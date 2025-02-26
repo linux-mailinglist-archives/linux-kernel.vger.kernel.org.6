@@ -1,168 +1,216 @@
-Return-Path: <linux-kernel+bounces-533650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CE2A45D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:32:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5869A45D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF4618975DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80B9172D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595F619CD16;
-	Wed, 26 Feb 2025 11:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8744E214A96;
+	Wed, 26 Feb 2025 11:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Td3icDVM"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mwoyUqjX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VoWPTwdu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16604322A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B05F322A;
+	Wed, 26 Feb 2025 11:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740569537; cv=none; b=tQLNult0Zi4Z8qT/R+9C5hScErX3dvoFpm+WlaQGjIefDW2abDj8DbrRo5j5y+2mv8uBvb8W3Uudsc1It4F/a8dpOxos/2yS8GNq0DX4rGdQJCVKf3ts/+1qMzzyOnfltUZvCfCmwSvO46Dx05ltZE8wc6sB1HSLgjIlQ0CIZbk=
+	t=1740569570; cv=none; b=sTvUaUQdZ0LXdzpOPfinY+sSdRxiEYDlLmOFvA4Ia6+g1nTf8JTi4D9R8a+TcD6Jv9rFblY1RGkqhik8giSJuVhqKwJ3QPE7cNl7U03Yfv6fGOXWSwTWZlgOzvnj0J+zMWXUVPNiclVhSyQTNdowMPgOWyEiyReBEOHhPpjAP1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740569537; c=relaxed/simple;
-	bh=B+iJEktDwmaRqvtBpDBg1SuXWEYGg9GsOnpJDl+ds9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sY6LULponnyH4qX+81PabIZSSqMFS5wswItHWs2qbkYVECYh7gv4PgRe48/4HBZz93Di6VjyeGVO8JZHG6DIaxtPlRHrJMq4/RgSTowxlemCKRirRCFCr8zQaOkwb1ELEFShM05SKUjUZqVIjknf2CQRNTPFucx+jStv+ourIbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Td3icDVM; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 94DDA43427;
-	Wed, 26 Feb 2025 11:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740569532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740569570; c=relaxed/simple;
+	bh=dQLj8MZf4R+QW6c2o5Xfyy6VuVALN8KafNc4OHy49p8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=osxSFNFPA/Y0SII0Vrr1lLlwQ4InZLPkTKG59zUhBOCmFrMcTjPD/jbKpZWyAxVRdzfjJJa5ML9iiFoOhTqZdbqb6oiSuy8r+v9I4qplYC/3TW6KIqQ2qcAwhfRN8mhW6He3VrqNaPejkw0tRFTvBOs7qC7ftAotxj9m1aFfKkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mwoyUqjX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VoWPTwdu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 11:32:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740569567;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oH5TLqPmHN4KHoh4+pmfs4/A09QxMx7XTAwVuGzjhTM=;
-	b=Td3icDVMjfODTdz85wp+A9sqtpo5jnYcHFQiTsczw97eA0Q8BUpWznYBtWeKUOeZYI7u5h
-	w26SzXlsnJZGs+H7yLiPOWaW1eSFh0mM8HXQDroR2XzUvIkwajVVEa3pWH6cPEXFpZvAx0
-	jaeXR6YmzNVBkf7T95z2pRdlRRFnLKJZ8YkepVulLaKLtn1jb4BStR4ADeAInFJnrSSfyE
-	GreRQUtd5snefUyi32TrLlJLWv9r2Yt7xBNJNUFGqMtnHO/Awy6zPovYDyvoa3CZCDU8dC
-	MCmF4kUJi0m5fc7Glz5TYL4qtsvRqpqfti2/r///uSXpKyCADmpUnZc+Ee9d1g==
-Date: Wed, 26 Feb 2025 12:32:08 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+	bh=iEMNPcMmxhiqSJW4zJbGtQeGjB58PtznAAcjriCRABU=;
+	b=mwoyUqjXOicRWnIn3+CCYtaQfweGLBxdn0iJxBaKliO+PMvlszo3MG3C6NlWvq+ZWZSRpt
+	Xzfb5Cg0PPgmYzJzudzPYucnPzezBXVQtMKedhpZcHfN1/Melo93YALlFccIbHfyOasNZu
+	udD9q8tJ4gigspqopCBXkRjDN+nxDebQRRrj16S5ca01adev4rSCqvx+tG6wgkko2yzDnt
+	GG9wSBw4esn86/29rsXZ8kmEvAa/oJSMNBFePTmIwRGOJf33os29v1+YNMu0zk07javZud
+	QlFD5unsJ8PtfBn2Ju55o7hQ/WCA8GHlXCitw5nX4sT+8/yVGz5tvLdAX2Y3VQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740569567;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iEMNPcMmxhiqSJW4zJbGtQeGjB58PtznAAcjriCRABU=;
+	b=VoWPTwdupsGx7a9yu8gIe1mz6BmiZuN+nUjuiRMazOGEqAaNt1Kgr3T6oLwW0HnVyKLtet
+	kTMw0R5nMfQL8hDw==
+From: "tip-bot2 for Nikolay Borisov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] x86/mce/inject: Remove call to mce_notify_irq()
+Cc: Nikolay Borisov <nik.borisov@suse.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/2] drm/bridge: move bridges_show logic from
- drm_debugfs.c
-Message-ID: <20250226123208.272e7766@booty>
-In-Reply-To: <871pvl6g1t.fsf@intel.com>
-References: <20250225-drm-debugfs-show-all-bridges-v7-0-8826037ada37@bootlin.com>
-	<20250225-drm-debugfs-show-all-bridges-v7-1-8826037ada37@bootlin.com>
-	<878qpu56cm.fsf@intel.com>
-	<20250225183621.6b33684b@booty>
-	<871pvl6g1t.fsf@intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+In-Reply-To: <20250225143348.268469-1-nik.borisov@suse.com>
+References: <20250225143348.268469-1-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <174056956644.10177.4335418535557398058.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeegiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhro
- hhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello Jani,
+The following commit has been merged into the ras/core branch of tip:
 
-On Tue, 25 Feb 2025 20:21:50 +0200
-Jani Nikula <jani.nikula@linux.intel.com> wrote:
+Commit-ID:     6447828875b7d768e4ef0f58765b4bd4e16bcf18
+Gitweb:        https://git.kernel.org/tip/6447828875b7d768e4ef0f58765b4bd4e16bcf18
+Author:        Nikolay Borisov <nik.borisov@suse.com>
+AuthorDate:    Tue, 25 Feb 2025 16:33:48 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 26 Feb 2025 12:18:37 +01:00
 
-> On Tue, 25 Feb 2025, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> > Hello Jani,
-> >
-> > On Tue, 25 Feb 2025 18:36:41 +0200
-> > Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> >  
-> >> On Tue, 25 Feb 2025, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:  
-> >> > In preparation to expose more info about bridges in debugfs, which will
-> >> > require more insight into drm_bridge data structures, move the bridges_show
-> >> > code to drm_bridge.c.
-> >> >
-> >> > Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>    
-> >> 
-> >> I hate myself for doing this on a patch that's at v7... but here goes.  
-> >
-> > Please don't! :-) This patch is new in v7, and a different (and
-> > definitely worse) approach was present in v6, but there was nothing
-> > before.
-> >  
-> >> Perhaps consider moving the bridges debugfs creation and fops to
-> >> drm_bridge.c instead of just adding
-> >> drm_bridge_debugfs_show_encoder_bridges().
-> >> 
-> >> For example, add drm_bridge_debugfs_add(struct drm_encoder *encoder),
-> >> which then contains the debugfs_create_file() call.  
-> >
-> > I think it should go in drm_encoder.c, not drm_bridge.c, right? Here we
-> > are showing the bridges attached to an encoder, so the entry point is
-> > each encoder.  
-> 
-> I'm still thinking drm_bridge.c, because it's about bridges and their
-> details. The encoder shouldn't care about bridge implementation details.
+x86/mce/inject: Remove call to mce_notify_irq()
 
-Ah, I think I now get what you mean.
+The call to mce_notify_irq() has been there since the initial version of
+the soft inject mce machinery, introduced in
 
-Current code is:
+  ea149b36c7f5 ("x86, mce: add basic error injection infrastructure").
 
-drm_encoder_register_all()                             [drm_encoder.c]
- -> drm_debugfs_encoder_add                            [drm_debugfs.c]
-   -> debugfs_create_file("bridges"...  &bridges_fops) [drm_debugfs.c]
-                                    [bridges_fops is in drm_debugfs.c]
+At that time it was functional since injecting an MCE resulted in the
+following call chain:
 
-Moving the last 2 lines to drm_bridge.c and into a new function we'd
-have:
+  raise_mce()
+    ->machine_check_poll()
+        ->mce_log() - sets notfiy_user_bit
+  ->mce_notify_user() (current mce_notify_irq) consumed the bit and called the
+  usermode helper.
 
-drm_encoder_register_all()                             [drm_encoder.c]
- -> drm_debugfs_encoder_add [*]                        [drm_debugfs.c]
-  -> drm_bridge_debugfs_add_encoder_bridges_file (NEW) [drm_bridge.c]
-   -> debugfs_create_file("bridges"...  &bridges_fops) [drm_bridge.c]
-                                    [bridges_fops is in drm_bridge.c]
+However, with the introduction of
 
-Potentially [*] could be moved to drm_encoder.c, but that is not bridge
-related and can be done as a future step.
+  011d82611172 ("RAS: Add a Corrected Errors Collector")
 
-Is this what you had in mind?
+the code got moved around and the usermode helper began to be called via the
+early notifier mce_first_notifier() rendering the call in raise_local()
+defunct as the mce_need_notify bit (ex notify_user) is only being set from the
+early notifier.
 
-> > On the other hand in patch 2 we should move the
-> > drm_debugfs_global_add() code to drm_bridge.c, as it's showing bridges
-> > ina encoder-independent way.  
-> 
-> Agreed on that.
-> 
-> > And finally drm_bridge should export the common
-> > drm_bridge_debugfs_show_bridge() function to drm_encoder.c.  
-> 
-> Disagree. That will still require the EXPORT and #ifdefs around
-> CONFIG_DEBUG_FS.
+Remove the noop call and make mce_notify_irq() static.
 
-With the above-sketched idea I agree we wouldn't need to export
-drm_bridge_debugfs_show_bridge().
+No functional changes.
 
-Luca
+Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20250225143348.268469-1-nik.borisov@suse.com
+---
+ arch/x86/include/asm/mce.h       |  2 +-
+ arch/x86/kernel/cpu/mce/core.c   | 44 +++++++++++++++----------------
+ arch/x86/kernel/cpu/mce/inject.c |  1 +-
+ 3 files changed, 22 insertions(+), 25 deletions(-)
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index eb2db07..6c77c03 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -296,8 +296,6 @@ enum mcp_flags {
+ 
+ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b);
+ 
+-bool mce_notify_irq(void);
+-
+ DECLARE_PER_CPU(struct mce, injectm);
+ 
+ /* Disable CMCI/polling for MCA bank claimed by firmware */
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 0dc00c9..1f14c33 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -584,6 +584,28 @@ bool mce_is_correctable(struct mce *m)
+ }
+ EXPORT_SYMBOL_GPL(mce_is_correctable);
+ 
++/*
++ * Notify the user(s) about new machine check events.
++ * Can be called from interrupt context, but not from machine check/NMI
++ * context.
++ */
++static bool mce_notify_irq(void)
++{
++	/* Not more than two messages every minute */
++	static DEFINE_RATELIMIT_STATE(ratelimit, 60*HZ, 2);
++
++	if (test_and_clear_bit(0, &mce_need_notify)) {
++		mce_work_trigger();
++
++		if (__ratelimit(&ratelimit))
++			pr_info(HW_ERR "Machine check events logged\n");
++
++		return true;
++	}
++
++	return false;
++}
++
+ static int mce_early_notifier(struct notifier_block *nb, unsigned long val,
+ 			      void *data)
+ {
+@@ -1773,28 +1795,6 @@ static void mce_timer_delete_all(void)
+ 		del_timer_sync(&per_cpu(mce_timer, cpu));
+ }
+ 
+-/*
+- * Notify the user(s) about new machine check events.
+- * Can be called from interrupt context, but not from machine check/NMI
+- * context.
+- */
+-bool mce_notify_irq(void)
+-{
+-	/* Not more than two messages every minute */
+-	static DEFINE_RATELIMIT_STATE(ratelimit, 60*HZ, 2);
+-
+-	if (test_and_clear_bit(0, &mce_need_notify)) {
+-		mce_work_trigger();
+-
+-		if (__ratelimit(&ratelimit))
+-			pr_info(HW_ERR "Machine check events logged\n");
+-
+-		return true;
+-	}
+-	return false;
+-}
+-EXPORT_SYMBOL_GPL(mce_notify_irq);
+-
+ static void __mcheck_cpu_mce_banks_init(void)
+ {
+ 	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
+diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
+index 313fe68..06e3cf7 100644
+--- a/arch/x86/kernel/cpu/mce/inject.c
++++ b/arch/x86/kernel/cpu/mce/inject.c
+@@ -229,7 +229,6 @@ static int raise_local(void)
+ 	} else if (m->status) {
+ 		pr_info("Starting machine check poll CPU %d\n", cpu);
+ 		raise_poll(m);
+-		mce_notify_irq();
+ 		pr_info("Machine check poll done on CPU %d\n", cpu);
+ 	} else
+ 		m->finished = 0;
 
