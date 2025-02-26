@@ -1,57 +1,75 @@
-Return-Path: <linux-kernel+bounces-533954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54153A460AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:24:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8488A460DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C83B7A97DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B1C3AE472
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA8521D3FD;
-	Wed, 26 Feb 2025 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05C922068A;
+	Wed, 26 Feb 2025 13:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkECZJmp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="M+EF2Q0a"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47CD221559;
-	Wed, 26 Feb 2025 13:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0088A21D3F0;
+	Wed, 26 Feb 2025 13:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576191; cv=none; b=ZepnzgLb7swCzMXVc9SAqrKanorLMWyYtsyq10UHiWp4nP5U1jOzNidq5EoK0/wYWtzmR89U8sax0X9DKILt8Nj7hvV7Opel7NNHe/Zvio1+EcbhKz94K2K4SrlZhB/MCdgKKWOB0Gm/j+doQ+GmrohKkNnfk+RosRsm2Wh30Jg=
+	t=1740576403; cv=none; b=sFvkdM8Mb7NFypvAZyvvWLTvoCyC2lHbxVw33bovhAik6OzECa3RL89Pw9+vbTBJxr3L91IcHlntZQzSvv8nEwrHImD1sK2HVydhK7l+CXb/bSbzRRuC9P66BM8EyYf4SBSGiKR0PhFr2UCKE6KL8WnsA7wWeIPaMEOLCXbmZoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576191; c=relaxed/simple;
-	bh=jp+L3EEqUZilFyzTlCkcQPWm08dxgvd2umLQ5g78EOg=;
+	s=arc-20240116; t=1740576403; c=relaxed/simple;
+	bh=DSExusSrJg5dEQz0ahM4rRJoxL+q1ToKc/UiFPZKQ2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfGq9RP3ST7MEp/pdrbSMCrBD1Z+gp1HzeikK3HkSS7gR3Lm4C03MaKNz7/zJyiXMTwehq+pICxefV9Md93S7qamSHxq21wW4CafFbP0oJ5Q/2B1gOZd1Eo7X/QzO24KnriV8eQ7DLbOQZhEZK2u/GumvuV8TYiDot9e+T0kU8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkECZJmp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B1F9C4CEE9;
-	Wed, 26 Feb 2025 13:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740576191;
-	bh=jp+L3EEqUZilFyzTlCkcQPWm08dxgvd2umLQ5g78EOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bkECZJmpQ5FtsegftLysD8xfz7G0DFh0TmuCy7MPfs2ABM4y5cfjhJbBzXNXHoXtD
-	 vRySXb0kcQjiCdn5a5bO2r3tlJszbVVPu53nRX9Hp4qGoihkQbNcT668cukq/FtZ5a
-	 ZidvZV4WLk32YqnICphiGO8wNzaDIyXnQgmC5S9PnN6BoyPWDvKbKmOC5OnpP71vZV
-	 DPvQia7UAZ3rfJiQLelgwaugPyl9dg28FrwKUigUC+oAI4ta4XRF0+u1BQiEO4hiWN
-	 +ff5pjWqDEicckbrmnHiXx7kOtM3I+Z/R4oDppD96lqpFpDasgWtqvbhuJ/H7FUaa9
-	 OhROKKLRMO47g==
-Date: Wed, 26 Feb 2025 14:23:03 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Benjamin Berg <benjamin@sipsolutions.net>
-Cc: linux-arch@vger.kernel.org, linux-um@lists.infradead.org,
-	x86@kernel.org, briannorris@chromium.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH 3/3] x86: avoid copying dynamic FP state from init_task
-Message-ID: <Z78Vt8yCcPrFQeqo@gmail.com>
-References: <20241217202745.1402932-1-benjamin@sipsolutions.net>
- <20241217202745.1402932-4-benjamin@sipsolutions.net>
- <Z78SVdv5YKie-Mcp@gmail.com>
- <159a83bf5457edbabcc1e88ee5ab98cf58ca6cb0.camel@sipsolutions.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoO+5xFMFTf+aCDdAcbARiKrJ78eFKlDEeLgp4UW/b1J+/SF//KDiLIUVMHDEQruPvWTTSevCbxvQ1wRyiBANBcFegg9DixU7C0j0Fq/Nb83r9zwwfktj1P6rZrdfdzQfWh0mC5ryDM2yYoGIM1KOqMK7u6UjKmgVRcH7eDVhU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=M+EF2Q0a; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=4Ozf+7Q+exXjohkxtJs5vNdrBo5Sdnc0Ag2Lz0YxhzU=; b=M+EF2Q0a0WRuAPx96YN4gdGAGD
+	cJUEFVSoVUXpcau6Rel+vg9J8OcLm3W6FCG3VX49WlwcmMK+wDwM5029xr9hVdseTQlMBv03A/9c6
+	Ra8Y8UvoFAx2/26RJRc/TNFA4IE7Sv4X42AgVaTgv8D9VZm6l33vh2vPiIqBo8ug1Skg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tnHQW-000GS9-6o; Wed, 26 Feb 2025 14:26:16 +0100
+Date: Wed, 26 Feb 2025 14:26:16 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Subject: Re: [PATCH net-next v2 1/3] net: phy: mediatek: Add 2.5Gphy firmware
+ dt-bindings and dts node
+Message-ID: <8bc68f1a-5abd-478c-9b9d-2c8baa6bb36a@lunn.ch>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-2-SkyLake.Huang@mediatek.com>
+ <a15cfd5d-7c1a-45b2-af14-aa4e8761111f@lunn.ch>
+ <Z7X5Dta3oUgmhnmk@makrotopia.org>
+ <ff96f5d38e089fdd76294265f33d7230c573ba69.camel@mediatek.com>
+ <176f8fe1-f4cf-4bbd-9aea-5f407cef8ac5@lunn.ch>
+ <c5728ec30db963c97b6e292b51e73e2c075d1757.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,29 +78,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159a83bf5457edbabcc1e88ee5ab98cf58ca6cb0.camel@sipsolutions.net>
+In-Reply-To: <c5728ec30db963c97b6e292b51e73e2c075d1757.camel@mediatek.com>
 
-
-* Benjamin Berg <benjamin@sipsolutions.net> wrote:
-
-> > Note that this patch, while it still applies cleanly, crashes/hangs 
-> > the x86-64 defconfig kernel bootup in the early boot phase in a KVM 
-> > guest bootup.
+> So I guess I can do the following according to the previous discussion:
+> 1) Reserve a memory region in mt7988.dtsi
+> reserved-memory {
+> 	#address-cells = <2>;
+> 	#size-celss = <2>;
+> 	ranges;
 > 
-> Oh, outch. It seems that arch_task_struct_size can actually become 
-> smaller than sizeof(init_task) if the CPU does not have certain 
-> features.
-> 
-> See fpu__init_task_struct_size, which does:
-> 
->   int task_size = sizeof(struct task_struct);
->   task_size -= sizeof(current->thread.fpu.__fpstate.regs);
->   task_size += fpu_kernel_cfg.default_size;
-> 
-> I'll submit a new version of the patch and then also switch to use
-> memcpy_and_pad.
+> 	/* 0x0f0100000~0x0f1f0024 are specific for built-in 2.5Gphy.
+> 	 * In this range, it includes "PMB_FW_BASE"(0x0f100000)
+> 	 * and "MCU_CSR_BASE"(0x0f0f0000)
+> 	 */
+> 	i2p5g: i2p5g@0f100000 {
+> 		reg = <0 0x0f010000 0 0x1e0024>;
+> 		no-map;
+> 	};
+> };
 
-Thank you!
+Do you even need these? I assume this is in the IO space, not DRAM. So
+the kernel is not going to use it by default. That is why you need to
+specifically ioremap() it.
 
-	Ingo
+> 2) Since PHYs don't use compatibles, hardcode address in mtk-2p5ge.c:
+> /* MTK_ prefix means that the macro is used for both MT7988 & MT7987*/
+> #define MTK_2P5GPHY_PMB_FW_BASE		(0x0f100000)
+> #define MT7988_2P5GE_PMB_FW_LEN		(0x20000)
+> #define MT7987_2P5GE_PMB_FW_LEN		(0x18000)
+> #define MTK_2P5GPHY_MCU_CSR_BASE	(0x0f0f0000)
+> #define MTK_2P5GPHY_MCU_CSR_LEN		(0x20)
+> 
+> /* On MT7987, we separate firmware bin to 2 files and total size
+>  * is decreased from 128KB(mediatek/mt7988/i2p5ge-phy-pmb.bin) to
+>  * 96KB(mediatek/mt7987/i2p5ge-phy-pmb.bin)+
+>  * 28KB(mediatek/mt7987/i2p5ge-phy-DSPBitTb.bin)
+>  * And i2p5ge-phy-DSPBitTb.bin will be loaded to
+>  * MT7987_2P5GE_XBZ_PMA_RX_BASE
+>  */
+> #define MT7987_2P5GE_XBZ_PMA_RX_BASE	(0x0f080000)
+> #define MT7987_2P5GE_XBZ_PMA_RX_LEN	(0x5228)
+> #define MT7987_2P5GE_DSPBITTB_SIZE	(0x7000)
+> 
+> /* MT7987 requires these base addresses to manipulate some
+>  * registers before loading firmware.
+>  */
+> #define MT7987_2P5GE_APB_BASE		(0x11c30000)
+> #define MT7987_2P5GE_APB_LEN		(0x9c)
+> #define MT7987_2P5GE_PMD_REG_BASE	(0x0f010000)
+> #define MT7987_2P5GE_PMD_REG_LEN	(0x210)
+> #define MT7987_2P5GE_XBZ_PCS_REG_BASE	(0x0f030000)
+> #define MT7987_2P5GE_XBZ_PCS_REG_LEN	(0x844)
+
+Should the PCS registers actually be in the PCS driver, not the PHY
+driver? Hard to say until we know what these registers actually are.
+
+> #define MT7987_2P5GE_CHIP_SCU_BASE	(0x0f0cf800)
+> #define MT7987_2P5GE_CHIP_SCU_LEN	(0x12c)
+> 
+> static int mt7988_2p5ge_phy_load_fw(struct phy_device *phydev)
+> {
+> 	struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
+> 	void __iomem *mcu_csr_base, *pmb_addr;
+> 	struct device *dev = &phydev->mdio.dev;
+> 	const struct firmware *fw;
+> 	int ret, i;
+> 	u32 reg;
+> 
+> 	if (priv->fw_loaded)
+> 		return 0;
+> 
+> 	pmb_addr = ioremap(MTK_2P5GPHY_PMB_FW_BASE,
+> 			   MT7988_2P5GE_PMB_FW_LEN);
+> 	if (!pmb_addr)
+> 		return -ENOMEM;
+> 	mcu_csr_base = ioremap(MTK_2P5GPHY_MCU_CSR_BASE,
+> 			       MTK_2P5GPHY_MCU_CSR_LEN);
+> 	if (!mcu_csr_base) {
+> 		ret = -ENOMEM;
+> 		goto free_pmb;
+> 	}
+> ...
+> free:
+> 	iounmap(mcu_csr_base);
+> free_pmb:
+> 	iounmap(pmb_addr);
+> ...
+> }
+
+This looks O.K. It is basically what we did before device tree was
+used.
+
+	Andrew
 
