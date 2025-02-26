@@ -1,126 +1,280 @@
-Return-Path: <linux-kernel+bounces-534161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC93A4639F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6002A463A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56CD18881EB
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477143B5233
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8872222D1;
-	Wed, 26 Feb 2025 14:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9F4223716;
+	Wed, 26 Feb 2025 14:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="inpkz+vP"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ7B01W+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED502222C7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3431D212FB4;
+	Wed, 26 Feb 2025 14:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581321; cv=none; b=DsLeLCAwcxDeA8a/jehA2vuHcOLqsYCm29RX4LHwq/iqFQJ22b9ESX09kZL0FXqYolWn3YSMKwYhyEdjJ+Cr8JX06adyZF0GqjIpczm19rX/ONNNlWZRnflE/uNj7DsDGTjFvG3QW+qpfqnL3cTrOFyihb7M5DBQa67qwbn3FXs=
+	t=1740581330; cv=none; b=Roovr+qFccLfMF4boe72DLoIPAWaa+QMnfHbUTdQHhBi/05LauIPwWc8vLpXmDwJx/GnTMDhXcbedJc4xCEHbS5ZS3zmTR72Z0L3MZAdWd6al7jOI6z2Lgysf8X0GwlXtVVVmGMEQ3GYs8NaGimTftMwevFWUmGsMtkwF4ujRzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581321; c=relaxed/simple;
-	bh=su0PyH6fk/umxyHrvcwmhEHJXABA6CnmzbapAUQDlIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7JRIW8r+/nCDni++nLirejtNkAxlEHCRBogfeN110q5CwYD+SDR2t9xmjKAFY5gwyMt/afvqEWIlrHniwI8NXJ980W8nVS2mmcDB/bhhGZYPKkr/+6c/es53a3mdS4VFNk0xWT//aoGYDR71CkmGAFgGJaGj4emUglw4ESVW6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=inpkz+vP; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e04f87584dso10602689a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:48:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1740581318; x=1741186118; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMoILKIF7N8WQlVNtPKgkkC84yA+V5fRgKd3rLXRVvE=;
-        b=inpkz+vPNl0mlm9nSbeeNnKOTt1q+9n6oHZNQrX7CjQukEe9Avk9f8bqnPOxPu0XDW
-         2+hMyEhuzWWNA3Jzaw9AD8Or1ANsQAhJ+IT+M08iyUH99AJ3MkhkOMZSm2jLWDPmjWBv
-         78ZZUHS+AjxLiiV0aOpALNWZoIDcoUD+Yy4EyAsFTIFSAlUI9jLw8vKNaj8YF2FWg0eq
-         PrnjADb6w0dMtB9ytr7dq8WcoXjUNe7QfJWWOL3YiR0mcEA9Gwiup+qsdrKX+MAwN/I0
-         EKoIH+9MNh4vjab2EQBAqv311ZV9B1LtdgsSb7WA9Cx0g3sDOyvibT/smDai2GDpMHuR
-         jEkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740581319; x=1741186119;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nMoILKIF7N8WQlVNtPKgkkC84yA+V5fRgKd3rLXRVvE=;
-        b=TLMPOn5IxHs2Qw2GjtR6S5QDSZXKVP7U6elkIID1SExOPWW8mG28h2ssKoVqftzvur
-         4qUso6FNKSrp/zQIYykSyKJe9lKUZtfx79yO4LKLSexUxsnd1hCsoAb6ZfozLI+HvUdV
-         eBawqmVZppZ4XknCn63PSn6Ju2gvsl+LJccvBe3qUxqZTRHQxV7OA9ZX+o7zllvfQg2J
-         IKaCFzWGZN785ipd/E//5ISYbIyIETiAE9nV6OAtYbX+WwvwWX1nO9c3Gx+OzYFQMSQe
-         TMdC20gOtDilmSUeYC9diDjhqGK1dNWL8mNnZ3FQx6PsCXeYAFZH1xjM9P+W1yCVIo1o
-         IP9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWd3NvDNu7YqgfWe8llJDFQYp81F5Yyd0j/2ZvlsBL77S58Kx2aMGFO8A1sQjosHut0A/r+OhiAdC8yeTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpkokxPqG/yhXAl66/upd3v7JGRhRvdMzcSUeI6TdMp6a3VmDL
-	OXBt/CWeKikHEijGRTC/MJcO+E4IcZt3FmSTAQxCLCO3BlnITS6N/PtnFr3wUDw=
-X-Gm-Gg: ASbGncs5ou4zynhwNPdcKdN7KHHJphMP/ZpmOyYkbx9DzSCWvq38I4AdJMDT8RDKYJ6
-	YnOqJ6yxXIvMd3+ZJzOVt9cETWBFge0gAga0QvAw26k2CvDvXWdhMcvkfFlwLpaezmoR7QFJbFL
-	6Rhgh7fOKGhN627ZZlIic4U4Zojvo8XVI7GY1lnUIgFvLCir3QxACuLBjUYIEyiN65aIM/pVSQc
-	uYJaZTHt0HCs3fK5ycG2gIi8xhZWT9J6vPLHNSzJqD87PB63rrMntAHpJgYFM8iyr8ZUtF5wQp8
-	behz6iaKBbFS0+U7WMSH4Y63LITLnAI8GrrSHpCV9s4w0h4SKEcl/g==
-X-Google-Smtp-Source: AGHT+IGtH1CcVMxMCJwtVi3LYJ16g2hv5Xsh1dW0fQCUJV+H/J70PtPy1kYytDJYuVvZvlxBA+dtIg==
-X-Received: by 2002:a05:6402:5202:b0:5e0:7f52:226 with SMTP id 4fb4d7f45d1cf-5e4a0d45e24mr4468134a12.4.1740581317806;
-        Wed, 26 Feb 2025 06:48:37 -0800 (PST)
-Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e462032b00sm2912497a12.68.2025.02.26.06.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 06:48:37 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:48:35 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Cosmin Ratiu <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org, 
-	Konrad Knitter <konrad.knitter@intel.com>, Jacob Keller <jacob.e.keller@intel.com>, davem@davemloft.net, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-kernel@vger.kernel.org, ITP Upstream <nxne.cnse.osdt.itp.upstreaming@intel.com>, 
-	Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [RFC net-next v2 1/2] devlink: add whole device devlink instance
-Message-ID: <iiemy2zwko4iehuw6cgbipszcxonanjpumxzv4nbdvgvdgi5fx@jz3hkez3lygw>
-References: <20250219164410.35665-1-przemyslaw.kitszel@intel.com>
- <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
- <ybrtz77i3hbxdwau4k55xn5brsnrtyomg6u65eyqm4fh7nsnob@arqyloer2l5z>
- <87855c66-0ab4-4b40-81fa-b37149c17dca@intel.com>
- <zzyls3te4he2l5spf4wzfb53imuoemopwl774dzq5t5s22sg7l@37fk7fvgvnrr>
- <e027f9e5-ff3a-4bc1-8297-9400a4ff62a6@intel.com>
+	s=arc-20240116; t=1740581330; c=relaxed/simple;
+	bh=gLpXpt/oNQG+cEDy1hm4zqtSmcdqyW5EeSzyAxZ0V9o=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KMl9nAZ9pKnfuZbDad888/4FVqgckJbnIPHTsSU/wDs4rB2VGBdurTptopsXfFmYZQ/TpuD0NjWDOdHpF7oRA+8Hj8Fxl/Xjr95QsaXU09UHYX1wQ67B2o4e6yNfZYYGKSKJAJ0mSDjuCkORTJ2SNYMybO9ayWTsg4sNZKWfNd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ7B01W+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA497C4CED6;
+	Wed, 26 Feb 2025 14:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740581329;
+	bh=gLpXpt/oNQG+cEDy1hm4zqtSmcdqyW5EeSzyAxZ0V9o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gJ7B01W+mbrEcbxVnT29sGrNuF70RyfeH5tA9BH9uG4p4L4pvobeAtOVeOYYxOGbL
+	 QaHIvLgwp2XQyL4AcVkPAq2GwMs0kZYUHdnzNq6FMKcgkAvhxXYG8OIprZtFzh+8Ra
+	 HbNd48dvOtfMNqJCyeCRON0ePQe2R5WnjlbGvlLMJg+W13UsAcOrpPEikHOUp3Kc03
+	 s39xRJQ4G7wCURYmuluIMiQu3IiP326gpaijSLJMF5YbYD37ISfNqvahT9V2Iyxap0
+	 czvH/JqVsIMzLaNA5lZMq3nNFCndr0ccxpTIf0Cri6N/l1qmU4stYRnaBTtrJsYPlv
+	 MersOB2KFfqzQ==
+Date: Wed, 26 Feb 2025 23:48:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Sven Schnelle <svens@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Donglin
+ Peng <dolinux.peng@gmail.com>, Zheng Yejian <zhengyejian@huaweicloud.com>,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] ftrace: Add print_function_args()
+Message-Id: <20250226234846.2525cef803717aa5acfb8f36@kernel.org>
+In-Reply-To: <20250225222653.550619678@goodmis.org>
+References: <20250225222601.423129938@goodmis.org>
+	<20250225222653.550619678@goodmis.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e027f9e5-ff3a-4bc1-8297-9400a4ff62a6@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Tue, Feb 25, 2025 at 04:40:49PM +0100, przemyslaw.kitszel@intel.com wrote:
->On 2/25/25 15:35, Jiri Pirko wrote:
->> Tue, Feb 25, 2025 at 12:30:49PM +0100, przemyslaw.kitszel@intel.com wrote:
+On Tue, 25 Feb 2025 17:26:02 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-[...]
+> From: Sven Schnelle <svens@linux.ibm.com>
+> 
+> Add a function to decode argument types with the help of BTF. Will
+> be used to display arguments in the function and function graph
+> tracer.
+> 
+> It can only handle simply arguments and up to FTRACE_REGS_MAX_ARGS number
+> of arguments. When it hits a max, it will print ", ...":
+> 
+>    page_to_skb(vi=0xffff8d53842dc980, rq=0xffff8d53843a0800, page=0xfffffc2e04337c00, offset=6160, len=64, truesize=1536, ...)
+> 
+> And if it hits an argument that is not recognized, it will print the raw
+> value and the type of argument it is:
+> 
+>    make_vfsuid(idmap=0xffffffff87f99db8, fs_userns=0xffffffff87e543c0, kuid=0x0 (STRUCT))
+>    __pti_set_user_pgtbl(pgdp=0xffff8d5384ab47f8, pgd=0x110e74067 (STRUCT))
+> 
 
->> > output, for all PFs and VFs on given device:
->> > 
->> > pci/0000:af:00:
->> >   name rss size 8 unit entry size_min 0 size_max 24 size_gran 1
->> >     resources:
->> >       name lut_512 size 0 unit entry size_min 0 size_max 16 size_gran 1
->> >       name lut_2048 size 8 unit entry size_min 0 size_max 8 size_gran 1
->> > 
->> > What is contributing to the hardness, this is not just one for all ice
->> > PFs, but one per device, which we distinguish via pci BDF.
->> 
->> How?
->
->code is in ice_adapter_index()
+This looks good to me.
 
-If you pass 2 pfs of the same device to a VM with random BDF, you get 2
-ice_adapters, correct?
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-[...]
+Thank you,
+
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Guo Ren <guoren@kernel.org>
+> Cc: Donglin Peng <dolinux.peng@gmail.com>
+> Cc: Zheng Yejian <zhengyejian@huaweicloud.com>
+> Link: https://lore.kernel.org/20241223201541.898496620@goodmis.org
+> Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  include/linux/ftrace_regs.h |  5 +++
+>  kernel/trace/Kconfig        |  6 +++
+>  kernel/trace/trace_output.c | 85 +++++++++++++++++++++++++++++++++++++
+>  kernel/trace/trace_output.h |  9 ++++
+>  4 files changed, 105 insertions(+)
+> 
+> diff --git a/include/linux/ftrace_regs.h b/include/linux/ftrace_regs.h
+> index bbc1873ca6b8..15627ceea9bc 100644
+> --- a/include/linux/ftrace_regs.h
+> +++ b/include/linux/ftrace_regs.h
+> @@ -35,4 +35,9 @@ struct ftrace_regs;
+>  
+>  #endif /* HAVE_ARCH_FTRACE_REGS */
+>  
+> +/* This can be overridden by the architectures */
+> +#ifndef FTRACE_REGS_MAX_ARGS
+> +# define FTRACE_REGS_MAX_ARGS	6
+> +#endif
+> +
+>  #endif /* _LINUX_FTRACE_REGS_H */
+> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+> index d570b8b9c0a9..60412c1012ef 100644
+> --- a/kernel/trace/Kconfig
+> +++ b/kernel/trace/Kconfig
+> @@ -263,6 +263,12 @@ config FUNCTION_GRAPH_RETADDR
+>  	  the function is called. This feature is off by default, and you can
+>  	  enable it via the trace option funcgraph-retaddr.
+>  
+> +config FUNCTION_TRACE_ARGS
+> +       bool
+> +	depends on HAVE_FUNCTION_ARG_ACCESS_API
+> +	depends on DEBUG_INFO_BTF
+> +	default y
+> +
+>  config DYNAMIC_FTRACE
+>  	bool "enable/disable function tracing dynamically"
+>  	depends on FUNCTION_TRACER
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 03d56f711ad1..4b721cd4f21d 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -12,8 +12,11 @@
+>  #include <linux/sched/clock.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/idr.h>
+> +#include <linux/btf.h>
+> +#include <linux/bpf.h>
+>  
+>  #include "trace_output.h"
+> +#include "trace_btf.h"
+>  
+>  /* must be a power of 2 */
+>  #define EVENT_HASHSIZE	128
+> @@ -684,6 +687,88 @@ int trace_print_lat_context(struct trace_iterator *iter)
+>  	return !trace_seq_has_overflowed(s);
+>  }
+>  
+> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
+> +void print_function_args(struct trace_seq *s, unsigned long *args,
+> +			 unsigned long func)
+> +{
+> +	const struct btf_param *param;
+> +	const struct btf_type *t;
+> +	const char *param_name;
+> +	char name[KSYM_NAME_LEN];
+> +	unsigned long arg;
+> +	struct btf *btf;
+> +	s32 tid, nr = 0;
+> +	int a, p, x;
+> +
+> +	trace_seq_printf(s, "(");
+> +
+> +	if (!args)
+> +		goto out;
+> +	if (lookup_symbol_name(func, name))
+> +		goto out;
+> +
+> +	/* TODO: Pass module name here too */
+> +	t = btf_find_func_proto(name, &btf);
+> +	if (IS_ERR_OR_NULL(t))
+> +		goto out;
+> +
+> +	param = btf_get_func_param(t, &nr);
+> +	if (!param)
+> +		goto out_put;
+> +
+> +	for (a = 0, p = 0; p < nr; a++, p++) {
+> +		if (p)
+> +			trace_seq_puts(s, ", ");
+> +
+> +		/* This only prints what the arch allows (6 args by default) */
+> +		if (a == FTRACE_REGS_MAX_ARGS) {
+> +			trace_seq_puts(s, "...");
+> +			break;
+> +		}
+> +
+> +		arg = args[a];
+> +
+> +		param_name = btf_name_by_offset(btf, param[p].name_off);
+> +		if (param_name)
+> +			trace_seq_printf(s, "%s=", param_name);
+> +		t = btf_type_skip_modifiers(btf, param[p].type, &tid);
+> +
+> +		switch (t ? BTF_INFO_KIND(t->info) : BTF_KIND_UNKN) {
+> +		case BTF_KIND_UNKN:
+> +			trace_seq_putc(s, '?');
+> +			/* Still print unknown type values */
+> +			fallthrough;
+> +		case BTF_KIND_PTR:
+> +			trace_seq_printf(s, "0x%lx", arg);
+> +			break;
+> +		case BTF_KIND_INT:
+> +			trace_seq_printf(s, "%ld", arg);
+> +			break;
+> +		case BTF_KIND_ENUM:
+> +			trace_seq_printf(s, "%ld", arg);
+> +			break;
+> +		default:
+> +			/* This does not handle complex arguments */
+> +			trace_seq_printf(s, "(%s)[0x%lx", btf_type_str(t), arg);
+> +			for (x = sizeof(long); x < t->size; x += sizeof(long)) {
+> +				trace_seq_putc(s, ':');
+> +				if (++a == FTRACE_REGS_MAX_ARGS) {
+> +					trace_seq_puts(s, "...]");
+> +					goto out_put;
+> +				}
+> +				trace_seq_printf(s, "0x%lx", args[a]);
+> +			}
+> +			trace_seq_putc(s, ']');
+> +			break;
+> +		}
+> +	}
+> +out_put:
+> +	btf_put(btf);
+> +out:
+> +	trace_seq_printf(s, ")");
+> +}
+> +#endif
+> +
+>  /**
+>   * ftrace_find_event - find a registered event
+>   * @type: the type of event to look for
+> diff --git a/kernel/trace/trace_output.h b/kernel/trace/trace_output.h
+> index dca40f1f1da4..2e305364f2a9 100644
+> --- a/kernel/trace/trace_output.h
+> +++ b/kernel/trace/trace_output.h
+> @@ -41,5 +41,14 @@ extern struct rw_semaphore trace_event_sem;
+>  #define SEQ_PUT_HEX_FIELD(s, x)				\
+>  	trace_seq_putmem_hex(s, &(x), sizeof(x))
+>  
+> +#ifdef CONFIG_FUNCTION_TRACE_ARGS
+> +void print_function_args(struct trace_seq *s, unsigned long *args,
+> +			 unsigned long func);
+> +#else
+> +static inline void print_function_args(struct trace_seq *s, unsigned long *args,
+> +				       unsigned long func) {
+> +	trace_seq_puts(s, "()");
+> +}
+> +#endif
+>  #endif
+>  
+> -- 
+> 2.47.2
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
