@@ -1,194 +1,348 @@
-Return-Path: <linux-kernel+bounces-532959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAC0A45427
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:50:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB6DA4542C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F6B3A922D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3B13A961C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC3F266F08;
-	Wed, 26 Feb 2025 03:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03142673A4;
+	Wed, 26 Feb 2025 03:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dsn53geV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpNcZV1R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDE8266B6A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15593218821;
+	Wed, 26 Feb 2025 03:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740541852; cv=none; b=C+Lu0R0NtMGsT3pvNt5ltfmJFmSTAAcYHsZ6q8hgoavTihhGWAIqYK7AbCuhBeFrVcaoAMwD4ZyfelZXK8h2ZtzDnhBLHWwPHo/T0dH83P95h3klAzVp8VchtZgRuS+PAow88OrdUpxCIa5mXW03CgTVedaKEYSS9qGwXihyYDI=
+	t=1740541956; cv=none; b=go6eEIwLYgH7HLl8TM8s9BJLHHes3+C5HHCSQJHPqPpiDV5O53ivZNeOQ7drwJrKuExLC+EwWRyBYwrry94cCStc92xHxpNudXvd2ksAuMbt4tc5tXraAw0ELJSLJ4gQVVxNItm8Eulm/Ugw5HmsKunL3YEZoMT174C3Cq+gp0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740541852; c=relaxed/simple;
-	bh=GIKSrcAdARWGtqwXcvhyMAAyoUO1Ab9BSrALrgWmSXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ExnZm6GxW3ZqUJacpHj2w1rYciVgk5QzrkXt7MdnhwSgGAuAo6rKVk4Sjye+xKCacmG5nCOGv0GsYrD2JtSvGxQfqrwc1PGt/DQKvm8HfLOfrg8nay2aaADLsV7r2OVT9rXqxoZM0phKpyLeo3iZTzoB2+op58dxUiZBVbtr3xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dsn53geV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740541851; x=1772077851;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GIKSrcAdARWGtqwXcvhyMAAyoUO1Ab9BSrALrgWmSXs=;
-  b=dsn53geVIbPBkPkw79xyFarURoRtsrGsiIq23KeZMMj0+BvJKm/24Rg4
-   gOPK0xTb9YP8R91ay6ltqinWCq5ny7C9SU9EN9IwCoTcZ0MlPIcjWJHgi
-   UYzpF1dj7n91khUogCZQWUGnaBLD2grVteoI6Hk1mMia21FuOoT4PtCPc
-   6KSEa0UqJHa/OvkuO9yDJ3RXOBc0YMzROzn/QK7OqfgyQ9/onS/zHhBGp
-   RqfEGSt1WkL+StdUQM8Zt9eoxXVwIQ2FXHyFYT82lrUdHDIJZn3pFGG9p
-   D/9Az1T59FMDszre54qum6slu3oHFY3R6Nf0xpH4Dl6LzR0SEeRRRi+4C
-   w==;
-X-CSE-ConnectionGUID: 0+Pih0kQSDGpcTSpWCAyXg==
-X-CSE-MsgGUID: 83bjZWwbTkufqjkhnEuzXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52795775"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52795775"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 19:50:50 -0800
-X-CSE-ConnectionGUID: zIgZAE2rTNKTn75tBkZ9xw==
-X-CSE-MsgGUID: n0Od5gPkRL6JE5HxqOUpWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="121683447"
-Received: from unknown (HELO [10.238.129.135]) ([10.238.129.135])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 19:50:48 -0800
-Message-ID: <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
-Date: Wed, 26 Feb 2025 11:50:45 +0800
+	s=arc-20240116; t=1740541956; c=relaxed/simple;
+	bh=OBm/ktjRULhvR+Dl6u2sMQDmw8mJ6M9OwWXPNkjttKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce/IevglD+tAZrHtOf0pMzTUn/qTKbOzrrwD9KJz9FMagEFCd68f0Wh3plQaCpJpKHonmct3y+V9xJDhrXkdyom6kQ4pA4GhJVBAHA1f69guZvPl4CGnAd+lL0sszfAQ7NR1ohE6p8lFSPYPOdp7MGBqUXvgIpoMoA1TPL1ecxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpNcZV1R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82F3C4CED6;
+	Wed, 26 Feb 2025 03:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740541955;
+	bh=OBm/ktjRULhvR+Dl6u2sMQDmw8mJ6M9OwWXPNkjttKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FpNcZV1Rx9gCAbniiVBT3niX4lja3lc8UTa7H47JHlJBFiNXUXSHXWlgymTeEuiIn
+	 mq5KH0gkYQS5EhsSAI8WnlOz8OD7lcyGxWyKlI1aWwBQzwoIn0gcg71Au2tWECwoDG
+	 8SS/PmWsOHdqJ3gDEIJICkDfJlQlpu4iJJphJswatwHMHIqwrD1ywVURsYvAaqkDcG
+	 M7cKR3abiwhPZ0fCOYd0Hcpe084ltQnlVRqe54EJHve4r1mr4Y/Kbe33AKTd1fvibb
+	 BPYfzE7NUagOdqcX22BkDWSw7nCw/kbHH3Zb/9TqIyP5T4AYa/P0odlH6KmSZMIeH1
+	 KtGlScGkVX8tw==
+Date: Tue, 25 Feb 2025 21:52:32 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ath12k@lists.infradead.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: add wifi node for IPQ5332 based
+ RDP441
+Message-ID: <3iwfhcl5gmpwfiatsawwkm5qns4pmzvhcrroq236y45kklw244@6rngcplttabx>
+References: <20250130045900.1903927-1-quic_rajkbhag@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Yunhui Cui
- <cuiyunhui@bytedance.com>, dwmw2@infradead.org, joro@8bytes.org,
- will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
- <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
- <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
- <20250225142610.GB545008@ziepe.ca>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
- 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
- 8TCx1OJHpvWFmL4Deq8=
-In-Reply-To: <20250225142610.GB545008@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250130045900.1903927-1-quic_rajkbhag@quicinc.com>
 
-在 2025/2/25 22:26, Jason Gunthorpe 写道:
-> On Tue, Feb 25, 2025 at 04:54:54PM +0800, Ethan Zhao wrote:
->>> On 2025/2/25 14:48, Yunhui Cui wrote:
->>>> We found that executing the command ./a.out &;reboot -f (where a.out
->>>> is a
->>>> program that only executes a while(1) infinite loop) can
->>>> probabilistically
->>>> cause the system to hang in the intel_iommu_shutdown() function,
->>>> rendering
->>>> it unresponsive. Through analysis, we identified that the factors
->>>> contributing to this issue are as follows:
->>>>
->>>> 1. The reboot -f command does not prompt the kernel to notify the
->>>> application layer to perform cleanup actions, allowing the
->>>> application to
->>>> continue running.
->>>>
->>>> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
->>>> BSP (Bootstrap Processor) CPU is operational in the system.
->>>>
->>>> 3. During the execution of intel_iommu_shutdown(), the function
->>>> down_write
->>>> (&dmar_global_lock) causes the process to sleep and be scheduled out.
-> Why does this happen? If the kernel has shutdown other CPUs then what
-> thread is holding the other side of this lock and why?
->
->>>> 4. At this point, though the processor's interrupt flag is not cleared,
->>>>    allowing interrupts to be accepted. However, only legacy devices
->>>> and NMI
->>>> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
->>>> routing have already been disabled. If no legacy or NMI interrupts occur
->>>> at this stage, the scheduler will not be able to run.
->>>> 5. If the application got scheduled at this time is executing a
->>>> while(1)-
->>>> type loop, it will be unable to be preempted, leading to an infinite
->>>> loop
->>>> and causing the system to become unresponsive.
-> If the schedular doesn't run how did we get from 4 -> 5?
->
-> Maybe the issue is the shutdown handler here is running in the wrong
-> time and it should not be running after the scheduler has been shut
-> down.
->
-> I don't think removing the lock is a great idea without more
-> explanation.
+On Thu, Jan 30, 2025 at 10:29:00AM +0530, Raj Kumar Bhagat wrote:
+> RDP441 is based on IPQ5332. It has inbuilt AHB bus based IPQ5332 WiFi
+> device.
+> 
+> Describe and add WiFi node for RDP441. Also, reserve the memory
+> required by IPQ5332 firmware.
+> 
+> Depends-On: [PATCH V2 0/2] mailbox: tmel-qmp: Introduce QCOM TMEL QMP mailbox driver
+> Depends-On: [PATCH V3 0/8] Add new driver for WCSS secure PIL loading
+> Link: https://lore.kernel.org/lkml/20241231054900.2144961-1-quic_srichara@quicinc.com/
+> Link: https://lore.kernel.org/lkml/20250107101647.2087358-1-quic_gokulsri@quicinc.com/
 
-Seems it is not so simple job to explain why there is no race window between
-this iommu_shutdown() and following dmar_global_lock holders.
+Please run "git log --grep 'Depends-on'" to see how this tag is expected
+to be used. As you can see, dependencies on other patches in flight does
+not go into the git history, and should as such be mentioned only below
+the --- line below.
 
-1. PCIe hotplug dmar_pci_bus_notifier()
+Please wait for these dependencies to be accepted before resubmitting
+this Devicetree change.
 
-2. mm_core_init detect_intel_iommu()
+> 
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+> ---
+> NOTE:
+> The DT binding changes for this patch has been posted along with the
+> driver ath12k AHB series.
+> Link: https://lore.kernel.org/all/20250130043508.1885026-1-quic_rajkbhag@quicinc.com/
+> 
+> v2:
+> - Dropped 'dt-bindings: net: wireless: describe the ath12k AHB module'.
+>   This DT binding is posted along with the ath12k AHB driver changes.
+> - Reserved four memory regions required by IPQ5332 ath12k firmware in DTS.
+>   These memory regions are also referenced in the WiFi node.
+> - Moved 'qcom,smem-states' and 'qcom,smem-states' to the ipq5332.dtsi file.
+> - Used lowercase hex values for the reg property.
+> 
+> v1: https://lore.kernel.org/all/20250128091012.2574478-1-quic_rajkbhag@quicinc.com/
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts |  64 ++++++++++-
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi       | 113 ++++++++++++++++++++
+>  2 files changed, 176 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+> index 846413817e9a..4b7a75e450ca 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
+> @@ -2,7 +2,7 @@
+>  /*
+>   * IPQ5332 AP-MI01.2 board device tree source
+>   *
+> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  /dts-v1/;
+> @@ -12,6 +12,61 @@
+>  / {
+>  	model = "Qualcomm Technologies, Inc. IPQ5332 MI01.2";
+>  	compatible = "qcom,ipq5332-ap-mi01.2", "qcom,ipq5332";
+> +
+> +	/*                 Default Profile
 
-3. late_initcall dmar_free_unused_resources()
+Why is the title "Default Profile", is this expected to be changed by
+someone? At what point?
 
-4. acpi attach dmar_device_hotplug()
+> +	 * +============+==============+=====================+
+> +	 * |            |              |                     |
+> +	 * | Region     | Start Offset |       Size          |
 
-5. pci_iommu_init intel_iommu_init() init_dmars()
+"Start Offset" relative to address 0 is typically called "base address".
 
-6. rootfs_initcall ir_dev_scope_init()
+> +	 * |            |              |                     |
+> +	 * +------------+--------------+---------------------+
+> +	 * |            |              |                     |
+> +	 * |            |              |                     |
+> +	 * |            |              |                     |
+> +	 * | WLAN Q6    |  0x4A900000  |       43MB          |
+> +	 * |            |              |                     |
+> +	 * |            |              |                     |
+> +	 * +------------+--------------+---------------------+
+> +	 * | M3 Dump    |  0x4D400000  |       1MB           |
+> +	 * +------------+--------------+---------------------+
+> +	 * | Q6 caldb   |  0x4D500000  |       5MB           |
+> +	 * +------------+--------------+---------------------+
+> +	 * | MLO        |  0x4DB00000  |       18MB          |
 
-though here is the last stage of reboot. then how about we turn back to v1
+18MB is the same size in your graph as the 1MB segment, but somehow the
+43MB segment is 5 times the size of the 18MB segment. So the graph isn't
+to scale...
 
-Just repalce with own_write() with down_write_trylock().
+> +	 * +============+==============+=====================+
+> +	 * |                                                 |
+> +	 * |                                                 |
+> +	 * |                                                 |
+> +	 * |            Rest of memory for Linux             |
+> +	 * |                                                 |
+> +	 * |                                                 |
+> +	 * |                                                 |
+> +	 * +=================================================+
 
-Thanks,
-
-Ethan
+Doesn't DDR start on a more even address, such as 0x40000000? I presume
+the purpose of your picture was to give a good overview of the memory
+layout of this system, but the only thing it added to the table below is
+a curious question about what happened to the first 169MB of DDR.
 
 
->
-> Jason
+Please omit the graph, it doesn't add value beyond what's provided by
+the below text form of the "same" data.
 
--- 
-"firm, enduring, strong, and long-lived"
+> +	 */
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		q6_region: wcss@4a900000 {
+> +			reg = <0x0 0x4a900000 0x0 0x02b00000>;
+> +			no-map;
+> +		};
+> +
+> +		m3_dump: m3-dump@4d400000 {
+> +			reg = <0x0 0x4d400000 0x0 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		q6_caldb: q6-caldb@4d500000 {
+> +			reg = <0x0 0x4d500000 0x0 0x500000>;
+> +			no-map;
+> +		};
+> +
+> +		mlo_mem: mlo-global-mem@4db00000 {
+> +			reg = <0x0 0x4db00000 0x0 0x01200000>;
+> +			no-map;
+> +		};
+> +	};
+>  };
+>  
+>  &blsp1_i2c1 {
+> @@ -63,3 +118,10 @@ data-pins {
+>  		};
+>  	};
+>  };
+> +
+> +&wifi0 {
+> +	memory-region = <&q6_region>, <&m3_dump>, <&q6_caldb>, <&mlo_mem>;
+> +	memory-region-names = "q6-region", "m3-dump", "q6-caldb", "mlo-global-mem";
 
+As you are resubmitting this, it would be nice to have these two
+properties wrapped (one entry per line), to increase readability...
+
+Regards,
+Bjorn
+
+> +	qcom,rproc = <&q6v5_wcss>;
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> index 85e10b20342a..1653da89d413 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> @@ -485,6 +485,119 @@ frame@b128000 {
+>  			};
+>  		};
+>  
+> +		wifi0: wifi@c000000 {
+> +			compatible = "qcom,ipq5332-wifi";
+> +			reg = <0x0c000000 0x1000000>;
+> +			clocks = <&gcc GCC_XO_CLK>;
+> +			clock-names = "xo";
+> +			interrupts-extended = <&wcss_smp2p_in 8 IRQ_TYPE_NONE>,
+> +					      <&wcss_smp2p_in 9 IRQ_TYPE_NONE>,
+> +					      <&wcss_smp2p_in 12 IRQ_TYPE_NONE>,
+> +					      <&wcss_smp2p_in 11 IRQ_TYPE_NONE>,
+> +					      <&intc GIC_SPI 559 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 560 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 561 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 422 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 423 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 424 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 425 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 426 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 427 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 428 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 429 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 430 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 431 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 491 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 495 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 493 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 544 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 457 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 497 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 454 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 453 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 452 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 451 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 488 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 488 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 484 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 554 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 554 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 549 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 507 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 500 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 499 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 498 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 450 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 449 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 447 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 543 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 486 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 486 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 482 IRQ_TYPE_EDGE_RISING>,
+> +					      <&intc GIC_SPI 419 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "fatal",
+> +					  "ready",
+> +					  "spawn",
+> +					  "stop-ack",
+> +					  "misc-pulse1",
+> +					  "misc-latch",
+> +					  "sw-exception",
+> +					  "ce0",
+> +					  "ce1",
+> +					  "ce2",
+> +					  "ce3",
+> +					  "ce4",
+> +					  "ce5",
+> +					  "ce6",
+> +					  "ce7",
+> +					  "ce8",
+> +					  "ce9",
+> +					  "ce10",
+> +					  "ce11",
+> +					  "host2wbm-desc-feed",
+> +					  "host2reo-re-injection",
+> +					  "host2reo-command",
+> +					  "host2rxdma-monitor-ring1",
+> +					  "reo2ost-exception",
+> +					  "wbm2host-rx-release",
+> +					  "reo2host-status",
+> +					  "reo2host-destination-ring4",
+> +					  "reo2host-destination-ring3",
+> +					  "reo2host-destination-ring2",
+> +					  "reo2host-destination-ring1",
+> +					  "rxdma2host-monitor-destination-mac3",
+> +					  "rxdma2host-monitor-destination-mac2",
+> +					  "rxdma2host-monitor-destination-mac1",
+> +					  "host2rxdma-host-buf-ring-mac3",
+> +					  "host2rxdma-host-buf-ring-mac2",
+> +					  "host2rxdma-host-buf-ring-mac1",
+> +					  "host2tcl-input-ring4",
+> +					  "host2tcl-input-ring3",
+> +					  "host2tcl-input-ring2",
+> +					  "host2tcl-input-ring1",
+> +					  "wbm2host-tx-completions-ring4",
+> +					  "wbm2host-tx-completions-ring3",
+> +					  "wbm2host-tx-completions-ring2",
+> +					  "wbm2host-tx-completions-ring1",
+> +					  "host2tx-monitor-ring1",
+> +					  "txmon2host-monitor-destination-mac3",
+> +					  "txmon2host-monitor-destination-mac2",
+> +					  "txmon2host-monitor-destination-mac1",
+> +					  "umac-reset";
+> +
+> +			qcom,smem-states = <&wcss_smp2p_out 8>,
+> +					   <&wcss_smp2p_out 9>,
+> +					   <&wcss_smp2p_out 10>;
+> +			qcom,smem-state-names = "shutdown",
+> +						"stop",
+> +						"spawn";
+> +			status = "disabled";
+> +		};
+> +
+>  		q6v5_wcss: remoteproc@d100000 {
+>  			compatible = "qcom,ipq5332-wcss-sec-pil";
+>  			reg = <0xd100000 0x4040>;
+> -- 
+> 2.34.1
+> 
 
