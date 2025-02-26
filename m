@@ -1,107 +1,192 @@
-Return-Path: <linux-kernel+bounces-534021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0835A46192
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:01:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C197BA46197
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9060171128
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8478C1889BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443FC21D3E7;
-	Wed, 26 Feb 2025 14:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E0620D51E;
+	Wed, 26 Feb 2025 14:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="4nwKJttn"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="eDzRA9aG"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E72A178372;
-	Wed, 26 Feb 2025 14:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03448192D63;
+	Wed, 26 Feb 2025 14:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578501; cv=none; b=qQvRjTLQbj4bVemnaq6g55gOjc9FqjPn9jRg9oLBoajf6GyOoVb8iHwbg4ehKTfZivhrAEUrisjlrkm5C/cU48iuw21F/FeWYyI9obPlz2LoIUUz9YthH0aoizlGzIg+DmCQVGgOjDVSE7irF53f4rgNX4QHDMkqCNmVTbjiIFc=
+	t=1740578532; cv=none; b=Dy41ZWtqhlDiJFl5GPOZEiG1H0yPZVm5JqAlCLCPVX/IzxhmHNXNfNCtOxC1Irt6omw8VNwWNFqncMGlEbwRtUZNQeAK77/ygpEVCWXLroe2Fpf+nGyKvL723Wi5rUAbLd4Y1Xfrj66OTJwbrWvhIudhldqgxsj9PhiVu6f0kYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578501; c=relaxed/simple;
-	bh=C6T6y2VPwiS4NutYlB6fzvkoRVEmILwql/V6Jy+Nz+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TqrhjdvaQlrQzOZ1muWNJJo7gvo305RMEk876bnGnBtf6syMRYH3NOtf/3AvRHFwdeD3f5eUWhbmcf1SRRVrl4U+4ivJHilF3+XY8ABa5caQVvbfd3LzDctuB/GEzWT8qEQGgicK0xfIo6L5R3qIuI9h3wTUUjzQK21NgLi+Mos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=4nwKJttn; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740578497; bh=C6T6y2VPwiS4NutYlB6fzvkoRVEmILwql/V6Jy+Nz+c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=4nwKJttnZHo4VuQvR9nHx0Ib0D+sS113oe8qv8PSBghGoME2J9o5Ym0PhYsMbDj16
-	 O9rlOWhd100KpgNmZDR4Z31HQm8PvgpWserABy5YED/m/HlSq14hvTZ3y7ZklA1VP/
-	 1iSA7D6Df6vRvWHQl9FAVOlsJ27t2FKqxnYmlDio=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 4D2DD2052D08;
-	Wed, 26 Feb 2025 15:01:37 +0100 (CET)
-Message-ID: <04d1cf43-9efe-4597-a6a9-8f2b801ec049@ralfj.de>
-Date: Wed, 26 Feb 2025 15:01:36 +0100
+	s=arc-20240116; t=1740578532; c=relaxed/simple;
+	bh=fa/1P7ogjNcW9edAeSgAD7fMtt8lrWug2G/rwmhqosI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKJDG2pM9z0K0aP/Oye2+h1yLM+XjLUjwtfTfji+Umy58Y+t3Utb0QD3Q9TMNkcp++j2IHLmvc/UwwGq4sR1m70rOxyr0yozE3xGV/GMJrhpHuHnFJ7cnMX8fE1z0E3YxqQO30dCLTx5iSVWrLC9MYpvKg78mFVy8/QL2bp9KJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=eDzRA9aG; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y5HzTLv7sfh35EQ2e6vDNCEEGGk0nP1LY8agEPskJ2I=; b=eDzRA9aG3dT4rI9lZkaMzOrjmZ
+	rv+C9d15o3IJ3+YtPHUnTHtWlK8hAESaVfGfspCo975JDCmV933K8L7yqpkpuIQGH2gWjQG9ewtPV
+	YwtyJzU3OShw94RtyU2yApCNZ8C/kCh0AcduQYQP0CNK74cLRzN1uW2ebUwfOTChvcA102kfx7AkV
+	zH64ql/uIcsoXQDW5Xs9n1hDWlUmHrnGSivSXOOMIsFQ8wDIcooZvfUgY3MlVMeq2m/XgchSRV8a1
+	u2N5xutn/cXHlqVmuQkojsEy8VVnPTrkuSy7U8uE3eSRGSZi3c3GvwSts6+EDiRi/DIdtdbQmc87h
+	4//QnB4A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58138)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tnHz6-0004Pb-13;
+	Wed, 26 Feb 2025 14:02:00 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tnHz3-00078s-0d;
+	Wed, 26 Feb 2025 14:01:57 +0000
+Date: Wed, 26 Feb 2025 14:01:57 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v2 09/13] net: phy: phylink: Use phy_caps_lookup
+ for fixed-link configuration
+Message-ID: <Z78e1dmEuQzMER5L@shell.armlinux.org.uk>
+References: <20250226100929.1646454-1-maxime.chevallier@bootlin.com>
+ <20250226100929.1646454-10-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Alice Ryhl <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>,
- Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
- david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
- hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
- <CANiq72kd2eTaPMcYSiQ61tZ2nX0jLM9SgsnbPEEbdNx+JQYFdg@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CANiq72kd2eTaPMcYSiQ61tZ2nX0jLM9SgsnbPEEbdNx+JQYFdg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226100929.1646454-10-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi all,
+Please use a subject line of "net: phylink: " for phylink patches, not
+"net: phy: " which is for phylib.
 
->> I think the one thing that's missing w.r.t. aliasing that Rust could
->> maybe use is a kasan-style sanitizer, I think with treeborrows and "now
->> we have an actual model for aliasing optimizations" it should be possible
->> to write such a sanitizer. But the amount of code doing complicated
->> enough stuff with unsafe should really be quite small, so - shouldn't be
+On Wed, Feb 26, 2025 at 11:09:24AM +0100, Maxime Chevallier wrote:
+> When phylink creates a fixed-link configuration, it finds a matching
+> linkmode to set as the advertised, lp_advertising and supported modes
+> based on the speed and duplex of the fixed link.
 > 
-> Miri implements those models and can check code for conformance. It
-> can be used easily in the Rust playground (top-right corner -> Tools
-> -> Miri):
+> Use the newly introduced phy_caps_lookup to get these modes instead of
+> phy_lookup_settings(). This has the side effect that the matched
+> settings and configured linkmodes may now contain several linkmodes (the
+> intersection of supported linkmodes from the phylink settings and the
+> linkmodes that match speed/duplex) instead of the one from
+> phy_lookup_settings().
 > 
->      https://play.rust-lang.org
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ---
+> V1 -> V2: - fixed pl->link_config.lp_advertising setting
 > 
-> However, it does not work when you involved C FFI, though, but you can
-> play there. For more advanced usage, e.g. testing a particular model
-> like Tree Borrows, I think you need to use it locally, since I am not
-> sure if flags can be passed yet.
- >
-> I would like to get it, plus other tools, into Compiler Explorer, see
-> e.g. https://github.com/compiler-explorer/compiler-explorer/issues/2563.
+>  drivers/net/phy/phylink.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+> index 6c67d5c9b787..63fbf3d8708a 100644
+> --- a/drivers/net/phy/phylink.c
+> +++ b/drivers/net/phy/phylink.c
+> @@ -805,9 +805,10 @@ static int phylink_validate(struct phylink *pl, unsigned long *supported,
+>  static int phylink_parse_fixedlink(struct phylink *pl,
+>  				   const struct fwnode_handle *fwnode)
+>  {
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(match) = { 0, };
+>  	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
+> +	const struct link_capabilities *c;
+>  	struct fwnode_handle *fixed_node;
+> -	const struct phy_setting *s;
+>  	struct gpio_desc *desc;
+>  	u32 speed;
+>  	int ret;
+> @@ -879,8 +880,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+>  	linkmode_copy(pl->link_config.advertising, pl->supported);
+>  	phylink_validate(pl, pl->supported, &pl->link_config);
+>  
+> -	s = phy_lookup_setting(pl->link_config.speed, pl->link_config.duplex,
+> -			       pl->supported, true);
+> +	c = phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
+> +			    pl->supported, true);
+> +	if (c)
+> +		linkmode_and(match, pl->supported, c->linkmodes);
 
-By default (and on the playground), Miri will check Stacked Borrows rules. Those 
-are almost always *more strict* than Tree Borrows rules.
+What's this for? Surely phy_caps_lookup() should not return a link mode
+that wasn't in phy_caps_lookup()'s 3rd argument.
 
-Unfortunately playground does not let you pass your own flags, so yeah getting 
-Miri on godbolt would be great. :D
+Otherwise...
 
-Kind regards,
-Ralf
+>  	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+>  	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
+> @@ -889,9 +892,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+>  
+>  	phylink_set(pl->supported, MII);
+>  
+> -	if (s) {
+> -		__set_bit(s->bit, pl->supported);
+> -		__set_bit(s->bit, pl->link_config.lp_advertising);
+> +	if (c) {
+> +		linkmode_or(pl->supported, pl->supported, match);
+> +		linkmode_or(pl->link_config.lp_advertising,
+> +			    pl->link_config.lp_advertising, match);
+>  	} else {
+>  		phylink_warn(pl, "fixed link %s duplex %dMbps not recognised\n",
+>  			     pl->link_config.duplex == DUPLEX_FULL ? "full" : "half",
+> @@ -1879,21 +1883,21 @@ static int phylink_register_sfp(struct phylink *pl,
+>  int phylink_set_fixed_link(struct phylink *pl,
+>  			   const struct phylink_link_state *state)
+>  {
+> -	const struct phy_setting *s;
+> +	const struct link_capabilities *c;
+>  	unsigned long *adv;
+>  
+>  	if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
+>  	    !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
+>  		return -EINVAL;
+>  
+> -	s = phy_lookup_setting(state->speed, state->duplex,
+> -			       pl->supported, true);
+> -	if (!s)
+> +	c = phy_caps_lookup(state->speed, state->duplex,
+> +			    pl->supported, true);
+> +	if (!c)
+>  		return -EINVAL;
+>  
+>  	adv = pl->link_config.advertising;
+>  	linkmode_zero(adv);
+> -	linkmode_set_bit(s->bit, adv);
+> +	linkmode_and(adv, pl->supported, c->linkmodes);
 
+... this is wrong since this is basically doing the same as the above
+parsing.
+
+I'm not sure why you're generating different code for what is
+essentially the same thing.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
