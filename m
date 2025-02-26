@@ -1,278 +1,201 @@
-Return-Path: <linux-kernel+bounces-532915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D1AA453B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:08:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057BFA453C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441B819C1645
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B954F3A804F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE521D5BD;
-	Wed, 26 Feb 2025 03:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0C82253BA;
+	Wed, 26 Feb 2025 03:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMWAAffn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="XpNjFti0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vnVNPGAc"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E74321CFF0;
-	Wed, 26 Feb 2025 03:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509A6224B0E;
+	Wed, 26 Feb 2025 03:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740539160; cv=none; b=QZJhiUyjIMUfV9uDdWi0EmEgOPTN8Si9Qmfg6Rc+jQk8/f0cdx44ImoeOvOXlYemAPtkOFH95XMxSJoN1I9WNplsshx+/9uMxS7tps5VxpqpcgTIVxvAMMpaeB0vqCse3czmFNUpwkw/F3UaYNh0HE1+EpDnWgKi0VwIlK8KQm8=
+	t=1740539307; cv=none; b=Bdj0YFK0nTVbiJY5V44/U8mQRmXmYtZE8FqKQdArSvaLM6a+NqtAXT4mlAp0Zfoh6YV0wnKe2P7UIWAV+BH8Fsejc0fzaTRK3u3YI/2pbUhIcR3TjLU9GXS2THb5jmYZ8vByXIGPXOKXX8LmHlkExrFtEGocqQl4IVYY6ci4UYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740539160; c=relaxed/simple;
-	bh=sAnrnDiqmmu+twpkvTp+YjYokbJnVI5dUkatxEoUo9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hU+bnihDzYDmhP9kVzHvQv+VAbbV+pg7/0qOF+Cu6eoD+0VNCfRAg5I1H1iqScUahGwrDZZnkT3gYbaEhCkRNbgq6KYZu+tUb1RVmzeezEv8q77gNpUiik8byh7aKm1CF+P99R+z/lq0SzIrbagYfc6p1ikXIRZTv3geP2Qirl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMWAAffn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E367C4CEDD;
-	Wed, 26 Feb 2025 03:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740539159;
-	bh=sAnrnDiqmmu+twpkvTp+YjYokbJnVI5dUkatxEoUo9M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XMWAAffn44d+2aX37Gv1Mu6kkrLyK40ELF84IaSsXnprQ46w1YXInkYDQ90Mnh7kC
-	 pbuRGMHyV1OvqymVByHl/Hu2WkxdbNYjx8t08I0LYjg6BlI+2Ki+nXer/XSEe4R4KQ
-	 amUK5CJREoXEURGUDUbJf9ch/u1KU9oztPaioavpaH+Y/URzAP0DRHDRNxKEk6Pa7n
-	 9w9tUGN745RCOPHkfIz0i96kAyZ7IVnfsWMmOoGdqcJoRFgcYlxditBdpe8jZCpSWU
-	 QizghxL7zUWoVbNz4UGDUcF5MDUUFvk80epiqyihAh4MrEFq7O4UGCWvfspN5SWHf+
-	 YqgMzuDiVgwBQ==
-Date: Wed, 26 Feb 2025 13:35:55 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z76FE8oZO2Ssuj9T@kspp>
+	s=arc-20240116; t=1740539307; c=relaxed/simple;
+	bh=+WpUxyhixO+xvs7xpfPGl9WG65KdWQhk1GqatJbAmIA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tPzIMKd8QYBCampZqgYc576tfbOODYgL5A6wktvellaLwrJV4LTaR1aGs1J862vLx46uoU459acVtYbRyALqTMz/8FGiJGC0s7+s+A4uvfE4ic5RedRKPaty2IIO4lqbLPVc3Mg+0dRGEfcLt8uWWuD2FTVqSSDyMXEvYAZ8Zd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=XpNjFti0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vnVNPGAc; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 363381380A38;
+	Tue, 25 Feb 2025 22:08:24 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Tue, 25 Feb 2025 22:08:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740539304;
+	 x=1740625704; bh=+WpUxyhixO+xvs7xpfPGl9WG65KdWQhk1GqatJbAmIA=; b=
+	XpNjFti0qRuBGJ7Y9PHjuVG4AT2iF8uGzdGtR5Nok2cgCd/NKZwPHK9K2E+GGJEt
+	cUirfpENXMLiMCjdWu64QJbopozD8ry9rrH6yvvjZY3xe5Tf2MKSAFprTg6rawd7
+	jp6i153322NzQNxvcWUzXnKXjoGHKm4hfkGWYaCkC0HRRAreNQtfptrRU+mKyitu
+	0hiEGVVDEdfc4EadMI4rlEa73C+29dFFF+RLHMpEtGz0PwOVKXGTIiZt+6eiIj5+
+	js3NzoYQiWaaUcZB5CTynnR6S4uGI1kplLSi24yHPYX05ayGhZ9EqUYexErefRpU
+	gbrbOIRPidu4d/dk1orsGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740539304; x=
+	1740625704; bh=+WpUxyhixO+xvs7xpfPGl9WG65KdWQhk1GqatJbAmIA=; b=v
+	nVNPGAcajaKNdC7/3mswz1ulFKg6vmBW4MVV0o+0HoMWeB+dTttQ64VOAHiEF4zY
+	g03CKAb95lNgrEJq3WBR+2N63IwhcR8QnxEvHsHMlpo3UdQBc1eix7wig1i3BZMV
+	RW9jK7y2tFoe9HqhnTceXegfNp3sbDJ39SJIy6CAQXToQVTI0UzrMUFKkbnrPe+K
+	V47owvczDJ+UQFJzWRgNqdzn5ix/kp5txG9jk74lHT1p/eNTxdZjJrx1u5MT1Vai
+	fGHbhySNF5xg12NILi2oDelOIOpM+NQ1XIy3t81mgZ+Z9Q0FRsLpPs8iCV6H+CKO
+	KJPf7aCmBLuc5DOk1udrg==
+X-ME-Sender: <xms:poW-Z6r2beDFH8rRGoNn9Fq-uiKbcCy2bEl5tSzac9Psz8vE4qi0GA>
+    <xme:poW-Z4reHHOyTTgFuNcfJDVnSB3CVldJyruj5ieJLDtA_cy39SrMI3wGgVcOjPH4s
+    lB8E9k5kJhJthEP5Lc>
+X-ME-Received: <xmr:poW-Z_MU072OqUA7AMRqBjQOVBPBkLX3-1TN9ZwDstDH3ZWn0Pd3rpNobMnSFX0W-6Djbp7Cce_2xt6clQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekfeeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepkffuhf
+    fvveffjghftgfgfgggsehtqhertddtreejnecuhfhrohhmpefnuhhkvgculfhonhgvshcu
+    oehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpeekfeffueejve
+    eujeeugeelleehtdegvdeludektddtfffhieefledvudehfeejieenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrd
+    guvghvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehlkhhmlhesrghnthhhvggrshdruggvvhdprhgtphhtthhopegsvghnthhishhssehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhm
+    pdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtg
+    homhdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    phhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:poW-Z56pmcbhkl_KT2ceEZY_uuK_KAg-_3lpL42XRuuEyZzlPbT6NQ>
+    <xmx:poW-Z57wvDvW4JbTh1TLLWSZZVM58qXCxh5y8zmen_F5g1zoJvJc4Q>
+    <xmx:poW-Z5gDL4ZB-yKqfN1qLmfsYiUbQ5jN16LuYM4IzrFzLZ7J68Md6g>
+    <xmx:poW-Zz6p_PG8aZfyKBKKcAPxSy7zZ6GBc17kUIfnly0sBvFdZwWjVQ>
+    <xmx:qIW-Z0YfA_3rIN5rM7NbJisHV8xukvenfwH4LGWJQoPY1EdkGcE_9kkX>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Feb 2025 22:08:20 -0500 (EST)
+Message-ID: <027706ba7b19a4eefb51aeddb5d10cc235751780.camel@ljones.dev>
+Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: Refactor Ally suspend/resume
+From: Luke Jones <luke@ljones.dev>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: bentiss@kernel.org, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
+	jikos@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	platform-driver-x86@vger.kernel.org
+Date: Wed, 26 Feb 2025 16:08:15 +1300
+In-Reply-To: <20250225141549.11165-1-lkml@antheas.dev>
+References: <20250225081744.92841-3-luke@ljones.dev>
+	 <20250225141549.11165-1-lkml@antheas.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Tue, 2025-02-25 at 15:15 +0100, Antheas Kapenekakis wrote:
+> Hi Luke,
+> setting MCU powersave too close to the boot-up sequence can cause the
+> controller of the original Ally to malfunction.
 
-So, in this particular case, we create a new `struct mlx5e_umr_wqe_hdr`
-to enclose the header part of flexible structure `struct mlx5e_umr_wqe`.
-This is, all the members except the flexible arrays `inline_mtts`,
-`inline_klms` and `inline_ksms` in the anonymous union. We then replace
-the header part with `struct mlx5e_umr_wqe_hdr hdr;` in `struct
-mlx5e_umr_wqe`, and change the type of the object currently causing
-trouble `umr_wqe` from `struct mlx5e_umr_wqe` to `struct
-mlx5e_umr_wqe_hdr` --this last bit gets rid of the flex-array-in-the-middle
-part and avoid the warnings.
+Read the code. It doesn't, as it is set by hid driver. Zero issues in
+all our testing.
 
-Also, no new members should be added to `struct mlx5e_umr_wqe`, instead
-any new members must be included in the header structure `struct
-mlx5e_umr_wqe_hdr`. To enforce this, we use `static_assert()`, ensuring
-that the memory layout of both the flexible structure and the newly
-created header struct remain consistent.
+> Which is why you created
+> this little init sequence in which you call CSEE manually. In
+> addition,
 
-The next step is to refactor the rest of the related code accordingly,
-which means adding a bunch of `hdr.` wherever needed.
+No it wasn't.
 
-Lastly, we use `container_of()` whenever we need to retrieve a pointer
-to the flexible structure `struct mlx5e_umr_wqe`.
+> MCU powersave (which is called Extreme Standby in Windows and you
+> named
+> incorrectly in asus-wmi), causes a very large 8 second delay in the
 
-So, with these changes, fix 125 of the following warnings:
+That is a UI label. ASUS call it Mcu Powersave in internal emails to
+me. It is also called *MCUPowerSaving in their source code.
 
-drivers/net/ethernet/mellanox/mlx5/core/en.h:664:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> resume
+> process. It should under no circumstance be set enabled by default.
+>=20
+> Users that want it can enable it manually. Following, distributions
+> that
+> want it and lack the appropriate configuration interface can use a
+> udev
+> rule with an 8 second delay to enable it, and then, the udev rule
+> should
+> first check if mcu_powersave is disabled before enabling it. This is
+> because writing to it even with the same value causes an issue
+> regardless.
+>=20
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Split the header members of `struct mlx5e_umr_wqe` into a
-   separate `struct mlx5e_umr_wqe_hdr`, and refactor the code
-   accordingly. (Jakub)
- - Update the changelog text.
- - Also, this part is intentionally left as-is (to keep the assertion
-   as close as possible to the flex struct):
+No it does not.
 
-| CHECK: Please use a blank line after function/struct/union/enum declarations
-| #63: FILE: drivers/net/ethernet/mellanox/mlx5/core/en.h:249:
-| };
-| +static_assert(offsetof(struct mlx5e_umr_wqe, inline_mtts) == sizeof(struct mlx5e_umr_wqe_hdr),
+> Therefore, please remove both parts of it from the second patch in
+> your
+> series and produce a v2, which contains no hints of CSEE. When you
+> do:
+>=20
+> Suggested-by: Antheas Kapenekakis <lkml@antheas.dev>
+>=20
 
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z6GCJY8G9EzASrwQ@kspp/
+No. You've suggested changes with zero testing, simply in an attempt to
+get a tag.
 
- drivers/net/ethernet/mellanox/mlx5/core/en.h  | 10 +++++++--
- .../ethernet/mellanox/mlx5/core/en/xsk/rx.c   |  6 ++---
- .../net/ethernet/mellanox/mlx5/core/en_main.c |  8 ++++---
- .../net/ethernet/mellanox/mlx5/core/en_rx.c   | 22 +++++++++----------
- 4 files changed, 27 insertions(+), 19 deletions(-)
+> Following, when you do finish the new Asus Armoury patch series,
+> please
+> rename MCU powersave to extreme standby, and add a suggested-by in
+> the
+> appropriate patch. Since to avoid user confusion, the names should
+> match
+> their windows branding.
+>=20
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-index 979fc56205e1..0e8f4ace8b87 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -232,16 +232,22 @@ struct mlx5e_rx_wqe_cyc {
- 	DECLARE_FLEX_ARRAY(struct mlx5_wqe_data_seg, data);
- };
- 
--struct mlx5e_umr_wqe {
-+struct mlx5e_umr_wqe_hdr {
- 	struct mlx5_wqe_ctrl_seg       ctrl;
- 	struct mlx5_wqe_umr_ctrl_seg   uctrl;
- 	struct mlx5_mkey_seg           mkc;
-+};
-+
-+struct mlx5e_umr_wqe {
-+	struct mlx5e_umr_wqe_hdr hdr;
- 	union {
- 		DECLARE_FLEX_ARRAY(struct mlx5_mtt, inline_mtts);
- 		DECLARE_FLEX_ARRAY(struct mlx5_klm, inline_klms);
- 		DECLARE_FLEX_ARRAY(struct mlx5_ksm, inline_ksms);
- 	};
- };
-+static_assert(offsetof(struct mlx5e_umr_wqe, inline_mtts) == sizeof(struct mlx5e_umr_wqe_hdr),
-+	      "struct member likely outside of struct_group_tagged()");
- 
- enum mlx5e_priv_flag {
- 	MLX5E_PFLAG_RX_CQE_BASED_MODER,
-@@ -660,7 +666,7 @@ struct mlx5e_rq {
- 		} wqe;
- 		struct {
- 			struct mlx5_wq_ll      wq;
--			struct mlx5e_umr_wqe   umr_wqe;
-+			struct mlx5e_umr_wqe_hdr umr_wqe;
- 			struct mlx5e_mpw_info *info;
- 			mlx5e_fp_skb_from_cqe_mpwrq skb_from_cqe_mpwrq;
- 			__be32                 umr_mkey_be;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-index 1b7132fa70de..2b05536d564a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-@@ -123,7 +123,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 	bitmap_zero(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	wi->consumed_strides = 0;
- 
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((icosq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) | MLX5_OPCODE_UMR);
- 
- 	/* Optimized for speed: keep in sync with mlx5e_mpwrq_umr_entry_size. */
-@@ -134,7 +134,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 		offset = offset * sizeof(struct mlx5_klm) * 2 / MLX5_OCTWORD;
- 	else if (unlikely(rq->mpwqe.umr_mode == MLX5E_MPWRQ_UMR_MODE_TRIPLE))
- 		offset = offset * sizeof(struct mlx5_ksm) * 4 / MLX5_OCTWORD;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
- 
- 	icosq->db.wqe_info[pi] = (struct mlx5e_icosq_wqe_info) {
- 		.wqe_type = MLX5E_ICOSQ_WQE_UMR_RX,
-@@ -144,7 +144,7 @@ int mlx5e_xsk_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 
- 	icosq->pc += rq->mpwqe.umr_wqebbs;
- 
--	icosq->doorbell_cseg = &umr_wqe->ctrl;
-+	icosq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 2fdc86432ac0..9abc6ce13ac9 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -311,8 +311,8 @@ static inline void mlx5e_build_umr_wqe(struct mlx5e_rq *rq,
- 				       struct mlx5e_icosq *sq,
- 				       struct mlx5e_umr_wqe *wqe)
- {
--	struct mlx5_wqe_ctrl_seg      *cseg = &wqe->ctrl;
--	struct mlx5_wqe_umr_ctrl_seg *ucseg = &wqe->uctrl;
-+	struct mlx5_wqe_ctrl_seg      *cseg = &wqe->hdr.ctrl;
-+	struct mlx5_wqe_umr_ctrl_seg *ucseg = &wqe->hdr.uctrl;
- 	u16 octowords;
- 	u8 ds_cnt;
- 
-@@ -393,7 +393,9 @@ static int mlx5e_rq_alloc_mpwqe_info(struct mlx5e_rq *rq, int node)
- 		bitmap_fill(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	}
- 
--	mlx5e_build_umr_wqe(rq, rq->icosq, &rq->mpwqe.umr_wqe);
-+	mlx5e_build_umr_wqe(rq, rq->icosq,
-+			    container_of(&rq->mpwqe.umr_wqe,
-+					 struct mlx5e_umr_wqe, hdr));
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-index 1963bc5adb18..5fd70b4d55be 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -631,16 +631,16 @@ static void build_ksm_umr(struct mlx5e_icosq *sq, struct mlx5e_umr_wqe *umr_wqe,
- 			  __be32 key, u16 offset, u16 ksm_len)
- {
- 	memset(umr_wqe, 0, offsetof(struct mlx5e_umr_wqe, inline_ksms));
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((sq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) |
- 			     MLX5_OPCODE_UMR);
--	umr_wqe->ctrl.umr_mkey = key;
--	umr_wqe->ctrl.qpn_ds = cpu_to_be32((sq->sqn << MLX5_WQE_CTRL_QPN_SHIFT)
-+	umr_wqe->hdr.ctrl.umr_mkey = key;
-+	umr_wqe->hdr.ctrl.qpn_ds = cpu_to_be32((sq->sqn << MLX5_WQE_CTRL_QPN_SHIFT)
- 					    | MLX5E_KSM_UMR_DS_CNT(ksm_len));
--	umr_wqe->uctrl.flags = MLX5_UMR_TRANSLATION_OFFSET_EN | MLX5_UMR_INLINE;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
--	umr_wqe->uctrl.xlt_octowords = cpu_to_be16(ksm_len);
--	umr_wqe->uctrl.mkey_mask     = cpu_to_be64(MLX5_MKEY_MASK_FREE);
-+	umr_wqe->hdr.uctrl.flags = MLX5_UMR_TRANSLATION_OFFSET_EN | MLX5_UMR_INLINE;
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_octowords = cpu_to_be16(ksm_len);
-+	umr_wqe->hdr.uctrl.mkey_mask     = cpu_to_be64(MLX5_MKEY_MASK_FREE);
- }
- 
- static struct mlx5e_frag_page *mlx5e_shampo_hd_to_frag_page(struct mlx5e_rq *rq, int header_index)
-@@ -704,7 +704,7 @@ static int mlx5e_build_shampo_hd_umr(struct mlx5e_rq *rq,
- 
- 	shampo->pi = (shampo->pi + ksm_entries) & (shampo->hd_per_wq - 1);
- 	sq->pc += wqe_bbs;
--	sq->doorbell_cseg = &umr_wqe->ctrl;
-+	sq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
-@@ -814,12 +814,12 @@ static int mlx5e_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 	bitmap_zero(wi->skip_release_bitmap, rq->mpwqe.pages_per_wqe);
- 	wi->consumed_strides = 0;
- 
--	umr_wqe->ctrl.opmod_idx_opcode =
-+	umr_wqe->hdr.ctrl.opmod_idx_opcode =
- 		cpu_to_be32((sq->pc << MLX5_WQE_CTRL_WQE_INDEX_SHIFT) |
- 			    MLX5_OPCODE_UMR);
- 
- 	offset = (ix * rq->mpwqe.mtts_per_wqe) * sizeof(struct mlx5_mtt) / MLX5_OCTWORD;
--	umr_wqe->uctrl.xlt_offset = cpu_to_be16(offset);
-+	umr_wqe->hdr.uctrl.xlt_offset = cpu_to_be16(offset);
- 
- 	sq->db.wqe_info[pi] = (struct mlx5e_icosq_wqe_info) {
- 		.wqe_type   = MLX5E_ICOSQ_WQE_UMR_RX,
-@@ -829,7 +829,7 @@ static int mlx5e_alloc_rx_mpwqe(struct mlx5e_rq *rq, u16 ix)
- 
- 	sq->pc += rq->mpwqe.umr_wqebbs;
- 
--	sq->doorbell_cseg = &umr_wqe->ctrl;
-+	sq->doorbell_cseg = &umr_wqe->hdr.ctrl;
- 
- 	return 0;
- 
--- 
-2.43.0
+No. See first response.
 
+> During our testing of the controller, we found that the lack of a
+> delay
+> causes the RGB of both the Ally and the Ally X to malfunction, so
+
+This is to do with your own code in userspace.=20
+
+> this is
+> a small nack for me (the old quirk is preferable in that regard). But
+> then
+> again, this patch series is not getting anywhere close to our users
+> even
+> if it is accepted, so you can do as you wish (given appropriate
+> attribution).
+>=20
+
+Your message attempts to frame this as a personal matter ("small nack
+for me," "you can do as you wish") rather than providing substantive
+technical feedback appropriate for LKML.
+
+To be clear: This patch is submitted for mainline Linux kernel
+consideration, not your downstream project. Your NACK lacks technical
+merit relevant to mainline development, as you yourself acknowledge
+these changes would not affect your users.
+
+As I am the maintainer on this driver I will proceed with the
+submission process as there are no valid technical objections to
+address. Further non-technical commentary on this thread is
+unnecessary.
+
+Cheers,
+Luke.
 
