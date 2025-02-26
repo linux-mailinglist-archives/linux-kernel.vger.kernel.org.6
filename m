@@ -1,86 +1,62 @@
-Return-Path: <linux-kernel+bounces-533362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD32A45909
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:54:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A74A4590F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB65A1890D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1902618805F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A62624E017;
-	Wed, 26 Feb 2025 08:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2FB22423E;
+	Wed, 26 Feb 2025 08:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jr4Wb4d0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVDJWhkL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE34224E013;
-	Wed, 26 Feb 2025 08:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351E258CC2;
+	Wed, 26 Feb 2025 08:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559977; cv=none; b=CcyWaL0IohxXgbEk86l+JaIyaxeZjJLvqAvppcZwjnVWPBT8PeGsmbbAEbHNvI6erJlmJBnyDvj64K4d9SMo37mTsJW25RBPZoqZT45VLAb7ABKqQvPFd4Tsww6IfA12PeyS13cXsFnCmTXqhW40PsKKDjgEBlsjFDV7CypC6u4=
+	t=1740560109; cv=none; b=R/sogeEZxrxVFGsSO7EMpyi8eCuHXUXAnd/ikjwk3x6L8wOrB6vDwShxcy6fNmIAk2rJnOPIGUzpIzAlMJgfYxxWBy3XfF6g4UMuWqDUEyosR6EqYFS6yvr4wf+y9q+WcnLLKU3hiRXi2jNlzEkg+rOe6HvcDdBQPNcX7T6vMq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559977; c=relaxed/simple;
-	bh=sWyxuVp5GIn2PyGiKOrfhffWXLzuRAsQpL6ER1bVxKA=;
+	s=arc-20240116; t=1740560109; c=relaxed/simple;
+	bh=k9Imo4Ndb+Av6okiCY/htILEn6oyEwrXzbQnbAjSjo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+4yDl+h609oNIjHuqq9zhGMRbLcVrUVhflawk7tDG7iXpRqpfykhRL+1y9iESOxl822CQCbyaGyy6T8KwATW7cZOA7OfdF937xeL0bAxTEgcBOUqvJIVl/876MHqTnfeUiP7Ju0MNqWN3vz4p5F6n6cz+AL+KsowRXPljq9YVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jr4Wb4d0; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740559976; x=1772095976;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sWyxuVp5GIn2PyGiKOrfhffWXLzuRAsQpL6ER1bVxKA=;
-  b=Jr4Wb4d0D/qLlAlhvSJDGBEUQlVUZQvPJO8iKZCB5VknhlBpXmgz3R+J
-   WkRgALVFdCSOk7GfDxupCewV+SsI22WQHr7ziagigW0jCqlTnAqv+KdN7
-   O1+uIPIVsUDyobrLzlVPgYkFxd4eKaGF1xr5J2PoM/5hT/Cw89hH7Cgii
-   +fdE6+OanyU1gXfHuJ8JUTT8Nma/qN+6cUOL6JbbRwOz2Fdpi966BwbJw
-   7m9H0stkSCLcSxG1PSivgjOU1qxEr49dzC6QM3gcBcvUBNhdCKxZkOwU1
-   maUZxcoMHytEjUXYcEIYnIl9eE3O4ebnhCUKjvxxnMiQIOI+Z16wa+9bf
-   Q==;
-X-CSE-ConnectionGUID: LX7TBp9rQ92Qm8arGbVupQ==
-X-CSE-MsgGUID: 9wmnfeQPSfyt5QoePRivFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52389684"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="52389684"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:52:55 -0800
-X-CSE-ConnectionGUID: Ij3kjip9SWyZdE5qJLB6Tw==
-X-CSE-MsgGUID: Pr4CVODQQOSIt8dTwipeBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="117128677"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:52:52 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id AF9D911F944;
-	Wed, 26 Feb 2025 10:52:49 +0200 (EET)
-Date: Wed, 26 Feb 2025 08:52:49 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] media: i2c: imx219: Report streams using frame
- descriptors
-Message-ID: <Z77WYcoV1MhWrpV3@kekkonen.localdomain>
-References: <20250220230818.275262-1-demonsingur@gmail.com>
- <20250220230818.275262-6-demonsingur@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITcamPqDTfIX8u1fe3xDxYvL8L/plxI6fhxQDm1875MerY5nFfZSx5SbFynMB5DyhrRotkaDp4YkGRM9jYzaApveoNI5IFl7xOrD+WeUDGCbP9o5mVnyomnWD0BiQCLJhxvAAfjN7qJJIayQw4coDsqKSQnXYXphkV4HhVMUZMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVDJWhkL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01663C4CED6;
+	Wed, 26 Feb 2025 08:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740560109;
+	bh=k9Imo4Ndb+Av6okiCY/htILEn6oyEwrXzbQnbAjSjo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mVDJWhkLl84U3eyL0yjbQXFgShXMKq3Ay6Mog2dflRLeJZVCBeTBR+E9F43TEA5iP
+	 wSN1Foc7A2kFeeM5JFDWbAbEPhtch38XJQKpb0POGXr0rHq+yWxFd74TN6LBUy9yac
+	 eXBzIfoIPpGBFqgorhgz8jVDVot8nifzXyFOU2KbOXy3c0o2Ix/HvjvGWE9WsQviKz
+	 iajrmmlAW0TY0/le6hESGZBTfxSJ/I2q3V9oPzsMntmRkLAJ1+LwK33W6s0GF+6yK6
+	 C3NtvikLi2Z+zRNhFjoSxAev4RpXFtyghSuZQdEYxnZdvh+se/tRh4JfZkWZJqKJbe
+	 rbJIlfRH0Tw8w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tnDCL-000000007d2-0AyI;
+	Wed, 26 Feb 2025 09:55:21 +0100
+Date: Wed, 26 Feb 2025 09:55:21 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
+	dmitry.baryshkov@linaro.org, maz@kernel.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	konradybcio@kernel.org
+Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
+Message-ID: <Z77W-fKBUqAALZKJ@hovoldconsulting.com>
+References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
+ <20250226024338.3994701-3-quic_sibis@quicinc.com>
+ <Z77M5iXHQsdMptWm@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,27 +65,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250220230818.275262-6-demonsingur@gmail.com>
+In-Reply-To: <Z77M5iXHQsdMptWm@hovoldconsulting.com>
 
-Hi Cosmin,
+On Wed, Feb 26, 2025 at 09:12:23AM +0100, Johan Hovold wrote:
+> On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
 
-On Fri, Feb 21, 2025 at 01:08:13AM +0200, Cosmin Tanislav wrote:
-> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> >  			     u8 describe_id, u32 message_id, u32 valid_size,
+> >  			     u32 domain, void __iomem **p_addr,
+> > -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
+> > +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
+> > +			     bool skip_check)
 > 
-> Implement the .get_frame_desc() subdev operation to report information
-> about streams to the connected CSI-2 receiver. This is required to let
-> the CSI-2 receiver driver know about virtual channels and data types for
-> each stream.
+> This does not look like it will scale.
+
+After taking a closer look, perhaps it needs to be done along these
+lines.
+
+But calling the parameter 'force' or similar as Dan suggested should
+make it more readable.
+
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >  {
+> >  	int ret;
+> >  	u32 flags;
+> > @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> >  
+> >  	/* Check if the MSG_ID supports fastchannel */
+> >  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
+> > -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
+> > +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
+> 
+> Why can't you just make sure that the bit is set in attributes as I
+> suggested? That seems like it should allow for a minimal implementation
+> of this.
 
-In addition to this, the idea has been that the set_frame_desc() could be
-used to set aspects of the frame descriptor. My thinking has been that you
-could modify the entries, up to the degree supported by the driver, but not
-add or remove them. This should be properly documented in v4l2-subdev.h.
+My idea here was that you could come up with some way of abstracting
+this so that you did not have to update every call site. Not sure how
+feasible that is.
 
--- 
-Regards,
+> >  		return;
+> >  
+> >  	if (!p_addr) {
 
-Sakari Ailus
+Johan
 
