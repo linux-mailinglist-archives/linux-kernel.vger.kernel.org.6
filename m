@@ -1,299 +1,165 @@
-Return-Path: <linux-kernel+bounces-535603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE83AA474FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:00:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7510AA473A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A95188EC1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:00:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D1A171575
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852D41EFF8C;
-	Thu, 27 Feb 2025 05:00:03 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804741D61A1;
+	Thu, 27 Feb 2025 03:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hd/aLA87"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616681EB5C7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4E21E51FE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740632403; cv=none; b=dC4zFEyU3syy2gSZtc032t4PEvPOcB9RX1T/4+Bb5HB7yIQd4XmqhyKajuecEZ4CiU7B7bGmBOFT68fyOohifcF2exNmloPX3dzWvMyooddqcpcS7yh1FFJXmyAwQoXGRiVuKLF2E372bqmc6ptp/ezs/Q73eeBNY3/pBlTiSj4=
+	t=1740627433; cv=none; b=r8L4AzBcoPhPIgqSqqIZ+4ozGmrYGhnZjMpIZbdDH/8dD+Cda+jxoRITjoAWkWKqGZ9lioOleHuxXkxdXqopUq8Wu95lnfrxjIqaMxevkjHhh6Zs7Fj58UcowF8m7gRqbE9oHjzCNVD9PAUijNwlJAQ4ROQPmZbuGmguYJUB19Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740632403; c=relaxed/simple;
-	bh=9wKlRlfh6+hqaiNsar4uUlJBFTr/ICWvyAUWcrw+Tm4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=rxMYv9tPngAWAZkoPjsnRwUiuEpCVS1HdQPu9fgGHQPD26vrYD/yl/tBY3Hm6xaIW+ZJw+1EgOPdXszbqXyCUyEq73WgoG+nqGZxZavT4voSxZokH0bD5LpK+r9kyXc9xMdRMDHd82jGgSGIj9zhpsrc6NyXDk0kWPfIEYMFe48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1740632384-086e23601915ff00001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx1.zhaoxin.com with ESMTP id D1GWUQnXWUTW6gOV (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 27 Feb 2025 12:59:44 +0800 (CST)
-X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from ZXSHMBX2.zhaoxin.com (10.28.252.164) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Thu, 27 Feb
- 2025 12:59:44 +0800
-Received: from ZXSHMBX2.zhaoxin.com ([fe80::4dfc:4f6a:c0cf:4298]) by
- ZXSHMBX2.zhaoxin.com ([fe80::4dfc:4f6a:c0cf:4298%4]) with mapi id
- 15.01.2507.044; Thu, 27 Feb 2025 12:59:44 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from [10.32.64.4] (10.32.64.4) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 26 Feb
- 2025 17:40:02 +0800
-Message-ID: <ab631e27-ee35-47b9-879b-2b8d6a245512@zhaoxin.com>
-Date: Wed, 26 Feb 2025 17:39:48 +0800
+	s=arc-20240116; t=1740627433; c=relaxed/simple;
+	bh=HUaL4jXzzmc7ZqOCVHB/3Wvc8pEz9pQtEipGVeSpP+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=dxWwbGurZhPdmtN/zxi7XtwBLLjoREW6qQMY2u3MRDSe6G4ek8hWmKfRHr5451Oijza4CcixPitOZMZj8fg95uK0zRe2vup5SOrWXYKrkeY2EoGjUc1M81wC/nCmqqkYeubaTtJGTBZ88pM+dn3iyiMPrL1O/GrmK82ImcEWptM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hd/aLA87; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250227033709epoutp04633d40304c81e39b79ce727722c7191d~n82zVHIh_0840908409epoutp04R
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:37:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250227033709epoutp04633d40304c81e39b79ce727722c7191d~n82zVHIh_0840908409epoutp04R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740627429;
+	bh=8qpJCAdMbp5JmaXKzVJ75C3QSwF3Nen3LlJUVevvP3A=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hd/aLA87jezeV38kovpbA/d/x/CiWANPO/DzkB9ewgjXAJJsNp4pcD6yAaPRQ04FZ
+	 z2eddlZj8SYrDA9eN4GputqwcVCMFxwuVQzE1grMfoFdSbPOJskn+fxd/5msqrmKU+
+	 HzqUbI+CfoCU3/iZYcKJ0ZwMDpWba+s9TE21SpqU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250227033709epcas5p2a660339d8d1342c9e4deb76d58e34b7a~n82zB_3hT0231602316epcas5p2w;
+	Thu, 27 Feb 2025 03:37:09 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Z3H8M5DPZz4x9Q2; Thu, 27 Feb
+	2025 03:37:07 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6F.33.29212.3EDDFB76; Thu, 27 Feb 2025 12:37:07 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef~nu0EWhdBB2952329523epcas5p3c;
+	Wed, 26 Feb 2025 10:27:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250226102749epsmtrp1e2e7ebc583d047cad490833fb912e42a~nu0EVt4mP1973819738epsmtrp1r;
+	Wed, 26 Feb 2025 10:27:49 +0000 (GMT)
+X-AuditID: b6c32a50-7ebff7000000721c-74-67bfdde3d4ba
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.2C.18949.5ACEEB76; Wed, 26 Feb 2025 19:27:49 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250226102747epsmtip2e91ed84807afc306cf7127cc44eeb79d~nu0CkZLAL0603906039epsmtip2s;
+	Wed, 26 Feb 2025 10:27:47 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [Patch v2] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+Date: Wed, 26 Feb 2025 15:52:51 +0530
+Message-Id: <20250226102251.9040-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmuu7ju/vTDd5eV7Z4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jou1R+6yWyzb9IfJ
+	YtHWL+wOvB6L97xk8ti0qpPN4861PWwem5fUe/RtWcXo8XmTnMepr5/ZA9ijsm0yUhNTUosU
+	UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5VUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnnGwtLjjPW9H7
+	LamB8R53FyMnh4SAicTFYyfZQWwhgT2MEqd+F3cxcgHZnxglDux+zQThfGOUuH/rJgtMx8vz
+	d9kgEnsZJY5f/c8O4XxhlGidfhGoioODTUBX4uz2HJAGEYFUiVfr1rKC1DALLGGSWHTkGRNI
+	QljAVWLhg3vMIDaLgKrE3V/3WEFsXgEbiU9n30Ntk5dYveEAM0izhMBbdokXL1rZIRIuErtW
+	9LFC2MISr45vgYpLSbzsb4OykyUeL3rJDGHnSKzfMwVqqL3EgStzwA5lFtCUWL9LHyIsKzH1
+	1Dqw25gF+CR6fz9hgojzSuyYB2OrScy58wNqrYzE4dVLGSFsD4mNew9DwzFWomV3G+MERtlZ
+	CBsWMDKuYpRKLSjOTU9NNi0w1M1LLYfHU3J+7iZGcBrUCtjBuHrDX71DjEwcjIcYJTiYlUR4
+	OTP3pAvxpiRWVqUW5ccXleakFh9iNAUG2kRmKdHkfGAiziuJNzSxNDAxMzMzsTQ2M1QS523e
+	2ZIuJJCeWJKanZpakFoE08fEwSnVwFRe/v9D6Exl9tBbPvaMoq7MO9RjNTTFEgxKVu2w7dk1
+	a8nm1L8CS9o9Dl7QmPKe6YSm8k81lS+ZXQ0GmznP/1rNp9ohFaw47fOHabI1GYyfXcr/XftS
+	nrSrZuU+vWks/advlirpW3+93XP3qeDLg84cS7Wzav2nvv3+9hiPV5v7ssk/fLpcZ0munC9x
+	TnRJ167ZIecOn+PTV7ulonzBnCVtGQfjrSfrsqXT1y0y4ig6LCqhd45d3GLHOoH12dOLk3bv
+	vF83W/Nr0Qezq4X584tMvt0QqzsnUsQ4a1eMY8vLR1xexRUeSas7mZ+dLm88UdXbqGj39/ma
+	W7ypDO3qQRqdkXEHbCLcXabnqoceUmIpzkg01GIuKk4EAIB/vNQMBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvO7SN/vSDZr3clg83TGT1eL+4s8s
+	Foc2b2W3uHlgJ5PFxZl3WSz6Xjxkttj0+BqrxeVdc9gsejZsZbWYcX4fk8XaI3fZLZZt+sNk
+	sWjrF3YHXo/Fe14yeWxa1cnmcefaHjaPzUvqPfq2rGL0+LxJzuPU18/sAexRXDYpqTmZZalF
+	+nYJXBknW4sLzvNW9H5LamC8x93FyMkhIWAi8fL8XbYuRi4OIYHdjBJ/t+1jg0jISPxvO8YO
+	YQtLrPz3nB2i6BOjxP91G1m7GDk42AR0Jc5uzwGpERFIl5h05ysLSA2zwDomiZ0rJ7KCJIQF
+	XCUWPrjHDGKzCKhK3P11DyzOK2Aj8ensexaIBfISqzccYJ7AyLOAkWEVo2RqQXFuem6xYYFR
+	Xmq5XnFibnFpXrpecn7uJkZwQGpp7WDcs+qD3iFGJg7GQ4wSHMxKIrycmXvShXhTEiurUovy
+	44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBaBJNl4uCUamC68Ddq5QnFdeKBn6s3+KrZ
+	nct68Nup60ml8ralt8xydde7772be3eW+8kq7StPns6crWkw2031Yv9h/YbJ/X4MTpIVW5/W
+	1XXOcXtkV5kxN2tms2q3/f/pBxc93JuZGPy3mWXfxjSG6vqnS4OXBv/f3szmyR8u4DDlfOCR
+	CDNtBa0s3kdORsy/ZP2uxba/lWyzDJSKrFyxyfNAZ4VIGs8+94gio/xW67zqScxMP9fVy/PM
+	O5Z16kzYVm/dtgOqCr7XZy/PUY+rVZBXP9W7dVqhGe+UHdFl59wD/Hk4Mze+u/3rzb79/5a8
+	87i8zfdx/vLD26Y8n3nzRVf04wz7kOITzjlT1H1i9x+xZvj97JMSS3FGoqEWc1FxIgCA2WvN
+	twIAAA==
+X-CMS-MailID: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef
+References: <CGME20250226102749epcas5p35afe43774ad2917b846c921dc593a5ef@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: LeoLiu-oc <leoliu-oc@zhaoxin.com>
-Subject: Re: [PATCH v4 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-X-ASG-Orig-Subj: Re: [PATCH v4 1/3] ACPI/APEI: Add hest_parse_pcie_aer()
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
-	<robert.moore@intel.com>, <avadhut.naik@amd.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
-	<CobeChen@zhaoxin.com>, <TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>
-References: <20241205114048.60291-1-LeoLiu-oc@zhaoxin.com>
- <20241205114048.60291-2-LeoLiu-oc@zhaoxin.com>
- <20241211192048.GA1960478@yaz-khff2.amd.com>
-In-Reply-To: <20241211192048.GA1960478@yaz-khff2.amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 2/27/2025 12:59:43 PM
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1740632384
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 6440
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.137764
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
 
+There is a possibility of getting page fault if the overall
+buffer size is not aligned to 256bytes. Since MFC does read
+operation only and it won't corrupt the data values even if
+it reads the extra bytes.
+Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+and V4L2_PIX_FMT_NV21M pixel format.
 
+Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+changelog:
+v1->v2
+Patch link: https://patchwork.kernel.org/project/linux-media/patch/20240806115714.29828-1-aakarsh.jain@samsung.com/
+Removed duplicate code and aligned luma and chroma size
+to multiple of 256bytes as suggested by Hans.
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-=E5=9C=A8 2024/12/12 3:20, Yazen Ghannam =E5=86=99=E9=81=93:
->=20
->=20
-> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
-=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
->=20
-> On Thu, Dec 05, 2024 at 07:40:46PM +0800, LeoLiu-oc wrote:
->> From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
->>
->> The purpose of the function apei_hest_parse_aer() is used to parse and
->> extract register value from HEST PCIe AER structures. This applies to
->> all hardware platforms that has a PCI Express AER structure in HEST.
->>
->> Signed-off-by: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
->> ---
->>   drivers/acpi/apei/hest.c | 77 ++++++++++++++++++++++++++++++++++++++--
->>   include/acpi/apei.h      | 17 +++++++++
->>   2 files changed, 92 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
->> index 20d757687e3d..13075f5aea25 100644
->> --- a/drivers/acpi/apei/hest.c
->> +++ b/drivers/acpi/apei/hest.c
->> @@ -22,6 +22,7 @@
->>   #include <linux/kdebug.h>
->>   #include <linux/highmem.h>
->>   #include <linux/io.h>
->> +#include <linux/pci.h>
->>   #include <linux/platform_device.h>
->>   #include <acpi/apei.h>
->>   #include <acpi/ghes.h>
->> @@ -132,9 +133,81 @@ static bool is_ghes_assist_struct(struct acpi_hest_=
-header *hest_hdr)
->>        return false;
->>   }
->>
->> -typedef int (*apei_hest_func_t)(struct acpi_hest_header *hest_hdr, void=
- *data);
->> +#ifdef CONFIG_ACPI_APEI
->=20
-> Why is this needed? The entire hest.c file is only built if
-> CONFIG_ACPI_APEI is enabled.
->=20
-I agree with your point.
-
->> +static bool hest_match_pci_devfn(struct acpi_hest_aer_common *p,
->> +                              struct pci_dev *dev)
->> +{
->> +     return ACPI_HEST_SEGMENT(p->bus) =3D=3D pci_domain_nr(dev->bus) &&
->> +            ACPI_HEST_BUS(p->bus) =3D=3D dev->bus->number &&
->> +            p->device =3D=3D PCI_SLOT(dev->devfn) &&
->> +            p->function =3D=3D PCI_FUNC(dev->devfn);
->=20
-> It may be nice to align all these lines on the "=3D=3D".
->=20
-Okay, I will make the changes in the next version
-
->> +}
->> +
->> +static bool hest_source_is_pcie_aer(struct acpi_hest_header *hest_hdr,
->> +                                 struct pci_dev *dev)
->> +{
->> +     u16 hest_type =3D hest_hdr->type;
->> +     u8 pcie_type =3D pci_pcie_type(dev);
->> +     struct acpi_hest_aer_common *common;
->> +
->> +     common =3D (struct acpi_hest_aer_common *)(hest_hdr + 1);
->> +
->> +     switch (hest_type) {
->> +     case ACPI_HEST_TYPE_AER_ROOT_PORT:
->> +             if (pcie_type !=3D PCI_EXP_TYPE_ROOT_PORT)
->> +                     return false;
->> +     break;
->=20
-> The breaks should be indented to the "if". Same for the rest of the
-> file.
->=20
-I agree with your point of view and will make modifications in the next=20
-version.
-
->> +     case ACPI_HEST_TYPE_AER_ENDPOINT:
->> +             if (pcie_type !=3D PCI_EXP_TYPE_ENDPOINT)
->> +                     return false;
->> +     break;
->> +     case ACPI_HEST_TYPE_AER_BRIDGE:
->> +             if (pcie_type !=3D PCI_EXP_TYPE_PCI_BRIDGE &&
->> +                 pcie_type !=3D PCI_EXP_TYPE_PCIE_BRIDGE)
->> +                     return false;
->> +     break;
->> +     default:
->> +             return false;
->> +     break;
->> +     }
->> +
->> +     if (common->flags & ACPI_HEST_GLOBAL)
->> +             return true;
->> +
->> +     if (hest_match_pci_devfn(common, dev))
->> +             return true;
->> +
->> +     return false;
->> +}
->> +
->> +int hest_parse_pcie_aer(struct acpi_hest_header *hest_hdr, void *data)
->> +{
->> +     struct hest_parse_aer_info *info =3D data;
->> +
->> +     if (!hest_source_is_pcie_aer(hest_hdr, info->pci_dev))
->> +             return 0;
->> +
->> +     switch (hest_hdr->type) {
->> +     case ACPI_HEST_TYPE_AER_ROOT_PORT:
->> +             info->hest_aer_root_port =3D (struct acpi_hest_aer_root *)=
-hest_hdr;
->> +             return 1;
->> +     break;
->> +     case ACPI_HEST_TYPE_AER_ENDPOINT:
->> +             info->hest_aer_endpoint =3D (struct acpi_hest_aer *)hest_h=
-dr;
->> +             return 1;
->> +     break;
->> +     case ACPI_HEST_TYPE_AER_BRIDGE:
->> +             info->hest_aer_bridge =3D (struct acpi_hest_aer_bridge *)h=
-est_hdr;
->> +             return 1;
->> +     break;
->> +     default:
->> +             return 0;
->> +     break;
->> +     }
->> +}
->> +#endif
->>
->> -static int apei_hest_parse(apei_hest_func_t func, void *data)
->> +int apei_hest_parse(apei_hest_func_t func, void *data)
->>   {
->>        struct acpi_hest_header *hest_hdr;
->>        int i, rc, len;
->> diff --git a/include/acpi/apei.h b/include/acpi/apei.h
->> index dc60f7db5524..82d3cdf53e22 100644
->> --- a/include/acpi/apei.h
->> +++ b/include/acpi/apei.h
->> @@ -23,6 +23,15 @@ enum hest_status {
->>        HEST_NOT_FOUND,
->>   };
->>
->> +#ifdef CONFIG_ACPI_APEI
->> +struct hest_parse_aer_info {
->> +     struct pci_dev *pci_dev;
->> +     struct acpi_hest_aer *hest_aer_endpoint;
->> +     struct acpi_hest_aer_root *hest_aer_root_port;
->> +     struct acpi_hest_aer_bridge *hest_aer_bridge;
->=20
-> These three pointers are mutually exclusive. Can you save just one
-> pointer and then cast it when checking the "port_type" in patch 3?
->=20
->> +};
->> +#endif
->=20
-> I think the #ifdef is not needed, because this is not declaring an
-> instance of the struct.
->=20
-I agree with your point of view and will make modifications in the next=20
-version.
-
->> +
->>   extern int hest_disable;
->>   extern int erst_disable;
->>   #ifdef CONFIG_ACPI_APEI_GHES
->> @@ -33,10 +42,18 @@ void __init acpi_ghes_init(void);
->>   static inline void acpi_ghes_init(void) { }
->>   #endif
->>
->> +typedef int (*apei_hest_func_t)(struct acpi_hest_header *hest_hdr, void=
- *data);
->> +int apei_hest_parse(apei_hest_func_t func, void *data);
->> +
->=20
-> Minor nit: this could be done as a separate patch.
->=20
-> Patch 1: Move apei_hest_parse() to apei.h
-> Patch 2: Add new hest_parse_pcie_aer()
->=20
-Ok, your suggestion is very reasonable, I will modify it in the next=20
-version.
-
-Leoliu-oc
-Best Regards
-
->>   #ifdef CONFIG_ACPI_APEI
->>   void __init acpi_hest_init(void);
->> +int hest_parse_pcie_aer(struct acpi_hest_header *hest_hdr, void *data);
->>   #else
->>   static inline void acpi_hest_init(void) { }
->> +static inline int hest_parse_pcie_aer(struct acpi_hest_header *hest_hdr=
-, void *data)
->> +{
->> +     return 0;
->> +}
->>   #endif
->>
->>   int erst_write(const struct cper_record_header *record);
->> --
->=20
-> Thanks,
-> Yazen
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 73f7af674c01..0c636090d723 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -549,8 +549,9 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+ 		case V4L2_PIX_FMT_NV21M:
+ 			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+ 			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+-			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
+-			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
++			ctx->luma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height, 16), 256);
++			ctx->chroma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height / 2, 16),
++					256);
+ 			break;
+ 		case V4L2_PIX_FMT_YUV420M:
+ 		case V4L2_PIX_FMT_YVU420M:
+-- 
+2.17.1
 
 
