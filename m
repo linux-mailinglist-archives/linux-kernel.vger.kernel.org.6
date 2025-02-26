@@ -1,207 +1,313 @@
-Return-Path: <linux-kernel+bounces-535062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2EA46E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:16:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA33A46E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:17:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51538168742
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEEBC188C8AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA025BACE;
-	Wed, 26 Feb 2025 22:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF52C25BACD;
+	Wed, 26 Feb 2025 22:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="JPBwxd8E"
-Received: from out-14.pe-b.jellyfish.systems (out-14.pe-b.jellyfish.systems [198.54.127.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoPWCV6l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB7F25BAB2;
-	Wed, 26 Feb 2025 22:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5E825BAA0;
+	Wed, 26 Feb 2025 22:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740608178; cv=none; b=MJozxtU9ulfwAQeMxRKIPugWBC30ao5se9En/oZpc0VkM5Mp+XKvHm+w+6vZQsySg4z8GVZZ6H5k1Or5JiybKaQiHmaymZaosDnRPcMz2XbYmxDBgM6mhqbWEXElKCpuURVIkVwGbxio6g/KiwYuYwm9aHL2A7yAXs40IQUGSMQ=
+	t=1740608240; cv=none; b=BFAHzJPxdTTjYd52SAh+VO12tKwDdgXDsqu4BdfY7vT4Mwg6QoScwjYusMWBgBL8Jk+/pLN+/Ca8zYnZdKyK2YThcfIzstIC6wNtnvTP8x5rCB8BNbSlhQdxqemmTbKxivDl2rz7vWdEZdfqYDPa4d6Rx5kB1DG7/cXJY1zc1ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740608178; c=relaxed/simple;
-	bh=uUSijLBzxUDMkZHkQcdcmdVTgQGyPSVsyno+xloRIsE=;
+	s=arc-20240116; t=1740608240; c=relaxed/simple;
+	bh=TYHG5LLx6g0PitLBYveoCyLBe6S57xNM9QzzSaBfaPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMR63+kaGOgywU/GDNRa3abHbVvI+GqgwuBF1DlwfqYopRkCZ8g9SXIrVBCeArVLM5Sl8O5HtKC/btpGCX4lfYsfSevPmAf2BHizH5b9qZtWbBR0TLAUGiCna33ZbxTFLAHeBx2fvJmenA9mxOg33LAml+m7VSajfHMK+bUQsdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=JPBwxd8E; arc=none smtp.client-ip=198.54.127.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
-	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z38270ss2zDqnn;
-	Wed, 26 Feb 2025 22:16:15 +0000 (UTC)
-Received: from MTA-15.privateemail.com (unknown [10.50.14.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z382702ssz3hhVZ;
-	Wed, 26 Feb 2025 17:16:15 -0500 (EST)
-Received: from mta-15.privateemail.com (localhost [127.0.0.1])
-	by mta-15.privateemail.com (Postfix) with ESMTP id 4Z38265nrvz3hhV0;
-	Wed, 26 Feb 2025 17:16:14 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1740608174;
-	bh=uUSijLBzxUDMkZHkQcdcmdVTgQGyPSVsyno+xloRIsE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kV7Ze2UswiRvX6aTmMIZdpQFNPUblWYTKuKixhkswVuqrOYQAPHQa2FnvW9ptK57kHwyJGWzG/7bo0xFLqwcEiLQpTyx30mPqO4fLnYi7f0T/fGxmWJ1/TNGXgdJkLZIkgfGPGb/0tp4AyuUaHEWGC8hIfGFNnOKcn4c1TXtiNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoPWCV6l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63E3C4CED6;
+	Wed, 26 Feb 2025 22:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740608240;
+	bh=TYHG5LLx6g0PitLBYveoCyLBe6S57xNM9QzzSaBfaPM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JPBwxd8EJrj6LnOEzK3whKRb5u45RYuZMSsask55Nus5JuT41kFJovzs7py9XlpQy
-	 zosB6g+jIdHeQGZM+36D3mu3T7UoPl6xfj0SkhBOgQACCJ6FGEprkCBYHZjuA+r1SX
-	 ILe6tdyCmQmLk9Qsg9zIIFATClvmW4PLEcJGC3OLGStbi2ZiisS3XGXQFLz7D1cmtV
-	 DrOqR6lcEt+oqh83tF0v/CZDpXdHEnSqX61QIULL0uDzdho+8G6WjuQsPihqo0pAa5
-	 gRO7b1ZWwt+SzmnlRBxTHL9B8Tg56yhSZO7DatkfVgkfbISz23urdoB4VhX2n98AfW
-	 f1UboBIfr4P8Q==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-15.privateemail.com (Postfix) with ESMTPA;
-	Wed, 26 Feb 2025 17:16:02 -0500 (EST)
-Date: Wed, 26 Feb 2025 17:16:02 -0500
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
-	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
-Message-ID: <Z7-SojPPx3kOVa4y@65YTFL3.secure.tethers.com>
-References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
- <20250225134612.577022-2-sam.winchenbach@framepointer.org>
- <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
- <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
- <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
+	b=IoPWCV6lHVkerzguV5oPGzRCzcH0Es3e/xhoFVU3F/Vy4n2GYLoGhCxvg/TatbDCL
+	 abkQnsxOQVntI2glIq4NyCqlAiq2xDkk3O07qIxO/3S9uUv6dWhTt3Il/QPnSO/j7L
+	 hm0+/eu/mhvlz1yzcoDmv6WcwygeAiqN0knPtyGXNiREbIdp/b9EXooHYjvx7sLp+h
+	 oC9bprQMzAgXhTKCsNEzYYErolmkcKS96Bcb0bg8begmrxAVxNbMSGc3TFTGdfxdSo
+	 UwDl/7sicA1e1DNpL6DOtDjqJCXI3x6x4kMkpxjnfMNEuInL7fl59htToBikrZzIwY
+	 N+AOuzhLsDF5w==
+Date: Wed, 26 Feb 2025 14:17:18 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] perf report: Add 'tgid' sort key
+Message-ID: <Z7-S7mopgpSFm20a@google.com>
+References: <Z712hzvv22Ni63f1@google.com>
+ <Z74U5s7Yf0f6I7Mo@x1>
+ <Z74V0hZXrTLM6VIJ@x1>
+ <Z74ZL6SUwWL_a5EK@x1>
+ <Z74eqEiyrzuoL6uz@x1>
+ <Z79std66tPq-nqsD@google.com>
+ <Z7-Jte2ImGa93VUD@x1>
+ <Z7-J5vHqHF4kc1HB@x1>
+ <Z7-KSRttQLImuWtJ@x1>
+ <Z7-May5w9VQd5QD0@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7-May5w9VQd5QD0@x1>
 
-On Wed, Feb 26, 2025 at 10:22:03PM +0100, Krzysztof Kozlowski wrote:
-> On 26/02/2025 18:10, Sam Winchenbach wrote:
-> > On Wed, Feb 26, 2025 at 09:03:13AM +0100, Krzysztof Kozlowski wrote:
-> >> On Tue, Feb 25, 2025 at 08:46:12AM -0500, Sam Winchenbach wrote:
-> >>> Adds two properties to add a margin when automatically finding the
-> >>> corner frequencies.
-> >>>
-> >>> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
-> >>> ---
-> >>>  .../bindings/iio/filter/adi,admv8818.yaml          | 14 ++++++++++++++
-> >>>  1 file changed, 14 insertions(+)
-> >>
-> >> Bindings are before users (see DT submitting patches), so this should be
-> >> re-ordered.
-> >>
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> >>> index b77e855bd594..2acdbd8d84cb 100644
-> >>> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> >>> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> >>> @@ -44,6 +44,18 @@ properties:
-> >>>    '#clock-cells':
-> >>>      const: 0
-> >>>  
-> >>> +  adi,lpf-margin-hz:
-> >>> +    description:
-> >>> +      Sets minimum low-pass corner frequency to the frequency of rf_in plus
-> >>> +      this value when in auto mode.
-> >>> +    default: 0
-> >>> +
-> >>> +  adi,hpf-margin-hz:
-> >>> +    description:
-> >>> +      Sets maximum high-pass corner frequency to the frequency of rf_in minus
-> >>> +      this value when in auto mode.
-> >>
-> >> IIUC, these are two bounds - lower and upper - in relation to something
-> >> else (like rf_in frequency)? If so, make it an array (naming to be
-> >> discuss, I assume you know better what's that):
-> > 
-> > It is true that these are both related to rf_in but both the low and high pass
-> > filters can operate independently. Logically, IMO, it makes more sense to have
+On Wed, Feb 26, 2025 at 06:49:31PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 26, 2025 at 06:40:29PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Feb 26, 2025 at 06:38:50PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Wed, Feb 26, 2025 at 06:38:00PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > On Wed, Feb 26, 2025 at 11:34:13AM -0800, Namhyung Kim wrote:
+> > > > > On Tue, Feb 25, 2025 at 08:48:56PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > On Tue, Feb 25, 2025 at 08:25:35PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > > On Tue, Feb 25, 2025 at 08:11:17PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > > > On Tue, Feb 25, 2025 at 08:07:18PM +0100, Arnaldo Carvalho de Melo wrote:
+> > > > > > > > > On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
+> > > > > > > > > > On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
+> > > > > > > > > > > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > > > > > > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
+> > > > > > > > > > [SNIP]
+> > > > > > > > > > > > > I thought the real-time processing had to use
+> > > > > > > > > > > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
+> > > > > > > > > > > > > events only give us VMA data and two mmaps may have been merged.
+> > > > > > > > > > > > > Shouldn't doing this change be the simplest fix?
+> > > > > > > > 
+> > > > > > > > > > > > Make sense.  How about this?
+> > > > > > > > 
+> > > > > > > > > > > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
+> > > > > > > > > > > to get pushed later?
+> > > > > > > > 
+> > > > > > > > > > I just noticed it would add extra kernel maps after modules.  I think it
+> > > > > > > > > > should fixup end address of the kernel maps after adding all maps first.
+> > > > > > > > 
+> > > > > > > > > > Arnaldo, can you please test this?
+> > > > > > > >  
+> > > > > > > > > Trying it now.
+> > > > > > > > 
+> > > > > > > > Now we have something different:
+> > > > > > > > 
+> > > > > > > > root@number:~# perf record sleep
+> > > > > > > > sleep: missing operand
+> > > > > > > > Try 'sleep --help' for more information.
+> > > > > > > > [ perf record: Woken up 1 times to write data ]
+> > > > > > > > perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
+> > > > > > > > Aborted (core dumped)
+> > > > > > > > root@number:~#
+> > > > > > > 
+> > > > > > > __maps__insert() does:
+> > > > > > > 
+> > > > > > >         if (dso && dso__kernel(dso)) {
+> > > > > > >                 struct kmap *kmap = map__kmap(new);
+> > > > > > > 
+> > > > > > >                 if (kmap)
+> > > > > > >                         kmap->kmaps = maps;
+> > > > > > >                 else
+> > > > > > >                         pr_err("Internal error: kernel dso with non kernel map\n");
+> > > > > > >         }
+> > > > > > > 
+> > > > > > > while maps__fixup_overlap_and_insert() doesn't.
+> > > > > > > 
+> > > > > > > It calls __maps__insert_sorted() that probably should do what
+> > > > > > > __maps__insert() does?
+> > > > > > 
+> > > > > > Ok, so I did the following patch but this case fails:
+> > > > > > 
+> > > > > > @@ -910,6 +928,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+> > > > > >                                  */
+> > > > > >                                 map__put(maps_by_address[i]);
+> > > > > >                                 maps_by_address[i] = map__get(new);
+> > > > > > +                               map__set_kmap(new, maps);
+> > > > > >                                 check_invariants(maps);
+> > > > > >                                 return err;
+> > > > > >                         }
+> > > > > > 
+> > > > > > With:
+> > > > > > 
+> > > > > > perf: util/maps.c:110: check_invariants: Assertion `refcount_read(map__refcnt(map)) > 1' failed.
+> > > > > > 
+> > > > > > As:
+> > > > > > 
+> > > > > > 106				/*
+> > > > > > 107				 * Maps by name maps should be in maps_by_address, so
+> > > > > > 108				 * the reference count should be higher.
+> > > > > > 109				 */
+> > > > > > 110				assert(refcount_read(map__refcnt(map)) > 1);
+> > > > > > 
+> > > > > > Since it is just replacing the map in the maps_by_address and not
+> > > > > > touching on the maps_by_name? Thus the refcount is just 1:
+> 
+> > > > > Sounds like it.  Can you add this on top?
+> 
+> > > > Trying, but somehow its not applying cleanly, checking:
+> 
+> > > > ⬢ [acme@toolbox perf-tools]$ patch -p1 < ~/wb/1.patch 
+> > > > patching file tools/perf/util/maps.c
+> > > > Hunk #1 succeeded at 815 (offset 18 lines).
+> > > > Hunk #2 succeeded at 826 (offset 18 lines).
+> > > > Hunk #3 succeeded at 846 (offset 18 lines).
+> > > > Hunk #4 succeeded at 893 (offset 18 lines).
+> > > > Hunk #5 succeeded at 919 (offset 18 lines).
+> > > > Hunk #6 FAILED at 923.
+> > > > 1 out of 6 hunks FAILED -- saving rejects to file tools/perf/util/maps.c.rej
+> > > > ⬢ [acme@toolbox perf-tools]$
+> 
+> > > > ⬢ [acme@toolbox perf-tools]$ git log --oneline -5
+> > > > 4a9f5d76130b707f (HEAD -> perf-tools) wip: acme
+> > > > d5ba0f5af35937c7 wip: namhyung
+> > > > 42367eca7604e16e (perf-tools/tmp.perf-tools, perf-tools/perf-tools) tools: Remove redundant quiet setup
+> > > > 293f324ce96d7001 tools: Unify top-level quiet infrastructure
+> > > > 9fae5884bb0e3480 (tag: perf-tools-fixes-for-v6.14-2025-01-30) perf cpumap: Fix die and cluster IDs
+> > > > ⬢ [acme@toolbox perf-tools]$
+> 
+> > > ⬢ [acme@toolbox perf-tools]$ cat tools/perf/util/maps.c.rej
+> > > --- tools/perf/util/maps.c
+> > > +++ tools/perf/util/maps.c
+> > > @@ -923,6 +936,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+> > >  				 */
+> > >  				map__put(maps_by_address[i]);
+> > >  				maps_by_address[i] = map__get(new);
+> > > +				if (maps_by_name) {
+> > > +					map__put(maps_by_name[ni]);
+> > > +					maps_by_name[ni] = map__get(new);
+> > > +				}
+> > >  				check_invariants(maps);
+> > >  				return err;
+> > >  			}
+> > > ⬢ [acme@toolbox perf-tools]$
+> 
+> > > Fixing this up by hand
+>  
+> > I see, I had tried this after sending that patch:
+>  
+> >      map__set_kmap(new, maps);
+>  
+> > Before check_invariants(), but that doesn't make sense, I should've
+> > dropped that, doing it now.
+> 
+> Nope, it still triggers:
+> 
+>  930                 } else {
+>  931                         struct map *next = NULL;
+>  932 
+>  933                         if (i + 1 < maps__nr_maps(maps))
+>  934                                 next = maps_by_address[i + 1];
+>  935 
+>  936                         if (!next  || map__start(next) >= map__end(new)) {
+>  937                                 /*
+>  938                                  * Replace existing mapping and end knowing
+>  939                                  * there aren't later overlapping or any
+>  940                                  * mappings.
+>  941                                  */
+>  942                                 map__put(maps_by_address[i]);
+>  943                                 maps_by_address[i] = map__get(new);
+>  944                                 if (maps_by_name) {
+>  945                                         map__put(maps_by_name[ni]);
+>  946                                         maps_by_name[ni] = map__get(new);
+>  947                                 }
+>  948                                 check_invariants(maps);
+>  949                                 return err;
+>  950                         }
+>  951                         __maps__remove(maps, pos);
+>  952                         check_invariants(maps);
+>  953                         /*
+>  954                          * Maps are ordered but no need to increase `i` as the
+>  955                          * later maps were moved down.
+>  956                          */
+>  957                 }
 > 
 > 
-> You mean you can set only low or high pass and keep other as default?
-> But what is the default then - something from reset value or "0" means
-> disabled?
-
-This value isn't setting the corner frequency of the filter, but the minimum
-distance the corner must be from the fundamental frequency. So, for example,
-if rf_in is 3.35 GHz and you set lpf-margin-hz to 0 then the corner frequency
-will be set to 3.35 GHz because that is an exact value supported by the device.
-
-If lpf-margin-hz is set to 30 MHz (for example), then corner frequency would be
-at least 3.35 GHz + 30 MHz = 3.38 GHz.  3.49 GHz is the closest corner
-frequency without going below 3.38 GHz that is supported by the device, so that
-is what will be selected.
-
-This prevents the situation where your fundamental frequency falls on, or close
-to, a corner frequency which could result in 3dB (half power) loss in your
-signal.
-
-This is all completely indepent of the high-pass filter.
-
+> perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
 > 
-> > them as separate controls but I am happy to put them into an array if that is
-> > the idiomatic approach to situations like this. That said, I am having a
-> > difficult time getting dt_binding_check to pass when I have an array of uint64.
-> > 
-> > When listing two items, as in your example below, I get the following:
-> > adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
+> Thread 1 "perf" received signal SIGABRT, Aborted.
+> __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
+> 44	      return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO (ret) : 0;
+> (gdb) bt
+> #0  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
+> #1  0x00007ffff6ea80a3 in __pthread_kill_internal (threadid=<optimized out>, signo=6) at pthread_kill.c:78
+> #2  0x00007ffff6e4ef1e in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
+> #3  0x00007ffff6e36902 in __GI_abort () at abort.c:79
+> #4  0x00007ffff6e3681e in __assert_fail_base (fmt=0x7ffff6fc3bb8 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n", assertion=assertion@entry=0x7bfd08 "RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)", 
+>     file=file@entry=0x7bfc53 "util/maps.c", line=line@entry=80, function=function@entry=0x7c0010 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:96
+> #5  0x00007ffff6e47047 in __assert_fail (assertion=0x7bfd08 "RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)", file=0x7bfc53 "util/maps.c", line=80, 
+>     function=0x7c0010 <__PRETTY_FUNCTION__.6> "check_invariants") at assert.c:105
+> #6  0x0000000000633c74 in check_invariants (maps=0xf977c0) at util/maps.c:80
+> #7  0x00000000006363a6 in __maps__fixup_overlap_and_insert (maps=0xf977c0, new=0xfc57e0) at util/maps.c:948
+> #8  0x0000000000636460 in maps__fixup_overlap_and_insert (maps=0xf977c0, new=0xfc57e0) at util/maps.c:970
+> #9  0x000000000062920a in machine__process_ksymbol_register (machine=0xf97158, event=0x7ffff7fbaba8, sample=0x7fffffffa860) at util/machine.c:715
+> #10 0x00000000006294ca in machine__process_ksymbol (machine=0xf97158, event=0x7ffff7fbaba8, sample=0x7fffffffa860) at util/machine.c:779
+> #11 0x00000000005ce2fd in perf_event__process_ksymbol (tool=0xec9ce0 <record>, event=0x7ffff7fbaba8, sample=0x7fffffffa860, machine=0xf97158) at util/event.c:296
+> #12 0x000000000063b860 in machines__deliver_event (machines=0xf97158, evlist=0xf531f0, event=0x7ffff7fbaba8, sample=0x7fffffffa860, tool=0xec9ce0 <record>, file_offset=35752, 
+>     file_path=0xf97850 "perf.data") at util/session.c:1334
+> #13 0x000000000063ba45 in perf_session__deliver_event (session=0xf96f40, event=0x7ffff7fbaba8, tool=0xec9ce0 <record>, file_offset=35752, file_path=0xf97850 "perf.data")
+>     at util/session.c:1367
+> #14 0x000000000063c839 in perf_session__process_event (session=0xf96f40, event=0x7ffff7fbaba8, file_offset=35752, file_path=0xf97850 "perf.data") at util/session.c:1626
+> #15 0x000000000063dfb9 in process_simple (session=0xf96f40, event=0x7ffff7fbaba8, file_offset=35752, file_path=0xf97850 "perf.data") at util/session.c:2203
+> #16 0x000000000063dc70 in reader__read_event (rd=0x7fffffffafa0, session=0xf96f40, prog=0x7fffffffaf70) at util/session.c:2132
+> #17 0x000000000063de6a in reader__process_events (rd=0x7fffffffafa0, session=0xf96f40, prog=0x7fffffffaf70) at util/session.c:2181
+> #18 0x000000000063e107 in __perf_session__process_events (session=0xf96f40) at util/session.c:2226
+> #19 0x000000000063eb04 in perf_session__process_events (session=0xf96f40) at util/session.c:2390
+> #20 0x000000000042d98b in process_buildids (rec=0xec9ce0 <record>) at builtin-record.c:1475
+> #21 0x000000000042e963 in record__finish_output (rec=0xec9ce0 <record>) at builtin-record.c:1798
+> #22 0x0000000000431c46 in __cmd_record (rec=0xec9ce0 <record>, argc=2, argv=0x7fffffffde80) at builtin-record.c:2841
+> #23 0x000000000043513f in cmd_record (argc=2, argv=0x7fffffffde80) at builtin-record.c:4260
+> #24 0x00000000004bcf65 in run_builtin (p=0xeccd60 <commands+288>, argc=3, argv=0x7fffffffde80) at perf.c:351
+> #25 0x00000000004bd20c in handle_internal_command (argc=3, argv=0x7fffffffde80) at perf.c:404
+> #26 0x00000000004bd365 in run_argv (argcp=0x7fffffffdc6c, argv=0x7fffffffdc60) at perf.c:448
+> #27 0x00000000004bd6ae in main (argc=3, argv=0x7fffffffde80) at perf.c:556
+> (gdb)
 > 
-> Tricky to say without seeing your code. Magic crystal ball had
-> malfunction today.
-
-This is the property:
-
-  adi,filter-margins-hz:
-    items:
-      - description: |
-          The minimum distance, in Hz, between rf_in and the low-pass corner
-          frequency when the device is used in "auto" mode. If the sum of
-          rf_in and this value is greater than 18.85 GHz then the low-pass
-          filter will be put into bypass mode, otherwise the closest corner
-          frequency that is greater than or equal to the sum of rf_in plus this
-          value will be used.
-        minimum: 0
-        maximum: 0xFFFFFFFFFFFFFFFF
-        default: 0
-      - description: |
-          The minimum distance, in Hz, between rf_in and the high-pass corner
-          frequency when the device is used in "auto" mode. If the difference
-          between rf_in and this value is less than 1.75 GHz then the high-pass
-          filter will be put into bypass mode, otherwise the closest corner
-          frequency that is less than or equal to the difference of rf_in and
-          this value will be used.
-        minimum: 0
-        maximum: 0xFFFFFFFFFFFFFFFF
-        default: 0
-
-And this is the example:
-
-examples:
-  - |
-    spi {
-      #address-cells = <1>;
-      #size-cells = <0>;
-      admv8818@0 {
-        compatible = "adi,admv8818";
-        reg = <0>;
-        spi-max-frequency = <10000000>;
-        clocks = <&admv8818_rfin>;
-        clock-names = "rf_in";
-        adi,filter-margins-hz = /bits/ 64 <30000000 30000000>;
-      };
-    };
-...
-
-Thank you for taking the time to go through this,
--Sam
-
+> humm, it seems that thing I removed may be needed after all...
 > 
-> Best regards,
-> Krzysztof
+> Yeah, please check if adding this, on top of your latest (second) patch,
+> makese sense:
+> 
+> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
+> index a710720e8bcfd305..776bbdaafdb32269 100644
+> --- a/tools/perf/util/maps.c
+> +++ b/tools/perf/util/maps.c
+> @@ -945,6 +945,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+>                                         map__put(maps_by_name[ni]);
+>                                         maps_by_name[ni] = map__get(new);
+>                                 }
+> +                               map__set_kmap(new, maps);
+>                                 check_invariants(maps);
+>                                 return err;
+>                         }
+> ⬢ [acme@toolbox perf-tools]$
+> 
+> 
+> With your two patches and my two patches finally I get:
+> 
+> root@number:~# perf record sleep 1
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.035 MB perf.data (14 samples) ]
+> root@number:~#
+> 
+> on a perf-tools/perf-tools build with DEBUG=1
+
+Great!  Can you please send the final version as a formal patch?
+
+Thanks,
+Namhyung
+
 
