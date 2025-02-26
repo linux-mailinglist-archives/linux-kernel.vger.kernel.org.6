@@ -1,214 +1,158 @@
-Return-Path: <linux-kernel+bounces-533688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50F5A45DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7A8A45DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A42947A2736
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39CA3175133
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A40021D3C7;
-	Wed, 26 Feb 2025 11:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DBF21773E;
+	Wed, 26 Feb 2025 11:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV3Ym0x5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Y+3lYlte";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="34ZhmKcj"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F16217701;
-	Wed, 26 Feb 2025 11:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D89216E19;
+	Wed, 26 Feb 2025 11:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570512; cv=none; b=HCgzQrwbCJHTHk2s236pS1n9STMvon1e45XsJyC2m7ATCdH9y84zw16wQwzTwg1vfOiW9XgH+Jiwe/g7xtf/a5ErVEU+zbElX+4PnYUAW8GNs5FS/TEO8dH7M4Fu2ss99Sr0MpBT3GTLl4IK6DboUZi70/E06VVyuHnDLIHJfL8=
+	t=1740570588; cv=none; b=DQ4KezbwnYoDOpYEWRlcK7N9Uk3YfJYM3dYpMtAtwN4Er8CHcZIHaWfSs7T41UrrT3XDYRMeiE2agX/PBpqg/O12Nk7ETmf9kkygC8de9bk0X4+yGEuAt2d6BJCMTSLK/NPuTp/eVfTTLB6oFi56u2gTH1WSQqWQPr1MQTeMDzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570512; c=relaxed/simple;
-	bh=GUzhGjNO5ocbKYgDd8dEbRVtIpH0rClgFTMO3hPnsIY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WoYPhubvz99qUiBNwmpJ8Mn2duv8u5mIw+jYKGfAbdUjrlpcug/UFGA1u6pICxJD05R+sh72iQtJpjf4eXnyaVpxz5eP+O0LD0nFEzF/Dbl1qTvW8rMzaPuwx5yA8Qwc2Frfb7n3K2nQsLbqCbttmvpZGallvkPIKdFQh6XuKWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV3Ym0x5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3118EC4CEE4;
-	Wed, 26 Feb 2025 11:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740570512;
-	bh=GUzhGjNO5ocbKYgDd8dEbRVtIpH0rClgFTMO3hPnsIY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AV3Ym0x5ULM+3BGpd9Zh/0shz+/jZdo1GKeLUmTJoVq9dUnLivFifFkHHZHkHGga2
-	 Xk+qhXAN6yrjxM7ZlVU+p5etMNuh6dNTq9EmbIYm3XG6ZYqIxCM6rbOwNGIMmvayv1
-	 Y+EQ395xelLSHSNlhNteYqkGwwvbGcQKiKA1AsUwMQNKRhivPVE4a6im6iOs7bm06c
-	 OgP7e5LeL8NnunR9dD8V3TWUdLPhGuDohgZIxcNzEG/mBPSaiWWCwILO3AZHGOPP6C
-	 GH+NBqDo3TpYEuf9KIF3dwjdDyJj+UUkY3mFDdL4znrwwQtrJ+zdIzadfam3DYPqYK
-	 ulEIGu8w9KT3Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
-  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
- (Tamir
-	Duberstein's message of "Tue, 25 Feb 2025 15:13:51 -0500")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
-	<q5sIYQbnCqKmdnZZy-eaKvSUY7O5pOy2-QzwWwCo9VoormFcKS6RS3OVIIby-Pf5PDpTRh67txem3sXQKSB1JQ==@protonmail.internalid>
-	<CAJ-ks9nj8+fXM_oo0LJo4O6Q=skFRcHwz8TLxw-yB3QTcDF9GA@mail.gmail.com>
-	<87cyf6xv7g.fsf@kernel.org>
-	<Wy3wqzRK5qG3GyHC7oEg3NR3tv9-Uv7m_tmgKZTHNEU6aZX5hxrIXLudLfzQvuZNvIz1Av2fKzH5eTvomny1Vg==@protonmail.internalid>
-	<CAJ-ks9=PR-Laj37NqG5s_TbKddONWxp4-Cf3C57AMk9z92mfDQ@mail.gmail.com>
-	<87r03lvnx4.fsf@kernel.org>
-	<RWZWPbf2ND3HRx_kFFVnjBngQMWjrmbidBCzyJr58iQsksyu5SpJVfCiEjf7WYWFOz6eWib5Q9j23QmbSqXyEQ==@protonmail.internalid>
-	<CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 26 Feb 2025 12:48:18 +0100
-Message-ID: <87eczludtp.fsf@kernel.org>
+	s=arc-20240116; t=1740570588; c=relaxed/simple;
+	bh=VpmMUY7wY/BS7Pk+f5B3auP2ZypMNupjv4juq8FsjbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6xPQqH4BENk0jkBp2aS6mP5oUd8DfFCpak9yT7DPmyyiQgJH6SLhUMUKPmpJkM0puS/YWvndMdR5oCljm3OggHgMQEsO9iJ4BusZTZe9E0c70VA5Oj3ElHq9SpU6z8WKer7cPh406BGq1eNWiPRcjIKpy+vnWR7CCk8G61r6QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Y+3lYlte; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=34ZhmKcj; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8A77011401BD;
+	Wed, 26 Feb 2025 06:49:45 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 26 Feb 2025 06:49:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1740570585; x=
+	1740656985; bh=NUV6XQ7b1xL3JnX+3WnfxkiyKE8c72Tyb0qS0broJwE=; b=Y
+	+3lYlte5EmJcJWEt2f+7MS4Os164ocN+bPsGNY/MYlMGWulxvxPfJdtvl2fDv9ik
+	bTXyQScCciCHsr1LCCauwhbpedXl5l03/ApwRcwr/HP6sphRpH2K25aPLn0Qyqzy
+	VHaGthhvGNNbq84N/Sgo92KE45v7ywb1MFpm2n6CMvNmo0bLxVbQ9kAM7MpqRyj1
+	9HpUYZLFqQDqeQTcFuKPcHIxNUWxEq0GN/c2yxkP6aVVaKVz6fwr7f7gWOvAtcim
+	U+6MkxWj1bAxCgRaEh04GJfBOIx2P3Q1h5rEfFBHTATBapXynS8DeZMlC151RjhU
+	P7/QqIHw5MW9dO/+6R5Aw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740570585; x=1740656985; bh=NUV6XQ7b1xL3JnX+3WnfxkiyKE8c72Tyb0q
+	S0broJwE=; b=34ZhmKcjT4ByBDZWw2nHG1CfFp0CXR9QQuD2S5LS7RiK1aRryuk
+	U9nq1PdX8Ng6nAo4KydzMu4ExzgBvxfxV+6uu6N4R5jbpSc9Awe7/X/9MT7bn+G0
+	inT4pSBexS4Dtnj/nvWpdx69Tv29q93HvCx8scG0MH9L1m7oA6sL9jlcmlKW/fYE
+	bvjcQW9QrsQhD2crdRf1+uzjFdlwArmRBPWJFLU82CJKHWii3WOGP+t2WdW1cR3g
+	/4/uf80M4/9+rwc+XQRljMCINZAHIidlqP/rXr/jWHb2pEHYOVACOjDG1h4cmQgr
+	r3MO3u+lSJfRghYCESD7zHbrzwT91VJ1FKw==
+X-ME-Sender: <xms:2P--Z0xjIADr4gf4kqZzE6XbVlHMc9jNVZdNJA85a7RR6x3I6qzHYg>
+    <xme:2P--Z4SrBuFVusf8FOAmIWtrw9nGZmL4KRzW-cPAzeVzAohRQu5-Izo0J3QFqxjLs
+    9Ls09odPimvYmbv5oY>
+X-ME-Received: <xmr:2P--Z2X3_1pSDndN3W4CcUAt6CG4kHsSzNyVcHPeaNNpTblmw2lW3vE5HQ1-ZlMm39uZrA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
+    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
+    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffh
+    ffevlefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
+    vhdrnhgrmhgvpdhnsggprhgtphhtthhopeefvddpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepvhgrnhhnrghpuhhrvhgvsehgohhoghhlvgdrtghomhdprhgtphhtthhopegu
+    rghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepkh
+    hirhhilhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphht
+    thhopehjghhrohhsshesshhushgvrdgtohhmpdhrtghpthhtoheprghjrgihrdhkrghhvg
+    hrsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegrkheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehtohhnhidrlhhutghksehinhhtvghlrdgtohhmpdhrtg
+    hpthhtohepthhhohhmrghsrdhlvghnuggrtghkhiesrghmugdrtghomhdprhgtphhtthho
+    pehtghhlgieslhhinhhuthhrohhnihigrdguvg
+X-ME-Proxy: <xmx:2P--ZyiAQKOFRnxyOzpeqCouZL8yXR5O0Z1uAGDl2AzgePchztVPLA>
+    <xmx:2P--Z2BFvoasHzlVzsB6ZwmpavJNmNunVnf_ozZVmCxuQcwxCQ7a7g>
+    <xmx:2P--ZzJmvgbpt5_9r6nXFhFSK3m76UBuDJRveiN9f9YKuSIEO60fsg>
+    <xmx:2P--Z9AAmPPQje4t-8vfSh04lk6sCU__6b4u3BnCegBa-MQ6XPC8TQ>
+    <xmx:2f--Z-a27CiKqq2ElAYuuRFNsyxas3XqkH1PFWDhpzTloP3iA4ZefGzk>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Feb 2025 06:49:34 -0500 (EST)
+Date: Wed, 26 Feb 2025 13:49:31 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: dave.hansen@linux.intel.com, kirill.shutemov@linux.intel.com, 
+	jgross@suse.com, ajay.kaher@broadcom.com, ak@linux.intel.com, tony.luck@intel.com, 
+	thomas.lendacky@amd.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	hpa@zytor.com, pbonzini@redhat.com, seanjc@google.com, kai.huang@intel.com, 
+	chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
+	sagis@google.com, afranji@google.com, kees@kernel.org, jikos@kernel.org, 
+	peterz@infradead.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, virtualization@lists.linux.dev, 
+	bcm-kernel-feedback-list@broadcom.com, stable@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] x86/tdx: Fix arch_safe_halt() execution for TDX
+ VMs
+Message-ID: <pvbwlmkknw7cwln4onmi5mujpykyaxisb73khlriq7pzqhgno2@nvu3cbchp4am>
+References: <20250225004704.603652-1-vannapurve@google.com>
+ <20250225004704.603652-3-vannapurve@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225004704.603652-3-vannapurve@google.com>
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+On Tue, Feb 25, 2025 at 12:47:03AM +0000, Vishal Annapurve wrote:
+> Direct HLT instruction execution causes #VEs for TDX VMs which is routed
+> to hypervisor via TDCALL. If HLT is executed in STI-shadow, resulting #VE
+> handler will enable interrupts before TDCALL is routed to hypervisor
+> leading to missed wakeup events.
+> 
+> Current TDX spec doesn't expose interruptibility state information to
+> allow #VE handler to selectively enable interrupts. To bypass this
+> issue, TDX VMs need to replace "sti;hlt" execution with direct TDCALL
+> followed by explicit interrupt flag update.
+> 
+> Commit bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+> prevented the idle routines from executing HLT instruction in STI-shadow.
+> But it missed the paravirt routine which can be reached like this as an
+> example:
+>         acpi_safe_halt() =>
+>         raw_safe_halt()  =>
+>         arch_safe_halt() =>
+>         irq.safe_halt()  =>
+>         pv_native_safe_halt()
 
-> On Tue, Feb 25, 2025 at 2:12=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> "Tamir Duberstein" <tamird@gmail.com> writes:
->>
->> > On Tue, Feb 25, 2025 at 3:52=E2=80=AFAM Andreas Hindborg <a.hindborg@k=
-ernel.org> wrote:
->> >>
->> >> "Tamir Duberstein" <tamird@gmail.com> writes:
->> >>
->> >> > Hi Andreas, mostly grammar and prose clarity comments below.
->> >> >
->> >> > I still think HasHrTimer::OFFSET is less clear and more fragile than
->> >> > just generating compiler-checked implementations in the macro (you'=
-re
->> >> > already generating OFFSET and one method implementation rather than
->> >> > generating 2 method implementations).
->> >>
->> >> I don't agree with you assessment. My argument is that I would rather
->> >> generate as little code as possible in the macro, and the trait would=
- in
->> >> practice never be implemented by hand.
->> >
->> > In the current patch, the trait:
->> > - provides raw_get_timer
->> > - provides timer_container_of
->> > and the macro:
->> > - defines OFFSET
->> > - defines raw_get_timer
->> >
->> > The justification for the redundancy is that without defining
->> > raw_get_timer in the macro the user might invoke the macro
->> > incorrectly.
->>
->> It's not that they might invoke the macro incorrectly, it's that we
->> would not be able to make the macro safe. The way it is implemented now,
->> it will only compile if it is safe.
->>
->> > But why is that better than defining both methods in the
->> > macro?
->>
->> Because it is generating less code. I would rather write the library cod=
-e than
->> have the macro generate the code for us on every invocation.
->
-> How is it less code? It's the same amount, just harder to reason about
-> because you're doing pointer arithmetic rather than relying on
-> existing macros like container_of.
->
->>
->> > Either way the macro provides 2 items. The key benefit of
->> > defining both methods in the macro is that there's no dead-code
->> > implementation of raw_get_pointer in the trait. It also reduces the
->> > surface of the trait, which is always a benefit due to Hyrum's law.
->>
->> When you say that the surface would be smaller, you mean that by
->> dropping OFFSET entirely, the trait would have fewer items?
->
-> Yes.
->
->
->> I'm not familiar with Hyrum's law.
->
-> TL;DR is that anything that can become load bearing will. So even if
-> the intent is that OFFSET is an implementation detail, there's no way
-> to enforce that, and so someone will misuse it.
+I would rather use paravirt spinlock example. It is less controversial.
+I still see no point in ACPI cpuidle be a thing in TDX guests.
 
-I don't fully agree with your assessment, but either way is fine for me.
-So I shall implement your suggestion.
+> 
+> To reliably handle arch_safe_halt() for TDX VMs, introduce explicit
+> dependency on CONFIG_PARAVIRT and override paravirt halt()/safe_halt()
+> routines with TDX-safe versions that execute direct TDCALL and needed
+> interrupt flag updates. Executing direct TDCALL brings in additional
+> benefit of avoiding HLT related #VEs altogether.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
 
-[...]
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
->> > I noticed below I had suggested talking about the handler as
->> > "returning" rather than "finishing execution"; please consider that
->> > throughout.
->>
->> I do not prefer one over the other. Do you care strongly about this one?
->
-> I prefer return since it's more obvious but don't feel strongly about
-> the choice, only that the usage is consistent.
-
-Ok, let's do that then.
-
-[...]
-
->> >> >> +/// Implemented by pointer types that point to structs that embed=
- a [`HrTimer`].
->> >
->> > This comment says "embed a [`HrTimer`]" but in `trait HrTimer` the
->> > wording is "Implemented by structs that contain timer nodes."
->>
->> I don't follow. There is no `trait HrTimer`, there is a `struct
->> HrTimer`, but it has no such wording.
->>
->> > Is the difference significant?
->>
->> No, I would say they are semantically the same. Whether a struct
->> contains a field of a type or it embeds another struct - I would say
->> that is the same.
->
-> Can we use the same wording in both places then?
-
-OK.
-
->> > Also the naming of the two traits feels inconsistent; one contains
->> > "Has" and the other doesn't.
->>
->> One is not a trait, not sure if you are looking on another item than
->> `struct HrTimer`?
->
-> Sorry, I meant HasHrTimer and HrTimerPointer rather than HrTimer and
-> HrTimerPointer.
-
-`HasHrTimer` is named so because it is meant to be implemented by types
-that contain a field of type `HrTimer`.
-
-`HrTimerPointer` is meant to be implemented by pointer types that point
-to types that implement `HasHrTimer`.
-
-They are different, and the naming reflect that.
-
-I will not rename `HasHrTimer` to `ContainsHrTimer`, because the rest of
-the rust kernel uses the `HasFoo` naming scheme.
-
-
-Best regards,
-Andreas Hindborg
-
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
