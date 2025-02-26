@@ -1,153 +1,111 @@
-Return-Path: <linux-kernel+bounces-533583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13340A45C4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543F9A45C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79CB9189359A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6311893383
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272B126A0AB;
-	Wed, 26 Feb 2025 10:54:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8354624E01A;
-	Wed, 26 Feb 2025 10:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FFF267F56;
+	Wed, 26 Feb 2025 10:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQEAK98a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD425C6E9;
+	Wed, 26 Feb 2025 10:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567283; cv=none; b=CZ0amb6ee6FLZBeu2FerVSA4iJ2E+eyDocEwLKPDy6vzNijwFUIMnDSUcnoqV9PE9DnK+CwlP6ZZbltj7Gv6jweF/+JhFzM51bZsIkirf8CJI+NFRPEXy26c/s3VFqKa4sITFao1wdsEGYD/C1aAKmflSJfOz1QQbOEea5kePi8=
+	t=1740567359; cv=none; b=Mr+Rtdnt+5ulrJkxXBtiYYWhLxo3IvunFb4OzGxtOHUxrSxRW6YKDd+jZ8ctlWQJWYzoY3Ctggn2R8mjsNgi2QR6TmWvzPzibIvFR+pgnH3qFczgEe5EWEB5IdBe6FpOYi3zbXUpTGr4xAXoK2HX9Uhh/Zn4hp4xQEM+xhQ3YwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567283; c=relaxed/simple;
-	bh=koG82KQ5MAFZbbOnQch9i9ot+SNWC3tiYmyye7wwNLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5/pqYub49s7UUlq9LginRYY35/7AXdHecZH8C0U/LqmlzqtUomo4FJfo/CUYNHk/JqnHxk+jR8rsDchL0sGhfcMK1COibgvb+xWvl0xhgHe+Fyi+jp1zdh/BMQPoNOZ8VzNAH8yAafW1AYZje+Y4Lj6iGRV4+9ULb57SHxFSYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6437D1BA8;
-	Wed, 26 Feb 2025 02:54:56 -0800 (PST)
-Received: from [192.168.102.177] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 380203F673;
-	Wed, 26 Feb 2025 02:54:38 -0800 (PST)
-Message-ID: <bc7f915b-8d9f-4e05-9939-8b7ecc078f85@arm.com>
-Date: Wed, 26 Feb 2025 10:54:29 +0000
+	s=arc-20240116; t=1740567359; c=relaxed/simple;
+	bh=ZU+ZyR4aLY3x0j3q2rbfwoqtx+ltymMrrVIRBW7+YG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbR4br/v5gVH4+HGlgsDHVm7nXIQejL9gs9p/ghzRl2bIn2Awy7CGI/0uP9ZyLhnNarCQ4VCECWv8aczl95TQeGsEPYHwpyG4q5MjbND08Zwwzn/vYAomVcxaI+kxjJkL+EAdFa3vBeA32xL0iyktvnXX9euScsxeidDbDmxly4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQEAK98a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A38C4CED6;
+	Wed, 26 Feb 2025 10:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740567358;
+	bh=ZU+ZyR4aLY3x0j3q2rbfwoqtx+ltymMrrVIRBW7+YG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQEAK98a9QsxVuUm4D+p3xKTQ8MVebjyVtb1s6tWkACMs3hlnKv6+T31miCwY1kIh
+	 PiTr1b7Lp89NngG+P0fdlzGCOqhrhC42qtV9ht2jvSv+5HrlLNIxw3w8Hp8gSnZEZg
+	 6DGna/DFkja7qjtlQMZ/HX/Lmo1fw2QrjCIU3IySKHQu8OA/XOu/X3M6QHeT5tjq7z
+	 UDZLDkLgf01Gk6ww34mSoQfEE8Nz3MA5Cpfq9oWS/sI620jNtMi9BjuVoTr8PRN9NE
+	 mp7g4AADraboKmZA5ICnooX09Dtv/aYuRc7WPHpp34SbtsH94KcmRzZbl5fmbeWJvE
+	 4TEzhlXjD9qug==
+Date: Wed, 26 Feb 2025 11:55:48 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>, x86@kernel.org
+Subject: Re: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY when we clear _PAGE_RW
+Message-ID: <Z77zNK7mRdjwILL7@gmail.com>
+References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
+ <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
+ <Z76APkysrjgHjgR2@casper.infradead.org>
+ <CAHk-=wj+VBV5kBMfXYNOb+aLt3WJqMKFT0wU=KaV3R12NvN5TA@mail.gmail.com>
+ <Z76R6ESSwiYipQVn@casper.infradead.org>
+ <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH v1 0/5] cpuidle: menu: Avoid discarding useful
- information when processing recent idle intervals
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
- <d0c013d5d2a9251d5dc468446f2a08ae8a7a8953.camel@linux.ibm.com>
- <f949565ef1f256a1641cea3fa1d01d126bcc32e8.camel@linux.ibm.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <f949565ef1f256a1641cea3fa1d01d126bcc32e8.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
 
-On 2/26/25 04:49, Aboorva Devarajan wrote:
-> On Mon, 2025-02-24 at 11:57 +0530, Aboorva Devarajan wrote:
->> On Thu, 2025-02-06 at 15:21 +0100, Rafael J. Wysocki wrote:
->>
->>
->>
->>
->> So for the entire series:
->>
->> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->>
->> I'm also trying a minimal unit fuzz-test with the pre- and post- patched version of the get_typical_interval 
->> function to understand this better, will post the results soon.
->>
->>
-> In addition to the previous tests, I also reviewed and tested how get_typical_interval
-> predicts the idle duration before and after the patch by mimicking the function in
-> userspace for better unit fuzz testing [1].
-> 
-> With the patch get_typical_interval function now produces more predictable values, whereas
-> in the previous implementation it frequently returned UINT_MAX. The behavior with the patch
-> seems to be more reasonable compared to before.  
-> 
-> Here are the test results  
-> 
-> 1. Low Variance:
-> 
-> When the history of CPU idle durations (8 intervals) is relatively uniform with low variance,
-> the predicted idle duration is unchanged between the patched and unpatched versions:  
-> 
-> | Test Case | Intervals                                    | Before | After | Difference |
-> |-----------|----------------------------------------------|--------|-------|------------|
-> | 1         | 100,105,110,115,120,125,130,135              | 117    | 117   | 0          |
-> | 2         | 200,205,210,215,220,225,230,235              | 217    | 217   | 0          |
-> | 3         | 500,505,510,515,520,525,530,535              | 517    | 517   | 0          |
-> | 4         | 1000,1005,1010,1015,1020,1025,1030,1035      | 1017   | 1017  | 0          |
-> 
->  2. High Variance
->  
-> For cases with high variance, the nonpatched function returned UINT_MAX,
-> 
-> After the patch, the function now returns reasonable values:  
-> 
-> | Test Case | Intervals                                  | Before      | After | Difference       |
-> |-----------|--------------------------------------------|-------------|-------|------------------|
-> | 5         | 99,198,297,396,495,594,693,792             | 4294967295  | 594   | -4294966701      |
-> | 6         | 1000,2000,3000,4000,5000,6000,7000,8000    | 4294967295  | 6000  | -4294961295      |
-> | 7         | 40,140,240,340,440,540,640,740             | 4294967295  | 540   | -4294966755      |
-> | 8         | 90,590,1090,1590,2090,2590,3090,3590       | 4294967295  | 2590  | -4294964705      |
-> | 9         | 42,142,242,342,442,542,642,742             | 4294967295  | 542   | -4294966753      |
-> | 10        | 70,570,1070,1570,2070,2570,3070,3570       | 4294967295  | 2570  | -4294964725      |
-> | 11        | 44,144,244,344,444,544,644,744             | 4294967295  | 544   | -4294966751      |
 
-So these are all "highest observed values after dropping high-end outliers" from what I can tell.
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
+> On Tue, 25 Feb 2025 at 20:00, Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > I think the entire point of this file is to manipulate kernel mappings.
 > 
->  3. Low-end Outliers 
-> 
-> The patch removes variance from low-end values as well,
-> Without the patch, the function only filtered high-end outliers, but now it correctly eliminates both
-> high and low ends.
-> 
-> | Test Case | Intervals                                 | Before      | After | Difference  |
-> |-----------|-------------------------------------------|-------------|-------|-------------|
-> | 12        | 1,200,200,250,250,230,220,260             | 4294967295  | 230   | -4294967065 |
-> | 13        | 100000,200,200,250,250,230,220,260        | 230         | 230   | 0           |
-> 
-> 
->  4. As far as I understand, the function only returns UINT_MAX when all values are 0, negative, or the
-> computed average itself is UINT_MAX.  
-> 
-> | Test Case | Intervals                                   | Before      | After       | Difference |
-> |-----------|---------------------------------------------|-------------|-------------|------------|
-> | 14        | 4294967295,4294967295,4294967295,4294967295 | 4294967295  | 4294967295  | 0          |
-> | 15        | 0,0,0,0,0,0,0,0                             | 4294967295  | 4294967295  | 0          |
-> 
-> The updated get_typical_interval function avoids unnecessary UINT_MAX returns, handles both low and high end
-> outliers, and gives more reliable predictions in high-variance cases. It only returns UINT_MAX when absolutely
-> necessary, and this will help in not selecting deeper idle state unless it is needed. So, I'm good with
-> the patch. 
-> 
-> Refer [2] for more test results.
-> 
-> [1] - https://github.com/AboorvaDevarajan/linux-utils/blob/main/cpuidle/cpuidle-predict-duration/predict_cpuidle_interval.c
-> [2] - https://github.com/AboorvaDevarajan/linux-utils/blob/main/cpuidle/cpuidle-predict-duration/out.predict.csv
-> 
-> 
-> Thanks,
-> Aboorva
+> Very likely. But just looking at the patch, it was very non-obvious.
 
-Thank you Aboorva, that's very useful.
-Looks all good and as expected to me then.
+Yeah, agreed - and I've extended the changelog the following way:
 
+  Subject: [PATCH] x86/mm: Clear _PAGE_DIRTY for kernel mappings when we clear _PAGE_RW
+  
+  The bit pattern of _PAGE_DIRTY set and _PAGE_RW clear is used to mark 
+  shadow stacks.  This is currently checked for in mk_pte() but not 
+  pfn_pte().  If we add the check to pfn_pte(), it catches vfree() 
+  calling set_direct_map_invalid_noflush() which calls 
+  __change_page_attr() which loads the old protection bits from the 
+  PTE, clears the specified bits and uses pfn_pte() to construct the 
+  new PTE.
+  
+  We should, therefore, for kernel mappings, clear the _PAGE_DIRTY bit 
+  consistently whenever we clear _PAGE_RW.  I opted to do it in the 
+  callers in case we want to use __change_page_attr() to create shadow 
+  stacks inside the kernel at some point in the future.  Arguably, we 
+  might also want to clear _PAGE_ACCESSED here.
+  
+  Note that the 3 functions involved:
+  
+    __set_pages_np()
+    kernel_map_pages_in_pgd()
+    kernel_unmap_pages_in_pgd()
+  
+  Only ever manipulate non-swappable kernel mappings, so maintaining 
+  the DIRTY:1|RW:0 special pattern for shadow stacks and DIRTY:0 
+  pattern for non-shadow-stack entries can be maintained consistently 
+  and doesn't result in the unintended clearing of a live dirty bit 
+  that could corrupt (destroy) dirty bit information for user mappings.
+
+Is this explanation better?
+
+Thanks,
+
+	Ingo
 
