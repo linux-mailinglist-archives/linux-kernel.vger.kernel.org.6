@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-533143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD72A45618
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:57:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 368E6A4561D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD9B16892F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:57:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16AB167FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D7026A09B;
-	Wed, 26 Feb 2025 06:56:54 +0000 (UTC)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17C7269B13;
+	Wed, 26 Feb 2025 06:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="QI5nX0oX"
+Received: from out30-65.freemail.mail.aliyun.com (out30-65.freemail.mail.aliyun.com [115.124.30.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E719269AE6;
-	Wed, 26 Feb 2025 06:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A0E5028C;
+	Wed, 26 Feb 2025 06:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740553014; cv=none; b=ceFMRbkSVFldfui+qxB2dS1I8yO0WpZagvB7+lLCnzIEMBC4Og+aRxyAOXd/lGIm1AxenxYf58s/+62TQ56xMSN9PdThztWFxrH8xH7/8DF8Qmz+wSgPaoX2Jtgc9gpJS2prJh2Xb1eMHSns3hPsIQ/QaP2fbqnksb0F7P8bQmI=
+	t=1740553090; cv=none; b=CMKhuRNeWoy8Yx9H9UoOpam3uS1lYoOjiQfAeEqJLQ69FNyap58oKedrd76TKsxlFLfxbzVSRNOvJtStJct4QY/YBplg1hUXEPfbD34plrU1tcASrGLuwFFrcyeXYWSj3VPRxeDsYVGgSc7yxT6DPbAnnBeGP5wOe0Uti7e6MgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740553014; c=relaxed/simple;
-	bh=REyGxNjVGb//SnIP92SWCgFA+IpnNaqyQiyCYfcvNSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cy/SKo48cmKvyXqR8+1vD68a8VhxxLcxbWvOdBkF4v5Ele6w81LxsIEXR3E+W/hACCnrHbaOkGREkfzfcEHubcneBrKldmVMwOYynQl7qE2/NSSlv8Rl4ATILYElBShLWMbGCqclQC7MzjSAGzxYNvaE/RvwB5UCT8cQTi6Qlw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22114b800f7so129148985ad.2;
-        Tue, 25 Feb 2025 22:56:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740553012; x=1741157812;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgmQrdXjfSpgmuZm0bmZrLFRaOfz8Weuouk07rmWvCo=;
-        b=GLCn9ojCqc6csQIs68hVChXL5LaaXVZQsz5bgw6nfhpmj/NUDoqhdDj55G4R1b3E9S
-         6lGxm8LXqSWwQkcOPslK0QS9vd2rEmZTIZ4q7xSNokevFSy+Fb+yICA5P+jEk1lWIf7K
-         Uv0jC+OPZlRfxwq2gcRMNcjdLV/I+mmeiWjeTV7Q5VTd8pPYqwjxUuPdYv7JERRX72Lh
-         vNJkHNr4xnCtff53XPlPbzlY9u6spEkJZZnoOATJAtWpHjLApEZLZGju/erohy/B0Kti
-         sjIXmEeSB8yqSkxQdIW9+GkDXbB+eco0XUTeNjEw+v3OgcsI4Ry7vhnSzn4/7N6o7VIG
-         XTAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3BYDieyOcIK9Lb4gS/lWfQkKjvvNppx/ENrCM5cBwWCeJ7DEROX6LO1/KZRnoa4NhK3G/280v5jD50ag=@vger.kernel.org, AJvYcCWAuHXBLDW8IfBcLEHqf/udPfTvCHKM5bGIp9p4jnUDE5CcN+mK6VLg4RQQzy3Qg4rZh3rbEWYF/5Np@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfMxHhqrxyzfQlBCLoChpflfe4/87nLl7nqpDHZGGVcuqd28Mx
-	QuNgtmC0ykq0jzH2tANeT531PJB0ng0HZgS/iKjnOtGI1Q8pQCMc
-X-Gm-Gg: ASbGncsD8fvrFiNLiQR60KXlGnvmw4PGU8HVLE19axv31MXC8z+kDim8YDjif8cHiT0
-	XVRZZBz26u9LsF0YRN6RhzwdIHBq6SKIElwu23NprSE6rqMNTL0PI3tsRYz6p3AR00hPJtt4UG8
-	QJwpUyNdrf+tPzG4GKSmrfVuv2GuwEIYsWx1/8PaRathS7jpclFoRT5sziu1m3QT30n1EmBSP8i
-	I5lbz73HG8316tqt0xxDPxuAbphpO14YUxU/ioJR1coKff5LncVH4zZqzX5lrqWjVGOJ0Lbk9ij
-	tivGCnxIRGYYfcSqHDp+uNTLR0+Wb3UaUXDJa1HPpWsYeBgjC85jZrXCmv6F
-X-Google-Smtp-Source: AGHT+IE90esSacLB2KmcdMQ1nRApbRRzIMd9mMfYID2+dXADWV/Ul+GxhLVJlLeZN+9ccdG/vujUxQ==
-X-Received: by 2002:a05:6a00:b46:b0:732:288b:c049 with SMTP id d2e1a72fcca58-7348bd91343mr3518214b3a.1.1740553012171;
-        Tue, 25 Feb 2025 22:56:52 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7347a7fa1bdsm2738604b3a.104.2025.02.25.22.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:56:51 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:56:50 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: jingoohan1@gmail.com, lpieralisi@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shradha.t@samsung.com,
-	cassel@kernel.org
-Subject: Re: [PATCH 2/2] PCI: dwc-debugfs: Return -EOPNOTSUPP if an event
- counter is not supported
-Message-ID: <20250226065650.GC951736@rocinante>
-References: <20250225171239.19574-1-manivannan.sadhasivam@linaro.org>
- <20250225171239.19574-3-manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1740553090; c=relaxed/simple;
+	bh=ZsjxukEOVO5ffJ4Zs95qYyTWGKODiQNlo9YbGYFgp5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jPunHAosB+374UCzXYUR50whuaKEZkqhEVA8fywZcmeLpy5D9jKEXUmMcYCJn2lvZK4IgMJfDDBnfXj+w8fB1Skvkza11P40jg7cMG5XN4E3gqTrnS/qdlhX1KYkq3CiVEj6jeXcL9IvEnPTGyn7Jo0Ua7aBZa5WRB2WPmZdPh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com; spf=pass smtp.mailfrom=aliyun.com; dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b=QI5nX0oX; arc=none smtp.client-ip=115.124.30.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliyun.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=aliyun.com; s=s1024;
+	t=1740553085; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=OxTo/iZCIK2ZpxP5h1M2T78BxTicPNxmRSp03rqcnX8=;
+	b=QI5nX0oXvc9YuStyjWUKIbPG4KO3kXgPkN+TNV7L/Vi1OBo4bnLsW+lof0cBzonu/cZ7njkW2q56OG2JFnogNf69bmyKw4kr80/D0UvhSh7CNWYJWDTqCfLaQPxgOkXU3wkq32QMDOSfi6P9/QgeAdgah8ZmVxr/fmc3qg1lPro=
+Received: from wdhh6.sugon.cn(mailfrom:wdhh6@aliyun.com fp:SMTPD_---0WQHDN2c_1740553084 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 14:58:05 +0800
+From: Chaohai Chen <wdhh6@aliyun.com>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chaohai Chen <wdhh6@aliyun.com>
+Subject: [PATCH] scsi: stop judging after finding a VPD page expected to be processed.
+Date: Wed, 26 Feb 2025 14:58:02 +0800
+Message-Id: <20250226065802.234144-1-wdhh6@aliyun.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250225171239.19574-3-manivannan.sadhasivam@linaro.org>
 
-Hello,
+When the vpd_buf->data[i] is expected to be processed, stop other
+judgments.
 
-> If the platform doesn't support an event counter, enabling it using the
-> 'counter_enable' debugfs attribute currently will succeed. But reading the
-> debugfs attribute back will return 'Counter Disabled'.
-> 
-> This could cause confusion to the users. So while enabling an event
-> counter in counter_enable_write(), always read back the status to check if
-> the counter is enabled or not. If not, return -EOPNOTSUPP to let the users
-> know that the event counter is not supported.
+Signed-off-by: Chaohai Chen <wdhh6@aliyun.com>
+---
+ drivers/scsi/scsi.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Thank you for following up on this.  Appreciated.  With that...
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index a77e0499b738..53daf923ad8e 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -510,22 +510,34 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+ 		return;
+ 
+ 	for (i = 4; i < vpd_buf->len; i++) {
+-		if (vpd_buf->data[i] == 0x0)
++		switch (vpd_buf->data[i]) {
++		case 0x0:
+ 			scsi_update_vpd_page(sdev, 0x0, &sdev->vpd_pg0);
+-		if (vpd_buf->data[i] == 0x80)
++			break;
++		case 0x80:
+ 			scsi_update_vpd_page(sdev, 0x80, &sdev->vpd_pg80);
+-		if (vpd_buf->data[i] == 0x83)
++			break;
++		case 0x83:
+ 			scsi_update_vpd_page(sdev, 0x83, &sdev->vpd_pg83);
+-		if (vpd_buf->data[i] == 0x89)
++			break;
++		case 0x89:
+ 			scsi_update_vpd_page(sdev, 0x89, &sdev->vpd_pg89);
+-		if (vpd_buf->data[i] == 0xb0)
++			break;
++		case 0xb0:
+ 			scsi_update_vpd_page(sdev, 0xb0, &sdev->vpd_pgb0);
+-		if (vpd_buf->data[i] == 0xb1)
++			break;
++		case 0xb1:
+ 			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+-		if (vpd_buf->data[i] == 0xb2)
++			break;
++		case 0xb2:
+ 			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
+-		if (vpd_buf->data[i] == 0xb7)
++			break;
++		case 0xb7:
+ 			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
++			break;
++		default:
++			break;
++		}
+ 	}
+ 	kfree(vpd_buf);
+ }
+-- 
+2.34.1
 
-Reviewed-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-
-Thank you!
-
-	Krzysztof
 
