@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-535001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1439DA46DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:40:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A3BA46DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB773A9F18
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E59E188D63C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214E4263C9E;
-	Wed, 26 Feb 2025 21:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEFA266F0B;
+	Wed, 26 Feb 2025 21:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="EhJ+rQ5g"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="gO5fv8h7"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CED20DD7A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4183F263C86
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605973; cv=none; b=UYzIFJtB4jgUpOaB+tUuuqhyL5gypXrOBKgAJkhW7YtQMhGQi+O2gRodDaBVh3dM1BzM9Z0d27mYZS1YkROWa1Rmz2e2y+7jOEo2SPwCXrCxpPLVLODPaAe4FQge2dzn3rSOFmwgmumU5XTIKz5sVGANM/sw/v6jya7DvMxjExE=
+	t=1740605978; cv=none; b=IqPSK/PfFlneiibNdoQx55RoAAHJ6Ln1A+PF/QmkGus0VlI+8QGMiSBEh3Tdd0kiOQEv7SesHwfavck3MJIcOpb5EmxNZCmw7QkwQIY3rrYcPonyyeb+NjM0ITar/dc3X9O+AGigbq7ShZCIgd5Z+8oIvnW06FL5TO3B2kRVG2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605973; c=relaxed/simple;
-	bh=QrmEP8tN0yyZl54302laf2o0i1y0v20R661+ErCqyqE=;
+	s=arc-20240116; t=1740605978; c=relaxed/simple;
+	bh=V0nqe9pGk9+j+rvT7OsE68sn/woHcCy9DXCv+4P0T4s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fY1lYIuXSrXw/lPJ31fDM2VA6VLGrGLQ1gIJhUZ4okMJjMVAmtUVu3+0/rAKdaDEq5G3yM5b4OYz4bAwCUeHHMztcv617icggwHYh1/cC7t3d+zWvKEhL7CfSCQU50pQs6/7N5jdGbOuXjAioPLFPDIQ9Onw7A511OV2fLU4CSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=EhJ+rQ5g; arc=none smtp.client-ip=67.231.153.30
+	 MIME-Version:Content-Type; b=B/g1Z8//XBmzjJgMOayxqii1zh6CZYHctUwB6/s+4LaHQ6LU0bz7REa42MRw4+3VJsaE/izfbmOWnYe9zzYLLYBK2imt1Mv3WS9ZxdiLwWkGAFWJJuFnkvBQk1jSJo/7HDaYpeq8zYoeTfIJ9uqu9Q5gVXzu9WZ+oQM1If5RYPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=gO5fv8h7; arc=none smtp.client-ip=67.231.153.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QKcd8a011226
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:39:30 -0800
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 51QKcSp4018501
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:39:34 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=6QWMRWFJaMkolJ4N5fn/a7XdpweKZa/QIaMY7SwUwCE=; b=EhJ+rQ5gnA22
-	LPjCW3FVCVOMYRKkT8w6EINOcbZO2B++l2lp1qwEq18MH8Dbp0mNAASd790R/86m
-	5+BDX8Wu4McTHfEwdGQWTOssNXUmeIY5SnWPYUBjsQrb8U7MhrMr11R7zp17HVe+
-	ViGB+0HL1JA1rYNpZGTI+lW4T6FR7zzUuqUWGPguNxCnZMC71CAaRUdBldwKacJm
-	c9JxXoHIY1WOfXcUMetvPH+ACcCodqvTiLzV9L1oOL6n44jAFMEyXxsqv8DIp7TJ
-	5nqChHZmU/bt7e/OjCRx8q6VsOZ5Q3ZtbSv5jGGZI7+Dd1xnCVJTjEP2x3wLZ8RA
-	lh7k6PZGKA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 45257gu7am-4
+	 bh=+lNJAllL67o7hUjzAbl5N9quGu7zuBmVuph1MeFnj+0=; b=gO5fv8h7LaQF
+	RBnT+7NHPmaCb6v5InxilkVDqkewGj4ZDzDuB6bk+rpSeyq61Lj+BuZiWLxNOgDR
+	NMP1D9XcqlFF58dfvFTKHSAhg6lgqGqm/u0qOs2wau1IHDH+q1gEImfA+RtLPDs6
+	jtFnsOBcVS83e3ZgZsRMWlIBqvsMetBO9Qbgw28kogB4hs8fXRj4mIKSN8cRgbxe
+	72LKtoULSmoW5wul5I1isdB9KU4o0ZmFyC6qfYtqaBMXGmxV2vUhvr4oLM7kP0WB
+	RshhYYJFgIp5P1INS5+Ok8bPgQpczBZ/BaGrg3gvUu1enK1YdjOG7M93UM/cgfXQ
+	abcXOs7/SQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 45257rb8d4-8
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:39:30 -0800 (PST)
-Received: from twshared11082.06.ash8.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:39:33 -0800 (PST)
+Received: from twshared11145.37.frc1.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 26 Feb 2025 21:38:48 +0000
+ 15.2.1544.14; Wed, 26 Feb 2025 21:38:49 +0000
 Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 32A80187DD500; Wed, 26 Feb 2025 13:38:45 -0800 (PST)
+	id 3AC4E187DD503; Wed, 26 Feb 2025 13:38:45 -0800 (PST)
 From: Keith Busch <kbusch@meta.com>
 To: <pbonzini@redhat.com>, <seanjc@google.com>, <kvm@vger.kernel.org>
 CC: <x86@kernel.org>, <virtualization@lists.linux.dev>,
         <linux-kernel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv2 1/2] vhost: return task creation error instead of NULL
-Date: Wed, 26 Feb 2025 13:38:43 -0800
-Message-ID: <20250226213844.3826821-2-kbusch@meta.com>
+Subject: [PATCHv2 2/2] kvm: retry nx_huge_page_recovery_thread creation
+Date: Wed, 26 Feb 2025 13:38:44 -0800
+Message-ID: <20250226213844.3826821-3-kbusch@meta.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250226213844.3826821-1-kbusch@meta.com>
 References: <20250226213844.3826821-1-kbusch@meta.com>
@@ -72,77 +72,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 3bKkHc11QqpxgssWmWqANtGLxx3xRbfO
-X-Proofpoint-ORIG-GUID: 3bKkHc11QqpxgssWmWqANtGLxx3xRbfO
+X-Proofpoint-GUID: 7XU4uLlAn8gP5pKG9T6MOum6zrGwAm6N
+X-Proofpoint-ORIG-GUID: 7XU4uLlAn8gP5pKG9T6MOum6zrGwAm6N
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-26_06,2025-02-26_01,2024-11-22_01
 
-From: Keith Busch <kbusch@kernel.org>
+From: Sean Christopherson <seanjc@google.com>
 
-Lets callers distinguish why the vhost task creation failed. No one
-currently cares why it failed, so no runtime change from this patch, but
-that will not be the case for long.
+A VMM may send a signal to its threads while they've entered KVM_RUN. If
+that thread happens to be trying to make the huge page recovery vhost
+task, it will fail with -ERESTARTNOINTR. We need to retry if that
+happens, so make call_once complete only if what it called was
+successful.
 
+Based-on-a-patch-by: Sean Christopherson <seanjc@google.com>
+[implemented caller side, commit log]
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- arch/x86/kvm/mmu/mmu.c | 2 +-
- drivers/vhost/vhost.c  | 2 +-
- kernel/vhost_task.c    | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/mmu/mmu.c    | 10 ++++------
+ include/linux/call_once.h | 16 +++++++++++-----
+ 2 files changed, 15 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index d4ac4a1f8b81b..18ca1ea6dc240 100644
+index 18ca1ea6dc240..8160870398b90 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7471,7 +7471,7 @@ static void kvm_mmu_start_lpage_recovery(struct onc=
-e *once)
- 				      kvm_nx_huge_page_recovery_worker_kill,
+@@ -7460,7 +7460,7 @@ static bool kvm_nx_huge_page_recovery_worker(void *=
+data)
+ 	return true;
+ }
+=20
+-static void kvm_mmu_start_lpage_recovery(struct once *once)
++static int kvm_mmu_start_lpage_recovery(struct once *once)
+ {
+ 	struct kvm_arch *ka =3D container_of(once, struct kvm_arch, nx_once);
+ 	struct kvm *kvm =3D container_of(ka, struct kvm, arch);
+@@ -7472,12 +7472,13 @@ static void kvm_mmu_start_lpage_recovery(struct o=
+nce *once)
  				      kvm, "kvm-nx-lpage-recovery");
 =20
--	if (!nx_thread)
-+	if (IS_ERR(nx_thread))
- 		return;
+ 	if (IS_ERR(nx_thread))
+-		return;
++		return PTR_ERR(nx_thread);
 =20
  	vhost_task_start(nx_thread);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 9ac25d08f473e..61dd19c7f99f1 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -666,7 +666,7 @@ static struct vhost_worker *vhost_worker_create(struc=
-t vhost_dev *dev)
 =20
- 	vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_killed,
- 				 worker, name);
--	if (!vtsk)
-+	if (!IS_ERR(vtsk))
- 		goto free_worker;
+ 	/* Make the task visible only once it is fully started. */
+ 	WRITE_ONCE(kvm->arch.nx_huge_page_recovery_thread, nx_thread);
++	return 0;
+ }
 =20
- 	mutex_init(&worker->mutex);
-diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
-index 8800f5acc0071..2ef2e1b800916 100644
---- a/kernel/vhost_task.c
-+++ b/kernel/vhost_task.c
-@@ -133,7 +133,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void =
-*),
+ int kvm_mmu_post_init_vm(struct kvm *kvm)
+@@ -7485,10 +7486,7 @@ int kvm_mmu_post_init_vm(struct kvm *kvm)
+ 	if (nx_hugepage_mitigation_hard_disabled)
+ 		return 0;
 =20
- 	vtsk =3D kzalloc(sizeof(*vtsk), GFP_KERNEL);
- 	if (!vtsk)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 	init_completion(&vtsk->exited);
- 	mutex_init(&vtsk->exit_mutex);
- 	vtsk->data =3D arg;
-@@ -145,7 +145,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void =
-*),
- 	tsk =3D copy_process(NULL, 0, NUMA_NO_NODE, &args);
- 	if (IS_ERR(tsk)) {
- 		kfree(vtsk);
--		return NULL;
-+		return ERR_PTR(PTR_ERR(tsk));
- 	}
+-	call_once(&kvm->arch.nx_once, kvm_mmu_start_lpage_recovery);
+-	if (!kvm->arch.nx_huge_page_recovery_thread)
+-		return -ENOMEM;
+-	return 0;
++	return call_once(&kvm->arch.nx_once, kvm_mmu_start_lpage_recovery);
+ }
 =20
- 	vtsk->task =3D tsk;
+ void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
+diff --git a/include/linux/call_once.h b/include/linux/call_once.h
+index 6261aa0b3fb00..ddcfd91493eaa 100644
+--- a/include/linux/call_once.h
++++ b/include/linux/call_once.h
+@@ -26,20 +26,26 @@ do {									\
+ 	__once_init((once), #once, &__key);				\
+ } while (0)
+=20
+-static inline void call_once(struct once *once, void (*cb)(struct once *=
+))
++static inline int call_once(struct once *once, int (*cb)(struct once *))
+ {
++	int r;
++
+         /* Pairs with atomic_set_release() below.  */
+         if (atomic_read_acquire(&once->state) =3D=3D ONCE_COMPLETED)
+-                return;
++		return 0;
+=20
+         guard(mutex)(&once->lock);
+         WARN_ON(atomic_read(&once->state) =3D=3D ONCE_RUNNING);
+         if (atomic_read(&once->state) !=3D ONCE_NOT_STARTED)
+-                return;
++                return -EINVAL;
+=20
+         atomic_set(&once->state, ONCE_RUNNING);
+-        cb(once);
+-        atomic_set_release(&once->state, ONCE_COMPLETED);
++	r =3D cb(once);
++	if (r)
++		atomic_set(&once->state, ONCE_NOT_STARTED);
++	else
++		atomic_set_release(&once->state, ONCE_COMPLETED);
++	return r;
+ }
+=20
+ #endif /* _LINUX_CALL_ONCE_H */
 --=20
 2.43.5
 
