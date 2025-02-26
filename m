@@ -1,133 +1,162 @@
-Return-Path: <linux-kernel+bounces-535155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B3EA46F9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:44:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CDBA46F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5507B3B0121
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD84818886C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E06027002A;
-	Wed, 26 Feb 2025 23:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D23D26E97C;
+	Wed, 26 Feb 2025 23:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1VihLE0"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2F627002B;
-	Wed, 26 Feb 2025 23:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ar/9C9wj"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577AD26E965;
+	Wed, 26 Feb 2025 23:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613398; cv=none; b=TtM9ZCIQnNuNA+r9Af3+Jj1K0DQ/fnssKxvoe6T7TwYJsmJyvDywPulBHPxZc6ATZefEcuZZplMljxf6uf7QhHAUazxY3xVTAsrE0IZSIQkl8+H70xDDadLaW5/qukRTfob97VQ1M33Md5+I9HxAyQpAJpjdMzmuko4Rr+SsyBk=
+	t=1740613394; cv=none; b=mN8r+GKj4W1P1R8LNxv7ZAvm9rg6zoxnW9aF5hj5fm/fXqIKIzG2PK7rxiw3MMl1fjF6Rdt6KxNZx2QACmbfd+KrlsGsM5uO/tocbsi5Fvr+vpAHCiF58B8p5geu6QA9ShabXF9XAxQWUNt29CpcGQ3bFen9yoE3TdYU1+4w25o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613398; c=relaxed/simple;
-	bh=Eh0Eo/Fkv7rimj8T89jrNFf3IIi3ia63rPOLD+dghLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C3Mo6Z//qw3GMTbYMzgVAFUNA7+HJmgOVnF7VLDbtKpldg6EwI+3rtUJjpNJD26fPF862go5yj588Q32iCKRGRJeOTtG/2Ri4wq5r9UOGJoYHqVqPBnh7Kq+AemD1t2Fe5SFD6V6vxbY0/st1pc9HfFXiYM/dv39tQ9jztLXxWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1VihLE0; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0a159ded2so33504885a.0;
-        Wed, 26 Feb 2025 15:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740613395; x=1741218195; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2BPCE1EwJy/+4tZvxiVTXnB1pR5FYwCTo9rAvyHj8R0=;
-        b=M1VihLE0to+xyPNWI8fNH10ahZ/gKMMyevUwXZbFqgIaz97pX0aTScraaY8NV2HPcW
-         LJIYkz+wHYPrkWdZW0H5p4J29IMHUsWa8vs7qQg8gKR6acdDrrzjKtMwQS4xgBs5OhNf
-         EiRl0RuVxtk7oTfc4Tsf5vO0kMVeDW+5dhIS6kEWkQUnETdSEVllHewW92+INXklEZc6
-         q60Fv8nTD6yYOdbjH7aBpKbTeUz21pxczWGNQsuMJ3qEHkBwv952qEhjqjWCa3y0oMkR
-         dJEmrulssFlu36bFY7Vc/NMovAmkRagUioG2UtSSmsWFews5Qaef0wxMjuGVGYmhBuvF
-         utQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740613395; x=1741218195;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2BPCE1EwJy/+4tZvxiVTXnB1pR5FYwCTo9rAvyHj8R0=;
-        b=O0CYM06iOfIl7odIbA0Tnp/92W/7MGbONjwg+mtTWPs7thJpXJYzWhlpeaQMgD1YH2
-         BrIP798IqPYZ8Zqn/rarF/z0wcKeyWW5P2XvOXYVzbR3ivY1umC0Dto5PJOZOvm6nMz+
-         6zxsb5KdN5qIdFPY+YcP9/4FuBok1PxcVq3c08btxPBT6TBMWO4z08ZiQ7hui4Ai/vxL
-         4BaiDa2AZq74jjdwAyG5S6PrEdW+d7atv25ieRiQDt6pOUap30GG64a8xfuahYH6ZHjn
-         aGbO9Lvz++UYvXZ8KOHhcddtJnR76E5VCwYZuzqvDmVhnpRbhCoSf1y21W9gWvJmcK1n
-         8DMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsIGYbCxZBvFtvDPAo2pgfo7+5VWCMCt/RHmmETXKeGLWjuVWrjjpiIYT88q32N1l2BIETq/KNH1xktgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvDla1i8aOyYW0NQZug5K9roLOLinb1KuiRW8lc5h0ldXZm6yC
-	s60tsJk623WLsZMR/s+VDAE2UU2cpfNOvuuCGS0U2RCj4tp3gP/E+ddv4g==
-X-Gm-Gg: ASbGncunODSnezBRDqguqQhEPY7gH1J8cvg/kiYal34VDEnGEU61rD0iq9M/Vpao2rK
-	LmKjsYU/lnmld1zzg/DeZ80nh0gv0vbiEqGyurh9d9z84KHzSuc47o+NulokIbKKBVi2rXENAXL
-	ADD7UF5N3nxWKlXfzFrcF9DRdt6lIxs8mYW6uJ2076M1Q99Rnq7x/cjreMbGP1PnCFqglkF99qw
-	DanbJnUkr8KZP5mhAiTJJSeN1zqxhBToZ/GGts9RUZiE88oPGiAw/gK/Kh2KQiT4quC6mjMAW6i
-	hQ==
-X-Google-Smtp-Source: AGHT+IExZ166ZnKNMVp2sWPEye4nK9gUSWKtplsD+DW3kIJ2K1CBVm+kQQbvv+biiRYF9M4XnPhnNw==
-X-Received: by 2002:a05:620a:198e:b0:7c0:8978:d1e3 with SMTP id af79cd13be357-7c247fcc139mr765759485a.46.1740613395229;
-        Wed, 26 Feb 2025 15:43:15 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36fee9b74sm24836785a.9.2025.02.26.15.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 15:43:14 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Guo Ren <guoren@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v2 5/5] riscv: dts: sg2042: Adapt reset generator for new binding
-Date: Thu, 27 Feb 2025 07:42:33 +0800
-Message-ID: <20250226234234.125305-6-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250226234234.125305-1-inochiama@gmail.com>
-References: <20250226234234.125305-1-inochiama@gmail.com>
+	s=arc-20240116; t=1740613394; c=relaxed/simple;
+	bh=yw3bajXoxmDmry067IRgYkao+gs6z0/DF6pY5sDZAF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGdAX5GIFkkhcdKPWUcAGTzTr5x5XOs7FcShRiJky1+3YlC/Oj8Rymp0aG8QKsrd+Z2HDMWC9wOJhLBadIZ6WC6m1FcPtjy2rxdpvadS6SZf9+9Mgc26hqtANWYMLYM3FTA52V5J20RYOmF2jOmiUCL4VaBYIBanxU/QVKOV1rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ar/9C9wj; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii. (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A393E210EACA;
+	Wed, 26 Feb 2025 15:43:11 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A393E210EACA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740613392;
+	bh=jzMXL280br0vhbgA72KzbwPRmGz6jiYxkQdz6bCZM2k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ar/9C9wjmLoKfaSfU4jE6OWNYEhLvO08kHxOvO1dxpVy28cVQhh0RP96Db9T5SWwU
+	 j3V/uYXFAQY97/T/kAINpXql5Jj4zG/wIuxKyi2pjR1LPPnaXEGObKUM8vLqnHf2Mc
+	 0EGXqC4phb3oOqEXIQmWqSTjHb1SfUFSUFK8Er3o=
+Date: Wed, 26 Feb 2025 15:43:09 -0800
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+	arnd@arndb.de, jinankjain@linux.microsoft.com,
+	muminulrussell@gmail.com, mrathor@linux.microsoft.com,
+	ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+	gregkh@linuxfoundation.org, vkuznets@redhat.com,
+	prapal@linux.microsoft.com, muislam@microsoft.com,
+	anrayabh@linux.microsoft.com, rafael@kernel.org, lenb@kernel.org,
+	corbet@lwn.net
+Subject: Re: [PATCH v5 08/10] x86: hyperv: Add mshv_handler irq handler and
+ setup function
+Message-ID: <Z7-nDUe41XHyZ8RJ@skinsburskii.>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-9-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1740611284-27506-9-git-send-email-nunodasneves@linux.microsoft.com>
 
-As the SG2042 reset controller reuse new binding, change the device
-compatible with new string.
+On Wed, Feb 26, 2025 at 03:08:02PM -0800, Nuno Das Neves wrote:
+> This will handle SYNIC interrupts such as intercepts, doorbells, and
+> scheduling messages intended for the mshv driver.
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Wei Liu <wei.liu@kernel.org>
+> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+> ---
+>  arch/x86/kernel/cpu/mshyperv.c | 9 +++++++++
+>  drivers/hv/hv_common.c         | 5 +++++
+>  include/asm-generic/mshyperv.h | 1 +
+>  3 files changed, 15 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index 0116d0e96ef9..616e9a5d77b4 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -107,6 +107,7 @@ void hv_set_msr(unsigned int reg, u64 value)
+>  }
+>  EXPORT_SYMBOL_GPL(hv_set_msr);
+>  
+> +static void (*mshv_handler)(void);
+>  static void (*vmbus_handler)(void);
+>  static void (*hv_stimer0_handler)(void);
+>  static void (*hv_kexec_handler)(void);
+> @@ -117,6 +118,9 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
+>  	struct pt_regs *old_regs = set_irq_regs(regs);
+>  
+>  	inc_irq_stat(irq_hv_callback_count);
+> +	if (mshv_handler)
+> +		mshv_handler();
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- arch/riscv/boot/dts/sophgo/sg2042.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Can mshv_handler be defined as a weak symbol doing nothing instead
+of defining it a null pointer?
+This should allow to simplify this code and get rid of
+hv_setup_mshv_handler, which looks redundant.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index e62ac51ac55a..2be10cbba0ce 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -499,9 +499,10 @@ intc: interrupt-controller@7090000000 {
- 		};
- 
- 		rstgen: reset-controller@7030013000 {
--			compatible = "sophgo,sg2042-reset";
-+			compatible = "sophgo,sg2042-reset", "reset-simple";
- 			reg = <0x00000070 0x30013000 0x00000000 0x0000000c>;
- 			#reset-cells = <1>;
-+			active-low;
- 		};
- 
- 		uart0: serial@7040000000 {
--- 
-2.48.1
+Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
 
+> +
+>  	if (vmbus_handler)
+>  		vmbus_handler();
+>  
+> @@ -126,6 +130,11 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_hyperv_callback)
+>  	set_irq_regs(old_regs);
+>  }
+>  
+> +void hv_setup_mshv_handler(void (*handler)(void))
+> +{
+> +	mshv_handler = handler;
+> +}
+> +
+>  void hv_setup_vmbus_handler(void (*handler)(void))
+>  {
+>  	vmbus_handler = handler;
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 2763cb6d3678..f5a07fd9a03b 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -677,6 +677,11 @@ void __weak hv_remove_vmbus_handler(void)
+>  }
+>  EXPORT_SYMBOL_GPL(hv_remove_vmbus_handler);
+>  
+> +void __weak hv_setup_mshv_handler(void (*handler)(void))
+> +{
+> +}
+> +EXPORT_SYMBOL_GPL(hv_setup_mshv_handler);
+> +
+>  void __weak hv_setup_kexec_handler(void (*handler)(void))
+>  {
+>  }
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+> index 1f46d19a16aa..a05f12e63ccd 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -208,6 +208,7 @@ void hv_setup_kexec_handler(void (*handler)(void));
+>  void hv_remove_kexec_handler(void);
+>  void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
+>  void hv_remove_crash_handler(void);
+> +void hv_setup_mshv_handler(void (*handler)(void));
+>  
+>  extern int vmbus_interrupt;
+>  extern int vmbus_irq;
+> -- 
+> 2.34.1
+> 
 
