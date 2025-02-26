@@ -1,79 +1,110 @@
-Return-Path: <linux-kernel+bounces-534417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B41A466C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:38:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F236A46678
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0709F19C0021
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE663AB006
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B1A22069E;
-	Wed, 26 Feb 2025 16:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C635F220694;
+	Wed, 26 Feb 2025 16:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M1xt+NJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QpGhNrRs"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCCF21D599;
-	Wed, 26 Feb 2025 16:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C690421D59E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586941; cv=none; b=SGzukg3Fc2Z3mmNolKuOpX+c4qWy5ohyRKCpTBjN95+ZultHg3tuJRw109Fp0l5lbYbpUjhFFnMRcRfd2ZDZ6vdECuIBBg5Nd8OuClBkQnbLSSzCZ9zzE/sd14g14supLooxEC4Si9AXhOhknsZ1PmqRnsTNO6AF98Ec/ivdEfk=
+	t=1740586992; cv=none; b=Q7TmMynslb+zK/8YjmWpufIseJyLrMmQ+L+3XtWFfe+GD4M18L62YITza877yOycwPURHVVrBNAGM0JdQ898tesR268zZmxLfz2skzeE8lmYf8PSxV8ZXSWrbf4m3iXIT74VRn6rasIYylPwEYWSf3JRUL6b138ift4wBNuwd3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586941; c=relaxed/simple;
-	bh=B6gilIoT9xVhIvC8ttWtPnP8FX+S+KHLrI0g12qku6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MT/iUzGUJ1d8w0bPMiHUVSoaBgjBOS8DwuIX6tYLGDIkt1xOhdywjjhQ9musn/h6aCPl5ihPslWm3roP6BJdfZ/Qw937tU0x1CydB8jjBjd7isYO4SLHNl1auWVt7qVQJQE1VXsBRQyIbGzI1pjzAdmzCsVh204wU44272lw6bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M1xt+NJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070CBC4CED6;
-	Wed, 26 Feb 2025 16:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740586941;
-	bh=B6gilIoT9xVhIvC8ttWtPnP8FX+S+KHLrI0g12qku6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M1xt+NJNubDw/FVWW03y2hZo95XeaMnSfkallJlteDpim69mLMA5Dz6XUasAMyoD3
-	 snizzYgpU7jeqVI+nVWc91zdS/VCNUetVOxr4qTvEZu1QRdTHCWPHsNWYMzRrHBm6P
-	 E1hhRykvgXxk3smn/L4l361/ikefDZkDJPqX3IrQ=
-Date: Wed, 26 Feb 2025 08:21:11 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable <stable@kernel.org>, Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH] Revert "libfs: Use d_children list to iterate
- simple_offset directories"
-Message-ID: <2025022621-worshiper-turtle-6eb1@gregkh>
-References: <2025022644-blinked-broadness-c810@gregkh>
- <a7fe0eda-78e4-43bb-822b-c1dfa65ba4dd@oracle.com>
+	s=arc-20240116; t=1740586992; c=relaxed/simple;
+	bh=OW3EKjV0GFKj4H5+AkSi8pTx6ChzKOaZ0w6/vFl+i0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVwzltIo8z9I3WU+cLSqc9j7H8Dw9aRNQJh3z2jhiJHE2B+DNDvBLGl1qOzHZxyjSnkpsmYJq2zriw0lCPiAd4/PhyMON4RtgOn3KAbAnB30sUDmfL3n68lW/hAZhhOLbrL092zZKK6wuxNnQpeHT2ytc5gAP6zAlVvt200qLjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QpGhNrRs; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-471fbfe8b89so414221cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:23:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740586989; x=1741191789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYwoz+4o0rXaFvnnGUxhQGDiYZ+3+SI/vfL79oLs+ao=;
+        b=QpGhNrRskqxuULwkeRKM+2wrloPklxAfnPG00a6bCgCNzIiT9XRBOEp/26oQ6deUmk
+         p0ckUo8yNCpA57eOgoqDPM7qfhdfdXSBRjbXKr7s292HCCwbJCwR6pOz5uuNyIDuXUMh
+         4dLvkVTWnu0IxxZdDlvvH0QGPKzk2HTYht0NX0CZd1d4iYZiSTXwn0WUg63rtnevxtEL
+         3JATLJCZ/U4bwyvGpi5gSbnxmZhzAGRT8LbjDyf6G7hUQWEawdhRrAam0jf/cYlB8EcY
+         MB4THjlBd/xNRQ+sHbu1JuUGCodIe5gWCm67ubAI4ynnoHiu3ZZwCNnY/l8Ve6zE+tvp
+         VbYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740586989; x=1741191789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TYwoz+4o0rXaFvnnGUxhQGDiYZ+3+SI/vfL79oLs+ao=;
+        b=M/ecsdfwqWaJGIWzni1id+ZrjfDc5qLGOwxs25C5lSqkfScKh76UjOt9OU9MdDbHvk
+         DZNbd9WkMTXjm+komk58nsa6fK+gdC8TrL9WPujsZnOf769lzl43y5uayjqTkmMOQv1c
+         zaQXQI1u+8qb88gXABbu7wDwNB4AKfq65f4oSZHz1jeSXwj0rodRGcGJEF5PTY9zUAor
+         poQeTtmDilHTrqG/OiMYvOnczV/fkG5xMURvCt9nFJAQduHcSkMb6HUo505XNSe4nqwy
+         sLWAjV5uI2ZVPaUpRMVNHjV/eIXjpH/bTB3K5Ndrx6TMMjwsS/Sr6teE6CKFEVXMGgvI
+         47Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZdocYGvUc2LR2SltKXtW/6ae9aGW3z4Xme+T1WB0B0wK1R46mqWzIn1D6yPpKq3tecpEMVYVR4qNP+XY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpN6xRc+UH0Y7mrcVWLCDYtDnplptvwjTrA4zXa3xYa6NUxxqL
+	TznEeRqBaRvLKmGctHqyVVeSUCZkTvPbUAdYasVtOTqqvPhTFQw9ij/MoxMrISV2bNV4z8ku6ZZ
+	VemcDohMnTcoGJ2G/+b9gSXQTneqUN1We/+jW
+X-Gm-Gg: ASbGncu3DOKhcnuoamGd1a4I67CHP+0Cy8KEzsIyGjwCK2YWvFqqBkbqH83r8yjzsez
+	HP/JZUDYTUyzM3gGbTH1fASx3Yg0op64zQq7N2SDNfO5Qw6neBZbNGoi8/0PJu5iO1yfDP1z7oL
+	HSmRMswiY=
+X-Google-Smtp-Source: AGHT+IGS4E0sY58X5WbTIcOKDP+XrBsyCeu0B3UEDuEcqOOX1Zx7lgdZMjLUe698XuQNGjVGfojoKnWDqlMSyuzqMOQ=
+X-Received: by 2002:a05:622a:287:b0:471:f8af:3231 with SMTP id
+ d75a77b69052e-47376fd1970mr10204321cf.19.1740586989239; Wed, 26 Feb 2025
+ 08:23:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7fe0eda-78e4-43bb-822b-c1dfa65ba4dd@oracle.com>
+References: <20250225204613.2316092-1-surenb@google.com> <hdcrjkqb4cevovpw5xprkh7ohykqay5ew27sbtpzg2k7vrm7mx@6ircmivkmkgv>
+ <CAJuCfpGu3Gx-kCChgQjZMQNOxU=CqzkHuoghfNmbv+Q1UKYPxA@mail.gmail.com> <Z78-YdCGtbV61x_Z@casper.infradead.org>
+In-Reply-To: <Z78-YdCGtbV61x_Z@casper.infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 26 Feb 2025 08:22:58 -0800
+X-Gm-Features: AWEUYZl0Odoo1BBPR51MmJxbUsSi0fMIUcQ-Z4sIaMMNc_DMaCdMCu8Iy33_Mg0
+Message-ID: <CAJuCfpFykPaU0XBPBdfnVzvYGK8k_KW7KAEeh2ROyibkuquJFg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: do not block on locking a large folio
+ with raised refcount
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
+	lokeshgidra@google.com, aarcange@redhat.com, 21cnbao@gmail.com, 
+	v-songbaohua@oppo.com, david@redhat.com, peterx@redhat.com, 
+	lorenzo.stoakes@oracle.com, hughd@google.com, jannh@google.com, 
+	kaleshsingh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 10:57:48AM -0500, Chuck Lever wrote:
-> On 2/26/25 9:29 AM, Greg Kroah-Hartman wrote:
-> > This reverts commit b9b588f22a0c049a14885399e27625635ae6ef91.
-> > 
-> > There are reports of this commit breaking Chrome's rendering mode.  As
-> > no one seems to want to do a root-cause, let's just revert it for now as
-> > it is affecting people using the latest release as well as the stable
-> > kernels that it has been backported to.
-> 
-> NACK. This re-introduces a CVE.
+On Wed, Feb 26, 2025 at 8:16=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Wed, Feb 26, 2025 at 08:11:25AM -0800, Suren Baghdasaryan wrote:
+> > On Wed, Feb 26, 2025 at 6:59=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
+racle.com> wrote:
+> > > Reversing the locking/folio_get() is okay because of the src_ptl spin
+> > > lock, right?  It might be worth saying something about it in the
+> > > comment?
+> >
+> > That is correct. We take both folio lock and refcount before we drop
+> > PTL. I'll add a comment. Thanks!
+>
+> In the commit message, not in the code, please.
 
-As I said elsewhere, when a commit that is assigned a CVE is reverted,
-then the CVE gets revoked.  But I don't see this commit being assigned
-to a CVE, so what CVE specifically are you referring to?
-
-thanks,
-
-greg k-h
+Ack.
 
