@@ -1,112 +1,177 @@
-Return-Path: <linux-kernel+bounces-533326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A46A4586F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:34:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7155EA45871
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA071894802
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499D8167E68
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5CB1E1DF3;
-	Wed, 26 Feb 2025 08:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E801E1E05;
+	Wed, 26 Feb 2025 08:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fF7Nkb6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G4U59130"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57BC258CEF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD127702
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558833; cv=none; b=eeqTsOoDyb7nRi11u8nr2u060c590d7VnxaRio+mxGadLCU7Ns2zQAU1s+xIq3oAS5WiQBFhEJz9/LMNcbtq/l/tMb7oQeutipv9+buiIMfQkslwnjy/lZRbk+vj3ZMk0itZzWdJ4T0+L7rrbrgJiSjUUIUv06jq0aEdnhHWKEU=
+	t=1740558868; cv=none; b=JnpW4JTKeOexAVs9SfSZ0v93hPJjaxEGx5ixT5WGBhfnbzr1oh+1eeZvzxwZtTy8vm7SlYifxQV/ucG4kdBeIx29W4X+hTUfwz1JMyY6jIizPKaF/+zcd/hK0x90luoMbDTErNEc2TlVeXlc/nHT9GELDiuhwU3VqH5s/qZs6W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558833; c=relaxed/simple;
-	bh=h4n+Ms5pL1bQf2A43JK9AnzZQ4jrDTIzztujw/nMLhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BFCiKL1z6N8aLZIAYGtolUcbZAW5yEhQlKM2AS0GqQeRRWZD6LvgzfKtfi2oMMlm9Qw0EXzQlEABV1YM4sbK/PjmN4EtWcHkb1bh60T4K0IF0PioyHbirpRSWlbksT7iXtg3//AZBPqSzBM3QxIRueEMP2035bcvRP0cqs0/LCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fF7Nkb6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2791C4AF0B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740558833;
-	bh=h4n+Ms5pL1bQf2A43JK9AnzZQ4jrDTIzztujw/nMLhY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fF7Nkb6EFcuQ2nWpn6NflNcAIyCSopyGB/ujzXI044JXfu4BnqLWzNubAe+Cb33pc
-	 QG2mmc4mqOTvDXR3wcjG0qPUonAST0mVOMTr9lMePVzgmTUOtnoZU0AnAa9Z74VaGr
-	 e4ygJuCHnFVma1bXj/yU13S6bfSrRSKn0vL9CxIC7YAnxujdRKI2SHzQyCng6c6ZDv
-	 cdNN5lNObsL930f0yNVkam1Duxxh6GzXE2pzNEPEi2b1GRXZa+hKSbEdZHKRJQNI+J
-	 22596hgvl+v3/IkOocxH+vYFBtCn37e6xfSxWwSWCuoZGIszMQemuR6jOD+Qh3fF+Z
-	 9JXFA9u+ROFzQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5452e6f2999so6930539e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:33:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXFCW/vdB7JblhwRT57TA7Fda1vcbgL3xQU8irj9Sg3hemFnsjgaWKTWPPmXGE7NpCMiB1EFnUQRiIVK5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/yJpfp7SiWasoI/yDfD8WOcAinMy/jqToz9DRGQ3YfgiBAWkE
-	Q3VL7Qs9NQ1Cb2q5jRaBnZQGefJ2uDDeS3Nvtb+DX43L5ca/QPrq0cADPJsJiodLfmR15DJ4diE
-	KhPa3lLOYeo/h2f7tDY4ukU8DHS0=
-X-Google-Smtp-Source: AGHT+IF/9KPwCKz/aTELvY1XPdqB6cBdhDW+Aul55vhx/tWDsKal1Jxjza19tj1JccT2kVzCsDOzqsJlMlUX/R+oPRs=
-X-Received: by 2002:a05:6512:39c6:b0:545:2871:7cd5 with SMTP id
- 2adb3069b0e04-548510cf95amr4870815e87.15.1740558832065; Wed, 26 Feb 2025
- 00:33:52 -0800 (PST)
+	s=arc-20240116; t=1740558868; c=relaxed/simple;
+	bh=nNK3eON7sgCfOoj/gz1hzVi92eFm3usqdnxBzxGqZKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W15oUJiiu35WKpkWl8hugsxLEeaM80IkDKvoQDT++CHyrUR5TznoY42u+NGjPzSmDhDwds+39dU2EWrjKCYFSRV5BWiIJYhWqYwM7admvXMq2rFxzfdg0gK9JH5lcRbYVQgfSRsYQGrpmzc0MTgRXjnSD4K/Qoe5wApgX3OT/uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G4U59130; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740558865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fImwG0gjP1kPfa1qAhDHGLxTqLh4BuZ+7fvJaclJjHc=;
+	b=G4U59130bcsBoDDEitWUwZU/N9p19M6qHB9ecKdZK10xuf+AlMB3FzcLfmYwYOZ3KRPjtp
+	ExmoDsVkDoDVfGe6z29rwBtenQdAtbsJejafuu4pFMeUpxgm8+rBiHELsN3tLvXd4RTMS4
+	Qj/YwUHR60ZVdNcEz8L7qktdBTtwuKQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-eLi501WYORugUbouz1XuFw-1; Wed,
+ 26 Feb 2025 03:34:23 -0500
+X-MC-Unique: eLi501WYORugUbouz1XuFw-1
+X-Mimecast-MFC-AGG-ID: eLi501WYORugUbouz1XuFw_1740558862
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 00E4519373DC;
+	Wed, 26 Feb 2025 08:34:22 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.27])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 226E11800352;
+	Wed, 26 Feb 2025 08:34:12 +0000 (UTC)
+Date: Wed, 26 Feb 2025 16:34:06 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
+Message-ID: <Z77R_rqgDdAvFVgP@fedora>
+References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225114638.2038006-1-ryan.roberts@arm.com>
- <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
- <20250226001047.GA24197@willie-the-truck> <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
- <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com>
-In-Reply-To: <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 26 Feb 2025 09:33:40 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrfVJEmlrpBhoXqMjR9dAVnG364eO1ZQeuCfzmi2NJ8RHVsmdaWEeUcBJg
-Message-ID: <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Luiz Capitulino <luizcap@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226011627.242912-1-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, 26 Feb 2025 at 09:07, Ryan Roberts <ryan.roberts@arm.com> wrote:
->
-> On 26/02/2025 06:59, Ard Biesheuvel wrote:
-> > On Wed, 26 Feb 2025 at 01:10, Will Deacon <will@kernel.org> wrote:
-> >>
-> >> On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
-> >>> Apologies for the breakage, and thanks for the fix.
-> >>>
-> >>> I have to admit that I was a bit overzealous here: there is no point
-> >>> yet in using the sanitised value, given that we don't actually
-> >>> override the PA range in the first place.
->
-> But unless I've misunderstood something, parange is overridden; Commit
-> 62cffa496aac (the same one we are fixing) adds an override to force parange to
-> 48 bits when arm64.nolva is specified for LPA2 systems (see mmfr2_varange_filter()).
->
-> I thought it would be preferable to honour that override, hence my use of
-> arm64_apply_feature_override() in the fix. Are you saying we don't need to worry
-> about that case?
->
+On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The bio submission time may be a few jiffies more than the expected
+> waiting time, due to 'extra_bytes' can't be divided in
+> tg_within_bps_limit(), and also due to timer wakeup delay. In this
+> case, adjust slice_start to jiffies will discard the extra wait time,
+> causing lower rate than expected.
+> 
+> This problem will cause blktests throtl/001 failure in case of
+> CONFIG_HZ_100=y, fix it by preserving one finished slice in
+> throtl_trim_slice() and allowing deviation between [0, 2 slices).
 
-I wouldn't think so (but I'm glad you brought it up because this
-didn't occur to me at all tbh)
+I think it only can cover single default slice deviation, since
+throtl_trim_slice() just keeps dispatch data in the previous single
+default slice. Or can you add words on how to allow 2 default slices
+deviation?
 
-With arm64.nolva, both the VA and PA ranges will be reduced, and so
-the range of the linear map will be 47 bits. So if the PA range is
-being reduced from 52 to 48, it will still exceed the size of the
-linear map, and so it should make no difference in this particular
-case.
+> 
+> For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+> slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
+> per slice.
+> 
+> If user issues two 21 bytes IO, then wait time will be 30ms for the
+> first IO:
+> 
+> bytes_allowed = 20, extra_bytes = 1;
+> jiffy_wait = 1 + 2 = 3 jiffies
+> 
+> and consider
+> extra 1 jiffies by timer, throtl_trim_slice() will be called at:
+> 
+> jiffies = 40ms
+> slice_start = 0ms, slice_end= 40ms
+> bytes_disp = 21
+> 
+> In this case, before the patch, real rate in the first two slices is
+> 10.5 bytes per slice, and slice will be updated to:
+> 
+> jiffies = 40ms
+> slice_start = 40ms, slice_end = 60ms,
+> bytes_disp = 0;
+> 
+> Hence the second IO will have to wait another 30ms;
+> 
+> With the patch, the real rate in the first slice is 20 bytes per slice,
+> which is the same as expected, and slice will be updated:
+> 
+> jiffies=40ms,
+> slice_start = 20ms, slice_end = 60ms,
+> bytes_disp = 1;
+> 
+> And now, there is still 19 bytes allowed in the second slice, and the
+> second IO will only have to wait 10ms;
+> 
+> Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
+> Reported-by: Ming Lei <ming.lei@redhat.com>
+> Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-throttle.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> index 8d149aff9fd0..cb472cf7b6b6 100644
+> --- a/block/blk-throttle.c
+> +++ b/block/blk-throttle.c
+> @@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+>  	 * sooner, then we need to reduce slice_end. A high bogus slice_end
+>  	 * is bad because it does not allow new slice to start.
+>  	 */
+> -
+>  	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
+>  
+>  	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+>  				 tg->td->throtl_slice);
+> -	if (!time_elapsed)
+> +	/* Don't trim slice until at least 2 slices are used */
+> +	if (time_elapsed < tg->td->throtl_slice * 2)
+>  		return;
+>  
+> +	/*
+> +	 * The bio submission time may be a few jiffies more than the expected
+> +	 * waiting time, due to 'extra_bytes' can't be divided in
+> +	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
+> +	 * case, adjust slice_start to jiffies will discard the extra wait time,
+> +	 * causing lower rate than expected. Therefore, one slice is preserved,
+> +	 * allowing deviation that is less than two slices.
+> +	 */
+> +	time_elapsed -= tg->td->throtl_slice;
 
-The use case I had in mind was to allow the PA range to be reduced to
-a value that is substantially less than the range of the linear map,
-e.g, 40 bits on a 48-bit VA kernel. On the Android side, the issue of
-the missing linear map randomization has come up a couple of times,
-but there is no clear direction at this point, so adding this feature
-here was premature (mea culpa)
+Please document that default slice window size is doubled actually in
+this way.
+
+
+Thanks,
+Ming
+
 
