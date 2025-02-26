@@ -1,261 +1,119 @@
-Return-Path: <linux-kernel+bounces-533968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C285A460EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:30:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD16A460EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2115E18892B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6A1A7A8D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E608F1624C0;
-	Wed, 26 Feb 2025 13:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4736A2206A4;
+	Wed, 26 Feb 2025 13:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KWaohmUR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B24RGItM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E8721C194
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B463E15E5AE;
+	Wed, 26 Feb 2025 13:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576607; cv=none; b=WkMJ1d6hmDYBiSuWB/1mHnLOifyzPISd5HMvdyX08SOKgaixi1AtSu2aqQ7gfHUz3qPov++YaDzAQ8W+QHYSSGoINAjG8Mfb/Tu7of8MlSOmhDeq4aSxUj0CIbVZjdhb/89Ury5C4bJUQUeROvG89up+0kBN3FfhVcd0/gFk9pA=
+	t=1740576613; cv=none; b=a3NtrU2OVVz20hKphXP+DnwdTgE+0NhHbNg9kmDChqqIYnHcXrK0md6gT6umzVzDTvUzIFCHLqGMwGOR/mtJ2FSgGdAgnoUGQF2HHp+RooSy+4s3ZZIFaOG2m0oUFPdR813eS9mXg2FraRJyiiCeax5csvcOG0aNd/Chbb23fyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576607; c=relaxed/simple;
-	bh=gbtSDsNREtt1StU3tTGiU8wDwt7jFuQNsaQebRZe3U0=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=c7rwYoggSn1DcIO+Gl3+B7W7lqmrGeVXE0DFKPFAbecWH3Gp/MD6UuVtbnmXV8MOwkILYh9IoArBV2SPJvvJ8DX9v4q4oANPw7kc2GBJ9H1ewdGlk4XBNsdoTS+d/B1O8FBT3Mf9tSGQOOurYkR2U4LUUzONdUDh/0H3WvmjBSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KWaohmUR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740576604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C4B22y5jIbu5fLuM9ql7DqeVvYnnQsAnENr+CqjaWMY=;
-	b=KWaohmURoQONnnSFuREpATsWQHZqDpNuXUWMDhXkvjXteSPo9eIKarYuKdr9i5ymeiLdmz
-	fxop7onZjSMUMiI/wbzxPRNvW3m2Y2kCGIak878kpKSvUUrLaZkngyHmqHl14sX7KQZY3X
-	VEursR8DsqGzcRcCdtget5cP36pNmr8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-202-KjdWZ0_6OGOxakcyLi6G8Q-1; Wed,
- 26 Feb 2025 08:30:02 -0500
-X-MC-Unique: KjdWZ0_6OGOxakcyLi6G8Q-1
-X-Mimecast-MFC-AGG-ID: KjdWZ0_6OGOxakcyLi6G8Q_1740576601
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1740576613; c=relaxed/simple;
+	bh=sCJ6jojoxc5SezhVGVdeO6sZxq4gq9c05ziXwDfmpkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcZQ4oSsGL0wV9ohLSBER+TclzxlNd+r82gyctd/gNg6S6Md8mykJCtM5Tq6g3UdKVGajtyS2Ae6hHouoB/3Q/zIucG6bsu6jLTV1GGX0StKtQo/6rcmHfIqqU54amByBlqu+eAdgSXSx4kU8BdzPmzsZswLtWfBPLJRay5YXzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B24RGItM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740576609;
+	bh=sCJ6jojoxc5SezhVGVdeO6sZxq4gq9c05ziXwDfmpkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B24RGItMUUWDCFWd7lymvY6aJ7jX/Le5eCguhwra3Hjc/FnVrPoKrsceMDm0N5tw7
+	 tsvF10smahGg4io7pJeXc6UcfoWhp78IA+OAJbzE0pzHhwG7bMDKWkm1Dm22+szeyi
+	 cnGxha5uPB4hLJSHPJiS4C1tJPx43dkfsP9n0cLCBUhtP71P68LUf88l3998f8TFPe
+	 Lxdgeq/lwoRc4L4q/JtOrnY655lYdR+xIky/IJ5KN10q/QjPjGT7F1NCGL2IacQCce
+	 vUgtIR+LpTT9PjS/SDrAMIxstCaiG1Pah6P2LaD9g/XAIA3MoXHo9gUORhFNw4Hdjf
+	 qO8qW0rZmaBIQ==
+Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1003])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E7141800878;
-	Wed, 26 Feb 2025 13:30:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.9])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B8C2719560A3;
-	Wed, 26 Feb 2025 13:29:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Use rreq->issued_to instead of rreq->submitted
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A072317E05C1;
+	Wed, 26 Feb 2025 14:30:05 +0100 (CET)
+Date: Wed, 26 Feb 2025 10:30:03 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Trevor Wu <trevor.wu@mediatek.com>, kernel@collabora.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add
+ DMIC backend to dai-link
+Message-ID: <9240905b-29af-4ea7-8ff9-a0cb2233da72@notapiano>
+References: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
+ <20250225-genio700-dmic-v2-7-3076f5b50ef7@collabora.com>
+ <20250226-ludicrous-seagull-of-music-a40daf@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2613163.1740576598.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 26 Feb 2025 13:29:58 +0000
-Message-ID: <2613164.1740576598@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250226-ludicrous-seagull-of-music-a40daf@krzk-bin>
 
-The netfslib read side uses rreq->submitted to track what's been issued an=
-d
-the write side uses rreq->issued_to - but both mean the same thing.
+On Wed, Feb 26, 2025 at 09:22:29AM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Feb 25, 2025 at 11:33:53AM -0300, Nícolas F. R. A. Prado wrote:
+> > MT8188 platforms also have DMIC DAIs, which were previously undescribed.
+> > Add DMIC_BE as a possible backend for the dai-link property.
+> > 
+> > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> > ---
+> >  Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
+> > index 362e729b51b43ec16716aee70ad736420def81f3..8c77e7f68ad7b6f5b88b53cedccb291139a2eeea 100644
+> > --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
+> > +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
+> > @@ -62,6 +62,7 @@ patternProperties:
+> >              - PCM1_BE
+> >              - DL_SRC_BE
+> >              - UL_SRC_BE
+> > +            - DMIC_BE
+> 
+> Any reason why you keep adding to the end of the lists but not
+> alphabetically sorted? It's enum, so it's expected to be sorted which
+> reduces conflicts between edits. Last commit already broke sorting :/
 
-Switch the read side to use rreq->issued_to instead and get rid of
-rreq->submitted.
+Well, I wasn't aware enums were supposed to be sorted. That doesn't seem to be
+documented anywhere. In fact, in example-schema.yaml the enum is not sorted [1].
+So it'd be great to update that example to follow that rule as well as
+explicitly document it. Maybe even a dt-binding check that checks for this?
+That'll make it much easier to learn about and follow this rule :).
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/buffered_read.c |   10 +++++-----
- fs/netfs/direct_read.c   |    4 ++--
- fs/netfs/main.c          |    2 +-
- fs/netfs/misc.c          |    2 +-
- fs/netfs/read_single.c   |    4 ++--
- fs/netfs/write_collect.c |    3 ++-
- include/linux/netfs.h    |    1 -
- 7 files changed, 13 insertions(+), 13 deletions(-)
+I don't think it'd be worth it to send another patch just to fix sorting in
+this case as it's already been merged, but I'll keep this in mind whenever I
+send future dt-binding patches.
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index fd4619275801..80143f17ed26 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -96,14 +96,14 @@ static ssize_t netfs_prepare_read_iterator(struct netf=
-s_io_subrequest *subreq)
- 		struct folio_batch put_batch;
- =
+Thanks,
+Nícolas
 
- 		folio_batch_init(&put_batch);
--		while (rreq->submitted < subreq->start + rsize) {
-+		while (atomic64_read(&rreq->issued_to) < subreq->start + rsize) {
- 			ssize_t added;
- =
-
- 			added =3D rolling_buffer_load_from_ra(&rreq->buffer, rreq->ractl,
- 							    &put_batch);
- 			if (added < 0)
- 				return added;
--			rreq->submitted +=3D added;
-+			atomic64_add(added, &rreq->issued_to);
- 		}
- 		folio_batch_release(&put_batch);
- 	}
-@@ -360,7 +360,7 @@ void netfs_readahead(struct readahead_control *ractl)
- 	netfs_rreq_expand(rreq, ractl);
- =
-
- 	rreq->ractl =3D ractl;
--	rreq->submitted =3D rreq->start;
-+	atomic64_set(&rreq->issued_to, rreq->start);
- 	if (rolling_buffer_init(&rreq->buffer, rreq->debug_id, ITER_DEST) < 0)
- 		goto cleanup_free;
- 	netfs_read_to_pagecache(rreq);
-@@ -386,7 +386,7 @@ static int netfs_create_singular_buffer(struct netfs_i=
-o_request *rreq, struct fo
- 	added =3D rolling_buffer_append(&rreq->buffer, folio, rollbuf_flags);
- 	if (added < 0)
- 		return added;
--	rreq->submitted =3D rreq->start + added;
-+	atomic64_set(&rreq->issued_to, rreq->start + added);
- 	rreq->ractl =3D (struct readahead_control *)1UL;
- 	return 0;
- }
-@@ -455,7 +455,7 @@ static int netfs_read_gaps(struct file *file, struct f=
-olio *folio)
- 	if (to < flen)
- 		bvec_set_folio(&bvec[i++], folio, flen - to, to);
- 	iov_iter_bvec(&rreq->buffer.iter, ITER_DEST, bvec, i, rreq->len);
--	rreq->submitted =3D rreq->start + flen;
-+	atomic64_set(&rreq->issued_to, rreq->start + flen);
- =
-
- 	netfs_read_to_pagecache(rreq);
- =
-
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index 17738baa1124..210a11068455 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -94,7 +94,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_=
-io_request *rreq)
- 		slice =3D subreq->len;
- 		size -=3D slice;
- 		start +=3D slice;
--		rreq->submitted +=3D slice;
-+		atomic64_add(slice, &rreq->issued_to);
- 		if (size <=3D 0) {
- 			smp_wmb(); /* Write lists before ALL_QUEUED. */
- 			set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
-@@ -143,7 +143,7 @@ static int netfs_unbuffered_read(struct netfs_io_reque=
-st *rreq, bool sync)
- =
-
- 	ret =3D netfs_dispatch_unbuffered_reads(rreq);
- =
-
--	if (!rreq->submitted) {
-+	if (!atomic64_read(&rreq->issued_to)) {
- 		netfs_put_request(rreq, netfs_rreq_trace_put_no_submit);
- 		inode_dio_end(rreq->inode);
- 		ret =3D 0;
-diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index 4e3e62040831..07b1adfac57f 100644
---- a/fs/netfs/main.c
-+++ b/fs/netfs/main.c
-@@ -72,7 +72,7 @@ static int netfs_requests_seq_show(struct seq_file *m, v=
-oid *v)
- 		   rreq->flags,
- 		   rreq->error,
- 		   0,
--		   rreq->start, rreq->submitted, rreq->len);
-+		   rreq->start, atomic64_read(&rreq->issued_to), rreq->len);
- 	seq_putc(m, '\n');
- 	return 0;
- }
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 77e7f7c79d27..055b7d53a018 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -464,7 +464,7 @@ static ssize_t netfs_wait_for_request(struct netfs_io_=
-request *rreq,
- 		case NETFS_UNBUFFERED_WRITE:
- 			break;
- 		default:
--			if (rreq->submitted < rreq->len) {
-+			if (atomic64_read(&rreq->issued_to) < rreq->len) {
- 				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
- 				ret =3D -EIO;
- 			}
-diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
-index fa622a6cd56d..66926c80fda0 100644
---- a/fs/netfs/read_single.c
-+++ b/fs/netfs/read_single.c
-@@ -123,12 +123,12 @@ static int netfs_single_dispatch_read(struct netfs_i=
-o_request *rreq)
- 		}
- =
-
- 		rreq->netfs_ops->issue_read(subreq);
--		rreq->submitted +=3D subreq->len;
-+		atomic64_add(subreq->len, &rreq->issued_to);
- 		break;
- 	case NETFS_READ_FROM_CACHE:
- 		trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 		netfs_single_read_cache(rreq, subreq);
--		rreq->submitted +=3D subreq->len;
-+		atomic64_add(subreq->len, &rreq->issued_to);
- 		ret =3D 0;
- 		break;
- 	default:
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 3cc6a5a0919b..3dbde09b692d 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -27,7 +27,8 @@ static void netfs_dump_request(const struct netfs_io_req=
-uest *rreq)
- 	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
- 	       rreq->origin, rreq->error);
- 	pr_err("  st=3D%llx tsl=3D%zx/%llx/%llx\n",
--	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
-+	       rreq->start, rreq->transferred, atomic64_read(&rreq->issued_to),
-+	       rreq->len);
- 	pr_err("  cci=3D%llx/%llx/%llx\n",
- 	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued=
-_to));
- 	pr_err("  iw=3D%pSR\n", rreq->netfs_ops->issue_write);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 6869f6d36ee7..5ec7dfa7a9dc 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -250,7 +250,6 @@ struct netfs_io_request {
- 	atomic_t		subreq_counter;	/* Next subreq->debug_index */
- 	unsigned int		nr_group_rel;	/* Number of refs to release on ->group */
- 	spinlock_t		lock;		/* Lock for queuing subreqs */
--	unsigned long long	submitted;	/* Amount submitted for I/O so far */
- 	unsigned long long	len;		/* Length of the request */
- 	size_t			transferred;	/* Amount to be indicated as transferred */
- 	long			error;		/* 0 or error that occurred */
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/example-schema.yaml#n52
 
