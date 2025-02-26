@@ -1,140 +1,236 @@
-Return-Path: <linux-kernel+bounces-534390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EB0A46627
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C4A4662D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7D27AA8D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:05:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D267AB655
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754AB21CC79;
-	Wed, 26 Feb 2025 16:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64AF21D3EF;
+	Wed, 26 Feb 2025 16:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="r49qTxEW"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNGWza+I";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yrABucOj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNGWza+I";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yrABucOj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4725821ABBD;
-	Wed, 26 Feb 2025 16:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316ED20AF8E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585991; cv=none; b=SCFHdRhNAf9nG4IhZUEr0T/tlzLUCndWXm3Yu3rdz0wF5CYdXahQNXXY5zjnoTQcOIeWQbFdRaOf3pNvz0cIJTn/oCZcIuZkVV4e9f2Oe1KUyAlA4JjoAuAWqWjTTl8CV6LDghR34BHdfaqdABvR6r1qV2t7yx32rqS6RHyyfm4=
+	t=1740586003; cv=none; b=LiKnkOrV9SNRt+7jFJ3RtuspYbqfIquRm9dabZXRwWf18jzxhgj4GmjI5EShDzTYimUFDRze4Iv5P9afIK0f3hIufjrkFGQEn0/CjoX2liU3BxudE4YvXJWt7dkGF00t5gicD9IaYSsJGGHvCfGeha7QvKFBFHWkEoKVIG6Ocrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585991; c=relaxed/simple;
-	bh=4viyFuVZHkdMCNHw0eRVdUTSQsdaaabV2jcJ1qRQrQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BKge/uBNnNvMixIOPH+xwiebj/4WIEFgdOTQUbv0l2XTtuMhfx5CUW1btqHror1a5xpJxNTDPpdt12M9q1OK+L5sCJ+rOxMyw8HPQO7PxY1fEyF0eAe0nD57vEhXyIgpHh+3llO9D0ClTlf+0CJleuxU7nXKNllgN6xixJ/uydU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=r49qTxEW; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740585988; bh=4viyFuVZHkdMCNHw0eRVdUTSQsdaaabV2jcJ1qRQrQo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r49qTxEWOsUdjC3BUNykb5g31fYhNVk9oHuB9UBRxdrvn9YUCXe/AnqoaNMZOCx8N
-	 GQkpxItgLy8ebk2rQwMC9JLfZY1frnLwy/RBeRrkrT+NSBuWK9FICRuByYN2AOUSR9
-	 VOIYTc6oqZu/FUZcj2mjUuNzQ3wSgbQJiyTaTeMA=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 2026A2052D08;
-	Wed, 26 Feb 2025 17:06:28 +0100 (CET)
-Message-ID: <54b3b2b1-3a0f-4e39-9661-4d1b947663f3@ralfj.de>
-Date: Wed, 26 Feb 2025 17:06:21 +0100
+	s=arc-20240116; t=1740586003; c=relaxed/simple;
+	bh=LCyoHSmapOSrLRv9RBkiRoPz+cmSw1HoK6QDtW4VrwA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZOeOW7GITluoLOn6VT7LV1s62SnuTGtvYpitnqz+eexJKJBS4Qtn3KCjIqt3L2KX5sg+gcKiTpo4TkKcS+/sd+/brJij820GGQFMnyN1zYIOp+6Umb65QJbBDIR+BJFpciPaGWq6wUB2LK8Wab/dnWqsE954TDGNVNwySbMgKGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNGWza+I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yrABucOj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNGWza+I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yrABucOj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 464CA1F387;
+	Wed, 26 Feb 2025 16:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740585999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
+	b=VNGWza+IAZhDSZY3n+l/bL74q0nHEgEaOEf7VTJqK5nvYLPCa71le4Z6vi4ff2YiLtp1yq
+	VmDFE+HvnaP+ELO+whmL2UdRrqpMAFvzbPsbt7WAcqbjdoyTej1KO2z+WGpwwOmKWOhDQ9
+	gpBRmoUi0I2TMi3RGTIOsi/5jRIOLx8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740585999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
+	b=yrABucOj4HWWBjO5FA7Pk9t2MH32TS1RcMCCpUwME4AfLHxUl4rkrv5kxhfp9EelDa7tjJ
+	D/9hhIOBaragCxDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VNGWza+I;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yrABucOj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740585999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
+	b=VNGWza+IAZhDSZY3n+l/bL74q0nHEgEaOEf7VTJqK5nvYLPCa71le4Z6vi4ff2YiLtp1yq
+	VmDFE+HvnaP+ELO+whmL2UdRrqpMAFvzbPsbt7WAcqbjdoyTej1KO2z+WGpwwOmKWOhDQ9
+	gpBRmoUi0I2TMi3RGTIOsi/5jRIOLx8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740585999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
+	b=yrABucOj4HWWBjO5FA7Pk9t2MH32TS1RcMCCpUwME4AfLHxUl4rkrv5kxhfp9EelDa7tjJ
+	D/9hhIOBaragCxDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C62213A53;
+	Wed, 26 Feb 2025 16:06:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1IU2Cg88v2daZwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 26 Feb 2025 16:06:39 +0000
+Date: Wed, 26 Feb 2025 17:06:38 +0100
+Message-ID: <87plj43d2p.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	regressions@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
+In-Reply-To: <5ff2354e-3bc6-4bb8-a481-bb81d717d698@oracle.com>
+References: <874j0lvy89.wl-tiwai@suse.de>
+	<dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+	<87jz9d5cdp.wl-tiwai@suse.de>
+	<263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
+	<87h64g4wr1.wl-tiwai@suse.de>
+	<7a4072d6-3e66-4896-8f66-5871e817d285@oracle.com>
+	<87eczk4vui.wl-tiwai@suse.de>
+	<5ff2354e-3bc6-4bb8-a481-bb81d717d698@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Ventura Jack <venturajack85@gmail.com>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
- <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
- <CAFJgqgRxfTVxrWja=ZW=mTj1ShPE5s-atAqxzMOq5poajMh=4A@mail.gmail.com>
- <CANiq72mA4Pbx1BeCZdg7Os3FtGkrwx6T8_+=+-=-o9+TOMv+EA@mail.gmail.com>
- <CAFJgqgSzqGKdeT88fJzrFOex7i-yvVte3NiQDdgXeWEFtnq=9A@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAFJgqgSzqGKdeT88fJzrFOex7i-yvVte3NiQDdgXeWEFtnq=9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 464CA1F387
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi all,
-
-> You are right that I should have written "currently tied", not "tied", and
-> I do hope and assume that the work with aliasing will result
-> in some sorts of specifications.
+On Wed, 26 Feb 2025 17:00:43 +0100,
+Chuck Lever wrote:
 > 
-> The language reference directly referring to LLVM's aliasing rules,
-> and that the preprint paper also refers to LLVM, does indicate a tie-in,
-> even if that tie-in is incidental and not desired. With more than one
-> major compiler, such tie-ins are easier to avoid.
+> On 2/26/25 9:35 AM, Takashi Iwai wrote:
+> > On Wed, 26 Feb 2025 15:20:20 +0100,
+> > Chuck Lever wrote:
+> >>
+> >> On 2/26/25 9:16 AM, Takashi Iwai wrote:
+> >>> On Wed, 26 Feb 2025 15:11:04 +0100,
+> >>> Chuck Lever wrote:
+> >>>>
+> >>>> On 2/26/25 3:38 AM, Takashi Iwai wrote:
+> >>>>> On Sun, 23 Feb 2025 16:18:41 +0100,
+> >>>>> Chuck Lever wrote:
+> >>>>>>
+> >>>>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
+> >>>>>>> [ resent due to a wrong address for regression reporting, sorry! ]
+> >>>>>>>
+> >>>>>>> Hi,
+> >>>>>>>
+> >>>>>>> we received a bug report showing the regression on 6.13.1 kernel
+> >>>>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> >>>>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+> >>>>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> >>>>>>>
+> >>>>>>> Quoting from there:
+> >>>>>>> """
+> >>>>>>> I use the latest TW on Gnome with a 4K display and 150%
+> >>>>>>> scaling. Everything has been working fine, but recently both Chrome
+> >>>>>>> and VSCode (installed from official non-openSUSE channels) stopped
+> >>>>>>> working with Scaling.
+> >>>>>>> ....
+> >>>>>>> I am using VSCode with:
+> >>>>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> >>>>>>> """
+> >>>>>>>
+> >>>>>>> Surprisingly, the bisection pointed to the backport of the commit
+> >>>>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> >>>>>>> to iterate simple_offset directories").
+> >>>>>>>
+> >>>>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> >>>>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> >>>>>>> release is still affected, too.
+> >>>>>>>
+> >>>>>>> For now I have no concrete idea how the patch could break the behavior
+> >>>>>>> of a graphical application like the above.  Let us know if you need
+> >>>>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
+> >>>>>>> and ask there; or open another bug report at whatever you like.)
+> >>>>>>>
+> >>>>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> thanks,
+> >>>>>>>
+> >>>>>>> Takashi
+> >>>>>>>
+> >>>>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> >>>>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> >>>>>>
+> >>>>>> We received a similar report a few days ago, and are likewise puzzled at
+> >>>>>> the commit result. Please report this issue to the Chrome development
+> >>>>>> team and have them come up with a simple reproducer that I can try in my
+> >>>>>> own lab. I'm sure they can quickly get to the bottom of the application
+> >>>>>> stack to identify the misbehaving interaction between OS and app.
+> >>>>>
+> >>>>> Do you know where to report to?
+> >>>>
+> >>>> You'll need to drive this, since you currently have a working
+> >>>> reproducer.
+> >>>
+> >>> No, I don't have, I'm merely a messenger.
+> >>
+> >> Whoever was the original reporter has the ability to reproduce this and
+> >> answer any questions the Chrome team might have. Please have them drive
+> >> this. I'm already two steps removed, so it doesn't make sense for me to
+> >> report a problem for which I have no standing.
+> > 
+> > Yeah, I'm going to ask the original reporter, but this is still not
+> > perfect at all; namely, you'll be missed in the loop.  e.g. who can
+> > answer to the questions from Chrome team about the breakage commit?
+> > That's why I asked you posting it previously.  If it has to be done by
+> > the original reporter, at least, may your name / mail be put as the
+> > contact for the kernel stuff in the report?
 > 
->      https://doc.rust-lang.org/stable/reference/behavior-considered-undefined.html
->          "Breaking the pointer aliasing rules
->          http://llvm.org/docs/LangRef.html#pointer-aliasing-rules
->          . Box<T>, &mut T and &T follow LLVM’s scoped noalias
->          http://llvm.org/docs/LangRef.html#noalias
->          model, except if the &T contains an UnsafeCell<U>.
->          References and boxes must not be dangling while they are
->          live. The exact liveness duration is not specified, but some
->          bounds exist:"
+> Certainly! Perhaps add Cc: linux-fsdevel@ as well.
 
-The papers mention LLVM since LLVM places a key constraint on the Rust model: 
-every program that is well-defined in Rust must also be well-defined in 
-LLVM+noalias. We could design our models completely in empty space and come up 
-with something theoretically beautiful, but the fact of the matter is that Rust 
-wants LLVM's noalias-based optimizations, and so a model that cannot justify 
-those is pretty much dead at arrival.
-Not sure if that qualifies as us "tying" ourselves to LLVM -- mostly it just 
-ensures that in our papers we don't come up with a nonsense model that's useless 
-in practice. :)
+OK, thanks, now asked on the bugzilla.
 
-The only real tie that exists is that LLVM is the main codegen backend for Rust, 
-so we strongly care about what it takes to get LLVM to generate good code. We 
-are aware of this as a potential concern for over-fitting the model, and are 
-trying to take that into account. So far, the main cases of over-fitting we are 
-having is that we often make something allowed (not UB) in Rust "because we 
-can", because it is not UB in LLVM -- and that is a challenge for gcc-rs 
-whenever C has more UB than LLVM, and GCC follows C (some cases where this 
-occurs: comparing dead/dangling pointers with "==", comparing entirely unrelated 
-pointers with "<", doing memcpy with a size of 0 [but C is allowing this soon so 
-GCC will have to adjust anyway], creating but never using an out-of-bounds 
-pointer with `wrapping_offset`). But I think that's fine (for gcc-rs to work, it 
-puts pressure on GCC to support these operations efficiently without UB, which I 
-don't think is a bad thing); it gets concerning only once we make *more* things 
-UB than we would otherwise for no good reason other than "LLVM says so". I don't 
-think we are doing that. I think what we did in the aliasing model is entirely 
-reasonable and can be justified based on optimization benefits and the structure 
-of how Rust lifetimes and function scopes interact, but this is a subjective 
-judgment calls and reasonable people could disagree on this.
 
-The bigger problem is people doing interesting memory management shenanigans via 
-FFI, and it being not clear whether and how LLVM has considered those 
-shenanigans in their model, so on the Rust side we can't tell users "this is 
-fine" until we have an "ok" from the LLVM side -- and meanwhile people do use 
-those same patterns in C without worrying about it. It can then take a while 
-until we have convinced LLVM to officially give us (and clang) the guarantees 
-that clang users have been assuming already for a while.
-
-Kind regards,
-Ralf
-
+Takashi
 
