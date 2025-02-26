@@ -1,187 +1,150 @@
-Return-Path: <linux-kernel+bounces-532874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD8EA45344
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:44:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCE7A4535D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572323ACA99
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC63189601F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF8B21CA17;
-	Wed, 26 Feb 2025 02:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D5521CC6D;
+	Wed, 26 Feb 2025 02:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="MhaF4XQX"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mGFogO3D"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F9E21CA05
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69CDEAFA;
+	Wed, 26 Feb 2025 02:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740537803; cv=none; b=qLQZz6IJMBBIkreA/vBtI2LB4C7Jvp+UME4q9Pbc+2OFwwT8wKsvxhlV47Czlh7DM2u1P61DNgwYexjKoPVuDmJm4JaiTtvvFiQUch8S67MVyTKum/L9WB5JI6B5jUfJ6WHc9pP1VP1rArwcZVWpTS+JsyPyprYomGi+/RgxaUM=
+	t=1740537849; cv=none; b=loS9hTA51T925T0INvn0gi9PyV+y43CC4aqXU4GaWT/v7fVZCgbYqSxaRBdM1yTQU328SfPyZJYyD2rWqhEJY7bOKae8vKLSEqyUBzppJOQih+bvk2nFc7CgsHbsyWyMwkpEIdg9OylQS0wX2SWDCEO4RRyLuVCuHe/x8I2vyjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740537803; c=relaxed/simple;
-	bh=V2FqWIT+Z6/06b6hrfSlcFnTHsvXjpIJFLKD0J4yUCM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dhcUe7QIGlwqQn55JklWw6ZCjSUgTT8mE826Mu4B5VJ6dqV4myJhAHK2UabKMtA4Gu2HUWO90LjeD0A+HK2CXT/PkBkLRPo+n/fxEXip7fKu3cLlcwaDp+8hLeUO+5DLfw+bmLZqWzPp88to3VJH+l/Ynm2H4ro1FFgvHR32Vp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=MhaF4XQX; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q26GKG030545
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:43:20 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2021-q4; bh=QnqXsEXt/JGgz9Hcnv
-	hv/HXTKzsw1tyQTNw7EIVzDcM=; b=MhaF4XQXmuTkbOHZ9XU/+rsJqgKZYve7p9
-	XQPVLX34yd30PxYKIjsqJJsJL3co00oocsthzbcE5ZR7AJWl+pCLshmZ/wn7BD3h
-	KyroDz9mGGKPlSHZvuHCou+CpfBqX8/eFmWTqAuLiKIu9Id7Lv9tuXJToKOSGk/s
-	1ohB6mjZbqraMv+xHWejKW6yGyYxHkQqD6nzxI8+if6eZCio0PhUUBA8keHqAc4s
-	NNvvkGXcqLOvnh2LPQqpGvQldVhmGxSFxRFbpnbWLFon1A4qhtEAiS9eU16ARXTy
-	+ct9+tZgJK0b4u1gxjZpR64hBIXnyrHhET0Zy/2za/eNcmC6t3Sg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 451psy1ra7-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:43:20 -0800 (PST)
-Received: from twshared7122.08.ash9.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Wed, 26 Feb 2025 02:43:09 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 56E4A1875B216; Tue, 25 Feb 2025 18:43:06 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <pbonzini@redhat.com>, <seanjc@google.com>, <kvm@vger.kernel.org>
-CC: <x86@kernel.org>, <virtualization@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>
-Subject: [RFC 2/2] kvm: retry nx_huge_page_recovery_thread creation
-Date: Tue, 25 Feb 2025 18:43:04 -0800
-Message-ID: <20250226024304.1807955-1-kbusch@meta.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1740537849; c=relaxed/simple;
+	bh=lPk7dpXyiNrE/vbhSnByAi74MBWNVIRlxH2Cjc/aom0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B/dHL1le5FTLcYHtNjqwSL0pFYsMRy7SWD9K2HjCxbCrm1L31Klqmz5kRLiVdtfsYJk/DPbYqLc7DKMJvuaV3Q8SkeF2r6PWXl8X3TzCTb4mFbFAOapB8/Jdu2lDUGgshGqFdQJ2gQbLojdG6tPXyc3JXhZaeHh6TGyYyoNH78E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mGFogO3D; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMXWlk025583;
+	Wed, 26 Feb 2025 02:43:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lxbrvWqdSdg0QKIuWS/73q
+	E193+doTJ8U/0htqu4vUw=; b=mGFogO3Dd/wHg1kJYNPvC70YLiT0gQd/h/jzak
+	MuCm6M+aROhVLnU1+NMiHznzlJh83KphbWezOcTb1zsB/a5GFKUm2d3XT1dwYkxt
+	oLc6blyxwynbaP6qenAt7x2ZcLjKJRmPez6QubTu+OlP6PkMkkkyTHW0hUkYN93G
+	IBbU00w0cRTBI/BnpIv5XYEobva+VKBmLJ5VSEW7hTlcvXEGVI09cubj7fYHXi1s
+	u7MXnCJRDoz25RAt1de7W5oAGsonEdUcL4VRKy6jwYMfeWle84+ro/zwkGDXNgmF
+	EPuW5Rz5eULAhFOyJShAsQEHbxcB8GQ8wduJZVzYLn2hJ/eQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmgfqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 02:43:57 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q2huK7021541
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 02:43:56 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Feb 2025 18:43:52 -0800
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <johan@kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <konradybcio@kernel.org>
+Subject: [RFC V6 0/2] firmware: arm_scmi: Misc Fixes
+Date: Wed, 26 Feb 2025 08:13:36 +0530
+Message-ID: <20250226024338.3994701-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: ckdQKVoHWZTxtyRhe2uKaeoobKogWxZj
-X-Proofpoint-GUID: ckdQKVoHWZTxtyRhe2uKaeoobKogWxZj
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7QsxKzOob-IwZtMBRjVQxkDAwdRUNRXI
+X-Proofpoint-ORIG-GUID: 7QsxKzOob-IwZtMBRjVQxkDAwdRUNRXI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502260019
 
-From: Keith Busch <kbusch@kernel.org>
+The series addresses the kernel warnings reported by Johan at [1] and are
+are required to X1E cpufreq device tree changes to land. It also proposes
+addition of quirks to bypass a fw bug on X1E devices.
 
-A VMM may send a signal to its threads while they've entered KVM_RUN. If
-that thread happens to be trying to make the huge page recovery vhost
-task, then it fails with -ERESTARTNOINTR. We need to retry if that
-happens, so we can't use call_once anymore. Replace it with a simple
-mutex and return the appropriate error instead of defaulting to ENOMEM.
+[1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
 
-One downside is that everyone will retry if it fails, which can cause
-some additional pressure on low memory situations. Another downside is
-we're taking a mutex on every KVM run, even if we were previously
-successful in starting the vhost task, but that's really not such a
-common operation that needs to be optimized to avoid this lock.
+Duplicate levels:
+arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
+arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
+arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- arch/x86/include/asm/kvm_host.h |  3 +--
- arch/x86/kvm/mmu/mmu.c          | 23 +++++++++--------------
- arch/x86/kvm/x86.c              |  2 +-
- 3 files changed, 11 insertions(+), 17 deletions(-)
+^^ exist because SCP reports duplicate values for the highest sustainable
+freq for perf domains 1 and 2. These are the only freqs that appear as
+duplicates and will be fixed with a firmware update. FWIW the warnings
+that we are addressing in this series will also get fixed by a firmware
+update but they still have to land for devices already out in the wild.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
-ost.h
-index 0b7af5902ff75..597c8e66fc204 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -26,7 +26,6 @@
- #include <linux/irqbypass.h>
- #include <linux/kfifo.h>
- #include <linux/sched/vhost_task.h>
--#include <linux/call_once.h>
-=20
- #include <asm/apic.h>
- #include <asm/pvclock-abi.h>
-@@ -1466,7 +1465,7 @@ struct kvm_arch {
- 	struct kvm_x86_pmu_event_filter __rcu *pmu_event_filter;
- 	struct vhost_task *nx_huge_page_recovery_thread;
- 	u64 nx_huge_page_last;
--	struct once nx_once;
-+	struct mutex nx_lock;
-=20
- #ifdef CONFIG_X86_64
- 	/* The number of TDP MMU pages across all roots. */
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 18ca1ea6dc240..eb6b625f6f43a 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7460,34 +7460,29 @@ static bool kvm_nx_huge_page_recovery_worker(void=
- *data)
- 	return true;
- }
-=20
--static void kvm_mmu_start_lpage_recovery(struct once *once)
-+int kvm_mmu_post_init_vm(struct kvm *kvm)
- {
--	struct kvm_arch *ka =3D container_of(once, struct kvm_arch, nx_once);
--	struct kvm *kvm =3D container_of(ka, struct kvm, arch);
- 	struct vhost_task *nx_thread;
-=20
-+	if (nx_hugepage_mitigation_hard_disabled)
-+		return 0;
-+
-+	guard(mutex)(&kvm->arch.nx_lock);
-+	if (kvm->arch.nx_huge_page_recovery_thread)
-+		return 0;
-+
- 	kvm->arch.nx_huge_page_last =3D get_jiffies_64();
- 	nx_thread =3D vhost_task_create(kvm_nx_huge_page_recovery_worker,
- 				      kvm_nx_huge_page_recovery_worker_kill,
- 				      kvm, "kvm-nx-lpage-recovery");
-=20
- 	if (IS_ERR(nx_thread))
--		return;
-+		return PTR_ERR(nx_thread);
-=20
- 	vhost_task_start(nx_thread);
-=20
- 	/* Make the task visible only once it is fully started. */
- 	WRITE_ONCE(kvm->arch.nx_huge_page_recovery_thread, nx_thread);
--}
--
--int kvm_mmu_post_init_vm(struct kvm *kvm)
--{
--	if (nx_hugepage_mitigation_hard_disabled)
--		return 0;
--
--	call_once(&kvm->arch.nx_once, kvm_mmu_start_lpage_recovery);
--	if (!kvm->arch.nx_huge_page_recovery_thread)
--		return -ENOMEM;
- 	return 0;
- }
-=20
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 02159c967d29e..872498566b540 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12744,7 +12744,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned lo=
-ng type)
- 			     "does not run without ignore_msrs=3D1, please report it to kvm@v=
-ger.kernel.org.\n");
- 	}
-=20
--	once_init(&kvm->arch.nx_once);
-+	mutex_init(&kvm->arch.nx_lock);
- 	return 0;
-=20
- out_uninit_mmu:
---=20
-2.43.5
+V5:
+* Drop all the patches that have already landed upstream and mark the
+  series as RFC to get feedback on adding quirk support for the perf
+  protocol.
+
+V4:
+* Rework debugfs node creation patch [Ulf/Dmitry]
+* Reduce report level to dev_info and tag it with FW_BUG [Johan/Dmitry]
+* Add cc stable and err logs to patch 1 commit message [Johan]
+
+V3:
+* Pick up R-b, T-b from the list.
+* Pick up the updated patch from Cristian for skipping opps.
+* Update device names only when a name collision occurs [Dmitry/Ulf]
+* Drop Johan's T-b from "fix debugfs node creation failure"
+* Move scmi_protocol_msg_check to the top [Sudeep]
+
+V2:
+* Include the fix for do_xfer timeout
+* Include the fix debugfs node creation failure
+* Include Cristian's fix for skipping opp duplication
+
+V1:
+* add missing MSG_SUPPORTS_FASTCHANNEL definition.
+
+base: next-20250225
+
+Sibi Sankar (2):
+  firmware: arm_scmi: Ensure that the message-id supports fastchannel
+  firmware: arm_scmi: Add quirk to bypass SCP fw bug
+
+ drivers/firmware/arm_scmi/driver.c    | 75 +++++++++++++++------------
+ drivers/firmware/arm_scmi/perf.c      | 30 ++++++++---
+ drivers/firmware/arm_scmi/powercap.c  |  8 +--
+ drivers/firmware/arm_scmi/protocols.h |  4 +-
+ 4 files changed, 72 insertions(+), 45 deletions(-)
+
+-- 
+2.34.1
 
 
