@@ -1,141 +1,164 @@
-Return-Path: <linux-kernel+bounces-533939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A2CA4608E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:19:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFC9A46090
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C637179B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:19:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038063A98EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D067521A421;
-	Wed, 26 Feb 2025 13:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C2E21D3D1;
+	Wed, 26 Feb 2025 13:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Vj51z+uc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fvlMAn+D"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="davWuDSw"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0606A1AF0B8;
-	Wed, 26 Feb 2025 13:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060E42192EE;
+	Wed, 26 Feb 2025 13:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575951; cv=none; b=Z39r3Iw2rtcIdtsKnkPVJco3FE9CHgPvzgv+XESnBAvTwGrnjBji7HpNWf09qO8+zFUGTIAxt4FSGjKFTnMm8bqW8pn/UYMAOUJ/s0WkHz8FRAB09v4Qbsh/mH5Y14oIhZRWwTvk7Vkxapnr4aZEKe+0pcY8Gj/Xd1tSshwmM2c=
+	t=1740575957; cv=none; b=NqeBfQq1HRAYdDLpMpeh/QP9Pp/JKjgCWWdBoWGacen6vOdYG6Uh8wNEv2Y/mMBYkwnRYoI0XmHws/UysgOw1zQ4G9dFTc8xo3grY2L0VgyzcUxB+BHHAGJYoEcRBHHVy2iJxkHoN5mMFfKRBeqadseTxbXTVXfkGl5+084So34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575951; c=relaxed/simple;
-	bh=Lj3Ctgm7NZ6KeH4zbqWmLO8wuZosl0vGgvp1DgxPET8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GiniwEWZr8acAx4Q+sbFc6NPrUhOBTfBwXjWF5Qp7GcEkOYPmO6gMeJ7UCDFmaJJAKqJbg7Et28ZlABUWaGmXO+yaPOdUBKy7y2chs4/9Cd9DFqnjudL8gaR9lCKwr/TkSp3mgVrR7ncpo3O8SaaCElWzkGmWxuD3NRWuoCKJzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Vj51z+uc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fvlMAn+D; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id C7DDC11400D1;
-	Wed, 26 Feb 2025 08:19:07 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 08:19:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740575947;
-	 x=1740662347; bh=UOZ4mYVIFdHTT9aEkdVg/UTAHR5Mna/PggP4OynHPN0=; b=
-	Vj51z+ucrADMcGvPqgqm/ocyub19PD6MhBlhIXOjDkMHHQrXIoD20teKX+xNT1Zz
-	AXLjQis+dGRDMnzTDBswrYrAgopT1GRSFlqVjgdwZZKU0WZKHen3lzZPiKM4Wk8r
-	nai+TBLBqRej9mDuNQE6WWAOmnH+0EujDEPCWSXIBDqd6TXN8y5jPnhbOmCGLqAt
-	MoRcttDaaPfRveyhiyOJVHWNL1EDf3c5gK1+yFglSp/2TIhR3AglzZxkQKPeQBxd
-	MsFZ3VeWpMryBpJHKuKulTzzgbXJIxUJUqb4w3X/kHKYs5KjqK5xVJSJjOGzekNf
-	6Q+r4oMTHv605qMhlo6bag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740575947; x=
-	1740662347; bh=UOZ4mYVIFdHTT9aEkdVg/UTAHR5Mna/PggP4OynHPN0=; b=f
-	vlMAn+D0OgBAbrUqB8/MFQSJG4PCDpgig7vU5ZUqhkzF1tvJusovpC/BZ4uZ1EYV
-	ZhLeuB9pgsiSRCEj95M/AM5UmWiVGo3N3hFVaFTdUNN62524J22Wi7//qjidWCso
-	cq+yTwxVyD4Iwla1hBnzuvqcbTbC1+haZ29yNxExZTYRLLbSS5Hh9YdSki6MEOCg
-	7tiZPskxi3jW/vkaR2pD5eyp2cQIYyYO1zVP7ZMvDHfPeB3NUK5FTje9kjoAc2eS
-	jbR87RNxIUarqUAiOxqHB4wncfeFz8jOdc6DDS8/sDfQwF989CyfwtRAw4JFZ1GH
-	/yqmoP+pEx/sIfakxgQVA==
-X-ME-Sender: <xms:yxS_Z6qOOLfzklww1--oi0qfaUrTdjq1-WVjRtzkVH5yja5by4s4eQ>
-    <xme:yxS_Z4qW7wtd7fsum4uEViAYsaLmi-DC0Cv27_VgyW2m2X8AAYNhuoPoGEuwziM2w
-    1H8wc4gIq297NQeEC8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeeikecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
-    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
-    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
-    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgr
-    vhhivghrmhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnh
-    esshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvghvsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:yxS_Z_Ns28A9EpUPipAK62UZsgV4g1ZSXq956j1168XrUDQrkY3T2w>
-    <xmx:yxS_Z54hN7DqCojVjxK3CIYOBJbCqfOWW45Qwjc6UHicALTLLVwFTg>
-    <xmx:yxS_Z54Imc1xlBHDZovquYk91g6UG_qQCS_Xn8-2MEwuLFb3ZcEmaA>
-    <xmx:yxS_Z5g7dX5-PTdzwF0F5VTdCY1owA7G6RhCuIK5hqgyFaHVQTxbJw>
-    <xmx:yxS_Z0bX88-s-Yzjw4WeScj6dc3Lj5BaKxN-8sRLlhSarnBie8vVa6qh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E80192220072; Wed, 26 Feb 2025 08:19:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740575957; c=relaxed/simple;
+	bh=YOOQzCfz+RVMuVYtyvfzzXeE4eMqRdtBbY+l6e/+iq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0uRnHaADAJc/agr70LYpIDcYRIaNhXpikrHADCYFJdkI+ZQf6Eef6t0JA6grUxjppsh6k9gwkd0e4h45VgDvUgLDqqCnP1rkpB1xvY24M5K3TmB/EDEcgA3/FKPUCXDwgv19DPujIE5pM5Ztco14BRW6vSbKXZ630MXaBWlbzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=davWuDSw; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so11145025a12.0;
+        Wed, 26 Feb 2025 05:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740575954; x=1741180754; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R7etPXwgBDrVOOvGd5qWXXdpTXS9fCWERnwFu20Cifs=;
+        b=davWuDSwpVz4jbYcwdD3MhYFcO3flmYrHCClAY6JUQ71vvxG2d/Ze7YoJm1i3eLCWL
+         EJcENi1VD42ysb3kMbIn3QmtzZR3ThXgzbmRGS00WY+W1royi3ornxmOMHSbIq8Z5mzt
+         qTDJHkH8UAiSIk8Naslt1GbgBvfBWjYrkcQ6CTh9/3muEyui3vK2L1l/x26mx5xmHNmo
+         +nXUG3LayZPwSplIJE+msnVzp+EFqo2YXxk469Jydq56xD4FM6IY5GbaMhN3XyPisRyj
+         OYPOheCOs65QqExRUducaVkY0y8vph65l/1dUpnlxShnicSWKbxvPQhtrgJ07TzITUWE
+         uRag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740575954; x=1741180754;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R7etPXwgBDrVOOvGd5qWXXdpTXS9fCWERnwFu20Cifs=;
+        b=xMi9enP8SiBk9+DrxgawrzhTUzKquhLgZLdvrrzZx8Huikea/DzouwTWASkuhgkI8K
+         iYTzEuWzqPL8Yw1jtWvYpuOiiA+i/aEVOmV9tliQoCYLzfFa0elnvhs2yFW1nuYWnxg3
+         ubMSfV44Gtibokg8govYZ/aYb8w5qR3r8te1JRKZPc5EdComHwwHDi8DBVYcPpfMn2Tv
+         3mku1JNzHS4GNhbTMToDqU0jmetDnrtqS52Mcbk/zvFEev+z/e6wPL0dw1mZGIvcGKWS
+         AxQMSB1kIA49Rc9r13v6Jw+TdJ5agWOl+DuKB6+dopeVTKhtbRwUciUHbO7pZQQrxVxN
+         qQnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRwllfhPtIriF2uhP5OUQGfQ121uSZHSjTMQ0JNFvAiX/U9rQL4gOwEK8oKOiwfgmvqcF2Z5sKT+7a1tVO@vger.kernel.org, AJvYcCX6FfS0hDxybTBa/f97tIKr9OMnWGIMAzN8D7TLJ7LEe15EOxKbMh+/xHzTuPrVvz/l1XWkm+DUvAITOVBp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvNlizyuQLTKZzJb+7MxJD8foGhjM3rG86EhZFj6UcB0UXHo1X
+	OaKnbdN7JIVYNojL51ijeQFqO/F1CgLoAwj/zg8TakmkQEp5E4MYH3sjO947
+X-Gm-Gg: ASbGnctWN68PrjxnQ8wcTPqO1CqJ1I4BN0Oyp5Uv8eHyGG18zxetTFOwI8Kiz+y0UkL
+	9D3+b3pEdiZZE9BVjqoSgzO/+qaQXRU/RECMVo6s/sX00E8YluY/0zyhUfNx1HklU1ZN7VqmUOQ
+	oqqHPY9wCmMEaJxfS0uX2RYGpkZ6p46hNDFOoB0bZ7rxq8P1AFm6UxUInVt2ppxwBt57qJAkLL8
+	I4GvKmYFwz5ZqRsE/o28uQb1977VXWc+W1Y/9Hw0HydVPOlksUWXWe4AkPphPFzY9mMOxNJgKuo
+	yhbXDlUa/A2ZMkuW433y09CM1dDN8AnryW8FFDv78A==
+X-Google-Smtp-Source: AGHT+IHqBLfninfSL3VmmxUVBX05PXkRJTuu1fJsyzAppjdDOMU7oA/onvkL+RxvktUOetKMpdZmdQ==
+X-Received: by 2002:a17:907:1c17:b0:ab6:dbd2:df78 with SMTP id a640c23a62f3a-abeeef44c16mr369316666b.35.1740575953186;
+        Wed, 26 Feb 2025 05:19:13 -0800 (PST)
+Received: from f (cst-prg-92-183.cust.vodafone.cz. [46.135.92.183])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1d5c4dasm329187866b.68.2025.02.26.05.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 05:19:12 -0800 (PST)
+Date: Wed, 26 Feb 2025 14:18:59 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, 
+	Manfred Spraul <manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, 
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 14:18:46 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Javier Martinez Canillas" <javierm@redhat.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Arnd Bergmann" <arnd@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Helge Deller" <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Message-Id: <98ed694b-0f2f-4bfb-9280-729842d9f95c@app.fastmail.com>
-In-Reply-To: <87mse8zzb0.fsf@minerva.mail-host-address-is-not-set>
-References: <20250225164436.56654-1-arnd@kernel.org>
- <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
- <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
- <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
- <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
- <87mse8zzb0.fsf@minerva.mail-host-address-is-not-set>
-Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250224142329.GA19016@redhat.com>
 
-On Wed, Feb 26, 2025, at 13:05, Javier Martinez Canillas wrote:
-> "Arnd Bergmann" <arnd@arndb.de> writes:
->> in drivers/video/console, with the simpler alternative just
->> calling into fbcon functions. I'm not sure if we can already drop
->> vgacon from normal x86-64 distro configs, i.e. if there are cases
->> that are not already covered by any of efi-earlycon, efifb,
->> vga16fb, vesafb/uvesafb or a PCI DRM driver.
->>
->
-> I believe vgacon is still useful for x86 with legacy BIOS, because
-> vesafb (and simpledrm) only works if the user defines a mode using
-> the vga= kernel cmdline parameter.
+On Mon, Feb 24, 2025 at 03:24:32PM +0100, Oleg Nesterov wrote:
+> On 02/24, Sapkal, Swapnil wrote:
+> > Whenever I compare the case where was_full would have been set but
+> > wake_writer was not set, I see the following pattern:
+> >
+> > ret = 100 (Read was successful)
+> > pipe_full() = 1
+> > total_len = 0
+> > buf->len != 0
+> >
+> > total_len is computed using iov_iter_count() while the buf->len is the
+> > length of the buffer corresponding to tail(pipe->bufs[tail & mask].len).
+> > Looking at pipe_write(), there seems to be a case where the writer can make
+> > progress when (chars && !was_empty) which only looks at iov_iter_count().
+> > Could it be the case that there is still room in the buffer but we are not
+> > waking up the writer?
+> 
+> I don't think so, but perhaps I am totally confused.
+> 
+> If the writer sleeps on pipe->wr_wait, it has already tried to write into
+> the pipe->bufs[head - 1] buffer before the sleep.
+> 
+> Yes, the reader can read from that buffer, but this won't make it more "writable"
+> for this particular writer, "PAGE_SIZE - buf->offset + buf->len" won't be changed.
 
-Right, at the minimum, a configuration without vgacon would
-have to pick a graphical mode in arch/x86/boot/video*.c if one
-wasn't already set by grub.
+While I think the now-removed wakeup was indeed hiding a bug, I also
+think the write thing pointed out above is a fair point (orthogonal
+though).
 
-Looking through the git history of that code, it seems that there
-are lots of corner cases with weird 32-bit hardware.
-Anything from the past 20 years is probably reasonably safe,
-but there still needs to be a way to configure vgacon back in
-to be safe.
+The initial call to pipe_write allows for appending to an existing page.
 
-    Arnd
+However, should the pipe be full, the loop which follows it insists on
+allocating a new one and waits for a slot, even if ultimately *there is*
+space now.
+
+The hackbench invocation used here passes around 100 bytes.
+
+Both readers and writers do rounds over pipes issuing 100 byte-sized
+ops.
+
+Suppose the pipe does not have space to hold the extra 100 bytes. The
+writer goes to sleep and waits for the tail to move. A reader shows up,
+reads 100 bytes (now there is space!) but since the current buf was not
+depleted it does not mess with the tail. 
+
+The bench spawns tons of threads, ensuring there is a lot of competition
+for the cpu time. The reader might get just enough time to largely
+deplete the pipe to a point where there is only one buf in there with
+space in it. Should pipe_write() be invoked now it would succeed
+appending to a page. But if the writer was already asleep, it is going
+to insist on allocating a new page.
+
+As for the bug, I don't see anything obvious myself.
+
+However, I think there are 2 avenues which warrant checking.
+
+Sapkal, if you have time, can you please boot up the kernel which is
+more likely to run into the problem and then run hackbench as follows:
+
+1. with 1 fd instead of 20:
+
+/usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
+
+2. with a size which divides 4096 evenly (e.g., 128):
+
+/usr/bin/hackbench -g 1 -f 20 --threads --pipe -l 100000 -s 128
 
