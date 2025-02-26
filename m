@@ -1,120 +1,142 @@
-Return-Path: <linux-kernel+bounces-533461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02447A45AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D465EA45ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEDD4188C245
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6B17AA829
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA6F26B08C;
-	Wed, 26 Feb 2025 09:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A9B27129A;
+	Wed, 26 Feb 2025 09:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUdzRG8E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OPGZ5Uw8"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E25189B91;
-	Wed, 26 Feb 2025 09:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9552459E0;
+	Wed, 26 Feb 2025 09:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563573; cv=none; b=H/jsDdvqthTsi20iSjthRtQIYH9PFucNOvqXmjtQEfWjxk0uwEYkGtLFaKOQNoXw3ZmSBfgqTb+4aEBwjtTqm1VB44CuH3raFSxRjUXF1kuTQJh+5ubjDTuAZ7+vnBreCHUmtE+27rK/Cs6c8DSIYOvGVKDIKuID1fQxAkrEANM=
+	t=1740563588; cv=none; b=cwyTO1GJHGGy/vQnxLOWNgZU4LeNMeuBSF8cI/8beED/cHAV4GQRzqpRA4qjyG+E2Nddpk/pzws2id7/2jirBmjU1f1fWW1q9XqnfEAIpiEp+R0PEzDVTEeleaGy6Nfw599C/2YqXCRRUGZofozTHEXVVIw85KISTqGWbIV9erg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563573; c=relaxed/simple;
-	bh=ciorLijCDPE3/xsYPkft10tMODFy17X/YsQ/RQhLc8Y=;
+	s=arc-20240116; t=1740563588; c=relaxed/simple;
+	bh=23AzTlA3i3e+EmS9Av59UpbDgrdMi/L7vS6N1uObpJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzynie8tQ/+PkVEdLPYNONy5b71F36LOxhPjrRO5z0KXwoWUcc0eAbLruKJ1PVf53GWEw/1d4pc5XQ23gQRgp/cV5egI2RE38z53y25ERpMi/4aDP2KX/SnaqzW/zwCcmQH5Cg3jHOlLfBuKqjUAmSaFB6uCX6e35iGu3ZIh2lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUdzRG8E; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740563572; x=1772099572;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ciorLijCDPE3/xsYPkft10tMODFy17X/YsQ/RQhLc8Y=;
-  b=aUdzRG8E7HXYhO065kwX25yMBAIyvwwLXY4xfeQ2Kuh4K/zSeelsa449
-   jSNhlK7bvx2Uey6Au0wbfDQoXS/Oz56BOuqcTESgukWDbrTnLmlDwndL/
-   S6TNO/tqd1jLeJuOslMsMELyDBlo7NQvTYkIsc0vBVsCgX11xNIDITZae
-   OBgNfgO6IR/yOgIuudwNG/dzQ2TCtaPIx4jt//uZUAXc+KmVWFsl4I1sS
-   Gclm6ThYJsVzhI++DFi6AIbfEQU2tYsWJrshrtbBdJV8kOq2pZAfFivSi
-   SfrfMr3Y5O+SSvlE5L2M8UW1NjOpgmXFExYPTiF5A9awEJUKT/FwmpE3q
-   Q==;
-X-CSE-ConnectionGUID: c/JRXZEUSYONl8Mil28o5Q==
-X-CSE-MsgGUID: N9Y6F9nQQbaJt4w/H9tRyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52037602"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="52037602"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 01:52:51 -0800
-X-CSE-ConnectionGUID: TGlmJ6xORTOhT/xH2DNDFQ==
-X-CSE-MsgGUID: 6BXYpYZHQD+YRrFY281gdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="153831882"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa001.jf.intel.com with SMTP; 26 Feb 2025 01:52:48 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 26 Feb 2025 11:52:47 +0200
-Date: Wed, 26 Feb 2025 11:52:47 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH] usb: typec: ps883x: fix probe error handling
-Message-ID: <Z77kb2a_Vhln0reU@kuha.fi.intel.com>
-References: <20250218082243.9318-1-johan+linaro@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JX5KoUhk6dMvuUiBQ1bGNSasjtB3lgIRkPpymQ6jkKvTwLz2K2lHYmGE1mzzmvNTCvgOlyGdkk+SrBZ390kirKRviFKNv5Nqj3IC3hU02bQCxh9TE0VtgOB6K9VrsGX+bmelteH48XA5n0BriAi4OV6aCcTtzcfRuXlg4U6szyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=OPGZ5Uw8; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AWAnLAcd4Ax9L2XjpW/XTk1Vc6xaPxRyyPPHRuN7d+0=; b=OPGZ5Uw8vm2+odS8tBnxh6bn5y
+	bMKasJwtYxa0VWmFmqzAohjow9oPWH5b8OMTZQvCa9wo09JRu6bE/sDd73lDgAh47se8VFabVThHr
+	ZEiE8aZTIDBA0m1Wve/02buldgj1FI8v2SRhJYXiIzAoIf97cT4DyazORIRNjwBOF5DDRK9WBnV6K
+	Y4qMJE77GtOgbxK8usYH4b2LD27i8CGjtu97MKuJ0UoVx1PTybavKFR98wAiyQwrFulF1ibmMLeIc
+	iMKwl7NTa38QBqSY5ibw8JS1Knpd3qKga8UVNrgiF8xTXt8mdyUx154pmR0LA3lBt6bYao0tocNRe
+	ymF8xUhQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51782)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tnE63-0003om-0c;
+	Wed, 26 Feb 2025 09:52:55 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tnE5y-0006xe-26;
+	Wed, 26 Feb 2025 09:52:50 +0000
+Date: Wed, 26 Feb 2025 09:52:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
+Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
+	"dqfext@gmail.com" <dqfext@gmail.com>,
+	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Subject: Re: [PATCH net-next v2 3/3] net: phy: mediatek: add driver for
+ built-in 2.5G ethernet PHY on MT7988
+Message-ID: <Z77kcqzmCqdT6lE0@shell.armlinux.org.uk>
+References: <20250219083910.2255981-1-SkyLake.Huang@mediatek.com>
+ <20250219083910.2255981-4-SkyLake.Huang@mediatek.com>
+ <Z7WleP9v6Igx2MjC@shell.armlinux.org.uk>
+ <5fae9c69a09320b0b24f25a178137bd0256a72d8.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250218082243.9318-1-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5fae9c69a09320b0b24f25a178137bd0256a72d8.camel@mediatek.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Feb 18, 2025 at 09:22:43AM +0100, Johan Hovold wrote:
-> Fix the probe error handling to avoid unbalanced clock disable or
-> leaving regulators on after probe failure.
-> 
-> Note that the active-low reset pin should also be asserted to avoid
-> leaking current after disabling the regulators.
-> 
-> Fixes: 257a087c8b52 ("usb: typec: Add support for Parade PS8830 Type-C Retimer")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Wed, Feb 26, 2025 at 06:48:34AM +0000, SkyLake Huang (黃啟澤) wrote:
+> On Wed, 2025-02-19 at 09:33 +0000, Russell King (Oracle) wrote:
+> > 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> > 
+> > 
+> > On Wed, Feb 19, 2025 at 04:39:10PM +0800, Sky Huang wrote:
+> > > +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
+> > > +{
+> > > +     struct pinctrl *pinctrl;
+> > > +     int ret;
+> > > +
+> > > +     /* Check if PHY interface type is compatible */
+> > > +     if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL)
+> > > +             return -ENODEV;
+> > > +
+> > > +     ret = mt798x_2p5ge_phy_load_fw(phydev);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > 
+> > Firmware should not be loaded in the .config_init method. The above
+> > call will block while holding the RTNL which will prevent all other
+> > network configuration until the firmware has been loaded or the load
+> > fails.
+> > 
+> > Thanks.
+> > 
+> > --
+> > RMK's Patch system:
+> > https://urldefense.com/v3/__https://www.armlinux.org.uk/developer/patches/__;!!CTRNKA9wMg0ARbw!iV-1ViPFsUV-lLj7aIycan8nery6sQO3t6mkpdlb_GW8hswhxc4ejJozxqkU3s2WzxSizs4kfdC77yr7HGGRIuU$
+> > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Hi Russell,
+> mt798x_p5ge_phy_load_fw() will only load firmware once after driver is
+> probed through priv->fw_loaded. And actually, firmware loading
+> procedure only takes about 11ms. This was discussed earlier in:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240520113456.21675-6-SkyLake.Huang@mediatek.com/#25856462
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240520113456.21675-6-SkyLake.Huang@mediatek.com/#25857174
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+1. Wouldn't it be a good idea to include the loading time in the patch
+   description or a comment in the patch?
 
-> ---
->  drivers/usb/typec/mux/ps883x.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
-> index 10e407ab6b7f..ef086989231f 100644
-> --- a/drivers/usb/typec/mux/ps883x.c
-> +++ b/drivers/usb/typec/mux/ps883x.c
-> @@ -387,10 +387,11 @@ static int ps883x_retimer_probe(struct i2c_client *client)
->  
->  err_switch_unregister:
->  	typec_switch_unregister(retimer->sw);
-> -err_vregs_disable:
-> -	ps883x_disable_vregs(retimer);
->  err_clk_disable:
->  	clk_disable_unprepare(retimer->xo_clk);
-> +err_vregs_disable:
-> +	gpiod_set_value(retimer->reset_gpio, 1);
-> +	ps883x_disable_vregs(retimer);
->  err_mux_put:
->  	typec_mux_put(retimer->typec_mux);
->  err_switch_put:
-> -- 
-> 2.45.3
+2. What about the time it takes for request_firmware() uses the sysfs
+   fallback, which essentially passes the firmware request to userspace
+   to deal with? That can block for an indeterminate amount of time.
 
 -- 
-heikki
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
