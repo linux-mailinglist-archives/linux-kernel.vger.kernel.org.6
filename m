@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-533074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB41A4556A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:18:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BAFA45569
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54727188BCFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50733A5911
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA98C267F5F;
-	Wed, 26 Feb 2025 06:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sxP3HswG"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9218326773B;
+	Wed, 26 Feb 2025 06:18:23 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A401B29D0E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5F829D0E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550708; cv=none; b=LjECKxZaGF6cV7IWXe/S11pF+T7HoY3vjpJTrKhwWuNySo2k5yeyy1riB3JQjHNu6j9DHCHeWvoYRDXP/FoZH38MRKWtPKatAjzsUQRC9SaHc5dzkJACdCLCJn2XjKdfx9Z5v8eQ7BJhEG0Uw+YtvXZY/G2Cn0eXt30xMK0NTHg=
+	t=1740550703; cv=none; b=u3mrKCB5OcjLJwFIKOb4YeDE4ZUr3AfdaJd0mlI9/Z/+blT2UT4ZTdLGvifSANQdbvyCpS6/jK61mImbxKaj0GERRWa6GnJajWnVya/RA7LrrkWmb5a8Wqbj2mtwX1Zo2BEaCP2BP2u0SH01wxXMTc7n+x8mfCz+Imm7I5t8pzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550708; c=relaxed/simple;
-	bh=rnGhfy7NnUxsUsjov/XDOXWGIuCyAAiKL4iAb7KmuyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L4PRWXycvBiXsJfANvqrfGuTyYnAKZnRxsKYQV63ptPZCeJT1r8+AJlk9y8LHskfabpUn4NAaewrfr/O9RCDjSwhj5xuiwt661/6j8hVRhN7EFaFnDZX1jWVQQ+DmrJP256cXp2PaRG/xeJv6ITvj9I5ygGWEvKkWU6pe2j6fRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sxP3HswG; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51Q6IEE71383194
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 00:18:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740550694;
-	bh=G8TuloVcDoxRcDVBKwXj6LZhpioTi4Wo9bQZpOdphDk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=sxP3HswGCwWbrDxJsI19Ccv5P4GIoMX95NtmgkUrHnoFZOTNpJdgfgTLnnfzvrxnC
-	 maKAzLi1q3d75Ox6loFNLYDCIW/RiTxt2zF+TfCdZbIYG6FnbQAnqvuV41afz1h24Y
-	 Zm2Gv1EU3ZAYMXUYdxPMDCndXtqO6Zl/by3W3lsI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51Q6IEwS125352
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 00:18:14 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 00:18:14 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 00:18:14 -0600
-Received: from [172.24.18.117] (lt9560gk3.dhcp.ti.com [172.24.18.117])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51Q6IBcG068437;
-	Wed, 26 Feb 2025 00:18:12 -0600
-Message-ID: <686f583d-6bf4-4486-b9e4-20c1e268eda6@ti.com>
-Date: Wed, 26 Feb 2025 11:48:10 +0530
+	s=arc-20240116; t=1740550703; c=relaxed/simple;
+	bh=JryWq7WV8uNmBfkhQojR45hf3u/Eku7l7OsIR6FXLt4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BcxLkbn0NNwO3XZtfzPqAld4Cmq3VR//vnai6VroYeZoGuWHE9YDFzCtoDWyuRsS1RamF+dHAUJTD6ONM4x9zRkPh2dQf86CbMSpaQ7UWuf2tnm/BahUbUO1RHHVIzPB+PUr05yzY8HEMWwgR7fd+tRY7t4WSiy79EV1CNyRudw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8578011a152so135393239f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:18:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740550701; x=1741155501;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KkxgE/b/3yDI6a3ezLAF95DWpHfHSO/kSkJ/250V8Pw=;
+        b=oetj/LAupa6PH7poa1NdFQHsb+3gq5cKqBZ5dkRsfjCnTsS8VNj/GdctPfzvQJLFKh
+         GfE0LE8bW2AzjWesC4RJSecBpFTuSnnDewDoHITpYT6sLGzgBh7uzDaL//jXBEyAnY+n
+         /32YiF9cYTju8KsTRZd6yJxnfonQ9oXOGdVPKuj8e2aimkKRA5R2CkYOCifYnZvNn67r
+         QEuXGmCcZ5Mj3vBURVxJg5t7Sj0FBwY+UNfvwYLIxSZV1Q1AdSeF12pTqUyNfrQLHb47
+         PYac5mcLvid1pcheB3SX2edyGyQ/295pZ9z288JnaOoJgpqvaP38ai9IOs4nB9voyq5p
+         m08g==
+X-Forwarded-Encrypted: i=1; AJvYcCXqBuUOb6WWJ2ngqHKlnP/7wq+/v9iqBG2ReWQqQiBBHE03FL44E0Z4c3ESmNOW3lbt1cgMjgB6zh6gng0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz29FY/ACu07ua+9rF3+5gXXm3PNYxu6IxfroZAJoLWsrRSJ3dV
+	tYNJYMhHi2Hj3DnbIJXKJpwq9UaD0NIGMj5C3fVeta9kPPNWVHy9f+hgaqAmDzIm3eqCG278TxL
+	n9JaeKvE9duZXxsjKhK/dG38G1QGAiO2pHxh6t+276xWGab6bAJRdROk=
+X-Google-Smtp-Source: AGHT+IFdIux2xCtFwI+X+/UDsvvVlScy23UF65J2zNj1GVC4lv0CCjLGdoMoDNbuKgtiI8OrR3OPi0YijYbRJGd/OibgL9Kcz2RE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Enable HSR driver
-To: <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <quic_bjorande@quicinc.com>, <krzysztof.kozlowski@linaro.org>,
-        <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        "Anwar, Md Danish"
-	<danishanwar@ti.com>
-References: <20240419060013.14909-1-r-gunasekaran@ti.com>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20240419060013.14909-1-r-gunasekaran@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Received: by 2002:a92:cd8f:0:b0:3d0:405d:e94f with SMTP id
+ e9e14a558f8ab-3d3d1f90759mr21788395ab.17.1740550700768; Tue, 25 Feb 2025
+ 22:18:20 -0800 (PST)
+Date: Tue, 25 Feb 2025 22:18:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67beb22c.050a0220.2eba0.0049.GAE@google.com>
+Subject: [syzbot] [bluetooth?] WARNING in hci_send_cmd (2)
+From: syzbot <syzbot+d04bd412c1b0e2f36647@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+Hello,
 
-Apologies in case you are receiving this email for the second time.
-Any reason why this patch hasn't been merged yet. Other than re-basing 
-this to the tip, anything else which needs to be addressed to get this 
-merged?
+syzbot found the following issue on:
 
-Thanks & Regards,
-Meghana Malladi.
+HEAD commit:    28b04731a38c MAINTAINERS: fix DWMAC S32 entry
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=15507ae4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d04bd412c1b0e2f36647
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-On 4/19/2024 11:30 AM, Ravi Gunasekaran wrote:
-> HSR is a redundancy protocol that can be realized with any
-> two port ethernet controller.
-> 
-> Many of TI's K3 SoCs support multi port ethernet controller.
-> So enable HSR driver inorder to support this protocol on
-> such SoCs.
-> 
-> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> ---
->   arch/arm64/configs/defconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 11fa4aa40094..750343564f41 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -176,6 +176,7 @@ CONFIG_NET_CLS_FLOWER=m
->   CONFIG_NET_CLS_ACT=y
->   CONFIG_NET_ACT_GACT=m
->   CONFIG_NET_ACT_MIRRED=m
-> +CONFIG_HSR=m
->   CONFIG_NET_ACT_GATE=m
->   CONFIG_QRTR_SMD=m
->   CONFIG_QRTR_TUN=m
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e10163bfe6ac/disk-28b04731.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0bb611c3bfe3/vmlinux-28b04731.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c3fd8dd5fabb/bzImage-28b04731.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d04bd412c1b0e2f36647@syzkaller.appspotmail.com
+
+Bluetooth: MGMT ver 1.23
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6674 at kernel/workqueue.c:2257 __queue_work+0xcd3/0xf50 kernel/workqueue.c:2256
+Modules linked in:
+CPU: 1 UID: 0 PID: 6674 Comm: syz.2.227 Not tainted 6.14.0-rc3-syzkaller-00154-g28b04731a38c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:__queue_work+0xcd3/0xf50 kernel/workqueue.c:2256
+Code: ff e8 e1 af 38 00 90 0f 0b 90 e9 b2 fe ff ff e8 d3 af 38 00 eb 13 e8 cc af 38 00 eb 0c e8 c5 af 38 00 eb 05 e8 be af 38 00 90 <0f> 0b 90 48 83 c4 60 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
+RSP: 0018:ffffc9001b5ef6c8 EFLAGS: 00010087
+RAX: ffffffff81890ac4 RBX: ffff888028dc8000 RCX: 0000000000080000
+RDX: ffffc9000bf59000 RSI: 000000000003158c RDI: 000000000003158d
+RBP: 0000000000000000 R08: ffffffff8188ff24 R09: 0000000000000000
+R10: ffffc9001b5ef7a0 R11: fffff520036bdef5 R12: ffff888027d1c800
+R13: ffff888027d1c9c0 R14: dffffc0000000000 R15: 0000000000000008
+FS:  00007f93037aa6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c381f89 CR3: 000000007d25a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:662 [inline]
+ hci_send_cmd+0xb6/0x180 net/bluetooth/hci_core.c:3048
+ set_link_security+0x606/0x820 net/bluetooth/mgmt.c:1909
+ hci_mgmt_cmd+0xa1f/0xf10 net/bluetooth/hci_sock.c:1712
+ hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:733
+ sock_write_iter+0x2d7/0x3f0 net/socket.c:1137
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xacf/0xd10 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f930298d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f93037aa038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f9302ba5fa0 RCX: 00007f930298d169
+RDX: 0000000000000007 RSI: 0000400000000000 RDI: 0000000000000008
+RBP: 00007f9302a0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9302ba5fa0 R15: 00007ffeb82b7bb8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
