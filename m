@@ -1,112 +1,222 @@
-Return-Path: <linux-kernel+bounces-534018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72840A4618A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:00:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2BBA46177
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02EDC188E06D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:00:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0183AA5D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42C32206B2;
-	Wed, 26 Feb 2025 13:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D861F221717;
+	Wed, 26 Feb 2025 13:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZuyzHR4F"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f6aC9r7h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kWvAXcYU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f6aC9r7h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kWvAXcYU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEF94A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A9D22154F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578369; cv=none; b=C00HKhmDO10IPztgDf1EzC0yN7XL78KNar1PRyJcizoW+a0IgLJPk2UGecrEc4HPsbc8zi6BwS9k9GjmGGM9HlP7lXmV4J+/kTcBCQswIxlzTRpmv0yD4I1jA553qUI0OdIYdohFFrF5kfdtd61ZwnITPuNMOcra2XQiFkxBnxA=
+	t=1740578270; cv=none; b=HxTlYALPk56w8DL69NNtmQsby16DPPXs1FeRFyyIkdUf3StoBdugXx8pmedCgJXhhM1LXNIerFVh0YuJ12v77qUUPBA5Vkw/KYdgAALj8K7v3K0RVShEvmKF28SPSUMBTjeDsSpAp3rkQj9pU5RAWRpqf6NyuDwD7Cmnp2S8BgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578369; c=relaxed/simple;
-	bh=FaNJbP28GrwA0xqX71qpviLKU4s/iLv9ygoXh3IRVjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AZRMuWP5ObIwcanJM1adnc6AiILxeaMtApGR8hsHu8As6tS9x8Q14D+7iOrQlalo0AImOfd9bBA3KxB52yp9b74uuivp6hq2A7UbhemraeOHLOTe4NQzTSwse4jsU/zB7OkfXhIJQudwEY+orwDXUadBAaaLju0GgcWPB9h8c9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZuyzHR4F; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0892e4b19so803976785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1740578366; x=1741183166; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnxH9uSAX9kLW2aHAnB9zwl34wSWVlyTXJAkrl1jEgk=;
-        b=ZuyzHR4F9nTkh0hJEqM5eDJYvG5YjFNxFPRCN0gROJHzrlLUQwPk6cMV8WNy9pR7Xz
-         T80WwPsdG/7xy+/ypqUJ1KzQQle/di6TYQ6jp9t3GQlDys7j47zR03cAQTTDXRWQ8SPc
-         W0Eg+K117v+9Do+4SpnI5sAozVeK/e6L2qQsThnjJR/VzCe7fROxPBKOAfHVNDP7uO18
-         ph13zmY8RrqO9pmxy2JNDRY889QU/NOjL+/0wOaTdwmQ5tVYvtEgPESZt8F/+LmSyzwA
-         HFM8BZHnIkg5gS08N7N1+bfvkv1IEtp28krep4w5+SfcGnok3/+iF9ETy/coen8D6d4Y
-         OTEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740578366; x=1741183166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QnxH9uSAX9kLW2aHAnB9zwl34wSWVlyTXJAkrl1jEgk=;
-        b=MhFx0+oVLQt3I5nFwEY5TOqqdd+WMG9ZNaj2Hz+AenZL4fXllh+ywJPrkKjE4tThQI
-         yiCx1wtnNyOM4YaFQWMfOt1ZHxm04BJfMHSTVwj8SKBWA4Fhk/J16Xk9wBj6AKhSC6N+
-         EMKo+d68Sj1upHxQy+V6PIhswbWn6ylNdh6kefPbC1FwEmfyHnHdLvL+wkOedeR2Am8O
-         oNMfNdHVJ7YrxSCan9rc0yMjMeL+ujSCbSeDdEN5XkVcSD6SgVdGmKeDsJ1e2qmde8nt
-         XC2qUdspaJfTmcmcjpBrI0V43Hb5YbRIGiLc9PoPjwihi7BgUZnFeD6laptkrybLPyhU
-         5QTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY7/VIgCw5/Id2Z8m5pVYC+rW9ChAkjWL4kOOia60IjBnZcMgE5OvXHldwCAm+fW83UJzCqrIWDWTcOC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Fk3aTFORtltL17n9OLPM/0n0SHGPOuqJdlsWzR/FIdl5CoN+
-	jfUPxZYAAs3n2GFxY0TmEe+uytct05DcK1GQvIU30svPi7Y4gvQ9ex9c078oTVZel9JF56rN2WS
-	/T/90rX9C+RgLD6FyaMkzRroz2cQpPwxuqhvvbw==
-X-Gm-Gg: ASbGncs1YydEcO8tWvObRbssSokIsVGN++Q1Oij7cKLUVLaIieB6rr7PhNY2Sqk9kCk
-	e2oj+o3D1PtffqNT+CWE67SrZAyi+vj60v9CLz+75c7sMH9U7QC08r8ZtNT9piT5NUC6wtLgfoD
-	splVyV
-X-Google-Smtp-Source: AGHT+IH3LH2E7qdLqaSbVmbd0vwQgYzSLFH3zYoBT6JZblmu5a/hbpYOUjW39/0dbNVn1kAPYr4FC5G28TPPww11BC4=
-X-Received: by 2002:a05:620a:2453:b0:7c0:7aab:9b43 with SMTP id
- af79cd13be357-7c247fcb787mr576156185a.40.1740578366648; Wed, 26 Feb 2025
- 05:59:26 -0800 (PST)
+	s=arc-20240116; t=1740578270; c=relaxed/simple;
+	bh=sOsAhVl3Pth7b6HVc96vFlxzXU6gEn4y6aryJYUr7r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nDj7k2ZYLhV6fMEtdOVRKVTEs3xvSUlRmNy1eU2JN+t50n69eAji7MRdqo1wcy59YO4bzVBk3DhSP36jBrEG/jvhvVs+P/Xvc0rsB1UX1V67df8+mOE3OMlIJJKiC5aJZXednTXf8J76ul6pMLcjqiF2EUi671cUgIK0B5jM1mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f6aC9r7h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kWvAXcYU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f6aC9r7h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kWvAXcYU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 77A8C1F388;
+	Wed, 26 Feb 2025 13:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740578266; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4IhlMQLU7O+/3cgB5SqnTRbXuJ/IQuGdZmOILhsLwm0=;
+	b=f6aC9r7hbfE5be4MYPaoQ3QEKQLeMGfx1A8Jq0wP9B0QUYVmlSQOkyKbJV8dTM9hmO0rgp
+	JSh9+W7ZcPSOuAtnVDIsXkjLDL/KN78VsMxOs3ICguiRLRV4Bf8PPo02qQlWJQGJgiwtm9
+	5TOgz69VrOYYvfDZyQWox44rwWSoT5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740578266;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4IhlMQLU7O+/3cgB5SqnTRbXuJ/IQuGdZmOILhsLwm0=;
+	b=kWvAXcYUdWO7rp5uJCpRO10JpeXohnZ7b05tEUtJqzgb9/jQDs1tWc3wlEIhh9NzthI/T1
+	TukaERVLfsFzvnAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=f6aC9r7h;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kWvAXcYU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740578266; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4IhlMQLU7O+/3cgB5SqnTRbXuJ/IQuGdZmOILhsLwm0=;
+	b=f6aC9r7hbfE5be4MYPaoQ3QEKQLeMGfx1A8Jq0wP9B0QUYVmlSQOkyKbJV8dTM9hmO0rgp
+	JSh9+W7ZcPSOuAtnVDIsXkjLDL/KN78VsMxOs3ICguiRLRV4Bf8PPo02qQlWJQGJgiwtm9
+	5TOgz69VrOYYvfDZyQWox44rwWSoT5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740578266;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4IhlMQLU7O+/3cgB5SqnTRbXuJ/IQuGdZmOILhsLwm0=;
+	b=kWvAXcYUdWO7rp5uJCpRO10JpeXohnZ7b05tEUtJqzgb9/jQDs1tWc3wlEIhh9NzthI/T1
+	TukaERVLfsFzvnAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5BC9B13A53;
+	Wed, 26 Feb 2025 13:57:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id inElFtodv2drOQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 26 Feb 2025 13:57:46 +0000
+Message-ID: <6e9d4d95-a132-46a0-89c3-e39ace6bcb2a@suse.cz>
+Date: Wed, 26 Feb 2025 14:59:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226135415.363605-1-vignesh.raman@collabora.com>
-In-Reply-To: <20250226135415.363605-1-vignesh.raman@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 26 Feb 2025 13:59:15 +0000
-X-Gm-Features: AWEUYZmmxdS5ypGHcyPPeldS7LVaWK9H32Imx1ThxzBXN-bcd6PFnzxtamWHxx8
-Message-ID: <CAPj87rNAaPUEmk1edcuHX1+bMWysF=aOMceUsCxnk2SMJUjqKg@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/ci: fix merge request rules
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
-	robdclark@gmail.com, dmitry.baryshkov@linaro.org, 
-	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	valentine.burley@collabora.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] mm/mempolicy: export memory policy symbols
+To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
+ willy@infradead.org, pbonzini@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, chao.gao@intel.com, seanjc@google.com,
+ ackerleytng@google.com, david@redhat.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, tabba@google.com
+References: <20250226082549.6034-1-shivankg@amd.com>
+ <20250226082549.6034-3-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+In-Reply-To: <20250226082549.6034-3-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 77A8C1F388
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Hi Vignesh,
 
-On Wed, 26 Feb 2025 at 13:55, Vignesh Raman <vignesh.raman@collabora.com> wrote:
-> Merge request pipelines were only created when changes
-> were made to drivers/gpu/drm/ci/, causing MRs that didn't
-> touch this path to break. Fix MR pipeline rules to trigger
-> jobs for all changes.
 
-Thanks a lot for fixing this up!
+On 2/26/25 9:25 AM, Shivank Garg wrote:
+> KVM guest_memfd wants to implement support for NUMA policies just like
+> shmem already does using the shared policy infrastructure. As
+> guest_memfd currently resides in KVM module code, we have to export the
+> relevant symbols.
+> 
+> In the future, guest_memfd might be moved to core-mm, at which point the
+> symbols no longer would have to be exported. When/if that happens is
+> still unclear.
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 
->      # Build everything after someone bypassed the CI
->      - if: *is-direct-push
->        when: on_success
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Should these be when: manual? I think it would be good to align with
-the rules we have for Mesa: run automatically for marge-bot and also
-for scheduled pipelines, but in all other cases (MR context but not
-scheduled for merge, direct push to ref, etc) be manual, so we don't
-overwhelm the CI by testing everything everyone pushed.
+> ---
+>  mm/mempolicy.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index bbaadbeeb291..d9c5dcdadcd0 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -214,6 +214,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
+>  
+>  	return &default_policy;
+>  }
+> +EXPORT_SYMBOL_GPL(get_task_policy);
+>  
+>  static const struct mempolicy_operations {
+>  	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
+> @@ -347,6 +348,7 @@ void __mpol_put(struct mempolicy *pol)
+>  		return;
+>  	kmem_cache_free(policy_cache, pol);
+>  }
+> +EXPORT_SYMBOL_GPL(__mpol_put);
+>  
+>  static void mpol_rebind_default(struct mempolicy *pol, const nodemask_t *nodes)
+>  {
+> @@ -2736,6 +2738,7 @@ struct mempolicy *mpol_shared_policy_lookup(struct shared_policy *sp,
+>  	read_unlock(&sp->lock);
+>  	return pol;
+>  }
+> +EXPORT_SYMBOL_GPL(mpol_shared_policy_lookup);
+>  
+>  static void sp_free(struct sp_node *n)
+>  {
+> @@ -3021,6 +3024,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+>  		mpol_put(mpol);	/* drop our incoming ref on sb mpol */
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(mpol_shared_policy_init);
+>  
+>  int mpol_set_shared_policy(struct shared_policy *sp,
+>  			struct vm_area_struct *vma, struct mempolicy *pol)
+> @@ -3039,6 +3043,7 @@ int mpol_set_shared_policy(struct shared_policy *sp,
+>  		sp_free(new);
+>  	return err;
+>  }
+> +EXPORT_SYMBOL_GPL(mpol_set_shared_policy);
+>  
+>  /* Free a backing policy store on inode delete. */
+>  void mpol_free_shared_policy(struct shared_policy *sp)
+> @@ -3057,6 +3062,7 @@ void mpol_free_shared_policy(struct shared_policy *sp)
+>  	}
+>  	write_unlock(&sp->lock);
+>  }
+> +EXPORT_SYMBOL_GPL(mpol_free_shared_policy);
+>  
+>  #ifdef CONFIG_NUMA_BALANCING
+>  static int __initdata numabalancing_override;
 
-Cheers,
-Daniel
 
