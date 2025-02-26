@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-534525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E292A467F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:23:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2273A467C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7D016BDEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2727A2A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183052253FF;
-	Wed, 26 Feb 2025 17:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6292253EB;
+	Wed, 26 Feb 2025 17:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WNZ1vcFY";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="qvxkKLCD"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0prwXY7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEF2220680;
-	Wed, 26 Feb 2025 17:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740590549; cv=pass; b=X9O8X2tlBvFneVF4Ie5R6K7UQZPJuPYRp4vllTfGG3MgtGQb7jhcpJ09O7zZiWaUs0AVgYu5lCnT2QfRimGHGA6BjVnwPzmd6y2NShwZ0iJLBwDDNmWc7tNrzJ5ca6Vp6qjF9KNHdqYVY6S1DsaRLpsY56k8gLLj379KOs+si0o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740590549; c=relaxed/simple;
-	bh=S/PiPzCVRmka0OjHHthPnqNxfP8KG+E7z2CDbxI51JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eaUjM0nFe/nUV/BrdrlTIVNclvoZJT1zc2/oABOuBbcZpIc7fw4pz/DVhf2PQsMD/J61epKYdVHwbl64rbKvhMlWgbjITSAmiwWDKhtwIn0HLvP0LddTuzDDt1j2x0H1aOqPCoE1IDCgFflxylnukeAV4vmxdSs/p+79dH1/V4A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=WNZ1vcFY; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=qvxkKLCD; arc=pass smtp.client-ip=81.169.146.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740590185; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=XzegoGgoNCNxR/DpTLYhpmeVC7GAAlAso1mUkbxW+HtcDmzhz9+/o1bMaxdVfDcaoz
-    NP8vA4dODxV/O1nBZ47ElGyqvqFXNNl4j8mlQ5d0H8m83ZJQJH77tJdztkkB3huWmDlj
-    0hMuUU9RV4I2bgElzzKIFidKrztWl+kb/sMPQP072WwTokt+leKr/p0reXJRLDlWaROQ
-    e0HIt3QJ6So0cN41kmqPUszQWF2V/dy62iSyhASXuRgNsXX4ATdyrlNx/UQRuxOyZWye
-    +AcjfHlSRMu5NQY2hQOZ+bhPwdgrfH//E+uxARtJEHfl7sq0Yk+D8B0mcZ9XFFSE8fvw
-    i3TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740590185;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GbY1FLE78d7HUAAoF/6GehoDyAWxuk3FuXFDDvxwZJY=;
-    b=XQqPefzFDqQWJwhVAN9ETVgWHLJBGq+GVarRrcpkzHRo/KmzHh5PcWg/UXA2Zh0zLe
-    0JGNsfS/BaMprSe7XVsTYPyThIoHT15UJBr6P3MV4fHlPAgya6mAos/DfkcCH5rR+R4e
-    4jiUAHJZtOPz9IDYQOu7gyUElCiFy7JUanDL5VJIOG1IUFBuGK0kLAOfWzBQ/9OlUpSh
-    zIPg3AIg9kvHrMMSGyARn+fq2aCeHaOVmcsPKrf6PGYZMRSccxo/CGpF8eivRnazlbmQ
-    UUtLXJ7FK+vSuSxkGaEQLlV6c9X2zFJrRt+2viy9fw9miHZCUX4P1JU1FxV7Qd3RawYc
-    Cc8Q==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740590185;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GbY1FLE78d7HUAAoF/6GehoDyAWxuk3FuXFDDvxwZJY=;
-    b=WNZ1vcFYyuY9VeOKiO7EFAoEYmnXfiFFixQKAYxAxWEmy61ioYgIfB1hWDbhPdN0ei
-    veVdhhke7fYURoXsEepa+jnfVE/5QP3B5l5gE4zZFf1gywHGBq1hUcZZh+brcAgCwUdy
-    kjSNLla3EOw34Tltdb6UqPxYKgt3ShANj8T4vmhGvkF3dnePPRvwYANhGQNVDW+FKvVt
-    o5QsLz754NHf87GIxGkHnDFk6Gw9nB5hKmP103A/KnndlquRPyaktftmGgrD1zwY8HVM
-    Vdm/TSVdf95qf5ZcYuBCxZkyPIIpz93IWhYpo69+KV24Pt61s/Y3MyIHItcFyIrCgPXX
-    2kUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740590185;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GbY1FLE78d7HUAAoF/6GehoDyAWxuk3FuXFDDvxwZJY=;
-    b=qvxkKLCDRHQgEZ7+dC9e9mg0S6+Qx4kEXvP5tG/Zen8Kzp+9pa2dViqoqsO3Rbn5cL
-    iB6xR6ZdKu7XH7lWl9Dg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeD0Z"
-Received: from localhost.localdomain
-    by smtp.strato.de (RZmta 51.2.23 DYNA|AUTH)
-    with ESMTPSA id Qe5b2211QHGPfq1
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 26 Feb 2025 18:16:25 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	Paul Boddie <paul@boddie.org.uk>,
-	Tim Bysun <tim.bysun@ingenic.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5F62253A9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740590250; cv=none; b=YczPKy8X3DCP5ftFAEC8BY8hkx/4qLn/DSxGGxQInGXicLVCdMuQiJJ2cVOJ1TMw7aOdnncV4kP/IloorPTt3O/Pivi6KBvRUCL0e09xZLh4YrMaPz8qqW4gq/p/xLr5U2knWszF+nEbH6U4FhIff+e4oU2KXd7hgA/rk/sW5Fg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740590250; c=relaxed/simple;
+	bh=4IWTO+yFXZQLpfb06fmYIIE+muqxQRpsizmPObyVJUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5LU4X+DH3fFzb3c7n5Ka7bCBTKFsuiOze+tHcGZy1h8ektFwXpBwq6qeZmTIp01a/aJ9Jqm0x8uPJR0Gmx9BDvFqpkFKaUMkSaMuUFY4spg1lgTQWTf/z3km2Jnwsmmlj1cJwkwZYDdI1Vw6+KBqGzvt0E0veGuuPM38hebCWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0prwXY7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740590247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nSXYs0Ypm9+hDMpFhNpxbn65/XRpk3PYQsylAaaaDb0=;
+	b=T0prwXY72RjcUXTM4raZ47+Ir524PwiTpYEv0YnkzdwjG6v+OX304hKQW9wXXKSgyy9bha
+	FJqiaxWAG2sT1EjkMs/pmPxmFRrFIGMbdGZVfg+a7I4ibflTSib/hUm8B5l6BH6MrJiSLR
+	aw/SUBKHFYct+S4P/jzy+2g9aOwW5/M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-342-PbARJ24iO0udAZCO0VAnUw-1; Wed,
+ 26 Feb 2025 12:17:24 -0500
+X-MC-Unique: PbARJ24iO0udAZCO0VAnUw-1
+X-Mimecast-MFC-AGG-ID: PbARJ24iO0udAZCO0VAnUw_1740590242
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 415711955F28;
+	Wed, 26 Feb 2025 17:17:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E6600180035E;
+	Wed, 26 Feb 2025 17:17:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 18:16:52 +0100 (CET)
+Date: Wed, 26 Feb 2025 18:16:46 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 4/4] pinctrl: ingenic: jz4730: add pinmux for I2S interface
-Date: Wed, 26 Feb 2025 18:16:07 +0100
-Message-ID: <7541ff32baf429db4efc1e69b11fe911a75b296d.1740590093.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1740590093.git.hns@goldelico.com>
-References: <cover.1740590093.git.hns@goldelico.com>
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250226171645.GH8995@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <CAGudoHGaJyipGfvsXVKrVaMBNk8d35o66VUoQ3W-NDa1=+HPOA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAGudoHGaJyipGfvsXVKrVaMBNk8d35o66VUoQ3W-NDa1=+HPOA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-I2S is used for the sound codec of the Alpha400.
+On 02/26, Mateusz Guzik wrote:
+>
+> On Wed, Feb 26, 2025 at 2:19 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> Now that I sent the e-mail, I realized the page would have unread data
+> after some offset, so there is no room to *append* to it, unless one
+> wants to memmove everythiing back.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/pinctrl/pinctrl-ingenic.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Yes, but... even "memmove everything back" won't help if
+pipe->ring_size > 1 (PIPE_DEF_BUFFERS == 16 by default).
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 86d285a800c5d..6a16729d0a235 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -209,10 +209,14 @@ static int jz4730_nand_cs4_pins[] = { 0x56, };
- static int jz4730_nand_cs5_pins[] = { 0x57, };
- static int jz4730_pwm_pwm0_pins[] = { 0x5e, };
- static int jz4730_pwm_pwm1_pins[] = { 0x5f, };
--
- static int jz4730_mii_pins[] = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
- 				 0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c, };
- 
-+static int jz4730_i2s_mclk_pins[] = { 0x44, };
-+static int jz4730_i2s_acreset_pins[] = { 0x45, };
-+static int jz4730_i2s_data_pins[] = { 0x46, 0x47, };
-+static int jz4730_i2s_clock_pins[] = { 0x4d, 0x4e, };
-+
- static u8 jz4730_lcd_8bit_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, };
- 
- static const struct group_desc jz4730_groups[] = {
-@@ -235,6 +239,11 @@ static const struct group_desc jz4730_groups[] = {
- 	INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
- 	INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
- 	INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
-+	INGENIC_PIN_GROUP("i2s-mclk-out", jz4730_i2s_mclk, 1),
-+	INGENIC_PIN_GROUP("i2s-acreset", jz4730_i2s_acreset, 1),
-+	INGENIC_PIN_GROUP("i2s-data", jz4730_i2s_data, 1),
-+	INGENIC_PIN_GROUP("i2s-master", jz4730_i2s_clock, 1),
-+	INGENIC_PIN_GROUP("i2s-slave", jz4730_i2s_clock, 2),
- };
- 
- static const char *jz4730_mmc_groups[] = { "mmc-1bit", "mmc-4bit", };
-@@ -251,6 +260,7 @@ static const char *jz4730_nand_groups[] = {
- static const char *jz4730_pwm0_groups[] = { "pwm0", };
- static const char *jz4730_pwm1_groups[] = { "pwm1", };
- static const char *jz4730_mii_groups[] = { "mii", };
-+static const char *jz4730_i2s_groups[] = { "i2s-data", "i2s-master", "i2s-slave", };
- 
- static const struct function_desc jz4730_functions[] = {
- 	INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
-@@ -263,6 +273,7 @@ static const struct function_desc jz4730_functions[] = {
- 	INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
- 	INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
- 	INGENIC_PIN_FUNCTION("mii", jz4730_mii),
-+	INGENIC_PIN_FUNCTION("i2s", jz4730_i2s),
- };
- 
- static const struct ingenic_chip_info jz4730_chip_info = {
--- 
-2.47.0
+> However, the suggestion below stands:
+
+Agreed, any additional info can help.
+
+Oleg.
+
+> > As for the bug, I don't see anything obvious myself.
+> >
+> > However, I think there are 2 avenues which warrant checking.
+> >
+> > Sapkal, if you have time, can you please boot up the kernel which is
+> > more likely to run into the problem and then run hackbench as follows:
+> >
+> > 1. with 1 fd instead of 20:
+> >
+> > /usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
+> >
+> > 2. with a size which divides 4096 evenly (e.g., 128):
+> >
+> > /usr/bin/hackbench -g 1 -f 20 --threads --pipe -l 100000 -s 128
+> 
+> 
+> 
+> -- 
+> Mateusz Guzik <mjguzik gmail.com>
+> 
 
 
