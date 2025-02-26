@@ -1,236 +1,212 @@
-Return-Path: <linux-kernel+bounces-534219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985A8A46444
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A456A4644B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:15:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798513AF3C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E41177AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59D322332C;
-	Wed, 26 Feb 2025 15:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09437226D02;
+	Wed, 26 Feb 2025 15:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="YXfOOeOh"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="nbvbDyKG"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88060222591
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CADE2236E8;
+	Wed, 26 Feb 2025 15:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582858; cv=none; b=MHZ+NfN3V7nsEluJqf5+ssPpbHr+qw7BvGTfihWpB9s73Wjb36MM6U7YmhqRCUFi3wl2CBzTaejoKVyAlWEDWvYJZl7ES9FR8+R5AAAx42OlJnbeK/Y4R6Qtpitm588+WECMiMaVyQD7nB1u69jlxKAkdOM4sceODgOCI6FeuPo=
+	t=1740582871; cv=none; b=W3Bf+GGNuFvO90GvRi8VtkTiR8ujodMRu+G6drkGj7p+m3Gloq/suaINKZzDDJPQEvj7nGOOIppZV6c/432j+gCVR+C+6bZtNUSVTFW/PTjSwtDFzA0B3KlXDRQbD/C+UOdp/H77M0AtNZLIyeb1jccNTgexQRvcrWvU89obyK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582858; c=relaxed/simple;
-	bh=cqvBrG3ie58oNevi03YHgjZaOlLV0ON165ZblqwNnOg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=MApG5KAW1egmcrDb3Bwth/INowy6Js89tlzvxrbR3GdCxC7PE0/uZgKFwnBYlIR/PPmXHlGzUeqq4Yyh/S9iS2qeATzmjJoE9nlXZuCvGTsLuQ/eIFXNKZCLi47Bk/GY93X1K9PkAvnpnXNuLmYFicFSTM3QVJdlZacHpGPM6c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=YXfOOeOh; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1740582871; c=relaxed/simple;
+	bh=aGGzSgO2NRNWrx289Woi8O0FtwiAqqUo2nQCCgLrNAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=neMpYXAoG4mUC/7ip6uYUl5b/NVqIEPIyx110GNwY8+QslGDNEZuesoNiuYSO3aY1FuWvE1UGwu5CKXyhsRF4pnusOIW1xpuDskWt5P7D4elaUlcdNRQHnqWGcAJd0SVvwd+gBSCX+3OB3cd4/37YYWZCvCbaq1yWv4i+K4oheE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=nbvbDyKG; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1740582870; x=1772118870;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wolJGYzNbXbPiDgE8dqL6KYG3P554mNNvwNzwm6iLVM=;
+  b=nbvbDyKGH2NJldnoV0K2VVFCusRUWNpFv7ImhdMcs7dYewEo7VvtLZbL
+   PbCThuJ1gy7rZ9IApuPosfIhQAHofLEjlYv90C8Fjv2tdjhxdsF3Q+PzV
+   R0XMF1poYDJWfX9GtUClR8FxHRvHBG+e4ykvAGgeHi+mjr/opnOGGib5f
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,317,1732579200"; 
+   d="scan'208";a="381035687"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:14:24 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:11919]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.58:2525] with esmtp (Farcaster)
+ id 044ff674-0f38-4827-8439-56d357ec9ac7; Wed, 26 Feb 2025 15:14:23 +0000 (UTC)
+X-Farcaster-Flow-ID: 044ff674-0f38-4827-8439-56d357ec9ac7
+Received: from EX19D003UWB002.ant.amazon.com (10.13.138.11) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 15:14:22 +0000
+Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
+ EX19D003UWB002.ant.amazon.com (10.13.138.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 15:14:22 +0000
+Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 15:14:22 +0000
+Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id 589A640496;
+	Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
+Message-ID: <7f38018b-dc89-4d79-a309-149557796121@amazon.co.uk>
+Date: Wed, 26 Feb 2025 15:14:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1740582853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6kQbb0PLOfRfxhBJWSWjWCVR9AvSTbkkHB29xifIVyM=;
-	b=YXfOOeOhPXiP8XxbTz7Vksn6vNnz/3+IGZ8Un2zM+V/NOt44UM00lgD4cYqwMKDhSSgDda
-	o6A71UbWTysV+Om+XzX5R4b3ctGUz0Z2jSx2n+Lx9TMobIDZmlYWDJjEyrSRnTWb7tL21V
-	CAe454MournGNCN3lI1U6sbqPqQab6eGDN9DPkIrsQOSjdLASSMz5s7J8zG3gizRisBToi
-	H8zk4KWkeNhClDlEN6WhP4xqLEUymcYJ/fCdhQZlTFs16hLI06/W9VNhPz66KyJY9b3UPI
-	ZcpfaBLUImADDXFiLuoi+t7HL5ZPdb4q6T5tSJ+LX4BlLE6Aj6OrwPDCSJ0Ozw==
-Content-Type: multipart/signed;
- boundary=a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 26 Feb 2025 16:14:02 +0100
-Message-Id: <D82H4F6J4V4V.2BLHVUVD3BVX9@cknow.org>
-Cc: <kernel@collabora.com>, <linux-media@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, "Tim Surber" <me@timsurber.de>,
- "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Diederik de Haas"
- <didi.debian@cknow.org>
-Subject: Re: [PATCH v10 3/6] media: platform: synopsys: Add support for HDMI
- input driver
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Dmitry Osipenko" <dmitry.osipenko@collabora.com>, "Shreeya Patel"
- <shreeya.patel@collabora.com>, "Heiko Stuebner" <heiko@sntech.de>, "Mauro
- Carvalho Chehab" <mchehab@kernel.org>, "Hans Verkuil" <hverkuil@xs4all.nl>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <jose.abreu@synopsys.com>, <nelson.costa@synopsys.com>,
- <shawn.wen@rock-chips.com>, <nicolas.dufresne@collabora.com>, "Sebastian
- Reichel" <sebastian.reichel@collabora.com>
-References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
- <20250225183058.607047-4-dmitry.osipenko@collabora.com>
-In-Reply-To: <20250225183058.607047-4-dmitry.osipenko@collabora.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
+ map
+To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
+	<seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
+	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
+	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
+	<derekmn@amazon.com>, <jthoughton@google.com>
+References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+ <20250221160728.1584559-4-roypat@amazon.co.uk>
+ <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
+ <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
+ <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
---a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
 
-On Tue Feb 25, 2025 at 7:30 PM CET, Dmitry Osipenko wrote:
-> From: Shreeya Patel <shreeya.patel@collabora.com>
+On Wed, 2025-02-26 at 09:08 +0000, David Hildenbrand wrote:
+> On 26.02.25 09:48, Patrick Roy wrote:
+>>
+>>
+>> On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
+>>>> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
+>>>> set, guest_memfd folios will be removed from the direct map after
+>>>> preparation, with direct map entries only restored when the folios are
+>>>> freed.
+>>>>
+>>>> To ensure these folios do not end up in places where the kernel cannot
+>>>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
+>>>> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
+>>>>
+>>>> Note that this flag causes removal of direct map entries for all
+>>>> guest_memfd folios independent of whether they are "shared" or "private"
+>>>> (although current guest_memfd only supports either all folios in the
+>>>> "shared" state, or all folios in the "private" state if
+>>>> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
+>>>> direct map entries of also the shared parts of guest_memfd are a special
+>>>> type of non-CoCo VM where, host userspace is trusted to have access to
+>>>> all of guest memory, but where Spectre-style transient execution attacks
+>>>> through the host kernel's direct map should still be mitigated.
+>>>>
+>>>> Note that KVM retains access to guest memory via userspace
+>>>> mappings of guest_memfd, which are reflected back into KVM's memslots
+>>>> via userspace_addr. This is needed for things like MMIO emulation on
+>>>> x86_64 to work. Previous iterations attempted to instead have KVM
+>>>> temporarily restore direct map entries whenever such an access to guest
+>>>> memory was needed, but this turned out to have a significant performance
+>>>> impact, as well as additional complexity due to needing to refcount
+>>>> direct map reinsertion operations and making them play nicely with gmem
+>>>> truncations.
+>>>>
+>>>> This iteration also doesn't have KVM perform TLB flushes after direct
+>>>> map manipulations. This is because TLB flushes resulted in a up to 40x
+>>>> elongation of page faults in guest_memfd (scaling with the number of CPU
+>>>> cores), or a 5x elongation of memory population. On the one hand, TLB
+>>>> flushes are not needed for functional correctness (the virt->phys
+>>>> mapping technically stays "correct",  the kernel should simply to not it
+>>>> for a while), so this is a correct optimization to make. On the other
+>>>> hand, it means that the desired protection from Spectre-style attacks is
+>>>> not perfect, as an attacker could try to prevent a stale TLB entry from
+>>>> getting evicted, keeping it alive until the page it refers to is used by
+>>>> the guest for some sensitive data, and then targeting it using a
+>>>> spectre-gadget.
+>>>>
+>>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>>>
+>>> ...
+>>>
+>>>>
+>>>> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
+>>>> +{
+>>>> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
+>>>> +}
+>>>> +
+>>>>    static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>>>>    {
+>>>> +     struct inode *inode = folio_inode(folio);
+>>>> +
+>>>> +     if (kvm_gmem_test_no_direct_map(inode)) {
+>>>> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
+>>>> +                                                  false);
+>>>
+>>> Will this work if KVM is built as a module, or is this another good
+>>> reason why we might want guest_memfd core part of core-mm?
+>>
+>> mh, I'm admittedly not too familiar with the differences that would come
+>> from building KVM as a module vs not. I do remember something about the
+>> direct map accessors not being available for modules, so this would
+>> indeed not work. Does that mean moving gmem into core-mm will be a
+>> pre-requisite for the direct map removal stuff?
+> 
+> Likely, we'd need some shim.
+> 
+> Maybe for the time being it could be fenced using #if IS_BUILTIN() ...
+> but that sure won't win in a beauty contest.
+
+Is anyone working on such a shim at the moment? Otherwise, would it make
+sense for me to look into it? (although I'll probably need a pointer or
+two for what is actually needed)
+
+I saw your comment on Fuad's series [1] indicating that he'll also need
+some shim, so probably makes sense to tackle it anyway instead of
+hacking around it with #if-ery.
+
+[1]: https://lore.kernel.org/kvm/8ddab670-8416-47f2-a5a6-94fb3444f328@redhat.com/
+
+> -- 
+> Cheers,
+> 
+> David / dhildenb
 >
-> Add initial support for the Synopsys DesignWare HDMI RX
-> Controller Driver used by Rockchip RK3588. The driver
-> supports:
->  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
->  - RGB888, YUV422, YUV444 and YCC420 pixel formats
->  - CEC
->  - EDID configuration
->
-> The hardware also has Audio and HDCP capabilities, but these are
-> not yet supported by the driver.
->
-> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
-> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> ---
->  drivers/media/platform/Kconfig                |    1 +
->  drivers/media/platform/Makefile               |    1 +
->  drivers/media/platform/synopsys/Kconfig       |    3 +
->  drivers/media/platform/synopsys/Makefile      |    2 +
->  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
->  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
->  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2756 +++++++++++++++++
->  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
->  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
->  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
->  10 files changed, 3516 insertions(+)
->  create mode 100644 drivers/media/platform/synopsys/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_ce=
-c.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_ce=
-c.h
->
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kcon=
-fig
-> index 85d2627776b6..9287faafdce5 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -85,6 +85,7 @@ source "drivers/media/platform/rockchip/Kconfig"
->  source "drivers/media/platform/samsung/Kconfig"
->  source "drivers/media/platform/st/Kconfig"
->  source "drivers/media/platform/sunxi/Kconfig"
-> +source "drivers/media/platform/synopsys/Kconfig"
->  source "drivers/media/platform/ti/Kconfig"
->  source "drivers/media/platform/verisilicon/Kconfig"
->  source "drivers/media/platform/via/Kconfig"
-> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Mak=
-efile
-> index ace4e34483dd..6fd7db0541c7 100644
-> --- a/drivers/media/platform/Makefile
-> +++ b/drivers/media/platform/Makefile
-> @@ -28,6 +28,7 @@ obj-y +=3D rockchip/
->  obj-y +=3D samsung/
->  obj-y +=3D st/
->  obj-y +=3D sunxi/
-> +obj-y +=3D synopsys/
->  obj-y +=3D ti/
->  obj-y +=3D verisilicon/
->  obj-y +=3D via/
-> diff --git a/drivers/media/platform/synopsys/Kconfig b/drivers/media/plat=
-form/synopsys/Kconfig
-> new file mode 100644
-> index 000000000000..4fd521f78425
-> --- /dev/null
-> +++ b/drivers/media/platform/synopsys/Kconfig
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +source "drivers/media/platform/synopsys/hdmirx/Kconfig"
-> diff --git a/drivers/media/platform/synopsys/Makefile b/drivers/media/pla=
-tform/synopsys/Makefile
-> new file mode 100644
-> index 000000000000..3b12c574dd67
-> --- /dev/null
-> +++ b/drivers/media/platform/synopsys/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-y +=3D hdmirx/
-> diff --git a/drivers/media/platform/synopsys/hdmirx/Kconfig b/drivers/med=
-ia/platform/synopsys/hdmirx/Kconfig
-> new file mode 100644
-> index 000000000000..3f96f6c97cf0
-> --- /dev/null
-> +++ b/drivers/media/platform/synopsys/hdmirx/Kconfig
-> @@ -0,0 +1,27 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +config VIDEO_SYNOPSYS_HDMIRX
-> +	tristate "Synopsys DesignWare HDMI Receiver driver"
-> +	depends on VIDEO_DEV
-> +	select MEDIA_CONTROLLER
-> +	select VIDEO_V4L2_SUBDEV_API
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select CEC_CORE
-> +	select CEC_NOTIFIER
-> +	select HDMI
-> +	help
-> +	  Support for Synopsys HDMI HDMI RX Controller.
-> +	  This driver supports HDMI 2.0 version.
-> +
-> +	  To compile this driver as a module, choose M here. The module
-> +	  will be called synopsys_hdmirx.
-> +
-> +config VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID
-> +	bool "Load default EDID"
-> +	depends on VIDEO_SYNOPSYS_HDMIRX
-> +	help
-> +	  Preload default EDID (Extended Display Identification Data).
 
-I see some value in making explicit what you mean by EDID ...
-
-> +	  EDID contains information about the capabilities of the display,
-> +	  such as supported resolutions, refresh rates, and audio formats.
-
-... I do not think a/this Kconfig needs to explain it.
-
-> +
-> +	  Enabling this option is recommended for a non-production use-cases.
-
-My guess is that it could be useful for development/debugging/CI work
-which possibly do not have an actual device (monitor) which provides
-actual EDID data? Is CI work the reason why you (initially) enabled it
-in the defconfig?
-But when you have an actual monitor (=3Dproduction use-case?), you
-(really) do not want it? Would it be harmless if 'still' enabled?
-
-Thus a more extensive description what *this* Kconfig item does and why
-and when I want to enable it or not, seems more useful to me.
-
-Cheers,
-  Diederik
-
-
---a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ78vvgAKCRDXblvOeH7b
-bgcOAQDqS73Snv/YiK3XuYu+04zVOsVyoTgZaPdwB1flqhS6PAD9HpydvFKnE7vj
-pve5Zbq372uE+I1waffsJU9B6k2p2w0=
-=lwwn
------END PGP SIGNATURE-----
-
---a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508--
+Best,
+Patrick
 
