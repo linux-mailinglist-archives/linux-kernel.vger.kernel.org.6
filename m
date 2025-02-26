@@ -1,213 +1,320 @@
-Return-Path: <linux-kernel+bounces-535103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BDFA46EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:01:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE09A47061
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F56188C552
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4073A4704
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DCF23A9AE;
-	Wed, 26 Feb 2025 23:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0EoOlfYR"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360D8C2FA;
+	Thu, 27 Feb 2025 00:38:39 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45B125E836
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1576327005B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740610875; cv=none; b=XAWWRwOr+41jUkAgso9UTzugh1N4O9/QGXWysAby89RQ+4AAo9wdkXBIz58cd6ev54+zl5rteCPYS2Y/bZ4b6cWIdh0KWnlqasDEphE2sMQj3JcyqNYP7v+MnGNTsWVZPFmmbhwztbLu12AYW1gpAcaezakUwsc+1CUI/Si4ho8=
+	t=1740616718; cv=none; b=BvbCPRpRg2cGMua5IvN0lRKsq3RooYN/Fg5KFt3Y2Ki10Uk9Sp0XQHxH1w57pA8dygFXcUkzDwvEcMx0I18XN70jtAFxkib8juEe89qwPKL4aZuJLJOOPr/mmpXvv7VGrnKLqydtlJIHnETv4TiDNUHBs+lWBCxB/QYnsxWyeG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740610875; c=relaxed/simple;
-	bh=f5oTp5SuUA9h/3I9N7juWjdnIYMZaPJU4Yhcj3JS9fo=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=RFum+lxUdLDNga8jpsL3Ogse84FqVEIPTo+72n5TzhtgEIoDRAME6zMmKnlHuURPo2qKdID1eSIabhS9wQ9aQ45olAwxw5qnNp7HQdP5zhsd4t3lq/4+v84ZLaStCt9GqEFYKvwOHBIyIrT8yh8GKvokqhX1y7sf8IW+jM5yBGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0EoOlfYR; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6f2737d115eso5009217b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:01:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740610873; x=1741215673; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Pu7sgl3+ZGn6x4LgYjWxEyBJxfFiut2VzzKduKXiRig=;
-        b=0EoOlfYR13/et9JriALQWl9jHrEvGG+Z8mMe03V7QOIIjuCpuWDMmEtA1gA5QaTMZ7
-         KxkJqC4K22vtVI3sylsxkrc2YxxDp87yPtlq+L00+BcQuGO3DnNDEY9l+E3LUwJ5CaD1
-         JgoQ1I1JUarK9z6Vh775EYdE18GhB+35g327FA2lu7b/eVZxh6sOKiUgpfycy5e5ETKX
-         oyOmJ1q2IfJ20UTeHyZAj9DCbpaQy/p/U2JxPQfnbVhvBH9/fQcRibhuKc/hSpKMSyil
-         pdD12+AilvSblzyeOFu/zwP/9AaZOYyMBgyUg6N/iV5gPeLlnv1VeFaHjbr7U439Q5qB
-         +MUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740610873; x=1741215673;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pu7sgl3+ZGn6x4LgYjWxEyBJxfFiut2VzzKduKXiRig=;
-        b=tpNPXnWussV+JchS1I/qtUO0FjDWnnBZFP7FyzMIbJ2cibujmNkfhCKabW+Fkh0adT
-         w17YmXZ6vAQV7F2iyrmYT7bHkXwS3SQ5xpQhFXXLN3AZgXV3YOB+3A0O0l02UnTEErlB
-         xq8QpvpBugkkmIEI3SVVqIMYuEvBzjYpo4Zl5+jh1jWlRShGBKB/3llSTSnQpc/zu7CM
-         8HLVQ7FSi7rIQwR1Fn3iAkRhc5XTV+Sjp4IWJSL3AeIvXtwEJZddSxabECLW9YsBxnRy
-         BoBnbbOpB/t2wic0sxZOxxxq2/cLtMCdgi5jjpi2TDj+za1XFRYdKw+mYh0TCQkvI3fr
-         iGSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNe+sWebnWO2K0t6CIr/oHwkTRkzjpUu81lr19Kx8nI6udOFg5hoIa3oo31j5bqBq+WMozlf28b7Oiw9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqUFdAy5sUjqVpt5kPyP+vPc1H6K78EhjbE7w82J4JNKkjhOXX
-	DAy/TcNtOaunr9LCzFsozIwZ660ihtQEQKJL1ti5PVZJEoAIOw2kk4RFFxLNxEzHf/DT1W+fNXe
-	x7+lLMA==
-X-Google-Smtp-Source: AGHT+IGv/0M1hTuvLFKK/FXKEHNI8rjDJXfn4bhSsJ4gwLOvaZkwvEpf7LqbCKAYvnH4Li2SpWcUPsfMXWij
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ba33:e56c:ea26:80e7])
- (user=irogers job=sendgmr) by 2002:a05:690c:3809:b0:6fb:4f1a:42e0 with SMTP
- id 00721157ae682-6fbcc3785famr24379917b3.4.1740610872777; Wed, 26 Feb 2025
- 15:01:12 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:01:09 -0800
-Message-Id: <20250226230109.314580-1-irogers@google.com>
+	s=arc-20240116; t=1740616718; c=relaxed/simple;
+	bh=FIiVtcNHJYrmZ+Yz2YVjUiAkhpAPHWrX1l2qB64oxFE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=RAI4+JrTsSq4ujimhn8edZfDV+CuuwlsltUuXLFHSP3ZEeXjt7Irr4rZCf+nmHbodEqubq+PZF7kIhHE7WXELqSsxV1mxZvKhR4+Y+WrVbT7xS/NyJJ7g6bjffOxzv3oAjl/KcPjfNZ8tOElezeje3qvi++fZy/i1eEkbYFm1Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1740616714-1eb14e79fe312d0001-xx1T2L
+Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id gy3gPjRKSLH6Qt18 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 27 Feb 2025 08:38:34 +0800 (CST)
+X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from ZXSHMBX2.zhaoxin.com (10.28.252.164) by ZXSHMBX3.zhaoxin.com
+ (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Thu, 27 Feb
+ 2025 08:38:34 +0800
+Received: from ZXSHMBX2.zhaoxin.com ([fe80::4dfc:4f6a:c0cf:4298]) by
+ ZXSHMBX2.zhaoxin.com ([fe80::4dfc:4f6a:c0cf:4298%4]) with mapi id
+ 15.01.2507.044; Thu, 27 Feb 2025 08:38:34 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from [10.32.64.4] (10.32.64.4) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 26 Feb
+ 2025 17:41:12 +0800
+Message-ID: <1cb4d7de-ee6d-4ce7-bb4a-86ef5a986dba@zhaoxin.com>
+Date: Wed, 26 Feb 2025 17:41:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Subject: [PATCH v1] perf tests: Fix data symbol test with LTO builds
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: LeoLiu-oc <leoliu-oc@zhaoxin.com>
+Subject: Re: [PATCH v4 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+X-ASG-Orig-Subj: Re: [PATCH v4 3/3] PCI/ACPI: Add pci_acpi_program_hest_aer_params()
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
+	<robert.moore@intel.com>, <avadhut.naik@amd.com>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
+	<CobeChen@zhaoxin.com>, <TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>
+References: <20241205114048.60291-1-LeoLiu-oc@zhaoxin.com>
+ <20241205114048.60291-4-LeoLiu-oc@zhaoxin.com>
+ <20241211194735.GB1960478@yaz-khff2.amd.com>
+In-Reply-To: <20241211194735.GB1960478@yaz-khff2.amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Moderation-Data: 2/27/2025 8:38:32 AM
+X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
+X-Barracuda-Start-Time: 1740616714
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 7645
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -1.52
+X-Barracuda-Spam-Status: No, SCORE=-1.52 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_SC0_SA983
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.137756
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+	0.50 BSF_SC0_SA983          Custom Rule BSF_SC0_SA983
 
-With LTO builds, although regular builds could also see this as
-all the code is in one file, the datasym workload can realize the
-buf1.reserved data is never accessed. The compiler moves the
-variable to bss and only keeps the data1 and data2 parts as
-separate variables. This causes the symbol check to fail in the
-test. Make the variable volatile to disable the more aggressive
-optimization. Rename the variable to make which buf1 in perf is
-being referred to.
 
-Before:
-```
-$ perf test -vv "data symbol"
-126: Test data symbol:
---- start ---
-test child forked, pid 299808
-perf does not have symbol 'buf1'
-perf is missing symbols - skipping test
----- end(-2) ----
-126: Test data symbol                                                : Skip
-$ nm perf|grep buf1
-0000000000a5fa40 b buf1.0
-0000000000a5fa48 b buf1.1
-```
 
-After:
-```
-$ nm perf|grep buf1
-0000000000a53a00 d buf1
-$ perf test -vv "data symbol"126: Test data symbol:
---- start ---
-test child forked, pid 302166
- a53a00-a53a39 l buf1
-perf does have symbol 'buf1'
-Recording workload...
-Waiting for "perf record has started" message
-OK
-Cleaning up files...
----- end(0) ----
-126: Test data symbol                                                : Ok
-```
+=E5=9C=A8 2024/12/12 3:47, Yazen Ghannam =E5=86=99=E9=81=93:
+>=20
+>=20
+> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
+=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
+>=20
+> On Thu, Dec 05, 2024 at 07:40:48PM +0800, LeoLiu-oc wrote:
+>> From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+>>
+>> Call the func pci_acpi_program_hest_aer_params() for every PCIe device,
+>> the purpose of this function is to extract register value from HEST PCIe
+>> AER structures and program them into AER Capabilities. This function
+>> applies to all hardware platforms that has a PCI Express AER structure
+>> in HEST.
+>>
+>> Signed-off-by: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+>> ---
+>>   drivers/pci/pci-acpi.c | 103 +++++++++++++++++++++++++++++++++++++++++
+>>   drivers/pci/pci.h      |   9 ++++
+>>   drivers/pci/probe.c    |   1 +
+>>   3 files changed, 113 insertions(+)
+>>
+>> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+>> index af370628e583..6e29af8e6cc4 100644
+>> --- a/drivers/pci/pci-acpi.c
+>> +++ b/drivers/pci/pci-acpi.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/pm_qos.h>
+>>   #include <linux/rwsem.h>
+>> +#include <acpi/apei.h>
+>>   #include "pci.h"
+>>
+>>   /*
+>> @@ -806,6 +807,108 @@ int pci_acpi_program_hp_params(struct pci_dev *dev=
+)
+>>        return -ENODEV;
+>>   }
+>>
+>> +#ifdef CONFIG_ACPI_APEI
+>> +/*
+>> + * program_hest_aer_common() - configure AER common registers for Root =
+Ports,
+>> + * Endpoints and PCIe to PCI/PCI-X bridges
+>> + */
+>> +static void program_hest_aer_common(struct acpi_hest_aer_common aer_com=
+mon,
+>> +                                 struct pci_dev *dev, int pos)
+>> +{
+>> +     u32 uncor_mask;
+>> +     u32 uncor_severity;
+>> +     u32 cor_mask;
+>> +     u32 adv_cap;
+>> +
+>> +     uncor_mask =3D aer_common.uncorrectable_mask;
+>> +     uncor_severity =3D aer_common.uncorrectable_severity;
+>> +     cor_mask =3D aer_common.correctable_mask;
+>> +     adv_cap =3D aer_common.advanced_capabilities;
+>> +
+>=20
+> These can be done at the same time as the declarations. Same for the
+> remaining functions.
+>=20
+These functions are called only in this pci-acpi.c file and should not=20
+require additional declarations.
 
-Fixes: 3dfc01fe9d12 ("perf test: Add 'datasym' test workload")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/test_data_symbol.sh | 17 +++++++++--------
- tools/perf/tests/workloads/datasym.c       | 11 ++++++-----
- 2 files changed, 15 insertions(+), 13 deletions(-)
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK, uncor_mask);
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, uncor_sever=
+ity);
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_COR_MASK, cor_mask);
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_CAP, adv_cap);
+>> +}
+>> +
+>> +static void program_hest_aer_root(struct acpi_hest_aer_root *aer_root,
+>> +                               struct pci_dev *dev, int pos)
+>> +{
+>> +     u32 root_err_cmd;
+>> +
+>> +     root_err_cmd =3D aer_root->root_error_command;
+>> +
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, root_err_c=
+md);
+>> +}
+>> +
+>> +static void program_hest_aer_bridge(struct acpi_hest_aer_bridge *hest_a=
+er_bridge,
+>> +                                 struct pci_dev *dev, int pos)
+>> +{
+>> +     u32 uncor_mask2;
+>> +     u32 uncor_severity2;
+>> +     u32 adv_cap2;
+>> +
+>> +     uncor_mask2 =3D hest_aer_bridge->uncorrectable_mask2;
+>> +     uncor_severity2 =3D hest_aer_bridge->uncorrectable_severity2;
+>> +     adv_cap2 =3D hest_aer_bridge->advanced_capabilities2;
+>> +
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK2, uncor_mask2=
+);
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER2, uncor_seve=
+rity2);
+>> +     pci_write_config_dword(dev, pos + PCI_ERR_CAP2, adv_cap2);
+>> +}
+>> +
+>> +static void program_hest_aer_params(struct hest_parse_aer_info info)
+>> +{
+>> +     struct pci_dev *dev;
+>> +     int port_type;
+>> +     int pos;
+>> +     struct acpi_hest_aer_root *hest_aer_root;
+>> +     struct acpi_hest_aer *hest_aer_endpoint;
+>> +     struct acpi_hest_aer_bridge *hest_aer_bridge;
+>> +
+>> +     dev =3D info.pci_dev;
+>> +     port_type =3D pci_pcie_type(dev);
+>> +     pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
+>> +     if (!pos)
+>> +             return;
+>> +
+>> +     switch (port_type) {
+>> +     case PCI_EXP_TYPE_ROOT_PORT:
+>> +             hest_aer_root =3D info.hest_aer_root_port;
+>> +             program_hest_aer_common(hest_aer_root->aer, dev, pos);
+>> +             program_hest_aer_root(hest_aer_root, dev, pos);
+>> +     break;
+>> +     case PCI_EXP_TYPE_ENDPOINT:
+>> +             hest_aer_endpoint =3D info.hest_aer_endpoint;
+>> +             program_hest_aer_common(hest_aer_endpoint->aer, dev, pos);
+>> +     break;
+>> +     case PCI_EXP_TYPE_PCI_BRIDGE:
+>> +             hest_aer_bridge =3D info.hest_aer_bridge;
+>> +             program_hest_aer_common(hest_aer_bridge->aer, dev, pos);
+>> +             program_hest_aer_bridge(hest_aer_bridge, dev, pos);
+>> +     break;
+>> +     default:
+>> +             return;
+>> +     break;
+>> +     }
+>> +}
+>> +
+>> +int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
+>> +{
+>> +     struct hest_parse_aer_info info =3D {
+>> +             .pci_dev =3D dev
+>> +     };
+>> +
+>> +     if (!pci_is_pcie(dev))
+>> +             return -ENODEV;
+>> +
+>> +     if (apei_hest_parse(hest_parse_pcie_aer, &info) =3D=3D 1)
+>=20
+> Don't need the "=3D=3D 1".
+>=20
+The apei_hest_parse function may return an error value, data are written=20
+to the aer registers only if the device in hest_parse_pcie_aer() matches=20
+the correct hest aer structure information. It is necessary to check=20
+whether the return value of the apei_hest_parse function is equal to 1.
 
-diff --git a/tools/perf/tests/shell/test_data_symbol.sh b/tools/perf/tests/shell/test_data_symbol.sh
-index c86da0235059..7da606db97cb 100755
---- a/tools/perf/tests/shell/test_data_symbol.sh
-+++ b/tools/perf/tests/shell/test_data_symbol.sh
-@@ -18,7 +18,7 @@ skip_if_no_mem_event() {
- 
- skip_if_no_mem_event || exit 2
- 
--skip_test_missing_symbol buf1
-+skip_test_missing_symbol workload_datasym_buf1
- 
- TEST_PROGRAM="perf test -w datasym"
- PERF_DATA=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-@@ -26,18 +26,19 @@ ERR_FILE=$(mktemp /tmp/__perf_test.stderr.XXXXX)
- 
- check_result() {
- 	# The memory report format is as below:
--	#    99.92%  ...  [.] buf1+0x38
-+	#    99.92%  ...  [.] workload_datasym_buf1+0x38
- 	result=$(perf mem report -i ${PERF_DATA} -s symbol_daddr -q 2>&1 |
--		 awk '/buf1/ { print $4 }')
-+		 awk '/workload_datasym_buf1/ { print $4 }')
- 
--	# Testing is failed if has no any sample for "buf1"
-+	# Testing is failed if has no any sample for "workload_datasym_buf1"
- 	[ -z "$result" ] && return 1
- 
- 	while IFS= read -r line; do
--		# The "data1" and "data2" fields in structure "buf1" have
--		# offset "0x0" and "0x38", returns failure if detect any
--		# other offset value.
--		if [ "$line" != "buf1+0x0" ] && [ "$line" != "buf1+0x38" ]; then
-+		# The "data1" and "data2" fields in structure
-+		# "workload_datasym_buf1" have offset "0x0" and "0x38", returns
-+		# failure if detect any other offset value.
-+		if [ "$line" != "workload_datasym_buf1+0x0" ] && \
-+		   [ "$line" != "workload_datasym_buf1+0x38" ]; then
- 			return 1
- 		fi
- 	done <<< "$result"
-diff --git a/tools/perf/tests/workloads/datasym.c b/tools/perf/tests/workloads/datasym.c
-index 8e08fc75a973..5074b3439835 100644
---- a/tools/perf/tests/workloads/datasym.c
-+++ b/tools/perf/tests/workloads/datasym.c
-@@ -7,7 +7,8 @@ typedef struct _buf {
- 	char data2;
- } buf __attribute__((aligned(64)));
- 
--static buf buf1 = {
-+/* volatile to try to avoid the compiler seeing reserved as unused. */
-+static volatile buf workload_datasym_buf1 = {
- 	/* to have this in the data section */
- 	.reserved[0] = 1,
- };
-@@ -15,8 +16,8 @@ static buf buf1 = {
- static int datasym(int argc __maybe_unused, const char **argv __maybe_unused)
- {
- 	for (;;) {
--		buf1.data1++;
--		if (buf1.data1 == 123) {
-+		workload_datasym_buf1.data1++;
-+		if (workload_datasym_buf1.data1 == 123) {
- 			/*
- 			 * Add some 'noise' in the loop to work around errata
- 			 * 1694299 on Arm N1.
-@@ -30,9 +31,9 @@ static int datasym(int argc __maybe_unused, const char **argv __maybe_unused)
- 			 * longer a continuous repeating pattern that interacts
- 			 * badly with the bias.
- 			 */
--			buf1.data1++;
-+			workload_datasym_buf1.data1++;
- 		}
--		buf1.data2 += buf1.data1;
-+		workload_datasym_buf1.data2 += workload_datasym_buf1.data1;
- 	}
- 	return 0;
- }
--- 
-2.48.1.711.g2feabab25a-goog
+>> +             program_hest_aer_params(info);
+>> +
+>> +     return 0;
+>> +}
+>> +#endif
+>> +
+>>   /**
+>>    * pciehp_is_native - Check whether a hotplug port is handled by the O=
+S
+>>    * @bridge: Hotplug port to check
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 2e40fc63ba31..78bdc121c905 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -897,6 +897,15 @@ static inline void pci_save_aer_state(struct pci_de=
+v *dev) { }
+>>   static inline void pci_restore_aer_state(struct pci_dev *dev) { }
+>>   #endif
+>>
+>> +#ifdef CONFIG_ACPI_APEI
+>> +int pci_acpi_program_hest_aer_params(struct pci_dev *dev);
+>=20
+> The return value is never checked, so this can return void.
+>=20
+Ok, I agree with you, I will modify it in the next version.
+
+>> +#else
+>> +static inline int pci_acpi_program_hest_aer_params(struct pci_dev *dev)
+>> +{
+>> +     return 0;
+>> +}
+>> +#endif
+>> +
+>>   #ifdef CONFIG_ACPI
+>>   bool pci_acpi_preserve_config(struct pci_host_bridge *bridge);
+>>   int pci_acpi_program_hp_params(struct pci_dev *dev);
+>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+>> index 2e81ab0f5a25..33b8b46ca554 100644
+>> --- a/drivers/pci/probe.c
+>> +++ b/drivers/pci/probe.c
+>> @@ -2304,6 +2304,7 @@ static void pci_configure_device(struct pci_dev *d=
+ev)
+>>        pci_configure_serr(dev);
+>>
+>>        pci_acpi_program_hp_params(dev);
+>> +     pci_acpi_program_hest_aer_params(dev);
+>=20
+> This should not be called here unconditionally.
+>=20
+> OS should only write AER registers if granted permission through
+> _OSC.
+>=20
+> It would be more appropriate to call this from pci_aer_init().
+>=20
+> Thanks,
+> Yazen
+The question about whether OS has control of AER to write the=20
+information in the HEST AER structure to the AER register of the=20
+corresponding device has been discussed, see the link for more details:=20
+https://lore.kernel.org/all/a3a603ef-b813-4798-bb54-62076d53bd3a@zhaoxin.co=
+m/
+
+It is inappropriate to add the pci_acpi_program_hest_aer_params function=20
+to the pci_aer_init function=EF=BC=8CThe reason for this is that no involve=
+ment=20
+of the AER driver.
+
+Leoliu-oc
+Best Regards
 
 
