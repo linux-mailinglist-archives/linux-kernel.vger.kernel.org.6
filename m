@@ -1,156 +1,168 @@
-Return-Path: <linux-kernel+bounces-534196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2FBA46401
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:04:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E7DA46405
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:05:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A411899CA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A9D3A6AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CA72222CA;
-	Wed, 26 Feb 2025 15:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE3222590;
+	Wed, 26 Feb 2025 15:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5gj1+Nd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5OexUTr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103672206A4;
-	Wed, 26 Feb 2025 15:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B1821D3E6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582269; cv=none; b=U62TNoTXr2cHAhyKRjRwob6DgjbAh6AIrREDxaJM8CkraRBljqWC1EOskOzatQ7IV4DrF0c9s4BxWe711syBlASrHiojaz7d4j6roghFAjEucgMWOe+MN0MH2GRmD0ifOwvTyw6mQBWKORGHmC8bpCe+Ms/TsSEZsfkLPnS0/pg=
+	t=1740582319; cv=none; b=KAVv87STTqBJvLymaX6MAYzYSHLC9uSbD3+AkYw665vcFK+m/Zl+V4tEDYkwhGSngk7fobFGo1z+gx2WR0kiD4zFfKdQo7r9fruIw8ymgRDqfvxmtOfbWxNI83m/ODUAQXJ6QWNXF1xvFOSHCedQ268VmJUlTCvv5bQQdIsvjjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582269; c=relaxed/simple;
-	bh=Kd2BF1a6VfS2P8GI8jSZHLKC/prjfy/cW+xW96oUPs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3SatLrXiQKYA29Zf3loLxOvVtLtHFJNHeavjpBwe8qgLP0h0WFHVxu4eK7klmKhvysUODS18apiVUeRQHIoF58JofzxlxHEMCmpjQQ51fqnZNEh8H5gYCg0mkaFf+DoVbDakvxwArzCtdIc02+V/3VlU1hqoY79D5YPVHCW9hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5gj1+Nd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73661C4CED6;
-	Wed, 26 Feb 2025 15:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740582268;
-	bh=Kd2BF1a6VfS2P8GI8jSZHLKC/prjfy/cW+xW96oUPs0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=j5gj1+NdHNNtjJ+PLc+5MU4pc/MW1xuzZ5iP0afNu7QWcW57kLslhnjSmPMpSOCFj
-	 +0F08Wxpi1wt7gdJ9tE87GPGoq4/eFZ2ulbvjhtR5xIsGBlg71z/wIIhgaav/S7ZRy
-	 7uM0RJU9evju4ilIY6mCW6Apky4z8vZoalle5EzALiTHr8Mw2cQArT2sIGVtevFTGb
-	 xT9VyrfI2kxWZABSJKifYb+TZBIpI9Q4f+AfK6kaBUUVyjKUezWbYDDTdvimhFZ9pM
-	 SpLl7iAtDE/Yaz37Tfn9gjXNhyXmLKsjIQX/pHTr2QWb0fszibFYpOooc8Pux+wcgB
-	 FY7LDzH2btduw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 11D50CE04E3; Wed, 26 Feb 2025 07:04:28 -0800 (PST)
-Date: Wed, 26 Feb 2025 07:04:28 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/3] rcu/exp: Remove confusing needless full barrier on
- task unblock
-Message-ID: <63cbab19-a7d4-4daa-8b54-58665e159e23@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250213232559.34163-1-frederic@kernel.org>
- <20250213232559.34163-3-frederic@kernel.org>
- <20250225215908.GA1812344@joelnvbox>
- <Z78OeeyarjDB63Dj@localhost.localdomain>
+	s=arc-20240116; t=1740582319; c=relaxed/simple;
+	bh=UbsznBB7Ta4OOWxE6Q76ciArrmMaaUYgQLE2J5Bd0ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHAq5IU2MZdoh5zH6Hjo9sOCo7RzFGjlQ5imEZhuf9qtl4PfP0OTNlhawHrjGe7k9ymtlwQ9bNeyDNzj3DXxflv+gL1zd5JitHew/15E0feVigucAK9IkGfBUIWJ+CgRm4Pz9yZfXAYlxkA7OgZF7Decf8cGyQCLqYtj+CpJrTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5OexUTr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740582317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DtaKuouL0Y3pv+96Ex3YwJXMFO8jE7lmxjvjb5LQJDY=;
+	b=e5OexUTrjjchN/aAZRzlYvbY2Hb65SDzox7PqIJJD+WchVV+sGaojxHhk9sL9Hsso1lBVe
+	n5NKWSCVw2fhvCxawo0grI0Yh4cgQhsPxywcYjOiua44xGiQvhOpAYIrJxCguMjafn94yB
+	nmsr3g/CDUQ5S0rRwKZtijR8+CUoCtE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-8MADYtq2MBG6xZE9ENFucA-1; Wed, 26 Feb 2025 10:05:15 -0500
+X-MC-Unique: 8MADYtq2MBG6xZE9ENFucA-1
+X-Mimecast-MFC-AGG-ID: 8MADYtq2MBG6xZE9ENFucA_1740582315
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4398e841963so52764085e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:05:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740582314; x=1741187114;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DtaKuouL0Y3pv+96Ex3YwJXMFO8jE7lmxjvjb5LQJDY=;
+        b=jy1EMPsweZINJGoGkpbvsARgDOWdN+pUb1ZO38ZbFKzYCJ1UcndpU/5JGBm67Rt6Nt
+         IUUTsHAaaifHLuJHR8RUGlkC64K4JLjETCB3e3trl9TPqj+UzVtqeO60MzPX5JMe5u5a
+         rfgJlGHt+1eHjsUgJmsKmpomoi2x6hnDSIEg91SRKcw5ZyF0JZKBZ0zi9Sk0labHjkfX
+         3WHgg5S9XRTRKJdaRZCLJeN2z73P02cRdnNcLYBZy7oxf+etinOGKn33SYWEW0zQ4ojn
+         obTUMjiYvVCO8mg1HO0YNT4JVVN0oYMZyMST0mhBBCfkPXpgWlqZK/gFPVa/B5JryF/F
+         lxfA==
+X-Gm-Message-State: AOJu0Yx7eFGpEKiu9JRhbJjxV3J8+tI26Jlox3UtQGzLCFnl3bMGGRqj
+	JoTfEqoSen/5RdtzjANIrvZ0bB/ifkISqCN62jpsiHUhGrO/BwSL1lF3k5C1dgxW9Oy2oS8Jo/o
+	4iKaPZse9VqgbYqNryhP84aaYYQGhWcF9tgLHyOi9uAGccu0tpoAcVDjsMVfRUA==
+X-Gm-Gg: ASbGncuK9AxOA/gSoqUrgynjeFPGnzJC9IoEVYu7jJMhYOSKnwaXnE3ZpU0qerwl5wx
+	C/KT4r7OfD2uSk6sTsio9+SGhLROWo62832uMGaoz0o3+Jph8OxAYQ2Nwp7UUAAxh6AtlmJuXxn
+	hHNfGKkyXCl381SoG49t+VO77YRTgLwgbzIDBDqx1N0Yx05HTLbDy3IcPv4pAqmBCMKIeewKKiz
+	LRhPOE7uvR1kmyIP/HPtLkktI+NYlI+RrOG/wjFlSdi95S+90L7dFi7/c6gkcCU3Oz5kpmdlgDj
+	8pUTuVj01m5LWhhJTip4JVU85Kjs4vGvXQRMr1cK9gXj
+X-Received: by 2002:a05:600c:3506:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-439aebcfc40mr173325155e9.29.1740582312995;
+        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE3bcYNh8Rp+gjnHI+8lWknh+fmKRrB7o51AAIckCXQu2kuHMMgbo940KVzsy6o7t0A+oKQMQ==
+X-Received: by 2002:a05:600c:3506:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-439aebcfc40mr173324475e9.29.1740582312582;
+        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
+Received: from [192.168.3.141] (p5b0c6611.dip0.t-ipconnect.de. [91.12.102.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5442c0sm24142145e9.32.2025.02.26.07.05.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
+Message-ID: <0dfeabca-5c41-4555-a43b-341a54096036@redhat.com>
+Date: Wed, 26 Feb 2025 16:05:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z78OeeyarjDB63Dj@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] KVM: s390: pv: fix race when making a page secure
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ frankja@linux.ibm.com, borntraeger@de.ibm.com, nrb@linux.ibm.com,
+ seiden@linux.ibm.com, nsg@linux.ibm.com, schlameuss@linux.ibm.com,
+ hca@linux.ibm.com
+References: <20250226123725.247578-1-imbrenda@linux.ibm.com>
+ <20250226123725.247578-2-imbrenda@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250226123725.247578-2-imbrenda@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 01:52:09PM +0100, Frederic Weisbecker wrote:
-> Le Tue, Feb 25, 2025 at 04:59:08PM -0500, Joel Fernandes a écrit :
-> > On Fri, Feb 14, 2025 at 12:25:58AM +0100, Frederic Weisbecker wrote:
-> > > A full memory barrier in the RCU-PREEMPT task unblock path advertizes
-> > > to order the context switch (or rather the accesses prior to
-> > > rcu_read_unlock()) with the expedited grace period fastpath.
-> > > 
-> > > However the grace period can not complete without the rnp calling into
-> > > rcu_report_exp_rnp() with the node locked. This reports the quiescent
-> > > state in a fully ordered fashion against updater's accesses thanks to:
-> > > 
-> > > 1) The READ-SIDE smp_mb__after_unlock_lock() barrier accross nodes
-> > >    locking while propagating QS up to the root.
-> > > 
-> > > 2) The UPDATE-SIDE smp_mb__after_unlock_lock() barrier while holding the
-> > >    the root rnp to wait/check for the GP completion.
-> > > 
-> > > 3) The (perhaps redundant given step 1) and 2)) smp_mb() in rcu_seq_end()
-> > >    before the grace period completes.
-> > > 
-> > > This makes the explicit barrier in this place superflous. Therefore
-> > > remove it as it is confusing.
-> > > 
-> > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > > ---
-> > >  kernel/rcu/tree_plugin.h | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > index 3c0bbbbb686f..d51cc7a5dfc7 100644
-> > > --- a/kernel/rcu/tree_plugin.h
-> > > +++ b/kernel/rcu/tree_plugin.h
-> > > @@ -534,7 +534,6 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
-> > >  		WARN_ON_ONCE(rnp->completedqs == rnp->gp_seq &&
-> > >  			     (!empty_norm || rnp->qsmask));
-> > >  		empty_exp = sync_rcu_exp_done(rnp);
-> > > -		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
-> > 
-> > I was wondering though, this is a slow path and the smp_mb() has been there
-> > since 2009 or so. Not sure if it is super valuable to remove it at this
-> > point. But we/I should definitely understand it.
-> 
-> The point is indeed not to improve performance because this is a slowpath
-> (although...). The main goal is to maintain a clear picture of the ordering
-> without needless barriers that leave a taste of doubt to reviewers.
+> +int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb)
+> +{
+> +	struct folio *folio;
+> +	spinlock_t *ptelock;
+> +	pte_t *ptep;
+> +	int rc;
+> +
+> +	ptep = get_locked_valid_pte(mm, hva, &ptelock);
+> +	if (!ptep)
+> +		return -ENXIO;
 
-Agreed!
+You very likely need a pte_write() check we had there before, as you 
+might effectively modify page content by clearing the page.
 
-> > I was wondering if you could also point to the fastpath that this is racing
-> > with, it is not immediately clear (to me) what this smp_mb() is pairing with
-> > :(
-> 
-> It is supposed to pair with the barrier in sync_exp_work_done() but then again
-> this is already enforced by the smp_mb__after_unlock_lock() chained through
-> rnp locking.
+-- 
+Cheers,
 
-You could interpret that "Order GP completion with preceding accesses"
-to include preceding readers, which to your point sounds plausible.
-And in that case, again as you say, the raw_spin_lock_irqsave_rcu_node()
-in rcu_report_exp_rnp() provides the needed ordering.
+David / dhildenb
 
-I think.  ;-)
-
-							Thanx, Paul
-
-> Thanks.
-> 
-> > 
-> > thanks,
-> > 
-> >  - Joel
-> > 
-> > 
-> > 
-> > 
-> > 
-> > >  		np = rcu_next_node_entry(t, rnp);
-> > >  		list_del_init(&t->rcu_node_entry);
-> > >  		t->rcu_blocked_node = NULL;
-> > > -- 
-> > > 2.46.0
-> > > 
 
