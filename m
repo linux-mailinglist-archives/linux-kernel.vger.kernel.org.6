@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-535168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80995A46FBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:55:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB899A46FC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476D87A545F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD96D3AFF7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D09325F7A5;
-	Wed, 26 Feb 2025 23:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F49425FA37;
+	Wed, 26 Feb 2025 23:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFyzvZ+O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T8Kqo0MO"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7927004B;
-	Wed, 26 Feb 2025 23:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291C627004B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740614090; cv=none; b=Wit5yS/XZ6pFgCFJnkrDUJXh8yKPcwM1LslqnGlgX7z4oRsnlPSE3x0Ei4V64QY2io1/fNmHrIxhY3mUEtkzY5JmthOu7p3yZj3KrgMQN9d6QVUY2N0n4WY0vLIfdcy45L0HAMOzcOAmqWMa9FbWdalAlsSu4+3n8cOyRysAh8g=
+	t=1740614329; cv=none; b=K2iItEmwjtRiFvF5rgNYympg3B/2YHVvu1nR2tQuVfOl816KzCBEIIdVe2U7DisjHZQ9QUWnDD4L99Vmu5ozdiMq9RMdc0Rq4966LmGLDmUymQ1ycSeu0GJIHu3yf3l6P4C6RKxt90xEVFxL2DqdfNQcmnY9IHV12hg/yi9Zg0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740614090; c=relaxed/simple;
-	bh=YUskBTkxhympUP6Mt/bQ164L/YKQXYDZt/yEpEGdp9c=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=XdIbE3wanLfUTpWU22xf0HHU4CIh0JjHFt7ptmXscKzh1zSoIHHEdoZeyCIKRiCbi8UZ5xgE8wOOeGFCEGW3hrr3xMoAEACJ9LrcSA6rHuCF+XeT9O1GgcpAMnt7jdeSgGhg808ELpBz/YR3ukwzEK5+Zimk8HR4pZVbEE4oblw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFyzvZ+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DF2C4CED6;
-	Wed, 26 Feb 2025 23:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740614090;
-	bh=YUskBTkxhympUP6Mt/bQ164L/YKQXYDZt/yEpEGdp9c=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=dFyzvZ+O6w2TFJX7p/NFufQIv1pOXDI8An2gT1zT7nQqP0GPusWu1vEiM2WMUWcmW
-	 sItYVpBw12Gmv3SwQOitJb+esi6VjFL3ZwZW3qaFuF+JLNr1EjusjOfzHbBAmx6HJm
-	 EOXAALJP09nJKYT/jsKRW2pBpeyCwVpxcxpj9U0fMJNT/S1MfHMZbDTcoB1xMAioxQ
-	 oshnfGtb5X7cRAy/j/kNanRYFp90H57W0Ac51V1vGA5wsDfivIAvqi47Q0q8Qmwcxg
-	 yBcv5bRlKfO5H3dBs7XSWlgt8rbvC9vHEjMawVBPTPjw7MqUA+YNvKTHJrf6byMVMx
-	 aBTYceJ3EUB0w==
-Message-ID: <eaae8c47a4bc27d512c76d9f107f1e00.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740614329; c=relaxed/simple;
+	bh=4Pj9kjyz6137WG7himdJP85mNE+Wj/4ku1bjTMb3HhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSRL2wNYHaC5UuvLgOiwitu5q9zLbbCtKXkI9MtL3Jfh/Gb4Jho/csqX6NKTaRWVJdSKQcmv7DTjnGF+XSsBxpUfZG4i8VPLppBTAf3390he1op6bOAqRSdesWGh+/kw27eHi29yxCyUfiwitP1dSZwl8LI27VawRIOgw7Ndwno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T8Kqo0MO; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 23:58:39 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740614323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yswrmCRrVsnZeMvvRyeXCzhvfViLwt8KDXKusOpWbOI=;
+	b=T8Kqo0MO1ZeLalmsNe+Zfiw1jmoaYYsLmXnleDI/1ggc4o2kqX/wPyqiKkf9qKsWl/J+oU
+	XGRzol7hoMsGyrYhK2ngvUz2dUntRBxYHJ8uz4awS2l8vSCPVGNnPUoiHQwbnURFOpJeb7
+	SB9KuG8Pyt7nI95EOdH1Y9ScQgj2VuU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev,
+	linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
+Message-ID: <Z7-qr6ar0HPyiYOv@google.com>
+References: <20250225213200.729056-1-nphamcs@gmail.com>
+ <Z76Go1VGw272joly@google.com>
+ <CAKEwX=O+27wN5p_j5REfnEsfVi4zsgvyowdhGUKQseo9g1GtLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
-References: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
-From: Stephen Boyd <sboyd@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 26 Feb 2025 15:54:48 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKEwX=O+27wN5p_j5REfnEsfVi4zsgvyowdhGUKQseo9g1GtLg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Krzysztof Kozlowski (2025-01-29 07:45:19)
-> The parent of disp_cc_mdss_byte0_intf_clk clock should not propagate up
-> the rates, because this messes up entire clock hierarchy when setting
-> clock rates in MSM DSI driver.
->=20
-> The dsi_link_clk_set_rate_6g() first sets entire clock hierarchy rates
-> via dev_pm_opp_set_rate() on byte clock and then sets individual clock
-> rates, like pixel and byte_intf clocks, to proper frequencies.  Having
-> CLK_SET_RATE_PARENT caused that entire tree was re-calced and the byte
-> clock received halved frequency.  Drop CLK_SET_RATE_PARENT to fix this
-> and align with SM8550 and SM8650.
->=20
-> Fixes: f1080d8dab0f ("clk: qcom: dispcc-sm8750: Add SM8750 Display clock =
-controller")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
-> ---
+On Wed, Feb 26, 2025 at 03:29:06PM -0800, Nhat Pham wrote:
+> On Tue, Feb 25, 2025 at 7:12 PM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
+> >
+> > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
+> > > Currently, we crash the kernel when a decompression failure occurs in
+> > > zswap (either because of memory corruption, or a bug in the compression
+> > > algorithm). This is overkill. We should only SIGBUS the unfortunate
+> > > process asking for the zswap entry on zswap load, and skip the corrupted
+> > > entry in zswap writeback.
+> >
+> > Some relevant observations/questions, but not really actionable for this
+> > patch, perhaps some future work, or more likely some incoherent
+> > illogical thoughts :
+> >
+> > (1) It seems like not making the folio uptodate will cause shmem faults
+> > to mark the swap entry as hwpoisoned, but I don't see similar handling
+> > for do_swap_page(). So it seems like even if we SIGBUS the process,
+> > other processes mapping the same page could follow in the same
+> > footsteps.
+> 
+> poisoned, I think? It's the weird SWP_PTE_MARKER thing.
 
-Applied to clk-fixes
+Not sure what you mean here, I am referring to the inconsistency between
+shmem_swapin_folio() and do_swap_page().
+
+> 
+> [...]
+> 
+> >
+> >
+> > (3) If we run into a decompression failure, should we free the
+> > underlying memory from zsmalloc? I don't know. On one hand if we free it
+> > zsmalloc may start using it for more compressed objects. OTOH, I don't
+> > think proper hwpoison handling will kick in until the page is freed.
+> > Maybe we should tell zsmalloc to drop this page entirely and mark
+> > objects within it as invalid? Probably not worth the hassle but
+> > something to think about.
+> 
+> This might be a fun follow up :) I guess my question is - is there a
+> chance that we might recover in the future?
+> 
+> For example, can memory (hardware) failure somehow recover, or the
+> decompression algorithm somehow fix itself? I suppose not?
+> 
+> If that is the case, one thing we can do is just free the zsmalloc
+> slot, then mark the zswap entry as corrupted somehow. We can even
+> invalidate the zswap entry altogether, and install a (shared)
+> ZSWAP_CORRUPT_ENTRY. Future readers can check for this and exit if
+> they encounter a corrupted entry?
+> 
+> It's not common enough (lol hopefully) for me to optimize right away,
+> but I can get on with it if there are actual data of this happening
+> IRL/in product :)ion
+
+I am not aware of this being a common problem, but something to keep in
+mind, perhaps.
 
