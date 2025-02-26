@@ -1,252 +1,181 @@
-Return-Path: <linux-kernel+bounces-533136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1FBA45608
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:52:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92CDA45610
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:53:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1763AD6FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89A9174B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CEF269AED;
-	Wed, 26 Feb 2025 06:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC1C269AED;
+	Wed, 26 Feb 2025 06:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fg4jsyjZ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i0ZxCpgD"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA1F267B77
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E85269889
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552707; cv=none; b=Tv9+B1LCwRSKEws0ncszTPMSmcoQxpQodq9cqlJcAGjnzrJIAc5xc7CmIiLzq6jsKXE6oelIx/O4knE1L8CqRGV466yvcDOIqJngaPVfyrCArtmd2sJNgPeTfTOE2iXdmV+GqsLGkYJ4f/n4jFDpc5TH1/J+jAZKhxEVDpBdyYg=
+	t=1740552758; cv=none; b=UKn1TphcA1787nYUsWV6GsZna4ZK4jLmQG02bG3EeMO6pw9LcdOByEENkYlAYdqfMHYiJC5t4p117Zeq5y4gmhjPGalxVYm9mZYNyw49eyBDTaiDvxuSnrjGhdoiXIUa9griIzRXyKyU+KTkLlPJC6UzXzdybzy7md7Zf5qphRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552707; c=relaxed/simple;
-	bh=gQt4uvwzi+yI/Ho/qaGi9ScgX+6wrk0tZ04EZq4q7G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3TyQ64bekwkWXcKLKkh2mNwMAbNdtilTobOuOCk2NRpb7/jRvKHMR//BB4qUO5kaGQNBVM9HUYLovb7yz0Fmrhd7J+RgvHpGKKovbszqfUTq7VSSfWsi6dnbKukRU67UxZbQbcpxqLsi8PbVeL9AKBoM2tNEWfukLPiMzu1j/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fg4jsyjZ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22113560c57so45222035ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:51:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740552705; x=1741157505; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H9Y6UOLHlk2ecsYC6FP7mpwrb5S7apuCvRXbHLnzqAY=;
-        b=Fg4jsyjZY/zPenvlkU+Md8WQGFJJwqxaTUaUz55V5Y+MceIhh0IH0dKMEmvmt4e84q
-         BFmjrjiqBu9TsxH7RwJCdZoc+tasCRqD+jNrppOfkPBJcglpBt4fJeXpJJwjtw+LMh2Q
-         8myfizvgx+LIBE3MyJx7HqUCNfvZhx7KLnXNikOYcWUIgqtfHZthg8KYrvz0nZuFXdVw
-         1obCK1nX15o9m0kRZTPIl+kY915AyLVqixeioZXvhv1mMCnnPL67cf07xIWP3TKeEdMd
-         MkoyoAaqbDwW7k6ZFU11USLV2MkDxbtfr7jBdr7N0xwyKN7+AU78Rb8axFKuqcNiwI3Y
-         Nm+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740552705; x=1741157505;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H9Y6UOLHlk2ecsYC6FP7mpwrb5S7apuCvRXbHLnzqAY=;
-        b=Rt9eTwxi1UtO/a9ylANq2hQvVQLgb66hNvXqY1Djtes4Yk5JCPQ28qlvWq9RFBlp6z
-         3vFkf3HZ9IDitVe+bYVM7BjRxK3djJe0q3vu0YwsrmBhWtA93L1od8zJulFLMQZDGCMN
-         yRhOTNQSrjWv2CtH7q/qjKLI2tHZBslkh5xSqV4giPJdzGfqq5TD3OTs/hspJ4W5kC4S
-         JZ1q4G0G9U8ShlV7qFqrRL5djscEuECEmTaqs3KsR/MO1zsbtDkQNSWTiq+BMnRSSRx3
-         651gRymnV/CtRVJk0N1bI5pTVSWZtZPHXzr231CrLszyHjFkVruxzcKlo3eenI2TT1bt
-         82Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3x8Q7sUejA4avvIX1itZGgMsxBEuJJ2/Qp9jUKYeaKJFTt3GTD86PLG149qcDxE9roeriqDFcAypOHio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaxSJxmh2oP+EokVIGQxcoBe5/J88+OsclgBSPEGWPFpg7gk6W
-	whaD1ggSx28vKJ44QpL7mQv2e1QRiWuhQSndvtfAxqvsXXaYaNLT
-X-Gm-Gg: ASbGncsD+1N/IA9mwbXO9uV2S5z/XKk7sebibI+j0rLlgfPtIWbZAG0cS8UPidAD4Sr
-	nTsxoLzru6ma66HdKCmL07Nfsz/QwgMKzueHojmBDLJmUGKd2NMumvADU/9VPfgIlPqEWjrdRkT
-	VHq1b3nk2mCnTdjI2VkOJ8tlAMu1FzBreo9GWj6uR2dcSX/7j2miFDVDqi03LyjeaoMcCY+zrFG
-	uEDTQr7BHpaWF60d/oTfdsZiLMQm5gcSoosxGR2Bv9EFWR4Rvyhz5qbLTa7OpISSjqAo3Or/WgJ
-	rKin29o3wrwuXYJzMmcHxA3qyDjl7O0WMB90mirkCA==
-X-Google-Smtp-Source: AGHT+IEytS7db6bI6tnqshbz/jWJQrj+o7rLH7DXq+K4BvYgA1Ttvm6InCBmaNkugrgzQ3VqR4OEKg==
-X-Received: by 2002:a17:903:22cc:b0:21f:35fd:1b7b with SMTP id d9443c01a7336-221a1195022mr296711565ad.50.1740552704682;
-        Tue, 25 Feb 2025 22:51:44 -0800 (PST)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:553c:b91:ab91:e34a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a09c716sm25065745ad.159.2025.02.25.22.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:51:43 -0800 (PST)
-Date: Wed, 26 Feb 2025 14:51:38 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: yury.norov@gmail.com
-Cc: anshuman.khandual@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw, skhan@linuxfoundation.org, mka@chromium.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v3] uapi: Revert "bitops: avoid integer overflow in
- GENMASK(_ULL)"
-Message-ID: <Z765-uSYQb986RTZ@vaxr-BM6660-BM6360>
-References: <20250225165437.1554395-1-richard120310@gmail.com>
+	s=arc-20240116; t=1740552758; c=relaxed/simple;
+	bh=4rxfz2RBs0i2KkyJbIivqlEYb7DDjtpkcjg98g6MAhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=LZGFT4IBuG+X4ClrsLwu3KHx6++k+vIzMXJAWZIx6KFMKzpdNOZQ4RbROL18fQsCY4VMDdO8seQfYJ+iwVfpuAdfgUyioGHmhnjBsa+UOJohcFd+XxKgmj2LkctD/ftgU8yv46fe63uWGMnWs+SW1lA9cQbF5B03VmTk9QfbuTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i0ZxCpgD; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250226065228epoutp02d00dc6bda6c494c97296fe61d082d415~nr4DMxA3B1160611606epoutp02a
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:52:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250226065228epoutp02d00dc6bda6c494c97296fe61d082d415~nr4DMxA3B1160611606epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740552748;
+	bh=VMxy5Fqms/eEj6SG3Fa4iJMOIvJ3Wms8fcLlQ4UDdm4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=i0ZxCpgDq43DKlyT2L+4Tztm/w2bFSKxw+DECGAs7J5kIKZ2UG7RA2WwdTTxmTX4Q
+	 6MOUyvYw28/GCxuYJ39PmKzm2G82+LWLeunGKF6SFGv027I5PAGSPoHBrkXe2Btwk0
+	 ueKl5smHGvinfzGvQc3ktlbLfR7ZgrD3yA55v69U=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20250226065215epcas2p4a1ff08b37e5b659501c8ccc7cce0781f~nr33D6qDX1242012420epcas2p4a;
+	Wed, 26 Feb 2025 06:52:15 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z2lWz0cVbz4x9Q6; Wed, 26 Feb
+	2025 06:52:15 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6D.46.23368.D1ABEB76; Wed, 26 Feb 2025 15:52:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e~nr31N9Bw71726517265epcas2p3V;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250226065213epsmtrp1b54a53bd8e040101c302fe1b3a39480c~nr31NNhbx2283422834epsmtrp1X;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+X-AuditID: b6c32a45-db1ed70000005b48-8d-67beba1d77ea
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.10.18729.D1ABEB76; Wed, 26 Feb 2025 15:52:13 +0900 (KST)
+Received: from KORCO180836 (unknown [12.36.150.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250226065213epsmtip2b95aa7fc901ce29e0b96a6a873f6b97f~nr31CCl9Q0556105561epsmtip2I;
+	Wed, 26 Feb 2025 06:52:13 +0000 (GMT)
+From: <sw617.shin@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, <krzk@kernel.org>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "'Kyunghwan Seo'" <khwan.seo@samsung.com>
+Subject: [PATCH V1 RESEND] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+Date: Wed, 26 Feb 2025 15:52:13 +0900
+Message-ID: <000001db881a$f7364da0$e5a2e8e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225165437.1554395-1-richard120310@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AduIGjfKeJ5dyM0LTxaz6ymXUsgWdA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmha7crn3pBvv2MFs8mLeNzWJ++yVG
+	i/PnN7BbbHp8jdXi8q45bBYzzu9jsrixbh+7xZOFZ5gsHr/8x+zA6bFpVSebx8o1a1g9Ni+p
+	99j5vYHdo2/LKkaPz5vkAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
+	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YW
+	l+al6+WlllgZGhgYmQIVJmRnvF05kamgka/i5/enLA2MZ7m7GDk5JARMJLbf+MbSxcjFISSw
+	g1Hi5+4j7BDOJ0aJLx/aoJxvjBIzfp1ng2npWXmACSKxl1Hi/4rXUM5LRokHsx6xglSxCchJ
+	LO1vYwGxRQSKJHb++Aq2hFngAKPEn5bpYEXCAgkSS6dPYAKxWQRUJe4sbwezeQUsJc7duMcK
+	YQtKnJz5BGwQs4C8xPa3c5ghzlCQ+Pl0GSvEAj2JLQt7oGpEJGZ3tjGDLJMQmMghca+zjxGi
+	wUWiecYOKFtY4tXxLewQtpTEy36QRzmA7HyJU0+EIXobGCXeNb+H+tleYtGZn2A1zAKaEut3
+	6UOUK0scuQW1lk+i4/BfqCm8Eh1tQhCNKhIdPzezwiw6euYB1FIPiSvX21knMCrOQvLkLCRP
+	zkLyzCyEvQsYWVYxiqUWFOempxYbFRjCYzs5P3cTIzjBarnuYJz89oPeIUYmDsZDjBIczEoi
+	vJyZe9KFeFMSK6tSi/Lji0pzUosPMZoCg30is5Rocj4wxeeVxBuaWBqYmJkZmhuZGpgrifNW
+	72hJFxJITyxJzU5NLUgtgulj4uCUamBK+huS8X9aqBhLsh3XGdW1CTvuhZucvrlPY6Xvoqcz
+	tu30ef3vbBmHwOYezt2+y2f+/fn1CefEFU8LNM5eOfevk3XLtqdlk76s1rl77uqMiR8+HV/z
+	/eyC9sLo5usbFrUYMFRtCU5b5ZrSor9EKPZG3hzlhR1Gu0+fkH+cH/eg7tOTCpEZEtUPHn/f
+	W7N0/vO0rWdCuO5u2VTpNeFHRmh+9vG/q2JTjlRbFMyLMMlzbXe5fTZxsZ6b/rkNeY6cOorV
+	N9YsqDzo+cr4HPOkVf9UHzqpzArSK34zscSr5zxDydMrZ/KsL7M41hdO/PWnc+6CzmPbDu4K
+	Fehbcfh2qNPxzSfM27dWR2j4W/VKrXlel6XEUpyRaKjFXFScCABROjBpOQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK7srn3pBi131SwezNvGZjG//RKj
+	xfnzG9gtNj2+xmpxedccNosZ5/cxWdxYt4/d4snCM0wWj1/+Y3bg9Ni0qpPNY+WaNawem5fU
+	e+z83sDu0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBlvV05kKmjkq/j5/SlLA+NZ7i5GTg4J
+	AROJnpUHmLoYuTiEBHYzSnTP2sjSxcgBlJCSePfMEqJGWOJ+yxFWiJrnjBKtr1eygiTYBOQk
+	lva3sYDYIgJlElsbtzKD2MwCRxglZnwGaxYWiJNoe7CaEcRmEVCVuLO8nQnE5hWwlDh34x4r
+	hC0ocXLmExaIXm2JpzefQtnyEtvfzmGGOEJB4ufTZawQu/QktizsgaoRkZjd2cY8gVFwFpJR
+	s5CMmoVk1CwkLQsYWVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgRHjpbmDsbtqz7o
+	HWJk4mA8xCjBwawkwsuZuSddiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTU
+	gtQimCwTB6dUA9OOlQssf7+4N12fcW7wLbkpaYzFgt2fSu6/SC/t43b27e7JZEn2mBd6Vv6K
+	nMyke4G95eVr5S6Yz3Qx9vgx951Qp6RSmKxZd0WbeUbZ3+17BD49XPFRR3LVzdr3r4/09xx7
+	8XWNo+PPRO0+9vLXxy6uPnJM5vcH78fvouYonuA3b73QfGTLgY0nOfs1pz54/nGiwap/Pm+d
+	HNwTTJK+T1bf4KA2d8uFdzcirfY2N9W1WG1mnBihxr2R/8LOOcf0BA9s6fCZ6pZyeXbE8Q+e
+	7at2H7bozDvbcCGRf9HkR+VMWf25T08uO//yjlj4heSLzku/d30pXXA3i+neJPuKjLVlivNX
+	zFvrJpt+6evNo73zlFiKMxINtZiLihMBm2ZU5wsDAAA=
+X-CMS-MailID: 20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e
+References: <CGME20250226065213epcas2p37d44b987d5bc913cf5f9d5800ff9df8e@epcas2p3.samsung.com>
 
-On Wed, Feb 26, 2025 at 12:54:37AM +0800, I Hsin Cheng wrote:
-> This patch reverts 'commit c32ee3d9abd2("bitops: avoid integer overflow in
->  GENMASK(_ULL)")'.
-> 
-> The code generation can be shrink by over 1KB by reverting this commit.
-> Originally the commit claimed that clang would emit warnings using the
-> implementation at that time.
-> 
-> The patch was applied and tested against numerous compilers, inclduing
-> gcc-13, gcc-12, gcc-11 cross-compiler, clang-17, clang-18 and clang-19.
-> Various warning levels were set (-W=0, -W=1, -W=2) and CONFIG_WERROR
-> disabled to complete the compilation. The results show that no compilation
-> errors or warnings were generated due to the patch.
-> 
-> The results of code size reduction are summarized in the following table.
-> The code size changes for clang are all zero across different versions,
-> so they're not listed in the table.
-> 
-> For NR_CPUS=64 on x86_64.
-> ----------------------------------------------
-> |	        |   gcc-13 |   gcc-12 |   gcc-11 |
-> ----------------------------------------------
-> |       old | 22438085 | 22453915 | 22302033 |
-> ----------------------------------------------
-> |       new | 22436816 | 22452913 | 22300826 |
-> ----------------------------------------------
-> | new - old |    -1269 |    -1002 |    -1207 |
-> ----------------------------------------------
-> 
-> For NR_CPUS=1024 on x86_64.
-> ----------------------------------------------
-> |	        |   gcc-13 |   gcc-12 |   gcc-11 |
-> ----------------------------------------------
-> |       old | 22493682 | 22509812 | 22357661 |
-> ----------------------------------------------
-> |       new | 22493230 | 22509487 | 22357250 |
-> ----------------------------------------------
-> | new - old |     -452 |     -325 |     -411 |
-> ----------------------------------------------
-> 
-> For arm64 architecture, gcc cross-compiler was used and QEMU was
-> utilized to execute a VM for a CPU-heavy workload to ensure no
-> side effects and that functionalities remained correct. The test
-> even demonstrated a positive result in terms of code size reduction:
-> * Before: 31660668
-> * After: 31658724
-> * Difference (After - Before): -1944
-> 
-> An analysis of multiple functions compiled with gcc-13 on x86_64 was
-> performed. In summary, the patch elimates one negation in almost
-> every use case. However, negative effects may occur in some cases,
-> such as the generation of additional "mov" instruction or increased
-> register usage> The use of "~_UL(0) << (l)" may even result in the
-> allocations of "%r*" registers instead of "%e*" registers (which are
-> 32-bit registers) because the compiler cannot assume that the higher
-> bits are zero.
-> 
-> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> ---
-> Changelog:
-> 
-> v1 -> v2:
-> 	- Refer the patch explicitly as a revert of commit c32ee3d
-> 	- Squash commits into 1 commit
-> 	- Perform compilation for numerous compilers, architectures and
-> 	  compare code size shrink for each of them
-> 	- Perform cpu-heavy workload test inside x86_64 VM and ARM64 VM
-> 	- Analyze the result of disassembly of several small use cases
-> 
-> v2 -> v3:
-> 	- Refactor code to single line
-> 	- Disabled CONFIG_WERROR to ensure no additional compilation errors or warnings
-> 	- Remove description for unrelated compilation errors and warnings
-> 	- Summarize the result into a better looking table
-> 	- Rephrase the patch and fix typos
-> 
-> 
-> Hi Yury,
-> 
-> Sorry about the last iteration that I included everything, making
-> the email too large and difficult to read. However, you still reviewed
-> it and gave me feedbacks, really big thanks for your patience and those
-> feedbacks. Running these tests also gave me a great opportunity to learn
-> a lot.
-> 
-> If there's anything else needed to be test or modified, please let
-> me know, I'll ammend them as soon as possible.
-> 
-> Hi David,
-> 
-> Thanks for your advise on alternative ideas for this code. I ran some
-> simple test (basically check the result of code size reduction) based
-> on your suggestions.
-> 
-> For gcc-13 on x86_64 + defconfig.
-> * "(_UL(2) << (h)) - (_UL(1) << (l))"
-> 	Before=22438085, After=22438193, Difference ( After - Before ) = 108
-> * "((_UL(1) + _UL(1)) << (h)) - (_UL(1) << (l))"
-> 	Before=22438085, After=22438209, Difference ( After - Before ) = 124
-> 
-> I tried to do an analysis on "intel_arch_events_quirk()", it only +2 in
-> code size change, I think it would be a nice example to see the differences
-> in generated code.
-> 
-> So the result shows that your proposal can save 1 negation and 1 "and".
-> -ffffffff83278ad2:	48 f7 d8             	neg    %rax
-> -ffffffff83278adc:	83 e0 7f             	and    $0x7f,%eax
-> 
-> However, one more "mov" and one more "sub" are generated.
-> +ffffffff83278acf:	b8 80 00 00 00       	mov    $0x80,%eax
-> +ffffffff83278ad7:	48 29 d0             	sub    %rdx,%rax
-> 
-> No change in total number of instructions, but negation only requires
-> one register, and the "mov" generated is more expensive then usual.
-> (Usually "mov" of the following form are generated,
-> "48 89 ea             	mov    %rbp,%rdx",
-> "89 c3                	mov    %eax,%ebx" ).
-> 
-> Thanks for your advise again, in some scenario it does have positive
-> effect, but unfortunately, the overall impact is not beneficial.
-> 
-> Best regards,
-> I Hsin Cheng.
-> 
-> Tests performed on ubuntu 24.04 with AMD Ryzen 7 5700X3D 8-Core
-> Processor on x86_64 with kernel version v6.14.0-rc1.
-> ---
->  include/uapi/linux/bits.h | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
-> index 5ee30f882736..682b406e1067 100644
-> --- a/include/uapi/linux/bits.h
-> +++ b/include/uapi/linux/bits.h
-> @@ -4,13 +4,9 @@
->  #ifndef _UAPI_LINUX_BITS_H
->  #define _UAPI_LINUX_BITS_H
->  
-> -#define __GENMASK(h, l) \
-> -        (((~_UL(0)) - (_UL(1) << (l)) + 1) & \
-> -         (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
-> +#define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
->  
-> -#define __GENMASK_ULL(h, l) \
-> -        (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
-> -         (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
-> +#define __GENMASK_ULL(h, l) (((~_ULL(0)) << (l)) & (~_ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
->  
->  #define __GENMASK_U128(h, l) \
->  	((_BIT128((h)) << 1) - (_BIT128(l)))
-> -- 
-> 2.43.0
->
+This is a friendly reminder for this patch.
 
-Please ignore this one, I missed to cc to David.
-I'll resend again later.
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> Sent: Thursday, February 13, 2025 1:56 PM
+> To: 'Sangwook Shin' <sw617.shin@samsung.com>; krzk@kernel.org; wim@linux-
+> watchdog.org; linux@roeck-us.net
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> kernel@vger.kernel.org; 'Kyunghwan Seo' <khwan.seo@samsung.com>
+> Subject: RE: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
+> ExynosAutoV920 SoC
+> 
+> Hello Sangwook
+> 
+> > -----Original Message-----
+> > From: Sangwook Shin <sw617.shin@samsung.com>
+> > Sent: Thursday, February 13, 2025 6:11 AM
+> > To: krzk@kernel.org; alim.akhtar@samsung.com; wim@linux-watchdog.org;
+> > linux@roeck-us.net
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> > soc@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Kyunghwan Seo <khwan.seo@samsung.com>;
+> > Sangwook Shin <sw617.shin@samsung.com>
+> > Subject: [PATCH] watchdog: s3c2410_wdt: Fix PMU register bits for
+> > ExynosAutoV920 SoC
+> >
+> > From: Kyunghwan Seo <khwan.seo@samsung.com>
+> >
+> > Fix the PMU register bits for the ExynosAutoV920 SoC.
+> > This SoC has different bit information compared to its previous
+> > version, ExynosAutoV9, and we have made the necessary adjustments.
+> >
+> > rst_stat_bit:
+> >     - ExynosAutoV920 cl0 : 0
+> >     - ExynosAutoV920 cl1 : 1
+> >
+> > cnt_en_bit:
+> >     - ExynosAutoV920 cl0 : 8
+> >     - ExynosAutoV920 cl1 : 8
+> >
+> > Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+> > Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> > ---
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> 
+> 
 
-Beset regards,
-I Hsin Cheng
+
 
