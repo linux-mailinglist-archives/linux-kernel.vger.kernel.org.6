@@ -1,252 +1,126 @@
-Return-Path: <linux-kernel+bounces-534512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1033A467D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:18:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390CAA467D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B021F188A6A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A76188BA98
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77DB2253A9;
-	Wed, 26 Feb 2025 17:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131AD2248B4;
+	Wed, 26 Feb 2025 17:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSNucT1W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m03dvTPu"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03522248B5;
-	Wed, 26 Feb 2025 17:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2A721CC66;
+	Wed, 26 Feb 2025 17:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740590110; cv=none; b=UHV7pZ9kHFDfaSWuStm1qBZnAmEE7EaiaSYRiXujAWzqzUmkWBeVIgHKtus8hUnH63JnaypC4ox+c9HnoEHATPlgeZssC8gGx9paS5dKtVPYWQr7rCxCHPp2GUbF787giB/zJs3jWKhJqEWW0HCvfLxOOjETdqckmQHdYSOqkok=
+	t=1740590125; cv=none; b=Pnq4kQQTlhhsLf5sUgI1d6GHPUnPuGicF0/CQqDrs5BUqFYqt0K3Ol5dnV8qicH+V33e3Z9jKWz6af/IfCEJTl9fGMpmaGPHrpzWfVbW6xvp0L4jghniWIbcrnGNlDe/RXCl9PCR50Lj9nQ5Mr+mSZI6JlTik1h5Q+IZCmHwUto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740590110; c=relaxed/simple;
-	bh=yDq6FhiPks4Ni/UD3gdC1MXn9apoLwfXV3btFFdqudE=;
+	s=arc-20240116; t=1740590125; c=relaxed/simple;
+	bh=1RAn5bNL4+9EQuzXgKRCtT0XlmNtPhYC/UhyweTJTjM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iZXWb0dvyD5QWEIay2xvWeQyV/gfv/qnE8AMKn4V7PmDrHqOvTNFPWQ37tGOq7I57pf0fXjFHa/baviIQoxlFkfX7QR7CHmDYZM6gUaHnuHsPaT44uG+hlbRafXUrX+2RWLYf0nqHN2hTGIFgiw0YHKB1Bsud4J+1IssTs5/114=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSNucT1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B5EC4AF0B;
-	Wed, 26 Feb 2025 17:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740590110;
-	bh=yDq6FhiPks4Ni/UD3gdC1MXn9apoLwfXV3btFFdqudE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CSNucT1WVr6bhbaG/eNar7P4qAOsFQ8TrHKH3gaK9MwmmZRBaBSVTE43K6W3tQKb0
-	 iqBYqLAG6yzC36vGRpTQvCrJmpfEasZgcZyU6aaSROMHRpmJYudFkYrE8hhZy6Rcvf
-	 kSMIAYhUcauzMJsqTiu8MZI8VP2rwn5F/8P4JKfRyDbdS5fY6PDfNLWXMyQeLk4QHw
-	 5SSTs89hh+e5LBgfI07SJ+CEqL+no3LlPdkQ14TsptCGbsJ0euYXYcRUJdAF+fDG1B
-	 YjoT+TiBgyHchsYu0zqD/W7oYMfOUCEwtFBM4QltnDCgv7jt3bzIVEzvy3v6wORLqQ
-	 UD/4Mksq5YO9g==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0813bd105so11813368a12.1;
-        Wed, 26 Feb 2025 09:15:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7VrFiWY6lyZBZC+1Ejvj0dfT06pODA+CfiPndyy7JWnRlCvYbD3/QoHb2oe447kMcXFKegYHZ/hqteV7G@vger.kernel.org, AJvYcCWQT/Cwrb/QP1ONbR6gbNRsJQw5C9UToyVJKhXk0uY93E9mNu7TkN1Ek5OCd2noc39tLM0oM9dkGRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7IH5E6aIzXCcKkzjSM9gi65bEWVvfAtrXlOPqWPzpPrjCpHNV
-	zQe9HgozXpoRryaa0df8de/Atj+OS0ylLiwuWEjw68qCpqs4TaP5XNcJWgCtLJhWDWcfjNtZ998
-	zLKQPFBey8LfD9vwFyNZ2E11KZA==
-X-Google-Smtp-Source: AGHT+IG6ki3Nh3Jcc3+FNKhZ4DjyuMcfvS8JuUCdoIhctR7oFoNEKiasPTiCqnoci1e/I6F3G+94PRSzioyjymj83WE=
-X-Received: by 2002:a05:6402:448f:b0:5e4:b874:3df7 with SMTP id
- 4fb4d7f45d1cf-5e4b8743f06mr1681182a12.25.1740590108944; Wed, 26 Feb 2025
- 09:15:08 -0800 (PST)
+	 To:Content-Type; b=Twtgnkmm6P1kbuf8uwPkiNGZCc663yc6w1pUA9CLUq94sE/lMrZHVUhtq5X/myIUInBUWgehjEo/blrGU+uxfzc6rGYhshTQE021T9+6QnlL2/m4ypoHH0iyL4LnocdfQ+JEhpqbmVO9e3EdkLwzkuFItg42WMw1rvgr6ahEtug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m03dvTPu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-439a4dec9d5so1216235e9.0;
+        Wed, 26 Feb 2025 09:15:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740590122; x=1741194922; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1RAn5bNL4+9EQuzXgKRCtT0XlmNtPhYC/UhyweTJTjM=;
+        b=m03dvTPuK9egrBhq5qoEaAOzQlU8Jfg9Pc7X1WhNt8Tg6hK3PjDT0Vq/JALq43EuER
+         po+nn8cafGyVtjtbQcuPiUkmfQjzvMyIWWQMfbeouO/SzUUZQnliIyMhGORIEUIx+n2T
+         BCD4rPHVFDXGJqtt6ssZwLWod/Jw/BDnTv84gusF9yFCH/LedmngqGiIj4CpnC9N/sIx
+         5z9h9PDGvJ8GT9GzLXByzFKuPYeognasbDlmX69/i7x0nepfSNB2RYUNSXFc9THr7lAC
+         faBjnquazNSIRFzCNv685jvjWEV3kwhRwH6BRAen+Iz3MuoCWzQb7XSCRXb96r/BWq8S
+         ZC2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740590122; x=1741194922;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1RAn5bNL4+9EQuzXgKRCtT0XlmNtPhYC/UhyweTJTjM=;
+        b=j94+iDICD7AdrVe6ghqkFLxf614EQ85q7VhkVpz7U28L7fRU+V2C9qZV+YSACW4aCz
+         riSmSkI6NSG0D+kjJjLfZ8oiE9Fu4YWqM7uaSfd7MwgRZpW+CI/Pslx2Sasqjsxoqb7f
+         EnpqWSLNiNCuCyQU0MlKtQYgb0KskAjAhwyrDOhNB/wAr5yD0wTQfJALudJbQt6W4LJo
+         O753FsF9APMSJ0i0DULzyTg5YNrNcR6O52+x9E8KWUd936uJTV5AxcemRmfML0NONik/
+         ZmoJ/xWn/0iQIVDHf+JLfQAiL6RtAzParErLu8zN28JdBsZ+oPFN64oW/QDZc5zl9euj
+         jhWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnmRsXqGB/IQIfqr2/dWk4Z5KEjQGPSc9D3Gtqb31o5ONtcx/GkL6AyWKLR5DpyjgVgVh5@vger.kernel.org, AJvYcCXxquVtJKKuyRAvEOi0Fo7oRHaouCa7kq9Gj6lf4b0GAoghIvBeG+mkxEWeuBTfAQ+nyCFl8RnV86vnO8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKe+BJzpfYqq1aiy2I9GZhVxQCDJQzqFuLkPSx3rLZA2QZvNAU
+	erwW5b3aGtKsvmnxRrSysFWDugdQ5bo6A/ZH6AIqQgMnuHV7KF9p6K9or4NooSLExEQ3AbsH8QN
+	hVfWKNMVLnyQ1keyWjhVAY0aPZ58=
+X-Gm-Gg: ASbGncvqkEL/4HRMOMXVYvyeCWveeDIYh3rhVlzXNt7U8zYA66AnlXilQXwjDl83ozX
+	OEmb1EhSZdZefD1pKvyI+w72ChcbjjqHaQFB5hDpwnemgOVgjWTQ31exGg8K4f8X+BHtm1XNmp8
+	3MFAUeN3pWxkb1qAoBcT5iBps=
+X-Google-Smtp-Source: AGHT+IEtBMoCTUav6TSmsKLpwW3a3MxoLkSWBfm5obvrcgUQcp2uu4q4pzqh/afdF4jNJX3Uzx31+bQWBYx2Js2h/d4=
+X-Received: by 2002:a05:6000:dcf:b0:38d:c44a:a64b with SMTP id
+ ffacd0b85a97d-390cc63c045mr7606159f8f.48.1740590121799; Wed, 26 Feb 2025
+ 09:15:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203050828.1049370-1-anshuman.khandual@arm.com>
- <20250203050828.1049370-8-anshuman.khandual@arm.com> <Z7x-EDH9QP7g4lC6@J2N7QTR9R3.cambridge.arm.com>
- <2ca1dc13-cd5a-4597-9733-2343e05f53b3@arm.com>
-In-Reply-To: <2ca1dc13-cd5a-4597-9733-2343e05f53b3@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 26 Feb 2025 11:14:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+dJiRLNM_QE_r6HOg7hEkJCPR6j-TGBpiJZLd+RDBbAA@mail.gmail.com>
-X-Gm-Features: AQ5f1JpoZHEuOBz0soF4EZKCAojh2v6H8m90soOJSt-k1bfoGbHi4kDZ6Ti1chI
-Message-ID: <CAL_Jsq+dJiRLNM_QE_r6HOg7hEkJCPR6j-TGBpiJZLd+RDBbAA@mail.gmail.com>
-Subject: Re: [PATCH V2 7/7] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Jonathan Corbet <corbet@lwn.net>, Eric Auger <eric.auger@redhat.com>, kvmarm@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz> <20250226170053.lxpreaegz5tysef7@offworld>
+In-Reply-To: <20250226170053.lxpreaegz5tysef7@offworld>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 26 Feb 2025 09:15:10 -0800
+X-Gm-Features: AQ5f1Jp-y9BTFtvA4Pj5PaiujmHZngx-Du8gcaN_n9QesEj3-kDANfPP_INIgoo
+Message-ID: <CAADnVQLAfZBvSyqE=2sbdH-kuNhvAJM+R_qMzfgPv=MDF+=VQA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce localtry_lock_t
+To: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 12:17=E2=80=AFAM Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
+On Wed, Feb 26, 2025 at 9:01=E2=80=AFAM Davidlohr Bueso <dave@stgolabs.net>=
+ wrote:
 >
+> On Fri, 14 Feb 2025, Vlastimil Babka wrote:
 >
->
-> On 2/24/25 19:41, Mark Rutland wrote:
-> > On Mon, Feb 03, 2025 at 10:38:28AM +0530, Anshuman Khandual wrote:
-> >> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_=
-EL1
-> >> access from EL1 requires appropriate EL2 fine grained trap configurati=
-on
-> >> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_E=
-L2.
-> >> Otherwise such register accesses will result in traps into EL2.
-> >>
-> >> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based f=
-ine
-> >> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting =
-the
-> >> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access in=
-to
-> >> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
-> >>
-> >> Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_F=
-GT2
-> >> based registers to be accessible in EL2.
-> >>
-> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >> Cc: Will Deacon <will@kernel.org>
-> >> Cc: Mark Rutland <mark.rutland@arm.com>
-> >> Cc: Rob Herring <robh@kernel.org>
-> >> Cc: Jonathan Corbet <corbet@lwn.net>
-> >> Cc: Marc Zyngier <maz@kernel.org>
-> >> Cc: Oliver Upton <oliver.upton@linux.dev>
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: linux-doc@vger.kernel.org
-> >> Cc: linux-kernel@vger.kernel.org
-> >> Cc: kvmarm@lists.linux.dev
-> >> Tested-by: Rob Herring (Arm) <robh@kernel.org>
-> >> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> >> ---
-> >>  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
-> >>  arch/arm64/include/asm/el2_setup.h   | 25 +++++++++++++++++++++++++
-> >>  2 files changed, 43 insertions(+)
+> >From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > >
-> > Three things to note here:
+> >In !PREEMPT_RT local_lock_irqsave() disables interrupts to protect
+> >critical section, but it doesn't prevent NMI, so the fully reentrant
+> >code cannot use local_lock_irqsave() for exclusive access.
 > >
-> > (1) I think this is missing some other necessary register configuration=
-.
+> >Introduce localtry_lock_t and localtry_lock_irqsave() that
+> >disables interrupts and sets acquired=3D1, so localtry_lock_irqsave()
+> >from NMI attempting to acquire the same lock will return false.
 > >
-> >     From a quick scan, we also require MDCR_EL3.EnPM2 (bit [7]) to be
-> >     configured, which is not described in mainline nor here. If that
->
-> Will update the Documentation/arch/arm64/booting.rst.
->
-> >     resets to 0, then EL{2,1,0} accesses to a number of registers such
-> >     as PMUACR_EL1 may trap to EL3>
-> >     AFAICT the boot-wrapper resets that bit to 0, so have we actually
-> >     tested all of this with the boot-wrapper? Does TF-A set this bit?
->
-> Right, boot wrapper resets the bit to 0. We will need the following chang=
-es
-> to set that up when PMUv3p9 is available. MDCR_EL3.EnPM2 also needs to be
-> set when FEAT_SPMU, FEAT_EBEP, FEAT_PMUv3_SS or FEAT_SPMU2 are implemente=
-d.
-> Should those features be checked here as well ?
-
-From Arm ARM:
-If FEAT_SPMU is implemented, then FEAT_PMUv3p9 is implemented.
-If FEAT_SPMU2 is implemented, then FEAT_SPMU is implemented.
-If FEAT_PMUv3_SS is implemented, then FEAT_PMUv3p9 is implemented.
-
-FEAT_EBEP is v9.3 and later. if FEAT_PMUv3p9 is implemented, FEAT_EBEP
-is implemented.
-
-So I don't think we need to check anything else.
-
->
-> --- a/arch/aarch64/include/asm/cpu.h
-> +++ b/arch/aarch64/include/asm/cpu.h
-> @@ -56,6 +56,7 @@
->  #define MDCR_EL3_SBRBE_NOTRAP_NOPROHIBIT       (UL(3) << 32)
->  #define MDCR_EL3_ENPMSN                                BIT(36)
->  #define MDCR_EL3_EBWE                          BIT(43)
-> +#define MDCR_EL3_EnPM2                         BIT(7)
->
->  #define SCR_EL3_RES1                   BITS(5, 4)
->  #define SCR_EL3_NS                     BIT(0)
-> @@ -87,6 +88,7 @@
->  #define ID_AA64DFR0_EL1_PMSVER         BITS(35, 32)
->  #define ID_AA64DFR0_EL1_TRACEBUFFER    BITS(47, 44)
->  #define ID_AA64DFR0_EL1_BRBE           BITS(55, 52)
-> +#define ID_AA64DFR0_EL1_PMUVER         BITS(11, 8)
->  #define ID_AA64DFR0_EL1_DEBUGVER       BITS(3, 0)
->
->  #define ID_AA64ISAR0_EL1_TME           BITS(27, 24)
-> diff --git a/arch/aarch64/init.c b/arch/aarch64/init.c
-> index 54e4cc4..fe7ed5f 100644
-> --- a/arch/aarch64/init.c
-> +++ b/arch/aarch64/init.c
-> @@ -152,6 +152,9 @@ static void cpu_init_el3(void)
->         if (mrs_field(ID_AA64DFR0_EL1, DEBUGVER) >=3D 11)
->                 mdcr |=3D MDCR_EL3_EBWE;
->
-> +       if (mrs_field(ID_AA64DFR0_EL1, PMUVER) >=3D 0b1001)
-> +               mdcr |=3D MDCR_EL3_EnPM2;
-> +
->         msr(MDCR_EL3, mdcr);
->
->         if (mrs_field(ID_AA64PFR0_EL1, SVE)) {
->
-> MDCR_EL2.EnPM2 does not seem to be set on TFA either, will double check a=
-nd
-> get it enabled.
->
+> >In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+> >Map localtry_lock_irqsave() to preemptible spin_trylock().
+> >When in hard IRQ or NMI return false right away, since
+> >spin_trylock() is not safe due to PI issues.
 > >
-> >     Are we sure we've cpatured *all* requirements for FEAT_PMUv3p9? i.e=
-.
-> >     is there anything else that we've missed?
-
-For FEAT_PMUv3_SS, there's MDCR_EL3.EnPMSS, MDCR_EL3.PMSSE, and MDCR_EL2.PM=
-SSE.
-
-For FEAT_EBEP (and SEBEP), there's  MDCR_EL3.PMEE and MDCR_EL2.PMEE
-
-I would assume those become requirements when and if the kernel uses
-those features.
-
->
+> >Note there is no need to use local_inc for acquired variable,
+> >since it's a percpu variable with strict nesting scopes.
 > >
-> > (2) This is a fix for !VHE support for PMUACR and ICNTR, where the host
-> >     may run at EL1 and consequently will be affected by fine grained
-> >     traps.
-> >
-> >     So this probably needs a CC stable and/or fixes tag, and backport.
 >
-> Fixes: 0bbff9ed8165 ("perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access =
-control")
-> Fixes: d8226d8cfbaf ("perf: arm_pmuv3: Add support for Armv9.4 PMU instru=
-ction counter")
-> Cc: stable@vger.kernel.org
+> LGTM.
 >
-> But is there a particular stable tree this patch should be addressed ?
+> Acked-by: Davidlohr Bueso <dave@stgolabs.net>
 
-It's 6.12+, but the Fixes tags are enough for the tooling to decide.
-
->
-> >
-> > (3) As there's no KVM changes, this is only safe provided that the
-> >     registers affected by these fine grained traps are already
-> >     unconditionally trapped by other traps when running a vCPU.
-> >
-> >     It looks like PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 are all
-> >     trapped by MDCR_EL2.TPM, so that should work as long as we emulate
-> >     the PMU. For direct access, FGT2 support will be a prerequisite.
-> >
-> > Ideally, we'd have added support for FGT2 before the PMU functionality
-> > that implicitly depends upon it. We should pay more attention to trap
-> > controls in future.
-> >
-> > Given (1) and (2) I think someone needs to look into this a bit more an=
-d
-> > figure out if this needs a fixup or a respin.
->
-> To summarize
->
-> - Update arm64/booting.rst regarding MDCR_EL3.EnPM2
-> - Add above mentioned "Fixes:" tag and "CC: stable"
-> - But should respin this patch or send a fix up instead ?
-
-It is not applied yet, right? So respin.
-
-Rob
+Thanks for the review.
+Do you mind if I apply your ack to the latest version of this patch?
+https://lore.kernel.org/bpf/20250222024427.30294-2-alexei.starovoitov@gmail=
+.com/
 
