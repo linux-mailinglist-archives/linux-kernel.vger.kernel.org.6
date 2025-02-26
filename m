@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-535084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47342A46EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:35:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E2AA46EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:38:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4BC16DAF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06121887E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DAF25BADC;
-	Wed, 26 Feb 2025 22:34:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E4328137A;
+	Wed, 26 Feb 2025 22:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="KF19JGhs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7Hcrrdfp"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86104224226;
-	Wed, 26 Feb 2025 22:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D7E25CC85;
+	Wed, 26 Feb 2025 22:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609295; cv=none; b=WCVMaFdrw+fPJwLnPfV1DgDmc97h4DozEXrScbavGTfhaO7f1Qwy/+isOdOyV+Jskm8HTO9Jh6NqrvOXXpKReK+AmjPN7w1wQ1+MNW1dSfyb7DNzXHX5siHCxm5qBtSxsxAIFNr7nC7Z+j/N44riSZTSBQGBOpUcYkMJNapAn14=
+	t=1740609495; cv=none; b=MVZerUBI+Dsz6dwsRiwWdDLrdJIfEcOuaBrOaSM9+yQJTo0KYfFPCaCrvi8irTRPxF83UDjVgqchD9WjglU8/E1e/5+C8coOiUnJquKJa4dhfH04vW92551npmMIPxi+nc2whuKy8V9HEVCuMPl7qoYUG7U0R8E/w4HRh+8LmlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609295; c=relaxed/simple;
-	bh=LRRBLPCsYoX3dO8xAVoUsyACiIYHxjJxSc3w0yS6vWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JdiiA6Z+NPDOXCgYV27OZnkCHYQXoInGqiPc4yXIkMCXKmNEV0EJlQ0CwLBLTWl94sReDHoJtyW7k/nc30BWtErldaDwg5EwMhlfErlxpbwf3y6U83LklLWyApbuqRcHTgAZ4E5ECCjIwnPUUFt7vaxjYUc2gDLapz5cagVbtEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3658C4CED6;
-	Wed, 26 Feb 2025 22:34:52 +0000 (UTC)
-Date: Wed, 26 Feb 2025 17:35:34 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Uecker <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E.
- McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura
- Jack <venturajack85@gmail.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250226173534.44b42190@gandalf.local.home>
-In-Reply-To: <CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
-	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-	<20250226162655.65ba4b51@gandalf.local.home>
-	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
-	<20250226165619.64998576@gandalf.local.home>
-	<20250226171321.714f3b75@gandalf.local.home>
-	<CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740609495; c=relaxed/simple;
+	bh=Db98LTqH8jszRgpa67m0NYmQtp7oqUzEwRQjHmNgjTk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G2V/3a+uwYJW74tPVcPhhzjJh6uCPDjO+UFgMvB379f5eVSgGuoyTKFiVcPVUpN7OGYWPC27ebYkKkVllRjvaLC5cBUgve+yurG96kIaFt9PwXsKg3wi2gKkZODcKm0cpWneAwBGLO2n8LVSUx29015GF/zXlw4Pe/ejkVzHt2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=KF19JGhs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=7Hcrrdfp; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 576A213800F3;
+	Wed, 26 Feb 2025 17:38:12 -0500 (EST)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 17:38:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1740609492; x=1740695892; bh=8jeNcdAnrq
+	Wk+vSPdJdCmOaMfIzJZpxOKWi8SuZ5KO0=; b=KF19JGhsJlH3a2SDPv5eAxRvhb
+	k7cvok85X37wos8bEf6CI/iHsc3GIS+ja/sFVlPNYqw8sKAm3cNXLTFjgKbYnIVZ
+	gExLPtmPqurPB5RJunsYPcn72eyfsbpB+LMRrWonURbaXoo8Z6ZKewgGsMY21x7+
+	XqSVn+7ZWD0UMm+s/BDleeLs51lNL1H0rRSBEdhHVRaUqObk/CpUTHVCV0GrRHNi
+	nz+8ohFzsgmsWqq1gQMVyvdj1LAknHCaV2NkZT0j+tOpTWGDD635JHGXEbWJMpFH
+	kxk1OaraKH52qBV1iqavApSODFecOB5od5e4Gi9iq9w+wm+gqEUuJecjmk+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740609492; x=1740695892; bh=8jeNcdAnrqWk+vSPdJdCmOaMfIzJZpxOKWi
+	8SuZ5KO0=; b=7Hcrrdfp3vQVEX5bJoUSrFhgbhe2LG8SjUrJOf20Ug85y9ZaH6H
+	SvZ+KorAR+y2VdIWv+OFcErsDVtdE+eRyzEaoFRsr+1nXcEonHg6jiHFXlfnSuwt
+	rnRSzILivxfJEu1kh5ApjzlbbGEP7xJHLwiZGsFrcSWRFP9+b6FVOHlCxrRuaund
+	7x8CkcEz8joGbKSk29KCy5wurStT9Iy/Fg3zx7xQvG8axsuS+ZIN1tSmLbAH1eXH
+	D9Q4uxrzr9C9iwoXaiVt2h+9kOG0WmMeh+yjK58GlSg/OlVxAXKMDRcFmJyFdtFg
+	xpU6aPMQlikfoIrTEjEC6ed243SMSx65iVA==
+X-ME-Sender: <xms:1Je_Z0fv-5_fCC0Emq9_ebNwkTh_TuofeVM5knPvNj45pfFrgDv55Q>
+    <xme:1Je_Z2PHqOYEZrGit31V5qpDyisreeH__lu1G1MOXF5uGcAtvWNRazTCjFaerjieC
+    nZCmfJeOn-kxflhZw>
+X-ME-Received: <xmr:1Je_Z1gvpHnmN31ctsO8kcTYEkGCNKuIBML2QOY5WXY-CBPJU98XskqjXaR_ujauQTVTUR1Hq7NBcr_LGuERAxYsKRfENd6FhCh1>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheektdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtsehttdertddtredt
+    necuhfhrohhmpefluhhnihhoucevucfjrghmrghnohcuoehgihhtshhtvghrsehpohgsoh
+    igrdgtohhmqeenucggtffrrghtthgvrhhnpeefveetteejheeugeffledvteeiveffueef
+    jeelueffteeigffgfedthfefieegieenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehgihhtshhtvghrsehpohgsohigrdgtohhmpdhnsggprhgt
+    phhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnrdhknhhosg
+    hlvgesghhmrghilhdrtghomhdprhgtphhtthhopehgihhtsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepghhithdqphgrtghkrghgvghrshesghhoohhglhgvghhr
+    ohhuphhsrdgtohhmpdhrtghpthhtohepghhithhsthgvrhesphhosghogidrtghomh
+X-ME-Proxy: <xmx:1Je_Z5-kdIdvDZ_BrppncdbGFpGvAkur6KE7ASVGzTnbGJ3Ei3Jnmg>
+    <xmx:1Je_Zwu2aFmrD9k9mBpTLIdaQc3EoQV5r72SKe6j5DtVfcTLEUaWfA>
+    <xmx:1Je_ZwEBLgJyTEjy6NFgQ3EbY94slp1ZvRS3nGXnECTJMCAR3d1AfA>
+    <xmx:1Je_Z_PkBoCZszyJ3k08M5mJ5I-0_52ES8c2XDXBAxpIbTPFvcddOg>
+    <xmx:1Je_Z6UjdHcAuaixaLKzZdnjYoKlb31YXXIxkXqP-g2h76kEmxlTjA77>
+Feedback-ID: if26b431b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Feb 2025 17:38:11 -0500 (EST)
+From: Junio C Hamano <gitster@pobox.com>
+To: "D. Ben Knoble" <ben.knoble@gmail.com>
+Cc: git@vger.kernel.org,  Linux Kernel <linux-kernel@vger.kernel.org>,
+  git-packagers@googlegroups.com
+Subject: Re: [ANNOUNCE] Git v2.49.0-rc0
+In-Reply-To: <CALnO6CA5tw9DNo9U8Fu95Y27DBiRaRDsz75MHwm64iW0TBkxDw@mail.gmail.com>
+	(D. Ben Knoble's message of "Wed, 26 Feb 2025 14:09:43 -0500")
+References: <xmqqzfi8bljk.fsf@gitster.g>
+	<CALnO6CA5tw9DNo9U8Fu95Y27DBiRaRDsz75MHwm64iW0TBkxDw@mail.gmail.com>
+Date: Wed, 26 Feb 2025 14:38:10 -0800
+Message-ID: <xmqqzfi89vsd.fsf@gitster.g>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Wed, 26 Feb 2025 14:22:26 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+"D. Ben Knoble" <ben.knoble@gmail.com> writes:
+> [snip]
+>>
+>>  * "[help] autocorrect = 1" used to be a way to say "please wait for
+> ...
+> It seems "help.autocorrect" style is _usually_ preferred, but there
+> are a handful of "[section] key" style. (I don't have a preference,
+> just something I noticed.)
 
-> > But if I used:
-> >
-> >         if (global > 1000)
-> >                 goto out;
-> >         x = global;  
-> 
-> which can have the TUCTOU issue because 'global' is read twice.
+But you cannot write "help.autocorrect=1" and claim that it is
+correct.  Your configuration file does not spell it that way, your
+command line to "git config" command would not take it.
 
-Correct, but if the variable had some other protection, like a lock held
-when this function was called, it is fine to do and the compiler may
-optimize it or not and still have the same result.
+The more awkward "in the conifguration file it looks that way" needs
+to be used when I need to write the variable with values.
 
-I guess you can sum this up to:
+Alternatively, I could say "setting help.autocorrect to 1 used to
+be....".
 
-  The compiler should never assume it's safe to read a global more than the
-  code specifies, but if the code reads a global more than once, it's fine
-  to cache the multiple reads.
+Thanks.
 
-Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
-And when I do use it, it is more to prevent write tearing as you mentioned.
-
--- Steve
 
