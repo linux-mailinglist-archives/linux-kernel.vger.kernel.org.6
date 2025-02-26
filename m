@@ -1,194 +1,121 @@
-Return-Path: <linux-kernel+bounces-534096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6C1A462C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892D9A462C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B18B17D0CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:27:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D536C3B4116
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28B5221D8F;
-	Wed, 26 Feb 2025 14:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652E62222CD;
+	Wed, 26 Feb 2025 14:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g1N2SYnY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vsBRbu3N"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A573A21171A;
-	Wed, 26 Feb 2025 14:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603171A00D1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580039; cv=none; b=IsyljDn3KXgvXUHy3Jk/kb8E0kYn/LGyfjOgA2bNrxAWCQZJFQ2ud26QrtUb32a5qYaIDXV1jeY2qOZZzzLyDL/sDLdiksu0zrJPp+tt0BDwxsZ+tGq4PgmceRnXfpDkYBM3iRO5FVREvZTPFuZZBJVmwnC9VOGeV2UAb8/cN3o=
+	t=1740580040; cv=none; b=gBi35E5WLxZjuIDSgABUDCDxhss8hzah61+jnLWJ2XI0rPIO++1EDG9t/KgKyjEHyGHG8IsQdBFV3wFI8jsFtamUHIcoZDNZGuI4jCkmnMm6B0Zpk1s+Sej0hlUUDTgfdI0sbOstIUTkiP3FWOhoZ9xbz9eQJ+FwOLPpPvbPzlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580039; c=relaxed/simple;
-	bh=dYFlL32N8DX1Xl0oKGBDfnt4Dp/7shZ7JfzayKZkIto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hnRJ/K8VxbwQ9/FHuoRCG+KMep+Wwa206K3lWvSfwq0QITfV1hJbybh4+F/lIA3IInKyaLYZ9/TSWCpqNKVHiXnwpC6hfBY8p0BD6FgR1H1zlgnrS3ef9mtM9kGxHCy0rN+jMh83BNHk7dCaXEp0l7hYb3i2BIQ3zEsBroQOV30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g1N2SYnY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDZ55e029108;
-	Wed, 26 Feb 2025 14:27:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=LBqcteT4tdYdKHL/7+g5XlDYiuAXlFBQoB4+G4OES
-	Qs=; b=g1N2SYnYXXgK9QYLeRQUFYF2O6O5x39KdRzGWIM5o3DQERuvO5nKcV0hu
-	63JiBeDB/ByAFPcVoN41k2ANRWQoBmjBS0txfGnTvvHHoFZ2qk7F1A2l2zNySCww
-	Sq8cM+0tWK0753d6s49Y3MoDMLrilfW4QcEPkLG5Uvys9980xV+T5z7o6p/w8z4u
-	r0B7jLAQe6xHZX03QGLDXJToEsYIVOXs23jCIQRnohS0YJSFlBvL7dliPFXjH+sS
-	jdLTSN5uqX4zmiqcI8utcUiyWcZlmf1Kvb7W0lwH4Zt4GDn/cl6vPPuy95LSq3Tz
-	Rq0OCJDlJ/FCx6CMIfkT56l4Sk/ZQ==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5jbmq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 14:27:09 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDPMPi002588;
-	Wed, 26 Feb 2025 14:27:08 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jtqr1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 14:27:08 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QER4Se55509292
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 14:27:04 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 681FD2004B;
-	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 46BD320043;
-	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Feb 2025 14:27:04 +0000 (GMT)
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] selftests/ftrace: Let fprobe test consider already enabled functions
-Date: Wed, 26 Feb 2025 15:27:03 +0100
-Message-ID: <20250226142703.910860-1-hca@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1740580040; c=relaxed/simple;
+	bh=EVDB5ihtgZeieRnrugyEXIDrswGJIhn4/GuR5gLfv2A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SdNa+LojHw4cmJEKeHyFPdrsxyElGXJ0zADzzgSkwXnqYQAiwm+tbQOB+Ohto6yfLYkra++MHDqxmUZ3gylLhh7FPgaf4QmpuwWav0iPnQ2PFNhiRari+/mTeUCWDrlf913c19bvOLcsIk78Y5fvm0RMHu2ocGXZe6pglqL6Kx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vsBRbu3N; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso22219235a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:27:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740580038; x=1741184838; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaRjEj+S+iNUpexzYhTHe/q7bOyFL6g0TekFIq/1o1g=;
+        b=vsBRbu3NfyDpphupjR0N4xxLTp3fhZPqv+PJDiaye9ZW6K/g6VYMwJ/8g4xROQ0DWR
+         cELYC294mAn4x9yHSPfnWv3YsSQp0pX0cXHUnbIoHQ7A7TS0tUD/aMi3Hydvk+P5iT0F
+         pUOkWJwT4TqQCA2gR+xAYAINOHAaaZ9FXiC1ds4IwtpLr2lZjg3EaZLXU9zmt0Mz0PWu
+         hOYlCqEU+pUv1DDY4PqJEBD2nQto6cLyqAfn+swnYkYBf7ZHj3veN/eSal0KdhI4MET7
+         LcJm2R491GtG5DeM+2/RFQH7yRtbSpJ7Sdn/eF07ef6RfGD+Xf/m0hk/IldbdwBZvV+W
+         LzWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740580038; x=1741184838;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaRjEj+S+iNUpexzYhTHe/q7bOyFL6g0TekFIq/1o1g=;
+        b=gGN53ooCb5XXnsMhTJa8aJFdzY619TFFQvKulnqjF8+TEhQULvhJ0eGqFybMt1Xaup
+         l/2Ge43nE0q0N1UOHg9sEGt7RdDVZ/1vhXOrey3WeBwgzi6JgfygePYVKtjKn72Evl4c
+         0YZ6/YOAEF/Te1WZB5nMKqhAmMWBydND89xOyLWHGhEoUsaPR+TYPAQaZSmXmMVrlmwu
+         3QjaIE9CWbPC/6gTklrczG/qpruH1rqLTT4IZff3mOPGQ3B0IUOO22M1Ers/h2bFjQVS
+         rnuwvBREvNxl2T37ZqYluaqG1iUgx+wqehRZTtyvJpTE4QZiLdQKay+XIKJKG9YkRDRE
+         +1pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ehmOXyQTEhz8qfIItYfbwmMC3DsmKAvXHrYTr0GXPEUDmIgLrjk+JilQZgBVASXDI6lWlaxzavXlxb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf5RMrQmXmr03U0JCAaolDDysA44aamrTklbMJh/zEiKdcnSBg
+	usImPsMW5cplYjiAmrZNnIuOJGVqyPFRBKZtEx57rXanqfgLvw3W6OjjlMuubQ0gFkBRLPM+JXb
+	2Cw==
+X-Google-Smtp-Source: AGHT+IFswkBOj+OW+b1B+n/Joz6AyKOkyChMtV3kE6V2sRCzgJx4EB1M/qGFGRbf1byqZAHdlEsQn9PZhSg=
+X-Received: from pjb8.prod.google.com ([2002:a17:90b:2f08:b0:2ea:5613:4d5d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:540c:b0:2ea:83a0:47a5
+ with SMTP id 98e67ed59e1d1-2fe68acd777mr11441995a91.4.1740580038672; Wed, 26
+ Feb 2025 06:27:18 -0800 (PST)
+Date: Wed, 26 Feb 2025 06:27:11 -0800
+In-Reply-To: <Z7yc8-QXXVPzr2K8@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -2MmPF4lgE4DXYssnY9AyMYkhFxESotJ
-X-Proofpoint-ORIG-GUID: -2MmPF4lgE4DXYssnY9AyMYkhFxESotJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_03,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 clxscore=1015 bulkscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260112
+Mime-Version: 1.0
+References: <20250219151505.3538323-1-michael.roth@amd.com>
+ <20250219151505.3538323-2-michael.roth@amd.com> <Z7yc8-QXXVPzr2K8@suse.de>
+Message-ID: <Z78kv-hhU6AWyufz@google.com>
+Subject: Re: [PATCH v5 1/1] KVM: Introduce KVM_EXIT_SNP_REQ_CERTS for SNP certificate-fetching
+From: Sean Christopherson <seanjc@google.com>
+To: Joerg Roedel <jroedel@suse.de>
+Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, pbonzini@redhat.com, thomas.lendacky@amd.com, 
+	ashish.kalra@amd.com, liam.merwick@oracle.com, pankaj.gupta@amd.com, 
+	dionnaglaze@google.com, huibo.wang@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-The fprobe test fails on Fedora 41 since the fprobe test assumption that
-the number of enabled_functions is zero before the test starts is not
-necessarily true. Some user space tools, like systemd, add BPF programs
-that attach to functions. Those will show up in the enabled_functions table
-and must be taken into account by the fprobe test.
+On Mon, Feb 24, 2025, Joerg Roedel wrote:
+> Hi Michael,
+> 
+> On Wed, Feb 19, 2025 at 09:15:05AM -0600, Michael Roth wrote:
+> > +  - If some other error occurred, userspace must set `ret` to ``EIO``.
+> > +    (This is to reserve special meaning for unused error codes in the
+> > +    future.)
+> 
+> [...]
+> 
+> > +static int snp_complete_req_certs(struct kvm_vcpu *vcpu)
+> > +{
+> > +	struct vcpu_svm *svm = to_svm(vcpu);
+> > +	struct vmcb_control_area *control = &svm->vmcb->control;
+> > +
+> > +	if (vcpu->run->snp_req_certs.ret) {
+> > +		if (vcpu->run->snp_req_certs.ret == ENOSPC) {
+> > +			vcpu->arch.regs[VCPU_REGS_RBX] = vcpu->run->snp_req_certs.npages;
+> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_INVALID_LEN, 0));
+> > +		} else if (vcpu->run->snp_req_certs.ret == EAGAIN) {
+> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_BUSY, 0));
+> > +		} else {
+> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_GENERIC, 0));
+> > +		}
+> 
+> According to the documentation above, there should be a block checking
+> for EIO which injects SNP_GUEST_VMM_ERR_GENERIC and the else block
+> should return with EINVAL to user-space, no?
 
-Therefore count the number of lines of enabled_functions before tests
-start, and use that as base when comparing expected results.
-
-Fixes: e85c5e9792b9 ("selftests/ftrace: Update fprobe test to check enabled_functions file")
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
----
- .../test.d/dynevent/add_remove_fprobe.tc       | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-index 449f9d8be746..73f6c6fcecab 100644
---- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-@@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
- PLACE2="kmem_cache_free"
- PLACE3="schedule_timeout"
- 
-+# Some functions may have BPF programs attached, therefore
-+# count already enabled_functions before tests start
-+ocnt=`cat enabled_functions | wc -l`
-+
- echo "f:myevent1 $PLACE" >> dynamic_events
- 
- # Make sure the event is attached and is the only one
- grep -q $PLACE enabled_functions
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 1 ]; then
-+if [ $cnt -ne $((ocnt + 1)) ]; then
- 	exit_fail
- fi
- 
-@@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
- 
- # It should till be the only attached function
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 1 ]; then
-+if [ $cnt -ne $((ocnt + 1)) ]; then
- 	exit_fail
- fi
- 
-@@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
- 
- grep -q $PLACE2 enabled_functions
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 2 ]; then
-+if [ $cnt -ne $((ocnt + 2)) ]; then
- 	exit_fail
- fi
- 
-@@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
- 
- # should still have 2 left
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 2 ]; then
-+if [ $cnt -ne $((ocnt + 2)) ]; then
- 	exit_fail
- fi
- 
-@@ -57,7 +61,7 @@ echo > dynamic_events
- 
- # Should have none left
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 0 ]; then
-+if [ $cnt -ne $ocnt ]; then
- 	exit_fail
- fi
- 
-@@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
- 
- # Should only have one enabled
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 1 ]; then
-+if [ $cnt -ne $((ocnt + 1)) ]; then
- 	exit_fail
- fi
- 
-@@ -73,7 +77,7 @@ echo > dynamic_events
- 
- # Should have none left
- cnt=`cat enabled_functions | wc -l`
--if [ $cnt -ne 0 ]; then
-+if [ $cnt -ne $ocnt ]; then
- 	exit_fail
- fi
- 
--- 
-2.45.2
-
+Yeah.  It feels a bit ridiculous, but it would be quite unfortunate to go through
+the extra effort of decoupling KVM's error handling from the GHCB error code, only
+for it to all fall apart due to not enforcing the "return" value.
 
