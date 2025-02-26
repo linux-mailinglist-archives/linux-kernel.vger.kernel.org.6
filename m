@@ -1,78 +1,89 @@
-Return-Path: <linux-kernel+bounces-532769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADA5A451FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:09:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F825A451FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710197A992C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA3C3AA160
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055A01552E3;
-	Wed, 26 Feb 2025 01:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543E51552E3;
+	Wed, 26 Feb 2025 01:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lfmYjdG/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+Sd9Kfo"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E712192D76;
-	Wed, 26 Feb 2025 01:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A87114F9CF;
+	Wed, 26 Feb 2025 01:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740532065; cv=none; b=VT/ZSZIU+nQfUT6y7yfvSl7RzZE+M85aDo00hddwIrWULN0Mc0gM2/zPwVFESHpRLx9nVQ4QlRttZqws1eR8loWmt3A2JcwjtYkIuCeIpUvO3XeP4+Gqeaz8XBEqMHdpttlhlShezyQzO/1YYeklG+oEygjTpZlNeE2dkLUOtjM=
+	t=1740532205; cv=none; b=Rkd6KqjfgRH9S2NzSz92T+T4KXNkb++7vhR6IDE4Tnyi2krp85MMD2UoUd4f4CHL+OVjhv8xdRP6NR2I/j0z/6l8V2nvMacCcF6IlfsU41d9eTgdIsA4RqssyYMDUieBKBOcNZ6WhxjBywWUNG/UJ7wCEerDIEAMyeTARKRR3S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740532065; c=relaxed/simple;
-	bh=QOJubvXVS/z+HN4zuJjtVNV1JTEpRBGWWqwVUZO8LIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gX/xNZS7q6Rd84hZtE56ZjJBzZCcjxMyoSfyN0Exr0ZMzycqa1q7drFudtYIqCPLCS70SO/aD3OJQrgVK10mmNMhYF0gddAP0ZZLkbeXMZQ8rUKnMjNrRsBAfGggW3HT8gqD8Pt2HoPDv6I3gRSMCUHGE/A7+FMxMogHdwYsGKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lfmYjdG/; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740532063; x=1772068063;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QOJubvXVS/z+HN4zuJjtVNV1JTEpRBGWWqwVUZO8LIc=;
-  b=lfmYjdG/Y0fLrFgsnyhinUfkiuOqjT6GiEKC8OfZp/7JMyiVEaV8c5aT
-   +B9AM5HMyNgJ9qiMQ03o8sunSJfCdXg+SE7NfYb+VWl/aaeYqAqFxHGmf
-   8bJcl1Eik1W2G24wvN5hfGr9lBr6yrH4+KY+CVrG+BDofwjB+xlW3LBij
-   BiSVFFCSkDTPIftnS8qI/7raC30ftWLuC5IhxCWBFDmbgZ/Wux+xN5ulP
-   Z0kg/RSLWZ2TIPg8o2TodhQX9Knwz8LHZ0cf1lIxyj8l75rnBFBYxOsg0
-   /AMPbSki8Sxolka8WJci993uYAy1g8zXxOQR6/em4qN9vS+WYc/OhHe1s
-   Q==;
-X-CSE-ConnectionGUID: 5feO+N/lTQaSYXCPUNdXvg==
-X-CSE-MsgGUID: 07gsZhJDSOKEeK/vQZE6rA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52362233"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="52362233"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 17:07:43 -0800
-X-CSE-ConnectionGUID: hJErFlpRSMebY3lem8Horg==
-X-CSE-MsgGUID: 3v3Eec9NQe2TzaXxrRCxnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147467368"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.166.169])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Feb 2025 17:07:42 -0800
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: x86@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	shuah@kernel.org,
-	chang.seok.bae@intel.com
-Subject: [PATCH 9/9] selftests/x86/avx: Add AVX test
-Date: Tue, 25 Feb 2025 17:07:29 -0800
-Message-ID: <20250226010731.2456-10-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250226010731.2456-1-chang.seok.bae@intel.com>
-References: <20250226010731.2456-1-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1740532205; c=relaxed/simple;
+	bh=J1ZAkl3ozYgniAVeeGm/DR4x+8Ypqttwvfp9sj5URr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMJtcbmosYk8aCBzMhF2ABn1jJlXfe5Jsym1jnIz1JRKqF2WhPNrhsRP/GTSZrLNSlLqQYz9q8/jDlTFxf3Qjomk58pMeAjGYx1+4oIbWl5w+uTcDLJv/gUOZDYDk/uoRye2tEkqPye6Ff7Z6QWW2go0t7JnQuk1hrCRzNU3ZJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+Sd9Kfo; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22113560c57so41371005ad.2;
+        Tue, 25 Feb 2025 17:10:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740532203; x=1741137003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiEgyM16960NSDV6t1+D1FR+8qHkFg4gFUmoJjgyErM=;
+        b=J+Sd9KfoYuXoFlNnGliMghDc+Qf3cDeZI5Pad3ezz0TlHsXRuErKzATp1Cj+YalZ/k
+         enTrc6xh484ZusS5tVm3ytSWdXo1gShFEn6LHdw0kLvwNQOJJPwRzvF/GRSKtvLOUnSj
+         VYLgzhxMjoqoPe65TOvHo2d1N7tj5hIpFeqOhYZHruv9O2HASBNFEQUl/r5HeUcUzR+f
+         ccjouj2uBv+pF9Fs0mXRoD7st5SgFf+8l2khUe8uZTtQ7yElCMEqH4e/+Clm88Tf7r/o
+         PasYSmCl0iDcI9NExa04Bq2TTi8Gdidw0hQ4SazRl/5L4nu3ERIsiaUSlS1qwSzolLXU
+         E1Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740532203; x=1741137003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WiEgyM16960NSDV6t1+D1FR+8qHkFg4gFUmoJjgyErM=;
+        b=PI8Tr7e2EYqN1TOiHCWSxepoQgTvvsBvCZdbSkrrBN8xu9OhJ9h+ubVCnn0gObHjAs
+         vSdeyiE8xN4DLJcNw/cT7+/KmE02skH3XP4CWmxEWMfbBJnMaNnpVZZkRtNTVz2mzBco
+         dHvHBHgd+krXL2tYYlzh9dXmIo3bBDR2fU6sv9kbded31TlsLyCXpyrfqhnYK4vVetRb
+         XEEKSoe+0VBrhTgkMmMXqdJu7ZnZhwLP0AQtpha2XN2Xv/RndCrq218+xivwmT58gYH6
+         h1sJixcxu6pE5H9sy1yFMoimlpLAjNIiH3BG4tuTRuGAXHASTKG92hntLFXmyvE4Kk2H
+         2jeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmEqKCK09+I74yC0uQbtL7MsMSDKGczh9U92QWkpo6ugTXMFvsCh326SxSeaIAM3i/CFUBBEGpHecJ@vger.kernel.org, AJvYcCXvnYsCsSpDqcpkDn5gnWA5yEBc7GGQl2lC9VyQQoifFYA9gvzTOYG80wqFUuaKh7OtagO6AofSqAURqaMd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7eocUYePd2SBIdUit7BCKS2nycYYHHHuc3cK8iUkrfDH08qet
+	E2baDKxNCgxEZVI6FtcTJdsGhqhP85RdkFebn6ONflPmdtR/lpkA
+X-Gm-Gg: ASbGncvF+d1DB05W7HwHjxFM+ufmK6jzrQbZ17y9KfThV8QDqHmEaD4omktxbOEQ1xQ
+	x9ZnClsCZv+lPNivC7mV7VEMphAtrsyfo3amnCZd+sNNBvs1vUoVwFrmiyJOgP+MK7748B9wo4r
+	M/6971+qy5y8Bnc+OezzpB8KzoZ8+djbT80WCBYefvgHJ5h1947AxxNKAqwP13+gF3dynw0A+MB
+	PFMjw0mzRJr4MumfeG63iWlWuy4LtJZMLVQ28OcPCyXGCEto+viL8E0PWcYvVjmhBX6MnyFtMLM
+	8jiX97OtYetzz8UcLXoth9Y=
+X-Google-Smtp-Source: AGHT+IEAIlHRnph+kEm0eZjJMotG6sxrxwDis5EVo+KPSHhWr29FBTWOWu09c8pE742ej1Laf9rDaQ==
+X-Received: by 2002:a05:6a00:4f88:b0:72a:8bb6:2963 with SMTP id d2e1a72fcca58-73426cf11e7mr27498782b3a.13.1740532203140;
+        Tue, 25 Feb 2025 17:10:03 -0800 (PST)
+Received: from dev.. ([2804:14d:887:95a9:e1a5:e9d5:ba9a:df82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a839dffsm2271324b3a.172.2025.02.25.17.09.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 17:10:02 -0800 (PST)
+From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
+To: tglx@linutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	vz@mleia.com
+Cc: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v2] dt-bindings: interrupt-controller: Convert nxp,lpc3220-mic.txt to yaml format
+Date: Tue, 25 Feb 2025 22:09:40 -0300
+Message-ID: <20250226010956.50566-1-leo.fthirata@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,84 +92,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add xstate testing specifically for those vector register states,
-validating kernel's context switching and ensuring ABI compliance.
-Use the established xstate testing framework.
+Convert NXP LPC3220-MIC to DT schema.
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
 ---
-Alternatively, this invocation could be placed directly in
-xstate.c::main(). However, the current test file naming convention, which
-clearly specifies the tested area, seems reasonable. Adding avx.c
-considerably aligns with that convention.
-
-The test output should be like this for ZMM_Hi256 as an example:
-$ avx_64
-...
-[RUN]   AVX-512 ZMM_Hi256: check context switches, 10 iterations, 5 threads.
-[OK]    No incorrect case was found.
-[RUN]   AVX-512 ZMM_Hi256: inject xstate via ptrace().
-[OK]    'xfeatures' in SW reserved area was correctly written
-[OK]    xstate was correctly updated.
-[RUN]   AVX-512 ZMM_Hi256: load xstate and raise SIGUSR1
-[OK]    'magic1' is valid
-[OK]    'xfeatures' in SW reserved area is valid
-[OK]    'xfeatures' in XSAVE header is valid
-[OK]    xstate delivery was successful
-[OK]    'magic2' is valid
-[RUN]   AVX-512 ZMM_Hi256: load new xstate from sighandler and check it after sigreturn
-[OK]    xstate was restored correctly
-
-But systems without AVX-512 will look like:
-...
-The kernel does not support feature number: 5
-The kernel does not support feature number: 6
-The kernel does not support feature number: 7
+Changes in v2:
+ - Fix SoB
+ - Remove reg description
+ - List #interrupt-cell items
+ - Add interrupt restriction per variant
+ - Remove extra examples
 ---
- tools/testing/selftests/x86/Makefile |  4 +++-
- tools/testing/selftests/x86/avx.c    | 12 ++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/x86/avx.c
+ .../interrupt-controller/nxp,lpc3220-mic.txt  | 58 --------------
+ .../interrupt-controller/nxp,lpc3220-mic.yaml | 80 +++++++++++++++++++
+ 2 files changed, 80 insertions(+), 58 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index f15efdc6aef7..28422c32cc8f 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -19,7 +19,7 @@ TARGETS_C_32BIT_ONLY := entry_from_vm86 test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip syscall_numbering \
--			corrupt_xstate_header amx lam test_shadow_stack
-+			corrupt_xstate_header amx lam test_shadow_stack avx
- # Some selftests require 32bit support enabled also on 64bit systems
- TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
- 
-@@ -133,4 +133,6 @@ $(OUTPUT)/check_initial_reg_state_64: CFLAGS += -Wl,-ereal_start -static
- $(OUTPUT)/nx_stack_32: CFLAGS += -Wl,-z,noexecstack
- $(OUTPUT)/nx_stack_64: CFLAGS += -Wl,-z,noexecstack
- 
-+$(OUTPUT)/avx_64: CFLAGS += -mno-avx -mno-avx512f
- $(OUTPUT)/amx_64: EXTRA_FILES += xstate.c
-+$(OUTPUT)/avx_64: EXTRA_FILES += xstate.c
-diff --git a/tools/testing/selftests/x86/avx.c b/tools/testing/selftests/x86/avx.c
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
+deleted file mode 100644
+index 0bfb3ba55f4c..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
++++ /dev/null
+@@ -1,58 +0,0 @@
+-* NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
+-
+-Required properties:
+-- compatible: "nxp,lpc3220-mic" or "nxp,lpc3220-sic".
+-- reg: should contain IC registers location and length.
+-- interrupt-controller: identifies the node as an interrupt controller.
+-- #interrupt-cells: the number of cells to define an interrupt, should be 2.
+-  The first cell is the IRQ number, the second cell is used to specify
+-  one of the supported IRQ types:
+-      IRQ_TYPE_EDGE_RISING = low-to-high edge triggered,
+-      IRQ_TYPE_EDGE_FALLING = high-to-low edge triggered,
+-      IRQ_TYPE_LEVEL_HIGH = active high level-sensitive,
+-      IRQ_TYPE_LEVEL_LOW = active low level-sensitive.
+-  Reset value is IRQ_TYPE_LEVEL_LOW.
+-
+-Optional properties:
+-- interrupts: empty for MIC interrupt controller, cascaded MIC
+-  hardware interrupts for SIC1 and SIC2
+-
+-Examples:
+-
+-	/* LPC32xx MIC, SIC1 and SIC2 interrupt controllers */
+-	mic: interrupt-controller@40008000 {
+-		compatible = "nxp,lpc3220-mic";
+-		reg = <0x40008000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
+-
+-	sic1: interrupt-controller@4000c000 {
+-		compatible = "nxp,lpc3220-sic";
+-		reg = <0x4000c000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-
+-		interrupt-parent = <&mic>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
+-			     <30 IRQ_TYPE_LEVEL_LOW>;
+-	};
+-
+-	sic2: interrupt-controller@40010000 {
+-		compatible = "nxp,lpc3220-sic";
+-		reg = <0x40010000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-
+-		interrupt-parent = <&mic>;
+-		interrupts = <1 IRQ_TYPE_LEVEL_LOW>,
+-			     <31 IRQ_TYPE_LEVEL_LOW>;
+-	};
+-
+-	/* ADC */
+-	adc@40048000 {
+-		compatible = "nxp,lpc3220-adc";
+-		reg = <0x40048000 0x1000>;
+-		interrupt-parent = <&sic1>;
+-		interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
 new file mode 100644
-index 000000000000..11d5367c235f
+index 000000000000..489bd329bc4e
 --- /dev/null
-+++ b/tools/testing/selftests/x86/avx.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/nxp,lpc3220-mic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#define _GNU_SOURCE /* Required for inline xstate helpers */
-+#include "xstate.h"
++title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
 +
-+int main(void)
-+{
-+	test_xstate(XFEATURE_YMM);
-+	test_xstate(XFEATURE_OPMASK);
-+	test_xstate(XFEATURE_ZMM_Hi256);
-+	test_xstate(XFEATURE_Hi16_ZMM);
-+}
++maintainers:
++  - Vladimir Zapolskiy <vz@mleia.com>
++
++properties:
++  compatible:
++    enum:
++      - nxp,lpc3220-mic
++      - nxp,lpc3220-sic
++
++  reg:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupts:
++    items:
++      - description:
++          IRQ number.
++      - description: |
++          IRQ type. Can be one of:
++
++              IRQ_TYPE_EDGE_RISING = Low-to-high edge triggered,
++              IRQ_TYPE_EDGE_FALLING = High-to-low edge triggered,
++              IRQ_TYPE_LEVEL_HIGH = Active high level-sensitive,
++              IRQ_TYPE_LEVEL_LOW = Active low level-sensitive.
++
++          Reset value is IRQ_TYPE_LEVEL_LOW.
++
++required:
++  - compatible
++  - reg
++  - interrupt-controller
++  - '#interrupt-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nxp,lpc3220-sic
++    then:
++      required:
++        - interrupts
++    else:
++      properties:
++        interrupts: false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    mic: interrupt-controller@40008000 {
++      compatible = "nxp,lpc3220-mic";
++      reg = <0x40008000 0x4000>;
++      interrupt-controller;
++      #interrupt-cells = <2>;
++    };
++
++    sic1: interrupt-controller@4000c000 {
++      compatible = "nxp,lpc3220-sic";
++      reg = <0x4000c000 0x4000>;
++      interrupt-controller;
++      #interrupt-cells = <2>;
++      interrupt-parent = <&mic>;
++      interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
++                  <30 IRQ_TYPE_LEVEL_LOW>;
++    };
 -- 
-2.45.2
+2.43.0
 
 
