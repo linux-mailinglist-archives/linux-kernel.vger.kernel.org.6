@@ -1,268 +1,116 @@
-Return-Path: <linux-kernel+bounces-533313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E1AA45836
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87797A45841
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CB163AA13F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031F93AA1AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D7226D00;
-	Wed, 26 Feb 2025 08:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6B423815B;
+	Wed, 26 Feb 2025 08:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hm/CYtcW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hLWhrehT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F9A224256
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A8B1E1DE7;
+	Wed, 26 Feb 2025 08:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558592; cv=none; b=VQX8aRAUlitZIiWwNmROZ8hjqkOoub3HYVZ9S5QMAPGknKeitNzy6DlEIvXIcug/9x2JBn/dNyTQz+Pws7qxSvoFlw8gkgAieTG0ns1lyFtmfO2ZMbGdIojW1tRoXhjEvitOcRfO1Y1KmTm2nO9jvuYPY01cqdYph2Ht1fiNiyM=
+	t=1740558603; cv=none; b=EDw7Fc9zkME2Epc1YT9wZDUGjboxcwaFZ8AYR2CU9c6TU2LV4ODw1D10gxhMZ/HkKQoZusQsuCIAqm3sp2tJsqTzgrkhYG990Ql3pSS6dMCeAdrTtCXsOHcXuC6Z2Sh2QCjajsScVFEocGih/9KPl7g7rDMzfGZycZZqvEsM45Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558592; c=relaxed/simple;
-	bh=+w08B6WQFLWGoY7KAUzC4ng4zpNF75XfE1/K5F/1xRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xe05wW/DiYw1ZqMBxh0j6pgOdxcbIkJjo4CCQ4Hs3EV+y9i3TfeTfo8o+3u27HMRbB0VIiHKwgpRn921KHWijP51RX9nYtr3KaadOoeWiL01WrDUDtezu78R6i+7m6HJXdqPM4N+m+ruM01VQlSDdz+nmY4U2rKPX9fZGsVbovk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hm/CYtcW; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abbd96bef64so1071609966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:29:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740558588; x=1741163388; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
-        b=Hm/CYtcWSPW1k4fv9hDPqmE66S4dHDlH3+8R0sXYWiBdQitIDMEmtvpLhZI/Y5By9S
-         sKR7EEAWBP9y+hDW8nyhlSKuiTppxodU/pVlJAOgF6i/xxuAmdB3c+uBfd9mqRuVNfkm
-         1nhKI4KTfI2DVSCdQJax6zLJQSfl0Nir+9hLn1CXgOyXpo0ydvtgt1ILpZsIKfIze3f7
-         2ebGtc2bWVp0iTe6doS09oetqbmoeXAtO4D0lkQ6bDEIq2tJhJh7Mc+kWvYod31kDaMR
-         SK6SfwUwNyNGVyKGLHuM2oEtVFrf4Pzxk945NBPutBBNUiSSSx4OHm3lFzog+Lh4xehk
-         6bNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740558588; x=1741163388;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
-        b=o+IjhxiMZ8LjC1VIidTE687s+abWndvOBVqfVapo4/AAczNqfrnrqRTEthD3wFFEpn
-         RswxQTahrQ7yKTQfsH8H3JEVbInUJDMWpAOeP/UxGZXIRFcYyQ1Zr3gP0yuRSHfUKeIq
-         fItn9x7xPJ9EQn0MuhzGcJ7gp58AqAUbz/AbFzdTfeU6wR8O9dqMqou9PontZC2B6lFO
-         YsTdUoI4pvdbCaQV3qUDwesONeaFk2zr8y9q1QAYNQBWiWhJ/0rM8gshExJI7zb2Jde3
-         0g8xEAfWSvp4AGscAvZ7K8P26+1N22W78LxgmSUdgQZZNW3RFnog4QYlhAlHBFBUGVAX
-         oOgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgt4+6UKPiAStPMUj6T82rs/beGmNfJWn1mXx3e9DlFa9pYAtCBYnefYlEFzIvN8tStUepBnMEkUPJ/qk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY6fDVGbg+2pSMNocHpocp22F1f9IIhWwDq402fCw7KBjC/H7u
-	tEIyauWvfwbqDB3onumgBDr/Kv8qsmsE73IRRQKJOwiOpzFUakmrAfwQs98V3pXQsS87M00dyuH
-	B3v7HGF4JZupYzUhbeYLcqzJRD+Lp7uqEVpmXHg==
-X-Gm-Gg: ASbGnctQeIj7cffpMYM2x9unBQXTYqE7mCD781zUdLcWqmuuWsuH4V1yhNJZDJ87dap
-	y1OPPW7BcCyXxhXzbWkIl1rmQqHVwwLuWUHPmxeYj6Kx5AlgBmd3nr3w53Mzj0ZaLAqCxNVgLxr
-	Exd9r9xA==
-X-Google-Smtp-Source: AGHT+IHCBmf3hFVyDRWrbNjNMJpg3u3tAe5Gkum3edJXg5+W5jYzpdGCY2CkRcaqBj3q4FkgF3ZBCF2Ur/l8ZS65ls8=
-X-Received: by 2002:a17:907:7711:b0:ab7:c152:a3ca with SMTP id
- a640c23a62f3a-abed0c66952mr598124866b.6.1740558587743; Wed, 26 Feb 2025
- 00:29:47 -0800 (PST)
+	s=arc-20240116; t=1740558603; c=relaxed/simple;
+	bh=EWSFMdl7MyfvZpem9KnI1HkP52VZvCbh4E+n398y4Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+A0HevZvQRjrgHzR9qB/DFiu1waI0/XVVZSvW+fXpsKJXNYzE847mY9OinoGUDGHk0ySYqIbd78zXwieVVP18fZAHfx+7Kl+ZITGUfUrvNjScr44jxJ+hOay0GmWSg9GopNbmoeH1TMTLIbSE03a6jg5dXUTDQlt0xvCxcpj3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hLWhrehT; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740558602; x=1772094602;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EWSFMdl7MyfvZpem9KnI1HkP52VZvCbh4E+n398y4Do=;
+  b=hLWhrehT8JTN9Al+AEz4I0TvDCRQ1xIAEOsT0lwGAoKGRcjhdB7vCFm/
+   sOOqzWxpZkmF0BjC/GbXcsfVhL0wwaSy1eUO3WHQi50jwx/ab6pFEVPOM
+   XRF7F7kW7lXAyTZEEOZPb8OWOU8vnOyzh0/TwDLf9qQOkwRp0WMzIEhVe
+   RDPTMSpR2wWYMLA8S7tbYpinp86OJEtsiikOxjBqIDELLL6/YtJ46HQAB
+   a+bhIjiiDQ6t5KIM50DBIMTpXu8HqEINXydrFAiVsAxyzdaQZPkPghR/v
+   XKAbcPTHiD+WwmZWZ42LaZgfivYPgrzKPc4jsHqfvullpznk3xtweDfD/
+   A==;
+X-CSE-ConnectionGUID: AftabeZOQryHc1Ei71TQMA==
+X-CSE-MsgGUID: rPdsB4ORT/O/3umkm5AilA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41273001"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="41273001"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:29:55 -0800
+X-CSE-ConnectionGUID: 7mrxZqYCTQepd9Hs2hE5GQ==
+X-CSE-MsgGUID: LZ/rF57nSNi8xIEK6qegrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="116639621"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:29:48 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B3A6411F944;
+	Wed, 26 Feb 2025 10:29:45 +0200 (EET)
+Date: Wed, 26 Feb 2025 08:29:45 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v4 2/2] of: Align macro MAX_PHANDLE_ARGS with
+ NR_FWNODE_REFERENCE_ARGS
+Message-ID: <Z77Q-eAGUayQdfpu@kekkonen.localdomain>
+References: <20250225-fix_arg_count-v4-0-13cdc519eb31@quicinc.com>
+ <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+ <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
- <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr> <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
- <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
-In-Reply-To: <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
-From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 26 Feb 2025 09:29:36 +0100
-X-Gm-Features: AQ5f1Jrr13SgxwVjT6ysFNM9oHlwZl6dEEKFUrutAasFQHuednVFm1EELk7zLLU
-Message-ID: <CAPjX3Fc1UuWvih_krriaF32aPCbGP0SPg2TSrBA8Xb7a=Ozc5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Frank.Li@nxp.com, James.Bottomley@hansenpartnership.com, 
-	Julia.Lawall@inria.fr, Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org, 
-	axboe@kernel.dk, broonie@kernel.org, cassel@kernel.org, cem@kernel.org, 
-	ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr, 
-	dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org, 
-	dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org, 
-	dsterba@suse.com, eahariha@linux.microsoft.com, festevam@gmail.com, 
-	hch@lst.de, hdegoede@redhat.com, hmh@hmh.eng.br, 
-	ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com, 
-	ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev, james.smart@broadcom.com, 
-	jgg@ziepe.ca, josef@toxicpanda.com, kalesh-anakkur.purayil@broadcom.com, 
-	kbusch@kernel.org, kernel@pengutronix.de, leon@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org, 
-	perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de, 
-	sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org, 
-	sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
 
-On Wed, 26 Feb 2025 at 09:10, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 26/02/2025 =C3=A0 08:28, Daniel Vacek a =C3=A9crit :
-> > On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
-> > <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
-> >>
-> >> Le 25/02/2025 =C3=A0 21:17, Easwar Hariharan a =C3=A9crit :
-> >>> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> >>> secs_to_jiffies().  As the value here is a multiple of 1000, use
-> >>> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multipli=
-cation
-> >>>
-> >>> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci=
- with
-> >>> the following Coccinelle rules:
-> >>>
-> >>> @depends on patch@ expression E; @@
-> >>>
-> >>> -msecs_to_jiffies(E * 1000)
-> >>> +secs_to_jiffies(E)
-> >>>
-> >>> @depends on patch@ expression E; @@
-> >>>
-> >>> -msecs_to_jiffies(E * MSEC_PER_SEC)
-> >>> +secs_to_jiffies(E)
-> >>>
-> >>> While here, remove the no-longer necessary check for range since ther=
-e's
-> >>> no multiplication involved.
-> >>
-> >> I'm not sure this is correct.
-> >> Now you multiply by HZ and things can still overflow.
-> >
-> > This does not deal with any additional multiplications. If there is an
-> > overflow, it was already there before to begin with, IMO.
-> >
-> >> Hoping I got casting right:
-> >
-> > Maybe not exactly? See below...
-> >
-> >> #define MSEC_PER_SEC    1000L
-> >> #define HZ 100
-> >>
-> >>
-> >> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
-> >>
-> >> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
-> >> {
-> >>          return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
-> >> }
-> >>
-> >> int main() {
-> >>
-> >>          int n =3D INT_MAX - 5;
-> >>
-> >>          printf("res  =3D %ld\n", secs_to_jiffies(n));
-> >>          printf("res  =3D %ld\n", _msecs_to_jiffies(1000 * n));
-> >
-> > I think the format should actually be %lu giving the below results:
-> >
-> > res  =3D 18446744073709551016
-> > res  =3D 429496130
-> >
-> > Which is still wrong nonetheless. But here, *both* results are wrong
-> > as the expected output should be 214748364200 which you'll get with
-> > the correct helper/macro.
-> >
-> > But note another thing, the 1000 * (INT_MAX - 5) already overflows
-> > even before calling _msecs_to_jiffies(). See?
->
-> Agreed and intentional in my test C code.
->
-> That is the point.
->
-> The "if (result.uint_32 > INT_MAX / 1000)" in the original code was
-> handling such values.
+Hi Andy, Zijun,
 
-I see. But that was rather an unrelated side-effect. Still you're
-right, it needs to be handled carefully not to remove additional
-guarantees which were implied unintentionally. At least in places
-where these were provided in the first place.
+On Tue, Feb 25, 2025 at 04:20:34PM +0200, Andy Shevchenko wrote:
+> On Tue, Feb 25, 2025 at 09:58:07PM +0800, Zijun Hu wrote:
+> > From: Zijun Hu <quic_zijuhu@quicinc.com>
+> > 
+> > Macro NR_FWNODE_REFERENCE_ARGS defines the maximal argument count
+> > for firmware node reference, and MAX_PHANDLE_ARGS defines the maximal
+> > argument count for DT node reference, both have the same value now.
+> > 
+> > To void argument count inconsistency between firmware and DT, simply
+> > align both macros by '#define MAX_PHANDLE_ARGS NR_FWNODE_REFERENCE_ARGS'.
+> 
+> I would add here that the of.h includes fwnode.h already, so it doesn't
+> add any new compile time dependency.
 
-> >
-> > Now, you'll get that mentioned correct result with:
-> >
-> > #define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
->
-> Not looked in details, but I think I would second on you on this, in
-> this specific example. Not sure if it would handle all possible uses of
-> secs_to_jiffies().
+It's included via property.h but I think that's fine.
 
-Yeah, I was referring only in context of the example you presented,
-not for the rest of the kernel. Sorry about the confusion.
+> 
+> Both patches LGTM,
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> But it is not how secs_to_jiffies() is defined up to now. See [1].
->
-> [1]:
-> https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/jiffies.h=
-#L540
->
-> >
-> > Still, why unsigned? What if you wanted to convert -5 seconds to jiffie=
-s?
->
-> See commit bb2784d9ab495 which added the cast.
-
-Hmmm, fishy. Maybe a function would be better than a macro?
-
-> >
-> >>          return 0;
-> >> }
-> >>
-> >>
-> >> gives :
-> >>
-> >> res  =3D -600
-> >> res  =3D 429496130
-> >>
-> >> with msec, the previous code would catch the overflow, now it overflow=
-s
-> >> silently.
-> >
-> > What compiler options are you using? I'm not getting any warnings.
->
-> I mean, with:
->         if (result.uint_32 > INT_MAX / 1000)
->                 goto out_of_range;
-> the overflow would be handled *at runtime*.
-
-Got it. But that may still fail if you configure HZ to 5000 or
-anything above 1000. Not that anyone should go this way but...
-
-> Without such a check, an unexpected value could be stored in
-> opt->lock_timeout.
->
-> I think that a test is needed and with secs_to_jiffies(), I tentatively
-> proposed:
->         if (result.uint_32 > INT_MAX / HZ)
->                 goto out_of_range;
-
-Right, that should correctly handle any HZ value. Looks good to me.
-
-> CJ
->
-> >
-> >> untested, but maybe:
-> >>          if (result.uint_32 > INT_MAX / HZ)
-> >>                  goto out_of_range;
-> >>
-> >> ?
-> >>
-> >> CJ
-> >>
->
-> ...
+-- 
+Sakari Ailus
 
