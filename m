@@ -1,204 +1,395 @@
-Return-Path: <linux-kernel+bounces-532742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C002AA451B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:49:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB9DA451BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88677189A258
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38413A64E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056B61514E4;
-	Wed, 26 Feb 2025 00:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C22A145B27;
+	Wed, 26 Feb 2025 00:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STuYX3oS"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKOj+m0r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48A2145B27
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D371494C9;
+	Wed, 26 Feb 2025 00:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740530942; cv=none; b=WvC9viqN2Mk6VWrXNd4L/fypJTPJdLAN+Qr2MsLXihUzj5smlcOEJ6OBE52xDgH1YGkGOmlXjrDVsbjmyYpv5iQXH3myS9Lo3mY50AWCetS76+8IF9VkSOAKNgpttoZ98zuLpnmrFWyKdaIHerZBq5dYww/zeYgX2CzPHz+sPoU=
+	t=1740531002; cv=none; b=T10dGKb3G17Cki2cpTV+qX90Y/Ue0/Cmri3aY774iaY46NTqSmw9Bo99vaclbczSu9tR72FUzDKKh9VFnXWajyAeEY+kYLVIqDKm10o3I49AAN/PVD72SPcBfbtQk0uF7Bv3FdBD7i+qXJl5LuWH41mESvRjTD1RFjkKbm/jDRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740530942; c=relaxed/simple;
-	bh=NdAKpzv41KIxBAk3AHe542XBbfiX3FwfgvvJR12NlTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dcVp2w1vcuu7l5x+xJ5NB+NeGkxKwXifxaJLwomhlBT+p/XuKiE4C2wcMPBLTIC2h4Gs36lDq7CgX/QPXtZnKuc2ffsWqPA8HmdXzWcMDC1IjhunS4noFoESNEBwPJfhUeLmpjNCI24wAlGT5DpWyKfSrC55V7ESUVvIZqiqFJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=STuYX3oS; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2a94159cd5cso467395fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:48:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740530939; x=1741135739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AVjqrV9ooYY5XM2Ro6nNPVrSgDfeAb3Lv275HPJChck=;
-        b=STuYX3oS5Dt5tgfWAodnVWqlVl6mGUMsm7vwhuU29x0GQlbhz4GyRJp5X0bX1IqqhK
-         5DMXCdDrgAWRN+BOnmazKbkB/Oa961nhJSwXc2Qz+8GFHjdpuuYLzQSYPx+9lD0RkAng
-         QicqqrykDDFYRLvIlqhfeoKlYQk1N+todNVkI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740530939; x=1741135739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AVjqrV9ooYY5XM2Ro6nNPVrSgDfeAb3Lv275HPJChck=;
-        b=Ggzo1nAt0QlEDf3i/eOSzKQvb/3I+pJvRCrIZwxgC04Ku5a5/+MYgOQrbTcauBEJUR
-         sa9ovB03A5IRJBRSEGSPGphbG2aVzdFFOhN0u6dgdxpv+M0iGvrv1tYnKkyUuDs7LVsV
-         mIotsNyLAGohuYHBY6yCLdu977fh6SyG1ZTTLk/PZP67wONz3DqZQ1H4ihDLPn2C7A4p
-         SLSyjjNt/WjIjEzGs1K8XsbNShneJ2jHmvYs+4j3x6cSrIZREHvCcKER0XPTZb49IR27
-         WSfKPIvu1eiiWZcOFFts6hE3L2Q4mXHDpIxPq20QYqEf0UeWb7U8qOutO+DRTontAJbx
-         kLPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAAb1PHxgs+r1sVOBmiyfgYX+IPRAYHB5z3oOAp51YFL7oeIkM2iMU3ZLH64S3RXEKJe+7rgKvDrYDohE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcAtL0gi4XxMrkEnxfdC0J+B1HsXfvKLFMQMDq3GZwygXdkIcQ
-	wzbw1AgrZBqyRQiG3vNP/3oNiFPnaXtCKTA9Peb3ILH+8FTTI9fi8qVomHfIEPMDcPCYtpSZB9d
-	rjqo9YcuI2ZWcML2ab71oFUCms1z+Ph7R48nj
-X-Gm-Gg: ASbGncuVjON1tV93GWX7G9FZ73N1a+/7XDI7ZoUOUqCCiqAfkhotjkZ41u3V4qMBj/k
-	/BB4x132TAXB11dEZaBV2Esk5cVpfTbzDrAWF0Ig50AYwy99JnwmcbThEuJ3Z1hcNCqeIt/iGKS
-	InLHZ8WkKG+lPcm5nRkrcm47StDaRvk+tBpsk=
-X-Google-Smtp-Source: AGHT+IGZbr9C3fw/M80D7U25WXvQ+YkVYOhFcuvGjWOO46noie5b+33k+LuPnjzb/dFNh57i49Vsajbe1fap9TbizXk=
-X-Received: by 2002:a05:6808:2109:b0:3f4:159d:a27e with SMTP id
- 5614622812f47-3f4247df7a0mr5851557b6e.8.1740530938691; Tue, 25 Feb 2025
- 16:48:58 -0800 (PST)
+	s=arc-20240116; t=1740531002; c=relaxed/simple;
+	bh=skkKd73cXLLRxcXwPAzNIOOjqaomSO+3N7ybm/u5Kkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=saY6THP+9fHohpFissLD/lhoWyms7p5JisjpYtEOyFT21Px7Uc+/BLE0+/U+pNSwBAycUOc+Re7FY72e6C29dUZfHkAKpiqJjhn82NX+5escK0Ol33loTTSGxOXAhhL0JK15KExsH9Mxe0CBF4Zgj/m5CRBZHxGC1phZVaogmHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKOj+m0r; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740531001; x=1772067001;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=skkKd73cXLLRxcXwPAzNIOOjqaomSO+3N7ybm/u5Kkw=;
+  b=nKOj+m0rfZq4ax6VpuPMX9oqGwbVwa9YVIWg8flc483HDAXWpUzq2thW
+   USMuAihVmHSbNUjvnP+oqAGbox+BVlX8wKHp3lIvJ9DRqGhwxYJlsyuo3
+   JHmT9POEa2j86i7iiAFf1ClV46LO41aWbqXHxw5p/Msk+ocXEM61Ktv+j
+   eFHUHFLO3jKATrHGZKV7b02sQ/zZjGZI8xgUOfUOvuVOp51fUKwEVMGDI
+   Pfh3Ts75PSlz/ck86WMKBsEC2JrO0yTDsX/+NC43q3rxCQz4zJqgKTfFd
+   4nWuKgLKw5HBSolW0wl2XNe9Zk6D5Suf2tU/kIjBWraQihM8zrYlANCzh
+   w==;
+X-CSE-ConnectionGUID: aRB5iKtMQECNkob9B3sfZA==
+X-CSE-MsgGUID: WhTE4aOMRKOD4VruGgYcGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52760452"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="52760452"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 16:50:00 -0800
+X-CSE-ConnectionGUID: RoHyEH7ETDGrYANjeA8Pog==
+X-CSE-MsgGUID: WH0QefF3TPWVDVxU0kXDGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="116331979"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 25 Feb 2025 16:49:58 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tn5cZ-000AyR-0P;
+	Wed, 26 Feb 2025 00:49:55 +0000
+Date: Wed, 26 Feb 2025 08:49:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
+Message-ID: <202502260805.jPVNYTZ0-lkp@intel.com>
+References: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-4-jeffxu@google.com>
- <20250225085728-24167715-8562-45a8-86cd-0ea503e4bc73@linutronix.de>
-In-Reply-To: <20250225085728-24167715-8562-45a8-86cd-0ea503e4bc73@linutronix.de>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 25 Feb 2025 16:48:47 -0800
-X-Gm-Features: AQ5f1JrsyQpU8D8-7sqmxrCWx44j7l_vFI1HjJFXH5LWUwsT0KeRVBq5_z7J_YU
-Message-ID: <CABi2SkUwETzrBSYm0QV9+eoeo0kgA+r2JM4QaFpQqeTiidFEDA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/7] mseal, system mappings: enable x86-64
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
 
-On Tue, Feb 25, 2025 at 12:08=E2=80=AFAM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> Hi Jeff,
->
-> On Mon, Feb 24, 2025 at 10:52:42PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on x86-64,
-> > covering the vdso, vvar, vvar_vclock.
-> >
-> > Production release testing passes on Android and Chrome OS.
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > ---
-> >  arch/x86/Kconfig          |  1 +
-> >  arch/x86/entry/vdso/vma.c | 16 ++++++++++------
-> >  2 files changed, 11 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 87198d957e2f..8fa17032ca46 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -26,6 +26,7 @@ config X86_64
-> >       depends on 64BIT
-> >       # Options that are inherently 64-bit kernel only:
-> >       select ARCH_HAS_GIGANTIC_PAGE
-> > +     select ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
-> >       select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
-> >       select ARCH_SUPPORTS_PER_VMA_LOCK
-> >       select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-> > diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-> > index 39e6efc1a9ca..1b1c009f20a8 100644
-> > --- a/arch/x86/entry/vdso/vma.c
-> > +++ b/arch/x86/entry/vdso/vma.c
-> > @@ -247,6 +247,7 @@ static int map_vdso(const struct vdso_image *image,=
- unsigned long addr)
-> >       struct mm_struct *mm =3D current->mm;
-> >       struct vm_area_struct *vma;
-> >       unsigned long text_start;
-> > +     unsigned long vm_flags;
-> >       int ret =3D 0;
-> >
-> >       if (mmap_write_lock_killable(mm))
-> > @@ -264,11 +265,12 @@ static int map_vdso(const struct vdso_image *imag=
-e, unsigned long addr)
-> >       /*
-> >        * MAYWRITE to allow gdb to COW and set breakpoints
-> >        */
-> > +     vm_flags =3D VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC;
-> > +     vm_flags |=3D VM_SEALED_SYSMAP;
-> >       vma =3D _install_special_mapping(mm,
-> >                                      text_start,
-> >                                      image->size,
-> > -                                    VM_READ|VM_EXEC|
-> > -                                    VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-> > +                                    vm_flags,
-> >                                      &vdso_mapping);
-> >
-> >       if (IS_ERR(vma)) {
-> > @@ -276,11 +278,12 @@ static int map_vdso(const struct vdso_image *imag=
-e, unsigned long addr)
-> >               goto up_fail;
-> >       }
-> >
-> > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
-> > +     vm_flags |=3D VM_SEALED_SYSMAP;
-> >       vma =3D _install_special_mapping(mm,
-> >                                      addr,
-> >                                      (__VVAR_PAGES - VDSO_NR_VCLOCK_PAG=
-ES) * PAGE_SIZE,
-> > -                                    VM_READ|VM_MAYREAD|VM_IO|VM_DONTDU=
-MP|
-> > -                                    VM_PFNMAP,
-> > +                                    vm_flags,
-> >                                      &vvar_mapping);
->
-> This hunk (and the vvar mapping in the arm64 patch) will conflict with my
-> "Generic vDSO datapage" series.
-> That series is already part of the tip tree (branch timers/vdso) and sche=
-duled
-> for the next merge window.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=3Dtime=
-rs/vdso
->
-> The conflict resolution is fairly easy:
-> Move the new flag logic into lib/vdso/datastore.c
->
-Thank you for bringing this to my attention.
+Hi Andy,
 
-In your change,  it seems lib/vdso/datastore.c implements a
-vdso_install_vvar_mapping(), then all the architectures call this
-function.
+kernel test robot noticed the following build errors:
 
-So merging conflict won't be as straightforward.  Maybe a better
-approach is that I continue resolving all the comments, based on the
-latest main. Then wait for your change to be merged and submit another
-version.
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on linus/master v6.14-rc4 next-20250225]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
--Jeff
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/watchdog-nic7018_wdt-tidy-up-ACPI-ID-table/20250225-180908
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250225095804.360899-1-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250226/202502260805.jPVNYTZ0-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250226/202502260805.jPVNYTZ0-lkp@intel.com/reproduce)
 
--Jeff
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502260805.jPVNYTZ0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/watchdog/nic7018_wdt.c:7:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2224:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/watchdog/nic7018_wdt.c:209:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     209 |         outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:213:3: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     213 |                 outb(LOCK, wdt->io_base + WDT_REG_LOCK);
+         |                 ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:229:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     229 |         outb(LOCK, wdt->io_base + WDT_REG_LOCK);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:96:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+      96 |         outb(counter << 4 | config->divider,
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+>> drivers/watchdog/nic7018_wdt.c:112:12: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
+     112 |         control = inb(wdt->io_base + WDT_RELOAD_CTRL);
+         |                   ^
+   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
+     643 | #define inb _inb
+         |             ^
+   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
+     542 | #define _inb _inb
+         |              ^
+   drivers/watchdog/nic7018_wdt.c:113:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     113 |         outb(control | WDT_RELOAD_PORT_EN, wdt->io_base + WDT_RELOAD_CTRL);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:115:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     115 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:117:12: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
+     117 |         control = inb(wdt->io_base + WDT_CTRL);
+         |                   ^
+   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
+     643 | #define inb _inb
+         |             ^
+   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
+     542 | #define _inb _inb
+         |              ^
+   drivers/watchdog/nic7018_wdt.c:118:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     118 |         outb(control | WDT_CTRL_RESET_EN, wdt->io_base + WDT_CTRL);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:127:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     127 |         outb(0, wdt->io_base + WDT_CTRL);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:128:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     128 |         outb(0, wdt->io_base + WDT_RELOAD_CTRL);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:129:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     129 |         outb(0xF0, wdt->io_base + WDT_PRESET_PRESCALE);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:138:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+     138 |         outb(1, wdt->io_base + WDT_RELOAD_PORT);
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:96:2: error: call to '_outb' declared with 'error' attribute: outb() requires CONFIG_HAS_IOPORT
+      96 |         outb(counter << 4 | config->divider,
+         |         ^
+   include/asm-generic/io.h:655:14: note: expanded from macro 'outb'
+     655 | #define outb _outb
+         |              ^
+   include/asm-generic/io.h:596:15: note: expanded from macro '_outb'
+     596 | #define _outb _outb
+         |               ^
+   drivers/watchdog/nic7018_wdt.c:148:10: error: call to '_inb' declared with 'error' attribute: inb()) requires CONFIG_HAS_IOPORT
+     148 |         count = inb(wdt->io_base + WDT_COUNT) & 0xF;
+         |                 ^
+   include/asm-generic/io.h:643:13: note: expanded from macro 'inb'
+     643 | #define inb _inb
+         |             ^
+   include/asm-generic/io.h:542:14: note: expanded from macro '_inb'
+     542 | #define _inb _inb
+         |              ^
+   3 warnings and 15 errors generated.
+
+
+vim +209 drivers/watchdog/nic7018_wdt.c
+
+98078ca34a0a71 Hui Chun Ong 2016-12-28  104  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  105  static int nic7018_start(struct watchdog_device *wdd)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  106  {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  107  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  108  	u8 control;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  109  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  110  	nic7018_set_timeout(wdd, wdd->timeout);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  111  
+98078ca34a0a71 Hui Chun Ong 2016-12-28 @112  	control = inb(wdt->io_base + WDT_RELOAD_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  113  	outb(control | WDT_RELOAD_PORT_EN, wdt->io_base + WDT_RELOAD_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  114  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  115  	outb(1, wdt->io_base + WDT_RELOAD_PORT);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  116  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  117  	control = inb(wdt->io_base + WDT_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  118  	outb(control | WDT_CTRL_RESET_EN, wdt->io_base + WDT_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  119  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  120  	return 0;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  121  }
+98078ca34a0a71 Hui Chun Ong 2016-12-28  122  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  123  static int nic7018_stop(struct watchdog_device *wdd)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  124  {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  125  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  126  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  127  	outb(0, wdt->io_base + WDT_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  128  	outb(0, wdt->io_base + WDT_RELOAD_CTRL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  129  	outb(0xF0, wdt->io_base + WDT_PRESET_PRESCALE);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  130  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  131  	return 0;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  132  }
+98078ca34a0a71 Hui Chun Ong 2016-12-28  133  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  134  static int nic7018_ping(struct watchdog_device *wdd)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  135  {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  136  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  137  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  138  	outb(1, wdt->io_base + WDT_RELOAD_PORT);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  139  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  140  	return 0;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  141  }
+98078ca34a0a71 Hui Chun Ong 2016-12-28  142  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  143  static unsigned int nic7018_get_timeleft(struct watchdog_device *wdd)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  144  {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  145  	struct nic7018_wdt *wdt = watchdog_get_drvdata(wdd);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  146  	u8 count;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  147  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  148  	count = inb(wdt->io_base + WDT_COUNT) & 0xF;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  149  	if (!count)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  150  		return 0;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  151  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  152  	return nic7018_timeout(wdt->period, count);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  153  }
+98078ca34a0a71 Hui Chun Ong 2016-12-28  154  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  155  static const struct watchdog_info nic7018_wdd_info = {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  156  	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  157  	.identity = "NIC7018 Watchdog",
+98078ca34a0a71 Hui Chun Ong 2016-12-28  158  };
+98078ca34a0a71 Hui Chun Ong 2016-12-28  159  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  160  static const struct watchdog_ops nic7018_wdd_ops = {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  161  	.owner = THIS_MODULE,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  162  	.start = nic7018_start,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  163  	.stop = nic7018_stop,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  164  	.ping = nic7018_ping,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  165  	.set_timeout = nic7018_set_timeout,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  166  	.get_timeleft = nic7018_get_timeleft,
+98078ca34a0a71 Hui Chun Ong 2016-12-28  167  };
+98078ca34a0a71 Hui Chun Ong 2016-12-28  168  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  169  static int nic7018_probe(struct platform_device *pdev)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  170  {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  171  	struct device *dev = &pdev->dev;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  172  	struct watchdog_device *wdd;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  173  	struct nic7018_wdt *wdt;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  174  	struct resource *io_rc;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  175  	int ret;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  176  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  177  	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  178  	if (!wdt)
+98078ca34a0a71 Hui Chun Ong 2016-12-28  179  		return -ENOMEM;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  180  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  181  	platform_set_drvdata(pdev, wdt);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  182  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  183  	io_rc = platform_get_resource(pdev, IORESOURCE_IO, 0);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  184  	if (!io_rc) {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  185  		dev_err(dev, "missing IO resources\n");
+98078ca34a0a71 Hui Chun Ong 2016-12-28  186  		return -EINVAL;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  187  	}
+98078ca34a0a71 Hui Chun Ong 2016-12-28  188  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  189  	if (!devm_request_region(dev, io_rc->start, resource_size(io_rc),
+98078ca34a0a71 Hui Chun Ong 2016-12-28  190  				 KBUILD_MODNAME)) {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  191  		dev_err(dev, "failed to get IO region\n");
+98078ca34a0a71 Hui Chun Ong 2016-12-28  192  		return -EBUSY;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  193  	}
+98078ca34a0a71 Hui Chun Ong 2016-12-28  194  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  195  	wdt->io_base = io_rc->start;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  196  	wdd = &wdt->wdd;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  197  	wdd->info = &nic7018_wdd_info;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  198  	wdd->ops = &nic7018_wdd_ops;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  199  	wdd->min_timeout = WDT_MIN_TIMEOUT;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  200  	wdd->max_timeout = WDT_MAX_TIMEOUT;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  201  	wdd->timeout = WDT_DEFAULT_TIMEOUT;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  202  	wdd->parent = dev;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  203  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  204  	watchdog_set_drvdata(wdd, wdt);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  205  	watchdog_set_nowayout(wdd, nowayout);
+14fad5d98d9043 Wolfram Sang 2019-04-19  206  	watchdog_init_timeout(wdd, timeout, dev);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  207  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  208  	/* Unlock WDT register */
+98078ca34a0a71 Hui Chun Ong 2016-12-28 @209  	outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  210  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  211  	ret = watchdog_register_device(wdd);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  212  	if (ret) {
+98078ca34a0a71 Hui Chun Ong 2016-12-28  213  		outb(LOCK, wdt->io_base + WDT_REG_LOCK);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  214  		return ret;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  215  	}
+98078ca34a0a71 Hui Chun Ong 2016-12-28  216  
+98078ca34a0a71 Hui Chun Ong 2016-12-28  217  	dev_dbg(dev, "io_base=0x%04X, timeout=%d, nowayout=%d\n",
+98078ca34a0a71 Hui Chun Ong 2016-12-28  218  		wdt->io_base, timeout, nowayout);
+98078ca34a0a71 Hui Chun Ong 2016-12-28  219  	return 0;
+98078ca34a0a71 Hui Chun Ong 2016-12-28  220  }
+98078ca34a0a71 Hui Chun Ong 2016-12-28  221  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
