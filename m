@@ -1,170 +1,91 @@
-Return-Path: <linux-kernel+bounces-535162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4264BA46FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:51:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C738EA46FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27FF188D106
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB18216D019
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BA625DB18;
-	Wed, 26 Feb 2025 23:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498D025D90E;
+	Wed, 26 Feb 2025 23:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="n+MWT2Of"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A5127004B;
-	Wed, 26 Feb 2025 23:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFJyRvE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E0A27004B;
+	Wed, 26 Feb 2025 23:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613886; cv=none; b=DjCW1fIis3Vna0ZNLN01KYV1Sj251L1ossFKzxTN34Pb+RhAh6euGyiyw7W4fhUxTNRPtIFnCRXMi6FRPjipvOTau3ZBS5dsinA0I0w2wPRsQuqVtpwRn2ZaE68gIwuStvIjcTGnYZM4LEliJH5hCoEjfAnaAfPAnD7ekeFnk7Y=
+	t=1740613901; cv=none; b=ORs5oRMEzvirkiwfxgtpRdoX2eziDn9IWQCjtC/Onrsj1ejqA5ivoToNbAxkEJNkSzPGnaPoZKVAXAQ1pDQHiWNy7u150uBM+cMaoLFJjq7g4DMD2kVbspZ8mC8Bk8zO/61yfgMwPe8wPs5Y97Wksjb5JduedQsdU82++Ui6lt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613886; c=relaxed/simple;
-	bh=owoOiIV/S68Na7TeG/F8G65pYaMGYPs8EpWgXG+MHvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6C6crFVKM6TkXM+qwJq7/O5Ed2AVlD5xXe5/ES5vgzU+n8h+TDqZTfe3E9NttR3UzVs2IVLRiHl4dRrCRf+DCqNQgL+Tuww7VYPokpCFjpYenMLsCe8m9WoxqJN7je75aRRTguP6fIa8P33gDkFEINnTzpqq3mNC1zIxOYv5MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=n+MWT2Of; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii. (unknown [20.236.10.120])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C853F210EACD;
-	Wed, 26 Feb 2025 15:51:23 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C853F210EACD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740613884;
-	bh=d+6I+3A1b4iKmWuAFLCEc6Cxy/RwiNoKQINkgAxYW+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n+MWT2OfBjANgztlGDriEEM11l+NAjEHrobcrCxCnPibzMo12xR4JKZRSGtO0sf4w
-	 3RzDqrRxyFlELGGpbpBsyaGm5ADrPpt55c8GJbd1TQx3u+LIJHojqvAByoYbTphfI2
-	 0PnHNwffW+IeWKXwvZTUTq9JqJ8upPvhZlec5Gn4=
-Date: Wed, 26 Feb 2025 15:51:21 -0800
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
-	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
-	arnd@arndb.de, jinankjain@linux.microsoft.com,
-	muminulrussell@gmail.com, mrathor@linux.microsoft.com,
-	ssengar@linux.microsoft.com, apais@linux.microsoft.com,
-	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
-	gregkh@linuxfoundation.org, vkuznets@redhat.com,
-	prapal@linux.microsoft.com, muislam@microsoft.com,
-	anrayabh@linux.microsoft.com, rafael@kernel.org, lenb@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH v5 09/10] hyperv: Add definitions for root partition
- driver to hv headers
-Message-ID: <Z7-o-VnE6iffOi7Z@skinsburskii.>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1740613901; c=relaxed/simple;
+	bh=6EbVlzjJrV2ElwmZxu2gWiXV7FHg40FqwN7t5C4bvEg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=X5EXeXRvIcQX9jfX4wEcV4r9jPMsuCD24vwE5jd6SNUe0C0yuzAdEACwcS7KGYEddyJK/ITa/5UmEr7Fl0NjygI8YwaeUxsZJCyGpiX2U78PRmHhJ9zrx6v1wxPNwd5UH92ukoWuCVVp4Dpb2A8dZZdiGN0F5vozv20bFoPTszA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFJyRvE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C515DC4CED6;
+	Wed, 26 Feb 2025 23:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740613901;
+	bh=6EbVlzjJrV2ElwmZxu2gWiXV7FHg40FqwN7t5C4bvEg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KFJyRvE2pX8fYVlh19qwqvU2lMd+tF8yVlrSF8Loo3ndDYgUeptke/zL7HThG1o3X
+	 QBgyBwgX+29nhTztQxSTi7NGBT6FklT0jIRYh2CLrBZej40AVW5idPQAxfij/QxzPg
+	 Kj5MIJ6BoG57nY3/AovMl92lJFMvDkDTNe+NIGR010cRd2o+G7sCbob5nfk0MFZQuC
+	 VqrkSUZcjzJpI4y8ShmIuVwTPRoRnftzvILDBH35r5JdggmTzyRJy0rjap8c+hfaaz
+	 GbzDIuIRK9OF6ii/mSg9J52dccfPGdzf3gqQw2DZZq0h7HhJVsR7yNEBg2ctJ7xMDZ
+	 ir0ENPyxdMMSg==
+Date: Thu, 27 Feb 2025 08:51:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Sven Schnelle <svens@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Let fprobe test consider already
+ enabled functions
+Message-Id: <20250227085136.741479a6719e53b50a0cc489@kernel.org>
+In-Reply-To: <20250226111300.5140fa9e@gandalf.local.home>
+References: <20250226142703.910860-1-hca@linux.ibm.com>
+	<20250226235447.7fab8051b2968277ce6920db@kernel.org>
+	<20250226111300.5140fa9e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 03:08:03PM -0800, Nuno Das Neves wrote:
-> A few additional definitions are required for the mshv driver code
-> (to follow). Introduce those here and clean up a little bit while
-> at it.
+On Wed, 26 Feb 2025 11:13:00 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Wed, 26 Feb 2025 23:54:47 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 > 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->  include/hyperv/hvgdk_mini.h |  64 ++++++++++++++++-
->  include/hyperv/hvhdk.h      | 132 ++++++++++++++++++++++++++++++++++--
->  include/hyperv/hvhdk_mini.h |  91 +++++++++++++++++++++++++
->  3 files changed, 280 insertions(+), 7 deletions(-)
+> > Hmm, this ftrace selftests has been expected to be run without 
+> > any BPF programs... Is there any other issue on other test cases?
 > 
-> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-> index 58895883f636..e4a3cca0cbce 100644
-> --- a/include/hyperv/hvgdk_mini.h
-> +++ b/include/hyperv/hvgdk_mini.h
- @@ -1325,6 +1344,49 @@ struct hv_retarget_device_interrupt {	 /* HV_INPUT_RETARGET_DEVICE_INTERRUPT */
->  	struct hv_device_interrupt_target int_target;
->  } __packed __aligned(8);
->  
-> +enum hv_intercept_type {
-> +#if defined(CONFIG_X86_64)
+> Unfortunately, systemd is starting to add BPF programs :-p
+> 
+> I noticed that my laptop has users.
 
-Prehaps it would be nice to have per-arch headers for such structures
-instead.
+Ah, I might need systemd-busybox to build minimum test environment :-(
 
-> +	HV_INTERCEPT_TYPE_X64_IO_PORT			= 0x00000000,
-> +	HV_INTERCEPT_TYPE_X64_MSR			= 0x00000001,
-> +	HV_INTERCEPT_TYPE_X64_CPUID			= 0x00000002,
-> +#endif
-> +	HV_INTERCEPT_TYPE_EXCEPTION			= 0x00000003,
-> +	/* Used to be HV_INTERCEPT_TYPE_REGISTER */
-> +	HV_INTERCEPT_TYPE_RESERVED0			= 0x00000004,
-> +	HV_INTERCEPT_TYPE_MMIO				= 0x00000005,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_GLOBAL_CPUID		= 0x00000006,
-> +	HV_INTERCEPT_TYPE_X64_APIC_SMI			= 0x00000007,
-> +#endif
-> +	HV_INTERCEPT_TYPE_HYPERCALL			= 0x00000008,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_APIC_INIT_SIPI		= 0x00000009,
-> +	HV_INTERCEPT_MC_UPDATE_PATCH_LEVEL_MSR_READ	= 0x0000000A,
-> +	HV_INTERCEPT_TYPE_X64_APIC_WRITE		= 0x0000000B,
-> +	HV_INTERCEPT_TYPE_X64_MSR_INDEX			= 0x0000000C,
-> +#endif
-> +	HV_INTERCEPT_TYPE_MAX,
-> +	HV_INTERCEPT_TYPE_INVALID			= 0xFFFFFFFF,
-> +};
-> +
-> +union hv_intercept_parameters {
-> +	/*  HV_INTERCEPT_PARAMETERS is defined to be an 8-byte field. */
-> +	__u64 as_uint64;
+Thanks,
 
-Should this one be "u64" instead of "__u64" (here and below) ?
+> 
+> -- Steve
 
-> +#if defined(CONFIG_X86_64)
-> +	/* HV_INTERCEPT_TYPE_X64_IO_PORT */
-> +	__u16 io_port;
-> +	/* HV_INTERCEPT_TYPE_X64_CPUID */
-> +	__u32 cpuid_index;
-> +	/* HV_INTERCEPT_TYPE_X64_APIC_WRITE */
-> +	__u32 apic_write_mask;
-> +	/* HV_INTERCEPT_TYPE_EXCEPTION */
-> +	__u16 exception_vector;
-> +	/* HV_INTERCEPT_TYPE_X64_MSR_INDEX */
-> +	__u32 msr_index;
-> +#endif
-> +	/* N.B. Other intercept types do not have any parameters. */
-> +};
-> +
->  /* Data structures for HVCALL_MMIO_READ and HVCALL_MMIO_WRITE */
->  #define HV_HYPERCALL_MMIO_MAX_DATA_LENGTH 64
->  
-> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
-> index 64407c2a3809..1b447155c338 100644
-> --- a/include/hyperv/hvhdk.h
-> +++ b/include/hyperv/hvhdk.h
-> @@ -19,11 +19,24 @@
->  
->  #define HV_VP_REGISTER_PAGE_VERSION_1	1u
->  
-> +#define HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT		7
-> +
-> +union hv_vp_register_page_interrupt_vectors {
-> +	u64 as_uint64;
-> +	struct {
-> +		u8 vector_count;
-> +		u8 vector[HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT];
-> +	} __packed;
-> +} __packed;
 
-Packed attribute for the union looks redundant.
-
-Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
