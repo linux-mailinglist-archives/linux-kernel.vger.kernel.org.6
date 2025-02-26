@@ -1,155 +1,375 @@
-Return-Path: <linux-kernel+bounces-533109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4B1A455C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:40:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FD2A455DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13DF13AD293
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0411895C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB81271831;
-	Wed, 26 Feb 2025 06:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B122690CB;
+	Wed, 26 Feb 2025 06:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkC3trE4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WEoz5IUn"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8295C271816;
-	Wed, 26 Feb 2025 06:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9A267B19;
+	Wed, 26 Feb 2025 06:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740551829; cv=none; b=oOokVmsrldH42XI1vZYfy3j3x9MFBWFbRkWnJtqEm9FwW48GOugCzessHFQX705tagpS0kT9fjHaaYiv/wLBJ4VpXdDbCDNfpu44ln+W8eVImKsIR2ShNfjqa8Z1C31d6BG3/u+ljeGfTwzFDFufEHoYaF7hIEnu5B/3qkqXnTI=
+	t=1740551884; cv=none; b=MFt3Gi5iaO8d5VrhcpcuzQvi4ejnJmI7qG4djkgn9rucnciVkoNghrCnqYeyw8n3AEdvb4zWPg+Mhjv0caVkz9l/RpG1Y7ZzPWJ10mRnJho+La/lMJZOiUqitqOLs9pcB8fsyhjxAkvmvH/r18ntfxKqusz/8ZmYBCeX+jgoEww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740551829; c=relaxed/simple;
-	bh=tR7XrAvAqL9tgp0wezUMza5484QErgFfXZf5Rw+Zt88=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XMqtNqsMSoXcSFOaLPK5hIeOWNH1dd7ZGIb4AwUsHG4KseVzn0usiDIGVunHNWnDOt1vGUh+P+0eWtQW726wGgn7H4WlSxIZUPc9ELG4aJROxTpYtKNfQJtRsleuRCh6s/vrdbxaYk4kqXUmi6Hz/fBRh5iXMsV2S3VyYq78uMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkC3trE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C407C4CEE2;
-	Wed, 26 Feb 2025 06:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740551829;
-	bh=tR7XrAvAqL9tgp0wezUMza5484QErgFfXZf5Rw+Zt88=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NkC3trE48rYxCFFDy66tykiWPjoMbZBsb/HBH52ZAkninFLJ0O7MByribphGwbMXz
-	 KLyVk3wtX2t/4Y0G1+C3lCFJJtVUbu69r17GBdwwItO1VXWf3YcRODWw7dXkn0AuAE
-	 phXZP9tRtyKsqQZ0MbG+9Qfyf7IP+CPFby3/BLT18JYgoBHCuZks1Cw+zk79o+PzpW
-	 uSl6vMNooIM3pr8B6TzmOWAUwvxvYIavDbJQouMkMxLaR7GHAXpqTFmi/H1u6KuAFm
-	 zTkjponpdS4dehkyARKICzrcYji2/gmUJN+SIFQgkB1I12AaeUXdMzH/18G3MFPeHx
-	 9yDRcptpIKLMg==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 13/13] mm/damon: remove damon_operations->reset_aggregated
-Date: Tue, 25 Feb 2025 22:36:51 -0800
-Message-Id: <20250226063651.513178-14-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250226063651.513178-1-sj@kernel.org>
-References: <20250226063651.513178-1-sj@kernel.org>
+	s=arc-20240116; t=1740551884; c=relaxed/simple;
+	bh=fMecm09Rfx9oEUf9WOp5NkiC2o/C4VPQjFfwFvBTXjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YITDTDQO2tAHXywYgDyVHpt+qzLHNP8kO6oe2X/IE1Q9DsV8Bjq75+3pbOcAtcn+FS3h5rFbvm9VQdnrLuniDDfZRm5anmeC51guEHzeDyL75IRJWlCOPLw+brNWtQ/V/Yfjf7BqljyW75TD6QjF+Wd3NnVkQz6yVU/FHnmX4eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WEoz5IUn; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740551876; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=554s2h1bj+14ni03J5udwsLLtSB7ydgcMw3kjvXBuls=;
+	b=WEoz5IUnguJgkgTZzw+8fXnSR2BPoKIi3ER/pYzAHnAE/P8qA3ow2jy2RF7sPqsX//n5NAlLN6E/9DshpOJjtU84y8bRK5siEjAqiTdKavAdQBDPLDilhkoQFttkxVdLSxCFJdi/3Df0dywXRaAmC4HsmRmsQhkJvDqPSRRypYA=
+Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQH7j7V_1740551875 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 14:37:55 +0800
+Message-ID: <ecc1990e-68d6-4a42-8618-7c1fdfc020a2@linux.alibaba.com>
+Date: Wed, 26 Feb 2025 14:37:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm/shmem: use xas_try_split() in
+ shmem_split_large_entry()
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Kairui Song <kasong@tencent.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20250218235444.1543173-1-ziy@nvidia.com>
+ <20250218235444.1543173-3-ziy@nvidia.com>
+ <f899d6b3-e607-480b-9acc-d64dfbc755b5@linux.alibaba.com>
+ <AD348832-5A6A-48F1-9735-924F144330F7@nvidia.com>
+ <47d189c7-3143-4b59-a3af-477d4c46a8a0@linux.alibaba.com>
+ <2e4b9927-562d-4cfa-9362-f23e3bcfc454@linux.alibaba.com>
+ <42440332-96FF-4ECB-8553-9472125EB33F@nvidia.com>
+ <37C4B6AC-0757-4B92-88F3-75F1B4DEFFC5@nvidia.com>
+ <655589D4-7E13-4F5B-8968-3FCB71DCE0FC@nvidia.com>
+ <bd30dc5e-880c-4daf-a86b-b814a1533931@linux.alibaba.com>
+ <af6122b4-2324-418b-b925-becf6036d9ab@linux.alibaba.com>
+ <C643A2FC-316F-4AA2-8788-84E5D92793F2@nvidia.com>
+ <AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The operations layer hook was introduced to let operations set do any
-aggregation data reset if needed.  But it is not really be used now.
-Remove it.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- include/linux/damon.h | 7 +------
- mm/damon/core.c       | 2 --
- mm/damon/paddr.c      | 1 -
- mm/damon/vaddr.c      | 1 -
- 4 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 2808ea07e1cc..957c7f3af80f 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -537,7 +537,6 @@ enum damon_ops_id {
-  * @update:			Update operations-related data structures.
-  * @prepare_access_checks:	Prepare next access check of target regions.
-  * @check_accesses:		Check the accesses to target regions.
-- * @reset_aggregated:		Reset aggregated accesses monitoring results.
-  * @get_scheme_score:		Get the score of a region for a scheme.
-  * @apply_scheme:		Apply a DAMON-based operation scheme.
-  * @target_valid:		Determine if the target is valid.
-@@ -549,8 +548,7 @@ enum damon_ops_id {
-  * (&damon_ctx.kdamond) calls @init and @prepare_access_checks before starting
-  * the monitoring, @update after each &damon_attrs.ops_update_interval, and
-  * @check_accesses, @target_valid and @prepare_access_checks after each
-- * &damon_attrs.sample_interval.  Finally, @reset_aggregated is called after
-- * each &damon_attrs.aggr_interval.
-+ * &damon_attrs.sample_interval.
-  *
-  * Each &struct damon_operations instance having valid @id can be registered
-  * via damon_register_ops() and selected by damon_select_ops() later.
-@@ -565,8 +563,6 @@ enum damon_ops_id {
-  * last preparation and update the number of observed accesses of each region.
-  * It should also return max number of observed accesses that made as a result
-  * of its update.  The value will be used for regions adjustment threshold.
-- * @reset_aggregated should reset the access monitoring results that aggregated
-- * by @check_accesses.
-  * @get_scheme_score should return the priority score of a region for a scheme
-  * as an integer in [0, &DAMOS_MAX_SCORE].
-  * @apply_scheme is called from @kdamond when a region for user provided
-@@ -584,7 +580,6 @@ struct damon_operations {
- 	void (*update)(struct damon_ctx *context);
- 	void (*prepare_access_checks)(struct damon_ctx *context);
- 	unsigned int (*check_accesses)(struct damon_ctx *context);
--	void (*reset_aggregated)(struct damon_ctx *context);
- 	int (*get_scheme_score)(struct damon_ctx *context,
- 			struct damon_target *t, struct damon_region *r,
- 			struct damos *scheme);
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 22f90666fe16..6f821a579257 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -2463,8 +2463,6 @@ static int kdamond_fn(void *data)
- 
- 			kdamond_reset_aggregated(ctx);
- 			kdamond_split_regions(ctx);
--			if (ctx->ops.reset_aggregated)
--				ctx->ops.reset_aggregated(ctx);
- 		}
- 
- 		if (ctx->passed_sample_intervals >= next_ops_update_sis) {
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index fee66a3cc82b..e5b532340102 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -618,7 +618,6 @@ static int __init damon_pa_initcall(void)
- 		.update = NULL,
- 		.prepare_access_checks = damon_pa_prepare_access_checks,
- 		.check_accesses = damon_pa_check_accesses,
--		.reset_aggregated = NULL,
- 		.target_valid = NULL,
- 		.cleanup = NULL,
- 		.apply_scheme = damon_pa_apply_scheme,
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index a6174f725bd7..e6d99106a7f9 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -710,7 +710,6 @@ static int __init damon_va_initcall(void)
- 		.update = damon_va_update,
- 		.prepare_access_checks = damon_va_prepare_access_checks,
- 		.check_accesses = damon_va_check_accesses,
--		.reset_aggregated = NULL,
- 		.target_valid = damon_va_target_valid,
- 		.cleanup = NULL,
- 		.apply_scheme = damon_va_apply_scheme,
--- 
-2.39.5
+On 2025/2/26 04:32, Zi Yan wrote:
+> On 25 Feb 2025, at 11:41, Zi Yan wrote:
+> 
+>> On 25 Feb 2025, at 5:15, Baolin Wang wrote:
+>>
+>>> On 2025/2/25 17:20, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2025/2/21 10:38, Zi Yan wrote:
+>>>>> On 20 Feb 2025, at 21:33, Zi Yan wrote:
+>>>>>
+>>>>>> On 20 Feb 2025, at 8:06, Zi Yan wrote:
+>>>>>>
+>>>>>>> On 20 Feb 2025, at 4:27, Baolin Wang wrote:
+>>>>>>>
+>>>>>>>> On 2025/2/20 17:07, Baolin Wang wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 2025/2/20 00:10, Zi Yan wrote:
+>>>>>>>>>> On 19 Feb 2025, at 5:04, Baolin Wang wrote:
+>>>>>>>>>>
+>>>>>>>>>>> Hi Zi,
+>>>>>>>>>>>
+>>>>>>>>>>> Sorry for the late reply due to being busy with other things:)
+>>>>>>>>>>
+>>>>>>>>>> Thank you for taking a look at the patches. :)
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 2025/2/19 07:54, Zi Yan wrote:
+>>>>>>>>>>>> During shmem_split_large_entry(), large swap entries are covering n slots
+>>>>>>>>>>>> and an order-0 folio needs to be inserted.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Instead of splitting all n slots, only the 1 slot covered by the folio
+>>>>>>>>>>>> need to be split and the remaining n-1 shadow entries can be retained with
+>>>>>>>>>>>> orders ranging from 0 to n-1.  This method only requires
+>>>>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
+>>>>>>>>>>>> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
+>>>>>>>>>>>> xas_split_alloc() + xas_split() one.
+>>>>>>>>>>>>
+>>>>>>>>>>>> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
+>>>>>>>>>>>> is 6), 1 xa_node is needed instead of 8.
+>>>>>>>>>>>>
+>>>>>>>>>>>> xas_try_split_min_order() is used to reduce the number of calls to
+>>>>>>>>>>>> xas_try_split() during split.
+>>>>>>>>>>>
+>>>>>>>>>>> For shmem swapin, if we cannot swap in the whole large folio by skipping the swap cache, we will split the large swap entry stored in the shmem mapping into order-0 swap entries, rather than splitting it into other orders of swap entries. This is because the next time we swap in a shmem folio through shmem_swapin_cluster(), it will still be an order 0 folio.
+>>>>>>>>>>
+>>>>>>>>>> Right. But the swapin is one folio at a time, right? shmem_split_large_entry()
+>>>>>>>>>
+>>>>>>>>> Yes, now we always swapin an order-0 folio from the async swap device at a time. However, for sync swap device, we will skip the swapcache and swapin the whole large folio by commit 1dd44c0af4fa, so it will not call shmem_split_large_entry() in this case.
+>>>>>>>
+>>>>>>> Got it. I will check the commit.
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> should split the large swap entry and give you a slot to store the order-0 folio.
+>>>>>>>>>> For example, with an order-9 large swap entry, to swap in first order-0 folio,
+>>>>>>>>>> the large swap entry will become order-0, order-0, order-1, order-2,… order-8,
+>>>>>>>>>> after the split. Then the first order-0 swap entry can be used.
+>>>>>>>>>> Then, when a second order-0 is swapped in, the second order-0 can be used.
+>>>>>>>>>> When the last order-0 is swapped in, the order-8 would be split to
+>>>>>>>>>> order-7,order-6,…,order-1,order-0, order-0, and the last order-0 will be used.
+>>>>>>>>>
+>>>>>>>>> Yes, understood. However, for the sequential swapin scenarios, where originally only one split operation is needed. However, your approach increases the number of split operations. Of course, I understand that in non-sequential swapin scenarios, your patch will save some xarray memory. It might be necessary to evaluate whether the increased split operations will have a significant impact on the performance of sequential swapin?
+>>>>>>>
+>>>>>>> Is there a shmem swapin test I can run to measure this? xas_try_split() should
+>>>>>>> performance similar operations as existing xas_split_alloc()+xas_split().
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> Maybe the swapin assumes after shmem_split_large_entry(), all swap entries
+>>>>>>>>>> are order-0, which can lead to issues. There should be some check like
+>>>>>>>>>> if the swap entry order > folio_order, shmem_split_large_entry() should
+>>>>>>>>>> be used.
+>>>>>>>>>>>
+>>>>>>>>>>> Moreover I did a quick test with swapping in order 6 shmem folios, however, my test hung, and the console was continuously filled with the following information. It seems there are some issues with shmem swapin handling. Anyway, I need more time to debug and test.
+>>>>>>>>>> To swap in order-6 folios, shmem_split_large_entry() does not allocate
+>>>>>>>>>> any new xa_node, since XA_CHUNK_SHIFT is 6. It is weird to see OOM
+>>>>>>>>>> error below. Let me know if there is anything I can help.
+>>>>>>>>>
+>>>>>>>>> I encountered some issues while testing order 4 and order 6 swapin with your patches. And I roughly reviewed the patch, and it seems that the new swap entry stored in the shmem mapping was not correctly updated after the split.
+>>>>>>>>>
+>>>>>>>>> The following logic is to reset the swap entry after split, and I assume that the large swap entry is always split to order 0 before. As your patch suggests, if a non-uniform split is used, then the logic for resetting the swap entry needs to be changed? Please correct me if I missed something.
+>>>>>>>>>
+>>>>>>>>> /*
+>>>>>>>>>     * Re-set the swap entry after splitting, and the swap
+>>>>>>>>>     * offset of the original large entry must be continuous.
+>>>>>>>>>     */
+>>>>>>>>> for (i = 0; i < 1 << order; i++) {
+>>>>>>>>>        pgoff_t aligned_index = round_down(index, 1 << order);
+>>>>>>>>>        swp_entry_t tmp;
+>>>>>>>>>
+>>>>>>>>>        tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+>>>>>>>>>        __xa_store(&mapping->i_pages, aligned_index + i,
+>>>>>>>>>               swp_to_radix_entry(tmp), 0);
+>>>>>>>>> }
+>>>>>>>
+>>>>>>> Right. I will need to adjust swp_entry_t. Thanks for pointing this out.
+>>>>>>>
+>>>>>>>>
+>>>>>>>> In addition, after your patch, the shmem_split_large_entry() seems always return 0 even though it splits a large swap entry, but we still need re-calculate the swap entry value after splitting, otherwise it may return errors due to shmem_confirm_swap() validation failure.
+>>>>>>>>
+>>>>>>>> /*
+>>>>>>>>    * If the large swap entry has already been split, it is
+>>>>>>>>    * necessary to recalculate the new swap entry based on
+>>>>>>>>    * the old order alignment.
+>>>>>>>>    */
+>>>>>>>>    if (split_order > 0) {
+>>>>>>>>      pgoff_t offset = index - round_down(index, 1 << split_order);
+>>>>>>>>
+>>>>>>>>      swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>>>>>>>> }
+>>>>>>>
+>>>>>>> Got it. I will fix it.
+>>>>>>>
+>>>>>>> BTW, do you mind sharing your swapin tests so that I can test my new version
+>>>>>>> properly?
+>>>>>>
+>>>>>> The diff below adjusts the swp_entry_t and returns the right order after
+>>>>>> shmem_split_large_entry(). Let me know if it fixes your issue.
+>>>>>
+>>>>> Fixed the compilation error. It will be great if you can share a swapin test, so that
+>>>>> I can test locally. Thanks.
+>>>>>
+>>>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>>>> index b35ba250c53d..bfc4ef511391 100644
+>>>>> --- a/mm/shmem.c
+>>>>> +++ b/mm/shmem.c
+>>>>> @@ -2162,7 +2162,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>>>>>    {
+>>>>>        struct address_space *mapping = inode->i_mapping;
+>>>>>        XA_STATE_ORDER(xas, &mapping->i_pages, index, 0);
+>>>>> -    int split_order = 0;
+>>>>> +    int split_order = 0, entry_order = 0;
+>>>>>        int i;
+>>>>>
+>>>>>        /* Convert user data gfp flags to xarray node gfp flags */
+>>>>> @@ -2180,6 +2180,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>>>>>            }
+>>>>>
+>>>>>            order = xas_get_order(&xas);
+>>>>> +        entry_order = order;
+>>>>>
+>>>>>            /* Try to split large swap entry in pagecache */
+>>>>>            if (order > 0) {
+>>>>> @@ -2192,23 +2193,23 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>>>>>                    xas_try_split(&xas, old, cur_order, GFP_NOWAIT);
+>>>>>                    if (xas_error(&xas))
+>>>>>                        goto unlock;
+>>>>> +
+>>>>> +                /*
+>>>>> +                 * Re-set the swap entry after splitting, and the swap
+>>>>> +                 * offset of the original large entry must be continuous.
+>>>>> +                 */
+>>>>> +                for (i = 0; i < 1 << cur_order; i += (1 << split_order)) {
+>>>>> +                    pgoff_t aligned_index = round_down(index, 1 << cur_order);
+>>>>> +                    swp_entry_t tmp;
+>>>>> +
+>>>>> +                    tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+>>>>> +                    __xa_store(&mapping->i_pages, aligned_index + i,
+>>>>> +                           swp_to_radix_entry(tmp), 0);
+>>>>> +                }
+>>>>>                    cur_order = split_order;
+>>>>>                    split_order =
+>>>>>                        xas_try_split_min_order(split_order);
+>>>>>                }
+>>>>
+>>>> This looks incorrect to me. Suppose we are splitting an order-9 swap entry, in the first iteration of the loop, it splits the order-9 swap entry into 8 order-6 swap entries. At this point, the order-6 swap entries are reset, and everything seems fine.
+>>>>
+>>>> However, in the second iteration, where an order-6 swap entry is split into 63 order-0 swap entries, the split operation itself is correct. But
+>>>
+>>> typo: 64
+>>>
+>>>> when resetting the order-0 swap entry, it seems incorrect. Now the 'cur_order' = 6 and 'split_order' = 0, which means the range for the reset index is always between 0 and 63 (see __xa_store()).
+>>>
+>>> Sorry for confusing. The 'aligned_index' will be rounded down by 'cur_order' (which is 6), so the index is correct. But the swap offset calculated by 'swp_offset(swap) + i' looks incorrect, cause the 'i' is always between 0 and 63.
+>>
+>> Right. I think I need to recalculate swap’s swp_offset for each iteration
+>> by adding the difference of round_down(index, 1 << cur_order) and
+>> round_down(index, 1 << split_order) and use the new swap in this iteration.
+>> Thank you a lot for walking me through the details. I really appreciate it. :)
+>>
+>> My tests did not fail probably because I was using linear access pattern
+>> to swap in folios.
+> 
+> Here is my new fix on top of my original patch. I tested it with zswap
+> and a random swapin order without any issue. Let me know if it passes
+> your tests. Thanks.
+> 
+> 
+>  From aaf4407546ff08b761435048d0850944d5de211d Mon Sep 17 00:00:00 2001
+> From: Zi Yan <ziy@nvidia.com>
+> Date: Tue, 25 Feb 2025 12:03:34 -0500
+> Subject: [PATCH] mm/shmem: fix shmem_split_large_entry()
+> 
+> the swap entry offset was updated incorrectly. fix it.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   mm/shmem.c | 41 ++++++++++++++++++++++++++---------------
+>   1 file changed, 26 insertions(+), 15 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 48caa16e8971..f4e58611899f 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2153,7 +2153,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   {
+>   	struct address_space *mapping = inode->i_mapping;
+>   	XA_STATE_ORDER(xas, &mapping->i_pages, index, 0);
+> -	int split_order = 0;
+> +	int split_order = 0, entry_order = 0;
+>   	int i;
+> 
+>   	/* Convert user data gfp flags to xarray node gfp flags */
+> @@ -2171,35 +2171,46 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   		}
+> 
+>   		order = xas_get_order(&xas);
+> +		entry_order = order;
+
+It seems ‘entry_order’ and ‘order’ are duplicate variables, and you can 
+remove the 'order' variable.
+
+> 
+>   		/* Try to split large swap entry in pagecache */
+>   		if (order > 0) {
+
+You can change the code as:
+		if (!entry_order)
+			goto unlock;
+
+which can some indentation.
+
+>   			int cur_order = order;
+> +			pgoff_t swap_index = round_down(index, 1 << order);
+> 
+>   			split_order = xas_try_split_min_order(cur_order);
+> 
+>   			while (cur_order > 0) {
+> +				pgoff_t aligned_index =
+> +					round_down(index, 1 << cur_order);
+> +				pgoff_t swap_offset = aligned_index - swap_index;
+> +
+>   				xas_set_order(&xas, index, split_order);
+>   				xas_try_split(&xas, old, cur_order, GFP_NOWAIT);
+>   				if (xas_error(&xas))
+>   					goto unlock;
+> +
+> +				/*
+> +				 * Re-set the swap entry after splitting, and
+> +				 * the swap offset of the original large entry
+> +				 * must be continuous.
+> +				 */
+> +				for (i = 0; i < 1 << cur_order;
+> +				     i += (1 << split_order)) {
+> +					swp_entry_t tmp;
+> +
+> +					tmp = swp_entry(swp_type(swap),
+> +							swp_offset(swap) +
+> +							swap_offset +
+> +								i);
+> +					__xa_store(&mapping->i_pages,
+> +						   aligned_index + i,
+> +						   swp_to_radix_entry(tmp), 0);
+> +				}
+>   				cur_order = split_order;
+>   				split_order =
+>   					xas_try_split_min_order(split_order);
+>   			}
+> -
+> -			/*
+> -			 * Re-set the swap entry after splitting, and the swap
+> -			 * offset of the original large entry must be continuous.
+> -			 */
+> -			for (i = 0; i < 1 << order; i++) {
+> -				pgoff_t aligned_index = round_down(index, 1 << order);
+> -				swp_entry_t tmp;
+> -
+> -				tmp = swp_entry(swp_type(swap), swp_offset(swap) + i);
+> -				__xa_store(&mapping->i_pages, aligned_index + i,
+> -					   swp_to_radix_entry(tmp), 0);
+> -			}
+>   		}
+> 
+>   unlock:
+> @@ -2212,7 +2223,7 @@ static int shmem_split_large_entry(struct inode *inode, pgoff_t index,
+>   	if (xas_error(&xas))
+>   		return xas_error(&xas);
+> 
+> -	return split_order;
+> +	return entry_order;
+>   }
+
+I did not find any obvious issues. But could you rebase and resend the 
+patch with fixing above coding style issues? (BTW, I posted one bugfix 
+patch to fix the split issues[1]) I can do more testing.
+
+[1] 
+https://lore.kernel.org/all/2fe47c557e74e9df5fe2437ccdc6c9115fa1bf70.1740476943.git.baolin.wang@linux.alibaba.com/
 
