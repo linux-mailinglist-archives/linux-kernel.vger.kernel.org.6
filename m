@@ -1,245 +1,539 @@
-Return-Path: <linux-kernel+bounces-533398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB2FA4598E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:10:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF48A4599D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BE11767E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39153A84DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044CB2459CD;
-	Wed, 26 Feb 2025 09:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047AF238162;
+	Wed, 26 Feb 2025 09:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U4rYuDlX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kPNzbJsf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E21820AF8E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B68210F49;
+	Wed, 26 Feb 2025 09:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740560930; cv=none; b=HIxkDah1wum6EogFdHn4K7mLnzietcKO4E1ndVbsBUaXAwUUEmdsSiGOoCQ7T1Ti332aPrvTKJjCO43wOwrtb60TRyFPj0HrmXOZolXVGgOY0VnUs5zdhyOUwls/+3G//2NncK3LqWY5plaJAwJVs7OJQqbcNEPWYcnKfeGyzhc=
+	t=1740561023; cv=none; b=WOPgF40m0cRkQfllwehGOAw00FGRQd9Cszjh5y/NgUaMK4snqVio4Z7MuHXCpf8tDwFmF1gv4C3shYt54Bki9CagR/nea8ectx4jdkB5I0ozCvEnXIfSzr3QJq67xNZA4GehbDFJAmyxEbe5uyjR2hJBE5vDKPoRUIKLDKP+pNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740560930; c=relaxed/simple;
-	bh=bJLY51LMKbmoPhaSC4QSOluS/yMA3KmLEs2qtXmVmaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O9JliA0HM32whFdBIqFZ7+kNFgx8PVsx9fFi7R2GcGQmTICXi4M0sV7AG4pTYqddwSsZXqIXsdQzZkRMlHPgMrDVKkEU1N2FK4BVt6rsBXW7j5M4F9r+7MNuNHAfnT+SIOaFEHkmYTf1JxNHc37DEDhLDPVV1JKJpEoy9N7aa4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U4rYuDlX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740560927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O8TE1MQFrJ10owitDy4Sd/FdbR2Se527RsQmy+KP7OE=;
-	b=U4rYuDlXsnHHz2L9ff/q90BXn2xtjiqAlUkBkUg9+wXmVx8zr2/t6+oTpza6yl/X97geys
-	rHfXcsn0/FlnCH8oDnznctVoPxJOnClTdyHgjN/6jLlID6gOtyVCnM8jej2IlPM7ynCIt4
-	7LPe0oM0bZ9k7zCQZAC+CeFMWl199wg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-uwsO3UQXMbamRRlZgpQqmQ-1; Wed, 26 Feb 2025 04:08:45 -0500
-X-MC-Unique: uwsO3UQXMbamRRlZgpQqmQ-1
-X-Mimecast-MFC-AGG-ID: uwsO3UQXMbamRRlZgpQqmQ_1740560924
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso59883655e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:08:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740560924; x=1741165724;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O8TE1MQFrJ10owitDy4Sd/FdbR2Se527RsQmy+KP7OE=;
-        b=lMnbekwkFSFz7bV+24SPpbWCI+U+751pZttdEtPLNGV33VqgHpFamUnX+QSP550cpn
-         Te4KFR/cV69N8ZzuroBTXuOIBH5g4MJh/0D4CtoNTedu+RtT0hW+aw455ohd1oHXXDNE
-         4cy2gTDQH8BWRWdQU3nwSwK81X/rJ7pJ8nM6+Qy7q9wBtr5Ul5iLYhizj2JxsTKgLW1w
-         /fGZ1C0V3kqa7CI5HLGS7XQNQDVmDokKVUN57/p8EhUdY4qWsEY8JglM0jRE0JssYcdE
-         lLEMlLGJgMGi8hLyQcQ1abq7pq8LXRz28uoelEgiMOHwrB+kZ78I0ngG6bq8stH//sJl
-         55Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDwAI+wN5KVYKP9+xzDlQP4E/hNiDZgBObaCBVMi2AMOle4mPtE30slEfC7AiopNgcTK9Nv3zNWhquCg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMWhqFIICpPN3t/YE8o7sXdd29kRmo+kaia5wwvPa0u8melTJr
-	aZsQEtVzuLa4lLEB8qb3d2udlJ5xnkLf4SZ2bwKr+3/bLVPab/9SpPzNipV6MlHZJoKnO66GcBe
-	XDvtHayTQ6UmoqfETcx0N01k6jui5eNpzWkmR8x3VGYYOA2Anwzgjd6q+fjmqhQ==
-X-Gm-Gg: ASbGncsk8s2lH0kIsWTvQHwdonqTmR5IQSzwzBKO45QIUTUTU9mx2w2gV/jHXjCquMZ
-	VxwM1hSfDJchsP19JiG7T4wBMQQaOe06PmeXQceOyw6fkT+eapK4RJGVfF5DjK6S1RvuNu6iPZY
-	G3DQalmDvSohUHD459d91Wv57g+KGJStvlwNKgpb1h0mw9et8SAcdN1Srupf/M/6jvlbCN1vKgi
-	wnbkgzKkCMIsPuXyQEAQhUPN6nEWVJSMfcJVa8YR7TfbCM0Sh+QgMl3ucenB13f7tk0ugfbPxCr
-	N6eCEbgE1PtPXzqFCc+LrxOggNcWrhvr4A5qRXWWspoFOHcos9VuEWLqQFlaPcwEcrJa4Wnr2dG
-	qktHU8IqEVwillTyCgG7q0I4pgFEfB9QP4Q1y7WKsXyY=
-X-Received: by 2002:a05:600c:1d15:b0:439:88bb:d023 with SMTP id 5b1f17b1804b1-43abcdbc490mr5762095e9.11.1740560924388;
-        Wed, 26 Feb 2025 01:08:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGzCgV6uzLeA5R9rGGNcz1AqCTL7vjwN5EkwLdrel31QMyKpsknZsMvxZpzMpDk7Hfkg937Gw==
-X-Received: by 2002:a05:600c:1d15:b0:439:88bb:d023 with SMTP id 5b1f17b1804b1-43abcdbc490mr5761555e9.11.1740560923961;
-        Wed, 26 Feb 2025 01:08:43 -0800 (PST)
-Received: from ?IPV6:2003:cb:c747:ff00:9d85:4afb:a7df:6c45? (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba543fdfsm14027565e9.31.2025.02.26.01.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 01:08:42 -0800 (PST)
-Message-ID: <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
-Date: Wed, 26 Feb 2025 10:08:40 +0100
+	s=arc-20240116; t=1740561023; c=relaxed/simple;
+	bh=W8h8PWXhwCWJu26Ia63fPNErxtJIVWtVl3xaH9vpsHI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YRaZ0Sv9cI2sVu/TAnD1rYkXMLPNiFhl9wCB1+XoPSPPOtDXyOWlDLFPU5MPWfR3qGPC9UImDfWylldsbH9jMUsI3talPfNGOpoQJH7LwTXfkM79OyrlgYhIJHBaVdToHaw84oGrHqxTbyortdkk5TZ/Cxvypy+FRyoYEhaDF2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kPNzbJsf; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740561021; x=1772097021;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=W8h8PWXhwCWJu26Ia63fPNErxtJIVWtVl3xaH9vpsHI=;
+  b=kPNzbJsfMTCGoZLjJX6I05KVd8TZKg1NnyBirxToCDtHW1UsSqktKx8A
+   qlAve9udIs8cyPwYUd6dmdmMumDZ6IsPeE9iqH6i5pQxAP6mUETkFsgz/
+   rDnv30yUYzAZGBYsV1Ca0+xKM8gzUJx7HePsIi5K4MTJlNjg/uvH2sxQr
+   KGb+Ai7wRtCt9dxgF/WFIMnx0iLz95y6mQg3zcu3aGPd53EFP2mLdoN1z
+   N8SutsoEA4nUYJ45cj4wpXq48yN7BPsypGXLfz6DPooDYcKtv2CpHXwY/
+   Vc0h5VVDIMRv4GAqO7oIvgJ2EiLN0RPsEL38+H3zgB4UqMPseh2eZXbZ0
+   w==;
+X-CSE-ConnectionGUID: i64UK+Z1STWPk9KJAejOjA==
+X-CSE-MsgGUID: DUc1ezCoSd6i6nLvF2uJeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58932656"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="58932656"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 01:10:20 -0800
+X-CSE-ConnectionGUID: +CgdF6e1T5GGP3e1aSGpPg==
+X-CSE-MsgGUID: yg0I5XV+RUCpJNRKnfkGig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120760360"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.246.81]) ([10.245.246.81])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 01:10:14 -0800
+Message-ID: <fd5af29d5d7be6b6c7bc8a69545fb2ff090350f0.camel@linux.intel.com>
+Subject: Re: [PATCH 2/5] drm/xe/guc: use SZ_4K for alignment
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Francois Dugast <francois.dugast@intel.com>, Matthew Brost
+	 <matthew.brost@intel.com>
+Cc: jeffbai@aosc.io, Lucas De Marchi <lucas.demarchi@intel.com>, Rodrigo
+ Vivi	 <rodrigo.vivi@intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, =?ISO-8859-1?Q?Jos=E9?= Roberto de Souza
+ <jose.souza@intel.com>, Alan Previn	 <alan.previn.teres.alexis@intel.com>,
+ Zhanjun Dong <zhanjun.dong@intel.com>,  Matt Roper
+ <matthew.d.roper@intel.com>, Mateusz Naklicki <mateusz.naklicki@intel.com>,
+ Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, Zbigniew
+ =?UTF-8?Q?Kempczy=C5=84ski?=	 <zbigniew.kempczynski@intel.com>,
+ intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Kexy Biscuit	 <kexybiscuit@aosc.io>, Shang
+ Yatsen <429839446@qq.com>, stable@vger.kernel.org,  Haien Liang
+ <27873200@qq.com>, Shirong Liu <lsr1024@qq.com>, Haofeng Wu
+ <s2600cw2@126.com>
+Date: Wed, 26 Feb 2025 10:09:57 +0100
+In-Reply-To: <Z77Y26ZhWpBL9agT@fdugast-desk>
+References: <20250226-xe-non-4k-fix-v1-0-80f23b5ee40e@aosc.io>
+	 <20250226-xe-non-4k-fix-v1-2-80f23b5ee40e@aosc.io>
+	 <Z76gAbZjF3b0jLb7@lstrano-desk.jf.intel.com>
+	 <Z77Y26ZhWpBL9agT@fdugast-desk>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
-To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
-Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
- akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
- graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
- derekmn@amazon.com, jthoughton@google.com
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
- <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
- <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 26.02.25 09:48, Patrick Roy wrote:
-> 
-> 
-> On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->>> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
->>> set, guest_memfd folios will be removed from the direct map after
->>> preparation, with direct map entries only restored when the folios are
->>> freed.
->>>
->>> To ensure these folios do not end up in places where the kernel cannot
->>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
->>> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
->>>
->>> Note that this flag causes removal of direct map entries for all
->>> guest_memfd folios independent of whether they are "shared" or "private"
->>> (although current guest_memfd only supports either all folios in the
->>> "shared" state, or all folios in the "private" state if
->>> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
->>> direct map entries of also the shared parts of guest_memfd are a special
->>> type of non-CoCo VM where, host userspace is trusted to have access to
->>> all of guest memory, but where Spectre-style transient execution attacks
->>> through the host kernel's direct map should still be mitigated.
->>>
->>> Note that KVM retains access to guest memory via userspace
->>> mappings of guest_memfd, which are reflected back into KVM's memslots
->>> via userspace_addr. This is needed for things like MMIO emulation on
->>> x86_64 to work. Previous iterations attempted to instead have KVM
->>> temporarily restore direct map entries whenever such an access to guest
->>> memory was needed, but this turned out to have a significant performance
->>> impact, as well as additional complexity due to needing to refcount
->>> direct map reinsertion operations and making them play nicely with gmem
->>> truncations.
->>>
->>> This iteration also doesn't have KVM perform TLB flushes after direct
->>> map manipulations. This is because TLB flushes resulted in a up to 40x
->>> elongation of page faults in guest_memfd (scaling with the number of CPU
->>> cores), or a 5x elongation of memory population. On the one hand, TLB
->>> flushes are not needed for functional correctness (the virt->phys
->>> mapping technically stays "correct",  the kernel should simply to not it
->>> for a while), so this is a correct optimization to make. On the other
->>> hand, it means that the desired protection from Spectre-style attacks is
->>> not perfect, as an attacker could try to prevent a stale TLB entry from
->>> getting evicted, keeping it alive until the page it refers to is used by
->>> the guest for some sensitive data, and then targeting it using a
->>> spectre-gadget.
->>>
->>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>
->> ...
->>
->>>
->>> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
->>> +{
->>> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
->>> +}
->>> +
->>>    static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>>    {
->>> +     struct inode *inode = folio_inode(folio);
->>> +
->>> +     if (kvm_gmem_test_no_direct_map(inode)) {
->>> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
->>> +                                                  false);
->>
->> Will this work if KVM is built as a module, or is this another good
->> reason why we might want guest_memfd core part of core-mm?
-> 
-> mh, I'm admittedly not too familiar with the differences that would come
-> from building KVM as a module vs not. I do remember something about the
-> direct map accessors not being available for modules, so this would
-> indeed not work. Does that mean moving gmem into core-mm will be a
-> pre-requisite for the direct map removal stuff?
+On Wed, 2025-02-26 at 10:03 +0100, Francois Dugast wrote:
+> Hi,
+>=20
+> On Tue, Feb 25, 2025 at 09:00:49PM -0800, Matthew Brost wrote:
+> > On Wed, Feb 26, 2025 at 10:00:19AM +0800, Mingcong Bai via B4 Relay
+> > wrote:
+> > > From: Mingcong Bai <jeffbai@aosc.io>
+> > >=20
+> > > Per the "Firmware" chapter in "drm/xe Intel GFX Driver", as well
+> > > as
+> > > "Volume 8: Command Stream Programming" in "Intel=C2=AE Arc=E2=84=A2 A=
+-Series
+> > > Graphics
+> > > and Intel Data Center GPU Flex Series Open-Source Programmer's
+> > > Reference
+> > > Manual For the discrete GPUs code named "Alchemist" and "Arctic
+> > > Sound-M""
+> > > and "Intel=C2=AE Iris=C2=AE Xe MAX Graphics Open Source Programmer's
+> > > Reference
+> > > Manual For the 2020 Discrete GPU formerly named "DG1"":
+> > >=20
+> > > =C2=A0 "The RINGBUF register sets (defined in Memory Interface
+> > > Registers) are
+> > > =C2=A0 used to specify the ring buffer memory areas. The ring buffer
+> > > must start
+> > > =C2=A0 on a 4KB boundary and be allocated in linear memory. The lengt=
+h
+> > > of any
+> > > =C2=A0 one ring buffer is limited to 2MB."
+> > >=20
+> > > The Graphics micro (=CE=BC) Controller (GuC) really expects command
+> > > buffers
+> > > aligned to 4K boundaries.
+> > >=20
+> > > Current code uses `PAGE_SIZE' as an assumed alignment reference
+> > > but 4K
+> > > kernel page sizes is by no means a guarantee. On 16K-paged
+> > > kernels, this
+> > > causes driver failures after loading the GuC firmware:
+> > >=20
+> > > [=C2=A0=C2=A0=C2=A0 7.398317] xe 0000:09:00.0: [drm] Found dg2/g10 (d=
+evice ID
+> > > 56a1) display version 13.00 stepping C0
+> > > [=C2=A0=C2=A0=C2=A0 7.410429] xe 0000:09:00.0: [drm] Using GuC firmwa=
+re from
+> > > i915/dg2_guc_70.bin version 70.36.0
+> > > [=C2=A0=C2=A0 10.719989] xe 0000:09:00.0: [drm] *ERROR* GT0: load fai=
+led:
+> > > status =3D 0x800001EC, time =3D 3297ms, freq =3D 2400MHz (req 2400MHz=
+),
+> > > done =3D 0
+> > > [=C2=A0=C2=A0 10.732106] xe 0000:09:00.0: [drm] *ERROR* GT0: load fai=
+led:
+> > > status: Reset =3D 0, BootROM =3D 0x76, UKernel =3D 0x01, MIA =3D 0x00=
+,
+> > > Auth =3D 0x02
+> > > [=C2=A0=C2=A0 10.744214] xe 0000:09:00.0: [drm] *ERROR* CRITICAL: Xe =
+has
+> > > declared device 0000:09:00.0 as wedged.
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 Please file a _new_ bug report at
+> > > https://gitlab.freedesktop.org/drm/xe/kernel/issues/new
+> > > [=C2=A0=C2=A0 10.828908] xe 0000:09:00.0: [drm] *ERROR* GT0: GuC mmio
+> > > request 0x4100: no reply 0x4100
+> > >=20
+> > > Correct this by revising all instances of `PAGE_SIZE' to `SZ_4K'
+> > > and
+> > > revise `PAGE_ALIGN()' calls to `ALIGN()' with `SZ_4K' as the
+> > > second
+> > > argument (overriding `PAGE_SIZE').
+> > >=20
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 84d15f426110 ("drm/xe/guc: Add capture size check in GuC
+> > > log buffer")
+> > > Fixes: 9c8c7a7e6f1f ("drm/xe/guc: Prepare GuC register list and
+> > > update ADS size for error capture")
+> > > Fixes: dd08ebf6c352 ("drm/xe: Introduce a new DRM driver for
+> > > Intel GPUs")
+> > > Tested-by: Mingcong Bai <jeffbai@aosc.io>
+> > > Tested-by: Haien Liang <27873200@qq.com>
+> > > Tested-by: Shirong Liu <lsr1024@qq.com>
+> > > Tested-by: Haofeng Wu <s2600cw2@126.com>
+> > > Link:
+> > > https://github.com/FanFansfan/loongson-linux/commit/22c55ab3931c32410=
+a077b3ddb6dca3f28223360
+> > > Co-developed-by: Shang Yatsen <429839446@qq.com>
+> > > Signed-off-by: Shang Yatsen <429839446@qq.com>
+> > > Co-developed-by: Kexy Biscuit <kexybiscuit@aosc.io>
+> > > Signed-off-by: Kexy Biscuit <kexybiscuit@aosc.io>
+> > > Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+> >=20
+> > Typo in last reply:
+> > Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+>=20
+> Nit: in order to improve clarity and to limit potential mistakes in
+> the future, you could add:
+>=20
+> =C2=A0=C2=A0=C2=A0 /* GuC really expects command buffers aligned to 4K bo=
+undaries.
+> */
+> =C2=A0=C2=A0=C2=A0 #define GUC_ALIGN SZ_4K
+>=20
+> Then use s/SZ_4K/GUC_ALIGN/ in your changes. It would make clear this
+> value does not come from PAGE_SIZE or XE_PAGE_SIZE.
 
-Likely, we'd need some shim.
+I was thinking the same.
 
-Maybe for the time being it could be fenced using #if IS_BUILTIN() ... 
-but that sure won't win in a beauty contest.
+But on another topic, From a quick read of the commit message it's not
+clear why a 16K alignment would fail, since a 16K aligned bo would also
+be 4K aligned?
 
--- 
-Cheers,
+/Thomas
 
-David / dhildenb
+
+>=20
+> Francois
+>=20
+> >=20
+> > > ---
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 4 ++--
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc_ads.c=C2=A0=C2=A0=C2=A0=C2=A0 | 32 ++=
+++++++++++++++-------
+> > > ---------
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc_capture.c |=C2=A0 8 ++++----
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc_ct.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 2 +-
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc_log.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 4 ++--
+> > > =C2=A0drivers/gpu/drm/xe/xe_guc_pc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 4 ++--
+> > > =C2=A06 files changed, 27 insertions(+), 27 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc.c
+> > > b/drivers/gpu/drm/xe/xe_guc.c
+> > > index
+> > > 408365dfe4eed02336bbd208b60491aea27a8a6e..595873780a5774501f04b2f
+> > > 01ebdf8a45c7ac931 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc.c
+> > > @@ -88,7 +88,7 @@ static u32 guc_ctl_feature_flags(struct xe_guc
+> > > *guc)
+> > > =C2=A0
+> > > =C2=A0static u32 guc_ctl_log_params_flags(struct xe_guc *guc)
+> > > =C2=A0{
+> > > -	u32 offset =3D guc_bo_ggtt_addr(guc, guc->log.bo) >>
+> > > PAGE_SHIFT;
+> > > +	u32 offset =3D guc_bo_ggtt_addr(guc, guc->log.bo) >>
+> > > XE_PTE_SHIFT;
+> > > =C2=A0	u32 flags;
+> > > =C2=A0
+> > > =C2=A0	#if (((CRASH_BUFFER_SIZE) % SZ_1M) =3D=3D 0)
+> > > @@ -141,7 +141,7 @@ static u32 guc_ctl_log_params_flags(struct
+> > > xe_guc *guc)
+> > > =C2=A0
+> > > =C2=A0static u32 guc_ctl_ads_flags(struct xe_guc *guc)
+> > > =C2=A0{
+> > > -	u32 ads =3D guc_bo_ggtt_addr(guc, guc->ads.bo) >>
+> > > PAGE_SHIFT;
+> > > +	u32 ads =3D guc_bo_ggtt_addr(guc, guc->ads.bo) >>
+> > > XE_PTE_SHIFT;
+> > > =C2=A0	u32 flags =3D ads << GUC_ADS_ADDR_SHIFT;
+> > > =C2=A0
+> > > =C2=A0	return flags;
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc_ads.c
+> > > b/drivers/gpu/drm/xe/xe_guc_ads.c
+> > > index
+> > > fab259adc380be28c79fae5946e123427359ec60..65e88ad43e8adef75288930
+> > > 0abd0197a0ac4a1a3 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc_ads.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc_ads.c
+> > > @@ -143,17 +143,17 @@ static size_t guc_ads_regset_size(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_golden_lrc_size(struct xe_guc_ads *ads)
+> > > =C2=A0{
+> > > -	return PAGE_ALIGN(ads->golden_lrc_size);
+> > > +	return ALIGN(ads->golden_lrc_size, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static u32 guc_ads_waklv_size(struct xe_guc_ads *ads)
+> > > =C2=A0{
+> > > -	return PAGE_ALIGN(ads->ads_waklv_size);
+> > > +	return ALIGN(ads->ads_waklv_size, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_capture_size(struct xe_guc_ads *ads)
+> > > =C2=A0{
+> > > -	return PAGE_ALIGN(ads->capture_size);
+> > > +	return ALIGN(ads->capture_size, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_um_queues_size(struct xe_guc_ads *ads)
+> > > @@ -168,7 +168,7 @@ static size_t guc_ads_um_queues_size(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_private_data_size(struct xe_guc_ads *ads)
+> > > =C2=A0{
+> > > -	return PAGE_ALIGN(ads_to_guc(ads)-
+> > > >fw.private_data_size);
+> > > +	return ALIGN(ads_to_guc(ads)->fw.private_data_size,
+> > > SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_regset_offset(struct xe_guc_ads *ads)
+> > > @@ -183,7 +183,7 @@ static size_t
+> > > guc_ads_golden_lrc_offset(struct xe_guc_ads *ads)
+> > > =C2=A0	offset =3D guc_ads_regset_offset(ads) +
+> > > =C2=A0		guc_ads_regset_size(ads);
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(offset);
+> > > +	return ALIGN(offset, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_waklv_offset(struct xe_guc_ads *ads)
+> > > @@ -193,7 +193,7 @@ static size_t guc_ads_waklv_offset(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0	offset =3D guc_ads_golden_lrc_offset(ads) +
+> > > =C2=A0		 guc_ads_golden_lrc_size(ads);
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(offset);
+> > > +	return ALIGN(offset, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_capture_offset(struct xe_guc_ads *ads)
+> > > @@ -203,7 +203,7 @@ static size_t guc_ads_capture_offset(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0	offset =3D guc_ads_waklv_offset(ads) +
+> > > =C2=A0		 guc_ads_waklv_size(ads);
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(offset);
+> > > +	return ALIGN(offset, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_um_queues_offset(struct xe_guc_ads *ads)
+> > > @@ -213,7 +213,7 @@ static size_t guc_ads_um_queues_offset(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0	offset =3D guc_ads_capture_offset(ads) +
+> > > =C2=A0		 guc_ads_capture_size(ads);
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(offset);
+> > > +	return ALIGN(offset, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_private_data_offset(struct xe_guc_ads
+> > > *ads)
+> > > @@ -223,7 +223,7 @@ static size_t
+> > > guc_ads_private_data_offset(struct xe_guc_ads *ads)
+> > > =C2=A0	offset =3D guc_ads_um_queues_offset(ads) +
+> > > =C2=A0		guc_ads_um_queues_size(ads);
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(offset);
+> > > +	return ALIGN(offset, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static size_t guc_ads_size(struct xe_guc_ads *ads)
+> > > @@ -276,7 +276,7 @@ static size_t
+> > > calculate_golden_lrc_size(struct xe_guc_ads *ads)
+> > > =C2=A0			continue;
+> > > =C2=A0
+> > > =C2=A0		real_size =3D xe_gt_lrc_size(gt, class);
+> > > -		alloc_size =3D PAGE_ALIGN(real_size);
+> > > +		alloc_size =3D ALIGN(real_size, SZ_4K);
+> > > =C2=A0		total_size +=3D alloc_size;
+> > > =C2=A0	}
+> > > =C2=A0
+> > > @@ -612,12 +612,12 @@ static int guc_capture_prep_lists(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0					 offsetof(struct
+> > > __guc_ads_blob, system_info));
+> > > =C2=A0
+> > > =C2=A0	/* first, set aside the first page for a capture_list
+> > > with zero descriptors */
+> > > -	total_size =3D PAGE_SIZE;
+> > > +	total_size =3D SZ_4K;
+> > > =C2=A0	if (!xe_guc_capture_getnullheader(guc, &ptr, &size))
+> > > =C2=A0		xe_map_memcpy_to(ads_to_xe(ads),
+> > > ads_to_map(ads), capture_offset, ptr, size);
+> > > =C2=A0
+> > > =C2=A0	null_ggtt =3D ads_ggtt + capture_offset;
+> > > -	capture_offset +=3D PAGE_SIZE;
+> > > +	capture_offset +=3D SZ_4K;
+> > > =C2=A0
+> > > =C2=A0	/*
+> > > =C2=A0	 * Populate capture list : at this point adps is already
+> > > allocated and
+> > > @@ -681,10 +681,10 @@ static int guc_capture_prep_lists(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0		}
+> > > =C2=A0	}
+> > > =C2=A0
+> > > -	if (ads->capture_size !=3D PAGE_ALIGN(total_size))
+> > > +	if (ads->capture_size !=3D ALIGN(total_size, SZ_4K))
+> > > =C2=A0		xe_gt_dbg(gt, "ADS capture alloc size changed
+> > > from %d to %d\n",
+> > > -			=C2=A0 ads->capture_size,
+> > > PAGE_ALIGN(total_size));
+> > > -	return PAGE_ALIGN(total_size);
+> > > +			=C2=A0 ads->capture_size, ALIGN(total_size,
+> > > SZ_4K));
+> > > +	return ALIGN(total_size, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static void guc_mmio_regset_write_one(struct xe_guc_ads *ads,
+> > > @@ -928,7 +928,7 @@ static void guc_populate_golden_lrc(struct
+> > > xe_guc_ads *ads)
+> > > =C2=A0		xe_gt_assert(gt, gt->default_lrc[class]);
+> > > =C2=A0
+> > > =C2=A0		real_size =3D xe_gt_lrc_size(gt, class);
+> > > -		alloc_size =3D PAGE_ALIGN(real_size);
+> > > +		alloc_size =3D ALIGN(real_size, SZ_4K);
+> > > =C2=A0		total_size +=3D alloc_size;
+> > > =C2=A0
+> > > =C2=A0		/*
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c
+> > > b/drivers/gpu/drm/xe/xe_guc_capture.c
+> > > index
+> > > f6d523e4c5feb7f07d695af90f4c44c7a9072c2d..dac51f8720fc6c7d27baa31
+> > > a1b5c567f560e8c1f 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc_capture.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+> > > @@ -590,8 +590,8 @@ guc_capture_getlistsize(struct xe_guc *guc,
+> > > u32 owner, u32 type,
+> > > =C2=A0		return -ENODATA;
+> > > =C2=A0
+> > > =C2=A0	if (size)
+> > > -		*size =3D PAGE_ALIGN((sizeof(struct
+> > > guc_debug_capture_list)) +
+> > > -				=C2=A0=C2=A0 (num_regs * sizeof(struct
+> > > guc_mmio_reg)));
+> > > +		*size =3D ALIGN((sizeof(struct
+> > > guc_debug_capture_list)) +
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (num_regs * sizeof(struct
+> > > guc_mmio_reg)), SZ_4K);
+> > > =C2=A0
+> > > =C2=A0	return 0;
+> > > =C2=A0}
+> > > @@ -738,7 +738,7 @@ size_t
+> > > xe_guc_capture_ads_input_worst_size(struct xe_guc *guc)
+> > > =C2=A0	 * sequence, that is, during the pre-hwconfig phase
+> > > before we have
+> > > =C2=A0	 * the exact engine fusing info.
+> > > =C2=A0	 */
+> > > -	total_size =3D PAGE_SIZE;	/* Pad a page in front
+> > > for empty lists */
+> > > +	total_size =3D SZ_4K;	/* Pad a page in front for empty
+> > > lists */
+> > > =C2=A0	for (i =3D 0; i < GUC_CAPTURE_LIST_INDEX_MAX; i++) {
+> > > =C2=A0		for (j =3D 0; j < GUC_CAPTURE_LIST_CLASS_MAX; j++)
+> > > {
+> > > =C2=A0			if (xe_guc_capture_getlistsize(guc, i,
+> > > @@ -758,7 +758,7 @@ size_t
+> > > xe_guc_capture_ads_input_worst_size(struct xe_guc *guc)
+> > > =C2=A0		total_size +=3D global_size;
+> > > =C2=A0	}
+> > > =C2=A0
+> > > -	return PAGE_ALIGN(total_size);
+> > > +	return ALIGN(total_size, SZ_4K);
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0static int guc_capture_output_size_est(struct xe_guc *guc)
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc_ct.c
+> > > b/drivers/gpu/drm/xe/xe_guc_ct.c
+> > > index
+> > > 72ad576fc18eb583110b44b118abeba4c6be936a..a58c58e599122f3e9ebd1e8
+> > > 374c17c3b4663a5ed 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc_ct.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc_ct.c
+> > > @@ -212,7 +212,7 @@ int xe_guc_ct_init(struct xe_guc_ct *ct)
+> > > =C2=A0	struct xe_bo *bo;
+> > > =C2=A0	int err;
+> > > =C2=A0
+> > > -	xe_gt_assert(gt, !(guc_ct_size() % PAGE_SIZE));
+> > > +	xe_gt_assert(gt, !(guc_ct_size() % SZ_4K));
+> > > =C2=A0
+> > > =C2=A0	ct->g2h_wq =3D alloc_ordered_workqueue("xe-g2h-wq",
+> > > WQ_MEM_RECLAIM);
+> > > =C2=A0	if (!ct->g2h_wq)
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc_log.c
+> > > b/drivers/gpu/drm/xe/xe_guc_log.c
+> > > index
+> > > 0ca3056d8bd3fa37bdb79a7a71ef671270771657..9975005732f645b4735f95f
+> > > bae8ebe431e793ebe 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc_log.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc_log.c
+> > > @@ -58,7 +58,7 @@ static size_t guc_log_size(void)
+> > > =C2=A0	 *=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Cap=
+ture logs=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > =C2=A0	 *=C2=A0 +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+ + CAPTURE_SIZE
+> > > =C2=A0	 */
+> > > -	return PAGE_SIZE + CRASH_BUFFER_SIZE + DEBUG_BUFFER_SIZE
+> > > +
+> > > +	return SZ_4K + CRASH_BUFFER_SIZE + DEBUG_BUFFER_SIZE +
+> > > =C2=A0		CAPTURE_BUFFER_SIZE;
+> > > =C2=A0}
+> > > =C2=A0
+> > > @@ -331,7 +331,7 @@ u32 xe_guc_get_log_buffer_size(struct
+> > > xe_guc_log *log, enum guc_log_buffer_type
+> > > =C2=A0u32 xe_guc_get_log_buffer_offset(struct xe_guc_log *log, enum
+> > > guc_log_buffer_type type)
+> > > =C2=A0{
+> > > =C2=A0	enum guc_log_buffer_type i;
+> > > -	u32 offset =3D PAGE_SIZE;/* for the log_buffer_states */
+> > > +	u32 offset =3D SZ_4K;	/* for the log_buffer_states */
+> > > =C2=A0
+> > > =C2=A0	for (i =3D GUC_LOG_BUFFER_CRASH_DUMP; i <
+> > > GUC_LOG_BUFFER_TYPE_MAX; ++i) {
+> > > =C2=A0		if (i =3D=3D type)
+> > > diff --git a/drivers/gpu/drm/xe/xe_guc_pc.c
+> > > b/drivers/gpu/drm/xe/xe_guc_pc.c
+> > > index
+> > > df7f130fb663fc2fd170a94cc1b835b4b4cca167..0f97c6310a3a5696490aaa4
+> > > 827eb3aa0d45ea6d6 100644
+> > > --- a/drivers/gpu/drm/xe/xe_guc_pc.c
+> > > +++ b/drivers/gpu/drm/xe/xe_guc_pc.c
+> > > @@ -1000,7 +1000,7 @@ int xe_guc_pc_start(struct xe_guc_pc *pc)
+> > > =C2=A0{
+> > > =C2=A0	struct xe_device *xe =3D pc_to_xe(pc);
+> > > =C2=A0	struct xe_gt *gt =3D pc_to_gt(pc);
+> > > -	u32 size =3D PAGE_ALIGN(sizeof(struct slpc_shared_data));
+> > > +	u32 size =3D ALIGN(sizeof(struct slpc_shared_data),
+> > > SZ_4K);
+> > > =C2=A0	unsigned int fw_ref;
+> > > =C2=A0	int ret;
+> > > =C2=A0
+> > > @@ -1110,7 +1110,7 @@ int xe_guc_pc_init(struct xe_guc_pc *pc)
+> > > =C2=A0	struct xe_tile *tile =3D gt_to_tile(gt);
+> > > =C2=A0	struct xe_device *xe =3D gt_to_xe(gt);
+> > > =C2=A0	struct xe_bo *bo;
+> > > -	u32 size =3D PAGE_ALIGN(sizeof(struct slpc_shared_data));
+> > > +	u32 size =3D ALIGN(sizeof(struct slpc_shared_data),
+> > > SZ_4K);
+> > > =C2=A0	int err;
+> > > =C2=A0
+> > > =C2=A0	if (xe->info.skip_guc_pc)
+> > >=20
+> > > --=20
+> > > 2.48.1
+> > >=20
+> > >=20
 
 
