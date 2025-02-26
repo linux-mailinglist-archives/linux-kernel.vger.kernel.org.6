@@ -1,239 +1,153 @@
-Return-Path: <linux-kernel+bounces-535060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED16A46E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:14:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F4BA46E54
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58A5188A8CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC423A56E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2212B26FA5D;
-	Wed, 26 Feb 2025 22:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BBB25BAC0;
+	Wed, 26 Feb 2025 22:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hkgn9JwX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="2P7POLzv"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853FB26FA4B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F5525BAA0;
+	Wed, 26 Feb 2025 22:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740608019; cv=none; b=lGl5FLXobY6tMjCJ1z1dU5ynDptQRWSEBQVby5ldYYNG/rq1a2fyjVWdmuLtCbWOOl+tvBrbwuBFB2vo4RjplahKUk0irnH1HpEHiDhdtsqCy2sgD5ER3bVX78FgaE84C1Y3pngXhjY/YKnY2TWu1QCXRRQgGWa0381Z+IL2mmw=
+	t=1740608145; cv=none; b=gxFQY9wl26Ui1tg93tD3bzYao7AWaBdSnPogGCp3j/LhbFwIt/BI+kZohNK5j8raFwZKOil4oIVgcZQWWs8KN8jcxnQ10Pw+z0mCZKQbethrSs5OdT1ofX17yJjBMVwTIDx8qMl5sovTXiwStrhfcLAv/Do4ROFV8AxO/e1ZeD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740608019; c=relaxed/simple;
-	bh=mIyDoJK+vPEhHHCQAXWk7O01IPra6Or14ZIOEHel7hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxtGtwJ2cEW+wGSj9YfTUPvJJ52jNxt8HUR7KpKI9P0FHCf9I4yZMc2raYRnA8DaDvxgu3/oChT7RMgcLim/FbZRvXZ/FJ525iTsxYUC00AlsmieF1YfuVSUxmwyZ9dS+NFfeaW/l/tDyKo199SU4xCEhg0bKHcNVbLXO+DM/RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hkgn9JwX; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740608018; x=1772144018;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mIyDoJK+vPEhHHCQAXWk7O01IPra6Or14ZIOEHel7hM=;
-  b=Hkgn9JwXlG4Jad99Z3+8J4ou0lscavJy3/RJbPgZBlLQdfjktEmQYWBV
-   vSTEncZX9a0NCyuouWt1LTrRb4OiZsN8Dpb95VIVdJQs1bBXWFQlklmZ0
-   NBA7mozB0jFJclU0liIKcN1LiEy/+WjbDaLFY4FKGayQN/xn5uPByj5c8
-   kv9pEbCA6WjSBl0dMFpyjJwqBLgWf5pDyBAmE0lpAcRXKoTPWLiaorv/H
-   HQulA6j0cr+A0VC1Y1AUEvbArMwfTFDRxq7rPjed4qIVqzTTBZDYdiZcH
-   k5qa+nF8EHnL/ZmI2yC2g7vtAtLqc+90kOM6Bfu+GbcvWpy9xhRqvK0Kh
-   w==;
-X-CSE-ConnectionGUID: 6xi0wfQvQDWD/p4KXAYcyw==
-X-CSE-MsgGUID: x4xV2Fx9RdiU5P6k4ZwJdw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45391559"
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="45391559"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:13:35 -0800
-X-CSE-ConnectionGUID: hs6ZizVxQfiJ9+w4Y0ntEQ==
-X-CSE-MsgGUID: 4egOe6fBSXKqy1+Tz175Cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147757343"
-Received: from unknown (HELO desk) ([10.125.145.169])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:13:35 -0800
-Date: Wed, 26 Feb 2025 14:13:24 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250226221324.hq2nevnnnrpgo75n@desk>
-References: <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
- <LV3PR12MB9265249E8D0FD3920C42A1A994FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
- <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
- <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
- <20250220220440.ma5yfebhiovkqojt@jpoimboe>
- <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250226201453.jgg6kucaathzmcvs@desk>
- <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740608145; c=relaxed/simple;
+	bh=nB+jmAHxPZ3soQmc5wLgDtK8Av2gzHEq4MFA/UQ0nAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cxwLrXLNF1lX/lP00AIuIhdVrtGlNqPgf9hfmhhpeP1sO9a8n6Aabqoi2KzdWuQ+IpVIKf4/OiqvVDwqcz0+jkLYqvaT0xtSXKcBk2OW8/+G2+mOi8retCuXUU2ff2l24aq5PSjb/SwWZP0CJaHZ7oC+TwhKBV7hFI52NGsxx2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=2P7POLzv; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 49D992E08410;
+	Thu, 27 Feb 2025 00:15:31 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740608131;
+	bh=VgIwtkMZ00hXOGNLHlqyEU83xt25hqz8jtzstHZ0Rbo=;
+	h=Received:From:Subject:To;
+	b=2P7POLzvQF3ldZmQNpUlDEFHdn0IgH8qKgCOmnUTM3OVCKMov+Y4ix8k1TuzJyKjF
+	 ejkfIwUpm63e0H48uLRXS7s1dQAeVlAq976pudNSQglUvw/Zg0cfvQQOkmus8pqsGi
+	 L2iqIYJ0imAwPkR4RlhEaJ4ytgCMtfQ6j6kdcBh4=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.174) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f174.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-30613802a6bso3677941fa.1;
+        Wed, 26 Feb 2025 14:15:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWC/VeId7UW2g0rq3aKHg0Dbwo8w+1i8hvXGSCgLaINgtUizuL7yCaoDcHWuU6ikhzWEQuBSJnIIUzqpU3vQ4l30NL0jw==@vger.kernel.org,
+ AJvYcCXFb1Z5hxbFf0PJNBvvHd4C7UUQIxBPrQ0faAF1f7vLMqAtDC7qcidA6ApVWl/BslS8b0ZIWUKIGmAS@vger.kernel.org,
+ AJvYcCXh1Ug0b9tAHmHAUuDmyXarW+ebGELeyH+S7D0Lp2JXOYLJE2KUMP865YBwBejckuwaBOUHi7BT7uSTPO+F@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqtzEVj4qHg4EZvAUrxz6WgGkrTa0IqzNlM8kFnrdnnvLA5ze7
+	NyzMj3S7ikiv1cPUlZW21vBw8McAoij+XklJxFhWeRXORcejmWA/Qio4X2rGB7TDKqw7YEaJu/U
+	xAcKJXzmfI7eq44RH37qwbABImUU=
+X-Google-Smtp-Source: 
+ AGHT+IFg4wyGK6VF2wjPjpIZ8OKnRzWWaJZk6o/Gjb7Is6KTQDwhUqgOfMyd55qPLWosSWcc5Up9ckS22GBNFVqu8cQ=
+X-Received: by 2002:a2e:968b:0:b0:304:68e5:eabd with SMTP id
+ 38308e7fff4ca-30a80c0f0admr41386401fa.3.1740608130090; Wed, 26 Feb 2025
+ 14:15:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+References: <20250224195059.10185-1-lkml@antheas.dev>
+ <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+ <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
+ <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+ <9fa91732-3085-4e79-9a8f-b38263ee7d08@gmx.de>
+ <CAGwozwHZCLaVD8iRgRxvQNqw3v+T9J+omMF+JoNe1r=+S1-OsA@mail.gmail.com>
+ <CAGwozwEEbsLOJROm7rW-240Zoqh3K_JOtZE_NL8AnLy1eChR6A@mail.gmail.com>
+ <CAJZ5v0jpSN_Tq6D3OrRj5KDuXwqVuzcwyNXwEuL90fr=juH48g@mail.gmail.com>
+ <CAGwozwHAKbR4y9cW8H0nmESS7yv6RrXtgcZyEdz1Wy2e8tAdqQ@mail.gmail.com>
+ <CAJZ5v0ihavOHCzfqMc7nd7HUaxYta7-vBBTo6WoJ3gDduZ6iRA@mail.gmail.com>
+In-Reply-To: 
+ <CAJZ5v0ihavOHCzfqMc7nd7HUaxYta7-vBBTo6WoJ3gDduZ6iRA@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Wed, 26 Feb 2025 23:15:16 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwEkGDfhUoCSM6eA-1QN3-pCixT-YVPBNY4bLUZYxvff8Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JqPcnpjoEwypmX0Ot_L-bCpE2CHv_Ze7HXHX5i7ZuRYsRKVxaYGbPY5yHs
+Message-ID: 
+ <CAGwozwEkGDfhUoCSM6eA-1QN3-pCixT-YVPBNY4bLUZYxvff8Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
+ multiple handlers
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Armin Wolf <W_Armin@gmx.de>, Luke Jones <luke@ljones.dev>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Limonciello, Mario" <mario.limonciello@amd.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+	me@kylegospodneti.ch
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <174060813166.13020.1806907721096684722@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Wed, Feb 26, 2025 at 09:03:58PM +0000, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> > -----Original Message-----
-> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > Sent: Wednesday, February 26, 2025 2:15 PM
-> > To: Kaplan, David <David.Kaplan@amd.com>
-> > Cc: Josh Poimboeuf <jpoimboe@kernel.org>; Borislav Petkov <bp@alien8.de>;
-> > Thomas Gleixner <tglx@linutronix.de>; Peter Zijlstra <peterz@infradead.org>; Ingo
-> > Molnar <mingo@redhat.com>; Dave Hansen <dave.hansen@linux.intel.com>;
-> > x86@kernel.org; H . Peter Anvin <hpa@zytor.com>; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Wed, Feb 26, 2025 at 06:57:05PM +0000, Kaplan, David wrote:
-> > > [AMD Official Use Only - AMD Internal Distribution Only]
+On Wed, 26 Feb 2025 at 21:04, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> Top-posting not welcome.
+
+?
+
+> On Wed, Feb 26, 2025 at 8:52=E2=80=AFPM Antheas Kapenekakis <lkml@antheas=
+.dev> wrote:
 > > >
-> > > > -----Original Message-----
-> > > > From: Josh Poimboeuf <jpoimboe@kernel.org>
-> > > > Sent: Thursday, February 20, 2025 4:05 PM
-> > > > To: Borislav Petkov <bp@alien8.de>
-> > > > Cc: Kaplan, David <David.Kaplan@amd.com>; Thomas Gleixner
-> > > > <tglx@linutronix.de>; Peter Zijlstra <peterz@infradead.org>; Pawan
-> > > > Gupta <pawan.kumar.gupta@linux.intel.com>; Ingo Molnar
-> > > > <mingo@redhat.com>; Dave Hansen <dave.hansen@linux.intel.com>;
-> > > > x86@kernel.org; H . Peter Anvin <hpa@zytor.com>;
-> > > > linux-kernel@vger.kernel.org
-> > > > Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-> > > >
-> > > > Caution: This message originated from an External Source. Use proper
-> > > > caution when opening attachments, clicking links, or responding.
-> > > >
-> > > >
-> > > > On Tue, Feb 18, 2025 at 09:52:03AM +0100, Borislav Petkov wrote:
-> > > > > On Mon, Feb 17, 2025 at 11:05:01PM -0800, Josh Poimboeuf wrote:
-> > > > > > IMO, make them generic from the start, then there's less churn
-> > > > > > and it's easy to port the other arches.
-> > > > > >
-> > > > > > If we went with putting everything in "mitigations=", making
-> > > > > > them generic would be the obvious way to go anyway.
-> > > > >
-> > > > > Just to make sure we're all on the same page: we obviously cannot
-> > > > > enable and test and support a mitigaion on another arch like, say, arm64, or
-> > so.
-> > > > >
-> > > > > This needs to come from the respective arch maintainers themselves
-> > > > > and they'll have to say, yes, pls, enable it and we'll support it.
-> > > > > We should not go "oh, this would be a good idea to do on all arches"
-> > > > > without hearing from them first, even if it is a good idea on its face.
-> > > > >
-> > > > > That's why those are x86-only as they should be initially.
-> > > >
-> > > > I wasn't suggesting that this patch set should *enable* it on all
-> > > > arches.  Of course that would need to be reviewed by the respective arch
-> > maintainers.
-> > > >
-> > > > But looking ahead, this *will* be needed for the other arches, for
-> > > > the same reason we have a generic mitigations=off.  It's a user problem, not an
-> > arch-specific one.
-> > > > Users need a simple interface that works everywhere.  That's why I
-> > > > suggested integrating it into "mitigations=".
-> > > >
-> > >
-> > > Talked with Boris on the side, he is ok with supporting this in mitigations=, with a
-> > warning message if you try to use these controls on yet-unsupported architectures.
-> > >
-> > > Going back to the command line definition, I think that to help make the selection
-> > clearer we could consider the following format:
-> > >
-> > > mitigations=[on/off],[attack vectors]
-> > >
-> > > For example:
-> > >
-> > > "mitigations=on,no_user_kernel" to enable all attack vectors except
-> > > user->kernel "mitigations=off,guest_host" to disable all vectors
-> > > except guest->host
+> > > What about adding "quiet" as a "hidden choice" to amd-pmf such that i=
+t
+> > > would allow the test_bit(*bit, handler->choices) check in
+> > > _store_class_profile() to pass, but it would not cause this "choice"
+> > > to become visible in the new I/F (or when amd-pmf becomes the only
+> > > platform-profile driver) and it would be aliased to "low-power"
+> > > internally?
 > >
-> > This is a bit ambiguous, mitigations=off,guest_host could be interpreted as disabling
-> > guest->host and enabling all others. Using attack vectors with both =on and =off
-> > seems unnecessary.
-> >
-> > Also, we currently don't have mitigations=on option, it's equivalent is =auto.
-> >
-> > static int __init mitigations_parse_cmdline(char *arg) {
-> >         if (!strcmp(arg, "off"))
-> >                 cpu_mitigations = CPU_MITIGATIONS_OFF;
-> >         else if (!strcmp(arg, "auto"))
-> >                 cpu_mitigations = CPU_MITIGATIONS_AUTO;
-> >         else if (!strcmp(arg, "auto,nosmt"))
-> >                 cpu_mitigations = CPU_MITIGATIONS_AUTO_NOSMT;
-> >         else
-> >                 pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
-> >                         arg);
-> >
-> >         return 0;
-> > }
-> >
-> > Extending =auto to take attack vectors is going to be tricky, because it already
-> > takes ",nosmt" which would conflict with ",no_cross_thread".
-> >
-> > How about we keep =off, and =auto as is, and add:
-> >
-> >   mitigations=selective,no_user_kernel,no_cross_thread,...
-> >
-> > Requiring the user to explicitly select attack vectors to disable (rather than to
-> > enable). This would be more verbose, but it would be clear that the user is explicitly
-> > selecting attack vectors to disable. Also, if a new attack vector gets added in future,
-> > it would be mitigated by default, without requiring the world to change their cmdline.
-> 
-> I kind of like that.
-> 
-> Note that for the SMT stuff, my new plan had been to use a separate
-> option 'mitigate_smt' which will be on/off/auto.
+> > This is what this patch series essentially does. It makes amd-pmf
+> > accept all choices but only show its own in its own handler and when
+> > it is the only option
+>
+> No, it does more than this.
 
-I would avoid that, because we can't drop support for
-"mitigations=auto,nosmt" and we also have a separate cmdline parameter
-"nosmt":
+I would say functionality-wise no. The patch could be minified further.
 
-	nosmt		[KNL,MIPS,PPC,S390,EARLY] Disable symmetric multithreading (SMT).
-			Equivalent to smt=1.
+>  For instance, it is not necessary to do
+> anything about PLATFORM_PROFILE_BALANCED_PERFORMANCE in it.
 
-			[KNL,X86,PPC] Disable symmetric multithreading (SMT).
-			nosmt=force: Force disable SMT, cannot be undone
-				     via the sysfs control file.
+I do not see a difference between QUIET and BALANCED_PERFORMANCE, any
+driver occluding either causes the same issue. Severity is debatably
+lower on BP though.
 
-> But we could also combine that with mitigations=selective perhaps with
-> tokens like 'mitigate_smt' (enable all relevant SMT mitigations including
-> disabling SMT if needed) or 'no_mitigate_smt' (do not enable any SMT
-> mitigation).  If no token is specified, then we'd default to the behavior
-> today where SMT won't be disabled but other mitigations get applied.
-> Then everything is in one option.
+> The structure of it is questionable either.  It really should be two
+> patches, one modifying the ACPI platform-profile driver and the other
+> changing amd-pmf on top of this.
 
-Agree.
+Ack. I can spin it up as 2 patches.
 
-> If we like that, then a related question then, do we agree that
-> 'mitigations=off' should be equivalent to
-> 'mitigations=selective,no_user_kernel,no_user_user,no_guest_host,no_guest_guest,no_mitigate_smt'?
-> 
-> If so, and we're ok with individual bug cmdlines overriding this, then I
-> think we can get rid of cpu_mitigations_off() and just rely on the attack
-> vectors as Josh was suggesting.
+> Moreover, I'm not entirely convinced that the "secondary" driver
+> concept is needed to address the problem at hand.
 
-Does that mean to stop supporting "mitigations=off"?
+Any suggestions on that front would be welcome. This is just the way I
+came up with doing it.
+
+Best,
+Antheas
 
