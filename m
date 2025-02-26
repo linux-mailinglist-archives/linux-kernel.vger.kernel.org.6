@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-534097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892D9A462C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426FBA462C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D536C3B4116
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070EE16D590
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652E62222CD;
-	Wed, 26 Feb 2025 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vsBRbu3N"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FF922370F;
+	Wed, 26 Feb 2025 14:27:25 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603171A00D1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122E12222C0;
+	Wed, 26 Feb 2025 14:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580040; cv=none; b=gBi35E5WLxZjuIDSgABUDCDxhss8hzah61+jnLWJ2XI0rPIO++1EDG9t/KgKyjEHyGHG8IsQdBFV3wFI8jsFtamUHIcoZDNZGuI4jCkmnMm6B0Zpk1s+Sej0hlUUDTgfdI0sbOstIUTkiP3FWOhoZ9xbz9eQJ+FwOLPpPvbPzlY=
+	t=1740580045; cv=none; b=h4Se4kTxV5+43fCyfElhzS4i9ksccIKSmlAh6wuPoqsaf2FPdTc3LWFlSgmPRIvXlnYr9z9+bumCGo3OKL50XmMF1uFKvXgFa5dZ+MdXLqEQ4ZqRgVt4EVXwt2nO4p8WGlEK7zfPT5udO7fSVub5/nkfdupkneQ5t/iTqWKj890=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580040; c=relaxed/simple;
-	bh=EVDB5ihtgZeieRnrugyEXIDrswGJIhn4/GuR5gLfv2A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SdNa+LojHw4cmJEKeHyFPdrsxyElGXJ0zADzzgSkwXnqYQAiwm+tbQOB+Ohto6yfLYkra++MHDqxmUZ3gylLhh7FPgaf4QmpuwWav0iPnQ2PFNhiRari+/mTeUCWDrlf913c19bvOLcsIk78Y5fvm0RMHu2ocGXZe6pglqL6Kx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vsBRbu3N; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso22219235a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:27:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740580038; x=1741184838; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eaRjEj+S+iNUpexzYhTHe/q7bOyFL6g0TekFIq/1o1g=;
-        b=vsBRbu3NfyDpphupjR0N4xxLTp3fhZPqv+PJDiaye9ZW6K/g6VYMwJ/8g4xROQ0DWR
-         cELYC294mAn4x9yHSPfnWv3YsSQp0pX0cXHUnbIoHQ7A7TS0tUD/aMi3Hydvk+P5iT0F
-         pUOkWJwT4TqQCA2gR+xAYAINOHAaaZ9FXiC1ds4IwtpLr2lZjg3EaZLXU9zmt0Mz0PWu
-         hOYlCqEU+pUv1DDY4PqJEBD2nQto6cLyqAfn+swnYkYBf7ZHj3veN/eSal0KdhI4MET7
-         LcJm2R491GtG5DeM+2/RFQH7yRtbSpJ7Sdn/eF07ef6RfGD+Xf/m0hk/IldbdwBZvV+W
-         LzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740580038; x=1741184838;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eaRjEj+S+iNUpexzYhTHe/q7bOyFL6g0TekFIq/1o1g=;
-        b=gGN53ooCb5XXnsMhTJa8aJFdzY619TFFQvKulnqjF8+TEhQULvhJ0eGqFybMt1Xaup
-         l/2Ge43nE0q0N1UOHg9sEGt7RdDVZ/1vhXOrey3WeBwgzi6JgfygePYVKtjKn72Evl4c
-         0YZ6/YOAEF/Te1WZB5nMKqhAmMWBydND89xOyLWHGhEoUsaPR+TYPAQaZSmXmMVrlmwu
-         3QjaIE9CWbPC/6gTklrczG/qpruH1rqLTT4IZff3mOPGQ3B0IUOO22M1Ers/h2bFjQVS
-         rnuwvBREvNxl2T37ZqYluaqG1iUgx+wqehRZTtyvJpTE4QZiLdQKay+XIKJKG9YkRDRE
-         +1pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ehmOXyQTEhz8qfIItYfbwmMC3DsmKAvXHrYTr0GXPEUDmIgLrjk+JilQZgBVASXDI6lWlaxzavXlxb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf5RMrQmXmr03U0JCAaolDDysA44aamrTklbMJh/zEiKdcnSBg
-	usImPsMW5cplYjiAmrZNnIuOJGVqyPFRBKZtEx57rXanqfgLvw3W6OjjlMuubQ0gFkBRLPM+JXb
-	2Cw==
-X-Google-Smtp-Source: AGHT+IFswkBOj+OW+b1B+n/Joz6AyKOkyChMtV3kE6V2sRCzgJx4EB1M/qGFGRbf1byqZAHdlEsQn9PZhSg=
-X-Received: from pjb8.prod.google.com ([2002:a17:90b:2f08:b0:2ea:5613:4d5d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:540c:b0:2ea:83a0:47a5
- with SMTP id 98e67ed59e1d1-2fe68acd777mr11441995a91.4.1740580038672; Wed, 26
- Feb 2025 06:27:18 -0800 (PST)
-Date: Wed, 26 Feb 2025 06:27:11 -0800
-In-Reply-To: <Z7yc8-QXXVPzr2K8@suse.de>
+	s=arc-20240116; t=1740580045; c=relaxed/simple;
+	bh=E20gb9sD+thFGdT/sXff/794s9zpyHXdhBKGllLOaCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YnwFuDHoOyNTYsycv0+UOftTZtn7mv3NnymYc/4SF6B2bxsH2Vjp682gT0zlkZcXSTEMhpjjc9jjyWs7J/eXAs5OsRRKEdsdDDdfRQtcbLaB5FoFPyAohKm1NzQHMJkVwEtstm6qZtKAN4CUsrzauLvC3a+r4U+X76HaHYDMT5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DCA8A433C9;
+	Wed, 26 Feb 2025 14:27:17 +0000 (UTC)
+Message-ID: <83830ab7-e15c-476f-b583-0df8d614f7cf@ghiti.fr>
+Date: Wed, 26 Feb 2025 15:27:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250219151505.3538323-1-michael.roth@amd.com>
- <20250219151505.3538323-2-michael.roth@amd.com> <Z7yc8-QXXVPzr2K8@suse.de>
-Message-ID: <Z78kv-hhU6AWyufz@google.com>
-Subject: Re: [PATCH v5 1/1] KVM: Introduce KVM_EXIT_SNP_REQ_CERTS for SNP certificate-fetching
-From: Sean Christopherson <seanjc@google.com>
-To: Joerg Roedel <jroedel@suse.de>
-Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, thomas.lendacky@amd.com, 
-	ashish.kalra@amd.com, liam.merwick@oracle.com, pankaj.gupta@amd.com, 
-	dionnaglaze@google.com, huibo.wang@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: ftrace: Add parentheses in macro definitions of
+ make_call_t0 and make_call_ra
+Content-Language: en-US
+To: Juhan Jin <juhan.jin@foxmail.com>, guoren@kernel.org,
+ guoren@linux.alibaba.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <tencent_AE90AA59903A628E87E9F80E563DA5BA5508@qq.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <tencent_AE90AA59903A628E87E9F80E563DA5BA5508@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepjhhuhhgrnhdrjhhinhesfhhogihmrghilhdrtghomhdprhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehlihhnuhigrdgrlhhisggrsggrrdgtohhmp
+ dhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Mon, Feb 24, 2025, Joerg Roedel wrote:
-> Hi Michael,
-> 
-> On Wed, Feb 19, 2025 at 09:15:05AM -0600, Michael Roth wrote:
-> > +  - If some other error occurred, userspace must set `ret` to ``EIO``.
-> > +    (This is to reserve special meaning for unused error codes in the
-> > +    future.)
-> 
-> [...]
-> 
-> > +static int snp_complete_req_certs(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct vcpu_svm *svm = to_svm(vcpu);
-> > +	struct vmcb_control_area *control = &svm->vmcb->control;
-> > +
-> > +	if (vcpu->run->snp_req_certs.ret) {
-> > +		if (vcpu->run->snp_req_certs.ret == ENOSPC) {
-> > +			vcpu->arch.regs[VCPU_REGS_RBX] = vcpu->run->snp_req_certs.npages;
-> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_INVALID_LEN, 0));
-> > +		} else if (vcpu->run->snp_req_certs.ret == EAGAIN) {
-> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_BUSY, 0));
-> > +		} else {
-> > +			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-> > +						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_GENERIC, 0));
-> > +		}
-> 
-> According to the documentation above, there should be a block checking
-> for EIO which injects SNP_GUEST_VMM_ERR_GENERIC and the else block
-> should return with EINVAL to user-space, no?
+Hi Juhan,
 
-Yeah.  It feels a bit ridiculous, but it would be quite unfortunate to go through
-the extra effort of decoupling KVM's error handling from the GHCB error code, only
-for it to all fall apart due to not enforcing the "return" value.
+On 06/02/2025 20:28, Juhan Jin wrote:
+> This patch adds parentheses to parameters caller and callee of macros
+> make_call_t0 and make_call_ra. Every existing invocation of these two
+> macros uses a single variable for each argument, so the absence of the
+> parentheses seems okay. However, future invocations might use more
+> complex expressions as arguments. For example, a future invocation might
+> look like this: make_call_t0(a - b, c, call). Without parentheses in the
+> macro definition, the macro invocation expands to:
+>
+> ...
+> unsigned int offset = (unsigned long) c - (unsigned long) a - b;
+> ...
+>
+> which is clearly wrong.
+>
+> The use of parentheses ensures arguments are correctly evaluated and
+> potentially saves future users of make_call_t0 and make_call_ra debugging
+> trouble.
+>
+> Fixes: 6724a76cff85 ("riscv: ftrace: Reduce the detour code size to half")
+> Signed-off-by: Juhan Jin <juhan.jin@foxmail.com>
+> ---
+>   arch/riscv/include/asm/ftrace.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
+> index c4721ce44ca4..2636ee00ccf0 100644
+> --- a/arch/riscv/include/asm/ftrace.h
+> +++ b/arch/riscv/include/asm/ftrace.h
+> @@ -92,7 +92,7 @@ struct dyn_arch_ftrace {
+>   #define make_call_t0(caller, callee, call)				\
+>   do {									\
+>   	unsigned int offset =						\
+> -		(unsigned long) callee - (unsigned long) caller;	\
+> +		(unsigned long) (callee) - (unsigned long) (caller);	\
+>   	call[0] = to_auipc_t0(offset);					\
+>   	call[1] = to_jalr_t0(offset);					\
+>   } while (0)
+> @@ -108,7 +108,7 @@ do {									\
+>   #define make_call_ra(caller, callee, call)				\
+>   do {									\
+>   	unsigned int offset =						\
+> -		(unsigned long) callee - (unsigned long) caller;	\
+> +		(unsigned long) (callee) - (unsigned long) (caller);	\
+>   	call[0] = to_auipc_ra(offset);					\
+>   	call[1] = to_jalr_ra(offset);					\
+>   } while (0)
+>
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+
+
+Probably not worth going into fixes since the problem is not around for 
+now, but that's still a good catch:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
+
 
