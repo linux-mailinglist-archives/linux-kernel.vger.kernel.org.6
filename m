@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-534333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44458A465BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:58:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178C6A4658E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B531888ACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA6D3B5591
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CF42253F2;
-	Wed, 26 Feb 2025 15:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838F121CA09;
+	Wed, 26 Feb 2025 15:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kv9/3dWd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ixIkh3m0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PoXEKjx2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947B118BC3B;
-	Wed, 26 Feb 2025 15:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748FC18BC3B;
+	Wed, 26 Feb 2025 15:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584711; cv=none; b=k/c6h5QlTLHR+yDkCnLSxU5nlG1bIphVtar0J4gQazPBlJSmYcGJqayGJDOFQmD7PmT3T9e2Hp8dKAgQfgZoc3K/Vwlg4oeN3UTetK2n1dzI6a35CMInIyFFxhyLxwSGiA4qv0eGs3b2lJP3k1rn8TdYzQV+bVlNv8FJjtTkBZ4=
+	t=1740584717; cv=none; b=I5gGuNRDuvIl5nmR5L45MXNBzJygfK1uxTofcwRxEYq7RN7UcdE1g61VCCLdORJGWyImkjSoUHbYnygjtD+sYkG2VGItcw49YixgdGG1a4DQAAvCsiEwSNSwJVEEaYXgeqppaZPVJB4IGuq+noMSc8tL9ZPFjYCH1YBgD+VZZuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584711; c=relaxed/simple;
-	bh=JAsKYRCmpSi3tnXTqqLf4H3CovqP6Od5db5bBj4KatA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QrwM1NnII137aXS8FG9yZvbyj9ysdU9JwMt0O3inLhfxxfPO3sNnN4aRTCZw13CWDM53j5TWuleUmlVt/KPBuN+S13kdfjjg6ScwXORi6+Vx0FgicRT8RP+zVHxInFUfCtutkDkwNawKYhN4Ube5UlkzAoPUnzfpWM/K68WA/rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kv9/3dWd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ixIkh3m0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740584707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s9YAfmlQr9Pd5bXVqXHzhDo0hk63Ti5/f8ktIw5AJhI=;
-	b=Kv9/3dWd+GXsGs7cU1xLIlW2zlePQy31R7G6Jy6QJFpJYBbsDogO0A4tPcqH2iqy6FlsJ+
-	YJk/B9nxmFA+MHnOA5EB5BazjUZeXo6ZO2GhQ0a2odsrE0E5pf/JF4UlNInVv+1AS14qV5
-	8SDQwtT8m3Jp50XfzUOOsnhjBuO9ZK7WHUIDQO/queig6lykW1ZfuXsqIi1NE7RNtPwL/c
-	1ubsW8nlIrnKz0QuzMEA1aFYFs2v2rCg2zxSeLSQ1ne86Cq4FQpOeD1L+HwRiy8DIZuPoc
-	uo9TcSrDqf/s5V4bB+NkfCaTvTvtKgOHTjpU0X8aujMZabOz2GZ7wsVL2CLN5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740584707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s9YAfmlQr9Pd5bXVqXHzhDo0hk63Ti5/f8ktIw5AJhI=;
-	b=ixIkh3m0apqeFPy9Qpy7CjIrvlJ4/WlAEuk0T/7wkqfv/ktP1pgsZB5HNeC5O7xJsKatxe
-	FnzDFatK/PE7L1DA==
-To: Yixun Lan <dlan@gentoo.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Alex
- Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang
- <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, Inochi Amaoto
- <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, Meng Zhang
- <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
-In-Reply-To: <20250226135635-GYA45740@gentoo>
-References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
- <20250226010108-GYA44567@gentoo>
- <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
- <20250226115957-GYA45508@gentoo> <20250226135635-GYA45740@gentoo>
-Date: Wed, 26 Feb 2025 16:45:07 +0100
-Message-ID: <87tt8gemm4.ffs@tglx>
+	s=arc-20240116; t=1740584717; c=relaxed/simple;
+	bh=5TQxHnU3PBtTgmCj+sOng8yLc1UM9OVCIbeacuaMWx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kaut/WA/nt8vntVVsq+IATHUyjOOBs5fWZVLu+RYzDhfHv7gfFCXN3bfq+MqD5Qq5vChg+FxusVgLZKvSJ9qacfJd4o35n/cNez/ZSGF95WQp77deptwCnIdadP+hrTpHeQs7op5oZBWQPvoCgrlcnOtttiitU+X9RCoj3ocdOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PoXEKjx2; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740584716; x=1772120716;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5TQxHnU3PBtTgmCj+sOng8yLc1UM9OVCIbeacuaMWx0=;
+  b=PoXEKjx2MkbF53eUBlkLpTPp68c3tqt5tuMh4o5Xlx1HDBgR4IrT9r8r
+   oil9/OuXg7xr0q0f+2Jjo6HXqCMG0O19jDkithspD9m3mjn6hBHDoZigW
+   gHbYAzuLE/vrYNa/MMmXxC50yyQPSoMJYEOtjkoEwljTmcSBLcm00E6qg
+   rQoeyXEwFkHWoZPork4NJC0iWo98FGQ4lGxME9HylzvNLrfKDKp163+0C
+   jXeTe8/qdGNHYmZZ1PySmoY4tlljJki2+MpvKMVpUU4tpP67rYMKeAy5e
+   Gf1f+LLuXncu/XQle+puMks2W5HUIK+hjLROQJl1PAtdythRiuSbDrWfe
+   w==;
+X-CSE-ConnectionGUID: evzAvKm9R8OHbxo5Zm4ZbQ==
+X-CSE-MsgGUID: EdY906JsQ1WR2PaQ1En/Vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="40615225"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="40615225"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 07:45:15 -0800
+X-CSE-ConnectionGUID: PO5srzFSSYG0iOuEhjmA2w==
+X-CSE-MsgGUID: hm4D1+xDSCSWsx30DxOf4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="147662030"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 07:45:15 -0800
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 0B4D920B5713;
+	Wed, 26 Feb 2025 07:45:12 -0800 (PST)
+Message-ID: <98112b48-5ca6-4077-a842-83d1407f1860@linux.intel.com>
+Date: Wed, 26 Feb 2025 10:45:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 10/24] perf/x86/intel: Process arch-PEBS records or
+ record fragments
+To: Peter Zijlstra <peterz@infradead.org>,
+ "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-11-dapeng1.mi@linux.intel.com>
+ <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
+ <20250225110012.GK31462@noisy.programming.kicks-ass.net>
+ <c1450cf4-f367-4675-9f5e-90416a996af1@linux.intel.com>
+ <20250226093558.GR11590@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250226093558.GR11590@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26 2025 at 13:56, Yixun Lan wrote:
-> sounds we need to implement .select() or .match() in irq_domain_ops,
-> then find the irq_domain.. here is a prototype version 
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index 995e5e0ec2db..c4d18267e86e 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -553,7 +553,7 @@ struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
->  	 */
->  	mutex_lock(&irq_domain_mutex);
->  	list_for_each_entry(h, &irq_domain_list, link) {
-> -		if (h->ops->select && bus_token != DOMAIN_BUS_ANY)
-> +		if (h->ops->select /* && bus_token != DOMAIN_BUS_ANY */)
 
-This breaks existing usage and reintroduces the regression, which was
-fixed with the commit which added the bus token check....
+
+On 2025-02-26 4:35 a.m., Peter Zijlstra wrote:
+> On Wed, Feb 26, 2025 at 01:20:37PM +0800, Mi, Dapeng wrote:
+> 
+>>> Also, should that workaround have been extended to also include
+>>> GLOBAL_STATUS_PERF_METRICS_OVF in that mask, or was that defect fixed
+>>> for every chip capable of metrics stuff?
+>>
+>> hmm,  per my understanding, GLOBAL_STATUS_PERF_METRICS_OVF handling should
+>> only be skipped when fixed counter 3 or perf metrics are included in PEBS
+>> counter group. In this case, the slots and topdown metrics have been
+>> updated by PEBS handler. It should not be processed again.
+>>
+>> @Kan Liang, is it correct?
+> 
+> Right, so the thing is, *any* PEBS event pending will clear METRICS_OVF
+> per:
+> 
+>                 status &= x86_pmu.intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
+> 
+
+Yes, we have to add it for both legacy PEBS and ARCH PEBS.
+
+An alternative way may change the order of handling the overflow bit.
+
+The commit daa864b8f8e3 ("perf/x86/pebs: Fix handling of PEBS buffer
+overflows") has moved the "status &= ~cpuc->pebs_enabled;" out of PEBS
+overflow code.
+
+As long as the PEBS overflow is handled after PT, I don't think the
+above is required anymore.
+
+It should be similar to METRICS_OVF. But the PEBS counters snapshotting
+should be specially handled, since the PEBS will handle the metrics
+counter as well.
+
+@@ -3211,7 +3211,8 @@ static int handle_pmi_common(struct pt_regs *regs,
+u64 status)
+ 	/*
+ 	 * Intel Perf metrics
+ 	 */
+-	if (__test_and_clear_bit(GLOBAL_STATUS_PERF_METRICS_OVF_BIT, (unsigned
+long *)&status)) {
++	if (__test_and_clear_bit(GLOBAL_STATUS_PERF_METRICS_OVF_BIT, (unsigned
+long *)&status) &&
++	
+!is_pebs_counter_event_group(cpuc->events[INTEL_PMC_IDX_FIXED_SLOTS])) {
+ 		handled++;
+ 		static_call(intel_pmu_update_topdown_event)(NULL, NULL);
+ 	}
+
 
 Thanks,
+Kan
 
-        tglx
+
 
