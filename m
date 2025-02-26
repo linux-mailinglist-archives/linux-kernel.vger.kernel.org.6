@@ -1,180 +1,343 @@
-Return-Path: <linux-kernel+bounces-535089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF127A46EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:41:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC7FA46EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F91118897F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599563AECEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7576225D1F8;
-	Wed, 26 Feb 2025 22:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B2D25E831;
+	Wed, 26 Feb 2025 22:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXG3Nxin"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eq+OZK6m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2A125D1E1;
-	Wed, 26 Feb 2025 22:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609701; cv=none; b=EtFjkTSuZBqQL6Lc03U341uHPvt4DEIKO/zT57ZX6XHmN2/E0kx73JXSnF9D3gq3gTs6hLKtMl93ZKqJYMYnpLcDA30ReOfwI30Bwh4FqHSy3PiQO+9SLM6Imz2l+G8+oUpy5dyQ/oEac925j4yAZQ89H4vuQlEOiuNr1MzKpig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609701; c=relaxed/simple;
-	bh=Qbf6pdMB9rWRlTmv9kPhr5EySnUr/WkW64EZ9c1V2N0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h/VyWdYfTtOk+iT3zvovYHSE2zSE+irWlCFG8F6j51W9qkExiznOWZ3Z1JzSYHTfslmQ6h7EMB3OA/535zEItB47iEerqDiDqcX/qICwe89rIr35nTUKdCOql9SgqknumiIBF2hJx245tIYOBkIdaYmTjWpU/0Tzuf1hhc5jo0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXG3Nxin; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e241443e8dso667346d6.0;
-        Wed, 26 Feb 2025 14:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740609699; x=1741214499; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Qbf6pdMB9rWRlTmv9kPhr5EySnUr/WkW64EZ9c1V2N0=;
-        b=HXG3NxinLSXM24yZa0pmPpACc7mCmrBkgvrobMxP80p/tIDvtZ8QpbKbTtJK7EcK3N
-         fR9tB0qZUpSFxCx4+if403YuNkz+CWKF8toCwX//pIXLa4fOZMRUiWceCwdGetkbwtzn
-         820fyfcCyB7QuyGBNuLSvmconbixM6bfiGZQStyxsGKMHbPKU9ex/CdCIBaiciZpHp3R
-         WvSfubUnZYbWwf8K4e54w7fRi1YWFPGQIy9sOvTcAMQdznTNiyYsmLHJSuuC6HHZYKgc
-         DlDZx04W1Y6q0mR/9QIa1j5njdAFWqKT2Gfs1ZJrFLTYzjR30N5b9q/TNAOPz3cx5I0z
-         fDdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740609699; x=1741214499;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qbf6pdMB9rWRlTmv9kPhr5EySnUr/WkW64EZ9c1V2N0=;
-        b=WGQyZyw30X3+auAS53PSB4nZPtbYy+yigngHGLWngnc8kbKWIof1Th5m7ujRRJQ0g1
-         99T75Nw8rNwCdP48Yu2JWGnrxh/fpxIFWCD9jq96154Hnz9hGNk/aA/E6jbqAJiWnznS
-         hwJevqEw1/KoI2eRVnhJTLgGJ/NAvakqGidcOxlwxecG7uC6YsiZspPIfqVOI4fNEFPW
-         XVjqywdgAIrbE8iUzypD7jfqCILdYLQN2rU/OGTuLMBzI9IaJa+DQC+xnk5SjOZA29JX
-         6lEOXTMDJns/k/ryQaBhhRj6TS1AP7el5Irc6UahGvFARfSN0mGhOrJs306qOTWpxp0L
-         SHgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgm0KH02Dnb2sdxiTi5kZo2gBv3eL79ph/QxT70sPjEJ15wU5Z9PTJShh52+ZUF9CfkSxf2XXKPPjYLYA=@vger.kernel.org, AJvYcCV6Ke53ieK7C8oT0+ie9re2B6KD/HjHSYV824C0tenfLAXMajonOa38xAIplsDc0OYWNelDWpAEXA5c@vger.kernel.org, AJvYcCXC3nvRcbZUEBHLJLV9NzaKrHFD5+6SBaJs05xyZMRiSAaHppVOOOmg+FC/2vdEBxUpg+iA5p9y78pmqhae@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPrBHReH4K2naIZmyacrI2kPAwsXq9pVva1NDG6jESiMZrJ6bX
-	yJlE/8UxIheinvXMnpXCzbrgNK+Fx6j22iF2PneVqJRAo/eXTT6N
-X-Gm-Gg: ASbGncspw/U1baou43f7z4+1WT4CFxXjDqGoME4kqHEby62SEWnWuL2O2CEestSpTB2
-	4ZDSnugLQdyXUigeHpPv6O6cxnOg9SZ3vFikkZCT4JHWEHZKBfWQaaDlaFJ+G4FIS+fiVSXeCuL
-	TFD1Y7bfAr/kVMYvb6mrmLRdc4hqG6unQUqZKVA29Ady+gH3PPh/itYZE9hJb5UYzFMDTvd7Hjl
-	VE7++rOmtu1VtJH7qlMrV/RsqhyyffNA+OxdYEq2t15/4NDluOLbnJmTh1mF4a55dGrTMC36F2x
-	6ETLOwoNpamlVw5gIKhSWxTG0pfHLCIfNRV1mBtMVY0FlaKCtRWKrfvUEIyzo/YkefHzvSo7TkR
-	4vRatlQ==
-X-Google-Smtp-Source: AGHT+IEzn/PG+RBqyb/tDnoYBHFaH7nC7MSNsCeG4Y6DHN/r5jkgDjgEjr6TLU5Kc6SwRg6WlTBCaw==
-X-Received: by 2002:a05:620a:1712:b0:7c0:af16:b4a8 with SMTP id af79cd13be357-7c0ceee5300mr1331316285a.3.1740609698879;
-        Wed, 26 Feb 2025 14:41:38 -0800 (PST)
-Received: from ?IPv6:2600:1002:a012:8f2c:b83e:9ea7:2886:546f? ([2600:1002:a012:8f2c:b83e:9ea7:2886:546f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe6dsm15570485a.77.2025.02.26.14.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:41:37 -0800 (PST)
-Message-ID: <69cb2e95c291f17cff42b45e7c871f30a85c060d.camel@gmail.com>
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add dt bindings for
- m2m-deinterlace device
-From: Matthew Majewski <mattwmajewski@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans Verkuil	 <hverkuil@xs4all.nl>, "Dr. David Alan
- Gilbert" <linux@treblig.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, Andrzej Pietrasiewicz
- <andrzejtp2010@gmail.com>, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Wed, 26 Feb 2025 17:41:35 -0500
-In-Reply-To: <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
-References: <20250214231759.119481-1-mattwmajewski@gmail.com>
-	 <20250214231759.119481-2-mattwmajewski@gmail.com>
-	 <20250218-eggplant-skylark-of-swiftness-dcf6ba@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88C025E80A;
+	Wed, 26 Feb 2025 22:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740609927; cv=fail; b=k8+lIWKjWuMsWTzFILFguurfcxJ9HT3mT3Z/jhNxTs49JRpYxN8OqWeve8PHTB2/qhFp0KIOpmh7RmSuuTqrh04G1AYtqMqRzcqMgq30vfXIbk/nfh/h18gScVyP2KUH/Q5cbHjaCXzaQxV7+BMLzPDqH6YH8bh1Xf+p8MhHDq8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740609927; c=relaxed/simple;
+	bh=2S4gUBwJQO/eC6t0Q8GeYfizSAX/RVl6cfYGen1fBS0=;
+	h=Message-ID:Date:Subject:References:From:To:CC:In-Reply-To:
+	 Content-Type:MIME-Version; b=SJ3GbLhHNl/XnIJDWMdbs+O9anEb/5oQZFwfCf92XWXQnfhIp4phUAZgl2bOXuSD88bOxrN91HcGEg+UL7vS/rGTCrjbNpRWIr+tD4IR68Xn9QgCNFo/Ea/E7ZijfD6rn/xG6ernysrb+2G9swxJ5PQjHLj2QX5u/8ufO6YWkKU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eq+OZK6m; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740609926; x=1772145926;
+  h=message-id:date:subject:references:from:to:cc:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2S4gUBwJQO/eC6t0Q8GeYfizSAX/RVl6cfYGen1fBS0=;
+  b=eq+OZK6mlYC7XL78TZ8iB2fEALNJyAeVYW0l49P//wTNszTFBTSGc0hx
+   Ure+0xowxHs+uIT5gZQWdGDPbfLY0wCYoR3VU0QYRdOwKQKMe/MGGEA85
+   KMR3w7T/NDaQJ1aMQ+NKAAFPO2PA32Xxt/aMJRXSTrjAKy6BTS3c+FHTd
+   DkDT60+W+7lLZtvB59MSOJNqR0zoW8ywKhsKZJu3vl8Ln79HBrjDr8ysB
+   wDs/QGvW/+uGjNKq2cJFal5dl3LOQ7svGbBIc0K0XgvSS8xy1y50Ff4n+
+   9FDlCuY/GrIvlJxhJpeKv9LBVunZ5ktAsFXATzoS7MT5EC7WjbAVcQlQs
+   A==;
+X-CSE-ConnectionGUID: GH5kK9KvSiy2qzRYwp3dfw==
+X-CSE-MsgGUID: gIesYaULQtSiE1CY4jJhng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41503426"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="41503426"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:45:25 -0800
+X-CSE-ConnectionGUID: ctl+OsQkQjG/0D9fzp1YWQ==
+X-CSE-MsgGUID: ieWNbsxCRmekS12vyqz9IA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="117475279"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:45:24 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 26 Feb 2025 14:45:23 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 14:45:23 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 26 Feb 2025 14:45:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GNShsYf60jpPhWV5wXjbQu7AK6x9epTniQFiXmnGJ5xcdnRWlwB4EOm5hTmnPsT5B4P5T72IrIaMkldzdr19rH6arm3hhvetEDRnfacu3nNt3deApuvWI5k7JvaE70KOV654D1HhxWx15KKqvFTCSLClYsfKFWZrZbY5fMMhwt2lxmyAtLy94txiCOe1QHI0Zi6pk3WNt1t+jN3MN2EVd8iEx/Diq7PlTDWdIlFBnSTzDd8zdrp4b0q2CoQf1oduefA+tn0D7EIU2Vkb/Qg429kDBLrC5U1vWrFNef/4XMy065FOBC1RWJ2t93f+N8orCK0OPULx2E4D5PCybW6F3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9I2oiZv3/HPRdrOUNsZY2Q5ZZq80GWNs0n3dQPBHO7w=;
+ b=w7+o+Ngo+L765hn1j5BUvGrFUFs4YQpmeaSfM7oH1/KX37Imzl2daeqaYunJGuJ2u46qh1wnpTeKgzqRg6uKZLZpuK+ZFSf9G7o4UeZbRoS9ODFQgkLvSYEuH1bbkpv6z7VY6OTuN9xNix0S6b+D0Svsbmoqlu5uSc4WzGzoAIEDHNBksg+Ki5fJi8F4fT3jdM/vUNby0eJ9v3m9fPpCHnJ/j/dAXJgQgngLBgkJHvMcrY0Y6mypJd7JHcriTO9FJF1glAoIpHufcMtCkxFAcpj+gn+VQ9StoDZJ7D7VRHFYijO7XZjJsdIr3FUjCQLuVD2HMiu4j1OCi85fqaqwXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by PH0PR11MB4805.namprd11.prod.outlook.com (2603:10b6:510:32::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
+ 2025 22:45:06 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%6]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 22:45:06 +0000
+Message-ID: <63886376-07d3-45f2-90b3-89e1b63501f3@intel.com>
+Date: Thu, 27 Feb 2025 11:44:54 +1300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH Resend] KVM: x86: ioapic: Optimize EOI handling to reduce
+ unnecessary VM exits
+References: <Z6uo24Wf3LoetUMc@google.com>
+ <20250225064253.309334-1-zijie.wei@linux.alibaba.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+To: weizijie <zijie.wei@linux.alibaba.com>, Sean Christopherson
+	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: xuyun <xuyun_xy.xy@linux.alibaba.com>
+In-Reply-To: <20250225064253.309334-1-zijie.wei@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0010.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::12) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH0PR11MB4805:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97d15eca-05a3-4ed2-d65b-08dd56b7374a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dFRhOEQyalVpem5raGZnV0V0dHNSRFFiT2d6bURDcXRJNms1VGVzcUNEL0tU?=
+ =?utf-8?B?NHNsNjc3RmY5ajZ4Y3k1NUZad3pJZUZsWlp4TzlOWGlXVWI5NFkzZ1laN1g4?=
+ =?utf-8?B?dGZwem1PeGdkQllTUEJRMVByVHVyS2loZGM5K3ljOEU3TnJQcjZaeXQweXRQ?=
+ =?utf-8?B?S2c4TmgraGd4SGZQVXBTVjRzc0ptVG9vNDdQMStvcTMzcnBBREpJeDNYMDRM?=
+ =?utf-8?B?Wk52ZW1qaVZlSG5SVlc2bDBBTHlTQzJCcEV4TElRVmRLcXcyT1RKU05DeEZT?=
+ =?utf-8?B?N2tQSGIwTG5NNVA2T1hBMzM5dHZySktDbHRWbGRHVUtKNHpldE5ydTlPZUdF?=
+ =?utf-8?B?UGpsSjZyVi9nUDRjTy9GRnVGWEQ5UTZFRm5PNTNUY0hGYTkwclJFcEYvd2w2?=
+ =?utf-8?B?UTVpM0dTaVY0bUp3dFFlYnNSWWhEazU0TzJaUjdDVFJXZCtEUW5pYnRjZGZz?=
+ =?utf-8?B?R3JxcktxWWtiOStab2ovbUlOQjJqRDhKbUlra0VxSXdRTVY2S2hucVpsVzZp?=
+ =?utf-8?B?WEt1bEtUQ3J1NjB4VkV0Zi9Xay9lazlQQmFsWTZvSTdkYzZDTll1NHZuT0dn?=
+ =?utf-8?B?Qjh6eXZud1V5REwybzZibzRFOHN0L0h6d2I1eUR4MmhyRVhEckJzaERTd2Zm?=
+ =?utf-8?B?SXNwSmxxUS8xUzZFWUtGS3lFRHFxcGZGd1l4Mk0yRk9MZWlCcW5VTXF1M2RU?=
+ =?utf-8?B?MzMrWmFxY2NYdithYk1SSU45Z0c0aWFVdVRWYXRoM0wvWEFtcTI2T2xYN1hN?=
+ =?utf-8?B?YS9NaFYwSXlUYkRrM3FBSkF6Yzh3WFJ3QnJVcnNaK1VQQnUva2RkNFNrYllS?=
+ =?utf-8?B?bFZIclB5anpJdFU2aFZIQkt6eUZEQlE5YmV0NDV0bFFzRGg0YmhjdGlMd3I4?=
+ =?utf-8?B?TGtqZndKUjlobjIzcUxTNDJPc2tJQjY3MjFiUmYwUVFDWDRjTTZzdVV3Ymh4?=
+ =?utf-8?B?akJQOGJJVVhMWFI0TUJkZTROQy9iN3ZJSlVNeWovcjlOQWZMc2tEdnJINFUr?=
+ =?utf-8?B?aTJxdXZrK3FCSG42UGVPUXRMK3BRYW8xQWVmTXdNNW1ZNXc3M2l5dmpPYlgx?=
+ =?utf-8?B?b0EyTTc4L05SS3V2ZXhJN3pia1pJd1RqQ004VkxzdEJtZi90VFhid2t3YjhX?=
+ =?utf-8?B?LzZ2ajBuSlQxM0pqNGhzT0tvbUZWYVFXOGJYSUlDbitUblNTaFQzTEM2bTNx?=
+ =?utf-8?B?NU12SkNZNDZVbStPRXorT0hjOWtrb0ViZllENXNxUUlNT1k1Nmp3VVl6YXJG?=
+ =?utf-8?B?Z0dCNjJTc2RmSHZNUVlxQTRVY3ZmTmRsZmgyYVZkcDc3R2RKd0d1S3dHRHJw?=
+ =?utf-8?B?cHY0MXdoaDc0cVAxc2ZXQlVlZENqaWJpTjYyaVdSbmU4YVZ1S3F0ajBWdXVy?=
+ =?utf-8?B?NSsvVFV0cExqKzhGVFV4djhhWUNPU0dKTGVQaTdsNk1Hb1ZZUlRpZzM5MWtp?=
+ =?utf-8?B?OC9WTEpwaTN1SnpZRm9lV2lHTE0zaXczT3ljK3I0Y3J4aXpNYTNJR24wdHYr?=
+ =?utf-8?B?VWdxaHRBZlB5U0xUekppcWJwZEhYdWdXVmN4Um84Nkl0THh6R2duV1NJVjBp?=
+ =?utf-8?B?U2pGbWZFaW4rTnNLdXFQenRUNVhER3RQNEtLbVRLSUdJdUdCK05vaWJFeXhZ?=
+ =?utf-8?B?T1FjM0VCcExwNnE0dmU0V28yckUrZ0JrUnNmMW1hbFduWHF4NkZrOHRDN1Y1?=
+ =?utf-8?B?dFp5QjVxWGR3QlNaYlNnZGhsekU2UFByeU9nS1o5cTdtVmlGRWQwN2FEUGcx?=
+ =?utf-8?B?NFJNbHdsSm1QbDhWS2MxSUlDRkhVQ3I1Z2xiRzY1RktUekRLTmxtRFZ2UkMy?=
+ =?utf-8?B?SFhLWmxINHRzUVMvRkd6RmFlSzJZOVFlRzNueCtKS1B4RzdGbWxLTFRhNngw?=
+ =?utf-8?B?bWlVK3g2c28xN2JZa2JmOE05WS81RENOK2hDQnhMNE5PZ3lEYmUzTEl6bVhK?=
+ =?utf-8?Q?UmbCbBWVIEg=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eEk5eGVJQTZXRFBzeXM4MjhVRW9UV0tMWG93UDlCYlprZjlFNlNYeEVQc1hh?=
+ =?utf-8?B?U0lBb244V1d4a05VU0MzaXp0SndodWFjSTVOdGF5RHFZTS94Y0RqakxzeGc5?=
+ =?utf-8?B?d1pGSndoOFBtWXNWcHV5U2dvdzBqWXBTaVdibndOT1VzOUZ6UVVKazRXRGJF?=
+ =?utf-8?B?dlBKdkFNZFd5YnMvSzRBVkVvM0tWdjVwWDJ3MHdPMzJJOWVYTy9GM0pkMm1h?=
+ =?utf-8?B?Sk1LanYwTGRMUVllK1dZa0hhb3lEWHRkbjhCd0N2VnJIUnpXdEpkaWJaZHow?=
+ =?utf-8?B?VDNJSktBZ1pnWWd2OFVXR3FGOFlLNW9SUUNWQVJUcTVxcU9FYlphMUxHZlJM?=
+ =?utf-8?B?Q3pHdTNaLzRXMmNyam9meUNXVEZjck5HdWZsaEw4V1NIc3o4eTM4aVVFRmQ5?=
+ =?utf-8?B?NldmN1BKREJsdmVmUGkvWld0c25hZm9KNWFYMWphYzhXVU5ia09HSW1BZXJC?=
+ =?utf-8?B?WGhLYS8vU2RjeWZTMVRKWExGalBKNjdMSFNOdHlpb2p4NDZUVjRsL0JWS3F1?=
+ =?utf-8?B?dnlOWk5nMmZkckt3OC9rMTRsWkdGZU55Ri9pYlJ6TmJqVFJYeGE0SVdsRDYv?=
+ =?utf-8?B?Q3AvZ3JhS09pUXlUL2t1Y2dPSkdwR082NFVLajJSalVHSmtXRmM4aTcwUExo?=
+ =?utf-8?B?M1QvV3hhVVE2M2dxOUxYVHBYM1ZqekZWRnJSSTV2V2dLVUlHQ0hqY0s1UmR5?=
+ =?utf-8?B?c2FuWFNETUxRd09Lc3p4ZjNwY2ZpcFcrbHl3MC9IYVFPSWJnTjJiU0VOOUls?=
+ =?utf-8?B?bi9aUnJqSHBnTFZBOHJFTldURENORlJyQ1A0Zm9GeUtwZllPSnVXdVdHWHQw?=
+ =?utf-8?B?b1JwMkZoVWlMa0RFZ2R2cks3RzFVM2xzMGsxb3BxbkJqYVgvTklobmtrNTE4?=
+ =?utf-8?B?UW9aTFoxdzdqRHREcWFKMkl5M2wxemtReGlRWGtBbEZLOWlPQ2JtM3RaRExI?=
+ =?utf-8?B?enpUcVVBMnlFRG52cGlTdjRrajI3TWlzSS9iRUY3ZjJWOGxyOHhVNWRpNUpo?=
+ =?utf-8?B?Ni8wRE5GeWIwaDJOMXUyQk9FakpDbmVQeHBxMERuUDdCSkZ4Mk5ORVBLTEc2?=
+ =?utf-8?B?WC9LcytWSStwSVMvbC9sL2pONzYwTHl1MzRzVTVpV2pYQXVNeURGbmxueFVL?=
+ =?utf-8?B?dGV4SUZXMTNyZjdmVjV1bG9NMzlwdDFMb05XdnVySDV5TkdMNkpOckxkdmlO?=
+ =?utf-8?B?OWF3NUdrQmsweE5KS05YWTBZejJ4eWRBUzBKcSs3QkZkRHIvaDFBZ0trT3BX?=
+ =?utf-8?B?NDFybThwOGlwWWQ5L2RTYXdYOXZJRHZsVlhiSUpVLzlvWFZJWTErYmNNZVRJ?=
+ =?utf-8?B?ZXBuL0Zkc3QxSGl4dW1lK1hVeFVHY0o5QWgwWk0zQVBWeDBramYxSGoyeUxR?=
+ =?utf-8?B?ZzdBYWN0VzI0MnBDZ3A0NkZVaHgyakxvTzl5L1lheWxGNkpCSytNNTFNY3BQ?=
+ =?utf-8?B?SmxnQnZvblpjcnFYSXlWWHJIbVNWYVZTcnpmeVhwK3JaWDdpUTdTOFNmVkNr?=
+ =?utf-8?B?c3QyVDQ0YkpXQTh1T1dZTEx1K09QOUlCdm9BTFR4bUQySS8xYW1CS3dGeHdr?=
+ =?utf-8?B?WVFyZmtLL3YvWjlBQUhrR1A0LzJJOUl2bkRtaVliTTR6emlsemorMWJRdy9D?=
+ =?utf-8?B?UXpzN0MzalpZSDluNzN5NTU2QTBUZUNHWGU5Tlc1YzVDRHdiTUtkY1dlZTV4?=
+ =?utf-8?B?MnMwQ2FzSS9RZ09GY1NGcVppVWhybk14TXhiSjRyN2lja24xRGdIenFMYXdK?=
+ =?utf-8?B?bUM2NG9GUDZYMExLdUxMa3hiVFBYcDQvRGRBWVVpUUlUZEhSL0dwOFVGRjZK?=
+ =?utf-8?B?M09vZ28yOU5HOEp2ajk0VlpsSHZ4QU92bWx3WUVhemJSZ3lFVlZaRCttQ0VR?=
+ =?utf-8?B?RGpURWpqNjRRTkFhNzl4b3YxK1ZjV2w3SFowT3RBdWwwUkgxY3ZZNzY2WUcz?=
+ =?utf-8?B?MFRxTUtkSTltaDRFZTNVeXY1YTh0dDJyNGhmZW1BTm5lcnZ3YWZhN1BZN1hJ?=
+ =?utf-8?B?aS83U2pvS0pKK1NQd3NqQTRhcytaQ3drS2NpOUw0S0Y5YmEzN2lmOGIxb25C?=
+ =?utf-8?B?elRyWnh3ZDBQVzNXWlBvdnV4KzFKR0ZlaGdIUWo2Q3dUa3RVSTcrNnZ4bytP?=
+ =?utf-8?Q?F/jCoBZD+y+u3HVSiO9qBgGKH?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97d15eca-05a3-4ed2-d65b-08dd56b7374a
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 22:45:06.6754
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vVmCSD8bCraVcLpBE/DWOXa0A6ZIXgGGk4D76HyiftMvBgVZAXZRhAStCH/5HX8gSyY3WXOlDSRyAGsyOhR9NA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4805
+X-OriginatorOrg: intel.com
 
-Hi Krzysztof,
-
-On Tue, 2025-02-18 at 09:30 +0100, Krzysztof Kozlowski wrote:
-> On Fri, Feb 14, 2025 at 06:17:58PM -0500, Matthew Majewski wrote:
-> > Create a new yaml schema file to describe the device tree bindings
-> > for
-> > generic m2m-deinterlace device.
-> >=20
-> > This device is supported on any hardware that provides a MEM_TO_MEM
->=20
-> Which device? I don't see here any device name/model.
-
-By "device" I am referring to the m2m-deinterlace device, which I
-explained is a quasi-virtual device. If this is confusing wording I can
-change.=20
-
-> I asked to provide here some examples of devices.
-
-As I wrote, supported devices/hardware is anything that provides a
-MEM_TO_MEM capable dma-controller with interleaved transfer support. I
-did not list specific devices because the bindings are supposed to be
-generic, as they are not describing actual silicon. But if you want me
-to list some devices which provide a compatible dma-controller, here
-are devices I found in the current mainline kernel:
-
-- TI OMAP Soc Family
-- TI Davinci Soc Family
-- TI Keystone Processor Family
-- IMX27 Processor and variants
-- Several Microchip Processors (sama5, sam9x7, sam9x60)
-
-As I mentioned in my original email, I have personally tested on a
-BeagleBone Black with an AM335X OMAP processor. There are likely many
-more devices with compatible dma-controllers that could be supported
-with additional dmaengine driver support.=20
 
 
-> > capable dma channel with interleaved trasfer support. Device tree
-> > bindings are for providing appropriate dma channel to device.
->=20
-> Don't describe what DT is, but the hardware.
->=20
+On 25/02/2025 7:42 pm, weizijie wrote:
+> Address performance issues caused by a vector being reused by a
+> non-IOAPIC source.
+> 
+> Commit 0fc5a36dd6b3
+> ("KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race")
+> addressed the issues related to EOI and IOAPIC reconfiguration races.
+> However, it has introduced some performance concerns:
+> 
+> Configuring IOAPIC interrupts while an interrupt request (IRQ) is
+> already in service can unintentionally trigger a VM exit for other
+> interrupts that normally do not require one, due to the settings of
+> `ioapic_handled_vectors`. If the IOAPIC is not reconfigured during
+> runtime, this issue persists, continuing to adversely affect
+> performance.
 
-Ok, will remove reference to DT.
+Could you elaborate why the guest would configure the IOAPIC entry to 
+use the same vector of an IRQ which is already in service?  Is it some 
+kinda temporary configuration (which means the guest will either the 
+reconfigure the vector of the conflicting IRQ or the IOAPIC entry soon)?
 
-> > +description: |-
-> > +=C2=A0 A generic memory2memory device for deinterlacing video using
-> > dmaengine. It can
-> > +=C2=A0 convert between interlaced buffer formats and can convert
-> > interlaced to
-> > +=C2=A0 progressive using a simple line-doubling algorithm. This device
-> > can be used on
-> > +=C2=A0 any hardware that provides a MEM_TO_MEM capable dma controller
-> > that supports
-> > +=C2=A0 interleaved transfers.
->=20
-> And how do you program that device to deinterlace? How do you signal
-> end
-> of frame/data when writing to the memory?
->=20
-> It still looks all this is for driver :/
->=20
+I.e., why would this issue persist?
 
-All of the deinterlacing is handled by the dma channel. To simplify a
-bit, m2m-deinterlace basically just translates video format information
-into appropriate interleaved dma transfers. Everything else (and
-everything hardware specific) is handled by the dma engine, such as
-initiation and signaling completion of transfers.=20
+If such "persist" is due to guest bug or bad behaviour I am not sure we 
+need to tackle that in KVM.
 
-I think an appropriate analogy for m2m-deinterlace would be spi-gpio.
-Since spi-gpio leverages gpio for bitbanging the spi protocol, the
-bindings do not need to describe any clocks, spi-controller registers,
-etc. All of the hardware specific components are abstracted away by the
-gpio controller. But the spi-gpio bindings still exist to specify which
-gpios are used.
+> 
+> Simple Fix Proposal:
+> A straightforward solution is to record highest in-service IRQ that
+> is pending at the time of the last scan. Then, upon the next guest
+> exit, do a full KVM_REQ_SCAN_IOAPIC. This ensures that a re-scan of
+> the ioapic occurs only when the recorded vector is EOI'd, and
+> subsequently, the extra bit in the eoi_exit_bitmap are cleared,
+> avoiding unnecessary VM exits.
+> 
+> Co-developed-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+> Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+> Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h |  1 +
+>   arch/x86/kvm/ioapic.c           | 10 ++++++++--
+>   arch/x86/kvm/irq_comm.c         |  9 +++++++--
+>   arch/x86/kvm/vmx/vmx.c          |  9 +++++++++
+>   4 files changed, 25 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 0b7af5902ff7..8c50e7b4a96f 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1062,6 +1062,7 @@ struct kvm_vcpu_arch {
+>   #if IS_ENABLED(CONFIG_HYPERV)
+>   	hpa_t hv_root_tdp;
+>   #endif
+> +	u8 last_pending_vector;
+>   };
+>   
+>   struct kvm_lpage_info {
+> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+> index 995eb5054360..40252a800897 100644
+> --- a/arch/x86/kvm/ioapic.c
+> +++ b/arch/x86/kvm/ioapic.c
+> @@ -297,10 +297,16 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+>   			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
+>   
+>   			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+> -						e->fields.dest_id, dm) ||
+> -			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
+> +						e->fields.dest_id, dm))
+>   				__set_bit(e->fields.vector,
+>   					  ioapic_handled_vectors);
+> +			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
+> +				__set_bit(e->fields.vector,
+> +					  ioapic_handled_vectors);
+> +				vcpu->arch.last_pending_vector = e->fields.vector >
+> +					vcpu->arch.last_pending_vector ? e->fields.vector :
+> +					vcpu->arch.last_pending_vector;
+> +			}
+>   		}
+>   	}
+>   	spin_unlock(&ioapic->lock);
+> diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+> index 8136695f7b96..1d23c52576e1 100644
+> --- a/arch/x86/kvm/irq_comm.c
+> +++ b/arch/x86/kvm/irq_comm.c
+> @@ -426,9 +426,14 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
+>   
+>   			if (irq.trig_mode &&
+>   			    (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+> -						 irq.dest_id, irq.dest_mode) ||
+> -			     kvm_apic_pending_eoi(vcpu, irq.vector)))
+> +						 irq.dest_id, irq.dest_mode)))
+>   				__set_bit(irq.vector, ioapic_handled_vectors);
+> +			else if (kvm_apic_pending_eoi(vcpu, irq.vector)) {
+> +				__set_bit(irq.vector, ioapic_handled_vectors);
+> +				vcpu->arch.last_pending_vector = irq.vector >
+> +					vcpu->arch.last_pending_vector ? irq.vector :
+> +					vcpu->arch.last_pending_vector;
+> +			}
+>   		}
+>   	}
+>   	srcu_read_unlock(&kvm->irq_srcu, idx);
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 6c56d5235f0f..047cdd5964e5 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5712,6 +5712,15 @@ static int handle_apic_eoi_induced(struct kvm_vcpu *vcpu)
+>   
+>   	/* EOI-induced VM exit is trap-like and thus no need to adjust IP */
+>   	kvm_apic_set_eoi_accelerated(vcpu, vector);
+> +
+> +	/* When there are instances where ioapic_handled_vectors is
+> +	 * set due to pending interrupts, clean up the record and do
+> +	 * a full KVM_REQ_SCAN_IOAPIC.
+> +	 */
 
-Best,
-Matthew
+Comment style:
+
+	/*
+	 * When ...
+	 */
+
+> +	if (vcpu->arch.last_pending_vector == vector) {
+> +		vcpu->arch.last_pending_vector = 0;
+> +		kvm_make_request(KVM_REQ_SCAN_IOAPIC, vcpu);
+> +	}
+
+As Sean commented before, this should be in a common code probably in 
+kvm_ioapic_send_eoi().
+
+https://lore.kernel.org/all/Z2IDkWPz2rhDLD0P@google.com/
+
 
