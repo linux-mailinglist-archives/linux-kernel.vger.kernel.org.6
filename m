@@ -1,148 +1,236 @@
-Return-Path: <linux-kernel+bounces-534217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0740A4643E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:13:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985A8A46444
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31DFF171398
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798513AF3C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46939223336;
-	Wed, 26 Feb 2025 15:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59D322332C;
+	Wed, 26 Feb 2025 15:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjDR60tq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="YXfOOeOh"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BC0219E86;
-	Wed, 26 Feb 2025 15:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88060222591
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582813; cv=none; b=LQzpi8tahjGIIwt1cGEy4Bh1CwrtHoKXrAdmzFQqSlhctsuJI9DYod+pPrWT/Mwx3WUPXy/Ew06CKH1m0Z/NOQAQYyRGArjNvIMuZ0HQwnhWi1JQH2gOdw27KNFevWJYZpzQJQAwd7ww5I2iLusa408JyhOuxWE68Y9eS1iYCGM=
+	t=1740582858; cv=none; b=MHZ+NfN3V7nsEluJqf5+ssPpbHr+qw7BvGTfihWpB9s73Wjb36MM6U7YmhqRCUFi3wl2CBzTaejoKVyAlWEDWvYJZl7ES9FR8+R5AAAx42OlJnbeK/Y4R6Qtpitm588+WECMiMaVyQD7nB1u69jlxKAkdOM4sceODgOCI6FeuPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582813; c=relaxed/simple;
-	bh=1m7fg74yHgTUFeFQ2a0WBgrsssqDzQ5QCWbP+rsGTgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N3InJk+s+0s7jnjXsOQwjg6CimTbvuc8rt0kD8AKhCc1LlDv0H+ZUjIzx0GqYZKyb3fhd8Dz/1oQnAlWiGfKeGTeUZ7Er8urzTnEKeAqKVA07gA3dqygvgkpS5wkMFYYUplgkJAxeerbWBMvuP6RZj4beDYjv6RwOTBhLWO0IEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjDR60tq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C7FC4CED6;
-	Wed, 26 Feb 2025 15:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740582813;
-	bh=1m7fg74yHgTUFeFQ2a0WBgrsssqDzQ5QCWbP+rsGTgM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MjDR60tqYReDxVsla2hsE74gvGjzQ7Wz9y4jgIyE4MKcZvDXBsIsWHtCnsvgObhjp
-	 xrZf+wGmqEMaazgPYctZHKNENgj/vJRKeZEr/ZcSD7gfRn/wpGnjMppqvX3bd3usBo
-	 yPqVQrVyyVNy2yAuLpZKe5yhi6F1rvmCUjMiNFfjaJGHkkaFn95yS1RplVB6+f4Udk
-	 pKvEoYa2Do+gO3Ma35DyPBWuPUNaZ0f/t+7syJmYVZGr18CrCkFMsocdbe9CCOrXXw
-	 +qcPoYcYTc7jR1omscpQH7EvD9vK2jXV8NFOvbQb+uOgYZKILUaaykCiuq9ltW4n6I
-	 +TN0irlVAqtew==
-Message-ID: <ac45cb5e-d991-4962-9c0a-02496be1af75@kernel.org>
-Date: Wed, 26 Feb 2025 16:13:30 +0100
+	s=arc-20240116; t=1740582858; c=relaxed/simple;
+	bh=cqvBrG3ie58oNevi03YHgjZaOlLV0ON165ZblqwNnOg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=MApG5KAW1egmcrDb3Bwth/INowy6Js89tlzvxrbR3GdCxC7PE0/uZgKFwnBYlIR/PPmXHlGzUeqq4Yyh/S9iS2qeATzmjJoE9nlXZuCvGTsLuQ/eIFXNKZCLi47Bk/GY93X1K9PkAvnpnXNuLmYFicFSTM3QVJdlZacHpGPM6c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=YXfOOeOh; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/13] arm64: dts: renesas: Add initial support for
- renesas RZ/T2H eval board
-To: Paul Barker <paul.barker.ct@bp.renesas.com>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, thierry.bultel@linatsea.fr
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-13-thierry.bultel.yh@bp.renesas.com>
- <9e973021-8f10-4870-8534-29c7669c7c74@kernel.org>
- <5beab0aa-ef61-4a9e-882a-99b6d9220879@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5beab0aa-ef61-4a9e-882a-99b6d9220879@bp.renesas.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1740582853;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6kQbb0PLOfRfxhBJWSWjWCVR9AvSTbkkHB29xifIVyM=;
+	b=YXfOOeOhPXiP8XxbTz7Vksn6vNnz/3+IGZ8Un2zM+V/NOt44UM00lgD4cYqwMKDhSSgDda
+	o6A71UbWTysV+Om+XzX5R4b3ctGUz0Z2jSx2n+Lx9TMobIDZmlYWDJjEyrSRnTWb7tL21V
+	CAe454MournGNCN3lI1U6sbqPqQab6eGDN9DPkIrsQOSjdLASSMz5s7J8zG3gizRisBToi
+	H8zk4KWkeNhClDlEN6WhP4xqLEUymcYJ/fCdhQZlTFs16hLI06/W9VNhPz66KyJY9b3UPI
+	ZcpfaBLUImADDXFiLuoi+t7HL5ZPdb4q6T5tSJ+LX4BlLE6Aj6OrwPDCSJ0Ozw==
+Content-Type: multipart/signed;
+ boundary=a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Wed, 26 Feb 2025 16:14:02 +0100
+Message-Id: <D82H4F6J4V4V.2BLHVUVD3BVX9@cknow.org>
+Cc: <kernel@collabora.com>, <linux-media@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>, "Tim Surber" <me@timsurber.de>,
+ "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Diederik de Haas"
+ <didi.debian@cknow.org>
+Subject: Re: [PATCH v10 3/6] media: platform: synopsys: Add support for HDMI
+ input driver
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Dmitry Osipenko" <dmitry.osipenko@collabora.com>, "Shreeya Patel"
+ <shreeya.patel@collabora.com>, "Heiko Stuebner" <heiko@sntech.de>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, "Hans Verkuil" <hverkuil@xs4all.nl>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <jose.abreu@synopsys.com>, <nelson.costa@synopsys.com>,
+ <shawn.wen@rock-chips.com>, <nicolas.dufresne@collabora.com>, "Sebastian
+ Reichel" <sebastian.reichel@collabora.com>
+References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
+ <20250225183058.607047-4-dmitry.osipenko@collabora.com>
+In-Reply-To: <20250225183058.607047-4-dmitry.osipenko@collabora.com>
+X-Migadu-Flow: FLOW_OUT
+
+--a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 15:46, Paul Barker wrote:
-> On 26/02/2025 14:23, Krzysztof Kozlowski wrote:
->> On 26/02/2025 14:09, Thierry Bultel wrote:
->>> Add the initial device tree for the RZ/T2H evaluation board.
->>>
->>> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
->>> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
->>
->> Where did this happen? I see tags only to few patches, not all of them.
->>
->> Same questions for all other places.
->>
->> Best regards,
->> Krzysztof
-> 
-> Hi Krzysztof,
-> 
-> We've recently switched to a patchwork instance and internal mailing
-> list for review within our team before sending things to the mailing
-> list. We did a round of internal review and the Reviewed-by tags from
-> this have accidentally been included here. It can easily be fixed.
-> 
-> Thierry, could you re-send a v4 series keeping my Reviewed-by tag only
-> on patch 7/13, as that was added on the public mailing list.
+Hi,
+
+On Tue Feb 25, 2025 at 7:30 PM CET, Dmitry Osipenko wrote:
+> From: Shreeya Patel <shreeya.patel@collabora.com>
+>
+> Add initial support for the Synopsys DesignWare HDMI RX
+> Controller Driver used by Rockchip RK3588. The driver
+> supports:
+>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>  - CEC
+>  - EDID configuration
+>
+> The hardware also has Audio and HDCP capabilities, but these are
+> not yet supported by the driver.
+>
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  drivers/media/platform/Kconfig                |    1 +
+>  drivers/media/platform/Makefile               |    1 +
+>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>  drivers/media/platform/synopsys/Makefile      |    2 +
+>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2756 +++++++++++++++++
+>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>  10 files changed, 3516 insertions(+)
+>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_ce=
+c.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_ce=
+c.h
+>
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kcon=
+fig
+> index 85d2627776b6..9287faafdce5 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -85,6 +85,7 @@ source "drivers/media/platform/rockchip/Kconfig"
+>  source "drivers/media/platform/samsung/Kconfig"
+>  source "drivers/media/platform/st/Kconfig"
+>  source "drivers/media/platform/sunxi/Kconfig"
+> +source "drivers/media/platform/synopsys/Kconfig"
+>  source "drivers/media/platform/ti/Kconfig"
+>  source "drivers/media/platform/verisilicon/Kconfig"
+>  source "drivers/media/platform/via/Kconfig"
+> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Mak=
+efile
+> index ace4e34483dd..6fd7db0541c7 100644
+> --- a/drivers/media/platform/Makefile
+> +++ b/drivers/media/platform/Makefile
+> @@ -28,6 +28,7 @@ obj-y +=3D rockchip/
+>  obj-y +=3D samsung/
+>  obj-y +=3D st/
+>  obj-y +=3D sunxi/
+> +obj-y +=3D synopsys/
+>  obj-y +=3D ti/
+>  obj-y +=3D verisilicon/
+>  obj-y +=3D via/
+> diff --git a/drivers/media/platform/synopsys/Kconfig b/drivers/media/plat=
+form/synopsys/Kconfig
+> new file mode 100644
+> index 000000000000..4fd521f78425
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/Kconfig
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +source "drivers/media/platform/synopsys/hdmirx/Kconfig"
+> diff --git a/drivers/media/platform/synopsys/Makefile b/drivers/media/pla=
+tform/synopsys/Makefile
+> new file mode 100644
+> index 000000000000..3b12c574dd67
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-y +=3D hdmirx/
+> diff --git a/drivers/media/platform/synopsys/hdmirx/Kconfig b/drivers/med=
+ia/platform/synopsys/hdmirx/Kconfig
+> new file mode 100644
+> index 000000000000..3f96f6c97cf0
+> --- /dev/null
+> +++ b/drivers/media/platform/synopsys/hdmirx/Kconfig
+> @@ -0,0 +1,27 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +config VIDEO_SYNOPSYS_HDMIRX
+> +	tristate "Synopsys DesignWare HDMI Receiver driver"
+> +	depends on VIDEO_DEV
+> +	select MEDIA_CONTROLLER
+> +	select VIDEO_V4L2_SUBDEV_API
+> +	select VIDEOBUF2_DMA_CONTIG
+> +	select CEC_CORE
+> +	select CEC_NOTIFIER
+> +	select HDMI
+> +	help
+> +	  Support for Synopsys HDMI HDMI RX Controller.
+> +	  This driver supports HDMI 2.0 version.
+> +
+> +	  To compile this driver as a module, choose M here. The module
+> +	  will be called synopsys_hdmirx.
+> +
+> +config VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID
+> +	bool "Load default EDID"
+> +	depends on VIDEO_SYNOPSYS_HDMIRX
+> +	help
+> +	  Preload default EDID (Extended Display Identification Data).
+
+I see some value in making explicit what you mean by EDID ...
+
+> +	  EDID contains information about the capabilities of the display,
+> +	  such as supported resolutions, refresh rates, and audio formats.
+
+... I do not think a/this Kconfig needs to explain it.
+
+> +
+> +	  Enabling this option is recommended for a non-production use-cases.
+
+My guess is that it could be useful for development/debugging/CI work
+which possibly do not have an actual device (monitor) which provides
+actual EDID data? Is CI work the reason why you (initially) enabled it
+in the defconfig?
+But when you have an actual monitor (=3Dproduction use-case?), you
+(really) do not want it? Would it be harmless if 'still' enabled?
+
+Thus a more extensive description what *this* Kconfig item does and why
+and when I want to enable it or not, seems more useful to me.
+
+Cheers,
+  Diederik
 
 
-Thanks for clarification. It is unusual to see internal review resulting
-in tags between already publicly discussed versions. Why it cannot be
-done in public where everything is both archived and visible to entire
-community?
+--a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508
+Content-Type: application/pgp-signature; name="signature.asc"
 
-BTW, sometimes b4 makes mistakes and we already have at least two cases
-tag from one patch was applied for entire set, so your case is
-indistinguishable from such b4 issue.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ78vvgAKCRDXblvOeH7b
+bgcOAQDqS73Snv/YiK3XuYu+04zVOsVyoTgZaPdwB1flqhS6PAD9HpydvFKnE7vj
+pve5Zbq372uE+I1waffsJU9B6k2p2w0=
+=lwwn
+-----END PGP SIGNATURE-----
+
+--a7f4c90e99e2aac72da4a10f52bcd4b0a05ca7264a6152fe3a9c3f70b508--
 
