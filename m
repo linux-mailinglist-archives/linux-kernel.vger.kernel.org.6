@@ -1,168 +1,240 @@
-Return-Path: <linux-kernel+bounces-534013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554D5A4617C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:58:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1029CA4617D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122611888D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B678188DB90
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79F9221704;
-	Wed, 26 Feb 2025 13:58:26 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767EE33EC;
+	Wed, 26 Feb 2025 13:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Wwt1P8JM"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A0B221545
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA4521E0BD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578306; cv=none; b=dpMoVodCahfIGfMzuv5WMR3G0Lh+TZQprYUQe+22dqQ5TsVvnXgcaRJ07EZbgbhQZw9RvGsSCMkO5GrUIvLBMHDkU8/msyRIyjAVQS+ijN3dyAm3yLWQsFvJhXc5o+WGnu2LnhxuBTvNtwWXBIAMWeNZyk52cxyWc5sHtdHlzlk=
+	t=1740578336; cv=none; b=KEWqpeoNqMNJ+n8qVMG6D1orGD8tpDJOTHbDLFzpkiH6QRUJdNOhWFpcMf7AyD+o2QfPPRZV2hbN+HXsn5luYrIXp666xmY/Ct5dqQU1JV2vzc9l9UmYyGTA1N+La+lREFxg9EMqoKLck1FiqeTfRvxYZJtZjOcdaW91irugH08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578306; c=relaxed/simple;
-	bh=idZKW56RqDJAjx8luhEO2SkLJKSf8fJkf2uO+LILXy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M6M94ncXItvd4/rIjDqpSXI1aYGGyRIqRHc59BQYOLaZiui62yvsExHYtWV/jNb4W7Gv8GWa8kO/jHQ6gsx0K4Q46/Ykr4zPclKLLln0iYbkPyr397E3OPv1Am3rsDi5cJKGtcvsb4lR2FnFrudA+vwu3xINeHq3WstCaSKZU5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 54F43443E5;
-	Wed, 26 Feb 2025 13:58:17 +0000 (UTC)
-Message-ID: <1f19a967-d240-4587-98d6-dfae24c6830a@ghiti.fr>
-Date: Wed, 26 Feb 2025 14:58:16 +0100
+	s=arc-20240116; t=1740578336; c=relaxed/simple;
+	bh=KoKXByWBSIf2npww0uaQKf+dyiKZnSdD0qxQQbGGdP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHZwjg5N1noOqmqkcg6Xrlmwgu+tYAG4g6Xv2n+S87gEXc657LwiCzcqI7nVvSZAJWEMbk0T+emX/ugNxdX1eYFF/VcAKwY0uuJ3dZN/bKgJp2s1o0zHrkpi4sQTp1YRioU+8ZMVyMc6e50DJmxvx80HWcuvfcAiPt8xC4ywnnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Wwt1P8JM; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f31f7732dso573902f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:58:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740578330; x=1741183130; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmseASJhwtjUx66eupfQddMd/CgXSgseQQBlGoFAbbA=;
+        b=Wwt1P8JMizpOaKDwxvswfug4uFEhk5bFLPGlyfcCiyQFpsiRVzOhtuiEV7Uv/uhJer
+         dHpgwUheepHxxyhpia+jdawAg4MPeraytZw+W2w6uDLv5kPuoUU54zbgrcBVXwg6l111
+         /OfEPJgtOavptilW68b5iqT3xr34f8smExn2mGcosxsia1uKWsfqPQ0WXDO+75EZVstQ
+         CvrYVy46WPuA43TEoZ4thenNYL+4HjRk0CeQxDyhfUPMGJ3/kc1RsDKwFdbHp8qPVu99
+         oM3cEc+bDIy4hiFEIY+k4G6I2FSbY65gJW1yDce3IBQG1YG+izSobXozGkUeUsF9ebvs
+         5lMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740578330; x=1741183130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SmseASJhwtjUx66eupfQddMd/CgXSgseQQBlGoFAbbA=;
+        b=cv8JDOSGPanil2JcHTWB+aRimH1Tk9jYlrcPLvcyuvMAM/9AvGBXnxFzOVGdWvkYSc
+         KosU+IkamRQtEUSs8AioF7AArQp4DGjdhZ0oK+hM5/D/1yi2QZt11MCRgsFb7QRd3re4
+         LhZNm2ioukb/nPJhke7wtD15uei18zeYjtN29255kIASdMImsasn3kv2nVt1H7yv68v1
+         6ACKQ95PgEWU8qJcTK0bP+StQDjiz2kA9H7PUIHc7iJOof3/Iy1GKGXC25sUTY9TzkqV
+         kWmp58gE+nLSi8mvDsqAJhIk58vFUsM2+mB0JJVtv0Bi2cUMZvH6RVfipsinny0kee5p
+         YtvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEYXpgHaAagcUTso6D6s3hIllUoRHnk6+G8IDurac0TptTp6lWb6u/wN/AqfutBEsEd86vvZRX+b62eP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlsLRkbwzQRgViEqBauzY1pwKeKhW5vIYD9QxLxx67LRDDe5yA
+	7NwwvvRUz6521zwzs0dGlJ/IN9exiyMyICotRyqQDR1FyFckmjY+kM4YOD8C96g=
+X-Gm-Gg: ASbGncsrAPAS/zlwElS7+IbjA6lHZ5DAeCjfcToAf/7NpAFiYk0tir96OEIip3H8AhI
+	5G8GIc4dFKnFNg8+iZD5NEtVCH/Rht140m4V3qaAmJZsrgrMayn4TB3o9TBaahsDJGSd2aWH1SU
+	H3oo5qgxrv70w95RFI7SZvIr6A4oy4b5mvhpkoUvmoGToDVmT9nPWagpq9Ns87uWisKWIMN9v6K
+	xKUTV8k1KPNWeNd5S3PuolFBqTBLVQGSpVq0FLXn1e1Eds6t55wavcld5Cm3iVNS02WtLNCBqWA
+	khGCesMGVDmJGLnK5Baav+nUJdmb
+X-Google-Smtp-Source: AGHT+IH224GviuTJrh5AcJGfibuR1lqHBOWNfk1sSRAsPvkCiW1x3c4TCaZgR0852ytZTE9PRQBbQA==
+X-Received: by 2002:a5d:6d82:0:b0:38a:4184:14ec with SMTP id ffacd0b85a97d-38f6f3c507amr17324474f8f.1.1740578330309;
+        Wed, 26 Feb 2025 05:58:50 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e7108sm5802782f8f.69.2025.02.26.05.58.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 05:58:49 -0800 (PST)
+Date: Wed, 26 Feb 2025 14:58:48 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Donghyeok Choe <d7271.choe@samsung.com>, linux-kernel@vger.kernel.org,
+	takakura@valinux.co.jp, youngmin.nam@samsung.com,
+	hajun.sung@samsung.com, seungh.jung@samsung.com,
+	jh1012.choi@samsung.com
+Subject: Re: printk: selective deactivation of feature ignoring non panic
+ cpu's messages
+Message-ID: <Z78eGNIuG_-CVOGl@pathway.suse.cz>
+References: <CGME20250226031756epcas2p3674cccc82687effb40575aa5fa2956e0@epcas2p3.samsung.com>
+ <20250226031628.GB592457@tiffany>
+ <84ikoxxrfy.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: select DMA_DIRECT_REMAP by RISCV_ISA_SVPBMT and
- ERRATA_THEAD_MAE
-Content-Language: en-US
-To: Sergey Matyukevich <geomatsi@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Palmer Dabbelt <palmer@dabbelt.com>, Heiko Stuebner <heiko@sntech.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Robin Murphy <robin.murphy@arm.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Christoph Hellwig
- <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20250116172950.1989748-1-geomatsi@gmail.com>
- <199526de-4351-4fd7-8f6a-9e8dbf05c184@ghiti.fr> <Z7b6YGiUiUYp9lU-@curiosity>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <Z7b6YGiUiUYp9lU-@curiosity>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuddtvddvvdfhvdevgfeiieduvedvjeegfeegkeejgefgfeetiefftdeuiedtueehnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepghgvohhmrghtshhisehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdri
- hhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84ikoxxrfy.fsf@jogness.linutronix.de>
 
-+cc Marek
+On Wed 2025-02-26 05:31:53, John Ogness wrote:
+> Hi Donghyeok,
+> 
+> On 2025-02-26, Donghyeok Choe <d7271.choe@samsung.com> wrote:
+> > I would like to print out the message of non panic cpu as it is.
+> > Can I use early_param to selectively disable that feature?
+> 
+> I have no issues about allowing this type of feature for debugging
+> purposes.
 
-On 20/02/2025 10:48, Sergey Matyukevich wrote:
-> Hi Alexandre,
->
-> On Mon, Feb 17, 2025 at 01:23:28PM +0100, Alexandre Ghiti wrote:
->> Hi Sergey,
->>
->> On 16/01/2025 18:29, Sergey Matyukevich wrote:
->>> Select DMA_DIRECT_REMAP for the RISC-V extensions that allow to set
->>> page-based memory types in PTEs according to the requested DMA
->>> attributes. This is the purpose of Svpbmt or XTheadMae extensions.
->>> Zicbom or XTheadCmo serve a different purpose, providing instructions
->>> to flush/invalidate cache blocks.
->>>
->>> Fixes: 381cae169853 ("riscv: only select DMA_DIRECT_REMAP from RISCV_ISA_ZICBOM and ERRATA_THEAD_PBMT")
->>>
->>> Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
->>> ---
->>>    arch/riscv/Kconfig        | 2 +-
->>>    arch/riscv/Kconfig.errata | 2 +-
->>>    2 files changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>> index d4a7ca0388c0..a5dabb744009 100644
->>> --- a/arch/riscv/Kconfig
->>> +++ b/arch/riscv/Kconfig
->>> @@ -603,6 +603,7 @@ config RISCV_ISA_SVPBMT
->>>    	depends on 64BIT && MMU
->>>    	depends on RISCV_ALTERNATIVE
->>>    	default y
->>> +	select DMA_DIRECT_REMAP
->>
->>  From what I read, DMA_DIRECT_MAP relies on the ability to map pages uncached
->> (pgprot_dmacoherent() here
->> https://elixir.bootlin.com/linux/v6.13.2/source/kernel/dma/pool.c#L104). But
->> CONFIG_RISCV_ISA_SVPBMT does not guarantee that the underlying platform
->> supports svpbmt so to me it is wrong to select DMA_DIRECT_MAP, we would need
->> some runtime check instead.
-> IIUC this function highlights coherent dma allocation options and their
-> requirements even more clearly:
-> - https://elixir.bootlin.com/linux/v6.13.2/source/kernel/dma/direct.c#L222
->
->>>    	help
->>>    	   Adds support to dynamically detect the presence of the Svpbmt
->>>    	   ISA-extension (Supervisor-mode: page-based memory types) and
->>> @@ -787,7 +788,6 @@ config RISCV_ISA_ZICBOM
->>>    	depends on RISCV_ALTERNATIVE
->>>    	default y
->>>    	select RISCV_DMA_NONCOHERENT
->>
->> And in the same way, we should not enable RISCV_DMA_NONCOHERENT since
->> CONFIG_RISCV_ISA_ZICBOM does guarantee the presence of zicbom. Because then
->> in mm/dma-noncoherent.c, the cache flush operations are nops.
->>
->> Or am I missing something?
-> This is my understanding as well. In fact this patch is almost useless.
-> It would only allow to enable DMA_GLOBAL_POOL for platforms that support
-> Zicbom, but do not support Svpbmt.
->
-> The actual problem is that the RISC-V kernel image cannot have both
-> DMA_DIRECT_REMAP and DMA_GLOBAL_POOL since they are now mutually
-> exclusive in kernel/dma/Kconfig. This limitation is not convenient for
-> RISC-V, where kernels can be built with support for multiple extensions
-> and errata. But on boot only appropriate subset of them is enabled based
-> on the chip's VENDOR_ID and selected dtb.
->
-> Currently a portable RISC-V kernel is suitable only for platforms with
-> support for both Zicbom and Svpbmt or their vendor-specific alternatives.
-> So it doesn't really matter where DMA_DIRECT_REMAP is selected. Platforms
-> without Svpbmt need to build their own non-portable kernels anyway,
-> enabling support for DMA_GLOBAL_POOL. For instance, Starfive and Andes
-> in arch/riscv/Kconfig.errata and drivers/soc/renesas/Kconfig respectively.
->
-> Maybe one possible option would be to revert commit da323d464070
-> ("dma-direct: add dependencies to CONFIG_DMA_GLOBAL_POOL") and add runtime
-> checks in dma_direct_alloc for dma_alloc_from_global_coherent.
+Yes. It makes sense. Another scenario might be when
+panic_other_cpus_shutdown() is not able to stop some CPUs.
+It might be useful to see messages from the problematic ones.
+
+> I do not know if early_param is the best approach. I expect
+> Petr will offer good insight here.
+
+early_param() looks good to me. There are already similar early
+parameters, for example, "ignore_loglevel".
 
 
-And dma_common_contiguous_remap(). Others? I guess the best would be to 
-have a patch to propose, unless Christoph or Marek answer with ideas.
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index fb242739aec8..3f420e8bdb2c 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -2368,6 +2368,17 @@ void printk_legacy_allow_panic_sync(void)
+> >         }
+> >  }
+> >
+> > +static bool __read_mostly keep_printk_all_cpu_in_panic;
+> > +
+> > +static int __init keep_printk_all_cpu_in_panic_setup(char *str)
+> > +{
+> > +       keep_printk_all_cpu_in_panic = true;
+> > +       pr_info("printk: keep printk all cpu in panic.\n");
+> > +
+> > +       return 0;
+> > +}
+> > +early_param("keep_printk_all_cpu_in_panic", keep_printk_all_cpu_in_panic_setup);
+> 
+> Quite a long argument. I am horrible at naming. I expect Petr would have
+> a good suggestion (if early_param is the way to go).
 
-Can you prepare something Sergey?
+Heh. It seems to be hard to find a good name ;-)
 
-Thanks,
+Anyway, I would use "printk_" prefix to make it clear that
+it is printk-related. The following comes to my mind:
 
-Alex
+  + printk_allow_non_panic_cpus
+  + printk_keep_non_panic_cpus
+  + printk_debug_non_panic_cpus
+
+I prefer "printk_debug_non_panic_cpus", see below.
 
 
->
-> In that case RISC-V kernels could be built with support for both
-> DMA_GLOBAL_POOL and DMA_DIRECT_REMAP. Global pool code path could be
-> enabled only for platforms that explicitly specify it in their dtbs.
->
-> Regards,
-> Sergey
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >  asmlinkage int vprintk_emit(int facility, int level,
+> >                             const struct dev_printk_info *dev_info,
+> >                             const char *fmt, va_list args)
+> > @@ -2379,13 +2390,15 @@ asmlinkage int vprintk_emit(int facility, int level,
+> >         if (unlikely(suppress_printk))
+> >                 return 0;
+> >
+> > -       /*
+> > -        * The messages on the panic CPU are the most important. If
+> > -        * non-panic CPUs are generating any messages, they will be
+> > -        * silently dropped.
+> > -        */
+> > -       if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+> > -               return 0;
+> > +       if (!keep_printk_all_cpu_in_panic) {
+> > +               /*
+> > +                * The messages on the panic CPU are the most important. If
+> > +                * non-panic CPUs are generating any messages, they will be
+> > +                * silently dropped.
+> > +                */
+> > +               if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+> > +                       return 0;
+> > +       }
+> 
+> I would not nest it. Just something like:
+> 
+> 	/*
+> 	 * The messages on the panic CPU are the most important. If
+> 	 * non-panic CPUs are generating any messages, they may be
+> 	 * silently dropped.
+> 	 */
+> 	if (!keep_printk_all_cpu_in_panic &&
+> 	    !panic_triggering_all_cpu_backtrace &&
+> 	    other_cpu_in_panic()) {
+> 		return 0;
+> 	}
+
+I would prefer this form as well.
+
+Thinking loudly:
+
+I wonder if this is actually safe. I recall that we simplified the
+design somewhere because we expected that non-panic CPUs will not
+add messages. I am not sure that I found all locations. But
+we might want to revise:
+
+
+1st problem: _prb_read_valid() skips non-finalized records on non-panic CPUs.
+
+   opinion: We should not do it in this case.
+
+
+2nd problem: Is _prb_read_valid() actually safe when
+	panic_triggering_all_cpu_backtrace is true?
+
+   opinion: It should be safe because the backtraces from different CPUs
+	are serialized via printk_cpu_sync_get_irqsave().
+
+
+3rd problem: nbcon_get_default_prio() returns NBCON_PRIO_NORMAL on
+	non-panic CPUs. As a result, printk_get_console_flush_type()
+	would suggest flushing like when the system works as expected.
+
+	But the legacy-loop will bail out after flushing one
+	message on one console, see console_flush_all(). It is weird
+	behavior.
+
+	Another question is who would flush the messages when the panic()
+	CPU does not reach the explicit flush.
+
+   opinion: We should probably try to flush the messages on non-panic
+	CPUs in this mode when safe. This is why I prefer the name
+	"printk_debug_non_panic_cpus".
+
+	We should update console_flush_all() to do not bail out when
+	the new option is set.
+
+	We should call nbcon_atomic_flush_pending() on non-panic CPUs
+	when the new option is set. printk_get_console_flush_type()
+	should behave like with NBCON_PRIO_EMERGENCY.
+
+	Maybe, nbcon_get_default_prio() should actually return
+	NBCON_PRIO_EMERGENCY on non-panic CPUs when this option is set.
+	It allow the non-panic CPUs to take over the nbcon context
+	from the potentially frozen kthread.
+
+
+Best Regards,
+Petr
 
