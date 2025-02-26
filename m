@@ -1,179 +1,170 @@
-Return-Path: <linux-kernel+bounces-534174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BDA463D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:54:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D6EA463D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0195179E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093BE17A194
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE38221F39;
-	Wed, 26 Feb 2025 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF4222332C;
+	Wed, 26 Feb 2025 14:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PukYN0zX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rwVvg8dt"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C6522171E;
-	Wed, 26 Feb 2025 14:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23DF2222D0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581691; cv=none; b=R+j2c9lC0gM4T23Ke96t2npoT1z8O3dGm+EmSEYz66V1Nf6SKTlILfiH+hW0/rJtgrnbThG3n1T+/aVWY//VHGoJ3nRJ26j4tWKk2zT7kFoIVRxxSUplbjP9H41K2AxTvhIUBgFehebRFYLVyssW9e9Bikj4AUsjxIk8Bdi89rc=
+	t=1740581758; cv=none; b=TVnFw6jaWarH6yyd3dsjFC6M10BsFwtOem9srRnP6/tYDQsYU6FjVWymvx1AzwKrUiXayiuCwf5KDiXNs9bV7jEhg357bBBzkPG20AdP1hGL06/xmvh6OrddAgSj/07KdqHxk+aAAT0I8Y+zPSUOl1f9/MP+A7Y4If+zXH1unds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581691; c=relaxed/simple;
-	bh=N5pfdNLe+7DSuFxXMeqe3V85svqYKJ23Y9wxDbruU6I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VRsn5/TWroT5fipp0RxX16WIPl6s5SOEL5MaqF5EYMuZsALsGg0UzFIeIMDTLWzPv++3kR3d9RP2uv+MwBoUTB9yz6z3Tef8zdVbV13FCXAnnTd4EyqkpXydGvgUviU1c872OeP6u5fHPCre5SJhwmZv6OLL/BlUYhMGOjM/O58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PukYN0zX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D6BC4CEE4;
-	Wed, 26 Feb 2025 14:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740581690;
-	bh=N5pfdNLe+7DSuFxXMeqe3V85svqYKJ23Y9wxDbruU6I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PukYN0zXjnAWKdcvGpAeXpJqOOEjbYMMAU++3I2Xbg3JD8MT/tFbWUqZuLr+JlFgo
-	 ndfkdrD2jkTCNOEGJyMkvtQy3bV63AxMAeVFTT1BSRNe+B2xcIS7ZQzU3Gd0QuvuV4
-	 C1mqwYoxuih6faDiufJD0j1/2WFyOjeXh07TmNLXU4HMorq3GLuB+cmifEDfdBbdre
-	 mFzm+d7LyljvGG9pcuFd7c1GvXjH7JxLDZ3eDnpszJ9iceystmeXrlGQOn+7KvaAwz
-	 Lziee9uh+nHU29WiuIlnC4vNiZK1H2uqo0o8xJVhEgi4x+KNmCQ0ajbM5F+FmlyLnH
-	 RGix7N+82K9lw==
-Date: Wed, 26 Feb 2025 23:54:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
- <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: Let fprobe test consider already
- enabled functions
-Message-Id: <20250226235447.7fab8051b2968277ce6920db@kernel.org>
-In-Reply-To: <20250226142703.910860-1-hca@linux.ibm.com>
-References: <20250226142703.910860-1-hca@linux.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740581758; c=relaxed/simple;
+	bh=zuIqAKgte0TNhWMQcUFuXFOS6ml4+tb80DkOVV5ygEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qEzgh8PheRijMN1R8zM3oVDC8ciMlg9ivm8c4EYud/8Ny+NYcKHkU3PDLnnKDh7y57xGz/U5iPYkqRWYQmDVQ1sZU+Zzr36/owsCcTTZKflKonG6+vY15P/7aigpe303Hh7q4p2sci6Tzh46r3JIOsMFa2HNxb1XNHUYXbYiqS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rwVvg8dt; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390d6b29ba4so421783f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:55:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740581755; x=1741186555; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Lh9ErM/3Q+yhun0mC3IR97PyDjsGz9W3qYuqQOhapo=;
+        b=rwVvg8dtSyjqf2cBJQZYtLAdMkjb48y/F25Ks32i8ZC6Jrw6pg1JhcNtpfjTxBUIDz
+         tqAzwdl5M56k42XPFbA0V7bRuJb2fRYb76MycjSNk8ay3mcj09DBpaEhs+cmpD105/YC
+         Bvlby+uU6pkF3nGCcEKY9FZSTInmumVDbk0s2fiIu+n42Lh550vKYTunV5f2NTcKELRi
+         rnWj1QApVPpaX8+ySKH3sImPTNAH8XzLv+PGvkx+h0/UyHunC+3Epwr82Qj5iJyJFSkk
+         NpnUBqRhwTFVSIBip0F374k9JlyqBvAs7U9WDtr2S4C3t0FqYF/VUx0iu5+arxvoKAZC
+         YJ5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740581755; x=1741186555;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Lh9ErM/3Q+yhun0mC3IR97PyDjsGz9W3qYuqQOhapo=;
+        b=ZOXm6jvx9p7+6hObmpZ64N86c/ZeHTdcsccL7oHJ2atUFqA+t9/LMrto7hrov+i7yO
+         yv2lbyMGuwor0krKP9s78pJLKKIbU2wrQEGEqipEzGDhVqY2jMsHTpeW2BrRf+5ViQoo
+         6beJS+DI22grGyyOuAAxLZF2WWXSOyuytQJ1dgBmzpCwHDGkU/RirtMs6rxaSmqe2Jx6
+         YBB3GU0mXJjyH0/aEvu5rEYZ0n3Oro2Gqxlua65jX0Va2MUugOgFnTrNeINnyO4KlqEW
+         mstt4DSwHjE/78TErvUqXxzdThraxs9nQJfPwPb8i5iHArVJnX+Q9eZT5rZkYiBB6vTX
+         nY2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUToK6kdT8NJmv9ZcnymR472e3lqPuuuxC4SbsnOAzp2HlAX/qaHLqKO+6E00GSKDu1j7vF8nlGlH5JTwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjepd/aRcdZtchBSr3jXBIGUXCiFLkHdRrFF1RInGM2C23zVT0
+	10qwUBQBTEyt3O3WFRXtmWUbCzYlGhuRnjZ9619tD736PwOEZQQiUkM8wF7mDWI=
+X-Gm-Gg: ASbGncs3VO86Heq7uNL7ZtAFEQO6jk2Cl2Aq5Rf9Ev3YLdHOysRUlegEjHA68BjM04H
+	/nzDcQju8tdAtlAz35A1L1vtoObFGn9CWWz2+L6UrZU8RJ8UktTVbIFLH3nphAqrKm2M+T00vpw
+	1LfMdobgii0iDAlH0VMhn/s8lI8rQ16FQPWB9mYbIwL7gclBXIfUY3TAE/YAgkeJqtEm6iTVvfX
+	4QO4SCXSdyWgG39u0mmELVkTVLCztbkwf7vvRApNcw2c0rqgz72V6Cw0ZrN67aHEgtxtR8yCWZM
+	kKTuLX/XYpgVIKkQJY0sLS42xEo=
+X-Google-Smtp-Source: AGHT+IHSR7ol++tcQ3t55KxpPADDKkuJUrc5pqPg7oVpe58mjcbGDwgbdiIc/J1H2cHUewzyAYI/RA==
+X-Received: by 2002:a05:6000:1fa3:b0:38d:d603:ff46 with SMTP id ffacd0b85a97d-38f7d1ffbfemr15478346f8f.14.1740581755300;
+        Wed, 26 Feb 2025 06:55:55 -0800 (PST)
+Received: from pop-os.lan ([145.224.66.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e71c0sm5803309f8f.78.2025.02.26.06.55.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:55:54 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	namhyung@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] perf stat: Fix non-uniquified hybrid legacy events
+Date: Wed, 26 Feb 2025 14:55:25 +0000
+Message-Id: <20250226145526.632380-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 15:27:03 +0100
-Heiko Carstens <hca@linux.ibm.com> wrote:
+Legacy hybrid events have attr.type == PERF_TYPE_HARDWARE, so they look
+like plain legacy events if we only look at attr.type. But legacy events
+should still be uniquified if they were opened on a non-legacy PMU. Fix
+it by checking if the evsel is hybrid and forcing needs_uniquify
+before looking at the attr.type.
 
-> The fprobe test fails on Fedora 41 since the fprobe test assumption that
-> the number of enabled_functions is zero before the test starts is not
-> necessarily true. Some user space tools, like systemd, add BPF programs
-> that attach to functions. Those will show up in the enabled_functions table
-> and must be taken into account by the fprobe test.
+This restores PMU names on hybrid systems and also changes "perf stat
+metrics (shadow stat) test" from a FAIL back to a SKIP (on hybrid). The
+test was gated on "cycles" appearing alone which doesn't happen on
+here.
 
-Hmm, this ftrace selftests has been expected to be run without 
-any BPF programs... Is there any other issue on other test cases?
+Before:
+  $ perf stat -- true
+  ...
+     <not counted>      instructions:u                           (0.00%)
+           162,536      instructions:u            # 0.58  insn per cycle
+  ...
 
-Anyway, this looks good to me.
+After:
+  $ perf stat -- true
+  ...
+      <not counted>      cpu_atom/instructions/u                  (0.00%)
+            162,541      cpu_core/instructions/u   # 0.62  insn per cycle
+  ...
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Fixes: 357b965deba9 ("perf stat: Changes to event name uniquification")
+Suggested-by: Ian Rogers <irogers@google.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
 
-Thank you!
+Changes since V1:
+ * Move the existing evsel__is_hybrid() test earlier instead of looking
+   at the PMU of the evsel. Looking at the PMU creates a dependency that
+   the PMU is assigned which may prevent refactors in the future.
 
+ tools/perf/util/stat-display.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> 
-> Therefore count the number of lines of enabled_functions before tests
-> start, and use that as base when comparing expected results.
-> 
-> Fixes: e85c5e9792b9 ("selftests/ftrace: Update fprobe test to check enabled_functions file")
-> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
-> ---
->  .../test.d/dynevent/add_remove_fprobe.tc       | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-> index 449f9d8be746..73f6c6fcecab 100644
-> --- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
-> @@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
->  PLACE2="kmem_cache_free"
->  PLACE3="schedule_timeout"
->  
-> +# Some functions may have BPF programs attached, therefore
-> +# count already enabled_functions before tests start
-> +ocnt=`cat enabled_functions | wc -l`
-> +
->  echo "f:myevent1 $PLACE" >> dynamic_events
->  
->  # Make sure the event is attached and is the only one
->  grep -q $PLACE enabled_functions
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 1 ]; then
-> +if [ $cnt -ne $((ocnt + 1)) ]; then
->  	exit_fail
->  fi
->  
-> @@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
->  
->  # It should till be the only attached function
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 1 ]; then
-> +if [ $cnt -ne $((ocnt + 1)) ]; then
->  	exit_fail
->  fi
->  
-> @@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
->  
->  grep -q $PLACE2 enabled_functions
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 2 ]; then
-> +if [ $cnt -ne $((ocnt + 2)) ]; then
->  	exit_fail
->  fi
->  
-> @@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
->  
->  # should still have 2 left
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 2 ]; then
-> +if [ $cnt -ne $((ocnt + 2)) ]; then
->  	exit_fail
->  fi
->  
-> @@ -57,7 +61,7 @@ echo > dynamic_events
->  
->  # Should have none left
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 0 ]; then
-> +if [ $cnt -ne $ocnt ]; then
->  	exit_fail
->  fi
->  
-> @@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
->  
->  # Should only have one enabled
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 1 ]; then
-> +if [ $cnt -ne $((ocnt + 1)) ]; then
->  	exit_fail
->  fi
->  
-> @@ -73,7 +77,7 @@ echo > dynamic_events
->  
->  # Should have none left
->  cnt=`cat enabled_functions | wc -l`
-> -if [ $cnt -ne 0 ]; then
-> +if [ $cnt -ne $ocnt ]; then
->  	exit_fail
->  fi
->  
-> -- 
-> 2.45.2
-> 
-
-
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index e65c7e9f15d1..e852ac0d9847 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -1688,6 +1688,12 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
+ 		return;
+ 	}
+ 
++	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
++		/* Unique hybrid counters necessary. */
++		counter->needs_uniquify = true;
++		return;
++	}
++
+ 	if  (counter->core.attr.type < PERF_TYPE_MAX && counter->core.attr.type != PERF_TYPE_RAW) {
+ 		/* Legacy event, don't uniquify. */
+ 		return;
+@@ -1705,12 +1711,6 @@ static void evsel__set_needs_uniquify(struct evsel *counter, const struct perf_s
+ 		return;
+ 	}
+ 
+-	if (!config->hybrid_merge && evsel__is_hybrid(counter)) {
+-		/* Unique hybrid counters necessary. */
+-		counter->needs_uniquify = true;
+-		return;
+-	}
+-
+ 	/*
+ 	 * Do other non-merged events in the evlist have the same name? If so
+ 	 * uniquify is necessary.
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
