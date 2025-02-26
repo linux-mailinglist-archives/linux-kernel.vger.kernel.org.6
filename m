@@ -1,223 +1,172 @@
-Return-Path: <linux-kernel+bounces-534106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB1FA462DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04D5A46319
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1133AFB6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14FD83B3A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2140221F21;
-	Wed, 26 Feb 2025 14:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDB92222BA;
+	Wed, 26 Feb 2025 14:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nXrDxxV2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="HOGU+wHP"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D7B192B77;
-	Wed, 26 Feb 2025 14:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D75821C9E7;
+	Wed, 26 Feb 2025 14:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580263; cv=none; b=Dx6EPGvcFfDkVKF/Raxge+xXWD4UpsiHpOHxtW1S8GyJ3kgjMOPkJ2aoClPbrmYko9iBAX5HzUX5d1wLevkJRxDWcn+l/+PVSyvcrcbR7jsUBX8IBRYp+HAgPcbAOoeM6J19H9BQAdaMGvsaoZtfMvspSt5IhTgNKrRo2Bj8sfI=
+	t=1740580672; cv=none; b=orXW7ZFbK1vsrxK2rAODIOWio0mCBkX0vROJ5galhhiKMI+VEnE+lirI/HdXNC0g8RIm9YX1oOoGXyCR8fWRLd9duzXZ6933/zbA3s4LtkqgnxE3EwiftZNTWbocw6+TfSfYeuNCrW84tGy/w3Svrjeo1Lc6czMLZLr/vF7TjZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580263; c=relaxed/simple;
-	bh=E3sm61jZe/lp7YwwF12TBEhOBv3rz1T48nGVqAYjySU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QxbgcTBhjuocgxYtQzerYaJOqt2L9dx5LE8L8Ru/9BBOhrZFNcI4qR2Xb2cRfbIbrSqvM+swCb1ZQqdz3Q/fsTb2RHiDZRxoMDu1ePdjNcEnjRz5n/td+wipxc3lXVX0U44NOvBvvij89ZR5EJvp2eXvx3/Aow+6IvZl1hsOkBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nXrDxxV2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A7DC4CED6;
-	Wed, 26 Feb 2025 14:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740580262;
-	bh=E3sm61jZe/lp7YwwF12TBEhOBv3rz1T48nGVqAYjySU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nXrDxxV2jqRVqz5FCBgOTaYTmI5+m217Z/CYjCjWvU7rj2aLrTkv1dHiyOzEVJWqT
-	 jXfCRi3VG6kVj/b5m89RRcmrVGZebbqrHOpWaA1AJwr0i4pghUHCHM1FY9a7pnY4FO
-	 DAMP6/B8mN+r5Kejke5yiklaPvrfFv0I3ALmwUls=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable <stable@kernel.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH] Revert "libfs: Use d_children list to iterate simple_offset directories"
-Date: Wed, 26 Feb 2025 15:29:45 +0100
-Message-ID: <2025022644-blinked-broadness-c810@gregkh>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740580672; c=relaxed/simple;
+	bh=K179TIMBNAwzzei+3sFPo1T4KrBk2+3+P31OITHT+To=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KEYdCxmfy3/HQQYyflktWqyt8AUvvHqd/OYU2U0AGdffEziQMBKgP44LKI3e/kLiSKykvETg+2gxGLbNWP0ZzFCoS6LOiPPQG3Cm8XTzjwqjoRywv3xlWSwEC+epDS2lJSdVTdbCNi6Kf50RkmUVld6OZMRdlcyJSJun/6pE/a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=HOGU+wHP; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1740580228; bh=K179TIMBNAwzzei+3sFPo1T4KrBk2+3+P31OITHT+To=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HOGU+wHPFLJESrVdUnB9KSg/csDyWbhEn+L+EyqF3BqTzLQxbcfsrQrWEyQ1Hhypy
+	 CpOYxtfn8sWvFs4Ap9LrJ6/bqYvqqDOxLCt5+aSRZNruHdRD++JXFjgUgEBwQQoQAV
+	 RMhKg2uxW93pe2Wb8uM76jZ3VoveNGOnU6YQB7E4HhPsrrXA1MQoxMziZMHG2EvMhN
+	 3+GPVSV0IJLkIMx8npTJ9vo88CHUMz9V7QeAckB2aHryeXy7zJK6qgWeGl6kbyYNjF
+	 CrLb5dJSWAj+bkQ+jTujuz4aknGpKeRMPHxADRV1cxorDHda9ZLVtXHOCDpxH0Q52Z
+	 7OL9t2V5WOiDQ==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id CB6343305;
+	Wed, 26 Feb 2025 19:30:27 +0500 (+05)
+From: Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH 0/2] {vision/navigation}-mezzanine: Fix overlay root node
+Date: Wed, 26 Feb 2025 19:29:54 +0500
+Message-Id: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 158
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4709; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=E3sm61jZe/lp7YwwF12TBEhOBv3rz1T48nGVqAYjySU=; b=owGbwMvMwCRo6H6F97bub03G02pJDOn7VSOYerSvm4q/NDy4oPboNBt25pQr9o+c1126qBiY2 izitnNhRywLgyATg6yYIsuXbTxH91ccUvQytD0NM4eVCWQIAxenAEzk/0mGeRbTnAWCb0Y+mllp OCkgWbBsob3zDYYF60T6Xebv7eFNi/C9e5dHaKuE7dcCAA==
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGIlv2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMz3cLk/FzdvPy8ovz8Et38stSinMTKYt2ktFQjwxRj46RUi2QloN6
+ CotS0zAqwudGxtbUANK3d4WcAAAA=
+X-Change-ID: 20250226-qcom-nonroot-overlays-bfe21d33be8c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1847; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=K179TIMBNAwzzei+3sFPo1T4KrBk2+3+P31OITHT+To=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBnvyWAvw50tbJuC6rZ+1/kX5iibwmoEN+6I3RK8
+ 4Glgqxn1/6JAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZ78lgAAKCRBDHOzuKBm/
+ dfh7D/4wQom19dboxkdcU8S08u3yposYehNTu06mFooaWgW8QhMX0zypWiHDy/UUprnC4ULj9ZU
+ jjCYER5e6rknq1Z9L3/PnNSrCwPQlq/8qNbFhku62ulXBJ5xo6383FiyO/YXPs9XpEYGAc9/bOL
+ 8lRTz/4lXht0BqjNb+OnfMot/WJJG45olteLQJDGg/M27g1yTILnAe3nE1zWwuva7+ZRv9Z4Zsw
+ FaI0eXSQUYxD18PWM4Tz7tg+Iv2Lu+xenSGB/UGiX8HPuolYIBejJ5pi0+9/KpkwQoy47nYR8KI
+ 6/NX3u7I2Boew1DX+59qzswdZhvPtOpgdx2PW1EB8hpemOQVL3TSMMsO9iHA3ticIrTs5YSuspD
+ 97RYEByTLOKSnMH/PBXvfU4GIUSL+eU2jRE4m8MuF8yjk53d+yRB/XjPtSRXxeZxg/FQReaXH1/
+ am0HsYen8CldcfUGPUsa8OuqP7lwiwC1Pa5OMiDoxK458GB/21jxP+26BGf+4HeIgnULULCBj93
+ uzLCWE5bfjUqTmIyhMIW/mBbrf9aqt1lm1DooFJ3ddMSuVi3QEC/Pv0kxpNrPoPGytoo9TCncTx
+ CbtlRlPQ8GR45m4LBP2bXNHKnSNulNayFBvXTSV7lU0m3KQumw7He2MpKsDaS7gmMSv6DtOWL4A
+ xTksbKTKWid/Orw==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-This reverts commit b9b588f22a0c049a14885399e27625635ae6ef91.
+While considering to propose WoA EL2 dt overlays upstream I was looking
+at existing overlays and noticed that some of them are broken: they put
+seemingly meaningful fixups into the overlay's "/" node, which places
+them into the overlay "metadata" itself, not into a fixup fragment to be
+applied to the actual dtb. This series fixes those two by changing to
+full path "&{/}" which should work as it was initially intended.
 
-There are reports of this commit breaking Chrome's rendering mode.  As
-no one seems to want to do a root-cause, let's just revert it for now as
-it is affecting people using the latest release as well as the stable
-kernels that it has been backported to.
+See demonstration of the problem below:
 
-Link: https://lore.kernel.org/r/874j0lvy89.wl-tiwai@suse.de
-Fixes: b9b588f22a0c ("libfs: Use d_children list to iterate simple_offset directories")
-Cc: stable <stable@kernel.org>
-Reported-by: Takashi Iwai <tiwai@suse.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+$ cat base.dts
+/dts-v1/;
+/ {
+	compatible = "fake,board";
+	fake,value = <42>;
+};
+
+$ cat extra.dtso
+/dts-v1/;
+/plugin/;
+
+/ {
+	foo;
+	bar { baz; };
+};
+&{/} { whatever-comes-next-after-baz; };
+
+$ dtc base.dts -o base.dtb
+$ dtc extra.dtso -o extra.dtbo
+$ fdtoverlay -i base.dtb -o combine.dtb extra.dtbo
+$ dtc base.dtb
+/dts-v1/;
+
+/ {
+	compatible = "fake,board";
+	fake,value = <0x2a>;
+};
+
+$ dtc extra.dtbo
+/dts-v1/;
+
+/ {
+	foo;
+
+	bar {
+		baz;
+	};
+
+	fragment@0 {
+		target-path = "/";
+
+		__overlay__ {
+			whatever-comes-next-after-baz;
+		};
+	};
+};
+
+$ dtc combine.dtb
+/dts-v1/;
+
+/ {
+	whatever-comes-next-after-baz;
+	compatible = "fake,board";
+	fake,value = <0x2a>;
+};
+
+In the resulting dtb foo bar and baz are missing.
+
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
- fs/libfs.c | 90 ++++++++++++++++++------------------------------------
- 1 file changed, 29 insertions(+), 61 deletions(-)
+Nikita Travkin (2):
+      arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix broken overlay root
+      arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Fix the overlay root
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 8444f5cc4064..96f491f82f99 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -247,13 +247,12 @@ EXPORT_SYMBOL(simple_dir_inode_operations);
- 
- /* simple_offset_add() never assigns these to a dentry */
- enum {
--	DIR_OFFSET_FIRST	= 2,		/* Find first real entry */
- 	DIR_OFFSET_EOD		= S32_MAX,
- };
- 
- /* simple_offset_add() allocation range */
- enum {
--	DIR_OFFSET_MIN		= DIR_OFFSET_FIRST + 1,
-+	DIR_OFFSET_MIN		= 2,
- 	DIR_OFFSET_MAX		= DIR_OFFSET_EOD - 1,
- };
- 
-@@ -458,82 +457,51 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- 	return vfs_setpos(file, offset, LONG_MAX);
- }
- 
--static struct dentry *find_positive_dentry(struct dentry *parent,
--					   struct dentry *dentry,
--					   bool next)
-+static struct dentry *offset_find_next(struct offset_ctx *octx, loff_t offset)
- {
--	struct dentry *found = NULL;
--
--	spin_lock(&parent->d_lock);
--	if (next)
--		dentry = d_next_sibling(dentry);
--	else if (!dentry)
--		dentry = d_first_child(parent);
--	hlist_for_each_entry_from(dentry, d_sib) {
--		if (!simple_positive(dentry))
--			continue;
--		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
--		if (simple_positive(dentry))
--			found = dget_dlock(dentry);
--		spin_unlock(&dentry->d_lock);
--		if (likely(found))
--			break;
--	}
--	spin_unlock(&parent->d_lock);
--	return found;
--}
--
--static noinline_for_stack struct dentry *
--offset_dir_lookup(struct dentry *parent, loff_t offset)
--{
--	struct inode *inode = d_inode(parent);
--	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+	MA_STATE(mas, &octx->mt, offset, offset);
- 	struct dentry *child, *found = NULL;
- 
--	MA_STATE(mas, &octx->mt, offset, offset);
--
--	if (offset == DIR_OFFSET_FIRST)
--		found = find_positive_dentry(parent, NULL, false);
--	else {
--		rcu_read_lock();
--		child = mas_find(&mas, DIR_OFFSET_MAX);
--		found = find_positive_dentry(parent, child, false);
--		rcu_read_unlock();
--	}
-+	rcu_read_lock();
-+	child = mas_find(&mas, DIR_OFFSET_MAX);
-+	if (!child)
-+		goto out;
-+	spin_lock(&child->d_lock);
-+	if (simple_positive(child))
-+		found = dget_dlock(child);
-+	spin_unlock(&child->d_lock);
-+out:
-+	rcu_read_unlock();
- 	return found;
- }
- 
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
- 	struct inode *inode = d_inode(dentry);
-+	long offset = dentry2offset(dentry);
- 
--	return dir_emit(ctx, dentry->d_name.name, dentry->d_name.len,
--			inode->i_ino, fs_umode_to_dtype(inode->i_mode));
-+	return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
-+			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void offset_iterate_dir(struct file *file, struct dir_context *ctx)
-+static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- {
--	struct dentry *dir = file->f_path.dentry;
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
- 	struct dentry *dentry;
- 
--	dentry = offset_dir_lookup(dir, ctx->pos);
--	if (!dentry)
--		goto out_eod;
- 	while (true) {
--		struct dentry *next;
--
--		ctx->pos = dentry2offset(dentry);
--		if (!offset_dir_emit(ctx, dentry))
--			break;
--
--		next = find_positive_dentry(dir, dentry, true);
--		dput(dentry);
--
--		if (!next)
-+		dentry = offset_find_next(octx, ctx->pos);
-+		if (!dentry)
- 			goto out_eod;
--		dentry = next;
-+
-+		if (!offset_dir_emit(ctx, dentry)) {
-+			dput(dentry);
-+			break;
-+		}
-+
-+		ctx->pos = dentry2offset(dentry) + 1;
-+		dput(dentry);
- 	}
--	dput(dentry);
- 	return;
- 
- out_eod:
-@@ -572,7 +540,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 	if (ctx->pos != DIR_OFFSET_EOD)
--		offset_iterate_dir(file, ctx);
-+		offset_iterate_dir(d_inode(dir), ctx);
- 	return 0;
- }
- 
+ arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso       | 2 +-
+ arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
+change-id: 20250226-qcom-nonroot-overlays-bfe21d33be8c
+
+Best regards,
 -- 
-2.48.1
+Nikita Travkin <nikita@trvn.ru>
 
 
