@@ -1,191 +1,138 @@
-Return-Path: <linux-kernel+bounces-533344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81ED0A458C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:48:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D3EA458C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74D821691E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7277A3D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82880224228;
-	Wed, 26 Feb 2025 08:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD67620E001;
+	Wed, 26 Feb 2025 08:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Ib53PPsc"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jxzeTuEh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154C218DB3B;
-	Wed, 26 Feb 2025 08:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270F1A5BA0;
+	Wed, 26 Feb 2025 08:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559713; cv=none; b=rFnncRI2ho2SyY0LcCkERFDDuCSIexy/4lt0exvNjBv4c8qiZ3m3T+B0YQbdfBBai+UKqLQTnp7utfL/tbKqHn9VN4teUhEfQMlyn59lxu8VJKQmchPUKLpFgzvXF3TULLMBj7Msxm5UmUY4X4Sdy42JCc8JZFcU/Bx/41jeiB8=
+	t=1740559759; cv=none; b=pYbK4SyBdgG9c+QdoR7TjhiEkop32D3D0+cjVXMX6RzOEcFfPLyA2eGfM35Mj1Iyljp1G4ppNrSaOl520cmnUVABSubi60Edh7tWZnoxRekKoihId7oAfmBKaIPp9fGf6DJ0p9YDjLl71NKZETcp3VjA2wOZsGoMlfbvxlEgG+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559713; c=relaxed/simple;
-	bh=+WodfQjsBZG487J0gzQOBPl0Z/0CzB+qFN+2/p2Ms3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fFssDZ1uJOosq4y/dATx95NhtZ1m5Tul5OaxPP1/8tR6dciqo1/QbbturEuy/O7cHeUfMdw4gL3HUDDqcvaua6116xlBq0YR/Z2VJenaZKu9VZSfT6akvAjeyKC2gvlEH/tbQWEvKJfmryHwThTcqX90KgdbgpPcx4NzKOmOrD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Ib53PPsc; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740559712; x=1772095712;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qF79yHjpoNZOP3Yj4UirgbH8x7O0W6H8pZSYrcLmHaU=;
-  b=Ib53PPscEwvJpgcDN5HFn4LuAhkhaxdRAH8ZKM99CAMnCUOMlOGHWBap
-   wBWVjdsGcTtOpJTSsLxtxDax9IZotzb67iWMK0h0KfSVM4gWfa8uTQSc9
-   uxTMWYk1eui/oQs4pbA57S4GfwIBHSm6seJLtSo+ZwPA/zd6Bu4nrRpUk
-   c=;
-X-IronPort-AV: E=Sophos;i="6.13,316,1732579200"; 
-   d="scan'208";a="497310661"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:48:27 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:29533]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.34.181:2525] with esmtp (Farcaster)
- id 74ff41ae-9755-4ae7-b352-87edb65d8925; Wed, 26 Feb 2025 08:48:26 +0000 (UTC)
-X-Farcaster-Flow-ID: 74ff41ae-9755-4ae7-b352-87edb65d8925
-Received: from EX19D020UWC002.ant.amazon.com (10.13.138.147) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:48:26 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D020UWC002.ant.amazon.com (10.13.138.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:48:26 +0000
-Received: from email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 08:48:26 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com (Postfix) with ESMTPS id AE19FA0135;
-	Wed, 26 Feb 2025 08:48:18 +0000 (UTC)
-Message-ID: <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
-Date: Wed, 26 Feb 2025 08:48:16 +0000
+	s=arc-20240116; t=1740559759; c=relaxed/simple;
+	bh=GZU93GuKJIpFBlwgWh+llyo6u7uHzEINyAi3nPlwXUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0bSWA2XcOEGWy0adKdT33ap0ULWvY/8CHVJOVSJ5lztq81gYURJItWTlySmuvUhmkbe94uuTvr9B9nvr8FRL4614qcJhRWlx09lfdiUczFVbSPByaSJ/aMVsVJJJxI7Ltx7WCH0dmRjf+fHppueihIsdS7G5tO9abW8KXaqgOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jxzeTuEh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pyrite.rasen.tech (unknown [IPv6:2404:7a81:160:2100:c539:d123:6770:2110])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EFF9022A;
+	Wed, 26 Feb 2025 09:47:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740559667;
+	bh=GZU93GuKJIpFBlwgWh+llyo6u7uHzEINyAi3nPlwXUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jxzeTuEhvTv0ndVVlS6KMPosDbk0rnLdjJcpn3L1yC0j2oOy/o0n0a/TevmFSURXn
+	 oMbqnKgSDSMwgyyxLq94UwWGBb7nZAHiKxaJ3TdJFNaVHU4WHhvs4Wdga0ixC/1o78
+	 62rl7aXZGKCq5HwABemop1ai6BC+USk8gjN9Qrfo=
+Date: Wed, 26 Feb 2025 17:49:07 +0900
+From: Paul Elder <paul.elder@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, kieran.bingham@ideasonboard.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: imx335: Set vblank immediately
+Message-ID: <Z77Vg7zcnj_5a-0s@pyrite.rasen.tech>
+References: <20250214133709.1290585-1-paul.elder@ideasonboard.com>
+ <Z7G3d_zEhqDuepNM@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
- <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7G3d_zEhqDuepNM@kekkonen.localdomain>
 
+Hi Sakari,
 
+Thanks for the review.
 
-On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
->> set, guest_memfd folios will be removed from the direct map after
->> preparation, with direct map entries only restored when the folios are
->> freed.
->>
->> To ensure these folios do not end up in places where the kernel cannot
->> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
->> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
->>
->> Note that this flag causes removal of direct map entries for all
->> guest_memfd folios independent of whether they are "shared" or "private"
->> (although current guest_memfd only supports either all folios in the
->> "shared" state, or all folios in the "private" state if
->> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
->> direct map entries of also the shared parts of guest_memfd are a special
->> type of non-CoCo VM where, host userspace is trusted to have access to
->> all of guest memory, but where Spectre-style transient execution attacks
->> through the host kernel's direct map should still be mitigated.
->>
->> Note that KVM retains access to guest memory via userspace
->> mappings of guest_memfd, which are reflected back into KVM's memslots
->> via userspace_addr. This is needed for things like MMIO emulation on
->> x86_64 to work. Previous iterations attempted to instead have KVM
->> temporarily restore direct map entries whenever such an access to guest
->> memory was needed, but this turned out to have a significant performance
->> impact, as well as additional complexity due to needing to refcount
->> direct map reinsertion operations and making them play nicely with gmem
->> truncations.
->>
->> This iteration also doesn't have KVM perform TLB flushes after direct
->> map manipulations. This is because TLB flushes resulted in a up to 40x
->> elongation of page faults in guest_memfd (scaling with the number of CPU
->> cores), or a 5x elongation of memory population. On the one hand, TLB
->> flushes are not needed for functional correctness (the virt->phys
->> mapping technically stays "correct",  the kernel should simply to not it
->> for a while), so this is a correct optimization to make. On the other
->> hand, it means that the desired protection from Spectre-style attacks is
->> not perfect, as an attacker could try to prevent a stale TLB entry from
->> getting evicted, keeping it alive until the page it refers to is used by
->> the guest for some sensitive data, and then targeting it using a
->> spectre-gadget.
->>
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+On Sun, Feb 16, 2025 at 10:01:27AM +0000, Sakari Ailus wrote:
+> Hi Paul,
 > 
-> ...
+> On Fri, Feb 14, 2025 at 10:37:09PM +0900, Paul Elder wrote:
+> > When the vblank v4l2 control is set, it does not get written to the
+> > hardware immediately. It only gets updated when exposure is set. Change
+> > the behavior such that the vblank is written immediately when the
+> > control is set.
+> > 
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > ---
+> >  drivers/media/i2c/imx335.c | 19 +++++++++++++------
+> >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> > index fcfd1d851bd4..e73a23bbbc89 100644
+> > --- a/drivers/media/i2c/imx335.c
+> > +++ b/drivers/media/i2c/imx335.c
+> > @@ -559,12 +559,12 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  			imx335->vblank,
+> >  			imx335->vblank + imx335->cur_mode->height);
+> >  
+> > -		return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+> > -						IMX335_EXPOSURE_MIN,
+> > -						imx335->vblank +
+> > -						imx335->cur_mode->height -
+> > -						IMX335_EXPOSURE_OFFSET,
+> > -						1, IMX335_EXPOSURE_DEFAULT);
+> > +		 __v4l2_ctrl_modify_range(imx335->exp_ctrl,
 > 
->>
->> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
->> +{
->> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
->> +}
->> +
->>   static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>   {
->> +     struct inode *inode = folio_inode(folio);
->> +
->> +     if (kvm_gmem_test_no_direct_map(inode)) {
->> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
->> +                                                  false);
+> Indentation.
 > 
-> Will this work if KVM is built as a module, or is this another good
-> reason why we might want guest_memfd core part of core-mm?
+> You're also missing an error check here.
 
-mh, I'm admittedly not too familiar with the differences that would come
-from building KVM as a module vs not. I do remember something about the
-direct map accessors not being available for modules, so this would
-indeed not work. Does that mean moving gmem into core-mm will be a
-pre-requisite for the direct map removal stuff?
+I reasoned that it's fine to not have the error check.
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+afaiu, the only change this has to error is if try/s_ctrl on
+V4L2_CID_EXPOSURE fails when the change to the range of valid exposure
+values requires a new exposure value to be set. Setting the exposure
+control comes back to this function, and goes through the switch-case
+and imx335_update_exp_gain() below, which doesn't fail.
 
-Best, 
-Patrick
+Also the imx219 has the exact same pattern in imx219_set_ctrl.
+
+
+Thanks,
+
+Paul
+
+> > +					  IMX335_EXPOSURE_MIN,
+> > +					  imx335->vblank +
+> > +					  imx335->cur_mode->height -
+> > +					  IMX335_EXPOSURE_OFFSET,
+> > +					  1, IMX335_EXPOSURE_DEFAULT);
+> >  	}
+> >  
+> >  	/*
+> > @@ -575,6 +575,13 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  		return 0;
+> >  
+> >  	switch (ctrl->id) {
+> > +	case V4L2_CID_VBLANK:
+> > +		exposure = imx335->exp_ctrl->val;
+> > +		analog_gain = imx335->again_ctrl->val;
+> > +
+> > +		ret = imx335_update_exp_gain(imx335, exposure, analog_gain);
+> > +
+> > +		break;
+> >  	case V4L2_CID_EXPOSURE:
+> >  		exposure = ctrl->val;
+> >  		analog_gain = imx335->again_ctrl->val;
 
