@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-534077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103B8A4628A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:24:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBAAA46292
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957997A4E5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2C73B51FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A97222576;
-	Wed, 26 Feb 2025 14:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E702225401;
+	Wed, 26 Feb 2025 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6d0dXSn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5526221F26;
-	Wed, 26 Feb 2025 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="b9R/2bqE"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2209022424B;
+	Wed, 26 Feb 2025 14:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579668; cv=none; b=TGMpFTd8S/zxsv7E83T6iFWgxK69me36PNCzCFIcJy2pNRqZRzdSTixwtTemqn8SrAQaEnueDQisyapv2Q3hT+THpzICU1QMRlfKCMztI+nGYUBMVTdQx3rdBE+fii/TP2pEHEIxCVkKpXi/gkmfs/CvN7D7aMLR3u38DxoJk0w=
+	t=1740579744; cv=none; b=ukPm1Tze8WFwEMTExmqISH7OeGSVL6LFBL1ip5IK9sCFipR9dg0L5bRkf8kxHmgifBB66rwZqqDG0VK2zlaAnAvpl31HziDGJ5IZB/lhnnAmIL8gRv0cdW+52NKMKla0uNUm8hehPyphqcR5igaB5dTja9tk1Jh1sl4UjxVETBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579668; c=relaxed/simple;
-	bh=5ZVxX96Jefja2LWob2Q747PzTY5XxGREUDxPIe+lZtU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XHgyYaZzlbCyX0phezyKCcMLatABAgaDj1fuLZjZsx1uvzg0GLTOyJBghQgL5YgPd9MDThkETUk0l6kCvVa/y4bsU/eBMtsx/+uD0fBABiEiI7EyR8bvIBr9wVOmrspv3Uyr117E2CsrEVjEKkg15/uBpBkZVc5FEw3CejhI9m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6d0dXSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F51C4CEE4;
-	Wed, 26 Feb 2025 14:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740579668;
-	bh=5ZVxX96Jefja2LWob2Q747PzTY5XxGREUDxPIe+lZtU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j6d0dXSn4+z/SBJM3vxhQu5qFzM6uDRQhTM7Q5gcbl08suWuDLdZCtHDVlOl2Yr/4
-	 LHQABUMx6qu11rdrb1XTgAb0pq4CljQS+UTTfrERupSGuGppZ0hpcOUFW9ySUS3tlk
-	 nDUVwwmB8h3rNl/evx/6pjLFu3GvSIdYAOdhdU51HzU60nm9kxEvW3VAv7ixlXdYBT
-	 ZHMfvD15XLkZPjHsVsSP6IeTDN2yXDfta/T5QWOFYaz4I0IlEuVj5q2nL2R5TKIdLv
-	 aDqMM6UyQ8OxQwRrIK4I/plLa9rOsaH+TeVdf508OHuqqfp2iO9Ao1baOYm5zzJd7D
-	 XAeLdUwG5hqaA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tnIHZ-008D3e-Bx;
-	Wed, 26 Feb 2025 14:21:05 +0000
-Date: Wed, 26 Feb 2025 14:21:04 +0000
-Message-ID: <868qpsrdm7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
+	s=arc-20240116; t=1740579744; c=relaxed/simple;
+	bh=7MWAvDS1sUySSkaCp7pr/xs+1jMl8D4sSiP1dEcJvvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FwJSKGWqsYX7M4lH+Z+9/niFmAudTg2yzO7ZqlMRCMOiRhXwoQYJHa6HRTqmES7D9P3h12fmlat0lLEUwfEZgPrH8hdoE5keD932ZHbYYxGqazI1iGbVgD6C5mKn5Z6OdbHBRkGmmtWtfOpy63bpo5/DIWDlVMivUD8xW47PpPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=b9R/2bqE; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=G1DsQ
+	8xw/CbJlnE26e47lsHv8AyG3/Yu1byV8dq/fhY=; b=b9R/2bqED/xY7w5nVSLAw
+	9l9GF6Uf30+u9FHRoc8pgM2NYUsEG0LzNIBRoGu2ODaHN0ede47vEvmVdNsQ7SpV
+	tGVVbPLlPPIQVDpyKl2dA2M5qNINFRP9BemySV0mRBHnUHlOAi/fY5vxzNiOpEJe
+	4DcWLN2bot18n+BJP1vP3U=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wAHpyRoI79nVfm6Ow--.12430S4;
+	Wed, 26 Feb 2025 22:21:30 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: slongerbeam@gmail.com,
+	p.zabel@pengutronix.de,
+	mchehab@kernel.org,
+	gregkh@linuxfoundation.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] KVM: arm64: Don't WARN from __pkvm_host_share_guest()
-In-Reply-To: <Z74e17vBiJAgViHQ@google.com>
-References: <20250225015327.3708420-1-qperret@google.com>
-	<20250225015327.3708420-3-qperret@google.com>
-	<87jz9d299h.wl-maz@kernel.org>
-	<Z74e17vBiJAgViHQ@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: imx: fix a potential memory leak in imx_media_csc_scaler_device_init()
+Date: Wed, 26 Feb 2025 22:21:26 +0800
+Message-Id: <20250226142126.3620482-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHpyRoI79nVfm6Ow--.12430S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF17Wr1rWw15ZrWDWFy3urg_yoWfZFX_CF
+	4vgryxXrWjk393t3WYyF18Z34Sqrs29rWFq3Z0va95WFWjya4avr4qvwsYq3yjgrWS9F9x
+	Ar1rJr13Kr92kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRuBTYDUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqB4Abme-HD3S3gAAst
 
-On Tue, 25 Feb 2025 19:49:43 +0000,
-Quentin Perret <qperret@google.com> wrote:
-> 
-> On Tuesday 25 Feb 2025 at 18:02:02 (+0000), Marc Zyngier wrote:
-> > On Tue, 25 Feb 2025 01:53:25 +0000,
-> > Quentin Perret <qperret@google.com> wrote:
-> > > 
-> > > We currently WARN() if the host attempts to share a page that is not in
-> > > an acceptable state with a guest. This isn't strictly necessary and
-> > > makes testing much harder, so drop the WARN and fix the error code.
-> > 
-> > Are you really fixing the error code? You still seem to return a
-> > -EPERM. I guess this was never reachable thanks to WARN() being a
-> > panic with pKVM?
-> 
-> Exactly, this is really poor wording in the commit message. 'Fix the
-> error code' in this case was intended to mean 'make sure to return the
-> error code properly instead outright crashing the device'.
-> 
-> Happy to send out a v3 with a better commit message.
+Add video_device_release() in label 'err_m2m' to release the memory
+allocated by video_device_alloc() and prevent potential memory leaks.
 
-Nah, that's probably something Oliver can fixup when picking up the
-patch.
+Fixes: a8ef0488cc59 ("media: imx: add csc/scaler mem2mem device")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ drivers/staging/media/imx/imx-media-csc-scaler.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-
-	M.
-
+diff --git a/drivers/staging/media/imx/imx-media-csc-scaler.c b/drivers/staging/media/imx/imx-media-csc-scaler.c
+index e5e08c6f79f2..f99c88e87a94 100644
+--- a/drivers/staging/media/imx/imx-media-csc-scaler.c
++++ b/drivers/staging/media/imx/imx-media-csc-scaler.c
+@@ -913,6 +913,7 @@ imx_media_csc_scaler_device_init(struct imx_media_dev *md)
+ 
+ err_m2m:
+ 	video_set_drvdata(vfd, NULL);
++	video_device_release(vfd);
+ err_vfd:
+ 	kfree(priv);
+ 	return ERR_PTR(ret);
 -- 
-Without deviation from the norm, progress is not possible.
+2.25.1
+
 
