@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-533772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D60A45E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E93A45E6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F1C176D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54AF83B372E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BDE26A08F;
-	Wed, 26 Feb 2025 12:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84413223327;
+	Wed, 26 Feb 2025 12:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qeHTmDwU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3McyQm8J"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R2UYJFhO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491923535E;
-	Wed, 26 Feb 2025 12:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4480C218AB2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571493; cv=none; b=jKEO1GqMU1bk08S2VYN0SJGTsy4FqUtaJioZmKB0oVWVydJHL3kFE1PDb3LUIYmjRVe23t7uZLmWxWOLhfaMeayJua43IUuoikPJc3AEPftfkCf4IK1D71Ah6BDtIBexNqyIvKZvKXAHohzr0BZGTJoNQvjHRuVR1TkADMC3FzE=
+	t=1740571533; cv=none; b=htI2idrgj6/xNAcB1pej4Q8W7ORpJTalkZqwKdnp9vo49K9KoM5GFEknkNQntTW8PJbQ/cqwBb/3rIPz+KM2iw227pD2wIja1xAdDYgm29voYJyUwABBu7Itp4MmMynvYrFAQNG6exNBxKL2P05j8rQ+3O1NBRSKYAqUfqVjIWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571493; c=relaxed/simple;
-	bh=pV/EDa0GwWE+xqgD5ZLb9sWNTm5HFpQmsr387LP7yyQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gZz3GibOJbZHcyHS6+UIgiVTL/IkHLgi6rLEbVz+R9gxE0Q90qp/uF1w2WyXYY64iRrLa89RRJiWSttzIFc+x1uHzU1A1ndwfb/nqWku6M9g/ICcwSqP0W1hz384cGYIoxiWUjjXFJ5cf+V4HylLlHK9MuV1cnMOPEOsiUw+te8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qeHTmDwU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3McyQm8J; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 12:04:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740571489;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1740571533; c=relaxed/simple;
+	bh=fP0sGdp3jpwxy/Pb8vlYK55k1s7gQsE0DIkSN6h8f5g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O3Qj1pTTTs+boNPKaYhfQ9x5fV1msHS9AppBMuI1Y+2q2bS6Xsj4MgWJZPhSZsOSuJNH1jksWsqVfqUXV4EQTKMxlAZAyCRzNcPbTGc7yDrHhcL9PFXfEEG5LhNpEINJoqDuWegroYtgCCs2snfyx5kVqpbWYqahzd1bEN6oWSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R2UYJFhO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740571530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4XtzsmMdytaXozXTf/rNAyS7G68QM4szoCPKqrtrabE=;
-	b=qeHTmDwU59k+llkVNO5xSDBIQcMJ7Lf/9hakxW8mCvqgeaemEEGAXLEqmlRMlsh92Dn2PW
-	4D+pkOJgmS/mTwk5mimkk7uVdwFm9qNlVRMcWC+uAsvIE3UXoZWb0wT4IfKn8XqyN6f5yg
-	hMbzAaQttFVX47vPi4q+XOCivQ6o+seGv4kOV2134gT/BARRg+vCfwx/ClGxXuhliIrxYi
-	dzrnRWZovMjWUlEeXcS2jM9x+wc7nR6eWP1M+DwUB4NjS2isHVtjHKLAm0MaqkOa9Eu2QR
-	QuxNuF3r7CifjgS6a/lIhfiF+xBKOQ80X8orfbj83v4rlX11Gx8I1Xq0nTrlbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740571489;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4XtzsmMdytaXozXTf/rNAyS7G68QM4szoCPKqrtrabE=;
-	b=3McyQm8JObyF10MdDIQQYhBqSQ6opVjcaKsvUrSyH0LA2o35YOXKIdwjNMhJpoi6CM+Lhu
-	xTyBEHGxYWrevFAw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/ibt: Add exact_endbr() helper
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, x86@kernel.org,
+	bh=ZONKr8gjSUHK5a82Fy5e7G5ZxvpLwOBguDakYGue1KI=;
+	b=R2UYJFhO8vn26680QzoxGdUjwJCieUnLqkR+l9I8Wtv/+kFqpGLyptkQGwNkJ2vMZY2b7Z
+	Hj+uSCuFYBPbNnNXply559YdwVYej1yPB2s7YJL8cHpjslSHZOOnInwLorOAvbiQeBO8Nr
+	J5u85QskoOI1liHVWyfDFAszEQ9mouE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-227-feOyFm_dPi-wB29qUW7mKw-1; Wed, 26 Feb 2025 07:05:29 -0500
+X-MC-Unique: feOyFm_dPi-wB29qUW7mKw-1
+X-Mimecast-MFC-AGG-ID: feOyFm_dPi-wB29qUW7mKw_1740571528
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4399a5afc95so28618195e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:05:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740571528; x=1741176328;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZONKr8gjSUHK5a82Fy5e7G5ZxvpLwOBguDakYGue1KI=;
+        b=TeBgRhobYcPMYNy2h5MXZd8SShdfXjpu4VhcHoLL6iHemWQECx3Um6fcSlukgoaBtN
+         Uir9NkSh/lWmGzQ6lpFTvCcHP9nqTknvxZ/AMFEH62tnxLpy/caLEj9rYjhNZ2tw25/G
+         ecRwN3IM9AbUWA3UicMFgFs48T3zM+we96EKfsdRm7TyyonArMFEu17rfhzRW+1WGGqU
+         yfg53MmAGVu0ckhBpj6H9KBGc90Ke0I1WklcoVZHFU3mSmgOuN8/DDfmLpiZUNdSUQmC
+         8lyU5DBRj/dSujaI3jvwvIlYodSRuSrn2CYDbIZnWkFT1h1YsI9fVfSZCb85Ntih+0ZS
+         ZUXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQszoMcvAolHpNNpMq93YGdYYL4kvPJtHF4a4r9ECvwk02B8FeEa377bh40VJpkJoWWkBQa0huAMG2n3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4ZAgjOs4ElLmWcvaXugiV53J4+3WlNhybsGfu0ldTE2FSjxbi
+	RmyMZY8+GTnNFLyhmykTW5m2UlYjuNrsf2VBHNXH5ccsxqr1qXSPOSG9JcM/Fi+D0KaWTNkI6VC
+	oqawSdQmb6XlNKfzeHFoVz/9G2sFAZgxjXpHxZijNFrbRFqZozmzbJgl6wCq16w==
+X-Gm-Gg: ASbGncuTDGYbbIhPTQrC53oWM7eCmng0zP1gzZQkvzLy1h+DIQ2R6tVwxJv+zIOzrf0
+	B9mSGkgJFIN+y7i7HaKiZo2W9zo3bA00CmPXGKujEgKxNCCB6bb+rwB/VUaM9qoGcBLVJRe+4qf
+	DGBHFiaMMuI2bg+A8GUSt2r3upJ13rPTMKLr9T7vK3alvHiuwkr71mfXtm0A8Qwv7uQlrG9H1tm
+	Fow4qWMZGUDxsc78/9/dxeYxX54z25jeh4nXar44Tyv0cZ/2LvEcbuNFJlSCKhqUBTwBuMyt1gA
+	rrk3mghRRI+M5v1s60xcVbjSpEHUU191Jnw3Vv7glGPHHXFowXKiUbmiqB0vC5PiOpbqwNCe1A=
+	=
+X-Received: by 2002:a05:600c:458e:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-439ae221d72mr172909835e9.29.1740571528150;
+        Wed, 26 Feb 2025 04:05:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFnrm0qM7DRHfCVZy3zVClFVQEZc0d79QmfHyW/xrSQhIhkvownRWDY6I4pd1YTGG105oIX1w==
+X-Received: by 2002:a05:600c:458e:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-439ae221d72mr172909435e9.29.1740571527760;
+        Wed, 26 Feb 2025 04:05:27 -0800 (PST)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5871f4sm19373245e9.39.2025.02.26.04.05.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 04:05:26 -0800 (PST)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Arnd Bergmann <arnd@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124200.059556588@infradead.org>
-References: <20250224124200.059556588@infradead.org>
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+In-Reply-To: <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+ <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
+ <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
+ <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+Date: Wed, 26 Feb 2025 13:05:23 +0100
+Message-ID: <87mse8zzb0.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174057148918.10177.18138134979109290177.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the x86/core branch of tip:
+"Arnd Bergmann" <arnd@arndb.de> writes:
 
-Commit-ID:     500a41acb05a973cb6826ee56df082a97e210a95
-Gitweb:        https://git.kernel.org/tip/500a41acb05a973cb6826ee56df082a97e210a95
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:05 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 26 Feb 2025 12:11:18 +01:00
+Hello Arnd,
 
-x86/ibt: Add exact_endbr() helper
+> On Wed, Feb 26, 2025, at 09:16, Thomas Zimmermann wrote:
+>> Am 26.02.25 um 08:55 schrieb Arnd Bergmann:
+>> Here's another general question. vgacon and fbcon only seem usable with 
+>> CONFIG_VT=y. Wouldn't it make sense to have them depend on CONFIG_VT=y? 
+>> dummycon could then be implemented as part of the vt code, maybe even 
+>> become a vt-internal thing. The console code is complex, so I'm probably 
+>> missing something here?
+>
+> I think in theory one may have a system use fbcon purely to get the
+> boot logo, but not actually support VT.  I had also assumed there might
+> be a way to use fbcon as the console (i.e. printk) but not register
+> the tty, but it looks like the console code still requires vt.
+>
+> After I looked at the vt and conswitchp code some more, I wonder
+> if we could go the other way and instead of integrating it more
+> make the conswitchp logic optional: most of the complexity here
+> deals with switching between text console and fbcon dynamically,
+> but having any text console support is getting very rare (vga
+> on alpha/mips/x86-32, newport on mips-ip22, sti on parisc).
+>
+> If we do this, the conswitchp code could be merged with dummycon
 
-For when we want to exactly match ENDBR, and not everything that we
-can scribble it with.
+This sounds like a much better approach indeed.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124200.059556588@infradead.org
----
- arch/x86/kernel/alternative.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+> in drivers/video/console, with the simpler alternative just
+> calling into fbcon functions. I'm not sure if we can already drop
+> vgacon from normal x86-64 distro configs, i.e. if there are cases
+> that are not already covered by any of efi-earlycon, efifb,
+> vga16fb, vesafb/uvesafb or a PCI DRM driver.
+>
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 1142ebd..83316ea 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -863,6 +863,21 @@ Efault:
- 	return false;
- }
- 
-+#ifdef CONFIG_FINEIBT
-+
-+static __noendbr bool exact_endbr(u32 *val)
-+{
-+	u32 endbr;
-+
-+	__get_kernel_nofault(&endbr, val, u32, Efault);
-+	return endbr == gen_endbr();
-+
-+Efault:
-+	return false;
-+}
-+
-+#endif
-+
- static void poison_cfi(void *addr);
- 
- static void __init_or_module poison_endbr(void *addr)
-@@ -1426,10 +1441,9 @@ static void poison_cfi(void *addr)
- bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
- {
- 	unsigned long addr = regs->ip - fineibt_preamble_ud2;
--	u32 endbr, hash;
-+	u32 hash;
- 
--	__get_kernel_nofault(&endbr, addr, u32, Efault);
--	if (endbr != gen_endbr())
-+	if (!exact_endbr((void *)addr))
- 		return false;
- 
- 	*target = addr + fineibt_preamble_size;
+I believe vgacon is still useful for x86 with legacy BIOS, because
+vesafb (and simpledrm) only works if the user defines a mode using
+the vga= kernel cmdline parameter.
+
+>     Arnd
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
