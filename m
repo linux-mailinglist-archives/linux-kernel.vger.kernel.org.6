@@ -1,137 +1,135 @@
-Return-Path: <linux-kernel+bounces-534461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09FFA46769
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:07:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76308A4676F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A053A16E6DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A527717CFF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD42222D3;
-	Wed, 26 Feb 2025 16:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32742248AE;
+	Wed, 26 Feb 2025 16:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="QH4eEtXJ"
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeAwsRp3"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFC21A01BF;
-	Wed, 26 Feb 2025 16:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBB9223710
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588715; cv=none; b=cAXNCqwIO41w89dhEOIAy1U6PicDAVk/H1yeboDknrrRS7gslcp7sd0WLCkemKF9wBskmgdGQeyYbPtRUyfNdhK1l0AZ4VbqslNjPiZinmzKV7MX50KONggMSOkAW/JHqsq4yWgtGw2qsRIhaEBlh/XcjHP52P/9JzaCLQEvzm4=
+	t=1740588868; cv=none; b=FMpg0m0mcuY+JJFlKczNOL0aWgvUjkMckeiCoGyd5IhinAo3I+2bN7r2v/j35AubyAc1xH4XxcIx/n8WP8RC1aAcmMeq64qP1WUPuWOeAlpzIr+KcIDhqshT1dJtiDVrp9pX7s/QLjWMO43P6ruBb6uDCfHnn67GWDj3V9Nj8Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588715; c=relaxed/simple;
-	bh=ypRzZ2zObNci18/WsswuAcEa0/e0UBSYDjvPeqxQn8I=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=TU2hDgELqgC7bJ86wfd3qmhURr7XsnoHOKiFBCsCKgBDYfijfTcZwhWrbkWj0okQW5mahK+VYmik4t8Ftdf4JEivnLHWIUR3GB/Tu0WKohx0FzEaxa9THs+T6i5KIl7F1t41nJpEhbmc68CPWJUdVfSS9M91QOi0+ITV8oxzOHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=QH4eEtXJ; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [194.37.255.9] (helo=mxout.expurgate.net)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=916645903c=ms@dev.tdt.de>)
-	id 1tnKdM-00CVZJ-Ta; Wed, 26 Feb 2025 17:51:45 +0100
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1tnKdL-009CW5-QK; Wed, 26 Feb 2025 17:51:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
-	s=z1-selector1; t=1740588703;
-	bh=GM0VcKZjCHnEUU6GMlRDDDCbN9fpMRBoWK8fN5/nSw0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QH4eEtXJIFjsEOqQpy+3RX3TWZQvU5S7VA6pzazGAhtZ9YXIuoy+IlIB6r10Rd2XW
-	 rG4PeixWun2jOawcNDSBA7lKlUjSgmJLAI4TPGiIjbf9C8pcmxWxxUslC/HQgg4F9T
-	 yz0FCxVI2y1IWpZOjOpwLeh0BRGCi2ZzMla1GD7CA+nK8KpxZXTLzqwzh6M3faUYET
-	 8Y5xErBp/F2Nvb0yiVuUt5vseTqoW/OzGgvp4eNOSrqijtdc8SD+NVgRj9MhmacFQp
-	 NGePDuUcO2nZG2Zc1Hw1p2ED/hj9N3RJxZd4OMfj7Zw0V7A1hurbpRBVc0JZvbjy6W
-	 KZTnLzrhkA4Dg==
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 3C0B7240041;
-	Wed, 26 Feb 2025 17:51:43 +0100 (CET)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 2ACB3240036;
-	Wed, 26 Feb 2025 17:51:43 +0100 (CET)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id CB4D4237BB;
-	Wed, 26 Feb 2025 17:51:42 +0100 (CET)
+	s=arc-20240116; t=1740588868; c=relaxed/simple;
+	bh=pvVFF8LcYlrlCMpxO/aHUSZAY8oWsFTdA7hLOwF7t3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AIh/R8wFlil+AMN/nPwHIoQvHAyTUxq7cNiL8QOYIqjATkePurzuVHIIGkRXkFcNj7ChS1Ui5wBC+SXkbcnVgxfDSDHYBUt43YAs7vxPzdC1b0kgwVuiFsvXBah9f/IVQqjmwgG9zFLPfN0p9vuy/jpEBWWX2rALEMbs3F+Yr4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeAwsRp3; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so426255e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:54:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740588865; x=1741193665; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YtGcm5ZWKNh3uJM/zqclGCkk9N3iqiYtET6+2Cl2Q+U=;
+        b=UeAwsRp3jtdZKVkfFGWcPkRC0ThF9++mweBBVhTMsxtEciaxlCtx1AFNlDek6jGfvu
+         0kGsyqUBEY+ryDBpvORMIv8ps90Fb+o8x8pGg0pOVNsg9QsNsGcvp0bJgK0nHm05oC+q
+         ivyKfUUHviJ9b+JHyl5OfYN1bPYJoGH+rDXWqYUoabxeZc9fD4HB4JkzSfd/uL6cJuTB
+         TCL0Dg6ofF4D5falZI+SzsSQI3BfmrmLrQbrkmQHy9S+UH2f4BSYPqB+AapGIb1Z9Jdh
+         2DwwcZ3/tt8KogZZtOpZLuWhUcUiynP7T/AVB4LmHReY79LkDCsgunDXk76QMvdhV9Pa
+         rTTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740588865; x=1741193665;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YtGcm5ZWKNh3uJM/zqclGCkk9N3iqiYtET6+2Cl2Q+U=;
+        b=V7pxow74X22miImFzJaA5pc+WKwDq9P9VExZKuegZReDdbtm97N4xyO+VbAqTu2jcN
+         S349XtBzr47M8FjVoxZnbZAK/ZQcq8rCUWHw//GpW2pjZdi76CLMHtJEIobMTJnvbvLs
+         oWA74cOjMdUmaORaHEzMoTA3kctbxrDXoBQ562jPfteWo2EHnMg1ow7dLIwvI9gXJUjj
+         HM93i+eBuBL0xVSJU6kLWZ1RHUchzXcp4nJHQVWKNjLcPk9SH9z4reE/5ZIsV0hhNERR
+         MT7WTkzue6iHUR1EcAiRtjYHfkjPVUpRpTtEXV/T7c86MgQHQ7jJP6D0TYSLao44LcjR
+         hujg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwN3c1DDVv78WEKxiqJvBN7CjYKZdbw5WJoKsdonfpqh+MU+vxZmr5/Ea3BFlq28e6Kk9L/YpoKgueKKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcluDdCLOmF3SyOZ+KUpnZ27Gn+fTFfEFfPfEukMekgBsouQqI
+	34+IRgG6HG/8/pQSBZRAG59VwyIdnP3i5fABMrt+mq8H28ggNvNA
+X-Gm-Gg: ASbGncspF7Gi64befMAKWDnMvgZy5yMgY9fsIFMTTmf5XATapTiAzX6aFc1xbZeD8JK
+	QPvAm2EtZfjhlqJ2Wm4dmqZrrBALqKEupj0VSWlZ89oN/6gPZwguSBFVH8wXSfHVcSBQTzyXVS3
+	zbF/NRdDH1Z1j13FWK2Blh5xd6EfRqJJOAl4eFJ3oJ1e7zjeP2CCBkxWna5up/4nbls5e09bEGt
+	cDG2XzRPNc+ItPdnm5o1khp560NT9q9LPOuqGDfTB8horTeq4TGXTQELlEIGgkBXkClNsI/wd5z
+	XwLBz4C3pYci0kxqpX72OQABMpB30eJnFLVGW5OtTCOO5MPuyG2UW8zSylFhMAhR
+X-Google-Smtp-Source: AGHT+IEr7k3hpbUucx2jKL4FfCjfgt288+HwWr+usBZ9kHZQ7fGw05QKWSeEYQ0zCCodSQZ6AYFIxA==
+X-Received: by 2002:a05:600c:458d:b0:439:99e6:2ab with SMTP id 5b1f17b1804b1-439aebcfd58mr175600195e9.28.1740588864704;
+        Wed, 26 Feb 2025 08:54:24 -0800 (PST)
+Received: from playground.localdomain ([188.25.208.27])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba587163sm27672515e9.36.2025.02.26.08.54.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 08:54:24 -0800 (PST)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Frank Li <Frank.li@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/5] dt-bindings: dsp: fsl,dsp: document 'access-controllers' property
+Date: Wed, 26 Feb 2025 11:53:11 -0500
+Message-Id: <20250226165314.34205-3-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 26 Feb 2025 17:51:42 +0100
-From: Martin Schiller <ms@dev.tdt.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
-	hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
- SFP+ module
-Organization: TDT AG
-In-Reply-To: <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
-References: <20250226141002.1214000-1-ms@dev.tdt.de>
- <Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
- <d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
- <20250226162649.641bba5d@kmaincent-XPS-13-7390>
- <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
- <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
-Message-ID: <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-Content-Transfer-Encoding: quoted-printable
-X-purgate: clean
-X-purgate-ID: 151534::1740588704-2BC6995C-803E5AC5/0/0
-X-purgate-type: clean
+Content-Transfer-Encoding: 8bit
 
-On 2025-02-26 17:27, Kory Maincent wrote:
-> On Wed, 26 Feb 2025 16:55:38 +0100
-> Martin Schiller <ms@dev.tdt.de> wrote:
->=20
->> On 2025-02-26 16:26, Kory Maincent wrote:
->> > On Wed, 26 Feb 2025 15:50:46 +0100
->> > Martin Schiller <ms@dev.tdt.de> wrote:
->> >
->> >> On 2025-02-26 15:38, Russell King (Oracle) wrote:
->>  [...]
->>  [...]
->>  [...]
->> >>
->> >> OK, I'll rename it to sfp_fixup_rollball_wait.
->> >
->> > I would prefer sfp_fixup_fs_rollball_wait to keep the name of the
->> > manufacturer.
->> > It can't be a generic fixup as other FSP could have other waiting ti=
-me
->> > values
->> > like the Turris RTSFP-10G which needs 25s.
->>=20
->> I think you're getting two things mixed up.
->> The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
->> there simply is an additional 4s wait at the beginning before we start
->> searching for a phy.
->=20
-> Indeed you are right, I was looking in older Linux sources, sorry.
-> Still, the additional 4s wait seems relevant only for FS SFP, so it=20
-> should
-> be included in the function naming to avoid confusion.
->=20
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-You may be right for the moment. But perhaps there will soon be SFP
-modules from other manufacturers that also need this quirk.
+Some DSP instances may have their access to certain peripherals
+conditioned by a bus access controller such as the one from the
+AIPSTZ bridge.
 
-There is also the function sfp_fixup_rollball_cc, which is currently
-only used for modules with vendor string =E2=80=9COEM=E2=80=9D. However, =
-the function is
-not called sfp_fixup_oem_rollball_cc.
+Add the optional 'access-controllers' property, which may be used
+in such cases.
 
-Regards,
-Martin
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/dsp/fsl,dsp.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+index ab93ffd3d2e5..869df7fcece0 100644
+--- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
++++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+@@ -82,6 +82,9 @@ properties:
+     description:
+       Phandle to syscon block which provide access for processor enablement
+ 
++  access-controllers:
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+-- 
+2.34.1
+
 
