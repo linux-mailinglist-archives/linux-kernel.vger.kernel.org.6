@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-535105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87F4A46F02
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:08:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77783A46F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:15:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B948D7A7E31
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480561888764
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5F325BAC2;
-	Wed, 26 Feb 2025 23:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4C92702B4;
+	Wed, 26 Feb 2025 23:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5uE1p5r"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7ZtnRnE"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDA51C6FF1;
-	Wed, 26 Feb 2025 23:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F952702A1;
+	Wed, 26 Feb 2025 23:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740611302; cv=none; b=VknW8Pp0Ci1boYI/qSAqOciQpORY8ZWWYwwaLpskPiuAWzP/nEbFvGn5kLw+2xms7H1h6GZuBHBMPjm2o7ZaZiqhryX53Lljw1HkCNLxP2+an5qr4jP+Dp0zMAn/1JEVDYS4UWL5N9D+48bTo+qUOfn/U05MffOrXIl6rpj+i1k=
+	t=1740611694; cv=none; b=shWlPLSo3QFPoocHrYnCIkZYUp+Q6kFlVk7BBxnYGiJbjRw1+uMnvX2NcJMelXlxuHYpaosfPDw8A3+bl2cJ3R6xhtzoGikVNdvySHBUVDEfiC9RUE+QPpw2CE78RmJqnjP+HUPeYVCvbACX6mDefx6KQu7ARL0KebZf4BdwYUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740611302; c=relaxed/simple;
-	bh=QwvGNkau5Bh+dIR6tn3UJPayr4vQX3G/2XwtNvuU3cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pmymTMuj5nPYh7L0hAm/jVTOF+npqmmruMH/u4aMtpBlcQhd3JwtVhlrcxiP1RjYRlbHeGrZntKsv4QUEF1weUZTVll0Gr7S5ixnVYd+hcI987Z9Y/qjGCTX8/gf0c4ZT7GN+khSYKsettAVJvFcwJe+5m7Fuz5CEKldZlRfgCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5uE1p5r; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1740611694; c=relaxed/simple;
+	bh=IFHAOpu+n//DKOMfiFBYd087s6JUXW9mnAyO3Sp+gT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pkzrHHYK/dbF4ATbUWSQtNBh3FjwP0foa5kkJ4+UXZX7FLI08gZoEL5LCEzEyc5z/sk8X909f31TFconJtGqEAy4iYAZN5Ea4wKEAMAjCOc42NYIjJqI3xkW6bctQWvmGseqwtlI01SViY1XjG+V0q1ZdeB6Be/0Ql1lyMxk/0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7ZtnRnE; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f378498c9so306488f8f.1;
-        Wed, 26 Feb 2025 15:08:19 -0800 (PST)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so222722f8f.0;
+        Wed, 26 Feb 2025 15:14:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740611298; x=1741216098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kqHl6YqOGD3BSAVr59pspE1LiZ8g6APu3kUtEV0wPY=;
-        b=E5uE1p5rK8WhEsOkeJ14meGb1oBrTScoNFeuLh+7hOdhNJI2+QfXxAe7oSsmcQexn/
-         kBXFg2fQeqEr+8yB5Yo1tPVTc7T2cxTAiMEFnNGwk0wAXqi16IVJN7mJVA3zXWgUwnqv
-         uNPBKAU+TIqpWTDwA57wrd2bjyq4ayt2Fw1Xhn4rzjQmdqVo72mICrYe5lhKdCVB+oiP
-         k82gG3zHNKv0lluBzRiOFiEgQG0HzTdZjAuxNlDIkQX4nmv9SaFSQNV+NIsA1p2VFQFr
-         h16ka5a+ceWGgAi6WYr7Gq3q4KjPo3y6xPse+Lgnu6vMbZOXnW86+BuJ3w+DLGRU/218
-         xIZg==
+        d=gmail.com; s=20230601; t=1740611691; x=1741216491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+FxedeWyw8wFOj4l+6pOUQLg6gn3S2T5avhUj/nDAQ=;
+        b=i7ZtnRnEG28ELv0YU0JZVHK6gNcBpK6Tsk6GZis/dGhg0anU0520DdhYNpXyBPDWFc
+         o98ZF48upDEGdkgqRZiP8+bSFGaPq2jS74gccx0meBAZC7Wql6rh41MJpNBme8q2zMBl
+         GnMvKZyOT++VSk7EjZMTw+E67v9vr+VR4GDXmz8il8HZ/D3ppwUh299uKYD6KHwo5s6t
+         3KkwjkARGyVfjHhZgU3tIiOOAj+GMe/vcn0swlL7ToS81SPXm6C14a8XtWWovKqUjrFe
+         7D891Uiw1apAX7jyO8Po8Rtkn8E7qIeWFUghLel9pu+bq/TjPY7/YaCj0N9YLzto98EV
+         fmig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740611298; x=1741216098;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kqHl6YqOGD3BSAVr59pspE1LiZ8g6APu3kUtEV0wPY=;
-        b=XypfSHED2Rozo88j7ptoJqPGjZ3glQauWSCD4479z3xdOWKzzQ3gS8BX3ZMSY4dT+i
-         JLtLSRVXv36iUeA8zTekENgGIw7DUJHb7R3VLLHb1krhXfvXQESwzSxkm9SPg2zaM29X
-         k8Xu7/lQar7dzvmQo66esDkzyQh5QHLkyZ/fm/schA1j9JFbLrpp0ARgyvF6aBmfVA/u
-         Qon3bZbHTEZ6aLp/WMeJAXvjjUHftH6wevrG/pDDU8uJ3C9egz8Wg8dwOYTrrJV4XmHK
-         OAUtcLgbE8obrfgkJNUfwA+vPUAKEUMBdDJOPRB6KO8bnACa9gSbV+I8f5ok09+astj5
-         UpBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlT6Q5RK3KYh1lBl18n1LTcsQWQKeaJt/Swv8LPKRBHNgRpPv4gYKIc0wZr6C9twwY4C5LQMBhIDsrpJhchAI=@vger.kernel.org, AJvYcCWjq6C6PvSmYUK9kXPGHjRz0Fiutk7SRH/gYpT2trBYLxrllrD4WOjEIzOimGmwI5mYJ1gz9ng1Cwr3SrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaSwIJxRotEEkOVijvik6OjaHmlcqo5HCZKeWlRP9ksgKAVrWq
-	Tx+iVvB73VMJXRyNW7AFzHZaFJpNgIWoD/lEz9KPNE8woju0y7lK
-X-Gm-Gg: ASbGncuSooxUCA23cghanc+tbveuBf92032MQu0H6OMRGElvCguUEQI5ewCrz7uNHMm
-	t313M07kK7hMP2lrJu6Tx18kI4k2wtmRqy1fL7BDQP5MhVCT7ZelqAnVdZ1O4T49EoH4KemUuT0
-	tkjdV7ohZ6WXkxJKTg604gqJnsRMLNC8QeVXswk8iPeJLWoih+xD8ifXogu+H9VJjn9l2qEf3P4
-	vF8hzZCxFACkm0SOr4QXhDWjj/b4eOlebgDur1DbYhjC86fd+ncwddcGNqkxjmNqWqS9AswNZmi
-	tJcoBwZecq36S95poR8KJG2oNB7IuwnrPRaqM6ZSGdcrfBm6KgRl2hcvXIy0F6qB
-X-Google-Smtp-Source: AGHT+IFb5vDf6eK/bH7+GTIOY122a6dwufeCuABNTioN79EKFgWyAgc0vc4m9UlnZFbwXhjvhwjBkQ==
-X-Received: by 2002:a5d:47cd:0:b0:390:d7c5:590a with SMTP id ffacd0b85a97d-390d7c55ddbmr5289864f8f.10.1740611298093;
-        Wed, 26 Feb 2025 15:08:18 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e03asm208817f8f.95.2025.02.26.15.08.17
+        d=1e100.net; s=20230601; t=1740611691; x=1741216491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y+FxedeWyw8wFOj4l+6pOUQLg6gn3S2T5avhUj/nDAQ=;
+        b=MaSG016wXF02tEEzbuHz1i8U+WMQxuJrIq0ckuj5c7rYt4BfxRawQ64qx95/J+/pgl
+         03f3eYioU17SewouRxJXNjvJfPywfhLdlphpHbWiC7fb+RW28X75HfE3Cvk2wtbu+Uy9
+         8Tb5uqyjo0b6jsVe4I2KzAeHqkE4lDamR0Sbjta2b8r6w78EOtuOC0X5QmLUTZl97GdP
+         qRcfi6khZTvh9zj/+muaf6IijCj7duQl78eDShYHGvogQoa5bSsvJnDAEjVMZPUsureI
+         05uXqGp7Q9JMBCZ3UcqFa9sCUY3ukkWkqOkdX+aqAWtTKKEmB1/mPHYzpL9Ls5bqg208
+         A9bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIbynmQlYWxuPuE/d2UT86pHZQWBz3KYhOGNbJPeKhPnQesnrotuHHe7gAvb/vq+QBmlcErp1wA2S@vger.kernel.org, AJvYcCUsu+ai8S6efoZuwcWqIaqri3X8sdiWuh+447w18xKdWKaeIlT9d1grY4GysfhjS9NmEbGtkywftPgJNnIt@vger.kernel.org, AJvYcCX+QH4CIyQ9fSYF10cT5B4n9A08Vkjevd8IC8p2iTiAQUgjEb93UCAzcct186bU/P1pi6ZsJCh114DqdV/XdA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAN44n50CGPMLBNn6X0OP5nFQOGzsu17z077IKoxjJKAs/HV9e
+	nmHAJAaaQIrLsDXreGEQcjG9d+1f+qBeyfmGxgPZTFkKz0y2K8s=
+X-Gm-Gg: ASbGncvNA8uB5oHEDEjtGaHEO0qral115eYY0jUCeRxml7EY6myNruVtQ3kAbOwHGl3
+	zy4oXdJjGTxUP8osa0z2znvnjVf2i8HYwhsY+zgAmZR2bvqS0vLkE5y9u5PLXR9cj0NvXPHsvEp
+	dCFp94DCFVghNId5JWsugJzzf32YUhdWzHfEgpE+nRYBsFO/TnhvTGWu7wOvmUEq9Iv8nN/7fsF
+	GSIl42cHy0cByaH3jJt4Sjn9pa1M5ELGI2Spgx6qOwqxGpxEsZzy8mERWkpGjzSr4SwdHvvvbza
+	5hXktNeFdZHU7WPcEB99PWfBAoCRO0UBeE/8BtEbvAlZqyfw9ziUvFrdfhuS1TLuxy0jSqTeig=
+	=
+X-Google-Smtp-Source: AGHT+IGSvAwYr8mut+L8fdr1Q7PF5uhKL4icm6gChBzwMrc/AtYARcYYHB2A8SZXUt41g0l7ZB2w3A==
+X-Received: by 2002:a5d:452f:0:b0:38d:d274:4533 with SMTP id ffacd0b85a97d-38f7087d88cmr14235893f8f.55.1740611690859;
+        Wed, 26 Feb 2025 15:14:50 -0800 (PST)
+Received: from alex-XPS-13-9345.lan (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm238134f8f.5.2025.02.26.15.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 15:08:17 -0800 (PST)
-Date: Wed, 26 Feb 2025 23:08:16 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Ralf Jung <post@ralfj.de>
-Cc: Ventura Jack <venturajack85@gmail.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>,
- torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250226230816.2c7bbc16@pumpkin>
-In-Reply-To: <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<20250222141521.1fe24871@eugeo>
-	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
-	<lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
-	<780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
-	<CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
-	<f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
-	<CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
-	<7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 26 Feb 2025 15:14:50 -0800 (PST)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	laurentiu.tudor1@dell.com,
+	abel.vesa@linaro.org,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v1 0/4] X1E Dell XPS 9345 External DisplayPort, HBR3 fixes
+Date: Thu, 27 Feb 2025 00:12:08 +0100
+Message-ID: <20250226231436.16138-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 23:28:20 +0100
-Ralf Jung <post@ralfj.de> wrote:
+As initial LTTPR support for msm driver [1] has landed, enable external
+DisplayPort on Dell XPS 9345. It appears that supported frequencies
+need to be listed to allow HBR3 speeds.
 
-...
-> > Unions in C, C++ and Rust (not Rust "enum"/tagged union) are
-> > generally sharp. In Rust, it requires unsafe Rust to read from
-> > a union.  
-> 
-> Definitely sharp. At least in Rust we have a very clear specification though, 
-> since we do allow arbitrary type punning -- you "just" reinterpret whatever 
-> bytes are stored in the union, at whatever type you are reading things. There is 
-> also no "active variant" or anything like that, you can use any variant at any 
-> time, as long as the bytes are "valid" for the variant you are using. (So for 
-> instance if you are trying to read a value 0x03 at type `bool`, that is UB.)
+While at it, enable HBR3 speeds on other X1E laptops that have external
+DisplayPort enabled already.
 
-That is actually a big f***ing problem.
-The language has to define the exact behaviour when 'bool' doesn't contain
-0 or 1.
-Much the same as the function call interface defines whether it is the caller
-or called code is responsible for masking the high bits of a register that
-contains a 'char' type.
+These patches were extensively tested over the past few months on
+Ubuntu's X1E concept tree [2].
 
-Now the answer could be that 'and' is (or may be) a bit-wise operation.
-But that isn't UB, just an undefined/unexpected result.
+[1] https://lore.kernel.org/all/20250203-drm-dp-msm-add-lttpr-transparent-mode-set-v5-0-c865d0e56d6e@linaro.org/
+[2] https://git.launchpad.net/~ubuntu-concept/ubuntu/+source/linux/+git/oracular/refs/?h=qcom-x1e
 
-I've actually no idea if/when current gcc 'sanitises' bool values.
-A very old version used to generate really crap code (and I mean REALLY)
-because it repeatedly sanitised the values.
-But IMHO bool just shouldn't exist, it isn't a hardware type and is actually
-expensive to get right.
-If you use 'int' with zero meaning false there is pretty much no ambiguity.
+Aleksandrs Vinarskis (4):
+  arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable external DP support
+  arm64: dts: qcom: x1e001de-devkit: Enable HBR3 on external DPs
+  arm64: dts: qcom: x1e80100-hp-x14: Enable HBR3 on external DPs
+  arm64: dts: qcom: x1e80100-qcp: Enable HBR3 on external DPs
 
-	David
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts   |  3 +++
+ .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts | 18 ++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts |  2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts      |  3 +++
+ 4 files changed, 26 insertions(+)
+
+-- 
+2.45.2
 
 
