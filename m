@@ -1,201 +1,112 @@
-Return-Path: <linux-kernel+bounces-534658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71B3A46996
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CF2A46998
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C98718832FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F921716F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C552376E6;
-	Wed, 26 Feb 2025 18:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09552238140;
+	Wed, 26 Feb 2025 18:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="AFPfr6hc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnxcBT5Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC68C22540A;
-	Wed, 26 Feb 2025 18:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627072356B2;
+	Wed, 26 Feb 2025 18:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593859; cv=none; b=Ht5l9oH2qGLFeGf8t7sE6SWMV+bMrUimBAhBbSBSC/Pgj9IybeivjSqkltHdQwzuP9z6bB2T0ugM7IjLniad1HLlC3TakVJlbXQIknpY/l6Fx9ri1AqcUr2DVpo4Paj+0aUK1xQuAyZpHzV8cAb11V+MeJCg3oLHdz+nVZADvMc=
+	t=1740593921; cv=none; b=X5j2yHLIbn0J7NGK3KhpGx7nJ9RM/ONE6FplTip9u7K6HpjoFid8h8RJRfakRex3e8cG6twmU3pOweZ4WlmMmBUmQX/Th161t+S3OUhheHJfh31M+l8mwSzaSrq3ukfBbfba5eVxR4npd8W1ESywx1cstaIQK5oFZB7Zp/CSNPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593859; c=relaxed/simple;
-	bh=7SPYnAXBwd09mqrgJKm3M4GdXzEp3OFKfWGQm31sLMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L1s3wsLJw/M4I+B/T0e3QgPJnuW0Fgg4J05khIQ2VICbYUq7WDa1Y66d5o9ztpWARG9R0E0Zg44cGV4MbulPsHNww4c3dalJ+Kr5hE1nfZQSFkRdk36jSgjAxHh568133AS0w7Jr04WXa1qmMWun5FJ21OCFcL25KtNgI0Dkzsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=AFPfr6hc; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1740593845; x=1741198645; i=ps.report@gmx.net;
-	bh=ukU3KmpIwMHvG/ytdZW/bBTC6zT6SMO7B8X4f4buLc0=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AFPfr6hcBztfz+NmL0B7stmiWF39iG0UeDKGr/YkwrCYTH9m6BM/KXupSrVqjjEa
-	 JRdP+687kJBC3zA+Pt5V02kTa/fxY9EAf8g21ZhABR/dh44XhRPKDsRAlyibcHVy7
-	 xbHWBecoxxPN5JmCFgIuLfE2CuEgBvyNFKReUHDCWTaY4/k6+3B9qe8Yr6DWzUEwl
-	 9uHXHs4eIBCOUBYFpIrH344Pyv/M7YaUQK9r8y1b/N57IpDeot0DziWow2CPm0twJ
-	 o1BmoXLfm8URn6xaCNM+s+Xe92AI8hOTrjOw1MNd19xA37UMPK3L68D6A0/Le+IAJ
-	 BZEoxama76MmT2dcVQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost ([82.135.81.93]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEm6F-1tX8Xe0d6h-00DWHH; Wed, 26
- Feb 2025 19:17:25 +0100
-Date: Wed, 26 Feb 2025 19:17:23 +0100
-From: Peter Seiderer <ps.report@gmx.net>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Simon Horman
- <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pktgen: avoid unused-const-variable warning
-Message-ID: <20250226191723.7891b393@gmx.net>
-In-Reply-To: <20250225085722.469868-1-arnd@kernel.org>
-References: <20250225085722.469868-1-arnd@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1740593921; c=relaxed/simple;
+	bh=I6uZ3dubqopcXOEdZGEs1cSZizLSjhh+Xzs4+YI0Z9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VRpBVEbnnCwWIrECD9FBUCw+TvjTeRacD/Eein8jpFTVU/bcEN6TC4f6of+jMDcYrufmOtAh7wso1anDFS8ZYoNYqTUm5K8XeT6cWLOlQvgW1ouQQMq8qer8LLOjeubB5ZA+GDNJj5gz5mXd7N7ypjMrwMznemUZ5FsXS2wtDys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnxcBT5Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D858BC4CEEC;
+	Wed, 26 Feb 2025 18:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740593920;
+	bh=I6uZ3dubqopcXOEdZGEs1cSZizLSjhh+Xzs4+YI0Z9w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VnxcBT5YS33uu66ssViE3OsbbOU+0Gwfa83ZtM9wbsnoE25Ejv19v4XNyvl623rcR
+	 8mC5MHmEGFTYaSh0DbrH0A4EQGLndlkKvMaPNjxfpXTExkmHsanJaAFy7kciZhpWH0
+	 3DjQJrZhD+A5aZJLce7NxcbgtTKrGL8Nl0yexYVg5wH61Smd3d7Bhwspp7ILBWj6rf
+	 ZMM44qEWCnZ7VaoYQnAOUmUBD2hEboPd6MUP9wHVmbqRwlBqFXOXkKonMRfGQAJFgF
+	 spdZ4qXxELo8CAGh1p8a6NjR/elqkZcXwbvd0eWfhky6e8MhUxCy4vyWJIxnKwxl+u
+	 /5o3wdft5xbDA==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2a88c7fabdeso112359fac.1;
+        Wed, 26 Feb 2025 10:18:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3gw2mX7+Vxbd4uBjAIUW3b+afuzzRGWE3I+/vqAEHT+wOIDP8+GolL3WwX8xiy1vzw/8MZQk5Y/ggqM8=@vger.kernel.org, AJvYcCXUDNR93+7zk20c19AgfAqKzmoWmQW2JBLdZ4tFPW9OcaP+ZEcy6QwzdydEHiLeEbt+GcDS+ZnDhTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/wvHHLNO45rvuoYWlE9xaRF3bBsKd7OBfYGgfZBXbQh8h5DjP
+	irgkLeZ0K7VR4sMpbEE6UsMMuPfkhc3G6QLpL2BL+FJbSFaHGTvZ3VorpMCskk3PTf6BFVysab/
+	X5TUpGi1DOnMFpADpTde6iIyEoo0=
+X-Google-Smtp-Source: AGHT+IE2kmXQsWSG7myXgUfM51bmNQDYKRwO4hv8qqCQ4cQ+cPJk5SEUokPYyteIO5x0nzk/onRfjaO32NpiFjty/X4=
+X-Received: by 2002:a05:6870:a10d:b0:2b7:ecaf:59d4 with SMTP id
+ 586e51a60fabf-2bd5185ac3dmr15454643fac.38.1740593920019; Wed, 26 Feb 2025
+ 10:18:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CF154B5C3C8E7E64+20250224074357.673094-1-wangyuli@uniontech.com>
+ <CAJZ5v0iigAB97mGBe6Uvr0v0spjqDKan-0O9XGObt5b4ZBvM7A@mail.gmail.com> <tencent_18C611757FED8D54331785FA@qq.com>
+In-Reply-To: <tencent_18C611757FED8D54331785FA@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Feb 2025 19:18:28 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jqEPMQ1rLpeH0ZV8DcsJMOXdyoYPwwRkr=2vUBCADjVQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JoGe9ZXilDP7_kh_pdoEO1ILfk23DI97JFXc7XPNsuzaQey6zCxvHz8cvo
+Message-ID: <CAJZ5v0jqEPMQ1rLpeH0ZV8DcsJMOXdyoYPwwRkr=2vUBCADjVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86 / hibernate: Eliminate the redundant
+ smp_ops.play_dead assignment
+To: Wentao Guan <guanwentao@uniontech.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?B?546L5pix5Yqb?= <wangyuli@uniontech.com>, 
+	pavel <pavel@kernel.org>, tglx <tglx@linutronix.de>, mingo <mingo@redhat.com>, 
+	bp <bp@alien8.de>, "dave.hansen" <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>, 
+	hpa <hpa@zytor.com>, linux-pm <linux-pm@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?5Y2g5L+K?= <zhanjun@uniontech.com>, 
+	=?UTF-8?B?6IGC6K+a?= <niecheng1@uniontech.com>, 
+	=?UTF-8?B?6ZmI6bqf6L2p?= <chenlinxuan@uniontech.com>, 
+	Huacai Chen <chenhuacai@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ilihWn6XSUXka8w4Opgx5nIzQpScpD4HwXJtjdcb9/251tDTrXj
- JpzqKlACqH6sGBWWsvOh1jNdQKqj/IOnr7Ar/pHaQQY4HPU0hFwd9hKNiuLzEWFzFe5i/9f
- g/0C4+V+vC5bBL9IIN0arPoKZgwbKoi9tgaSieXFYCYR+DM39XzePbvX1UGb8FGZ0QF2YbB
- JYEAWTMshD0rApFd7C9IA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gQi6RG8KjxU=;aTnVN3p7RJX35+JhVMF/chgdJvW
- reT/KTUm6O5rRZXERB9xrD/fX9oCcIYkkSbpljIkSlaI/gnbnDNMgiLDwyE76YO7IO4HI+ApW
- Sf0bMe/s+KlJFIGcvWFR2OFP+T5i12tUykwU2zM/mK8y6q50NrWPw5HAq1lA150telttH752y
- 0YymL3foKuQTmGp6nSSs+7OVl/EPscZIUQ11EIPs7CLKt0DeWr6LKGIQ9oB20QVCHtibL6chp
- b9VnmAgOBmGpDF1Vj4ZOPwKmUMFs5RZLKTFUqKQblgOw7UqSBxneWKX7qrhufqlHCkNvioKxu
- sDXk/D6MtlfvTLgRjtJ4MbrYy6FGmMFRGqtlabFSw8DQSd8tV0DngJZomNcgFr8SwlnLkDvT/
- v6QfdpLRvQPd1zgTBulWKsxR8JLiTC1Ztz0CspfAzbLEX5P8XVXSx8B3AiO8vZ9KmGcQz0sYx
- 5cR/aWhkgOfQvktW4vlROQ0HFdqOgQ5+RFh/VMbaD3qjNWGtvyvGY05n0ywr2HCfwY7+1jLfO
- ZTSUSeIXEy/KR8MeJ5+Mtv5A0tjCvxvYIyxU9b1HOCWc0/b2C1eiwsFewOrBpMA3iRX7ATJb9
- hFfR6qJNMnRKdSC2MoGCrsWJDWD1kEweV7LmMAlwoR/sHt+H5oxUVcBS+NtYHDGjzFVqE8u3h
- b/42Rufc1D9yphlczebnksZ0qvYVKeRkmn6uUaUqU2T4gmA2ckSJAbSpFgAm4wOeM6MYF4xrG
- +UZXxsfakGtb3uRQG72wUrcQ3Ob/kjXP+FdAyNaoXtYEPT4LNn2G6aBMjqfotzG5hiYSzIUVM
- ouSKQCpVsdxrz34btWVWyq1RneySDZeSXMwvjm6fWqvVJkkndFSMAds01XzFmTShggbq0uVVA
- NOxglmJfzAaLDW1N7uvdaX7cWpf1CZ5bxPtmTKNg+7qB25dzo3dV156o0i6e5xRjc0trzAUmv
- Sw8EBL2EPyi5fyCd5XxW9Q9k0atJ0hXBgFz8JJC+zO2TfyZa151aJQHT+HkIw/GqjDbwJOU27
- 1ZuSBRV8j9lV9+blkzBo66ddESVDVJce5kl2wjyzUq9BHKm0GvXaQYvX26akJx8jPyZz6sIRR
- WEKDy4Yzld0IZew+/NhEbWv24Nmfj8MsJaxL7Q9qn7YZ+5TgEmoxWCg9EzL+EzsjLKaaLO0wI
- DmB2nACYU49XVpmybkxpp71hfRDCVQJxpOftQY+VHDVFTrtQo1AoO0ra+bdwsHyWMM4agrSQJ
- wQSBuxKGEXbtP2vxKWJtTXP9FJXBJ+A1C8RevLvtLwXoo6AnuertAQlzCvV45rEAsGOKaVz7s
- 9R4IicY7Ac6KEk5PmNYSE9f3HxF8pnPTIWcuLuVUKUY7SHYNjDfp1y1QbfZWxgoPrJxVkiCUb
- pWoByLIEbUt4kM/ltzdZETvh4j/OpiI0dwOeu4OEPA9kPE/DDzlYYHcyWy
 
-Hello Arnd,
-
-On Tue, 25 Feb 2025 09:57:14 +0100, Arnd Bergmann <arnd@kernel.org> wrote:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Feb 26, 2025 at 7:08=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
+om> wrote:
 >
-> When extra warnings are enable, there are configurations that build
-> pktgen without CONFIG_XFRM, which leaves a static const variable unused:
+> Hello,
 >
-> net/core/pktgen.c:213:1: error: unused variable 'F_IPSEC' [-Werror,-Wunu=
-sed-const-variable]
->   213 | PKT_FLAGS
->       | ^~~~~~~~~
-> net/core/pktgen.c:197:2: note: expanded from macro 'PKT_FLAGS'
->   197 |         pf(IPSEC)               /* ipsec on for flows */        =
-        \
->       |         ^~~~~~~~~
+> Thanks for your reply.
 >
-> This could be marked as __maybe_unused, or by making the one use visible
-> to the compiler by slightly rearranging the #ifdef blocks. The second
-> variant looks slightly nicer here, so use that.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  net/core/pktgen.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-> index 55064713223e..402e01a2ce19 100644
-> --- a/net/core/pktgen.c
-> +++ b/net/core/pktgen.c
-> @@ -158,9 +158,7 @@
->  #include <net/udp.h>
->  #include <net/ip6_checksum.h>
->  #include <net/addrconf.h>
-> -#ifdef CONFIG_XFRM
->  #include <net/xfrm.h>
-> -#endif
+> In my opinion, the only logic different before the patch is delete smp_op=
+s.play_dead
+> save and restore, as the comment "the resumed kernel will decide itself" =
+and same
+> logic as which in arch/arm64/kernel/hibernate.c, the ok path will work as=
+ expect.
 
-This ifdef/endif can be kept (as the xfrm stuff is still not used)...
+Yes, the OK path will work as expected so long as smp_ops.play_dead is
+switched over to resume_play_dead before calling
+freeze_secondary_cpus().
 
->  #include <net/netns/generic.h>
->  #include <asm/byteorder.h>
->  #include <linux/rcupdate.h>
-> @@ -2363,13 +2361,13 @@ static inline int f_pick(struct pktgen_dev *pkt_=
-dev)
->  }
->
->
-> -#ifdef CONFIG_XFRM
->  /* If there was already an IPSEC SA, we keep it as is, else
->   * we go look for it ...
->  */
->  #define DUMMY_MARK 0
+> When discussing the error path and ret value that we not restore play_dea=
+d,
+> I will try to analyze the difference between native_play_dead and resume_=
+play_dead,
+> and sev_es_play_dead [the all possiable three value], and I see some mwai=
+t and hlt
+> way difference.[maybe it happens as disable the cpu failed and goes to En=
+able_cpus
+> path in func:resume_target_kernel in hibernate.c? ] Is that it desgin to =
+do and we can
+> move it to a common place in hibernate.c and left some comments ?
 
-A now unused define...
-
->  static void get_ipsec_sa(struct pktgen_dev *pkt_dev, int flow)
->  {
-> +#ifdef CONFIG_XFRM
->  	struct xfrm_state *x =3D pkt_dev->flows[flow].x;
->  	struct pktgen_net *pn =3D net_generic(dev_net(pkt_dev->odev), pg_net_i=
-d);
-
-Maybe better this way here?
-
-	const u32 dummy_mark =3D 0;
-
->  	if (!x) {
-> @@ -2395,11 +2393,10 @@ static void get_ipsec_sa(struct pktgen_dev *pkt_=
-dev, int flow)
->  		}
->
->  	}
-> -}
->  #endif
-> +}
->  static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
->  {
-> -
->  	if (pkt_dev->flags & F_QUEUE_MAP_CPU)
->  		pkt_dev->cur_queue_map =3D smp_processor_id();
->
-> @@ -2574,10 +2571,8 @@ static void mod_cur_headers(struct pktgen_dev *pk=
-t_dev)
->  				pkt_dev->flows[flow].flags |=3D F_INIT;
->  				pkt_dev->flows[flow].cur_daddr =3D
->  				    pkt_dev->cur_daddr;
-> -#ifdef CONFIG_XFRM
->  				if (pkt_dev->flags & F_IPSEC)
->  					get_ipsec_sa(pkt_dev, flow);
-> -#endif
->  				pkt_dev->nflows++;
->  			}
->  		}
-
-Otherwise works as expected, you can add my (with or without the suggested
-changes)
-
-Reviewed-by: Peter Seiderer <ps.report@gmx.net>
-
-Regards,
-Peter
-
+Why not leave it as is?
 
