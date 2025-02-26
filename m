@@ -1,147 +1,143 @@
-Return-Path: <linux-kernel+bounces-535090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B584DA46EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:45:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168DAA46EBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F7B16DAA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACFC16DD50
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E31825DD1E;
-	Wed, 26 Feb 2025 22:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B23125E823;
+	Wed, 26 Feb 2025 22:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRPd5n+a"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jwrbf/pK"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274E025DCF0;
-	Wed, 26 Feb 2025 22:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331A25E800;
+	Wed, 26 Feb 2025 22:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609921; cv=none; b=BLmyaQJjb7x45GQFQRl21Y6/nzznNGCNufc4/zdOcmcOuSLjOIoQZud8ytFeAKOKD/PUxBONYWoXaHc2IFp+76IFRc4PSXa5qVsjSSD7Lz+xDwGISM3SC9ayeq0qwYpafUqKoTcJPziFluz750zenAud4pC01a8sf5CqEIOrjTY=
+	t=1740610036; cv=none; b=ItMYul9mU70kNbTlJEGqESaVVlBLDalljK9/7DO25acoAeJmxrWJq6V4JV6wJ7Zk6ht/DAZFH0t30k0vkrXEfI7t+R4zR21IkKH9a3H+jn/dyRnknJIay62yN4M5osIyZcxeVNqnN7LwRVYsDjkdvEmiL7Td5ars8zMphnoBaKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609921; c=relaxed/simple;
-	bh=4UVInMS4tv9biv/bwMI9v0/JxHTrZ/Bs/uQ+9nGhqOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ju/scOVaiz2eCFZMYNtpYSIUugo3poYeflrTT1foFS5by/6nMaDGStQiDr6VVyoGzaJpveqkd8frE+SGbtbSCoYlcSGKgGFbfQZSp+ektAhHqueEyBjOaq8WqCudLtNqi9a0RuH0XP8/TSsPUCcLHk8tG1yQG5l/UUTN7AlGgQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRPd5n+a; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1740610036; c=relaxed/simple;
+	bh=NiB/0Hv7B9rJJ1mcVx0hEwGrXQNl2EhmmWqB8YzD7/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EDHv4G5IFnPtF4rKYUe23Ix9gMi9XZqnNrGeGeHy8MztYwGLiLDjTSXD8/8iLp04WCQp9zHjZfZayWFHXpGZC5K5Vnnc6iO7XHWhk+qvARQbgv+c1QS4rj4OQsbNAAdDo9TvoBIILRM88Ldz/8b42Wz4Az7zPbM6K9PUuteMXNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jwrbf/pK; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f24fc466aso151759f8f.2;
-        Wed, 26 Feb 2025 14:45:19 -0800 (PST)
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d3db3b68a7so2953795ab.0;
+        Wed, 26 Feb 2025 14:47:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740609918; x=1741214718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740610034; x=1741214834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fungY5bDN0475Mx+5aT/SrTRB4XbDglBaa6SO+Fa5Kk=;
-        b=XRPd5n+awi0Cg63zbSzIO++SV49cmn2d2ZWNDQ6NEGNPw2at9cgg6wNZAy5MtF4Dan
-         Sl3u84qs8zmrKEJiQ3JjWUHUGEVWHQigu/byqqtvrt46/N991ApbgUU03XZzpAhDRK2w
-         FShidf6IyExaPRdA15d/thHQNIW4i8lIfdVhKU7iUB3AlJQoovo+tWr0IoU61bPz755q
-         oRf/4D5OF45ct51s6uastiWM5V6UAYTQw3w9nsJ6DLAEQzONOmJOnammurDoqSYYZVkn
-         744aVo0u9EOWWLpduejCWlglWgdbd7r1Cq7FCG/Sa/bQEUtbzi+xHZjRqP7e2wKudQjg
-         IP3A==
+        bh=NiB/0Hv7B9rJJ1mcVx0hEwGrXQNl2EhmmWqB8YzD7/s=;
+        b=Jwrbf/pK1iy04D/uVkYIb8+4T3E6rGCqfKjvXPeN/6BvwLDBDqPspodbDNTEBicbv2
+         xZ597TNq+HKf2aO+Z8gVwFfLIKgPcAB1Z2Q3xmOCkTJ72qW7dLW5ZqWSdlPID4e8KB6x
+         M8T+uEEOh1foKWIoIkHx8IpJIw2iO7Tr/rXDWq4u+QJ31JuC3v/7HF8KJmbxtlwJbnL4
+         0xagzy462mnayguvawbnTUwg+V2YfJxiOZR4nlUD9QevdCZyi426X/sYJufIwOaLNjPN
+         rhFN6NjxXomp5ggySMItWeR0RbsWUP6uvhLvZeSw4k0b6geBg1cbvK4NWUA0STJZp7WE
+         snrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740609918; x=1741214718;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740610034; x=1741214834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fungY5bDN0475Mx+5aT/SrTRB4XbDglBaa6SO+Fa5Kk=;
-        b=afH5NZRA+A2rhlcbCvQ9z0Q4SZuok4ReDVVpH85B6XuHuxwpkimu1uZWeIOo/HvMtc
-         fpUpuqcbrVqP5PJVbvacXxjKlO4MXkv/qTVaboFUNQbtUGEn+POfgkVEqyu9uBfMa7QM
-         B48SM6jixTskTFE9/F5E9hTXuB7WOtLSgid5R6awJWNug6QjCsA3qWy1zqesJFtxYVb7
-         Gqv5F/K7cDqzoTCsMBJv0majEB3JHp08bY7vMsztWg8Ila+Mw7lHKGv79svQopmmdFvX
-         X5ighIdgTk0mdSr8x1ZPLLdOvs+l8YnnZ/3NT/4QBocbhAHmbzEtnaTCKsk+oTaF2XFp
-         1Reg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7gWygMuEYv8XM0TrmjPgyUSn6AOfcI9fzUzsUxjq1TyDfnVVvzZRcXJECGD9Tvhs93jr3JvAixihrgh0=@vger.kernel.org, AJvYcCVomgXBcqst+dJTnMwt2WWwB1Pv3mU9SgUoZ3P8VS8qCb5Cfrxe3aDHELz6KOdlDHYYtXXJd9aqFLTN/vpiE8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwsi9McMxeKm7TO3Xx5/ShKh8cPZ5bF+bYmM3HJcH1mClSJ9dc
-	Wu+z79UUQd3x51IhAfcpxOeG+WFz04ItrSVXhXgnGXRIZMHvlEFn
-X-Gm-Gg: ASbGncu6wlOsbTiojxT/bMOwTnNPbSfW1Pi3S8AEDNcu7ddhqQZEtRourhU4U7RFsaU
-	lyo50vm8tLdkKMssUSYstSHZKqT2IhMNBMi5Va/QiO55Oq8ZQkhNMqMcW5TVmKC9KJzQq15h1oh
-	Jk8nksrUpysqGtHsK1+pDhopecZPGxnxrAL7Hw4yBBB50ZP+G/OyoXUX9Soq6UcK4b+0eBBYQa/
-	KqmhN9IvQYPGs4vusPw9eLK+i52Upp+YZaqbvS1cQwqtKrMAjLdp186tiOaRGMy2mnw/Uc05g0s
-	Fi5WgdhveH824gq4yFuxBEU3TMh0qE9unL4D02xyXXtFeFEAaBKkGDxO2pMHVS0A
-X-Google-Smtp-Source: AGHT+IHfa0Da3Dsc6dUNmlhxWx5A7ERkfnnAoMxP8iyrOb7NjpkpXiGNxsSey1NtIbSrIu00F1cV6g==
-X-Received: by 2002:a5d:5450:0:b0:38d:dd8c:51db with SMTP id ffacd0b85a97d-38f70859603mr16661370f8f.53.1740609918235;
-        Wed, 26 Feb 2025 14:45:18 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27abd6sm3160445e9.26.2025.02.26.14.45.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 14:45:17 -0800 (PST)
-Date: Wed, 26 Feb 2025 22:45:16 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>, Ventura
- Jack <venturajack85@gmail.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, ej@inai.de,
- gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250226224516.7d4d28ea@pumpkin>
-In-Reply-To: <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<20250222141521.1fe24871@eugeo>
-	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
-	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=NiB/0Hv7B9rJJ1mcVx0hEwGrXQNl2EhmmWqB8YzD7/s=;
+        b=vCv/3diSbxg7kje2lkiTV62bM+sTl6Weoxvr1BqCjIwegE2a5gQPMYMqGPHGlrQwAA
+         vNjwYd2hnurpo5BgRYaOcBgnBqNSAL4c+iRalKQvz9DnShCuoTeyDjI0VJ0oXveFIiIc
+         KTfnY8XmxLWekkTpNlZtNm34uz7Q8IhiubcIG9rocQQWMh3x6qP8q0+0BB6lKHOhIRK4
+         ZZdC5sJIcCzSRRPQPXEk+oo1QkFaZCosYqprQYviJ95mRufTHGdH646t+Wk8d1615ThP
+         qUmd2GvyXtD5YYVCedVSH6Yj7hQ5xq9zd/caPvogS6Q3VH9j7cDvTh2mOrOtyVZrX89P
+         eQxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL80ZXWz7JFcO5tyx4xsPerCSmLOoZ5DI0/ZVkvQMjtYdiy91hSqk+U2uPkB/WvKRRMSwcIxMABWq8RIFA+8qG6gDL@vger.kernel.org, AJvYcCUvWNZUAuvs9Xfw622Zulkb3HytC4tLtwS8XF53USIHlAucSWI9ib3PBZIVtvdzuvmkVqBTLgFfaNCaFsA=@vger.kernel.org, AJvYcCUwBkU4fnEkAduD6kxVBD+/g+w/M/AeuAGJJ38dW6b9pxAEL7U8r6Tx+X7b3hkZKU2/6AOdZCtN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoo3MmD0J30uAZH2+lTEy8Cq+MmrmfOeEdEwy8cPnv3/CNKcgB
+	PxURwukOg87KseoPB1E0cpir2lEUkfEsXPM5v5QKKWqZQ9EXFKyBnr0TXyWayopXFUL8CGR4Klq
+	7Dy1VBVCfG9xAlrKVnLzE/Kj/6iE=
+X-Gm-Gg: ASbGncsATtoeWCkijLXIyQIEZuLK0AzmS6Iq6LfhJH50QrnlPSKnoC/ROardG9P8ld/
+	p2yiUFq79FMQ65l1kUJ8PSbt3sZOKYibpS2LUYRSayfZRtje7dqgReRnSEgNn8bzXjW2QEJ/bjx
+	PmN5USUQ==
+X-Google-Smtp-Source: AGHT+IEDkyaBCvKG+jeUfydmJPq42wxXEiOEt/9TtX3jBybuaop9pjY/6wyBbjbU66wKxWXE4vHNAz1ftRtsBuFlmHw=
+X-Received: by 2002:a05:6e02:1a64:b0:3d1:9cee:3d1d with SMTP id
+ e9e14a558f8ab-3d3d1fa94camr61591535ab.19.1740610034120; Wed, 26 Feb 2025
+ 14:47:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
+ <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
+ <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org> <20250226-cunning-innocent-degu-d6c2fe@leitao>
+ <7e148fd2-b4b7-49a1-958f-4b0838571245@kernel.org>
+In-Reply-To: <7e148fd2-b4b7-49a1-958f-4b0838571245@kernel.org>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Thu, 27 Feb 2025 06:46:37 +0800
+X-Gm-Features: AQ5f1Jq74MBOJohSv6TMoUiiDhSuH1iCbMaNWpxMH7brzPoWODwXEvzccr-WXTk
+Message-ID: <CAL+tcoD=zr15PL5dMFzQm2huMsRrAsfxP1jqW57Atdk_gJjuDA@mail.gmail.com>
+Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
+To: David Ahern <dsahern@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>, Eric Dumazet <edumazet@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, kernel-team@meta.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 Feb 2025 09:59:41 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi David,
 
-> On Wed, 26 Feb 2025 at 05:54, Ralf Jung <post@ralfj.de> wrote:
+On Thu, Feb 27, 2025 at 1:14=E2=80=AFAM David Ahern <dsahern@kernel.org> wr=
+ote:
+>
+> On 2/26/25 9:10 AM, Breno Leitao wrote:
+> >> Also, if a tracepoint is added, inside of tcp_sendmsg_locked would cov=
+er
+> >> more use cases (see kernel references to it).
 > >
-> >      The only approach we know that we can actually
-> > pull through systematically (in the sense of "at least in principle, we can
-> > formally prove this correct") is to define the "visible behavior" of the source
-> > program, the "visible behavior" of the generated assembly, and promise that they
-> > are the same.  
-> 
-> That's literally what I ask for with that "naive" code generation, you
-> just stated it much better.
-> 
-> I think some of the C standards problems came from the fact that at
-> some point the standards people decided that the only way to specify
-> the language was from a high-level language _syntax_ standpoint.
-> 
-> Which is odd, because a lot of the original C semantics came from
-> basically a "this is how the result works". It's where a lot of the
-> historical C architecture-defined (and undefined) details come from:
-> things like how integer division rounding happens, how shifts bigger
-> than the word size are undefined, etc.
+> > Agree, this seems to provide more useful information
+> >
+> >> We have a patch for a couple years now with a tracepoint inside the
+> >
+> > Sorry, where do you have this patch? is it downstream?
+>
+> company tree. Attached. Where to put tracepoints and what arguments to
+> supply so that it is beneficial to multiple users is always a touchy
 
-I'm pretty sure some things were 'undefined' to allow more unusual
-cpu to be conformant.
-So ones with saturating integer arithmetic, no arithmetic right shift,
-only word addressing (etc) could still claim to be C.
-There is also the NULL pointer not being the 'all zeros' pattern.
-I don't think any C compiler has ever done that, but clang has started
-complaining that maths with NULL is undefined because that is allowed.
-Is it going to complain about memset() of structures containing pointers?
+Right. I am always eager to establish a standard evaluation/method
+which developers have common sense in. It's really hard because I gave
+it a try before. Maintainers seem not to like to see too many
+tracepoints appearing in the stack.
 
-The other problem is that it says 'Undefined Behaviour' not 'undefined
-result' or 'may trap'. UB includes 'erasing all the data on your disk'.
+> subject :-), so I have not tried to push the patch out. sock arg should
+> be added to it for example.
+>
+> The key is to see how tcp_sendmsg_locked breaks up the buffers, and then
+> another one in tcp_write_xmit to see when the actual push out happens.
 
-	David
+Agreed on this point because a fine-grained BPF program can take
+advantage of it. But it seems another small topic that is probably
+different from what the original motivation from Breno is in this
+patch: I guess, making the tcp_sendmsg_locked non-inlined can allow
+the BPF program to calculate the delta between when tcp_sendmsg_locked
+starts and when tcp_sendmsg_locked ends? I don't know. Probably as
+Eric said, using noinline or something like this is simpler?
 
+> At the time I was looking at latency in the stack - from sendmsg call to
+> driver pushing descriptors to hardware.
 
+So do I.
 
+Thanks,
+Jason
 
