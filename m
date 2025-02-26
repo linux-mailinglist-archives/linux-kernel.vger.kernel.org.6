@@ -1,248 +1,352 @@
-Return-Path: <linux-kernel+bounces-533360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F3FA45904
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:54:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0836A45901
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164651653F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070061895905
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E165D226CFD;
-	Wed, 26 Feb 2025 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEAB24DFFA;
+	Wed, 26 Feb 2025 08:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bo2a96YB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b="ScDO44vn"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D4225416
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC4E224223
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559964; cv=none; b=F2WLrSCnEA76FVpW1HblmpRdDf1APPa+77bLllIUIt0mYg0V39ET+FTI6t50+oNOj1MWfcHDpu6xfsOOIs2eUq5kTG5cIvKXP7zYDPsALjkRRhCLrcnASFz/jBT9BTl+lnl6gx+/372QlNwS/JlNnmsWUZTyCL9WWuKENp1yBw4=
+	t=1740559967; cv=none; b=dLZOKZ1BJ5ePmyVx7Qu7snb436jrjbIUop1+mrmKIH/CD1F2aUhBTqweFsqbgHOk7Opz2cAysefxp/0paTGU4hu8hzQrcrdzaUwIiK5Zp3oI6AiUqFlsCitOKj3ZqjhwyFVOhc3Ye2me54Q/YYJGSreu8tes/yPZ0ShiDt6dl8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559964; c=relaxed/simple;
-	bh=RASzz04ZIexabz1WnXUW+GlS/PrfwuS50BtY+K2ie8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PCP3cFp9FOf8pmcL2c7Erd33vYqvvXVEx/nF5gGEYwh/v2cxXnpN8Bus/UBx0iG0A8zileUimmWdbnVde0OlYFlIHubO0xEiJlTpaT/LzyQCRTz922ZceX7NXaGxBydfa7VyQi7BZt/3sWe1DQBeLmNHVNbiinLmobHfAOMsAcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bo2a96YB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWpOr012246
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n04MMEZm+776Edy2BZXCJwY6EGHO/xjYajIKZPiVcsw=; b=bo2a96YBaB1CSqU5
-	Ah6K+TAVWLnmbUToE9+9QZTHYyEg7zPN/LagAwY6JWdCzSElLd2a8MG9XR2Eg7Yo
-	anuFxiWF+lMph4UuETuf6a3Mb4Ai++1JxykjKUXXgYAMXuydcmFbk/xhhbiq+JS7
-	DSIBdJHPZH7hhveqfyAqqlpAt9IxXxjqgu/WzGCniXOmlhOXpXPPV33htBu8E8cZ
-	ap6GRihwEDW2Wb4quMh4/ljhpfTdWr1ne4JxLlWwOoSRwYGfn88TX7gqHS8ohWTR
-	lC2Pg/nICboKgU3XUMGaq1UilO0WNxiWXmcpyJSl4W58d5E+nlhAx43kg0tHsSwv
-	DDrajQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prk1axh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:52:41 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22178547841so191827455ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:52:41 -0800 (PST)
+	s=arc-20240116; t=1740559967; c=relaxed/simple;
+	bh=WhBjwiDPvzA2J3MRTXehQXn6xz5waK1mG59taYN0bmo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=F9kMvrJYx5ifSiHn73vQcg3kZHZARqWMNkra6Ej4h2fOrOb2SlPz2jJqfBgkulldVezewJ6aIrgFOgniXWotRrfgH93pbkRuozBcJMPGltCXMLF0D1ky+oPg1CFPbViFsDiKVuax9lCaqbUb47WCYLMrMwXETSeFU03VGOSO5y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev; spf=pass smtp.mailfrom=orbstack.dev; dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b=ScDO44vn; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orbstack.dev
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-220c665ef4cso114521255ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=orbstack.dev; s=google; t=1740559964; x=1741164764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/evB7uf2d+D96aiq40k7urUc7qUnnEsGdStCHDhXYg=;
+        b=ScDO44vnQea39rNw2M0elW+VUJ+YRRHlPSiobioucIm20FsSYXtc9Pz4OA1HHQFH54
+         ePBTy4rTy1B+FbLq3J0JZJ9gg/UcGuM/CfpW1GFgZ13S5nTjvN6iX9oh2hBs2PQu2aAN
+         yRruCsoe7M62+D+2aS1pd9HIC3qS6VqTYRtoQFH7yODoX+oLPUu/q3IHv9MLQU2yI/SQ
+         3hUFDSviOOvrnnzPABsuiw5oiNNyjDfII3Qpb9g7+SmvIxcqpMmDktxnu2j9r1Q7EfXS
+         P7mw5dF262O9jFqj2dGLyAv0/XmHaG5nvwqfAqrl3nr7Qx3bOe85qdBRwWaiHQBuQG4M
+         YeuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740559955; x=1741164755;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n04MMEZm+776Edy2BZXCJwY6EGHO/xjYajIKZPiVcsw=;
-        b=HrpcMKK1XWWF0S1Ga6nTHqfBfSa+e6UtiaBNOZQgPc7ZJjOLDkGPhHu5Tuz2uAxHQE
-         TJ/IOPRGlBdOLIHP0NPJSBdWbDu36rYAkcItxzvkeXt0/OKz2gzhYxEXWmEOD3WthACd
-         mnIRSSmU+WWKqWRZAZvrSiQhh3ZQMPrIFYYp8vjuAT6odN7u2WgS5tMLk0k/VAKitSyO
-         dyJhIyFhFDfpUfD+wFdFSHR3XjI643iUSCUhhl5vnHAURr6qYFlMKVzBKmvctBPC2m5L
-         ugV0traqBh4XhQxmaUDWAH+e9weKBlnUZr7OeeQ8ZQn5ua8K83zXmWK1D9goPeHZ/xwp
-         gDfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeSrX7YHxqNnL/eF5ScMCH9wJYmV/2YKAdQSEFnLiZIyDWpIws0HyRqVyshcDOahBIkkFWPBrC87+KK1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygzfHZ1Ve62+Gn0kRS/vz9ielEfeMkCpvsOCW3TCU505FPe6hD
-	xYH7UnqebDA2Exe3z3ghLgDjBGutVZ9xYbjgBAwfmIoBBKYca1A1TFPCc9ajbgNNQhBW9bquKF9
-	Gxg1HGo+VRtFHqUVHQ4dvV6kKTqBnmuOociV9rG5EHnS95+dDGy3VJAek6gVGCdw=
-X-Gm-Gg: ASbGnctvK+qFXD5Ek5p8qPGMPX2+QjegOV4VxpKd8jkeDt4LWEJabtkl7gbgnG5e97n
-	qEooW9VsXw1X0ImxwJOVmeVgRN21q9gdRjfVXnFzNrxgdOvxlrXh2oDey5/N64LpPQGpufSF5ZF
-	iSmCzYV+n7IChyz5nBD809X8aJUT90BjRzaMSMmJVSpIwr3JwCyS9UbRs77kSltCyW75LCb20SE
-	ZaE/WCJKm3U2S84jg0/y9jm1bL1e8OMvbXs/hf/wtBkkag5dTBj5YzopOCwxDHAvwIV9EWoLYau
-	pYholLGZaDQcA/M6aYOPi0B7UChHhqD5cddxdJp7jQjV
-X-Received: by 2002:a17:902:d4cf:b0:216:4853:4c0b with SMTP id d9443c01a7336-223201f7d84mr41221025ad.33.1740559954626;
-        Wed, 26 Feb 2025 00:52:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHf629KRJkq4TmfJ2tQbXLT1D80gBVLyUAAPMBjcxrvnCwbYZ3/j9fge56XWA6VW8ot4WsA6w==
-X-Received: by 2002:a17:902:d4cf:b0:216:4853:4c0b with SMTP id d9443c01a7336-223201f7d84mr41219795ad.33.1740559952738;
-        Wed, 26 Feb 2025 00:52:32 -0800 (PST)
-Received: from [10.217.217.28] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092eb0sm26943325ad.142.2025.02.26.00.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 00:52:32 -0800 (PST)
-Message-ID: <dafe240f-c531-43f9-8787-bb8ba4ddea49@oss.qualcomm.com>
-Date: Wed, 26 Feb 2025 14:22:24 +0530
+        d=1e100.net; s=20230601; t=1740559964; x=1741164764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/evB7uf2d+D96aiq40k7urUc7qUnnEsGdStCHDhXYg=;
+        b=IhnQtTJ8ysfSPseGadiYgALq1AkqPLRUytE49jCokTRauTj5mILMUFQm+FVH0TeVdn
+         vhi8RYx/WM1rG+pL4T8HC2ECU93YwRT9nxWevMtQdaCS99IxFIxNiXuFmFaEaJwVx4ed
+         t3S6tosI74hrTUKSKlh6zIjaYhBVX43t7xq2sY/VgXBA2Ke0CMDl8CcYimlG9xmUeEQD
+         xcSCLwVjoH/2RANeBoYZ5uXaFmIIi4OkMk9nXis0hqhDKDpqaWXGzqIDHrdn1Fv1+PPp
+         F1H3y90G04OncgLouGHr6tdUYyyYlGuNDgxR/kEzdX5Do26iSyR52DaeZplaiPHf7w4X
+         fNHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIdWXaOtaZemmaCWYePsHnTBchGZT3Pdwl0hXirqRAglyKOUuWP/h8Waz19n1pxmeu6HeGSNNEMb5hYAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+syF8gPDXXaLoOjKTE85uJWIO0J77H8KWHAew709/wCpZ2D3F
+	F9PFkT6bFx6kVgjH+tLgPTxtsui9uYXWcDRHtxsEhl1ezKiYJgPfux6ZQO6jwhw=
+X-Gm-Gg: ASbGncv1MMB+/OgbOKgBlkjvZbHl/A+ccHxTUBARd8KyYDkarx8YfufNT0KbzbmoFu5
+	SLXum/QDFmXZCeWHougl9OllhmP0iU35iFVxvUSS5h1A7xL2m3eZtSWkvtuj//0ChVOnwdAU+yT
+	xgGP/4ppwSp1ZYW39bzKfCjp+eFosafGgDhlvCQZ7Je89U7eMVCGbtkoR2bKJ3DWFv+5il2rWUr
+	Vg8ebkoctKAo3+zaA1zKZwrjvf4Rgi43MvOf6Z8Dq4EC5EPiHbYSUjqXIbb3K3Hlbreu/IDhKe5
+	4zq0kv44UdccxMcar5losGuHLEIgtDgNWv0=
+X-Google-Smtp-Source: AGHT+IE+xqqgeYMr7ghCdbEjkF6yqw+n7eC3jV64oYYrQQdw6SHriJ93xizUlVpjhB2h6xp6qZdq9A==
+X-Received: by 2002:a17:903:2f43:b0:215:89a0:416f with SMTP id d9443c01a7336-2219ffc2dcbmr302987615ad.30.1740559964574;
+        Wed, 26 Feb 2025 00:52:44 -0800 (PST)
+Received: from debian.. ([68.65.164.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0a6006sm26944675ad.179.2025.02.26.00.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 00:52:44 -0800 (PST)
+From: Danny Lin <danny@orbstack.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Danny Lin <danny@orbstack.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: fully namespace net.core.{r,w}mem_{default,max} sysctls
+Date: Wed, 26 Feb 2025 00:52:27 -0800
+Message-ID: <20250226085229.7882-1-danny@orbstack.dev>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 5/5] thermal: qcom: add support for PMIC5 Gen3 ADC
- thermal monitoring
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        agross@kernel.org, andersson@kernel.org, dmitry.baryshkov@linaro.org,
-        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
-        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
-        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
-        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
-        quic_kamalw@quicinc.com, rui.zhang@intel.com, lukasz.luba@arm.com,
-        lars@metafoo.de, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org, quic_skakitap@quicinc.com,
-        neil.armstrong@linaro.org
-References: <20250131183242.3653595-1-jishnu.prakash@oss.qualcomm.com>
- <20250131183242.3653595-6-jishnu.prakash@oss.qualcomm.com>
- <20250201122731.2762b1f8@jic23-huawei>
-Content-Language: en-US
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-In-Reply-To: <20250201122731.2762b1f8@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: CcHpgJS3VOr0AkCodevOcItto0IlRmeN
-X-Proofpoint-ORIG-GUID: CcHpgJS3VOr0AkCodevOcItto0IlRmeN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_01,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260071
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
+This builds on commit 19249c0724f2 ("net: make net.core.{r,w}mem_{default,max} namespaced")
+by adding support for writing the sysctls from within net namespaces,
+rather than only reading the values that were set in init_net. These are
+relatively commonly-used sysctls, so programs may try to set them without
+knowing that they're in a container. It can be surprising for such attempts
+to fail with EACCES.
 
-On 2/1/2025 5:57 PM, Jonathan Cameron wrote:
-> On Sat,  1 Feb 2025 00:02:42 +0530
-> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
-> 
->> Add support for ADC_TM part of PMIC5 Gen3.
->>
->> This is an auxiliary driver under the Gen3 ADC driver, which
->> implements the threshold setting and interrupt generating
->> functionalities of QCOM ADC_TM drivers, used to support thermal
->> trip points.
-> 
-> Very short wrap. For commit descriptions 75 chars is fine.
-> 
->>
->> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-> Various minor comments inline.
-> 
-> Jonathan
-> 
->> ---
->> Changes since v4:
->> - Fixed a compilation error and updated dependencies in config as suggested
->>   by reviewer.
+Unlike other net sysctls that were converted to namespaced ones, many
+systems have a sysctl.conf (or other configs) that globally write to
+net.core.rmem_default on boot and expect the value to propagate to
+containers, and programs running in containers may depend on the increased
+buffer sizes in order to work properly. This means that namespacing the
+sysctls and using the kernel default values in each new netns would break
+existing workloads.
 
-...
+As a compromise, inherit the initial net.core.*mem_* values from the
+current process' netns when creating a new netns. This is not standard
+behavior for most netns sysctls, but it avoids breaking existing workloads.
 
->>
->> +
->> +MODULE_DEVICE_TABLE(auxiliary, adctm5_auxiliary_id_table);
->> +
->> +static struct adc_tm5_auxiliary_drv adctm5gen3_auxiliary_drv = {
->> +	.adrv = {
->> +		.id_table = adctm5_auxiliary_id_table,
->> +		.probe = adc_tm5_probe,
->> +	},
->> +	.tm_event_notify = adctm_event_handler,
->> +};
->> +
->> +static int __init adctm5_init_module(void)
->> +{
->> +	return auxiliary_driver_register(&adctm5gen3_auxiliary_drv.adrv);
->> +}
->> +
->> +static void __exit adctm5_exit_module(void)
->> +{
->> +	auxiliary_driver_unregister(&adctm5gen3_auxiliary_drv.adrv);
->> +}
->> +
->> +module_init(adctm5_init_module);
->> +module_exit(adctm5_exit_module);
-> 
-> Can use module_auxiliary_driver() to replace this boilerplate.
-> The embedded adrv shouldn't stop that working that I can see.
-> 
+Signed-off-by: Danny Lin <danny@orbstack.dev>
+---
+ include/net/netns/core.h        |  5 +++++
+ include/net/sock.h              |  6 ------
+ net/core/net_namespace.c        | 21 +++++++++++++++++++++
+ net/core/sock.c                 | 16 ++++------------
+ net/core/sysctl_net_core.c      | 17 +++++------------
+ net/ipv4/ip_output.c            |  2 +-
+ net/ipv4/tcp_output.c           |  2 +-
+ net/netfilter/ipvs/ip_vs_sync.c |  4 ++--
+ 8 files changed, 39 insertions(+), 34 deletions(-)
 
-I tried to do this, but it does not work with the embedded adrv.
-
-
-When I tried this change:
-
-    -static int __init adctm5_init_module(void)
-    -{
-    -       return auxiliary_driver_register(&adctm5gen3_auxiliary_drv.adrv);
-    -}
-    -
-    -static void __exit adctm5_exit_module(void)
-    -{
-    -       auxiliary_driver_unregister(&adctm5gen3_auxiliary_drv.adrv);
-    -}
-    -
-    -module_init(adctm5_init_module);
-    -module_exit(adctm5_exit_module);
-    +module_auxiliary_driver(adctm5gen3_auxiliary_drv.adrv);
-
-
-Ideally this should have worked as I see module_auxiliary_driver() takes a single argument of type struct auxiliary_driver. But it failed with errors like this:
-
-
-    drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c:474:49: error: expected '=', ',', ';', 'asm' or '__attribute__' before '.' token
-     module_auxiliary_driver(adctm5gen3_auxiliary_drv.adrv);
-                                                     ^
-
-    drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c:474:49: error: 'struct adc_tm5_auxiliary_drv' has no member named 'adrv_init'
-     module_auxiliary_driver(adctm5gen3_auxiliary_drv.adrv);
-                                                     ^
-
-    drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c:474:49: error: 'struct adc_tm5_auxiliary_drv' has no member named 'adrv_exit'
-     module_auxiliary_driver(adctm5gen3_auxiliary_drv.adrv);
-                                                     ^
-
-
-I think this happens because module_auxiliary_driver() is defined as a macro, like this:
-
-    #define module_auxiliary_driver(__auxiliary_driver) \
-        module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
-
-And when the text substitution for the argument is done, we would end up with lines like this in the expansion finally:
-
-    module_init(adctm5gen3_auxiliary_drv.adrv_init);
-    module_exit(adctm5gen3_auxiliary_drv.adrv_exit);
-
-
-I'm facing similar issues, of the input argument being misinterpreted, if I use a pointer to the struct auxiliary_driver member (adrv), and dereference it as argument to module_auxiliary_driver().
-
-I think module_auxiliary_driver() can only take a simple variable name as input, because in all the examples of its usage I found, I see there is a "struct auxiliary_driver" initialization just before the initialized variable is passed to module_auxiliary_driver().
-
-In this auxiliary driver, I need to have adrv embedded within the struct adc_tm5_auxiliary_drv wrapper, as I also need to have the .tm_event_notify member, to expose a callback to the main driver, so I don't think I can change this.
-
-
-I'll address your other comments in the next patch series.
-
-Thanks,
-Jishnu
-
-> 
->> +
->> +MODULE_DESCRIPTION("SPMI PMIC Thermal Monitor ADC driver");
->> +MODULE_LICENSE("GPL");
->> +MODULE_IMPORT_NS("QCOM_SPMI_ADC5_GEN3");
-> 
+diff --git a/include/net/netns/core.h b/include/net/netns/core.h
+index 78214f1b43a2..d943d980403f 100644
+--- a/include/net/netns/core.h
++++ b/include/net/netns/core.h
+@@ -16,6 +16,11 @@ struct netns_core {
+ 	int	sysctl_optmem_max;
+ 	u8	sysctl_txrehash;
+ 
++	u32 sysctl_wmem_max;
++	u32 sysctl_rmem_max;
++	u32 sysctl_wmem_default;
++	u32 sysctl_rmem_default;
++
+ #ifdef CONFIG_PROC_FS
+ 	struct prot_inuse __percpu *prot_inuse;
+ #endif
+diff --git a/include/net/sock.h b/include/net/sock.h
+index fa055cf1785e..11f8c51ca1f7 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2818,14 +2818,8 @@ void sk_get_meminfo(const struct sock *sk, u32 *meminfo);
+ #define SK_WMEM_MAX		(_SK_MEM_OVERHEAD * _SK_MEM_PACKETS)
+ #define SK_RMEM_MAX		(_SK_MEM_OVERHEAD * _SK_MEM_PACKETS)
+ 
+-extern __u32 sysctl_wmem_max;
+-extern __u32 sysctl_rmem_max;
+-
+ extern int sysctl_tstamp_allow_data;
+ 
+-extern __u32 sysctl_wmem_default;
+-extern __u32 sysctl_rmem_default;
+-
+ #define SKB_FRAG_PAGE_ORDER	get_order(32768)
+ DECLARE_STATIC_KEY_FALSE(net_high_order_alloc_disable_key);
+ 
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 70fea7c1a4b0..092500975bd3 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -317,6 +317,27 @@ static __net_init void preinit_net_sysctl(struct net *net)
+ 	 */
+ 	net->core.sysctl_optmem_max = 128 * 1024;
+ 	net->core.sysctl_txrehash = SOCK_TXREHASH_ENABLED;
++
++	/*
++	 * net.core.{r,w}mem_{default,max} used to be non-namespaced.
++	 * For backward compatibility, inherit values from the current netns
++	 * when creating a new one, so that setting them in init_net
++	 * affects new namespaces like it used to. This avoids causing
++	 * surprising performance regressions for namespaced applications
++	 * relying on tuned rmem/wmem.
++	 */
++	if (net == &init_net) {
++		net->core.sysctl_wmem_max = SK_WMEM_MAX;
++		net->core.sysctl_rmem_max = SK_RMEM_MAX;
++		net->core.sysctl_wmem_default = SK_WMEM_MAX;
++		net->core.sysctl_rmem_default = SK_RMEM_MAX;
++	} else {
++		struct net *current_net = current->nsproxy->net_ns;
++		net->core.sysctl_wmem_max = current_net->core.sysctl_wmem_max;
++		net->core.sysctl_rmem_max = current_net->core.sysctl_rmem_max;
++		net->core.sysctl_wmem_default = current_net->core.sysctl_wmem_default;
++		net->core.sysctl_rmem_default = current_net->core.sysctl_rmem_default;
++	}
+ }
+ 
+ /* init code that must occur even if setup_net() is not called. */
+diff --git a/net/core/sock.c b/net/core/sock.c
+index b4985f011bc5..771b1ee0a299 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -278,14 +278,6 @@ static struct lock_class_key af_wlock_keys[AF_MAX];
+ static struct lock_class_key af_elock_keys[AF_MAX];
+ static struct lock_class_key af_kern_callback_keys[AF_MAX];
+ 
+-/* Run time adjustable parameters. */
+-__u32 sysctl_wmem_max __read_mostly = SK_WMEM_MAX;
+-EXPORT_SYMBOL(sysctl_wmem_max);
+-__u32 sysctl_rmem_max __read_mostly = SK_RMEM_MAX;
+-EXPORT_SYMBOL(sysctl_rmem_max);
+-__u32 sysctl_wmem_default __read_mostly = SK_WMEM_MAX;
+-__u32 sysctl_rmem_default __read_mostly = SK_RMEM_MAX;
+-
+ int sysctl_tstamp_allow_data __read_mostly = 1;
+ 
+ DEFINE_STATIC_KEY_FALSE(memalloc_socks_key);
+@@ -1322,7 +1314,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		 * play 'guess the biggest size' games. RCVBUF/SNDBUF
+ 		 * are treated in BSD as hints
+ 		 */
+-		val = min_t(u32, val, READ_ONCE(sysctl_wmem_max));
++		val = min_t(u32, val, READ_ONCE(sock_net(sk)->core.sysctl_wmem_max));
+ set_sndbuf:
+ 		/* Ensure val * 2 fits into an int, to prevent max_t()
+ 		 * from treating it as a negative value.
+@@ -1354,7 +1346,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		 * play 'guess the biggest size' games. RCVBUF/SNDBUF
+ 		 * are treated in BSD as hints
+ 		 */
+-		__sock_set_rcvbuf(sk, min_t(u32, val, READ_ONCE(sysctl_rmem_max)));
++		__sock_set_rcvbuf(sk, min_t(u32, val, READ_ONCE(sock_net(sk)->core.sysctl_rmem_max)));
+ 		break;
+ 
+ 	case SO_RCVBUFFORCE:
+@@ -3545,8 +3537,8 @@ void sock_init_data_uid(struct socket *sock, struct sock *sk, kuid_t uid)
+ 	timer_setup(&sk->sk_timer, NULL, 0);
+ 
+ 	sk->sk_allocation	=	GFP_KERNEL;
+-	sk->sk_rcvbuf		=	READ_ONCE(sysctl_rmem_default);
+-	sk->sk_sndbuf		=	READ_ONCE(sysctl_wmem_default);
++	sk->sk_rcvbuf		=	READ_ONCE(sock_net(sk)->core.sysctl_rmem_default);
++	sk->sk_sndbuf		=	READ_ONCE(sock_net(sk)->core.sysctl_wmem_default);
+ 	sk->sk_state		=	TCP_CLOSE;
+ 	sk->sk_use_task_frag	=	true;
+ 	sk_set_socket(sk, sock);
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index 5dd54a813398..e2bd79189f42 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -668,12 +668,9 @@ static struct ctl_table netns_core_table[] = {
+ 		.extra2		= SYSCTL_ONE,
+ 		.proc_handler	= proc_dou8vec_minmax,
+ 	},
+-	/* sysctl_core_net_init() will set the values after this
+-	 * to readonly in network namespaces
+-	 */
+ 	{
+ 		.procname	= "wmem_max",
+-		.data		= &sysctl_wmem_max,
++		.data		= &init_net.core.sysctl_wmem_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -681,7 +678,7 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "rmem_max",
+-		.data		= &sysctl_rmem_max,
++		.data		= &init_net.core.sysctl_rmem_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -689,7 +686,7 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "wmem_default",
+-		.data		= &sysctl_wmem_default,
++		.data		= &init_net.core.sysctl_wmem_default,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -697,12 +694,13 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "rmem_default",
+-		.data		= &sysctl_rmem_default,
++		.data		= &init_net.core.sysctl_rmem_default,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= &min_rcvbuf,
+ 	},
++	// dummy line to cause merge conflict if this changes
+ };
+ 
+ static int __init fb_tunnels_only_for_init_net_sysctl_setup(char *str)
+@@ -731,13 +729,8 @@ static __net_init int sysctl_core_net_init(struct net *net)
+ 			goto err_dup;
+ 
+ 		for (i = 0; i < table_size; ++i) {
+-			if (tbl[i].data == &sysctl_wmem_max)
+-				break;
+-
+ 			tbl[i].data += (char *)net - (char *)&init_net;
+ 		}
+-		for (; i < table_size; ++i)
+-			tbl[i].mode &= ~0222;
+ 	}
+ 
+ 	net->core.sysctl_hdr = register_net_sysctl_sz(net, "net/core", tbl, table_size);
+diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+index 49811c9281d4..d7c906164674 100644
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1637,7 +1637,7 @@ void ip_send_unicast_reply(struct sock *sk, struct sk_buff *skb,
+ 
+ 	sk->sk_protocol = ip_hdr(skb)->protocol;
+ 	sk->sk_bound_dev_if = arg->bound_dev_if;
+-	sk->sk_sndbuf = READ_ONCE(sysctl_wmem_default);
++	sk->sk_sndbuf = READ_ONCE(net->core.sysctl_wmem_default);
+ 	ipc.sockc.mark = fl4.flowi4_mark;
+ 	err = ip_append_data(sk, &fl4, ip_reply_glue_bits, arg->iov->iov_base,
+ 			     len, 0, &ipc, &rt, MSG_DONTWAIT);
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 6d5387811c32..08af982d8f03 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -241,7 +241,7 @@ void tcp_select_initial_window(const struct sock *sk, int __space, __u32 mss,
+ 	if (wscale_ok) {
+ 		/* Set window scaling on max possible window */
+ 		space = max_t(u32, space, READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_rmem[2]));
+-		space = max_t(u32, space, READ_ONCE(sysctl_rmem_max));
++		space = max_t(u32, space, READ_ONCE(sock_net(sk)->core.sysctl_rmem_max));
+ 		space = min_t(u32, space, window_clamp);
+ 		*rcv_wscale = clamp_t(int, ilog2(space) - 15,
+ 				      0, TCP_MAX_WSCALE);
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index 3402675bf521..62f30d5c25c7 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1280,12 +1280,12 @@ static void set_sock_size(struct sock *sk, int mode, int val)
+ 	lock_sock(sk);
+ 	if (mode) {
+ 		val = clamp_t(int, val, (SOCK_MIN_SNDBUF + 1) / 2,
+-			      READ_ONCE(sysctl_wmem_max));
++			      READ_ONCE(sock_net(sk)->core.sysctl_wmem_max));
+ 		sk->sk_sndbuf = val * 2;
+ 		sk->sk_userlocks |= SOCK_SNDBUF_LOCK;
+ 	} else {
+ 		val = clamp_t(int, val, (SOCK_MIN_RCVBUF + 1) / 2,
+-			      READ_ONCE(sysctl_rmem_max));
++			      READ_ONCE(sock_net(sk)->core.sysctl_rmem_max));
+ 		sk->sk_rcvbuf = val * 2;
+ 		sk->sk_userlocks |= SOCK_RCVBUF_LOCK;
+ 	}
+-- 
+2.47.2
 
 
