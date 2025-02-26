@@ -1,226 +1,128 @@
-Return-Path: <linux-kernel+bounces-534788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A938A46B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:34:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F632A46B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:35:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08073AEED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388D41889E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A493C241688;
-	Wed, 26 Feb 2025 19:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D4B245008;
+	Wed, 26 Feb 2025 19:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuS3tEQy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dlWusk4Z"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3B823A9AF;
-	Wed, 26 Feb 2025 19:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BFD241672
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598455; cv=none; b=b0TqlNdOX6fzd2IPQmBi5yQJRxun6KwTwP8Ps59V3KnAFxRyTll/6ss2eV/aX4lca7O/35sYNGkDglYZ1MWLQ6Vd+W+SO2ivHXrCdy3gNGreOw66MG+CO+ptXjv12SWK9txmDKGVG9m1mHkMR9N9kt8lDuBJsCvSK3T1BnGMVrI=
+	t=1740598507; cv=none; b=GHNsOFAQffh1FZBHtMCgED+2DtnUVbq7nIsTnZbhhwDEzhO5Sfctd/+nf78SG87wqzo/GRraXIMR+2Vr973D9XWmd3PGQYLsTXjld2f9cZFziCVr8TgsRktaA3OM5Jh1+P0vQGtkteJEtrmrz+mfOY14ZzU/52IpIegR3wvYRuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598455; c=relaxed/simple;
-	bh=5vVt57PLpS5SI0SXJq5Fffg3GFA0wf+g8dSTQO2g2qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsREz6bcFJRfmR4ZPCr1Dm8ey7Z/DbAcw5WGH2Ww6Lf/SkoyXkoDxp1IP28rxk4gsGNKoim0kNAjmkmpk5CcdfP9SXuo/mKoUn6vgSsH+idYyd/uGOJuiTsr8MjUPRttIP+IHZM8Y1/1/q42bY28x5bdovTK/93PWia3XtrF39I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuS3tEQy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8D5C4CED6;
-	Wed, 26 Feb 2025 19:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740598455;
-	bh=5vVt57PLpS5SI0SXJq5Fffg3GFA0wf+g8dSTQO2g2qM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cuS3tEQy84N7j1D0dDnHVLEEsZslz/6tYg9ulNDxecUDoFUtk2bWFeG25Qqck+EHu
-	 qNkYxd5dVgARuF5NuKu9rzkiEoi+ZdGyB80TSY6T5unUgQjNoPgSiXG7WdnglXwwcl
-	 yK0gj5bCP9LixozeHnf8iWuXUdmUlc+J8jc4xl7LbSj8NGMmnKe0h13fj8HCgVN9iw
-	 uTc3afMECWn0Xl2pMLuTrs0f4wRi/N6XIxXq+EQeM7Ewhq7Cu0Xw1XfEaUUayWnf6Z
-	 gbDtxU35sxKAnA4WBZ39/teEj7S8/dJ9p6i6LNs6FiBoG6K8BZ52o6zCvKcflB188M
-	 CLwFjuPISgYVg==
-Date: Wed, 26 Feb 2025 11:34:13 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z79std66tPq-nqsD@google.com>
-References: <CAP-5=fWZXPjD3Ok5XmMwwaYt+9mL+V8t8fNSUdf-F5PPiEAvrg@mail.gmail.com>
- <Z7gllQZeg6U2OvZE@google.com>
- <CAP-5=fXEEMFgPF2aZhKsfrY_En+qoqX20dWfuE_ad73Uxf0ZHQ@mail.gmail.com>
- <Z70wHEl6Sp0H0c-3@google.com>
- <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
- <Z712hzvv22Ni63f1@google.com>
- <Z74U5s7Yf0f6I7Mo@x1>
- <Z74V0hZXrTLM6VIJ@x1>
- <Z74ZL6SUwWL_a5EK@x1>
- <Z74eqEiyrzuoL6uz@x1>
+	s=arc-20240116; t=1740598507; c=relaxed/simple;
+	bh=bvEh2cJJ8fQdCKZqF4/MHgwher79PNLHTe2wORKT3qI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LTea3UX77Up+N9pIa9RtdqJk8SOAgdEOwWsg8XRJSG3S8V1ZnxZJ9eY7xLGVWujHSW2YUrijq8BYT9DTOh2ZhpVffuqHPT/xTaa6XoLngScAVj2D+mrSiDdczIncsaDZuWC4At1c/vI30AmRbzCQMCC2TWcWbAyCc9XqXm7wJJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dlWusk4Z; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 359C02C041E;
+	Thu, 27 Feb 2025 08:35:01 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1740598501;
+	bh=bvEh2cJJ8fQdCKZqF4/MHgwher79PNLHTe2wORKT3qI=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=dlWusk4Z8rr/xuuuGKE7FB4vkMzOYJGFxd4ZxxK8/XdTeP4EYsOUU97Zag4JB3t/0
+	 qSOp+848SX3CKtUdHh97rJVgEUJ6s/H2JMhV7gshtC2j0yPGAoSMQedEi981ymutrY
+	 GYTIyEYOMS4Tj6NHJgMjqp78gsiiF3glMNtBwYMlbTwHinSer/s7Ra8xpcO/nSoRP0
+	 AuYAslN5oFhQ89oMcFuQBGt+UhjB93xlND/plC8gKdfWenTu2TGCXvyRdz/4dfQNfr
+	 beHREWjyT0jXfZP8e5GMBWPOHKwzHpU6BFAmnqXNg7J0tesAgNauMUremESfofrxye
+	 Qf/UDvQJb9pGQ==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67bf6ce50001>; Thu, 27 Feb 2025 08:35:01 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 27 Feb 2025 08:35:00 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Thu, 27 Feb 2025 08:35:00 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>, "andrew@lunn.ch"
+	<andrew@lunn.ch>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"sander@svanheule.net" <sander@svanheule.net>, "markus.stockhausen@gmx.de"
+	<markus.stockhausen@gmx.de>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v7 1/2] net: mdio: Add RTL9300 MDIO driver
+Thread-Topic: [PATCH net-next v7 1/2] net: mdio: Add RTL9300 MDIO driver
+Thread-Index: AQHbh+J8lt76RIU/40yozHOVVg4xD7NYWweAgADGUgA=
+Date: Wed, 26 Feb 2025 19:35:00 +0000
+Message-ID: <121f35fc-f151-4c5e-a644-87485acf2eda@alliedtelesis.co.nz>
+References: <20250226000748.3979148-1-chris.packham@alliedtelesis.co.nz>
+ <20250226000748.3979148-2-chris.packham@alliedtelesis.co.nz>
+ <20250226084511.5f8f4c62@fedora.home>
+In-Reply-To: <20250226084511.5f8f4c62@fedora.home>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FAA606CD114D8C44959722D921238B9D@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z74eqEiyrzuoL6uz@x1>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67bf6ce5 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=p39UaIAQFBWNGi97qX4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Tue, Feb 25, 2025 at 08:48:56PM +0100, Arnaldo Carvalho de Melo wrote:
-> On Tue, Feb 25, 2025 at 08:25:35PM +0100, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Feb 25, 2025 at 08:11:17PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, Feb 25, 2025 at 08:07:18PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
-> > > > > On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
-> > > > > > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
-> > > > > [SNIP]
-> > > > > > > > I thought the real-time processing had to use
-> > > > > > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
-> > > > > > > > events only give us VMA data and two mmaps may have been merged.
-> > > > > > > > Shouldn't doing this change be the simplest fix?
-> > > 
-> > > > > > > Make sense.  How about this?
-> > > 
-> > > > > > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
-> > > > > > to get pushed later?
-> > > 
-> > > > > I just noticed it would add extra kernel maps after modules.  I think it
-> > > > > should fixup end address of the kernel maps after adding all maps first.
-> > > 
-> > > > > Arnaldo, can you please test this?
-> > >  
-> > > > Trying it now.
-> > > 
-> > > Now we have something different:
-> > > 
-> > > root@number:~# perf record sleep
-> > > sleep: missing operand
-> > > Try 'sleep --help' for more information.
-> > > [ perf record: Woken up 1 times to write data ]
-> > > perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
-> > > Aborted (core dumped)
-> > > root@number:~#
-> > 
-> > __maps__insert() does:
-> > 
-> >         if (dso && dso__kernel(dso)) {
-> >                 struct kmap *kmap = map__kmap(new);
-> > 
-> >                 if (kmap)
-> >                         kmap->kmaps = maps;
-> >                 else
-> >                         pr_err("Internal error: kernel dso with non kernel map\n");
-> >         }
-> > 
-> > while maps__fixup_overlap_and_insert() doesn't.
-> > 
-> > It calls __maps__insert_sorted() that probably should do what
-> > __maps__insert() does?
-> 
-> Ok, so I did the following patch but this case fails:
-> 
-> @@ -910,6 +928,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->                                  */
->                                 map__put(maps_by_address[i]);
->                                 maps_by_address[i] = map__get(new);
-> +                               map__set_kmap(new, maps);
->                                 check_invariants(maps);
->                                 return err;
->                         }
-> 
-> With:
-> 
-> perf: util/maps.c:110: check_invariants: Assertion `refcount_read(map__refcnt(map)) > 1' failed.
-> 
-> As:
-> 
-> 106				/*
-> 107				 * Maps by name maps should be in maps_by_address, so
-> 108				 * the reference count should be higher.
-> 109				 */
-> 110				assert(refcount_read(map__refcnt(map)) > 1);
-> 
-> Since it is just replacing the map in the maps_by_address and not
-> touching on the maps_by_name? Thus the refcount is just 1:
-
-Sounds like it.  Can you add this on top?
-
-Thanks,
-Namhyung
-
-
----8<---
-diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-index 09c9cc326c08d435..3aee0c9e8d421cef 100644
---- a/tools/perf/util/maps.c
-+++ b/tools/perf/util/maps.c
-@@ -797,7 +797,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- {
- 	int err = 0;
- 	FILE *fp = debug_file();
--	unsigned int i;
-+	unsigned int i, ni;
- 
- 	if (!maps__maps_by_address_sorted(maps))
- 		__maps__sort_by_address(maps);
-@@ -808,6 +808,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 	 */
- 	for (i = first_ending_after(maps, new); i < maps__nr_maps(maps); ) {
- 		struct map **maps_by_address = maps__maps_by_address(maps);
-+		struct map **maps_by_name = maps__maps_by_name(maps);
- 		struct map *pos = maps_by_address[i];
- 		struct map *before = NULL, *after = NULL;
- 
-@@ -827,6 +828,9 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 			map__fprintf(pos, fp);
- 		}
- 
-+		if (maps_by_name)
-+			ni = maps__by_name_index(maps, pos);
-+
- 		/*
- 		 * Now check if we need to create new maps for areas not
- 		 * overlapped by the new map:
-@@ -871,6 +875,11 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 		if (before) {
- 			map__put(maps_by_address[i]);
- 			maps_by_address[i] = before;
-+			if (maps_by_name) {
-+				map__put(maps_by_name[ni]);
-+				maps_by_name[ni] = map__get(before);
-+			}
-+
- 			/* Maps are still ordered, go to next one. */
- 			i++;
- 			if (after) {
-@@ -892,6 +901,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 			 */
- 			map__put(maps_by_address[i]);
- 			maps_by_address[i] = map__get(new);
-+			if (maps_by_name) {
-+				map__put(maps_by_name[ni]);
-+				maps_by_name[ni] = map__get(new);
-+			}
- 			err = __maps__insert_sorted(maps, i + 1, after, NULL);
- 			map__put(after);
- 			check_invariants(maps);
-@@ -910,6 +923,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 				 */
- 				map__put(maps_by_address[i]);
- 				maps_by_address[i] = map__get(new);
-+				if (maps_by_name) {
-+					map__put(maps_by_name[ni]);
-+					maps_by_name[ni] = map__get(new);
-+				}
- 				check_invariants(maps);
- 				return err;
- 			}
+SGkgTWF4aW1lLA0KDQpPbiAyNi8wMi8yMDI1IDIwOjQ1LCBNYXhpbWUgQ2hldmFsbGllciB3cm90
+ZToNCj4gSGkgQ2hyaXMsDQo+DQo+IE9uIFdlZCwgMjYgRmViIDIwMjUgMTM6MDc6NDcgKzEzMDAN
+Cj4gQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56PiB3cm90
+ZToNCj4NCj4+IEFkZCBhIGRyaXZlciBmb3IgdGhlIE1ESU8gY29udHJvbGxlciBvbiB0aGUgUlRM
+OTMwMCBmYW1pbHkgb2YgRXRoZXJuZXQNCj4+IHN3aXRjaGVzIHdpdGggaW50ZWdyYXRlZCBTb0Mu
+IFRoZXJlIGFyZSA0IHBoeXNpY2FsIFNNSSBpbnRlcmZhY2VzIG9uIHRoZQ0KPj4gUlRMOTMwMCBo
+b3dldmVyIGFjY2VzcyBpcyBkb25lIHVzaW5nIHRoZSBzd2l0Y2ggcG9ydHMuIFRoZSBkcml2ZXIg
+dGFrZXMNCj4+IHRoZSBNRElPIGJ1cyBoaWVyYXJjaHkgZnJvbSB0aGUgRFRTIGFuZCB1c2VzIHRo
+aXMgdG8gY29uZmlndXJlIHRoZQ0KPj4gc3dpdGNoIHBvcnRzIHNvIHRoZXkgYXJlIGFzc29jaWF0
+ZWQgd2l0aCB0aGUgY29ycmVjdCBQSFkuIFRoaXMgbWFwcGluZw0KPj4gaXMgYWxzbyB1c2VkIHdo
+ZW4gZGVhbGluZyB3aXRoIHNvZnR3YXJlIHJlcXVlc3RzIGZyb20gcGh5bGliLg0KPj4NCj4+IFNp
+Z25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5j
+by5uej4NCj4gSXQgYWxsIG1vc3RseSBsb29rcyBnb29kIHRvIG1lLCB0aGVyZSdzIG9uZSB0eXBv
+IHRob3VnaCBhbmQgYXMgaXQgbWF5DQo+IGJlIHVzZXIgdmlzaWJsZSwgSSB0aGluayBpdCdzIHdv
+cnRoIGZpeGluZy4uLg0KPg0KPiBbLi4uXQ0KPg0KPj4gK3N0YXRpYyBpbnQgcnRsOTMwMF9tZGlv
+YnVzX3Byb2JlX29uZShzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBydGw5MzAwX21kaW9fcHJp
+diAqcHJpdiwNCj4+ICsJCQkJICAgICBzdHJ1Y3QgZndub2RlX2hhbmRsZSAqbm9kZSkNCj4+ICt7
+DQo+PiArCXN0cnVjdCBydGw5MzAwX21kaW9fY2hhbiAqY2hhbjsNCj4+ICsJc3RydWN0IGZ3bm9k
+ZV9oYW5kbGUgKmNoaWxkOw0KPj4gKwlzdHJ1Y3QgbWlpX2J1cyAqYnVzOw0KPj4gKwl1MzIgbWRp
+b19idXM7DQo+PiArCWludCBlcnI7DQo+PiArDQo+PiArCWVyciA9IGZ3bm9kZV9wcm9wZXJ0eV9y
+ZWFkX3UzMihub2RlLCAicmVnIiwgJm1kaW9fYnVzKTsNCj4+ICsJaWYgKGVycikNCj4+ICsJCXJl
+dHVybiBlcnI7DQo+PiArDQo+PiArCWZ3bm9kZV9mb3JfZWFjaF9jaGlsZF9ub2RlKG5vZGUsIGNo
+aWxkKQ0KPj4gKwkJaWYgKGZ3bm9kZV9kZXZpY2VfaXNfY29tcGF0aWJsZShjaGlsZCwgImV0aGVy
+bmV0LXBoeS1pZWVlODAyLjMtYzQ1IikpDQo+PiArCQkJcHJpdi0+c21pX2J1c19pc19jNDVbbWRp
+b19idXNdID0gdHJ1ZTsNCj4+ICsNCj4+ICsJYnVzID0gZGV2bV9tZGlvYnVzX2FsbG9jX3NpemUo
+ZGV2LCBzaXplb2YoKmNoYW4pKTsNCj4+ICsJaWYgKCFidXMpDQo+PiArCQlyZXR1cm4gLUVOT01F
+TTsNCj4+ICsNCj4+ICsJYnVzLT5uYW1lID0gIlJlYWt0ZWsgU3dpdGNoIE1ESU8gQnVzIjsNCj4g
+WW91IHByb2JhYmx5IG1lYW4gUmVhbHRlayA/IDopDQoNCkdvb2QgY2F0Y2ggdGhhbmtzLiBJJ3Zl
+IGZpeGVkIHRoZSB0eXBvIGxvY2FsbHkgYW5kIEknbGwgc2VuZCBvdXQgYSB2OCANCnRvbW9ycm93
+IGlmIHRoZXJlIGFyZW4ndCBhbnkgb3RoZXIgY29tbWVudHMuDQo=
 
