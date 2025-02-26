@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-532971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB8DA4544B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:09:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3193A45454
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD381898D84
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:09:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C7B7A6372
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871081A08B8;
-	Wed, 26 Feb 2025 04:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCAD25E45B;
+	Wed, 26 Feb 2025 04:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ri4t/Kn0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ADtWR/2Z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F54438B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38281A08B8;
+	Wed, 26 Feb 2025 04:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740542977; cv=none; b=nzfgY3UbjSm6/cRfJ+OEpdYdnYOKxAKN6thou3LhWBPtoXRDCxJgAHtRkur0mP74lWU8E86z8FaWAY38N0qIJgZbEYj51Em+7UxvbxBz2MS1krO8jjPas9RuYoT2V4/oSazh3z6TW4nAppU6ryAKiTYD9+GycpF3HHbRFDEVpZA=
+	t=1740543054; cv=none; b=Yn9wVB72megEIvIdg3napLSYwubUeYwurtLEmixhtANoNNY7A/98SvitozW/MwAJZPKPFdSB0NmszGgZX2mNlZYbQQtt9tpflZQsLL20dhXg846MJ2R7lU79tJ9vUAuNwLTOVkVZuxPRa52sb8vpafhIAS5A42iqSHcKJ5J3XCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740542977; c=relaxed/simple;
-	bh=cP3PR+OlwzJA3fBVfk6ajcn/yRjvqWqrQ7H6/+u/gao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O+EywCLASzSDsoMC6ynhulC5Fsftrb56oAIcUVJBuh3KY4I1OYNvdpzWstyU+bxicwtciZ1QEVNdhRNlcILgJ0GXro64uCq1n76c8hNfyG6AeEilktEtOFhb0KAdoRfmz2x5P6ir8rtc/xuS/6LsIvn22OQKTD8P9psGN3Babac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ri4t/Kn0; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740542977; x=1772078977;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cP3PR+OlwzJA3fBVfk6ajcn/yRjvqWqrQ7H6/+u/gao=;
-  b=Ri4t/Kn0SySXnTdbTcv98+VUrxr/6cSDI5ZiBHnXGEgDjnfG7y1p1s4A
-   EJionmBwHQI+Ue+k/Qz+l0PZMtL7mfA8c/9+OXaXkX92OH5pGxn4hdD4R
-   8aLG+1ZWjVeyAkoNswxeeJqBzZIhD8KzGnfMsr2FtmQiG7P2V8w2ip14F
-   tnZPRgnZtQSgpd+Rx+AgQVc6VjPeFFfcGjBK92PP2HDWFQKFyiJjHeeWO
-   nLtubt4M9kBDi7DTlQmtNSBSeGcD7XO3Tl6uWlBbEuekRt49j/jV+sL1/
-   dRtX4+0zHA6fCmfAw7OMe14mTHVcS0IujZHj50oS5j6f6E94zwq8oxbgg
-   A==;
-X-CSE-ConnectionGUID: tp3ccDUFSCWN67xQWDfLXw==
-X-CSE-MsgGUID: h6TnWnlhQGCmmJXBDAic0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="44199201"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="44199201"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 20:09:36 -0800
-X-CSE-ConnectionGUID: HZBvsV2rQxmmgzEbsRuIkQ==
-X-CSE-MsgGUID: L0c1mKTiSm6Ov0/dfL5lFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="116394288"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 20:09:33 -0800
-Message-ID: <a4d650cf-c8e4-4590-ab6f-f464a17125d1@linux.intel.com>
-Date: Wed, 26 Feb 2025 12:06:18 +0800
+	s=arc-20240116; t=1740543054; c=relaxed/simple;
+	bh=3BY1U0pdocC7pCxUx8eiTC99KB9OU2tuNmi79TCD6UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PB2VFxpv1m/NkR3qq/DRVbh9pA8+5wkr05Lg46O2XA34PyipeqnvPUDsMA7O01Wcd57n++0TYWtJbiec60COhqn5VGqv7vSEDw3NWbU/kiRDWn8RKAEI3ZtKiKj2OjCyt6g2uNRkCD6yowedVO3eGh/RUz5XWwUk9IN8JT+b+24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ADtWR/2Z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMXJwM017857;
+	Wed, 26 Feb 2025 04:10:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k9igG3d3TeQZGKwiYTxqqqFKugY3XF+PxDnkovdJS7o=; b=ADtWR/2ZrZ/WmRr2
+	Yd04csp+5h/k3SbH4WEiG4h89sgj/qD1L1vn6cJOejhTMo8ZscKwEZxbE5xK0/F+
+	kb8xEsPjc+50hlo99BMWNlWlCu4clZlrpqI+sKJEDw1wfv9g4lVqeuVdSPlZqPXj
+	SE9v4p1kvQdG+jJ1v7yV3mrYfiDrA2vSS4eTCSScAmrq5VwElB5VpGkY8b0wcABW
+	lmOAXBn8Q2mWA1XovDP8cXeKHJ2+FBA4j4K5hAHQbJsqF9Vl+eURSX/uK1v3vDiG
+	ENvqAv9d5XJsNFuBaqGy2gHV6YQo8mlpV+ZkcgQxLA6bUobqtqSruvWfgZCP6k6X
+	rktQ9g==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn0nub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 04:10:39 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q4Acex007563
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 04:10:38 GMT
+Received: from [10.216.45.35] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
+ 2025 20:10:34 -0800
+Message-ID: <fe0db67e-ee62-4e6b-b6e7-48e96dbe474d@quicinc.com>
+Date: Wed, 26 Feb 2025 09:40:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,51 +64,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] iommufd/selftest: Put iopf enablement in domain
- attach path
-To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Jiang, Dave" <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
- Zhou Wang <wangzhou1@hisilicon.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
- <20250224051627.2956304-9-baolu.lu@linux.intel.com>
- <BN9PR11MB5276852398C05D067FEFB2DF8CC32@BN9PR11MB5276.namprd11.prod.outlook.com>
+Subject: Re: [PATCH] drm/msm: Expose DRIVER_SYNCOBJ_TIMELINE
+To: Rob Clark <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>
+CC: <freedreno@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        "Rob
+ Clark" <robdclark@chromium.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list
+	<linux-kernel@vger.kernel.org>
+References: <20250225225244.26625-1-robdclark@gmail.com>
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276852398C05D067FEFB2DF8CC32@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250225225244.26625-1-robdclark@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -PC560jqYNSnAx6qZNp9TSKw2b79EKqz
+X-Proofpoint-GUID: -PC560jqYNSnAx6qZNp9TSKw2b79EKqz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260030
 
-On 2/25/25 16:16, Tian, Kevin wrote:
->> +	ret = mock_dev_enable_iopf(dev, domain);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mock_dev_disable_iopf(dev, mdev->domain);
-> You could use the same trick to simplify iopf_for_domain_replace()
-> in patch7?
+On 2/26/2025 4:22 AM, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> Initially we didn't want to expose the cap, as it would expose a bug
+> in the vk driver (turnip) with older mesa versions.  This was fixed over
+> a year ago (and cherry-picked to stable release branches at the time),
+> see https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25981.
+> So let's go ahead and expose it now.
+> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 
-Yes, simplify it like this,
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-static inline int iopf_for_domain_replace(struct iommu_domain *new,
-                                           struct iommu_domain *old,
-                                           struct device *dev)
-{
-         int ret;
+-Akhil
 
-         ret = iopf_for_domain_set(new, dev);
-         if (ret)
-                 return ret;
+> ---
+>  drivers/gpu/drm/msm/msm_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 37db92c8cecb..70373e0fd4a6 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -812,6 +812,7 @@ static const struct drm_driver msm_driver = {
+>  				DRIVER_RENDER |
+>  				DRIVER_ATOMIC |
+>  				DRIVER_MODESET |
+> +				DRIVER_SYNCOBJ_TIMELINE |
+>  				DRIVER_SYNCOBJ,
+>  	.open               = msm_open,
+>  	.postclose          = msm_postclose,
 
-         iopf_for_domain_remove(old, dev);
-
-         return 0;
-}
-
-Thanks,
-baolu
 
