@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-533088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BA1A45599
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:31:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01B2A455A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDE73A9605
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C5417521D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAF31DED6D;
-	Wed, 26 Feb 2025 06:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843522686A5;
+	Wed, 26 Feb 2025 06:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmmsAKro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Pa8yLKt5"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDB1E868
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAFD1E868
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740551501; cv=none; b=AIqbLAiYgvaBlwrLHIWdaM9RjPYo2YI7SQuHbZ7X82IOEddCJbLJ4oL9O5PMUhWf/0xAheBfh/sVx69FigV3Gps2Wt5Mi0PD1MV7wuuAf1FstW+hCeYohja1cLP0v2wUB0ISdRN3bXr8UlFi6VNyhl2ODl4iT9vSpW4Q8L9XV8A=
+	t=1740551540; cv=none; b=PJmzA5Ckm/XW3XX9i75neJECuBoyChsIEQtt0wn7v1/hY6Dc+BwDOUWWH51E4escThSEtc9aw+zfPZo1dE7btd6GxGRzLju7vmNs3DY3HE05A9F+5AxflbhjQY7MEo93J0rwFNH0cpHjE3wBKqSslAf2i3NwvAxfiMDDFtGwRR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740551501; c=relaxed/simple;
-	bh=cw5T9PwYdLU4jxcK8Pp0F604TRNUxhqOicEQjNnOlbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TpqhXmvi9qcTzG5H5q3zMvsn4pxOJXd5uCVw4KldegGR90vPdCQeg05JWWROVuLO8+8l1FQxkE+t3PbsClq2WvBIb0R9STMSlr9nyRZgY4Grp0pMXi1iAjyFCds4+M/cb+atkwi3fuDyV6L5eI6QytHuKFnTayWHn7ro6Ma1L/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmmsAKro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898DDC4CED6;
-	Wed, 26 Feb 2025 06:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740551501;
-	bh=cw5T9PwYdLU4jxcK8Pp0F604TRNUxhqOicEQjNnOlbk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YmmsAKrok1ivrIdvCgcidF71xYDmrMENAZRBQyVusDNZVfT6wjQPA5UqXxncU999F
-	 ibc9GBBhdt7teSm4u0WLCfiomLm4BEkLjKjf04ODyH2kRpgTnpU9vaO8vOSI9pKeEm
-	 Em8UHMYIR8HHS76rOyKEu8feqVnvEekPb+fqEgQF2z8cILF2Ia06nh5hmOTt/hvGLy
-	 9ILOOjaSbobdALTQmYO2oBbAhF+8ZIkNaF39Wi9t+O8q+2BHY605BvWbIXo86/mOai
-	 19mKEy3x1QxmFxROTqTIChw8NWIzaHesBrDEhzm6VBEx1veIXgbGPnjHnolDwXWZMd
-	 j44qqfX14WrUQ==
-Message-ID: <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
-Date: Wed, 26 Feb 2025 07:31:37 +0100
+	s=arc-20240116; t=1740551540; c=relaxed/simple;
+	bh=O/Cgz/sNloT4p2sEDuZ9Z/7WzZX+Hiv6oAtunAv14gs=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ZOrbWnr8UomP9XPNBz1k2m6MkYvwScKPEt8f4Q2FUZ3hb9fKCyfOZNMT+r1egdoS5pxYKpmxNYQqIXlRKJVEklXVhFpGXKpLNv1wB6jGsEMnlx3CNMGH42jUqG6ofaReTHkBphTsAHUUpmoJqzWVw0wTQWtxRHumOiYwEg4cNN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Pa8yLKt5; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2f441791e40so9940690a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:32:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740551539; x=1741156339; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtUWquMOJu8M6vXYzl7Hez8XDGzXf5hk21OpP0Wr4oE=;
+        b=Pa8yLKt5PVImOj0oTJv/2yk6WXgJ2K9pQAPfhk4o729b4mu21AddPsfiOftZeVagrD
+         b11Vx4AOUHK8oV3xXT1ZLgrJTLaQPng2rFF4yuVJ5CtV2hzi5vAOjCFL6D4HqzL3IL36
+         1aaIfQNvJUvhRB1FV62JiIPuvNWAOxeL5uM2b3spIxHLHOl9UjfBie5HaiZqiAT1CHPV
+         n+BS/4lTzF+50dEfybh4l2NfGDV2Ib0mDtrCgBzYv0t1ADWCAXTJ59dyeDC63fDWqr56
+         +T+4uepWx1OzQQnsn8I6CJDg8Ttjwi+4xkUhvBw29oBAGHBWXbFwA5Aa5XR9AKqfNWaq
+         VTng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740551539; x=1741156339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtUWquMOJu8M6vXYzl7Hez8XDGzXf5hk21OpP0Wr4oE=;
+        b=oqX6SIGl5UZ2oSGWjsfK/n12TsbbS5Qguw+X1spGS+DO/cY9lSjNQbEhNOiNRJTO1k
+         hu7wz5/UzrILxlqH+jWQvEKmMIuOSFNxP38RyopqcTQXH9f16qTQ0vxdn/3JBSjRct3K
+         vLgxPuDzLgvLh45TZu1bwCxmdmL8jksMyKXSWwX3kECBCbG7vPFcBZUaq7r+N4T7EuZH
+         CH5nPeNpbkBlrjEUU90eHiXWQhtIbI8uW/X5FqxTu6o8YAPVWBXGmuybgkKJEMFxGXkU
+         gpGlKhYhku4EQywuqRfZmreKRbtQg0niQRVwGtXyIruXoDKoh16BzpWDdYdLlSqus6xO
+         FafQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWE47x85uOl4PRoq1PKQkWcX/vpX6PAbjDS73S7ZM95luhaL7LCTP7OtglQU/IlYgJEwmFLQDPNRpk91tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6PL6jOdHcqEd8Q2ZlDJMb4+k7U6AwYpw+Ledyh/hr5G6gdyHZ
+	/pQhN4wLTZjGzHreYXoihhAvmgDWfiz47YxiEOiAk1bTvbGCAitSF6LFTey7S74=
+X-Gm-Gg: ASbGncsezQQ2UxV3N4HuU/KyiOWsIOXgB1tBtZhBXUaEzDByOrPio68cBsDHkONjyPc
+	XEjOCF7P2Yg9+oCdi5QgloJ/2Uy2qv5x7nPga0fuDlQ/oPCVYDTho+nk+Yj/3OuBCv+ebkJWixL
+	QS6sF0dou+xecBamlVP6NqvIFbl90ZyI9Ci5m9yYCsGi2k9UxWVtIJzqdqOQDfybI4WjakWMVZH
+	JQy1l5+51VgZgkQQZzQF+aosQ6loV7bpM0FEq4lm0BaLLfTanc9jDK8SYQzmO8KS0pUUXdbL1BD
+	3wrNYIgPmCfLsbjmFKadMzcjlslTr5LqZ3QypqpI74U8WGzCRxpSy8viXmAP
+X-Google-Smtp-Source: AGHT+IG2mAiXspI0vkCYd+e4u0ND+Y2lMAuAlqRh2tnsq4uOKE0Trc7s5XDT5FmuMUha5uITuEAAhQ==
+X-Received: by 2002:a17:90b:3e8a:b0:2f1:4715:5987 with SMTP id 98e67ed59e1d1-2fce86ae503mr34768209a91.9.1740551538640;
+        Tue, 25 Feb 2025 22:32:18 -0800 (PST)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.253])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe8284f152sm682599a91.46.2025.02.25.22.32.11
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 25 Feb 2025 22:32:18 -0800 (PST)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: ajones@ventanamicro.com,
+	alexghiti@rivosinc.com,
+	andybnac@gmail.com,
+	aou@eecs.berkeley.edu,
+	charlie@rivosinc.com,
+	cleger@rivosinc.com,
+	conor.dooley@microchip.com,
+	conor@kernel.org,
+	corbet@lwn.net,
+	cuiyunhui@bytedance.com,
+	evan@rivosinc.com,
+	jesse@rivosinc.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	samuel.holland@sifive.com,
+	shuah@kernel.org
+Subject: [PATCH v7 0/3] Enable Zicbom in usermode
+Date: Wed, 26 Feb 2025 14:32:03 +0800
+Message-Id: <20250226063206.71216-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20250129154920.6773-1-ubizjak@gmail.com>
- <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
- <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
- <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org>
- <CAFULd4bTYudfNap1trVyjqA0xv5cQQeWxSZ8numv_uHqxz1Afw@mail.gmail.com>
- <ef6e2925-f005-41e9-bc24-b9adc3922706@kernel.org>
- <Z7zBXyywUEC2ieiR@gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <Z7zBXyywUEC2ieiR@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24. 02. 25, 19:58, Ingo Molnar wrote:
-> So this CodingStyle entry is a red herring, and the !! is absolutely
-> used in the kernel
+v1/v2:
+There is only the first patch: RISC-V: Enable cbo.clean/flush in usermode,
+which mainly removes the enabling of cbo.inval in user mode.
 
-Sure, for intended conversion to either 0 or 1.
+v3:
+Add the functionality of Expose Zicbom and selftests for Zicbom.
 
-> as an explicit marker of intentional type conversion
-> to bool.
+v4:
+Modify the order of macros, The test_no_cbo_inval function is added
+separately.
 
-With this in mind, you would have to write "if (!!x)" everywhere.
+v5:
+1. Modify the order of RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE in hwprobe.rst
+2. "TEST_NO_ZICBOINVAL" -> "TEST_NO_CBO_INVAL"
 
-I don't want such constructions in code I maintain. (Nor for return 
-values.) But this is not code I maintain (obviously), so your call after 
-all.
+v6:
+Change hwprobe_ext0_has's second param to u64.
 
-thanks,
+v7:
+Rebase to the latest code of linux-next.
+
+Yunhui Cui (3):
+  RISC-V: Enable cbo.clean/flush in usermode
+  RISC-V: hwprobe: Expose Zicbom extension and its block size
+  RISC-V: selftests: Add TEST_ZICBOM into CBO tests
+
+ Documentation/arch/riscv/hwprobe.rst        |  6 ++
+ arch/riscv/include/asm/hwprobe.h            |  2 +-
+ arch/riscv/include/uapi/asm/hwprobe.h       |  2 +
+ arch/riscv/kernel/cpufeature.c              |  8 +++
+ arch/riscv/kernel/sys_hwprobe.c             |  8 ++-
+ tools/testing/selftests/riscv/hwprobe/cbo.c | 66 +++++++++++++++++----
+ 6 files changed, 79 insertions(+), 13 deletions(-)
+
 -- 
-js
-suse labs
+2.39.2
+
 
