@@ -1,49 +1,54 @@
-Return-Path: <linux-kernel+bounces-533683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3143CA45D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF5CA45D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C9916A9F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE3918848D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E5F21B183;
-	Wed, 26 Feb 2025 11:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEB6222582;
+	Wed, 26 Feb 2025 11:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="f8lZWyvS"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c6IURImb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15885218AC8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28850219308;
+	Wed, 26 Feb 2025 11:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570352; cv=none; b=Ec4JVy73scdWIifLT++EwLI6CFMth4lNTynX6bDZdUzElTLandZZaUwrPg8ZKObEHxfE8QyuXG1QlhCHTIbMCVJ5dj7CVs9C8aAwcmBoJhl/H6RHUBukmOcZoj/tOfKST61lskKVU5VYky6f3xVRzkGia5ZpUL/TARiqjo9DzgE=
+	t=1740570355; cv=none; b=Zo+fGjUd00M3PQdOmMpZlPpdZ6sx4QwIeOPbZBMrHRJ+k3gjZJ6W/C21eKdzay5Vh5XdjbhHGSFGRV99LdvLfwK0sS450Hvt62haPhvnDDrMZhbnt3YWOsmnTxdTXFMNtXNpg2MiIni1OWVebBFlw62sgBxfYsh7ZeE827QjhM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570352; c=relaxed/simple;
-	bh=C0kSWoh3LIV+HuMudMUFcqmX7KtzIL+dLkLS0LuQI+w=;
+	s=arc-20240116; t=1740570355; c=relaxed/simple;
+	bh=zuDQtknTvVdF2ZgtKWCQkBEadEohQseRtbIm+TZ42II=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QsKUqtVIXtWmp1ohXb4gQJgO+Cy24MPZPYuRtCvg46J6Aht4vKD/ccVRmjg5dr1F0rEwItpZNwRNbTLCdMviGOd4tBu6amQxULSzRBz8bZrFc8dmgw9oxVO47O6Ry5hWjO/V1ut2fLUj/4Lggb5f6fAGFYGKd2q80WYjQpCkImc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=f8lZWyvS; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=UlmH7lnQ/SSIrKM5aMl2BHpkT+fwdodZZLv8W8GXIsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=f8lZWyvSDPQwKr7SDXIE6VdW5kZrI22cRU+v86cMZBg8M63ib8K+MKQDsZPYVZ+Mz
-	 VIc01nNZYPIWEtaq9AznMiQTF7n48OFpxRM5YhSgpY2okVb9cwuvzP1KIikiB+2fRu
-	 d+7AduZcNoirLHLK7K4h8pgvS0d1L0tQbLrFrF/Od88tDX/EZXod457QB5bg4qbmFp
-	 DbogBPgs3Q7iQQ0mZfmhQRiw2/P900rSG5OeZM5GDf/tYeCwP0bcGCpZ97ZFFl8n8G
-	 biW93Aup+84jC3T2ck5W5lDGV0KXW+sjwetmqndyZG8OIOv24PsphQXGiGBlN7Elxi
-	 r4aI2TycTa3Rw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 5CEAB180350;
-	Wed, 26 Feb 2025 11:45:37 +0000 (UTC)
-Message-ID: <a6dfff9c-ab0e-4308-81e7-62d8ea04d62b@icloud.com>
-Date: Wed, 26 Feb 2025 19:45:34 +0800
+	 In-Reply-To:Content-Type; b=YlaF5fS08LqMWzDXbHx4QQWgsJrASfw/W4wtG6GS36bVNMvfs53ByL5gQvxg7sA0AjcJmp6P94z/Vh7jerG8C6HDYwqTwfolIRhzIvdXKzqwCLWNpWAW06PLqqJ57tm/zqrWgvK0cMWEU1L2GIfVQetm8sNXK9LAHH6+94+3TQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c6IURImb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740570351;
+	bh=zuDQtknTvVdF2ZgtKWCQkBEadEohQseRtbIm+TZ42II=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c6IURImbp3KCNPOXFqy/b6TUhD6r6DZYgxKIeCAGg7D8+LlPKf7XzU2cGsy+oKS9Z
+	 8GT8GVmWOkCPxrTBLFR3F+TfZJgI6Xwko6eiu6Bz2d/BDAatb5HIZ3hGOZ0NSYpcIN
+	 DEWkzB2FF6Vf+hwAURRZhY6pPQByQtkVwj/vtHFnXls+kkCP3jAjrBfc3tZnGiZOpE
+	 WsRwsZcFKKMVnjizZA6i8Gn/IFm41fWyeeceJL+EE+sHY3cAFIqcBTCg/E5DX6SPCA
+	 OiYFmkguld2n2q6v67dYHd4hYE+oaSRaeZ0+vRQOPqNIv7bQZrFMKDZECDO751geVT
+	 CJCxipnCBdbvw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E0BF317E001E;
+	Wed, 26 Feb 2025 12:45:49 +0100 (CET)
+Message-ID: <c2154240-efa1-4c73-aabe-74e938a75af1@collabora.com>
+Date: Wed, 26 Feb 2025 12:45:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,86 +56,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH *-next 01/18] mm/mmu_gather: Remove needless return in
- void API tlb_remove_page()
-To: David Howells <dhowells@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Johannes Berg <johannes@sipsolutions.net>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
- Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev,
- linux-mtd@lists.infradead.org
-References: <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
- <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
- <20250221-rmv_return-v1-1-cc8dff275827@quicinc.com>
- <20250221200137.GH7373@noisy.programming.kicks-ass.net>
- <2298251.1740496596@warthog.procyon.org.uk>
+Subject: Re: [PATCH v7 2/6] drm/mediatek: dsi: Improves the DSI lane setup
+ robustness
+To: Alexandre Mergnat <amergnat@baylibre.com>,
+ =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "simona.vetter@ffwll.ch" <simona.vetter@ffwll.ch>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "will@kernel.org" <will@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "simona@ffwll.ch" <simona@ffwll.ch>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>
+References: <20231023-display-support-v7-0-6703f3e26831@baylibre.com>
+ <20231023-display-support-v7-2-6703f3e26831@baylibre.com>
+ <ab3bd050c873bb6cecc00b615b938eabc157cb49.camel@mediatek.com>
+ <79477810-00a9-47f1-8282-f8077ea082bb@baylibre.com>
+ <3310b6f9-df7a-4769-a221-4a93cc3ec035@collabora.com>
+ <0863ee2e-25ed-43b7-a896-e380de828d58@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2298251.1740496596@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: iqw5w_RmeMXu0iJloMXtrzoP0X8vVIzf
-X-Proofpoint-ORIG-GUID: iqw5w_RmeMXu0iJloMXtrzoP0X8vVIzf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=985
- malwarescore=0 clxscore=1011 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502260094
+In-Reply-To: <0863ee2e-25ed-43b7-a896-e380de828d58@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025/2/25 23:16, David Howells wrote:
-> Zijun Hu <zijun_hu@icloud.com> wrote:
+Il 26/02/25 12:35, Alexandre Mergnat ha scritto:
 > 
->>>>  static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
->>>>  {
->>>> -	return tlb_remove_page_size(tlb, page, PAGE_SIZE);
->>>> +	tlb_remove_page_size(tlb, page, PAGE_SIZE);
->>>>  }
->>> So I don't mind removing it, but note that that return enforces
->>> tlb_remove_page_size() has void return type.
+> 
+> On 18/02/2025 09:52, AngeloGioacchino Del Regno wrote:
+>> Il 17/02/25 16:03, Alexandre Mergnat ha scritto:
+>>> Hi CK.
 >>>
+>>> On 17/02/2025 08:56, CK Hu (胡俊光) wrote:
+>>>> On Fri, 2025-01-10 at 14:31 +0100, Alexandre Mergnat wrote:
+>>>>> External email : Please do not click links or open attachments until you have 
+>>>>> verified the sender or the content.
+>>>>>
+>>>>>
+>>>>> Currently, mtk_dsi_lane_ready (which setup the DSI lane) is triggered
+>>>>> before mtk_dsi_poweron. lanes_ready flag toggle to true during
+>>>>> mtk_dsi_lane_ready function, and the DSI module is set up during
+>>>>> mtk_dsi_poweron.
+>>>>>
+>>>>> Later, during panel driver init, mtk_dsi_lane_ready is triggered but does
+>>>>> nothing because lanes are considered ready. Unfortunately, when the panel
+>>>>> driver try to communicate, the DSI returns a timeout.
+>>>>>
+>>>>> The solution found here is to put lanes_ready flag to false after the DSI
+>>>>> module setup into mtk_dsi_poweron to init the DSI lanes after the power /
+>>>>> setup of the DSI module.
+>>>>
+>>>> I'm not clear about what happen.
+>>>> I think this DSI flow has worked for a long time.
+>>>> So only some panel has problem?
+>>>
+>>> I don't know if it's related to a specific panel or not.
+>>>
+>>>>
+>>>> And another question.
+>>>> Do you mean mtk_dsi_lane_ready() do some setting to hardware, but lane is not 
+>>>> actually ready?
+>>>
+>>> The workflow should be:
+>>> ... | dsi->lanes_ready = false | Power-on | setup dsi lanes | dsi->lanes_ready = 
+>>> true (to avoid re-do dsi lanes setup) | ...
+>>>
+>>> I observe (print function name called + dsi->lanes_ready value):
 >>
->> tlb_remove_page_size() is void function already. (^^)
+>> Alex, the first poweron is called by mtk_dsi_ddp_start() - and the start callback
+>> is internal to the mediatek-drm driver.
+>>
+>> That callback is called by mtk_crtc during setup and during bridge enable(), and
+>> there we go with suboptimal code design backfiring - instead of using what the
+>> DRM APIs provide, this driver uses something custom *and* the DRM APIs, giving
+>> this issue.
+>>
+>> Part of what mtk_crtc does is duplicated with what the DRM APIs want to do, so
+>> there you go, that's your problem here :-)
+>>
+>> Should I go on with describing the next step(s), or is that obvious for everyone?
+>>
+>> :-)
+>>
+>> Cheers,
 > 
-> That may be true... for now.  But if that is changed in the future, then you
-> will get an error indicating something you need to go and look at... so in
-> that regard, it's *better* to do this ;-)
+> Ok thanks Angelo.
+> Can you let me know if you agree with this change please ? This should be better:
 > 
 
-i understand your point.
+No, no, I'm saying that we should do the exact opposite of what you're doing here!
 
-if the callee tlb_remove_page_size() is in the same module with the
-caller tlb_remove_page. it is meaningless to watch the callee's return type.
+We should drop the MediaTek custom stuff that duplicates the DRM APIs behavior(s),
+and conform to what the DRM APIs provide and want us to do.
 
-otherwise, provided the callee is a API which is provided by other
-module author. once the author changes the API's return type, he/she
-must take effort to cleanup this weird and lots of usages, that is not
-nice for API provider.
+To be really really clear - I'm saying to delete and avoid using:
+- mtk_dsi_ddp_start()
+- mtk_dsi_ddp_stop()
 
-this is a common issue. i will list my reasons why this usage is not
-good in cover letter of this series
-> David
+The spirit here should be to use kernel provided APIs, and to make custom stuff
+to disappear as much as possible (again, that mtk_crtc .start/.stop).
+
+I'm not saying that literally all of the start/stop callbacks for all of the
+MTK DRM drivers should disappear *all at once* but... gradually, one by one,
+these should get lost (where/if possible).
+
+Just one more mention: that custom handling also backfired on me while writing
+the hdmiv2/dpi drivers... and now backfires on dsi, and in the future it will
+backfire again on something else. It's there only to give problems in the end,
+not to solve them :-)
+
+Cheers,
+Angelo
+
+> @@ -843,25 +843,6 @@ static void mtk_dsi_bridge_atomic_enable(struct drm_bridge 
+> *bridge,
+>       mtk_output_dsi_enable(dsi);
+>   }
 > 
+> -static void mtk_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+> -                         struct drm_bridge_state *old_bridge_state)
+> -{
+> -    struct mtk_dsi *dsi = bridge_to_dsi(bridge);
+> -    int ret;
+> -
+> -    ret = mtk_dsi_poweron(dsi);
+> -    if (ret < 0)
+> -        DRM_ERROR("failed to power on dsi\n");
+> -}
+> -
+> -static void mtk_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
+> -                           struct drm_bridge_state *old_bridge_state)
+> -{
+> -    struct mtk_dsi *dsi = bridge_to_dsi(bridge);
+> -
+> -    mtk_dsi_poweroff(dsi);
+> -}
+> -
+>   static enum drm_mode_status
+>   mtk_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>                 const struct drm_display_info *info,
+> @@ -886,8 +867,6 @@ static const struct drm_bridge_funcs mtk_dsi_bridge_funcs = {
+>       .atomic_disable = mtk_dsi_bridge_atomic_disable,
+>       .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>       .atomic_enable = mtk_dsi_bridge_atomic_enable,
+> -    .atomic_pre_enable = mtk_dsi_bridge_atomic_pre_enable,
+> -    .atomic_post_disable = mtk_dsi_bridge_atomic_post_disable,
+>       .atomic_reset = drm_atomic_helper_bridge_reset,
+>       .mode_valid = mtk_dsi_bridge_mode_valid,
+>       .mode_set = mtk_dsi_bridge_mode_set,
+> 
+> 
+
 
 
