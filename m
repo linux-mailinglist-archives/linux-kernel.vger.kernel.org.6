@@ -1,117 +1,208 @@
-Return-Path: <linux-kernel+bounces-534047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F62BA46213
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:16:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807DBA46217
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A871188F81D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899D73AF9E5
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C7D21B9C5;
-	Wed, 26 Feb 2025 14:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA46D22172A;
+	Wed, 26 Feb 2025 14:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UIueZEZw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PkL9E1tS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vxS0B8e1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4onTdeWZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yIpqqYeL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b+zQmUnD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F215D3209
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35606155322
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579366; cv=none; b=JlEwLUhLMcKTH13uUihOfQPBmiE8GgGRp7c/7ne7QDvXWU/Lw30EQT9wHQhG5gD0AbfUC9pM7uGaLTOHElglxC6MuJzbbec/OlEX5Cai+25UpUHcnywx30A15BPed5PiYQZFobABaXwd23425H6Kn9d7HDKbvi24+rHFS2yRz8s=
+	t=1740579383; cv=none; b=mFXhtDou0HuL1U3C83I00LavXoSLXmjNqMjDZyrTIxHf2rPsTzk2kUen01XDC85LaSMXTyKIjafIDXK8MODXpxQjLJuAR8i6jx1TtK7z5QZVSgS1rPzzuEXMwQBHBbTRVc40oy8xYRV0BbLj4S8ECmJSEUzajwRV6h1du+Hh208=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579366; c=relaxed/simple;
-	bh=+22gOs8S5d4E9UxPZqeJIYphnE6ScP1uHa78A/JGDKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxWJUXkNdv7pHk76TgXax6CUUT69gEq2Xict8zDippMiqABB0J3hRxMnhApE+4hd6VUbFX+N5GOK572bBrgYwUsN3BeOaIO86h/pzxlE23tvJkyVFlw1Ij/sSH2e/8MhndRUeNJHKVvh79dBoJU9MHBG3tzz9A/mwbiJlJX/WWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UIueZEZw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PkL9E1tS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 15:16:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740579362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740579383; c=relaxed/simple;
+	bh=xHaye/VD0gTX8JBjRwbKLLg1fkIN8ge3YghviGCjuek=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lca+fBMbe3ynQrtvPV9u5k0E3PyNQHDNm2abAaI4HD7u/07zKLeTvDfgX9pXAiPwLh1TOAF5K7IhHJkqYZxApnOEE3EvscQe1hrJx6AOb6OpI386TN//qEyc09fqtrAl9rBw3EYrUjo5g2SdD1cfJl2cjNFdPQkXfM6kQRY/el0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vxS0B8e1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4onTdeWZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yIpqqYeL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b+zQmUnD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 577AE21179;
+	Wed, 26 Feb 2025 14:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740579380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pvs8XNbEl/alJbdW70qIi28Rlefg4eDpG/mkImN9p4U=;
-	b=UIueZEZwb2vEfIzdUy7smeKVEuQsme7oCJqisG0+orYlq9ITKsRYY70MluvDDJJSdyRSg2
-	mLmo2sUPZLCtwmZAit71JQJYKZHNVwFqO0d4lFrTlmdMnzgfU6KJ0q5RDIfGgSmDJu1RU+
-	2U72Ic+V2XJZzKi11e/464GJWXg0+N8dbBZkxV4cFQDrH/8cUPMs4HE+2j+P8OvEuUX3zM
-	4fo8TKe9x54V7M6vcNzJxd4qrrvrJBpvM+zsKdPmBLTaejF4KcwpWbaGarKWPQGt+6+JbQ
-	SMpwGBxkBYFFy67SCE6huQrw/LVPHSmFu+Qkb+s0lYM70B6+4CaNjJ2hWBCpLg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740579362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=WLv1G8ojBaALqWVhETzpPds9EbyN7hQfuo/4E9u8d2A=;
+	b=vxS0B8e1bMBi+70xVx+wUUH/9q/iiRn+Ubi7eZZLAoKxK4sStibr+LS5lqQhKKyYMaIB/e
+	J3//Nbg3VZizT1hVK0sI3XloSYtOP+BDT2SnFKHJsS+WVtNyoZ1As6t1rii/l2SCZaEAUu
+	G00nbteqYHP9Hpl4sG6uNr/mesiPza0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740579380;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pvs8XNbEl/alJbdW70qIi28Rlefg4eDpG/mkImN9p4U=;
-	b=PkL9E1tS+b4dGmodcwg9JESlpefuRuFYNpZhohnz1ZeZA1Eekco+v79CrLzQd8E6zUAjOk
-	cy+bvzLr+rXw4SBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
- the callbacks.
-Message-ID: <20250226141601.VBQ91ZDb@linutronix.de>
-References: <20250221170530.L3yMvO0i@linutronix.de>
- <20250223224014.GC23282@redhat.com>
+	bh=WLv1G8ojBaALqWVhETzpPds9EbyN7hQfuo/4E9u8d2A=;
+	b=4onTdeWZINNij3shn49BHGY1+a40q2ZKxy6HSWRpEZCqL/FhiP0Bnr0rlG6z/jx3OeeC8e
+	wCvJShMO26gxqZAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yIpqqYeL;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=b+zQmUnD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740579379; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLv1G8ojBaALqWVhETzpPds9EbyN7hQfuo/4E9u8d2A=;
+	b=yIpqqYeLlTQErATJu+yipyfkPrV9CEnsL4TlUQ2Da/eiA3i+N0XSGAVkgS+YjW4uGWIgOq
+	Y7KzybbX2Pzh+51QQdvvxhpHSp46/Wnn/trBB+R4oJBMa0kX54xOxlVOMlHeJxDVAtSs1S
+	nITT9R2o4e8pFF4F3wzeJP5GLYLeXq8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740579379;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLv1G8ojBaALqWVhETzpPds9EbyN7hQfuo/4E9u8d2A=;
+	b=b+zQmUnDSX22rtHwg5fgVfJTVWVL+uegJ7ksEBwK/9E1MdMGPzfce0+pWTOuioB/uMHtlS
+	50opoGpPt9paBGCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4062013A53;
+	Wed, 26 Feb 2025 14:16:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SxwqDzMiv2fzPwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 26 Feb 2025 14:16:19 +0000
+Date: Wed, 26 Feb 2025 15:16:18 +0100
+Message-ID: <87h64g4wr1.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	regressions@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
+In-Reply-To: <263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
+References: <874j0lvy89.wl-tiwai@suse.de>
+	<dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+	<87jz9d5cdp.wl-tiwai@suse.de>
+	<263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250223224014.GC23282@redhat.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 577AE21179
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2025-02-23 23:40:15 [+0100], Oleg Nesterov wrote:
-> Well... I won't really argue because I can't suggest a better fix at
-> least right now. Most probably never.
+On Wed, 26 Feb 2025 15:11:04 +0100,
+Chuck Lever wrote:
 > 
-> However, let me say that this patch doesn't make me happy ;) See below.
+> On 2/26/25 3:38 AM, Takashi Iwai wrote:
+> > On Sun, 23 Feb 2025 16:18:41 +0100,
+> > Chuck Lever wrote:
+> >>
+> >> On 2/23/25 3:53 AM, Takashi Iwai wrote:
+> >>> [ resent due to a wrong address for regression reporting, sorry! ]
+> >>>
+> >>> Hi,
+> >>>
+> >>> we received a bug report showing the regression on 6.13.1 kernel
+> >>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> >>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+> >>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> >>>
+> >>> Quoting from there:
+> >>> """
+> >>> I use the latest TW on Gnome with a 4K display and 150%
+> >>> scaling. Everything has been working fine, but recently both Chrome
+> >>> and VSCode (installed from official non-openSUSE channels) stopped
+> >>> working with Scaling.
+> >>> ....
+> >>> I am using VSCode with:
+> >>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> >>> """
+> >>>
+> >>> Surprisingly, the bisection pointed to the backport of the commit
+> >>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> >>> to iterate simple_offset directories").
+> >>>
+> >>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> >>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> >>> release is still affected, too.
+> >>>
+> >>> For now I have no concrete idea how the patch could break the behavior
+> >>> of a graphical application like the above.  Let us know if you need
+> >>> something for debugging.  (Or at easiest, join to the bugzilla entry
+> >>> and ask there; or open another bug report at whatever you like.)
+> >>>
+> >>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> >>>
+> >>>
+> >>> thanks,
+> >>>
+> >>> Takashi
+> >>>
+> >>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> >>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> >>
+> >> We received a similar report a few days ago, and are likewise puzzled at
+> >> the commit result. Please report this issue to the Chrome development
+> >> team and have them come up with a simple reproducer that I can try in my
+> >> own lab. I'm sure they can quickly get to the bottom of the application
+> >> stack to identify the misbehaving interaction between OS and app.
+> > 
+> > Do you know where to report to?
 > 
-> On 02/21, Sebastian Andrzej Siewior wrote:
-> >
-> > Oleg pointed out that this might be problematic if one closes 2.000.000
-> > files at once. While testing this scenario by opening that many files
-> > following by exit() to ensure that all files are closed at once, I did
-> > not observe anything outside of noise.
-> 
-> and this probably means that we can revert c82199061009 ("task_work: remove
-> fifo ordering guarantee") and restore the fifo ordering which IMO makes much
-> more sense.
+> You'll need to drive this, since you currently have a working
+> reproducer.
 
-So assume that turning around will fix the problem because the cancel
-callback is run first followed by the clean up.
+No, I don't have, I'm merely a messenger.
 
-> But:
-> 
-> > Fixes: c5d93d23a2601 ("perf: Enqueue SIGTRAP always via task_work.")
-> 
-> Yes. So, to fix this specific problem in perf this patch changes task_work.c
-> 
-> And after this change we can never enforce a "clear" ordering, fifo or even lifo.
-> The ordering is simply "unpredictable/random".
-> 
-> I'll try to find and read the previous discussions tomorrow, but iirc Frederic
-> had another solution?
 
-Two at least:
-- having a pointer to the next item
-- avoiding the wait in the task_work callback. I think this is the
-  unfortunate part. I think he had something but was very unhappy with
-  it.
-
-> Oleg.
-
-Sebastian
+Takashi
 
