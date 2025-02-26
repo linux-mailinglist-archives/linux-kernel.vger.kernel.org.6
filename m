@@ -1,137 +1,214 @@
-Return-Path: <linux-kernel+bounces-533687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96E2A45DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:50:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50F5A45DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD8C3A2F2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A42947A2736
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD96E21773E;
-	Wed, 26 Feb 2025 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A40021D3C7;
+	Wed, 26 Feb 2025 11:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bASzfkXc"
-Received: from mail-qv1-f73.google.com (mail-qv1-f73.google.com [209.85.219.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV3Ym0x5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989EE217F48
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F16217701;
+	Wed, 26 Feb 2025 11:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570504; cv=none; b=Wn7O3wGM/BujxIcJVYHix8z4UrLyb/O8ge68nmM9kICyZeSkgiqnF4hCiAPFAy5KCx5L86GIaymXfaTL0j4yR/iE/Sf7y3+e76sWl8oFO/A2xikjK8X9viMidCtyNzQpDIDU2mBOtMeMuC6pUXkhStFl7vuNXicZcmPSaIjCXCU=
+	t=1740570512; cv=none; b=HCgzQrwbCJHTHk2s236pS1n9STMvon1e45XsJyC2m7ATCdH9y84zw16wQwzTwg1vfOiW9XgH+Jiwe/g7xtf/a5ErVEU+zbElX+4PnYUAW8GNs5FS/TEO8dH7M4Fu2ss99Sr0MpBT3GTLl4IK6DboUZi70/E06VVyuHnDLIHJfL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570504; c=relaxed/simple;
-	bh=NluUjPQ1lcXSGNSXHKkI9g2tFhg8Z04LMSmLkLhacJg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RoUQ21dEE9/VuJd45ccvSs1Ig40Zc+y0o0XQW+gcJhcflvoxPbR+cmGj09u6/AJ91CPAlf2c8fgOLvCiy07tjlz2kNhekd/7PTAcG3Lg8/su63wNy/PeH8+125BGssIfJCgHXCaeYurHtsKdOsZOuS+yR/j+BkTzRTJ6A/F+D2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bASzfkXc; arc=none smtp.client-ip=209.85.219.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com
-Received: by mail-qv1-f73.google.com with SMTP id 6a1803df08f44-6e867ab3537so54563536d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740570501; x=1741175301; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BW2sDZbGgcaHae82O3nWDg50TbU9r5oNGjDpd8Bq0yg=;
-        b=bASzfkXcq6uDxnM3z9vcz2+aGdJN4NKqtup4GK2vxVtnyP+fgJVvuMkARXpYDOpwk8
-         IeNYqrWvf2DvIibDUErf/peL/5JR+W9MCyRE6yhQJnLeK3CKy/x59dcxKjwcuVNwsTyr
-         N9cvyW5v6B+ZL/nO3JO7WfqoA6zYqOA1Gors36mb/aD1SK1A9ZGR5+ql1u6NOuOR4ycd
-         0WPia3G/HXFZw2qyfV7W9si6O0hS9uu9fsHffeiDPgwtmSVeEunBS+hDcRkFsGS75+uv
-         1rnj3tcxDuZzymkpiv/xNQAcVzWjlsvlzDZdmerOMPVKVdt5LUA7ZhjyA+89UjSISl1h
-         vqsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740570501; x=1741175301;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BW2sDZbGgcaHae82O3nWDg50TbU9r5oNGjDpd8Bq0yg=;
-        b=vi6v+Tc+Pm9r4TAgPi1A0WpHLn2jRM9/ALgue+of2ce5lOjXPOCAqFFNmZ1pDxkSv+
-         FGpm1/RgDKuc7exBRVduvDmGal+hdpT7+KYs0hAGBnus8aHSQYs1Zo6dOGh121QwoaNl
-         24JopSVt0W/aIWJAEjFOw6O5e0xN9hl8+8owhYvFDCiDVaIv7GqgoPBo7kTpsDyXEUnz
-         anbGwiJor4t/1v5F4XZ3PF6vglPb52cPFPwXAbIl5Qyu3vHETMQBGMeecwdI09z7eESi
-         v6MWI2ucbGltIzxwQGkZhKgbB1Ppq3dvbBovZxz8dA67fbGiU3kVw8rXKRmZ7Jp+edN1
-         xSoA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6NsEVvywkeiiqLV5FYnVd3MGQOYZcWcV8qM9s3b/r/Agt6zQN+FnwIWc925hovzLjrZGNRsssbzx2i2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjdLLK6k9Bzvr0nLF5zZIXAOWZWvnAgzgom3mIDJErz5JFK/cY
-	ma2Hc1VuyWNxge4GcapYQFXvikXkPV5dkYyKOqmWr9zupbBToVNHEZkzhb1EF27mjsbA9mzZeHi
-	M2RLdlw==
-X-Google-Smtp-Source: AGHT+IHJUITF5zclnwhhjHbh20BakF71z5r6tgDhP0AK9kt5E28tAnRR/N6wBQQHHEoX4jc66xvFWRnCg9Rw
-X-Received: from qvbkh18.prod.google.com ([2002:a05:6214:5152:b0:6e6:62c7:9f79])
- (user=bgeffon job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6214:4119:b0:6d8:99cf:d2db
- with SMTP id 6a1803df08f44-6e6b01c6a01mr279510756d6.38.1740570501527; Wed, 26
- Feb 2025 03:48:21 -0800 (PST)
-Date: Wed, 26 Feb 2025 06:48:15 -0500
+	s=arc-20240116; t=1740570512; c=relaxed/simple;
+	bh=GUzhGjNO5ocbKYgDd8dEbRVtIpH0rClgFTMO3hPnsIY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WoYPhubvz99qUiBNwmpJ8Mn2duv8u5mIw+jYKGfAbdUjrlpcug/UFGA1u6pICxJD05R+sh72iQtJpjf4eXnyaVpxz5eP+O0LD0nFEzF/Dbl1qTvW8rMzaPuwx5yA8Qwc2Frfb7n3K2nQsLbqCbttmvpZGallvkPIKdFQh6XuKWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV3Ym0x5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3118EC4CEE4;
+	Wed, 26 Feb 2025 11:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740570512;
+	bh=GUzhGjNO5ocbKYgDd8dEbRVtIpH0rClgFTMO3hPnsIY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=AV3Ym0x5ULM+3BGpd9Zh/0shz+/jZdo1GKeLUmTJoVq9dUnLivFifFkHHZHkHGga2
+	 Xk+qhXAN6yrjxM7ZlVU+p5etMNuh6dNTq9EmbIYm3XG6ZYqIxCM6rbOwNGIMmvayv1
+	 Y+EQ395xelLSHSNlhNteYqkGwwvbGcQKiKA1AsUwMQNKRhivPVE4a6im6iOs7bm06c
+	 OgP7e5LeL8NnunR9dD8V3TWUdLPhGuDohgZIxcNzEG/mBPSaiWWCwILO3AZHGOPP6C
+	 GH+NBqDo3TpYEuf9KIF3dwjdDyJj+UUkY3mFDdL4znrwwQtrJ+zdIzadfam3DYPqYK
+	 ulEIGu8w9KT3Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
+  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
+ (Tamir
+	Duberstein's message of "Tue, 25 Feb 2025 15:13:51 -0500")
+References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
+	<20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
+	<q5sIYQbnCqKmdnZZy-eaKvSUY7O5pOy2-QzwWwCo9VoormFcKS6RS3OVIIby-Pf5PDpTRh67txem3sXQKSB1JQ==@protonmail.internalid>
+	<CAJ-ks9nj8+fXM_oo0LJo4O6Q=skFRcHwz8TLxw-yB3QTcDF9GA@mail.gmail.com>
+	<87cyf6xv7g.fsf@kernel.org>
+	<Wy3wqzRK5qG3GyHC7oEg3NR3tv9-Uv7m_tmgKZTHNEU6aZX5hxrIXLudLfzQvuZNvIz1Av2fKzH5eTvomny1Vg==@protonmail.internalid>
+	<CAJ-ks9=PR-Laj37NqG5s_TbKddONWxp4-Cf3C57AMk9z92mfDQ@mail.gmail.com>
+	<87r03lvnx4.fsf@kernel.org>
+	<RWZWPbf2ND3HRx_kFFVnjBngQMWjrmbidBCzyJr58iQsksyu5SpJVfCiEjf7WYWFOz6eWib5Q9j23QmbSqXyEQ==@protonmail.internalid>
+	<CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 26 Feb 2025 12:48:18 +0100
+Message-ID: <87eczludtp.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250226114815.758217-1-bgeffon@google.com>
-Subject: [PATCH] mm: fix finish_fault() handling for large folios
-From: Brian Geffon <bgeffon@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zi Yan <ziy@nvidia.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Brian Geffon <bgeffon@google.com>, stable@vger.kernel.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins <hughd@google.com>, 
-	Marek Maslanka <mmaslanka@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-When handling faults for anon shmem finish_fault() will attempt to install
-ptes for the entire folio. Unfortunately if it encounters a single
-non-pte_none entry in that range it will bail, even if the pte that
-triggered the fault is still pte_none. When this situation happens the
-fault will be retried endlessly never making forward progress.
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-This patch fixes this behavior and if it detects that a pte in the range
-is not pte_none it will fall back to setting just the pte for the
-address that triggered the fault.
+> On Tue, Feb 25, 2025 at 2:12=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
+>>
+>> "Tamir Duberstein" <tamird@gmail.com> writes:
+>>
+>> > On Tue, Feb 25, 2025 at 3:52=E2=80=AFAM Andreas Hindborg <a.hindborg@k=
+ernel.org> wrote:
+>> >>
+>> >> "Tamir Duberstein" <tamird@gmail.com> writes:
+>> >>
+>> >> > Hi Andreas, mostly grammar and prose clarity comments below.
+>> >> >
+>> >> > I still think HasHrTimer::OFFSET is less clear and more fragile than
+>> >> > just generating compiler-checked implementations in the macro (you'=
+re
+>> >> > already generating OFFSET and one method implementation rather than
+>> >> > generating 2 method implementations).
+>> >>
+>> >> I don't agree with you assessment. My argument is that I would rather
+>> >> generate as little code as possible in the macro, and the trait would=
+ in
+>> >> practice never be implemented by hand.
+>> >
+>> > In the current patch, the trait:
+>> > - provides raw_get_timer
+>> > - provides timer_container_of
+>> > and the macro:
+>> > - defines OFFSET
+>> > - defines raw_get_timer
+>> >
+>> > The justification for the redundancy is that without defining
+>> > raw_get_timer in the macro the user might invoke the macro
+>> > incorrectly.
+>>
+>> It's not that they might invoke the macro incorrectly, it's that we
+>> would not be able to make the macro safe. The way it is implemented now,
+>> it will only compile if it is safe.
+>>
+>> > But why is that better than defining both methods in the
+>> > macro?
+>>
+>> Because it is generating less code. I would rather write the library cod=
+e than
+>> have the macro generate the code for us on every invocation.
+>
+> How is it less code? It's the same amount, just harder to reason about
+> because you're doing pointer arithmetic rather than relying on
+> existing macros like container_of.
+>
+>>
+>> > Either way the macro provides 2 items. The key benefit of
+>> > defining both methods in the macro is that there's no dead-code
+>> > implementation of raw_get_pointer in the trait. It also reduces the
+>> > surface of the trait, which is always a benefit due to Hyrum's law.
+>>
+>> When you say that the surface would be smaller, you mean that by
+>> dropping OFFSET entirely, the trait would have fewer items?
+>
+> Yes.
+>
+>
+>> I'm not familiar with Hyrum's law.
+>
+> TL;DR is that anything that can become load bearing will. So even if
+> the intent is that OFFSET is an implementation detail, there's no way
+> to enforce that, and so someone will misuse it.
 
-Cc: stable@vger.kernel.org
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Hugh Dickins <hughd@google.com>
-Fixes: 43e027e41423 ("mm: memory: extend finish_fault() to support large folio")
-Reported-by: Marek Maslanka <mmaslanka@google.com>
-Signed-off-by: Brian Geffon <bgeffon@google.com>
----
- mm/memory.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+I don't fully agree with your assessment, but either way is fine for me.
+So I shall implement your suggestion.
 
-diff --git a/mm/memory.c b/mm/memory.c
-index b4d3d4893267..32de626ec1da 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5258,9 +5258,22 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
- 		ret = VM_FAULT_NOPAGE;
- 		goto unlock;
- 	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
--		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
--		ret = VM_FAULT_NOPAGE;
--		goto unlock;
-+		/*
-+		 * We encountered a set pte, let's just try to install the
-+		 * pte for the original fault if that pte is still pte none.
-+		 */
-+		pgoff_t idx = (vmf->address - addr) / PAGE_SIZE;
-+
-+		if (!pte_none(ptep_get_lockless(vmf->pte + idx))) {
-+			update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
-+			ret = VM_FAULT_NOPAGE;
-+			goto unlock;
-+		}
-+
-+		vmf->pte = vmf->pte + idx;
-+		page = folio_page(folio, idx);
-+		addr = vmf->address;
-+		nr_pages = 1;
- 	}
- 
- 	folio_ref_add(folio, nr_pages - 1);
--- 
-2.48.1.711.g2feabab25a-goog
+[...]
+
+>> > I noticed below I had suggested talking about the handler as
+>> > "returning" rather than "finishing execution"; please consider that
+>> > throughout.
+>>
+>> I do not prefer one over the other. Do you care strongly about this one?
+>
+> I prefer return since it's more obvious but don't feel strongly about
+> the choice, only that the usage is consistent.
+
+Ok, let's do that then.
+
+[...]
+
+>> >> >> +/// Implemented by pointer types that point to structs that embed=
+ a [`HrTimer`].
+>> >
+>> > This comment says "embed a [`HrTimer`]" but in `trait HrTimer` the
+>> > wording is "Implemented by structs that contain timer nodes."
+>>
+>> I don't follow. There is no `trait HrTimer`, there is a `struct
+>> HrTimer`, but it has no such wording.
+>>
+>> > Is the difference significant?
+>>
+>> No, I would say they are semantically the same. Whether a struct
+>> contains a field of a type or it embeds another struct - I would say
+>> that is the same.
+>
+> Can we use the same wording in both places then?
+
+OK.
+
+>> > Also the naming of the two traits feels inconsistent; one contains
+>> > "Has" and the other doesn't.
+>>
+>> One is not a trait, not sure if you are looking on another item than
+>> `struct HrTimer`?
+>
+> Sorry, I meant HasHrTimer and HrTimerPointer rather than HrTimer and
+> HrTimerPointer.
+
+`HasHrTimer` is named so because it is meant to be implemented by types
+that contain a field of type `HrTimer`.
+
+`HrTimerPointer` is meant to be implemented by pointer types that point
+to types that implement `HasHrTimer`.
+
+They are different, and the naming reflect that.
+
+I will not rename `HasHrTimer` to `ContainsHrTimer`, because the rest of
+the rust kernel uses the `HasFoo` naming scheme.
+
+
+Best regards,
+Andreas Hindborg
+
 
 
