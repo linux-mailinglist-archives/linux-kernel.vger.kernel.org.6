@@ -1,196 +1,134 @@
-Return-Path: <linux-kernel+bounces-534342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B4AA465E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:01:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEA6A464E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39171189C8CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:51:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9567E7A5E71
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9E621CC66;
-	Wed, 26 Feb 2025 15:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC69721CFFF;
+	Wed, 26 Feb 2025 15:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="BXgM6QBV"
-Received: from l2mail1.panix.com (l2mail1.panix.com [166.84.1.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ml4pa7kF"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B221721CC6D;
-	Wed, 26 Feb 2025 15:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BE021D00E;
+	Wed, 26 Feb 2025 15:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584993; cv=none; b=CM2IZxBS5VddB+uziutYGVC9hEpohKYrzdhp1cwO5yKA9VC6a2SB2StmqRgDYeBdM54vJZCTfvntfoBzR5dXZajjxiSdOKbnR25sWLy9l7uPKeWefLPvD/O0gNKmtIFrlV/wZQCTa3xMtl75KFid1ShFgWWf35omAfMyn3yHkfg=
+	t=1740583834; cv=none; b=GPt+rk4N5BaeB1D1rwVk3nEQzUztMU2Yu4JsAr83TXexyLzVKh1XW3pCWZFrjiSSDpBKFFXWO6MZ0R8aN+MLU5nJx6DiRCM0WKDyaUQbotzwUqTZe3oGOIxAcIGNPiVTmd+xdtb0kWbQJNjDkIZ/GuLRFKhAtzZLtvpSTkIZ6nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584993; c=relaxed/simple;
-	bh=Vj5uE4ESzohsxDwURRoN/xqYlLO93wlxFGqvOeU2v0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YfjR3AllY26UMVzIVCgbwGbLgQiXJpxjvD7J8SezWhnbku6vNfhz/eaxgO80mmXdwr+/oblG/WrFkle+wrKYWvkDp8FxQNSbhTZBojDYfMsQ0O6xhcuiekK1Jny4O6dKy43p3IL6uCuCgLGB+lRRaHfu95GzqqIxSKx939y+RK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=BXgM6QBV; arc=none smtp.client-ip=166.84.1.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (1024 bits) server-digest SHA256)
-	(No client certificate requested)
-	by l2mail1.panix.com (Postfix) with ESMTPS id 4Z2z3S3y1QzDSH;
-	Wed, 26 Feb 2025 10:31:48 -0500 (EST)
-Received: from [172.16.225.207] (unknown [47.154.181.182])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z2z3H0zQqz56g5;
-	Wed, 26 Feb 2025 10:31:39 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1740583900; bh=Vj5uE4ESzohsxDwURRoN/xqYlLO93wlxFGqvOeU2v0Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BXgM6QBVMxwP3HtMLYG4ARsarO/GAmA/r+WnIFR2oNA23NwVHsnuLEh0L+6KLiHzR
-	 zvPLpInkIjwPGTmJI4/IzrWXf4g53/MAVosroZNl6NJj6Ktt0L8HDYhAfCTyifKOC6
-	 BeQOfik9xOSbLC6e4zLTnMNqzX/kh4I44VOrwn4k=
-Message-ID: <7b472880-32d0-4783-b9d2-3d4230403975@panix.com>
-Date: Wed, 26 Feb 2025 07:31:37 -0800
+	s=arc-20240116; t=1740583834; c=relaxed/simple;
+	bh=jWzDbbQHO9gEeKekcUVkcixWDMvI3qej9AstFronzn0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MmRubPwOXD8IyCr0nuaYx3xGEhwHbe58dDSxRcBM6aXLvkL0MnBw2pytZKZX7pY/YbRz5b+UtfbrdkG9tQHq8MsLg7KWBGl76aNe4dTuLh33ZsroP3/xH6P7T67RJtnZtt/gz015U6Kz0GjAraj3NK/Tv4yhN1ZAEYb0TT4A14E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ml4pa7kF; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2f42992f608so10781244a91.0;
+        Wed, 26 Feb 2025 07:30:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740583832; x=1741188632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TZ/QbTWZNshBxb5hC06ZzjWtL5HiviO0RmZtIpOJ43M=;
+        b=ml4pa7kF+RVJA6p3sjQ4lgR5iyJTXkzanwoXWm3sGgAL8OLzpET1CivN+c6PUrxsww
+         HqxbeTlORiu4n+yXdDZtOLGf5/ia2oMDTrzkHoyO9uqxp54Kx6Um+bORLI5dysbMetT0
+         dWod8W+A6jfHo/5lZP2t7GnKkyNfVmexpjcXQLUhmQ5LOZnybswTBWPSJx0UU+WTWSKC
+         WT4ctSgp6/+Wt4Ft/ZQirhIY/rGW/pOm/GnTPxwEXRAZ3zC26FKdXFRYgEQs+4hX9RXV
+         qPwXlcZ+ZdQbZjneCZyf3xI2A4nt2xQNEql9UgGbFIwHM2qqvc1gERzBALZDyhnJ4jGk
+         EZhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740583832; x=1741188632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TZ/QbTWZNshBxb5hC06ZzjWtL5HiviO0RmZtIpOJ43M=;
+        b=ZudE8EOPB1fCe7y+Ih4RJ3jlnZFPdH2zOIKZjjEFB+zDCW5TmBd6IznmU4J7O5obdc
+         gChKp2z0OPhhuNxzAv5reLgWr/0ey6kT2FXZAs+kThiOwn4HYyVuqrTna+BvzOrZhSa/
+         AjkOsQGdxBsEBXeYXEfah7peScsqXk6R8RgSpA52ARiMMwHMZv8doIAeBnNU2mT3YOMl
+         MqqupYYYQwzs4Ni4T0hhBsap0I++F5d+ATuAf8vs0ycLLX5CIvy0oCUJ76tidNoWCVgm
+         DNnD7/7J+gIB8mPm76r20m0eHe/OQYsOWNB/UxfZHJrkfaG7kxnnd7jK8oSPVf1uS5S+
+         qW5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV0HSiX9W1pyvP1/wo1z7qMF6yR8yfya3NHkyVU6yddBUjh8GwHu1h9fbga3d36eIdIp1JSNeK700tH0ljA@vger.kernel.org, AJvYcCWnjq9yE201frbsc1GJk2k970YcAyyYkNWeG6NuvbBRHJ2JjT1ZN4q/3rOpDbOyRYQ8nhGy/HMU0XYi@vger.kernel.org, AJvYcCWxPYKiPQtRmAsZ9oIl+F2CvYFw3cQBAR6VfRHCxVGmRhh19dEkDrjyjAv9PjBX87/LREcuKOuxnshR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAH0XmyqLwHpvlSQh2W4zgWzH1m9s+//p0wU7D1qIzGNkx84+/
+	SQHjJOYjKnW1wOgH4d2uSH3LsyUG+7GVNKI5QmcA0E/R8ExiMZs2DSRExHChl4xey3K0Qm/4SH0
+	1sLqkcxAaeI3EaHUB8eBJYbVww4E=
+X-Gm-Gg: ASbGncvszUgIv8IIymE51I/6eRe0kcPNUd0edI+S+2DKyqUlqSxz716gfSFiiintSL8
+	C87RzVEc78Epn7H83rrqWYccZ39EXOUQ7YU/puuMGkE/A7p/7cpD6hvtFqn4VvgVgHf3QfR7hXu
+	F20njv
+X-Google-Smtp-Source: AGHT+IFo6DOoGnTsS38LlUXMIhC0H9EtIGCJVFbM5Bu56nEtT839xcPAHtRDebmakeB9TC+KDHHS0qohqRpYH+q6d2s=
+X-Received: by 2002:a17:90a:c2c7:b0:2ee:e113:815d with SMTP id
+ 98e67ed59e1d1-2fe68ada148mr12284035a91.8.1740583831681; Wed, 26 Feb 2025
+ 07:30:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
- Kenneth Crudup <kenny@panix.com>
-References: <20250210210502.GA15655@bhelgaas>
- <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20250226084404.GM3713119@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250226-initial_display-v2-0-23fafa130817@gocontroll.com> <20250226-initial_display-v2-4-23fafa130817@gocontroll.com>
+In-Reply-To: <20250226-initial_display-v2-4-23fafa130817@gocontroll.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 26 Feb 2025 17:32:08 +0200
+X-Gm-Features: AWEUYZnVDiZ00SedBZ6EyKd9EOM22xcDBV6m1uAzMRnVUY2vdD1K52vvrRAuSvo
+Message-ID: <CAEnQRZDXxuviih+o-iFOtiS6j8=JqnhUOHaZf3RhGL++fg=moA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] arm64: dts: imx8mp: Add pinctrl config definitions
+To: maudspierings@gocontroll.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 26, 2025 at 4:23=E2=80=AFPM Maud Spierings via B4 Relay
+<devnull+maudspierings.gocontroll.com@kernel.org> wrote:
+>
+> From: Maud Spierings <maudspierings@gocontroll.com>
+>
+> Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
+> register is written in the dts, these values are not obvious. Add defines
+> which describe the fields of this register which can be or-ed together to
+> produce readable settings.
+>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+> This patch has already been sent in a different group of patches: [1]
+> It was requested there to submit it along with a user, this series also
+> includes some users for it.
+>
+> [1]: https://lore.kernel.org/all/20250218-pinctrl_defines-v2-2-c554cad0e1=
+d2@gocontroll.com/
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 27 ++++++++++++++++++++=
+++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h b/arch/arm64/=
+boot/dts/freescale/imx8mp-pinfunc.h
+> index 0fef066471ba607be02d0ab15da5a048a8a213a7..0927ed11ec687d5b273c4a4a6=
+455e8d81468f676 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
+> @@ -6,6 +6,33 @@
+>  #ifndef __DTS_IMX8MP_PINFUNC_H
+>  #define __DTS_IMX8MP_PINFUNC_H
+>
+> +//Drive Strength
 
-Trying to do a "control" test before I try out your bisected commit, and 
-Lukas' changes, but of course now I can't get it to fail (I'm on Linus' 
-master as of this morning (b5799106b4).
-
-I'm using my portable USB4 dock (Plugable TBT4-HUB3C) this time (vs. my 
-CalDigit 4 dock) but the same ASMedia USB4-to-NVMe adapter as always; in 
-any case everything is PCIe so it shouldn't matter.
-
-I don't normally use "tbauth" (I think that's all done for me via the 
-"boltctl" suite) but I grabbed and built the GIT and ran it anyway, for 
-good measure.
-
-I'll keep you updated, I'll be at my CalDigit dock soon enough if I 
-can't get any failures this morning.
-
--K
-
-On 2/26/25 00:44, Mika Westerberg wrote:
-> Hi Kenneth,
-> 
-> On Fri, Feb 14, 2025 at 09:39:33AM -0800, Kenneth Crudup wrote:
->>
->> This is excellent news that you were able to reproduce it- I'd figured this
->> regression would have been caught already (as I do remember this working
->> before) and was worried it may have been specific to a particular piece of
->> hardware (or software setup) on my system.
->>
->> I'll see what I can dig up on my end, but as I'm not expert in these
->> subsystems I may not be able to diagnose anything until your return.
-> 
-> [Back now]
-> 
-> My git bisect ended up to this commit:
-> 
->    9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
-> 
-> Adding Lukas who is the expert.
-> 
-> My steps to reproduce on Intel Meteor Lake based reference system are:
-> 
-> 1. Boot the system up, nothing connected.
-> 2. Once up, connect Thunderbolt 4 dock and Thunderbolt 3 NVMe in a chain:
-> 
->    [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
-> 
-> 3. Authorize PCIe tunnels (whatever your distro provides, my buildroot just
->      has the debugging tools so running 'tbauth -r 301')
-> 
-> 4. Check that the PCIe topology matches the expected (lspci)
-> 
-> 5. Enter s2idle:
-> 
->    # rtcwake -s 30 -mmem
-> 
-> 6. Once it is suspended, unplug the cable between the host and the dock.
-> 
-> 7. Wait for the resume to happen.
-> 
-> Expectation: The system wakes up fine, notices that the TB and PCIe devices
-> are gone, stays responsive and usable.
-> 
-> Actual result: Resume never completes.
-> 
-> I added "no_console_suspend" to the command line and the did sysrq-w to
-> get list of blocked tasks. I've attached it just in case it is needed.
-> 
-> If I revert the above commit the issue is gone. Now I'm not sure if this is
-> exactly the same issue that you are seeing but nevertheless this is kind of
-> normal use case so definitely something we should get fixed.
-> 
-> Lukas, if you need any more information let me know. I can reproduce this
-> easily.
-> 
->> I also saw some DRM/connected fixes posted to Linus' master so maybe one of
->> them corrects this new display-crash issue (I'm not home on my big monitor
->> to be able to test yet).
->>
->> -Kenny
->>
->> On 2/14/25 08:29, Mika Westerberg wrote:
->>> Hi,
->>>
->>> On Thu, Feb 13, 2025 at 11:19:35AM -0800, Kenneth Crudup wrote:
->>>>
->>>> On 2/13/25 05:59, Mika Westerberg wrote:
->>>>
->>>>> Hi,
->>>>
->>>> As Murphy's would have it, now my crashes are display-driver related (this
->>>> is Xe, but I've also seen it with i915).
->>>>
->>>> Attached here just for the heck of it, but I'll be better testing the NVMe
->>>> enclosure-related failures this weekend. Stay tuned!
->>>
->>> Okay, I checked quickly and no TB related crash there but I was actually
->>> able to reproduce hang when I unplug the device chain during suspend. I did
->>> not yet have time to look into it deeper. I'm sure this has been working
->>> fine in the past as we tested all kinds of topologies including similar to
->>> this.
->>>
->>> I will be out next week for vacation but will continue after that if the
->>> problem is not alraedy solved ;-)
->>>
->>
->> -- 
->> Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County
->> CA
-
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
-
+Please use C-style comments /* .. */
 
