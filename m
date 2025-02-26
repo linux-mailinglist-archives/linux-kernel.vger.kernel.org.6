@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-532792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CC7A45240
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:37:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE4EA45245
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00ECC189E428
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D431742E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E0199924;
-	Wed, 26 Feb 2025 01:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C91199FA4;
+	Wed, 26 Feb 2025 01:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kp7NLbUb"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kLSkW6pu"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489FD198A06
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FF51990DB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740533844; cv=none; b=IvPwWWMrA3TgXUoTs1R9Ejh9ZlUxN8D+hkXB0WykDx8lhKLPCn7dcFIEPR/ss9B+Ko2kBx+6ydoi2GnU1PU0W6+gj6Mj1mb5llW6aCSy5jrJPM2dnu1BgZqkM0vv9sjq6GYyRctFhtFGrJKhcBEwi91QWDAlBCnvk6cmlTZrh3Q=
+	t=1740533860; cv=none; b=lK/j+PuqJcKrCVvwCC0wvUMYqKF7YcgdUTQ4VUusm/qBU+Di14/1M9cm5bdjDNgKWiLmq0dSUV+kS6DLdm1Dz3fgKWK8Dmngcg1+bQmc7z7G9G9huFwg3CLf8dOC4lPxHgH0LBzBvOINMelBrrK5ZzG6220IN21rThDtWQaBBIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740533844; c=relaxed/simple;
-	bh=6jMqSHCB1b/d3tIPznfvnPv5y2TPzXfyEbziUHnLOwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sZsfHP7IqCck+pFMu+aclPoJTBzEgDQS01nfKZ8JLspCq7WurTQK2kcRDk5GV4YRSeEZ+NYyI8ouwaM0nTwdp4BJdLlK9citauIlDRMrxaa/9BFdF9TrKikZAxkr4TFKALcayapOqjDjcFsAEJh8Wh4vSH1mrvPZL+ScctM/CXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kp7NLbUb; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740533840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c6lV2O/MV07x2xCD5gRyXKU/naKq49lc8wVecRpyzJY=;
-	b=kp7NLbUbFkijnU8Nd3tRXnRzRt88xeE3r6qyYDNVsdcLu//PHlllllF9cw62u2LxU+5zBp
-	ECjKglKSRLHKZdKCdpmRA7RKSee9ZF81DFTevlbWlk7M0DsneewFBlbRtrXhJhTBYJ1e9j
-	Gyr3tKio/MAG0NQGh5i0tQCoI+cqNus=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: horms@kernel.org,
-	kuba@kernel.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	ricardo@marliere.net,
-	viro@zeniv.linux.org.uk,
-	dmantipov@yandex.ru,
-	aleksander.lobakin@intel.com,
-	linux-ppp@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>,
-	syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
-Subject: [PATCH net-next v4 1/1] ppp: Fix KMSAN warning by initializing 2-byte header
-Date: Wed, 26 Feb 2025 09:36:58 +0800
-Message-ID: <20250226013658.891214-2-jiayuan.chen@linux.dev>
-In-Reply-To: <20250226013658.891214-1-jiayuan.chen@linux.dev>
-References: <20250226013658.891214-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1740533860; c=relaxed/simple;
+	bh=SZXVHGpnAZAjUR/CtLa8PUD2AYYL1dTCoQzVwHq4l6k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lEyGwkyikkWP7BZ9ULgyEwDCvOJ3xXVw0NI7QovYQfUOiLFX8eLN5my2XKQ/qE/vx6tlvo61RzLKzp9VoHhhF5JPDOda3SWpwlJ1xCOvPudcPi7qQJreQsl+7TRVayhA5nxPSHpSFvLn/lASLUHAo40rHWPLGNQz7wKMy4zp5WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kLSkW6pu; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc2b258e82so13425223a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740533858; x=1741138658; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULZtC1FDd6NUJ3rI9g4pbuHdjytTUlPfqVdSRlPBgi0=;
+        b=kLSkW6puJ0deJ0Y6F7Dm4/ygcE9253BQi0wbtG/OUUSPQ2ha+SFovO91g2HCke1GZ/
+         PdrU6bC6V7si0Sq4nNLOD9Vwv1pGaJVzSp1lvVtv86JubadJups6h0Z7oOCR8+PTPQ8H
+         yvE9hZrNi822PwoIyPelafcLd5m/CQJBebP19/krmfMJfp2rEHPK5r2y+mPYaT2vU9fi
+         ngJ2pcpw9Ejglz1ajr8xHCyn7hB8r9i8z7r/NEaboHJQcULeaDo/PnKbMU3tspsQq1Is
+         blf/FpAijK1uQ3i9F26dVb3Je15Uh042jlf/ko/z7DRWVrwl4/4LB6Kjs3iPnubAcemm
+         jCJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740533858; x=1741138658;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULZtC1FDd6NUJ3rI9g4pbuHdjytTUlPfqVdSRlPBgi0=;
+        b=Iy7NJf1xQYwv3ZYuKfwzSm5sGp75T/vh285iI+ANDJBoifAWH3l1DxMW4sp7K6oItl
+         o9e9zMpIUMoZx3TBKD2taYhhMG5kK7azzuzPMndZ0ZzZ0yPI62G07KLK5STE0mQjJ6J2
+         8pAyH0Zug8qDrfOgXrgL95TfM0aE3AxErdQ6nvdtddliGI4o+RZz74ZoJ8UrAvt3GMT2
+         3ZP8DQmtZ1rlBUaB4587+HVL3I+Ek8QgleFm5zPqiVDORavfshg92bWEgaZLHNOMiNg7
+         U88/qa6umUH7PeOxYOmcFU14kpFHP1c6+dqBk7HIP9PSm+UKyc7yRwrJxaGckBeFloDo
+         8XMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcYx3oWmlwWGVHh5VAre5xlxvIE0FUDZR5TsS6YZ67tZ3BxU062bwMACVi6vDZvFQvOwF3eC8xx1m1+jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvriAeYyG8O5K2tSE1/80g4F6sdWjd4HJIfkkJzxYU+hDgyYWw
+	0BDVSPvPNNOo+Mfbz0qy+rNI0hAEId5F7jCSSE4DZSnZQER0PVs9QezAdjlKcr5Ahkg1lSetybk
+	6Zw==
+X-Google-Smtp-Source: AGHT+IHA8CF5QxCpD/x/wbknob1L7guzavFzGaqCBJ/GtwIioN65VvOsc9KVNLvbhXTXOB4aN7b1T5gcI8o=
+X-Received: from pjbee8.prod.google.com ([2002:a17:90a:fc48:b0:2fa:1481:81f5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d48:b0:2ee:f550:3848
+ with SMTP id 98e67ed59e1d1-2fe7e2e1088mr2350421a91.5.1740533858514; Tue, 25
+ Feb 2025 17:37:38 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:37:37 -0800
+In-Reply-To: <20250128015345.7929-1-szy0127@sjtu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250128015345.7929-1-szy0127@sjtu.edu.cn>
+Message-ID: <Z75wYblH3_IFsoUW@google.com>
+Subject: Re: [PATCH v7 0/3] KVM: SVM: Flush cache only on CPUs running SEV guest
+From: Sean Christopherson <seanjc@google.com>
+To: Zheyun Shen <szy0127@sjtu.edu.cn>
+Cc: thomas.lendacky@amd.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	kevinloughlin@google.com, mingo@redhat.com, bp@alien8.de, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-The PPP driver adds an extra 2-byte header to enable socket filters to run
-correctly. However, the driver only initializes the first byte, which
-indicates the direction. For normal BPF programs, this is not a problem
-since they only read the first byte.
+On Tue, Jan 28, 2025, Zheyun Shen wrote:
+> Previous versions pointed out the problem of wbinvd_on_all_cpus() in SEV
+> and tried to maintain a cpumask to solve it. This version includes
+> further code cleanup.
+> 
+> Although dirty_mask is not maintained perfectly and may lead to wbinvd on 
+> physical CPUs that are not running a SEV guest, it's still better than 
+> wbinvd_on_all_cpus(). And vcpu migration is designed to be solved in 
+> future work.
 
-Nevertheless, for carefully crafted BPF programs, if they read the second
-byte, this will trigger a KMSAN warning for reading uninitialized data.
+I have a variety of comments, but no need to send a new version.  I'm going to
+post a combined version with the WBNOINVD series, hopefully tomorrow.
 
-Reported-by: syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/bpf/000000000000dea025060d6bc3bc@google.com/
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- drivers/net/ppp/ppp_generic.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+The only thing that needs your attention is the pre_sev_run() => sev_vcpu_load()
+change between v3 and v4.
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 4583e15ad03a..b4433badf03c 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -72,6 +72,10 @@
- #define PPP_PROTO_LEN	2
- #define PPP_LCP_HDRLEN	4
- 
-+/* These are fields recognized by libpcap */
-+#define PPP_FILTER_OUTBOUND_TAG 0x0100
-+#define PPP_FILTER_INBOUND_TAG  0x0000
-+
- /*
-  * An instance of /dev/ppp can be associated with either a ppp
-  * interface unit or a ppp channel.  In both cases, file->private_data
-@@ -1762,10 +1766,15 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
- 
- 	if (proto < 0x8000) {
- #ifdef CONFIG_PPP_FILTER
--		/* check if we should pass this packet */
--		/* the filter instructions are constructed assuming
--		   a four-byte PPP header on each packet */
--		*(u8 *)skb_push(skb, 2) = 1;
-+		/* Check if we should pass this packet.
-+		 * The filter instructions are constructed assuming
-+		 * a four-byte PPP header on each packet. The first byte
-+		 * indicates the direction, and the second byte is meaningless,
-+		 * but we still need to initialize it to prevent crafted BPF
-+		 * programs from reading them which would cause reading of
-+		 * uninitialized data.
-+		 */
-+		*(__be16 *)skb_push(skb, 2) = htons(PPP_FILTER_OUTBOUND_TAG);
- 		if (ppp->pass_filter &&
- 		    bpf_prog_run(ppp->pass_filter, skb) == 0) {
- 			if (ppp->debug & 1)
--- 
-2.47.1
-
+> ---
+> v6 -> v7:
+> - Fixed the writing oversight in sev_vcpu_load().
+> 
+> v5 -> v6:
+> - Replaced sev_get_wbinvd_dirty_mask() with the helper function 
+> to_kvm_sev_info().
+> 
+> v4 -> v5:
+> - rebase to tip @ 15e2f65f2ecf .
+> - Added a commit to remove unnecessary calls to wbinvd().
+> - Changed some comments.
+> 
+> v3 -> v4:
+> - Added a wbinvd helper and export it to SEV.
+> - Changed the struct cpumask in kvm_sev_info into cpumask*, which should
+> be dynamically allocated and freed.
+> - Changed the time of recording the CPUs from pre_sev_run() to vcpu_load().
+> - Removed code of clearing the mask.
+> 
+> v2 -> v3:
+> - Replaced get_cpu() with parameter cpu in pre_sev_run().
+> 
+> v1 -> v2:
+> - Added sev_do_wbinvd() to wrap two operations.
+> - Used cpumask_test_and_clear_cpu() to avoid concurrent problems.
+> ---
+> 
+> Zheyun Shen (3):
+>   KVM: x86: Add a wbinvd helper
+>   KVM: SVM: Remove wbinvd in sev_vm_destroy()
+>   KVM: SVM: Flush cache only on CPUs running SEV guest
+> 
+>  arch/x86/kvm/svm/sev.c | 36 +++++++++++++++++++++++++++---------
+>  arch/x86/kvm/svm/svm.c |  2 ++
+>  arch/x86/kvm/svm/svm.h |  5 ++++-
+>  arch/x86/kvm/x86.c     |  9 +++++++--
+>  arch/x86/kvm/x86.h     |  1 +
+>  5 files changed, 41 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
