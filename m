@@ -1,212 +1,190 @@
-Return-Path: <linux-kernel+bounces-534221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A456A4644B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:15:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE9BA46447
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E41177AC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49208175BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09437226D02;
-	Wed, 26 Feb 2025 15:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="nbvbDyKG"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CADE2236E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED3D2236ED;
 	Wed, 26 Feb 2025 15:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CB8223321
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582871; cv=none; b=W3Bf+GGNuFvO90GvRi8VtkTiR8ujodMRu+G6drkGj7p+m3Gloq/suaINKZzDDJPQEvj7nGOOIppZV6c/432j+gCVR+C+6bZtNUSVTFW/PTjSwtDFzA0B3KlXDRQbD/C+UOdp/H77M0AtNZLIyeb1jccNTgexQRvcrWvU89obyK8=
+	t=1740582868; cv=none; b=W9EBWpYYMZIhbJGqg/rp3FaGiRnn22+B0d2sbsddVG/1MIdl81YqiClkLmYyTHBO02/YmFfV4hQ5hilZl6dBOUGRSA2rErAIZL5OUdZ1P77iyj64SnTvvlhooESCgdijffNEefJF98+v1+l4nZGtxg0OaFz9Nt376CPb9na8TFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582871; c=relaxed/simple;
-	bh=aGGzSgO2NRNWrx289Woi8O0FtwiAqqUo2nQCCgLrNAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=neMpYXAoG4mUC/7ip6uYUl5b/NVqIEPIyx110GNwY8+QslGDNEZuesoNiuYSO3aY1FuWvE1UGwu5CKXyhsRF4pnusOIW1xpuDskWt5P7D4elaUlcdNRQHnqWGcAJd0SVvwd+gBSCX+3OB3cd4/37YYWZCvCbaq1yWv4i+K4oheE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=nbvbDyKG; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740582870; x=1772118870;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wolJGYzNbXbPiDgE8dqL6KYG3P554mNNvwNzwm6iLVM=;
-  b=nbvbDyKGH2NJldnoV0K2VVFCusRUWNpFv7ImhdMcs7dYewEo7VvtLZbL
-   PbCThuJ1gy7rZ9IApuPosfIhQAHofLEjlYv90C8Fjv2tdjhxdsF3Q+PzV
-   R0XMF1poYDJWfX9GtUClR8FxHRvHBG+e4ykvAGgeHi+mjr/opnOGGib5f
-   o=;
-X-IronPort-AV: E=Sophos;i="6.13,317,1732579200"; 
-   d="scan'208";a="381035687"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:14:24 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:11919]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.58:2525] with esmtp (Farcaster)
- id 044ff674-0f38-4827-8439-56d357ec9ac7; Wed, 26 Feb 2025 15:14:23 +0000 (UTC)
-X-Farcaster-Flow-ID: 044ff674-0f38-4827-8439-56d357ec9ac7
-Received: from EX19D003UWB002.ant.amazon.com (10.13.138.11) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 15:14:22 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D003UWB002.ant.amazon.com (10.13.138.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 15:14:22 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 15:14:22 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id 589A640496;
-	Wed, 26 Feb 2025 15:14:15 +0000 (UTC)
-Message-ID: <7f38018b-dc89-4d79-a309-149557796121@amazon.co.uk>
-Date: Wed, 26 Feb 2025 15:14:14 +0000
+	s=arc-20240116; t=1740582868; c=relaxed/simple;
+	bh=ZSjf+72l4ULpS9+WjRMnaULwTrJ3p4O6jvlFCqeY2GA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QSjNEPn/P8uwszxWVs1izs8Q10budc/msWkbs4rkJIs/lLDLAd5QP8dFL0o6VYFdkXDi/QeSLtt4cobZTOGEzWFj34syOnKrZwU4R7q4zxT6NA4jBkHS0ZoUjKJV90kzYtTK06ydJPtflgl2wcXULHm1AUXnUtEgh/cnz0z7jYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3cf64584097so65623195ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:14:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740582866; x=1741187666;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JjGZhgtmajH8ksi81iyDChdKn7BYRAvuR2AIZl1oWx0=;
+        b=lE/AoAlzE+CZpICD7+fxojMhtHVMfhYXj4OdDlTEeVXL6MQQLjU1TBDghtHfUnvOOc
+         M1EueXxxkab7AxMezRAQbio8xOCAEhOZLIOxEvywai2ZT/yy8Td/VpabGACJHwHwDMpM
+         aDusP3OhemOPYe4XJcJJTAHD/JEe5PJqFcXInLH1us8F4dnSKK2Z8bp+guF3P63un7b9
+         ZEVzZIZNjaVszR3UMMvhD0zhsDIQgFXHKGcK1a04RRKgNqlHga94AkOH/Dqq1lbFuktu
+         U/itnTMQcspk9GrfZCB+nwhP8BtUPBpodl3l58EqwiZOJSFWCG8lxbeHs0lKl4rvawtL
+         eQ4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqqCMhAnNRX5vMiu9QN7XX+lQWvw+kb5vU5z6EGyVTz/Fye3q+3H1OwvbsOWMgje//khotBkfDLSB9ls4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGzHpxyn7L3nidROSnVTDbqsF0teCuyjT3M/PuZnsQm9/CX/Ho
+	I5cPpPiqYUhxYYr2bERiYQ/2Ypjicmz7Q3ur5l1Y6l4MaSbPiQYgSrlFjCyh/XGxUW1JFb8CmC7
+	ncgdjPIZT7Byc8ahrAddoBLDOoQyhbbugj8HrrVwL5xj27di6W9mXXb8=
+X-Google-Smtp-Source: AGHT+IHduX2kYfl0g+s4hLq/1qwTItImgVCln4vA5u60yhrBAPuDUDZAay9r5Fob/ntyIr7se55x7uYvP5na6H3Ra1vrBhB+ERwJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] KVM: guest_memfd: Add flag to remove from direct
- map
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-4-roypat@amazon.co.uk>
- <a3178c50-2e76-4743-8008-9a33bd0af93f@redhat.com>
- <8642de57-553a-47ec-81af-803280a360ec@amazon.co.uk>
- <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <bfe43591-66b6-4fb9-bf6c-df79ddeffb17@redhat.com>
+X-Received: by 2002:a05:6e02:4813:b0:3d3:d994:e92e with SMTP id
+ e9e14a558f8ab-3d3d994ea94mr9224315ab.17.1740582866377; Wed, 26 Feb 2025
+ 07:14:26 -0800 (PST)
+Date: Wed, 26 Feb 2025 07:14:26 -0800
+In-Reply-To: <674c2f0c.050a0220.ad585.0034.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bf2fd2.050a0220.1ebef.0023.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_btree_node_get
+From: syzbot <syzbot+2b2046c73fcb7e6a0e4e@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    ac9c34d1e45a Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17a4f7a4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d66f6f82ee090382
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b2046c73fcb7e6a0e4e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11da9c98580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177a003f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c756243ff2fa/disk-ac9c34d1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/47bd399bb287/vmlinux-ac9c34d1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b6c5db9fcba1/bzImage-ac9c34d1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/039e65b899b2/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2b2046c73fcb7e6a0e4e@syzkaller.appspotmail.com
+
+bucket 0:127 gen 0 has wrong data_type: got free, should be sb, fixing
+bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+ done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay...
+=====================================================
+BUG: KMSAN: uninit-value in bch2_btree_node_get+0x5ed/0x1970 fs/bcachefs/btree_cache.c:1180
+ bch2_btree_node_get+0x5ed/0x1970 fs/bcachefs/btree_cache.c:1180
+ btree_path_down fs/bcachefs/btree_iter.c:976 [inline]
+ bch2_btree_path_traverse_one+0x283d/0x4790 fs/bcachefs/btree_iter.c:1202
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:249 [inline]
+ bch2_btree_iter_traverse+0xbb8/0x1110 fs/bcachefs/btree_iter.c:1913
+ bch2_journal_replay_key+0x28a/0x13f0 fs/bcachefs/recovery.c:264
+ bch2_journal_replay+0x301d/0x4e20 fs/bcachefs/recovery.c:373
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:226 [inline]
+ bch2_run_recovery_passes+0x5a2/0x1160 fs/bcachefs/recovery_passes.c:291
+ bch2_fs_recovery+0x489c/0x6230 fs/bcachefs/recovery.c:936
+ bch2_fs_start+0x7ca/0xc20 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0x1564/0x24e0 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ memcpy_u64s_small fs/bcachefs/util.h:416 [inline]
+ bkey_reassemble fs/bcachefs/bkey.h:506 [inline]
+ bch2_bkey_buf_reassemble fs/bcachefs/bkey_buf.h:28 [inline]
+ btree_node_iter_and_journal_peek+0x889/0x2560 fs/bcachefs/btree_iter.c:918
+ btree_path_down fs/bcachefs/btree_iter.c:947 [inline]
+ bch2_btree_path_traverse_one+0x2131/0x4790 fs/bcachefs/btree_iter.c:1202
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:249 [inline]
+ bch2_btree_iter_traverse+0xbb8/0x1110 fs/bcachefs/btree_iter.c:1913
+ bch2_journal_replay_key+0x28a/0x13f0 fs/bcachefs/recovery.c:264
+ bch2_journal_replay+0x301d/0x4e20 fs/bcachefs/recovery.c:373
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:226 [inline]
+ bch2_run_recovery_passes+0x5a2/0x1160 fs/bcachefs/recovery_passes.c:291
+ bch2_fs_recovery+0x489c/0x6230 fs/bcachefs/recovery.c:936
+ bch2_fs_start+0x7ca/0xc20 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0x1564/0x24e0 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4249
+ __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4266
+ __do_kmalloc_node mm/slub.c:4282 [inline]
+ __kmalloc_node_noprof+0xc96/0x1250 mm/slub.c:4300
+ __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:662
+ btree_node_data_alloc fs/bcachefs/btree_cache.c:156 [inline]
+ bch2_btree_node_mem_alloc+0xa72/0x2ee0 fs/bcachefs/btree_cache.c:834
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:304 [inline]
+ bch2_btree_reserve_get+0x37f/0x2290 fs/bcachefs/btree_update_interior.c:532
+ bch2_btree_update_start+0x2b0e/0x2d60 fs/bcachefs/btree_update_interior.c:1251
+ bch2_btree_split_leaf+0x120/0xc90 fs/bcachefs/btree_update_interior.c:1853
+ bch2_trans_commit_error+0x1c0/0x1d60 fs/bcachefs/btree_trans_commit.c:908
+ __bch2_trans_commit+0x1d5f/0xd310 fs/bcachefs/btree_trans_commit.c:1089
+ bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
+ bch2_journal_replay+0x3125/0x4e20 fs/bcachefs/recovery.c:373
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:226 [inline]
+ bch2_run_recovery_passes+0x5a2/0x1160 fs/bcachefs/recovery_passes.c:291
+ bch2_fs_recovery+0x489c/0x6230 fs/bcachefs/recovery.c:936
+ bch2_fs_start+0x7ca/0xc20 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0x1564/0x24e0 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5784 Comm: syz-executor148 Not tainted 6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+=====================================================
 
 
-
-On Wed, 2025-02-26 at 09:08 +0000, David Hildenbrand wrote:
-> On 26.02.25 09:48, Patrick Roy wrote:
->>
->>
->> On Tue, 2025-02-25 at 16:54 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->>>> Add KVM_GMEM_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD() ioctl. When
->>>> set, guest_memfd folios will be removed from the direct map after
->>>> preparation, with direct map entries only restored when the folios are
->>>> freed.
->>>>
->>>> To ensure these folios do not end up in places where the kernel cannot
->>>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
->>>> address_space if KVM_GMEM_NO_DIRECT_MAP is requested.
->>>>
->>>> Note that this flag causes removal of direct map entries for all
->>>> guest_memfd folios independent of whether they are "shared" or "private"
->>>> (although current guest_memfd only supports either all folios in the
->>>> "shared" state, or all folios in the "private" state if
->>>> !IS_ENABLED(CONFIG_KVM_GMEM_SHARED_MEM)). The usecase for removing
->>>> direct map entries of also the shared parts of guest_memfd are a special
->>>> type of non-CoCo VM where, host userspace is trusted to have access to
->>>> all of guest memory, but where Spectre-style transient execution attacks
->>>> through the host kernel's direct map should still be mitigated.
->>>>
->>>> Note that KVM retains access to guest memory via userspace
->>>> mappings of guest_memfd, which are reflected back into KVM's memslots
->>>> via userspace_addr. This is needed for things like MMIO emulation on
->>>> x86_64 to work. Previous iterations attempted to instead have KVM
->>>> temporarily restore direct map entries whenever such an access to guest
->>>> memory was needed, but this turned out to have a significant performance
->>>> impact, as well as additional complexity due to needing to refcount
->>>> direct map reinsertion operations and making them play nicely with gmem
->>>> truncations.
->>>>
->>>> This iteration also doesn't have KVM perform TLB flushes after direct
->>>> map manipulations. This is because TLB flushes resulted in a up to 40x
->>>> elongation of page faults in guest_memfd (scaling with the number of CPU
->>>> cores), or a 5x elongation of memory population. On the one hand, TLB
->>>> flushes are not needed for functional correctness (the virt->phys
->>>> mapping technically stays "correct",  the kernel should simply to not it
->>>> for a while), so this is a correct optimization to make. On the other
->>>> hand, it means that the desired protection from Spectre-style attacks is
->>>> not perfect, as an attacker could try to prevent a stale TLB entry from
->>>> getting evicted, keeping it alive until the page it refers to is used by
->>>> the guest for some sensitive data, and then targeting it using a
->>>> spectre-gadget.
->>>>
->>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>>
->>> ...
->>>
->>>>
->>>> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
->>>> +{
->>>> +     return ((unsigned long) inode->i_private) & KVM_GMEM_NO_DIRECT_MAP;
->>>> +}
->>>> +
->>>>    static inline void kvm_gmem_mark_prepared(struct folio *folio)
->>>>    {
->>>> +     struct inode *inode = folio_inode(folio);
->>>> +
->>>> +     if (kvm_gmem_test_no_direct_map(inode)) {
->>>> +             int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
->>>> +                                                  false);
->>>
->>> Will this work if KVM is built as a module, or is this another good
->>> reason why we might want guest_memfd core part of core-mm?
->>
->> mh, I'm admittedly not too familiar with the differences that would come
->> from building KVM as a module vs not. I do remember something about the
->> direct map accessors not being available for modules, so this would
->> indeed not work. Does that mean moving gmem into core-mm will be a
->> pre-requisite for the direct map removal stuff?
-> 
-> Likely, we'd need some shim.
-> 
-> Maybe for the time being it could be fenced using #if IS_BUILTIN() ...
-> but that sure won't win in a beauty contest.
-
-Is anyone working on such a shim at the moment? Otherwise, would it make
-sense for me to look into it? (although I'll probably need a pointer or
-two for what is actually needed)
-
-I saw your comment on Fuad's series [1] indicating that he'll also need
-some shim, so probably makes sense to tackle it anyway instead of
-hacking around it with #if-ery.
-
-[1]: https://lore.kernel.org/kvm/8ddab670-8416-47f2-a5a6-94fb3444f328@redhat.com/
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb
->
-
-Best,
-Patrick
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
