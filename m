@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-533542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E2BA45BDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:32:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6BDA45B74
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED25188A380
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7696E3AEE53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65A726FA40;
-	Wed, 26 Feb 2025 10:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5254E24DFFC;
+	Wed, 26 Feb 2025 10:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oY2I4BNZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012B626E62F;
-	Wed, 26 Feb 2025 10:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S+MHqDdN"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E05F226D02;
+	Wed, 26 Feb 2025 10:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565857; cv=none; b=ingjci+aW9OflOfwlgBxEc5/tAwbLIaxKamgay9eWxiz1WRtNYsqtsAYMoSxZzpuANgc5UldnXvNmIFTpv0JOXR3kCxqf7fWJUBGNZ3ND65qOULbjlf+uIghUDlUmBq9ikZt7aS1Ix62nRCaMjt+Kvyx1b/OogGTCkyOG0dimf4=
+	t=1740564813; cv=none; b=hcftKkIxgNuq/k2c3C7fn+Td4PEb9EPd8+LHiBKHWcnikRwTebXCVQXkxHBo2tXdNcIl6VZL/jYv1ip64wEq9iLOjE/x7xgQ5gb96UFf0vpT1ajoI78efYjX0aLMJLQZLbi9lnznQRAHJagpYm5YkPxYZ9ZSLRHOG1GtkYOt1ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565857; c=relaxed/simple;
-	bh=1ZAHdC2Y37gCh7qOM6vyURJ2MhLryVz7qduf3r/k/0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cbfgyfbVkPOeV6wlD6WT6rKc4IYmRQRVL+NdvPs23wpLIPaYvdYinpL1EtE2AKm1+Pd2MQlx2r82Ef/0WU+vu/GSD1r2H6v3JGplWBW4RhYenAFZXpC1YbAyEuk9xn+EmU5+jJrX/rcLaM0v7ePxZxokT+rqs8XO8XLm4ryBNLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oY2I4BNZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A719C4CEE7;
-	Wed, 26 Feb 2025 10:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740565856;
-	bh=1ZAHdC2Y37gCh7qOM6vyURJ2MhLryVz7qduf3r/k/0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oY2I4BNZuDBzdFwgQrPjbspkyxIuDk4kYfb2otT23dIGypfYvDeB5R8ErYRuNi9+f
-	 w9uAGh8kPUfflns7um67MZTXzpZxDndjXZCNPlQ5hmL9wP6xINtSrcl2jHxZzIGAAK
-	 E9pdVzJGbSsRueCVmvC+5y7oZt6D1M985n49v/tA=
-Date: Wed, 26 Feb 2025 11:09:57 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alan Mackenzie <acm@muc.de>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: More than 256/512 glyphs on the Liinux console
-Message-ID: <2025022652-uptown-cheating-5df8@gregkh>
-References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
- <2025022243-street-joylessly-6dfa@gregkh>
- <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
- <2025022355-peroxide-defacing-4fa4@gregkh>
- <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
- <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
- <Z73sqvjlbJ54FCtH@MAC.fritz.box>
+	s=arc-20240116; t=1740564813; c=relaxed/simple;
+	bh=wX6dPQiYKQr65TtTejA4CV3J0CpQjoNYdCwxgXtX9lQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W+ZzwWONlKU/s/7k/snzqmWgT2JdGpMHJ66iEMFw4SbS5P6LaNpqtE+SxjcHb3cy6IYzNq+wZTdCWsJAWJvcYdIxKUB53zeCxZYUKnTGfOpswBnVVnJYkvgSBbGu9g5AJZ3R5wOoKMnWDsEVnjvrX5K6hSzELb+JGGp5vrtMGNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S+MHqDdN; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=CbQtw
+	XuFlmtrkGlidPFjKUyUoT7NfEQyjqPCU9PcbW4=; b=S+MHqDdNo8tNjl0Tk3ECj
+	UaoradQplO9Owt4n8BkgmMx/NtMU8uowdGH0uViQyZ45b8z/4SoOCDNKzlJgu/Fe
+	7/OtLI/7AuXraEg6AgTsdsW58SeihKFcoW/MUwp7yk5Y5RkOtqxQlrMZWXmuRvVn
+	lQeA8+ON/1K6I1LJFglFhk=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDn70UA6b5nShOUOw--.3815S4;
+	Wed, 26 Feb 2025 18:12:17 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: andy@kernel.org,
+	geert@linux-m68k.org,
+	u.kleine-koenig@pengutronix.de,
+	erick.archer@outlook.com,
+	haoxiang_li2024@163.com,
+	ojeda@kernel.org,
+	w@1wt.eu,
+	poeschel@lemonage.de
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v3] auxdisplay: hd44780: Fix a potential memory leak in hd44780.c
+Date: Wed, 26 Feb 2025 18:12:13 +0800
+Message-Id: <20250226101213.3593835-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z73sqvjlbJ54FCtH@MAC.fritz.box>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn70UA6b5nShOUOw--.3815S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFyxKr1UGr4xWF1UAFykuFg_yoW8Ar1xpF
+	srWa4Fka18JF1vga4DGw1xXFyYkan7A34jgr9Fk3sa9ry3JFWIy34Yyryq9w47WrWfG3WY
+	v3W2vrWSyFsrAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0hb9bme8gkvYZQADs7
 
-On Tue, Feb 25, 2025 at 04:15:38PM +0000, Alan Mackenzie wrote:
-> Hello, Jiri.
-> 
-> On Mon, Feb 24, 2025 at 21:08:50 +0100, Jiri Slaby wrote:
-> > On 24. 02. 25, 19:22, Alan Mackenzie wrote:
-> > > Hello, Greg.
-> 
-> > > On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
-> > >> On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
-> > >>> On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
-> 
-> > > [ .... ]
-> 
-> > >>> But I think you are also asking why I use the console at all.  That's
-> > >>> a fair question which I'll try to answer.
-> 
-> > >> I'm not disputing using the console, it's the vt layer that I'm talking
-> > >> about.  The DRM developers have the long-term goal of getting rid of
-> > >> CONFIG_VT which will remove a ton of mess that we have overall.
-> > >> DRM-based consoles should provide the same functionality that a vt
-> > >> console does today.  If not, please let them know so that the remaining
-> > >> corner cases can be resolved.
-> 
-> > > Does a DRM based console exist at the moment?  I spent quite some time
-> > > looking for it yesterday, but found nothing.
-> 
-> > I didn't read the thread, but are you looking e.g. for kmscon?
-> 
-> No, I wasn't.  I was looking for a drm replacement for the drivers/tty/vt
-> code inside the kernel.  I may have misunderstood Greg when he referred
-> to a replacement which uses drm.
+At the 'fail2' label in hd44780_probe(), the 'lcd' variable is
+freed via kfree(), but this does not actually release the memory
+allocated by charlcd_alloc(), as that memory is a container for lcd.
+As a result, a memory leak occurs. Replace kfree() with charlcd_free()
+to fix a potential memory leak.
+Same replacement is done in hd44780_remove().
 
-No, this is what I was referring to.  Also maybe we should be asking on
-the drm list?  The developers there were working to get rid of CONFIG_VT
-so I know they have plans for what they see replacing it.
+Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v3:
+- modify the patch description.
+Thanks for the review! I think Fixes-tag should be added because
+the previous version causes a memory leak. I modified the patch
+description to illustrate it. Thanks again!
+Changes in v2:
+- Merge the two patches into one.
+- Modify the patch description.
+Sorry Geert, I didn't see your reply until after I sent the
+second patch. I've merged the two patches into one, hoping
+to make your work a bit easier! Thanks a lot!
+---
+ drivers/auxdisplay/hd44780.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> kmscon doesn't seem to be a suitable replacement for the Linux console.
-> According to Wikipedia, it stopped being maintained ~10 years ago.  Also,
-> it is a user level program, not a kernel level program, so will only become
-> active later in the boot process than the current console, which is not
-> a good thing.  It might well steal key sequences from application
-> programs, the way X and X window managers do, but maybe it doesn't.  On
-> Gentoo, kmscon is "masked", i.e. strongly recommended not to be
-> installed, and installable only after taking special measures.
+diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
+index 0526f0d90a79..9d0ae9c02e9b 100644
+--- a/drivers/auxdisplay/hd44780.c
++++ b/drivers/auxdisplay/hd44780.c
+@@ -313,7 +313,7 @@ static int hd44780_probe(struct platform_device *pdev)
+ fail3:
+ 	kfree(hd);
+ fail2:
+-	kfree(lcd);
++	charlcd_free(lcd);
+ fail1:
+ 	kfree(hdc);
+ 	return ret;
+@@ -328,7 +328,7 @@ static void hd44780_remove(struct platform_device *pdev)
+ 	kfree(hdc->hd44780);
+ 	kfree(lcd->drvdata);
+ 
+-	kfree(lcd);
++	charlcd_free(lcd);
+ }
+ 
+ static const struct of_device_id hd44780_of_match[] = {
+-- 
+2.25.1
 
-Yes, it will be "after" the boot console, but that should be it.  It
-shouldn't be stealing any keys away from anything, but rather going
-through the existing apis we have for input devices and the like.
-
-I don't know why distros seem to not be using it anymore, maybe there's
-something else?
-
-thanks,
-
-greg k-h
 
