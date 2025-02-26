@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-534112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E68A462FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:35:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38BFA462ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DD17A4054
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A331782CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144BE217737;
-	Wed, 26 Feb 2025 14:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07E62222CD;
+	Wed, 26 Feb 2025 14:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gWb+oE74"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MUqMlJkL"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040D32222D5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E86F218AAB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580350; cv=none; b=ow7eWw6jvjjZAkqqkS7qsBkR815IWvTvVpkPSiq2YjJAT/Sv2HWfaO0OD3Kxyn0emFjVki/tgkW6Lm08pQbs5JZIL3ULN60BIclZ4vzjdxDGHr5TSD4fM6fKsrJglU8pYJ2ZYoSZnqGSiiiHQYlP0/CXUkSe4xTj5vFRqTZslEg=
+	t=1740580328; cv=none; b=WttpeEs0B4BG71glwDqgFWTGwdPKIdtLalQ8bjQh4wqxi1ncNCN7CUeFIWRwq5fygKEH91oveHWGhqZqIjI5ccK345o+BYYUw9esu786i3T+71Oa8cCCdmZhUpAeN5uSfcs0fHTGS2sMV5Dw6LBLOdU4HLmWzKIgTRXKLIA8d6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580350; c=relaxed/simple;
-	bh=1xje41uCepRrRXg3A3edi3Mg9Y3fBjuttj6Mnw8furo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/f6mIFOubgLO6Y3nyV9Z423dDIpp+7Gx4JfLR49TQmsKjYgYTWBQEr4EiE5iqE1e/AQpGVD6xphSZTs+PA3dsRSSAeb6foJshpNI762TtvbV3KqJC8l1WfJSoEn44asAtALDk0FpxljYvpg5vxvoKhCCk+sZ/ia+AGwAsLiZQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gWb+oE74; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-221ac1f849fso137865ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:32:28 -0800 (PST)
+	s=arc-20240116; t=1740580328; c=relaxed/simple;
+	bh=fMVSvdO9Qk7XWWOU/kG7NyzMG+VeN5WdRjOKq8C7m9M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jh8j8jHRmEs4TISBhDfU/Dj15B3iDt573CaPxMZbmPkDJ4eLmP9B6HMMgWaNG/UM96Qqv0h2P85+YlULwtUYqIPJpkNZzY8KZprYAv0ulbsDgTT8ZSLt7fvvfT/u15yeCB7Cxjm+Zq/bxZu7QwS+ywye8ueHD10wdd4TYEdj5G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MUqMlJkL; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-855183fdcafso28584939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:32:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740580348; x=1741185148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740580325; x=1741185125; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=td9asxPNprcMZQkvIe996BJRz0iK1TqPUGnP0/ABMBE=;
-        b=gWb+oE74KGT/ffjSYhI9knAAG02nDNmIqpwPgndBTLi+3Bnze37K72F0LiBn/AvZzu
-         eRrdn8M2vCONtNGEndrmi4jyhiHEtPEi/cP+T+A81XkKChrfJ6ksGkOkvQ0Bk/EKm0TQ
-         JKpLmTaz97+pp7F/4Xx7Y73LHSPRoXQrn5oWqRPonRrYg9L+V89fZohX+TJwfWnLhRv/
-         EXy8v4/niZC+go+YOdjcebK5julupkTw45CM6yKoJJy0gKnt048tfwafbJFwp6slapPT
-         V2ubURY+MKmJBRgkDZ9POYeNxMDoYbAoHTa5YtoRuJkzh1aAZL+a7PlWeGW7UII3JWKZ
-         znLg==
+        bh=trZK1Q0XJm3EAQhjNCUlku9wqjbsls2X+EuichAbMRQ=;
+        b=MUqMlJkLnXRu2zadwbmb28wbke+nzPeyqUKHL4eHpRUy81Szhy2oeYrFFX2Ig/FuKh
+         3i0pUJcrUdsCEqZJNGK3OkUFiweEPOVLCeloT/Nvk+Qsmq/7AQ3y3Fr9Vet5orTiFkP4
+         CQu2MLeurK2yIGcWNZQlWScGsulXD6gKxXfPDDvuPO69LPx3OhD5N07+feV+Gt9DuH1o
+         GTCGKnGUPEItwSzuCc+sp552y2UNpQrWY0icbB6qEU3lgSPBqqlYAoyxr2SxygX873EM
+         es6Zvi0iIUXgRJomuSddnLzfbfv+T2a/ZI4W0Hxpe/jHLXVHwaUrpHije/RU1jfAJI1p
+         KIdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740580348; x=1741185148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740580325; x=1741185125;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=td9asxPNprcMZQkvIe996BJRz0iK1TqPUGnP0/ABMBE=;
-        b=XJmkD+S/HScF/YaZjSXR9GDpQy+iGkgMY880uYsXp0pB7IGGxFyo+p5S6iObyAmzKX
-         E4/t/Itm3obkgF8w8O0MDOnYa2f9eMHECCFGuhwyEBuePEklMxi1INFhA7nehriu73HI
-         dhq1Iomz4vh0I7SRqbDl4cd74CEP+a9CrZUd/Jc5JGDuEbKoLkYvcBQa9L+8qrNez6Kt
-         05p57iSKZTeCximRkt0PaeYsNt3sR9di1qbm5KK7vOWkkKjVRZOgWeu4hWaSc4KlGOfB
-         PgcHyc9jbdztkyV2LUfDRI5zsJdBSQDXcRKs1o1zkTpXmph/1bbnCG+AEcNpG5M3EgUJ
-         ZHxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbvamjDvhQqhSE+nK0lX/W/JJ3O1hSKJQ7xUzgGOEKUiWJaqwrEdqxIm/Dmqm0pnUpcTc71DLevA/7Kpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp8Is6ZSKWIvmPH7+WnmimiBAt5StWkwQhK6iPdxnxizAFF15d
-	Pp/g8OehniYFj4V9G2u3oG7XFJlDQ4FRV11fqBBeIx872dDoxfjHYR688bsb45b8wkU3pzi5hEg
-	eDEIS+umvf18IhsyICmlPvhLOGtN1w/7I4N0d
-X-Gm-Gg: ASbGncv9LZTBgn0aD816iEq/1NAcuJ2NzdbmMy0kpo8trvEKz6ZIpJwapzyV7h4NGha
-	lAXnYxepO6xG5rKY2Z+p/uPRTEHWwcmKfvp18vi8su4tt0v+O7QcsWg9evGW/FsfcjX95yXBr+3
-	PABpmITg==
-X-Google-Smtp-Source: AGHT+IEV7oIAxW6mnHKhBlIrbZwecYCm5nSGQwXbP+kYpROVcMIbhN327FZxfj24JStSXf63AwfCMV6rWezOiQiGmYU=
-X-Received: by 2002:a17:902:ea0a:b0:216:21cb:2e06 with SMTP id
- d9443c01a7336-22307a97497mr6478505ad.19.1740580348078; Wed, 26 Feb 2025
- 06:32:28 -0800 (PST)
+        bh=trZK1Q0XJm3EAQhjNCUlku9wqjbsls2X+EuichAbMRQ=;
+        b=IOTuXhi6/eAhG08GiTBHi+D9lx9yalIJX7N5TLDAaVFKqCNDF8cpYQ8twbB2oScJJZ
+         IhNHkRoHwEyPlElF7Rorh4JQ/aOYXxf/oTI6WjvIK4MEHSy0N2cyfiONEeMSjFNdvho8
+         TY/b5eOv1hdBZ7cBZjLvJlohY9YJ0bxD8gI80DsAg9sWNWxm0DGRZqpYzJshJQSpjwBs
+         7kKBldVj+l6Qwr9IaXday+vDOcuWzWdFctVtYaPv1HKcl+RNcnJZ5wS26c/y9MvKWdRA
+         VIvmB5cXo7S7XiybQExd8eKEfrGZ0D06v8Ve3zpJa3+T75Q6rdOQFvTYZHiqR/XEdbot
+         pc9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW5b8nIuErw+ZVuh0s9cYR/uTqm9foenUGDU8Vi2BiLJxbw1AO8E8wkW0kTG3nGFh50690gncvIIKLaWU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfnKxeJ+jJdNmTp6xAHoSnzWD7tI+he29U9vXsGVGdfgu2vGAx
+	9dmpzeUhNM5x2v05kAdkdSg3zwqqop3l/ZQpg/s3uxGE/KqGES3HZnO04JnwvgA=
+X-Gm-Gg: ASbGncugm325RLo6PLMUu1nmLBqUaHPS42DIWgGsYmBtcuqWhpL8v4UdV1eo+t/HpKp
+	nrWelQCMxSyWxqgM2YZ66GgpsS8681qdTcEmBF9PliTIabTsFm796op5nzyGVC44jPGL6Wavt6J
+	Do4bR/5jpfi5Z0401yRjDWnA4RHVrzyxIS0+1QHuPh96NT5ZGWGwH3/eXohIq5UftajFYVG/vVi
+	FNpuary1g2mOQvvL35M4KuK6ZekXY0arloTpsL06JXwtS2fH4UqfWbRxIXoOclSh7npsBBzLm/H
+	j/fgbhNmfhgeHVdZ
+X-Google-Smtp-Source: AGHT+IHabXtiuY9p9FWUehezndCWyS3XMFRLX6LH+PTKhkqUOLGI+DxXj2jxDHmMWTb/jH8LLzzPVw==
+X-Received: by 2002:a05:6e02:791:b0:3d1:9bca:cf28 with SMTP id e9e14a558f8ab-3d2c0239750mr196114715ab.8.1740580325652;
+        Wed, 26 Feb 2025 06:32:05 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f04744daebsm908534173.27.2025.02.26.06.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 06:32:05 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250225212456.2902549-1-csander@purestorage.com>
+References: <20250225212456.2902549-1-csander@purestorage.com>
+Subject: Re: [PATCH] ublk: complete command synchronously on error
+Message-Id: <174058032466.2230500.13734000197859662068.b4-ty@kernel.dk>
+Date: Wed, 26 Feb 2025 07:32:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226114815.758217-1-bgeffon@google.com> <Z78fT2H3BFVv50oI@casper.infradead.org>
-In-Reply-To: <Z78fT2H3BFVv50oI@casper.infradead.org>
-From: Brian Geffon <bgeffon@google.com>
-Date: Wed, 26 Feb 2025 09:31:51 -0500
-X-Gm-Features: AWEUYZn6pM-y42p_MFAy4Xy3EXUzYgSyyByB_sRAby2IurtgY3iUwDA_grGzwRU
-Message-ID: <CADyq12x8eJ8ASq6WOEkFFbmJYajLnPd+qM8+QP1W76Add=S67A@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix finish_fault() handling for large folios
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins <hughd@google.com>, 
-	Marek Maslanka <mmaslanka@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-94c79
 
-On Wed, Feb 26, 2025 at 9:04=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Feb 26, 2025 at 06:48:15AM -0500, Brian Geffon wrote:
-> > When handling faults for anon shmem finish_fault() will attempt to inst=
-all
-> > ptes for the entire folio. Unfortunately if it encounters a single
-> > non-pte_none entry in that range it will bail, even if the pte that
-> > triggered the fault is still pte_none. When this situation happens the
-> > fault will be retried endlessly never making forward progress.
-> >
-> > This patch fixes this behavior and if it detects that a pte in the rang=
-e
-> > is not pte_none it will fall back to setting just the pte for the
-> > address that triggered the fault.
->
-> Surely there's a similar problem in do_anonymous_page()?
->
-> At any rate, what a horrid function finish_fault() has become.
-> Special cases all over the place.  What we should be doing is
-> deciding the range of PTEs to insert, bounded by the folio, the VMA
-> and any non-none entries.  Maybe I'll get a chance to fix this up.
 
-I agree, I wasn't thrilled that the fix looked like this but I was
-trying to keep the change minimal to aid in backporting to stable
-kernels where this behavior is broken. With that being said, do you
-have a preference on a minimal way we can fix this before
-finish_fault() gets a proper cleanup?
+On Tue, 25 Feb 2025 14:24:55 -0700, Caleb Sander Mateos wrote:
+> In case of an error, ublk's ->uring_cmd() functions currently return
+> -EIOCBQUEUED and immediately call io_uring_cmd_done(). -EIOCBQUEUED and
+> io_uring_cmd_done() are intended for asynchronous completions. For
+> synchronous completions, the ->uring_cmd() function can just return the
+> negative return code directly. This skips io_uring_cmd_del_cancelable(),
+> and deferring the completion to task work. So return the error code
+> directly from __ublk_ch_uring_cmd() and ublk_ctrl_uring_cmd().
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] ublk: complete command synchronously on error
+      commit: 6376ef2b6af3bbcb7c50dc657bdfb83aba467aef
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
