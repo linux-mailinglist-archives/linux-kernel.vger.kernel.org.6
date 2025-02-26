@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-533330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E25A45883
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:38:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BC9A4589A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA5BF3A9A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:37:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37C01894C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE4B1E1DFD;
-	Wed, 26 Feb 2025 08:38:00 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE17E224237;
+	Wed, 26 Feb 2025 08:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="aWRf0kSG"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6839D1A83FB;
-	Wed, 26 Feb 2025 08:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89B1E1DEC;
+	Wed, 26 Feb 2025 08:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559079; cv=none; b=GNjq1gd5/LvB8y54o5wsnlrSYS+wpvaT9O1M21a/Xvv1Qv2dSunGUBTKHOZdxPScn+Ioay7lXClrQC4JgWHzsyAwUeThg43cqtyS9cPQVNYkkX/PSMpotMPg7KgcvulQrQFOO6w+lQWzOnCV/e9isfulf/mtlsnXh1WMWThwz/4=
+	t=1740559224; cv=none; b=pX+Z4XQnH9TBWXoSChLI5mEtG4RbDaNxsbvG8LuJR/EgP0AC3324Yu/4TiaQsZpL9TpV9f7hrwVp3hj1VQnOTClJHiAd/svqBaYHpM5o0niGwLQsiRICfwTs0D5zyhlt2VEsruhyQQFOUyY0PsQnBFz/5zv4buuw/iOzY1TPyCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559079; c=relaxed/simple;
-	bh=ZuhjPQ8IQ6b0dwP/OGt6yuaQL12SDYZvrO/wo8V1HiI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C++pNKHH05TWwNUGr6wPFy8KU9S+ZfFU94y/ShJxMlrZlF9TGpaxST9+AM4dMilSZdTWQKbDzdbJgq8sQtfepGHdqy59ftR7wkzgxKqRnnka3Kfd59QFCcdL9j4ZkuztFQFgRhlFd6kFPZ1M5p1tbUax4BrEG2KOxFExTIxLF98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABHr8jM0r5ndgtBEA--.16274S2;
-	Wed, 26 Feb 2025 16:37:44 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alex.hung@amd.com,
-	dillon.varone@amd.com,
-	Samson.Tam@amd.com,
-	chris.park@amd.com,
-	aurabindo.pillai@amd.com,
-	george.shen@amd.com,
-	gabe.teeger@amd.com,
-	Yihan.Zhu@amd.com,
-	Tony.Cheng@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/amd/display: Fix null check for pipe_ctx->plane_state in resource_build_scaling_params
-Date: Wed, 26 Feb 2025 16:37:31 +0800
-Message-Id: <20250226083731.3584509-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740559224; c=relaxed/simple;
+	bh=Td9kPv+4aEqMiRvo8WQdVA0t/ydWeEaHLWoB0s8TtIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bos2YejeAhYRM96hRScfzRFzgK8ZTmeQEjsjgT/kN9Dqg4RcuypQPJIOh1o9pQZJmrURw0lEdRpVXvD8WCP50P018vap5kYAsadJArkr8Xlg5OkXysx/uHrriVyFwFGggH/7ao5omsQMFBKb0rRMIDZ7rFW4H7vSS/z8nM9SCmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=aWRf0kSG; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1740559223; x=1772095223;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lh1Ns51OurirFGbJo73DhgVZ1PCIKOIciohAAfR5Ylc=;
+  b=aWRf0kSGnpEGu4t32qelUQtQNbYnCm32H+dvThMUwDBY+L1jAlVfQNSt
+   9lFxuHl220cLybMoYUEsQL7UzWIucSmw1NaFyMdG+Ul9CEStZ7jGvOuqS
+   8MRcJScF2EkIYSaMyyGBi5pdwhiBjwlrAnFpW0nxewxQCm07/aZ7W/YH3
+   o=;
+X-IronPort-AV: E=Sophos;i="6.13,316,1732579200"; 
+   d="scan'208";a="26144342"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:37:51 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:52267]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.30.133:2525] with esmtp (Farcaster)
+ id 287ec09d-dd1c-4342-a920-a9f616a17912; Wed, 26 Feb 2025 08:37:47 +0000 (UTC)
+X-Farcaster-Flow-ID: 287ec09d-dd1c-4342-a920-a9f616a17912
+Received: from EX19D030EUC003.ant.amazon.com (10.252.61.173) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 08:37:41 +0000
+Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
+ EX19D030EUC003.ant.amazon.com (10.252.61.173) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 26 Feb 2025 08:37:41 +0000
+Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 08:37:40 +0000
+Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id D3830805C1;
+	Wed, 26 Feb 2025 08:37:36 +0000 (UTC)
+Message-ID: <086e02c8-6408-4b15-9384-42313254f041@amazon.co.uk>
+Date: Wed, 26 Feb 2025 08:37:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABHr8jM0r5ndgtBEA--.16274S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW5ZrW7XFW5Zry3ur4Durg_yoW8JF47pw
-	s7GFWY9r1UCFn2ya9rJ3WkWFZxWayrWF4F9rW7J3WfX3W5Ary5KF98Cry7Wa15GFyvyw4a
-	q3ZrGw4qqFyqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
-	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/12] KVM: Add capability to discover
+ KVM_GMEM_NO_DIRECT_MAP support
+To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
+	<seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
+	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
+	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
+	<derekmn@amazon.com>, <jthoughton@google.com>
+References: <20250221160728.1584559-1-roypat@amazon.co.uk>
+ <20250221160728.1584559-5-roypat@amazon.co.uk>
+ <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-Null pointer dereference issue could occur when pipe_ctx->plane_state
-is null. The fix adds a check to ensure 'pipe_ctx->plane_state' is not
-null before accessing. This prevents a null pointer dereference.
 
-Found by code review.
 
-Cc: stable@vger.kernel.org
-Fixes: 3be5262e353b ("drm/amd/display: Rename more dc_surface stuff to plane_state")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch as suggestions.
----
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, 2025-02-25 at 16:55 +0000, David Hildenbrand wrote:
+> On 21.02.25 17:07, Patrick Roy wrote:
+>> Add a capability to let userspace discover whether guest_memfd supports
+>> removing its folios from the direct map. Support depends on guest_memfd
+>> itself being supported, but also on whether KVM can manipulate the
+>> direct map at page granularity at all (possible most of the time, just
+>> arm64 is a notable outlier where its impossible if the direct map has
+>> been setup using hugepages, as arm64 cannot break these apart due to
+>> break-before-make semantics).
+>>
+>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>> ---
+> 
+> Not sure how KVM folks handle that, but I suspect we would just want to
+> squash that into the previous commit,
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-index 520a34a42827..a45037cb4cc0 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -1455,7 +1455,8 @@ bool resource_build_scaling_params(struct pipe_ctx *pipe_ctx)
- 	DC_LOGGER_INIT(pipe_ctx->stream->ctx->logger);
- 
- 	/* Invalid input */
--	if (!plane_state->dst_rect.width ||
-+	if (!plane_state ||
-+			!plane_state->dst_rect.width ||
- 			!plane_state->dst_rect.height ||
- 			!plane_state->src_rect.width ||
- 			!plane_state->src_rect.height) {
--- 
-2.25.1
+Ah, yeah, I just had a look at the commit history in this file and
+indeed these have seem to usually be squashed. Will do so too, thanks!
 
+Best, 
+Patrick
 
