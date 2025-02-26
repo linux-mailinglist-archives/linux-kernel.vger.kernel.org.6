@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-534773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E16EA46AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 358FDA46B00
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D8716E4E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D4C16EA0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4FF23A58E;
-	Wed, 26 Feb 2025 19:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC17239584;
+	Wed, 26 Feb 2025 19:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JtIjqmS6"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pzm/OXZ+"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFE523959A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504F239561
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598098; cv=none; b=Hc+DWEC5xmlzswC28yAWsAH0pQju7bEuIjwqQcFGuD/UBMxawY2qlP3+Bw2JqwvGiUf2DaQzYlmCPn6ILybqk7An2VsDtqjLA58aPAApxH1bbGwbpXSK4foHv6CI2+AjeGHh3RMNRLkytapcNG+OvXcfQgZAGWl+8sRFVMOWBxo=
+	t=1740598108; cv=none; b=QMAbYZ/rSCkejxLMqyoUj4iD+At4yofuyRYT0k/oarKGJy3cQh20me+CTgNaruDeXSSRsoVIC7oy8kU3hiihOQ63B1UeqUKT0q47cyaFvH+VfmvXiBkNkie2q9697YcByv2P2WKX4T4caoYg804j8eUj0/VeYU0DnuG9OuFSqrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598098; c=relaxed/simple;
-	bh=bl9Plq6JnXW74ZZ2OyZkxJ1bQfSDrH+0T8qUb2SbqgY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bdf/UwL1u5Ryw95t6z279GWNyntO0gtyEtEQTfO/bUprTqiwZmSe2X/bNHkjBaMaxo1tk8b0hpoQJKrGJs0ji8Cf4O2v1K0HTnCI6xZt2xLQWnePNXF+yVnFsSHirtEkO74ejr5SttnVSngcbiLJ5kdjbGI18jJtbwEazufYA3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JtIjqmS6; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1740598108; c=relaxed/simple;
+	bh=tmN5JwTaZ421JUVQTXr4tJNOy/0VgsWNPYovSN2FDSU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Om7GHe/Kp/iRTQDlPQh8qV1GS7k/wQ6wPEEEv1Gpoyr8M0ppnF7Zwbd7zLzKgtDcSraDv0gkfFiof/hN84W5QL2difINv+dGW19QoVn2X7pyg9XNZCH/EvGvCv6icYMbn2Ea82zav8+Ak4q0kHKUojwgFeId+yqZ3tVHzyH/kZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pzm/OXZ+; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22101351b1dso1721885ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:28:17 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8fa38f6eso377609a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:28:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740598097; x=1741202897; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qKg29E18EQ/8K9KKxW0a2f9wLs1Xc02tFARhkKQdFJI=;
-        b=JtIjqmS6IYgExDgS6kJWBRzm7hW5KLRv3qNhDdu4R5/AxHzceNro3vmM+Vz9BCpL4t
-         Rq5H4ZTpBA+0X5wzNrZdavjmpVQzGFqHl9wk4Ojrs/NpVPY5rfdNxJP6PsR6pwyiw2no
-         uujzXnSg94EReU8HPNdl1ZUbjsUIgpFeRYmDN+xHP3cT47gBZhKvuiIrywCdCWMlR/T9
-         x9QyacQapqkvSYxVDHXDNZTuBu0NYQuR55OC22xFoX3XA2+FYJFA6hcCexbCKgqVMdnU
-         o8t2vGZsfzvhCs10Oh1Vyjhgo+jKenDTysLDNfSDfg+rfjDmt0/qevl64d0ggr7xa7f9
-         aRCg==
+        d=google.com; s=20230601; t=1740598106; x=1741202906; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfKyFrAiD8h/LnMC+tGogS6xsvZrTTIIDx60NZVpyZE=;
+        b=Pzm/OXZ+TgUygYunrr38Ff4cgRZlJiJiNBJm79oEzx/i9MN5qv0SyOepDmYspAIIWV
+         DFkLy2p9aKgT2LaFlnVpwOaUCbLWO5BpwFQj0mnHjQmalnKuk0+ECQiHFx6jlSV0nEvK
+         0WlOxUAKfJQFoYxY3KYtTreUK0Nb+D+xqO4HvAjPCrhq/nUMziPUUn1gks6AwU3d2RGY
+         eIFtLF/GXT/yYeGzTTwjXnoLcoP+0hpYlJMPcaEjAz/DDTJYA0RVRVDHbk1tnDOTiDcg
+         AT7o1vx1+0V35NKKGp4RQR7jyLF8+NBuz4e1bu0yor8wHTUuqxHHdJcbvb0P/68hDArA
+         WEVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740598097; x=1741202897;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qKg29E18EQ/8K9KKxW0a2f9wLs1Xc02tFARhkKQdFJI=;
-        b=TvDkouQ1Uj0gO70+ugJ0CLuK5tsY5T303wPis51vbVt71XBLFM8k8iBEG4a3oObO9r
-         aDMTcZ1vLtPixVFmOuLj89+naRVS3M5Ck9YcWvXoa72Ir58GcP1g1a5u7+jXCznMLzzA
-         GioYjDHPAsmWsiBeppkcseI6F1E+Pb3zvplqFR2BVUCHiJfhR1KqMRy9VBp7Zs/DL4CF
-         gPL3lvNHpBz4SHA4q1A1lcWh5l0GJl5O8GxdLm9SQMcWnde5g8fmVNi1rtk4gWV1/EEL
-         LL1ZsJjN7Kns6kIiCdhZqZINPLyK5u6B1TzJHloNxY982FeyLo3aifz1tgclBRrJ+VQ6
-         JgEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2FjYR9PEyovqDiPgtTEa9H4970wJnGqO13/Hb6pV0pBIBQkFwfbkzswduvT6MT7Nvxx5sAHITz25zwTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaGLfiprGWeG6i0mE6hJo8EQZsDj7L7Np8tS5YyqrSOCffHptk
-	JhZv0P9inQa+FOqIXi43G+9mAEuhgjnGTMCN2wS+kFvBWODo6p+pXxPRwpz0tm8rXpPtZl20wmF
-	/X5fPt8ku
-X-Google-Smtp-Source: AGHT+IHKu4c7meNjkGUZE1g8urh4/azLv13+UGEM3NtUkBkRgsExSR+jbSrEuSkHB2KxuBwP29fasZf1vU6dkQ==
-X-Received: from pfhj23.prod.google.com ([2002:a62:e917:0:b0:725:1ef3:c075])
+        d=1e100.net; s=20230601; t=1740598106; x=1741202906;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfKyFrAiD8h/LnMC+tGogS6xsvZrTTIIDx60NZVpyZE=;
+        b=ElJ6r2n+oHcidgVYqVWDVbmIDnycYd6+8POvgWEe8rHUGsowwOdjOpOvHJuL64vQfb
+         pk7Kkt8bRMI2r2UhjFcBGgBwn4hsZPJ/RK0Mnk1k/6yrlF1rliYxUndv+NE21ZLxIfn3
+         GnjDrpNsnNuEDkKOHokBk+MxbA5cGtMojlY3+p9u5ZycTm47ayqukEPaOL25rgErDfT1
+         lDI2iglhH/2B0YcK2PM0z4fKzr9KgSRWkBSf2eY0QgPiFDwHxhytC3rCP3T84PqqVBAC
+         SBZRxPvGTgARoleapb1AJV+v9m2RclR+CNnRHA/Cbp171QH4How0WfZgvsmyAEfDWkwB
+         5exw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5f8gVMMu0khZFMCDH9k1Cnbr9/9f7frYgtj7KWbu4sHfRJJz1WMJZ6AibZVMTV/g/KTlSOqJg3HGxBKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx89ZdDldDBBWX9InQfi4D2vzfCrhmIc+0WwvpCBvXsvk+/MnHP
+	3xmtp1t59U8H5SGchTc0v+z4mFo6iU3N7c02shtbeXWnls7eCThBconMHMdD8BdHqrHol3FD0kS
+	+3fYb4LBf
+X-Google-Smtp-Source: AGHT+IH6eAP4Cyst+V85LJmLhx2Rg1bDfnJ+WmNbTdbRluW4pkEzVr68R+e3txlLoA5Mp3lBArRubTvC02kHFg==
+X-Received: from pjbtc16.prod.google.com ([2002:a17:90b:5410:b0:2f7:d453:e587])
  (user=krakauer job=prod-delivery.src-stubby-dispatcher) by
- 2002:aa7:8d41:0:b0:72f:590f:2859 with SMTP id d2e1a72fcca58-7348bdd0046mr5402845b3a.13.1740598096762;
- Wed, 26 Feb 2025 11:28:16 -0800 (PST)
-Date: Wed, 26 Feb 2025 11:27:22 -0800
+ 2002:a17:90b:5243:b0:2f4:434d:c7f0 with SMTP id 98e67ed59e1d1-2fe68ada3e8mr15762000a91.12.1740598106543;
+ Wed, 26 Feb 2025 11:28:26 -0800 (PST)
+Date: Wed, 26 Feb 2025 11:27:23 -0800
+In-Reply-To: <20250226192725.621969-1-krakauer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250226192725.621969-1-krakauer@google.com>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250226192725.621969-1-krakauer@google.com>
-Subject: [PATCH v2 0/3] selftests/net: deflake GRO tests and fix return value
- and output
+Message-ID: <20250226192725.621969-2-krakauer@google.com>
+Subject: [PATCH v2 1/3] selftests/net: have `gro.sh -t` return a correct exit code
 From: Kevin Krakauer <krakauer@google.com>
 To: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -81,28 +83,27 @@ Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
 	Kevin Krakauer <krakauer@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The GRO selftests can flake and have some confusing behavior. These
-changes make the output and return value of GRO behave as expected, then
-deflake the tests.
+Modify gro.sh to return a useful exit code when the -t flag is used. It
+formerly returned 0 no matter what.
 
-v2:
-- Split into multiple commits.
-- Reduced napi_defer_hard_irqs to 1.
-- Reduced gro_flush_timeout to 100us.
-- Fixed comment that wasn't updated.
+Tested: Ran `gro.sh -t large` and verified that test failures return 1.
+Signed-off-by: Kevin Krakauer <krakauer@google.com>
+---
+ tools/testing/selftests/net/gro.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/netdev/20250218164555.1955400-1-krakauer@google.com/
-
-Kevin Krakauer (3):
-  selftests/net: have `gro.sh -t` return a correct exit code
-  selftests/net: only print passing message in GRO tests when tests pass
-  selftests/net: deflake GRO tests
-
- tools/testing/selftests/net/gro.c         | 8 +++++---
- tools/testing/selftests/net/gro.sh        | 7 ++++---
- tools/testing/selftests/net/setup_veth.sh | 3 ++-
- 3 files changed, 11 insertions(+), 7 deletions(-)
-
+diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
+index 02c21ff4ca81..aabd6e5480b8 100755
+--- a/tools/testing/selftests/net/gro.sh
++++ b/tools/testing/selftests/net/gro.sh
+@@ -100,5 +100,6 @@ trap cleanup EXIT
+ if [[ "${test}" == "all" ]]; then
+   run_all_tests
+ else
+-  run_test "${proto}" "${test}"
++  exit_code=$(run_test "${proto}" "${test}")
++  exit $exit_code
+ fi;
 -- 
 2.48.1.658.g4767266eb4-goog
 
