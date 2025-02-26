@@ -1,248 +1,119 @@
-Return-Path: <linux-kernel+bounces-534997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F149EA46DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB779A46DAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E003ADB10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78073B0929
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D2267389;
-	Wed, 26 Feb 2025 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F10260A2C;
+	Wed, 26 Feb 2025 21:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hgq6SPlj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="NvaNvXKm"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C55D266EE8;
-	Wed, 26 Feb 2025 21:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7359525EF86
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605881; cv=none; b=rbsLBbdaKvSI7qOZtsxuK2Vt2wFE9Cd5WNJlrqvetYE73E2J8LWcTLNDiKtOQZoC5YKzB0YOOdxkZXtV7ezMOgFQEQmJEAa7ni4TqszeNXT5S8IzzZDq1/WfDCqkajOoV+k1GrRJ/xCPvk04vyFkF8gImS6R3v4tY9NnjABUeXI=
+	t=1740605941; cv=none; b=qR+S5uLMmLdqiFpYykkEZE7bb+W5sJrTsCkQRsfnI1px680ZSSTF8JGXooORAAXcKNuXTNsh80OjcGUCguING2j0MtUVgKzPcAvLkIuD6DIh1VHCyMt1U4WaMShfLhVX6YYrW0+SXm5ulUlwKYYR0+bhlmSE4gtPjp4Leeu2dys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605881; c=relaxed/simple;
-	bh=1HxTySRGFLapXwQ4iFlnjdpTnd4Uf8TTpcFXhntBvcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpzL256twtmwP3TGLs3xmvIdHDqVtK7c04HLZQND9y4oJyc9HYJ1eFs2Siz80xWkOFrqcwiwYHaemSXJh5rZPsfPwLgjjqDlTtoAfVzzxxhjQAacG9pOSBfisC5iyo5nKSuQR1z6I/DR4EfDLxG1SWTCoFBz07qWaqly/CaOmaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hgq6SPlj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA53C4CED6;
-	Wed, 26 Feb 2025 21:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605880;
-	bh=1HxTySRGFLapXwQ4iFlnjdpTnd4Uf8TTpcFXhntBvcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hgq6SPljsxPh3c6H7xtRy7lT/2+9yq3u5qEpNLwE97LZXB6PW3NvP2d7VjKUjfYPR
-	 9OBjN2LRHMdvEnU2e4N+UpuPyShnCp30v11yl0KgDvC/+ZBoaPYZa72qTCVse4jz5D
-	 Hs9msFgRTbHnz+3qxnZehJOccPmggjHXDrSa3DZ3yTNKIGZiu4TK8/di5HKNLerckQ
-	 K07gnUi4adbcl39e8Ew39di2573zb1vBVDQI0GcVyHLn6UXN3+2fxHPSh5hm317doF
-	 z92cDwYuzXuqGURo8v+a0yUfnSyGmFc9zyMdwD3tExFRG/LAFymV+IKJ8fkpFmxJmZ
-	 J4ve065LFcH5w==
-Date: Wed, 26 Feb 2025 18:37:57 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf report: Add 'tgid' sort key
-Message-ID: <Z7-Jte2ImGa93VUD@x1>
-References: <Z7gllQZeg6U2OvZE@google.com>
- <CAP-5=fXEEMFgPF2aZhKsfrY_En+qoqX20dWfuE_ad73Uxf0ZHQ@mail.gmail.com>
- <Z70wHEl6Sp0H0c-3@google.com>
- <CAP-5=fUosOVUKi5tQ3gVtHhfApk0oH3r2zHDW7-i+_qASKm+Cg@mail.gmail.com>
- <Z712hzvv22Ni63f1@google.com>
- <Z74U5s7Yf0f6I7Mo@x1>
- <Z74V0hZXrTLM6VIJ@x1>
- <Z74ZL6SUwWL_a5EK@x1>
- <Z74eqEiyrzuoL6uz@x1>
- <Z79std66tPq-nqsD@google.com>
+	s=arc-20240116; t=1740605941; c=relaxed/simple;
+	bh=ZNex3sNHO1gK7hwC1yQ98UDg1F2Y+2a1P6/fzIJSBx0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YdD9Ap+65PD/tT9RbLsQa27x3jWG+6+Wo/SayPVa6H9/KL+xkfQV2p1+GkUFD+eUmm5YFU5J6/U7GzskH6IZ91H9h4/fKctVrpNw5VtHkZcRZegvzyKJDaswKYuGXEQ7Nird+W13Jt890TkWsPtII64pdxbEgfdojmUkzpzh6U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=NvaNvXKm; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QLbeON001971
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:38:58 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=TZ9PNSGnUmWogA7wUt
+	UsRsbdSZ0fPSdGDef34CF3mKc=; b=NvaNvXKmNEp8xMkea0V3voYEGwyamwIAEc
+	yUcTFhwRAzEEl72WsQhNIGl9YoLXu8g0FTvA7tQUp9U3xJQHculrU/05MYvfI9sV
+	Cs+dj2bs6cUVJAzIWBECGPEQ7RH25m0w0ZLKR4iON2/OMzi35ATYhy5o8l+O+O3l
+	peEK3NUYMd+h6lHELU9Pe99XUJCv31X508SZk7y83sUIcSq3YoHekWhxSjw4E0sD
+	lBCdNVieBer5VdKzGAnUCl3g8sq+4lGc4s78pEmucM7ZCMpOr8W0Z/fzr33fBXhF
+	8cSPYd9mvzujbh0H5rVRoni/+2WoPPDgka2DGt3Wh8E1TisqtnlQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4528hu9ae6-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:38:58 -0800 (PST)
+Received: from twshared11145.37.frc1.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Wed, 26 Feb 2025 21:38:49 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 2E7EB187DD4FE; Wed, 26 Feb 2025 13:38:45 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <pbonzini@redhat.com>, <seanjc@google.com>, <kvm@vger.kernel.org>
+CC: <x86@kernel.org>, <virtualization@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv2 0/2] kvm/x86: vhost task creation failure handling
+Date: Wed, 26 Feb 2025 13:38:42 -0800
+Message-ID: <20250226213844.3826821-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z79std66tPq-nqsD@google.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: NaRcN9fcFclURv9jahVw-ZCO-BrROMM6
+X-Proofpoint-GUID: NaRcN9fcFclURv9jahVw-ZCO-BrROMM6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_06,2025-02-26_01,2024-11-22_01
 
-On Wed, Feb 26, 2025 at 11:34:13AM -0800, Namhyung Kim wrote:
-> On Tue, Feb 25, 2025 at 08:48:56PM +0100, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Feb 25, 2025 at 08:25:35PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, Feb 25, 2025 at 08:11:17PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > On Tue, Feb 25, 2025 at 08:07:18PM +0100, Arnaldo Carvalho de Melo wrote:
-> > > > > On Mon, Feb 24, 2025 at 11:51:35PM -0800, Namhyung Kim wrote:
-> > > > > > On Mon, Feb 24, 2025 at 08:40:37PM -0800, Ian Rogers wrote:
-> > > > > > > On Mon, Feb 24, 2025 at 6:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > On Mon, Feb 24, 2025 at 10:18:37AM -0800, Ian Rogers wrote:
-> > > > > > [SNIP]
-> > > > > > > > > I thought the real-time processing had to use
-> > > > > > > > > maps__fixup_overlap_and_insert (rather than maps__insert) as mmap
-> > > > > > > > > events only give us VMA data and two mmaps may have been merged.
-> > > > > > > > > Shouldn't doing this change be the simplest fix?
-> > > > 
-> > > > > > > > Make sense.  How about this?
-> > > > 
-> > > > > > > Lgtm, I have no way to test the issue. Why does maps__fixup_end need
-> > > > > > > to get pushed later?
-> > > > 
-> > > > > > I just noticed it would add extra kernel maps after modules.  I think it
-> > > > > > should fixup end address of the kernel maps after adding all maps first.
-> > > > 
-> > > > > > Arnaldo, can you please test this?
-> > > >  
-> > > > > Trying it now.
-> > > > 
-> > > > Now we have something different:
-> > > > 
-> > > > root@number:~# perf record sleep
-> > > > sleep: missing operand
-> > > > Try 'sleep --help' for more information.
-> > > > [ perf record: Woken up 1 times to write data ]
-> > > > perf: util/maps.c:80: check_invariants: Assertion `RC_CHK_EQUAL(map__kmap(map)->kmaps, maps)' failed.
-> > > > Aborted (core dumped)
-> > > > root@number:~#
-> > > 
-> > > __maps__insert() does:
-> > > 
-> > >         if (dso && dso__kernel(dso)) {
-> > >                 struct kmap *kmap = map__kmap(new);
-> > > 
-> > >                 if (kmap)
-> > >                         kmap->kmaps = maps;
-> > >                 else
-> > >                         pr_err("Internal error: kernel dso with non kernel map\n");
-> > >         }
-> > > 
-> > > while maps__fixup_overlap_and_insert() doesn't.
-> > > 
-> > > It calls __maps__insert_sorted() that probably should do what
-> > > __maps__insert() does?
-> > 
-> > Ok, so I did the following patch but this case fails:
-> > 
-> > @@ -910,6 +928,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
-> >                                  */
-> >                                 map__put(maps_by_address[i]);
-> >                                 maps_by_address[i] = map__get(new);
-> > +                               map__set_kmap(new, maps);
-> >                                 check_invariants(maps);
-> >                                 return err;
-> >                         }
-> > 
-> > With:
-> > 
-> > perf: util/maps.c:110: check_invariants: Assertion `refcount_read(map__refcnt(map)) > 1' failed.
-> > 
-> > As:
-> > 
-> > 106				/*
-> > 107				 * Maps by name maps should be in maps_by_address, so
-> > 108				 * the reference count should be higher.
-> > 109				 */
-> > 110				assert(refcount_read(map__refcnt(map)) > 1);
-> > 
-> > Since it is just replacing the map in the maps_by_address and not
-> > touching on the maps_by_name? Thus the refcount is just 1:
-> 
-> Sounds like it.  Can you add this on top?
+From: Keith Busch <kbusch@kernel.org>
 
-Trying, but somehow its not applying cleanly, checking:
+The suggestion from Sean appears to be successful, so sending out a new
+version for consideration.
 
-⬢ [acme@toolbox perf-tools]$ patch -p1 < ~/wb/1.patch 
-patching file tools/perf/util/maps.c
-Hunk #1 succeeded at 815 (offset 18 lines).
-Hunk #2 succeeded at 826 (offset 18 lines).
-Hunk #3 succeeded at 846 (offset 18 lines).
-Hunk #4 succeeded at 893 (offset 18 lines).
-Hunk #5 succeeded at 919 (offset 18 lines).
-Hunk #6 FAILED at 923.
-1 out of 6 hunks FAILED -- saving rejects to file tools/perf/util/maps.c.rej
-⬢ [acme@toolbox perf-tools]$
+Background:
 
-⬢ [acme@toolbox perf-tools]$ git log --oneline -5
-4a9f5d76130b707f (HEAD -> perf-tools) wip: acme
-d5ba0f5af35937c7 wip: namhyung
-42367eca7604e16e (perf-tools/tmp.perf-tools, perf-tools/perf-tools) tools: Remove redundant quiet setup
-293f324ce96d7001 tools: Unify top-level quiet infrastructure
-9fae5884bb0e3480 (tag: perf-tools-fixes-for-v6.14-2025-01-30) perf cpumap: Fix die and cluster IDs
-⬢ [acme@toolbox perf-tools]$
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> ---8<---
-> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-> index 09c9cc326c08d435..3aee0c9e8d421cef 100644
-> --- a/tools/perf/util/maps.c
-> +++ b/tools/perf/util/maps.c
-> @@ -797,7 +797,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  {
->  	int err = 0;
->  	FILE *fp = debug_file();
-> -	unsigned int i;
-> +	unsigned int i, ni;
->  
->  	if (!maps__maps_by_address_sorted(maps))
->  		__maps__sort_by_address(maps);
-> @@ -808,6 +808,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  	 */
->  	for (i = first_ending_after(maps, new); i < maps__nr_maps(maps); ) {
->  		struct map **maps_by_address = maps__maps_by_address(maps);
-> +		struct map **maps_by_name = maps__maps_by_name(maps);
->  		struct map *pos = maps_by_address[i];
->  		struct map *before = NULL, *after = NULL;
->  
-> @@ -827,6 +828,9 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  			map__fprintf(pos, fp);
->  		}
->  
-> +		if (maps_by_name)
-> +			ni = maps__by_name_index(maps, pos);
-> +
->  		/*
->  		 * Now check if we need to create new maps for areas not
->  		 * overlapped by the new map:
-> @@ -871,6 +875,11 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  		if (before) {
->  			map__put(maps_by_address[i]);
->  			maps_by_address[i] = before;
-> +			if (maps_by_name) {
-> +				map__put(maps_by_name[ni]);
-> +				maps_by_name[ni] = map__get(before);
-> +			}
-> +
->  			/* Maps are still ordered, go to next one. */
->  			i++;
->  			if (after) {
-> @@ -892,6 +901,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  			 */
->  			map__put(maps_by_address[i]);
->  			maps_by_address[i] = map__get(new);
-> +			if (maps_by_name) {
-> +				map__put(maps_by_name[ni]);
-> +				maps_by_name[ni] = map__get(new);
-> +			}
->  			err = __maps__insert_sorted(maps, i + 1, after, NULL);
->  			map__put(after);
->  			check_invariants(maps);
-> @@ -910,6 +923,10 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
->  				 */
->  				map__put(maps_by_address[i]);
->  				maps_by_address[i] = map__get(new);
-> +				if (maps_by_name) {
-> +					map__put(maps_by_name[ni]);
-> +					maps_by_name[ni] = map__get(new);
-> +				}
->  				check_invariants(maps);
->  				return err;
->  			}
+The crosvm VMM might send signals to its threads that have entered
+KVM_RUN. The signal specifically is SIGRTRMIN from here:
+
+  https://github.com/google/crosvm/blob/main/src/crosvm/sys/linux/vcpu.rs=
+#L651
+
+If this happens to occur when the huge page recovery is trying to create
+its vhost task, that will fail with ERESTARTNOINTR. Once this happens,
+all KVM_RUN calls will fail with ENOMEM despite memory not being the
+problem.
+
+This series propogates the error up so we can distinguish that from the
+current defaulting to ENOMEM and replaces the call_once since we need to
+be able to call it repeatedly due to this condition.
+
+Changes from the v1 (prefixed as an "RFC", really) patch:
+
+  Instead of using a VM-wide mutex, update the call_once pattern to
+  complete only if what it calls is successful (from Sean).
+
+Keith Busch (1):
+  vhost: return task creation error instead of NULL
+
+Sean Christopherson (1):
+  kvm: retry nx_huge_page_recovery_thread creation
+
+ arch/x86/kvm/mmu/mmu.c    | 12 +++++-------
+ drivers/vhost/vhost.c     |  2 +-
+ include/linux/call_once.h | 16 +++++++++++-----
+ kernel/vhost_task.c       |  4 ++--
+ 4 files changed, 19 insertions(+), 15 deletions(-)
+
+--=20
+2.43.5
+
 
