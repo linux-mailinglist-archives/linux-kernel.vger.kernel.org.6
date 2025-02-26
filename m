@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-532718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0414BA45159
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:20:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18509A4515C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF413A5860
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E5916C3DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6FC182BC;
-	Wed, 26 Feb 2025 00:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349380BEC;
+	Wed, 26 Feb 2025 00:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiRQfezN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ec+JTauw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7BDDCD;
-	Wed, 26 Feb 2025 00:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AF047F4A;
+	Wed, 26 Feb 2025 00:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740529198; cv=none; b=LtCE3IzCxiYo3wtaMvKpuGCUWkch8H4TTtL6DnhBuiSW4UJlxMbBPEFV1j+1PSGfmxO+yyt+4kJnyQ01XqKvkyhf5yK9CAKRV3XC2fPU90V2VF7KqE/50hRosttB1AloBCBUrq4tDPWgP4cdBYaWmqYlsVobyj11eIl6i/91cMY=
+	t=1740529202; cv=none; b=XsEqXwTcC5V4n3Nfeth++qVakS+gLV96puzyE2zbcP5wBAS/Uua4lC4EpOq8QLVcklwGTvCACZxyT6glJYDOvXO/YKlULdqC8eDrbdjJcZt33Dg39u9zLe/Nc16d190uoEOFBCutayDRuYbyDSnZ+S9pPSvGDurf0sJPrD8sVA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740529198; c=relaxed/simple;
-	bh=wyuE+HQdjDPiLBHCXVWwd2bHxF9sJ6kKMUdRklRIjDA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=u/H++DETBqxFru4+9uwgfRps8LaOYwjnaYzIGBlTlUVQMKrLAW+37xBP9DgBq1ScqMz/+MCrpXVJqsHTtVBW/8ysLiF6VhSuAn93pz5b41M5qa0Qs5ofZnUGiqdaxXfg+WilfdlmoT9+BI61qUO51C3BqIHuU22cf68qqNulRBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiRQfezN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A98C4CEDD;
-	Wed, 26 Feb 2025 00:19:58 +0000 (UTC)
+	s=arc-20240116; t=1740529202; c=relaxed/simple;
+	bh=R5w9HSa8JfJx6MrcgY+bd5/ecukvj/vwIuqQFd4C4YI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=V3sXXjN1Ux4MbcvxZvpsjhXatgiRpFAtoiwMMNGTxm0xFalWAmsq/0Lajb+ca9cDvYYOD88uRFDsE5ma17xT8GDjEzMCx4gCXsxyTxi1k2pZjQ3ofrSA7zig7+HP/YMr+/jGo1fuVhiltYdHW1gG5t/XAYpLPbISowHpISTk3fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ec+JTauw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F76DC4CEDD;
+	Wed, 26 Feb 2025 00:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740529198;
-	bh=wyuE+HQdjDPiLBHCXVWwd2bHxF9sJ6kKMUdRklRIjDA=;
+	s=k20201202; t=1740529202;
+	bh=R5w9HSa8JfJx6MrcgY+bd5/ecukvj/vwIuqQFd4C4YI=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=RiRQfezNf9Yj0xruAgmPIPvEW7nftyX4aDT1mPhlZY4TM3ZchvQStG4KEP430H/fN
-	 s/6Y+the/TgSD893TOfda58zbo1xwCQ3C3rvHz3Xto8r3paCpt7LyzH88NX2WOm0dN
-	 oIlyR0bZVDkBviAJkfppEMwdTVW46+yTjiQx2EDe+/ACnXijUBA5JTcT8PCZZlhUrU
-	 fQEFQ9vH4UrH3aN+mu8V4Yr6LIdfcDurYuNvdn3U8wEYoghIux3I6XaaeFfZiKeipg
-	 FjXz/CPGuAZcaSAnxicRQArBZOvf9TTxZ8qn335UC3lMsYwVtFNrxQGxTlxkvivxpa
-	 SgBRdFEB8Tl/g==
+	b=Ec+JTauw7/ZPFNbxzGtrg5NfoKgrgsgiI38fXLNOP13uyiUp2maIxSYccs0k/4Jo0
+	 3Q80AUU9DyBMThdGKjP3GBtZKRS1ar5TzDlJ6+vumRjGXSa0ahGA3ybDtRNXK2z41R
+	 mz+Utq/m5Yk2lLwocssjpRukhrUXRUSbGB3p5EzbcoWi9mPHIbB6JTFFlQJaW131Z+
+	 qAmtlFYmtlAB+2Cu9vVJfGPNcuUyD9uZg2oErlFcFFZkwoJSD283sgyohngB66xPgZ
+	 xRt88AIN4vsMYHr4O4g4wH57cDF0Nbb5VvxnMt2Zm1quqJ99KCu8SbbvijpXo/E3pt
+	 TkIfEmlX+Zoug==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB37F380CFDC;
-	Wed, 26 Feb 2025 00:20:30 +0000 (UTC)
-Subject: Re: [GIT PULL] perf tools fixes for v6.14: 2nd batch
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EFF380CFDC;
+	Wed, 26 Feb 2025 00:20:35 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250225190552.115479-1-acme@kernel.org>
-References: <20250225190552.115479-1-acme@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250225190552.115479-1-acme@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.14-2-2025-02-25
-X-PR-Tracked-Commit-Id: 42367eca7604e16e170bd6bd94ef61ffdd335f4a
+In-Reply-To: <20250225192249.GA637700@nvidia.com>
+References: <20250225192249.GA637700@nvidia.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250225192249.GA637700@nvidia.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+X-PR-Tracked-Commit-Id: b66535356a4834a234f99e16a97eb51f2c6c5a7d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9f5270d758d955506dcb114cb863a86b30a4c783
-Message-Id: <174052922944.175592.7729004694751845663.pr-tracker-bot@kernel.org>
-Date: Wed, 26 Feb 2025 00:20:29 +0000
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>, Andrii Nakryiko <andrii@kernel.org>, Quentin Monnet <qmo@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+X-PR-Merge-Commit-Id: ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
+Message-Id: <174052923404.175592.14963006876546718593.pr-tracker-bot@kernel.org>
+Date: Wed, 26 Feb 2025 00:20:34 +0000
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue, 25 Feb 2025 20:05:52 +0100:
+The pull request you sent on Tue, 25 Feb 2025 15:22:49 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.14-2-2025-02-25
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9f5270d758d955506dcb114cb863a86b30a4c783
+https://git.kernel.org/torvalds/c/ac9c34d1e45a4c25174ced4fc0cfc33ff3ed08c7
 
 Thank you!
 
