@@ -1,218 +1,107 @@
-Return-Path: <linux-kernel+bounces-532963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E229A45433
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:57:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E833EA45441
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517777A32BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10744188F811
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AC025E44B;
-	Wed, 26 Feb 2025 03:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AB9267393;
+	Wed, 26 Feb 2025 04:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Lu6Nx4Ry"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAkRwzmq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63BD253F05
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA5321C9EB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740542259; cv=none; b=CiHbXgWkCuJcBoC0k7rNgZlaFZ+9Hk+AcnqWBJe1G+NHTqaa83IiI00RIuDfwwjavplqkIBl163rVVnu59WPGfjuzaGZppMPcH7Liocl3iyqCVUHD0E3mT4ygMlNQTqNyc6YCCSjAThnPgKyFdNwgnDgNPxhp+fILGahgJwcm/A=
+	t=1740542451; cv=none; b=VuCWR68lQ28mBZGLY1MpeDmraAIj1XfxzZ+OGp1wPo82RnU0OVyh3I1enlNZG614K9qQqPrKaOiZEvpAsG5FBGFMUF/DQ8Q6fsYP/pUI78gUBQOjbH3PHtQBLZ2ISgI3M5QLN1Tgl7f6uN4w/OanNqN2TmDzlTTCO6NdtsHw2cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740542259; c=relaxed/simple;
-	bh=S8CueGnUhBX+InO7Ps5YZ8Q5A2f6RMU32xQPe/HsHj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgr/BFaT7Coolo3J3Np/wB6TydMicUEgPDHNfCnRVRKuAAuEu5BIw0jZ8FxWNkh6AJ5UZHOnY/gymZC7I1K0sOEIKdCGSt/SZacdf+3BJhXCOTA81+7nE2Cv3EvdR2+N3HjZl69l5GblkO7fhQbLnLpjTjPAc1lwAUX14lkx5Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Lu6Nx4Ry; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0ade6036aso50710985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740542255; x=1741147055; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GezmTNX8+C8WiOApS4hZZNlcHuSlvsEOcsQtDlYSxss=;
-        b=Lu6Nx4Ryk8nwaS6nCNkR0ojNqPcfvKFTGiN9NKseLarZMcypDPfG4bc9u8bpZ/e0P4
-         Zs81fxiE2C/ey3oQfozfs1qatcKIgbjqoQubDX0y6AKshPTi4VI+XTlrhdsW+IE3WotM
-         AZ6K7177CeOWxYrdQlPZ5hpY0octWlR8g1vuX+N7e3Hp7qM4fB79dM6pbY/Qgqw4dwhV
-         m+BCha7zCQ3TlF6jdvyrrVluKmY4EBmbu+GMfYXzYo0hh/jX1n5jLM1+GnqYt6kaZTSv
-         wfahDyo8TOvCoH/TlkG9v8UGhRdf23UtuzeBU3vse2FtoxCbXC0AJnHerEV9erVjkjJO
-         uggw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740542255; x=1741147055;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GezmTNX8+C8WiOApS4hZZNlcHuSlvsEOcsQtDlYSxss=;
-        b=rKcR6UF9UJjwLM1f+DI5DtUGVuvtp/o08SW6yBor4l32MQHTN2PoqtgtEwmXoTeMhK
-         r0x/L3jiLSAk5R6SEOFhOIPF4e8zU5F+vVausU2C3o6W4Ff1Csu6thxggcnpxgyPJN2Z
-         w3IQ9w6HMHGK+AmBj/XF8LP3WSdhfjYEjib4i6Wy9qJpj1hOr6/6HiLkuRk+MYvEFzg6
-         qcqfHg+4ZVw4b8V8bifG0jZiBMzrFwE5ac/UzXdcc6TTuTTCf0IZ8h+Qbfhk75uo9CG+
-         38HOxjuxCzrrBH3IIaRKLMSZ2fHikN8rAi4fIZNVaHJfABwY0+wHizl8xMIyjHMYnWPJ
-         qz2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPWbr5QzZ7brSosl/KWnvJWTTqlsQDXL4WRhRqbhbAbtSMBCIKtoHdDAu0cp8HoJY+5gYlKoTTZvtoF/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvL4/3hK92m1tRUoU5qrdA0QDuo9n0HGfvuXaEYKJ3og88E54P
-	3Yk/AardZVTeeM90hL5pXV+gDlA40+alGwSrL5FwGENsXkFW9B5qk7gVaw9DqUPlGFh4jfcadsn
-	A
-X-Gm-Gg: ASbGncv/JBPJsewWEHPoD2tZ8ypihysZe//M/eMIw5I3JKo8YVHosJ0QCVA/RTLIFuX
-	88RVLu5Az9oY7PR9GgLg7AnSDtkgKHQ64WUM2JxAfGvvVkJ6YEh9bJ087rhk5Rr+MyC1QVoODWM
-	jzBBHNZenVuHn5WMLuaN8cNJNAJG2WSMO9VCTOLJkh71IX7gccBXzuqnkvH7tb4faC0UkdGgFzz
-	FpICFHkKOkErTXpcKU9VdPWq94chj/GtoN6wCGKgcFprmtG5vCAc20Y/J8GuJtAUcn62xuEhTK0
-	rSTUZkSheACQJEpbhmPw9xPe
-X-Google-Smtp-Source: AGHT+IFxVs7WaOj9SrpMU2Qpcc6TtLkLZ68EjS+bv1tuwu7c6k3k8VtnWZ6bWvllrdQzwoexERXttw==
-X-Received: by 2002:a05:620a:1a8a:b0:7c0:a9ee:e6c1 with SMTP id af79cd13be357-7c0c2190e26mr3207066685a.7.1740542255247;
-        Tue, 25 Feb 2025 19:57:35 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c23c2a5bedsm193006685a.26.2025.02.25.19.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 19:57:33 -0800 (PST)
-Date: Tue, 25 Feb 2025 22:57:30 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-Message-ID: <20250226035730.GA1775487@cmpxchg.org>
-References: <20250225213200.729056-1-nphamcs@gmail.com>
- <20250226005149.GA1500140@cmpxchg.org>
- <Z76AVZ_tjq2NvmLT@google.com>
+	s=arc-20240116; t=1740542451; c=relaxed/simple;
+	bh=C1veCn/rK3xvTWL13RaHegLP4l8qfJT3vhhx5f3gSS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhZdEWeS8KsaCpSoeI8cRBO8KDZpIiVrcfFIp138krXz8qoLcN6f0TX6U1VneQbrnaRgDIQ5BF67wJGPKMA+W1pjEu3Or7VDZBHlbr/hpHC302SfBmcC22w0DhxHsvZKSjek6DeSK9Lj9tG1AZoGGKW7PMurBZLjlPvQjAPz9fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAkRwzmq; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740542450; x=1772078450;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=C1veCn/rK3xvTWL13RaHegLP4l8qfJT3vhhx5f3gSS0=;
+  b=NAkRwzmqhjBmqYKr8FUQKsJkf2g4RKYwiF21TjB4DRNlH9iMXt3g2MPq
+   Rh0WppZ0hFvofmNzVZHASxC5qgm+YoZ/K+d0Yx6dL4pGNIy8nZDOpXElD
+   F4cIVWk8+rzewqlr3EZpn38iGsVwXRjOuKj1xIqRVO6nVOWO+s2kQ7vMi
+   uaBkblINQBMSbHA+/EQRfitLkqDbo4F7rn/8h21Dva9S5s8d/7w1kbS52
+   6T0TDAen7EOE3XmuuSGcPJV9vJRnoQhejpsM7GtwMtJBSTWHupdbcV50N
+   VKKwwDPC3Eg7CW0XPowyzkjF23HIsltPmMvrm1OD1SOoyLSQHH+KmyftU
+   w==;
+X-CSE-ConnectionGUID: rHYhn2gsSkSFHvOAiYWrzw==
+X-CSE-MsgGUID: Yt6ipYaUR62XG6IYwEQDOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="28966866"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="28966866"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 20:00:49 -0800
+X-CSE-ConnectionGUID: oZymBoQpRoW/3AKbpBSfIg==
+X-CSE-MsgGUID: dE9++S+AQqOk+1BQ5ohALA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121833592"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 20:00:46 -0800
+Message-ID: <421bb6af-4b7b-4987-8db2-037a39d43078@linux.intel.com>
+Date: Wed, 26 Feb 2025 11:57:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z76AVZ_tjq2NvmLT@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/12] iommu/vt-d: Cleanup
+ intel_context_flush_present()
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Jiang, Dave" <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+ Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Zhou Wang <wangzhou1@hisilicon.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
+ <20250224051627.2956304-7-baolu.lu@linux.intel.com>
+ <BN9PR11MB52763EE4B5976621A7797DBD8CC32@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB52763EE4B5976621A7797DBD8CC32@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 02:45:41AM +0000, Yosry Ahmed wrote:
-> On Tue, Feb 25, 2025 at 07:51:49PM -0500, Johannes Weiner wrote:
-> > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> > > +	}
-> > >  	mutex_unlock(&acomp_ctx->mutex);
-> > >  
-> > >  	if (src != acomp_ctx->buffer)
-> > >  		zpool_unmap_handle(zpool, entry->handle);
-> > > +	return ret;
-> > >  }
-> > >  
-> > >  /*********************************
-> > > @@ -1018,6 +1028,7 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > >  	struct writeback_control wbc = {
-> > >  		.sync_mode = WB_SYNC_NONE,
-> > >  	};
-> > > +	int ret = 0;
-> > >  
-> > >  	/* try to allocate swap cache folio */
-> > >  	mpol = get_task_policy(current);
-> > > @@ -1034,8 +1045,8 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > >  	 * and freed when invalidated by the concurrent shrinker anyway.
-> > >  	 */
-> > >  	if (!folio_was_allocated) {
-> > > -		folio_put(folio);
-> > > -		return -EEXIST;
-> > > +		ret = -EEXIST;
-> > > +		goto put_folio;
-> > >  	}
-> > >  
-> > >  	/*
-> > > @@ -1048,14 +1059,17 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > >  	 * be dereferenced.
-> > >  	 */
-> > >  	tree = swap_zswap_tree(swpentry);
-> > > -	if (entry != xa_cmpxchg(tree, offset, entry, NULL, GFP_KERNEL)) {
-> > > -		delete_from_swap_cache(folio);
-> > > -		folio_unlock(folio);
-> > > -		folio_put(folio);
-> > > -		return -ENOMEM;
-> > > +	if (entry != xa_load(tree, offset)) {
-> > > +		ret = -ENOMEM;
-> > > +		goto fail;
-> > >  	}
-> > >  
-> > > -	zswap_decompress(entry, folio);
-> > > +	if (!zswap_decompress(entry, folio)) {
-> > > +		ret = -EIO;
-> > > +		goto fail;
-> > > +	}
-> > > +
-> > > +	xa_erase(tree, offset);
-> > >  
-> > >  	count_vm_event(ZSWPWB);
-> > >  	if (entry->objcg)
-> > > @@ -1071,9 +1085,14 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
-> > >  
-> > >  	/* start writeback */
-> > >  	__swap_writepage(folio, &wbc);
-> > > -	folio_put(folio);
-> > > +	goto put_folio;
-> > >  
-> > > -	return 0;
-> > > +fail:
-> > > +	delete_from_swap_cache(folio);
-> > > +	folio_unlock(folio);
-> > > +put_folio:
-> > > +	folio_put(folio);
-> > > +	return ret;
-> > >  }
-> > 
-> > Nice, yeah it's time for factoring out the error unwinding. If you
-> > write it like this, you can save a jump in the main sequence:
-> > 
-> > 	__swap_writepage(folio, &wbc);
-> > 	ret = 0;
-> > put:
-> > 	folio_put(folio);
-> > 	return ret;
-> > delete_unlock:
+On 2/25/25 15:43, Tian, Kevin wrote:
+>> From: Lu Baolu<baolu.lu@linux.intel.com>
+>> Sent: Monday, February 24, 2025 1:16 PM
+>>
+>> The intel_context_flush_present() is called in places where either the
+>> scalable mode is disabled, or scalable mode is enabled but all PASID
+>> entries are known to be non-present. In these cases, the flush_domains
+>> path within intel_context_flush_present() will never execute. This dead
+>> code is therefore removed.
+>>
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+> usually a suffix "_present()" indicates that the helper can be called
+> on an object which is currently in-use, which is obviously not the
+> case here.
 > 
-> (I like how you sneaked the label rename in here, I didn't like 'fail'
-> either :P)
-> 
-> > 	delete_from_swap_cache(folio);
-> > 	folio_unlock(folio);
-> > 	goto put;
-> 
-> I would go even further and avoid gotos completely (and make it super
-> clear what gets executed in the normal path vs the failure path):
-> 
-> 	__swap_writepage(folio, &wbc);
-> 	folio_put(folio);
-> 	if (ret) {
-> 		delete_from_swap_cache(folio);
-> 		folio_unlock(folio);
-> 	}
-> 	return ret;
+> To avoid confusion probably just call it intel_context_flush() or
+> intel_context_flush_no_user() is clearer.
 
-The !folio_was_allocated case only needs the put. I guess that could
-stay open-coded.
-
-And I think you still need one goto for the other two error legs to
-jump past the __swap_writepage.
-
-> > Something like this?
-> > 
-> > 	if (!zswap_decompress(entry, folio)) {
-> > 		/*
-> > 		 * The zswap_load() return value doesn't indicate success or
-> > 		 * failure, but whether zswap owns the swapped out contents.
-> > 		 * This MUST return true here, otherwise swap_readpage() will
-> > 		 * read garbage from the backend.
-> > 		 *
-> > 		 * Success is signaled by marking the folio uptodate.
-> > 		 */
-> 
-> We use the same trick in the folio_test_large() branch, so maybe this
-> should be moved to above the function definition. Then we can perhaps
-> refer to it in places where we return true wihout setting uptodate for
-> added clarity if needed.
-
-That makes sense to me. Nhat, what do you think?
+How about intel_context_flush_no_pasid()?
 
