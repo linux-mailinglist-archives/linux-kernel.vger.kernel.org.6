@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-533068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F092A4555D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:16:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3049FA45560
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4356A7A1CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:15:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D289189894F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB57268FCD;
-	Wed, 26 Feb 2025 06:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE0D26A093;
+	Wed, 26 Feb 2025 06:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWDqeb5L"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azwxf2z5"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A680E2686BD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F04269806
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550567; cv=none; b=Yd3IkiqOdgc3eoteJENAW+ixYWGWrF36Y8/PnSoFWLSZGw7p1bWK/jrXwnJmozIiZH6pTPtQxSykgoKMJaLTilcd4jN/map0YFhMPxdG8jWJ55fj6xyaHleMX9mHIM3oqDsvmrSS2WFqq5k1xBHnH4BxJ2r5a2EMQE5N0cdsFmg=
+	t=1740550571; cv=none; b=JPVFthjGiWTB2rXvmXzMM4a6AT/piLMnQ4G9oEda2g8/+1Ehte7/wJZR5b/ljsWPRz3X5zvMGldMQXAjvXj9m5Dnc2ylZui69zz1ghxpS0xs0m994Ley9XkbIbeEpP6PjE93kZFe5W22BZjk3dghwjnvYyAb9Kj5cEZzsT13okM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550567; c=relaxed/simple;
-	bh=rBMW5kD5Vi0TzRy+2B+pr84PvdtBiM7mxCSVZSoqN9w=;
+	s=arc-20240116; t=1740550571; c=relaxed/simple;
+	bh=QHNRHvG/OXkKvZb6dLBeHah+A42rdz+0hcZn9bEWh/w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oqiB7yUjIyJcEBo+ppw2pFz6tH7JhnmYffR8ESLg1iAumLHuqL6qncIzSPUzzX58FLckWTGtqubdyJXsssQIGTkzLOafTfpisiI6mdx9CDWJIMCT6Ao5J7PvCEA6Nn1H8XkGvRyxj67HPfIfZzQVRynBO41+1HWRVR1+ZHlztVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eWDqeb5L; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=DsN9xk5DWctZDZQH9upgwk50UPq1+q4q0k0rzeQKrjuvfN1s2/jrQ59cUk32I/5ZS5+LI4/Ltn7xAPtLTegqSDR6ZgxBDgEPmzwkdE55gmd7+ZqC8C0A1bapgwd6zkGn9YkL5atuVW9T/wJjjKofRxizgyoAlN0hcHBDXC7EBA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azwxf2z5; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740550566; x=1772086566;
+  t=1740550568; x=1772086568;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=rBMW5kD5Vi0TzRy+2B+pr84PvdtBiM7mxCSVZSoqN9w=;
-  b=eWDqeb5L8mUGWvqypX+UXUhRG+7Lf+GSaHuKNKSE/l0ttU7WlHVL2khz
-   E3ecGxdXmHBrWD7iw04uNEJzmmS+tbETQBTTZJnVE1C6tN1+EKiilinCt
-   0aLsaGwm/4b1R+2snNwqQ0T4C9vau6FUHyQPxozyvRHO+dlZGeeOJTNcB
-   ANgvOdbNzVj7TBs2YQaAnQy3V1arR8kO4qeVzGZ+mqUSqCJhxk26rf9n8
-   +xJF112lyK6OuRaCL4pE0Leic+4b04agxEVoIfkbGIhH/ZrI5RGUseGYJ
-   txAnw1TEuekcQCZN8gTCJpzPkDtC7BjEi66pZrLBQc5FQqNvWpshaSQmu
-   Q==;
-X-CSE-ConnectionGUID: FZkI34wVSsewo94hUIiL7g==
-X-CSE-MsgGUID: rlp4dEa1RzmcruUWnlC0FQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41636482"
+  bh=QHNRHvG/OXkKvZb6dLBeHah+A42rdz+0hcZn9bEWh/w=;
+  b=azwxf2z5xOBjXfbomRr1C5hcKU7hODzr5D2E6/QRVZacDMtJ4/uXlZUJ
+   nHr/clVgr2yA399noBWnIfXqIifEttBPixtHIMQgOSfjJSz1YtPEk9Y3G
+   LUxL9CmmgaJRV4bWQllZrQTVKB09LI4vNyk4lITf+43NF9A5p0hhpJccT
+   PgMDBaFkrUq1ofe5JlsuFlmJpAgJVk8qQkmiuQNT/rKmc8fIqxDNGz0rI
+   kinK1+tTzWzyQ6XvdSDYGRXWd1kJq5W1q2h6lkmSvQ2frxBqRhOfLPkDW
+   0vEeHPVg6u3vfO2vJlm8EoJemgYquDNC6/3HsqmahiuICim3yNvxxAqNB
+   A==;
+X-CSE-ConnectionGUID: AXdz+t2FQs6lgSVS/0xGQA==
+X-CSE-MsgGUID: nBGYD0xxRCaxjIE/JM71Hw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41636487"
 X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="41636482"
+   d="scan'208";a="41636487"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:16:06 -0800
-X-CSE-ConnectionGUID: 0fTVo6A5R3eKgKtV/sYGMg==
-X-CSE-MsgGUID: cMG/q3nqRFSGhXvT/rjdmg==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:16:08 -0800
+X-CSE-ConnectionGUID: O/swzXeCSAqZ5z6LVTOOQg==
+X-CSE-MsgGUID: qpvMoH1jSjuGSiF8Pp4DvA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="147434831"
+   d="scan'208";a="147434834"
 Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa002.jf.intel.com with ESMTP; 25 Feb 2025 22:16:03 -0800
+  by orviesa002.jf.intel.com with ESMTP; 25 Feb 2025 22:16:05 -0800
 From: Raag Jadav <raag.jadav@intel.com>
 To: lee@kernel.org,
 	giometti@enneenne.com,
@@ -65,9 +65,9 @@ To: lee@kernel.org,
 	raymond.tan@intel.com
 Cc: linux-kernel@vger.kernel.org,
 	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1 3/4] pps: generators: tio: Introduce Intel Elkhart Lake PSE TIO
-Date: Wed, 26 Feb 2025 11:45:26 +0530
-Message-Id: <20250226061527.3031250-4-raag.jadav@intel.com>
+Subject: [PATCH v1 4/4] mfd: intel-ehl: Introduce Intel Elkhart Lake PSE GPIO and TIO
+Date: Wed, 26 Feb 2025 11:45:27 +0530
+Message-Id: <20250226061527.3031250-5-raag.jadav@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250226061527.3031250-1-raag.jadav@intel.com>
 References: <20250226061527.3031250-1-raag.jadav@intel.com>
@@ -79,73 +79,168 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add initial support for Intel Elkhart Lake PSE TIO controller.
+Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
+devices that expose two different capabilities of GPIO and Timed I/O
+as a single PCI function through shared MMIO.
 
 Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 ---
- drivers/pps/generators/pps_gen_tio.c | 17 ++++++++++++++++-
- drivers/pps/generators/pps_gen_tio.h |  5 +++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ MAINTAINERS                  |  5 ++
+ drivers/mfd/Kconfig          |  9 ++++
+ drivers/mfd/Makefile         |  1 +
+ drivers/mfd/intel-ehl-gpio.c | 95 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 110 insertions(+)
+ create mode 100644 drivers/mfd/intel-ehl-gpio.c
 
-diff --git a/drivers/pps/generators/pps_gen_tio.c b/drivers/pps/generators/pps_gen_tio.c
-index 89b08301d21e..8339d8c8f8bb 100644
---- a/drivers/pps/generators/pps_gen_tio.c
-+++ b/drivers/pps/generators/pps_gen_tio.c
-@@ -22,6 +22,14 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d4280facbe51..7e50a6892878 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11643,6 +11643,11 @@ F:	drivers/gpio/gpio-sodaville.c
+ F:	drivers/gpio/gpio-tangier.c
+ F:	drivers/gpio/gpio-tangier.h
  
- #include "pps_gen_tio.h"
++INTEL GPIO MFD DRIVER
++M:	Raag Jadav <raag.jadav@intel.com>
++S:	Supported
++F:	drivers/mfd/intel-ehl-gpio.c
++
+ INTEL GVT-g DRIVERS (Intel GPU Virtualization)
+ M:	Zhenyu Wang <zhenyuw@linux.intel.com>
+ M:	Zhi Wang <zhi.wang.linux@gmail.com>
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 6b0682af6e32..8ba3db736a8f 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -609,6 +609,15 @@ config MFD_INTEL_QUARK_I2C_GPIO
+ 	  their respective IO driver.
+ 	  The GPIO exports a total amount of 8 interrupt-capable GPIOs.
  
-+static const struct pps_tio_data ehl_pse_data = {
-+	.regs = {
-+		.ctl = TIOCTL_PSE,
-+		.compv = TIOCOMPV_PSE,
-+		.ec = TIOEC_PSE,
++config MFD_INTEL_EHL_PSE_GPIO
++	tristate "Intel Elkhart Lake PSE GPIO MFD"
++	depends on PCI && (X86 || COMPILE_TEST)
++	select MFD_CORE
++	help
++	  This MFD provides support for GPIO and TIO that exist on Intel
++	  Elkhart Lake PSE as a single PCI device. It splits the two I/O
++	  devices to their respective I/O drivers.
++
+ config LPC_ICH
+ 	tristate "Intel ICH LPC"
+ 	depends on PCI
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 9220eaf7cf12..bf7245fb6824 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -197,6 +197,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+ obj-$(CONFIG_MFD_ADP5585)	+= adp5585.o
+ obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
++obj-$(CONFIG_MFD_INTEL_EHL_PSE_GPIO)	+= intel-ehl-gpio.o
+ obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+ obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+ obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+diff --git a/drivers/mfd/intel-ehl-gpio.c b/drivers/mfd/intel-ehl-gpio.c
+new file mode 100644
+index 000000000000..039c74c64848
+--- /dev/null
++++ b/drivers/mfd/intel-ehl-gpio.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Intel Multi-Functional driver for Elkhart Lake - Programmable
++ * Service Engine (PSE) GPIO & TIO
++ *
++ * Copyright (c) 2025 Intel Corporation
++ *
++ * Intel Elkhart Lake PSE includes two PCI devices that expose two
++ * different capabilities of GPIO and Timed I/O as a single PCI
++ * function through shared MMIO.
++ */
++
++#include <linux/array_size.h>
++#include <linux/ioport.h>
++#include <linux/mfd/core.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pci.h>
++
++#define PSE_GPIO_OFFSET		0x0000
++#define PSE_GPIO_SIZE		0x0134
++
++#define PSE_TIO_OFFSET		0x1000
++#define PSE_TIO_SIZE		0x06B0
++
++static struct resource ehl_pse_gpio_resources[] = {
++	DEFINE_RES_MEM(PSE_GPIO_OFFSET, PSE_GPIO_SIZE),
++	DEFINE_RES_IRQ(0),
++};
++
++static struct resource ehl_pse_tio_resources[] = {
++	DEFINE_RES_MEM(PSE_TIO_OFFSET, PSE_TIO_SIZE),
++	DEFINE_RES_IRQ(1),
++};
++
++static struct mfd_cell ehl_pse_gpio_devs[] = {
++	{
++		.name = "gpio-elkhartlake",
++		.num_resources = ARRAY_SIZE(ehl_pse_gpio_resources),
++		.resources = ehl_pse_gpio_resources,
++		.ignore_resource_conflicts = true,
++	},
++	{
++		.name = "pps-gen-tio",
++		.num_resources = ARRAY_SIZE(ehl_pse_tio_resources),
++		.resources = ehl_pse_tio_resources,
++		.ignore_resource_conflicts = true,
 +	},
 +};
 +
- static const struct pps_tio_data pmc_data = {
- 	.regs = {
- 		.ctl = TIOCTL_PMC,
-@@ -240,9 +248,16 @@ static const struct acpi_device_id intel_pmc_tio_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, intel_pmc_tio_acpi_match);
- 
-+static const struct platform_device_id pps_gen_tio_ids[] = {
-+	{ "pps-gen-tio", (kernel_ulong_t)&ehl_pse_data },
-+	{ }
++static int ehl_pse_gpio_probe(struct pci_dev *pci, const struct pci_device_id *id)
++{
++	int ret;
++
++	ret = pcim_enable_device(pci);
++	if (ret)
++		return ret;
++
++	pci_set_master(pci);
++
++	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
++	if (ret < 0)
++		return ret;
++
++	return mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
++			       ARRAY_SIZE(ehl_pse_gpio_devs), &pci->resource[0],
++			       pci_irq_vector(pci, 0), NULL);
++}
++
++static void ehl_pse_gpio_remove(struct pci_dev *pdev)
++{
++	mfd_remove_devices(&pdev->dev);
++	pci_free_irq_vectors(pdev);
++}
++
++static const struct pci_device_id ehl_pse_gpio_ids[] = {
++	{ PCI_VDEVICE(INTEL, 0x4b88) },
++	{ PCI_VDEVICE(INTEL, 0x4b89) },
++	{}
 +};
-+MODULE_DEVICE_TABLE(platform, pps_gen_tio_ids);
++MODULE_DEVICE_TABLE(pci, ehl_pse_gpio_ids);
 +
- static struct platform_driver pps_gen_tio_driver = {
- 	.probe          = pps_gen_tio_probe,
- 	.remove         = pps_gen_tio_remove,
-+	.id_table	= pps_gen_tio_ids,
- 	.driver         = {
- 		.name                   = "intel-pps-gen-tio",
- 		.acpi_match_table       = intel_pmc_tio_acpi_match,
-@@ -255,5 +270,5 @@ MODULE_AUTHOR("Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>");
- MODULE_AUTHOR("Pandith N <pandith.n@intel.com>");
- MODULE_AUTHOR("Thejesh Reddy T R <thejesh.reddy.t.r@intel.com>");
- MODULE_AUTHOR("Subramanian Mohan <subramanian.mohan@intel.com>");
--MODULE_DESCRIPTION("Intel PMC Time-Aware IO Generator Driver");
-+MODULE_DESCRIPTION("Intel Time-Aware IO Generator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pps/generators/pps_gen_tio.h b/drivers/pps/generators/pps_gen_tio.h
-index e652f976e455..bbf5b994e7ff 100644
---- a/drivers/pps/generators/pps_gen_tio.h
-+++ b/drivers/pps/generators/pps_gen_tio.h
-@@ -14,6 +14,11 @@
- #include <linux/pps_gen_kernel.h>
- #include <linux/spinlock_types.h>
- 
-+/* EHL PSE Registers */
-+#define TIOCTL_PSE			0x00
-+#define TIOCOMPV_PSE			0x04
-+#define TIOEC_PSE			0x24
++static struct pci_driver ehl_pse_gpio_driver = {
++	.probe		= ehl_pse_gpio_probe,
++	.remove		= ehl_pse_gpio_remove,
++	.id_table	= ehl_pse_gpio_ids,
++	.name		= "ehl_pse_gpio",
++};
++module_pci_driver(ehl_pse_gpio_driver);
 +
- /* PMC Registers */
- #define TIOCTL_PMC			0x00
- #define TIOCOMPV_PMC			0x10
++MODULE_AUTHOR("Raymond Tan <raymond.tan@intel.com>");
++MODULE_AUTHOR("Raag Jadav <raag.jadav@intel.com>");
++MODULE_DESCRIPTION("Intel MFD for Elkhart Lake PSE GPIO & TIO");
++MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
