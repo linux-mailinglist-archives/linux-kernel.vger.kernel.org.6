@@ -1,201 +1,264 @@
-Return-Path: <linux-kernel+bounces-534189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315DEA463F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:01:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C98FA463F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96374188E452
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:01:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493597A3342
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7876224884;
-	Wed, 26 Feb 2025 15:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B342222CA;
+	Wed, 26 Feb 2025 15:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yRTHuO5l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="go7j7OTr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yRTHuO5l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="go7j7OTr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMId5dGZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A302236FF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A59821D3E6;
+	Wed, 26 Feb 2025 15:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582048; cv=none; b=HV7rBdoHobLoaZc3KxYmtoM/puvHcQxlhEf4ktRfbJB3ovbo5PM6FdX/b5Gs5k89qQKrkmw1T7osaq3Yg38cUsks969zdKh1aNk/JhO8zcJkAAjq9IcjFT4vmdlWSZsVQzTXAeKeK/z7vaxlGHefjVqCL93WeSskdNfjIEifScg=
+	t=1740582097; cv=none; b=m32tv+5ahp5++xdeJEbc41RH6Au2mqyi6vdKQPYatVXEdYqBpn7IOhi0F2Uv1TEjhUSLNXJF1Zb4n6D8Ym9aAFNP7LAkE2kG06V4EDJ0ZRqDxcR+6pWRQSC0POQJmDbIgnz1xe8WDu/v8yA1WGt1DGQUjbgiG/IYu3re2EkWoXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582048; c=relaxed/simple;
-	bh=0oWmWe3SseKXfTXZNUeeJM1kbadlesoNXEtNEma0I4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qguiyTkC6/r7YSHcpkQvclpwgBq6MeKNQwHTs75kCGE0i8JLe8rkwTsa/aHmN+8SjQv3m9Xl2OKBvm7Wy04X9bE98qWfvp2lZF4fdjw2Z+UQ6CPAKCYPynMLUo8iHngz3Sk/4SYAmhlUDjwrgQbbZjPIzQDrtO8+7gJcSXcQ4G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yRTHuO5l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=go7j7OTr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yRTHuO5l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=go7j7OTr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E5BE1F388;
-	Wed, 26 Feb 2025 15:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740582043;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UVVorH37MCFSJ8eBr7mIIBXtxKR/7OGM0uGrvqyOHyE=;
-	b=yRTHuO5ltZF5t4rc8/RvW1o2lrdAKnhMvUQTXZTJEWU8JROBFPtr5u0hdOJ1oMN0ddwVIb
-	UWaVCp0CeDQwiSNBdLh2m0qa5Kjapvqr7QSaJpJfhJ52AvTx4q7MvdnoF2yivI1mgrlb2A
-	4WwkPkiCJ3g8DJWH9J3smqa1sRulpLo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740582043;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UVVorH37MCFSJ8eBr7mIIBXtxKR/7OGM0uGrvqyOHyE=;
-	b=go7j7OTrGBw67ufCbKuCxvFtMmr7TSOykyjE6coYbBqa3C/SV6IaJnO0bQhPZS8KZDvsJQ
-	ZYtU/rjKoSf2iUBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yRTHuO5l;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=go7j7OTr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740582043;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UVVorH37MCFSJ8eBr7mIIBXtxKR/7OGM0uGrvqyOHyE=;
-	b=yRTHuO5ltZF5t4rc8/RvW1o2lrdAKnhMvUQTXZTJEWU8JROBFPtr5u0hdOJ1oMN0ddwVIb
-	UWaVCp0CeDQwiSNBdLh2m0qa5Kjapvqr7QSaJpJfhJ52AvTx4q7MvdnoF2yivI1mgrlb2A
-	4WwkPkiCJ3g8DJWH9J3smqa1sRulpLo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740582043;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UVVorH37MCFSJ8eBr7mIIBXtxKR/7OGM0uGrvqyOHyE=;
-	b=go7j7OTrGBw67ufCbKuCxvFtMmr7TSOykyjE6coYbBqa3C/SV6IaJnO0bQhPZS8KZDvsJQ
-	ZYtU/rjKoSf2iUBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 349191377F;
-	Wed, 26 Feb 2025 15:00:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dLGZDJssv2d8UAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 26 Feb 2025 15:00:43 +0000
-Date: Wed, 26 Feb 2025 16:00:41 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: haoran zheng <zhenghaoran154@gmail.com>, Daniel Vacek <neelx@suse.com>,
-	clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Subject: Re: [PATCH] btrfs: fix data race when accessing the block_group's
- used field
-Message-ID: <20250226150041.GV5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250208073829.1176287-1-zhenghaoran154@gmail.com>
- <CAL3q7H5JgQkFavwrjOsvxDt9mMjVUK_nPOha-WYU-muLW=Orug@mail.gmail.com>
- <CAPjX3FeaL2+oRz81OEkLKjWwr1XuOOa3t-kgCrc51we-C-GVng@mail.gmail.com>
- <CAL3q7H7iFQ0pS+TB8NNj5CDA=c1cmurSiGsuXDn61O6A5=mBSQ@mail.gmail.com>
- <CAPjX3Feo9=hkptSxOMREKVckbvhfbmjHAWYBL2sBryDcVzp0NA@mail.gmail.com>
- <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
- <CAKa5YKjymZzRWy6WhVhu+mMzENunsM6URBL3o-_yy1wPGhdV-A@mail.gmail.com>
- <Z72s4bDZghGhcWzN@debian0.Home>
+	s=arc-20240116; t=1740582097; c=relaxed/simple;
+	bh=33XeyLXQjZxA2YWGTddxSjB5mDjUVglXOocdu2S4T9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CKMEl+8q2U6w+GSu4BoOUBuqhTmAhUTlWhMQIVh4cug6Ho+qdFT/KoxSd1roh9pT9SxPJD+MVSdK7KmUYykYKz8STICT7gIak+uecWKIoRLg9N1/9JKK5bbVEkXwwDOrVppVhsOhl0YCLxbYQxD4xA9TWYWZIkVoz/gRnDnZ0vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMId5dGZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 500F9C4CEE9;
+	Wed, 26 Feb 2025 15:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740582097;
+	bh=33XeyLXQjZxA2YWGTddxSjB5mDjUVglXOocdu2S4T9s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IMId5dGZKGXMIMdbfYmiUjxGkHhvVzMueDIY+4ecPRY1m6UtXMrIL1yEbCjf/4j9E
+	 sX85bD+yIy8h8a0vgMvN6k7m52xyz7QYtJcFMQK6FjzzVe4xTnaAvpdSnB/k9bzCwg
+	 J361KAbHXnL1W3kIqfVhzLFWdllPYTqSrt8hI4U5FmZEbb8WDWZXj2YRYwCSMn5Ttp
+	 giizz60N6L5nbUnhyppWTvG4WN0TYdh9ysIDgR3kFcUEukn2tpChO6QedqKgGuQqdc
+	 7iyPpWb/5OoqwoArEtXf2c/iHGptU34t2dBRM0281mx5JpTImELVx7/MZRWNLqp6WD
+	 aJlz0tMaMB5Qw==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2bc71717d3fso3976869fac.2;
+        Wed, 26 Feb 2025 07:01:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWekqhmoZ8cWyfWYRhHh5vF7cAOhDI2NnVpQeeO9B5BG5Gl98nTUSjMZJpCclW47nw/SqZsWLR6HPfBERM=@vger.kernel.org, AJvYcCXCgwvAWKk/3Sqfd3OeNqYQYtikeryOvkoUrwa2S6NQ4d/RV8iFI0B9PE/Ty2N153Cqq7w5vKJUz1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3yqYCQvEMpaxYYqkk/kjoXd/VQH8GjLShF5L8boyO7fGyzgXC
+	w97O066PJUy3gTMGcUFfKc9Xk6OkCMKym+7Ignsrz2aUaQWL+WApdWdQX5w3Swa6B1PxBX98jCN
+	QYC33MGRJW5Ulb1clG5eYUTK0WNE=
+X-Google-Smtp-Source: AGHT+IHs7wl4wQ/NhNBp7mt5ww6ofEVLSPI6lJxC4pdR1mOx9KqeIHS9dAw6lkuQ4xrT5J/YtJ+Dl+952d2Toffg/7c=
+X-Received: by 2002:a05:6870:55cf:b0:2bc:68a1:98b0 with SMTP id
+ 586e51a60fabf-2c13028da93mr2166182fac.4.1740582096485; Wed, 26 Feb 2025
+ 07:01:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z72s4bDZghGhcWzN@debian0.Home>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 5E5BE1F388
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.com,fb.com,toxicpanda.com,vger.kernel.org,buaa.edu.cn];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+References: <CAJZ5v0gad9peEcVYGyV72TBOULnsv20J3DU_7GXQMKXgONCZww@mail.gmail.com>
+ <20250224013139.3994500-1-lizhi.xu@windriver.com>
+In-Reply-To: <20250224013139.3994500-1-lizhi.xu@windriver.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Feb 2025 16:01:24 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gEbKt-4FKm2D04CMxmw9CgJzx01WbHXK4Jg86Xfy7Phw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jogl_r1k4NsP24xXV-f_wgt-7iumVMjJyP-sbm9KXKZ9gAVdXKuoYgHT84
+Message-ID: <CAJZ5v0gEbKt-4FKm2D04CMxmw9CgJzx01WbHXK4Jg86Xfy7Phw@mail.gmail.com>
+Subject: Re: [PATCH V4] module: replace the mutex lock acquisition method
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: rafael@kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, pavel@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 11:43:29AM +0000, Filipe Manana wrote:
-> > > > > > > static inline u64 btrfs_block_group_used(struct btrfs_block_group *bg)
-> > > > > > > {
-> > > > > > >    u64 ret;
-> > > > > > >
-> > > > > > >    spin_lock(&bg->lock);
-> > > > > > >    ret = bg->used;
-> > > > > > >    spin_unlock(&bg->lock);
-> > > > > > >
-> > > > > > >     return ret;
-> > > > > > > }
-> > 
-> > I understand that using lock to protect block_group->used
-> > in discard.c file is feasible. In addition, I looked at the code
-> > of block-group.c and found that locks have been added in
-> > some places where block_group->used are used. , it
-> > seems that it is not appropriate to call
-> > btrfs_block_group_used again to obtain (because it will
-> > cause deadlock). 
-> 
-> In places where we are reading it while holding the block group's
-> spinlock, there's nothing that needs to be changed.
-> 
-> Also we can't call it btrfs_block_group_used() since there's already
-> an accessor function for struct btrfs_block_group_item with that name
-> (defined through macros at accessors.h).
-> 
-> I took a closer look at the cases in discard.c, and it's safe to use
-> data_race() instead, even if load/store tearing happens or we get stale
-> values, nothing harmful happens, only a few things can be done later or
-> unnecessarily without side effects - like adding a non-empty block group
-> to the list of unused block groups, which is fine since the we won't
-> delete it the cleaner kthread in case it's not empty, or delay the discard.
-> 
-> Either give it another name like btrfs_get_block_group_used() or directly
-> use data_race() in discard.c - I don't like much either of them, the first
-> because there's the similar named accessor for block group items, the
-> second due to spreading data_race(), but I don't see any more elegant
-> alternative.
+On Mon, Feb 24, 2025 at 2:31=E2=80=AFAM Lizhi Xu <lizhi.xu@windriver.com> w=
+rote:
+>
+> syzbot reported a deadlock in lock_system_sleep. [1]
+>
+> The write operation to "/sys/module/hibernate/parameters/compressor"
+> conflicts with the registration of ieee80211 device, resulting in a deadl=
+ock
+> in the lock param_lock.
+>
+> Replace the method of acquiring the lock system_transition_mutex with try=
+lock,
+> it is arguably better to fail a write to the module param with -EBUSY tha=
+n to
+> fail ieee80211_register_hw() IMV.
+>
+> Since this is not a kthread path and it doesn't call set_freezable()
+> on itself anywhere, mutex_trylock(&system_transition_mutex) can be called
+> from here directly.
+>
+> [1]
+> syz-executor895/5833 is trying to acquire lock:
+> ffffffff8e0828c8 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_s=
+leep+0x87/0xa0 kernel/power/main.c:56
+>
+> but task is already holding lock:
+> ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: kernel_param_lock kernel/p=
+arams.c:607 [inline]
+> ffffffff8e07dc68 (param_lock){+.+.}-{4:4}, at: param_attr_store+0xe6/0x30=
+0 kernel/params.c:586
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #3 (param_lock){+.+.}-{4:4}:
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+>        ieee80211_rate_control_ops_get net/mac80211/rate.c:220 [inline]
+>        rate_control_alloc net/mac80211/rate.c:266 [inline]
+>        ieee80211_init_rate_ctrl_alg+0x18d/0x6b0 net/mac80211/rate.c:1015
+>        ieee80211_register_hw+0x20cd/0x4060 net/mac80211/main.c:1531
+>        mac80211_hwsim_new_radio+0x304e/0x54e0 drivers/net/wireless/virtua=
+l/mac80211_hwsim.c:5558
+>        init_mac80211_hwsim+0x432/0x8c0 drivers/net/wireless/virtual/mac80=
+211_hwsim.c:6910
+>        do_one_initcall+0x128/0x700 init/main.c:1257
+>        do_initcall_level init/main.c:1319 [inline]
+>        do_initcalls init/main.c:1335 [inline]
+>        do_basic_setup init/main.c:1354 [inline]
+>        kernel_init_freeable+0x5c7/0x900 init/main.c:1568
+>        kernel_init+0x1c/0x2b0 init/main.c:1457
+>        ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> -> #2 (rtnl_mutex){+.+.}-{4:4}:
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+>        wg_pm_notification drivers/net/wireguard/device.c:80 [inline]
+>        wg_pm_notification+0x49/0x180 drivers/net/wireguard/device.c:64
+>        notifier_call_chain+0xb7/0x410 kernel/notifier.c:85
+>        notifier_call_chain_robust kernel/notifier.c:120 [inline]
+>        blocking_notifier_call_chain_robust kernel/notifier.c:345 [inline]
+>        blocking_notifier_call_chain_robust+0xc9/0x170 kernel/notifier.c:3=
+33
+>        pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+>        snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+>        misc_open+0x35a/0x420 drivers/char/misc.c:179
+>        chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+>        do_dentry_open+0x735/0x1c40 fs/open.c:956
+>        vfs_open+0x82/0x3f0 fs/open.c:1086
+>        do_open fs/namei.c:3830 [inline]
+>        path_openat+0x1e88/0x2d80 fs/namei.c:3989
+>        do_filp_open+0x20c/0x470 fs/namei.c:4016
+>        do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+>        do_sys_open fs/open.c:1443 [inline]
+>        __do_sys_openat fs/open.c:1459 [inline]
+>        __se_sys_openat fs/open.c:1454 [inline]
+>        __x64_sys_openat+0x175/0x210 fs/open.c:1454
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> -> #1 ((pm_chain_head).rwsem){++++}-{4:4}:
+>        down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+>        blocking_notifier_call_chain_robust kernel/notifier.c:344 [inline]
+>        blocking_notifier_call_chain_robust+0xa9/0x170 kernel/notifier.c:3=
+33
+>        pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+>        snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+>        misc_open+0x35a/0x420 drivers/char/misc.c:179
+>        chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+>        do_dentry_open+0x735/0x1c40 fs/open.c:956
+>        vfs_open+0x82/0x3f0 fs/open.c:1086
+>        do_open fs/namei.c:3830 [inline]
+>        path_openat+0x1e88/0x2d80 fs/namei.c:3989
+>        do_filp_open+0x20c/0x470 fs/namei.c:4016
+>        do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
+>        do_sys_open fs/open.c:1443 [inline]
+>        __do_sys_openat fs/open.c:1459 [inline]
+>        __se_sys_openat fs/open.c:1454 [inline]
+>        __x64_sys_openat+0x175/0x210 fs/open.c:1454
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> -> #0 (system_transition_mutex){+.+.}-{4:4}:
+>        check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>        validate_chain kernel/locking/lockdep.c:3906 [inline]
+>        __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+>        lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+>        lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
+>        hibernate_compressor_param_set+0x1c/0x210 kernel/power/hibernate.c=
+:1452
+>        param_attr_store+0x18f/0x300 kernel/params.c:588
+>        module_attr_store+0x55/0x80 kernel/params.c:924
+>        sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+>        kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+>        new_sync_write fs/read_write.c:586 [inline]
+>        vfs_write+0x5ae/0x1150 fs/read_write.c:679
+>        ksys_write+0x12b/0x250 fs/read_write.c:731
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   system_transition_mutex --> rtnl_mutex --> param_lock
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(param_lock);
+>                                lock(rtnl_mutex);
+>                                lock(param_lock);
+>   lock(system_transition_mutex);
+>
+>  *** DEADLOCK ***
+>
+> Reported-by: syzbot+ace60642828c074eb913@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dace60642828c074eb913
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+> V1 -> V2: use -EAGAIN to replace -EPERM.
+> V2 -> V3: replace lock_system_sleep to trylock and update comments
+> V3 -> V4: use system_transition_mutex directly
+>
+>  kernel/power/hibernate.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index 10a01af63a80..b129ed1d25a8 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -1446,10 +1446,10 @@ static const char * const comp_alg_enabled[] =3D =
+{
+>  static int hibernate_compressor_param_set(const char *compressor,
+>                 const struct kernel_param *kp)
+>  {
+> -       unsigned int sleep_flags;
+>         int index, ret;
+>
+> -       sleep_flags =3D lock_system_sleep();
+> +       if (!mutex_trylock(&system_transition_mutex))
+> +               return -EBUSY;
+>
+>         index =3D sysfs_match_string(comp_alg_enabled, compressor);
+>         if (index >=3D 0) {
+> @@ -1461,7 +1461,7 @@ static int hibernate_compressor_param_set(const cha=
+r *compressor,
+>                 ret =3D index;
+>         }
+>
+> -       unlock_system_sleep(sleep_flags);
+> +       mutex_unlock(&system_transition_mutex);
+>
+>         if (ret)
+>                 pr_debug("Cannot set specified compressor %s\n",
+> --
 
-Agreed, this looks like a resonable "solution". It's not really a bug,
-we can live with data_race annotation, namely when it filters out known
-cases so the code analysis tools may find the real problems.
+Applied as 6.15 material under a new subject and with edits in the changelo=
+g.
 
-> So a sample patch:
-[...]
-
-Looks good to me.
+Thanks!
 
