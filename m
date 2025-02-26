@@ -1,259 +1,222 @@
-Return-Path: <linux-kernel+bounces-533471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1856BA45AEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:58:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1626EA45AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3CDF3A6153
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B083A4305
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D7926FA6C;
-	Wed, 26 Feb 2025 09:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567B72459F2;
+	Wed, 26 Feb 2025 09:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDIsy8iO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmXTCPDU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138F12459E0;
-	Wed, 26 Feb 2025 09:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CF42459CA;
+	Wed, 26 Feb 2025 09:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563784; cv=none; b=PHu2MMB1gT/X0OTdwQabecvwpJHGzy/hmchjCBAMzV0rVVA38cgCNLAY6SlmKsx1MDv19i85zyO8EuDpl/eO8rp6jHdeTYvnXTXLnf5iYd0xTZzVnHoonTvHMzDCwwKJ23V/HIPlk4ngh/KgIrEGfZkhaa8gsecrI5nsbixjBaY=
+	t=1740563796; cv=none; b=E2cQKeXbhdOlgG1i4PalHPS2c+ksltyTPLM+Cz8Vk4hUvMBoeuZG5D9ZQnv9arkiBTVNYzfRb17IWBAx7nT7KRMqm4sx2mq85N5COBRKDYeB5WAVcWekwkyeKdT+rv4T4C+oqm0zj8VZDJFkc/VZZwN+yhJv9oKcLODxOR0EgUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563784; c=relaxed/simple;
-	bh=1Quf7/c1ehY7FhlfL5b4CSIvNDLhWomMOOrwdf5C1bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVIRK+15LhqMyjq88CmBa3wEEY8b9xvcC3w8bBX9bNZm04hAGkIPxlnhOOEZe3zgFulczDujym4CDoj1vj1mJTUQkz2pZ8E+3PwxhOTb5QPgbL+kqnAW6KgwoFvry3/5stj4FHPeQkzNlHlm7vJHKldFhGhcQbHNtDBvgF01EjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDIsy8iO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B313C4CED6;
-	Wed, 26 Feb 2025 09:56:19 +0000 (UTC)
+	s=arc-20240116; t=1740563796; c=relaxed/simple;
+	bh=1iExFtZ3QvWxcM47HUcAx+z+werqUEUymLyduVoKl+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XkvHOvedwAx2sALzTfYtaife+4mPFDqc4XCXi8MEnFygxKNvoMaomaeI98YT4k9YQeXXVgdY6ExtrO3kXHSjUM7QfEUf/TYVWUOaZMScymi5sb/YIyNMBW4byQfCtPENrcoIYIZtxSdrXsCogNjdT0v4KZ3J4ojwzDBykJDKXIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmXTCPDU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37121C4CED6;
+	Wed, 26 Feb 2025 09:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740563783;
-	bh=1Quf7/c1ehY7FhlfL5b4CSIvNDLhWomMOOrwdf5C1bc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nDIsy8iONaUkV3zCR4j24aHleHJTprg4Ra22sC6KXhc8VhmIPceVBmDcFBURrhIje
-	 cu7kCS/JqDVLynQAq47qWpSXY+sx1LXQCf5NthVCR4cz70GDprSdoMxNf44f1F0s7f
-	 lkEttvPtA4icjYlN+6PjUfTSuiI9sIE6I9xCe9ofUGVGLmM7CL4DSqrjZD3A4feDS7
-	 AslZqbM90UNfJmjSBXyskmUlDyJs3dBrwl+snCUs4gQK8ctVFdz/qce6nP2MR416XY
-	 BGHC2WMTKEKN3BV+K4HMnG4jWxihC9Yt8F6DDtUxVnTebz0sPKInn95MHwTb0TxxJI
-	 5vrkFmbgouSTw==
-Message-ID: <50327725-f3b8-4a8b-94a2-85afccd2868a@kernel.org>
-Date: Wed, 26 Feb 2025 10:56:17 +0100
+	s=k20201202; t=1740563796;
+	bh=1iExFtZ3QvWxcM47HUcAx+z+werqUEUymLyduVoKl+E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TmXTCPDU7uiKjJOuSlwFAIbVncCjuP+EvqjS5MqLvrwPfA9pYdrBKYDVryiF+KgCl
+	 yMBFPK/UOFoHxU/SSzprXZSSYmB8xnI1peLHdkgF54o3MTYigEsOrDFP7do9XbYWfd
+	 x0TJxyW2IzLLNh5dRL8EYcuYw1REqkl9Cjzep/URf35j7AYT/g9DgQXfaedl5lyw2i
+	 EZbjOqjEFZWuydFMnV3vuP0qN6OUysNpNL/7yfPhM9p7pDiHQ+YxiX/avdepjGpsJz
+	 rkFBX7BQdMr1yGwsuLBZqz/CL3erfvG/lPtp4F70rTC7PIKtWChjD4wqGu4m6WKxY0
+	 Obg0arufcesVg==
+Date: Wed, 26 Feb 2025 10:56:28 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Michael S . Tsirkin"
+ <mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+ <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>, Philippe =?UTF-8?B?TWF0?=
+ =?UTF-8?B?aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, "Markus Armbruster" <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, "Paolo Bonzini" <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 00/14] Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250226105628.7e60f952@foz.lan>
+In-Reply-To: <20250225110115.6090e416@imammedo.users.ipa.redhat.com>
+References: <cover.1738345063.git.mchehab+huawei@kernel.org>
+	<20250203110934.000038d8@huawei.com>
+	<20250203162236.7d5872ff@imammedo.users.ipa.redhat.com>
+	<20250221073823.061a1039@foz.lan>
+	<20250221102127.000059e6@huawei.com>
+	<20250225110115.6090e416@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
- <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
- <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
- <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 10:28, Ryan Chen wrote:
->> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
->> AST2600-i2cv2
->>
->> On Mon, Feb 24, 2025 at 01:59:34PM +0800, Ryan Chen wrote:
->>> Add ast2600-i2cv2 compatible and aspeed,global-regs, aspeed,enable-dma
->>> and description for ast2600-i2cv2.
->>>
->>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
->>> ---
->>>  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 58 +++++++++++++++++++
->>>  1 file changed, 58 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
->>> b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
->>> index 5b9bd2feda3b..356033d18f90 100644
->>> --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
->>> +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
->>> @@ -44,12 +44,60 @@ properties:
->>>      description: frequency of the bus clock in Hz defaults to 100 kHz when
->> not
->>>        specified
->>>
->>> +  multi-master:
->>> +    type: boolean
->>> +    description:
->>> +      states that there is another master active on this bus
->>
->> Except that this wasn't ever tested...
->>
->> Don't duplicate properties. i2c-controller schema has it already.
+Em Tue, 25 Feb 2025 11:01:15 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
+
+> On Fri, 21 Feb 2025 10:21:27 +0000
+> Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
 > 
-> I will remove it to avoid duplication.
->>
->>> +
->>> +  aspeed,enable-dma:
->>> +    type: boolean
->>> +    description: |
->>> +      I2C bus enable dma mode transfer.
->>> +
->>> +      ASPEED ast2600 platform equipped with 16 I2C controllers that
->> share a
->>> +      single DMA engine. DTS files can specify the data transfer mode
->> to/from
->>> +      the device, either DMA or programmed I/O. However, hardware
->>> + limitations
->>
->> so what is byte mode?
-> I explain in cover, I will add here also. 
-
-Cover letters do not get merged and we do not read them, except when
-looking for dependencies and explanations of process (like RFC). Your
-hardware description must be fully contained in commits, not cover letter.
-
-
-> aspeed,enable-byte:
-> Force i2c controller use byte mode transfer. the byte mode transfer
-> will send i2c data each byte by byte, inlcude address read/write.
-
-Isn't this standard FIFO mode?
-
-Why anyone would need to enable byte mode for given board?
-
+> > On Fri, 21 Feb 2025 07:38:23 +0100
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >   
+> > > Em Mon, 3 Feb 2025 16:22:36 +0100
+> > > Igor Mammedov <imammedo@redhat.com> escreveu:
+> > >     
+> > > > On Mon, 3 Feb 2025 11:09:34 +0000
+> > > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> > > >       
+> > > > > On Fri, 31 Jan 2025 18:42:41 +0100
+> > > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > > >         
+> > > > > > Now that the ghes preparation patches were merged, let's add support
+> > > > > > for error injection.
+> > > > > > 
+> > > > > > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
+> > > > > > table and hardware_error firmware file, together with its migration code. Migration tested
+> > > > > > with both latest QEMU released kernel and upstream, on both directions.
+> > > > > > 
+> > > > > > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
+> > > > > >    to inject ARM Processor Error records.
+> > > > > > 
+> > > > > > If I'm counting well, this is the 19th submission of my error inject patches.          
+> > > > > 
+> > > > > Looks good to me. All remaining trivial things are in the category
+> > > > > of things to consider only if you are doing another spin.  The code
+> > > > > ends up how I'd like it at the end of the series anyway, just
+> > > > > a question of the precise path to that state!        
+> > > > 
+> > > > if you look at series as a whole it's more or less fine (I guess you
+> > > > and me got used to it)
+> > > > 
+> > > > however if you take it patch by patch (as if you've never seen it)
+> > > > ordering is messed up (the same would apply to everyone after a while
+> > > > when it's forgotten)
+> > > > 
+> > > > So I'd strongly suggest to restructure the series (especially 2-6/14).
+> > > > re sum up my comments wrt ordering:
+> > > > 
+> > > > 0  add testcase for HEST table with current HEST as expected blob
+> > > >    (currently missing), so that we can be sure that we haven't messed
+> > > >    existing tables during refactoring.      
+> > 
+> > To potentially save time I think Igor is asking that before you do anything
+> > at all you plug the existing test hole which is that we don't test HEST
+> > at all.   Even after this series I think we don't test HEST.  You add
+> > a stub hest and exclusion but then in patch 12 the HEST stub is deleted whereas
+> > it should be replaced with the example data for the test.  
 > 
->>
->>> +      may require a DTS to manually allocate which controller can use
->> DMA mode.
->>> +      The "aspeed,enable-dma" property allows control of this.
->>> +
->>> +      In cases where one the hardware design results in a specific
->>> +      controller handling a larger amount of data, a DTS would likely
->>> +      enable DMA mode for that one controller.
->>> +
->>> +  aspeed,enable-byte:
->>> +    type: boolean
->>> +    description: |
->>> +      I2C bus enable byte mode transfer.
->>
->> No, either this is expressed as lack of dma mode property or if you have three
->> modes, then rather some enum (aspeed,transfer-mode ?)
+> that's what I was saying.
+> HEST table should be in DSDT, but it's optional and one has to use
+> 'ras=on' option to enable that, which we aren't doing ATM.
+> So whatever changes are happening we aren't seeing them in tests
+> nor will we see any regression for the same reason.
 > 
-> Thanks suggestion, I will using an enum property like aspeed,transfer-mode instead.
->>
->>
->>
->>> +
->>> +  aspeed,global-regs:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description: The phandle of i2c global register node.
->>
->> For what? Same question as usual: do not repeat property name, but say what
->> is this used for and what exactly it points to.
->>
->> s/i2c/I2C/ but then what is "I2C global register node"? This is how you call your
->> device in datasheet?
->>
-> I do descript in cover, should add into the yaml file ?
+> While white listing tables before change should happen and then updating them
+> is the right thing to do, it's not sufficient since none of tests
+> run with 'ras' enabled, hence code is not actually executed. 
 
+Ok. Well, again we're not modifying HEST table structure on this
+changeset. The only change affecting HEST is when the number of entries
+increased from 1 to 2.
 
-Again, cover letter does not matter. Your hardware must be explained here.
+Now, looking at bios-tables-test.c, if I got it right, I should be doing
+something similar to the enclosed patch, right?
+
+If so, I have a couple of questions:
+
+1. from where should I get the HEST table? dumping the table from the
+   running VM?
+
+2. what values should I use to fill those variables:
+
+	int hest_offset = 40 /* HEST */;
+	int hest_entry_size = 4;
+
 
 > 
-> aspeed,global-regs: 
-> This global register is needed, global register is setting for
-> new clock divide control, and new register set control.
-
-So this means you implement clock controller via syscon?
-
+> > 
+> > That indeed doesn't address testing the error data storage which would be
+> > a different problem.  
 > 
->>
->>> +
->>>  required:
->>>    - reg
->>>    - compatible
->>>    - clocks
->>>    - resets
->>>
->>> +allOf:
->>> +  - $ref: /schemas/i2c/i2c-controller.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: aspeed,ast2600-i2cv2
->>
->> NAK, undocumented compatible.
+> I'd skip hardware_errors/CPER testing from QEMU unit tests.
+> That's basically requires functioning 'APEI driver' to test that.
 > 
-> Sorry, I should add what kind of document about this compatible?
+> Maybe we can use Ani's framework to parse HEST and all the way
+> towards CPER record(s) traversal, but that's certainly out of
+> scope of this series.
+> It could be done on top, but I won't insist even on that
+> since Mauro's out of tree error injection testing will
+> cover that using actual guest (which I assume he would
+> like to run periodically).
 
-You cannot add new compatibles without documenting them. Documentation
-is in the form of DT schema and each compatible must be listed (in some
-way) in compatible property description.
+Yeah, my plan is to periodically test it. I intend to setup somewhere
+a CI to test Kernel, QEMU and rasdaemon altogether.
 
+Thanks,
+Mauro
 
-Best regards,
-Krzysztof
+---
+
+diff --git a/tests/qtest/bios-tables-test.c b/tests/qtest/bios-tables-test.c
+index 0a333ec43536..31e69d906db4 100644
+--- a/tests/qtest/bios-tables-test.c
++++ b/tests/qtest/bios-tables-test.c
+@@ -210,6 +210,8 @@ static void test_acpi_fadt_table(test_data *data)
+     uint32_t val;
+     int dsdt_offset = 40 /* DSDT */;
+     int dsdt_entry_size = 4;
++    int hest_offset = 40 /* HEST */;
++    int hest_entry_size = 4;
+ 
+     g_assert(compare_signature(&table, "FACP"));
+ 
+@@ -242,6 +244,12 @@ static void test_acpi_fadt_table(test_data *data)
+     /* update checksum */
+     fadt_aml[9 /* Checksum */] = 0;
+     fadt_aml[9 /* Checksum */] -= acpi_calc_checksum(fadt_aml, fadt_len);
++
++
++
++    acpi_fetch_table(data->qts, &table.aml, &table.aml_len,
++                     fadt_aml + hest_offset, hest_entry_size, "HEST", true);
++    g_array_append_val(data->tables, table);
+ }
+ 
+ static void dump_aml_files(test_data *data, bool rebuild)
+@@ -2411,7 +2419,7 @@ static void test_acpi_aarch64_virt_oem_fields(void)
+     };
+     char *args;
+ 
+-    args = test_acpi_create_args(&data, "-cpu cortex-a57 "OEM_TEST_ARGS);
++    args = test_acpi_create_args(&data, "-ras on -cpu cortex-a57 "OEM_TEST_ARGS);
+     data.qts = qtest_init(args);
+     test_acpi_load_tables(&data);
+     test_oem_fields(&data);
+
 
