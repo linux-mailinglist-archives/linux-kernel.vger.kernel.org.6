@@ -1,102 +1,194 @@
-Return-Path: <linux-kernel+bounces-533427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740B6A45A10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0694A45A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEC63AC66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C2C173339
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBAC226CF1;
-	Wed, 26 Feb 2025 09:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Au9uBnob"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9E5226CF1;
+	Wed, 26 Feb 2025 09:26:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879092135C8;
-	Wed, 26 Feb 2025 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561951; cv=pass; b=H7WFLtjNzvZ5pnfCD4DAgUBSyM+n9jwkB5vb6o8D7Cj0TtUwiQ2opdmBpoWjhaNGJl7S2HrkMaarwiaD0VrYWmu5NkL0esh+pi19l8Nvwu7cql9qCaRYeiILFFtZdAHbS8XZ1hNeQYNePcvRxh68ShlqwFG9dEQyGeBvd4Rd2zI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561951; c=relaxed/simple;
-	bh=1pMf73z2aCoj+FMzFwoTCiqJuDrSFSA0D44yHK/qnbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpUdqlVu+GCvybfcJnu+HqzUyQNAeb9Og5iNucU3DtzMz6GDHf65BlJe9bjCGSxsHhjPVnijF4xp9lI4i9bwklMP22Q8A6BhhNY470ALADqz8IvGzSSJWeO94YfLafCcDZK6ZSK6KnkMSguBRoYR6ze1ItRSriRteo6lTd1LXCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Au9uBnob; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740561900; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=h6jMGyNquMYiuM227g9wPaaTmMMKGJl/CrNRqyizQVbr6EknV/fyQAPekngWO1X5DsQiIN4Js07AvuA+Yvk+tA8YKpEnm+jJvSfZd4c/6RlL2gvjiJDPVD2Depq9PWH5jzQUb0wqj97LHwHb2pxfSG2DBxFlDJF5yvv7RpJIGpU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740561900; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HQxcDlER3epDHU7gCY5nogKiIBVZBqXqRS/yzoOYA5k=; 
-	b=KFvC/X8oxjJwlCK1JL1gZcfnb5+ihTbDGSkh/1Qrd7ttMlK3NvjXPhEsLNmaVoEebd6mG++JJ/JNEyzzbexl4UlThEILnJAotKcUlScrBWvv+7w2XBj8CJ/ItsnL4clyYYuvqr+w3VpLUaEdtZ14Lpw9ao35d65S5qpPt7eMe38=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740561900;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=HQxcDlER3epDHU7gCY5nogKiIBVZBqXqRS/yzoOYA5k=;
-	b=Au9uBnobaAWWqJREgg7BOma+yPXfVIT6l631Hzgb7RW6BAG9xkt93duVe1DLGcmp
-	Pamusoh7vhtjBw+3MG5I25cw4tg4DFFATJnt1pTWiLVp2Dc68pPeXxcry/tdDmft7jU
-	+q38mpOg8or6lUhfgw31FPIewfOwmR4XVBxD1c1M=
-Received: by mx.zohomail.com with SMTPS id 1740561898306593.375047630114;
-	Wed, 26 Feb 2025 01:24:58 -0800 (PST)
-Message-ID: <860e30df-ba7e-4df3-b42a-ad41c3922b0f@collabora.com>
-Date: Wed, 26 Feb 2025 12:24:51 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2924215189;
+	Wed, 26 Feb 2025 09:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740561973; cv=none; b=WVqqoUNsKprQv3KPcYyxR8evjuJc8p9A/jR35aaLorNcXiEnKy4OdRHvSTWVELmMZ0R1Yz6BpD+OciptqlicmtPiRcCccnKcaMVgzh3gznhKjPSzVoUhYbUsOjRa8vWhgwm2QELGB7IOUL0OGmKjVDJm96P+UHRcMtu1HFt4lLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740561973; c=relaxed/simple;
+	bh=snXsEhf+LNi9fdlosqnbK4Qm4UNaUVu8+oUbUR/A6+M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ce68aP8A0HTTc4W08baic+o3oINx26Lpf1Ak+qLubh20zDdD8P1SCf8E39bdHqQOgq0saNpbo3re6w3VjxtwceiuXYWS77C7/HtJm+mgHuK6KjhFup+R0xg7eI64OndqHt4m829ws/ajw7B06Oxrb3XQ0Igt6BajoyQz1TG4hbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z2pvJ1wwcz6K9Fn;
+	Wed, 26 Feb 2025 17:24:12 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 72B0814097D;
+	Wed, 26 Feb 2025 17:26:07 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Feb 2025 10:26:07 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Wed, 26 Feb 2025 10:26:07 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
+ without VF device driver
+Thread-Topic: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
+ without VF device driver
+Thread-Index: AQHbh07C3f9e7H+vQ0mq3v4m2vU4obNZTIOQ
+Date: Wed, 26 Feb 2025 09:26:07 +0000
+Message-ID: <fa8cd8c1cdbe4849b445ffd8f4894515@huawei.com>
+References: <20250225062757.19692-1-liulongfang@huawei.com>
+ <20250225062757.19692-6-liulongfang@huawei.com>
+In-Reply-To: <20250225062757.19692-6-liulongfang@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/6] MAINTAINERS: Add entry for Synopsys DesignWare
- HDMI RX Driver
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
- <20250225183058.607047-2-dmitry.osipenko@collabora.com>
- <7763884d-d259-4e52-aac8-73bca5b2ed61@kernel.org>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <7763884d-d259-4e52-aac8-73bca5b2ed61@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 2/26/25 11:44, Krzysztof Kozlowski wrote:
->> +SYNOPSYS DESIGNWARE HDMI RX CONTROLLER DRIVER
->> +M:	Shreeya Patel <shreeya.patel@collabora.com>
-> 
-> You are sending someone else's patches, which sometimes indicate the
-> owner moved on. Nothing in cover letter explains that here so we can
-> keep guessing. Anyway if that's the case, this does not look up to date
-> anymore, so this either needs fixing or clarifications in at least cover
-> letter.
 
-Will re-iterate on the v11 cover letter that Shreeya is currently busy.
-Thanks for paying attention.
 
--- 
-Best regards,
-Dmitry
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Tuesday, February 25, 2025 6:28 AM
+> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> Subject: [PATCH v4 5/5] hisi_acc_vfio_pci: bugfix live migration function
+> without VF device driver
+>=20
+> If the driver of the VF device is not loaded in the Guest OS,
+> then perform device data migration. The migrated data address will
+> be NULL.
+
+May be rephrase:
+
+If the VF device driver is not loaded in the Guest OS and we attempt to
+perform device data migration, the address of the migrated data will
+be NULL.
+
+> The live migration recovery operation on the destination side will
+> access a null address value, which will cause access errors.
+=20
+> Therefore, live migration of VMs without added VF device drivers
+> does not require device data migration.
+> In addition, when the queue address data obtained by the destination
+> is empty, device queue recovery processing will not be performed.
+>=20
+> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live
+> migration")
+> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> ---
+>  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>=20
+> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> index 3f0bcd855839..77872fc4cd34 100644
+> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> @@ -440,6 +440,7 @@ static int vf_qm_get_match_data(struct
+> hisi_acc_vf_core_device *hisi_acc_vdev,
+>  				struct acc_vf_data *vf_data)
+>  {
+>  	struct hisi_qm *pf_qm =3D hisi_acc_vdev->pf_qm;
+> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
+>  	struct device *dev =3D &pf_qm->pdev->dev;
+>  	int vf_id =3D hisi_acc_vdev->vf_id;
+>  	int ret;
+> @@ -466,6 +467,13 @@ static int vf_qm_get_match_data(struct
+> hisi_acc_vf_core_device *hisi_acc_vdev,
+>  		return ret;
+>  	}
+>=20
+> +	/* Get VF driver insmod state */
+> +	ret =3D qm_read_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state,
+> 1);
+
+We already have qm_wait_dev_not_ready() function that checks the QM_VF_STAT=
+E.=20
+Why can't we use that here?
+
+Also we are getting this vf_qm_state already in vf_qm_state_save(). And you=
+ don't
+seem to check the vf_qm_state in vf_qm_check_match(). So why it is read=20
+early in this function?
+
+
+Thanks,
+Shameer
+
+> +	if (ret) {
+> +		dev_err(dev, "failed to read QM_VF_STATE!\n");
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>=20
+> @@ -505,6 +513,12 @@ static int vf_qm_load_data(struct
+> hisi_acc_vf_core_device *hisi_acc_vdev,
+>  	qm->qp_base =3D vf_data->qp_base;
+>  	qm->qp_num =3D vf_data->qp_num;
+>=20
+> +	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
+> +	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
+> +		dev_err(dev, "resume dma addr is NULL!\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	ret =3D qm_set_regs(qm, vf_data);
+>  	if (ret) {
+>  		dev_err(dev, "set VF regs failed\n");
+> @@ -727,6 +741,9 @@ static int hisi_acc_vf_load_state(struct
+> hisi_acc_vf_core_device *hisi_acc_vdev)
+>  	struct hisi_acc_vf_migration_file *migf =3D hisi_acc_vdev-
+> >resuming_migf;
+>  	int ret;
+>=20
+> +	if (hisi_acc_vdev->vf_qm_state !=3D QM_READY)
+> +		return 0;
+> +
+>  	/* Recover data to VF */
+>  	ret =3D vf_qm_load_data(hisi_acc_vdev, migf);
+>  	if (ret) {
+> @@ -1530,6 +1547,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
+> vfio_device *core_vdev)
+>  	hisi_acc_vdev->vf_id =3D pci_iov_vf_id(pdev) + 1;
+>  	hisi_acc_vdev->pf_qm =3D pf_qm;
+>  	hisi_acc_vdev->vf_dev =3D pdev;
+> +	hisi_acc_vdev->vf_qm_state =3D QM_NOT_READY;
+>  	mutex_init(&hisi_acc_vdev->state_mutex);
+>  	mutex_init(&hisi_acc_vdev->open_mutex);
+>=20
+> --
+> 2.24.0
+
 
