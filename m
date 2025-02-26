@@ -1,119 +1,247 @@
-Return-Path: <linux-kernel+bounces-533140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87811A45614
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:56:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92959A45615
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E47A681C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A966C3A7207
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08E269AED;
-	Wed, 26 Feb 2025 06:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE39269AEA;
+	Wed, 26 Feb 2025 06:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DlXHZzBk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoeQ1WYs"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02335028C;
-	Wed, 26 Feb 2025 06:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4D5028C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552969; cv=none; b=UVcS/qwY1Og0cyb3IiVaH2R0m8cygSkBXK6ux7uoXhGI2r4I0pw5b5ffoXaa9q69Fn+Jutl/Ykyh46j41xeagVksb6SrNPvY8erSxp+OVcjt71a/9tFUMSzgkvQXLWnZRk0xICwchrmgsPu2m/R0j406pP/LEbHmGFlAPBFD8MU=
+	t=1740552994; cv=none; b=ikYDIReU0jyE9JQGKSCkd/c6KU8OBt1TQwCKwNrtpbjaSfTJ3Td35A3eocnozQRDpxpBQOtNugcs6EAOwrbfNaz7V3nYba+paHqSXqIwMLaRC3c1MvnOjia04bxkAdP2E8ivDzrAB8g2Hfc3dKoYGXYGywU8SCtaxzCRSQCmoEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552969; c=relaxed/simple;
-	bh=q4ZyS3nL2pCIXXvsUTTmZGs+Mzd+5hRRC6xwUNA1o98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFIfEvvL5rBpyvuTfKVRHOURM7i4qVth6FZxZst3O7YqK/B+Mwo88DKq8BQLUgOK2tMENH03PY/rkjO36AC+aVxnud6Qs7/POaudI1UcSBmo6Ta4/09TcN9M1BrRkaZeNDL9fCnRVew+P7k4KiGPWwM9cXXzH6hOHCrn+YqQdVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DlXHZzBk; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740552968; x=1772088968;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=q4ZyS3nL2pCIXXvsUTTmZGs+Mzd+5hRRC6xwUNA1o98=;
-  b=DlXHZzBkAw8U7llBwcKhrxGDrYWdl4M2Co0Pcvz2mDoYeVBdVGX0fSHg
-   DG7pSLxPXleL4KQOBNX3+Y1VJQCnbWsoD/0u3FvdvVu3YOW/GxJ2jaFib
-   KA7htrs16jxw87xPt3Ha5PtTa97d9G+Ez+T7eIv1okwXFb4wgGq77xBjT
-   FenhMOl9MQBi8oNlJPHxiFeNDlc+KNDfHn0lWv6+6A30y+dc4K0nhCeTX
-   ptOgKvd3de6ihE9pTfQDqoG3EjK/P/9p7BADGEIyn/RvOR6ekJ8Kvy1iE
-   hMTtQMqwtgb9WRchkjzwZrUD/DVvShZTTga7HC4WU08mIwTN6nJXpnj1v
-   A==;
-X-CSE-ConnectionGUID: Oi+nmZdhSweLlk7Yb8RZ1w==
-X-CSE-MsgGUID: NAlxO4TSRXKPfdM3p4ya1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45036985"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="45036985"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:56:08 -0800
-X-CSE-ConnectionGUID: BLZlSfEPQImFfbcqS22cTA==
-X-CSE-MsgGUID: U6PHjfyKSNWS/Jpn1cL2UQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="121554118"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:56:04 -0800
-Message-ID: <5bbed578-db74-408d-a92e-76d869054738@linux.intel.com>
-Date: Wed, 26 Feb 2025 14:56:00 +0800
+	s=arc-20240116; t=1740552994; c=relaxed/simple;
+	bh=maWE2ec0tJrqxvlM/sGG8sDlN+b8R1Q5EaLQCSNYN3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLG/daZSmAU1uUxAwkz18nBHd3acU8l+iLT8G6Iybkjiyz2N3E4vWrPYt7ITlOgs8UGVMg/V3YcCzVIDa70OhCgICfpQQA+1t+o7IN7T02KMncmjZjvOnxPp9WR4PUDs+StnOAsc+pw10nNPETOXxX8GDlAdZyPEtXCUQnSJrT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoeQ1WYs; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-222e8d07dc6so10063585ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:56:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740552992; x=1741157792; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UvBUkvrpnaWOB4XGkZSpuc/FodpmoXmalQA7k8tmnYE=;
+        b=JoeQ1WYsfuB7RyMMdA3+9W6pemWuotKy08QhOoGhm056R+Btdu4Zuso/E25ogQB7u0
+         XI8Lu8479vCmSZ3FqWXSxRFEspKl18zidfukbrkWkJcxazqGH95sgmmytCcpH8UNH3st
+         touDl2EazpCpHQCY0yWhXXO2ioVTp48fs48Jpv0pSTG6aqaFgHyNWiOnGrhX3IZC5ai4
+         5j/0DdDjve7PMSr2zFZs2hE6zclp4Dd41mcizIzm7U+izLo22vjfuPHMbjsmQI4B4MYK
+         divuWYXxCbzcU2Zspev771qXLmkRfBWwlCXVM34MqV3xNLckxrNn6api531+y/G4dGDT
+         7ZVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740552992; x=1741157792;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UvBUkvrpnaWOB4XGkZSpuc/FodpmoXmalQA7k8tmnYE=;
+        b=V8vIhOEyrqst6t6t21I9xw35H+pSlbYPCK3fAi2Lc/RA9uyAwjCDPVqj7rfcodafjZ
+         2F7UpaMKdt46hGwSiLaN5bkNKyz4/MULXphye2xhpanpQXKS2uQbDrByrDJwpoW2DJsz
+         phwR8HfzKwI/uPh65PqfCTDyueMQ44d1vsTa/sjVYVQ5A3mcgiKoHTb3yNbVoLINAGOh
+         9374bGD6Z79kI8eLmfGsRepZ+I5qmQzgX51ZZP7U5f1A1Snl3jX9Qo+cEZ3tq2v7kTfz
+         L3X7vmK5BWteciS7Oc+SlCq5U2wE2yR57txASSohWKmmGomfuZ4xwlelWwhNHHE4zB7B
+         ZoQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl0Kt4xfPYqIv2QCfspkNGNIuA47Ua1ioJXhowItEIZOFWyyglGHngHRrtXfYI8af+YPIxoZTY27cqXHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ2XhBTnWiPq7G/h/k4S7WuXShjX0WqAMnNTSRMR3v/QxhmrH0
+	YCJhfFIcL9d6ztSXAI3brY9qo3vDy5aO+fVMYhRF92r+QMiY7zdPpv4t7g9v
+X-Gm-Gg: ASbGnctQBz1KQGHeskFTbpsOnEI2WWUvW6WLYg413t1b9D0dunbkzjS4fVMtdU/kpEj
+	wTscmLeF0bjZtbmz6MjVFG70ebWkAU9gmsDZnqtvMXpNXOOUvmnkSOnoGKEqmpnmV/fN/nxeJXn
+	0r/9OvfhN1c9m02KozUzNrSri3xKwMHMEg54aWXorDcpjxyLvIksROHtl1RR0y/6VoBBl3CwtXr
+	3zojZzCRF0GAJmmkQdX3y4LzyLtgfrE5dHjoDAN+nX/ki6QmM7Nk9URNoa5ECTTA0Ic3WR5AAEZ
+	zXWx7bNjPOKGGpGIC+L7VOj888VLaDxTThOhZfKm/X/tTWyxCDUULgi3
+X-Google-Smtp-Source: AGHT+IHWNgMRxS2wDsQ8DfmTVlhhQ98TvahLD3DSbQQe0MJnnyowlR0MgLuR1nRqrbVlX+8Z8D6BeA==
+X-Received: by 2002:a17:902:d2c1:b0:21a:7e04:7021 with SMTP id d9443c01a7336-221a001fb74mr306421785ad.24.1740552992216;
+        Tue, 25 Feb 2025 22:56:32 -0800 (PST)
+Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:484a:6ad2:2b8e:884b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a00ab54sm25236725ad.77.2025.02.25.22.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 22:56:31 -0800 (PST)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: yury.norov@gmail.com
+Cc: david.laight.linux@gmail.com,
+	anshuman.khandual@arm.com,
+	arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw,
+	skhan@linuxfoundation.org,
+	mka@chromium.org,
+	akpm@linux-foundation.org,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH v3 RESEND] uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"
+Date: Wed, 26 Feb 2025 14:56:23 +0800
+Message-ID: <20250226065623.1567363-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 15/24] perf/x86/intel: Add SSP register support for
- arch-PEBS
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-16-dapeng1.mi@linux.intel.com>
- <20250225115229.GN11590@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250225115229.GN11590@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+This patch reverts 'commit c32ee3d9abd2("bitops: avoid integer overflow in
+ GENMASK(_ULL)")'.
+
+The code generation can be shrink by over 1KB by reverting this commit.
+Originally the commit claimed that clang would emit warnings using the
+implementation at that time.
+
+The patch was applied and tested against numerous compilers, including
+gcc-13, gcc-12, gcc-11 cross-compiler, clang-17, clang-18 and clang-19.
+Various warning levels were set (-W=0, -W=1, -W=2) and CONFIG_WERROR
+disabled to complete the compilation. The results show that no compilation
+errors or warnings were generated due to the patch.
+
+The results of code size reduction are summarized in the following table.
+The code size changes for clang are all zero across different versions,
+so they're not listed in the table.
+
+For NR_CPUS=64 on x86_64.
+----------------------------------------------
+|	        |   gcc-13 |   gcc-12 |   gcc-11 |
+----------------------------------------------
+|       old | 22438085 | 22453915 | 22302033 |
+----------------------------------------------
+|       new | 22436816 | 22452913 | 22300826 |
+----------------------------------------------
+| new - old |    -1269 |    -1002 |    -1207 |
+----------------------------------------------
+
+For NR_CPUS=1024 on x86_64.
+----------------------------------------------
+|	        |   gcc-13 |   gcc-12 |   gcc-11 |
+----------------------------------------------
+|       old | 22493682 | 22509812 | 22357661 |
+----------------------------------------------
+|       new | 22493230 | 22509487 | 22357250 |
+----------------------------------------------
+| new - old |     -452 |     -325 |     -411 |
+----------------------------------------------
+
+For arm64 architecture, gcc cross-compiler was used and QEMU was
+utilized to execute a VM for a CPU-heavy workload to ensure no
+side effects and that functionalities remained correct. The test
+even demonstrated a positive result in terms of code size reduction:
+* Before: 31660668
+* After: 31658724
+* Difference (After - Before): -1944
+
+An analysis of multiple functions compiled with gcc-13 on x86_64 was
+performed. In summary, the patch elimates one negation in almost
+every use case. However, negative effects may occur in some cases,
+such as the generation of additional "mov" instruction or increased
+register usage. The use of "~_UL(0) << (l)" may even result in the
+allocations of "%r*" registers instead of "%e*" registers (which are
+32-bit registers) because the compiler cannot assume that the higher
+bits are zero.
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+---
+Changelog:
+
+v1 -> v2:
+	- Refer the patch explicitly as a revert of commit c32ee3d
+	- Squash commits into 1 commit
+	- Perform compilation for numerous compilers, architectures and
+	  compare code size shrink for each of them
+	- Perform cpu-heavy workload test inside x86_64 VM and ARM64 VM
+	- Analyze the result of disassembly of several small use cases
+
+v2 -> v3:
+	- Refactor code to single line
+	- Disabled CONFIG_WERROR to ensure no additional compilation errors or warnings
+	- Remove description for unrelated compilation errors and warnings
+	- Summarize the result into a better looking table
+	- Rephrase the patch and fix typos
 
 
-On 2/25/2025 7:52 PM, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 03:28:09PM +0000, Dapeng Mi wrote:
->
->> +	if (unlikely(event->attr.sample_regs_intr & BIT_ULL(PERF_REG_X86_SSP))) {
->> +		/* Only arch-PEBS supports to capture SSP register. */
->> +		if (!x86_pmu.arch_pebs || !event->attr.precise_ip)
->> +			return -EINVAL;
->> +	}
->> @@ -27,9 +27,11 @@ enum perf_event_x86_regs {
->>  	PERF_REG_X86_R13,
->>  	PERF_REG_X86_R14,
->>  	PERF_REG_X86_R15,
->> +	/* Shadow stack pointer (SSP) present on Clearwater Forest and newer models. */
->> +	PERF_REG_X86_SSP,
-> The first comment makes more sense. Nobody knows of cares what a
-> clearwater forest is, but ARCH-PEBS is something you can check.
+Hi Yury,
 
-Sure. would modify it in next version.
+Sorry about the last iteration that I included everything, making
+the email too large and difficult to read. However, you still reviewed
+it and gave me feedbacks, really big thanks for your patience and those
+feedbacks. Running these tests also gave me a great opportunity to learn
+a lot.
 
+If there's anything else needed to be test or modified, please let
+me know, I'll ammend them as soon as possible.
 
->
-> Also, this hard implies that anything exposing ARCH-PEBS exposes
-> CET-SS. Does virt complicate this?
+Hi David,
 
-Yes, for real HW, I think CET-SS would be always supported as long as
-arch-PEBS is supported, but it's not true for virt. So suppose we need to
-check CET-SS is supported before reading it.
+Thanks for your advise on alternative ideas for this code. I ran some
+simple test (basically check the result of code size reduction) based
+on your suggestions.
 
+For gcc-13 on x86_64 + defconfig.
+* "(_UL(2) << (h)) - (_UL(1) << (l))"
+	Before=22438085, After=22438193, Difference ( After - Before ) = 108
+* "((_UL(1) + _UL(1)) << (h)) - (_UL(1) << (l))"
+	Before=22438085, After=22438209, Difference ( After - Before ) = 124
 
->
+I tried to do an analysis on "intel_arch_events_quirk()", it only +2 in
+code size change, I think it would be a nice example to see the differences
+in generated code.
+
+So the result shows that your proposal can save 1 negation and 1 "and".
+-ffffffff83278ad2:	48 f7 d8             	neg    %rax
+-ffffffff83278adc:	83 e0 7f             	and    $0x7f,%eax
+
+However, one more "mov" and one more "sub" are generated.
++ffffffff83278acf:	b8 80 00 00 00       	mov    $0x80,%eax
++ffffffff83278ad7:	48 29 d0             	sub    %rdx,%rax
+
+No change in total number of instructions, but negation only requires
+one register, and the "mov" generated is more expensive then usual.
+(Usually "mov" of the following form are generated,
+"48 89 ea             	mov    %rbp,%rdx",
+"89 c3                	mov    %eax,%ebx" ).
+
+Thanks for your advise again, in some scenario it does have positive
+effect, but unfortunately, the overall impact is not beneficial.
+
+Best regards,
+I Hsin Cheng.
+
+Tests performed on ubuntu 24.04 with AMD Ryzen 7 5700X3D 8-Core
+Processor on x86_64 with kernel version v6.14.0-rc1.
+---
+ include/uapi/linux/bits.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+index 5ee30f882736..682b406e1067 100644
+--- a/include/uapi/linux/bits.h
++++ b/include/uapi/linux/bits.h
+@@ -4,13 +4,9 @@
+ #ifndef _UAPI_LINUX_BITS_H
+ #define _UAPI_LINUX_BITS_H
+ 
+-#define __GENMASK(h, l) \
+-        (((~_UL(0)) - (_UL(1) << (l)) + 1) & \
+-         (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
++#define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
+ 
+-#define __GENMASK_ULL(h, l) \
+-        (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+-         (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
++#define __GENMASK_ULL(h, l) (((~_ULL(0)) << (l)) & (~_ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
+ 
+ #define __GENMASK_U128(h, l) \
+ 	((_BIT128((h)) << 1) - (_BIT128(l)))
+-- 
+2.43.0
+
 
