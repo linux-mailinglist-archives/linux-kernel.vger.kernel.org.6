@@ -1,236 +1,133 @@
-Return-Path: <linux-kernel+bounces-534391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610C4A4662D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968DFA46632
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D267AB655
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:06:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AFF27A6E05
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64AF21D3EF;
-	Wed, 26 Feb 2025 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E93621CA09;
+	Wed, 26 Feb 2025 16:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNGWza+I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yrABucOj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNGWza+I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yrABucOj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIy2WahF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316ED20AF8E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137191DE2A0;
+	Wed, 26 Feb 2025 16:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586003; cv=none; b=LiKnkOrV9SNRt+7jFJ3RtuspYbqfIquRm9dabZXRwWf18jzxhgj4GmjI5EShDzTYimUFDRze4Iv5P9afIK0f3hIufjrkFGQEn0/CjoX2liU3BxudE4YvXJWt7dkGF00t5gicD9IaYSsJGGHvCfGeha7QvKFBFHWkEoKVIG6Ocrs=
+	t=1740586126; cv=none; b=D9XP8PURx8j/MairIBvjViyGI3pXNIaUBA9Oc/sd+ZIbgd0M7vt6+QUwbJa1fmfS6PsOTPQ97NBq3DbGG8gZejb8nvKDBBwawULJzNkFr1x3U/2pslv7Z2lMZG1duf+5VTWywPfX/EmW+dUDvqFSzbbCP10dY4WQlpTeCn3ZuLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586003; c=relaxed/simple;
-	bh=LCyoHSmapOSrLRv9RBkiRoPz+cmSw1HoK6QDtW4VrwA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZOeOW7GITluoLOn6VT7LV1s62SnuTGtvYpitnqz+eexJKJBS4Qtn3KCjIqt3L2KX5sg+gcKiTpo4TkKcS+/sd+/brJij820GGQFMnyN1zYIOp+6Umb65QJbBDIR+BJFpciPaGWq6wUB2LK8Wab/dnWqsE954TDGNVNwySbMgKGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNGWza+I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yrABucOj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNGWza+I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yrABucOj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 464CA1F387;
-	Wed, 26 Feb 2025 16:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740585999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
-	b=VNGWza+IAZhDSZY3n+l/bL74q0nHEgEaOEf7VTJqK5nvYLPCa71le4Z6vi4ff2YiLtp1yq
-	VmDFE+HvnaP+ELO+whmL2UdRrqpMAFvzbPsbt7WAcqbjdoyTej1KO2z+WGpwwOmKWOhDQ9
-	gpBRmoUi0I2TMi3RGTIOsi/5jRIOLx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740585999;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
-	b=yrABucOj4HWWBjO5FA7Pk9t2MH32TS1RcMCCpUwME4AfLHxUl4rkrv5kxhfp9EelDa7tjJ
-	D/9hhIOBaragCxDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VNGWza+I;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yrABucOj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740585999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
-	b=VNGWza+IAZhDSZY3n+l/bL74q0nHEgEaOEf7VTJqK5nvYLPCa71le4Z6vi4ff2YiLtp1yq
-	VmDFE+HvnaP+ELO+whmL2UdRrqpMAFvzbPsbt7WAcqbjdoyTej1KO2z+WGpwwOmKWOhDQ9
-	gpBRmoUi0I2TMi3RGTIOsi/5jRIOLx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740585999;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+6Lt7QtAt9Z+XWboE+EPbbEmZwM15M49tfg3Y2BUCo=;
-	b=yrABucOj4HWWBjO5FA7Pk9t2MH32TS1RcMCCpUwME4AfLHxUl4rkrv5kxhfp9EelDa7tjJ
-	D/9hhIOBaragCxDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C62213A53;
-	Wed, 26 Feb 2025 16:06:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1IU2Cg88v2daZwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 26 Feb 2025 16:06:39 +0000
-Date: Wed, 26 Feb 2025 17:06:38 +0100
-Message-ID: <87plj43d2p.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	regressions@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
-In-Reply-To: <5ff2354e-3bc6-4bb8-a481-bb81d717d698@oracle.com>
-References: <874j0lvy89.wl-tiwai@suse.de>
-	<dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
-	<87jz9d5cdp.wl-tiwai@suse.de>
-	<263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
-	<87h64g4wr1.wl-tiwai@suse.de>
-	<7a4072d6-3e66-4896-8f66-5871e817d285@oracle.com>
-	<87eczk4vui.wl-tiwai@suse.de>
-	<5ff2354e-3bc6-4bb8-a481-bb81d717d698@oracle.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1740586126; c=relaxed/simple;
+	bh=YIhN7xyFT7K0nQ06jXmx+41n6tZRGej2Wzg4+MGtWTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhP3eaLDYAxKuqGUC+cApb/1cuNuOikptUvIaMs3UnoZvppYNDFvfHtLiilH8eMCwDn03R9zab68mOSZu6SWPSyiJdSg6jeYO216nqjSDBuh2zh/t9JRcI/2I/j73yABMMrJ67q8SizxAr/xu/xNwWXhT1nm7zVoHLq1/Sy3BhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIy2WahF; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740586125; x=1772122125;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YIhN7xyFT7K0nQ06jXmx+41n6tZRGej2Wzg4+MGtWTA=;
+  b=BIy2WahFfy8ck95U0QH+K4H7KNoXu/CDfM7GXD3OCNjfxsvTMBXiwPk/
+   Oa5cDEOE1VVII9L76ZqQg8IcKcGGYqfSXpj4RKf0O/7k9UqIltM7zC0bZ
+   me3eeI0n+M3yeHaqyBDfDEHIwBGlA7G9VERaQtCVyRM7XRsv0S2/pE9qp
+   HDlMxQ0jfVN5SS0ZCTpeCsihTraTQvyvW/xEMG+iWkMbOibWJHbEnOOa/
+   LGlcADYdbJ3VLvTUVmWkN/wq/rld7EiiORyQFVg9PMfjuC7e3EDsf2hKc
+   qfDwbGmsOXoWAN2NYNsv1V+LnSJe7dSDbEwuVWXRATHloHWtUTxzwpY65
+   A==;
+X-CSE-ConnectionGUID: cRxxDJXdQf2oSph4myZELA==
+X-CSE-MsgGUID: tpivdYVcSpeN2h713KOCKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45221831"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="45221831"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:08:44 -0800
+X-CSE-ConnectionGUID: EeN2cePgQJadJV9KcS74OA==
+X-CSE-MsgGUID: FhQCKIXsTVyjFb9MYsveXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="121737427"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:08:41 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0F04211F944;
+	Wed, 26 Feb 2025 18:08:39 +0200 (EET)
+Date: Wed, 26 Feb 2025 16:08:39 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mathis Foerst <mathis.foerst@mt.com>
+Cc: linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, manuel.traut@mt.com
+Subject: Re: [PATCH v1 1/8] MT9M114: Add bypass-pll DT-binding
+Message-ID: <Z788hw7pSpwmL2Ze@kekkonen.localdomain>
+References: <20250226153929.274562-1-mathis.foerst@mt.com>
+ <20250226153929.274562-2-mathis.foerst@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 464CA1F387
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226153929.274562-2-mathis.foerst@mt.com>
 
-On Wed, 26 Feb 2025 17:00:43 +0100,
-Chuck Lever wrote:
+Hi Mathis,
+
+Please see which subject prefix has been used in the past for these
+bindings.
+
+On Wed, Feb 26, 2025 at 04:39:22PM +0100, Mathis Foerst wrote:
+> The MT9M114 sensor has an internal PLL that generates the required SYSCLK
+> from EXTCLK. It also has the option to bypass the PLL and use EXTCLK
+> directly as SYSCLK.
+> The current driver implementation uses a hardcoded PLL configuration that
+> requires a specific EXTCLK frequency. Depending on the available clocks,
+> it can be desirable to use a different PLL configuration or to bypass it.
 > 
-> On 2/26/25 9:35 AM, Takashi Iwai wrote:
-> > On Wed, 26 Feb 2025 15:20:20 +0100,
-> > Chuck Lever wrote:
-> >>
-> >> On 2/26/25 9:16 AM, Takashi Iwai wrote:
-> >>> On Wed, 26 Feb 2025 15:11:04 +0100,
-> >>> Chuck Lever wrote:
-> >>>>
-> >>>> On 2/26/25 3:38 AM, Takashi Iwai wrote:
-> >>>>> On Sun, 23 Feb 2025 16:18:41 +0100,
-> >>>>> Chuck Lever wrote:
-> >>>>>>
-> >>>>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
-> >>>>>>> [ resent due to a wrong address for regression reporting, sorry! ]
-> >>>>>>>
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> we received a bug report showing the regression on 6.13.1 kernel
-> >>>>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
-> >>>>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
-> >>>>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>>>>
-> >>>>>>> Quoting from there:
-> >>>>>>> """
-> >>>>>>> I use the latest TW on Gnome with a 4K display and 150%
-> >>>>>>> scaling. Everything has been working fine, but recently both Chrome
-> >>>>>>> and VSCode (installed from official non-openSUSE channels) stopped
-> >>>>>>> working with Scaling.
-> >>>>>>> ....
-> >>>>>>> I am using VSCode with:
-> >>>>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-> >>>>>>> """
-> >>>>>>>
-> >>>>>>> Surprisingly, the bisection pointed to the backport of the commit
-> >>>>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-> >>>>>>> to iterate simple_offset directories").
-> >>>>>>>
-> >>>>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
-> >>>>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
-> >>>>>>> release is still affected, too.
-> >>>>>>>
-> >>>>>>> For now I have no concrete idea how the patch could break the behavior
-> >>>>>>> of a graphical application like the above.  Let us know if you need
-> >>>>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
-> >>>>>>> and ask there; or open another bug report at whatever you like.)
-> >>>>>>>
-> >>>>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> thanks,
-> >>>>>>>
-> >>>>>>> Takashi
-> >>>>>>>
-> >>>>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-> >>>>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
-> >>>>>>
-> >>>>>> We received a similar report a few days ago, and are likewise puzzled at
-> >>>>>> the commit result. Please report this issue to the Chrome development
-> >>>>>> team and have them come up with a simple reproducer that I can try in my
-> >>>>>> own lab. I'm sure they can quickly get to the bottom of the application
-> >>>>>> stack to identify the misbehaving interaction between OS and app.
-> >>>>>
-> >>>>> Do you know where to report to?
-> >>>>
-> >>>> You'll need to drive this, since you currently have a working
-> >>>> reproducer.
-> >>>
-> >>> No, I don't have, I'm merely a messenger.
-> >>
-> >> Whoever was the original reporter has the ability to reproduce this and
-> >> answer any questions the Chrome team might have. Please have them drive
-> >> this. I'm already two steps removed, so it doesn't make sense for me to
-> >> report a problem for which I have no standing.
-> > 
-> > Yeah, I'm going to ask the original reporter, but this is still not
-> > perfect at all; namely, you'll be missed in the loop.  e.g. who can
-> > answer to the questions from Chrome team about the breakage commit?
-> > That's why I asked you posting it previously.  If it has to be done by
-> > the original reporter, at least, may your name / mail be put as the
-> > contact for the kernel stuff in the report?
+> Add the 'bypass-pll' property to the MT9M114 DT-bindings to allow selecting
+> the PLL bypass mode.
 > 
-> Certainly! Perhaps add Cc: linux-fsdevel@ as well.
+> Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> index f6b87892068a..72e258d57186 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> @@ -70,6 +70,10 @@ properties:
+>            - bus-type
+>            - link-frequencies
+>  
+> +  onnn,bypass-pll:
+> +    description: Bypass the internal PLL of the sensor to use EXTCLK directly as SYSCLK.
+> +    type: boolean
+> +
 
-OK, thanks, now asked on the bugzilla.
+But on the content itself: do you need this? Could you instead compare the
+external clock frequency to the link-frequencies property value(s)?
 
+>  required:
+>    - compatible
+>    - reg
 
-Takashi
+-- 
+Regards,
+
+Sakari Ailus
 
