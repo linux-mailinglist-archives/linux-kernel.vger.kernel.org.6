@@ -1,225 +1,163 @@
-Return-Path: <linux-kernel+bounces-533660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861EFA45D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:41:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B60FA45D69
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A164168DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5493A72B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283B3215779;
-	Wed, 26 Feb 2025 11:41:50 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FF32153FD;
+	Wed, 26 Feb 2025 11:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBLyiBHY"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F0621505D;
-	Wed, 26 Feb 2025 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A652321505D;
+	Wed, 26 Feb 2025 11:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570109; cv=none; b=uogbsB89HMoA0iEu/DdNGTMCZzP3+2Mu4twN5bmmM+YMGzdALx7IxDnzfDxp5JtWAPjMks+H74QgTnvkWRVhBPzbRdRl7YuSxY4dP0Z2MxVyKjGLcl6uq3jedcz2Lc3mfl4coEAlzQjmHfsd1Xp+biz56zicdnm9C5ofGCaUcdc=
+	t=1740570181; cv=none; b=knFhLJEaabqn6M5HPjEtbz2l8Y2RR5pru3joBFLMKd1tJCY0mNp1rFekE5hJToheBAdzpPzYBss0n+7DLDjOVt3F0brjFVK+EWRyr1sex9iPJRbNuiubQ4ooBabvyhjuwtYZU1w8OrnE/rHBI/XPfXhN1UI08jlQbVJ6aSx3c54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570109; c=relaxed/simple;
-	bh=KSwNl3A1mC+3ZEdgjSHwOe3ThOAVyqdt0JrcLju1qg8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Liv4B1LTWfgdrz8cW3SfWl831v+ibAYLnLpyj1pIctN8hBasJxfbdn5oknwCjWlW6pl2k0PsvzsG/8XCYxoPEgqjunCYMNBRJjSK2iqSQ++gIpz8MZhUYfc9ljGXFJ4Fsqu75YCcg5QWEmX3acFCNiyIiFJ1G+RECPbEhedZf/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z2srN2P2Xz1GDh5;
-	Wed, 26 Feb 2025 19:36:52 +0800 (CST)
-Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7B5821402C4;
-	Wed, 26 Feb 2025 19:41:37 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 26 Feb 2025 19:41:36 +0800
-Subject: Re: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>, Alex
- Williamson <alex.williamson@redhat.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-References: <20250225062757.19692-1-liulongfang@huawei.com>
- <20250225062757.19692-2-liulongfang@huawei.com>
- <20250225170941.46b0ede5.alex.williamson@redhat.com>
- <024fd8e2334141b688150650728699ba@huawei.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <2dd0cd4a-0b64-aa21-d82b-f1d506d42631@huawei.com>
-Date: Wed, 26 Feb 2025 19:41:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740570181; c=relaxed/simple;
+	bh=5i/OknVHZIgAS7fy0fc/g2sApGx+XqAVMHcU0hKTur8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i5oK8zgAgIF8/Pc9QEB1eBQMCc5t01hvT0Wrj2+zMWDE1eQEsXIw+Wir1KqOsSPPjpTGoNmMy2xPsuryCGnhvdRUDpOU3wQZdIbitQsW4W/DMFoHFfFVUpKt2epgQ59T60jnhtSzf4ZZ2Gvoj7GvgnYEPgZG7YOhOHXDb+mpWso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBLyiBHY; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54838cd334cso5763908e87.1;
+        Wed, 26 Feb 2025 03:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740570178; x=1741174978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L5hrGQtYfhc5Y+HY7h904Luh/ddK0W6WhpT8KbPVtUc=;
+        b=NBLyiBHYCPyuZ6VxRa/b9eUn51wslQDiMgx8zyTznQ4UcE/rzXKLMfIkJgTc27gYrT
+         UlGrFIM9S5MBv2onMJnbB8WMIbfMfZORn9bfOK6CJkjHeDzdIyco99V69L+hbRSxHsTb
+         6AzLDlIossix8m478tYzP+OLcjd1HaOJ0enyNDbEZ/sZJg+WmQJZuj3m0oLj77XU1nEN
+         qyXctGUdx7KJR7/kavkBusr1V6jfJ82+wdxKcR61OMTcz7AYpbsXBw/yekiGo8MkSAVK
+         DkkVTnXVsQ+/G6tTWs7tYjaHwKPpchVk+K1vaqiwz7hNwScQ4RA6OqlaN5KS26bahlv9
+         OO4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740570178; x=1741174978;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L5hrGQtYfhc5Y+HY7h904Luh/ddK0W6WhpT8KbPVtUc=;
+        b=aUV/wsBJGOeGUlZfVvVewiHQyTOpidqh3xQCaB41rt3UQkbaMgwf7raJ8Hhg+fVcN4
+         uy1qYIxOIuMMr66kxmwQZujEbRy37nQ09k1ZotUeWlbg1ZR0PNo9i0sm05XKND/ox1go
+         cCXyKYPGcm0Xq5LotPmjhEIUWVt+175l9h/or4ZEA1yX1Ma6BjDCqeoABNZIaHVvYLSy
+         F1CktVxVNMg8NzmBGH3T46x3MJntkXg39ZveUeWatA0l6lYMzm8PtvxYypJy+sFOVyhn
+         /Y2eEPOmy9X5D/vsmsgKQA539SymKbjsSz685jSXvmveCrm6jEeCkHg3aIYfPwSnyY+y
+         JK4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUUFUJJuRvEsbVzqtMtNphkkIw1wctvR1K/MvXFpd8TCZHJyTQOTeJjyj7UDeLZ/S7MRsNvS+JLSOdJqcpo@vger.kernel.org, AJvYcCX4f7XMVtkQo7jfgCKeamMJrxbMt316/7REqxTJ/+jXR32eGnDEOBvlXaD/bzHp0f3AQtqFv4HZldp3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+l4ikjAB9YIkdECl5NKgAzQvRax7OzDg9+vUVpgEzTECNwT63
+	EaENA2g5SSpIj0EW2brnt2jUSkZ+KKpvhJyhOPAm4n70V/aUZVbeuG3GHw==
+X-Gm-Gg: ASbGncsjkyHZ8Q7dCPAqhty1y7sqi8mC1QLxWKkxGoHyYhiLEXCV3G73A8aScPjPt88
+	jrPIHE7ZPwZbOomQ82OfjPgZh60/z/mHiVGMcOvdcfa27xicGaYc4CRHli/pxwRECrLqiYu3l8N
+	LFD48H7L0mcOCtBGl7gi7fzYdw6Rz42QOoFg+IDDpL+9zgEDxNGgeq6HdGY2yirid3ytxGJaEE6
+	boAkAr6lJoz6QmPD/MjcoKX9D1+NLnqIvb52B7TawjHrzhtU1D4jqjghPOeeQJIWcQXI9h7wviS
+	IbUo8QlaoaZNqgTPtwGfJ5l0b54YCNIK6i8JmuM/dKW0+88QpK0QphsifUv3R9E2B52iWsYAXq5
+	5x5tpyAM=
+X-Google-Smtp-Source: AGHT+IGWmhNVTANspZfihUtvglm0GZovp+BUZPoZB6tq8t5oZerY9iOeHToM9Prhn88TfpdSdzHrIg==
+X-Received: by 2002:a05:6512:3f07:b0:545:a1a:556b with SMTP id 2adb3069b0e04-5493c373156mr2643553e87.0.1740570177524;
+        Wed, 26 Feb 2025 03:42:57 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514efcd5sm432787e87.141.2025.02.26.03.42.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 03:42:56 -0800 (PST)
+Message-ID: <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+Date: Wed, 26 Feb 2025 13:42:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <024fd8e2334141b688150650728699ba@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500006.china.huawei.com (7.202.181.43)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+ <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+ <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2025/2/26 16:11, Shameerali Kolothum Thodi wrote:
+On 26/02/2025 12:18, Linus Walleij wrote:
+> On Wed, Feb 26, 2025 at 7:09 AM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+>> On 25/02/2025 23:36, Linus Walleij wrote:
+>>> we can maybe move it to struct gpio_device in
+>>> drivers/gpio/gpiolib.h?
+>>>
+>>> This struct exist for every gpio_chip but is entirely gpiolib-internal.
+>>>
+>>> Then it becomes impossible to do it wrong...
+>>
+>> True. I can try seeing what it'd require to do that. But ... If there
+>> are any drivers out there altering the valid_mask _after_ registering
+>> the driver to the gpio-core ... Then it may be a can of worms and I may
+>> just keep the lid closed :)
 > 
-> 
->> -----Original Message-----
->> From: Alex Williamson <alex.williamson@redhat.com>
->> Sent: Wednesday, February 26, 2025 12:10 AM
->> To: liulongfang <liulongfang@huawei.com>
->> Cc: jgg@nvidia.com; Shameerali Kolothum Thodi
->> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
->> <jonathan.cameron@huawei.com>; kvm@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linuxarm@openeuler.org
->> Subject: Re: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
->>
->> On Tue, 25 Feb 2025 14:27:53 +0800
->> Longfang Liu <liulongfang@huawei.com> wrote:
->>
->>> The dma addresses of EQE and AEQE are wrong after migration and
->>> results in guest kernel-mode encryption services  failure.
->>> Comparing the definition of hardware registers, we found that
->>> there was an error when the data read from the register was
->>> combined into an address. Therefore, the address combination
->>> sequence needs to be corrected.
->>>
->>> Even after fixing the above problem, we still have an issue
->>> where the Guest from an old kernel can get migrated to
->>> new kernel and may result in wrong data.
->>>
->>> In order to ensure that the address is correct after migration,
->>> if an old magic number is detected, the dma address needs to be
->>> updated.
->>>
->>> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live
->> migration")
->>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->>> ---
->>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 40 ++++++++++++++++---
->>>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++++++-
->>>  2 files changed, 46 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>> index 451c639299eb..35316984089b 100644
->>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->>> @@ -350,6 +350,31 @@ static int vf_qm_func_stop(struct hisi_qm *qm)
->>>  	return hisi_qm_mb(qm, QM_MB_CMD_PAUSE_QM, 0, 0, 0);
->>>  }
->>>
->>> +static int vf_qm_version_check(struct acc_vf_data *vf_data, struct device
->> *dev)
->>> +{
->>> +	switch (vf_data->acc_magic) {
->>> +	case ACC_DEV_MAGIC_V2:
->>> +		if (vf_data->major_ver < ACC_DRV_MAJOR_VER ||
->>> +		    vf_data->minor_ver < ACC_DRV_MINOR_VER)
->>> +			dev_info(dev, "migration driver version not
->> match!\n");
->>> +			return -EINVAL;
->>> +		break;
->>
->> What's your major/minor update strategy?
->>
->> Note that minor_ver is a u16 and ACC_DRV_MINOR_VER is defined as 0, so
->> testing less than 0 against an unsigned is useless.
->>
->> Arguably testing major and minor independently is pretty useless too.
->>
->> You're defining what a future "old" driver version will accept, which
->> is very nearly anything, so any breaking change *again* requires a new
->> magic, so we're accomplishing very little here.
->>
->> Maybe you want to consider a strategy where you'd increment the major
->> number for a breaking change and minor for a compatible feature.  In
->> that case you'd want to verify the major_ver matches
->> ACC_DRV_MAJOR_VER
->> exactly and minor_ver would be more of a feature level.
-> 
-> Agree. I think the above check should be just major_ver != ACC_DRV_MAJOR_VER
-> and we can make use of minor version whenever we need a specific handling for
-> a feature support.
->
+> That's easy to check with some git grep valid_mask
 
-Well, that's a good way.
-We only use minor_ver to record important updates of the driver. When there is
-an important update, minor_ver increases by 1.
-Major_ver is used to distinguish migration versions. After major_ver is updated,
-minor_ver returns to 0.
+True. I just tried. It seems mostly Ok, but...
+For example the drivers/gpio/gpio-rcar.c uses the contents of the 
+'valid_mask' in it's set_multiple callback to disallow setting the value 
+of masked GPIOs.
 
-Therefore, we can change it to only check major_ver.
+For uneducated person like me, it feels this check should be done and 
+enforced by the gpiolib and not left for untrustworthy driver writers 
+like me! (I am working on BD79124 driver and it didn't occur to me I 
+should check for the valid_mask in driver :) If gpiolib may call the 
+driver's set_multiple() with masked lines - then the bd79124 driver just 
+had one unknown bug less :rolleyes:) )
 
-> Also I think it would be good to print the version info above in case of mismatch.
->
+I tried looking at the gpiolib to see how this works... It seems to me:
 
-OK.
-Thanks.
-Longfang.
+gpio_chip_set_multiple() does not seem to check for valid_mask. This is 
+called from the gpiod_set_array_value_complex() - which gave me a 
+headache as it is, as name says, complex. Well, I didn't spot valid_mask 
+check but I may have missed a thing or 2...
 
->>
->>> +	case ACC_DEV_MAGIC_V1:
->>> +		/* Correct dma address */
->>> +		vf_data->eqe_dma = vf_data-
->>> qm_eqc_dw[QM_XQC_ADDR_HIGH];
->>> +		vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
->>> +		vf_data->eqe_dma |= vf_data-
->>> qm_eqc_dw[QM_XQC_ADDR_LOW];
->>> +		vf_data->aeqe_dma = vf_data-
->>> qm_aeqc_dw[QM_XQC_ADDR_HIGH];
->>> +		vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
->>> +		vf_data->aeqe_dma |= vf_data-
->>> qm_aeqc_dw[QM_XQC_ADDR_LOW];
->>> +		break;
->>> +	default:
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>  static int vf_qm_check_match(struct hisi_acc_vf_core_device
->> *hisi_acc_vdev,
->>>  			     struct hisi_acc_vf_migration_file *migf)
->>>  {
->>> @@ -363,7 +388,8 @@ static int vf_qm_check_match(struct
->> hisi_acc_vf_core_device *hisi_acc_vdev,
->>>  	if (migf->total_length < QM_MATCH_SIZE || hisi_acc_vdev-
->>> match_done)
->>>  		return 0;
->>>
->>> -	if (vf_data->acc_magic != ACC_DEV_MAGIC) {
->>> +	ret = vf_qm_version_check(vf_data, dev);
->>> +	if (ret) {
->>>  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
->>>  		return -EINVAL;
->>>  	}
->>> @@ -418,7 +444,9 @@ static int vf_qm_get_match_data(struct
->> hisi_acc_vf_core_device *hisi_acc_vdev,
->>>  	int vf_id = hisi_acc_vdev->vf_id;
->>>  	int ret;
->>>
->>> -	vf_data->acc_magic = ACC_DEV_MAGIC;
->>> +	vf_data->acc_magic = ACC_DEV_MAGIC_V2;
->>> +	vf_data->major_ver = ACC_DRV_MAR;
->>> +	vf_data->minor_ver = ACC_DRV_MIN;
->>
->> Where are "MAR" and "MIN" defined?  I can't see how this would even
->> compile.  Thanks,
+If someone remembers straight away how this is supposed to work - I 
+appreciate any guidance. If not, then I try doing some testing when I 
+wire the BD79124 to my board for the next version of the BD79124 series.
+
+> and intuition. I think all calls actually changing the valid_mask
+> are in the init_valid_mask() callback as they should be.
 > 
-> Yes. Please  make sure to do a compile test and run basic sanity tested even if you
-> think the changes are minor. Chances are there that you will miss out things like
-> this.
+>> Furthermore, I was not 100% sure the valid_mask was not intended to be
+>> used directly by the drivers. I hoped you and Bart have an opinion on that.
 > 
-> Thanks,
-> Shameer
->  
-> .
+> Oh it was. First we just had .valid_mask and then it was
+> manipulated directly.
+
+I still can't decide if hiding the valid_mask is the right thing to do, 
+or if we should just respect it if it is set by driver (as it was 
+originally intended).
+
+> Then we introduced init_valid_mask() and all users switched over
+> to using that.
 > 
+> So evolution, not intelligent design...
+
+Like anything we actually get done ^_^;
+
+Yours,
+	-- Matti
+
 
