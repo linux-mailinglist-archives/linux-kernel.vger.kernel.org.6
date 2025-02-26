@@ -1,153 +1,113 @@
-Return-Path: <linux-kernel+bounces-533192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098F4A456B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:32:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6944CA456BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C3C176D33
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8566C3A320C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC6E26B089;
-	Wed, 26 Feb 2025 07:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB7426B96D;
+	Wed, 26 Feb 2025 07:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bf/wJYKa"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZnSOWrc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648F4171E49
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2052158DD4;
+	Wed, 26 Feb 2025 07:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740555133; cv=none; b=uIQ1Q6wRZ4luzFw0hy87ak4htuq9EJENgsRLrYl4U3iL9bSOlrW7tOFWIqS4Um925HpD+2ocID2VrySD5ea+2GEgyIXQCh5FgwD9iZMIgKVxdpGbLNI9fYJWBOCrVDU7fjmUuAYHvFsP1RrxP6xz6U08IQKRMmqH1uYxwnW0wmk=
+	t=1740555166; cv=none; b=I461/mGzz8t4A0fS0+nteazJqitF0bD1lYyfor/FiuU4FMv7SNafmZ05+MIz/Io/YlAiwmYwZpgS9NbdaYXQ+Dj2cE1ORXpd8UofLF8C7dxrBBxWHtHWAXfWngAquO2uOXwNhubwDHFhMhjruwJLVuMmmpPd1QzXidEthJxSRzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740555133; c=relaxed/simple;
-	bh=2d7ZYo/J6xNOpi6uaMp2ccWOTHvJMpT+pl0WNwgOe4U=;
+	s=arc-20240116; t=1740555166; c=relaxed/simple;
+	bh=i3yBUJwWR2nHLbnkwSKlJvBidp8N1zKCYReFcAUDAhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REJ+pEfUHl/OiA4TI+bmTrHlGE/iVwcQ9nxQG1NNc0XFA/TmYQoRl4WsbEKuA1OwGxiDJg9geo5MjIISnliFFkLTa2NDqMIIjWwx9VCuCIiQQJOoiDv4q6xsxwIu48xSGxwWrPk0GJsGa8e/Ck+jAd1s+O3vrjMt/zmXkSwbuRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bf/wJYKa; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so8719484a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:32:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740555130; x=1741159930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fV/8UPNYlCCgRVHTwtkpq+W+pfg36jdrdbg5juiRqX0=;
-        b=bf/wJYKaBz5PcBGldDLGM5AhUG8EVBoUB2WB4W1J4hyei3TSuWbSYDc61yJEK0yGOH
-         MzqAUmpb7Lve4O0eDzYcz0GXEdVf0D/YZLovYwtNg3uGIrqHCMZYEVAFqQd2HkPVvvqC
-         eZgi6TflAkFmx7GZXo1aumGXr3CQGIZrOcib22MRwQ7MqQ77fymUGGsTVlMLOznzKfY5
-         IQR9CdIEc256f7Ma/9cuw9eSLpsVUmC5gSCh+ljfatIoXdO4YiDLFJGLgQHobjsVygYS
-         +kRkOecAkD2t1fDcsFo2AnOIyAQIuLRisS6EhUFz2o9kZ9kpOjorFjCF6a5aooxjSHpq
-         yXkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740555130; x=1741159930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fV/8UPNYlCCgRVHTwtkpq+W+pfg36jdrdbg5juiRqX0=;
-        b=RzSPvTcBMdsRzfhl2Kc7t6FA7AjG1fExdIMPE1NvUgoRebuKfQNFFbU3//tT7dakKO
-         1bCUN2LeOVL2EUS49mv6hXe6Q2dDFgOeZSo/w+EyN2kNPXOya45cnqVrkP9Fw7nYJXoz
-         FLi1+cb6NvM3b1XHDBLvnbNVd9dlOIHpMSzgVIkbMp3VBFlmGcxrj2+fEL8ip6vEzq0J
-         v4Hl/NSZhL38ot2FZYAZYrLwrhHL89l9m2znDZ9yxSedrKhU8nh6YvG0hMIjHyPfNyF3
-         xLG9B9z3i3mANE5SsLr0z+vsDCuHNnePPqnRM7tPa06q3HsNnTZVDCqW772dTqq8qJj9
-         USgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmxGAezxibB4ehwgahzeHNN+x4Qe7NgV2cOaS6auV0Cq8Cr3g/PI/qJuPKVippfWP7ECqn8kknbtZykDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSeP0AOC3B55nvXRaH2DNI8d1NCZGACOK7TdogAIv4vfVGLcoF
-	95CvCkqNp10qWlEDP9ojqBvWqWFm5LtSd5rmJeU6Y24hTlIZeKm6xfyQ8jtWEtI=
-X-Gm-Gg: ASbGncuirLEPCkVtrLNBkpLBRQnAoESME0C8JRTh/AZIByB7I4y+Cd3LKwf9cHvjiPF
-	aPzQiR2WT4PKSMy3HA/mNpJZuOit2C6jtflFt+msPj0srHUyjTFsHNbddMX9Hfqjnm37td5s7iL
-	gafCPW5VGyrtCDwchdlZbvPyxv0hT5lWhtpaUU2qvzdbQTxn5TOXJqJUGVXYDbGVEU+JlmNIwx/
-	LC9gkE/rDZHXn/Z9urB6pOn4Oe0Clf6Jz7TgPtgcc4mCYgTcLWB95UMJBf0FwWSz2smFeijaEk1
-	maH17fwZDPoYOYHvhzR7GTQEc9c1qZ0=
-X-Google-Smtp-Source: AGHT+IEn3LearM21K5U7hoqi12X3IHtk0Y4SVgsVZwZq95cg2z1JvH53DBpCfb50hAH/YxGjgv13xg==
-X-Received: by 2002:a05:6402:51d0:b0:5e0:818a:5f43 with SMTP id 4fb4d7f45d1cf-5e4a0e29a82mr2240541a12.30.1740555129678;
-        Tue, 25 Feb 2025 23:32:09 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4a6353eb6sm572296a12.48.2025.02.25.23.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 23:32:08 -0800 (PST)
-Date: Wed, 26 Feb 2025 10:32:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Karan Tilak Kumar <kartilak@cisco.com>
-Cc: sebaddel@cisco.com, arulponn@cisco.com, djhawar@cisco.com,
-	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
-	aeasi@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] scsi: fnic: Remove unnecessary spinlock locking and
- unlocking
-Message-ID: <80809232-9490-4a0d-8159-af53228b612b@stanley.mountain>
-References: <20250225215146.4937-1-kartilak@cisco.com>
- <20250225215146.4937-2-kartilak@cisco.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fk0DqwQR2aZxH/d+WfweiMLq4PeoPhqMjo4vhysWa63/JusyADlyGPLsxyF1jVenqqPMUNEYu1nsx+10H8DSra9QEbl0IoMiw6+1yOE9X+pJ5G2v54Dzq6ffwWdSgKAiDaz56/FiAGQKQW4CTBBgfJlYHHQicijg6PQY4ngV/qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZnSOWrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8B4C4CED6;
+	Wed, 26 Feb 2025 07:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740555165;
+	bh=i3yBUJwWR2nHLbnkwSKlJvBidp8N1zKCYReFcAUDAhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iZnSOWrc0534guOCFWF3FoGRqYV1GlyUmFrwgIbROiK9rLsd0ayqM1xEdlPXMAqSh
+	 HniEWuVBoyAGumLibd0DuSPosEoXMpfbgMy5KQxi7KDzAaqyN7eVmKBodgCv20Pfty
+	 gdLuTRnR34nSWCaiNJBkLSN8KuYktv5wvP0hSbGe2LV3C2BtSo+3RMmciVN7cCGvW6
+	 Od9ERN5yet2XqQOuCGRz4VZdEeL8bYVo0jKNJ5cmbRL5Pw65Yd1umqkbUNW2x0v5kc
+	 bbzqTcI9mp+unBHvd6ZBQnKcCT2KUKZtCHo0IHiTjWTkGsYQR1rOz20OFb7YRgkf/u
+	 xSI/Z6WfjK0IA==
+Date: Wed, 26 Feb 2025 08:32:42 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, dmitry.baryshkov@linaro.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	jorge.ramirez@oss.qualcomm.com
+Subject: Re: [PATCH v4 09/10] dt-bindings: PCI: qcom,pcie-sc7280: Add
+ 'global' interrupt
+Message-ID: <20250226-enlightened-chachalaca-of-artistry-2de5ea@krzk-bin>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-9-e08633a7bdf8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250225215146.4937-2-kartilak@cisco.com>
+In-Reply-To: <20250225-qps615_v4_1-v4-9-e08633a7bdf8@oss.qualcomm.com>
 
-On Tue, Feb 25, 2025 at 01:51:46PM -0800, Karan Tilak Kumar wrote:
-> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-> index 8843d9486dbb..6530298733f0 100644
-> --- a/drivers/scsi/fnic/fdls_disc.c
-> +++ b/drivers/scsi/fnic/fdls_disc.c
-> @@ -311,36 +311,30 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
->  	unsigned long flags;
->  	int idx;
+On Tue, Feb 25, 2025 at 03:04:06PM +0530, Krishna Chaitanya Chundru wrote:
+> Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
+> to the host CPU. This interrupt can be used by the device driver to handle
+> PCIe link specific events such as Link up and Link down, which give the
+> driver a chance to start bus enumeration on its own when link is up and
+> initiate link training if link goes to a bad state. The PCIe driver can
+> still work without this interrupt but it will provide a nice user
+> experience when device gets plugged and removed.
+> 
+> Hence, document it in the binding along with the existing MSI interrupts.
+> Global interrupt is parsed as optional in driver, so adding it in bindings
+> will not break the ABI.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
+> index 76cb9fbfd476..7ae09ba8da60 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
+> @@ -54,7 +54,7 @@ properties:
 >  
-> -	spin_lock_irqsave(&fnic->fnic_lock, flags);
-> -
->  	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
+>    interrupts:
+>      minItems: 8
+> -    maxItems: 8
+> +    maxItems: 9
 >  
->  		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
->  			"Schedule oxid free. oxid idx: %d\n", idx);
->  
-> -		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->  		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
-> -		spin_lock_irqsave(&fnic->fnic_lock, flags);
-> -
->  		if (!reclaim_entry) {
->  			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
->  				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
-> -			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->  			return;
->  		}
->  
->  		if (test_and_clear_bit(idx, oxid_pool->pending_schedule_free)) {
+>    interrupt-names:
+>      items:
+> @@ -66,6 +66,7 @@ properties:
+>        - const: msi5
+>        - const: msi6
+>        - const: msi7
+> +      - const: global
 
-We discussed this earlier and I really should have brought it up then,
-but what is this check about?  We "know" (scare quotes) that it is true
-because we're inside a for_each_set_bit() loop.  I had assumed it was to
-test for race conditions so that's why I put it under the lock.  If the
-locking doesn't matter then we could just do a clear_bit() without doing
-a second test.
+Either context is missing or these are not synced with interrupts.
 
-regards,
-dan carpenter
+Best regards,
+Krzysztof
 
->  			reclaim_entry->oxid_idx = idx;
->  			reclaim_entry->expires = round_jiffies(jiffies + delay_j);
-> +			spin_lock_irqsave(&fnic->fnic_lock, flags);
->  			list_add_tail(&reclaim_entry->links, &oxid_pool->oxid_reclaim_list);
-> +			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->  			schedule_delayed_work(&oxid_pool->oxid_reclaim_work, delay_j);
->  		} else {
->  			/* unlikely scenario, free the allocated memory and continue */
->  			kfree(reclaim_entry);
->  		}
->  	}
-
-> -
-> -	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->  }
->  
->  static bool fdls_is_oxid_fabric_req(uint16_t oxid)
-> -- 
-> 2.47.1
 
