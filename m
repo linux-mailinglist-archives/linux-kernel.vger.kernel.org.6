@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-534043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE51A46206
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA2BA46208
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE8E17419A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB3A175133
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8DB22171C;
-	Wed, 26 Feb 2025 14:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D858622173C;
+	Wed, 26 Feb 2025 14:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k/dUISma"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KP+ssduJ"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0621B9C5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5483209;
+	Wed, 26 Feb 2025 14:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579277; cv=none; b=LAbV1lsA/6Iz4lAMcqEIS162fOWHz6N1I/MOKwGK/N0nctoQEwnQbwdQWu3SEJWIzEAm+tgrztqOXxLyPTfNiR2+LhymA8qxVglxiCOkhfkuMrxp1ZDtHhaNSci3u17S31xkwz/ybncjXoSvSly7ZxdZHZDAnv5Dc3B1G6SBObY=
+	t=1740579279; cv=none; b=jHEgW3IYPsAZvJ9IlZEJjff5S1URqhl72UYG54LgA+PRzuPk2mFoYASnwhKZtjHaEHTf3wkHkN516iJkgBpHyw3JLGJy/0e8H34ZwFqiqMCpyipHXBwvBHL3w6iJRIlj+HlNx/P1SYNNNGPXHKmZO1tBR9TjM6tIIA5R7mrVPBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579277; c=relaxed/simple;
-	bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kq0hYMkB3mODo8OTOpcGNp5BoQAuUjRfHECtw53szMRhWlH/Ems4PkW+UpjHx8JdWQvxIqQDA3/+2jKNrVwa6zYKb1AJBHowuugk3X5OEeCXeMmwZ5Tf2mQi+21KishM5cvRPeTM9TVAYor3pnAgmtWsJme86opGMb//+gqyy9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k/dUISma; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e5ddd781316so5628537276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:14:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740579275; x=1741184075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
-        b=k/dUISmaK7iNxvCp1KgDkJA3F4naHAjCMZJsTqEAaWiUWgHOYN+1Y1K9YVaCpOr8wD
-         yeEx1bxbwl5bD42fyOFF0sCn0JpJLE4k7ajdwpD016Tjd11XH6OrFd5C3v6PMUqu+H2R
-         w00pOibPbdNk6/mmALYULTx3gTTf2zY4QJClUKrI7Es2BU6G/AWSE3c7bTME75aPhf3j
-         dGO1o1ZOlhHv8gcSbaupb20cSw/hZtGPqI9mr496VhyiTC25Y2e5gS3gJPNhekCmTmji
-         exX6Q/HYL0Sd+zkjBjALWtTolJLmat3pd0Pag4gJ7zBcQZMSUvpITEhTmjT870Ztq+jL
-         Stlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740579275; x=1741184075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
-        b=FmFIRYXl8q8AdvESeitJYQvynB5NJvDxXsFw165i+IDV4gNqjXg2/DIaMMGTDB06iI
-         XR5zTIglqnvdQGa42dwR6bxOTH3o7N30wVgbLdisuGksNQ+OpTGGJ2pijAPhf1iAwrz5
-         8n8SkOtJT3kI/G/om8+3zMCg26gALL+EqwtSw6OWNUZfcXo8k4rsyJ0Mw58lPBeJp4/B
-         B2agYNOH9wDO3q6Y0Z03j3EUuFj0HsXx8ComhFloct85/8hCX1qDTi1JSOIhKqRqqpiD
-         SKGIIdQzTu5HX2uQwtJPdo68aK1IN440GTtSUKLJ1bQIwMXVSrv1onPAG6E7SreJr1bC
-         oDtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5VF1///zZmc27X0wuDWJKwKAfRAmzCANdL2CzXSibBqwYBn3EZ3yqmvRLgc5cNXckLaO0/ua3zpB9LW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpVNzIkke544MHA1Xjwqk6LWncU/SvZ8yStmwA8ofHtRHBc5PL
-	Ikab5lxXAIUr9cS4MzBcDBsERNlQcr8K9BqTIBvC7ASeS4uLCYBPHCANdpCesP2AMyDG0yDbRjf
-	40yO264j5aqiwHd3iaAacWUoOH/gODWoK1gI6UA==
-X-Gm-Gg: ASbGnculI/Jz+eIsjQNOm7LEUOYli0GuhcI8FKH5ZHFVwzagc0235JyfMfJnV9BQ+7n
-	n13u0sY32se0LaIsXnEZqT2N2cPMs3iPg42Gkp9jgZWCC871ZyJ3SzSHhNCMjw3ZRIappqXQI8Y
-	SzeXjHhPtKWgJjJOBXZYn0Nyod8A2ji5kzBcHp
-X-Google-Smtp-Source: AGHT+IEX4wu5j82nOLm5VM0kOISrbX4gSyb4L+WcDmjP1Qsdn6b72+IZdtPz57qGabsSe+EpTHSUCTQhwXW8UuTpO28=
-X-Received: by 2002:a05:6902:2607:b0:e5d:fd9c:f4d with SMTP id
- 3f1490d57ef6-e5e8afc4b41mr15466365276.11.1740579275247; Wed, 26 Feb 2025
- 06:14:35 -0800 (PST)
+	s=arc-20240116; t=1740579279; c=relaxed/simple;
+	bh=WnGKDVToiFp5+OKsdNZhHHiF3rAkYqZFvkZOqStCEdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o68h7BL9ldFRNrjIp8Wmq59qCb/NChi6ikBVCfPNsYYFidqjsTe+kx7Itn9IfqKvURFi3z1wdX73PfXD5YnPSpO3yk+Z9QtFF79qmuSsjRZZ0qS+VBUBbiyLqOVOjMCGPwdk1u7c+OHGFzP5R7Ika/64ncXrjNyMt6sKUMVilKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KP+ssduJ; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KvJGAbyWkcvedoLLc4FaW3JqrKOaqT7oAs2HApM74cQ=; b=KP+ssduJCcCljk3HCk1xztnkk3
+	zS+GF9pbhbYxs31tkIc2o1qgOvBu73G6nQzg79jNujH4QtrV/x03B5kel06GZxwVlF4zqtsEz59p4
+	ru+ycq0C3F+HcU8HRvffn8jqfbXLhQYlB/evrA589kvVMPsgnBKDNt5w82GcGfGRkMy8PdsroOFSz
+	636143j44zLKs98WFAY6XFV11DqeZmGi/Z8eYumMznOW+xAbNtzwH0fzumWX2A8TB+ZXJi5AIUW14
+	0UawrXNqsHTNcbdTLvHAIJ0D5AOQF89jh8mWGN1MckA15++rkbSjCzJ4fntz5Op3XSfGPuwfEgOUO
+	oRwePrdA==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tnIBH-0000Xq-P2; Wed, 26 Feb 2025 15:14:35 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: quentin.schulz@cherry.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dse@thaumatec.com,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject:
+ Re: [PATCH v3 3/3] arm64: dts: rockchip: add overlay for tiger-haikou
+ video-demo adapter
+Date: Wed, 26 Feb 2025 15:14:35 +0100
+Message-ID: <12349849.zAa99ISigo@diego>
+In-Reply-To: <20250226140942.3825223-4-heiko@sntech.de>
+References:
+ <20250226140942.3825223-1-heiko@sntech.de>
+ <20250226140942.3825223-4-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
- <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
- <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de> <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
- <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de> <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
- <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
- <Z78ZK8Sh0cOhMEsH@black.fi.intel.com> <Z78bUPN7kdSnbIjW@black.fi.intel.com>
-In-Reply-To: <Z78bUPN7kdSnbIjW@black.fi.intel.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 26 Feb 2025 15:14:24 +0100
-X-Gm-Features: AWEUYZnbMeCHev03p9RWQPC8yVSoQaBwao4RL0MRMqRWnB_wlBGnSpwb4oA7_tQ
-Message-ID: <CACMJSevxA8pC2NTQq3jcKCog+o02Y07gVgQydo19YjC9+5Gs6Q@mail.gmail.com>
-Subject: Re: Linux logs new warning `gpio gpiochip0: gpiochip_add_data_with_key:
- get_direction failed: -22`
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, brgl@bgdev.pl, 
-	Paul Menzel <pmenzel@molgen.mpg.de>, linux-gpio@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
-	regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 26 Feb 2025 at 14:47, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Feb 26, 2025 at 03:37:47PM +0200, Andy Shevchenko wrote:
-> > On Tue, Feb 25, 2025 at 10:25:00PM +0100, Linus Walleij wrote:
-> > > On Mon, Feb 24, 2025 at 9:51=E2=80=AFAM <brgl@bgdev.pl> wrote:
-> > >
-> > > > In any case: Linus: what should be our policy here? There are some =
-pinctrl
-> > > > drivers which return EINVAL if the pin in question is not in GPIO m=
-ode. I don't
-> > > > think this is an error. Returning errors should be reserved for rea=
-d failures
-> > > > and so on. Are you fine with changing the logic here to explicitly =
-default to
-> > > > INPUT as until recently all errors would be interpreted as such any=
-way?
-> > >
-> > > Oh hm I guess. There was no defined semantic until now anyway. Maybe
-> > > Andy has something to say about it though, it's very much his pin con=
-troller.
-> >
-> > Driver is doing correct things. If you want to be pedantic, we need to =
-return
-> > all possible pin states (which are currently absent from GPIO get_direc=
-tion()
-> > perspective) and even though it's not possible to tell from the pin mux=
-er
-> > p.o.v. If function is I2C, it's open-drain, if some other, it may be co=
-mpletely
-> > different, but pin muxer might only guesstimate the state of the partic=
-ular
-> > function is and I do not think guesstimation is a right approach.
-> >
-> > We may use the specific error code, though. and document that semantics=
-.
->
-> Brief looking at the error descriptions and the practical use the best (a=
-nd
-> unique enough) choice may be EBADSLT.
->
+Am Mittwoch, 26. Februar 2025, 15:09:42 MEZ schrieb Heiko Stuebner:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> 
+> This adds support for the video-demo-adapter DEVKIT ADDON CAM-TS-A01
+> (https://embedded.cherry.de/product/development-kit/) for the Haikou
+> devkit with Tiger RK3588 SoM.
+> 
+> The Video Demo adapter is an adapter connected to the fake PCIe slot
+> labeled "Video Connector" on the Haikou devkit.
+> 
+> It's main feature is a Leadtek DSI-display with touchscreen and a camera
+> (that is not supported yet). To drive these components a number of
+> additional regulators are grouped on the adapter as well as a PCA9670
+> gpio-expander to provide the needed additional gpio-lines.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-In any case, I proposed to revert to the previous behavior in
-gpiochip_add_data() in my follow-up series so the issue should soon go
-away.
+in v2 Quentin commented with a (which I forgot to add)
 
-Bart
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
+
+
+> +	vcc1v8_video: regulator-vcc1v8-video {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc1v8-video";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc3v3_baseboard>;
+> +	};
+> +
+> +	vcc2v8_video: regulator-vcc2v8-video {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc2v8-video";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <2800000>;
+> +		regulator-max-microvolt = <2800000>;
+> +		vin-supply = <&vcc3v3_baseboard>;
+> +	};
+
+and suggested to add the additional regulators on that board, that are used
+for the camera part that is unsupported right now.
+
+If there is a v4, I'll probably add those.
+
+
 
