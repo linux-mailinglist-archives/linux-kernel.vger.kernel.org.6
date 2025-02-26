@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-533332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AD0A4588A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:39:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8B8A4588C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A73C1725A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551383A9716
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057BD1E1DF9;
-	Wed, 26 Feb 2025 08:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A851E1E11;
+	Wed, 26 Feb 2025 08:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VlANETbM"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9ARkDjK"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A801A9B34
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62111E1DE9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559149; cv=none; b=b/995hhv5z6Pp7EnNDLJevKDTYNqdF6G1nF/to1UvU7Pf9PUA853B6K3I8kUZi0um7baB1XPI51auKkfSTRyfjUIJaUXT9LTfWsSBNvnKQeQB8vWWFFXqvJHz2gz9lfEyvS++ldwm/Qp7VQCDfXgRRjkOvMnD2KUU5MTxIWJRqE=
+	t=1740559175; cv=none; b=tYW7w9Z3agivifwgZCXO4cW1a9gNCcxCaM63TMzzAbMqHLRi04PbmuuersqiIDKuMyYnawrb1SrI7EwHKoTbKh6SFITQRUtH9NDVbAiRyrA/vRtY2bAAX/Vmzr8mlG7OxHIyJfRdD2Ro65Rn+W6nwlibpkCVIKTqrQPS6MsyQUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559149; c=relaxed/simple;
-	bh=R7o25Gmhow4Z8lEDeZaJUPCmJA/D+pLPP+WdRXbdRN4=;
+	s=arc-20240116; t=1740559175; c=relaxed/simple;
+	bh=GVyDNaY6+fqwoUtVjnyv7MlKCJ8j/D26acuBjiblkCQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8Ev2HGZTWPlaNVgvvXVgwX7q1zb6Nw7xecWYcub15qk73+A0Rf1APfN5XpKwwRNItTNP4JDe+hqBgV0GJ2mt2w8qzrVw8EID/W67wUxcDQ0iMmzoA2NC3ZVFegkUEDcLqq+bYdNeldKQUYLKuV/Z2I8WumkHh7JfC6vHOeafYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VlANETbM; arc=none smtp.client-ip=209.85.221.47
+	 To:Cc:Content-Type; b=Q24r2cLodNHJ/fJU8Phiz2HqTQwcMkKKzhbuD1R3sToJitmKYiH1swC90RjZLtryKcTLSSFTsxPHGDbr4zCzE/WWjIqxxmaEZ8GdS5b20nDip40FQbp3RxDyaT+pWSsZp+rAJ+aTL+NjQgs1rB1zVZUyN8ctx5G486O9qtHVxJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9ARkDjK; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so3711882f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:39:07 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4399a1eada3so56743645e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:39:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740559146; x=1741163946; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740559171; x=1741163971; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3v1HmoRqjrqqsg5xrU75YJMSiVDiFQ/P7qFYUH2blA8=;
-        b=VlANETbMkSaDtEM3N95AgVM9uHXm/o0F69qs3J9SVEEFd62/r8U4QfEjtmyYOM/LwG
-         MIPYc+9467z6t1Trim5VYAcLNp5ZgZXKnuCa5ACfzOg6nf8LGy7SDVo6L6ayp6+Nr8Pl
-         QB7PhLf+sP8A/Yc4XZ+Cz2pUfY8JwgZLTl1TEskCYQOOp91VIfdBcEcgJnLJ+6wrb/sf
-         j1RzEazWapnSXKEkcokcyXAOzwMz73hGUEYcLoeYblwR36z5K/lqkGSR860cIf+kxbyM
-         ckK0AvQwf6Bsbo5lDrYqGbGg2308KfEfp+1SXK3B7QleLV/lZmf1YlulTMxhKzxHqyvz
-         cuFg==
+        bh=Ht6WBt02v8B/a/5DouNJugdEx2I1Lc+d52dgpIP/wWg=;
+        b=h9ARkDjK+8lNdaB+64Ti9VVge93ZmoYboLHO9ojKR/UcjjfVX3cUpBhJmp5tTMyp0q
+         EAQ2vHleC1HO9+YtESmbtF2+lW2UY7NaBVfZpklPf2KY4jpScR7RyxEIAt+9bFHiutiF
+         cZffuhPCN7G+d3wsvy9ZOpQlHpLE5WjH5Ge4xj0C4cE92N4WvUF7kL7agZuMV3XGS1xj
+         GFNg+cZEYr/Mzr8CEME4L3zTr377B4U/Bg29JLlnYMwTgr5TRHQdVu/PsskGSeXjzhag
+         sErk8hO3eEmRLdkYjrt/fOwdEG7PcsQwu9aMXKW4KX3r/4dd60ZoYZV/fusRMM9ReRCy
+         BaKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740559146; x=1741163946;
+        d=1e100.net; s=20230601; t=1740559171; x=1741163971;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3v1HmoRqjrqqsg5xrU75YJMSiVDiFQ/P7qFYUH2blA8=;
-        b=To9QSkTuQmFHOHbMm/6p/clRc79iaMwUwu1P8sycU2GXAvJkt9qLeOqsK1qQzdKdSU
-         IahnpvzhMY9bRG2DVIX/ILeIXtgOY0ntkY7RJf4d30dHK9FsWDQMzTf14tWtgC5gTBcS
-         u6jcT+c+PFAgkoIrtbqty3BlaDggLDnKthW/fjmeVOT3HcodinRXB23BPZbESapb0fRX
-         OmIbT2U0Q6vsDAwZHFpCy7ZtXLZqgwTh9wSHACULNlG9jEzA02Ux6XEEOyTemWT5JvUY
-         ZENYH/wqV/kdhrC511beHlp30Am3U6RkCEUS0iEx0OvxNvVaNOAf+krh3/JBzmWsTse1
-         /u9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIeUSvwiI1JMRNMiQ6arvmrxTE54hLbJFeg97hDcA+nSUOr08iWAWoPCxopEV+KjBYt7EfIbS1a0907EE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy08HTS1XKC9NKCrmdOMrlxJEp0g2gvPy4Aww3FbwcFRcu+KBgs
-	OTnYvfer28vfJSjV1u6vgPKDJjNzd9qSyReRhtDeSkoaBgi6ioqVCjFPiGfzDqzS+E8uaKXwbTY
-	Un8fmi5eY36/7S91kEA52lshwddN2EWSwkEqI
-X-Gm-Gg: ASbGncsgF85C/PDSU2AiYInqjWB9Uapvc/9BLADZCwTsYfMoTVtBSc3sJ+JuksC7byG
-	SiTTFlbY9iR72lAbL/RZSOe8c20njn8vvlrt88ErEGsPGBNCSfqm4dbxhT1/nSTf4OKDFVaIzYe
-	2vygNsUtPLIt/U55i5ZYGw9svKpzwZREE6R6G82g==
-X-Google-Smtp-Source: AGHT+IFWtgwikgZyNRQh/bt3EkyBmLyTlQQvW2Pbzy/KXQM5t1igagm8AQOFPeLD62G1j7aoeerCLVV1JYNFoG7dFBM=
-X-Received: by 2002:a05:6000:18a6:b0:38f:2678:d790 with SMTP id
- ffacd0b85a97d-390d4f43039mr1702221f8f.33.1740559144919; Wed, 26 Feb 2025
- 00:39:04 -0800 (PST)
+        bh=Ht6WBt02v8B/a/5DouNJugdEx2I1Lc+d52dgpIP/wWg=;
+        b=RB9ZKxzzf9jyLiI9PhKqxR5eXQPnmDfVnnRghh3wmh9yTy3ININlXf+Ybr/Hv9sbBd
+         j5TvPc5bGY6bBCNa8LAfCOFZbjz9zbVSeyVBncpYVWSCAmBMNJ5pUWRAPgiLsFRNkcLj
+         k8atk1D12iX4q6hBDjnw/yNE89MVzlE6jneK1KJL8ciOUVGKLpPmHxERPNw00ic4rsB5
+         1N+2jCSu5HzawFAy9nTvLsCI+9OHulYlkDmgv/TphMNNtO1pnkOuCrtW179CsmTI753o
+         s0QvdqRhKS3InK3GajuIpjdwv3zswiMf0XL8sB7vsDyNMbiJWUpaY5lW5K2S9EPBpw9f
+         /9dA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ENwVnQlUhFRP0HGu8ujIBZM9wb7DlETT5L5W3ikNkGLWihiBMpXfbOVIgvOapU1C7lhunyxmvLVyZoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxQ4S6e9JkxIHgMsK7/v6SMZ7yc27xBecCkqcu9zmZf9psLNr5
+	8/2OiBkNZB2QoSTaKGZs3IXMvieR1TbBtAaRKzw1xOzboXdwBR6pt7R/U0/58E/Xa/C0p7L5eKT
+	HF9wzltHiVunnxO6VH5IRyQaaTnrovjDccXpe
+X-Gm-Gg: ASbGncttJvWGD2jkS78JQVJVeTxzXZu/GmRPTwrM53Nb1ipNRp5SqsdlXKms5qHd/5/
+	Tdo0BHo4v1/z5INUeunvyoTW6D6u5gIClvWlSyrrkDXpRRS5hxH4DWUQC9ZuuY2pxNDM0IohlBU
+	xSwEUu1lpAspapjhGP+Li3cR9VApo5C2Zv2UwYiw==
+X-Google-Smtp-Source: AGHT+IH2YOOgmJJq+20JpUJLcvE32um5OoF4ycWk2WoATazzM1UFIN5ekMfTI/oKjYXPlbOk/26tK0r1Bs7Vnk2SXZY=
+X-Received: by 2002:a05:600c:3548:b0:439:8a44:1e68 with SMTP id
+ 5b1f17b1804b1-43ab9046de3mr18395905e9.28.1740559170862; Wed, 26 Feb 2025
+ 00:39:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225213112.872264-1-lyude@redhat.com> <20250225213112.872264-3-lyude@redhat.com>
-In-Reply-To: <20250225213112.872264-3-lyude@redhat.com>
+References: <20250225213112.872264-1-lyude@redhat.com> <20250225213112.872264-2-lyude@redhat.com>
+In-Reply-To: <20250225213112.872264-2-lyude@redhat.com>
 From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 26 Feb 2025 09:38:51 +0100
-X-Gm-Features: AQ5f1JpVJkDPdU7KsO2IK1L8WWCkkhoNT3HcxpZZ2FpHX-G-e_JTJoIZFjJ49fg
-Message-ID: <CAH5fLghwkK4S12eMUm3bgMXvYMNf_1Gi9ws9q-53OZPdB+QHQA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to Registration::new()
+Date: Wed, 26 Feb 2025 09:39:17 +0100
+X-Gm-Features: AQ5f1JoEeKqGvLEXW3mM8ELPq3wAVUCLl4md3n10GKFy1pzYMyRYWo_o7jMGa-E
+Message-ID: <CAH5fLgiku4K9n4p4WaFJWD_GgaOjHND+UW2Bnf3FL8A6M76DFw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust/faux: Drop #[repr(transparent)] from faux::Registration
 To: Lyude Paul <lyude@redhat.com>
 Cc: rust-for-linux@vger.kernel.org, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mairacanal@riseup.net>, 
@@ -94,45 +94,16 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Feb 25, 2025 at 10:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrot=
 e:
 >
-> A little late in the review of the faux device interface, we added the
-> ability to specify a parent device when creating new faux devices - but
-> this never got ported over to the rust bindings. So, let's add the missin=
-g
-> argument now so we don't have to convert other users later down the line.
+> I think this change got missed during review, we don't need
+>  #[repr(transparent)] since Registration just holds a single NonNull. Thi=
+s
+> attribute had originally been added by me when I was still figuring out h=
+ow
+> the bindings should look like but got committed by mistake. So, just drop
+> it.
 >
 > Signed-off-by: Lyude Paul <lyude@redhat.com>
 > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  rust/kernel/faux.rs              | 10 ++++++++--
->  samples/rust/rust_driver_faux.rs |  2 +-
->  2 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-> index 41751403cd868..ae99ea3d114ef 100644
-> --- a/rust/kernel/faux.rs
-> +++ b/rust/kernel/faux.rs
-> @@ -23,11 +23,17 @@
->
->  impl Registration {
->      /// Create and register a new faux device with the given name.
-> -    pub fn new(name: &CStr) -> Result<Self> {
-> +    pub fn new(name: &CStr, parent: Option<&device::Device>) -> Result<S=
-elf> {
->          // SAFETY:
->          // - `name` is copied by this function into its own storage
->          // - `faux_ops` is safe to leave NULL according to the C API
-> -        let dev =3D unsafe { bindings::faux_device_create(name.as_char_p=
-tr(), null_mut(), null()) };
-> +        let dev =3D unsafe {
-> +            bindings::faux_device_create(
-> +                name.as_char_ptr(),
-> +                parent.map_or(null_mut(), |p| p.as_raw()),
-> +                null(),
 
-This function signature only requires that `parent` is valid for the
-duration of this call to `new`, but `faux_device_create` stashes a
-pointer without touching the refcount. How do you ensure that the
-`parent` pointer does not become dangling?
-
-Alice
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
