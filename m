@@ -1,70 +1,95 @@
-Return-Path: <linux-kernel+bounces-534334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178C6A4658E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:53:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07AAA46597
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA6D3B5591
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F1D7A6BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838F121CA09;
-	Wed, 26 Feb 2025 15:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A39522068E;
+	Wed, 26 Feb 2025 15:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PoXEKjx2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YkCGpM5I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KLEXvqrj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YkCGpM5I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KLEXvqrj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748FC18BC3B;
-	Wed, 26 Feb 2025 15:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6018621CA0B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584717; cv=none; b=I5gGuNRDuvIl5nmR5L45MXNBzJygfK1uxTofcwRxEYq7RN7UcdE1g61VCCLdORJGWyImkjSoUHbYnygjtD+sYkG2VGItcw49YixgdGG1a4DQAAvCsiEwSNSwJVEEaYXgeqppaZPVJB4IGuq+noMSc8tL9ZPFjYCH1YBgD+VZZuo=
+	t=1740584698; cv=none; b=M60WXxtCjJjiuoo744WQwPVwQe3Uqq59i03KlZ18v3tVojCGpFBmLTlyNu4gRkFC//Xk8ZCnu+dAgvp9X/aCEz/Dosacdba+DTLf3LZx0LPselH0fAUf/SP4ZZo7mDRKWOOUwSn6izU8SJXxVpy96amUERsfVqBZaooWsxAnA04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584717; c=relaxed/simple;
-	bh=5TQxHnU3PBtTgmCj+sOng8yLc1UM9OVCIbeacuaMWx0=;
+	s=arc-20240116; t=1740584698; c=relaxed/simple;
+	bh=COgq8LpyrFC8DNQstL1tTvqWX3TQYT2DrGFVJrf/W54=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kaut/WA/nt8vntVVsq+IATHUyjOOBs5fWZVLu+RYzDhfHv7gfFCXN3bfq+MqD5Qq5vChg+FxusVgLZKvSJ9qacfJd4o35n/cNez/ZSGF95WQp77deptwCnIdadP+hrTpHeQs7op5oZBWQPvoCgrlcnOtttiitU+X9RCoj3ocdOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PoXEKjx2; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740584716; x=1772120716;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5TQxHnU3PBtTgmCj+sOng8yLc1UM9OVCIbeacuaMWx0=;
-  b=PoXEKjx2MkbF53eUBlkLpTPp68c3tqt5tuMh4o5Xlx1HDBgR4IrT9r8r
-   oil9/OuXg7xr0q0f+2Jjo6HXqCMG0O19jDkithspD9m3mjn6hBHDoZigW
-   gHbYAzuLE/vrYNa/MMmXxC50yyQPSoMJYEOtjkoEwljTmcSBLcm00E6qg
-   rQoeyXEwFkHWoZPork4NJC0iWo98FGQ4lGxME9HylzvNLrfKDKp163+0C
-   jXeTe8/qdGNHYmZZ1PySmoY4tlljJki2+MpvKMVpUU4tpP67rYMKeAy5e
-   Gf1f+LLuXncu/XQle+puMks2W5HUIK+hjLROQJl1PAtdythRiuSbDrWfe
-   w==;
-X-CSE-ConnectionGUID: evzAvKm9R8OHbxo5Zm4ZbQ==
-X-CSE-MsgGUID: EdY906JsQ1WR2PaQ1En/Vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="40615225"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="40615225"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 07:45:15 -0800
-X-CSE-ConnectionGUID: PO5srzFSSYG0iOuEhjmA2w==
-X-CSE-MsgGUID: hm4D1+xDSCSWsx30DxOf4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147662030"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 07:45:15 -0800
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 In-Reply-To:Content-Type; b=iucFHUb38gU1YedY3dzpdSHzrUBxCAxi+SaQhfCd1GCHvEtrQKLbhUlN+jE78IKkbAPzdeNYmd+0z8qPDEn2XGnPJ5TOgaWJIixleGnILJCUw/ZvTNkoyDg5nE6gY+OuoiomuLNWE9pXgBUD4M9MGYNAKFYohnzJSenWHkaew5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YkCGpM5I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KLEXvqrj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YkCGpM5I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KLEXvqrj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 0B4D920B5713;
-	Wed, 26 Feb 2025 07:45:12 -0800 (PST)
-Message-ID: <98112b48-5ca6-4077-a842-83d1407f1860@linux.intel.com>
-Date: Wed, 26 Feb 2025 10:45:11 -0500
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 23D841F387;
+	Wed, 26 Feb 2025 15:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740584695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WT/e1NPqFVPRk0VeexpY3gu2bFX/ah2sTyCgZLZp0Ds=;
+	b=YkCGpM5I9acZohiD9dnyxFl64Ab+0li8mwf7b2KvVBM3/w/f0Z577nF1/U6vroigXHI9Iu
+	NgYQhfqnbhQrHt+K4a07w8DF2wS/yJXcptwRqYcn8SBRgJQ37jEoBthT/Zp/1CSqFKpswN
+	+LSKgt5zFDI07eUh2eHHTHvtGP/bv50=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740584695;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WT/e1NPqFVPRk0VeexpY3gu2bFX/ah2sTyCgZLZp0Ds=;
+	b=KLEXvqrjK4dGTbjFTELtm2VMerhUVC1+n+Vg9iuvEAcR9oQSRRAKM3xyqksiCHjvva9lW0
+	wDlMwmC/O/lo+RCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YkCGpM5I;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=KLEXvqrj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740584695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WT/e1NPqFVPRk0VeexpY3gu2bFX/ah2sTyCgZLZp0Ds=;
+	b=YkCGpM5I9acZohiD9dnyxFl64Ab+0li8mwf7b2KvVBM3/w/f0Z577nF1/U6vroigXHI9Iu
+	NgYQhfqnbhQrHt+K4a07w8DF2wS/yJXcptwRqYcn8SBRgJQ37jEoBthT/Zp/1CSqFKpswN
+	+LSKgt5zFDI07eUh2eHHTHvtGP/bv50=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740584695;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WT/e1NPqFVPRk0VeexpY3gu2bFX/ah2sTyCgZLZp0Ds=;
+	b=KLEXvqrjK4dGTbjFTELtm2VMerhUVC1+n+Vg9iuvEAcR9oQSRRAKM3xyqksiCHjvva9lW0
+	wDlMwmC/O/lo+RCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0020413A53;
+	Wed, 26 Feb 2025 15:44:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xn9bO/Y2v2e0XwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 26 Feb 2025 15:44:54 +0000
+Message-ID: <8899bfa5-bd8b-4d34-a149-40f30d12cb1e@suse.cz>
+Date: Wed, 26 Feb 2025 16:46:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,84 +97,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 10/24] perf/x86/intel: Process arch-PEBS records or
- record fragments
-To: Peter Zijlstra <peterz@infradead.org>,
- "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-11-dapeng1.mi@linux.intel.com>
- <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
- <20250225110012.GK31462@noisy.programming.kicks-ass.net>
- <c1450cf4-f367-4675-9f5e-90416a996af1@linux.intel.com>
- <20250226093558.GR11590@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
+ kmem_cache_destroy()
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Keith Busch <keith.busch@gmail.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ linux-nvme@lists.infradead.org, leitao@debian.org
+References: <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
+ <Z7xbrnP8kTQKYO6T@pc636> <ef97428b-f6e7-481e-b47e-375cc76653ad@suse.cz>
+ <Z73p2lRwKagaoUnP@kbusch-mbp>
+ <CAOSXXT6-oWjKPV1hzXa5Ra4SPQg0L_FvxCPM0Sh0Yk6X90h0Sw@mail.gmail.com>
+ <Z74Av6tlSOqcfb-q@pc636> <Z74KHyGGMzkhx5f-@pc636>
+ <8d7aabb2-2836-4c09-9fc7-8bde271e7f23@suse.cz> <Z78lpfLFvNxjoTNf@pc636>
+ <93f03922-3d3a-4204-89c1-90ea4e1fc217@suse.cz> <Z782eoh-d48KXhTn@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250226093558.GR11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <Z782eoh-d48KXhTn@pc636>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 23D841F387
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,joelfernandes.org,joshtriplett.org,linux.com,google.com,goodmis.org,efficios.com,inria.fr,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,googlegroups.com,lists.infradead.org,debian.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLctujmen6hjyrx8fu4drawbuj)];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On 2025-02-26 4:35 a.m., Peter Zijlstra wrote:
-> On Wed, Feb 26, 2025 at 01:20:37PM +0800, Mi, Dapeng wrote:
-> 
->>> Also, should that workaround have been extended to also include
->>> GLOBAL_STATUS_PERF_METRICS_OVF in that mask, or was that defect fixed
->>> for every chip capable of metrics stuff?
+On 2/26/25 4:42 PM, Uladzislau Rezki wrote:
+> On Wed, Feb 26, 2025 at 03:36:39PM +0100, Vlastimil Babka wrote:
+>> On 2/26/25 3:31 PM, Uladzislau Rezki wrote:
+>>> On Wed, Feb 26, 2025 at 11:59:53AM +0100, Vlastimil Babka wrote:
+>>>> On 2/25/25 7:21 PM, Uladzislau Rezki wrote:
+>>>>>>
+>>>>> WQ_MEM_RECLAIM-patch fixes this for me:
+>>>>
+>>>> Sounds good, can you send a formal patch then?
+>>>>
+>>> Do you mean both? Test case and fix? I can :)
 >>
->> hmm,  per my understanding, GLOBAL_STATUS_PERF_METRICS_OVF handling should
->> only be skipped when fixed counter 3 or perf metrics are included in PEBS
->> counter group. In this case, the slots and topdown metrics have been
->> updated by PEBS handler. It should not be processed again.
+>> Sure, but only the fix is for stable. Thanks!
 >>
->> @Kan Liang, is it correct?
+> It is taken by Gregg if there is a Fixes tag in the commit.
+> What do you mean: the fix is for stable? The current Linus
+> tree is not suffering from this?
+
+I just meant the fix should be a Cc: stable, and the testcase not.
+mm/ has an exception from "anything with Fixes: can be taken to stable"
+
 > 
-> Right, so the thing is, *any* PEBS event pending will clear METRICS_OVF
-> per:
-> 
->                 status &= x86_pmu.intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
-> 
-
-Yes, we have to add it for both legacy PEBS and ARCH PEBS.
-
-An alternative way may change the order of handling the overflow bit.
-
-The commit daa864b8f8e3 ("perf/x86/pebs: Fix handling of PEBS buffer
-overflows") has moved the "status &= ~cpuc->pebs_enabled;" out of PEBS
-overflow code.
-
-As long as the PEBS overflow is handled after PT, I don't think the
-above is required anymore.
-
-It should be similar to METRICS_OVF. But the PEBS counters snapshotting
-should be specially handled, since the PEBS will handle the metrics
-counter as well.
-
-@@ -3211,7 +3211,8 @@ static int handle_pmi_common(struct pt_regs *regs,
-u64 status)
- 	/*
- 	 * Intel Perf metrics
- 	 */
--	if (__test_and_clear_bit(GLOBAL_STATUS_PERF_METRICS_OVF_BIT, (unsigned
-long *)&status)) {
-+	if (__test_and_clear_bit(GLOBAL_STATUS_PERF_METRICS_OVF_BIT, (unsigned
-long *)&status) &&
-+	
-!is_pebs_counter_event_group(cpuc->events[INTEL_PMC_IDX_FIXED_SLOTS])) {
- 		handled++;
- 		static_call(intel_pmu_update_topdown_event)(NULL, NULL);
- 	}
-
-
-Thanks,
-Kan
-
+> --
+> Uladzislau Rezki
 
 
