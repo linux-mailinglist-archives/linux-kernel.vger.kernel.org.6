@@ -1,103 +1,83 @@
-Return-Path: <linux-kernel+bounces-532948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE96A4540F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:37:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C900A45411
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C423A6126
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:37:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC233A67C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA86525A32D;
-	Wed, 26 Feb 2025 03:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F5125A635;
+	Wed, 26 Feb 2025 03:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z3T5jCnf"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="xBRrq+7H"
+Received: from out30-85.freemail.mail.aliyun.com (out30-85.freemail.mail.aliyun.com [115.124.30.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43C222A814
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708D825A33D;
+	Wed, 26 Feb 2025 03:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740541032; cv=none; b=IRx6ARTFcmAA2g5IHU57WVsha9QqvxknJBy/OPH6xKtPVG54plZteK1Fdq6/ErAq96Eb8r/Dw89VuwijLyGLg6uuoCbDeqnwNlKQkScdRmUaD5SUdrhvO5Qu8zQINwhJiD4DrXA5y3lwjILSKIQgDRxCwC8arU8oXEQ3/7wD17c=
+	t=1740541091; cv=none; b=FRWpBO86coPseEjBJorpE/xG8n1PYYsyt9Q2LvL2VbxvOa35UZEzIlZEmk+2RM5VxU9kz7Vmz/mrDvuIiwgePJBHXyUDGiS26OoQWSHcm/ujAu4x0igQ7FckBwJKRFn7p+AsD7MtaZjq7O2AwOIke8JQY3WeJQEO7wVblxDNSRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740541032; c=relaxed/simple;
-	bh=+d150ORAuwcNcBo0bktXkOORXUeaVvLFU+FwfnagMfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rGPLVlJvha5rUs+KhvOGQ3VEN0Ew9mSzQ5AvBfxy7NgMvcUpD9xrK+byB8Ag055hXUJVP22TUTIhC7LD2YfUO/iIZNBgWfesFJdCz28HNdzu/ngSkgZA3pn1jS4qSVZquBJj0kay8FNCYn1/n5fsD3kWu5W74R3YEekZa43Ah+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z3T5jCnf; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 03:37:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740541029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OSEd15iaG/YVJV5R/ef6IG1gpof8ihg018EdijbCkTM=;
-	b=Z3T5jCnfrOToJENKnoI4nrqp8h67TYclznwQJonLGnH1MdtaRh3U+rUtMFZPuW0Dk8odJH
-	R4iQgoi7LhyL5GTLrvs8kGPdUDv01NPJGyMemu9nACJyOIPWXt0cJb/0+8XAOmWn/tADbD
-	O2yePYAenoNjBuS57LxLyRnB5A5YBNs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
- hw_stat_device_show()
-Message-ID: <Z76MYRaWm9AE0SaW@google.com>
-References: <Z7gARTF0mpbOj7gN@google.com>
- <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250221174347.GA314593@nvidia.com>
- <CY8PR12MB7195A82F6CE17D9BDC674D72DCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250224151127.GT50639@nvidia.com>
- <CY8PR12MB7195E91917FD5329932FA3FCDCC02@CY8PR12MB7195.namprd12.prod.outlook.com>
- <Z7z_NcGWIr3_Dxtt@google.com>
- <20250224233004.GD520155@nvidia.com>
- <Z708JNt6-vPIuDBm@google.com>
- <20250225131618.GN520155@nvidia.com>
+	s=arc-20240116; t=1740541091; c=relaxed/simple;
+	bh=tl+hIViqGcJN9EAhpBn2DhDk/dQx1zV1lpZjUUKNoM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AaP94zFmwhG4NC+wX2TRU9WnOTU5pgw1isnnorSzsQkSNdBXckpW+fX0xn7DRMpTUVnkG3IgtRHiyux8Aa9JyYNS3ZZjXhP57AVevlRp5o3QB1Vsrl0TGry7Q06jwjNbZ5hJaC8aHdUeUHfHybc052wRz/DMlYB3szcSV/1bjx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com; spf=pass smtp.mailfrom=aliyun.com; dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b=xBRrq+7H; arc=none smtp.client-ip=115.124.30.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliyun.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=aliyun.com; s=s1024;
+	t=1740541086; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=OsKNsNmNLVMbVkhyVLShvvRjQAaJ25qqPxT54PpSMw4=;
+	b=xBRrq+7HrdUdUuLLHVgKmOBermnbpIubERCA0ySM25KUAV8ap7iHVz1A9rR/Hkif9rg+zQN6yylRIJ67HdO2Ix3Gjyb9S7sgFljdexSdbeFs7cKODh3/jO+Xd8/zjlggJfQx/hYZ4sNMgGkPC5dt0NZF6Tnw65PFQYiROMHSQK8=
+Received: from wdhh6.sugon.cn(mailfrom:wdhh6@aliyun.com fp:SMTPD_---0WQGbC7D_1740541085 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 11:38:05 +0800
+From: Chaohai Chen <wdhh6@aliyun.com>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chaohai Chen <wdhh6@aliyun.com>
+Subject: [PATCH] scsi: fix schedule_work in spin_lock_irqsave in sdev_evt_send
+Date: Wed, 26 Feb 2025 11:38:02 +0800
+Message-Id: <20250226033802.233509-1-wdhh6@aliyun.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225131618.GN520155@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 09:16:18AM -0400, Jason Gunthorpe wrote:
-> On Tue, Feb 25, 2025 at 03:42:28AM +0000, Roman Gushchin wrote:
-> 
-> > diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-> > index 0ded91f056f3..6998907fc779 100644
-> > --- a/drivers/infiniband/core/device.c
-> > +++ b/drivers/infiniband/core/device.c
-> > @@ -956,6 +956,7 @@ static int add_one_compat_dev(struct ib_device *device,
-> >         ret = device_add(&cdev->dev);
-> >         if (ret)
-> >                 goto add_err;
-> > +       device->groups[2] = NULL;
-> >         ret = ib_setup_port_attrs(cdev);
-> >         if (ret)
-> >                 goto port_err;
-> 
-> That's horrible - but OK, maybe something like that..
-> 
-> Does it work? Or does the driver core need groups after the initial
-> setup?
-> 
-> Could we have two group lists and link them together? IIRC there was a
-> way to do that without creating a sub directory
+sdev->list_lock is designed to protect the sdev->event_list, the action
+should be single(add, delete, traverse) in the lock.
 
-It does work.
+Signed-off-by: Chaohai Chen <wdhh6@aliyun.com>
+---
+ drivers/scsi/scsi_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I just sent a decent implementation of this idea, please, take a look.
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index be0890e4e706..ca1bbd5e38c0 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -2661,8 +2661,8 @@ void sdev_evt_send(struct scsi_device *sdev, struct scsi_event *evt)
+ 
+ 	spin_lock_irqsave(&sdev->list_lock, flags);
+ 	list_add_tail(&evt->node, &sdev->event_list);
+-	schedule_work(&sdev->event_work);
+ 	spin_unlock_irqrestore(&sdev->list_lock, flags);
++	schedule_work(&sdev->event_work);
+ }
+ EXPORT_SYMBOL_GPL(sdev_evt_send);
+ 
+-- 
+2.34.1
 
-Thank you!
 
