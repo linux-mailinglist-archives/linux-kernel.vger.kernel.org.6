@@ -1,168 +1,123 @@
-Return-Path: <linux-kernel+bounces-534198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E7DA46405
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:05:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24420A46402
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A9D3A6AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD36172251
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE3222590;
-	Wed, 26 Feb 2025 15:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5OexUTr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C621194AF9;
+	Wed, 26 Feb 2025 15:04:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B1821D3E6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E39190665;
+	Wed, 26 Feb 2025 15:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582319; cv=none; b=KAVv87STTqBJvLymaX6MAYzYSHLC9uSbD3+AkYw665vcFK+m/Zl+V4tEDYkwhGSngk7fobFGo1z+gx2WR0kiD4zFfKdQo7r9fruIw8ymgRDqfvxmtOfbWxNI83m/ODUAQXJ6QWNXF1xvFOSHCedQ268VmJUlTCvv5bQQdIsvjjk=
+	t=1740582287; cv=none; b=TI5t1A0gmGI7F8jmWkclDk0X2U2BdNXvTCztpKOTtNSrKxXAbubNjMueLGzKHaSxBLqqtLUTs2U1GXhp12XXn0FaKeh0KPRsPxwUj2J8InJiqB2Jh4ogR69zf5WccAKuFUYhFqd69m7Gl7n4SY8vwxV7of2QeYerd2TMavMHJOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582319; c=relaxed/simple;
-	bh=UbsznBB7Ta4OOWxE6Q76ciArrmMaaUYgQLE2J5Bd0ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHAq5IU2MZdoh5zH6Hjo9sOCo7RzFGjlQ5imEZhuf9qtl4PfP0OTNlhawHrjGe7k9ymtlwQ9bNeyDNzj3DXxflv+gL1zd5JitHew/15E0feVigucAK9IkGfBUIWJ+CgRm4Pz9yZfXAYlxkA7OgZF7Decf8cGyQCLqYtj+CpJrTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5OexUTr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740582317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DtaKuouL0Y3pv+96Ex3YwJXMFO8jE7lmxjvjb5LQJDY=;
-	b=e5OexUTrjjchN/aAZRzlYvbY2Hb65SDzox7PqIJJD+WchVV+sGaojxHhk9sL9Hsso1lBVe
-	n5NKWSCVw2fhvCxawo0grI0Yh4cgQhsPxywcYjOiua44xGiQvhOpAYIrJxCguMjafn94yB
-	nmsr3g/CDUQ5S0rRwKZtijR8+CUoCtE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-8MADYtq2MBG6xZE9ENFucA-1; Wed, 26 Feb 2025 10:05:15 -0500
-X-MC-Unique: 8MADYtq2MBG6xZE9ENFucA-1
-X-Mimecast-MFC-AGG-ID: 8MADYtq2MBG6xZE9ENFucA_1740582315
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4398e841963so52764085e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:05:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740582314; x=1741187114;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DtaKuouL0Y3pv+96Ex3YwJXMFO8jE7lmxjvjb5LQJDY=;
-        b=jy1EMPsweZINJGoGkpbvsARgDOWdN+pUb1ZO38ZbFKzYCJ1UcndpU/5JGBm67Rt6Nt
-         IUUTsHAaaifHLuJHR8RUGlkC64K4JLjETCB3e3trl9TPqj+UzVtqeO60MzPX5JMe5u5a
-         rfgJlGHt+1eHjsUgJmsKmpomoi2x6hnDSIEg91SRKcw5ZyF0JZKBZ0zi9Sk0labHjkfX
-         3WHgg5S9XRTRKJdaRZCLJeN2z73P02cRdnNcLYBZy7oxf+etinOGKn33SYWEW0zQ4ojn
-         obTUMjiYvVCO8mg1HO0YNT4JVVN0oYMZyMST0mhBBCfkPXpgWlqZK/gFPVa/B5JryF/F
-         lxfA==
-X-Gm-Message-State: AOJu0Yx7eFGpEKiu9JRhbJjxV3J8+tI26Jlox3UtQGzLCFnl3bMGGRqj
-	JoTfEqoSen/5RdtzjANIrvZ0bB/ifkISqCN62jpsiHUhGrO/BwSL1lF3k5C1dgxW9Oy2oS8Jo/o
-	4iKaPZse9VqgbYqNryhP84aaYYQGhWcF9tgLHyOi9uAGccu0tpoAcVDjsMVfRUA==
-X-Gm-Gg: ASbGncuK9AxOA/gSoqUrgynjeFPGnzJC9IoEVYu7jJMhYOSKnwaXnE3ZpU0qerwl5wx
-	C/KT4r7OfD2uSk6sTsio9+SGhLROWo62832uMGaoz0o3+Jph8OxAYQ2Nwp7UUAAxh6AtlmJuXxn
-	hHNfGKkyXCl381SoG49t+VO77YRTgLwgbzIDBDqx1N0Yx05HTLbDy3IcPv4pAqmBCMKIeewKKiz
-	LRhPOE7uvR1kmyIP/HPtLkktI+NYlI+RrOG/wjFlSdi95S+90L7dFi7/c6gkcCU3Oz5kpmdlgDj
-	8pUTuVj01m5LWhhJTip4JVU85Kjs4vGvXQRMr1cK9gXj
-X-Received: by 2002:a05:600c:3506:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-439aebcfc40mr173325155e9.29.1740582312995;
-        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3bcYNh8Rp+gjnHI+8lWknh+fmKRrB7o51AAIckCXQu2kuHMMgbo940KVzsy6o7t0A+oKQMQ==
-X-Received: by 2002:a05:600c:3506:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-439aebcfc40mr173324475e9.29.1740582312582;
-        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
-Received: from [192.168.3.141] (p5b0c6611.dip0.t-ipconnect.de. [91.12.102.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5442c0sm24142145e9.32.2025.02.26.07.05.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 07:05:12 -0800 (PST)
-Message-ID: <0dfeabca-5c41-4555-a43b-341a54096036@redhat.com>
-Date: Wed, 26 Feb 2025 16:05:11 +0100
+	s=arc-20240116; t=1740582287; c=relaxed/simple;
+	bh=1NPMnlLH6CTFkjQURe97JYrL80EWkR7Iiy9OAhcn0r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOIGoAcI8Qh6P0Cuu92+PpivK7O1l27oq3pvhMgVPbLbouGWZ4AE+7eI5RIKc5IdfJS62nmDhjtHDK5RnIVorLxEPsDT/as/aW9hr4syoALhM9MTUEH8sWQYOeCwX35fw4yCkdmO/+oZbXKqzX0FUM8daKLucMI7FldOJsVCa8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55331C4CED6;
+	Wed, 26 Feb 2025 15:04:46 +0000 (UTC)
+Date: Wed, 26 Feb 2025 10:05:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ran Xiaokai <ranxiaokai627@163.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+ ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn, yang.guang5@zte.com.cn
+Subject: Re: [PATCH] tracing/osnoise: Fix possible recursive locking for
+ cpus_read_lock()
+Message-ID: <20250226100526.3039102d@gandalf.local.home>
+In-Reply-To: <20250226034253.2587709-1-ranxiaokai627@163.com>
+References: <20250225113032.5e01922d@gandalf.local.home>
+	<20250226034253.2587709-1-ranxiaokai627@163.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] KVM: s390: pv: fix race when making a page secure
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- frankja@linux.ibm.com, borntraeger@de.ibm.com, nrb@linux.ibm.com,
- seiden@linux.ibm.com, nsg@linux.ibm.com, schlameuss@linux.ibm.com,
- hca@linux.ibm.com
-References: <20250226123725.247578-1-imbrenda@linux.ibm.com>
- <20250226123725.247578-2-imbrenda@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250226123725.247578-2-imbrenda@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-> +int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb)
-> +{
-> +	struct folio *folio;
-> +	spinlock_t *ptelock;
-> +	pte_t *ptep;
-> +	int rc;
-> +
-> +	ptep = get_locked_valid_pte(mm, hva, &ptelock);
-> +	if (!ptep)
-> +		return -ENXIO;
+On Wed, 26 Feb 2025 03:42:53 +0000
+Ran Xiaokai <ranxiaokai627@163.com> wrote:
 
-You very likely need a pte_write() check we had there before, as you 
-might effectively modify page content by clearing the page.
+> >> @@ -2105,7 +2104,12 @@ static void osnoise_hotplug_workfn(struct
+> >> work_struct *dummy)
+> >>      if (!cpumask_test_cpu(cpu, &osnoise_cpumask))
+> >>          return;
+> >>  
+> >> -    start_kthread(cpu);
+> >> +    if (start_kthread(cpu)) {
+> >> +        cpus_read_unlock();
+> >> +        stop_per_cpu_kthreads();
+> >> +        return;  
+> >
+> >If all you want to do is to unlock before calling stop_per_cpu_kthreads(),
+> >then this should simply be:
+> >
+> >   if (start_kthread(cpu)) {
+> >       cpus_read_unlock();
+> >       stop_per_cpu_kthreads();
+> >       cpus_read_lock(); // The guard() above will unlock this
+> >       return;
+> >   }  
+> 
+> This is the deadlock senario:
+> start_per_cpu_kthreads()
+>   cpus_read_lock();                  // first lock call
+>   start_kthread(cpu)
+>     ... kthread_run_on_cpu() fails:
+>     if (IS_ERR(kthread)) {
+>       stop_per_cpu_kthreads(); {
+>         cpus_read_lock();      // second lock call. Cause the AA deadlock senario
+>       }
+>     }
+>   stop_per_cpu_kthreads();
+> 
+> Besides, stop_per_cpu_kthreads() is called both in start_per_cpu_kthreads() and
+> start_kthread() which is unnecessary.
+> 
+> So the fix should be inside start_kthread()?
+> How about this ?
 
--- 
-Cheers,
+No! You misunderstood what I wrote above.
 
-David / dhildenb
+Instead of removing the guard, keep it!
 
+Do everything the same, but instead of having the error path of:
+
+[..]
+    if (start_kthread(cpu)) {
+        cpus_read_unlock();
+        stop_per_cpu_kthreads();
+        return;
+    }
+    cpus_read_unlock();
+ }
+
+Which requires removing the guard. Just do:
+
+    if (start_kthread(cpu)) {
+        cpus_read_unlock();
+        stop_per_cpu_kthreads();
+        cpus_read_lock(); // The guard() will unlock this
+    }
+ }
+
+I'm just saying to not replace the guard with open coded locking of
+cpus_read_lock().
+
+-- Steve
 
