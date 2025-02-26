@@ -1,132 +1,184 @@
-Return-Path: <linux-kernel+bounces-534136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405FDA46344
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:42:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6042FA46345
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1677167D28
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD98918970E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DFC221DB1;
-	Wed, 26 Feb 2025 14:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EE4221711;
+	Wed, 26 Feb 2025 14:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UA0T92Yi"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddMcL1Wy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3DB21D3C7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D39921D3C7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740580923; cv=none; b=jRg/xhXsBNx9E6/PfzqbnQvKA2sJhiW5jSAF+9JiorT1tXoepsiS3zzOkvnETk4U0CaQm18aTN0ReeyL9B5pXN0n2q/HjG88c8oiLGeQ/IGRSS9lthO3Ct4CwJ4QFh5QGuCLUfVqxlWCmx65XO1UAmTu7Zfc2bjcdXZ/nGEIW98=
+	t=1740580938; cv=none; b=UEydpPu83ycLjKpdngQthC+X8tmAWARzDTiPBHVCi1NoGeHyCbAJtqY73pFnJBM4jt8NBilhwWcfacaduaP5YX3f0E7hDyPlaz2Z8awzJatO+Nzer5oU84tuR1ED9W3Tk+Y9YrVaJznHedShliWQenrJJSghcriOOfgxnIiu4Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740580923; c=relaxed/simple;
-	bh=4FWXayBvVhNTS0E6OWpQiCVezWoKUfgMUUoPmP8gePk=;
+	s=arc-20240116; t=1740580938; c=relaxed/simple;
+	bh=RPPUCQFNNRPULwXb1o+C2PDoiUpyW+jNKrMiUvragHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pl3SMZiWx05KDwgmvtlSHLnb0k6m5Z1+/3oQoE7QqzQ9E+mfbBtJkdjXmrQxyI+Rr6HghCH/KFyY/51Tv38E+L0Tjyxh2LAHwDUnyaNhPM0Vt7ZRkRovW5C1Omf1wlpWpgmRxP18MRC4ts478C0ELN9jBq8Corx8AC7UgTo2YZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UA0T92Yi; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso1203685866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:42:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740580919; x=1741185719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yd4Q4hVeUYOM1ue+qUfzWNg9Q9i3oT/9A9AYIFfGkUc=;
-        b=UA0T92YiBtus8ppEPCDg10F757C1qob4i4FvX+s7vjhN06JNq09tElmthayuZTKbKR
-         RzBb38v/U1Tzi19jDCCKfJ53nBVMHlTo4YRBTAT+fa36GR1daqknAVGi9+MjMMyGwuYA
-         rOmuWLd2B4Pm7oDF7avN9M6Le7mDbT/Ur4DX0LIzc+0kCLKShWuMR7lyzkU9yirIXxsA
-         SHikx/C4FcLi+M3Uu8T8uTvLjeMOiachCQHWNAcZlLpyXRW/exId+fnmOo6+wm54cA+Y
-         5KlcZvwLo+17WtT5kNkzT6tI7l+preG+EKVTlgCpuLnooIW80GCVX1kZYEmVFa+eTgri
-         kjnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740580919; x=1741185719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yd4Q4hVeUYOM1ue+qUfzWNg9Q9i3oT/9A9AYIFfGkUc=;
-        b=mby1afW4Qe/ZBpzyRVBcGeQnF70mmKFBWuB9FlW9QsAqhj6TIkMDniRJoH2oqWiy97
-         g0Wx8Bt/UKg+s9CLHjOWkkYnYooLX3HVM8HywHRbhIjKD/YmplLyDO9aXOEEt6Ey/E9O
-         RWXefo34ErNvBbv8/05zqJqbplLwend8XfSOqbNJpPr4rrxn3WcdXk/1NJ9zg7rA70yt
-         d+9cHl9jArBxABUiEpRKTscMAQHxKj2tghgxnsn9qG9GyK+kUTq+CZlir9zsnNhTRcRL
-         jEPTd2hhXqqy6KolZE4UgaqQmelrGrCbLBgxdbmsHBsPKIFYC6CGK0D2NAsBiOZXonZr
-         JIgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTCk7plM6xGy85EEqyAB0tPioNEoAQ/j1x5LlfU/zICXy/bmMrx5tnL81TNBm59s4Dns+zCQDMXKlfN/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy++h0zousjAEyBQZuzWe7VUXwelR9/rHj9Y9ivWFwLe+EMG7OJ
-	MQPDJ+F4sudz+4lxTMMH1mSlf4+F0CxxdOnuoAIuCBh1DuXHH2GjrcAb9eVDDF0=
-X-Gm-Gg: ASbGncvOWQkKkCB7G2RcOpu3im0/e/35I4z/GgIKiMsF2ppUn57wPqeZYNfsvo3HVHT
-	Jn+5D6hnjl+adz/5nlvDFgxO86cywS7JynjuK/ZTc0NxQJwTZOhmEzdEhDS+8R2qtJiksb5p3GR
-	60rLe9Pe0YEkWbyaujrLfD0Rsyj+utQ9bMaQdUC/C8C0ddBuNf7117PstoM582VEBB3xhllb89E
-	mTKawrgPB1WILVHojbmWbaTC5TzvBLYlszjaEdWC52m+w2IW3/q2Too4zSyurj3WCYK3FBHk47R
-	itIXAoGBvpf7hger1kK/ebhbo3UggZE=
-X-Google-Smtp-Source: AGHT+IEqq+wCIO+7KpV9xqIa2Ubw1hCVyP4Ga6WxVj5wemOObN4UBSusPlhMuI5n8yBIpYErWlyqpg==
-X-Received: by 2002:a17:906:314d:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-abc0de55dbcmr1974440866b.48.1740580919225;
-        Wed, 26 Feb 2025 06:41:59 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed2012142sm333883966b.117.2025.02.26.06.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 06:41:58 -0800 (PST)
-Date: Wed, 26 Feb 2025 17:41:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: slongerbeam@gmail.com, p.zabel@pengutronix.de, mchehab@kernel.org,
-	gregkh@linuxfoundation.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	hverkuil@xs4all.nl, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] media: imx: fix a potential memory leak in
- imx_media_csc_scaler_device_init()
-Message-ID: <450cdcc9-ccb8-4ebd-847c-b106fae2d709@stanley.mountain>
-References: <20250226142126.3620482-1-haoxiang_li2024@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZGkjywmwrL9bb2aUwvKhtwAzBc3lcPv6Tk7izA/DKTsmktWss+qtqsVQvLTzFAZu6ZCuJQeOgC2p7Rxey1CDMMmV1DdccD4VtDSaiaU9pygYtwCbAup+9DIrx5qfriT0mBcQ7eRgzgpDbpMSlHVEHr/o85ehjXlyeCqsqiiw3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddMcL1Wy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFB5C4CED6;
+	Wed, 26 Feb 2025 14:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740580937;
+	bh=RPPUCQFNNRPULwXb1o+C2PDoiUpyW+jNKrMiUvragHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ddMcL1WyghYEvaEply3ddEJ0FHh6m1Djyk28bODOHQkRCx0LPk2fB/lBmn0pUWNjw
+	 TeD4xY68lGn6FgseBSltwpFxbbdCMD+tvuCj0sJAsPGVNkPPAjSM6xyKV1T7QfapX7
+	 ioDuwiWfuKUD38Dx+0K9mPI44UJAZk5PUAPNkeSRHfhBjPiF8UllYq8FAxKzTEUTGs
+	 wHUEV8VnIUVup2Zcm4lKHupYMMLkT4c8NnL/9T5Q/PWLX4MLg+uqnCUuSjpUaMeqDJ
+	 TtqftMee08ej5fWZPgUN/+/BU5C+ro1BFX2WnN/ANYcYaQAd8eJLo7i0P9B1La6oiT
+	 PJaqc9pNkTCFQ==
+Date: Wed, 26 Feb 2025 15:42:14 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
+ the callbacks.
+Message-ID: <Z78oRqnN9-NZO_LJ@localhost.localdomain>
+References: <20250221170530.L3yMvO0i@linutronix.de>
+ <20250223224014.GC23282@redhat.com>
+ <Z73Tj3SAzNjaHwV3@localhost.localdomain>
+ <20250225163549.GB29585@redhat.com>
+ <Z75CKDw6uJZmNKYt@pavilion.home>
+ <20250226131315.GD8995@redhat.com>
+ <20250226140114.GE8995@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250226142126.3620482-1-haoxiang_li2024@163.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250226140114.GE8995@redhat.com>
 
-On Wed, Feb 26, 2025 at 10:21:26PM +0800, Haoxiang Li wrote:
-> Add video_device_release() in label 'err_m2m' to release the memory
-> allocated by video_device_alloc() and prevent potential memory leaks.
+Le Wed, Feb 26, 2025 at 03:01:15PM +0100, Oleg Nesterov a écrit :
+> On 02/25, Frederic Weisbecker wrote:
+> >
+> > Le Tue, Feb 25, 2025 at 05:35:50PM +0100, Oleg Nesterov a écrit :
+> > > --- a/kernel/events/core.c
+> > > +++ b/kernel/events/core.c
+> > > @@ -5304,12 +5304,12 @@ static void perf_pending_task_sync(struct perf_event *event)
+> > >  		return;
+> > >  	}
+> > >
+> > > -	/*
+> > > -	 * All accesses related to the event are within the same RCU section in
+> > > -	 * perf_pending_task(). The RCU grace period before the event is freed
+> > > -	 * will make sure all those accesses are complete by then.
+> > > -	 */
+> > > -	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
+> > > +	spin_lock(XXX_LOCK);
+> > > +	if (event->pending_work) {
+> > > +		local_dec(&event->ctx->nr_no_switch_fast);
+> > > +		event->pending_work = -1;
+> > > +	}
+> > > +	spin_unlock(XXX_LOCK);
+> > >  }
+> > >
+> > >  static void _free_event(struct perf_event *event)
+> > > @@ -5369,7 +5369,15 @@ static void _free_event(struct perf_event *event)
+> > >  	exclusive_event_destroy(event);
+> > >  	module_put(event->pmu->module);
+> > >
+> > > -	call_rcu(&event->rcu_head, free_event_rcu);
+> > > +	bool free = true;
+> > > +	spin_lock(XXX_LOCK)
+> > > +	if (event->pending_work == -1) {
+> > > +		event->pending_work = -2;
+> > > +		free = false;
+> > > +	}
+> > > +	spin_unlock(XXX_LOCK);
+> > > +	if (free)
+> > > +		call_rcu(&event->rcu_head, free_event_rcu);
+> > >  }
+> > >
+> > >  /*
+> > > @@ -6981,7 +6989,14 @@ static void perf_pending_task(struct callback_head *head)
+> > >  {
+> > >  	struct perf_event *event = container_of(head, struct perf_event, pending_task);
+> > >  	int rctx;
+> > > +	bool free = false;
+> > >
+> > > +	spin_lock(XXX_LOCK);
+> > > +	if ((int)event->pending_work < 0) {
+> > > +		free = event->pending_work == -2u;
+> > > +		event->pending_work = 0;
+> > > +		goto unlock;
+> > > +	}
+> > >  	/*
+> > >  	 * All accesses to the event must belong to the same implicit RCU read-side
+> > >  	 * critical section as the ->pending_work reset. See comment in
+> > > @@ -7004,6 +7019,12 @@ static void perf_pending_task(struct callback_head *head)
+> > >
+> > >  	if (rctx >= 0)
+> > >  		perf_swevent_put_recursion_context(rctx);
+> > > +
+> > > +unlock:
+> > > +	spin_unlock(XXX_LOCK);
+> > > +
+> > > +	if (free)
+> > > +		call_rcu(&event->rcu_head, free_event_rcu);
+> > >  }
+> > >
+> > >  #ifdef CONFIG_GUEST_PERF_EVENTS
+> > >
+> >
+> > Heh, I suggested something similar also:
+> > https://lore.kernel.org/lkml/ZyJUzhzHGDu5CLdi@localhost.localdomain/
 > 
-> Fixes: a8ef0488cc59 ("media: imx: add csc/scaler mem2mem device")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  drivers/staging/media/imx/imx-media-csc-scaler.c | 1 +
->  1 file changed, 1 insertion(+)
+> ;)
 > 
-> diff --git a/drivers/staging/media/imx/imx-media-csc-scaler.c b/drivers/staging/media/imx/imx-media-csc-scaler.c
-> index e5e08c6f79f2..f99c88e87a94 100644
-> --- a/drivers/staging/media/imx/imx-media-csc-scaler.c
-> +++ b/drivers/staging/media/imx/imx-media-csc-scaler.c
-> @@ -913,6 +913,7 @@ imx_media_csc_scaler_device_init(struct imx_media_dev *md)
->  
->  err_m2m:
->  	video_set_drvdata(vfd, NULL);
-> +	video_device_release(vfd);
+> I can't comment your patch because I don't understand this code enough.
+> 
+> My patch is more simple, it doesn't play with refcount.
+> 
+> perf_pending_task_sync() sets ->pending_work = -1, after that
+> perf_pending_task() (which can run in parallel on another CPU) will
+> only clear ->pending_work and do nothing else.
+> 
+> Then _free_event() rechecks ->pending_work before return, if it is still
+> nonzero then perf_pending_task() is still pending. In this case _free_event()
+> sets ->pending_work = -2 to offload call_rcu(free_event_rcu) to the pending
+> perf_pending_task().
 
-The video_set_drvdata() call is pointless.  It just does:
+Right it works but it does a parallel implementation of events refcounting.
 
-	vfd.dev->driver_data = NULL;
+> 
+> But it is certainly more ugly, and perhaps the very idea is wrong. So I will
+> be happy if we go with your patch.
 
-but that's not necessary if we're just going to free "vfd" on the next
-line.
+Ok I'll prepare a changelog and see where it goes.
 
-regards,
-dan carpenter
+> Either way, IMO we should try to kill this rcuwait_wait_event() logic. See
+> another email I sent a minute ago in this thread. Quite possibly I missed
+> something, but the very idea to wait for another task doesn't look safe
+> to me.
 
->  err_vfd:
->  	kfree(priv);
->  	return ERR_PTR(ret);
+You're right it's very fragile...
 
+Thanks.
+
+> 
+> Thanks!
+> 
+> Oleg.
+> 
 
