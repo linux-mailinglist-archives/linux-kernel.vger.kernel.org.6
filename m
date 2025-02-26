@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-533579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D54A45C46
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E30C0A45C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5BB18931A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4331D18933FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59325271263;
-	Wed, 26 Feb 2025 10:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755BE271811;
+	Wed, 26 Feb 2025 10:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t4GdHqU2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9uz7+w0r"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WInhrX0F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tmdw7nDl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212FC26F47F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2129926B08C;
 	Wed, 26 Feb 2025 10:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567266; cv=none; b=g2qWe82FSTKDMuaT2Kvy1Aaa7QyuwwDYIhbfqANtt10OStlo0OgmDdkL2yQtmbtCKvv9uzcszX/JzZqYuejVKzkfn3+JZpNeJU4KGTWq9Kj1RulxqLcB09+9YiDLacsZB/lkSvZujSQqdv/XXxveV+IaVUpjUXq68lmrqJahFek=
+	t=1740567266; cv=none; b=CdV5MjCbYZA5RgFqSrQ+Oq7hk6aJpoSUyqwHdrhGUlOzfDPVuOQp8FROi9gRjO0q1CuuBIJ7MNDXypMJXp1LmLCGY3jKec0e1/UbairpLA2xVvkbdXN4GQPmxRnWX9NQHexoHEMtmfbwoNf2mZ9wRMXEsYfVFG8DDSRAXEg8nw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740567266; c=relaxed/simple;
-	bh=nhtxBP/6tVIma1rJWq6lKa9z0q6XsubpsADUpz5bRMY=;
+	bh=0C3SRP/SJCUFIWtehUq63auo8FGU921ckejeqTGEtaY=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VCf3qUDD3L6YInoQGCgL7CT6D7Vk+kVEn4Rup62FIdqkGCJhCCDBtdh8umkaW/AcGt7eEypqGqTu7PD+xYKxyd6El4/b0xvwBUPfnh1Xua0TzOsv4ttWlsvBkNkFSLatdTHEH7tJ0SEUjU0ep/H7sKUpNayk6xPtF8UoDk5y4Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t4GdHqU2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9uz7+w0r; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=K5YCO3mXjPJUTwE2VIGo56VLNR0ZZ8WWMKM8YKkH/2tgbnHJKz0DB28xRPJuW3j93jkQmNrtONBEnuFiiwRJ62q4mfm2zr3E2wMm3NEaZkB2Cs6qNHvOs7rGo4B4hGJpacTEWSWc9/V7RydBcsWyg8kcOYuCpqjHEdJ2yIYQQZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WInhrX0F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tmdw7nDl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 10:54:21 -0000
+Date: Wed, 26 Feb 2025 10:54:22 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1740567262;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PemXpk7B4/Hyqgud74VTc2J3Z0W0sCuHVhMvsWqvwzM=;
-	b=t4GdHqU2/yWmUwQ+kexLL5lKSFqN0TE5Au5d6J5WDoPhH35rjpUfgTrZgsjJXL3ZKHrylP
-	YbQpr7sBKHjiuxQ82P21zGvuFnFw4yTizLJb5UvpINaL9+AB0K6qJet9URZFCKks2qsOuy
-	teexrWjIP/BhvFachqKGGzd8IxPd4Zb+XT5IkAkT3ugSMBNc/fpFR8OHNt9reWZo3x0RdK
-	gbQHLFm6Qe4mBJeKZFTqS312YKZgltJeEUwNeMvJo84lMIn3tXTBNdW73amkWFtUvaCnAG
-	Ftes6bIzrKCb+D6ZH5cGmh0+bnh3UW6dUYrN/qg7/68uWxZuxWa8fSLFR/xnEQ==
+	bh=/SFG8pUhSaiCNHBY/Y3L8KZpNmy+cxcslLAGrttOBe0=;
+	b=WInhrX0FdFxeTKK6Em+h03FAIqGTcg8bd1qlyJsSeb5m5NgS/nXwuCCrdsCLa2GKNDyB4p
+	hGFgEvxaOiCEUtP5YK9W3wV0zCiDad/axvX3z40aZ1obApP1bid96wBnuSqt+gy/jGnuQY
+	i4lT8C5FIMaLVU2hMtSoko5e2rQPDpyyfKdLQv6Qn1mroZwesASnHuunO2pmcM+QOSwayg
+	4nxck/Gkm64HE0XYqfJUvvCb/XmnjWWoXchSiSRIgpWRlx1Al5D0v8w9aF7QTyUMxnSR44
+	C5pRsU6r8WV2s/VVSbwXHeptxz8uMiCwqu5/b7eCmljkPoSxCBqNiI/MHpg0Mg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1740567262;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,25 +52,25 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PemXpk7B4/Hyqgud74VTc2J3Z0W0sCuHVhMvsWqvwzM=;
-	b=9uz7+w0rE4JGCQHOT7I130GEOmpC1ExF5ht8yHVXIVWUIcbUsDulkuIeqMjblyPwdxLohu
-	WljQlyl6J5et26BQ==
+	bh=/SFG8pUhSaiCNHBY/Y3L8KZpNmy+cxcslLAGrttOBe0=;
+	b=Tmdw7nDlPMBf2AJscfyhm/nr2Tep1dQTBBkOnHGxkrvhmGuxECQYTXvYImXtDZVlvKcQyk
+	tRoy+9ooij6+2SCQ==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/traps: Allow custom fixups in handle_bug()
+Subject: [tip: x86/core] x86/traps: Decode 0xEA #UD
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Kees Cook <kees@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124200.275223080@infradead.org>
-References: <20250224124200.275223080@infradead.org>
+In-Reply-To: <20250224124200.166774696@infradead.org>
+References: <20250224124200.166774696@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174056726168.10177.9438836200421162490.tip-bot2@tip-bot2>
+Message-ID: <174056726215.10177.5379269621524406320.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,104 +80,88 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     5d28fddb66e672e3183716a156cae04597599d3b
-Gitweb:        https://git.kernel.org/tip/5d28fddb66e672e3183716a156cae04597599d3b
+Commit-ID:     dbf3638d81bf009568de02bde9dc5fda9769e672
+Gitweb:        https://git.kernel.org/tip/dbf3638d81bf009568de02bde9dc5fda9769e672
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:07 +01:00
+AuthorDate:    Mon, 24 Feb 2025 13:37:06 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Wed, 26 Feb 2025 11:41:54 +01:00
 
-x86/traps: Allow custom fixups in handle_bug()
+x86/traps: Decode 0xEA #UD
 
-The normal fixup in handle_bug() is simply continuing at the next
-instruction. However upcomming patches make this the wrong thing, so
-allow handlers (specifically handle_cfi_failure()) to over-ride
-regs->ip.
-
-The callchain is such that the fixup needs to be done before it is
-determined if the exception is fatal, as such, revert any changes in
-that case.
-
-Additionally, have handle_cfi_failure() remember the regs->ip value it
-starts with for reporting.
+FineIBT will start using 0xEA as #UD
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124200.275223080@infradead.org
+Link: https://lore.kernel.org/r/20250224124200.166774696@infradead.org
 ---
- arch/x86/kernel/cfi.c   |  8 ++++----
- arch/x86/kernel/traps.c | 16 +++++++++++++---
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/bug.h |  1 +
+ arch/x86/kernel/traps.c    | 20 +++++++++++++++++---
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cfi.c b/arch/x86/kernel/cfi.c
-index f6905be..77086cf 100644
---- a/arch/x86/kernel/cfi.c
-+++ b/arch/x86/kernel/cfi.c
-@@ -67,16 +67,16 @@ static bool decode_cfi_insn(struct pt_regs *regs, unsigned long *target,
-  */
- enum bug_trap_type handle_cfi_failure(struct pt_regs *regs)
- {
--	unsigned long target;
-+	unsigned long target, addr = regs->ip;
- 	u32 type;
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 1a5e4b3..bc8a2ca 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -25,6 +25,7 @@
+ #define BUG_UD2			0xfffe
+ #define BUG_UD1			0xfffd
+ #define BUG_UD1_UBSAN		0xfffc
++#define BUG_EA			0xffea
  
- 	switch (cfi_mode) {
- 	case CFI_KCFI:
--		if (!is_cfi_trap(regs->ip))
-+		if (!is_cfi_trap(addr))
- 			return BUG_TRAP_TYPE_NONE;
+ #ifdef CONFIG_GENERIC_BUG
  
- 		if (!decode_cfi_insn(regs, &target, &type))
--			return report_cfi_failure_noaddr(regs, regs->ip);
-+			return report_cfi_failure_noaddr(regs, addr);
- 
- 		break;
- 
-@@ -90,7 +90,7 @@ enum bug_trap_type handle_cfi_failure(struct pt_regs *regs)
- 		return BUG_TRAP_TYPE_NONE;
- 	}
- 
--	return report_cfi_failure(regs, regs->ip, &target, type);
-+	return report_cfi_failure(regs, addr, &target, type);
- }
- 
- /*
 diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index a02a51b..c169f3b 100644
+index 05b86c0..a02a51b 100644
 --- a/arch/x86/kernel/traps.c
 +++ b/arch/x86/kernel/traps.c
-@@ -287,11 +287,12 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+@@ -96,6 +96,7 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+  * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
+  * If it's a UD1, further decode to determine its use:
+  *
++ * FineIBT:      ea                      (bad)
+  * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
+  * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
+  * static_call:  0f b9 cc                ud1    %esp,%ecx
+@@ -113,6 +114,10 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ 	v = *(u8 *)(addr++);
+ 	if (v == INSN_ASOP)
+ 		v = *(u8 *)(addr++);
++	if (v == 0xea) {
++		*len = addr - start;
++		return BUG_EA;
++	}
+ 	if (v != OPCODE_ESCAPE)
+ 		return BUG_NONE;
  
- static noinstr bool handle_bug(struct pt_regs *regs)
- {
-+	unsigned long addr = regs->ip;
- 	bool handled = false;
- 	int ud_type, ud_len;
- 	s32 ud_imm;
+@@ -309,10 +314,16 @@ static noinstr bool handle_bug(struct pt_regs *regs)
  
--	ud_type = decode_bug(regs->ip, &ud_imm, &ud_len);
-+	ud_type = decode_bug(addr, &ud_imm, &ud_len);
- 	if (ud_type == BUG_NONE)
- 		return handled;
+ 	switch (ud_type) {
+ 	case BUG_UD2:
+-		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+-		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-			regs->ip += ud_len;
++		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN) {
++			handled = true;
++			break;
++		}
++		fallthrough;
++
++	case BUG_EA:
++		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+ 			handled = true;
++			break;
+ 		}
+ 		break;
  
-@@ -339,8 +340,17 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+@@ -328,6 +339,9 @@ static noinstr bool handle_bug(struct pt_regs *regs)
  		break;
  	}
  
--	if (handled)
--		regs->ip += ud_len;
-+	/*
-+	 * When continuing, and regs->ip hasn't changed, move it to the next
-+	 * instruction. When not continuing execution, restore the instruction
-+	 * pointer.
-+	 */
-+	if (handled) {
-+		if (regs->ip == addr)
-+			regs->ip += ud_len;
-+	} else {
-+		regs->ip = addr;
-+	}
- 
++	if (handled)
++		regs->ip += ud_len;
++
  	if (regs->flags & X86_EFLAGS_IF)
  		raw_local_irq_disable();
+ 	instrumentation_end();
 
