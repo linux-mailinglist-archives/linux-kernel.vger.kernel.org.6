@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-535081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E21A46E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:32:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BBEA46EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECF516D9A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B76F16DA7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635D92571A9;
-	Wed, 26 Feb 2025 22:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016E3258CE5;
+	Wed, 26 Feb 2025 22:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM+dCu3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jrTj0Swo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9B25D8EA;
-	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E368425D8F4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609150; cv=none; b=ikvMw1qBWsfuTva49Cfsq1VM2Dnac6vAg9zQocOEON8wB+QO6egaJ9a8m0Nw0ACA5Gk4At63I2WXVjHFByGFi1r2F1N5YoOeVYG0qrGqffkZs9URvUIsU8NJMGSZDVVHiVxRuFhhGv5WBthrhvJRzoB9oHJAu9MPrvCwvSnFITw=
+	t=1740609266; cv=none; b=LiH2lFkQPvoP+JqXuTP6pl/OhXl0Hl8sjDacctElHbO1+liTtt2hPLFtRs1n4ZcmSJs2ptiOlpVz37IlCS2VAQ7zgDXI7mqZpzcYjThE7FRY3HgJDw/M2d0Btga622oFBdu2pGM57mfKximteZidaoD67ospmlY1MO3KmYsyIoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609150; c=relaxed/simple;
-	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=eCZYehdiF3Dj+PrLIEH9wglqYn6xXs8T7u9AdFqUWG12AfYbzSFQxq2fVKCIFYKXOp8Prrj4y5ly/YqojsWt3Xd6CRXQhdyemLw1RPdeWrdTY9xUOp3OkpohkTuocFZfDUOcl/NQMmkXURlmp4Eh9O0wJ2MV8aPmoKevr7Eso00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM+dCu3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84961C4CED6;
-	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740609150;
-	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gM+dCu3zSXgP0vfv1zk0gj6h3oNPNl0PElzsk0x1f5eWDzXJHX0EoC2V2fPRrEESY
-	 VD4Z4dtx7XA2be0lAzeSsoxrlcP/ZQd/mYvrfoIDG3XkMx0f+X1/lgXO+T9a5OHaTZ
-	 Pewm8zsLi5m+VieImStVD7ghKyVVfS3BXy242hwYNuKd5kxXASWiUbJmE/NzQ8VRX5
-	 47OvCoDdb/t1kXw6TpZ/vaztlZgUrjEckmJx+TVl+fJbNjtyHFVYZi3NXzwBXb6wTg
-	 pDeXkuIJfIaQuDMUFB6YxzY4QHULpMhfnk+huq+RSdr4yNEiK/K2aGDcMG34wVa/hu
-	 gynIpQkJSNG+g==
-Message-ID: <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740609266; c=relaxed/simple;
+	bh=kB67aXgZyoDNpQIVobWHgHnQeePRhb+j/OqfST83Zh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pwn1/8w7wfH6WUM8dYd1mRoF9D5g2SFmfIXHBfjeMvdelVt+z7CasZjb1HO1XCEQjakUwt7tPkxA9nJOZBmqtX47ruysYNH/N7dEU3vTsU+QoDuf6Ddv3o6F2S1ntiU6++0hs0qZiLzWV3xbyBf6bz55Fs0t/3Ni/Wam31mewso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jrTj0Swo; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740609265; x=1772145265;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kB67aXgZyoDNpQIVobWHgHnQeePRhb+j/OqfST83Zh4=;
+  b=jrTj0SwoQ/oI0QvMU0OuuVvgnBUl699495G6qmip7Tj9JzkLk19nTw+F
+   O3BCtvTncqlgP7oRo/difl8bt+d9E9h0QjCbwEyA+0x5SoU85CBfnosyT
+   b5x54o61vdOCLlMeXoN+k773Mka0jlfVz9caqAoQF0cvnEzbEK7poNuH8
+   B7vSiloSHKXENFL5kJ87EO5DqxMNDvlW2L5/HifnVbs1b2t58KEGmsf4o
+   Y91mBwAu+ftlVVN+bzpU8G3CtTNrsw2KwBOmrYckXazsyc/BjvdSC2anv
+   I3++0xKADa7Eb2wLdNc3Fxxo5UxGKzTi6+f6aWS2hNyqjFLgduJhAt+hI
+   A==;
+X-CSE-ConnectionGUID: gfQGLwcaTqKhbBAHg6qKdw==
+X-CSE-MsgGUID: /1j2nmH+QIiNWOrd1nEwmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45132919"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="45132919"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:34:24 -0800
+X-CSE-ConnectionGUID: /zj3KAbWQt+XjXkJ9n2UQg==
+X-CSE-MsgGUID: It/cinhqSlmZFwVgli3SxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="121850877"
+Received: from unknown (HELO desk) ([10.125.145.169])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 14:34:24 -0800
+Date: Wed, 26 Feb 2025 14:34:16 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250226223416.kdrzblkw7nvyc2vq@desk>
+References: <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
+ <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
+ <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
+ <20250220220440.ma5yfebhiovkqojt@jpoimboe>
+ <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226201453.jgg6kucaathzmcvs@desk>
+ <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226221324.hq2nevnnnrpgo75n@desk>
+ <LV3PR12MB9265BC33F465DB7D2735290394C22@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250222223733.2990179-1-heiko@sntech.de>
-References: <20250222223733.2990179-1-heiko@sntech.de>
-Subject: Re: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, liujianfeng1994@gmail.com, sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com, heiko@sntech.de
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 26 Feb 2025 14:32:28 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265BC33F465DB7D2735290394C22@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Quoting Heiko Stuebner (2025-02-22 14:37:33)
-> of_clk_get_hw_from_clkspec checks all available clock-providers by
-> compairing their of-nodes to the one from the clkspec. If no matching
-> clock-provider is found, the function returns EPROBE_DEFER to cause a
-> re-check at a later date.
->=20
-> If a matching clock-provider is found, an authoritative answer can be
-> retrieved from it whether the clock exists or not.
->=20
-> This does not take into account that the clock-provider may never appear,
-> because it's node is disabled. This can happen for example when a clock
-> is optional, provided by a separate block which just never gets enabled.
->=20
-> One example of this happening is the rk3588's VOP, which has optional
-> additional display-clock-supplies coming from PLLs inside the hdmiphy
-> blocks. These can be used for better rates, but the system will also
-> work without them.
->=20
-> The problem around that is described in the followups to:
-> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-819=
-62a7151d6@collabora.com/
->=20
-> As we already know the of-node of the presumed clock-provider, just add
-> a check via of_device_is_available whether this is a "valid" device node.
-> This prevents eternal defer-loops.
->=20
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+On Wed, Feb 26, 2025 at 10:18:51PM +0000, Kaplan, David wrote:
+> No.  I'm saying that mitigations=off would be equivalent to the above
+> command line.  The <vuln>_select_mitigation() functions wouldn't have to
+> call cpu_mitigations_off() anymore, they'd just naturally chose no
+> mitigation because no attack vectors would be selected.
 
-Applied to clk-next (unless this needs to fix something urgent?)
-
-Please write a unit test (or many). I also wonder if we should use a
-different return value so that we don't try to look up the clk by name
-(see clk_core_fill_parent_index()). We could go even further and stop
-trying to find the clk over and over again too. Maybe -ENODEV can
-indicate that and we can cache that parent entry value so we stop
-trying.
+Ohk, thanks for the clarification.
 
