@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-535029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4BDA46DF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:53:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7339A46DF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CCF3ACCF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:53:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6777A7B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C6E25D551;
-	Wed, 26 Feb 2025 21:53:24 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290125E448;
+	Wed, 26 Feb 2025 21:55:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC8725A63D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5611E1E01;
+	Wed, 26 Feb 2025 21:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740606803; cv=none; b=TjFJu77pphdgeRua9UpIoVjv9pD9Q8UVMhgPJQFa8jKKoCNcVBWodI/WV8mgcIoM5h90Z+ZEVgSqSLqdOn/Xejk7Zhrmhs6itAQK/v8A0DOBvZxjcJPajQK26njUmGXEnFqd1f8rkCoGjp2lR3gcxVPqsnPlkfl1H0FxWKx4Wk0=
+	t=1740606942; cv=none; b=P+NNNgY4foST94fuFRNPL5kKOlHqkGJbGUUWVOZDBsO/cU6ze1sLb1Ixado1iQj7NeAv+Bpdls9NlCEZf2lJuY33ffablZi/2WJCMS2rZEzt26+YLVovVBWtZoHGDULszXoIIaHDvfk0tyMPlB/p+qKS69s8ur+4uZFh3VB3V/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740606803; c=relaxed/simple;
-	bh=sv0dKcBt/bKkXVRUC1sAljTJTNjVv3FGpLnyxt9RQBE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=d4g4Z6Ydd2GGYhMWSl7OnUCN++r/rzw+nMgTx7AUdOu/S1zWFcx9kQ4aLAOvfQluw6/0MbE+eYARJGalbDd76qTnvMdGgUpk6VyD+LQg4m7BQFUxZVW8oL616DPF8INFQnUz45KlGSzzN41Ks1GBv6uGKfPCup7+76kQmCYwAic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d18700311dso3192145ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:53:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740606801; x=1741211601;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HbmWJ9DJNoOMF0ppF15ubSg2HJVCK35INpCBaiEGn10=;
-        b=kutfgTh5SmwyfDVjstulvo1qdo5+mPmmYcUdWfCMVzQDikrLGUr4+1geFXBgDH/XhM
-         cWPbhR6umJdXD11ubUY5orGFSZDL6jNcSqL2IcZwWRzUE7zC/PAT8DP/Pb/ee4lAzzWe
-         Grz9BHlr8tmJB7lL/0L8jZkpChqiS3uyukr7JzOaC4WlMHL9UOztsSycLXll/7mWgsMg
-         AZy3PNMcTjZsokMZ7dAzZl31Kgz6R3kHobteZb+5lYR8xhsECaphZfkckKmOoWlrgf5s
-         bG0jQWX3kjEbmUMQPNstU0WzX/fkxfboTPQLO2aTK3b2TsC7ZB6+cPH/xLgh5VIlyK/H
-         ybgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKxbvvvkb0Zo7Q9t3zYAOO0XQ6Eb5L98XGgt67sQxkm7qeHaVxtD1Gc86jJ3trpc5ZLXi97QfssWPuPr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXbN6JWYH7zLJ4gg4tiiAi4gAb3ivK9Cw5LVBa6XS0UYyKX7XQ
-	BDZQJlHktl5xEE7jLq6q0wYgprB0llgAP5CyVBcXAjK0RX7z/qjiYisZzd5xQhzn3PRRT54HMPu
-	qXpvZq8o0PEKW5meJY438yrSu/WyIHtfF4i0PqXTpjYDWPdP9jegntTk=
-X-Google-Smtp-Source: AGHT+IEq0kEjVTCJtgk1ykwmmIcPRwJAg9qPvwCmP+cJoK8Hli2D+nss5GYGHls/7yoZVnEa8zErRmMoqQ+4LCFDvND6eAHhJ0+s
+	s=arc-20240116; t=1740606942; c=relaxed/simple;
+	bh=AdC1eQ/rcm0w7OFs+Hk2SDojajEWDutq0tzUrs4cEKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RnL5GC6fdiisVe04L3tsDxwrLK7VOqzKK4S+iPwuoPzNzNU1E4QUZViK6of2CPzNs7ctVw5uweguHdHbdpy1+cEwOEsbGXPXnyF/S8eF02AcmNvc3zBYCuEOUHPsxvPlE9vDHv204GvTY72kUlExV589nc3qDLLlCpmEtEDfPqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04446C4CED6;
+	Wed, 26 Feb 2025 21:55:38 +0000 (UTC)
+Date: Wed, 26 Feb 2025 16:56:19 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Uecker <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E.
+ McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura
+ Jack <venturajack85@gmail.com>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
+ airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250226165619.64998576@gandalf.local.home>
+In-Reply-To: <CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	<20250222141521.1fe24871@eugeo>
+	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+	<20250226162655.65ba4b51@gandalf.local.home>
+	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a86:b0:3d3:cdde:fbf2 with SMTP id
- e9e14a558f8ab-3d3d1f9885dmr56339175ab.15.1740606800100; Wed, 26 Feb 2025
- 13:53:20 -0800 (PST)
-Date: Wed, 26 Feb 2025 13:53:20 -0800
-In-Reply-To: <67bf882e.050a0220.1ebef.008f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bf8d50.050a0220.1ebef.0095.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING: bad unlock balance in traverse
-From: syzbot <syzbot+0b16dd9bd622c40b2bbe@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On Wed, 26 Feb 2025 13:42:29 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-HEAD commit:    ac9c34d1e45a Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=175b003f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1635bf4c5557b92
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b16dd9bd622c40b2bbe
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ba9db0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10479c98580000
+> On Wed, 26 Feb 2025 at 13:26, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > As a bystander here, I just want to ask, do you mean basically to treat all
+> > reads as READ_ONCE() and all writes as WRITE_ONCE()?  
+> 
+> Absolutely not.
+> 
+> I thought I made that clear:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ed21c75da715/disk-ac9c34d1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f51096fe566c/vmlinux-ac9c34d1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e6a27961fbbe/bzImage-ac9c34d1.xz
+Sorry, I didn't make myself clear. I shouldn't have said "all reads". What
+I meant was the the "initial read".
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0b16dd9bd622c40b2bbe@syzkaller.appspotmail.com
+Basically:
 
-RBP: 0000000000000001 R08: 00007ffd17221997 R09: 00007fd111db0032
-R10: 00000000000005af R11: 0000000000000246 R12: 00007fd111db3618
-R13: 00007ffd17221dd8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-=====================================
-WARNING: bad unlock balance detected!
-6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0 Not tainted
--------------------------------------
-syz-executor218/5831 is trying to release lock (event_mutex) at:
-[<ffffffff82399e2d>] traverse.part.0.constprop.0+0x2bd/0x640 fs/seq_file.c:131
-but there are no more locks to release!
+	r = READ_ONCE(*p);
 
-other info that might help us debug this:
-1 lock held by syz-executor218/5831:
- #0: ffff88802f5d5790 (&p->lock){+.+.}-{4:4}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
+and use what 'r' is from then on.
 
-stack backtrace:
-CPU: 1 UID: 0 PID: 5831 Comm: syz-executor218 Not tainted 6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_unlock_imbalance_bug kernel/locking/lockdep.c:5289 [inline]
- print_unlock_imbalance_bug+0x1aa/0x1f0 kernel/locking/lockdep.c:5263
- __lock_release kernel/locking/lockdep.c:5528 [inline]
- lock_release+0x525/0x6f0 kernel/locking/lockdep.c:5872
- __mutex_unlock_slowpath+0xa3/0x6a0 kernel/locking/mutex.c:891
- traverse.part.0.constprop.0+0x2bd/0x640 fs/seq_file.c:131
- traverse fs/seq_file.c:98 [inline]
- seq_read_iter+0x934/0x12b0 fs/seq_file.c:195
- seq_read+0x39f/0x4e0 fs/seq_file.c:162
- vfs_read+0x1df/0xbf0 fs/read_write.c:563
- ksys_pread64 fs/read_write.c:756 [inline]
- __do_sys_pread64 fs/read_write.c:764 [inline]
- __se_sys_pread64 fs/read_write.c:761 [inline]
- __x64_sys_pread64+0x1f6/0x250 fs/read_write.c:761
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd111d48329
-Code: 48 83 c4 28 c3 e8 17 1a 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd17221bf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+Where the compiler reads the source once and works with what it got.
+
+To keep it from changing:
+
+	r = *p;
+	if (r > 1000)
+		goto out;
+	x = r;
+
+to:
+
+	if (*p > 1000)
+		goto out;
+	x = *p;
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- Steve
 
