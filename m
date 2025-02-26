@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-535086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7967AA46EA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:38:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CD2A46EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB95D1887919
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376893AFC09
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E3A25D206;
-	Wed, 26 Feb 2025 22:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C41725D1F5;
+	Wed, 26 Feb 2025 22:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEP3xGZa"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsihiHmF"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9925D1FB;
-	Wed, 26 Feb 2025 22:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128625D1E1;
+	Wed, 26 Feb 2025 22:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609502; cv=none; b=dAIfvCFMqtCo9YU5SeeBJqhgfalOfl/UcAoOBXBHMpvtfmSc2/U2juFT5SLw9KvIojAxTyLQsy+Gz3f+P2fcfOWFzsnTLhn5zIvWDEy553XBaTIfKA3o91zQCuAatXJ43EHMIO4fcBGsP2PtuwtTI4EJsdX8zRRuokbkkoY4g20=
+	t=1740609591; cv=none; b=ouffO2HfIjk8pckipqXkeJJxhYuftX+3Mo8exE8WtMSoQ18LDKaEF6C8N19T4K2/itHCLYa7VAqclxmW0SaZCYnmoLlgsUG+qlD+/TVCS3TYy7cYHztaOoVDUIBG9pKHjX91NDMD54NMNdxJSh4tA8Z4ee5X6T5duRzWeGFOG8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609502; c=relaxed/simple;
-	bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dxunCH50qJCArgxn1o+ImPu/9QYNaSQmahieppvot4axvd1WuZ+EPjYA4LSp68TkroPdXpAHy6EFQ7CcN4DhRN6wQl7alLUstCnW7JxJmBwj4WjvIyqF0/hjPk9eGzzCD/7y5pg6YIsWrMGFw+a+o0XbvUZ5vAGzJQ4ircj6IpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEP3xGZa; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1740609591; c=relaxed/simple;
+	bh=u2A9qCjDWZkzV/a5G2DIvQAlNnCeoYE8Rtqwv4VilKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LrvYq9hWcT4GhnHe7XsJ0ej4etF6j4fFFScD39AR+PyTOVMgBMPu/1Wp5ncn99OCuinhJ5vK+ZlNTyX2X3ynU8s/sjnsrWD19HTsfqQDcse/86ikMuC4GqqeDauShamHie4dGwvtL0209iBb4lpEIg0krK3yoMw8oybhabjVOnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsihiHmF; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab78e6edb99so37042966b.2;
-        Wed, 26 Feb 2025 14:38:20 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so2107645e9.1;
+        Wed, 26 Feb 2025 14:39:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740609499; x=1741214299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
-        b=gEP3xGZaeyBrxX/hAyDZsRp45gwXbsYRGmauAqH3XOF7u9Y0j8p9ssetYpxxZQIFT7
-         JlkIdvCT2hYUxEP2dmaghzR2wTzIE1LOFHi8nDRnyNSryQstwszM12BQcPKOQNI826iU
-         TaUqeHHT8VQVsXQV67UnaNYJgjxDqePqndkMzQfl2bzcQeBwIebwmdgDKqDUOT2TNRhh
-         r4HIweE6SztITBWNNaezTRnBH8wBIC3QA5LPIlEN3ZbCvUOzSO1r01c3MOjSfPSc4hQS
-         LSg9o6X/w28UTrFlKfaVVR/X4vKTUzOExppi2GFKrS6VVvQb2T3qWeJH2yJQN4nUOuKJ
-         781w==
+        d=gmail.com; s=20230601; t=1740609587; x=1741214387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
+        b=bsihiHmF0kFmwEfaX3UNF0Vjwvpu2pblgDX78du3Vx7XK6E6o/669sKgf+MUpW9bZK
+         Idk7hIVqQRhNMS7zWkAXrvAQrsGBO7QohCsTjQ76gzjCXAE099KjwVUarj24Yd76FNZ6
+         fTGRb+wx45uwhhtC32r2PTZEH/zn+ElIK/J0MovUwT8VjdUpmiIxCDFV89P9+dotV91T
+         PtJuKjWFatpEv0NsHoGU9EPzp6b0FEnqSSv2PqyVMZgAB58/xTFP3Q6BYw2UHsRm20OA
+         6PuUM8P3sAbIISePjIySSt+LtXV2PAWFs5YuD9oL2//5WJvQF+Ls+VAQXyD009NOfEeJ
+         jStA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740609499; x=1741214299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
-        b=MaLC7jK7230zN8eC/yLVNif84/0qH22mPLjEeOQsqARsVkug0SkVu6ZgpPfkzCmxjl
-         3bTjWleXF8+iABRL14w6Jcq+/MfZkCTqvQEzgCLLq5pVLvE9PwSGQiDzmkNLXOOhQdhu
-         xxB+Q4hwITu9+m3SrZbpqhDKv1lnT8OVx6lwnzbhjI5Ux+1gQyE3bPwe7/5p9IyYazw8
-         PpgxQVubKoXvp3Q94+HzR7C8FK3omrEjGgJq3GgxtnPUg86A6VAYqy/MdoMDZF5jN3KZ
-         ibayJzCTlOSbtQoAl6WcALfFxmbShwyV37/4ur1bCJ19kFUTdrCoVNUwghC9HoyuMq4q
-         heHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2ZLAOYiMVAu5UMqtBUCwi0Xj/p6uL429WzFgN5ABeBpTngxPdMMS+7rNAomjoJpVIOqrgJX6wL3h+AA=@vger.kernel.org, AJvYcCWyFG79DM7ieANzzMG8ZKICh/xRovdgPWC/K3jRh5cq9udNkTeh3SwUg0iqZPTYRX8EcIv93snmLdZO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5uOxdB6WYxVw1jS+SUu3i6YbJESHK01zwSFrDHQtGg6A4XWgo
-	FO2MAzap2TTqS0kAhZGZPkUw+Z9iiQKyUZTFH7P5Vabunh+XxrOgXib3FQ==
-X-Gm-Gg: ASbGncuqU9Wz+cQS/4OXyiUm00LTMTrYfmbpMvpJY0pIl8CcjuisDBk0VstNJen7ouN
-	DL9Rs1fbCZ8FJyNcMJsDW0G4vioH4y8pnVX3WgU5IkaIOjOBse9Np47odmhd0R2bgDnfCz2Esjo
-	WujojeRMyX+cmQCn0G3BCHO9l+jyCQYS7q39DodlZL7/FI6pYZqeIOo3iuepbmxJR5xC3CoxYZU
-	1JYlXQSYYSaakHogJRAulC3jhggPEXVL8AblpDvH6knwV11706YdSPVrM8u/ZcUcErO0hvXn560
-	94jzM/P6SVmwyqw8drLZ/WjaD9iDhQgA3jc3c2RW
-X-Google-Smtp-Source: AGHT+IFvnCcjVzKiyESHJQTcXdKkePyQ5sqIwPDa4LsokuRcrAZowyqutvPh5KZs+5lN8m7DEenuDA==
-X-Received: by 2002:a17:906:18b1:b0:abb:ebfe:d5eb with SMTP id a640c23a62f3a-abeeed5bbccmr595868666b.18.1740609498741;
-        Wed, 26 Feb 2025 14:38:18 -0800 (PST)
-Received: from foxbook (adqi59.neoplus.adsl.tpnet.pl. [79.185.142.59])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6f60b2sm14506266b.102.2025.02.26.14.38.17
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 26 Feb 2025 14:38:18 -0800 (PST)
-Date: Wed, 26 Feb 2025 23:38:15 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] usb: xhci: Don't skip on Stopped - Length
- Invalid
-Message-ID: <20250226233815.46d2f053@foxbook>
-In-Reply-To: <20250226080255.770ca055@foxbook>
-References: <20250226080202.7eb5e142@foxbook>
-	<20250226080255.770ca055@foxbook>
+        d=1e100.net; s=20230601; t=1740609587; x=1741214387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EsxB3niZhDLQXKscUY4SNZGf3lUEcngVn+r/WMhCyzY=;
+        b=v2dXJbqSdA563B+GwYxoNr4RVaQo9GeSHi1G8EgULao6gZUUV7bJvMAvUmlKOZXBoy
+         j2XY1NzjW5HU2qb2+Clwp0k89C52i8QtBsEsEjB2AwyL9F1PJIuwCZ/o3QQDtaaDGiSK
+         0yiX/Ab04PlymeS+H5v6cfMyD3qgLBrIu8upihwuAJjL/Sv0UgaAFZ0TrPfFe7hulepm
+         shevge/t5wmQp5+q3YG955p5Ug82qk0eM+ZZIsDcuC77Sf+w5i0ifwEwO3Xt2jvahMUL
+         wjojLLQy1JAjC7C9n7FGgJAKc07kFAJ3x8iYsoPgslFJd2hWEObkW7iCDtgPy0GhQOuu
+         1WlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQsabP8gRNG1SSZascGH/jC1h16MtlJ3sWJw2w4Z3EkcO8iaUDUUh9LWml/pymrlwL4OBQTLsgid4LhlCW@vger.kernel.org, AJvYcCXPli9OHVhWKogwldLN40GZf5w47m6bO34B9QLknX9rvD73tfNH90TXOO7U6fIFS25b2ei+GEw3AsSu8UmD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxHWCV9pJW5b+fGyHaheDHyhZZB6+m8rngDfU3j+IaF7IpCeam
+	lxchFkMfUiBg1ANXMl1lRG4UUp2DiDFwR1CW+Tc3abUui94jJNLh
+X-Gm-Gg: ASbGncvlOjonMASt+S6xjWWUMXMfIKQMnooATnQI+APgwPfB05XBHfeHgxGVS1f6Oc4
+	Vs9awGmnUzuohCcOahZRbPBIAQkoEh9QkoFz8w5mEmEvNXSbHaPegpJhmFuo1+QNnS4IVgj5o7B
+	1DYtnJgxgSYfzvM1NKsc9bNk9UPyukAobDMlFhggdL/JExkMt/Q0F1oMf0SOp+8iuda2Z09y2SB
+	4Pc97dg0XAkXHY0zyXvJvIaqlMw8LGjWV76Gm7LHhFHf7UwRNS67PJLMezSFNJFvef0ZCq/6fx1
+	Nyxg9EchZr01lQSYjkG2S4jhXU4=
+X-Google-Smtp-Source: AGHT+IEKmoN/1Etv0GnYfbieq7HiOjjWHpmIeqo/u0VjHW2My8Y0pb14MM+VqaWPvkUE+4XaiIxTew==
+X-Received: by 2002:a05:6000:1fa1:b0:387:8752:5691 with SMTP id ffacd0b85a97d-390cc63ce07mr8391029f8f.47.1740609587301;
+        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e485d6dbsm155058f8f.82.2025.02.26.14.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 14:39:47 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs: Fix uninitialized variable uflags
+Date: Wed, 26 Feb 2025 22:39:12 +0000
+Message-ID: <20250226223913.591371-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 08:02:55 +0100, Michal Pecio wrote:
-> After d56b0b2ab142, TDs are immediately skipped when handling those
-> Stopped events. This poses a potential problem in case of Stopped -
-> Length Invalid, which occurs either on completed TDs (likely already
-> given back) or Link and No-Op TRBs. Such event won't be recognized
-> as matching any TD (unless it's the rare Link TRB inside a TD) and
-> will result in skipping all pending TDs, giving them back possibly
-> before they are done, risking isoc data loss and maybe UAF by HW.
+The variable uflags is only being initialized in the if statement that
+checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
+initializing uflags at the start of the system call move_mount.
 
-Actually, Stopped and Stopped - Short Packet may be unsafe too.
-As far as I understand, one of those (depending on SPC capability)
-can occur on the second TRB of a TD whose first TRB completed with
-Short Packet. Then the TD is already given back and removed from
-td_list, so no match will be found with this Stopped event.
+Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I suspect this is the reason why the driver has a policy to silently
-ignore Stopped events which don't match the pending TD, and not only
-Stopped - Length Invalid. Not sure why Stopped - Short Packet isn't
-also ignored and yet apparently doesn't cause problems.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 663bacefddfa..c19e919a9108 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
+ 	struct path from_path __free(path_put) = {};
+ 	struct filename *to_name __free(putname) = NULL;
+ 	struct filename *from_name __free(putname) = NULL;
+-	unsigned int lflags, uflags;
++	unsigned int lflags, uflags = 0;
+ 	enum mnt_tree_flags_t mflags = 0;
+ 	int ret = 0;
+ 
+-- 
+2.47.2
+
 
