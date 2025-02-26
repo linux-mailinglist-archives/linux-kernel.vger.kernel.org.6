@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-532796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83030A45247
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:39:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7BFA4523A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A48283B1580
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F413170C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9684219DF75;
-	Wed, 26 Feb 2025 01:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02DA194A6C;
+	Wed, 26 Feb 2025 01:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DSr0p5U6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MO3PZ/Xw"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADA8199EBB;
-	Wed, 26 Feb 2025 01:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D844D192B63
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740533965; cv=none; b=dOS7CTBjYzn+yCHcmpCBbAEWgHwdDiut8P9lzBSIdmKIRhE3Jcw1vBhOyyWdThHRE3Di2qQBT2ogsddVZN8E1OLjo7QxV4L14cw6WjK4VEOBKhhh+rhmaA6/NmeJ+vb+UvrEjlKEJqEcml8/RIfTViOEWDb9KolQJmQVYnvzsbY=
+	t=1740533758; cv=none; b=DZ7zFXN1692n/pbBJYWQ5tYAGwmt5qeGQGewodDr+oUcnDrAhy2fmnuN2NiaArIeEJn40ggNN+NgPmJgwhPikUR57Y7a07NrpHFCec6gEbuRJQugNjmVYxe7atuyPG8gdM+EZ8BaXPnAM3Ao/FcGSzd1kDaJZoSoeUKGVoqArIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740533965; c=relaxed/simple;
-	bh=T0pKCclIvHKyDRUHCJs7P4mfoEs4SIcJGp6SSmwXCZc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=l8J0kNGUdlNTI1ROnga+P6ZKjzmHhtm58VmT54d4SFKrvZU49bRDqNtemU45s5igZsN4W+2YCm/fWU+ZQxWPJkU6w+BBhKfe2BTTNqpbEch4mrZ3A8HI2hHEkvprDT9dTgg/v+rb7mZXyzYdNsH8WteQCCz82zAavl5g4EZDm0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DSr0p5U6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51Q1ZSdu1502812
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 25 Feb 2025 17:35:29 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51Q1ZSdu1502812
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740533740;
-	bh=T0pKCclIvHKyDRUHCJs7P4mfoEs4SIcJGp6SSmwXCZc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=DSr0p5U6PuFacB2sJlJBShpK+caegDMEmn8OYplTp/ukKNtEFfrkn97ga+OT2dXpz
-	 K/n5OJZ9p7wF026A4N5Ms8I4Ha7wXxIE31o+eevCv66LWleUk5egaKa/T1wzR+OiP5
-	 pBftNRMbRUke7ubIKWI6Trw88YIoPJ//UlgWSqbBalJrMQ6XLeWdsBqjIBFJ2BqBTU
-	 NxN3soIqU4psmCdpeI68cUVCZ/T8YSni/GX+FUYtyTt8DqQzRz5FBJx8rRSkQsq+0n
-	 LFOV9xO0DwzRQLOdgcR413cBdNqea/GHzmtBr2NpUvBJ8KgVfK7MCUU4fZDlrEdXny
-	 PWA/+ls6AlysA==
-Date: Tue, 25 Feb 2025 17:35:26 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        akpm@linux-foundation.org, alistair@popple.id.au,
-        andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-        arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-        bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-        davem@davemloft.net, david.laight.linux@gmail.com,
-        dmitry.torokhov@gmail.com, dri-devel@lists.freedesktop.org,
-        eajames@linux.ibm.com, edumazet@google.com, eleanor15x@gmail.com,
-        gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
-        jernej.skrabec@gmail.com, jirislaby@kernel.org, jk@ozlabs.org,
-        joel@jms.id.au, johannes@sipsolutions.net, jonas@kwiboo.se,
-        jserv@ccns.ncku.edu.tw, kuba@kernel.org, linux-fsi@lists.ozlabs.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux@rasmusvillemoes.dk, louis.peens@corigine.com,
-        maarten.lankhorst@linux.intel.com, mchehab@kernel.org,
-        mingo@redhat.com, miquel.raynal@bootlin.com, mripard@kernel.org,
-        neil.armstrong@linaro.org, netdev@vger.kernel.org,
-        oss-drivers@corigine.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
-        simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de,
-        vigneshr@ti.com, visitorckw@gmail.com, x86@kernel.org,
-        yury.norov@gmail.com
-Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8052b316-9f72-42c7-9e11-e23e690d80c4@citrix.com>
-References: <3BC57C78-1DFF-4B83-85AA-A908DBF2B958@zytor.com> <8052b316-9f72-42c7-9e11-e23e690d80c4@citrix.com>
-Message-ID: <4259A207-7B5F-4D25-A8AE-144D24554201@zytor.com>
+	s=arc-20240116; t=1740533758; c=relaxed/simple;
+	bh=+a/8Rnwq3M59jG/h6pOx1MvWKehiDVKh9LFb8+XkUcU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=koHfhijWJvSpcgc6zjobVA/6y+NjH0Mk6MUzyg0alwFZlzhlWfFKZQ3azoqnvJEKoozWxdxUcQjk6tFCP3J+RZQUbQPK9lbiqZZFdcA50F4muGaGMSzbc1b3U/YKMYUW8Q8/3JpqFJxYjygoRZ48bD81dVVsNOIerotfjR5G64E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MO3PZ/Xw; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fbff6426f5so12960450a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:35:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740533756; x=1741138556; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bwkMEQZZWa7h4K0NWv+dMOi3x/q9ujiLZV0nsTlZNA=;
+        b=MO3PZ/XwrqsIIu9qVwWotKKccrRiKZEd5f0ARTK59RvwHH0Xi91qDaaWnjf2u6RamC
+         FEszGhUW+lDA5cXSiQuV5HajExtkVaqJPFu9LJ4X4DaLaODuND7nhe15k7IRtSW29/v/
+         ZORgLclzrambUeOokxZ3GA2m1Y3GG4lqNm6uGrzJH0qWyH184cpyLbHOP2wNzwBRBOmZ
+         Hmdc6ktNq2wvy3StqfWZz3fhLIWBYRNezDat6s/H9WzrQwiLP1SAetBaYKNEP+1MjGVB
+         MrrhiHrQkETs7W4EX8dG0eMnx9mxTXLpimPRmqroJx3e4vvWc2mQ+VLthP/jlhFCgwbv
+         3JJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740533756; x=1741138556;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bwkMEQZZWa7h4K0NWv+dMOi3x/q9ujiLZV0nsTlZNA=;
+        b=F9F1xF57SIjgvQEMzjz2bG74/AzfHPSHfLUa1Na38n6FTMlZKDfUAuG7OxrTVUuI7k
+         0A+53fJmRWP4arLyi2m3xzrklLUC0TY3mxY1fspHwkEZWxGIvpfuSOYTCcyl4Rri3Gu2
+         IGRcz309wULEfjoc1MIx3imzEn7WC1V/mH5/OETutyU+cdqsfy2+YIoFk85mw9scjtdK
+         6+p2OV/hGVLC3K0I+vwruLDg+/1v8bhmetJs1/6POGHoicqc1hn+wp5iE+/jw+MtgIGO
+         jeNTK6wg2HOtz/Fmfk+BhKQvGB8Ptj00OpzOGXzk/BRQUj/o6cc5tcvddurlzR2FSB8V
+         uvrQ==
+X-Gm-Message-State: AOJu0YykyEN7V3ISDmc2n4IX9OSBfwYipMKSsk5HVwHbxxjueuGRJ9OI
+	OIktFUj4jpMnr5V9euE8mlsY64uTtsA8jKPGXd42K8M9tx24OgUPDi4IOzZlrgVNRmdLT9hprm5
+	3ag==
+X-Google-Smtp-Source: AGHT+IETvbRVrxXRHnpW+9mE2FrumQ0EMxOPE73/r92E+MK8Sttdkq2JT/HBaFrwixzCkTPTbJac7xQUoeM=
+X-Received: from pjboh3.prod.google.com ([2002:a17:90b:3a43:b0:2fc:af0c:4be])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d2d0:b0:2ea:37b4:5373
+ with SMTP id 98e67ed59e1d1-2fe68ada2a5mr8962899a91.10.1740533755483; Tue, 25
+ Feb 2025 17:35:55 -0800 (PST)
+Date: Tue, 25 Feb 2025 17:35:54 -0800
+In-Reply-To: <20250123002422.1632517-1-kevinloughlin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250122013438.731416-1-kevinloughlin@google.com> <20250123002422.1632517-1-kevinloughlin@google.com>
+Message-ID: <Z75v-hT5SxKlqdwt@google.com>
+Subject: Re: [PATCH v5 0/2] KVM: SEV: Prefer WBNOINVD over WBINVD for cache
+ maintenance efficiency
+From: Sean Christopherson <seanjc@google.com>
+To: Kevin Loughlin <kevinloughlin@google.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	pbonzini@redhat.com, kirill.shutemov@linux.intel.com, kai.huang@intel.com, 
+	ubizjak@gmail.com, jgross@suse.com, kvm@vger.kernel.org, 
+	thomas.lendacky@amd.com, pgonda@google.com, sidtelang@google.com, 
+	mizhang@google.com, rientjes@google.com, manalinandan@google.com, 
+	szy0127@sjtu.edu.cn
+Content-Type: text/plain; charset="us-ascii"
 
-On February 25, 2025 1:43:27 PM PST, Andrew Cooper <andrew=2Ecooper3@citrix=
-=2Ecom> wrote:
->> Incidentally, in all of this, didn't anyone notice __builtin_parity()?
->
->Yes=2E=C2=A0 It it has done sane for a decade on x86, yet does things suc=
-h as
->emitting a library call on other architectures=2E
->
->https://godbolt=2Eorg/z/6qG3noebq
->
->~Andrew
+On Thu, Jan 23, 2025, Kevin Loughlin wrote:
+> v5:
+> - explicitly encode wbnoinvd as 0xf3 0x0f 0x09 for binutils backwards compatibility
 
-And not even a smart one at that=2E
+Please, please, please do not send new series with In-Reply-To.  Trying to sort
+through the different versions in my workflow was painful.  From
+Documentation/process/maintainer-kvm-x86.rst:
+
+Links
+~~~~~
+Do not explicitly reference bug reports, prior versions of a patch/series, etc.
+via ``In-Reply-To:`` headers.  Using ``In-Reply-To:`` becomes an unholy mess
+for large series and/or when the version count gets high, and ``In-Reply-To:``
+is useless for anyone that doesn't have the original message, e.g. if someone
+wasn't Cc'd on the bug report or if the list of recipients changes between
+versions.
+
+To link to a bug report, previous version, or anything of interest, use lore
+links.  For referencing previous version(s), generally speaking do not include
+a Link: in the changelog as there is no need to record the history in git, i.e.
+put the link in the cover letter or in the section git ignores.  Do provide a
+formal Link: for bug reports and/or discussions that led to the patch.  The
+context of why a change was made is highly valuable for future readers.
 
