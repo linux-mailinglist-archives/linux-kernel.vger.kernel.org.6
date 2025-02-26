@@ -1,123 +1,175 @@
-Return-Path: <linux-kernel+bounces-534478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44D6A46793
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:12:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DE7A46780
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A4917AE8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15729188CA3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D5223329;
-	Wed, 26 Feb 2025 17:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6552222CF;
+	Wed, 26 Feb 2025 17:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UCMKzmC6"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="miRfNZe+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DFF1DE2A9;
-	Wed, 26 Feb 2025 17:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018C71DE2A9;
+	Wed, 26 Feb 2025 17:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589240; cv=none; b=LOV0zVpk4aKW4r6LfMkvvEBx8DPt6dQpIHCEd7hR2EED8XqCldYXSal1mOpdm9+Tvza11pg8U4cZVL7g1JIsE6rUUoytYQvQPqgDq19UgDlkgLB6SyZ8jX1SVrRFkYuORqMT2xMxqJQoSCenCqySs6uJKz7z4qPf1h2PUPrRYiM=
+	t=1740589252; cv=none; b=LH7Bx7C+KHGI3nC2tD7fLWP7gwp/FAY5YQc3NgGdY8q8kDlstItWP3oDEr+GkB28BWmwVuEYeIqvBIOmgl4aJ/8RpdYOTuC6ICrz+E8MWittLczerHFoHh8i+iQW/5q0CCXZtONsvFt4PkYN/YRcBX+3RPYqxA3tTD3jzkdxXvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589240; c=relaxed/simple;
-	bh=as/rxyivHk6qYSCy6Dl+SlKl3s4ZaumMyqnaRx29FYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F8gBl2lqjN7m7G4E82/c/r7XAB0lJyVfhgD7ygCsV1bp1fF9iONEsrZ5ejW4N7Cp+TCFMWP1iVMrsd1lvhidn0D/PQy0yAChC2oKxdPX65rCtfEzMgOPPHBtZo3MyImn1FzIrLzJ2f7HpKHud3YM4n71EGfcf3Mh+9TrO2R766I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UCMKzmC6; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A24C71F687;
-	Wed, 26 Feb 2025 17:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740589235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a/HQt0AoDb+k3+XX8xsB7vdc/4Es82oRu2Uz9GkCQW0=;
-	b=UCMKzmC6XIXsMaNnDiavmRgUHlvzryvgemkKqBj45PmRJPGCnZxCbxYYNYPSgrxrjPWmkH
-	vJcpaViueIugGx18ze8qDeQe83r41+p5Qbn9DSFTTioYCfuT0SIgynJqM8pts6mJxagFtk
-	19qb3rysjfUwBbCWIh/LkAXFKlxpDmSJsb21fKG+XsrcrNUAwLM3FmVv41bCCJGSY8PubP
-	x6aO8qUtzNioh0ttzFtysFyxoonCtjS2dKP4oTHy6MjOFrXVoBCmlMG67VPKSetcOWq0LB
-	OdMMT03iwKOwgnPnbDYrzh2RScByD7XGyeI4s/2pzqvj1eNPpyvAFkHb93Y/fw==
-Date: Wed, 26 Feb 2025 18:00:33 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
- hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
- SFP+ module
-Message-ID: <20250226180033.260070d7@kmaincent-XPS-13-7390>
-In-Reply-To: <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
-References: <20250226141002.1214000-1-ms@dev.tdt.de>
-	<Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
-	<d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
-	<20250226162649.641bba5d@kmaincent-XPS-13-7390>
-	<b300404d2adf0df0199230d58ae83312@dev.tdt.de>
-	<20250226172754.1c3b054b@kmaincent-XPS-13-7390>
-	<daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740589252; c=relaxed/simple;
+	bh=MdqkHWUEtv7tjnvc1shi+RAak0dflbv0rf/oThbljPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D7w5U+iHgEUv+/v3IhtZb9DMq44yovMUz0GVmXQsj1tNgeyxyzaHG+j6Qq9HJa9WCYJQB8CutzRMqh0km1z0OYtt7wBRjND2X6O7R87vo9gxY/NlgFkeBjcj86cvdDF5yWxcBMZFX8q3OvX/rLCZAE+qTuXbaP8XxPPvAuP5gJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=miRfNZe+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740589250; x=1772125250;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MdqkHWUEtv7tjnvc1shi+RAak0dflbv0rf/oThbljPQ=;
+  b=miRfNZe+9jnrZ3kYF0xVwFDYmwXu7UCnX1h5zSor/s5sOwyolXFV0Spp
+   AD6AKuNHah0o9IK1Fqps/bxb52hC7qZNL6jQdkImn8POLVBx7Ja8wZ8dx
+   CmrDyESDCkXzqZ4Y81Gvz1sVC5D24WHXjGKZ8kapoO6tZMEAFPouyXsif
+   NKD7qH2UABlXuDTdudSvRKlx9T/e1y7RbLYWP4SirwNqk0sJ5adSfzMPB
+   mK5DHIgiqVvEFT49mKPsxPJ0fwg9TJVJaOK0U8c3pnoNKK0qvPTpUE15c
+   kcDJexJkK8IIzKSmFikAJztnWhVaE05FyUMW5s+Qs3HeDrFQelHCP2y4N
+   w==;
+X-CSE-ConnectionGUID: b8vKBc5aTUqGBqTbMy0d7w==
+X-CSE-MsgGUID: +amB/NTSSHG9rf7UVEzldg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41577104"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="41577104"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 09:00:49 -0800
+X-CSE-ConnectionGUID: GekzjP7zTV2iLQdCigxZcw==
+X-CSE-MsgGUID: SjUIbYiwSgatyjlq00pQKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="121751950"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.124.220.27])
+  by orviesa004.jf.intel.com with ESMTP; 26 Feb 2025 09:00:47 -0800
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: linux-perf-users@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Kan Liang <kan.liang@intel.com>
+Subject: [PATCH v4] perf script: Fix output type for dynamically allocated core PMU's
+Date: Wed, 26 Feb 2025 11:00:43 -0600
+Message-ID: <20250226170043.762219-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekhedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemleehrggvmeelfhdttdemrggsvggtmedugehfjeemvgdviegrmedufegttdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeelhegrvgemlehftddtmegrsggvtgemudegfhejmegvvdeirgemudeftgdtpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmshesuggvvhdrthguthdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfiesl
- hhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Feb 2025 17:51:42 +0100
-Martin Schiller <ms@dev.tdt.de> wrote:
+This patch was originally posted here:
 
-> On 2025-02-26 17:27, Kory Maincent wrote:
-> > On Wed, 26 Feb 2025 16:55:38 +0100
-> > Martin Schiller <ms@dev.tdt.de> wrote:
-> >  =20
-> >> On 2025-02-26 16:26, Kory Maincent wrote: =20
->  [...] =20
->  [...] =20
-> >>  [...]
-> >>  [...]
-> >>  [...] =20
->  [...] =20
->  [...] =20
-> >>=20
-> >> I think you're getting two things mixed up.
-> >> The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
-> >> there simply is an additional 4s wait at the beginning before we start
-> >> searching for a phy. =20
-> >=20
-> > Indeed you are right, I was looking in older Linux sources, sorry.
-> > Still, the additional 4s wait seems relevant only for FS SFP, so it=20
-> > should
-> > be included in the function naming to avoid confusion.
-> >  =20
->=20
-> You may be right for the moment. But perhaps there will soon be SFP
-> modules from other manufacturers that also need this quirk.
->=20
-> There is also the function sfp_fixup_rollball_cc, which is currently
-> only used for modules with vendor string =E2=80=9COEM=E2=80=9D. However, =
-the function is
-> not called sfp_fixup_oem_rollball_cc.
+https://lore.kernel.org/all/20241213215421.661139-1-thomas.falcon@intel.com/
 
-Indeed. As you prefer then.
+I have rebased on top of Arnaldo's patch here:
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+https://lore.kernel.org/all/Z2XCi3PgstSrV0SE@x1/
+
+The original commit message:
+"
+perf script output may show different fields on different core PMU's
+that exist on heterogeneous platforms. For example,
+
+perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
+umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
+-c10000 -W -d -a -- sleep 1
+
+perf script:
+
+chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
+ |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+
+perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
+name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
+
+perf script:
+
+gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+
+Some fields, such as data_src, are not included by default.
+
+The cause is that while one PMU may be assigned a type such as
+PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
+If this value does not match an existing PERF_TYPE_X value,
+output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
+
+Instead search for a core PMU with a matching perf_event_attr type
+and, if one is found, return PERF_TYPE_RAW to match output of other
+core PMU's.
+"
+
+Suggested-by: Kan Liang <kan.liang@intel.com>
+Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+---
+v2: restrict pmu lookup to platforms with more than one core pmu
+v3: only scan core pmu list
+v4: rebase on top of Arnaldo's patch
+---
+ tools/perf/builtin-script.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d797cec4f054..abc860d01420 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -398,10 +398,28 @@ static inline int output_type(unsigned int type)
+ 	return OUTPUT_TYPE_OTHER;
+ }
+ 
++static bool output_type_check_core_pmus(unsigned int type)
++{
++	struct perf_pmu *pmu = NULL;
++
++	if (perf_pmus__num_core_pmus() > 1) {
++		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
++			if (pmu->type == type)
++				return true;
++		}
++	}
++	return false;
++}
++
+ static inline int evsel__output_type(struct evsel *evsel)
+ {
+-	if (evsel->script_output_type == OUTPUT_TYPE_UNSET)
+-		evsel->script_output_type = output_type(evsel->core.attr.type);
++	if (evsel->script_output_type == OUTPUT_TYPE_UNSET) {
++		if (output_type(evsel->core.attr.type) == OUTPUT_TYPE_OTHER &&
++		    output_type_check_core_pmus(evsel->core.attr.type))
++			evsel->script_output_type = PERF_TYPE_RAW;
++		else
++			evsel->script_output_type = output_type(evsel->core.attr.type);
++	}
+ 
+ 	return evsel->script_output_type;
+ }
+-- 
+2.48.1
+
 
