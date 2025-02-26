@@ -1,175 +1,167 @@
-Return-Path: <linux-kernel+bounces-534191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0DBA463F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:02:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1703A463FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72AD43B0AA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24AC017E167
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4242222AB;
-	Wed, 26 Feb 2025 15:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA1222370C;
+	Wed, 26 Feb 2025 15:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ozu8qxXD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0M7GPZf3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1MXKeEXZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E04415278E;
-	Wed, 26 Feb 2025 15:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17EC223329;
+	Wed, 26 Feb 2025 15:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582121; cv=none; b=MTvuNSYpdXAkYjS2n6cqYPaDpmMMdVvJhboQMrAfhuKKscBTJVOgcs/D8fGoXWloT301lYOmgE09eoXvGCixtLQnoiE5vUjaOyfpPlg2SAt3XxQR+5IQqPf3Eg6fjj8iZEyQbte7X1+1LygS63Di+PtbzF2ZQSNAfGrkJmnHlqQ=
+	t=1740582194; cv=none; b=SfNG2uFJBZE7p3WmwObLKSl5qL5XE+mE8QfMCrQlvyZeV+cjmONSXkqdJk15mmaXGOQSOhZ0S2o19Rtt/L/hB4kcSE/mRbceENk1D0l1L+Z7LfcXhjEz6IrzQA+y0eShp7cTm6s4SZVD+jaHbV7A/zABldBEHQEGMTtOAIRyTrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582121; c=relaxed/simple;
-	bh=celbQI4md4Nw9NiTcdx99RF7CX7CNJgN/S3lD5ArXGI=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J26rD4/3UNZUrdD9uiMwvQQg87OCVdNqcZxisIc3fowrXTXqWpA5s4GDNCLxTXIq22AlKo9ngd1k+EHQwcucdCc9p9m4b0J5dTeB9AxTGeox/CIhi9Er8/iTGUdJsFW+q3q7VcZaa9UWPkvgKQr3SViAah0+p8WimKwlxDxbn0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ozu8qxXD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0M7GPZf3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740582118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JWlX9TJLo6j7kLc4k/KFCY/zN5HPB61jkl2jDj8mI+4=;
-	b=Ozu8qxXDgHlyYDgOIOrHxApCO4stPIj6JjjCbdNoJMzVCmA1zGPro86S1pXvvhGk4LmEp+
-	XSAS0m/tKXYVxXvKNCKzcVgIaAsDdON/wFO9TqZAcULl8eVTLe2EGVkcdBaJgArIJ44m7W
-	6gljhBtPvnu4o4uO0q1EiJjmm8icUBGiJK4O8CI3WiiS0sNXiq4ODv17LqBkayLOZwUKH6
-	7aEtFQq3hx6bcyUKcXklxLJCsx8+FXzPHMrFO42mMAcRJrKyCOYlMVtUzrvr0dsWioWx9l
-	B9diGFKhAsLety4R0kbJSGlw6SChnU0svqLjpEftN9Sq4ryHL3BGHUyBO7Vfdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740582118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JWlX9TJLo6j7kLc4k/KFCY/zN5HPB61jkl2jDj8mI+4=;
-	b=0M7GPZf3s+9CFrwhjsGBGwadoUM4Lp5OV+6AA7HjCpgMYRqYgK3FzTWHSJGxVnYD/I+QrS
-	lqfT8G6EytwcmUCw==
-To: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org
-Subject: [PATCH] x86/iopl: Cure TIF_IO_BITMAP inconsistencies
-In-Reply-To: <67bead04.050a0220.38b081.0002.GAE@google.com>
-References: <67bead04.050a0220.38b081.0002.GAE@google.com>
-Date: Wed, 26 Feb 2025 16:01:57 +0100
-Message-ID: <87wmdceom2.ffs@tglx>
+	s=arc-20240116; t=1740582194; c=relaxed/simple;
+	bh=6Kf9Hy8Gkd2YHeBt3fvfpgCx0kTgH1gopcryskVAEQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIaSV5tYJIjIZtXGSSYa+n/pnj2oGK/sAFuSmypOJGjpdkR5VWGEjGdNUIpFYdsWYjfR2SXzRqH7NJk/SLJJx/mb5COTrlFFf60DSZOGgtsbV59Bv0i6hGizoFAGKopK/Z/DHhSL4bs39K1CmUEDJPEIDo86D85I9f7KehfpWgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1MXKeEXZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB333C4CEE9;
+	Wed, 26 Feb 2025 15:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740582193;
+	bh=6Kf9Hy8Gkd2YHeBt3fvfpgCx0kTgH1gopcryskVAEQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1MXKeEXZIkZ9aEjNk3bgNn9SVZnLkd84/woiWvzH62rlyT/+LY5oaiYYbEFnyfBVW
+	 CcWyjzRhYDKGB/AYspsbu5Qkw6Gdulz72lu4LOAZvb2w9d8LDvxvujel72Lg3yz25N
+	 D7nlHEWnt+1o7+i4j7yAOlz+Fc3hS00DMI3hghTM=
+Date: Wed, 26 Feb 2025 16:02:04 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Chuck Lever <chuck.lever@oracle.com>, regressions@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit
+ b9b588f22a0c
+Message-ID: <2025022630-reseal-habitat-939a@gregkh>
+References: <874j0lvy89.wl-tiwai@suse.de>
+ <dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+ <87jz9d5cdp.wl-tiwai@suse.de>
+ <263acb8f-2864-4165-90f7-6166e68180be@oracle.com>
+ <87h64g4wr1.wl-tiwai@suse.de>
+ <7a4072d6-3e66-4896-8f66-5871e817d285@oracle.com>
+ <2025022657-credit-undrilled-81f1@gregkh>
+ <2025022626-octane-rickety-304a@gregkh>
+ <87cyf44vnc.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cyf44vnc.wl-tiwai@suse.de>
 
-io_bitmap_exit() is invoked from exit_thread() when a task exists or
-when a fork fails. In the latter case the exit_thread() cleans up
-resources which were allocated during fork().
+On Wed, Feb 26, 2025 at 03:40:07PM +0100, Takashi Iwai wrote:
+> On Wed, 26 Feb 2025 15:35:34 +0100,
+> Greg KH wrote:
+> > 
+> > On Wed, Feb 26, 2025 at 03:26:44PM +0100, Greg KH wrote:
+> > > On Wed, Feb 26, 2025 at 09:20:20AM -0500, Chuck Lever wrote:
+> > > > On 2/26/25 9:16 AM, Takashi Iwai wrote:
+> > > > > On Wed, 26 Feb 2025 15:11:04 +0100,
+> > > > > Chuck Lever wrote:
+> > > > >>
+> > > > >> On 2/26/25 3:38 AM, Takashi Iwai wrote:
+> > > > >>> On Sun, 23 Feb 2025 16:18:41 +0100,
+> > > > >>> Chuck Lever wrote:
+> > > > >>>>
+> > > > >>>> On 2/23/25 3:53 AM, Takashi Iwai wrote:
+> > > > >>>>> [ resent due to a wrong address for regression reporting, sorry! ]
+> > > > >>>>>
+> > > > >>>>> Hi,
+> > > > >>>>>
+> > > > >>>>> we received a bug report showing the regression on 6.13.1 kernel
+> > > > >>>>> against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> > > > >>>>> with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+> > > > >>>>>   https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> > > > >>>>>
+> > > > >>>>> Quoting from there:
+> > > > >>>>> """
+> > > > >>>>> I use the latest TW on Gnome with a 4K display and 150%
+> > > > >>>>> scaling. Everything has been working fine, but recently both Chrome
+> > > > >>>>> and VSCode (installed from official non-openSUSE channels) stopped
+> > > > >>>>> working with Scaling.
+> > > > >>>>> ....
+> > > > >>>>> I am using VSCode with:
+> > > > >>>>> `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> > > > >>>>> """
+> > > > >>>>>
+> > > > >>>>> Surprisingly, the bisection pointed to the backport of the commit
+> > > > >>>>> b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> > > > >>>>> to iterate simple_offset directories").
+> > > > >>>>>
+> > > > >>>>> Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> > > > >>>>> fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> > > > >>>>> release is still affected, too.
+> > > > >>>>>
+> > > > >>>>> For now I have no concrete idea how the patch could break the behavior
+> > > > >>>>> of a graphical application like the above.  Let us know if you need
+> > > > >>>>> something for debugging.  (Or at easiest, join to the bugzilla entry
+> > > > >>>>> and ask there; or open another bug report at whatever you like.)
+> > > > >>>>>
+> > > > >>>>> BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> > > > >>>>>
+> > > > >>>>>
+> > > > >>>>> thanks,
+> > > > >>>>>
+> > > > >>>>> Takashi
+> > > > >>>>>
+> > > > >>>>> #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> > > > >>>>> #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> > > > >>>>
+> > > > >>>> We received a similar report a few days ago, and are likewise puzzled at
+> > > > >>>> the commit result. Please report this issue to the Chrome development
+> > > > >>>> team and have them come up with a simple reproducer that I can try in my
+> > > > >>>> own lab. I'm sure they can quickly get to the bottom of the application
+> > > > >>>> stack to identify the misbehaving interaction between OS and app.
+> > > > >>>
+> > > > >>> Do you know where to report to?
+> > > > >>
+> > > > >> You'll need to drive this, since you currently have a working
+> > > > >> reproducer.
+> > > > > 
+> > > > > No, I don't have, I'm merely a messenger.
+> > > > 
+> > > > Whoever was the original reporter has the ability to reproduce this and
+> > > > answer any questions the Chrome team might have. Please have them drive
+> > > > this. I'm already two steps removed, so it doesn't make sense for me to
+> > > > report a problem for which I have no standing.
+> > > 
+> > > Ugh, no.  The bug was explictly bisected to the offending commit.  We
+> > > should just revert that commit for now and it can come back in the
+> > > future if the root-cause is found.
+> > > 
+> > > As the revert seems to be simple, and builds here for me, I guess I'll
+> > > have to send it in. {sigh}
+> > > 
+> > > Takashi, thanks for the report and the bisection, much appreciated.
+> > 
+> > Now sent:
+> > 	https://lore.kernel.org/r/2025022644-blinked-broadness-c810@gregkh
+> 
+> Thanks Greg!
+> 
+> Let's continue hunting the cause before 6.14 release, meanwhile.
 
-io_bitmap_exit() invokes task_update_io_bitmap(), which in turn ends up
-in tss_update_io_bitmap(). tss_update_io_bitmap() operates on the
-current task. If current has TIF_IO_BITMAP set, but no bitmap installed,
-tss_update_io_bitmap() crashes with a NULL pointer dereference.
+I'd prefer that the revert land in Linus's tree first and I can take the
+revert from there for the stable releases, otherwise it's going to be a
+mess once 6.14-final is released :(
 
-There are two issues, which lead to that problem:
+thanks,
 
-  1) io_bitmap_exit() should not invoke task_update_io_bitmap() when
-     the task, which is cleaned up, is not the current task. That's a
-     clear indicator for a cleanup after a failed fork().
-
-  2) A task should not have TIF_IO_BITMAP set and neither a bitmap
-     installed nor IOPL emulation level 3 activated.
-
-     This happens, when a kernel thread is created in the context of a
-     user space thread, which has TIF_IO_BITMAP set as the thread flags
-     are copied and the IO bitmap pointer is cleared.
-
-     Other than in the failed fork() case this has no impact because
-     kernel threads including IO workers never return to user space and
-     therefore never invoke tss_update_io_bitmap().
-
-Cure this by adding the missing cleanups and checks:
-
-  1) Prevent io_bitmap_exit() to invoke task_update_io_bitmap() if
-     the to be cleaned up task is not the current task.
-
-  2) Clear TIF_IO_BITMAP in copy_thread() unconditionally. For user
-     space forks it is set later, when the IO bitmap is inherited in
-     io_bitmap_share().
-
-For paranoia sake, add a warning into tss_update_io_bitmap() to catch
-the case, when that code is invoked with inconsistent state.
-
-Fixes: ea5f1cd7ab49 ("x86/ioperm: Remove bitmap if all permissions dropped")
-Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
----
-
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -33,8 +33,9 @@ void io_bitmap_share(struct task_struct
- 	set_tsk_thread_flag(tsk, TIF_IO_BITMAP);
- }
- 
--static void task_update_io_bitmap(struct task_struct *tsk)
-+static void task_update_io_bitmap(void)
- {
-+	struct task_struct *tsk = current;
- 	struct thread_struct *t = &tsk->thread;
- 
- 	if (t->iopl_emul == 3 || t->io_bitmap) {
-@@ -54,7 +55,12 @@ void io_bitmap_exit(struct task_struct *
- 	struct io_bitmap *iobm = tsk->thread.io_bitmap;
- 
- 	tsk->thread.io_bitmap = NULL;
--	task_update_io_bitmap(tsk);
-+	/*
-+	 * Don't touch the TSS when invoked on a failed fork(). TSS
-+	 * reflects the state of @current and not the state of @tsk.
-+	 */
-+	if (tsk == current)
-+		task_update_io_bitmap();
- 	if (iobm && refcount_dec_and_test(&iobm->refcnt))
- 		kfree(iobm);
- }
-@@ -192,8 +198,7 @@ SYSCALL_DEFINE1(iopl, unsigned int, leve
- 	}
- 
- 	t->iopl_emul = level;
--	task_update_io_bitmap(current);
--
-+	task_update_io_bitmap();
- 	return 0;
- }
- 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -176,6 +176,7 @@ int copy_thread(struct task_struct *p, c
- 	frame->ret_addr = (unsigned long) ret_from_fork_asm;
- 	p->thread.sp = (unsigned long) fork_frame;
- 	p->thread.io_bitmap = NULL;
-+	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
- 	p->thread.iopl_warn = 0;
- 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
- 
-@@ -464,6 +465,11 @@ void native_tss_update_io_bitmap(void)
- 	} else {
- 		struct io_bitmap *iobm = t->io_bitmap;
- 
-+		if (WARN_ON_ONCE(!iobm)) {
-+			clear_thread_flag(TIF_IO_BITMAP);
-+			native_tss_invalidate_io_bitmap();
-+		}
-+
- 		/*
- 		 * Only copy bitmap data when the sequence number differs. The
- 		 * update time is accounted to the incoming task.
+greg k-h
 
