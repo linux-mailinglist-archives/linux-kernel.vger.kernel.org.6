@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-532998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4CAA454AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:47:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED16BA454AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B1318986EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083003AE58A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D448426770A;
-	Wed, 26 Feb 2025 04:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A0C1925A6;
+	Wed, 26 Feb 2025 04:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KXAeSvBC"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KSU1SiCY"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A041A9B34
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8F91A9B34
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740545222; cv=none; b=SmxqZREWW7Zc+IINDOGICMvqp3Ie73VBqsFqAoLeE17pgmx/q19/L3iI3ijn0eXi7s1DminrSsvixbx7gudMsRtlAx1aUSOV05fknLXiC/t7cvdyKTmVygeNyQVNuYQPVyVELLzWNqh34rOYFw30nf+gF5HZ42UIJMzDlmvIAwE=
+	t=1740545227; cv=none; b=LuMiDTm0X9a4/1tZI/1jhBUd4GgFbvUCqLJlLKLXy9r0SJAnPvUCf7MNiNc5octujptojLZf+skjLnQjiASwKfZi/UIGmItd5yH+9QGuqYlsTXAQk/ZsdJDPqx2iYia7yJx4H9CLWHCCtO30TfJC97AE1UeMhYPPYf+TRmgfJEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740545222; c=relaxed/simple;
-	bh=HMNzmLTZDAIthT0I+YHbH4FM5qPUX+p4x8vAc69vCcY=;
+	s=arc-20240116; t=1740545227; c=relaxed/simple;
+	bh=PtDh4uv0y2c5ni/NRQQZ8f92mCvCxlm8AHhvC71fFDE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R4pdk90l+/HmoGsCxdXrSnymlyN8vB74lNubG/tnyJJuvLwCa5Y1Fz1dxDmwuCjKrCYHacSycjHk4rZCZudKpWO81bSAyOlRqiMgOGkr7Vf8fQFx7QABrB8h6q7kEmfm+TTwFLProNVqaBR6TwYQgMzi8ouPXYZSzBX3C/nrSxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KXAeSvBC; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version:Content-Type; b=mYobnT+RXQ7ed4f8NXMvMXpix7gUK45DrsgF53Z0GQtiwHbvw2/bUu2u9yh4CykWHCTfMJhuHjkMf1l5xlcWesSiXIIA6h3lbt8qD0AOEdVyqCL6nMD9Rw73ckByf9OBDpd4w9mN/pGpV1MtNqL8N5EMxCjP9sFJ9o/nkBrXDNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KSU1SiCY; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q1n9Ms015935;
-	Wed, 26 Feb 2025 04:46:48 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q1ku9h012292;
+	Wed, 26 Feb 2025 04:46:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=eXSdLb
-	JOggzZQEA4sHdq529HfrnQ1p0S3qmolMOzjzg=; b=KXAeSvBC7Qh9mJwmkj/qxr
-	2GhxpPTS9JywhB+paCjE5zFxQZYMCIOsb11IK390AcE+SnKj3D1JH3gSIsT/eAMt
-	P+mk9xCvL0LIFhttxnYXoe8TMq8R/5NnDfvroAcjhTlKB1c0l3Bf7rE+jR+krqH4
-	qEH8Wm7+gBAsLO3VTDAkF+709615Z5F6P50Fmu1MM+XF3ibIXXGZq2yiEzcno17z
-	tVRpBPt0UnLzMFrwhljJbP/lKjTrMynAA2KfFP1QPAC+fnI/Pj+3qYoIZERbO8Bx
-	Ge1ReV/kc2ltUMx+XTrjbRJTYbeeI8GzwsfSO2094gDFT6cuo3FuZq8jQ2QRdIhw
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QaFeSp
+	h5N0ebnv3LOYKdtqVg4TRqnBD3D85gZUv4cFM=; b=KSU1SiCYz5NA0v+1jXayLd
+	bF7nUKDwM4ibVE5Sn/bVV7rx9DTqZurP5+mNMoMqfj0ZrJ7/mn4XfeMYZwiLD42v
+	iL+ySbXauSc7wUjGKPe8rz/CAkkS3btIv3SSytU6PEf/9rb2/j2oMJh4URoNghJQ
+	AGxgW5BJEYJ/z2ey9zXjDA66OYu2wCP3foev10HTExGIZtizdkHSFMkgEwJDI8I4
+	7DE7Jsf6IxJKHw1428N6yP+BGyoshT42jY4GipwA9H/T6JTd9nfu2sxKPac/WN3s
+	ubOgGi/5l5OVJGk5ZrmPghO6T+q7aIfs0JV2Zf1b1bcT+QtvBpy6Q++WUdQ4wZ8Q
 	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451s198qrr-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5ms55q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 04:46:48 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51Q4klJU005970;
-	Wed, 26 Feb 2025 04:46:47 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451s198qrq-1
+	Wed, 26 Feb 2025 04:46:54 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51Q4VrWH010807;
+	Wed, 26 Feb 2025 04:46:53 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5ms55k-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 04:46:47 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q0lVHf026304;
-	Wed, 26 Feb 2025 04:46:46 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44yswngsvb-1
+	Wed, 26 Feb 2025 04:46:53 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q3N7iX012597;
+	Wed, 26 Feb 2025 04:46:52 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ys9yh151-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 04:46:46 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51Q4kiNU32702724
+	Wed, 26 Feb 2025 04:46:52 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51Q4koRB43909584
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 04:46:44 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A0E592004B;
-	Wed, 26 Feb 2025 04:46:44 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D92720040;
-	Wed, 26 Feb 2025 04:46:41 +0000 (GMT)
+	Wed, 26 Feb 2025 04:46:50 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 923AE2004B;
+	Wed, 26 Feb 2025 04:46:50 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C30920040;
+	Wed, 26 Feb 2025 04:46:47 +0000 (GMT)
 Received: from li-c439904c-24ed-11b2-a85c-b284a6847472.ibm.com.com (unknown [9.43.65.188])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Feb 2025 04:46:40 +0000 (GMT)
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Feb 2025 04:46:46 +0000 (GMT)
 From: Madhavan Srinivasan <maddy@linux.ibm.com>
 To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
         Naveen N Rao <naveen@kernel.org>,
         Christophe Leroy <christophe.leroy@csgroup.eu>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/time: Define div128_by_32() static and __init
-Date: Wed, 26 Feb 2025 10:16:39 +0530
-Message-ID: <174054508252.1386382.5381279072295079526.b4-ty@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/vmlinux: Remove etext, edata and end
+Date: Wed, 26 Feb 2025 10:16:45 +0530
+Message-ID: <174054508251.1386382.1364395123476522030.b4-ty@linux.ibm.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <50810349bf1eee378fbeab72a36e4b6553a60c3d.1738749246.git.christophe.leroy@csgroup.eu>
-References: <50810349bf1eee378fbeab72a36e4b6553a60c3d.1738749246.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <d1686d36cdd6b9d681e7ee4dd677c386d43babb1.1736332415.git.christophe.leroy@csgroup.eu>
+References: <d1686d36cdd6b9d681e7ee4dd677c386d43babb1.1736332415.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,37 +94,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wDVYu4xa319XOIyyF2HqagPhZSj3eYlh
-X-Proofpoint-ORIG-GUID: KXa3Z-JPUjIkILz9p0UEpWmIB-daQ2ST
+X-Proofpoint-ORIG-GUID: h1D-ohVbxAu52xu1TNcw9a_PFPCAZV83
+X-Proofpoint-GUID: Ds3Kf2cycof3AF0ZlB0N86nAvM4Xneyd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- phishscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
- mlxlogscore=885 mlxscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 bulkscore=0 mlxlogscore=700
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2502100000 definitions=main-2502260033
 
-On Wed, 05 Feb 2025 10:54:26 +0100, Christophe Leroy wrote:
-> div128_by_32() used to be called from outside time.c in the old days
-> but since v2.6.15 it hasn't been used outside time.c
+On Wed, 08 Jan 2025 11:33:44 +0100, Christophe Leroy wrote:
+> etext is not used anymore since commit 843a1ffaf6f2 ("powerpc/mm: use
+> core_kernel_text() helper")
 > 
-> $ git grep div128_by_32 v2.6.14
-> v2.6.14:arch/ppc64/kernel/iSeries_setup.c:	div128_by_32(1024 * 1024, 0, tb_ticks_per_sec, &divres);
-> v2.6.14:arch/ppc64/kernel/pmac_time.c:	div128_by_32( 1024*1024, 0, tb_ticks_per_sec, &divres );
-> v2.6.14:arch/ppc64/kernel/time.c:				div128_by_32( XSEC_PER_SEC, 0, tb_ticks_per_sec, &divres );
-> v2.6.14:arch/ppc64/kernel/time.c:	div128_by_32(1024*1024, 0, tb_ticks_per_sec, &divres);
-> v2.6.14:arch/ppc64/kernel/time.c:	div128_by_32(1000000000, 0, tb_ticks_per_sec, &res);
-> v2.6.14:arch/ppc64/kernel/time.c:	div128_by_32( 1024*1024, 0, new_tb_ticks_per_sec, &divres );
-> v2.6.14:arch/ppc64/kernel/time.c:void div128_by_32( unsigned long dividend_high, unsigned long dividend_low,
-> v2.6.14:include/asm-ppc64/time.h:void div128_by_32( unsigned long dividend_high, unsigned long dividend_low,
+> edata and end have not been used since the merge of arch/ppc/ and
+> arch/ppc64/
+> 
+> Remove the three and remove macro PROVIDE32.
 > 
 > [...]
 
 Applied to powerpc/next.
 
-[1/1] powerpc/time: Define div128_by_32() static and __init
-      https://git.kernel.org/powerpc/c/f17bcb97ed415235bbbcf897a28de856b88ddf95
+[1/1] powerpc/vmlinux: Remove etext, edata and end
+      https://git.kernel.org/powerpc/c/2c1cbbab626afd2e66ae980eabf610e660cd9126
 
 Thanks
 
