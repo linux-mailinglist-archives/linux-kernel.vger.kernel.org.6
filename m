@@ -1,171 +1,119 @@
-Return-Path: <linux-kernel+bounces-532730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D310EA45185
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:35:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C245A4518C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9BF1792B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5493A79E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE9313D52E;
-	Wed, 26 Feb 2025 00:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C121494C9;
+	Wed, 26 Feb 2025 00:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPsxWft9"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UwEPWxhi"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4513B19A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04947F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740530126; cv=none; b=AcEBGRltGNNR6Iu5LRw4S7BTpnlV2wRpwZm8NKFD7GaXUVIPy6qRQSZKGjApzQsLdrqC11lc+xUs4M9Gu7jzFtZCKjBnGwAPlMJjARv+gwPO8c0fAtH39/BUORGXCs83NFGWsYY8MO0oI6v470yRd8K1op1uG0+IVFG/U9yF4Qs=
+	t=1740530184; cv=none; b=uyMioSxvTt0SEforTUHkV/32gPFB8a1vbVyzwUHTK4kD9A9zT0gX2ho3QZARPoQbcKM32p8NJDzzSFZ7s+lGwI0FdKC/3tm+4Vit86Gkj0ai0PhWrIi7qZqt7zg9yhituQH1RohgLESaha6XVTCKRIcpg0K7yXGZ8GmpJz4w73g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740530126; c=relaxed/simple;
-	bh=WXk+NSNdAwFqqx+MVizfGGgWgwuhd31Tk8ZujVhcpSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9aS4qaaWyzi3D2NdeVesHEOCZOur8xKL56v1japJHZHyY2PUmhoBniMDKBgDP3sOE8ghQ63O+qvqld3OcFxsv88BGAKWF1eumY8kE/AqRyMKXqKJpcRGYAm6iTgI+0iBjIGC9g0J8mFdK0qCwst0NvxxDh2u8IIKqWRRr+f+m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XPsxWft9; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-aaec111762bso441644966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:35:23 -0800 (PST)
+	s=arc-20240116; t=1740530184; c=relaxed/simple;
+	bh=bN8gfJuIIhF73j3nDVVpaoOYFmyR/2OtbGeHfy6t+bs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=UHwjdhBwX8uaxmQEIKYQMVOovCgIWhhuiMXmMUbDSTg4cvVk7tihpVndTet3zzbTozC3hZZDsLd0TbCLYbSFyf1RKpFIUWsC09G9X+vdLD/ZLvE/tyf8czuIjJhRebcW4NEYMTMWgmEtSL4J857x27Tx1b+WWo9FGyFhZ+hKhCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UwEPWxhi; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc2f22f959so636615a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:36:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740530122; x=1741134922; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2sWr60tesWUFRYFPqf/atpsmtwt+NxovXy8XB/PMBUs=;
-        b=XPsxWft9THEr2JoV4vovD48+FoVfhZXPJK6tY/CUJulVZ5xRUWkFx17+PjtcHVKIu1
-         OxGctuiMtMDR1sNsnzQkb24gR4JZqJpAck4nSxWRA+Q6bFTZVN9iGH02zDDMYkl6ztFO
-         yS8EDK+pGsGLzGRAqh5l2emYBFQ3gAETJ9ea9xwM4T0jxypNqUHhyunzJanNESW6PWZ8
-         qyc4PMvdNFyXHAnvm/p5XF6TUrA8iLOLnXVtX/40Fy6msc7Gztk98bLyzPa3nYITuq6P
-         dLfFnW1mhsTxEG++ncwBMaUzLuXnHnb1hhJNXRVoT0vK8/iaoMoZNK5jdgWlyphO1eJq
-         6e5A==
+        d=google.com; s=20230601; t=1740530183; x=1741134983; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nXsj9VmJS338dGGKNMmEL0zNWuSXmfxwvYQboUIxXE8=;
+        b=UwEPWxhiiNnorZC9wJ/Of682IgfnOwCy7G9Xc4NiQ0ygyn4I7nfWJzOO7BYCz9KKv+
+         ogReU2zk+SXhOAbNYORDfMjpdaj1oPKwQsf+hNRb9L1UcFbOeL6/KjmmsrzjSUtBv2Vc
+         BgjaA5sUYuDqAV+vlNInsQk0TvcvnJujn4aKvAPnKq3kQjXJHS9SXDFBfDw7RaswcGVk
+         CDicoCCJt9ShYFFpArbL2B0iDgaQcebIjbEDKs4dSONGw9NmyN+9X41PnSr/hWQnAFoI
+         ds0kC+9Me5JFJatAEDLfs+hYaprzs++kiOBLZUYfMizBmAUFCZT6Pf4k0JQzPGOxdvo6
+         aBRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740530122; x=1741134922;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2sWr60tesWUFRYFPqf/atpsmtwt+NxovXy8XB/PMBUs=;
-        b=q9oeCEJUYJjf+za65+hz8LL52Dy6Asyj7fruoDZhE1T3xS8AqXKq4h5WVoSAIHLWph
-         zDmQEXcl9lnqM+cKxZJFiZspkzK6VBhrTy3kqxP4StceTCyK3dIsVuAve4YFpnV225Wd
-         yXiG04RLKvdUqs+2DWqM3N0E3FUbzUGSG3tV4U44CDteLwcwWWQt5IKhO37YgOcnPNfx
-         /rVuEs+S1KaO2F8qy/Y3SC1fMgiFyGfuwbvUcc2/QYWKT/Jx1fN94IJcepYs6BU4S5F4
-         eehwIJhyLxbQsrETe2UxQ4USimyNKh4CvXhc7L0w192sht+iD5GyxNpFNp9PFIz72gpV
-         vhZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHldyFNeR9mu5YlcNVjYWvuGGkFf/FYNb8fBe5uJT7AFteJviJ4mh3jFu2A/tkP5qgUV54UtjJetBaNvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKqQd7fyQB7eA2FWWRe9uq4FZFLiq+LqTfIlm7lEkn6wp8Dqsg
-	uxABDKPL+7n8J6QtSPSrzelOiaOZX0YHcIRokfjJQL22nYoZMty++BSr5nXjGhuJGA==
-X-Gm-Gg: ASbGncuJnKICyvdiQTsiXF9Y63rvFsTvUpm6i1UnSlukiyHN32YJa1NkqL0ZM+T/iOG
-	D9c66ia4KKj1B5trljXu1+aYL09mIy9qX33fbP2TIMfBoXhSkTNZ44iSRTFyObf7hqfMvTMuitp
-	T5S92DZaGsVElnjsV+JWZBke+YjYFCckAZ0Y5r2jUeNU9p9yFvYc0lQCKOPO9oPWYFcdzifPJHN
-	/yhZy1Xjd9ifIoz1dJFXat28z7jbjx9MP1PQIyf/Q2QpKI1OJLe1CXncX5MHc6lsJ2NoautBAZ6
-	utbPIARtjfAaV1gA0iFMRJyzvdXgu16k4OcK3zEJKdO0irPV6MR57j+Bo5fdo7uozOJPXKSZHDe
-	wt0Z4ygpzyxmDdHq4gFM9mBb5g+KOecre2Nnqfm0W+mKRTGL+wuZfvPk=
-X-Google-Smtp-Source: AGHT+IF3XIr+VPlmtfyD5U0Gg/aRmrzOoS9BOhDrJkrfSsducyRIXJb03Wm06EbWrn1gJBz30qxBmA==
-X-Received: by 2002:a17:907:d8a:b0:abb:aef3:6052 with SMTP id a640c23a62f3a-abeeef81b5emr99428266b.55.1740530122412;
-        Tue, 25 Feb 2025 16:35:22 -0800 (PST)
-Received: from [26.26.26.1] (ec2-3-73-218-181.eu-central-1.compute.amazonaws.com. [3.73.218.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20b5cc5sm226238966b.168.2025.02.25.16.35.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 16:35:21 -0800 (PST)
-Message-ID: <f77cc212-deb0-47a7-90fa-8d76bc891564@gmail.com>
-Date: Wed, 26 Feb 2025 08:35:17 +0800
+        d=1e100.net; s=20230601; t=1740530183; x=1741134983;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nXsj9VmJS338dGGKNMmEL0zNWuSXmfxwvYQboUIxXE8=;
+        b=ciUElZR+0KQwbmkrtEsvN6ezsHCq341ijw3gT+wJFR4tq4cmzkxDlp+5k6H6e4SCSC
+         ZWYJwD7yc+m2AlOSq1ERt0uLJ9XeY1MqUJFfcJ+YX4vJzK1XXyE/o9raw53R/ArhFejE
+         H/HqueYFAS5O8lY2juk7ugGwVkEl9pz01WUSy2AL+Z7vdWYii8c9LyN5fn93focAWLQK
+         5LQDxAdrPfbuRxux8C5CJ/9gMWD7G75sQubplWSKeI2vFIWcCN+y9d7q6OWLSS16Tvfa
+         VlQdaITkxsm8e0HRnCg/uWW0TV3gqXwrleTtBEz4OFQkWjQZM7tOBm/GJ7oCzP8/kACU
+         +Chw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYZ+f4PDWoQxLbWn5nTySo25ewHiw6Aqfj0JV50eHAGZFurofuFwUpehFgBf8ZjfgWkTRULRoVh28bTRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQnPXQ+czK1Os3zmrgY6+FjAnXOeJHImVVor/t0BApMXtUTv4C
+	choYsGWEUjAfKzgnNRRQjFGg3156Ci3J3Y0xbaVZlRStf5n9z93HcUfG2cwWARZBbgl1FONUpLb
+	h59UITjcFyIfQmpvfHzuAuw==
+X-Google-Smtp-Source: AGHT+IFAJA9kXjbtodM50cg9NdVfJgqMXkKHhhOKxSVMlYERHkjtSUyApwsAYc+sWvgX0xUTBoLiM0dw3MhKeHxGbw==
+X-Received: from pjz15.prod.google.com ([2002:a17:90b:56cf:b0:2fb:fac8:f45b])
+ (user=hramamurthy job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:1b50:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-2fce7ae8f31mr29815385a91.5.1740530182660;
+ Tue, 25 Feb 2025 16:36:22 -0800 (PST)
+Date: Wed, 26 Feb 2025 00:35:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
-To: Jason Gunthorpe <jgg@ziepe.ca>, Ethan Zhao <haifeng.zhao@linux.intel.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Yunhui Cui
- <cuiyunhui@bytedance.com>, dwmw2@infradead.org, joro@8bytes.org,
- will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
- <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
- <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
- <20250225142610.GB545008@ziepe.ca>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <20250225142610.GB545008@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250226003526.1546854-1-hramamurthy@google.com>
+Subject: [PATCH net] gve: unlink old napi when stopping a queue using queue API
+From: Harshitha Ramamurthy <hramamurthy@google.com>
+To: netdev@vger.kernel.org
+Cc: jeroendb@google.com, hramamurthy@google.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	pkaligineedi@google.com, shailend@google.com, willemb@google.com, 
+	jacob.e.keller@intel.com, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/25/2025 10:26 PM, Jason Gunthorpe wrote:
-> On Tue, Feb 25, 2025 at 04:54:54PM +0800, Ethan Zhao wrote:
->>> On 2025/2/25 14:48, Yunhui Cui wrote:
->>>> We found that executing the command ./a.out &;reboot -f (where a.out
->>>> is a
->>>> program that only executes a while(1) infinite loop) can
->>>> probabilistically
->>>> cause the system to hang in the intel_iommu_shutdown() function,
->>>> rendering
->>>> it unresponsive. Through analysis, we identified that the factors
->>>> contributing to this issue are as follows:
->>>>
->>>> 1. The reboot -f command does not prompt the kernel to notify the
->>>> application layer to perform cleanup actions, allowing the
->>>> application to
->>>> continue running.
->>>>
->>>> 2. When the kernel reaches the intel_iommu_shutdown() function, only the
->>>> BSP (Bootstrap Processor) CPU is operational in the system.
->>>>
->>>> 3. During the execution of intel_iommu_shutdown(), the function
->>>> down_write
->>>> (&dmar_global_lock) causes the process to sleep and be scheduled out.
-> Why does this happen? If the kernel has shutdown other CPUs then what
-> thread is holding the other side of this lock and why?
+When a queue is stopped using the ndo queue API, before
+destroying its page pool, the associated NAPI instance
+needs to be unlinked to avoid warnings.
 
-The down_write() actually executes might_sleep()->might_resched()->__cond_resched()->
+Handle this by calling page_pool_disable_direct_recycling()
+when stopping a queue.
 
-__schedule() first before acquiring the lock, thus there is change to got scheduled out.
+Cc: stable@vger.kernel.org
+Fixes: ebdfae0d377b ("gve: adopt page pool for DQ RDA mode")
+Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
+---
+ drivers/net/ethernet/google/gve/gve_rx_dqo.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The caller is scheduled out due to voluntary sleep or because its time slice is exhausted,
+diff --git a/drivers/net/ethernet/google/gve/gve_rx_dqo.c b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+index 8ac0047f1ada..f0674a443567 100644
+--- a/drivers/net/ethernet/google/gve/gve_rx_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+@@ -109,10 +109,12 @@ static void gve_rx_reset_ring_dqo(struct gve_priv *priv, int idx)
+ void gve_rx_stop_ring_dqo(struct gve_priv *priv, int idx)
+ {
+ 	int ntfy_idx = gve_rx_idx_to_ntfy(priv, idx);
++	struct gve_rx_ring *rx = &priv->rx[idx];
+ 
+ 	if (!gve_rx_was_added_to_block(priv, idx))
+ 		return;
+ 
++	page_pool_disable_direct_recycling(rx->dqo.page_pool);
+ 	gve_remove_napi(priv, ntfy_idx);
+ 	gve_rx_remove_from_block(priv, idx);
+ 	gve_rx_reset_ring_dqo(priv, idx);
+-- 
+2.48.1.658.g4767266eb4-goog
 
-not because the lock is held by other processes here.
-
->>>> 4. At this point, though the processor's interrupt flag is not cleared,
->>>>    allowing interrupts to be accepted. However, only legacy devices
->>>> and NMI
->>>> (Non-Maskable Interrupt) interrupts could come in, as other interrupts
->>>> routing have already been disabled. If no legacy or NMI interrupts occur
->>>> at this stage, the scheduler will not be able to run.
->>>> 5. If the application got scheduled at this time is executing a
->>>> while(1)-
->>>> type loop, it will be unable to be preempted, leading to an infinite
->>>> loop
->>>> and causing the system to become unresponsive.
-> If the schedular doesn't run how did we get from 4 -> 5?
-
-We got from 4-->5 because caller thread's voluntary invocation of the scheduler.
-
->
-> Maybe the issue is the shutdown handler here is running in the wrong
-> time and it should not be running after the scheduler has been shut
-> down.
-
-Move thex86_platform.iommu_shutdown() before hpet_disable() ?
-
-I didn't figure out why we need scheduler is active when we execute
-
-iommu_shutdown(), or the reason to keep this pair of down_write()/
-
-up_write(). could you help to shed light ?
-
-Thanks,
-Ethan
-
->
-> I don't think removing the lock is a great idea without more
-> explanation.
->
-> Jason
->
 
