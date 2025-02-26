@@ -1,91 +1,114 @@
-Return-Path: <linux-kernel+bounces-532797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D515A45256
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:42:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473B9A45251
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F9A17F7D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:40:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 580A37A30AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6DF19DF40;
-	Wed, 26 Feb 2025 01:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A4819D8A4;
+	Wed, 26 Feb 2025 01:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uphFgnPo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="CvN5XUDJ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A6519994F;
-	Wed, 26 Feb 2025 01:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157B018801A;
+	Wed, 26 Feb 2025 01:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740534008; cv=none; b=Kme4QWEQNJAFSp+svlA7VufsnMhb6D3sWVpZgT2pR+GDmevdcdjhwzMO6h0Q9q+0gkpxnua/6bShyZgKLB2z6qe5J3IxRR4bfr17xggAcyHPe/SJ+BDAXd5eDx/2baJhRT/Ubikt08ZcxHJTCrYPAJHD84EVkrsCHI2dkJ8JLjA=
+	t=1740534098; cv=none; b=OHFDF8ISjo0+1c30r+cEFs5m4hj1l4yv/7DWUv8C1DOY+JK9VaPwl6H6puC/ZNHzeC14bak0NjQuPRwb4L3Vl52XBp7CSVDM+es46JvpCrj2WBUPCi9+lFsyK1ec09P69hm0bBULt7ODwh7SmbMszQ3giu7UI4qqUynDSNTWJ98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740534008; c=relaxed/simple;
-	bh=qgHwa1uTYGNlZs1FSdv5nNpP+wTaMz+y1Oe8SjywQLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GPtFExNRdXAM6ZCDM7pmZSPg1014UULUVHqC4eHHOGpukYbX3zl0kjR8gsU6adcvIZ4rruQ9sL8l1fwHihc6JlZLCEA8QwgcYgFgG3RAz5vqCEdkalo9lD+EBViQNqXvglfd3g38CsbqkoJVIIf6tef+Tw+ajYzHfMxRj2ywXLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uphFgnPo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA80C4CEDD;
-	Wed, 26 Feb 2025 01:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740534007;
-	bh=qgHwa1uTYGNlZs1FSdv5nNpP+wTaMz+y1Oe8SjywQLI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uphFgnPovfymgldeHUGro1jxgiPCTC0ckwkZ5B7XmddbxY5yJh5GGb7Y0ma8C/+Fc
-	 2jH+Bd2/9aucGnV0bcNFpIA3y/8eJMNmoVXmNV70xoWkHr19Ht0a/PMIAk/gMDcUpS
-	 ejjI5yMWLqLv5FmElWjcYfHW5dDMo3k4HuOKW3ahHdadE4m9pUzugGnfqlX2FSkqL3
-	 +KkcUmSFiODbvsQM2rFhaW78kTqVkurJjK5k6DfOt/7AHvX2Ery5+0Gqf3JjQBHjOs
-	 PIcMUFZ+anoAuQQvvnJ0/QvxMGnSAo6d5CtAOc0/TscpSYOPf6IidRp6DkByEThdQR
-	 BHglpIkEsIBAQ==
-Date: Tue, 25 Feb 2025 17:40:05 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko
- <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran
- <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate
- domains
-Message-ID: <20250225174005.189f048d@kernel.org>
-In-Reply-To: <qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
-References: <20250213180134.323929-1-tariqt@nvidia.com>
-	<20250213180134.323929-4-tariqt@nvidia.com>
-	<ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
-	<20250218182130.757cc582@kernel.org>
-	<qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
+	s=arc-20240116; t=1740534098; c=relaxed/simple;
+	bh=58ZMG8/1/Uh1xkS5yKwRQCg82oBoxBK2uJYcSHkp4rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLOsXc77hwhzFJV7vbWYxOA3ZrfGnanKdx9DptQmxPCLNwbKBIhFpRfqXBjClTdWGCQG0CEC+41Udpkh+CGKGQ+GOxSIV/mg38qLzBxQ0+qmhQSE8PLYLHvFOiZUxKOV+UyzltFg3GPT4Dq6heATUUV8UUo5aBFiNhD4YQ3whpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=CvN5XUDJ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=jdo3/IxMwB8Q6RAm8ZwQFpjzIGffxAXyzhXHZ3RcNYQ=; b=CvN5XUDJLLlwrhy2yvZ3JOn+mA
+	66llyxU9BmPbO5yXQyiku1NmjCiS1kuS9BFF8Yp06Eqq24WFuOy39micBVHNgX3ViXpXs19PthvR/
+	Wn9fLbmpxq9kdrF/dni3e0lPtym++ScEocHEK8MLciUAsI6lsVqr//2bFdZX5STFbLXwXndIoKsVO
+	PZQ6MhZXoT/BiTrKcnlI/OL350i3vgAWwJmB8o8De+KtnrV2a6lTFKQ/ouDwLkRElW691cwJl0YRk
+	/SiR5VaATjvDIh1KOZqglSm6ktFZm7wqGo36ulqjhlizNZB/3F21vRn8vd7OKxW/bwYZ5ZOJXuLL1
+	sUyRl2ag==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tn6Px-001nh1-2C;
+	Wed, 26 Feb 2025 09:40:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Feb 2025 09:40:57 +0800
+Date: Wed, 26 Feb 2025 09:40:57 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH] crypto: lib/Kconfig - fix chacha/poly1305 dependencies
+ more more
+Message-ID: <Z75xKexTUNm_FnSK@gondor.apana.org.au>
+References: <20250225164216.4807-1-arnd@kernel.org>
+ <20250225213344.GA23792@willie-the-truck>
+ <f7c298b8-7989-49e7-90a2-5356029a6283@app.fastmail.com>
+ <c4896a12-8abe-4fe6-b381-86b23d32b332@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4896a12-8abe-4fe6-b381-86b23d32b332@app.fastmail.com>
 
-On Tue, 25 Feb 2025 14:36:07 +0100 Jiri Pirko wrote:
-> >The problem comes from having a devlink instance per function /
-> >port rather than for the ASIC. Spawn a single instance and the
-> >problem will go away =F0=9F=A4=B7=EF=B8=8F =20
->=20
-> Yeah, we currently have VF devlink ports created under PF devlink instanc=
-e.
-> That is aligned with PCI geometry. If we have a single per-ASIC parent
-> devlink, this does not change and we still need to configure cross
-> PF devlink instances.
+On Tue, Feb 25, 2025 at 10:50:10PM +0100, Arnd Bergmann wrote:
+>
+> After looking at the original 0day report, I think the fix for
+> that problem would have been
+> 
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -94,6 +94,7 @@ config WIREGUARD
+>         select CRYPTO_CHACHA_MIPS if CPU_MIPS32_R2
+>         select CRYPTO_POLY1305_MIPS if MIPS
+>         select CRYPTO_CHACHA_S390 if S390
+> +       select CRYPTO_CURVE25519_PPC64 if PPC64 && CPU_LITTLE_ENDIAN
+>         help
+>           WireGuard is a secure, fast, and easy to use replacement for IPSec
+>           that uses modern cryptography and clever networking tricks. It's
 
-Why would there still be PF instances? I'm not suggesting that you
-create a hierarchy of instances.
+Thanks.  I wasn't aware wireguard was doing this.
 
-> The only benefit I see is that we don't need rate domain, but
-> we can use parent devlink instance lock instead. The locking ordering
-> might be a bit tricky to fix though.
+Let me see if I can replicate this select matrix in lib/crypto
+instead.
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
