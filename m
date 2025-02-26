@@ -1,224 +1,142 @@
-Return-Path: <linux-kernel+bounces-533684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF5CA45D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50817A45DA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE3918848D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D900189825F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEB6222582;
-	Wed, 26 Feb 2025 11:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14745216382;
+	Wed, 26 Feb 2025 11:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c6IURImb"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K5dLnZ+I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b3rFsbLM"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28850219308;
-	Wed, 26 Feb 2025 11:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF44215F65;
+	Wed, 26 Feb 2025 11:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570355; cv=none; b=Zo+fGjUd00M3PQdOmMpZlPpdZ6sx4QwIeOPbZBMrHRJ+k3gjZJ6W/C21eKdzay5Vh5XdjbhHGSFGRV99LdvLfwK0sS450Hvt62haPhvnDDrMZhbnt3YWOsmnTxdTXFMNtXNpg2MiIni1OWVebBFlw62sgBxfYsh7ZeE827QjhM0=
+	t=1740570451; cv=none; b=dWTWzAnXtv2aIIxmzW3+V5ZwIBCchUBkmMxkhS+5w12i8gn7nIKWEVLDgz1ylL5Gr6+YFuHl1tczPI4otTXxwYHfnLwe2L2lNeGx1R/w4dvM3GjDvwKacV+1fWAGyHqBdPUx0eVjysqDmPFBOo1o+8MnZFDRlE0qYNlwFhaBhkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570355; c=relaxed/simple;
-	bh=zuDQtknTvVdF2ZgtKWCQkBEadEohQseRtbIm+TZ42II=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YlaF5fS08LqMWzDXbHx4QQWgsJrASfw/W4wtG6GS36bVNMvfs53ByL5gQvxg7sA0AjcJmp6P94z/Vh7jerG8C6HDYwqTwfolIRhzIvdXKzqwCLWNpWAW06PLqqJ57tm/zqrWgvK0cMWEU1L2GIfVQetm8sNXK9LAHH6+94+3TQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c6IURImb; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740570351;
-	bh=zuDQtknTvVdF2ZgtKWCQkBEadEohQseRtbIm+TZ42II=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c6IURImbp3KCNPOXFqy/b6TUhD6r6DZYgxKIeCAGg7D8+LlPKf7XzU2cGsy+oKS9Z
-	 8GT8GVmWOkCPxrTBLFR3F+TfZJgI6Xwko6eiu6Bz2d/BDAatb5HIZ3hGOZ0NSYpcIN
-	 DEWkzB2FF6Vf+hwAURRZhY6pPQByQtkVwj/vtHFnXls+kkCP3jAjrBfc3tZnGiZOpE
-	 WsRwsZcFKKMVnjizZA6i8Gn/IFm41fWyeeceJL+EE+sHY3cAFIqcBTCg/E5DX6SPCA
-	 OiYFmkguld2n2q6v67dYHd4hYE+oaSRaeZ0+vRQOPqNIv7bQZrFMKDZECDO751geVT
-	 CJCxipnCBdbvw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E0BF317E001E;
-	Wed, 26 Feb 2025 12:45:49 +0100 (CET)
-Message-ID: <c2154240-efa1-4c73-aabe-74e938a75af1@collabora.com>
-Date: Wed, 26 Feb 2025 12:45:49 +0100
+	s=arc-20240116; t=1740570451; c=relaxed/simple;
+	bh=GNROyfSwLsU0OnrSPd4OOnWuNRATtj48jePoEv0RPik=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TwAvh70Aav/6fJ8jtRqZvkLqotm1I016gMBNENFsMYSeLkVsoep40rMJxHok9aGH9PYdegqBBvC0erO4A1/xjkpYnuWNZKDaVGFnTDT0+4Y3QnTOspkOThvbNoW98gX3yb/O4XeDFqeIdyJnI+hXDCQYPYjArJ+CGJTFVa36bls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K5dLnZ+I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b3rFsbLM; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C3C225401B8;
+	Wed, 26 Feb 2025 06:47:27 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 06:47:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740570447;
+	 x=1740656847; bh=srA0vSiRaX96bO7gWAZFdEu/4TLsEeD2V/wdQUaSQxQ=; b=
+	K5dLnZ+IEvOA4/EeEZFacetVjPs/sdbfQ9nMyi6y+2jlG8gB0UCZBNudMqiOwk21
+	VLkFin5zplcLTwOCwv3zMK7AYAdl0FTWjWl7WjxoJFDBnPVMOYsSvUJqSaEpHMSI
+	TdMNp2iMDeSttMrUVbgj8cBRLXuSmuCwtTAIn1Lqvd94R6k8o0KYTrGohXUldphT
+	+pY6CL/v1klhU96/KIUrl6YntD9u/FeyBp2PbC0iDoU+adrI1lzGm4ldfVFgdf8V
+	wv65M8dUEFxifrAxNJ77b0yxHnxTSuFNql9/5rCmiU/BZqdBeU3JQfSjCx4V5e0G
+	ftBQ5d/HzyZgkE48TtUxuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740570447; x=
+	1740656847; bh=srA0vSiRaX96bO7gWAZFdEu/4TLsEeD2V/wdQUaSQxQ=; b=b
+	3rFsbLMobRqNDSJF8SjvoG8Kucn6IjqOjT4yCQfpZkMBcnMCSRFYfuHfFEVQQtAg
+	WdZv4dNfurKnlqastIL8h7s2j1lO+PNQzoCdSbuOZ/IwKa9ad/d9I3NVnkoYHFJT
+	bFCH4SArUOM9F/c9fyndinVws5+Z4ct0p6oIzmlB9hWsvDidM33eaVERL91jhVjp
+	qADplyULD1YP9TEUFEPxVv/JPPtPX6C/0Hsk9KHo31HKjTe5WtmuHsL21t2hVqHu
+	+ECbqPy6mi+lMqswcoHujtVizKnLQWZBQnMSDJZHLoxD5E2NtUPlQSJFWGungpEF
+	9XGV910f2sueMNM0LfpgQ==
+X-ME-Sender: <xms:Tv--Z_diHp5ZDRErRnqmS8ZPTTCezM_3rgE7AVddKtn-DuaNDBkDCw>
+    <xme:Tv--Z1MphFXytyiu7QgFfDu2nEn88_gsIz_sjHvdAPGZjY0HNcLObb1hRQsEwbmpw
+    u-3NTzdUuLsebhpXOE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
+    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
+    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
+    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthii
+    ihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvg
+    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Tv--Z4iCSjAUyvHYNJf_AG3sE_ua61qG6NfnGFOiyktvBK3_IRMNxQ>
+    <xmx:Tv--Zw8wQwtaohN4eqXaSl-7aGOjmxGKmCkBjCDSzCiQbM1hU71dEg>
+    <xmx:Tv--Z7u04LRvb5kBTsNhcfklAEHiAI9rK6b3N5rrYCGjNnwe_hmluQ>
+    <xmx:Tv--Z_GRVy1a40pOCrtq_ao7UwyvfCgGSK5AqqZ27__1LsxM_r9ugA>
+    <xmx:T_--Z_hz1oXOkYT7AeuVlKWwR_HmHayHpHeWbHHKwfw0qUc_tH4kb6ns>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AA9B42220072; Wed, 26 Feb 2025 06:47:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/6] drm/mediatek: dsi: Improves the DSI lane setup
- robustness
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "simona.vetter@ffwll.ch" <simona.vetter@ffwll.ch>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "will@kernel.org" <will@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>
-References: <20231023-display-support-v7-0-6703f3e26831@baylibre.com>
- <20231023-display-support-v7-2-6703f3e26831@baylibre.com>
- <ab3bd050c873bb6cecc00b615b938eabc157cb49.camel@mediatek.com>
- <79477810-00a9-47f1-8282-f8077ea082bb@baylibre.com>
- <3310b6f9-df7a-4769-a221-4a93cc3ec035@collabora.com>
- <0863ee2e-25ed-43b7-a896-e380de828d58@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0863ee2e-25ed-43b7-a896-e380de828d58@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date: Wed, 26 Feb 2025 12:46:56 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Arnd Bergmann" <arnd@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Helge Deller" <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+In-Reply-To: <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+ <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
+ <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Il 26/02/25 12:35, Alexandre Mergnat ha scritto:
-> 
-> 
-> On 18/02/2025 09:52, AngeloGioacchino Del Regno wrote:
->> Il 17/02/25 16:03, Alexandre Mergnat ha scritto:
->>> Hi CK.
->>>
->>> On 17/02/2025 08:56, CK Hu (胡俊光) wrote:
->>>> On Fri, 2025-01-10 at 14:31 +0100, Alexandre Mergnat wrote:
->>>>> External email : Please do not click links or open attachments until you have 
->>>>> verified the sender or the content.
->>>>>
->>>>>
->>>>> Currently, mtk_dsi_lane_ready (which setup the DSI lane) is triggered
->>>>> before mtk_dsi_poweron. lanes_ready flag toggle to true during
->>>>> mtk_dsi_lane_ready function, and the DSI module is set up during
->>>>> mtk_dsi_poweron.
->>>>>
->>>>> Later, during panel driver init, mtk_dsi_lane_ready is triggered but does
->>>>> nothing because lanes are considered ready. Unfortunately, when the panel
->>>>> driver try to communicate, the DSI returns a timeout.
->>>>>
->>>>> The solution found here is to put lanes_ready flag to false after the DSI
->>>>> module setup into mtk_dsi_poweron to init the DSI lanes after the power /
->>>>> setup of the DSI module.
->>>>
->>>> I'm not clear about what happen.
->>>> I think this DSI flow has worked for a long time.
->>>> So only some panel has problem?
->>>
->>> I don't know if it's related to a specific panel or not.
->>>
->>>>
->>>> And another question.
->>>> Do you mean mtk_dsi_lane_ready() do some setting to hardware, but lane is not 
->>>> actually ready?
->>>
->>> The workflow should be:
->>> ... | dsi->lanes_ready = false | Power-on | setup dsi lanes | dsi->lanes_ready = 
->>> true (to avoid re-do dsi lanes setup) | ...
->>>
->>> I observe (print function name called + dsi->lanes_ready value):
->>
->> Alex, the first poweron is called by mtk_dsi_ddp_start() - and the start callback
->> is internal to the mediatek-drm driver.
->>
->> That callback is called by mtk_crtc during setup and during bridge enable(), and
->> there we go with suboptimal code design backfiring - instead of using what the
->> DRM APIs provide, this driver uses something custom *and* the DRM APIs, giving
->> this issue.
->>
->> Part of what mtk_crtc does is duplicated with what the DRM APIs want to do, so
->> there you go, that's your problem here :-)
->>
->> Should I go on with describing the next step(s), or is that obvious for everyone?
->>
->> :-)
->>
->> Cheers,
-> 
-> Ok thanks Angelo.
-> Can you let me know if you agree with this change please ? This should be better:
-> 
+On Wed, Feb 26, 2025, at 09:16, Thomas Zimmermann wrote:
+> Am 26.02.25 um 08:55 schrieb Arnd Bergmann:
+> Here's another general question. vgacon and fbcon only seem usable with 
+> CONFIG_VT=y. Wouldn't it make sense to have them depend on CONFIG_VT=y? 
+> dummycon could then be implemented as part of the vt code, maybe even 
+> become a vt-internal thing. The console code is complex, so I'm probably 
+> missing something here?
 
-No, no, I'm saying that we should do the exact opposite of what you're doing here!
+I think in theory one may have a system use fbcon purely to get the
+boot logo, but not actually support VT.  I had also assumed there might
+be a way to use fbcon as the console (i.e. printk) but not register
+the tty, but it looks like the console code still requires vt.
 
-We should drop the MediaTek custom stuff that duplicates the DRM APIs behavior(s),
-and conform to what the DRM APIs provide and want us to do.
+After I looked at the vt and conswitchp code some more, I wonder
+if we could go the other way and instead of integrating it more
+make the conswitchp logic optional: most of the complexity here
+deals with switching between text console and fbcon dynamically,
+but having any text console support is getting very rare (vga
+on alpha/mips/x86-32, newport on mips-ip22, sti on parisc).
 
-To be really really clear - I'm saying to delete and avoid using:
-- mtk_dsi_ddp_start()
-- mtk_dsi_ddp_stop()
+If we do this, the conswitchp code could be merged with dummycon
+in drivers/video/console, with the simpler alternative just
+calling into fbcon functions. I'm not sure if we can already drop
+vgacon from normal x86-64 distro configs, i.e. if there are cases
+that are not already covered by any of efi-earlycon, efifb,
+vga16fb, vesafb/uvesafb or a PCI DRM driver.
 
-The spirit here should be to use kernel provided APIs, and to make custom stuff
-to disappear as much as possible (again, that mtk_crtc .start/.stop).
-
-I'm not saying that literally all of the start/stop callbacks for all of the
-MTK DRM drivers should disappear *all at once* but... gradually, one by one,
-these should get lost (where/if possible).
-
-Just one more mention: that custom handling also backfired on me while writing
-the hdmiv2/dpi drivers... and now backfires on dsi, and in the future it will
-backfire again on something else. It's there only to give problems in the end,
-not to solve them :-)
-
-Cheers,
-Angelo
-
-> @@ -843,25 +843,6 @@ static void mtk_dsi_bridge_atomic_enable(struct drm_bridge 
-> *bridge,
->       mtk_output_dsi_enable(dsi);
->   }
-> 
-> -static void mtk_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
-> -                         struct drm_bridge_state *old_bridge_state)
-> -{
-> -    struct mtk_dsi *dsi = bridge_to_dsi(bridge);
-> -    int ret;
-> -
-> -    ret = mtk_dsi_poweron(dsi);
-> -    if (ret < 0)
-> -        DRM_ERROR("failed to power on dsi\n");
-> -}
-> -
-> -static void mtk_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
-> -                           struct drm_bridge_state *old_bridge_state)
-> -{
-> -    struct mtk_dsi *dsi = bridge_to_dsi(bridge);
-> -
-> -    mtk_dsi_poweroff(dsi);
-> -}
-> -
->   static enum drm_mode_status
->   mtk_dsi_bridge_mode_valid(struct drm_bridge *bridge,
->                 const struct drm_display_info *info,
-> @@ -886,8 +867,6 @@ static const struct drm_bridge_funcs mtk_dsi_bridge_funcs = {
->       .atomic_disable = mtk_dsi_bridge_atomic_disable,
->       .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->       .atomic_enable = mtk_dsi_bridge_atomic_enable,
-> -    .atomic_pre_enable = mtk_dsi_bridge_atomic_pre_enable,
-> -    .atomic_post_disable = mtk_dsi_bridge_atomic_post_disable,
->       .atomic_reset = drm_atomic_helper_bridge_reset,
->       .mode_valid = mtk_dsi_bridge_mode_valid,
->       .mode_set = mtk_dsi_bridge_mode_set,
-> 
-> 
-
-
+    Arnd
 
