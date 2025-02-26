@@ -1,208 +1,182 @@
-Return-Path: <linux-kernel+bounces-534340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E667A465D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:00:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8980BA465A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A540519C6CE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2FF3AC56C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2150F21E0BE;
-	Wed, 26 Feb 2025 15:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BC9221F26;
+	Wed, 26 Feb 2025 15:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YU7xe1AF"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnmVaD/7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2703121E098
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC122206BF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584973; cv=none; b=UcuOr2lnRf/4qbU3dujd0OuFNDWkN5IrZvMBLxcQRPVNRLGRdSt+JJaAKBa/6mMvUUBIHkHQ+6+EqD+IYWlSlH7UmBPwjzFb1lKKcqKh38sAiKrPXt64/hAQARdyxt6MybOdHj+mt+USs654WHjjhBmorJs3XnIf34XjtuJGUeM=
+	t=1740584981; cv=none; b=XOs8jP3MOWHx4DMBhekkAhl02ze9jNJUn51+PbbWTU0kWGwm/a8vfBnbGFdRawgrk+wCWJjHutqapzoH3/CqXIaqE2I3eks6x2CEIK3UmMbgI8ijZzsCdt4ml4x1JLi0Xs43C1UEmnZBCdtei3twPPMxAyRWuwiEWaw34KZzatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584973; c=relaxed/simple;
-	bh=n9sfwMLjqZKr8H/DBdrE0eiQovz4JNiyMotXUT2Uvjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5DqoUkYLEF5+Dd5IBlvD46cmSsWBtRic5TBGiIVkHrVuLfmMcxRI7WM725dqaPX4F2tzxWBqzQIeU17Dzo7TNhsF7Za91Dx17foyJz5vqnnUFefSW+Zxp30Nv0v0XSK7FW3I8Byd5ku2qW+kiNL/gMRY3k4uVz7tbYdkPTXmfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YU7xe1AF; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4397dff185fso61300685e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:49:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740584969; x=1741189769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0p0n/HvVMpkGcsOceJadWdw3uKxq8oQ66r+vg7p98B4=;
-        b=YU7xe1AF+mIIRE7HEzTv/xqfgG3daQ37STLk0+GSYkYg5cHt4hw5iGQ91J1s+f+/0B
-         Bo/RzLGkB5EvQtsml+u54+dLeCStLnhdzvlC8aeQBBQMYdWwNuAXtdU2KItZRtD6IX8Q
-         SFVz2bkymusgV+/ggXZxf+8p6Gi4kAnialYcFKMp1YQMnxhPra4gSugoceRexIJZDGGl
-         8WX+ThWR32eP+CmdjRDEDDBVlhYPOSpOpmXsG+QwzFQuyInlz5q6+PFLG34iuw7jrGeb
-         E4EE3avW1e1Z7wiKOz4cEKtg2CRAYVIjOr4kbgOHBKw3ph/SdOqZS2HMcnuYZ1aK/hZG
-         tdBA==
+	s=arc-20240116; t=1740584981; c=relaxed/simple;
+	bh=n1fy917P+2mh2oWdkcLfEyqDtzdc5rxA/k69/UduN48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=upkU9lNR9f9uu7D+r8Gf9I4bNn2r5sz0pPv4DwP/OzuG9r2mH9PXmEGlk3468Ij3Zu2AAEZ+6AgxZOmThnstduVDCeyXLhBo90pZy3B6zEcYoXfBT9RTwlGM2+nMciDkjUCk2+YKLj7HT6WQ2bEu05xFWxKHXXSGeXbuC0iANLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnmVaD/7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740584978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MZqoAhhTc84e9dub+PoP4YgGkFKys3LU0QDJcNFYohw=;
+	b=VnmVaD/7stYvIbPcJCSptHo/MeQ4bZGd3IxSWwxCcrE87P8pIT8zPlNmO3J1U9zWShkQmG
+	a1mHcto1Wo+CYf7OJiJkEIxU3YuoKlM/f5migHCovA4KK9ClF3Em+fwZWYIbG1YnvRHyd9
+	rSvHHmaQtwsMz61Ph4bbb2G0YgNQADA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-31-cG-c-WfUPdCpy8a5J788Lg-1; Wed, 26 Feb 2025 10:49:35 -0500
+X-MC-Unique: cG-c-WfUPdCpy8a5J788Lg-1
+X-Mimecast-MFC-AGG-ID: cG-c-WfUPdCpy8a5J788Lg_1740584974
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f29b4d4adso2826124f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:49:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740584969; x=1741189769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1740584974; x=1741189774;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0p0n/HvVMpkGcsOceJadWdw3uKxq8oQ66r+vg7p98B4=;
-        b=M9Mcsnk1cc2bokFULeYx6O/4hhCHHWH2z8bBhkLOt5DOVGAyAno2yefaqltzLnV0aw
-         r5+4qq27Qcv5G+JXNtBxBHDI2uvtr8cktLQE6gC2D/edg32CT3+SHCRU1mkD/FFuhGlr
-         xyF9+1rArQSZsMM/AcAfjeS7AE6irnLla5ua3dRz3RK56arUOhrKNzugvNnZP1yUL8Ng
-         bkwd6BB1xTvm7Siz6bB3D5OM8i+KOdvirLTpugamob6lLQQIYMmBsI2YTscdB010oUev
-         orbSrEZ3O8s26YwEIIjDsNFMS3zvk6ZLU0p1P04xYTyg9kZ3sOCHRnpqFg2z44brHyVM
-         pMOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHWvpbUxCC8B4RTFuS/wBQhgV22GJf+Rkv99kHjoD79blmWymZhGDussLEIS6DVzcmt/GMp0zL+rGmLFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxt1uNXRp35X4X6w9kLoHwBzwtim2peF7tVBgOCfNz1NIiS/TN
-	fLpi/zogOyuiLECHox5F74kpXkluebWqjDV/OFnzXH9W84MgwfydjnA/6ZU6tv8=
-X-Gm-Gg: ASbGncuQmG9l0nAgbCB0noUCb0SHjrE9AJRRK7vyrNIGkA4WejaEzbBL7Z4mLSsB3Nr
-	PIQuOnGtp45wHXNR24V/JZ/DiPtwPR0I1u9NvDRk0pmbEnKJiCdB1IcQdtUDLUS/3HUcTs8JFCR
-	mekYyZ2AcTXBQ+hLEjJVDWEgmlzlqQVIJu9Bk3fkqk2S33q1oUaWX+2u/ADOJ4XhcVMnqxScpB9
-	236y5I7Ch570eq6AOpjidT0C2B+WZ3hG7ccgZNt9aN6i828TmvzlAyOXDEbzCD87wSyU6GFkAwi
-	9u0RoOAO6VggVGD/skBZSL1JZEtR
-X-Google-Smtp-Source: AGHT+IFrDL1uk86PVoF2mj9jbYVArsum6vONC+I6iG2Yc+eitETSemITRmSloxxMANxWuwoKDv84Ng==
-X-Received: by 2002:a05:600c:4506:b0:439:6e12:fdb4 with SMTP id 5b1f17b1804b1-43ab8fe90camr40816605e9.14.1740584969299;
-        Wed, 26 Feb 2025 07:49:29 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532d33sm25750165e9.15.2025.02.26.07.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 07:49:28 -0800 (PST)
-Date: Wed, 26 Feb 2025 16:49:26 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: hamzamahfooz@linux.microsoft.com, akpm@linux-foundation.org,
-	bhe@redhat.com, decui@microsoft.com, gregkh@linuxfoundation.org,
-	haiyangz@microsoft.com, jani.nikula@intel.com, jfalempe@redhat.com,
-	joel.granados@kernel.org, john.ogness@linutronix.de,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	wei.liu@kernel.org
-Subject: Re: [PATCH RFC] panic: call panic handlers before
- panic_other_cpus_shutdown()
-Message-ID: <Z784BiUZohADyoOW@pathway.suse.cz>
-References: <Z7juu2YMiVfYm7ZM@hm-sls2>
- <20250222054405.298294-1-ryotkkr98@gmail.com>
+        bh=MZqoAhhTc84e9dub+PoP4YgGkFKys3LU0QDJcNFYohw=;
+        b=VlUbooIQ7UBENsd6X8wvTJxHR5QGEU/ppfPmnZghzwXz0IWSfd10AXyyR+7P1e4ToC
+         RPny3CsUBfLZxMcX2eDTe2SOpaa4+rWbdNUCeljwVs34tAlk/073sJ07EqmWPSzzcKtS
+         FdM/LXj774B+89Byo8YktP0lNq+ZRpmY65wwx5+GieboySen5RhI7bSkJkouvOUrthiA
+         FegkrqmDsMZoC5S1i9OdL9tiSZYou6oiGX7oMr3pguClj/bX7++F2hm558HKkpQu5Uiw
+         TYg4ZCTVz/gaaCC+F6mfscxdEAIUJO7oWa2LIQ+oMwU47KqOW3JzODLIJoLDCsqOKzCF
+         KBOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3jhbb0Al4Dmxocy8iF+aacz94wy6/2u2kILGMbW84pwtcHkqP84jWipLowDt+FakY3vL38EVbPWDaXNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJH9obEhf4HKW/yCoKFCwbWKzetCwJ6xRKItBDy7ba6EtwXCIF
+	+ko+KvCRUMc/BmGjX1P3mYDVsHjJoGBLjT/1YLyQc8gcHbv9x6IITqN+X6pBWROK57YkWBPemct
+	1Jv3ci2bm8GaVOaZctcnrS/+RICCAQX8W7yV/pynH6/3dPAZMMnfzThe88GqBNBEWcUFGTli/
+X-Gm-Gg: ASbGncvmVSgXMZiJiRVSa+chrzfzriRveZ4WtK0m1WPWP0vrZV3OYWo9kEie6SQejX5
+	OuMpQ39zar1sbLcBd4qlsope6LVuXgORLNJEpPihq0anjWnhoBPIEyNa8dlqfLT0gwSmJx2aOHD
+	zQXchQNmEqIy50ihrUzjRPXIz/cImjoqTlTA0Y5/B2zFIhNs2Q/r9N3M9KPx3OePJOxzsB6ZrZg
+	Rd6auvmoshMvZlJnwM0MIiej86J8dib9KfpIcLFCa9OAsiqULeEm8kFfNrI0/Y2W0kTFZABpGEx
+	tcDc0J7cPk6g3lgrr8wFwHe83nsCxBWGnSJ5n+rdUFnifuD7e6t/EXdNEcjzyBfV6EjAVjiBs/e
+	GqNZygrC9BGl1IciV/bLjAwMu0u/0qHgVWAH7RYrbnGQ=
+X-Received: by 2002:a05:6000:1864:b0:390:d796:b946 with SMTP id ffacd0b85a97d-390d796b9abmr3035132f8f.44.1740584974124;
+        Wed, 26 Feb 2025 07:49:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEbr7n62HsZrZDOcDjI5ATI6UvX8kL50C2biNTQ9XxZ6VEVQqe5IqaTf9iGj64Gh9dxZuBnGA==
+X-Received: by 2002:a05:6000:1864:b0:390:d796:b946 with SMTP id ffacd0b85a97d-390d796b9abmr3035116f8f.44.1740584973767;
+        Wed, 26 Feb 2025 07:49:33 -0800 (PST)
+Received: from ?IPV6:2003:cb:c747:ff00:9d85:4afb:a7df:6c45? (p200300cbc747ff009d854afba7df6c45.dip0.t-ipconnect.de. [2003:cb:c747:ff00:9d85:4afb:a7df:6c45])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5871f4sm26735645e9.39.2025.02.26.07.49.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 07:49:33 -0800 (PST)
+Message-ID: <0e825585-3421-4fa9-8912-41b936f29fae@redhat.com>
+Date: Wed, 26 Feb 2025 16:49:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222054405.298294-1-ryotkkr98@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: make page_mapped_in_vma() hugetlb walk aware
+To: Jane Chu <jane.chu@oracle.com>, willy@infradead.org, peterx@redhat.com,
+ akpm@linux-foundation.org, linmiaohe@huawei.com,
+ kirill.shutemov@linux.intel.com, hughd@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250224211445.2663312-1-jane.chu@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250224211445.2663312-1-jane.chu@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat 2025-02-22 14:44:05, Ryo Takakura wrote:
-> On Fri, 21 Feb 2025 16:23:07 -0500, Hamza Mahfooz wrote:
-> >On Fri, Feb 21, 2025 at 11:23:28AM +0900, Ryo Takakura wrote:
-> >> On Thu, 20 Feb 2025 17:53:00 -0500, Hamza Mahfooz wrote:
-> >> >Since, the panic handlers may require certain cpus to be online to panic
-> >> >gracefully, we should call them before turning off SMP. Without this
-> >> >re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
-> >> >vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
-> >> >is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
-> >> >crash_smp_send_stop() before the vmbus channel can be deconstructed.
-> >> >
-> >> So maybe panic_other_cpus_shutdown() should be palced after 
-> >> atomic_notifier_call_chain() along with printk_legacy_allow_panic_sync()
-> >> like below?
-> >> 
-> >> ----- BEGIN -----
-> >> diff --git a/kernel/panic.c b/kernel/panic.c
-> >> index d8635d5cecb2..7ac40e85ee27 100644
-> >> --- a/kernel/panic.c
-> >> +++ b/kernel/panic.c
-> >> @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
-> >>         if (!_crash_kexec_post_notifiers)
-> >>                 __crash_kexec(NULL);
-> >> 
-> >> -       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> >> -
-> >> -       printk_legacy_allow_panic_sync();
-> >> -
-> >>         /*
-> >>          * Run any panic handlers, including those that might need to
-> >>          * add information to the kmsg dump output.
-> >>          */
-> >>         atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
-> >> 
-> >> +       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> >> +
-> >> +       printk_legacy_allow_panic_sync();
-> >> 
-> >>         panic_print_sys_info(false);
-> >> 
-> >>         kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
-> >> ----- END -----
-> >
-> >Ya, that looks fine to me, that's actually how I had it initally, but I
-> >wasn't sure if it had to go before the panic handlers. So, I erred on
-> >the side of caution.
+On 24.02.25 22:14, Jane Chu wrote:
+> When a process consumes a UE in a page, the memory failure handler
+> attempts to collect information for a potential SIGBUS.
+> If the page is an anonymous page, page_mapped_in_vma(page, vma) is
+> invoked in order to
+>    1. retrieve the vaddr from the process' address space,
+>    2. verify that the vaddr is indeed mapped to the poisoned page,
+> where 'page' is the precise small page with UE.
+> 
+> It's been observed that when injecting poison to a non-head subpage
+> of an anonymous hugetlb page, no SIGBUS show up; while injecting to
+> the head page produces a SIGBUS. The casue is that, though hugetlb_walk()
+> returns a valid pmd entry (on x86), but check_pte() detects mismatch
+> between the head page per the pmd and the input subpage. Thus the vaddr
+> is considered not mapped to the subpage and the process is not collected
+> for SIGBUS purpose.  This is the calling stack
+>        collect_procs_anon
+>          page_mapped_in_vma
+>            page_vma_mapped_walk
+>              hugetlb_walk
+>                huge_pte_lock
+>                  check_pte
+> 
 
-The ordering (stopping CPUs before allowing printk_legacy loop)
-is important from the printk POV. So, keep it, please.
-
-
-> I see, sorry that I was only speaking in relation to stored backtraces.
-> It seems that printk_legacy_allow_panic_sync() is placed before 
-> atomic_notifier_call_chain() so that it can handle flushing before calling
-> any panic handlers as described [0].
-
-> [0] https://lore.kernel.org/lkml/ZeHSgZs9I3Ihvpye@alley/
-
-> I'm not really familar with the problems associated with panic handlers
-> so I hope maybe John and Petr can help on this matter...
-
-Honestly, I do not have much experience with failures of the panic
-notifiers. But I saw a patchset which tried to add filtering of
-some problematic ones, see
-https://lore.kernel.org/lkml/20220108153451.195121-1-gpiccoli@igalia.com/
-
-I did not like the way of ad-hoc filtering. The right solution was to
-fix the problematic notifiers.
-
-Anyway, it went out that the situation was not that easy. The notifiers
-do various things. Some of them just printing extra information. Others
-stopped or suspended some devices or services. Some should be called
-before and some after crash_dump.
-
-The outcome was a monster-patchset which tried to fix some problematic
-notifiers and split them into more notifier chains, see
-https://lore.kernel.org/all/20220427224924.592546-1-gpiccoli@igalia.com/
-
-Some of the fixes were accepted but the split has never been done.
-
-
-My opinion:
-
-1. The best solution would be to make the problematic notifier working
-   with stopped CPUs. The discussion around [v2] suggests that the author
-   made it working at least for x86_64, see
-   https://lore.kernel.org/r/20250221213055.133849-1-hamzamahfooz@linux.microsoft.com
+Why can't we require callers to never pass in subpages of hugetlb pages, 
+and sanity check that this is the case?
 
 
-2. Another good solution might be to do the split of the notifier
-   chain, for an example, see
-   https://lore.kernel.org/lkml/Yn0TnsWVxCcdB2yO@alley/
+-- 
+Cheers,
 
-   The problematic notifier can be then added into a chain which
-   is called before stopping CPUs.
+David / dhildenb
 
-
-3. In the worst case, you could change the ordering as proposed above.
-   I am just afraid that it might bring in new problems. There might
-   be notifiers which were not tested with more running CPUs...
-
-
-In general, the system is in an unpredictable state when panic() is
-called. Notifiers should not expect that non-panic CPUs will be
-able to handle any requests.
-
-Also it looks like a good idea to stop non-panic CPUs as soon as possible.
-Otherwise, they might create more harm than good.
-
-Best Regards,
-Petr
 
