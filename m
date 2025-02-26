@@ -1,91 +1,94 @@
-Return-Path: <linux-kernel+bounces-532921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06689A453BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A84A453BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE03A189ED23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3231189FAA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719CC225A32;
-	Wed, 26 Feb 2025 03:10:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B108122577E;
+	Wed, 26 Feb 2025 03:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8l43LiX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932D1225792
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EA522576E;
+	Wed, 26 Feb 2025 03:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740539404; cv=none; b=nCSTzC64+8Q83FxkZDqeezskyW0PgK3EEMBRlYwvk2zZ4Ol2Lpfuw4vfyFNFrVzj9mEZtAXAwr7+H9n8PrzbLjXx+NGboI3Otz+IEPGqaAz8oXXDFiSznf20XVvkuqk9b1gLpiHghdnrr/+JuWa/rvGUW+rMUccRxOnKsuITvuk=
+	t=1740539409; cv=none; b=R2A1pEnS0pqx2sApzN8WaFrdx0ERr0q6IQsgplwzwSuqWvCs5FO/DhhUdIGJzIrV5TZx3jJLFhlIp4UKy2gCawqCszJUIThijV2KCUh8KUdieQ3m9ZlZ0vV0iOSz/Jvx0bV5gLOMml8H99A7UzKpFRPNFw67La8Lrp2ibpgj2GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740539404; c=relaxed/simple;
-	bh=obw1Sax1F2UAMmx1AGGj5gICIC2sjWZ9oZPNwJG9rfg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uW326bTqP2Lg+hjfBSqQTdbhTlsmf6Xfpws/BZZ4Gsg+ePc8wo9wjqqcxbp9hdlqteQOB6joRV14+qgrIcnIpzMv/yoaiVlRgAnCJBjRPXDbRY6K/p1QyUlj5BJfbov+hBXQDujT/Z5TLZkl6TJ1cgrPtyUWZOQxTM9zBCcbfwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ce8cdf1898so53482585ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:10:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740539401; x=1741144201;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pI5OF1BLxFeb9UKkgyFgef27z30POH6v7L/twCJv8dk=;
-        b=kcFTdbMEE5ctEO+KCuhzNDSAjRqJJxolRhXiuDlauWOB4ZYPiA0eGwdUxsYtUUMst4
-         v8jH6xCBl4nkDeltqiAknsdqZdHfm//066HlWnBNWNqBE0Au7vcv98e2wzAscZQw8xDu
-         5iIlCIBTYhBDrxdqfqvQrl3MJRWYs0YuxlWE7K+vpNoEZXpSqlFN9o7Ffr2kOiU3bgld
-         D89Rr0YiqyV9Bd4+Rcifj4x56dBspfiZ3wPh6hWxPYmbjd+qun/kIaySFAb4HsWncEmd
-         lSEtE3b5xZDdPz0+S5QxoEte5L3HiWjvqqkbGVqFp3EIT7vUBA6iZxamfrCWIaMlWZLe
-         HY1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWmDcbTJqez/tRUrSnwx+WN9uKnW85Y3Lk5w7C6a7FBZyE9u1+CCh5Exn24B5U7NG4BIP0KjPvU+O0ZKA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYDT9v2XZdhfY7FkasFMfwdEIieri+xQGjfG1ObxNzmtx0cZEK
-	UOqJr7WJubAZFjYJiqXNO6rYn/9wYBxyMTTezA2XGZ89E4lVuvKOuRweHnPODKrOU0u7LHgMPiW
-	Z5J+QJRHBxcCy02heYDnf30wk8zj0QjorjbtCnd9Gyqt7RjgZXDQnbPk=
-X-Google-Smtp-Source: AGHT+IFnMGyYE6QlMavrFjUCDpJgSomAeZEaIsXHwmEdGE2tooAFABLuqmpirNOy8eiHcy3O++/DW6WQtKh7jTmkVkdyLUwNiJ++
+	s=arc-20240116; t=1740539409; c=relaxed/simple;
+	bh=PB6vDI0pNLawaK0/VTKCfZhlobFTvQHOsS7pDJob7v4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DQP/TadZrGgyuw4v3vSTgRG9TfXw/3VxXs6GUd2V322eSm85shBXehhDcN4ftbWoT4+V/1yMTRj8fJewHv1KlcHYPlMpgsd6Hd2lmJStYSxAZ5ziI7Sb65IDUjqZ4nG3B6KQtCtsMD1RZmEHuDkXMYzE5mUKXCzLWNIXN75ey10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8l43LiX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BE1C4CED6;
+	Wed, 26 Feb 2025 03:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740539408;
+	bh=PB6vDI0pNLawaK0/VTKCfZhlobFTvQHOsS7pDJob7v4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=k8l43LiX7JvyZoXDr0WLRcPJmovITlK6r5tAE0axkXhbAjMgr2Qe+w6LB6SXS+ze9
+	 2XTCSR9N3FCweoYIu3/RL4hztxnUakaWTPYTFhzoHY2xo78tTgPTj8AnXTtjamb9yB
+	 CGgNOu0udRgv2VwOtKscIgQLH8lzGPmI7+JbqpM0OIIY1AlCx6BVwrKO50/LV2Esov
+	 xx4eNwBtf6EPyOP0JaIdT+Lcxa4i1Y6H62w7+Mw0vEH+9oH5srbdcNWOk5sr9Z6yk6
+	 PDkcKowtVaqR6nXvNX5DgOhnndffoqdAFg9J7tbnUmlGklrJYFS6Bgq2Ff/N13aHFY
+	 8/yDz+UD3Qwqg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E39380CFDD;
+	Wed, 26 Feb 2025 03:10:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:368c:b0:3ce:6628:3c4 with SMTP id
- e9e14a558f8ab-3d2cb44f8cfmr179693375ab.6.1740539401708; Tue, 25 Feb 2025
- 19:10:01 -0800 (PST)
-Date: Tue, 25 Feb 2025 19:10:01 -0800
-In-Reply-To: <000000000000c27c9e06197d59c3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67be8609.050a0220.38b081.0000.GAE@google.com>
-Subject: Re: [syzbot] [usb?] [kernfs?] INFO: task hung in kernfs_add_one
-From: syzbot <syzbot+e4804edf2708e8b7d2a5@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v1 1/1] drivers: net: xgene: Don't use "proxy"
+ headers
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174053943999.217003.8623321212324575821.git-patchwork-notify@kernel.org>
+Date: Wed, 26 Feb 2025 03:10:39 +0000
+References: <20250224120037.3801609-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250224120037.3801609-1-andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
+ quan@os.amperecomputing.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
 
-syzbot suspects this issue was fixed by commit:
+Hello:
 
-commit 5189df7b8088268012882c220d6aca4e64981348
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Wed Oct 16 15:44:45 2024 +0000
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-    USB: gadget: dummy-hcd: Fix "task hung" problem
+On Mon, 24 Feb 2025 14:00:37 +0200 you wrote:
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+> 
+> In this case replace *gpio.h, which are subject to remove by the GPIOLIB
+> subsystem, with the respective headers that are being used by the driver.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> [...]
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ceffdf980000
-start commit:   2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=e4804edf2708e8b7d2a5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ea2012980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ba6851980000
+Here is the summary with links:
+  - [net-next,v1,1/1] drivers: net: xgene: Don't use "proxy" headers
+    https://git.kernel.org/netdev/net-next/c/ad530283d3c8
 
-If the result looks correct, please mark the issue as fixed by replying with:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-#syz fix: USB: gadget: dummy-hcd: Fix "task hung" problem
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
