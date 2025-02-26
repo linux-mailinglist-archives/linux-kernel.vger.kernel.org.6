@@ -1,158 +1,190 @@
-Return-Path: <linux-kernel+bounces-533182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69242A4568B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:21:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF09A4569A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1A91895C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:21:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55EEC16B6EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8CD268FCC;
-	Wed, 26 Feb 2025 07:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCFA26BD83;
+	Wed, 26 Feb 2025 07:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CdLBYy5K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U/3BJIwQ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD218DB11
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92591268684
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554503; cv=none; b=G40yxweOGEfRkFhWMrn5Q4wU1+kK5uwRa7BHvnPjZ5+/k5/d1gQt7hW67BZcdoVL2RGb2dKW7KEXYGa3gwWMfZOwDCIn+ufvh6MWIBKiP7VRfZ48455DvRDb+1qQY/T2J6Boy6HE0JYQ7VR+3Kn2OkCBl2AV0Uy9Pq36fiXVCJ8=
+	t=1740554747; cv=none; b=RsWh1k+8jFxwugCCbPAk/Dj04RRXXQ1QZKJSwcPwqbS0caurKuVe6TXWFL0F4bKKjEV+m0HwRPODlkDOB2O5f9b4tpsc2tIERAZqv2TtmiADbz2dkjqaif+r94kW6zlMjm1sOfIorVFDuFkwo2v/tVudwqP/Dn/F7ru99Twt/1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554503; c=relaxed/simple;
-	bh=U2bcrImwpl9X6lPc3vxXB5L/OeJT90yTbUFng8az8i0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k37A2hkNnkljK+8zm11PUFbj9lV6XBtoHr+4ugCA4BYLtegzhFxtteU52rN3ik4IuR/36BxwLivT4GaqKJZIV5lJugmE2KAkL0wJSYmcuUABow4GxhhOHcv5iuvq24xoJN/XaSE/66dsr/TzM4LUSagxH+2Qhld+4Crhr8qlWTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CdLBYy5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB39C4CED6;
-	Wed, 26 Feb 2025 07:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740554502;
-	bh=U2bcrImwpl9X6lPc3vxXB5L/OeJT90yTbUFng8az8i0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CdLBYy5KaDAqDHkt3QfUYvJRD5P9ZVWZN84o0GOvobtGoNSAwBpFWI6pckRXr8nYA
-	 klUk3MhFJsUFw4RreZyKuDRArXs99Ka/sekpWXgmCZfsXwJ/HXV8mvOdXz+veXKpo2
-	 DyS40bpKldFGgfrxVuZm+KTJ67mZFm1Czb3iIuIikoAfFx4uMZCyez6xQYV5nw9sDL
-	 i0TAl3lsuT4xxuyrQmTuw2Vyg0V+xncXJni1OaIr8+fNDPbx2YxkY2cvcvMJbF8tUx
-	 PziwVLT3/Ep6q+6s2/lAwriI2FMJr1wdaIoYxfWASe/BZyIcNLPawmrVhQ9azt3QgL
-	 Psd7/33yNVdjw==
-Message-ID: <674a80d3-8a85-4d5a-a083-f948643479c6@kernel.org>
-Date: Wed, 26 Feb 2025 08:21:39 +0100
+	s=arc-20240116; t=1740554747; c=relaxed/simple;
+	bh=kNMNh8c15ufMq2hOdDy+f201l80OHrU6gDtUHgb/Pjg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=fluqIWVvHpCTdRxTG4q7yvhzR9JFxsw7eNOk2dApKEcHHadW4BQJBKjQKda6mRKqStvmAK+BTWMAmlom7FLnmvuxKKFu0k9ggfgS4RkWt/ZQ6QAaw/DUhRTdMLGU4VlRceZNm0G+/4s65+ab3jXF1mXnQZT/fgv5y4z9v2lnd8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U/3BJIwQ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250226072537epoutp01ff56c8069d35c22920ca3321f532f3c1~nsU_9dqxJ2466924669epoutp010
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:25:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250226072537epoutp01ff56c8069d35c22920ca3321f532f3c1~nsU_9dqxJ2466924669epoutp010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740554737;
+	bh=qbsRW+rPGG7sOyzmINLAUZ6n+49WHNhTA0JmCyA9gd0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=U/3BJIwQ+2m+T2HIVBrcrunOt9lphQVsGs2nOz766KfjqZCFxfWG918HbuwIadqd1
+	 1GhgbFLer4MCuHvV3/P7p3OP1VE/yMPLDdhfDyV8PM+6oI184AW49LCMEHuzn12z1C
+	 C1ABwpz11qSlcSxmVyWP9v8cA19lSbX7vHUIuEVg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20250226072536epcas2p2669e3682cad6e97d545cc6f2542a446d~nsU_jZinE1172911729epcas2p2y;
+	Wed, 26 Feb 2025 07:25:36 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.88]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z2mGR6hkbz4x9Pp; Wed, 26 Feb
+	2025 07:25:35 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	20.75.22105.FE1CEB76; Wed, 26 Feb 2025 16:25:35 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219~nsU9VGKON1585315853epcas2p4N;
+	Wed, 26 Feb 2025 07:25:35 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250226072535epsmtrp2cae8b068735d2728e3d8fac672b2d743~nsU9TwQsh2895528955epsmtrp2L;
+	Wed, 26 Feb 2025 07:25:35 +0000 (GMT)
+X-AuditID: b6c32a47-f91c170000005659-ac-67bec1ef5bfe
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A4.89.18949.FE1CEB76; Wed, 26 Feb 2025 16:25:35 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250226072535epsmtip29c454e0beda8b5dc9cf893abaa8f1a2c~nsU9Im_nx2560225602epsmtip26;
+	Wed, 26 Feb 2025 07:25:35 +0000 (GMT)
+From: Sangwook Shin <sw617.shin@samsung.com>
+To: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Kyunghwan Seo
+	<khwan.seo@samsung.com>, Sangwook Shin <sw617.shin@samsung.com>
+Subject: [PATCH V1 RESEND] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+Date: Wed, 26 Feb 2025 16:21:51 +0900
+Message-Id: <20250226072151.2123990-1-sw617.shin@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
-To: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-References: <20250129154920.6773-1-ubizjak@gmail.com>
- <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
- <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
- <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org>
- <CAFULd4bTYudfNap1trVyjqA0xv5cQQeWxSZ8numv_uHqxz1Afw@mail.gmail.com>
- <ef6e2925-f005-41e9-bc24-b9adc3922706@kernel.org>
- <Z7zBXyywUEC2ieiR@gmail.com>
- <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
- <2229E260-CF5A-463C-8552-32ACA97BE30F@zytor.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <2229E260-CF5A-463C-8552-32ACA97BE30F@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdljTXPf9wX3pBu8/mFo8mLeNzWJ++yVG
+	i/PnN7BbbHp8jdXi8q45bBYzzu9jsrixbh+7xZOFZ5gsZiw+yWbx+OU/Zgcuj02rOtk8Vq5Z
+	w+qxeUm9x87vDewefVtWMXp83iQXwBaVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGto
+	aWGupJCXmJtqq+TiE6DrlpkDdJmSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C8
+	QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj/pYutoI9ghUPGwwaGO/zdTFycEgImEg8W+HTxcjF
+	ISSwg1Hi+MbnjBDOJ0aJhq6NbBDON0aJr9NfMXcxcoJ13G78wQKR2Mso8eUyTBVQy8bzsxhB
+	qtgEdCSm/7vNAmKLCERJHNyxjB2kiFngDqPEvv8vwEYJCyRILJ0+gQnkEBYBVYnzF0VAwrwC
+	thJ7lk9lgdgmLzHz0nd2iLigxMmZT8DizEDx5q2zmUFmSgi8ZZeY1/SGEaLBRWLO4WdQtrDE
+	q+Nb2CFsKYnP7/ayQTydL3HqiTBEbwOjxLvm92wQNfYSi878ZAepYRbQlFi/Sx+iXFniyC2o
+	tXwSHYf/skOEeSU62oQgGlUkOn5uZoVZdPTMA6gSD4ltu3RAwkICsRIL+6YyT2CUn4Xkl1lI
+	fpmFsHYBI/MqRrHUguLc9NRiowJjeIwm5+duYgSnTC33HYwz3n7QO8TIxMF4iFGCg1lJhJcz
+	c0+6EG9KYmVValF+fFFpTmrxIUZTYOBOZJYSTc4HJu28knhDE0sDEzMzQ3MjUwNzJXHe6h0t
+	6UIC6YklqdmpqQWpRTB9TBycUg1MDcc/HDj/0t2nb8Fet4txHX8EX3IeK26udvnv17aN9eDH
+	YrfFE10lbebt8GOv9548LZ45+SCP7/Pzf49r341ZcafQWWP39Rmpb+t2u0yTX82wUUL7pMmV
+	jLm8Wy7vPhTqK7VwbZhrcMGifV4zPtvEPryYvkPKiz9pX0lZhRfjgXsVF9YkcE63VFls+F3c
+	+OhaK7ErInP1nEVMbNZbOLodNvp/VWNZplrM4aN7GeOZYp+6hHJs4N201YHN8VDcnhMSpw/q
+	75r4pPvTpXefguUz3fYsPfVmd41O71/27EOsherHDz3RW8jgnidXk2IxwfXlwgmLNxqvFF6/
+	afqcOZOXcX37d6ZpRu6tHKfq/VL85kosxRmJhlrMRcWJAKVLhBkiBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSvO77g/vSDS728Fg8mLeNzWJ++yVG
+	i/PnN7BbbHp8jdXi8q45bBYzzu9jsrixbh+7xZOFZ5gsZiw+yWbx+OU/Zgcuj02rOtk8Vq5Z
+	w+qxeUm9x87vDewefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXF/SxdbwR7BiocNBg2M9/m6
+	GDk5JARMJG43/mABsYUEdjNKfJpv3MXIARSXknj3zBKiRFjifssR1i5GLqCSD4wSR9f9YARJ
+	sAnoSEz/dxusV0QgTuJY+2ZmkCJmgUeMEmdvTGIGSQgDJdoerGYEGcoioCpx/qIISJhXwFZi
+	z/KpLBAL5CVmXvrODhEXlDg58wlYnBko3rx1NvMERr5ZSFKzkKQWMDKtYpRMLSjOTc8tNiww
+	ykst1ytOzC0uzUvXS87P3cQIDmMtrR2Me1Z90DvEyMTBeIhRgoNZSYSXM3NPuhBvSmJlVWpR
+	fnxRaU5q8SFGaQ4WJXHeb697U4QE0hNLUrNTUwtSi2CyTBycUg1MnpuOdUjP/D2FhVNyS+dz
+	2Wa39/8tdn8sv/180c6vS6ZMnSu9VPNb8srEMwvKn4dqaffVCjb9qbgu9snmTcHuk8wrDq34
+	lbR+/XTljfJrfKJVJj98tKdxHmNsYsTLpWacM3jcPn/nX/llntxDl0MbvXKPpk5o22esk/cj
+	u/jXlXCnZrf4k5732vgtlk5Q3ur4fPWrTNVo6U8ePx1/xShsClmTGPJIL8dAo4Dj22/btt3a
+	dgsk+Jm5zNiWSpyzcarJcOf0vRngpOfaP7G0vyA1ZkXekidXJ8zzjsi/v81A4TuD9rXy7eoy
+	l1cd9b776DBHunxdzycV+/Nlmv8P8hUcvWZYWZDv96Pq3IWt/yYlKbEUZyQaajEXFScCABcQ
+	jCrSAgAA
+X-CMS-MailID: 20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219
+References: <CGME20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219@epcas2p4.samsung.com>
 
-On 26. 02. 25, 8:17, H. Peter Anvin wrote:
-> On February 25, 2025 10:31:37 PM PST, Jiri Slaby <jirislaby@kernel.org> wrote:
->> On 24. 02. 25, 19:58, Ingo Molnar wrote:
->>> So this CodingStyle entry is a red herring, and the !! is absolutely
->>> used in the kernel
+From: Kyunghwan Seo <khwan.seo@samsung.com>
 
-label1:
+Fix the PMU register bits for the ExynosAutoV920 SoC.
+This SoC has different bit information compared to its previous
+version, ExynosAutoV9, and we have made the necessary adjustments.
 
->> Sure, for intended conversion to either 0 or 1.
+rst_stat_bit:
+    - ExynosAutoV920 cl0 : 0
+    - ExynosAutoV920 cl1 : 1
 
+cnt_en_bit:
+    - ExynosAutoV920 cl0 : 8
+    - ExynosAutoV920 cl1 : 8
 
+Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
+Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+---
+ drivers/watchdog/s3c2410_wdt.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-
->>> as an explicit marker of intentional type conversion
->>> to bool.
->>
->> With this in mind, you would have to write "if (!!x)" everywhere.
->>
->> I don't want such constructions in code I maintain. (Nor for return values.) But this is not code I maintain (obviously), so your call after all.
->>
->> thanks,
-> 
-> Uh, no, that's not the point.
-> 
-> The point is that:
-> 
-> !!x
-> 
-> ... is the same as
-> 
-> x ? true : false
-> 
-> ... which if promoted to an integer, intentionally or not, becomes
-> 
-> x ? 1 : 0
-
-Which I write at label1 above. Sorry, am I missing something?
-
-
-"!!x" when implicitly converted to bool is the very same as simple "x".
-
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 30450e99e5e9..bdd81d8074b2 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -72,6 +72,8 @@
+ #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
+ #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
+ #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
++#define EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT	0
++#define EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT	1
+ 
+ #define GS_CLUSTER0_NONCPU_OUT			0x1220
+ #define GS_CLUSTER1_NONCPU_OUT			0x1420
+@@ -312,9 +314,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
+ 	.mask_bit = 2,
+ 	.mask_reset_inv = true,
+ 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+-	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
++	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER0_WDTRESET_BIT,
+ 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
+-	.cnt_en_bit = 7,
++	.cnt_en_bit = 8,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+ 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+ 		  QUIRK_HAS_DBGACK_BIT,
+@@ -325,9 +327,9 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
+ 	.mask_bit = 2,
+ 	.mask_reset_inv = true,
+ 	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+-	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
++	.rst_stat_bit = EXYNOSAUTOV920_CLUSTER1_WDTRESET_BIT,
+ 	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
+-	.cnt_en_bit = 7,
++	.cnt_en_bit = 8,
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+ 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+ 		  QUIRK_HAS_DBGACK_BIT,
 -- 
-js
-suse labs
+2.40.1
+
 
