@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-534181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF583A463DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:58:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22ACA463E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882A13B4507
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1F1171166
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282B82222C5;
-	Wed, 26 Feb 2025 14:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0B92222D0;
+	Wed, 26 Feb 2025 14:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="upAD++MI"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j5dP5LnM"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28BD221732
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DF221732;
+	Wed, 26 Feb 2025 14:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581892; cv=none; b=ufkSbxfJVs0Q7EZYq+6ruhKl0syZ1ZKeqiBx7NkUQN0A7EfdT/HC+YZ35cHVk/H3BpaKG65VvQkSbn4iVst/Cz9TvGjltzjnNz3zx8lPDGQOA+VG99PGbmWLN0Z9o9dH23m/9KnxpMfgPWy5P2KazLZn/LxlmD0ZaW5mDyyPB3Q=
+	t=1740581924; cv=none; b=djP0Kxxd+Jv1CF7rve/jdYMLGteYZ0QHfZJCMIBIXCFq/wpp0fj7FDOtOOc2WqowQtVWuT/z96/aK3pURkeno5qqjoyFU9xeU3CUSf28FjI+Y7vvBn6zVIMg2G0orXlTMAARt7kydg+uTtdgfEmBSP09W/6gSB6NKxPeIhNhtnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581892; c=relaxed/simple;
-	bh=3sDxMf9KpRehDKWhVmGfqFxLYxDYhusGFoK9M5P7Qq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aQPYK+DeEFbo2K6VAUE0ScTikQDLdz31xh+f5rb6P2IfpW/a569OpJHaK4C9s5Gy0pDkMA2aFfvkruJnfjf33mBTwqAslMe9Qyxx11Zwg6w4OwjUHz8Z4a3nOA9irXHIrCkltufTCAqwKZRq9ofP7RXXsvrCSF9/MolV9PQ3W0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=upAD++MI; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ded69e6134so11315594a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:58:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740581888; x=1741186688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Cx+xJGKu5N0JmZ2sR9g+qa3HIRq8K6zYLh9TIcwjV0=;
-        b=upAD++MIswg7oIajataBNRtmPgyoI0dXMMwG2zKdTfugL/ItCD35wb5YEEYgml/gIH
-         gGiZlhX7U6B1nDVxNzw8xfKDGLfVJs1T9Cf4rETSOdjmrNkadzeoqj/JPDGWxu/Ei4Al
-         joGb06FWwpCgTjAGyPYrCrTjyaZ2gXtOUB/hx87cdyd0Jkzi2lowKE7D09RQZiTVE3Ft
-         RZJwQT+p+Z1TmLphbZS9hLyARbjCbV33SvpOdfhPo6hIRUcBSoVFtg2oU+LCNyqm67gH
-         2AI6YVo1LrElVfbUz+xksQHjKzpq0u/TfELSJiiDPWoY0yhCNgYS3qTK+5oAdojcW/j2
-         VshA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740581888; x=1741186688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Cx+xJGKu5N0JmZ2sR9g+qa3HIRq8K6zYLh9TIcwjV0=;
-        b=seITp5c1et/Rz0b5gCttstOvPefQCz/mtnXPdrZqPBtwsWLnsA6ppdAlc/WFCvqj9i
-         CeWxd5YsOfyvBhhkGpumnjmcVWG59RurOH9p3VHNfiyBrcjZKt5eFh/anW7KjDdXdgYX
-         xfF3RlMCGUf8fKs6o/0OFuXA5vullmKoH9DK5mlDunOv2oyR1u61cJiHXAD4WYyJx7kn
-         op6xKim4EADDKNw4/UOcH6SYBM4MOFIlPyaGrEbtnC55IjmCpfgg60xqqF73JBaEDKt1
-         zKVfQ4YunBsksxUryJ53SdsEo9bwFQjUbW407h7F6iLbUpC2TEx3Fl8+LIWF4Ojigbic
-         qg4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiI4yJdiT2AXb1br1ZWIGFUbs4pGyRPM6wtwq0yuaFZdoKQGDafHBJSocsNQxlutXrOQjGpG95Ko/OH+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvEeXTvrkT6Oym7yiL8JcWFjtHq9qRg6JdnxH2KUSyTScKpnxz
-	ZxzJZlOm0FR+fL1jizYIQoaGrUr6TMzp8pHBM+dJny7npxzfOo45JjoAPVMhtjIf2gJEQEtwdLs
-	LqvndKuHMbE3jgII6oaOJrVmY9bGrZvBWl+EoQQ==
-X-Gm-Gg: ASbGncuwC32bsiEYw2tBHJMdmm1XoBw8SMYc6wOoy6beHy4P+pWU9DR/5zWhMc5+LZ0
-	8NXsepZ1kmX3pIgXXGhAfaeMTjclq50/YkJtKReFnbtHsNmKwbuvkPKlcXysJRE0GFBBfLyF/YL
-	HrfFoHJ3drjTsm7NCA6Ev/zTTQkljRo3sPx/gEDu/l
-X-Google-Smtp-Source: AGHT+IE5KIbB4z+VdU6KvYCJ8GmmazCYgsdMxoVEY76uzggD9TD+2odB1KQGXMJsPgsKuEa+422vj8CyF4RJmBCfmf0=
-X-Received: by 2002:a05:6402:34cc:b0:5dc:cfc5:9305 with SMTP id
- 4fb4d7f45d1cf-5e4a0dfc8b9mr4917673a12.25.1740581888192; Wed, 26 Feb 2025
- 06:58:08 -0800 (PST)
+	s=arc-20240116; t=1740581924; c=relaxed/simple;
+	bh=OHpRm29ejlVV/G0aHNonMP2Y2YbznVl5ftbP8prKd7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vt+PdWt1ggqTSgf0YhN5D6b4xBzlTmFiucjupUThl4ixeqKMLT8ZThQrwPPsIGtqjg8ONb31ili2S5oYkqrFkDfx4szB8aMEYUmetwHD6GAyhyTzjAG1f9HcSWhWa0G3On8K7dEIGrBuRzBeipk+IL6wGTCdrbyvJGP3ThGwJVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=j5dP5LnM; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QEwTxr1494032
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 08:58:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740581909;
+	bh=Wl/RXJwnlW0HcAbSZbnsW1EyC94rw8Ynnk5XKByQikc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=j5dP5LnMQM7gc5c8CJtu7tCaBhh1NK0I534IFjJzWTP6NACP1kZWlqJcVMdi6jNOF
+	 7D/cRRUf7FqYAZBFLSSafVJGf8rZWYKi4ZzhMO8MclirPHW8QFErQPS2B+3y3bByUL
+	 FM3nOoMh7ggxuMDzTOvDaJG+r6rE6wtjdHdbzczg=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QEwSCI100560
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Feb 2025 08:58:29 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Feb 2025 08:58:28 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Feb 2025 08:58:28 -0600
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QEwSY6121157;
+	Wed, 26 Feb 2025 08:58:28 -0600
+Message-ID: <8cf95899-bebb-46a2-843e-debdfb5079ff@ti.com>
+Date: Wed, 26 Feb 2025 08:58:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250201110607.34766-1-cuiyunhui@bytedance.com> <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
-In-Reply-To: <CAEEQ3w=uYad7UAedSU4M_L277v=RQGWHpJQwOW-p7W6=hcijsQ@mail.gmail.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 26 Feb 2025 15:57:56 +0100
-X-Gm-Features: AQ5f1Jq3NwdOzWli4GS6uC6Juk-y-5UTRJ8pwcbzU1SmN5IAfAxHrxw4vEUMxl0
-Message-ID: <CAHVXubhW9b6fw8ZvHtn7zmyRSUVt-3JjmFbE-_L42wZ9W6=vKA@mail.gmail.com>
-Subject: Re: [PATCH] riscv: print hartid on bringup
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: apatel@ventanamicro.com, atishp@rivosinc.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com, 
-	jassisinghbrar@gmail.com, takakura@valinux.co.jp, 
-	valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com, 
-	charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com, 
-	andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62a/p: Add r5fss nodes
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <kristo@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>,
+        Hari Nagalla <hnagalla@ti.com>
+References: <20250122-topic-dt-updates-am62-wkup-v6-13-v1-0-f74835b91da9@baylibre.com>
+ <c81ccd05-4fb7-4ec0-8cc0-c59ac4dff91e@ti.com>
+ <qlqxmqluqrw36bkjaa7efcsk6cinyr2rxvznfhz6dopeu67dsf@w4lkuq65uwno>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <qlqxmqluqrw36bkjaa7efcsk6cinyr2rxvznfhz6dopeu67dsf@w4lkuq65uwno>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Yunhui,
+Hi Markus,
 
-On Thu, Feb 20, 2025 at 1:54=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.com=
-> wrote:
->
-> Hi All,
->
-> Gentle ping. Any comments on this patch?
->
-> On Sat, Feb 1, 2025 at 7:06=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.co=
-m> wrote:
-> >
-> > Firmware randomly releases cores, so CPU numbers don't linearly map
-> > to hartids. When the system has an exception, we care more about hartid=
-s.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >  arch/riscv/kernel/smp.c     | 2 ++
-> >  arch/riscv/kernel/smpboot.c | 4 ++++
-> >  2 files changed, 6 insertions(+)
-> >
-> > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> > index d58b5e751286..e650dec44817 100644
-> > --- a/arch/riscv/kernel/smp.c
-> > +++ b/arch/riscv/kernel/smp.c
-> > @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
-> >  void __init smp_setup_processor_id(void)
-> >  {
-> >         cpuid_to_hartid_map(0) =3D boot_cpu_hartid;
-> > +
-> > +       pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid);
-> >  }
-> >
-> >  static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
-> > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-> > index e36d20205bd7..beba0efb00b9 100644
-> > --- a/arch/riscv/kernel/smpboot.c
-> > +++ b/arch/riscv/kernel/smpboot.c
-> > @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
-> >         riscv_ipi_enable();
-> >
-> >         numa_add_cpu(curr_cpuid);
-> > +
-> > +       pr_info("CPU%u: Booted secondary hartid %lu\n", curr_cpuid,
-> > +               cpuid_to_hartid_map(curr_cpuid));
-> > +
-> >         set_cpu_online(curr_cpuid, true);
-> >
-> >         /*
-> > --
-> > 2.39.2
-> >
->
-> Thanks,
-> Yunhui
+On 2/25/25 4:28 AM, Markus Schneider-Pargmann wrote:
+> Hi Judith,
+> 
+> On Mon, Feb 24, 2025 at 09:06:56AM -0600, Judith Mendez wrote:
+>> Hi Markus,
+>>
+>> On 1/22/25 3:54 AM, Markus Schneider-Pargmann wrote:
+>>> Hi,
+>>>
+>>> am62p-wakeup already has the r5fss node defined, but it is currently
+>>> missing from the am62a-wakeup domain in the devicetree. This is added as
+>>> part of the series.
+>>>
+>>> For am62a and am62p starter kit boards the r5fss memory region is added
+>>> and referenced for the r5fss core 0 node.
+>>
+>>
+>> This has already been sent here:
+>> https://lore.kernel.org/linux-devicetree/20250210221530.1234009-1-jm@ti.com/
+> 
+> yes, I saw that recently. Could you please cc me on the next version?
+> 
 
-IIRC that's a debug feature when you can't reach userspace and use
-cpuinfo, so what about using pr_debug() instead?
+Sure no problem. (:
 
-Thanks,
+> Thanks!
+> 
+> Best
+> Markus
 
-Alex
 
