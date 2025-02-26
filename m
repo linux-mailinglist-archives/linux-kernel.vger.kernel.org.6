@@ -1,195 +1,188 @@
-Return-Path: <linux-kernel+bounces-534975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F27CA46D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A136A46D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A88188A5C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185A4188A5E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DA125C6F9;
-	Wed, 26 Feb 2025 21:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbT+32uo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA0525D539;
+	Wed, 26 Feb 2025 21:31:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D49B192D63;
-	Wed, 26 Feb 2025 21:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF68A25A33E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605485; cv=none; b=DZPzF6BD8O2EN/UBgEOMKpgjH44c7Utt5g7VfrgOGc+M3iJtkHsN3YbJd8kGRr+oOhAtVN3NTRqFwMGPZIEQK9UsKYyDlEI8Kh3uTU2/3UlGUCGrrABif47ZlLE50f0ca6RaKjifnkIW/N6akm4Gg8SU4sABGJqoJGJc9cOhygs=
+	t=1740605488; cv=none; b=M5t1bPZ8OiYkxfyQmHjXY4zdyNfkERWDdMiqGAF5Jczgaa7lFv+lf+CrdbVZ+WXkfXjtTl31RGqunMCkU//pqI8/EFT2H4q+qSAes5Wb8gmzqKENV0cLf/qwLTefPLiBP4K7Tok0Y6NZT7oG+OlFXJT08a66epJFQbGXpmu6sDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605485; c=relaxed/simple;
-	bh=PRE/A1VqtcxDcp5QHrfXCdxA0NkFgqWuo0KK3OU5E/o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=esE+Ya5uikLz8jx275t9dHjHJt4NwCqC4ZBfCAw4omWFSiwHB+3DQKALdrSh03rtlzeeIXctu2apfl9JfwvezixcKiwZri8VfFAOKywArOKq8kBo+apmThR1frgBQiH/UN1rr/DunIUL/0UMa5aW/PV8jAG7RaqEPeNLoB+oDf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbT+32uo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AF5C4CEE7;
-	Wed, 26 Feb 2025 21:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740605484;
-	bh=PRE/A1VqtcxDcp5QHrfXCdxA0NkFgqWuo0KK3OU5E/o=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=VbT+32uoi+S966XSIV43IVdHDOCkoR4xt4GkRsdG5Gfx0l/lk1OZaGmab0b9KJBJH
-	 PPnRDqjW1RQZPJl35PtQKX7iCuxXhRoCatilQzGbYf3TRETC4bv+lfwo/fgLQldyhf
-	 dNwjEvsTbU5kS2bPjXX7kHW6Vm4MAbhYCsNw0GgRaHR4sAADfynFS1pdGgH/fTHzNn
-	 MVInle6Att2aa+UNdkDx41uw3/9Fqxslx/pRhfaEUavE57Ai6nypu1uqF/CtDnmzEC
-	 InDnIgYKUi+0s2+ZiBWM0fk7yk5IBnq/IWJvlLg/V3SXnAtftMVIhixKbYmmNwbMJw
-	 FXDXX4fOk9O3g==
-Message-ID: <17450f7d-d398-4a75-8b53-6c9c396661ab@kernel.org>
-Date: Wed, 26 Feb 2025 22:31:17 +0100
+	s=arc-20240116; t=1740605488; c=relaxed/simple;
+	bh=vSbZ1lPOoxuzg5lFT8+PpZWymmTjFZjRf042CFA1t2w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=c6nUODFyY0FCvpn9rKlXdcFGzC8VZXd8/2Lf9qov2STNIdZN2Yqn6XwaLCXG5vNsqd4tR53mVzy37dHBY/QqwI36FrCPJp4nW2cdVEKSEHFGKfYE73NfOIYjNPgYuqLCqpajJWYQXnzGJbAEL4Urqap8MRXYOI8ziCbrdpHH3KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b3882febso2304265ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:31:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740605486; x=1741210286;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fMg9TKcK2cdynHcTZsurS/dwdlNwTi87E4QCDwHb/EE=;
+        b=Gp6nlQofW8S8R2QWodUQYzSUvF6+RSQ31ELJnA/hZeXDRBH1U7FFT0KaymFIE/DrAA
+         2wiU86Y8YFGwRHxMIuCduEI6mkf0ipEQ8YCsXGAAJ0/cAxMPXfX+AYrK6H1QUvRxL5Uv
+         GJHpEx5PBNDS6MKEsfte9Z0DaKecFhaNTeCCm74P0O6a4NkHhepTsLlHno47+2r9CRyY
+         d3pmUFf7Vwku1hL4NMczsALe8wTwuRceqmSrAvAsVshS9RR/K4nz0PsC4mGZUZg7LBY1
+         IfzPfGT2AXnX9OT/7v6fd+c/I5PytQFiu2ynbwTJ38qWsYVag3M4HCkHxDOC1onOc92i
+         gBHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2V/9BsvHi9P6EGMHbxtG9NZU+Fb9PMFpLU0ZwpKlCahPJKsOISCUzbhi0NjvqRxyLMm7XVxcCjWE/618=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOqffL0aSOJ8AuLFdpbBahYuSk2NFQPi8RiCHB51/drjZX1Oqk
+	FF9+1jkzvb0uERBvUn5dXgG09EY5+yV8Z47kBX5UroGStDv9cYmdAOmbPl0f/Ic+qNgdDR/QkBE
+	HMwCD8GlCuG63jPF6pBLP/uJCZAPO2sETQLRsXxHDrHTX2rlEP6ZbUF0=
+X-Google-Smtp-Source: AGHT+IGYhbAVzVS3Ypz1KgMy51SCImn3S/MXG2pbnx+AyQusLkCGLdiV6Fc3oPnWxO3rkSqPQHQ5oljoOePqXoUInwhBCWT93Xvn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
- Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
- <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
- <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
- <988667a4-4bc0-4594-8dfd-a7b652b149b2@foss.st.com>
- <55beb3e7-65ac-4145-adae-fb064378c78d@kernel.org>
- <8cdc7e52-f9e2-4fc9-be68-0dd72a25ee1b@foss.st.com>
- <48cc626a-d632-444f-8563-07a9ea0ecc71@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <48cc626a-d632-444f-8563-07a9ea0ecc71@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d08:b0:3cf:bac5:d90c with SMTP id
+ e9e14a558f8ab-3d30487a1abmr95952345ab.18.1740605486114; Wed, 26 Feb 2025
+ 13:31:26 -0800 (PST)
+Date: Wed, 26 Feb 2025 13:31:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bf882e.050a0220.1ebef.008f.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING: bad unlock balance in traverse
+From: syzbot <syzbot+0b16dd9bd622c40b2bbe@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/02/2025 22:26, Krzysztof Kozlowski wrote:
-> On 26/02/2025 16:30, Alexandre TORGUE wrote:
->>
->>
->> On 2/26/25 16:08, Krzysztof Kozlowski wrote:
->>> On 26/02/2025 10:33, Alexandre TORGUE wrote:
->>>>>>>> +		hdp: pinctrl@44090000 {
->>>>>>>> +			compatible = "st,stm32mp-hdp";
->>>>>>>
->>>>>>> So here again - you have stm32mp251 SoC, but use entirely different
->>>>>>> compatible.
->>>>>>
->>>>>> Ok so I will use "st,stm32mp15-hdp"
->>>>>
->>>>>
->>>>> This means this is stm32mp15 SoC. I do not see such SoC on list of your
->>>>> SoCs in bindings. What's more, there are no bindings for other SoC
->>>>> components for stm32mp15!
->>>>
->>>> Yes stm32mp15 is not a "real SoC". I agree that at the beginning of the
->>>> STM32 story we didn't have a clear rule/view to correctly naming our
->>>> compatible. We tried to improve the situation to avoid compatible like
->>>> "st,stm32", "st,stm32mp" or "st,stm32mp1". So we introduced
->>>> "st,stm32mp13", "st,stm32mp15" or "st,stm32mp25" for new drivers. So yes
->>>> it represents a SoC family and not a real SoC. We haven't had much
->>>> negative feedback it.
->>>>
->>>> But, if it's not clean to do it in this way, lets define SoC compatible
->>>> for any new driver.
->>>
->>> Compatibles are for hardware.
->>>
->>>> For the HDP case it is: "st,stm32mp157" and used for STM32MP13,
->>>> STM32MP15 end STM32MP25 SoC families (if driver is the same for all
->>>> those SoCs).
->>>
->>> No, it's three compatibles, because you have three SoCs. BTW, writing
->>> bindings (and online resources and previous reviews and my talks) are
->>> saying that, so we do not ask for anything new here, anything different.
->>> At least not new when looking at last 5 years, because 10 years ago many
->>> rules were relaxed...
->>
->> So adding 3 times the same IP in 3 different SoCs implies to have 3 
-> 
-> Yes. Always, as requested by writing bindings.
-> 
->> different compatibles. So each time we use this same IP in a new SoC, we 
->> have to add a new compatible. My (wrong) understanding was: as we have 
-> 
-> Yes, as requested by writing bindings and followed up by all recent
-> platforms having decent/active upstream support. See qcom, nxp, renesas
-> for example.
-> 
->> the same IP (same hardware) in each SoC we have the same compatible (and 
-> 
-> You do not have same hardware. You have same IP, or almost same because
-> they are almost never same, implemented in different hardware.
-> 
->> IP integration differences (clocks, interrupts) are handled by DT 
->> properties.
-> 
-> Which binding doc/guide suggested such way? Countless reviews from DT
-> maintainers were saying opposite.
-I was not precise: IP integration differences are of course handles as
-DT properties, but I wanted to say that it does not solve the problem
-that IP integration means you might have differences in this device and
-you should have different quirks.
+Hello,
 
-And the example in this patchset: entirely different pin functions is a
-proof. This device behaves/operates/integrates differently, thus
-different compatible.
+syzbot found the following issue on:
 
-Best regards,
-Krzysztof
+HEAD commit:    ac9c34d1e45a Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=165b9c98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1635bf4c5557b92
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b16dd9bd622c40b2bbe
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=152b003f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ed21c75da715/disk-ac9c34d1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f51096fe566c/vmlinux-ac9c34d1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e6a27961fbbe/bzImage-ac9c34d1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0b16dd9bd622c40b2bbe@syzkaller.appspotmail.com
+
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdab0827c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 00007f06103a5fa0 RCX: 00007f061018d169
+RDX: 0000000000000400 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007ffdab082820 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000009871 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007f06103a5fa0 R14: 00007f06103a5fa0 R15: 0000000000000004
+ </TASK>
+=====================================
+WARNING: bad unlock balance detected!
+6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0 Not tainted
+-------------------------------------
+syz.0.17/6067 is trying to release lock (event_mutex) at:
+[<ffffffff82399e2d>] traverse.part.0.constprop.0+0x2bd/0x640 fs/seq_file.c:131
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz.0.17/6067:
+ #0: ffff888032e872f0 (&p->lock){+.+.}-{4:4}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6067 Comm: syz.0.17 Not tainted 6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_unlock_imbalance_bug kernel/locking/lockdep.c:5289 [inline]
+ print_unlock_imbalance_bug+0x1aa/0x1f0 kernel/locking/lockdep.c:5263
+ __lock_release kernel/locking/lockdep.c:5528 [inline]
+ lock_release+0x525/0x6f0 kernel/locking/lockdep.c:5872
+ __mutex_unlock_slowpath+0xa3/0x6a0 kernel/locking/mutex.c:891
+ traverse.part.0.constprop.0+0x2bd/0x640 fs/seq_file.c:131
+ traverse fs/seq_file.c:98 [inline]
+ seq_read_iter+0x934/0x12b0 fs/seq_file.c:195
+ seq_read+0x39f/0x4e0 fs/seq_file.c:162
+ vfs_read+0x1df/0xbf0 fs/read_write.c:563
+ ksys_pread64 fs/read_write.c:756 [inline]
+ __do_sys_pread64 fs/read_write.c:764 [inline]
+ __se_sys_pread64 fs/read_write.c:761 [inline]
+ __x64_sys_pread64+0x1f6/0x250 fs/read_write.c:761
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f061018d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdab0827c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 00007f06103a5fa0 RCX: 00007f061018d169
+RDX: 0000000000000400 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007ffdab082820 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000009871 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007f06103a5fa0 R14: 00007f06103a5fa0 R15: 0000000000000004
+ </TASK>
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	ff c3                	inc    %ebx
+   2:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   9:	00 00 00
+   c:	0f 1f 40 00          	nopl   0x0(%rax)
+  10:	48 89 f8             	mov    %rdi,%rax
+  13:	48 89 f7             	mov    %rsi,%rdi
+  16:	48 89 d6             	mov    %rdx,%rsi
+  19:	48 89 ca             	mov    %rcx,%rdx
+  1c:	4d 89 c2             	mov    %r8,%r10
+  1f:	4d 89 c8             	mov    %r9,%r8
+  22:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+  27:	0f 05                	syscall
+* 29:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax <-- trapping instruction
+  2f:	73 01                	jae    0x32
+  31:	c3                   	ret
+  32:	48 c7 c1 a8 ff ff ff 	mov    $0xffffffffffffffa8,%rcx
+  39:	f7 d8                	neg    %eax
+  3b:	64 89 01             	mov    %eax,%fs:(%rcx)
+  3e:	48                   	rex.W
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
