@@ -1,206 +1,160 @@
-Return-Path: <linux-kernel+bounces-533912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DF1A46032
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:06:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9A4A46027
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9AA03B0ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B103AFEB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B551B21D3E2;
-	Wed, 26 Feb 2025 13:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBD22206B2;
+	Wed, 26 Feb 2025 13:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WD4V6KQ3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8/7CjMn"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8075B21B9CC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFC11891A9;
+	Wed, 26 Feb 2025 13:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575039; cv=none; b=A7Dhm/dvkoKWPlYqN0TQBDuxiwQHUo7WDyA8UFTKeUYtoqsEYFBtPys4RivwxF1Y+pMV5mBrllv+tqMof/kyly9pUNubOnY/H/cAZaxybe+noAkcffbbBiHxxExbOzTpEuZG8DvbDA5gi2MgWKL4VKDb+mhzMIPY1W6lB4DtwHw=
+	t=1740575018; cv=none; b=XamUFe2Nlmzftthls4NrY5ny35wVchiwpRy25Wyg9ehpNC0HND+54tZIbcN0yhenw4zWn64UA+zNKhxHTYHflZkhiaAlQYBHmcC396ao8jWFmo4ay00dkQydR9iX11pdd6E35JYWt4wsysaJqVNcAybVMGUthtUnqgsOUA2YW8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575039; c=relaxed/simple;
-	bh=8jiS+kPdQZP7EWPxn7Of1UXgpTQ62xuev1qCkeye9+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JplG0i8f7j6MaH3KLUDHotH9xqJSlzniMWFw3twa0la5661FPDIWgASnJ1UtgsMdWMfhynWAgaGIACTjFLkdRSThO3CtWIXUb3zCNjyDVnEfsGiXFJaSG7ivvUgs8J+GNETD6CyVh8+qirm3FDYxB4Hd0bzmIWYhAULxDaW9LQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WD4V6KQ3; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740575038; x=1772111038;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8jiS+kPdQZP7EWPxn7Of1UXgpTQ62xuev1qCkeye9+0=;
-  b=WD4V6KQ3kyWGM6cnCyLpCh7sjJY4oHtn/27WBchHJxPSKRi8ffPjdELj
-   C0C+24eC5HI82UjPY/ZV0IT/n8vr5h2x+OKemaacv0Ig7PDVb/trGfGJm
-   6Md/y9pONLsjEd/trGCLmkk+TbUjjHXZiIZS64zApraqAcKlUW21ix8kb
-   Sz4SeR15MCCYKwyLKbd87HtjNO2HZ4CGPgc+ZlYrPDhHCdY93RfS4ddCm
-   Aqnp67R/RDt7JTF/4cqFt7I1DsoVw3rbYVSuYIWKOsmBI+IIUT+3+9vVd
-   5HQCAKzY2s6tI9BYM75KrDt47X6UsuGB7eSKN7ZZK6U5ID2IjYQ14bX2V
-   A==;
-X-CSE-ConnectionGUID: awmYf1mJR+e3+gOxr0o4jQ==
-X-CSE-MsgGUID: bWQkbgcTQ8GBrMVDNBOaxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41341675"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="41341675"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:03:58 -0800
-X-CSE-ConnectionGUID: kh+122C9SgecQqqNpusQEg==
-X-CSE-MsgGUID: A21xIJetS9CbUuTMCxUurQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="121691034"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:03:52 -0800
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Karthik Poosa <karthik.poosa@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	Oren Weil <oren.jer.weil@intel.com>,
-	linux-mtd@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v5 11/11] drm/xe/nvm: add support for access mode
-Date: Wed, 26 Feb 2025 14:51:43 +0200
-Message-ID: <20250226125143.3791515-12-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250226125143.3791515-1-alexander.usyskin@intel.com>
-References: <20250226125143.3791515-1-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1740575018; c=relaxed/simple;
+	bh=eHXH2xcwHvpeP2rTbNNDIAknPYHbqmdnpV8ggdyjZ7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Svoh9Q7oiPGw3De4tPzQ02Z7xsBUrNa1hzfpCPu91mWRMMx5KQRee3r9+EpFlqhA/no48NzNWW5OUputxjTEu7kOo1BynouCW/2azXm2PgAZv/a8xO5K1dCRa/TJ1dQKjMLI68GBnhau6SEY4IPzP8aN8GJ6COy+sIGFUtEdCG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E8/7CjMn; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5461dab4bfdso8013600e87.3;
+        Wed, 26 Feb 2025 05:03:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740575015; x=1741179815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OOaAyIgCFX8Depn/PozouTZSxlQDaDtgCKWZ+jCIr88=;
+        b=E8/7CjMn1kbAPnjhKJeOSvnDX2ffIHZEor8AXIe9+2OFoPwTvqeyLAHCy9eB719KAZ
+         mC0Hokq/E5lZOUb73xpW/lr+MMPuKoFlpo0Vv2LTldb7dsK1uEFOOylrFOL22przRUsx
+         SCy+01cRq6Zzbv/YBChx9L1oWH7nGO0azfcct55QgPvCEsNTZtKQldrAJsSjixow5dp4
+         DG3i8yrWEIB/DC+Wnbu2XSZUX+gROSFMXFgbWiHXVC7j35MJOklx+LKkto1Yibef0Jue
+         zhaT5Zjr0hmC/3GmeJgWZLStNWwUTR7VmtsrzjsX8BDIDwElW+T66HBp9Y8D+Te53pIG
+         +oJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740575015; x=1741179815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OOaAyIgCFX8Depn/PozouTZSxlQDaDtgCKWZ+jCIr88=;
+        b=uYMbfZkvLKuCV6LoI/nNhMUjngp9StNET5D9HS9MG07cR78K/ZipnLQMMewu9mUvUG
+         x+UDGwwlQk6rm/yh3U0gZyC8zwPEsf43jhTNy0R5zIPHNufvpBv25/eNNGaLhQfkAPPs
+         OpSPSYbquUD8kbbe+XLuQ3jAa1bROLLgxNPyxF5NoczwhiwgFqNvyAL8a/CcxIYvUjIX
+         lCmcONYpzCD2Z9ri1mRYjfg0YzdnusAKxhsq1DNyQnnH3O/fSaaAO0rdM7Aly0YVRns2
+         mapeV172WeOqfXP6VkhE08YQuWDtpQNE4BKW/t0o3LaTpwgNLYVkkdAjWyS5MSrE32Qo
+         IdmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdd28eGA7olQXiOscqVm2SODPlUG1mMKtWGkPawFIsQ3r0jbp9d7dX7ROt0aikfFHt6uvn3Ni/Ad/bxmI=@vger.kernel.org, AJvYcCXGv35DwHEQmvtUrvdmUNYQf2lNEijIZ/6d8sxkDrKOCbEyeOToZISV648yi/pbkjsxyiqu5kMchFiD/+KY1us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDWCnDF6OnwshAiIYP3edbyNOtvRBAhRM2F9+1GGymm/zRpOfY
+	s6qFGklOf53dxWE133vtd5f9hCOK/AEjB8Z1YePy7nL/N/+4Y04f92JoVSg3XGQvFygUv6fCdNM
+	j/LZsyu4+O/EFqJa/vq1KfMaRbWg=
+X-Gm-Gg: ASbGncvekjZBzJJp2ydtCTPhasNF0fVqEp1pRpjJuF26XfBibVZt01RpRm2TWdqBgPr
+	kmejou3GfOriJd4jA4pcFNDeN+0ZNeiFCTiA1b1nORLwFqvhgcLE32gAjI9Gv5NzpQbnYQYY2R3
+	k3kNZ/hl2y
+X-Google-Smtp-Source: AGHT+IF4/7i4cn3DiJ773zF8xOQe9L3YSlR5TCr/4/VVZsgTQa7dvgs28vk0rkrTCUmUnVPKqxiqJEINXiihbPUT3OY=
+X-Received: by 2002:a05:6512:e99:b0:545:6fa:bf5f with SMTP id
+ 2adb3069b0e04-54838edd8b6mr9406658e87.2.1740575014818; Wed, 26 Feb 2025
+ 05:03:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
+ <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
+ <5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com> <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
+In-Reply-To: <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
+From: Ventura Jack <venturajack85@gmail.com>
+Date: Wed, 26 Feb 2025 06:03:20 -0700
+X-Gm-Features: AQ5f1JoDaaLCqIcdIZhNNBP4aubytjJzFmRPFjw-ljPopqVIQo-B9DJXO1CskAM
+Message-ID: <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check NVM access mode from GSC FW status registers
-and overwrite access status read from SPI descriptor, if needed.
+On Tue, Feb 25, 2025 at 1:21=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Tue, Feb 25, 2025 at 10:16:17AM -0800, H. Peter Anvin wrote:
+> >
+> > I do have to say one thing about the standards process: it forces a
+> > real specification to be written, as in a proper interface contract,
+> > including the corner cases (which of course may be "undefined", but
+> > the idea is that even what is out of scope is clear.)
+>
+> Did it, though?
+>
+> The C standard didn't really define undefined behaviour in a
+> particularly useful way, and the compiler folks have always used it as a
+> shield to hide behind - "look! the standard says we can!", even though
+> that standard hasn't meaninfully changed it decades. It ossified things.
+>
+> Whereas the Rust process seems to me to be more defined by actual
+> conversations with users and a focus on practicality and steady
+> improvement towards meaningful goals - i.e. concrete specifications.
+> There's been a lot of work towards those.
+>
+> You don't need a standards body to have specifications.
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/gpu/drm/xe/regs/xe_gsc_regs.h |  4 ++++
- drivers/gpu/drm/xe/xe_heci_gsc.c      |  5 +----
- drivers/gpu/drm/xe/xe_nvm.c           | 32 ++++++++++++++++++++++++++-
- 3 files changed, 36 insertions(+), 5 deletions(-)
+Some have claimed that a full specification for aliasing missing
+makes unsafe Rust harder than it otherwise would be. Though
+there is work on specifications as far as I understand it.
 
-diff --git a/drivers/gpu/drm/xe/regs/xe_gsc_regs.h b/drivers/gpu/drm/xe/regs/xe_gsc_regs.h
-index 7702364b65f1..9b66cc972a63 100644
---- a/drivers/gpu/drm/xe/regs/xe_gsc_regs.h
-+++ b/drivers/gpu/drm/xe/regs/xe_gsc_regs.h
-@@ -16,6 +16,10 @@
- #define MTL_GSC_HECI1_BASE	0x00116000
- #define MTL_GSC_HECI2_BASE	0x00117000
- 
-+#define DG1_GSC_HECI2_BASE	0x00259000
-+#define PVC_GSC_HECI2_BASE	0x00285000
-+#define DG2_GSC_HECI2_BASE	0x00374000
-+
- #define HECI_H_CSR(base)	XE_REG((base) + 0x4)
- #define   HECI_H_CSR_IE		REG_BIT(0)
- #define   HECI_H_CSR_IS		REG_BIT(1)
-diff --git a/drivers/gpu/drm/xe/xe_heci_gsc.c b/drivers/gpu/drm/xe/xe_heci_gsc.c
-index 3ea325d3db99..266097a5b98b 100644
---- a/drivers/gpu/drm/xe/xe_heci_gsc.c
-+++ b/drivers/gpu/drm/xe/xe_heci_gsc.c
-@@ -11,15 +11,12 @@
- #include "xe_device_types.h"
- #include "xe_drv.h"
- #include "xe_heci_gsc.h"
-+#include "regs/xe_gsc_regs.h"
- #include "xe_platform_types.h"
- #include "xe_survivability_mode.h"
- 
- #define GSC_BAR_LENGTH  0x00000FFC
- 
--#define DG1_GSC_HECI2_BASE			0x259000
--#define PVC_GSC_HECI2_BASE			0x285000
--#define DG2_GSC_HECI2_BASE			0x374000
--
- static void heci_gsc_irq_mask(struct irq_data *d)
- {
- 	/* generic irq handling */
-diff --git a/drivers/gpu/drm/xe/xe_nvm.c b/drivers/gpu/drm/xe/xe_nvm.c
-index 26de7d4472c8..08fe3bf04cf0 100644
---- a/drivers/gpu/drm/xe/xe_nvm.c
-+++ b/drivers/gpu/drm/xe/xe_nvm.c
-@@ -6,8 +6,11 @@
- #include <linux/intel_dg_nvm_aux.h>
- #include <linux/pci.h>
- 
-+#include "xe_device.h"
- #include "xe_device_types.h"
-+#include "xe_mmio.h"
- #include "xe_nvm.h"
-+#include "regs/xe_gsc_regs.h"
- #include "xe_sriov.h"
- 
- #define GEN12_GUNIT_NVM_BASE 0x00102040
-@@ -25,6 +28,33 @@ static void xe_nvm_release_dev(struct device *dev)
- {
- }
- 
-+static bool xe_nvm_writeable_override(struct xe_device *xe)
-+{
-+	struct xe_gt *gt = xe_root_mmio_gt(xe);
-+	resource_size_t base;
-+	bool writeable_override;
-+
-+	if (xe->info.platform == XE_BATTLEMAGE) {
-+		base = DG2_GSC_HECI2_BASE;
-+	} else if (xe->info.platform == XE_PVC) {
-+		base = PVC_GSC_HECI2_BASE;
-+	} else if (xe->info.platform == XE_DG2) {
-+		base = DG2_GSC_HECI2_BASE;
-+	} else if (xe->info.platform == XE_DG1) {
-+		base = DG1_GSC_HECI2_BASE;
-+	} else {
-+		drm_err(&xe->drm, "Unknown platform\n");
-+		return true;
-+	}
-+
-+	writeable_override =
-+		!(xe_mmio_read32(&gt->mmio, HECI_FWSTS2(base)) &
-+		  HECI_FW_STATUS_2_NVM_ACCESS_MODE);
-+	if (writeable_override)
-+		drm_info(&xe->drm, "NVM access overridden by jumper\n");
-+	return writeable_override;
-+}
-+
- void xe_nvm_init(struct xe_device *xe)
- {
- 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
-@@ -49,7 +79,7 @@ void xe_nvm_init(struct xe_device *xe)
- 
- 	nvm = xe->nvm;
- 
--	nvm->writeable_override = false;
-+	nvm->writeable_override = xe_nvm_writeable_override(xe);
- 	nvm->bar.parent = &pdev->resource[0];
- 	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
- 	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
--- 
-2.43.0
+One worry I do have, is that the aliasing rules being officially
+tied to LLVM instead of having its own separate specification,
+may make it harder for other compilers like gccrs to implement
+the same behavior for programs as rustc.
 
+    https://doc.rust-lang.org/stable/reference/behavior-considered-undefine=
+d.html
+    http://llvm.org/docs/LangRef.html#pointer-aliasing-rules
+
+Interestingly, some other features of Rust are defined through C++
+or implemented similar to C++.
+
+    https://doc.rust-lang.org/nomicon/atomics.html
+        "Rust pretty blatantly just inherits the memory model for
+        atomics from C++20. This is not due to this model being
+        particularly excellent or easy to understand."
+
+    https://rust-lang.github.io/rfcs/1236-stabilize-catch-panic.html
+        "Panics in Rust are currently implemented essentially as
+        a C++ exception under the hood. As a result, exception
+        safety is something that needs to be handled in Rust code
+        today."
+
+Exception/unwind safety may be another subject that increases
+the difficulty of writing unsafe Rust. At least the major or
+aspiring Rust compilers, rustc and gccrs, are all sharing
+code or infrastructure with C++ compilers, so C++ reuse in
+the Rust language should not hinder making new major
+compilers for Rust.
+
+Best,  VJ.
 
