@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-534584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B287A468D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:04:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5299DA468DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E273C1888E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F481888D29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA8D233703;
-	Wed, 26 Feb 2025 18:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6037622A7F4;
+	Wed, 26 Feb 2025 18:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LP2cM6Cg"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFdpQdUa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D2B4A1A;
-	Wed, 26 Feb 2025 18:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9F22063FD;
+	Wed, 26 Feb 2025 18:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593041; cv=none; b=CyXDAqj5nAMU03rQNDRr67xxrHzUaXYoj7Zj/IZfYu1f+XgVOnyPgadh1WX7l0JzCVVLzJWeQn36c5nKM1EHFVNpBA4hJQfjRiJsEPr6+n+eXlzOwGACMRuPVYYpmzgxDbi8Hp1YV44cKSsmz0mixBt7MtXxjpzm/PWvZVT3SSs=
+	t=1740593076; cv=none; b=n5IhUBgkByCCBuj2pgaSEOev8NJSPCdY4Rz9p8E/FG7RpKuRxM4crLZpHJ1D1XXuQWFNXxI0/qwXkr8E2QY71RHtDNDzAwvnN0GtnQAovdY3BUfb1EcQJg4qHbVcHQAur/hGERwy+9bRQKmzRx98uJsFsYDocOUoZy6+u6XdwkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593041; c=relaxed/simple;
-	bh=Ult+jCe8V+RK2OSVBLS7kPBk2d9BSot4j1pHvtVAPX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SZeDzwxmDw29DN8mgZ8p4hCRPAGrAGY6rFRhiWAAU+G7Z+xpnOwMExnErfOYtLeHpf7y8DUHFgr92QfUit2H4Vu9J4NnjzdmsMHRpEcO0SOlyM0fGkhBS837MTn+vLNuIDghpfyKylIoe21R2dX/HWhuYkI4ErMAsiULQZ8MTqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LP2cM6Cg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QDHIsi027833;
-	Wed, 26 Feb 2025 18:03:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=BagUnjM7IFd8MM1CI
-	k7jDa6LhSJ/+lrqaAtDxWexNw8=; b=LP2cM6CgFUyC8Sfm+oWnLADLmY/rwMAnH
-	+OPGTFT+ZBc8kgGe+6hqEZrrzYsN2e82TmpYN3Qsce1NFVrNd6CoQVBrSDjYNfeq
-	EoYGGozeY9+HtdDVlSI0ASfzEDn+caxCN3kh6jhOAYKH2M/oLRkNyxCyo8gxQcsq
-	PqRB6Ri5G2xcXwe9fPuZIqp8x6n8K6sqSnvYf0kgO+uxGzAhfDi68ZU03tpKTok3
-	p3NdU5wrvsIV2yDT9dQpQH5Ff5hj5pTBQJHlAS0Ncn7/DdoSOc424cKXiQ2jekkr
-	sKid2mKVBixBwAYrtdkFWiAnYMLXh1RWPIx0UY24UHtobnDrOZH3A==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5jcw4y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 18:03:57 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QHU97f012918;
-	Wed, 26 Feb 2025 18:03:56 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwsvcsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 18:03:56 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QI3ubR7930442
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 18:03:56 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 19A1058063;
-	Wed, 26 Feb 2025 18:03:56 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D7C258060;
-	Wed, 26 Feb 2025 18:03:55 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.61.248.9])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Feb 2025 18:03:55 +0000 (GMT)
-From: Rorie Reyes <rreyes@linux.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: hca@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
-        alex.williamson@redhat.com, akrowiak@linux.ibm.com,
-        rreyes@linux.ibm.com
-Subject: [RFC PATCH v2 2/2] s390/vfio-ap: Fixing mdev remove notification
-Date: Wed, 26 Feb 2025 13:03:53 -0500
-Message-ID: <20250226180353.15511-3-rreyes@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250226180353.15511-1-rreyes@linux.ibm.com>
-References: <20250226180353.15511-1-rreyes@linux.ibm.com>
+	s=arc-20240116; t=1740593076; c=relaxed/simple;
+	bh=k9YMZX0DfU8c/uTdxAb90MdvrVC9IpX7UL32YOtzo3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OtOf4dWaBCBxpzdtrPqrVZov2kLgSfjH0S5/dR+wRqmHz9t4M+tRSw1vFU/qAuFFEr1CzwyB0uFISTfmC9GbiZ4ES8xK8TEM0KIoltA71Hchv5s8qa98/pQW/IZFFUrB4pWqkroa9ZRRU29223J89X0ke3JMKsGTp5CjsGCCqDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFdpQdUa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B374C4CED6;
+	Wed, 26 Feb 2025 18:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740593076;
+	bh=k9YMZX0DfU8c/uTdxAb90MdvrVC9IpX7UL32YOtzo3w=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=PFdpQdUaJE2mTTgcDkyvfL2gFpQTjbuivZVxfftIMDIUTylRvY9IZUOH5zq4JPmvX
+	 uYxvnpY0HfIUp34xVJe/1JLEsqi7+rMaDs5zXUtVRTDfmP1MrU4iKXg+edvf8ilu8H
+	 Jd12GA6Ozg+Fvvl2jUKMSYAiodCPSdoXuqwA2NjZ/1YFmQYc6lXngBeucAdjgA5Tbv
+	 EAGdt1SgYb7w5EFkRNNLoNBsq9XiYMLvM7ETV4sOkA9jPGhY6ynXMZ6Q7nvP9Q1Ypk
+	 ImQBx3JaZkmX5hjusxi8OUKKqy1GbrCYyendbYQOiqQMnmPpcERlF0BCshCcZ3QNec
+	 bHHGJyf4ITLFg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B3474CE04E3; Wed, 26 Feb 2025 10:04:35 -0800 (PST)
+Date: Wed, 26 Feb 2025 10:04:35 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v3 1/3] rcutorture: Allow a negative value for
+ nfakewriters
+Message-ID: <a3892fc3-f0a7-47d1-a7ea-d82bb7c88d05@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250225110020.59221-1-urezki@gmail.com>
+ <20250225212409.GA1807836@joelnvbox>
+ <Z78lNRKjLQKigyLw@pc636>
+ <a26d4cc5-ff54-4f9f-b2df-aa423c112487@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: UErNMyfhWTLj5eLi4IgK0yfw8vafgZZw
-X-Proofpoint-ORIG-GUID: UErNMyfhWTLj5eLi4IgK0yfw8vafgZZw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=937 phishscore=0 adultscore=0 clxscore=1015 bulkscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a26d4cc5-ff54-4f9f-b2df-aa423c112487@nvidia.com>
 
-Removed eventfd from vfio_ap_mdev_unset_kvm
-Update and release locks along with the eventfd added
-to vfio_ap_mdev_request
+On Wed, Feb 26, 2025 at 12:49:41PM -0500, Joel Fernandes wrote:
+> 
+> 
+> On 2/26/2025 9:29 AM, Uladzislau Rezki wrote:
+> > On Tue, Feb 25, 2025 at 04:24:09PM -0500, Joel Fernandes wrote:
+> >> On Tue, Feb 25, 2025 at 12:00:18PM +0100, Uladzislau Rezki (Sony) wrote:
+> >>> Currently "nfakewriters" parameter can be set to any value but
+> >>> there is no possibility to adjust it automatically based on how
+> >>> many CPUs a system has where a test is run on.
+> >>>
+> >>> To address this, if the "nfakewriters" is set to negative it will
+> >>> be adjusted to num_online_cpus() during torture initialization.
+> >>>
+> >>> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> >>> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> >>> ---
+> >>>  kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
+> >>>  1 file changed, 16 insertions(+), 6 deletions(-)
+> >>>
+> >>> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> >>> index d98b3bd6d91f..f376262532ce 100644
+> >>> --- a/kernel/rcu/rcutorture.c
+> >>> +++ b/kernel/rcu/rcutorture.c
+> >>> @@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
+> >>
+> >> IMO, this should also be updated to reflect the possibily to set it negative
+> >> and hence to number CPUs:
+> >>
+> >> torture_param(int, nfakewriters, 4, "Number of RCU fake writer threads");
+> >>
+> > You can set it to a negative as well as to number of CPUs or any other
+> > number.
+> Sorry I just meant amend the description to something like "Number of RCU fake
+> writer threads (or set to -1 for NR_CPUs)", so user does not have to read code
+> to know that (and update the kernel cmdline params document as well).
 
-Signed-off-by: Rorie Reyes <rreyes@linux.ibm.com>
----
- drivers/s390/crypto/vfio_ap_ops.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Should we also adjust the string for nreaders?
 
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index c6ff4ab13f16..e0237ea27d7e 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -1870,7 +1870,6 @@ static void vfio_ap_mdev_unset_kvm(struct ap_matrix_mdev *matrix_mdev)
- 		get_update_locks_for_kvm(kvm);
- 
- 		kvm_arch_crypto_clear_masks(kvm);
--		signal_guest_ap_cfg_changed(matrix_mdev);
- 		vfio_ap_mdev_reset_queues(matrix_mdev);
- 		kvm_put_kvm(kvm);
- 		matrix_mdev->kvm = NULL;
-@@ -2057,6 +2056,14 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
- 
- 	matrix_mdev = container_of(vdev, struct ap_matrix_mdev, vdev);
- 
-+	if (matrix_mdev->kvm) {
-+		get_update_locks_for_kvm(matrix_mdev->kvm);
-+		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
-+		signal_guest_ap_cfg_changed(matrix_mdev);
-+	} else {
-+		mutex_lock(&matrix_dev->mdevs_lock);
-+	}
-+
- 	if (matrix_mdev->req_trigger) {
- 		if (!(count % 10))
- 			dev_notice_ratelimited(dev,
-@@ -2068,6 +2075,12 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
- 		dev_notice(dev,
- 			   "No device request registered, blocked until released by user\n");
- 	}
-+
-+	if (matrix_mdev->kvm)
-+		release_update_locks_for_kvm(matrix_mdev->kvm);
-+	else
-+		mutex_unlock(&matrix_dev->mdevs_lock);
-+
- }
- 
- static int vfio_ap_mdev_get_device_info(unsigned long arg)
--- 
-2.39.5 (Apple Git-154)
-
+							Thanx, Paul
 
