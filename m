@@ -1,102 +1,153 @@
-Return-Path: <linux-kernel+bounces-534771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A44A46AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:27:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7223A46AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:24:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6A2188BB30
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:27:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5531F16D800
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFAA23956C;
-	Wed, 26 Feb 2025 19:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8737F239561;
+	Wed, 26 Feb 2025 19:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NW8lxxvD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="IsHfiaQS"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E18236A66;
-	Wed, 26 Feb 2025 19:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9800516F288
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598060; cv=none; b=RPU1P+/mSslNim7f8yG5chKp9RcE+KDOFN9bL9pgWCV0f/332ckieWR3l59nbq2U0SMYIGGOluJW+rRKJK31yFb7tGs1bAaFSn1ONXu/6xlbo98SEQ3Fd65VECFeG3MPNuodv4+y8NZFKhrBMkBKIsKzm0WkZx818U0gTtVzZa0=
+	t=1740597862; cv=none; b=Kx5KbdILUYgxdCNb4ioCNYqnkXQLOwk+S+Fg7w44Dh1WHiMkWZgkCEXq46g+IbRbDEZpBYi01uRdDV/T7wXjqdyQRmEDg9FYFWtmvDC6O0IIVRZipRjYgLFYWnPFsAabllEl48JVrl8pI0f8jDNuSFNZoA/EJYfuVxRrBsJT5vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598060; c=relaxed/simple;
-	bh=TR7F1RtqVngJgjrbPnHgmwGaX8T2VMKYSMSpMKAAPlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AN5HQ8d9xboEaH5Zlkow3NBuJu+6aFV29gRHNgDIQG5EAFxj/CaLvIaAgPyG14IIpwiTdADrmhvfHsfxWeIZ6kO9C5L/EsQbY5mLPe7m3+mB3PmL6SQ/NDV/o+nCkfdgfw8AA5YIkEOGg2EaWB/FUTqcb6hSzWTyto5pAH+n1/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NW8lxxvD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:2b29:76dc:a5a9:647c])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 92A9C49E;
-	Wed, 26 Feb 2025 20:26:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740597968;
-	bh=TR7F1RtqVngJgjrbPnHgmwGaX8T2VMKYSMSpMKAAPlE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NW8lxxvDmzfPYMXpgDSCd6IHHfUuXIIuesoKkEjM/CbPFSewuNBLXD2Ac6G4j/+ew
-	 Hg/pFr74tx67Rjt5r7WVNu3NLh/jjThLjdQ/lqtCRYThnm5hfSExf/UFMyKHXBAHNY
-	 RlF/Q/CmwML/jQGYJLlZPFuU7l/PlcwhAfIYdI9Q=
-From: Stefan Klug <stefan.klug@ideasonboard.com>
-To: libcamera-devel@lists.libcamera.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] media: rkisp1: Apply full quantization when color space JPEG is requested
-Date: Wed, 26 Feb 2025 20:23:53 +0100
-Message-ID: <20250226192413.2903243-1-stefan.klug@ideasonboard.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740597862; c=relaxed/simple;
+	bh=+MPxJiszOeCmFsn8+9MqxMgk4It36YrHrcETxZymxZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHDYw6J25SD9CIjsSxXQ0or2CdZBfK48lzRFDSHYYfWVyREd+GTr8pzLmJPm2FtIpiQ2ZOFoks/RzP+lrpWJL9f/r0D+C86//DuVVREVpg1qAmPdcTJDkXfUBhUKhjbV7EI3KzpT0AlyvkTtBsDsD7UEv7XscvYgfSqYYw/bZXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=IsHfiaQS; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c8f38febso1910375ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:24:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1740597861; x=1741202661; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/sflnpIC6yKwseTfHm3vT9z2UOLJa7dEKR1pgDETj+Y=;
+        b=IsHfiaQS04ZUz/3DCH5S0DOwiRC7GjFG/TLqvpLRYM6MtZgPsmMMchJo7hM34E9dzp
+         GYY1nVx32t9BWNt4Cge9fW7lnvbsmNg9JvUk8UJRdnw7+4pC9Q8OxIY5zhd73G/T9t3f
+         1FUy8KyIGv1r6p/3lonrpTJ0I969LTDxq3By3DoslF0xmJ1kD983XlJBMA+Q7o3ipqjF
+         TGAEobrE1aJwwIaomr8zPADA8ZUSOULcM+nfxR8dpkynLZfUxNP6j1+AWcyyTjqbg4lu
+         cj1LCALJNC7GvavlWfD4SwW0ScnPMoT66gRBPpyhgiOUJKsFMoDBWJvRp2A5PRzkjtLZ
+         3+HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740597861; x=1741202661;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/sflnpIC6yKwseTfHm3vT9z2UOLJa7dEKR1pgDETj+Y=;
+        b=jTRXTxxRPQ6wxFxr8C/TTCjXcp4fcHige9PbdiSjRUG/sEuCpoPkOr5gbPcqWIpOZj
+         95YSAwXluQSPwImBXoAu/P9odz8niRqZnJuGlkewcPEOfayCFtl3ZD5hQj1SAEXFgqtw
+         LSMdZjWZPQAIUMuKQKKQ0Jd/HpVFSizrc0FqlsXYclPFm3S7QPXdmUmAW4fCp78nzcPH
+         bAjUhGKK9GBeNAKiCUFcyf4j1ynaVm+frU6mdXGEK2uU1X/DkBS1SuONKdvx4WNUSxqa
+         zp3OiIY5JfBLXW6oC4oidVRfDdWFWFEZtOZzorBBkCQ1OUVn9W2OT9ESkzRqiPjFbfVU
+         Bz1w==
+X-Forwarded-Encrypted: i=1; AJvYcCX83TLas7VvmpTASBVIsZGP6V1p442rMW88Udw5rf6RvJyK/gCsgjEkDCSpQWzkXKgmYuuz0wWaBm20FR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwA47f5BYxRv3wB3qS8tYTXYCERmBUi33SkCwj3LHc6eN9QmJ/
+	fhRlSKn0RZUWzh8o89YfOh29QJ42QdPw3h82GnpryiiSlMgADrSoZMug/DunQJg=
+X-Gm-Gg: ASbGncuc27hGzzWNtBOIknB8tln+wFGt2OoG4SlojDJIjvdTX+JWI3BeXv13BoXitcE
+	j9eWgDOLYcfuseQcoHQEqR1tw5ZMXh7HyxcnQmTxVY3XTdrSneuPLF2cqIqDtnIcbhts6hIMBxn
+	LSpSQYw+Dgqnig8WciH5qTc4MWkxKOBhS5ItbviGw8Vxqx/LeNyGhj9LywAvL2TjhuyILPAeFbY
+	PWllk0i2OncFMfsIR0FAZ86naY32EHBUA1Y1C1+MqxfHdTCQego4EkXRKVYs0iKekY5+UCxHeBi
+	2wzta0zDjPLQ/tmXe644t9r5RM9gJT5GpvaEt63EK6zeqPE9y+mZ00EX4WWNq1RkRx6p1A==
+X-Google-Smtp-Source: AGHT+IG0kO7k4eegwSBS0bGAJzlZ+5QciSS8EYAlWnYhxBYs9Vs7ZY1jsyhgzaQSgGTs4piCQxxvzw==
+X-Received: by 2002:a17:902:f60b:b0:216:725c:a137 with SMTP id d9443c01a7336-2219ffb8b58mr407759205ad.28.1740597859464;
+        Wed, 26 Feb 2025 11:24:19 -0800 (PST)
+Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::4:af20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0908eesm36470885ad.124.2025.02.26.11.24.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 11:24:19 -0800 (PST)
+Message-ID: <35c55f5b-7c1c-46cf-8d6c-50ee2479bbda@davidwei.uk>
+Date: Wed, 26 Feb 2025 11:24:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] selftests: drv-net: Check if combined-count exists
+Content-Language: en-GB
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: gerhard@engleder-embedded.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250226181957.212189-1-jdamato@fastly.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20250226181957.212189-1-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When color space V4L2_COLORSPACE_JPEG is requested the ISP incorrectly
-sets the output quantization to V4L2_QUANTIZATION_LIM_RANGE. Fix that by
-applying the default quantization for the requested color space.
+On 2025-02-26 10:19, Joe Damato wrote:
+> Some drivers, like tg3, do not set combined-count:
+> 
+> $ ethtool -l enp4s0f1
+> Channel parameters for enp4s0f1:
+> Pre-set maximums:
+> RX:		4
+> TX:		4
+> Other:		n/a
+> Combined:	n/a
+> Current hardware settings:
+> RX:		4
+> TX:		1
+> Other:		n/a
+> Combined:	n/a
+> 
+> In the case where combined-count is not set, the ethtool netlink code
+> in the kernel elides the value and the code in the test:
+> 
+>   netnl.channels_get(...)
+> 
+> With a tg3 device, the returned dictionary looks like:
+> 
+> {'header': {'dev-index': 3, 'dev-name': 'enp4s0f1'},
+>  'rx-max': 4,
+>  'rx-count': 4,
+>  'tx-max': 4,
+>  'tx-count': 1}
+> 
+> Note that the key 'combined-count' is missing. As a result of this
+> missing key the test raises an exception:
+> 
+>  # Exception|     if channels['combined-count'] == 0:
+>  # Exception|        ~~~~~~~~^^^^^^^^^^^^^^^^^^
+>  # Exception| KeyError: 'combined-count'
+> 
+> Change the test to check if 'combined-count' is a key in the dictionary
+> first and if not assume that this means the driver has separate RX and
+> TX queues.
+> 
+> With this change, the test now passes successfully on tg3 and mlx5
+> (which does have a 'combined-count').
+> 
+> Fixes: 1cf270424218 ("net: selftest: add test for netdev netlink queue-get API")
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  v2:
+>    - Simplify logic and reduce indentation as suggested by David Wei.
+>      Retested on both tg3 and mlx5 and test passes as expected.
+> 
+>  v1: https://lore.kernel.org/lkml/20250225181455.224309-1-jdamato@fastly.com/
 
-Fixes: c1ec5efba080 ("media: rkisp1: Allow setting all color space fields on ISP source pad")
-Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
----
- drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks Joe.
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-index d94917211828..98635d875ac4 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-@@ -646,7 +646,7 @@ static void rkisp1_isp_set_src_fmt(struct rkisp1_isp *isp,
- 
- 	/*
- 	 * Copy the color space for the sink pad. When converting from Bayer to
--	 * YUV, default to a limited quantization range.
-+	 * YUV, default to the default quantization range of the color space.
- 	 */
- 	src_fmt->colorspace = sink_fmt->colorspace;
- 	src_fmt->xfer_func = sink_fmt->xfer_func;
-@@ -654,7 +654,8 @@ static void rkisp1_isp_set_src_fmt(struct rkisp1_isp *isp,
- 
- 	if (sink_info->pixel_enc == V4L2_PIXEL_ENC_BAYER &&
- 	    src_info->pixel_enc == V4L2_PIXEL_ENC_YUV)
--		src_fmt->quantization = V4L2_QUANTIZATION_LIM_RANGE;
-+		src_fmt->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(
-+			false, sink_fmt->colorspace, sink_fmt->ycbcr_enc);
- 	else
- 		src_fmt->quantization = sink_fmt->quantization;
- 
--- 
-2.43.0
-
+Reviewed-by: David Wei <dw@davidwei.uk>
 
