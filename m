@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-534803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7BBA46B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 820C5A46B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8733A86A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2B73A7B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B111F2566D9;
-	Wed, 26 Feb 2025 19:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7BB2566FB;
+	Wed, 26 Feb 2025 19:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JbJ9Wjw7"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcOE0PsT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020E621CC66
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7662221B192;
+	Wed, 26 Feb 2025 19:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740599217; cv=none; b=dlmT6FWMrHwjxUeTbipYnAUQLZ/PkIms2kjVFQ4JphwMiuvow1aa3aV7ylbSym53lj5qgs/LQHl76aUhB3ioCcTgMc0ifLuHx0PTQlfotYuDYm0DSPcRaU3HLeS+UAg/uzeDoA3gHtL0Vdj4yyEIZ5OPOW2dSvxFz5vtfReyX+k=
+	t=1740599357; cv=none; b=aiY0Kb4M5dPgiit2oWqjYD8VhCxpogEtNFNGpP2phaPLWIihZqh4DanG+RHh3jBLXNcmgMtskyg31FSE+am927cPgWmUmruz2DhUal7NaEFErkheFAORHxl2LO/M1fEWWQqAbm9KA4dOI849CZmq15YI2SKC4MkAc5kHhDwrAts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740599217; c=relaxed/simple;
-	bh=kmXsm0tu1kCQ1GFE0RiAQ4Mdk6NvP8QTIiy8MYMTOJ0=;
+	s=arc-20240116; t=1740599357; c=relaxed/simple;
+	bh=iXo8Zg9Hs5XWNAR7WBc8K+qfaewfdE21wZuoP1F6W/4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eztVJOjtsPwFuw65udLeJyo6cpZkqheMOt8aQTRikSiTWqEYriNVfb2KCtCKvpGJVEsc4u0qD3pDilQr8jmkkikCyr00MCvuCSv0dqBrBTjCtV0Ke4NwqhHxWp/7/uWMjglGS3+bvz7N9Anw71sqCTTbX9e3ggrzZHP5bADIlRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JbJ9Wjw7; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abb86beea8cso23940266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740599213; x=1741204013; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDq2bqWbHjLfc7ZX5wzS8caIXUgF6MrSjsLg41kQmUQ=;
-        b=JbJ9Wjw7nZz9GkiBVUTvNWjiGIaAZot1Wb97jWoS31zp14taon+k28j3Z4hVbAIMW1
-         1Aw+yren7/eUSko9AyT7QMjzN05XQkr8ZkXfCdE2mvt93fpWQna1Vk8waO1XVgJEAEHJ
-         ML+R3zSIfrpavRWwzxYRz42e7L58ChP3LipCE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740599213; x=1741204013;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aDq2bqWbHjLfc7ZX5wzS8caIXUgF6MrSjsLg41kQmUQ=;
-        b=Phi74LB9FjTi/zygcBI8/suLk80m867tKc7qDfJboixTcpLkYBAJHs0av3bdBTWSFg
-         CqBq5Kr2ByUXBc9ReO12TYnCzmJwLknkJXJYVrOc0RRnOIgRm9C72nf59vmX7/oDFzK8
-         Lg+IgE3ztzWLybLGwW2DZDE7xh6X6EBUbhIvr6LDKKEUpcOKjWJB7P8YAjZTMyTyOggN
-         x5gpa5tRiD343xWfJYngNRmbUcDuMrtbrBf6mCwfdHz0JmG9s8xTYwfl1MB6jjgJV0za
-         eujfnlX/ceRwVf4hRsZgX/mhFFwyshPbPzGwXkGnQRBN4VKR2yOQq9DX6mKbmPvMonaX
-         toVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaXR0SVWpggEUbWKTpK4u2vDb5J1YYcVn/95XeyqVBA2N4BfoRxC9REiNokDRClVJforNwU9f4L+YUP5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA7AQec/cwE3sK/N7DW8/Bax4dmTm7ElY7yB/wu0FlUTeLMNvz
-	30FCKVDOWU+o/4JjPAkXYT2rcIWe0tCAoS9U9A+CNuiFNm7x3/P2eZ4yE259UvA65JnX9XqG59h
-	Bgk8nng==
-X-Gm-Gg: ASbGncvrwe4VoWF2F20x7k8a+lhpDMPR3IKWQlz6CWz7VZKbb9KYF9McCk/beYABcLn
-	U8QG0jZ0TpPdjiETCyvmYTBZmZjz+otgZt7B/Ws7eV/wam3Xq7sfQt5SFgmUarCarV33BBokR/U
-	88ddPV7c6SJTk594wMGfvFyd7DTMdTICHnuva4Byux/iulX7Jf0gr7ra1FcRiUKiyHJitaIVY9i
-	dH53DE2sZkWwNOBO6X6iTWcqz84SmUtHi0PReX6goeypMFPx9z8sxJuTJMtZYTpzcH+B6jcR2Xq
-	UsGLU5ykjLekO1fWeNq3skfeCOuYNCz0mk89lU+4FqbyZLiZzrEyqMFX5D59Ze4qJQFcrSdsqsU
-	5
-X-Google-Smtp-Source: AGHT+IEo/d0sT2+GuVfJTjb22M3EebSa2FujU4u19dUKVQ6MbBEieg/d2PMPjQP3E4wE3WVizUIQfQ==
-X-Received: by 2002:a17:907:9712:b0:ab7:ea47:dee1 with SMTP id a640c23a62f3a-abeeef7508amr565657266b.48.1740599212904;
-        Wed, 26 Feb 2025 11:46:52 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d58sm384117866b.148.2025.02.26.11.46.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 11:46:52 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abec925a135so22809866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:46:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWLPll5HMHDhJBRtvamu6ikjEl6h+ckVp2QAKdMMkarb2MLFSNimSFVwurgDTYn38UjOUC8UqwkwEuQYsU=@vger.kernel.org
-X-Received: by 2002:a17:907:c407:b0:ab7:c893:fc80 with SMTP id
- a640c23a62f3a-abeeedd7806mr626760566b.24.1740599211884; Wed, 26 Feb 2025
- 11:46:51 -0800 (PST)
+	 To:Cc:Content-Type; b=jMZx5LE8ckY9DZsANEFjmZVS+QTkcXw1U/mpxPDYC+LE64gOtsUSfLC1xyy/Mmi1fq8ynki6mRFNvf6FWbngVF3IrHHUz5RClaUyDkVZjyA3u6PiNkhPckGT1HQVqzWIw6t9IEJWzI70aqA7GZ2yQrv043m9zV4rPziUWfrIB2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcOE0PsT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BF5C4CEE9;
+	Wed, 26 Feb 2025 19:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740599355;
+	bh=iXo8Zg9Hs5XWNAR7WBc8K+qfaewfdE21wZuoP1F6W/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fcOE0PsTnb/Eeyd+RUmyPXo50ettHDcHm4XGjekca9YlB3Xos2Ctlg8fmlo+PkJWj
+	 dsDx4sIqH/Wyo0zAXQaVmFQDHnAUHr9JvuTBN0tl1L31/Mv2tU7uV7WAm2zYSGtUnE
+	 qORGXwhobcb31HQ2i5jyOTCOXdkrGQWgM32uzskqiNSA+4zpeg8rahLvWZmZ+JAUfF
+	 9nhMrgP4t5krJILb0u5D1LUM1tuZQCJpfZFWUkyrsblh459ECVmC6smynnccXAzFFA
+	 4xOoCZYTIvsZlWg5hW/IQENGeykcBSaF7mOjJhSEjk2qZBnPVcHYFluOaycXpBKRDl
+	 /XB3Qk1QhpsaA==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2a01bcd0143so213378fac.2;
+        Wed, 26 Feb 2025 11:49:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUrolhFWJWnjIfZsNLv5ZOX3un0WoRGTGe1RhKP+PoXDNh0i9M0jhD1FVbSlnqUr7DIPC0H3LXt4dZ+aSlWkSw=@vger.kernel.org, AJvYcCX5+D901eguA6rn/2yDvuMc3QofVBpT/7SLxX0JBisQ3e/y+zJBzJR5fIw9+xufpxUoS7cIihuXXCI=@vger.kernel.org, AJvYcCXjX2rk997YSQ9OcXL0BTTIp8NR5Tc3u96Qf8xnl6pCHct4GkhsP6PAZWbUfnhE3l/Ch6jUtG16AqR3TnVu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKT76zYd/Gw3wn02CkVzFXrQeZ9N1lsuC141Bg+6OELSZT31bq
+	jcFX4uHEYZAt26EW3mTSYnx9ajgSPxXtsBcGpXU2wZo/Jsw5Clbh5CEVOygaMHwC3HNQbpnDgod
+	Dn/wWxEOQbpcQlsfoDFCDJ9ezoXU=
+X-Google-Smtp-Source: AGHT+IG9KOWipKPuW/avokgsq+B5PMz6gRuNbcoVKz5SzBWwDWsvvpNxpEEubrbWAd/G3WgmYULL2iRkf1h3CuLOA8U=
+X-Received: by 2002:a05:6871:582c:b0:29e:4ba5:4ddc with SMTP id
+ 586e51a60fabf-2c13070e85fmr2741891fac.24.1740599355161; Wed, 26 Feb 2025
+ 11:49:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
- <CAHk-=whfkWMkQOVMCxqcJ6+GWdSZTLcyDUmSRCVHV4BtbwDrHA@mail.gmail.com>
- <Z76APkysrjgHjgR2@casper.infradead.org> <CAHk-=wj+VBV5kBMfXYNOb+aLt3WJqMKFT0wU=KaV3R12NvN5TA@mail.gmail.com>
- <Z76R6ESSwiYipQVn@casper.infradead.org> <CAHk-=whS1uq_4hEgkZJogv_HMhe_PJ-RyMs6E303_Pa+W0zx0A@mail.gmail.com>
- <Z77zNK7mRdjwILL7@gmail.com>
-In-Reply-To: <Z77zNK7mRdjwILL7@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Feb 2025 11:46:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj9D2AK01nqOTkgOmHX16RmJBAwixuauaG7vKfhEH7HKA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrk6XsYr3MaK4Awbj7yu4VkLzSx6BA6s2x3ZGWN9f_Hpcj1UKc3WhiiBro
-Message-ID: <CAHk-=wj9D2AK01nqOTkgOmHX16RmJBAwixuauaG7vKfhEH7HKA@mail.gmail.com>
-Subject: Re: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY when we clear _PAGE_RW
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-tip-commits@vger.kernel.org, kernel test robot <oliver.sang@intel.com>, x86@kernel.org
+References: <20250222-thermal_kcalloc-v1-1-9f7a747fbed7@ethancedwards.com>
+In-Reply-To: <20250222-thermal_kcalloc-v1-1-9f7a747fbed7@ethancedwards.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 26 Feb 2025 20:49:03 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0j5Rqc29NsEBVFakq8b4o1Ng-fhviU5BOfn1jxqEnXokQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpIycxwb8ZQ_56Qub8exElXQ_8HMpr2P1Nl6dwLu1XkJjsDEjwb14E6avc
+Message-ID: <CAJZ5v0j5Rqc29NsEBVFakq8b4o1Ng-fhviU5BOfn1jxqEnXokQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal/debugfs: replace kzalloc() with kcalloc() in thermal_debug_tz_add()
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 Feb 2025 at 02:56, Ingo Molnar <mingo@kernel.org> wrote:
+On Sat, Feb 22, 2025 at 9:02=E2=80=AFPM Ethan Carter Edwards
+<ethan@ethancedwards.com> wrote:
 >
-> Is this explanation better?
+> We are trying to get rid of all multiplications from allocation
+> functions to prevent integer overflows[1]. Here the multiplication is
+> obviously safe, but using kcalloc() is more appropriate and improves
+> readability. This patch has no effect on runtime behavior.
+>
+> Link: https://github.com/KSPP/linux/issues/162 [1]
+> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-c=
+oded-arithmetic-in-allocator-arguments
+>
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> ---
+>  drivers/thermal/thermal_debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_=
+debugfs.c
+> index c800504c3cfe0ea3b4a51286f348dd5802e1898f..60ee6c366998e26447a0b9851=
+12f578ba8757f17 100644
+> --- a/drivers/thermal/thermal_debugfs.c
+> +++ b/drivers/thermal/thermal_debugfs.c
+> @@ -876,7 +876,7 @@ void thermal_debug_tz_add(struct thermal_zone_device =
+*tz)
+>
+>         tz_dbg->tz =3D tz;
+>
+> -       tz_dbg->trips_crossed =3D kzalloc(sizeof(int) * tz->num_trips, GF=
+P_KERNEL);
+> +       tz_dbg->trips_crossed =3D kcalloc(tz->num_trips, sizeof(int), GFP=
+_KERNEL);
+>         if (!tz_dbg->trips_crossed) {
+>                 thermal_debugfs_remove_id(thermal_dbg);
+>                 return;
+>
+> ---
 
-Ack. Just making it clear that it's always kernel pages, never a user
-address range makes it fine in my book,
-
-       Linus
+Applied as 6.15 material with some edits in the changelog, thanks!
 
