@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-533557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33247A45C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:41:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19EFA45C0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4998D3A67BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:41:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772B27A5C83
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED1B258CED;
-	Wed, 26 Feb 2025 10:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEA124E000;
+	Wed, 26 Feb 2025 10:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AejhHYXM"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hCJC/TyQ"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447851F4177
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D84942A9D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566486; cv=none; b=Uon/UWSBUn750W7S52KTsIrd2FiKboj8pbLbuvVQCvSZfAWtayGDzl/ajDKy5If8yw+Hnv+Xw1OxVpQPEmKRWmNMp3zsh4iWPSAfqIlMKzfPP3k63cRvTbIuxae6VotS9OHuaG9HZwfDRZ7+G8E8so7nKg0FoBPiXH/rf/1ejAQ=
+	t=1740566497; cv=none; b=BPpdwPMqXNqtOG/NyxQn+LonJd18uTOAUlfXAAHmOwHYIMlQSjgvV2r1qufcrGhyUBpQZZ7Hv5FNebgNp1jM0Rbdi6UcQyLbP5ktGB2rNVsKRszDxkajb2f+OqILBX8Sa/aOCPUbjDA3V4bJheJobqf3d1TbifjWpYjyGlhH4WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566486; c=relaxed/simple;
-	bh=XRXy6RSItxNq6QnKOnKdXg5Yk8DodK9KEgrENi0WQ2Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lmse00uwdeoolwAYuJjJmFwJXe02PALVu50MPX5sHdxRBRnBg+KOpDAIJpB4awbPfNa8ESaFj3lenM26AMM5C9pey1CX9SAm5Y7Fm5o9dwTzLLSmLTbjFfWLBigmLRED2VTzNnmljDym20FCCLvmsJwtlAeAjB8mci3seH/3U2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AejhHYXM; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1740566497; c=relaxed/simple;
+	bh=I+I/8/xf34EbwKSApSqeEKtUP8iTESCQ7V0oqUtLUC8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j3JufO0m54wwrKPxkQg6lE3FiORlQje2LTZuYDFmPDchr06GSnp/boqF8BPWLmv0/XLvtpbJuuxC/YoqROWr6783RIFfCamJJ2hXFJ6wmnReDBYZQtoP7Hs6cdbpEPw5IWusUydENgOXVV+lUVzJlcE1k8YfaFNdtatiRE7nwTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hCJC/TyQ; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4398e3dfc66so58089245e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:41:24 -0800 (PST)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f5fc33602so463539f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:41:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740566483; x=1741171283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Io4l6/kfa0Abr7c2gr2/O0xUhpbW7CfkwJb9n48BOE0=;
-        b=AejhHYXM1X2OqFulETr1+E5mdC+oPAllJ4ttBkAK18cSs7YRVg61z1TMVs6y3nTL1p
-         ufoSUADTlOTl7rxVN/a5+42rq3iuHgFzWP1n0PhxkOlnY9Dsp4iEY+Jqse2uEpQtwLQc
-         +VZuQtM8AF7iWB6IQMVSISmojak2X8LoYvvN5lx7jDoqto1GeMdJa4dEfr5EHAf8WCcj
-         BkovwLHZjCcxU5BxDtoWDcWhGPF506QkIABbWGtNM5dtSZUEgY57B3bSRNxFxc2C4nZ7
-         w5gYssY1jGopo79D4t1nrq01/Jo9Yn2/t3SPQUadKQa5h7K7+lIeSwq7fcqOB3y+9EgY
-         JcAw==
+        d=linaro.org; s=google; t=1740566493; x=1741171293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ojcUEtfO91j+JO9KXm+lQGJj1Y8aR3j+uQwF6xWxzOk=;
+        b=hCJC/TyQGw/rzbRVnbIvHgQNTTQUleZ8aCxLtbJeQAfxU+au2ljZYRF/IkWK3ljUV/
+         uHEbYUQgJFv4PX7cbe+mgl/iNMFOh/BAhaBRBb5BBtVvTux3wTGkJWydAS8Osc/Jgw+5
+         UAE2vpIm9k92TbFiTBc0dUBHVCIYjRP1gnsCdIDgd5HC/tuH+q1UeKg8CAiHvSfxxWxb
+         LGJugioIH/XodQBEBOGhxDGDx8RB/jIYJQhl14vD4oMru30JHGrbW01N9U1uZacg+Vsb
+         6KI/8JtbWYnwLV8o0WrVC4DYCPpHYl45IJ+O01QR9A41o7PFJkThQ5bZQMEHESOpg9od
+         sZpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740566483; x=1741171283;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Io4l6/kfa0Abr7c2gr2/O0xUhpbW7CfkwJb9n48BOE0=;
-        b=r3qeRY6AcXcoHyK0cCyejHD1mmSWMpe/kmy5B1LUed+JpcdJ8BC/4tiOB5QQszublU
-         oym35jQ+u7NtZFLigUIVFC6Yfh1M8Vy7hYcHZVmCltl12OQh9ijjcHPmEOOsFV4BAwN2
-         02Mm8ORVnDesjAg96vemWbrgOV/LMUgIu2ICXL+WrCvOus8bttU0ZY1fV/ST23JLv5sy
-         hyFozNFShO1BLXbbWkg9SmfqZeYVv7fwreSwF4Y//jkauxaxxzQ+6diW7bJfzNdiQJ03
-         P6M3DCtOHh/oymnshU06oHp4zTY8/pwUxXSl1Y6hFD64M+pio0VZX146tJQlwDLHqujO
-         SCdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtzEy0MM6iLyK/fuAGU9ZKsGKnPKa4ZASSH/CBG2suepvsJeAXsQHBs6bNQYvaAP/h7gUfF45e0KeaPf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu9uDL223P4zBFNP9R+Ld56w7ZKg83vhuazSKhjXCkSYWaHk1w
-	9nLq7LUsfCjJmxJyQgJpHD+BC7xo1UGE4ohRze4woPf5nUCf6lFyqBuGphM1CSg=
-X-Gm-Gg: ASbGncsUXQziuA66lyiKWxyRUgPCtVXfz7juRiUQ1UtdR6zc4JtCEEQ5gizhIx8BAOl
-	8RUvZWwgcQl9r53NEBOhw0kYdgPlssbsjnT4G6rCCrs+tKmffj9TRbc2jZBmVI/sU2DUsn+r6CH
-	PTiZyGmQ1Z5Y+8i9P5umBZXXg7A4Na0Kc1nWS8OtywAXR0je7fEn1FgosniNEtSLNd7Sr3722O9
-	KCRj/KnbfSf4DJYS9XgjEfoi66F2zLz3OW2LDO8SNLcnPQD5NkFa+8Y7PGpN1UZ9ehwgmgTcDUr
-	PFVTNpTrdVm6js2ADcKGbmjUCnI=
-X-Google-Smtp-Source: AGHT+IGM/5sKGlj2yIGkYDThiqtYqRuGy0u3oCOTR3Uv1tGaYGxuD0FRM9XnnIUJokzK6qFNma0+pg==
-X-Received: by 2002:a05:600c:19d4:b0:439:34dd:c3cc with SMTP id 5b1f17b1804b1-43ab90169c6mr20461805e9.22.1740566483568;
-        Wed, 26 Feb 2025 02:41:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740566493; x=1741171293;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ojcUEtfO91j+JO9KXm+lQGJj1Y8aR3j+uQwF6xWxzOk=;
+        b=dCoyOPqRi9Wr1dZoONWA1Qj+yi7bOVhHBdK6Qbt/5s3LjKtSNAKfXVWh+7AllCHvCq
+         kmLit5vsNenr2rOUNzn9eImUBWZIiBYRhpXaLXsng8aO0mNO/NQnAvQQV5WXKITLPHhc
+         mSjgB5YdRItnL58TWZPYUgBCkKBc/ip3yHBX7/c+eW372fyNjxFlWYRkB4M1ZX5/I3XS
+         PjNrqXNrsGm/otO3NL2IqyypJrTImHKOrw7MAwAZ0q21c9eQxFDgOJSraeyn09sPCswC
+         JzXITIZ6nmhZhENMiB+sN2mUiQ7PyfZztT9ct1hR0o/mprwJsKjKnv8cHYg3V8C+h6mB
+         fF4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVtRux3C0duRhm3gJv6y60bD833Fgq0OOhM2FprMwmtpjaZk+BKBt4ZsmZv8E2dcXVwt/sKNJDlomd6Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysaHRAkF4QVTWfb1hm+jHobB+eBRJ87BJyHkjxpv+13IqKoVBN
+	IZh2qPPf9pAT+nKYRiT8r0jF18Ze6xt4/cQCBtql8S9UZhOyie5xsbpZxHBi6g8=
+X-Gm-Gg: ASbGncsky1NgaCq7kE4G6g7tbw6KHSt+01Sk/KPDEIaIN0B2wj2vCUsZ5fL3ob08sVX
+	NRhXPLQ2JqstaOIFlGaSkxQNCTAHAEzwNUnYblKKxmDOlZqQ02kwhwWUBYDX/GeV7csEtF27dEM
+	32qhUN5g53aRU7wtRb/jgEwfEXtM01JRZQoT83aiqQaZweksd/ry6nKBxtYGtz53L0PnvgprJgm
+	TxnpGODqS7i3C5p857LT7bjmVq6XbXgAhLobhhIOUkglGJgOOaRrf3OQABc30tn8eYsrZXhxRMw
+	vaC++3+0KwFq6q3g/KOEEBvFkXc=
+X-Google-Smtp-Source: AGHT+IHeEQGMuScqdt+otMxEcTZ0w/KlZkRLRkmqcLWLGizQi7xw1jIAhR1WxzNLVabB3EHEyGVDUA==
+X-Received: by 2002:a5d:6486:0:b0:38f:2c10:da1e with SMTP id ffacd0b85a97d-38f6f51db8amr15902752f8f.27.1740566493501;
+        Wed, 26 Feb 2025 02:41:33 -0800 (PST)
 Received: from pop-os.lan ([145.224.66.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c93bsm5080832f8f.26.2025.02.26.02.41.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c93bsm5080832f8f.26.2025.02.26.02.41.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:41:23 -0800 (PST)
+        Wed, 26 Feb 2025 02:41:33 -0800 (PST)
 From: James Clark <james.clark@linaro.org>
 To: linux-perf-users@vger.kernel.org,
 	irogers@google.com,
@@ -83,16 +85,18 @@ Cc: James Clark <james.clark@linaro.org>,
 	Jiri Olsa <jolsa@kernel.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
 	Weilin Wang <weilin.wang@intel.com>,
-	Junhao He <hejunhao3@huawei.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Junhao He <hejunhao3@huawei.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] perf pmu: Dynamically allocate tool PMU
-Date: Wed, 26 Feb 2025 10:40:59 +0000
-Message-Id: <20250226104111.564443-1-james.clark@linaro.org>
+Subject: [PATCH v2 1/3] perf pmu: Dynamically allocate tool PMU
+Date: Wed, 26 Feb 2025 10:41:00 +0000
+Message-Id: <20250226104111.564443-2-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250226104111.564443-1-james.clark@linaro.org>
+References: <20250226104111.564443-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,26 +105,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A few minor fixes that I came across when poking around with the Perf
-list behavior on hybrid Arm.
+perf_pmus__destroy() treats all PMUs as allocated and free's them so we
+can't have any static PMUs that are added to the PMU lists. Fix it by
+allocating the tool PMU in the same way as the others. Current users of
+the tool PMU already use find_pmu() and not perf_pmus__tool_pmu(), so
+rename the function to add 'new' to avoid it being misused in the
+future.
 
-Changes since v1:
-  * Rename perf_pmus__new_tool_pmu() -> tool_pmu__new()
+perf_pmus__fake_pmu() can remain as static as it's not added to the
+PMU lists.
 
-James Clark (3):
-  perf pmu: Dynamically allocate tool PMU
-  perf pmu: Don't double count common sysfs and json events
-  perf list: Document -v option deduplication feature
+Fixes the following error:
 
- tools/perf/Documentation/perf-list.txt |  2 +-
- tools/perf/builtin-list.c              |  2 +-
- tools/perf/util/pmu.c                  |  7 ++++---
- tools/perf/util/pmu.h                  |  5 +++++
- tools/perf/util/pmus.c                 |  2 +-
- tools/perf/util/tool_pmu.c             | 23 +++++++++++------------
- tools/perf/util/tool_pmu.h             |  2 +-
- 7 files changed, 24 insertions(+), 19 deletions(-)
+  $ perf bench internals pmu-scan
 
+  # Running 'internals/pmu-scan' benchmark:
+  Computing performance of sysfs PMU event scan for 100 times
+  munmap_chunk(): invalid pointer
+  Aborted (core dumped)
+
+Fixes: 240505b2d0ad ("perf tool_pmu: Factor tool events into their own PMU")
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ tools/perf/util/pmus.c     |  2 +-
+ tools/perf/util/tool_pmu.c | 23 +++++++++++------------
+ tools/perf/util/tool_pmu.h |  2 +-
+ 3 files changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+index 8a0a919415d4..6498021acef0 100644
+--- a/tools/perf/util/pmus.c
++++ b/tools/perf/util/pmus.c
+@@ -268,7 +268,7 @@ static void pmu_read_sysfs(unsigned int to_read_types)
+ 
+ 	if ((to_read_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) != 0 &&
+ 	    (read_pmu_types & PERF_TOOL_PMU_TYPE_TOOL_MASK) == 0) {
+-		tool_pmu = perf_pmus__tool_pmu();
++		tool_pmu = tool_pmu__new();
+ 		list_add_tail(&tool_pmu->list, &other_pmus);
+ 	}
+ 	if ((to_read_types & PERF_TOOL_PMU_TYPE_HWMON_MASK) != 0 &&
+diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+index 3a68debe7143..9156745ea180 100644
+--- a/tools/perf/util/tool_pmu.c
++++ b/tools/perf/util/tool_pmu.c
+@@ -490,17 +490,16 @@ int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread)
+ 	return 0;
+ }
+ 
+-struct perf_pmu *perf_pmus__tool_pmu(void)
++struct perf_pmu *tool_pmu__new(void)
+ {
+-	static struct perf_pmu tool = {
+-		.name = "tool",
+-		.type = PERF_PMU_TYPE_TOOL,
+-		.aliases = LIST_HEAD_INIT(tool.aliases),
+-		.caps = LIST_HEAD_INIT(tool.caps),
+-		.format = LIST_HEAD_INIT(tool.format),
+-	};
+-	if (!tool.events_table)
+-		tool.events_table = find_core_events_table("common", "common");
+-
+-	return &tool;
++	struct perf_pmu *tool = zalloc(sizeof(struct perf_pmu));
++
++	tool->name = strdup("tool");
++	tool->type = PERF_PMU_TYPE_TOOL;
++	INIT_LIST_HEAD(&tool->aliases);
++	INIT_LIST_HEAD(&tool->caps);
++	INIT_LIST_HEAD(&tool->format);
++	tool->events_table = find_core_events_table("common", "common");
++
++	return tool;
+ }
+diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
+index a60184859080..c6ad1dd90a56 100644
+--- a/tools/perf/util/tool_pmu.h
++++ b/tools/perf/util/tool_pmu.h
+@@ -51,6 +51,6 @@ int evsel__tool_pmu_open(struct evsel *evsel,
+ 			 int start_cpu_map_idx, int end_cpu_map_idx);
+ int evsel__tool_pmu_read(struct evsel *evsel, int cpu_map_idx, int thread);
+ 
+-struct perf_pmu *perf_pmus__tool_pmu(void);
++struct perf_pmu *tool_pmu__new(void);
+ 
+ #endif /* __TOOL_PMU_H */
 -- 
 2.34.1
 
