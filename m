@@ -1,224 +1,248 @@
-Return-Path: <linux-kernel+bounces-534403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A60A46657
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:16:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93017A4669C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E71B3A6DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D11619C6910
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00E21CC65;
-	Wed, 26 Feb 2025 16:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDvZO4Y9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFE721D599;
+	Wed, 26 Feb 2025 16:14:24 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4E521C9E8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9930221CFEE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586456; cv=none; b=G2ex8ZKACUm8y1Z6eCr13VcnPh0aeW0sBoeAh7CtmkmHaV6wCAAcM5dqBzGlj6bvyG9A1Hqs4BoPU1PZ6XvsTK6Nly8Peegi/K5b4uyZn8gOsJKEeQpSyRtYnLXkQ99MygUjchOf2o2SAF9XDdW6MLVMygUH8dWKlbXApWOdLfc=
+	t=1740586464; cv=none; b=bWUGtARppZ6VtJzAYhDv/xnFj/SuN8+Td9O57zTn3L+weLDwexX04/vulbETDlZFPWbT9uk4gtzEi8ELTgHi639tBLJh3RSUW8Th+HtMwMX3ohzZp/QKQRBLmSKcpj7weGO3jlOPQ7GeUcxVdie1SQSASsSxH9NquCoCQgyBOeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586456; c=relaxed/simple;
-	bh=VWgjdVCCAYLfAMVoQ7sn9DmErxaB7SJqb0egoUiHw1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dWf065WXpHYuOJfZXGsI6oMIIZQcXBMtwHyw3bUiAXUN0QObh/oJ5wnnXUwVbzPkHQsAsmetXzE0E5UFigY6m4JqwFTns6gMZqKEc4VWyuAF+TaUqBUnhKB+YD1y0qg4asZ90KomNCwHYGfzfYbBGR9JweZN6zF4QiKmGssQx0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDvZO4Y9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B976EC4CED6;
-	Wed, 26 Feb 2025 16:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740586456;
-	bh=VWgjdVCCAYLfAMVoQ7sn9DmErxaB7SJqb0egoUiHw1o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TDvZO4Y9kztbbQJcuHJk1nAzPQRlbfmXQwy7E0kI3ypexpyGO+jGa+Vs1lhwnGdwL
-	 DxeVr5o7kjQ7OTLqMmbYi1MdEvX5HHcrBJxurqx9qzETplHq/zRF+R8GYdV3sBUM5k
-	 n+fNwO0zCAqkUKsOPa0Fer73E5ytusz9jEa9IJhajmT7cpPewUlTgm+yyTRbljyhTa
-	 5vvxPYGZ27nIdz1dM/XRF1BscBP6RPv9sSL0LH4+SO+GRKHj+Ga8aUV3ES/pr2RnJ4
-	 FTXkbloQPHuG0vw4vkEgp+vYgFpL9rN/2Qbb7Igy7+mICtRFfA8TQGu0p2r+TvCeNM
-	 FXX5b9yV6Pp8Q==
-Date: Wed, 26 Feb 2025 17:14:06 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] acpi/ghes: Use HEST table offsets when
- preparing GHES records
-Message-ID: <20250226171406.19c2de6b@sal.lan>
-In-Reply-To: <20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
-References: <cover.1738345063.git.mchehab+huawei@kernel.org>
-	<9610ff88cf6fdc59cbfc8871d653fd890391be1e.1738345063.git.mchehab+huawei@kernel.org>
-	<20250203153423.3e4de17c@imammedo.users.ipa.redhat.com>
-	<20250221070221.329bdfb0@foz.lan>
-	<20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740586464; c=relaxed/simple;
+	bh=5DcLEnh6vcZAD2MZ5E1WYCKntW1wrJLiKqEgaqmxs7A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eKTx5jsciuxGNDYikH7tRYVAaVnkoMGi6rAQxhWDFYdQliwDgj/vatFo6xF2M6QHJqPMwPn+WPJxW4vnCVsCFRs49jiiAvUTcbsbO7ES61oloCb2zOEYNN8ERqI+NxRSjbO6Xelg7yg21xgTPl23kXdmC39aX07b31WfNBJQgP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d289bf6c39so7833455ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:14:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740586461; x=1741191261;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VlzWfcGYfPaJ9SldeHNlm2qmsZkBArfdEBidikYP3No=;
+        b=SVKGgo766nATMl2V6enGZ+9Tmt8sDtTkz4ExBXF8w/94x1k2cor+gfeMKImj/WPwQQ
+         uH9M+Z4GukKCvzgiNkfZxcaQ3hp0ybN9r4S2shGV3xQF612fFcvVokhAK9EThMpzug6Q
+         yySdSs3rm6jx2tJgJXjYDTDEr5KlxMhgj0KxZMHeyD+fkIIbL6t2uamU4lf6QxPE4OV/
+         ol4XdKWUvjIE+F17zD8MeeSyF6iWd6MI2orL5qjj9omnS13xcu00gR2FE7UJKRIdFaNJ
+         PJ7n3sE/eP+/JQ3XU5iXW0Hetjl2FAwtXBnQXORGDK3qUUeRPgTlIfBAWxb4RpBk7Nsh
+         HKtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFEtPOLw9+KwI/plPpF/CmSQsLrcipTepSlSPlGS0KIjfx2dPSZUvugM9bEqYb+9gh9ueu0ElCW7jpaME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx65HlqY0FsCuEa8+Cnwxtlr6R5lPvS40SxwgyDnnx7/rVu/QCq
+	6p6Rge5q5F/LFZMgi6tgVHD7GwO4qzmkWe/vmhBwrQLVEhOynGc6jDXNXV/xAFPbjRc+jdvKLDo
+	dj1iPPKO3Ul6InM9aW16cdOTky3CNsrUnPAUTnvLIMteoxusuWqHS6z0=
+X-Google-Smtp-Source: AGHT+IGMHfipWMis7WHKcdsyYkLSXA5wIVcN2zDDQ7XOouFzSbURpVAI/x2L0V2ztxrmOxrhpgwkkCUH6lx1E3ZmEZ+2WC+IxKF0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1945:b0:3cf:c7bc:4523 with SMTP id
+ e9e14a558f8ab-3d2cad31ac7mr187462735ab.6.1740586461665; Wed, 26 Feb 2025
+ 08:14:21 -0800 (PST)
+Date: Wed, 26 Feb 2025 08:14:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bf3ddd.050a0220.1ebef.002d.GAE@google.com>
+Subject: [syzbot] [net?] possible deadlock in ipv6_sock_ac_close (4)
+From: syzbot <syzbot+be6f4b383534d88989f7@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Em Tue, 25 Feb 2025 10:43:27 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
+Hello,
 
-> On Fri, 21 Feb 2025 07:02:21 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Em Mon, 3 Feb 2025 15:34:23 +0100
-> > Igor Mammedov <imammedo@redhat.com> escreveu:
-> >   
-> > > On Fri, 31 Jan 2025 18:42:44 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> > > > There are two pointers that are needed during error injection:
-> > > > 
-> > > > 1. The start address of the CPER block to be stored;
-> > > > 2. The address of the ack.
-> > > > 
-> > > > It is preferable to calculate them from the HEST table.  This allows
-> > > > checking the source ID, the size of the table and the type of the
-> > > > HEST error block structures.
-> > > > 
-> > > > Yet, keep the old code, as this is needed for migration purposes.
-> > > > 
-> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > ---
-> > > >  hw/acpi/ghes.c         | 132 ++++++++++++++++++++++++++++++++++++-----
-> > > >  include/hw/acpi/ghes.h |   1 +
-> > > >  2 files changed, 119 insertions(+), 14 deletions(-)
-> > > > 
-> > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > > index 27478f2d5674..8f284fd191a6 100644
-> > > > --- a/hw/acpi/ghes.c
-> > > > +++ b/hw/acpi/ghes.c
-> > > > @@ -41,6 +41,12 @@
-> > > >  /* Address offset in Generic Address Structure(GAS) */
-> > > >  #define GAS_ADDR_OFFSET 4
-> > > >  
-> > > > +/*
-> > > > + * ACPI spec 1.0b
-> > > > + * 5.2.3 System Description Table Header
-> > > > + */
-> > > > +#define ACPI_DESC_HEADER_OFFSET     36
-> > > > +
-> > > >  /*
-> > > >   * The total size of Generic Error Data Entry
-> > > >   * ACPI 6.1/6.2: 18.3.2.7.1 Generic Error Data,
-> > > > @@ -61,6 +67,25 @@
-> > > >   */
-> > > >  #define ACPI_GHES_GESB_SIZE                 20
-> > > >  
-> > > > +/*
-> > > > + * Offsets with regards to the start of the HEST table stored at
-> > > > + * ags->hest_addr_le,      
-> > > 
-> > > If I read this literary, then offsets above are not what
-> > > declared later in this patch.
-> > > I'd really drop this comment altogether as it's confusing,
-> > > and rather get variables/macro naming right
-> > >     
-> > > > according with the memory layout map at
-> > > > + * docs/specs/acpi_hest_ghes.rst.
-> > > > + */      
-> > > 
-> > > what we need is update to above doc, describing new and old ways.
-> > > a separate patch.    
-> > 
-> > I can't see anything that should be changed at
-> > docs/specs/acpi_hest_ghes.rst, as this series doesn't change the
-> > firmware layout: we're still using two firmware tables:
-> > 
-> > - etc/acpi/tables, with HEST on it;
-> > - etc/hardware_errors, with:
-> > 	- error block addresses;
-> > 	- read_ack registers;
-> > 	- CPER records.
-> > 
-> > The only changes that this series introduce are related to how
-> > the error generation logic navigates between HEST and hw_errors
-> > firmware. This is not described at acpi_hest_ghes.rst, and both
-> > ways follow ACPI specs to the letter.
-> > 
-> > The only difference is that the code which populates the CPER
-> > record and the error/read offsets doesn't require to know how
-> > the HEST table generation placed offsets, as it will basically
-> > reproduce what OSPM firmware does when handling	HEST events.  
-> 
-> section 8 describes old way to get to address to record old CPER,
-> so it needs to amended to also describe a new approach and say
-> which way is used for which version.
-> 
-> possibly section 11 might need some messaging as well.
+syzbot found the following issue on:
 
-Ok, I'll modify it and place at the end of the series. Please
-see below if the new text is ok for you.
+HEAD commit:    ff202c5028a1 Merge tag 'soc-fixes-6.14' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173863b8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9658857a9163f824
+dashboard link: https://syzkaller.appspot.com/bug?extid=be6f4b383534d88989f7
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c24121709a3f/disk-ff202c50.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e11874557832/vmlinux-ff202c50.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/78e2b0b48168/bzImage-ff202c50.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+be6f4b383534d88989f7@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-rc3-syzkaller-00267-gff202c5028a1 #0 Not tainted
+------------------------------------------------------
+syz.4.1528/11571 is trying to acquire lock:
+ffffffff8fef8de8 (rtnl_mutex){+.+.}-{4:4}, at: ipv6_sock_ac_close+0xd9/0x110 net/ipv6/anycast.c:220
+
+but task is already holding lock:
+ffff888027f596a8 (&smc->clcsock_release_lock){+.+.}-{4:4}, at: smc_clcsock_release+0x75/0xe0 net/smc/smc_close.c:30
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&smc->clcsock_release_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       smc_switch_to_fallback+0x2d/0xa00 net/smc/af_smc.c:903
+       smc_sendmsg+0x13d/0x520 net/smc/af_smc.c:2781
+       sock_sendmsg_nosec net/socket.c:718 [inline]
+       __sock_sendmsg net/socket.c:733 [inline]
+       ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
+       ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
+       __sys_sendmsg+0x16e/0x220 net/socket.c:2659
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (sk_lock-AF_INET6){+.+.}-{0:0}:
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3645
+       lock_sock include/net/sock.h:1624 [inline]
+       sockopt_lock_sock net/core/sock.c:1133 [inline]
+       sockopt_lock_sock+0x54/0x70 net/core/sock.c:1124
+       do_ipv6_setsockopt+0x2160/0x4520 net/ipv6/ipv6_sockglue.c:567
+       ipv6_setsockopt+0xcb/0x170 net/ipv6/ipv6_sockglue.c:993
+       udpv6_setsockopt+0x7d/0xd0 net/ipv6/udp.c:1850
+       do_sock_setsockopt+0x222/0x480 net/socket.c:2303
+       __sys_setsockopt+0x1a0/0x230 net/socket.c:2328
+       __do_sys_setsockopt net/socket.c:2334 [inline]
+       __se_sys_setsockopt net/socket.c:2331 [inline]
+       __x64_sys_setsockopt+0xbd/0x160 net/socket.c:2331
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (rtnl_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3163 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+       validate_chain kernel/locking/lockdep.c:3906 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       ipv6_sock_ac_close+0xd9/0x110 net/ipv6/anycast.c:220
+       inet6_release+0x47/0x70 net/ipv6/af_inet6.c:485
+       __sock_release net/socket.c:647 [inline]
+       sock_release+0x8e/0x1d0 net/socket.c:675
+       smc_clcsock_release+0xb7/0xe0 net/smc/smc_close.c:34
+       __smc_release+0x5c2/0x880 net/smc/af_smc.c:301
+       smc_release+0x1fc/0x5f0 net/smc/af_smc.c:344
+       __sock_release+0xb0/0x270 net/socket.c:647
+       sock_close+0x1c/0x30 net/socket.c:1398
+       __fput+0x3ff/0xb70 fs/file_table.c:464
+       task_work_run+0x14e/0x250 kernel/task_work.c:227
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  rtnl_mutex --> sk_lock-AF_INET6 --> &smc->clcsock_release_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&smc->clcsock_release_lock);
+                               lock(sk_lock-AF_INET6);
+                               lock(&smc->clcsock_release_lock);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.4.1528/11571:
+ #0: ffff888077e88208 (&sb->s_type->i_mutex_key#10){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
+ #0: ffff888077e88208 (&sb->s_type->i_mutex_key#10){+.+.}-{4:4}, at: __sock_release+0x86/0x270 net/socket.c:646
+ #1: ffff888027f596a8 (&smc->clcsock_release_lock){+.+.}-{4:4}, at: smc_clcsock_release+0x75/0xe0 net/smc/smc_close.c:30
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 11571 Comm: syz.4.1528 Not tainted 6.14.0-rc3-syzkaller-00267-gff202c5028a1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
+ check_prev_add kernel/locking/lockdep.c:3163 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+ validate_chain kernel/locking/lockdep.c:3906 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+ ipv6_sock_ac_close+0xd9/0x110 net/ipv6/anycast.c:220
+ inet6_release+0x47/0x70 net/ipv6/af_inet6.c:485
+ __sock_release net/socket.c:647 [inline]
+ sock_release+0x8e/0x1d0 net/socket.c:675
+ smc_clcsock_release+0xb7/0xe0 net/smc/smc_close.c:34
+ __smc_release+0x5c2/0x880 net/smc/af_smc.c:301
+ smc_release+0x1fc/0x5f0 net/smc/af_smc.c:344
+ __sock_release+0xb0/0x270 net/socket.c:647
+ sock_close+0x1c/0x30 net/socket.c:1398
+ __fput+0x3ff/0xb70 fs/file_table.c:464
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b4b38d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe4efd22d8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00000000000b14a3 RCX: 00007f8b4b38d169
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f8b4b5a7ba0 R08: 0000000000000001 R09: 000000114efd25cf
+R10: 00007f8b4b200000 R11: 0000000000000246 R12: 00007f8b4b5a5fac
+R13: 00007f8b4b5a5fa0 R14: ffffffffffffffff R15: 00007ffe4efd23f0
+ </TASK>
+
 
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[PATCH] docs/specs/acpi_hest_ghes.rst: update it to reflect some changes
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-While the HEST layout didn't change, there are some internal
-changes related to how offsets are calculated and how memory error
-events are triggered.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Update specs to reflect such changes.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
-index c3e9f8d9a702..f22d2eefdec7 100644
---- a/docs/specs/acpi_hest_ghes.rst
-+++ b/docs/specs/acpi_hest_ghes.rst
-@@ -89,12 +89,21 @@ Design Details
-     addresses in the "error_block_address" fields with a pointer to the
-     respective "Error Status Data Block" in the "etc/hardware_errors" blob.
- 
--(8) QEMU defines a third and write-only fw_cfg blob which is called
--    "etc/hardware_errors_addr". Through that blob, the firmware can send back
--    the guest-side allocation addresses to QEMU. The "etc/hardware_errors_addr"
--    blob contains a 8-byte entry. QEMU generates a single WRITE_POINTER command
--    for the firmware. The firmware will write back the start address of
--    "etc/hardware_errors" blob to the fw_cfg file "etc/hardware_errors_addr".
-+(8) QEMU defines a third and write-only fw_cfg blob to store the location
-+    where the error block offsets, read ack registers and CPER records are
-+    stored.
-+
-+    Up to QEMU 9.2, the location was at "etc/hardware_errors_addr", and
-+    contains an offset for the beginning of "etc/hardware_errors".
-+
-+    Newer versions place the location at "etc/acpi_table_hest_addr",
-+    pointing to the beginning of the HEST table.
-+
-+    Through that such offsets, the firmware can send back the guest-side
-+    allocation addresses to QEMU. They contain a 8-byte entry. QEMU generates
-+    a single WRITE_POINTER command for the firmware. The firmware will write
-+    back the start address of either "etc/hardware_errors" or HEST table at
-+    the correspoinding address firmware.
- 
- (9) When QEMU gets a SIGBUS from the kernel, QEMU writes CPER into corresponding
-     "Error Status Data Block", guest memory, and then injects platform specific
-@@ -105,8 +114,6 @@ Design Details
-      kernel, on receiving notification, guest APEI driver could read the CPER error
-      and take appropriate action.
- 
--(11) kvm_arch_on_sigbus_vcpu() uses source_id as index in "etc/hardware_errors" to
--     find out "Error Status Data Block" entry corresponding to error source. So supported
--     source_id values should be assigned here and not be changed afterwards to make sure
--     that guest will write error into expected "Error Status Data Block" even if guest was
--     migrated to a newer QEMU.
-+(11) kvm_arch_on_sigbus_vcpu() report RAS errors via a SEA notifications,
-+     when a SIGBUS event is triggered. The logic to convert a SEA notification
-+     into a source ID is defined inside ghes.c source file.
-
-
-
+If you want to undo deduplication, reply with:
+#syz undup
 
