@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-534042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24F3A46200
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:13:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE51A46206
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791613ADD3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE8E17419A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76915221DA6;
-	Wed, 26 Feb 2025 14:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8DB22171C;
+	Wed, 26 Feb 2025 14:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="oeQkAmaw"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k/dUISma"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CCB22171E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0621B9C5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579217; cv=none; b=qYQt1IpirPxScr42VJ28Wu2dFE1JxRofAJ1+twCqjVbaY8yltN7iQopkR8TnL34UvnVgJCUVNhEke6BVCmevu8AcQ0nKazlcYiznf/4Tr+5f+135Rxq2KBitNXQUi9UCNS8TFNyHrGVExu7p2T8WZcfe+4950mHaTZiwn8E3A80=
+	t=1740579277; cv=none; b=LAbV1lsA/6Iz4lAMcqEIS162fOWHz6N1I/MOKwGK/N0nctoQEwnQbwdQWu3SEJWIzEAm+tgrztqOXxLyPTfNiR2+LhymA8qxVglxiCOkhfkuMrxp1ZDtHhaNSci3u17S31xkwz/ybncjXoSvSly7ZxdZHZDAnv5Dc3B1G6SBObY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579217; c=relaxed/simple;
-	bh=NakPrcYHABUnkE9/40aDSNT5XIpd9QvW3ezgcg7EAk8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=JRaOFOHzRPvtd9ZvWpQN2mnXmP8MCq9WZwx7AHvnLU3PrnXH1JOdHk1M5xYz59NnvBPvflNWAyS1TjcLPpsr/otL99+nTjPbPmXsXyuRco/kzjDZeTCI+cViplHENEtiPgE0eg+hOdaK50glFucb7KNg7KT2+9zkMnH55VPsp00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=oeQkAmaw; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so65725335e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:13:35 -0800 (PST)
+	s=arc-20240116; t=1740579277; c=relaxed/simple;
+	bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kq0hYMkB3mODo8OTOpcGNp5BoQAuUjRfHECtw53szMRhWlH/Ems4PkW+UpjHx8JdWQvxIqQDA3/+2jKNrVwa6zYKb1AJBHowuugk3X5OEeCXeMmwZ5Tf2mQi+21KishM5cvRPeTM9TVAYor3pnAgmtWsJme86opGMb//+gqyy9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k/dUISma; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e5ddd781316so5628537276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1740579214; x=1741184014; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1740579275; x=1741184075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vgbpb+wQs1fiWsUu+quFf7N3iJTinXogOjcbntSJGqg=;
-        b=oeQkAmawKdFkOYIh1KZFQXcbri2BxNd4USu1sfqxG1oG4BhpFo600nhh6wWLLDlXTB
-         OsPrUz8eNDTFeQBsPtAtxKDMv6m4fPhcI9ityR7RSBOOwzURU+LdzDsNuSkEDx0supIs
-         NhVQlvcEABsAw6jwUGO8u03wAnafGXqMHwNP4JvciSUkJkAYDKjjIDeLJeH3Bg/qTPZu
-         PnxTxFwG6HYXTKpjxWr3tzWt07PPUn8ZjvsYjKi2zvOFf2Z0EX5iOLztv3ae8RHq3x+7
-         f3KB0hRtFHCYXs6QkVNrebs7WOrVhkh7DYxGDGx3iyRgrnnAalh/D8Q7XUNyQn9QSNLq
-         QhuQ==
+        bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
+        b=k/dUISmaK7iNxvCp1KgDkJA3F4naHAjCMZJsTqEAaWiUWgHOYN+1Y1K9YVaCpOr8wD
+         yeEx1bxbwl5bD42fyOFF0sCn0JpJLE4k7ajdwpD016Tjd11XH6OrFd5C3v6PMUqu+H2R
+         w00pOibPbdNk6/mmALYULTx3gTTf2zY4QJClUKrI7Es2BU6G/AWSE3c7bTME75aPhf3j
+         dGO1o1ZOlhHv8gcSbaupb20cSw/hZtGPqI9mr496VhyiTC25Y2e5gS3gJPNhekCmTmji
+         exX6Q/HYL0Sd+zkjBjALWtTolJLmat3pd0Pag4gJ7zBcQZMSUvpITEhTmjT870Ztq+jL
+         Stlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740579214; x=1741184014;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vgbpb+wQs1fiWsUu+quFf7N3iJTinXogOjcbntSJGqg=;
-        b=RmenLyQ41+Vao4mo/k71uzu3Md7V7IKJ8FeUKDX2kTekPdi7w35Z9783s2uvYanxq1
-         b6RV3cu02JPhet8BmK4EPVaJt8mPsBbETVns+c5eGooCrydBrPAbPsBjQn0Vp6RsGkOC
-         7bqM2WyPUDrGU0N6hJjpwPhAKmYP/wZZWoopoSQxfAAIpCp5lAu1gcFhepJRKdqmywaq
-         uQK/Pc5IDJPXkyczDoq+xoPQYM4c65DRM1NhXGHBHFemrpTG/WuQxr04O5tQzaDqUStJ
-         hsXNloJsIkjd/p9/32V9MDmxvDtItqfNrmFZge0v6ztqwKplhqCDGFgRNLPmAW9HPcKh
-         CCtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHIz+puHiSpaqUzGBz6WtA9uQNyek3IIf+pbbYLUgfHcvxFl0Jhfhyuo3k4Me+J1CxLAbfpFS6+pw+084=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzslzFJcwC0i/uT+wnq9Mac77SyVZl16CsI5FgjWkotd+0to9TF
-	c2VHvQRhNMTndfsBz20cVbpuvzEjaI81xN8OWhgEMk4zp8tuvwb9OGi0sERkYV8=
-X-Gm-Gg: ASbGncuk+YG/+iytI64PoBehnU7U7kq0gu8IykPwq0jdwNkeoLOo7gyQhg0KPrbMC03
-	reRkNTEwzY54WuSavo+RxX4eP0+e61zpbg3440bnuxHjD3XrgWgaLPtHwR6UvQk7evSUrTsbRKg
-	DTsKrEQWPPYRYBdza7gQgGIs1MdPzZim66Dk/5ghsd8L6EvDx2ivSyNYcWXUAaOA/AiCTIHWInw
-	vAD6IkX2OYPeHDlzuz55Uj7USS7BUaXHZNH2Fi6NKUO4Oe8e1rXlUbVGrlrKLV8pih1PnoC6Tvo
-	pJsrKLWsPj6E4s/SOPLQQf4W0+SRzycLzjmJota33caUBBSIys8w02QyPK2NbQRxJkMorOk=
-X-Google-Smtp-Source: AGHT+IGjMBREYHM3Ps9vQIMuqM9jKVtM80DfGnNOYnRFojf/OC403IkVNKEcMty4GV6fP9tsA8PHBQ==
-X-Received: by 2002:a05:600c:19ce:b0:439:92ca:f01b with SMTP id 5b1f17b1804b1-439aeb34975mr170790095e9.13.1740579213904;
-        Wed, 26 Feb 2025 06:13:33 -0800 (PST)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e7121sm5791619f8f.61.2025.02.26.06.13.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 06:13:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740579275; x=1741184075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LX2XSUIj2bqmtXIFEbc/wRFdKzgVtWlqUTiSBuY3DCk=;
+        b=FmFIRYXl8q8AdvESeitJYQvynB5NJvDxXsFw165i+IDV4gNqjXg2/DIaMMGTDB06iI
+         XR5zTIglqnvdQGa42dwR6bxOTH3o7N30wVgbLdisuGksNQ+OpTGGJ2pijAPhf1iAwrz5
+         8n8SkOtJT3kI/G/om8+3zMCg26gALL+EqwtSw6OWNUZfcXo8k4rsyJ0Mw58lPBeJp4/B
+         B2agYNOH9wDO3q6Y0Z03j3EUuFj0HsXx8ComhFloct85/8hCX1qDTi1JSOIhKqRqqpiD
+         SKGIIdQzTu5HX2uQwtJPdo68aK1IN440GTtSUKLJ1bQIwMXVSrv1onPAG6E7SreJr1bC
+         oDtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5VF1///zZmc27X0wuDWJKwKAfRAmzCANdL2CzXSibBqwYBn3EZ3yqmvRLgc5cNXckLaO0/ua3zpB9LW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpVNzIkke544MHA1Xjwqk6LWncU/SvZ8yStmwA8ofHtRHBc5PL
+	Ikab5lxXAIUr9cS4MzBcDBsERNlQcr8K9BqTIBvC7ASeS4uLCYBPHCANdpCesP2AMyDG0yDbRjf
+	40yO264j5aqiwHd3iaAacWUoOH/gODWoK1gI6UA==
+X-Gm-Gg: ASbGnculI/Jz+eIsjQNOm7LEUOYli0GuhcI8FKH5ZHFVwzagc0235JyfMfJnV9BQ+7n
+	n13u0sY32se0LaIsXnEZqT2N2cPMs3iPg42Gkp9jgZWCC871ZyJ3SzSHhNCMjw3ZRIappqXQI8Y
+	SzeXjHhPtKWgJjJOBXZYn0Nyod8A2ji5kzBcHp
+X-Google-Smtp-Source: AGHT+IEX4wu5j82nOLm5VM0kOISrbX4gSyb4L+WcDmjP1Qsdn6b72+IZdtPz57qGabsSe+EpTHSUCTQhwXW8UuTpO28=
+X-Received: by 2002:a05:6902:2607:b0:e5d:fd9c:f4d with SMTP id
+ 3f1490d57ef6-e5e8afc4b41mr15466365276.11.1740579275247; Wed, 26 Feb 2025
+ 06:14:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de> <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de> <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+ <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+ <Z78ZK8Sh0cOhMEsH@black.fi.intel.com> <Z78bUPN7kdSnbIjW@black.fi.intel.com>
+In-Reply-To: <Z78bUPN7kdSnbIjW@black.fi.intel.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Wed, 26 Feb 2025 15:14:24 +0100
+X-Gm-Features: AWEUYZnbMeCHev03p9RWQPC8yVSoQaBwao4RL0MRMqRWnB_wlBGnSpwb4oA7_tQ
+Message-ID: <CACMJSevxA8pC2NTQq3jcKCog+o02Y07gVgQydo19YjC9+5Gs6Q@mail.gmail.com>
+Subject: Re: Linux logs new warning `gpio gpiochip0: gpiochip_add_data_with_key:
+ get_direction failed: -22`
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, brgl@bgdev.pl, 
+	Paul Menzel <pmenzel@molgen.mpg.de>, linux-gpio@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Feb 2025 15:13:33 +0100
-Message-Id: <D82FU3SIX5RZ.1Y525GJO0UOAA@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Robert Foss"
- <rfoss@kernel.org>, "Todor Tomov" <todor.too@gmail.com>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Barnabas
- Czeman" <barnabas.czeman@mainlining.org>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@somainline.org>, "Caleb Connolly"
- <caleb.connolly@linaro.org>, "David Heidelberg" <david@ixit.cz>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Some small preparations around CAMSS D-PHY / C-PHY
- support
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
-In-Reply-To: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
 
-Hi all,
-
-On Mon Dec 9, 2024 at 1:01 PM CET, Luca Weiss wrote:
-> Since the hardware blocks on the SoCs generally support both D-PHY and
-> C-PHY standards for camera, but the camss driver currently is only
-> supporting D-PHY, do some preparations in order to add C-PHY support at
-> some point.
+On Wed, 26 Feb 2025 at 14:47, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> Make the dt bindings explicit that the hardware supports both (except
-> for MSM8916) but also add a check to the driver that errors out in case
-> a dt tries to use C-PHY since that's not supported yet.
+> On Wed, Feb 26, 2025 at 03:37:47PM +0200, Andy Shevchenko wrote:
+> > On Tue, Feb 25, 2025 at 10:25:00PM +0100, Linus Walleij wrote:
+> > > On Mon, Feb 24, 2025 at 9:51=E2=80=AFAM <brgl@bgdev.pl> wrote:
+> > >
+> > > > In any case: Linus: what should be our policy here? There are some =
+pinctrl
+> > > > drivers which return EINVAL if the pin in question is not in GPIO m=
+ode. I don't
+> > > > think this is an error. Returning errors should be reserved for rea=
+d failures
+> > > > and so on. Are you fine with changing the logic here to explicitly =
+default to
+> > > > INPUT as until recently all errors would be interpreted as such any=
+way?
+> > >
+> > > Oh hm I guess. There was no defined semantic until now anyway. Maybe
+> > > Andy has something to say about it though, it's very much his pin con=
+troller.
+> >
+> > Driver is doing correct things. If you want to be pedantic, we need to =
+return
+> > all possible pin states (which are currently absent from GPIO get_direc=
+tion()
+> > perspective) and even though it's not possible to tell from the pin mux=
+er
+> > p.o.v. If function is I2C, it's open-drain, if some other, it may be co=
+mpletely
+> > different, but pin muxer might only guesstimate the state of the partic=
+ular
+> > function is and I do not think guesstimation is a right approach.
+> >
+> > We may use the specific error code, though. and document that semantics=
+.
 >
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
-> Luca Weiss (2):
->       media: dt-bindings: media: camss: Restrict bus-type property
->       media: qcom: camss: Restrict endpoint bus-type to D-PHY
-
-This series is still pending, both patches got reviews and no pending
-comments from what I can see.
-
-Would be nice to get it in for 6.15.
-
-Regards
-Luca
-
+> Brief looking at the error descriptions and the practical use the best (a=
+nd
+> unique enough) choice may be EBADSLT.
 >
->  .../bindings/media/qcom,msm8916-camss.yaml         |  8 ++++++
->  .../bindings/media/qcom,msm8953-camss.yaml         | 15 +++++++++++
->  .../bindings/media/qcom,msm8996-camss.yaml         | 20 +++++++++++++++
->  .../bindings/media/qcom,sc8280xp-camss.yaml        | 20 +++++++++++++++
->  .../bindings/media/qcom,sdm660-camss.yaml          | 20 +++++++++++++++
->  .../bindings/media/qcom,sdm845-camss.yaml          | 20 +++++++++++++++
->  .../bindings/media/qcom,sm8250-camss.yaml          | 30 ++++++++++++++++=
-++++++
->  drivers/media/platform/qcom/camss/camss.c          |  9 +++++++
->  8 files changed, 142 insertions(+)
-> ---
-> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-> change-id: 20241209-camss-dphy-8bf46e251291
->
-> Best regards,
 
+In any case, I proposed to revert to the previous behavior in
+gpiochip_add_data() in my follow-up series so the issue should soon go
+away.
+
+Bart
 
