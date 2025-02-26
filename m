@@ -1,82 +1,47 @@
-Return-Path: <linux-kernel+bounces-534737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D42A46A92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:04:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF44A46B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC6D1888126
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8CB188C54A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB97623815F;
-	Wed, 26 Feb 2025 19:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a98mfXM+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3257220680
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD52245008;
+	Wed, 26 Feb 2025 19:37:31 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B4F23906A;
+	Wed, 26 Feb 2025 19:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740596643; cv=none; b=N3JnOqe8U0lJJN9er+G9UcjB6hhVT/B3YisFY8LMBfMXnjg7wohavSNN/yBq1t372xeg3OM2v7YvvE+Zc4yBeoExKL6JiJzfwFyr1EEk7yaoGmGQdE8U+NqiGZhoPTjxD8gnpzOlPIBy2gq38pQk0vyG2JDJjOEqGfDaRbjRc2w=
+	t=1740598650; cv=none; b=npz/36rIwP5pSI5AOFgT6tvumr3Em3uHRPeWl0Uepb6unSoLdbzfNLBN4lReDZjfyWyCotZt4WMkckXlsQhrVjBZSXz4blTkvzmQlzbFsXZAY3jYYOFTXGsWQmmAX1i7zf5hk1wP9Mrd7iw+DSHtBmICUbryyezySK+7JdNi4Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740596643; c=relaxed/simple;
-	bh=CP1ZQTGcS1XGDk8705yrsyn1P0HHQp7ZwLXpNdZVTts=;
+	s=arc-20240116; t=1740598650; c=relaxed/simple;
+	bh=nNKiHnZN5yfytqAictGgp6qmTpEUP2oD++h/KrUNk2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZTGpfg1xjC6WjQRcq4dXS2voar4IVXZfe/iCyzFiObts4EkgV5l4kEgIXYlXdBN6AJJmoX3ZcaeFKarNl5gIK7IPw9I/HhRGzptzczJQ49kyy1IbgBcErSkbvtd8FpODIpomQMAckzA3GBU9wY1G/NpAiykuqJf1B5fWJck+ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a98mfXM+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740596640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PIunKPS4UZCFjPvS7Od7AUtu0dxUhH3F4cLQKO6l55Y=;
-	b=a98mfXM+v6m0XWJdtedn0Gv3t3hi/JQ32/cB8/CtjozlSKgRnheLh3arZC6abFDPchKmMv
-	ImkU8eNKoWdiH4MsVsvEQRY/t5A0tgciggS7f7YS0Tj7tB5ATQNRejd9KQpGNfk9ppJqh+
-	EejrJACMvwEOCUwE1sJkVcbfdaTEYJ8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-172-ITJtCnapMwyKxZSD11cetQ-1; Wed,
- 26 Feb 2025 14:03:58 -0500
-X-MC-Unique: ITJtCnapMwyKxZSD11cetQ-1
-X-Mimecast-MFC-AGG-ID: ITJtCnapMwyKxZSD11cetQ_1740596637
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B2AD1800874;
-	Wed, 26 Feb 2025 19:03:57 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2D49E1800352;
-	Wed, 26 Feb 2025 19:03:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 20:03:27 +0100 (CET)
-Date: Wed, 26 Feb 2025 20:03:23 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [GIT PULL] KVM changes for Linux 6.14
-Message-ID: <20250226190322.GL8995@redhat.com>
-References: <20250126142034.GA28135@redhat.com>
- <CAHk-=wiOSyfW3sgccrfVtanZGUSnjFidSbaP3tg9wapydb-u6g@mail.gmail.com>
- <20250126185354.GB28135@redhat.com>
- <CAHk-=wiA7wzJ9TLMbC6vfer+0F6S91XghxrdKGawO6uMQCfjtQ@mail.gmail.com>
- <20250127140947.GA22160@redhat.com>
- <CABgObfaar9uOx7t6vR0pqk6gU-yNOHX3=R1UHY4mbVwRX_wPkA@mail.gmail.com>
- <20250204-liehen-einmal-af13a3c66a61@brauner>
- <CABgObfaBizrwP6mh82U20Y0h9OwYa6OFn7QBspcGKak2r+5kUw@mail.gmail.com>
- <20250205-bauhof-fraktionslos-b1bedfe50db2@brauner>
- <20250226-portieren-staudamm-10823e224307@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFFWqOuMWGk77VbLR0e2N8GSu7RYX+tct/BvjlTYJofx/xR7SY7VPgkCpd+fPNxWmVf7ypiYsHV3ZkkYbMDZWBRzLaR55WBXJhbRK8PNXo5mQzB4FxTdRknSwNCpzyunvHJodzuo3pgIWMxjJTcp7+p7Tr2zg2pbSplWk4Yhtno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tnNDZ-0001cQ-00; Wed, 26 Feb 2025 20:37:17 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id A857BC0135; Wed, 26 Feb 2025 19:10:23 +0100 (CET)
+Date: Wed, 26 Feb 2025 19:10:23 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Matt Redfearn <matt.redfearn@blaize.com>,
+	linux-mips@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: Ignore relocs against __ex_table for relocatable
+ kernel
+Message-ID: <Z79ZD3EL1Q8UjaFH@alpha.franken.de>
+References: <20250226132841.381063-1-xry111@xry111.site>
+ <20250226104340.3f0b961b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,27 +50,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226-portieren-staudamm-10823e224307@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250226104340.3f0b961b@gandalf.local.home>
 
-Sorry, didn't have time to actually read this patch, but after a quick
-glance...
+On Wed, Feb 26, 2025 at 10:43:40AM -0500, Steven Rostedt wrote:
+> On Wed, 26 Feb 2025 21:28:41 +0800
+> Xi Ruoyao <xry111@xry111.site> wrote:
+> 
+> > Since commit 6f2c2f93a190 ("scripts/sorttable: Remove unneeded
+> > Elf_Rel"), sorttable no longer clears relocs against __ex_table,
+> > claiming "it was never used."  But in fact MIPS relocatable kernel had
+> > been implicitly depending on this behavior, so after this commit the
+> > MIPS relocatable kernel has started to spit oops like:
+> 
+>  Oops!
+> 
+> > 
+> > 	CPU 1 Unable to handle kernel paging request at virtual address 000000fffbbdbff8, epc == ffffffff818f9a6c, ra == ffffffff813ad7d0
+> > 	... ...
+> > 	Call Trace:
+> > 	[<ffffffff818f9a6c>] __raw_copy_from_user+0x48/0x2fc
+> > 	[<ffffffff813ad7d0>] cp_statx+0x1a0/0x1e0
+> > 	[<ffffffff813ae528>] do_statx_fd+0xa8/0x118
+> > 	[<ffffffff813ae670>] sys_statx+0xd8/0xf8
+> > 	[<ffffffff81156cc8>] syscall_common+0x34/0x58
+> > 
+> > So ignore those relocs on our own to fix the issue.
+> > 
+> > Fixes: 6f2c2f93a190 ("scripts/sorttable: Remove unneeded Elf_Rel")
+> > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> 
+> Thanks! Yeah, this is better than having an implicit dependency to the
+> sorttable code.
+> 
+> I take it that this will go through the mips tree?
 
-On 02/26, Christian Brauner wrote:
->
-> @@ -3949,7 +3955,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
->  	tid = (int)(intptr_t)file->private_data;
->  	file->private_data = NULL;
->  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
-> -	     task;
-> +	     task && !(task->flags & PF_USER_WORKER);
+yes, I'll take it.
 
-unless I am totally confused this looks "obviously wrong".
+Thomas.
 
-proc_task_readdir() should not stop if it sees a PF_USER_WORKER task, this
-check should go into first_tid/next_tid.
-
-Oleg.
-
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
