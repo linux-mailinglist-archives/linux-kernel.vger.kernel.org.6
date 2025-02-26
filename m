@@ -1,96 +1,87 @@
-Return-Path: <linux-kernel+bounces-532845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF02A452E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:12:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F39A452E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9D117E93A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA40F189C364
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89A1DE3B6;
-	Wed, 26 Feb 2025 02:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B61FFC44;
+	Wed, 26 Feb 2025 02:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MWGoz4fW"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="T7J92h8r"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F81C1624C5;
-	Wed, 26 Feb 2025 02:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8230619D89E;
+	Wed, 26 Feb 2025 02:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740535839; cv=none; b=J2nlY7YN1GbsCvZHcJngvTUHIDRVbgTIz65NE4zzla98OYqTyC9Phki/ddctL9BKSuwvHH/s8ad5Ujd3/Htd/8CXgkv1JfC7Y96XlE1qNXRl67DdyCeb48KS/Hm/cI7fs3vaJGRMpcxHmUeR7t3+w/Z44zw1UTQJav40FkZryyw=
+	t=1740535942; cv=none; b=T+bbKtA4uuSLjLR+KyqNJUfyEmBYb/P9MJ0ixxXton4HoHxUdv1si2se6lCfqBVKFdCAhHEIBsXFw4yEpCu9/ZeVRHHtgbL5Jge1RzVXLInzN7L+CyCxomOSan/XVkE8K4C6Zz8YmGL6sX2XM5f67axGt9JX63kWzNSgjPCiqoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740535839; c=relaxed/simple;
-	bh=i3ySs1ANzdL6E3wykPrZlYoNt4xpeP8fLcsBB2qT+WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/23k3/o4FfjV8Mw4psCTVP1EiDdkelUIf4IGZakXptUFXul+dMqLrACsMzpRPEgpf3MoBkL0q6BpK+UdZScAk6WouXPnn45X4pdjG2gvaR+5zRRi2e/jhqNCMnijpX5CzULgegzAp9AGnp7nd3AlqVLJJIuaRmZ2l8+BeYDTr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MWGoz4fW; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=4UaxEhn+opD9ww6UUfnZ4q2QQDf5316tUr+NMRLN7X0=; b=MWGoz4fWs/xAd/6OgBVijOW0J6
-	x4GBtTchVEg9eyE1QCxHr3M3CjdqBFN/7YsYKXT1+hkgEHHE7VMApuJEZPEi2pIY3Dj/KXsnhNnuw
-	eYfF5PCag3sh5cmhCUYpqLp4r4js4gQTxlC1LQM3Q6qZFectjymws2D8JtLgpNGysfWnwpH8qd7rY
-	Y2J3p1A++n54v7m/ocdVHRodQoXCQOfKi/7xuk9Hu5mOJERq9HUPM3jQtXisRmywVtYI0IVM50tQ5
-	LGUd1Qc6XPgYtOZ6laRA5dtcFJ/YpQnqt61i4KpioZ/KFNtAFMmDDe0G2idiXKjovRfEAyPmbBByR
-	kjMBfBWg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tn6sQ-001o3g-0l;
-	Wed, 26 Feb 2025 10:10:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 26 Feb 2025 10:10:22 +0800
-Date: Wed, 26 Feb 2025 10:10:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: syzbot <syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com>,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: mm: zswap: fix crypto_free_acomp deadlock in zswap_cpu_comp_dead
-Message-ID: <Z754DloF4TpoRr7P@gondor.apana.org.au>
-References: <67bcea51.050a0220.bbfd1.0096.GAE@google.com>
- <Z72FJnbA39zWh4zS@gondor.apana.org.au>
- <3482501981b13aedda3c1c6b54d83d496bd05922@linux.dev>
- <Z75tg3wXoDnGtLis@gondor.apana.org.au>
- <Z753jsValuBdcvnv@google.com>
+	s=arc-20240116; t=1740535942; c=relaxed/simple;
+	bh=bXXR0itSb5vCm6uSsQEcEnQDgsp8SoDHma+jHpA1cwA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aw3qsQ6ouPRHmsBoJfAVgxjWlyn/7Vs6DIRY8LPyE8J0/qgTDVUosA+zLbn1/D/DZcw/w6j33UeS2nL+5bM7BboyeB0hDl//dAkD5noQBM/NWVdm3ML4zFY6vHwF+NaJgzaYlglB955OKJWbOFM6XMhAE531DkPN5iyX/A09Wzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=T7J92h8r; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740535928; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ZQODXK1cc2I+sNWZIm9dydVGUE4aa1Jdys9cTr2m3fM=;
+	b=T7J92h8rGoNaMbWnQ//4KpQcjnwmSzpes/DtjMfMywsSz/WEY/1xjEWx8fhJK0bFsWcJ5i6e1kjERP42HN/0fV5JrdxZs0FL3Ago432WjQVn03Kx03dfvk2C8WdYfavTzqRWcMF81WlsyEYjc42X07iiQO1TIlDmkP4zCol9I7Y=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WQG7I3G_1740535919 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 26 Feb 2025 10:12:08 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: martin.petersen@oracle.com,
+	heiko@sntech.de,
+	linux-scsi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] scsi: ufs: rockchip: Simplify bool conversion
+Date: Wed, 26 Feb 2025 10:11:57 +0800
+Message-Id: <20250226021157.77934-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z753jsValuBdcvnv@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 02:08:14AM +0000, Yosry Ahmed wrote:
->
-> Could you please:
-> 
-> (1) Explain the exact scenario in the commit log, I did not understand
-> it at first, only after looking at the syzbot dashboard for a while (and
-> I am not sure how long this persists).
-> 
-> (2) Move all the freeing operations outside the mutex? Right now
-> crypto_free_acomp() was the problematic call but it could be 
-> acomp_request_free() next.
-> 
-> Something like:
+./drivers/ufs/host/ufs-rockchip.c:268:70-75: WARNING: conversion to bool not needed here.
 
-Looks good to me.  Feel free to send this patch since it is your
-system after all :)
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19055
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/ufs/host/ufs-rockchip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
+index 5b0ea9820767..350cb0f8d0c2 100644
+--- a/drivers/ufs/host/ufs-rockchip.c
++++ b/drivers/ufs/host/ufs-rockchip.c
+@@ -265,7 +265,7 @@ static int ufs_rockchip_runtime_suspend(struct device *dev)
+ 	clk_disable_unprepare(host->ref_out_clk);
+ 
+ 	/* Do not power down the genpd if rpm_lvl is less than level 5 */
+-	dev_pm_genpd_rpm_always_on(dev, hba->rpm_lvl < UFS_PM_LVL_5 ? true : false);
++	dev_pm_genpd_rpm_always_on(dev, hba->rpm_lvl < UFS_PM_LVL_5);
+ 
+ 	return ufshcd_runtime_suspend(dev);
+ }
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.32.0.3.g01195cf9f
+
 
