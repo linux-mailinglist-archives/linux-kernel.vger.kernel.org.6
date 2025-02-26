@@ -1,39 +1,49 @@
-Return-Path: <linux-kernel+bounces-533682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838E0A45D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3143CA45D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279DE16E938
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C9916A9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012FD218ADF;
-	Wed, 26 Feb 2025 11:45:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F411121D3D2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E5F21B183;
+	Wed, 26 Feb 2025 11:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="f8lZWyvS"
+Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15885218AC8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570329; cv=none; b=EJttchaw+K/M4zyGcyKG8S9gCtBNjnj27rikE6m1c09k6CWhSRh5vJG+UGEcMuV4OMuE1FmL57+jLL/ON1DIFL3vNlPvCTnc5zvLPShOE382ke78hBF1C/FRroNtWMaKAoDNE6u0OS51rWgFNsw0avq4fB6WAwzfvwKr6gf0+Zs=
+	t=1740570352; cv=none; b=Ec4JVy73scdWIifLT++EwLI6CFMth4lNTynX6bDZdUzElTLandZZaUwrPg8ZKObEHxfE8QyuXG1QlhCHTIbMCVJ5dj7CVs9C8aAwcmBoJhl/H6RHUBukmOcZoj/tOfKST61lskKVU5VYky6f3xVRzkGia5ZpUL/TARiqjo9DzgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570329; c=relaxed/simple;
-	bh=0R88SCK6AaON9aBmUcGzT7P1J69Uy3dcE5TQ8ZG87lM=;
+	s=arc-20240116; t=1740570352; c=relaxed/simple;
+	bh=C0kSWoh3LIV+HuMudMUFcqmX7KtzIL+dLkLS0LuQI+w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cvgoW4gPEOtx5zSbWX/qA4KUA0Oc9SZ+ynqrB6BjGHjVKWe/a/SS1h0CRmwUjvJFNdcJszVVRdyJply1hjb+O0d/72bn4gb/1F4fRyHEjr4xdzgyXBJtD86IQ15EEdGQLofegsypklw+jmL36U+uy6/WNF7Dj3Bh8j7wEnuDLgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BA681516;
-	Wed, 26 Feb 2025 03:45:43 -0800 (PST)
-Received: from [10.163.40.69] (unknown [10.163.40.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 744B83F673;
-	Wed, 26 Feb 2025 03:45:25 -0800 (PST)
-Message-ID: <fc357e47-a727-4ba3-9019-877ce8bc443f@arm.com>
-Date: Wed, 26 Feb 2025 17:15:23 +0530
+	 In-Reply-To:Content-Type; b=QsKUqtVIXtWmp1ohXb4gQJgO+Cy24MPZPYuRtCvg46J6Aht4vKD/ccVRmjg5dr1F0rEwItpZNwRNbTLCdMviGOd4tBu6amQxULSzRBz8bZrFc8dmgw9oxVO47O6Ry5hWjO/V1ut2fLUj/4Lggb5f6fAGFYGKd2q80WYjQpCkImc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=f8lZWyvS; arc=none smtp.client-ip=17.58.6.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=UlmH7lnQ/SSIrKM5aMl2BHpkT+fwdodZZLv8W8GXIsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=f8lZWyvSDPQwKr7SDXIE6VdW5kZrI22cRU+v86cMZBg8M63ib8K+MKQDsZPYVZ+Mz
+	 VIc01nNZYPIWEtaq9AznMiQTF7n48OFpxRM5YhSgpY2okVb9cwuvzP1KIikiB+2fRu
+	 d+7AduZcNoirLHLK7K4h8pgvS0d1L0tQbLrFrF/Od88tDX/EZXod457QB5bg4qbmFp
+	 DbogBPgs3Q7iQQ0mZfmhQRiw2/P900rSG5OeZM5GDf/tYeCwP0bcGCpZ97ZFFl8n8G
+	 biW93Aup+84jC3T2ck5W5lDGV0KXW+sjwetmqndyZG8OIOv24PsphQXGiGBlN7Elxi
+	 r4aI2TycTa3Rw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 5CEAB180350;
+	Wed, 26 Feb 2025 11:45:37 +0000 (UTC)
+Message-ID: <a6dfff9c-ab0e-4308-81e7-62d8ea04d62b@icloud.com>
+Date: Wed, 26 Feb 2025 19:45:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,103 +51,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Explicit cast conversions to correct data type
-To: Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250219035646.536707-1-anshuman.khandual@arm.com>
- <Z724Q1ofM1GvKquV@J2N7QTR9R3> <9e1721a1-54a4-4007-a0f5-d651f5f21ae2@arm.com>
- <Z73LEkHklpjvIlmZ@J2N7QTR9R3.cambridge.arm.com>
+Subject: Re: [PATCH *-next 01/18] mm/mmu_gather: Remove needless return in
+ void API tlb_remove_page()
+To: David Howells <dhowells@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-mtd@lists.infradead.org
+References: <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
+ <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <20250221-rmv_return-v1-1-cc8dff275827@quicinc.com>
+ <20250221200137.GH7373@noisy.programming.kicks-ass.net>
+ <2298251.1740496596@warthog.procyon.org.uk>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Z73LEkHklpjvIlmZ@J2N7QTR9R3.cambridge.arm.com>
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <2298251.1740496596@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: iqw5w_RmeMXu0iJloMXtrzoP0X8vVIzf
+X-Proofpoint-ORIG-GUID: iqw5w_RmeMXu0iJloMXtrzoP0X8vVIzf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=985
+ malwarescore=0 clxscore=1011 phishscore=0 bulkscore=0 adultscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502260094
 
-
-
-On 2/25/25 19:22, Mark Rutland wrote:
-> On Tue, Feb 25, 2025 at 01:00:40PM +0000, Ryan Roberts wrote:
->> On 25/02/2025 12:32, Mark Rutland wrote:
->>> On Wed, Feb 19, 2025 at 09:26:46AM +0530, Anshuman Khandual wrote:
->>>> From: Ryan Roberts <ryan.roberts@arm.com>
->>>>
->>>> When CONFIG_ARM64_PA_BITS_52 is enabled, page table helpers __pte_to_phys()
->>>> and __phys_to_pte_val() are functions which return phys_addr_t and pteval_t
->>>> respectively as expected. But otherwise without this config being enabled,
->>>> they are defined as macros and their return types are implicit.
->>>>
->>>> Until now this has worked out correctly as both pte_t and phys_addr_t data
->>>> types have been 64 bits. But with the introduction of 128 bit page tables,
->>>> pte_t becomes 128 bits. Hence this ends up with incorrect widths after the
->>>> conversions, which leads to compiler warnings.
+On 2025/2/25 23:16, David Howells wrote:
+> Zijun Hu <zijun_hu@icloud.com> wrote:
+> 
+>>>>  static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+>>>>  {
+>>>> -	return tlb_remove_page_size(tlb, page, PAGE_SIZE);
+>>>> +	tlb_remove_page_size(tlb, page, PAGE_SIZE);
+>>>>  }
+>>> So I don't mind removing it, but note that that return enforces
+>>> tlb_remove_page_size() has void return type.
 >>>
->>> Does 128-bit page table not imply 52-bit PAs?
 >>
->> Not to my knowledge. For now the prototype code base is explicitly sticking to
->> 48-bit PA and 44-bit VA (for initial simplicitly because that's the limit for 4
->> levels).
+>> tlb_remove_page_size() is void function already. (^^)
 > 
-> Fair enough; info dump below, but hopefully nothing of consequence.
+> That may be true... for now.  But if that is changed in the future, then you
+> will get an error indicating something you need to go and look at... so in
+> that regard, it's *better* to do this ;-)
 > 
-> I assume that you're relying on the VMSAv9-128 PA bits [48:12] being in the
-> same place as in the VMSAv8-64 descriptors, and being handled by the same
-> PTE_ADDR_LOW mask that we use for CONFIG_ARM64_PA_BITS_52=n.
-> 
->>From a quick scan of ARM DDI 0487 L.a, the VMSAv9-128 translation table
-> descriptor format always contains a 56-bit PA (though PARange could be
-> smaller than that). Bits [51:49] are packed differently than in
-> VMSAv8-64 descriptors, and bits [55:52] are obviously new.
-> 
->>>> Fix the warnings by explicitly casting to the correct type after doing the
->>>> conversion.
->>>
->>> I think it would be simpler and clearer if we replaced the macros with
->>> functions, such that __pte_to_phys() and __phys_to_pte_val() are
->>> *always* functions.
->>
->> Yeah, agreed. This was initially just a hack I did to get things working.
-> 
-> Cool; sounds like we're aligned.
 
-Planning for the following respin instead.
+i understand your point.
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 0b2a2ad1b9e8..4ebfa60ea5c6 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -68,10 +68,6 @@ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
- #define pte_ERROR(e)	\
- 	pr_err("%s:%d: bad pte %016llx.\n", __FILE__, __LINE__, pte_val(e))
- 
--/*
-- * Macros to convert between a physical address and its placement in a
-- * page table entry, taking care of 52-bit addresses.
-- */
- #ifdef CONFIG_ARM64_PA_BITS_52
- static inline phys_addr_t __pte_to_phys(pte_t pte)
- {
-@@ -84,8 +80,15 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
- 	return (phys | (phys >> PTE_ADDR_HIGH_SHIFT)) & PHYS_TO_PTE_ADDR_MASK;
- }
- #else
--#define __pte_to_phys(pte)	(pte_val(pte) & PTE_ADDR_LOW)
--#define __phys_to_pte_val(phys)	(phys)
-+static inline phys_addr_t __pte_to_phys(pte_t pte)
-+{
-+	return pte_val(pte) & PTE_ADDR_LOW;
-+}
-+
-+static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
-+{
-+	return phys;
-+}
- #endif
- 
- #define pte_pfn(pte)		(__pte_to_phys(pte) >> PAGE_SHIFT)
--- 
-2.30.2
+if the callee tlb_remove_page_size() is in the same module with the
+caller tlb_remove_page. it is meaningless to watch the callee's return type.
 
+otherwise, provided the callee is a API which is provided by other
+module author. once the author changes the API's return type, he/she
+must take effort to cleanup this weird and lots of usages, that is not
+nice for API provider.
+
+this is a common issue. i will list my reasons why this usage is not
+good in cover letter of this series
+> David
+> 
 
 
