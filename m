@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-535148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7582A46F8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:42:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3022A46F8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BE33AF476
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F2C7A64A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA2B2620EA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1F32620E4;
 	Wed, 26 Feb 2025 23:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f74K/K/a"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WwcvegKB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6172620D9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5532620D5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613310; cv=none; b=kdaUEAiJH+OT5fhbrI78N2iKWsLVCI6z/5EYJHUUscsg7i5x+3w9qUXns35EMsqC/lVGw53BNFVuGf5dvJk+T06OtIqq0C/mBndTa64ZXns6KWrHdKuNtLg/wDH19HmWgbsBKz7j0VwFfwZrP5XXRyCPDsBLtRAkVKNBtVg5hKQ=
+	t=1740613309; cv=none; b=NsUNhA+bBNdUHI7gOiKJFDeeCSzJCqEYESF6CkB/+eFE8iiK+wvlBdi3eQp0mwjGibjrmerLIoCPdAtLwFgPpOAiAi/fGXLAqB5FhKw33M+kSzEi+RXImPnv6XTsGEavf3stOjqGTUtboP0Ke5aILqVXve9J7CL+JpQp7RowD4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613310; c=relaxed/simple;
-	bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=laJViOtxmUks7B82zw3/+KaNJHCHcngkrRss3E27up1JIRJmjGF47rLC3/J827B3KCG7+4JwaCDi8/uuPG87+nbSnStvBagwP6aHMT/eKR6P+8n/ezxgAT7QLAxkyxd7JeM5yoVhLzGD98Ere5TVdaeDzwWMgANXFpKzT9Fge4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f74K/K/a; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6fb7d64908fso3715447b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:41:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740613307; x=1741218107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
-        b=f74K/K/afzWjWvWsdHxzN/jH61xJHHyuPbfUP001y7a/mX6nUiQ6DZSUR4rQzkAFCx
-         uOFAYRBDM75LJJ3tEtVTkKT7Pfyamp4QYiJxQoBN7PAuBLpEFKsB4bsCIFSC+EyqITA4
-         MSFowOZhYMXT6smdUYfJrBJNAGtzWPePtqkaV+TeW+JQV8A86bZ4NvxrgQQwmhygBwVc
-         4AyCxHkuezll/ele/Euj7pr1pPIBuQgLCodPj+v2Il0IkiTCMNdfBwh8YYMXpiUuZsUg
-         jNsMH1mqRG2FYKB9txR+/jBVrF4PiuwCG7NFcaxSBTrxjJCbTAetHKMw2dcEExoHNhUR
-         hHlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740613307; x=1741218107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
-        b=n50mgObZRx5AOmD/arMg5lIocR8uaK0IjaBr3L8Wx/L68o13piY1DySfGberwUoJDm
-         bGjdZKnYvzgtlUPZKe+a5bNQ4gPaD3EcoBw5JxaoLypbB/qZIVevXuNQIdyD7ebH2WoR
-         BQ9tYdRQCGyd6dXjBvcGjxvJKDf7ADxY27r+adlt5c1Vgtk820uExof+NU0QJBqrLfrX
-         mEkIQ0e5vGIG7z/egHL4deRcjZEnyAsovs95dEoBoVsX7sKW9eru45lC6wJeSca2pY6+
-         RRV0eNHStRO/2KJvOiEw0gJiOCXMwGnjKlj/jZa8Gxal4+ofRmmc5eUXxcNlFb2+xhJH
-         8dTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWF3kuA9+hnR32jxdZdF5p2V2IrSHeXJtxOs8ZrNN6xB8z+rGWWbYRwkvlcPcnv9hHIaHXjar71OgNLSHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfZJQp5ctJGsk+mpcg0zAUxKU/UDZ7pMDYH0nv7xlxD/tZ+8LX
-	yumLJL2f4w45OXMMo+nNaMk81Pa5AgtGpVx3tpqvJC1Bw49OEImoXDTUcoLlS/Hxra/Jg7OrpGd
-	3TiDPmjBbtal5n/6ZJllpHCocv57DrMYGjsq2
-X-Gm-Gg: ASbGncvAb9B8/W7fxMM3172HMiOr1YV5zJlECWJkmElPjg30EmkeGrdT1fcMUiMC1u1
-	BFzahn7nhr+blQf12Rsir6/067GG+IZ08Cdm7WXyHMnar3RJl4IJLgFRjnwNDKUcX0IrCJ/ipCK
-	5jWX4RbAo=
-X-Google-Smtp-Source: AGHT+IGemVdA8vFM5APA46NT9uZdRK4EJWAEgmp2/eNiVxXqJ81TXGGCyav4i+lfYJLRLeB/U2Bp2pN4yp0P8tAT1hU=
-X-Received: by 2002:a05:690c:38d:b0:6f6:b646:4f34 with SMTP id
- 00721157ae682-6fd22074377mr57621747b3.30.1740613307514; Wed, 26 Feb 2025
- 15:41:47 -0800 (PST)
+	s=arc-20240116; t=1740613309; c=relaxed/simple;
+	bh=8Bwz6Uwyna28A9u7qfhyqwnfqrwLq4MaRl2ezjSy15Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pk+DeuLjhNRm+Ln5/UnkrZbbSAxGQBIzf/+O74uzP4Y5YnPS2nEkx4rtDD7gLOJHp6kAaVvEoA2Vsh/82l+UFA6T+gYZ2gjTDhuw2VQx+3TxyvgjRccEnEjgV7l89/kXs8u0ytzppXDYBmHlLRkZT7aJS9j7czNTPv5M3UlsXbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WwcvegKB; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740613307; x=1772149307;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8Bwz6Uwyna28A9u7qfhyqwnfqrwLq4MaRl2ezjSy15Y=;
+  b=WwcvegKBZWX+ouMczLvubxjle0aj8w//tcL7LDpNPWmRhppNdpeKsx00
+   lNjm9MXkln9rdo7JdY2pTyteShw1mcX5mVjiaOXBLlEAzGpn3RGMgAvD9
+   kgipL6B7L+ycdd0nanujM3uZPJ8VLK+NH3ns9L7BSS/Xqd+uZk2BtkkiF
+   0xcTYiH4CaLpp5vGtuZivFAFLZdsP1/asLkxp/B7TTesqAVRH+p5q2MJ/
+   NJfCX95xGT4kY2nNWdJJYwNawLh5N6ljJAiaVMFK3gL5gctnWFR9k/g1S
+   /qCNXUiN+WJYOAoQRTlxmTse5knX2voBQeyWiN1T9+SLu7oBPcR6ZmxYH
+   Q==;
+X-CSE-ConnectionGUID: H0svRCN/TwelPR8NtKiQ/w==
+X-CSE-MsgGUID: eos45tY5TM6vhcOaplXR3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="29088402"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="29088402"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 15:41:47 -0800
+X-CSE-ConnectionGUID: RiJsh+UlQeywQDYkgACb6g==
+X-CSE-MsgGUID: ie/z0suQRXuj9EEPHnB5cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="121446392"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Feb 2025 15:41:45 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnR27-000CbY-2T;
+	Wed, 26 Feb 2025 23:41:43 +0000
+Date: Thu, 27 Feb 2025 07:41:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: sound/soc/renesas/sh7760-ac97.c:43:17: sparse: sparse: incorrect
+ type in argument 1 (different base types)
+Message-ID: <202502270743.XHyhWKWp-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250131163059.1139617-11-mic@digikod.net> <7ed44e7b0e371302d29be95789cd1a57@paul-moore.com>
- <20250218.aePeer3oole2@digikod.net>
-In-Reply-To: <20250218.aePeer3oole2@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 26 Feb 2025 18:41:36 -0500
-X-Gm-Features: AQ5f1JqWYmxLqpt22zS6kb-r4-IiD-XvgZ__5B9665k_Ga0PZ4Qv98lgbWnYyX4
-Message-ID: <CAHC9VhSo7L8jw2pR9x6KmVCiqucGaRqkuj+RyQXOC6jnQBcQjA@mail.gmail.com>
-Subject: Re: [PATCH v5 10/24] landlock: Add AUDIT_LANDLOCK_DOMAIN and log
- domain status
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Feb 18, 2025 at 2:21=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> Are there guidance about __GFP_NOWARN for audit or other subsystems?
+Hi Lad,
 
-Unfortunately I'm not aware of anything, and I too would be very
-interested in learning if there was some solid guidance around the GFP
-flags as the comment block in gfp_types.h is rather short.
+First bad commit (maybe != root cause):
 
---=20
-paul-moore.com
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f4ce1f3318ad4bc12463698696ebc36b145a6aa3
+commit: c087a94bea49acf34d651f7308506fe462a937b3 ASoC: Rename "sh" to "renesas"
+date:   4 months ago
+config: sh-randconfig-r132-20250226 (https://download.01.org/0day-ci/archive/20250227/202502270743.XHyhWKWp-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250227/202502270743.XHyhWKWp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502270743.XHyhWKWp-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> sound/soc/renesas/sh7760-ac97.c:43:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
+   sound/soc/renesas/sh7760-ac97.c:43:17: sparse:     expected void const volatile [noderef] __iomem *ptr
+   sound/soc/renesas/sh7760-ac97.c:43:17: sparse:     got unsigned int
+   sound/soc/renesas/sh7760-ac97.c:44:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
+   sound/soc/renesas/sh7760-ac97.c:44:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   sound/soc/renesas/sh7760-ac97.c:44:9: sparse:     got unsigned int
+--
+>> sound/soc/renesas/hac.c:77:3: sparse: sparse: symbol 'hac_cpu_data' was not declared. Should it be static?
+
+vim +43 sound/soc/renesas/sh7760-ac97.c
+
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  36  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  37  static int __init sh7760_ac97_init(void)
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  38  {
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  39  	int ret;
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  40  	unsigned short ipsel;
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  41  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  42  	/* enable both AC97 controllers in pinmux reg */
+48ccb2ceec6fb1d sound/soc/sh/sh7760-ac97.c Paul Mundt    2010-10-27 @43  	ipsel = __raw_readw(IPSEL);
+48ccb2ceec6fb1d sound/soc/sh/sh7760-ac97.c Paul Mundt    2010-10-27  44  	__raw_writew(ipsel | (3 << 10), IPSEL);
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  45  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  46  	ret = -ENOMEM;
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  47  	sh7760_ac97_snd_device = platform_device_alloc("soc-audio", -1);
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  48  	if (!sh7760_ac97_snd_device)
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  49  		goto out;
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  50  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  51  	platform_set_drvdata(sh7760_ac97_snd_device,
+f0fba2ad1b6b53d sound/soc/sh/sh7760-ac97.c Liam Girdwood 2010-03-17  52  			     &sh7760_ac97_soc_machine);
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  53  	ret = platform_device_add(sh7760_ac97_snd_device);
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  54  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  55  	if (ret)
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  56  		platform_device_put(sh7760_ac97_snd_device);
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  57  
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  58  out:
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  59  	return ret;
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  60  }
+aef3b06ac69783d sound/soc/sh/sh7760-ac97.c Manuel Lauss  2007-05-14  61  
+
+:::::: The code at line 43 was first introduced by commit
+:::::: 48ccb2ceec6fb1d46d1bc92dadc602d4341a0149 sound: sh: ctrl_in/outX to __raw_read/writeX conversion.
+
+:::::: TO: Paul Mundt <lethal@linux-sh.org>
+:::::: CC: Paul Mundt <lethal@linux-sh.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
