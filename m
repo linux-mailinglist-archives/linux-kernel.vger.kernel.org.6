@@ -1,338 +1,119 @@
-Return-Path: <linux-kernel+bounces-533502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEDFA45B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:14:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E2BA45BDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74343A8E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED25188A380
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4698E280A33;
-	Wed, 26 Feb 2025 10:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65A726FA40;
+	Wed, 26 Feb 2025 10:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gi+8fPKX"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oY2I4BNZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B34727425C;
-	Wed, 26 Feb 2025 10:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012B626E62F;
+	Wed, 26 Feb 2025 10:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740564592; cv=none; b=hy3fwDFwt2Fjv2SJ72dTiyEhQYV9bmFabHitHDF8oN/b754aV1kUWFG5GhcnnfGf3T1M4l0PWz5c4rv2ykjhx2XPiSLuhrsj8XHxVOHGMzFqyc1nKeTvi6cidtUwSGhkd2cAnlcfv76ksS9isSVAHxFzlxMl8CIBBRScHYgTLWs=
+	t=1740565857; cv=none; b=ingjci+aW9OflOfwlgBxEc5/tAwbLIaxKamgay9eWxiz1WRtNYsqtsAYMoSxZzpuANgc5UldnXvNmIFTpv0JOXR3kCxqf7fWJUBGNZ3ND65qOULbjlf+uIghUDlUmBq9ikZt7aS1Ix62nRCaMjt+Kvyx1b/OogGTCkyOG0dimf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740564592; c=relaxed/simple;
-	bh=cw/JDzuq4Z8YBQc19Ajyg703TEI/lsTbqR8/6Na8niM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TOpF9ASDBd1retmTpwPyzQy3zSD1zP+IldQeuHDryHR4ouNMBwsSB1KHO/o36ly8rGJFZUyBMKFU/cJTTXrKk2Wu4lcMUT2RApEaFU7amLY9BLbrZeMJObtt0gW639ZaOH2uAtnC63BKtKSvqLu2BkMp/93TPVPhD73rVg0hgKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gi+8fPKX; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CC4424320C;
-	Wed, 26 Feb 2025 10:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740564588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u/T8nQU/mkiG0ZoUMSNWXf5KxPMM/+5v8lOlnZng3vQ=;
-	b=gi+8fPKXMPPztI5WCc2qiwlHX/OqB9miuV1WDFbpV+5Hf0qGbBnInnBhY/pQhxteKbobPF
-	q3AeQ1U879aWJCuKllB3vDCJQue88zS7dwpy7SNuvu63ZlKmyE0ccTJDO3EawegRNhVP7X
-	dXHtdqGDpC8agFL1+XOaaXSuZl9E7vKCHXxxiOSONVhpRJ6nIz6/1w46Wn5nCrXrV5NYI+
-	o6isVbf6KvmDir64v8u01aXHrSR2Z5JBqJ5tnrNyuLDLHL5aoJfJW1McMX7Sfh11T44Phg
-	5QNAZYHXEe43GxGeQTR1NCGyz0oyr4HNsyoE4ue7oG5rPY/kENRyYuq8ObjN1g==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v2 13/13] net: phy: phy_caps: Allow getting an phy_interface's capabilities
-Date: Wed, 26 Feb 2025 11:09:28 +0100
-Message-ID: <20250226100929.1646454-14-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250226100929.1646454-1-maxime.chevallier@bootlin.com>
-References: <20250226100929.1646454-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1740565857; c=relaxed/simple;
+	bh=1ZAHdC2Y37gCh7qOM6vyURJ2MhLryVz7qduf3r/k/0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbfgyfbVkPOeV6wlD6WT6rKc4IYmRQRVL+NdvPs23wpLIPaYvdYinpL1EtE2AKm1+Pd2MQlx2r82Ef/0WU+vu/GSD1r2H6v3JGplWBW4RhYenAFZXpC1YbAyEuk9xn+EmU5+jJrX/rcLaM0v7ePxZxokT+rqs8XO8XLm4ryBNLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oY2I4BNZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A719C4CEE7;
+	Wed, 26 Feb 2025 10:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740565856;
+	bh=1ZAHdC2Y37gCh7qOM6vyURJ2MhLryVz7qduf3r/k/0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oY2I4BNZuDBzdFwgQrPjbspkyxIuDk4kYfb2otT23dIGypfYvDeB5R8ErYRuNi9+f
+	 w9uAGh8kPUfflns7um67MZTXzpZxDndjXZCNPlQ5hmL9wP6xINtSrcl2jHxZzIGAAK
+	 E9pdVzJGbSsRueCVmvC+5y7oZt6D1M985n49v/tA=
+Date: Wed, 26 Feb 2025 11:09:57 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alan Mackenzie <acm@muc.de>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: More than 256/512 glyphs on the Liinux console
+Message-ID: <2025022652-uptown-cheating-5df8@gregkh>
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh>
+ <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+ <2025022355-peroxide-defacing-4fa4@gregkh>
+ <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
+ <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
+ <Z73sqvjlbJ54FCtH@MAC.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeeftdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpeeinecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgri
- igvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z73sqvjlbJ54FCtH@MAC.fritz.box>
 
-Phylink has internal code to get the MAC capabilities of a given PHY
-interface (what are the supported speed and duplex).
+On Tue, Feb 25, 2025 at 04:15:38PM +0000, Alan Mackenzie wrote:
+> Hello, Jiri.
+> 
+> On Mon, Feb 24, 2025 at 21:08:50 +0100, Jiri Slaby wrote:
+> > On 24. 02. 25, 19:22, Alan Mackenzie wrote:
+> > > Hello, Greg.
+> 
+> > > On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
+> > >> On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
+> > >>> On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
+> 
+> > > [ .... ]
+> 
+> > >>> But I think you are also asking why I use the console at all.  That's
+> > >>> a fair question which I'll try to answer.
+> 
+> > >> I'm not disputing using the console, it's the vt layer that I'm talking
+> > >> about.  The DRM developers have the long-term goal of getting rid of
+> > >> CONFIG_VT which will remove a ton of mess that we have overall.
+> > >> DRM-based consoles should provide the same functionality that a vt
+> > >> console does today.  If not, please let them know so that the remaining
+> > >> corner cases can be resolved.
+> 
+> > > Does a DRM based console exist at the moment?  I spent quite some time
+> > > looking for it yesterday, but found nothing.
+> 
+> > I didn't read the thread, but are you looking e.g. for kmscon?
+> 
+> No, I wasn't.  I was looking for a drm replacement for the drivers/tty/vt
+> code inside the kernel.  I may have misunderstood Greg when he referred
+> to a replacement which uses drm.
 
-Extract that into phy_caps, but use the link_capa for conversion. Add an
-internal phylink helper for the link caps -> mac caps conversion, and
-use this in phylink_caps_to_linkmodes().
+No, this is what I was referring to.  Also maybe we should be asking on
+the drm list?  The developers there were working to get rid of CONFIG_VT
+so I know they have plans for what they see replacing it.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V1 -> V2: - new patch
+> kmscon doesn't seem to be a suitable replacement for the Linux console.
+> According to Wikipedia, it stopped being maintained ~10 years ago.  Also,
+> it is a user level program, not a kernel level program, so will only become
+> active later in the boot process than the current console, which is not
+> a good thing.  It might well steal key sequences from application
+> programs, the way X and X window managers do, but maybe it doesn't.  On
+> Gentoo, kmscon is "masked", i.e. strongly recommended not to be
+> installed, and installable only after taking special measures.
 
- drivers/net/phy/phy-caps.h |  2 +
- drivers/net/phy/phy_caps.c | 92 ++++++++++++++++++++++++++++++++++++++
- drivers/net/phy/phylink.c  | 90 ++++++-------------------------------
- 3 files changed, 108 insertions(+), 76 deletions(-)
+Yes, it will be "after" the boot console, but that should be it.  It
+shouldn't be stealing any keys away from anything, but rather going
+through the existing apis we have for input devices and the like.
 
-diff --git a/drivers/net/phy/phy-caps.h b/drivers/net/phy/phy-caps.h
-index 7b76b3204e24..2b7ed6a93e3b 100644
---- a/drivers/net/phy/phy-caps.h
-+++ b/drivers/net/phy/phy-caps.h
-@@ -8,6 +8,7 @@
- #define __PHY_CAPS_H
- 
- #include <linux/ethtool.h>
-+#include <linux/phy.h>
- 
- enum {
- 	LINK_CAPA_10HD = 0,
-@@ -46,6 +47,7 @@ size_t phy_caps_speeds(unsigned int *speeds, size_t size,
- void phy_caps_linkmode_max_speed(u32 max_speed, unsigned long *linkmodes);
- bool phy_caps_valid(int speed, int duplex, const unsigned long *linkmodes);
- void phy_caps_linkmodes(unsigned long caps, unsigned long *linkmodes);
-+unsigned long phy_caps_from_interface(phy_interface_t interface);
- 
- const struct link_capabilities *
- phy_caps_lookup_by_linkmode(const unsigned long *linkmodes);
-diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
-index 602e0ad44602..b04c3997df18 100644
---- a/drivers/net/phy/phy_caps.c
-+++ b/drivers/net/phy/phy_caps.c
-@@ -246,3 +246,95 @@ void phy_caps_linkmodes(unsigned long caps, unsigned long *linkmodes)
- 		linkmode_or(linkmodes, linkmodes, link_caps[capa].linkmodes);
- }
- EXPORT_SYMBOL_GPL(phy_caps_linkmodes);
-+
-+/**
-+ * phy_caps_from_interface() - Get the link capa from a given PHY interface
-+ * @interface: The PHY interface we want to get the possible Speed/Duplex from
-+ *
-+ * Returns: A bitmask of LINK_CAPA_xxx values that can be achieved with the
-+ *          provided interface.
-+ */
-+unsigned long phy_caps_from_interface(phy_interface_t interface)
-+{
-+	unsigned long link_caps = 0;
-+
-+	switch (interface) {
-+	case PHY_INTERFACE_MODE_USXGMII:
-+		link_caps |= BIT(LINK_CAPA_10000FD) | BIT(LINK_CAPA_5000FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_10G_QXGMII:
-+		link_caps |= BIT(LINK_CAPA_2500FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_PSGMII:
-+	case PHY_INTERFACE_MODE_QSGMII:
-+	case PHY_INTERFACE_MODE_QUSGMII:
-+	case PHY_INTERFACE_MODE_SGMII:
-+	case PHY_INTERFACE_MODE_GMII:
-+		link_caps |= BIT(LINK_CAPA_1000HD) | BIT(LINK_CAPA_1000FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_REVRMII:
-+	case PHY_INTERFACE_MODE_RMII:
-+	case PHY_INTERFACE_MODE_SMII:
-+	case PHY_INTERFACE_MODE_REVMII:
-+	case PHY_INTERFACE_MODE_MII:
-+		link_caps |= BIT(LINK_CAPA_10HD) | BIT(LINK_CAPA_10FD);
-+		fallthrough;
-+
-+	case PHY_INTERFACE_MODE_100BASEX:
-+		link_caps |= BIT(LINK_CAPA_100HD) | BIT(LINK_CAPA_100FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_TBI:
-+	case PHY_INTERFACE_MODE_MOCA:
-+	case PHY_INTERFACE_MODE_RTBI:
-+	case PHY_INTERFACE_MODE_1000BASEX:
-+		link_caps |= BIT(LINK_CAPA_1000HD);
-+		fallthrough;
-+	case PHY_INTERFACE_MODE_1000BASEKX:
-+	case PHY_INTERFACE_MODE_TRGMII:
-+		link_caps |= BIT(LINK_CAPA_1000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_2500BASEX:
-+		link_caps |= BIT(LINK_CAPA_2500FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_5GBASER:
-+		link_caps |= BIT(LINK_CAPA_5000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_XGMII:
-+	case PHY_INTERFACE_MODE_RXAUI:
-+	case PHY_INTERFACE_MODE_XAUI:
-+	case PHY_INTERFACE_MODE_10GBASER:
-+	case PHY_INTERFACE_MODE_10GKR:
-+		link_caps |= BIT(LINK_CAPA_10000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_25GBASER:
-+		link_caps |= BIT(LINK_CAPA_25000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_XLGMII:
-+		link_caps |= BIT(LINK_CAPA_40000FD);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_INTERNAL:
-+		link_caps |= GENMASK(__LINK_CAPA_LAST, 0);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_NA:
-+	case PHY_INTERFACE_MODE_MAX:
-+		break;
-+	}
-+
-+	return link_caps;
-+}
-+EXPORT_SYMBOL_GPL(phy_caps_from_interface);
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 8548c265cecf..8a48aff72df6 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -335,6 +335,18 @@ static unsigned long phylink_caps_to_link_caps(unsigned long caps)
- 	return link_caps;
- }
- 
-+static unsigned long phylink_link_caps_to_mac_caps(unsigned long link_caps)
-+{
-+	unsigned long caps = 0;
-+	int i;
-+
-+	for (i = 0; i <  ARRAY_SIZE(phylink_caps_params); i++)
-+		if (link_caps & phylink_caps_params[i].caps_bit)
-+			caps |= phylink_caps_params[i].mask;
-+
-+	return caps;
-+}
-+
- /**
-  * phylink_caps_to_linkmodes() - Convert capabilities to ethtool link modes
-  * @linkmodes: ethtool linkmode mask (must be already initialised)
-@@ -412,86 +424,12 @@ static unsigned long phylink_get_capabilities(phy_interface_t interface,
- 					      unsigned long mac_capabilities,
- 					      int rate_matching)
- {
-+	unsigned long link_caps = phy_caps_from_interface(interface);
- 	int max_speed = phylink_interface_max_speed(interface);
- 	unsigned long caps = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
- 	unsigned long matched_caps = 0;
- 
--	switch (interface) {
--	case PHY_INTERFACE_MODE_USXGMII:
--		caps |= MAC_10000FD | MAC_5000FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_10G_QXGMII:
--		caps |= MAC_2500FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_RGMII_TXID:
--	case PHY_INTERFACE_MODE_RGMII_RXID:
--	case PHY_INTERFACE_MODE_RGMII_ID:
--	case PHY_INTERFACE_MODE_RGMII:
--	case PHY_INTERFACE_MODE_PSGMII:
--	case PHY_INTERFACE_MODE_QSGMII:
--	case PHY_INTERFACE_MODE_QUSGMII:
--	case PHY_INTERFACE_MODE_SGMII:
--	case PHY_INTERFACE_MODE_GMII:
--		caps |= MAC_1000HD | MAC_1000FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_REVRMII:
--	case PHY_INTERFACE_MODE_RMII:
--	case PHY_INTERFACE_MODE_SMII:
--	case PHY_INTERFACE_MODE_REVMII:
--	case PHY_INTERFACE_MODE_MII:
--		caps |= MAC_10HD | MAC_10FD;
--		fallthrough;
--
--	case PHY_INTERFACE_MODE_100BASEX:
--		caps |= MAC_100HD | MAC_100FD;
--		break;
--
--	case PHY_INTERFACE_MODE_TBI:
--	case PHY_INTERFACE_MODE_MOCA:
--	case PHY_INTERFACE_MODE_RTBI:
--	case PHY_INTERFACE_MODE_1000BASEX:
--		caps |= MAC_1000HD;
--		fallthrough;
--	case PHY_INTERFACE_MODE_1000BASEKX:
--	case PHY_INTERFACE_MODE_TRGMII:
--		caps |= MAC_1000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_2500BASEX:
--		caps |= MAC_2500FD;
--		break;
--
--	case PHY_INTERFACE_MODE_5GBASER:
--		caps |= MAC_5000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_XGMII:
--	case PHY_INTERFACE_MODE_RXAUI:
--	case PHY_INTERFACE_MODE_XAUI:
--	case PHY_INTERFACE_MODE_10GBASER:
--	case PHY_INTERFACE_MODE_10GKR:
--		caps |= MAC_10000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_25GBASER:
--		caps |= MAC_25000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_XLGMII:
--		caps |= MAC_40000FD;
--		break;
--
--	case PHY_INTERFACE_MODE_INTERNAL:
--		caps |= ~0;
--		break;
--
--	case PHY_INTERFACE_MODE_NA:
--	case PHY_INTERFACE_MODE_MAX:
--		break;
--	}
-+	caps |= phylink_link_caps_to_mac_caps(link_caps);
- 
- 	switch (rate_matching) {
- 	case RATE_MATCH_OPEN_LOOP:
--- 
-2.48.1
+I don't know why distros seem to not be using it anymore, maybe there's
+something else?
 
+thanks,
+
+greg k-h
 
