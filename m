@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-532905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA0FA45390
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:03:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC87A45397
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D896C163B0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE01A3AD75C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF89222592;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B99E223316;
 	Wed, 26 Feb 2025 03:01:51 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE4D21CC50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCE218ACA
 	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740538910; cv=none; b=OrsCNiAxbJGffd+e27zpRrsBiyTPeRwVxb68XpGbtTHR92ZBtZwa7u5D/1ED2qgwA/7MNFhlK+8HxGcw99XyzvPpDdCvzqTA1EBUWeX8A3fListmWQdAUlWu4+mtQhJeRah62o7JKz8AujntUJrTKbRm4+9oZIQp5/LTYDrqtcY=
+	t=1740538911; cv=none; b=HINbVebI19ztbZnCZvieauofu7LdddbPVMWV3LL7ZJ7UjSYByfZkhFSWiDevTS2Y7KmLB6QM09YAAlCQC12UiAvow3p5BTVOmyaCj7R+Fl+yCL1VMyYgEBj/j+IZcYwUn0HDjhck/RnhvzMz4D5guMu9tJCb7SPeUHPvRCzTvl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740538910; c=relaxed/simple;
-	bh=2okXcf6/hDlTU7qdH8RLklgfu0+Y7r42+N8iamhZCxM=;
+	s=arc-20240116; t=1740538911; c=relaxed/simple;
+	bh=STuOCYDD3Tz7RSgB6HhqVvv+CS1V5ge7c89XdA4qdyw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kPnZAytAvM72wfvPjyfIf0kNM0dKIuyMTWCsHp8WuSgzS8OTMGahlQnARf4zhaOj+gCN4TtJqYYJK04S+yN/MCdq/PYWcugMKWj4hDE0h1Kvlxj3567k2rbzs+qbICyhO6No4aOV86kGJIZrM3/dYKf/CunU4bew7lvy9Zx6aU4=
+	 MIME-Version; b=XTgekvXR4+cLB9k2fyrr1IBfYef9+jb3vCkOxti7hOWBN/lNxUNbOUJkYr4mlqbta608kdjiCzSapoTYpbnir+T1hp6g9gPRC/0rKCHVFNpE8k7ReGctL4wN8rbWbhKVmPCOYmOdzTnMZXyD7a5qdey4PU6F6QA4UFec9Lv7X2E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -32,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1tn7fw-000000001Y5-0wG8;
+	id 1tn7fw-000000001Y5-10yf;
 	Tue, 25 Feb 2025 22:01:32 -0500
 From: Rik van Riel <riel@surriel.com>
 To: x86@kernel.org
@@ -53,9 +53,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Manali.Shukla@amd.com,
 	mingo@kernel.org,
 	Rik van Riel <riel@surriel.com>
-Subject: [PATCH v14 07/13] x86/mm: add global ASID allocation helper functions
-Date: Tue, 25 Feb 2025 22:00:42 -0500
-Message-ID: <20250226030129.530345-8-riel@surriel.com>
+Subject: [PATCH v14 08/13] x86/mm: global ASID context switch & TLB flush handling
+Date: Tue, 25 Feb 2025 22:00:43 -0500
+Message-ID: <20250226030129.530345-9-riel@surriel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250226030129.530345-1-riel@surriel.com>
 References: <20250226030129.530345-1-riel@surriel.com>
@@ -68,288 +68,222 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-Add functions to manage global ASID space. Multithreaded processes that
-are simultaneously active on 4 or more CPUs can get a global ASID,
-resulting in the same PCID being used for that process on every CPU.
+Context switch and TLB flush support for processes that use a global
+ASID & PCID across all CPUs.
 
-This in turn will allow the kernel to use hardware-assisted TLB flushing
-through AMD INVLPGB or Intel RAR for these processes.
+At both context switch time and TLB flush time, we need to check
+whether a task is switching to a global ASID, and reload the TLB
+with the new ASID as appropriate.
+
+In both code paths, we also short-circuit the TLB flush if we
+are using a global ASID, because the global ASIDs are always
+kept up to date across CPUs, even while the process is not
+running on a CPU.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
-Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-Tested-by: Brendan Jackman <jackmanb@google.com>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
 ---
- arch/x86/include/asm/mmu.h         |  11 +++
- arch/x86/include/asm/mmu_context.h |   2 +
- arch/x86/include/asm/tlbflush.h    |  43 +++++++++
- arch/x86/mm/tlb.c                  | 146 ++++++++++++++++++++++++++++-
- 4 files changed, 199 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/tlbflush.h | 18 ++++++++
+ arch/x86/mm/tlb.c               | 77 ++++++++++++++++++++++++++++++---
+ 2 files changed, 88 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
-index 3b496cdcb74b..edb5942d4829 100644
---- a/arch/x86/include/asm/mmu.h
-+++ b/arch/x86/include/asm/mmu.h
-@@ -69,6 +69,17 @@ typedef struct {
- 	u16 pkey_allocation_map;
- 	s16 execute_only_pkey;
- #endif
-+
-+#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
-+	/*
-+	 * The global ASID will be a non-zero value when the process has
-+	 * the same ASID across all CPUs, allowing it to make use of
-+	 * hardware-assisted remote TLB invalidation like AMD INVLPGB.
-+	 */
-+	u16 global_asid;
-+	/* The process is transitioning to a new global ASID number. */
-+	bool asid_transition;
-+#endif
- } mm_context_t;
- 
- #define INIT_MM_CONTEXT(mm)						\
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 795fdd53bd0a..a2c70e495b1b 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -139,6 +139,8 @@ static inline void mm_reset_untag_mask(struct mm_struct *mm)
- #define enter_lazy_tlb enter_lazy_tlb
- extern void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
- 
-+extern void mm_free_global_asid(struct mm_struct *mm);
-+
- /*
-  * Init a new mm.  Used on mm copies, like at fork()
-  * and on mm's that are brand-new, like at execve().
 diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 855c13da2045..8e7df0ed7005 100644
+index 8e7df0ed7005..37b735dcf025 100644
 --- a/arch/x86/include/asm/tlbflush.h
 +++ b/arch/x86/include/asm/tlbflush.h
-@@ -6,6 +6,7 @@
- #include <linux/mmu_notifier.h>
- #include <linux/sched.h>
+@@ -240,6 +240,11 @@ static inline bool is_dyn_asid(u16 asid)
+ 	return asid < TLB_NR_DYN_ASIDS;
+ }
  
-+#include <asm/barrier.h>
- #include <asm/processor.h>
- #include <asm/cpufeature.h>
- #include <asm/special_insns.h>
-@@ -234,6 +235,48 @@ void flush_tlb_one_kernel(unsigned long addr);
- void flush_tlb_multi(const struct cpumask *cpumask,
- 		      const struct flush_tlb_info *info);
- 
-+static inline bool is_dyn_asid(u16 asid)
++static inline bool is_global_asid(u16 asid)
 +{
-+	return asid < TLB_NR_DYN_ASIDS;
++	return !is_dyn_asid(asid);
 +}
 +
-+#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
-+static inline u16 mm_global_asid(struct mm_struct *mm)
-+{
-+	u16 asid;
+ #ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
+ static inline u16 mm_global_asid(struct mm_struct *mm)
+ {
+@@ -266,6 +271,14 @@ static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
+ 	mm->context.asid_transition = true;
+ 	smp_store_release(&mm->context.global_asid, asid);
+ }
 +
++static inline bool in_asid_transition(struct mm_struct *mm)
++{
 +	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
-+		return 0;
++		return false;
 +
-+	asid = smp_load_acquire(&mm->context.global_asid);
-+
-+	/* mm->context.global_asid is either 0, or a global ASID */
-+	VM_WARN_ON_ONCE(asid && is_dyn_asid(asid));
-+
-+	return asid;
++	return mm && READ_ONCE(mm->context.asid_transition);
 +}
+ #else
+ static inline u16 mm_global_asid(struct mm_struct *mm)
+ {
+@@ -275,6 +288,11 @@ static inline u16 mm_global_asid(struct mm_struct *mm)
+ static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
+ {
+ }
 +
-+static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
++static inline bool in_asid_transition(struct mm_struct *mm)
 +{
-+	/*
-+	 * Notably flush_tlb_mm_range() -> broadcast_tlb_flush() ->
-+	 * finish_asid_transition() needs to observe asid_transition = true
-+	 * once it observes global_asid.
-+	 */
-+	mm->context.asid_transition = true;
-+	smp_store_release(&mm->context.global_asid, asid);
++	return false;
 +}
-+#else
-+static inline u16 mm_global_asid(struct mm_struct *mm)
-+{
-+	return 0;
-+}
-+
-+static inline void mm_assign_global_asid(struct mm_struct *mm, u16 asid)
-+{
-+}
-+#endif
-+
- #ifdef CONFIG_PARAVIRT
- #include <asm/paravirt.h>
  #endif
+ 
+ #ifdef CONFIG_PARAVIRT
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 1cc25e83bd34..9b1652c02452 100644
+index 9b1652c02452..b7d461db1b08 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -74,13 +74,15 @@
-  * use different names for each of them:
-  *
-  * ASID  - [0, TLB_NR_DYN_ASIDS-1]
-- *         the canonical identifier for an mm
-+ *         the canonical identifier for an mm, dynamically allocated on each CPU
-+ *         [TLB_NR_DYN_ASIDS, MAX_ASID_AVAILABLE-1]
-+ *         the canonical, global identifier for an mm, identical across all CPUs
-  *
-- * kPCID - [1, TLB_NR_DYN_ASIDS]
-+ * kPCID - [1, MAX_ASID_AVAILABLE]
-  *         the value we write into the PCID part of CR3; corresponds to the
-  *         ASID+1, because PCID 0 is special.
-  *
-- * uPCID - [2048 + 1, 2048 + TLB_NR_DYN_ASIDS]
-+ * uPCID - [2048 + 1, 2048 + MAX_ASID_AVAILABLE]
-  *         for KPTI each mm has two address spaces and thus needs two
-  *         PCID values, but we can still do with a single ASID denomination
-  *         for each mm. Corresponds to kPCID + 2048.
-@@ -251,6 +253,144 @@ static void choose_new_asid(struct mm_struct *next, u64 next_tlb_gen,
- 	*need_flush = true;
+@@ -227,6 +227,20 @@ static void choose_new_asid(struct mm_struct *next, u64 next_tlb_gen,
+ 		return;
+ 	}
+ 
++	/*
++	 * TLB consistency for global ASIDs is maintained with hardware assisted
++	 * remote TLB flushing. Global ASIDs are always up to date.
++	 */
++	if (static_cpu_has(X86_FEATURE_INVLPGB)) {
++		u16 global_asid = mm_global_asid(next);
++
++		if (global_asid) {
++			*new_asid = global_asid;
++			*need_flush = false;
++			return;
++		}
++	}
++
+ 	if (this_cpu_read(cpu_tlbstate.invalidate_other))
+ 		clear_asid_other();
+ 
+@@ -391,6 +405,23 @@ void mm_free_global_asid(struct mm_struct *mm)
+ #endif
  }
  
 +/*
-+ * Global ASIDs are allocated for multi-threaded processes that are
-+ * active on multiple CPUs simultaneously, giving each of those
-+ * processes the same PCID on every CPU, for use with hardware-assisted
-+ * TLB shootdown on remote CPUs, like AMD INVLPGB or Intel RAR.
-+ *
-+ * These global ASIDs are held for the lifetime of the process.
++ * Is the mm transitioning from a CPU-local ASID to a global ASID?
 + */
-+static DEFINE_RAW_SPINLOCK(global_asid_lock);
-+static u16 last_global_asid = MAX_ASID_AVAILABLE;
-+static DECLARE_BITMAP(global_asid_used, MAX_ASID_AVAILABLE);
-+static DECLARE_BITMAP(global_asid_freed, MAX_ASID_AVAILABLE);
-+static int global_asid_available = MAX_ASID_AVAILABLE - TLB_NR_DYN_ASIDS - 1;
-+
-+/*
-+ * When the search for a free ASID in the global ASID space reaches
-+ * MAX_ASID_AVAILABLE, a global TLB flush guarantees that previously
-+ * freed global ASIDs are safe to re-use.
-+ *
-+ * This way the global flush only needs to happen at ASID rollover
-+ * time, and not at ASID allocation time.
-+ */
-+static void reset_global_asid_space(void)
++static bool needs_global_asid_reload(struct mm_struct *next, u16 prev_asid)
 +{
-+	lockdep_assert_held(&global_asid_lock);
++	u16 global_asid = mm_global_asid(next);
 +
-+	invlpgb_flush_all_nonglobals();
-+
-+	/*
-+	 * The TLB flush above makes it safe to re-use the previously
-+	 * freed global ASIDs.
-+	 */
-+	bitmap_andnot(global_asid_used, global_asid_used,
-+			global_asid_freed, MAX_ASID_AVAILABLE);
-+	bitmap_clear(global_asid_freed, 0, MAX_ASID_AVAILABLE);
-+
-+	/* Restart the search from the start of global ASID space. */
-+	last_global_asid = TLB_NR_DYN_ASIDS;
-+}
-+
-+static u16 allocate_global_asid(void)
-+{
-+	u16 asid;
-+
-+	lockdep_assert_held(&global_asid_lock);
-+
-+	/* The previous allocation hit the edge of available address space */
-+	if (last_global_asid >= MAX_ASID_AVAILABLE - 1)
-+		reset_global_asid_space();
-+
-+	asid = find_next_zero_bit(global_asid_used, MAX_ASID_AVAILABLE, last_global_asid);
-+
-+	if (asid >= MAX_ASID_AVAILABLE && !global_asid_available) {
-+		/* This should never happen. */
-+		VM_WARN_ONCE(1, "Unable to allocate global ASID despite %d available\n",
-+				global_asid_available);
-+		return 0;
-+	}
-+
-+	/* Claim this global ASID. */
-+	__set_bit(asid, global_asid_used);
-+	last_global_asid = asid;
-+	global_asid_available--;
-+	return asid;
-+}
-+
-+/*
-+ * Check whether a process is currently active on more than @threshold CPUs.
-+ * This is a cheap estimation on whether or not it may make sense to assign
-+ * a global ASID to this process, and use broadcast TLB invalidation.
-+ */
-+static bool mm_active_cpus_exceeds(struct mm_struct *mm, int threshold)
-+{
-+	int count = 0;
-+	int cpu;
-+
-+	/* This quick check should eliminate most single threaded programs. */
-+	if (cpumask_weight(mm_cpumask(mm)) <= threshold)
++	if (!static_cpu_has(X86_FEATURE_INVLPGB))
 +		return false;
 +
-+	/* Slower check to make sure. */
-+	for_each_cpu(cpu, mm_cpumask(mm)) {
-+		/* Skip the CPUs that aren't really running this process. */
-+		if (per_cpu(cpu_tlbstate.loaded_mm, cpu) != mm)
-+			continue;
++	/* Process is transitioning to a global ASID */
++	if (global_asid && prev_asid != global_asid)
++		return true;
 +
-+		if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
-+			continue;
-+
-+		if (++count > threshold)
-+			return true;
-+	}
 +	return false;
-+}
-+
-+/*
-+ * Assign a global ASID to the current process, protecting against
-+ * races between multiple threads in the process.
-+ */
-+static void use_global_asid(struct mm_struct *mm)
-+{
-+	u16 asid;
-+
-+	guard(raw_spinlock_irqsave)(&global_asid_lock);
-+
-+	/* This process is already using broadcast TLB invalidation. */
-+	if (mm_global_asid(mm))
-+		return;
-+
-+	/* The last global ASID was consumed while waiting for the lock. */
-+	if (!global_asid_available) {
-+		VM_WARN_ONCE(1, "Ran out of global ASIDs\n");
-+		return;
-+	}
-+
-+	asid = allocate_global_asid();
-+	if (!asid)
-+		return;
-+
-+	mm_assign_global_asid(mm, asid);
-+}
-+
-+void mm_free_global_asid(struct mm_struct *mm)
-+{
-+	if (!mm_global_asid(mm))
-+		return;
-+
-+	guard(raw_spinlock_irqsave)(&global_asid_lock);
-+
-+	/* The global ASID can be re-used only after flush at wrap-around. */
-+#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
-+	__set_bit(mm->context.global_asid, global_asid_freed);
-+
-+	mm->context.global_asid = 0;
-+	global_asid_available++;
-+#endif
 +}
 +
  /*
   * Given an ASID, flush the corresponding user ASID.  We can delay this
   * until the next time we switch to it.
+@@ -696,7 +727,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 	 */
+ 	if (prev == next) {
+ 		/* Not actually switching mm's */
+-		VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[prev_asid].ctx_id) !=
++		VM_WARN_ON(is_dyn_asid(prev_asid) &&
++			   this_cpu_read(cpu_tlbstate.ctxs[prev_asid].ctx_id) !=
+ 			   next->context.ctx_id);
+ 
+ 		/*
+@@ -713,6 +745,20 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
+ 			cpumask_set_cpu(cpu, mm_cpumask(next));
+ 
++		/* Check if the current mm is transitioning to a global ASID */
++		if (needs_global_asid_reload(next, prev_asid)) {
++			next_tlb_gen = atomic64_read(&next->context.tlb_gen);
++			choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
++			goto reload_tlb;
++		}
++
++		/*
++		 * Broadcast TLB invalidation keeps this PCID up to date
++		 * all the time.
++		 */
++		if (is_global_asid(prev_asid))
++			return;
++
+ 		/*
+ 		 * If the CPU is not in lazy TLB mode, we are just switching
+ 		 * from one thread in a process to another thread in the same
+@@ -746,6 +792,13 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 		 */
+ 		cond_mitigation(tsk);
+ 
++		/*
++		 * Let nmi_uaccess_okay() and finish_asid_transition()
++		 * know that we're changing CR3.
++		 */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		/*
+ 		 * Leave this CPU in prev's mm_cpumask. Atomic writes to
+ 		 * mm_cpumask can be expensive under contention. The CPU
+@@ -760,14 +813,12 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+-
+-		/* Let nmi_uaccess_okay() know that we're changing CR3. */
+-		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
+-		barrier();
+ 	}
+ 
++reload_tlb:
+ 	new_lam = mm_lam_cr3_mask(next);
+ 	if (need_flush) {
++		VM_WARN_ON_ONCE(is_global_asid(new_asid));
+ 		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+ 		load_new_mm_cr3(next->pgd, new_asid, new_lam, true);
+@@ -886,7 +937,7 @@ static void flush_tlb_func(void *info)
+ 	const struct flush_tlb_info *f = info;
+ 	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+-	u64 local_tlb_gen = this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen);
++	u64 local_tlb_gen;
+ 	bool local = smp_processor_id() == f->initiating_cpu;
+ 	unsigned long nr_invalidate = 0;
+ 	u64 mm_tlb_gen;
+@@ -909,6 +960,16 @@ static void flush_tlb_func(void *info)
+ 	if (unlikely(loaded_mm == &init_mm))
+ 		return;
+ 
++	/* Reload the ASID if transitioning into or out of a global ASID */
++	if (needs_global_asid_reload(loaded_mm, loaded_mm_asid)) {
++		switch_mm_irqs_off(NULL, loaded_mm, NULL);
++		loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++	}
++
++	/* Broadcast ASIDs are always kept up to date with INVLPGB. */
++	if (is_global_asid(loaded_mm_asid))
++		return;
++
+ 	VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].ctx_id) !=
+ 		   loaded_mm->context.ctx_id);
+ 
+@@ -926,6 +987,8 @@ static void flush_tlb_func(void *info)
+ 		return;
+ 	}
+ 
++	local_tlb_gen = this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen);
++
+ 	if (unlikely(f->new_tlb_gen != TLB_GENERATION_INVALID &&
+ 		     f->new_tlb_gen <= local_tlb_gen)) {
+ 		/*
+@@ -1093,7 +1156,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 	 * up on the new contents of what used to be page tables, while
+ 	 * doing a speculative memory access.
+ 	 */
+-	if (info->freed_tables)
++	if (info->freed_tables || in_asid_transition(info->mm))
+ 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
+ 	else
+ 		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
 -- 
 2.47.1
 
