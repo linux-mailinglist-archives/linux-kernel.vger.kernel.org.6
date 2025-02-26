@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-534701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E60A46A11
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E788A469FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082D1160920
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B42F3A3CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4DE23959A;
-	Wed, 26 Feb 2025 18:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296822D4FB;
+	Wed, 26 Feb 2025 18:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pBfjg8U5"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+/xF3t4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0D722D784;
-	Wed, 26 Feb 2025 18:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D83222577;
+	Wed, 26 Feb 2025 18:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595594; cv=none; b=AjOJKyojRLnb87yukzz42YRU8Zom4pn9d6neejomCERG73ZfJfHEOgn1FR/RPCifR4W8SsQBKRgzAnO3UH6c8iZwURIWiLXszzITYxs2mmGNyKtoopR179NEP0WrrARi/u21SBs87mCwy/r7Gww8RT8ORkKssM1I4HvKnSTeJIc=
+	t=1740595520; cv=none; b=j6p/ly3X96Q3v0r04HmHprV+4V0kCIi0YLCYDlUk+435jM6fn3Nt9M+W191MF7S54dWUebF6hsXChXYksIionxcSPjZSOw562qB4m9Mfsd/2g9TOMV6nEI2DBqpaVQPdOQIAkRXeBqBo6LvouQtWmSgqZrGnPWyf8aGvcRvV8cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595594; c=relaxed/simple;
-	bh=av0A0EgMmZuF7k4uVACqRkbAc5DuEtFyJ21KJyF35nw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSZ0plLOTJjr1zBeIFDsNVtw+VX6z1E723wdxSY5pfR5aKKPSEDHJOGNPt0e9CZY2VZ230nNheNLLlo326MRT9MhqMwVEfTUDgayGSDkrNjWFbfiqPUXzZbaKQWy8JGyTG+tDcPiP/I6C8hx1VXfgcTaM5FUW9wNl3Ehkh09juw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pBfjg8U5; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QIi9ms2156450
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 12:44:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740595450;
-	bh=esbbA0aHxV2C7K7XPMRSKO3A35omNfgqBS1hPBjtmXg=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=pBfjg8U5jkATBCxBRPgW1hxkKxkjGDHEVGISh7VcEj5YIYrbU+fYbnsayWPzlFKcI
-	 47JaBvj4ZjrahbShEttZOLhtpYWrZvE+Dn2iMeKZduVs2P1eJ3xxTWysLT/29QlYTd
-	 cP2MVrU0/cHm+OCLt+4sGqm7SAwgQRmoH/hTrANA=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QIi9GH029156
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 12:44:09 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 12:44:08 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 12:44:08 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QIi8S8076566;
-	Wed, 26 Feb 2025 12:44:08 -0600
-Date: Wed, 26 Feb 2025 12:44:08 -0600
-From: Nishanth Menon <nm@ti.com>
-To: parvathi <parvathi@couthit.com>
-CC: <danishanwar@ti.com>, <rogerq@kernel.org>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <ssantosh@kernel.org>,
-        <richardcochran@gmail.com>, <basharath@couthit.com>,
-        <schnelle@linux.ibm.com>, <diogo.ivo@siemens.com>,
-        <m-karicheri2@ti.com>, <horms@kernel.org>, <jacob.e.keller@intel.com>,
-        <m-malladi@ti.com>, <javier.carrasco.cruz@gmail.com>, <afd@ti.com>,
-        <s-anna@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <pratheesh@ti.com>, <prajith@ti.com>,
-        <vigneshr@ti.com>, <praneeth@ti.com>, <srk@ti.com>, <rogerq@ti.com>,
-        <krishna@couthit.com>, <pmohan@couthit.com>, <mohan@couthit.com>
-Subject: Re: [PATCH net-next v3 00/10] PRU-ICSSM Ethernet Driver
-Message-ID: <20250226184408.d4gpr3uu2dm7oxa2@handwork>
-References: <20250214054702.1073139-1-parvathi@couthit.com>
+	s=arc-20240116; t=1740595520; c=relaxed/simple;
+	bh=ERGSj8UoLV6emwDjg3zTNHnsZejqQWg/I0zbv9GeNbM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=BOx4zq0cGb1E+0tfsXq+2XHAbvpkZbGlt1a7CjiHl3iqd5ssKK+enmKMXjIo9dnLNpI7gN9AMXD26spW/+6eF9n9FGNvqwHBHUR3rVrwkFb7Q7wI4Uj8uc++0Nb5ROKXbywpmG8EfICGILkeXENW+q3serXui7ppl5LLHeO8Dr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+/xF3t4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BF2C4CED6;
+	Wed, 26 Feb 2025 18:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740595519;
+	bh=ERGSj8UoLV6emwDjg3zTNHnsZejqQWg/I0zbv9GeNbM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=T+/xF3t4tpA/bM8KzWexhY5qNBzCXfgQ4G02MVaEvRJRJ/N+6fo6LnPJKg/zvWnu5
+	 uRXENvWQ/Wc9Wmy5R66SK8d7kaOyHlJftocHLw6W8arDA4WvSwgO9D2ICWPuE9Rto0
+	 Jze6dVjvEuoISfK82Q6TL5xD2iYG694Q4BT+ndjZiCvH8CbvpPMi6OhV85MkmJPE+G
+	 uUbf0BKxHR3OQK8RUNv/e0CCeLMi927pPpjhAg3b3xQpPRSQJMS5cmbwYEFG+Vhr9R
+	 SbEAFRrdq7X92lEobC3h6YeMsckxVCdbuV2e2xSDUieVI3foINpDmJUFpCjK97Dkfm
+	 G8achp3TuJCIg==
+Date: Wed, 26 Feb 2025 12:45:17 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250214054702.1073139-1-parvathi@couthit.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>, 
+ Michael Ellerman <mpe@ellerman.id.au>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Nicholas Piggin <npiggin@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Crystal Wood <oss@buserror.net>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, devicetree@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linux-mtd@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Naveen N Rao <naveen@kernel.org>, 
+ linuxppc-dev@lists.ozlabs.org
+To: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+In-Reply-To: <20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net>
+References: <20250226-ppcyaml-elbc-v3-0-a90ed71da838@posteo.net>
+ <20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net>
+Message-Id: <174059551678.3319332.12055848852503108874.robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: nand: Add fsl,elbc-fcm-nand
 
-On 11:16-20250214, parvathi wrote:
-[...]
-> The patches presented in this series have gone through the patch verification
-> tools and no warnings or errors are reported. Sample test logs verifying the
-> functionality on Linux next kernel are available here:
+
+On Wed, 26 Feb 2025 18:01:41 +0100, J. Neuschäfer wrote:
+> Formalize the binding already supported by the fsl_elbc_nand.c driver
+> and used in several device trees in arch/powerpc/boot/dts/.
 > 
-> [Interface up Testing](https://gist.github.com/ParvathiPudi/f481837cc6994e400284cb4b58972804)
+> raw-nand-chip.yaml is referenced in order to accommodate situations in
+> which the ECC parameters settings are set in the device tree. One such
+> example is in arch/powerpc/boot/dts/turris1x.dts:
 > 
-> [Ping Testing](https://gist.github.com/ParvathiPudi/a121aad402defcef389e93f303d79317)
+> 	/* MT29F2G08ABAEAWP:E NAND */
+> 	nand@1,0 {
+> 		compatible = "fsl,p2020-fcm-nand", "fsl,elbc-fcm-nand";
+> 		reg = <0x1 0x0 0x00040000>;
+> 		nand-ecc-mode = "soft";
+> 		nand-ecc-algo = "bch";
 > 
-> [Iperf Testing](https://gist.github.com/ParvathiPudi/581db46b0e9814ddb5903bdfee73fc6f)
+> 		partitions { ... };
+> 	};
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+> 
+> V3:
+> - remove unnecessary #address/size-cells from nand node in example
+> - add Frank Li's review tag
+> - add missing end of document marker (...)
+> - explain choice to reference raw-nand-chip.yaml
+> 
+> V2:
+> - split out from fsl,elbc binding patch
+> - constrain #address-cells and #size-cells
+> - add a general description
+> - use unevaluatedProperties=false instead of additionalProperties=false
+> - fix property order to comply with dts coding style
+> - include raw-nand-chip.yaml instead of nand-chip.yaml
+> ---
+>  .../devicetree/bindings/mtd/fsl,elbc-fcm-nand.yaml | 68 ++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 > 
 
+My bot found errors running 'make dt_binding_check' on your patch:
 
-I am looking at https://lore.kernel.org/all/20250214085315.1077108-11-parvathi@couthit.com/
-and wondering if i can see the test log for am335x and am47xx to make
-sure that PRUs are functional on those two?
+yamllint warnings/errors:
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/fsl,elbc-fcm-nand.example.dtb: nand@1,0: $nodename:0: 'nand@1,0' does not match '^nand@[a-f0-9]$'
+	from schema $id: http://devicetree.org/schemas/mtd/fsl,elbc-fcm-nand.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250226-ppcyaml-elbc-v3-2-a90ed71da838@posteo.net
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
