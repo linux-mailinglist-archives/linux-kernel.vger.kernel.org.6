@@ -1,234 +1,175 @@
-Return-Path: <linux-kernel+bounces-534789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2936A46B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:34:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6A5A46B34
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BFB188C5D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055D116E7E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F61245008;
-	Wed, 26 Feb 2025 19:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2D323906A;
+	Wed, 26 Feb 2025 19:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="I5dNNmTd"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazolkn19011077.outbound.protection.outlook.com [52.103.32.77])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="mkc0h+Lv"
+Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF23238D2F;
-	Wed, 26 Feb 2025 19:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B2F239584;
+	Wed, 26 Feb 2025 19:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598477; cv=fail; b=T2bJDc8FX7hqAcBP07XYGdFrXOxZyTopRGnIjLDcoo138GG4ums1MzRmhz1ebcxPXdEIOna/KOxSiis5gMS4FbASUfrpESdNLbEVYfSl4VkXSDlSrEKyjsaO7RXGiQPwDXd1snjxtJiFl+2xHDlh29R/apJvw8/qHCBUMdqhvOM=
+	t=1740598129; cv=pass; b=SK4hY2gFETscQTTAYcZOq8+PP6OYuy8u4FOaMor1MgLrEBFowxAVRJEdd6bud8Jx/l41BrYyhK9MtGYWiOVhgWh4LxHN4oASGoAbNhhJ+tJ3wSvHK+Yf3QmE/UFhXKqRy93Rv1ARjYIsaiVH5AcgwxhjTi7KnfjIdQbSWeTarAY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598477; c=relaxed/simple;
-	bh=ACOFdcjyzEMrrUEVtj8xsPuWQ6feABuf35kwC4CSxHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JIuH69VL9u4dfiSNmQESb6KNpkXpQ3ASgqVD33wLdr+lMM7ocRwIvBE+Mc1EWqOO2Ul04OV7/19pN33WDYhB89RRGfO59rW1+yvTbAD4vVKe/CtzrdehJ/pIxDtJ9bRLTi2slNcfQBodzEg/+sNIw87bEADa3K2WqrDhs0DN4yI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=I5dNNmTd; arc=fail smtp.client-ip=52.103.32.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MsYMDFX0JD8++LSybR0w/tKbpUdnzt1rbQY+XG1S7PdeY66GEEJa0Ictj8f6I3NVBcn0gk0WHSUW/7lNMqOHn7duXAzcoax2yhK3GOaoomtgyVKQhbMVK+gRzehm7U01vRw6I4U3OugXOqlvFNZV04xfM+bhyUU8r/fbFdpUE9iuU6jqgtNsp8/Ud+2vti4QgRg0dIxPwrym2+TgUHr97hDFN0xV/ii47e7prhKfxdVL2YEHrG1U7whMm1Y5AOS+Kl1w37jnFZpIJ+ulgjQ1ao4L3M336acgyJVUQXpMie43sg/SRplrkTaIf4iorkNiU7yXwWZHrBOynJnbDi8gVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vFkNWT9qi7ZMq+d4X59uKo9TPr7WcNyc1CNt4P36duA=;
- b=LOpanNnLwm76m8A3PP/ARFbLk8Zsdkhp9Zu569ST9CYjLzBxrVs9B9kKZ13NYtCxeqkmxVccGrBAApKoz75Ro3uWfXYK8pF63b3oBrUccnveJDhfLAuUOhRlBtaAoG7n791LngoZcc7bnfRL3tHE1eWMNJ7xKkqxsXweVVCsbn/0dWyn6WFCULMsZ8uEBRqht+Yrrsq97pkt11jtHX9CXCTLRmgyantMug/Jx7Pc+H+3hOMk10WApdYBc9Al3LqEMSw73aXH5HNpVffgPPWU/HdCpZRRQyoZH2MGc15J9+xxRqUYbejQvmPfad0FFux67kSqqOokjVlM7PHRUgycVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vFkNWT9qi7ZMq+d4X59uKo9TPr7WcNyc1CNt4P36duA=;
- b=I5dNNmTdIC18qBiYF7G4lpleDQiJr6yqojRHtcPxZAF8BlWkSFoApdhJ7bR5xqbnxKpeQsDWuf89pMHzysnEfQC5jDwxBC59TFNJ4zBmQ9NRGNwAkvkC+FgENiffLE1ChxCtdChic/nypnBw4gaGNjuJaEz2XXEJ9vhoMBYwI8+/9dsaAgZeNp+GAZT0dZ1be5RKvq5VkkGVcDJ6wPCVXaNNIhz3MavzY4eXYylUH0f6l68Zudx6XMA7gGced7MptZtCdKbSDyAWwwnrV0P426fWSdOeYCPdWBTdtq3BICq25BIEAuUJjfJXK1RPUqDImz69eGtplrg4z4FnL8rSCg==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by DBBPR03MB7451.eurprd03.prod.outlook.com (2603:10a6:10:20e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Wed, 26 Feb
- 2025 19:34:31 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 19:34:31 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com,
-	changwoo@igalia.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.15 v3 5/5] selftests/sched_ext: Update enq_select_cpu_fails to adapt to struct_ops context filter
-Date: Wed, 26 Feb 2025 19:28:20 +0000
-Message-ID:
- <AM6PR03MB5080996A206B9BE042C7C6D599C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
-References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0349.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18d::12) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <20250226192820.156545-5-juntong.deng@outlook.com>
+	s=arc-20240116; t=1740598129; c=relaxed/simple;
+	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUZq6UMznYvEDLudCoh0nI4n9qF4jkPhNXbn7cg7fLArC75wR6ZD9dzrGD9O4Gz68Rx7rpbPTQ9vd08Iez97T12+tYv6YHTYYZh4XpdJXIyEQhMuPYbobaZKq20PxTn1dXfndXqzTkwOeqKS7jUt5us0DFLbKNz9XQhmjNHVXVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=mkc0h+Lv; arc=pass smtp.client-ip=23.83.223.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 0EB399054F5;
+	Wed, 26 Feb 2025 19:28:41 +0000 (UTC)
+Received: from pdx1-sub0-mail-a232.dreamhost.com (100-99-192-59.trex-nlb.outbound.svc.cluster.local [100.99.192.59])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 85BE3903CC7;
+	Wed, 26 Feb 2025 19:28:40 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1740598120; a=rsa-sha256;
+	cv=none;
+	b=OKAz95KvTk5hRyDwD7osiCT/FD/FEjnfvSK3cZaf4w8vDvr4iOaCnc8iMFisKIXctETH9m
+	4CiUXoBk/m9tIB5C831nwrJOeHmb0Iky7c6n68rRnbEDT4T6n/atUO1HB96j+ClQ3qVklr
+	Ch0pMX0RFFRe8XceTwPo2mKcFXcVnBKK4AFBB49oNWIold7L3tyswycOLhEZCl18gkZhWk
+	xJRU//KP/8EjznmlDjm2JkYNawmf8V+LqfHLpcD8hwwzb3hda5lqtqs2r5FwHzbEXazgAW
+	hKyK7QJKqzeyxa33WiUTjAJ8wZrgBUPvAT+FtKOf7hsi4io2qf3cMI3UmjiaWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1740598120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
+	b=UWQRn6xsASkGBMAtFOr/ULkhbwi1IpSOwjhH86ZbdrwhTE61imWUpb2iyKM9npq5EcUGAn
+	LyRJRWqDN9hXK6RLhmIBeKl2/wkzKSMHKYvTc/iocQMbcgIeU+Dyc9PmUf0OVRmWu0AQPS
+	pkiPLPVxCtjbZ/vLa0OyGsgVKPZbDB+bmK2Ee1D45ulnC4K3RO5R8qH0BrNp6O/G7Sjl6+
+	3kVr23g6aq9wyCtCae3ulKKolU8Jd9nWUjYmF8oA4DMHbbcMtLPRl314sQLOpzTO71MgRe
+	Zd5C3g2h74czoGSuUEeToI/aPDOc4RU26HeKflI+IisA1CYPfr9qtWLSR9JNlQ==
+ARC-Authentication-Results: i=1;
+	rspamd-6d7cc6b78d-jpb69;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Shrill-Squirrel: 7e800a0258e359d8_1740598120877_3242746971
+X-MC-Loop-Signature: 1740598120877:4221620723
+X-MC-Ingress-Time: 1740598120877
+Received: from pdx1-sub0-mail-a232.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.99.192.59 (trex/7.0.2);
+	Wed, 26 Feb 2025 19:28:40 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a232.dreamhost.com (Postfix) with ESMTPSA id 4Z34Jl41B8zLF;
+	Wed, 26 Feb 2025 11:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1740598120;
+	bh=pYIw9z3bS5deLOWEgf2733YFTI87p9O1CnGmqE0gF08=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=mkc0h+Lv2m2i8Hp/ny7cTPnrR/Rj06rgBp19qbgM+HJkUxv4+L7sNLswOk1B+LvPW
+	 Hr5aiWVaS+rtM/rLs3zK92JGFKVRBVUm41EGuEVNzWT0itjZGxW70SJfEkWQr+iZgY
+	 kdKj1/z1jYwQRFhpy2Wvxj8hl//mgctMgkBfk4rB+3hmNF6Hg6669l0tzAx7Hh/QiJ
+	 61hmzUNp0hVBL7EOmEF7ylfynogImtwg9gI+QwADgUCmjeiiR4oYn8saabBknSlfZq
+	 ikU24o3LalQBplB+pTzYYrCmPApZqou/d3a0GGanJ74pHq5BRVaC9ArYVNYeYOW+aT
+	 sr28ct+tivzmw==
+Date: Wed, 26 Feb 2025 11:28:35 -0800
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH RFC v2 03/10] locking/local_lock: Introduce
+ localtry_lock_t
+Message-ID: <20250226192835.bmehafm2rjcbq42z@offworld>
+Mail-Followup-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org,
+	maple-tree@lists.infradead.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexei Starovoitov <ast@kernel.org>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <20250214-slub-percpu-caches-v2-3-88592ee0966a@suse.cz>
+ <20250226170053.lxpreaegz5tysef7@offworld>
+ <CAADnVQLAfZBvSyqE=2sbdH-kuNhvAJM+R_qMzfgPv=MDF+=VQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|DBBPR03MB7451:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47ee319f-607e-4f5e-11cb-08dd569c97a9
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799006|19110799003|8060799006|5072599009|440099028|3412199025|21061999003|41001999003|12071999003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OLVLa2/MSIDJo/L7uSQ418vgWT6lbHDzJIHObDR/1zu5k2CpOXb0DlNZSXDp?=
- =?us-ascii?Q?2nyWVpSlaMoz7u9bc5EvTMMzmV6uhbjSDJdIbpXYrZ9MG0v/D8TgYhQk0DeW?=
- =?us-ascii?Q?Gy9lgpSMnvBRX/yna1EC+G8c3Jd3uCE6s8BmmTx3qnqXomYRTg5Wrp+ZvaL9?=
- =?us-ascii?Q?OipWlJIgZnHMwvUDIJ/R82Stjsw+Dqo8hVstgzWSLOlbVvP1jRaFoLDXk+Rl?=
- =?us-ascii?Q?vGrbAELFhv5u8ZwwyutVYEwqh0ATlZ21zxwxbneUi7srM+QksWY3poLqheNG?=
- =?us-ascii?Q?GAWCJMhFCpktxtUR10kH7wNqMPh28GhVluVRcO/VnLeCRU8Pah+eNeUl69de?=
- =?us-ascii?Q?Le/DzT/BRrn94eBgIPXT6zaJztkIVCdpwiHmqqOlhWabNGr0SesouBdJg1J8?=
- =?us-ascii?Q?btwR4Tp7zyJmaL1EzIbiyTqXPpF277QClSsNgCahkduRSekQNh7TkACq5hZp?=
- =?us-ascii?Q?Ry0jfyQevVwI1f0PUFZzhv66wjkw5M152gKPcqKdR4MiW1OLw4+Fc8jrK8zJ?=
- =?us-ascii?Q?6232Ie0MPk2PTHukF1MT4uR9jBUGSkldg00OZpXVk9YIQjdozwIa3n65GWHe?=
- =?us-ascii?Q?1QA0p3oWwRCgB8bQrfh3wbCad4nEPEyhBhdzN0Jqr/VAEc739BsHYI8u5L1h?=
- =?us-ascii?Q?2prbG0sDiDvFnbn7IkmMhW6esA2324cLPiXZKN+a2g3l0bH+Ay+tTjlS61Uf?=
- =?us-ascii?Q?VHtArO1I8wRK2WTK6i5PzXQJXS2R2txsf2rzeVDt9vReZurZ7pdZ7X6knDJC?=
- =?us-ascii?Q?6mhu16hDcaYmLJ0Utxw3W03ZDYQLjxUnDwvfpv5oQmjcTIdG4Cu95+2x37D8?=
- =?us-ascii?Q?MlOi6pcUzk1Z8hvadWU5NUpOWYsAIw3rL81xCD4O4uJH6ddZpFe1QI1fqYL8?=
- =?us-ascii?Q?LS7zfGjd5YvrxD/eZigKxS4ruPoYXxHJQRBeL2oaT+B9pfCIiUtL7dziNMrG?=
- =?us-ascii?Q?Xh47JosPHSejklesidZK9rurwpD69GhihcQk6mF6yGjwWLbql8P1NRGozZGG?=
- =?us-ascii?Q?p2h5vOwkiag4w9df9rYAvnpvT2SneJRcAax170Sz9FgkgrD1XmzfDY77uUtb?=
- =?us-ascii?Q?7Ub6Q8kVa4ET66L+Mwck/TZUwHdD7bbF+t7FOKkpBxVtSX7W6KL1zXE/DoS0?=
- =?us-ascii?Q?TeZsjZl3M65olCisDz7aETVM6Y2qEtT7eQ=3D=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YfyosufItesbFH7StDoM+vNTbL1T3Taj4e3mWidJ3VxS4PGJGbd746VTQFNL?=
- =?us-ascii?Q?UGzGCNYp/+TSh9rSTEQ0jOwzfhbDIrKgWaQr8CKGxpkQvql16JENY3ovlOSP?=
- =?us-ascii?Q?P565l9e1XVuoZF96nhD7nNSeKvCGqXpcuIdpx3lt/rL+S4j6xdtnEjDVkOZH?=
- =?us-ascii?Q?UtlPuP7JJ6X01ZJqXHGQz4+5ymXvUI/PHEyBs7kRJ/uNzyzKcSq3/YjS49bb?=
- =?us-ascii?Q?m4zAlT0GpydsgZLCcRcx4nST6zygZTjniTwRozyH69wT8KyKZU+FBpqaGtMK?=
- =?us-ascii?Q?TBILWYpHlZChqrJ9Nppb+mjR9ligUP4E37Wxp91yU333ZtT5cfh6SvuuPNUB?=
- =?us-ascii?Q?1yLyLeW2r8HoRV0tbbTl8PKMh5CdCKKZZQMjgBtSlz+P/WIlojTrXTcSiOjV?=
- =?us-ascii?Q?GtPq1Xp7b+f8ulfQ3ATZ4oq2YSIcTh2WuU0DeVM1pVYEndgcpYrRAFpELIAB?=
- =?us-ascii?Q?Pd1Bd8a8NkpUaqNhjtzYfo21Z/MKGQAFqqOmYyxWavKPs3pSG0F4yjWB922x?=
- =?us-ascii?Q?93loRfcMKS8Rai91rgIWOksDjf6GYYN8BLL7S0F52QT8v8xK2qQ6ruMhe4VN?=
- =?us-ascii?Q?ExODKaOosR464D8yyDj+i92yT8u0O+ldTi4w9i1qerFgRDo6wFjNqeJUOn7B?=
- =?us-ascii?Q?C71EckY7IcFTqAi8D9Hbhh/pUgMN4Z65jwBK+S6r+KXHAjoapxeDk+ha2lr9?=
- =?us-ascii?Q?b20+3aZG1U0x3xFUjft5DJAIm/iIlOO9t1XyH6kgyeMuQpyqbItAOHUxvKJq?=
- =?us-ascii?Q?dj/zmO11FMzoQhfF9sZQbXY+7EHO06nleizpj1Q+IDS21zgGOb8KV1NHDt+M?=
- =?us-ascii?Q?ornqMuXzbL9eeaIkCFN0dGlRFbSLK60JdoUp1YuN7kl/xSulcin71WWsxHJS?=
- =?us-ascii?Q?p0grIqYhbe6td434Alshrk/OJJDSLxpxh+QtLJ/KsQvHTLbGVikT4vAPskGs?=
- =?us-ascii?Q?pFiG/2KUh5FaWUmEKrfNIlKWzHyGpXyiknm/yR3T0ByvPlI8zo+3h71GtqJh?=
- =?us-ascii?Q?vZqrB/xlG5qt6JAVnAHdq4tp5AqqCOXCLtPGgN3C1lhz32uGWp62f6ejxP/5?=
- =?us-ascii?Q?qZ7nbmmWJD/26oLG0CWiOEL2DUSdegdDS4Z4VTXdnDSIyuSb6yj6JFFFUePV?=
- =?us-ascii?Q?gYB02XXmt1XPn9MhGkFeyP4UBefIlyvpD2cWuvs1OxJ1Nj9aT4REhzBdXkyV?=
- =?us-ascii?Q?AYkI0Bj7z2+zVWpMf9cSvlx0flexcWVTaNNILxhBNcivsKynvpsARq3laDNp?=
- =?us-ascii?Q?BZW0HJakvxduQzCT2fPb?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47ee319f-607e-4f5e-11cb-08dd569c97a9
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 19:34:31.8208
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR03MB7451
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAADnVQLAfZBvSyqE=2sbdH-kuNhvAJM+R_qMzfgPv=MDF+=VQA@mail.gmail.com>
+User-Agent: NeoMutt/20220429
 
-After kfunc filters support struct_ops context information, SCX programs
-that call incorrect context-sensitive kfuncs will fail to load.
+On Wed, 26 Feb 2025, Alexei Starovoitov wrote:
 
-This patch updates the enq_select_cpu_fails test case to adapt to the
-failed load situation.
+>On Wed, Feb 26, 2025 at 9:01???AM Davidlohr Bueso <dave@stgolabs.net> wrote:
+>>
+>> On Fri, 14 Feb 2025, Vlastimil Babka wrote:
+>>
+>> >From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>> >
+>> >In !PREEMPT_RT local_lock_irqsave() disables interrupts to protect
+>> >critical section, but it doesn't prevent NMI, so the fully reentrant
+>> >code cannot use local_lock_irqsave() for exclusive access.
+>> >
+>> >Introduce localtry_lock_t and localtry_lock_irqsave() that
+>> >disables interrupts and sets acquired=1, so localtry_lock_irqsave()
+>> >from NMI attempting to acquire the same lock will return false.
+>> >
+>> >In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+>> >Map localtry_lock_irqsave() to preemptible spin_trylock().
+>> >When in hard IRQ or NMI return false right away, since
+>> >spin_trylock() is not safe due to PI issues.
+>> >
+>> >Note there is no need to use local_inc for acquired variable,
+>> >since it's a percpu variable with strict nesting scopes.
+>> >
+>>
+>> LGTM.
+>>
+>> Acked-by: Davidlohr Bueso <dave@stgolabs.net>
+>
+>Thanks for the review.
+>Do you mind if I apply your ack to the latest version of this patch?
+>https://lore.kernel.org/bpf/20250222024427.30294-2-alexei.starovoitov@gmail.com/
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
- .../sched_ext/enq_select_cpu_fails.c          | 37 +++----------------
- 1 file changed, 5 insertions(+), 32 deletions(-)
+Yes, that is fine.
 
-diff --git a/tools/testing/selftests/sched_ext/enq_select_cpu_fails.c b/tools/testing/selftests/sched_ext/enq_select_cpu_fails.c
-index a80e3a3b3698..a04ad9a48a8f 100644
---- a/tools/testing/selftests/sched_ext/enq_select_cpu_fails.c
-+++ b/tools/testing/selftests/sched_ext/enq_select_cpu_fails.c
-@@ -11,51 +11,24 @@
- #include "enq_select_cpu_fails.bpf.skel.h"
- #include "scx_test.h"
- 
--static enum scx_test_status setup(void **ctx)
--{
--	struct enq_select_cpu_fails *skel;
--
--	skel = enq_select_cpu_fails__open();
--	SCX_FAIL_IF(!skel, "Failed to open");
--	SCX_ENUM_INIT(skel);
--	SCX_FAIL_IF(enq_select_cpu_fails__load(skel), "Failed to load skel");
--
--	*ctx = skel;
--
--	return SCX_TEST_PASS;
--}
--
- static enum scx_test_status run(void *ctx)
- {
--	struct enq_select_cpu_fails *skel = ctx;
--	struct bpf_link *link;
-+	struct enq_select_cpu_fails *skel;
- 
--	link = bpf_map__attach_struct_ops(skel->maps.enq_select_cpu_fails_ops);
--	if (!link) {
--		SCX_ERR("Failed to attach scheduler");
-+	skel = enq_select_cpu_fails__open_and_load();
-+	if (skel) {
-+		enq_select_cpu_fails__destroy(skel);
-+		SCX_ERR("This program should fail to load");
- 		return SCX_TEST_FAIL;
- 	}
- 
--	sleep(1);
--
--	bpf_link__destroy(link);
--
- 	return SCX_TEST_PASS;
- }
- 
--static void cleanup(void *ctx)
--{
--	struct enq_select_cpu_fails *skel = ctx;
--
--	enq_select_cpu_fails__destroy(skel);
--}
--
- struct scx_test enq_select_cpu_fails = {
- 	.name = "enq_select_cpu_fails",
- 	.description = "Verify we fail to call scx_bpf_select_cpu_dfl() "
- 		       "from ops.enqueue()",
--	.setup = setup,
- 	.run = run,
--	.cleanup = cleanup,
- };
- REGISTER_SCX_TEST(&enq_select_cpu_fails)
--- 
-2.39.5
-
+Thanks,
+Davidlohr
 
