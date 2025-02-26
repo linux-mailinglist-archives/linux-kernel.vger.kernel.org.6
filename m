@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-535085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E2AA46EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7967AA46EA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06121887E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB95D1887919
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E4328137A;
-	Wed, 26 Feb 2025 22:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E3A25D206;
+	Wed, 26 Feb 2025 22:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="KF19JGhs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7Hcrrdfp"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEP3xGZa"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D7E25CC85;
-	Wed, 26 Feb 2025 22:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9925D1FB;
+	Wed, 26 Feb 2025 22:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609495; cv=none; b=MVZerUBI+Dsz6dwsRiwWdDLrdJIfEcOuaBrOaSM9+yQJTo0KYfFPCaCrvi8irTRPxF83UDjVgqchD9WjglU8/E1e/5+C8coOiUnJquKJa4dhfH04vW92551npmMIPxi+nc2whuKy8V9HEVCuMPl7qoYUG7U0R8E/w4HRh+8LmlQ=
+	t=1740609502; cv=none; b=dAIfvCFMqtCo9YU5SeeBJqhgfalOfl/UcAoOBXBHMpvtfmSc2/U2juFT5SLw9KvIojAxTyLQsy+Gz3f+P2fcfOWFzsnTLhn5zIvWDEy553XBaTIfKA3o91zQCuAatXJ43EHMIO4fcBGsP2PtuwtTI4EJsdX8zRRuokbkkoY4g20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609495; c=relaxed/simple;
-	bh=Db98LTqH8jszRgpa67m0NYmQtp7oqUzEwRQjHmNgjTk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=G2V/3a+uwYJW74tPVcPhhzjJh6uCPDjO+UFgMvB379f5eVSgGuoyTKFiVcPVUpN7OGYWPC27ebYkKkVllRjvaLC5cBUgve+yurG96kIaFt9PwXsKg3wi2gKkZODcKm0cpWneAwBGLO2n8LVSUx29015GF/zXlw4Pe/ejkVzHt2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=KF19JGhs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=7Hcrrdfp; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 576A213800F3;
-	Wed, 26 Feb 2025 17:38:12 -0500 (EST)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 17:38:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1740609492; x=1740695892; bh=8jeNcdAnrq
-	Wk+vSPdJdCmOaMfIzJZpxOKWi8SuZ5KO0=; b=KF19JGhsJlH3a2SDPv5eAxRvhb
-	k7cvok85X37wos8bEf6CI/iHsc3GIS+ja/sFVlPNYqw8sKAm3cNXLTFjgKbYnIVZ
-	gExLPtmPqurPB5RJunsYPcn72eyfsbpB+LMRrWonURbaXoo8Z6ZKewgGsMY21x7+
-	XqSVn+7ZWD0UMm+s/BDleeLs51lNL1H0rRSBEdhHVRaUqObk/CpUTHVCV0GrRHNi
-	nz+8ohFzsgmsWqq1gQMVyvdj1LAknHCaV2NkZT0j+tOpTWGDD635JHGXEbWJMpFH
-	kxk1OaraKH52qBV1iqavApSODFecOB5od5e4Gi9iq9w+wm+gqEUuJecjmk+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740609492; x=1740695892; bh=8jeNcdAnrqWk+vSPdJdCmOaMfIzJZpxOKWi
-	8SuZ5KO0=; b=7Hcrrdfp3vQVEX5bJoUSrFhgbhe2LG8SjUrJOf20Ug85y9ZaH6H
-	SvZ+KorAR+y2VdIWv+OFcErsDVtdE+eRyzEaoFRsr+1nXcEonHg6jiHFXlfnSuwt
-	rnRSzILivxfJEu1kh5ApjzlbbGEP7xJHLwiZGsFrcSWRFP9+b6FVOHlCxrRuaund
-	7x8CkcEz8joGbKSk29KCy5wurStT9Iy/Fg3zx7xQvG8axsuS+ZIN1tSmLbAH1eXH
-	D9Q4uxrzr9C9iwoXaiVt2h+9kOG0WmMeh+yjK58GlSg/OlVxAXKMDRcFmJyFdtFg
-	xpU6aPMQlikfoIrTEjEC6ed243SMSx65iVA==
-X-ME-Sender: <xms:1Je_Z0fv-5_fCC0Emq9_ebNwkTh_TuofeVM5knPvNj45pfFrgDv55Q>
-    <xme:1Je_Z2PHqOYEZrGit31V5qpDyisreeH__lu1G1MOXF5uGcAtvWNRazTCjFaerjieC
-    nZCmfJeOn-kxflhZw>
-X-ME-Received: <xmr:1Je_Z1gvpHnmN31ctsO8kcTYEkGCNKuIBML2QOY5WXY-CBPJU98XskqjXaR_ujauQTVTUR1Hq7NBcr_LGuERAxYsKRfENd6FhCh1>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheektdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtsehttdertddtredt
-    necuhfhrohhmpefluhhnihhoucevucfjrghmrghnohcuoehgihhtshhtvghrsehpohgsoh
-    igrdgtohhmqeenucggtffrrghtthgvrhhnpeefveetteejheeugeffledvteeiveffueef
-    jeelueffteeigffgfedthfefieegieenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehgihhtshhtvghrsehpohgsohigrdgtohhmpdhnsggprhgt
-    phhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnrdhknhhosg
-    hlvgesghhmrghilhdrtghomhdprhgtphhtthhopehgihhtsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepghhithdqphgrtghkrghgvghrshesghhoohhglhgvghhr
-    ohhuphhsrdgtohhmpdhrtghpthhtohepghhithhsthgvrhesphhosghogidrtghomh
-X-ME-Proxy: <xmx:1Je_Z5-kdIdvDZ_BrppncdbGFpGvAkur6KE7ASVGzTnbGJ3Ei3Jnmg>
-    <xmx:1Je_Zwu2aFmrD9k9mBpTLIdaQc3EoQV5r72SKe6j5DtVfcTLEUaWfA>
-    <xmx:1Je_ZwEBLgJyTEjy6NFgQ3EbY94slp1ZvRS3nGXnECTJMCAR3d1AfA>
-    <xmx:1Je_Z_PkBoCZszyJ3k08M5mJ5I-0_52ES8c2XDXBAxpIbTPFvcddOg>
-    <xmx:1Je_Z6UjdHcAuaixaLKzZdnjYoKlb31YXXIxkXqP-g2h76kEmxlTjA77>
-Feedback-ID: if26b431b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Feb 2025 17:38:11 -0500 (EST)
-From: Junio C Hamano <gitster@pobox.com>
-To: "D. Ben Knoble" <ben.knoble@gmail.com>
-Cc: git@vger.kernel.org,  Linux Kernel <linux-kernel@vger.kernel.org>,
-  git-packagers@googlegroups.com
-Subject: Re: [ANNOUNCE] Git v2.49.0-rc0
-In-Reply-To: <CALnO6CA5tw9DNo9U8Fu95Y27DBiRaRDsz75MHwm64iW0TBkxDw@mail.gmail.com>
-	(D. Ben Knoble's message of "Wed, 26 Feb 2025 14:09:43 -0500")
-References: <xmqqzfi8bljk.fsf@gitster.g>
-	<CALnO6CA5tw9DNo9U8Fu95Y27DBiRaRDsz75MHwm64iW0TBkxDw@mail.gmail.com>
-Date: Wed, 26 Feb 2025 14:38:10 -0800
-Message-ID: <xmqqzfi89vsd.fsf@gitster.g>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1740609502; c=relaxed/simple;
+	bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dxunCH50qJCArgxn1o+ImPu/9QYNaSQmahieppvot4axvd1WuZ+EPjYA4LSp68TkroPdXpAHy6EFQ7CcN4DhRN6wQl7alLUstCnW7JxJmBwj4WjvIyqF0/hjPk9eGzzCD/7y5pg6YIsWrMGFw+a+o0XbvUZ5vAGzJQ4ircj6IpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEP3xGZa; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab78e6edb99so37042966b.2;
+        Wed, 26 Feb 2025 14:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740609499; x=1741214299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
+        b=gEP3xGZaeyBrxX/hAyDZsRp45gwXbsYRGmauAqH3XOF7u9Y0j8p9ssetYpxxZQIFT7
+         JlkIdvCT2hYUxEP2dmaghzR2wTzIE1LOFHi8nDRnyNSryQstwszM12BQcPKOQNI826iU
+         TaUqeHHT8VQVsXQV67UnaNYJgjxDqePqndkMzQfl2bzcQeBwIebwmdgDKqDUOT2TNRhh
+         r4HIweE6SztITBWNNaezTRnBH8wBIC3QA5LPIlEN3ZbCvUOzSO1r01c3MOjSfPSc4hQS
+         LSg9o6X/w28UTrFlKfaVVR/X4vKTUzOExppi2GFKrS6VVvQb2T3qWeJH2yJQN4nUOuKJ
+         781w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740609499; x=1741214299;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jqg6xgss2TwTJnwYTz6WVElRsaDmvCoRkq61/S/VaTA=;
+        b=MaLC7jK7230zN8eC/yLVNif84/0qH22mPLjEeOQsqARsVkug0SkVu6ZgpPfkzCmxjl
+         3bTjWleXF8+iABRL14w6Jcq+/MfZkCTqvQEzgCLLq5pVLvE9PwSGQiDzmkNLXOOhQdhu
+         xxB+Q4hwITu9+m3SrZbpqhDKv1lnT8OVx6lwnzbhjI5Ux+1gQyE3bPwe7/5p9IyYazw8
+         PpgxQVubKoXvp3Q94+HzR7C8FK3omrEjGgJq3GgxtnPUg86A6VAYqy/MdoMDZF5jN3KZ
+         ibayJzCTlOSbtQoAl6WcALfFxmbShwyV37/4ur1bCJ19kFUTdrCoVNUwghC9HoyuMq4q
+         heHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2ZLAOYiMVAu5UMqtBUCwi0Xj/p6uL429WzFgN5ABeBpTngxPdMMS+7rNAomjoJpVIOqrgJX6wL3h+AA=@vger.kernel.org, AJvYcCWyFG79DM7ieANzzMG8ZKICh/xRovdgPWC/K3jRh5cq9udNkTeh3SwUg0iqZPTYRX8EcIv93snmLdZO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5uOxdB6WYxVw1jS+SUu3i6YbJESHK01zwSFrDHQtGg6A4XWgo
+	FO2MAzap2TTqS0kAhZGZPkUw+Z9iiQKyUZTFH7P5Vabunh+XxrOgXib3FQ==
+X-Gm-Gg: ASbGncuqU9Wz+cQS/4OXyiUm00LTMTrYfmbpMvpJY0pIl8CcjuisDBk0VstNJen7ouN
+	DL9Rs1fbCZ8FJyNcMJsDW0G4vioH4y8pnVX3WgU5IkaIOjOBse9Np47odmhd0R2bgDnfCz2Esjo
+	WujojeRMyX+cmQCn0G3BCHO9l+jyCQYS7q39DodlZL7/FI6pYZqeIOo3iuepbmxJR5xC3CoxYZU
+	1JYlXQSYYSaakHogJRAulC3jhggPEXVL8AblpDvH6knwV11706YdSPVrM8u/ZcUcErO0hvXn560
+	94jzM/P6SVmwyqw8drLZ/WjaD9iDhQgA3jc3c2RW
+X-Google-Smtp-Source: AGHT+IFvnCcjVzKiyESHJQTcXdKkePyQ5sqIwPDa4LsokuRcrAZowyqutvPh5KZs+5lN8m7DEenuDA==
+X-Received: by 2002:a17:906:18b1:b0:abb:ebfe:d5eb with SMTP id a640c23a62f3a-abeeed5bbccmr595868666b.18.1740609498741;
+        Wed, 26 Feb 2025 14:38:18 -0800 (PST)
+Received: from foxbook (adqi59.neoplus.adsl.tpnet.pl. [79.185.142.59])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6f60b2sm14506266b.102.2025.02.26.14.38.17
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 26 Feb 2025 14:38:18 -0800 (PST)
+Date: Wed, 26 Feb 2025 23:38:15 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] usb: xhci: Don't skip on Stopped - Length
+ Invalid
+Message-ID: <20250226233815.46d2f053@foxbook>
+In-Reply-To: <20250226080255.770ca055@foxbook>
+References: <20250226080202.7eb5e142@foxbook>
+	<20250226080255.770ca055@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-"D. Ben Knoble" <ben.knoble@gmail.com> writes:
-> [snip]
->>
->>  * "[help] autocorrect = 1" used to be a way to say "please wait for
-> ...
-> It seems "help.autocorrect" style is _usually_ preferred, but there
-> are a handful of "[section] key" style. (I don't have a preference,
-> just something I noticed.)
+On Wed, 26 Feb 2025 08:02:55 +0100, Michal Pecio wrote:
+> After d56b0b2ab142, TDs are immediately skipped when handling those
+> Stopped events. This poses a potential problem in case of Stopped -
+> Length Invalid, which occurs either on completed TDs (likely already
+> given back) or Link and No-Op TRBs. Such event won't be recognized
+> as matching any TD (unless it's the rare Link TRB inside a TD) and
+> will result in skipping all pending TDs, giving them back possibly
+> before they are done, risking isoc data loss and maybe UAF by HW.
 
-But you cannot write "help.autocorrect=1" and claim that it is
-correct.  Your configuration file does not spell it that way, your
-command line to "git config" command would not take it.
+Actually, Stopped and Stopped - Short Packet may be unsafe too.
+As far as I understand, one of those (depending on SPC capability)
+can occur on the second TRB of a TD whose first TRB completed with
+Short Packet. Then the TD is already given back and removed from
+td_list, so no match will be found with this Stopped event.
 
-The more awkward "in the conifguration file it looks that way" needs
-to be used when I need to write the variable with values.
-
-Alternatively, I could say "setting help.autocorrect to 1 used to
-be....".
-
-Thanks.
-
+I suspect this is the reason why the driver has a policy to silently
+ignore Stopped events which don't match the pending TD, and not only
+Stopped - Length Invalid. Not sure why Stopped - Short Packet isn't
+also ignored and yet apparently doesn't cause problems.
 
