@@ -1,226 +1,207 @@
-Return-Path: <linux-kernel+bounces-533285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E08A457D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:12:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE98A457B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79C016C53F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE44616AE22
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15F8226D05;
-	Wed, 26 Feb 2025 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1E029D0E;
+	Wed, 26 Feb 2025 08:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eN5Aq4eo"
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXcPbggz"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91EF1E1DF8;
-	Wed, 26 Feb 2025 08:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2A0258CC5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557496; cv=none; b=gQQwKZqBkZcBk/KDWg9OuaWXa6uejj8HSbP9sr1fBFpY87RPl04EIf3XYq0lKwXWQK2X4hEkxOewzCIAJlTN780ruVw8O33PoEQqbrHAfbnhLXHacKdHG+dBQEHazdgeVgGYNNVD//VIyhCJnwYlPsOBm6KpniG56wRtD72pAQg=
+	t=1740557424; cv=none; b=NKYry52DOZV+Am6BwGH/RdYpGdyvwUhLrpSRkbdH2oEo9GCXQ5ijszcTI9uapO3cQzFc7dnv9POvWq2+EqfTr5jwR1ai3mmQiXKj7Mp2SK+TC5lcOzx7xCjjDFVWI9HKa5zZyQUTi169Bz5gCRkSiSnoNEjpFhL2mROF+DAlza4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557496; c=relaxed/simple;
-	bh=awSOf5Uptv5ylK84gNxEQtXQbjceSW4sC06B5EGXwTo=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:Cc:To:
-	 In-Reply-To:Content-Type; b=UARJ0LvEX9I2lRuv9JPsmI0Pz0FR1j2BbDtjUsvZI+zxm3JIxy1WmYxBA7xL8TK39G5ecAxv6W8vkoD2GvKWNnhtAXmxka+Y4lhm8r43OKbLlv2G8tAUao2Xkc4kqU0HI4KCuMdWKWTEEOI7VGf+JjGC7F1jRRPnVsUvtbGh4EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eN5Aq4eo; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nCUZttGc7xgLFnCUctj4sa; Wed, 26 Feb 2025 09:10:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740557422;
-	bh=ZqGB3dHEkHXDAW5t23ZRy/tk7CvQyYHBVX5yXFeysoI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=eN5Aq4eovmdL2fTfqQhqmyNlSDtRmJIyRo9BV90ujHdViAKnbjtHr7qbLtUGcLRlZ
-	 sm6a7gFroiFb3USkdQ363fe5J2nBAhWrC7vKq9Gr98LlhArejaCxQtmS/g1lQfI49r
-	 0aIAOKfoRo4tNDooG9At7xMG826jfO8nyaZlknhJmJI7Jeype1X6hRb1E9umLPEZG2
-	 XbWU654Orv/crOsdG/XuK2GvaB+YBDki8U4i31RNmbRUpE2c+df/ckkinYznub6VnQ
-	 yhVMeiNx7yCwm+qgQ83RKYb4GoAOEUYS84Jpg4YkW7VlX71dQkYv0MO6jlmI4MTa2U
-	 +sFJCwiWciqJQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 26 Feb 2025 09:10:22 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
-Date: Wed, 26 Feb 2025 09:10:07 +0100
+	s=arc-20240116; t=1740557424; c=relaxed/simple;
+	bh=m16n2a0G+H+R4XeqWbUshVKKT5SxZQTLx9zmaPENiPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTC+dE2v8b+ZnVG1+RMIvEnm6dJQtZiVFTfsFPNqGkr/hM2ZmcHP/a2nRmjq4aJOPrgHQ9TVfCXF9TMDigUA0K/78lFXm43yOpGZGUIgiMAuLUoWUtvTeuV1HGZl6j35/0ToQtSrJbDVKSfSQNsHV5tkgErrQDWeP/2iGzJXKH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXcPbggz; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abb90f68f8cso1240016466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:10:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740557420; x=1741162220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzL0HH6+3pjB6JtUVnEkC+XEezkYR9X8Kd/L450a2PU=;
+        b=kXcPbggzg2g9xvRUylTF5YWyTUmcdLbmPK3oABsnoBDK//we7JdIKTt2/XMfMi1pC4
+         maH7IhVx4bOSVkDAdHuRhZCeoOTVOTXurXCh33QzGGNxaxN4zDXA1KM4ZQKJ17WBLNXm
+         N9/FO5S3PKTV0odv15Kw/EpbupM/Rge3xzhxs7vq5WEfiR2PYYax0UUENo1TiGWjSHkV
+         ChF203hu8Af5cv6LSBttJE7paPVm53c1CYnUTWWJOyysP+degwnaAbq9mAO//AWh5mam
+         zbOiuDUd0nG3K2jdkYuAF3sLbro82fStSj9cyDGcIwn22r1mvGXuWtKXDQjdD6+tKbBp
+         iIqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740557420; x=1741162220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yzL0HH6+3pjB6JtUVnEkC+XEezkYR9X8Kd/L450a2PU=;
+        b=d09lLHfUFeSZqC7IT0CzAns+yXgYLkGkMFqncXHysloQel4An+brO85PN07QU2IHGV
+         b9uaWxGmeCUR8xorfZo1VAjEoJk29syrueZYNfVrJTaSd9qbnt137MtT2ixUWGUXBwAh
+         nZ09HYLTBNe/IdL1A3LSVU/RWEjzinNl/T9IZmtKBTh/DBk5i0sDA7NUrGZosm/4IDj9
+         mexDooRrY6ENENOCaUvtJGRx0WnWeYBfs2+eWFltEro1mbiKZ8nAMDdvA7KHL/6jGWkf
+         jGH/dDSXfiG8J3azotvMTXHoYRXlBdPGYzk0pGKqq+cIvcU2bGENuCgA2YyWylkjJoaE
+         qQlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLm2qfdipJnjXr4o7rBORnPdD6z3CCmaUE6X9BHic/QBXYdAjPc18tMCu693kwDyBjpRymUtKhO6ExC98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLnINyvzCK6tM2IgN+kYzfD63a4KUtQjMVu9wwAPypavJo+5ph
+	BrbMvIAwH0mhaeBTz+tR9HesM5JX4KnYGd1681Ul7kIcdpzZlVAPUB4klqdZDhU=
+X-Gm-Gg: ASbGncsKG+BZ6+s93yqXS0/xrrRwMYmjyAoLDS2xWgay8NBjlpRu7Mi+vhQZVoSZ2f5
+	Xie6RvNId47cTu8VFwpWQXNJcTQiPocvTxQ8SR8ucqebrepsmmJpfmoO8ng7IG4ok+jppO97FM/
+	QkKY41+sthF36RcVVCgOaiZ5EhG6ZisX2We1lDRmT8WwhDwm7uX0HQdBPsh+NckPmtymsJ/INGM
+	/wjI1K830LrPQDnFr/H1VH1B4WD5Y62GY6+kMZUr9aXj9HhBhhV0Y1KKrARsQYXe64NipXdWbuT
+	3JVQG2g2yaOVb5reX8sEr6Fvn8aeeAY=
+X-Google-Smtp-Source: AGHT+IHpAStU3+Mniiaci5QMGYjPh41Vll/PquOYd6UlaCbeosoKMMhRy2Vp0kLKhOE9xPeFAQTT2Q==
+X-Received: by 2002:a17:907:868a:b0:ab7:d179:2496 with SMTP id a640c23a62f3a-abed0c77de1mr720783166b.6.1740557420331;
+        Wed, 26 Feb 2025 00:10:20 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed1d5c369sm288355466b.60.2025.02.26.00.10.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 00:10:19 -0800 (PST)
+Date: Wed, 26 Feb 2025 11:10:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, johan@kernel.org,
+	dmitry.baryshkov@linaro.org, maz@kernel.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	konradybcio@kernel.org
+Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
+Message-ID: <4fe60edd-6e0b-4e7f-9d4b-632203790b5b@stanley.mountain>
+References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
+ <20250226024338.3994701-3-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
- <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
- <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Frank.Li@nxp.com, James.Bottomley@hansenpartnership.com,
- Julia.Lawall@inria.fr, Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org,
- axboe@kernel.dk, broonie@kernel.org, cassel@kernel.org, cem@kernel.org,
- ceph-devel@vger.kernel.org, christophe.jaillet@wanadoo.fr, clm@fb.com,
- cocci@inria.fr, dick.kennedy@broadcom.com, djwong@kernel.org,
- dlemoal@kernel.org, dongsheng.yang@easystack.cn,
- dri-devel@lists.freedesktop.org, dsterba@suse.com,
- eahariha@linux.microsoft.com, festevam@gmail.com, hch@lst.de,
- hdegoede@redhat.com, hmh@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net,
- idryomov@gmail.com, ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev,
- james.smart@broadcom.com, jgg@ziepe.ca, josef@toxicpanda.com,
- kalesh-anakkur.purayil@broadcom.com, kbusch@kernel.org,
- kernel@pengutronix.de, leon@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org,
- martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org,
- perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de,
- sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org,
- sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
-To: neelx@suse.com
-In-Reply-To: <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226024338.3994701-3-quic_sibis@quicinc.com>
 
-Le 26/02/2025 à 08:28, Daniel Vacek a écrit :
-> On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
-> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
->>
->> Le 25/02/2025 à 21:17, Easwar Hariharan a écrit :
->>> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
->>> secs_to_jiffies().  As the value here is a multiple of 1000, use
->>> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
->>>
->>> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
->>> the following Coccinelle rules:
->>>
->>> @depends on patch@ expression E; @@
->>>
->>> -msecs_to_jiffies(E * 1000)
->>> +secs_to_jiffies(E)
->>>
->>> @depends on patch@ expression E; @@
->>>
->>> -msecs_to_jiffies(E * MSEC_PER_SEC)
->>> +secs_to_jiffies(E)
->>>
->>> While here, remove the no-longer necessary check for range since there's
->>> no multiplication involved.
->>
->> I'm not sure this is correct.
->> Now you multiply by HZ and things can still overflow.
+On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
+> The addition of per message-id fastchannel support check exposed
+> a SCP firmware bug which leads to a device crash on X1E platforms.
+
+You're fixing a bug that is introduced in patch 1.  That's not allowed.
+These need to be squashed into one patch.  I means the patch will be
+slightly long and the commit message will be slightly long but I
+feel like it's manageable.
+
+> The X1E firmware supports fastchannel on LEVEL_GET but fails to
+> have this set in the protocol message attributes and the fallback
+> to regular messaging leads to a device crash since that implementation
+> has a bug for all the X1E devices in the wild. Fix this by introducing
+> a quirk that selectively skips the per message-id fastchannel check only
+> for the LEVEL_GET message on X1E platforms.
 > 
-> This does not deal with any additional multiplications. If there is an
-> overflow, it was already there before to begin with, IMO.
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  drivers/firmware/arm_scmi/driver.c    |  5 +++--
+>  drivers/firmware/arm_scmi/perf.c      | 30 +++++++++++++++++++++------
+>  drivers/firmware/arm_scmi/powercap.c  |  8 +++----
+>  drivers/firmware/arm_scmi/protocols.h |  2 +-
+>  4 files changed, 32 insertions(+), 13 deletions(-)
 > 
->> Hoping I got casting right:
-> 
-> Maybe not exactly? See below...
-> 
->> #define MSEC_PER_SEC    1000L
->> #define HZ 100
->>
->>
->> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
->>
->> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
->> {
->>          return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
->> }
->>
->> int main() {
->>
->>          int n = INT_MAX - 5;
->>
->>          printf("res  = %ld\n", secs_to_jiffies(n));
->>          printf("res  = %ld\n", _msecs_to_jiffies(1000 * n));
-> 
-> I think the format should actually be %lu giving the below results:
-> 
-> res  = 18446744073709551016
-> res  = 429496130
-> 
-> Which is still wrong nonetheless. But here, *both* results are wrong
-> as the expected output should be 214748364200 which you'll get with
-> the correct helper/macro.
-> 
-> But note another thing, the 1000 * (INT_MAX - 5) already overflows
-> even before calling _msecs_to_jiffies(). See?
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index 9313b9020fc1..b182fa8e8ccb 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -1903,7 +1903,8 @@ static void
+>  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+>  			     u8 describe_id, u32 message_id, u32 valid_size,
+>  			     u32 domain, void __iomem **p_addr,
+> -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
+> +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
+> +			     bool skip_check)
+>  {
+>  	int ret;
+>  	u32 flags;
+> @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+>  
+>  	/* Check if the MSG_ID supports fastchannel */
+>  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
+> -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
+> +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
+>  		return;
 
-Agreed and intentional in my test C code.
+This is explained well in the commit message but the comment here needs
+to be better.  Also if scmi_protocol_msg_check() fails then we should
+return.  Let's rename the variable to "force_fastchannel".
 
-That is the point.
+	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
+	if (ret)
+		return;
 
-The "if (result.uint_32 > INT_MAX / 1000)" in the original code was 
-handling such values.
+	/*
+	 * Check if the MSG_ID supports fastchannel.  The force_fastchannel
+	 * quirk is necessary to work around a firmware bug.  We can probably
+	 * remove that quirk in 2030.
+	 */
+	if (!force_fastchannel && !MSG_SUPPORTS_FASTCHANNEL(attributes))
+		return;
 
-> 
-> Now, you'll get that mentioned correct result with:
-> 
-> #define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
 
-Not looked in details, but I think I would second on you on this, in 
-this specific example. Not sure if it would handle all possible uses of 
-secs_to_jiffies().
+>  
+>  	if (!p_addr) {
+> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+> index c7e5a34b254b..5b4559d0b054 100644
+> --- a/drivers/firmware/arm_scmi/perf.c
+> +++ b/drivers/firmware/arm_scmi/perf.c
+> @@ -48,6 +48,10 @@ enum {
+>  	PERF_FC_MAX,
+>  };
+>  
+> +enum {
+> +	PERF_QUIRK_SKIP_FASTCHANNEL_LEVEL_GET,
+> +};
 
-But it is not how secs_to_jiffies() is defined up to now. See [1].
+Let's keep the FORCE_FASTCHANNEL naming.  Normally we would do this like:
 
-[1]: 
-https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/jiffies.h#L540
+#define PERF_QUIRK_FORCE_FASTCHANNEL BIT(0)
 
-> 
-> Still, why unsigned? What if you wanted to convert -5 seconds to jiffies?
+> +
+>  struct scmi_opp {
+>  	u32 perf;
+>  	u32 power;
+> @@ -183,6 +187,7 @@ struct scmi_perf_info {
+>  	enum scmi_power_scale power_scale;
+>  	u64 stats_addr;
+>  	u32 stats_size;
+> +	u32 quirks;
+>  	bool notify_lvl_cmd;
+>  	bool notify_lim_cmd;
+>  	struct perf_dom_info *dom_info;
+> @@ -838,9 +843,10 @@ static int scmi_perf_level_limits_notify(const struct scmi_protocol_handle *ph,
+>  }
+>  
+>  static void scmi_perf_domain_init_fc(const struct scmi_protocol_handle *ph,
+> -				     struct perf_dom_info *dom)
+> +				     struct perf_dom_info *dom, u32 quirks)
+>  {
+>  	struct scmi_fc_info *fc;
+> +	bool quirk_level_get = !!(quirks & BIT(PERF_QUIRK_SKIP_FASTCHANNEL_LEVEL_GET));
 
-See commit bb2784d9ab495 which added the cast.
+	bool force_fastchannel = !!(quirks & PERF_QUIRK_FORCE_FASTCHANNEL);
 
-> 
->>          return 0;
->> }
->>
->>
->> gives :
->>
->> res  = -600
->> res  = 429496130
->>
->> with msec, the previous code would catch the overflow, now it overflows
->> silently.
-> 
-> What compiler options are you using? I'm not getting any warnings.
+>  
+>  	fc = devm_kcalloc(ph->dev, PERF_FC_MAX, sizeof(*fc), GFP_KERNEL);
+>  	if (!fc)
 
-I mean, with:
-	if (result.uint_32 > INT_MAX / 1000)
-		goto out_of_range;
-the overflow would be handled *at runtime*.
+regards,
+dan carpenter
 
-Without such a check, an unexpected value could be stored in 
-opt->lock_timeout.
-
-I think that a test is needed and with secs_to_jiffies(), I tentatively 
-proposed:
-	if (result.uint_32 > INT_MAX / HZ)
-		goto out_of_range;
-
-CJ
-
-> 
->> untested, but maybe:
->>          if (result.uint_32 > INT_MAX / HZ)
->>                  goto out_of_range;
->>
->> ?
->>
->> CJ
->>
-
-...
 
