@@ -1,142 +1,234 @@
-Return-Path: <linux-kernel+bounces-533340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D001A458B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:45:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233BAA458B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E39D18917E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412563AA970
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C40922423E;
-	Wed, 26 Feb 2025 08:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27301A5BA0;
+	Wed, 26 Feb 2025 08:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="lsoVR3av"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q22NNPjU"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC2119992D;
-	Wed, 26 Feb 2025 08:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FAA258CEF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559479; cv=none; b=pAvPBAF/5z3rIaaO6ZV8PkeTEjWKWZd7X3/Xxi6uQG5kNRW04O9UP91SBlFmSfBntewKSQp8b82E6yW7djPIiWYAa5kCQTCyfFCe5x+Cr9FLsDqEPuKwDJd6tSH6tHymQYBneHJnp07aGvc1hwf01C2SlvJDNIh7A5GqPewFaxs=
+	t=1740559556; cv=none; b=C+3Nx0MB/c+wV5Nd0hzGbSgJGk+4XwYVgijkrI+wj+XCcPgkIMOJ+/fDLc48LzBGsLQO2EHG15l0YlOfn9GBwmpuaHC/oPOJrVthN4WApzCW+oOGFvVWKR65QbqfHxc2KMHVmdTjKzVHW9aTjdko8S91GuSCSXyNuth2i+HS29w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559479; c=relaxed/simple;
-	bh=ah8Rud19XqBfAm7klnOLCY4UdWDQ4YKFCkcL12/9vAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Wgt2eOlEjlQICRAYiY/rhEkcIavbpN6yAQC+iEgjBp+ytedvyipEWUXWZgp6ROKUc2rO7Lz3x48gdn04CE8WE2xG6Wz6ZAqLmuYCHoRRyrT61QqrqN058Caarq/yF9w6ogqVCfJvywGowKaLMILjsZM4ZC4x8PNr48EfGRBYbw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=lsoVR3av; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1740559556; c=relaxed/simple;
+	bh=UENyK6nf1sqkzjJ9uKX6c6MBHZH8oAEzlZrBi/B3ayE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p5gq192as5pzqXKHTO1w9ZTXXEA3vR7D4YPZCTTW4vl14itlsrS9DP6MFF3HB3t69ZIjaCV4JZAfsQiW9FUwlE2+ZyBqhBNNSHf9qAgMTicdas/+xiMVgP6vJzpekabPUGZn/TSxQ+rwiaL65f4aQlQxErTctXL/vrYeXSSe1Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q22NNPjU; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4be74b9de53so1928606137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:45:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740559478; x=1772095478;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=12yv0TKYhFE27VJGLR2M6EZlfXB9G3C2ZSi56M7sI+I=;
-  b=lsoVR3avFHhlwKOR8SRBCH0epox0MPjq1b7mieS7FHTnRMsNx0ANddb6
-   jS0LNG45ugwzy8qmw3TdmsaicghWN0nSVZEi8djJuGH0p6Efwd652MZGQ
-   iXZffeMMA5jpfQEGBJ/LCHGV9/IQuGCBJ319+56k3Tn7FORti7SrroqXd
-   M=;
-X-IronPort-AV: E=Sophos;i="6.13,316,1732579200"; 
-   d="scan'208";a="470078821"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:44:31 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:34974]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.7.176:2525] with esmtp (Farcaster)
- id dc3e5d47-4ff6-4e54-90f4-b1104b684e2a; Wed, 26 Feb 2025 08:44:30 +0000 (UTC)
-X-Farcaster-Flow-ID: dc3e5d47-4ff6-4e54-90f4-b1104b684e2a
-Received: from EX19D003UWC001.ant.amazon.com (10.13.138.144) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:44:29 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D003UWC001.ant.amazon.com (10.13.138.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:44:29 +0000
-Received: from email-imr-corp-prod-iad-all-1b-af42e9ba.us-east-1.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 08:44:29 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1b-af42e9ba.us-east-1.amazon.com (Postfix) with ESMTPS id 6C410406C3;
-	Wed, 26 Feb 2025 08:44:24 +0000 (UTC)
-Message-ID: <c48e7708-d100-4ecc-9944-e71f39d00ae6@amazon.co.uk>
-Date: Wed, 26 Feb 2025 08:44:22 +0000
+        d=linaro.org; s=google; t=1740559553; x=1741164353; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XaQtfK1ctsYhz+bqcOdbV6RX9cgXfU4dyosRcNQlmSM=;
+        b=q22NNPjUYiUNh3+5VP7QaJdCWnz2v/HPNSozkb2uEcTJB9mN3HeZwms0uInzxbd1Mr
+         Dlfn6jete5W/wwfR9jkouWcsj5c+fS/M7AOXWuoQbLqU7XpUDmQhMLOmwN46ANUnf9Mp
+         V7ImPWrf8UQE7gEeiW7XtadTmV9Hzwr0Ez5aAbLwj3t2naWRF2jWr/KJu5Z6emXgrsEQ
+         Q8VgxCcBh8vaiPPy7XHMO/KCAmYHpJX9Pq7oDMZxUGYwulLWkMHLZJ/j2veMw5xiHqlB
+         7rbOmVuYyqzmPYFlzexmH6vrzK6B/J41yIBZwvrYNd4qiRDLAaetgAfs10ExPDB5RmVR
+         7dTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740559553; x=1741164353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XaQtfK1ctsYhz+bqcOdbV6RX9cgXfU4dyosRcNQlmSM=;
+        b=Pw6QShFxzce+E5JF9gGJt+tHmrTaDLhGpya9n+HAjuMborhoPj0+BaC14oTsM52WTW
+         RiSXMsutYQIRwaIZ3YdgpSjg/clbXdlzt6/OKI5mINaOoY0IxM0KPCzy9U+XlJI1RjVj
+         hVd6/tPOrSxqEPEVHW7eJSBiHIZ8jAec+ImL75dZrszHFPEGiOg9EOVI9ci+OeU/byr4
+         YE/nsTU8rNdGikhGikWIdCyHHI6HO3Pf5zFVNlhavkxq9eixtht3Z4u17H8V88BQWWYE
+         bBhMWJdBFCELCm9mHKz91s5nPBpJXSgbKjX3jfnzYsMpHqe4iQHCa+9s2S+LrMmHvQq2
+         qNVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0go5qDY8hbab6C8N1gm1/nRJelC/My2NAKVZfbKP8EB72FnDIY5HyRz5OLVViXAItOj42svO+6sMgpjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzziXcX3GOxyyzGYX9CNZT0dr/h/nf+5jFbsKY1IU03FF74LPJt
+	d5PdjohyiVISjOlaifpxibDcDDAOfFdgn2ZGWXTj/SBIu7jbWo3BYAYHWbEUsahgm3fnZTjmT0w
+	BSMbgJuTw3wbNzUV7ZHTe8Nb8fFfTKp7K4rdAiQ==
+X-Gm-Gg: ASbGnctiGZVieno4qp12zT6qwBI9+Y8sXdVZRs7Ze0jPwrLQ579cq2ujeyyvq9W91sP
+	xulM7EsACVBYV1/7/tkCBzsGuUBhOgEm4AN5B5bumVJno6pMiwatOFjOB4xMdSMdfmUL4zgmkG7
+	7prOEEKq4NT71y13eA52xjWPMV6LWBJXBq5k7nT1zb
+X-Google-Smtp-Source: AGHT+IHlTWHmx/PR+pAg6v0zjV4nAI7mL/7+NhbjnE90ZG7dJ3J/mJSI9AvKQBNoL98EdaRoCDlUqdYVK0tIYP4I298=
+X-Received: by 2002:a05:6102:41a2:b0:4af:deaf:f891 with SMTP id
+ ada2fe7eead31-4c00ad0bf53mr3858141137.4.1740559553235; Wed, 26 Feb 2025
+ 00:45:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] mm/secretmem: set AS_NO_DIRECT_MAP instead of
- special-casing
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-3-roypat@amazon.co.uk>
- <d686092d-bc86-4a65-b580-04f0e42e96dc@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <d686092d-bc86-4a65-b580-04f0e42e96dc@redhat.com>
+References: <20250225064750.953124108@linuxfoundation.org>
+In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 26 Feb 2025 14:15:40 +0530
+X-Gm-Features: AQ5f1JrJY6iKijR8inxTrQ5QwIT5PIXgHcc5gyMzNTXahEI-z93knUfSfRHeZtA
+Message-ID: <CA+G9fYvH8nowEkm9td-HZi0C67i=uChzHC7BDt6AhQFNGGDJbw@mail.gmail.com>
+Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 25 Feb 2025 at 12:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.13.5 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.13.5-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.13.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On Tue, 2025-02-25 at 16:52 +0000, David Hildenbrand wrote:> On 21.02.25 17:07, Patrick Roy wrote:
->> Make secretmem set AS_NO_DIRECT_MAP on its struct address_space, to drop
->> all the vma_is_secretmem()/secretmem_mapping() checks that are based on
->> checking explicitly for the secretmem ops structures.
->>
->> This drops a optimization in gup_fast_folio_allowed() where
->> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
->> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
->> by default"), so the secretmem check did not actually end up elided in
->> most cases anymore anyway.
->>
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->> ---
-> 
-> Ah, there it is. Can both patches somehow be squashed?
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Yeah, I'm happy to squash them. I separated them out based on feedback
-on the v2, but checking back I realized that I actually just
-misunderstood/misremembered what you and Mike were telling me. Sorry
-about that, they'll be squashed together in the next posting :)
+## Build
+* kernel: 6.13.5-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 1a0f764e17e372bfc20424b8e79ca2594782924c
+* git describe: v6.13.3-397-g1a0f764e17e3
+* test details:
+https://staging.qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/bui=
+ld/v6.13.3-397-g1a0f764e17e3/
 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+## Test Regressions (compared to 6.13.4)
 
-Best, 
-Patrick
+## Metric Regressions (compared to 6.13.4)
+
+## Test Fixes (compared to 6.13.4)
+
+## Metric Fixes (compared to 6.13.4)
+
+## Test result summary
+total: 125711, pass: 102863, fail: 4064, skip: 18784, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 137 total, 137 passed, 0 failed
+* arm64: 48 total, 48 passed, 0 failed
+* i386: 17 total, 17 passed, 0 failed
+* mips: 32 total, 32 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 38 total, 38 passed, 0 failed
+* riscv: 22 total, 22 passed, 0 failed
+* s390: 21 total, 20 passed, 1 failed
+* sh: 6 total, 5 passed, 1 failed
+* sparc: 3 total, 3 passed, 0 failed
+* x86_64: 44 total, 44 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
