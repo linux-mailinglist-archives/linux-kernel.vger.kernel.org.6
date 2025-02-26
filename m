@@ -1,239 +1,147 @@
-Return-Path: <linux-kernel+bounces-534655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF1A4698D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:24:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A93A46991
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B3917093D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB64C18887BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FB226B089;
-	Wed, 26 Feb 2025 18:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DB7236A98;
+	Wed, 26 Feb 2025 18:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e9HXwbel"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwyCj9Fk"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC23236433
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B89522540A;
+	Wed, 26 Feb 2025 18:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593752; cv=none; b=Qgqnhg8uFT4xkpFjBzUGBrfQ2vRgG00ivLCgusLq9NYdHH3JoSDU+fnTxMBVjg8FFbcZDFJ1OKrhn4LJIXhpOmkndwHBNLF8lxmzJVeNhqTn15qYRxvfO/gXBvPdzNz7HNjvPyCAwCQd2ayNlKF4se8eljH7AAJxBymuroQokYc=
+	t=1740593791; cv=none; b=pmpo04EYBp0CCB8gGE+KdDWK2FDDyQU0EudTamXxd0tosW+pPhbXF50t5UdZAcRpqDqFEgEMMOgq0Ov2GIr1P+OpiZ1wwHRnHGeN8B6/B9KB7e4l6GurK3jBOuqZtuCtO0Gm+d2+KtIh9Dr4Ahp/BveSFX2bHJdlg6kLhiyMFm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593752; c=relaxed/simple;
-	bh=seWoJCLHzUSGHY2ub892/th4uC2XgX2vyehowh0z7Fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eB6PO2zWsZPO654L/5aWUnxtriie6keN3UJTVow3aRoU6EHQuAdohUeY2wpeuEEPBN+Xb2ZSh2HTbDS5kCkWoMr73V0IVTTPHNetplUM4a1EaOWZRnar9LXocJIU29JilWr7yEc6h7tJRmmcWuZNfkdVMMLbv2GNhHuJkfCXZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e9HXwbel; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740593750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0GKvDOo0k2UAhKFvTepzV2l7EJE5eUwGknV9USqZAc=;
-	b=e9HXwbel26/W4JtDgSt9MtSqV80t2CTkSuAycbLxQMCJdRlQFFPq+TJV43g0wu4VkqJ4SM
-	Fq/L5ZTUuFUBJ8/QCHLPfRBiqE2QUbwOSvWJGvhWPUhZlpd1PWlNEup4WKEJxwMg2o8xso
-	hXNtipPrK5wVOem2hOmDFJBBRBth+sc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-ob7jpLXFOuqWGcj0rb0cZA-1; Wed,
- 26 Feb 2025 13:15:45 -0500
-X-MC-Unique: ob7jpLXFOuqWGcj0rb0cZA-1
-X-Mimecast-MFC-AGG-ID: ob7jpLXFOuqWGcj0rb0cZA_1740593743
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B673C180034E;
-	Wed, 26 Feb 2025 18:15:43 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A47EE180087F;
-	Wed, 26 Feb 2025 18:15:42 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: seanjc@google.com,
-	Yan Zhao <yan.y.zhao@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Zhiming Hu <zhiming.hu@intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: [PATCH 33/33] KVM: TDX: Register TDX host key IDs to cgroup misc controller
-Date: Wed, 26 Feb 2025 13:14:52 -0500
-Message-ID: <20250226181453.2311849-34-pbonzini@redhat.com>
-In-Reply-To: <20250226181453.2311849-1-pbonzini@redhat.com>
-References: <20250226181453.2311849-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1740593791; c=relaxed/simple;
+	bh=PNiyuwVdpLNUJENGkyF6Mxf17ggDLh3V6Qr2VnnJecQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5myC1x36AN/8tCaLUaWwVm013K/teqSItYz7U3cGqwlfeWdG8sZH83JV4WmU0FXLq4icKxpwAP2ef7jLG5eYaeJLxbuSeIBLEEdJpFYRbCcuF4xLUBp3sm4G8B2nLQwHxQzMfQ/cVyJ//bDBaQJfhEuY5x4gyNE7VUmCZY4XX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwyCj9Fk; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so27316e87.3;
+        Wed, 26 Feb 2025 10:16:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740593788; x=1741198588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dW8IjnVqYAnoyypVc25LwdWGOG0ZhAp1qYJ86wqoM0E=;
+        b=hwyCj9FkZl4/QW4Jciur9RaLc3rR39ebEgVOlZOm9+De5dlYu5TO6e8IqEO34x4pmD
+         pTr5bqCvR2s3KJ9KBPcsKmcxHxajyj/ol1dCjeriwLRouZvWbbkmEhrxmYmqKkfSFw/Y
+         Xv6qcCUgsGFl42Ue2m0CheUAKvQogJH6pQGXw3MwceKHWhadquOFdlm6f0u01pg6UBoI
+         q4tIdcmrogzoLU1BLyjkIdBGZ7eKBplSgmKBZSdzgGe5CdH/6Ir1Kngv8Ph02VRIxaaQ
+         JdykDD0vwOBz0GJmUdemmbygvFc8cvpGaX+Ylox4Irs3WpW+QHswUk/V6IttA4WXwnAW
+         WqOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740593788; x=1741198588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dW8IjnVqYAnoyypVc25LwdWGOG0ZhAp1qYJ86wqoM0E=;
+        b=ugKNqxW+twz2l4ge2hBpSNYPZpDbOo2WPXlV68L7tgYfXLLo5OglEarsmKQbwqFO0k
+         tqOQhM6OZG1js7P0vdJA9R1QE71XQEBUHN4tAPgnGYZb1xjmzfkeghqdh32JfZxGnTzT
+         TLmLAIMa3EBK0X/VkTqT5zxoXQW4cTvVGVV1rniBSLdcj9P1nLXhP/xwkwWpowFs+vu8
+         +0Lv2uCeBWIJmBgP+Y81B8VPPKYMJK5yXkvtzdNTnwbzzay7gfZmLdDfB/V7x+euuqIX
+         4kNfS0+YPZpxABR9oRa44kore6PDv25/csnpHt66By7HhHswSuogILx89KEywrqI1yHV
+         MaAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2yT4lFeA7N/dtra0IfmxuqWIenD8YUOpnsh2dbdxY4FSLTudzANRc0WLYt2rXDVT/B9AEspt9FsrPowQ=@vger.kernel.org, AJvYcCXQ0CKKDPxHLm7qbi/vZqjMKvnNhkQcg0vsFOvDWW7lZS/6+ZmUmxY9m8tf0SIfCUVvKcuu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPprN3KEiDpSvs2YwlgzUtTsfYTgafvYs6JV3NbP7NvcN+uqf+
+	+w1fTVx0jMdEMzyFG+lmAiadCIlAL9mp0Y00e4LZ2UfojVsC+OuA
+X-Gm-Gg: ASbGncsA9YSn6H2ysCMiAxGubAVanb3SIFAqcrvT3Tgo5qqzm6lbwMbYYOGXMTqTDIj
+	HFePFW5HTvD6twDACPTJ4hjm1Il52yKvjUKkiEepQK1JgEzhjKIPvgcLUFxliHOyHrNFPS3KCTh
+	haA3RWt4Q5aE72vsAVJwF1H1NQOwwHEdrMohhNcP75a1Jma2xI91uaWrGqedKLwuXBNyxoOtnFS
+	cOonxA4CXdRwuDYEFzaASMPtKVigKTcmq/pQ4RW7hP4danvWCML1IG276vfuB1CpaGLICIStm5F
+	mLoWpzXMd9wgrY38/9zSkRrZxuf4araLkA2f10HE651/5PMm
+X-Google-Smtp-Source: AGHT+IHRLmoBUoY4FBdsGXt2Pz0LRZDOQPRhjMxYUhfsU9pjgEpkUYNYDod+hStyOkPEKqMYoc2UbA==
+X-Received: by 2002:a05:6512:ba5:b0:545:e7f:cf33 with SMTP id 2adb3069b0e04-548510ddc55mr5274273e87.28.1740593787740;
+        Wed, 26 Feb 2025 10:16:27 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f9dc3sm516092e87.215.2025.02.26.10.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 10:16:26 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 26 Feb 2025 19:16:24 +0100
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v3 1/3] rcutorture: Allow a negative value for
+ nfakewriters
+Message-ID: <Z79aeJn_bC9ptBD4@pc636>
+References: <20250225110020.59221-1-urezki@gmail.com>
+ <20250225212409.GA1807836@joelnvbox>
+ <Z78lNRKjLQKigyLw@pc636>
+ <a26d4cc5-ff54-4f9f-b2df-aa423c112487@nvidia.com>
+ <a3892fc3-f0a7-47d1-a7ea-d82bb7c88d05@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3892fc3-f0a7-47d1-a7ea-d82bb7c88d05@paulmck-laptop>
 
-From: Zhiming Hu <zhiming.hu@intel.com>
+On Wed, Feb 26, 2025 at 10:04:35AM -0800, Paul E. McKenney wrote:
+> On Wed, Feb 26, 2025 at 12:49:41PM -0500, Joel Fernandes wrote:
+> > 
+> > 
+> > On 2/26/2025 9:29 AM, Uladzislau Rezki wrote:
+> > > On Tue, Feb 25, 2025 at 04:24:09PM -0500, Joel Fernandes wrote:
+> > >> On Tue, Feb 25, 2025 at 12:00:18PM +0100, Uladzislau Rezki (Sony) wrote:
+> > >>> Currently "nfakewriters" parameter can be set to any value but
+> > >>> there is no possibility to adjust it automatically based on how
+> > >>> many CPUs a system has where a test is run on.
+> > >>>
+> > >>> To address this, if the "nfakewriters" is set to negative it will
+> > >>> be adjusted to num_online_cpus() during torture initialization.
+> > >>>
+> > >>> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> > >>> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > >>> ---
+> > >>>  kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
+> > >>>  1 file changed, 16 insertions(+), 6 deletions(-)
+> > >>>
+> > >>> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > >>> index d98b3bd6d91f..f376262532ce 100644
+> > >>> --- a/kernel/rcu/rcutorture.c
+> > >>> +++ b/kernel/rcu/rcutorture.c
+> > >>> @@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
+> > >>
+> > >> IMO, this should also be updated to reflect the possibily to set it negative
+> > >> and hence to number CPUs:
+> > >>
+> > >> torture_param(int, nfakewriters, 4, "Number of RCU fake writer threads");
+> > >>
+> > > You can set it to a negative as well as to number of CPUs or any other
+> > > number.
+> > Sorry I just meant amend the description to something like "Number of RCU fake
+> > writer threads (or set to -1 for NR_CPUs)", so user does not have to read code
+> > to know that (and update the kernel cmdline params document as well).
+> 
+> Should we also adjust the string for nreaders?
+> 
+Makes sense. Both options are adjusted in same way.
 
-TDX host key IDs (HKID) are limit resources in a machine, and the misc
-cgroup lets the machine owner track their usage and limits the possibility
-of abusing them outside the owner's control.
-
-The cgroup v2 miscellaneous subsystem was introduced to control the
-resource of AMD SEV & SEV-ES ASIDs.  Likewise introduce HKIDs as a misc
-resource.
-
-Signed-off-by: Zhiming Hu <zhiming.hu@intel.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      | 14 ++++++++++++++
- arch/x86/kvm/vmx/tdx.h      |  1 +
- arch/x86/virt/vmx/tdx/tdx.c |  6 ++++++
- include/linux/misc_cgroup.h |  4 ++++
- kernel/cgroup/misc.c        |  4 ++++
- 6 files changed, 31 insertions(+)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 52a21075c0a6..7dd71ca3eb57 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -124,6 +124,7 @@ const char *tdx_dump_mce_info(struct mce *m);
- const struct tdx_sys_info *tdx_get_sysinfo(void);
- 
- int tdx_guest_keyid_alloc(void);
-+u32 tdx_get_nr_guest_keyids(void);
- void tdx_guest_keyid_free(unsigned int keyid);
- 
- struct tdx_td {
-@@ -179,6 +180,7 @@ u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
- static inline void tdx_init(void) { }
- static inline int tdx_cpu_enable(void) { return -ENODEV; }
- static inline int tdx_enable(void)  { return -ENODEV; }
-+static u32 tdx_get_nr_guest_keyids(void) { return 0; }
- static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
- static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
- #endif	/* CONFIG_INTEL_TDX_HOST */
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 02fef65cda87..d85f74c0a965 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/cpu.h>
- #include <asm/cpufeature.h>
-+#include <linux/misc_cgroup.h>
- #include <asm/tdx.h>
- #include "capabilities.h"
- #include "mmu.h"
-@@ -140,6 +141,9 @@ static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
- 	tdx_guest_keyid_free(kvm_tdx->hkid);
- 	kvm_tdx->hkid = -1;
- 	atomic_dec(&nr_configured_hkid);
-+	misc_cg_uncharge(MISC_CG_RES_TDX, kvm_tdx->misc_cg, 1);
-+	put_misc_cg(kvm_tdx->misc_cg);
-+	kvm_tdx->misc_cg = NULL;
- }
- 
- static inline bool is_hkid_assigned(struct kvm_tdx *kvm_tdx)
-@@ -670,6 +674,10 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 	if (ret < 0)
- 		return ret;
- 	kvm_tdx->hkid = ret;
-+	kvm_tdx->misc_cg = get_current_misc_cg();
-+	ret = misc_cg_try_charge(MISC_CG_RES_TDX, kvm_tdx->misc_cg, 1);
-+	if (ret)
-+		goto free_hkid;
- 
- 	ret = -ENOMEM;
- 
-@@ -1453,6 +1461,11 @@ static int __init __tdx_bringup(void)
- 		goto get_sysinfo_err;
- 	}
- 
-+	if (misc_cg_set_capacity(MISC_CG_RES_TDX, tdx_get_nr_guest_keyids())) {
-+		r = -EINVAL;
-+		goto get_sysinfo_err;
-+	}
-+
- 	/*
- 	 * Leave hardware virtualization enabled after TDX is enabled
- 	 * successfully.  TDX CPU hotplug depends on this.
-@@ -1469,6 +1482,7 @@ static int __init __tdx_bringup(void)
- void tdx_cleanup(void)
- {
- 	if (enable_tdx) {
-+		misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
- 		__tdx_cleanup();
- 		kvm_disable_virtualization();
- 	}
-diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index c3bde94c19dc..5fea072b4f56 100644
---- a/arch/x86/kvm/vmx/tdx.h
-+++ b/arch/x86/kvm/vmx/tdx.h
-@@ -21,6 +21,7 @@ enum kvm_tdx_state {
- struct kvm_tdx {
- 	struct kvm kvm;
- 
-+	struct misc_cg *misc_cg;
- 	int hkid;
- 	enum kvm_tdx_state state;
- 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 9f0c482c1a03..3a272e9ff2ca 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1476,6 +1476,12 @@ const struct tdx_sys_info *tdx_get_sysinfo(void)
- }
- EXPORT_SYMBOL_GPL(tdx_get_sysinfo);
- 
-+u32 tdx_get_nr_guest_keyids(void)
-+{
-+	return tdx_nr_guest_keyids;
-+}
-+EXPORT_SYMBOL_GPL(tdx_get_nr_guest_keyids);
-+
- int tdx_guest_keyid_alloc(void)
- {
- 	return ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
-diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index 49eef10c8e59..8c0e4f4d71be 100644
---- a/include/linux/misc_cgroup.h
-+++ b/include/linux/misc_cgroup.h
-@@ -17,6 +17,10 @@ enum misc_res_type {
- 	MISC_CG_RES_SEV,
- 	/** @MISC_CG_RES_SEV_ES: AMD SEV-ES ASIDs resource */
- 	MISC_CG_RES_SEV_ES,
-+#endif
-+#ifdef CONFIG_INTEL_TDX_HOST
-+	/* Intel TDX HKIDs resource */
-+	MISC_CG_RES_TDX,
- #endif
- 	/** @MISC_CG_RES_TYPES: count of enum misc_res_type constants */
- 	MISC_CG_RES_TYPES
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 0e26068995a6..264aad22c967 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -24,6 +24,10 @@ static const char *const misc_res_name[] = {
- 	/* AMD SEV-ES ASIDs resource */
- 	"sev_es",
- #endif
-+#ifdef CONFIG_INTEL_TDX_HOST
-+	/* Intel TDX HKIDs resource */
-+	"tdx",
-+#endif
- };
- 
- /* Root misc cgroup */
--- 
-2.43.5
-
+--
+Uladzislau Rezki
 
