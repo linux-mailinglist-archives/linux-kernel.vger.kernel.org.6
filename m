@@ -1,121 +1,179 @@
-Return-Path: <linux-kernel+bounces-534173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF5EA463C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:52:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BDA463D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0628173F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:52:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0195179E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC238221F00;
-	Wed, 26 Feb 2025 14:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE38221F39;
+	Wed, 26 Feb 2025 14:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kODoTOrp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+H40pGWK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PukYN0zX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE59B21E0AF;
-	Wed, 26 Feb 2025 14:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C6522171E;
+	Wed, 26 Feb 2025 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581565; cv=none; b=hau3yZi5IRurN0qaveE+Kldah4nNnHR0xxp7GZVnIUY2Cb1L2V/fvszSXT/tocTR5rY+VO4YZQguw8ZcEwgr4KO0YfJHqOTga3tiHEpohwgEwuODl8VskzcO9ZgesWziZdD+fofsLibl/eKPqutvrDNOojDlXdJz0lfxViYLRLo=
+	t=1740581691; cv=none; b=R+j2c9lC0gM4T23Ke96t2npoT1z8O3dGm+EmSEYz66V1Nf6SKTlILfiH+hW0/rJtgrnbThG3n1T+/aVWY//VHGoJ3nRJ26j4tWKk2zT7kFoIVRxxSUplbjP9H41K2AxTvhIUBgFehebRFYLVyssW9e9Bikj4AUsjxIk8Bdi89rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581565; c=relaxed/simple;
-	bh=E22Fc9jL05Pf7IMChCFtieu2H7spK/k6Zt+c8r2L2VY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ne86K7V3IWwJDZB7XLS4etIsGaXShYlT1pvFtRCrjEQW0Ezp0BCwnYuqXiyubFKCrY5KmyE6pBT1+En/Vt6SMayeHto3Hbs7zRhx2ZJ0c7BDW8iZMShf4Qqh2VW7sBLmodnJZUZZIuvxYnmeSLVmrOX1E0bqE6+9vwiQwXJ/YV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kODoTOrp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+H40pGWK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 14:52:37 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740581561;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8tL8KtgpEZ3APLVc/11YQHWXuhZ0UhYFw0RN3Q847SY=;
-	b=kODoTOrpLBER6/VB2djq+3lJx1kPY1eYT5Wep7yNvvmRnaiz4CurIrfBFobBwseQpxaI6i
-	ZuzP1L1ApZdF+QNDXLFEyAnLCUt30Z6OiQbvNaUU/nN3QE1sBYa5Cf8WJF02o/k34XOkVE
-	xz0sLEqig7CBmiYGQQsl2ieaZYHwYwDl3iZS2tfcYZ1V3kAKBNSbnYpNmN8aRFkI3S6tGh
-	31waOirhmai3OqDX8suuDLN3FZ74R6XLR8wnpy61tKzG1MrsKP2ouizhlzBflwd04lNhQf
-	CAxFBXgH6yjNevH4GWO/J0g8vWHmmL9aK2tEcX2jXfXb1E8CNzrXBqCLNVOeWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740581561;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8tL8KtgpEZ3APLVc/11YQHWXuhZ0UhYFw0RN3Q847SY=;
-	b=+H40pGWKgp5um3VTOf9kLzz2Pcvw5Zk4G7AkRkEHlZgITdSAvGyi4KX/r+BNUfwH/hLEIq
-	K5zm1DDe16tpLtAw==
-From: "tip-bot2 for Zhou Ding" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/boot: Add missing has_cpuflag() prototype
-Cc: Zhou Ding <zhouding@cmss.chinamobile.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241217162859.1167889-1-zhouding@cmss.chinamobile.com>
-References: <20241217162859.1167889-1-zhouding@cmss.chinamobile.com>
+	s=arc-20240116; t=1740581691; c=relaxed/simple;
+	bh=N5pfdNLe+7DSuFxXMeqe3V85svqYKJ23Y9wxDbruU6I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VRsn5/TWroT5fipp0RxX16WIPl6s5SOEL5MaqF5EYMuZsALsGg0UzFIeIMDTLWzPv++3kR3d9RP2uv+MwBoUTB9yz6z3Tef8zdVbV13FCXAnnTd4EyqkpXydGvgUviU1c872OeP6u5fHPCre5SJhwmZv6OLL/BlUYhMGOjM/O58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PukYN0zX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D6BC4CEE4;
+	Wed, 26 Feb 2025 14:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740581690;
+	bh=N5pfdNLe+7DSuFxXMeqe3V85svqYKJ23Y9wxDbruU6I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PukYN0zXjnAWKdcvGpAeXpJqOOEjbYMMAU++3I2Xbg3JD8MT/tFbWUqZuLr+JlFgo
+	 ndfkdrD2jkTCNOEGJyMkvtQy3bV63AxMAeVFTT1BSRNe+B2xcIS7ZQzU3Gd0QuvuV4
+	 C1mqwYoxuih6faDiufJD0j1/2WFyOjeXh07TmNLXU4HMorq3GLuB+cmifEDfdBbdre
+	 mFzm+d7LyljvGG9pcuFd7c1GvXjH7JxLDZ3eDnpszJ9iceystmeXrlGQOn+7KvaAwz
+	 Lziee9uh+nHU29WiuIlnC4vNiZK1H2uqo0o8xJVhEgi4x+KNmCQ0ajbM5F+FmlyLnH
+	 RGix7N+82K9lw==
+Date: Wed, 26 Feb 2025 23:54:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
+ <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Let fprobe test consider already
+ enabled functions
+Message-Id: <20250226235447.7fab8051b2968277ce6920db@kernel.org>
+In-Reply-To: <20250226142703.910860-1-hca@linux.ibm.com>
+References: <20250226142703.910860-1-hca@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174058155738.10177.10551712962774765029.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/boot branch of tip:
+On Wed, 26 Feb 2025 15:27:03 +0100
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-Commit-ID:     7d8f03f7dd9f7d108b8d5af12fdc57e10555981f
-Gitweb:        https://git.kernel.org/tip/7d8f03f7dd9f7d108b8d5af12fdc57e1055=
-5981f
-Author:        Zhou Ding <zhouding@cmss.chinamobile.com>
-AuthorDate:    Wed, 18 Dec 2024 00:28:59 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 26 Feb 2025 15:40:23 +01:00
+> The fprobe test fails on Fedora 41 since the fprobe test assumption that
+> the number of enabled_functions is zero before the test starts is not
+> necessarily true. Some user space tools, like systemd, add BPF programs
+> that attach to functions. Those will show up in the enabled_functions table
+> and must be taken into account by the fprobe test.
 
-x86/boot: Add missing has_cpuflag() prototype
+Hmm, this ftrace selftests has been expected to be run without 
+any BPF programs... Is there any other issue on other test cases?
 
-We get a warning when building the kernel with W=3D1:
+Anyway, this looks good to me.
 
-  arch/x86/boot/compressed/cpuflags.c:4:6: warning: no previous prototype for=
- =E2=80=98has_cpuflag=E2=80=99 [-Werror=3Dmissing-prototypes]
-      4 | bool has_cpuflag(int flag)
-        |      ^~~~~~~~~~~
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Add a function declaration to cpuflags.h
+Thank you!
 
-Signed-off-by: Zhou Ding <zhouding@cmss.chinamobile.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20241217162859.1167889-1-zhouding@cmss.chinam=
-obile.com
----
- arch/x86/boot/cpuflags.h | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
-index 475b8fd..fdcc2aa 100644
---- a/arch/x86/boot/cpuflags.h
-+++ b/arch/x86/boot/cpuflags.h
-@@ -18,5 +18,6 @@ extern u32 cpu_vendor[3];
- int has_eflag(unsigned long mask);
- void get_cpuflags(void);
- void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d);
-+bool has_cpuflag(int flag);
-=20
- #endif
+> 
+> Therefore count the number of lines of enabled_functions before tests
+> start, and use that as base when comparing expected results.
+> 
+> Fixes: e85c5e9792b9 ("selftests/ftrace: Update fprobe test to check enabled_functions file")
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
+>  .../test.d/dynevent/add_remove_fprobe.tc       | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> index 449f9d8be746..73f6c6fcecab 100644
+> --- a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe.tc
+> @@ -10,12 +10,16 @@ PLACE=$FUNCTION_FORK
+>  PLACE2="kmem_cache_free"
+>  PLACE3="schedule_timeout"
+>  
+> +# Some functions may have BPF programs attached, therefore
+> +# count already enabled_functions before tests start
+> +ocnt=`cat enabled_functions | wc -l`
+> +
+>  echo "f:myevent1 $PLACE" >> dynamic_events
+>  
+>  # Make sure the event is attached and is the only one
+>  grep -q $PLACE enabled_functions
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 1 ]; then
+> +if [ $cnt -ne $((ocnt + 1)) ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -23,7 +27,7 @@ echo "f:myevent2 $PLACE%return" >> dynamic_events
+>  
+>  # It should till be the only attached function
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 1 ]; then
+> +if [ $cnt -ne $((ocnt + 1)) ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -32,7 +36,7 @@ echo "f:myevent3 $PLACE2" >> dynamic_events
+>  
+>  grep -q $PLACE2 enabled_functions
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 2 ]; then
+> +if [ $cnt -ne $((ocnt + 2)) ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -49,7 +53,7 @@ grep -q myevent1 dynamic_events
+>  
+>  # should still have 2 left
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 2 ]; then
+> +if [ $cnt -ne $((ocnt + 2)) ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -57,7 +61,7 @@ echo > dynamic_events
+>  
+>  # Should have none left
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 0 ]; then
+> +if [ $cnt -ne $ocnt ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -65,7 +69,7 @@ echo "f:myevent4 $PLACE" >> dynamic_events
+>  
+>  # Should only have one enabled
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 1 ]; then
+> +if [ $cnt -ne $((ocnt + 1)) ]; then
+>  	exit_fail
+>  fi
+>  
+> @@ -73,7 +77,7 @@ echo > dynamic_events
+>  
+>  # Should have none left
+>  cnt=`cat enabled_functions | wc -l`
+> -if [ $cnt -ne 0 ]; then
+> +if [ $cnt -ne $ocnt ]; then
+>  	exit_fail
+>  fi
+>  
+> -- 
+> 2.45.2
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
