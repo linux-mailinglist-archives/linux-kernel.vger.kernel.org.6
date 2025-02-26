@@ -1,186 +1,336 @@
-Return-Path: <linux-kernel+bounces-533045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6FEA4551F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:56:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCDCA45525
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951303ABFF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DFBC177A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF5E2676CE;
-	Wed, 26 Feb 2025 05:56:23 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3D82676CB;
+	Wed, 26 Feb 2025 05:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jdls1GUT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="eRQCbkaA"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA11C25485A
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740549383; cv=none; b=OYxrjICzcVEkBcVM8dmbK+SB1H0ON/Uia4AWETZl16BEGG5Pbh8wfJji9lahDBfIizKcbD0/hmk1V1mOpSVh391UCVfy9OwBqd+Tl58fFD/8mH0g1kEcxRQSO0holgxiK5X3tjm6dpjholyYrNbxrEq8pDUEupjx2ytA3TVn5yU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740549383; c=relaxed/simple;
-	bh=aJ1CDj6IHG5CdCYhUfhaAMuHbGLGkJsU8mSDkSUKG/k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jU9+QJ9OfeWgSy3r1QcwD6v/Tghs075NCt7Z7Qfu0Csvv6UULHiKM3qg6dckuDHu8R1mbcggnbIS9uauCbE1MxWwgY5RwzLcoGxHWklLHJZJGUm1jpGWag5KVF+qai/KucALGrSZiFOAg9EDRXY7jTOfokBMrCFjLxDTjGx7Wi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so131010495ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:56:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740549381; x=1741154181;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HSP8CbSQTbCE3z3gezg5yrid18Cgij6SuX+4IyN9t1k=;
-        b=RfXFdYQePxTHptChlw1E6yizWtk8SecVIshh0dqdIAvSDuaYJJO6VpIoVD6Ni/pORK
-         fPX8mwSOKhS8XZeex8dNiAMl3+rLhp8UaTusNI3YKvOBh9tVRW2ih85iwT/ujb9qWpKc
-         GVpxQVdLd15lkxmzreT9/EnL3SR0P+4d5vZB2z3Nw3gIfeuLzSdFo/g1MxKolyKs/Wc7
-         ngujz5Jbz+KbWyJ+Hqj2HCjS5/agwTUghpl48YDrCBhc6qTlTdtZQSL8xFyEUcWbHbCB
-         H2VotAMneSYDmMv8SzKDBti8g7gs6zm6g6DoribBRK5hpvwEDT+7Iu8NLj1xGxnZsHWM
-         gtmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPneB4rSWwngiXCA7HzwX2pOVb5o0O3EStyan5SjmOmrG8EcMkpHnHkjltLG0Ix/Pu6fqlsY68sdcR4RA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKY3oFJ1rAN023pVM8xbdDmd2HP3YuJwfLrMD0hhOum+IEhzy8
-	Ovx7ix/tB+k0E2ITPw2jKns+goFn+0yjIRL/rBnW4BPmQtrRMhIDSXor4otB20MKAYD6wWBJK3L
-	8Y/rPVki/C9mgJagRN55ZGFEuhWgQ6EA+3IkiErjo+MN9KOubvkY+nh4=
-X-Google-Smtp-Source: AGHT+IEI/C25oLPvNScwmmGwkgadLS4wD1Jjf3Kg5w27gYr7QxYS7Y67gF1WFdlmVBm20HQhF1It5bWJCaUtmVBn4tQ04g1Gf0mf
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135AF7DA73;
+	Wed, 26 Feb 2025 05:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740549519; cv=fail; b=JZUawmkHh0ok/LC7MTmj+rkJPAqmUecxZMlmXZoqztVRcHI/U35MLg36wOGuWM7A++4OiukImnphQKFUCu+xVD+PqNP40DV4zNHS0d6dX+dePcbTYvc9VItJvZ/9Yh53LX3+6gIfOwQBsp2r6jsNUnZk+gHMOYMkNRJvnLI4QuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740549519; c=relaxed/simple;
+	bh=dDnQQ2suWJwVUnv+dWG8YZnyM/mnnX0Lee3+JFvy/FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QvIk6UIlCc+hBvcJINxbij+mc3eqy5fsf4a5jnhcY6jn+H/ee7yeiY53SEkycmBPvCxgBW1IRDAGAnf+fro2R+7JMu1lB7whrXrAfa5NYKqRcPr7nvClLWRecWlkk88P+2+pp3VTGXdFIZIg+Pc+qTIcJ3z3Y1AEAU5jiMoFcYU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Jdls1GUT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=eRQCbkaA; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q5XcfQ029822;
+	Wed, 26 Feb 2025 05:57:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=Usk6OlARyqsFzYYGe7QTGh4I61e2ZF927fnLqC1AvTw=; b=
+	Jdls1GUTuQtMsgsK8YLn1DAiJZZp8xCyKg+xnVy3O95tNw5HQRhIOgTifEyMTz+4
+	7N5cRdcbZ9Q9Dr2Zs49XnGI0xzyZzagoXxys/G9MBTO8uKcWe+LnWuV5Ra6olDxX
+	aDt9NPSnovUy1x432sH0tcnx5Tm1bvQjMGJynN7KGvbKp+k3MSjUFR7TogTqumn/
+	M17uFh0dUNAbDWKWatyanubz5AGMlY1NkFjG3sZArFCx/a11gBW+cwGvCWp2D2hy
+	RmwZ+Z5sah2VcqhwNsHNNq3D7oMwN5FniE05i9jqJdjwxoazT13mlJ7+R9neuCYS
+	79XXLVK3caG7FqVprC7dLQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451psdgen0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 05:57:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q5k1rL002916;
+	Wed, 26 Feb 2025 05:57:55 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2171.outbound.protection.outlook.com [104.47.58.171])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51aer4d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 05:57:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GfraKSwUqQ7Y+NOzVXCb6fKHq2JjHdrzxeiqYj+eIZRvPFO+icjXYXRJNxZbWMYSd1xF3g6GVNriBMF8tLhxzK9Dx0oHVkCKQLJV/8ysI5j2L/lxSc8rWfDDbCnJdlNEM5nxjQqExcUF9moycdbNpanDudGyTFYv1x8/zwl0m9ALTeVohXyvM1CD2MOE3swpPrGIgOXWhAYuDDaVgQHDEaDGBwJy16gK/ugBXm+msrEOdTM0VV6YmKfYVTvd5fPk1D2/Jnj6TZ7nKpYczwKlnW8mNfOuxLMdCLhOBhXtYpZfWZ/RSlsUfuHRGk0Gkw7zJaMBg1+IfQLJ82fvag8rpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Usk6OlARyqsFzYYGe7QTGh4I61e2ZF927fnLqC1AvTw=;
+ b=Qus9dMkEaU9vOC6a4H+UKaTXheg5N95Z86gFACofjjO5r9V7mpO5p6hZGH629CQKJGz3c73LBcFtzvzPZlkGn1v9UwQX1IJCjCYMWKEl5emf4m36ohiMvrQ1NBgOdXpASXdLT49uVoBgX54XidCU1sUaEbpwCppcqBq/b85aBLLReRT+v0gbypvRWcC2XvQP0NMMsyix5tv31pbHHW8LVJsojjokKeQ/JaIj1sugRcOtaZAAlNBuY5hwhq3i4tccjLH/7oZ3Rmipu8PWl0frp/b9qAlMCbsoDI4C6opAjDJY2o6EpJeY7w+twAXa9gS8uOakJ/91Sxy93KVx/+crow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Usk6OlARyqsFzYYGe7QTGh4I61e2ZF927fnLqC1AvTw=;
+ b=eRQCbkaA2RCVLit2+QRfM9OwJ/4/Q6k1GWBoBXqUzMCTVAsjgrDoEO3ULpl+TzrvdUkUkTifwHYIiUPIzQsLD4uujSXlMiVYIUMGpDolU9DNHjJ1LmDoLndkBVAqCkNvFrgdfrWv7hPrtI3OZv178KUskiX4bVQtpeaqV3bnG10=
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
+ by LV3PR10MB7914.namprd10.prod.outlook.com (2603:10b6:408:21e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
+ 2025 05:57:52 +0000
+Received: from MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
+ ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
+ 05:57:52 +0000
+Date: Wed, 26 Feb 2025 05:57:50 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, akpm@linux-foundation.org,
+        keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org,
+        vbabka@suse.cz, Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org,
+        avagin@gmail.com, benjamin@sipsolutions.net,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
+        hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
+        adobriyan@gmail.com, johannes@sipsolutions.net,
+        pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
+        anna-maria@linutronix.de, mark.rutland@arm.com,
+        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+        enh@google.com, rientjes@google.com, groeck@chromium.org,
+        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+        mike.rapoport@gmail.com
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+Message-ID: <9eed1285-3876-4f64-a079-61a72f6349fa@lucifer.local>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+ <20250224225246.3712295-7-jeffxu@google.com>
+ <55a9ff15-c72e-45cb-ab38-ad814011e27e@lucifer.local>
+ <CABi2SkVRG8-j7T30tFQySOU9G8Lvyxqf_aRTrE2KXhj9GeBOkw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkVRG8-j7T30tFQySOU9G8Lvyxqf_aRTrE2KXhj9GeBOkw@mail.gmail.com>
+X-ClientProxiedBy: LO2P265CA0109.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:c::25) To MN2PR10MB4112.namprd10.prod.outlook.com
+ (2603:10b6:208:11e::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:310f:b0:3cf:fe21:af8 with SMTP id
- e9e14a558f8ab-3d2cb432219mr213116715ab.4.1740549380868; Tue, 25 Feb 2025
- 21:56:20 -0800 (PST)
-Date: Tue, 25 Feb 2025 21:56:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bead04.050a0220.38b081.0002.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in native_tss_update_io_bitmap
-From: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|LV3PR10MB7914:EE_
+X-MS-Office365-Filtering-Correlation-Id: 240aae7c-111a-4a51-d93c-08dd562a81e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z1VBbmhPcmxlSmRPRGFiRVVSQVJKNGZ0dlFkMnFLOG9ROFdTQmZuelRCZjlU?=
+ =?utf-8?B?NTVUenNONGxSQnZzTXdqcjdOR25YZStVVnZVMVgwcmFjOVdkUkpGM3BvbGFX?=
+ =?utf-8?B?bXNFeUlqUDYrd3VFQmNvVlcrTWJ5VVJMd3AwaVlSalhDVHV5YUtlYXQ1MFBO?=
+ =?utf-8?B?ZzdpaFZRWEFwdEMySnJWV203bWNEOER4TFcwaFpMVE05Rk5xQnoydVI1QzlO?=
+ =?utf-8?B?K2V0eTVpREhnRUxUS3FoMjFyY3dZVThLMUltNzREaFQxMStoUW45QkJkNWZq?=
+ =?utf-8?B?RkkzQ09NemlkOS9Dc3JzNVRXTFJJcmlWNkpMZVdSbGRORkNIbVVxZytrTUhX?=
+ =?utf-8?B?ZTRkQzkrYXpDLzNEcnUwd1ZiU3ZYLzdZN3VkUjhNMk5Ib2JVN0orYW50amtF?=
+ =?utf-8?B?V0x2cGlhaG0wTkVSMDkwM212eENjaWh6NmtVaFF5K256MVEvNEoweVFXd1hE?=
+ =?utf-8?B?clF2S3RycDFrblFaa29Kb09zbEZhQUtvWjZ1b2FYOHNTY0xRUVZsSTFoSWI0?=
+ =?utf-8?B?ZDdIMTFoSkptUEdOTDE5V2hYWHJvN29kSGFoUnpvQjk2NUMyTXBBVTZQWE9E?=
+ =?utf-8?B?dU5zTnpUby9VTjg5UFdWY2g4Y0tjTVpZUG1pYi9kN3VUMi84eTVEVml1U3FN?=
+ =?utf-8?B?TnNwV09SdWw4RXZFNTBTaS92VStKaElnaDNVQzQ2WDJvMEl0WXplOVRITHR0?=
+ =?utf-8?B?eWdHU0Mzbjdkb3pPam1Zcm5ENHA2TEVER0RXWXpKdzBLc0lFVFNTSXYwam1x?=
+ =?utf-8?B?OWEycTNkUDZwbW51dVdIaFBUL0tMVjhLS1VWdHhyWUlUL2ZVOXZudDRoSm04?=
+ =?utf-8?B?WG96eXpXTW5uWmxzaWtwRkErbW1TK3dWVlk4Smt1aUpoL01KdlZCK1NxcEYx?=
+ =?utf-8?B?c3dyM1N5b0FRKzlnVmVnTjJWUEp5Y3ZqQzlpV1EwNGU4VkZUNzBUVFA5QnVS?=
+ =?utf-8?B?MTlWN3BEUHBYNlgreUlhajNXOTJ1TUpaQXU0TnlIR2wySDNUNllzSTdnK2x3?=
+ =?utf-8?B?TWpySmJHU3hscVVER1l4NGpPQlNOZklnMzcxUytTL3pjSVMweFB3VUd2RWhH?=
+ =?utf-8?B?UUNBcjNISzczaGUyNkYyZ0U2ZHhlV0VrWklWbnVVRFVZdDBnNDU5NExwcjM1?=
+ =?utf-8?B?M0hJMDk4RHF3ZWZta3ZaSlFjeGZNbndEeWM1eDcyTThGZDd0TTYybTFBelhL?=
+ =?utf-8?B?ZWxpcnlleGhEWWp3N3QvWDdobSsxa3FmakliYkZHelZ3Sm8xTTRGWllHSW5k?=
+ =?utf-8?B?U3JVZHlWWE1aaDF4dktncGU5T25BM3FNeVJ0VGJMaWlWc3ppaGdVYmVFL1VT?=
+ =?utf-8?B?SkhxZlM4NmxCdTFNN0RoUHBKby9jdVZOUUI3dUl1Y1VVYTBLcSs3aWxPeHNT?=
+ =?utf-8?B?UlZUZG05Mm0xa1lHbjB6Q251THhkVDRtaXJmQnFRT3htK3hQVWZab0VkZGNL?=
+ =?utf-8?B?WTNvb1FMZmxCbVJHa3F5dWNxTm0vWUVhQnEwN1pkZktHM2F5WDVIY3BCdTlG?=
+ =?utf-8?B?c0FMa1JYbUhRK0FNQUhTVmV4SXVNbkVjdllkV1NDVStuTStaQy80MGlHWHl6?=
+ =?utf-8?B?Z2VMMWdOUXQzdTVtYVFUMWY0MmlvQnh1UG43SUN1WjJReEhxWVEwT1Z4REZB?=
+ =?utf-8?B?U3l5M0pLVHR4UzBzcUtVVEJSbDJsc1ZBMGduZ25naXFpN1l3VkIxb1NETzJh?=
+ =?utf-8?B?cWI3L1I5V2t6N2ZWVHVPYjBIQngxTjJsZ1ZHZFBmOEZ4RWE5UnBZQ2gxS1Jm?=
+ =?utf-8?B?UExON2tQaEszaFc2b1l1c0ZHd0d6bFN4YlJxdkMrREkyVnpYekNOck5sVnlL?=
+ =?utf-8?B?UHg0V2I3QUYzV2NRWGo1TGNYZjNKUzM5eUduVkFyZmF6OGJXblFyOGJ1MFNs?=
+ =?utf-8?Q?iO8pw0d3d44Lt?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ei9GTDJNSytLYjQvVDdzcDhCY0REM1lRaWJPd04yRFhLWmJzYzJOMm9vayth?=
+ =?utf-8?B?ZmFpbmdYenhxOEs1RkdSeEkxM0djTTcyVTFvcUc4OGlRTTVQU1N1N1pUbUtm?=
+ =?utf-8?B?WlVFMzEvZmN0S0gvZHZXN0lCY3pyUWZ3cGRxTER2UVBRM0RsSzVlWW5NRVdo?=
+ =?utf-8?B?Z1hEb21NdU9TK2xmc0s0REZQcmZ0Zm95Y3ZDL2E3aEVqUWU0UDZ1WFM3UXp0?=
+ =?utf-8?B?MmlaUTZvL0xTYVc5WVNlbDVQRjVCN3JkR2xJN2h4WWZJT0hXNzBIL2NlQlMy?=
+ =?utf-8?B?RWVhSE5nZEhSTjNmaUcwaXFRNitqQjdVblhjdU1sNEpIcXRyRHFHdVVvNEtp?=
+ =?utf-8?B?dlloSUR6QmZaR3ZKR2VaR2hDRFpsRURFYUdCSEU1M2l6VTRzaG5sTTc1VjBZ?=
+ =?utf-8?B?SDFnbWFZWllRVlNBTDJmTUJrcm44a0dQbmh4MzZaS1VJZEpaUFVHdFhXa3RQ?=
+ =?utf-8?B?ZjhMSWZtUGt0TmExR1FxcmZoQ2l2cTdBRWo3d2VrbWhWcFFCaHV1T0IrUUht?=
+ =?utf-8?B?b3kzMW1IQXdqd1VNWDRwQWhBWHlxY1Y2WjF5YU50Tm01emRmSEpuRGRqS0Zj?=
+ =?utf-8?B?OFhBNmtleVNmU01sTHNuQWFXcUowVjMyQmN6MXRydzROZUZmWUk1RXpTVUZR?=
+ =?utf-8?B?bUFDN1VjUVJMZU43SWFReG83S1ZYeHdqZGxpUEQ1WEZXWDgvWTBGMUYvb0Jz?=
+ =?utf-8?B?SktDVFJZTW14ZlNHM2wzQllhamdrZVRxbGJnZmc4NXZWZkF2SnZYenpaZWhw?=
+ =?utf-8?B?QWV3NE5xNGF2MEtzN29GMFFWUTF5a0tOUHJrMXN0V2hZMDNyblR3OWcrODgr?=
+ =?utf-8?B?TmZpVnQ3bDgvWXpVK0VBenB2M1Y4U0hUWlY1TUZUZDloekUvclZyQzByaE9F?=
+ =?utf-8?B?YndHQ0YrQml0ZWw1aDdGcFBUK1NLN2ZXOUR0aUJkcXpVeG1oaC8xeVczcGFI?=
+ =?utf-8?B?UVFsODlzUnpocU9yWWF6WDNpMVBOLytXVFljMHY4SHplY2g2L0FMWERCeFhv?=
+ =?utf-8?B?RXUrQUwwZUlNSmZjZWliOHNtS3dCNUhqVDJORzBqSWpNWmxzRjdrbnZDLzdY?=
+ =?utf-8?B?V2w4dzc3OWw5RmIwRWhxSXBVK21sWjNsR3FTUEJLVjMwNFF1NDBaRkVNeGRX?=
+ =?utf-8?B?ZmkwK0pvd1BDVFA3MHVJanJWcytCb21nN0sxUkV2SlhxQm14TnR1TVh2L1F2?=
+ =?utf-8?B?NXJ6VjZFcUFkeXdpWm1jK0tLZ1ZreUFmM3c1bEJWOW1LRExrR1piS3U5Q01Q?=
+ =?utf-8?B?U0psbGoxRjY2OFkxK0paYUZFV1l6cHhEQ0NONGVrSFhCUXFkWUVHY2NaVWVE?=
+ =?utf-8?B?TWp6Yk81cE8rVVRxV3pvTEllY1p3VUMrWFFheUwwbDZqNzdsTTJIYkFrTUV5?=
+ =?utf-8?B?ZDJtdTAxNVF5a0krOXpuYTN3TTdib1lBN3NkTnpDaTlMUHBRZ0ZzcjErTndj?=
+ =?utf-8?B?NnNERElaTjJGZWpGK0pybVhCdFVNTkxsYXZEYlVyZWdxTlR2U3lhUU9uYkV4?=
+ =?utf-8?B?QytKVldWQmFscGM2eW9pa016U2Ixb2RwZmN3a0RLcEZqTnZaNVF6VjVvcEhZ?=
+ =?utf-8?B?SjZmbDF5bGJlbUhsVWxIZWtDUVkrUzh3eVlVYTl6b0FWeFFTRjd5WGRqanpD?=
+ =?utf-8?B?TFc3MFJaZzFTeTdBMmJqREdlcFl1S25NZVR4a1ZWS2UzaGJPcWRDRTg3c2k0?=
+ =?utf-8?B?Q2ZvRzRzOEVaYldkclBjeE16aklIMzlmaEFUWi9VMElOcEpIOTUzNnRqaVVQ?=
+ =?utf-8?B?enc4dUFpVVNPUzdUSmtiNW5MM09zWVB0dHNYWlpQWExaOUI5VEEvWkRNd1BK?=
+ =?utf-8?B?U1lFVkJPZWJuMkIrNEFHNkYxRkp6OXowSUM2OHpDMjlQdDhVeXlqNkRqQ3Ux?=
+ =?utf-8?B?QWoyZ05aM29ucVcxdUwzOFFBZ0JENTJSTFIzV1JmOTBhVWZ0Y0Y0Uis2a0g4?=
+ =?utf-8?B?VXFuMDh0SDZXbVl0ZlJjM1V5b0MrZ01BaGxWTEcxejFKNkFDRFpmSUFLcGhP?=
+ =?utf-8?B?WkROQTIzekt2eWV2NjVicWVXMlR4U2F1ZjB1ZGt0L2VhL1gzdjlhbW1oaWpW?=
+ =?utf-8?B?NzNrVHBYTjdxamZjTDl6WnJqVEpzV0ozdlBCTnl1Y2tHNk1EN0VFWk91blFp?=
+ =?utf-8?B?eUo0VEMrUGk4NzdiQS9sZjZ1TU1SclVxOFZsWFgwOEpKODhocHBLUWRiMnk5?=
+ =?utf-8?B?d1E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	PeaFaE3WEGmoAVPh/C27K39gVAoxkJcqT1t/RndhYs0ax8ASTIIueP5r0e9Ke3yYwjjrQOItf9CUw0TjyHQRiC75FILUvsaUWj9Wevvug6RTbSEPxU5NbfEbjoBxSNvViCDblVE8N0/rLAilV1MjBghwVPMgfyYcMDciEMLBE7hJ9wH/I1pSqubtTBIj+NyqUjS3jfDLzQXnCndhtOflHTgbtGAY0ucA5CGpbTMKamJ6c+wwP71mwSP0wWcBMDWNIKbdxynrOfY4vRfGkk97Ev4A6qqxx6z8lFx6AFexaW3GClbda3q2oTr/7WPKfUq0Jtueaj6D9qxY+B1HldEa8eEXoe6dX81wCxgX+GboNIgRkzx8IA/L1zieninOb56FYP4UiM6cJTV3hB/QV6qngQ423Pdh9pi7B6eDBZsvSGIVJ4EQh6aeZ6PpZuuOlLrsg7UaDPL/d01CDtf1VjlJA66CJTA3jalZ47d8n+NyOBs+csLskjxOqWPzAtJTgxTVl64qftXpGefQacmdgkESDmzWVNAXFlDTpZq0vMcU807vFjN8kry7zVuNmhc+yrmYBf9stS46tj5+xDyNBYFbnXC8GnYL2sL16ef6yaBhcdY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 240aae7c-111a-4a51-d93c-08dd562a81e0
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 05:57:52.5362
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4IjdAgxDyMavI0LHZ14aUv54mJmOWZibyU+X8snRk2QWqNBAW9vC8deaVSoPfdQEdB/2w7Cigto3/IdQ43YIwUkZbmF/B0nkkDhJPl+ibAI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7914
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_08,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502100000 definitions=main-2502260045
+X-Proofpoint-GUID: JjCTJUdAMDhjAadAGkQDOQI-i1GtjMbd
+X-Proofpoint-ORIG-GUID: JjCTJUdAMDhjAadAGkQDOQI-i1GtjMbd
 
-Hello,
+On Tue, Feb 25, 2025 at 04:06:37PM -0800, Jeff Xu wrote:
+> On Mon, Feb 24, 2025 at 10:24 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > On Mon, Feb 24, 2025 at 10:52:45PM +0000, jeffxu@chromium.org wrote:
+> > > From: Jeff Xu <jeffxu@chromium.org>
+> > >
+> > > Provide support to mseal the uprobe mapping.
+> > >
+> > > Unlike other system mappings, the uprobe mapping is not
+> > > established during program startup. However, its lifetime is the same
+> > > as the process's lifetime. It could be sealed from creation.
+> > >
+> >
+> > I thought we agreed not to enable this for now? What testing
+> > have you done to ensure this is functional?
+> >
+> I honestly don't know much about uprobe. I don't recall that I agree
+> to ignore that though.
 
-syzbot found the following issue on:
+OK sorry I realise you have done this from an early version of the series,
+my mistake! Apologies.
 
-HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fcd7f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e2b1803445d236442e54
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149427a4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ed06e4580000
+I'm concerned you don't feel you know much about uprobe, but I guess you
+defer to Oleg's views here?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+If he's confirmed this is ok, then fine.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
+>
+> As indicated in the cover letter, it is my understanding that uprobe's
+> mapping's lifetime are the same as process's lifetime, thus sealable.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 5891 Comm: iou-sqp-5889 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
-Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
-RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
-R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
-R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- task_update_io_bitmap+0xb8/0xf0 arch/x86/kernel/ioport.c:47
- io_bitmap_exit+0x62/0xf0 arch/x86/kernel/ioport.c:57
- exit_thread+0x76/0xa0 arch/x86/kernel/process.c:123
- copy_process+0x277d/0x3cf0 kernel/fork.c:2638
- create_io_thread+0x16a/0x1e0 kernel/fork.c:2746
- create_io_worker+0x176/0x540 io_uring/io-wq.c:862
- io_wq_create_worker io_uring/io-wq.c:332 [inline]
- io_wq_enqueue+0x7b5/0xa00 io_uring/io-wq.c:989
- io_queue_iowq+0x433/0x670 io_uring/io_uring.c:542
- io_submit_state_end io_uring/io_uring.c:2215 [inline]
- io_submit_sqes+0x1940/0x1cf0 io_uring/io_uring.c:2335
- __io_sq_thread io_uring/sqpoll.c:189 [inline]
- io_sq_thread+0xc8c/0x1fd0 io_uring/sqpoll.c:312
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
-Code: ff df 48 89 44 24 50 42 80 3c 38 00 74 08 48 89 df e8 cf 75 c7 00 48 89 5c 24 58 4c 8b 2b 4c 89 f0 48 c1 e8 03 48 89 44 24 48 <42> 80 3c 38 00 74 08 4c 89 f7 e8 ac 75 c7 00 49 8b 1e 4c 89 ef 48
-RSP: 0018:ffffc900042cf280 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880b870a068 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: ffffc900042cf380 R08: ffffffff81620a34 R09: 1ffff1100fbacb40
-R10: dffffc0000000000 R11: ffffed100fbacb41 R12: 1ffff92000859e5c
-R13: 0000000000000014 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000555565746480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f62e5469170 CR3: 000000002a054000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	df 48 89             	fisttps -0x77(%rax)
-   3:	44 24 50             	rex.R and $0x50,%al
-   6:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
-   b:	74 08                	je     0x15
-   d:	48 89 df             	mov    %rbx,%rdi
-  10:	e8 cf 75 c7 00       	call   0xc775e4
-  15:	48 89 5c 24 58       	mov    %rbx,0x58(%rsp)
-  1a:	4c 8b 2b             	mov    (%rbx),%r13
-  1d:	4c 89 f0             	mov    %r14,%rax
-  20:	48 c1 e8 03          	shr    $0x3,%rax
-  24:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
-* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	4c 89 f7             	mov    %r14,%rdi
-  33:	e8 ac 75 c7 00       	call   0xc775e4
-  38:	49 8b 1e             	mov    (%r14),%rbx
-  3b:	4c 89 ef             	mov    %r13,%rdi
-  3e:	48                   	rex.W
+> [1]
+> Oleg Nesterov, also cc, seems OK with mseal it in the early version of
+> this patch [2]
+>
+> Are there any potential downsides of doing this? If yes, I can remove it.
+>
+> I'm also looking at Oleg to give more guidance on this :-), or if
+> there are some functional tests that I need to do for uprobe.
 
+Yeah, apologies, my mistake I forgot that this was from early, I thought it
+was scope creep... but I double-checked and yeah, no haha.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+>
+> [1] https://lore.kernel.org/all/20241005200741.GA24353@redhat.com/
+> [2] https://lore.kernel.org/all/20241005200741.GA24353@redhat.com/
+>
+> > I mean is this literally _all_ uprobe mappings now being sealed?
+> >
+> > I'd really like some more assurances on this one. And what are you
+> > mitigating by sealing these? I get VDSO (kinda) but uprobes?
+> >
+> > You really need to provide more justification here.
+>
+> Sure. In our threat model, we need to seal all r-x, r--, and --x
+> mappings to prevent them from becoming writable. This applies to all
+> mappings, regardless of whether they're created by the kernel or
+> dynamic linker.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+All mappings? :P I mean I guess you mean somehow, all 'system' mappings
+right?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I guess you mean that somehow some malicious user could manipulate these
+mappings from a sandbox or such using a series of exploits that are maybe
+more achievable that arbitrary code execution (rop with syscalls or sth? I
+am not a security person - obviously! :)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+And then un-sandboxed code could innocently touch and bang.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I mean that to me makes sense and cool, we're good. Something like this in
+the doc, just a brief sentence like this for idiots (or perhaps you might
+say, idiots when it comes to security :) like me would be great, thanks!
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>
+> > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > > ---
+> > >  kernel/events/uprobes.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > index 2ca797cbe465..8dcdfa0d306b 100644
+> > > --- a/kernel/events/uprobes.c
+> > > +++ b/kernel/events/uprobes.c
+> > > @@ -1662,6 +1662,7 @@ static const struct vm_special_mapping xol_mapping = {
+> > >  static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+> > >  {
+> > >       struct vm_area_struct *vma;
+> > > +     unsigned long vm_flags;
+> > >       int ret;
+> > >
+> > >       if (mmap_write_lock_killable(mm))
+> > > @@ -1682,8 +1683,10 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+> > >               }
+> > >       }
+> > >
+> > > +     vm_flags = VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
+> > > +     vm_flags |= VM_SEALED_SYSMAP;
+> > >       vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+> > > -                             VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
+> > > +                             vm_flags,
+> > >                               &xol_mapping);
+> > >       if (IS_ERR(vma)) {
+> > >               ret = PTR_ERR(vma);
+> > > --
+> > > 2.48.1.658.g4767266eb4-goog
+> > >
 
