@@ -1,117 +1,167 @@
-Return-Path: <linux-kernel+bounces-533513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D41A45B7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:16:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F03A45B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:17:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E123A1763E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B32816DDDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02A324E01A;
-	Wed, 26 Feb 2025 10:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CXc3Vro9"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C452A226D1B;
+	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C4B2459DF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC0619CC11;
+	Wed, 26 Feb 2025 10:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740564921; cv=none; b=UmgjA9+r80Lg9zb0KFb6n32ui/fAiRjQXUITXL/TJN8jW6WJ5nUekvwf2Twq+oEYpiXTDsjFmlt8GUCIlh0wZCXNjC+owN4Eu+oCHA/UfEIPD1h9Zh7ptckXScbuDy9W6AfNuEYsxDy5jq//0y0Uy+cRKu+WUIHPyMPwPHym/2o=
+	t=1740564996; cv=none; b=bq0BMLm4Aex3nVO9b+phLiNf5qPKaqXFj2YxVCs8zviP5dTgV/6GzQwJf9BbkyhjOQGasqXNt7fabMcXVM6MylfFuWQelnq/oqWuyPdCXzbRelCASeGJqgbC3AxGikTAhRaudOqbqeokZeTO6iCiIThvf3u1+2gr7M+hnGZUE2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740564921; c=relaxed/simple;
-	bh=lmaHsdIjyeoXwlxTnbkpP3HL5d/owFOlMVcngpMhhDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iNSZyllRmRSxAnDy3ZK6b3FwixYj1lg0CQUx2bX3ebWrwL1s4fEg8h3GKv+f5h7xHGkAueLHnQD8P1X7RpEw6IKIxhkZfA5ZkCOVvNqiQmyVIWYfbfY5wNxFETWW/lWGwnyCmfgAWUYaJDA8AotuUR+0xbZkt3UZbooG2JJppuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CXc3Vro9; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so4203165e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:15:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740564918; x=1741169718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aGbaXyM3Jpdsq99NC8sU65wH5v68rhdD4yTSLXIyXtw=;
-        b=CXc3Vro91izrzt3YQpCK1JQBx/6Vew++Pzjw8KHw7u3j9hlCTZSWlyQKr9UosR6Ldy
-         5NHxJPliUZH2+OQucmujYc/DH0IXAXFB8s1XMCa1v+wJd9KpXT6GzD7zy5YXx6zqIiEw
-         444rSIoV4jTJf+HlvqLt/xc9meIWYkRKWEz5wH7ZHwFiAxpxMwMuVtnyg91dStWa5oH0
-         B6ki0obMcW0dTTN/YO1RUNfKlW3XMOR/Msv8SSd6pDCzyIa/erAxMpc7XIYEMfpy9avB
-         Cak1HrQNYuEs9weOcSUgJvyuNR28Sf8QW+FQ94T0CM5YlsHaLJ2at4tN6ZY8ogHY9h6p
-         8T2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740564918; x=1741169718;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aGbaXyM3Jpdsq99NC8sU65wH5v68rhdD4yTSLXIyXtw=;
-        b=Cj49vdC1fIbE1DTYEw16XzJ5zX2gHvv1vhjWoKS1faCJyEZM9TQvqNkaLzlPAGq8fG
-         N9yOsj0wJrgak5Yl6n+jaCjwNIgZtPqWO6HIY9VEb4MkdmTMDu6PAOgEDMJkzCwSzFgO
-         94PevbVYZbpFBXZgI+PwNEpIc3oOfUxZt4QS4ziWIIeI3cSZlBlTn9myH7pqp+lP5oLX
-         HIAjJHRaHc6c6+XnbjF45z64mmXOrlNmpJnARpr/ELPnQWtZunChbQKOZ8MDIEb32iwm
-         Tjc3i0BahNFXgYEdPfFCGS9BjWPWQ+q8ARw5lC1/+i06RfDI1tbNbNo4YU4llbYTQhdK
-         VPDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8H+k25QsOyNLvpLCG7/SNuNV9Vyvw/jloPcowjO43v0HF0YsFL/BGcw2Vjsl08TqT5GzW+BTyTwq4slk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe/SfJzrvaklNlqdBVwaUUfoq7emU+mObGf8ZHREoBQu+UjcN+
-	0aaIQrYQedhodlEkpDVIN06uor7rRBGeLuHTqIp7sFBUJ9TOGi+QjRDfnbx8Lm8=
-X-Gm-Gg: ASbGnctSvVwkM35ggxPbJ1bOYVaTpLBf5yyyop6hvz4POIu8bORiYTMZ1MfvlSlqFe0
-	bCJ7rTklevcKWWbLAtlj5EojrFsN0Zl6Ck5Xs2l8hQcta2U4QRuzD/TL1vaKWcc4lEh7PTMd3Po
-	3I72iFjkknK43PagPxa8FG20byzqHDRstXuAwbLdtX3bcHAoW0J1Ir2Vbm/rMEJheA9SaH8LFrO
-	xDrvGtMs5VUnOu/QMle23B+uln/l+myijpLw2k0+hXy8Y/Hw6ewHGqCKOT7yoYZ/tM0lCWQlg8V
-	KdYdlvjIOaVJq2h5GZqGiq0=
-X-Google-Smtp-Source: AGHT+IHJ1cyASwzwsO+YvriZVv8hoDmiSBsK+ybOnr9953bvfTy7VHWnbh89iSzieYU/NqrxhGQkNg==
-X-Received: by 2002:a7b:cd8b:0:b0:435:edb0:5d27 with SMTP id 5b1f17b1804b1-439a30afaecmr221385665e9.9.1740564917888;
-        Wed, 26 Feb 2025 02:15:17 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7d02:26:5770:658c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fc1f9sm4924418f8f.88.2025.02.26.02.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:15:17 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v2] gpiolib: use the required minimum set of headers
-Date: Wed, 26 Feb 2025 11:15:15 +0100
-Message-ID: <174056490934.34383.5628472134451605193.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250225095210.25910-1-brgl@bgdev.pl>
-References: <20250225095210.25910-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1740564996; c=relaxed/simple;
+	bh=/CcL2F/cVbDssQ66xgDLuEBSQTiJSj/VCfAF0UsU5rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mVDcXt5CxNJXpWW9PDo/3S45AaMu7cgN0Rc224slhqKUKu2BJvaqpdqpag7au+8aCYqdmnIPJlue/Xzu5CdzFkzsRElAylDTwdfegEJQ3m8SVWLpQJ58IgeWFxWEXZw9dTtQEbCdE7P4SMkbsQvLlVzGwSSYb/huq8HwSx7hfnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031EFC4CED6;
+	Wed, 26 Feb 2025 10:16:31 +0000 (UTC)
+Message-ID: <6b261f80-6713-430d-93ee-9dac77f47580@xs4all.nl>
+Date: Wed, 26 Feb 2025 11:16:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/6] media: platform: synopsys: Add support for HDMI
+ input driver
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <20250226094946.665963-1-dmitry.osipenko@collabora.com>
+ <20250226094946.665963-4-dmitry.osipenko@collabora.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250226094946.665963-4-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Tue, 25 Feb 2025 10:52:10 +0100, Bartosz Golaszewski wrote:
-> Andy suggested we should keep a fine-grained scheme for includes and
-> only pull in stuff required within individual ifdef sections. Let's
-> revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
-> gpio/consumer.h") and make the headers situation even more fine-grained
-> by only including the first level headers containing requireded symbols
-> except for bug.h where checkpatch.pl warns against including asm/bug.h.
+On 26/02/2025 10:49, Dmitry Osipenko wrote:
+> From: Shreeya Patel <shreeya.patel@collabora.com>
 > 
-> [...]
+> Add initial support for the Synopsys DesignWare HDMI RX
+> Controller Driver used by Rockchip RK3588. The driver
+> supports:
+>  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>  - CEC
+>  - EDID configuration
+> 
+> The hardware also has Audio and HDCP capabilities, but these are
+> not yet supported by the driver.
+> 
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  drivers/media/platform/Kconfig                |    1 +
+>  drivers/media/platform/Makefile               |    1 +
+>  drivers/media/platform/synopsys/Kconfig       |    3 +
+>  drivers/media/platform/synopsys/Makefile      |    2 +
+>  .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+>  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2752 +++++++++++++++++
+>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+>  .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+>  10 files changed, 3512 insertions(+)
+>  create mode 100644 drivers/media/platform/synopsys/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+>  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+> 
 
-Applied, thanks!
+<snip>
 
-[1/1] gpiolib: use the required minimum set of headers
-      commit: 007094c83872ed33c1d9e39b3ef7168d85a3f214
+> +/* vb2 queue */
+> +static const struct vb2_ops hdmirx_vb2_ops = {
+> +	.queue_setup = hdmirx_queue_setup,
+> +	.buf_queue = hdmirx_buf_queue,
+> +	.wait_prepare = vb2_ops_wait_prepare,
+> +	.wait_finish = vb2_ops_wait_finish,
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+These two ops are no longer needed. New drivers must not use them. I'm
+working on removing these ops, but it's not quite there yet.
+
+I will remove these two lines manually for this v11, but if a v12 is needed,
+then make sure you drop these two lines.
+
+Regards,
+
+	Hans
+
+> +	.stop_streaming = hdmirx_stop_streaming,
+> +	.start_streaming = hdmirx_start_streaming,
+> +};
 
