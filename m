@@ -1,213 +1,139 @@
-Return-Path: <linux-kernel+bounces-532814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D8FA45298
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:02:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2AFCA45280
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17713AAEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 104A517900F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4441A83EB;
-	Wed, 26 Feb 2025 01:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ECA1A3BA1;
+	Wed, 26 Feb 2025 01:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="T07tFiD8"
-Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [217.182.113.132])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TR+Tplih"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DE51A5BAE;
-	Wed, 26 Feb 2025 01:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.182.113.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4871019D081;
+	Wed, 26 Feb 2025 01:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740535077; cv=none; b=iXf5ZmKopwnbgENwjmS4LGEiatkOYILCAbH/8i3i36d2nIRRcS0iW4g9Cw4/xhD7kOzfNK7aaM0BLumgkmm0wzuKuqW5N3vla144NMw6+6oZaHFDe7fwVllS6MP0zixxwMgVESs+nkkvkcXxrPxcSzKweAF9WVe50fHmEPwV6fo=
+	t=1740535073; cv=none; b=LZwHOIMSZ5b0D42BRJ6zJwWen/gHUm4JVrKgQc6V7Nz0Ainue5D47rfEYuaE5maDdBGz8hv75BH1w1UGMzqtzWzPtzjb67eFRkmvc+MnGG54he9MjembTAomNJ/qzZFvk8tVUIElqCGLlLoieDU08cZfGHlULSSUbu8VnBPQNHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740535077; c=relaxed/simple;
-	bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tedtHhiK45hTw/ZRKm5QrrWFNVtAUZcXIogQswr380JNUwhcfslyRMQm8a26MBFti+FPGqTnGOUcC+WHdsLPO1CnsDsHT4orrmcngYYoaX+b8HJxfQOXNhIAkuVFBYzXmq6YxncdoPfFbHWCNk7MRJLNnGk5xcgVANFKf6VByGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=T07tFiD8; arc=none smtp.client-ip=217.182.113.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay2.mymailcheap.com (Postfix) with ESMTPS id 7101B3E8A5;
-	Wed, 26 Feb 2025 01:57:53 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 9E3634023E;
-	Wed, 26 Feb 2025 01:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1740535072; bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
-	h=From:Subject:Date:To:Cc:From;
-	b=T07tFiD8k3l+F1ihE5Y+v9JsjZTKcsFlbU0Jt61MrK7i4nAcoTug0UrTZCcly7mnK
-	 zeIcc6jZR0Eu0Tc/fZWSIhjZMNhWUCOcxPKd64BKDicM44nJubx22MEMV2j5Ak3KDP
-	 nzdbYJt5BzXhy+FaPBgf0GyWFzEIi57WYVPclEZo=
-Received: from [172.29.0.32] (unknown [203.175.14.48])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 90274404F6;
-	Wed, 26 Feb 2025 01:57:42 +0000 (UTC)
-From: Mingcong Bai <jeffbai@aosc.io>
-Subject: [PATCH 0/5] drm/xe: enable driver usage on non-4KiB kernels
-Date: Wed, 26 Feb 2025 09:57:31 +0800
-Message-Id: <20250226-xe-non-4k-fix-v1-0-e61660b93cc3@aosc.io>
+	s=arc-20240116; t=1740535073; c=relaxed/simple;
+	bh=QtPU3mcSJOWlTG5Pe7QWi4x4IEqPC/66/sfpTQTshJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ND7m00XOYzEZCcEzNXw3KeQNxL970W4XtM8qRHAru6cwzqaoVFMSV2pnEsFVtFCd+p7uFlIYahaOC33II6frCfbAfVu+aPlf03dVR+O0rz0T0UrEqK6vB9SPrqLxP6zucVdUMWny1CYEXkGYh/2MokH2Wg9rsTyyxDP5qi0f30A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TR+Tplih; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMX45T017692;
+	Wed, 26 Feb 2025 01:57:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QAzt4AuPUvHXPA4JKMQmOna6qgcM/nN1LwMKvZwiKUM=; b=TR+TplihGFbKZXYB
+	0+H1RIiLcPgjb/Ed1gGABdhWud4EKCUzwg9vEmqFDT0NQdB/NKhCfF95ugrKULMy
+	fBoi8Mzo5cfT/e71ncLpe3Wk41stk4WuqzZaUzhS8ltZz4zAZl+mb6oaxBNqTxTy
+	7lh9uOELh2234wbe2KlXEXR9Gj8h7rF5Bggu/gwHR42UrSW3wRgZrVuPl8x2AY6N
+	S32BeDxOS6BsYvazIMp3Jqk1wmFhwZxnM1zwujqz1h0NXzjTvEVTpM7kmk81PyYT
+	ZVngIwRDu9RdjMpelJFRDT/zYfzD2CnhTEyqbZX8iKRYs3PMPfyyW+e72FUU2jMs
+	U3+6Sg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn0c60-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 01:57:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51Q1vbr3032160
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 01:57:37 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
+ 2025 17:57:35 -0800
+Message-ID: <bff06390-08ce-4dac-87a9-4b4d142e78a4@quicinc.com>
+Date: Wed, 26 Feb 2025 09:57:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] wifi: ath12k: Clear affinity hint before calling
+ ath12k_pci_free_irq() in error path
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <ath11k@lists.infradead.org>
+References: <20250225053447.16824-1-manivannan.sadhasivam@linaro.org>
+ <20250225053447.16824-3-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250225053447.16824-3-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAt1vmcC/x2MQQqAIBAAvyJ7bsEW9dBXooPlVkugoRCC9Pek4
- wzMNCichQtMqkHmR4qk2GEcFGynjwejhM5AmqwmclgZY4poLtyloluJAwftrTPQmztz1/9vXt7
- 3A+VGO45fAAAA
-X-Change-ID: 20250226-xe-non-4k-fix-6b2eded0a564
-To: Lucas De Marchi <lucas.demarchi@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- =?utf-8?q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>, 
- Francois Dugast <francois.dugast@intel.com>, 
- Matthew Brost <matthew.brost@intel.com>, 
- Alan Previn <alan.previn.teres.alexis@intel.com>, 
- Zhanjun Dong <zhanjun.dong@intel.com>, 
- Matt Roper <matthew.d.roper@intel.com>, 
- Mateusz Naklicki <mateusz.naklicki@intel.com>
-Cc: Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, 
- =?utf-8?q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>, 
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Shang Yatsen <429839446@qq.com>, Mingcong Bai <jeffbai@aosc.io>, 
- stable@vger.kernel.org, Haien Liang <27873200@qq.com>, 
- Shirong Liu <lsr1024@qq.com>, Haofeng Wu <s2600cw2@126.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740535062; l=4506;
- i=jeffbai@aosc.io; s=20250225; h=from:subject:message-id;
- bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
- b=h1P5B1NsPwC752Eq4QwdLC/ar+9y08WwQAliWRHpeTAe2zGDgTLcx28irCVGWb4zz+NP3K1Vw
- UOoshffMQFlCNBgYA+DmqFPwV+PEJNnG+gn3zo/6ogCJXs4fFsl6D2A
-X-Developer-Key: i=jeffbai@aosc.io; a=ed25519;
- pk=PShXLX1m130BHsde1t/EjBugyyOjSVdzV0dYuYejXYU=
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: 9E3634023E
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.14 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	BAYES_HAM(-0.04)[59.07%];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[intel.com,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,429839446.qq.com:server fail,kexybiscuit.aosc.io:server fail];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	FREEMAIL_ENVRCPT(0.00)[126.com,gmail.com,qq.com];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,lists.freedesktop.org,vger.kernel.org,aosc.io,qq.com,126.com];
-	TO_DN_SOME(0.00)[]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9mUfSnrrBmFnZpA1aKGMDpmLKruxm2kA
+X-Proofpoint-GUID: 9mUfSnrrBmFnZpA1aKGMDpmLKruxm2kA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260013
 
-This patch series attempts to enable the use of xe DRM driver on non-4KiB
-kernel page platforms. This involves fixing the ttm/bo interface, as well
-as parts of the userspace API to make use of kernel `PAGE_SIZE' for
-alignment instead of the assumed `SZ_4K', it also fixes incorrect usage of
-`PAGE_SIZE' in the GuC and ring buffer interface code to make sure all
-instructions/commands were aligned to 4KiB barriers (per the Programmer's
-Manual for the GPUs covered by this DRM driver).
 
-This issue was first discovered and reported by members of the LoongArch
-user communities, whose hardware commonly ran on 16KiB-page kernels. The
-patch series began on an unassuming branch of a downstream kernel tree
-maintained by Shang Yatsen.[^1]
 
-It worked well but remained sparsely documented, a lot of the work done
-here relied on Shang Yatsen's original patch.
+On 2/25/2025 1:34 PM, Manivannan Sadhasivam wrote:
+> If a shared IRQ is used by the driver due to platform limitation, then the
+> IRQ affinity hint is set right after the allocation of IRQ vectors in
+> ath12k_pci_msi_alloc(). This does no harm unless one of the functions
+> requesting the IRQ fails and attempt to free the IRQ.
+> 
+> This may end up with a warning from the IRQ core that is expecting the
+> affinity hint to be cleared before freeing the IRQ:
+> 
+> kernel/irq/manage.c:
+> 
+> 	/* make sure affinity_hint is cleaned up */
+> 	if (WARN_ON_ONCE(desc->affinity_hint))
+> 		desc->affinity_hint = NULL;
+> 
+> So to fix this issue, clear the IRQ affinity hint before calling
+> ath12k_pci_free_irq() in the error path. The affinity will be cleared once
+> again further down the error path due to code organization, but that does
+> no harm.
+> 
+> Fixes: a3012f206d07 ("wifi: ath12k: set IRQ affinity to CPU0 in case of one MSI vector")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/net/wireless/ath/ath12k/pci.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
+> index 06cff3849ab8..2851f6944b86 100644
+> --- a/drivers/net/wireless/ath/ath12k/pci.c
+> +++ b/drivers/net/wireless/ath/ath12k/pci.c
+> @@ -1689,6 +1689,8 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
+>  	return 0;
+>  
+>  err_free_irq:
+> +	/* __free_irq() expects the caller to have cleared the affinity hint */
+> +	ath12k_pci_set_irq_affinity_hint(ab_pci, NULL);
+>  	ath12k_pci_free_irq(ab);
+>  
+>  err_ce_free:
 
-AOSC OS then picked it up[^2] to provide Intel Xe/Arc support for users of
-its LoongArch port, for which I worked extensively on. After months of
-positive user feedback and from encouragement from Kexy Biscuit, my
-colleague at the community, I decided to examine its potential for
-upstreaming, cross-reference kernel and Intel documentation to better
-document and revise this patch.
-
-Now that this series has been tested good (for boot up, OpenGL, and
-playback of a standardised set of video samples[^3]... with the exception
-of the Intel Arc B580, which seems to segfault at intel-media-driver -
-iHD_drv_video.so, but strangely, hardware accelerated video playback works
-well with Firefox?) on the following platforms (motherboard + GPU model):
-
-- x86-64, 4KiB kernel page:
-    - MS-7D42 + Intel Arc A580
-- LoongArch, 16KiB kernel page:
-    - XA61200 + GUNNIR DG1 Blue Halberd (Intel DG1)
-    - XA61200 + ASRock Arc A380 Challenger ITX OC (Intel Arc 380)
-    - XA61200 + Intel Arc 580
-    - XA61200 + GUNNIR Intel Arc A750 Photon 8G OC (Intel Arc A750)
-    - ASUS XC-LS3A6M + GUNNIR Intel Arc B580 INDEX 12G (Intel Arc B580)
-
-On these platforms, basic functionalities tested good but the driver was
-unstable with occasional resets (I do suspect however, that this platform
-suffers from PCIe coherence issues, as instability only occurs under heavy
-VRAM I/O load):
-
-- AArch64, 4KiB/64KiB kernel pages:
-    - ERUN-FD3000 (Phytium D3000) + GUNNIR Intel Arc A750 Photon 8G OC
-      (Intel Arc A750)
-
-I think that this patch series is now ready for your comment and review.
-Please forgive me if I made any simple mistake or used wrong terminologies,
-but I have never worked on a patch for the DRM subsystem and my experience
-is still quite thin.
-
-But anyway, just letting you all know that Intel Xe/Arc works on non-4KiB
-kernel page platforms (and honestly, it's great to use, especially for
-games and media playback)!
-
-[^1]: https://github.com/FanFansfan/loongson-linux/tree/loongarch-xe
-[^2]: We maintained Shang Yatsen's patch until our v6.13.3 tree, until
-      we decided to test and send this series upstream,
-      https://github.com/AOSC-Tracking/linux/tree/aosc/v6.13.3
-[^3]: Delicious hot pot!
-      https://repo.aosc.io/ahvl/sample-videos-20250223.tar.zst
-
-Suggested-by: Kexy Biscuit <kexybiscuit@aosc.io>
-Co-developed-by: Shang Yatsen <429839446@qq.com>
-Signed-off-by: Shang Yatsen <429839446@qq.com>
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
----
-Mingcong Bai (5):
-      drm/xe/bo: fix alignment with non-4K kernel page sizes
-      drm/xe/guc: use SZ_4K for alignment
-      drm/xe/regs: fix RING_CTL_SIZE(size) calculation
-      drm/xe: use 4K alignment for cursor jumps
-      drm/xe/query: use PAGE_SIZE as the minimum page alignment
-
- drivers/gpu/drm/xe/regs/xe_engine_regs.h |  3 +--
- drivers/gpu/drm/xe/xe_bo.c               |  8 ++++----
- drivers/gpu/drm/xe/xe_guc.c              |  4 ++--
- drivers/gpu/drm/xe/xe_guc_ads.c          | 32 ++++++++++++++++----------------
- drivers/gpu/drm/xe/xe_guc_capture.c      |  8 ++++----
- drivers/gpu/drm/xe/xe_guc_ct.c           |  2 +-
- drivers/gpu/drm/xe/xe_guc_log.c          |  4 ++--
- drivers/gpu/drm/xe/xe_guc_pc.c           |  4 ++--
- drivers/gpu/drm/xe/xe_migrate.c          |  4 ++--
- drivers/gpu/drm/xe/xe_query.c            |  2 +-
- include/uapi/drm/xe_drm.h                |  2 +-
- 11 files changed, 36 insertions(+), 37 deletions(-)
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250226-xe-non-4k-fix-6b2eded0a564
-
-Best regards,
--- 
-Mingcong Bai <jeffbai@aosc.io>
+Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
 
