@@ -1,124 +1,309 @@
-Return-Path: <linux-kernel+bounces-534253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D33A464C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:31:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2269A464CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E993B3819
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597A44215C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4F522FE0E;
-	Wed, 26 Feb 2025 15:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22092309B9;
+	Wed, 26 Feb 2025 15:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R9LQM1rT"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JbcNsXOL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D7B227B9A;
-	Wed, 26 Feb 2025 15:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9549227BA4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583616; cv=none; b=I/d4zklgoExMj8O0datio2wEEWXtWqpTsxqA56HPI2uNwrOqKfAiAlI7jZqsSyWCWg8f1VfeMT5KxwtSbq0Nb0Wlg4BbDm4pn6wHu8AAu+B6HOCgXfwr5jhG1cES6jqJTFJsnb6OCtcRJwsZMplJY0exYX9eISIHO3ofIINdYmU=
+	t=1740583632; cv=none; b=tAe9xXQH0JzFSM/I6xhNwUuOoiukGjeuC4yYV7gBLsQsQxOyrAwxs+ESGbr/NVWu0jjUQ2yB5gZeU2gmnkvmJDkq2itahyJ1npcRnzBb432Qv0Hsfoub8A6YrEzpM1Gh+vaRVOvCbLa5/O5FHfTCEoSq5GZ3VU9gIfnpz5VbuIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583616; c=relaxed/simple;
-	bh=Px0TsxbCfQ9bAXB7TeNIXcIiDKaORZDXwBKEcQweDUQ=;
+	s=arc-20240116; t=1740583632; c=relaxed/simple;
+	bh=T4Baa59RSsii1/+I1kF4FXFme9v/EnqNMR7oY5tvLz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jAnuY6I0cjCt6fdVBrDHfFNCcFdqnLDz+ptit0UEABdxdOuhFlYhy5sJcvHHmk7ui0aWA1tPZ0JLS2dpvT0UPVEQJ55Vn9mBIsm+99P2R96aLH+tcmsmWE5yXVOrissgKVw/qbT/7q6cgzCKS+3TnLIbWB/EPGRb1W/mtzPEGZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R9LQM1rT; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B3D44442DF;
-	Wed, 26 Feb 2025 15:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740583611;
+	 MIME-Version:Content-Type; b=YQgH3j2ayYYnsCiz2VMXLFnV5VRtqseU6CMlH6QMyBqawIf2vLom3npuXilbr7tVvRjraSsLzWLqaF5krlJV10asZ+OAanAJ1uLfO7MsmHmxe3K9UylDjoi/grPMtt2mRhJvf9c3fgBQng1oGbaSfNT4sarOcFnWvarmiEyIUx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JbcNsXOL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740583629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NYxcMPGYKbGinA0gFQqz77Ivwma0qnrykC+7U+WLLDY=;
-	b=R9LQM1rTBbQzW/3h544Dab7/s3B629oLhkrD52C73nvXc+5k5Xht4xixV5VXZlH1rRTdKp
-	FtF3Gqa9/6k4ieSgvAJzFWhnyWuvJszk0L45OQYO5GJoG3jVzEIEpKBfHutHBGE/O7A+IG
-	M+3BISZ2dOB66QbBhrPmZ3ctvmTx1zOYp4eUOn+fVUks6JG3Gwe1r/WfC9/3wrCVZz8dCU
-	alNVGDSZ/Cf6lYdhe1owXO8Kh147ldzivqk/Mt/CKq3a5wFFhICoiqPM+OpIFxpzz24yQE
-	EOQCUPjvyGr8TM5S+tfFaU1QT+lraNlF8KqDUFdOe/a+c/DItAkjVQAdEeINDQ==
-Date: Wed, 26 Feb 2025 16:26:49 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
- hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
- SFP+ module
-Message-ID: <20250226162649.641bba5d@kmaincent-XPS-13-7390>
-In-Reply-To: <d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
-References: <20250226141002.1214000-1-ms@dev.tdt.de>
-	<Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
-	<d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=opCox9KVcehhy1NQGp4HS1lXiyGpPcoip0UbMOR0ICE=;
+	b=JbcNsXOLL0jO4NG6ryd3uRLjVGE7J78Xb1w0U/xYAAwsbhehsZDspedfr1j6ukA/0vW3/4
+	L1W7Ktd8pWYGugcsNCgsr//uBZ2FQfIVmcaaIcYlvNpxH70R2zkQzZk7Jb+O6zJzO2a5Fb
+	XhlLIjZaL1bL71ifSYa9p9cfFjdMCTA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-256-bZ2VoH86O2Ku7PGseltwTw-1; Wed, 26 Feb 2025 10:27:08 -0500
+X-MC-Unique: bZ2VoH86O2Ku7PGseltwTw-1
+X-Mimecast-MFC-AGG-ID: bZ2VoH86O2Ku7PGseltwTw_1740583627
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f31e96292so4372842f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:27:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740583627; x=1741188427;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=opCox9KVcehhy1NQGp4HS1lXiyGpPcoip0UbMOR0ICE=;
+        b=ubgyM5n1xX6bRndJJl/4Fq0kGeq2HQ1TJZzNC0DRpRqa2G2hS4LKLNcJtz4nCXyOJq
+         AOFJjknB6sffjSX3hoeUB1H23/OS8ask2yWI6MBGNYoX9H3hyqMbBuflYqGYr9WY/dEE
+         E8+ebQidb4aCgHSvJDT/ICFJIpAx3mU0vyOZ23234C+2rhZEcaiL8kl8WJ4qGCcXwIZ+
+         +gSKU3FTONLW6VEFSd5dfaAs3rMlXUt231Haz4wbUe95TKpvp6qLfkXqO7cDcOSwbjaW
+         xZX+zTDiPfZacRtGxqq1AYmYu3T1GBjt+KtMBQzaTpOOledTSQYaXzpP8+lgl/Pp22CP
+         5yGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXM/+JGCkwqICKyHiicyan9+RCpYdMHN9ogdC29sx/lcniTjOGgJcg+F6OYr4qy83Jir9FIUL0D7zKI+s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLPdV+P7JVZhiLqOhF0iDSx5e0V+8VPgh5+OczoCeG9swCGuaF
+	wND0V4SBYoOo4vzZHtNnPwahz7jCwg0T8630RAvP8fJiONXM1h87U0aYJf9I8wMPV+NyScrswDc
+	iy1sd+bT/z10htpSRrV8pFVgHqRg66FZ2uiu8yfJiviDSroAoRyTj1bDRtIuDtw==
+X-Gm-Gg: ASbGncsda9Lmdl0Pq09aQa+J1P9e0zgHmNo5jBc+Mi+IYaiw6SiSUdeX3u4QQ2FxDsZ
+	rnDE4/hu4OYbgfRNkTiChoQx/z3Cej3fhmc3NTXl9fX9RBhNrmkgX5E7+KcN7E6wAh8+1R35vWf
+	CF7RgreZnWNyEtA0EpcBg4MPe2Q0zvMJyBbw32MOoDJfOtCAz2P2ftFdgctIgE5PEEuIR4AMkQr
+	nfj6ibFcznANzboNAMkKlGhzDJg3zAFiwvfmKUxKZDRC+HgnPFBxukmAElavAR89CqHISsSb1De
+	OA9Ppa/HroNPBFGkX4M2NGEzE/p8ha93Z3rsKfSUygXqeaKLw8jWU7Mclg2AKD8=
+X-Received: by 2002:a5d:5887:0:b0:38f:355b:141e with SMTP id ffacd0b85a97d-390d4f378ebmr3452617f8f.3.1740583626899;
+        Wed, 26 Feb 2025 07:27:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF1DwZYHHCSs8+Mdqpg+KX0YNs2WqUN7TodnTaxIGwwctMTc50nKGidchiWQV2RbC4q0fkVAw==
+X-Received: by 2002:a5d:5887:0:b0:38f:355b:141e with SMTP id ffacd0b85a97d-390d4f378ebmr3452587f8f.3.1740583626458;
+        Wed, 26 Feb 2025 07:27:06 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd882a64sm5769008f8f.46.2025.02.26.07.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 07:27:05 -0800 (PST)
+Date: Wed, 26 Feb 2025 16:27:05 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/14] acpi/ghes: create an ancillary
+ acpi_ghes_get_state() function
+Message-ID: <20250226162705.67875661@imammedo.users.ipa.redhat.com>
+In-Reply-To: <2288cfe02f8cfec4b35759fd748366c885018b59.1740148260.git.mchehab+huawei@kernel.org>
+References: <cover.1740148260.git.mchehab+huawei@kernel.org>
+	<2288cfe02f8cfec4b35759fd748366c885018b59.1740148260.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemleehrggvmeelfhdttdemrggsvggtmedugehfjeemvgdviegrmedufegttdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeelhegrvgemlehftddtmegrsggvtgemudegfhejmegvvdeirgemudeftgdtpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmshesuggvvhdrthguthdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfiesl
- hhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 15:50:46 +0100
-Martin Schiller <ms@dev.tdt.de> wrote:
+On Fri, 21 Feb 2025 15:35:15 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> On 2025-02-26 15:38, Russell King (Oracle) wrote:
-> > On Wed, Feb 26, 2025 at 03:10:02PM +0100, Martin Schiller wrote: =20
-> >> Add quirk for a copper SFP that identifies itself as "FS"=20
-> >> "SFP-10GM-T".
-> >> It uses RollBall protocol to talk to the PHY and needs 4 sec wait=20
-> >> before
-> >> probing the PHY.
-> >>=20
-> >> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-> >> ---
-> >>  drivers/net/phy/sfp.c | 5 +++--
-> >>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>=20
-> >> diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-> >> index 9369f5297769..15284be4c38c 100644
-> >> --- a/drivers/net/phy/sfp.c
-> >> +++ b/drivers/net/phy/sfp.c
-> >> @@ -479,9 +479,10 @@ static const struct sfp_quirk sfp_quirks[] =3D {
-> >>  	// PHY.
-> >>  	SFP_QUIRK_F("FS", "SFP-10G-T", sfp_fixup_fs_10gt),
-> >>=20
-> >> -	// Fiberstore SFP-2.5G-T uses Rollball protocol to talk to the
-> >> PHY and
-> >> -	// needs 4 sec wait before probing the PHY.
-> >> +	// Fiberstore SFP-2.5G-T and SFP-10GM-T uses Rollball protocol to=20
-> >> talk
-> >> +	// to the PHY and needs 4 sec wait before probing the PHY.
-> >>  	SFP_QUIRK_F("FS", "SFP-2.5G-T", sfp_fixup_fs_2_5gt),
-> >> +	SFP_QUIRK_F("FS", "SFP-10GM-T", sfp_fixup_fs_2_5gt), =20
-> >=20
-> > Which makes sfp_fixup_fs_2_5gt mis-named. Please rename. =20
->=20
-> OK, I'll rename it to sfp_fixup_rollball_wait.
+> Instead of having a function to check if ACPI is enabled
+> (acpi_ghes_present), change its logic to be more generic,
+> returing a pointed to AcpiGhesState.
+> 
+> Such change allows cleanup the ghes GED state code, avoiding
+> to read it multiple times, and simplifying the code.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by:  Igor Mammedov <imammedo@redhat.com>
+> ---
+>  hw/acpi/ghes-stub.c    |  7 ++++---
+>  hw/acpi/ghes.c         | 38 ++++++++++----------------------------
+>  include/hw/acpi/ghes.h | 14 ++++++++------
+>  target/arm/kvm.c       |  7 +++++--
+>  4 files changed, 27 insertions(+), 39 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
+> index 7cec1812dad9..40f660c246fe 100644
+> --- a/hw/acpi/ghes-stub.c
+> +++ b/hw/acpi/ghes-stub.c
+> @@ -11,12 +11,13 @@
+>  #include "qemu/osdep.h"
+>  #include "hw/acpi/ghes.h"
+>  
+> -int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+> +int acpi_ghes_memory_errors(AcpiGhesState *ags, uint16_t source_id,
+> +                            uint64_t physical_address)
+>  {
+>      return -1;
+>  }
+>  
+> -bool acpi_ghes_present(void)
+> +AcpiGhesState *acpi_ghes_get_state(void)
+>  {
+> -    return false;
+> +    return NULL;
+>  }
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index f2d1cc7369f4..401789259f60 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -425,10 +425,6 @@ static void get_hw_error_offsets(uint64_t ghes_addr,
+>                                   uint64_t *cper_addr,
+>                                   uint64_t *read_ack_register_addr)
+>  {
+> -    if (!ghes_addr) {
+> -        return;
+> -    }
+> -
+>      /*
+>       * non-HEST version supports only one source, so no need to change
+>       * the start offset based on the source ID. Also, we can't validate
+> @@ -517,27 +513,16 @@ static void get_ghes_source_offsets(uint16_t source_id,
+>  NotifierList acpi_generic_error_notifiers =
+>      NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
+>  
+> -void ghes_record_cper_errors(const void *cper, size_t len,
+> +void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+>                               uint16_t source_id, Error **errp)
+>  {
+>      uint64_t cper_addr = 0, read_ack_register_addr = 0, read_ack_register;
+> -    AcpiGedState *acpi_ged_state;
+> -    AcpiGhesState *ags;
+>  
+>      if (len > ACPI_GHES_MAX_RAW_DATA_LENGTH) {
+>          error_setg(errp, "GHES CPER record is too big: %zd", len);
+>          return;
+>      }
+>  
+> -    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+> -                                                       NULL));
+> -    if (!acpi_ged_state) {
+> -        error_setg(errp, "Can't find ACPI_GED object");
+> -        return;
+> -    }
+> -    ags = &acpi_ged_state->ghes_state;
+> -
+> -
+>      if (!ags->use_hest_addr) {
+>          get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+>                               &cper_addr, &read_ack_register_addr);
+> @@ -546,11 +531,6 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+>                                  &cper_addr, &read_ack_register_addr, errp);
+>      }
+>  
+> -    if (!cper_addr) {
+> -        error_setg(errp, "can not find Generic Error Status Block");
+> -        return;
+> -    }
+> -
+>      cpu_physical_memory_read(read_ack_register_addr,
+>                               &read_ack_register, sizeof(read_ack_register));
+>  
+> @@ -576,7 +556,8 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+>      notifier_list_notify(&acpi_generic_error_notifiers, NULL);
+>  }
+>  
+> -int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+> +int acpi_ghes_memory_errors(AcpiGhesState *ags, uint16_t source_id,
+> +                            uint64_t physical_address)
+>  {
+>      /* Memory Error Section Type */
+>      const uint8_t guid[] =
+> @@ -602,7 +583,7 @@ int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+>      acpi_ghes_build_append_mem_cper(block, physical_address);
+>  
+>      /* Report the error */
+> -    ghes_record_cper_errors(block->data, block->len, source_id, &errp);
+> +    ghes_record_cper_errors(ags, block->data, block->len, source_id, &errp);
+>  
+>      g_array_free(block, true);
+>  
+> @@ -614,7 +595,7 @@ int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+>      return 0;
+>  }
+>  
+> -bool acpi_ghes_present(void)
+> +AcpiGhesState *acpi_ghes_get_state(void)
+>  {
+>      AcpiGedState *acpi_ged_state;
+>      AcpiGhesState *ags;
+> @@ -623,11 +604,12 @@ bool acpi_ghes_present(void)
+>                                                         NULL));
+>  
+>      if (!acpi_ged_state) {
+> -        return false;
+> +        return NULL;
+>      }
+>      ags = &acpi_ged_state->ghes_state;
+> -    if (!ags->hw_error_le && !ags->hest_addr_le)
+> -        return false;
+>  
+> -    return true;
+> +    if (!ags->hw_error_le && !ags->hest_addr_le) {
+> +        return NULL;
+> +    }
+> +    return ags;
+>  }
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 219aa7ab4fe0..276f9dc076d9 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -99,15 +99,17 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+>                       const char *oem_id, const char *oem_table_id);
+>  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+>                            GArray *hardware_errors);
+> -int acpi_ghes_memory_errors(uint16_t source_id, uint64_t error_physical_addr);
+> -void ghes_record_cper_errors(const void *cper, size_t len,
+> +int acpi_ghes_memory_errors(AcpiGhesState *ags, uint16_t source_id,
+> +                            uint64_t error_physical_addr);
+> +void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+>                               uint16_t source_id, Error **errp);
+>  
+>  /**
+> - * acpi_ghes_present: Report whether ACPI GHES table is present
+> + * acpi_ghes_get_state: Get a pointer for ACPI ghes state
+>   *
+> - * Returns: true if the system has an ACPI GHES table and it is
+> - * safe to call acpi_ghes_memory_errors() to record a memory error.
+> + * Returns: a pointer to ghes state if the system has an ACPI GHES table,
+> + * it is enabled and it is safe to call acpi_ghes_memory_errors() to record
+      ^^^^^^^^^^^^^ can't link 'it' with anything, I'd drop this
 
-I would prefer sfp_fixup_fs_rollball_wait to keep the name of the manufactu=
-rer.
-It can't be a generic fixup as other FSP could have other waiting time valu=
-es
-like the Turris RTSFP-10G which needs 25s.
+> + * a memory error. Returns false, otherwise.
+                              ^^^ NULL ??
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+>   */
+> -bool acpi_ghes_present(void);
+> +AcpiGhesState *acpi_ghes_get_state(void);
+>  #endif
+> diff --git a/target/arm/kvm.c b/target/arm/kvm.c
+> index da30bdbb2349..80ca7779797b 100644
+> --- a/target/arm/kvm.c
+> +++ b/target/arm/kvm.c
+> @@ -2366,10 +2366,12 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
+>  {
+>      ram_addr_t ram_addr;
+>      hwaddr paddr;
+> +    AcpiGhesState *ags;
+>  
+>      assert(code == BUS_MCEERR_AR || code == BUS_MCEERR_AO);
+>  
+> -    if (acpi_ghes_present() && addr) {
+> +    ags = acpi_ghes_get_state();
+> +    if (ags && addr) {
+>          ram_addr = qemu_ram_addr_from_host(addr);
+>          if (ram_addr != RAM_ADDR_INVALID &&
+>              kvm_physical_memory_addr_from_host(c->kvm_state, addr, &paddr)) {
+> @@ -2387,7 +2389,8 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
+>               */
+>              if (code == BUS_MCEERR_AR) {
+>                  kvm_cpu_synchronize_state(c);
+> -                if (!acpi_ghes_memory_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
+> +                if (!acpi_ghes_memory_errors(ags, ACPI_HEST_SRC_ID_SEA,
+> +                                             paddr)) {
+>                      kvm_inject_arm_sea(c);
+>                  } else {
+>                      error_report("failed to record the error");
+
 
