@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-533598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4578BA45C7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:04:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831E8A45C7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BDED3A42CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA463A4DD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B061C32EA;
-	Wed, 26 Feb 2025 11:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6144620F06D;
+	Wed, 26 Feb 2025 11:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F9qU4quS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kpNO8pIr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1R34L+UF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oM4jRYmH"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C5748D;
-	Wed, 26 Feb 2025 11:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE851632E6;
+	Wed, 26 Feb 2025 11:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567841; cv=none; b=QvfME+yUVeV8mqFvMYAgH/q4w1p3KrXT1qCdtTYlwGZQIbCbC8AZ9lXPiMx8RNoZXCSRRuzsgfBeoxJ0IH4r3Uud6hkXdJJIcgv7PCcYqZMipes8JPi7ZK5xwNcxA98uv+uvBXccbBN5aDi5A6pGGm7BJTOMYItWUb0MSKmho8g=
+	t=1740567841; cv=none; b=jzzWC1w1aYbZFIdvT1QrynJbQGF4wefOObaBWstrDd5kF597Ev/wLVWuzoVqLbrRRpsp1lF2mwVhSjLFoM/t4xCnb9iHA1Gso5N9kisOGz2kxeDQSg5Rl4+ChUmIoemAi5Xt+ivRPsesKX9NtvqG1pQ8X2jyq9otITviofZ566E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740567841; c=relaxed/simple;
-	bh=hr07251wVy7tye18zoCp/tAzoWgPq2UA/zqPbsrhiXQ=;
+	bh=WPWJmWvlESOzVnK6HLxjwGY6tM9Py1I+GYc5pBgo1Rc=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ssMBBcmo1fSOy9vgxe+otcofKGrditRJvI0QDKqVhGPdhOgK1fQGmL7XzXVsCwCdda+OAMBjbhf+KuEwSo7Kp24TcJcs9tA6aeBn+2d0B3PdrulktHU3z5vNnfTdD7ItmUxjQ26tL64n4GOj/o6Oacsd9lXEaJ4VeE2rMrrmpfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F9qU4quS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kpNO8pIr; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=gGPR2K8HRIPSief7Rimt7UgGxzAr4Fkhj4VFVT9UK4S56pjMneAh0eQGt1IhnhcqOpGao0PxptmDxxNYbo1GS4hUX9ICbj/bErnJ1QD4qiraTAA/hnCD6gWa5gvib6nO1tXrFoeRBUMOL+/fQcDiW4xZFlcUk68v9+/18nmat80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1R34L+UF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oM4jRYmH; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 11:03:57 -0000
+Date: Wed, 26 Feb 2025 11:03:58 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1740567838;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SmKBoyBxLeWrCWLqrLx3kmsaIOa4z+hRNJ6tm3lVNE8=;
-	b=F9qU4quSp86F4W1Wjkza2Zrk/4ehgfExxdErQuMYBEl1/ja8A/xQIFT9H00cLOkSJjP9Z6
-	yJsQBlY3DjIX7CCL5ew2SlMRnqjgeQOwmxY/+q96wSWErjF8Qw/ANPFjZReq88I1ux9p8B
-	zeZGKSZ+2DQtf3N0GbLOZ7As5kITL6f+rAVGbVMHMNU0CHSJmbJzCsHBV5RtjyBFjEOWug
-	95eLyepcW9/R7mAwlk8Ii0yXX2pbnmB8eHidVRImAmnJf+UMU+dVXaKMtER+o5Kv6rq/jf
-	qUdqraiPvpUBkMZo/hNbgnFwOZaJ2/x6kMSpHn+nLG0c6pl8YIiqaivJ1Mj1yQ==
+	bh=+j9LFd/hXIPuPpYlZXROWWZT+uKnE8tdMeBw/miXAiI=;
+	b=1R34L+UF9uKAAxT9sQi+ZivHAApdF1rZWVhJ/kt8JmbOLk+HMwjRPDY3Bo3Nt/FkJPgst3
+	jlLueKeVzV9xTBWyEtXMWmFwCbQ6AuKsr+fe3ey++WLt6TkwxuPAdXznuv/4yA2yar35vq
+	rHLk7mPU1+Psnay+uKH9b9swAglcD7TVeGh0IizEyovRcVh+RS1KyjjFrlmVGi8FP59ilA
+	qpV4R2tZ27X3ttWIFCyrVJ/w/TE3u4LkLKNyvAJQiZfcyhdVojmh0ZcFlfFIIJWKTe7/4f
+	HoUAhYt4+5apaL/L1P8ahppaFT6DR7hIq9P0diZH82dlDi/uLrfqziOAhfJk7g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1740567838;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SmKBoyBxLeWrCWLqrLx3kmsaIOa4z+hRNJ6tm3lVNE8=;
-	b=kpNO8pIrIzzSvb+4yF8BoCNAZciOtSiwSPNeMKGs14F1jRMcAfQNub8GoRZD1NrOemuanq
-	6v55isuWlsg459Aw==
+	bh=+j9LFd/hXIPuPpYlZXROWWZT+uKnE8tdMeBw/miXAiI=;
+	b=oM4jRYmHsh9LYbwpWBtIgIKT9Y6thIKYTWurG0/6f9bugWD9iECa4VJDly6FoEP2FQXcdU
+	PnEqtGua7tCSFBDg==
 From: "tip-bot2 for Biju Das" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/renesas-rzv2h: Update macros
- ICU_TSSR_TSSEL_{MASK,PREP}
+Subject: [tip: irq/drivers] irqchip/renesas-rzv2h: Update TSSR_TIEN macro
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
  Thomas Gleixner <tglx@linutronix.de>,
  Geert Uytterhoeven <geert+renesas@glider.be>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250224131253.134199-12-biju.das.jz@bp.renesas.com>
-References: <20250224131253.134199-12-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250224131253.134199-11-biju.das.jz@bp.renesas.com>
+References: <20250224131253.134199-11-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174056783756.10177.5053244649280730644.tip-bot2@tip-bot2>
+Message-ID: <174056783807.10177.275390317106058228.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,61 +82,64 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     e3a16c33db69ffd1369ebfdf93f93a93a785896a
-Gitweb:        https://git.kernel.org/tip/e3a16c33db69ffd1369ebfdf93f93a93a785896a
+Commit-ID:     76c3b774734feb8224b78721e0c67a54760a75c5
+Gitweb:        https://git.kernel.org/tip/76c3b774734feb8224b78721e0c67a54760a75c5
 Author:        Biju Das <biju.das.jz@bp.renesas.com>
-AuthorDate:    Mon, 24 Feb 2025 13:11:27 
+AuthorDate:    Mon, 24 Feb 2025 13:11:26 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Wed, 26 Feb 2025 11:59:50 +01:00
 
-irqchip/renesas-rzv2h: Update macros ICU_TSSR_TSSEL_{MASK,PREP}
+irqchip/renesas-rzv2h: Update TSSR_TIEN macro
 
-On RZ/G3E, TSSEL register field is 8 bits wide compared to 7 on RZ/V2H.
-Also bits 8..14 is reserved on RZ/G3E and any writes on these reserved
-bits is ignored.
-
-Use bitmask GENMASK(field_width - 2, 0) on both SoCs for extracting TSSEL
-and then update the macros ICU_TSSR_TSSEL_PREP and ICU_TSSR_TSSEL_MASK for
-supporting both SoCs.
+On RZ/G3E, TIEN bit position is at 15 compared to 7 on RZ/V2H. Replace the
+macro ICU_TSSR_TIEN(n)->ICU_TSSR_TIEN(n, _field_width) for supporting both
+these SoCs.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/all/20250224131253.134199-12-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/all/20250224131253.134199-11-biju.das.jz@bp.renesas.com
 
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 8d0bd4d..7bc4397 100644
+index 98a6a7c..8d0bd4d 100644
 --- a/drivers/irqchip/irq-renesas-rzv2h.c
 +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -64,8 +64,13 @@
- #define ICU_TINT_LEVEL_HIGH			2
- #define ICU_TINT_LEVEL_LOW			3
+@@ -66,7 +66,11 @@
  
--#define ICU_TSSR_TSSEL_PREP(tssel, n)		((tssel) << ((n) * 8))
--#define ICU_TSSR_TSSEL_MASK(n)			ICU_TSSR_TSSEL_PREP(0x7F, n)
-+#define ICU_TSSR_TSSEL_PREP(tssel, n, field_width)	((tssel) << ((n) * (field_width)))
-+#define ICU_TSSR_TSSEL_MASK(n, field_width)	\
+ #define ICU_TSSR_TSSEL_PREP(tssel, n)		((tssel) << ((n) * 8))
+ #define ICU_TSSR_TSSEL_MASK(n)			ICU_TSSR_TSSEL_PREP(0x7F, n)
+-#define ICU_TSSR_TIEN(n)			(BIT(7) << ((n) * 8))
++#define ICU_TSSR_TIEN(n, field_width)	\
 +({\
 +		typeof(field_width) (_field_width) = (field_width); \
-+		ICU_TSSR_TSSEL_PREP((GENMASK(((_field_width) - 2), 0)), (n), _field_width); \
++		BIT((_field_width) - 1) << ((n) * (_field_width)); \
 +})
-+
- #define ICU_TSSR_TIEN(n, field_width)	\
- ({\
- 		typeof(field_width) (_field_width) = (field_width); \
-@@ -326,8 +331,8 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 
+ #define ICU_TITSR_K(tint_nr)			((tint_nr) / 16)
+ #define ICU_TITSR_TITSEL_N(tint_nr)		((tint_nr) % 16)
+@@ -153,9 +157,9 @@ static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
  	guard(raw_spinlock)(&priv->lock);
+ 	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(k));
+ 	if (enable)
+-		tssr |= ICU_TSSR_TIEN(tssel_n);
++		tssr |= ICU_TSSR_TIEN(tssel_n, priv->info->field_width);
+ 	else
+-		tssr &= ~ICU_TSSR_TIEN(tssel_n);
++		tssr &= ~ICU_TSSR_TIEN(tssel_n, priv->info->field_width);
+ 	writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(k));
+ }
  
- 	tssr = readl_relaxed(priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
--	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n) | tien);
--	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n);
-+	tssr &= ~(ICU_TSSR_TSSEL_MASK(tssel_n, priv->info->field_width) | tien);
-+	tssr |= ICU_TSSR_TSSEL_PREP(tint, tssel_n, priv->info->field_width);
+@@ -314,7 +318,7 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
+ 	nr_tint = 32 / priv->info->field_width;
+ 	tssr_k = tint_nr / nr_tint;
+ 	tssel_n = tint_nr % nr_tint;
+-	tien = ICU_TSSR_TIEN(tssel_n);
++	tien = ICU_TSSR_TIEN(tssel_n, priv->info->field_width);
  
- 	writel_relaxed(tssr, priv->base + priv->info->t_offs + ICU_TSSR(tssr_k));
- 
+ 	titsr_k = ICU_TITSR_K(tint_nr);
+ 	titsel_n = ICU_TITSR_TITSEL_N(tint_nr);
 
