@@ -1,136 +1,181 @@
-Return-Path: <linux-kernel+bounces-532700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4FCA45127
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:06:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579FCA45128
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C158A3B0184
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56C6189AA6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88A92581;
-	Wed, 26 Feb 2025 00:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E71C36;
+	Wed, 26 Feb 2025 00:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lU7wpRdo"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TKbztSDH"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76CE382;
-	Wed, 26 Feb 2025 00:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970FEBE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740528353; cv=none; b=rzqx27RBHxDSQdDqkBfkIa3UlklqZobKxJEOsnwR0BcyEQhlgUVAz12uBexklrF9F51zuMWg7du9DASJDqbizJcOhewSnJPBqLDYRzZrk3w7ey3DmgKL2JisR2cet+vwprEAgYHTwZlzaIeJ7co7Kqd6WWF9JfnVE7i0MK+8EGg=
+	t=1740528411; cv=none; b=VxHt3Gdosq1LAPUjtmRjcmvZ5pqjh7l9dAG0OupqXhetj8h/bHsrDdcIHCsSFn9Y5VxSjVtaVw+kmOS/XbAQL1JNjBqPOBvUHULO1kzshZODPJbu0vUxMBVzecY3aroNi064cCnDo2P12R+pKuAHg27HC6gltHKYbYzW2WKLxQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740528353; c=relaxed/simple;
-	bh=o7nXJE4/tR29kcZ0RxLhCK5271BhFYlP1dAyO4djKgQ=;
+	s=arc-20240116; t=1740528411; c=relaxed/simple;
+	bh=S4fMM43XNumxy2Y2WHeMAhzCBwUnO+gGCPA/D0hCFBg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r8V9j11nm/ChqqcVeTRqjvhk7Ha0W3eoLTlNJwWKLXWXVk+lz/LjwJA/Nl5uWeE+V35DNxIVY5+iDdyJi0j01h2ktcBY5UL7Ggopl5Kjd9abHp3fHsMJQf1WkTT9s8RZVn2Fw1So7cRlauDOD55bWWzaTvEYeV8ArJ+dr4qo/wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lU7wpRdo; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220d47b035fso14290765ad.1;
-        Tue, 25 Feb 2025 16:05:51 -0800 (PST)
+	 To:Cc:Content-Type; b=obblj8e8uq4NebEamgtA++czC1suBDXO5NeWEXvdXI6r7248+fV81I14dM8ZmCESzO976PKDWearR+tRbn3WKjeHyLEqYLXECD8WMnQPjm7FVgq+S8bJdoAEaMhRX8B3mnz2yqbRYxWStm46IVAVdUPQ+WiBA/+pSTcpHUcdLjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TKbztSDH; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5fce7745a8fso113468eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:06:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740528351; x=1741133151; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740528409; x=1741133209; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xUAvjubYZLJI1LaubMDXI2X+TYdJbP6ozpKUS1AuvfI=;
-        b=lU7wpRdoLjlBOXXOEOq9wS8w1hxYm52agVSwlDTs3RtDm3LCc6SHAIOqvPsSa7LDo7
-         F+xSMpql2NBXD+cZrS2AENP9UZYr/BsyIShoaN28TJgrV0QUtYnjuqr0wLXWjuqxiFFu
-         VEExmsE+K2KxChO6OkBs/7GlwqLQBwHWXcFxfdR4z8FBkEVLuxAExyaKJxIDg8uWoWuf
-         LiqG6I4csj0DwLhNxW3Hezo1rFnYV+SVblfddywkCTLpvCdIk3gcxrDluxst7TxiBeJi
-         FOuBkZ8CVTWigpdO+plDyFBGbOf3M8Qabh9itoR0f6jf2aYKl6DaBu6wlV1fLpH0UzlU
-         gxCw==
+        bh=cEQHtnjF2vZRn83mHHMuyJ6nMFok4NklDXTEXMMMyT8=;
+        b=TKbztSDHrRrD82GBKHC1DEqbom1m7Q7oqFabsXCwIZ9h161hqCawupmceHueDA/vsX
+         46wSivpyMFboCFyC8RwZSMqL+uB0lFKvrFY8i0YGA3CAfCHsbwrmck/hQkZeLxAjtvIL
+         01rkdydhejh3OBC5YNUaDFDKKc6AEllHR7kbg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740528351; x=1741133151;
+        d=1e100.net; s=20230601; t=1740528409; x=1741133209;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xUAvjubYZLJI1LaubMDXI2X+TYdJbP6ozpKUS1AuvfI=;
-        b=cG3atMlIb1S1CoyYHk6auxkgGEGjIapfON4VdqCLMs4ewxbrQtCQwJUMXj6+sEruNT
-         gvZB+7hW3AkMwaSZFjp/hLW9rFsjsONoZGZ2rLmphZuL5yyPuoXKE8YCBT8X7oIkldy0
-         90TDCsc4OZbtzqvsOMA/iha8NoUtAHYH98vPhPyM6bTAS/6f2dV1ArEUQOWQxQdjmKfY
-         HOf6w2Xyr1oZJbDr9qB+H3KxWWR/9wAw4dzN/A8RvtoSuzrtZvyNPVjz0rDiDMyMIN1e
-         gfTmF0DnxsZ7l0K2sdtDULJUmFWdSiOPYzVHlKPdejNAL5o72dhOkqcZY73qX4rESZNz
-         uDjA==
-X-Forwarded-Encrypted: i=1; AJvYcCViPd5JQhGeBYvSkg4i2s0xGuLrL3iOagI1EtPzk70OXAqCnHdL0jSYGQpMeB2YmBaVQm8x+gpV+S0tAz8=@vger.kernel.org, AJvYcCXQppR351R3mw1WuhbRl7jwGpZyLYsmoMCLHnC+oBdBLxrSR4E/7Vt6FjN6Q9twV8DROVvO+/yj9XgZhd35zEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWPcenCQiftBi+Iyg2PRv9eqzis+o7Z0xIAfaj5M/GFFnV5LyC
-	yiv6zjeMc4LgBMnHApf7tAZ4vJKX9VxugL/2sZDSUY26Yzl6Vtcbns+JpMxtriXNpWPQx36P4zB
-	yHhdkBxOPz9JGpi5hfar1i/wrvN8=
-X-Gm-Gg: ASbGnct422bMtgeoq4oqFCk1/VGChLZ6wBHaLulAjoth4rjwn6HClGNmQxKr1nhiN8D
-	uPzl8J67KnA8gsH1FCNKDqBsXseahhTgJExIncCqXZDHP1fXdX5rK5o7kyqtnIxYOBNwLHLnWQA
-	UfmHpzDuI=
-X-Google-Smtp-Source: AGHT+IHxJYtBEK/vIkPSuGiT2cdGhB+Dp2qltN3Si2ziuSqv9qgyA+WLvw+xjFqa1MqLcr61X+91n33B0YCU5Xe3tgU=
-X-Received: by 2002:a17:902:e74b:b0:216:30f9:93db with SMTP id
- d9443c01a7336-2219fdc4218mr116488315ad.0.1740528351197; Tue, 25 Feb 2025
- 16:05:51 -0800 (PST)
+        bh=cEQHtnjF2vZRn83mHHMuyJ6nMFok4NklDXTEXMMMyT8=;
+        b=mALkQftzqYPf/kxsACJ12G2J0SEQpNTevJrlrzehwb9OnWkQwWAtRnjSBxBgz8xpKP
+         nZCE2J2P8ZS5O/+YcB1S1Rajv8KyRy1RUwvi/dg0y7Tn2iK5Brq9dwcUk4Ks+M/Rh5TQ
+         FIYmLiBcCrQMm16CzWbzhTHrhym6BOT5Vehq3NlYIY6jShjJxoJT8G0axP3I6Vtr1imd
+         EbCF3ZYz86g5r44SoIei6PofSw3wkI6Px1/z7riZZB62dxOnTQNk50alYVVCoQWdxavY
+         JnWPzs+sqocduQMyTi0M/AaIflDjz+QI/hdaeFPfWyzHf7NT8E9sYFlWiogu6RBwi7oz
+         7sDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPEvrpXgztvnoJqgjeBpynjmO3pS4Pc6u52qPR9EVs6mNGUrxxO8azfzrGPjDv7QkBybgxiww41lob2JI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnOg0ExmFzQGX97p+AYCfTxqt4Ns2Y5Va+YNal+SGgM09VboSS
+	omfGoNScyYEhIB0eO+nOWjP8rf07ymDoAXY/pnvQHt9fl+J4Gvl7bImvpoOcerNp2Ikg4Oz6isI
+	/fco9pdwUGsPN++ewL3dIrqiRfe7/t3kM3US2
+X-Gm-Gg: ASbGnctOnXWee1GBiIVB4JwrePlse7rXUlaVtdVDJVex8uPV+751vHIksuCd+wD+Sq3
+	KxD95dcn3JLtVi+PLkDnwHWFnxtUD0KGTaRE9S1lEYsgcyeXHjtsjw2gq5MZ1ilED0ShH9kDp10
+	yKKIpFgp4tCFqvNiq/tpsc1H3uicc0wlKHLfA=
+X-Google-Smtp-Source: AGHT+IEkVNQlEk7Bxd7v+XujCfyFZChBzX7n2px0GzS5hBJ1gxxX5fMOBHcLpxDKLvHORzQ6goY6cV15X1nVnc4Q2A0=
+X-Received: by 2002:a05:6820:1692:b0:5fc:f0fd:3cf7 with SMTP id
+ 006d021491bc7-5fd19389a0fmr4090988eaf.0.1740528409160; Tue, 25 Feb 2025
+ 16:06:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
- <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com> <CANiq72kSdPvh81uOm=N-=37f7NT7udRV-PozfO2pcfbT6aaWyw@mail.gmail.com>
-In-Reply-To: <CANiq72kSdPvh81uOm=N-=37f7NT7udRV-PozfO2pcfbT6aaWyw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 26 Feb 2025 01:05:38 +0100
-X-Gm-Features: AQ5f1JqmcnqUGZJTUm_HLdCmNW5apMCMsos5veOlcb7tjSSn4RdGk-1LU5FePhg
-Message-ID: <CANiq72ki6evya6T3EuPQGbNMgaDv-O0XRvJAYx5U9PxOY=tJVA@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Alice Ryhl <aliceryhl@google.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
+References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-7-jeffxu@google.com>
+ <55a9ff15-c72e-45cb-ab38-ad814011e27e@lucifer.local>
+In-Reply-To: <55a9ff15-c72e-45cb-ab38-ad814011e27e@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 25 Feb 2025 16:06:37 -0800
+X-Gm-Features: AQ5f1JqtMYoP2_skx7V3vIqYOv2gZjuF55AZ7cU2O2tsMHOlHUe0nuXvc4MgPGA
+Message-ID: <CABi2SkVRG8-j7T30tFQySOU9G8Lvyxqf_aRTrE2KXhj9GeBOkw@mail.gmail.com>
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Oleg Nesterov <oleg@redhat.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	adhemerval.zanella@linaro.org, avagin@gmail.com, benjamin@sipsolutions.net, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
+	ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 11:45=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Mon, Feb 24, 2025 at 10:24=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> Both of them are essentially `restrict`/`noalias`, and thus no load is
-> performed, with a constant 42 returned.
+> On Mon, Feb 24, 2025 at 10:52:45PM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Provide support to mseal the uprobe mapping.
+> >
+> > Unlike other system mappings, the uprobe mapping is not
+> > established during program startup. However, its lifetime is the same
+> > as the process's lifetime. It could be sealed from creation.
+> >
+>
+> I thought we agreed not to enable this for now? What testing
+> have you done to ensure this is functional?
+>
+I honestly don't know much about uprobe. I don't recall that I agree
+to ignore that though.
 
-I forgot to mention that while having so many `restrict`s around
-sounds crazy, the reason why this can even remotely work in practice
-without everything blowing up all the time is because, unlike
-`restrict` in C, Rust will not allow one to e.g. call
+As indicated in the cover letter, it is my understanding that uprobe's
+mapping's lifetime are the same as process's lifetime, thus sealable.
+[1]
+Oleg Nesterov, also cc, seems OK with mseal it in the early version of
+this patch [2]
 
-    f(&mut a, &mut a)
+Are there any potential downsides of doing this? If yes, I can remove it.
 
-Complaining with:
+I'm also looking at Oleg to give more guidance on this :-), or if
+there are some functional tests that I need to do for uprobe.
 
-    error[E0499]: cannot borrow `a` as mutable more than once at a time
-      --> <source>:10:19
-       |
-    10 |         f(&mut a, &mut a);
-       |         - ------  ^^^^^^ second mutable borrow occurs here
-       |         | |
-       |         | first mutable borrow occurs here
-       |         first borrow later used by call
 
-Even then, when one is around unsafe code, one needs to be very
-careful not to introduce UB by e.g. fabricating `&mut`s that actually
-alias by mistake, because of course then it all breaks.
+[1] https://lore.kernel.org/all/20241005200741.GA24353@redhat.com/
+[2] https://lore.kernel.org/all/20241005200741.GA24353@redhat.com/
 
-And the hard part is designing APIs (like the mentioned `Vec`) that
-use unsafe code in the implementation but are able to promise to be
-safe without allowing any possible caller to break the castle down
-("soundness").
+> I mean is this literally _all_ uprobe mappings now being sealed?
+>
+> I'd really like some more assurances on this one. And what are you
+> mitigating by sealing these? I get VDSO (kinda) but uprobes?
+>
+> You really need to provide more justification here.
 
-Cheers,
-Miguel
+Sure. In our threat model, we need to seal all r-x, r--, and --x
+mappings to prevent them from becoming writable. This applies to all
+mappings, regardless of whether they're created by the kernel or
+dynamic linker.
+
+
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > ---
+> >  kernel/events/uprobes.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index 2ca797cbe465..8dcdfa0d306b 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -1662,6 +1662,7 @@ static const struct vm_special_mapping xol_mappin=
+g =3D {
+> >  static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+> >  {
+> >       struct vm_area_struct *vma;
+> > +     unsigned long vm_flags;
+> >       int ret;
+> >
+> >       if (mmap_write_lock_killable(mm))
+> > @@ -1682,8 +1683,10 @@ static int xol_add_vma(struct mm_struct *mm, str=
+uct xol_area *area)
+> >               }
+> >       }
+> >
+> > +     vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
+> > +     vm_flags |=3D VM_SEALED_SYSMAP;
+> >       vma =3D _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+> > -                             VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
+> > +                             vm_flags,
+> >                               &xol_mapping);
+> >       if (IS_ERR(vma)) {
+> >               ret =3D PTR_ERR(vma);
+> > --
+> > 2.48.1.658.g4767266eb4-goog
+> >
 
