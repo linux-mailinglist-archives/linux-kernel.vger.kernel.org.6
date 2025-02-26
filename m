@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-534421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE3FA466D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:43:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA88A466C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8D17CF11
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01FF19C3737
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADDA22156D;
-	Wed, 26 Feb 2025 16:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F0F221701;
+	Wed, 26 Feb 2025 16:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="V9gpZOds"
-Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZH27SIB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E623A22068B;
-	Wed, 26 Feb 2025 16:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEA22068B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587214; cv=none; b=Ap2pxoms/pFyhqJfGWV4tBYP/rDtJUmcfr+NfT1jdAU02XiAJnWy6PUFe4tpOjWZ51pxBajmllEUSavL0EBuqMU7+MswcPFhEWA2l9r5OCbcSwj2ejO3azbd4/xt5IvHkDRdNNgxkR/DrT2DLtm72MacpiSmWFKWfrZ/w06LD8Q=
+	t=1740587225; cv=none; b=lYllaSMjB+b3LwkgcNGo0F5mZ8pbu7WoE7QPhA5prQnz8LM2xhUPYRnaUpj5UQvuK6wZjvY3XFc3TpJqyqT4I3Vx8RQlMNVVhifUTNom36TIU2gsMXnt0BiHM4lxzbphnuEWgiqsnIFNnalY51O6yH1xVagufLTKuGAApUBKXH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587214; c=relaxed/simple;
-	bh=YJ/+P3P/Fn2JvqI3zjsXaQHPUu/Jy5T9+fh/ITKJfPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oun6DJIFE3VPVbCoyQjXHjQVaAd5DoEO3o7wFlPLWYM53kM7JSZRrt/VVvtSR+lHSi5LytGSGxLFvBicRGd17FXC4jgjHvPkug2dRLKRBFII4mIY1HtjJ5X/dA0Tz2/OtbgQ4q1XNsIzAeA5PtfEkBnR2i7Nn/nkMF1FbvCprJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=V9gpZOds; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nKE7t7elVLJNynKEAt1BPh; Wed, 26 Feb 2025 17:25:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740587143;
-	bh=jHYBM0RY1+uRab10Zpvkox4s6qLlIbyBWl1J3zSisU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=V9gpZOdsxmg54ji2qNTr5bCpRjzD5IfC744BKjoCpYnPF65LaysHOmtTVeMeVoqAO
-	 2L49GkKqABvSc19hk/3MBbxEMOkxaIum1rh1DAYqvtKEpv5kGKRGUkt4QuKMmybf3T
-	 UvLH3J+7bXlrmXPBTtxCz9FKEBHc0RQ3qnWiUZkYmr5R6y5cGIjl2vm8jHi7Lv/e70
-	 y3yIs5+1Z1AmJAFpTyBg4j4ktdDQSO4Vx2oSFZCSkWIfMncOs7KHQRM726c/F/eRBA
-	 mio+9BsgDnQuDX1Uy0VjHYAcD9il+F8CvVp27rg5/5rAT4f9Q/QwHuCswFYxZtsD/9
-	 2L4wVlRJT5NFQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 26 Feb 2025 17:25:43 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <9625cd57-dc1d-4455-af12-aac0e2ba5392@wanadoo.fr>
-Date: Wed, 26 Feb 2025 17:25:39 +0100
+	s=arc-20240116; t=1740587225; c=relaxed/simple;
+	bh=Te2kIeqdYdMn9tYf2u9iApRSgSZW5n90rzOPs8gdJpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obvzyaRJekyKnb5pIGQGNPJtocqWbHhv2wncVq7jBi/8mz6ij1ztH//uoz00Del8CIScv8Bhgj/JRCIL/rQJ8WiBOipRd7ZXc8VVF6ZCDVDwoZ5dfYKYmf2Cek9c5wfyHkM2nYjLoDKoFaoDC+W0GlFR8xXZjcAaN2CpvLFb2OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZH27SIB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740587223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppomcWQSOcgvzeEl160zR2jOyW8ovhKpqyTRKDX1OIo=;
+	b=KZH27SIBiUwYhIfDkMmx+eXejf2URrNSZ3RacFjt1UVult3Wf+Lc2f09OzTaOWpSlGHf9A
+	XZakr7jaU2ZsAx5GNzQ419gJGZZsEiXCCUiakxSc/ays5Pk376tdRGtQZpYZn6YYGIR2uw
+	R09hg6bU1uS7S7ZCONm8qs0gCiRM0tM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-LPGgYWgyOTyPOxcZJ_DLYw-1; Wed,
+ 26 Feb 2025 11:26:58 -0500
+X-MC-Unique: LPGgYWgyOTyPOxcZJ_DLYw-1
+X-Mimecast-MFC-AGG-ID: LPGgYWgyOTyPOxcZJ_DLYw_1740587214
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 436A51800998;
+	Wed, 26 Feb 2025 16:26:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8BD4D3000199;
+	Wed, 26 Feb 2025 16:26:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 17:26:22 +0100 (CET)
+Date: Wed, 26 Feb 2025 17:26:04 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
+	torvalds@linux-foundation.org, vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@Oracle.com,
+	adhemerval.zanella@linaro.org, avagin@gmail.com,
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
+	ojeda@kernel.org, thomas.weissschuh@linutronix.de,
+	adobriyan@gmail.com, johannes@sipsolutions.net,
+	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
+	anna-maria@linutronix.de, mark.rutland@arm.com,
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+	enh@google.com, rientjes@google.com, groeck@chromium.org,
+	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+	mike.rapoport@gmail.com
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+Message-ID: <20250226162604.GA17833@redhat.com>
+References: <20250224225246.3712295-1-jeffxu@google.com>
+ <20250224225246.3712295-7-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (max77705) add initial support
-To: Dzmitry Sankouski <dsankouski@gmail.com>, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225-initial-support-for-max77705-sensors-v1-1-2be6467628b0@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250225-initial-support-for-max77705-sensors-v1-1-2be6467628b0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224225246.3712295-7-jeffxu@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Le 25/02/2025 à 20:11, Dzmitry Sankouski a écrit :
-> Add support for max77705 hwmon. Includes charger input, system bus, and
-> vbyp measurements.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+On 02/24, jeffxu@chromium.org wrote:
+>
+> Unlike other system mappings, the uprobe mapping is not
+> established during program startup. However, its lifetime is the same
+> as the process's lifetime. It could be sealed from creation.
 
-...
+Agreed, VM_SEALED should be always for the "[uprobes]" vma, regardless
+of config options.
 
-> +static int max77705_hwmon_probe(struct platform_device *pdev)
-> +{
-> +	struct i2c_client *i2c;
-> +	struct device *hwmon_dev;
-> +	struct max77705_hwmon *drv_data;
-> +
-> +	drv_data = devm_kzalloc(&pdev->dev, sizeof(struct max77705_hwmon),
-> +			GFP_KERNEL);
-> +	if (!drv_data)
-> +		return -ENOMEM;
-> +
-> +	i2c = to_i2c_client(pdev->dev.parent);
-> +	drv_data->regmap = devm_regmap_init_i2c(i2c, &max77705_hwmon_regmap_config);
-> +	if (IS_ERR(drv_data->regmap))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(drv_data->regmap),
-> +				"Failed to register max77705 hwmon regmap\n");
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev, "max77705", drv_data,
-> +			&max77705_chip_info, NULL);
-> +	if (IS_ERR(hwmon_dev)) {
-> +		return dev_err_probe(&i2c->dev, PTR_ERR(hwmon_dev),
+ACK,
 
-No strong opinion, but why &i2c->dev and not &pdev->dev?
+but can't we do
 
-> +				"Unable to register hwmon device\n");
-> +	}
+	#ifdef CONFIG_64BIT
+	/* VM is sealed, in vm_flags */
+	#define VM_SEALED	_BITUL(63)
++	#else
++	#define VM_SEALED	0
+	#endif
 
-Extra { } can be removed, as done a few lines above
+and then simply
 
-> +
-> +	return 0;
-> +};
-> +
+	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+-				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
++				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
 
-...
+?
 
-CJ
+But I am fine either way, feel free to ignore.
+
+Oleg.
+
 
