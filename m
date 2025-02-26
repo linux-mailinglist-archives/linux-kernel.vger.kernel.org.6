@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-534901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343BCA46C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:29:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42353A46C37
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75426188B10D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E28C7A1D15
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1167720E31F;
-	Wed, 26 Feb 2025 20:29:43 +0000 (UTC)
-Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091332755FE;
+	Wed, 26 Feb 2025 20:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyGHRe93"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D175275617;
-	Wed, 26 Feb 2025 20:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EBBEEBB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740601782; cv=none; b=RUhRcbcRy0zb/mtZrm/6lpk+8zxk+OA03j8dCNxPsIZA/vIpb3kal0ZOTpqoueb2bPKoYrT70QKYQXBFc1gSwJpVQT776L1L8TwKBxya0rrlHI+QKw/Uwd5STz6+c0bUvrVCClS7ZV5Yf+bWqyBPIxyGw+LNrBSsVshnTyNdT90=
+	t=1740601341; cv=none; b=TWpY/gogoIJpk9arl+s13MBMdz4K7guWVRjS8PxLM8kWqrqrB6Fc+jcL0X8/so7ugK58PiRM3yckqE5CTrfP2ifpXtDds0qJ2P30xVKxLwqbGVp3TSh4TPMGo3orajYmJTKlHl1CmQ4YZ0xr0aBeZD9PO+0Jf+2MDQSWCKIjJd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740601782; c=relaxed/simple;
-	bh=yxQtZhATw7YZMwx8d0sQeR7D3tNH7pkKxlGCc/f7ick=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lg8ToDZvfWbCyxUiQ2WvETQ4sbR8yjqgf5VM+RiiDGlaF4uFFHpb0M6PQR+NTg/iaToZwr/QXMLr3UcD61IUQS0Hc6NDwHO3n3tAqsQnP/rtFsPqFRAEAJtEuO3u+P677lC4iZ2CyyG+G4Yrs+PDaUPsJ3RBDNlK8RBRmNTru2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 29B8D54145B;
-	Wed, 26 Feb 2025 21:21:00 +0100 (CET)
-Date: Wed, 26 Feb 2025 21:20:58 +0100
-From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Roopa Prabhu <roopa@nvidia.com>, linux-kernel@vger.kernel.org,
-	bridge@lists.linux.dev, Jan Hoffmann <jan@3e8.eu>,
-	Birger Koblitz <git@birger-koblitz.de>,
-	Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Subject: Re: [PATCH RFC net-next 00/10] MC Flood disable and snooping
-Message-ID: <Z793qqMMvxKuFxbM@sellars>
-References: <065b803f-14a9-4013-8f11-712bb8d54848@blackwall.org>
- <804b7bf3-1b29-42c4-be42-4c23f1355aaf@gmail.com>
- <20240405102033.vjkkoc3wy2i3vdvg@skbuf>
- <935c18c1-7736-416c-b5c5-13ca42035b1f@blackwall.org>
- <651c87fc-1f21-4153-bade-2dad048eecbd@gmail.com>
- <20240405211502.q5gfwcwyhkm6w7xy@skbuf>
- <1f385946-84d0-499c-9bf6-90ef65918356@gmail.com>
- <20240430012159.rmllu5s5gcdepjnc@skbuf>
- <b90caf5f-fa1e-41e6-a7c2-5af042b0828e@gmail.com>
- <431e1af1-6043-4e3e-bc3b-5998ec366de7@blackwall.org>
+	s=arc-20240116; t=1740601341; c=relaxed/simple;
+	bh=2yI91M11oJYuKDMpnA26v1DUN7gvrm+j1JKyo///pNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQ0G7YIw7VVCA1y+XPXI3KM2jhXN4GbJCm1SkY3ccnP1H3lwW/v11RT6vYAwYtcq0g/UC06Uq+E7Pa/xw/tnpiOthUf8TyOiUhrcglMA4y+qH3PW5h47MabJCT2vPmBddMBOWJbziXxcRwOsLhkXI1PULeJilgLS7ASVmTK8KKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyGHRe93; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so170192a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:22:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740601338; x=1741206138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1vDmtIQrMsy1qqwpZWxFUiy2B26yzWBbUqZcyfJHmc=;
+        b=RyGHRe93nXQuUsRAv4g+3RCfl6cIO+JDXRh9yJ5NDCp+ZCAdiFoFrf1+8lqGcD7WzA
+         ToDDOgzQL0A67NlkHhsnmvK8HFgotzgp5gtQPq+ClznobGqb4C/YBadI02tvrvTpM773
+         ueJjjMM2wPkAj2nuN0av7AUvJLHTxzE+Tm9hrY+CRff25W2SrQbtcSeZWFZiofjkOlQC
+         ugjMrLphVnp48GjN47Az+wYqXPDd8G+spZrfxe48GmiVUNE8TDJKUdZdjCn4lQUg4SF+
+         rOUdXCgL4pNbWWa2NOJZ42TTun05CoxeNUy59NfsNd/GhQpx/85VJSN03tkN4BQCShEk
+         o2Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740601338; x=1741206138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P1vDmtIQrMsy1qqwpZWxFUiy2B26yzWBbUqZcyfJHmc=;
+        b=WFDkGm6KKxZ6pDEyFpTn7nTuwdpv0Dt1MDIWodt8DPWBow0rRNzHsJ06a5mJX+Uk7U
+         yKq7dovgkA4gc3/Qj+K4CDn5wLFK+grs4GlCMaW/AEU7KS/Ocqk5R1BIFMPomfs3yrhA
+         EkUZG1cy5Cm/x7KVMcGM6uRvKgwX8FrW4M+qQUzqSwDlFkSghpbdW3b21Kbm1jwWRgqE
+         yIGVxNAo4IhptulxyatU2wZ9Xb+vhNv7dTuJZmIq/UHggHN0lEPNIi5td4u+r4BSf0lj
+         HuS10ECKDzgyEm8t3FHkjITHI6V0PPa++mjN1RV7t4fL8HyMV1utAHuMDbXtN0rnGQDy
+         6p3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUm5KsAJgNMIy2R5CfloWxnJkb5eH5vy6zbgDmhc8hQvvk20xyA59191sHnCUtHiSfO8QorjHF9Y1vvGwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEf7kgk6jXuJGVrfWK44gV4RUjxgJv/wqXoiy9FuhlkfcqLNQl
+	9htE+dnVngnl0KE6gMAlL3MGmlb/PPTY/N7iK8WwouXF82wpNIHFbvASg/ejk//ZJJ3v1LP+Pnb
+	SyJX6CfZocgfcWz2huAftd3kPYBw=
+X-Gm-Gg: ASbGncv9LGUUaf2l6m47rkQ+o9TsuQrnA9Zf+r69VGBt1/gzwEu+c+JJMia9vv5RHUD
+	qUYrOu8sgLhUhi2j9WsKp7aWLrjjPjdlUFLjs6SLxrO6FAbhfPJ9aMeKjZwWejcuBjrS1Q22uKi
+	3caLmizWsXZw==
+X-Google-Smtp-Source: AGHT+IG4/LTA9VORKAh51/6AHK540icwK8yAJ1ehhOtvAKagYtTRj15neS+9RcboR5sP60eFuY0oWpHLuLOCjG2ILAc=
+X-Received: by 2002:a05:6402:3587:b0:5de:3c29:e834 with SMTP id
+ 4fb4d7f45d1cf-5e44b7635damr10190157a12.27.1740601337838; Wed, 26 Feb 2025
+ 12:22:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <431e1af1-6043-4e3e-bc3b-5998ec366de7@blackwall.org>
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250217053719.442644-1-vignesh.raman@collabora.com> <20250217053719.442644-3-vignesh.raman@collabora.com>
+In-Reply-To: <20250217053719.442644-3-vignesh.raman@collabora.com>
+From: Helen Mae Koike Fornazier <helen.fornazier@gmail.com>
+Date: Wed, 26 Feb 2025 17:22:05 -0300
+X-Gm-Features: AQ5f1JonnkitWo-lyzBGKGAx2v3pmOJ4LrXR_AOBnSKv7RbGNmxa-AbuRJBkKFQ
+Message-ID: <CAPW4XYaGgfck58HQy_Y3y4YTjCHOYHFDofJR_8k56i3Cj1U1tA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] drm/ci: enable CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, airlied@gmail.com, 
+	simona.vetter@ffwll.ch, robdclark@gmail.com, guilherme.gallo@collabora.com, 
+	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
+	jani.nikula@linux.intel.com, dmitry.baryshkov@linaro.org, mripard@kernel.org, 
+	boqun.feng@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for chiming in so late in this conversation, missed it due
-to the mailing list address change and how my procmail sorts
-things...
+Em seg., 17 de fev. de 2025 =C3=A0s 02:37, Vignesh Raman
+<vignesh.raman@collabora.com> escreveu:
+>
+> Enable CONFIG_DEBUG_WW_MUTEX_SLOWPATH for mutex
+> slowpath debugging.
+>
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 
-First of all, many thanks Joseph for looking into this! I think I
-agree with you that there is an actual RFC4541 compatiblity
-issue for multicast offloading switches which (try to) use
-the kernel space Linux bridge IGMP/MLD snooping code. For both
-routable and non-routable multicast traffic.
+Acked-by: Helen Koike <helen.fornazier@gmail.com>
 
-
-I see a lot of confusion and misunderstandings in this thread. And
-initially got very confused by the cover letter, too, and needed to
-recheck the MCAST_FLOOD flag behaviour in the code and in practice :-).
-
-> There is a use case where one would like to enable multicast snooping
-> on a bridge but disable multicast flooding on all bridge ports so that
-> registered multicast traffic will only reach the intended recipients and
-> unregistered multicast traffic will be dropped.
-
-To clarify for others: This is exactly what the Linux bridge does
-right now. With bridge multicast snooping enabled and active
-(a querier is present) any snoopable, unregistered (no MDB entry)
-IP multicast payload traffic will only be forwarded to ports which
-were either manually set to a multicast router port or where a
-multicast router was detected via IGMP/MLD query, MRD or PIM
-snooping. And if no such port exists, will be dropped.
-
-The current per port MCAST_FLOOD flag implementation does not change this
-behaviour. Its current (unfortunately not very well documented)
-behaviour is basically, mainly to decide on what to do with packets
-which the bridge multicast snooping code *can not* deal with / can
-not learn about. Which can be because multicast snooping is
-disabled, because there is no IGMP/MLD querier, because they are
-IGMPv1/v2/MLDv1 packets, because they are not in the RFC4541
-defined snoopable address ranges - or because it is a multicast
-packet which is not an IP packet after all. The last case should
-make it clear why the MCAST_FLOOD is 1/enabled by default. Which
-might be a bit confusing/counterintuitive initially when
-coming and thinking from the other, the IP snooping direction.
-
-> bridge ports' mcast_flood flag implementation, it doesn't work as desired.
-
-The important context to the "it doesn't work as desired"
-can be found some lines later:
-"3. A hardware offloading switch is involved".
-
-The main issue seems that the learned or manually set multicast
-router ports in the Linux bridge are not propagated down to the
-actual multicast offloading switches. And therefore these switches
-won't be able to follow RFC4541, which will potentially lead to
-packet loss for multicast packets, both routable ones - as
-multicast routers are not detected - but also for non-routable ones
-due to potential IGMPv1/v2/MLDv1 report suppression.
-This is the main issue this patchset tries to tackle, making
-multicast offloading switches with kernelspace IGMP/MLD snooping
-RFC4541 compliant, I believe?
-
------
-
-> [PATCH RFC net-next 03/10] net: bridge: Always flood local subnet mc packets
-> ...
-> If multicast flooding is disabled on a bridge port, local subnet multicast
-> packets from the bridge will not be forwarded out of that port, even if
-> IGMP snooping is running and the hosts beyond the bridge port are sending
-> Reports to join these groups (e.g., 224.0.0.251)
-
-This is a fix for a regression which patch 01/10 introduced in the first place
-
-> [PATCH RFC net-next 02/10] net: bridge: Always multicast_flood Reports
-> ...
-> Fixes: b00589af3b04 ("bridge: disable snooping if there is no querier")
-
-This is a regression of patch 01/10, the "Fixes" line is
-incorrect.
+> ---
+>
+> v2:
+>   - New patch in the series.
+>
+> v3:
+>   - No changes.
+>
+> ---
+>  drivers/gpu/drm/ci/build.yml | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/ci/build.yml b/drivers/gpu/drm/ci/build.yml
+> index 274f118533a7..6c0dc10b547c 100644
+> --- a/drivers/gpu/drm/ci/build.yml
+> +++ b/drivers/gpu/drm/ci/build.yml
+> @@ -67,7 +67,7 @@ testing:arm32:
+>      #
+>      # db410c and db820c don't boot with KASAN_INLINE, probably due to th=
+e kernel
+>      # becoming too big for their bootloaders.
+> -    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
+> +    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT D=
+EBUG_WW_MUTEX_SLOWPATH"
+>      UPLOAD_TO_MINIO: 1
+>      MERGE_FRAGMENT: arm.config
+>
+> @@ -79,7 +79,7 @@ testing:arm64:
+>      #
+>      # db410c and db820c don't boot with KASAN_INLINE, probably due to th=
+e kernel
+>      # becoming too big for their bootloaders.
+> -    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
+> +    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT D=
+EBUG_WW_MUTEX_SLOWPATH"
+>      UPLOAD_TO_MINIO: 1
+>      MERGE_FRAGMENT: arm64.config
+>
+> @@ -91,7 +91,7 @@ testing:x86_64:
+>      #
+>      # db410c and db820c don't boot with KASAN_INLINE, probably due to th=
+e kernel
+>      # becoming too big for their bootloaders.
+> -    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
+> +    ENABLE_KCONFIGS: "PROVE_LOCKING DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT D=
+EBUG_WW_MUTEX_SLOWPATH"
+>      UPLOAD_TO_MINIO: 1
+>      MERGE_FRAGMENT: x86_64.config
+>
+> --
+> 2.43.0
+>
 
 
-> [PATCH RFC net-next 09/10] net: dsa: mv88e6xxx: Enable mc flood for mrouter port
-
-So this is what the idea of repurposing/redefining of MCAST_FLOOD
-ultimately comes down to, I guess?
-
-I'm wondering, shouldn't the information you're looking for already
-be available inside the Linux bridge as is? As it
-right now correctly knows when to flood on a port?
-Hm, would it maybe alternatively be possible to somehow call the
-new dsa_switch_ops.port_mrouter you're adding - which
-seems to be a missing, key part to fix this in the DSA API -
-from for instance br_port_mc_router_state_change() instead?
-Without needing any new or redefined state or knob in the
-Linux bridge?
-
-I'm also not quite sure yet what effect your proposed changes to
-the MCAST_FLOOD knob would have to non-IP multicast packets -
-could it break them?
-
------
-
-For the discussion regarding more knobs for a more fine-grained
-control for flooding various types of packets: I agree that would
-be nice to have. But I don't think it's necessary to fix the
-original issue which Joseph tries to address.
-
-Also I think they maybe should be added afterwards, after fixing
-the issue with offloading switches? As already as is the port
-MCAST_FLOOD and BR_INPUT_SKB_CB(skb)->mrouters_only flags
-interactions are quite hard to follow and confusing in the
-Linux bridge code (qed.?).
-
-Regards, Linus
-
-
-PS: Also adding Jan Hoffmann, Birger Koblitz and
-Sebastian Gottschall to CC, as they seem to have been working on
-getting such a feature running in OpenWrt/DD-Wrt for rtl83xx
-DSA switches, too.
+--=20
+Helen Koike
 
