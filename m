@@ -1,240 +1,86 @@
-Return-Path: <linux-kernel+bounces-533256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F637A4578F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:03:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01DFA45781
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547F188C870
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A7C1798EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8051E1E17;
-	Wed, 26 Feb 2025 07:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qd8gPi7k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B0E2459D4;
+	Wed, 26 Feb 2025 07:56:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DF1E1E00;
-	Wed, 26 Feb 2025 07:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BCA2459CF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556538; cv=none; b=QFEVfYtu2tihLTsXf1KNYaw6Qc6eY6XGledI+nhG6AnL7xqHrS/mhs5/JpJPyZ3ODPGXpThKVHqJJZc/EDCtAwvOUqXnT4vbc5iB09p74rQQFb944jgm+i28sx3WcxvHPAVEdo1xlx9flRd207FAsGGjuAWS9WxSGaHNADZnzro=
+	t=1740556565; cv=none; b=GHo+UmCMxhDVe8OL7MWzhC68mbpTyE7TxhodSy6ce50efBfXdMOqIt+CBnn+4c9cknWm9/FlS/K2rfN3PjOP32H7xnl9pqB5MD4x9qQrgwUi6mMiAkPbLBtq98GtHeE5+MOXsKmx+JXdm4EJlktAYHjrKqHkwLY6H287gNVCFhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556538; c=relaxed/simple;
-	bh=/YceScPPQMvHiNJjr+5pdUHJJ20GDGgy99xO79TB4oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RR8gawAdCrtqGtlSr63cP2jap+csA+VkvvWWVrLoqABxSwgv44Oa6hOJbX+XFOiRrCvOJ6rbTVUN5d5mzdN7pU8hC7BAA3q8Rr3pQDKcICc0XVq+QrAMgmmtXe8V3ynFzz4YV8tubJ3vwwwibrjBIqoM39wVofvVqgvHQ8AphLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qd8gPi7k; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740556537; x=1772092537;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/YceScPPQMvHiNJjr+5pdUHJJ20GDGgy99xO79TB4oo=;
-  b=Qd8gPi7kOhI6cQ5xgVHRxWU9dMjrGBvBmvfNt6b2DE5RNuFuOFmw4tQs
-   p5eeTxLiZTZIGfJRiOCpK2o3piN0D6TtA11gwVZhbXpngkGM5ALthIUsP
-   W1yHycm8fJErnrt76mNGqn8kHZBuD2c7lwusPazpgsdwibc5HBB2HTYqM
-   n0kLnOyp3rF1hdz7InQwU1CBky/nNWYtCPSwVveBHs4g0SyFo5hCHyG0C
-   m8H1FUiHj5WEQ3OFf9STGeNY3KTjkG1NjtKuJ5Y7XSj3bledjzRIgZsV+
-   st6JvL2b8GoEv7ojECuVqBHHNYVDm30hVYDm4xO7I58za+6n1ns1tVYyP
-   A==;
-X-CSE-ConnectionGUID: Gw7Wq4mpTVaJFTcxvkhJhw==
-X-CSE-MsgGUID: PogOqnqRT1KYDNY2CLsaiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41644266"
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="41644266"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:55:36 -0800
-X-CSE-ConnectionGUID: 3cJ6f5llTW6EhFWJIkmLsA==
-X-CSE-MsgGUID: 03D8LZSzQbWr9l417L5DIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
-   d="scan'208";a="116825690"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:55:33 -0800
-Message-ID: <b92f8e0b-7dc1-49a2-89e1-c47c0ecc1d89@linux.intel.com>
-Date: Wed, 26 Feb 2025 15:55:30 +0800
+	s=arc-20240116; t=1740556565; c=relaxed/simple;
+	bh=9sWtArTfsCXQ/0N87eed6VqmHB9iKc08+wN9MkB+0Hs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Bu//suFmu4/BhADlYR9Rn3in3lokegGb0BOybzjqZnNdlQlo7BKWNvIDxQTet1HHS/jVQzRGbniMVfSrApPRt9m88xpBFIcekAxjGnf/qv8seWnczfu7ySzfkblrmyJFUpnnWe3/15Dp/KRzmwg1NgtGv/vgYJrHD7M5K55Pbhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ce8cdf1898so54821815ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:56:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740556562; x=1741161362;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xRKRvXk5uImHEDe6ppaGeHU5yUgJwekaD02jpPZeV00=;
+        b=RqHq4CZu9NpzcU/MYCahdphn+YbV+J+7kbVupOY1FAw7JJh3FdTuF25rDFozLUBbDV
+         pjFI3rFfA45liBocuqNDVXnKB+87hg+8i2azE/ebC5xjXHdwTfcRqTVNnPmCBlBmFzW4
+         rc9urcFKGUzvAU9F71zQ+8uKL8FuMPI4MJmPsWNrQ7tQ+ybcg6gw15n2OrDFnBpKqJlV
+         k60LV76C7jLuI7uq7iUHuSLwlwa+gs+F9Pa7IEiiJ+II1bZ/+bXhXCoUS3KIh4LOlg3p
+         FGzgKabPnalRmZwN6QFl56e1hEkQABAuDUlKLkbSQtcGjRqjMz4nbjFKECIJoHBmpg1f
+         6ayw==
+X-Gm-Message-State: AOJu0Yx0E6B/5SKT8CjnfUhpAvbTwxgAJa8rrpmwj7P/Wycv61uCfnpB
+	2NR8tlUm2X6h7xrKJyNYjJohHpEMYLDMD0dpKO3xzejjYvgVCHeqVuIiQ17ekYlICprJtpKC+iU
+	3tsCXGGo4nqqkT0oNKKMccwCy3jqcxmszIZOIQLmlfrsb4tMBUql2kqA=
+X-Google-Smtp-Source: AGHT+IFTC8A+9hEt7RqENPGmESF4BArfjxZgImOootj4dlBZ6E9ooXerlBZs5ikrDIM7yCtjlrFLPbwmZ1sBogkQDbowaTqpaQLF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 17/24] perf/core: Support to capture higher width
- vector registers
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-18-dapeng1.mi@linux.intel.com>
- <20250225203224.GB1278@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250225203224.GB1278@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12c5:b0:3d2:5a0a:7227 with SMTP id
+ e9e14a558f8ab-3d2cb48229dmr161464645ab.13.1740556562663; Tue, 25 Feb 2025
+ 23:56:02 -0800 (PST)
+Date: Tue, 25 Feb 2025 23:56:02 -0800
+In-Reply-To: <1D76F22E-39A3-4174-9ADE-E3FCA97182BA@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bec912.050a0220.38b081.0005.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] possible deadlock in pcpu_alloc_noprof
+From: syzbot <syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On 2/26/2025 4:32 AM, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 03:28:11PM +0000, Dapeng Mi wrote:
->> diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
->> index 9ee9e55aed09..3851f627ca60 100644
->> --- a/arch/x86/include/uapi/asm/perf_regs.h
->> +++ b/arch/x86/include/uapi/asm/perf_regs.h
->> @@ -33,7 +33,7 @@ enum perf_event_x86_regs {
->>  	PERF_REG_X86_32_MAX = PERF_REG_X86_GS + 1,
->>  	PERF_REG_X86_64_MAX = PERF_REG_X86_SSP + 1,
->>  
->> -	/* These all need two bits set because they are 128bit */
->> +	/* These all need two bits set because they are 128 bits */
->>  	PERF_REG_X86_XMM0  = 32,
->>  	PERF_REG_X86_XMM1  = 34,
->>  	PERF_REG_X86_XMM2  = 36,
->> @@ -53,6 +53,87 @@ enum perf_event_x86_regs {
->>  
->>  	/* These include both GPRs and XMMX registers */
->>  	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
->> +
->> +	/*
->> +	 * YMM upper bits need two bits set because they are 128 bits.
->> +	 * PERF_REG_X86_YMMH0 = 64
->> +	 */
->> +	PERF_REG_X86_YMMH0	= PERF_REG_X86_XMM_MAX,
->> +	PERF_REG_X86_YMMH1	= PERF_REG_X86_YMMH0 + 2,
->> +	PERF_REG_X86_YMMH2	= PERF_REG_X86_YMMH1 + 2,
->> +	PERF_REG_X86_YMMH3	= PERF_REG_X86_YMMH2 + 2,
->> +	PERF_REG_X86_YMMH4	= PERF_REG_X86_YMMH3 + 2,
->> +	PERF_REG_X86_YMMH5	= PERF_REG_X86_YMMH4 + 2,
->> +	PERF_REG_X86_YMMH6	= PERF_REG_X86_YMMH5 + 2,
->> +	PERF_REG_X86_YMMH7	= PERF_REG_X86_YMMH6 + 2,
->> +	PERF_REG_X86_YMMH8	= PERF_REG_X86_YMMH7 + 2,
->> +	PERF_REG_X86_YMMH9	= PERF_REG_X86_YMMH8 + 2,
->> +	PERF_REG_X86_YMMH10	= PERF_REG_X86_YMMH9 + 2,
->> +	PERF_REG_X86_YMMH11	= PERF_REG_X86_YMMH10 + 2,
->> +	PERF_REG_X86_YMMH12	= PERF_REG_X86_YMMH11 + 2,
->> +	PERF_REG_X86_YMMH13	= PERF_REG_X86_YMMH12 + 2,
->> +	PERF_REG_X86_YMMH14	= PERF_REG_X86_YMMH13 + 2,
->> +	PERF_REG_X86_YMMH15	= PERF_REG_X86_YMMH14 + 2,
->> +	PERF_REG_X86_YMMH_MAX	= PERF_REG_X86_YMMH15 + 2,
->> +
->> +	/*
->> +	 * ZMM0-15 upper bits need four bits set because they are 256 bits
->> +	 * PERF_REG_X86_ZMMH0 = 96
->> +	 */
->> +	PERF_REG_X86_ZMMH0	= PERF_REG_X86_YMMH_MAX,
->> +	PERF_REG_X86_ZMMH1	= PERF_REG_X86_ZMMH0 + 4,
->> +	PERF_REG_X86_ZMMH2	= PERF_REG_X86_ZMMH1 + 4,
->> +	PERF_REG_X86_ZMMH3	= PERF_REG_X86_ZMMH2 + 4,
->> +	PERF_REG_X86_ZMMH4	= PERF_REG_X86_ZMMH3 + 4,
->> +	PERF_REG_X86_ZMMH5	= PERF_REG_X86_ZMMH4 + 4,
->> +	PERF_REG_X86_ZMMH6	= PERF_REG_X86_ZMMH5 + 4,
->> +	PERF_REG_X86_ZMMH7	= PERF_REG_X86_ZMMH6 + 4,
->> +	PERF_REG_X86_ZMMH8	= PERF_REG_X86_ZMMH7 + 4,
->> +	PERF_REG_X86_ZMMH9	= PERF_REG_X86_ZMMH8 + 4,
->> +	PERF_REG_X86_ZMMH10	= PERF_REG_X86_ZMMH9 + 4,
->> +	PERF_REG_X86_ZMMH11	= PERF_REG_X86_ZMMH10 + 4,
->> +	PERF_REG_X86_ZMMH12	= PERF_REG_X86_ZMMH11 + 4,
->> +	PERF_REG_X86_ZMMH13	= PERF_REG_X86_ZMMH12 + 4,
->> +	PERF_REG_X86_ZMMH14	= PERF_REG_X86_ZMMH13 + 4,
->> +	PERF_REG_X86_ZMMH15	= PERF_REG_X86_ZMMH14 + 4,
->> +	PERF_REG_X86_ZMMH_MAX	= PERF_REG_X86_ZMMH15 + 4,
->> +
->> +	/*
->> +	 * ZMM16-31 need eight bits set because they are 512 bits
->> +	 * PERF_REG_X86_ZMM16 = 160
->> +	 */
->> +	PERF_REG_X86_ZMM16	= PERF_REG_X86_ZMMH_MAX,
->> +	PERF_REG_X86_ZMM17	= PERF_REG_X86_ZMM16 + 8,
->> +	PERF_REG_X86_ZMM18	= PERF_REG_X86_ZMM17 + 8,
->> +	PERF_REG_X86_ZMM19	= PERF_REG_X86_ZMM18 + 8,
->> +	PERF_REG_X86_ZMM20	= PERF_REG_X86_ZMM19 + 8,
->> +	PERF_REG_X86_ZMM21	= PERF_REG_X86_ZMM20 + 8,
->> +	PERF_REG_X86_ZMM22	= PERF_REG_X86_ZMM21 + 8,
->> +	PERF_REG_X86_ZMM23	= PERF_REG_X86_ZMM22 + 8,
->> +	PERF_REG_X86_ZMM24	= PERF_REG_X86_ZMM23 + 8,
->> +	PERF_REG_X86_ZMM25	= PERF_REG_X86_ZMM24 + 8,
->> +	PERF_REG_X86_ZMM26	= PERF_REG_X86_ZMM25 + 8,
->> +	PERF_REG_X86_ZMM27	= PERF_REG_X86_ZMM26 + 8,
->> +	PERF_REG_X86_ZMM28	= PERF_REG_X86_ZMM27 + 8,
->> +	PERF_REG_X86_ZMM29	= PERF_REG_X86_ZMM28 + 8,
->> +	PERF_REG_X86_ZMM30	= PERF_REG_X86_ZMM29 + 8,
->> +	PERF_REG_X86_ZMM31	= PERF_REG_X86_ZMM30 + 8,
->> +	PERF_REG_X86_ZMM_MAX	= PERF_REG_X86_ZMM31 + 8,
->> +
->> +	/*
->> +	 * OPMASK Registers
->> +	 * PERF_REG_X86_OPMASK0 = 288
->> +	 */
->> +	PERF_REG_X86_OPMASK0	= PERF_REG_X86_ZMM_MAX,
->> +	PERF_REG_X86_OPMASK1	= PERF_REG_X86_OPMASK0 + 1,
->> +	PERF_REG_X86_OPMASK2	= PERF_REG_X86_OPMASK1 + 1,
->> +	PERF_REG_X86_OPMASK3	= PERF_REG_X86_OPMASK2 + 1,
->> +	PERF_REG_X86_OPMASK4	= PERF_REG_X86_OPMASK3 + 1,
->> +	PERF_REG_X86_OPMASK5	= PERF_REG_X86_OPMASK4 + 1,
->> +	PERF_REG_X86_OPMASK6	= PERF_REG_X86_OPMASK5 + 1,
->> +	PERF_REG_X86_OPMASK7	= PERF_REG_X86_OPMASK6 + 1,
->> +
->> +	PERF_REG_X86_VEC_MAX	= PERF_REG_X86_OPMASK7 + 1,
->>  };
->>  
->>  #define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
->> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
->> index 0524d541d4e3..8a17d696d78c 100644
->> --- a/include/uapi/linux/perf_event.h
->> +++ b/include/uapi/linux/perf_event.h
->> @@ -379,6 +379,10 @@ enum perf_event_read_format {
->>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
->>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
->>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
->> +#define PERF_ATTR_SIZE_VER9	168	/* add: sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE] */
->> +
->> +#define PERF_EXT_REGS_ARRAY_SIZE	4
->> +#define PERF_NUM_EXT_REGS		(PERF_EXT_REGS_ARRAY_SIZE * 64)
->>  
->>  /*
->>   * Hardware event_id to monitor via a performance monitoring event:
->> @@ -531,6 +535,13 @@ struct perf_event_attr {
->>  	__u64	sig_data;
->>  
->>  	__u64	config3; /* extension of config2 */
->> +
->> +	/*
->> +	 * Extension sets of regs to dump for each sample.
->> +	 * See asm/perf_regs.h for details.
->> +	 */
->> +	__u64	sample_regs_intr_ext[PERF_EXT_REGS_ARRAY_SIZE];
->> +	__u64   sample_regs_user_ext[PERF_EXT_REGS_ARRAY_SIZE];
->>  };
->>  
->>  /*
-> *groan*... so do people really need per-register (or even partial
-> register) masks for all this?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Yeah, I agree. Users should never read partial registers. But as current
-perf tool has already supported to read per-register on XMM registers, not
-sure if it would introduce back-compatible issues if we only support read
-register group, like XMM, YMM or ZMM group.
+Reported-by: syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com
+Tested-by: syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com
 
+Tested on:
 
->
-> Or can we perhaps -- like XSAVE/PEBS -- do it per register group?
+commit:         42f41ed6 bcachefs: Fix deadlock
+git tree:       https://github.com/alanskind/bcachefs
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e40ff8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9593a0a6d52aabe9
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe63f377148a6371a9db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-If there is no back-compatible issue, I think it should work.
-
-
->
-> Also, we're going to be getting EGPRs, which I think just about fit in
-> this 320 bit mask we now have, but it is quite insane.
->
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
