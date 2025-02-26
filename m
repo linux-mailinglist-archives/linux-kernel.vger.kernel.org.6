@@ -1,82 +1,155 @@
-Return-Path: <linux-kernel+bounces-534968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E584A46D60
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:26:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5063A46D69
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7FB3A7862
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7418882A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0F425A32B;
-	Wed, 26 Feb 2025 21:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D825A327;
+	Wed, 26 Feb 2025 21:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy1LDM2s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37163223321;
-	Wed, 26 Feb 2025 21:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574821CC54;
+	Wed, 26 Feb 2025 21:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605178; cv=none; b=d1tPnyu63/a85bEAbiRAZV3J4dDO8uXVN1J2tr9FmuHfMWfrXCCogCPiEYO1rgww6EY8eghJDfSuDRE+TBd6Ck8704xkto11ITE/JjSV/3FbFTNAVaKsDUqaw8lM5RmwppKdIfdVTeKRBWz9iuiBxtsMSd2sftNyDq/HTWSAaOk=
+	t=1740605254; cv=none; b=jGhXtfw8cxCILQbIYdrjG29SlHVVZKWubCTjGQj1dplrIkBXzWiLbhAQaXk5wTmPKNcKSKyZkR1NEVIUqBXbtks9inOyENUwLui1ngbb5dFv9kUUqekbdNqJN45+lD3CrV/w9WLWkSodlgMBk1wXnt0c+iN+DzeefSO8yqeIbi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605178; c=relaxed/simple;
-	bh=Yp/mMIwMpxDeFoFPJUGlW9naor6FAFBdrMt76B+P2rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iBGwYIL4VL2bRZnFjJBx1m05PhiXWR44O/FNBExfTm4ycxbBkaQNbhZw31kW5X3w7hfzGeCOXhb+QCb0GPztGANkD3qIbJrmel1lqda+tzJCo50Vi+5xuJPABsGh7ZLYAQmeNKjw2c5QE9s/GLZQJgD2w1PHrCB9WhSEPlHUYUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE6BC4CED6;
-	Wed, 26 Feb 2025 21:26:14 +0000 (UTC)
-Date: Wed, 26 Feb 2025 16:26:55 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Uecker <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E.
- McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura
- Jack <venturajack85@gmail.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250226162655.65ba4b51@gandalf.local.home>
-In-Reply-To: <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<20250222141521.1fe24871@eugeo>
-	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
-	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740605254; c=relaxed/simple;
+	bh=QBF3gK7K+8XyqisYuWi4FlxcFrpOykFsHbOMdaD+jO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+3pUqhpzbVKvbapBj8zDZvgZhqbJQ8E8wVWPn3FYzPzwKtzvxhrgRWwmOnBod/2bNvraOL2u8D0H+X9DNicxONdVyqm28YsMF8oUGAzHOunvHNMylUrm4bFPyQtF2nAB8NWu4m38gcQiWogPODS2AeBWhv/RBaOf3c0ycGLLB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy1LDM2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCCDFC4CED6;
+	Wed, 26 Feb 2025 21:27:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740605254;
+	bh=QBF3gK7K+8XyqisYuWi4FlxcFrpOykFsHbOMdaD+jO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cy1LDM2s4HzDSgUGAmgr/JODHJxrsVjMMNP/47jQ1He4q+kNlS0GKvfQY2too9PXW
+	 yUrxWuKyke82/OhQjxZBrQ7WOEBymVivlqTaVZXTD/nA5/M2EGz2BOu4Czy9QkHeWq
+	 B9UpDihHPXzd0gmJYpWlSQxq1cxiriOkoeOGox//dGyotChkUWCwnD0QTz919exoLx
+	 hhCXg85BQvMCbUriEhSDswVwvL7bObC5J2UeCTm+mZq4Ton1yjlfz+Z2yjK6EJOx0x
+	 Wvqa7TmHAMWxCzqqmpzo6FVjNclNKEmBs/bo1saxMBnPGZ7PACJM1uXMEkxlGRgmxx
+	 DdO4Z8rL3LuTg==
+Message-ID: <1de58672-5355-4b75-99f4-c48687017d2f@kernel.org>
+Date: Wed, 26 Feb 2025 22:27:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp25
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+ Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
+ <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
+ <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
+ <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
+ <988667a4-4bc0-4594-8dfd-a7b652b149b2@foss.st.com>
+ <55beb3e7-65ac-4145-adae-fb064378c78d@kernel.org>
+ <8cdc7e52-f9e2-4fc9-be68-0dd72a25ee1b@foss.st.com>
+ <248f63ff-b6ec-4f58-8a96-7aee2fcd6038@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <248f63ff-b6ec-4f58-8a96-7aee2fcd6038@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 13:14:30 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On 26/02/2025 17:54, Alexandre TORGUE wrote:
+>>>> But, if it's not clean to do it in this way, lets define SoC compatible
+>>>> for any new driver.
+>>>
+>>> Compatibles are for hardware.
+>>>
+>>>> For the HDP case it is: "st,stm32mp157" and used for STM32MP13,
+>>>> STM32MP15 end STM32MP25 SoC families (if driver is the same for all
+>>>> those SoCs).
+>>>
+>>> No, it's three compatibles, because you have three SoCs. BTW, writing
+>>> bindings (and online resources and previous reviews and my talks) are
+>>> saying that, so we do not ask for anything new here, anything different.
+>>> At least not new when looking at last 5 years, because 10 years ago many
+>>> rules were relaxed...
+>>
+>> So adding 3 times the same IP in 3 different SoCs implies to have 3 
+>> different compatibles. So each time we use this same IP in a new SoC, we 
+>> have to add a new compatible. My (wrong) understanding was: as we have 
+>> the same IP (same hardware) in each SoC we have the same compatible (and 
+>> IP integration differences (clocks, interrupts) are handled by DT 
+>> properties.
+> 
+> Just to complete, reading the Linux kernel doc, as device are same we 
+> will use fallbacks like this:
+> 
+> MP15: compatible = "st,stm32mp151-hdp";
+> MP13: compatible = "st,stm32mp131-hdp", "st,stm32mp151-hdp";
+> MP25: compatible = "st,stm32mp251-hdp", "st,stm32mp151-hdp";
 
-> Similarly, if the source code has a single read, the compiler had
-> better not turn that into two reads (because of some register pressure
-> issue). That would *ALSO* be a bug, because of the whole TOCTOU issue
-> (ie the source code may have had one single access, done sanity
-> testing on the value before using it, and if the compiler turned it
-> all into "read+sanity test" and "read+use", the compiler is
-> introducing behavioral differences).
+Yes, this looks correct.
 
-As a bystander here, I just want to ask, do you mean basically to treat all
-reads as READ_ONCE() and all writes as WRITE_ONCE()?
-
--- Steve
+Best regards,
+Krzysztof
 
