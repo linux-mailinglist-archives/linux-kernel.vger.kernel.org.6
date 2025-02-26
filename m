@@ -1,142 +1,108 @@
-Return-Path: <linux-kernel+bounces-533685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50817A45DA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:49:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC41A45DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D900189825F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6441897C01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14745216382;
-	Wed, 26 Feb 2025 11:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78067258CE3;
+	Wed, 26 Feb 2025 11:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K5dLnZ+I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b3rFsbLM"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBvHyzQd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF44215F65;
-	Wed, 26 Feb 2025 11:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93D6217701;
+	Wed, 26 Feb 2025 11:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740570451; cv=none; b=dWTWzAnXtv2aIIxmzW3+V5ZwIBCchUBkmMxkhS+5w12i8gn7nIKWEVLDgz1ylL5Gr6+YFuHl1tczPI4otTXxwYHfnLwe2L2lNeGx1R/w4dvM3GjDvwKacV+1fWAGyHqBdPUx0eVjysqDmPFBOo1o+8MnZFDRlE0qYNlwFhaBhkI=
+	t=1740570462; cv=none; b=csBDUdiE2bo5FauQmRtAqqsKApUmhy3MOPw+mk8WVpZkqFrG2a/w/1QAeJMSUaVaGkhrBGTq4lBM4NNBMqrAAioo2xUzjDmMLOuVeJBM+huZcdNjczhSSqlv02lkzYHnjATGik/te1j844S3KpL+KcNgLK8PTideRWdV8zscCXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740570451; c=relaxed/simple;
-	bh=GNROyfSwLsU0OnrSPd4OOnWuNRATtj48jePoEv0RPik=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TwAvh70Aav/6fJ8jtRqZvkLqotm1I016gMBNENFsMYSeLkVsoep40rMJxHok9aGH9PYdegqBBvC0erO4A1/xjkpYnuWNZKDaVGFnTDT0+4Y3QnTOspkOThvbNoW98gX3yb/O4XeDFqeIdyJnI+hXDCQYPYjArJ+CGJTFVa36bls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K5dLnZ+I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b3rFsbLM; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C3C225401B8;
-	Wed, 26 Feb 2025 06:47:27 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 06:47:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740570447;
-	 x=1740656847; bh=srA0vSiRaX96bO7gWAZFdEu/4TLsEeD2V/wdQUaSQxQ=; b=
-	K5dLnZ+IEvOA4/EeEZFacetVjPs/sdbfQ9nMyi6y+2jlG8gB0UCZBNudMqiOwk21
-	VLkFin5zplcLTwOCwv3zMK7AYAdl0FTWjWl7WjxoJFDBnPVMOYsSvUJqSaEpHMSI
-	TdMNp2iMDeSttMrUVbgj8cBRLXuSmuCwtTAIn1Lqvd94R6k8o0KYTrGohXUldphT
-	+pY6CL/v1klhU96/KIUrl6YntD9u/FeyBp2PbC0iDoU+adrI1lzGm4ldfVFgdf8V
-	wv65M8dUEFxifrAxNJ77b0yxHnxTSuFNql9/5rCmiU/BZqdBeU3JQfSjCx4V5e0G
-	ftBQ5d/HzyZgkE48TtUxuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740570447; x=
-	1740656847; bh=srA0vSiRaX96bO7gWAZFdEu/4TLsEeD2V/wdQUaSQxQ=; b=b
-	3rFsbLMobRqNDSJF8SjvoG8Kucn6IjqOjT4yCQfpZkMBcnMCSRFYfuHfFEVQQtAg
-	WdZv4dNfurKnlqastIL8h7s2j1lO+PNQzoCdSbuOZ/IwKa9ad/d9I3NVnkoYHFJT
-	bFCH4SArUOM9F/c9fyndinVws5+Z4ct0p6oIzmlB9hWsvDidM33eaVERL91jhVjp
-	qADplyULD1YP9TEUFEPxVv/JPPtPX6C/0Hsk9KHo31HKjTe5WtmuHsL21t2hVqHu
-	+ECbqPy6mi+lMqswcoHujtVizKnLQWZBQnMSDJZHLoxD5E2NtUPlQSJFWGungpEF
-	9XGV910f2sueMNM0LfpgQ==
-X-ME-Sender: <xms:Tv--Z_diHp5ZDRErRnqmS8ZPTTCezM_3rgE7AVddKtn-DuaNDBkDCw>
-    <xme:Tv--Z1MphFXytyiu7QgFfDu2nEn88_gsIz_sjHvdAPGZjY0HNcLObb1hRQsEwbmpw
-    u-3NTzdUuLsebhpXOE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpd
-    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhk
-    hheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhiqdguvg
-    hvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthii
-    ihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvg
-    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Tv--Z4iCSjAUyvHYNJf_AG3sE_ua61qG6NfnGFOiyktvBK3_IRMNxQ>
-    <xmx:Tv--Zw8wQwtaohN4eqXaSl-7aGOjmxGKmCkBjCDSzCiQbM1hU71dEg>
-    <xmx:Tv--Z7u04LRvb5kBTsNhcfklAEHiAI9rK6b3N5rrYCGjNnwe_hmluQ>
-    <xmx:Tv--Z_GRVy1a40pOCrtq_ao7UwyvfCgGSK5AqqZ27__1LsxM_r9ugA>
-    <xmx:T_--Z_hz1oXOkYT7AeuVlKWwR_HmHayHpHeWbHHKwfw0qUc_tH4kb6ns>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AA9B42220072; Wed, 26 Feb 2025 06:47:26 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740570462; c=relaxed/simple;
+	bh=JOQo3/AMvkrL1dqwOqth1Sz1S7IiFRAbwLyLHcQKuZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwdDL4TXrzTXNwizhB24jd/RgfEZ1Ja6v77GW4ocr6m8Xkh9gZWOHLfFpA4p7J8yiulzCD+oOcjh8AZbI9NQVMOuadh+QEXp5gLePCPoB3JTu3GYzfo02usMCHIy1T8vM2gC8tpptIRF+SL9PmqWKvZJI1b6+ht16ob/vhH2KLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBvHyzQd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE318C4CED6;
+	Wed, 26 Feb 2025 11:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740570461;
+	bh=JOQo3/AMvkrL1dqwOqth1Sz1S7IiFRAbwLyLHcQKuZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LBvHyzQdQCpEbjbuVZQynljxXW4ZIyfPT+HBhocchWPRqewWdlQgD3A4zsUTR1Ijx
+	 daVc1JVwYN6hev7qQrS2S7ciZGAgjExyXFq7mw7hpyaezkgmih9UlQ5wfkeh4DMSOJ
+	 CV2GtFzC/e1ABejStfX5ejCjYmykN0vxNhLXbw4SF4RUTu8nWU1a3gE/35NtHCG3q7
+	 wH/V3JDjIENUcecZ+0tiu/Vkz2ZrL9vUTdQ96q29/aJHIExaxYTiQnIFNQvvEYTZ9i
+	 q7zqA1wCr+UorcQ7ZpdS2ZKsmElUX/5fD8nFwpCzzMLfZ5Qv+PqSdifWUg/KQv4mTW
+	 t9BZ/LHKbEHrQ==
+Date: Wed, 26 Feb 2025 11:47:36 +0000
+From: Mark Brown <broonie@kernel.org>
+To: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: regulator: add adi,adp5055-regulator
+Message-ID: <dd547319-f8c8-4c3a-979d-4610971cdd25@sirena.org.uk>
+References: <20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com>
+ <20250225-upstream-adp5055-v1-1-a5a7f8e46986@analog.com>
+ <cf90cf64-202b-456c-9a9a-ba33d0e68961@sirena.org.uk>
+ <SA1PR03MB6340A94474EBFE0F8428A581F1C22@SA1PR03MB6340.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 26 Feb 2025 12:46:56 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Arnd Bergmann" <arnd@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Helge Deller" <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Message-Id: <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
-In-Reply-To: <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
-References: <20250225164436.56654-1-arnd@kernel.org>
- <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
- <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
- <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
-Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vyNIygDModyIpM3c"
+Content-Disposition: inline
+In-Reply-To: <SA1PR03MB6340A94474EBFE0F8428A581F1C22@SA1PR03MB6340.namprd03.prod.outlook.com>
+X-Cookie: I've been there.
 
-On Wed, Feb 26, 2025, at 09:16, Thomas Zimmermann wrote:
-> Am 26.02.25 um 08:55 schrieb Arnd Bergmann:
-> Here's another general question. vgacon and fbcon only seem usable with 
-> CONFIG_VT=y. Wouldn't it make sense to have them depend on CONFIG_VT=y? 
-> dummycon could then be implemented as part of the vt code, maybe even 
-> become a vt-internal thing. The console code is complex, so I'm probably 
-> missing something here?
 
-I think in theory one may have a system use fbcon purely to get the
-boot logo, but not actually support VT.  I had also assumed there might
-be a way to use fbcon as the console (i.e. printk) but not register
-the tty, but it looks like the console code still requires vt.
+--vyNIygDModyIpM3c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After I looked at the vt and conswitchp code some more, I wonder
-if we could go the other way and instead of integrating it more
-make the conswitchp logic optional: most of the complexity here
-deals with switching between text console and fbcon dynamically,
-but having any text console support is getting very rare (vga
-on alpha/mips/x86-32, newport on mips-ip22, sti on parisc).
+On Wed, Feb 26, 2025 at 02:25:02AM +0000, Torreno, Alexis Czezar wrote:
 
-If we do this, the conswitchp code could be merged with dummycon
-in drivers/video/console, with the simpler alternative just
-calling into fbcon functions. I'm not sure if we can already drop
-vgacon from normal x86-64 distro configs, i.e. if there are cases
-that are not already covered by any of efi-earlycon, efifb,
-vga16fb, vesafb/uvesafb or a PCI DRM driver.
+> > > +      adi,disable-delay-us:
+> > > +        description:
+> > > +          Configures the disable delay for each channel. Dependent on Tset.
+> > > +        enum: [0, 5200, 10400, 15600, 20800, 26000, 31200, 36400]
+> > > +        default: 0
 
-    Arnd
+> > This looks a lot like the driver should implemnt the enable_time() and/or
+> > set_ramp_delay() operations and use the constraints to configure this.
+
+> Based on what I understand I agree implementing the enable_time() core
+> function for this. However, shall I keep the code for the disable-delay-us?
+> I don't think I saw a disable_time() equivalent
+
+We don't generally worry about disable times, they're hugely load
+dependent so the numbers tend to involve a lot of wishful thinking.
+
+--vyNIygDModyIpM3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme+/1gACgkQJNaLcl1U
+h9AJRgf/SbMsNIjw2JAqtkYzbbLh4A52BF7wEa29RpyV6CGwgPnhj84DYF3aRqfM
+04oRlSwVzFRIUSTo2bzc6cf2uT8eUMCEVSpRCyfsPy9pZsy8Bma7d8sRwPyXO/vc
+FUZIj8nNVDiFYLaKCAxOyj8iY4KmpPfoEnmpa8fXpEOH2dnyJoZA0dR3cArL/Cwx
+XYcE5K9KyaK7wRfjWHF9M2g5AYklTespWcisxiAKJLBbUX+oqzuGAWEh0cfJfM4a
+WzErIOflLqFm5npZE3HcI+FsTDi8g9pIsihhk1ppcPiYU4EI9Z2/3REbnHn1gGz7
+y5y3ZM7j0RFp+rZiOJcL8y4dBMpsPw==
+=HtnD
+-----END PGP SIGNATURE-----
+
+--vyNIygDModyIpM3c--
 
