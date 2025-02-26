@@ -1,102 +1,163 @@
-Return-Path: <linux-kernel+bounces-533130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D34AA45604
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:51:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42576A45609
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68A216A0FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC85A1744DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B713E269AEA;
-	Wed, 26 Feb 2025 06:48:54 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E18269AED;
+	Wed, 26 Feb 2025 06:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Y9LPHaJJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c2bp7lRM"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5F120FA9C;
-	Wed, 26 Feb 2025 06:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1451C84BD;
+	Wed, 26 Feb 2025 06:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740552534; cv=none; b=NLTZer4N/JI902lCjv6dkOKeX1BViGr6N2FLKwZ1yDmbhHPmXj0FMjie1gKIXAWJWukG6dJ/RwB6RfO9UKy1K74dvsfy2gQ9xnhwmgrE2L++V6WIlFC3Wu5vwIjeuNVb1/7mejU3P5GRPY68nNaFDLmxD+zE+QlD5vmUhq9lJfg=
+	t=1740552600; cv=none; b=rHHXsJZ62fh3vOLEdPyfhaOwPYT1rEGQcJsJINcjkpR161YErBrCVVr1LwZdMYNuKV4+isyAHcUq/47YMuuqDmF7JdxOykeVutooi55uEkIZupQxFbSfd7mp1j5pZ/amOFxMX3H8MVFjLj6lKk4qFO5RCC3hJpdXRhbksZvyLsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740552534; c=relaxed/simple;
-	bh=gC7PSBjyRUnVpAoH8oaR/sRgc92k/ei7rpPXG+RmbiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PX4c3tBIA4af7v4q13VO0AH455FA/g2czjljzrHEYKnwILdTKUzCw2OYiLFxw7GLWeUEUtW8KwVpDriQAjSQoAP9x6XPXMzjfYcAkMWrluhWSo3VVSHITpNL3o9T2aKBIqYV5MPK4mb2ZyhmK//+MY8fFOQKdclfWdbrx/ktZO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22334203781so1829215ad.0;
-        Tue, 25 Feb 2025 22:48:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740552532; x=1741157332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BFPHzWF9dvrF9nnBiTWLXmH6iPscf0ArvWzi8p1a6zg=;
-        b=aEw4C1Ig7pUPmccjvUWp3FfIggCwsguGDZ6uvZxGM3cAv+I+3AY5l1JzSiwXBCpgky
-         HiHh94eayPrrUXD1KOjp4B+1MrWDesjqOeqZUmH20fRUAlWpVhjGowtPARQtWrxPtR+g
-         iRPObpuG/0SQAVKeJZXGnOJzBdNNlzGK/gQHpl5XLyGvBNyxwbA+9ZMJHp0istwkNCjN
-         RFLAcFS2xu1GjfGYLaznvFPhvdLqOhP4qhlorXWe8teqp9zqYsFDHUWmwxPw+jepMfdw
-         HIXvk2QBgp1qPju2sMHKB50KPuYIeCmwX6FSxjhKKDpEslqKF1jdK30qqz/8qRtDHIUs
-         FuEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKUase9qpBbrqzpDwLuM/7EMkMAHxPh9c650CoJgWMqv7bVrwPkXxRoWM/aJlJGc9iQm6fGxOsQ6HlQbVIT4PJZA==@vger.kernel.org, AJvYcCUQt/7XoGIiExwje0OdFVtEPvRxeUtMh0LreFzdFDLiM05cQYjz1bD2ijDwL4QIokfSx9Ny/wSxmGn7@vger.kernel.org, AJvYcCWYYnZj/f/dPhRPzLL7ov51LF+s0H2ceF+OzyDMCNeiSMGsg32m+umVB+hl1MKoYQ/SaFaewDCPyRFbd1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvOFy3Jt0DWxaca2xsxsAPdNmS2ZMIrEKYaM0YlGFyHZ//pKHj
-	WeHEMLzkDYpI+vyhWl4WJMK3WG3UqRdaoTgNSkIaOEZwThB00jH+
-X-Gm-Gg: ASbGncuv4lJrRGPLPNDXveu3pl3S5ysiZVAslLPq9xKvH4gbod2DZe7FAvmPhWnQJoF
-	3mCC7RiZ2qySTWf4IrhfdAj5R84J2RV52zSmdtkyDGNUX8LdSO9hVM/IGyeuMmLakmqzlGmN0+V
-	SIcMQy9F5At58xXy9hoOT0gsS4ID+/boxnwpvtnf9fppQztqz9PMosOH+3ohtYvoXhGs185Oca/
-	5/dZuyO21toHc4wEw3xBuJF1k2pNjtpN1dHI2DpHSnUmekRZedl9IgPe07HY4v7FeY9F3e1NOb3
-	82UHRJaY6K/81Y597JX9zQIbdDSRMLpnKFszE5gEusdnVH7VrDI+mCthGkHzKpNKJZOFGcFaza8
-	fhg4=
-X-Google-Smtp-Source: AGHT+IGcE5VWjeLtYFuzMnR4StCCXIyHnVIwT6r2xYT1E3w/+YsuMDqsIDN1v9y0CaB1GqFIti/+Mw==
-X-Received: by 2002:a62:b419:0:b0:725:4a1b:38ec with SMTP id d2e1a72fcca58-7341406be25mr35814240b3a.3.1740552532025;
-        Tue, 25 Feb 2025 22:48:52 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aedab119e3csm2394339a12.76.2025.02.25.22.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 22:48:51 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:48:49 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 1/5] perf/dwc_pcie: Move common DWC struct definitions
- to 'pcie-dwc.h'
-Message-ID: <20250226064849.GA951736@rocinante>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132024epcas5p13d6e617805e4ef0c081227b08119871b@epcas5p1.samsung.com>
- <20250221131548.59616-2-shradha.t@samsung.com>
- <855b4178-cbd5-4d95-a2eb-32c5ee0e5894@linux.alibaba.com>
+	s=arc-20240116; t=1740552600; c=relaxed/simple;
+	bh=XnItWZpT3oZZxPjd9HEvharwKL5dOWJMkAj2c8lY4Rw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=svcqLLQ21orAQ5NX5G5FnosdKhES6P4KblRj2Y0tlpZqh681hVXrPazb16tBdlFuSD3E7VeEurF0eYQxuQsDQS7NnEysqgE5SIepfuZ+JchdEzsaK6Hu9LHYvTM5DTNZZ4D895NlVwMEaEtTBRr1g8tCvM+Qv0rzH0Pmn6T0Y7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Y9LPHaJJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c2bp7lRM; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CD4FC25401F4;
+	Wed, 26 Feb 2025 01:49:55 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Wed, 26 Feb 2025 01:49:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740552595;
+	 x=1740638995; bh=CND1Q8F/E/Zja91qSOuemRzNE+ygiM8qRxcIP8zqLs0=; b=
+	Y9LPHaJJQdansMPzLOkYEjlxNr4pRweYbEo8VUJ14Jaw7KGX6ZPZJpK5rPS2rfoq
+	ELSqUqKMc+ou7Bx4slNVjGARbvQo9rGjyiBpKMvQ8OrQt694BmpId+HKIBQ059b2
+	RCmzH3cJxbtBsX5MH8TCMiKRe6CFgkR3sGV16VtmyMFBCeN4DKfUtAEh0qF8LsXt
+	tM6eDYHrK+r1BBFNZvQAXymnDWOKtwrAwDtGyTzYAdKygqhoEWup+QP5iH72bXWR
+	O8qSFDCBRCpYgv/8NRXtjrCWumpLLDpC2unbnYrG9D8PV4aAQoVI36EPsO1rVXWZ
+	Et5vnm38wfKvKi7j6lwtzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740552595; x=
+	1740638995; bh=CND1Q8F/E/Zja91qSOuemRzNE+ygiM8qRxcIP8zqLs0=; b=c
+	2bp7lRM3NfsAVzd2PrutbWN/WOdnRM9BcUXSlyVK/mGKtNn8aXZ8tDEqzGPRd8MU
+	PAdt/0e3HHpCrBlh0ASE93XBhKlkpRkR3Oti6NbKPi4q6LpDIHb3U5Z5v8AT9BYO
+	OJtMP0m0LFSHwbw4Yi1A4+4hI6Ll9AeiXOo7awKU8IAJvGLprhSnxJUrW5sKHlsM
+	lMHdJsQdxrLB0RZ1T68E4AU3ZeUfBRDMpAKRaCAMV4xV5qpKvHbmm+fZPzg+dpFP
+	ZjtuAhVrdBon8Xr6isqqS1aUnI3ifKr9z69dMzw3xWALo97Jo7loJweUs7FbYvIc
+	rDgFo0atfvOnmmJUdj0Yw==
+X-ME-Sender: <xms:k7m-Z1XuMqeCAXyOMoV53IFSIR3O8v0mFNxDRLlhcNeQEQVai8jbaA>
+    <xme:k7m-Z1n0IacjfEuUpfGVZNTo-EohhMo-E8yH_1J0Nh9hHqd-vj48dwl0t9KZ4UWoi
+    -0PqP_WSQ5uGeOwntA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekfeeklecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnh
+    highessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhl
+    ohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtohepshgrlhhilhdrmhgvhhhtrgeshhhurgifvghirdgtohhmpdhrtghpthht
+    ohepshhhrghojhhijhhivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepshhhvghnjh
+    hirghnudehsehhuhgrfigvihdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epkhhusggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:k7m-ZxZYaRIKDhkg0F8rPM2LOMRwnVAjmQsWBf8IqurddXLQnqM4hw>
+    <xmx:k7m-Z4WxKQkqVMnzoIoFrACJ1VSFKmTiWufuUbupsyjr-4ob8phJpg>
+    <xmx:k7m-Z_nXHZVYWoYNvRGZ8EalC3iqTItlNAb9S7wsNRHwx9wvFqBOcw>
+    <xmx:k7m-Z1dHMdax-zq8gK24rACd_ZpzBrhP0i34guJQpGxLv9b_jODMMw>
+    <xmx:k7m-Z5lDgYihus_fDhfVfmt_Vye5Eb-_LEmS3fFbycjz2wrKBIjIrY2f>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0FED62220072; Wed, 26 Feb 2025 01:49:55 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <855b4178-cbd5-4d95-a2eb-32c5ee0e5894@linux.alibaba.com>
+Date: Wed, 26 Feb 2025 07:49:33 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jijie Shao" <shaojijie@huawei.com>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Jian Shen" <shenjian15@huawei.com>, "Salil Mehta" <salil.mehta@huawei.com>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>
+Cc: "Simon Horman" <horms@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Message-Id: <c0a3d083-d6ae-491e-804d-28e4c37949d7@app.fastmail.com>
+In-Reply-To: <da799a9f-f0c7-4ee0-994b-4f5a6992e93b@huawei.com>
+References: <20250225163341.4168238-1-arnd@kernel.org>
+ <da799a9f-f0c7-4ee0-994b-4f5a6992e93b@huawei.com>
+Subject: Re: [PATCH 1/2] net: hisilicon: hns_mdio: remove incorrect ACPI_PTR annotation
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, Feb 26, 2025, at 04:21, Jijie Shao wrote:
+> on 2025/2/26 0:33, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Building with W=1 shows a warning about hns_mdio_acpi_match being unused when
+>> CONFIG_ACPI is disabled:
+>>
+>> drivers/net/ethernet/hisilicon/hns_mdio.c:631:36: error: unused variable 'hns_mdio_acpi_match' [-Werror,-Wunused-const-variable]
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/net/ethernet/hisilicon/hns_mdio.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
+>> index a1aa6c1f966e..6812be8dc64f 100644
+>> --- a/drivers/net/ethernet/hisilicon/hns_mdio.c
+>> +++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
+>> @@ -640,7 +640,7 @@ static struct platform_driver hns_mdio_driver = {
+>>   	.driver = {
+>>   		   .name = MDIO_DRV_NAME,
+>>   		   .of_match_table = hns_mdio_match,
+>> -		   .acpi_match_table = ACPI_PTR(hns_mdio_acpi_match),
+>> +		   .acpi_match_table = hns_mdio_acpi_match,
+>>   		   },
+>>   };
+>
+>
+> But I think it can be changed to:
+>
+> + #ifdef CONFIG_ACPI
+> static const struct acpi_device_id hns_mdio_acpi_match[] = {
+> 	{ "HISI0141", 0 },
+> 	{ },
+> };
+> MODULE_DEVICE_TABLE(acpi, hns_mdio_acpi_match);
+> + #endif
+>
 
-> > Since these are common to all Desginware PCIe IPs, move them to a new
-> > header 'pcie-dwc.h', so that other drivers like debugfs, perf and sysfs
-> > could make use of them.
-[...]
-> LGTM. Thanks.
-> 
-> Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
+That would of course avoid the build warning, but otherwise
+would be worse: the only reason ACPI_PTR()/of_match_ptr() exist
+is to work around drivers that have to put their device ID
+table inside of an #ifdef for some other reason. Adding the
+#ifdef to work around an incorrect ACPI_PTR() makes no sense.
 
-Thank you!
-
-	Krzysztof
+     Arnd
 
