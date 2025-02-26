@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-534600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C41CA468EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:08:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23EEA468F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEC5188CC1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A593A171178
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400A623959A;
-	Wed, 26 Feb 2025 18:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64C423CEE5;
+	Wed, 26 Feb 2025 18:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yn9mxMVo"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RErttnN9"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259C2238D38
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8319E23A564
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593172; cv=none; b=HHMw09vqMqA1T/3Q3NslB+lI2M+eS+0rPsWcIAiBVETCLsUlWYWcs/yYJ9zd6GmaAtFZXSm90ezK+y9IqDeeE5LlOSo3zPDQvMl+kPpwSV5Xbvwa2EtAcvLDTGpP41KL8t8LVG52GbGfuwQH/e/1pFMuZArChWQbNNqmchjJUO0=
+	t=1740593175; cv=none; b=oWZ7f8RapSjih/RHEhgZRpIrUrOFW2IyQy547GLIBrfeg5znfCdXWHtyzTRheU3BLDXFfHGHhsN88NCwJ6KBpzSNmU5nJEZC39BXMnttXHsvnR/OVst+ATMAZ75NdARWBjQZjIYDS9as1ST8LVgvjOOYVp7FrbtyR6Lcz9I9vW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593172; c=relaxed/simple;
-	bh=+NITKJToEUXuaXK8zS47p3zttszR09n9fFSVaLvRHdk=;
+	s=arc-20240116; t=1740593175; c=relaxed/simple;
+	bh=gbeR1LC6epTxL5hjM57IzLXNWDQ+GaAp9Yh449sHR1o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u9UYnRBPjSMmbcUoqpi8xYM0IlPoxVmt9VaV9a2AaRrOCe0S3wLSEOzJEMxGMtjELMDyguysQ3VX/qx6zNfAuo1sdkDci6PLUoT9Wd8v1gmy9yIR/PNr0+QXDsSPzEi/D2RZr8ISIQKTcrZ8Rd3LrZ0tmXOf0m/ymYJ67vdXtXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yn9mxMVo; arc=none smtp.client-ip=209.85.161.51
+	 MIME-Version; b=g1x5E1E3nwHIlqDaLoNZP8q4OaSQdrKJ2w2UICAU36OYAzSamF5BhrnkKRsaXjA+7syYhPKwRnFQ175wCgXpH4WpRknvwuQLyBVOmV9rgegsp0BRrhyEieR1F8kHKR5t33YjKjS9J5fTG0Ko0VnXJTOEVrDsM6JPMscdcJAxoFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RErttnN9; arc=none smtp.client-ip=209.85.161.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fe944a4243so17833eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:06:10 -0800 (PST)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f6b65c89c4so21317eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:06:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740593170; x=1741197970; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740593172; x=1741197972; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AzASOhbn/TdUnUq2BoNH4zzSfvXYoXG0ehJxyB+XGAg=;
-        b=Yn9mxMVoVEencS7lXzRJU1YL+j7md8nXLHoMXxlzKghYcO1Taf6Zg9S8ujTo7a6aJj
-         yEsFeBhR6HbfiOT6kvUtnpgCRSPR6LdC1On6m9+ulWoeAqtPChdF7Sfa9LdB+sWE9665
-         MYx7/pa4sPQu+98BD7qfnfZOiQ/Gu68g96I8lyYzScqN/1HXEmXz855Nqr+uVEeWpyNN
-         VjVUUlmlMFfZI4XX3WzG8optFFLm4y+UsPFz1luD0iL58wgz9UhZy71JSDaCEx50yBP7
-         RC/o5bYOiKtIKT1nEDLvXHXOD1S/1Uro/cxDrcdhOjky+Cjt7F3N3Dpnc7t/5KsOmhP0
-         q1RQ==
+        bh=ib/up2lq4vie8y203Us1LjVuEcmMH4a7XcIoSxmd8Ww=;
+        b=RErttnN9u742rYFY4uL2Lh61sCFEb8ipMca0FsN9bi2Ld8bSVw7ReIVjPXG3K3mJUB
+         U7Qo32BxqmEOAdOcacMeYftfNm3UapzHoO1irInnwni8KUqvoPAazigdCVpgJ9HJagvS
+         DHlH/l5COHtL5+Q4//Lp1xr0O7gI+f8JwWPy6FxpCGhB5QcD8vBm4b2Q2O5rD7j5V5rz
+         +J83DIs4Ijj0JLrL+dBxWplDXVeiE08kzy43l8uwT0bhfJfnXuiZ085tWB2U3JDTJorw
+         KPTol96p6ILrFsMhMSrKJl7jjp2dPXyUWpi0o865/FtYtw49DyF9i+q+1cyl1SEIi4Z0
+         Hwmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740593170; x=1741197970;
+        d=1e100.net; s=20230601; t=1740593172; x=1741197972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AzASOhbn/TdUnUq2BoNH4zzSfvXYoXG0ehJxyB+XGAg=;
-        b=QL41eUK493Rm6ZquMEprrDSI0G46kVigdGLpPNFgPO8ANGHlZL/XI0hulQSCxr0KJ3
-         ujJG4/E9oanLcfCuIpykOjkGkyZ/7JQGdM65f6HRxyQJDHZZundbHlD61tC35ttU95uA
-         bRiHA8RYrsQpjiclPxJmTMRtiIR55haZd0/MtBmW1YiOmZOEMgKdE7m3hDH0ezBrNpLa
-         7E721KvdHdtlzjeig7eq+GdLPBE2BtNu9CtnjS5514jRfIohgt2kNOWPmNH/doZo4pU6
-         OAM+1eyzyscG6wXUFhb0XRidGOs3M964dWbx9BP3K4ZbP1Fvxxl/z/HA/r74DQUq4qRP
-         arsA==
-X-Gm-Message-State: AOJu0YxoS2AUZHbPcS5HrdgYwQ4KvIcD4kanNR2vXPQJzmMYa0wcT7rV
-	a5YZmsQFOX5AIYhs3YSeNpNf3o7ftcUnAHgCGrKS8sVttGSq5Zm6pGZL
-X-Gm-Gg: ASbGnctmSAhsIlcE6t92uygGkICKUSubWKCWwRtQbAtY+r3dBTiOCWyfEh4g46h+SxW
-	TccbA5gbkP+RcRmebLtOe30i5dd6vJwTiR5uitxOoDJuW4zI7t36P7OImw92ERCQNtuVaNnu2TH
-	13wVpKlcs6Tb38wqND0RNMlxr/9PuBZDNNlF7V9G12jGLxGCERO6+tqmK3xLTe3hOL7bkbgly4B
-	LNzKgUJbbQ4+36oXN3jOp2rFjR5XWirldiFszMoeEfC4x7Bek6K3l9fubw1aOpDNN4/pAu0yavp
-	Ht0vI9Q=
-X-Google-Smtp-Source: AGHT+IFii8Y/uCMqIDFr/IoOM4XP5abwoUhsViZfg/Vzn8cm5Kj85HSMWVmn3VxiKZKd22QeLpQM+A==
-X-Received: by 2002:a05:6820:506:b0:5fd:b85:9b47 with SMTP id 006d021491bc7-5fe937185camr3833158eaf.1.1740593169862;
-        Wed, 26 Feb 2025 10:06:09 -0800 (PST)
+        bh=ib/up2lq4vie8y203Us1LjVuEcmMH4a7XcIoSxmd8Ww=;
+        b=lpQ/niTzOuUAxFEidKq1bpW4PjOv4KyB5qwtuCyhI4Ge/7VAfC0dX/8syNKZZGFDTK
+         aWuTM96+w9ijz5Txrwg01kZgOfpcn6dN3RDQZsNFJAl+EHQrMpoEeDe/NPkXUaXrnWqB
+         419MGpWYvXxtIFeLAr/Rtb05ydPwEzasdL6KdQqCyXgahLDiN/Z58UrPzh1pstbfPJvQ
+         NqKBMTlTpRtOYZiFCNNg2oS97n3bM8fRq89MsXFbkW4lCrpefgoYB4qtrv2Oy73KdrJd
+         iXVJRIR1Q1hgfdb0GkiDtJXEP+2oRaz73pUtpidS1wEDRH+4vwyTbCbE5fPp+cQhPldY
+         xOdA==
+X-Gm-Message-State: AOJu0Yze+VBYiEY5PNmavwUbp+ZZaUsYgqnim5WjyaS/KtOATm388Lp6
+	GenTKsxZ3N/pvuaV8IGMyh9c170/V4CUr+X5exgNOldYHI8b+GG112Is
+X-Gm-Gg: ASbGncuHPmEbZf8AnSEcadINnlTp6GXO2LgFsOr3Tl4LmZiwTeHa+OP+uFBG0JomBKl
+	IxS4IEclYB+80XuDamZoHlobaT11l/fbnz0F/fuETLiQ0VEVIQsDVdLzODGh1gA5zolN2caELZb
+	6QFCB1eTnbW26bwGQfLLQLGZKUrzfurMDbfYkX7SObj1TRJ61YaKl11u769JTJGeACD9I/rP1wx
+	S2BB8RjKgOKGRRB85jzWhufyqC8vyRcqE99UVOme4X1ryU/loM0B+AOz+d6oaw1T8vSKSs0+ywF
+	tmEQsSw=
+X-Google-Smtp-Source: AGHT+IEEw2uHIFBgv6fuSgOXXKvyHfckRf/gCuwJonZJVz2UKrz+YgfxDShvuBLOs6wsHI4meNd+hA==
+X-Received: by 2002:a05:6808:2105:b0:3f4:af3:74c0 with SMTP id 5614622812f47-3f540fbdf5fmr5020591b6e.29.1740593172172;
+        Wed, 26 Feb 2025 10:06:12 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fe9428c8b3sm755069eaf.39.2025.02.26.10.06.07
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fe9428c8b3sm755069eaf.39.2025.02.26.10.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 10:06:09 -0800 (PST)
+        Wed, 26 Feb 2025 10:06:11 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -84,9 +84,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v2 10/11] x86/stackprotector: Move __stack_chk_guard to percpu hot section
-Date: Wed, 26 Feb 2025 13:05:29 -0500
-Message-ID: <20250226180531.1242429-11-brgerst@gmail.com>
+Subject: [PATCH v2 11/11] x86/smp: Move this_cpu_off to percpu hot section
+Date: Wed, 26 Feb 2025 13:05:30 -0500
+Message-ID: <20250226180531.1242429-12-brgerst@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250226180531.1242429-1-brgerst@gmail.com>
 References: <20250226180531.1242429-1-brgerst@gmail.com>
@@ -102,36 +102,36 @@ No functional change.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/include/asm/stackprotector.h | 2 +-
- arch/x86/kernel/cpu/common.c          | 2 +-
+ arch/x86/include/asm/percpu.h  | 2 +-
+ arch/x86/kernel/setup_percpu.c | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm/stackprotector.h
-index d43fb589fcf6..cd761b14eb02 100644
---- a/arch/x86/include/asm/stackprotector.h
-+++ b/arch/x86/include/asm/stackprotector.h
-@@ -20,7 +20,7 @@
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index e347c6656ce8..f29c85a0abf4 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -589,7 +589,7 @@ do {									\
+ #include <asm-generic/percpu.h>
  
- #include <linux/sched.h>
+ /* We can use this directly for local CPU (faster). */
+-DECLARE_PER_CPU_READ_MOSTLY(unsigned long, this_cpu_off);
++DECLARE_PER_CPU_CACHE_HOT(unsigned long, this_cpu_off);
  
--DECLARE_PER_CPU(unsigned long, __stack_chk_guard);
-+DECLARE_PER_CPU_CACHE_HOT(unsigned long, __stack_chk_guard);
+ #endif /* !__ASSEMBLY__ */
  
- /*
-  * Initialize the stackprotector canary value.
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index ac8721a0eb3a..62472b8f798a 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2097,7 +2097,7 @@ void syscall_init(void)
- #endif /* CONFIG_X86_64 */
+diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
+index 175afc3ffb12..bfa48e7a32a2 100644
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -26,7 +26,7 @@
+ DEFINE_PER_CPU_CACHE_HOT(int, cpu_number);
+ EXPORT_PER_CPU_SYMBOL(cpu_number);
  
- #ifdef CONFIG_STACKPROTECTOR
--DEFINE_PER_CPU(unsigned long, __stack_chk_guard);
-+DEFINE_PER_CPU_CACHE_HOT(unsigned long, __stack_chk_guard);
- #ifndef CONFIG_SMP
- EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
- #endif
+-DEFINE_PER_CPU_READ_MOSTLY(unsigned long, this_cpu_off);
++DEFINE_PER_CPU_CACHE_HOT(unsigned long, this_cpu_off);
+ EXPORT_PER_CPU_SYMBOL(this_cpu_off);
+ 
+ unsigned long __per_cpu_offset[NR_CPUS] __ro_after_init;
 -- 
 2.48.1
 
