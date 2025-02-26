@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-534811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13DFA46B6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:51:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2E4A46B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E606116B831
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1414C188B7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CDD2566EB;
-	Wed, 26 Feb 2025 19:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1082566FB;
+	Wed, 26 Feb 2025 19:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a7JpSAiz"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SXJRKTPi"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1006821B192
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C477F21B192;
+	Wed, 26 Feb 2025 19:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740599479; cv=none; b=C2NcXuOa3sBisoSZ72JLjCDuObSVMxsKSjxEpB0FxZ+roPz1dliJ62gQhbGKd19kT9f1F0wMTKl4w2wX0tbY6RvNUHyxBArHkpFM5Y0AdT4N00ykh8xqx5Zn07sLZ2AqNHQvjg43nhGyzbSXeIEm6w9yP3Wk25ifB3mlVxW703s=
+	t=1740599594; cv=none; b=ZmYfuv5pdrqpObckd38ccaclIoeBRzG37uSRnNYqe3+u+byjsYGNtqnD+1znldgUpxchB4LUAi7OPWw4zpmZ0ElFIXg2iTKbT0jB/GUIef4CLuZm3KWyOhObgmAMMI99ytIPBgPOfth3C3V3aFGySSP7bbXZah7g8hfJpVqxSco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740599479; c=relaxed/simple;
-	bh=HPx5he7R5CNJ8mm6HEOg600FCFZgd4hCSDOVZ2Urmgk=;
+	s=arc-20240116; t=1740599594; c=relaxed/simple;
+	bh=fjNznI7ikazb+EF1sd1I6lh/W9iPJGpYuHhscRMec2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjjwNNmblVwgZ1rHFX1AgKQW8qSE/brXqgb4VqntTBdB5ZVc6nt9urhsDPl3hA6+6MiL7lJaG8wDm8cD9W9d34pJRqGKSuCFHXEf7D0zBzYEaTSRM+6BCddsy3/W9iUp2q/v5r0q15HwxCLPop45aChzDyvNX0kKYyE7BfcImiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a7JpSAiz; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 19:51:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740599474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ivu+nGK60AA1jaOvyRimH7ilHI4XPYOE1OskE9W6xZc=;
-	b=a7JpSAizvZ+acqtTt9FpwIcXbH7MdlxrsO2gEAq5DEaZqSmB29gWcM9QRAZQu9fatdws6y
-	GVR0Enoizo0yw6zKGHPE5KY/rG2FwRno1G4bfDLTBTMdvnDvE3Ckx2yTMcP3yopMW3ad6R
-	ZXAYpQzVMM8yfUnKr5t1Ad0s74V+678=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Patrick Bellasi <derkling@google.com>
-Cc: Borislav Petkov <bp@alien8.de>, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Bellasi <derkling@matbug.net>,
-	Brendan Jackman <jackmanb@google.com>,
-	David Kaplan <David.Kaplan@amd.com>
-Subject: Re: [PATCH final?] x86/bugs: KVM: Add support for SRSO_MSR_FIX
-Message-ID: <Z79wrLx3kJCxweuy@google.com>
-References: <20250226184540.2250357-1-derkling@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTZtHqx73c2MSAdeAAQOZZI5cHO0qYXF1um1PfdJWDZsabs887ax9xuqLGfW5tjx+BjfS6cc/u+JzUc3TP0iovJI+6IDzCQY34vPYsy+GEOQpPffsfVF6qfy1p8E8NnnZu1t1QZwitg6fwv1mrREouPv6nzmqNKhP2xIiph1ev8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SXJRKTPi; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MlkY8E0ykQtOxNBdGL5vBmEs1N89TyYPAy0burVU63Q=; b=SXJRKTPiEJ027l6aVtdu+lAnI4
+	FeLsNtnlOuNu2NEi6znmO0LfJ/Qm03UzoSCm4X8W3LrHGyZLh7pvZZBFsjNtxsgaza3TqKpDT47Ve
+	RLbEIS9mHjq/TUSVpH391OyiQlLtcHewUzN31uTWoJkbXYxv6eHO6v1WcYOo9AmTeU5dzIsOb6Goi
+	xr/qG0u8Rd0dOy7cVsJBV9vniAkafjsYwRQLqDMroXvbMR0uVezmRpcEOREW8LiUJtKPiBf0bexfn
+	Tsq4Yjq3pOcB9qNFTmLSrmbxwamRKTEEONLQ94kjV7n9Grvc0At8EA+PQEhsTwtCNn4HMXSfTajbE
+	a6aqYnmw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnNSv-00000003gF0-2k1g;
+	Wed, 26 Feb 2025 19:53:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C2EA530072F; Wed, 26 Feb 2025 20:53:08 +0100 (CET)
+Date: Wed, 26 Feb 2025 20:53:08 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org, ojeda@kernel.org
+Cc: linux-tip-commits@vger.kernel.org,
+	Scott Constable <scott.d.constable@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+	x86@kernel.org
+Subject: Re: [tip: x86/core] x86/ibt: Implement FineIBT-BHI mitigation
+Message-ID: <20250226195308.GA29387@noisy.programming.kicks-ass.net>
+References: <20250224124200.820402212@infradead.org>
+ <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,157 +65,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226184540.2250357-1-derkling@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <174057447519.10177.9447726208823079202.tip-bot2@tip-bot2>
 
-On Wed, Feb 26, 2025 at 06:45:40PM +0000, Patrick Bellasi wrote:
-> > On Tue, Feb 18, 2025 at 02:42:57PM +0000, Patrick Bellasi wrote:
-> > > Maybe a small improvement we could add on top is to have a separate and
-> > > dedicated cmdline option?
-> > > 
-> > > Indeed, with `X86_FEATURE_SRSO_USER_KERNEL_NO` we are not effectively using an
-> > > IBPB on VM-Exit anymore. Something like the diff down below?
-> > 
-> > Except that I don't see the point of this yet one more cmdline option. Our
-> > mitigations options space is a nightmare. Why do we want to add another one?
-> 
-> The changelog of the following patch provides the motivations.
-> 
-> Do you think something like the following self contained change can be added on
-> top of your change?
-> 
-> Best,
-> Patrick
-> 
-> ---
-> From 62bd6151cdb5f8e3322d8c91166cf89b6ed9f5b6 Mon Sep 17 00:00:00 2001
-> From: Patrick Bellasi <derkling@google.com>
-> Date: Mon, 24 Feb 2025 17:41:30 +0000
-> Subject: [PATCH] x86/bugs: Add explicit BP_SPEC_REDUCE cmdline
-> 
-> Some AMD CPUs are vulnerable to SRSO only limited to the Guest->Host
-> attack vector. When no command line options are specified, the default
-> SRSO mitigation on these CPUs is "safe-ret", which is optimized to use
-> "ibpb-vmexit". A further optimization, introduced in [1], replaces IBPB
-> on VM-Exits with the more efficient BP_SPEC_REDUCE mitigation when the
-> CPU reports X86_FEATURE_SRSO_BP_SPEC_REDUCE support.
-> 
-> The current implementation in bugs.c automatically selects the best
-> mitigation for a CPU when no command line options are provided. However,
-> it lacks the ability to explicitly choose between IBPB and
-> BP_SPEC_REDUCE.
-> In some scenarios it could be interesting to mitigate SRSO only when the
-> low overhead of BP_SPEC_REDUCE is available, without overwise falling
-> back to an IBPB at each VM-Exit.
+On Wed, Feb 26, 2025 at 12:54:35PM -0000, tip-bot2 for Peter Zijlstra wrote:
 
-To add more details about this, we are using ASI as our main mitigation
-for SRSO. However, it's likely that bp-spec-reduce is cheaper, so we
-basically want to always use bp-spec-reduce if available, if not, we
-don't want the ibpb-on-vmexit or safe-ret as they are a lot more
-expensive than ASI.
-
-So we want the cmdline option to basically say only use bp-spec-reduce
-if it's available, but don't fallback if it isn't. On the other hand we
-are enlighting ASI to skip mitigating SRSO if
-X86_FEATURE_SRSO_BP_SPEC_REDUCE is enabled
-
-> More in general, an explicit control is valuable for testing,
-> benchmarking, and comparing the behavior and overhead of IBPB versus
-> BP_SPEC_REDUCE.
-> 
-> Add a new kernel cmdline option to explicitly select BP_SPEC_REDUCE.
-> Do that with a minimal change that does not affect the current SafeRET
-> "fallback logic". Do warn when reduced speculation is required but the
-> support not available and properly report the vulnerability reason.
-> 
-> [1] https://lore.kernel.org/lkml/20250218111306.GFZ7RrQh3RD4JKj1lu@fat_crate.local/
-> 
-> Signed-off-by: Patrick Bellasi <derkling@google.com>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 7fafd98368b91..2d785b2ca4e2e 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -2523,6 +2523,7 @@ enum srso_mitigation {
->  	SRSO_MITIGATION_IBPB,
->  	SRSO_MITIGATION_IBPB_ON_VMEXIT,
->  	SRSO_MITIGATION_BP_SPEC_REDUCE,
-> +	SRSO_MITIGATION_BP_SPEC_REDUCE_NA,
->  };
-> 
->  enum srso_mitigation_cmd {
-> @@ -2531,6 +2532,7 @@ enum srso_mitigation_cmd {
->  	SRSO_CMD_SAFE_RET,
->  	SRSO_CMD_IBPB,
->  	SRSO_CMD_IBPB_ON_VMEXIT,
-> +	SRSO_CMD_BP_SPEC_REDUCE,
->  };
-> 
->  static const char * const srso_strings[] = {
-> @@ -2542,6 +2544,7 @@ static const char * const srso_strings[] = {
->  	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
->  	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
->  	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation",
-> +	[SRSO_MITIGATION_BP_SPEC_REDUCE_NA]	= "Vulnerable: Reduced Speculation, not available",
->  };
-> 
->  static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-> @@ -2562,6 +2565,8 @@ static int __init srso_parse_cmdline(char *str)
->  		srso_cmd = SRSO_CMD_IBPB;
->  	else if (!strcmp(str, "ibpb-vmexit"))
->  		srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
-> +	else if (!strcmp(str, "bp-spec-reduce"))
-> +		srso_cmd = SRSO_CMD_BP_SPEC_REDUCE;
->  	else
->  		pr_err("Ignoring unknown SRSO option (%s).", str);
-> 
-> @@ -2672,12 +2677,8 @@ static void __init srso_select_mitigation(void)
-> 
->  ibpb_on_vmexit:
->  	case SRSO_CMD_IBPB_ON_VMEXIT:
-> -		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-> -			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-> -			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-> -			break;
-> -		}
-> -
-> +		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE))
-> +			goto bp_spec_reduce;
->  		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
->  			if (has_microcode) {
->  				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-> @@ -2694,6 +2695,17 @@ static void __init srso_select_mitigation(void)
->  			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
->  		}
->  		break;
+> diff --git a/Makefile b/Makefile
+> index 96407c1..f19431f 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1014,6 +1014,9 @@ CC_FLAGS_CFI	:= -fsanitize=kcfi
+>  ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+>  	CC_FLAGS_CFI	+= -fsanitize-cfi-icall-experimental-normalize-integers
+>  endif
+> +ifdef CONFIG_FINEIBT_BHI
+> +	CC_FLAGS_CFI	+= -fsanitize-kcfi-arity
+> +endif
+>  ifdef CONFIG_RUST
+>  	# Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects
+>  	# CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index c4175f4..5c27726 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2473,6 +2473,10 @@ config CC_HAS_RETURN_THUNK
+>  config CC_HAS_ENTRY_PADDING
+>  	def_bool $(cc-option,-fpatchable-function-entry=16,16)
+>  
+> +config CC_HAS_KCFI_ARITY
+> +	def_bool $(cc-option,-fsanitize=kcfi -fsanitize-kcfi-arity)
+> +	depends on CC_IS_CLANG && !RUST
 > +
-> +	case SRSO_CMD_BP_SPEC_REDUCE:
-> +		if (boot_cpu_has(X86_FEATURE_SRSO_BP_SPEC_REDUCE)) {
-> +bp_spec_reduce:
 
-We can put this label above 'case SRSO_CMD_BP_SPEC_REDUCE' for
-consistency with the ibpb_on_vmexit label. The
-X86_FEATURE_SRSO_BP_SPEC_REDUCE check will be repeated but it shouldn't
-matter in practice and the compiler will probably optimize it anyway.
+Miguel, can we work on fixing that !RUST dep?
 
-> +			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-> +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-> +			break;
-> +		} else {
-> +			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE_NA;
-
-Why do we need SRSO_MITIGATION_BP_SPEC_REDUCE_NA? It seems like in other
-cases, if some requirements are not met, we just leave srso_mitigation
-set SRSO_MITIGATION_NONE.
-
-> +			pr_warn("BP_SPEC_REDUCE not supported!\n");
-> +		}
->  	default:
->  		break;
->  	}
-> --
-> 2.48.1.711.g2feabab25a-goog
+>  config FUNCTION_PADDING_CFI
+>  	int
+>  	default 59 if FUNCTION_ALIGNMENT_64B
+> @@ -2498,6 +2502,10 @@ config FINEIBT
+>  	depends on X86_KERNEL_IBT && CFI_CLANG && MITIGATION_RETPOLINE
+>  	select CALL_PADDING
+>  
+> +config FINEIBT_BHI
+> +	def_bool y
+> +	depends on FINEIBT && CC_HAS_KCFI_ARITY
+> +
+>  config HAVE_CALL_THUNKS
+>  	def_bool y
+>  	depends on CC_HAS_ENTRY_PADDING && MITIGATION_RETHUNK && OBJTOOL
 
