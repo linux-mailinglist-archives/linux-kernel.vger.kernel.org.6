@@ -1,90 +1,138 @@
-Return-Path: <linux-kernel+bounces-533177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD94A4567E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:17:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD19A45685
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBA1173CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B581895B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AE9268684;
-	Wed, 26 Feb 2025 07:17:28 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E3826AA9E;
+	Wed, 26 Feb 2025 07:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCkFmz/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140DD18DB11;
-	Wed, 26 Feb 2025 07:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54CB19CD17;
+	Wed, 26 Feb 2025 07:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554248; cv=none; b=pILhAga3Mo5MS4VGaawjDbitBCu8fzdAyPXVUBE3yXLFIUwK2I+2D6D3GaPSa97mVq0TcFO9+YDGPZyxI05cQYtjX5It74PR8XlY7S6uACWmwZPPs9i0hI9Ca3MqvEGCtNu+awJwsLmiREfqEJ23UVd5X/zrPoiZWJund/cuNZY=
+	t=1740554404; cv=none; b=fBMdETn5Q5DBAkqXrvqbXxGFCRTCB1P0D/V1kzbW8PbBynUHrg0xem4zsz1L3StNRB4Y0u4iKXkfzyxYn33x8KYzFXbbzBOPBKMcwWimMvZMys6PbOHXaXR+G3YUkAKdgKAL8/R6E5Wmmj/UsUYcbW2g7nVVyxY1gs52/+20KHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554248; c=relaxed/simple;
-	bh=6JW0ahoUz3pEDfR+wAMH5W/AP2CrzMgP842FYPHgu4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hvw8qZ2T4GP0lAdBGMwUa8uER/VK2sz2wGpUrFbmJZaqNVRi3MK16pBpJSujJpBXs3fximL3OK5dZxh0lC8rYCiVqOhJ5xxCppaqVZ5j6ZGprfnJFR3z0qBUJ1vfnyJKMFLPrclJsC3j7RJkuBp2w1fw0+TJD1y2lPcHH/U99ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22100006bc8so113949085ad.0;
-        Tue, 25 Feb 2025 23:17:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740554246; x=1741159046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mW9bMldGg6LIlvvDvWC6cOazlkyZmVjqHW01ty4hQt4=;
-        b=JZdi4aXSze2dYUZFS+4GTtismX1f5A3D51ZJ23IanOydPneDh2aUB2AfVvsFavteRs
-         x3YqTdsdHr93WemdrZMTVqQsrcIKL0rjGWwJ+oehSBOB19NGFFdlbXSCoiQG81KP1wH3
-         kKxsYVCKR7qRxGjoLRP9CyfyiIVdgYCBhJ+zc5eokOLpWSaPT79AbafbZFKKtYc/q+ed
-         g7GeTVwiD0bQe5ROsQI8UVvZQa8t8G+XGypQRtvtOw2eLSIqxjGfw76CGkRJZnxXhFUP
-         wS8CiVUWU9UPJJ+YHltaaoowU2gaUnPBVz5oHhMOWdrXI+RkK8S12Z/zLjmZgAk2W6Kg
-         9GGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF8mqiuYp/+/UJbWEMjevoM1Yyj/TrvASQaBG1tgvVkq9AoGqnUAruGgXo3rdbOdjq/eiEH2t7NZj4s6o=@vger.kernel.org, AJvYcCX6F9HRhudlQ1ywkEZCWWvAuZn1SJBsMHYsziq8TakbU5bLN56M2JYqrjC8T6qmoNg5zoe/jLqKWAoo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdiWO8FKvA8lQElyiDy4iNPUPRjFa9LM9pw34cIBkmKSXv6J3v
-	+haLuZj/AbbUxS7sj0884cG/qgNnAKqdkUIOt6n4qwxhIQ6AXDOovlZxd2abtUc=
-X-Gm-Gg: ASbGncsQvFGVCCGjK2dbeCGVY7apVR0cTP6yr92S1vZfvR4M6UvorCVl5IcQuj87gYL
-	YtTipwzX9+tOd4NUq0u4k/kZPRJ3TfhF0OSaoL1g9kxKqFzsiDhC8e+k49KsS/MvD73gdmfH/oF
-	JhFgUnh+f3GstztQxaoB+tMV8V3Q0flWJHj4mH0nfVBG7Agb6HnOjJ0PYAfoPlWTo/2sJbGYuoG
-	TaFICjXAEH+9alXCsqKZDlkoyHJaLuU/QS6Uc8Am5s+Kaf1vHZn4GTm6VdOr8VQNASqkXno0wP/
-	l4D8f5K/T2DhMl5YlFlJFcw92QtSDgr9TEwPRRuz0bFa60n2tqtqZUWpVfAX
-X-Google-Smtp-Source: AGHT+IFfZzOSgnxkpJdX8VC3XmknHk+nW3PGWhl7cjv9dtT/kV2/KI14MuU0c+PmbD+OmNR44vO/Tw==
-X-Received: by 2002:a17:903:191:b0:21f:6a36:7bf3 with SMTP id d9443c01a7336-22307b4bd13mr99685825ad.12.1740554246364;
-        Tue, 25 Feb 2025 23:17:26 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2230a0b2292sm25382075ad.252.2025.02.25.23.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 23:17:25 -0800 (PST)
-Date: Wed, 26 Feb 2025 16:17:24 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: jingoohan1@gmail.com, lpieralisi@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shradha.t@samsung.com,
-	cassel@kernel.org
-Subject: Re: [PATCH 0/2] PCI: dwc-debugfs: Couple of fixes
-Message-ID: <20250226071724.GD951736@rocinante>
-References: <20250225171239.19574-1-manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1740554404; c=relaxed/simple;
+	bh=wTTdKmIse4ca7h/gjxh9HC9YCPX8M8gZcWnwJ0f1gQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fy1uO/g2nNrOO7xa5A/ggOY4gzRDYagTP6lXPHiB8M5nl5FOVE7JiLBPwdt0ZAFVeQh3+pyD5k5nqRVAdt+e/CcTEBpXSrTyET0NIEooRuY84ZoI3VXTu72mZ8RR27aciUyvLAaZEpC44lTsIg6m5EYAFD4RFQ81gtN12Y4RWJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCkFmz/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F849C4CED6;
+	Wed, 26 Feb 2025 07:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740554404;
+	bh=wTTdKmIse4ca7h/gjxh9HC9YCPX8M8gZcWnwJ0f1gQ8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VCkFmz/5Bu/vlRbdiwFTbonhh+iN0v9QN90eaCbsoGIU3Xg9HVuyTsODOWhxiZDX2
+	 p5sGIaW0ym40ew7DKIACUGi4U6tA9ERtL+fo/IAInghpemXtwcIUrgla3vBDBaFjLt
+	 XCa/dRCBOFlkbtoZiptJgbS14IRUiznBSXquRUJbbQT/seFfszWRYmCJIq+ij5T4jS
+	 41qo+3jwDqoxs+XU8QlfY3pE0dyrYzdcDtME7bFY1wJ/PLCW1Ut9ClpoV8LoaSSSMN
+	 eCnDGr2WJyWV/+mue8xUZkGK7O+elEOHo4dt+sW7csVsGhlSPvs0RhL2KfBkwU9irT
+	 7WXDEK0KzQrZg==
+Message-ID: <459fe67d-0602-41c5-a94c-d9e9697c80b4@kernel.org>
+Date: Wed, 26 Feb 2025 08:19:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225171239.19574-1-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] dt-bindings: pinctrl: stm32: Add HDP includes for
+ stm32mp platforms
+To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-1-9d049c65330a@foss.st.com>
+ <f17eadf3-eb2d-470d-ad77-909f00584d44@kernel.org>
+ <7bc5c425-1d6e-4e25-b913-287478d4149f@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7bc5c425-1d6e-4e25-b913-287478d4149f@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 25/02/2025 16:46, Clement LE GOFFIC wrote:
+>>
+>> Why this is a string not a number?
+>>
+>> Where is it used? I don't see usage in the driver, so this does not look
+>> like binding (and DTS is not a driver).
+> 
+> Those files are helpers for the devicetrees and may be included in 
+> stm32mp*-pinctrl.dtsi files.
 
-> This series has a couple of fixes for the recently merged debugfs patches.
-> This series is rebased on top of pci/controller/dwc branch.
+So not a binding, see other platforms/header files how it is done.
 
-Squashed both patches with the changes already on the branch.
+> It is a string because it is an helper for the `function` property of 
+> `pinmux-node.yaml` which is a string.
+> 
+> I understand that having a number as a string is not easily understandable.
+> I'll consider it in a V2 by trying to use the `pinmux` property.
 
-Thank you for both fixes!
+Let's keep discussing this part in the bindings doc patch.
 
-	Krzysztof
+Best regards,
+Krzysztof
 
