@@ -1,102 +1,166 @@
-Return-Path: <linux-kernel+bounces-534395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C19A46690
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:28:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5FCA46685
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB941425FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0204280B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F3D21CC67;
-	Wed, 26 Feb 2025 16:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="Wn+KczOZ"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C11521D59C;
+	Wed, 26 Feb 2025 16:10:57 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C92218ACA;
-	Wed, 26 Feb 2025 16:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0760721CFEA;
+	Wed, 26 Feb 2025 16:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586253; cv=none; b=QCYWHLmw5x5awzR5FwAUFY0p343QBXZ1srrGFzP8LCLFrMvtOW7r8upP2eNLSgjGMSgMhfOJHFI/0+jUNyjYW7FrzYV1n6l4/DkHqPWcM6lAoJyMFia/9V9cogdBtZAPD4GoGhqZyd3yIiWZb/XmMpWQ8C7jXiIrQlUTD+/cq9o=
+	t=1740586256; cv=none; b=b/xdPSy6zlKFls0Ef6k5wNLkad7KSi1uHxmywtOhpUO5VDBqYNpi0/pOSLDHMDwTTPyqMYVDadSTIAq+XI+hueRIU4b6C8NnKDl+jrPChIQSXudh9GE3ZGQLMJ/CM3HrI4iBu22fzVH1akMC8W7yhbxwJ62PvaGwMVwi+l8muVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586253; c=relaxed/simple;
-	bh=Sh654BeCHVU+iFhxxMO6lVNtnSopA0tl8/OEVey77ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jyx9neWAVuk0qultHdE4Nf9nNPc4lxCOLWRnGOBvWjb0JwIKQe4EuBTUjAfXpeMZMajItPZl01TaOMRfPDY8CMReEtFTlCh53yI8wJmzqqxUjHO1dUZeWVqUi8Kn+BOaAgNV6c5IZTxlARLjCUWM7OVuNDQxC3N97riM2aIR3Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=Wn+KczOZ; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740586250; bh=Sh654BeCHVU+iFhxxMO6lVNtnSopA0tl8/OEVey77ig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wn+KczOZrYKVjRn3aRSmjZmCnB1ZJqx1LAo17jSD/OrwiaxU6Ek0olkA8e2zlvXfv
-	 VThbkFO4/EvQIznrKVYuSIixZPPcq0J5ZvBqNihy6KGk2qLFllrM5/X+v0NQGh6A/i
-	 +FiFcIwY7+E1qA85n3XQdU01pNJEO28+nBFB/fPc=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id F38692052D08;
-	Wed, 26 Feb 2025 17:10:49 +0100 (CET)
-Message-ID: <6983015e-4d6a-44d4-9f2e-203688263018@ralfj.de>
-Date: Wed, 26 Feb 2025 17:10:49 +0100
+	s=arc-20240116; t=1740586256; c=relaxed/simple;
+	bh=NiH8SRXw2DXbtCKmXtL7dumfhM6oSyvlJXoK8NUJwS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NF58IoizKlN/kIiGhLqD+UXEOEHQeckIWlaVSQ04aB+mY8RT6nhVaE7gKyLu3g9Z0v11YqoVqYqgDC2XpdY7owE8KlhDFS3WC9EAXG6fOUWT06KLlJEpvFsb6Djc+iT7IK8i79rdxy2W8YvScOPUwe3W45uvjXotxhaYsMGlD4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e0505275b7so11196301a12.3;
+        Wed, 26 Feb 2025 08:10:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740586253; x=1741191053;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hdFq/RSQGllNMaaMkzzrwTZL0ht5WX0qvlwijavAzn4=;
+        b=qclbH2EuBUYx8LYlp/Z9ZNEq3RnnGNkkYw1HrE2GNta0jjZv5QGWwhPW6TnXB3jAUB
+         zfJRqqnJ2M9lS1wB/PP4YXxEUgc/asLeECiWd1yVgHHEzTRgxpoT2LKTY1LL/j1W0pgS
+         ZfFniFZ0qWxRvitQyJ6ohohnd3dN8soaFot7r+sQT+/8QB/qRrpwGEPmtz1G95J1tLpF
+         7tOXz2uKQcLEfP2GPodOR0DoEAaEj2to1vlSxbAF+67IKITPBSOK16oTeRiow9/IaWXh
+         C432ckyqC+jKg0gvIWIylebX9u2gid/bJnwgzZ3nL8JbiHg/UvAhGK5+Oa+LC45BJ6G7
+         ARNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUal/bnPxI+PGa4QfDRjLSourwJUANdmTQn0Llnfv1WFPHUoL6qFnKdrbj6bAzfe0wfEKzf9E07@vger.kernel.org, AJvYcCVv2X2iltq2d1tgjD2hIiCnS7al8h8sRbMM2sMqnC2fcp1zEeJIz2IwuO6EsDTCnfoaBjC9FaXKo24Jnrt4O0LnxNCx@vger.kernel.org, AJvYcCW25vYtNQ4IVVcA+4bwwkd4vlmgNyqVVhocvJsQqR5ybl0o6deEhZmqahyRgVpvUTsKS2b5Knaagm+qnOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWCa66pf5z0Rg0dvVK6GDjGE6zuevt8tytrDuqlQi2c2YfbADY
+	IzoVaceF/be4LX37vLIKk0rP0ALP9nFmSVQvhBSZP12Z956i6S9cQmmuzg==
+X-Gm-Gg: ASbGncvBDbstiszZX7oJGZLW9bmjwrTsVexyCmDKlT1Oqebqoko0u2poDfMQtawxWrv
+	7CYr7dmP87V9Kr0htsZi+mIF6dM0rt5xP4Fc3atxjOGZtDQlGG7zHwvmYPURjdQI3OokWbeR595
+	E1aR/c7ysIpyXZcn/NSSlLOSjyrz+ncrX45Nx6hL8UMlwT1Pss5I36WQp19j8j/i7ty3VlrIwkz
+	dGlX6yiB8EhWKkWtufzXIGQ8sYJsIpg0ZcLY4B6C7Q+DDe3LHcYlRkK+nsn8yHp8bgKCbou2x5b
+	X9dx00ySDC8AQzMs
+X-Google-Smtp-Source: AGHT+IHkM42/HOpoB5e04qARcXv0azFNm3lcPy13WbWpWbJWwaQKpfFqbOJx/CyYcNMJ21Tke9hjgQ==
+X-Received: by 2002:a05:6402:4305:b0:5d4:1ac2:277f with SMTP id 4fb4d7f45d1cf-5e4a0d71fb1mr5146443a12.9.1740586253056;
+        Wed, 26 Feb 2025 08:10:53 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e460ff8aa2sm2954375a12.56.2025.02.26.08.10.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 08:10:52 -0800 (PST)
+Date: Wed, 26 Feb 2025 08:10:50 -0800
+From: Breno Leitao <leitao@debian.org>
+To: David Ahern <dsahern@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	kernel-team@meta.com, yonghong.song@linux.dev
+Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
+Message-ID: <20250226-cunning-innocent-degu-d6c2fe@leitao>
+References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
+ <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
+ <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Ventura Jack <venturajack85@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
- <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
- <CAFJgqgRxfTVxrWja=ZW=mTj1ShPE5s-atAqxzMOq5poajMh=4A@mail.gmail.com>
- <91dbba64-ade3-4e46-854e-87cd9ecaa689@ralfj.de>
- <CAFJgqgTTgy=yae68AE29oJQc7Bi+NvkgsrBtOkVUvRt1O0GzSQ@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAFJgqgTTgy=yae68AE29oJQc7Bi+NvkgsrBtOkVUvRt1O0GzSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org>
 
-Hi,
+Hello David,
 
->> [Omitted] (However, verification tools are
->> in the works as well, and thanks to Miri we have a very good idea of what
->> exactly it is that these tools have to check for.) [Omitted]
+On Mon, Feb 24, 2025 at 12:16:04PM -0700, David Ahern wrote:
+> On 2/24/25 12:03 PM, Eric Dumazet wrote:
+> > On Mon, Feb 24, 2025 at 7:24 PM Breno Leitao <leitao@debian.org> wrote:
+> >>
+> >> Add a lightweight tracepoint to monitor TCP sendmsg operations, enabling
+> >> the tracing of TCP messages being sent.
+> >>
+> >> Meta has been using BPF programs to monitor this function for years,
+> >> indicating significant interest in observing this important
+> >> functionality. Adding a proper tracepoint provides a stable API for all
+> >> users who need visibility into TCP message transmission.
+> >>
+> >> The implementation uses DECLARE_TRACE instead of TRACE_EVENT to avoid
+> >> creating unnecessary trace event infrastructure and tracefs exports,
+> >> keeping the implementation minimal while stabilizing the API.
+> >>
+> >> Given that this patch creates a rawtracepoint, you could hook into it
+> >> using regular tooling, like bpftrace, using regular rawtracepoint
+> >> infrastructure, such as:
+> >>
+> >>         rawtracepoint:tcp_sendmsg_tp {
+> >>                 ....
+> >>         }
+> > 
+> > I would expect tcp_sendmsg() being stable enough ?
+> > 
+> > kprobe:tcp_sendmsg {
+> > }
 > 
-> Verification as in static verification? That is some interesting and
-> exciting stuff if so.
+> Also, if a tracepoint is added, inside of tcp_sendmsg_locked would cover
+> more use cases (see kernel references to it).
 
-Yes. There's various projects, from bounded model checkers (Kani) that can 
-"only" statically guarantee "all executions that run loops at most N times are 
-fine" to full-fledged static verification tools (Gillian-Rust, VeriFast, Verus, 
-Prusti, RefinedRust -- just to mention the ones that support unsafe code). None 
-of the latter tools is production-ready yet, and some will always stay research 
-prototypes, but there's a lot of work going on, and having a precise model of 
-the entire Abstract Machine that is blessed by the compiler devs (i.e., Miri) is 
-a key part for this to work. It'll be even better when this Abstract Machine 
-exists not just implicitly in Miri but explicitly in a Rust Specification, and 
-is subject to stability guarantees -- and we'll get there, but it'll take some 
-more time. :)
+Agree, this seems to provide more useful information
 
-Kind regards,
-Ralf
+> We have a patch for a couple years now with a tracepoint inside the
 
+Sorry, where do you have this patch? is it downstream?
+
+> while (msg_data_left(msg)) {
+> }
+> 
+> loop which is more useful than just entry to sendmsg.
+
+Do you mean something like the following?
+
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 1a40c41ff8c30..23318e252d6b9 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -259,6 +259,11 @@ TRACE_EVENT(tcp_retransmit_synack,
+ 		  __entry->saddr_v6, __entry->daddr_v6)
+ );
+ 
++DECLARE_TRACE(tcp_sendmsg_tp,
++	TP_PROTO(const struct sock *sk, const struct msghdr *msg, size_t size, ssize_t copied),
++	TP_ARGS(sk, msg, size, copied)
++);
++
+ DECLARE_TRACE(tcp_cwnd_reduction_tp,
+ 	TP_PROTO(const struct sock *sk, int newly_acked_sacked,
+ 		 int newly_lost, int flag),
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 08d73f17e8162..5fcef82275d4a 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1290,6 +1290,8 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+ 			sk_mem_charge(sk, copy);
+ 		}
+ 
++		trace_tcp_sendmsg_tp(sk, msg, size, copy);
++
+ 		if (!copied)
+ 			TCP_SKB_CB(skb)->tcp_flags &= ~TCPHDR_PSH;
+ 
 
