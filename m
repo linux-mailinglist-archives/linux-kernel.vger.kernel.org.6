@@ -1,150 +1,88 @@
-Return-Path: <linux-kernel+bounces-533288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6368BA457E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:14:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D12A457EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCCD169519
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44418188CA19
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CEA23816B;
-	Wed, 26 Feb 2025 08:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111C9258CFA;
+	Wed, 26 Feb 2025 08:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sukt2lmf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G3vZTLI4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QzUwmqI1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9B822423C;
-	Wed, 26 Feb 2025 08:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E15C1624EA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557531; cv=none; b=fqUEgj2v36xapwDoRRBNfApWFRIUAo6K8vqFv2Wlmnq6GDFwNGJVL5cU0ZMW5aotMvyS3q0YpOjpjnbcwRZxvFLWpGhs7OyGWVd5Apnp/0VmHqIXwvAwqc68Lr67EvwDItWhj1qOOd9pTRejSTreaEvl4Qyy0xe/0mNNwsNe1gc=
+	t=1740557707; cv=none; b=eHF9o7ox2GhdD1uu368LMs7HR5GX4mRVRNGYOjF4lXk7nNdLGSgZwPOW8qsF4cYI2H8PHpWB/TEJumbecrWNLelkHnn88s3n/ABlryc22quNoadfyOuDGn7TUNVWuFy/SRqEx9RZvreiBLlpk10U3EsBE3H++abSkfyrTjqKEJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557531; c=relaxed/simple;
-	bh=X+ENWuPD+JB6t0c8PzzFNjzL6/ESOQRKHl4B55Rn1SI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIIKwAqC77lGOHxLN1bIQ1TaoQl0WY7rpcSJzHn6oGBp4As7eVPwkvRHBrdsSBQTZObaRkDQbi6hQNzJluPYeWkvpAx61BxZWGXpyE1ECG/PZct2g0hxv7II9H36MpmFz3mkFRQy5d/lpnDWRDNXa6cp9IyEKhbvpMIvUs8HdKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sukt2lmf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C42A2C4CED6;
-	Wed, 26 Feb 2025 08:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740557530;
-	bh=X+ENWuPD+JB6t0c8PzzFNjzL6/ESOQRKHl4B55Rn1SI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sukt2lmfbb1YRaIhEuoOIVPmO5LxtzAr4sDu54lYTLt2kmTm+sEi58qQIj8XKdAkV
-	 iFR7LZ6gSQXV0vWF4imJIX2947HOfrYc2h3w5/vCT4UGaH8yOr1cWkHGF94rYMKdyd
-	 TUBCWS0EHb1ZmqEuWhN4kdh/v3+uCl0xENlExZu9G+O1Kq74Po9fol0lJUe6p5vA6b
-	 8Qw6OzKFqqE+KfHdD4aVxeysGbjkzGGwwF0ihGHWERizdlLwDwCo9ge77SxBzDdxoO
-	 KwwC5oFTfHPd4M6AWGEpmymbUANHtgj2tT2Z7v/eH9s5iPZMZ0s2eVg0V2FhWf6uyP
-	 6BoklGoCFLePQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tnCWk-000000004oQ-3B4H;
-	Wed, 26 Feb 2025 09:12:23 +0100
-Date: Wed, 26 Feb 2025 09:12:22 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com,
-	dmitry.baryshkov@linaro.org, maz@kernel.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org
-Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
-Message-ID: <Z77M5iXHQsdMptWm@hovoldconsulting.com>
-References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
- <20250226024338.3994701-3-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1740557707; c=relaxed/simple;
+	bh=QBioUh+5ar2IMYsyHFiRhFqP9iliCkPTQcG5+LT+TOc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kIo1YaqdFemWP+gxbR/vw40vTpoEZFCCZPXzSt7iHbO3bmK6S7o6/tPJAdXgXQAOOa9njlfimH1hdT1EBVz58nlT3qDPwj0RWZCXa4Q/LAt4Kz1VLrzd0D4F+2h+CfQOs6/hV3m1/kM+00pONe0ziBL42E1/Cid3kCqi1VZ5CmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G3vZTLI4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QzUwmqI1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740557703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kiuMsq8B6x/9dbWlu6OuXV+fQwySnuyp6H+0glY8vgs=;
+	b=G3vZTLI45el49Y5XwY9GqNmqgGVIuJdKDR9+8KRNIFCmAxo7IkH3J2JtWrAidaJc/QzPMe
+	IA7zlnpOdY5v21bvNlPSa4GPIqE5jkTIceTcb3riT0ALmIUxBVBKAPCG/yRB64mHGJwf94
+	jI5ia5BjrBY8u4oWtHZ0BXu01VccvV2Q6k4QPC6BKfIzEvwZ9j5v6lUMGfS0g3XDj0+V70
+	op476HU71ohqpGhMQhLCXYACTdRYYAhmaO48nnE2f6en8cZnnZN6zJfw4Lpzepih2YHDCO
+	h2a3HEBX6Cfhq/TDceY4FgeXSQQfpO6KGu6wwBPBbl0zmvXJHDaLQD9HCdlCmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740557703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kiuMsq8B6x/9dbWlu6OuXV+fQwySnuyp6H+0glY8vgs=;
+	b=QzUwmqI1v1f66+dI47NPXqkxxW3iYBEXE5J+PXEw7wtbjkS+6GqczKFLbXSPcN3c6gpcpW
+	06k/CUzRaP+rmzAg==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
+ Long <longman@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH v9 01/11] futex: fixup futex_wait_setup [fold futex:
+ Move futex_queue() into futex_wait_setup()]
+In-Reply-To: <20250225170914.289358-2-bigeasy@linutronix.de>
+References: <20250225170914.289358-1-bigeasy@linutronix.de>
+ <20250225170914.289358-2-bigeasy@linutronix.de>
+Date: Wed, 26 Feb 2025 09:15:02 +0100
+Message-ID: <878qptf7g9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226024338.3994701-3-quic_sibis@quicinc.com>
+Content-Type: text/plain
 
-On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
-> The addition of per message-id fastchannel support check exposed
-> a SCP firmware bug which leads to a device crash on X1E platforms.
-> The X1E firmware supports fastchannel on LEVEL_GET but fails to
-> have this set in the protocol message attributes and the fallback
-> to regular messaging leads to a device crash since that implementation
-> has a bug for all the X1E devices in the wild. Fix this by introducing
-> a quirk that selectively skips the per message-id fastchannel check only
-> for the LEVEL_GET message on X1E platforms.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  drivers/firmware/arm_scmi/driver.c    |  5 +++--
->  drivers/firmware/arm_scmi/perf.c      | 30 +++++++++++++++++++++------
->  drivers/firmware/arm_scmi/powercap.c  |  8 +++----
->  drivers/firmware/arm_scmi/protocols.h |  2 +-
->  4 files changed, 32 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 9313b9020fc1..b182fa8e8ccb 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -1903,7 +1903,8 @@ static void
->  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
->  			     u8 describe_id, u32 message_id, u32 valid_size,
->  			     u32 domain, void __iomem **p_addr,
-> -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
-> +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
-> +			     bool skip_check)
+On Tue, Feb 25 2025 at 18:09, Sebastian Andrzej Siewior wrote:
 
-This does not look like it will scale.
+> we could also make @task a bool signaling it is either NULL or current.
 
->  {
->  	int ret;
->  	u32 flags;
-> @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
->  
->  	/* Check if the MSG_ID supports fastchannel */
->  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
-> -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
-> +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
+I have no idea what this change log is trying to tell me. It gives zero
+information what this patch is about and the subject line is confusing
+at best.
 
-Why can't you just make sure that the bit is set in attributes as I
-suggested? That seems like it should allow for a minimal implementation
-of this.
+Thanks,
 
->  		return;
->  
->  	if (!p_addr) {
-
-> @@ -1282,6 +1288,7 @@ static int scmi_perf_protocol_init(const struct scmi_protocol_handle *ph)
->  {
->  	int domain, ret;
->  	u32 version;
-> +	struct device_node *np;
->  	struct scmi_perf_info *pinfo;
->  
->  	ret = ph->xops->version_get(ph, &version);
-> @@ -1297,6 +1304,17 @@ static int scmi_perf_protocol_init(const struct scmi_protocol_handle *ph)
->  
->  	pinfo->version = version;
->  
-> +	/*
-> +	 * Some X1E devices support fastchannel for LEVEL_GET but erroneously
-> +	 * says otherwise in the protocol message attributes. Add a quirk to
-> +	 * force fastchannel on LEVEL_GET to prevent crashes on such devices.
-> +	 */
-> +	np = of_find_compatible_node(NULL, NULL, "qcom,x1e80100");
-
-Here you should use of_machine_is_compatible().
-
-> +	if (np) {
-> +		pinfo->quirks = BIT(PERF_QUIRK_SKIP_FASTCHANNEL_LEVEL_GET);
-> +		of_node_put(np);
-> +	}
-> +
->  	ret = scmi_perf_attributes_get(ph, pinfo);
->  	if (ret)
->  		return ret;
-
-Johan
+        tglx
 
