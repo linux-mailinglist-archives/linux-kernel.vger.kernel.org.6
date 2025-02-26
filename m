@@ -1,422 +1,209 @@
-Return-Path: <linux-kernel+bounces-533440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00EEEA45A4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:38:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C2FA45A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 904C27A74A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CAA816A941
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EDB238159;
-	Wed, 26 Feb 2025 09:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C732238153;
+	Wed, 26 Feb 2025 09:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="exvhgisB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rcuvkOXD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="exvhgisB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rcuvkOXD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AvRqVXgA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4504B226D1E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024811E1E18
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740562680; cv=none; b=AXd0Fq31SruzcudJDvv7aFAqQQbOXr2bRLx5/j5OPR4IgzG7+mPeHfwnQVNU8YA4ks/zrcjrly9JStnnyMkGsBBQvQQBl4qG83GGaoNNCsFBsyN12JUGCno20J2SdcULIRCM5aaADTZHMdEDaX9C+rCgHOeWTg0YM83Uo6azQQU=
+	t=1740562919; cv=none; b=pYNJnr9FZdFlfQMOYxOeRcAkRh1DVZ6dvjnrxEoRXrXVpBmLpNcHwObUuAtDzqsL/EzxM3UkbN9HvpR3MIeLlCCn6Choh7eSndyNjSfoMgiMEyJ6TfDOuaFbNctaJjtZ7Qc+M/9kfOb3JxdgbhvwBh3F7DbxBU7ojX3wN3DExEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740562680; c=relaxed/simple;
-	bh=mPRPK0Ll2aMXSE/KGohOVyyCVaKobo3uQIdh6ZRkrfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VtcUPRM3W2654gqkDNVzGEqafGSUev6iDU6O/o57p0R25gPohF1G3O8WEs6jjNegQ6HlK23jQ5j55wc7fpFgqNdBGFvrd4CbquI1GRlmr0ZgbWJ0W7K/h22arreKpw04K8dkS7S2vjMWznTkiGIkCWmP1C9zjR3xW7Ff1RCvKoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=exvhgisB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rcuvkOXD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=exvhgisB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rcuvkOXD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 854B11F388;
-	Wed, 26 Feb 2025 09:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740562675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740562919; c=relaxed/simple;
+	bh=vlwe3g7egmkzEBkQSzX3LSMTW10UmJaDYSyt6uIJXOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=apnbUqNQ7CIkokINpHl9a6Cp1Q5Gd5Sk7shsoh8K+8GaJoVWW5C9gmAnLSwMjmV4gude0VgmiNw7ZNiZPL/zRSQ1g+JeTBJuGYDDF0szPXqD7gg8xKNbk8yRWgR1WLp3tQv2xWcBqnJdGSt9lvEqyr2ZSX+GIbwe7MVj20THiqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AvRqVXgA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740562916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MBbYKGm5cbogSGjJYm8NibVmsnDsWY1+jqx/aSfDx1c=;
-	b=exvhgisBRlv0mfRfnYiRJ91JD52cyGlGAqIz64vXziPf69dDyvQVgE+Lg2HNO8UHHnIIwX
-	HY+10vpuJ3CCXCERJGr+WcoU0YauU21uotQFkqqdTljNrtugQ5WwJYbO5S9q+3zMIC2Ine
-	lmecOY+s+j86HvLeaTHEER0ymEBoh1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740562675;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBbYKGm5cbogSGjJYm8NibVmsnDsWY1+jqx/aSfDx1c=;
-	b=rcuvkOXDp19PRlWxmL5D+DIRbJJyut08Rsuzvm02LjTm9KuRY67+2BrxSEaKOxalHaNPfm
-	htsCusYEMpZUeFCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740562675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBbYKGm5cbogSGjJYm8NibVmsnDsWY1+jqx/aSfDx1c=;
-	b=exvhgisBRlv0mfRfnYiRJ91JD52cyGlGAqIz64vXziPf69dDyvQVgE+Lg2HNO8UHHnIIwX
-	HY+10vpuJ3CCXCERJGr+WcoU0YauU21uotQFkqqdTljNrtugQ5WwJYbO5S9q+3zMIC2Ine
-	lmecOY+s+j86HvLeaTHEER0ymEBoh1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740562675;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBbYKGm5cbogSGjJYm8NibVmsnDsWY1+jqx/aSfDx1c=;
-	b=rcuvkOXDp19PRlWxmL5D+DIRbJJyut08Rsuzvm02LjTm9KuRY67+2BrxSEaKOxalHaNPfm
-	htsCusYEMpZUeFCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F48513A53;
-	Wed, 26 Feb 2025 09:37:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yjS3GvPgvmfKXQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 26 Feb 2025 09:37:55 +0000
-Message-ID: <03dad20d-1293-47d1-a55d-8430fcefc0bb@suse.de>
-Date: Wed, 26 Feb 2025 10:37:55 +0100
+	bh=35a45e+KUNfgdwWER78OhdI0cbUBUXNz7n/UkAMYBnI=;
+	b=AvRqVXgAowx28RhouMLQKbXFaIuXl/B634eGk75Ibz+S6xV4izvVSFtnJ5q8BYdAl3GM0B
+	leqWbsBqThS0yrqwwACW/JxikQ5z+X9zREfAHOJYdAZs0grv2pCSrCxmfIE93zwidtkxbx
+	OebBHxz25sk18bzRaYi4zst2L3iLK3o=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-79-lnyG06BTMCWrRkRcZ7RYnQ-1; Wed, 26 Feb 2025 04:41:55 -0500
+X-MC-Unique: lnyG06BTMCWrRkRcZ7RYnQ-1
+X-Mimecast-MFC-AGG-ID: lnyG06BTMCWrRkRcZ7RYnQ_1740562914
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fe862ea448so1416508a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:41:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740562914; x=1741167714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=35a45e+KUNfgdwWER78OhdI0cbUBUXNz7n/UkAMYBnI=;
+        b=vT3W2S4QZF4zkb3hZFIQDdeEkD+10tgm6tfStUiaCs+LWOYIFode7KozQA9YyOYkr5
+         cedM570Rps1XA5JgZP0MZFNoS/BkwLz8xPsKT4N4ifpBp17EJH6ZEW23fSYYuR9FwsDM
+         AlfFv/AODRxuULlNVqYtlQ8OCARXIJ3xtAIJNmHIVHPLRSxQpYXTb80oxLKlxowHFuY1
+         eIhzaAQbQ1wo8OCxS6udYAEWWE/4RNBhTXWiEYSzEwSAyOwGBivxUuDoWBeeogEg6EVL
+         /0bG5xw48JSpzQeqY5vPpRwxOghYQ5beiQX7xzLc10AjlIQGKZM2jU3wWgCMIdDVMSfN
+         PVXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVw95YF190reZYQbxtTwqsgeHPH5HS+69F0OU39ahYw5inTeRwnlNtoZaoVCrzEQxbBNbMAjOdwXQFghLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxceRk4Q/zb6BujdW7tbGuIpjEsy7LLd7klmja4nsoMImipsQzc
+	SKU7QfRTRGNNMTbN+1Ny0AqT2jr1p1soVose98OZH50hUk8jMhKj05epuQc+0c9aKpDCIbt4oJT
+	jwzbyUQT7pW5JCnZU2lQg/djo60vlK96EbvVREQgg+XWQG1nEvGX4xVaNBv12ULWD7iFMgHamEl
+	K2kD21OKd1c5zKm9CcJHPnF43ZGHs05jpktLSE
+X-Gm-Gg: ASbGncsgTScGZ0MOI1iGd3i4kSWNCeB2tswvdGjpR4jMJDGGgdPOBHs55pmeYxB8H7d
+	ESPvuiHeZfGG79xTJ20Auu0PUE9ygzd9VwzRB+jWs6PWM6p/e1J/KpUqAGaCcQ+kpxnOYptSLcw
+	==
+X-Received: by 2002:a17:90b:3bcb:b0:2ea:b564:4b31 with SMTP id 98e67ed59e1d1-2fe68ae7147mr9875979a91.19.1740562914029;
+        Wed, 26 Feb 2025 01:41:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFd2VtFq1+EBSUe5YRiKx2c1b8xErNTKsEKpyNpzK8NMUkxluegLLjCSvqusnZyPT8sBH5l6nTPU/LhghJl6kU=
+X-Received: by 2002:a17:90b:3bcb:b0:2ea:b564:4b31 with SMTP id
+ 98e67ed59e1d1-2fe68ae7147mr9875939a91.19.1740562913645; Wed, 26 Feb 2025
+ 01:41:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet-tcp: switch to using the crc32c library
-To: Eric Biggers <ebiggers@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250226062841.60688-1-ebiggers@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250226062841.60688-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250225020455.212895-1-jdamato@fastly.com> <CAPpAL=w7e8F_0_RRhBuyM-qyaYxgR=miYf_h90j78HzR4dvQxg@mail.gmail.com>
+In-Reply-To: <CAPpAL=w7e8F_0_RRhBuyM-qyaYxgR=miYf_h90j78HzR4dvQxg@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 26 Feb 2025 17:41:41 +0800
+X-Gm-Features: AWEUYZkhxJqSexlmCxlZ4MpaYPDcVZbl2V5cw5njrD7GTgOGPeEvAyX7SCzxTvM
+Message-ID: <CACGkMEvaYvrxsbOdiN8tfba4t5vH_L8=5MnZqb_P6qNwv2x0Tw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 0/4] virtio-net: Link queues to NAPIs
+To: Lei Yang <leiyang@redhat.com>
+Cc: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org, mkarsten@uwaterloo.ca, 
+	gerhard@engleder-embedded.com, xuanzhuo@linux.alibaba.com, kuba@kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Paolo Abeni <pabeni@redhat.com>, 
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/26/25 07:28, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Now that the crc32c() library function directly takes advantage of
-> architecture-specific optimizations, it is unnecessary to go through the
-> crypto API.  Just use crc32c().  This is much simpler, and it improves
-> performance due to eliminating the crypto API overhead.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->   drivers/nvme/target/tcp.c | 92 +++++++++++----------------------------
->   1 file changed, 26 insertions(+), 66 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> index 7c51c2a8c109a..b1da98481c186 100644
-> --- a/drivers/nvme/target/tcp.c
-> +++ b/drivers/nvme/target/tcp.c
-> @@ -5,10 +5,11 @@
->    */
->   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->   #include <linux/module.h>
->   #include <linux/init.h>
->   #include <linux/slab.h>
-> +#include <linux/crc32c.h>
->   #include <linux/err.h>
->   #include <linux/key.h>
->   #include <linux/nvme-tcp.h>
->   #include <linux/nvme-keyring.h>
->   #include <net/sock.h>
-> @@ -16,11 +17,10 @@
->   #include <net/tls.h>
->   #include <net/tls_prot.h>
->   #include <net/handshake.h>
->   #include <linux/inet.h>
->   #include <linux/llist.h>
-> -#include <crypto/hash.h>
->   #include <trace/events/sock.h>
->   
->   #include "nvmet.h"
->   
->   #define NVMET_TCP_DEF_INLINE_DATA_SIZE	(4 * PAGE_SIZE)
-> @@ -171,12 +171,10 @@ struct nvmet_tcp_queue {
->   	union nvme_tcp_pdu	pdu;
->   
->   	/* digest state */
->   	bool			hdr_digest;
->   	bool			data_digest;
-> -	struct ahash_request	*snd_hash;
-> -	struct ahash_request	*rcv_hash;
->   
->   	/* TLS state */
->   	key_serial_t		tls_pskid;
->   	struct delayed_work	tls_handshake_tmo_work;
->   
-> @@ -293,18 +291,13 @@ static inline u8 nvmet_tcp_hdgst_len(struct nvmet_tcp_queue *queue)
->   static inline u8 nvmet_tcp_ddgst_len(struct nvmet_tcp_queue *queue)
->   {
->   	return queue->data_digest ? NVME_TCP_DIGEST_LENGTH : 0;
->   }
->   
-> -static inline void nvmet_tcp_hdgst(struct ahash_request *hash,
-> -		void *pdu, size_t len)
-> +static inline void nvmet_tcp_hdgst(void *pdu, size_t len)
->   {
-> -	struct scatterlist sg;
-> -
-> -	sg_init_one(&sg, pdu, len);
-> -	ahash_request_set_crypt(hash, &sg, pdu + len, len);
-> -	crypto_ahash_digest(hash);
-> +	put_unaligned_le32(~crc32c(~0, pdu, len), pdu + len);
->   }
->   
->   static int nvmet_tcp_verify_hdgst(struct nvmet_tcp_queue *queue,
->   	void *pdu, size_t len)
->   {
-> @@ -317,11 +310,11 @@ static int nvmet_tcp_verify_hdgst(struct nvmet_tcp_queue *queue,
->   			queue->idx);
->   		return -EPROTO;
->   	}
->   
->   	recv_digest = *(__le32 *)(pdu + hdr->hlen);
-> -	nvmet_tcp_hdgst(queue->rcv_hash, pdu, len);
-> +	nvmet_tcp_hdgst(pdu, len);
->   	exp_digest = *(__le32 *)(pdu + hdr->hlen);
->   	if (recv_digest != exp_digest) {
->   		pr_err("queue %d: header digest error: recv %#x expected %#x\n",
->   			queue->idx, le32_to_cpu(recv_digest),
->   			le32_to_cpu(exp_digest));
-> @@ -440,16 +433,28 @@ static int nvmet_tcp_map_data(struct nvmet_tcp_cmd *cmd)
->   err:
->   	nvmet_tcp_free_cmd_buffers(cmd);
->   	return NVME_SC_INTERNAL;
->   }
->   
-> -static void nvmet_tcp_calc_ddgst(struct ahash_request *hash,
-> -		struct nvmet_tcp_cmd *cmd)
-> +static void nvmet_tcp_calc_ddgst(struct nvmet_tcp_cmd *cmd)
->   {
-> -	ahash_request_set_crypt(hash, cmd->req.sg,
-> -		(void *)&cmd->exp_ddgst, cmd->req.transfer_len);
-> -	crypto_ahash_digest(hash);
-> +	size_t total_len = cmd->req.transfer_len;
-> +	struct scatterlist *sg = cmd->req.sg;
-> +	u32 crc = ~0;
-> +
-> +	while (total_len) {
-> +		size_t len = min_t(size_t, total_len, sg->length);
-> +
-> +		/*
-> +		 * Note that the scatterlist does not contain any highmem pages,
-> +		 * as it was allocated by sgl_alloc() with GFP_KERNEL.
-> +		 */
-> +		crc = crc32c(crc, sg_virt(sg), len);
-> +		total_len -= len;
-> +		sg = sg_next(sg);
-> +	}
-> +	cmd->exp_ddgst = cpu_to_le32(~crc);
->   }
->   
->   static void nvmet_setup_c2h_data_pdu(struct nvmet_tcp_cmd *cmd)
->   {
->   	struct nvme_tcp_data_pdu *pdu = cmd->data_pdu;
-> @@ -472,23 +477,22 @@ static void nvmet_setup_c2h_data_pdu(struct nvmet_tcp_cmd *cmd)
->   	pdu->data_length = cpu_to_le32(cmd->req.transfer_len);
->   	pdu->data_offset = cpu_to_le32(cmd->wbytes_done);
->   
->   	if (queue->data_digest) {
->   		pdu->hdr.flags |= NVME_TCP_F_DDGST;
-> -		nvmet_tcp_calc_ddgst(queue->snd_hash, cmd);
-> +		nvmet_tcp_calc_ddgst(cmd);
->   	}
->   
->   	if (cmd->queue->hdr_digest) {
->   		pdu->hdr.flags |= NVME_TCP_F_HDGST;
-> -		nvmet_tcp_hdgst(queue->snd_hash, pdu, sizeof(*pdu));
-> +		nvmet_tcp_hdgst(pdu, sizeof(*pdu));
->   	}
->   }
->   
->   static void nvmet_setup_r2t_pdu(struct nvmet_tcp_cmd *cmd)
->   {
->   	struct nvme_tcp_r2t_pdu *pdu = cmd->r2t_pdu;
-> -	struct nvmet_tcp_queue *queue = cmd->queue;
->   	u8 hdgst = nvmet_tcp_hdgst_len(cmd->queue);
->   
->   	cmd->offset = 0;
->   	cmd->state = NVMET_TCP_SEND_R2T;
->   
-> @@ -502,18 +506,17 @@ static void nvmet_setup_r2t_pdu(struct nvmet_tcp_cmd *cmd)
->   	pdu->ttag = nvmet_tcp_cmd_tag(cmd->queue, cmd);
->   	pdu->r2t_length = cpu_to_le32(cmd->req.transfer_len - cmd->rbytes_done);
->   	pdu->r2t_offset = cpu_to_le32(cmd->rbytes_done);
->   	if (cmd->queue->hdr_digest) {
->   		pdu->hdr.flags |= NVME_TCP_F_HDGST;
-> -		nvmet_tcp_hdgst(queue->snd_hash, pdu, sizeof(*pdu));
-> +		nvmet_tcp_hdgst(pdu, sizeof(*pdu));
->   	}
->   }
->   
->   static void nvmet_setup_response_pdu(struct nvmet_tcp_cmd *cmd)
->   {
->   	struct nvme_tcp_rsp_pdu *pdu = cmd->rsp_pdu;
-> -	struct nvmet_tcp_queue *queue = cmd->queue;
->   	u8 hdgst = nvmet_tcp_hdgst_len(cmd->queue);
->   
->   	cmd->offset = 0;
->   	cmd->state = NVMET_TCP_SEND_RESPONSE;
->   
-> @@ -522,11 +525,11 @@ static void nvmet_setup_response_pdu(struct nvmet_tcp_cmd *cmd)
->   	pdu->hdr.hlen = sizeof(*pdu);
->   	pdu->hdr.pdo = 0;
->   	pdu->hdr.plen = cpu_to_le32(pdu->hdr.hlen + hdgst);
->   	if (cmd->queue->hdr_digest) {
->   		pdu->hdr.flags |= NVME_TCP_F_HDGST;
-> -		nvmet_tcp_hdgst(queue->snd_hash, pdu, sizeof(*pdu));
-> +		nvmet_tcp_hdgst(pdu, sizeof(*pdu));
->   	}
->   }
->   
->   static void nvmet_tcp_process_resp_list(struct nvmet_tcp_queue *queue)
->   {
-> @@ -849,46 +852,10 @@ static void nvmet_prepare_receive_pdu(struct nvmet_tcp_queue *queue)
->   	queue->left = sizeof(struct nvme_tcp_hdr);
->   	queue->cmd = NULL;
->   	queue->rcv_state = NVMET_TCP_RECV_PDU;
->   }
->   
-> -static void nvmet_tcp_free_crypto(struct nvmet_tcp_queue *queue)
-> -{
-> -	struct crypto_ahash *tfm = crypto_ahash_reqtfm(queue->rcv_hash);
-> -
-> -	ahash_request_free(queue->rcv_hash);
-> -	ahash_request_free(queue->snd_hash);
-> -	crypto_free_ahash(tfm);
-> -}
-> -
-> -static int nvmet_tcp_alloc_crypto(struct nvmet_tcp_queue *queue)
-> -{
-> -	struct crypto_ahash *tfm;
-> -
-> -	tfm = crypto_alloc_ahash("crc32c", 0, CRYPTO_ALG_ASYNC);
-> -	if (IS_ERR(tfm))
-> -		return PTR_ERR(tfm);
-> -
-> -	queue->snd_hash = ahash_request_alloc(tfm, GFP_KERNEL);
-> -	if (!queue->snd_hash)
-> -		goto free_tfm;
-> -	ahash_request_set_callback(queue->snd_hash, 0, NULL, NULL);
-> -
-> -	queue->rcv_hash = ahash_request_alloc(tfm, GFP_KERNEL);
-> -	if (!queue->rcv_hash)
-> -		goto free_snd_hash;
-> -	ahash_request_set_callback(queue->rcv_hash, 0, NULL, NULL);
-> -
-> -	return 0;
-> -free_snd_hash:
-> -	ahash_request_free(queue->snd_hash);
-> -free_tfm:
-> -	crypto_free_ahash(tfm);
-> -	return -ENOMEM;
-> -}
-> -
-> -
->   static int nvmet_tcp_handle_icreq(struct nvmet_tcp_queue *queue)
->   {
->   	struct nvme_tcp_icreq_pdu *icreq = &queue->pdu.icreq;
->   	struct nvme_tcp_icresp_pdu *icresp = &queue->pdu.icresp;
->   	struct msghdr msg = {};
-> @@ -913,15 +880,10 @@ static int nvmet_tcp_handle_icreq(struct nvmet_tcp_queue *queue)
->   		return -EPROTO;
->   	}
->   
->   	queue->hdr_digest = !!(icreq->digest & NVME_TCP_HDR_DIGEST_ENABLE);
->   	queue->data_digest = !!(icreq->digest & NVME_TCP_DATA_DIGEST_ENABLE);
-> -	if (queue->hdr_digest || queue->data_digest) {
-> -		ret = nvmet_tcp_alloc_crypto(queue);
-> -		if (ret)
-> -			return ret;
-> -	}
->   
->   	memset(icresp, 0, sizeof(*icresp));
->   	icresp->hdr.type = nvme_tcp_icresp;
->   	icresp->hdr.hlen = sizeof(*icresp);
->   	icresp->hdr.pdo = 0;
-> @@ -1238,11 +1200,11 @@ static int nvmet_tcp_try_recv_pdu(struct nvmet_tcp_queue *queue)
->   
->   static void nvmet_tcp_prep_recv_ddgst(struct nvmet_tcp_cmd *cmd)
->   {
->   	struct nvmet_tcp_queue *queue = cmd->queue;
->   
-> -	nvmet_tcp_calc_ddgst(queue->rcv_hash, cmd);
-> +	nvmet_tcp_calc_ddgst(cmd);
->   	queue->offset = 0;
->   	queue->left = NVME_TCP_DIGEST_LENGTH;
->   	queue->rcv_state = NVMET_TCP_RECV_DDGST;
->   }
->   
-> @@ -1607,12 +1569,10 @@ static void nvmet_tcp_release_queue_work(struct work_struct *w)
->   	cancel_work_sync(&queue->io_work);
->   	nvmet_tcp_free_cmd_data_in_buffers(queue);
->   	/* ->sock will be released by fput() */
->   	fput(queue->sock->file);
->   	nvmet_tcp_free_cmds(queue);
-> -	if (queue->hdr_digest || queue->data_digest)
-> -		nvmet_tcp_free_crypto(queue);
->   	ida_free(&nvmet_tcp_queue_ida, queue->idx);
->   	page_frag_cache_drain(&queue->pf_cache);
->   	kfree(queue);
->   }
->   
-> 
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+On Tue, Feb 25, 2025 at 11:47=E2=80=AFPM Lei Yang <leiyang@redhat.com> wrot=
+e:
+>
+> I tested this series of patches with virtio-net regression tests,
+> everything works fine.
+>
+> Tested-by: Lei Yang <leiyang@redhat.com>
 
-... and it also eliminates a sporadic crash which we've seen
-where 'snd_hash' wasn't initialized when sending PDUs.
-Thanks for doing this!
+If it's possible, I would like to add the resize (via ethtool) support
+in the regression test.
 
-(Note to self: check the nvme-tls code for crc32c usage ...)
+Thanks
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+>
+>
+> On Tue, Feb 25, 2025 at 10:05=E2=80=AFAM Joe Damato <jdamato@fastly.com> =
+wrote:
+> >
+> > Greetings:
+> >
+> > Welcome to v4.
+> >
+> > Jakub recently commented [1] that I should not hold this series on
+> > virtio-net linking queues to NAPIs behind other important work that is
+> > on-going and suggested I re-spin, so here we are :)
+> >
+> > This is a significant refactor from the rfcv3 and as such I've dropped
+> > almost all of the tags from reviewers except for patch 4 (sorry Gerhard
+> > and Jason; the changes are significant so I think patches 1-3 need to b=
+e
+> > re-reviewed).
+> >
+> > As per the discussion on the v3 [2], now both RX and TX NAPIs use the
+> > API to link queues to NAPIs. Since TX-only NAPIs don't have a NAPI ID,
+> > commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present") now
+> > correctly elides the TX-only NAPIs (instead of printing zero) when the
+> > queues and NAPIs are linked.
+> >
+> > See the commit message of patch 3 for an example of how to get the NAPI
+> > to queue mapping information.
+> >
+> > See the commit message of patch 4 for an example of how NAPI IDs are
+> > persistent despite queue count changes.
+> >
+> > Thanks,
+> > Joe
+> >
+> > v4:
+> >   - Dropped Jakub's patch (previously patch 1).
+> >   - Significant refactor from v3 affecting patches 1-3.
+> >   - Patch 4 added tags from Jason and Gerhard.
+> >
+> > rfcv3: https://lore.kernel.org/netdev/20250121191047.269844-1-jdamato@f=
+astly.com/
+> >   - patch 3:
+> >     - Removed the xdp checks completely, as Gerhard Engleder pointed
+> >       out, they are likely not necessary.
+> >
+> >   - patch 4:
+> >     - Added Xuan Zhuo's Reviewed-by.
+> >
+> > v2: https://lore.kernel.org/netdev/20250116055302.14308-1-jdamato@fastl=
+y.com/
+> >   - patch 1:
+> >     - New in the v2 from Jakub.
+> >
+> >   - patch 2:
+> >     - Previously patch 1, unchanged from v1.
+> >     - Added Gerhard Engleder's Reviewed-by.
+> >     - Added Lei Yang's Tested-by.
+> >
+> >   - patch 3:
+> >     - Introduced virtnet_napi_disable to eliminate duplicated code
+> >       in virtnet_xdp_set, virtnet_rx_pause, virtnet_disable_queue_pair,
+> >       refill_work as suggested by Jason Wang.
+> >     - As a result of the above refactor, dropped Reviewed-by and
+> >       Tested-by from patch 3.
+> >
+> >   - patch 4:
+> >     - New in v2. Adds persistent NAPI configuration. See commit message
+> >       for more details.
+> >
+> > v1: https://lore.kernel.org/netdev/20250110202605.429475-1-jdamato@fast=
+ly.com/
+> >
+> > [1]: https://lore.kernel.org/netdev/20250221142650.3c74dcac@kernel.org/
+> > [2]: https://lore.kernel.org/netdev/20250127142400.24eca319@kernel.org/
+> >
+> > Joe Damato (4):
+> >   virtio-net: Refactor napi_enable paths
+> >   virtio-net: Refactor napi_disable paths
+> >   virtio-net: Map NAPIs to queues
+> >   virtio_net: Use persistent NAPI config
+> >
+> >  drivers/net/virtio_net.c | 100 ++++++++++++++++++++++++++++-----------
+> >  1 file changed, 73 insertions(+), 27 deletions(-)
+> >
+> >
+> > base-commit: 7183877d6853801258b7a8d3b51b415982e5097e
+> > --
+> > 2.45.2
+> >
+> >
+>
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
