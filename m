@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-533152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4400DA45635
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A32CEA4563D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FDB3A3F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C603A864A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422DA26B08F;
-	Wed, 26 Feb 2025 07:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513C926B2A3;
+	Wed, 26 Feb 2025 07:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWGfhsRk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmoXtens"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9022F1624F3;
-	Wed, 26 Feb 2025 07:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7002267B9D;
+	Wed, 26 Feb 2025 07:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740553338; cv=none; b=YMRwa9t/NdiVJ5bUeHqYQqb9mrB8sLxwpWQsk7zpuz6vZJcF+kuHCFqaVRjvhgQMDT/zjc9PEnhSGdCmf0ukQvamU9AjI6PpfK5ggtp79yoM47JzuqFacLf/0PftXj4KWFsHQl8Gkw0hwFCp034cTW6RP4lTQAJWtQ6MdBFY3VI=
+	t=1740553382; cv=none; b=PqbJn0FLfw2SSURnBSdrmYRZJ56HWegsoQkOBY6Aq9MODugZ7lPsMkHqsYkSzLaBbpqjYCJMwRf1EqVlCx5N6PmfqymVkm4ohrT4ko6wSbZRGos8wCrhVLU6IZipYGCAn/pxeAQxFsnH2L14cIYjGXFBu07ot/h8J9fyFHJ+De8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740553338; c=relaxed/simple;
-	bh=LNW2RCAz3S4DPK/VKv4XUbUdFMgW/79zioxJj69XsEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9LZzoCKpxyb7qjib+OkA/c0E6egyRU+EcH26SWF1qWKIxE5k6Chn/48HXYYnTBOyAeDr9rM+ZEfFMkOrCnctqcfI0DPTLJ/xPmcsvFx6LPD1rUFbo1zs3ouYKXIm3vqdIewPo3YHpo5xp5J4ajEXte5vOxS5Q+MtnG6kEXpfKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWGfhsRk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF39C4CEE2;
-	Wed, 26 Feb 2025 07:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740553338;
-	bh=LNW2RCAz3S4DPK/VKv4XUbUdFMgW/79zioxJj69XsEs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gWGfhsRkOdAtLrTKIuG5ReuA2Y9V7HLVEmt6fVZYZGDpAhc/ZLyBbFw2g3/N5WoM7
-	 zChlSdRtojeYdaXOjy2MYk27V6pWYUAQTyxzDj7Fqr+VLzh3cqr48L+XRDKxx7I0UO
-	 wCnfSmohznvbTKBDzVCsgdk92Mm3hx7MFfqYvEOtTw+i6wCmFBYqvwo+afgkkPC8kr
-	 0fc5o6XX0g++VIm456Wz1XGcTxcua8ywGNCa9L92TFvdUi0tgB5WPEXCwobWjjV66b
-	 wNLS7uihw/HEaRmv9imPKU9lpTqtqa0Td5txpuCa7vUYEB+agWQZbN1agBdC/T5ePn
-	 rKIpgaf4MGx5Q==
-Message-ID: <f89817fe-22af-460e-9f5c-a3347eba1892@kernel.org>
-Date: Wed, 26 Feb 2025 08:02:12 +0100
+	s=arc-20240116; t=1740553382; c=relaxed/simple;
+	bh=Kqe1gQUtzcqKdab8ZBtaidJEpF+k2xXYoBmxUhCJeMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UBRod9t/6/AmFWjZuWQmP8jcd4zHnXWIkEIDt3D+kHfzkd9To0pVca4lH+Iwiu1vPda3Ta+tY0RcKNyBLzwmNgVkbWR2YirdmEFR5IObHRBgV9aPZ8EPnA00VhBQxNMi+kkZJJRNHMro5Rh9LV6XrrAA6V4yzk/TTEx80x25cNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmoXtens; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab744d5e567so98856766b.1;
+        Tue, 25 Feb 2025 23:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740553379; x=1741158179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OsFdL7LBIygzcy20JDjI+85CJNQJPpaqLDWDofbFEjg=;
+        b=EmoXtensci13Sa1+UyAfXf5JMiuNhLDKxYstDRVZ7NLiaegaOSdGy+SnKHW8WVjLEH
+         vEp0qNS6/08blGt/3EgWuX9fiioHrNEpfmZJHQoE6EZGl1MLcBYBAVqo+Ez/GsNWuKbg
+         ID2RFhfm2Qy9AG6CzQZNt3voSrZMsLhlUPSVD2e8IJw5PWqHjlIghRHx0z3GCGJGuacR
+         KzwWwaGryUaVZKHORySO2V8XIwhCfESeuEJe0IvlukFNMMLrBLZAltQeBUMUPCBhspfp
+         hWIu3uNSRo+4I7ff4ro5rOnoWt0GpiTIO4mjUzuWmCADW3KWwsCrfkqmwuLtYqx6ksZ8
+         3wbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740553379; x=1741158179;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OsFdL7LBIygzcy20JDjI+85CJNQJPpaqLDWDofbFEjg=;
+        b=nM1egPxIxzmOhMHxf1kIiuRvW1aue4O7VMdqxflmgHoQH+dOBwC0oS5CIGy4RQMnYU
+         UrQ6qf2vM1jnVR/ZdFqG/GOq4HfP+nBjH8ANShAu1R30v7QJ5a78qJ5XSdzH+RZJirQD
+         KEin8jcihw7rDE/7y/CFCRNoBt2LY+/YrnDWDQtcqraUdYxD16TnRmzdqXwm3F8Yl53D
+         GJ3u7W/IScOrL7cHg2BLR6o2sRJb4VWkYTMcuPE915bV1BDfREwSHwGt8PLydSrMnZ2d
+         ZyfZ6uhGV9YPP7nUp/b2kGh7K/fOOER/+FJF9vvPxiajtPsj1pQEk+54ly4u597Sz5DH
+         sz1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Hi+/buSnj0SAKCqjzyqKunFFB3G3RKDywA3EoQvavwFJwmM7idZ3J6dQhy5IpQxvOlOiYA+7u733@vger.kernel.org, AJvYcCX8hVE1K1fDbS8ezoclMQVwpF8KXj+btXpkrDVaUGOm/yfQt0NwICg6xyX6dtfZqcnsLGp40qeIleX7uvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiF18AqB6JcL8i9GbzPOsWMeHxK8gWqk8EcS7XrwPsCXMG28rY
+	bB7LrQPntqYlcOhovvos8Ohbbzz4N8gfre4QrNaVpDzGkqUM53Lp
+X-Gm-Gg: ASbGncuEfKZDaH61CeM1R/Sua+/O897ccdCqBQyHPOgxVXjiU3OFst3HHrM2ElKugWy
+	Y8NG3nMbCq8gp3k5u5DgQb/PzBtDYdvVYmdkeujmrz9JnCA0T22lmDEorWITlscjOxtQDq+1/Cm
+	nBgKfkPqG8UEqRWRSfo/bkh0ihZbN2S0VFRErb02wI+ECxwKvc+SP6G7EIyrl/Wrje2yhukd9+A
+	lkg3X/tzKz9fN1ZGBAHoMY3vIA2um/svotMYjQwjLik0a6pY7CdWKSRYuTtqv9muIta5aDf1Af/
+	OBLecdy7rr1TQEEGDdhibo30B/I9tO9k0h33IF/6
+X-Google-Smtp-Source: AGHT+IHLx4B9QasOhWDgt2i3SkmYkC/M3Wurcf1VMTIobHREkQU+9RTLNyYXcdFo47+x2c33nRzEmg==
+X-Received: by 2002:a17:907:7e8e:b0:abb:b411:5e02 with SMTP id a640c23a62f3a-abc0aea5253mr2193603766b.18.1740553378770;
+        Tue, 25 Feb 2025 23:02:58 -0800 (PST)
+Received: from foxbook (adqi59.neoplus.adsl.tpnet.pl. [79.185.142.59])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1a01648sm275856266b.0.2025.02.25.23.02.57
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 25 Feb 2025 23:02:58 -0800 (PST)
+Date: Wed, 26 Feb 2025 08:02:55 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/5] usb: xhci: Don't skip on Stopped - Length Invalid
+Message-ID: <20250226080255.770ca055@foxbook>
+In-Reply-To: <20250226080202.7eb5e142@foxbook>
+References: <20250226080202.7eb5e142@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] dt-bindings: arm: add CIX P1 (SKY1) SoC
-To: Peter Chen <peter.chen@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
- marcin@juszkiewicz.com.pl, Fugang Duan <fugang.duan@cixtech.com>
-References: <20250226012136.854614-1-peter.chen@cixtech.com>
- <20250226012136.854614-3-peter.chen@cixtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226012136.854614-3-peter.chen@cixtech.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 02:21, Peter Chen wrote:
-> Add device tree bindings for CIX P1 (Internal name sky1) Arm SoC,
-> it consists several SoC models like CP8180, CD8180, etc.
-> 
-> Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-> Signed-off-by: Peter Chen <peter.chen@cixtech.com>
-> ---
+Up until commit d56b0b2ab142 ("usb: xhci: ensure skipped isoc TDs are
+returned when isoc ring is stopped") in v6.11, the driver didn't skip
+missed isochronous TDs when handling Stoppend and Stopped - Length
+Invalid events. Instead, it erroneously cleared the skip flag, which
+would cause the ring to get stuck, as future events won't match the
+missed TD which is never removed from the queue until it's cancelled.
 
-<form letter>
-This is a friendly reminder during the review process.
+This buggy logic seems to have been in place substantially unchanged
+since the 3.x series over 10 years ago, which probably speaks first
+and foremost about relative rarity of this case in normal usage, but
+by the spec I see no reason why it shouldn't be possible.
 
-It looks like you received a tag and forgot to add it.
+After d56b0b2ab142, TDs are immediately skipped when handling those
+Stopped events. This poses a potential problem in case of Stopped -
+Length Invalid, which occurs either on completed TDs (likely already
+given back) or Link and No-Op TRBs. Such event won't be recognized
+as matching any TD (unless it's the rare Link TRB inside a TD) and
+will result in skipping all pending TDs, giving them back possibly
+before they are done, risking isoc data loss and maybe UAF by HW.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
+As a compromise, don't skip and don't clear the skip flag on this
+kind of event. Then the next event will skip missed TDs. A downside
+of not handling Stopped - Length Invalid on a Link inside a TD is
+that if the TD is cancelled, its actual length will not be updated
+to account for TRBs (silently) completed before the TD was stopped.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+I had no luck producing this sequence of completion events so there
+is no compelling demonstration of any resulting disaster. It may be
+a very rare, obscure condition. The sole motivation for this patch
+is that if such unlikely event does occur, I'd rather risk reporting
+a cancelled partially done isoc frame as empty than gamble with UAF.
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+This will be fixed more properly by looking at Stopped event's TRB
+pointer when making skipping decisions, but such rework is unlikely
+to be backported to v6.12, which will stay around for a few years.
 
-Best regards,
-Krzysztof
+Fixes: d56b0b2ab142 ("usb: xhci: ensure skipped isoc TDs are returned when isoc ring is stopped")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 67f3d8128b10..96b90819aec7 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2870,6 +2870,10 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 		if (!ep_seg) {
+ 
+ 			if (ep->skip && usb_endpoint_xfer_isoc(&td->urb->ep->desc)) {
++				/* this event is unlikely to match any TD, don't skip them all */
++				if (trb_comp_code == COMP_STOPPED_LENGTH_INVALID)
++					return 0;
++
+ 				skip_isoc_td(xhci, td, ep, status);
+ 				if (!list_empty(&ep_ring->td_list))
+ 					continue;
+-- 
+2.48.1
 
