@@ -1,106 +1,211 @@
-Return-Path: <linux-kernel+bounces-533352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349D0A458E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:52:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F270DA458D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EEC83AAE2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837031883ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2D420E302;
-	Wed, 26 Feb 2025 08:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9720DD7A;
+	Wed, 26 Feb 2025 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Nzilg7ck"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7899B1E1DEA;
-	Wed, 26 Feb 2025 08:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gLT8qfUn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31FC20DD4D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559913; cv=none; b=Nrjac0KoFk14PzoQliOzQ7Rjd/PcdouYruaILI/3dLX+XPIDrzERtfbNbc/F3peAJZisRaQfZ4QA08QS8kgyK/4uisjqNt/34oYTyizpKVx6B/DHHsVHD6j0Ra5mB0YPuve+8AH+WhJOpD2y+zxkhvxJE1gQLVsjP9F8WCbtcOI=
+	t=1740559874; cv=none; b=AUylh07CnCl9DDXTtvBkXOr02cD0qVpXoS6M1HJ8IFVJipt3uk15iiYnoetOrDa6p/XnhXTHfjS+Qb0QCc87ezXSJ28retT717MjktPrajQzTUmmotSVDBuUBjDxeT7AZQkqPvx54cD4PjcyeqVw6nABs5Zk9Ri7Z82bBA54rAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559913; c=relaxed/simple;
-	bh=KrDx804goEIsj6Ttq1rYSXS0VwgGZXtZ8WpbM3w0qCk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UrZJZ5xJCt67LkQ7EAfVhJc6DLxY22obS1pvCmPVwXMdRmripcyvNDVTANMGGJfHKQRGrmhCHLDieXSnHLVNvdrCxAv4d0aqKHluFzC2OAkfH1qXB3kcdJhh1qeceyWkf6KAD3rF1YWnqfLFx2hicUlMCcOGtVav0CpM74j+WNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Nzilg7ck; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ObvQD
-	iPPxOzG/hmREPfYkM4fAGsaYvUaZ5Q4hk45P4I=; b=Nzilg7ckxss9jeVntAsrU
-	pMqa30cCJadBdyUfBWGr37lmKo7g25PJr3CjIoQFLoq8Qd1plxJGqguzxN9iVD/u
-	83s7fHqaEo398EalLR1WuMT6lpPil0p/2GL/kU6AU17zLMZlGaNmxfRGz8UM3E0N
-	cZ7fgkvi8U2bJ3YNtQ/IvA=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3n_zs1b5nqnH6Og--.60025S4;
-	Wed, 26 Feb 2025 16:50:53 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	quic_mohs@quicinc.com,
-	krzysztof.kozlowski@linaro.org,
-	quic_pkumpatl@quicinc.com,
-	alexey.klimov@linaro.org,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ASoC: codecs: wcd937x: fix a potential memory leak in wcd937x_soc_codec_probe()
-Date: Wed, 26 Feb 2025 16:50:50 +0800
-Message-Id: <20250226085050.3584898-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740559874; c=relaxed/simple;
+	bh=2viEWV9e7kJ90xVYLnVBY1QMwCp8ekGrGx1sdCvA9Zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZGgg/Ad/AElZDPsYhUeEPqDUox4MUQmKgbAm6x/lhJVU5Zy70pLkPhMcA40XDvV9bZTYH7wZbSSRee8GgX/1mFGWcF7bVTjDu2rjzEUHdB+ck6qlv83wpeRv9flbFGlzZ3XKLmRqBsxv+hODc/9MYTLZLjNklsrbi1nY8/Hy474=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gLT8qfUn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWq1v011767
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:51:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7aWGZVyJ1OvaCe4Hv0tS3ZL8LfJtxhk7LYTNGSNU6L0=; b=gLT8qfUnLMac3K+0
+	2r+29PMc9DNYly3kgsw4apDA+HnfO6ibynP5Zz+19AXnbDx6RJKY0MzmBQSYn/2o
+	4TSOW+DNlBR3kvoIObHNWCdL1SLI5chFzQSIfwuji11T2X9W2onuI36OlNIu8A0L
+	xWsJAkbHxzG7NgMLJE+7R7OCR0wfVRgiobB293zpKxlxr22va5E7aAYeyvZ4NUMB
+	sgyNzxwm++rvZdUjj21rykf4XkRl2rzuupqPGRbQQmwUJsNv3nMyL0OFuNMdWC9Q
+	xUxayUb/fqAZ5evkcbvU7fPuv+bZ7scsey708vL1EJckuRT/SeRL4ZusiHyCp/Bk
+	KjODZg==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmhaj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:51:12 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2f816a85facso13567025a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:51:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740559871; x=1741164671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aWGZVyJ1OvaCe4Hv0tS3ZL8LfJtxhk7LYTNGSNU6L0=;
+        b=JA7L9LEn8oAZwh/YBEqVyeOY06vPg0RS3id3oOoRyCnS6XRsWCDlBIlJnY1MfKRbVs
+         lSJ+N9pxxFBj6DL6WG0QazAoZ+VzbXzjtVjYBBnx13isAsgE5WlMrRA3z4CmII4+IN4s
+         Pgb89S8ArNLI6nAEe1INCnMWfR3tMizTwjPq8T7AQnEtHRKAvzubIp1X+X4GbLRU0Hu7
+         S9nCHx3WmAlR5BTj/2mbAyPar/pBSfpMORLFD2JuukJh2x+tDdj3TjM8UMLJXsQDmLZV
+         M8bU1Lkkx651L26pg/Hpi8gDYpRhkg2kirlsqKdkDOrjoAP69/HAU8NmgOf/3lK9wCxD
+         6Y9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqhbOYOKs200UgMklVPtwuUouubCel+wUDSweIZg1oA4QjO7xUz9uydSRm1+0dcIRIaVOMtb3pmUYR99U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWUpCwAusM3AITAw+pjQhHZreO90h8Ubmhen6uJjwNQwJU+Hwc
+	0uiWpuDFePk72GeTYci1WpsKcBlzByYudv2qEU8cvE9njr7KTwGouR26UlSKnn74BaUTpKykZSK
+	NLGUEj3GkzSuZJ70xylpSzFM/4eyTw1WCoSQqFUywubDjNlsNL4ZlGnGXTp2rrDY=
+X-Gm-Gg: ASbGncuHLgGuOPuH/nO+7nmdrrBLyrFgbK+FRf64vH0Xf5v7zLKKGo+Rf95F+6jROEP
+	KqtFCXHIQeeEF6EBYgEyjf1UfQ/kklZFy1fMH1J9tuVX88Y4t9qRDwiKB7vgAdcQtzt69tl+SKt
+	uC/feoRjb1jesqsfp7KFQHpz7OUkXMqggNnGAQdckEsuUr5SnK9jq6PFNSc36N4ANQHO3kPvcHq
+	oPu8ii+2+FF7QktxzT+DIWxl5FUXVRLYTkKkH8qqBJYPKy6+gmRATjOhuaED9z4A43Pw8aIgKcn
+	Y0KOqIffg24XDOmg64jGU/ZigdQCOAe8MLrIt/yvo7IH
+X-Received: by 2002:a17:90a:da87:b0:2fa:1f1b:3db6 with SMTP id 98e67ed59e1d1-2fce875b1e1mr32942246a91.29.1740559871047;
+        Wed, 26 Feb 2025 00:51:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IECiylrQlK960oN+myaYEe+QpHxYo2jDM3eXLVu6qHaHgHcEk+DCVPvWzFzdemQRAZ62hc97Q==
+X-Received: by 2002:a17:90a:da87:b0:2fa:1f1b:3db6 with SMTP id 98e67ed59e1d1-2fce875b1e1mr32942218a91.29.1740559870642;
+        Wed, 26 Feb 2025 00:51:10 -0800 (PST)
+Received: from [10.217.217.28] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825d31f3sm1038485a91.28.2025.02.26.00.51.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 00:51:10 -0800 (PST)
+Message-ID: <cc328ade-a05e-4b1d-a8f0-55b18b4a0873@oss.qualcomm.com>
+Date: Wed, 26 Feb 2025 14:21:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n_zs1b5nqnH6Og--.60025S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7JrW8tr1kXFWkWF48urWDtwb_yoW8JF1DpF
-	4ktrZ8Aa45Wa4rA345J3y8uas2k3ykuF1xGw42g345Jwn8Jryxuw1Yy34I9FsruFWrGrnx
-	ZFZFva48A3W5Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkBsAbme+0SWJ0wAAsS
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 1/5] dt-bindings: iio/adc: Move QCOM ADC bindings to
+ iio/adc folder
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rob Herring (Arm)"
+ <robh@kernel.org>
+Cc: jic23@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        agross@kernel.org, andersson@kernel.org, dmitry.baryshkov@linaro.org,
+        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
+        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
+        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
+        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
+        quic_kamalw@quicinc.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+        lars@metafoo.de, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        cros-qcom-dts-watchers@chromium.org, quic_skakitap@quicinc.com,
+        neil.armstrong@linaro.org
+References: <20250131183242.3653595-1-jishnu.prakash@oss.qualcomm.com>
+ <20250131183242.3653595-2-jishnu.prakash@oss.qualcomm.com>
+ <20250202-convivial-stingray-of-promotion-1123b8@krzk-bin>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <20250202-convivial-stingray-of-promotion-1123b8@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: rvpvbVULDggUWnHxVXsNbsI4vhT_SBXa
+X-Proofpoint-GUID: rvpvbVULDggUWnHxVXsNbsI4vhT_SBXa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_01,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260070
 
-When snd_soc_dapm_new_controls() or snd_soc_dapm_add_routes() fails,
-wcd937x_soc_codec_probe() returns without releasing 'wcd937x->clsh_info',
-which is allocated by wcd_clsh_ctrl_alloc. Add wcd_clsh_ctrl_free()
-to prevent potential memory leak.
+Hi Krzysztof,
 
-Fixes: 313e978df7fc ("ASoC: codecs: wcd937x: add audio routing and Kconfig")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- sound/soc/codecs/wcd937x.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 2/2/2025 6:59 PM, Krzysztof Kozlowski wrote:
+> On Sat, Feb 01, 2025 at 12:02:38AM +0530, Jishnu Prakash wrote:
+>> There are several files containing QCOM ADC macros for channel names
+>> right now in the include/dt-bindings/iio folder. Since all of these
+>> are specifically for adc, move the files to the
+>> include/dt-bindings/iio/adc folder.
+>>
+>> Also update all affected devicetree and driver files to fix compilation
+>> errors seen with this move and update documentation files to fix
+>> dtbinding check errors for the same.
+>>
+>> Acked-by: Lee Jones <lee@kernel.org>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+>> ---
+>> Changes since v4:
+>> - Updated some more devicetree files requiring this change.
+> 
+> I don't get why this fails building and nothing here nor in cover letter
+> helps me to understand that.
+> 
 
-diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-index c9d5e67bf66e..951fd1caf847 100644
---- a/sound/soc/codecs/wcd937x.c
-+++ b/sound/soc/codecs/wcd937x.c
-@@ -2563,6 +2563,7 @@ static int wcd937x_soc_codec_probe(struct snd_soc_component *component)
- 						ARRAY_SIZE(wcd9375_dapm_widgets));
- 		if (ret < 0) {
- 			dev_err(component->dev, "Failed to add snd_ctls\n");
-+			wcd_clsh_ctrl_free(wcd937x->clsh_info);
- 			return ret;
- 		}
+I have tried checking multiple ways for anything missing in my build setup, but I'm not getting this error when building in my local workspace. But the error itself looks invalid to me.
+
+This was the error:
+
+    dtschema/dtc warnings/errors:
+    In file included from Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dts:80:
+    ./scripts/dtc/include-prefixes/dt-bindings/iio/adc/qcom,spmi-adc7-pmk8350.h:13:10: fatal error: dt-bindings/iio/adc/qcom,spmi-vadc.h: No such file or directory
+       13 | #include <dt-bindings/iio/adc/qcom,spmi-vadc.h>
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    compilation terminated.
+
+My patch moves both "qcom,spmi-adc7-pmk8350.h" and "qcom,spmi-vadc.h" from the "/include/dt-bindings/iio/" folder to the "/include/dt-bindings/iio/adc" folder. "qcom,spmi-adc7-pmk8350.h" internally includes "qcom,spmi-vadc.h" and I have updated its path too within the file. These are the relevant changes from my patch:
+
+
+
+    diff --git a/include/dt-bindings/iio/qcom,spmi-adc7-pmk8350.h b/include/dt-bindings/iio/adc/qcom,spmi-adc7-pmk8350.h
+    similarity index 97%
+    rename from include/dt-bindings/iio/qcom,spmi-adc7-pmk8350.h
+    rename to include/dt-bindings/iio/adc/qcom,spmi-adc7-pmk8350.h
+    index 3d1a41a22cef..161b211ec126 100644
+    --- a/include/dt-bindings/iio/qcom,spmi-adc7-pmk8350.h
+    +++ b/include/dt-bindings/iio/adc/qcom,spmi-adc7-pmk8350.h
+    @@ -10,7 +10,7 @@
+     #define PMK8350_SID					0
+     #endif
  
-@@ -2570,6 +2571,7 @@ static int wcd937x_soc_codec_probe(struct snd_soc_component *component)
- 					      ARRAY_SIZE(wcd9375_audio_map));
- 		if (ret < 0) {
- 			dev_err(component->dev, "Failed to add routes\n");
-+			wcd_clsh_ctrl_free(wcd937x->clsh_info);
- 			return ret;
- 		}
- 	}
--- 
-2.25.1
+    -#include <dt-bindings/iio/qcom,spmi-vadc.h>
+    +#include <dt-bindings/iio/adc/qcom,spmi-vadc.h>
+
+
+
+
+    diff --git a/include/dt-bindings/iio/qcom,spmi-vadc.h b/include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+    similarity index 100%
+    rename from include/dt-bindings/iio/qcom,spmi-vadc.h
+    rename to include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+
+
+I have tried checking for other similar changes where dt-binding header files were moved and other files (driver, DT, documentation) updated in the same patch, but I couldn't find any similar enough to this case.
+
+Perhaps the kernel bot is not able to properly handle this case where multiple dt-binding header files are moved and also one of the moved header files includes another of the moved header files, with the new correct path updated.
+
+
+Anyway, I think this could be fixed by splitting this patch into two. There are two ways I can see for doing this:
+
+1. In first patch, move qcom,spmi-vadc.h alone, updating its path in all other affected files. In second patch, move the remaining dt-binding header files referencing qcom,spmi-vadc.h, with similar corrections in other affected files.
+
+or
+
+2. In first patch, copy all the relevant dt-binding header files present in "/include/dt-bindings/iio/" folder to "/include/dt-bindings/iio/adc" folder. In second patch, update all other files (.c, .yaml, .dts/.dtsi) to use the newer ADC file paths and delete the header files in the older "/include/dt-bindings/iio/" path.
+
+Which approach do you think is better?
+
+Thanks,
+Jishnu
+
+> Best regards,
+> Krzysztof
+> 
 
 
