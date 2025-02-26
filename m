@@ -1,137 +1,169 @@
-Return-Path: <linux-kernel+bounces-534963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8A9A46D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C74A46D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143B73B043D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA0E3A5B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BA2236A74;
-	Wed, 26 Feb 2025 21:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EB3258CE5;
+	Wed, 26 Feb 2025 21:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DMmbh3dq"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kov41Vzs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB3F218591
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA43224249;
+	Wed, 26 Feb 2025 21:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604923; cv=none; b=XT7F43yew8MMi8ERj0HXugfcDP8J7rIB5O0fZT2zNtK3cWQn5JoSvIupdON8ZwNNS6n0bm1q+jCVzF+gxCjOjVl6EvnDc1patTakBqSlSp0Cnv3HXCMAqDI1tKFu049RF3IjX2wwSkT2ofmt32flnDnr2Y1yY5WIseuxClP/JZ8=
+	t=1740604930; cv=none; b=Ea4Nm/DkHfZ4uNgGzizHm+aOZMw2de3DeY3hbhQJF2s14LBHuc1ajxheyiGU1FetJ8MTiETnUWtumM6b3DK0qh/mrV/OUxZE549EKF320cPI4KNHdwtyF2JnZ2Bwsg/k0Rcsthpq5AqxOTf6jLy5KuD8h3WPPB6Pp/YDtR2Vdnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604923; c=relaxed/simple;
-	bh=+N3TkM1NRoZBHh9Ynr3C7aEtzpQAI6OT4vv0R68K6KA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lZNcmT2SEPazymLzyCD/PQaOCXPkrGBqCYGaC9skvSJr8estYA03aUWFmQxtDWQpKjezZdp4b7pvI+swDnsLCdkBrsxYshOdaanKuvwJlZjxkY9B9CHbF/QvaDfqJnYg7y3E1ik76MWY04WQ+M0h5VH7GTDcH4dwUr7bK+R2fcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DMmbh3dq; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abbae92be71so17057166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:22:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740604920; x=1741209720; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdNIeKEV298BHIClZBktZsY+11PKkbWSpfNyTBEPjKM=;
-        b=DMmbh3dqTkdqfMS6AaFoSF1aQpndrjsrMmhEjSQCJ2FZB87+hUa/fKQwOWtyuEXlmF
-         /RWWTh91m79cDqqqJTLmulDW9IOgd2ig7XVTEB97dN/znIAv94JnmblDR+A7RCWxrptH
-         m6Cj8E7GyudRqsLqWhk42InL/VAudf2qZ2v7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740604920; x=1741209720;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bdNIeKEV298BHIClZBktZsY+11PKkbWSpfNyTBEPjKM=;
-        b=QRRNg79nsngRl4Y+WQ7HBGyl48el+VJkscB3bwrbMMq7RPypT8vl9V2v4uOQH/o+nS
-         YGPTedkfCnQd8BAIaRO4CgqY1N9jvun5mHYydvo7QIoTyM9UWS3wVaR35W+1TZ+ujN0Q
-         47gC7VQG5bs75awjCiEZ+uLXSwujP8DSZIZArFir1Vg92G9jBvGIDtF70S1upLYu4LHy
-         lyghRoiX2vwQTY+g5N7zD2MIaHzKnF0XFGZ4i4J33iprCIxG1ixBUnODX26CUI7ec/Xm
-         Q4GKZmvLjVgVW+EiMzNDX/laIM/eTJpmJBMKR3RvOub64k7ElhdGe8zcFGYR5YI1R1rw
-         eKYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXg3oUZegtpIppsS+F+x4nCl8SUXV/isdfiPqOe/KcVIg/4fqB3qv9TR8BS7sS4gqAr8VgUZ5Pm9Skgwdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCV7aaKal3R74cTRNB0NjT9KNvZG0eGNwOF7VLtIqFPH0//EO2
-	uUYkHT8rD2pp74UiC2gZb1U38AdAWNpdZCynIXQnMTdOMxCgWIY2Aph+bUsFuXQGOe0/RDwHrhq
-	0LJLR+w==
-X-Gm-Gg: ASbGncvSq7XiyAZvKVOgs6n/mUFln8w7wUypJGFRoE8w5Sq4554JkRCVugFPxW2D+AY
-	jaOKv+3UtFVui+Q8sstXq5zeAMosMxV2frihYwjJa8X5Q/4enmFFylB2m6ipvSjwalQPpNJX4Qa
-	bQlA8k8oZ7C8LvQPhCO6OjiA5LwtpHBEXXjyvcekooF2MseYSp6Do7Q/JDX2Y/qAFyGIdLjkEGe
-	fbZt/kYmlzob738T6m5CFURjgHHl3Qzt7Opeu9v2d3A9hWWBBv8dhDzLuey+2hidJdePrjq8LI+
-	ZRz5PZLZaOszscU0uQxiEPYLo/VDYXPIssifYqqkd5E9yP67Dn4qkH1T1XXyuVmrc/ECDHLJNrU
-	X
-X-Google-Smtp-Source: AGHT+IFWBf4IOcNv8L48h4nWrR4lFn/UyzS7Gqhr5rzljJUvX5MdbKGbkEVGQVNRinGdg6ohW91PYA==
-X-Received: by 2002:a05:6402:2787:b0:5dc:74fd:abf1 with SMTP id 4fb4d7f45d1cf-5e4469da925mr22724468a12.15.1740604919701;
-        Wed, 26 Feb 2025 13:21:59 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dc150sm6683866b.61.2025.02.26.13.21.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 13:21:59 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so177350a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:21:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXPs9i/JVrpAGRvyStF909l48GkJju70XuI32Bwcj0u7aJ56Qt0fXTsdFmULIy0u2mtuO9B9X3xDRaA5bI=@vger.kernel.org
-X-Received: by 2002:a05:6402:40ca:b0:5e0:922e:527a with SMTP id
- 4fb4d7f45d1cf-5e43c17fd68mr23458418a12.0.1740604918551; Wed, 26 Feb 2025
- 13:21:58 -0800 (PST)
+	s=arc-20240116; t=1740604930; c=relaxed/simple;
+	bh=Vu09UrU0Muu5/ttkFdeLyuALho7P3OYY3oKYTW24fKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PXQG/c8b9nl1SzaTvZEyMjaBTAT07FsoTVbzUVep3Vh8e9vLV0XNGmwgduiBWGhuoURFZVrGF2TpdO9Y0+GQ1WE50yMM5/45a5NUfLjKsaMxRLPf1dzwVSGXqTY4cb6Wo94Zp18supb1kapVOcMOtzo8stqBgL0cFirmyBDGRIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kov41Vzs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F834C4CEEA;
+	Wed, 26 Feb 2025 21:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740604930;
+	bh=Vu09UrU0Muu5/ttkFdeLyuALho7P3OYY3oKYTW24fKk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kov41VzsIr7/iMwrlnwsiyCjHSHHLexu05kPcJvU5BZKb0Fm9z6FVjfuclGljXLL3
+	 4ZLLUSh7kAJCv0UvvAzHhGfNd7eJnh+teT3tR8bCrQiWv5+TaRmG7zBdmYYlQKXpj6
+	 BoHbC2g6TyRoob4u8jPg/QrdGd+SbS0mgJl0w4mD919lHcTqWVewy9mx6Z364MWWdk
+	 pAK1WkSbew5bsedMwg1ZTJdXE5aLdffrsJ1LexQgezrpI3Az9tvgj8SoUlCbRTgEEX
+	 7AXgaZf2ThS/G6Iz54s8ziwSeB9nK93OpltH9xtfo6l+hi0FcD9BgdFuBva2WOTA7S
+	 C70cjOev7bbGA==
+Message-ID: <05e56d15-059b-425b-9e55-66993d988f8d@kernel.org>
+Date: Wed, 26 Feb 2025 22:22:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de> <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at> <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Feb 2025 13:21:41 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj3C7Gc7pB0BD+5dvrFWh8xNJLYgupq6parOCFk94VyoA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrrDtu6pQtaXDIWizvRpIKwFgJHej09xYvppc2qRPzk9XWU6Yj8paFL6N4
-Message-ID: <CAHk-=wj3C7Gc7pB0BD+5dvrFWh8xNJLYgupq6parOCFk94VyoA@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Ralf Jung <post@ralfj.de>, "Paul E. McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
+To: Sam Winchenbach <sam.winchenbach@framepointer.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, antoniu.miclaus@analog.com, jic23@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
+ <20250225134612.577022-2-sam.winchenbach@framepointer.org>
+ <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
+ <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 at 13:14, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> That "single read done as multiple reads" is sadly still accepted by
-> the C standard, as far as I can tell. Because the standard still
-> considers it "unobservable" unless I've missed some update.
+On 26/02/2025 18:10, Sam Winchenbach wrote:
+> On Wed, Feb 26, 2025 at 09:03:13AM +0100, Krzysztof Kozlowski wrote:
+>> On Tue, Feb 25, 2025 at 08:46:12AM -0500, Sam Winchenbach wrote:
+>>> Adds two properties to add a margin when automatically finding the
+>>> corner frequencies.
+>>>
+>>> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+>>> ---
+>>>  .../bindings/iio/filter/adi,admv8818.yaml          | 14 ++++++++++++++
+>>>  1 file changed, 14 insertions(+)
+>>
+>> Bindings are before users (see DT submitting patches), so this should be
+>> re-ordered.
+>>
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+>>> index b77e855bd594..2acdbd8d84cb 100644
+>>> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+>>> @@ -44,6 +44,18 @@ properties:
+>>>    '#clock-cells':
+>>>      const: 0
+>>>  
+>>> +  adi,lpf-margin-hz:
+>>> +    description:
+>>> +      Sets minimum low-pass corner frequency to the frequency of rf_in plus
+>>> +      this value when in auto mode.
+>>> +    default: 0
+>>> +
+>>> +  adi,hpf-margin-hz:
+>>> +    description:
+>>> +      Sets maximum high-pass corner frequency to the frequency of rf_in minus
+>>> +      this value when in auto mode.
+>>
+>> IIUC, these are two bounds - lower and upper - in relation to something
+>> else (like rf_in frequency)? If so, make it an array (naming to be
+>> discuss, I assume you know better what's that):
+> 
+> It is true that these are both related to rf_in but both the low and high pass
+> filters can operate independently. Logically, IMO, it makes more sense to have
 
-I want to clarify that I'm talking about perfectly normal and entirely
-unannotated variable accesses.
 
-Don't say "programmers should annotate their special accesses with
-volatile if they want to avoid compiler-introduced TOCTOU issues".
+You mean you can set only low or high pass and keep other as default?
+But what is the default then - something from reset value or "0" means
+disabled?
 
-Having humans have to work around failures in the language is not the way to go.
+> them as separate controls but I am happy to put them into an array if that is
+> the idiomatic approach to situations like this. That said, I am having a
+> difficult time getting dt_binding_check to pass when I have an array of uint64.
+> 
+> When listing two items, as in your example below, I get the following:
+> adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
 
-Particularly when there isn't even any advantage to it. I'm pretty
-sure neither clang nor gcc actually rematerialize reads from memory,
-but in the kernel we have *way* too many "READ_ONCE()" annotations
-only because of various UBSAN-generated reports because our tooling
-points the reads out as undefined if you don't do that.
+Tricky to say without seeing your code. Magic crystal ball had
+malfunction today.
 
-In other words, we actively pessimize code generation *and* we spend
-unnecessary human effort on working around an issue that comes purely
-from a bad C standard, and tooling that worries about it.
-
-            Linus
+Best regards,
+Krzysztof
 
