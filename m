@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-532806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C483A45272
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:54:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E84A45274
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5378D3A5542
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA93171186
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E81219E7ED;
-	Wed, 26 Feb 2025 01:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737C017E45B;
+	Wed, 26 Feb 2025 01:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t2VFU5r1"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbmoBrey"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2ED17A58F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587F6EBE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740534832; cv=none; b=JHsWVCJgJGVCvverfjlPsjBJ+yXJHoeoG/xFrr5Qrq9hOMPXPpRZlMzJSbxUYucBo/9FGmFKOsZLZfno6WyaWGYcxkPQdML4dL4FpxzwEZRXoEg7qgZ1+DByiPgPRlHY15oX3GNcie09xeW4CIjn4ro0aW9qHgPB7KpXN/4JqwE=
+	t=1740534902; cv=none; b=SLetegOjZ4XyHhgussv4TfRRbMmW4vbH9EnfAsVS0hsfZJlJhhFs8Ijz5NEP2EozhaPe1Y5GccnSfa8ld0NAXk3EriJR1N07rVFebp/ivvF4F4BIzHTJRbuFm8IHWjxuPeu9KR/irpJ50BuJwkjBB9pRBN7ktsjkPux15ULJAxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740534832; c=relaxed/simple;
-	bh=mt9ZPQ68rspzjWyqQSWrq3VOqM7TIRbM4OFSIyDzI1E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=U6cF8BSmA7J3OMcNDwIddnyOiEV18A0kzkiS4SFlpL8gZ2w/cWjMDppX2Px+CNWn1n9eMrUkYSU4Gf9rjmbh35E5M8OIPWcqK8ZF07eqJvjz+Sp06YewtUWbijTi0IA65r0lgWakyJELGqfefRLWs0jiLVVppXJIr3K1oNLn62Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t2VFU5r1; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1e7efdffso20528203a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:53:51 -0800 (PST)
+	s=arc-20240116; t=1740534902; c=relaxed/simple;
+	bh=qKfesCctE/K12QuygJLzdrcIJInJArYzz755rZy62bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtiydaSSeAugXisHL6x1noDPjLaw+bfNsKj99Hd2BJHgqk2zSQXUve2ak9BiNP7d5RrD+wMd4/7QWfVqepcc7VwwdGvVh2l0l9E84I3cGMY7+FKcsvoXr1q4gi3RS/K+wstHPbx4ez46TN+w/Du/0CuSsJSwQ4E/st1mn23yU4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbmoBrey; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so11302974a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:55:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740534831; x=1741139631; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qy84pRVEWANZRUM0lPCmW+OAKARH3NjZYD4jWNoJGGM=;
-        b=t2VFU5r1iXmm+bkGTzRvmeR4t1EK5lCZV3UpUNdGCR2TqChX0mqQ3g3wodgwg3wbYU
-         jILRLibfegjmcXJWenVngr9cjYMql+xE/gvTpP/jBd/mU35zef9RHsPKnkukYyGMuWOe
-         OvUL+xAQ9siqi1fzXWaL1fGNREKpE8JpAXwEKfmD6Mq5yhSE3l/QzKe/ii+8rkxul4MS
-         h0SrShEU7SNbDuFBavgFIcCuhpJEAjQqwFNL/T+teorxMlMpjiR+t+RFxxBAmtiPPoHf
-         4YvxO6ui5/nomNcVOq2EoChXQRR8OD40U84Z8XJnrbXYXqVHDjuWM4RGQBVI8ccxIFlS
-         /x+g==
+        d=gmail.com; s=20230601; t=1740534899; x=1741139699; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9H9GBuQxb7tmxrvUu+zqJxWqL0txTdzcC55QK9WokbI=;
+        b=TbmoBreyriCZrV66q8H0pHK2zSD2YLVimWdA3VeQpedAbB/7LQ1xgrJLjkplJMkl07
+         0/MaK07zUTdNN569ppgaHlAzC+MxXSgIsli6zuCO3g1c8AISO/CaC8NDjh+SKTyMnL47
+         y94w2RZ2bv0q/O69xrqn8GsGS6JfWpmsZJNayUzPleNcXo4+5grSJyN5p3hDa+t9X2i2
+         OvHo4zbUcLSwaFrJuhujG2/OjqecHxLb59+bAu8tvpkAtqBJ/dHUcKdUvZeKTEDmXO2V
+         BQmQyh8g4I5CER3H9A4BRVTH8r6n/N8T36Ty2rN/S/2x3dFX5y6w8/AcvnBqpdoBnP8d
+         6tpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740534831; x=1741139631;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qy84pRVEWANZRUM0lPCmW+OAKARH3NjZYD4jWNoJGGM=;
-        b=DOMhctQGwId7Hjry71q1FFFaXu1UX3yD4kCL/o9kJeFbZjSXni1k/qcYracsn39kgE
-         SbQ7gpZiNMj9ppLMHEq3wCrlC/mLMw7+6ucqdUA58hULoFBsgNvtnCSG7+c9puC6wCt8
-         /SND1MWZudHwoc+3IhgF6JwiHm58bmd0pYA7t01HTsVpKv3Wq+b/qf+rwyWvlrCZ/5y3
-         ihIIcrrGCf8bi+1/xQIzqLxYC4u9Aaq/Rzj47gQOYBoD/3n6K9L9w+jvSeUV1K5fS3GK
-         B9L57AbGVPqPCNHS/y+AVT4p4ZaGhHLq+oCgBDkozZG8Pxj5wlOBE/0vNR+8ppkTa5w6
-         siQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ1dt0q+F7Gz1UQCnlMLfGwYfBk14PNwx65fBwhmHO6VbtHTTKljnxZgFaTE52tcIzipIEWbMuDidhxAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKRIabf5xyuCNCMBGCz3DLJ1nSPvQkH3HhXFOFfHlpr1Llt/FJ
-	lNXTYW188Qp1/5TKvzw4subEt36N7/06MrOBgNEAivGDE0855FoNmhE/RGjlkaX4IF/mxgoobX5
-	O5w==
-X-Google-Smtp-Source: AGHT+IEJjGJb9O/bSNSRy5vZ6GfVz8lZRWSwczFt1c3DSQSuSg0EpGbpRjI4VST/mOFIjxYS4aIjr8nRu8o=
-X-Received: from pjbtc16.prod.google.com ([2002:a17:90b:5410:b0:2f7:d453:e587])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2803:b0:2f4:4003:f3ea
- with SMTP id 98e67ed59e1d1-2fe692c8403mr9701542a91.33.1740534830763; Tue, 25
- Feb 2025 17:53:50 -0800 (PST)
-Date: Tue, 25 Feb 2025 17:53:49 -0800
-In-Reply-To: <69a1443e73dc1c10a23cf0632a507c01eece9760.camel@intel.com>
+        d=1e100.net; s=20230601; t=1740534899; x=1741139699;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9H9GBuQxb7tmxrvUu+zqJxWqL0txTdzcC55QK9WokbI=;
+        b=w96jZJrgQNjQRcwr6brV3R9NDLYSB03FHZMBGNyVONaOlnX44WpoTCAaZ2HloA8kFj
+         4oDjyBmBbq88QYmt2JFKJbHqTL8BDXc3F09PT5sLB2zchlnJuz7aoae1DARAyAOhZVe7
+         UoxRtttfkOT5HpYitiV3H/6OweOdgvdaK9zBROBD7fodHALF+HV4oSCQGREnb+ew5Cv+
+         /2xdHhkzgjFRrioaKnDhgjg/27iuBoz+ESMzvqNlhGELXWWy9tDIipoR0nsIsHcCKQzu
+         932E5ImzU3fVRfnEFsP/D4lDNm+dRpgPY7u0KZfL4BVnPBCoQnIi6vpmZDx2wjlaTI44
+         wrTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb5feIgcHZkUpW72xHBRV8zKADtbSZySZMk2LI6C/qinDmiTGskwrmXJ11O3eXR6nn92xsRb/xJFNaQfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlb2fm8xyfSi5FM4+l+Cd8Fq9LgD9cqzxTfQNtgwAIkiZDlTfk
+	NP/uOLbyMfciSnF9SERKaEXt9hNgcrB5tBydZbO9M5MRTCCM6SNE
+X-Gm-Gg: ASbGncv/E6xzvmfRyfuIztWai6uQWZgg11UCpAFVI4VAob99Mtvtb0xhHnMWvphXgdo
+	dGcLIKF3eY0gucwiYgCxbbslcDNt6KOmQ4z4/QPGdlsd3DdJgrZ7dhzP1Yn/rJqDypadXLG5shM
+	p5gp6NHB/oi3I5aJEbz8COjQaL7xbBrEjsVGg0FzbyW2NaCjTateklQ82foi7nF7fBqPgu5msOb
+	W+grLkVDBoZPvFpe22cMbNf2zHHh4g4zh59kyoifaReWpucB9C93NrelwF6VOTNT2Ltga4gIWTg
+	ea8ZGuOVpYv+SLLFSRqDRQeKxA==
+X-Google-Smtp-Source: AGHT+IFwNd4cxnMZQflLC+24HaBcAUcg+8DA7JR1rZIOh4jqFoPNGORJVT/6HXYJ6ygRGy/f3IYDvg==
+X-Received: by 2002:a17:907:724f:b0:ab7:bf87:d9de with SMTP id a640c23a62f3a-abc0de146b4mr1817661766b.37.1740534899395;
+        Tue, 25 Feb 2025 17:54:59 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d89sm235268066b.151.2025.02.25.17.54.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Feb 2025 17:54:58 -0800 (PST)
+Date: Wed, 26 Feb 2025 01:54:58 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Frank van der Linden <fvdl@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 2/2] mm/mm_init: rename init_reserved_page to
+ init_deferred_page
+Message-ID: <20250226015458.5xo5qlvvyijyuutm@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250225083017.567649-1-rppt@kernel.org>
+ <20250225083017.567649-3-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250208105318.16861-1-yan.y.zhao@intel.com> <23ea46d54e423b30fa71503a823c97213a864a98.camel@intel.com>
- <Z6qrEHDviKB2Hf6o@yzhao56-desk.sh.intel.com> <69a1443e73dc1c10a23cf0632a507c01eece9760.camel@intel.com>
-Message-ID: <Z750LaPTDS6z6DAK@google.com>
-Subject: Re: [PATCH] KVM: selftests: Wait mprotect_ro_done before write to RO
- in mmu_stress_test
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Yan Y Zhao <yan.y.zhao@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225083017.567649-3-rppt@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, Feb 11, 2025, Rick P Edgecombe wrote:
-> On Tue, 2025-02-11 at 09:42 +0800, Yan Zhao wrote:
-> > > On the fix though, doesn't this remove the coverage of writing to a
-> > > region that is in the process of being made RO? I'm thinking about
-> > > warnings, etc that may trigger intermittently based on bugs with a race
-> > > component. I don't know if we could fix the test and still leave the
-> > > write while the "mprotect(PROT_READ) is underway". It seems to be
-> > > deliberate.
-> > Write before "mprotect(PROT_READ)" has been tested in stage 0.
-> > Not sure it's deliberate to test write in the process of being made RO.
+On Tue, Feb 25, 2025 at 10:30:17AM +0200, Mike Rapoport wrote:
+>From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+>When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, init_reserved_page()
+>function performs initialization of a struct page that would have been
+>deferred normally.
+>
+>Rename it to init_deferred_page() to better reflect what the function does.
+>
+>Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Writing while VMAs are being made RO is 100% intended.  The goal is to stress
-KVM's interactions with the mmu_notifier, and to verify KVM delivers -EFAULT to
-userspace.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Something isn't quite right in the original analysis.  We need to drill down on
-that before change anything.
-
-FWIW, I run this test frequently on large systems and have never observed failures.
-Maybe Rick and I should go buy lottery tickets?
+-- 
+Wei Yang
+Help you, Help me
 
