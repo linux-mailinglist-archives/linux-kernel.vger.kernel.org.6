@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-533176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB485A45679
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:16:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60145A45680
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18773A5EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19BB1895799
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8714C25C717;
-	Wed, 26 Feb 2025 07:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2612267709;
+	Wed, 26 Feb 2025 07:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fJmBCwMR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="vXuIJ1fo"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7333923AD;
-	Wed, 26 Feb 2025 07:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DF919CD17
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740554209; cv=none; b=o8vlP3WCdDQA4UU3Vwa6QF+Beshpw2r4nqXFmjLjXzrtOLtK06v4FA4Iw0U581x1wkIgas+6uOl6PlftcDfmgb848Xf6aMFGQp0DGcgL65EAvfp92OsCKlmh/TU+4PGxsCzA2961UYHRYYUV48knroBf6ZKdZUYRK3Yrg4ekuvw=
+	t=1740554261; cv=none; b=ZROPcgL1PU8iKrWeYQgSivP1UCGobv9xPyoAdoF8xm/ByYLSDM6tSC+NyuJOkD25XDAARgekmJAN3+OR6PFxNNi7RMXwe6UodJXPgZJtGlouZwAlc51h5gWRURO2yK8DmYg72Gg2496n0X6foOIAQ6ylPSADgVtNGa4lQHt+av4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740554209; c=relaxed/simple;
-	bh=D8ggxto9h0+YmFo1mS6CdwDp0jJBo3gfXuOouTuXqVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gunFTeErAVJUWmVLUADJoaWv84LaUJ+jxgD8I3LBW/E6pT0WTzhdLezT+Ow49Mo+ndDpXtVOeQ6kHhew5FCwbwJ4tDQe5YE9/O1zxVWJQp65D9pnDuOzdFrTgkzxWrmBaAdm4dTqSrrvLGkD1+mUtGaSbOz2cSM9XerhPbqF8FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fJmBCwMR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q6PclK028516;
-	Wed, 26 Feb 2025 07:16:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=s0daWTZ+h3e4CYzqQrGN8s4MZibHUn
-	ZL7K/uuxn95uA=; b=fJmBCwMRObf/ZnmW9sa5kvECELdq3pHny4YsS08gG4Q/gi
-	cHvYhexKdM49XUtPcMrfs73oN/ZdfMLz6FY2OmcsUNM0SZZDnM5/HvUF6h4zwFBe
-	vFi5tLlUP/a5CAAfTf3GozhcWZ68RkW8rgvEm8VIj/UJFvQeTAGP2/m8MdcG+wFS
-	daCY2Rk1F27oScWMb820pAU2LMDCMe6sT8sTjJ8XcQO7ZrI+4V3we7Kbolu27cGQ
-	eJ2dy8AMJpgFvKxeLbjjXwerdyzBz9CiHa8VOFLzS+gydJZSPoDSW21uUznHjMXa
-	388ehXkYWD9DEqwggjCN/SeJCK0D0qwXKl1/AeAA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451wp6864a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 07:16:15 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51Q7DWT5027408;
-	Wed, 26 Feb 2025 07:16:14 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451wp68648-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 07:16:14 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q4rJnR027390;
-	Wed, 26 Feb 2025 07:16:14 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ytdkh853-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 07:16:14 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51Q7G82A17170924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 07:16:10 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A1A112004B;
-	Wed, 26 Feb 2025 07:16:08 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 519E420049;
-	Wed, 26 Feb 2025 07:16:06 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.19.83])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 26 Feb 2025 07:16:06 +0000 (GMT)
-Date: Wed, 26 Feb 2025 08:16:04 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Muchun Song <muchun.song@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] mm: hugetlb: Add huge page size param to
- huge_ptep_get_and_clear()
-Message-ID: <Z76/tK6yr32O2C4h@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20250217140419.1702389-1-ryan.roberts@arm.com>
- <20250217140419.1702389-2-ryan.roberts@arm.com>
- <Z73Szw4rSHSyfpoy@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <290f858c-07d4-4690-998c-2aefac664d7b@arm.com>
+	s=arc-20240116; t=1740554261; c=relaxed/simple;
+	bh=nQE82M389tEqleRp6N/SxEJ1DNH209IWxLRnYe2riB0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=jXSnYl/7H6k06AqAJfAj4wAs6fdy0CrT3n3272mvxwxkmXHKEwMp6N2GFgnbiYRvdo5kxLJ3fS1A09HEX+QgSZtod0BFsFh5pMaQLuhr6IhobTz2IKP/nRyk7+rOEW9rbzNsAYJbf8EWNq2GGG6K/B2jUW7SbLNCglEmXRg7/ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=vXuIJ1fo; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51Q7H9rg1592254
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 25 Feb 2025 23:17:09 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51Q7H9rg1592254
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740554230;
+	bh=nQE82M389tEqleRp6N/SxEJ1DNH209IWxLRnYe2riB0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=vXuIJ1foV5j4uLaC59mij4w9wJ4qGpy+3d5SPYb4gXprn83GNQs0Mz6WzMaXPbntU
+	 Qm+EYYTEKM1yOR2ZfHAl4HVBrqW9CbL2t2qgdeg9/kChvNcyoJtqdI/uN31OhE7Tqj
+	 kCRgEF1TmMxs4yALvAd4S2ODq1pFDZczjo9tz9g0SsK3q7Nvln7T7ArScV4EW54mz7
+	 Dr+KYG7CjOUO2Yv2GV28kc+CGz4z7CZN+KTGly6bCju1j0D8+Q+4l262mz2WzfeYrD
+	 8SBgQXK1Je//ip5NHf0v0m06Dsq1lorvymeDiqdxJEFlL2ZKgIs2ABtiYH+iLNdvO1
+	 A05IQmHtjYdTA==
+Date: Tue, 25 Feb 2025 23:17:07 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Jiri Slaby <jirislaby@kernel.org>, Ingo Molnar <mingo@kernel.org>
+CC: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
+User-Agent: K-9 Mail for Android
+In-Reply-To: <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
+References: <20250129154920.6773-1-ubizjak@gmail.com> <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org> <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com> <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org> <CAFULd4bTYudfNap1trVyjqA0xv5cQQeWxSZ8numv_uHqxz1Afw@mail.gmail.com> <ef6e2925-f005-41e9-bc24-b9adc3922706@kernel.org> <Z7zBXyywUEC2ieiR@gmail.com> <67544c34-2c6f-43d3-b429-c8752f57a7e6@kernel.org>
+Message-ID: <2229E260-CF5A-463C-8552-32ACA97BE30F@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <290f858c-07d4-4690-998c-2aefac664d7b@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: XY_V547MWzFXGjFNryOxXjG0TG-cKJAp
-X-Proofpoint-ORIG-GUID: vG3krsx3_W2UnseQJeBqT6t6C7a6pKKC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=592 clxscore=1015
- adultscore=0 spamscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260055
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 03:43:04PM +0000, Ryan Roberts wrote:
-> >> +pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
-> >> +			      unsigned long addr, pte_t *ptep, unsigned long sz)
-> >> +{
-> >> +	return __huge_ptep_get_and_clear(mm, addr, ptep);
-> >> +}
-> > 
-> > Is there a reason why this is not a header inline, as other callers of
-> > __huge_ptep_get_and_clear()?
-> 
-> I was trying to make the change as uninvasive as possible, so didn't want to
-> change the linkage in case I accidentally broke something. Happy to make this an
-> inline in the header though, if you prefer?
+On February 25, 2025 10:31:37 PM PST, Jiri Slaby <jirislaby@kernel=2Eorg> w=
+rote:
+>On 24=2E 02=2E 25, 19:58, Ingo Molnar wrote:
+>> So this CodingStyle entry is a red herring, and the !! is absolutely
+>> used in the kernel
+>
+>Sure, for intended conversion to either 0 or 1=2E
+>
+>> as an explicit marker of intentional type conversion
+>> to bool=2E
+>
+>With this in mind, you would have to write "if (!!x)" everywhere=2E
+>
+>I don't want such constructions in code I maintain=2E (Nor for return val=
+ues=2E) But this is not code I maintain (obviously), so your call after all=
+=2E
+>
+>thanks,
 
-Yes, please.
+Uh, no, that's not the point=2E
 
-> Thanks,
-> Ryan
+The point is that:
 
-Thanks!
+!!x
+
+=2E=2E=2E is the same as=20
+
+x ? true : false
+
+=2E=2E=2E which if promoted to an integer, intentionally or not, becomes
+
+x ? 1 : 0
 
