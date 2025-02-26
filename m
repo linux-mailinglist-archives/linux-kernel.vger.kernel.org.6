@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-534762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AAEA46ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76350A46AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FACC16E594
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6530F16E5C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50943237A3C;
-	Wed, 26 Feb 2025 19:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11862238D5A;
+	Wed, 26 Feb 2025 19:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i1DdCjY7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D32236A66;
-	Wed, 26 Feb 2025 19:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/gfgBbM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DE022E3F1;
+	Wed, 26 Feb 2025 19:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740597707; cv=none; b=upirvRH93dTC1yXiNnrNUHk6D3j5NLw5Sn6Rev7zsR93hYB2dHErcu0OoDmuPqT2rorNFvGET9hKCESNzX7/BoVglV0gKFqFDijUZ5nRMKbZnpgx1ZwwILPwNGfttsbtHG1C4BFxgVWWpmXFXeQ2+qD1xcEMmgwrhekZzvlK5Xw=
+	t=1740597741; cv=none; b=lf/jPoB6MODetwng56J1L+uy/hVNWKTog7HcPPHMNQYIl3/e9C2/FrYsUtOFAa6Q3n3Q22bMdtvsxW9ar60Ic0Rjta502CNWPJwef15IggRLD9yeZsSV8vfA16Zh6Hspf2g/Qa/49EtS+9rFFwnHd0FZ+v2QDJHgNW2SMOL9wow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740597707; c=relaxed/simple;
-	bh=9voOCpIr5KsR2MrzPyH2v0+Hl+LD4VAcKc3oOdHexTo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bERe8gWXMOILJ/kL73AIX7ZA0e5ZsZgVCl5evAQBNNHUeWJLx6Ht8veB/210fzCtR3En5F6aU2SNbMJ8b69QztQ7aUZbhKqxMyPERt38gD4AH7jVlc2rmYVGPG4vIeL5xxXgvhrVYBf+511DxKW4y1NG1RJwX6NOUXMGf9jaA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i1DdCjY7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F37A72107AAB;
-	Wed, 26 Feb 2025 11:21:32 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F37A72107AAB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740597700;
-	bh=9voOCpIr5KsR2MrzPyH2v0+Hl+LD4VAcKc3oOdHexTo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=i1DdCjY7F0rctTcaMxKIxXXmBJZYfZpU2ARs6hjfPwxgl/oOBWgQ8ZkwhMtwb7dAt
-	 kvdQLVVWHY+r3NlVA73slr8Gx16VJbEED1agkRJwxq9pcC4t78BnizML2qgpxUw9uJ
-	 8pwpJebUVF+/3SH4DjtuCeb/QpvlHUD7V/CmQ/2g=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu
- <song@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
- Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, LSM List
- <linux-security-module@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- selinux@vger.kernel.org
-Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf
- hooks
-In-Reply-To: <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
-References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
- <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
- <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
- <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
-Date: Wed, 26 Feb 2025 11:21:30 -0800
-Message-ID: <87plj4jyv9.fsf@microsoft.com>
+	s=arc-20240116; t=1740597741; c=relaxed/simple;
+	bh=70HPt7cXIlQ+KkPTytAjDaBWtPrvl6+QqP5ouDBmFLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJ/FvrV92SXuKRlDBp4JW/KVFWKzeKgBC0hTNdINNMzc+RH5ZqBj1beRZyl+b/FXYThP9ElJYurlwxkA8Tkv8tVDYI+j7229Gcz/2Rv3HvtIbmTSiuicg0P2UvK/2Uq7hzw8n8tZDhiZInvGRxKrYSf8n9Q0qL50TLfZ8lJLyUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/gfgBbM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA20C4CEE8;
+	Wed, 26 Feb 2025 19:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740597740;
+	bh=70HPt7cXIlQ+KkPTytAjDaBWtPrvl6+QqP5ouDBmFLo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=h/gfgBbMNup3uDIk+icOzLt+LsY+Y44k8czZKXOueFZxvu3VjgCaT0LKGbx0NH4hM
+	 95gfVq8fUKWCl49f+d+VYi0PzzX9vQZjCCygY8pnRa7krLyNP9B07mWtqrMY5benNh
+	 REf55tk6hg8R0iGPKQM8nUAXOnK6AQBQKCpMKk7EO6Y7hP843P0Smpl289HbzUjzUM
+	 E34XPLILwjLYkIbVPPyszQizUdn9qPSqZUcIMp65lrO+o2qomYIhFi8ovxT6fCOH9f
+	 KjsPnoGEVu66EuTgGRpHGn4/DsYYO/NOl0arqfq3Cp/HA1R8liQJ9Qn0BLvuda0/tw
+	 Pw1fkbci+l7ew==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e4c0c12bccso121263a12.1;
+        Wed, 26 Feb 2025 11:22:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU73DmcGC+2Igambfpkz/QDf6UPCkz6xZGTjicmqH3z8Dkk8pw4bhBaZA5ZLkez04vgJpiQIEkRjYCr@vger.kernel.org, AJvYcCW4m8tYuDWahZcgU5k0S32E80gwYZMrFborUToxOHgHs2zZjwjRAu0ZTV3dviT+ltFHoJ6nuH/x8ZT19OXA4Q==@vger.kernel.org, AJvYcCXMaCN6eBYNJdmJ5uzfpdNyZedf+zi0hymqhgO0Aj6au2vtsd/9AzGCF6a4A2G1is+FlK6uOBzIdBRFlCzE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW8hLD0LLBvxLtkMD0+Y78wuEfdV+yd1uP7ZTBlu//2kBnYmHX
+	k5SGosM2G7K7P4ixd6v5Z2QRzbOx2znUdbd/aKfWbbfA/+FExay/3SbmfyGWK1Z5CnMkxkl5iUq
+	y/0ZJz1ST19mJWDJyPG5bJa1O2A==
+X-Google-Smtp-Source: AGHT+IE879zpQVonAD3+QX2VFbqk24PyMa64J5Q0ZFCMgA4E7ybBbhC+LwGrmURfNPkEUYddUs8POdQv17d4bNrYwl4=
+X-Received: by 2002:a05:6402:518f:b0:5e0:51c0:701e with SMTP id
+ 4fb4d7f45d1cf-5e0b7254f98mr23443051a12.32.1740597739433; Wed, 26 Feb 2025
+ 11:22:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru> <20250226-qcom-nonroot-overlays-v1-1-26c6e7605833@trvn.ru>
+In-Reply-To: <20250226-qcom-nonroot-overlays-v1-1-26c6e7605833@trvn.ru>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 26 Feb 2025 13:22:07 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJH5g-A0Td8zYn--FuYFZi=HQ96BeNSMLuxQU6+5X3k-w@mail.gmail.com>
+X-Gm-Features: AQ5f1JqBSWKWscupDtx7XUeNsPytnMVaiTjrHhniqHbmTDtYseDb8YQVhIUWai0
+Message-ID: <CAL_JsqJH5g-A0Td8zYn--FuYFZi=HQ96BeNSMLuxQU6+5X3k-w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix
+ broken overlay root
+To: Nikita Travkin <nikita@trvn.ru>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-
-> On Tue, Feb 25, 2025 at 11:06=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->>
->> On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
->> <bboscaccy@linux.microsoft.com> wrote:
->> >
->> > Certain bpf syscall subcommands are available for usage from both
->> > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
->> > need to take a different course of action depending on whether or not
->> > a BPF syscall originated from the kernel or userspace.
->> >
->> > Additionally, some of the bpf_attr struct fields contain pointers to
->> > arbitrary memory. Currently the functionality to determine whether or
->> > not a pointer refers to kernel memory or userspace memory is exposed
->> > to the bpf verifier, but that information is missing from various LSM
->> > hooks.
->> >
->> > Here we augment the LSM hooks to provide this data, by simply passing
->> > the corresponding universal pointer in any hook that contains already
->> > contains a bpf_attr struct that corresponds to a subcommand that may
->> > be called from the kernel.
->>
->> I think this information is useful for LSM hooks.
->>
->> Question: Do we need a full bpfptr_t for these hooks, or just a boolean
->> "is_kernel or not"?
+On Wed, Feb 26, 2025 at 8:30=E2=80=AFAM Nikita Travkin <nikita@trvn.ru> wro=
+te:
 >
-> +1
-> Just passing the bool should do.
-> Passing uattr is a footgun. Last thing we need is to open up TOCTOU conce=
-rns.
+> When converting to the overlay format, it was missed that "/" in the
+> overlay corresponds to the overlay's own root node and not the fragment
+> targeted to update root of the base dts, which should be "&{/}" instead.
+> This results in the cma node never actually being applied by libfdt.
+>
+> Fix the overlay to use correct target node.
+>
+> Fixes: 231c03c6119d ("arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Con=
+vert mezzanine riser to dtbo")
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso b=
+/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
+> index ae256c713a36078afdadc67193f381a19ea8e5d3..254df3d518d8cbfb1082511f3=
+8e132435b7fdf59 100644
+> --- a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
+> +++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
+> @@ -9,7 +9,7 @@
+>  #include <dt-bindings/clock/qcom,camcc-sm8250.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>
+> -/ {
+> +&{/} {
+>         reserved-memory {
 
-Sounds good to me, I'll rework it to use a bool instead.
+IMO, this should be applied to the /reserved-memory node rather than
+the root node. Though I also think using overlays to set CMA size is
+questionable. It's much easier to change the kernel command line than
+apply an overlay.
 
--blaise
+>                 linux,cma {
+>                         compatible =3D "shared-dma-pool";
+>
+> --
+> 2.48.1
+>
 
