@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-533645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D37A45D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:30:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7A8A45D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EAF189761E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD26217353A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EBD2163AB;
-	Wed, 26 Feb 2025 11:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBE22153FD;
+	Wed, 26 Feb 2025 11:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIUlTfK2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iTi5nPo2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FFD21519A;
-	Wed, 26 Feb 2025 11:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA01215772
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740569408; cv=none; b=ikHtXf3/ILJlulQD53pnfFUAoyunNlU4g2qx+bKZvbMRSmxTTHKnGBTNFxFFnVfDKPKsOlXs29BR5vUkAtHqrpoLAbYNDC5Lt9eDM/MrBNEUxco0eGgqCoMSp7fUjU4pV2KE7vz78RdP0ZSzKdgXc0HQvFuDOmFVvfP7gHyRe/4=
+	t=1740569450; cv=none; b=gU2ltdfbguOOdUw8bC5vm0uk7FAHdqC6/5egSDbTSydG+E9j8x9OssTTbcWzewDMbGt1z8k3ACitqyA9gzi5ngx5md5vIDMUUo8XzIM3r9ncMhlLx2IMxQP042YlLssgW5tkLiaNq7l/pHtPkTtcWAoEYnp80X74QL/TR4CtseA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740569408; c=relaxed/simple;
-	bh=9WiEqRQ0WC4TcHNEk0++D2oF9/1toQwtlnkrdN1ISFg=;
+	s=arc-20240116; t=1740569450; c=relaxed/simple;
+	bh=FO6z9XAnbl99r5mAf5xNI8wGp7r/Mn9K4KKIHeLztyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8WNnvB2NiVYAazCbnwPbxL8J5EAA189SDk99FpdXZ6b49VkuBiHvPOfuuudsPDoGBc6aoqgPMNy2K4GcKtK5kx0Vd+yfWbAKjx4HLiuFVYlU8/5l4DlW02RVl2/CmC4rDU6YvL56zC36Jr9LbfZVXJxQzSpqIxUSvbBCuhyQ2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIUlTfK2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC63AC4CED6;
-	Wed, 26 Feb 2025 11:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740569407;
-	bh=9WiEqRQ0WC4TcHNEk0++D2oF9/1toQwtlnkrdN1ISFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIUlTfK2pXqaUDMpw5RIIHnVeByfDlzQfBY3+0E8d5BdAX+TUTVNIwrKJgP/FaBgf
-	 IjKKuUXeG5l9Ew8YeRaCGxVo6aYi0aUIrGzgwgY4+2DWcarIPntGz/9GLbyfVSNYfO
-	 SW67yeYI3cR0fo8n3xv0/29uJIe3dVQR5PiV8qSEWeCXl+fwqnxdcjjE7DRmUVfiOS
-	 9ThhnWpo2ZcFcSSUl0fMoM6tREGrNbzEDH/ikx2VuLf8tYWdUKO61yIk6vUlP6vZME
-	 uzwqRVd6q4FA9sQCc3I/OUPF+zTBTE5BD6JsPh7tFiinI8MhEHoSIxhQ9UdEv6t4h/
-	 T5prmsk09BN7w==
-Date: Wed, 26 Feb 2025 11:29:53 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yaron Avizrat <yaron.avizrat@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Dongsheng Yang <dongsheng.yang@easystack.cn>,
-	Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Selvin Xavier <selvin.xavier@broadcom.com>,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	cocci@inria.fr, linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-sound@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org,
-	ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH v3 00/16] Converge on using secs_to_jiffies() part two
-Message-ID: <79b24031-5776-4eb3-960b-32b0530647fb@sirena.org.uk>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZyuf+5ThP1A8OJc2RYHk4WHvH0SqXGBCEApIY7vgkCBEpC9hRA27fE7gjLvovNAug2ltMxov1wnjupZIoQZ6fP+IvLkW4Zx6ZkYA5Lk9mhLV5jEJ3Q4Y/LckaC7rvbwrMXKnQmtF7T0dYX6GnQGWFYK5Z+Tgj1GBl+YMwJ9BjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iTi5nPo2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740569447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zMbwlR55IsYFkSNbcLoRNPldNYhmk+s65IhIsLBnOf8=;
+	b=iTi5nPo2kdMl47smbI29P8V01XcSPoz1+SoPgaNvsLmcMGIHyAZKFOdU7Sivdy+f288iyf
+	lDxf2Wk7TAKxMd0o9bODlhNdT6FttbpYeYrrmnZpjrIPhJ321NnqfGMZIsdSMl73gTycq/
+	9XVq2FPGQbHe1I2gPq7Qou82w7HjdEo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-6-MOq10sPNaHoK_XgBLyrA-1; Wed,
+ 26 Feb 2025 06:30:45 -0500
+X-MC-Unique: 6-MOq10sPNaHoK_XgBLyrA-1
+X-Mimecast-MFC-AGG-ID: 6-MOq10sPNaHoK_XgBLyrA_1740569444
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09A6818EB2C9;
+	Wed, 26 Feb 2025 11:30:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8411C180087F;
+	Wed, 26 Feb 2025 11:30:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 12:30:13 +0100 (CET)
+Date: Wed, 26 Feb 2025 12:30:09 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jolsa@kernel.org, kernel-team@meta.com,
+	Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH perf/core] uprobes: remove too strict lockdep_assert()
+ condition in hprobe_expire()
+Message-ID: <20250226113008.GA8995@redhat.com>
+References: <20250225223214.2970740-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZCSMnIMPvhXPgIqW"
-Content-Disposition: inline
-In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
-X-Cookie: I've been there.
-
-
---ZCSMnIMPvhXPgIqW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250225223214.2970740-1-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Feb 25, 2025 at 08:17:14PM +0000, Easwar Hariharan wrote:
-> This is the second series (part 1*) that converts users of msecs_to_jiffi=
-es() that
-> either use the multiply pattern of either of:
-> - msecs_to_jiffies(N*1000) or
-> - msecs_to_jiffies(N*MSEC_PER_SEC)
->=20
-> where N is a constant or an expression, to avoid the multiplication.
+On 02/25, Andrii Nakryiko wrote:
+>
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -762,10 +762,14 @@ static struct uprobe *hprobe_expire(struct hprobe *hprobe, bool get)
+>  	enum hprobe_state hstate;
+>
+>  	/*
+> -	 * return_instance's hprobe is protected by RCU.
+> -	 * Underlying uprobe is itself protected from reuse by SRCU.
+> +	 * Caller should guarantee that return_instance is not going to be
+> +	 * freed from under us. This can be achieved either through holding
+> +	 * rcu_read_lock() or by owning return_instance in the first place.
+> +	 *
+> +	 * Underlying uprobe is itself protected from reuse by SRCU, so ensure
+> +	 * SRCU lock is held properly.
+>  	 */
+> -	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
+> +	lockdep_assert(srcu_read_lock_held(&uretprobes_srcu));
 
-Please don't combine patches for multiple subsystems into a single
-series if there's no dependencies between them, it just creates
-confusion about how things get merged, problems for tooling and makes
-everything more noisy.  It's best to split things up per subsystem in
-that case.
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
---ZCSMnIMPvhXPgIqW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme++zEACgkQJNaLcl1U
-h9BKXgf/Ybq0e4qGEIKGWBa7OUYTknbVxMBC/99e3FVQ0Dwf4IPl8bDlEvGCxai/
-A2UYH2niNzqAGOIs0IYUzaMIbok+phK2ifRcVyNdM2KciC1B2jGROzQplIYaq0bH
-aEBWCAEyWMlRAMVwWL66KhB7d9asaNrv9v4WCNfcV9F4pThna3PAti9AF+sX6sQh
-kvQleuahMD/hHAdTIrgBuJGgtox61kBDTFMibaWt2Moq01Wsp8YDQS3JtnnLyiE0
-Rc67if2Uvg1ZMAyO3Fvm80flyFkMHhuiaq0uTFCLt1YiqCLfzk2w+QExnv0DRECR
-mx63KFPW0WMILQcbYwjzaGgaLuTDWg==
-=UO5r
------END PGP SIGNATURE-----
-
---ZCSMnIMPvhXPgIqW--
 
