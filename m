@@ -1,272 +1,109 @@
-Return-Path: <linux-kernel+bounces-533856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F1FA45F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBDFA45FC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557C3189917B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B211891010
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA78122173D;
-	Wed, 26 Feb 2025 12:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCgT3FL2"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E9D1A00D1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B1721B9F3;
+	Wed, 26 Feb 2025 12:50:17 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3278621B1AC;
+	Wed, 26 Feb 2025 12:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740573247; cv=none; b=hYTC9cP3uX4SNovnyNcAsz0jU9EzG/1zVbUX08MiQ2aFUgi3RNIHO/LWCKGwMSMJhg9JuXEqLm8/cGb3YyQQqYM3W3DJc7tnRV2Ei9oZ9NTeuhdaJQvJhZS3pVyyKnXW+au1Dj4VmMXc60ZUIKVxBKPYBSQNhtvSRs7bI97ggZE=
+	t=1740574216; cv=none; b=D7OT7Oe5heUMfVCCRHYRzg3T+bEmFZkTT2/igcTUEGUU3GJxruAmp9jwNkF6HkPAbYLv9MufAX8y8CQ9G55jfRHhkwBonsXVwMmjftc3lXQLFkmjFa14murE+v8JsNUu7taaOK6bMyFcgbatstU2fn2yGrvwH0IoTm5bh1Fy5Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740573247; c=relaxed/simple;
-	bh=QGCcgrerBtCitrFyUHoak79bGfEvyYUxi46inAzFuQ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OsM77r80bjVSVOmjycl23NlWoO+ecng1QCmaNDiD0iYn1Pbhwz7zdO5EzLCz3wHZI80JprATQAp6HJ0nW7lHTIBovVdR8/vzpD4JGOcpwG2BI+LxoxfTGQQ/vmyGmE6878dLuGXsqppyU/Opsl4VWZntJPaIOOV7xXz6jsFwN3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SCgT3FL2; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc3027c7aeso13211172a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:34:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740573245; x=1741178045; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=thORHaa0nHO42oQf0yI+R4Ole7z2L1zPAr3s/1qHHtI=;
-        b=SCgT3FL2JHbXiv5boYKNTlwJvKw2av2fjyE7aFRDxa4y0NasUMZ/y27YOgEZq+lzT2
-         BU9mKTH2CeJkXzT8UokqyuWqxtKSDDoX3hgEmtd3ijsKoRO4uiCR8fDwHf/fjBXINCdE
-         2tkAhrLJpYkLPM5zqyV13lw++JBevvz/Gu12HUBXF86Cc9HNWpJXr8Tzos80l5OcWMi7
-         wBsWGnlTxntsy9arnjMs/+UvorePHwZaOlsozqWRi//4spNcx5us0yontgUsI0eQpfDJ
-         4R53tPtfqt4Kmo3IupVRd20tnmSsGlU195XYFH2Xm5HjWg8lqvNCzkVnGW+Y5rtfuAEN
-         c4Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740573245; x=1741178045;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=thORHaa0nHO42oQf0yI+R4Ole7z2L1zPAr3s/1qHHtI=;
-        b=HaprjH+ggvgr/vDIJ1ll3kvq8V4VWv9Y/NfRFF/+n79knB0Bnyg5FdmJfcGkV0E7qe
-         x7mf7mRN3q9wwrRO3O+ZI4cHKpJGeV2acrJpx4FOT9VaNKf8dRkBMSLdCtZGRFvIH19B
-         8x+QKz+RJiOvi3zjlKj8u3cZmi2qNz8kJhjWu6CWqPvzX6WuMX6f6u5ZC6V4Q2HHDdVt
-         JAhop3lqpJBKG3ziBXK2IBofzaPrq8RZawg/Iq5fPO2flWUmh2IKOEg5BLJr5fkAT2b4
-         EkeCBVRHDhueOw76u6DjlYbgiMX+J65mxIV2s234GG/hTj9fyPb1Zgo4S7zjSLpkS5Zk
-         328Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVIrG9bPJbLL+gDDVVR5MzpZhMLHoPTb9650QtLsZAWUjtAEybY0VP+Icud1Jh3+gGmGymYQOl1Lc2vAN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkTpjrMVA+uv4y43FaPAdqqhnvdRifcfVl/9qga4mlGUWIs+Bv
-	PUFNtYIbUQNSPg3JCPRz50piZvcNhtn6EU8LiRR05XIx2/eNElGr9ZHuCFqNRmo=
-X-Gm-Gg: ASbGncuRbTBGktJ3i53UAT43CQJE1Dmq+OXNeKyFu1MfKKUix1yRAaBMmGHl1nNg610
-	rtBCyl9tkFaw5Eae3/qD89T+oZiY9u+sTp1xqWXBEHJJfSuQ8URaCR+9H7ZhZiqe1haM4T0OY/o
-	Zj2xkVVd3BGuPOvBi/bAhGCiI6L6PUxFrjFih31EAuwmyV/RUXlA1fmlm+b5TJp/bJUU00xYqBX
-	cMP89vvaZlkW2cH7Iks1QscmbB2Jm+neH8b93dBxBiBLtQpaux/8A2OfD7gXBFsv7iAdn8QY6aU
-	8eAqbdLwb+rVtihALenzn78=
-X-Google-Smtp-Source: AGHT+IFXVKub4Te8Y+5zo1pivgTmLAxms5yC3rfs7Iy2+cnhuxz7ONibXZPnzKSA6ohsSyQFBFtM/A==
-X-Received: by 2002:a17:90b:3c84:b0:2fc:c262:ef4b with SMTP id 98e67ed59e1d1-2fce86cf0e0mr38933575a91.18.1740573245059;
-        Wed, 26 Feb 2025 04:34:05 -0800 (PST)
-Received: from [127.0.1.1] ([112.64.61.158])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825d2ed3sm1352479a91.29.2025.02.26.04.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 04:34:04 -0800 (PST)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Wed, 26 Feb 2025 20:31:04 +0800
-Subject: [PATCH v7 15/15] drm/msm/dpu: Enable quad-pipe for DSC and
- dual-DSI case
+	s=arc-20240116; t=1740574216; c=relaxed/simple;
+	bh=fN3Sb53xeNCJ9LjtIsyWpWduSaQsGJv6Bs/u5lAlxME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fhT3DbRQ5fWmOYWEtuzl3UqKZGp9h5VK2tE+Gh0WAwORHuT1TfgEDWqba3oD+Ldh6ksP4OQOhZbm5V9RYAxZG+Fo6adB//IxogfwI/AB+ZjCyAr2WJdSNTjNqSP/7AdJPUvGZefzmdL2BhVAR5iqerLgsK6l5zH4JHhhcCACzCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z2v3D0g7Fz9sSK;
+	Wed, 26 Feb 2025 13:31:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zdl6tAtT0ddh; Wed, 26 Feb 2025 13:31:19 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z2v3C6tl5z9sSH;
+	Wed, 26 Feb 2025 13:31:19 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D853B8B78B;
+	Wed, 26 Feb 2025 13:31:19 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id lyR8MYIwt_Lw; Wed, 26 Feb 2025 13:31:19 +0100 (CET)
+Received: from [10.25.207.138] (unknown [10.25.207.138])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 96D918B77C;
+	Wed, 26 Feb 2025 13:31:19 +0100 (CET)
+Message-ID: <50339b41-9b4d-4315-a69b-ee32fc86baa6@csgroup.eu>
+Date: Wed, 26 Feb 2025 13:31:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-15-8d5f5f426eb2@linaro.org>
-References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
-In-Reply-To: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740573128; l=6430;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=QGCcgrerBtCitrFyUHoak79bGfEvyYUxi46inAzFuQ0=;
- b=Dxnr+cuGjBLFYOjYttwaBWRQa/F4no/cLNx5YXYk/r01UpvfnftYFotv/Z932e7GxuhVv0vva
- lufHxM0P5aYCUCnCnLJqfIXJ3LzMBW6jj+kHRBdL9f46Awyt0fSPnwT
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/5] arch/powerpc: Drop GENERIC_PTDUMP from
+ mpc885_ads_defconfig
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+References: <20250226122404.1927473-1-anshuman.khandual@arm.com>
+ <20250226122404.1927473-3-anshuman.khandual@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250226122404.1927473-3-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-To support high-resolution cases that exceed the width limitation of
-a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
-additional pipes are necessary to enable parallel data processing
-within the SSPP width constraints and MDP clock rate.
 
-Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
-and dual interfaces are enabled. More use cases can be incorporated
-later if quad-pipe capabilities are required.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++++++++++++------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
- 6 files changed, 28 insertions(+), 14 deletions(-)
+Le 26/02/2025 à 13:24, Anshuman Khandual a écrit :
+> GENERIC_PTDUMP gets selected on powerpc explicitly and hence can be dropped
+> off from mpc885_ads_defconfig. Replace with CONFIG_PTDUMP_DEBUGFS instead.
+> 
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-kernel@vger.kernel.org
+> Fixes: e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
+> Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 9405453cbf5d852e72a5f954cd8c6aed3a222723..c6e8a6cbb5c3f480b30594e0c33f601e4d6fb594 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -200,7 +200,7 @@ static int dpu_crtc_get_lm_crc(struct drm_crtc *crtc,
- 		struct dpu_crtc_state *crtc_state)
- {
- 	struct dpu_crtc_mixer *m;
--	u32 crcs[CRTC_DUAL_MIXERS];
-+	u32 crcs[CRTC_QUAD_MIXERS];
- 
- 	int rc = 0;
- 	int i;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-index b14bab2754635953da402d09e11a43b9b4cf4153..38820d05edb8b3003971dc6dc675ba8ede847be8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-@@ -210,7 +210,7 @@ struct dpu_crtc_state {
- 
- 	bool bw_control;
- 	bool bw_split_vote;
--	struct drm_rect lm_bounds[CRTC_DUAL_MIXERS];
-+	struct drm_rect lm_bounds[CRTC_QUAD_MIXERS];
- 
- 	uint64_t input_fence_timeout_ns;
- 
-@@ -218,10 +218,10 @@ struct dpu_crtc_state {
- 
- 	/* HW Resources reserved for the crtc */
- 	u32 num_mixers;
--	struct dpu_crtc_mixer mixers[CRTC_DUAL_MIXERS];
-+	struct dpu_crtc_mixer mixers[CRTC_QUAD_MIXERS];
- 
- 	u32 num_ctls;
--	struct dpu_hw_ctl *hw_ctls[CRTC_DUAL_MIXERS];
-+	struct dpu_hw_ctl *hw_ctls[CRTC_QUAD_MIXERS];
- 
- 	enum dpu_crtc_crc_source crc_source;
- 	int crc_frame_skip_count;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index c89a5da0fa8321e9082d5aee304fa16402bb4ad9..d4719b45f4cdd5d1f0bd585283c0c16f1df2f1f2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -54,7 +54,7 @@
- #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
- 	(MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
- 
--#define MAX_CHANNELS_PER_ENC 2
-+#define MAX_CHANNELS_PER_ENC 4
- 
- #define IDLE_SHORT_TIMEOUT	1
- 
-@@ -664,9 +664,13 @@ static struct msm_display_topology dpu_encoder_get_topology(
- 
- 	/* Datapath topology selection
- 	 *
--	 * Dual display
-+	 * Dual display without DSC
- 	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
- 	 *
-+	 * Dual display with DSC
-+	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
-+	 * 4 LM, 2 INTF ( Split display using 2 interfaces)
-+	 *
- 	 * Single display
- 	 * 1 LM, 1 INTF
- 	 * 2 LM, 1 INTF (stream merge to support high resolution interfaces)
-@@ -691,10 +695,20 @@ static struct msm_display_topology dpu_encoder_get_topology(
- 		 * 2 DSC encoders, 2 layer mixers and 1 interface
- 		 * this is power optimal and can drive up to (including) 4k
- 		 * screens
-+		 * But for dual display case, we prefer 4 layer mixers. Because
-+		 * the resolution is always high in the case and 4 DSCs are more
-+		 * power optimal.
- 		 */
--		topology.num_dsc = 2;
--		topology.num_lm = 2;
--		topology.num_intf = 1;
-+
-+		if (intf_count == 2 && dpu_kms->catalog->dsc_count >= 4) {
-+			topology.num_dsc = 4;
-+			topology.num_lm = 4;
-+			topology.num_intf = 2;
-+		} else {
-+			topology.num_dsc = 2;
-+			topology.num_lm = 2;
-+			topology.num_intf = 1;
-+		}
- 	}
- 
- 	return topology;
-@@ -2189,8 +2203,8 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
- 	struct dpu_hw_mixer_cfg mixer;
- 	int i, num_lm;
- 	struct dpu_global_state *global_state;
--	struct dpu_hw_blk *hw_lm[2];
--	struct dpu_hw_mixer *hw_mixer[2];
-+	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-+	struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
- 	struct dpu_hw_ctl *ctl = phys_enc->hw_ctl;
- 
- 	memset(&mixer, 0, sizeof(mixer));
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-index 63f09857025c2004dcb56bd33e9c51f8e0f80e48..a9e122243dce9006aaa582a1537980c86b6203a4 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-@@ -302,7 +302,7 @@ static inline enum dpu_3d_blend_mode dpu_encoder_helper_get_3d_blend_mode(
- 
- 	/* Use merge_3d unless DSC MERGE topology is used */
- 	if (phys_enc->split_role == ENC_ROLE_SOLO &&
--	    dpu_cstate->num_mixers == CRTC_DUAL_MIXERS &&
-+	    (dpu_cstate->num_mixers != 1) &&
- 	    !dpu_encoder_use_dsc_merge(phys_enc->parent))
- 		return BLEND_3D_H_ROW_INT;
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 4cea19e1a20380c56ae014f2d33a6884a72e0ca0..77a7a5375d545483edb316e8428df12212191362 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -24,7 +24,7 @@
- #define DPU_MAX_IMG_WIDTH 0x3fff
- #define DPU_MAX_IMG_HEIGHT 0x3fff
- 
--#define CRTC_DUAL_MIXERS	2
-+#define CRTC_QUAD_MIXERS	4
- 
- #define MAX_XIN_COUNT 16
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index 74bf3ab9d6cfb8152b32d89a6c66e4d92d5cee1d..804858e69e7da1c8c67c725aa462c1a558d1b402 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -34,7 +34,7 @@
- #define DPU_MAX_PLANES			4
- #endif
- 
--#define STAGES_PER_PLANE		1
-+#define STAGES_PER_PLANE		2
- #define PIPES_PER_STAGE			2
- #define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
- #ifndef DPU_MAX_DE_CURVES
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
--- 
-2.34.1
+> ---
+>   arch/powerpc/configs/mpc885_ads_defconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/configs/mpc885_ads_defconfig b/arch/powerpc/configs/mpc885_ads_defconfig
+> index 77306be62e9e..129355f87f80 100644
+> --- a/arch/powerpc/configs/mpc885_ads_defconfig
+> +++ b/arch/powerpc/configs/mpc885_ads_defconfig
+> @@ -78,4 +78,4 @@ CONFIG_DEBUG_VM_PGTABLE=y
+>   CONFIG_DETECT_HUNG_TASK=y
+>   CONFIG_BDI_SWITCH=y
+>   CONFIG_PPC_EARLY_DEBUG=y
+> -CONFIG_GENERIC_PTDUMP=y
+> +CONFIG_PTDUMP_DEBUGFS=y
 
 
