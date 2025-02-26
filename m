@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-534729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD28A46A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:00:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2C7A46A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2903A85B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456B816D884
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23EC22D793;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA523959B;
 	Wed, 26 Feb 2025 19:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRm3ned/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmI9ua6C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2220C238D45;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221AE238D43;
 	Wed, 26 Feb 2025 19:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740596417; cv=none; b=sLS+Ban/cVvBnApDEYat1EjwTaMZqpGVWqScxx334UEPaQNz287aQvTM+JbGsC5UirS4x8q6oluvEaV+uKXOKTf5+gnwCC/PjiI+8uEEZ+lRnCjzdNeJbefwsPcaM1l7N4wG5j+GPYEn5XoJ4JA7rUyK9fOSgtDhvMqpIx9ViDs=
+	t=1740596417; cv=none; b=YqxZGgfwNSNeNISzRcaIpPTDKnpzshxYSVKp9W8DdcbVt7xmEcTDLyQhM2Qiz3LbcQC3BuR3r/9dgmyaR5yE1Y+SRa3cUZuhjfB0RSLs3h9kpqAzGrUR2D3c1tYob85q0X3MazBLb9Eed2MUHPdPbUWW6ZWzS4X4DI9vMMoH+Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740596417; c=relaxed/simple;
-	bh=wRpTgVNyj3uFgb5wwu79FFUhOzFVyOzLcCfMgdRPLUM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uHX8KDigbtafqsYzNdUJhCoYWUBxOmpthECSFpJNShfjoUsVKCfBlrKSLDScYp7Kp+urdC507ySPJU5FR1ZKDy8UD3ca1tTyRk+TBOCU0hNHHjV58B1faCiuyZCZkpyLXf9dUkor/Te2J+ve35FY2Ttud+Ctg5Xxd4NGuASz11w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRm3ned/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A3035C4CED6;
+	bh=VHk6+dPKZF78pRrNidDKIzcA8Vd8WnrEysNDQjAv7p4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=StKSHC3nYayP+4mFju9RKPwqwHsFnsn4QPho+9D7IOm8QTMPR+0Wpk4ccxF8MDLv71H58pbJ6IPmqHMWAFa3YiahXiUmhGPSk7gcq6H2PQ/XJRNptx4fTheCTrwVXXGsBahdGnmiIuS5gXhFErEBRZiL94D/rcu2ec18Z42ve2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmI9ua6C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9121C4CEE8;
 	Wed, 26 Feb 2025 19:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740596416;
-	bh=wRpTgVNyj3uFgb5wwu79FFUhOzFVyOzLcCfMgdRPLUM=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=lRm3ned/BUYf6GvWxpgCOO8QFq0tstqJRUiEyXTgUmphlSq/KNZ2g9vEMjPaJN6fZ
-	 53QIPBAUNEr3J/bMDqJoy69IctFdFrPzJ0TWsquINlXC5lylaZd+8DyMVrD3tZDnBk
-	 wN1LVVuCmiXu783iLZ4z/XCDcwO1srFHyECKo46pcCOhcsAczakaHtizpRdzFBF6IB
-	 ZoEUMHAFNWBUgq/Sf2sDD0vXxyQ96348PWD4b6HNpzfxouzpUMB/LNeFGoZSDiDbDA
-	 kc5hOWbt7EaGrET+x+asYSMybMdx/L54cfuj4+G701/BbW/fXlCSJIwkY2V0vwd0Oh
-	 hKBKiRD/J6T+Q==
+	bh=VHk6+dPKZF78pRrNidDKIzcA8Vd8WnrEysNDQjAv7p4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=lmI9ua6Ci+qh1KVirQDshLct2N6hauoIY8BAPYgX4hXNgKUiUAE0ZZcFt8yta7sj7
+	 nZLIhACUs7o9JPplNDjdhxxAOUmYM488AHK70BDi6/bfH5Ma4SDxU0NPsamQHU2FN5
+	 o6SQ20c6Nz0s8HpZ8WgeXDkPyrRqT8+AhnoN8ixAaf7+EmP8oUSH0WZj53H+1rVDU+
+	 5feQBxYGwkGRtgsF/j+fmcp3Aw8pZlI3k0/52cQpNRrUDzr3by+ive0FZD1sGhYU7W
+	 q0eAqBAK3RuohHoc3U61r26G4izkkjvxVuazNrkmcC1yFQzv0voPeht9yRQbaIE/Nv
+	 T9geiyNzFauYA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F09C021B8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80F4C19776;
 	Wed, 26 Feb 2025 19:00:16 +0000 (UTC)
 From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
-Subject: [PATCH v2 0/4] Miscellaneous Apple RTKit fixes
-Date: Wed, 26 Feb 2025 19:00:02 +0000
-Message-Id: <20250226-apple-soc-misc-v2-0-c3ec37f9021b@svenpeter.dev>
+Date: Wed, 26 Feb 2025 19:00:03 +0000
+Subject: [PATCH v2 1/4] soc: apple: rtkit: Add and use PWR_STATE_INIT
+ instead of _ON
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,22 +55,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALJkv2cC/13MQQrCMBCF4auUWTuSjClUV95Dugjp1A5oGzIlK
- CV3NxbcuPwfvG8D5SSscGk2SJxFZZlr0KGBMPn5zihDbSBDrSEy6GN8MOoS8CkasG05WHK2c+M
- A9RQTj/LawVtfexJdl/Te/Wy/64+ifypbNGj9yY/u7Lzr/FUzz5FXTseBM/SllA9SysEtsAAAA
- A==
+Message-Id: <20250226-apple-soc-misc-v2-1-c3ec37f9021b@svenpeter.dev>
+References: <20250226-apple-soc-misc-v2-0-c3ec37f9021b@svenpeter.dev>
+In-Reply-To: <20250226-apple-soc-misc-v2-0-c3ec37f9021b@svenpeter.dev>
 To: Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>, 
  Sven Peter <sven@svenpeter.dev>
 Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Hector Martin <marcan@marcan.st>
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1200; i=sven@svenpeter.dev;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1269; i=sven@svenpeter.dev;
  h=from:subject:message-id;
- bh=wRpTgVNyj3uFgb5wwu79FFUhOzFVyOzLcCfMgdRPLUM=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ/r+lF0rtmXPCKrcHZwkdkdrq9kvHjMe3mcezRsknjxdt
- ERMTVyqo5SFQYyDQVZMkWX7fnvTJw/fCC7ddOk9zBxWJpAhDFycAjARrQaG/zHO/8T+hOSnBcwU
- Yw9u38vbtfb/l+/zvW9eiuPY+cD2GhfDf3fjQ68NFCcdn3JxEtuRx7IqsixdG2dIrJ8xgfHQ1oV
- cAvwA
+ bh=7cIMb5W1B1VA4bj9uxkLGyPS9AbrGxHzx345cZFtAjE=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ/r+lD1Bh8qjJmd9L3nt8Wfjzf+VE6cxljdMYp51V4h1z
+ vIHkkldHaUsDGIcDLJiiizb99ubPnn4RnDppkvvYeawMoEMYeDiFICJ2P5kZLgmfEC234zvaQHL
+ m+Umc17u7+aRLZvYOX3X/zuc2WEseraMDC8UpRU3M5w+m8wbFMrmMJk5MVT9T/cVw9a5b4/G77j
+ qwgkA
 X-Developer-Key: i=sven@svenpeter.dev; a=openpgp;
  fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
 X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
@@ -77,44 +77,41 @@ X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/default with
 X-Original-From: Sven Peter <sven@svenpeter.dev>
 Reply-To: sven@svenpeter.dev
 
-Hi,
+From: Janne Grunau <j@jannau.net>
 
-This series contains four unrelated minor fixes to our RTKit driver.
-These are mainly required for drivers which aren't upstream yet but
-have been part of our downstream tree for quite a while now.
+This state is needed to wake the dcp IOP after m1n1 shut it down
+and works for all other co-processors as well.
 
-Best,
-
-Sven
-
+Signed-off-by: Janne Grunau <j@jannau.net>
+Signed-off-by: Sven Peter <sven@svenpeter.dev>
 ---
-Changes in v2:
-- Changed commit message for APPLE_RTKIT_PWR_STATE_INIT to make it clear
-  this is a behavioral change
-- Added a comment for the new oslog logic that the asymetric shifts are
-  indeed correct
-- Collected r-b tags
-- Link to v1: https://lore.kernel.org/r/20250222-apple-soc-misc-v1-0-1a3af494a48a@svenpeter.dev
+ drivers/soc/apple/rtkit.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
----
-Hector Martin (1):
-      soc: apple: rtkit: Implement OSLog buffers properly
+diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
+index 2f5f878bf899..be0d08861168 100644
+--- a/drivers/soc/apple/rtkit.c
++++ b/drivers/soc/apple/rtkit.c
+@@ -12,6 +12,7 @@ enum {
+ 	APPLE_RTKIT_PWR_STATE_IDLE = 0x201, /* sleeping, retain state */
+ 	APPLE_RTKIT_PWR_STATE_QUIESCED = 0x10, /* running but no communication */
+ 	APPLE_RTKIT_PWR_STATE_ON = 0x20, /* normal operating state */
++	APPLE_RTKIT_PWR_STATE_INIT = 0x220, /* init after starting the coproc */
+ };
+ 
+ enum {
+@@ -898,7 +899,7 @@ int apple_rtkit_wake(struct apple_rtkit *rtk)
+ 	 * Use open-coded apple_rtkit_set_iop_power_state since apple_rtkit_boot
+ 	 * will wait for the completion anyway.
+ 	 */
+-	msg = FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_STATE_ON);
++	msg = FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_STATE_INIT);
+ 	ret = apple_rtkit_management_send(rtk, APPLE_RTKIT_MGMT_SET_IOP_PWR_STATE,
+ 					  msg);
+ 	if (ret)
 
-Janne Grunau (3):
-      soc: apple: rtkit: Add and use PWR_STATE_INIT instead of _ON
-      soc: apple: rtkit: Use high prio work queue
-      soc: apple: rtkit: Cut syslog messages after the first '\0'
-
- drivers/soc/apple/rtkit-internal.h |  1 +
- drivers/soc/apple/rtkit.c          | 63 +++++++++++++++++++++++---------------
- 2 files changed, 39 insertions(+), 25 deletions(-)
----
-base-commit: 00834971f0d9e38beae37e92055b1432782827d0
-change-id: 20250220-apple-soc-misc-55ec124184fd
-
-Best regards,
 -- 
-Sven Peter <sven@svenpeter.dev>
+2.34.1
 
 
 
