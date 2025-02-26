@@ -1,94 +1,47 @@
-Return-Path: <linux-kernel+bounces-534227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA39A4645E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:17:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F15A4646B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4431893083
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831F43A280E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88A922424E;
-	Wed, 26 Feb 2025 15:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1F2224B04;
+	Wed, 26 Feb 2025 15:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZC13OJXN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="InDN0d6r";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZC13OJXN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="InDN0d6r"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cA/IzGhK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB0C2222B2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD522157A;
+	Wed, 26 Feb 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583011; cv=none; b=Vhypcgi2fa9O5+dNuvlbMaPMrUAAdEgJZ5PE4WxPQslyMFdqUkHi0raUQX6wf5vp1Sm2OZbDyE8Jv3Zi71Rx3zR67FADIwa+jDRD/WMXKZGfqIjRSxGMaG2swIy1IjXEIrk7FH45eVcjh9xET8Yh1YE9I4juVJ2RKSujX/ZOtrg=
+	t=1740583206; cv=none; b=EHWuSS4qhj8yCEsyM/VZqWPcUk+bIaLzx6aS0rcJ32TSeTafPMQPcLqZoDjL6OFILQRRVHI2PkG6YbOhjG61kVElu8ZG5SRgKWHZz1jOBr7V7Q84N2HyqLAJiGvjDabn4tn6lH91nLJFupfhcEpEBmHFSlQeHzHU+4wM2mYWk0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583011; c=relaxed/simple;
-	bh=fOdiVlsji0Slhzx4kloR0dK7a/mC3LkTFwdcME21l8k=;
+	s=arc-20240116; t=1740583206; c=relaxed/simple;
+	bh=CedHuBhU4dG6Z7WShc/tqSWOqWeKxnRhgco2OyGymr4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qdEcVW7Z5AhQC4ti+ccQ5rD/r0bscefCebWwegg2AnPSaBrE8Ncb7d3udk4drdN1jn5cJrTgxlXVZfi6J576fi1JSAqUGnwbzfJoPfl09vFypjcYvIjiCnO4zA1AWDJbZe1gvaiA8FkihxHb2Qw2FcJhZZE2wAMNPxEK7gKgEbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZC13OJXN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=InDN0d6r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZC13OJXN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=InDN0d6r; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8054D1F74A;
-	Wed, 26 Feb 2025 15:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740583007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJayfz8MtAbPlILPbeTLJFh5NNnCDR2UTDSPWC3ZicQ=;
-	b=ZC13OJXNaCYWCi4EdSEBJRxKuOpWMFkHtlkdA+u08uGLgvnLk/2mG+tmyIa76zRmZzbhSJ
-	Kuxj91uvYeJveZFFYZ/jDattqdOyjBp2357Jg00cBWycRfJHdDsHTeG5odmSbrUMGUKLhA
-	sgd0wgVvtM755I4QknWfDYwXqhAkRSc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740583007;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJayfz8MtAbPlILPbeTLJFh5NNnCDR2UTDSPWC3ZicQ=;
-	b=InDN0d6rPuS9D8tjMrYJs3KdApoVK02tibEur+GUDtIqc+7ihx+kNEez1khdBOR3kACrDZ
-	LbWBseNjvJt/81DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740583007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJayfz8MtAbPlILPbeTLJFh5NNnCDR2UTDSPWC3ZicQ=;
-	b=ZC13OJXNaCYWCi4EdSEBJRxKuOpWMFkHtlkdA+u08uGLgvnLk/2mG+tmyIa76zRmZzbhSJ
-	Kuxj91uvYeJveZFFYZ/jDattqdOyjBp2357Jg00cBWycRfJHdDsHTeG5odmSbrUMGUKLhA
-	sgd0wgVvtM755I4QknWfDYwXqhAkRSc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740583007;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJayfz8MtAbPlILPbeTLJFh5NNnCDR2UTDSPWC3ZicQ=;
-	b=InDN0d6rPuS9D8tjMrYJs3KdApoVK02tibEur+GUDtIqc+7ihx+kNEez1khdBOR3kACrDZ
-	LbWBseNjvJt/81DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 31DC61377F;
-	Wed, 26 Feb 2025 15:16:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +Zg3C18wv2cIVgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 26 Feb 2025 15:16:47 +0000
-Message-ID: <ec501508-ff60-40e0-81eb-e3c00b96bdb5@suse.cz>
-Date: Wed, 26 Feb 2025 16:18:30 +0100
+	 In-Reply-To:Content-Type; b=ncKUQgbLwvikFZ6iMxsoY2gBcJpFMFAKVFtv4hd3NPYnW1NIC5Q8zrNq/LHrqQUCYSfIuYDlgAVUYm4J5mPP0zo5LCukZ2va+z/VCVT+FUfOUQpYKXQ4zDhPuoRq/PL0i3QniF1qMROnv8kjiITXDRoRbgg9D0aCvrhRM1Zw8Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cA/IzGhK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C24C4CED6;
+	Wed, 26 Feb 2025 15:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740583205;
+	bh=CedHuBhU4dG6Z7WShc/tqSWOqWeKxnRhgco2OyGymr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cA/IzGhK17WDeCv7tdCcRLQFW79uNqyYRIehaLJxTU4mER7nWMrg4J52hwOOnMQ7d
+	 y3P12OCaCxGYIQb8FkolzbFh4np2zmANfHmuYVD8n9A6GZYfQPMAAFx/P+tEQGAM3C
+	 IuCDJ7zoNuFyIW+4PA1wYOGL8XJTrjM6gZBxLo84GZITi2kGvaBJtPzG+fc9F8S+xq
+	 dBea/g/ocDDgqiNjFUIufWXAudP9K2REo3ChgTgOObN8WyyTIUx6SBVD4SBybPEFGx
+	 IUCOt/DGYagls2AKjM94UQeWZ3BnXGKpxr+ymX3tB8rg4p5ra5Mh30oUTEOx56hwcL
+	 eFgj3XkX9PPdA==
+Message-ID: <b4029bcd-3d47-4f24-956e-04033853c667@kernel.org>
+Date: Wed, 26 Feb 2025 08:20:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,142 +49,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm/page_alloc: Clarify should_claim_block()
- commentary
-To: Brendan Jackman <jackmanb@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>, Michal Hocko
- <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Yosry Ahmed <yosry.ahmed@linux.dev>
-References: <20250225-clarify-steal-v3-0-f2550ead0139@google.com>
- <20250225-clarify-steal-v3-2-f2550ead0139@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH net-next v5 3/9] net: devmem: Implement TX path
 Content-Language: en-US
-In-Reply-To: <20250225-clarify-steal-v3-2-f2550ead0139@google.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ virtualization@lists.linux.dev, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Donald Hunter <donald.hunter@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, Neal Cardwell <ncardwell@google.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
+ asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20250222191517.743530-1-almasrymina@google.com>
+ <20250222191517.743530-4-almasrymina@google.com>
+ <a814c41a-40f9-4632-a5bb-ad3da5911fb6@redhat.com>
+ <CAHS8izNfNJLrMtdR0je3DsXDAvP2Hs8HfKf5Jq7_kQJsVUbrzg@mail.gmail.com>
+ <a003b144-0abf-4274-abff-a6e391a3e20b@kernel.org>
+ <CAHS8izMc0NCMPvCGg-uAOeWaf+K-_EfHnK7+4i205dPUy9JBFA@mail.gmail.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <CAHS8izMc0NCMPvCGg-uAOeWaf+K-_EfHnK7+4i205dPUy9JBFA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-
-
-On 2/25/25 4:29 PM, Brendan Jackman wrote:
-> There's lots of text here but it's a little hard to follow, this is an
-> attempt to break it up and align its structure more closely with the
-> code.
+On 2/25/25 11:54 AM, Mina Almasry wrote:
 > 
-> Reword the top-level function comment to just explain what question the
-> function answers from the point of view of the caller.
+> Will do, although I think maybe I'll add that comment above the
+> refcount_t definition in net_devmem_dmabuf_binding, if that's OK with
+> you. That was meant to explain how the refcounting on the binding
+> works.
 > 
-> Break up the internal logic into different sections that can have their
-> own commentary describing why that part of the rationale is present.
-> 
-> Note the page_groupy_by_mobility_disabled logic is not explained in the
 
-grouping
+That is fine, I just think the lifecycle of the dmabuf and what the
+unbinding is really doing should be clearly documented to avoid surprises.
 
-> commentary, that is outside the scope of this patch...
-> 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-
-Johannes suggested moving the checks to the caller and removing this
-function but with this kind of detailed commentary I guess it's better
-to keep it as a separate function.
-
-> ---
->  mm/page_alloc.c | 39 +++++++++++++++++++++++----------------
->  1 file changed, 23 insertions(+), 16 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 5e694046ef92965b34d4831e96d92f02681a8b45..475ec1284033acec69da4a39dd4e7d7fbaee6d0f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1941,16 +1941,9 @@ static inline bool boost_watermark(struct zone *zone)
->  }
->  
->  /*
-> - * When we are falling back to another migratetype during allocation, try to
-> - * claim entire blocks to satisfy further allocations, instead of polluting
-> - * multiple pageblocks.
-> - *
-> - * If we are stealing a relatively large buddy page, it is likely there will be
-> - * more free pages in the pageblock, so try to claim the whole block. For
-> - * reclaimable and unmovable allocations, we claim the whole block regardless of
-> - * page size, as fragmentation caused by those allocations polluting movable
-> - * pageblocks is worse than movable allocations stealing from unmovable and
-> - * reclaimable pageblocks.
-> + * When we are falling back to another migratetype during allocation, should we
-> + * try to claim an entire block to satisfy further allocations, instead of
-> + * polluting multiple pageblocks?
->   */
->  static bool should_claim_block(unsigned int order, int start_mt)
->  {
-> @@ -1964,6 +1957,26 @@ static bool should_claim_block(unsigned int order, int start_mt)
->  	if (order >= pageblock_order)
->  		return true;
->  
-> +	/*
-> +	 * Above a certain threshold, always try to claim, as it's likely there
-> +	 * will be more free pages in the pageblock.
-> +	 */
-> +	if (order >= pageblock_order / 2)
-> +		return true;
-> +
-> +	/*
-> +	 * Unmovable/reclaimable allocations would cause permanent
-> +	 * fragmentations if they fell back to allocating from a movable block
-> +	 * (polluting it), so we try to claim the whole block regardless of the
-> +	 * allocation size. Later movable allocations can always steal from this
-> +	 * block, which is less problematic.
-> +	 */
-> +	if (start_mt == MIGRATE_RECLAIMABLE || start_mt == MIGRATE_UNMOVABLE)
-> +		return true;
-> +
-> +	if (page_group_by_mobility_disabled)
-> +		return true;
-> +
->  	/*
->  	 * Movable pages won't cause permanent fragmentation, so when you alloc
->  	 * small pages, you just need to temporarily steal unmovable or
-> @@ -1972,12 +1985,6 @@ static bool should_claim_block(unsigned int order, int start_mt)
->  	 * and the next movable allocation may not need to steal.  Unmovable and
->  	 * reclaimable allocations need to actually claim the whole block.
->  	 */
-
-This block could be also massaged? I'd unify the style so it's "we"
-everywhere and not suddenly "you". The last sentence is redundant with
-the comment you added above reclaimable/unmovable. The text should be
-just about movable allocations in the case of small enough order.
-
-> -	if (order >= pageblock_order / 2 ||
-> -		start_mt == MIGRATE_RECLAIMABLE ||
-> -		start_mt == MIGRATE_UNMOVABLE ||
-> -		page_group_by_mobility_disabled)
-> -		return true;
-> -
->  	return false;
->  }
->  
+> Maybe worthy of note, this is not that new, in fact something similar
+> is happening in the RX path. In the RX path each skb waiting in the
+> receive queue to be recvmsg()'d will hold a reference on the
+> underlying page_pool, which in-turn holds a reference on the
+> underlying dmabuf. It's just that a similar thing is happening in the
+> TX path.
 > 
 
 
