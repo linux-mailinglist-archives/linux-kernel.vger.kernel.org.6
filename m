@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-532885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8962AA45359
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:47:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E246A4536D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE78C164B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89EF61882DFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B3821C9E8;
-	Wed, 26 Feb 2025 02:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QzYFiPnY"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D3214203;
+	Wed, 26 Feb 2025 02:51:13 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000E18C03D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85A914830F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740538021; cv=none; b=EY7fQz8ds0ejcNuym9c3a+MTWReH9z292M2y/qsH2ZFNbxH+wQMqhECzxdMo7YS/NVtAOV2GRtQ2Vx6t3DT53fL/zyQD6TOCY7srfoWd8Qn6OfZbsKcHELKIIhwMzmQECaGs9FZ16vXOTPLwH/tMehhSAddtqY0qT5sPPDQzsmY=
+	t=1740538272; cv=none; b=DtVxTpe2agMYBXgXlrh4dCd5NjZkP6K/yzTgODQpNI4gYiS7eGj/xo5NX2+Kgm3NqMf+ImtqjfS7TAopuiJQJ0vJErxVrqUPxfLimE9464SYy8OlJfBEtKmTvPoAVpGC6n0AN681qvF1+TvcJQNXDnDUdmOtMnggtQQrIFpV5yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740538021; c=relaxed/simple;
-	bh=Ztaw/4iKvi4PfNHCK3e+9IS8E/GsOpzkRTl/ZUe1gZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lAbQulbIKCLafRqzviPbBMMNcJlDFraSnHBATyqhpkfDuGQ6TTiE/YKsxFQ1S2BkbsaDkj5EvjnEjpNZQx8U6J0fIlJyQD2rqIFZjZIRIH+YIwX5ayv+yrcYpnHwmLfG9WZfLyLxvcLlwrwIf+skezYhbSAWPXmVBIMxrjud8dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QzYFiPnY; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 02:46:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740538018;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PNQREzBUoxFxQC1/e8FKtyGb+Q7/bb7nwwjKa99py3U=;
-	b=QzYFiPnYne0hV2XOpE1d7tPmtG1cJziA1H08fMY70Pz58C0xPOCeYla7VgDTnkrOOGymDf
-	hc3iZysvaUwRGDfWRzwfDDHBhq2GuQhiY6ZLvA3FWvmUlcvMdpNDcz8VZtHMMw4H11CgmF
-	5ae30sMl1UdWTExtrUhTmd9NDui1nJ0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: syzbot <syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com>,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Subject: Re: mm: zswap: fix crypto_free_acomp deadlock in zswap_cpu_comp_dead
-Message-ID: <Z76AnbQVZybcAi3g@google.com>
-References: <67bcea51.050a0220.bbfd1.0096.GAE@google.com>
- <Z72FJnbA39zWh4zS@gondor.apana.org.au>
- <3482501981b13aedda3c1c6b54d83d496bd05922@linux.dev>
- <Z75tg3wXoDnGtLis@gondor.apana.org.au>
- <Z753jsValuBdcvnv@google.com>
- <Z754DloF4TpoRr7P@gondor.apana.org.au>
+	s=arc-20240116; t=1740538272; c=relaxed/simple;
+	bh=1Z6DV3nAh2GNp+f+3eM/MPMoibcOuIl5T7q6/Lj4WOo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QMKpNAnY0qBnKxeWgWg2NH3OuAJ7Rc75YNR/PmzUXqYXV0XXIHCFIujfQ30cKvlWTUL81Dyv15faRVzA+QCQs3XmJA+L5TuWsQ4LOHGXpIqyK1mgKbxGaE1Nwt2chHK7ZU+Gx3Opx+Rfhcix71PmBYOuDeCQ0kTAgyud1kBTgYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 51Q2oi4k080334;
+	Wed, 26 Feb 2025 10:50:44 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Z2f410gTQz2PxVxt;
+	Wed, 26 Feb 2025 10:46:09 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 26 Feb 2025 10:50:41 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <peterz@infradead.org>, <vincent.guittot@linaro.org>, <mingo@redhat.com>,
+        <juri.lelli@redhat.com>, <dietmar.eggemann@arm.com>
+CC: <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <ke.wang@unisoc.com>, <di.shen@unisoc.com>,
+        <xuewen.yan94@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] sched/fair: Fixup wake_up_sync vs DELAYED_DEQUEUE
+Date: Wed, 26 Feb 2025 10:47:41 +0800
+Message-ID: <20250226024741.2274-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z754DloF4TpoRr7P@gondor.apana.org.au>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 51Q2oi4k080334
 
-On Wed, Feb 26, 2025 at 10:10:22AM +0800, Herbert Xu wrote:
-> On Wed, Feb 26, 2025 at 02:08:14AM +0000, Yosry Ahmed wrote:
-> >
-> > Could you please:
-> > 
-> > (1) Explain the exact scenario in the commit log, I did not understand
-> > it at first, only after looking at the syzbot dashboard for a while (and
-> > I am not sure how long this persists).
-> > 
-> > (2) Move all the freeing operations outside the mutex? Right now
-> > crypto_free_acomp() was the problematic call but it could be 
-> > acomp_request_free() next.
-> > 
-> > Something like:
-> 
-> Looks good to me.  Feel free to send this patch since it is your
-> system after all :)
+Delayed dequeued feature keeps a sleeping task enqueued until its
+lag has elapsed. As a result, it stays also visible in rq->nr_running.
+So when in ake_affine_idle(), we should use the real running-tasks
+in rq to check whether we should place the wake-up task to
+current cpu.
 
-Can do :) May I add your Co-developed-by and Signed-off-by since this
-would be based off your patch?
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+---
+ kernel/sched/fair.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1c0ef435a7aa..2d6d5582c3e9 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7342,8 +7342,15 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ 	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+ 		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+ 
+-	if (sync && cpu_rq(this_cpu)->nr_running == 1)
+-		return this_cpu;
++	if (sync) {
++		struct rq *rq = cpu_rq(this_cpu);
++		int nr_delayed;
++
++		nr_delayed = rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable;
++
++		if ((rq->nr_running - nr_delayed) == 1)
++			return this_cpu;
++	}
+ 
+ 	if (available_idle_cpu(prev_cpu))
+ 		return prev_cpu;
+-- 
+2.25.1
+
 
