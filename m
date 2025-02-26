@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-534557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25487A46876
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:51:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816F9A46879
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241F53AE233
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CEF81886EED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CE422A7E5;
-	Wed, 26 Feb 2025 17:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926FC22A807;
+	Wed, 26 Feb 2025 17:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="km5KCfub"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ffGik0Uy"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B533122A1ED
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B722A4C2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740592289; cv=none; b=ohYgyClZwnpdLT3tbZJhCs1OvpPngPFmSSoMqk1WTgFMlwPRia78V9w8cI6rPszypygk3NGbge47KRAWTBF/eRya1F/pFz9EWp6t3jnP+3keuzdKvCPGqGCP3kbp/Nk6vjBQpWV6oZbgQIX247P49B+gTIFMviaECqWY2yl0zAw=
+	t=1740592289; cv=none; b=A7LCrygxI7RMCxzimkpbvXK5vliVjpSwgZ7bV7XDBddv0sHFf2Mw9Nx5MESzEwjVOcOwfyLIh/dJuucZrMsh9bUleN0w8iSneNglnAmhppogiIRmrU9L8bvOfcrRrJYaZbLrTF/cQEGXTJQHI+55Nmsj1LY0DUWsW96vexwJ5sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740592289; c=relaxed/simple;
-	bh=I4feaQK2NeL1iMZsywRHTjEz/SueHsximMXGo9uKgLE=;
+	bh=Wrk3Tbjy48DhMXMrJ6FsxsEEZWO2wkyYnH7V/hmHbpk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mfhv6ZNNKX6SlulmonuN1pUwMJD6yiB/TQOYmQL62+Ixa66iyXaBxO9rVLLM6myXYyVLLkd8hVxc8kYGkRRTGf04tYlHlNf8HBTkcgjQhJXbYOKsD1/KffU2rOkG/1SiC4JnumGrbQ9t9HRchFmURVGBNA52QAa7nyvFwiDUcyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=km5KCfub; arc=none smtp.client-ip=209.85.208.52
+	 In-Reply-To:To:Cc; b=WKm0jDZXwsIYJbSU2bXVvPKB7ivRx3Gqu0RINr0KvPz2dNOJXBjvf2+/yF3mxah0TN6TcaVwP1xVN2pFrVhCWT+MeZfZpTJVJbPqJNIfvOjUKOM30SATL/puQmqSNt3EPPRQ+aPoLib2I/BBKp/Lc78rnko+aIMohG+cbUrkr0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ffGik0Uy; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dedae49c63so12725852a12.0
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb81285d33so7104666b.0
         for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:51:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1740592285; x=1741197085; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A9YomS+c0wThxhIl04CUTErMlrQA8JmWzVl1nv3uerI=;
-        b=km5KCfuboEwYf3Lk8LTH7jJmnQvgCD+Dc8ClSyE8K3EK2mwV9/emetFM6v+S7X7Hlu
-         4uK9rloDtfjz47LEtO9xjUAS9Oj89VIw4I3Py/QU+qc6r8zA39pTHTvSvq/V8+bgBiZY
-         hj5VZSTd0RnEm9E3xpJx32rUEzk3Nrf3/Ze6LTAnx0OR0x4paJ5o9GLhCYhwOG/+Bxmb
-         05DHgc8rvMxqaTa+VuQyBDwUiVbBEPcYOTO1Zf1pVtoq1c/JHNW0hyVMxDy1vTRWohTf
-         6h9LXVt1sg0IlQogJ2yHxaPYzhO/n6JStcDD2mwliNsVUV9qGJB9iGWYaemL3Fh8pwc3
-         egIg==
+        bh=JO1yRDgm5kl/hQVQWW5vYh5O5OnfQpLxrGfUp86iA18=;
+        b=ffGik0UyZ4H1FZtySsggiTuIg8yRHhj0ec76bakiPDSk2i6s/i+HTahRaoxvkpm7za
+         UWZbNHMlbD21o1ixSWUfMfNn7Qm4nt9rOPXJzd1X7nq7qTaZK+EAlZ3k6WYReYuRXMfR
+         3dgep0O5GTTLVZ8Qa1Elgl3a56HyF5jrQqPUWhucWAUtsBhe0QJ0YoWvqH1tVoQKingp
+         ojZFyajXjNW15pmdgKDEaIDOizj5GvfgiKdMJgebTYBdwyyxygkneNpbye0ZtFTVck9x
+         0H18AUMcC2amR1kFm39vXJninBn0yL4bQD4ZyQ6P2K0IKRmiB+meEv8etMxszHkdBO3C
+         s8Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1740592285; x=1741197085;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A9YomS+c0wThxhIl04CUTErMlrQA8JmWzVl1nv3uerI=;
-        b=gzCRkGXu7diFEfR5XaqQ+T3BdbTdXrafSOkuQg/PxXv6ksBxMoSlHdAJECmHzuAN8I
-         lwPRcuM92Ii6uFZEG3JV/upQMd5PTRvVn9MWRtxdVFURm738SAibOxrVtC8E/U8YS6RF
-         lEHVf0k6M1ne9Xcp5YMOWKOk+YJ+12Plm1aNedXD91TtFr6PKMEmMl4e9IL6KoD08nVG
-         foZ7CJA24aqONCNqmV3ouqUsUDaMpGsCN0M62i++Rr2g4e8ERBEF9HvMp6TQpf7dK3Z5
-         +Fw7iVxmc7kKNkIrpA4LguDkgaLP0k5ba7uF8FrRzXrZdi83+YQbfwmpGFTRduCulaR1
-         dyVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjKeHmmuUQqug5RzT1riluYJEwZMYEpUfVx5yKp9XPdkonDpLMKwj58eUf0ZL8vTXD8skc10jj/4LHFy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2H+Y2KK7daf5SHKJfXRCYGf/xKNmKcEngnnHAgjpp7R0y75Ka
-	malEc+CXYsMJTQ39VCqQ1/2iKocr5wL5C+UaWW3aJHKVz/qUAweble95v9f0qLA=
-X-Gm-Gg: ASbGncv6ihuw2Ojx8LeTxs7Hj6SXgnuMAmt4mKt8QcPhZK4oJI08EJX9JJv46VQRj3L
-	r2W/pwfbi3B/ME3Mm5DafdWNboFxtbOP1gHi/Sm2UYDi3KcLaiunS56pZLX1jtbpEKIwZXM3qnj
-	2fb9UapdujUTha2HCJEkIfdmbbifCgZOQoXJ/JYCBnSYDBOdExZtBqgSCQXIjaOLt7ztWk0yCUR
-	HrBtCbpZ8ZKXUF6p+eBHmEfUK+LS8AZTi1iXNbkSdEapBDOTB13e6UP854pDgJYjfSEIyZ7WBVV
-	/myY2/BVm66/awFJK9pqMyXU8iZ8p1qLhJ9ZmDWTffajClTXAgP/RtQJ2R/vuiS5uwUea+jIq6T
-	wnemjDfqcdw==
-X-Google-Smtp-Source: AGHT+IF7S3Byg/2EA8G/VaFXwC0WijN7Hyq+Y45Wz3xtOjrJyqaLL3aB8h/6a9ePi5nZG42xtp7hZw==
-X-Received: by 2002:a17:906:6a22:b0:aba:6204:1c03 with SMTP id a640c23a62f3a-abc0df5d89fmr2632175766b.57.1740592284983;
-        Wed, 26 Feb 2025 09:51:24 -0800 (PST)
+        bh=JO1yRDgm5kl/hQVQWW5vYh5O5OnfQpLxrGfUp86iA18=;
+        b=kdxjDGF1sNBgO03M4infGHjkgEv+vWDu36FCiX+uLFsD/hGClG6IfqTAlC0fvZdnUr
+         1ONzzuD+2WYpMyREr68WcKrLVCej+PXpmzOSKB/cDucXSkjoUR7EkSf6pfqkxC1ZZV7N
+         rYw46ngCO2X/5ds5/T2IL0uwS50eHTX26zsRUJAVMHk4XaDDvhoT7T84Uk7JhdtzIzJu
+         6rlpFoGAwcdoIz4pmdyqMd8kyVvfu4hiXBcSc89YM4TbHm/9sqgyyJelzYt/MVx0kBS/
+         Ref+BwG0L1ABRK+h5YCsCh4C7DTIwdb1yAnarrgEim9K0JtckZm/brTsfzsvZATjpsvk
+         wuKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqGVKnMM47RGFl7lUR0lCuqNOaVuwcl8n12n9Vn3AEjDYix+V3PGJZT6ovWPDwK4pSE36az/HFLkqz7W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE6r/BSSjEcFpew1YjFj3Mc64rjE9xjOEEgYJxa1GZqtRmzw31
+	6p1vBpWFPyZ8IEvsh7pKrfWnZ2RcuqD8XbUpcafozTxBGkrjXUQNr2/RfS7V5T4=
+X-Gm-Gg: ASbGnctr2j30XlRKgCY6Z4iSZebIcvELgSkE/LM+1vLeqljC1h7rHScJvRLoubUhDI9
+	DbpGJ3SisTRyUTZxq2mlkwEvPk0+rFbxdEsIrQEcW3zcIJpiKTzFBSEtJEk8GeLFSFYDWu3O8tc
+	YDmRkOS0cyzc3OMO8EC066MaLHul13bdVcUgZmPgazWG452fdrKkBiw7ATFs7FpYnnxyXUd+wg7
+	QZpBkDm50GBMZauP+mbUDlET8rmGLqNiTBqTWwLHQf5Pnr/o/K5Axlg2mCEAKQZYFQg9HrNeyik
+	3jpbTFfME5IwlmSXW/5GBrgNiEcHvEao3370tlDePv2PMQtEC4hgFKL1FgKMvW9CxQpRwWSoWes
+	AN1IN9DQvew==
+X-Google-Smtp-Source: AGHT+IFmKSPF6nqqiaetA3heVfq299jPwpErUmra97HCWFZu+Y10xqFwRt4yZaOIXY+ZiDT6DcAWfQ==
+X-Received: by 2002:a17:907:728a:b0:aba:608d:4a22 with SMTP id a640c23a62f3a-abc09a09707mr2420013566b.21.1740592285488;
+        Wed, 26 Feb 2025 09:51:25 -0800 (PST)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdb131sm361889866b.7.2025.02.26.09.51.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdb131sm361889866b.7.2025.02.26.09.51.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 09:51:24 -0800 (PST)
+        Wed, 26 Feb 2025 09:51:25 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 26 Feb 2025 17:51:21 +0000
-Subject: [PATCH v2 2/6] dt-bindings: nvmem: add max77759 binding
+Date: Wed, 26 Feb 2025 17:51:22 +0000
+Subject: [PATCH v2 3/6] dt-bindings: mfd: add max77759 binding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250226-max77759-mfd-v2-2-a65ebe2bc0a9@linaro.org>
+Message-Id: <20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.org>
 References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
 In-Reply-To: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -105,58 +105,132 @@ The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
 includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
 Port Controller (TCPC), NVMEM, and a GPIO expander.
 
-This describes its storage module (NVMEM).
+This describes the top-level device.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 ---
 v2:
-* drop example as the MFD binding has a complete one (Rob)
+* rename expected nvmem subdev nodename to 'nvmem-0'
+  I'd have preferred just 'nvmem', but that matches nvmem-consumer.yaml
+  and fails validation.
 
 Note: MAINTAINERS doesn't need updating, the binding update for the
 first leaf device (gpio) adds a wildcard matching all max77759 bindings
 ---
- .../bindings/nvmem/maxim,max77759-nvmem.yaml       | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    | 104 +++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml b/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..1e3bd4433007341a11040f513bf444866b9e38a8
+index 0000000000000000000000000000000000000000..87e3737896a289998a18b67932dbccacfb8e3150
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml
-@@ -0,0 +1,32 @@
++++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+@@ -0,0 +1,104 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/nvmem/maxim,max77759-nvmem.yaml#
++$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Maxim Integrated MAX77759 Non Volatile Memory
++title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
 +
 +maintainers:
 +  - André Draszik <andre.draszik@linaro.org>
 +
 +description: |
-+  This module is part of the MAX77759 PMIC. For additional information, see
-+  Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
++  This is a part of device tree bindings for the MAX77759 companion Power
++  Management IC for USB Type-C applications.
 +
-+  The MAX77759 is a PMIC integrating, amongst others, Non Volatile Memory
-+  (NVMEM) with 30 bytes of storage which can be used by software to store
-+  information or communicate with a boot loader.
++  The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors, USB
++  Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
 +
 +properties:
 +  compatible:
-+    const: maxim,max77759-nvmem
++    const: maxim,max77759
 +
-+  wp-gpios: false
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++
++  gpio:
++    $ref: /schemas/gpio/maxim,max77759-gpio.yaml
++
++  reg:
++    maxItems: 1
++
++  nvmem-0:
++    $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
 +
 +required:
 +  - compatible
++  - interrupts
++  - reg
 +
-+allOf:
-+  - $ref: nvmem.yaml#
++additionalProperties: false
 +
-+unevaluatedProperties: false
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@66 {
++            compatible = "maxim,max77759";
++            reg = <0x66>;
++            interrupts-extended = <&gpa8 3 IRQ_TYPE_LEVEL_LOW>;
++
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            gpio {
++                compatible = "maxim,max77759-gpio";
++
++                gpio-controller;
++                #gpio-cells = <2>;
++
++                interrupt-controller;
++                #interrupt-cells = <2>;
++            };
++
++            nvmem-0 {
++                compatible = "maxim,max77759-nvmem";
++
++                nvmem-layout {
++                    compatible = "fixed-layout";
++                    #address-cells = <1>;
++                    #size-cells = <1>;
++
++                    reboot-mode@0 {
++                        reg = <0x0 0x4>;
++                    };
++
++                    boot-reason@4 {
++                        reg = <0x4 0x4>;
++                    };
++
++                    shutdown-user-flag@8 {
++                        reg = <0x8 0x1>;
++                    };
++
++                    rsoc@10 {
++                        reg = <0xa 0x2>;
++                    };
++                };
++            };
++        };
++    };
 
 -- 
 2.48.1.658.g4767266eb4-goog
