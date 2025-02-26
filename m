@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-533862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638B3A45F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6031FA45F7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9DC16DE57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:38:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9E4164D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294621576D;
-	Wed, 26 Feb 2025 12:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D3C21576D;
+	Wed, 26 Feb 2025 12:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hAy4cr/J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JPa35gLf"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DBD2063FD;
-	Wed, 26 Feb 2025 12:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887A618024;
+	Wed, 26 Feb 2025 12:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740573511; cv=none; b=JhJYF+7R62uTq9X8pShti8jCXJd4Mka+tv7xLMC112PgLfCfg2UIAwGzSBR2oiZ1aJhGExL2e0jLfW6nbXi39Tf/WpShP2fCrrDsormzBikaYFwx63GF7mNRn6pGmH0dDu72qxijqPw9b3cGM3rlTVFfHix9z3a+n03VA7LSQqE=
+	t=1740573617; cv=none; b=XknllJfxORSphddO5sJmRcrew+zjI1DgNc6Jyq/s0WwGD0YizWZVQKRpboHSTwdLegOp2VwxnOK7M2mIKxHATr9xWNa/9uhDYAAWs3/oVcqEPCyax6h2KQ2eAj3JnPvwbfBnswB5N4o+67zA6qfmZi9w4kTsl8IycrWb+Jdhw1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740573511; c=relaxed/simple;
-	bh=KGFvfxU4db5vtbnoDHtKUfvcsj7Nffzksy8W4HNffuQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDt9cEoO4IAjRKGR5pYc5sz8gJG89PtlwKi2RmtjhoC1Ojpt2ZR98jjuu9xQks6BCs0rB4sCr/TLLPTOoQY4y5PaJPUoyRnyBCMVyA919CTfna9TyKkNJqnt4s9dlf8A7+pwATE9+JIC33Ekm2rRkWLucZF5+JaHoi5GU4z//HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hAy4cr/J; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740573511; x=1772109511;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KGFvfxU4db5vtbnoDHtKUfvcsj7Nffzksy8W4HNffuQ=;
-  b=hAy4cr/JNWWPES9qlI6px7K+TN2FLY8NaSeXnNA/yLyh8t8cZI0iNdVv
-   bJQYoPheDs368nWt2SzFSomn897kwBnO0rAz5c0XFFUfSmTpLw107q/O9
-   xz2ROV97mDtr6OD7rMpNR+p9+g8qF7IRgOw1ajxFUXqE4/ZmUFSzL3db0
-   WL9EGuleAc4lN3B6J2v93BsqtK50Yf+p6cwJjklOJu/aumpIskwZXVsNj
-   XDE0kJeXNofrgtABAe1ilC4jdXXWZgqqEoVJKBv0ntTGGvhLSXOQcfhNp
-   RRh8dok/otHF39neH6QV3VspCrI3NhOUA+Urts65cdBN4qMLoL6KZCy7s
-   g==;
-X-CSE-ConnectionGUID: 4eru/AzjT9e6G33QSaZrRw==
-X-CSE-MsgGUID: +4NrcPpMR3q/2F2h3OF5dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41611326"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="41611326"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 04:38:30 -0800
-X-CSE-ConnectionGUID: L/xqCCUISSWVAQ8L+chRMA==
-X-CSE-MsgGUID: noWgvZioS3qyNglv+20Ajw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="116476605"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa009.jf.intel.com with ESMTP; 26 Feb 2025 04:38:28 -0800
-Message-ID: <72f3b497-ecac-4efe-8010-a77cc232ce30@linux.intel.com>
-Date: Wed, 26 Feb 2025 14:39:28 +0200
+	s=arc-20240116; t=1740573617; c=relaxed/simple;
+	bh=hoTM6ye1U0cropi9cWGckjGlQYCb63GXZH+OrhAk56U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=svNH7EBoOeAW72O3Vlq26AuimnOpI6fnlRgXA2rRVKv4fbxcF6UEAlJALJJU4Z7YynestmLUslJkBLOkyEjwzbSUQWmw0sQYW4dfI/RZG4H4zpfKKAt2aTR2/XQiWYyaj2V8cvEPdQLSk80r8YKSmfTt5pm8c251wpeNdmqPYlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JPa35gLf; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Z2vFK6VcDz9tH5;
+	Wed, 26 Feb 2025 13:40:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1740573605; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zZ+uIJiq3RhTKEA0gh5ZWipu0RfM+2RCWylSkxgmlWY=;
+	b=JPa35gLfjz9F0PVStYwlKmHjJ9E4k0AWCHhRXdZDYvnIfaMeuv1akUBer9uNAQCcsqpm0x
+	iS51R5FQ3Z1M20KjKqFaL1YQkQAt/giBv8Nv4FV2DCshI9pkqVXDFtcrRTOeXESoRNPxP0
+	lyETC7FJIB15e4qEL1Aw6KQzdK3wjVkM9GfdCRRo7DHJmwsZdF+YAYF24CS/QWbehQFX3e
+	mZIybZA4SkmML1T/0+1IFQzD8672eJ6JrchgxIa/yAM5zHex54bPEAh0QKnNcLyNzK/f7x
+	HylFjsXdhcxovtaRuiHhlTiO/wif3NStyEG5iGGLq7k2IvbNud+yUe9Okl9qwQ==
+Message-ID: <99a18daf596ca384d38e561675cf3e13a9ed3161.camel@mailbox.org>
+Subject: Re: [PATCH V3] drm/sched: Fix fence reference count leak
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Qianyi Liu <liuqianyi125@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
+  Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
+ <phasta@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Wed, 26 Feb 2025 13:40:01 +0100
+In-Reply-To: <20250226090521.473360-1-liuqianyi125@gmail.com>
+References: <20250226090521.473360-1-liuqianyi125@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] xhci: ring queuing cleanups plus a quirk
-To: Michal Pecio <michal.pecio@gmail.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250225125750.1b345e2c@foxbook>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250225125750.1b345e2c@foxbook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: dcpuawum54q7wqs4efgup93ayfw5tcuh
+X-MBO-RS-ID: 4711bda07a75dfb2973
 
-On 25.2.2025 13.57, Michal Pecio wrote:
-> I was looking at all uses of enqueue/dequeue pointers and I found two
-> rather complex loops which appear to be doing really simple things.
-> 
-> I don't understand why they were written this way, it seems wasteful
-> and I see nothing that should go wrong if they are replaced with much
-> simpler code.
-> 
-> I rewrote them and the driver still works. I exercised Set TR Dequeue
-> code by starting/stopping isoc streams, using usb-storage with crappy
-> cable (transaction errors, halts) and also the smartctl -x trick that
-> results in URB unlinks (both on usb-storage and uas) with some disks.
-> 
-> The third patch is a dedupe. BTW, that comment there about section
-> 6.4.4.1 of the 0.95 spec seems to be wrong, I suspect it should say
-> that the chain bit cannot be *cleared* because that's how the code
-> works and what some commit messages say. But I don't have 0.95 spec.
-> 
-> New in v2:
-> - dropped the patch for obsolete update_ring_for_set_deq_completion()
-> - added a patch to enable the link chain quirk on one more HC
-> - don't touch the chain bit in inc_enq_past_link() on quirky HCs
-> - don't call inc_enq_past_link() unnecessarily
-> 
-> Michal Pecio (3):
->    usb: xhci: Apply the link chain quirk on NEC isoc endpoints
->    usb: xhci: Simplify moving HW Dequeue Pointer past cancelled TDs
->    usb: xhci: Unify duplicate inc_enq() code
-> 
+On Wed, 2025-02-26 at 17:05 +0800, Qianyi Liu wrote:
+> From: qianyi liu <liuqianyi125@gmail.com>
+>=20
+> The last_scheduled fence leaked when an entity was being killed and
+> adding its callback failed.
+>=20
+> Decrement the reference count of prev when dma_fence_add_callback()
+> fails, ensuring proper balance.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 2fdb8a8f07c2 ("drm/scheduler: rework entity flush, kill and
+> fini")
+> Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
 
-Thanks, adding Patch 1/3 and 3/3, skipping 2/3 for now.
+@Matt: since you in principle agreed with this patch, could you give it
+an official RB?
 
--Mathias
+I could then take it [but will probably rephrase some nits in the
+commit message]
+
+
+P.
+
+> ---
+> v2 -> v3: Rework commit message (Markus)
+> v1 -> v2: Added 'Fixes:' tag and clarified commit message (Philipp
+> and Matthew)
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
+> =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
+> b/drivers/gpu/drm/scheduler/sched_entity.c
+> index 69bcf0e99d57..1c0c14bcf726 100644
+> --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
+> drm_sched_entity *entity)
+> =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
+> =C2=A0
+> =C2=A0		dma_fence_get(&s_fence->finished);
+> -		if (!prev || dma_fence_add_callback(prev, &job-
+> >finish_cb,
+> -					=C2=A0=C2=A0
+> drm_sched_entity_kill_jobs_cb))
+> +		if (!prev ||
+> +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
+> +					=C2=A0=C2=A0
+> drm_sched_entity_kill_jobs_cb)) {
+> +			dma_fence_put(prev);
+> =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
+> >finish_cb);
+> +		}
+> =C2=A0
+> =C2=A0		prev =3D &s_fence->finished;
+> =C2=A0	}
+
 
