@@ -1,140 +1,163 @@
-Return-Path: <linux-kernel+bounces-534565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFCFA4688C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:55:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC32CA4688D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B6A1717C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47153AA264
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09F622A4F6;
-	Wed, 26 Feb 2025 17:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BE022A4F8;
+	Wed, 26 Feb 2025 17:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gERYa0Uo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QmUTRCZR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D753122A4E2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96358229B2D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740592518; cv=none; b=R4idBVMifgcLMYTU6AkOhaMWEiNIGAIKHqboHdzzwEc0b8p7TVJB6ZSwYCxg9tGTzlSLg47W3IN0rMWfOGAxCZ4DKjDQkdJEFSNukBIIEoOxcMzKX6GMXXM7bQvv5BdD8I4I+Brl7tbsqj+STmtgJc32NHz+hwEfxykDhHqS+5o=
+	t=1740592551; cv=none; b=bU7nZ1WfvJmP8/RRot2YF0Jf9itsUB7prJjysydx5nXIFZdglXZ1YzEhVl+phAv1SdQck30+q0GkSG+gjEGr7dj1fSf8sdTx3kh6XLfo5/lIv9YKDy/XgL8/+7+3JzYnGiNqaIhaCIkscWcna89WXwqYCIYqdlWh3DrG9ut+Vzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740592518; c=relaxed/simple;
-	bh=GpFW5tb6w5Zxnnk+co07dwBjXCBsJZQTjZwgp/lZHVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cR40VZ6wX3sOAXh9EocxzG0H+SQW2/Yvug8oyrUBOuMd24EfqAh65JR3oYpXmsn46sVopNw5l1ndGXtDSGmHfvTFmO29W9UHJN3MZFI+jfliYzyHi+PvNI/3BgKjQ8y/ClVnrWWBL3loQ2c8/R8St/2wz7dErNrkOSTZo+AuKk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gERYa0Uo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QD9AZh001059
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:55:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ug4hAHKEAsupgCQgj2U8+TkMQ2h82a7/mZMYq9uA5mU=; b=gERYa0UoZ9EN2kie
-	FRGbDr037ohEB/SuVUogW/ZoJcbyJhMdQ6JM1TmsFPCMSJGow9HVC0RsQrPquxmx
-	J0bqQ1F+ujmszSZxVn46IklZ1E1rbd55sigBm36wCs1rNfwxrRPsrp+TmSz6zhkq
-	kQ9/8KYmjw0XSaaLdY3QHjhwNCdVrp+3cyAB7od1S8brcu+ZbFkMRBQEjavTesWe
-	+xjHGliisGynx9ko1ZS0LQW4bD4/QduVqMsPnikRMlRbJ+Ii0jelN2/DzErZXShz
-	RSvMSi688EkRXrEtVfaO4qxKjS7vbImn01ipiQR88enT5afOcG4tlu2BhXpk2tYD
-	7ywxCg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4523kc8s6n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:55:15 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e19bfc2025so310656d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:55:15 -0800 (PST)
+	s=arc-20240116; t=1740592551; c=relaxed/simple;
+	bh=jKWuuJWv6A+vUltg7krISG4nDtKKTEvwhC3/E1ZD+sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J97Z0muQvt/VAuAunOX8G6zrvotbNu2KbPLY6/TUjY+ebSAV+CSUrrtDqLJxpjhXhp34D0CRbjYJFPKmjfIeVoWBYzVfW58XRWjyo3aysa4Nha/6T6smdGH2wyLfoVqizOmOBS7QTP3wNM8VxDz7UqZnNJnZx6IGFnGxUBt0sww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QmUTRCZR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740592548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l5deIFWf7QW+foShMtc0J6gQh0z1hOsU2aErwIMaqEs=;
+	b=QmUTRCZRzq18DPHSDt8Nx/ChUGy1Q+IR4ZkBgEuFYxfDHYS2tdz/QOyi5/X1XYGBc8t8S4
+	yudu4DT/RQRincn2VCdavEOkQ1Yqlh46jL0tjWzwSSZt68BtjJ5eNYrvQmqFWd1OTlJGda
+	MwxAAmbas9ZoihrSs+LXbZ2opO/KTaY=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-tkP3C11JM3Gn8Rnwb-KT-w-1; Wed, 26 Feb 2025 12:55:45 -0500
+X-MC-Unique: tkP3C11JM3Gn8Rnwb-KT-w-1
+X-Mimecast-MFC-AGG-ID: tkP3C11JM3Gn8Rnwb-KT-w_1740592545
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-855a922b214so1134939f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:55:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740592514; x=1741197314;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ug4hAHKEAsupgCQgj2U8+TkMQ2h82a7/mZMYq9uA5mU=;
-        b=oW5S9cfZBh5sl7DlqG1W7WG/44G+XE+ev298QzwoNLDUFLRN/lnR2uY5k86/yMwEJi
-         NtX06BSh92YYOnq+GWMsXiQPCGK+RUgCWywHY/Q8f47JfjJjVDWrDMoZxOSWbAtZlNzf
-         5rbbYsLT97ivAbYJxhYLJn90S/reP8YCqRTXfkvfOG8xEfu0miYipnOsT5cIC9s1IazR
-         irJu9oLbMYxb4o4LBQF8zTD6uzv0xhU1AMCEETxueYMMqlqAQIh4fXNrO12C7lADg0aa
-         dP0u9PdRHWXBnP3X+qcv9WzTGwq6REgNRwf14kwtPsYkeorxoD1X/5FkZ+ghiaR5quOW
-         FB/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxmJlYD+yOU2Afk+8/usrK4ODsvDq8m2XSfop8ls/dyu9vxpzBLI/evin65Zy4SMYPhZQndxAXrBU9fEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydRtB0JBw69su7PxGzv3rO3ZCiUCF+y5xne2AYVY5B7lgZ7IsZ
-	QYt4T8eWFZT96SbAooHKZAIkiDAN77bpV5nzLdUA060LGz+7EKtiLB3L0uw4cHLR11OwFXAqSYV
-	BzLvXh1VacUC740gThl4ecmdlk5mNKXXGI7x8NSVoReDg5Tyvc/HzDEV/G6HY/iE=
-X-Gm-Gg: ASbGnctegkIRtSaAW1DNB7jb9V2IIRJaQZ+OuY4hnYJBbL67HYjEyc5Jo1HyYd2mZTT
-	4AKmnJUEo9Rnq6AL4dGMKkvtZlzKz+XsaUR11irgKJ+8R4oqhSOqnDEioKBUeY7/xUA5lPBfd1d
-	cfst+QEc5wJahN1piQhzcRlStfLK2LCpkD5lQf/yKxe47cQD0oCK+d5origZE+7803CzdWQCalU
-	0tw5/Vku3TsN/9FEAbKpsNgASvMCbc0OfYYOsrGWHj7KdVuxLteYBNrBEnRcUdfaok1XfgSg3PG
-	hBXNlwW0NzC2bw34lEEVj/OmB1DYPZzLrS8ZCmRsc4CvesyFdjgnXEIaZi+L/3RgcIOGSA==
-X-Received: by 2002:a05:6214:c64:b0:6e6:9bd4:8298 with SMTP id 6a1803df08f44-6e6ae9bc159mr104062756d6.9.1740592514670;
-        Wed, 26 Feb 2025 09:55:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFB+bAYGSr3lxDK6a+c5HGa70nt51K+vT3MgvlcdHMqpTqUvcW4udBi8K1H8W4pmZUiXlLwUg==
-X-Received: by 2002:a05:6214:c64:b0:6e6:9bd4:8298 with SMTP id 6a1803df08f44-6e6ae9bc159mr104062606d6.9.1740592514272;
-        Wed, 26 Feb 2025 09:55:14 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdbe0asm363939366b.36.2025.02.26.09.55.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 09:55:13 -0800 (PST)
-Message-ID: <137331ed-2f5c-47c4-99d9-e932673dca31@oss.qualcomm.com>
-Date: Wed, 26 Feb 2025 18:55:11 +0100
+        d=1e100.net; s=20230601; t=1740592545; x=1741197345;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l5deIFWf7QW+foShMtc0J6gQh0z1hOsU2aErwIMaqEs=;
+        b=w4WaYsiPbFzlanm1uC5TODuFNQQ13IKOKVoCNUuwOc26aAZL8m4rg9pnrsnv4n+jgS
+         WC0IoafTsb0Nof38kheRl5BWY1RZtNof6lOjGFIC4SA6p9QnVKuhjm4r6kEfPojfFi0l
+         8kCCgWh/sDawPeAA3JXRn4BlBp9aySLB1VABjv1yoLX6aGVQqXGhcTXtcApN/dzEaDYQ
+         BM9GFfFeRIACQmecoJ/Ez/rfJPvdeQB7D3sYHywy8Wc8l/+zob8HgnormjuXlyBUht1v
+         cwsRQpRU3d0VyqpslKmUyqMZG0kq+TMjnyKy3BmNwPF+hZNpjX5yaPCYNlqqHPSiFe9O
+         a1Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTqNcLhV2gWNuu2rVUSpYKV+7SPaNXYx/axixUttNVFOhxo9+TBo263dJ645sGy270D+I7SN1sOfKd5Es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRiCHXH3Umx6qKpJ1nU0sR933aOIwpy/sssPENk2SZxvp7fqBQ
+	GC/KQ0kcMtAQFgUpcX6JtwWL/tIsduscpR0luzxUFiVyVsXAtqSd4JFqVatWLJOHbKzFdttyTHE
+	bjRum8AHGxe52DmcrlA31KefvKYqSotTXaJNG0kllwGuel+EVUt7qfVcVRdEyTA==
+X-Gm-Gg: ASbGncsN6oOx4g7tnkdFxC/qgFNXfDOKnGG572xSyh2gQ/aUGMm2+B+ADj6UI1w2mqG
+	ebPqqyz/GDgilp6JyV2KI3XBY450d1jmv0DBYLq7JSTSnqnn+sqruS8BsAikCCwTaX4heOhqrwK
+	dyb14hePKQrqm4zsYNu/EFgp85FWrkHOGOMmRNxv4bekHMTfV/BNeEZjdHRJ91OwJWKfG/4bFxA
+	dEuBn/CSq0TL0Luq3jebgyFHOPOsLYF5MgWDLURc18VFMIdLW7nAeshlEhKVCp6SUOEHjXOJVRI
+	sCc3FYwBrhaerfzpoJQ=
+X-Received: by 2002:a92:ca48:0:b0:3d3:dcd5:cde5 with SMTP id e9e14a558f8ab-3d3dcd5cfddmr1419255ab.4.1740592544904;
+        Wed, 26 Feb 2025 09:55:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGLi9toGQNcAOsQjLNocJqsr2fmMBl60KY6Tab7NdzqDWlTOWNKvbA3zWCXMh0ikHg+n0TqbA==
+X-Received: by 2002:a92:ca48:0:b0:3d3:dcd5:cde5 with SMTP id e9e14a558f8ab-3d3dcd5cfddmr1419175ab.4.1740592544567;
+        Wed, 26 Feb 2025 09:55:44 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d367fef1f5sm8799375ab.62.2025.02.26.09.55.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 09:55:43 -0800 (PST)
+Date: Wed, 26 Feb 2025 10:55:40 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, clg@redhat.com, jgg@nvidia.com,
+ willy@infradead.org
+Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
+Message-ID: <20250226105540.696a4b80.alex.williamson@redhat.com>
+In-Reply-To: <CAHTA-ubiguHnrQQH7uML30LsVc+wk-b=zTCioVTs3368eWkmeg@mail.gmail.com>
+References: <20250218222209.1382449-1-alex.williamson@redhat.com>
+	<20250218222209.1382449-7-alex.williamson@redhat.com>
+	<Z7UOEpgH5pdTBcJP@x1.local>
+	<20250218161407.6ae2b082.alex.williamson@redhat.com>
+	<CAHTA-ua8mTgNkDs0g=_8gMyT1NkgZqCE0J7QjOU=+cmZ2xqd7Q@mail.gmail.com>
+	<20250219080808.0e22215c.alex.williamson@redhat.com>
+	<CAHTA-ubiguHnrQQH7uML30LsVc+wk-b=zTCioVTs3368eWkmeg@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sm8750: Fix cluster hierarchy for
- idle states
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_lsrao@quicinc.com
-References: <20250226-sm8750_cluster_idle-v2-1-ef0ac81e242f@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250226-sm8750_cluster_idle-v2-1-ef0ac81e242f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 4An1rDNdrsh6LEpivLtwpJdu78gX_ypC
-X-Proofpoint-ORIG-GUID: 4An1rDNdrsh6LEpivLtwpJdu78gX_ypC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 spamscore=0 mlxlogscore=791
- clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260141
 
-On 26.02.2025 7:51 AM, Maulik Shah wrote:
-> SM8750 have two different clusters. cluster0 have CPU 0-5 as child and
-> cluster1 have CPU 6-7 as child. Each cluster requires its own idle state
-> and power domain in order to achieve complete domain sleep state.
+On Wed, 19 Feb 2025 14:32:35 -0600
+Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
+
+> > Thanks for the review and testing!  
 > 
-> However only single cluster idle state is added mapping CPU 0-7 to the
-> same power domain. Fix this by correctly mapping each CPU to respective
-> cluster power domain and make cluster1 power domain use same domain idle
-> state as cluster0 since both use same idle state parameters.
+> Sure thing, thanks for the patch set!
 > 
-> Fixes: 068c3d3c83be ("arm64: dts: qcom: Add base SM8750 dtsi")
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> ---
+> If you happen to have a few minutes, I'm struggling to understand the
+> epfn computation and would appreciate some insight.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Sorry, this slipped off my todo list for a few days.
 
-Konrad
+> My current understanding (very possibly incorrect):
+> - epfn is intended to be the last page frame number that can be
+> represented at the mapping level corresponding to addr_mask. (so, if
+> addr_mask == PUD_MASK, epfn would be the highest pfn still in PUD
+> level).
+
+Actually epfn is the first pfn of the next addr_mask level page.  The
+value in the parens (*pfn | (~addr_mask >> PAGE_SHIFT)) is the last pfn
+within the same level page.  We could do it either way, it's just a
+matter of where the +1 gets added.
+
+> - ret should be == npages if all pfns in the requested vma are within
+> the memory hierarchy level denoted by addr_mask. If npages is more
+> than can be represented at that level, ret == the max number of page
+> frames representable at addr_mask level.
+
+Yes.
+
+> - - (if the second case is true, that means we were not able to obtain
+> all requested pages due to running out of PFNs at the current mapping
+> level)
+
+vaddr_get_pfns() is called again if we haven't reached npage.
+Specifically, from vfio_pin_pages_remote() we hit the added continue
+under the !batch->size branch.  If the pfnmaps are fully PUD aligned,
+we'll call vaddr_get_pfns() once per PUD_SIZE, vfio_pin_pages_remote()
+will only return with the full requested npage value, and we'll only
+call vfio_iommu_map() once.  The latter has always been true, the
+difference is the number of times we iterate calling vaddr_get_pfns().
+
+> If the above is all correct, what is confusing me is where the "(*pfn)
+> | " comes into this equation. If epfn is meant to be the last pfn
+> representable at addr_mask level of the hierarchy, wouldn't that be
+> represented by (~pgmask >> PAGE_SHIFT) alone?
+
+(~addr_mask >> PAGE_SHIFT) gives us the last pfn relative to zero.  We
+want the last pfn relative to *pfn, therefore we OR in *pfn.  The OR
+handles any offset that *pfn might have within the addr_mask page, so
+this operation always provides the last pfn of the addr_mask page
+relative to *pfn.  +1 because we want to calculate the number of pfns
+until the next page.  Thanks,
+
+Alex
+
 
