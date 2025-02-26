@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-534473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9A5A46724
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:57:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAB9A46726
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:57:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3775F3A6629
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68EFA7A66F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0C622332B;
-	Wed, 26 Feb 2025 16:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R66MwYLJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F56223328;
+	Wed, 26 Feb 2025 16:56:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A069621C9E8;
-	Wed, 26 Feb 2025 16:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DDB8BE5;
+	Wed, 26 Feb 2025 16:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589032; cv=none; b=YQRKjKqfb8AA9LYQ/Q7AoMiKkCLxN3avUwazykfeTLsbctLW5OUlIx0n+mSFGJSOiqCQhrmz+cci6+WtFopuPlpsgN4xyerlmzlA/+bc1H6e/uWY7dHq4j+tDNemOCS2Cj8sGg1kNnsKoWUAIY5jK99izFPv67U2Va1CZMwRYSI=
+	t=1740589008; cv=none; b=dTNWlcn4TQUPESVrHjYIgk9zcIN4j7nxbZLaUDLSPOXU/XpeDMr3S4iyooo8xPWKqGFYyWGR9w7ZhTsYoc762Dag8sIaffqYVhriTmCWZp6Xd1vlnAMmRb7e0GrkB2QDmV2yQZil37bn776vpc0ZKful5aEkBtKC7pKYjOKKL6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589032; c=relaxed/simple;
-	bh=3WAySbhme57idwUAMGNOyLnrc2/y3hBo3tmaf5OeDQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5OCRRu8DXZqPHuKt/7qgCroNeo8nC0OkIpezd4SjD1DLaeQk40g/BcP/EsHe8oTNyTSjyPkspu54cT0GhKBq79EoeWbX2zUPY3m3TMAi3mIJxH0D0dc0K6cJ2gQ1cCGYhCtKuCuiXVynY3ErqPTYKMZ0aY669PeJBxTRLXS37I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R66MwYLJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4DPt7QYp04Ry8rLHfov5JpGHMDqB3/VtlthfMAT+pZ4=; b=R66MwYLJidHJxRhnCf+eiGeZN5
-	NuHhuLecYei0nkUnyQvusL+YSy2EIEie0vhOvFTGZQJj80P3nDErhnVUkaZByJeChLf2W5Jvl2GPX
-	RoHDo9SkYGiz4rQa+f0OMvRT7ZECJt2d+dKbd8qfVH7a6vNT3Ag4LafQEdmEdfmfVQZA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tnKiR-000Jnk-0D; Wed, 26 Feb 2025 17:56:59 +0100
-Date: Wed, 26 Feb 2025 17:56:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
- SFP+ module
-Message-ID: <3c4e6613-f7fc-4105-b4ce-d959769f2944@lunn.ch>
-References: <20250226141002.1214000-1-ms@dev.tdt.de>
- <Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
- <d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
- <20250226162649.641bba5d@kmaincent-XPS-13-7390>
- <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
- <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
- <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
+	s=arc-20240116; t=1740589008; c=relaxed/simple;
+	bh=aZDXeRG6Tv3oHJ75HiBSg1cMMCX7EbM0Tt8WZ07i38g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fwccmc1zaVVNTglFJi4JKVQWFEijuX9zdXn4coEPND19CqCB/U1KavCGbmYv0Bn+bsO9jSEqUxE6/GUd4BZUp6Kn0kSkWY3zzyJT4CpxarfCUB63hyz04UDm1DTqvms7Uf1Nv26P1DBlJN9zCNKrkHaDY5o7OgKMVrhWP6RHgWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C58C4CED6;
+	Wed, 26 Feb 2025 16:56:45 +0000 (UTC)
+Date: Wed, 26 Feb 2025 11:57:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Greg KH
+ <gregkh@linuxfoundation.org>, Miguel Ojeda
+ <miguel.ojeda.sandonis@gmail.com>, Ventura Jack <venturajack85@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>,
+ airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
+ hch@infradead.org, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>, Josh Poimboeuf
+ <jpoimboe@redhat.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250226115726.27530000@gandalf.local.home>
+In-Reply-To: <ylsffirqsrogli5fqlyhklhy6s54ngolvk5hj5fnpn3ceglyii@cgcvtm4ohtra>
+References: <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
+	<5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com>
+	<2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
+	<CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
+	<CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
+	<f2bf76553c666178505cb9197659303a39faf7aa.camel@HansenPartnership.com>
+	<2025022611-work-sandal-2759@gregkh>
+	<16127450a24e9df8112a347fe5f6df9c9cca2926.camel@HansenPartnership.com>
+	<20250226110033.53508cbf@gandalf.local.home>
+	<9c443013493f8f380f9c4d51b1eeeb9d29b208a3.camel@HansenPartnership.com>
+	<ylsffirqsrogli5fqlyhklhy6s54ngolvk5hj5fnpn3ceglyii@cgcvtm4ohtra>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 05:51:42PM +0100, Martin Schiller wrote:
-> On 2025-02-26 17:27, Kory Maincent wrote:
-> > On Wed, 26 Feb 2025 16:55:38 +0100
-> > Martin Schiller <ms@dev.tdt.de> wrote:
-> > 
-> > > On 2025-02-26 16:26, Kory Maincent wrote:
-> > > > On Wed, 26 Feb 2025 15:50:46 +0100
-> > > > Martin Schiller <ms@dev.tdt.de> wrote:
-> > > >
-> > > >> On 2025-02-26 15:38, Russell King (Oracle) wrote:
-> > >  [...]
-> > >  [...]
-> > >  [...]
-> > > >>
-> > > >> OK, I'll rename it to sfp_fixup_rollball_wait.
-> > > >
-> > > > I would prefer sfp_fixup_fs_rollball_wait to keep the name of the
-> > > > manufacturer.
-> > > > It can't be a generic fixup as other FSP could have other waiting time
-> > > > values
-> > > > like the Turris RTSFP-10G which needs 25s.
-> > > 
-> > > I think you're getting two things mixed up.
-> > > The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
-> > > there simply is an additional 4s wait at the beginning before we start
-> > > searching for a phy.
-> > 
-> > Indeed you are right, I was looking in older Linux sources, sorry.
-> > Still, the additional 4s wait seems relevant only for FS SFP, so it
-> > should
-> > be included in the function naming to avoid confusion.
-> > 
-> 
-> You may be right for the moment. But perhaps there will soon be SFP
-> modules from other manufacturers that also need this quirk.
 
-Since these are all kernel internal implementation details, we can
-rename them any time we want. There is no kernel ABI involved. So
-please use a name based on what we know now. If such a module does
-appear sometime in the future, we can change the name at that point.
+[ Adding Josh ]
 
-       Andrew
+On Wed, 26 Feb 2025 11:47:09 -0500
+Kent Overstreet <kent.overstreet@linux.dev> wrote:
+
+> On Wed, Feb 26, 2025 at 11:42:41AM -0500, James Bottomley wrote:
+> > On Wed, 2025-02-26 at 11:00 -0500, Steven Rostedt wrote: =20
+> > > On Wed, 26 Feb 2025 09:45:53 -0500
+> > > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> > >  =20
+> > > > > From some other rust boot system work, I know that the quality of
+> > > > > a=C2=A0  =20
+> > > > simple backtrace in rust where you just pick out addresses you
+> > > > think you know in the stack and print them as symbols can sometimes
+> > > > be rather misleading, which is why you need an unwinder to tell you
+> > > > exactly what happened. =20
+> > >=20
+> > > One thing I learned at GNU Cauldron last year is that the kernel
+> > > folks use the term "unwinding" incorrectly. Unwinding to the compiler
+> > > folks mean having full access to all the frames and variables and
+> > > what not for all the previous functions.
+> > >=20
+> > > What the kernel calls "unwinding" the compiler folks call "stack
+> > > walking". That's a much easier task than doing an unwinding, and that
+> > > is usually all we need when something crashes. =20
+> >=20
+> > Well, that's not the whole story.  We do have at least three unwinders
+> > in the code base.  You're right in that we don't care about anything
+> > other than the call trace embedded in the frame, so a lot of unwind
+> > debug information isn't relevant to us and the unwinders ignore it.  In
+> > the old days we just used to use the GUESS unwinder which looks for
+> > addresses inside the text segment in the stack and prints them in
+> > order.  Now we (at least on amd64) use the ORC unwinder because it
+> > gives better traces:
+> >=20
+> > https://docs.kernel.org/arch/x86/orc-unwinder.html =20
+
+Note, both myself and Josh (creator of ORC) were arguing with the GCC folks
+until we all figured out we were talking about two different things. Once
+they said "Oh, you mean stack walking. Yeah that can work" and the
+arguments stopped. Lessons learned that day was that compiler folks take
+the term "unwinding" to mean much more than kernel folks, and since we have
+compiler folks on this thread, I'd figure I would point that out.
+
+We still use the term "unwinder" in the kernel, but during the sframe
+meetings, we need to point out that we all just care about stack walking.
+
+>=20
+> More accurate perhaps, but I still don't see it working reliably - I'm x
+> still having to switch all my test setups (and users) to frame pointers
+> if I want to be able to debug reliably.
+
+Really? The entire point of ORC was to have accurate stack traces so that
+live kernel patching can work. If there's something incorrect, then please
+report it.
+
+-- Steve
 
