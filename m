@@ -1,206 +1,167 @@
-Return-Path: <linux-kernel+bounces-533469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419CCA45AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:57:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBF6A45AEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6626E3AA997
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794CE1895C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8F24E017;
-	Wed, 26 Feb 2025 09:56:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A60026E17A;
+	Wed, 26 Feb 2025 09:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SLRVEi+G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072BB23816C;
-	Wed, 26 Feb 2025 09:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A76D23816C;
+	Wed, 26 Feb 2025 09:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563774; cv=none; b=i5/mrFMYnviRFrtdxJ1M44tCE//S6bbKajiT9eRDRv6aJDU6drZPFdJrBN0CBFXqJCULfBUxxtv2ZcQUjD09fNrlQhmGkY/ECDvF9FHqe07C2jTMgJYhN6XRtv0HFbG4CV4zCmd1YY+ZdbyjU+UbrU6QEOhILCZe+m5eHk/TAlA=
+	t=1740563777; cv=none; b=qn99L/j3xQV4FQ3nby4DxVh82UhUg0WMSzjrim0LWtU9ZNXfggtJ3MnKKwVBDeXTJPPi66hLJigW8CrxZ6tRAoiqf5fK0Tk8dB8at6qohKvg0SyytHjGtKt80P+2pOnp8QPWKCWy7FbI1hvkeCLlaQDNcdvW021cZeK1JJfA/VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563774; c=relaxed/simple;
-	bh=ACfxlLi96pq3LwoFRbPH7LVakUiixUCwz36+zU6xyXY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=boHFqlJ7LFuoFYnoxWrXz3iEf9PrZRhzBby35bJ9IyNucDDHUmwvKPzVta6PWRd90SiwXmW56rOI2fNxF2TBowDJDKhownypKBeGd91KG4wPcDvXkVLNf+ek4elwm2W5Y+a/PzVk9/ESjDrZy6IGfQOG8cgo6fuoNKiM1B1VIDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2qbh09NTz4f3lVs;
-	Wed, 26 Feb 2025 17:55:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 49F631A06D7;
-	Wed, 26 Feb 2025 17:56:07 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXul4z5b5nbYzHEw--.15301S3;
-	Wed, 26 Feb 2025 17:56:05 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
- <Z77R_rqgDdAvFVgP@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
-Date: Wed, 26 Feb 2025 17:56:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740563777; c=relaxed/simple;
+	bh=uLcfPblXp3Dq6tC1+K5w8I0KVlAA3UXTDKqyfaM/JgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3o6e5LqBSlGjrpAeQjbqg7gFNEY4sjhuF7x6LZCPHxVOV35M3OOvqwL7LNQQgJuWhxG2S8NIVJbpKh5pE3ZhFGZjB+eWqpforpvABFx+/RFeskHrOcFchf9eTaUUqB3cSU6+ruv3hxU+cwJlj0y66RB9X1ZHMU+8o2VIK80T2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SLRVEi+G; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740563777; x=1772099777;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uLcfPblXp3Dq6tC1+K5w8I0KVlAA3UXTDKqyfaM/JgI=;
+  b=SLRVEi+GofDcJhQgEEbdwWI9oJe/GOkYop0Dgp5kp6j4rg//zlfZueEq
+   q6MctfIHCdBIC/DfQlTMHaSQNrJ3cZ5E7kpFFwX0Gllbe1BT+4/Paykg+
+   Ec4HZTOtde3RjwGOhyVjQy4VVk1fOmgzAsyGN7ZrWfSYRHkLON1V5GXiE
+   ZmZ4o8YsmcEbwfodAW0YScbzfIMO8KmwegF3CeICiQ0EukRc5v//6im5B
+   2eZCw4fnec2oCAP6l8+bpA8XCCEokinf0+gjThEpyqMEZ+ZSZNMv6twBR
+   PagxD2D98qpc0aNsgtc94cpd8lBdnqDGvQsmmNb6E+o5ybhLNFupzxuvr
+   w==;
+X-CSE-ConnectionGUID: pAzU2cPRTF2YhQpAFYgElA==
+X-CSE-MsgGUID: +5wFp+ViS0GsYYa8R9q9uQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41317133"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="41317133"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 01:56:14 -0800
+X-CSE-ConnectionGUID: zPzLMhNhRfeLeImi2/euhw==
+X-CSE-MsgGUID: 0sPndXcsTEqsht5X+w/tFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="139882556"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa002.fm.intel.com with SMTP; 26 Feb 2025 01:56:10 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 26 Feb 2025 11:56:09 +0200
+Date: Wed, 26 Feb 2025 11:56:09 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] usb: typec: ps883x: fix configuration error handling
+Message-ID: <Z77lOR8nUQSNafm0@kuha.fi.intel.com>
+References: <20250218152933.22992-1-johan+linaro@kernel.org>
+ <20250218152933.22992-4-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z77R_rqgDdAvFVgP@fedora>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXul4z5b5nbYzHEw--.15301S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw1kAFWxGr1kAF15Kw4xXrb_yoWrAF4xpF
-	W3AFWF9Fs8XFyIkFW3X3Z3tayjk3yfGFyUGw15Cr48Awn8Cr1fKFnxAw4Y9a4rAas3uw4F
-	v3WDXry7Cr12vrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218152933.22992-4-johan+linaro@kernel.org>
 
-Hi,
-
-ÔÚ 2025/02/26 16:34, Ming Lei Ð´µÀ:
-> On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> The bio submission time may be a few jiffies more than the expected
->> waiting time, due to 'extra_bytes' can't be divided in
->> tg_within_bps_limit(), and also due to timer wakeup delay. In this
->> case, adjust slice_start to jiffies will discard the extra wait time,
->> causing lower rate than expected.
->>
->> This problem will cause blktests throtl/001 failure in case of
->> CONFIG_HZ_100=y, fix it by preserving one finished slice in
->> throtl_trim_slice() and allowing deviation between [0, 2 slices).
+On Tue, Feb 18, 2025 at 04:29:33PM +0100, Johan Hovold wrote:
+> Propagate errors to the consumers when configuring the retimer so that
+> they can act on any failures as intended, for example:
 > 
-> I think it only can cover single default slice deviation, since
-> throtl_trim_slice() just keeps dispatch data in the previous single
-> default slice. Or can you add words on how to allow 2 default slices
-> deviation?
+> 	ps883x_retimer 2-0008: failed to write conn_status_0: -5
+> 	pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to setup retimer to DP: -5
 > 
->>
->> For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
->> slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
->> per slice.
->>
->> If user issues two 21 bytes IO, then wait time will be 30ms for the
->> first IO:
->>
->> bytes_allowed = 20, extra_bytes = 1;
->> jiffy_wait = 1 + 2 = 3 jiffies
->>
->> and consider
->> extra 1 jiffies by timer, throtl_trim_slice() will be called at:
->>
->> jiffies = 40ms
->> slice_start = 0ms, slice_end= 40ms
->> bytes_disp = 21
->>
->> In this case, before the patch, real rate in the first two slices is
->> 10.5 bytes per slice, and slice will be updated to:
->>
->> jiffies = 40ms
->> slice_start = 40ms, slice_end = 60ms,
->> bytes_disp = 0;
->>
->> Hence the second IO will have to wait another 30ms;
->>
->> With the patch, the real rate in the first slice is 20 bytes per slice,
->> which is the same as expected, and slice will be updated:
->>
->> jiffies=40ms,
->> slice_start = 20ms, slice_end = 60ms,
->> bytes_disp = 1;
->>
->> And now, there is still 19 bytes allowed in the second slice, and the
->> second IO will only have to wait 10ms;
->>
->> Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
->> Reported-by: Ming Lei <ming.lei@redhat.com>
->> Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   block/blk-throttle.c | 13 +++++++++++--
->>   1 file changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
->> index 8d149aff9fd0..cb472cf7b6b6 100644
->> --- a/block/blk-throttle.c
->> +++ b/block/blk-throttle.c
->> @@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
->>   	 * sooner, then we need to reduce slice_end. A high bogus slice_end
->>   	 * is bad because it does not allow new slice to start.
->>   	 */
->> -
->>   	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
->>   
->>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
->>   				 tg->td->throtl_slice);
->> -	if (!time_elapsed)
->> +	/* Don't trim slice until at least 2 slices are used */
->> +	if (time_elapsed < tg->td->throtl_slice * 2)
->>   		return;
->>   
->> +	/*
->> +	 * The bio submission time may be a few jiffies more than the expected
->> +	 * waiting time, due to 'extra_bytes' can't be divided in
->> +	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
->> +	 * case, adjust slice_start to jiffies will discard the extra wait time,
->> +	 * causing lower rate than expected. Therefore, one slice is preserved,
->> +	 * allowing deviation that is less than two slices.
->> +	 */
->> +	time_elapsed -= tg->td->throtl_slice;
+> Fixes: 257a087c8b52 ("usb: typec: Add support for Parade PS8830 Type-C Retimer")
+> Cc: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/usb/typec/mux/ps883x.c | 36 ++++++++++++++++++++++++----------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
 > 
-> Please document that default slice window size is doubled actually in
-> this way.
+> diff --git a/drivers/usb/typec/mux/ps883x.c b/drivers/usb/typec/mux/ps883x.c
+> index f8b47187f4cf..ad59babf7cce 100644
+> --- a/drivers/usb/typec/mux/ps883x.c
+> +++ b/drivers/usb/typec/mux/ps883x.c
+> @@ -58,12 +58,31 @@ struct ps883x_retimer {
+>  	unsigned int svid;
+>  };
+>  
+> -static void ps883x_configure(struct ps883x_retimer *retimer, int cfg0,
+> -			     int cfg1, int cfg2)
+> +static int ps883x_configure(struct ps883x_retimer *retimer, int cfg0,
+> +			    int cfg1, int cfg2)
+>  {
+> -	regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_0, cfg0);
+> -	regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_1, cfg1);
+> -	regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_2, cfg2);
+> +	struct device *dev = &retimer->client->dev;
+> +	int ret;
+> +
+> +	ret = regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_0, cfg0);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write conn_status_0: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_1, cfg1);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write conn_status_1: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_write(retimer->regmap, REG_USB_PORT_CONN_STATUS_2, cfg2);
+> +	if (ret) {
+> +		dev_err(dev, "failed to write conn_status_2: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int ps883x_set(struct ps883x_retimer *retimer)
+> @@ -74,8 +93,7 @@ static int ps883x_set(struct ps883x_retimer *retimer)
+>  
+>  	if (retimer->orientation == TYPEC_ORIENTATION_NONE ||
+>  	    retimer->mode == TYPEC_STATE_SAFE) {
+> -		ps883x_configure(retimer, cfg0, cfg1, cfg2);
+> -		return 0;
+> +		return ps883x_configure(retimer, cfg0, cfg1, cfg2);
+>  	}
+>  
+>  	if (retimer->mode != TYPEC_STATE_USB && retimer->svid != USB_TYPEC_DP_SID)
+> @@ -113,9 +131,7 @@ static int ps883x_set(struct ps883x_retimer *retimer)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> -	ps883x_configure(retimer, cfg0, cfg1, cfg2);
+> -
+> -	return 0;
+> +	return ps883x_configure(retimer, cfg0, cfg1, cfg2);
+>  }
+>  
+>  static int ps883x_sw_set(struct typec_switch_dev *sw,
+> -- 
+> 2.45.3
 
-I said two slices because there is a round down:
-
- >>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
- >>   				 tg->td->throtl_slice);
-
-Hence the deviation is actually between [1 ,2) jiffies, depends on the
-time start to wait and how long the delay is.
-
-If start to wait at slice_start + n * throtl_slice - 1, the deviation is
-*at most 1 slice*
-
-If start to wait at slice_stat + n * throtl_slice, the max deviation is
-*less than 2 slices* (2 slices not included)
-
-Now, I agree allowing deviation at most 1 slice is more appropriate. :)
-
-Thanks,
-Kuai
-
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
-
+-- 
+heikki
 
