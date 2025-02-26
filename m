@@ -1,214 +1,124 @@
-Return-Path: <linux-kernel+bounces-534683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481FCA469EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:39:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5946A469F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D14A167A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794F31883642
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DD223496B;
-	Wed, 26 Feb 2025 18:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96A923372B;
+	Wed, 26 Feb 2025 18:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MPLTIuSW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZQkU8DK9"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF6F224AF1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428BF2222CF;
+	Wed, 26 Feb 2025 18:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740595150; cv=none; b=Y1+s3lzyhDdEjQaIkcrMGBJDX4W1DnOHQYMmSSxhbPFiN2m5ZgDTqH/zmMt0i870PoopN0dk1+admK3z/6nF+5iXox0SnpY42JXfKCqBXkv0KC0cEDlsJowhH+mM51NcWbs59ZMea1u6LwEbLVcFpauU4SrW+abNTmRss/W5puE=
+	t=1740595260; cv=none; b=nMzXkUS8a7okGoWm/TcJUDahBVzaPobaFN6p3g5sUOzwAWD9iJtUdRbPWA5aQqoIoB2xgs9aGKSObZA6It2vEpEswbIzKH7i/FgZyFJTchB0i7JduR8BU1rPP4SQxeyPF4zo3l6nikqlja+U72WYN2JU66iJvgGAKZyNBZ3Vl7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740595150; c=relaxed/simple;
-	bh=lKrXR1KGRZSugNM5yC3co97RUFbsdNWdtgCIXHI7OTk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eontsQdIyMN1gtupWzM8D916IPFgfKXRQUsE5Xmtt3p4FUc/y3IyWIb3OUr/8bzkSK4W52qwD+4R+n1EF/0rDeYpOUKYtEAXj21Dr61dOOvx1htzNwIejKvwe5JOoGqZAR6H7YfmvlD85jd2zgxuKF2FQK3yjNxHh867WMVAUR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MPLTIuSW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740595147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=90eXzmLAT43+01svPMQAHvvPwTa7z+5JsRENaBTrc8I=;
-	b=MPLTIuSWWYQfTSAO4mXUziXmnySbrOci7CCAArTHkehUNFuNLgFOzQLwSnk9PCG+S2GNWx
-	2zperedj9S2K2aAY1O9ZRAUPU2QKj8Us3ZmpPvHyb0qsl8ZHPs/zf9KjYu3cWHhTtrCHMp
-	x5KOSvfwJ/2X48ScKIxutf8XfsvA8Lw=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-189-nzdciPYMNYaZNqE1rIN2QA-1; Wed, 26 Feb 2025 13:39:05 -0500
-X-MC-Unique: nzdciPYMNYaZNqE1rIN2QA-1
-X-Mimecast-MFC-AGG-ID: nzdciPYMNYaZNqE1rIN2QA_1740595145
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e2378169a4so3256256d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:39:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740595145; x=1741199945;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=90eXzmLAT43+01svPMQAHvvPwTa7z+5JsRENaBTrc8I=;
-        b=h/Ce3FLGGOAQCQpJm4+QvYpejxk9zS2KeIr0gnu/f48FDxiQ+bBcgjsvWABt/Gonvp
-         mMwtFG+FfTCEYOi3fsZdI+ZQxX0AC0k4WtJRwZ1iEOk0JOxyL1oSMnMWQBsWj3ofG4P1
-         iDwcNM3VCk4+TRo/xqx0G7jjR5rIJjXLuvQKVFfDTEVVPxsZ5ZJ0lhfPbrE0gPJ19xg2
-         zTvp2SMgSTq0r0HIcxadAqeHop5KM98DSji3G5+3ZaOIwDEvHhCNKPCh3Ng8l3RPgC3Q
-         W9MhOlRUyS+EfPKZ5oyLOG+Y1QswGFDJ3XjHoLMTtTiwzPcCU887Sh9UiN9UNBAw9c4D
-         aOlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaqxlZFdWagpYqwr4z08KXVi9xEoNrsaX3KcRdqhFHgPK7JoSuamvHj3Om1jQQz//eVDvaS/Dcjqrd8qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBqPyAQqzwYx2jTHOmf+cRgGISJbdibCX4fYhZWQZjKdIcJYi5
-	TA6dIOWjyUGpjMO84rkKhKz2u9KOKiRZpubd+K0s+kMacph9WN26JLXJN5yTO8t9IBQnmGJuXax
-	SuM7YSCU+TjSziLCKi7MaOvF8XwDw3VKDMPE6f8yhvtvRfph8JoXmHHDEOEslUw==
-X-Gm-Gg: ASbGncs+UeJltb+c8c/x1WYZ7V/cnoryZbZfwM7jenjvmNAyEr0UM5m3FGE26shra7w
-	HcLX9W7kaj84Vp8NIE99kUn/Yts0h9liRok3ei0RWanYtZec1mg5ieAvo7CbSOyenQVb5qhZQWH
-	OHm1kSx/ak528YWDtqPaEY58jUhecgdhhQ8+hKdEXVgwDwoV0YYxWbRs0LZMFRCtkD22v/oz1uj
-	XxFCY1h/kCon4FVuBO8fOR8MIU55cIEV8M9DbiBbzsjhGUe4uka9uMABTp7NboNLgvM+HU/T9vM
-	37F5kmVOQt1GHmU=
-X-Received: by 2002:a0c:c587:0:b0:6e6:64ce:3111 with SMTP id 6a1803df08f44-6e88689c141mr38637976d6.24.1740595144726;
-        Wed, 26 Feb 2025 10:39:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHbOz3Tqr6hQCs7COjzgB8TX38rAHvlgqyAvPxtiLWjotGeTAS5snldmdaBWtJva1mdqP5ulQ==
-X-Received: by 2002:a0c:c587:0:b0:6e6:64ce:3111 with SMTP id 6a1803df08f44-6e88689c141mr38637786d6.24.1740595144399;
-        Wed, 26 Feb 2025 10:39:04 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b17194csm25604976d6.97.2025.02.26.10.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 10:39:04 -0800 (PST)
-Message-ID: <4c605b4e395a3538d9a2790918b78f4834912d72.camel@redhat.com>
-Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  David Matlack <dmatlack@google.com>, David Rientjes
- <rientjes@google.com>, Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao
- <yuzhao@google.com>, Axel Rasmussen <axelrasmussen@google.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 26 Feb 2025 13:39:02 -0500
-In-Reply-To: <Z75lcJOEFfBMATAf@google.com>
-References: <20250204004038.1680123-1-jthoughton@google.com>
-	 <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
-	 <Z7UwI-9zqnhpmg30@google.com>
-	 <07788b85473e24627131ffe1a8d1d01856dd9cb5.camel@redhat.com>
-	 <Z75lcJOEFfBMATAf@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1740595260; c=relaxed/simple;
+	bh=XDo3dXB3ZepMkRvo5YjK5g4NfObnn16Macr8zt68RMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=udL108SLbOTPt97c7khlakddzLJQRcqrm0iH1LuoSTkVey8mcX0miEVIG2gVZUrleSzeFm/YUdb++OvsPIGNgbTpBi/VcTY5xa+SIneX5fR9+PFgoLd4zyDLGC18H28Zy7BWNSVYcah53Gks3wrYigTYS4/EiYokQGkV9sRr504=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZQkU8DK9; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Z33Fj4mxNzlm4Yd;
+	Wed, 26 Feb 2025 18:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1740595256; x=1743187257; bh=egOgaD1Wy/xQmlMQKt5dzZhV
+	EvaTAscpf2ST+vETF70=; b=ZQkU8DK9G2NgT6E4oJk9OcmTtOTG71QBNvuYIR32
+	/5kftq6h+AfSPcR2P0tOxsCqVaUKhWTSLON7vpCRDwJAcS4yLtCoRMc1oq/jnWod
+	H/YXaw6GTqVpzts5ozwnH0I9lu54owIEeADPa/kQdDGPr6TdI0EOpgry+Q4lXrmM
+	EsgtLjhUaTfGAZxF3YtGrbAYJ2WqOVlbnZSFR+VoQo3kEwzKzNCjywCcUN3hjZ7Q
+	L+EcNv+cKNznPAPKpqxT7HUt61bY8HNJt2VQA/K4RuYsobmKsX7EhQ1w3M0oE6+v
+	CJxWmd+7fJXbXmovqseRF2H42h+sG+ziEeAR/1m7GfV4gA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id EQd11jh3aRYl; Wed, 26 Feb 2025 18:40:56 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Z33Fd6S6Hzlsfvx;
+	Wed, 26 Feb 2025 18:40:53 +0000 (UTC)
+Message-ID: <6eb9ec05-96f1-41d2-b055-56e34d5722ae@acm.org>
+Date: Wed, 26 Feb 2025 10:40:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Enable Dumping of Hibern8, MCQ, and
+ Testbus Registers
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
+ Manish Pandey <quic_mapa@quicinc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com
+References: <20241025055054.23170-1-quic_mapa@quicinc.com>
+ <20241112075000.vausf7ulr2t5svmg@thinkpad>
+ <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
+ <20241209040355.kc4ab6nfp6syw37q@thinkpad>
+ <3a850d86-5974-4b2d-95be-e79dad33636f@acm.org>
+ <20250226053019.y6tdukcqpijkug4m@thinkpad>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250226053019.y6tdukcqpijkug4m@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-02-25 at 16:50 -0800, Sean Christopherson wrote:
-> On Tue, Feb 25, 2025, Maxim Levitsky wrote:
-> > On Tue, 2025-02-18 at 17:13 -0800, Sean Christopherson wrote:
-> > > My understanding is that the behavior is deliberate.  Per Yu[1], page_idle/bitmap
-> > > effectively isn't supported by MGLRU.
-> > > 
-> > > [1] https://lore.kernel.org/all/CAOUHufZeADNp_y=Ng+acmMMgnTR=ZGFZ7z-m6O47O=CmJauWjw@mail.gmail.com
-> > 
-> > Hi,
-> > 
-> > Reading this mail makes me think that the page idle interface isn't really
-> > used anymore.
+On 2/25/25 9:30 PM, Manivannan Sadhasivam wrote:
+> On Mon, Dec 09, 2024 at 10:35:39AM -0800, Bart Van Assche wrote:
+>> On 12/8/24 12:03 PM, Manivannan Sadhasivam wrote:
+>>> On Tue, Nov 12, 2024 at 10:10:02AM -0800, Bart Van Assche wrote:
+>>>> On 11/11/24 11:50 PM, Manivannan Sadhasivam wrote:
+>>>>> On Fri, Oct 25, 2024 at 11:20:51AM +0530, Manish Pandey wrote:
+>>>>>> Submitting a series of patches aimed at enhancing the debugging and monitoring capabilities
+>>>>>> of the UFS-QCOM driver. These patches introduce new functionalities that will significantly
+>>>>>> aid in diagnosing and resolving issues related to hardware and software operations.
+>>>>>>
+>>>>>
+>>>>> TBH, the current state of dumping UFSHC registers itself is just annoying as it
+>>>>> pollutes the kernel ring buffer. I don't think any peripheral driver in the
+>>>>> kernel does this. Please dump only relevant registers, not everything that you
+>>>>> feel like dumping.
+>>>>
+>>>> I wouldn't mind if the code for dumping  UFSHC registers would be removed.
+>>>
+>>> Instead of removing, I'm planning to move the dump to dev_coredump framework.
+>>> But should we move all the error prints also? Like all ufshcd_print_*()
+>>> functions?
+>>
+>> Hmm ... we may be better off to check which of these functions can be
+>> removed rather than moving all of them to another framework.
 > 
-> I'm sure it's still used in production somewhere.  And even if it's being phased
-> out in favor of MGLRU, it's still super useful for testing purposes, because it
-> gives userspace much more direct control over aging.
-
-I also think that page_idle is used somewhere in production, and it probably works
-more or less correctly with regular non VM processes, although I have no idea how well it works
-when MGLRU is enabled.
-
-My point was that using page_idle to track guest memory is something that is probably
-not used because it doesn't work that well, and nobody seems to complain.
-However I don't ask for it to be removed, although a note of deprecation might
-be worth it if really nobody uses it.
-
+> devcoredump turned out to be not a good fit for storage drivers. And I can't
+> figure out another way. And Qcom is telling me that these debug prints are
+> necessary for them to debug the issues going forward.
 > 
-> > Maybe we should redo the access_tracking_perf_test to only use the MGLRU
-> > specific interfaces/mode, and remove its classical page_idle mode altogher?
-> 
-> I don't want to take a hard dependency on MGLRU (unless page_idle gets fully
-> deprecated/removed by the kernel), and I also don't think page_idle is the main
-> problem with the test.
->    
-> > The point I am trying to get across is that currently
-> > access_tracking_perf_test main purpose is to test that page_idle works with
-> > secondary paging and the fact is that it doesn't work well due to more that
-> > one reason:
-> 
-> The primary purpose of the test is to measure performance.  Asserting that 90%+
-> pages were dirtied is a sanity check, not an outright goal.
+> Your thoughts?
 
-From my POV, a performance test can't really be a selftest unless it actually fails
-when it detects an unusually low performance. 
+Does this mean that printk() is the best alternative we have available?
 
-Otherwise who is going to be alarmed when a regression happens and
-things actually get slower?
+Thanks,
 
-> 
-> > The mere fact that we don't flush TLB already necessitated hacks like the 90%
-> > check, which for example doesn't work nested so another hack was needed, to
-> > skip the check completely when hypervisor is detected, etc, etc.
-> 
-> 100% agreed here.
-> 
-> > And now as of 6.13, we don't propagate accessed bit when KVM zaps the SPTE at
-> > all, which can happen at least in theory due to other reasons than NUMA balancing.
-> > 
-> > Tomorrow there will be something else that will cause KVM to zap the SPTEs,
-> > and the test will fail again, and again...
-> > 
-> > What do you think?
-> 
-> What if we make the assertion user controllable?  I.e. let the user opt-out (or
-> off-by-default and opt-in) via command line?  We did something similar for the
-> rseq test, because the test would run far fewer iterations than expected if the
-> vCPU task was migrated to CPU(s) in deep sleep states.
-> 
-> 	TEST_ASSERT(skip_sanity_check || i > (NR_TASK_MIGRATIONS / 2),
-> 		    "Only performed %d KVM_RUNs, task stalled too much?\n\n"
-> 		    "  Try disabling deep sleep states to reduce CPU wakeup latency,\n"
-> 		    "  e.g. via cpuidle.off=1 or setting /dev/cpu_dma_latency to '0',\n"
-> 		    "  or run with -u to disable this sanity check.", i);
-> 
-> This is quite similar, because as you say, it's impractical for the test to account
-> for every possible environmental quirk.
-
-No objections in principle, especially if sanity check is skipped by default, 
-although this does sort of defeats the purpose of the check. 
-I guess that the check might still be used for developers.
-
-
-> 
-> > > Aha!  I wonder if in the failing case, the vCPU gets migrated to a pCPU on a
-> > > different node, and that causes NUMA balancing to go crazy and zap pretty much
-> > > all of guest memory.  If that's what's happening, then a better solution for the
-> > > NUMA balancing issue would be to affine the vCPU to a single NUMA node (or hard
-> > > pin it to a single pCPU?).
-> > 
-> > Nope. I pinned main thread to  CPU 0 and VM thread to  CPU 1 and the problem
-> > persists.  On 6.13, the only way to make the test consistently work is to
-> > disable NUMA balancing.
-> 
-> Well that's odd.  While I'm quite curious as to what's happening, my stance is
-> that enabling NUMA balancing with KVM is a terrible idea, so my vote is to sweep
-> it under the rug and let the user disable the sanity check.
-> 
-
-One thing for sure, with NUMA balancing off, the test passes well (shows on average
-around 100-200 idle pages) and I have run it for a long time.
-
-
-Best regards,
-	Maxim Levitsky
-
-
+Bart.
 
