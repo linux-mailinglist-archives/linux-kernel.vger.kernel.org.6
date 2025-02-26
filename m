@@ -1,112 +1,142 @@
-Return-Path: <linux-kernel+bounces-534919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68C3A46CB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:48:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E757A46CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:49:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1ADB3AEA55
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:48:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F3A77A384A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EF924E4B7;
-	Wed, 26 Feb 2025 20:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF98C24E4B7;
+	Wed, 26 Feb 2025 20:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ij8eWfqs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9XutZNi"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1659C239561;
-	Wed, 26 Feb 2025 20:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990B927560B;
+	Wed, 26 Feb 2025 20:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740602896; cv=none; b=QF41ngtaiv3tm1bIjc1RJr3N19OvGX5dfm8G7Qj7XUmoN5D+CEQ1o83FonJCpoPKgN+n0JlRudQCkAXl4l71YdS28BdWJloWCDvSNQyoG8pVuplWAj8Rh32EXtWiJnboXnUSIfvDGnKZry9u3N96I5lWBJSvsQznTlU5yYXwTy4=
+	t=1740602938; cv=none; b=JQgmYOjr0mXsh+KkOn2TtNzE+MTwIFDMp0vdd9g77q/v797skHUUBkJFhdChHwZkqZJB47hMO7pGZJKF7C6aIhMEly4Qum98Pf4dLifYjDciYBs0AgMEolpi2CCAgSwQtrpigduoYSSxvhyigrkKfdTi2OZaqKWyUNaERZyphYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740602896; c=relaxed/simple;
-	bh=sC5RYdaZue37P+C7M9L14ccZIaPy5L1CJK2xQlV1wYE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NFYeyO5DFreW90JWkDZPMIaIic2kj619R1KDO//EhkFeShNjy3ex+p937l7RPRpDkBr2QErNfsg0qkgcWK8P47iDncPEo+SRxC9nzIZ25WO7QunVmWqqa2Cr+5Zz3T8KWDMXKzSGENL9/dbN3DoWReWLJ5GSZFu5FdnheUwU8JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ij8eWfqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E42C4CED6;
-	Wed, 26 Feb 2025 20:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740602895;
-	bh=sC5RYdaZue37P+C7M9L14ccZIaPy5L1CJK2xQlV1wYE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Ij8eWfqsxn/ZkwP5BEGm+7ER5s5vne8hqKZ/jvtuPYOddfFcDhJmn9b1lkdVKUxYB
-	 NYXLIdj6P/dmSiwj3WwHEWe+d4yu8/32Ltrz5Pm/RpAAArbd5dur/hZwTqtqskhlZd
-	 1xMWa97jQCF57WS9WGynp9IN5/vPGmahuvSwfE9fe0mMBP46mWfMDbyeleGHnOdPph
-	 Ibxf70p0cuMNrtf+peGwevVb7k8Ryq9RnwY3q+RUiC8NNpbnXZaTbcU7V2PAZhM6W2
-	 VfOjnDX9mAin2lU0RLvHB9+mtMFcuqY4S1FgBVJOPh7eCVKTrf7PmWJa14r1SZWFzz
-	 67lz2oDWPD7BQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>, 
- Sudeep Holla <sudeep.holla@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250226122325.2014547-1-vincenzo.frascino@arm.com>
-References: <20250226122325.2014547-1-vincenzo.frascino@arm.com>
-Subject: Re: [PATCH v6 0/4] xlnx: dt-bindings: Convert to json-schema
-Message-Id: <174060289250.139585.8159041053673503341.b4-ty@kernel.org>
-Date: Wed, 26 Feb 2025 20:48:12 +0000
+	s=arc-20240116; t=1740602938; c=relaxed/simple;
+	bh=gZjBcOl/386CqJSbAK0vfOXEhFi8iYGEu8dKGfYaEDE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UM2I4WRu3owWk0oqFGs93Dh1r9j5j8VtUHgJm+q/9JszjY1JB11S760J97mhuuc9Sm5ZrnD904ezCDgPcs3dFINrF0M3/5cKPz+vK5dgXSBF+Ej/ybp4ZB53qgZBfyp8verMtnD+ft27XpGvTScE5yAH3O1VUhcYXU6hiHc0qY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9XutZNi; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5454f00fc8dso184179e87.0;
+        Wed, 26 Feb 2025 12:48:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740602935; x=1741207735; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5LN/OwxnNW6hXEfH/vlgCwxT5V7SAIvLyLle5g1daI=;
+        b=Y9XutZNipPcaaAF6zn38qwJr/jgt3dd+6Y05bVDB04yJiRNfHNeS0WFBbxo+OlE64c
+         rM78+jwL1PV5R6eRs2a+gzVyYlehJeT5ozaFwVZFReWWplsyHub9Qg3aqZb1TamD6ymo
+         v4qu+x6B+bu6H4xYay7NOXCTvFAh/tyqnr97zT1gbt/efYuWZWdd+/JJF75q9HuxHfMu
+         07EViw/VWeozXYRSXBXOsSUJ4cEDGsFr1JayP3o+6Knz06srlq7+7sKh0eqdJNkvqeyk
+         sDk663eRm5fTNYyympZYATYL5uHTKjkqgkn0EWgw0lHGaUXGt0x4PQr5KPk+r81/LfIX
+         Igjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740602935; x=1741207735;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5LN/OwxnNW6hXEfH/vlgCwxT5V7SAIvLyLle5g1daI=;
+        b=WwvSg3IzeSrSMA1xHo8qrY0HhMRbIkj5sR3TNbKQhdhox/LOnb4pgdha9292ShILS0
+         i1OCfmICeteQkOnenpb54dbKZobogRXPoH+Sr6JkBu9kZwouEFeXzuKr9eus5On1R8aL
+         9ogAFc8xZjP8PJL+LuUSin39gfASG6oU4lsfuG/VWimUq+0YAEwD3htnLWRALYVLB3ow
+         /9HwlE8uSdzUlat7P3FPJG8l8mzpn0WCwAROhCdzUCz2yJHqxxlRwPHkSF9e/Igq03aW
+         3U7gnRMVAbyyi2191mRUREP2i6qOhNJKeWBY+JKemP0HphDJbuZPfVBmruwim7HGXEXu
+         EcqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS67DCXuyfYIfyWzaj7T5Et9oOlIiM+cIxAGhg8t1jJvVoGQwQqfeAuHnldiJWa6SWBKea@vger.kernel.org, AJvYcCWBOLdPc4k/dhflaO03a9CzCl309pYILozbTZL0NMQLB3XT4/bBVBc7JZA8l2usqx5x/1HaBDIgmiD2RdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxyiw2isHgIluoJ/1pS8sokw8zQWr+d2QpqmzNbo8olgdxcsXy
+	iIqb+XRr+RcG5KZTcv1PlD33IywWTzli0Kkr78LUugMCtHSgYF7l
+X-Gm-Gg: ASbGncuKlpe8aXa1BmqKBkZF79Mf/i7YrklGfxTyT2Nc46NSAsmEkOPD4kqH3SV/ffo
+	6XcFm+8OavaABbeuSvPQ/pW7pkvFusxC12B28nmbRkRCiAzOBbpfGM4PxiP7YyqM0417It6d78n
+	LCSGKaYIxerLi2b4vU8qXuOdYf44xWjsc6DJOXggIZ7YW8J1mRy1jUHesCe+Xtroakbfv3w58FH
+	y3mJF46HztvedHFYuu6rkc5a41gOrWLWaEr0OBRDAZ7opBbptFGOUkGZAi3ucbUm2Sr
+X-Google-Smtp-Source: AGHT+IH4nWCLKEp9bNdPJh7bKmngRMcPhiiv96pUqJ1z6vVUk/7nMiqfAkvDV3dF+eQn4i1eSlN2VQ==
+X-Received: by 2002:a05:6512:b0f:b0:53e:3a7c:c0b5 with SMTP id 2adb3069b0e04-5493c570467mr3182150e87.10.1740602934302;
+        Wed, 26 Feb 2025 12:48:54 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a81ae8193sm6113851fa.105.2025.02.26.12.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 12:48:53 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 26 Feb 2025 21:48:52 +0100
+To: Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v3 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z79-NAOoK-Vimgbr@pc636>
+References: <20250225110020.59221-1-urezki@gmail.com>
+ <20250225110020.59221-3-urezki@gmail.com>
+ <Z79kKiokpq9FpjYc@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z79kKiokpq9FpjYc@boqun-archlinux>
 
-On Wed, 26 Feb 2025 12:23:21 +0000, Vincenzo Frascino wrote:
-> This series converts the folling Xilinx device tree binding documentation:
->  - xlnx,i2s
->  - xlnx,audio-formatter
->  - xlnx,spdif
-> to json-schema.
+Hello, Boqun.
+
+> Hi Ulad,
 > 
-> To simplify the testing a linux tree rebased on 6.13-rc4 is accessible
-> at [1].
+> On Tue, Feb 25, 2025 at 12:00:20PM +0100, Uladzislau Rezki (Sony) wrote:
+> > Switch for using of get_state_synchronize_rcu_full() and
+> > poll_state_synchronize_rcu_full() pair for debug a normal
+> > synchronize_rcu() call.
+> > 
+> > Just using "not" full APIs to identify if a grace period
+> > is passed or not might lead to a false kernel splat.
+> > 
 > 
-> [...]
+> Could you provide detailed explanation on this? I.e. why is _full() is
+> needed? I find the current commit message is a bit vague.
+>
+<snip>
+rcu: Use _full() API to debug synchronize_rcu()
 
-Applied to
+Switch for using of get_state_synchronize_rcu_full() and
+poll_state_synchronize_rcu_full() pair to debug a normal
+synchronize_rcu() call.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Just using "not" full APIs to identify if a grace period is
+passed or not might lead to a false-positive kernel splat.
 
-Thanks!
+It can happen, because get_state_synchronize_rcu() compresses
+both normal and expedited states into one single unsigned long
+value, so a poll_state_synchronize_rcu() can miss GP-completion
+when synchronize_rcu()/synchronize_rcu_expedited() concurrently
+run.
 
-[1/4] ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
-      commit: a206376b425472c7c3a824f47a9967a4c97ae32c
-[2/4] ASoC: dt-bindings: xlnx,audio-formatter: Convert to json-schema
-      commit: 1b8b6dd0c91b7db58e344f01781932458ac43da3
-[3/4] ASoC: dt-bindings: xlnx,spdif: Convert to json-schema
-      commit: 7ed7065dfbbac1b5405a0c8029299847e408cf97
-[4/4] MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
-      commit: 55a1abd6e76ce91eb6049f32efec3a8506686748
+To address this, switch to poll_state_synchronize_rcu_full() and
+get_state_synchronize_rcu_full() APIs, which use separate variables
+for expedited and normal states.
+<snip>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Does it look better?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+--
+Uladzislau Rezki
 
 
