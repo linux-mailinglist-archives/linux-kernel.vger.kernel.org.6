@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-534423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35281A466DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:44:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C630CA466FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67BD81770BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E534423EFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE46C221DAA;
-	Wed, 26 Feb 2025 16:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912D2221546;
+	Wed, 26 Feb 2025 16:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lDPSTg2f"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o8FrW8zE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9B22069A;
-	Wed, 26 Feb 2025 16:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9012144AF;
+	Wed, 26 Feb 2025 16:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587282; cv=none; b=YsvHBetAEr5FV84kZ5EkvVPgadce3JZACMaLTJDRriYcpPuyy06EcD9kVDLN0eiRdhp13CkxTnKQKkQSidncYO+1eAmXUxItLR5QmIMpLD/fhQv3PMDEQI2FKE+af8EehmejIpjDRkneUYolwv+/Txfd3PREc9xtgZXAu0+5yJM=
+	t=1740587302; cv=none; b=XhWa3B0NHrwI9R2O+jn7QBAKZ5mhTPBto2plI2Vzm4IRiquX2b7FDC6KIL/XwPqOLpozdB9+RWruYVRdXB8AwZlHgD3jxbXA3DhqWHLXjLkXE0qer2F6w7iPawYQpVVadQs49LsWoDe8iXowzOQLGkgcrZ02FfkA5GXEltJTlRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587282; c=relaxed/simple;
-	bh=+CJnwpM3+mYhb/baNTRwUdP82sSzeFGR+8cKV8R2Jaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M+ZRxVnpSkISnlCs4rOC5tETIfJSf2gQPiDNrut28VbPk6TRttTGOy4r30fMmduylcXTurZgCg+Hl8IXmx41WACKRWWRyEefaicWHXP+tVNyCLwDiQLPIrbzkjB3fkWjcWt6FcoIh22ZDSr9r2Mm55z9gACoyI4nM43NDMSXbDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lDPSTg2f; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C618544421;
-	Wed, 26 Feb 2025 16:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740587277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+rOTwaDm+HJIE1QxwBJkpKIsIaJ4w8lQuPLKb8xSMk=;
-	b=lDPSTg2fGI4tnkuNQQXNmHL/uceaFcw+Dr6r1NOElk2opoMeJe7utT0IqRefe2C5yEOnAf
-	0AjcrlnCYZ9rq8yVET/0r2V/MRzviky7OuvAYjx048eT+qEzgDO9Hgnh1y6qw4YBq3BDGl
-	BXA+8O0VZXMnwjQGTAv32W1QzO2/aL8CVVFRG1fYWHrqkcqb3S/I7u4s2NkoMQTuuvQQYR
-	HQWlYXhF/lIACwzMnqCNhHhXR8o2zKTSpLV+OOWtv1TV65rIXDUrryTNojPZplas3cw14r
-	7k7moZX7mdZzUo5UGvac3VPErFsR+DBPGVAOtoEP6jPIHVJQrUhJvdW0+xlZdA==
-Date: Wed, 26 Feb 2025 17:27:54 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
- hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
- SFP+ module
-Message-ID: <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
-In-Reply-To: <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
-References: <20250226141002.1214000-1-ms@dev.tdt.de>
-	<Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
-	<d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
-	<20250226162649.641bba5d@kmaincent-XPS-13-7390>
-	<b300404d2adf0df0199230d58ae83312@dev.tdt.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740587302; c=relaxed/simple;
+	bh=RWgbNGbThZAIvkWf4FQylqpPbMrJViP+t/XR7nzg76w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzQYh4MJJXI4ia4StqUa3VW5ksMUoeZgFUyJdQ+wh+zsV+qPBit+0xsd7w99q+s8ZBLxnahwyvpZdrCqG9hTckhYmu1Y+0TDoLZ+/ixx+wztIdU920snzqP/fAtEGcMqxojPlli4EYPrmAosyGy3zjPpVp/IgC+4WUWUHcvWK0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o8FrW8zE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4RmUbpiZrPYzsk4xFenBE/pyKt10j/v0QGOy+nm2ZO0=; b=o8FrW8zE8bGYGDdg7xo7Qyk7OI
+	gfB4DGIvFjlHlatRVJjFyihgwvj3lLUR+Jx9pG2RB9Xukf5r13j4BaW6Q4dYqwYvK/Ru3xbT/ABku
+	0EIHZZT7ZVxNsuHnliwSShaVuxknQMUXF/9SSGwxlcNNxNH4pKKoKAWjWbQ4EVdLcugnAbAwLroxe
+	67hHiaYqYkN8uyTExhXN6wMnu/zwE324JT5yvclKZkUFAVtF85hs3Zrk/wEaha3z/IdRSnLx7shqt
+	wQ9OyxHXYfOG8k5Gr+HtRyVDR+GIsDaxhpHTHxYAYz5jZfKNYWauHzfsEb8nC4zb+47dRARQAtqAu
+	eSpyro6Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnKGb-0000000Fv81-0qEB;
+	Wed, 26 Feb 2025 16:28:13 +0000
+Date: Wed, 26 Feb 2025 16:28:13 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Brian Geffon <bgeffon@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Hugh Dickins <hughd@google.com>,
+	Marek Maslanka <mmaslanka@google.com>
+Subject: Re: [PATCH] mm: fix finish_fault() handling for large folios
+Message-ID: <Z79BHbCL3U5aGS0Q@casper.infradead.org>
+References: <20250226114815.758217-1-bgeffon@google.com>
+ <Z78fT2H3BFVv50oI@casper.infradead.org>
+ <121abab9-5090-486b-a3af-776a9cae04fb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekhedtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemleehrggvmeelfhdttdemrggsvggtmedugehfjeemvgdviegrmedufegttdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeelhegrvgemlehftddtmegrsggvtgemudegfhejmegvvdeirgemudeftgdtpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmshesuggvvhdrthguthdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfiesl
- hhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <121abab9-5090-486b-a3af-776a9cae04fb@redhat.com>
 
-On Wed, 26 Feb 2025 16:55:38 +0100
-Martin Schiller <ms@dev.tdt.de> wrote:
+On Wed, Feb 26, 2025 at 04:42:46PM +0100, David Hildenbrand wrote:
+> On 26.02.25 15:03, Matthew Wilcox wrote:
+> > On Wed, Feb 26, 2025 at 06:48:15AM -0500, Brian Geffon wrote:
+> > > When handling faults for anon shmem finish_fault() will attempt to install
+> > > ptes for the entire folio. Unfortunately if it encounters a single
+> > > non-pte_none entry in that range it will bail, even if the pte that
+> > > triggered the fault is still pte_none. When this situation happens the
+> > > fault will be retried endlessly never making forward progress.
+> > > 
+> > > This patch fixes this behavior and if it detects that a pte in the range
+> > > is not pte_none it will fall back to setting just the pte for the
+> > > address that triggered the fault.
+> > 
+> > Surely there's a similar problem in do_anonymous_page()?
+> 
+> I recall we handle it in there correctly the last time I stared at it.
+> 
+> We check pte_none to decide which folio size we can allocate (including
+> basing the decision on other factors like VMA etc), and after retaking the
+> PTL, we recheck vmf_pte_changed / pte_range_none() to make sure there were
+> no races.
 
-> On 2025-02-26 16:26, Kory Maincent wrote:
-> > On Wed, 26 Feb 2025 15:50:46 +0100
-> > Martin Schiller <ms@dev.tdt.de> wrote:
-> >  =20
-> >> On 2025-02-26 15:38, Russell King (Oracle) wrote: =20
->  [...] =20
->  [...] =20
->  [...] =20
-> >>=20
-> >> OK, I'll rename it to sfp_fixup_rollball_wait. =20
-> >=20
-> > I would prefer sfp_fixup_fs_rollball_wait to keep the name of the=20
-> > manufacturer.
-> > It can't be a generic fixup as other FSP could have other waiting time=
-=20
-> > values
-> > like the Turris RTSFP-10G which needs 25s. =20
->=20
-> I think you're getting two things mixed up.
-> The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
-> there simply is an additional 4s wait at the beginning before we start
-> searching for a phy.
-
-Indeed you are right, I was looking in older Linux sources, sorry.
-Still, the additional 4s wait seems relevant only for FS SFP, so it should
-be included in the function naming to avoid confusion.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Ah, so then we'll retry and allocate a folio of the right size the next
+time?  Rather than the shmem case where the folio is already allocated
+and we can't change that?
 
