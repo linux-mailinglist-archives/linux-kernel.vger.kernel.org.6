@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-535140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83614A46F78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:31:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5188AA46F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A798188D304
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09A22188D2E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCDD22422D;
-	Wed, 26 Feb 2025 23:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DD925FA3E;
+	Wed, 26 Feb 2025 23:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="D9icv2Oe"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ABA25FA23;
-	Wed, 26 Feb 2025 23:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CCyu/PrW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0099725FA23;
+	Wed, 26 Feb 2025 23:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740612698; cv=none; b=j/1uHQakBj8wcUsoUg3N8RREXUPT8oo47UI5rcHHZduX84/DZYpf0HjfAp/jgnDS4+6ei0LM5BdyxOJxKW/JlsjqdrfEfbkz/zW4VCh9e/KjRJXhH2YKi7OKk5Ca5lTg/tkXzikvwxNKAfp3EYp8YjDmVZiX1SGM1Rer5v+4epk=
+	t=1740612746; cv=none; b=JzuNtXjrr0OlTHKq35F8ykx5P8xa28al+qe6T1NjB/zQmDUSGkV4wTn54OZPdNM1T7Tu5qoj2ygwDtNC12E/27HOIxYzhuY+/tepn6Yw/kA/r9HNe79cs/D5QtVmUip68tschOQCpPHr+rKUeBGUT7hdocCl2ca+1o/HyT/sFEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740612698; c=relaxed/simple;
-	bh=ta9421UjHvWIHjdsl6MGoh7QrZef/XCE0ZzA4+ffJjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8ilbSUC8R89KU7ELNfugY6bBhcFNKBHep41lbM1xyHkYHBM14a2I6P7VmkRh4N7VUPn/MAr4jZgCKYI3dGDDGJzPeHSMxfThow7PQurqbqEDwR8lVYy8OX6CAG+GP4zLSP0rfTfc3E7Y66fGSTH8qb528B0qcE2wTtc5pMwWrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=D9icv2Oe; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii. (unknown [20.236.10.120])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9C950210EACC;
-	Wed, 26 Feb 2025 15:31:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9C950210EACC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740612696;
-	bh=smjit/QOli8nDcBTnlq+IXvVJxQjsbEgJ6Aw5iXyn/0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9icv2OehF8C4IQm6v8VGElOql6Tl2Byga40BAnvuJFcSL21kP6EiJAZapo85yaEv
-	 0z+DfrPz+nWW/C92EgQK94mRa2xtr+gXgtV7CR0P6fCXsYd3zisGZxIkHJ9S+LQo/Y
-	 Fxf2YP+gaMG+c+MaB8mm2wGgwpFRD+e7/0qmWEYc=
-Date: Wed, 26 Feb 2025 15:31:33 -0800
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
-	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
-	arnd@arndb.de, jinankjain@linux.microsoft.com,
-	muminulrussell@gmail.com, mrathor@linux.microsoft.com,
-	ssengar@linux.microsoft.com, apais@linux.microsoft.com,
-	Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
-	gregkh@linuxfoundation.org, vkuznets@redhat.com,
-	prapal@linux.microsoft.com, muislam@microsoft.com,
-	anrayabh@linux.microsoft.com, rafael@kernel.org, lenb@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH v5 05/10] acpi: numa: Export node_to_pxm()
-Message-ID: <Z7-kVXsMrhhNV17S@skinsburskii.>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1740612746; c=relaxed/simple;
+	bh=Kua10j+9s5qqV3YA7Nq1paaFw2az235kbmUb8iAmuiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WmJvWwZT1zcqCrljMtlicXDBN6sk5yra/vOk2w4ywC77/506+3I+z+ObARd7Tf6A6HBaBwenBbv3rHejHy+FBI+ZClDnS7hGDPPqh4RHRa4ETOxlfUkueiRW75bqRpnC8+srlxCow7XMUfDm9GmcW/uGy7ULSnK0FfojKbMGuUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CCyu/PrW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740612737;
+	bh=lDZG/aLyVQ4ffMEW1u60XV6WdfLbDHHPSxwBIYPNZjw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CCyu/PrWP/Ck5c1m7UGLU9MeOjEdg4PGBSeQDf9R5J1buSNCYP6Fr/anIFYtAd76T
+	 JnP0szJGfAnH2faPmtuSZNWC0e24A1bmZcn6CPcT8MD/LkBLVyLvnG6QFtA58RX0R7
+	 vaGk1NlooIRMBEoYu5xTQMpJtirFYck8lz/fFgzRVJts3RH+OQ+fmqiD2BdKYjdz61
+	 ZWcf+sdW5UG/3XFfGjfvToUFv+LB4ng+5KMeyfHQZCcQjXP6EbQ50kVKiyqxBjw2wk
+	 uy1e+Z+IKFlos1uHHNJhAF3a6I2G+Nsmuzv7Dvb9+C6N1BaHG0KYC/D3h4b0rerZxM
+	 XPs8h2P5aFJ1A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z39jr6VJdz4wcD;
+	Thu, 27 Feb 2025 10:32:16 +1100 (AEDT)
+Date: Thu, 27 Feb 2025 10:32:14 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.cz>
+Cc: David Sterba <dsterba@suse.com>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the btrfs tree
+Message-ID: <20250227103214.2cf95e8a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: multipart/signed; boundary="Sig_/HLb.Y+A27vi/Ve_qop5eNa=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Feb 26, 2025 at 03:07:59PM -0800, Nuno Das Neves wrote:
-> node_to_pxm() is used by hv_numa_node_to_pxm_info().
-> That helper will be used by Hyper-V root partition module code
-> when CONFIG_MSHV_ROOT=m.
-> 
+--Sig_/HLb.Y+A27vi/Ve_qop5eNa=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Hi all,
+
+After merging the btrfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+fs/btrfs/extent_io.c: In function 'btrfs_set_folio_subpage':
+fs/btrfs/extent_io.c:874:45: error: passing argument 2 of 'btrfs_is_subpage=
+' from incompatible pointer type [-Wincompatible-pointer-types]
+  874 |         if (!btrfs_is_subpage(fs_info, folio->mapping))
+      |                                        ~~~~~^~~~~~~~~
+      |                                             |
+      |                                             struct address_space *
+In file included from fs/btrfs/extent_io.c:26:
+fs/btrfs/subpage.h:95:51: note: expected 'struct folio *' but argument is o=
+f type 'struct address_space *'
+   95 |                                     struct folio *folio)
+      |                                     ~~~~~~~~~~~~~~^~~~~
+
+Caused by commit
+
+  40524fd05deb ("btrfs: kill EXTENT_FOLIO_PRIVATE")
+
+I have used the btffs tree from next-20250226 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HLb.Y+A27vi/Ve_qop5eNa=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme/pH4ACgkQAVBC80lX
+0Gy1Zgf/UrU55KYEjwjvB+FcDeG5NMQeKCPeczP1huJp7eYPN5ZOvABk8Wa8TRCI
+nA5LEq/5SpKtU63/fMvt/VkS1Y4oSoruluswobO/0n4cyTdACcfraQL8Fzis8F2v
+jBAlOxV98B5+GXCZnUwZKAQVMT09R9HxbCuba4wZerywXGS5QsXkBqdUmJOu6lR9
+a2/kYn6EJ/D027txP/ReY4oZI3zXqV9IbEFTkoAfLyRQssptB0hsm5BXfM/u0vmB
+wdU1tX4H0AyN9Qexl4dCdDZYBxqgs+UnnllupoHvGG4PfhxgftC5G1MzVY8oNs1G
+fT/JFLafOAJC0M1JR8NVC7s467OXfA==
+=oSKn
+-----END PGP SIGNATURE-----
+
+--Sig_/HLb.Y+A27vi/Ve_qop5eNa=--
 
