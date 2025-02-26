@@ -1,205 +1,221 @@
-Return-Path: <linux-kernel+bounces-533215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF5CA456F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:48:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98E9A45738
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A0517249D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEFE188FEE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1052686AA;
-	Wed, 26 Feb 2025 07:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BDF224231;
+	Wed, 26 Feb 2025 07:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LYhxfECj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8Cqk/sEs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LYhxfECj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8Cqk/sEs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Snl7o7CH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCB41898FB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33F51E1DE6;
+	Wed, 26 Feb 2025 07:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556098; cv=none; b=MA2Q3Afr7MvHMTmZ0Sk7sXSxvZYeh6+BDPgX4W4mYay/kcW+AWmUD0M0MPsW+lFMZUzn6L1iS/Ok+z/HBbbKgWtZBDy4HYMwSXIvbTwfHKARr6dESx5PzknDOQEa/C75Q+qExuvAllZn79PSdquYjgCj+m1IgMHPvE4F4tkG01w=
+	t=1740556208; cv=none; b=IwSbe+F/3sajFyf75ZpdO6byfF6gRtp0mCGA8SFaWIpDR7ZDkya2NJXrahBQuzhK4qtqJbSmKrGBl0KVu4mAM6yzqcziEVkrasuWIwi48mNeXKxF6nHRCjLR6SfCgSrOF9R8IuntRXFrdTYjucEUKzxKml6/P3wobVvAbujoJBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556098; c=relaxed/simple;
-	bh=ORQ/MWKZIVHZNPycW8K2CopfAf5d3bKuxLJzswEaJ5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sc9qhAeRYurHS694M2tIvLpCxWuJkavJDukh34DfxJlWuevniYqtzOiMQOVh065t7j8NNs62hK63LU8qHGJsNFINmgLugPrIzl0USMLZcKEFy0quVEqA2f2nEr85+A6JdYibWPOW4tMUWM71HgDJd2jOl9RlGxcqsL2ejLIvPbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LYhxfECj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8Cqk/sEs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LYhxfECj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8Cqk/sEs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CE0BC1F387;
-	Wed, 26 Feb 2025 07:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740556094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
-	b=LYhxfECjdPqZzgEPVTUL/6MtencREBbcGFR88mO88ljAB6l/2X6Fe2yyXl8UAdQbC+2sMJ
-	u9Mwcq78EjLe4ITfSpsOo20XD9wYt7fcScnkRd/l8Ha8csIEOr3VYCXUwuhfjnv2mrjKeI
-	6kChoaqp+K2qvuSU2ZTIcUZOvlrjhr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740556094;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
-	b=8Cqk/sEs8JIIYgK4SVTypbTraxTqFH61HSTeAJ/HapWAnXTrPa1/dWyT7cJgtIphJjUCUH
-	pBHyi/w0yuLh9RAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740556094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
-	b=LYhxfECjdPqZzgEPVTUL/6MtencREBbcGFR88mO88ljAB6l/2X6Fe2yyXl8UAdQbC+2sMJ
-	u9Mwcq78EjLe4ITfSpsOo20XD9wYt7fcScnkRd/l8Ha8csIEOr3VYCXUwuhfjnv2mrjKeI
-	6kChoaqp+K2qvuSU2ZTIcUZOvlrjhr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740556094;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
-	b=8Cqk/sEs8JIIYgK4SVTypbTraxTqFH61HSTeAJ/HapWAnXTrPa1/dWyT7cJgtIphJjUCUH
-	pBHyi/w0yuLh9RAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A36213A53;
-	Wed, 26 Feb 2025 07:48:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2KBYJD7HvmcdOQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 07:48:14 +0000
-Message-ID: <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
-Date: Wed, 26 Feb 2025 08:48:14 +0100
+	s=arc-20240116; t=1740556208; c=relaxed/simple;
+	bh=8EIhzlM2gLlOBarT9qw4PuIMvUldVxztIuTe/SPq5U0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dElg0U9tLs0t5TFUwMbyK54NcfPHrcBQTx6PV1j1IAjaN048URfuLKn4xW8bEiu24MRwDFwa635xouWvaSgs8inCUBpBpdXU8/LdX7cCWW1ILVqokXNXqkbpgVjbH2Fo3dAHlrwFMKPjuJr5/Bw6CgpBdMdFyn04gw1OOmSmmJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Snl7o7CH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740556206; x=1772092206;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8EIhzlM2gLlOBarT9qw4PuIMvUldVxztIuTe/SPq5U0=;
+  b=Snl7o7CHq98Ozc3ZrYtwezH8jvDI0A/o6AWyC+s6aj0Y3i0byKiKlDjc
+   wuhoS4DIpzi9hul/JtdM345Z6iR2N7NQlGOg+5CGOZEKQWIl2nZR1AVKF
+   S5PDx7qb5m58izw5gzKQPb80FAxfFnHwI6ZipL47AjjaAYWE7FvX+DmLP
+   DKr4BuW2ubkabWs9qkUYgG4Wsw47J1SWpktm8cZOUkYjic5qIPujAniCr
+   LvlPaOzHMauk5EyLyLKlPtoVWcySzRFKNZbVai4S+9CFmi+s0yVSZYIL3
+   jx6PMDsiMoBFowB3PSiwuGLrGr1V1kq5J/jWo+u5iNj3lNvgQER15m1ZU
+   g==;
+X-CSE-ConnectionGUID: fejwfJYKQge88umUvYDAJQ==
+X-CSE-MsgGUID: rEMmmsFqR2GQAdkRZgEe3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="45304958"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="45304958"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 23:49:55 -0800
+X-CSE-ConnectionGUID: YViQm8QORYaoX5S3GrZdIw==
+X-CSE-MsgGUID: NzyRZrwHQuSYgVocsSPURQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120742932"
+Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
+  by fmviesa003.fm.intel.com with ESMTP; 25 Feb 2025 23:49:48 -0800
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+To: Simon Horman <horms@kernel.org>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	David E Box <david.e.box@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+	David E Box <david.e.box@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Serge Semin <fancer.lancer@gmail.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net-next v8 0/6] Enable SGMII and 2500BASEX interface mode switching for Intel platforms
+Date: Wed, 26 Feb 2025 15:48:31 +0800
+Message-Id: <20250226074837.1679988-1-yong.liang.choong@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
-To: Arnd Bergmann <arnd@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller <deller@gmx.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250225164436.56654-1-arnd@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250225164436.56654-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.20 / 50.00];
-	RSPAMD_URIBL(4.50)[arndb.de:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.978];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[kernel.org,linuxfoundation.org,gmx.de];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:email]
-X-Spam-Score: 0.20
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd
+During the interface mode change, the 'phylink_major_config' function will
+be triggered in phylink. The modification of the following functions will
+support the switching between SGMII and 2500BASE-X interface modes for
+the Intel platform:
 
-Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Dummycon is used as a fallback conswitchp for vgacon and fbcon
-> in the VT code, and there are no references to it if all three
-> are disabled, so just leave it out of the kernel image for
-> configurations without those.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/video/console/Kconfig | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-> index bc31db6ef7d2..1c4263c164ce 100644
-> --- a/drivers/video/console/Kconfig
-> +++ b/drivers/video/console/Kconfig
-> @@ -47,8 +47,7 @@ config SGI_NEWPORT_CONSOLE
->   	  card of your Indy.  Most people say Y here.
->   
->   config DUMMY_CONSOLE
-> -	bool
-> -	default y
-> +	def_bool VT || VGA_CONSOLE || FRAMEBUFFER_CONSOLE
+- xpcs_switch_interface_mode: Re-initiates clause 37 auto-negotiation for
+  the SGMII interface mode to perform auto-negotiation.
+- mac_finish: Configures the SerDes according to the interface mode.
 
-What about MDA_CONSOLE and STI_CONSOLE. Don't they require this as fallback?
+With the above changes, the code will work as follows during the interface
+mode change. The PCS will reconfigure according to the pcs_neg_mode and the
+selected interface mode. Then, the MAC driver will perform SerDes
+configuration in 'mac_finish' based on the selected interface mode. During
+the SerDes configuration, the selected interface mode will identify TSN
+lane registers from FIA and then send IPC commands to the Power Management
+Controller (PMC) through the PMC driver/API. The PMC will act as a proxy to
+program the PLL registers.
 
-Best regards
-Thomas
+Change log:
+v1 -> v2: 
+ - Add static to pmc_lpm_modes declaration
+ - Add cur_link_an_mode to the kernel doc
+ - Combine 2 commits i.e. "stmmac: intel: Separate driver_data of ADL-N
+ from TGL" and "net: stmmac: Add 1G/2.5G auto-negotiation
+ support for ADL-N" into 1 commit.
 
->   
->   config DUMMY_CONSOLE_COLUMNS
->   	int "Initial number of console screen columns"
+v2 -> v3:
+ - Create `pmc_ipc.c` file for `intel_pmc_ipc()` function and 
+ allocate the file in `arch/x86/platform/intel/` directory.
+ - Update phylink's AN mode during phy interface change and 
+ not exposing phylink's AN mode into phylib.
+ 
+ v3 -> v4:
+ - Introduce `allow_switch_interface` flag to have all ethtool 
+ link modes that are supported and advertised will be published.
+ - Introduce `mac_get_pcs_neg_mode` function that selects the PCS 
+ negotiation mode according to the interface mode.
+ - Remove pcs-xpcs.c changes and handle pcs during `mac_select_pcs`
+ function
+ - Configure SerDes base on the interface on `mac_finish` function.
+ 
+ v4 -> v5:
+ - remove 'allow_switch_interface' related patches.
+ - remove 'mac_select_pcs' related patches.
+ - add a soft reset according to XPCS datasheet for re-initiate Clause 37
+ auto-negotiation when switching to SGMII interface mode.
+
+v5 -> v6:
+- Remove 'mac_get_pcs_neg_mode' related patches. 
+  The pcs_neg_mode is properly handled by the
+  'net: add negotiation of in-band capabilities' patch series:
+  https://patchwork.kernel.org/project/netdevbpf/cover/Z08kCwxdkU4n2V6x@shell.armlinux.org.uk/
+- Using act_link_an_mode to determine PHY, as cfg_link_an_mode was not
+  updated for the 2500BASE-X interface mode, caused a failure to link up.
+- Clean up and standardize the interface mode switch for xpcs.
+
+v6 -> v7:
+- Remove the "net: phylink: use act_link_an_mode to determine PHY" patch.
+- Use pl->link_interface in phylink_expects_phy().
+- Remove priv->plat->serdes_powerup in intel_tsn_lane_is_available() as it is
+  always true.
+- Refactor the code in intel_config_serdes().
+- Rename intel_config_serdes() to intel_mac_finish() with an AN mode parameter.
+- Define the magic number as "max_fia_regs".
+- Store the pointer and the number of elements in the platform info structure.
+- Move the arrays to the C file.
+
+v7 -> v8:
+- Move xpcs_switch_interface_mode() into xpcs_pre_config().
+- Move the "stmmac: intel: interface switching support for EHL platform" commit
+  into "stmmac: intel: configure SerDes according to the interface mode" to
+  resolve the "defined but not used" error.
+- Changes for the "arch: x86: add IPC mailbox accessor function and add SoC register access" commit:
+    - Rephrase the second bullet in the patch description.
+    - Remove 'config INTEL_PMC_IPC' from Kconfig, as discussed.
+    - Remove the authors from intel_pmc_ipc.h.
+    - Define VALID_IPC_RESPONSE for package.count.
+    - Update the copyright year to 2025.
+    - Create struct pmc_ipc_rbuf.
+    - Update the function description for intel_pmc_ipc().
+
+
+v1: https://patchwork.kernel.org/project/netdevbpf/cover/20230622041905.629430-1-yong.liang.choong@linux.intel.com/
+v2: https://patchwork.kernel.org/project/netdevbpf/cover/20230804084527.2082302-1-yong.liang.choong@linux.intel.com/
+v3: https://patchwork.kernel.org/project/netdevbpf/cover/20230921121946.3025771-1-yong.liang.choong@linux.intel.com/
+v4: https://patchwork.kernel.org/project/netdevbpf/cover/20240129130253.1400707-1-yong.liang.choong@linux.intel.com/
+v5: https://patchwork.kernel.org/project/netdevbpf/cover/20240215030500.3067426-1-yong.liang.choong@linux.intel.com/
+v6: https://patchwork.kernel.org/project/netdevbpf/cover/20250204061020.1199124-1-yong.liang.choong@linux.intel.com/
+v7: https://patchwork.kernel.org/project/netdevbpf/cover/20250206131859.2960543-1-yong.liang.choong@linux.intel.com/
+
+Choong Yong Liang (5):
+  net: phylink: use pl->link_interface in phylink_expects_phy()
+  net: pcs: xpcs: re-initiate clause 37 Auto-negotiation
+  stmmac: intel: configure SerDes according to the interface mode
+  net: stmmac: configure SerDes on mac_finish
+  stmmac: intel: interface switching support for ADL-N platform
+
+David E. Box (1):
+  arch: x86: add IPC mailbox accessor function and add SoC register
+    access
+
+ MAINTAINERS                                   |   1 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c | 231 +++++++++++++++++-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.h |  29 +++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  13 +
+ drivers/net/pcs/pcs-xpcs-wx.c                 |   4 +-
+ drivers/net/pcs/pcs-xpcs.c                    |  29 ++-
+ drivers/net/phy/phylink.c                     |   2 +-
+ .../linux/platform_data/x86/intel_pmc_ipc.h   |  94 +++++++
+ include/linux/stmmac.h                        |   4 +
+ 10 files changed, 394 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/platform_data/x86/intel_pmc_ipc.h
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.34.1
 
 
