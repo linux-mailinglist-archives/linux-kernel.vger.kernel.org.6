@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-533974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202AFA460FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:32:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482A2A460F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BDF179F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F93A98F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C310315E5AE;
-	Wed, 26 Feb 2025 13:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEFE18B492;
+	Wed, 26 Feb 2025 13:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Qqoukv+D"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO1HF207"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBCD101FF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A012904;
+	Wed, 26 Feb 2025 13:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576772; cv=none; b=s8LeGXozww1JJZFBZ45I3aOf5hQPpPAU7ehQdJum0e1BTmaP3pD3tFxC47CzWltxRXgfC7IybZNNLpuSSwq3wGsvb9C48hpkzC7Tm1Wz4xkEzZ/1GOQ+heLJl8fPsZ001tCEczS7mLuhTWcKHfaSUN+VAdJXNuIr9byUriB/EYM=
+	t=1740576730; cv=none; b=sK5ULQnYrEGNgruiHFMd91dxhQK+TAIh4DGBkidVzkVZY3XrNcc04187lYtRUywGpZDgwZ+Xg5AdBJLmuNPL5mRC31KXb0Fgjg+qtrgVYGiLOurjHHdkRCuY4K7supuTWbBNzDaCEpzp4BR3YWWrmQYiBCbPz+Oqs9JXL1QoXGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576772; c=relaxed/simple;
-	bh=zYf2TGn1bduJfQJOUoeRinZjy8HAppg9lifk3sexQ84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N2RDZXqVPQG2frTCbgJoTWc2aRUXKAEADP/rquoETsXwXHXElUigEqSNLfLRvSKbgfQTHW356f5OsdZMkmNIXl3AeB8Ix9BtuZ9X27Oggyip5k6NkPPTj+fN6BHnSQSGfu0qh2i4noRm3tELq5/5lB1WdnJiWm3eR4UdYeNxQcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Qqoukv+D; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=owRcVAIfAdo/eBUmry6xKaLhXuxlLmRZar2zptWsOeY=; t=1740576770; x=1741786370; 
-	b=Qqoukv+DiZrPAKRksi6yhlQ7/DirGpWFMCmJ9icuN8H5OSyNJExGBiusmsBcDR76u+8fnvk+9eT
-	62ofBQx3PY5W6VCali9YbF9ynhDDNHTSr2veMVAU72OvxIxKS8tUpXA8un92+k74qYZWh2+FGIAYV
-	dAy8pD31q1H6reEsnI+R0dMeJkTX/Oj3Dqpsm/a55vVEXb4T8JOLNuok3ApfwUBo/Ap5W9lgr1exy
-	APAR8WG2fKoz5Zqz1q+VKfq32o6MQUoAynKX0A4RGuTRxhyfg+iRDJalK5lWF2etLs8lOwmB1h+Oe
-	kDh8CO9NVmIChNDt6q1/coLkI76ywaQaEdRQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1tnHWp-0000000BVAQ-1rwO;
-	Wed, 26 Feb 2025 14:32:48 +0100
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: x86@kernel.org,
+	s=arc-20240116; t=1740576730; c=relaxed/simple;
+	bh=87XnNLS5vX+w11/Z+SmXBj0sS8D51hZWXWwqpckuLdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=brJJDylulLRyr8W7ao50trUIrKMv5UcYyV9FcWSCRMRt9l8OPRhZ5aqZ/AkMLQTeTOcH2eJMuOLHeKk5EfnQ5KHqOQN297zuSMk8vOOuB7Sgoz4GUxjDXTpN1/bCbcagQQe6hibJxneKwW4tm1Hllb0tnjG05WcS+IYNijcW674=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO1HF207; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7452C4CED6;
+	Wed, 26 Feb 2025 13:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740576729;
+	bh=87XnNLS5vX+w11/Z+SmXBj0sS8D51hZWXWwqpckuLdE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MO1HF207lu5OxxGlBGpLsRjkUTdAtTRgQFPFa0UKKxxPPonRiBCQcs18JJDVExy16
+	 8szssYjWaU8BeY1FVI37zFA49AlLuOKH5Di74fPMeTipoT/LsCT5ziGvCa3o81uQ92
+	 5VWuoE9Te4LYMbxo53+UC9dJx17YUlL9z02zpxkQIm0pWkiUwWswYYTk7tUlwF/2gb
+	 oBILwYzQ0MAvrEiIIyUNLJArSnxdWDX+6m7tH7WSXADzaYhFkoxrMKMpRz5OG3dqdv
+	 nORcz9g35yqluagNBkUK7KMK51uHeNzqY735133A3Je3TyTKCT7lZMEYQaF9ENuQKx
+	 SdPUrkl2pTlag==
+Date: Wed, 26 Feb 2025 07:32:07 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Mahadevan <quic_mahap@quicinc.com>, Maxime Ripard <mripard@kernel.org>,
+	Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	mingo@kernel.org
-Cc: Benjamin Berg <benjamin.berg@intel.com>
-Subject: [PATCH v2] x86: avoid copying dynamic FP state from init_task
-Date: Wed, 26 Feb 2025 14:31:36 +0100
-Message-ID: <20250226133136.816901-1-benjamin@sipsolutions.net>
-X-Mailer: git-send-email 2.48.1
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] dt-bindings: display/msm: qcom,sa8775p-mdss: Add
+ missing eDP phy
+Message-ID: <174057672730.1813399.10950790122107114702.robh@kernel.org>
+References: <20250221151311.138755-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221151311.138755-1-krzysztof.kozlowski@linaro.org>
 
-From: Benjamin Berg <benjamin.berg@intel.com>
 
-The init_task instance of struct task_struct is statically allocated and
-may not contain the full FP state for userspace. As such, limit the copy
-to the valid area of both init_task and dst and ensure all memory is
-initialized.
+On Fri, 21 Feb 2025 16:13:11 +0100, Krzysztof Kozlowski wrote:
+> The Qualcomm SA8775p MDSS display block comes with eDP phy, already used
+> in DTS and already documented in phy/qcom,edp-phy.yaml binding.  Add the
+> missing device node in the binding and extend example to silence
+> dtbs_check warnings like:
+> 
+>   sa8775p-ride.dtb: display-subsystem@ae00000: Unevaluated properties are not allowed ('phy@aec2a00', 'phy@aec5a00' were unexpected)
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. Fix reg size (address/size cells =1) in the example (Rob)
+> ---
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 32 +++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
+> 
 
-Note that the FP state is only needed for userspace, and as such it is
-entirely reasonable for init_task to not contain parts of it.
-
-Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-Fixes: 5aaeb5c01c5b ("x86/fpu, sched: Introduce CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT and use it on x86")
-
-----
-
-v2:
-- Fix code if arch_task_struct_size < sizeof(init_task) by using
-  memcpy_and_pad.
----
- arch/x86/kernel/process.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 6da6769d7254..a8f65c17df10 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -93,7 +93,13 @@ EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
-  */
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- {
--	memcpy(dst, src, arch_task_struct_size);
-+	/* init_task is not dynamically sized (incomplete FPU state) */
-+	if (unlikely(src == &init_task))
-+		memcpy_and_pad(dst, arch_task_struct_size,
-+			       src, sizeof(init_task), 0);
-+	else
-+		memcpy(dst, src, arch_task_struct_size);
-+
- #ifdef CONFIG_VM86
- 	dst->thread.vm86 = NULL;
- #endif
--- 
-2.48.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
