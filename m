@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-534500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A70A4677D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:09:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A8BA467A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFEB3A5424
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 568841885F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CD2224895;
-	Wed, 26 Feb 2025 17:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BCF2248B8;
+	Wed, 26 Feb 2025 17:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="boECVuFj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="WlEkZEIM"
+Received: from out-14.pe-b.jellyfish.systems (out-14.pe-b.jellyfish.systems [198.54.127.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C054A221DB5;
-	Wed, 26 Feb 2025 17:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAC121CFFB;
+	Wed, 26 Feb 2025 17:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589772; cv=none; b=RqZTK5yJGO9+06DAgED1KWehiIqMIv3CiPqPamS+DPp98VOASjIjlenG3BuzxPrI/5kVR9s3A7uKfJROlo+8a6P0f5Irg46XisNSrBMUDZD4eqBLC7C1Rvl+8f3J8Pkk3Hq9v4wT3mU0EDox87ma8DKSaNdpoHMphL91IXfv990=
+	t=1740589834; cv=none; b=WG9tG3QaWonW1n/nYmrm6+mqKEryXMmAN86InNK+62+5Lgcw/fTjvB2jNYZ0540/z1kPYss9y3LJ+1D+RTiuiDmCyLCMWZGZuRWt9j6igep72KCt1a1hPPIGCyB2MUF+SzsJB1OBUoeivIXGcRXOBjeUoi8XvNGnVZx5Vdxj10c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589772; c=relaxed/simple;
-	bh=RpZK3hDwnoyWB6QxzrvsdxdnOrzjeLEZ0yDi6js33yQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dM5YdES22SrS/USJNG/2KT0POt/g4D5ADV/87iTL0zXVtLImWhz+JdNpiBOUh3ILfgHYZJhI+cOJ1IXq+Q2SAS0iygxPDiIi3VBEWizX+JckhrhWbvIJfvqzebf8/w3ssFXSmSQyzBwnbMx8fzOFGQXKGngTQbf8kXfpFlOSm7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=boECVuFj; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740589771; x=1772125771;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RpZK3hDwnoyWB6QxzrvsdxdnOrzjeLEZ0yDi6js33yQ=;
-  b=boECVuFjH/qx0EIneL3BpyqSaRMApFZgwKF7g/l3E9pI9N6EdYClRJew
-   sR+KwrrxidsaYdyN67Ip4vyp/62n855Ggev2mXDs+aNDnxGeIzwj0GcaB
-   hWtD6k5pt6bvYwAP76u41Ts7Q3Vhmm42JZEUNLWpP8/KapcdpzomdgNHF
-   VINA5s9d5Shjbl1fBYV38iywMNRumKPBf7g4pa4d6MJnR5dUcrCrbKcaA
-   dTtiXMvj+UlCsRWZLMfRBl7TXKgDtY4tYJx2DHhSUlNQswn6kKTFta1jK
-   K43G8upIXQQZYeLASkM4a1SRqX8MAmWC2A4lYtp64Q12TCmht3mhTwzXp
-   g==;
-X-CSE-ConnectionGUID: LVxHglW5TWavH4dMC67wzQ==
-X-CSE-MsgGUID: dMpRvnkjQraNyJG2Pc4h/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41579817"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="41579817"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 09:09:30 -0800
-X-CSE-ConnectionGUID: fdNNbC1yTaun7e2cRxPbvQ==
-X-CSE-MsgGUID: 7ZU8MHxaS0CAxG0yml802w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="121758725"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.111.226]) ([10.125.111.226])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 09:09:29 -0800
-Message-ID: <5fd6c945-9319-4bde-9c0b-3ab864da111c@intel.com>
-Date: Wed, 26 Feb 2025 09:09:39 -0800
+	s=arc-20240116; t=1740589834; c=relaxed/simple;
+	bh=ET6MnGOAw+tmFtDYLv/Ch2D8SAlnx0O5Qbh8oHJdoso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCjlrcUsllZoOuyB/0XDc2TxzgC6dDoK4rF24rxo3R0URGFC2wTBKFTxD0E2F8PAGTgC1leF9TuLBUfc186CaGHpYzaIDfrr+qKkh+LstRSo1+xE3y/22gO1bMq6buHTaLkSZen/PofObRvTTKoFAuZO6ncBTTSzfVoHrU0kH3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=WlEkZEIM; arc=none smtp.client-ip=198.54.127.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
+	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z31F85lf1zDqfN;
+	Wed, 26 Feb 2025 17:10:20 +0000 (UTC)
+Received: from MTA-05.privateemail.com (unknown [10.50.14.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z31F85FvZz3hhVj;
+	Wed, 26 Feb 2025 12:10:20 -0500 (EST)
+Received: from mta-05.privateemail.com (localhost [127.0.0.1])
+	by mta-05.privateemail.com (Postfix) with ESMTP id 4Z31F83yDwz3hhVF;
+	Wed, 26 Feb 2025 12:10:20 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1740589820;
+	bh=ET6MnGOAw+tmFtDYLv/Ch2D8SAlnx0O5Qbh8oHJdoso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WlEkZEIMW+KffMjCPDH6+idMT3DAJuMMkd3eaQoKDW3VvaRGO0J3tOIXHGGlqJxv1
+	 JisZa8byIBamvcutb6I+rXFqevtlxyFBrmvtPYks7GylmOBh8GGIFN01rUPGrQD5x/
+	 0FuTTdr4OIt5exSvZNGJptZ+tlQD+3pGQw84YnilKTN3hcQH63wzYHR4CulQ4WcemX
+	 Qm9CW9fyg6Rng3J2fBAL+Y9yqLx4Ibi0/dfSh8WsqQztA6FF7n9kAopBo4ZfSZciWj
+	 FlYP2fNjmDH2TBMjX9/ceKw+rFv9fNgHKvji1NBvU7D8D6rAO0qxWEA+qgzZif4TxF
+	 svfud/0j7u+vA==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-05.privateemail.com (Postfix) with ESMTPA;
+	Wed, 26 Feb 2025 12:10:08 -0500 (EST)
+Date: Wed, 26 Feb 2025 12:10:08 -0500
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Message-ID: <Z79K8Ag4SJYtJTtM@65YTFL3.secure.tethers.com>
+References: <20250225134612.577022-1-sam.winchenbach@framepointer.org>
+ <20250225134612.577022-2-sam.winchenbach@framepointer.org>
+ <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] x86/fpu: make kernel-mode FPU reliably usable in
- softirqs
-To: Eric Biggers <ebiggers@kernel.org>,
- David Laight <david.laight.linux@gmail.com>
-Cc: Xiao Liang <shaw.leon@gmail.com>, x86@kernel.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>
-References: <20250220051325.340691-1-ebiggers@kernel.org>
- <20250220051325.340691-2-ebiggers@kernel.org>
- <CABAhCOQjnSsos3gm4GWrxFUdV8dw-=r_mMn0+xdjnZjJ0PQ9MA@mail.gmail.com>
- <20250221193124.GA3790599@google.com> <20250225222133.395f7194@pumpkin>
- <20250225225932.GA2975818@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250225225932.GA2975818@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-sparkling-caped-saluki-b1cbad@krzk-bin>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 2/25/25 14:59, Eric Biggers wrote:
-> If we had to save/restore a large number of vector registers in every crypto
-> function call (not amortized to one save/restore per return to userspace), that
-> would be a big performance problem.
+On Wed, Feb 26, 2025 at 09:03:13AM +0100, Krzysztof Kozlowski wrote:
+> On Tue, Feb 25, 2025 at 08:46:12AM -0500, Sam Winchenbach wrote:
+> > Adds two properties to add a margin when automatically finding the
+> > corner frequencies.
+> > 
+> > Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+> > ---
+> >  .../bindings/iio/filter/adi,admv8818.yaml          | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> 
+> Bindings are before users (see DT submitting patches), so this should be
+> re-ordered.
+> 
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> > index b77e855bd594..2acdbd8d84cb 100644
+> > --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> > @@ -44,6 +44,18 @@ properties:
+> >    '#clock-cells':
+> >      const: 0
+> >  
+> > +  adi,lpf-margin-hz:
+> > +    description:
+> > +      Sets minimum low-pass corner frequency to the frequency of rf_in plus
+> > +      this value when in auto mode.
+> > +    default: 0
+> > +
+> > +  adi,hpf-margin-hz:
+> > +    description:
+> > +      Sets maximum high-pass corner frequency to the frequency of rf_in minus
+> > +      this value when in auto mode.
+> 
+> IIUC, these are two bounds - lower and upper - in relation to something
+> else (like rf_in frequency)? If so, make it an array (naming to be
+> discuss, I assume you know better what's that):
 
-I just did a quick trace on my laptop. Looks like I have two main
-kernel_fpu_begin() users: LUKS and networking. They both very much seem
-to do a bunch of kernel_fpu_begin() operations but very few actual XSAVEs:
+It is true that these are both related to rf_in but both the low and high pass
+filters can operate independently. Logically, IMO, it makes more sense to have
+them as separate controls but I am happy to put them into an array if that is
+the idiomatic approach to situations like this. That said, I am having a
+difficult time getting dt_binding_check to pass when I have an array of uint64.
 
-     26 : save_fpregs_to_fpstate <-kernel_fpu_begin_mask
-    818 : kernel_fpu_begin_mask <-crc32c_pcl_intel_update
-   4192 : kernel_fpu_begin_mask <-xts_encrypt_vaes_avx10_256
+When listing two items, as in your example below, I get the following:
+adi,admv8818.example.dtb: admv8818@0: adi,filter-margins-hz: [[0, 30000000], [0, 30000000]] is too long
 
-This is at least _one_ data point very much in favor of Eric's argument
-here. It appears that that the cost of one XSAVE is amortized across a
-bunch of kernel_fpu_begin()s.
+I have tried specifying the scheme for each item, setting minItems/maxItems.
+
+Any advice on this would be appreciated.
+Thanks.
+
+> 
+> adi,filter-margin-hz:
+>   items:
+>     - description: low-pass corner frequency to the freq.....
+>       minimum: xxxx?
+>       maximum: xxxx?
+>       default: 0
+>     - description: high-pass ....
+>       minimum: xxxx?
+>       maximum: xxxx?
+>       default: 0
+> 
+> Best regards,
+> Krzysztof
+> 
 
