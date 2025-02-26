@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-534184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E923DA463EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:59:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56183A463EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8BC63AB7C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067FB18939A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010A7222577;
-	Wed, 26 Feb 2025 14:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2A022256D;
+	Wed, 26 Feb 2025 14:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLXaNz+9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pf82xsg3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A9D2222A5;
-	Wed, 26 Feb 2025 14:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ACC2222D5;
+	Wed, 26 Feb 2025 14:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581975; cv=none; b=FerRNsvwv6bb8fpA5keIoyIJl/4N9W3N4JcT2f8FP/zazUr8OgHS8H4VgKLmn8gaEIi3avBUIEau//HGSlvmEw7ibdDT3gRddGpkaTDVDvAspuvcyP95/FDlfP1mYqxOWxww94Wwpp43DFeFmnnMrAwpN52syhPLeyESd3QITRA=
+	t=1740581995; cv=none; b=ZbNJSfuBzMBPx/YIW9zQuWkbA6l57zIWQ2Ph8EoZMrhx/ALLG7DddKEwUTH2hJ0+UHZrmlE4DqxrdW5GrRPoZRhPD/bDUIhnew7+u36gSYVtBWtcbmbUIfbll4f8SkbuPBxZG0eD0PGTFgB07K420pY24ozYYWTJ7oAa5A01u20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581975; c=relaxed/simple;
-	bh=fSYcTa92gedbLZbsaWA/digY3oZKW/7+btr68YyooGA=;
+	s=arc-20240116; t=1740581995; c=relaxed/simple;
+	bh=5OsdiBDxPu2iv1r0X9avBecbm1x9d/4DtgPaMujJESg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tev0DJpoB6LcgndKSKjHvEQh5KFcMaAdr60XG10v6uks2Z33kwVBgdMvjj94p7M6rNOtrS7+LlX9Q7FdooDFbQNvJ8eViKy2NygW5UnJefkno6O4A50T+VT236T0zOGNiFzihVWdJOfrqK5D8VIRLH7c5Q3rHyx44HFZcpLWcqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLXaNz+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72363C4CED6;
-	Wed, 26 Feb 2025 14:59:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMbe+9thnJPxXxizCoYo5SF4srfJK+jSRM05JUCqf7CCanj7EirjTc9ooM3VK5++/aA2Pgm++/75BworOCTGOuAN+KFO8epcmDOvZURpdY2uAc0JZ68FFKqBBXvnNw3flsx6UUuLoVbwp1Yiwq3biuckEL1BSG6x0S1JxexBC34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pf82xsg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E8AC4CED6;
+	Wed, 26 Feb 2025 14:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740581973;
-	bh=fSYcTa92gedbLZbsaWA/digY3oZKW/7+btr68YyooGA=;
+	s=k20201202; t=1740581995;
+	bh=5OsdiBDxPu2iv1r0X9avBecbm1x9d/4DtgPaMujJESg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLXaNz+9fiGhVU/Os3/4wVX9iVEd0qlx8laIAWKvboTDdkQ+FlZxUOorv7344CVQz
-	 hBxBMN5GCKfdDFTRQxFE/b3VTQblG0fHnQX9dPHAOvq3ucnSdOFkh9ITuh+1Zo4FSP
-	 eAYOhUyqTNWGTzNJ3I5bKtDpUpW/p7aHCDRiNgyoOXkLLPUA/bB9KKtNgEULWNq65S
-	 hVCkbg8ArGA4TEqIX/qOLr7fKAo00W9IErursQtj75YezqnlR2uOkKRdUxndxhSLJC
-	 3enBX1Bb0h509rgLd8IgPkvSY3TOx9q8Cjo2ou2hNSiqDFVMdlLITOl8NRd5SZrHos
-	 kCdL56lE2P0rA==
-Date: Wed, 26 Feb 2025 08:59:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
-Message-ID: <20250226145931.GA2314060-robh@kernel.org>
-References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
- <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
- <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
+	b=pf82xsg3k9jh8QtGaWy1eQhTi9IN3uysZTF363aSirodmtrEFH37HTQrBGfud7KOy
+	 xqX82R/DyaRbsNK/JrD4zRJsehcO4Jr5KnUI8wjr5wMS4s/sVmZu9ylppoETZ9yC7g
+	 87OQBKgk6AFeQ34A2UAAXRA1jVd+Cco5qkXQcK3OJ59waQsDK1X9zLZkkiCBsFAgCP
+	 cLAmYpv2RQIpQt7xmOb7rBHpWs68gdyK2V983VU2YsY/I5fiXoa1ugF54UkGeUuKOG
+	 Rn9ZoT3aZGSaO5kFbRxKo5PYJ/aNWwqwNN1om6ZW11Xxk+cIJetbgNZgS20cbcQdfO
+	 t7Ypmvo/hOPyg==
+Date: Wed, 26 Feb 2025 08:59:53 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: "moderated list:I3C SUBSYSTEM" <linux-i3c@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, monstr@monstr.eu,
+	michal.simek@xilinx.com, Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, git@xilinx.com
+Subject: Re: [PATCH] dt-bindings: i3c: dw: Add power-domains
+Message-ID: <174058199256.2331808.4044534396247326953.robh@kernel.org>
+References: <fb8adcd318b1023ca6b90d294e46ae3b59dc1280.1740490666.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,75 +60,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
+In-Reply-To: <fb8adcd318b1023ca6b90d294e46ae3b59dc1280.1740490666.git.michal.simek@amd.com>
 
-On Wed, Feb 26, 2025 at 09:20:40AM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Feb 25, 2025 at 09:01:13PM +0800, Cedric Encarnacion wrote:
-> > Add Analog Devices LT3074 Ultralow Noise, High PSRR Dropout Linear
-> > Regulator.
-> > 
-> > Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > ---
-> >  .../bindings/hwmon/pmbus/adi,lt3074.yaml           | 64 ++++++++++++++++++++++
-> >  MAINTAINERS                                        |  7 +++
-> >  2 files changed, 71 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..714426fd655a8daa96e15e1f789743f36001ac7a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> > @@ -0,0 +1,64 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/hwmon/pmbus/adi,lt3074.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices LT3074 voltage regulator
-> > +
-> > +maintainers:
-> > +  - Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > +
-> > +description: |
-> > +  The LT3074 is a low voltage, ultra-low noise and ultra-fast transient
-> > +  response linear regulator. It allows telemetry for input/output voltage,
-> > +  output current and temperature through the PMBus serial interface.
-> > +
-> > +  Datasheet:
-> > +    https://www.analog.com/en/products/lt3074.html
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - adi,lt3074
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  regulators:
-> > +    type: object
-> > +    description: |
-> > +      list of regulators provided by this controller.
+
+On Tue, 25 Feb 2025 14:37:48 +0100, Michal Simek wrote:
+> Describe optional power-domains property.
 > 
-> You have only one regulator, so drop the "regulators". vout could be
-> here, but since you do not have any other resources, I doubt it stands
-> on its own either. This is even visible in your DTS - you named the
-> device as regulator, so logically this is the regulator. Regulator does
-> not have regulators (otherwise they could also have regulators... so
-> triple regulator).
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> ---
 > 
-> hwmon code might need some changes, but that's not really relevant for
-> proper hardware description.
+>  Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Normally, I would agree, but it seems generic pmbus code expects this 
-structure. This just came up with changing another binding maintained by 
-'Not Me' to follow this structure. We're stuck with the existing way, so 
-I don't know that it is worth supporting 2 ways forever. OTOH, is it 
-guaranteed that these devices will only ever be pmbus devices or that 
-other regulator devices which are not handled as pmbus devices currently 
-will be in the future. If so, more flexibility in the bindings will be 
-needed.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
 
