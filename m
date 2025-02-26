@@ -1,153 +1,102 @@
-Return-Path: <linux-kernel+bounces-534397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138DBA46640
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:13:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C19A46690
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CBA3A33AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB941425FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDB621CC66;
-	Wed, 26 Feb 2025 16:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F3D21CC67;
+	Wed, 26 Feb 2025 16:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z0LTKaBy"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="Wn+KczOZ"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1436279D0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C92218ACA;
+	Wed, 26 Feb 2025 16:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586272; cv=none; b=g9mJCPYcqPLENISktsOH+tw2vy+cgQu3XARdu0kwpZTZFe+6nmMxuCpyM5zTG3UyD41LiNc9xw10vUVIzlhhcRnkqXQXM99mhyLBki801vhcCAxKWcCFSLudNaHOlOdSAKMAcGvIYuWwbayWRtOD+xS3rJdhfkslHKdtFRQhr8Q=
+	t=1740586253; cv=none; b=QCYWHLmw5x5awzR5FwAUFY0p343QBXZ1srrGFzP8LCLFrMvtOW7r8upP2eNLSgjGMSgMhfOJHFI/0+jUNyjYW7FrzYV1n6l4/DkHqPWcM6lAoJyMFia/9V9cogdBtZAPD4GoGhqZyd3yIiWZb/XmMpWQ8C7jXiIrQlUTD+/cq9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586272; c=relaxed/simple;
-	bh=njlYm1HipU4GTba9IPYc6mSfqmgAKYis/Fm7MpxPiHo=;
+	s=arc-20240116; t=1740586253; c=relaxed/simple;
+	bh=Sh654BeCHVU+iFhxxMO6lVNtnSopA0tl8/OEVey77ig=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pLfezNBfEXPOyMIL6RB+VnJUc2Ao5ezWU8TsQSGSpeiumkUjymg8dDv1N5QbO5SylGdvTY3KX06rXJ6wQF5A9qZZPQzOkrSYCsvOGK/oUFihTyesBMqGSelPzk6aNYoJvMsRLwyd5oGaSVCyg3B5Mp/m12CkV2KXtYlFLyTgGvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z0LTKaBy; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <39c6ea8b-1095-49e7-9a5d-8748a868857b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740586258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/Z3fvS5V2xY3ecNZv7jEQVD2SZNQvdmOL6w5Rg26DM=;
-	b=Z0LTKaBygArBaMNxPDlHmtGg8Be/oMVHDxoy6UkOAieyBgvErgXvf3R7enHqNk9is1JdsK
-	04upR43Pn742N9/sXAd6ZhoQCVc2E0hDfiSjn2R+tv6gRyZj14OeR4E0NE2DtyQNRvdIpD
-	y26s1yOwZV90E9hG8qsKNr28sZzY71g=
-Date: Thu, 27 Feb 2025 00:10:46 +0800
+	 In-Reply-To:Content-Type; b=jyx9neWAVuk0qultHdE4Nf9nNPc4lxCOLWRnGOBvWjb0JwIKQe4EuBTUjAfXpeMZMajItPZl01TaOMRfPDY8CMReEtFTlCh53yI8wJmzqqxUjHO1dUZeWVqUi8Kn+BOaAgNV6c5IZTxlARLjCUWM7OVuNDQxC3N97riM2aIR3Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=Wn+KczOZ; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1740586250; bh=Sh654BeCHVU+iFhxxMO6lVNtnSopA0tl8/OEVey77ig=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wn+KczOZrYKVjRn3aRSmjZmCnB1ZJqx1LAo17jSD/OrwiaxU6Ek0olkA8e2zlvXfv
+	 VThbkFO4/EvQIznrKVYuSIixZPPcq0J5ZvBqNihy6KGk2qLFllrM5/X+v0NQGh6A/i
+	 +FiFcIwY7+E1qA85n3XQdU01pNJEO28+nBFB/fPc=
+Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id F38692052D08;
+	Wed, 26 Feb 2025 17:10:49 +0100 (CET)
+Message-ID: <6983015e-4d6a-44d4-9f2e-203688263018@ralfj.de>
+Date: Wed, 26 Feb 2025 17:10:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v8 4/5] libbpf: Init kprobe prog
- expected_attach_type for kfunc probe
-To: Jiri Olsa <olsajiri@gmail.com>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, haoluo@google.com, qmo@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, chen.dylane@gmail.com
-References: <20250224165912.599068-1-chen.dylane@linux.dev>
- <20250224165912.599068-5-chen.dylane@linux.dev>
- <CAEf4BzYz9_0Po-JLU+Z4kB7L5snuh2KFSTO0X9KK00GKSq91Sw@mail.gmail.com>
- <d25b468f-0a84-45c9-b48e-9fd3b9f65b54@linux.dev>
- <CAEf4BzY85DmfwRruD4tnTj+UiRTk64k1N5vO69cdL1T7H+QTXw@mail.gmail.com>
- <Z773KxMF0N1nEFsH@krava>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <Z773KxMF0N1nEFsH@krava>
+User-Agent: Mozilla Thunderbird
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Ventura Jack <venturajack85@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
+ airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo>
+ <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
+ <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
+ <CAFJgqgRxfTVxrWja=ZW=mTj1ShPE5s-atAqxzMOq5poajMh=4A@mail.gmail.com>
+ <91dbba64-ade3-4e46-854e-87cd9ecaa689@ralfj.de>
+ <CAFJgqgTTgy=yae68AE29oJQc7Bi+NvkgsrBtOkVUvRt1O0GzSQ@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <CAFJgqgTTgy=yae68AE29oJQc7Bi+NvkgsrBtOkVUvRt1O0GzSQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
 
-在 2025/2/26 19:12, Jiri Olsa 写道:
-> On Tue, Feb 25, 2025 at 09:04:58AM -0800, Andrii Nakryiko wrote:
->> On Mon, Feb 24, 2025 at 9:44 PM Tao Chen <chen.dylane@linux.dev> wrote:
->>>
->>> 在 2025/2/25 09:15, Andrii Nakryiko 写道:
->>>> On Mon, Feb 24, 2025 at 9:03 AM Tao Chen <chen.dylane@linux.dev> wrote:
->>>>>
->>>>> Kprobe prog type kfuncs like bpf_session_is_return and
->>>>> bpf_session_cookie will check the expected_attach_type,
->>>>> so init the expected_attach_type here.
->>>>>
->>>>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->>>>> ---
->>>>>    tools/lib/bpf/libbpf_probes.c | 1 +
->>>>>    1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
->>>>> index 8efebc18a215..bb5b457ddc80 100644
->>>>> --- a/tools/lib/bpf/libbpf_probes.c
->>>>> +++ b/tools/lib/bpf/libbpf_probes.c
->>>>> @@ -126,6 +126,7 @@ static int probe_prog_load(enum bpf_prog_type prog_type,
->>>>>                   break;
->>>>>           case BPF_PROG_TYPE_KPROBE:
->>>>>                   opts.kern_version = get_kernel_version();
->>>>> +               opts.expected_attach_type = BPF_TRACE_KPROBE_SESSION;
->>>>
->>>> so KPROBE_SESSION is relative recent feature, if we unconditionally
->>>> specify this, we'll regress some feature probes for old kernels where
->>>> KPROBE_SESSION isn't supported, no?
->>>>
->>>
->>> Yeah, maybe we can detect the kernel version first, will fix it.
->>
->> Hold on. I think the entire probing API is kind of unfortunately
->> inadequate. Just the fact that we randomly pick some specific
->> expected_attach_type to do helpers/kfunc compatibility detection is
->> telling. expected_attach_type can change a set of available helpers,
->> and yet it's not even an input parameter for either
->> libbpf_probe_bpf_helper() or kfunc variant you are trying to add.
+Hi,
+
+>> [Omitted] (However, verification tools are
+>> in the works as well, and thanks to Miri we have a very good idea of what
+>> exactly it is that these tools have to check for.) [Omitted]
 > 
-> could we use the libbpf_probe_bpf_kfunc opts argument and
-> allow to specify and override expected_attach_type?
-> 
-> jirka
-> 
+> Verification as in static verification? That is some interesting and
+> exciting stuff if so.
 
-It looks great, btw, these probe apis already used in bpftool feature
-function, so maybe we can continue to improve it including the 
-libbpf_probe_bpf_helper as andrii said.
+Yes. There's various projects, from bounded model checkers (Kani) that can 
+"only" statically guarantee "all executions that run loops at most N times are 
+fine" to full-fledged static verification tools (Gillian-Rust, VeriFast, Verus, 
+Prusti, RefinedRust -- just to mention the ones that support unsafe code). None 
+of the latter tools is production-ready yet, and some will always stay research 
+prototypes, but there's a lot of work going on, and having a precise model of 
+the entire Abstract Machine that is blessed by the compiler devs (i.e., Miri) is 
+a key part for this to work. It'll be even better when this Abstract Machine 
+exists not just implicitly in Miri but explicitly in a Rust Specification, and 
+is subject to stability guarantees -- and we'll get there, but it'll take some 
+more time. :)
 
->>
->> Basically, I'm questioning the validity of even adding this API to
->> libbpf. It feels like this kind of detection is simple enough for
->> application to do on its own.
->>
->>>
->>> +               if (opts.kern_version >= KERNEL_VERSION(6, 12, 0))
->>> +                       opts.expected_attach_type =BPF_TRACE_KPROBE_SESSION;
->>
->> no, we shouldn't hard-code kernel version for feature detection (but
->> also see above, I'm not sure this API should be added in the first
->> place)
->>
->>>
->>>> pw-bot: cr
->>>>
->>>>>                   break;
->>>>>           case BPF_PROG_TYPE_LIRC_MODE2:
->>>>>                   opts.expected_attach_type = BPF_LIRC_MODE2;
->>>>> --
->>>>> 2.43.0
->>>>>
->>>
->>>
->>> --
->>> Best Regards
->>> Tao Chen
+Kind regards,
+Ralf
 
-
--- 
-Best Regards
-Tao Chen
 
