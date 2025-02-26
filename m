@@ -1,156 +1,112 @@
-Return-Path: <linux-kernel+bounces-533976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11FFA46101
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:33:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329C2A46103
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FDE1709D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4774E3A6E4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0992718785D;
-	Wed, 26 Feb 2025 13:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB39C2192F4;
+	Wed, 26 Feb 2025 13:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLmShJcn"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uJPKbnUL"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DF821B9DE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DA4187858
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576796; cv=none; b=Bkc3X+LssVO2eE8JfXh9T0RhGzbGAEvYVPk8pgOE5Zro4C6xq2nSzFAZyeSqy18zt7BrpQw9NEaGDWKKvW6MUhX4vWYQUTGJ7STvnNIEQctPOQCzsnL/+eikhqbeGDkU1BE59ayWuP3wNfKh3ljCsj5D8PBVmVlPK1OrYF91plQ=
+	t=1740576894; cv=none; b=s0oWqZwT07Y7/ZTd0z+m32ZUsDeE4+VdjGWIu6Y67822SuPNhg8BYxeosP+bpNbUHayMhG2BXASDaSW/5TY6Ol5i+B7s3k1VhuAVcnPOoME45ecCDBSwem4v8YDG6/LJzm5rObKFjRyt3/ZwtcbFXurLbyIvzW6bMj2lP8HZC2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576796; c=relaxed/simple;
-	bh=4S5ii8vpsdzR3GlUzVYFWg/lI8juhZxOyAULPAaLmhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=MX/8o9aYigpQrgEoYMnI/lQ4DxfJg6DcbYA2UdNxXULj7xzKHed/jV4157KhAkr5imVdx2wXnWpYv8j7K6UE9Ar8OMMRG7a67evqUwJ1oM87v79apwTr4QDVaqRl+4mE1NpjrJ24/Rfsw2F/STBBp9uA29epk7FGOJ3IDF88f9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLmShJcn; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso5524140f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:33:13 -0800 (PST)
+	s=arc-20240116; t=1740576894; c=relaxed/simple;
+	bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/gPWF9TWCljMpSHgENdWgkWCIubW9ATxTBN2T7hQzQlI56GyxtH1lkhVvz5l3QlB+oyZ2eXAKS804KV3K+rlAa1Abqg1mgDMgQvBTjOH7zUBu/D6kf99YXIzOt7wLNqsitilEJbJNn6LUAFX0up3cgS+rTvs/0zabXx2g0Xbrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uJPKbnUL; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so12705747a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:34:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740576792; x=1741181592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0AHsRBeWrg5AIl4T2vlSKQMrg1QVH5JjtnKAUlo99n4=;
-        b=OLmShJcnzQIBPSmtNW5bgGi2xsWWZx9jtVB0Aw8esi/nvT6oBuQlB/mnTRCRxhrCmh
-         FnorDcR4Ki1G/xbEt0NV65fb+4k+Blx+qt1IzwLR5RXLBHC9nb7GAZggYbhsAt0tO9SH
-         V5QkKIt3oIXYegJCmmB6bpRQ5XC8GDf+ok1KZWK92Qg2FaXG9JTE7bC1yIAgeGCJoXkb
-         p+fZs/dOaJ9vRuHr/BYZSl/LnVSaOWKDw4njcHztLABSJMQ28VwwEhXP2p4O3u9DonJg
-         gTtUHpsa7zgNcCpWJRRf6US5Phr+iDsCU1TcZE25Lyj1eWr9AMfU2HY1EYLuSfL1s137
-         zlBA==
+        d=google.com; s=20230601; t=1740576891; x=1741181691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
+        b=uJPKbnULGR2vCJntS9rFs+3+kmYIjSgKv4TTFkRg3JVjbFmbBx3hXzxQlliVjDijow
+         LXI7NeWmTu0Vl0hkQAlJHhXlUTAMhumBjav6rU6n8qblWYAAFB8ZwOdUnvIg4wS+3Xl2
+         TR9j7J7lYuaVdUAemz2xo73r7A+LF5gZQCYp6a4N3igq1vP3h/FnJUAN0gE/UYe1qwD+
+         fnOcc9PLELKt59sLgsSudDEcpCtffMKGBWVmUgtDc6fYA91o7s0cK6lnEID7lMk9yr/8
+         Ol/Du+E1L2iEbsxJz6aZn0CveiUhB3pLBBnd9KHGpbbYRz/AtP6A1aH4HtIkWizNgzRv
+         IacQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740576792; x=1741181592;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AHsRBeWrg5AIl4T2vlSKQMrg1QVH5JjtnKAUlo99n4=;
-        b=Lq3gm0MXj9y9z/GaSdNjv6punOAaIeGCqxhwO6fvWxDWKIfKm5wKRdbBVspaUXCo4X
-         +2Ql19Q6mSRxE+8Lz3WdhCv31Z/FDvJqMF1VfcW3uMUtbHTXeTCpUMULYwYvs/weD3Z3
-         fWaHwY5IHK8PUB5uSVlJ6SkK5lSp94EEs+qOFQqscwc5fN+4GisSmsh5x1MWGenWpekR
-         6ekUR1hlk6UHaWgo/ZUWZD6VFqVs1qb/Mhdw7IXjcwQussydr7QuV6VsUiQu4Ex27I4X
-         io9CqS4UyLM8f/Po94dJAGq12YUS2+MMSUQO8BeQ371Dnw1zJQrFWNDXDC56U0qnNXqF
-         J8GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrOTB47FPG6ikmZos/jy5MAOxyKWdVhoPbw8ALnRFHB8OhTPn2OgLd0mp4lY1eK6A3wRozuMOFmrvXlHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc8lgbCht6DqfOPGCivG+by7+77WVJ3/CGPR36sMUu0CGAoub5
-	shXnn6nohRblbixsKZ2VvrtZ+9nXVWBGPhjMcr0HgB5VfSarYcwTCyP6T5bmGsg=
-X-Gm-Gg: ASbGncsiYRTWkfbFBbu8gBMv2g3EfdK2z+A74A2yzRrbTJYhE7nP6lFjaAmqnC3PCkG
-	0z5Fr1mq00nuxektzwbBRHMoF9DhLkTIo1SsdQKUdM6gBGq5Xuf1Se85ckmKPkonN1gZ2yVBPkv
-	TLoJ+n1EGDNmHBPjlzlWPxnIIm97YnnfAcnlOVqbFqoVGElqK6m8t/gLMLZwil51XXqcpR21571
-	RY2hUY3TH9tpzoJyH7WW71B67IGVcvilkAOgWhJiNXQCUVM4BFAZweMYHObdRJU6CY0fvdMwAvv
-	gXx1NwdgEVzBQOZwGR55iOoKzXYJbHsOwg==
-X-Google-Smtp-Source: AGHT+IEMwTnaV1lxB24cLJCmw9AEkuHApONnAq+Ctb9Vrt09pWCW31XxqxzLWZRAu38Bw7cikwZPiw==
-X-Received: by 2002:a05:6000:18af:b0:385:d852:29ed with SMTP id ffacd0b85a97d-390d4f8b520mr2586635f8f.36.1740576792150;
-        Wed, 26 Feb 2025 05:33:12 -0800 (PST)
-Received: from [192.168.1.247] ([145.224.66.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd882a37sm5699140f8f.51.2025.02.26.05.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 05:33:11 -0800 (PST)
-Message-ID: <e7fea60f-dac3-4762-9139-cf096d7bc121@linaro.org>
-Date: Wed, 26 Feb 2025 13:33:10 +0000
+        d=1e100.net; s=20230601; t=1740576891; x=1741181691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
+        b=miulBVsWrF2L0KlHl3Wz12IpOFEmCQ3h59VGXnLra++uiDnDmOdBk94EsXUnOA+nYg
+         N/CzMIXVp+cQSbps3JDPr1AlPuVrEZVW6bVAUCSQjwR5wWypR6v36hV+SptdY6vBYMia
+         dAXdYaXRamHCGeIBHCv0MPI4qZ4B7ZLKFRNmb/HbitJeJqINmQc2+O+MuwUPDH/Jk/vP
+         H/rYT7Yzs57UM8Z9tpqqUIpSyxAtH2/xstI0dWyjTGdUq9hA20xLSk225LZaqoJDdVTD
+         7DG2hmc/lXpirPpB1aBihGE0jY1FHjUOfemdVhuJet1LoG8X4/8FyHO9BibySyonmbZW
+         8kTA==
+X-Gm-Message-State: AOJu0YzQ5hRzHVxLLjZVg+/sBqoQc4u1W68e1zIAr2agjedX0rRWCyts
+	XvDexdOL1gtTzFgY+pBr7BUp8ZRwjTox8G7OlzsUxINy8OFacC2DHDOeTdw6+xXi984nKoFQ7JS
+	YcxHjfIDvpXNtvG7KGpJ9BUGA8xeCz8gDd84J
+X-Gm-Gg: ASbGnctUTT63vscGceswE5YgYnN0pHG6OjS9G3OaTXhhn9R4y2mheSUI9dW2PYnHjwT
+	4ZoKYEdgJrJW5bSUiMbiFQWCK9W/f6+iXEJ36QZWCzAkutZhAaHR0r0cdsgAlyp8kRAuk/vxiQE
+	UoHdz/kRg=
+X-Google-Smtp-Source: AGHT+IGW6oMB/55DkXWA0LLasiWq5S5+A9NXO3XUybwbuwmJAv6UNSnhAEHmQHk8wdhRjs//iRBVdydqkyBots+Z1vQ=
+X-Received: by 2002:a05:6402:1ece:b0:5e0:3447:f6b7 with SMTP id
+ 4fb4d7f45d1cf-5e4455c2e30mr7504271a12.8.1740576890809; Wed, 26 Feb 2025
+ 05:34:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] perf arm-spe: Fix load-store operation checking
-To: Leo Yan <leo.yan@arm.com>
-References: <20250217195908.176207-1-leo.yan@arm.com>
- <20250217195908.176207-7-leo.yan@arm.com>
-Content-Language: en-US
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Mike Leach <mike.leach@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Will Deacon <will@kernel.org>,
- Graham Woodward <graham.woodward@arm.com>, Paschalis.Mpeis@arm.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250217195908.176207-7-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250223221708.27130-1-frederic@kernel.org> <CANn89iLgyPFY_u_CHozzk69dF3RQLrUVdLrf0NHj5+peXo2Yuw@mail.gmail.com>
+ <Z78VaPGU3dzKdvl1@localhost.localdomain>
+In-Reply-To: <Z78VaPGU3dzKdvl1@localhost.localdomain>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 26 Feb 2025 14:34:39 +0100
+X-Gm-Features: AQ5f1JrFcA4Lv4LOIeGP9ZDQ3eWx1CPhGwwMoKSGSc7bhZoOJr-kdVosyBIItuo
+Message-ID: <CANn89i+3+y1br8V4BP5Gq58_1Z-guYQotOKAr9N1k519PLE7rA@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: Handle napi_schedule() calls from non-interrupt
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Francois Romieu <romieu@fr.zoreil.com>, Paul Menzel <pmenzel@molgen.mpg.de>, 
+	Joe Damato <jdamato@fastly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 26, 2025 at 2:21=E2=80=AFPM Frederic Weisbecker <frederic@kerne=
+l.org> wrote:
+>
 
+> That looks good and looks like what I did initially:
+>
+> https://lore.kernel.org/lkml/20250212174329.53793-2-frederic@kernel.org/
+>
+> Do you prefer me doing it over DEBUG_NET_WARN_ON_ONCE() or with lockdep
+> like in the link?
 
-On 17/02/2025 7:59 pm, Leo Yan wrote:
-> The ARM_SPE_OP_LD and ARM_SPE_OP_ST operations are secondary operation
-> type, they are overlapping with other second level's operation types
-> belonging to SVE and branch operations.  As a result, a non load-store
-> operation can be parsed for data source and memory sample.
-> 
-> To fix the issue, this commit introduces a is_ldst_op() macro for
-> checking LDST operation, and apply the checking when synthesize data
-> source and memory samples.
-> 
-> Fixes: a89dbc9b988f ("perf arm-spe: Set sample's data source field")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   tools/perf/util/arm-spe.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 251d214adf7f..0e8e05c87fd7 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -37,6 +37,8 @@
->   #include "../../arch/arm64/include/asm/cputype.h"
->   #define MAX_TIMESTAMP (~0ULL)
->   
-> +#define is_ldst_op(op)		(!!((op) & ARM_SPE_OP_LDST))
-> +
->   struct arm_spe {
->   	struct auxtrace			auxtrace;
->   	struct auxtrace_queues		queues;
-> @@ -681,6 +683,10 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
->   {
->   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
->   
-> +	/* Only synthesize data source for LDST operations */
-> +	if (!is_ldst_op(record->op))
-> +		return 0;
-> +
->   	if (record->op & ARM_SPE_OP_LD)
->   		data_src.mem_op = PERF_MEM_OP_LOAD;
->   	else if (record->op & ARM_SPE_OP_ST)
-> @@ -779,7 +785,7 @@ static int arm_spe_sample(struct arm_spe_queue *speq)
->   	 * When data_src is zero it means the record is not a memory operation,
->   	 * skip to synthesize memory sample for this case.
->   	 */
-> -	if (spe->sample_memory && data_src) {
-> +	if (spe->sample_memory && is_ldst_op(record->op)) {
->   		err = arm_spe__synth_mem_sample(speq, spe->memory_id, data_src);
->   		if (err)
->   			return err;
+To be clear, I have not tried this thing yet.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+Perhaps let your patch as is (for stable backports), and put the debug
+stuff only after some tests, in net-next.
 
+It is very possible that napi_schedule() in the problematic cases were
+not on a fast path anyway.
+
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
