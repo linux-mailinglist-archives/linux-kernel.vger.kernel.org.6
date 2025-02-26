@@ -1,1057 +1,502 @@
-Return-Path: <linux-kernel+bounces-534272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C719BA4650B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:38:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A763DA464FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4083A380A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CEB188C5A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF75D21D5BB;
-	Wed, 26 Feb 2025 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9979821E0BE;
+	Wed, 26 Feb 2025 15:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VYZ4vFVL"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TIANFoFL";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KYwN1Rv2"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED88BE65;
-	Wed, 26 Feb 2025 15:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583852; cv=none; b=FSpvDqYE+GkLYSrq+6GQAiorubLwM2lj5yZemwxWFiWKUcUbDtWYYNitV5e9H89IdlAuOhTQvAxZhzpNUuRYzcO10bN3xcfqRCiRrtatd/FlkIxvQ6Gcd3efW7P8BHa7W2seUpbDS6tojJO5EdUyKHNf93dn4fYKIeudUO1oZ8A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583852; c=relaxed/simple;
-	bh=Ew2pec55Rem5NnT50vSagJrqVmTLoJdoocs4prFkl2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EcO1SlYtQopiv85tnCigC567VK4MP1WMJ8vu2y+D2LGLcTQvJWZ8vPXhu8NVc/ffTof8yKTncJFChdxjBmzlVv7HH8DCkZEQHA3O8IJWcJ86uc4GukkSJ2rorXAjwzP/nbPLjkMIEN8O4TDR3vxqGCeakgZ9iQzOKsAgKYjKLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VYZ4vFVL; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QFUbvn1590845
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 09:30:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740583837;
-	bh=IP3EqjjMF6apSrZI152A6He4byPVdlRzOijAZieHyGI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VYZ4vFVLWWKg3zFqcIlxwJPj595iVaUVNTk8USiiuVwFXiWEM3XVdDYGQnBfucYLU
-	 H+IW3mzPapugAn1isQv5bU/G9jUsJcmkGr7Z/+4xB/T0Um16Agy7C4B1kPMnNGukqb
-	 VjFNKbkXtpP1Gmc6bPkIAVxQZlKuBqA9yepwME4w=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QFUbIJ122247
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 09:30:37 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 09:30:36 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 09:30:36 -0600
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QFUX86031572;
-	Wed, 26 Feb 2025 09:30:33 -0600
-Message-ID: <cd9a723f-14fe-4c1b-a937-d952903de098@ti.com>
-Date: Wed, 26 Feb 2025 21:00:32 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352FA21E0AA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740583873; cv=fail; b=VzAWdITKjl3neWP1zgfRWG3IdPTNicvW07/GQ61ousVFHV97eFg+rOSwKl2H0SP4Ocpb+nsHqFkNacJYVdiNNoJOeY9VlbDYZs7SuwHdRxZpZG6Dif0RZZzHE5UWQ2LVf3SGGnFnoophV6pdTMaHWFo9JePVWjVUGRx+TdJ1+hA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740583873; c=relaxed/simple;
+	bh=gerCa1/EB1hyWV9sAWx3XL9EtCKXCkub4HQJqgx2dfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QDyveN/Za7ecQeBN8iBJTdp+0WA0EOqk/nKCSVFKUGZ8Vx1fgaXRcqgft6z88IkhR0LrPg9dMkRs1AKt7R1gVgAvNDiw7bpLTlfj0nH3Ag+JrW6dkONWb1PnEq84tinQatyUUBQcZpxmqQ2nC50v/8R9bTuUdJNvY6qg9vF38FI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TIANFoFL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KYwN1Rv2; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QEtaMp002641;
+	Wed, 26 Feb 2025 15:31:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=Y1Uax3Stq4ETzSy7BV
+	IL8u3SwXS8Dn9dzdzmytSZvkk=; b=TIANFoFLTp2stJYOmjloewhGuf+Z9s928E
+	m2au3OlVLZTBfkBTbRjdiSGXriXo1WM7Dnvo6HZecJb++pQdaHgViXehgBMWShoh
+	KoRpxZruPKb0EQsCdDboxY9qq/6tlQwebvRBrTIymU6EfVuVXjZ3K5U4//aXrGBJ
+	pYqSaBMaH1vJBdi6T6bCc1IzgbxHiBLIVT6xIgjmxp7F6AmG8S6EFgKfB41UL0P2
+	LOfC9HTUmc4rUJBbgX5IG9KaVc46I42WDIg7nj0Di9e6N2T+U8v9Bm3nJcIP+/kT
+	utuSHGUGgiktArL3VgX1UBzQLocYypELbnFKCRgAhqRZtyDx/yZg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451psfsbrj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 15:31:01 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51QFLhQo012641;
+	Wed, 26 Feb 2025 15:31:00 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2171.outbound.protection.outlook.com [104.47.56.171])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51c2rnx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 15:31:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fqPUoQRS4NHD/hZMzZFJk4pWJrPyjL7ZKZfxjdscXsMhBmYM4HOzjKJC4zJV1sUq1EKBqfFm9CQLGgEvOMGC35cBGm8M0KqtlRqTb4Yrc4ETTaok1oiKhDjk5ahmqsRxUfPwcQUZmJEVZP3jjWfiPJuejtbYmFdVBbzMMbZPkUwFqe82uIVNsYqhzXvbqWDvUclE5Gf+cIFjfhCh8gRd7/FMeoGWJheZOjk/Y5Jtu12wUCe6VGppGbMGpRMH+5X9MwMRXEhtLOh8CMizeT/HDGt2pW1l9Pz3f21zuIR/RoXwaHKaxiFWqa0XJbLZqnVTWIpd3SX1Hf66iIW/LLFItw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y1Uax3Stq4ETzSy7BVIL8u3SwXS8Dn9dzdzmytSZvkk=;
+ b=Wr0mr4PGLsuVdCTCPA9MrQ/b2T8Tl9h3XtNzelgY+/+ePoKHHXgFcMfIp+iWn3T1kYifC+Ijxwrbb5H2sOkzn0WKiCszPDD/Qx+yjExBLV6yi6XtQfYj/PA4WvtnpBbBp+BaA6014oMv3ZTpXgg/SzA4jhjsFeYP4nAgMFBN+kX75aNw6dplL88D0eiXMTpvRgg5bgTKXtuE2qc8TytrSnlVAi8WhI7kwfltCuymBsECJkklzjXUvor6AHywu36JC5uzB5uafJj1EMxixHuyvQWie4xcHRuVeJcHziaFKSISJcY/ekXBjbsKo5iQa7I7EZIB08jUaHAt+ueS4jaZew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Uax3Stq4ETzSy7BVIL8u3SwXS8Dn9dzdzmytSZvkk=;
+ b=KYwN1Rv2QrWXM7ol3MVdnroYun73d2lDdaZpHajuj5LWA98yGfBgNTr/Y77dBrje2GEAYeh0H1Ne370SN6GeGhlk6Yxg82TTKlgbR3i5din0dLUSoSFJLyGABnaQ3LL9BB56DXKNr5DPH3RZRUEEmfGUNS8uo7fuA7mXre2pryM=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by CO1PR10MB4627.namprd10.prod.outlook.com (2603:10b6:303:9d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 15:30:58 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
+ 15:30:58 +0000
+Date: Wed, 26 Feb 2025 10:30:55 -0500
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        richard.weiyang@gmail.com
+Subject: Re: [PATCH v2 3/6] maple_tree: use vacant nodes to reduce worst case
+ allocations
+Message-ID: <qadlxahyhhm3cihdnwjwhbolk36acybreawwgcy42rltxcpzwy@7xkxdv4ue5pp>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, richard.weiyang@gmail.com
+References: <20250221163610.578409-1-sidhartha.kumar@oracle.com>
+ <20250221163610.578409-4-sidhartha.kumar@oracle.com>
+ <sjugioveqmkfqwnse5j6tnnlcz6qk5sfvcqf4isqozu3hn4vc7@2ldyqovzngwo>
+ <c43bfd29-8dfb-4751-86d2-9eb31955d693@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c43bfd29-8dfb-4751-86d2-9eb31955d693@oracle.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT1PR01CA0093.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:2d::32) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: k3-r5: Refactor Data Structures to Align
- with DSP and M4
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250219091042.263819-1-b-padhi@ti.com>
- <20250219091042.263819-3-b-padhi@ti.com>
- <2674244f-aecf-47aa-a7a2-3cdf8cceb098@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <2674244f-aecf-47aa-a7a2-3cdf8cceb098@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CO1PR10MB4627:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a62f038-819d-439e-26a8-08dd567a9159
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tyyAlXqKWbedbhKFMlogwR6vzK3G7zeOo6NTciKxNyeUzfhoO5Ks9xB3jnM+?=
+ =?us-ascii?Q?aI1mXnAT9WbcS45uol6c1rSjxeaEU2HH3LGHgPBtEz5rS7k2Uj/0IBevTik2?=
+ =?us-ascii?Q?o7sH9yh1mNEu7sdPrLfDqmSxXZNjyM71ZS9yx2H9iMFfcMXjMWycn2FdEedo?=
+ =?us-ascii?Q?ko+/AwNobwhSSq9m46Q+sOfdfp+CvHprTH/eGMnIILpp8HDYCf3RDqVDEmCm?=
+ =?us-ascii?Q?0FM9WRLTJhsAL4BXRq+evCFqJ7YN5NO3WJR6ZDaK1nybo4FXbm5fFDeDji+C?=
+ =?us-ascii?Q?/RO9fZodm+mEvgrnuvsywHNhihq9YONJdz9aJUokGSJ0FaNeoA52f89VfVck?=
+ =?us-ascii?Q?USwinWPHZTbXWBy0XFC4JOiNZP8Qu8Wf1byIpijDi/6qXClZbhB37/QOhmZG?=
+ =?us-ascii?Q?oCpQvjGfMwjnZkRs1mpzvpwra+MEJNOb7231hCDOdi9wxKgFhdkYxQgHIEzJ?=
+ =?us-ascii?Q?PArpD88yVmvWgky9fllk7+CxSbgZZcShDRMLhzn4PIvIrP4Fdvldid3qnQ4M?=
+ =?us-ascii?Q?+gKx1iNK9sfywv/5rKs49d8QpvEsdCUm8eywdhfoXOGNcgeTCLOInsLn/SMR?=
+ =?us-ascii?Q?yxwGsYrCNmb9hDmyRVv/dSUVZdN/PdGZ5fqe2gci24msMsYDTM/iOUB01/xl?=
+ =?us-ascii?Q?Hwosy3t44k0uckaztaGJMrjbJ8PoqkgYslf0dGU7WMrJ0MjlkJFo26rg0unQ?=
+ =?us-ascii?Q?H9ubpS6rVyFOm/SLCJZATQji5d8SvSTdL3B/JGdTBMpE+CxK8kfp/EkzwChe?=
+ =?us-ascii?Q?r6v0iMtPHitcjYAIZHLAjb5/vqno2yyvQ7Mt5nLjbYglyGrQ6i/A144QRz1T?=
+ =?us-ascii?Q?qGyLf321MlbOLJ6BafuCoV9a1QrJbP8otgK9bg8AL2mgZKeGkp4QKamnj+Nf?=
+ =?us-ascii?Q?j+FORt4HDL2uZpufDkgoQi1GFhY18ej/M7cNYd0IRWf+WAdPEOLfPw3J2kFK?=
+ =?us-ascii?Q?fG3y+vCNNCN2rvGxnb2AXYB4D30b8wi2Cxtviav0M+yNmTtV1LKwHqxVoceI?=
+ =?us-ascii?Q?jj+kwIDbgCJ7NiPXFyzmHRYOLaa04igcrYIUN633nPDYrxIRk6uppMBHZu+U?=
+ =?us-ascii?Q?Y29+2q7Dvv82ZDKhFMy/654paotjjpj2iP2c0XIJb9FFhHuSMwFF1iuXgfl5?=
+ =?us-ascii?Q?PCG47q1CpHigUFJqQGSJMglGpC89zt0GYRoFWzT1ysuWdiXdF4fJuH9KYbEr?=
+ =?us-ascii?Q?JzqpufK+BfyIsiZCV6/JkFINiGN7RuSUO1RGmgTCFmURABm+4z+6cwm5OhDR?=
+ =?us-ascii?Q?6oVOC0LjODPvZk73vDvUG3DyAf8herAEBmI+JPVesUN7LYCo3XWpDPr8EV4y?=
+ =?us-ascii?Q?45SSd8YnUUuTbe9JD/SGJ5ulSInPAofse4OUBUoMWR8tlUeHD23rwfF23Hca?=
+ =?us-ascii?Q?OzPlUZS0rTFXs6KDL3SLDdAjw8tQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?K+Tjnlcy8e3SZhbG3Fm4a7crTDygOGimzlXCPVLeTEa/S34xDtyDfNKlzZmk?=
+ =?us-ascii?Q?AmgteUchsnf5kigdtVN/h18Q0tLRENjgg/MdxSBWEFowHCdBTIa0zHX7n/24?=
+ =?us-ascii?Q?pk94UoNIzGsbzYAMoxOIm9d+0bLYmfFz9IoKaX3rqoSS2HXnkaHxbgJ95+2c?=
+ =?us-ascii?Q?4TqfJGd0ZgYrqAIfEuDji5Q5dZeBD8Qh44XJ7Lpt76bs6OFK3bJbL/Ly3nAZ?=
+ =?us-ascii?Q?Uz8B13EkrIOxSMeNNXrAblngLPuphdfrskUXvMy8BKfyTPyjdDL1vz9gzNUW?=
+ =?us-ascii?Q?T84YTpFwIKDveS8HJVFiHxz/Lq5Cbq1EInU61SopuFJPkfVLxYV56IAhZSF2?=
+ =?us-ascii?Q?lXkAmhqm+nwwiDNBVpEBszVAiI7B1JZTe6985SJ5PLGusaa1wxA/3GGgX8Kh?=
+ =?us-ascii?Q?bMba5cGq0kjYMyLWYQbb1YYajekQmv7Cni47D1Cw6ocMubQpiePZ+mVPYYWR?=
+ =?us-ascii?Q?mUO1/dp9qZ2Y9NU3dI2QGEgpSVtITuYf2awhlBDNrFMKUef7syHtYqyDOWiX?=
+ =?us-ascii?Q?/fACzQu2zeIDAzhpDrzSzceAkVr5gw6XsWtIbfHRQ3fO/hAI3Vt6Csx1AhZv?=
+ =?us-ascii?Q?Mknp3uFmvnwervtpgwC8El/qAn4mWT9B7ifuRhr6xrNwZze1vGp3zlXRdkSv?=
+ =?us-ascii?Q?S88IrE0lHQlJrAb2TLA1kkmJRjGFaXmxERmMLGv6DHaYlSeVqImWRRidM6FU?=
+ =?us-ascii?Q?HFspy8m6A22xAxc+WILG8IcbON1rvdu9Xi3Yl75XZ9RuVcgTF+u4E6FkLce8?=
+ =?us-ascii?Q?IfMc70UMTAOAObux69I3oOFr+FL1WIlPZVeLxuo7r+P8SQpHVIWETY+aRfN+?=
+ =?us-ascii?Q?j+bMkf3eV47KOTRxOK2420LVxtQnPmvUbOzJ7tz+TWi5lkTnWpbyUm2Tc3B8?=
+ =?us-ascii?Q?lK7zhIqTWRYgQpgAsRPouW5XWnk7q4mNoCbgyjFcrgCQOf7eItKojBenI6dx?=
+ =?us-ascii?Q?QJ5xPNMxlAIgbcxv7hqeQIZ/lTx+nXtBm4wNWfIH7WU+sLQYGQlRdUIEXV+x?=
+ =?us-ascii?Q?Mn5XlYhRP6eq7KEmjqVXRm9z+NFJqkorqovfBICaLP2JeYfvEo84lGtkJBQ2?=
+ =?us-ascii?Q?QjU2qdi6tj2nwRXjdUQCImv1RzrVRGYIsU1UbvujB/r4+UTaEnK6Js24f3ma?=
+ =?us-ascii?Q?0oIKgfToO+zp42lZ9mhh8yGKxP5wNXaURjZRXe2qAmniSXLRV7ees0yWFCxP?=
+ =?us-ascii?Q?gHwoL56uro/EP0UtbdQ3mafn4CzDVR7TA/Numjo0cj0SAXmM7R7g3bIXnCHd?=
+ =?us-ascii?Q?c/i3JclLzJoJDR95upVuIPAjGxH4ICHqc/gmwyF1Ed92XLd2kInqWkD/oaBn?=
+ =?us-ascii?Q?A00KBAO/0+PAXRP/dm3dvFkB8plv4g6Z5l4Wb+VfBKIrhKSWJbxcoYOL6HHc?=
+ =?us-ascii?Q?Ze4+crTxhfZtSfgNoWnsTB9dYVgFRJUCCqfEBtcAER2LlFWgmpn4AHypN+rx?=
+ =?us-ascii?Q?UMgNePaF7+4dnn/tb2IlEsaQTLYmbgiy3qsk6BzwZnrfkpS4649AZnEVCK/O?=
+ =?us-ascii?Q?nEbYGhpmpql1VWVqnKuqhPIbjIoKc1nigKxsYDQ3m07wKIBjM8MRMzKrZQX4?=
+ =?us-ascii?Q?s47o0uAtIVGcXUOB7AKSh+DiThIqzOFoYS3/40uB?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	J8yPosfHWb55pMs68Uzfbti4gMFz97+JXGRHjDF81E7/O9XadBMa95Eo9TAsSibi+gHBAEQIps6Ho0xcTJDZPb40noeweBB6psMARfVg3pWvuFeU/2Zxc543nMB6jznbuNJEXNSdI5ND1n827eYg/NAxtnsjTKMwKmWlh0hHOQoxJ2y/kog3of5pVD9y22i/sgdBw8eGHKEHlLfVjgjk7H9EqIWrtC48njdJpwkjwmIRnJ3Ky6AZovKh2DbJnHYRoSbwHoJx2q+DPlhG7jP5ge8kj/8EnB9LGAARsbJnvtHKLiaICT5AxB8cfcuhXr97L7y3CKLbOs+Aa6kfPoDHF7WyyhKObXmEjWKRpeaL3GC9O5IOO45DUfXt9d/M0ed/YAEUYwpDWIfYhJDwtimwSYgJ7L2X7TFyJNfg9bninkvUWEcrAG8k9qr40UhNRWWqeNuhmLY2NhuDLdQwSkHmry8ppW9e376Y5ilZoLzdVJgP1ZzAY2+x/pX9Swm8LuKWHBmQ7idxo5Gjf79kVDNKvuNTCz0DJn82JdLVEb4ZLaxS7J4WDFgaA7fk4zsbmVrQlrBfQUhROqDoRhy6EUJNppP1fklM3dpnkbM/YGD7wNc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a62f038-819d-439e-26a8-08dd567a9159
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 15:30:58.2072
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xaTamBx1QJ4e8b6qlR6OtM7IyH/ocJmy8K8wBzQejMWgwF4pJdNQuFvzboUca+mu+yJmyq2rlFJR+bXR/mRKsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4627
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 mlxscore=0
+ adultscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502260123
+X-Proofpoint-ORIG-GUID: giYSjYeDGqhOGSJBAg-XGP2XELsHpEb0
+X-Proofpoint-GUID: giYSjYeDGqhOGSJBAg-XGP2XELsHpEb0
 
-Hi Andrew,
+* Sidhartha Kumar <sidhartha.kumar@oracle.com> [250225 11:22]:
+> On 2/25/25 10:46 AM, Liam R. Howlett wrote:
+> > * Sidhartha Kumar <sidhartha.kumar@oracle.com> [250221 11:36]:
+> > > In order to determine the store type for a maple tree operation, a walk
+> > > of the tree is done through mas_wr_walk(). This function descends the
+> > > tree until a spanning write is detected or we reach a leaf node. While
+> > > descending, keep track of the height at which we encounter a node with
+> > > available space. This is done by checking if mas->end is less than the
+> > > number of slots a given node type can fit.
+> > > 
+> > > Now that the height of the vacant node is tracked, we can use the
+> > > difference between the height of the tree and the height of the vacant
+> > > node to know how many levels we will have to propagate creating new
+> > > nodes. Update mas_prealloc_calc() to consider the vacant height and
+> > > reduce the number of worst-case allocations.
+> > > 
+> > > Rebalancing and spanning stores are not supported and fall back to using
+> > > the full height of the tree for allocations.
+> > > 
+> > > Update preallocation testing assertions to take into account vacant
+> > > height.
+> > > 
+> > > Signed-off-by: Sidhartha <sidhartha.kumar@oracle.com>
+> > > ---
+> > >   include/linux/maple_tree.h       |   2 +
+> > >   lib/maple_tree.c                 |  13 ++--
+> > >   tools/testing/radix-tree/maple.c | 102 ++++++++++++++++++++++++++++---
+> > >   3 files changed, 105 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+> > > index cbbcd18d4186..7d777aa2d9ed 100644
+> > > --- a/include/linux/maple_tree.h
+> > > +++ b/include/linux/maple_tree.h
+> > > @@ -463,6 +463,7 @@ struct ma_wr_state {
+> > >   	void __rcu **slots;		/* mas->node->slots pointer */
+> > >   	void *entry;			/* The entry to write */
+> > >   	void *content;			/* The existing entry that is being overwritten */
+> > > +	unsigned char vacant_height;	/* Height of lowest node with free space */
+> > >   };
+> > >   #define mas_lock(mas)           spin_lock(&((mas)->tree->ma_lock))
+> > > @@ -498,6 +499,7 @@ struct ma_wr_state {
+> > >   		.mas = ma_state,					\
+> > >   		.content = NULL,					\
+> > >   		.entry = wr_entry,					\
+> > > +		.vacant_height = 0					\
+> > >   	}
+> > >   #define MA_TOPIARY(name, tree)						\
+> > > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> > > index d7dac3119748..ef71af0529f4 100644
+> > > --- a/lib/maple_tree.c
+> > > +++ b/lib/maple_tree.c
+> > > @@ -3542,6 +3542,9 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+> > >   		if (ma_is_leaf(wr_mas->type))
+> > >   			return true;
+> > > +		if (mas->end < mt_slots[wr_mas->type] - 1)
+> > > +			wr_mas->vacant_height = mas->depth + 1;
+> > > +
+> > >   		mas_wr_walk_traverse(wr_mas);
+> > >   	}
+> > > @@ -4157,7 +4160,9 @@ static inline void mas_wr_prealloc_setup(struct ma_wr_state *wr_mas)
+> > >   static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
+> > >   {
+> > >   	struct ma_state *mas = wr_mas->mas;
+> > > -	int ret = mas_mt_height(mas) * 3 + 1;
+> > > +	unsigned char height = mas_mt_height(mas);
+> > > +	int ret = height * 3 + 1;
+> > > +	unsigned char delta = height - wr_mas->vacant_height;
+> > >   	switch (mas->store_type) {
+> > >   	case wr_invalid:
+> > > @@ -4175,13 +4180,13 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
+> > >   			ret = 0;
+> > >   		break;
+> > >   	case wr_spanning_store:
+> > > -		ret =  mas_mt_height(mas) * 3 + 1;
+> > > +		ret = height * 3 + 1;
+> > 
+> > ret is already height * 3 + 1, you could add a WARN_ON_ONCE or such to
+> > ensure that's the case here and it's not missed in updates to the code.
+> > 
+> > >   		break;
+> > >   	case wr_split_store:
+> > > -		ret =  mas_mt_height(mas) * 2 + 1;
+> > > +		ret = delta * 2 + 1;
+> > >   		break;
+> > >   	case wr_rebalance:
+> > > -		ret =  mas_mt_height(mas) * 2 - 1;
+> > > +		ret = height * 2 + 1;
+> > >   		break;
+> > >   	case wr_node_store:
+> > >   		ret = mt_in_rcu(mas->tree) ? 1 : 0;
+> > > diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+> > > index bc30050227fd..d22c1008dffe 100644
+> > > --- a/tools/testing/radix-tree/maple.c
+> > > +++ b/tools/testing/radix-tree/maple.c
+> > > @@ -35475,12 +35475,85 @@ static void check_dfs_preorder(struct maple_tree *mt)
+> > >   }
+> > >   /* End of depth first search tests */
+> > > +/* same implementation as mas_is_span_wr() in lib/maple_tree.c */
+> > 
+> > Is this needed then?  At the start of this file we have:
+> > #include "../../../lib/maple_tree.c" so I would think you could use the
+> > one already defined?
+> 
+> 
+> I don't think we can use that one because the it takes in a maple write
+> state as an argument which is not exposed externally. The check_prealloc()
+> tests use a maple state and the maple write state is then defined internally
+> in mas_preallocate() so I'm not sure how to get an external facing interface
+> to the maple write state.
 
-On 26/02/25 20:14, Andrew Davis wrote:
-> On 2/19/25 3:10 AM, Beleswar Padhi wrote:
->> Currently, struct members such as mem, num_mems, reset, tsp, ti_sci and
->> ti_sci_id are part of the k3_r5_core structure. To align the rproc->priv
->> data structure of the R5 remote processor with that of the DSP and M4,
->> move the above members from k3_r5_core to k3_r5_rproc.
->>
->> Additionally, introduce a void *priv pointer in k3_r5_rproc that can be
->> typecasted to point to the k3_r5_core structure. This abstraction is
->> done to ensure common functionalities across R5, DSP and M4 drivers can
->> be refactored at a later stage.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 380 ++++++++++++-----------
->>   1 file changed, 197 insertions(+), 183 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index b2738b9a1b2d..ae7d0ea27e40 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -114,19 +114,16 @@ struct k3_r5_cluster {
->>       const struct k3_r5_soc_data *soc_data;
->>   };
->>   +struct k3_r5_rproc;
->> +
->>   /**
->>    * struct k3_r5_core - K3 R5 core structure
->>    * @elem: linked list item
->>    * @dev: cached device pointer
->> - * @rproc: rproc handle representing this core
->> - * @mem: internal memory regions data
->> + * @kproc: K3 rproc handle representing this core
->> + * @cluster: cached pointer to parent cluster structure
->>    * @sram: on-chip SRAM memory regions data
->> - * @num_mems: number of internal memory regions
->>    * @num_sram: number of on-chip SRAM memory regions
->> - * @reset: reset control handle
->> - * @tsp: TI-SCI processor control handle
->> - * @ti_sci: TI-SCI handle
->> - * @ti_sci_id: TI-SCI device identifier
->>    * @atcm_enable: flag to control ATCM enablement
->>    * @btcm_enable: flag to control BTCM enablement
->>    * @loczrama: flag to dictate which TCM is at device address 0x0
->> @@ -135,15 +132,10 @@ struct k3_r5_cluster {
->>   struct k3_r5_core {
->>       struct list_head elem;
->>       struct device *dev;
->> -    struct rproc *rproc;
->> -    struct k3_r5_mem *mem;
->> +    struct k3_r5_rproc *kproc;
->> +    struct k3_r5_cluster *cluster;
->>       struct k3_r5_mem *sram;
->> -    int num_mems;
->>       int num_sram;
->> -    struct reset_control *reset;
->> -    struct ti_sci_proc *tsp;
->> -    const struct ti_sci_handle *ti_sci;
->> -    u32 ti_sci_id;
->>       u32 atcm_enable;
->>       u32 btcm_enable;
->>       u32 loczrama;
->> @@ -153,23 +145,33 @@ struct k3_r5_core {
->>   /**
->>    * struct k3_r5_rproc - K3 remote processor state
->>    * @dev: cached device pointer
->> - * @cluster: cached pointer to parent cluster structure
->> - * @mbox: mailbox channel handle
->> - * @client: mailbox client to request the mailbox channel
->>    * @rproc: rproc handle
->> - * @core: cached pointer to r5 core structure being used
->> + * @mem: internal memory regions data
->> + * @num_mems: number of internal memory regions
->>    * @rmem: reserved memory regions data
->>    * @num_rmems: number of reserved memory regions
->> + * @reset: reset control handle
->> + * @tsp: TI-SCI processor control handle
->> + * @ti_sci: TI-SCI handle
->> + * @ti_sci_id: TI-SCI device identifier
->> + * @mbox: mailbox channel handle
->> + * @client: mailbox client to request the mailbox channel
->> + * @priv: Remote processor private data
->>    */
->>   struct k3_r5_rproc {
->>       struct device *dev;
->> -    struct k3_r5_cluster *cluster;
->> -    struct mbox_chan *mbox;
->> -    struct mbox_client client;
->>       struct rproc *rproc;
->> -    struct k3_r5_core *core;
->> +    struct k3_r5_mem *mem;
->> +    int num_mems;
->>       struct k3_r5_mem *rmem;
->>       int num_rmems;
->> +    struct reset_control *reset;
->> +    struct ti_sci_proc *tsp;
->> +    const struct ti_sci_handle *ti_sci;
->> +    u32 ti_sci_id;
->> +    struct mbox_chan *mbox;
->
-> So you are just re-ordering these member variable? Might be good to
-> just keep them in the old spot to make this patch easier to parse.
+Ah, yes.  But you have everything it uses, so you can use it by setting:
+wr_mas.mas = mas,
+wr_mas.r_max = r_max,
+wr_mas.type = type,
+wr_mas.entry = entry
 
+You can add a new MA_WR_STATE #define like in the maple_tree.h file, but
+only to the testing side.
 
-Not just re-ordering. We have moved the mem, num_mems, reset, tsp, 
-ti_sci, ti_sci_id from k3_r5_core to k3_r5_rproc. Then re-ordering was 
-done to match the k3_m4_rproc/k3_dsp_rproc struct. But right, can skip 
-the re-ordering part!
+I think it's worth doing because, if the internal checking changes then
+this test will still work (or will fail and force an update the wr_mas
+setup, or whatever..).  If we have duplicated code that becomes out of
+sync, we risk passing this test without actually getting the right answer
+in the kernel where it matters most.
 
->
->> +    struct mbox_client client;
->> +    void *priv;
->
-> Why do we need this "priv" again?
-
-
-Idea for having a priv void pointer is to let the R5/DSP/M4 individual 
-drivers have an instance of any private data structure they want to. In 
-case of R5, this would be k3_r5_core, in case of DSP/M4 priv can be a 
-null pointer. Some functions like k3_r5_rproc_prepare, 
-k3_r5_rproc_start, k3_r5_rproc_configure etc. need to extract the R5 
-private DS k3_r5_core somehow indirectly from the 'rproc' pointer. This 
-void priv allows to do that while ensuring we can align all the 
-R5/DSP/M4 data structures into "k3_rproc".
-
-
-> The othes (k3_m4_rproc/k3_dsp_rproc)
-> do not have this, so you'll have to drop it to make these structs
-> common at some point.
-
-
-Currently not. Instead of dropping the priv, we will add the priv in 
-DSP/M4 data structures (can be null ptrs which will never be 
-dereferenced) in the revision of following series[0],
-
-[0]: https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com
-
-> k3_r5_core already has a handle to this struct,
-> so why not have k3_r5_core be what you keep in "rproc->priv" then
-> extract out k3_r5_rproc from that, instead of the other way around.
-
-
-I'd say that is the sole problem, extracting k3_r5_core in common 
-refactorable functions. If we extract k3_r5_core from rproc->priv, R5 
-functions can't be refactored.
-
-Example code with assuming above logic in R5 driver:
-
-  static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
-    {
-            struct k3_r5_core *core = rproc->priv;
-            struct k3_r5_rproc *kproc = core->kproc;
-    }
-
-Whereas same function in DSP/M4 driver would be:
-
-  static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
-    {
-            struct k3_dsp_rproc *kproc = rproc->priv;
-    }
-
-Thanks,
-Beleswar
-
-
->
-> Andrew
->
->>   };
->>     /**
->> @@ -244,48 +246,48 @@ static void k3_r5_rproc_kick(struct rproc 
->> *rproc, int vqid)
->>               ret);
->>   }
->>   -static int k3_r5_split_reset(struct k3_r5_core *core)
->> +static int k3_r5_split_reset(struct k3_r5_rproc *kproc)
->>   {
->>       int ret;
->>   -    ret = reset_control_assert(core->reset);
->> +    ret = reset_control_assert(kproc->reset);
->>       if (ret) {
->> -        dev_err(core->dev, "local-reset assert failed, ret = %d\n",
->> +        dev_err(kproc->dev, "local-reset assert failed, ret = %d\n",
->>               ret);
->>           return ret;
->>       }
->>   -    ret = core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> -                           core->ti_sci_id);
->> +    ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +                            kproc->ti_sci_id);
->>       if (ret) {
->> -        dev_err(core->dev, "module-reset assert failed, ret = %d\n",
->> +        dev_err(kproc->dev, "module-reset assert failed, ret = %d\n",
->>               ret);
->> -        if (reset_control_deassert(core->reset))
->> -            dev_warn(core->dev, "local-reset deassert back failed\n");
->> +        if (reset_control_deassert(kproc->reset))
->> +            dev_warn(kproc->dev, "local-reset deassert back failed\n");
->>       }
->>         return ret;
->>   }
->>   -static int k3_r5_split_release(struct k3_r5_core *core)
->> +static int k3_r5_split_release(struct k3_r5_rproc *kproc)
->>   {
->>       int ret;
->>   -    ret = core->ti_sci->ops.dev_ops.get_device(core->ti_sci,
->> -                           core->ti_sci_id);
->> +    ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->> +                            kproc->ti_sci_id);
->>       if (ret) {
->> -        dev_err(core->dev, "module-reset deassert failed, ret = %d\n",
->> +        dev_err(kproc->dev, "module-reset deassert failed, ret = %d\n",
->>               ret);
->>           return ret;
->>       }
->>   -    ret = reset_control_deassert(core->reset);
->> +    ret = reset_control_deassert(kproc->reset);
->>       if (ret) {
->> -        dev_err(core->dev, "local-reset deassert failed, ret = %d\n",
->> +        dev_err(kproc->dev, "local-reset deassert failed, ret = %d\n",
->>               ret);
->> -        if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> -                             core->ti_sci_id))
->> -            dev_warn(core->dev, "module-reset assert back failed\n");
->> +        if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +                              kproc->ti_sci_id))
->> +            dev_warn(kproc->dev, "module-reset assert back failed\n");
->>       }
->>         return ret;
->> @@ -294,11 +296,12 @@ static int k3_r5_split_release(struct 
->> k3_r5_core *core)
->>   static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
->>   {
->>       struct k3_r5_core *core;
->> +    struct k3_r5_rproc *kproc;
->>       int ret;
->>         /* assert local reset on all applicable cores */
->>       list_for_each_entry(core, &cluster->cores, elem) {
->> -        ret = reset_control_assert(core->reset);
->> +        ret = reset_control_assert(core->kproc->reset);
->>           if (ret) {
->>               dev_err(core->dev, "local-reset assert failed, ret = 
->> %d\n",
->>                   ret);
->> @@ -309,8 +312,9 @@ static int k3_r5_lockstep_reset(struct 
->> k3_r5_cluster *cluster)
->>         /* disable PSC modules on all applicable cores */
->>       list_for_each_entry(core, &cluster->cores, elem) {
->> -        ret = core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> -                               core->ti_sci_id);
->> +        kproc = core->kproc;
->> +        ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +                                kproc->ti_sci_id);
->>           if (ret) {
->>               dev_err(core->dev, "module-reset assert failed, ret = 
->> %d\n",
->>                   ret);
->> @@ -322,14 +326,15 @@ static int k3_r5_lockstep_reset(struct 
->> k3_r5_cluster *cluster)
->>     unroll_module_reset:
->>       list_for_each_entry_continue_reverse(core, &cluster->cores, 
->> elem) {
->> -        if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> -                             core->ti_sci_id))
->> +        kproc = core->kproc;
->> +        if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +                              kproc->ti_sci_id))
->>               dev_warn(core->dev, "module-reset assert back failed\n");
->>       }
->>       core = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->>   unroll_local_reset:
->>       list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> -        if (reset_control_deassert(core->reset))
->> +        if (reset_control_deassert(core->kproc->reset))
->>               dev_warn(core->dev, "local-reset deassert back failed\n");
->>       }
->>   @@ -339,12 +344,14 @@ static int k3_r5_lockstep_reset(struct 
->> k3_r5_cluster *cluster)
->>   static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
->>   {
->>       struct k3_r5_core *core;
->> +    struct k3_r5_rproc *kproc;
->>       int ret;
->>         /* enable PSC modules on all applicable cores */
->>       list_for_each_entry_reverse(core, &cluster->cores, elem) {
->> -        ret = core->ti_sci->ops.dev_ops.get_device(core->ti_sci,
->> -                               core->ti_sci_id);
->> +        kproc = core->kproc;
->> +        ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
->> +                                kproc->ti_sci_id);
->>           if (ret) {
->>               dev_err(core->dev, "module-reset deassert failed, ret = 
->> %d\n",
->>                   ret);
->> @@ -355,7 +362,7 @@ static int k3_r5_lockstep_release(struct 
->> k3_r5_cluster *cluster)
->>         /* deassert local reset on all applicable cores */
->>       list_for_each_entry_reverse(core, &cluster->cores, elem) {
->> -        ret = reset_control_deassert(core->reset);
->> +        ret = reset_control_deassert(core->kproc->reset);
->>           if (ret) {
->>               dev_err(core->dev, "module-reset deassert failed, ret = 
->> %d\n",
->>                   ret);
->> @@ -367,29 +374,30 @@ static int k3_r5_lockstep_release(struct 
->> k3_r5_cluster *cluster)
->>     unroll_local_reset:
->>       list_for_each_entry_continue(core, &cluster->cores, elem) {
->> -        if (reset_control_assert(core->reset))
->> +        if (reset_control_assert(core->kproc->reset))
->>               dev_warn(core->dev, "local-reset assert back failed\n");
->>       }
->>       core = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->>   unroll_module_reset:
->>       list_for_each_entry_from(core, &cluster->cores, elem) {
->> -        if (core->ti_sci->ops.dev_ops.put_device(core->ti_sci,
->> -                             core->ti_sci_id))
->> +        kproc = core->kproc;
->> +        if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
->> +                              kproc->ti_sci_id))
->>               dev_warn(core->dev, "module-reset assert back failed\n");
->>       }
->>         return ret;
->>   }
->>   -static inline int k3_r5_core_halt(struct k3_r5_core *core)
->> +static inline int k3_r5_core_halt(struct k3_r5_rproc *kproc)
->>   {
->> -    return ti_sci_proc_set_control(core->tsp,
->> +    return ti_sci_proc_set_control(kproc->tsp,
->>                          PROC_BOOT_CTRL_FLAG_R5_CORE_HALT, 0);
->>   }
->>   -static inline int k3_r5_core_run(struct k3_r5_core *core)
->> +static inline int k3_r5_core_run(struct k3_r5_rproc *kproc)
->>   {
->> -    return ti_sci_proc_set_control(core->tsp,
->> +    return ti_sci_proc_set_control(kproc->tsp,
->>                          0, PROC_BOOT_CTRL_FLAG_R5_CORE_HALT);
->>   }
->>   @@ -447,15 +455,15 @@ static int k3_r5_rproc_request_mbox(struct 
->> rproc *rproc)
->>   static int k3_r5_rproc_prepare(struct rproc *rproc)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *dev = kproc->dev;
->>       u32 ctrl = 0, cfg = 0, stat = 0;
->>       u64 boot_vec = 0;
->>       bool mem_init_dis;
->>       int ret;
->>   -    ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, 
->> &ctrl, &stat);
->> +    ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, 
->> &stat);
->>       if (ret < 0)
->>           return ret;
->>       mem_init_dis = !!(cfg & PROC_BOOT_CFG_FLAG_R5_MEM_INIT_DIS);
->> @@ -463,7 +471,7 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>       /* Re-use LockStep-mode reset logic for Single-CPU mode */
->>       ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>              cluster->mode == CLUSTER_MODE_SINGLECPU) ?
->> -        k3_r5_lockstep_release(cluster) : k3_r5_split_release(core);
->> +        k3_r5_lockstep_release(cluster) : k3_r5_split_release(kproc);
->>       if (ret) {
->>           dev_err(dev, "unable to enable cores for TCM loading, ret = 
->> %d\n",
->>               ret);
->> @@ -487,10 +495,10 @@ static int k3_r5_rproc_prepare(struct rproc 
->> *rproc)
->>        * can be effective on all TCM addresses.
->>        */
->>       dev_dbg(dev, "zeroing out ATCM memory\n");
->> -    memset_io(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
->> +    memset_io(kproc->mem[0].cpu_addr, 0x00, kproc->mem[0].size);
->>         dev_dbg(dev, "zeroing out BTCM memory\n");
->> -    memset_io(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
->> +    memset_io(kproc->mem[1].cpu_addr, 0x00, kproc->mem[1].size);
->>         return 0;
->>   }
->> @@ -514,15 +522,15 @@ static int k3_r5_rproc_prepare(struct rproc 
->> *rproc)
->>   static int k3_r5_rproc_unprepare(struct rproc *rproc)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *dev = kproc->dev;
->>       int ret;
->>         /* Re-use LockStep-mode reset logic for Single-CPU mode */
->>       ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>              cluster->mode == CLUSTER_MODE_SINGLECPU) ?
->> -        k3_r5_lockstep_reset(cluster) : k3_r5_split_reset(core);
->> +        k3_r5_lockstep_reset(cluster) : k3_r5_split_reset(kproc);
->>       if (ret)
->>           dev_err(dev, "unable to disable cores, ret = %d\n", ret);
->>   @@ -549,9 +557,9 @@ static int k3_r5_rproc_unprepare(struct rproc 
->> *rproc)
->>   static int k3_r5_rproc_start(struct rproc *rproc)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> +    struct k3_r5_core *core0, *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *dev = kproc->dev;
->> -    struct k3_r5_core *core0, *core;
->>       u32 boot_addr;
->>       int ret;
->>   @@ -560,15 +568,14 @@ static int k3_r5_rproc_start(struct rproc 
->> *rproc)
->>       dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", 
->> boot_addr);
->>         /* boot vector need not be programmed for Core1 in LockStep 
->> mode */
->> -    core = kproc->core;
->> -    ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->> +    ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
->>       if (ret)
->>           return ret;
->>         /* unhalt/run all applicable cores */
->>       if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->>           list_for_each_entry_reverse(core, &cluster->cores, elem) {
->> -            ret = k3_r5_core_run(core);
->> +            ret = k3_r5_core_run(core->kproc);
->>               if (ret)
->>                   goto unroll_core_run;
->>           }
->> @@ -576,13 +583,13 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>           /* do not allow core 1 to start before core 0 */
->>           core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
->>                        elem);
->> -        if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->> +        if (core != core0 && core0->kproc->rproc->state == 
->> RPROC_OFFLINE) {
->>               dev_err(dev, "%s: can not start core 1 before core 0\n",
->>                   __func__);
->>               return -EPERM;
->>           }
->>   -        ret = k3_r5_core_run(core);
->> +        ret = k3_r5_core_run(core->kproc);
->>           if (ret)
->>               return ret;
->>   @@ -594,7 +601,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>     unroll_core_run:
->>       list_for_each_entry_continue(core, &cluster->cores, elem) {
->> -        if (k3_r5_core_halt(core))
->> +        if (k3_r5_core_halt(core->kproc))
->>               dev_warn(core->dev, "core halt back failed\n");
->>       }
->>       return ret;
->> @@ -627,15 +634,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>   static int k3_r5_rproc_stop(struct rproc *rproc)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> +    struct k3_r5_core *core1, *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *dev = kproc->dev;
->> -    struct k3_r5_core *core1, *core = kproc->core;
->>       int ret;
->>         /* halt all applicable cores */
->>       if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->>           list_for_each_entry(core, &cluster->cores, elem) {
->> -            ret = k3_r5_core_halt(core);
->> +            ret = k3_r5_core_halt(core->kproc);
->>               if (ret) {
->>                   core = list_prev_entry(core, elem);
->>                   goto unroll_core_halt;
->> @@ -645,14 +652,14 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>           /* do not allow core 0 to stop before core 1 */
->>           core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
->>                       elem);
->> -        if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
->> +        if (core != core1 && core1->kproc->rproc->state != 
->> RPROC_OFFLINE) {
->>               dev_err(dev, "%s: can not stop core 0 before core 1\n",
->>                   __func__);
->>               ret = -EPERM;
->>               goto out;
->>           }
->>   -        ret = k3_r5_core_halt(core);
->> +        ret = k3_r5_core_halt(core->kproc);
->>           if (ret)
->>               goto out;
->>       }
->> @@ -661,7 +668,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>     unroll_core_halt:
->>       list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> -        if (k3_r5_core_run(core))
->> +        if (k3_r5_core_run(core->kproc))
->>               dev_warn(core->dev, "core run back failed\n");
->>       }
->>   out:
->> @@ -731,7 +738,7 @@ static struct resource_table 
->> *k3_r5_get_loaded_rsc_table(struct rproc *rproc,
->>   static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, 
->> size_t len, bool *is_iomem)
->>   {
->>       struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core = kproc->priv;
->>       void __iomem *va = NULL;
->>       phys_addr_t bus_addr;
->>       u32 dev_addr, offset;
->> @@ -742,22 +749,22 @@ static void *k3_r5_rproc_da_to_va(struct rproc 
->> *rproc, u64 da, size_t len, bool
->>           return NULL;
->>         /* handle both R5 and SoC views of ATCM and BTCM */
->> -    for (i = 0; i < core->num_mems; i++) {
->> -        bus_addr = core->mem[i].bus_addr;
->> -        dev_addr = core->mem[i].dev_addr;
->> -        size = core->mem[i].size;
->> +    for (i = 0; i < kproc->num_mems; i++) {
->> +        bus_addr = kproc->mem[i].bus_addr;
->> +        dev_addr = kproc->mem[i].dev_addr;
->> +        size = kproc->mem[i].size;
->>             /* handle R5-view addresses of TCMs */
->>           if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
->>               offset = da - dev_addr;
->> -            va = core->mem[i].cpu_addr + offset;
->> +            va = kproc->mem[i].cpu_addr + offset;
->>               return (__force void *)va;
->>           }
->>             /* handle SoC-view addresses of TCMs */
->>           if (da >= bus_addr && ((da + len) <= (bus_addr + size))) {
->>               offset = da - bus_addr;
->> -            va = core->mem[i].cpu_addr + offset;
->> +            va = kproc->mem[i].cpu_addr + offset;
->>               return (__force void *)va;
->>           }
->>       }
->> @@ -835,9 +842,9 @@ static const struct rproc_ops k3_r5_rproc_ops = {
->>    */
->>   static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>   {
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> +    struct k3_r5_core *temp, *core0, *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *dev = kproc->dev;
->> -    struct k3_r5_core *core0, *core, *temp;
->>       u32 ctrl = 0, cfg = 0, stat = 0;
->>       u32 set_cfg = 0, clr_cfg = 0;
->>       u64 boot_vec = 0;
->> @@ -851,10 +858,10 @@ static int k3_r5_rproc_configure(struct 
->> k3_r5_rproc *kproc)
->>           cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>           core = core0;
->>       } else {
->> -        core = kproc->core;
->> +        core = kproc->priv;
->>       }
->>   -    ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
->> +    ret = ti_sci_proc_get_status(core->kproc->tsp, &boot_vec, &cfg, 
->> &ctrl,
->>                        &stat);
->>       if (ret < 0)
->>           return ret;
->> @@ -924,7 +931,7 @@ static int k3_r5_rproc_configure(struct 
->> k3_r5_rproc *kproc)
->>            * and TEINIT config is only allowed with Core0.
->>            */
->>           list_for_each_entry(temp, &cluster->cores, elem) {
->> -            ret = k3_r5_core_halt(temp);
->> +            ret = k3_r5_core_halt(temp->kproc);
->>               if (ret)
->>                   goto out;
->>   @@ -932,7 +939,7 @@ static int k3_r5_rproc_configure(struct 
->> k3_r5_rproc *kproc)
->>                   clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
->>                   clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_TEINIT;
->>               }
->> -            ret = ti_sci_proc_set_config(temp->tsp, boot_vec,
->> +            ret = ti_sci_proc_set_config(temp->kproc->tsp, boot_vec,
->>                                set_cfg, clr_cfg);
->>               if (ret)
->>                   goto out;
->> @@ -940,14 +947,14 @@ static int k3_r5_rproc_configure(struct 
->> k3_r5_rproc *kproc)
->>             set_cfg = PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
->>           clr_cfg = 0;
->> -        ret = ti_sci_proc_set_config(core->tsp, boot_vec,
->> +        ret = ti_sci_proc_set_config(core->kproc->tsp, boot_vec,
->>                            set_cfg, clr_cfg);
->>       } else {
->> -        ret = k3_r5_core_halt(core);
->> +        ret = k3_r5_core_halt(core->kproc);
->>           if (ret)
->>               goto out;
->>   -        ret = ti_sci_proc_set_config(core->tsp, boot_vec,
->> +        ret = ti_sci_proc_set_config(core->kproc->tsp, boot_vec,
->>                            set_cfg, clr_cfg);
->>       }
->>   @@ -1057,10 +1064,9 @@ static int k3_r5_reserved_mem_init(struct 
->> k3_r5_rproc *kproc)
->>    */
->>   static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
->>   {
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core0, *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *cdev = core->dev;
->> -    struct k3_r5_core *core0;
->>         if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>           cluster->mode == CLUSTER_MODE_SINGLECPU ||
->> @@ -1070,14 +1076,14 @@ static void k3_r5_adjust_tcm_sizes(struct 
->> k3_r5_rproc *kproc)
->>         core0 = list_first_entry(&cluster->cores, struct k3_r5_core, 
->> elem);
->>       if (core == core0) {
->> -        WARN_ON(core->mem[0].size != SZ_64K);
->> -        WARN_ON(core->mem[1].size != SZ_64K);
->> +        WARN_ON(kproc->mem[0].size != SZ_64K);
->> +        WARN_ON(kproc->mem[1].size != SZ_64K);
->>   -        core->mem[0].size /= 2;
->> -        core->mem[1].size /= 2;
->> +        kproc->mem[0].size /= 2;
->> +        kproc->mem[1].size /= 2;
->>             dev_dbg(cdev, "adjusted TCM sizes, ATCM = 0x%zx BTCM = 
->> 0x%zx\n",
->> -            core->mem[0].size, core->mem[1].size);
->> +            kproc->mem[0].size, kproc->mem[1].size);
->>       }
->>   }
->>   @@ -1096,22 +1102,21 @@ static void k3_r5_adjust_tcm_sizes(struct 
->> k3_r5_rproc *kproc)
->>    */
->>   static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->>   {
->> -    struct k3_r5_cluster *cluster = kproc->cluster;
->> -    struct k3_r5_core *core = kproc->core;
->> +    struct k3_r5_core *core0, *core = kproc->priv;
->> +    struct k3_r5_cluster *cluster = core->cluster;
->>       struct device *cdev = core->dev;
->>       bool r_state = false, c_state = false, lockstep_en = false, 
->> single_cpu = false;
->>       u32 ctrl = 0, cfg = 0, stat = 0, halted = 0;
->>       u64 boot_vec = 0;
->>       u32 atcm_enable, btcm_enable, loczrama;
->> -    struct k3_r5_core *core0;
->>       enum cluster_mode mode = cluster->mode;
->>       int reset_ctrl_status;
->>       int ret;
->>         core0 = list_first_entry(&cluster->cores, struct k3_r5_core, 
->> elem);
->>   -    ret = core->ti_sci->ops.dev_ops.is_on(core->ti_sci, 
->> core->ti_sci_id,
->> -                          &r_state, &c_state);
->> +    ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, 
->> kproc->ti_sci_id,
->> +                           &r_state, &c_state);
->>       if (ret) {
->>           dev_err(cdev, "failed to get initial state, mode cannot be 
->> determined, ret = %d\n",
->>               ret);
->> @@ -1122,7 +1127,7 @@ static int k3_r5_rproc_configure_mode(struct 
->> k3_r5_rproc *kproc)
->>                r_state, c_state);
->>       }
->>   -    reset_ctrl_status = reset_control_status(core->reset);
->> +    reset_ctrl_status = reset_control_status(kproc->reset);
->>       if (reset_ctrl_status < 0) {
->>           dev_err(cdev, "failed to get initial local reset status, 
->> ret = %d\n",
->>               reset_ctrl_status);
->> @@ -1135,7 +1140,7 @@ static int k3_r5_rproc_configure_mode(struct 
->> k3_r5_rproc *kproc)
->>        */
->>       core->released_from_reset = c_state;
->>   -    ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
->> +    ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl,
->>                        &stat);
->>       if (ret < 0) {
->>           dev_err(cdev, "failed to get initial processor status, ret 
->> = %d\n",
->> @@ -1192,25 +1197,26 @@ static int k3_r5_rproc_configure_mode(struct 
->> k3_r5_rproc *kproc)
->>           core->atcm_enable = atcm_enable;
->>           core->btcm_enable = btcm_enable;
->>           core->loczrama = loczrama;
->> -        core->mem[0].dev_addr = loczrama ? 0 : K3_R5_TCM_DEV_ADDR;
->> -        core->mem[1].dev_addr = loczrama ? K3_R5_TCM_DEV_ADDR : 0;
->> +        kproc->mem[0].dev_addr = loczrama ? 0 : K3_R5_TCM_DEV_ADDR;
->> +        kproc->mem[1].dev_addr = loczrama ? K3_R5_TCM_DEV_ADDR : 0;
->>       }
->>         return ret;
->>   }
->>     static int k3_r5_core_of_get_internal_memories(struct 
->> platform_device *pdev,
->> -                           struct k3_r5_core *core)
->> +                           struct k3_r5_rproc *kproc)
->>   {
->>       static const char * const mem_names[] = {"atcm", "btcm"};
->>       struct device *dev = &pdev->dev;
->> +    struct k3_r5_core *core = kproc->priv;
->>       struct resource *res;
->>       int num_mems;
->>       int i;
->>         num_mems = ARRAY_SIZE(mem_names);
->> -    core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), 
->> GFP_KERNEL);
->> -    if (!core->mem)
->> +    kproc->mem = devm_kcalloc(dev, num_mems, sizeof(*kproc->mem), 
->> GFP_KERNEL);
->> +    if (!kproc->mem)
->>           return -ENOMEM;
->>         for (i = 0; i < num_mems; i++) {
->> @@ -1236,13 +1242,13 @@ static int 
->> k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
->>            * unaligned data accesses when using memcpy() or memset()
->>            * functions (normally seen with device type memory).
->>            */
->> -        core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
->> -                            resource_size(res));
->> -        if (!core->mem[i].cpu_addr) {
->> +        kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
->> +                             resource_size(res));
->> +        if (!kproc->mem[i].cpu_addr) {
->>               dev_err(dev, "failed to map %s memory\n", mem_names[i]);
->>               return -ENOMEM;
->>           }
->> -        core->mem[i].bus_addr = res->start;
->> +        kproc->mem[i].bus_addr = res->start;
->>             /*
->>            * TODO:
->> @@ -1253,20 +1259,20 @@ static int 
->> k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
->>            * SoCs) based on loczrama setting
->>            */
->>           if (!strcmp(mem_names[i], "atcm")) {
->> -            core->mem[i].dev_addr = core->loczrama ?
->> +            kproc->mem[i].dev_addr = core->loczrama ?
->>                               0 : K3_R5_TCM_DEV_ADDR;
->>           } else {
->> -            core->mem[i].dev_addr = core->loczrama ?
->> +            kproc->mem[i].dev_addr = core->loczrama ?
->>                               K3_R5_TCM_DEV_ADDR : 0;
->>           }
->> -        core->mem[i].size = resource_size(res);
->> +        kproc->mem[i].size = resource_size(res);
->>             dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK 
->> da 0x%x\n",
->> -            mem_names[i], &core->mem[i].bus_addr,
->> -            core->mem[i].size, core->mem[i].cpu_addr,
->> -            core->mem[i].dev_addr);
->> +            mem_names[i], &kproc->mem[i].bus_addr,
->> +            kproc->mem[i].size, kproc->mem[i].cpu_addr,
->> +            kproc->mem[i].dev_addr);
->>       }
->> -    core->num_mems = num_mems;
->> +    kproc->num_mems = num_mems;
->>         return 0;
->>   }
->> @@ -1284,6 +1290,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       struct device *dev = &pdev->dev;
->>       struct k3_r5_rproc *kproc;
->>       struct k3_r5_core *core, *core1;
->> +    struct device_node *np;
->>       struct device *cdev;
->>       const char *fw_name;
->>       struct rproc *rproc;
->> @@ -1292,6 +1299,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->>       list_for_each_entry(core, &cluster->cores, elem) {
->>           cdev = core->dev;
->> +        np = dev_of_node(cdev);
->>           ret = rproc_of_parse_firmware(cdev, 0, &fw_name);
->>           if (ret) {
->>               dev_err(dev, "failed to parse firmware-name property, 
->> ret = %d\n",
->> @@ -1312,11 +1320,62 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>           rproc->recovery_disabled = true;
->>             kproc = rproc->priv;
->> -        kproc->cluster = cluster;
->> -        kproc->core = core;
->> +        kproc->priv = core;
->>           kproc->dev = cdev;
->>           kproc->rproc = rproc;
->> -        core->rproc = rproc;
->> +        core->kproc = kproc;
->> +
->> +        kproc->ti_sci = devm_ti_sci_get_by_phandle(cdev, "ti,sci");
->> +        if (IS_ERR(kproc->ti_sci)) {
->> +            ret = dev_err_probe(cdev, PTR_ERR(kproc->ti_sci), 
->> "failed to get ti-sci handle\n");
->> +            kproc->ti_sci = NULL;
->> +            goto out;
->> +        }
->> +
->> +        ret = of_property_read_u32(np, "ti,sci-dev-id", 
->> &kproc->ti_sci_id);
->> +        if (ret) {
->> +            dev_err(cdev, "missing 'ti,sci-dev-id' property\n");
->> +            goto out;
->> +        }
->> +
->> +        kproc->reset = devm_reset_control_get_exclusive(cdev, NULL);
->> +        if (IS_ERR_OR_NULL(kproc->reset)) {
->> +            ret = PTR_ERR_OR_ZERO(kproc->reset);
->> +            if (!ret)
->> +                ret = -ENODEV;
->> +            dev_err_probe(cdev, ret, "failed to get reset handle\n");
->> +            goto out;
->> +        }
->> +
->> +        kproc->tsp = ti_sci_proc_of_get_tsp(cdev, kproc->ti_sci);
->> +        if (IS_ERR(kproc->tsp)) {
->> +            ret = dev_err_probe(cdev, PTR_ERR(kproc->tsp),
->> +                        "failed to construct ti-sci proc control\n");
->> +            goto out;
->> +        }
->> +
->> +        ret = 
->> k3_r5_core_of_get_internal_memories(to_platform_device(cdev), kproc);
->> +        if (ret) {
->> +            dev_err(cdev, "failed to get internal memories, ret = 
->> %d\n",
->> +                ret);
->> +            goto out;
->> +        }
->> +
->> +        ret = ti_sci_proc_request(kproc->tsp);
->> +        if (ret < 0) {
->> +            dev_err(cdev, "ti_sci_proc_request failed, ret = %d\n", 
->> ret);
->> +            goto out;
->> +        }
->> +
->> +        ret = devm_add_action_or_reset(cdev, k3_r5_release_tsp, 
->> kproc->tsp);
->> +        if (ret)
->> +            goto out;
->> +    }
->> +
->> +    list_for_each_entry(core, &cluster->cores, elem) {
->> +        cdev = core->dev;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>             ret = k3_r5_rproc_request_mbox(rproc);
->>           if (ret)
->> @@ -1330,7 +1389,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>             ret = k3_r5_rproc_configure(kproc);
->>           if (ret) {
->> -            dev_err(dev, "initial configure failed, ret = %d\n",
->> +            dev_err(cdev, "initial configure failed, ret = %d\n",
->>                   ret);
->>               goto out;
->>           }
->> @@ -1340,14 +1399,14 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>             ret = k3_r5_reserved_mem_init(kproc);
->>           if (ret) {
->> -            dev_err(dev, "reserved memory init failed, ret = %d\n",
->> +            dev_err(cdev, "reserved memory init failed, ret = %d\n",
->>                   ret);
->>               goto out;
->>           }
->>   -        ret = devm_rproc_add(dev, rproc);
->> +        ret = devm_rproc_add(cdev, rproc);
->>           if (ret) {
->> -            dev_err_probe(dev, ret, "rproc_add failed\n");
->> +            dev_err_probe(cdev, ret, "rproc_add failed\n");
->>               goto out;
->>           }
->>   @@ -1373,7 +1432,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>                                  core->released_from_reset,
->>                                  msecs_to_jiffies(2000));
->>           if (ret <= 0) {
->> -            dev_err(dev,
->> +            dev_err(cdev,
->>                   "Timed out waiting for %s core to power up!\n",
->>                   rproc->name);
->>               goto out;
->> @@ -1396,8 +1455,8 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>       /* undo core0 upon any failures on core1 in split-mode */
->>       if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
->>           core = list_prev_entry(core, elem);
->> -        rproc = core->rproc;
->> -        kproc = rproc->priv;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>           goto err_split;
->>       }
->>       return ret;
->> @@ -1422,8 +1481,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>           list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->>         list_for_each_entry_from_reverse(core, &cluster->cores, elem) {
->> -        rproc = core->rproc;
->> -        kproc = rproc->priv;
->> +        kproc = core->kproc;
->> +        rproc = kproc->rproc;
->>             if (rproc->state == RPROC_ATTACHED) {
->>               ret = rproc_detach(rproc);
->> @@ -1539,58 +1598,12 @@ static int k3_r5_core_of_init(struct 
->> platform_device *pdev)
->>           goto err;
->>       }
->>   -    core->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
->> -    if (IS_ERR(core->ti_sci)) {
->> -        ret = dev_err_probe(dev, PTR_ERR(core->ti_sci), "failed to 
->> get ti-sci handle\n");
->> -        core->ti_sci = NULL;
->> -        goto err;
->> -    }
->> -
->> -    ret = of_property_read_u32(np, "ti,sci-dev-id", &core->ti_sci_id);
->> -    if (ret) {
->> -        dev_err(dev, "missing 'ti,sci-dev-id' property\n");
->> -        goto err;
->> -    }
->> -
->> -    core->reset = devm_reset_control_get_exclusive(dev, NULL);
->> -    if (IS_ERR_OR_NULL(core->reset)) {
->> -        ret = PTR_ERR_OR_ZERO(core->reset);
->> -        if (!ret)
->> -            ret = -ENODEV;
->> -        dev_err_probe(dev, ret, "failed to get reset handle\n");
->> -        goto err;
->> -    }
->> -
->> -    core->tsp = ti_sci_proc_of_get_tsp(dev, core->ti_sci);
->> -    if (IS_ERR(core->tsp)) {
->> -        ret = dev_err_probe(dev, PTR_ERR(core->tsp),
->> -                    "failed to construct ti-sci proc control\n");
->> -        goto err;
->> -    }
->> -
->> -    ret = k3_r5_core_of_get_internal_memories(pdev, core);
->> -    if (ret) {
->> -        dev_err(dev, "failed to get internal memories, ret = %d\n",
->> -            ret);
->> -        goto err;
->> -    }
->> -
->>       ret = k3_r5_core_of_get_sram_memories(pdev, core);
->>       if (ret) {
->>           dev_err(dev, "failed to get sram memories, ret = %d\n", ret);
->>           goto err;
->>       }
->>   -    ret = ti_sci_proc_request(core->tsp);
->> -    if (ret < 0) {
->> -        dev_err(dev, "ti_sci_proc_request failed, ret = %d\n", ret);
->> -        goto err;
->> -    }
->> -
->> -    ret = devm_add_action_or_reset(dev, k3_r5_release_tsp, core->tsp);
->> -    if (ret)
->> -        goto err;
->> -
->>       platform_set_drvdata(pdev, core);
->>       devres_close_group(dev, k3_r5_core_of_init);
->>   @@ -1652,6 +1665,7 @@ static int k3_r5_cluster_of_init(struct 
->> platform_device *pdev)
->>           }
->>             core = platform_get_drvdata(cpdev);
->> +        core->cluster = cluster;
->>           put_device(&cpdev->dev);
->>           list_add_tail(&core->elem, &cluster->cores);
->>       }
+> 
+> That's why a similar implementation is needed but one that takes in a maple
+> state rather than a maple write state.
+> 
+> Thanks,
+> Sid
+> 
+> 
+> > 
+> > > +static bool is_span_wr(struct ma_state *mas, unsigned long r_max,
+> > > +				enum maple_type type, void *entry)
+> > > +{
+> > > +	unsigned long max = r_max;
+> > > +	unsigned long last = mas->last;
+> > > +
+> > > +	/* Contained in this pivot, fast path */
+> > > +	if (last < max)
+> > > +		return false;
+> > > +
+> > > +	if (ma_is_leaf(type)) {
+> > > +		max = mas->max;
+> > > +		if (last < max)
+> > > +			return false;
+> > > +	}
+> > > +
+> > > +	if (last == max) {
+> > > +		/*
+> > > +		 * The last entry of leaf node cannot be NULL unless it is the
+> > > +		 * rightmost node (writing ULONG_MAX), otherwise it spans slots.
+> > > +		 */
+> > > +		if (entry || last == ULONG_MAX)
+> > > +			return false;
+> > > +	}
+> > > +
+> > > +	return true;
+> > > +}
+> > > +
+> > > +/* get height of the lowest non-leaf node with free space */
+> > > +static unsigned char get_vacant_height(struct ma_state *mas, void *entry)
+> > > +{
+> > > +	char vacant_height = 0;
+> > > +	enum maple_type type;
+> > > +	unsigned long *pivots;
+> > > +	unsigned long min = 0;
+> > > +	unsigned long max = ULONG_MAX;
+> > > +
+> > > +	/* start traversal */
+> > > +	mas_reset(mas);
+> > > +	mas_start(mas);
+> > > +	if (!xa_is_node(mas_root(mas)))
+> > > +		return 0;
+> > > +
+> > > +	type = mte_node_type(mas->node);
+> > > +	while (!ma_is_leaf(type)) {
+> > > +		mas_node_walk(mas, mte_to_node(mas->node), type, &min, &max);
+> > > +		mas->end = mas_data_end(mas);
+> > > +		pivots = ma_pivots(mte_to_node(mas->node), type);
+> > > +
+> > > +		if (pivots) {
+> > > +			if (mas->offset)
+> > > +				min = pivots[mas->offset - 1];
+> > > +			if (mas->offset < mas->end)
+> > > +				max = pivots[mas->offset];
+> > > +		}
+> > > +
+> > > +		/* detect spanning write */
+> > > +		if (is_span_wr(mas, max, type, entry))
+> > > +			break;
+> > > +
+> > > +		if (mas->end < mt_slot_count(mas->node) - 1)
+> > > +			vacant_height = mas->depth + 1;
+> > > +
+> > > +		mas_descend(mas);
+> > > +		type = mte_node_type(mas->node);
+> > > +		mas->depth++;
+> > > +	}
+> > > +
+> > > +	return vacant_height;
+> > > +}
+> > > +
+> > >   /* Preallocation testing */
+> > >   static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   {
+> > >   	unsigned long i, max = 100;
+> > >   	unsigned long allocated;
+> > >   	unsigned char height;
+> > > +	unsigned char vacant_height;
+> > >   	struct maple_node *mn;
+> > >   	void *ptr = check_prealloc;
+> > >   	MA_STATE(mas, mt, 10, 20);
+> > > @@ -35494,8 +35567,9 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > >   	MT_BUG_ON(mt, allocated == 0);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	mas_destroy(&mas);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	MT_BUG_ON(mt, allocated != 0);
+> > > @@ -35503,8 +35577,9 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > >   	MT_BUG_ON(mt, allocated == 0);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	mas_destroy(&mas);
+> > >   	allocated = mas_allocated(&mas);
+> > > @@ -35514,7 +35589,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	mn = mas_pop_node(&mas);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+> > >   	mn->parent = ma_parent_ptr(mn);
+> > > @@ -35527,7 +35603,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	mn = mas_pop_node(&mas);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > > @@ -35540,7 +35617,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	mn = mas_pop_node(&mas);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+> > >   	mas_push_node(&mas, mn);
+> > > @@ -35553,7 +35631,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+> > >   	mas_store_prealloc(&mas, ptr);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+> > > @@ -35578,7 +35657,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 2);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > > +	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 2);
+> > >   	mas_store_prealloc(&mas, ptr);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+> > >   	mt_set_non_kernel(1);
+> > > @@ -35595,8 +35675,14 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+> > >   	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+> > >   	allocated = mas_allocated(&mas);
+> > >   	height = mas_mt_height(&mas);
+> > > +	vacant_height = get_vacant_height(&mas, ptr);
+> > >   	MT_BUG_ON(mt, allocated == 0);
+> > > -	MT_BUG_ON(mt, allocated != 1 + height * 3);
+> > > +	/*
+> > > +	 * vacant height cannot be used to compute the number of nodes needed
+> > > +	 * as the root contains two entries which means it is on the verge of
+> > > +	 * insufficiency. The worst case full height of the tree is needed.
+> > > +	 */
+> > > +	MT_BUG_ON(mt, allocated != height * 3 + 1);
+> > >   	mas_store_prealloc(&mas, ptr);
+> > >   	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+> > >   	mas_set_range(&mas, 0, 200);
+> > > -- 
+> > > 2.43.0
+> > > 
+> 
 
