@@ -1,354 +1,282 @@
-Return-Path: <linux-kernel+bounces-533147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CC9A45628
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:00:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5E0A45629
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF5B188EC17
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC87188ECC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E44269CF0;
-	Wed, 26 Feb 2025 07:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D035267B9D;
+	Wed, 26 Feb 2025 07:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kWQmsjjg"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2045.outbound.protection.outlook.com [40.107.100.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="rhMXYUbg";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="rhMXYUbg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483014A62A;
-	Wed, 26 Feb 2025 07:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740553237; cv=fail; b=LBUrQ3mN0w7rJ6CND1AQvWAsHKXELxOpnTRyBzKv92oav+WAZUIBr0Nb1bs5LLhJ9q1wlKp68krOPVGj/cRlJ6dYwwyBVxOuHaxfFYBklNCOQG5cy/cp2gBvjfozPI9dW2fXCLlY7cNSzikwEvVBqLGAb3MbiciKDCa3U23F4bI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740553237; c=relaxed/simple;
-	bh=2b31xYgXNjlNR2R+PetEyc8/jc/rRWhe8KYSnlC+DTE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=afmzke+R0PW1xg9IZqYlSEqVWIZpjcqSwr3E6IW5KMO3X8NAjEe6kKBP3jIlBmk5NWehQa6T6hDbn2BRSlfHwlA6T9Jj+WQT0dfyBNcVAkqo8/pqwUdl2kgiYJ7+H/ZrHx6yjmIx2RgpnqnsLJHfiWCEfwr+5LXU6+Qugrt1IlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kWQmsjjg; arc=fail smtp.client-ip=40.107.100.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XWjCJ1vc9H5lRyLd0Yrzrwy/hcgfm85xgvdt91MIsUalxdTLcy8s0psjg+8nt3uL924J49/37eKwG/pfxuLRU/wCxBJcKlFE7owlsya5zmqS/yt/7HxB5U4Ss2e8aaowCqGjBrAEl5M5G2glvl34CtVMBSgLD7MIVY9ne/QeGlXG79uUtkIY3VlynR+KTwg3/aOTQWfHFqRQ44smvY8QFJ81joldwokKW2xSoXP5qNDOHb8RgTx+D5Gbs6tzYcbXi4tob/Yd2ITlutcsd1GOBC3IuR5IX3Rv0OlJDRu2qRXdtXbdc6nXQyYqnpCX/mQcJDGF00f/pWqfRWihedwQCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3S7WeSx+AIoNLuIVaVtllAab+O+9zeylEv2hk+E/ScU=;
- b=RYHJwvXp5h9HY83GmJ4foehGWC+eJnkw9Hi1uxPfp2Jkb++lKnE4hGNaRA2Wc8d0KoG8HUoRxuuRJKdD9FSQl2ITEYpFXmRTjSyMyq7PNnjdBug8Pu4HVMWU2IRfCPuejE0Y1opM+4nfNwmz+XwDSWze5/2xIADfELQyPEsq30+WIOSTxJUoPlmqU6lv8vOPDtG4lBetq8d4YnSGgQsPY4TjT02hpGIhhFwLTum8W9NpMkZYNhuvGUn2zJJySnjfPEhqTixHtp6zQtN5wv67vvTAVh3S72Aebunc10GMc45tPCbFjvipKYM+WIUAtSwx/cpTYjCsWM/AHfJwM0kozg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3S7WeSx+AIoNLuIVaVtllAab+O+9zeylEv2hk+E/ScU=;
- b=kWQmsjjgzGpi4CDJLkDQU/Fl3+HshszyFRfpwnUt7fPjm8f/ei2MlLNhT6HELy3Ybfk4wnkH6jGc0J+HXfK8eWI/SbF4wdLn75sbo/eXwjKcMfxWGcrtge8udDSSvCLnL117miDdWCUxsqBai4bGIy9gbJcNbMVUtaW2BhlRuXM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DM6PR12MB4283.namprd12.prod.outlook.com (2603:10b6:5:211::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Wed, 26 Feb
- 2025 07:00:33 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
- 07:00:33 +0000
-Message-ID: <64613914-1759-4008-8e56-ae220c0171fc@amd.com>
-Date: Tue, 25 Feb 2025 23:00:32 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hid-asus: check ROG Ally MCU version and warn
-To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
- bentiss@kernel.org, jikos@kernel.org
-References: <20250226010129.32043-1-luke@ljones.dev>
- <20250226010129.32043-2-luke@ljones.dev>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250226010129.32043-2-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH8P222CA0015.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:2d7::19) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE2622DFBF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740553269; cv=none; b=N3inQuMcEvnVdrMMNBCOMXvuZ4kYduLmXuVe6IDnYvzcp4kr7AFjZpSBvJxA2yoCn3Apk/PnuCFg/x44hfYsn2ccEDcsU6hdV6YZYFQRMFbQyth9GMXIy7YhKoOZFy56fv1R7VwarocVUQpeplYTeMuZruL/8Sr8i+c40DRwSFw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740553269; c=relaxed/simple;
+	bh=9rypwHoesTlOWR7OCKuLQGvOso59Ys4o9mAyGPSRcqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAADaCuPMFqC4FEmG7YSyGLkwcZeTEEU50dVYcy55txRmdvSuLEBuYULRvIhjpmaTv52F9C1skTUZkfMg2ZM7ypF5eox49+4xdn6OFyUD9DdJjEaS5aol8aRb7bsdbkrsDHEpNSytxpwG5ZSCRwn11QX7Ha36AE1Glzygr0dW8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=rhMXYUbg; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=rhMXYUbg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8DBA321195;
+	Wed, 26 Feb 2025 07:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1740553265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9rypwHoesTlOWR7OCKuLQGvOso59Ys4o9mAyGPSRcqg=;
+	b=rhMXYUbgnRqP0O+CUUG2G5Q/291VkpbQvLDu1DnQxPfW2oAtfiDtTNLH96NmEpVU5Vx9F/
+	QYq/0RQBQzL/Y/XadVNG9kyK4TNoNwbwTbdpnQPZ933daQgQQaBzcQ3Es4ugmiXufxAPX4
+	7azwhjIpnWBtXmDxCfht/cdVOsf52ko=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=rhMXYUbg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1740553265; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9rypwHoesTlOWR7OCKuLQGvOso59Ys4o9mAyGPSRcqg=;
+	b=rhMXYUbgnRqP0O+CUUG2G5Q/291VkpbQvLDu1DnQxPfW2oAtfiDtTNLH96NmEpVU5Vx9F/
+	QYq/0RQBQzL/Y/XadVNG9kyK4TNoNwbwTbdpnQPZ933daQgQQaBzcQ3Es4ugmiXufxAPX4
+	7azwhjIpnWBtXmDxCfht/cdVOsf52ko=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 676DD1377F;
+	Wed, 26 Feb 2025 07:01:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nwILFzG8vmfqKgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Wed, 26 Feb 2025 07:01:05 +0000
+Message-ID: <9a6223ee-cb70-4c20-9749-e5ddc5018f1b@suse.com>
+Date: Wed, 26 Feb 2025 08:01:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DM6PR12MB4283:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc224080-f552-47c8-c7e0-08dd56334397
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RVBieFNQbnNNQ080alZRQXRNeHYySGhBNjVSdzkzVnNENzNremFrWm11Q3h1?=
- =?utf-8?B?Qzl5bjdmNzYvTytJaVRMRUt6K3dkY0ZaaXFYVXd0ZnQ5OVFTQkt0SkdNRnc5?=
- =?utf-8?B?a3h1blNrK0FpaHZtbkl6ekdQWkszSGRsNmExMmtiOVJERHIyY3dqV2V1SEZH?=
- =?utf-8?B?OVh1RUVIVkliYzIzRnBxVXNHYXN5U0tDRkx3S1FCb0JXcElFbllzdE54ZjFN?=
- =?utf-8?B?VG5vNjZxaURTTVM0aW9UeTFTelJoeDh4bG5CR3pUUEF0N0hPN3p2S1Q0WkV2?=
- =?utf-8?B?Sk1XQ3gzTzc2TkIvNHhCR29uNnVRRi9wSS9HSHFMQVZFMVpSTFF0L3JZd0wr?=
- =?utf-8?B?ZG8yK2hIeE94UXgrblZseE5nbG1PbDdTcWtuWlVSRWtjV0pMRXlEcmd4MVpB?=
- =?utf-8?B?Zmd1WXBad2JybG8rUW1JL0gySkNRejJsS09JZG9ZRTdQRXpwalJUZ0FXNG1x?=
- =?utf-8?B?bEovbFpabjhPY1p5QnA0cldYWXVuVnhCSG9EdmJOMlRTTENhSnA5Y1VhSlo0?=
- =?utf-8?B?Ulhyb1lqK2tyaFYxL1NpbWY1ZVFRam9WTVJUTVhkWUswd0txMkJHZ1pIczZI?=
- =?utf-8?B?SFQwaXRmOUpneGZOS3BwbUJzMWJlZjJIY3ZkVGpaVkgwY0V4Y1FNblp1S0s2?=
- =?utf-8?B?bDNnR0lZc3EwT3NYYXNpQ3ArdU5SSEh5ZlZzbkFYZ08xMlhLYjE5RnZZb3hi?=
- =?utf-8?B?Zit4WVFYb010WjZzYjR1bDJwMFVJaW10N0pPMFUxbHp4UDdCQkM1cWZUc3hl?=
- =?utf-8?B?dm9SYzZqbHpiK1o2d2hVaVJoWXgxNGhQcWtKTk1IMDZrVG9jQS9ESzl1YThH?=
- =?utf-8?B?aHdySVFjNGhydGdNZDVKWVFhSGVXTHdSVE9QanVycVJrL0E5c0JzdzVtczJa?=
- =?utf-8?B?Y1JIZmgxdEF0TGVqV2N6OFJES1lKS3pqdTFKOG5lMVpwaGJlUlJ6cHpLd2FG?=
- =?utf-8?B?UXNNcGxTUjlVV2REc3k2T3RmZ0xleTh3UXJhRThzUkxWN3Q4VXZjVHNnM3B4?=
- =?utf-8?B?a1g3VC95aU1iNmNSaFRzZ2loTUd0di9RR3k5TzNPWkJzb3ZIWnlsTDVsUkJR?=
- =?utf-8?B?Qlg4b1ZuVXNCK0RCMG9tdE94NmttcCtlSFBDSGkyck90MHFrTDhaZDMwUUh0?=
- =?utf-8?B?c2swd28weDRuNk9JNlczTG1kZEhoNFlZMTY1QkdCZFRkWm9Nc3RTVlFOd3dp?=
- =?utf-8?B?UFhhRlU4NDdSMkxuZW9CSzgxK0J3dEE5VkVTbnZ0OWFpK3ZLbWYxMktOQUVQ?=
- =?utf-8?B?MzBHRVd5ViswVWNBOWVRZ1RBT0V0V0ltODFtYmdCcGx6bHlncDBOK3RNbnJv?=
- =?utf-8?B?bGp2bHJWeElSZEdYMHNQb0pyQzJORUNDM0p3d2l5Ukk1OUZWdXNsa1hKbGNp?=
- =?utf-8?B?dittZjhRQnRuQzMzYjd2MFBJT29XZXlLZnpCNW5QL0p3d0RpblFiVHEvM2Rz?=
- =?utf-8?B?bk14ZzhlNndXeDF1Rk9iVU81MlE4SldKWHpVazJod1JhR3VaZUl2RndQSzZl?=
- =?utf-8?B?b2JBeUVFYnlwcG5seTFLV1hXRnpFTTlrUmZMT1ZVY2R2SDVtcDA1ZTg2S0VG?=
- =?utf-8?B?cEh3ZmNkb0Y1OWpvTjZuRTduUjZ4eHdpV3VMd3NnZGxuN3UxWmpVOElGMGxl?=
- =?utf-8?B?L3hZZWJVRTRRUWtSdkZkT3FKU1F6b2QxL3pOVm5nQlIreVpxa3hJOG00NnRm?=
- =?utf-8?B?aWNOMTcrOGI4dUU1azFtakZIZS9LVkpVbGlVcFJPc1I0R1E5WVYzS3pCaGVO?=
- =?utf-8?B?Y21HL1FPS3JaMzJzMUR1dzlwYnl2dmhKdHVvNFVJaWM1Y3BMYTRMcjhYdWk5?=
- =?utf-8?B?WTcxSXlJRGdvdmhBVDc1UXN4MXhIWWVDSW5CNFZycTltaFJhKzVrUnBkY285?=
- =?utf-8?Q?GMiur4Hf9hnrA?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QjBINlRid0E0NXZDcWhNVG9lUUErTTVwZExaaFF1UUtPWWYwVUhYNzNzOUNW?=
- =?utf-8?B?L21mdmVnT0wwYmkxUXZxOXd5Qkd4dUMxZEVrWThIT2krZmZrRGFhNkNDM29u?=
- =?utf-8?B?UFdUODlsTHYvRk4vWFB0VFk1MmxNQ1IzQkNubDZRTjcyTU5uNStybVgvQ1JO?=
- =?utf-8?B?Y0ZKWFliQ0xWWWw2eDVvYlpHMlliV3VuNUhPeHB2cnRxM3hmWnJKSnlpTFRP?=
- =?utf-8?B?am4zQ1E3QSt1VFlzMW5jWTlwWjBrSUlEMHF6VXJibmpQTXk1M29YZ2dtcFQ1?=
- =?utf-8?B?cVpHSTFQd1RabXRKZjZsZS9hUVRGWS9vOUJsWjF6R3k2a2hSRTc4Y040czZW?=
- =?utf-8?B?V1QwT1dSaWhob2x1SFZmblI4MmVaV21BNFQ4Q1lpNnVYenNQaTd5V1NibmZW?=
- =?utf-8?B?NHFoUjA0UmJLRkNjM1pjYU56cVlWVG14aitXRGJ1NlIyQzZiSnVCK3pPYVB4?=
- =?utf-8?B?V2dwZElDYUZKaXNCR1htYnJEbGxNU3ZUa08xWjBOT2ZIcG5vN1dXSExzNUZs?=
- =?utf-8?B?b2dLanJ3UncvZXRiL0hzcnVtN3BaK3pTKzBYWHgycTFXTkpxdWdJMjBkVE96?=
- =?utf-8?B?cnZzNXdFQThFWDRzNlpGOXY0RnQyUWdneWx6WU1DZ0xpWjVQZGczZmZHazJk?=
- =?utf-8?B?SnJwZUJHZUw4T1N6eWRYQUVTZ2RJMWViQmFZTUtscnhKaU5CcVhQa1N4ODU3?=
- =?utf-8?B?N1VqZ0hjbXYwdnVUM0pLNEc0UmRES2Q1dG11cERTM2FGa1VDSFlqTTFWYkoz?=
- =?utf-8?B?TERuSGRvMlNWMFpRZmhpSG9CUHBzZm5zV1JucU83WVd3LzZVYzhsaVVFOXBr?=
- =?utf-8?B?My95ZDZyN09wOTQrbHA3MnVRUUZBQjhsK3dUZjJPKzdkTnh3RnU0QVNLVi9L?=
- =?utf-8?B?cjNwQkVLNTluZ1JYNWxPWHhTUDhtejkrcmhwa2dyNldoYnREZ2xNMytRcGw0?=
- =?utf-8?B?Q0xkb1UyZ2piMFZsdTFaSzRDRVVHcGdIOGx3dkQ4RVZUQTNRN09uYjdiUUs4?=
- =?utf-8?B?Qk8zdDVZWGRCM3Zjem1jR1FDOHpKT1IwYUpaNjBpRmc4dGZuUFFpQ3VUZk93?=
- =?utf-8?B?dlMvcW54NXMya3Q5VFNCeGVmek1SelUwQWR2Nk1hMkVPdTJ2Y3VjcHFicnRZ?=
- =?utf-8?B?VU00bDdaMHFGZzBoLytTT3NSb1UxQVZ0WGZsaFZGWklGbUVqMElvbGllbW9i?=
- =?utf-8?B?K1hoNU4rNStibUVzZytXZis0VHh5VTNzUjA5LzM3TVFaaXp6UndLa3ZZbE9K?=
- =?utf-8?B?cUxZWW5zTXVLTE9va2RzNk5FMEFiR0Z4KzNZSnBxVUpDMmFaR1VYc0dPTHAz?=
- =?utf-8?B?WE1EelkzZU5RNFR1Q1ZCdzBaWTgxU1ZJRWhCTzNUQlNhd3A1YzcyaWJpY0pj?=
- =?utf-8?B?VjNQR3V4V3NOWTdhWTlkNk1PT1hIL2hkK1F5THhRNnJwaHRmS0hwM0d3Y200?=
- =?utf-8?B?M1pWK3pIOHpaVEpQajAwdjJYU0N6UERFbURrT3RTeDRoWGh1LzlDTGtUOE9W?=
- =?utf-8?B?aVc5RGs1bkxWLzF1emNhRVFoSmF4TmhxWklqQVoxVmJBRGcraHUzaE9leDJ4?=
- =?utf-8?B?ZEpYZnRpcHV6YXZjajFxb3Z3dEtZQ0JVcXppM21oL2JXNkJ4aDVVTEs4TnJV?=
- =?utf-8?B?WDlSMEJ5K3ZaNmxobUExRnhHWnA2UE5ZNWRVT0k5SENBZlNpYnlLc1hKUEJW?=
- =?utf-8?B?ZWFzeC9mekRRa3U3VFMwNC9yRkZVeEUzK0pRMU9VVk5tNDFlMXpPQlFTdEE5?=
- =?utf-8?B?UW45cUtYUi9pQkN1d0pOK1A2MWNhL1NDVUxFeEpnZjAxVk5nR3FNcGcxc3ZZ?=
- =?utf-8?B?UnpUcCtZL2J5bjZoR0Zhcm1xcHFGbUxrNy9TbjdpNkprMk5qY1loUHVwSmN2?=
- =?utf-8?B?eks3UDc2MHZMaXg1d1dEY3dvU1lmaG4rTExySVBnZHE4dnJsSVNqN1YwTGhB?=
- =?utf-8?B?bitiY21GR0ZqcE9rWFFtUXBkYW4wUm1oSGFYcUVQR3dLZTFrTDBIdzEvOHJa?=
- =?utf-8?B?TG9GUUpTZkNubzdFTnJiamhzZ0hQQ04zV3JQMjR3elJtRG1JcUc3b3dwVFVz?=
- =?utf-8?B?Y3VkWHd3YWR1TFMxS2F6MWFmTHNLb09CMXd0UDQyRmxtTCtlYVVxajArUG5w?=
- =?utf-8?Q?3ZRoaEo7pDRxwdq5V6YXrOoz0?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc224080-f552-47c8-c7e0-08dd56334397
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 07:00:33.5387
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wj+v7N5Wmui0A0HF9AGvjvKcmKXbdReGkRHP3Q62mwjOIHuhItTsMwagkBDtAd3YEVYpAf0xx2hzroi1pc47CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4283
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2022-49660: xen/arm: Fix race in RB-tree based P2M accounting
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <2025022622-CVE-2022-49660-cf45@gregkh>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <2025022622-CVE-2022-49660-cf45@gregkh>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------kM0j0dLGxablkIUnDEkcMV0f"
+X-Rspamd-Queue-Id: 8DBA321195
+X-Spam-Score: -5.41
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.976];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2/25/2025 17:01, Luke Jones wrote:
-> From: "Luke D. Jones" <luke@ljones.dev>
-> 
-> ASUS have fixed suspend issues arising from a flag not being cleared in
-> the MCU FW in both the ROG Ally 1 and the ROG Ally X.
-> 
-> Implement a check and a warning to encourage users to update the FW to
-> a minimum supported version.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->   drivers/hid/hid-asus.c | 103 ++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 101 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 46e3e42f9eb5..3cec622b6e68 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -52,6 +52,10 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
->   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
->   
-> +#define ROG_ALLY_REPORT_SIZE 64
-> +#define ROG_ALLY_X_MIN_MCU 313
-> +#define ROG_ALLY_MIN_MCU 319
-> +
->   #define SUPPORT_KBD_BACKLIGHT BIT(0)
->   
->   #define MAX_TOUCH_MAJOR 8
-> @@ -84,6 +88,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->   #define QUIRK_MEDION_E1239T		BIT(10)
->   #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
->   #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
-> +#define QUIRK_ROG_ALLY_XPAD		BIT(13)
->   
->   #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
->   						 QUIRK_NO_INIT_REPORTS | \
-> @@ -534,9 +539,95 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
->   	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
->   }
->   
-> +/*
-> + * We don't care about any other part of the string except the version section.
-> + * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
-> + */
-> +static int mcu_parse_version_string(const u8 *response, size_t response_size)
-> +{
-> +	const u8 *end = response + response_size;
-> +	const u8 *p = response;
-> +	int dots, err;
-> +	long version;
-> +
-> +	dots = 0;
-> +	while (p < end && dots < 2) {
-> +		if (*p++ == '.')
-> +			dots++;
-> +	}
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------kM0j0dLGxablkIUnDEkcMV0f
+Content-Type: multipart/mixed; boundary="------------94aGwv1dl1ofCdQElm0zZV2t";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <9a6223ee-cb70-4c20-9749-e5ddc5018f1b@suse.com>
+Subject: Re: CVE-2022-49660: xen/arm: Fix race in RB-tree based P2M accounting
+References: <2025022622-CVE-2022-49660-cf45@gregkh>
+In-Reply-To: <2025022622-CVE-2022-49660-cf45@gregkh>
 
-Did you miss my comment about using strsep() instead?
+--------------94aGwv1dl1ofCdQElm0zZV2t
+Content-Type: multipart/mixed; boundary="------------juSPIrKJUpLyNKwSiBacJLxY"
 
-> +
-> +	if (dots != 2 || p >= end)
-> +		return -EINVAL;
-> +
-> +	err = kstrtol((const char *)p, 10, &version);
+--------------juSPIrKJUpLyNKwSiBacJLxY
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-It seems a bit odd to me to convert to long only to then convert again 
-to an int (for the return code).
+T24gMjYuMDIuMjUgMDM6MjMsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRGVzY3Jp
+cHRpb24NCj4gPT09PT09PT09PT0NCj4gDQo+IEluIHRoZSBMaW51eCBrZXJuZWwsIHRoZSBm
+b2xsb3dpbmcgdnVsbmVyYWJpbGl0eSBoYXMgYmVlbiByZXNvbHZlZDoNCj4gDQo+IHhlbi9h
+cm06IEZpeCByYWNlIGluIFJCLXRyZWUgYmFzZWQgUDJNIGFjY291bnRpbmcNCj4gDQo+IER1
+cmluZyB0aGUgUFYgZHJpdmVyIGxpZmUgY3ljbGUgdGhlIG1hcHBpbmdzIGFyZSBhZGRlZCB0
+bw0KPiB0aGUgUkItdHJlZSBieSBzZXRfZm9yZWlnbl9wMm1fbWFwcGluZygpLCB3aGljaCBp
+cyBjYWxsZWQgZnJvbQ0KPiBnbnR0YWJfbWFwX3JlZnMoKSBhbmQgYXJlIHJlbW92ZWQgYnkg
+Y2xlYXJfZm9yZWlnbl9wMm1fbWFwcGluZygpDQo+IHdoaWNoIGlzIGNhbGxlZCBmcm9tIGdu
+dHRhYl91bm1hcF9yZWZzKCkuIEFzIGJvdGggZnVuY3Rpb25zIGVuZA0KPiB1cCBjYWxsaW5n
+IF9fc2V0X3BoeXNfdG9fbWFjaGluZV9tdWx0aSgpIHdoaWNoIHVwZGF0ZXMgdGhlIFJCLXRy
+ZWUsDQo+IHRoaXMgZnVuY3Rpb24gY2FuIGJlIGNhbGxlZCBjb25jdXJyZW50bHkuDQo+IA0K
+PiBUaGVyZSBpcyBhbHJlYWR5IGEgInAybV9sb2NrIiB0byBwcm90ZWN0IGFnYWluc3QgY29u
+Y3VycmVudCBhY2Nlc3NlcywNCj4gYnV0IHRoZSBwcm9ibGVtIGlzIHRoYXQgdGhlIGZpcnN0
+IHJlYWQgb2YgInBoeXNfdG9fbWFjaC5yYl9ub2RlIg0KPiBpbiBfX3NldF9waHlzX3RvX21h
+Y2hpbmVfbXVsdGkoKSBpcyBub3QgY292ZXJlZCBieSBpdCwgc28gdGhpcyBtaWdodA0KPiBs
+ZWFkIHRvIHRoZSBpbmNvcnJlY3QgbWFwcGluZ3MgdXBkYXRlIChyZW1vdmluZyBpbiBvdXIg
+Y2FzZSkgaW4gUkItdHJlZS4NCj4gDQo+IEluIG15IGVudmlyb25tZW50IHRoZSByZWxhdGVk
+IGlzc3VlIGhhcHBlbnMgcmFyZWx5IGFuZCBvbmx5IHdoZW4NCj4gUFYgbmV0IGJhY2tlbmQg
+aXMgcnVubmluZywgdGhlIHhlbl9hZGRfcGh5c190b19tYWNoX2VudHJ5KCkgY2xhaW1zDQo+
+IHRoYXQgaXQgY2Fubm90IGFkZCBuZXcgcGZuIDwtPiBtZm4gbWFwcGluZyB0byB0aGUgdHJl
+ZSBzaW5jZSBpdCBpcw0KPiBhbHJlYWR5IGV4aXN0cyB3aGljaCByZXN1bHRzIGluIGEgZmFp
+bHVyZSB3aGVuIG1hcHBpbmcgZm9yZWlnbiBwYWdlcy4NCj4gDQo+IEJ1dCB0aGVyZSBtaWdo
+dCBiZSBvdGhlciBiYWQgY29uc2VxdWVuY2VzIHJlbGF0ZWQgdG8gdGhlIG5vbi1wcm90ZWN0
+ZWQNCj4gcm9vdCByZWFkcyBzdWNoIHVzZS1hZnRlci1mcmVlLCBldGMuDQo+IA0KPiBXaGls
+ZSBhdCBpdCwgYWxzbyBmaXggdGhlIHNpbWlsYXIgdXNhZ2UgaW4gX19wZm5fdG9fbWZuKCks
+IHNvDQo+IGluaXRpYWxpemUgInN0cnVjdCByYl9ub2RlICpuIiB3aXRoIHRoZSAicDJtX2xv
+Y2siIGhlbGQgaW4gYm90aA0KPiBmdW5jdGlvbnMgdG8gYXZvaWQgcG9zc2libGUgYmFkIGNv
+bnNlcXVlbmNlcy4NCj4gDQo+IFRoaXMgaXMgQ1ZFLTIwMjItMzM3NDQgLyBYU0EtNDA2Lg0K
+DQpBcyBjbGVhcmx5IHZpc2libGUgaW4gdGhlIGNvbW1pdCBtZXNzYWdlOiB0aGVyZSBpcyBh
+bHJlYWR5IGEgQ1ZFIGFzc2lnbmVkLg0KDQpQbGVhc2UgcmV2b2tlIENWRS0yMDIyLTQ5NjYw
+Lg0KDQoNCkp1ZXJnZW4NCg==
+--------------juSPIrKJUpLyNKwSiBacJLxY
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Would it make more sense to jump right to an integer immediately?
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Sorry I missed this the first time.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-> +	if (err || version < 0)
-> +		return -EINVAL;
-> +
-> +	return version;
-> +}
-> +
-> +static int mcu_request_version(struct hid_device *hdev)
-> +{
-> +	const u8 request[] = { 0x5a, 0x05, 0x03, 0x31, 0x00, 0x20 };
-> +	u8 *response;
+--------------juSPIrKJUpLyNKwSiBacJLxY--
 
-If you're spinning away, maybe worth using a __free() macro to avoid a 
-manual kfree.
+--------------94aGwv1dl1ofCdQElm0zZV2t--
 
-You could also drop the goto statements then and return ret for the 
-failures.  Although admittedly you'll lose your error message for the 
-asus_kbd_set_report() and hid_hw_raw_request().
+--------------kM0j0dLGxablkIUnDEkcMV0f
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-tedly > +	int ret;
-> +
-> +	response = kzalloc(ROG_ALLY_REPORT_SIZE, GFP_KERNEL);
-> +	if (!response)
-> +		return -ENOMEM;
-> +
-> +	ret = asus_kbd_set_report(hdev, request, sizeof(request));
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = hid_hw_raw_request(hdev, FEATURE_REPORT_ID, response,
-> +				ROG_ALLY_REPORT_SIZE, HID_FEATURE_REPORT,
-> +				HID_REQ_GET_REPORT);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = mcu_parse_version_string(response, ROG_ALLY_REPORT_SIZE);
-> +
-> +out:
-> +	if (ret < 0)
-> +		hid_err(hdev, "Failed to get MCU version: %d, response: %*ph\n",
-> +					ret, ROG_ALLY_REPORT_SIZE, response);
-> +	kfree(response);
-> +	return ret;
-> +}
-> +
-> +static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
-> +{
-> +	int min_version, version;
-> +
-> +	version = mcu_request_version(hdev);
-> +	if (version < 0)
-> +		return;
-> +
-> +	switch (idProduct) {
-> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY:
-> +		min_version = ROG_ALLY_MIN_MCU;
-> +		break;
-> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X:
-> +		min_version = ROG_ALLY_X_MIN_MCU;
-> +		break;
-> +	default:
-> +		min_version = 0;
-> +	}
-> +
-> +	hid_info(hdev, "Ally device MCU version: %d\n", version);
-> +	if (version < min_version) {
-> +		hid_warn(hdev,
-> +			"The MCU firmware version must be %d or greater to avoid issues with suspend.\n",
-> +			min_version);
-> +	}
-> +}
-> +
->   static int asus_kbd_register_leds(struct hid_device *hdev)
->   {
->   	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> +	struct usb_interface *intf;
-> +	struct usb_device *udev;
->   	unsigned char kbd_func;
->   	int ret;
->   
-> @@ -560,6 +651,14 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->   			if (ret < 0)
->   				return ret;
->   		}
-> +
-> +		if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-> +			intf = to_usb_interface(hdev->dev.parent);
-> +			udev = interface_to_usbdev(intf);
-> +			validate_mcu_fw_version(hdev,
-> +				le16_to_cpu(udev->descriptor.idProduct));
-> +		}
-> +
->   	} else {
->   		/* Initialize keyboard */
->   		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> @@ -1280,10 +1379,10 @@ static const struct hid_device_id asus_devices[] = {
->   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
-> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD},
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
-> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
->   	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
+-----BEGIN PGP SIGNATURE-----
 
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAme+vDAFAwAAAAAACgkQsN6d1ii/Ey/u
+9Qf9FVWreoHruQ1pCzF7iI+BNT5xxg+3B8IdtdlSZXdeP3AZ4bYGfQj0CcukL0zU2T/v8vfvwfI+
+oXLn0/nfx5D7lrvdjCy6rmPc4EDR47DJQeMjyudkN8zqICHQZKCXs7/Ul0d4ktjuH//ufyccwkmJ
+k+4lkj8l35VEeHMsHHCTeARe9hyW29L/sN9woUUcEERffZOMCl450swnCtiYRXsDB/Jic00iZ1wN
+NmHRylb9gbiLGMIO5GlOtsjmIBmNpe6K2+Fo0IrPuEWR2w38HrDoLXlgBr9oC8TjTdjgitG710aJ
+GHSIryehpiZDxXmgyS6NtpK1onzpdsnzx78CbqSAoQ==
+=NUg9
+-----END PGP SIGNATURE-----
+
+--------------kM0j0dLGxablkIUnDEkcMV0f--
 
