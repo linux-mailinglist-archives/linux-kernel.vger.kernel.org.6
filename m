@@ -1,174 +1,281 @@
-Return-Path: <linux-kernel+bounces-533487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF341A45B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:08:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5C1A45B40
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419283AAD54
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D415171F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A32238165;
-	Wed, 26 Feb 2025 10:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8987C2459E0;
+	Wed, 26 Feb 2025 10:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgVsLb6a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vl+8t0fT"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C67258CE0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432623815F;
+	Wed, 26 Feb 2025 10:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740564453; cv=none; b=BIieRzYdKHgcRNThziDSvMQ1stYyX+Ljw60nL1ruf9bkgbR+Tblwtb/qYM8HhSwS7jRo57GIY73mhRtzJGI1qJ3OlMYZAipnrbjrWXWmQ4jwGCG3yXDa2mrDQXcnqHN58R2ISsYxhUXfvO1nmcvkK9jq7PvjtE9/TIeTWx+zH5o=
+	t=1740564578; cv=none; b=ovuutgSWq79IejHstmok7gs2nAVHKnwvDaAkg2uN1EpqclQT08SUXWLziHjEyicObEE1YDHqonRAuKS7+x2h9eMFdtN0Ui+yDg/R7Sx8trJ2VyX4IQAQUybF/IOVBY2CpAGk6tr44XWtdc4oHbqS9/W6mtPZjWHM6ZGHA2lNukM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740564453; c=relaxed/simple;
-	bh=AyAHIQeVxV7KJDnqLXHbeSFECRBR40Nsmn5QJdOcsts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PDPSQZf1IhhHfVpvqpd7HTvACanybqpa3GpqmwZ5h80hTSt4857MaOveg1NDkrr2QelNJizl1izz1d6tvMZfu0XFqjX37FRXx8U+xUVRhk5DAcOVE4/ydFr5Ges3arHASKtDDYZqweP5fxOJRRmBzoxD1/nUoUJ9qHaQ691xqw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgVsLb6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5892C4CEE2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740564452;
-	bh=AyAHIQeVxV7KJDnqLXHbeSFECRBR40Nsmn5QJdOcsts=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LgVsLb6ae+6LZxYgCVoI/D5XVgpm6Cz/p1SVdgYH18ndzrPdcLpBd+x3IDZU8Go8i
-	 gGsnx3pAaSA8BxbaCutK6L5h9gBJkAwR7r38p/ljcw1QNlBMAVOhCjwkXg3KFr9lHi
-	 Ul2GZK+GzGGoiuQYETJDEcBLGN3Z+m8s5dDA2AbmI1lDST3qmHUQHAEnNS28xYlYGX
-	 Fmrv/oTt00u+8w/a8YOqJsUDnfXvXhxcchOxz+kZj1dvVJyq1AofUSoouMf7NhXs2x
-	 X1q8NGBNLy+b1ojpKIQ4N9tH79OIMMsbRCsRT6go97QHSd9PL1iT3Ii8UqEsEkG/Yi
-	 TNLsxJK37cyRQ==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3072f8dc069so68635861fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:07:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUt6Nqielxyhdswi+e8junSQ4vOpKOM/B18moLkx9SrUlKCk7k1RtjJSOGqb5YuWgC/Tghd4rlzPvJIqg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpceEmqzsZ+IWOPEzXFiYa2mMImh3Zd0wuOtn0725iXBQg3eqO
-	jrSGCWiKnYVa6Eoz3qSTrvScivQpt8wYZOIuCeG7OAQMsKKndN1dsaq7BUalcp2YA51liRdx3yD
-	JJIuVRWYfy4GLZH3LXgSmetPS7Og=
-X-Google-Smtp-Source: AGHT+IH77s07/831v/UsWRW9X8Qt2tEO6lngODAKoum/ihUKwQXpXxPbkOfYTJKPMisMdLAWL73xuBPJxdwhVpBZ4kk=
-X-Received: by 2002:a05:6512:234e:b0:543:e406:6363 with SMTP id
- 2adb3069b0e04-5493c570ed1mr2417228e87.3.1740564451208; Wed, 26 Feb 2025
- 02:07:31 -0800 (PST)
+	s=arc-20240116; t=1740564578; c=relaxed/simple;
+	bh=w+6G/iZ6JZRUr2xq7OaaCs1aEdwbk2Z/2SarFa9fPrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tLHjMK6dDn7A81Yy4oes7BO/jRq2522IRuQn6zG/Weitrjoy3Rso/lhdgWm3I7bSVfSdrMDt8/Vk9DGKTe9an0nPKhPRXvRV++exmZWLx1j7Mt64WXhid61IRIxPv4/Up55PYUS/EPrnQMGz4XAZ2zGALDR6RpxRr0KkWCqex6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vl+8t0fT; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D54794321C;
+	Wed, 26 Feb 2025 10:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740564574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=irmKjgy54eKsa/wYtjIJ+UJ+LZLLIAEkq3oBzyxkhvQ=;
+	b=Vl+8t0fTI17niDSomkviT3W3Uv0NHyEusjarB94jIOFEoe9bH8kOD5pLoe3Pfpvq+Umu3w
+	q/qtZHOak0oadHxBr1MVv5XNWCuH/TmwxUp3iYMgschl0SppTMlUi+7i7MP1I94VI58uAG
+	AdIJcjKykD0m0+r3RrZk0rXoiW6aNv0efiS/061mBOMiVdrsd5kiUSN2spMOxfNo1RzkiE
+	nY+sJyvCIxcFzQh3niQ+asDSLDVSgZ54dB3Vsb9QxD6U4CM+swOO3djbI1S2OyM6gFHGue
+	u59B9UgHi6peebLLx14fqIJjI2znfbL07RSypbelzyBU13y3UUdCSIMx+gubGQ==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v2 00/13] net: phy: Rework linkmodes handling in a dedicated file
+Date: Wed, 26 Feb 2025 11:09:15 +0100
+Message-ID: <20250226100929.1646454-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225114638.2038006-1-ryan.roberts@arm.com>
- <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
- <20250226001047.GA24197@willie-the-truck> <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
- <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com> <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
- <b6b999c9-79cd-4945-9d7a-c5ee8158b7dc@arm.com> <CAMj1kXHesY77QhnW_U19UURGUqiBuQrNcL-kWQs7niaMa4nAng@mail.gmail.com>
- <2c465bdf-8028-4b05-8e18-3154735ce906@arm.com>
-In-Reply-To: <2c465bdf-8028-4b05-8e18-3154735ce906@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 26 Feb 2025 11:07:19 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGQSFh9A_uK6-i1-sd59i+yKg3vZxD+cYQ_vyz-HZJZKg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqAlass0uE8mVVRnhELpOjzjIKuYqX8xCtGGpSz6emoBSwU3fQmwrmDzrg
-Message-ID: <CAMj1kXGQSFh9A_uK6-i1-sd59i+yKg3vZxD+cYQ_vyz-HZJZKg@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Luiz Capitulino <luizcap@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeeftdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieevffefgfevgeehveeftdeiheektddvheegtdevtdeivedtgffgvdejffefleffnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, 26 Feb 2025 at 10:45, Ryan Roberts <ryan.roberts@arm.com> wrote:
->
-> On 26/02/2025 09:04, Ard Biesheuvel wrote:
-> > On Wed, 26 Feb 2025 at 09:55, Ryan Roberts <ryan.roberts@arm.com> wrote:
-> >>
-> >> On 26/02/2025 08:33, Ard Biesheuvel wrote:
-> >>> On Wed, 26 Feb 2025 at 09:07, Ryan Roberts <ryan.roberts@arm.com> wrote:
-> >>>>
-> >>>> On 26/02/2025 06:59, Ard Biesheuvel wrote:
-> >>>>> On Wed, 26 Feb 2025 at 01:10, Will Deacon <will@kernel.org> wrote:
-> >>>>>>
-> >>>>>> On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
-> >>>>>>> Apologies for the breakage, and thanks for the fix.
-> >>>>>>>
-> >>>>>>> I have to admit that I was a bit overzealous here: there is no point
-> >>>>>>> yet in using the sanitised value, given that we don't actually
-> >>>>>>> override the PA range in the first place.
-> >>>>
-> >>>> But unless I've misunderstood something, parange is overridden; Commit
-> >>>> 62cffa496aac (the same one we are fixing) adds an override to force parange to
-> >>>> 48 bits when arm64.nolva is specified for LPA2 systems (see mmfr2_varange_filter()).
-> >>>>
-> >>>> I thought it would be preferable to honour that override, hence my use of
-> >>>> arm64_apply_feature_override() in the fix. Are you saying we don't need to worry
-> >>>> about that case?
-> >>>>
-> >>>
-> >>> I wouldn't think so (but I'm glad you brought it up because this
-> >>> didn't occur to me at all tbh)
-> >>>
-> >>> With arm64.nolva, both the VA and PA ranges will be reduced, and so
-> >>> the range of the linear map will be 47 bits. So if the PA range is
-> >>> being reduced from 52 to 48, it will still exceed the size of the
-> >>> linear map, and so it should make no difference in this particular
-> >>> case.
-> >>
-> >> OK, so I think you're saying it'll happen to work correctly even if we ignore
-> >> that override? That sounds a bit fragile to me. Surely we should be consistent
-> >> and either always honour the override or remove the override in the first place?
-> >>
-> >
-> > I'm trying to walk a fine line here between consistent use of the
-> > override, and fixing something that I broke in a nasty way all the way
-> > back to 6.12.
-> >
-> > So yes, I agree that it would be better to use the override
-> > consistently, and this is what we should do going forward. But the
-> > purpose of the original patch was mainly to ensure that we
-> > consistently program the MMU either in LPA2 or in non-LPA2 mode, and
-> > not in a mix of the two. The linear mapping randomization change was
-> > kind of secondary.
-> >
-> > So perhaps this should be two patches:
-> > - backing out the use of the sanitised register, as proposed by Will,
-> > with cc:stable
-> > - a follow up based on your proposal, which can be backported later if
-> > needed, but without tagging it for stable.
->
-> I suspect I'm misunderstanding something crucial about the way the linear map
-> randomization works (TBH the details of the signed comparisons went a little
-> over my head).
->
-> But my rough understanding is that there are 2 values you want to compare; the
-> size of the linear map and the PA range. If the PA range is significantly bigger
-> than the linear map size then we conclude we have enough room to randomize.
+Hello everyone,
 
-It is the other way around: the linear map should be able to cover all
-system RAM that may appear anywhere in the PA space, and so if the PA
-space is very large (and memory hotplug is enabled), no randomization
-is possible, as it may end up mapping RAM that appears later past the
-top of the VA space. Note that the same is fundamentally true for
-running a 39-bit VA kernel on hardware that has a PA range that
-exceeds that.
+This is the V2 of the phy_caps series. This series aims at reworking the way
+we do conversions between speed/duplex, linkmodes and interfaces. There's two
+goals here :
+ - Make that conversion easier to maintain and somewhat more efficient, by
+   avoiding the re-definitions of capabilities to linkmodes to interfaces that
+   exist in phylib and phylink
+ - create an internal API for these conversions, in preparation for the phy_port
+   work.
 
-As for the signed arithmetic: the randomization works by substracting
-from memstart_addr (aka PHYS_OFFSET). Normally, if system RAM starts
-at 1G, memstart_addr will be 1G, and the linear map will associate
-PAGE_OFFSET with PA 1G.
+This V2 reworks the way we deal with the phy_interface_t <-> caps <-> linkmodes,
+leaving the MAC_*** capabilities a phylink-only set of values.
 
-To randomize the linear mapping, the system RAM has to be moved up in
-the linear map (as this is the only direction it can be moved), and so
-PAGE_OFFSET needs to map to a lower value, and so memstart_addr may
-wrap around and become negative.
+This V2 also addresses the comments from Köry as well as a kdoc warning.
 
-> (I
-> think this assumes that VA size is always GTE PA size). But if linear map size
-> is based on an overridden VA and overridden PA size (which I assume it must be,
-> given the pgtables will be limitted to the overridden VA size) and PA size is
-> not overridden, isn't it possible to wrongly conclude that there is enough room
-> to randomize when there really is not?
->
+V1 : https://lore.kernel.org/netdev/20250222142727.894124-1-maxime.chevallier@bootlin.com/
 
-No, if the linear map is only 47 bits, and the PA space is either 52
-or 48 bits, no randomization is possible. We might even run out of
-space without randomization, but this is an existing problem for
-non-LPA2 too.
+For context, The text below is an extract from the V1 cover :
+
+Following the V4 of the phy_port series [1] we've discussed about attempting
+to extract some of the linkmode <-> capabilities (speed/duplex) <-> interface
+logic into a dedicated file, so that we can re-use that logic out of
+phylink.
+
+While trying to do that, I might have gotten a bit carried-away, and I'm
+therefore submitting this series to rework the way we are currently
+managing the linkmodes <-> capabilities handling.
+
+We are currently defining all the possible Ethernet linkmodes in an
+enum ethtool_link_mode_bit_indices value defined in uapi/linux/ethtool.h :
+
+	ETHTOOL_LINK_MODE_10baseT_Half_BIT	= 0,
+	ETHTOOL_LINK_MODE_10baseT_Full_BIT	= 1,
+	...
+
+Each of these modes represents a media-side link definition, and runs at
+a given speed and duplex.
+
+Specific attributes for each modes are stored in net/ethtool/common.c, as
+an array of struct link_mode_info :
+
+	struct link_mode_info {
+		int				speed;
+		u8				lanes;
+		u8				duplex;
+	}
+
+The link_mode_params[] array is the canonical definition for these modes,
+as (1) there are build-time checks to make sure any new linkmode
+definition is also defined in this array and (2) this array is always
+compiled-in, as it's part of the net stack (i.e. it is not phylib-specific).
+
+This array is however not optimized for lookups, as it is not ordered in
+any particular fashion (new modes go at the end, regardless of their speed
+and duplex).
+
+Phylib also includes a similar array, in the form of the phy_settings
+array in drivers/net/phy/phy-core.c :
+
+	struct phy_setting {
+		u32 speed;
+		u8 duplex;
+		u8 bit; // The enum index for the linkmode
+	};
+
+The phy_settings array however is ordered by descending speeds. A variety
+of helpers in phylib rely on that ordering to perform lookups, usually
+to get one or any linkmode corresponding to a requested speed and duplex.
+
+Finally, we have some helpers in phylink (phylink_caps_to_linkmodes) that
+allows getting the list of linkmodes that match a set of speed and duplex
+value, all at once.
+
+While the phylink and phylib helpers allows for efficient lookups, they
+have some drawbacks as well :
+
+	(1) : It's easy to forget updating of all of these helpers and structures
+		  when adding a new linkmode. New linkmodes are actually added fairly
+		  often, lately either for slow BaseT1 flavours, or for crazy-fast
+		  modes (800Gbps modes, but I guess people won't stop there)
+		  
+	(2) : Even though the phylink and phylib modes use carefull sorting
+		  to speed-up the lookup process, the phylib lookups are usually
+		  done in descending speed order and will therefore get slower
+		  as people add even faster link speeds.
+		  
+This series introduces a new "link_capabilities" structure that is used
+to build an array of link_caps :
+
+	struct link_capabilities {
+		int speed;                           
+		unsigned int duplex;
+		__ETHTOOL_DECLARE_LINK_MODE_MASK(linkmodes);
+	};
+
+We group these in an array, indexed with LINK_CAPA enums that are basically
+identical to the phylink MAC_CAPS :
+
+...
+LINK_CAPA_1000HD,             
+LINK_CAPA_1000FD,
+LINK_CAPA_2500FD,
+LINK_CAPA_5000FD,
+...
+
+We now have an associative array of <speed,duplex> <-> All compatible linkmodes
+
+This array is initialized at phylib-init time based on the content of
+the link_mode_params[] array from net/ethtool/common.c, that way it is
+always up-to-date with new modes, and always properly ordered.
+
+Patches 3 to 8 then convert all lookups from the phy_settings array into
+lookups from this link_caps array, hopefully speeding-up lookups in the
+meantime (we iterate over possible speeds instead of individual linkmodes)
+
+This series is not meant to introduce changes in behaviour, however patches
+9 and 10 do introduce functionnal changes. When configuring the advert
+for speeds >= 1G in PHY devices, as well as when constructing the link
+parameters for fixed links in phylink, we used to rely on phy_settings
+lookups returning one, and only one, compatible linkmode. This series will
+make so that the lookups will result on all matching linkmodes being
+returned, and MAY cause advert/fixed-link configuring more linkmodes.
+
+Patches 12 and 13 extract the conversion logic for interface <-> caps from
+phylink.
+
+There are cons as well for this, as this is a bit more init time for phylib,
+but maybe more importantly, we lose in the precision for the lookups in
+phy_settings. However, given all the uses for phy_settings (most are just
+to get speed/duplex), I think this is actually ok, but any comment would
+be very welcome.
+
+This series was tested with :
+ - 10/100/1000M links
+ - 2,5, 5, 10G BaseT links
+ - 1G Fixed link
+
+I also made sure that this compiles with the following options :
+
+CONFIG_PHYLIB=n
+
+CNFIG_PHYLINK=m
+CONFIG_PHYLIB=m
+
+CNFIG_PHYLINK=m
+CONFIG_PHYLIB=y
+
+CNFIG_PHYLINK=y
+CONFIG_PHYLIB=y
+
+All the new helpers that were introduced (in drivers/net/phy/phy-caps.h)
+are for internal use only (only users should be core stuff, such as phylib and
+phylink, and in the future, phy_port).
+
+Thanks,
+
+Maxime
+
+[1]: https://lore.kernel.org/netdev/20250213101606.1154014-1-maxime.chevallier@bootlin.com/
+
+
+
+Maxime Chevallier (13):
+  net: ethtool: Export the link_mode_params definitions
+  net: phy: Use an internal, searchable storage for the linkmodes
+  net: phy: phy_caps: Move phy_speeds to phy_caps
+  net: phy: phy_caps: Move __set_linkmode_max_speed to phy_caps
+  net: phy: phy_caps: Introduce phy_caps_valid
+  net: phy: phy_caps: Implement link_capabilities lookup by linkmode
+  net: phy: phy_caps: Allow looking-up link caps based on speed and
+    duplex
+  net: phy: phy_device: Use link_capabilities lookup for PHY aneg config
+  net: phy: phylink: Use phy_caps_lookup for fixed-link configuration
+  net: phy: drop phy_settings and the associated lookup helpers
+  net: phy: phylink: Add a mapping between MAC_CAPS and LINK_CAPS
+  net: phy: phylink: Convert capabilities to linkmodes using phy_caps
+  net: phy: phy_caps: Allow getting an phy_interface's capabilities
+
+ drivers/net/phy/Makefile     |   2 +-
+ drivers/net/phy/phy-caps.h   |  62 +++++++
+ drivers/net/phy/phy-core.c   | 253 ++------------------------
+ drivers/net/phy/phy.c        |  37 ++--
+ drivers/net/phy/phy_caps.c   | 340 +++++++++++++++++++++++++++++++++++
+ drivers/net/phy/phy_device.c |  13 +-
+ drivers/net/phy/phylink.c    | 337 +++++++++-------------------------
+ include/linux/ethtool.h      |   8 +
+ include/linux/phy.h          |  15 --
+ net/ethtool/common.c         |   1 +
+ net/ethtool/common.h         |   7 -
+ 11 files changed, 532 insertions(+), 543 deletions(-)
+ create mode 100644 drivers/net/phy/phy-caps.h
+ create mode 100644 drivers/net/phy/phy_caps.c
+
+-- 
+2.48.1
+
 
