@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-533517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECD8A45B92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:19:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0989EA45B9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BF5176317
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD65E3AB102
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC51231A24;
-	Wed, 26 Feb 2025 10:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LV+kBunC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9536723814F;
+	Wed, 26 Feb 2025 10:20:06 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E67F21324E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F01120E302;
+	Wed, 26 Feb 2025 10:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565172; cv=none; b=ZcluwPQ0jGW2QrH0T8oLhp27HAkltNz4sSzKwTZb+BIOXYdoRSzdeGdMrGUJP6B9dnmnzRgTKAdJVMPlhKTNqV15NtLB6Yhh6fUkjBenCvGfhyveBAb3Wy5fIL+C9tQ0Ox9k64HjeIZndzXar7JViXMFpL8dCCR/QQNZgeR4tWY=
+	t=1740565206; cv=none; b=o0kwHEciU7OLL6kw67umOUwvYMc5QfY/nG+05lLf8wnBlc7RDarxO867MUuq2+vYGl22YjeWQduXLLykXdCEiwmaNjoxwE40nT3cSaXBQMLnFtz9KvVK9SlzuX9yGC3j6S0PusjVmFyfgANyUhSuEO0931ecsFRlaGAEzeObuIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565172; c=relaxed/simple;
-	bh=lsqUHQiNLeacHnEbKXQeLViXVU0UgO/D/+5OdoncwL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FkZGkWxOW0+1o0VqdSzrSa5x7uTpFQoa8wEZA1fHqjZDkhSFoT2d5flWQFx2x1hovF/9mFN5GYybXBJhYqeseuhQEAyb1AmNEQaIX46gEeGW5lBUbIQxWGocsbt/wA+aIBtloU56sDpM3cq7BaiEcuKihfRvqc/xIOYutcSnfMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LV+kBunC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-439a4fc2d65so64057325e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740565169; x=1741169969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WvejRLHxI7cWJHZ6jttnlknQfuM1gunX4QyfWK6KcOM=;
-        b=LV+kBunCODO6lNpe09E6YU70eUNp8Tz73QMd+pt+hmBjEkv0FDY4BvWPdAHJeTYc1W
-         MXqHgtWsyiXcw98aAlKPEDufMvqYEhTq/jymcrYd3LPLrhRAKyvw8VII8vS6v61gLheV
-         auVt1V9scAqQAIB9COd2ZG72QRMo/hRBjiFqSRpKDRuXVXrHNdOlE6z+RU02f3ETnZe+
-         QlBwm6B00fkMSpZZgvre249Vs/eK3hc3xC18xidHfAVq95P7fbLp+k1JXo4FBuEIzdXQ
-         SU2yruFaEXzF2gDZmZpxAlllhKBjwOJy5Uo6M49pPMvoXJyJomldEztFujZa4WD7NUpD
-         glTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740565169; x=1741169969;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WvejRLHxI7cWJHZ6jttnlknQfuM1gunX4QyfWK6KcOM=;
-        b=OEtLdxWbFPW1LJJWCUwheBlbQb+gzXJugTiGRni6YlBDvR6h7ZvawVydqHj9YGlbLp
-         lWApDe1XF8gY7KX8+dW24oMmm3r+JOp2LjEEw5fpAgTV0vIBDji6Y05OB4PllYwUXeUk
-         JX/q+qmd8NJOqEKN3S42uQbFs0T2ewz6PbzRlqyHmYifzlu1Ex+u3dD0oCmVWHeue96r
-         fu0K/xg/0BTNh/6HqfabiD4Fv4+2DOQGuI4mRSUlNVmaUoD1+XlWTCvy6jXEt0dLP34d
-         NvP4D1TP+Hf8LQzBSpYguyzw1SlrOPSIoM75fFjj9oQPIvOwWCkhitalwYHERgaHXLvJ
-         2uUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUONwB+CRA3rAjoizJ45DRqNNwiFygwwKKPZkeKz3qX1M0Y+xrq9mBq4SafN71pdNc51w34Q01GKeaCHvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw512CGa1OynggjPvEyHOhpX0RaSHAEIkxhEtRY/fW+b18wYlEi
-	xwmI/J5I6L+ptntzRiFBLQbT/fMPgI9e2Q+tYGHFOCW/vTaT0pgg4R/YtbkNvVg=
-X-Gm-Gg: ASbGncslStAoGqJkz4AAYjteYxRi9/RqsTRazE6P86GOuP+I6inxW9xt3BMVzlfnU6R
-	atiSSF80kyXKwvC8nWAifcTSFLujVpgaG7vnhhALodmqgZzAnHFTxu7NT6b19iLsGr+dtozObmR
-	BogHKjd5CC5Ls5QIfWQ54Rik9SJmBmKCxLXrMd3PHMT37xA3NvmF0cWSCQ/PwndEicnt1oqPmgn
-	mJ4ujqPc/fRQimc+9y4T+4lnrVCQ+9RyZPQFrFy7hUzXPfpuHnfQOSpomxqLQI4ZFd7FrQyqtuD
-	OO2VRZ3NRRvWg95rcEjX+Jg=
-X-Google-Smtp-Source: AGHT+IHtX44cvyUZkHpacOhemqLTunu3D50Mgcq1iaIh7ou+6BH/jVVPHw9q66AFLdQeQkeaqpkm8A==
-X-Received: by 2002:a05:600c:444d:b0:439:89d1:30dc with SMTP id 5b1f17b1804b1-43ab0f2dcbcmr72336785e9.10.1740565169301;
-        Wed, 26 Feb 2025 02:19:29 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7d02:26:5770:658c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532bbcsm15963045e9.11.2025.02.26.02.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:19:28 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Keerthy <j-keerthy@ti.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	linux-leds@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 00/15] gpiolib: indicate errors in value setters
-Date: Wed, 26 Feb 2025 11:19:27 +0100
-Message-ID: <174056512537.35186.16775359979829251031.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
-References: <20250220-gpio-set-retval-v2-0-bc4cfd38dae3@linaro.org>
+	s=arc-20240116; t=1740565206; c=relaxed/simple;
+	bh=mN0lNSeBBhqB/5IZtFTHXKfDxy0YY26JEUmomHg9C1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kf/3ncQi27kbOydoO5hXJ6lWjEP2wv5u3RU9fuijesZG3z8VMCOcPGDfh2xd3V2dGTFWybGTHcJkDj4qkL/JfaBZzhGbz6ceAkBQOgBcNfdJ1hGj/3vfBdFk2mos3bPC/Bm4N+oEpO0Qs7Z8zVVuZpJNIWu+C+2b7Jz2Rge6kzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z2r3x2j7cz21nyr;
+	Wed, 26 Feb 2025 18:16:45 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0275B1A0188;
+	Wed, 26 Feb 2025 18:19:50 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Feb 2025 18:19:49 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 26 Feb
+ 2025 18:19:49 +0800
+Message-ID: <05bb1583-13c7-25f6-48fb-dc415b3206f9@huawei.com>
+Date: Wed, 26 Feb 2025 18:19:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [RFC] hwmon: (acpi_power_meter) Replace hwmon_device_register
+To: Guenter Roeck <linux@roeck-us.net>, <jdelvare@suse.com>
+CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <liuyonglong@huawei.com>
+References: <20250225085158.6989-1-lihuisong@huawei.com>
+ <8b59c8d0-4710-48ab-ad70-b2eddc74fa9e@roeck-us.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <8b59c8d0-4710-48ab-ad70-b2eddc74fa9e@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Guenter,
+
+在 2025/2/25 21:01, Guenter Roeck 写道:
+> On 2/25/25 00:51, Huisong Li wrote:
+>> When load this mode, we can see the following log:
+>> "power_meter ACPI000D:00: hwmon_device_register() is deprecated. Please
+>>   convert the driver to use hwmon_device_register_with_info()."
+>>
+>> So replace hwmon_device_register with hwmon_device_register_with_info.
+>>
+>> To avoid any changes in the display of some sysfs interfaces, some of
+>> necessary changes in hwmon.c must be made:
+>> 1> For 'power1_average_interval_max/min' interface, insert 'average' 
+>> to the
+>>     string corresponding to hwmon_power_average_interval_max/max in
+>>     hwmon_power_attr_templates[]. I guess that is what's missing.
+>> 2> Add some string attributes in power sensor type because of below 
+>> items:
+>>     a) power1_accuracy  --> display like '90.0%'
+>>     b) power1_cap_hyst  --> display 'unknown' when its value is 
+>> 0xFFFFFFFF
+>>     c) power1_average_min/max --> display 'unknown' when its value is
+>>                                   negative.
+>> Note: All the attributes modified above in hwmon core are not used by 
+>> other
+>> drivers.
+>>
+>
+> That is not a reason to change the ABI, much less so hiding the change
+> in a driver patch.
+>
+>
+I am trying to replace the deprecated hwmon_device_register with 
+hwmon_device_register_with_info for acpi power meter driver.
+
+To avoid any changes in the display of some sysfs interfaces, there are 
+two modifications in hwmon core as follows:
+(1) The first modification in hwmon is as follows:
+-->
+@@ -646,8 +653,8 @@ static const char * const 
+hwmon_power_attr_templates[] = {
+      [hwmon_power_enable] = "power%d_enable",
+      [hwmon_power_average] = "power%d_average",
+      [hwmon_power_average_interval] = "power%d_average_interval",
+-    [hwmon_power_average_interval_max] = "power%d_interval_max",
+-    [hwmon_power_average_interval_min] = "power%d_interval_min",
++    [hwmon_power_average_interval_max] = "power%d_average_interval_max",
++    [hwmon_power_average_interval_min] = "power%d_average_interval_min",
+      [hwmon_power_average_highest] = "power%d_average_highest",
+
+The string names, "power%d_interval_max/min", are missing 'average'.
+I think the meaning of these attributes are unclear If no this word. It 
+can be regarded as a fault.
+And power attribute name in acpi power meter is 
+"power1_average_interval_min/max".
+
+(2)The second modification changes the attribute of 'power_accuracy', 
+'power_cap_hyst', 'power_average_min' and 'power_average_max' from data 
+to string.
+It is appropriate to assign 'power_accuracy' to string attribute.
+Because it can be displayed as '%' and also include decimal point like 
+acpi power meter driver, which is more in line with the meaning of this 
+attribute.
+It might be better to keep other attributes as data types. But it breaks 
+the cornor display of these attributes in acpi power meter driver as 
+said below.
+    a) power1_cap_hyst  --> display 'unknown' when its value is 0xFFFFFFFF
+    b) power1_average_min/max --> display 'unknown' when its value is 
+negative.
+
+I want to say that all the attributes modified above in hwmon core are 
+not used by other drivers, so don't break ABI of some driver.
+These can't be solved in this driver side.
+
+AFAICS, acpi power meter driver can't replace the deprecated API because 
+their sysfs interfaces will be broken if there's no any modification in 
+hwmon core.
 
 
-On Thu, 20 Feb 2025 10:56:57 +0100, Bartosz Golaszewski wrote:
-> The value setter callbacks (both for single and multiple lines) return
-> void even though we have many types of controllers that can fail to set
-> a line's value: i2c, SPI, USB, etc.
-> 
-> For the consumer API: single line setters return void. Multiple line
-> setters do have an integer return value but due to the above, they still
-> cannot be used to indicate problems within the driver.
-> 
-> [...]
-
-Applied, thanks!
-
-[01/15] leds: aw200xx: don't use return with gpiod_set_value() variants
-        commit: 129fdfe25ac513018d5fe85b0c493025193ef19f
-[02/15] gpiolib: make value setters have return values
-        commit: 8ce258f62f90cb2d339cc39fa43e5634594a9dfb
-[03/15] gpiolib: wrap gpio_chip::set()
-        commit: d36058b89a4aa30865d4cfeb101bbfd1d1dcb22f
-[04/15] gpiolib: rework the wrapper around gpio_chip::set_multiple()
-        commit: 9b407312755fd5db012413ca005f0f3a661db8dd
-[05/15] gpiolib: introduce gpio_chip setters that return values
-        commit: 98ce1eb1fd87ea1b016e0913ef6836ab0139b5c4
-[06/15] gpio: sim: use value returning setters
-        commit: fe69bedc77c119ffd4e27778eec03c89acb8e87b
-[07/15] gpio: regmap: use value returning setters
-        commit: a458d2309c81902dc6ca19b5037b9d25eb60a4a8
-[08/15] gpio: pca953x: use value returning setters
-        commit: e32ce8f62dd9c0ec923cfb9c783fc04070edb24e
-[09/15] gpio: mockup: use value returning setters
-        commit: 66d231b12eb8d39c21835a9bf553299a278ae363
-[10/15] gpio: aggregator: use value returning setters
-        commit: 468eae4166ab796cd2f9ad2bbb141d914e19c0b1
-[11/15] gpio: max77650: use value returning setters
-        commit: 97c9b59f6658671f3f13f57de1352ec9d16ad13d
-[12/15] gpio: latch: use lock guards
-        commit: 14628b692707fa8e61d0a068ef012156d23dc776
-[13/15] gpio: latch: use value returning setters
-        commit: 4b28762caa7b85609ee1a9a5e1038ae7bbd24892
-[14/15] gpio: davinci: use value returning setters
-        commit: f01436c2a038fe8d7b69a5fe701ab98028ce5cc4
-[15/15] gpio: mvebu: use value returning setters
-        commit: 9080b5d1b9c259645cd0e3694ffba85ccdd25352
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+/Huisong
+>
+> .
 
