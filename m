@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-534226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72643A4645C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:17:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DE1A46460
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DE417A8A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3861D189C92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D522371F;
-	Wed, 26 Feb 2025 15:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oQYj+R7W"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0102222C6;
+	Wed, 26 Feb 2025 15:16:59 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C68320C008;
-	Wed, 26 Feb 2025 15:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CBF221DA1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583010; cv=none; b=WhGKOJlV4cymwuW9DgHyvpyzJK7kM6Tw1AdbXdNcZNyqBNDOgaIY+1QlPksrLqfkNcLwxrsLlqeYvUdMKztIC4MHdpexv2hkND+VAHPi/VisDW2c1BVSvg4FhSEW1Mj9e8rd6jQOkD1NZBwAWupheN+4IlZIyewQMdcBf/+pHfc=
+	t=1740583018; cv=none; b=JBLyWB2hb6Kv7IhXyfxHxzKYQzu8gX+ViwrLU2LqOoTCzaSVah99Vj1W1khTqgdlnlckqQZ2SN9WHZImdk0V4YkZYnS+9prsRSoyzlz1wUp0jiO1Ptjembsr2aCFoKv2ZzAjvo775vwknyydAcwQUoiWLW3ouZcoXI2JnQI2fxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583010; c=relaxed/simple;
-	bh=SVdD8U7d/FDoTOYHC+jT1skSEd46CNF33xakYMMnULk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F1bOuiuJcHi0TzDJM+hiIEBxsQFzMOi6nxNWrUlK+sLLQHYK7RfIkXQbQbw47VJQSFz+/nnpQEOSjFvPlgfbfQhhQ12QzrvzlohzUdiIJPINE5uzH0go1c4a/1nHINMR8UTeF5hlzhlbs/dWuNjiBTZTBXUmdgK55PCYObaLbDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oQYj+R7W; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6CF6E4433C;
-	Wed, 26 Feb 2025 15:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740583000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sJaZnLfOjI4LHuqpMppLemf30WiM8BMZnVVa5Y1FR+4=;
-	b=oQYj+R7WOnYA+MwRlTQIzmLyjq+90/o3hskqoEiVmNBKzmv/6rvFw3UgwaZHhz6jMc2OyI
-	9y0kuwsHY6qlDLb5e0z1Xm/6QmttvRq5lOpiQE/Lu02zCkUyYHSKcgXbY2AtU4M67KN3pW
-	W1n1ocgqqeVvlDNaw81c1/Ae47EhCR/djL9MNHB9nj9DjDod0rT0/YfSPMduXOTsPLpMuA
-	KhN8xZRXSf+BFuaABamiBdWznDI3hE+6RfJDVarHq/ZAhjEByQ8onXeBje9yMdSkltML50
-	dliR5gV7ykHjenp5GXJJwgJy/VlRqg7ecWeiutKp2d7ZFHfedKZy9zX+GyV2/g==
-Date: Wed, 26 Feb 2025 16:16:37 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v2 09/13] net: phy: phylink: Use
- phy_caps_lookup for fixed-link configuration
-Message-ID: <20250226161637.58597e28@fedora.home>
-In-Reply-To: <Z78e1dmEuQzMER5L@shell.armlinux.org.uk>
-References: <20250226100929.1646454-1-maxime.chevallier@bootlin.com>
-	<20250226100929.1646454-10-maxime.chevallier@bootlin.com>
-	<Z78e1dmEuQzMER5L@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740583018; c=relaxed/simple;
+	bh=gZftN9vnHWTjKMNbj6QirIP3uS4HfPaol0o2029dF4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JYL5oD5EhNppNSs02D1d1EZDsJMx+8sYBWUSbIp9roykj7VMyi0gr2wrRrnxFkbLY03+ZjXPhpv5L9XV5ZvGk1vCcYSxCihO1zeTWyYTtXN6iGYFZxNothz+wZnbeK3r7zJFFP1PChQ/3pYUGEwHfuIFsn0spgAlpLicHHnAi6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4798F2047A;
+	Wed, 26 Feb 2025 15:16:47 +0000 (UTC)
+Message-ID: <ed90f97a-35b4-4514-94d1-a699d673163c@ghiti.fr>
+Date: Wed, 26 Feb 2025 16:16:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: remove redundant CMDLINE_FORCE check
+Content-Language: en-US
+To: Zixian Zeng <sycamoremoon376@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250114-rebund-v1-1-5632b2d54d6c@gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250114-rebund-v1-1-5632b2d54d6c@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtt
- hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekgeelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemrgektddumeegfhegfeemgeekudeimeeisggtfhgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehshigtrghmohhrvghmohhonhefjeeisehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtr
+ dgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Russell,
+Hi Zixian,
 
-On Wed, 26 Feb 2025 14:01:57 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+On 13/01/2025 17:30, Zixian Zeng wrote:
+> Drop redundant CMDLINE_FORCE check as it's already done in
+> function early_init_dt_scan_chosen().
+>
+> Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
+> ---
+> ---
+>   arch/riscv/kernel/setup.c | 5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index 45010e71df86ce40f99fabf03103a49ad1041f3d..a08a8409aab01d504d3ad975fbf9c66c02992713 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -237,11 +237,6 @@ static void __init parse_dtb(void)
+>   	} else {
+>   		pr_err("No DTB passed to the kernel\n");
+>   	}
+> -
+> -#ifdef CONFIG_CMDLINE_FORCE
+> -	strscpy(boot_command_line, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
+> -	pr_info("Forcing kernel command line to: %s\n", boot_command_line);
+> -#endif
+>   }
+>   
+>   #if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+>
+> ---
+> base-commit: fa47906ff358a5865b7be2356a5a1d1e58dd17d8
+> change-id: 20250113-rebund-25d469c1c4d5
+>
+> Best regards,
 
-> Please use a subject line of "net: phylink: " for phylink patches, not
-> "net: phy: " which is for phylib.
 
-Sure thing, I wasn't sure about the subject line for this one.
+We lose the pr_info() but to me that's not a problem, so:
 
-> On Wed, Feb 26, 2025 at 11:09:24AM +0100, Maxime Chevallier wrote:
-> > When phylink creates a fixed-link configuration, it finds a matching
-> > linkmode to set as the advertised, lp_advertising and supported modes
-> > based on the speed and duplex of the fixed link.
-> > 
-> > Use the newly introduced phy_caps_lookup to get these modes instead of
-> > phy_lookup_settings(). This has the side effect that the matched
-> > settings and configured linkmodes may now contain several linkmodes (the
-> > intersection of supported linkmodes from the phylink settings and the
-> > linkmodes that match speed/duplex) instead of the one from
-> > phy_lookup_settings().
-> > 
-> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-[...]
+Thanks,
 
-> > @@ -879,8 +880,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
-> >  	linkmode_copy(pl->link_config.advertising, pl->supported);
-> >  	phylink_validate(pl, pl->supported, &pl->link_config);
-> >  
-> > -	s = phy_lookup_setting(pl->link_config.speed, pl->link_config.duplex,
-> > -			       pl->supported, true);
-> > +	c = phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
-> > +			    pl->supported, true);
-> > +	if (c)
-> > +		linkmode_and(match, pl->supported, c->linkmodes);  
-> 
-> What's this for? Surely phy_caps_lookup() should not return a link mode
-> that wasn't in phy_caps_lookup()'s 3rd argument.
+Alex
 
-The new lookup may return a linkmode that wasn't in the 3rd argument,
-as it will return ALL linkmodes that matched speed and duplex, provided
-that at least one of said linkmodes matched the 3rd parameter.
-
-Say you pass SPEED_1000, DUPLEX_FULL and a bitset containing only
-1000BaseTFull, you'll get :
-
- - 1000BaseTFull, 1000BaseKX, 1000BaseT1, etc. in c->linkmodes.
-
-That's the reason for re-andf'ing the modes afterwards.
-
-If that API is too convoluted or error-prone, I can come up with an API
-returning only what matched.
-
-Maxime
 
