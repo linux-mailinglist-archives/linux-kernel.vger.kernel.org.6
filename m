@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-534783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13123A46B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:32:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D63A46B23
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C791F188B321
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCCC03AF3D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9C224292C;
-	Wed, 26 Feb 2025 19:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C9242933;
+	Wed, 26 Feb 2025 19:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MUPXdYRI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NX0chk+2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C8F23716E;
-	Wed, 26 Feb 2025 19:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFAB21ABA9;
+	Wed, 26 Feb 2025 19:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598352; cv=none; b=rQStF66gnZhvEcR8sM0SjTZvNWNzKyARM/KTzJg9KEl0omA6gjmo7UrDb9zQmYFwHc4mqivGoHW1GKdGBVg59E0OcwL7pMEbref5Qjk6bytKpRlKXMuJQgMpQ/SJDpRMuUlYhiAapxn8sKDII32VsGFx5kR7yZi83YfXOm3GD1I=
+	t=1740598427; cv=none; b=Z1gt0b4HCqGXQ8Qbq/BRprtl/cK8bFOQrzxlSidgRqZeF8D6kccfJH7e/eDAfvhzZGpWmTpECtBsLmvePJRm7I3HqO/JfbAHgdxArkEbqaKOxCNwWOg3w8f9t2pqpKHNQbeGyBpg2d0jkwlWyyybfNUAJwerIwcq/Pm/r+hXaZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598352; c=relaxed/simple;
-	bh=n34QbtmMdjpzkgNnPzOLGUCqAdv9+gXWSqDi7wMP8JY=;
+	s=arc-20240116; t=1740598427; c=relaxed/simple;
+	bh=kZ9rIq7rbJMYNQBhDU2KfRNXZ4jZx+RJE2OfPefQzY4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bpyk2lp6+eacdJe2zUXB8/+WQbwbsschM5aNlYgKMcX4fG31J69Dp2ZsEbXj81TLppPn3jPftCDjnbxMPlNRCUFwyBv8f086O1AOKtOzyFEeg2kbX03x39LRDdqoSTK9XoDdtbzxk9wOeKyl2ewA/vLzsjMM0eJhzE6CDlaJ71g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MUPXdYRI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01732C4CED6;
-	Wed, 26 Feb 2025 19:32:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPkke+2skB1ukBGsZCTZ8+85QDwCVAmSS3crjUot0xy7ecVBSGOaW4M/edQegxEc4hEUNVTYQY9WPw1OLz4kz1VibOmmDyIpIRSQ+Px4/lzkAUn9p90N6iaky4l/xgjEw6jWGDQs/nDAnNQ6WjT/JCQv6cXztS6SiVKXTtxjiNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NX0chk+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18512C4CED6;
+	Wed, 26 Feb 2025 19:33:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740598352;
-	bh=n34QbtmMdjpzkgNnPzOLGUCqAdv9+gXWSqDi7wMP8JY=;
+	s=korg; t=1740598427;
+	bh=kZ9rIq7rbJMYNQBhDU2KfRNXZ4jZx+RJE2OfPefQzY4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUPXdYRIMYCgud+9BPFBGDu6ScQgBqRiQMtVOvZjpC2ksYD/sjJZGWclC1VyQF89f
-	 NWLC6w9tcmk8ahh9imh5i7GsYfhueO8HlAJrEUlioS1INJwwqGn7flzNmDSUAJA76R
-	 2N/EEzzLDC5BkEd+cM+N/DxZxz7VS87j88jVZ5Wo=
-Date: Wed, 26 Feb 2025 11:31:23 -0800
+	b=NX0chk+2GsU5vFXy1cTpOS3T/Qhq9Oeggbl+4VMbq5H9uN6wq0rqYgjOWKu5uYdPY
+	 m6vTN/YoafXfzX9COt3ucNb8oVmclD3bLQ0/9xzY2DgVEW2pYxw8Sh+QnrbKoCzl4S
+	 amlOJU+06Z5+znHfvFhPqQGwaenFkGI+dBqCAQLI=
+Date: Wed, 26 Feb 2025 11:32:38 -0800
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to
- Registration::new()
-Message-ID: <2025022628-cyclist-clubbing-9762@gregkh>
-References: <20250225213112.872264-1-lyude@redhat.com>
- <20250225213112.872264-3-lyude@redhat.com>
- <2025022601-starlit-roamer-1687@gregkh>
- <7c7f9b38e321353507a75520c35efd9b20d69acf.camel@redhat.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Kurt Borja <kuurtb@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] driver core: faux: only create the device if probe()
+ succeeds
+Message-ID: <2025022616-refute-unmarked-a4be@gregkh>
+References: <2025022545-unroasted-common-fa0e@gregkh>
+ <Z72oceZFfJcMAf-D@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +56,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c7f9b38e321353507a75520c35efd9b20d69acf.camel@redhat.com>
+In-Reply-To: <Z72oceZFfJcMAf-D@pollux>
 
-On Wed, Feb 26, 2025 at 11:51:26AM -0500, Lyude Paul wrote:
-> On Wed, 2025-02-26 at 11:01 +0100, Greg Kroah-Hartman wrote:
+On Tue, Feb 25, 2025 at 12:24:33PM +0100, Danilo Krummrich wrote:
+> On Tue, Feb 25, 2025 at 07:35:46AM +0100, Greg Kroah-Hartman wrote:
+> > It's really hard to know if a faux device properly passes the callback
+> > to probe() without having to poke around in the faux_device structure
+> > and then clean up.  Instead of having to have every user of the api do
+> > this logic, just do it in the faux device core itself.
 > > 
+> > This makes the use of a custom probe() callback for a faux device much
+> > simpler overall.
 > > 
-> > I guess you can add parent can be NULL to the SAFETY line?
+> > Suggested-by: Kurt Borja <kuurtb@gmail.com>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Cc: Danilo Krummrich <dakr@kernel.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  drivers/base/faux.c |   15 ++++++++++++++-
+> >  1 file changed, 14 insertions(+), 1 deletion(-)
 > > 
-> > Sorry, I thought I would just leave it this way without a parent pointer
-> > until you actually had a user that needed it.  And then we could add the
-> > new parameter and fix up all callers.  No need to add support for it yet
-> > without that, changing apis is easy!  :)
-> > 
-> > Do you have a real user for this any time soon?
-> > 
+> > diff --git a/drivers/base/faux.c b/drivers/base/faux.c
+> > index 531e9d789ee0..407c1d1aad50 100644
+> > --- a/drivers/base/faux.c
+> > +++ b/drivers/base/faux.c
+> > @@ -102,7 +102,9 @@ static void faux_device_release(struct device *dev)
+> >   *
+> >   * Note, when this function is called, the functions specified in struct
+> >   * faux_ops can be called before the function returns, so be prepared for
+> > - * everything to be properly initialized before that point in time.
+> > + * everything to be properly initialized before that point in time.  If the
+> > + * probe callback (if one is present) does NOT succeed, the creation of the
+> > + * device will fail and NULL will be returned.
+> >   *
+> >   * Return:
+> >   * * NULL if an error happened with creating the device
+> > @@ -147,6 +149,17 @@ struct faux_device *faux_device_create_with_groups(const char *name,
+> >  		return NULL;
+> >  	}
+> >  
+> > +	/*
+> > +	 * Verify that we did bind the driver to the device (i.e. probe worked),
+> > +	 * if not, let's fail the creation as trying to guess if probe was
+> > +	 * successful is almost impossible to determine by the caller.
+> > +	 */
+> > +	if (!dev->driver) {
 > 
-> Not particularly! My thought process was mostly just this seems like a simple
-> enough addition that it would probably be easy to add it now when we don't
-> have any users upstream yet rather than building up faux device users in rust
-> and potentially having to refactor later to add such an argument.
+> Seems like really_probe() cleans things up properly through
+> device_unbind_cleanup(), such that dev->driver is guaranteed to be NULL on
+> failure.
+
+Yes.
+
+> > +		dev_err(dev, "probe did not succeed, tearing down the device\n");
+> > +		faux_device_destroy(faux_dev);
+> > +		faux_dev = NULL;
 > 
-> I don't think the refactoring would be that much work either, but it seemed
-> harmless to just get it over with now.
+> NIT: Maybe return NULL directly (like above) in case a subsequent change adds
+> more code to the end of this function and does not consider that we fall
+> through.
+> 
+> Either way,
+> 
+> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-Ok, fair enough, want me to take this one and you'll figure out if/when
-the SAFETY comment needs to be changed for the parent pointer as an
-add-on patch?
-
-Or do you want to send a new version?  Your choice.
-
-thanks,
+Thanks for the review!
 
 greg k-h
 
