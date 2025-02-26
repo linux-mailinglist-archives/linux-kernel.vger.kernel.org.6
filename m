@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-532925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC971A453D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:14:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F82A453DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B703A7F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567B33AE405
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E154D22B8C8;
-	Wed, 26 Feb 2025 03:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EFF22579F;
+	Wed, 26 Feb 2025 03:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7riKW2y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bStgg62m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0B722A4F7;
-	Wed, 26 Feb 2025 03:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D940A235BF3;
+	Wed, 26 Feb 2025 03:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740539413; cv=none; b=fprM11nLZd9kJ+ns5CrPN4tYhUaBX6wLcQYJsW7gmsrTQQdh2b5aKpZTBEKgBXCDUdnojMA4hQxpOFd4odM18Muh3TdTL9wh1dYwJBYbyi4CAZVQTWffzMyt3xiu2QsOZkAEoIDtayv3mbyudUMkxwlx4fM4NPzu0ls3tXA/6B8=
+	t=1740539418; cv=none; b=mrlH/HP2U58yUURf2AiJJdixxZMDBqLtjB95Bn2wb+DnzQNhBkzbIsSNnTTJBe8UpxlfQFl4QxU1SfPMbq73wQejPSAdIl/oWrKvHkjbJib7xBARjFQ+O1f0GJxm/iUqyKxy/TVzkzzXjc/povr8QlR/WwL482TQJpzSS4Kdr/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740539413; c=relaxed/simple;
-	bh=7SZKCabJX2HhzOUVLWc4O6ED5KbebiL7NRXD7bLYeDs=;
+	s=arc-20240116; t=1740539418; c=relaxed/simple;
+	bh=K4zo5EwDGUKkQZoFT0sJW1vrOhMHdjojfl+0ozf+g0Y=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZVYH6Ti9XgREpzXslGbi0hGDd67pEE/ylINq1vZyTn0aPuRZTI4SkWtjml2MJL2XPeCQasJJjCqtflhue8sxlt0KgOhK4/LuQtC2Zx5mgtlnvvU2majJvYorRTHVlEy+p2u9oPXVoqWcuCH0Cse2+BHXSZ/54TmFsHe+tCEXnss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7riKW2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21BCC4CEE7;
-	Wed, 26 Feb 2025 03:10:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ooBTIEDl5f51XOzximW179BsKSYABPKEYWml1+JtMiG2ScqBe2QspIUEvmVf8F2ZgTPQpcqvlfv5bN95FYo5dVwBruPg5eRik5pvHTApIPAl81ejR/uZgaAFZ7rzkWvqs3E3eZCSU9bMbnL6SYoRiqdsdKiRqeu2KRJxoqR0O0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bStgg62m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9088C4CED6;
+	Wed, 26 Feb 2025 03:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740539412;
-	bh=7SZKCabJX2HhzOUVLWc4O6ED5KbebiL7NRXD7bLYeDs=;
+	s=k20201202; t=1740539418;
+	bh=K4zo5EwDGUKkQZoFT0sJW1vrOhMHdjojfl+0ozf+g0Y=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=m7riKW2yeZiEyIsB0QWoJhRpLUmAOwYUtUlqUSecnU6LhPO5bHRobROJgnBumA1LU
-	 OsAZqHhwE3emp3ss0g2nF0yL+WYsOAjTKKfT50xDlRqHtApDx5QtRhuGkRc5Zv+sY3
-	 2lwCGw8WRZx0sIrDljVsH4jhw78+A7ove9mf059naedxZrOIIPCp2/vaxktlx+vNSe
-	 SzNwwRccjI2lKrN/iJdSIWwhW9N7DedD27vpPUu3HKx4zCJbP1kwknnVEVlTc2PJkV
-	 Hx3IhZ97qB7+K2j57hXbv5CjKRpPD2WUK+3Hs6PBus6odRb+JF8N0PJ1JTE9yThB1g
-	 pZX6VVIAuQ2fA==
+	b=bStgg62mQX1CbA5BSIqhV8t8WnT+QvHJlvRiWU0h9B1lduYqvYSDFNBEnI6FqMVXS
+	 Fr+muqqMrcJcHQH2AZ7vW6/ft0IE94o7ORcVGRIVXzx0J4bihsTso53Wyy4EjqYk+O
+	 yzXVhPiqWaLGObtKSeif2boQLZ4HrkIkjOIPUjwrW9LFVT/ThplIeSgUiSG/dIUBzL
+	 Spxyq9kxIOUM9AT6/ks8AyIyDz6m5FF9G4VGpj5Bm9X6T6dX2RJjHx44unzWTI4An2
+	 tdVXpGnH+kpRfhrf603HaEg5Dj68hf+lNcseo//TizLxJmSy3FuQddqdUDnh7/6yim
+	 f2nVm0qPhn5QA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE011380CFDD;
-	Wed, 26 Feb 2025 03:10:45 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEB4380CFDD;
+	Wed, 26 Feb 2025 03:10:51 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] Add OVN to `rtnetlink.h`
+Subject: Re: [net-next] Octeontx2-af: RPM: Register driver with PCI subsys IDs
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174053944450.217003.5009204346469404479.git-patchwork-notify@kernel.org>
-Date: Wed, 26 Feb 2025 03:10:44 +0000
-References: <Z7w_e7cfA3xmHDa6@SIT-SDELAP4051.int.lidl.net>
-In-Reply-To: <Z7w_e7cfA3xmHDa6@SIT-SDELAP4051.int.lidl.net>
-To: Felix Huettner <felix.huettner@stackit.cloud>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, jonas.gottlieb@stackit.cloud
+ <174053945024.217003.8404388361563873866.git-patchwork-notify@kernel.org>
+Date: Wed, 26 Feb 2025 03:10:50 +0000
+References: <20250224035603.1220913-1-hkelam@marvell.com>
+In-Reply-To: <20250224035603.1220913-1-hkelam@marvell.com>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+ davem@davemloft.net, sgoutham@marvell.com, gakula@marvell.com,
+ jerinj@marvell.com, lcherian@marvell.com, sbhatta@marvell.com,
+ naveenm@marvell.com, edumazet@google.com, pabeni@redhat.com,
+ andrew+netdev@lunn.ch
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 24 Feb 2025 10:44:27 +0100 you wrote:
-> From: Jonas Gottlieb <jonas.gottlieb@stackit.cloud>
+On Mon, 24 Feb 2025 09:26:03 +0530 you wrote:
+> Although the PCI device ID and Vendor ID for the RPM (MAC) block
+> have remained the same across Octeon CN10K and the next-generation
+> CN20K silicon, Hardware architecture has changed (NIX mapped RPMs
+> and RFOE Mapped RPMs).
 > 
-> - The Open Virtual Network (OVN) routing netlink handler uses ID 84
-> - Will also add to `/etc/iproute2/rt_protos` once this is accepted
-> - For more information: https://github.com/ovn-org/ovn
-> 
-> Signed-off-by: Jonas Gottlieb <jonas.gottlieb@stackit.cloud>
+> Add PCI Subsystem IDs to the device table to ensure that this driver
+> can be probed from NIX mapped RPM devices only.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] Add OVN to `rtnetlink.h`
-    https://git.kernel.org/netdev/net-next/c/6002850fdfe0
+  - [net-next] Octeontx2-af: RPM: Register driver with PCI subsys IDs
+    https://git.kernel.org/netdev/net-next/c/fc9167192f29
 
 You are awesome, thank you!
 -- 
