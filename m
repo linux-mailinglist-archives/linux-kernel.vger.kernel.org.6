@@ -1,147 +1,201 @@
-Return-Path: <linux-kernel+bounces-534657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A93A46991
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71B3A46996
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB64C18887BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C98718832FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DB7236A98;
-	Wed, 26 Feb 2025 18:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C552376E6;
+	Wed, 26 Feb 2025 18:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwyCj9Fk"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="AFPfr6hc"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B89522540A;
-	Wed, 26 Feb 2025 18:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC68C22540A;
+	Wed, 26 Feb 2025 18:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593791; cv=none; b=pmpo04EYBp0CCB8gGE+KdDWK2FDDyQU0EudTamXxd0tosW+pPhbXF50t5UdZAcRpqDqFEgEMMOgq0Ov2GIr1P+OpiZ1wwHRnHGeN8B6/B9KB7e4l6GurK3jBOuqZtuCtO0Gm+d2+KtIh9Dr4Ahp/BveSFX2bHJdlg6kLhiyMFm8=
+	t=1740593859; cv=none; b=Ht5l9oH2qGLFeGf8t7sE6SWMV+bMrUimBAhBbSBSC/Pgj9IybeivjSqkltHdQwzuP9z6bB2T0ugM7IjLniad1HLlC3TakVJlbXQIknpY/l6Fx9ri1AqcUr2DVpo4Paj+0aUK1xQuAyZpHzV8cAb11V+MeJCg3oLHdz+nVZADvMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593791; c=relaxed/simple;
-	bh=PNiyuwVdpLNUJENGkyF6Mxf17ggDLh3V6Qr2VnnJecQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5myC1x36AN/8tCaLUaWwVm013K/teqSItYz7U3cGqwlfeWdG8sZH83JV4WmU0FXLq4icKxpwAP2ef7jLG5eYaeJLxbuSeIBLEEdJpFYRbCcuF4xLUBp3sm4G8B2nLQwHxQzMfQ/cVyJ//bDBaQJfhEuY5x4gyNE7VUmCZY4XX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwyCj9Fk; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so27316e87.3;
-        Wed, 26 Feb 2025 10:16:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740593788; x=1741198588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dW8IjnVqYAnoyypVc25LwdWGOG0ZhAp1qYJ86wqoM0E=;
-        b=hwyCj9FkZl4/QW4Jciur9RaLc3rR39ebEgVOlZOm9+De5dlYu5TO6e8IqEO34x4pmD
-         pTr5bqCvR2s3KJ9KBPcsKmcxHxajyj/ol1dCjeriwLRouZvWbbkmEhrxmYmqKkfSFw/Y
-         Xv6qcCUgsGFl42Ue2m0CheUAKvQogJH6pQGXw3MwceKHWhadquOFdlm6f0u01pg6UBoI
-         q4tIdcmrogzoLU1BLyjkIdBGZ7eKBplSgmKBZSdzgGe5CdH/6Ir1Kngv8Ph02VRIxaaQ
-         JdykDD0vwOBz0GJmUdemmbygvFc8cvpGaX+Ylox4Irs3WpW+QHswUk/V6IttA4WXwnAW
-         WqOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740593788; x=1741198588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dW8IjnVqYAnoyypVc25LwdWGOG0ZhAp1qYJ86wqoM0E=;
-        b=ugKNqxW+twz2l4ge2hBpSNYPZpDbOo2WPXlV68L7tgYfXLLo5OglEarsmKQbwqFO0k
-         tqOQhM6OZG1js7P0vdJA9R1QE71XQEBUHN4tAPgnGYZb1xjmzfkeghqdh32JfZxGnTzT
-         TLmLAIMa3EBK0X/VkTqT5zxoXQW4cTvVGVV1rniBSLdcj9P1nLXhP/xwkwWpowFs+vu8
-         +0Lv2uCeBWIJmBgP+Y81B8VPPKYMJK5yXkvtzdNTnwbzzay7gfZmLdDfB/V7x+euuqIX
-         4kNfS0+YPZpxABR9oRa44kore6PDv25/csnpHt66By7HhHswSuogILx89KEywrqI1yHV
-         MaAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2yT4lFeA7N/dtra0IfmxuqWIenD8YUOpnsh2dbdxY4FSLTudzANRc0WLYt2rXDVT/B9AEspt9FsrPowQ=@vger.kernel.org, AJvYcCXQ0CKKDPxHLm7qbi/vZqjMKvnNhkQcg0vsFOvDWW7lZS/6+ZmUmxY9m8tf0SIfCUVvKcuu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPprN3KEiDpSvs2YwlgzUtTsfYTgafvYs6JV3NbP7NvcN+uqf+
-	+w1fTVx0jMdEMzyFG+lmAiadCIlAL9mp0Y00e4LZ2UfojVsC+OuA
-X-Gm-Gg: ASbGncsA9YSn6H2ysCMiAxGubAVanb3SIFAqcrvT3Tgo5qqzm6lbwMbYYOGXMTqTDIj
-	HFePFW5HTvD6twDACPTJ4hjm1Il52yKvjUKkiEepQK1JgEzhjKIPvgcLUFxliHOyHrNFPS3KCTh
-	haA3RWt4Q5aE72vsAVJwF1H1NQOwwHEdrMohhNcP75a1Jma2xI91uaWrGqedKLwuXBNyxoOtnFS
-	cOonxA4CXdRwuDYEFzaASMPtKVigKTcmq/pQ4RW7hP4danvWCML1IG276vfuB1CpaGLICIStm5F
-	mLoWpzXMd9wgrY38/9zSkRrZxuf4araLkA2f10HE651/5PMm
-X-Google-Smtp-Source: AGHT+IHRLmoBUoY4FBdsGXt2Pz0LRZDOQPRhjMxYUhfsU9pjgEpkUYNYDod+hStyOkPEKqMYoc2UbA==
-X-Received: by 2002:a05:6512:ba5:b0:545:e7f:cf33 with SMTP id 2adb3069b0e04-548510ddc55mr5274273e87.28.1740593787740;
-        Wed, 26 Feb 2025 10:16:27 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f9dc3sm516092e87.215.2025.02.26.10.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 10:16:26 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 26 Feb 2025 19:16:24 +0100
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v3 1/3] rcutorture: Allow a negative value for
- nfakewriters
-Message-ID: <Z79aeJn_bC9ptBD4@pc636>
-References: <20250225110020.59221-1-urezki@gmail.com>
- <20250225212409.GA1807836@joelnvbox>
- <Z78lNRKjLQKigyLw@pc636>
- <a26d4cc5-ff54-4f9f-b2df-aa423c112487@nvidia.com>
- <a3892fc3-f0a7-47d1-a7ea-d82bb7c88d05@paulmck-laptop>
+	s=arc-20240116; t=1740593859; c=relaxed/simple;
+	bh=7SPYnAXBwd09mqrgJKm3M4GdXzEp3OFKfWGQm31sLMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L1s3wsLJw/M4I+B/T0e3QgPJnuW0Fgg4J05khIQ2VICbYUq7WDa1Y66d5o9ztpWARG9R0E0Zg44cGV4MbulPsHNww4c3dalJ+Kr5hE1nfZQSFkRdk36jSgjAxHh568133AS0w7Jr04WXa1qmMWun5FJ21OCFcL25KtNgI0Dkzsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=AFPfr6hc; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1740593845; x=1741198645; i=ps.report@gmx.net;
+	bh=ukU3KmpIwMHvG/ytdZW/bBTC6zT6SMO7B8X4f4buLc0=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AFPfr6hcBztfz+NmL0B7stmiWF39iG0UeDKGr/YkwrCYTH9m6BM/KXupSrVqjjEa
+	 JRdP+687kJBC3zA+Pt5V02kTa/fxY9EAf8g21ZhABR/dh44XhRPKDsRAlyibcHVy7
+	 xbHWBecoxxPN5JmCFgIuLfE2CuEgBvyNFKReUHDCWTaY4/k6+3B9qe8Yr6DWzUEwl
+	 9uHXHs4eIBCOUBYFpIrH344Pyv/M7YaUQK9r8y1b/N57IpDeot0DziWow2CPm0twJ
+	 o1BmoXLfm8URn6xaCNM+s+Xe92AI8hOTrjOw1MNd19xA37UMPK3L68D6A0/Le+IAJ
+	 BZEoxama76MmT2dcVQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost ([82.135.81.93]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEm6F-1tX8Xe0d6h-00DWHH; Wed, 26
+ Feb 2025 19:17:25 +0100
+Date: Wed, 26 Feb 2025 19:17:23 +0100
+From: Peter Seiderer <ps.report@gmx.net>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Simon Horman
+ <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pktgen: avoid unused-const-variable warning
+Message-ID: <20250226191723.7891b393@gmx.net>
+In-Reply-To: <20250225085722.469868-1-arnd@kernel.org>
+References: <20250225085722.469868-1-arnd@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3892fc3-f0a7-47d1-a7ea-d82bb7c88d05@paulmck-laptop>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ilihWn6XSUXka8w4Opgx5nIzQpScpD4HwXJtjdcb9/251tDTrXj
+ JpzqKlACqH6sGBWWsvOh1jNdQKqj/IOnr7Ar/pHaQQY4HPU0hFwd9hKNiuLzEWFzFe5i/9f
+ g/0C4+V+vC5bBL9IIN0arPoKZgwbKoi9tgaSieXFYCYR+DM39XzePbvX1UGb8FGZ0QF2YbB
+ JYEAWTMshD0rApFd7C9IA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gQi6RG8KjxU=;aTnVN3p7RJX35+JhVMF/chgdJvW
+ reT/KTUm6O5rRZXERB9xrD/fX9oCcIYkkSbpljIkSlaI/gnbnDNMgiLDwyE76YO7IO4HI+ApW
+ Sf0bMe/s+KlJFIGcvWFR2OFP+T5i12tUykwU2zM/mK8y6q50NrWPw5HAq1lA150telttH752y
+ 0YymL3foKuQTmGp6nSSs+7OVl/EPscZIUQ11EIPs7CLKt0DeWr6LKGIQ9oB20QVCHtibL6chp
+ b9VnmAgOBmGpDF1Vj4ZOPwKmUMFs5RZLKTFUqKQblgOw7UqSBxneWKX7qrhufqlHCkNvioKxu
+ sDXk/D6MtlfvTLgRjtJ4MbrYy6FGmMFRGqtlabFSw8DQSd8tV0DngJZomNcgFr8SwlnLkDvT/
+ v6QfdpLRvQPd1zgTBulWKsxR8JLiTC1Ztz0CspfAzbLEX5P8XVXSx8B3AiO8vZ9KmGcQz0sYx
+ 5cR/aWhkgOfQvktW4vlROQ0HFdqOgQ5+RFh/VMbaD3qjNWGtvyvGY05n0ywr2HCfwY7+1jLfO
+ ZTSUSeIXEy/KR8MeJ5+Mtv5A0tjCvxvYIyxU9b1HOCWc0/b2C1eiwsFewOrBpMA3iRX7ATJb9
+ hFfR6qJNMnRKdSC2MoGCrsWJDWD1kEweV7LmMAlwoR/sHt+H5oxUVcBS+NtYHDGjzFVqE8u3h
+ b/42Rufc1D9yphlczebnksZ0qvYVKeRkmn6uUaUqU2T4gmA2ckSJAbSpFgAm4wOeM6MYF4xrG
+ +UZXxsfakGtb3uRQG72wUrcQ3Ob/kjXP+FdAyNaoXtYEPT4LNn2G6aBMjqfotzG5hiYSzIUVM
+ ouSKQCpVsdxrz34btWVWyq1RneySDZeSXMwvjm6fWqvVJkkndFSMAds01XzFmTShggbq0uVVA
+ NOxglmJfzAaLDW1N7uvdaX7cWpf1CZ5bxPtmTKNg+7qB25dzo3dV156o0i6e5xRjc0trzAUmv
+ Sw8EBL2EPyi5fyCd5XxW9Q9k0atJ0hXBgFz8JJC+zO2TfyZa151aJQHT+HkIw/GqjDbwJOU27
+ 1ZuSBRV8j9lV9+blkzBo66ddESVDVJce5kl2wjyzUq9BHKm0GvXaQYvX26akJx8jPyZz6sIRR
+ WEKDy4Yzld0IZew+/NhEbWv24Nmfj8MsJaxL7Q9qn7YZ+5TgEmoxWCg9EzL+EzsjLKaaLO0wI
+ DmB2nACYU49XVpmybkxpp71hfRDCVQJxpOftQY+VHDVFTrtQo1AoO0ra+bdwsHyWMM4agrSQJ
+ wQSBuxKGEXbtP2vxKWJtTXP9FJXBJ+A1C8RevLvtLwXoo6AnuertAQlzCvV45rEAsGOKaVz7s
+ 9R4IicY7Ac6KEk5PmNYSE9f3HxF8pnPTIWcuLuVUKUY7SHYNjDfp1y1QbfZWxgoPrJxVkiCUb
+ pWoByLIEbUt4kM/ltzdZETvh4j/OpiI0dwOeu4OEPA9kPE/DDzlYYHcyWy
 
-On Wed, Feb 26, 2025 at 10:04:35AM -0800, Paul E. McKenney wrote:
-> On Wed, Feb 26, 2025 at 12:49:41PM -0500, Joel Fernandes wrote:
-> > 
-> > 
-> > On 2/26/2025 9:29 AM, Uladzislau Rezki wrote:
-> > > On Tue, Feb 25, 2025 at 04:24:09PM -0500, Joel Fernandes wrote:
-> > >> On Tue, Feb 25, 2025 at 12:00:18PM +0100, Uladzislau Rezki (Sony) wrote:
-> > >>> Currently "nfakewriters" parameter can be set to any value but
-> > >>> there is no possibility to adjust it automatically based on how
-> > >>> many CPUs a system has where a test is run on.
-> > >>>
-> > >>> To address this, if the "nfakewriters" is set to negative it will
-> > >>> be adjusted to num_online_cpus() during torture initialization.
-> > >>>
-> > >>> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-> > >>> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > >>> ---
-> > >>>  kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
-> > >>>  1 file changed, 16 insertions(+), 6 deletions(-)
-> > >>>
-> > >>> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > >>> index d98b3bd6d91f..f376262532ce 100644
-> > >>> --- a/kernel/rcu/rcutorture.c
-> > >>> +++ b/kernel/rcu/rcutorture.c
-> > >>> @@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
-> > >>
-> > >> IMO, this should also be updated to reflect the possibily to set it negative
-> > >> and hence to number CPUs:
-> > >>
-> > >> torture_param(int, nfakewriters, 4, "Number of RCU fake writer threads");
-> > >>
-> > > You can set it to a negative as well as to number of CPUs or any other
-> > > number.
-> > Sorry I just meant amend the description to something like "Number of RCU fake
-> > writer threads (or set to -1 for NR_CPUs)", so user does not have to read code
-> > to know that (and update the kernel cmdline params document as well).
-> 
-> Should we also adjust the string for nreaders?
-> 
-Makes sense. Both options are adjusted in same way.
+Hello Arnd,
 
---
-Uladzislau Rezki
+On Tue, 25 Feb 2025 09:57:14 +0100, Arnd Bergmann <arnd@kernel.org> wrote:
+
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> When extra warnings are enable, there are configurations that build
+> pktgen without CONFIG_XFRM, which leaves a static const variable unused:
+>
+> net/core/pktgen.c:213:1: error: unused variable 'F_IPSEC' [-Werror,-Wunu=
+sed-const-variable]
+>   213 | PKT_FLAGS
+>       | ^~~~~~~~~
+> net/core/pktgen.c:197:2: note: expanded from macro 'PKT_FLAGS'
+>   197 |         pf(IPSEC)               /* ipsec on for flows */        =
+        \
+>       |         ^~~~~~~~~
+>
+> This could be marked as __maybe_unused, or by making the one use visible
+> to the compiler by slightly rearranging the #ifdef blocks. The second
+> variant looks slightly nicer here, so use that.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  net/core/pktgen.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+>
+> diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+> index 55064713223e..402e01a2ce19 100644
+> --- a/net/core/pktgen.c
+> +++ b/net/core/pktgen.c
+> @@ -158,9 +158,7 @@
+>  #include <net/udp.h>
+>  #include <net/ip6_checksum.h>
+>  #include <net/addrconf.h>
+> -#ifdef CONFIG_XFRM
+>  #include <net/xfrm.h>
+> -#endif
+
+This ifdef/endif can be kept (as the xfrm stuff is still not used)...
+
+>  #include <net/netns/generic.h>
+>  #include <asm/byteorder.h>
+>  #include <linux/rcupdate.h>
+> @@ -2363,13 +2361,13 @@ static inline int f_pick(struct pktgen_dev *pkt_=
+dev)
+>  }
+>
+>
+> -#ifdef CONFIG_XFRM
+>  /* If there was already an IPSEC SA, we keep it as is, else
+>   * we go look for it ...
+>  */
+>  #define DUMMY_MARK 0
+
+A now unused define...
+
+>  static void get_ipsec_sa(struct pktgen_dev *pkt_dev, int flow)
+>  {
+> +#ifdef CONFIG_XFRM
+>  	struct xfrm_state *x =3D pkt_dev->flows[flow].x;
+>  	struct pktgen_net *pn =3D net_generic(dev_net(pkt_dev->odev), pg_net_i=
+d);
+
+Maybe better this way here?
+
+	const u32 dummy_mark =3D 0;
+
+>  	if (!x) {
+> @@ -2395,11 +2393,10 @@ static void get_ipsec_sa(struct pktgen_dev *pkt_=
+dev, int flow)
+>  		}
+>
+>  	}
+> -}
+>  #endif
+> +}
+>  static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
+>  {
+> -
+>  	if (pkt_dev->flags & F_QUEUE_MAP_CPU)
+>  		pkt_dev->cur_queue_map =3D smp_processor_id();
+>
+> @@ -2574,10 +2571,8 @@ static void mod_cur_headers(struct pktgen_dev *pk=
+t_dev)
+>  				pkt_dev->flows[flow].flags |=3D F_INIT;
+>  				pkt_dev->flows[flow].cur_daddr =3D
+>  				    pkt_dev->cur_daddr;
+> -#ifdef CONFIG_XFRM
+>  				if (pkt_dev->flags & F_IPSEC)
+>  					get_ipsec_sa(pkt_dev, flow);
+> -#endif
+>  				pkt_dev->nflows++;
+>  			}
+>  		}
+
+Otherwise works as expected, you can add my (with or without the suggested
+changes)
+
+Reviewed-by: Peter Seiderer <ps.report@gmx.net>
+
+Regards,
+Peter
+
 
