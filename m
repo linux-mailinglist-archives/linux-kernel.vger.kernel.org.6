@@ -1,234 +1,122 @@
-Return-Path: <linux-kernel+bounces-534957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B76AA46D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:16:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748F1A46D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59DA3AC237
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:16:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E441887D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BEB2571A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312D0236A74;
 	Wed, 26 Feb 2025 21:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUWUinCT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjJlQYC6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CEE10F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D132755E5;
 	Wed, 26 Feb 2025 21:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604590; cv=none; b=XYdMVXaJhoKMUir7HnoGIwAKeK93MTZl1XKnzpIO704hi2caTmJVlP1oDaGf8+G4XFc7BcARYO8SmHtPyn1u9XyHHozlKOUz4n+LLYd5WA2ReVoFaEfFNRK9G85N4CSlG0/ZMaz4OenPiQ0IrwAgTjnlduLETjuY6MXGXWUNZzw=
+	t=1740604590; cv=none; b=Qiqv+IZ7ufz6zXu8f+okEFgLozhqIj+m0NqfoCy3X2V2vYqsCSDpS1n1TLIpzoDoyelYytxR8dm0/gt+IxSmF1/XSXdxHzCwA05ik1Rh2EjYgaWsxDK1+yKocb5PdVLoik3sZSTUVw2FBrkej954Son8jp9DpmA6PIt2jkIVd7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740604590; c=relaxed/simple;
-	bh=dPJC0lc57f2rXn0+uVJILsaYDPovw8HJ1xtdYghmLBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BC7uGbYmc4/uIEa2O6g8QkPgurPVLWAaiy0iZf78k/TbSypfZnxbtl7nQQrcbUUNYGy4k7wtHebgRxBJQWLh/kcJLyDFlxxw7WeCfqjIe0hCBJTloFHlpnIl7G52CuEwXLEuM+qorx3/j0U9+BXbXIWY3UhEVo9OFFzdWoWnvMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUWUinCT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32AEC4CED6;
-	Wed, 26 Feb 2025 21:16:24 +0000 (UTC)
+	bh=BlXrr5d0eV/LhE0K1ldO09vh9dZWhnRmDBzqcBJ+MDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9KkXfRCXZRzIGowlUr6fKL/dBA53TkMAjy9p5ezkmPpIRb2kUIxDiBp4LxsikLBC5YaNOsFGHcKzvi/jQEfg7iXikL0weldIjZF0FHJEPaRrp4eF69LfQAziMhhkpECx867W9bqiDqzF03el83jXgpfMaag5sTEwz/Css7lN6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjJlQYC6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEAAC4CEE7;
+	Wed, 26 Feb 2025 21:16:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740604590;
-	bh=dPJC0lc57f2rXn0+uVJILsaYDPovw8HJ1xtdYghmLBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NUWUinCTYGHKGQaNumUPg7EzITLxV+feDCDtX8F0PUNXcrXV5Vg1RU4LToP5y/c9T
-	 surSs667chPmyTFNFxi7zs5Ho/TQJYEtqI0kTK1k1dlwWnAxBZ0C5i7AeTiTQ32APX
-	 0RwfW4u6fYs4TcobKN/PJIh5X0ZzDkDWJMq5AogDPG8IXJ3qL/lAnYwXjCcjPr9jc3
-	 lhZvGo2bf42jQeza5+v2geAgc/I3yWBb/nawIOsNKLCO6p60PH+arwg4kRgwhrxUSy
-	 o5NfsJmYb5v2qqCWV7KL/4C1O/0zwRe0LmrPAOmSE6NA0RddgcRWXh+2DbWmLQUh5T
-	 vabIxfHT1vpEw==
-Message-ID: <837c7fd8-68b1-4d95-af3e-2af5dfccb60a@kernel.org>
-Date: Wed, 26 Feb 2025 22:16:22 +0100
+	bh=BlXrr5d0eV/LhE0K1ldO09vh9dZWhnRmDBzqcBJ+MDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PjJlQYC6X0Ysyd0rN4GOVuwn8p1vTM0P/RTtiVegzerz7GdF/X8yBE1ul9r8dIvme
+	 v4pmKoPifGMG7esQKPU2DDle9YL8BV9r9Ifm31rUYkQEcthrbkqOCXf5+aiL3tIrna
+	 OC+bYnJxK8E4N9G86mVOs7hBOCP1d8R4B9Fz/cX7ZqgjPqfa7dFgjZK6UckAtvaU63
+	 FnTr+OXy399bfR/1hbmvQwKEbitnTw0w8Rd93GjUDUjtC47AwS5/tqB1JrMMuxHNDN
+	 KtIvu/UEGFElCZECX5tsqoBx1znqsJZVRuwd2q+fOYeLHY03n9m/fMXIkq1/2nkVFe
+	 cobiK/OYjJdWw==
+Date: Wed, 26 Feb 2025 21:16:28 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>, linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
+ zswap_cpu_comp_dead()
+Message-ID: <20250226211628.GD3949421@google.com>
+References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
+ <20250226200016.GB3949421@google.com>
+ <Z796VjPjno2PLTut@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: bus: add documentation for the IMX
- AIPSTZ bridge
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
- <20250226165314.34205-2-laurentiumihalcea111@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226165314.34205-2-laurentiumihalcea111@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z796VjPjno2PLTut@google.com>
 
-On 26/02/2025 17:53, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed, Feb 26, 2025 at 08:32:22PM +0000, Yosry Ahmed wrote:
+> On Wed, Feb 26, 2025 at 08:00:16PM +0000, Eric Biggers wrote:
+> > On Wed, Feb 26, 2025 at 06:56:25PM +0000, Yosry Ahmed wrote:
+> > > Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
+> > > the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
+> > > (through crypto_exit_scomp_ops_async()).
+> > > 
+> > > On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
+> > > (through crypto_scomp_init_tfm()), and then allocates memory.
+> > > If the allocation results in reclaim, we may attempt to hold the per-CPU
+> > > acomp_ctx mutex.
+> > 
+> > The bug is in acomp.  crypto_free_acomp() should never have to wait for a memory
+> > allocation.  That is what needs to be fixed.
 > 
-> Add documentation for IMX AIPSTZ bridge.
+> crypto_free_acomp() does not explicitly wait for an allocation, but it
+> waits for scomp_lock (in crypto_exit_scomp_ops_async()), which may be
+> held while allocating memory from crypto_scomp_init_tfm().
 > 
+> Are you suggesting that crypto_exit_scomp_ops_async() should not be
+> holding scomp_lock?
 
-Please use get_maintainers so this will reach proper lists and
-automation. Or just start using b4, so you won't remove cc-entries (v1
-looked correct).
+I think the solution while keeping the bounce buffer in place would be to do
+what the patch
+https://lore.kernel.org/linux-crypto/Z6w7Pz8jBeqhijut@gondor.apana.org.au/ does,
+i.e. make the actual allocation and free happen outside the lock.
 
-
-> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+> > But really the bounce buffering in acomp (which is what is causing this problem)
+> > should not exist at all.  There is really no practical use case for it; it's
+> > just there because of the Crypto API's insistence on shoehorning everything into
+> > scatterlists for no reason...
 > 
-> diff --git a/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
-> new file mode 100644
-> index 000000000000..dfcfe4a8ae74
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bus/fsl,imx8mp-aipstz.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Secure AHB to IP Slave bus (AIPSTZ) bridge
-> +
-> +description:
-> +  The secure AIPS bridge (AIPSTZ) acts as a bridge for AHB masters
-> +  issuing transactions to IP Slave peripherals. Additionally, this module
-> +  offers access control configurations meant to restrict which peripherals
-> +  a master can access.
-> +
-> +maintainers:
-> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,imx8mp-aipstz
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    enum: [1, 2]
-> +
-> +  "#size-cells":
-> +    enum: [1, 2]
+> I am assuming this about scomp_scratch logic, which is what we need to
+> hold the scomp_lock for, resulting in this problem.
 
-Why flexible? This is either 32- or 64-bit addressing in the sources,
-isn't it?
+Yes.
 
-> +
-> +  "#access-controller-cells":
-> +    const: 0
-> +
-> +  ranges: true
-> +
-> +# borrowed from simple-bus.yaml, no additional requirements for children
-> +patternProperties:
-> +  "@(0|[1-9a-f][0-9a-f]*)$":
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      reg:
-> +        items:
-> +          minItems: 2
-> +          maxItems: 4
-> +        minItems: 1
-> +        maxItems: 1024
-> +      ranges:
-> +        oneOf:
-> +          - items:
-> +              minItems: 3
-> +              maxItems: 7
-> +            minItems: 1
-> +            maxItems: 1024
-> +          - $ref: /schemas/types.yaml#/definitions/flag
-> +    anyOf:
-> +      - required:
-> +          - reg
-> +      - required:
-> +          - ranges
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - "#access-controller-cells"
-> +  - ranges
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    bus@30df0000 {
-> +      compatible = "fsl,imx8mp-aipstz";
-> +      reg = <0x30df0000 0x10000>;
-> +      power-domains = <&pgc_audio>;
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      #access-controller-cells = <0>;
-> +      ranges;
+> If this is something that can be done right away I am fine with dropping
+> this patch for an alternative fix, although it may be nice to reduce the
+> lock critical section in zswap_cpu_comp_dead() to the bare minimum
+> anyway.
 
-Add at least one child, so your pattern will be tested.
+Well, unfortunately the whole Crypto API philosophy of having a single interface
+for software and for hardware offload doesn't really work.  This is just yet
+another example of that; it's a problem caused by shoehorning software
+compression into an interface designed for hardware offload.  zcomp really
+should just use the compression libs directly (like most users of compression in
+the kernel already do), and have an alternate code path specifically for
+hardware offload (using acomp) for the few people who really want that.
 
-
-
-Best regards,
-Krzysztof
+- Eric
 
