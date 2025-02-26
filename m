@@ -1,185 +1,138 @@
-Return-Path: <linux-kernel+bounces-534952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D04CA46D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:13:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08450A46D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6652618888EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835C616B5AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598C1258CFD;
-	Wed, 26 Feb 2025 21:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D125A2A4;
+	Wed, 26 Feb 2025 21:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evORnxZS"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ELirHwpV"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4304014EC62;
-	Wed, 26 Feb 2025 21:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B41114EC62
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604390; cv=none; b=gO1f5yMkn9EG1LP3/Rgjm13ueULRzELy3YdYlrKxzfxGbFyvkOEXBE1HWNbWIwrV0bDdmnmGMmRs0B35ujemn55VH0Z+azgqKiYmD/OPpwN4khIyen098v2vjxRxuS51ryWHyIyRtzBX6Cpan66U+IM/eGNl6FUCNaykzlYTu1o=
+	t=1740604367; cv=none; b=iYFd18mqS0Yj+Jkg7FqjyAQUY/r4BnyXwcxXBqT9g6z7Rh+LnKGPcnoW8+x43OxBA0k68kOI0tWeLTTO8pXzKBgukhoqiRxPMPq5GbK3pmP8N+FWtpCSY/bEJR003DMLzwwIK6am3lAhcLRHr+WEuIwyD+/NYA6flk0SdmbaqqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604390; c=relaxed/simple;
-	bh=r6ctwvTBzCOsJfegDA3zEy2JPkq7n4u0xEqH/cdj0gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrFRTf0h4cbWGozpTuVEunv/Ck4Xn9j/LJDIIKA5zX87vtewQKHMdD6tdfgOwltpimHTpsm6Dg8IqhZz+aGINjF8MlKci7OxcZ7Cu2dVl09xQBLfRVPqukRv5M2FQS/195Kn5+c+NMkQboTQyBIPsoBIsbJiUq6ewjvRdDair9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evORnxZS; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c095b5365eso17027985a.1;
-        Wed, 26 Feb 2025 13:13:08 -0800 (PST)
+	s=arc-20240116; t=1740604367; c=relaxed/simple;
+	bh=a7D2XYmGoeKdz24VpbFVPzI8X7fRpawKWQ3rHB/7Fk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kA6ysEA9iE9i2fE1XjIlfWDmxxyQOEMSzhA49z3Mrc66nIbrOb62++jou+7CEgyZgDpYOsrC0/+vt5W+taFgn22hXlaUd/myze2s2j00eKZhIk+1pRo8nLpBZB/lOay/8sBRwN77lQEfVFzRIboVxUMT7hkqiTAJGfQcrRGgKiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ELirHwpV; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-855b09fca35so16682339f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:12:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740604388; x=1741209188; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LuhPUiiWa/D5LUXBpWxpkn8zHplSC1iuiAYg+ApjZbg=;
-        b=evORnxZS7fbuViQRID4WeDtEklP6m9d3hEk1eYiX23LBIWpy2AwKVI7rpWB/wejske
-         ZkU2MAMP+W2+60yKnE2j3tEhvVmj0hAS0XCKkQH+WdS+5WSt1QXNuDqpUlZOsP4U6q/G
-         EdTs0jRLHov7KAexj3zvFkVb5H8cH8CAG6Fi6dg1Us0ElN08FFHizG6L38e7P0aJKjdZ
-         5b8Soiep/S36Y5cjQZBy8M/7OgGQdws8y27JrszmHZQX3Jp4nwXGnpsov0vPO2F5Uqio
-         WXEBsRjQW3l5S2HzN4HEA4p20QOKmL7rAkVGxLwRVbHNdoJNTpOKAcKSJS0hcWs3hTsx
-         Ulrw==
+        d=linuxfoundation.org; s=google; t=1740604365; x=1741209165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pzp4vdXBmVandIjCD1Ph9v4wYVEYC392IHskVG+hw1s=;
+        b=ELirHwpVFWYsKNSXB3ZBKfx2hsFddLVs2ILPr9kqE0pr7PVGPPQf6+cEIv4pYv9geV
+         jPcxRHYKWCzBPYmqHq1kAw6EQpgyjyDdMQWz6e6zkIOBsHnfpxWmjEfFOYC65pKuycbQ
+         9m/KB08VBTTRqwZD5/lCX43Bk5jpf9IqUa1HQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740604388; x=1741209188;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LuhPUiiWa/D5LUXBpWxpkn8zHplSC1iuiAYg+ApjZbg=;
-        b=Tltd3Wy2KiyHzVZ7jKnhrXMS/Vb/PKVrsMmkQEvFGBLw3UYlHr/sjcOaKXo3Bn/PaP
-         s+5JhuFJYWqjsSsZUeNsl4ulFtQBUx143TqNpPZCcih9RtJH2YjNqbUWxklu/JIKx8rk
-         Lm5gH2tk8wo8NVUdQrYRaLEBIVBiHmgwjUGCE5UeZhDfCa4xqK/riw0Fg+hN3/lYBU4i
-         HcFtbUgPF07xTc0J0+DnuIH70Vcn6gnStiMA8GwJg5XT2whFpNHEX+u9Xjyj4Vz1W3C6
-         yT1jWI2s1LB/0kGltajg6xRUSQ+K/kLDNAekc4PyBHLWVqP/Ay81CHbk7H3e7Pszg5F3
-         mggw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpOl5HEVxtYaipv+b5soAH0UIAgcY0EWd4shakQ39VLixl6PQewyMgOugidjVyZ8jGYLluz9/BIjcFWD4=@vger.kernel.org, AJvYcCXyD37TxqKGuD9BdQlRzXqMVMX71OlZxA4QJSu2vA7HCdq3IqVnouwxf8xUeeAL49FYoM5X@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCON1DATtbzICH7E7ZXSTFwMc2RAeFW5lda9lKrlAdsbZmxUVy
-	NALUBsFQCYJN4HougLCPIe8+62fJV8L9X/JOR3ExpOssdig/sMjY
-X-Gm-Gg: ASbGncsRk0i52ACW8mq6A4Iho7F89cFk928bkCfim1FXdoHADZb7BSF84+t0JtKn6dQ
-	n4ytNR0peBry20VBxweypS8DNdj7vEXTS1a45GB2MCgeXOPJrji1F5DfcSE6NtxNzFRe5RJTiBz
-	6GnoD+IZd/GvjaPM5PIGyCHn4Cs/B5nwRuJg2YmpuMZ/6U/fTAWeoldxS6qw7MHKaorjVJqAjeP
-	PCZX3Pl/3vlZrjapCEesxWIVUu4RCdTVX8Zpj5pEgBQsqHG6ec7rIjNHp9emGP+Crq8FlH1B1Dm
-	BGdgmalLOylCHFbO0qP26JHPpHayOSqH49MckerWmcz0GZ2aPlXazyT1EaRjtYV6OVO4ENO5NY/
-	WoVp/nh1iE20Buw4s
-X-Google-Smtp-Source: AGHT+IEea6S8UsN+IOEXDInlJY7lKrtjGxkFo0CVKQOzJ0kf+D6eZ4hlGIfyjtlTD09u8q1SSQQy9Q==
-X-Received: by 2002:a05:620a:3183:b0:7c0:a216:404f with SMTP id af79cd13be357-7c247f00dcbmr525241985a.2.1740604388075;
-        Wed, 26 Feb 2025 13:13:08 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976d9f19sm745166d6.98.2025.02.26.13.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 13:13:07 -0800 (PST)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2ABB81200070;
-	Wed, 26 Feb 2025 16:13:07 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Wed, 26 Feb 2025 16:13:07 -0500
-X-ME-Sender: <xms:44O_Z7JMCCWCYoVdBER2fUw2kOlvtjnbYphna5qMDF-TXHYy_f67yA>
-    <xme:44O_Z_KvfpGDU5-c_jPSmFUEdSw-PiFzvxf5QCBd1T4zVHt_Og5auVzY1GN4-6LKU
-    _Xry9KXUXevaL15Fg>
-X-ME-Received: <xmr:44O_ZzuufMt98zu-Su_2psDXHe_FfXz7jlUbXoUbGHIuHWyeRZrKDt1K7yg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheeigecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedutddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuhhrvgiikhhisehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgt
-    uhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehfrhgvuggvrhhitges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepiiiiqhhqtddutdefrdhhvgihsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepnhgvvghrrghjrdhuphgrughhhigrhiesrghmugdrtgho
-    mhdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdrohhrghdprhgtph
-    htthhopeholhgvkhhsihihrdgrvhhrrghmtghhvghnkhhosehsohhnhidrtghomh
-X-ME-Proxy: <xmx:44O_Z0ad5rXhxJFn_NG1HDA_AWHLm4kj_e8U9A84-5AUZ_Qu19z_Sg>
-    <xmx:44O_ZyafSZFFMjiHDur1tcK4mBfEeqpmZMv1rG7jI5eGFMZdTzNi_w>
-    <xmx:44O_Z4CDQy1pa_0wwtCz_mS1TB8xEMgb4D_r3xo9XlvaKPWcj_PiaA>
-    <xmx:44O_ZwaPgZrrYw20yaQOjGpwmVEA4jMuMXkWOKo4InC4iPWGaIEgyw>
-    <xmx:44O_Z2oW4kU8FzFzGDopJsxTm_57RQKs014UlFW652psAJxxS2N3S0BO>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Feb 2025 16:13:06 -0500 (EST)
-Date: Wed, 26 Feb 2025 13:12:21 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v3 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z7-DtSTSXOETcrnD@boqun-archlinux>
-References: <20250225110020.59221-1-urezki@gmail.com>
- <20250225110020.59221-3-urezki@gmail.com>
- <Z79kKiokpq9FpjYc@boqun-archlinux>
- <Z79-NAOoK-Vimgbr@pc636>
+        d=1e100.net; s=20230601; t=1740604365; x=1741209165;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pzp4vdXBmVandIjCD1Ph9v4wYVEYC392IHskVG+hw1s=;
+        b=kDwUn7pZT/djBDKGWE4428iAiITg4IQRgnAz7fQnQU/PD4fMYClC+RsGY17nCIAxL+
+         JAKecDDJ+lr1TPUlsO7m+VK/raej7RteO8ecBnd8jrt5nv+fphHFaTBgB6rOJrdTBjFC
+         IkHxiAAfqZxOnRjwV1L2lwb4og3S97SQfb6P4juxoxsJMG1sOOewoTHAgvZOrKO8Px7Z
+         7T1ppQsb1gZt+vShujj8QokhSltHSnpJmWJajMhChg/q+C+jWurNS9wsy3WpnmG7C4Kz
+         XtvhRGdopuV+Pv+iT/rS3FSMN6HzH63Qr+0PPdf1KstVL+Sf6P8cuWjPeIIy95tYWnfE
+         M0HQ==
+X-Gm-Message-State: AOJu0Yxk9J6rie1nE+uths1Ve9AB0LeqBilmZf77QYjSRxkpo/cNaolj
+	PaIiMWo21yfcEYgFV/kbS8jDXMKuStHTxuwKaQh5hGeyXnHyCgaw7gTgWRdTpiL3IyBMS0pkJTo
+	x
+X-Gm-Gg: ASbGncvCrj2RSp9/+a9DaURnN5jJsJZnZszofEDLWmv+TLlMhV+WP13n9qozaRGPT29
+	2nKhkvqaimi6KvzurGYZ4XUSYao13pqnnI0lsuRhpouZttB45/GfW4f55KKr4P7DXHhhZKq/0wF
+	3S52FwOcIOX3OfbpKjxjc9yV6YY4d+mCvmARWy65/j7xMJ1X5C7JISSAwYdiqWh9Tib5YplXj/s
+	o4ikAfmtdoFt4wAnwr4a+ypCvGJkPL/UYBbZW8qnyVrx+EV8Zh2K8zHDAih4Q934jrHwbfVfHIn
+	z34OZVPsU3zFv3smlwKF2o+fCc9LIs1xA7Vx
+X-Google-Smtp-Source: AGHT+IFsXTQa1QaEqW6angF6LEd2bWKQxCM0gljjbQUjyQ2/aOGSMQuuVwDAAa1K/hkVZRGORxpUug==
+X-Received: by 2002:a05:6602:2d94:b0:855:bcc9:a8d0 with SMTP id ca18e2360f4ac-855dac845b6mr2369569739f.11.1740604365049;
+        Wed, 26 Feb 2025 13:12:45 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-858753f0a0csm1013139f.44.2025.02.26.13.12.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 13:12:44 -0800 (PST)
+Message-ID: <9abade09-4186-4730-b197-91d9fd622b1d@linuxfoundation.org>
+Date: Wed, 26 Feb 2025 14:12:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z79-NAOoK-Vimgbr@pc636>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Revert "selftests: kselftest: Fix build failure
+ with NOLIBC"
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250209-nolibc-scanf-v2-0-c29dea32f1cd@weissschuh.net>
+ <20250209-nolibc-scanf-v2-2-c29dea32f1cd@weissschuh.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250209-nolibc-scanf-v2-2-c29dea32f1cd@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 09:48:52PM +0100, Uladzislau Rezki wrote:
-> Hello, Boqun.
+On 2/9/25 13:27, Thomas Weißschuh wrote:
+> This reverts commit 16767502aa990cca2cb7d1372b31d328c4c85b40.
 > 
-> > Hi Ulad,
-> > 
-> > On Tue, Feb 25, 2025 at 12:00:20PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > Switch for using of get_state_synchronize_rcu_full() and
-> > > poll_state_synchronize_rcu_full() pair for debug a normal
-> > > synchronize_rcu() call.
-> > > 
-> > > Just using "not" full APIs to identify if a grace period
-> > > is passed or not might lead to a false kernel splat.
-> > > 
-> > 
-> > Could you provide detailed explanation on this? I.e. why is _full() is
-> > needed? I find the current commit message is a bit vague.
-> >
-> <snip>
-> rcu: Use _full() API to debug synchronize_rcu()
+> Nolibc gained support for uname(2) and sscanf(3) which are the
+> dependencies of ksft_min_kernel_version().
 > 
-> Switch for using of get_state_synchronize_rcu_full() and
-> poll_state_synchronize_rcu_full() pair to debug a normal
-> synchronize_rcu() call.
+> So re-enable support for ksft_min_kernel_version() under nolibc.
 > 
-> Just using "not" full APIs to identify if a grace period is
-> passed or not might lead to a false-positive kernel splat.
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>   tools/testing/selftests/kselftest.h | 5 -----
+>   1 file changed, 5 deletions(-)
 > 
-> It can happen, because get_state_synchronize_rcu() compresses
-> both normal and expedited states into one single unsigned long
-> value, so a poll_state_synchronize_rcu() can miss GP-completion
-> when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> run.
-> 
-> To address this, switch to poll_state_synchronize_rcu_full() and
-> get_state_synchronize_rcu_full() APIs, which use separate variables
-> for expedited and normal states.
-> <snip>
-> 
-> Does it look better?
+> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+> index cdf91b0ca40fbdc4fb825b86d4dc547b5afa673c..c3b6d2604b1e486af5a224a11386f75fe0a83495 100644
+> --- a/tools/testing/selftests/kselftest.h
+> +++ b/tools/testing/selftests/kselftest.h
+> @@ -444,10 +444,6 @@ static inline __noreturn __printf(1, 2) void ksft_exit_skip(const char *msg, ...
+>   static inline int ksft_min_kernel_version(unsigned int min_major,
+>   					  unsigned int min_minor)
+>   {
+> -#ifdef NOLIBC
+> -	ksft_print_msg("NOLIBC: Can't check kernel version: Function not implemented\n");
+> -	return 0;
+> -#else
+>   	unsigned int major, minor;
+>   	struct utsname info;
+>   
+> @@ -455,7 +451,6 @@ static inline int ksft_min_kernel_version(unsigned int min_major,
+>   		ksft_exit_fail_msg("Can't parse kernel version\n");
+>   
+>   	return major > min_major || (major == min_major && minor >= min_minor);
+> -#endif
+>   }
+>   
+>   #endif /* __KSELFTEST_H */
 > 
 
-Yes, that looks good to me. Thanks!
+Looks good to me.
 
-Regards,
-Boqun
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-> --
-> Uladzislau Rezki
-> 
+thanks,
+-- Shuah
 
