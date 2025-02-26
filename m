@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-533364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68638A45911
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:55:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42820A45915
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820CA3A43E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436F9162B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD6E20DD4D;
-	Wed, 26 Feb 2025 08:55:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265EF258CF6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE1C224231;
+	Wed, 26 Feb 2025 08:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBIZtqHB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97925258CC2;
+	Wed, 26 Feb 2025 08:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740560134; cv=none; b=MKdPucjyEl1k8xL/aLCOPdn7Xkrqsc/0ckYl4I9je0IhXO5yf8rbZmeRuoFa1vGAbtvZJi/2IMiwiOKYCzytXuvAxYDdWfOALXQZclR6XE1pQzLOoEofUFlQ9TbP1NONbGd/fp2yjMZH4zwTDF82nkQL3PNpZhqjfTuR2uV467U=
+	t=1740560173; cv=none; b=Zn5A4cbFxKyGkCCknCJvQWo8zrMQxvoU+S71tcoJw8Dwm/N+JpzNDYDcCLDNvIJaN7heUhnQcy6ieWFvvlmxgRddhrDqlEa0TBLTIcDqgvQRxCI6FCnkTAZIXsNzb5GZTHGkpPxhlyLaMVRPnC2loLojucSLioqMK1/QcqZ8/BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740560134; c=relaxed/simple;
-	bh=0+51M4Nbyf6waNQ4dGj4iEc36P0jrC4pTrry9E2QESw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XeMdWZ6XlcvHBF3l9NqrkUbVNDbo6NRT252ZofWBKfLXX54eOZLXmzhzzP3lnI9fV09VZsimhinb/JJvzhpKILlsYZf59q+0JWBJn4cdCVC+jX5TPMuKJJ8Iua7BmsAaoioAJQbNrog3nYi78RG/6VMWONBQoRj6OyKat70wTes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 777091063;
-	Wed, 26 Feb 2025 00:55:47 -0800 (PST)
-Received: from [10.57.84.229] (unknown [10.57.84.229])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 523C43F6A8;
-	Wed, 26 Feb 2025 00:55:30 -0800 (PST)
-Message-ID: <b6b999c9-79cd-4945-9d7a-c5ee8158b7dc@arm.com>
-Date: Wed, 26 Feb 2025 08:55:28 +0000
+	s=arc-20240116; t=1740560173; c=relaxed/simple;
+	bh=WCNt74G5tme6q4CCVSYBGU4ec6i7pLkmF1w4VJWLFxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PD9mr3kO58Cg+l7lRaMgmSRZQ4mtvCS/bRRyd5GH3x2n0xTEubMlTQvhul8j6ziW5HhDVI8Fz0/Qb0U2lH2DDRe36yALS73PoCepnRoeTngMvhqAZkulqSLJW5GopGdoLMS2xNAUIT56P8GkD7wAoQVsJaj12Gmt7HTEdpBPHrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBIZtqHB; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740560172; x=1772096172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WCNt74G5tme6q4CCVSYBGU4ec6i7pLkmF1w4VJWLFxY=;
+  b=LBIZtqHBVWNFOX0+fOstdPZemOTOlEw08Pl8o7vG8OflZzA+3YFLsGrV
+   cS6q7+Dci5T3znuI5Gdhjl82axGBRyZQYp4Em0VhTyNUN0CKhLLHpTxCj
+   0N6qHgfYmm3aPiJcLfOwidjXdEoeyCDWRQXxij00F/3IzQRiOZ4FRqUVq
+   3ljttZBZ2QvnqPjEwwwvys87pNSJ5TBM5F2deNe6PfOX9r5i7A+caHNLq
+   yBUXwya2zv3DuKeqSX7Y9VYb6INzt5ZaYf1OfVjH1cSzbKRFNjWXiHD0+
+   OgHeu2J5pM2PMiku0nDczK5S6+sf7qzjnihddPUJQ0bNZjFFKI/ee0BvN
+   w==;
+X-CSE-ConnectionGUID: SdUSS2pVTpWXLt+JWrsPOw==
+X-CSE-MsgGUID: KYycK975SGq6uFd/OJKcww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="52790470"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="52790470"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:56:12 -0800
+X-CSE-ConnectionGUID: rVYk4NRYQHqBfNStj6ZYTg==
+X-CSE-MsgGUID: PmTaVXcvRIeRH2eefjNBKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="121577306"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 00:56:10 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B0F5C11F944;
+	Wed, 26 Feb 2025 10:56:06 +0200 (EET)
+Date: Wed, 26 Feb 2025 08:56:06 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Paul Elder <paul.elder@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, kieran.bingham@ideasonboard.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: imx335: Set vblank immediately
+Message-ID: <Z77XJrRoqZWTLF4g@kekkonen.localdomain>
+References: <20250214133709.1290585-1-paul.elder@ideasonboard.com>
+ <Z7G3d_zEhqDuepNM@kekkonen.localdomain>
+ <Z77Vg7zcnj_5a-0s@pyrite.rasen.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
-Content-Language: en-GB
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, Luiz Capitulino <luizcap@redhat.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250225114638.2038006-1-ryan.roberts@arm.com>
- <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
- <20250226001047.GA24197@willie-the-truck>
- <CAMj1kXH=tPuM+irCsKgycUTbts8h9vD4m3tEtw51YFzWafdSUA@mail.gmail.com>
- <b0578d21-95cd-4d8a-add1-87299f36b491@arm.com>
- <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAMj1kXHJGC9aYCwwb2XTWfhAjH6GDKQptNdLwO+hfv6hazivHQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z77Vg7zcnj_5a-0s@pyrite.rasen.tech>
 
-On 26/02/2025 08:33, Ard Biesheuvel wrote:
-> On Wed, 26 Feb 2025 at 09:07, Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 26/02/2025 06:59, Ard Biesheuvel wrote:
->>> On Wed, 26 Feb 2025 at 01:10, Will Deacon <will@kernel.org> wrote:
->>>>
->>>> On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
->>>>> Apologies for the breakage, and thanks for the fix.
->>>>>
->>>>> I have to admit that I was a bit overzealous here: there is no point
->>>>> yet in using the sanitised value, given that we don't actually
->>>>> override the PA range in the first place.
->>
->> But unless I've misunderstood something, parange is overridden; Commit
->> 62cffa496aac (the same one we are fixing) adds an override to force parange to
->> 48 bits when arm64.nolva is specified for LPA2 systems (see mmfr2_varange_filter()).
->>
->> I thought it would be preferable to honour that override, hence my use of
->> arm64_apply_feature_override() in the fix. Are you saying we don't need to worry
->> about that case?
->>
+Hi Paul,
+
+On Wed, Feb 26, 2025 at 05:49:07PM +0900, Paul Elder wrote:
+> Hi Sakari,
 > 
-> I wouldn't think so (but I'm glad you brought it up because this
-> didn't occur to me at all tbh)
+> Thanks for the review.
 > 
-> With arm64.nolva, both the VA and PA ranges will be reduced, and so
-> the range of the linear map will be 47 bits. So if the PA range is
-> being reduced from 52 to 48, it will still exceed the size of the
-> linear map, and so it should make no difference in this particular
-> case.
+> On Sun, Feb 16, 2025 at 10:01:27AM +0000, Sakari Ailus wrote:
+> > Hi Paul,
+> > 
+> > On Fri, Feb 14, 2025 at 10:37:09PM +0900, Paul Elder wrote:
+> > > When the vblank v4l2 control is set, it does not get written to the
+> > > hardware immediately. It only gets updated when exposure is set. Change
+> > > the behavior such that the vblank is written immediately when the
+> > > control is set.
+> > > 
+> > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > > ---
+> > >  drivers/media/i2c/imx335.c | 19 +++++++++++++------
+> > >  1 file changed, 13 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> > > index fcfd1d851bd4..e73a23bbbc89 100644
+> > > --- a/drivers/media/i2c/imx335.c
+> > > +++ b/drivers/media/i2c/imx335.c
+> > > @@ -559,12 +559,12 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
+> > >  			imx335->vblank,
+> > >  			imx335->vblank + imx335->cur_mode->height);
+> > >  
+> > > -		return __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+> > > -						IMX335_EXPOSURE_MIN,
+> > > -						imx335->vblank +
+> > > -						imx335->cur_mode->height -
+> > > -						IMX335_EXPOSURE_OFFSET,
+> > > -						1, IMX335_EXPOSURE_DEFAULT);
+> > > +		 __v4l2_ctrl_modify_range(imx335->exp_ctrl,
+> > 
+> > Indentation.
+> > 
+> > You're also missing an error check here.
+> 
+> I reasoned that it's fine to not have the error check.
+> 
+> afaiu, the only change this has to error is if try/s_ctrl on
+> V4L2_CID_EXPOSURE fails when the change to the range of valid exposure
+> values requires a new exposure value to be set. Setting the exposure
+> control comes back to this function, and goes through the switch-case
+> and imx335_update_exp_gain() below, which doesn't fail.
 
-OK, so I think you're saying it'll happen to work correctly even if we ignore
-that override? That sounds a bit fragile to me. Surely we should be consistent
-and either always honour the override or remove the override in the first place?
+It will fail if cci_write() it calls does.
 
 > 
-> The use case I had in mind was to allow the PA range to be reduced to
-> a value that is substantially less than the range of the linear map,
-> e.g, 40 bits on a 48-bit VA kernel. On the Android side, the issue of
-> the missing linear map randomization has come up a couple of times,
-> but there is no clear direction at this point, so adding this feature
-> here was premature (mea culpa)
+> Also the imx219 has the exact same pattern in imx219_set_ctrl.
 
+Feel free to fix it. :-)
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
