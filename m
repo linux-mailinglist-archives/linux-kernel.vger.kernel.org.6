@@ -1,205 +1,109 @@
-Return-Path: <linux-kernel+bounces-534148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED80FA46367
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:46:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8029A46371
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19E47A7CC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DA9189E6C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3EF2236FF;
-	Wed, 26 Feb 2025 14:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79F7226188;
+	Wed, 26 Feb 2025 14:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7TO8yXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="w9uE/21M"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690F2223339;
-	Wed, 26 Feb 2025 14:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8C5225397;
+	Wed, 26 Feb 2025 14:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581151; cv=none; b=QUeGXHd9COGZ3BnT/SNaB91s9wcDpSnp24zceqedgC1YJElCMy05xNXOid+GS7dRt+Dd6FCbTrdv+51IP8lKKVn1Rm/r74nTKfsSOQdnexOJy8RX7bDA2sablF8XRCqsGVgqYe5jaYWh4vF9758r+fDf/q4vyxIytSxDOfdYl2s=
+	t=1740581158; cv=none; b=jAoDLfkYbA2P2kc3UYxPAHdcdeuRpZhTMANdUEyms18KrTWWN7rgA+yL1nNb+vAoAD/QiQbWfE1lK4Kp5hdl1yuv+fYkKF9ZGsFx+sSmfQsx67cIFXNLJOenFn2TQ+k5SLNqshbMHnIopRJj78Wh6ZJp38IjqkrfFQOFgZYVbYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581151; c=relaxed/simple;
-	bh=2e8y34nF3WAvOI36M9xs1+jJDib5lSf6jroS4lJKWRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1NkqghlF7m7enkt4XhEhKb+gotDb97TLPVUC9SLnMX7oVBTayxQsZLXb3om4UC67vrV/qHg4x49At/T3BLwKZA4tVv7KHsOyaFntOcgb1SWYj5b2BpHtgIOF36j+zfPcvPcaHFM1GfcgqILXbu+5gTpkp136YDQL5GhiZrWP78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7TO8yXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9932AC4AF0B;
-	Wed, 26 Feb 2025 14:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740581150;
-	bh=2e8y34nF3WAvOI36M9xs1+jJDib5lSf6jroS4lJKWRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L7TO8yXxQmiYV0e978xp7cwfIDefmJ7wdXKZEKaEo7couphnmeePegIiWh7rHgAes
-	 yi6PFABiCw0C6OnVizzoqwFj1Y+r4yOaPdqWynd0DSSPzQrZQvRC3yOjjyJuTqLWaS
-	 X4UNy3p+thTfBpcYIf4iwD14hMFT+Ty9KNpydCaHtMpIzgr3TDoE9kUs66v7opDFWg
-	 oplQ8iqVFvQ9CUI6aL7+JfIhPm/vs3pfSN459q0AtlP1xmpXUga85qgQP7CQEBO+2I
-	 7Rr1SDzlaQke0cDyIDA8a4JiXHva92wkVVAL7u9MTHNVoT/utxi17F/MZatXawLLWL
-	 vEAdgOgR53OLw==
-Date: Wed, 26 Feb 2025 08:45:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] dt-bindings: thermal: rockchip: document otp
- thermal trim
-Message-ID: <20250226144548.GA2299551-robh@kernel.org>
-References: <20250225-rk3576-tsadc-upstream-v2-0-6eb7b00de89c@collabora.com>
- <20250225-rk3576-tsadc-upstream-v2-4-6eb7b00de89c@collabora.com>
+	s=arc-20240116; t=1740581158; c=relaxed/simple;
+	bh=yYTySIEW2vyb9fQfSiWDrhePMMoxgZdjZmmJCBzHfiY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l1U6WW/+vGmGarr9Y7c0o9/JfxKsYHjgm4CxAtw6X8/DQE7MHH7O13NFF5azsooLQf4prHvAf2wFo6lcU7DhTWKpVQ3Lu7tDkzyU6AZDTS7piEPr4TM0G9YYYvKoqkyXHVUASvS//6S3BFtuwqkw/QNAITX09Ki5OJtoNsTPXBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=w9uE/21M; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1740581155;
+	bh=yYTySIEW2vyb9fQfSiWDrhePMMoxgZdjZmmJCBzHfiY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=w9uE/21MKYo/CoH4yc5VHQq6YGVeHHWbTNNKbhNNdrX9KqyIy/wXk0Uyklhy75xJ/
+	 iB4lyacb/CYp0iZkOFcg/HD/X3vWJ/fRK68u/yagIywyDmIYKdkM/LvKouBw+AYcgO
+	 7Q8t1o6+jr69ac9BOgdqOVJ8T/veh8YMlNsjcd6A=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 838361C0993;
+	Wed, 26 Feb 2025 09:45:54 -0500 (EST)
+Message-ID: <16127450a24e9df8112a347fe5f6df9c9cca2926.camel@HansenPartnership.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Ventura Jack
+ <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, "H.
+ Peter Anvin" <hpa@zytor.com>, Alice Ryhl <aliceryhl@google.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Gary Guo <gary@garyguo.net>,
+ airlied@gmail.com,  boqun.feng@gmail.com, david.laight.linux@gmail.com,
+ ej@inai.de, hch@infradead.org,  ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org,  rust-for-linux@vger.kernel.org, Ralf Jung
+ <post@ralfj.de>
+Date: Wed, 26 Feb 2025 09:45:53 -0500
+In-Reply-To: <2025022611-work-sandal-2759@gregkh>
+References: 
+	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	 <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	 <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	 <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
+	 <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
+	 <5E3FEDC4-DBE3-45C7-A331-DAADD3E7EB42@zytor.com>
+	 <2rrp3fmznibxyg3ocvsfasfnpwfp2skhf4x7ihrnvm72lemykf@lwp2jkdbwqgm>
+	 <CAFJgqgS-SMMEE2FktuCUimdGkPWMV3HB2Eg38SiUDQK1U8=rNg@mail.gmail.com>
+	 <CANiq72mOp0q1xgAHod1Y_mX86OESzdDsgSghtQCwe6iksNt-sA@mail.gmail.com>
+	 <f2bf76553c666178505cb9197659303a39faf7aa.camel@HansenPartnership.com>
+	 <2025022611-work-sandal-2759@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-rk3576-tsadc-upstream-v2-4-6eb7b00de89c@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 01:56:47PM +0100, Nicolas Frattaroli wrote:
-> Several Rockchip SoCs, such as the RK3576, can store calibration trim
-> data for thermal sensors in OTP cells. This capability should be
-> documented.
+On Wed, 2025-02-26 at 15:39 +0100, Greg KH wrote:
+> On Wed, Feb 26, 2025 at 09:26:50AM -0500, James Bottomley wrote:
+> > On Wed, 2025-02-26 at 14:53 +0100, Miguel Ojeda wrote:
+> > > On Wed, Feb 26, 2025 at 2:03 PM Ventura Jack
+> > > <venturajack85@gmail.com> wrote:
+> > [...]
+> > > > Exception/unwind safety may be another subject that increases
+> > > > the difficulty of writing unsafe Rust.
+> > > 
+> > > Note that Rust panics in the kernel do not unwind.
+> > 
+> > I presume someone is working on this, right?  While rust isn't
+> > pervasive enough yet for this to cause a problem, dumping a
+> > backtrace is one of the key things we need to diagnose how
+> > something went wrong, particularly for user bug reports where they
+> > can't seem to bisect.
 > 
-> Such a rockchip thermal sensor may reference cell handles that store
-> both a chip-wide trim for all the sensors, as well as cell handles
-> for each individual sensor channel pointing to that specific sensor's
-> trim value.
-> 
-> Additionally, the thermal sensor may optionally reference cells which
-> store the base in terms of degrees celsius and decicelsius that the trim
-> is relative to.
-> 
-> Each SoC that implements this appears to have a slightly different
-> combination of chip-wide trim, base, base fractional part and
-> per-channel trim, so which ones do which is documented in the bindings.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  .../bindings/thermal/rockchip-thermal.yaml         | 64 ++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> index 49ceed68c92ce5a32ed8d4f39bd88fd052de0e80..eef8d2620b675fe2f871a03aebdaed13278e0884 100644
-> --- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> @@ -11,6 +11,23 @@ maintainers:
->  
->  $ref: thermal-sensor.yaml#
->  
-> +definitions:
+> The backtrace is there, just like any other call to BUG() provides,
+> which is what the rust framework calls for this.
 
-'$defs' is preferred over 'definitions'. However, I don't think you need 
-either.
+From some other rust boot system work, I know that the quality of a
+simple backtrace in rust where you just pick out addresses you think
+you know in the stack and print them as symbols can sometimes be rather
+misleading, which is why you need an unwinder to tell you exactly what
+happened.
 
-> +  channel:
+Regards,
 
-Just make this a pattern property:
+James
 
-'@[0-5]$'
-
-Really, node names should be generic and the type of thing they are, not 
-what instance they are. So something like 'sensor' for all the child 
-nodes. IOW, node names is not how you should identify what each sensor 
-is associated with.
-
-> +    type: object
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +        description: sensor ID, a.k.a. channel number
-> +      nvmem-cells:
-> +        items:
-> +          - description: handle of cell containing the calibration data
-> +      nvmem-cell-names:
-> +        items:
-> +          - const: trim
-> +    required:
-> +      - reg
-> +    unevaluatedProperties: false
-> +
->  properties:
->    compatible:
->      enum:
-> @@ -51,6 +68,12 @@ properties:
->        - const: tsadc
->        - const: tsadc-phy
->  
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
->    "#thermal-sensor-cells":
->      const: 1
->  
-> @@ -80,6 +103,47 @@ required:
->    - clock-names
->    - resets
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3568-tsadc
-> +    then:
-> +      properties:
-> +        nvmem-cells:
-> +          items:
-> +            - description: cell handle to where the trim's base temperature is stored
-> +            - description:
-> +                cell handle to where the trim's tenths of Celsius base value is stored
-> +        nvmem-cell-names:
-> +          items:
-> +            - const: trim_base
-> +            - const: trim_base_frac
-
-Define all properties at the top-level and then restrict their presence 
-in the if/then schema.
-
-> +        cpu@0:
-> +          $ref: "#/definitions/channel"
-> +        gpu@1:
-> +          $ref: "#/definitions/channel"
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3576-tsadc
-> +    then:
-> +      properties:
-> +        soc@0:
-> +          $ref: "#/definitions/channel"
-> +        bigcores@1:
-> +          $ref: "#/definitions/channel"
-> +        littlecores@2:
-> +          $ref: "#/definitions/channel"
-> +        ddr@3:
-> +          $ref: "#/definitions/channel"
-> +        npu@4:
-> +          $ref: "#/definitions/channel"
-> +        gpu@5:
-> +          $ref: "#/definitions/channel"
-> +
->  unevaluatedProperties: false
->  
->  examples:
-> 
-> -- 
-> 2.48.1
-> 
 
