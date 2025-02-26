@@ -1,140 +1,204 @@
-Return-Path: <linux-kernel+bounces-533335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BC9A4589A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:40:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0A7A45887
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37C01894C90
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6353F7A47B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE17E224237;
-	Wed, 26 Feb 2025 08:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2AF1E1E18;
+	Wed, 26 Feb 2025 08:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="aWRf0kSG"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kXZVcSem";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Lo5vVIuL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kXZVcSem";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Lo5vVIuL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89B1E1DEC;
-	Wed, 26 Feb 2025 08:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC765028C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740559224; cv=none; b=pX+Z4XQnH9TBWXoSChLI5mEtG4RbDaNxsbvG8LuJR/EgP0AC3324Yu/4TiaQsZpL9TpV9f7hrwVp3hj1VQnOTClJHiAd/svqBaYHpM5o0niGwLQsiRICfwTs0D5zyhlt2VEsruhyQQFOUyY0PsQnBFz/5zv4buuw/iOzY1TPyCY=
+	t=1740559127; cv=none; b=fdXBDm1ZNX/mD+rWztOOj5h1gleUtyNGK/aduVPxgX9aPZhWJTWihvScXUKnX7EpFnr5zPKDt/rswGTasn9Tjjit+fr4NZYv+SkZXz7nmoHvyP2FO8+sKBF4jpkwaZpkAycf8L82qIHQJRypuTelvf8I1YdnNTZlRRYOvmtBC4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740559224; c=relaxed/simple;
-	bh=Td9kPv+4aEqMiRvo8WQdVA0t/ydWeEaHLWoB0s8TtIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bos2YejeAhYRM96hRScfzRFzgK8ZTmeQEjsjgT/kN9Dqg4RcuypQPJIOh1o9pQZJmrURw0lEdRpVXvD8WCP50P018vap5kYAsadJArkr8Xlg5OkXysx/uHrriVyFwFGggH/7ao5omsQMFBKb0rRMIDZ7rFW4H7vSS/z8nM9SCmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=aWRf0kSG; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1740559223; x=1772095223;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lh1Ns51OurirFGbJo73DhgVZ1PCIKOIciohAAfR5Ylc=;
-  b=aWRf0kSGnpEGu4t32qelUQtQNbYnCm32H+dvThMUwDBY+L1jAlVfQNSt
-   9lFxuHl220cLybMoYUEsQL7UzWIucSmw1NaFyMdG+Ul9CEStZ7jGvOuqS
-   8MRcJScF2EkIYSaMyyGBi5pdwhiBjwlrAnFpW0nxewxQCm07/aZ7W/YH3
-   o=;
-X-IronPort-AV: E=Sophos;i="6.13,316,1732579200"; 
-   d="scan'208";a="26144342"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 08:37:51 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:52267]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.30.133:2525] with esmtp (Farcaster)
- id 287ec09d-dd1c-4342-a920-a9f616a17912; Wed, 26 Feb 2025 08:37:47 +0000 (UTC)
-X-Farcaster-Flow-ID: 287ec09d-dd1c-4342-a920-a9f616a17912
-Received: from EX19D030EUC003.ant.amazon.com (10.252.61.173) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:37:41 +0000
-Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
- EX19D030EUC003.ant.amazon.com (10.252.61.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 26 Feb 2025 08:37:41 +0000
-Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 08:37:40 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id D3830805C1;
-	Wed, 26 Feb 2025 08:37:36 +0000 (UTC)
-Message-ID: <086e02c8-6408-4b15-9384-42313254f041@amazon.co.uk>
-Date: Wed, 26 Feb 2025 08:37:35 +0000
+	s=arc-20240116; t=1740559127; c=relaxed/simple;
+	bh=L319haLVcr7EgLjzxUtwlakNxNLMdU4uCPNlfpMnBRU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AU/mD86zH/OylJI3owomGJqu0nyUSbrEvimUV1qdKG+g8dGv8PgSNDzT4TqcFJzuJGecAHvGZYFG44QpYqHU96osVejQ8/DcGCSaW4tUX2U2yUTC53IJbYu+Ida/u6LXHl6zP7lam3qWJmq94OK5bXPVkqslnlm0EiPUxTVTWfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kXZVcSem; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Lo5vVIuL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kXZVcSem; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Lo5vVIuL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B59AD1F387;
+	Wed, 26 Feb 2025 08:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740559123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlfzfddCa02ekgtIiZ4Y7lB1ihUd1iRg4dVgIlmzNvI=;
+	b=kXZVcSemKgKdHAm19BLeC7fMf2ysr6S8N4tKFEV1AyQhCm7ExozBi2zsUhcbqtcMPT9mqZ
+	atk+GdiS6xJRYQ5ceo5D6kwiBKobG9Uu/5EDW1RcFb6ap+QFIcL8dJSc3eKf0IJK9JJnd7
+	csKDeTJnnGG3vOMkn35UjMXAPWPUsVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740559123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlfzfddCa02ekgtIiZ4Y7lB1ihUd1iRg4dVgIlmzNvI=;
+	b=Lo5vVIuL2K4w1s5b4UifME9dCB7a1rzZ1LfvCjZo+sQNTcmAB75q+AxcYUMFmIkguQsKDz
+	h/EFqeA7v9ZdthDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kXZVcSem;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Lo5vVIuL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740559123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlfzfddCa02ekgtIiZ4Y7lB1ihUd1iRg4dVgIlmzNvI=;
+	b=kXZVcSemKgKdHAm19BLeC7fMf2ysr6S8N4tKFEV1AyQhCm7ExozBi2zsUhcbqtcMPT9mqZ
+	atk+GdiS6xJRYQ5ceo5D6kwiBKobG9Uu/5EDW1RcFb6ap+QFIcL8dJSc3eKf0IJK9JJnd7
+	csKDeTJnnGG3vOMkn35UjMXAPWPUsVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740559123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlfzfddCa02ekgtIiZ4Y7lB1ihUd1iRg4dVgIlmzNvI=;
+	b=Lo5vVIuL2K4w1s5b4UifME9dCB7a1rzZ1LfvCjZo+sQNTcmAB75q+AxcYUMFmIkguQsKDz
+	h/EFqeA7v9ZdthDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 777141377F;
+	Wed, 26 Feb 2025 08:38:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zYeAGxPTvmdcSgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 26 Feb 2025 08:38:43 +0000
+Date: Wed, 26 Feb 2025 09:38:42 +0100
+Message-ID: <87jz9d5cdp.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	regressions@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
+In-Reply-To: <dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+References: <874j0lvy89.wl-tiwai@suse.de>
+	<dede396a-4424-4e0f-a223-c1008d87a6a8@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/12] KVM: Add capability to discover
- KVM_GMEM_NO_DIRECT_MAP support
-To: David Hildenbrand <david@redhat.com>, <rppt@kernel.org>,
-	<seanjc@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <song@kernel.org>, <jolsa@kernel.org>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<vbabka@suse.cz>, <jannh@google.com>, <shuah@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <tabba@google.com>, <jgowans@amazon.com>,
-	<graf@amazon.com>, <kalyazin@amazon.com>, <xmarcalx@amazon.com>,
-	<derekmn@amazon.com>, <jthoughton@google.com>
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-5-roypat@amazon.co.uk>
- <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: B59AD1F387
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On Tue, 2025-02-25 at 16:55 +0000, David Hildenbrand wrote:
-> On 21.02.25 17:07, Patrick Roy wrote:
->> Add a capability to let userspace discover whether guest_memfd supports
->> removing its folios from the direct map. Support depends on guest_memfd
->> itself being supported, but also on whether KVM can manipulate the
->> direct map at page granularity at all (possible most of the time, just
->> arm64 is a notable outlier where its impossible if the direct map has
->> been setup using hugepages, as arm64 cannot break these apart due to
->> break-before-make semantics).
->>
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->> ---
+On Sun, 23 Feb 2025 16:18:41 +0100,
+Chuck Lever wrote:
 > 
-> Not sure how KVM folks handle that, but I suspect we would just want to
-> squash that into the previous commit,
+> On 2/23/25 3:53 AM, Takashi Iwai wrote:
+> > [ resent due to a wrong address for regression reporting, sorry! ]
+> > 
+> > Hi,
+> > 
+> > we received a bug report showing the regression on 6.13.1 kernel
+> > against 6.13.0.  The symptom is that Chrome and VSCode stopped working
+> > with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
+> >   https://bugzilla.suse.com/show_bug.cgi?id=1236943
+> > 
+> > Quoting from there:
+> > """
+> > I use the latest TW on Gnome with a 4K display and 150%
+> > scaling. Everything has been working fine, but recently both Chrome
+> > and VSCode (installed from official non-openSUSE channels) stopped
+> > working with Scaling.
+> > ....
+> > I am using VSCode with:
+> > `--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
+> > """
+> > 
+> > Surprisingly, the bisection pointed to the backport of the commit
+> > b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
+> > to iterate simple_offset directories").
+> > 
+> > Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
+> > fix the issue.  Also, the reporter verified that the latest 6.14-rc
+> > release is still affected, too.
+> > 
+> > For now I have no concrete idea how the patch could break the behavior
+> > of a graphical application like the above.  Let us know if you need
+> > something for debugging.  (Or at easiest, join to the bugzilla entry
+> > and ask there; or open another bug report at whatever you like.)
+> > 
+> > BTW, I'll be traveling tomorrow, so my reply will be delayed.
+> > 
+> > 
+> > thanks,
+> > 
+> > Takashi
+> > 
+> > #regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
+> > #regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
 > 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+> We received a similar report a few days ago, and are likewise puzzled at
+> the commit result. Please report this issue to the Chrome development
+> team and have them come up with a simple reproducer that I can try in my
+> own lab. I'm sure they can quickly get to the bottom of the application
+> stack to identify the misbehaving interaction between OS and app.
 
-Ah, yeah, I just had a look at the commit history in this file and
-indeed these have seem to usually be squashed. Will do so too, thanks!
+Do you know where to report to?  The reported stuff are no distro
+packages, and I myself have no experience with them, hence have no
+idea about the upstream development.
+If you have more clue about Chrome development, it'd be appreciated if
+you can report / ask from your side.  Of course, feel free to put me
+to Cc.
 
-Best, 
-Patrick
+
+thanks,
+
+Takashi
 
