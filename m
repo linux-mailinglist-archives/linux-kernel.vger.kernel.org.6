@@ -1,56 +1,91 @@
-Return-Path: <linux-kernel+bounces-534290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025AFA46517
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC1CA4651E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEEA019C193E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACC2189B53C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8621CC68;
-	Wed, 26 Feb 2025 15:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714AB22258B;
+	Wed, 26 Feb 2025 15:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AX7MX3wM"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Nr0yY4QO"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035141624E0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06248221DAD;
+	Wed, 26 Feb 2025 15:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584032; cv=none; b=bOnvZd0TwRPrr8IW+C4yrDunf/5gO2tWq/qyQXUig0mZLTaNgArAbnljGw4P/PljA0DjJyvyivTZwP4Xl+ckQNzpacM6tf3YidibGIFJAvCTJgm2EpdZLapxim68Q9933AGnSOP6cg5QAbYGv+d5Q9IDWcovcObm76nqMqqoLHM=
+	t=1740584102; cv=none; b=BlISPjEjGcN80PwqRrsiD3Da+CjQ6/yPo7BJYFqLu1Jb8ET+Z1sJJQ0/R4ioyyhWxdn2xJS00KLnrvqW+dPwPSNJXPdNrgRxIy2JLjwEW5iqMGHxbjRG63xtCS1RPwVrAGVjJKjN59xLJc0PzOuHV6JCIs749J4yUlu+fZdHHZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584032; c=relaxed/simple;
-	bh=/bB/yZLGL3DWE2PUG3M5lw3kgRGqPeayAXHhqErbi10=;
+	s=arc-20240116; t=1740584102; c=relaxed/simple;
+	bh=33i2bTQp+ZsHKxRZbNCSdJ8c5HwFI463KJdRgZDmFH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBKCEFOCCYkCnOj0OOZFUoDJIsKL7DeApCiNZEK6egzVc/+URLpPUTA8knf2pRe5TahXz5rZlEzKuMemCaEiIisR3muCT8pxcbVUBXiK9EryCfyroftX6kkKhGfn4gTHsJpiEL6X6YVuS5vk6e+vO/TpTVv8X6iZjxLbMygS4NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AX7MX3wM; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 15:33:43 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740584027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YghUIUtGJFDQ2JIT44YnprUkmQqQzSSO6n1OgaplZRk=;
-	b=AX7MX3wMWgNLdA8YTvt8dSILGImJRuHBwZfP9SPk6Nd9B/IDdvnJogK8ehjKudK4AGLCH/
-	T4oOprYE0r6ihvzf6xnEmIstsYkgnvP2L0maEprSSu4xkQK5pvsUwcIoP2U6awEyoyHMse
-	zjCIDxX/rtym74xSdEBw1a5mqf/+fYg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-Message-ID: <Z780VzBOE3LKY0yi@google.com>
-References: <20250225213200.729056-1-nphamcs@gmail.com>
- <Z76Go1VGw272joly@google.com>
- <20250226045727.GB1775487@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oN9OAmXouZXuXjqShP1bq/b8dU0CA/ummb4rfVEQx7WSv2RhZP0zrS67IdTCYHIhsy95csKw3x6llFMqlYqkkB994jUCsh99KTYkU2pg9t3hbeufhdngxdQBMSIMX8suFQ65huExZGTzym5Hc/GOX16iqiYQuE9aMFbOASj2wGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Nr0yY4QO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=We2PZZN/Z/OuW0OC8GwI1XN1ZlLiDb7BHXEm1VKevUk=; b=Nr0yY4QOvO504vfmWBFQmckDao
+	kNFatIEDpJJ49/rgYpfiH++mWZHYZIFvqFiGiXICM9+pzthfUMdPm085ugAORIS3wfA6892RzO7ys
+	XfghSaloouVCRP/vJ4x1dPqWm4qT9JOLDlXny/EWwtvq2FoQRvL01pJn6YNuVsEDQ2AQbmNrF1sMQ
+	prEvODafyJe2vhYMbMrOCqIzl76gHh8JPgUgK0HbiqTvGpBjuY6PfdNEeMiouWLF5C7wG2IiUlS9m
+	XFFePb5qrC1YziycPejRxgJ/jMXRSUZrhxfnRbnOM6zeZFJ4JKzGAho6Vn3ki5ucSBQ0Uy6i9xN8H
+	fIvMutIA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42746)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tnJQQ-0004iF-1A;
+	Wed, 26 Feb 2025 15:34:18 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tnJQG-0007CL-1X;
+	Wed, 26 Feb 2025 15:34:08 +0000
+Date: Wed, 26 Feb 2025 15:34:08 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: Simon Horman <horms@kernel.org>, Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	David E Box <david.e.box@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+	David E Box <david.e.box@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Serge Semin <fancer.lancer@gmail.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v8 1/6] net: phylink: use pl->link_interface in
+ phylink_expects_phy()
+Message-ID: <Z780cM9bejxhzTXO@shell.armlinux.org.uk>
+References: <20250226074837.1679988-1-yong.liang.choong@linux.intel.com>
+ <20250226074837.1679988-2-yong.liang.choong@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,89 +94,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226045727.GB1775487@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250226074837.1679988-2-yong.liang.choong@linux.intel.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Feb 25, 2025 at 11:57:27PM -0500, Johannes Weiner wrote:
-> On Wed, Feb 26, 2025 at 03:12:35AM +0000, Yosry Ahmed wrote:
-> > On Tue, Feb 25, 2025 at 01:32:00PM -0800, Nhat Pham wrote:
-> > > Currently, we crash the kernel when a decompression failure occurs in
-> > > zswap (either because of memory corruption, or a bug in the compression
-> > > algorithm). This is overkill. We should only SIGBUS the unfortunate
-> > > process asking for the zswap entry on zswap load, and skip the corrupted
-> > > entry in zswap writeback.
-> > 
-> > Some relevant observations/questions, but not really actionable for this
-> > patch, perhaps some future work, or more likely some incoherent
-> > illogical thoughts :
-> > 
-> > (1) It seems like not making the folio uptodate will cause shmem faults
-> > to mark the swap entry as hwpoisoned, but I don't see similar handling
-> > for do_swap_page(). So it seems like even if we SIGBUS the process,
-> > other processes mapping the same page could follow in the same
-> > footsteps.
+On Wed, Feb 26, 2025 at 03:48:32PM +0800, Choong Yong Liang wrote:
+> The phylink_expects_phy() function allows MAC drivers to check if they are
+> expecting a PHY to attach. The checking condition in phylink_expects_phy()
+> aims to achieve the same result as the checking condition in
+> phylink_attach_phy().
 > 
-> It's analogous to what __end_swap_bio_read() does for block backends,
-> so it's hitchhiking on the standard swap protocol for read failures.
-
-Right, that's also how I got the idea when I did the same for large
-folios handling.
-
+> However, the checking condition in phylink_expects_phy() uses
+> pl->link_config.interface, while phylink_attach_phy() uses
+> pl->link_interface.
 > 
-> The page sticks around if there are other users. It can get reclaimed,
-> but since it's not marked dirty, it won't get overwritten. Another
-> access will either find it in the swapcache and die on !uptodate; if
-> it was reclaimed, it will attempt another decompression. If all
-> references have been killed, zswap_invalidate() will finally drop it.
+> Initially, both pl->link_interface and pl->link_config.interface are set
+> to SGMII, and pl->cfg_link_an_mode is set to MLO_AN_INBAND.
 > 
-> Swapoff actually poisons the page table as well (unuse_pte).
+> When the interface switches from SGMII to 2500BASE-X,
+> pl->link_config.interface is updated by phylink_major_config().
+> At this point, pl->cfg_link_an_mode remains MLO_AN_INBAND, and
+> pl->link_config.interface is set to 2500BASE-X.
+> Subsequently, when the STMMAC link goes down and comes up again,
+> it is blocked by phylink_expects_phy().
 
-Right. My question was basically why don't we also poison the page table
-in do_swap_page() in this case. It's like that we never swapoff.
+I thought we ascertained that it's not "link goes down" but when the
+interface is taken down administratively. "Link goes down" to most
+people mean an event such as the network cable being unplugged.
+Please fix the patch description.
 
-This will cause subsequent fault attempts to return VM_FAULT_HWPOISON
-quickly without doing through the swapcache or decompression. Probably
-not a big deal, but shmem does it so maybe it'd be nice to do it for
-consistency.
-
+> Since phylink_expects_phy() and phylink_attach_phy() aim to achieve the
+> same result, phylink_expects_phy() should check pl->link_interface,
+> which never changes, instead of pl->link_config.interface, which is
+> updated by phylink_major_config().
 > 
-> > (2) A hwpoisoned swap entry results in VM_FAULT_SIGBUS in some cases
-> > (e.g. shmem_fault() -> shmem_get_folio_gfp() -> shmem_swapin_folio()),
-> > even though we have VM_FAULT_HWPOISON. This patch falls under this
-> > bucket, but unfortunately we cannot tell for sure if it's a hwpoision or
-> > a decompression bug.
-> 
-> Are you sure? Actual memory failure should replace the ptes of a
-> mapped shmem page with TTU_HWPOISON, which turns them into special
-> swap entries that trigger VM_FAULT_HWPOISON in do_swap_page().
+> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
 
-I was looking at the shmem_fault() path. It seems like for this path we
-end up with VM_SIGBUS because shmem_swapin_folio() returns -EIO and not
--EHWPOISON. This seems like something that can be easily fixed though,
-unless -EHWPOISON is not always correct for a diffrent reason.
+With, and *only* with the above fixed:
 
-> 
-> Anon swap distinguishes as long as the swapfile is there. Swapoff
-> installs poison markers, which are then handled the same in future
-> faults (VM_FAULT_HWPOISON):
-> 
-> /*
->  * "Poisoned" here is meant in the very general sense of "future accesses are
->  * invalid", instead of referring very specifically to hardware memory errors.
->  * This marker is meant to represent any of various different causes of this.
->  *
->  * Note that, when encountered by the faulting logic, PTEs with this marker will
->  * result in VM_FAULT_HWPOISON and thus regardless trigger hardware memory error
->  * logic.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-If that's the case, maybe it's better for zswap in the future if we stop
-relying on not marking the folio uptodate, and instead propagate an
-error through swap_read_folio() to the callers to make sure we always
-return VM_FAULT_HWPOISON and install poison markers.
+Thanks!
 
-The handling is a bit quirky and inconsistent, but it ultimately results
-in VM_SIGBUS or VM_FAULT_HWPOISON which I guess is fine for now.
-
->  */
-> #define  PTE_MARKER_POISONED                    BIT(1)
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
