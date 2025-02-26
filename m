@@ -1,296 +1,217 @@
-Return-Path: <linux-kernel+bounces-533840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2603A45F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:34:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4FEA45F45
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98957AA724
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7EB1887129
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621841ADC8F;
-	Wed, 26 Feb 2025 12:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D9C1CFBC;
+	Wed, 26 Feb 2025 12:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GIf4v6Ma"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EPq9WAnq"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA09216397
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595C12F37
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740572954; cv=none; b=CRqynyb8iBRl7zwSh4FXh1ntUKflHqcdlk2E4bIp9ArZNeK0zaWLgpVS9Evhv7BjhJXgktXLS9XW9QJg7bl4/PO4jQdFQUaCZOBfbydrV7pcLxCWJK+VKnxAOWs3tjJrGS7NvOLjvr8HgmI7Ru19t/VLW9PAIz87n2frIpM8uFU=
+	t=1740573138; cv=none; b=KA6f1eBEmVg26H5KVU7mhRU6J5CY1i6bVKT77Va0BPmgr4XrqpOQMWmtRd2D5mEXARseLRZbzlhjDnzYxvHYa6L6/wQljuLZkliXc1Xt8czCTXYeF612QcxJ7B+eZ6uvOvgiY8+nY/3AWtsbSj6FZvIN3kebgHvZ6qnM7RAs9bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740572954; c=relaxed/simple;
-	bh=3tPTH0OfW1bXXoDhOFEtxf7pDN2l1bHuBEJiQV3Y4kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HrkVLLdb5maV1J83SfzTHhSCL903pAMS+eIBv2ViFzTOQj9qPWhOSvH2zHfcwOCc3SUYjhHT7bYpXUcXWaZ4mMykSfQUZME4dBbe86Y4zm+4VUzFfYIWY1DCAPg1d1U+bRzUUZi3uKZ+bVPYNi1eUfIPlM/mzSHiu4PzD9MJgxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GIf4v6Ma; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740572950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqtUsmTYfSl8QjL4A92EdoUfNd8iKRnEclZHB/5oJQc=;
-	b=GIf4v6MaC8EmwdwyunN157x5d0PciwgSfRDwuLacPOPDKs3bgUSgL/upyrt60uFWt9Duzb
-	bqim0vcGg5T0qV2FNES6nccmnbrdQ5SNlxxdCBuuXlD0uifbeocibCuXM4UM9k3sDxxcXk
-	RXq4dp61DUMCTLIvFN8vgFj6IC5Smw8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-GCwjoy2ePGOrOD0k2l92tA-1; Wed, 26 Feb 2025 07:29:08 -0500
-X-MC-Unique: GCwjoy2ePGOrOD0k2l92tA-1
-X-Mimecast-MFC-AGG-ID: GCwjoy2ePGOrOD0k2l92tA_1740572948
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43942e82719so48672205e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:29:08 -0800 (PST)
+	s=arc-20240116; t=1740573138; c=relaxed/simple;
+	bh=VBK03V2F6vXX1tPpdWKGvw2UDlBxDRc/SEGCFWAoghw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BRiaobzDOXfrBfHwjnqnd8NnUstF7zML3m9I1WcUdOM6U9F2/BhGGFZ2UeZIe2aNbC0a71LM3TNkqCV+2esP9eV07kqWntakIfXD3Njm6n6SDH0j5TGo74yRS7LiEr56xKfstlolmFlA9kied87ohDU+WsPYbU6NXpTr5axhz0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EPq9WAnq; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fcce9bb0ecso12890341a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 04:32:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740573135; x=1741177935; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLwMDc9HvQFeLzMA/QjMcCF3FmyqVGFtUL4wI4RN+NY=;
+        b=EPq9WAnqFBhjzIBwOvm2yhHEGjE31lcUgm7IzDc/6aGU2afc01laOFGQIeicY2LiMI
+         XhcvFRkoTnKbuuDY6tzSv3JSe8oS8d6zBjd6pRby+Jrwmwe69vMFCKzbQp1sNqx3r6G7
+         dkMh1L2sAJ6XS4tpIDllBDSNabskKrYSfSSrO+a2L7pn3T6GBg6Ho5kNiNMVYCi65J5Y
+         BVnvFJksmfmwW0Y/2YY+JEQbLKeDrufOHTdgy4gZztYMoaY3vq1K0dlrtl3AYamGV/CT
+         1Wz27eSb2zl6jMXoxXhD0tNZCmSysHlQwDJBpkQVg9bfZSbgjkUQj9MJE3kuFsD5Ubam
+         HUKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740572947; x=1741177747;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YqtUsmTYfSl8QjL4A92EdoUfNd8iKRnEclZHB/5oJQc=;
-        b=FgmNg5y3OYQ+a6GTKa7paJftfYAzw+yUoYZDQXBi5yS5k8K3Tl/hZy7Y4N0KevBC8T
-         gO3YI9/w9M/0wcvvMSIzmdBaQRUFbz5VdJmSsWh4RKuy+TsPRfs3YUd/yITCx3dIaF48
-         D0EIbXzwZ6lh5jNEzocKXFAHkd6+5xY01FG/SNu2LkrUaF+qrdTj2IcSg+lTf5wo1JAG
-         UOEjFHjy3L3AD6vhasPoeNT9XA2KU6VoGLWM9j+nMl1q0PquLmPPSCrX41Zer7yfYSTX
-         8RAXpwOI19g3CG3HPaS/YeY1t416uoVpLPpfRboy3ltKyKM0qLVQHxet8ZJuLt+SxQ8V
-         U0kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYfp4mAZZYxW7raznVDPrvdr6jYZsfKMEpvf2f4aEF2dqEp+m4l/K6gXBdresuiOG5j5JtgCUCYk0YtPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztWsZi+dr7y3w6WK1nB6W0Mxs9HBYNWITBYja89/TTvT1EFcxD
-	cff+VqtYirud4F7E2ukL3opw2+Qbhsl/+CLi21OLAWgCaT7HLlgkvkvM3YzrVVnmJxnG3QoPVTV
-	uTOEQV6LfCqbDFf3Y5kQDLFtrVhJJMXeQrghau2wE3mRGKLHjkRDepBmVMC6Opg==
-X-Gm-Gg: ASbGncs3GTi0q12BzUykC4tVQt9ZA1jynVfKyQohQq1A7td6U1HiENCk9QMVYvuxks5
-	5nTq8qpmYaZmgbdwfsJGeIvDMCdwmaBgw6MDB6ZH33jGresSOknd1NaNJx1Ufp02FVmNWvaWDl/
-	ETff52iqQj/n/1rcDSij7Dxf3roEnIBNwB9aVGeG92S2wsRJ+AzD6niGN2cPh4jpuzfwyVp9Je+
-	imPlyUy/JfdR8iI1DPnK21uxE9OUKi22hgiUcSCWoI3n8sURSzAviGwgmsYi6K/wXBms5bDFZEK
-	LFENHxtoijuqDllHs9fQXDbVjQ176AtnpejEx3M7OMvbEBRkt8gf4yqFOhJxIB4=
-X-Received: by 2002:a05:600c:35d6:b0:439:985b:17d6 with SMTP id 5b1f17b1804b1-43ab903603emr23927975e9.27.1740572947511;
-        Wed, 26 Feb 2025 04:29:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEOqU6+YvkXlQ4vuTagbuCtwCjwmj0H5+Xta6YoRzeguoUafKp6W738/ohg4cf/c9smG6tt4g==
-X-Received: by 2002:a05:600c:35d6:b0:439:985b:17d6 with SMTP id 5b1f17b1804b1-43ab903603emr23927655e9.27.1740572947018;
-        Wed, 26 Feb 2025 04:29:07 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5711dfsm19946945e9.27.2025.02.26.04.29.05
+        d=1e100.net; s=20230601; t=1740573135; x=1741177935;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nLwMDc9HvQFeLzMA/QjMcCF3FmyqVGFtUL4wI4RN+NY=;
+        b=DUtLDbCYTD5Gj6g8KuMagWlmOC6IDvTGpgRX7HMAD5OGUPfq6/zTj+ItIM1zIsn95/
+         CGEJ7nju2MUut+VU3pYonMZ+iTCqT+FTGWRE1lNlx1sipohKyJi7dmnhWVEZ8Bj6s2d6
+         MOhbbc9h5NmDw+1v254rq+RQ/UKHL8Tw7OVwXD8HVefo6O2/h9+zaZTVT6E/cE9raIX5
+         dcZ6uOYF7X9+ygn/JjpxJsKhvoHQTKqq/2Mj6xk5NIS5f7/eO2rvaEjxAlU4aa+1FNEd
+         PBInicS4q9Q1yfNRWWuJpzisbowZb3oWtYdqdmjjrka6S+4OouZVp5S+smWiGBnhbbzI
+         ms5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnfMEdFQlq4PlVqMaRO3sg8xVhl36PUPjdGdOgAjHnbH46c/HSdbt+vG0QsL47a81VZdoFwAxPFoxtklk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3bcBlNBD6AYZrC2VYwr8ut/H/5Fs7y6taK73zqRoBhQT9GkIJ
+	PImQ5Jgy9GVzZHzou6z3isGGxBzN9+6ML0rlnwCl9b/ysF6uR53pFMX/xGkJa2s=
+X-Gm-Gg: ASbGncuUogkKRjTQgOWe+GD9OJVdtyXSUglR6wyBS4dp28smfEwD5IbbdG8OMX2To9Y
+	qXvi9Z2R+PqlmpYhdhOnxJbwNyRsA6HzzpUXicIkXojeo4P8j5QEm5HkhUs1hYQUZIUCOZcXXyP
+	hVFUPpxyT3wCG7mAYt/s4NCQDRGS6zjX5U2XxakFwocCpmcUxL5pIvrGhWZa7ogwE8LC9fqKtcy
+	fHZKbFvSATm6PauWrRNIp4izAINutDTqKwwkLum1mRAxmhLECZPHi/vtSEAB0sThGHG8HBd7Awb
+	xaXFO4jNXrtIf4xFmEQy8Y8=
+X-Google-Smtp-Source: AGHT+IEbAyFBBOMkxX8iii+oG2zEvN+iVSKnB8HOk1y0lYNcQvxQ9iWW6DeYSTP1NWuOybRV4hR6Ag==
+X-Received: by 2002:a17:90b:2e08:b0:2f5:88bb:12f with SMTP id 98e67ed59e1d1-2fe68ae74ebmr10318377a91.21.1740573135543;
+        Wed, 26 Feb 2025 04:32:15 -0800 (PST)
+Received: from [127.0.1.1] ([112.64.61.158])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825d2ed3sm1352479a91.29.2025.02.26.04.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 04:29:06 -0800 (PST)
-Date: Wed, 26 Feb 2025 13:29:05 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
- <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>, Philippe =?UTF-8?B?TWF0?=
- =?UTF-8?B?aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
- <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, "Markus Armbruster" <armbru@redhat.com>,
- Michael Roth <michael.roth@amd.com>, "Paolo Bonzini" <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 00/14] Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250226132905.47aa50d2@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20250226105628.7e60f952@foz.lan>
-References: <cover.1738345063.git.mchehab+huawei@kernel.org>
-	<20250203110934.000038d8@huawei.com>
-	<20250203162236.7d5872ff@imammedo.users.ipa.redhat.com>
-	<20250221073823.061a1039@foz.lan>
-	<20250221102127.000059e6@huawei.com>
-	<20250225110115.6090e416@imammedo.users.ipa.redhat.com>
-	<20250226105628.7e60f952@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Wed, 26 Feb 2025 04:32:15 -0800 (PST)
+From: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v7 00/15] drm/msm/dpu: Support quad pipe with dual-DSI
+Date: Wed, 26 Feb 2025 20:30:49 +0800
+Message-Id: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHkJv2cC/62OTQ6CMBBGr0K6dkyh0IIr72FYVDpAI9A6BdQQ7
+ m7lDC7fS76fjQUki4Fdko0RrjZYN0VQp4Q1vZ46BGsis4xnBc9SBWEsZcFhlZDm0I8GDDYPTQZ
+ GEwI8F21g8WEm1CO4wdydm1+kvUcCIcETekDBq7ZqSyGkZnEoyta+jxO3OnJvw+zoc3xa5c/+d
+ T5mOTRpmsdOlQuproOdNLmzo47V+75/AeTMizQVAQAA
+X-Change-ID: 20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-e309f9f8336a
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Jun Nie <jun.nie@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740573128; l=5416;
+ i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
+ bh=VBK03V2F6vXX1tPpdWKGvw2UDlBxDRc/SEGCFWAoghw=;
+ b=hscE8wpDC3R8ueN5JF46sO3IoxiKACWus9Wa5L/Y69195ArHTygUgkfnmSuo1hX1EwUw3hJUj
+ bpmj+o80zo6Cf2m8H5K/8P721uK7s9gO4b7AogkHyngNh2iiB+E3PZh
+X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
+ pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-On Wed, 26 Feb 2025 10:56:28 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+2 or more SSPPs and dual-DSI interface are need for super wide panel.
+And 4 DSC are preferred for power optimal in this case due to width
+limitation of SSPP and MDP clock rate constrain. This patch set
+extends number of pipes to 4 and revise related mixer blending logic
+to support quad pipe. All these changes depends on the virtual plane
+feature to split a super wide drm plane horizontally into 2 or more sub
+clip. Thus DMA of multiple SSPPs can share the effort of fetching the
+whole drm plane.
 
-> Em Tue, 25 Feb 2025 11:01:15 +0100
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Fri, 21 Feb 2025 10:21:27 +0000
-> > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> >   
-> > > On Fri, 21 Feb 2025 07:38:23 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> > > > Em Mon, 3 Feb 2025 16:22:36 +0100
-> > > > Igor Mammedov <imammedo@redhat.com> escreveu:
-> > > >       
-> > > > > On Mon, 3 Feb 2025 11:09:34 +0000
-> > > > > Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> > > > >         
-> > > > > > On Fri, 31 Jan 2025 18:42:41 +0100
-> > > > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > > > > >           
-> > > > > > > Now that the ghes preparation patches were merged, let's add support
-> > > > > > > for error injection.
-> > > > > > > 
-> > > > > > > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
-> > > > > > > table and hardware_error firmware file, together with its migration code. Migration tested
-> > > > > > > with both latest QEMU released kernel and upstream, on both directions.
-> > > > > > > 
-> > > > > > > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
-> > > > > > >    to inject ARM Processor Error records.
-> > > > > > > 
-> > > > > > > If I'm counting well, this is the 19th submission of my error inject patches.            
-> > > > > > 
-> > > > > > Looks good to me. All remaining trivial things are in the category
-> > > > > > of things to consider only if you are doing another spin.  The code
-> > > > > > ends up how I'd like it at the end of the series anyway, just
-> > > > > > a question of the precise path to that state!          
-> > > > > 
-> > > > > if you look at series as a whole it's more or less fine (I guess you
-> > > > > and me got used to it)
-> > > > > 
-> > > > > however if you take it patch by patch (as if you've never seen it)
-> > > > > ordering is messed up (the same would apply to everyone after a while
-> > > > > when it's forgotten)
-> > > > > 
-> > > > > So I'd strongly suggest to restructure the series (especially 2-6/14).
-> > > > > re sum up my comments wrt ordering:
-> > > > > 
-> > > > > 0  add testcase for HEST table with current HEST as expected blob
-> > > > >    (currently missing), so that we can be sure that we haven't messed
-> > > > >    existing tables during refactoring.        
-> > > 
-> > > To potentially save time I think Igor is asking that before you do anything
-> > > at all you plug the existing test hole which is that we don't test HEST
-> > > at all.   Even after this series I think we don't test HEST.  You add
-> > > a stub hest and exclusion but then in patch 12 the HEST stub is deleted whereas
-> > > it should be replaced with the example data for the test.    
-> > 
-> > that's what I was saying.
-> > HEST table should be in DSDT, but it's optional and one has to use
-> > 'ras=on' option to enable that, which we aren't doing ATM.
-> > So whatever changes are happening we aren't seeing them in tests
-> > nor will we see any regression for the same reason.
-> > 
-> > While white listing tables before change should happen and then updating them
-> > is the right thing to do, it's not sufficient since none of tests
-> > run with 'ras' enabled, hence code is not actually executed.   
-> 
-> Ok. Well, again we're not modifying HEST table structure on this
-> changeset. The only change affecting HEST is when the number of entries
-> increased from 1 to 2.
-> 
-> Now, looking at bios-tables-test.c, if I got it right, I should be doing
-> something similar to the enclosed patch, right?
-> 
-> If so, I have a couple of questions:
-> 
-> 1. from where should I get the HEST table? dumping the table from the
->    running VM?
+The first pipe pair co-work with the first mixer pair to cover the left
+half of screen and 2nd pair of pipes and mixers are for the right half
+of screen. If a plane is only for the right half of screen, only one
+or two of pipes in the 2nd pipe pair are valid, and no SSPP or mixer is
+assinged for invalid pipe.
 
+For those panel that does not require quad-pipe, only 1 or 2 pipes in
+the 1st pipe pair will be used. There is no concept of right half of
+screen.
 
-> 
-> 2. what values should I use to fill those variables:
-> 
-> 	int hest_offset = 40 /* HEST */;
-> 	int hest_entry_size = 4;
-you don't need to do that,
-bios-tables-test will dump all ACPI tables for you automatically,
-you only need to add or extend a test with ras=on option.
+For legacy non virtual plane mode, the first 1 or 2 pipes are used for
+the single SSPP and its multi-rect mode.
 
-   1: 1st add empty table and whitelist it ("tests/data/acpi/aarch64/virt/HEST")
-   2: enable ras in existing tescase
+To test bonded DSI on SM8650, the 5 patches for active-CTL improvement
+are needed:
+https://gitlab.freedesktop.org/lumag/msm/-/commits/dpu-4k?ref_type=heads
 
---- a/tests/qtest/bios-tables-test.c
-+++ b/tests/qtest/bios-tables-test.c
-@@ -2123,7 +2123,8 @@ static void test_acpi_aarch64_virt_tcg(void)
-     data.smbios_cpu_max_speed = 2900;
-     data.smbios_cpu_curr_speed = 2700;
-     test_acpi_one("-cpu cortex-a57 "
--                  "-smbios type=4,max-speed=2900,current-speed=2700", &data);
-+                  "-smbios type=4,max-speed=2900,current-speed=2700 "
-+                  "-machine ras=on", &data);
-     free_test_data(&data);
- }
-     
-  then with installed IASL run
-    V=1 QTEST_QEMU_BINARY=./qemu-system-aarch64  ./tests/qtest/bios-tables-test
-  to see diff
+Changes in v7:
+- Improve pipe assignment to avoid point to invalid memory.
+- Define STAGES_PER_PLANE as 2 only when quad-pipe is introduced.
+- Polish LM number when blending pipes with min() and pull up to caller func.
+- Add review tags.
+- Link to v6: https://lore.kernel.org/r/20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org
 
-  3: rebuild tables and follow the rest of procedure to update expected blobs
-     as described in comment at the top of (tests/qtest/bios-tables-test.c)
+Changes in v6:
+- Replace LM number with PP number to calculate PP number per encoder.
+- Rebase to Linux v6.14-rc2.
+- Add review tags.
+- Link to v5: https://lore.kernel.org/r/20250118-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-33-v5-0-9701a16340da@linaro.org
 
-I'd recommend to add 3 patches as the beginning of the series,
-that way we can be sure that if something changes unintentionally
-it won't go unnoticed.
+Changes in v5:
+- Iterate SSPP flushing within the required mixer pair, instead of all
+  active mixers or specific mixer.
+- Limit qaud-pipe usage case to SoC with 4 or more DSC engines and 2
+  interfaces case.
+- Remove valid flag and use width for pipe validation.
+- Polish commit messages and code comments.
+- Link to v4: https://lore.kernel.org/r/20250116-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-33-v4-0-74749c6eba33@linaro.org
 
-> 
-> >   
-> > > 
-> > > That indeed doesn't address testing the error data storage which would be
-> > > a different problem.    
-> > 
-> > I'd skip hardware_errors/CPER testing from QEMU unit tests.
-> > That's basically requires functioning 'APEI driver' to test that.
-> > 
-> > Maybe we can use Ani's framework to parse HEST and all the way
-> > towards CPER record(s) traversal, but that's certainly out of
-> > scope of this series.
-> > It could be done on top, but I won't insist even on that
-> > since Mauro's out of tree error injection testing will
-> > cover that using actual guest (which I assume he would
-> > like to run periodically).  
-> 
-> Yeah, my plan is to periodically test it. I intend to setup somewhere
-> a CI to test Kernel, QEMU and rasdaemon altogether.
-> 
-> Thanks,
-> Mauro
-> 
-> ---
-> 
-> diff --git a/tests/qtest/bios-tables-test.c b/tests/qtest/bios-tables-test.c
-> index 0a333ec43536..31e69d906db4 100644
-> --- a/tests/qtest/bios-tables-test.c
-> +++ b/tests/qtest/bios-tables-test.c
-> @@ -210,6 +210,8 @@ static void test_acpi_fadt_table(test_data *data)
->      uint32_t val;
->      int dsdt_offset = 40 /* DSDT */;
->      int dsdt_entry_size = 4;
-> +    int hest_offset = 40 /* HEST */;
-> +    int hest_entry_size = 4;
->  
->      g_assert(compare_signature(&table, "FACP"));
->  
-> @@ -242,6 +244,12 @@ static void test_acpi_fadt_table(test_data *data)
->      /* update checksum */
->      fadt_aml[9 /* Checksum */] = 0;
->      fadt_aml[9 /* Checksum */] -= acpi_calc_checksum(fadt_aml, fadt_len);
-> +
-> +
-> +
-> +    acpi_fetch_table(data->qts, &table.aml, &table.aml_len,
-> +                     fadt_aml + hest_offset, hest_entry_size, "HEST", true);
-> +    g_array_append_val(data->tables, table);
->  }
->  
->  static void dump_aml_files(test_data *data, bool rebuild)
-> @@ -2411,7 +2419,7 @@ static void test_acpi_aarch64_virt_oem_fields(void)
->      };
->      char *args;
->  
-> -    args = test_acpi_create_args(&data, "-cpu cortex-a57 "OEM_TEST_ARGS);
-> +    args = test_acpi_create_args(&data, "-ras on -cpu cortex-a57 "OEM_TEST_ARGS);
->      data.qts = qtest_init(args);
->      test_acpi_load_tables(&data);
->      test_oem_fields(&data);
-> 
+Changes in v4:
+- Restrict SSPP flushing to the required mixer, instead of all active mixers.
+- Polish commit messages and code comments.
+- Rebase to latest msm/drm-next branch.
+- Move pipe checking patch to the top of patch set.
+- Link to v3: https://lore.kernel.org/dri-devel/20241219-sm8650-v6-13-hmd-deckard-mdss-quad-upstream-32-v3-0-92c7c0a228e3@linaro.org
+
+Changes in v3:
+- Split change in trace into a separate patch.
+- Rebase to latest msm-next branch.
+- Reorder patch sequence to make sure valid flag is set in earlier patch
+- Rectify rewrite patch to move logic change into other patch
+- Polish commit messages and code comments.
+- Link to v2: https://lore.kernel.org/dri-devel/20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org
+
+Changes in v2:
+- Revise the patch sequence with changing to 2 pipes topology first. Then
+  prepare for quad-pipe setup, then enable quad-pipe at last.
+- Split DSI patches into other patch set.
+- Link to v1: https://lore.kernel.org/all/20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org
+    
+
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+Jun Nie (15):
+      drm/msm/dpu: check every pipe per capability
+      drm/msm/dpu: Do not fix number of DSC
+      drm/msm/dpu: configure DSC per number in use
+      drm/msm/dpu: polish log for resource allocation
+      drm/msm/dpu: decide right side per last bit
+      drm/msm/dpu: fix mixer number counter on allocation
+      drm/msm/dpu: switch RM to use crtc_id rather than enc_id for allocation
+      drm/msm/dpu: bind correct pingpong for quad pipe
+      drm/msm/dpu: Add pipe as trace argument
+      drm/msm/dpu: handle pipes as array
+      drm/msm/dpu: split PIPES_PER_STAGE definition per plane and mixer
+      drm/msm/dpu: blend pipes per mixer pairs config
+      drm/msm/dpu: support SSPP assignment for quad-pipe case
+      drm/msm/dpu: support plane splitting in quad-pipe case
+      drm/msm/dpu: Enable quad-pipe for DSC and dual-DSI case
+
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  88 +++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |   8 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      |  70 ++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |   2 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h          |  12 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c        | 411 ++++++++++++++---------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h        |  12 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c           | 215 ++++++------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h           |  32 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h        |  10 +-
+ 12 files changed, 516 insertions(+), 348 deletions(-)
+---
+base-commit: b44251a8c179381b9f3ed3aa49be04fe1d516903
+change-id: 20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-e309f9f8336a
+
+Best regards,
+-- 
+Jun Nie <jun.nie@linaro.org>
 
 
