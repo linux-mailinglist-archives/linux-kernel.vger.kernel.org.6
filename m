@@ -1,117 +1,195 @@
-Return-Path: <linux-kernel+bounces-533596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7355DA45C76
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:02:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE9BA45C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74DC216436E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B253B188BDD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C27718CC10;
-	Wed, 26 Feb 2025 11:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3C157E99;
+	Wed, 26 Feb 2025 11:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="Pqnuy1cd"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AB2idIOg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307D342AA5;
-	Wed, 26 Feb 2025 11:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567733; cv=pass; b=JbkWs1FYwOYuQGZQhnHFla7+r08ChMdQp0HsLGlkpZmFOMzjGz1EqSKwtPQm2C4/z/5eSmIrvfZpXlMX5xF+q4Opa5aCamc28IChyh9kmPOobhxHOA6NAqcfrqhuruM0w5cEgFF5t/JiCacmb68YnzA7y3ShZDwvz5672ICNuRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567733; c=relaxed/simple;
-	bh=PFQ+EYK/8O8aCGX6DneukYkRMliA11MfeP0OGf/4Nhc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KuWwB7r6vrxGHf2Au+I8VaNtj9fCNq+JPg4SfEWb3OpsUUZstHzsHQtHX0qfxo3XMUFh7o8JtEh4SqK7qJqpDZgEtt6jC3A+pdUbM+u3swxd0r+0hbbe/mpWOruRvNhwxcFihzNgwgVuf4uMd8ffAFgCJ2649qWo0+U1yiQ3HKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=Pqnuy1cd; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740567688; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OHsDb7qi1Q6V5cXXa+YwxRDw8cJL6/TX5DzDe+cmvdZmYIUxkaQlNlknKCAZYLlALZqtbBA67LDbcR8LX0SfCCV9GF3bbiDMCfulZHfpK9K+Rg/zb8OIyjTBVaIJ7awcqkjSmrcb4khM3tIKQaAJTeIwtUXLrSG7v9FEaZJncS8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740567688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PFQ+EYK/8O8aCGX6DneukYkRMliA11MfeP0OGf/4Nhc=; 
-	b=EbOZIp7auPL055mgS9OAypJ0Me3pj7acA7q6jcB2A5IadsDoALo/FLmB/w3f9mnXL6ajBSPqevKRNUYf7VoOvenM31LimL8CNpIXtA5aPwm7+K9zQUQcP32dmtGgWqLoogINjpETwjYFp7Ie64tNDij6VOqdPrprlEqSVNkUMCo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
-	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740567688;
-	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=PFQ+EYK/8O8aCGX6DneukYkRMliA11MfeP0OGf/4Nhc=;
-	b=Pqnuy1cdlVxfvgCICDSklrgS9RX7RbAtLq6CNEwg0w7lWu1hVbp11s2h9Gp7+n1u
-	pBDTlMExaN1+A1dUef26MN0FZ6wXWlh4Bd5k1aj+oeZ6GQHX38JUK4k4bImN0dxsWbN
-	99H4QJjcunoe7QNcf/etCvN/Vb5cCx1IbIYmbMUs=
-Received: by mx.zohomail.com with SMTPS id 1740567685853948.6812241070395;
-	Wed, 26 Feb 2025 03:01:25 -0800 (PST)
-Message-ID: <3ec81e9083afae19f672afed3809ad5db20f7d9a.camel@collabora.com>
-Subject: Re: [PATCH v2 0/2] Add driver for Himax HX8279 DriverIC panels
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	neil.armstrong@linaro.org
-Cc: quic_jesszhan@quicinc.com, airlied@gmail.com, simona@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@collabora.com, pablo.sun@mediatek.com,
- 	christophe.jaillet@wanadoo.fr
-Date: Wed, 26 Feb 2025 12:01:20 +0100
-In-Reply-To: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
-References: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
-Organization: Collabora Ltd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0CB8F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740567715; cv=none; b=F6fHW2YfDoOURy0j72erWmj1lF78bU1WeTSBKuYsS4hO5BAOmi7/S35gdeC0HspI5TKzx3FVBqOOnZvxNVZBzqMe+LnPpBzgE69fITLiU5mjlJRsFQDt8CPhMrjGI/ABtVBoo5hvRVcCrYUJoIHWVP9jkEfMgGdw2xJ0QMlIdL0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740567715; c=relaxed/simple;
+	bh=ELh0DbRCnexYXj3fOKvjLvoyNSPP5ogImvS/80cg/jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZWiY4jSG94NNyxxWPWkcmQtTJ4RPihbF4WSckP8BnSOgxQY2x/M26FjRELfrAhHZeYm/+wVONrYv0/dkpMwvnla51VsgrDIAF5o/He3v4NqhSkh5PpBcAySd/bnvjxrU0SnbSJ5XZaQaCl/pnx5kOUaZ1LorAfmS/9oZtprRiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AB2idIOg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q9t2kE021388;
+	Wed, 26 Feb 2025 11:01:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IpWjfMFq4T0n/31yeL4zQq7DoZUOnPGq6b5MktpgVn0=; b=AB2idIOgvss1mxnA
+	aydR8PTnSm1ZHPXDGcFLtMkJl/9OmheQDy9GsHOO9dWttoYB1ce+RXlQZXF4Dh7t
+	mvuiQugv/Kch0/emOYsbj2PWbb6Z8k7F1LinlrwicBvUq3i2tni1vZqADAkTL6HT
+	ioS5tE61WpuFaVFibeQzSJ/NQX0123zLsSt7UtOblNQ+rTRp4O6/c4BClEA0hOjl
+	Ttj90H/jpr50NuMgUuj1zswECRqJMR6teQo4iTb2RAQdc2xkyA5K9q1rT1kqJcUF
+	o525Do2GBqDFJDACO9aUn2trAnIqf+BRiZaD+lzpMReSb9kjpUy0qwdvBesbgO0X
+	G8i3aw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prkhppm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 11:01:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51QB1eLK013037
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 11:01:40 GMT
+Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
+ 2025 03:01:33 -0800
+Message-ID: <bb9a1614-4702-4b3f-a22d-07402426569a@quicinc.com>
+Date: Wed, 26 Feb 2025 19:01:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: arm: Add Coresight device Trace NOC
+ definition
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark
+	<james.clark@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>
+CC: <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20250220-trace-noc-driver-v1-0-15d78bd48e12@quicinc.com>
+ <20250220-trace-noc-driver-v1-1-15d78bd48e12@quicinc.com>
+ <1bdf70d0-5011-4faa-88c2-96703d3907e7@kernel.org>
+Content-Language: en-US
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+In-Reply-To: <1bdf70d0-5011-4faa-88c2-96703d3907e7@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BebcDKPRBK6xzZx01_9D4Hj-j3Xhbmog
+X-Proofpoint-ORIG-GUID: BebcDKPRBK6xzZx01_9D4Hj-j3Xhbmog
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260088
 
-On Tue, 2025-02-18 at 15:39 +0100, AngeloGioacchino Del Regno wrote:
-> Changes in v2:
-> =C2=A0- Removed unneeded mipi_dsi_device_unregister() call for secondary
-> =C2=A0=C2=A0 DSI: as the driver is using devm, that's not necessary (CJ)
-> =C2=A0- Removed superfluous if branch as pointed out by CJ
->=20
-> This series adds a driver for DSI panels using the Himax HX8279 and
-> HX8279-D DriverICs, and introduces one panel using such a
-> configuration,
-> the Startek KX070FHFID078.
->=20
-> This panel is found on the latest hardware revisions of some MediaTek
-> Genio Evaluation Kits, and specifically, at least:
-> =C2=A0- Genio 510 EVK
-> =C2=A0- Genio 700 EVK
-> =C2=A0- Genio 1200 EVK
->=20
-> This driver was tested on all of the aforementioned boards.
->=20
-> AngeloGioacchino Del Regno (2):
-> =C2=A0 dt-bindings: display: panel: Add Himax HX8279/HX8279-D
-> =C2=A0 drm: panel: Add driver for Himax HX8279 and Startek KD070FHFID078
->=20
-> =C2=A0.../bindings/display/panel/himax,hx8279.yaml=C2=A0 |=C2=A0 74 ++
-> =C2=A0drivers/gpu/drm/panel/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 11 +
-> =C2=A0drivers/gpu/drm/panel/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/gpu/drm/panel/panel-himax-hx8279.c=C2=A0=C2=A0=C2=A0 | 905
-> ++++++++++++++++++
-> =C2=A04 files changed, 991 insertions(+)
-> =C2=A0create mode 100644
-> Documentation/devicetree/bindings/display/panel/himax,hx8279.yaml
-> =C2=A0create mode 100644 drivers/gpu/drm/panel/panel-himax-hx8279.c
->=20
-Tested-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> # on
-Genio 510 EVK and Genio 1200 EVK
+
+
+On 2/20/2025 8:25 PM, Krzysztof Kozlowski wrote:
+> On 20/02/2025 10:41, Yuanfang Zhang wrote:
+>> Adds new coresight-tnoc.yaml file describing the bindings required
+>> to define Trace NOC in the device trees.
+>>
+>> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
+> 
+updated in https://lore.kernel.org/r/20250221-trace-noc-driver-v1-0-0a23fc643217@quicinc.com
+>> ---
+>>  .../bindings/arm/qcom,coresight-tnoc.yaml          | 107 +++++++++++++++++++++
+>>  1 file changed, 107 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..b8c1aaf014fb483fd960ec55d1193fb3f66136d2
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
+>> @@ -0,0 +1,107 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tnoc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Ttrace NOC(Network On Chip)
+>> +
+>> +maintainers:
+>> +  - yuanfang Zhang <quic_yuanfang@quicinc.com>
+>> +
+>> +description:
+>> +  The Trace NoC is an integration hierarchy which is a replacement of Dragonlink tile configuration.
+>> +  It brings together debug component like TPDA, funnel and interconnect Trace Noc which collects trace
+> 
+> Wrap according to coding style.
+> 
+Done in V2.
+>> +  from subsystems and transfers to QDSS sink.
+>> +
+>> +  It sits in the different subsystem of SOC and aggregates the trace and transports it to Aggregation TNoC
+>> +  or to QDSS trace sink eventually. Trace NoC embeds bridges for all the interfaces(APB, ATB, QPMDA & NTS).
+>> +
+>> +  Trace NoC can take inputs from different trace sources i.e. ATB, QPMDA.
+>> +
+>> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
+>> +select:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +          - qcom,coresight-tnoc
+>> +  required:
+>> +    - compatible
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^tn(@[0-9a-f]+)$"
+>> +  compatible:
+>> +    items:
+>> +      - const: qcom,coresight-tnoc
+>> +      - const: arm,primecell
+>> +
+>> +  reg:
+>> +    minItems: 1
+>> +    maxItems: 2
+> 
+> Look how existing bindings do it. You need to list and describe the items.
+> 
+Done in V2.
+> Best regards,
+> Krzysztof
 
 
