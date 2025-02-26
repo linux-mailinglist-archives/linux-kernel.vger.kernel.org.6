@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-533424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C88DA45A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:24:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740B6A45A10
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B875172A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEC63AC66B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395A224251;
-	Wed, 26 Feb 2025 09:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBAC226CF1;
+	Wed, 26 Feb 2025 09:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TwepVOEP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Au9uBnob"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DCF1E1E1C;
-	Wed, 26 Feb 2025 09:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561875; cv=none; b=QKwA3qWVXFDtfUnBt5dZfBMRzXtgPGtjJAHcQuS8I2NCpSWmt5twEiAP9WUakSijwLcSorO4zUKdVyxTdUiII3oco580PhIqGx9hVmFhY8lYLQPFMAVpGbcq2ncFDFl6pWOfAwRhuapx6So0vK1D3TbNtWm/N3+vHxMWtPU1Pgg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561875; c=relaxed/simple;
-	bh=aTaZuav1IXJYZAPJXWsET7WDRhEiVQTB0oqAdkenAYE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879092135C8;
+	Wed, 26 Feb 2025 09:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740561951; cv=pass; b=H7WFLtjNzvZ5pnfCD4DAgUBSyM+n9jwkB5vb6o8D7Cj0TtUwiQ2opdmBpoWjhaNGJl7S2HrkMaarwiaD0VrYWmu5NkL0esh+pi19l8Nvwu7cql9qCaRYeiILFFtZdAHbS8XZ1hNeQYNePcvRxh68ShlqwFG9dEQyGeBvd4Rd2zI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740561951; c=relaxed/simple;
+	bh=1pMf73z2aCoj+FMzFwoTCiqJuDrSFSA0D44yHK/qnbg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8AmDo+mUqqP0YoSBZXECx3wwcquDGvHySqEtYO6b7CvUG+nFCR4d4s1gcPpByBJcSavPF3zUm9IHZGeoYTRGyxWdPcHC9L13kCCZx/J889XqRsLeCa4bVllathSrEc+rTimGf57m6eNppVb8qETYbO4ISrU6UctRpWGRXMvq90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TwepVOEP; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=VpUdqlVu+GCvybfcJnu+HqzUyQNAeb9Og5iNucU3DtzMz6GDHf65BlJe9bjCGSxsHhjPVnijF4xp9lI4i9bwklMP22Q8A6BhhNY470ALADqz8IvGzSSJWeO94YfLafCcDZK6ZSK6KnkMSguBRoYR6ze1ItRSriRteo6lTd1LXCI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Au9uBnob; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740561871;
-	bh=aTaZuav1IXJYZAPJXWsET7WDRhEiVQTB0oqAdkenAYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TwepVOEPXKKnSkNQGhl7To1NnH3FzLC+16EN2ydRcTupyJN+A56RJq1cQ0xGvWAVg
-	 Yl4y+YzftkD+c/dVxmuwhw/rhFn4XlIaK944qjWpj48seA48LqeS2WS+cQ4OcRzrAi
-	 /i+lqML/6K0y8jVo6ywdR5feXVc3mJSqS9oBbD2xlgaDnQfyxYgYcobyJVDlplDJfe
-	 ymd4mUJ8UI5m4lP3cWtQW2ATx9hFPlEOVGyX9xyDIyGH5NRFu+csYztyaBO8H/HzEh
-	 Fh2ZOf/GR7ZPTYMadMo5rMgarUoDYOsQpdtx221X444rZzb/oEYk2TtpfXXRA1JHfd
-	 viO19ZUL2mhsQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8EAB317E0B10;
-	Wed, 26 Feb 2025 10:24:30 +0100 (CET)
-Message-ID: <bf9a74f6-fba3-4720-b2b1-1c8e5dae1f83@collabora.com>
-Date: Wed, 26 Feb 2025 10:24:29 +0100
+ARC-Seal: i=1; a=rsa-sha256; t=1740561900; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=h6jMGyNquMYiuM227g9wPaaTmMMKGJl/CrNRqyizQVbr6EknV/fyQAPekngWO1X5DsQiIN4Js07AvuA+Yvk+tA8YKpEnm+jJvSfZd4c/6RlL2gvjiJDPVD2Depq9PWH5jzQUb0wqj97LHwHb2pxfSG2DBxFlDJF5yvv7RpJIGpU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740561900; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HQxcDlER3epDHU7gCY5nogKiIBVZBqXqRS/yzoOYA5k=; 
+	b=KFvC/X8oxjJwlCK1JL1gZcfnb5+ihTbDGSkh/1Qrd7ttMlK3NvjXPhEsLNmaVoEebd6mG++JJ/JNEyzzbexl4UlThEILnJAotKcUlScrBWvv+7w2XBj8CJ/ItsnL4clyYYuvqr+w3VpLUaEdtZ14Lpw9ao35d65S5qpPt7eMe38=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740561900;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=HQxcDlER3epDHU7gCY5nogKiIBVZBqXqRS/yzoOYA5k=;
+	b=Au9uBnobaAWWqJREgg7BOma+yPXfVIT6l631Hzgb7RW6BAG9xkt93duVe1DLGcmp
+	Pamusoh7vhtjBw+3MG5I25cw4tg4DFFATJnt1pTWiLVp2Dc68pPeXxcry/tdDmft7jU
+	+q38mpOg8or6lUhfgw31FPIewfOwmR4XVBxD1c1M=
+Received: by mx.zohomail.com with SMTPS id 1740561898306593.375047630114;
+	Wed, 26 Feb 2025 01:24:58 -0800 (PST)
+Message-ID: <860e30df-ba7e-4df3-b42a-ad41c3922b0f@collabora.com>
+Date: Wed, 26 Feb 2025 12:24:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,40 +59,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Enable DMIC for Genio 700/510 EVK
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v10 1/6] MAINTAINERS: Add entry for Synopsys DesignWare
+ HDMI RX Driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- parkeryang <Parker.Yang@mediatek.com>, Zoran Zhan <zoran.zhan@mediatek.com>
-References: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+ <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
+ <20250225183058.607047-2-dmitry.osipenko@collabora.com>
+ <7763884d-d259-4e52-aac8-73bca5b2ed61@kernel.org>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20250225-genio700-dmic-v2-0-3076f5b50ef7@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7763884d-d259-4e52-aac8-73bca5b2ed61@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Il 25/02/25 15:33, Nícolas F. R. A. Prado ha scritto:
-> This series enables the dual digital microphones present on the Genio
-> 700 and 510 EVK boards.
+On 2/26/25 11:44, Krzysztof Kozlowski wrote:
+>> +SYNOPSYS DESIGNWARE HDMI RX CONTROLLER DRIVER
+>> +M:	Shreeya Patel <shreeya.patel@collabora.com>
 > 
-> Patches 1 and 2 add some required clocks, patch 3 changes volatility
-> handling of some registers to prevent issues, patch 3 adds the DMIC DAI
-> driver for MT8188 and updates the AFE with its routes, patch 4 adds the
-> DMIC backend and widget to the mt8188-6359 machine sound driver, patch 5
-> adds the audio routes for the DMIC to the Devicetree, patch 6 adds
-> DMIC_BE in the dt-binding and patch 6 assigns a wakeup-delay-ms to the
-> DMIC DAI.
-> 
-Patches 6 and 8 applied to v6.14-next/dts64
+> You are sending someone else's patches, which sometimes indicate the
+> owner moved on. Nothing in cover letter explains that here so we can
+> keep guessing. Anyway if that's the case, this does not look up to date
+> anymore, so this either needs fixing or clarifications in at least cover
+> letter.
 
-arm64: dts: mediatek: mt8390-genio-common: Add routes for DMIC
-arm64: dts: mediatek: mt8390-genio-common: Add delay codec for DMIC
+Will re-iterate on the v11 cover letter that Shreeya is currently busy.
+Thanks for paying attention.
 
-Thanks!
+-- 
+Best regards,
+Dmitry
 
