@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-534965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08824A46D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43710A46D91
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38A83A5C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC563A7787
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3C02571A9;
-	Wed, 26 Feb 2025 21:22:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D998425B663;
+	Wed, 26 Feb 2025 21:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KXVsMGRz"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432A721CC54
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C5720DD7A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604958; cv=none; b=PDaoiSQfDdqpHWhq+Va10GHzw09jLpB6TCc7j+WzHHv+YKkJOk+zzYVQEkZzJb5xkqPf5Oqbu3JZQFjZIydn7OXx0Z97pTy4g/GgFkw1SvDdNQjQfcngudSybsT4dx6QU+vaOgb5kBD3XxuWVDBfLUHse/K8Wduc86GfsCJRkXE=
+	t=1740605781; cv=none; b=PNFdGRx1s6lJ6WMe5UwqSxKVwxmaV/Ng4JILTokI63Nm5mm4GnRbzinQD6VtnMyxFDQ1mWNqcZ1MpD5n7Jai+CME0KrIQKrdOwiKHu13C7KjGSLrIJXqZhfVSMOddaq48beWL9xA5UIMtobp0RzcQgDEuhFUafVto/GLsG3hA+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604958; c=relaxed/simple;
-	bh=EzZkwmkop4wiw857fKxcJh0niCVBRlSLbeFVZXgxnI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plASaxLKlUoAq0XPTyqKw7/qGSD9yXCdb4OFwfpSGlgANJ44bWHI38jLOn0zWzZaZ5L+is9YSId0GF5ykR+sKNYFOnqVwned5PxWFH86CDrxPfHagp1/jpt/VfNN4LrW8Vt5yRO1VQWAzWRE4m70EN7ZQfiYTIm7XAmUzSf5+c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnOrD-00085X-L1; Wed, 26 Feb 2025 22:22:19 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnOrD-0030wc-0f;
-	Wed, 26 Feb 2025 22:22:19 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnOrD-001fiU-0G;
-	Wed, 26 Feb 2025 22:22:19 +0100
-Date: Wed, 26 Feb 2025 22:22:19 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
-Message-ID: <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
-References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1740605781; c=relaxed/simple;
+	bh=vZGnJx5kd0tFgk25pQJmZLmcAZ8Ky1L2n9kLxIp8Ntk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hur1knt5CWIzaX+hjlY3zeCxNoTgbIfGAw/Vho/dA3eR/Og7DPC59LdQyyRTVMq2hptikK17E7hZmqKgnk2VRpV4owtqaefvKMlR0ME5k6xM8I20Ly1dWIlG8J0hVdqqRTnqbEL/HIbMpX91FlQGotIUDQuf1Nbyfe3gVqI7rjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KXVsMGRz; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id E0A795819D8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:24:58 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3245644359;
+	Wed, 26 Feb 2025 21:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740605091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TgXFCdjVREXcRGUE0JevXJ8e89l3cM/elkjd9RzCGfY=;
+	b=KXVsMGRz0Wxm2TObr9aSrau2qKoYmUNE+2C8hol5lxYBa6QSWTA/wphd/Sl33TGMisCfoA
+	beltHL40H3Vs0GViZ+kGQQaDo309XhwS2P14m8G0Iym0nFIclkv5H9XnK3h2GUGh6cfF6S
+	0iG9wh+/BnutFc1vlKQ4Yrm23RFs/3h7B2uWRaHabfffwXc2Z0Qzci+3E+yLd5EGVFO5L1
+	wvadvFnb5CRxQIucNQcm9nrzQ0HNy5M39I1xG6Nl1dkb+Pb9i/uVBiys3F3AaUkfdgPiHm
+	NiJeHUti0TsB4PP3/ukKorxpyq1gfRcaxro6ItmP+PEI/u0EudDO6aEcVQ7TAQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v8 0/2] drm: show "all" bridges in debugfs
+Date: Wed, 26 Feb 2025 22:23:51 +0100
+Message-Id: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGeGv2cC/43NQQ6CMBCF4auYWTumFqGNK+9hWLR0gEmAmg6ih
+ nB3Kydw+b3F/1YQSkwC18MKiRYWjlOGPR6g6d3UEXLIBq10qbQuMaQRA/ln1wpKH1/ohgF94tC
+ RYHXRZI3y5kwGcuKRqOX3nr/X2T3LHNNnf1vMb/0zvBhUaK2uVGFccIW5+RjngadTE0eot237A
+ hzNoLfKAAAA
+X-Change-ID: 20250225-drm-debugfs-show-all-bridges-642e870b71e7
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekheeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfeiteekkefgtdduveeuffeuffevkeehieduhfefvdfhueekuefhhfdttddvkeefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigr
+ dhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi,
+This series adds a /sys/kernel/debug/dri/bridges file showing all bridges
+between drm_bridge_add() and drm_bridge_remove(), which might not be bound
+to any encoder and thus not visible anywhere in debugfs.
 
-On 25-02-26, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> The AIPSTZ bridge offers some security-related configurations which can
-> be used to restrict master access to certain peripherals on the bridge.
-> 
-> Normally, this could be done from a secure environment such as ATF before
-> Linux boots but the configuration of AIPSTZ5 is lost each time the power
-> domain is powered off and then powered on. Because of this, it has to be
-> configured each time the power domain is turned on and before any master
-> tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
+It also cleans up the DRM bridge debugfs code by moving code to
+drm_bridge.c.
 
-My question still stands:
+Luca
 
-Setting these bits requires very often that the core is running at EL3
-(e.g. secure-monitor) which is not the case for Linux. Can you please
-provide more information how Linux can set these bits?
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v8:
+- moved more code to drm_bridge.c, which makes adding '#if CONFIG_DEBUG_FS' unnecessary
+- a small fix to a harmless bug
+- Link to v7: https://lore.kernel.org/r/20250225-drm-debugfs-show-all-bridges-v7-0-8826037ada37@bootlin.com
 
-Regards,
-  Marco
+This series was initially part of v6 of this other series:
+- Link to v6: https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
 
-> The child-parent relationship between the bridge and its peripherals
-> should guarantee that the bridge is configured before the AP attempts
-> to access the IPs.
-> 
-> Other masters should use the 'access-controllers' property to enforce
-> a dependency between their device and the bridge device (see the DSP,
-> for example).
-> 
-> At the moment, we only want to apply a default, more relaxed
-> configuration, which is why the number of access controller cells
-> is 0.
-> 
-> The initial version of the series can be found at [1]. The new version
-> should provide better management of the device dependencies.
-> 
-> [1]: https://lore.kernel.org/linux-arm-kernel/20241119130726.2761726-1-daniel.baluta@nxp.com/
-> 
-> ---
-> Changes in v2:
-> * adress Frank Li's comments
-> * pick up some A-b/R-b's
-> * don't use "simple-bus" as the second compatible. As per Krzysztof's
-> comment, AIPSTZ is not a "simple-bus".
-> ---
-> 
-> Laurentiu Mihalcea (5):
->   dt-bindings: bus: add documentation for the IMX AIPSTZ bridge
->   dt-bindings: dsp: fsl,dsp: document 'access-controllers' property
->   bus: add driver for IMX AIPSTZ bridge
->   arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
->   arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
-> 
->  .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 86 +++++++++++++++++
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      |  3 +
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  9 +-
->  drivers/bus/Kconfig                           |  6 ++
->  drivers/bus/Makefile                          |  1 +
->  drivers/bus/imx-aipstz.c                      | 92 +++++++++++++++++++
->  6 files changed, 194 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
->  create mode 100644 drivers/bus/imx-aipstz.c
-> 
-> -- 
-> 2.34.1
-> 
-> 
-> 
+---
+Luca Ceresoli (2):
+      drm/bridge: move bridges_show logic from drm_debugfs.c
+      drm/debugfs: add top-level 'bridges' file showing all added bridges
+
+ drivers/gpu/drm/drm_bridge.c  | 70 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_debugfs.c | 38 +----------------------
+ drivers/gpu/drm/drm_drv.c     |  2 ++
+ include/drm/drm_bridge.h      |  3 ++
+ 4 files changed, 76 insertions(+), 37 deletions(-)
+---
+base-commit: b439ab75b6382f5c34aec6e87435cf7e58e72a35
+change-id: 20250225-drm-debugfs-show-all-bridges-642e870b71e7
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
