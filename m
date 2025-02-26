@@ -1,141 +1,212 @@
-Return-Path: <linux-kernel+bounces-533634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F7EA45CEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:20:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751A3A45CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 982FC7A3D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690E416C5F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13E215076;
-	Wed, 26 Feb 2025 11:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIQCwrrn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9938321505D;
+	Wed, 26 Feb 2025 11:21:24 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B40A18BC3F;
-	Wed, 26 Feb 2025 11:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A318BC3F;
+	Wed, 26 Feb 2025 11:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740568821; cv=none; b=PX2TOUPHoi/H5XOJzhBfxDZUBuZ/ZwrDheDJMcH1IzsGfph01UJLz8bFMpghTNhzW8ktIrqvJO/GktXd7KgWGAbGuMLTfhny19v+hjgRxY4NwoFfJXPFr6lQPLrvr0QrFazNJW6sa5Df6ibVyB/4iBVqiOVxAgsOB+0LKxXNTC8=
+	t=1740568884; cv=none; b=dlFJN6J2KGkcPZaJpnekj+7S+Pz/94PisGr6uOUpM1Sj8kfZg1w7sAAy6TY2NpHLjouRnlUad9EzykBvGKk40sVtj9e7O1QaAsfmtw8faU+nZrnRe8sOl2hIws/6Ts+jYAfZMqumRkBH2H72h93HbQApj9l0w2M4uSgPn0f4drU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740568821; c=relaxed/simple;
-	bh=gruYM7mrSaPUeCfe+9dZ9++l4fXt7v710dR5E5U2++M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7eggOn2DcqR5kOBRj+k2KLXBSDyVzNwmNFRP8nU0oS0b4i4hUo2Vqbo6sPicpALWA2peJ3j/6zosz4CZ+s/zWlTXgMiaAkJCt1yJyrlc6J118ckjvvV7OQxkRVRZ0HGKUA9CSU2s/fEF2K0jOMGa4peWXjmLAlXsel7T9E76wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIQCwrrn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA70C4CED6;
-	Wed, 26 Feb 2025 11:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740568820;
-	bh=gruYM7mrSaPUeCfe+9dZ9++l4fXt7v710dR5E5U2++M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FIQCwrrnDRdu/tRDZ7U/bvMl0v2SmpTeuIVRo4bfPnjRHpgUMg/1ST5t4729gLwyo
-	 JfOPjmp4jtR/snwZnDouCDgiBEWu+icl5uISKKvtVZ5/tKAxa8ITjjw6IquK3l5FID
-	 cnGCQmBbuzt3itpuMa+ivYR9brkk821CVaMKIKDhtsR8HzfO+Eib2JlAaWDhkYn9WH
-	 Hp8hmY62UVM1uAFQc5ia6Ju7V4Xdtkt1qkeGtqxzKM3h7kPSuSTxd42Do0jL6rBF5o
-	 MZGJiFTw/gzfizQAZaRUX4/DTKToezA/0njnwVM9HioFCckrrDknVsfHmSkSyG9mbW
-	 f2f2jpa78phMg==
-Message-ID: <c2759c9e-29e2-4df8-a9d0-7f1b3c079352@kernel.org>
-Date: Wed, 26 Feb 2025 12:20:14 +0100
+	s=arc-20240116; t=1740568884; c=relaxed/simple;
+	bh=CoxQ8RbiWma3QVldiRP0+KsnCNFY2EMIgbwlVS/+J4o=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fbGlIVT7I0LsxwNvheu12WITZdwMR2YqGhVGODZfgTdUsIonLHbFAWDi9kRzkXw9QF+9w6DRi1rCx0tvfe7VXDxuZkxXGJ/+yJbBg/H8w1kLjBBNvJm3QLefBPQmwgAhj7Jq9CdeOL8cdK3XYwBTRRb2uqGblt6LxXxQUCxz3Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z2sSf2NWCzTmrh;
+	Wed, 26 Feb 2025 19:19:46 +0800 (CST)
+Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5650F18009E;
+	Wed, 26 Feb 2025 19:21:18 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 26 Feb 2025 19:21:17 +0800
+Subject: Re: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>
+References: <20250225062757.19692-1-liulongfang@huawei.com>
+ <20250225062757.19692-2-liulongfang@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <bc8b5917-53e6-cf4f-2666-82274c86b606@huawei.com>
+Date: Wed, 26 Feb 2025 19:21:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: arm: Add Coresight device Trace NOC
- definition
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
- <20250226-trace-noc-driver-v2-1-8afc6584afc5@quicinc.com>
- <d1c945bd-a738-4f01-8b93-c2a03b190c34@kernel.org>
- <913b8fd3-ffc2-45d9-a8bc-e52a05b85c81@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <913b8fd3-ffc2-45d9-a8bc-e52a05b85c81@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250225062757.19692-2-liulongfang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500006.china.huawei.com (7.202.181.43)
 
-On 26/02/2025 12:16, Yuanfang Zhang wrote:
+On 2025/2/25 14:27, Longfang Liu wrote:
+> The dma addresses of EQE and AEQE are wrong after migration and
+> results in guest kernel-mode encryption services  failure.
+> Comparing the definition of hardware registers, we found that
+> there was an error when the data read from the register was
+> combined into an address. Therefore, the address combination
+> sequence needs to be corrected.
 > 
+> Even after fixing the above problem, we still have an issue
+> where the Guest from an old kernel can get migrated to
+> new kernel and may result in wrong data.
 > 
-> On 2/26/2025 7:09 PM, Krzysztof Kozlowski wrote:
->> On 26/02/2025 12:05, Yuanfang Zhang wrote:
->>> +
->>> +  compatible:
->>> +    items:
->>> +      - const: qcom,coresight-tnoc
->>> +      - const: arm,primecell
->>> +
->>> +  reg:
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +    description:
->>> +      Physical address space of the device.
->> Not much improved - still items are not listed. Which binding did you
->> choose as an example as I asked to? (so I can fix it)
->>
-> qcom,coresight-tpda.yaml
-But there is no description there. About the items, I will fix it, thanks.
+> In order to ensure that the address is correct after migration,
+> if an old magic number is detected, the dma address needs to be
+> updated.
+> 
+> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live migration")
+> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> ---
+>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 40 ++++++++++++++++---
+>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++++++-
+>  2 files changed, 46 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> index 451c639299eb..35316984089b 100644
+> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> @@ -350,6 +350,31 @@ static int vf_qm_func_stop(struct hisi_qm *qm)
+>  	return hisi_qm_mb(qm, QM_MB_CMD_PAUSE_QM, 0, 0, 0);
+>  }
+>  
+> +static int vf_qm_version_check(struct acc_vf_data *vf_data, struct device *dev)
+> +{
+> +	switch (vf_data->acc_magic) {
+> +	case ACC_DEV_MAGIC_V2:
+> +		if (vf_data->major_ver < ACC_DRV_MAJOR_VER ||
+> +		    vf_data->minor_ver < ACC_DRV_MINOR_VER)
+> +			dev_info(dev, "migration driver version not match!\n");
+> +			return -EINVAL;
+> +		break;
+> +	case ACC_DEV_MAGIC_V1:
+> +		/* Correct dma address */
+> +		vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+> +		vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
+> +		vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
+> +		vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
+> +		vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
+> +		vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>  			     struct hisi_acc_vf_migration_file *migf)
+>  {
+> @@ -363,7 +388,8 @@ static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>  	if (migf->total_length < QM_MATCH_SIZE || hisi_acc_vdev->match_done)
+>  		return 0;
+>  
+> -	if (vf_data->acc_magic != ACC_DEV_MAGIC) {
+> +	ret = vf_qm_version_check(vf_data, dev);
+> +	if (ret) {
+>  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
+>  		return -EINVAL;
+>  	}
+> @@ -418,7 +444,9 @@ static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+>  	int vf_id = hisi_acc_vdev->vf_id;
+>  	int ret;
+>  
+> -	vf_data->acc_magic = ACC_DEV_MAGIC;
+> +	vf_data->acc_magic = ACC_DEV_MAGIC_V2;
+> +	vf_data->major_ver = ACC_DRV_MAR;
+> +	vf_data->minor_ver = ACC_DRV_MIN;
 
-Best regards,
-Krzysztof
+The values ​​here should be ACC_DRV_MAJOR_VER and ACC_DRV_MINOR_VER
+I will fix this in the next version.
+
+Thanks.
+Longfang.
+
+>  	/* Save device id */
+>  	vf_data->dev_id = hisi_acc_vdev->vf_dev->device;
+>  
+> @@ -496,12 +524,12 @@ static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data *vf_data)
+>  		return -EINVAL;
+>  
+>  	/* Every reg is 32 bit, the dma address is 64 bit. */
+> -	vf_data->eqe_dma = vf_data->qm_eqc_dw[1];
+> +	vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+>  	vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
+> -	vf_data->eqe_dma |= vf_data->qm_eqc_dw[0];
+> -	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[1];
+> +	vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
+> +	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
+>  	vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
+> -	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[0];
+> +	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
+>  
+>  	/* Through SQC_BT/CQC_BT to get sqc and cqc address */
+>  	ret = qm_get_sqc(vf_qm, &vf_data->sqc_dma);
+> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> index 245d7537b2bc..91002ceeebc1 100644
+> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> @@ -39,6 +39,9 @@
+>  #define QM_REG_ADDR_OFFSET	0x0004
+>  
+>  #define QM_XQC_ADDR_OFFSET	32U
+> +#define QM_XQC_ADDR_LOW	0x1
+> +#define QM_XQC_ADDR_HIGH	0x2
+> +
+>  #define QM_VF_AEQ_INT_MASK	0x0004
+>  #define QM_VF_EQ_INT_MASK	0x000c
+>  #define QM_IFC_INT_SOURCE_V	0x0020
+> @@ -50,10 +53,15 @@
+>  #define QM_EQC_DW0		0X8000
+>  #define QM_AEQC_DW0		0X8020
+>  
+> +#define ACC_DRV_MAJOR_VER 1
+> +#define ACC_DRV_MINOR_VER 0
+> +
+> +#define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
+> +#define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
+> +
+>  struct acc_vf_data {
+>  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
+>  	/* QM match information */
+> -#define ACC_DEV_MAGIC	0XCDCDCDCDFEEDAACC
+>  	u64 acc_magic;
+>  	u32 qp_num;
+>  	u32 dev_id;
+> @@ -61,7 +69,9 @@ struct acc_vf_data {
+>  	u32 qp_base;
+>  	u32 vf_qm_state;
+>  	/* QM reserved match information */
+> -	u32 qm_rsv_state[3];
+> +	u16 major_ver;
+> +	u16 minor_ver;
+> +	u32 qm_rsv_state[2];
+>  
+>  	/* QM RW regs */
+>  	u32 aeq_int_mask;
+> 
 
