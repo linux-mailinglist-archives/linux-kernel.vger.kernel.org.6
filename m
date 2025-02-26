@@ -1,91 +1,130 @@
-Return-Path: <linux-kernel+bounces-534360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015E8A46624
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A65A46616
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0BE1883DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DA1188CA69
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CBB21E092;
-	Wed, 26 Feb 2025 15:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCvVLYNl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E15D21D59E;
+	Wed, 26 Feb 2025 15:57:10 +0000 (UTC)
+Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF9D21D5A8;
-	Wed, 26 Feb 2025 15:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE9919CC3E;
+	Wed, 26 Feb 2025 15:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585355; cv=none; b=XHbsU0FDRu0C92bXMkCsnNIeHtWxdSj+ioOSEUck3yEK5mwBcedX/uC6SkvnaCKeQs0WziRVs+YhF8rZaTXwTt0bU1TxoZovQomHxc12ZeIwpmkSq3acgrvlqFPe7zMBR3bsyHLkh8TUCsMkeJJRG9fMNS53wDjBmpUzW+NIgtE=
+	t=1740585429; cv=none; b=RO5shzWP/puReFOWtzwxJXaZOAcsuRafmUuG7sIx7HcaqSGZ5Pei6mg+so5I6kB/uoNrxhUBirvs+Ae0IY/1iD+j2YBhOoffU6v+2ypwuIfy1N+rhiRD649LhkL97NG86sp8yWKm6sehoJSK7sBAw/+WsYSl06RZ2A2TXQXDT8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585355; c=relaxed/simple;
-	bh=2b/0jmiET26RzTFkTnCeyD691GwyGBvbl6ZzIxxMzBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpo8r7jBA5RpdIG3kbE5+nbem1tBpQ+NpA5UdUspFVnPIP6+PuniF7nyk8oDy4dbxyaAKGrKhRHFvS3k72DBn0wdPqsUZ6z3ui2xMmQkb6UPfYklFtD/9dchEpoZYEpa35+eJWRJ8WoV7/iWwmMXQB3OLlSmhoZ8Dnd/x4Ve9V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCvVLYNl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880C5C4CEE9;
-	Wed, 26 Feb 2025 15:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740585354;
-	bh=2b/0jmiET26RzTFkTnCeyD691GwyGBvbl6ZzIxxMzBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DCvVLYNl/BDsnaShGUmbG2XfXhp7YkwSQPo2z31Zh+BrguxCktqVKeTxq/nCVPSV7
-	 yrH8LApkaemi3jyzNA8FJIbyi/WOfZSF5oEYnphgr5mPDmAgzIsR3EX7i31YGK7kG6
-	 sC01lAwwrqlEXvKb3FXFz4lUT7BB6T+dEGU/78Hrv6d6Wv3e5diyU/v8Miwnc9I0Lg
-	 Yj4i2icq3VyziG/Z3uTdQRPAOJuExBbLP3KCHxa62ogm0wc7XR3aPGEVh1OLBKGHqD
-	 qhCvmfTo5PlRk2mhcEmV7QH1AqRGaBRk78vS+mvYTXlB/PHSuwtGZbW7jbeTOD2Ftn
-	 PQCd2eAg4QyVg==
-Date: Wed, 26 Feb 2025 09:55:52 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
-	spacemit@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Alex Elder <elder@riscstar.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Yangyu Chen <cyy@cyyself.name>, Conor Dooley <conor@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v7 1/4] dt-bindings: gpio: spacemit: add support for K1
- SoC
-Message-ID: <174058535208.2501613.753521033662405764.robh@kernel.org>
-References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
- <20250226-03-k1-gpio-v7-1-be489c4a609b@gentoo.org>
+	s=arc-20240116; t=1740585429; c=relaxed/simple;
+	bh=GKMzlZ2maRtkgC5P94Kko9bp/n+VqxMprs5WYnSKGPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6OCmHV/MFEtC2f7VhS1aMzAJkPFlxJWZSgSxREVc5TuUmPlSVa6Qhl/82JxTgEgJWNpIJ9ZNF6HF6XMnWm0sqo2jj7bEftKEfuVJzRdkQ7RrJQar2e4DqnXaQA/S0fxseqmP0ZjbrlP9KsQGKo9yJhIlg6FoZbjG0QlCqPL0tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tnJm0-000Fvw-Fh; Wed, 26 Feb 2025 16:56:36 +0100
+Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1tnJm0-000FGH-0e;
+	Wed, 26 Feb 2025 16:56:36 +0100
+Message-ID: <9c00cff3-92a8-492a-b059-7d8c66c23daf@hetzner-cloud.de>
+Date: Wed, 26 Feb 2025 16:56:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-03-k1-gpio-v7-1-be489c4a609b@gentoo.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 4/6] selftests/bpf: refactor
+ xdp_context_functional test and bpf program
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ hawk@kernel.org
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
+ <Z7yof3pafRsMwBrf@mini-arch>
+Content-Language: en-US
+From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
+ 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
+ wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
+In-Reply-To: <Z7yof3pafRsMwBrf@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27561/Wed Feb 26 10:36:26 2025)
 
-
-On Wed, 26 Feb 2025 08:41:17 +0800, Yixun Lan wrote:
-> The GPIO controller of K1 support basic functions as input/output,
-> all pins can be used as interrupt which route to one IRQ line,
-> trigger type can be select between rising edge, falling edge, or both.
-> There are four GPIO banks, each consisting of 32 pins.
+Am 24.02.25 um 18:12 schrieb Stanislav Fomichev:
+> On 02/24, Marcus Wichelmann wrote:
+> [..]
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 79 ++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
+>> +int send_test_packet(int ifindex)
+> 
+> nit: static? same for assert_test_result below
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Yeah why not. Will change it.
 
+Thanks!
 
