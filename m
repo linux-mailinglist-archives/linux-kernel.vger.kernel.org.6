@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-533084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A1CA45581
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:21:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C448A45586
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCCEA17A980
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102E41886CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6C6268C4F;
-	Wed, 26 Feb 2025 06:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB449266F07;
+	Wed, 26 Feb 2025 06:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wfd2uNRO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UDfvlGaR"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D8A25D537;
-	Wed, 26 Feb 2025 06:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24FC29D0E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740550787; cv=none; b=n9T5lQOt9NhS6lONrW2CJwA0KhUuO2SKmYiEg8XqIAbhaUGrRbGtk3BqXXDp/ECE1goO09zQYAaUyRbg8gT9snrFj/9+qn7w2XMAv8HPfVYzq9UQjtFGof1YaOjaDD3TLsQkXIy84E+u/un98mi2wOzg7rbudBV6tiKDFn7KDGo=
+	t=1740550981; cv=none; b=JiyBx+Q6gfirXEfWtbUd9kUymIWO+M9Kj4ZGGFKI+aaLCia1WfET3S8XgWsvkXuMkWtD3XmXSGS5hB9jDlfhbxiPeNj1XrNap8rinWpUxCKSPkHN07oqF3J2A869Ia24z66O1rmeqNMxxacRopW70FyUUBWsJvBtSFJ9Gt/abHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740550787; c=relaxed/simple;
-	bh=CDnh/F6yJJZro6R0MIKigGgnvX9Ri5GL0GCDeg3C3l8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ILD0zelmcq7bSg8dDpfw2bIGeu+eGDLePsacUUljTRnC7dYPFRi5+8EwhvsfiRsrduinxJNgOPchshyJOlC0HPJFjUZ6zHIUl1TLR5CpGcVZetMf9dL3O4YdTEiEsP7H/H9g2fnzd9tXZQlNrbafnaIRqQiGZ5APcIT/LsMggCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wfd2uNRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D828C4CEE2;
-	Wed, 26 Feb 2025 06:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740550786;
-	bh=CDnh/F6yJJZro6R0MIKigGgnvX9Ri5GL0GCDeg3C3l8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wfd2uNROPQwZgTHXi+QlKkAae7QnvEoW1s0Clv3rWUBZvFJW/kUG+YaI4Qwd50rl0
-	 9zZvTyEIh3mImIeqGTbfhyE4NfIPh8SJWO84W/Ki9ToargIrI1IeBF+F1QWKyw5tMR
-	 xcSikvVaV2blHkItD9JNF+zBTfYNtAh/cdeqi6XsUZahm2TKqoVi5rIaLp4xLaU5zC
-	 QhpGptj++qMBQfbqJy5+5pJ+cwCatN8o315HVstCxIdpzjm8Y2hwIeXlVl3KBgui3C
-	 VkghvqTzO/8uokKTP50+9Rs5ah1nejHhfFFQqSclhxFEZtsSkjNOQmRGvVOzzQkgi0
-	 eKzWcVnz39DtQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 8/8] selftests/ftrace: Add dynamic events argument limitation test case
-Date: Wed, 26 Feb 2025 15:19:43 +0900
-Message-ID:  <174055078295.4079315.14702008939511417359.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-In-Reply-To:  <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
-References:  <174055071644.4079315.12468865615828925878.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1740550981; c=relaxed/simple;
+	bh=gaGT5q2hJkeCFwVBIUxi+ItVgLmJ9uiRm2cydxHO080=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iJsq2O1CA2cwEXCtLFZYidnJ9unmXgBEqtpfkShgkBJ0Za3Mak+ipRIjzx2Jx74m7kpzi2XEu5zF35BtqdPw9RVUWKP8YBNsDMrDSFgnIhr7eETfaOAUtI71uVgbI+qnVeIrj+cu2XLl1uBH/Je/JlONrwe5hElOAGcpLjootuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UDfvlGaR; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a060cc7e-3d99-4483-937b-3a20476eb6b6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740550965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p84KZbYiIU6m9SlSsr+aRK2OA82hVN0ETZwtDueX4s8=;
+	b=UDfvlGaRHhHPkYtzzkJJsBohOAOqzj/RWd0TDW9TX9i4bnBDcW5cnu0No6nP1PvOQwuMIc
+	2Vf693IH3A7zq2ZyYSpRH7I37QZB9lSTvtu4u4JWAcG5yh/KMKWfBQiIEcqvVuG4yjl1DI
+	+T6Uvxd4PGrc3rUzSDZhrlN2lm0a8sE=
+Date: Wed, 26 Feb 2025 14:22:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH linux next] Docs/zh_CN: Translate msg_zerocopy.rst to
+ Simplified Chinese
+To: yaxin_wang <yaxin_wang_uestc@163.com>, corbet@lwn.net
+Cc: alexs@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
+ wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, he.peilin@zte.com.cn,
+ tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, zhang.yunkai@zte.com.cn,
+ ye.xingchen@zte.com.cn, jiang.kun2@zte.com.cn
+References: <20250226014942.2586561-1-yaxin_wang_uestc@163.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250226014942.2586561-1-yaxin_wang_uestc@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Add argument limitation test case for dynamic events.
-This is a boudary check for the maximum number of the probe
-event arguments.
+在 2/26/25 9:49 AM, yaxin_wang 写道:
+>> <jiang.kun2@zte.com.cn> writes:
+>>
+>>> From: Wang Yaxin <wang.yaxin@zte.com.cn>
+>>>
+>>> translate the "msg_zerocopy.rst" into Simplified Chinese
+>>>
+>>> Update to commit bac2cac12c26("docs: net: description of
+>>> MSG_ZEROCOPY for AF_VSOCK")
+>>>
+>>> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+>>> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+>>> Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+>>> Reviewed-by: He Peilin <he.peilin@zte.com.cn>
+>> So how did these reviews happen?  I have certainly not seen them on the
+>> public lists...
+>>
+>> Thanks,
+>>
+>> jon
+> xu xin and he peilin are my colleagues. They helped me with the internal
+> review of the document and did not participate in the public lists review.
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- .../ftrace/test.d/dynevent/dynevent_limitations.tc |   42 ++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
+Unfortunately, this cannot be archived in the lore, so it is not suitable
 
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
-new file mode 100644
-index 000000000000..6b94b678741a
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
-@@ -0,0 +1,42 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Checking dynamic events limitations
-+# requires: dynamic_events "imm-value":README
-+
-+# Max arguments limitation
-+MAX_ARGS=128
-+EXCEED_ARGS=$((MAX_ARGS + 1))
-+
-+check_max_args() { # event_header
-+  TEST_STRING=$1
-+  # Acceptable
-+  for i in `seq 1 $MAX_ARGS`; do
-+    TEST_STRING="$TEST_STRING \\$i"
-+  done
-+  echo "$TEST_STRING" >> dynamic_events
-+  echo > dynamic_events
-+  # Error
-+  TEST_STRING="$TEST_STRING \\$EXCEED_ARGS"
-+  ! echo "$TEST_STRING" >> dynamic_events
-+  return 0
-+}
-+
-+# Kprobe max args limitation
-+if grep -q "kprobe_events" README; then
-+  check_max_args "p vfs_read"
-+fi
-+
-+# Fprobe max args limitation
-+if grep -q "f[:[<group>/][<event>]] <func-name>[%return] [<args>]" README; then
-+  check_max_args "f vfs_read"
-+fi
-+
-+# Tprobe max args limitation
-+if grep -q "t[:[<group>/][<event>]] <tracepoint> [<args>]" README; then
-+  check_max_args "t kfree"
-+fi
-+
-+# Uprobe max args limitation
-+if grep -q "uprobe_events" README; then
-+  check_max_args "p /bin/sh:10"
-+fi
+as a basis for community review. how about:
+
+:翻译:
+
+    王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
+
+:校译:
+
+    - xxx <xxx@xxx.x>
+
+    - xxx <xxx@xxx.x
+
+
+This can better highlight their contributions.
+
+
+BTW, If your colleagues want to appear in the signature
+
+section of the patch, subsequent patches can be reviewed
+
+on the mailing list. Everyone on the mailing list has the
+
+right to observe the review process.
+
+
+Thanks,
+
+Yanteng
+
 
 
