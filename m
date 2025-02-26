@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-534089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60009A4629D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:26:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA493A462AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F01E1891AE4
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15353B461F
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7568E22A7F7;
-	Wed, 26 Feb 2025 14:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D69F22CBE8;
+	Wed, 26 Feb 2025 14:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2WXZHeDm"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1DN+8/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9DF221732
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 14:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A6822B595;
+	Wed, 26 Feb 2025 14:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579819; cv=none; b=cIA8DqoAyxHgY0kA+tTEvMgHJu6LETNyOl2s/yu/B4Sh89AD5c7G9YNtTdopZ/rsuv00k1QNA/0UMrAIG9/eT3zx/hWfqO+H16kI/ShQKtKqqkGDJbVA4VVjJu4iYiL0EuOqDpW6HSXr2f/Fo6+fFc2vA7uNf/tmLmBvELa0ybw=
+	t=1740579823; cv=none; b=OgX06UDFN7jsK1uAZOlT3xNSEsBKwlSKiQk+mWN1fUAPofohxdL840waKfggDQoT9CKie9zCVpmq7hcgCpp8NRxj4ZVCvp1S5GoUZ/eOJ7/kxKnyR/8ZJqqCoduqJCc+rByINqnto0teTVP+XL6iH3EbdwGgl+084J/oX8+7pmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579819; c=relaxed/simple;
-	bh=oESKRxk7S/SAj+JzXbT8tJchADNljAklyGCeLl3hM0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FS/mpRXvrULDYC0imBtRNkA6tp8mz/Df2tWWI29TTxKwerJEushGPN1BFbzryHG3X5zdB8hi2vMr4hzYLOhc75Pn+8CIhCmpV6Gb7ymXEI7kw+AUsKJ3S34ncRIs/QTXDddMveN0qroDmzxMhgNEJKNmUmn+e607L6whdSqsstE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2WXZHeDm; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-855fc51bdfcso31006639f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 06:23:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740579816; x=1741184616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+lLnbkzYFUFW6XfzIit24LipM1R/Z0yOhTI6EbT/o+g=;
-        b=2WXZHeDmVrlHnboRPAA9QI6Smp2eBDLYOufLBWyiEGt/MskC000iqzPD1tYdiALD/+
-         Ase5Yzyqgf8SufII8dn+EKz1cFfLZvi8a4Nadk41upoU3ZJ3VDRt6jzncraK80YivA3d
-         KaRn9pfKU+vEiRXoBd1aJdU6eoupR7clRvjXfZof7YcbXripeLns0jgqP612AwDb3MzS
-         4eETYPUgDt7h/FRgKXCzMOUTzZdT3yiuypjHM8y06WlbZaXhWjFn0P0McfN+r+W1MmJV
-         uCEd0NfFHHErNflGjMZX+FPD7sWYVERgQibR8vIXPY+UnXUcKudUVB1qlhXyC7q8ittr
-         jRMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740579816; x=1741184616;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+lLnbkzYFUFW6XfzIit24LipM1R/Z0yOhTI6EbT/o+g=;
-        b=Rm2HZjranO0CMEnHP170QBoNECW8LuInYpzS3LzDH5OwFDJTrO04p6sKnbHhnlPcF2
-         MRibhBHnY5DVVQWhS/k02zM794+ur8Grv1JZFnqCUzDqVR0LCqmOZfynQrdtf+tmVllU
-         tIFg5XXhqsnbXy2VZEDBi3uzRYWvHtd8QdVK6BtxAu73uGVG1uo/gpe3EgRJ12aBdq6D
-         NHCtMp2ynvJ4pgrM3GP+jwi6hO10wRQhIGZ0UuAKEQ59F71Vzn4Ckts1vLox/YmT7+jW
-         mfJz57zjF5UwNHjWNPsyQuDXgSsRsHeQsqdDOY1JT/c7lf67o7bmx7UE+YGjqzGxDXhd
-         jkzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgc9bJ/62BzS8BTudZA/F1DdsUFj8Uh6YG99I2WmOa1pvORfmyi9YchRoZseXd28ta5EoQctCZ7oJaQi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNLTWCvj3cgGcwFf1JBrLKIiRsGrseSEUCMkv6lBthBUO1g5wm
-	eHTdPMlYocXQKEQvlwVQNCLNHrqXelwYch/KAlOkjbBa1EEaMSRj7k8iU9WZytY=
-X-Gm-Gg: ASbGncvrW7Cv1Ah7wkCmBNsa1NZS8WzCPMug4FKuvJPL9DAfGe1b63GhEQURJFEqKzV
-	ax7UCdEG3d0XQJj/UQ3FyDKp5VgPPGmcejnm0yhqGCmyEl27RuQmT7EvoHZLORM/xoiW4rNSmh8
-	oV7deykmbwVmrJ4KwSOjrCpxE22ZqrsaBKKWOvk1flpUNb5oxK5e5DrC7gfF/ACE33lxunMMEWC
-	ZvB2npisc6IV+YV2uDS0JvbsnvzkRa/DvV6R9qVPwZv0Adfqmn4LwT3hFNRUAHsdn72h8aB2EOZ
-	hmQ1otceH+2z//UeNPoowg==
-X-Google-Smtp-Source: AGHT+IHCTcB7uZZBwrrVwoyg1sY7x7wAOYntHYhSFAGNdVEQ0bIslcm3vAPpwn7DmMLgCW3Yu+nGVw==
-X-Received: by 2002:a05:6e02:1686:b0:3cf:fd62:e39c with SMTP id e9e14a558f8ab-3d2cacde097mr187503355ab.5.1740579815860;
-        Wed, 26 Feb 2025 06:23:35 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d36165339esm8144515ab.19.2025.02.26.06.23.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 06:23:35 -0800 (PST)
-Message-ID: <aace30fd-6cdc-4608-8ca8-0cef74dd1c66@kernel.dk>
-Date: Wed, 26 Feb 2025 07:23:34 -0700
+	s=arc-20240116; t=1740579823; c=relaxed/simple;
+	bh=AAEKm1O7htp5NeH3NMI9L3J6SDIohMjK9ooiU+PU/cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h0zAKK8lZ/ayt3Z+lCFIwqYybusSiyzd0T/jlfQVOnYiSiRdVXJJ5aWZLsSTog28tQbcrB6L0pZB4qTpp5b9Vnug2g9Z/1QIi9MxFXgP4MvSazds2jlrSSOIOE6q6etsbmpY39ciZg+CRpuppoPt66dGwVbfGjWcHJJoIXo1vBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1DN+8/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB389C4CED6;
+	Wed, 26 Feb 2025 14:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740579822;
+	bh=AAEKm1O7htp5NeH3NMI9L3J6SDIohMjK9ooiU+PU/cc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I1DN+8/iEv1J0mjRLjUZDQUsEGe8kHDqvcRFHtejC6d6diiU/Ni2ditT1E7s4LFWE
+	 XHuvHlBUUcqXuAYFvvIFOs10FpyQ6ksQTLoOYMg7SJlKFdNP8Q0mKKfVlX6NQ6rjcw
+	 y6exKcM8nk+GlFoUcownxU54EMWM0uy36bNlMIKgxKy9t7/UYe3oyKMY2+e8YQmjww
+	 NNOhW5o2SAf0xkJfrG4llLtxRyICQa6lNdjfqWRPryLs9Tjxm9jXUMhtJ4mZCjA+D7
+	 wdoYMD7/dy1Xp9cjPHuFei8ghGvGkF0q0WUrPqSxnNB2tcmoIMra1PatsT1aAi6aCL
+	 3fah9XHMFWWew==
+Message-ID: <9e973021-8f10-4870-8534-29c7669c7c74@kernel.org>
+Date: Wed, 26 Feb 2025 15:23:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,58 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- native_tss_update_io_bitmap
-To: syzbot <syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- mingo@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
- x86@kernel.org
-References: <67bead04.050a0220.38b081.0002.GAE@google.com>
+Subject: Re: [PATCH v3 12/13] arm64: dts: renesas: Add initial support for
+ renesas RZ/T2H eval board
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+ thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+ paul.barker.ct@bp.renesas.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
+ <20250226130935.3029927-13-thierry.bultel.yh@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <67bead04.050a0220.38b081.0002.GAE@google.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250226130935.3029927-13-thierry.bultel.yh@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/25/25 10:56 PM, syzbot wrote:
-> Hello,
+On 26/02/2025 14:09, Thierry Bultel wrote:
+> Add the initial device tree for the RZ/T2H evaluation board.
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13fcd7f8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e2b1803445d236442e54
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149427a4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ed06e4580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e2b1803445d236442e54@syzkaller.appspotmail.com
-> 
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 1 UID: 0 PID: 5891 Comm: iou-sqp-5889 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-> RIP: 0010:native_tss_update_io_bitmap+0x1f5/0x640 arch/x86/kernel/process.c:471
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-This doesn't look io_uring related at all, it looks more like something missing
-for error injection and early failure handling in the fork path for the x86 io
-bitmap handling. Possibly related to PF_IO_WORKER, didn't poke deep enough to
-see if it's specific to that or not. Presumably a change slated for 6.15? It's
-testing an older linux-next, so also quite possible that this is known and
-already fixed, it's a week old.
+Where did this happen? I see tags only to few patches, not all of them.
 
-#syz set subsystems: kernel
+Same questions for all other places.
 
--- 
-Jens Axboe
-
+Best regards,
+Krzysztof
 
