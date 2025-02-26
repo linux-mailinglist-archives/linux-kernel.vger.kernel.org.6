@@ -1,167 +1,148 @@
-Return-Path: <linux-kernel+bounces-534580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3EFA468C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:02:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DE4A468CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD10172327
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E3417343C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E34422A7EE;
-	Wed, 26 Feb 2025 18:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aw4UMCvi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F0223373B;
+	Wed, 26 Feb 2025 18:02:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B9915C0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786DE15C0;
+	Wed, 26 Feb 2025 18:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740592957; cv=none; b=XtR7SPQ+FcgeDtzdUPWQqAbRfM8EmFSE4AGQ1JFLXapBlH38LV1pdSY46Q59yWHDjw9lzJZJJJip0Y5WC4fCM942HXtJAk7huzqla0BUyYBLBSJWBq9rOkS/8+qAXkbYBXEH3fJinPXNzZJ8U24Vw6CXXiiQys6ULVKpXOTRxLg=
+	t=1740592960; cv=none; b=NdF0XSmzxcIlY/D4hvBbFJlNMuSe0JDSevf2H0gRqXCtGmeaMdCG7E1/xEzteVQK8FkpkVE1VZ3uBJ04XAcuJGQZaSvbYGQ5auBs3iJRtgn+GP00RmDn0+PZVpakdkgjH6NmmiKFB/XAk7eaMqpd60DayS7M0ZjgR6sHdv5Uevk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740592957; c=relaxed/simple;
-	bh=jhy078aGvkWLefBnyO8DaaSrFOwLxl0Z20hUjLmS2so=;
+	s=arc-20240116; t=1740592960; c=relaxed/simple;
+	bh=+RJYxKc0WbneuRstiscX8xX/ABP7qF0Tpk0DF+AQtQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svXkK5iakbawmrdE/7kV0+gN3HTT70ShxvAMQr9DH+PkSS3JonUDSYHMXhmcsF5uwgVI2EjhIzWyE7gsCjaVnucRSeexkRUQK3qxf6MZ1YHBF2qe/PAsF/Ie/YUxbVwwJJAB4BTFSgq4+HqCBovzbQGzH7Zan4QMxwvNr1KVMVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aw4UMCvi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740592954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=saipoHpMrYA1d7u1DAL6sNSJSJ6bf1mRMJvo8EMj3Vo=;
-	b=Aw4UMCviDFlgp3PqRrEYg4qDlilpOHUJGAh/4aJhm/7dkV+sxKL0m0PZWvbKb3eTeGFRgX
-	9JgdMHm0YFTfHlmwAWYtceTPp16C4iC4t0s8bT++w0oiGBP0Cojn1b1v9Phe2AKpwvKRYt
-	st8r225f0pNzW9USv8HYPxqinI4+WDA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-643-1NuXJJeyNLC8G461PmoNOA-1; Wed,
- 26 Feb 2025 13:02:29 -0500
-X-MC-Unique: 1NuXJJeyNLC8G461PmoNOA-1
-X-Mimecast-MFC-AGG-ID: 1NuXJJeyNLC8G461PmoNOA_1740592945
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EF24418EB2D3;
-	Wed, 26 Feb 2025 18:02:22 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 77D981955BD4;
-	Wed, 26 Feb 2025 18:02:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Feb 2025 19:01:52 +0100 (CET)
-Date: Wed, 26 Feb 2025 19:01:36 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz,
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org,
-	avagin@gmail.com, benjamin@sipsolutions.net,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com,
-	hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de,
-	adobriyan@gmail.com, johannes@sipsolutions.net,
-	pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org,
-	anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
-	mike.rapoport@gmail.com
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-Message-ID: <20250226180135.GI8995@redhat.com>
-References: <20250224225246.3712295-1-jeffxu@google.com>
- <20250224225246.3712295-7-jeffxu@google.com>
- <20250226162604.GA17833@redhat.com>
- <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqcbqv8aVCZ2LOpEEutofemyFaIfMAc2he6KoSMMoMOf6cUogs6/VNDhJNUZESM0Yc+r2dvm8E2G2M3RbM0NPvwi7mXW6pl55I0PFdEjdxAL6s3J2Fu7vZxEDAJjQetfekyQmNwHKLeudusDGM5/xsUhGmLPY4E/KhMFY8R9wdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D889FC4CEE7;
+	Wed, 26 Feb 2025 18:02:37 +0000 (UTC)
+Date: Wed, 26 Feb 2025 18:02:35 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot
+ creation
+Message-ID: <Z79XOyjWOSvVGIfM@arm.com>
+References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
+ <Z7xSfVME4z2ComUm@arm.com>
+ <86ldtvr0nl.wl-maz@kernel.org>
+ <Z7yElHKrJGn8XuPS@arm.com>
+ <86jz9fqtbk.wl-maz@kernel.org>
+ <yq5aseo3gund.fsf@kernel.org>
+ <86ikozqmsl.wl-maz@kernel.org>
+ <yq5a8qptauyl.fsf@kernel.org>
+ <Z786ODqxlYNpj40l@arm.com>
+ <yq5a1pvkbqju.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yq5a1pvkbqju.fsf@kernel.org>
 
-On 02/26, Lorenzo Stoakes wrote:
->
-> On Wed, Feb 26, 2025 at 05:26:04PM +0100, Oleg Nesterov wrote:
-> > On 02/24, jeffxu@chromium.org wrote:
-> > >
-> > > Unlike other system mappings, the uprobe mapping is not
-> > > established during program startup. However, its lifetime is the same
-> > > as the process's lifetime. It could be sealed from creation.
+On Wed, Feb 26, 2025 at 10:18:21PM +0530, Aneesh Kumar K.V wrote:
+> Catalin Marinas <catalin.marinas@arm.com> writes:
+> > On Wed, Feb 26, 2025 at 03:28:26PM +0530, Aneesh Kumar K.V wrote:
+> >> Marc Zyngier <maz@kernel.org> writes:
+> >> > On Mon, 24 Feb 2025 16:44:06 +0000,
+> >> > Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
+> >> >> >> On Mon, Feb 24, 2025 at 12:24:14PM +0000, Marc Zyngier wrote:
+> >> >> >> > > On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> >> >> >> > > > This change is needed because, without it, users are not able to use MTE
+> >> >> >> > > > with VFIO passthrough (currently the mapping is either Device or
+> >> >> >> > > > NonCacheable for which tag access check is not applied.), as shown
+> >> >> >> > > > below (kvmtool VMM).
+> > [...]
+> >> >> >> > My other concern is that this gives pretty poor consistency to the
+> >> >> >> > guest, which cannot know what can be tagged and what cannot, and
+> >> >> >> > breaks a guarantee that the guest should be able to rely on.
+> > [...]
+> >> >> What if we trigger a memory fault exit with the TAGACCESS flag, allowing
+> >> >> the VMM to use the GPA to retrieve additional details and print extra
+> >> >> information to aid in analysis? BTW, we will do this on the first fault
+> >> >> in cacheable, non-tagged memory even if there is no tagaccess in that
+> >> >> region. This can be further improved using the NoTagAccess series I
+> >> >> posted earlier, which ensures the memory fault exit occurs only on
+> >> >> actual tag access
+> >> >> 
+> >> >> Something like below?
+> >> >
+> >> > Something like that, only with:
+> >> >
+> >> > - a capability informing userspace of this behaviour
+> >> >
+> >> > - a per-VM (or per-VMA) flag as a buy-in for that behaviour
+> >> 
+> >> If we’re looking for a capability based control, could we tie that up to
+> >> FEAT_MTE_PERM? That’s what I did here:
+> >> 
+> >> https://lore.kernel.org/all/20250110110023.2963795-1-aneesh.kumar@kernel.org
+> >> 
+> >> That patch set also addresses the issue mentioned here. Let me know if
+> >> you think this is a better approach
 > >
-> > Agreed, VM_SEALED should be always for the "[uprobes]" vma, regardless
-> > of config options.
->
-> If you think this ought to be the case generally, then perhaps we should
-> drop this patch from the commit and just do this separately as a
-> permanent-on thing, if you are sure this is fine + want it?
-
-See below...
-
-> An aside - we _definitely_ cannot allow this -system mapping stuff- to be
-> enabled without a config option,
-
-This is clear.
-
-But as for uprobes in particular I do think that VM_SEALED is always fine.
-
-Do we really want it? I dunno. If a task unmaps its "[uprobes]" vma it
-will crash when it hits the uprobes bp next time. Unless the probed insn
-can be emulated and it is not ret-probe. Do we really care? Again, I don't
-know.
-
-Should this change come as a separate patch? I don't understand why it should
-but I am fine either way.
-
-In short. please do what you think is right,  VM_SEALED can't hurt uprobes ;)
-
-> > 	#ifdef CONFIG_64BIT
-> > 	/* VM is sealed, in vm_flags */
-> > 	#define VM_SEALED	_BITUL(63)
-> > +	#else
-> > +	#define VM_SEALED	0
-> > 	#endif
->
-> This has been raised a few times. Jeff objects to this
-
-OK,
-
-> > and then simply
+> > From the patch linked above:
 > >
-> > 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
-> > -				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
-> > +				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
+> > | @@ -2152,7 +2162,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+> > |  		if (!vma)
+> > |  			break;
+> > | 
+> > | -		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
+> > | +		if (kvm_has_mte(kvm) &&
+> > | +		    !kvm_has_mte_perm(kvm) && !kvm_vma_mte_allowed(vma)) {
+> > |  			ret = -EINVAL;
+> > |  			break;
+> > |  		}
 > >
-> > ?
->
-> Nah you'd have to do:
->
->
-> > 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
-> 				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO
-> #ifdef CONFIG_64BIT
-> 				VM_SEALED
-> #endif
-> 				,
+> > we also have the same ABI change every time FEAT_MTE_PERM is present.
+> > TBH, I'd rather have it from the start as per the patch in this thread,
+> > irrespective of FEAT_MTE_PERM. I'm fine, however, with better exit to
+> > VMM information though.
+> 
+> The patch also does:
+> 
+> #define kvm_has_mte_perm(kvm)					\
+> 	(system_supports_notagaccess() &&				\
+> 	 test_bit(KVM_ARCH_FLAG_MTE_PERM_ENABLED, &(kvm)->arch.flags))
+> 
+> That is it depends on userspace to drive the behavior and also relies on the
+> FEAT_MTE_PERM hardware feature.
 
-Why??? With the proposed change above VM_SEALED == 0 if !CONFIG_64BIT.
+Ah, ok, so the VMM needs to explicitly opt in to FEAT_MTE_PERM and the
+slight ABI change.
 
-Oleg.
+> I was considering whether, if we're
+> introducing this capability, should we also include FEAT_MTE_PERM? since
+> adding FEAT_MTE_PERM would also require a capability to handle VM
+> migration
 
+Fine by me to tie this to FEAT_MTE_PERM. However, ignoring VM migration,
+we really only need FEAT_MTE_PERM if we have a cacheable device memory
+assigned into the guest.
+
+-- 
+Catalin
 
