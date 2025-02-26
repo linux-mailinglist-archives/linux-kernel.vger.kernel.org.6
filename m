@@ -1,157 +1,238 @@
-Return-Path: <linux-kernel+bounces-533573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E27A45C38
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:54:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A611A45C43
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83ACE175568
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D69189337F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1BE26D5B7;
-	Wed, 26 Feb 2025 10:54:23 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEAB270EA6;
+	Wed, 26 Feb 2025 10:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XUex2nyZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rT0E5ANI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC36526B08C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B4826E62C;
+	Wed, 26 Feb 2025 10:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567262; cv=none; b=FOFKQ04V4cclbgpF9YsQxpFOy0IW9KG76h3QQNKgYRghy4QT+IK3iuGtiXlUoAxNVsM3GQcKlC2SbUQ2/jrWzs47YwBhMe6G/YoYH99OY6l0io2tqnCFhBChmIcd38Bg4aEeh3aQO16KY1pMZOinVZeEj2gyjF6WFtxVVGeA7jw=
+	t=1740567266; cv=none; b=EPchBH9FG30iNceNVNljdjy9sKY0VkiacYOJzjGo/+GhO/Wex3AIJ9pe819U2yrt0R63sl0p1186xeGUMagMcycR+aw7pJ4zca/vxL15b255B/j920XcI6GOwH7V21QlEDVveL1XGnifo5v8Hf8TOrT2fQoOzC7ca7NGf7Quh64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567262; c=relaxed/simple;
-	bh=Qs2eopeLtj6FqaBsS/f9Lvq9GwF7fXrRnRy9gdlOVDw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pJNnvqjL8ULOgTs2BH54qzT/qa1CzxKyVdrZZqDj8/A/XE73381fWkWX+UE9T6IxWrZRVhmynNXBQU59EkLi3/XOZ/6BTgCXH1Q5gf4u6CgNARghivkE+LG9bZoCtjJvO9AlSxrMktKm3D5jvXyEoRnEjCVBCxHrIJiWT4HIpBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d060cfe752so54186375ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:54:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740567260; x=1741172060;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ywVTkBOTGXpD4dtX6/3aeHzuNHi338K7wvDLA2azj8=;
-        b=phQoXWFMt2tRpihQl0mpZg1dNZM+9MygM9WGsT7O06wOoWiT7N63NehytRr2fODEuY
-         URiAiIOSMdBx7MQOd4J37sspIv9tzNeiHYjUWw2gqXTex+qHOwUx0txhG3nH3yOfltv0
-         p1h2Jk5Wagk4pJWx698UZhzpU++WEexItnO6nIpSZE2eB+rCszwDDng9P7oehPd5Uw4p
-         vRyogIY2ggOZvRV4PnJWQRf7aTu8JzNJ4hAcrcECw4PmD10bN23ORQ8H7H1AxKDS+fUp
-         8pkEea4/jtGOaPP5CKA5jTWRVYAR6Q0oDjU0QHUQ7Nf1aSTYC16U0HR0/e2YG57bSwgR
-         ZGkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVRstYF9k2HxLWRcAtjlCZrsF8uWywKHmAOtbEuKc3xTEiXAyQG2V5JE2FVtYoLnTaPmR50rYIHvm4YbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyWWEkPBxSaeeqMpETHgVytlfInT8SkuoNueRODZPYCStx72UE
-	6JZmyG+t8NS+IzRz8iOaDyCdt2LV9W0T29Sd/Iz9ilEpsPkglatEew/zRp0avVATT+rKtu9LYvS
-	rUsByXyBnnVOG/d87J+DTrhhPAanNGalnAyAopl9ex4yjqi2FT7os77E=
-X-Google-Smtp-Source: AGHT+IF8gLd4yzsv1WPHl52n1M8hACs+R+LGrr6hGH0ZFK52nrRI7fUoPV6viMHZct4cOmlyoMGezzjmXyyVoIK1u1F2nsklBAC9
+	s=arc-20240116; t=1740567266; c=relaxed/simple;
+	bh=9jQi2oe4ACPxFgTZT/wfimYgKbuAA934twTRiC/0+M0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NEf3iovxdQwVNoj1Y7Rr90Bx9MocixgO96k1CI3JMdAe+Gdx21jdo3ydIIi/xQ/keCmRkicWT5HGbxj1pEwP7R4G8y98WnfZJo+lX4hiGDpkejI+qHUqZU3UfTm0IGj8kSTMBDzL6K3OHGSIwZFShQFzDX1SPra1LPoR6If/3jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XUex2nyZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rT0E5ANI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 10:54:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740567261;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1pdqb2IAcYHElMsrgqXtnTLk+Cj80ClKr57N3fKBXUw=;
+	b=XUex2nyZyAhFFiQP5854Ja7X5G5iEemjl6xnqVhIWo8xZMDyLuKx5zCdGgxbIRZlWTS7rf
+	ezmaSazyWewEwel5ASYumOAdlYPhMdfW26p2TBbYOZJl+kB8QsTS81NG1Xo/1BFMzihskU
+	FCua+yOJby4mfRdODOdS2MUoVA320IUpF5aDaeyHXLADcUP4HIWXMV/aJvxu0S83ArwabX
+	S8qUxQenrprUDVUORYOQ+IrAaO0qK6N6knOJdp4tKiqvo6kmLKS967YeFbR1p3XNujfm82
+	1ohSPfHGySMNgBhVPq9JkiiSzhxe3wigxPp185s2ZlJyz0zOykbjToBFcmnx7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740567261;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1pdqb2IAcYHElMsrgqXtnTLk+Cj80ClKr57N3fKBXUw=;
+	b=rT0E5ANI9m0c40Am56qXCbgS7XqdeLovJ9UunSZaDFXlkh0ZGmKse4D6OKVsNYDmygT1OO
+	Ln8GScduK+3TdxCA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/ibt: Optimize FineIBT sequence
+Cc: Scott Constable <scott.d.constable@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, Kees Cook <kees@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250224124200.371942555@infradead.org>
+References: <20250224124200.371942555@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e8:b0:3d1:966c:fc8c with SMTP id
- e9e14a558f8ab-3d2cb514b1emr187392555ab.17.1740567260091; Wed, 26 Feb 2025
- 02:54:20 -0800 (PST)
-Date: Wed, 26 Feb 2025 02:54:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bef2dc.050a0220.38b081.00f9.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_set_disassoc
-From: syzbot <syzbot+91d7214a5ebebe3792cf@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174056726115.10177.145025681668547446.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the x86/core branch of tip:
 
-syzbot found the following issue on:
+Commit-ID:     7359ea8e1b7fbd5b98cb72a9f596ddf67f2dc33b
+Gitweb:        https://git.kernel.org/tip/7359ea8e1b7fbd5b98cb72a9f596ddf67f2dc33b
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 24 Feb 2025 13:37:08 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 26 Feb 2025 11:41:54 +01:00
 
-HEAD commit:    e5d3fd687aac Add linux-next specific files for 20250218
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b73498580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
-dashboard link: https://syzkaller.appspot.com/bug?extid=91d7214a5ebebe3792cf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+x86/ibt: Optimize FineIBT sequence
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Scott notes that non-taken branches are faster. Abuse overlapping code
+that traps instead of explicit UD2 instructions.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef079ccd2725/disk-e5d3fd68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/99f2123d6831/vmlinux-e5d3fd68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eadfc9520358/bzImage-e5d3fd68.xz
+And LEA does not modify flags and will have less dependencies.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+91d7214a5ebebe3792cf@syzkaller.appspotmail.com
-
-wlan1: deauthenticating from 08:02:11:00:00:00 by local choice (Reason: 3=DEAUTH_LEAVING)
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 18257 at net/mac80211/mlme.c:3920 ieee80211_set_disassoc+0x1177/0x1620 net/mac80211/mlme.c:3920
-Modules linked in:
-CPU: 0 UID: 0 PID: 18257 Comm: kworker/u8:17 Not tainted 6.14.0-rc3-next-20250218-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: netns cleanup_net
-RIP: 0010:ieee80211_set_disassoc+0x1177/0x1620 net/mac80211/mlme.c:3920
-Code: 00 00 00 48 3b 84 24 a0 00 00 00 0f 85 b1 04 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 2a 4b 2d f6 90 <0f> 0b 90 eb b4 e8 1f 4b 2d f6 90 0f 0b 90 eb a9 e8 14 4b 2d f6 90
-RSP: 0018:ffffc9000b7aed20 EFLAGS: 00010293
-RAX: ffffffff8b94b3b6 RBX: 0000000000000001 RCX: ffff88802ff78000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000b7aee10 R08: ffffffff8b94a435 R09: 1ffffffff207b48e
-R10: dffffc0000000000 R11: fffffbfff207b48f R12: 0000000000000001
-R13: dffffc0000000000 R14: ffff88804fc70d80 R15: ffffc9000b7aeda8
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f651f2d7d60 CR3: 0000000068174000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ieee80211_mgd_deauth+0xa88/0x1080 net/mac80211/mlme.c:9754
- rdev_deauth net/wireless/rdev-ops.h:509 [inline]
- cfg80211_mlme_deauth+0x582/0x930 net/wireless/mlme.c:519
- cfg80211_sme_disconnect net/wireless/sme.c:667 [inline]
- cfg80211_disconnect+0x3e7/0x7e0 net/wireless/sme.c:1557
- cfg80211_netdev_notifier_call+0x1ba/0x1490 net/wireless/core.c:1540
- notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
- call_netdevice_notifiers_extack net/core/dev.c:2180 [inline]
- call_netdevice_notifiers net/core/dev.c:2194 [inline]
- __dev_close_many+0x145/0x350 net/core/dev.c:1663
- dev_close_many+0x24e/0x4c0 net/core/dev.c:1714
- dev_close+0x1c0/0x2c0 net/core/dev.c:1740
- cfg80211_shutdown_all_interfaces+0xbb/0x1d0 net/wireless/core.c:277
- ieee80211_remove_interfaces+0x108/0x700 net/mac80211/iface.c:2285
- ieee80211_unregister_hw+0x5d/0x2c0 net/mac80211/main.c:1681
- mac80211_hwsim_del_radio+0x2c4/0x4c0 drivers/net/wireless/virtual/mac80211_hwsim.c:5665
- hwsim_exit_net+0x5c1/0x670 drivers/net/wireless/virtual/mac80211_hwsim.c:6545
- ops_exit_list net/core/net_namespace.c:172 [inline]
- cleanup_net+0x812/0xd60 net/core/net_namespace.c:652
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
+Suggested-by: Scott Constable <scott.d.constable@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Link: https://lore.kernel.org/r/20250224124200.371942555@infradead.org
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/kernel/alternative.c | 61 ++++++++++++++++++++++------------
+ arch/x86/net/bpf_jit_comp.c   |  5 +--
+ 2 files changed, 42 insertions(+), 24 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 1cc0e4d..599f218 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1053,9 +1053,9 @@ early_param("cfi", cfi_parse_cmdline);
+  * __cfi_\func:					__cfi_\func:
+  *	movl   $0x12345678,%eax		// 5	     endbr64			// 4
+  *	nop					     subl   $0x12345678,%r10d   // 7
+- *	nop					     jz     1f			// 2
+- *	nop					     ud2			// 2
+- *	nop					1:   nop			// 1
++ *	nop					     jne    __cfi_\func+6	// 2
++ *	nop					     nop3			// 3
++ *	nop
+  *	nop
+  *	nop
+  *	nop
+@@ -1067,37 +1067,50 @@ early_param("cfi", cfi_parse_cmdline);
+  *
+  * caller:					caller:
+  *	movl	$(-0x12345678),%r10d	 // 6	     movl   $0x12345678,%r10d	// 6
+- *	addl	$-15(%r11),%r10d	 // 4	     sub    $16,%r11		// 4
++ *	addl	$-15(%r11),%r10d	 // 4	     lea    -0x10(%r11),%r11	// 4
+  *	je	1f			 // 2	     nop4			// 4
+  *	ud2				 // 2
+- * 1:	call	__x86_indirect_thunk_r11 // 5	     call   *%r11; nop2;	// 5
++ * 1:	cs call	__x86_indirect_thunk_r11 // 6	     call   *%r11; nop3;	// 6
+  *
+  */
+ 
+-asm(	".pushsection .rodata			\n"
+-	"fineibt_preamble_start:		\n"
+-	"	endbr64				\n"
+-	"	subl	$0x12345678, %r10d	\n"
+-	"	je	fineibt_preamble_end	\n"
+-	"fineibt_preamble_ud2:			\n"
+-	"	ud2				\n"
+-	"	nop				\n"
+-	"fineibt_preamble_end:			\n"
++/*
++ * <fineibt_preamble_start>:
++ *  0:   f3 0f 1e fa             endbr64
++ *  4:   41 81 <ea> 78 56 34 12  sub    $0x12345678, %r10d
++ *  b:   75 f9                   jne    6 <fineibt_preamble_start+0x6>
++ *  d:   0f 1f 00                nopl   (%rax)
++ *
++ * Note that the JNE target is the 0xEA byte inside the SUB, this decodes as
++ * (bad) on x86_64 and raises #UD.
++ */
++asm(	".pushsection .rodata				\n"
++	"fineibt_preamble_start:			\n"
++	"	endbr64					\n"
++	"	subl	$0x12345678, %r10d		\n"
++	"	jne	fineibt_preamble_start+6	\n"
++	ASM_NOP3
++	"fineibt_preamble_end:				\n"
+ 	".popsection\n"
+ );
+ 
+ extern u8 fineibt_preamble_start[];
+-extern u8 fineibt_preamble_ud2[];
+ extern u8 fineibt_preamble_end[];
+ 
+ #define fineibt_preamble_size (fineibt_preamble_end - fineibt_preamble_start)
+-#define fineibt_preamble_ud2  (fineibt_preamble_ud2 - fineibt_preamble_start)
++#define fineibt_preamble_ud   6
+ #define fineibt_preamble_hash 7
+ 
++/*
++ * <fineibt_caller_start>:
++ *  0:   41 ba 78 56 34 12       mov    $0x12345678, %r10d
++ *  6:   4d 8d 5b f0             lea    -0x10(%r11), %r11
++ *  a:   0f 1f 40 00             nopl   0x0(%rax)
++ */
+ asm(	".pushsection .rodata			\n"
+ 	"fineibt_caller_start:			\n"
+ 	"	movl	$0x12345678, %r10d	\n"
+-	"	sub	$16, %r11		\n"
++	"	lea	-0x10(%r11), %r11	\n"
+ 	ASM_NOP4
+ 	"fineibt_caller_end:			\n"
+ 	".popsection				\n"
+@@ -1428,15 +1441,15 @@ static void poison_cfi(void *addr)
+ }
+ 
+ /*
+- * regs->ip points to a UD2 instruction, return true and fill out target and
+- * type when this UD2 is from a FineIBT preamble.
++ * When regs->ip points to a 0xEA byte in the FineIBT preamble,
++ * return true and fill out target and type.
+  *
+  * We check the preamble by checking for the ENDBR instruction relative to the
+- * UD2 instruction.
++ * 0xEA instruction.
+  */
+ bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
+ {
+-	unsigned long addr = regs->ip - fineibt_preamble_ud2;
++	unsigned long addr = regs->ip - fineibt_preamble_ud;
+ 	u32 hash;
+ 
+ 	if (!exact_endbr((void *)addr))
+@@ -1447,6 +1460,12 @@ bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
+ 	__get_kernel_nofault(&hash, addr + fineibt_preamble_hash, u32, Efault);
+ 	*type = (u32)regs->r10 + hash;
+ 
++	/*
++	 * Since regs->ip points to the middle of an instruction; it cannot
++	 * continue with the normal fixup.
++	 */
++	regs->ip = *target;
++
+ 	return true;
+ 
+ Efault:
+diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+index f36508b..ce033e6 100644
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -417,9 +417,8 @@ static void emit_fineibt(u8 **pprog, u32 hash)
+ 
+ 	EMIT_ENDBR();
+ 	EMIT3_off32(0x41, 0x81, 0xea, hash);		/* subl $hash, %r10d	*/
+-	EMIT2(0x74, 0x07);				/* jz.d8 +7		*/
+-	EMIT2(0x0f, 0x0b);				/* ud2			*/
+-	EMIT1(0x90);					/* nop			*/
++	EMIT2(0x75, 0xf9);				/* jne.d8 .-7		*/
++	EMIT3(0x0f, 0x1f, 0x00);			/* nop3			*/
+ 	EMIT_ENDBR_POISON();
+ 
+ 	*pprog = prog;
 
