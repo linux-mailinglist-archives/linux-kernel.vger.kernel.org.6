@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-534476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2448A46772
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:08:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44D6A46793
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D26A1888D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A4917AE8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD6A223715;
-	Wed, 26 Feb 2025 16:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D5223329;
+	Wed, 26 Feb 2025 17:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QNYH2H2v"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UCMKzmC6"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFB521CA01;
-	Wed, 26 Feb 2025 16:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DFF1DE2A9;
+	Wed, 26 Feb 2025 17:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589125; cv=none; b=ZSf6HAW9id7e++tJ46t8W6v0r8TAqnn6Cj0F2k9ZsAWbzP7z4VvfIph4lv7xMYtcsMi5MF9Uf4z82w4GGDz69f8ygNuzPvXtoyyaLXaEtWYAdpismasZhApmuWkr5tkJTy8AYuqGTxCL0n5RdEn6TLd1QAo9u1I0zbZusOjp/0s=
+	t=1740589240; cv=none; b=LOV0zVpk4aKW4r6LfMkvvEBx8DPt6dQpIHCEd7hR2EED8XqCldYXSal1mOpdm9+Tvza11pg8U4cZVL7g1JIsE6rUUoytYQvQPqgDq19UgDlkgLB6SyZ8jX1SVrRFkYuORqMT2xMxqJQoSCenCqySs6uJKz7z4qPf1h2PUPrRYiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589125; c=relaxed/simple;
-	bh=Fg223SHibQKgebDMBsGFZaFDHofVBllGK7dAM65Pxp8=;
+	s=arc-20240116; t=1740589240; c=relaxed/simple;
+	bh=as/rxyivHk6qYSCy6Dl+SlKl3s4ZaumMyqnaRx29FYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=igs1vXd001Jw+N8eh5q/GFp2ziBAlEwWxkJv0WqcPChcnRKcGq+nWUUnzb76ScaovBHHIpTwfpXFlLK6QbGRSn0NuIfK/AMvxRuGsHzY9O5a6bHa9nDhIExXdhZhkWVzQ4ot8ifFXjewju9cKtKRzHbZ00i1SGDsG1MTcYR1474=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QNYH2H2v; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q7WpHM005964;
-	Wed, 26 Feb 2025 16:58:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Qqkvw5
-	sVdc4OjLjsPlTA9mIkdFACVA5E9/VNX7SLR5A=; b=QNYH2H2v2uxFzuF3CLBqmI
-	aDqSzrJJKnbPw+NbLv86zizCq4kQhLSKP5ND8LZb62B/Q6rqO3GdtCsvyS3mn38w
-	4H3AXRIRPO/c6gYdLICeco9TRc/IgWamioOkVOqZDObqQDO/MPCzkSf3YrCB1g2z
-	3oBTRAfQwFc/dGPAZwCs3S58ltICHBzx+XByYmQ/gf0CqoPTrQHg5Z8pIIJg2woW
-	ICrctI3/Ttdb1ug4cXuHzRuqnG7ztuSzXv0hIfHsNf9pQyjyU9OGO4KuFInDXZr3
-	J3+iabHam7lLJ0OBRtiMaqd8XU+5YdnsGT7clnYXvmLuMK7h0LmaqVOtso6mqDcg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451xnp2nat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 16:58:40 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QE5xIF027372;
-	Wed, 26 Feb 2025 16:58:39 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yum23amq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 16:58:39 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QGwadU10486202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 16:58:36 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DE98B20040;
-	Wed, 26 Feb 2025 16:58:35 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3C62E2004D;
-	Wed, 26 Feb 2025 16:58:35 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.171.9.246])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 26 Feb 2025 16:58:35 +0000 (GMT)
-Date: Wed, 26 Feb 2025 17:58:33 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, nrb@linux.ibm.com, seiden@linux.ibm.com,
-        nsg@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com
-Subject: Re: [PATCH v2 1/1] KVM: s390: pv: fix race when making a page
- secure
-Message-ID: <20250226175833.16a7a970@p-imbrenda>
-In-Reply-To: <0dfeabca-5c41-4555-a43b-341a54096036@redhat.com>
-References: <20250226123725.247578-1-imbrenda@linux.ibm.com>
-	<20250226123725.247578-2-imbrenda@linux.ibm.com>
-	<0dfeabca-5c41-4555-a43b-341a54096036@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=F8gBl2lqjN7m7G4E82/c/r7XAB0lJyVfhgD7ygCsV1bp1fF9iONEsrZ5ejW4N7Cp+TCFMWP1iVMrsd1lvhidn0D/PQy0yAChC2oKxdPX65rCtfEzMgOPPHBtZo3MyImn1FzIrLzJ2f7HpKHud3YM4n71EGfcf3Mh+9TrO2R766I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UCMKzmC6; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A24C71F687;
+	Wed, 26 Feb 2025 17:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740589235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a/HQt0AoDb+k3+XX8xsB7vdc/4Es82oRu2Uz9GkCQW0=;
+	b=UCMKzmC6XIXsMaNnDiavmRgUHlvzryvgemkKqBj45PmRJPGCnZxCbxYYNYPSgrxrjPWmkH
+	vJcpaViueIugGx18ze8qDeQe83r41+p5Qbn9DSFTTioYCfuT0SIgynJqM8pts6mJxagFtk
+	19qb3rysjfUwBbCWIh/LkAXFKlxpDmSJsb21fKG+XsrcrNUAwLM3FmVv41bCCJGSY8PubP
+	x6aO8qUtzNioh0ttzFtysFyxoonCtjS2dKP4oTHy6MjOFrXVoBCmlMG67VPKSetcOWq0LB
+	OdMMT03iwKOwgnPnbDYrzh2RScByD7XGyeI4s/2pzqvj1eNPpyvAFkHb93Y/fw==
+Date: Wed, 26 Feb 2025 18:00:33 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch,
+ hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
+ SFP+ module
+Message-ID: <20250226180033.260070d7@kmaincent-XPS-13-7390>
+In-Reply-To: <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
+References: <20250226141002.1214000-1-ms@dev.tdt.de>
+	<Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
+	<d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
+	<20250226162649.641bba5d@kmaincent-XPS-13-7390>
+	<b300404d2adf0df0199230d58ae83312@dev.tdt.de>
+	<20250226172754.1c3b054b@kmaincent-XPS-13-7390>
+	<daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WrNXnQvLPCPgrc_P8En33TtwvtL5axnM
-X-Proofpoint-GUID: WrNXnQvLPCPgrc_P8En33TtwvtL5axnM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=827 spamscore=0 phishscore=0
- mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260131
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekhedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemleehrggvmeelfhdttdemrggsvggtmedugehfjeemvgdviegrmedufegttdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeelhegrvgemlehftddtmegrsggvtgemudegfhejmegvvdeirgemudeftgdtpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmshesuggvvhdrthguthdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfiesl
+ hhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 26 Feb 2025 16:05:11 +0100
-David Hildenbrand <david@redhat.com> wrote:
+On Wed, 26 Feb 2025 17:51:42 +0100
+Martin Schiller <ms@dev.tdt.de> wrote:
 
-> > +int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb)
-> > +{
-> > +	struct folio *folio;
-> > +	spinlock_t *ptelock;
-> > +	pte_t *ptep;
-> > +	int rc;
-> > +
-> > +	ptep = get_locked_valid_pte(mm, hva, &ptelock);
-> > +	if (!ptep)
-> > +		return -ENXIO;  
-> 
-> You very likely need a pte_write() check we had there before, as you 
-> might effectively modify page content by clearing the page.
+> On 2025-02-26 17:27, Kory Maincent wrote:
+> > On Wed, 26 Feb 2025 16:55:38 +0100
+> > Martin Schiller <ms@dev.tdt.de> wrote:
+> >  =20
+> >> On 2025-02-26 16:26, Kory Maincent wrote: =20
+>  [...] =20
+>  [...] =20
+> >>  [...]
+> >>  [...]
+> >>  [...] =20
+>  [...] =20
+>  [...] =20
+> >>=20
+> >> I think you're getting two things mixed up.
+> >> The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
+> >> there simply is an additional 4s wait at the beginning before we start
+> >> searching for a phy. =20
+> >=20
+> > Indeed you are right, I was looking in older Linux sources, sorry.
+> > Still, the additional 4s wait seems relevant only for FS SFP, so it=20
+> > should
+> > be included in the function naming to avoid confusion.
+> >  =20
+>=20
+> You may be right for the moment. But perhaps there will soon be SFP
+> modules from other manufacturers that also need this quirk.
+>=20
+> There is also the function sfp_fixup_rollball_cc, which is currently
+> only used for modules with vendor string =E2=80=9COEM=E2=80=9D. However, =
+the function is
+> not called sfp_fixup_oem_rollball_cc.
 
-it's not really needed, but it doesn't hurt either, I'll add a check
+Indeed. As you prefer then.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
