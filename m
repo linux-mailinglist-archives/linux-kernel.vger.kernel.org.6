@@ -1,98 +1,186 @@
-Return-Path: <linux-kernel+bounces-533431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E437A45A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:29:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52261A45F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F9516D4C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA97C3B9F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D5F224255;
-	Wed, 26 Feb 2025 09:29:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB900214A67;
+	Wed, 26 Feb 2025 12:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MdEAhItm"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E282135C8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6180A214803;
+	Wed, 26 Feb 2025 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740562142; cv=none; b=H6RFugQQevRs4RkVMloFMWAg8pYI3wotxHWtF++posBd9En6CXfGcIXzyK3B5NEXAcixVKs72XZGuSj9JghY1TeyUgbRLYPqtx/xtO1KbVcXztYaz1Ignau1gCn5AToLAUHXIvwo4WOsNlwSd/oocVq95F8+sf1dSckXTVHMa+o=
+	t=1740572880; cv=none; b=tsWsO2en/oN5CzQjWe2zdKrRQtQVtd19VTLdrEyCo0ysOQOAqvetljVRKEje3QAT7IuZ1SvKAiui2hCQNF2q+71h4fE38hHvcCjJa6V2rHoNjREiV0YV75hQWcyXH5X6Fz7wQIkCvJ2QIfc3IUvON2YiaVUzNhXK3OjrQPgGEPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740562142; c=relaxed/simple;
-	bh=a+F458GU1I94B8Pd1fiZZSFktaTFIM7f8pqraQhH+8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X+YTntUTApqsgolvW+ruPFZKQkCiSKJIkKOkHRT+MfAGLCol8sLMEQe+MN4F6qDldjZhARlfpCWaqEx+uwzEl5JUIwvy0xzM1sy1osqX40PzaGiFIJisKf0rtAm0huntMD+vZaW6SlFCT/S6kuDN5X1NAug0tkeZxWZN+OASQFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2q0Q5GHWz4f3jqj
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:28:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 414CE1A0847
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:28:55 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgCXU2bV3r5naYetEw--.50393S2;
-	Wed, 26 Feb 2025 17:28:55 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	kasong@tencent.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: swap: fix build warning when CONFIG_SWAP is not set
-Date: Thu, 27 Feb 2025 02:25:11 +0800
-Message-Id: <20250226182511.592796-1-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1740572880; c=relaxed/simple;
+	bh=K9oUygm4AKDUmgMf4aFOL3Lbp7QFh/wmXeF8uUXzjec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tM7CtNEWIS2dBlhmxGRzbwHSvZ6ab/QVcDvj5iXrEEa6vZtz5m/iYX0v9x21GiVAs9Tm09GWGz8aKr6reOPI3/b5eUI3ltDc+LrTBfVsd3Vdiw9NT/KUMjBm8ElvkZaUoEwtmnW/1+2Lxds+RjJRHQ2jp+pwkV03mDc1e1znNYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MdEAhItm; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q8wODq012375;
+	Wed, 26 Feb 2025 13:27:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	hZZuGvujbz+DHcZWLDWVwgKdZX6e4AC0NKcxZ1Mlhwc=; b=MdEAhItmw3+E1u3C
+	r8HueeBOvKLTCaKleXHh1C8dodj135VyASWo0XfJ2NifRuQ+x5lYfjjzWR3X6tNZ
+	802co02i0Mxx6VYM7W6BoZCSIULZCePY/KRWEATaZLQAxf5AYkJ0yf4vhcgUHl3s
+	OmG3W/wVw4GweHAFey0xk3IMjY1X0qCo7jpD4FsoH7GScd27EdJwj2wfRnV9ZNLn
+	T6F4onw9J6qRweP5pioK2Dxie2OQQG5w26nW5KoQeoJaD7ajkK9qrFwT2+Qe41e7
+	ZZYxL9oEobWQ1SoYMT7XqbOFC2djKKvCQh73Gtl5HSr/Ui749DxYb++YCioXf4fu
+	SJFQ5A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451psv4a64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:27:41 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DA74B40051;
+	Wed, 26 Feb 2025 13:26:31 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CC916495277;
+	Wed, 26 Feb 2025 11:52:59 +0100 (CET)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
+ 2025 11:52:59 +0100
+Message-ID: <264d7fb8-06c2-4ada-82bc-4d3a7cc5e184@foss.st.com>
+Date: Wed, 26 Feb 2025 11:52:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
+ <6fc80544-6fc3-4450-a0cc-bfc740fe97bb@kernel.org>
+ <91f19306-4b31-41fe-8ad2-680b1a339204@foss.st.com>
+ <00526b1d-b753-4ee5-8f83-67d27d66a43c@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <00526b1d-b753-4ee5-8f83-67d27d66a43c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCXU2bV3r5naYetEw--.50393S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFW5JF48Xr1xGF4rArW3GFg_yoW3Grc_u3
-	s3JayrWr4kGF1xuwn2kas2qFyaga4xWr1DuFn5GF12vF15Aan5twn2gryfXry7W3Z7CrW8
-	J3W8ur4fZrnFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
-	AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
-	JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gc
-	CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
-	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
-	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
-	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
-	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
-	vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j-6pPUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
 
-Fix build warning that folio_alloc_swap is defined but not used when
-CONFIG_SWAP is not set.
+On 2/26/25 08:21, Krzysztof Kozlowski wrote:
+> On 25/02/2025 16:51, Clement LE GOFFIC wrote:
+>> On 2/25/25 14:04, Krzysztof Kozlowski wrote:
+>>> On 25/02/2025 09:48, Clément Le Goffic wrote:
+>>>> +
+>>>> +maintainers:
+>>>> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
+>>>> +
+>>>> +description: |
+>>>
+>>>
+>>> Do not need '|' unless you need to preserve formatting.
+>>
+>> Ok
+>>
+>>>> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
+>>>> +  It allows to output internal signals on SoC's GPIO.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: st,stm32mp-hdp
+>>>
+>>> There is a mess in STM SoCs. Sometimes you call SoC stm32, sometimes
+>>> stm32mp and sometimes stm32mpXX.
+>>>
+>>> Define for all your STM contributions what is the actual SoC. This
+>>> feedback was already given to ST.
+>>>
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +patternProperties:
+>>>> +  '-pins$':
+>>>> +    type: object
+>>>> +    $ref: pinmux-node.yaml#
+>>>> +
+>>>> +    properties:
+>>>> +      function:
+>>>> +        enum: [ "0", "1", "2", "3", "4", "5", "6", "7",
+>>>> +                "8", "9", "10", "11", "12", "13", "14",
+>>>> +                "15" ]
+>>>
+>>> Function which has a number is not really useful. What does it even express?
+>>
+>> As said in my previous answer, function names are very different from
+>> one platform to another. Numbers were used as string to be generic.
+>> I'll consider it in a V2.
+> 
+> What does it mean "one platform to another"? This is one platform! Is
+> this some sort of continuation of SoC compatible mess?
 
-Fixes: b79768ab943cf ("mm, swap: simplify folio swap allocation")
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- include/linux/swap.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I may used incorrectly the word platform.
+This driver is the same for the three SoC families STM32MP13, STM32MP15 
+and STM32MP25 because the hardware is mostly the same.
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 3a68da686c4e..d1f5414ea537 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -587,7 +587,7 @@ static inline int swp_swapcount(swp_entry_t entry)
- 	return 0;
- }
- 
--static int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
-+static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
- {
- 	return -EINVAL;
- }
--- 
-2.30.0
+Why mostly ?
+
+The peripheral is behaving as a mux, there are 8 HDP ports, for each 
+port there is up to 16 possible hardware signals. Numbered from 0 to 15.
+Each of this number represent a signal on the port.
+
+But the hardware signal behind the number is not the same from one SoC 
+family to another.
+As example, in STM32MP15 family the HDP is able to output GPU hardware 
+signals because the family has a GPU but in the STM32MP13 family this 
+signal is not present.
+
+The purpose of my helpers was to give a readable name to facilitate the 
+configuration in boards devicetree's. If needed I can get rid of that 
+and use only the number as string.
+
+> What are the exact functions written in datasheet?
+
+The exact functions name written in the datasheet are the ones of my 
+helper file without the HDP prefix.
+
+
+> Best regards,
+> Krzysztof
 
 
