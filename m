@@ -1,243 +1,277 @@
-Return-Path: <linux-kernel+bounces-532842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D7EA452D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:09:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC17A452D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5268E18992D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25957189A050
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DBC20B21C;
-	Wed, 26 Feb 2025 02:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1748215F60;
+	Wed, 26 Feb 2025 02:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3dw8Qjk"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u0yVGzYi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eet465dc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XtO52lJP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k0wvKTl8"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1662419F13F;
-	Wed, 26 Feb 2025 02:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101672153FE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740535760; cv=none; b=ZX4l/+pSY8/aVw1Zn0XZj6CZMMY5ERspTmIya5QnNAV3TTQrtaY8Wte5k9AyULTO2inuN6t5r2iQr7xRDwXaDSkw3hXqEbqRYO7T/wYOXi1Rrt8Kbk1Bx7Z0gGHQKdGPeXUCt54fdxQZzxdkwNMV9CdjZEHZWWAfJAIAwTg1Um8=
+	t=1740535775; cv=none; b=T/xy/uO0L4Tq9mxJ7tVFqfcI4feaJFS3wVnStIIjhwPLBmf3ycv+UoPPOcWcwMKBDWtaYVJ/tSYp1V58vYpXNxt/LuSELz16YqF0c1C+U4HyKYV3vO1TtP9LmAt4bKZIkwKXT3UhRrT0R4Q1hODGeIsna29WxQbvUDvfgolLLeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740535760; c=relaxed/simple;
-	bh=IEbds4yphJOI94QKHcQ3WECEM4kLPwgihOa8v/Lflno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5+HWgNQEtbyy75yZjvx7CBuhf/vSD6ry8UUrc86vgJ9ox00A/uNAs0c4jWJVB6FN3y5tLuNMTr7G7oU02g6DxmS/r4XZsEsjnLX9sSpi+yWV6VKlyMKwQCN+aSsmigyVevxDRmO5Rri1r9bx9BC2MRaOcvD+fU7GLp070Fne10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3dw8Qjk; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e04f87584dso9519627a12.3;
-        Tue, 25 Feb 2025 18:09:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740535757; x=1741140557; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jNDX0bDy82gk9QmnrN58DpzxWTxMxMF4PEgthtYO/y8=;
-        b=L3dw8QjkDEd+mikXhB0AoirPeK6EdAFYgTb3OIJ0Ni+JAkRwQE27xAl+McP/yPQDKg
-         x3Tz3YWoZXW8b8FCBAYyac5eCAXfx4IeKdeXzZLmiwkKf/IBKRc9fboEB/zJtXIeYnwk
-         O7HmnqVLVUlxaTtj//PQvrFodTlQgKydcWI2hNcB4kEnArA3x+TwcQ0P6QmBrERxl8RQ
-         oEVi1jgP55SdvFH8kk0Z+YMpnP7x2P2p3yvcw/s4gJOVo4sJh8GYE+RqJ5vEVH5XmXDo
-         S0TUKsu5AX8lzjb104uVn/lHYZ2DqBQNI72yafS0fGnr/0cFUhYkLhjhNLV1bnjCc4tg
-         x2PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740535757; x=1741140557;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jNDX0bDy82gk9QmnrN58DpzxWTxMxMF4PEgthtYO/y8=;
-        b=FtfPvIa13dVGCioIZ7B2QkqM4HTp0XwhM0114NWkxSHZM4ZYXnjYsCjLwYEfm4xnaR
-         Gl4mR4jySKXZfPU15bvbJHGpSr+ntHL9bCk33gXOjfyYPtNLQi7KmQeBvbAQMT0IVP/0
-         909PVzQd5Zc6GXhRcriJgZ1LP+dHhmQLg/DhVDF2YcXkIr5OC7+Cy2Df+D8blsMtfO+m
-         FxBGX8SGlcVO4LVNrwuU/fQ5WNAcIwYIRDijjRq/7mZ55Ru0Sa7hv9avPwH+Xs0kTvvC
-         yK33DbnfMoLcslugiyz3UoMxWOkHown1Yh3iwrwhdR89QcTAgfyMn1DjEsv4+Xy80XGw
-         JWqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIEgSQfW9HxW6Sn0D10B2IJbAda7YFs5NQMn2s2MlQQIGxtjWXMLX07iTbMZTGo48IIjtRQjD2FNzb@vger.kernel.org, AJvYcCUoAohxHfwkuRxatq5H5zatDdDea9pvX+9DJlSzN+uDFdS5ig0Bd2gCayZ0BMHe32OdHf/XgK7FWi5+QC0n@vger.kernel.org, AJvYcCW7bW6EUZK7CtA6/gjkO5CoPTgH+ZATbw76hjXSPd7LrH4Klu+5ABWrHqU5Bygvrki/kmr+hmMJ2hOc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJf54fckw4ADKwmeC3SztW1K9w32f/jX6AyFM887Hzm9a2VOY2
-	FgNJ7QVvc6iizJOvGhTfCnjuk38bv6KUAmHQPdu+5SyP++HPhqn1
-X-Gm-Gg: ASbGncuxuVIYpuH1dfTUw/H5X5ooynFZYoHhc+2Jv8banW1O+YvN+xmdTMgP+z4HOFn
-	dUw4q8TkY7qzQmNGmLnDrq10/VJUh2BmZ84q6Sf2HKTcRHEVtAIM/2JTHtxRM0PHMuipzdX4lyr
-	FSeW/G8k3GqbemwsY+wmROEtC9kzcrYvJcpi1nn3Cx+QwOPUxcB05GkR1n9JJZtzfvOS9fHwG5t
-	TVzF0YPicsPqOEAgvAEhXKVOUL8Dd5mxzaQ3PQ5m0JMvShL8xT7Xoavn6Z7xPqnQBkpnpJLQNV8
-	2L8vXfo3xX4EDHhyMgARcnfiXA==
-X-Google-Smtp-Source: AGHT+IGRtYD7rWXN/Sb7N5YCwL4iwg6Gy2cLXak4su8dMR+fikHn63505aewDuiYmopReDoTjLpqLQ==
-X-Received: by 2002:a05:6402:5508:b0:5dc:cc02:5d25 with SMTP id 4fb4d7f45d1cf-5e4a0d71d15mr1703278a12.11.1740535757056;
-        Tue, 25 Feb 2025 18:09:17 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e461f3e675sm1976282a12.72.2025.02.25.18.09.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Feb 2025 18:09:16 -0800 (PST)
-Date: Wed, 26 Feb 2025 02:09:15 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 02/14] memblock: add MEMBLOCK_RSRV_KERN flag
-Message-ID: <20250226020915.ytxusrrl7rv4g64l@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-3-rppt@kernel.org>
- <20250218155004.n53fcuj2lrl5rxll@master>
- <Z7WHL_Xqgoln9oLg@kernel.org>
- <20250224013131.fzz552bn7fs64umq@master>
- <Z711VP45tjBi0kwx@kernel.org>
+	s=arc-20240116; t=1740535775; c=relaxed/simple;
+	bh=NSHYMvLkdyKWlrJ8TUrBFvBlFGqXUq8fzgDW+/N42tQ=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cDep9GQ60oVxnM0O194ZL/ZpsJrFcdl/PCelL5j2NWOV9sVQi95/B1TEZC7erW+ce/99GYrz/+sLKcH/gVehboYQ3bJ00rKBkPZNYrrIVL9GRBTlCf+nN77uO7byL8VN0XuXm8P7mTBIkUO9eqgu1ctDlKDW4Hgt55a0hzdlpSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u0yVGzYi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eet465dc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XtO52lJP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k0wvKTl8; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EA1BB1F387;
+	Wed, 26 Feb 2025 02:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740535771; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSHYMvLkdyKWlrJ8TUrBFvBlFGqXUq8fzgDW+/N42tQ=;
+	b=u0yVGzYiNkzoEPIVHZee60sXFj3ne+Wb8tPzwZ/NcZWX1ofnfNRGRJwIXcAb9D/IDMGyb/
+	usUaRMHuPkFExNna4bYaKzoK+yUhpgWHHy3u+WOTuKI/FFaPgHGWzE79KiJGQruftUWdpU
+	x83Pz3gK8Sl5gqJalcZ0usKWFh24ZfY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740535771;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSHYMvLkdyKWlrJ8TUrBFvBlFGqXUq8fzgDW+/N42tQ=;
+	b=eet465dcLupY2TpMQbmmQdvX+TDfghJ8aIFuG7/Cr1OyR05t8xUbytdq1Ic3lU5zNdpoai
+	tKqVPW+naUF6X/Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XtO52lJP;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=k0wvKTl8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740535770; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSHYMvLkdyKWlrJ8TUrBFvBlFGqXUq8fzgDW+/N42tQ=;
+	b=XtO52lJPWuBEyOccT4EnXjjeFJ8fOtInDyKUUA+yznmb22nEwsuDzq0wTYEAhVOWZ4Ej4n
+	c81NWXZ7ui/GzQeXRfXCxgGwwyVF1wx9qjPBVvVe7ThQ7GrTCxaP31V4kPpim4xu6ClB1C
+	fST4cM1wVZ+Udh/RiZIS+H0sLKady7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740535770;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSHYMvLkdyKWlrJ8TUrBFvBlFGqXUq8fzgDW+/N42tQ=;
+	b=k0wvKTl8JYtMrGy37fuIOg7D7oNXeJY52zKjSvtUfDhxeGoKL9/5A72/9kHcQIhk4UAB76
+	Ioq34eDDLVWaC1AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E0BC213404;
+	Wed, 26 Feb 2025 02:09:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C85nJNJ3vmdDXgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 26 Feb 2025 02:09:22 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z711VP45tjBi0kwx@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From: "NeilBrown" <neilb@suse.de>
+To: "Trond Myklebust" <trondmy@hammerspace.com>
+Cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "xiubli@redhat.com" <xiubli@redhat.com>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,
+ "okorniev@redhat.com" <okorniev@redhat.com>,
+ "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+ "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>,
+ "anna@kernel.org" <anna@kernel.org>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
+ "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
+ "richard@nod.at" <richard@nod.at>,
+ "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+ "senozhatsky@chromium.org" <senozhatsky@chromium.org>
+Subject:
+ Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+In-reply-to: <d4aaba8c09f68d8a8264474ce81b9e818eaa60d7.camel@hammerspace.com>
+References:
+ <>, <d4aaba8c09f68d8a8264474ce81b9e818eaa60d7.camel@hammerspace.com>
+Date: Wed, 26 Feb 2025 13:09:19 +1100
+Message-id: <174053575968.102979.1033896985966452059@noble.neil.brown.name>
+X-Rspamd-Queue-Id: EA1BB1F387
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,redhat.com,gmail.com,vger.kernel.org,oracle.com,sipsolutions.net,szeredi.hu,cambridgegreys.com,suse.cz,talpey.com,nod.at,lists.infradead.org,lists.linux.dev,chromium.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Tue, Feb 25, 2025 at 09:46:28AM +0200, Mike Rapoport wrote:
->On Mon, Feb 24, 2025 at 01:31:31AM +0000, Wei Yang wrote:
->> On Wed, Feb 19, 2025 at 09:24:31AM +0200, Mike Rapoport wrote:
->> >Hi,
->> >
->> >On Tue, Feb 18, 2025 at 03:50:04PM +0000, Wei Yang wrote:
->> >> On Thu, Feb 06, 2025 at 03:27:42PM +0200, Mike Rapoport wrote:
->> >> >From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->> >> >
->> >> >to denote areas that were reserved for kernel use either directly with
->> >> >memblock_reserve_kern() or via memblock allocations.
->> >> >
->> >> >Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->> >> >---
->> >> > include/linux/memblock.h | 16 +++++++++++++++-
->> >> > mm/memblock.c            | 32 ++++++++++++++++++++++++--------
->> >> > 2 files changed, 39 insertions(+), 9 deletions(-)
->> >> >
->> >> >diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->> >> >index e79eb6ac516f..65e274550f5d 100644
->> >> >--- a/include/linux/memblock.h
->> >> >+++ b/include/linux/memblock.h
->> >> >@@ -50,6 +50,7 @@ enum memblock_flags {
->> >> > 	MEMBLOCK_NOMAP		= 0x4,	/* don't add to kernel direct mapping */
->> >> > 	MEMBLOCK_DRIVER_MANAGED = 0x8,	/* always detected via a driver */
->> >> > 	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
->> >> >+	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
->> >> 
->> >> Above memblock_flags, there are comments on explaining those flags.
->> >> 
->> >> Seems we miss it for MEMBLOCK_RSRV_KERN.
->> >
->> >Right, thanks!
->> > 
->> >> > 
->> >> > #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
->> >> >@@ -1459,14 +1460,14 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
->> >> > again:
->> >> > 	found = memblock_find_in_range_node(size, align, start, end, nid,
->> >> > 					    flags);
->> >> >-	if (found && !memblock_reserve(found, size))
->> >> >+	if (found && !__memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN))
->> >> 
->> >> Maybe we could use memblock_reserve_kern() directly. If my understanding is
->> >> correct, the reserved region's nid is not used.
->> >
->> >We use nid of reserved regions in reserve_bootmem_region() (commit
->> >61167ad5fecd ("mm: pass nid to reserve_bootmem_region()")) but KHO needs to
->> >know the distribution of reserved memory among the nodes before
->> >memmap_init_reserved_pages().
->> > 
->> >> BTW, one question here. How we handle concurrent memblock allocation? If two
->> >> threads find the same available range and do the reservation, it seems to be a
->> >> problem to me. Or I missed something?
->> >
->> >memblock allocations end before smp_init(), there is no possible concurrency.
->> > 
->> 
->> Thanks, I still have one question here.
->> 
->> Below is a simplified call flow.
->> 
->>     mm_core_init()
->>         mem_init()
->>             memblock_free_all()
->>                 free_low_memory_core_early()
->>                     memmap_init_reserved_pages()
->>                         memblock_set_node(..., memblock.reserved, )   --- (1)
->>                     __free_memory_core()
->>         kmem_cache_init()
->>             slab_state = UP;                                          --- (2)
->> 
->> And memblock_allloc_range_nid() is not supposed to be called after
->> slab_is_available(). Even someone do dose it, it will get memory from slab
->> instead of reserve region in memblock.
->> 
->> From the above call flow and background, there are three cases when
->> memblock_alloc_range_nid() would be called:
->> 
->>   * If it is called before (1), memblock.reserved's nid would be adjusted correctly.
->>   * If it is called after (2), we don't touch memblock.reserved.
->>   * If it happens between (1) and (2), it looks would break the consistency of
->>     nid information in memblock.reserved. Because when we use
->>     memblock_reserve_kern(), NUMA_NO_NODE would be stored in region.
->> 
->> So my question is if the third case happens, would it introduce a bug? If it
->> won't happen, seems we don't need to specify the nid here?
->
->We don't really care about proper assignment of nodes between (1) and (2)
->from one side and the third case does not happen on the other side. Nothing
->should call membloc_alloc() after memblock_free_all(). 
->
+On Tue, 25 Feb 2025, Trond Myklebust wrote:
+> On Mon, 2025-02-24 at 14:09 +1100, NeilBrown wrote:
+> > On Mon, 24 Feb 2025, Al Viro wrote:
+> > > On Mon, Feb 24, 2025 at 12:34:06PM +1100, NeilBrown wrote:
+> > > > On Sat, 22 Feb 2025, Al Viro wrote:
+> > > > > On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
+> > > > >=20
+> > > > > > +In general, filesystems which use d_instantiate_new() to
+> > > > > > install the new
+> > > > > > +inode can safely return NULL.=C2=A0 Filesystems which may not
+> > > > > > have an I_NEW inode
+> > > > > > +should use d_drop();d_splice_alias() and return the result
+> > > > > > of the latter.
+> > > > >=20
+> > > > > IMO that's a bad pattern, _especially_ if you want to go for
+> > > > > "in-update"
+> > > > > kind of stuff later.
+> > > >=20
+> > > > Agreed.=C2=A0 I have a draft patch to change d_splice_alias() and
+> > > > d_exact_alias() to work on hashed dentrys.=C2=A0 I thought it should
+> > > > go after
+> > > > these mkdir patches rather than before.
+> > >=20
+> > > Could you give a braindump on the things d_exact_alias() is needed
+> > > for?
+> > > It's a recurring headache when doing ->d_name/->d_parent audits;
+> > > see e.g.
+> > > https://lore.kernel.org/all/20241213080023.GI3387508@ZenIV/=C2=A0for
+> > > related
+> > > mini-rant from the latest iteration.
+> > >=20
+> > > Proof of correctness is bloody awful; it feels like the primitive
+> > > itself
+> > > is wrong, but I'd never been able to write anything concise
+> > > regarding
+> > > the things we really want there ;-/
+> > >=20
+> >=20
+> > As I understand it, it is needed (or wanted) to handle the
+> > possibility
+> > of an inode becoming "stale" and then recovering.=C2=A0 This could happen,
+> > for example, with a temporarily misconfigured NFS server.
+> >=20
+> > If ->d_revalidate gets a NFSERR_STALE from the server it will return
+> > '0'
+> > so lookup_fast() and others will call d_invalidate() which will
+> > d_drop()
+> > the dentry.=C2=A0 There are other paths on which -ESTALE can result in
+> > d_drop().
+> >=20
+> > If a subsequent attempt to "open" the name successfully finds the
+> > same
+> > inode we want to reuse the old dentry rather than create a new one.
+> >=20
+> > I don't really understand why.=C2=A0 This code was added 20 years ago
+> > before
+> > git.
+> > It was introduced by
+> >=20
+> > commit 89a45174b6b32596ea98fa3f89a243e2c1188a01
+> > Author: Trond Myklebust <trond.myklebust@fys.uio.no>
+> > Date:=C2=A0=C2=A0 Tue Jan 4 21:41:37 2005 +0100
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0 VFS: Avoid dentry aliasing problems in filesyste=
+ms like NFS,
+> > where
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inodes may be mark=
+ed as stale in one instance (causing the
+> > dentry
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to be dropped) the=
+n re-enabled in the next instance.
+> > =C2=A0=C2=A0=C2=A0=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0 Signed-off-by: Trond Myklebust <trond.myklebust@=
+fys.uio.no>
+> >=20
+> > in history.git
+> >=20
+> > Trond: do you have any memory of this?=C2=A0 Can you explain what the
+> > symptom
+> > was that you wanted to fix?
+> >=20
+> > The original patch used d_add_unique() for lookup and atomic_open and
+> > readdir prime-dcache.=C2=A0 We now only use it for v4 atomic_open.=C2=A0 =
+Maybe
+> > we
+> > don't need it at all?=C2=A0 Or maybe we need to restore it to those other
+> > callers?=20
+> >=20
+>=20
+> 2005? That looks like it was trying to deal with the userspace NFS
+> server. I can't remember when it was given the ability to use the inode
+> generation counter, but I'm pretty sure that in 2005 there were plenty
+> of setups out there that had the older version that reused filehandles
+> (due to inode number reuse). So you would get spurious ESTALE errors
+> sometimes due to inode number reuse, sometimes because the filehandle
+> fell out of the userspace NFS server's cache.
 
-My point is if no one would call memblock_alloc() after memblock_free_all(),
-which set nid in memblock.reserved properly, it seems not necessary to do
-__memblock_reserve() with exact nid during memblock_alloc()? 
+So this was likely done to work-around known weaknesses in NFS servers
+at the time.
 
-As you did __memblock_reserve(found, size, nid, MEMBLOCK_RSRV_KERN) in this
-patch.
+The original d_add_unique() was used in nfs_lookup() nfs_atomic_lookup()
+and nfs_readdir_lookup() but the current descendent d_exact_alias() is
+only used in _nfs4_open_and_get_state() called only by nfs4_do_open()
+which is only used in nfs4_atomic_open() and nfs4_proc_create().
 
->But it's easy to make the window between (1) and (2) disappear by replacing
->checks for slab_is_available() in memblock with a variable local to
->memblock.
-> 
->> -- 
->> Wei Yang
->> Help you, Help me
->
->-- 
->Sincerely yours,
->Mike.
+So the usage in 'lookup' and 'readdir' have fallen by the wayside with
+no apparent negative consequences. =20
+The old NFS servers have probably been fixed.
 
--- 
-Wei Yang
-Help you, Help me
+So do you have any concerns with us discarding d_exact_alias() and only
+using d_splice_alias() in _nfs4_open_get_state() ??
+
+Thanks,
+NeilBrown
+
 
