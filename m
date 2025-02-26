@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-532734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB9AA4519F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C7AA451A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCD6179AED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E902C179C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FF0142E67;
-	Wed, 26 Feb 2025 00:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GudRu/hJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136421494C9;
+	Wed, 26 Feb 2025 00:42:14 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B1D79D2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B1383A5;
+	Wed, 26 Feb 2025 00:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740530416; cv=none; b=WzBtLSVUrhUsxS2s4Iucav12nxG0gAh8QvOF11iDPDogW7VcV7Tx5em9mBv3Vap8TxHgpzXaXNnr1VlwTTTsNnaFuiVkuqBknGVj8PcanyHxXfFnrgcFYdK5b60X4DOT1MBEVRnjIyjrUpm9AL3LRD2vCLGoviip92cAoKhl1Fk=
+	t=1740530533; cv=none; b=f7hgIp0set51F55HYK3TKazTN5CpzlfHhrpProVLGPVz3GWSTEsxvtwjPn+Ue64Af8mlza1PNcBqDpIsPASDctWKD+304uWXEDr1Vl+b+UcJ5+7KlWZNVZ8Yhh/sqpCZRUSXBLGR+Sgh4rKg1OGIPwdnT+2yK2MJ03ywfkK5BF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740530416; c=relaxed/simple;
-	bh=uk2Uim0gU+hjB0BMRQBeSM98fROd/0txsPkca7sCdbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgyC8VjHpNtzLusJNgWk/4H01raFlDpdtH/ncsmUj3MuRTMTXO9jDkN+S9pbHNQpfVcmcedX88a5pMNtuEdYgqVYbG+7ie8laL9O2isjAE1NVMDtqcI9TjRO2kPOYZoGe0LkXo14YY1KNiEnI27BtHVznQCRVDsXJVYP3AU0bAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GudRu/hJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740530413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/fLOI8OoddJLVPbWF8PdboZeiEPg5BhgTCWlbYEUGLE=;
-	b=GudRu/hJjK5P9q7AOo99AbLmZMKbXpmV4DUF/+UpjpCF2gKP6IdiIXga0jBOu3+M1C8rDL
-	MZMQPDW2AtPiUghxT4sJ7fDkMP27uiN57RFHr+Q86f9uShYePNAhiw27VYwirB02YrIRGA
-	gSKfbTwIHJreasvQ5blPNVKD+H/PKx8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-540--42mYKK8MTS4avnePE08_Q-1; Tue,
- 25 Feb 2025 19:40:10 -0500
-X-MC-Unique: -42mYKK8MTS4avnePE08_Q-1
-X-Mimecast-MFC-AGG-ID: -42mYKK8MTS4avnePE08_Q_1740530408
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	s=arc-20240116; t=1740530533; c=relaxed/simple;
+	bh=UWPU2G9kLDNS6nKvBYXIylw9swDhkp6TjVyIYMZ2kAA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XegQiI1VWZlSjoEM2FCnReDzPVLjNmeQAJj8vMuBSKPYZhu4n0LyZwPzTjYTvrQ/KgEjoZF2+lck8zlr2Lqub/2wjeEg3ptSI7/UTTy+BFf2VWcv6dKry6EolAo29XdUbaaa9jRIE5kkZOYJq0+Td0zsnDUkn7y5fSC3vnxRtn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.55.252])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24DDB180087A;
-	Wed, 26 Feb 2025 00:40:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFD39300018D;
-	Wed, 26 Feb 2025 00:40:03 +0000 (UTC)
-Date: Wed, 26 Feb 2025 08:39:59 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-Message-ID: <Z75i31INh5DAfW+R@MiWiFi-R3L-srv>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-3-chenste@linux.microsoft.com>
- <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
- <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
- <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
- <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 42D0B343295;
+	Wed, 26 Feb 2025 00:42:04 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
+Date: Wed, 26 Feb 2025 08:41:16 +0800
+Message-Id: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACxjvmcC/2XQTU7DMBAF4KtUXmNkj/+z4h6IRWyP04hSFyeNQ
+ FXvjpMKSJTlWPqe38yNDFh6HEhzuJGCUz/0+VwH83Qg4dieO6R9rDMBBpJZsJQJ+s5pd+kz1dw
+ nB8kxAYFUcCmY+q8l7PXtMRf8vNbM8fFIfDsgDfnjox+bg4gGomaiTa2Bmq0YR8eMRoyaI1OCC
+ +EwWbLu0hxqE8WAm0eHMr8PNOVrCXg6UaustW0E7mLbTILMPY79MObyvew48aXIso5jcr3OxCm
+ jmhlAjxhaZC8dnsecn3PplpwJ/iyvH2wsVAtWSpkiAA9xZ8XKgtpYMVvjvfFS8qhhZ+WvrScCv
+ rF1Ayq15MGpwLiTO6v+7Xy0tVVLZy0wCDRem53VKwtiY3W10QPKNiImHjb2fr//AGAAuDhZAgA
+ A
+X-Change-ID: 20240828-03-k1-gpio-61bf92f9032c
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>, 
+ Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4477; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=UWPU2G9kLDNS6nKvBYXIylw9swDhkp6TjVyIYMZ2kAA=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnvmNMqLtiu2OxpFDZQX22A2YH993qpWDZMZ81I
+ xst+pizDOCJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZ75jTF8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277ZsND/9S2mioO4CNFsRhPU
+ ucm7rw+lbP1rfXfp8FFlSa2Ot6SOvKNE4PoPpiOSymGsbgx1/DWV/LPPvo6sT9bam+n6y81iCmz
+ rV/y/SOm5zfhubkwid5Gv2ix3vZeXTJF8sQ5UsN0KdxBp+1JgR1idnbCtg8B2mS7OEoLdTbFGry
+ NqAOdsJUur1K1dB9K63nfN6gxBoqVtMq2mWnjRucKk8+a0/K/5eBSMuzWt4WklxmUj8R+3sCrOp
+ jaAi4gAJSmZpwdmKJAJ3ZyQOq5FG+DUTrkKAtR5pQwGVqhH+xye6pKTuHT8+HnB3AnKFFaRyxkx
+ roW7tptC38IPpUQhJmdNwgoPqqZd0izS7Xvud9DpRstwSgdUDMct4ff6Vgl9ZZq3D8HFHBqSZMC
+ Ja8/SlDSQZPBl72+RfDvtURavZR4aqiHq9Tp4c/DGjN4LD2FnviKMeHeT8OZbx3G//8zKn0Gf7N
+ Yc0u1L1SaxZLueV8TnxS02Y6ehY6IAahLhQAMtwOq0mZHs3K4/TJHyaDzNfsiLylFS54YPVc5hg
+ YbHmSJcAoIdaPw4IfmCK24gCDQjcoOyqY2bsm8m/56ySxWv3uHDaT9Saf9mhLqFA8u4evxWJCH3
+ o8r6TDtQoULiWFS+JUPq2R8fEU+NutsO1vYFSfZHbzqD1w7YTbO1rsB8LPX/2bJBj1Vg==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On 02/25/25 at 10:35am, steven chen wrote:
-> On 2/24/2025 4:18 PM, Baoquan He wrote:
-> > On 02/24/25 at 03:05pm, steven chen wrote:
-> > > On 2/23/2025 10:14 PM, Baoquan He wrote:
-> > > > Hi Steve, Mimi,
-> > > > 
-> > > > On 02/18/25 at 02:54pm, steven chen wrote:
-> > > > > Currently, the mechanism to map and unmap segments to the kimage
-> > > > > structure is not available to the subsystems outside of kexec.  This
-> > > > > functionality is needed when IMA is allocating the memory segments
-> > > > > during kexec 'load' operation.  Implement functions to map and unmap
-> > > > > segments to kimage.
-> > > > I am done with the whole patchset understanding. My concern is if this
-> > > > TPM PCRs content can be carried over through newly introduced KHO. I can
-> > > > see that these patchset doesn't introduce too much new code changes,
-> > > > while if many conponents need do this, kexec reboot will be patched all
-> > > > over its body and become ugly and hard to maintain.
-> > > > 
-> > > > Please check Mike Rapoport's v4 patchset to see if IMA can register
-> > > > itself to KHO and do somthing during 2nd kernel init to restore those
-> > > > TPM PCRs content to make sure all measurement logs are read correctly.
-> > > > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-> > > > 
-> > > > Thanks
-> > > > Baoquan
-> > > Hi Baoquan,
-> > > 
-> > > For IMA, it appears that there are no current issues with TPM PCRs after a
-> > > kernel soft reboot.
-> > I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
-> > kernel.
-> > 
-> > > This patches is used to get currently missed IMA measurements during the
-> > > kexec process copied to new kernel after the kernel soft reboot. I think
-> > > it's ok to leave it at current location: it will be easy to maintain for
-> > > IMA.
-> > Yeah, but I am saying this patchset increase unnecessary code
-> > complexity in kexec code maintaining.
-> > 
-> > > Overall, for these patches, do you see any major blockers for kexec?
-> > > 
-> > > If you have any specific concerns or need further details, please let me
-> > > know.
-> > I have no concerns for this patchset implementation itself, I saw you using
-> > vmap to maping the possible scattered source pages smartly and taking
-> > the mapped buffer pointers to update later duing kexec jumping. That's very
-> > great and clever method. BUT I am concerned about the solution, if we
-> > can make use of the existed way of KHO to implement it more simply. Could
-> > you please do investigation?
-> 
-> Hi Baoquan,
-> 
-> I will conduct an investigation. Thank you for your comments.
+The gpio controller of K1 support basic GPIO functions,
+which capable of enabling as input, output. It can also be used
+as GPIO interrupt which able to detect rising edge, falling edge,
+or both. There are four GPIO ports, each consisting of 32 pins and
+has indepedent register sets, while still sharing IRQ line and clocks.
 
-Thanks a lot, Steven.
+The GPIO controller request the clock source from APBC block,
+In this series, I haven't added the clock support, but plan
+to fix it after clock driver is merged.
+
+Due to first three GPIO ports has interleave register settings, some
+resources (IRQ, clock) are shared by all pins.
+
+The GPIO docs of K1 SoC can be found here, chapter 16.4 GPIO [1]
+
+Note, this patch is rebased to v6.14-rc1.
+
+This patch series has been tested on Bananapi-F3 board,
+with following GPIO cases passed:
+ 1) gpio input
+ 2) gpio output - set to high, low
+ 3) gpio interrupt - rising trigger, falling trigger, both edge trigger
+
+This version should resolve DT related concern in V4, and register each bank as
+indepedent gpio chip in driver, no more sub children gpio DT node needed.
+
+One problem is still not resolved, the interrupt cells parsing isn't correct.
+but it works if request gpio irq via gpiod_get() + gpiod_to_irq()
+
+Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf [1]
+Link: https://lore.kernel.org/all/20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org [2]
+Link: https://lore.kernel.org/all/20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org/ [3]
+Link: https://lore.kernel.org/all/20250218-gpio-ranges-fourcell-v1-0-b1f3db6c8036@linaro.org [4]
+Link: https://lore.kernel.org/all/20250225-gpio-ranges-fourcell-v3-0-860382ba4713@linaro.org [5]
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+Changes in v7:
+- dt-binding: fix 80 column, drop unneeded dependencies
+- tested with patch v3 of "gpiolib: of: Handle threecell gpios" [5]
+- collect review tags
+- Link to v6: https://lore.kernel.org/r/20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org
+
+Changes in v6:
+- rebase to threecell gpio patch which proposed by LinusW at [4], 
+  drop unneeded *xlate(), *add_pin_range() function
+- add SPACEMIT prefix to macro
+- adjust register comments
+- drop 'index' member, instead calculate from offset
+- add IRQCHIP_SKIP_SET_WAKE as gpio doesn't support irq wake up
+- drop #ifdef CONFIG_OF_GPIO
+- move interrupt mask disabling/enabling into irq_*mask()
+- Link to v5: https://lore.kernel.org/r/20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org
+
+Changes in v5:
+- export add_pin_range() from gpio core, support to add custom version
+- change to 3 gpio cells, model to <bank number>, <bank offset>, <gpio flag>
+- fold children DT nodes into parent
+- Link to v4: https://lore.kernel.org/r/20250121-03-k1-gpio-v4-0-4641c95c0194@gentoo.org
+
+Changes in v4:
+- gpio: re-construct gpio as four independent ports, also leverage gpio mmio API
+- gpio interrupt: convert to generic gpio irqchip
+- Link to v3: https://lore.kernel.org/r/20241225-03-k1-gpio-v3-0-27bb7b441d62@gentoo.org
+
+Changes in v3:
+- dt: drop ranges, interrupt-names property
+- Link to v2: https://lore.kernel.org/r/20241219-03-k1-gpio-v2-0-28444fd221cd@gentoo.org
+
+Changes in v2:
+- address dt-bindings comments, simplify example
+- rebase to 6.13-rc3 
+- Link to v1: https://lore.kernel.org/r/20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org
+
+---
+Yixun Lan (4):
+      dt-bindings: gpio: spacemit: add support for K1 SoC
+      gpio: spacemit: add support for K1 SoC
+      riscv: dts: spacemit: add gpio support for K1 SoC
+      riscv: dts: spacemit: add gpio LED for system heartbeat
+
+ .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml |  79 ++++++
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  11 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   3 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |  15 ++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-spacemit-k1.c                    | 277 +++++++++++++++++++++
+ 7 files changed, 394 insertions(+)
+---
+base-commit: 3d72d603afa72082501e9076eed61e0531339ef8
+change-id: 20240828-03-k1-gpio-61bf92f9032c
+prerequisite-change-id: 20250217-gpio-ranges-fourcell-85888ad219da:v3
+prerequisite-patch-id: 9d4c8b05cc56d25bfb93f3b06420ba6e93340d31
+prerequisite-patch-id: 7949035abd05ec02a9426bb17819d9108e66e0d7
+
+Best regards,
+-- 
+Yixun Lan
 
 
