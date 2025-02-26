@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-535151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA165A46F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD93A46F96
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC833AF274
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76593AF830
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EA525F985;
-	Wed, 26 Feb 2025 23:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71E328137A;
+	Wed, 26 Feb 2025 23:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6joGw31"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMnQGyMG"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E58A2620E4;
-	Wed, 26 Feb 2025 23:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D423C2620E5;
+	Wed, 26 Feb 2025 23:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613389; cv=none; b=MOzi9dvBK0UZ67igHEdFj5xEtGuFHUBT2Vdy0oRReTOiaziRQgHekboe/2FQqUwXvjcxq8Kvbk4DL1ks/owkpcMa9hZQYqfWKcMZh814byjJ7lN3K2M27WSeP0O8j7SKiAl2cLekUVoFZEejSSM6lSkQbK5uP4KBbM5vAL/AkIc=
+	t=1740613390; cv=none; b=Yv9ldVbN2yiILc+nFNUNMJNpOOdcrVI4c63S1dO0nRUGjLwU24MCWhkEiumQLYlGbHM52jkRkcDTfU3nPlWpf2pRsec4NZ61TuIOleddGEwOViy0Sgps3aBBG8hJec5Q3TesFOSAeKVFJdTxww2EoBH/Fj2gYQ2TqZ56tK06Bjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613389; c=relaxed/simple;
-	bh=cga9488zLVFf7sCO0MjjdfdtRfVLyx321Cy+QiZ4Dvg=;
+	s=arc-20240116; t=1740613390; c=relaxed/simple;
+	bh=dyuuxAMJmy1jUNq2vusCG8A/JEHelnf2zIDJsSHAoYo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lHodTbRz9EED8CVKzerTf4U6qEmf++apGYl2DbsmGKmAqOf1ySBvQDngM9jIZbNjdif3VOU7O3d3IldjKU+iXoNHJKqhLbixO7L9T2rpbAGEnh8KBmiyJnkAhpGPeRNvZ+CK/Svk4aDX2BpfxUIZMrfPQTkBN2VgJVlypLWPJWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6joGw31; arc=none smtp.client-ip=209.85.160.172
+	 MIME-Version; b=dtTqLPa0Ld5d1+T19utDJS5+ysalrsJG+aVrW7o6SGIjPoyI7x8QDJG6ckpqjnuftCANKi+C3jRBY/w7ixVZ1NHi/pdyPAxIUGrQap8ccDcGvPnFrG/BjryK/TnjeUEmiKh9FCzBpcaKU2P9mCy1T7vnJbKUZ6glomT8Z7D4m8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMnQGyMG; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-472049c72afso3783131cf.2;
-        Wed, 26 Feb 2025 15:43:05 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c09a30e14dso60399485a.0;
+        Wed, 26 Feb 2025 15:43:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740613384; x=1741218184; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740613388; x=1741218188; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lqQoHTg7agUCd14WEWX/oWRFNn9TygqwW0Esl6cK8GI=;
-        b=J6joGw31se8+a4xfAZsI1MAZqwSmGysdBPQgVkiqpE4GlcVt1/da/XcygqRmCt90mU
-         8XBCOuPK9bnbXcW5QqbZy6y9ygXfB3MAjWIO8bPuiQji91e1r9bPyEmK6KDwTqjA2Uch
-         pIafKjDUcuBhYSJ81gGyjAMwu6xEpDDyIH7pNEoYpy/YbTdhjfyHxua7ODT6zcvxskbF
-         AJJqc9/qiv4NMYx3eoV2LkaF+TasyRTy9ntsu7D95/GmT8EDpIPgrcqpKsLRII28UYkt
-         P+NW5ZqLXvJyx1HG3S1+aZStVybGALwZs4AljIMyrD8LYBafxVElI/0qeB82Tzjp+ufU
-         om1A==
+        bh=z3ZZcc6aFlJ+Kl9Jw+kBevA1072SNgIuZeodxvN8Etc=;
+        b=EMnQGyMGNkYZ+TcU12sG2xAqDHPit6I+k08GbLk9ka7sPBgbTqqgejJI2dk70GmMLH
+         uHkUTLDPAJADXEzLWLkvbf8c94efuQbBqmw0sTaU5Pt2vBDVSHG42EncbCwewXmX9mwF
+         f3YLoFX1IkLkCUso3P6haVCrWmd7fdjYv6nRdJxV+47W8TCbjzXejLXGgcoqF1Rv/jID
+         8wOd5kSd+RFugCSu76wrV5j7KIlBKWxvAO5Maoc5AuldGicn0HOM3rYQOJELGaiE2Uc1
+         g8IQ6LcPStgw+gMvd419kOU8DO4ciiWihzrDQOXbL3+4TLjMQnf5PKIjpPLCg/6S+5++
+         E5vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740613384; x=1741218184;
+        d=1e100.net; s=20230601; t=1740613388; x=1741218188;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lqQoHTg7agUCd14WEWX/oWRFNn9TygqwW0Esl6cK8GI=;
-        b=NGimbjZewLinF5iYO5z5Ysmywj2ltQRyZIJl+KtmgNxMjn4PtvvwMP36/4wzeaAqRg
-         Gd1rAyvDYnF4hXB6/520kRuevZ10lzljZX4eWa86NkLBLJUnYIE2n5eYJW5bFUXooNGn
-         66qNanDO2FUj1yU1a8lffBka3/TucM3QPrdJt1zY611UltViyb89lqfjpxLT1DqyG7hw
-         XoGzS/djSyvsuMwZYMhLiMv4uppMEJIs3Ec4NrR5ivz3uhpol2HYelUdsImYfIGvM/R9
-         RgEMGZGNDiqAMR+4sR5+8oT8wx6HfFqKKHP/nFz95LZAqMf0wy4Xhu5hF8MfiBA68D3M
-         /+kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUzfInDV3P10R/vzK65pAJOEq1S/ggkWFg4v4Qo9Vhly+MXHwgjeM0inosvG6a0rhu6xGH9zVhWAWlrUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8NKsSAuVayamR4U4p8AjpbUig30eOwvWiN9jDIzLoZ3l4gE3M
-	1MOrSbkiOzT2Hp/C/x5gxIll7kRc9q66RFMF48ttos4u+nQ491hJacv6wA==
-X-Gm-Gg: ASbGncv74F/8kkteZ1VNj1iBzR8DvS1JCzoZ95lChqw40pjLWDfM76jAo3jSCyGw3KO
-	HaL/p70y7Cofq7p7U197LZe9VXlP3Hr313F/g/9q/c1P3dXV+JVKxDoI18pga8kznM1CKwdNvaH
-	67yko7O07V1j8NCHfMW0bu2UIAA1bgcL+0L10usqbvHyjj//Xm48ngC1ifrQveZTqoqjgYoyObE
-	89m8hJpCISYgF2LmmfEWxstFC9RRgrO4NtLGDB7n52h7bja8CRaMNAtf2AbkC1HG8+4p/XH4Vvn
-	3A==
-X-Google-Smtp-Source: AGHT+IGamOlB8L5DPR7KmoFMGsjzwDrX/7GZPr5d7+DS9KT5p5K9ctOUhXRuQL0MoiV6ugPJfD161A==
-X-Received: by 2002:ad4:5ccf:0:b0:6d8:8109:a547 with SMTP id 6a1803df08f44-6e88689b91fmr79086796d6.22.1740613384532;
-        Wed, 26 Feb 2025 15:43:04 -0800 (PST)
+        bh=z3ZZcc6aFlJ+Kl9Jw+kBevA1072SNgIuZeodxvN8Etc=;
+        b=b8BAQFZgfIaYkOtVsn/M1sCeWUtdQOdIKdveGBcUuQrsrgT6xcfJgwY62D8ps0+uhg
+         0ZEEkY//GwyV8k3KTA1SATE1CPmIP69WnXQcjmnShc/Ck9dQHzsRAiHbah5eXYEETcYv
+         pFnN6pPNERB8NlYB0pbvpQeWYKfhSG9iSTBot27bY6h9Ypt8E5XFqfDqEhjpxZ5I7eWA
+         kKXTwqKvx1BQG5h035sE8nq3lMaG53jBPYTrWCKW9f8EV0HiUb4G9DPLJMuz+Qmq45DO
+         nnOMnUOqNx2f3CkUtoj3Ptrj0QKvzc3tgxCI7YrX42VCoLKc2PKQkTrN+D3wvkAR8NQ7
+         P84Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ+VG5+cnxTUUDwLCq+OwJKQtAX0dZ/xakR5QR8Nj3+P0W30Wah8Go4gCyy2I40zg1Rs6/h1fj4M+PG7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy53jUzoN8bHkYvAoo1RZcLjIwwuYlcKHB8iA9vSt7a2QGSVmzZ
+	t4+FKUmydqGOfYTCJtlkLKcKYMGIjLbuRjv1I1EVXLMYIdbUTdYp
+X-Gm-Gg: ASbGncuRsCeURLKhH3hOHWn+z6yw7z8u7MutF/gkmJ5Ddx3AaOM+S6U8JVSV6QB5YDt
+	mZo+0KsyahfqXUkwqjLUBD9dF5P2Rw1lO8bCNYN+Pv/WFK0Ra0EnFnSUznNXFCG5iSIdn3G8pIQ
+	G42zSpCOF+w4nlMI060bSpcsLVuAjjFkqAGAsVWjbS28qtIu3pMKdvdcbHiEtUUVgm1qBFkTRZv
+	/9DAlsSOtalyGvM8H8bczy1O3QY0gC5K94F0UC2chunn/JFkMKtYCXJdgR32w87inj+br40SvTO
+	9A==
+X-Google-Smtp-Source: AGHT+IGD3BiOa/Df2rVPvpy/tGOHarw9GjKQY9DsMSLrCoKOy4FTIEiF7wxb91QFop6oTXwxGEZsUA==
+X-Received: by 2002:a05:620a:24c1:b0:7c0:a3bd:a779 with SMTP id af79cd13be357-7c23c04868amr1554444085a.47.1740613387864;
+        Wed, 26 Feb 2025 15:43:07 -0800 (PST)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976d9f19sm2383616d6.98.2025.02.26.15.43.02
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36ff0f756sm24200285a.61.2025.02.26.15.43.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 15:43:03 -0800 (PST)
+        Wed, 26 Feb 2025 15:43:07 -0800 (PST)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -89,9 +89,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Yixun Lan <dlan@gentoo.org>,
 	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v2 2/5] reset: simple: Add active-low property support.
-Date: Thu, 27 Feb 2025 07:42:30 +0800
-Message-ID: <20250226234234.125305-3-inochiama@gmail.com>
+Subject: [PATCH v2 3/5] reset: simple: add support generic reset-simple device
+Date: Thu, 27 Feb 2025 07:42:31 +0800
+Message-ID: <20250226234234.125305-4-inochiama@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250226234234.125305-1-inochiama@gmail.com>
 References: <20250226234234.125305-1-inochiama@gmail.com>
@@ -103,39 +103,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce "active-low" property support for the reset-simple driver.
-This property allow users to mark the reset device is active low
-without adding a new device id in the driver.
+Add support for generic bit reset device.
 
 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 ---
- drivers/reset/reset-simple.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/reset/reset-simple.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
-index 276067839830..4b08f8d70942 100644
+index 4b08f8d70942..0681f2db7459 100644
 --- a/drivers/reset/reset-simple.c
 +++ b/drivers/reset/reset-simple.c
-@@ -16,6 +16,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/reset/reset-simple.h>
-@@ -190,6 +191,11 @@ static int reset_simple_probe(struct platform_device *pdev)
- 		data->status_active_low = devdata->status_active_low;
- 	}
- 
-+	if (device_property_present(dev, "active-low")) {
-+		data->active_low = true;
-+		data->status_active_low = true;
-+	}
-+
- 	data->membase += reg_offset;
- 
- 	return devm_reset_controller_register(dev, &data->rcdev);
+@@ -149,6 +149,7 @@ static const struct of_device_id reset_simple_dt_ids[] = {
+ 		.data = &reset_simple_active_low },
+ 	{ .compatible = "brcm,bcm4908-misc-pcie-reset",
+ 		.data = &reset_simple_active_low },
++	{ .compatible = "reset-simple" },
+ 	{ .compatible = "snps,dw-high-reset" },
+ 	{ .compatible = "snps,dw-low-reset",
+ 		.data = &reset_simple_active_low },
 -- 
 2.48.1
 
