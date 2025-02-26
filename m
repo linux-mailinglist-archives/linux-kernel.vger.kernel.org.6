@@ -1,70 +1,100 @@
-Return-Path: <linux-kernel+bounces-533448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FB0A45A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92140A45A8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7E27A38C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:46:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC5B37A5096
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC1622424C;
-	Wed, 26 Feb 2025 09:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909B1238163;
+	Wed, 26 Feb 2025 09:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GR8ZTEI2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K18et+uI"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C65E19EED7;
-	Wed, 26 Feb 2025 09:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789122AE9A;
+	Wed, 26 Feb 2025 09:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740563223; cv=none; b=F0oBCeTtUVMGtFcVtUbTlBnk4NqOm0+vQNqXXOnQHWpFdGOIHlEoSrF9dEFDeftNSCK7ElGIteu55wFiz/kpZJfA0gMlKHegYapPoYiCcthq5qqDXOB9Mmkc65abyRMNVlzm8V1ik4yF/oJz3/GGLpxzFP0wfS/Rt5eCX3lcspo=
+	t=1740563327; cv=none; b=oYEhKhVTnf7D34yidv3vK8kECqoJcaSIK+/98qrRKcwNyFhqZ2xn1u1hxeUEhzHY4xwbsqWyGRnCb94UZxOL9MkdGK/ohVuA40R91JcvGxYAkjRrcGZAoq8oZdtpTBn2kdxMQEygMwWVKxMotOXzegBCMljEXk6EDRMnJHb5qdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740563223; c=relaxed/simple;
-	bh=65mCvrCgQ8vUabuuLrrDfQqdfH8PfOiynZ1+gS5LqcY=;
+	s=arc-20240116; t=1740563327; c=relaxed/simple;
+	bh=YHnWMxsDd4NI3G57XP3K3uhiH2OsB3c9BFnE3iwI+R4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3GpXJ5reIUcl9X5akXHv6VjGZJPW9W/3KIWDzIZ85ScnWEXgUInO+3uEcxEQduya8xAs1Zb1yu1C0sJdVEyoDGS8vMX0rUp+FSW6hvvGSF2PJTbkWElr32aFRbp1WQElawgmrUngrtgxq85PXo/HSfTzehSDdamAo8tQZF5zIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GR8ZTEI2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YtowJyTfySe91smR0qJ/muHbcExkBlLYkwOcrWOMYg0=; b=GR8ZTEI2cDfxbbLGLTUqMau5x8
-	QU3gurHsTGFVIe1eAvVAGwAY/J75XF8XyeaaAurSkh+fufJHMbOokeO6+4vENMZ5oVhxBWZNRLfIm
-	5Pr592CUB/oZsCmKVj0wwvv/UNx17MqjkjazitGIeaiWOi6nBrtbquf+H5dTlI6kvzduZYUctgCNg
-	EpEP71ClhZ9Z0QFbV/kRLznf26IH6lgnU+3IjQCV1+6v7RLEQaF25A8WCFtyXZ/ao6kwyUISCaJUl
-	QvhrV42Uft2Vb8mb9oETo0p1Beox4u3KSyx26qi+iOuFhuFnDzOgxZtInOK9e+icO8dlV1HU12h2E
-	q498Gy3Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tnE0G-00000003ZNY-3ZXz;
-	Wed, 26 Feb 2025 09:46:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6C9CD300677; Wed, 26 Feb 2025 10:46:56 +0100 (CET)
-Date: Wed, 26 Feb 2025 10:46:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
- initialize PEBS_BASE MSR
-Message-ID: <20250226094656.GS11590@noisy.programming.kicks-ass.net>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
- <20250225111805.GL11590@noisy.programming.kicks-ass.net>
- <2e1b48d7-1528-4de0-affa-e6c13e0ce1b1@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cc/UpfxmJ8Uu/hA+8eMoEEXoimXmcM23UGq7zpNhpwYnraeLysZUk5jwRekdU8OD1NDE15qfKggmAy4Ah9wb2SZahl5dFC20wN9qQP1zT5zKGYxRdqc+hRAnBnpBc9tAhAZykFiHjh4/rzlIorFzqhTnvwl1x52Q7Wum3P49PiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K18et+uI; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso1113801a91.0;
+        Wed, 26 Feb 2025 01:48:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740563325; x=1741168125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PLcQO0F1bTUCUpJSJ+y0elRMBmjObmFBfYrryjf1JY8=;
+        b=K18et+uICN9DCMmdeyVcVVaBkpMS7rHSOBkvHCwsO0JhW3pw4lUzvDhC7QAw6jAsYi
+         VxQtDocSn2MhToJ7+YFRvWT9Iycfjb+3PcWoVTa4AMbvv6zO4gVyMQMGYW5MeCBKIi9j
+         tFgnS1a0M+hI0y3qdkapYpSygRwwlPV3UIwbCrz60CnWbqM1S4nTl2iJB9U7etz3a6oH
+         XGplcSQrt778yAjm+lArVMHr7wPCdkLjgjYpXyDDrFY6pwoHdBUcBsPgrKF9+9QDzyDo
+         7lVcQnm9fZR/sTOR+EZCuVqCfSmI2bhW2AwngCAr+Nk9C3uVXMlgg4ROPcpxaswVAfi9
+         XZzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740563325; x=1741168125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PLcQO0F1bTUCUpJSJ+y0elRMBmjObmFBfYrryjf1JY8=;
+        b=I/NwTdoeVAPQ4DgmmXHmPvNRrqJzD9CL1aahfHuURUx8Z8XJULOcEg/Kwy4juNtTqO
+         HSFnxmvJQIGspAah3F3AZzPDZiMiqE8La+DEiiVuzln3ITlf1TWOR6Pk5hj8ew5on9uI
+         Q2RraH2B8QlEL/7kAC3o331NesDVJ/6+7oxg/TvWkaksiGZGE6HFZC2wFjdVdX9G2gGX
+         wRImfyHBeP76LYIDCXt2DWIdrOJzha46lhRnlwQxCFKEAHrBSXEeoz1hVFyT+N6pw3Zx
+         J7/4z/WcsvtQ5f6y9oCDncRfH+xlsH7qQi2UZ8ABVSXiqKIIUQB2zH8ttwTFNiUqGHaH
+         BRXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZgWG4wGhhUxJkRv5IIs8/pgG4fAogAyD7pHstfnFWMEUQasEhnQoJG6Eh4Tdlimn64vCNocUhyQLs56kO+LtD@vger.kernel.org, AJvYcCWdRJ2ln8xuP2wNVuoe6tGGAPKEtN8mcKl63ecCQ9zXT/rZ2t614g4wa/wf4bHdFJkhQB5xSjkOLorBQ2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1+HU5CBM5hptsRsqCqPcQZWU9xl87tfogXO1cpHuPmO4lPYHB
+	T2nTx92f8WMZ8OdTQAVN1yJnmHU6kzi7PYn+qp34y8Ccy+ShRAlq
+X-Gm-Gg: ASbGnctU5B8oE7w4xXGy6do1fijdi8RtnOv5QqIhP3MbX4Mw9PA5puJYUMdadCPu0I7
+	OlCedlKVDbO79shitnH/bITmcdVogjGxa3r/Fx5Pe+4H0Supv49JVMP+CJOIqQWLNLcgOqN2fpy
+	BZwbKfFAa4Y+Vm7286KOeAeviqQCyqhv1hisKk58orysV4kyjNheLDq2ptXOVT/7w2pF9LXBWWr
+	pk7UaKB7iiLW0BIrLGJM/dho6eNIIAfrutx/IvAGRrrRaq7oGtykjivd+uIOBlUMuQXlrlqtjHU
+	VlT6hTRjOb3/8t6DV6DpcPsD2za3z/Y=
+X-Google-Smtp-Source: AGHT+IFlo4foFMWPg/DN45x8tUVnr6ByaRax2qGODemzI9Qn99M3p6q6BuIgPgp4/81TS1aJavK+Nw==
+X-Received: by 2002:a17:90b:1f8c:b0:2fa:9c9:20a3 with SMTP id 98e67ed59e1d1-2fce763d546mr36534184a91.0.1740563324499;
+        Wed, 26 Feb 2025 01:48:44 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6cf92bcfsm1844153a91.0.2025.02.26.01.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 01:48:43 -0800 (PST)
+Date: Wed, 26 Feb 2025 09:48:35 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Cosmin Ratiu <cratiu@nvidia.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"jarod@redhat.com" <jarod@redhat.com>,
+	"razor@blackwall.org" <razor@blackwall.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+	"jv@jvosburgh.net" <jv@jvosburgh.net>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	Jianbo Liu <jianbol@nvidia.com>
+Subject: Re: [PATCHv2 net 1/3] bonding: move mutex lock to a work queue for
+ XFRM GC tasks
+Message-ID: <Z77jc8AB3D2xWczl@fedora>
+References: <20250225094049.20142-1-liuhangbin@gmail.com>
+ <20250225094049.20142-2-liuhangbin@gmail.com>
+ <d298da7bc638c323e6d492b2dec7f1b9ea1e1350.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,29 +103,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e1b48d7-1528-4de0-affa-e6c13e0ce1b1@linux.intel.com>
+In-Reply-To: <d298da7bc638c323e6d492b2dec7f1b9ea1e1350.camel@nvidia.com>
 
-On Wed, Feb 26, 2025 at 01:48:52PM +0800, Mi, Dapeng wrote:
+Hi Cosmin,
+On Tue, Feb 25, 2025 at 02:00:05PM +0000, Cosmin Ratiu wrote:
+> This got me to stare at the code again. What if we move the removal of
+> the xs from bond->ipsec from bond_ipsec_del_sa to bond_ipsec_free_sa?
+> bond_ipsec_free_sa, unlike bond_ipsec_del_sa, is not called with x-
+> >lock held. It is called from the xfrm gc task or directly via
+> xfrm_state_put_sync and therefore wouldn't suffer from the locking
+> issue.
 > 
-> On 2/25/2025 7:18 PM, Peter Zijlstra wrote:
-> > On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
-> >> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
-> >> buffer physical address. This patch allocates arch-PEBS buffer and then
-> >> initialize IA32_PEBS_BASE MSR with the buffer physical address.
-> > Not loving how this patch obscures the whole DS area thing and naming.
+> The tricky part is to make sure that inactive bond->ipsec entries
+> (after bond_ipsec_del_sa calls) do not cause issues if there's a
+> migration (bond_ipsec_del_sa_all is called) happening before
+> bond_ipsec_free_sa. Perhaps filtering by x->km.state != XFRM_STATE_DEAD
+> in bond_ipsec_del_sa_all.
 > 
-> arch-PEBS uses a totally independent buffer to save the PEBS records and
-> don't use the debug store area anymore. To reuse the original function as
-> much as possible and don't mislead users to think arch-PEBS has some
-> relationship with debug store, the original key word "ds" in the function
-> names are changed to "BTS_PEBS". I know the name maybe not perfect, do you
-> have any suggestion? Thanks.
+> What do you think about this idea?
 
-Right, so I realize it has a new buffer, but why do you need to make it
-all complicated like this?
+Thanks a lot for the comments. I also skipped the DEAD xs in add_sa_all.
+What about the patch like:
 
-Just leave the existing stuff and stick the new arch pebs buffer
-somewhere new. All that reserve nonsense shouldn't be needed anymore.
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index e45bba240cbc..0e4db43a833a 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -537,6 +537,12 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
+ 	}
+ 
+ 	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
++		/* No need to handle DEAD XFRM, as it has already been
++		 * deleted and will be freed later.
++		 */
++		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
++			continue;
++
+ 		/* If new state is added before ipsec_lock acquired */
+ 		if (ipsec->xs->xso.real_dev == real_dev)
+ 			continue;
+@@ -592,15 +598,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
+ 	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
+ out:
+ 	netdev_put(real_dev, &tracker);
+-	mutex_lock(&bond->ipsec_lock);
+-	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+-		if (ipsec->xs == xs) {
+-			list_del(&ipsec->list);
+-			kfree(ipsec);
+-			break;
+-		}
+-	}
+-	mutex_unlock(&bond->ipsec_lock);
+ }
+ 
+ static void bond_ipsec_del_sa_all(struct bonding *bond)
+@@ -617,6 +614,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
+ 
+ 	mutex_lock(&bond->ipsec_lock);
+ 	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
++		/* No need to handle DEAD XFRM, as it has already been
++		 * deleted and will be freed later.
++		 */
++		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
++			continue;
++
+ 		if (!ipsec->xs->xso.real_dev)
+ 			continue;
+ 
+@@ -666,6 +669,16 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
+ 		real_dev->xfrmdev_ops->xdo_dev_state_free(xs);
+ out:
+ 	netdev_put(real_dev, &tracker);
++
++	mutex_lock(&bond->ipsec_lock);
++	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
++		if (ipsec->xs == xs) {
++			list_del(&ipsec->list);
++			kfree(ipsec);
++			break;
++		}
++	}
++	mutex_unlock(&bond->ipsec_lock);
+ }
+ 
+ /**
+-- 
+2.46.0
 
-Just add it to the intel_pmu_cpu_{prepare,starting,dying,dead} things.
 
