@@ -1,187 +1,131 @@
-Return-Path: <linux-kernel+bounces-534320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5ABA46573
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:49:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFBAA46587
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7203B5F72
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB63317DD89
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0CE21CC53;
-	Wed, 26 Feb 2025 15:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA627224B0B;
+	Wed, 26 Feb 2025 15:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+A0NOMi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C3Orbq+G"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFE621CA1E;
-	Wed, 26 Feb 2025 15:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DCF224AF2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740584547; cv=none; b=DUtfsqQ1QN0aoci+hDA9KkZnULu+nTmztO7tl3ao/L240NbJpIZ28qJW87cBWSO69v302E8pUv0KzsBGXFoniXeWOb9C9tO02EwETqPIU1R+JwiBVGtlY9jhqipTvMubaHM6tprorrPQW2WC/3dBIyEESF69cznIjMgOV41/HME=
+	t=1740584555; cv=none; b=o7o9yaaOqFYlXgjJve3GdLL/H+Nsaq/odSauZRlliFqywm/euFcafGR9Cw0DU5GrTnfuVfjlcN0EjoVcPBqz10EMzMyQTamY69cIyH72NVq6YU5JTOtFlma7DEvfHRFrJD+VZeTuK35S81TlhqSDKgDNUElwZflVbGKGDnOPrek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740584547; c=relaxed/simple;
-	bh=5f2oYRMymOyXWg8oig+0mtUHGVHmikl0iXvLN6O7avs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HXNvdaK775SW8AodloWuXrcM9gV4jId8J1nU1YNEKoTo4o26vSfhTcr2irBOIrqnyS0e+UF1MNUg6Gt3/Cn9v7LvKlmE0A2Gh40uOCJ3Me3Jg9wVpB191SOChRktKr4istNoMq8xtWndathxB1kU70VB/jihMQiFaz1AG59dq6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+A0NOMi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D4E03C4CED6;
-	Wed, 26 Feb 2025 15:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740584546;
-	bh=5f2oYRMymOyXWg8oig+0mtUHGVHmikl0iXvLN6O7avs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=T+A0NOMiOZjt0INGPmIK6+2J1NasnxQ7rkZbSY0B9RFwNBpnvju+9PYxI/xhZ/qRt
-	 QaOhuf9rZBDbsf2Sqfu8MT0gMikG0S+cz5UufAFO36izPR5eoinepuSq6vSBfFIaKy
-	 KfUAzlkv3XyKnTbuaW5RvIUFWm2LLsJzh1ieL8k9qZXrIhs8gcB47LEI58Ye2PjJa9
-	 iXyGv8O9fo2E3gcRT4nvrwbxTefSJ33PgtDLT6zFh8W8H/5HB1XRLG/9KZt+jz+KZ6
-	 0Crz8DzJI89NnXm/VYxILA+2b5ggKfWPM/KXhRWO3hvMr6y5RHtKXQ0qa1KkYa6Vre
-	 pbB3reqdRr39A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75EC021B8;
-	Wed, 26 Feb 2025 15:42:26 +0000 (UTC)
-From: Brendan King via B4 Relay <devnull+Brendan.King.imgtec.com@kernel.org>
-Date: Wed, 26 Feb 2025 15:42:19 +0000
-Subject: [PATCH v2] drm/imagination: avoid deadlock on fence release
+	s=arc-20240116; t=1740584555; c=relaxed/simple;
+	bh=yET4WCQ0TidGw46uDqCa2xPxmd6bKwpoScO4cAMic7A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pqmEba99sxBCGvkeRjFEguRaCVMkjJjrolBoc55Vpd9d/g6xWgYb7oLmz6QI83fPjSDKl9Hip/Pm6RYhgM2UV1yz4KMS6HYVKETeOnD7wYyfnK8DnbLBblmqsOCHXA4RwR7hnzNx9qJLQo+/Eo+yawf1a8OnD7HRmZ9Ig0mjx2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C3Orbq+G; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-438a39e659cso46771065e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740584552; x=1741189352; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yET4WCQ0TidGw46uDqCa2xPxmd6bKwpoScO4cAMic7A=;
+        b=C3Orbq+GsIma7v8fPk0cUnsE4cHhspQ4nv6LHjkF6WFdfKFD2QhIMcpMZRhn4en5dZ
+         7ZRAibSWpYEEfEm4KluZJGiysahiHnVUZ526Y+e1KhoOYN0/EvxQnZjwhOqQ0olM3wra
+         3TZvImZZC26aSTsfUTBjOtPDN/T4vkBW9lf3z6hG3OQeUbWFj9uQFa8d2HyDT8sOKmrf
+         JbVZfZZHXoEyUpXg3cwoKbgu09uZqq12R5Z5jvfK9l6rieEVGtABq5Kj3bz3GH3MAUTL
+         D7bljuZyuxJpFIgtGCQhtQzatylKo9zNo3hj5gdUBC8nRSw+03x2dU1pr/C4JbjLxz6s
+         otIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740584552; x=1741189352;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yET4WCQ0TidGw46uDqCa2xPxmd6bKwpoScO4cAMic7A=;
+        b=fc6YoDiJMCymavcNC7Eeu+sgosL6fEhSQgOaXKEQxJKUhRo2MSJA8gwUs4Zho+GmBn
+         kRSKdC8fJPbuBTNNqSZRnaPqXgasEercQlFDj8RdDvdpsrZO2a/XQFOq2FIJ4+IuqcRE
+         r9Z2D3j5bJUY0IHRJUbzW8GdAHR6JYB7rIGEJoMCbevpMbPKlTmyFxV2GsIdjZC9cD3K
+         Xzm+7djy4dPfdTrwyLEOaEqL+C/iYhVlG8EtRV+DSIPSyAm7BTYr4xOVxlGf2B0pCm12
+         E7eEOk8kCZWw1toHJc9ccFB13MyNPLffhOFcATgPcm2Vvt3+EIBklxWBKD/opudjEo+2
+         gYew==
+X-Forwarded-Encrypted: i=1; AJvYcCU2G27KhKIinUI18ZY+EbyYp5ieRJ2xNhgAMgbsEcOfNbIYO9gswGbpElXZkON3Od8646dBcj6OcaP58q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHKtogpTPVt9Efn8ROKWNqkVivnEyOfG7lyb6yGvTeCmE8f6sp
+	mLq7skVA768VB//k1aRmraH8Q8e6GsGtWWKJNPh5wNXZ8PbKneIPBXMni41QRys=
+X-Gm-Gg: ASbGncuPAEs3Qr+aVtxjxZf3H7E4xfUbra0ss2AIR8KsWgi5IYWgiMMNH6Z6qkJfCN3
+	WtiNPKz/+i4Ru1O0sM5H4cfHNFafCYc0x1ayxp0QzbEpGK6aeC50IpTPU0kbl2CCOrLRjS04tRV
+	O7yJEFCSv3pLqXKZx4vjZ8M7L9ICwhpkCDp28AQ1kxT8tDDNz7e3B6M0J4zOr3KGyphP3L19iWs
+	qmPnTfCaj/U2Bfxz7LKO06P1IrSMHxEaQzcCWPA4ZSeDj/SsZc2tJwoMMTOASFj03TsRpq+Py2x
+	1wxQRE17xYeNgjUpK2/IH55fvOCiUA==
+X-Google-Smtp-Source: AGHT+IFBjnTWTZFRw7uykXPFUh9gNCNUIJPbPGaNy6dQmXu2Z2glg7T41KVUH/4tSaNb7DypQgIDsA==
+X-Received: by 2002:a05:600c:1c1d:b0:439:9496:181c with SMTP id 5b1f17b1804b1-439aebdc9e1mr174340225e9.29.1740584551612;
+        Wed, 26 Feb 2025 07:42:31 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab37403cfsm48020585e9.1.2025.02.26.07.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 07:42:31 -0800 (PST)
+Message-ID: <ba98106d00038a9b2a2bfb27dd49a5915cb93b81.camel@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: reset: syscon-reboot: support reset
+ modes
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, Will McVicker <willmcvicker@google.com>, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>
+Date: Wed, 26 Feb 2025 15:42:30 +0000
+In-Reply-To: <174058375994.2463209.9948592153423144239.robh@kernel.org>
+References: <20250226-syscon-reboot-reset-mode-v1-0-91c1b62166ae@linaro.org>
+	 <20250226-syscon-reboot-reset-mode-v1-1-91c1b62166ae@linaro.org>
+	 <174058375994.2463209.9948592153423144239.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250226-fence-release-deadlock-v2-1-6fed2fc1fe88@imgtec.com>
-X-B4-Tracking: v=1; b=H4sIAFo2v2cC/4WNQQ6CMBBFr2Jm7Zi2BDCuvIdhUdoPTARqWkI0h
- LtbuYDL95L//kYJUZDodtooYpUkYc5gzidyg517sPjMZJQplVEFd5gdOGKETWAP68fgnmxVXRZ
- O1W3nPeXxK6KT9xF+NJkHSUuIn+Nn1T/7N7lq1lxBe2hTqba43mXqF7iLCxM1+75/ATA9Nne9A
- AAA
-X-Change-ID: 20250203-fence-release-deadlock-a0753c07bfdd
-To: Frank Binns <frank.binns@imgtec.com>, 
- Matt Coster <matt.coster@imgtec.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Brendan King <brendan.king@imgtec.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740584545; l=3702;
- i=Brendan.King@imgtec.com; s=20250203; h=from:subject:message-id;
- bh=bKMHhVTtJG43Lz66Kv6FNFtvsLiapP6vakNG5JK3jlE=;
- b=AIcRT9pMXFXcHhbEtmfBoDYE5yT1XBAGdWkiIvjBQMohYC690SraSw4dAjj9UA7Ca8NbcFqfe
- 9A1nWq+aUxsCx5k/EdINHeuOp3BSuPD8EKuyJslnyh9rvJBfM9hj6y/
-X-Developer-Key: i=Brendan.King@imgtec.com; a=ed25519;
- pk=i3JvC3unEBLW+4r5s/aEWQZFsRCWaCBrWdFbMXIXCqg=
-X-Endpoint-Received: by B4 Relay for Brendan.King@imgtec.com/20250203 with
- auth_id=335
-X-Original-From: Brendan King <Brendan.King@imgtec.com>
-Reply-To: Brendan.King@imgtec.com
 
-From: Brendan King <Brendan.King@imgtec.com>
+On Wed, 2025-02-26 at 09:29 -0600, Rob Herring (Arm) wrote:
+>=20
+> On Wed, 26 Feb 2025 14:08:20 +0000, Andr=C3=A9 Draszik wrote:
+> > Add support for specifying different register/mask/value combinations
+> > for different types of reset.
+> >=20
+> > In particular, update the binding to allow platforms to specify the
+> > following reset modes: soft, warm, cold, hard.
+> >=20
+> > Linux can perform different types of reset using its reboot=3D kernel
+> > command line argument, and some platforms also wish to reset
+> > differently based on whether or not e.g. contents of RAM should be
+> > retained across the reboot.
+> >=20
+> > The new properties match the existing properties, just prefixed with
+> > one of the reset modes mentioned above.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0.../bindings/power/reset/syscon-reboot.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 74 ++++++++++++++++++++++
+> > =C2=A01 file changed, 74 insertions(+)
+> >=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
 
-Do scheduler queue fence release processing on a workqueue, rather
-than in the release function itself.
+oops, sorry - the script we usually run didn't cover this binding,
+I've updated things and will send a v2.
 
-Fixes deadlock issues such as the following:
-
-[  607.400437] ============================================
-[  607.405755] WARNING: possible recursive locking detected
-[  607.415500] --------------------------------------------
-[  607.420817] weston:zfq0/24149 is trying to acquire lock:
-[  607.426131] ffff000017d041a0 (reservation_ww_class_mutex){+.+.}-{3:3}, at: pvr_gem_object_vunmap+0x40/0xc0 [powervr]
-[  607.436728]
-               but task is already holding lock:
-[  607.442554] ffff000017d105a0 (reservation_ww_class_mutex){+.+.}-{3:3}, at: dma_buf_ioctl+0x250/0x554
-[  607.451727]
-               other info that might help us debug this:
-[  607.458245]  Possible unsafe locking scenario:
-
-[  607.464155]        CPU0
-[  607.466601]        ----
-[  607.469044]   lock(reservation_ww_class_mutex);
-[  607.473584]   lock(reservation_ww_class_mutex);
-[  607.478114]
-                *** DEADLOCK ***
-
-Cc: stable@vger.kernel.org
-Fixes: eaf01ee5ba28 ("drm/imagination: Implement job submission and scheduling")
-Signed-off-by: Brendan King <brendan.king@imgtec.com>
----
-Changes in v2:
-- Added 'Cc:' and 'Fixes:' tags
-- Link to v1: https://lore.kernel.org/r/20250203-fence-release-deadlock-v1-1-6e1de1260b38@imgtec.com
----
- drivers/gpu/drm/imagination/pvr_queue.c | 13 +++++++++++--
- drivers/gpu/drm/imagination/pvr_queue.h |  4 ++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/imagination/pvr_queue.c b/drivers/gpu/drm/imagination/pvr_queue.c
-index c4f08432882b12f5cdfeb7fc991fd941f0946676..f3f1c5212df7432161919ddc510cececacbbe143 100644
---- a/drivers/gpu/drm/imagination/pvr_queue.c
-+++ b/drivers/gpu/drm/imagination/pvr_queue.c
-@@ -109,12 +109,20 @@ pvr_queue_fence_get_driver_name(struct dma_fence *f)
- 	return PVR_DRIVER_NAME;
- }
- 
-+static void pvr_queue_fence_release_work(struct work_struct *w)
-+{
-+	struct pvr_queue_fence *fence = container_of(w, struct pvr_queue_fence, release_work);
-+
-+	pvr_context_put(fence->queue->ctx);
-+	dma_fence_free(&fence->base);
-+}
-+
- static void pvr_queue_fence_release(struct dma_fence *f)
- {
- 	struct pvr_queue_fence *fence = container_of(f, struct pvr_queue_fence, base);
-+	struct pvr_device *pvr_dev = fence->queue->ctx->pvr_dev;
- 
--	pvr_context_put(fence->queue->ctx);
--	dma_fence_free(f);
-+	queue_work(pvr_dev->sched_wq, &fence->release_work);
- }
- 
- static const char *
-@@ -268,6 +276,7 @@ pvr_queue_fence_init(struct dma_fence *f,
- 
- 	pvr_context_get(queue->ctx);
- 	fence->queue = queue;
-+	INIT_WORK(&fence->release_work, pvr_queue_fence_release_work);
- 	dma_fence_init(&fence->base, fence_ops,
- 		       &fence_ctx->lock, fence_ctx->id,
- 		       atomic_inc_return(&fence_ctx->seqno));
-diff --git a/drivers/gpu/drm/imagination/pvr_queue.h b/drivers/gpu/drm/imagination/pvr_queue.h
-index e06ced69302fca47fc26451dfb09ebbb24b57f52..93fe9ac9f58ccc020615485e86be438548dcee43 100644
---- a/drivers/gpu/drm/imagination/pvr_queue.h
-+++ b/drivers/gpu/drm/imagination/pvr_queue.h
-@@ -5,6 +5,7 @@
- #define PVR_QUEUE_H
- 
- #include <drm/gpu_scheduler.h>
-+#include <linux/workqueue.h>
- 
- #include "pvr_cccb.h"
- #include "pvr_device.h"
-@@ -63,6 +64,9 @@ struct pvr_queue_fence {
- 
- 	/** @queue: Queue that created this fence. */
- 	struct pvr_queue *queue;
-+
-+	/** @release_work: Fence release work structure. */
-+	struct work_struct release_work;
- };
- 
- /**
-
----
-base-commit: 3ab334814dc7dff39075e055e12847d51878916e
-change-id: 20250203-fence-release-deadlock-a0753c07bfdd
-
-Best regards,
--- 
-Brendan King <Brendan.King@imgtec.com>
-
+Cheers,
+Andre'
 
 
