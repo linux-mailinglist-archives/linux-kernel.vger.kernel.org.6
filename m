@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-533286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C555A457D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CBDA457DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE11609F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B7E16A5B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A01E1E19;
-	Wed, 26 Feb 2025 08:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97DB224236;
+	Wed, 26 Feb 2025 08:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M52k0xCi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8iRN0KEK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M52k0xCi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8iRN0KEK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDs9w/9V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEAD1E1E0F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FA01898FB;
+	Wed, 26 Feb 2025 08:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557512; cv=none; b=i5yRANgehEed7tiJOtge3Qs3A5N3Co59+/rhzfWIS0+n7xu0AuU4XkTO1ymFXft1dYwD55pvasQRtYAXRaHKfmayLPbrhhrosDGXrrNrUN/u/SWks06+l3L+ADnlnk3/BVZPfY3s0vEf/5gwKdYMzPj7YDWIhrH3ZACT7QBAlQs=
+	t=1740557527; cv=none; b=LhmvQOkWWKGj7pPwIOshaGC0tdT0L/LEH5ytWU6CiX8cG/dgXvNMTrhTqsoNXxln9Q9r2ZX3oQMl7lqDavrd6fCtsWj6qn5N52XuL3IrjE6x0M0mEm6q3v/n2rge/KW9R2gCBxhF/MU5iepQtDEVrZsUL0CRIXGrcHyW3bdYDA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557512; c=relaxed/simple;
-	bh=ngVPVzEoGTQofPb2IuC5RPQf+fnemEe3saOAh3C/qTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tTfDUkGbVeiJ1eAZIPyjj3SrPOGhrZCpg6n6EimFuB6kG2MfDKnn60QHt6GsNi3NJEO8bEYG6+9rlhQpOQJ16SFRj+2cqbFpRaVwL/ZpKY13Hh+oyYHWb9NmfQd7p9M6kGnbTtlyMsY8CZaoFX0N9yXJcMzL5RMX/7t2c8IIfBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M52k0xCi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8iRN0KEK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M52k0xCi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8iRN0KEK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B7A831F38A;
-	Wed, 26 Feb 2025 08:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740557508;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oSK5a0wXtrsCNbcDCNVM2B7YuQM4YVWXEKgiWoGr4g=;
-	b=M52k0xCidBShUQAUieS3yPeEKYbp9SkWFdE1T3Y9LN5qr+qoYQf7ZkLHS+lGpskYFmX84o
-	rj9MORggsjWLOOWi/wz2wycGn+wJaTmZBjktZaO+KZUIC3AmoqtrO/rEulVAIrr84IJswA
-	fagXdOSFcorVbEFOJXuRji/5Ut1Z0Lk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740557508;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oSK5a0wXtrsCNbcDCNVM2B7YuQM4YVWXEKgiWoGr4g=;
-	b=8iRN0KEKaA2TzYhRyiJviHM7S5ocd8Wgx3odRIDBHuMEw1X2YH9ID+lMEUobTzWCFcCrsV
-	lywwqivyW5oEyPCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740557508;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oSK5a0wXtrsCNbcDCNVM2B7YuQM4YVWXEKgiWoGr4g=;
-	b=M52k0xCidBShUQAUieS3yPeEKYbp9SkWFdE1T3Y9LN5qr+qoYQf7ZkLHS+lGpskYFmX84o
-	rj9MORggsjWLOOWi/wz2wycGn+wJaTmZBjktZaO+KZUIC3AmoqtrO/rEulVAIrr84IJswA
-	fagXdOSFcorVbEFOJXuRji/5Ut1Z0Lk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740557508;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5oSK5a0wXtrsCNbcDCNVM2B7YuQM4YVWXEKgiWoGr4g=;
-	b=8iRN0KEKaA2TzYhRyiJviHM7S5ocd8Wgx3odRIDBHuMEw1X2YH9ID+lMEUobTzWCFcCrsV
-	lywwqivyW5oEyPCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DD6F1377F;
-	Wed, 26 Feb 2025 08:11:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id O2tbIsTMvmf5QAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 26 Feb 2025 08:11:48 +0000
-Date: Wed, 26 Feb 2025 09:11:42 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-hardening@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: Replace deprecated strncpy() with strscpy()
-Message-ID: <20250226081142.GR5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250225192613.330409-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740557527; c=relaxed/simple;
+	bh=AxvPnSdYWK3XwRXQOtiDzG+BiQbJeg5wLpvJO6mak7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a6cXSHLZhBGBbV6slPBUVJHr+KtuCvI+25/qk38QAmdlDJ5k5Bkf83RKHtgwK3Qs/sw1hFo4/adkhGdLFPs5IARa/W3qxOdcsjFQSTkJeQSqXfQcyDN9sLaGkm2Rc940tmlsgc0v0pUpPfEqr/WomM5m96s5vcLW8HvBVRplOBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDs9w/9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1381FC4CED6;
+	Wed, 26 Feb 2025 08:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740557527;
+	bh=AxvPnSdYWK3XwRXQOtiDzG+BiQbJeg5wLpvJO6mak7Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DDs9w/9V2cNTGLDJxbuwB/5RZTwn4Jbdvd4lfNCcA1aaJRxAGgXlGI2y/6M/F1ku3
+	 /Kvulz5sP8CxKaF5+v3YHXBt9mqRI/9SesmbNg/3NE8OYo5jR5M0X3zBe069S9/O6w
+	 LtHVZgdX9Vmnoxs/BrFjXQJdYA27fyUZw6mw/aZSLiV221VYNAQn4vwpsA+bOd2PHn
+	 sJg3qen5p61BBnV2sxuaR/j5Yn5/Ky34lWxE3xFKCbPAPO0jCNtwIwG7+6ktS9qJPd
+	 AyA3GCtu0Qv6VWtFsYtnctOrEk0yR0OmjjAXbjhD7Gax+/u2o25ZmuWnvlA3ZJz7vC
+	 MvFG0YHYtQVPg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jan Kara <jack@suse.cz>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	"Seth Forshee (DigitalOcean)" <sforshee@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] fs: namespace: fix uninitialized variable use
+Date: Wed, 26 Feb 2025 09:11:54 +0100
+Message-Id: <20250226081201.1876195-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225192613.330409-2-thorsten.blum@linux.dev>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 08:26:14PM +0100, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers. Use
-> strscpy() instead and don't zero-initialize the param array.
-> 
-> Compile-tested only.
-> 
-> Link: https://github.com/KSPP/linux/issues/90
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Added to for-next, thanks.
+clang correctly notices that the 'uflags' variable initialization
+only happens in some cases:
+
+fs/namespace.c:4622:6: error: variable 'uflags' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+ 4622 |         if (flags & MOVE_MOUNT_F_EMPTY_PATH)    uflags = AT_EMPTY_PATH;
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fs/namespace.c:4623:48: note: uninitialized use occurs here
+ 4623 |         from_name = getname_maybe_null(from_pathname, uflags);
+      |                                                       ^~~~~~
+fs/namespace.c:4622:2: note: remove the 'if' if its condition is always true
+ 4622 |         if (flags & MOVE_MOUNT_F_EMPTY_PATH)    uflags = AT_EMPTY_PATH;
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/namespace.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 663bacefddfa..7a531e03cb3c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4619,6 +4619,7 @@ SYSCALL_DEFINE5(move_mount,
+ 	lflags = 0;
+ 	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
+ 	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
++	uflags = 0;
+ 	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
+ 	from_name = getname_maybe_null(from_pathname, uflags);
+ 	if (IS_ERR(from_name))
+@@ -4627,6 +4628,7 @@ SYSCALL_DEFINE5(move_mount,
+ 	lflags = 0;
+ 	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
+ 	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
++	uflags = 0;
+ 	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
+ 	to_name = getname_maybe_null(to_pathname, uflags);
+ 	if (IS_ERR(to_name))
+-- 
+2.39.5
+
 
