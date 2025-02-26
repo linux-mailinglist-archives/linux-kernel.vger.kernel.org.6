@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-534660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6CF2A46998
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:25:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5998DA4699B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F921716F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:25:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BF4D7AAD5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09552238140;
-	Wed, 26 Feb 2025 18:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnxcBT5Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB638238163;
+	Wed, 26 Feb 2025 18:18:36 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627072356B2;
-	Wed, 26 Feb 2025 18:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5B322540A;
+	Wed, 26 Feb 2025 18:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740593921; cv=none; b=X5j2yHLIbn0J7NGK3KhpGx7nJ9RM/ONE6FplTip9u7K6HpjoFid8h8RJRfakRex3e8cG6twmU3pOweZ4WlmMmBUmQX/Th161t+S3OUhheHJfh31M+l8mwSzaSrq3ukfBbfba5eVxR4npd8W1ESywx1cstaIQK5oFZB7Zp/CSNPE=
+	t=1740593916; cv=none; b=rHaXla36FlL5UAsPeRX7WivORFglP/k01fJZtkDnE1tIYx77kiqoJpaoVCltqZ6PtjvOgfPMrkO3odtOqLNG5K3/pjZOV7gScf6asY0ayVoSzVosK52pqAP9PyEfw8OOT6MvK2eb6KN3WiQgaNawdgBIZSOMzJGdmQjlYZ5CizI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740593921; c=relaxed/simple;
-	bh=I6uZ3dubqopcXOEdZGEs1cSZizLSjhh+Xzs4+YI0Z9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VRpBVEbnnCwWIrECD9FBUCw+TvjTeRacD/Eein8jpFTVU/bcEN6TC4f6of+jMDcYrufmOtAh7wso1anDFS8ZYoNYqTUm5K8XeT6cWLOlQvgW1ouQQMq8qer8LLOjeubB5ZA+GDNJj5gz5mXd7N7ypjMrwMznemUZ5FsXS2wtDys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnxcBT5Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D858BC4CEEC;
-	Wed, 26 Feb 2025 18:18:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740593920;
-	bh=I6uZ3dubqopcXOEdZGEs1cSZizLSjhh+Xzs4+YI0Z9w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VnxcBT5YS33uu66ssViE3OsbbOU+0Gwfa83ZtM9wbsnoE25Ejv19v4XNyvl623rcR
-	 8mC5MHmEGFTYaSh0DbrH0A4EQGLndlkKvMaPNjxfpXTExkmHsanJaAFy7kciZhpWH0
-	 3DjQJrZhD+A5aZJLce7NxcbgtTKrGL8Nl0yexYVg5wH61Smd3d7Bhwspp7ILBWj6rf
-	 ZMM44qEWCnZ7VaoYQnAOUmUBD2hEboPd6MUP9wHVmbqRwlBqFXOXkKonMRfGQAJFgF
-	 spdZ4qXxELo8CAGh1p8a6NjR/elqkZcXwbvd0eWfhky6e8MhUxCy4vyWJIxnKwxl+u
-	 /5o3wdft5xbDA==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2a88c7fabdeso112359fac.1;
-        Wed, 26 Feb 2025 10:18:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW3gw2mX7+Vxbd4uBjAIUW3b+afuzzRGWE3I+/vqAEHT+wOIDP8+GolL3WwX8xiy1vzw/8MZQk5Y/ggqM8=@vger.kernel.org, AJvYcCXUDNR93+7zk20c19AgfAqKzmoWmQW2JBLdZ4tFPW9OcaP+ZEcy6QwzdydEHiLeEbt+GcDS+ZnDhTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/wvHHLNO45rvuoYWlE9xaRF3bBsKd7OBfYGgfZBXbQh8h5DjP
-	irgkLeZ0K7VR4sMpbEE6UsMMuPfkhc3G6QLpL2BL+FJbSFaHGTvZ3VorpMCskk3PTf6BFVysab/
-	X5TUpGi1DOnMFpADpTde6iIyEoo0=
-X-Google-Smtp-Source: AGHT+IE2kmXQsWSG7myXgUfM51bmNQDYKRwO4hv8qqCQ4cQ+cPJk5SEUokPYyteIO5x0nzk/onRfjaO32NpiFjty/X4=
-X-Received: by 2002:a05:6870:a10d:b0:2b7:ecaf:59d4 with SMTP id
- 586e51a60fabf-2bd5185ac3dmr15454643fac.38.1740593920019; Wed, 26 Feb 2025
- 10:18:40 -0800 (PST)
+	s=arc-20240116; t=1740593916; c=relaxed/simple;
+	bh=VIygefJsmrqlayJetk/TuRE//08XHGhMXg4SxJl1N7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/SwXZC95Ks6qXrjJSbevxbt2WfuaIkrKaWa5hjWrFnY/n+dIDkQB7C/u3WaM9yYckl1TEzIm5cAP7n/QjsoMAkytamZ+AQtpoei2YT3T4oESCrPLOm+WHBMMT6JkkMqSjssJ1XnnVZ6OUKczFmQprNq/mKAd2N1C08EKOKx49M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abb86beea8cso8867166b.1;
+        Wed, 26 Feb 2025 10:18:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740593913; x=1741198713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANOUXq6Q4nNmGnkwfSvFwfZWJzxkc6uaWJAjlNi6mrw=;
+        b=FfuFw6x4R1MjPcJV5iQBUDYP19L4w0UxZPtGELt60sGFAC2JgcSD3NSeLb4gETakMz
+         nJADBYI1nLzRIkm+asNkvHM9Hb9vcSTDx9T9sROfDJgZREywwtqaYLHnL9Qj9eErpDwt
+         OOs1i/Em4cd4BXXLndxBgx00YeeC8bzIGPdz+Cq1yjsJJmdl5KkLbtez4U2ViHkJLoYU
+         DXmExVsbtbmsW6FngHvPUV0Ex6FAL/6EUH/A5b+nNh8KKBKiFCwJszxtuBcuQJKttFRd
+         mMz8bOU18j9552NA7BFhKalfN7w0uQZ4va+AyniAlnxjGLXx6oJGt7/h6R7ceGN0NL69
+         VMSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzbFs+kAczICxZsGKmxIKpI097aF08XxrXFwfG1oDAiMk4tLL0ZWHOMQ83DoCltLorqBZG4qbOXIz9NT0=@vger.kernel.org, AJvYcCXQMCkFipIYBiqdUv3bII3vAwrnwtNumPnQ3acyK1gLu3+0z2BnxnP7yF/eq3yF4ODROInr5HmRgVI/+rRge4Fvt8pw@vger.kernel.org, AJvYcCXiVKkZmjhuoNCFeom82oAlUfKbu+wd5hGMjVvrVUJXjf7CMPygcPffIBt5tFvoAfsjNLPocWPW@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbq+I8I9JA9oCGSS5v38UZ0z+5tQAXZ/I5+Y+lzqVSqBdhOUzC
+	4ObwPOPAtTIwGTeTxEwqhEqxgdNUwH9ktybH1X3D6+rEFd2x+0u4
+X-Gm-Gg: ASbGncttpHYl46vLQB5T8v0cvvNmHQTLwwkkHM37m8O+z/Zo2x+g3rnpO7TQYkUWCsP
+	hZ6m+dT86vsYQ0hcBWwthyhoO/MiZ2zIYV8pvSbUwZX3O0P1z09eR/u5v+goBkDNSV5CTy9AgW2
+	cZ3tRIFk+bXzZ2LKkRBPX+ZPESrRmA4+1OZiYTOaIozb5+q5RuP+zBJXNhJlixo33paH216rkRB
+	ZmuhLCRZ70BUYAU2vUlnNoPkQMVDQTC3mVl3xh+kB3SfxZkjlCi/RgwHmO/bCZUOnhLm0Rf4XSV
+	NPAcd0KrsqxajaBH
+X-Google-Smtp-Source: AGHT+IGHOxW1BBkFTturFyL0nAQ4vwJGMPYFC9ml9D+kyEb7X/IH12HFXFvHGQMhPjAVMLuRzx9bPg==
+X-Received: by 2002:a17:907:2cc2:b0:abc:cbf:ff1f with SMTP id a640c23a62f3a-abeeef42910mr615585566b.40.1740593912702;
+        Wed, 26 Feb 2025 10:18:32 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1d55b90sm373260066b.54.2025.02.26.10.18.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 10:18:32 -0800 (PST)
+Date: Wed, 26 Feb 2025 10:18:29 -0800
+From: Breno Leitao <leitao@debian.org>
+To: David Ahern <dsahern@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	kernel-team@meta.com, yonghong.song@linux.dev
+Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
+Message-ID: <20250226-daft-inchworm-of-love-3a98c2@leitao>
+References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
+ <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
+ <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org>
+ <20250226-cunning-innocent-degu-d6c2fe@leitao>
+ <7e148fd2-b4b7-49a1-958f-4b0838571245@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CF154B5C3C8E7E64+20250224074357.673094-1-wangyuli@uniontech.com>
- <CAJZ5v0iigAB97mGBe6Uvr0v0spjqDKan-0O9XGObt5b4ZBvM7A@mail.gmail.com> <tencent_18C611757FED8D54331785FA@qq.com>
-In-Reply-To: <tencent_18C611757FED8D54331785FA@qq.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Feb 2025 19:18:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jqEPMQ1rLpeH0ZV8DcsJMOXdyoYPwwRkr=2vUBCADjVQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JoGe9ZXilDP7_kh_pdoEO1ILfk23DI97JFXc7XPNsuzaQey6zCxvHz8cvo
-Message-ID: <CAJZ5v0jqEPMQ1rLpeH0ZV8DcsJMOXdyoYPwwRkr=2vUBCADjVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86 / hibernate: Eliminate the redundant
- smp_ops.play_dead assignment
-To: Wentao Guan <guanwentao@uniontech.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?B?546L5pix5Yqb?= <wangyuli@uniontech.com>, 
-	pavel <pavel@kernel.org>, tglx <tglx@linutronix.de>, mingo <mingo@redhat.com>, 
-	bp <bp@alien8.de>, "dave.hansen" <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>, 
-	hpa <hpa@zytor.com>, linux-pm <linux-pm@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?5Y2g5L+K?= <zhanjun@uniontech.com>, 
-	=?UTF-8?B?6IGC6K+a?= <niecheng1@uniontech.com>, 
-	=?UTF-8?B?6ZmI6bqf6L2p?= <chenlinxuan@uniontech.com>, 
-	Huacai Chen <chenhuacai@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e148fd2-b4b7-49a1-958f-4b0838571245@kernel.org>
 
-On Wed, Feb 26, 2025 at 7:08=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
-om> wrote:
->
-> Hello,
->
-> Thanks for your reply.
->
-> In my opinion, the only logic different before the patch is delete smp_op=
-s.play_dead
-> save and restore, as the comment "the resumed kernel will decide itself" =
-and same
-> logic as which in arch/arm64/kernel/hibernate.c, the ok path will work as=
- expect.
+Hello David,
 
-Yes, the OK path will work as expected so long as smp_ops.play_dead is
-switched over to resume_play_dead before calling
-freeze_secondary_cpus().
+On Wed, Feb 26, 2025 at 10:12:08AM -0700, David Ahern wrote:
+> On 2/26/25 9:10 AM, Breno Leitao wrote:
+> >> Also, if a tracepoint is added, inside of tcp_sendmsg_locked would cover
+> >> more use cases (see kernel references to it).
+> > 
+> > Agree, this seems to provide more useful information
+> > 
+> >> We have a patch for a couple years now with a tracepoint inside the
+> > 
+> > Sorry, where do you have this patch? is it downstream?
+> 
+> company tree. Attached. Where to put tracepoints and what arguments to
+> supply so that it is beneficial to multiple users is always a touchy
+> subject :-)
 
-> When discussing the error path and ret value that we not restore play_dea=
-d,
-> I will try to analyze the difference between native_play_dead and resume_=
-play_dead,
-> and sev_es_play_dead [the all possiable three value], and I see some mwai=
-t and hlt
-> way difference.[maybe it happens as disable the cpu failed and goes to En=
-able_cpus
-> path in func:resume_target_kernel in hibernate.c? ] Is that it desgin to =
-do and we can
-> move it to a common place in hibernate.c and left some comments ?
+Thanks. I would like to state that this would be useful for Meta as
+well.
 
-Why not leave it as is?
+Right now, we (Meta) are using nasty `noinline` attribute in
+tcp_sendmsg() in order to make the API stable, and this tracepoint would
+solve this problem avoiding the `noinline` hack. So, at least two type
+of users would benefit from it.
+
+> so I have not tried to push the patch out. sock arg should
+> be added to it for example.
+
+True, if it becomes a tracepoint instead of a rawtracepoint, the sock
+arg might be useful.
+
+How would you recommend me proceeding in this case?
+
+Thanks
+--breno
 
