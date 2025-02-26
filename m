@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-533584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE28A45C4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:56:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 810BDA45C35
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6E81892400
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2001892830
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C79F2676F6;
-	Wed, 26 Feb 2025 10:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3C226A08F;
+	Wed, 26 Feb 2025 10:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YcUOE5w5"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f5cYX4Bx"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38F524E00E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76F525D54B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567358; cv=none; b=KPG6CrSUXkP8cYRhio+LGEfxA3drQkYXRFEb1xGo9aH+awqLL36gx/SxtjZT8USIiUBhkh5MTk14QhyGWxPr7GXSeNAn+ZRyxKOLn0ozgAwf83q0mKnnkqvcSc0UMprhx6VoSEvETyHhtJ9bKvh4g1pxCWylM7ViU2RWNBX+tP4=
+	t=1740567259; cv=none; b=FGjCJefnBM6zLbVAmaPp/wx5aYeB+tLgn8dXTS+fR+SZDQRPaPVwoACGh4QLUJmm9zp64q+3B7fWWAoT/YyvhoiMM6BzdbPOs1rKR7yD88h9//fYzhi9H5p1hp+SPuZmsjJ7dkKJv5lyZlELvYZpu7hObN1B7ki7OD1bJE98NBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567358; c=relaxed/simple;
-	bh=hw4n8uJE0LcLADDBnJlFqcuib42uD/ho8CDkJ6P0W60=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fADUHnl1LSdafepuhHEkhO68P+lF+TqG+DtCHXS4P63HEAJtI/WYvs0oNa/ymLBmwy7Y133Oc44TFKu014+wf9b1dUm+ZRmNmP9XSw5pHHL31W5fIaM2uybBO7kLvqYw8W1n2cYxue5/K2Du9sVBnvtODIYkCfYuCvIguBeRFOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YcUOE5w5; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51QAjN2r1525492
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 04:45:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740566723;
-	bh=sjX+tO2Pkybis8N/p9WpJQ8YymWnX6z/Zza9cSgrmoc=;
-	h=From:To:CC:Subject:Date;
-	b=YcUOE5w5qKcTrnKoP7Up9bzMlwYEtkiQBaR2vB/iRa59e0vTsmjT27bvFTFuI/NRV
-	 4FLc5Uu9eYke/d+3c0d26geY+qRJm4Ljc/6aMYJrUlpgajaKMgNe0tk7AiRe+8sPNT
-	 S+qsR6i117OMzkBzw3nhIZ43kQ7V0bSTMknClct4=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51QAjNxg024798
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 04:45:23 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 04:45:22 -0600
-Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 04:45:23 -0600
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51QAjNrv075701;
-	Wed, 26 Feb 2025 04:45:23 -0600
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 51QAjMY3014137;
-	Wed, 26 Feb 2025 04:45:22 -0600
-From: Meghana Malladi <m-malladi@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
-CC: <elinor.montmasson@savoirfairelinux.com>, <javier.carrasco@wolfvision.net>,
-        <ebiggers@google.com>, <biju.das.jz@bp.renesas.com>,
-        <quic_tdas@quicinc.com>, <nfraprado@collabora.com>, <arnd@arndb.de>,
-        <dmitry.baryshkov@linaro.org>, <krzysztof.kozlowski@linaro.org>,
-        <geert+renesas@glider.be>, <quic_bjorande@quicinc.com>,
-        <will@kernel.org>, <catalin.marinas@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <m-malladi@ti.com>, Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: [PATCH v2] arm64: defconfig: Enable HSR driver
-Date: Wed, 26 Feb 2025 16:15:17 +0530
-Message-ID: <20250226104517.1746190-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740567259; c=relaxed/simple;
+	bh=x5xg3LwibJXQQaaKDM6VQ+lAP9lfPVdOz0gIsQg4kuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R9bxXsi3hpJOvdg9WixGBek6KExfthUQjn3k5tpVQgR43dxPgvHLctWCnnFKRFtAg6kJE70RFIhCxza6TbUER+YRgbHCRUkr+DcnipPACRLzSKkN+8IGEkBEkHV42LT/Rq34CJDywoIw5mjnvwY/7nAoPgYAXQeT6sBUlN6rsk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f5cYX4Bx; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-471f1dd5b80so160871cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:54:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740567255; x=1741172055; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8k9ussjgNfo7XH+19sy9pLzES4opNKoTTPxfbK8Va7w=;
+        b=f5cYX4Bxd88dY7t4MQPx2AdKVuvpWEE3sUTMD5Jt266TY61hY3xGRVW70Vqrl+JlXp
+         GmjZ3uYavX61DLSFyCGFiReZZwlz2zxpIA3s/AliLyENIkDafEH4e/brrCLRaHhpveDu
+         r5hKll0tbE4C1DFitzluA7Sf71R0mZYEyi0seewgN/ApoVPSlQXNM9IWm5I2OKQ4mfGO
+         hkMkNcj0csnZ0Es/kIviCoiQfFFEG4BOwxsQCMkqLGZI3A6fw0yAKqsOiSH60JzKtqLO
+         akpTZ8THMO24/QPtnkXpjUNkwLwJ7G/BucQUfBhiaXxbfTD+DlwDJGB05gd9+BXfLsxr
+         A1Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740567255; x=1741172055;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8k9ussjgNfo7XH+19sy9pLzES4opNKoTTPxfbK8Va7w=;
+        b=sQ+3DdwuUE1w7hMF7ujSBsYRHD1Ktx8A+EsCauj+YYtt5swXlZ/86FJNzruilcyKEb
+         yJGi0g2F0ZIySgOkaPklQJrvXS13m7HWN7qsEC4MINZ7ks8yoLqzrlS2QrQRmyWuFzEs
+         f2sRbhBd8BXjg6K8FERzkONcnaVS0ArwwOJYb+diCbGaYbXduczKGqWkvY5OdMxerZNs
+         klvdu2QBxt5jWatI9NXQR13PHR8FHV5iXFe1wxzRGX9GOjwiEBcMOxaSSkJWNbiLw1v1
+         TAfn3WZPA4Wf9xCZ9BOt2yplPWM6pbK2tCoG6wMcnMCuaqwCdpaZBVAbx8pVBI0HwZAi
+         IDFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5crEBBWYrLMloI+vU5wBjK17Xg84ouhD9oqsC5ujy9IUy41DV2E2dXwdj/0sJxfr3o5TcF/Ydjyiy8YI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdZwRMYViDDiW78/y0rJFDRCEwR+3FZGiFgi39hST8nnSuAvHx
+	Zn8q1nj2EjeKyZOmwitHdGiDQghSjixgO668wRjYevIy4mooYD59T2nbLIRUCqjxvNQ8ANoTltE
+	Mow86/U/qd72YNYrxhYIPMZpZxIyBdm7SBRyw
+X-Gm-Gg: ASbGncswQhUO7200LZbsazl0vRH3cQ+PjNOy4YCFNsu9xaCdEtnEIMvPd5tmMKSjpOu
+	wrcGh2hLgTHsWnKFAgh4tOOFIxHC6YQgcb/32OWVNK+T4D13c2OvtxUxclbY4l/TivO9A92/fhd
+	8MHMBrXUqJN4CFhilqcXMYvsYprfEBXZm+uaY=
+X-Google-Smtp-Source: AGHT+IEtUNEH5PpKZRBVaacFBgRUGjAhw23RRBB5/3TVjGiyJAVndyaT1T40ETOgSGf0gVSz9gyrvjommoMUte+jJtQ=
+X-Received: by 2002:ac8:5a10:0:b0:471:fefc:f002 with SMTP id
+ d75a77b69052e-47376e81cf3mr8973501cf.9.1740566831709; Wed, 26 Feb 2025
+ 02:47:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com> <20250224-page-alloc-kunit-v1-4-d337bb440889@google.com>
+In-Reply-To: <20250224-page-alloc-kunit-v1-4-d337bb440889@google.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 26 Feb 2025 11:47:00 +0100
+X-Gm-Features: AQ5f1JrJDmTOqjWilOWeguYEmp9d0N0gM7ZtyDHGC2VpER2YE2U_sG3dR8rzJXg
+Message-ID: <CA+i-1C2C4GSd3Jhw56WfccKizoeLj4ychCz2BpOU6AwESjzSyg@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/4] mm/page_alloc_test: Add smoke-test for page allocation
+To: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+On Mon, 24 Feb 2025 at 15:47, Brendan Jackman <jackmanb@google.com> wrote:
+> +static inline struct page *alloc_pages_force_nid(struct kunit *test,
+> +                                                gfp_t gfp, int order, int nid)
+> +{
+> +       NODEMASK_ALLOC(nodemask_t, nodemask, GFP_KERNEL);
+> +       struct page *page;
+> +
+> +       KUNIT_ASSERT_NOT_NULL(test, nodemask);
+> +       kunit_add_action(test, action_nodemask_free, &nodemask);
+> +       nodes_clear(*nodemask);
+> +       node_set(nid, *nodemask);
+> +
+> +       page = __alloc_pages_noprof(GFP_KERNEL, 0, nid, nodemask);
 
-HSR is a redundancy protocol that can be realized with any
-two port ethernet controller.
+Oops, it's ignoring the gfp argument here.
 
-Many of TI's K3 SoCs support multi port ethernet controller.
-So enable HSR driver inorder to support this protocol on
-such SoCs.
+> +       { .gfp_flags = GFP_DMA32,       .want_zone = ZONE_NORMAL },
 
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
+And with that fixed, it becomes clear DMA32 allocations can't be
+expected to succeed in this zone setup.
 
-v1: https://lore.kernel.org/all/20240419060013.14909-1-r-gunasekaran@ti.com/
-
-v2-v1:
-- Rebase to the latest tip
-- Included TI specific maintainers in 'to'
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c3df5120b23d..f3afc0ec68f0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -177,6 +177,7 @@ CONFIG_NET_CLS_FLOWER=m
- CONFIG_NET_CLS_ACT=y
- CONFIG_NET_ACT_GACT=m
- CONFIG_NET_ACT_MIRRED=m
-+CONFIG_HSR=m
- CONFIG_NET_ACT_GATE=m
- CONFIG_QRTR_SMD=m
- CONFIG_QRTR_TUN=m
-
-base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
--- 
-2.43.0
-
+(Anyway, it's a bit of a silly test regardless, just something to
+illustrate the KUnit idea).
 
