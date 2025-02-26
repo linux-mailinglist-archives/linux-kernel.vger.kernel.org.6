@@ -1,159 +1,191 @@
-Return-Path: <linux-kernel+bounces-532965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D90EA45439
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:59:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC9AA45437
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94010188BF21
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:59:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B761755F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88825D54D;
-	Wed, 26 Feb 2025 03:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB36A25E452;
+	Wed, 26 Feb 2025 03:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ITac/vdw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B0445979
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="h8E64SGI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D884253F05;
+	Wed, 26 Feb 2025 03:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740542378; cv=none; b=IWwiqM/Z4vrd0vvltbjVpznnd7DeoPtovMXcO/Qsakhoh1ShSIiq0VsodRmhu5Nvy1LRmKzbNlCLUfYfwDpZBi5SlKaBe2RYbLYxF8LfNaS0rDLz4PG18gBqmPhFvYa8PdR2VuoHqzSRx6/QKAV0Fwz0En4eE9o/4OCfYYi41NY=
+	t=1740542335; cv=none; b=CtQsyCBGXGM1r9h1bc7Lhz/xau8PWXZnfTZT/dZNcAnfY5rB9j+gkP5fLPklP/6GJCntX7cd7CZGFdUc1MHG7rMOlMZg6/nZ0hIqC7sLdcoayc4FSrnA8mrOJ08VcHjn5KtwIneTzhaeMsuKWuNxvmvZsBYwtXrWiLjpe/mGhwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740542378; c=relaxed/simple;
-	bh=JFem/7WPlM/rLN7r5J/ez/NiGMaJxDxukWm2SZ0acVw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QxNCa+W8NkZ6zewc29O1u3+ojaGJ5yeNau9f1TpsQag/l3/3QhQpUCmgamaC4IH3L3GHlpiHg5mBBH4GzrJtpd3EVS0FMJ5Vj+Sz9T5vDVeQRdzbn/b9ZQ2RqIPA6mImtWS1GOrqnUfrxUVyR1015kGNkWfDdoTxNLEWAouCHvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ITac/vdw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q1kqMD028572;
-	Wed, 26 Feb 2025 03:59:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=lbb2EYaTqrYLW/hbRhQ7MvoeKzpm
-	8rT2BSNrqeTkGZc=; b=ITac/vdweHEqKLHUFprLC0DoifcdK2JatGG02ZwLT6B2
-	7YsNXlvQqQgCQAQgJ6Z/gEMOKyo9ojkHylfHmijgXYNAxKKfMHej3oSP+4YpsV6l
-	D2i1jDxAUWne+OG0uRqvW1bpOIvUGkBKt9VqcjxZACZV0tPA8g3vcYX15sxnU+xi
-	sB/eZVfxWN+Tw5jysFUm+r6RXuWdBPSUIA+pP9k7SQRRN1TMaFhBObY9a+gT/rop
-	FGMoYXh5O3plMJMgmHZpJl1POhKNkGn6gD2tcM62DN8TfN9UYJjh0C4iKmRtLPjw
-	+u26Qjwl9K1IROSy3tHiAPURgw8JwvYGdSHV5JzsGw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5m8xug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 03:59:18 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51Q3xIQ2023050;
-	Wed, 26 Feb 2025 03:59:18 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451q5m8xtt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 03:59:18 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q08TD6026354;
-	Wed, 26 Feb 2025 03:59:02 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44yswngma6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 03:59:02 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51Q3x2CD21234144
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 03:59:02 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1A0245805F;
-	Wed, 26 Feb 2025 03:59:02 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E9D4658043;
-	Wed, 26 Feb 2025 03:58:55 +0000 (GMT)
-Received: from [9.43.65.188] (unknown [9.43.65.188])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Feb 2025 03:58:55 +0000 (GMT)
-Message-ID: <8ce77d4d-cd19-472b-a526-0c80feb2b028@linux.ibm.com>
-Date: Wed, 26 Feb 2025 09:28:52 +0530
+	s=arc-20240116; t=1740542335; c=relaxed/simple;
+	bh=IOgnrycr1WyDhdThwz2plkVF4tNNBF3gbfroVg94MOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGyf/X/UJ4/+f8BSKfb/x9kJpJ1t7aoJbS0aDSUbRqyeAm4cl9RXzkQGyAettJK3XrlCdIEtLeng3OdYYT3JGxE9pBtSwAhULK8ecOLyavYrMgmtJ357AG0Wrcwsd6+ORQRWSUG8kQg1Adc93+VBSAEIG5T6VVOQE2UHVWH5GPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=h8E64SGI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 1B46E20460A8; Tue, 25 Feb 2025 19:58:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B46E20460A8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740542333;
+	bh=yNYyjztGjtuVPk6nvoez8iotd+cHNDaVQ/pzCQ1fHfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h8E64SGIHyZ7T5uwofjtEDo4Iq1vLHvis+riAuwYNAxQKG9QyytbxNa6cgmrHeHhf
+	 GulGYp9LNgQARRep3PiPJt0yIl8BLlCZOEM5LFisdSaEQXMbML6JXdKDCrp3WBJSFM
+	 lKPV2Z9QliBXrIKjHLjNmpbbE6t+l8G3qZXPqGUI=
+Date: Tue, 25 Feb 2025 19:58:53 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ssengar@microsoft.com" <ssengar@microsoft.com>
+Subject: Re: [PATCH v2] fbdev: hyperv_fb: Allow graceful removal of
+ framebuffer
+Message-ID: <20250226035853.GA19981@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1740473808-9754-1-git-send-email-ssengar@linux.microsoft.com>
+ <SN6PR02MB41574CD095A292D20AD6C84ED4C32@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Donnellan <ajd@linux.ibm.com>,
-        Bagas Sanjaya
- <bagasdotme@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.14-4 tag
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0y8MZNw5xkoeLVax816qcmv3mZpeSElb
-X-Proofpoint-ORIG-GUID: SZz9kxXELDzWkYv7JjrGO4rsdSsu0lR-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 bulkscore=0 adultscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=679 mlxscore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502260029
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB41574CD095A292D20AD6C84ED4C32@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On Tue, Feb 25, 2025 at 04:46:12PM +0000, Michael Kelley wrote:
+> From: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > 
+> > When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
+> > release the framebuffer forcefully. If this framebuffer is in use it
+> > produce the following WARN and hence this framebuffer is never released.
+> > 
+> > [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_info.c:70
+> > framebuffer_release+0x2c/0x40
+> > < snip >
+> > [   44.111289] Call Trace:
+> > [   44.111290]  <TASK>
+> > [   44.111291]  ? show_regs+0x6c/0x80
+> > [   44.111295]  ? __warn+0x8d/0x150
+> > [   44.111298]  ? framebuffer_release+0x2c/0x40
+> > [   44.111300]  ? report_bug+0x182/0x1b0
+> > [   44.111303]  ? handle_bug+0x6e/0xb0
+> > [   44.111306]  ? exc_invalid_op+0x18/0x80
+> > [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
+> > [   44.111311]  ? framebuffer_release+0x2c/0x40
+> > [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
+> > [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
+> > [   44.111323]  device_remove+0x40/0x80
+> > [   44.111325]  device_release_driver_internal+0x20b/0x270
+> > [   44.111327]  ? bus_find_device+0xb3/0xf0
+> > 
+> > Fix this by moving the release of framebuffer and assosiated memory
+> > to fb_ops.fb_destroy function, so that framebuffer framework handles
+> > it gracefully.
+> > 
+> > While we fix this, also replace manual registrations/unregistration of
+> > framebuffer with devm_register_framebuffer.
+> > 
+> > Fixes: 68a2d20b79b1 ("drivers/video: add Hyper-V Synthetic Video Frame Buffer
+> > Driver")
+> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > ---
+> > V2 : Move hvfb_putmem into destroy()
+> > 
+> >  drivers/video/fbdev/hyperv_fb.c | 28 ++++++++++++++++++++++------
+> >  1 file changed, 22 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
+> > index 363e4ccfcdb7..89ee49f1c3dc 100644
+> > --- a/drivers/video/fbdev/hyperv_fb.c
+> > +++ b/drivers/video/fbdev/hyperv_fb.c
+> > @@ -282,6 +282,8 @@ static uint screen_depth;
+> >  static uint screen_fb_size;
+> >  static uint dio_fb_size; /* FB size for deferred IO */
+> > 
+> > +static void hvfb_putmem(struct hv_device *hdev, struct fb_info *info);
+> > +
+> >  /* Send message to Hyper-V host */
+> >  static inline int synthvid_send(struct hv_device *hdev,
+> >  				struct synthvid_msg *msg)
+> > @@ -862,6 +864,24 @@ static void hvfb_ops_damage_area(struct fb_info *info, u32 x,
+> > u32 y, u32 width,
+> >  		hvfb_ondemand_refresh_throttle(par, x, y, width, height);
+> >  }
+> > 
+> > +/*
+> > + * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
+> > + * of unregister_framebuffer() or fb_release(). Do any cleanup related to
+> > + * framebuffer here.
+> > + */
+> > +static void hvfb_destroy(struct fb_info *info)
+> > +{
+> > +	struct hv_device *hdev;
+> > +	struct device *dev;
+> > +	void *driver_data = (void *)info;
+> > +
+> > +	dev = container_of(driver_data, struct device, driver_data);
+> 
+> I don't think the above is right. The struct fb_info was allocated
+> with kzalloc() in framebuffer_alloc(). You would use container_of()
+> if fb_info was embedded in a struct device, but that's not the case
+> here. The driver_data field within the struct device is a pointer to the
+> fb_info, but that doesn't help find the struct device.
 
-Hi Linus,
+Thanks for catching this. I should have been more careful.
 
-Please pull powerpc fix for 6.14:
+> 
+> What does help is that info->device (not to be confused with info->dev,
+> which is a different struct device) points to the struct device that
+> you need here. That "device" field is set in framebuffer_alloc().
+> So that's an easy fix.
 
-The following changes since commit d262a192d38e527faa5984629aabda2e0d1c4f54:
+Right, thanks.
 
-  powerpc/code-patching: Fix KASAN hit by not flagging text patching area as VM_ALLOC (2025-02-12 14:38:13 +0530)
+> 
+> > +	hdev = container_of(dev, struct hv_device, device);
+> > +
+> > +	hvfb_putmem(hdev, info);
+> 
+> Another observation: The interface to hvfb_putmem() is more
+> complicated than it needs to be. The hdev argument could be
+> dropped because it is used only to get the device pointer,
+> which is already stored in info->device. hvfb_release_phymem()
+> would also need to be updated to take a struct device instead of
+> struct hv_device. But if you made those changes, then the
+> container_of() to get the hdev wouldn't be needed either.
 
-are available in the git repository at:
+Make sense.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.14-4
+> 
+> A similar simplification could be applied to hvfb_getmem().
+> 
+> Maybe do two patches -- the first to simplify the interfaces,
+> and the second to do this patch but with reduced
+> complexity because of the simpler interfaces.
 
-for you to fetch changes up to eff2eb592efd73f00590d578c3d6021f604df62c:
+Agree, let me do it in V3.
 
-  cxl: Fix cross-reference in documentation and add deprecation warning (2025-02-19 13:33:58 +0530)
+- Saurabh
 
-- ------------------------------------------------------------------
-powerpc fix for 6.14 #4
+> 
+> Michael  
+>
 
- - Fix for cross-reference in documentation and deprecation warning
-
-Thanks to: Andrew Donnellan, Bagas Sanjaya
-
-- ------------------------------------------------------------------
-Andrew Donnellan (1):
-      cxl: Fix cross-reference in documentation and add deprecation warning
-
-
- Documentation/arch/powerpc/cxl.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEqX2DNAOgU8sBX3pRpnEsdPSHZJQFAme+kI4ACgkQpnEsdPSH
-ZJTRHg//cAiqHzzrYX9jErT/3QGrvjRLIUUSlZxXKnS1pObH1IjryIR+KXVh6Jsh
-IKuKRFtWGIiffX829hd7kwfVQ15T5iK0dIR4q2kFxWf4x6Znd1AUyVjrUTiGzs/R
-iP3JMItipD/q3uFfdJR/Dy0H4oV8/F+53g++m9EteZErBLvYjutq53mq9d40Teiw
-K+n21GVToZ5sHafILA9wRrj1MzkWhzFqZl84s9SV2ReBCTYSx2KixWXWFNLf4dvJ
-ynFPJIka1x3IZB4Lv6GlwxgRkUT3YMSrcMEKd4s2kWrPRxTBKd4Rvo6OjoGWleV8
-C7IunJtSABJDXuSAKq6S0cF0cvDbs6E8nMJEXjYwFKgNL0OWVBa38YEsSuVXndcy
-YdROZtHEjx9vNK+APpLZSaDD6TcShqCICgSccWSLFKssdsL0//ZRn7M1VKsqJ2La
-3RvXl5I1Uf7hxGAE/O4nfATW0SrYNUrXU4b4uSAnEBGzDI6Ot73XE+UXEao4y2bH
-c97IthhClqW3WD+mV/+3jFArK6QatEls4lsK6TqKYLdTjfaLTHdzs/SYkt9SYT1u
-XMfhDy5eg5WjjyxAQGbhuF+yu/Ljws+uRuALIalGpLCL/KFI8wsaaOYBKRLtt4Yl
-gSdsNDRFP4AJFZVwEM1ypC/xQ0uSU76LSsdcareljrzkrgiDi/8=
-=7YO9
------END PGP SIGNATURE-----
+<snip> 
 
