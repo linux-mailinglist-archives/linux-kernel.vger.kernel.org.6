@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-534192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5D5A463FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:02:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ECEA463FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:03:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245E71710C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFEB01890B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB932222C8;
-	Wed, 26 Feb 2025 15:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D482222CA;
+	Wed, 26 Feb 2025 15:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMxOtcWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVFfL316"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C3D190665
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0704190665;
+	Wed, 26 Feb 2025 15:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740582143; cv=none; b=MqWXFe9VK6dsHBZMa5arcCmpd/G0X9s7RuGuj2ZTjLKFhRK7FkbiG9cGzKRdaqq1i1HdSFUBcQokOkBFQmXiy4lvEIy77qFAe69cCbBQVGJ6T+WjZ154/aJyGyL1B6cKSn+KsAzo6E0wqqESC3qteXVLQiIn+OIBgK5XdA2MPvk=
+	t=1740582191; cv=none; b=R8xS+dOUL2q+TZBqIYGQFC9wDwN6trbpNlMO9s9rNnDQNNf1QefHxHFfUe4tLkAyunCpm4c3wR3UqIoyL9WYL4krfs8NKRWu1eUdSNYtXN/l4DY0zP2GToeORuSk89KgJ9vZXgAIAISEC5oCtJWuZBFvNEp146FmojCJYMO9mT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740582143; c=relaxed/simple;
-	bh=lW1uVxiz1zwkZfsdu2FvG52Ph55luPTOoJCgdMZItXA=;
+	s=arc-20240116; t=1740582191; c=relaxed/simple;
+	bh=fMoKzn75GHUYA90ipZu+q71iCAH9WvdZFZJ+RHG3XAs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCyxqVAkwVDyXAPFpME3tXWaE0Nvlrdjm+OQfWE9gMvt8guPYhDvOH7p4cpcDocdusKpIhnzkeKQzmf3mNdFQGE5qbB4YZ2Rh2krJWqS0P+OAgEkAca3w0rAIGumLaSmUQDLMzUKXh7WUUOHAXjsYUsq36c+NhRRf/qDMrxS0p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMxOtcWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D43DC4CEE4;
-	Wed, 26 Feb 2025 15:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740582142;
-	bh=lW1uVxiz1zwkZfsdu2FvG52Ph55luPTOoJCgdMZItXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XMxOtcWrU/RFP969LF589aMic0wVLrITjYRqReOSEFaCXsrCjdlAwnfsTEUb6nbxf
-	 zmsJi4CcfQ6qh712C0UTUxvw8ZpupFh3FtYLstDKdHYSYRzCjDevpq8FzrvoRv+FIC
-	 BUC7ESgv1vvXmcG2K3Dd6SuY0JTgjaguHs1qlBYZO93xv7J2bIOw+DP9oI4OouOzhA
-	 +bA0IFiUriEV9RKoktxUZDuT2p//BScIIpMkDdpX8096DIpIpZDBHCD5lM3QXzew0d
-	 t1pLWSv4x1qmH1dTdg15EpF8HfoECNRyCO1n+s0Wfr7ilbPk5R5t3JYQ6zGtMmcQOW
-	 oENIobmmUAq0g==
-Date: Wed, 26 Feb 2025 16:02:19 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
- WORK_CPU_UNBOUND.
-Message-ID: <Z78s-1jHXehA33px@localhost.localdomain>
-References: <20250221112003.1dSuoGyc@linutronix.de>
- <Z7iSboU-05uMJ7-e@localhost.localdomain>
- <Z7iuUObJGgZtsaJe@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rGLxX3PSaBegnQZoe9z6PcbgvtwhSu0lMJiWFl9QQ0o2J2/Lr4yKkVF61P4ToLVi+tWPMD/Pl2bgfni8DKNXid9owjkD+eR3cqm5HX0HaTHNpy9Dp7U9uEXcr4GoxRrJSqf3/bK00Xopg7JRiCOHbzMuezOMgzCher+eW/0Dg4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVFfL316; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220f4dd756eso149137065ad.3;
+        Wed, 26 Feb 2025 07:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740582189; x=1741186989; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgmChzRUPWrxU/Ro0HZWigmuIxGgec64e1FE97Altvs=;
+        b=YVFfL3164/k2C18lmdJE9Wc5Xx3i/DzJaujEnVvW4fN+Q1l72XfnflOSiVo8FAhQkC
+         IrTPU5jlJAzqNLOAC+KqPHbebPA4cbjyzHACSW0TKfEn0mHWJ6mS4NhT4ZzTkgsq5n4M
+         ogS8Rzk9sb8MZVVg1YY/wnA1e8Vo+mrda2nocwPvgbZOmeT1urRh/vAc24VUcS+cMXGz
+         Edvxpac1EK9zOne/Kfg5vVlCkjRX9NBPbXwO2M0rebgE+OmCeOZtV2yp/Yah868bY7CO
+         gghY8rAQzxiuCOMvSS1VfenTEKp/ncD0vOeKXwRVxOulNAWSTjW1J3dYB/I+wwOjD8sj
+         tV/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740582189; x=1741186989;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lgmChzRUPWrxU/Ro0HZWigmuIxGgec64e1FE97Altvs=;
+        b=tB15cbaXnq1D8T/qOzT0PqoavkF6ACRVk4JbC92W4tdJyek6uy5/tyC5YgnQsbdjRu
+         RG9wndbJT5bcsbTtwFUrrzgkm+RN6ObQ1Je3mtVhRSklRWeZQfT30sK2gttGpgA2GK7t
+         G8KyqPLiOZmloSlViWXYzfC/67hIaF0TyIbq09DMplojDpnHcbkB83NwXFvTOEYzP1Tu
+         feVkV7ui27XsRT+5AsdfaYRHCl4PPY7rm4KREcsI8Vd4UZZrnTOOJH6x4p8Ux1MhT1AG
+         kAjA48biK8GdDjGJLt2Q6ln6qzK5bQdXucdN0j6Kr2ELBYyq6g63FRB6IBPiBdMAbfdJ
+         53mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6uM2g+DY7DYpQvEB5mojjnNNoR9/GFHuNKSrNd/o/jiB8dXT6OpS6JK9jXnPFNYJHZaNaPKcZ+2q+nN8ZQqQ=@vger.kernel.org, AJvYcCVK4uoeTf63Wftk2QkvweZ5YIeZqay+FggWp40S4H9Cjdotsf07mL9OidDCoLDTPcH9IcvhQgCuaGl701M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWvqKD924RAOaTYgerKTetwO/2eMtalyNm+daEbxVldLUnDhuF
+	nMTVc+2KUX8ulJOnO6nqavmkEEJNg12wY8OljZFKZt/+ODT4ZJbd4OE9t/7d
+X-Gm-Gg: ASbGncuRVPNmOyK6rUlE5N44Tyz7NO1fNei2LdnUKu8IXU2lwz1EZvtGFcaWg36+WAY
+	7qbBX40tNC67dqwh/YmiJYyz8clu6DHLITf8ELBKaAxzM0Fd0bXgXP9gfayW2PMAtJQLv2fAZRi
+	6z9l3eBHwRu1adiMHCIZLQEYiEuqwt/Ae0e56y6HIwqGUwbtEySJnl+YfpwKu5VfjgNS2kHCNEI
+	JJLmZm7P5F5j4DR0Oferi0MybcJReW6Vcy8SCnvMhVoo8M5qzVOKiqioLcv2u7SNu/otJWakxxo
+	FrpjdERZ9qTCXdgWd7qLl2zdjCzIRc1s4IkKd24vNHD2OI8X1g==
+X-Google-Smtp-Source: AGHT+IFl++KPanhHASqmMVGgwPLmI6jBBycifC3LPnORcJTe5GZAgJBB2UNwedgMdxS/e6kNWR6Xhw==
+X-Received: by 2002:a17:902:e5c2:b0:215:9470:7e82 with SMTP id d9443c01a7336-22307b455dcmr130723185ad.4.1740582188873;
+        Wed, 26 Feb 2025 07:03:08 -0800 (PST)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a01fe8bsm33339875ad.54.2025.02.26.07.03.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 07:03:08 -0800 (PST)
+Date: Wed, 26 Feb 2025 10:03:06 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
+	rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 2/2] MAINTAINERS: Add entry for Rust bitmap API
+Message-ID: <Z78tKmTa3RVH327d@thinkpad>
+References: <cover.1740475625.git.viresh.kumar@linaro.org>
+ <8c6249c6631f47565541d584fbec78cd2fbe60c1.1740475625.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7iuUObJGgZtsaJe@slm.duckdns.org>
+In-Reply-To: <8c6249c6631f47565541d584fbec78cd2fbe60c1.1740475625.git.viresh.kumar@linaro.org>
 
-Le Fri, Feb 21, 2025 at 06:48:16AM -1000, Tejun Heo a écrit :
-> Hello,
+On Tue, Feb 25, 2025 at 03:17:15PM +0530, Viresh Kumar wrote:
+> Update the MAINTAINERS file to include the Rust abstractions for bitmap
+> API.
 > 
-> On Fri, Feb 21, 2025 at 03:49:18PM +0100, Frederic Weisbecker wrote:
-> > Le Fri, Feb 21, 2025 at 12:20:03PM +0100, Sebastian Andrzej Siewior a écrit :
-> > > If the user did not specify a CPU while enqueuing a work item then
-> > > WORK_CPU_UNBOUND is passed. In this case, for WQ_UNBOUND a CPU is
-> > > selected based on wq_unbound_cpumask while the local CPU is preferred.
-> > > For !WQ_UNBOUND the local CPU is selected.
-> > > For NOHZ_FULL system with isolated CPU wq_unbound_cpumask is set to the
-> > > not isolated (housekeeping) CPUs. This leads to different behaviour if a
-> > > work item is scheduled on an isolated CPU where
-> > > 	schedule_delayed_work(, 1);
-> > > 
-> > > will move the timer to the housekeeping CPU and then schedule the work
-> > > there (on the housekeeping CPU) while
-> > > 	schedule_delayed_work(, 0);
-> > > 
-> > > will schedule the work item on the isolated CPU.
-> > > 
-> > > The documentation says WQ_UNBOUND prefers the local CPU. It can
-> > > preferer the local CPU if it is part of wq_unbound_cpumask.
-> > > 
-> > > Restrict WORK_CPU_UNBOUND to wq_unbound_cpumask via
-> > > wq_select_unbound_cpu().
-> > > 
-> > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > 
-> > I really would like to have this patch in. I have considered
-> > doing that a few month ago but got sort-of discouraged by the
-> > lack of properly defined semantics for schedule_work(). And that
-> > function has too many users to check their locality assumptions.
-> > 
-> > Its headers advertize to queue in global workqueue but the target
-> > is system_wq and not system_unbound_wq. But then it's using
-> > WORK_CPU_UNBOUND through queue_work().
-> > 
-> > I'm tempted to just assume that none of its users depend on the
-> > work locality?
+> Yury has indicated that he does not wish to maintain the Rust code but
+> would like to be listed as a reviewer.
 > 
-> That's API guarantee and there are plenty of users who depend on
-> queue_work() and schedule_work() on per-cpu workqueues to be actually
-> per-cpu. I don't think we can pull the rug from under them. If we want to do
-> this, which I think is a good idea, we should:
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Reviewed-by: Yury Norov <yury.norov@gmail.com>
+
+> ---
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> 1. Convert per-cpu workqueue users to unbound workqueues. Most users don't
->    care whether work item is executed locally or not. However, historically,
->    we've been preferring per-cpu workqueues because unbound workqueues had a
->    lot worse locality properties. Unbound workqueue's topology awareness is
->    a lot better now, so this should be less of a problem and we should be
->    able to move a lot of users over to unbound workqueues.
-
-But we must check those ~1951 schedule_work() users one by one to make sure they
-don't rely on locality for correctness, right? :-)
-
-> 
-> 2. There still are cases where local execution isn't required for
->    correctness but local & concurrency controlled executions yield
->    performance gains. Workqueue API currently doesn't distinguish these two
->    cases. We should add a new API which prefers local execution but doesn't
->    require it, which can then do what's suggested in this patch.
-
-That is much trickier to find out and requires to know about the subsystem
-details and history.
-
-For those that don't rely on locality for correctness, we would really like
-to be able to offload them to unbound pool at least when nohz_full= is filled.
-Because in that case we don't care much on workqueues performance.
-
-> 
-> Unfortunately, I don't see a way forward without auditing and converting the
-> users.
-
-I see...
-
-Thanks.
-
-> 
-> Thanks.
-> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ec2428b82103..17e98d757b9b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4034,6 +4034,12 @@ M:	Yury Norov <yury.norov@gmail.com>
+>  S:	Maintained
+>  F:	rust/helpers/cpumask.c
+>  
+> +BITMAP API [RUST]
+> +M:	Viresh Kumar <viresh.kumar@linaro.org> (cpumask)
+> +R:	Yury Norov <yury.norov@gmail.com>
+> +S:	Maintained
+> +F:	rust/kernel/cpumask.rs
+> +
+>  BITOPS API
+>  M:	Yury Norov <yury.norov@gmail.com>
+>  R:	Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > -- 
-> tejun
+> 2.31.1.272.g89b43f80a514
 
