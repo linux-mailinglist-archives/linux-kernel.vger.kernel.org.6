@@ -1,228 +1,171 @@
-Return-Path: <linux-kernel+bounces-532773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95505A45209
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:14:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584EBA45218
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D0A1705A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4901189C33B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F115575C;
-	Wed, 26 Feb 2025 01:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="GJeLbRxN"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011051.outbound.protection.outlook.com [40.107.74.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1354517DE2D;
+	Wed, 26 Feb 2025 01:20:39 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F12E18DB00;
-	Wed, 26 Feb 2025 01:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740532464; cv=fail; b=OkLaT1ZvWOK6RncpqTON8QBKUfeeHo62sNAHrmyrCMq8iRa/fc0kJ0LzKyM6C1ZGIOVr33xk6HPRTUJtU0E+EVmh5WuZDgfa1nRBPSXprzIVPaTRKCHKVBrYvRYEhNNkuXJjWMzfVxGlwXSzJNv5z/yKI2koN6KRMp3aNcZg85A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740532464; c=relaxed/simple;
-	bh=o00VCQYvXcO2oAYd5m6FXEuodtzzzwYbY4hFSB0cAZQ=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=BnuwUx4qpt2r52zo4HToZFdLaNmnvhamQP0KUEilc/bslewye2k/jr3R16vOC5k/fqnn3Lp1NOCgcEx34f071vyMcHj0ON4hKwyzcX25iSJ7J9AuoTdYDG/ZOg5UJVBT/bwD+iNHYvFGxYLhmUVzevZnXQ8VMlzVgYBYkk+j5gs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=GJeLbRxN; arc=fail smtp.client-ip=40.107.74.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s0Aqof7IU4XDcg+Sg0kUgEbaMcHdkHEIASAR5yDWqLTHSKLorK3Y9/PwcndoysTV3nNa6LeCRnxgRFLD/3kEZNOnDp3pJ/1azM4sTfLzk6N7yT4jpO/B04O/xk+odgm8IJQCSJet4fmDJN3T5zE7mvTJ6ZiOfou2Cd0fng7Du6mGQxrmAM5xvj0DMmffK1W52xcpjoHFOlsvdw1xWORqEOn3S4nIXhi//+T24l/FCpYXJL1HP6QEkWG89R7uuduh/xN8QBi6Cql6dLvrBIe0ftwSPvhsy+JshqmUkr53Et09hbElBt91Qhc0VMxVsniyIe5OGSvL0Yw5yL+iSq4mDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R7zaSWw6FmY0E0Rujx9PGo2q8mZHstDo8RanybewW3M=;
- b=xcpEPcFcEcLwS94NNS9o7JNXS6vqVarPkbD5IlpzOpnDVNTPR+sYBZLMrP0cpQf1gFVo8ZInERGnl2JQadK/YGVuiO9RWOIhTu+JFNkZ3le7GQhCno+DkoxWU4ECWBvmOhiS+f4dYdVpE1W6PmOHewa9y1PiHNWpM9UWrtXYdbQ9CdNUaLvxFXjmiRhEO6qFe/mD2wGSZFUjBS9BOOlwU3LteVAGe7a/MDRW7sYue+R9hwT2mUCXx8lHQAbqSZCf8FrcwW+rWdhX7jBP21SsYmjR+QI4o62aAA1uK6J9nK21zAA/z1bYBdPBBvhqOWL1QaT2v1jeOmeFSHPLRuo7iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R7zaSWw6FmY0E0Rujx9PGo2q8mZHstDo8RanybewW3M=;
- b=GJeLbRxNedNgfrtn4MHb7cRYoqfebyTerCggGtMy5R2hagnfERgAMMR3bp+TWjwesf/ELbyEArUFuSSYWDx6xVCpoEqbzM7yQ4pZ+a/KBgNa/TYrMps1gUvnFsSspLsyzqxIUIPmXVYovcIWoyKMdndhBfWS8hksQiLSXwoxrvE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TY3PR01MB11771.jpnprd01.prod.outlook.com
- (2603:1096:400:376::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
- 2025 01:14:17 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.8489.018; Wed, 26 Feb 2025
- 01:14:17 +0000
-Message-ID: <87h64hh5hz.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Linux-ARM <linux-arm-kernel@lists.infradead.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	David Airlie <airlied@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v7 0/3] Add HDMI audio on the rk3588 SoC
-In-Reply-To: <3337030.aeNJFYEL58@trenzalore>
-References: <20250217215641.372723-1-detlev.casanova@collabora.com>
-	<87frk2sumw.wl-kuninori.morimoto.gx@renesas.com>
-	<8734g2sg4t.wl-kuninori.morimoto.gx@renesas.com>
-	<3337030.aeNJFYEL58@trenzalore>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 26 Feb 2025 01:14:16 +0000
-X-ClientProxiedBy: TYCPR01CA0201.jpnprd01.prod.outlook.com
- (2603:1096:405:7a::18) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634A3EEBB;
+	Wed, 26 Feb 2025 01:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740532838; cv=none; b=iEpcerMbNYeDSqR5JNimtm7D07HAgXKjB2dtCjjwoXFOsHWAAiT/pF5rOuWiJ+JSiRUtT0JWkgcl1/KFX4GDWnQmf4hXjvKENEcqTk5ofpHLBedBVCIzh6kw5D1UsZNZHi/xhwlCckIt0emtnuZxBCEOTll1YCgib79X4enrr14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740532838; c=relaxed/simple;
+	bh=1y+CsCuTNBZX2g/3ocZNhC6n59KFuU6Pz+bZyclOKXY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bTS0SoLj3sl2sRNunxTJ1Wi9PkgmN4X/i/rDC9z7L6XyWgumYys5lFr4RWWrbY9k/mM5uKBClFdFot1iI8Nom63lupLoJ8gHo6cm2UeG0TXCgqTTI3v4c9GdfppqtBM8h295Jd3NnS83iustI3xxHf6/ZENJOg0q4J/YtS6TTW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2c8m06hZz4f3l2C;
+	Wed, 26 Feb 2025 09:20:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 43BF11A06DC;
+	Wed, 26 Feb 2025 09:20:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgD3W2BbbL5nY96kEw--.12272S4;
+	Wed, 26 Feb 2025 09:20:29 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: ming.lei@redhat.com,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk,
+	vgoyal@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
+Date: Wed, 26 Feb 2025 09:16:27 +0800
+Message-Id: <20250226011627.242912-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TY3PR01MB11771:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c16b9d5-e7aa-48d3-3a64-08dd5602e3e4
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|52116014|366016|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?ZSb4NMpYNo49TkbgjefhWLPadjvt1IYBNGFKJSQ4m1CR5NoIi8ZtOzQ8qzQT?=
- =?us-ascii?Q?dtptFj7xjsuCu9hmDYpZpv0gAtRgLiciW2l60mBn8A25ESaltc6OV7u3xYlj?=
- =?us-ascii?Q?rFUMcJgpacn7ZiXQJO7ohfa+uICrwP6c/3p0Z3XP37cb4dlgFSPYGIhQt+1C?=
- =?us-ascii?Q?u43Vri46vB1TVc6kHRJyuMuLw0Y8/cEWseNaJ1HaAW1fEcOx2zTuM2a7FsBL?=
- =?us-ascii?Q?NXhZ5hwHxrigYAnbIrTvp/FAHtDT+F7J/r0bkCBqA3JSpJ1u3/RFnCCCxX0n?=
- =?us-ascii?Q?zjFHKDKSO3Jk7SX1op9o6/hu3ul39IFJL34UbBRd09fJjuZT+5XjTc1hkLh3?=
- =?us-ascii?Q?vIpXC3DUUIT9WXCLKhI2Hc5ifb0XnuYv6vB4+fty/lYj/WEGn464YPvN8W/G?=
- =?us-ascii?Q?TNnQLNiliTJx+KDaHUVTQ6DDvCGxtmH+CO6Z2cuXr3MohoNtIu0v/J9soxCJ?=
- =?us-ascii?Q?ircNDUDzLVwMM91H8ACIJG1hTHEBSnL5/wTEkeQCqDR6/dQVpLlm1dMLyrCu?=
- =?us-ascii?Q?tCmje4EhZmsVZ5wxhn4DW7jYmGQZXZffX2IGOt880mRD+nHPiuTQbhYCrTTp?=
- =?us-ascii?Q?74QkTOQPxYbhxyA156QS37ZgheivXvYI/mj3dIIOvYSHlcfaKzAAznKnGp+u?=
- =?us-ascii?Q?f2ondoN8v9b5pGYUpWto0BRjdgPQ/Jp3hAzTwSPJ53ODyfpMEyZ4So3LgJUG?=
- =?us-ascii?Q?8ufrpgwrW0O5Qt2W/CQZ1eV3PKUqOvDU+DISP18PK14Y+gPJjvFJe3WcQ300?=
- =?us-ascii?Q?r0pY5JVFzPMjDK1H3wrUCWOmnrlxK47PYnNENUMZkcyPXELhf4treGz0bkq5?=
- =?us-ascii?Q?t7kS2jfuaqQ8wUn01C01a/LLGohKz1XL7SkAysDmuKWztxiWSQlJMQz3S0pe?=
- =?us-ascii?Q?IxgdsAu1iQ7bkwAEaMdfxaNUO46bHzMB20RW6I5CeLFNXgSBLu7QQpkRM3hA?=
- =?us-ascii?Q?JFof30cf1CKFaM13h98Mq7XNnXq4Yp9yQDWW+mKo2DakSbsyJTbTM9I/gBqz?=
- =?us-ascii?Q?cIe63tSkMlO8RlSM/pyzSmVcZQ1Y4iG7ND6rmG4LllSTHHqQ42jvTLX1x4xx?=
- =?us-ascii?Q?jVWG4wmfxvUo3XRnS8RBowCMoWI0nF2V4Kak5XvZddHVP3rBiiIznw4XSYsw?=
- =?us-ascii?Q?WHbjjjj+SaD7dB14SnMst1/JDhsyVBxoTTQBWXjx126HgU56xDa3/ZVhU65P?=
- =?us-ascii?Q?HcWBFcPFkJ09GB3buuSRaxtESKgnw0yjjNhaSnfcXzYBATfLNnkDte1saRFF?=
- =?us-ascii?Q?F2jnd2A6R530rE+5dszANdsEzbvDSiHMvEaUY2vmRJ90x5ziFL0qp2o7GRZL?=
- =?us-ascii?Q?sVIGECdWcBPEhJiX1eujQhNh/uiumtWmMaExyXke/X1tYnVrqOKXhtmagsab?=
- =?us-ascii?Q?b6M4E7X9VprLaO59Gbs/B8HCd7XqKjC/8KN+BY/nEgZ6rmecuEPPvi1/iMe3?=
- =?us-ascii?Q?n84Pukxq/1Fv/gJJeywYADruer/FhXWv?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(52116014)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?a5a4x6IUj0J8GmI21pBOIUZ7/Qxilekt+a9wLDjnaDOad6zbXmNCGxzCQi1e?=
- =?us-ascii?Q?Oc/jn4zIL78NoDso6Hm+J9pw+MbLqDKcOc52X0il5y9wSGSB7ZNbtS7kv58l?=
- =?us-ascii?Q?brlWXkwwldQt+gGhQHWK9/seHcUu2dQSTKDBq/i/Bh3uwaCipaX+GA2GsF6K?=
- =?us-ascii?Q?gZvtv/dJyAIeE/FHLRwNtWcepv8YuHuCd6q8592x1KXLUOcL39cQ/Fvkaxvp?=
- =?us-ascii?Q?aaQbGVQmBXAkZ5Uflc3LAg2rTu+dR1wfZ/ZWtMLd+uPZxlXFD3YHXRRT2g9L?=
- =?us-ascii?Q?baAWT89RpMFPUVfNixNDkcl57WztcIyUh51PpnGsFazXpaJgCH+gAaC2L67t?=
- =?us-ascii?Q?bZmyN5zKOJB4gJC3mkd9g4GrSA3PNgKVW1gdAuUkrQke8rRaoMn4jUDPcCCk?=
- =?us-ascii?Q?ETqu8LwBg2uEFZFnzmr09JDLZ0Ai5Sfk6siiD/LmedbWpjdx2/vcTS4yrDqk?=
- =?us-ascii?Q?CmxOBeaAcIPIh8OGSZf7hGolr6LhIHg1Wj6hHsnFOufCtFLyd2ts0O6cR9fX?=
- =?us-ascii?Q?u/9H50hZvD4VHnvc6W5nfX+MS3+SY/47q93HcrlXEKbWxqWlkGrIsOwlvyrM?=
- =?us-ascii?Q?J0jLUVmmgcF6vp7pVXrwyKm16d7d9w4x4LkloDGG49ETGiAN0FTjd9Utnql8?=
- =?us-ascii?Q?242oZDf6S13GzX5XChGns0qGXQYqbBcW2g1nGEtRyVqPSK91uKHjoEMKhSZt?=
- =?us-ascii?Q?2kYGgyx+3eoTuUbJL16gYvA3hqW40RgTz1x4XypKmWK9SOghlcBy8g+JC0Ha?=
- =?us-ascii?Q?7aZJyWO7vUUmkLinR8sZDzZI7zvgazN4Rt3/YJkNotFuRc0chD524STAeTMZ?=
- =?us-ascii?Q?cmddnZGw65dkIYKR5tsJIHSZOWwOKhPzwE/REPtocKCqRIXyG8HARzr3TuCP?=
- =?us-ascii?Q?6UYAbcOZCkLDqB7Gs5TzO4M1ZuJzxam7Sfzud/bmaJZf85FJYfBCR82Ipltd?=
- =?us-ascii?Q?nwbfZkq3B86B4LF4JEgmeMm5yzBwG87jWYFxwNrGpbpS0uCat1/PqCp1juev?=
- =?us-ascii?Q?mFRk3HFzo6CGoPSlNI6AXep/JpFZp6sJRRvekiB+9iJzRWR0Fq/wCVdfUfGi?=
- =?us-ascii?Q?KeLeEuIvSowRdGZ2/18l/2FDcggdRMkNXtjr4KGPw32Tr4szaFUVrrrYZM7k?=
- =?us-ascii?Q?NCZHGZdX/CX5+yuTXXQoEy0HlpL5Q/o+gVXNtPC+e4guddIpUEc2LsdNU6uA?=
- =?us-ascii?Q?zqFGCwVbIMR2Y4VtYxFnm9xlz28wgS3u0sWgwUDsGn0k/OHlNo8kKuH8yQtW?=
- =?us-ascii?Q?dWaxPq/Bcs5WiQRQ2fXULyKbhAriWbi+nzJfgTSCxT9PGTh56IAOsluTAzVk?=
- =?us-ascii?Q?KNkohFliDzkSYnEPZufCgneUGxC3DazBfmEal8pC6XivoXG6uaLCKymovHOq?=
- =?us-ascii?Q?16DrNwX1dFcHdrzWFZwjZyRIXUrE0MAwjDtIFYy4DdqcIfG5GFAjK+33eEF4?=
- =?us-ascii?Q?6HrbEgVfximK4Uyh53oTZLyaIVYNylwYog6XXcirSCW2x4fza9zrEOWiYkrI?=
- =?us-ascii?Q?+WjYVErEEWsULJKnS6sUCgV38Ux+hd5d6iojHTEFijembvWNl9hVyt/DlRVw?=
- =?us-ascii?Q?kaa2SIBLD56srrEPFfrjMGr2RgoCrv0VYqZ/7hde0jy54dnHJMylpCsXCfsQ?=
- =?us-ascii?Q?48K33Fjaf4k5HJakSt6DHTQ=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c16b9d5-e7aa-48d3-3a64-08dd5602e3e4
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 01:14:17.1388
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bT7zs/K7zdnHUQa7CYoqndmUDlTxyWpq4h+VDVawOiC1ac/F4VS87vU145iCsldknQqQJaIA2p9VX0DlW9LMG8HB1td8g85RhhB1+NzMaDhkTi6r4KJ+uskMOyUO3k/9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11771
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3W2BbbL5nY96kEw--.12272S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF4DCr4UArWfGF1fuw18Grg_yoW5Cw13pF
+	W3Ar4agFWUXFy2kFW3X3Z3Jay0k3yrGFy5Gwn5ur4rAa45Cr1fKFnxAr4Yka43A3s3ur4a
+	v3WqvryxCF1jyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
-Hi Detlev
+The bio submission time may be a few jiffies more than the expected
+waiting time, due to 'extra_bytes' can't be divided in
+tg_within_bps_limit(), and also due to timer wakeup delay. In this
+case, adjust slice_start to jiffies will discard the extra wait time,
+causing lower rate than expected.
 
-Thank you for the testing.
+This problem will cause blktests throtl/001 failure in case of
+CONFIG_HZ_100=y, fix it by preserving one finished slice in
+throtl_trim_slice() and allowing deviation between [0, 2 slices).
 
-> I got same report from our test team. I'm now tring to solve it.
+For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
+per slice.
 
-It seems our test team and your team are encounter same issues by different
-way, and it seems it happen if some kind of deffer issue happen (?).
+If user issues two 21 bytes IO, then wait time will be 30ms for the
+first IO:
 
-> That being said, I'm not sure I completely understand why that extra line fixes 
-> the issue. Is the __free() attribute smart enough to know that the pointer has 
-> been copied and not free it at the end of scope ?
+bytes_allowed = 20, extra_bytes = 1;
+jiffy_wait = 1 + 2 = 3 jiffies
 
-__free(device_node) attribute will automatically calls of_node_put() when it
-lost the scope. By below patch, graph_util_parse_dai() will use
-__free(device_node) and thus dlc->of_node counter was not increased.
+and consider
+extra 1 jiffies by timer, throtl_trim_slice() will be called at:
 
-	419d1918105e5d9926ab02f1f834bb416dc76f65
-	("ASoC: simple-card-utils: use __free(device_node) for device node")
+jiffies = 40ms
+slice_start = 0ms, slice_end= 40ms
+bytes_disp = 21
 
-In such situation, if some kind of deffer issue happened, xxx-card probe()
-will failed and calls simple_util_clean_reference(). It calls of_node_put()
-for each dlc->of_node, but above one was already called of_node_put() via
-__free(device_node). So you encounter the error.
+In this case, before the patch, real rate in the first two slices is
+10.5 bytes per slice, and slice will be updated to:
 
-I'm not 100% sure why dabbd325b2 commit removed the issue, but I think
-it is just luck, I think.
+jiffies = 40ms
+slice_start = 40ms, slice_end = 60ms,
+bytes_disp = 0;
 
-Thank you for your test !!
-I will post the patch with below tag if our test team could confirm it.
+Hence the second IO will have to wait another 30ms;
 
-	Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+With the patch, the real rate in the first slice is 20 bytes per slice,
+which is the same as expected, and slice will be updated:
 
-Best regards
+jiffies=40ms,
+slice_start = 20ms, slice_end = 60ms,
+bytes_disp = 1;
+
+And now, there is still 19 bytes allowed in the second slice, and the
+second IO will only have to wait 10ms;
+
+Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
+Reported-by: Ming Lei <ming.lei@redhat.com>
+Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
-Kuninori Morimoto
+ block/blk-throttle.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 8d149aff9fd0..cb472cf7b6b6 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+ 	 * sooner, then we need to reduce slice_end. A high bogus slice_end
+ 	 * is bad because it does not allow new slice to start.
+ 	 */
+-
+ 	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
+ 
+ 	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+ 				 tg->td->throtl_slice);
+-	if (!time_elapsed)
++	/* Don't trim slice until at least 2 slices are used */
++	if (time_elapsed < tg->td->throtl_slice * 2)
+ 		return;
+ 
++	/*
++	 * The bio submission time may be a few jiffies more than the expected
++	 * waiting time, due to 'extra_bytes' can't be divided in
++	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
++	 * case, adjust slice_start to jiffies will discard the extra wait time,
++	 * causing lower rate than expected. Therefore, one slice is preserved,
++	 * allowing deviation that is less than two slices.
++	 */
++	time_elapsed -= tg->td->throtl_slice;
+ 	bytes_trim = calculate_bytes_allowed(tg_bps_limit(tg, rw),
+ 					     time_elapsed) +
+ 		     tg->carryover_bytes[rw];
+-- 
+2.39.2
+
 
