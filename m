@@ -1,204 +1,149 @@
-Return-Path: <linux-kernel+bounces-533712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DAAA45E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:00:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE582A45E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1CC168B52
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877DA3AA696
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78B0214A62;
-	Wed, 26 Feb 2025 12:00:05 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C084217718;
-	Wed, 26 Feb 2025 12:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3905218ADF;
+	Wed, 26 Feb 2025 12:01:48 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD2816F288
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571205; cv=none; b=EvHfmikrgSXo5w8kFTNstOIR5XaCa+ngZJu/d5jkvHGOBUIlebKgfkT1Z5q9GIywdgRY9fyNDMsghxqTCDBYZMDHbanpswFgv1smYF/NCAuWYhFJhEyf6vIBKi277UXg5t9FNR2j0HZUCr9uRBmhdsbh9tAmKgQrHgu4frM5ZuI=
+	t=1740571308; cv=none; b=rzxVQU1uTDWKO2/5FSPXsD2nWYjS0CEC3DO5wufhslM7etcXeEEY3wvRUz/Dcz7dJEQmGbxtlt2eAhihm0BkDuOJU7oKJWWs/IlxMlE34htXYZcns1RMmxQLPu4QP6XPb0sUGHqohQAuvsuPiOkrprCzHpRU9JFmUcsAlf901zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571205; c=relaxed/simple;
-	bh=1rPLZ7Ny+tavg+eVzEq79uWoftJ4xcrjRHDV3jxiGGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jo+x+Bgc50sOmDftw0iUezZlUGt1C2pHJTwsypnm0shftDgrS1Hba1vAN8zwZ6tVRmiM8qpaef1FhUdA1bokzmhk41UhVbmf4DMq4zyOP6ahkDP1Q8Q0c3iU+sUBvPs3Ab0KGKRPZWK/JoVHXdBrkKMPxsN1sMq+wdIIxFGtgKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 7197134133B;
-	Wed, 26 Feb 2025 12:00:01 +0000 (UTC)
-Date: Wed, 26 Feb 2025 11:59:57 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
-Message-ID: <20250226115957-GYA45508@gentoo>
-References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
- <20250226010108-GYA44567@gentoo>
- <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
+	s=arc-20240116; t=1740571308; c=relaxed/simple;
+	bh=oqSmI5xcxwfWM9F9TTfIG7Bqp2HwCZJQe3hg1oUK1ow=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=SGcvSyZGu0e3TodaCiaKeyjYyqGVNYdAnN5byXqoHT3Ww21Im3h9DlgfoBCt+i3Tq0At46xHA44QH0E01CtFUTCeZBVF2LFB/xoLNc8vvGz+gn0TzTaQIMZauwdiMiO5KPeSSvDHJySqVFRh0KjwMYLUD+E7d48WMpkqGSrBjzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-c7-67bf02a62d46
+From: Byungchul Park <byungchul@sk.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: kernel_team@skhynix.com,
+	akpm@linux-foundation.org,
+	vernhao@tencent.com,
+	mgorman@techsingularity.net,
+	hughd@google.com,
+	willy@infradead.org,
+	david@redhat.com,
+	peterz@infradead.org,
+	luto@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	rjgolo@gmail.com
+Subject: [RFC PATCH v12 based on mm-unstable as of Feb 21, 2025 01/25]  x86/tlb: add APIs manipulating tlb batch's arch data
+Date: Wed, 26 Feb 2025 21:01:08 +0900
+Message-Id: <20250226120132.28469-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250226113342.GB1935@system.software.com>
+References: <20250226113342.GB1935@system.software.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsXC9ZZnke4ypv3pBjdeC1nMWb+GzeLzhn9s
+	Fl/X/2K2ePqpj8Xi8q45bBb31vxntTi/ay2rxY6l+5gsLh1YwGRxvPcAk8X8e5/ZLDZvmsps
+	cXzKVEaL3z/msDnweXxv7WPx2DnrLrvHgk2lHptXaHlsWtXJ5rHp0yR2j3fnzrF7nJjxm8Xj
+	/b6rbB5bf9l5NE69xubxeZNcAE8Ul01Kak5mWWqRvl0CV8a1PbMYC54IVdzfVtjA+J2/i5GT
+	Q0LAROLSlGvMMPbGi71gNpuAusSNGz/BbBEBM4mDrX/Yuxi5OJgFljFJ7D3RwAaSEBaokbg5
+	/R8TiM0ioCrx6vRldhCbV8BU4vGXfnaIofISqzccABvEKWAhMWveAbB6IQFziTOP/jKCDJUQ
+	uM8m8XXDWkaIBkmJgytusExg5F3AyLCKUSgzryw3MTPHRC+jMi+zQi85P3cTIzCol9X+id7B
+	+OlC8CFGAQ5GJR7eB2f2pguxJpYVV+YeYpTgYFYS4eXM3JMuxJuSWFmVWpQfX1Sak1p8iFGa
+	g0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJg1OqgZHloKphXtYzronKui9LV8Xmy+qlaD5akjqj
+	Y8KdTuXTXqfvWWoUu8xoCVJKmcD18ltdltlneSmGi+6hL+9+jojRjXNYoKhhGrd5CvdBxVrZ
+	c9/nOk8MslP5NXnBAsZV97/ZZW7YJ2ur8dzu5zW+6TZHV/JbslRe+rkyxi6HS+VPxdzFHdMs
+	3ymxFGckGmoxFxUnAgCaPPDpZgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsXC5WfdrLuMaX+6wadX7BZz1q9hs/i84R+b
+	xdf1v5gtnn7qY7E4PPckq8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
+	bN40ldni+JSpjBa/f8xhc+D3+N7ax+Kxc9Zddo8Fm0o9Nq/Q8ti0qpPNY9OnSewe786dY/c4
+	MeM3i8f7fVfZPBa/+MDksfWXnUfj1GtsHp83yQXwRnHZpKTmZJalFunbJXBlXNszi7HgiVDF
+	/W2FDYzf+bsYOTkkBEwkNl7sZQax2QTUJW7c+AlmiwiYSRxs/cPexcjFwSywjEli74kGNpCE
+	sECNxM3p/5hAbBYBVYlXpy+zg9i8AqYSj7/0s0MMlZdYveEA2CBOAQuJWfMOgNULCZhLnHn0
+	l3ECI9cCRoZVjCKZeWW5iZk5pnrF2RmVeZkVesn5uZsYgSG6rPbPxB2MXy67H2IU4GBU4uF9
+	cGZvuhBrYllxZe4hRgkOZiURXs7MPelCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb3CUxOEBNIT
+	S1KzU1MLUotgskwcnFINjHcYLU5lOnoeZC5jv7Q4fK11+SGxK983+Jud65i4O0pt7bXcyZdz
+	GSY8TtfgFLEo7GblPVvxJDiUofrqjX7XCQIzr+ZpNZXd8DIJ2bvPf8apc7eeTok+LrNSuOD7
+	zBNrU9b01fMnzpZdkfLk47tVS9/v6dmil3fcsdl5wcuJEeEZPOfdUwreFSqxFGckGmoxFxUn
+	AgCLgQj5TQIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
 
-Hi Linus Walleij:
+A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
+that have been unmapped and freed, eventually get allocated again.  It's
+safe for folios that had been mapped read-only and were unmapped, since
+the contents of the folios wouldn't change while staying in pcp or buddy
+so we can still read the data through the stale tlb entries.
 
-On 11:24 Wed 26 Feb     , Linus Walleij wrote:
-> On Wed, Feb 26, 2025 at 2:01 AM Yixun Lan <dlan@gentoo.org> wrote:
-> 
-> > Current this v7 version work great with request irq from gpio, like:
-> >         pin = devm_gpiod_get_optional(dev, "myirq", GPIOD_IN);
-> >         irq = gpiod_to_irq(pin);
-> >         devm_request_threaded_irq(dev, irq, ..)
-> >
-> > but have problem if request irq via of_irq_get(), something like this:
-> > DT part
-> >         mytst {
-> >                 ..
-> >                 interrupt-parent = <&gpio>;
-> >                 interrupts = <1 28 IRQ_TYPE_EDGE_RISING>;
-> >                 interrupt-names = "wakeup";
-> >         }
-> >
-> > In source code
-> >         irq = of_irq_get_byname(dev->of_node, "wakeup");
-> >
-> > I've made an attempt to patch gpiolib to support three cells "interrupts"
-> > syntax, but still fail, it always get last gpio irqchip of four, thus using
-> > the wrong pin (e.g: will always get 3 from gpiochips 0, 1, 2, 3)
-> 
-> Right, we need a proper patch to fix this.
-> 
-> Can you paste your patch so I can see if I can spot/fix
-> the problem?
-> 
-> I think the irq cell parser needs to call out to
-> of_node_instance_match() - or similar - as well.
-do you have any suggestion where to implement this similar function?
+This is a preparation for the mechanism that needs to recognize
+read-only tlb entries by separating tlb batch arch data into two, one is
+for read-only entries and the other is for writable ones, and merging
+those two when needed.
 
-I actually miss this logic, the patch here only support parsing
-interrupts with 3 cells
+It also optimizes tlb shootdown by skipping CPUs that have already
+performed tlb flush needed since.  To support it, added APIs
+manipulating arch data for x86.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 679ed764cb14..9aa88c3fa485 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1454,6 +1454,10 @@ static int gpiochip_hierarchy_irq_domain_translate(struct irq_domain *d,
- 		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
- 	}
+Signed-off-by: Byungchul Park <byungchul@sk.com>
+---
+ arch/x86/include/asm/tlbflush.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 29373da7b00a6..52c54ca68ca9e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -5,6 +5,7 @@
+ #include <linux/mm_types.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/sched.h>
++#include <linux/cpumask.h>
  
-+	if (is_of_node(fwspec->fwnode) && fwspec->param_count == 3) {
-+		return irq_domain_translate_threecell(d, fwspec, hwirq, type);
-+	}
-+
- 	/* This is for board files and others not using DT */
- 	if (is_fwnode_irqchip(fwspec->fwnode)) {
- 		int ret;
-@@ -1758,7 +1762,8 @@ static const struct irq_domain_ops gpiochip_domain_ops = {
- 	.map	= gpiochip_irq_map,
- 	.unmap	= gpiochip_irq_unmap,
- 	/* Virtually all GPIO irqchips are twocell:ed */
--	.xlate	= irq_domain_xlate_twocell,
-+	/* FIXME: force switch to three cells */
-+	.xlate	= irq_domain_xlate_threecell,
- };
+ #include <asm/processor.h>
+ #include <asm/cpufeature.h>
+@@ -293,6 +294,29 @@ static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
  
- static struct irq_domain *gpiochip_simple_create_domain(struct gpio_chip *gc)
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index e432b6a12a32..69a9540ec253 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -568,10 +568,18 @@ int irq_domain_xlate_onecell(struct irq_domain *d, struct device_node *ctrlr,
- int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type);
-+int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
-+			const u32 *intspec, unsigned int intsize,
-+			irq_hw_number_t *out_hwirq, unsigned int *out_type);
- int irq_domain_xlate_onetwocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type);
+ extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
  
-+int irq_domain_translate_threecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type);
-+
- int irq_domain_translate_twocell(struct irq_domain *d,
- 				 struct irq_fwspec *fwspec,
- 				 unsigned long *out_hwirq,
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index ec6d8e72d980..995e5e0ec2db 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1132,6 +1132,17 @@ int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
- }
- EXPORT_SYMBOL_GPL(irq_domain_xlate_twocell);
- 
-+int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
-+			const u32 *intspec, unsigned int intsize,
-+			irq_hw_number_t *out_hwirq, unsigned int *out_type)
++static inline void arch_tlbbatch_clear(struct arch_tlbflush_unmap_batch *batch)
 +{
-+	struct irq_fwspec fwspec;
-+
-+	of_phandle_args_to_fwspec(ctrlr, intspec, intsize, &fwspec);
-+	return irq_domain_translate_threecell(d, &fwspec, out_hwirq, out_type);
++	cpumask_clear(&batch->cpumask);
 +}
-+EXPORT_SYMBOL_GPL(irq_domain_xlate_threecell);
 +
- /**
-  * irq_domain_xlate_onetwocell() - Generic xlate for one or two cell bindings
-  * @d:		Interrupt domain involved in the translation
-@@ -1216,6 +1227,19 @@ int irq_domain_translate_twocell(struct irq_domain *d,
- }
- EXPORT_SYMBOL_GPL(irq_domain_translate_twocell);
- 
-+int irq_domain_translate_threecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type)
++static inline void arch_tlbbatch_fold(struct arch_tlbflush_unmap_batch *bdst,
++		struct arch_tlbflush_unmap_batch *bsrc)
 +{
-+	if (WARN_ON(fwspec->param_count < 3))
-+		return -EINVAL;
-+	*out_hwirq = fwspec->param[1];
-+	*out_type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
-+	return 0;
++	cpumask_or(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
 +}
-+EXPORT_SYMBOL_GPL(irq_domain_translate_threecell);
 +
- int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
- 			   int node, const struct irq_affinity_desc *affinity)
- {
++static inline bool arch_tlbbatch_need_fold(struct arch_tlbflush_unmap_batch *batch,
++		struct mm_struct *mm)
++{
++	return !cpumask_subset(mm_cpumask(mm), &batch->cpumask);
++}
++
++static inline bool arch_tlbbatch_done(struct arch_tlbflush_unmap_batch *bdst,
++		struct arch_tlbflush_unmap_batch *bsrc)
++{
++	return !cpumask_andnot(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
++}
++
+ static inline bool pte_flags_need_flush(unsigned long oldflags,
+ 					unsigned long newflags,
+ 					bool ignore_access)
 
+base-commit: f7ed46277aaa8f848f18959ff68469f5186ba87c
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.17.1
+
 
