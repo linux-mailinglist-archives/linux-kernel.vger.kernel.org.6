@@ -1,118 +1,205 @@
-Return-Path: <linux-kernel+bounces-533545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D72A45BE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:33:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A36A45BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8894C3A12A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9DE1733A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFED2459F4;
-	Wed, 26 Feb 2025 10:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6479238171;
+	Wed, 26 Feb 2025 10:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LnggYE7S"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WOj13tc0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE301ACEA6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9BE258CED
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566028; cv=none; b=gvs7sDLhS+29xA/lysf/PaKhRKIGKmCJJDnx0UgzM8uvhG9daV6Hdoagnq6zjIYguaD8TRqJ2PDyiJqiH+Z1Vyl3rf4/3HlFy8zt6lscygwsyEg7ONrLZ0IOrW0yTAXC1lB5/P+iV1KNxqCEYuQUqIwUm/Ky3rxUhNuW55Swov8=
+	t=1740566085; cv=none; b=GW5SIHk8Qtt/aKDSPvRSeLX/X6nDEzlVzVpRRGg+6qQGKsCbwkqS2vhzoYtnIsOuYkp/cjO5upYAuwZ794Rpml2Tc/3dJc1BwW++f0037XL/9FKZrtBp51VNo2Ko48TO4VbjZEfufSHRvQ/GLTeQTYjmnr0gm3AurZQmjC2EKHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566028; c=relaxed/simple;
-	bh=OInzV5A00n7mGPHyOTHzxDyfR7GJd4/agyAg8/xaO+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTE5WFxBjdwt5E1tmkw41C4LzNFCx8Iu9ZaoxRSM9YMWO/64coJdR3uLAkN0nalbEZWYa+/rxuyqIK8Bw4mwxfbeFB+WjUStPoBfOpuZtE/OKAQO+zqwoFRXSr3GHobM3hT2/MIvDx2qwJiEj+9WIuYD1ifUNFI3QEVX44dYpQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LnggYE7S; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-472098e6e75so214481cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740566024; x=1741170824; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OInzV5A00n7mGPHyOTHzxDyfR7GJd4/agyAg8/xaO+s=;
-        b=LnggYE7SrJXEnGzjTivOYac6Yiq/z6kyifz7yIkE1B8dK0GRLp0T3rFz5yw782lipV
-         OTSzueZ5zDS4vXEtoozVQRP5BLBcfNVa/6l8w/wj+rD7P+JiJnT8XCCIz4uKLyOyc0xa
-         vD5HPv/ewCIRyOQV4D8P/a7rnVXxoP56dVwXFLowN+DjZTZrANxG8aQSabqv7MLT4tfV
-         RQvVNPwYIB+0PikkDOqtTOy+YZrZH2CzZzKfXmr0ZQYQ0E8Xaa7R4Kx0ZAGlGRCbkWb8
-         fiaC+IDBiX+lTxKVDHIP5iMWRpleFJMKphVGoCFMWsGmlops5T03Uw740Xbng8/YPN/Q
-         XIpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740566024; x=1741170824;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OInzV5A00n7mGPHyOTHzxDyfR7GJd4/agyAg8/xaO+s=;
-        b=FKLaNJCWtdRjObmKWrDP0t3wMVMlBD2G0l3vIy3flU8iqMb6WsdgZErpgFoWo5CsQM
-         rxDM6CiypzSgpvkTDeY5GguKzudHrRLM1x59X89nUSj/k8UWtpti/KCWgR6rNu8FDMH5
-         eIHt/Jf/f5EftfURAjSaXDV5wAuHFnG4wfRxLwn2oxKmmcXeVniGH7aC4o5V+jzVu2c2
-         PkDBUZQ+PDNHI6qDUPOBg+golI5nUM///DANTnCMg+7Q/whd3cAzCSe6hG4Aw3x8QIAN
-         XwvFcz9tOTIEv9ya/ubu/8vVX7J0IMaswg9tDnnSxLNllOxJ9nBvNskFyNk25LNdr2Xn
-         r8lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLwPJVMJHCi2GuF95nSlUMIPxhrK1WoOM89vd0CR+r0BXyi+U9kxEnelBjoTUXltG2YAa20K/L4IxHmxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrNzFWFgkJWbXCDeBAfZMjh2UH+Wmb0lrMWlVnc0wkHL9hTbY3
-	hQ/i3HY5PHVQl2lgmDI8qvww8ZPThqHUHTQUWRqrauILSkbUvCw0a3T96SNFI3RJt2VxiZ2xy41
-	QqW//IgwvYbUt4qFMk1qVwAGmPWlfWq/w1uv2
-X-Gm-Gg: ASbGncs513sOl6WIGU64R/DIV28kHnwsywH8SVymuTLLnjZLGtAH7Z9ZYrMkbKLQVys
-	G6Gp3xeHMZHxuVHnmkv1P5hw7pPtk3WcGL1O4Z4q/6Z7yiwHlnqIAtYailZJCt5l5bpxKckLF7y
-	Vm6k4tbtw+hCDfIcjHUX4BQjGoXT0ihDag2tk=
-X-Google-Smtp-Source: AGHT+IF1PpaLFEiA7f+EXz6qq+cFGjDAy9aw353F05vZULOtvLZWfHJ0lyt+gtzy2bQXRNEdC1uzl1vmxroPzPbxC0c=
-X-Received: by 2002:ac8:7d04:0:b0:465:c590:ed18 with SMTP id
- d75a77b69052e-47376e6ef18mr9498391cf.9.1740566024238; Wed, 26 Feb 2025
- 02:33:44 -0800 (PST)
+	s=arc-20240116; t=1740566085; c=relaxed/simple;
+	bh=ZwpbPAQDpfXXvC5bnx73RX9l87tEewCgIZFh7VoRISw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMtXmnJbsy1VJ7FiIs2xRY4V2lB/ZoBpB3eHK1fdN6w5w/3SXL3GK6B7eFlBfPYIEOFv1W1WfqttGeoJ0LnK/Rpcpv4kUb944+S4EKmKf2lSigX5aOgVmZVm28foPQPUSKzPa04sUsBXN1K48lnrJvAy/LcpBdGAG0D2Qs7Gy8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WOj13tc0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740566070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gFsFyW0JsFOyjdFU+q14/lZqV9kDgAqshzcYwesYMoE=;
+	b=WOj13tc0pDCtAxGu9YgX+NM3u0dhMNAOYE7gRtSABvhY/rxuC6FG3u2U0r+4V5Q9pjIr0m
+	ZnRLq+4O5ysgVALQzNfsEo0hecPHmqhnwlYdp/olchMYXalKp7h9rEY8vA4X3nRYVOoVcM
+	f5hRii30klYo61bzTAW57Xh8kmhp6CA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-102-LTsIioOaPd6vuHmT1PKl7Q-1; Wed,
+ 26 Feb 2025 05:34:26 -0500
+X-MC-Unique: LTsIioOaPd6vuHmT1PKl7Q-1
+X-Mimecast-MFC-AGG-ID: LTsIioOaPd6vuHmT1PKl7Q_1740566063
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C33C91800875;
+	Wed, 26 Feb 2025 10:34:22 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.27])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 685D8300018D;
+	Wed, 26 Feb 2025 10:34:13 +0000 (UTC)
+Date: Wed, 26 Feb 2025 18:34:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
+Message-ID: <Z77uID36yIvWDQEj@fedora>
+References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
+ <Z77R_rqgDdAvFVgP@fedora>
+ <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
- <20250224-page-alloc-kunit-v1-3-d337bb440889@google.com> <Z7y7ltOSDjamYmhP@google.com>
- <CA+i-1C31w5yjVRBLNr9b2WwghP_=Wv0+SymWKOQtG8SEszKxxA@mail.gmail.com>
-In-Reply-To: <CA+i-1C31w5yjVRBLNr9b2WwghP_=Wv0+SymWKOQtG8SEszKxxA@mail.gmail.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Wed, 26 Feb 2025 11:33:33 +0100
-X-Gm-Features: AQ5f1JqGuyBNSN8KYcK9T7xt4yQKGTXnaeYG0DwOUWhx-q_M4BMgBpShAvdqPrA
-Message-ID: <CA+i-1C2F-Wx6_6WT_m83uEmmsaiXRU3yNOTMJOpL8yTkEjZ7Vg@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/4] mm/page_alloc_test: Add logic to isolate a node
- for testing
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, 25 Feb 2025 at 12:20, Brendan Jackman <jackmanb@google.com> wrote:
->
-> On Mon, 24 Feb 2025 at 19:34, Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> > > +#ifdef CONFIG_KUNIT
-> >
-> > Why not CONFIG_PAGE_ALLOC_KUNIT_TEST?
->
-> VISIBLE_IF_KUNIT is paired with #ifdef CONFIG_KUNIT elsewhere (I think
-> there might even be docs that do this in an example) so I just
-> followed the pattern.
->
-> #ifdef CONFIG_KUNIT -> things are consistent and you just don't have
-> to think about this very much.
->
-> #ifdef CONFIG_PAGE_ALLOC_KUNIT_TEST -> better scoping.
->
-> So yeah, shrug. Maybe David/Rae/Brendan has an opinion.
+On Wed, Feb 26, 2025 at 05:56:03PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/02/26 16:34, Ming Lei 写道:
+> > On Wed, Feb 26, 2025 at 09:16:27AM +0800, Yu Kuai wrote:
+> > > From: Yu Kuai <yukuai3@huawei.com>
+> > > 
+> > > The bio submission time may be a few jiffies more than the expected
+> > > waiting time, due to 'extra_bytes' can't be divided in
+> > > tg_within_bps_limit(), and also due to timer wakeup delay. In this
+> > > case, adjust slice_start to jiffies will discard the extra wait time,
+> > > causing lower rate than expected.
+> > > 
+> > > This problem will cause blktests throtl/001 failure in case of
+> > > CONFIG_HZ_100=y, fix it by preserving one finished slice in
+> > > throtl_trim_slice() and allowing deviation between [0, 2 slices).
+> > 
+> > I think it only can cover single default slice deviation, since
+> > throtl_trim_slice() just keeps dispatch data in the previous single
+> > default slice. Or can you add words on how to allow 2 default slices
+> > deviation?
+> > 
+> > > 
+> > > For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+> > > slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
+> > > per slice.
+> > > 
+> > > If user issues two 21 bytes IO, then wait time will be 30ms for the
+> > > first IO:
+> > > 
+> > > bytes_allowed = 20, extra_bytes = 1;
+> > > jiffy_wait = 1 + 2 = 3 jiffies
+> > > 
+> > > and consider
+> > > extra 1 jiffies by timer, throtl_trim_slice() will be called at:
+> > > 
+> > > jiffies = 40ms
+> > > slice_start = 0ms, slice_end= 40ms
+> > > bytes_disp = 21
+> > > 
+> > > In this case, before the patch, real rate in the first two slices is
+> > > 10.5 bytes per slice, and slice will be updated to:
+> > > 
+> > > jiffies = 40ms
+> > > slice_start = 40ms, slice_end = 60ms,
+> > > bytes_disp = 0;
+> > > 
+> > > Hence the second IO will have to wait another 30ms;
+> > > 
+> > > With the patch, the real rate in the first slice is 20 bytes per slice,
+> > > which is the same as expected, and slice will be updated:
+> > > 
+> > > jiffies=40ms,
+> > > slice_start = 20ms, slice_end = 60ms,
+> > > bytes_disp = 1;
+> > > 
+> > > And now, there is still 19 bytes allowed in the second slice, and the
+> > > second IO will only have to wait 10ms;
+> > > 
+> > > Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
+> > > Reported-by: Ming Lei <ming.lei@redhat.com>
+> > > Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
+> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > > ---
+> > >   block/blk-throttle.c | 13 +++++++++++--
+> > >   1 file changed, 11 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> > > index 8d149aff9fd0..cb472cf7b6b6 100644
+> > > --- a/block/blk-throttle.c
+> > > +++ b/block/blk-throttle.c
+> > > @@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+> > >   	 * sooner, then we need to reduce slice_end. A high bogus slice_end
+> > >   	 * is bad because it does not allow new slice to start.
+> > >   	 */
+> > > -
+> > >   	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
+> > >   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+> > >   				 tg->td->throtl_slice);
+> > > -	if (!time_elapsed)
+> > > +	/* Don't trim slice until at least 2 slices are used */
+> > > +	if (time_elapsed < tg->td->throtl_slice * 2)
+> > >   		return;
+> > > +	/*
+> > > +	 * The bio submission time may be a few jiffies more than the expected
+> > > +	 * waiting time, due to 'extra_bytes' can't be divided in
+> > > +	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
+> > > +	 * case, adjust slice_start to jiffies will discard the extra wait time,
+> > > +	 * causing lower rate than expected. Therefore, one slice is preserved,
+> > > +	 * allowing deviation that is less than two slices.
+> > > +	 */
+> > > +	time_elapsed -= tg->td->throtl_slice;
+> > 
+> > Please document that default slice window size is doubled actually in
+> > this way.
+> 
+> I said two slices because there is a round down:
+> 
+> >>   	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
+> >>   				 tg->td->throtl_slice);
+> 
+> Hence the deviation is actually between [1 ,2) jiffies, depends on the
+> time start to wait and how long the delay is.
+> 
+> If start to wait at slice_start + n * throtl_slice - 1, the deviation is
+> *at most 1 slice*
+> 
+> If start to wait at slice_stat + n * throtl_slice, the max deviation is
+> *less than 2 slices* (2 slices not included)
+> 
+> Now, I agree allowing deviation at most 1 slice is more appropriate. :)
 
-Oh, actually I rescind my shrug. If we used #ifdef
-CONFIG_PAGE_ALLOC_KUNIT_TEST, then -Wmissing-prototypes would fire for
-people running other KUnit tests.
+Actually the in-tree code already covers deviation from the rounddown(),
+but turns out it is still not enough, so this patch increases one extra
+def slice size. With this thing is documented, feel free to add:
 
-So yeah the function needs to be non-static exactly when there's a
-prototype in the header.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+
+
+Thanks,
+Ming
+
 
