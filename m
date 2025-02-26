@@ -1,190 +1,124 @@
-Return-Path: <linux-kernel+bounces-534953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689C4A46D30
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:14:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720DEA46D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1DD16BEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4842C1887FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF5A25A32B;
-	Wed, 26 Feb 2025 21:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4978125A2A8;
+	Wed, 26 Feb 2025 21:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="FcAHGQWH"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E6R/KFIV"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1979D2586CD;
-	Wed, 26 Feb 2025 21:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0062586CD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604407; cv=none; b=hvbQLKpZf5Qk8Rr8vcjTEN+3oZkM/9EiQ+N4Gl9WVYH5EqGjNe9P1LfCeRLXd+pUHQ81tegJy03upQ3bl8+Vag+u7qfJIIfj1yLXey3R0bkDdQxuadKE650McnfgfoQDN/VVsIynRsJb76IzEPeqpFoFL1xWZNWKxYXQeVyd+kQ=
+	t=1740604417; cv=none; b=cfdAmV1WBMO3ISKdJtw+mOSTla+GBixaIDIAf9y5nVlsd1cUGVOxCn5GCWPR1qRGp8TwFxGg3zxj8jtkFC/dkA0pE457TiRYsCXYlfKlbNljhqKw08jhk7NDB6R2qmKXmyu3Q2sKy+bLN8k+f97Ito0lO1jXvFShLUTjUx6JzaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604407; c=relaxed/simple;
-	bh=E/dJ5Y8bdjQYw6GSaDq5ATC1vAkUsCnMT24XUYEUe58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+4rHq+3Gk8+OJsFvDgHot6aPCqW2K6gLe8YRJxAvsNJqvJDrHTPl/+QPsTIwD0JmC1SqjIiRpwBJIBEUQ+ojWwFGg7mSRxSACoVpagrV3LlTd8KMaVSUaLqOGww4AV5XC/PQ5vanzkNc76fZfWyDTci1b8WP1NvTt/FQwvwz1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=FcAHGQWH; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [10.50.4.36] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z36dZ4mptz4LNC;
-	Wed, 26 Feb 2025 16:13:22 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1740604403; bh=E/dJ5Y8bdjQYw6GSaDq5ATC1vAkUsCnMT24XUYEUe58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=FcAHGQWHKjqkf1gEBknZTkBriUmj4/KselbymUNOXdbCUMbFQpsUyIt1KAXSDRCiA
-	 jRx6wWobWlxMQgrHammlMVBUD+67ka69vBG4yIUi0ivc4wLUmRU/3LE2tg9pZ4VTtS
-	 dWGKXGGE1rCibfFCVUNRSYVSi6D/ZLmJxLkAjoGI=
-Message-ID: <a984f2c9-43c9-4c27-b346-a8654901c7f2@panix.com>
-Date: Wed, 26 Feb 2025 13:13:21 -0800
+	s=arc-20240116; t=1740604417; c=relaxed/simple;
+	bh=P6EvdgYE3hi3CZqdLjhQ96p5OUzYvR+kAXaMZb08x3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjjT/q8th9j+4XgFCmD4qYHAUBn1CmI5drvCYpuKxPa4PFUKRWnKZOEWs91D1pPLvYHdhW07ESh1QMOS0wQ7QmG5wLBDNWxrM8pyt2zMr+n85Bsy2STMphu8hl/2MJZU1dVQJcombPedz8n1Qw/XBfE7BN3d/e1dQwlUUERV+Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E6R/KFIV; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 26 Feb 2025 13:13:28 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740604412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BWPw8dfW2CKCuC+NKpHNqPJSNvcldwRNktFZqPfqU2s=;
+	b=E6R/KFIV4Rp5HH5CLpsx7TNcbvC7wNUl3YqA/sjctG1VLvuVcfn9qd2ixbFxmEpZPXEaXE
+	S0Rx7kEcq1J7/dIxW5JZgGHxQDfHUS1v1z8Y5TAVHbnqUFMBdW5gjFF2R+/9unLJOw6mnV
+	gaNEVfOIwZGOlLShLf5Or1J9AvUVdTE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, "T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>, 
+	Michal Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: add hierarchical effective limits for v2
+Message-ID: <rpwhn5zwemr63x4tafcheekdmqullcjvvabdgrm3jgtbtfwgki@6sxglgvtgzof>
+References: <20250205222029.2979048-1-shakeel.butt@linux.dev>
+ <mshcu3puv5zjsnendao73nxnvb2yiprml7aqgndc37d7k4f2em@vqq2l6dj7pxh>
+ <ctuqkowzqhxvpgij762dcuf24i57exuhjjhuh243qhngxi5ymg@lazsczjvy4yd>
+ <5jwdklebrnbym6c7ynd5y53t3wq453lg2iup6rj4yux5i72own@ay52cqthg3hy>
+ <20250210225234.GB2484@cmpxchg.org>
+ <Z6rYReNBVNyYq-Sg@google.com>
+ <bg5bq2jakwamok6phasdzyn7uckq6cno2asm3mgwxwbes6odae@vu3ngtcibqpo>
+ <t574eyvdp5ypg5enpnvfusnjjbu3ug7mevo5wmqtnx7vgt66qu@sblnf7trrpxs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Kenneth Crudup <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <20250210210502.GA15655@bhelgaas>
- <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20250226084404.GM3713119@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <t574eyvdp5ypg5enpnvfusnjjbu3ug7mevo5wmqtnx7vgt66qu@sblnf7trrpxs>
+X-Migadu-Flow: FLOW_OUT
 
-Trying to do a "control" test before I try out your bisected commit, and
-Lukas' changes, but of course now I can't get it to fail (I'm on Linus'
-master as of this morning (b5799106b4).
+Sorry for the late response.
 
-I'm using my portable USB4 dock (Plugable TBT4-HUB3C) this time (vs. my
-CalDigit 4 dock) but the same ASMedia USB4-to-NVMe adapter as always; in
-any case everything is PCIe so it shouldn't matter.
+On Mon, Feb 17, 2025 at 06:57:46PM +0100, Michal Koutný wrote:
+> Hello.
+> 
 
-I don't normally use "tbauth" (I think that's all done for me via the
-"boltctl" suite) but I grabbed and built the GIT and ran it anyway, for
-good measure.
+[...]
 
-I'll keep you updated, I'll be at my CalDigit dock soon enough if I
-can't get any failures this morning.
+> > The most simple explanation is visibility. Workloads that used to run
+> > solo are being moved to a multi-tenant but non-overcommited environment
+> > and they need to know their capacity which they used to get from system
+> > metrics.
+> 
+> > Now they have to get from cgroup limit files but usage of
+> > cgroup namespace limits those workloads to extract the needed
+> > information.
+> 
+> I remember Shakeel said the limit may be set higher in the hierarchy for
+> container + siblings but then it's potentially overcommitted, no?
+> 
+> I.e. namespace visibility alone is not the problem. The cgns root's
+> memory.max is the shared medium between host and guest through which the
+> memory allowance can be passed -- that actually sounds to me like
+> Johannes' option b).
+> 
+> (Which leads me to an idea of memory.max.effective that'd only present
+> the value iff there's no sibling between tightest ancestor..self. If one
+> looks at nr_tasks, it's partial but correct memory available. Not that
+> useful due to the partiality.)
+> 
+> Since I was originally fan of the idea, I'm not a strong opponent of
+> plain memory.max.effective, especially when Johannes considers the
+> option of kernel stepping back here and it may help some users. But I'd
+> like to see the original incarnations [2] somehow linked (and maybe
+> start only with memory.max as
+> that has some usecases).
 
--K
+Yes, I can link [2] with more info added to the commit message.
 
+Johannes, do you want effective interface for low and min as well or for
+now just keep the current targeted interfaces?
 
-On 2/26/25 00:44, Mika Westerberg wrote:
-> Hi Kenneth,
 > 
-> On Fri, Feb 14, 2025 at 09:39:33AM -0800, Kenneth Crudup wrote:
->>
->> This is excellent news that you were able to reproduce it- I'd figured this
->> regression would have been caught already (as I do remember this working
->> before) and was worried it may have been specific to a particular piece of
->> hardware (or software setup) on my system.
->>
->> I'll see what I can dig up on my end, but as I'm not expert in these
->> subsystems I may not be able to diagnose anything until your return.
+> Thanks,
+> Michal
 > 
-> [Back now]
-> 
-> My git bisect ended up to this commit:
-> 
->    9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
-> 
-> Adding Lukas who is the expert.
-> 
-> My steps to reproduce on Intel Meteor Lake based reference system are:
-> 
-> 1. Boot the system up, nothing connected.
-> 2. Once up, connect Thunderbolt 4 dock and Thunderbolt 3 NVMe in a chain:
-> 
->    [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
-> 
-> 3. Authorize PCIe tunnels (whatever your distro provides, my buildroot just
->      has the debugging tools so running 'tbauth -r 301')
-> 
-> 4. Check that the PCIe topology matches the expected (lspci)
-> 
-> 5. Enter s2idle:
-> 
->    # rtcwake -s 30 -mmem
-> 
-> 6. Once it is suspended, unplug the cable between the host and the dock.
-> 
-> 7. Wait for the resume to happen.
-> 
-> Expectation: The system wakes up fine, notices that the TB and PCIe devices
-> are gone, stays responsive and usable.
-> 
-> Actual result: Resume never completes.
-> 
-> I added "no_console_suspend" to the command line and the did sysrq-w to
-> get list of blocked tasks. I've attached it just in case it is needed.
-> 
-> If I revert the above commit the issue is gone. Now I'm not sure if this is
-> exactly the same issue that you are seeing but nevertheless this is kind of
-> normal use case so definitely something we should get fixed.
-> 
-> Lukas, if you need any more information let me know. I can reproduce this
-> easily.
-> 
->> I also saw some DRM/connected fixes posted to Linus' master so maybe one of
->> them corrects this new display-crash issue (I'm not home on my big monitor
->> to be able to test yet).
->>
->> -Kenny
->>
->> On 2/14/25 08:29, Mika Westerberg wrote:
->>> Hi,
->>>
->>> On Thu, Feb 13, 2025 at 11:19:35AM -0800, Kenneth Crudup wrote:
->>>>
->>>> On 2/13/25 05:59, Mika Westerberg wrote:
->>>>
->>>>> Hi,
->>>>
->>>> As Murphy's would have it, now my crashes are display-driver related (this
->>>> is Xe, but I've also seen it with i915).
->>>>
->>>> Attached here just for the heck of it, but I'll be better testing the NVMe
->>>> enclosure-related failures this weekend. Stay tuned!
->>>
->>> Okay, I checked quickly and no TB related crash there but I was actually
->>> able to reproduce hang when I unplug the device chain during suspend. I did
->>> not yet have time to look into it deeper. I'm sure this has been working
->>> fine in the past as we tested all kinds of topologies including similar to
->>> this.
->>>
->>> I will be out next week for vacation but will continue after that if the
->>> problem is not alraedy solved ;-)
->>>
->>
->> -- 
->> Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County
->> CA
+> [1] https://lore.kernel.org/all/ZcY7NmjkJMhGz8fP@host1.jankratochvil.net/
+> [2] https://lore.kernel.org/all/20240606152232.20253-1-mkoutny@suse.com/
 
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
 
 
