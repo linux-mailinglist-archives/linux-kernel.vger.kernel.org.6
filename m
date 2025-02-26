@@ -1,167 +1,222 @@
-Return-Path: <linux-kernel+bounces-534668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBF3A469BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:29:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5331DA469CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:31:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B970C3AB223
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE43173DB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92022257B;
-	Wed, 26 Feb 2025 18:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2947C233714;
+	Wed, 26 Feb 2025 18:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iD9exBNr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FbMWb8kA"
+Received: from 002.mia.mailroute.net (002.mia.mailroute.net [199.89.3.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A419597F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA77E21C19E;
+	Wed, 26 Feb 2025 18:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740594503; cv=none; b=Cfwr9U9MRfphzqoshcQWi4oETYRUMxFJPLsVSBJ4IIZ+YYA2cRPzbf5gphcFJMZkQBLEwLLErxX2YxmVFyDXiaAa+oT+ZQBt0y9KQCoxiOz+SFk22YF/egYFIT7Gs9OY2mQfYe3kczBx2uVG/uJbQthbeQKZ+5xGONQ58cylN/A=
+	t=1740594528; cv=none; b=lH1JGskk06AcbqXilsRFuJkoToCKeccD7Yk7zb3l/x+u4rFE732OtjcVsHb1Y19vo04PKpJGXlNOPUqXi8W+apcJOUeTdBkZiyZWierEWLoEH1QtmathsPfF0QTVxjI6lugUOx9pFHgHEda6RIrknRye0M5RD/3OybJMFJFdxKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740594503; c=relaxed/simple;
-	bh=9tJSryV3UIix0A0318dVjz1+cy/T3SG8xsS9e9fiHHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XM7YnmTX2QxvZd8cgyIksk2IJTpQTNWEgRWZ6xOYzAmG2MS5mUvOJP/UtxV4cVyhgjlZmLrF1imcxBOk0QC/q/L1dw0dD9Agdh1cjscW+UjAMX8egFoVoIVVMUwUO+ywdkRwSyF0xO9uHSWugBUtL9ingScHD/0zPLuDm9OpMrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iD9exBNr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220c92c857aso2925655ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:28:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740594501; x=1741199301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKEXMcX2vydQl8yKGxLj6o83FrSjnokZ56LmF36tpZQ=;
-        b=iD9exBNrqXX6Wjr8a/IfKN7uULPmpNz2S5k9kMQJJ8jmkVErKrGMKmNNzWgHzJ+kPM
-         COf0mNbIK5ZT5iI/jXz1VjmzVzFJ7h9lFmkyU/bH/kp7dqqfQXWoHeSkqhdzh23+ObVo
-         S0aB+e6/faPZpWSnbuuojHZzpOobMY/s7VmyRq79nMOOtfLbr4vEb2AhE73JMdUt+uhW
-         U7al21SY9g4rjZGSFciqBM2uJMujEPNExhWSSqIjjCeXMlLnYGjvmE7aha5pXR7qBF9w
-         zt6u9kFvUVxXoHhoA0znf5QNJ5mU7ROrwOl7CZAKIREZuqGXcj517g81yjpE0u1vB7M8
-         aQpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740594501; x=1741199301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jKEXMcX2vydQl8yKGxLj6o83FrSjnokZ56LmF36tpZQ=;
-        b=mB6GZ/tfW/bZqj2Bzii5gldiNPWtCmTc2qYn4FM8I8Iz/iuw627UXB0Cf2SzCE9mXV
-         9c54VcryeoV4LvFnuPSf8e/eOY9tkNpKdmvsjCR8b25GNxI5U69cZFTCWUUF7zUbuhOP
-         hCY0qUTYrZa/2tvps0A8IhVX7YOR8Ewl/IuPoGGItEGQAM+Qnn4lxRckTX88o17tGVWL
-         YJMxW7LAW52xK1VcSWMLpSj2z8oNup76mQB9tO95oGiNmUnfZNQ2VKyhVHQAe2V0I41C
-         R9mt+G3DXWCYawnWUcSshWM0TsrbKq1dMcf9CeuzBTtKZFaCTEhkvauCEI8oKp6JaurU
-         E2iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsD+KFVCJNOCMFltTzX+2Egj5Sz0KwyjGtlm484E3gBTQ/dJSnDPLtxrraONg9Ic8vI5OK5QeZ9O9vzbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLhahyL6+/xmHh+XlCFtUW4TqgpSqSISGx6fzHIs7fxR10obOI
-	y4QnznkqLgoKFYZrBKfJgfmPj4VZ5yMEGyrJlgZ6AyGc07AZbEo3iXs/0Ni4
-X-Gm-Gg: ASbGnctGB0E03Tv0MRYGQ3i/Ogw9f2ozo1TvHXi+P48p3fUIZTInffLx5NEIcao7FTT
-	N0SF8Es9yKuIsCncMzjKTrtpCPQBKYIXSMadUQGt5M97wd+3VgMyHvz5BqZOYa9mm7vsYOcK58o
-	yokb23Q5JlanwR/b6cGvcVj8iZymFamM+7zJ5bh2zfCKmZkeVUP9G2RWIPeGajUAwelfDklEWnN
-	OBOewZUWoomtiO6Slp4ulIw0FidXwKUhmBYHWG38fQTYr6qTh/mFSFo85rtUdsND77Pn22TNsMf
-	XU7or3ohUH+9eRohByH0EMGtDl/ayz7VmBepvYX5yNL/qE7TCo8/
-X-Google-Smtp-Source: AGHT+IFWBxzBAY5PMojlcke9devpD3Go8axTjlzmDjzhL79jsCphy2n0lTirLrKLsEIErC2ofUnoFw==
-X-Received: by 2002:a17:902:d504:b0:21f:6dcf:fd2b with SMTP id d9443c01a7336-2234a15e3a9mr5976705ad.1.1740594501327;
-        Wed, 26 Feb 2025 10:28:21 -0800 (PST)
-Received: from ideapad.tail50fddd.ts.net ([139.5.199.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6ada86sm3849296b3a.30.2025.02.26.10.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 10:28:20 -0800 (PST)
-From: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: dakr@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
-Subject: [PATCH] drivers/base: fix iterator cleanup in attribute_container
-Date: Wed, 26 Feb 2025 23:57:52 +0530
-Message-ID: <20250226182753.257559-1-ayaanmirzabaig85@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1740594528; c=relaxed/simple;
+	bh=xgLlMELhRjjgX4wSWhoOtD6ZOngS4uqiYbGhlQQhuy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t70J9t4m+ry06AuSkN05pFdW3D1vcyhZJ44UryZ1J6TVt7bIERtIVZ7TcdOAly7b/qSbXpmb6tzuAtGSBkOk+BHLaK9nx8FfqA2fzLPLVS9Do4ZKH+EQAIOVcJ/wFMP53cVvY769h8u8pUAZhHdO3hCtr2wUjWYvr9RBYDDEgNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FbMWb8kA; arc=none smtp.client-ip=199.89.3.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 002.mia.mailroute.net (Postfix) with ESMTP id 4Z32zc6Vf6zmB6xx;
+	Wed, 26 Feb 2025 18:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1740594523; x=1743186524; bh=KyPmYbL6zItehixQFi6Llkvh
+	GEJE3rfZhaDk8EUQkxc=; b=FbMWb8kAwfE3DveSTfkaX0bTjbcAPF6jJwaG2vqa
+	o96YiC65ASo2GWw08BDKdO1ZG5Yk2vzbMp/AbhTCu6BwAJ32RucT98AiqNS+ZpfL
+	CGcheOl5wUWIjium7kPq0OlvPcpGazTZgbzk30zwpX6/f2chNlG6lNXHx3v5wteM
+	WGip9CAXkDU/5V0gfNZBljZY5AAvp9YfCPJmZETqNhXAKuTX3onRADo2FgdyRtrp
+	avS+1CKwiv1Few0k5AJqxpRowSZ7u8ZoAVk27Kv5Okv2J/nhyE4EaR7AWs2xsZno
+	jcWeF33yfqBZ1VON0y0oKMS+q59V5AoehkCLdGmM/vXnCQ==
+X-Virus-Scanned: by MailRoute
+Received: from 002.mia.mailroute.net ([127.0.0.1])
+ by localhost (002.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id wp3WPZv53FQq; Wed, 26 Feb 2025 18:28:43 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 002.mia.mailroute.net (Postfix) with ESMTPSA id 4Z32zZ5Pf2znSXxj;
+	Wed, 26 Feb 2025 18:28:42 +0000 (UTC)
+Message-ID: <125e3b04-a614-4d9d-aba4-8e08684374a8@acm.org>
+Date: Wed, 26 Feb 2025 10:28:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: stop judging after finding a VPD page expected to
+ be processed.
+To: Chaohai Chen <wdhh6@aliyun.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250226065802.234144-1-wdhh6@aliyun.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250226065802.234144-1-wdhh6@aliyun.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch addresses a long-standing FIXME in
-dirvers/base/attribute_container.c, where the function
-failed to call klist_iter_exit() before breaking
-out of the loop when a matching class device was found.
+On 2/25/25 10:58 PM, Chaohai Chen wrote:
+> When the vpd_buf->data[i] is expected to be processed, stop other
+> judgments.
+> 
+> Signed-off-by: Chaohai Chen <wdhh6@aliyun.com>
+> ---
+>   drivers/scsi/scsi.c | 28 ++++++++++++++++++++--------
+>   1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+> index a77e0499b738..53daf923ad8e 100644
+> --- a/drivers/scsi/scsi.c
+> +++ b/drivers/scsi/scsi.c
+> @@ -510,22 +510,34 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+>   		return;
+>   
+>   	for (i = 4; i < vpd_buf->len; i++) {
+> -		if (vpd_buf->data[i] == 0x0)
+> +		switch (vpd_buf->data[i]) {
+> +		case 0x0:
+>   			scsi_update_vpd_page(sdev, 0x0, &sdev->vpd_pg0);
+> -		if (vpd_buf->data[i] == 0x80)
+> +			break;
+> +		case 0x80:
+>   			scsi_update_vpd_page(sdev, 0x80, &sdev->vpd_pg80);
+> -		if (vpd_buf->data[i] == 0x83)
+> +			break;
+> +		case 0x83:
+>   			scsi_update_vpd_page(sdev, 0x83, &sdev->vpd_pg83);
+> -		if (vpd_buf->data[i] == 0x89)
+> +			break;
+> +		case 0x89:
+>   			scsi_update_vpd_page(sdev, 0x89, &sdev->vpd_pg89);
+> -		if (vpd_buf->data[i] == 0xb0)
+> +			break;
+> +		case 0xb0:
+>   			scsi_update_vpd_page(sdev, 0xb0, &sdev->vpd_pgb0);
+> -		if (vpd_buf->data[i] == 0xb1)
+> +			break;
+> +		case 0xb1:
+>   			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+> -		if (vpd_buf->data[i] == 0xb2)
+> +			break;
+> +		case 0xb2:
+>   			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
+> -		if (vpd_buf->data[i] == 0xb7)
+> +			break;
+> +		case 0xb7:
+>   			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+>   	}
+>   	kfree(vpd_buf);
+>   }
 
-The code is now refactored to use a goto-based cleanup approach
-that ensure klist_iter_exit() is invoked exactly once regardless
-of the exit path.
+Instead of preserving the code duplication, please change this function
+such that no code is duplicated. This will make it easier to cache more
+VPD pages in the future. Here is an example of how this could be done
+(entirely untested):
 
-In addition, checkpatch.pl warnings were fixed along with this change.
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index a77e0499b738..1365168941ed 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -487,6 +487,19 @@ static void scsi_update_vpd_page(struct scsi_device 
+*sdev, u8 page,
+  		kfree_rcu(vpd_buf, rcu);
+  }
 
-Tested on a minimal Debian System in QEMU with GDB attached.
-No regressions or errors were observed.
++struct vpd_page_info {
++	u8 page_code;
++	u16 offset; /* offset in struct scsi_device of vpd_pg... member */
++};
++
++#define SCSI_BUILD_BUG_ON(cond) (sizeof(char[1 - 2 * !!(cond)]) - 
+sizeof(char))
++
++#define VPD_PAGE_INFO(vpd_page)						\
++	{ 0x##vpd_page, offsetof(struct scsi_device, vpd_pg##vpd_page) +\
++		SCSI_BUILD_BUG_ON(					\
++		!__same_type(&((struct scsi_device *)NULL)->vpd_pg##vpd_page, \
++			     struct scsi_vpd __rcu **))}
++
+  /**
+   * scsi_attach_vpd - Attach Vital Product Data to a SCSI device structure
+   * @sdev: The device to ask
+@@ -498,7 +511,17 @@ static void scsi_update_vpd_page(struct scsi_device 
+*sdev, u8 page,
+   */
+  void scsi_attach_vpd(struct scsi_device *sdev)
+  {
+-	int i;
++	static const struct vpd_page_info cached_page[] = {
++		VPD_PAGE_INFO(0),
++		VPD_PAGE_INFO(80),
++		VPD_PAGE_INFO(83),
++		VPD_PAGE_INFO(89),
++		VPD_PAGE_INFO(b0),
++		VPD_PAGE_INFO(b1),
++		VPD_PAGE_INFO(b2),
++		VPD_PAGE_INFO(b7),
++	};
++	int i, j;
+  	struct scsi_vpd *vpd_buf;
 
-Signed-off-by: Ayaan Mirza Baig <ayaanmirzabaig85@gmail.com>
----
- drivers/base/attribute_container.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+  	if (!scsi_device_supports_vpd(sdev))
+@@ -510,22 +533,17 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+  		return;
 
-diff --git a/drivers/base/attribute_container.c b/drivers/base/attribute_container.c
-index b6f941a6ab69..1e7af328dd49 100644
---- a/drivers/base/attribute_container.c
-+++ b/drivers/base/attribute_container.c
-@@ -5,7 +5,7 @@
-  * Copyright (c) 2005 - James Bottomley <James.Bottomley@steeleye.com>
-  *
-  * The basic idea here is to enable a device to be attached to an
-- * aritrary numer of classes without having to allocate storage for them.
-+ * aritrary number of classes without having to allocate storage for them.
-  * Instead, the contained classes select the devices they need to attach
-  * to via a matching function.
-  */
-@@ -21,7 +21,8 @@
- #include "base.h"
- 
- /* This is a private structure used to tie the classdev and the
-- * container .. it should never be visible outside this file */
-+ * container .. it should never be visible outside this file
-+ */
- struct internal_container {
- 	struct klist_node node;
- 	struct attribute_container *cont;
-@@ -42,7 +43,6 @@ static void internal_container_klist_put(struct klist_node *n)
- 	put_device(&ic->classdev);
- }
- 
--
- /**
-  * attribute_container_classdev_to_container - given a classdev, return the container
-  *
-@@ -449,7 +449,7 @@ attribute_container_remove_attrs(struct device *classdev)
- 
- 	if (cont->grp) {
- 		sysfs_remove_group(&classdev->kobj, cont->grp);
--		return ;
-+		return;
- 	}
- 
- 	for (i = 0; attrs[i]; i++)
-@@ -491,12 +491,11 @@ attribute_container_find_class_device(struct attribute_container *cont,
- 	klist_for_each_entry(ic, &cont->containers, node, &iter) {
- 		if (ic->classdev.parent == dev) {
- 			cdev = &ic->classdev;
--			/* FIXME: must exit iterator then break */
--			klist_iter_exit(&iter);
--			break;
-+			goto out;
- 		}
- 	}
--
-+out:
-+	klist_iter_exit(&iter);
- 	return cdev;
- }
- EXPORT_SYMBOL_GPL(attribute_container_find_class_device);
--- 
-2.47.1
+  	for (i = 4; i < vpd_buf->len; i++) {
+-		if (vpd_buf->data[i] == 0x0)
+-			scsi_update_vpd_page(sdev, 0x0, &sdev->vpd_pg0);
+-		if (vpd_buf->data[i] == 0x80)
+-			scsi_update_vpd_page(sdev, 0x80, &sdev->vpd_pg80);
+-		if (vpd_buf->data[i] == 0x83)
+-			scsi_update_vpd_page(sdev, 0x83, &sdev->vpd_pg83);
+-		if (vpd_buf->data[i] == 0x89)
+-			scsi_update_vpd_page(sdev, 0x89, &sdev->vpd_pg89);
+-		if (vpd_buf->data[i] == 0xb0)
+-			scsi_update_vpd_page(sdev, 0xb0, &sdev->vpd_pgb0);
+-		if (vpd_buf->data[i] == 0xb1)
+-			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+-		if (vpd_buf->data[i] == 0xb2)
+-			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
+-		if (vpd_buf->data[i] == 0xb7)
+-			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
++		for (j = 0; j < ARRAY_SIZE(cached_page); j++) {
++			const u8 page_code = cached_page[j].page_code;
++			const u16 offset = cached_page[j].offset;
++			struct scsi_vpd __rcu **vpd_data =
++				(void *)&sdev + offset;
++
++			if (vpd_buf->data[i] == page_code) {
++				scsi_update_vpd_page(sdev, page_code, vpd_data);
++				break;
++			}
++		}
+  	}
+  	kfree(vpd_buf);
+  }
 
 
