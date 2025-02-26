@@ -1,201 +1,260 @@
-Return-Path: <linux-kernel+bounces-534005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14ABA46164
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:56:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140ECA46169
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E27175ACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:55:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB9D188EC8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF6F21D3FF;
-	Wed, 26 Feb 2025 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="lAYR+mu/"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF3B22068A;
+	Wed, 26 Feb 2025 13:56:42 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0466118CC10
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556CB84A2B;
+	Wed, 26 Feb 2025 13:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740578154; cv=none; b=PkCZmgmjxPAeaN9hlydmpWVM+SpZE18wyIRAzmiDnUID2ppudBv221hRw5/11qxoTEzS35/fOYjXDP65bPR9E1B9WWgzNf3WreqviikXEN/PuHtMr2zlojxe632vLqb8oG07q8dFtGmmmrgD57wixcUu0Zv05kg141ePMQvJVV4=
+	t=1740578202; cv=none; b=lO6I/LozFGPB713wvPgVkP04KfjvA66FVDVqyhq2keVxTDKk0l56ZEdLmSEQniNNmkFCEvlPOfzgCI61eXUB0rM9VBR0Pb9Qo83U9pcy0VsHSSHhHikJ6c08OH3aqrMdXHKQbwXh13GuWyHTnzfnlJdO0MGBJ00GzeGquDCZ45s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740578154; c=relaxed/simple;
-	bh=tpF74Bc8nkP8DDuqSqjtD4uoz4vOJq3ZHVih9iTzIt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h/xWig4n5lHlKIdcmH8+Ku6FptFl10+Ve8UiHBc4r3HN134o9olxhT+guX9jfcjjhLVnGreOk8/81B4XB2VclBe9P9e8iw2VBB54RGnaoAqri+SkBNfZzV2qCZ7FICYo6DMJKffg/l+DdKgf3SumdSM/fzovee5a7d6291X+qUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=lAYR+mu/; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7be49f6b331so661272285a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:55:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1740578152; x=1741182952; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WhUvj0RFZy69SqBW6GfxIwgPOzkEGSiBv5ZaFs5vLVs=;
-        b=lAYR+mu/irYh3vdlb5SDeFq7CpMNztR93KukqXdFXVPGZ9KC9Ufw9Ig9OZPgBYa1Md
-         8/ElnANDGHczu4G9bQY4fTcZrGUfV9ngg/w5UytacABQ8tyQcWycaQ3eUvlxMs2cszyd
-         OWT20NMpvSSewqYNMfzgbUQLZmU8q1zqhTiRhPUoiLDJVNvkp7ggp0tqjoAsVDxqtIKk
-         D6lfq+gNBAuzxeeQCW5usUrjzubXBrmqPO2R1q2NFTeJxfe38vtZMik/iasIbQQMbuU+
-         AiS25zMxtyGLX7EvYXg3Btz6xRGNSl5V4LstNOZVttiftLGyaRk3pVmXPnW7TWkINdgh
-         7mcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740578152; x=1741182952;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WhUvj0RFZy69SqBW6GfxIwgPOzkEGSiBv5ZaFs5vLVs=;
-        b=E8ZW7edGBaSzdmqEMqt2LImg6JR9zmNt9a6xUpjsLxq9a3B1YeH843G9dR9on+6ptD
-         lX0nZZnu55wIaiwjbsH8UG6eTQ/Mg0HWfKfswSOE50jAK9RZod07sZMDiJ8e6hiaN+ve
-         jSDtxMi3H9kz+7xctd6SOjJP+32yNuYgtyr6Pk/T0r2HrlamoOCWuWfC04dc4GbeKPix
-         PvRQcWtb/+DETRVL6pZrR6hyJzwe23c8vtmhhN0sykQazvW99EZKVbix17RvQHOvTgBz
-         mVbYo4pjFl5nEhFLjBCgQSu+IMsrAOXsZTEgPyKTeYs3aXuxUpOVn6r15U1zGRzvpkEp
-         kDPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnOmdQEfSd/pi4R7UfYrPrKKeNdmvXkH++s8FpSgfoWtok33oSAB7MMXJsxIeyyvNe0bztcWG6h88sqos=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBqHMfo9SpNDsDf4iDFmIre4pHkrGW03nsDI5v8S+M0jQD2fB3
-	o4q8PbUtiv8MsL++dIwwmmYI6diyXZ9O3TscFDP8brEZZO9elbQPLG2JvME8Qgz4WTr8bzNJfbO
-	jzzlC7+Q5J8pDaCz5jK1qxVAe92kmksqTlYolBQ==
-X-Gm-Gg: ASbGnctVr/c4xuW/kpmAfQvfKhlvQw+7EyDIJmwe98ZnxpHM7/TcMloksSR5ZU6m1Fm
-	ZKKcw08fUirQAOQ+j1ckIOyMbJo3QNVmePnuF0pzg+ange/Nt54OB5ORZxyQfg95PULaamhymQx
-	evfn2CupeDjfKedIm8JYw2Y2E=
-X-Google-Smtp-Source: AGHT+IF9JNVuuN8bPIEslvqP08Rm/fPznkmgjxA71qYbkp5tsuuoVM8OWD850Rm891NlxodE4XcG6gIPGkpGJXT6eNs=
-X-Received: by 2002:a05:622a:1a1b:b0:472:1812:23d3 with SMTP id
- d75a77b69052e-47224716f88mr242782461cf.10.1740578151740; Wed, 26 Feb 2025
- 05:55:51 -0800 (PST)
+	s=arc-20240116; t=1740578202; c=relaxed/simple;
+	bh=U9JYgXlhNDPZ4KKWBvxoTR0Ovs8uIhSzmgYhtbuhjuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoVqdRw2ig2YNe55hXUVcBtx5ayCe1AvW6iRiireSJWOt/ymijYLqrzQthAQ2Pd/Ak9W8+Jgdzv8fDaJjkNkxNucDVmCn3i5mseqPvwIoxTDdGjYnKDT8gR11+Din9QZ7rbpKff/yhX1FAx0nn5QN8vU8Uv7GBH1hBtRMbs9Kdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 3A33E34309B;
+	Wed, 26 Feb 2025 13:56:38 +0000 (UTC)
+Date: Wed, 26 Feb 2025 13:56:35 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
+Message-ID: <20250226135635-GYA45740@gentoo>
+References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
+ <20250226010108-GYA44567@gentoo>
+ <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
+ <20250226115957-GYA45508@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-apple-twiddled-modifiers-v2-1-cf69729e87f6@rosenzweig.io>
- <CAPj87rO3N2=3mNQg8-CUF=-XTysJHLmgArRKuvDpdk3YZ2xMvQ@mail.gmail.com> <Z75BwWllrew-DIlS@blossom>
-In-Reply-To: <Z75BwWllrew-DIlS@blossom>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 26 Feb 2025 13:55:40 +0000
-X-Gm-Features: AWEUYZlVeaWaGooIARJfI13M5E2woUVblHaLAgLiu0Mf6aUTrS-ZPIVERoXVQWc
-Message-ID: <CAPj87rMpSbaOe0qEU8x-VFCGOvoWpyRURr=0bJ80=cdkTQiAbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm: add modifiers for Apple GPU layouts
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250226115957-GYA45508@gentoo>
 
-Hey,
+Hi Linus Walleij:
 
-On Tue, 25 Feb 2025 at 22:18, Alyssa Rosenzweig <alyssa@rosenzweig.io> wrote:
-> > > These layouts are notably not used for interchange across hardware
-> > > blocks (e.g. with the display controller). There are other layouts for
-> > > that but we don't support them either in userspace or kernelspace yet
-> > > (even downstream), so we don't add modifiers here.
-> >
-> > Yeah, when those have users with good definitions matching these, we
-> > can add them here, even if they are downstream. Anything the GPU would
-> > share out of context, or the codec, would be good for this.
->
-> Sure. The mentioned "other layouts" are for scanout (GPU->display), and
-> apparently the GPU can render but not sample them... You can imagine
-> about how well that would go without a vendor extension + compositor
-> patches......
->
-> (Currently we use linear framebuffers for scanout and avoid that rat's
-> nest.)
+I went ahead and made further progress on this, and now
+the 3 cell interrupts model work fine, although still few issues left
 
-Heh, impressive. Are those the twiddled-but-not-tiled ones?
+see patch below
 
-> > > +/*
-> > > + * Apple GPU-tiled layout.
-> > > + *
-> > > + * GPU-tiled images are divided into tiles. Tiles are always 16KiB, with
-> > > + * dimensions depending on the base-format. Within a tile, pixels are fully
-> > > + * interleaved (Morton order). Tiles themselves are raster-order.
-> > > + *
-> > > + * Images must be 16-byte aligned.
-> > > + *
-> > > + * For more information see
-> > > + * https://docs.mesa3d.org/drivers/asahi.html#image-layouts
-> >
-> > This writeup is really nice. I would prefer it was inlined here though
-> > (similar to AFBC), with Mesa then referring to the kernel, but tbf
-> > Vivante does have a similar external reference.
->
-> Thanks :-) I wasn't sure which way would be better. Most of the
-> complexity in that writeup relates to mipmapping and arrayed images,
-> which I don't think WSI hits...?
+On 12:00 Wed 26 Feb     , Yixun Lan wrote:
+> Hi Linus Walleij:
+> 
+> On 11:24 Wed 26 Feb     , Linus Walleij wrote:
+> > On Wed, Feb 26, 2025 at 2:01 AM Yixun Lan <dlan@gentoo.org> wrote:
+> > 
+> > > Current this v7 version work great with request irq from gpio, like:
+> > >         pin = devm_gpiod_get_optional(dev, "myirq", GPIOD_IN);
+> > >         irq = gpiod_to_irq(pin);
+> > >         devm_request_threaded_irq(dev, irq, ..)
+> > >
+> > > but have problem if request irq via of_irq_get(), something like this:
+> > > DT part
+> > >         mytst {
+> > >                 ..
+> > >                 interrupt-parent = <&gpio>;
+> > >                 interrupts = <1 28 IRQ_TYPE_EDGE_RISING>;
+> > >                 interrupt-names = "wakeup";
+> > >         }
+> > >
+> > > In source code
+> > >         irq = of_irq_get_byname(dev->of_node, "wakeup");
+> > >
+> > > I've made an attempt to patch gpiolib to support three cells "interrupts"
+> > > syntax, but still fail, it always get last gpio irqchip of four, thus using
+> > > the wrong pin (e.g: will always get 3 from gpiochips 0, 1, 2, 3)
+> > 
+> > Right, we need a proper patch to fix this.
+> > 
+> > Can you paste your patch so I can see if I can spot/fix
+> > the problem?
+> > 
+> > I think the irq cell parser needs to call out to
+> > of_node_instance_match() - or similar - as well.
+> do you have any suggestion where to implement this similar function?
+> 
+> I actually miss this logic, the patch here only support parsing
+> interrupts with 3 cells
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 679ed764cb14..9aa88c3fa485 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1454,6 +1454,10 @@ static int gpiochip_hierarchy_irq_domain_translate(struct irq_domain *d,
+>  		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
+>  	}
+>  
+> +	if (is_of_node(fwspec->fwnode) && fwspec->param_count == 3) {
+> +		return irq_domain_translate_threecell(d, fwspec, hwirq, type);
+> +	}
+> +
+>  	/* This is for board files and others not using DT */
+>  	if (is_fwnode_irqchip(fwspec->fwnode)) {
+>  		int ret;
+> @@ -1758,7 +1762,8 @@ static const struct irq_domain_ops gpiochip_domain_ops = {
+>  	.map	= gpiochip_irq_map,
+>  	.unmap	= gpiochip_irq_unmap,
+>  	/* Virtually all GPIO irqchips are twocell:ed */
+> -	.xlate	= irq_domain_xlate_twocell,
+> +	/* FIXME: force switch to three cells */
+> +	.xlate	= irq_domain_xlate_threecell,
+>  };
+>  
+>  static struct irq_domain *gpiochip_simple_create_domain(struct gpio_chip *gc)
+> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+> index e432b6a12a32..69a9540ec253 100644
+> --- a/include/linux/irqdomain.h
+> +++ b/include/linux/irqdomain.h
+> @@ -568,10 +568,18 @@ int irq_domain_xlate_onecell(struct irq_domain *d, struct device_node *ctrlr,
+>  int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
+>  			const u32 *intspec, unsigned int intsize,
+>  			irq_hw_number_t *out_hwirq, unsigned int *out_type);
+> +int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
+> +			const u32 *intspec, unsigned int intsize,
+> +			irq_hw_number_t *out_hwirq, unsigned int *out_type);
+>  int irq_domain_xlate_onetwocell(struct irq_domain *d, struct device_node *ctrlr,
+>  			const u32 *intspec, unsigned int intsize,
+>  			irq_hw_number_t *out_hwirq, unsigned int *out_type);
+>  
+> +int irq_domain_translate_threecell(struct irq_domain *d,
+> +				 struct irq_fwspec *fwspec,
+> +				 unsigned long *out_hwirq,
+> +				 unsigned int *out_type);
+> +
+>  int irq_domain_translate_twocell(struct irq_domain *d,
+>  				 struct irq_fwspec *fwspec,
+>  				 unsigned long *out_hwirq,
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index ec6d8e72d980..995e5e0ec2db 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -1132,6 +1132,17 @@ int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
+>  }
+>  EXPORT_SYMBOL_GPL(irq_domain_xlate_twocell);
+>  
+> +int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
+> +			const u32 *intspec, unsigned int intsize,
+> +			irq_hw_number_t *out_hwirq, unsigned int *out_type)
+> +{
+> +	struct irq_fwspec fwspec;
+> +
+> +	of_phandle_args_to_fwspec(ctrlr, intspec, intsize, &fwspec);
+> +	return irq_domain_translate_threecell(d, &fwspec, out_hwirq, out_type);
+> +}
+> +EXPORT_SYMBOL_GPL(irq_domain_xlate_threecell);
+> +
+>  /**
+>   * irq_domain_xlate_onetwocell() - Generic xlate for one or two cell bindings
+>   * @d:		Interrupt domain involved in the translation
+> @@ -1216,6 +1227,19 @@ int irq_domain_translate_twocell(struct irq_domain *d,
+>  }
+>  EXPORT_SYMBOL_GPL(irq_domain_translate_twocell);
+>  
+> +int irq_domain_translate_threecell(struct irq_domain *d,
+> +				 struct irq_fwspec *fwspec,
+> +				 unsigned long *out_hwirq,
+> +				 unsigned int *out_type)
+> +{
+> +	if (WARN_ON(fwspec->param_count < 3))
+> +		return -EINVAL;
+> +	*out_hwirq = fwspec->param[1];
+> +	*out_type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(irq_domain_translate_threecell);
+> +
+>  int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
+>  			   int node, const struct irq_affinity_desc *affinity)
+>  {
+> 
 
-Yeah, anything that wouldn't be exported out of a GPU API context
-doesn't need to be in here!
+sounds we need to implement .select() or .match() in irq_domain_ops,
+then find the irq_domain.. here is a prototype version 
 
-> Also, the Mesa docs are easier for me
-> to update, support tables and LaTeX, have other bits of hw writeups on
-> the same page, etc... so they feel like a better home for the unabridged
-> version.  And since Vivante did this, I figured it was ok.
->
-> If people feel strongly I can of course inline it, it's just not clear
-> to me that dumping all that info into the header here is actually
-> desired. (And there's even more info Marge queued ...
-> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33743/diffs?commit_id=5ddb57ceb46d42096a34cbef1df6b4109ac2b511
-> )
-
-I don't feel strongly about this btw, was just thinking out loud, and
-also lets you move asahi.html around (e.g. split into subpages)
-without having to worry about breaking old links.
-
-> > The one thing it's missing is an explicit description of how stride is
-> > computed and used. I can see the 'obvious' way to do it for this and
-> > compression, but it would be good to make it explicit, given some
-> > misadventures in the past. CCS is probably the gold standard to refer
-> > to here.
->
-> Ah, right -- thanks for raising that! I'll add this for v3. Indeed, I
-> picked the "obvious" way, given said misadventures with AFBC ;)
->
-> This is the relevant Mesa code:
->
->    /*
->     * For WSI purposes, we need to associate a stride with all layouts.
->     * In the hardware, only strided linear images have an associated
->     * stride, there is no natural stride associated with twiddled
->     * images.  However, various clients assert that the stride is valid
->     * for the image if it were linear (even if it is in fact not
->     * linear). In those cases, by convention we use the minimum valid
->     * such stride.
->     */
->    static inline uint32_t
->    ail_get_wsi_stride_B(const struct ail_layout *layout, unsigned level)
->    {
->       assert(level == 0 && "Mipmaps cannot be shared as WSI");
->
->       if (layout->tiling == AIL_TILING_LINEAR)
->          return ail_get_linear_stride_B(layout, level);
->       else
->          return util_format_get_stride(layout->format, layout->width_px);
->    }
->
-> I can either copy that comment here, or to make that logic more explicit:
->
->     Producers must set the stride to the image width in
->     pixels times the bytes per pixel. This is a software convention, the
->     hardware does not use this stride.
-
-Hrm. I guess more in keeping with how it's used in other APIs, as well
-as more kind of future-proof in the sense of not needing possibly
-gen-specific rounding everywhere, would be to pass (n_tiles_h(buf) *
-tile_size_bytes) / n_rows_in_tile(format). That gives you the same
-information as you get for other users of stride, and might help make
-things more explicit for small tiles as well? Plus would apply pretty
-obviously to compression.
-
-I know it seems pretty inconsequential, but it does help for utils
-which e.g. dump and copy content. And makes sure no-one can make some
-dumb assumptions and get it wrong.
-
-Cheers,
-Daniel
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9aa88c3fa485..73caba47bd2d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1758,9 +1758,25 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+ 	irq_set_chip_data(irq, NULL);
+ }
+ 
++static int gpiochip_irq_select(struct irq_domain *d, struct irq_fwspec *fwspec,
++			enum irq_domain_bus_token bus_token)
++{
++	struct fwnode_handle *fwnode = fwspec->fwnode;
++	struct gpio_chip *gc = d->host_data;
++	unsigned int index = fwspec->param[0];
++
++	if (gc->of_gpio_n_cells == 3 && gc->of_node_instance_match)
++		return gc->of_node_instance_match(gc, index);
++
++	return ((fwnode != NULL) && (d->fwnode == fwnode) &&
++		((bus_token == DOMAIN_BUS_ANY) ||
++		(d->bus_token == bus_token)));
++}
++
+ static const struct irq_domain_ops gpiochip_domain_ops = {
+ 	.map	= gpiochip_irq_map,
+ 	.unmap	= gpiochip_irq_unmap,
++	.select	= gpiochip_irq_select,
+ 	/* Virtually all GPIO irqchips are twocell:ed */
+ 	/* FIXME: force switch to three cells */
+ 	.xlate	= irq_domain_xlate_threecell,
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 995e5e0ec2db..c4d18267e86e 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -553,7 +553,7 @@ struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
+ 	 */
+ 	mutex_lock(&irq_domain_mutex);
+ 	list_for_each_entry(h, &irq_domain_list, link) {
+-		if (h->ops->select && bus_token != DOMAIN_BUS_ANY)
++		if (h->ops->select /* && bus_token != DOMAIN_BUS_ANY */)
+ 			rc = h->ops->select(h, fwspec, bus_token);
+ 		else if (h->ops->match)
+ 			rc = h->ops->match(h, to_of_node(fwnode), bus_token);
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
