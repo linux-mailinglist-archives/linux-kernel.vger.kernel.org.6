@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-532897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25981A4538C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:02:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DF3A45394
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 04:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E22BB177A77
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CA83ACC92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AEF21CC5B;
-	Wed, 26 Feb 2025 03:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D42221567;
+	Wed, 26 Feb 2025 03:01:51 +0000 (UTC)
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC73D1624E0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC78518801A
 	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 03:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740538908; cv=none; b=YwLomvOJS7ybraDZxYqtj6VXwU68/DYYa8P30vgvxw3T919I48UwnKvnWc6BFBDCOazHX0i60LGU/7ZHrF0rJtNQ2bmI2VHxRWtEbt20TUZpia0QwhbGyCvGghr5z4yN94+L9hErD5l04tmDxFsivCtlkvM30BySoRzCzAlIccU=
+	t=1740538910; cv=none; b=UB34Eu7f70kcA5qvFZ3534Y4c3+GgRToWMcOEsMWEgAvlgV3n2yuC/nF9hjBFQFe5yqYqNX95f8Z5KHI+Dlusoyk/aZmKgvWUs5WU5X4rONIPK02X5pS6HzUSHemD2/w13os2rJLT6jfoemYInbiW6rtbs+HGnwE6B4/0zXs83g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740538908; c=relaxed/simple;
-	bh=2B0jRg2pHEqGU0fVvecN1s9XWljnzy0dsfVv8Ike5s4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hYyT7VHiQY3flvtQZ+24Mur/3zOJbDz3PRxd2jmYtoi/1Fv9uiZnzUKGxQdNQer9WDVzp0ObSp5QhOUKGqzsWSrGUK4EVMCRu01iCzjYG8wSSJ0r5pNW/c86phkrlWJpgZg/8DpW7T3QT2RVrGjXWEsafWKjaLouNB7M3Hx+iLE=
+	s=arc-20240116; t=1740538910; c=relaxed/simple;
+	bh=g8vmp/uzQTrkyEAw/uOk9QKaOhpUgeH3UCuUM3E0TkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D0LaQf+qXrKgWJe0uShS+ijuiz9M+DUyxOx8LhyWzIsAQHMaeEHc/NIsoHHYoUIz1naPZXHpogfGGCCOogAPggb4pNh6vwTCpyry/UyTPkipETNzC+mK4LpQP+6LIvvxhnV4cmdmQERQfDu9liHKU1NVY2G2CUZJWhz8A+6ZAZQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
@@ -31,7 +32,7 @@ Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@shelob.surriel.com>)
-	id 1tn7fw-000000001Y5-0Eni;
+	id 1tn7fw-000000001Y5-0MJ4;
 	Tue, 25 Feb 2025 22:01:32 -0500
 From: Rik van Riel <riel@surriel.com>
 To: x86@kernel.org
@@ -50,11 +51,15 @@ Cc: linux-kernel@vger.kernel.org,
 	mhklinux@outlook.com,
 	andrew.cooper3@citrix.com,
 	Manali.Shukla@amd.com,
-	mingo@kernel.org
-Subject: [PATCH v14 00/13] AMD broadcast TLB invalidation
-Date: Tue, 25 Feb 2025 22:00:35 -0500
-Message-ID: <20250226030129.530345-1-riel@surriel.com>
+	mingo@kernel.org,
+	Rik van Riel <riel@surriel.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH v14 01/13] x86/mm: consolidate full flush threshold decision
+Date: Tue, 25 Feb 2025 22:00:36 -0500
+Message-ID: <20250226030129.530345-2-riel@surriel.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250226030129.530345-1-riel@surriel.com>
+References: <20250226030129.530345-1-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,104 +69,91 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: riel@surriel.com
 
-Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
+Reduce code duplication by consolidating the decision point
+for whether to do individual invalidations or a full flush
+inside get_flush_tlb_info.
 
-This allows the kernel to invalidate TLB entries on remote CPUs without
-needing to send IPIs, without having to wait for remote CPUs to handle
-those interrupts, and with less interruption to what was running on
-those CPUs.
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Tested-by: Michael Kelley <mhklinux@outlook.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/mm/tlb.c | 41 +++++++++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 22 deletions(-)
 
-Because x86 PCID space is limited, and there are some very large
-systems out there, broadcast TLB invalidation is only used for
-processes that are active on 3 or more CPUs, with the threshold
-being gradually increased the more the PCID space gets exhausted.
-
-Combined with the removal of unnecessary lru_add_drain calls
-(see https://lkml.org/lkml/2024/12/19/1388) this results in a
-nice performance boost for the will-it-scale tlb_flush2_threads
-test on an AMD Milan system with 36 cores:
-
-- vanilla kernel:           527k loops/second
-- lru_add_drain removal:    731k loops/second
-- only INVLPGB:             527k loops/second
-- lru_add_drain + INVLPGB: 1157k loops/second
-
-Profiling with only the INVLPGB changes showed while
-TLB invalidation went down from 40% of the total CPU
-time to only around 4% of CPU time, the contention
-simply moved to the LRU lock.
-
-Fixing both at the same time about doubles the
-number of iterations per second from this case.
-
-Some numbers closer to real world performance
-can be found at Phoronix, thanks to Michael:
-
-https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
-
-My current plan is to implement support for Intel's RAR
-(Remote Action Request) TLB flushing in a follow-up series,
-after this thing has been merged into -tip. Making things
-any larger would just be unwieldy for reviewers.
-
-v14:
- - code & comment cleanups (Boris)
- - drop "noinvlpgb" commandline option (Boris)
- - fix !CONFIG_X86_BROADCAST_TLB_FLUSH compile anywhere in the series
-v13:
- - move invlpgb_count_max back to amd.c for resume (Boris, Oleksandr)
- - fix Kconfig circular dependency (Tom, Boris)
- - add performance numbers to the patch adding invlpgb for userspace (Ingo)
- - drop page table RCU free patches (already in -tip)
-v12
- - make sure "nopcid" command line option turns off invlpgb (Brendan)
- - add "noinvlpgb" kernel command line option
- - split out kernel TLB flushing differently (Dave & Yosry)
- - split up the patch that does invlpgb flushing for user processes (Dave)
- - clean up get_flush_tlb_info (Boris)
- - move invlpgb_count_max initialization to get_cpu_cap (Boris)
- - bunch more comments as requested
-v11:
- - resolve conflict with CONFIG_PT_RECLAIM code
- - a few more cleanups (Peter, Brendan, Nadav)
-v10:
- - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
- - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Brendan)
- - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
- - various cleanups (Brendan)
-v9:
- - print warning when start or end address was rounded (Peter)
- - in the reclaim code, tlbsync at context switch time (Peter)
- - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (Jan)
-v8:
- - round start & end to handle non-page-aligned callers (Steven & Jan)
- - fix up changelog & add tested-by tags (Manali)
-v7:
- - a few small code cleanups (Nadav)
- - fix spurious VM_WARN_ON_ONCE in mm_global_asid
- - code simplifications & better barriers (Peter & Dave)
-v6:
- - fix info->end check in flush_tlb_kernel_range (Michael)
- - disable broadcast TLB flushing on 32 bit x86
-v5:
- - use byte assembly for compatibility with older toolchains (Borislav, Michael)
- - ensure a panic on an invalid number of extra pages (Dave, Tom)
- - add cant_migrate() assertion to tlbsync (Jann)
- - a bunch more cleanups (Nadav)
- - key TCE enabling off X86_FEATURE_TCE (Andrew)
- - fix a race between reclaim and ASID transition (Jann)
-v4:
- - Use only bitmaps to track free global ASIDs (Nadav)
- - Improved AMD initialization (Borislav & Tom)
- - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
- - Fixes for subtle race conditions (Jann)
-v3:
- - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
- - More suggested cleanups and changelog fixes by Peter and Nadav
-v2:
- - Apply suggestions by Peter and Borislav (thank you!)
- - Fix bug in arch_tlbbatch_flush, where we need to do both
-   the TLBSYNC, and flush the CPUs that are in the cpumask.
- - Some updates to comments and changelogs based on questions.
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index ffc25b348041..dbcb5c968ff9 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -1000,6 +1000,15 @@ static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
+ 	BUG_ON(this_cpu_inc_return(flush_tlb_info_idx) != 1);
+ #endif
+ 
++	/*
++	 * If the number of flushes is so large that a full flush
++	 * would be faster, do a full flush.
++	 */
++	if ((end - start) >> stride_shift > tlb_single_page_flush_ceiling) {
++		start = 0;
++		end = TLB_FLUSH_ALL;
++	}
++
+ 	info->start		= start;
+ 	info->end		= end;
+ 	info->mm		= mm;
+@@ -1026,17 +1035,8 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 				bool freed_tables)
+ {
+ 	struct flush_tlb_info *info;
++	int cpu = get_cpu();
+ 	u64 new_tlb_gen;
+-	int cpu;
+-
+-	cpu = get_cpu();
+-
+-	/* Should we flush just the requested range? */
+-	if ((end == TLB_FLUSH_ALL) ||
+-	    ((end - start) >> stride_shift) > tlb_single_page_flush_ceiling) {
+-		start = 0;
+-		end = TLB_FLUSH_ALL;
+-	}
+ 
+ 	/* This is also a barrier that synchronizes with switch_mm(). */
+ 	new_tlb_gen = inc_mm_tlb_gen(mm);
+@@ -1089,22 +1089,19 @@ static void do_kernel_range_flush(void *info)
+ 
+ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ {
+-	/* Balance as user space task's flush, a bit conservative */
+-	if (end == TLB_FLUSH_ALL ||
+-	    (end - start) > tlb_single_page_flush_ceiling << PAGE_SHIFT) {
+-		on_each_cpu(do_flush_tlb_all, NULL, 1);
+-	} else {
+-		struct flush_tlb_info *info;
++	struct flush_tlb_info *info;
++
++	guard(preempt)();
+ 
+-		preempt_disable();
+-		info = get_flush_tlb_info(NULL, start, end, 0, false,
+-					  TLB_GENERATION_INVALID);
++	info = get_flush_tlb_info(NULL, start, end, PAGE_SHIFT, false,
++				  TLB_GENERATION_INVALID);
+ 
++	if (info->end == TLB_FLUSH_ALL)
++		on_each_cpu(do_flush_tlb_all, NULL, 1);
++	else
+ 		on_each_cpu(do_kernel_range_flush, info, 1);
+ 
+-		put_flush_tlb_info();
+-		preempt_enable();
+-	}
++	put_flush_tlb_info();
+ }
+ 
+ /*
+-- 
+2.47.1
 
 
