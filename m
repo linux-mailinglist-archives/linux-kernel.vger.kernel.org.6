@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-533931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B1BA46071
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:12:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751ADA46078
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA991899246
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 519F2176CAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729DB21D3C0;
-	Wed, 26 Feb 2025 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B8821ADA0;
+	Wed, 26 Feb 2025 13:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SLaeXKrr"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdS+9uDh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9765921B9C1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B32144AF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575493; cv=none; b=CpacX5G5x+nyjYCpwSad/nRIBVEh5Hda7cweLgXo7h/O79R3lHm//nfo+V7Djv7Kd90/9BLKywd3BI++nnzd+W7bYQ1dGv4js2hDBEBQyPu0Pryd4ODzZ5U+wFRcCMqvFLyjGsSGaIelotieMtkzpZ0JW9gn9/TXBCeQ/Ec3Azs=
+	t=1740575638; cv=none; b=Dr9k+1G0SPdW8w3CR4WOR8hX9PXAtTt+EA9bCW7J9wbSUOuZ5u8DHj9hDs6U7l5Ijq8FBvSTR9TGDYWJebwALBDoGGgSShg/sOQTrUjsMS+UQmNmq0EQ2WNKIbOCrPeStW9Bk7hffpSd0vBc+tWox5lEEawncANTemVrYeHK1Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575493; c=relaxed/simple;
-	bh=eycO/kASFwLYW9hX24QtdGg9sf3TO/EKg5hIszY8pWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P4P4OPj7BWE0fydC3cOCD+D4lQ0hiA6WZC2u8wKm9gusSWB7BpVhMkQMaPIE+ldeOWegvLIj2bI6iBQ8YdlCx0XgO+5GPyOFx+BdahFEAIGzU9BBJ/JHSZVCiVKXdbo4CdqC+xBuw/BUyCXU/D5cTQrh3ybcMtZkuZmdUusi2TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SLaeXKrr; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=VWcU7yMm2YN0QLOsb6yyKZ0nl0TCOlQKOQKYheBKv+M=; b=SLaeXKrrmUNKF6OXzyS6A8UFzR
-	57i5ricWO1V10tV7/8HRnQaAV9XbXno14qYY7MOBPn9Dp5+EPXGHhMdEppwUuCxjOyv/SE+IPCIoW
-	Amj1KwDWNZKgc6VmmR/pZ6Yt3uvH4RSZ3FKXR4T6/scGWLVJoyChg05zD/iqyO9K8NQbuvC86mCtt
-	ciwoKfXdbuF6KggNd3y8YuQ2mTIkmUztMcdBEH8kWfgpjbNE4UuZnb4Aah4bx2u5alJMn3gmRPee6
-	i7pvDbZYKPK7LJ161YGwLKX9Jidwxr6bkEiQ89wyHyZt+iTzrgqClRLmjVCZEGk3/EHRWui8WzbPb
-	6WNZKmtQ==;
-Received: from [191.204.194.148] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tnHC1-000yOs-3B; Wed, 26 Feb 2025 14:11:23 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?=27Christian=20K=C3=B6nig=27?= <christian.koenig@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	siqueira@igalia.com
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH] drm/amdgpu: Create a debug option to disable ring reset
-Date: Wed, 26 Feb 2025 10:11:18 -0300
-Message-ID: <20250226131118.1012223-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740575638; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKlNk3bWpqVNbvAtOS5xHLFHaK+8U9GhK4e9VMb4R1kA3z+obNCVnk93StiELB8tcga4QyokpzSYJmByDwHeHKTC2ui2stbnHbzRi8aNr/cKFlIUs3jGyx2g3hAnHA/rzQ+r6LW4tdFDZVGfEEqapOT2mgqD6MKgcbCy2pBjDOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdS+9uDh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740575635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	b=MdS+9uDhsEOKM2cRg+l53I44kYrPc82ktalMl4mt8AKDu/QfDk/6N27IhVrjtk5gT0R5nM
+	uq3F5QcXBuEbTXzbDX5LgPfEgnEE19Hg2oBrRT50hcU0CfuVLDKfPHdY633PLT9ttvbP2Z
+	fQ18z4HZ1CrUGWkVCEm5i/2rTF+hI0s=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-sICbnFwmOTi-cyIzUKGz5g-1; Wed,
+ 26 Feb 2025 08:13:52 -0500
+X-MC-Unique: sICbnFwmOTi-cyIzUKGz5g-1
+X-Mimecast-MFC-AGG-ID: sICbnFwmOTi-cyIzUKGz5g_1740575631
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B97E61800374;
+	Wed, 26 Feb 2025 13:13:50 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.247])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9123B1800357;
+	Wed, 26 Feb 2025 13:13:47 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 26 Feb 2025 14:13:20 +0100 (CET)
+Date: Wed, 26 Feb 2025 14:13:16 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
+ the callbacks.
+Message-ID: <20250226131315.GD8995@redhat.com>
+References: <20250221170530.L3yMvO0i@linutronix.de>
+ <20250223224014.GC23282@redhat.com>
+ <Z73Tj3SAzNjaHwV3@localhost.localdomain>
+ <20250225163549.GB29585@redhat.com>
+ <Z75CKDw6uJZmNKYt@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z75CKDw6uJZmNKYt@pavilion.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Prior to the addition of ring reset, the debug option
-`debug_disable_soft_recovery` could be used to force a full device
-reset. Now that we have ring reset, create a debug option to disable
-them in amdgpu, forcing the driver to go with the full device
-reset path again when both options are combined.
 
-This option is useful for testing and debugging purposes when one wants
-to test the full reset from userspace.
-
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu.h     | 1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 6 ++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 5 +++--
- 3 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index 69895fccb474..75dc4b962d64 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1186,6 +1186,7 @@ struct amdgpu_device {
- 	bool                            debug_use_vram_fw_buf;
- 	bool                            debug_enable_ras_aca;
- 	bool                            debug_exp_resets;
-+	bool                            debug_disable_gpu_ring_reset;
- 
- 	bool				enforce_isolation[MAX_XCP];
- 	/* Added this mutex for cleaner shader isolation between GFX and compute processes */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 95a05b03f799..edeb12c816e8 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -136,6 +136,7 @@ enum AMDGPU_DEBUG_MASK {
- 	AMDGPU_DEBUG_USE_VRAM_FW_BUF = BIT(3),
- 	AMDGPU_DEBUG_ENABLE_RAS_ACA = BIT(4),
- 	AMDGPU_DEBUG_ENABLE_EXP_RESETS = BIT(5),
-+	AMDGPU_DEBUG_DISABLE_GPU_RING_RESET = BIT(6),
- };
- 
- unsigned int amdgpu_vram_limit = UINT_MAX;
-@@ -2221,6 +2222,11 @@ static void amdgpu_init_debug_options(struct amdgpu_device *adev)
- 		pr_info("debug: enable experimental reset features\n");
- 		adev->debug_exp_resets = true;
- 	}
-+
-+	if (amdgpu_debug_mask & AMDGPU_DEBUG_DISABLE_GPU_RING_RESET) {
-+		pr_info("debug: ring reset disabled\n");
-+		adev->debug_disable_gpu_ring_reset = true;
-+	}
- }
- 
- static unsigned long amdgpu_fix_asic_type(struct pci_dev *pdev, unsigned long flags)
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index 7b79b0f39ba1..8ab23182127e 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -137,8 +137,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 	dma_fence_set_error(&s_job->s_fence->finished, -ETIME);
- 
- 	/* attempt a per ring reset */
--	if (amdgpu_gpu_recovery &&
--	    ring->funcs->reset) {
-+	if (unlikely(adev->debug_disable_gpu_ring_reset)) {
-+		dev_err(adev->dev, "Ring reset disabled by debug mask\n");
-+	} else if (amdgpu_gpu_recovery && ring->funcs->reset) {
- 		dev_err(adev->dev, "Starting %s ring reset\n", s_job->sched->name);
- 		/* stop the scheduler, but don't mess with the
- 		 * bad job yet because if ring reset fails
--- 
-2.48.1
 
 
