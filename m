@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-534079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A038A46290
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:24:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FFCA46295
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12DF47AAD9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550E23AD6CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBA92248BF;
-	Wed, 26 Feb 2025 14:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE932227B9A;
+	Wed, 26 Feb 2025 14:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQOwlOOY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="chi0m7b2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04802236F7;
-	Wed, 26 Feb 2025 14:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BE322154E;
+	Wed, 26 Feb 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740579744; cv=none; b=Gq3AZGVGO+drwxoFqKS5gRvO0wNFkWxJv545ReUJ56V7WNd+q7vJlKmZS074Or925oI85WpEB1D8EBrOut1nEBKTRrEG6EXbGvlz+nDh9ZfKmU9CAo8ZY8igrsvt76xYjjTWHKlHZ+XaaVm/WhaIphBVAD9MzBcV8EtEiIw9DD8=
+	t=1740579782; cv=none; b=tnyWQKADM77Bsd3f6S9GyGCqSUl3JB1IsbSNEfdw04f4VZu38FwEoG3TlN9iQGZPKUBnAmXQClB8oPH2BYBS8fzKaJpBp5KYSV6M2LmR5KKc2cyRWlPrsTwxgXdMktDknDI5eL3igHdZs3XgGA/fYsq/U1eZjdjk20tGzIc6aNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740579744; c=relaxed/simple;
-	bh=Dx2YL59vcH3avejDv320ymxqHG4J7PJa3Jre2dO4+dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+gZGd7MxcEsYVLPfEkWRjp04NACzQejdra7jc5iqF9B1AEtBqLcheKvhrUDEekIPSEVUzRD9wfbycMhxWALGBofQ28JDn4X2oNSoRPuob6OH0oko01kNlk0d3YsPgAW9ZXz8SBLE/ipSxEjxRn//HYfFSIRx/Du/n3/up7CumI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQOwlOOY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E552BC4CED6;
-	Wed, 26 Feb 2025 14:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740579743;
-	bh=Dx2YL59vcH3avejDv320ymxqHG4J7PJa3Jre2dO4+dU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BQOwlOOYO8ozGaBpP8z44bRTDKdh6gCPsOaVmx+D6RTLwtbhF05j77W25PQrv8P7u
-	 h6H5LNrP3npc6/i4mwEWj+QALOWUuoAzJgwemX2B0ePhrObeMGQ81byF2aqdRbil2H
-	 8xG9oNgpu/dtaBzwEQFRs3KBT+zoCITMA382kuI8pdeeUAHOuyr86smp9cAIyeaIaF
-	 SevZgpxA36PwOa8yf0iZqSlBazgCDIJk5Mlbh21JjvcTNSksILICt2wbiNCSyeW2YF
-	 LhfbGbWeTpDihOQtXSeC4c+qw9JcmzBgA7AybKlynCWoReOY7bFM+CfHNHu08Tq5Ly
-	 JzOPa4XFCIyLw==
-Message-ID: <fe4ccf6d-bdf0-41eb-bffe-83d459319689@kernel.org>
-Date: Wed, 26 Feb 2025 15:22:19 +0100
+	s=arc-20240116; t=1740579782; c=relaxed/simple;
+	bh=2xtZdg1o0mcGgtwPEq0nDvn90UkibPYUNiunJgBmxo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muB+e9q9Vmdj+J0tyBM6L2J3Rnqph4B/AbpfrLJFd2dEd/4SU+Pb7xMalmimS4Tjkv/7hxpmVWj6s7FHvz/O8gFTip8v5BcRu6fDQ3PxCe+BAm7n8vTnaqIuVxszy9UfklQCq6wQ54ikl3uYW/NBJPWnDQZsZc+CfQu5jSjtp2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=chi0m7b2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D817B40E01AE;
+	Wed, 26 Feb 2025 14:22:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hB8TCgDSMEUl; Wed, 26 Feb 2025 14:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740579772; bh=qV0BRFew9iIjwnorvNTFrnH55kkijGPj+DC5RPEAgKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=chi0m7b2audNsQyqqkMNNYIcEZbhaX5Tl0GKJ2dEEcWJfuh4UaVliV6yToRHGIQvx
+	 y3ON/8CSY5aMQdStv76ckYVOkg6fbowpmnoXaRMmaZmcZaem47WrI9MYaNkhQrUwY+
+	 RRWHisMeV/FTwDsvj33nU0IcdlQ6Sj0CaljBMkv+uAq2lY7TYq4Phkp+L2DTfbxyad
+	 om3hEdIGRqHtn/ZlYV3nVGHp2AVHa3hosUvFMwK0k5ON0CPbi2vTO1DqbRjqm2M33S
+	 CndwTv9PbEtuKEF7YQrWvpvg2KjDBYS6ManmI+14IwzwkM3d3/nykHakrQ7XsTxuuL
+	 nb++XT75JPQ3MiElB3U9w8q9KRyClDI5YgeCVfkvktIxGHDzclMvxUlUz+9WbN5hX5
+	 kAHiacVAw02DNYtk+WPCLRGbconc8oWWx3EZRcRYw6L0t68cvi5D3Bawup5QHg8EJu
+	 BHnykzqStumQFOpmnfcQ9ahRupoabgHo7Mot/TDw7b3M96vK4ZHlcQlD5qDtFRXhr8
+	 c8mJcYGYwecm3xRV+Tp4GZBjGsG8L9NN//hXNQMgq8s4FlI4n/nbc5JXxAx7l91Frv
+	 NA9y/lp/qBLHU6pfLxEsA+bynefiMFL0n6JpWYaK6nu74Hy3/y2mSK/KcVc/x9fV74
+	 kY9kZV1wPfQjWUd6ACx9yXjk=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C5CDB40E0028;
+	Wed, 26 Feb 2025 14:22:30 +0000 (UTC)
+Date: Wed, 26 Feb 2025 15:22:22 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
+	kirill.shutemov@linux.intel.com, kai.huang@intel.com,
+	ubizjak@gmail.com, jgross@suse.com, kvm@vger.kernel.org,
+	thomas.lendacky@amd.com, pgonda@google.com, sidtelang@google.com,
+	mizhang@google.com, rientjes@google.com, manalinandan@google.com,
+	szy0127@sjtu.edu.cn
+Subject: Re: [PATCH v6 1/2] x86, lib: Add WBNOINVD helper functions
+Message-ID: <20250226142222.GGZ78jnpbBc45Nl9uU@fat_crate.local>
+References: <20250123002422.1632517-1-kevinloughlin@google.com>
+ <20250201000259.3289143-1-kevinloughlin@google.com>
+ <20250201000259.3289143-2-kevinloughlin@google.com>
+ <Z75t3d1EXQpmim9m@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/13] arm64: defconfig: Enable Renesas RZ/T2H SoC
- option
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- paul.barker.ct@bp.renesas.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com>
- <20250226130935.3029927-14-thierry.bultel.yh@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226130935.3029927-14-thierry.bultel.yh@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z75t3d1EXQpmim9m@google.com>
 
-On 26/02/2025 14:09, Thierry Bultel wrote:
-> Selects support for RZ/T2H (aka r9a09g077), and
-> SCI (serial) specific code for it.
-> 
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> ---
+On Tue, Feb 25, 2025 at 05:26:53PM -0800, Sean Christopherson wrote:
+> /* Instruction encoding provided for binutils backwards compatibility. */
+> #define ASM_WBNOINVD ".byte 0xf3,0x0f,0x09"
 
-You never responded to my comments at v1. So I asked at v2. Still no answer.
+Yah, or simply INSN_WBNOINVD as that name basically tells you what it is. And
+we have already
 
-That's v3 and still silence from your side.
+arch/x86/include/asm/bug.h:13:#define INSN_UD2  0x0b0f
 
-NAK
+oh and
 
-Best regards,
-Krzysztof
+arch/x86/include/asm/bug.h:12:#define ASM_UD2           ".byte 0x0f, 0x0b"
+
+Pff.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
