@@ -1,184 +1,206 @@
-Return-Path: <linux-kernel+bounces-533945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3214A4609C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:21:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC35A4609E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F518972BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BBB3B0347
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E726021C177;
-	Wed, 26 Feb 2025 13:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD121D3D8;
+	Wed, 26 Feb 2025 13:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VP0AQbPt"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsiSb0Du"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F50218ABB;
-	Wed, 26 Feb 2025 13:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8A921CA0D;
+	Wed, 26 Feb 2025 13:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576106; cv=none; b=CuQ7z86OVlvlN24dt8vCfc/ys53cncta13zm4mb5+BUxARMeOEU4LzQepemD/OCPFOkvcX3cIh/bFUqvkHYvPy0jpMeRk4cS/RoGqQUfYINaIkL09Za2K/ltIZ/kF84rbPdjH+zoSzrAmN3WFmvoE+CM24yENdl+gVuNNUsOU58=
+	t=1740576107; cv=none; b=crZIx8CWKfdHWG7nSO5MkQGFs6wUvm8JbkqjmoUiNn/zuLoIzSVHQZlRp74EHhXdFi94DgEQzsMr3EZwK0o4frxAJBdgLn/5oDvoIrWAZ4n7LjuUXfu6qjZ2lnjj7yFcP3YC+/ZdoQaapVdK7o9/VBQsei0yR8LgfuSiViXY3WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576106; c=relaxed/simple;
-	bh=Q5/RUl+Bdu66WjUmXTWUC88O+wFDli3YPBlrDjyH4ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VW+hq3WYWAkPPIYlc7JdKGF4LPNC1KBZk48+qlmky+WTjIbgCZCbRKPLYWI/IcyE9VHvlBYPNwZuUdg2yE3Vi9vgODIqKyOiB7UjVqAXw8uqW6Z3Zbj2zzF0nEnFLbOsmgnR8fvSM/SBS8xKcneJix9lP0R/D7HSBlPFWw2CQ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VP0AQbPt; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so12678616a12.3;
-        Wed, 26 Feb 2025 05:21:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740576103; x=1741180903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5/RUl+Bdu66WjUmXTWUC88O+wFDli3YPBlrDjyH4ns=;
-        b=VP0AQbPt+gXP5OYK0t6Y8BRgtfTm1E9gGc1CaAc0kWv63uLp1dULpPdfHjAa2begKH
-         QisEX2Vh9y9MBy29jbJXAFdfLV2g+wUon/jjwu0xTYQ5dhkXm8Mt82mOlsDwWZgtgY4C
-         3q7ACXMvnDjsZLpBwvBngZo+NqfMcI5Po/DoCxnox75UuVWDs6NNjhct54RmpPXZNeE2
-         Kvgnhw9pCEXL8vokfTmG96YE0bzteoWmBsQBr9elXFWMa8zkdK9cUxyK4CQI32D444DV
-         xqkAtWEU2hON7zd+1DvbG8dZXIMZH5flN8q7ofUQmyxIPLZxyKcPZQ8ZNVcZIqVq6HBy
-         aojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740576103; x=1741180903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5/RUl+Bdu66WjUmXTWUC88O+wFDli3YPBlrDjyH4ns=;
-        b=KYUyN94G0nHCHPdv1bdGtuO89XEA6mdo5QtF/2TKYbPI+a7gdE/s3z0lSIYHr+iQGe
-         p8eqLeotHAM4F4ImQzWag7CHvPqklOtw+DbhLq+E78v+7/HYOnDCdVZJLLZK67WB7tfV
-         pRAGVgGSCj6h4uyR5EgAbs0+aRi3c9a76DN52Wuu4X7pdS0T0EhAcHGEyIOAb5wa1goB
-         ZwlWhwrrHVQeHxc35bC3cmqylvy0/WsHnqWEsEeSQ0oCV23gSqZNmlgDldtLy8P3wAe1
-         6l/9OZnwowtq8Qek/o618R46xJagUZjPBU026nva1rlOQTf75YDtNkSAw2QAIAHo0Zrm
-         Drhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz/aT/JI9OtfG5yc2dqlHOEG0jg5OmnRlmqrTCJ4iY+zrWNlb0zCwyRixRk+k/9/wXc9MM0ulq4cY1RuiA@vger.kernel.org, AJvYcCVAB50hcdLEN4oq1qMUVI6GeN4RMVGY0POEP27LblLTwA46g/1Y6m99Lrt8A/N0eumDnbpFSgv+oPmyOdPO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+MRmAKCA7Sn+dGXq8V9ehOZYItmtmlaNKSbe8ZpbrdMP6YcZZ
-	i8BGDxU41DjvR+xDW2spG/M2xczp0rMHnM8zZ5mW/bzGZbSM8Ip7M1TlETqyxYPms9RbEQex0lV
-	uW7eIwe8qfTMO5p29r2VrcMeRTTIrly6c
-X-Gm-Gg: ASbGncv5zL4P1TJB2LSImui6NrSAc7E2hnPd1Ruj6TYsnfbRPnaKJwzOPasbx7k3qtO
-	fse1bZVEuAGCM1Zi7kHG1vPbENsiS3vSP20OMVRiV4/Cysd4WOOBIvjA0jgTbtCZVvy7T/AoBkc
-	wFtIM2sK8=
-X-Google-Smtp-Source: AGHT+IGnrQahi3Q3/mVtEzmJWDRXjMAImXcCfoKOuscgcPGPbIvjw9E630qsNx5l1cen6PJCOINvakCZSKGCmAiL5j4=
-X-Received: by 2002:a05:6402:4304:b0:5e0:4276:c39e with SMTP id
- 4fb4d7f45d1cf-5e44ba3fe8amr8275383a12.30.1740576102716; Wed, 26 Feb 2025
- 05:21:42 -0800 (PST)
+	s=arc-20240116; t=1740576107; c=relaxed/simple;
+	bh=8cnR8orHIs6RAb5Jn/LFacAHgK/ZjTRl+C+5RkYBwQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=otft2iPuI64BbWemGZZbEb6u5IYLuHk7WhkemsznhY5okmEXmOoovk7Irm4QWZNqdmkdUcr4j7XUhE7MCTEY330DtnaH8525C4mNY57/CZr6+Zi9AiZ16MdQbcniFFfpPKMpdwanlP59xjGMX1piy84A/prmQ1BIbWyOaVPVMgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsiSb0Du; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985EEC4CED6;
+	Wed, 26 Feb 2025 13:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740576107;
+	bh=8cnR8orHIs6RAb5Jn/LFacAHgK/ZjTRl+C+5RkYBwQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rsiSb0Duk/4h54bpfyOucSbD05kHaZYafFd9PfLIQG4vOlEEAV3CG5M1aGXpzfJjY
+	 fhOY/aoBDXrQF9DwgGT2XachvtbithI73fPVkhHlBOfpC0B4If6mvOIR5/XbezVmPr
+	 b5TJ9jqmKwJ3s0pNd/77kpK8FXTPoiTviqzRHZTy5T5aZvN7OoRKbEia4h2s/NicwW
+	 hOnpuQ5WSS3SBh75wDDdXRiuNkwcrO6SD/1pdUyg67nFk/SSrNb8EagWYiJ2k7f1Kx
+	 2dNxo5RXVSgDW2ZjeBmkYOt9WUtg+7+PINrUkpzbr8bsHNwHpRJ8qbplJM6zTy9rO0
+	 7gDrTEZD7qEqQ==
+Date: Wed, 26 Feb 2025 14:21:44 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Francois Romieu <romieu@fr.zoreil.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Joe Damato <jdamato@fastly.com>
+Subject: Re: [PATCH net v2] net: Handle napi_schedule() calls from
+ non-interrupt
+Message-ID: <Z78VaPGU3dzKdvl1@localhost.localdomain>
+References: <20250223221708.27130-1-frederic@kernel.org>
+ <CANn89iLgyPFY_u_CHozzk69dF3RQLrUVdLrf0NHj5+peXo2Yuw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
-In-Reply-To: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 26 Feb 2025 14:21:30 +0100
-X-Gm-Features: AQ5f1JrGRQ6x6P35CYIjcmeEYvxZDrHYDp6l3JtEAdtwlbXoEf2r6wGz-Q_6K8k
-Message-ID: <CAGudoHGaJyipGfvsXVKrVaMBNk8d35o66VUoQ3W-NDa1=+HPOA@mail.gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	David Howells <dhowells@redhat.com>, WangYuli <wangyuli@uniontech.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iLgyPFY_u_CHozzk69dF3RQLrUVdLrf0NHj5+peXo2Yuw@mail.gmail.com>
 
-On Wed, Feb 26, 2025 at 2:19=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Mon, Feb 24, 2025 at 03:24:32PM +0100, Oleg Nesterov wrote:
-> > On 02/24, Sapkal, Swapnil wrote:
-> > > Whenever I compare the case where was_full would have been set but
-> > > wake_writer was not set, I see the following pattern:
-> > >
-> > > ret =3D 100 (Read was successful)
-> > > pipe_full() =3D 1
-> > > total_len =3D 0
-> > > buf->len !=3D 0
-> > >
-> > > total_len is computed using iov_iter_count() while the buf->len is th=
-e
-> > > length of the buffer corresponding to tail(pipe->bufs[tail & mask].le=
-n).
-> > > Looking at pipe_write(), there seems to be a case where the writer ca=
-n make
-> > > progress when (chars && !was_empty) which only looks at iov_iter_coun=
-t().
-> > > Could it be the case that there is still room in the buffer but we ar=
-e not
-> > > waking up the writer?
+Le Wed, Feb 26, 2025 at 11:31:24AM +0100, Eric Dumazet a écrit :
+> On Sun, Feb 23, 2025 at 11:17 PM Frederic Weisbecker
+> <frederic@kernel.org> wrote:
 > >
-> > I don't think so, but perhaps I am totally confused.
+> > napi_schedule() is expected to be called either:
 > >
-> > If the writer sleeps on pipe->wr_wait, it has already tried to write in=
-to
-> > the pipe->bufs[head - 1] buffer before the sleep.
+> > * From an interrupt, where raised softirqs are handled on IRQ exit
 > >
-> > Yes, the reader can read from that buffer, but this won't make it more =
-"writable"
-> > for this particular writer, "PAGE_SIZE - buf->offset + buf->len" won't =
-be changed.
->
-> While I think the now-removed wakeup was indeed hiding a bug, I also
-> think the write thing pointed out above is a fair point (orthogonal
-> though).
->
-> The initial call to pipe_write allows for appending to an existing page.
->
-> However, should the pipe be full, the loop which follows it insists on
-> allocating a new one and waits for a slot, even if ultimately *there is*
-> space now.
->
-> The hackbench invocation used here passes around 100 bytes.
->
-> Both readers and writers do rounds over pipes issuing 100 byte-sized
-> ops.
->
-> Suppose the pipe does not have space to hold the extra 100 bytes. The
-> writer goes to sleep and waits for the tail to move. A reader shows up,
-> reads 100 bytes (now there is space!) but since the current buf was not
-> depleted it does not mess with the tail.
->
-> The bench spawns tons of threads, ensuring there is a lot of competition
-> for the cpu time. The reader might get just enough time to largely
-> deplete the pipe to a point where there is only one buf in there with
-> space in it. Should pipe_write() be invoked now it would succeed
-> appending to a page. But if the writer was already asleep, it is going
-> to insist on allocating a new page.
+> > * From a softirq disabled section, where raised softirqs are handled on
+> >   the next call to local_bh_enable().
+> >
+> > * From a softirq handler, where raised softirqs are handled on the next
+> >   round in do_softirq(), or further deferred to a dedicated kthread.
+> >
+> > Other bare tasks context may end up ignoring the raised NET_RX vector
+> > until the next random softirq handling opportunity, which may not
+> > happen before a while if the CPU goes idle afterwards with the tick
+> > stopped.
+> >
+> > Such "misuses" have been detected on several places thanks to messages
+> > of the kind:
+> >
+> >         "NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
+> >
+> > For example:
+> >
+> >        __raise_softirq_irqoff
+> >         __napi_schedule
+> >         rtl8152_runtime_resume.isra.0
+> >         rtl8152_resume
+> >         usb_resume_interface.isra.0
+> >         usb_resume_both
+> >         __rpm_callback
+> >         rpm_callback
+> >         rpm_resume
+> >         __pm_runtime_resume
+> >         usb_autoresume_device
+> >         usb_remote_wakeup
+> >         hub_event
+> >         process_one_work
+> >         worker_thread
+> >         kthread
+> >         ret_from_fork
+> >         ret_from_fork_asm
+> >
+> > And also:
+> >
+> > * drivers/net/usb/r8152.c::rtl_work_func_t
+> > * drivers/net/netdevsim/netdev.c::nsim_start_xmit
+> >
+> > There is a long history of issues of this kind:
+> >
+> >         019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
+> >         330068589389 ("idpf: disable local BH when scheduling napi for marker packets")
+> >         e3d5d70cb483 ("net: lan78xx: fix "softirq work is pending" error")
+> >         e55c27ed9ccf ("mt76: mt7615: add missing bh-disable around rx napi schedule")
+> >         c0182aa98570 ("mt76: mt7915: add missing bh-disable around tx napi enable/schedule")
+> >         970be1dff26d ("mt76: disable BH around napi_schedule() calls")
+> >         019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
+> >         30bfec4fec59 ("can: rx-offload: can_rx_offload_threaded_irq_finish(): add new  function to be called from threaded interrupt")
+> >         e63052a5dd3c ("mlx5e: add add missing BH locking around napi_schdule()")
+> >         83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule")
+> >         bd4ce941c8d5 ("mlx4: Invoke softirqs after napi_reschedule")
+> >         8cf699ec849f ("mlx4: do not call napi_schedule() without care")
+> >         ec13ee80145c ("virtio_net: invoke softirqs after __napi_schedule")
+> >
+> > This shows that relying on the caller to arrange a proper context for
+> > the softirqs to be handled while calling napi_schedule() is very fragile
+> > and error prone. Also fixing them can also prove challenging if the
+> > caller may be called from different kinds of contexts.
+> >
+> > Therefore fix this from napi_schedule() itself with waking up ksoftirqd
+> > when softirqs are raised from task contexts.
+> >
+> > Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> > Reported-by: Jakub Kicinski <kuba@kernel.org>
+> > Reported-by: Francois Romieu <romieu@fr.zoreil.com>
+> > Closes: https://lore.kernel.org/lkml/354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de/
+> > Cc: Breno Leitao <leitao@debian.org>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Eric Dumazet <edumazet@google.com>
+> > Cc: Paolo Abeni <pabeni@redhat.com>
+> > Cc: Francois Romieu <romieu@fr.zoreil.com>
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >  net/core/dev.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index 80e415ccf2c8..5c1b93a3f50a 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -4693,7 +4693,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
+> >          * we have to raise NET_RX_SOFTIRQ.
+> >          */
+> >         if (!sd->in_net_rx_action)
+> > -               __raise_softirq_irqoff(NET_RX_SOFTIRQ);
+> > +               raise_softirq_irqoff(NET_RX_SOFTIRQ);
+> 
+> Your patch is fine, but would silence performance bugs.
+> 
+> I would probably add something to let network developers be aware of them.
+> 
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 1b252e9459fdbde42f6fb71dc146692c7f7ec17a..ae8882a622943a81ddd8e2d141df685637e334b6
+> 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -4762,8 +4762,10 @@ static inline void ____napi_schedule(struct
+> softnet_data *sd,
+>         /* If not called from net_rx_action()
+>          * we have to raise NET_RX_SOFTIRQ.
+>          */
+> -       if (!sd->in_net_rx_action)
+> -               __raise_softirq_irqoff(NET_RX_SOFTIRQ);
+> +       if (!sd->in_net_rx_action) {
+> +               raise_softirq_irqoff(NET_RX_SOFTIRQ);
+> +               DEBUG_NET_WARN_ON_ONCE(!in_interrupt());
+> +       }
 
-Now that I sent the e-mail, I realized the page would have unread data
-after some offset, so there is no room to *append* to it, unless one
-wants to memmove everythiing back.
+That looks good and looks like what I did initially:
 
-Please ignore this bit :P
+https://lore.kernel.org/lkml/20250212174329.53793-2-frederic@kernel.org/
 
-However, the suggestion below stands:
+Do you prefer me doing it over DEBUG_NET_WARN_ON_ONCE() or with lockdep
+like in the link?
 
->
-> As for the bug, I don't see anything obvious myself.
->
-> However, I think there are 2 avenues which warrant checking.
->
-> Sapkal, if you have time, can you please boot up the kernel which is
-> more likely to run into the problem and then run hackbench as follows:
->
-> 1. with 1 fd instead of 20:
->
-> /usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
->
-> 2. with a size which divides 4096 evenly (e.g., 128):
->
-> /usr/bin/hackbench -g 1 -f 20 --threads --pipe -l 100000 -s 128
+Thanks.
 
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+>  }
+> 
+>  #ifdef CONFIG_RPS
+> 
+> 
+> Looking at the list of patches, I can see idpf fix was not very good,
+> I will submit another patch.
 
