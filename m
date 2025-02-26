@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-533977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329C2A46103
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:35:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74873A46106
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4774E3A6E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E2DB7A1997
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB39C2192F4;
-	Wed, 26 Feb 2025 13:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A228219E86;
+	Wed, 26 Feb 2025 13:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uJPKbnUL"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3HOIt5R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DA4187858
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE72154C00;
+	Wed, 26 Feb 2025 13:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740576894; cv=none; b=s0oWqZwT07Y7/ZTd0z+m32ZUsDeE4+VdjGWIu6Y67822SuPNhg8BYxeosP+bpNbUHayMhG2BXASDaSW/5TY6Ol5i+B7s3k1VhuAVcnPOoME45ecCDBSwem4v8YDG6/LJzm5rObKFjRyt3/ZwtcbFXurLbyIvzW6bMj2lP8HZC2A=
+	t=1740577072; cv=none; b=d95t1cVLdMDYOgf07b07eYO6GUqqrHoRIqPrniN7RFAKYTkMmKwgXsdDo6lMWgthuxDDq6bFhxJrC6WS0Z++BPw8m5xvU2Et6WUV9wMnTUaCyIGOivt5WY1DM+9vbXznlGSc8sueBpnx5o9nVm8aAPCCcBA6W9pDDWD4Uy3DOTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740576894; c=relaxed/simple;
-	bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/gPWF9TWCljMpSHgENdWgkWCIubW9ATxTBN2T7hQzQlI56GyxtH1lkhVvz5l3QlB+oyZ2eXAKS804KV3K+rlAa1Abqg1mgDMgQvBTjOH7zUBu/D6kf99YXIzOt7wLNqsitilEJbJNn6LUAFX0up3cgS+rTvs/0zabXx2g0Xbrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uJPKbnUL; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so12705747a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:34:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740576891; x=1741181691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
-        b=uJPKbnULGR2vCJntS9rFs+3+kmYIjSgKv4TTFkRg3JVjbFmbBx3hXzxQlliVjDijow
-         LXI7NeWmTu0Vl0hkQAlJHhXlUTAMhumBjav6rU6n8qblWYAAFB8ZwOdUnvIg4wS+3Xl2
-         TR9j7J7lYuaVdUAemz2xo73r7A+LF5gZQCYp6a4N3igq1vP3h/FnJUAN0gE/UYe1qwD+
-         fnOcc9PLELKt59sLgsSudDEcpCtffMKGBWVmUgtDc6fYA91o7s0cK6lnEID7lMk9yr/8
-         Ol/Du+E1L2iEbsxJz6aZn0CveiUhB3pLBBnd9KHGpbbYRz/AtP6A1aH4HtIkWizNgzRv
-         IacQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740576891; x=1741181691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DIzYRqRFyYOa53u6xfU8L6+PRUgNNVXsQx7isekoETU=;
-        b=miulBVsWrF2L0KlHl3Wz12IpOFEmCQ3h59VGXnLra++uiDnDmOdBk94EsXUnOA+nYg
-         N/CzMIXVp+cQSbps3JDPr1AlPuVrEZVW6bVAUCSQjwR5wWypR6v36hV+SptdY6vBYMia
-         dAXdYaXRamHCGeIBHCv0MPI4qZ4B7ZLKFRNmb/HbitJeJqINmQc2+O+MuwUPDH/Jk/vP
-         H/rYT7Yzs57UM8Z9tpqqUIpSyxAtH2/xstI0dWyjTGdUq9hA20xLSk225LZaqoJDdVTD
-         7DG2hmc/lXpirPpB1aBihGE0jY1FHjUOfemdVhuJet1LoG8X4/8FyHO9BibySyonmbZW
-         8kTA==
-X-Gm-Message-State: AOJu0YzQ5hRzHVxLLjZVg+/sBqoQc4u1W68e1zIAr2agjedX0rRWCyts
-	XvDexdOL1gtTzFgY+pBr7BUp8ZRwjTox8G7OlzsUxINy8OFacC2DHDOeTdw6+xXi984nKoFQ7JS
-	YcxHjfIDvpXNtvG7KGpJ9BUGA8xeCz8gDd84J
-X-Gm-Gg: ASbGnctUTT63vscGceswE5YgYnN0pHG6OjS9G3OaTXhhn9R4y2mheSUI9dW2PYnHjwT
-	4ZoKYEdgJrJW5bSUiMbiFQWCK9W/f6+iXEJ36QZWCzAkutZhAaHR0r0cdsgAlyp8kRAuk/vxiQE
-	UoHdz/kRg=
-X-Google-Smtp-Source: AGHT+IGW6oMB/55DkXWA0LLasiWq5S5+A9NXO3XUybwbuwmJAv6UNSnhAEHmQHk8wdhRjs//iRBVdydqkyBots+Z1vQ=
-X-Received: by 2002:a05:6402:1ece:b0:5e0:3447:f6b7 with SMTP id
- 4fb4d7f45d1cf-5e4455c2e30mr7504271a12.8.1740576890809; Wed, 26 Feb 2025
- 05:34:50 -0800 (PST)
+	s=arc-20240116; t=1740577072; c=relaxed/simple;
+	bh=e7ksaBgVZM/n3+KRkzsb8JIum6nQW0z0INzIBzxLwFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iq+x3Wh6u2yb28Umw9HWibwAFiNBzkyMTvMApfDsXkmDGKpmKpQ5qXT0vLgvdxG/bqf6VJ5/BiLNwGtaqLUdSpg46z2FQ5eDptkUiLEotxtLEeMpNMR2684BvnSe6jmfRSI/9ey6I7H8to4dF3+RjBfjPo3ePHrLCGQ5r0/caGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3HOIt5R; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740577071; x=1772113071;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=e7ksaBgVZM/n3+KRkzsb8JIum6nQW0z0INzIBzxLwFM=;
+  b=K3HOIt5RZrR7peYJP6soUi12hpykDgW356qIcWqNrsm7xvLMivQ3clsG
+   phWPb5Bl5++MZwN/FdAcJkJ+BeJZNjgrQZRRnPmSO157Iq40atwTHIpFD
+   PEJD1LaXXN5L2yQIYcUyJ8Wcydw0TdZJcRbrR2cYfIcB8bBUFK4fLeZ49
+   Sj101DbpPREG52ySgUKkHuOhDtB9MqynwIYoF3xhO0+gL481XfUm/f0BN
+   OvIB1Mza5oI853x0eiw1j4W4rHYjhRYYaGcwdeV6N+cnmlZfRIJfTVa1G
+   w7SRs8UCZSL3WPc/1P1nQDyl2D9UZlhOfVrOqjM51a1jB4zUHaTkoZVNl
+   Q==;
+X-CSE-ConnectionGUID: +yER9GoXQGW1vfyyPSzhCg==
+X-CSE-MsgGUID: gJvLnvBCTru/OvotLTY/Yg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52811469"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="52811469"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:37:51 -0800
+X-CSE-ConnectionGUID: eQSqF4AvSzmI9Z1mI7/vVQ==
+X-CSE-MsgGUID: 4th0tnM9TamQqQ7t3N9YMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="116488206"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 26 Feb 2025 05:37:49 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 425DF2FB; Wed, 26 Feb 2025 15:37:47 +0200 (EET)
+Date: Wed, 26 Feb 2025 15:37:47 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: brgl@bgdev.pl, Paul Menzel <pmenzel@molgen.mpg.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-pci@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Linux logs new warning `gpio gpiochip0:
+ gpiochip_add_data_with_key: get_direction failed: -22`
+Message-ID: <Z78ZK8Sh0cOhMEsH@black.fi.intel.com>
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
+ <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+ <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+ <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223221708.27130-1-frederic@kernel.org> <CANn89iLgyPFY_u_CHozzk69dF3RQLrUVdLrf0NHj5+peXo2Yuw@mail.gmail.com>
- <Z78VaPGU3dzKdvl1@localhost.localdomain>
-In-Reply-To: <Z78VaPGU3dzKdvl1@localhost.localdomain>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 26 Feb 2025 14:34:39 +0100
-X-Gm-Features: AQ5f1JrFcA4Lv4LOIeGP9ZDQ3eWx1CPhGwwMoKSGSc7bhZoOJr-kdVosyBIItuo
-Message-ID: <CANn89i+3+y1br8V4BP5Gq58_1Z-guYQotOKAr9N1k519PLE7rA@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: Handle napi_schedule() calls from non-interrupt
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
-	Francois Romieu <romieu@fr.zoreil.com>, Paul Menzel <pmenzel@molgen.mpg.de>, 
-	Joe Damato <jdamato@fastly.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Feb 26, 2025 at 2:21=E2=80=AFPM Frederic Weisbecker <frederic@kerne=
-l.org> wrote:
->
+On Tue, Feb 25, 2025 at 10:25:00PM +0100, Linus Walleij wrote:
+> On Mon, Feb 24, 2025 at 9:51 AM <brgl@bgdev.pl> wrote:
+> 
+> > In any case: Linus: what should be our policy here? There are some pinctrl
+> > drivers which return EINVAL if the pin in question is not in GPIO mode. I don't
+> > think this is an error. Returning errors should be reserved for read failures
+> > and so on. Are you fine with changing the logic here to explicitly default to
+> > INPUT as until recently all errors would be interpreted as such anyway?
+> 
+> Oh hm I guess. There was no defined semantic until now anyway. Maybe
+> Andy has something to say about it though, it's very much his pin controller.
 
-> That looks good and looks like what I did initially:
->
-> https://lore.kernel.org/lkml/20250212174329.53793-2-frederic@kernel.org/
->
-> Do you prefer me doing it over DEBUG_NET_WARN_ON_ONCE() or with lockdep
-> like in the link?
+Driver is doing correct things. If you want to be pedantic, we need to return
+all possible pin states (which are currently absent from GPIO get_direction()
+perspective) and even though it's not possible to tell from the pin muxer
+p.o.v. If function is I2C, it's open-drain, if some other, it may be completely
+different, but pin muxer might only guesstimate the state of the particular
+function is and I do not think guesstimation is a right approach.
 
-To be clear, I have not tried this thing yet.
+We may use the specific error code, though. and document that semantics.
 
-Perhaps let your patch as is (for stable backports), and put the debug
-stuff only after some tests, in net-next.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-It is very possible that napi_schedule() in the problematic cases were
-not on a fast path anyway.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
 
