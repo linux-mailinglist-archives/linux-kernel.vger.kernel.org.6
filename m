@@ -1,202 +1,160 @@
-Return-Path: <linux-kernel+bounces-532743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B506A451B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:49:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F526A451C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A353A9AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1F817D7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2399522EE5;
-	Wed, 26 Feb 2025 00:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68696153BE8;
+	Wed, 26 Feb 2025 00:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TspGTA46"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EnbrudHx"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0251494C9;
-	Wed, 26 Feb 2025 00:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740530963; cv=fail; b=J5gc8IWITtnda7XuRbZj/9Gea8n2DRZGNoCfryt6ZCg/VeQkkp3NlFXq3xTVUTYh61Xv4EO2H2Btw7Mc8XnofPmyiv9UANKhedmTY6Gbzijdd4C3WPlXDF1IyPV7qtHPxNk6hgoU9h99dlm6igB9DXvpuYbMEyheepR+1cuqCOc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740530963; c=relaxed/simple;
-	bh=16Ekmce5l7CYWBlJYPXMNzBWqvf4q6pSdG0zXZWu2cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TKJuOgoRupK1xwl+DX0nyBMzdQn7AqKjarE2bs62IQJYZTqwZB5HV9b8g98gGmZUiqe3vtDJOFIQR4STXeW2RvEne95yymCw3le3aLCxcGHbnKyf0foI46X4XTjEGExvvvkIceNNJSii1Ht0bFBOnqPtHHylKpzha3h+WCnv7Sc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TspGTA46; arc=fail smtp.client-ip=40.107.220.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mUwKXMJHYY3CQEZ8Qh6eAixxJYB2HoZpVR+c88FuwftxyU9rJ4jY+mBOvIZzK1hIk7dIcRDmvvnJt5AK0pXUNiSYMIEH0fKob6Nqz8Yb0QlKnfLwNzvMQ4oQsqMs+JFadRK+7WPGMOhnpP0xAoPsdWObOA4+woTIY3OPnGhVW+6/+PclU4YRdc8FkfuPZlIPOZGDIZkNGRtJNoE0zF/RY2UiiRcnLjpK0+AVVbN9FMm0t99H7jk8Ky7Cs0yYS/cCOPWXb7FywBJvL1ESQi8A6/gjeftBqGHKbL9rm7yoTfxMbJz2YCFw5xKiuDHvK6LqrpXpqNrjhlssdWTlqsTxMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wdi8QPj5+ubJssuLU8x8rt1XbSugnTdGgUIASxYtJz8=;
- b=AhE/geW009tPNppNL1y0v3B+nPBvTJ1OmuJaMVBZmqMUZb7z88z6GDWah9imxmSnJ6B6JBzs7VovfTHAsvWy0ehSgIST5E6YNjNdTpqiSQbTOLhQ7NdUWl3+FTxh8l+2qhyXVV4Tr+iRWsLkdQ9NUbqUKTed1ZbIN4Kf1Uxw1U15gB/udlnKtv9NgI/PDDk5BN25RycOe2MgoWPVQvVCfAyQDXdyzCVhO47yQ3GEVCN5EkHNx/RUCWSBj+OguFhFeqoF/a0qwCA2DkWxc+4asWBWkv1J92ytHTe8LAelQh7JfSXyWjPVxKYTOjp+bgLclkEtncoRmdTpvgZsGUzRMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wdi8QPj5+ubJssuLU8x8rt1XbSugnTdGgUIASxYtJz8=;
- b=TspGTA469cV0n7qLvoDYBI6yHMBX6jUJH0Y7GIGH6H77gyWju6C74IfZjwcNwR4tAQpywPdovWPVnWWWIrIkl5U+i7/kuXosVrzUJiF9tvfN2MiR2V6zfJ3Rv3wvoopxyPkYitBpTxQBIOwIwf++1AveI2ZZtVHro+ecRaIuHydqmcl9NhlsxswaW62kbrYrh+EBCRONhqknQQ7QXtn9QlxCmrgSBBlk7Y3vKVJ1KxUGFqmaFasL2wXLSTR3JzZF3k0mKH9lgh1W4qaZpMmknd51zPn8BqOF+usdSTolt7H35h9TnTfynaL62iiSV9N0JWVJ+P4p3ytXY8dZkz3yTw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN2PR12MB4357.namprd12.prod.outlook.com (2603:10b6:208:262::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Wed, 26 Feb
- 2025 00:49:18 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 00:49:18 +0000
-Date: Tue, 25 Feb 2025 20:49:16 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <20250226004916.GB4959@nvidia.com>
-References: <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
- <Z7xg8uArPlr2gQBU@pollux>
- <Z7xh5bEyh_MII4WV@pollux>
- <20250224184502.GA1599486@joelnvbox>
- <Z70EcwNIX0KtWy36@cassiopeiae>
- <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
- <Z73rP4secPlUMIoS@cassiopeiae>
- <20250225210228.GA1801922@joelnvbox>
- <20250225225756.GA4959@nvidia.com>
- <Z75WKSRlUVEqpysJ@cassiopeiae>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z75WKSRlUVEqpysJ@cassiopeiae>
-X-ClientProxiedBy: BL1PR13CA0158.namprd13.prod.outlook.com
- (2603:10b6:208:2bd::13) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9601494C9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740531059; cv=none; b=iCrjkxnWAkGRuyZQz1owEi6uetBnvj9G0o67dENImxK+Ge99wQWeKl8+SCWc9VK/Yd9AusL4AVCarU3g3QQDrXCPO/AHyk/rueN7skS2XjqR2Him3RuUd0s7hb9tW6cjzpvUTP5srny9umR5ptE8KVBCZN19QTymWcGzvh78Pro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740531059; c=relaxed/simple;
+	bh=z4otdrdsn2fsyB2Bvll9tjCAMDpiUsb7HJylJFqs8UQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Z4qoDdBpTTkBmup69ycDAF1fe2zkQ4Tg/FA67TlbAc6K3UPxUn+msgDshqGKQcPEwSIJSyyjVcomGKa7ZonafDe7mJpFyFy0H+/QmGEWlNLW8kgO0v7B3Z9n8pmIK9TZ/d7oc9cHGlAtV7GxKRXgefcl292/lIMcvZ05szSV/lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EnbrudHx; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc2b258e82so13337030a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:50:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740531057; x=1741135857; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXtm2iNAeoRBljTe88BgfoaNePq6nOE+XaOff3sfo/g=;
+        b=EnbrudHx6FPi5eSeSmmrEYqNQUwTyQ6W1ZPT9kRed74bbvv0C3GkMxqoxqyb9qyHdR
+         qiSkFtwemWb+8DYk7VWJ9AdSCy6ghNEo7K66iDtXSpwnw27iIbgb9t/PhXs+7BIlPsp2
+         nE+Iv8xZ21/vvmHt6ZM3FgFz2f+jLvKsj/XN+I+kpCi0Bxf2KhyGNPV4q7qLjCw68FA5
+         a4UmmyYxS58ZQvMsJs0d/W6jmngE344AMXriGRQ5Qv/JqCZMEeov0sNRGOkp0RrA/1XH
+         5Aabc9jBNxFKrEfQdG/UtJoQbdjWQkVedUk7ICRAK3Wr+b27qRW/Ur7FrzHiteXMiJ0z
+         FV5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740531057; x=1741135857;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXtm2iNAeoRBljTe88BgfoaNePq6nOE+XaOff3sfo/g=;
+        b=Sf/Q604ZCrzjCImYUUy5m8PbbShWUIjst02zgO0apRM6qDDyZUnombF0oJ5haO4+Gw
+         NJTgCav72hR31YxMEeX6Aqmu9hE6PjrmboVDmZEcBPklsdmmV7mB4WCn1pOg6X6ekM8u
+         ZGHKGnR6CRwn/9hmev+zaa+sDWQBCA9BNs+IFYyUXleCERnzAuwNDkVDRnxlI3kXPX/I
+         ih4imkvwG5psGtIKgqfLeye/C+HYd3X4pD2DB0Bck8RtFJlOAcUzUfOW8lh15iQmhyyH
+         96If3DA2M+qyPNOKc4RGJyFaf2gPiWCONiq1BG+1i579CU5XefcvzSr4Hz9VXya1N01U
+         Ipcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsuChjZVvY8Jn75P0VKpd5hxOtO6F3/e+UEcTSQBRPF4FxBAMQAddo73+jA2V1+4crIa+jdc1Oi/OZ51o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5YkxadZEHZm4yv0uIrVZu1R0nZ3Hdv3kDF3/W8GDkJOSnN+Qg
+	+HGoy+pr3DYYmmd+npM6eygOj/NVxJ8+DehsmDyHiSorjX06b4Zb8r5Ob329julVEVd4B/6vfIn
+	psw==
+X-Google-Smtp-Source: AGHT+IEGXofKw7PxDUXKaR4FAQmTtG03BfGhA63qxjzop1MVKo/p8/lL+ozSw4uxIKofwjdQ6x2HR5WCrE4=
+X-Received: from pjb16.prod.google.com ([2002:a17:90b:2f10:b0:2fa:1803:2f9f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f42:b0:2ea:2a8d:dd2a
+ with SMTP id 98e67ed59e1d1-2fe7e36c869mr2169059a91.27.1740531057669; Tue, 25
+ Feb 2025 16:50:57 -0800 (PST)
+Date: Tue, 25 Feb 2025 16:50:56 -0800
+In-Reply-To: <07788b85473e24627131ffe1a8d1d01856dd9cb5.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4357:EE_
-X-MS-Office365-Filtering-Correlation-Id: e337b819-834d-4b76-6984-08dd55ff664c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gvStVip5vhW1tIL1kYZaDR+cNNOgsxReRR0n3GdQqpVNt5Y18l6sq+h4mN1W?=
- =?us-ascii?Q?UDc907Jo93rPCyMuYZ+jPYbZJJHzmmXw58kGHYHUhKt6uhUbjU3/f2Zx/zyT?=
- =?us-ascii?Q?+spcbDYrzzyaZG0gWdaXdPMCIRStA8uQgKzXQ+bVKwoGtCCPCcVvQnZgrN5D?=
- =?us-ascii?Q?N3iSHeoKXsuLQlNfLBx/nC/CR1GrBAiqgTo7NGu+SyVOLVJ3OVXitDCHUbyK?=
- =?us-ascii?Q?ydieaY9JZTtPRmMv9S+UJvn1aJmxqT2iRgT0ceMXrtZ5zNUY13kVAqtkfPhP?=
- =?us-ascii?Q?wPFFT3ihM+pF3VM3BEMKtOCTXGhGtCL8kyN7Ebhtt8d4ncArgIlLdxBWav1+?=
- =?us-ascii?Q?m7Vu7cpaCquRARHx8dvL09diSMLpAVYjBtRhX6zLgqxv1gRL7Y/axOAiyTNa?=
- =?us-ascii?Q?xsoKfYGjIB77MN2m4xSZawG/b42WT8lVW0Gdi5hWDC4bmvlQ6JFfVxTTZs8v?=
- =?us-ascii?Q?Tu05xTQWcwqKmlRJSnFTuj59ALE86chd4kXeLQ1AXg3ywodlCweZY3z3mMqU?=
- =?us-ascii?Q?mRELVAUVv79gpWA/91X1sQf1HADlHThNd6YYloauZ16fv30M2FZ7lwTDipdY?=
- =?us-ascii?Q?imJJsovNXSdi8h4u2nbtHFqhMmnN4pgeXPrdV3vRh5ri16Py0gcCZVlrKNkF?=
- =?us-ascii?Q?4o9AkfgUBwi+3WPVbhhIK+elSPk8YmfTPJoKMb81IlNwtjXWn24icFTAZPhI?=
- =?us-ascii?Q?k4lKCf+n+ylbKsFOSMgd68HUU3FO0MWhvTES4QxHqwfBwqCaiyYBS9cm2HPQ?=
- =?us-ascii?Q?zLP0zeLmP603U7HjSOF/qrOqo/rmSkx94kQKc/BrcrntoW0u4+2JF68m7YcY?=
- =?us-ascii?Q?JCoZ+V0uzQIoojJ+/yqzCmvyt1bZAzw/5OD4AZ4hiD9SCbJFwtQa7oLrlsds?=
- =?us-ascii?Q?04r3ayo3uJAqQmXA9XTQieB/K2rrkykpNruBj3c6sC/G+pFqXCUgHypHHWsu?=
- =?us-ascii?Q?DdBv2aTlXY6jhQpX1IPd4yGpM0Q4gZaHSX7nM9wpvnrVIQnJCi2pptP3seRa?=
- =?us-ascii?Q?eDVssQHbnLeQxcLYHq7cimSd0NjoqsxK5tqxN24Zy3ytWGO6jwwhSnBb61rK?=
- =?us-ascii?Q?w9Ikf+jE6u3e11BZPEtDHnCwruWLePWbF9uQTVxR1ficyz+NdZg05VH/z/3+?=
- =?us-ascii?Q?FJTqzT1QxWLAZmMPkqU4/POSiU9Zbolc17GWHDtlVOdDsFZPzizSmSH0m1CP?=
- =?us-ascii?Q?b+BmAQOmE3c7UNVUSYiTw/7zMVzsnVL0dQccZcp5m0uT9Ju12D4U/9YdN1Kl?=
- =?us-ascii?Q?uJQfdcJ5TzPVRNtePLTdVC7QQ7KSmnlAxw9O9rO6Po6b1LNFu2s95BYGCbET?=
- =?us-ascii?Q?j8BjOZ88ajZvgAW1yX1mfHDyENWCR1q26grg0qHBCy67FDaylP8gH3NMv1bm?=
- =?us-ascii?Q?Y0ZS1klzUkd6q/0RFQvyE1Yt7vs8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b40s9TV4vVXZsmWtbX4sP2pWDKA9fG0gnw8P/M6yUuFSAlknOa1sGyXbO5aT?=
- =?us-ascii?Q?Q3MFvQoIo4tdjzXfO/2er0bwUUFmAq4gNQ+agL7iMM8ztYICv7ZQmSTXE1qZ?=
- =?us-ascii?Q?Drj/znAzmDq16mhUGcAf5oliBE+rkPfTKNWGVbUJNwVijVhwPJPvcP3+zFnH?=
- =?us-ascii?Q?ZAEw2TnvF6uR4WXCWyEF/225DIBt1kDXt5Qszvc3Xsh1A9NPQhIG3ZqeA3rO?=
- =?us-ascii?Q?1xHvluRu4pOzSyPg+W2Gh2zecg2+/xJ9ksVBuV5miYz0jAgwewCNHurL8zzS?=
- =?us-ascii?Q?valR60BCELy0bhHjkpRr2N9jOtwcLXyY5/y04x5EsVnmOljhFL9L8QekyZS4?=
- =?us-ascii?Q?N4rZTnJyW2O6uDOXevyanYaahjjFOs3Gw289vLjkWydbK5ZvoIyh+5KWCU80?=
- =?us-ascii?Q?cqsEbtaGYTo7j8VPq7SMcKxYnS3JYydrmmt5oTsARLH8KbKYq4v6/7Kyv/C+?=
- =?us-ascii?Q?Z/EK+R8c6hbtbVFajOkyFyNZ92O9HsdWLMpu25cEcKiyk472HCZzD7EZWDzr?=
- =?us-ascii?Q?AUkq2ihSWf/ra0vTMwtodJWlNYsdB0IQwoziH3ChKYGZqT8Znc5E9S/6abpw?=
- =?us-ascii?Q?/vS8Ucwo0zwRQlFE2h+6NTrICta6zCK/uZ9dxEFbRN6tAH7jMm4QUA1ePHde?=
- =?us-ascii?Q?82kaMbsxz71a4dkFHTMEs85K6zn8r6/85eXTjrNk2fNix13YvvMm8jffd3wE?=
- =?us-ascii?Q?wxzQEctqT/25jjSrW6u6f41V+8w/efeYE3P5AdzqefioZyA7eoY4iZIOOovr?=
- =?us-ascii?Q?CUs6Vjh66EZ//N6n8NMt0Wi2TAOmsaq0iTx1KbubfqEhmMYOSj71TGugzU7y?=
- =?us-ascii?Q?0naS+rmWofJQ5jdWBtYLQEGE5oDP8lLs0wtyoVZroNaNKdgenXUSZ7bMa6am?=
- =?us-ascii?Q?AU6LYNTXbhGRD1scc5IlChD6NHSCdm8Pg2J63Gs213bO2XBcBw1dHFC1440O?=
- =?us-ascii?Q?ULJLNmYx9jEIMGjl7kQiMGfyDrQxwj5xYy1RrevWXoJ2nuZGPWjUHjK2USvl?=
- =?us-ascii?Q?wn+rZlk/DnvmcurkLiHqtmzWsjX8gD05UrV+xExrFr/9mjIQ4DOJhChABWf7?=
- =?us-ascii?Q?eU4hLT6rRVlKbju7qwvzr1Hdi67h7E6y4pW0OVH6sOvM7EpjFbAkuTObCOqH?=
- =?us-ascii?Q?mdyTcomYDwVLCLtP7jVhoSh9OQAtSwzB0B9XFFjiuAmQJBAmc3pS1aSrzSG/?=
- =?us-ascii?Q?79qNzsRgPvIAvniglDvyhtMrC6wKLWx2b2mElaoHwanka0nMJJF2JZI7CD1a?=
- =?us-ascii?Q?k61rd6c1G+tBnehu+S7aaQVEsgewf6MR3O7mjicT9l8rg3SQ0QnWcO1I8ZXI?=
- =?us-ascii?Q?yKdwE1OejIER5/zLWq/KrgaUgeSA9hZ90cRqE67Fhd10qiHu1BwLphjDEskl?=
- =?us-ascii?Q?kQnLyeXNuA/X96Qo46xIKSrqWWM5k0twnn6k5j+bZn8ozAxr+H2Yb8NIV6T7?=
- =?us-ascii?Q?jAzBOYiNv6Lg736mS1xGSMXuPgOirX4UDqo39ornNeBPBSucL5YrPhUUIN2S?=
- =?us-ascii?Q?2k4fJZxJPn0Uj1JDsKmVbjZlAE8DpKsmia5J6mLKy6XYfOJPDQju1F3EMSwC?=
- =?us-ascii?Q?fi0EHonzs9CL5Phq6fQ=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e337b819-834d-4b76-6984-08dd55ff664c
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 00:49:17.9283
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o1hwaWSDySjGx9LkrXehwbBj07AHZV1pyKpQcK5D4RZS24I7+lKW1O7OIduXCtuN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4357
+Mime-Version: 1.0
+References: <20250204004038.1680123-1-jthoughton@google.com>
+ <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
+ <Z7UwI-9zqnhpmg30@google.com> <07788b85473e24627131ffe1a8d1d01856dd9cb5.camel@redhat.com>
+Message-ID: <Z75lcJOEFfBMATAf@google.com>
+Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Feb 26, 2025 at 12:45:45AM +0100, Danilo Krummrich wrote:
-> On Tue, Feb 25, 2025 at 06:57:56PM -0400, Jason Gunthorpe wrote:
-> > The common driver shutdown process in the kernel, that is well tested
-> > and copied, makes the driver single threaded during the remove()
-> > callback.
+On Tue, Feb 25, 2025, Maxim Levitsky wrote:
+> On Tue, 2025-02-18 at 17:13 -0800, Sean Christopherson wrote:
+> > My understanding is that the behavior is deliberate.  Per Yu[1], page_idle/bitmap
+> > effectively isn't supported by MGLRU.
+> > 
+> > [1] https://lore.kernel.org/all/CAOUHufZeADNp_y=Ng+acmMMgnTR=ZGFZ7z-m6O47O=CmJauWjw@mail.gmail.com
 > 
-> All devres callbacks run in the same callchain, __device_release_driver() first
-> calls remove() and then all the devres callbacks, where we revoke the pci::Bar,
-> by which gets dropped and hence the bar is unmapped and resource regions are
-> free. It's not different to C drivers. Except that in C you don't lose access to
-> the void pointer that still points to the (unmapped) MMIO address.
+> Hi,
+> 
+> Reading this mail makes me think that the page idle interface isn't really
+> used anymore.
 
-I understand how devm works.
+I'm sure it's still used in production somewhere.  And even if it's being phased
+out in favor of MGLRU, it's still super useful for testing purposes, because it
+gives userspace much more direct control over aging.
 
-I'm pointing out the fundamental different in approachs. The typical
-widely used pattern results in __device_release_driver() completing
-with no concurrent driver code running.
+> Maybe we should redo the access_tracking_perf_test to only use the MGLRU
+> specific interfaces/mode, and remove its classical page_idle mode altogher?
 
-DRM achieves this, in part, by using drm_dev_unplug().
+I don't want to take a hard dependency on MGLRU (unless page_idle gets fully
+deprecated/removed by the kernel), and I also don't think page_idle is the main
+problem with the test.
+   
+> The point I am trying to get across is that currently
+> access_tracking_perf_test main purpose is to test that page_idle works with
+> secondary paging and the fact is that it doesn't work well due to more that
+> one reason:
 
-The Rust approach ends up with __device_release_driver() completing
-and leaving driver code still running in other threads.
+The primary purpose of the test is to measure performance.  Asserting that 90%+
+pages were dirtied is a sanity check, not an outright goal.
 
-This is a significant different outcome that must be mitigated somehow
-to prevent an Execute After Free failure for Rust. DRM happens to be
-safe because it ends up linking the driver module refcount to FD
-lifetime. This also prevents unloading the driver (bad!!).
+> The mere fact that we don't flush TLB already necessitated hacks like the 90%
+> check, which for example doesn't work nested so another hack was needed, to
+> skip the check completely when hypervisor is detected, etc, etc.
 
-However, for instance, you can't rely on the module reference count
-with work queues, so this scheme is not generally applicable.
+100% agreed here.
 
-Jason
+> And now as of 6.13, we don't propagate accessed bit when KVM zaps the SPTE at
+> all, which can happen at least in theory due to other reasons than NUMA balancing.
+> 
+> Tomorrow there will be something else that will cause KVM to zap the SPTEs,
+> and the test will fail again, and again...
+> 
+> What do you think?
+
+What if we make the assertion user controllable?  I.e. let the user opt-out (or
+off-by-default and opt-in) via command line?  We did something similar for the
+rseq test, because the test would run far fewer iterations than expected if the
+vCPU task was migrated to CPU(s) in deep sleep states.
+
+	TEST_ASSERT(skip_sanity_check || i > (NR_TASK_MIGRATIONS / 2),
+		    "Only performed %d KVM_RUNs, task stalled too much?\n\n"
+		    "  Try disabling deep sleep states to reduce CPU wakeup latency,\n"
+		    "  e.g. via cpuidle.off=1 or setting /dev/cpu_dma_latency to '0',\n"
+		    "  or run with -u to disable this sanity check.", i);
+
+This is quite similar, because as you say, it's impractical for the test to account
+for every possible environmental quirk.
+
+> > Aha!  I wonder if in the failing case, the vCPU gets migrated to a pCPU on a
+> > different node, and that causes NUMA balancing to go crazy and zap pretty much
+> > all of guest memory.  If that's what's happening, then a better solution for the
+> > NUMA balancing issue would be to affine the vCPU to a single NUMA node (or hard
+> > pin it to a single pCPU?).
+> 
+> Nope. I pinned main thread to  CPU 0 and VM thread to  CPU 1 and the problem
+> persists.  On 6.13, the only way to make the test consistently work is to
+> disable NUMA balancing.
+
+Well that's odd.  While I'm quite curious as to what's happening, my stance is
+that enabling NUMA balancing with KVM is a terrible idea, so my vote is to sweep
+it under the rug and let the user disable the sanity check.
 
