@@ -1,234 +1,190 @@
-Return-Path: <linux-kernel+bounces-532815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E5AA45283
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:59:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF43A45296
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 03:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBB917A54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:58:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7641796B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 02:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9450A1A3BA1;
-	Wed, 26 Feb 2025 01:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B10213E69;
+	Wed, 26 Feb 2025 02:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzdcF+nP"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXvAFZjw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D351A9B52;
-	Wed, 26 Feb 2025 01:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EE11B0F23;
+	Wed, 26 Feb 2025 02:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740535082; cv=none; b=ro8Up6aAk30ojoO3vYp59i+ljV4OKgG5ii39Gki0gt/YwE5mOYJAUmvJZX3uGLGSHqWBb7M0hYR2v7qKgpyGaXXUx2M1cuJ1cuCgGqSaPTs4BGawm9ipSmQ7RZr6nZIud7a0UGVV/78uydGiLoyE1XLCeRtg63qeW2xronKAfHI=
+	t=1740535220; cv=none; b=HlfVWofR8d2ula6YqD7HiAKMwqFSXmP3sR7QuaZukhVCR6/Z+JKB5UlQCu6YkIgakM4J+F9dyO/IzPih12fMrcE3aFuM6v6XFmYv8cUaNGlWL8R9rUQt0GiYvCiW7CjQYp3j4sVjldZx6Cdif2kDas3WVgacEPoQHCqZP/sWi2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740535082; c=relaxed/simple;
-	bh=wdN1jaQODGwx5/NgvAuOzU3s+ziBsjzTgRgg3aLVOjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=od1OvJDomZ1VXGyRR3E3jgs58eD4Vvyjf+QHdCWYZZx2cTYTZlE+p2Efiqtlsuj/IjB1+bW6IpC6jAfN5q6wy87GDQc4kafEmXgHI8PsEqeAjSPZNGUempJlxL5grfUHz0cTyxe3AZ3+h72ZuTQEcNi33g6qH7RtPbCeZaD5E90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WzdcF+nP; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-439946a49e1so40011155e9.0;
-        Tue, 25 Feb 2025 17:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740535079; x=1741139879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHzaes6TH6B7hJXqk1Wlg42S/TR2u3UC1epvW9tSF1I=;
-        b=WzdcF+nPZZwsSgG4Jwl9Gm2i6qdLRH8VGFJN4j96fUmiU0MbDfgy7L6nSx513hbsbZ
-         Y+2t9YLYS2vPk7r9BgyRM80oXQs9sKp6QQ2A+K3QAVhvNgWzbQNDQ46mPuBmiYNuopJF
-         kyCRzGmmI7v0Iy28SfSD+aft2W/CKxgPtjUHrnA8g2afCrTHdt4jALBoIik23zxVk/RD
-         4kJmS/HKjhDS8X6ysxdsAEtyHSfEelVsJBxOT8c3tVZszikspXx3u40995rSbi9zqrxr
-         sk7O+btogpFNT2f6NLZJxRcTvIVOKZdEFtBSnB0qjN0UmvFIsWs8gxz+4qs3oQTOVStr
-         ivvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740535079; x=1741139879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHzaes6TH6B7hJXqk1Wlg42S/TR2u3UC1epvW9tSF1I=;
-        b=foZ5jN77/yoHBpainZrmzbi8oRVlwq1Ax9whzCU3g6MggaOn1TUC9iKjxUDVSDyZD2
-         +P6/md/fCpVDj8/+2lqKIqIAYRl6vJzaxISvugHCe6+Fp0JORkeRtok1xF/mzptHqYm4
-         1mWnqj2RMjDCsR2qtTbHTyEOWYaXA0boWB1h6SLgGIHHcAkviUFIk/MgVZ86T/etVRyO
-         iJfBexwnY2XcLpVNJp4BiKDLCWLtJ80qN3r/PKo5BdZ+ParnoCRWgOqt06nvm9k3O00J
-         Sk82VnKdip2R1czn9HWCoOjtC7wKbKX8jsUuKlVbgorgjhnYvjsCodF4ehewT96Zba8O
-         65vw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1brfLxmm6TVdi9gbu48Jw04fggVBxNrtt9tw22SatH8Rjp02Q/BoI7LoV7nEfBVUoNKI=@vger.kernel.org, AJvYcCVSukvfaTIRQyizBU+MGQ2Z4IpNVQlvGQizEMFe/Ry3TAAJ4niOQv89uoz7W4MjZ4LE8X2HUUvmVk4+buYe@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf8ordNZ81wptuz0AyidRBKSEYcrQRtIogPFaSKh/SNvrT69Hs
-	5pmztOd88DOXMw1mHugLpYKwS3MKrOReuGwcR21tPjp/7zGf8vyKhtodeEpd/d1Ye2JG4ohcUwu
-	Yyazwc4qjPrPcrdE6Re4WbQfB588=
-X-Gm-Gg: ASbGncsmMMsSVPpoOUDkbC8ebuSw0pIKtmC63+coCHrsxLYYc4p5Gg92r5k2i75idcY
-	aVCpoJBg7OqahxRcpH+k53ITfb7ks57LAyesCj+bevHdjI0TrcDE4FYsX1JjGvpS5bxWFGTQdhq
-	m7Sq14D8EC/p1ecP0zdveqogo=
-X-Google-Smtp-Source: AGHT+IFO6/dJyoTf/Xa1UP3OB5XVQqcvDm13BIuavJhyPluLlJK5clgZ3kqtohjqlYYhjC8zaIwj8uhogoYr6zzuyzo=
-X-Received: by 2002:a05:600c:450c:b0:434:fb65:ebbb with SMTP id
- 5b1f17b1804b1-43ab8fe995amr12456765e9.17.1740535078910; Tue, 25 Feb 2025
- 17:57:58 -0800 (PST)
+	s=arc-20240116; t=1740535220; c=relaxed/simple;
+	bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NV0BNOUjBnSlMbHi8wdm9FV2xKTxJ5CXsB1h/rYNhuHJlKGCIBaK6pUFydjgHushWcTITFqZYQhgOQgoG1rAGZ7MEHSR2GQzW68ZswShPF9UtFH0FqGieJ4y4Bm2wiRDroKFr/Xk4RlbuVTfxcc5LYIHLeG8XwYpbinE2zOoO+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXvAFZjw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F662C4CEE7;
+	Wed, 26 Feb 2025 02:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740535220;
+	bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=pXvAFZjwN+HM6hznjlhTfvY6FGpDbDbVafPkehz/HHhNLimgYKdPwBzZ59NU6tgOP
+	 eGEHQeGyNmgVv//FcrSJMQELzvTJU/0FpnqGjzxvbbOPJ1f3lL5iDtL9Bs7U+amPrr
+	 8f/G4l0FdIYX15nIxzkvcWrHJMZ5rx+xBpSmoQwlmeCZYULg8+XzOlKO8OvaywUSTp
+	 WVfZwfuIypVTtN/dWjng/CV6cECE/KjtCBCqwck4zpMFS2ecrNMyukcMGWLjipzUCJ
+	 v8EpknhRjcRlgatjQdI0p2r8iiO4LEZa/Qj+WT8hELKPLwUNV4UJVgTdvXCiHqoYjO
+	 z+/UcqS94lTbQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBCDC021BF;
+	Wed, 26 Feb 2025 02:00:20 +0000 (UTC)
+From: Mingcong Bai via B4 Relay <devnull+jeffbai.aosc.io@kernel.org>
+Subject: [PATCH 0/5] drm/xe: enable driver usage on non-4KiB kernels
+Date: Wed, 26 Feb 2025 10:00:17 +0800
+Message-Id: <20250226-xe-non-4k-fix-v1-0-80f23b5ee40e@aosc.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com> <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 25 Feb 2025 17:57:47 -0800
-X-Gm-Features: AQ5f1Jo_CUowQ4QBm9bjekRCzahCOwBtZ3wBGebmjJg5fbjCMlLjByLydrkMYYM
-Message-ID: <CAADnVQ+TzLc=Z_Rp-UC6s9gg5hB1byd_w7oT807z44NuKC_TxA@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
- runtime acquire/release
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALF1vmcC/x2MQQqAIBAAvyJ7bsEW9dBXooPlVkugoRCC9Pek4
+ wzMNCichQtMqkHmR4qk2GEcFGynjwejhM5AmqwmclgZY4poLtyloluJAwftrTPQmztz1/9vXt7
+ 3A+VGO45fAAAA
+X-Change-ID: 20250226-xe-non-4k-fix-6b2eded0a564
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ =?utf-8?q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>, 
+ Francois Dugast <francois.dugast@intel.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Alan Previn <alan.previn.teres.alexis@intel.com>, 
+ Zhanjun Dong <zhanjun.dong@intel.com>, 
+ Matt Roper <matthew.d.roper@intel.com>, 
+ Mateusz Naklicki <mateusz.naklicki@intel.com>
+Cc: Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>, 
+ =?utf-8?q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>, 
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>, 
+ Shang Yatsen <429839446@qq.com>, Mingcong Bai <jeffbai@aosc.io>, 
+ stable@vger.kernel.org, Haien Liang <27873200@qq.com>, 
+ Shirong Liu <lsr1024@qq.com>, Haofeng Wu <s2600cw2@126.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740535218; l=4506;
+ i=jeffbai@aosc.io; s=20250225; h=from:subject:message-id;
+ bh=A9ejl1O+HrZTCsb9J1JPq9c6GX36Sh+YgeDcLZTKdjY=;
+ b=p9NnNXi4quZqnKVTwOpkskDHDTalG5zIr5IMx0pjwy4MMb3Qu3KeRPlKHo+p2JevzvuVTYXEB
+ DJIL+X2VFm8AtaW88Z7RVxswmG86MttPx1Aixfi0/s/jptw8bLFwecj
+X-Developer-Key: i=jeffbai@aosc.io; a=ed25519;
+ pk=PShXLX1m130BHsde1t/EjBugyyOjSVdzV0dYuYejXYU=
+X-Endpoint-Received: by B4 Relay for jeffbai@aosc.io/20250225 with
+ auth_id=349
+X-Original-From: Mingcong Bai <jeffbai@aosc.io>
+Reply-To: jeffbai@aosc.io
 
-On Tue, Feb 25, 2025 at 3:34=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
-> On 2025/2/25 22:12, Alexei Starovoitov wrote:
-> > On Thu, Feb 13, 2025 at 4:36=E2=80=AFPM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> +void *bpf_runtime_acquire_hook(void *arg1, void *arg2, void *arg3,
-> >> +                              void *arg4, void *arg5, void *arg6 /* k=
-func addr */)
-> >> +{
-> >> +       struct btf_struct_kfunc *struct_kfunc, dummy_key;
-> >> +       struct btf_struct_kfunc_tab *tab;
-> >> +       struct bpf_run_ctx *bpf_ctx;
-> >> +       struct bpf_ref_node *node;
-> >> +       bpf_kfunc_t kfunc;
-> >> +       struct btf *btf;
-> >> +       void *kfunc_ret;
-> >> +
-> >> +       kfunc =3D (bpf_kfunc_t)arg6;
-> >> +       kfunc_ret =3D kfunc(arg1, arg2, arg3, arg4, arg5);
-> >> +
-> >> +       if (!kfunc_ret)
-> >> +               return kfunc_ret;
-> >> +
-> >> +       bpf_ctx =3D current->bpf_ctx;
-> >> +       btf =3D bpf_get_btf_vmlinux();
-> >> +
-> >> +       tab =3D btf->acquire_kfunc_tab;
-> >> +       if (!tab)
-> >> +               return kfunc_ret;
-> >> +
-> >> +       dummy_key.kfunc_addr =3D (unsigned long)arg6;
-> >> +       struct_kfunc =3D bsearch(&dummy_key, tab->set, tab->cnt,
-> >> +                              sizeof(struct btf_struct_kfunc),
-> >> +                              btf_kfunc_addr_cmp_func);
-> >> +
-> >> +       node =3D list_first_entry(&bpf_ctx->free_ref_list, struct bpf_=
-ref_node, lnode);
-> >> +       node->obj_addr =3D (unsigned long)kfunc_ret;
-> >> +       node->struct_btf_id =3D struct_kfunc->struct_btf_id;
-> >> +
-> >> +       list_del(&node->lnode);
-> >> +       hash_add(bpf_ctx->active_ref_list, &node->hnode, node->obj_add=
-r);
-> >> +
-> >> +       pr_info("bpf prog acquire obj addr =3D %lx, btf id =3D %d\n",
-> >> +               node->obj_addr, node->struct_btf_id);
-> >> +       print_bpf_active_refs();
-> >> +
-> >> +       return kfunc_ret;
-> >> +}
-> >> +
-> >> +void bpf_runtime_release_hook(void *arg1, void *arg2, void *arg3,
-> >> +                             void *arg4, void *arg5, void *arg6 /* kf=
-unc addr */)
-> >> +{
-> >> +       struct bpf_run_ctx *bpf_ctx;
-> >> +       struct bpf_ref_node *node;
-> >> +       bpf_kfunc_t kfunc;
-> >> +
-> >> +       kfunc =3D (bpf_kfunc_t)arg6;
-> >> +       kfunc(arg1, arg2, arg3, arg4, arg5);
-> >> +
-> >> +       bpf_ctx =3D current->bpf_ctx;
-> >> +
-> >> +       hash_for_each_possible(bpf_ctx->active_ref_list, node, hnode, =
-(unsigned long)arg1) {
-> >> +               if (node->obj_addr =3D=3D (unsigned long)arg1) {
-> >> +                       hash_del(&node->hnode);
-> >> +                       list_add(&node->lnode, &bpf_ctx->free_ref_list=
-);
-> >> +
-> >> +                       pr_info("bpf prog release obj addr =3D %lx, bt=
-f id =3D %d\n",
-> >> +                               node->obj_addr, node->struct_btf_id);
-> >> +               }
-> >> +       }
-> >> +
-> >> +       print_bpf_active_refs();
-> >> +}
-> >
-> > So for every acq/rel the above two function will be called
-> > and you call this:
-> > "
-> > perhaps we can use some low overhead runtime solution first as a
-> > not too bad alternative
-> > "
-> >
-> > low overhead ?!
-> >
-> > acq/rel kfuncs can be very hot.
-> > To the level that single atomic_inc() is a noticeable overhead.
-> > Doing above is an obvious no-go in any production setup.
-> >
-> >> Before the bpf program actually runs, we can allocate the maximum
-> >> possible number of reference nodes to record reference information.
-> >
-> > This is an incorrect assumption.
-> > Look at register_btf_id_dtor_kfuncs()
-> > that patch 1 is sort-of trying to reinvent.
-> > Acquired objects can be stashed with single xchg instruction and
-> > people are not happy with performance either.
-> > An acquire kfunc plus inlined bpf_kptr_xchg is too slow in some cases.
-> > A bunch of bpf progs operate under constraints where nanoseconds count.
-> > That's why we rely on static verification where possible.
-> > Everytime we introduce run-time safety checks (like bpf_arena) we
-> > sacrifice some use cases.
-> > So, no, this proposal is not a solution.
->
-> OK, I agree, if single atomic_inc() is a noticeable overhead, then any
-> runtime solution is not applicable.
->
-> (I had thought about using btf id as another argument to further
-> eliminate the O(log n) overhead of binary search, but now it is
-> obviously not enough)
->
->
-> I am not sure, BPF runtime hooks seem to be a general feature, maybe it
-> can be used in other scenarios?
->
-> Do you think there would be value in non-intrusive bpf program behavior
-> tracking if it is only enabled in certain modes?
->
-> For example, to help us debug/diagnose bpf programs.
+This patch series attempts to enable the use of xe DRM driver on non-4KiB
+kernel page platforms. This involves fixing the ttm/bo interface, as well
+as parts of the userspace API to make use of kernel `PAGE_SIZE' for
+alignment instead of the assumed `SZ_4K', it also fixes incorrect usage of
+`PAGE_SIZE' in the GuC and ring buffer interface code to make sure all
+instructions/commands were aligned to 4KiB barriers (per the Programmer's
+Manual for the GPUs covered by this DRM driver).
 
-Unlikely. In general we don't add debug code to the kernel.
-There are exceptions like lockdep and kasan that are there to
-debug the kernel itself and they're not enabled in prod.
-I don't see a use case for "let's replace all kfuncs with a wrapper".
-perf record/report works on bpf progs, so profiling/perf analysis
-part of bpf prog is solved.
-Debugging of bpf prog for correctness is a different story.
-It's an interesting challenge on its own, but
-wrapping kfuncs won't help.
-Debugging bpf prog is not much different than debugging normal kernel code.
-Sprinkle printk is typically the answer.
+This issue was first discovered and reported by members of the LoongArch
+user communities, whose hardware commonly ran on 16KiB-page kernels. The
+patch series began on an unassuming branch of a downstream kernel tree
+maintained by Shang Yatsen.[^1]
+
+It worked well but remained sparsely documented, a lot of the work done
+here relied on Shang Yatsen's original patch.
+
+AOSC OS then picked it up[^2] to provide Intel Xe/Arc support for users of
+its LoongArch port, for which I worked extensively on. After months of
+positive user feedback and from encouragement from Kexy Biscuit, my
+colleague at the community, I decided to examine its potential for
+upstreaming, cross-reference kernel and Intel documentation to better
+document and revise this patch.
+
+Now that this series has been tested good (for boot up, OpenGL, and
+playback of a standardised set of video samples[^3]... with the exception
+of the Intel Arc B580, which seems to segfault at intel-media-driver -
+iHD_drv_video.so, but strangely, hardware accelerated video playback works
+well with Firefox?) on the following platforms (motherboard + GPU model):
+
+- x86-64, 4KiB kernel page:
+    - MS-7D42 + Intel Arc A580
+- LoongArch, 16KiB kernel page:
+    - XA61200 + GUNNIR DG1 Blue Halberd (Intel DG1)
+    - XA61200 + ASRock Arc A380 Challenger ITX OC (Intel Arc 380)
+    - XA61200 + Intel Arc 580
+    - XA61200 + GUNNIR Intel Arc A750 Photon 8G OC (Intel Arc A750)
+    - ASUS XC-LS3A6M + GUNNIR Intel Arc B580 INDEX 12G (Intel Arc B580)
+
+On these platforms, basic functionalities tested good but the driver was
+unstable with occasional resets (I do suspect however, that this platform
+suffers from PCIe coherence issues, as instability only occurs under heavy
+VRAM I/O load):
+
+- AArch64, 4KiB/64KiB kernel pages:
+    - ERUN-FD3000 (Phytium D3000) + GUNNIR Intel Arc A750 Photon 8G OC
+      (Intel Arc A750)
+
+I think that this patch series is now ready for your comment and review.
+Please forgive me if I made any simple mistake or used wrong terminologies,
+but I have never worked on a patch for the DRM subsystem and my experience
+is still quite thin.
+
+But anyway, just letting you all know that Intel Xe/Arc works on non-4KiB
+kernel page platforms (and honestly, it's great to use, especially for
+games and media playback)!
+
+[^1]: https://github.com/FanFansfan/loongson-linux/tree/loongarch-xe
+[^2]: We maintained Shang Yatsen's patch until our v6.13.3 tree, until
+      we decided to test and send this series upstream,
+      https://github.com/AOSC-Tracking/linux/tree/aosc/v6.13.3
+[^3]: Delicious hot pot!
+      https://repo.aosc.io/ahvl/sample-videos-20250223.tar.zst
+
+Suggested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+Co-developed-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Shang Yatsen <429839446@qq.com>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+Mingcong Bai (5):
+      drm/xe/bo: fix alignment with non-4K kernel page sizes
+      drm/xe/guc: use SZ_4K for alignment
+      drm/xe/regs: fix RING_CTL_SIZE(size) calculation
+      drm/xe: use 4K alignment for cursor jumps
+      drm/xe/query: use PAGE_SIZE as the minimum page alignment
+
+ drivers/gpu/drm/xe/regs/xe_engine_regs.h |  3 +--
+ drivers/gpu/drm/xe/xe_bo.c               |  8 ++++----
+ drivers/gpu/drm/xe/xe_guc.c              |  4 ++--
+ drivers/gpu/drm/xe/xe_guc_ads.c          | 32 ++++++++++++++++----------------
+ drivers/gpu/drm/xe/xe_guc_capture.c      |  8 ++++----
+ drivers/gpu/drm/xe/xe_guc_ct.c           |  2 +-
+ drivers/gpu/drm/xe/xe_guc_log.c          |  4 ++--
+ drivers/gpu/drm/xe/xe_guc_pc.c           |  4 ++--
+ drivers/gpu/drm/xe/xe_migrate.c          |  4 ++--
+ drivers/gpu/drm/xe/xe_query.c            |  2 +-
+ include/uapi/drm/xe_drm.h                |  2 +-
+ 11 files changed, 36 insertions(+), 37 deletions(-)
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250226-xe-non-4k-fix-6b2eded0a564
+
+Best regards,
+-- 
+Mingcong Bai <jeffbai@aosc.io>
+
+
 
