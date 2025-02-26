@@ -1,46 +1,75 @@
-Return-Path: <linux-kernel+bounces-534955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25477A46D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:14:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F123DA46D36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 22:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2138A3AB394
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9346316B505
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3872C25B669;
-	Wed, 26 Feb 2025 21:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9225A65F;
+	Wed, 26 Feb 2025 21:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="ZqghOfAq"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cQyepYDK"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF89D21CC54;
-	Wed, 26 Feb 2025 21:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A692F2586CD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604477; cv=none; b=UVg+fSFLkNyFQOP3cK1ctUp6W6VOfk5GTd9tr15mJBJRMYJhEtnQtQccBN8GcNORSVtRu5ferBaqjzjUxhXQJvNgGzbNBe0wZRyz9Jyn3HBTQy7rmUM6EFFrD42wgQ46b0/3tc6GG/10brHH8xuDXZqaMkpe9tDRymmiwq85KZY=
+	t=1740604496; cv=none; b=VB2ILYUgsei93Dwm5qt5iTqDRh5IDEeF9HoiqawwpQpemiObu5Xkt7Fx7pnVK2YdSjiJDYsMLRWvn+IAVbMShFDBeZZZ1wEIGvdNi6Fy0hubxvzZJ5MUgYxxZj8JItUgQ/IQ00TtCSmmJ6pquXgZXpRcLHI/dl+btefG3LarJpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604477; c=relaxed/simple;
-	bh=XcLEjNFPOoLRIwImSrjAbC/QV0oZJMWCJiJfGnQ9RQY=;
+	s=arc-20240116; t=1740604496; c=relaxed/simple;
+	bh=E1c29q1k3+hPHBUs86giej64N6HgJOnbesOhyZVRWkY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HmbWVNgeq3gQtnvXAFlAc0JRLRMJPHZWzu+SEOPeAgh0T0Pc33CWo8SY0ZjNLTVYwpjR/qp4t01LJkAfkBlSN0r4BhwVTgN+ViQ3KpHfeTjqaR53QH0bmvANgERM64zlw3FQILvAetYx0U9tBrCvtc7E40qsc7zw+vXRVKIWJ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=ZqghOfAq; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [10.50.4.36] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z36fx3233z4KrM;
-	Wed, 26 Feb 2025 16:14:33 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1740604474; bh=XcLEjNFPOoLRIwImSrjAbC/QV0oZJMWCJiJfGnQ9RQY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ZqghOfAqRbEIhg3c3Ioc2TNh5inQD/y+OFOdgxVLZsc8iE3R1sVwO2ZRi/vXiSOqd
-	 2NmKjYClWrOaMBjUrLwm9UXEH6hpeUjXCrS8UwlIFBNYncx+7+mstum067/TmwdAMi
-	 WeC6LZ3K2qiesn0sRHBRXBbRuB9FIgjNJeJTrogk=
-Message-ID: <b6eff06e-1a8c-48c3-b536-39b567015d0c@panix.com>
-Date: Wed, 26 Feb 2025 13:14:32 -0800
+	 In-Reply-To:Content-Type; b=rY+7GNWbgfh0+KyUcbUH/Kdv9IaKDrVQPQeHWkFd59sdc0/WKVZEhRMJQpJktWs/UcVZbmxtf9ysHtRSa+a1NMOv/1/8GzdySJeRCPujoHo0OpK4rPNL5tUcho3WYo6BDxGGPIQQ4LRj9gIvEksj8DMIPrI3YDAVGVz2ulKI+ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cQyepYDK; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-854a68f5a9cso25003039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:14:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1740604494; x=1741209294; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CfF1Iqu17zlnxPN/qbmmV6kCrFr+eSAtr+JvZ1nEl4Y=;
+        b=cQyepYDKsHin7kdPrt8zsJS3VF3p4J3phpKVPto6Ccc6yOB2z76ERWCynGxQGmwWGW
+         sFk4upSOOteWO6NktxiRCnlxKJlZYoNM0qXCDs/dImEpfTTl8pNIp6nA9GowaaBVLZDB
+         +9lQ9DVXHKuc9+Qf+P1HJWIfQj5z5iS3wpax8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740604494; x=1741209294;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CfF1Iqu17zlnxPN/qbmmV6kCrFr+eSAtr+JvZ1nEl4Y=;
+        b=Mr57O9We3e5dcJ12vMpLypfKB4SsoinGgU4vf3LEyhx5/RNtInhA8f8aEz+YOUuHnD
+         H83NPlS5PBMEhJXWULPTBb0P5uE7IiLyBZkPTJ2L8CJ1epV0T4av/E+f9qchE77o7yBJ
+         SZZFVrCMapHkCbWKERZFsn1GHxHPoV4zOExsomlNh6RnNzVoumz6F+ohNFW1GusUKCpL
+         LpoJn2MM3Vid0YrhvqAZqm/HAMxN/ea3pmCX005Ck91MszQUhqqUAr6tK0nXvl91gHWt
+         FjjviLtivq7Zel4WCDR57HKBGR8ah4gemUGR9wL77NVrius6fySk+2t0FsOkj7JDs1NB
+         m6bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVitM1veD1MkoirTFpLIzP6wW8KMOrSnPqOac52NBgT8bAbVOaX2tmqGXkDCbmpGWh0XEBCoGgDlFLo67M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpUtoJu82+byB3g0gxJZBc+KLZP0hzuhLnRWbUS+JL47JqqhXO
+	7ORNRDopBnjwrO0ACorDFB2lMrW+ZFYAMEhnr0DKO6t/2O6B8czF2nSFdDpjn4E=
+X-Gm-Gg: ASbGncuz3FtB26m1uypU+oRju+FG5Bd90DVRafyznBLIx2CjPhcZNKNS1zbmdQYHeJ6
+	urRmMTlFIeab2pouqN5P7W9tm4ZkdzMHSajBT1KNlliC3A4Fi22glsa3BpPOU5qOp1E22A91gV3
+	e8v+Lj9iG8EJs185nofuAbxugZBw7MCh5Nk/x1Eg+g9MY0kUW46KO3mqcdLy27Ncte8tkzp4Ro9
+	tOJ/yw1gsxf+VlOPpD4cjEmwF1i62HpyHhtIie6mAWONQt4E+wfv5AauZ06D7uHQhNTA8DgjdIz
+	7nxWgr5mA5gSaL2ViNpkQwD1iEIHMag+eOKe
+X-Google-Smtp-Source: AGHT+IG+jg50kIWbCGxmzZInd7J5jXcpjOWX98KOihuv5522c7CQ+evo5WxnYAC8GIaepTI0uvYjmg==
+X-Received: by 2002:a92:c246:0:b0:3d3:d229:f166 with SMTP id e9e14a558f8ab-3d3d229f29emr46992055ab.17.1740604493774;
+        Wed, 26 Feb 2025 13:14:53 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d36166099esm9453395ab.31.2025.02.26.13.14.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 13:14:53 -0800 (PST)
+Message-ID: <8b903a33-30bb-4229-92e0-f97c3ae0a906@linuxfoundation.org>
+Date: Wed, 26 Feb 2025 14:14:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,140 +77,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Kenneth Crudup <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?TmlrbMSBdnMgS2/EvGVzxYZpa292cw==?= <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>, Lukas Wunner <lukas@wunner.de>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <20250210210502.GA15655@bhelgaas>
- <21b72adf-aac6-49fa-af40-6db596c87432@panix.com>
- <20250211055722.GW3713119@black.fi.intel.com>
- <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com>
+Subject: Re: [PATCH v2] selftests/vDSO: fix GNU hash table entry size for
+ s390x
+To: Vasily Gorbik <gor@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Fangrui Song <i@maskray.me>, Xi Ruoyao <xry111@xry111.site>,
+ Heiko Carstens <hca@linux.ibm.com>, Jens Remus <jremus@linux.ibm.com>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250217-selftests-vdso-s390-gnu-hash-v2-1-f6c2532ffe2a@linutronix.de>
+ <your-ad-here.call-01739836346-ext-7522@work.hours>
+ <your-ad-here.call-01740598679-ext-1013@work.hours>
 Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <20250226084404.GM3713119@black.fi.intel.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <your-ad-here.call-01740598679-ext-1013@work.hours>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-OK, just did a resume after suspended (for an hour, which somehow seems 
-to matter) while my CalDigit dock was attached with the ASMedia NVMe 
-adaptor at suspend, but both disconnected on resume, and I am indeed 
-locked up.
-
-I can attached the "pstore" report if necessary.
-
-Unfortunately I won't be able to get back to the CalDigit until Saturday 
-afternoon California time.
-
-I'll be trying all the reverts/commits listed herein and at least check 
-for regressions in other cases, though.
-
--Kenny
-
-On 2/26/25 00:44, Mika Westerberg wrote:
-> Hi Kenneth,
-> 
-> On Fri, Feb 14, 2025 at 09:39:33AM -0800, Kenneth Crudup wrote:
+On 2/26/25 12:37, Vasily Gorbik wrote:
+> On Tue, Feb 18, 2025 at 12:52:31AM +0100, Vasily Gorbik wrote:
+>> On Mon, Feb 17, 2025 at 02:04:18PM +0100, Thomas Weißschuh wrote:
+>>> Commit 14be4e6f3522 ("selftests: vDSO: fix ELF hash table entry size for s390x")
+>>> changed the type of the ELF hash table entries to 64bit on s390x.
+>>> However the *GNU* hash tables entries are always 32bit.
+>>> The "bucket" pointer is shared between both hash algorithms.
+>> --
+>>> On s390x the GNU algorithm assigns and dereferences this pointer to a
+>>> 64bit value as a pointer to a 32bit value, leading to compiler warnings and
+>>> runtime crashes.
 >>
->> This is excellent news that you were able to reproduce it- I'd figured this
->> regression would have been caught already (as I do remember this working
->> before) and was worried it may have been specific to a particular piece of
->> hardware (or software setup) on my system.
+>> I would rephrase it as follows:
 >>
->> I'll see what I can dig up on my end, but as I'm not expert in these
->> subsystems I may not be able to diagnose anything until your return.
-> 
-> [Back now]
-> 
-> My git bisect ended up to this commit:
-> 
->    9d573d19547b ("PCI: pciehp: Detect device replacement during system sleep")
-> 
-> Adding Lukas who is the expert.
-> 
-> My steps to reproduce on Intel Meteor Lake based reference system are:
-> 
-> 1. Boot the system up, nothing connected.
-> 2. Once up, connect Thunderbolt 4 dock and Thunderbolt 3 NVMe in a chain:
-> 
->    [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
-> 
-> 3. Authorize PCIe tunnels (whatever your distro provides, my buildroot just
->      has the debugging tools so running 'tbauth -r 301')
-> 
-> 4. Check that the PCIe topology matches the expected (lspci)
-> 
-> 5. Enter s2idle:
-> 
->    # rtcwake -s 30 -mmem
-> 
-> 6. Once it is suspended, unplug the cable between the host and the dock.
-> 
-> 7. Wait for the resume to happen.
-> 
-> Expectation: The system wakes up fine, notices that the TB and PCIe devices
-> are gone, stays responsive and usable.
-> 
-> Actual result: Resume never completes.
-> 
-> I added "no_console_suspend" to the command line and the did sysrq-w to
-> get list of blocked tasks. I've attached it just in case it is needed.
-> 
-> If I revert the above commit the issue is gone. Now I'm not sure if this is
-> exactly the same issue that you are seeing but nevertheless this is kind of
-> normal use case so definitely something we should get fixed.
-> 
-> Lukas, if you need any more information let me know. I can reproduce this
-> easily.
-> 
->> I also saw some DRM/connected fixes posted to Linus' master so maybe one of
->> them corrects this new display-crash issue (I'm not home on my big monitor
->> to be able to test yet).
+>> On s390, this caused the GNU hash algorithm to access its 32-bit entries as if they
+>> were 64-bit, triggering compiler warnings (assignment between "Elf64_Xword *" and
+>> "Elf64_Word *") and runtime crashes.
 >>
->> -Kenny
+>> And take it via s390 tree.
 >>
->> On 2/14/25 08:29, Mika Westerberg wrote:
->>> Hi,
->>>
->>> On Thu, Feb 13, 2025 at 11:19:35AM -0800, Kenneth Crudup wrote:
->>>>
->>>> On 2/13/25 05:59, Mika Westerberg wrote:
->>>>
->>>>> Hi,
->>>>
->>>> As Murphy's would have it, now my crashes are display-driver related (this
->>>> is Xe, but I've also seen it with i915).
->>>>
->>>> Attached here just for the heck of it, but I'll be better testing the NVMe
->>>> enclosure-related failures this weekend. Stay tuned!
->>>
->>> Okay, I checked quickly and no TB related crash there but I was actually
->>> able to reproduce hang when I unplug the device chain during suspend. I did
->>> not yet have time to look into it deeper. I'm sure this has been working
->>> fine in the past as we tested all kinds of topologies including similar to
->>> this.
->>>
->>> I will be out next week for vacation but will continue after that if the
->>> problem is not alraedy solved ;-)
->>>
->>
->> -- 
->> Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County
->> CA
+>> Shuah, if you don't mind, may I get your Acked-by?
+> 
+> Hello Shuah,
+> 
+> friendly ping. Could you please respond with "Acked-by" if you don’t
+> mind me taking this patch via the s390 tree? Or let me know if you plan
+> to take it via your tree.
+> 
+> Thank you!
 
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
+Yes. Please take this through s390 tree.
 
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
