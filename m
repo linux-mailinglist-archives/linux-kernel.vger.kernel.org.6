@@ -1,151 +1,122 @@
-Return-Path: <linux-kernel+bounces-534411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E98A46667
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:19:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5ABA466C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F000D3A6406
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D05426F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0ED421C9FE;
-	Wed, 26 Feb 2025 16:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5726821E086;
+	Wed, 26 Feb 2025 16:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oVcdN4cU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u6/Sb2yQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBGKO0eO"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D413A21D58C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB1B3FB0E;
+	Wed, 26 Feb 2025 16:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740586732; cv=none; b=mTeFYGtOUHUXjmMVCc+W79N7Gv0pBpWI3T3wAVg/nRocDO5sNCDs+koyZunRaanh58BdYzoc2twu+BT62tlVQ84huI9N62AUIcHJO1hYekBt5N6odkqazxKBUXubInquEtDVlVTKz8JqAh7nHfldT6BDcuebPJuTk9GZH18NTHc=
+	t=1740586764; cv=none; b=YgfNbd6r1cGUsWW/TpoQbF+ffsUcMIvlJ+D9Vj56LygUU6M60vrUOydeSvNAMfDDh5vf8KNOFHkDNudwlOKe9PdRKjPx0uvCfp6QoLiJ1mwoniOVvYXvxWA3hF72DeX8oV/hxO9r9w0sm7iPA7RmGligLDICWuyp7ip8+rGxMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740586732; c=relaxed/simple;
-	bh=ihff/4I114zmlq2rerVgXVzRtRbXazjckeOZ3R2piFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdz9uEEURG0dSow+QvorXjx8liQT76bhCWEjByia0EZOztlSSbRsdJt2U2vZNH1g22+owFMRlVvT2fU6Y4Q8ukV9dCD655NOuqS6SUXUrcqF+Kx/w4b+YvA5EE43Zqj2yxl3vnUS9viA76pR1HxP/ZVYeFF7dd26hW5wOoOtbT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oVcdN4cU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u6/Sb2yQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 17:18:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740586728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rkNenM+yKDUaHBy3c3ZJgUQZ1lxQ7VuCx5GrvAyocnE=;
-	b=oVcdN4cUEvI4Wg6URhwtMZf3ufDVwWaLkwAQl+0MpUZ/7QZ7CJcRiinJ4m4r6cFPqdo6Je
-	ukgTK0kBDQs1lJX3NMijk/G+df+NlvrWyxtIVC3VM+C7OUun+ILrgfOu0zPnZe++3RXkFK
-	OoDN8QZF1X2CgTltQixGn2JuP3L5Xoo4qRyV/BRYtvP0irlQpLjRuzwSNwxjBc3m0xTC+w
-	e8Quqru//HfCIqpJDBNM4u982aO0JOyT6Ku7WMPsA+OFOHPm0xmSXtILgLTj0Jcx9gN5tp
-	HzAptuOts1QUzn1zSfzvXWJYsqwEw5Og+16AAqFqU/k7nq54ZoAA4zafk9DcjA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740586728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rkNenM+yKDUaHBy3c3ZJgUQZ1lxQ7VuCx5GrvAyocnE=;
-	b=u6/Sb2yQ71oHgzAOdMElkLcJUxQpGhk/dHPZE4ejIPciElUZIgA1sx3LBgzdCBoXjHK+Kb
-	MgEXefNK1J0qOaCw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] workqueue: Always use wq_select_unbound_cpu() for
- WORK_CPU_UNBOUND.
-Message-ID: <20250226161847.eYrJFpIg@linutronix.de>
-References: <20250221112003.1dSuoGyc@linutronix.de>
- <Z7iSboU-05uMJ7-e@localhost.localdomain>
- <Z7iuUObJGgZtsaJe@slm.duckdns.org>
+	s=arc-20240116; t=1740586764; c=relaxed/simple;
+	bh=kVAJWJ1n9B5HqAXvAOf2QCSR41y110AB9N77022F3hA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rgLEiSGDDtpIfNLfMIfpBaHCUTqHenpNGNzxTzluMr+YeZp5QOz0MEstk5SV2znY3ZsCRHKfeJDpexv+5uDNIuIOh4kQz/9/xedRGr2R9h2vBbYgXaS4T/v9m7GXD1Y9mCvvdrEua9WZ65SGyVxijUnUwf4MtXhGKvcKUcRhHz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBGKO0eO; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-439a4dec9d5so267355e9.0;
+        Wed, 26 Feb 2025 08:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740586761; x=1741191561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7oIbL6Oq4nSHg07LEL+0/DEW8r33JxAc53XxQi3IME=;
+        b=NBGKO0eOuTOSDlD8sla8qt2JXaeuCOPy60ZrVKFXgq/OAzwxNkIxmUY0fNnVMJpWKX
+         /3O4K0UhzDnGc9ccKfVHQ76S/DYlm7jPQMWfK+tYRdYeLoz6F/DcvgcnTZSxKKSnlTWn
+         lywLDeFsWeX+rjpymlPP7RVsjm5w61D8RcV47g4n4Vfp0LyElgoOBzdvSVKMt/htvA9i
+         tOUFlB4UNQekGbEDkup5BLZpJ1kdqEau7u+Mhf6y6+Qqg6hVriOekyNmKaFBzCXaKWtF
+         XIj62gKEECLN+qqI04ka4SjMh5VSvPhMNtGLxGKjNY74kzllp2I3swu4EnFZpULtejjy
+         illw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740586761; x=1741191561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t7oIbL6Oq4nSHg07LEL+0/DEW8r33JxAc53XxQi3IME=;
+        b=VFjLeUwynXK0s9QuDmYSbt0Cg7KhqBwJeRTTRnIwwIXtbE3WSA5sfvkR+K2Z8QoWoV
+         dZFWYOh+k3LDmm64+IwM7DOZJzepKBPiZ86EMszBK6MoVqXehIheno99TfJRJ9/pH6Y3
+         Lk5FuD9HPBTw7b2Tv6o8VBsimDscG3FCRCTFGcfMWJtrNc6QlM1f9zQTiFggoUfcBYW+
+         OiJoQOHnTZwANhEaHOl3xzy9okJGs1GM8HPQLGDhTyMGKCFZDFSGlBlbsViEjzAjVF9F
+         gbI5JVkssPwa4h4/I1UYdzcr130c25to7+RtYlyKFglrDAwYqbX2BtyHsqtxtQExeBNO
+         OC2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZyFo40EGUT6njLCk18OdKFsXHz5Ltrzwa1Ni8rxW6gH0Mp4s6D4dziDeCCMUEpMNlwXrA8Si1tmSoTNU=@vger.kernel.org, AJvYcCXfrjgepbWw6UfUc18LpcrXjdj7yZyjlD1noOseYjwxs3XkUQbLUmHH8HxfdisL22pEOBJyM1TujeVyh50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz81AnIDTlClZwjoIIq5gAAAIAnheO9LXJDax2nzm2LeWbbu1uV
+	tJipGrmVPO9qsRuLbHUmxfyEF69wXpEj6MwYfmMz5/qM0HVgk3TV
+X-Gm-Gg: ASbGncvvU3oL5oW4WQBGHno7H70QL7vlaN6yt44cTJOWZDW2i8dgzr3EAVUKeVjBdLl
+	Ngd4ziTAZBgqzW2h2g1Z3KToGsWnx4SRyw/l3KiLUTWfS2WZO3L/hveMyCeB13yp29vZ6hqgNxZ
+	tfsrI+Z9rAgyAp8/nNQ3RbCetNfjVgwzdLm5dlpawavfDxgarfu1tyo3B57GD5oHLjj1IKflcZe
+	QvPFFnrUbrujPg6H26Exg6qxXBfnVDfdlPu6s/r+iqENMcLm+GBPn/zfZYPupQjq3BOZynYDW/i
+	SWVUqVby372SYs32skJ9rSwZPDU=
+X-Google-Smtp-Source: AGHT+IFCHrP0DmNTDiQaKF5lTigPtiLat3d0zHJOGbPCRd6J2ldYAIFvsJPwNG1s+zkxJZVh4LfRHg==
+X-Received: by 2002:a05:600c:154e:b0:439:a0a3:a15 with SMTP id 5b1f17b1804b1-43ab0f3c907mr103513685e9.14.1740586761203;
+        Wed, 26 Feb 2025 08:19:21 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba5397d2sm27064705e9.22.2025.02.26.08.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 08:19:20 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: mediatek: mt8188: Fix uninitialized variable msk
+Date: Wed, 26 Feb 2025 16:18:47 +0000
+Message-ID: <20250226161847.567160-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z7iuUObJGgZtsaJe@slm.duckdns.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025-02-21 06:48:16 [-1000], Tejun Heo wrote:
-> Hello,
-Hi,
+The variable msk not initialized and is being bit-wise or'd with values
+in a for-loop, leading to an undefined result. Fix this by initializing
+msk to zero before the for-loop.
 
-> > I'm tempted to just assume that none of its users depend on the
-> > work locality?
->=20
-> That's API guarantee and there are plenty of users who depend on
-> queue_work() and schedule_work() on per-cpu workqueues to be actually
-> per-cpu.=20
+Fixes: c1e42ec04197 ("ASoC: mediatek: mt8188: Add support for DMIC")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/mediatek/mt8188/mt8188-dai-dmic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-You mean queue_work(), not queue_work_on()?
-Even with the latter you need to ensure the CPU does not go away and
-hardly someone does this.
+diff --git a/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c b/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
+index 4cfbcb71d2d9..adcea7818be2 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
++++ b/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
+@@ -307,6 +307,7 @@ static int mtk_dmic_event(struct snd_soc_dapm_widget *w,
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+ 		/* request fifo soft rst */
++		msk = 0;
+ 		for (i = dmic_num; i >= DMIC0; i--)
+ 			msk |= PWR2_TOP_CON1_DMIC_FIFO_SOFT_RST_EN(i);
+ 
+-- 
+2.47.2
 
->          I don't think we can pull the rug from under them. If we want to=
- do
-> this, which I think is a good idea, we should:
->
-> 1. Convert per-cpu workqueue users to unbound workqueues. Most users don't
->    care whether work item is executed locally or not. However, historical=
-ly,
->    we've been preferring per-cpu workqueues because unbound workqueues ha=
-d a
->    lot worse locality properties. Unbound workqueue's topology awareness =
-is
->    a lot better now, so this should be less of a problem and we should be
->    able to move a lot of users over to unbound workqueues.
-
-you mean convert each schedule_work() to schedule_unbound_work() which
-uses system_unbound_wq instead?
-
-I would really like to make it default because otherwise most people
-will stick to the old function and the "convert" is never ending.
-
-Maybe I misunderstood you.
-
-> 2. There still are cases where local execution isn't required for
->    correctness but local & concurrency controlled executions yield
->    performance gains. Workqueue API currently doesn't distinguish these t=
-wo
->    cases. We should add a new API which prefers local execution but doesn=
-'t
->    require it, which can then do what's suggested in this patch.
-
-I see. So we get rid of the old naming and have them something like
-	schedule_bound_work()
-	schedule_unbound_work()
-	schedule_hopefully_local_work()
-
-? The last one would attempt the local CPU for performance reasons
-unless the CPU is not part the workqueue' cpumask. So the difference is
-that the middle one would be queued on WQ_UNBOUND while the latter might
-be queued on a different CPU but on WQ without WQ_UNBOUND. Both would
-respect workqueue' cpumask.
-
-> Unfortunately, I don't see a way forward without auditing and converting =
-the
-> users.
-
-So tried to pull the "in WORK_CPU_UNBOUND the has unbound" card and
-comment where it says "prefer local CPU" card.
-We have already different behaviour with queue_delayed_work(,,0) vs
-queue_delayed_work(,,!0) but this does not count here?
-I don't insist in doing this always, just if the CPU is "isolated" as in
-not part of the workmask. But then, this path gets probably less testing
-so it might be not a good idea if something relies on but does not know=E2=
-=80=A6
-
-> Thanks.
-
-Sebastian
 
