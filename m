@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-534750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C04CA46AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:14:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5133EA46AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F65F16E22D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB443ADCFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22A3238D2E;
-	Wed, 26 Feb 2025 19:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8B4238D2E;
+	Wed, 26 Feb 2025 19:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FPPsEYMV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PrgrgjIB"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DC1236A70;
-	Wed, 26 Feb 2025 19:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1920236A70
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740597270; cv=none; b=onfq+PHrVsKUq3dNAZdOmaQf/RPEFwPbEJjMhen402XT394g6uAadYGbySmUMXxRZl5I/lgPOPgopEyxQyr/KkehBB18HvpAfCh+GQPgIPi3CWCqWaHZrpN6MF+07eilTzmEOZaFnP6/crD+0TK+O2g/q2jg9uYAMbQUs0j5UZQ=
+	t=1740597241; cv=none; b=UybwjdTYgLtnNOgMB4IIC6qzYxrLMENis+ddQEj59y4/lWljcDMAnXLVt9eNtQip6GfLYLe2bzmfV7MXHyq2a6wQje6dSAe1BT+5qrjcCrliYKnEvSf4wFbACdmwE8mzmkVdbcjZPYJupcMsxTaNWjPegiGaO9KiM1xwNOkjsAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740597270; c=relaxed/simple;
-	bh=i/naK2lcPrsZcpnXtdZkpMy9O49yW/4nymiV3W56gVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jE70YnSqrB3rFXOk5I/o38FybA6M3gww7JLc+e4qWGTGc6SFBNv661N0t0C+QEqWpwTBdpbWICx7AkmNsp9Y9pI5oAXEvdVwFvdubikmzzzDnBGM1bKmxpsM3jXwFullWk45pezGsMyQ9zgm4UTEnqWBuk9D3jkW/YDjlyL9LVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FPPsEYMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF30C4CED6;
-	Wed, 26 Feb 2025 19:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740597269;
-	bh=i/naK2lcPrsZcpnXtdZkpMy9O49yW/4nymiV3W56gVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FPPsEYMVKXtAClAtFNK+li48+SbI3R4U9WE3gTNwbc19uH7ju2plJ0bOFge5Qcmbh
-	 GH7yLggtNe3O8xIQ1EArqN5JI+ChEdjK5DhOXNzDuDTv+1LaNP+8OrCPtXz8szKCS/
-	 CSVtN5ioSOLcgiBSYsyL1UIo449oofTIwq0ERDRg=
-Date: Wed, 26 Feb 2025 11:13:20 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable <stable@kernel.org>, Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH] Revert "libfs: Use d_children list to iterate
- simple_offset directories"
-Message-ID: <2025022612-stratus-theology-de3c@gregkh>
-References: <2025022644-blinked-broadness-c810@gregkh>
- <a7fe0eda-78e4-43bb-822b-c1dfa65ba4dd@oracle.com>
- <2025022621-worshiper-turtle-6eb1@gregkh>
- <a2e5de22-f5d1-4f99-ab37-93343b5c68b1@oracle.com>
+	s=arc-20240116; t=1740597241; c=relaxed/simple;
+	bh=vHzrEzooH4K8CcIGUei7pRVS17MmHjHrMcmzZoer/Ec=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cSM7w6rX3KKFs8tEEXqTuA1ogIyFplPrcAtyyXjxUcKaoDTJwh4icq92CpM2KTS1Ka5wV0yXqGlkgBhdenebjovwphA9dn3XERGZZXy0cLLGMS2CkGiiG6vK9hy3EWdcVp16p2JBjMKIKJGrZ8bBJrQdbkYvp6IXOx7CYkl5ge8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PrgrgjIB; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471f4909650so1293041cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 11:13:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740597238; x=1741202038; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O/7HubgIS3yguXLFwagiKL0MIanaDsiXeL1ZcDJnpI0=;
+        b=PrgrgjIBDzFyuCW0/BkssmUrWr+ejDo9K2GOMxCGaRhnW6xhcbtTD1JwwVGKLo/83P
+         3dM9rKUsAMq62CVpok1RfQHA2wfcnXMzJ18qMcZcYUdGiwaEKk+ikc6U0hO+hXP5eQ2E
+         NyqwDG/QmtPKzQkkLdTGYwhvbp9CTaW2CN1tiR+JGk13bm+x5+rLq5IqlamFPgOFO8PM
+         HjoHxNDXIv68a/z/4EiqGgLE/s9X5kBDvYWorhxzCCaJ/Ef6jGrbARuL5iiZvdsP0RaR
+         Wk+ZOlH0gvpRUqepXN07eMUzObSySHsdNfhHZlo1wCex2FQyD78d2/r2De4OapeVF9iC
+         RAJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740597238; x=1741202038;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O/7HubgIS3yguXLFwagiKL0MIanaDsiXeL1ZcDJnpI0=;
+        b=HfaIKtpOSPs9E3BfF7i8IEsBk7NGNGDG7bHzPPv9reO6iCspDC0bdNiuPRKVHjIdvo
+         uSbzTNuTz4un/yCQPIUA6QMtJ6PpIIVpPr4SYLjxRz3XN+6LtR0bgrtY06a+WBoa4Wa4
+         ss3/RkCYJ+Unu8GzVojPdIlBlliS4/j4NGzZ7Vs41XWjcdxZuRpypA718IPodUCh7Tv8
+         uMDVN6sSQmRKUx4s9BsQMX5GgaSNqkWxsOdEdfKVjJgZ2GrMO8vZ98a2162NlWJNyo+z
+         lib8wk0KucJikvKd6vTdrSbTUd2/GyWBqpvkQi2qVlV9I9PSIqMODi1OjCgUICJLNMfv
+         qRPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUibs4NnAE4yI6eQziZjTrGwGEopas+nYNkntFQpwCIwwTuL+6a3XNYNZ4Ag051b4oWd3g+5Qtq02C63s0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYV1WGcqYtF/8P/of8Z7KPbUumuuzizzdBE6vO7lBo/HT/kJ3v
+	loLo2RMqSvg1xL70ljFw4/wPjlD7MY6aAAAdBzs9Vk4yVNldDvxNBXokfGlZYQ==
+X-Gm-Gg: ASbGncsaKhnjOQ2ydYlCyyrxZI/XiMwUHJPTU3P+SkESIPpNFrLgnZM5wbd0e/0ys+D
+	JxYZxHGkCjG1pphWUVv5dvTHDNrl2QY/mMdOePk6+3wIhXpQOPyeggkUDi5KJ0V2cB9DcJAbZWq
+	Qkb8/auXS9DMo9GGI+ORKb1sRaOnpQqA5WH56HI/XcQ3Xlksz8ZgeV9XsDDA+8svBG+k/30iHfA
+	bjuiV0Oc3Dgm/a0oVEDIOdlDgzMqNan0dkCprKPiy5vbomWmtS0k7FFBcGm+dhgjRtLrU0OA0K0
+	LcWJqxxTINTQAhy7L3BXDfxlHtlMvX7ctcdLchdsQeefMdZaxzFKigUR/lq37lMgFGWQ4Ic=
+X-Google-Smtp-Source: AGHT+IGZKQ763FRka4tXmeqX9uwcpJ0v96pIEchafXYFD2cwhU7ih42tfW2HHRWzr2HQKaEkzBO+qA==
+X-Received: by 2002:a05:622a:1a07:b0:472:201c:aa45 with SMTP id d75a77b69052e-47377116ed2mr109013401cf.9.1740597237709;
+        Wed, 26 Feb 2025 11:13:57 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47377e1543csm28407591cf.27.2025.02.26.11.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 11:13:57 -0800 (PST)
+Date: Wed, 26 Feb 2025 14:13:56 -0500
+Message-ID: <41cb98ddf724ade0fc529b8c952f3efc@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2e5de22-f5d1-4f99-ab37-93343b5c68b1@oracle.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250226_1339/pstg-lib:20250226_1339/pstg-pwork:20250226_1339
+From: Paul Moore <paul@paul-moore.com>
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org, jmorris@namei.org, serge@hallyn.com, rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, selinux@vger.kernel.org, luogengkun@huaweicloud.com
+Subject: Re: [PATCH 1/2] perf: Remove unnecessary parameter of security check
+References: <20241223070650.2810747-2-luogengkun@huaweicloud.com>
+In-Reply-To: <20241223070650.2810747-2-luogengkun@huaweicloud.com>
 
-On Wed, Feb 26, 2025 at 11:28:35AM -0500, Chuck Lever wrote:
-> On 2/26/25 11:21 AM, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 26, 2025 at 10:57:48AM -0500, Chuck Lever wrote:
-> >> On 2/26/25 9:29 AM, Greg Kroah-Hartman wrote:
-> >>> This reverts commit b9b588f22a0c049a14885399e27625635ae6ef91.
-> >>>
-> >>> There are reports of this commit breaking Chrome's rendering mode.  As
-> >>> no one seems to want to do a root-cause, let's just revert it for now as
-> >>> it is affecting people using the latest release as well as the stable
-> >>> kernels that it has been backported to.
-> >>
-> >> NACK. This re-introduces a CVE.
-> > 
-> > As I said elsewhere, when a commit that is assigned a CVE is reverted,
-> > then the CVE gets revoked.  But I don't see this commit being assigned
-> > to a CVE, so what CVE specifically are you referring to?
+On Dec 23, 2024 Luo Gengkun <luogengkun@huaweicloud.com> wrote:
 > 
-> https://nvd.nist.gov/vuln/detail/CVE-2024-46701
+> It seems that the attr parameter was never been used in security
+> checks since it was first introduced by:
+> 
+> commit da97e18458fb ("perf_event: Add support for LSM and SELinux checks")
+> 
+> so remove it.
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> Reviewed-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/events/intel/bts.c     |  2 +-
+>  arch/x86/events/intel/core.c    |  2 +-
+>  arch/x86/events/intel/p4.c      |  2 +-
+>  drivers/perf/arm_spe_pmu.c      |  4 ++--
+>  include/linux/lsm_hook_defs.h   |  2 +-
+>  include/linux/perf_event.h      | 10 +++++-----
+>  include/linux/security.h        |  5 ++---
+>  kernel/events/core.c            | 14 +++++++-------
+>  kernel/trace/trace_event_perf.c |  4 ++--
+>  security/security.c             |  5 ++---
+>  security/selinux/hooks.c        |  2 +-
+>  11 files changed, 25 insertions(+), 27 deletions(-)
 
-That refers to commit 64a7ce76fb90 ("libfs: fix infinite directory reads
-for offset dir"), which showed up in 6.11 (and only backported to 6.10.7
-(which is long end-of-life).  Commit b9b588f22a0c ("libfs: Use
-d_children list to iterate simple_offset directories") is in 6.14-rc1
-and has been backported to 6.6.75, 6.12.12, and 6.13.1.
+Now that we have Ingo's Reviewed-by, I've gone ahead and merged
+patch 1/2 into lsm/dev, thanks everyone!
 
-I don't understand the interaction here, sorry.
-
-> The guideline that "regressions are more important than CVEs" is
-> interesting. I hadn't heard that before.
-
-CVEs should not be relevant for development given that we create 10-11
-of them a day.  Treat them like any other public bug list please.
-
-But again, I don't understand how reverting this commit relates to the
-CVE id you pointed at, what am I missing?
-
-> Still, it seems like we haven't had a chance to actually work on this
-> issue yet. It could be corrected by a simple fix. Reverting seems
-> premature to me.
-
-I'll let that be up to the vfs maintainers, but I'd push for reverting
-first to fix the regression and then taking the time to find the real
-change going forward to make our user's lives easier.  Especially as I
-don't know who is working on that "simple fix" :)
-
-thanks,
-
-greg k-h
+--
+paul-moore.com
 
