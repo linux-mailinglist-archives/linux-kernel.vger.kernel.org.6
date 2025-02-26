@@ -1,131 +1,143 @@
-Return-Path: <linux-kernel+bounces-532708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D28A4513D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:10:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57354A45140
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 01:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65D8A189C163
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CF33AF7A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598A923CE;
-	Wed, 26 Feb 2025 00:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2D4A1C;
+	Wed, 26 Feb 2025 00:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZRs1ohv"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9Nd/W3c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C31FAA;
-	Wed, 26 Feb 2025 00:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA45828EB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 00:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740528624; cv=none; b=oJpjthmOWnYfk5eCT5JCAYGvxZzTVG8bZ+XrWCJTCSS4sPuIbNUQwDtjfHa2ixtd40dGx63555cY53UCzq8piz55ilp2d4myU0HeLyaUHxqqOBBabdCyViAhT7HZl52qBb9rximM6BhIT6YH9h4+2Pu2/Lmunn7pl74P1v9opKQ=
+	t=1740528655; cv=none; b=mTB34UxN1Om8p/kjezPPSegZouq/mJTFA0aArm0HDIwDJcmL5J6Z1coNFBIrB8bYZWHNsC7HxG4cuAm7RKzM19mXvWMiJQeakGgZye8FdBfHbo//vIAriA+iSuB4LWRljJbKFVjTrfCSs2Ctb2TA05sA4qnVLxLOfD4gPXqY9CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740528624; c=relaxed/simple;
-	bh=4i8/0kq5jqG0L6DboHzLqAXfVAyzJEGZ5MIpsyYxeeo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tVmzmBHDmlLbdeUQd3qe5wCPxJmJCC6Iba6VQ//X80t1JORDTNUUE6e0dqTdWy45sxgdTuIt16sCzjn6lbed5Vc2eSCTDnBEEvNYV2qJ6ieKvTQSY9/lX0a/i1vb3YGXixvTwjYoNf6567qw8JddMLVg8zJudrfeZIvNUoiaGpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZRs1ohv; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220cd9959f6so15848825ad.1;
-        Tue, 25 Feb 2025 16:10:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740528623; x=1741133423; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uBY2nfE7KwlFz4xK8WDp9wc2SavbvwNmlQeXQVB17oU=;
-        b=lZRs1ohvzTw6kVpaPpjpMLSd0D6F2Ouxyeg03jf+8ijq++6YGMtLaJ6XY4IIXW6NLo
-         qVfsCazWWP0d+yzu4XVWDadEAVr+bENRmlEMce36pENSyFnOyRzqvVKRJevru4VnxtxF
-         2OzQPq4dgjVJuTQcvuU7uAskbm1AOe7od3cdtEAMDG2xg0hV/P7g2RnneoToep1HteKu
-         LD7LvdpEsZx5P/HrFSBg6ktj6reUoWS1PFPBnmKboLXNB4TDcyWUnic9ErxKCcx8RqIF
-         wGFxPDv7fc1uAZVOKUShHpViugcEerebVxIXl+vckwUp1bsWzKzpmpbIf8aJ41sG5NRK
-         RuLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740528623; x=1741133423;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uBY2nfE7KwlFz4xK8WDp9wc2SavbvwNmlQeXQVB17oU=;
-        b=K9pVWAji4DwVg8QB54sN0E6ubnJrWodUf88+1q1VdRBrqPwj/PhI1JwjGNTVDA102D
-         uAQxI3s+JlnjRiD3ikUyi6I5u6T/Zz38+mnFOTnv9XhhJta+OJQFU1byxdvUxFQ320uf
-         bG2Ceocwyq5t2qNX7M2GKISzzgVie9J4BCkb+X3Bvjos3fHBqEK2STRS49rgdieyIX4a
-         xYmlRR5gVisMFGpHEvdNsPC1gm9mqii5w2UmuXfPePsPNXnsN9LzufvaLKIUzS3u/U4N
-         kj+SbC2AyM23/fyW/hxJ/rM77MePE5CR6ITxg7qcClHCCN/eVeyuvH4O8cjLPIJwgafw
-         nVVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh7XurkTUoDhyghv4aboylb4eYRAGggi+QK6UEQOUKERbx2Xwv6HqZComkxgkEd+dYXbPwYKMZ@vger.kernel.org, AJvYcCVke9GJqz5N2iTBGe2hqU2qm5aw3UoBHALLJ66hSS/eKvYozSYV9GEZNtHpf23GZdvfo27+hrolQyFOxI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLnGPRy5QWc4ThPkCRDJUJ6OD8al/Sn1EPGImBfeM/XZUdxisU
-	6NA3bMSI2fzHT5XNN62/kX9VIj1vMVV9udQCtOPzFnHvpOh27SWE
-X-Gm-Gg: ASbGncsWs1QcUeLb+wFVZMAXZ7S8FvNHKWkBzo5l505LC0/3yBGrKNawxb9b+ksO228
-	dgOZ4ZLIhj2l7KSIyFnlHjt8QtxHNqCzyV5v6DisA8qncW8K0V8y69uLqUhKe+yoZp/kuoNJZH4
-	nHfMtMwysxoD0Z/mcdZc5oQ+2KnHzEQvc4mTKr0OGSSN6zuhS/EJSEDSLlk+FU8YcabXpMXdh90
-	eJ6ZtfnhbEllk7n3Qs9dSK2ZDlkRKvAigaDLHw5bB6veiVzjv/dRJStfJRWbEBclTjbUeUT19UM
-	losz2EryjCYH5HoVV1ArsNajaIZ5uddHiBKqYXd4Uoee
-X-Google-Smtp-Source: AGHT+IH3TRviZoVQATCal1hTW8eJ1YFBaKLXfG5od1V9ifxhdFIJk1JzinmmHdL7QXxBqj+hhTlDbQ==
-X-Received: by 2002:a17:903:1aee:b0:223:28a8:610b with SMTP id d9443c01a7336-22328a867c6mr1806235ad.14.1740528622703;
-        Tue, 25 Feb 2025 16:10:22 -0800 (PST)
-Received: from localhost.localdomain ([171.216.136.220])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223234b95e1sm2610165ad.33.2025.02.25.16.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 16:10:22 -0800 (PST)
-From: Qianyi Liu <liuqianyi125@gmail.com>
-To: markus.elfring@web.de
-Cc: airlied@gmail.com,
-	ckoenig.leichtzumerken@gmail.com,
-	dakr@kernel.org,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	liuqianyi125@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	matthew.brost@intel.com,
-	mripard@kernel.org,
-	phasta@kernel.org,
-	stable@vger.kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH V2] drm/sched: fix fence reference count leak
-Date: Wed, 26 Feb 2025 08:10:12 +0800
-Message-Id: <20250226001012.111886-1-liuqianyi125@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2fabe78f-a527-494f-8c3e-f2226ecbc43d@web.de>
-References: <2fabe78f-a527-494f-8c3e-f2226ecbc43d@web.de>
+	s=arc-20240116; t=1740528655; c=relaxed/simple;
+	bh=49SUBzThyd9e7y0nhqcoDUOOKWxbYBsP2XBvQGwPRys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hA8Ia+zkdRO5wmz3Rh3BMFGHqfttV6JelfSlUqa6zyehFl44uHMDTbcygjjFEZ6KXYVADFdSzE1XGlSWVucNkkvB5P2yO5Maxzss2Mvy9Zvo+9cCgkmWrUKnWBunHr47CmYKtykZmd5KwLKMG2jW6NycXhdcccPC45GuRuxfETM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9Nd/W3c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1FEC4CEDD;
+	Wed, 26 Feb 2025 00:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740528655;
+	bh=49SUBzThyd9e7y0nhqcoDUOOKWxbYBsP2XBvQGwPRys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G9Nd/W3cOBogxdlzH5W7R2i885MstlkyBA6wyh8ewYrp7QZVdEnI3tmffn9vUY59q
+	 NR1ul224yG9Qa2M25MgW46NuxFaLMU+LjAZH8LSzPRxfv+8ojJpHFJJqREpp2sKSbk
+	 IkpDI/KU+mtJ5EIH20eJC26M/fvom4a4vI5d4HFjvj2w4l2M2CjAHXqSEO4GuVm47T
+	 7JNtkY7CAlJkcGlcAqtr3Zu1J6Wdh4IsJUz/qak5ZagZ0UswA/G+oxihiYI7lp4wnn
+	 e8GK6DWfNj3Ohf13DMLC8Dq1+YsjHim8p+Q614mfk8nuC6ynY7Jl3af9pBhtSRcUxK
+	 0RRVej2Cefs3g==
+Date: Wed, 26 Feb 2025 00:10:50 +0000
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Luiz Capitulino <luizcap@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
+Message-ID: <20250226001047.GA24197@willie-the-truck>
+References: <20250225114638.2038006-1-ryan.roberts@arm.com>
+ <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHNO+iB4vNFz-4tR_9CPzv96hn+RW=eqyZXMGy_AySDpw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello Markus,
+On Tue, Feb 25, 2025 at 07:05:35PM +0100, Ard Biesheuvel wrote:
+> Apologies for the breakage, and thanks for the fix.
+> 
+> I have to admit that I was a bit overzealous here: there is no point
+> yet in using the sanitised value, given that we don't actually
+> override the PA range in the first place. This is something I've
+> prototyped for Android use, so that linear map randomization can be
+> force enabled on CPUs with a wide PArange, but right now, mainline
+> does not have that capability, and so I'd be inclined to just revert
+> the hunk that introduces the call to read_sanitised_ftr_reg() into
+> arm64_memblock_init(), especially given the fact that commit
+> 62cffa496aac was tagged for stable, and was already pulled into 6.13
+> and 6.12
+> 
+> In any case, it would be good if we could get a fix into Linus's tree asap
 
->…
->> fence callback add fails.
+Makes sense. So the patch below?
 
->                     failed?
+Will
 
+--->8
 
->> To fix this, we should decrement the reference count of prev when
->…
+From b76ddd40dd6fe350727a4b2ec50709fd919d8408 Mon Sep 17 00:00:00 2001
+From: Ryan Roberts <ryan.roberts@arm.com>
+Date: Tue, 25 Feb 2025 11:46:36 +0000
+Subject: [PATCH] arm64/mm: Fix Boot panic on Ampere Altra
 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc4#n94
+When the range of present physical memory is sufficiently small enough
+and the reserved address space for the linear map is sufficiently large
+enough, The linear map base address is randomized in
+arm64_memblock_init().
 
+Prior to commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and
+use it consistently"), we decided if the sizes were suitable with the
+help of the raw mmfr0.parange. But the commit changed this to use the
+sanitized version instead. But the function runs before the register has
+been sanitized so this returns 0, interpreted as a parange of 32 bits.
+Some fun wrapping occurs and the logic concludes that there is enough
+room to randomize the linear map base address, when really there isn't.
+So the top of the linear map ends up outside the reserved address space.
 
->> v2:
+Since the PA range cannot be overridden in the first place, restore the
+mmfr0 reading logic to its state prior to 62cffa496aac, where the raw
+register value is used.
 
-> Patch version descriptions may be specified behind the marker line.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc4#n763
+Reported-by: Luiz Capitulino <luizcap@redhat.com>
+Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+Closes: https://lore.kernel.org/all/a3d9acbe-07c2-43b6-9ba9-a7585f770e83@redhat.com/
+Fixes: 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and use it consistently")
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Link: https://lore.kernel.org/r/20250225114638.2038006-1-ryan.roberts@arm.com
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ arch/arm64/mm/init.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Thanks for your comments, I will update these in V3.
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9c0b8d9558fc..ccdef53872a0 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -279,12 +279,7 @@ void __init arm64_memblock_init(void)
+ 
+ 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+ 		extern u16 memstart_offset_seed;
+-
+-		/*
+-		 * Use the sanitised version of id_aa64mmfr0_el1 so that linear
+-		 * map randomization can be enabled by shrinking the IPA space.
+-		 */
+-		u64 mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
++		u64 mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
+ 		int parange = cpuid_feature_extract_unsigned_field(
+ 					mmfr0, ID_AA64MMFR0_EL1_PARANGE_SHIFT);
+ 		s64 range = linear_region_size -
+-- 
+2.48.1.658.g4767266eb4-goog
 
-> Regards,
-> Markus
-
-Best Regards
-Qianyi
 
