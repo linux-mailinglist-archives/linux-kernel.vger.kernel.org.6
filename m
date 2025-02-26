@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-533580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B8FA45C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE42A45C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D1E3AA2D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D433AB1AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C14327180E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876AA271815;
 	Wed, 26 Feb 2025 10:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1N1e2egg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oApiFxAz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1FLMiRwX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jepdv8iP"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF05F26FA70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287D326FD85;
 	Wed, 26 Feb 2025 10:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567267; cv=none; b=j3mQg87au2W8Nh8Knraq+ZbWP1WM4X4SyWXMzT6pw0Kq6ZEA8ZVPdInyTvfsRoLEB1Fq3lKASSz/YZQdcjDTRaNWKwncs+KqNA1P42gDbKseT3NpVgyAwH9OQRsUW+9ng+afbB7xk2qc46/HoHiKtr6HxCY23Y28vR5nRBKR9wM=
+	t=1740567267; cv=none; b=TG7XBW1LPLnRUtYsGJ6jbS1N9B/t4z8BB0fVRsFknRSDz3GYvyok617PwDdPhenXD73DA6YtZIl4Zkz832+3wHJlddhZbxWpKWsJo3FKQb1UiOb8eTduUd654Z05KFn6S9caihTiSt+nTYbpueL1Mo2scviPUhQjnD43aR0jh8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740567267; c=relaxed/simple;
-	bh=1Q2t2ckichc1zaHULoouzCbay22qXmd4zDkK7lVs2TM=;
+	bh=UROiS+W0ZalnNDQVlDk6gaX0lUdaLd/4dAR1/K8/rt0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dzZmX2deWbo5el3iWfoER7LPZ0ySgX6Z5Nt3UaWsjs7fcADckS8LHcVHcddghjbmuyR7fff7Na5I9m6joKpNKEiDkIuaM0yZTGVmfSiUVIfY1f4JZW8xH3NyGL3cy8r/LFocd470h/HtWgrmgv/ZiDJ4Q3eoQJPXgp3uRlBStNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1N1e2egg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oApiFxAz; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=lZVCegOU9j6AtyZjEP54TlHTNpM+gYwfbKW4ikDnJexRpQys//djg5IgWPTnfKkjSpHyrmgSoXjUVVZpqxlngyEoQbGpJ+WCIqO0tehaEd1quPZmxpP/M0GbVl38z1AkTTO7pZ26YMtE1itjv+VwIUCoce5ZXrdq2cRukUCmonw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1FLMiRwX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jepdv8iP; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 26 Feb 2025 10:54:22 -0000
+Date: Wed, 26 Feb 2025 10:54:23 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1740567263;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xvHaR9tznwMQP9OOIDgTPyPnOn0Hoj7Y6w3MVd4252c=;
-	b=1N1e2eggB1FnzdotnGqnUMJFkhEonuxIUJY2sHggpG+jOtR0DgWwBdz9bfK+no6RNpXon0
-	C1IjIJi3WwGvrHMje+S9lXly151AdbpnL8xXU4Ywhes3TQTIF8hQPtJu7u7L8j0vvVpVla
-	hCp+Iejn9PmMXfcz4u7eM635k7uQe42+O7pQwwQdRVh4jBQyN+IQXJZLMPynI08/FGJwed
-	BguPh00MwhQV1B4OKq7xe08bgDnW4wQ4BkDeP3OcKUCCk42+R7RrWBp7KcTwTEKSs4gH95
-	2KIsS+Fg8Hfqe73X0BTyV/wknVjM0sPXuNVK76LiCnw3SL7cN4Vrsznvhe/+yw==
+	bh=5PgpXSae7O1VWFna0jYT6apG/3Hm/MaP/RddLIoQowM=;
+	b=1FLMiRwXVPVIzSk13HjIlWHpkCAVTragpX7TISANO/BrYKLCCXi6QpxAs9orseJDjYk+GJ
+	/ILvouM87vW3oH51vacWZCjYarRTu0REnFS27aLRJUMoR1DmzIjAEx/jZp8Apm5to5FnP4
+	XHF5BiDu3cnUpo1MC9kazi4HND2a+Ba3z9ImBikw8c7eeNoL7hltmSV5YvggrvaIB8F0Aa
+	b31Vle9B1aMhFLIETAat6oLjaHMA6724X2c+HqZgdo8lrDQHAzulDfSpBbznaiv9tOl21p
+	IMwDmSBFPsuGyPsNg4UzXIvoWOiuO8u9uCrfBVPNw6eyDSkZjaTeMTbxYYNiUQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1740567263;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,25 +52,25 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xvHaR9tznwMQP9OOIDgTPyPnOn0Hoj7Y6w3MVd4252c=;
-	b=oApiFxAzSPe8vEMSqvrVETIQar4q7WmZcSs8eApeUYaMtTN6wQpffOG3liUpGWlH5mCC97
-	WrzerRXej5YjpQAQ==
+	bh=5PgpXSae7O1VWFna0jYT6apG/3Hm/MaP/RddLIoQowM=;
+	b=jepdv8iPm6eC0jWTzYY/G8zST38TqTPqrCJYnkCk9MXFnLQZKlSzvXylAPyuDPLXXAcyJX
+	o1NlHfXz/YmW2cCQ==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/ibt: Add exact_endbr() helper
+Subject: [tip: x86/core] x86/cfi: Add warn option
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Kees Cook <kees@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250224124200.059556588@infradead.org>
-References: <20250224124200.059556588@infradead.org>
+In-Reply-To: <20250224124159.924496481@infradead.org>
+References: <20250224124159.924496481@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174056726271.10177.1691643759974399191.tip-bot2@tip-bot2>
+Message-ID: <174056726322.10177.14430365702785340054.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,58 +80,74 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     1d60b295042d20f312de17d74076a74a0d13a32d
-Gitweb:        https://git.kernel.org/tip/1d60b295042d20f312de17d74076a74a0d13a32d
+Commit-ID:     f003da5d29a179bd1beb4ef87ac93a3ca6ddf734
+Gitweb:        https://git.kernel.org/tip/f003da5d29a179bd1beb4ef87ac93a3ca6ddf734
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 24 Feb 2025 13:37:05 +01:00
+AuthorDate:    Mon, 24 Feb 2025 13:37:04 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Wed, 26 Feb 2025 11:41:53 +01:00
 
-x86/ibt: Add exact_endbr() helper
+x86/cfi: Add warn option
 
-For when we want to exactly match ENDBR, and not everything that we
-can scribble it with.
+Rebuilding with CFI_PERMISSIVE toggled is such a pain, esp. since
+clang is so slow.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Kees Cook <kees@kernel.org>
-Link: https://lore.kernel.org/r/20250224124200.059556588@infradead.org
+Link: https://lore.kernel.org/r/20250224124159.924496481@infradead.org
 ---
- arch/x86/kernel/alternative.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/x86/kernel/alternative.c | 3 +++
+ include/linux/cfi.h           | 2 ++
+ kernel/cfi.c                  | 4 +++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 1142ebd..1cc0e4d 100644
+index 247ee5f..1142ebd 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -863,6 +863,17 @@ Efault:
- 	return false;
- }
+@@ -1022,6 +1022,9 @@ static __init int cfi_parse_cmdline(char *str)
+ 			cfi_mode = CFI_FINEIBT;
+ 		} else if (!strcmp(str, "norand")) {
+ 			cfi_rand = false;
++		} else if (!strcmp(str, "warn")) {
++			pr_alert("CFI mismatch non-fatal!\n");
++			cfi_warn = true;
+ 		} else {
+ 			pr_err("Ignoring unknown cfi option (%s).", str);
+ 		}
+diff --git a/include/linux/cfi.h b/include/linux/cfi.h
+index f0df518..1db17ec 100644
+--- a/include/linux/cfi.h
++++ b/include/linux/cfi.h
+@@ -11,6 +11,8 @@
+ #include <linux/module.h>
+ #include <asm/cfi.h>
  
-+static __noendbr bool exact_endbr(u32 *val)
-+{
-+	u32 endbr;
++extern bool cfi_warn;
 +
-+	__get_kernel_nofault(&endbr, val, u32, Efault);
-+	return endbr == gen_endbr();
-+
-+Efault:
-+	return false;
-+}
-+
- static void poison_cfi(void *addr);
- 
- static void __init_or_module poison_endbr(void *addr)
-@@ -1426,10 +1437,9 @@ static void poison_cfi(void *addr)
- bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
+ #ifndef cfi_get_offset
+ static inline int cfi_get_offset(void)
  {
- 	unsigned long addr = regs->ip - fineibt_preamble_ud2;
--	u32 endbr, hash;
-+	u32 hash;
+diff --git a/kernel/cfi.c b/kernel/cfi.c
+index 08caad7..19be796 100644
+--- a/kernel/cfi.c
++++ b/kernel/cfi.c
+@@ -7,6 +7,8 @@
  
--	__get_kernel_nofault(&endbr, addr, u32, Efault);
--	if (endbr != gen_endbr())
-+	if (!exact_endbr((void *)addr))
- 		return false;
+ #include <linux/cfi.h>
  
- 	*target = addr + fineibt_preamble_size;
++bool cfi_warn __ro_after_init = IS_ENABLED(CONFIG_CFI_PERMISSIVE);
++
+ enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
+ 				      unsigned long *target, u32 type)
+ {
+@@ -17,7 +19,7 @@ enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
+ 		pr_err("CFI failure at %pS (no target information)\n",
+ 		       (void *)addr);
+ 
+-	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE)) {
++	if (cfi_warn) {
+ 		__warn(NULL, 0, (void *)addr, 0, regs, NULL);
+ 		return BUG_TRAP_TYPE_WARN;
+ 	}
 
