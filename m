@@ -1,233 +1,338 @@
-Return-Path: <linux-kernel+bounces-534870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CD3A46C12
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:10:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363F9A46C1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFACC1889013
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B76F16D890
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B599F27560B;
-	Wed, 26 Feb 2025 20:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA2D27560B;
+	Wed, 26 Feb 2025 20:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WSOgHRdG";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="ttIj/9tj"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.80])
+	dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b="X/F+j/P5"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2120.outbound.protection.outlook.com [40.107.220.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4C22755E8;
-	Wed, 26 Feb 2025 20:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17A02755E5;
+	Wed, 26 Feb 2025 20:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.120
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740600600; cv=pass; b=F//DStEYhsh5lA4MH2Et2E7T9t911MYFRL1WWizk+IffW4VDY+BGiUUBpG6A9baQdatmGpUVDjOIW554kKmYHHVhp1wxSTXMFlLAXyhOwilD2J/0RnaK555XCcx5kEZ8pr+iE8anIgH9PwwK3YKcVviGqvbB8ah0RknICvyDPQY=
+	t=1740600818; cv=fail; b=HZlsYlhhVz+5dtD4PnDwPH08nyuiw3LLotxGKL0N16yDz6RkJQkYodwPGjDMPac+AxuzqhNPnSzaH0TaSkXfir+iXbUg84+JJ+SHYLcLwASxaueFj5Ih/oV2RqOcPolObzLzq91CZsxWGJgQgb+kPrwAe/nA295LE8xiGCOePrY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740600600; c=relaxed/simple;
-	bh=mLir7XwBspBdDwsD/s9G81odxFhscf7wYuOasgJF8Ww=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mWnpbSu3cDKyX0aoQEydJTEfLntD/CWxaVWrH8SRmnmyxjG0vzfDOxhbfkeQQGQLsJaZNvBEC7ntKevqj6Swx/lLEhE50Cv4jLJp43IpVxmqSRstySdPevZE/nTUPT2ueBaNMKQ/CCQEgPWDvs90RXXOoYNIH6Yxs8rgYhBNeSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=WSOgHRdG; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=ttIj/9tj; arc=pass smtp.client-ip=85.215.255.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740600591; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Q/DeuSUgJPhpiuo/9S77eV8SkZQoVeHMUj3y3LpLMRsztr6vYWuCRVSTLdnH/a8yA3
-    6nRF3EOg2pQmlD4P4X//6QztLwzJH9B7+/bdwJza+8nToUvuvsVi6r7+cM9fUzK4WU1g
-    GlM76kbay0ocSsBZRkCTNX0GdC7F2OScvuh8Va60N6KFImNmszrsIvNfkBz0tlvhe57u
-    IMhIml1vuX7yU6cx8Fk6M4yKukZJdOjciNGQkwZyAyqqddKW2DHn3XECJrC27Ogk0zCs
-    EwsBluzH0sdi3T/ehPAZPASqexc3NMFop4KdWLsJEJ1zeAAkkreApAq1Ncfk/TqqDReM
-    BXwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740600591;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=mLir7XwBspBdDwsD/s9G81odxFhscf7wYuOasgJF8Ww=;
-    b=hqLQbvM2WvUmuYVnrZ/ofqYJ1Ftf0arUeOV46U0p2+WtL6U0S2CtvCTqctwdz3rJpJ
-    aVyfSYi8fAoH59KX18Bg/Q0slNbsO4l2vtTSMd8YcNcBAIsLCb4BDEUclLFT1JIh1MLG
-    Iyid5xog3gdsPzOIVU71569hwYmTz+jBZrDAfRe0gcdikrhJFhdgewyfFqcITGwJRanR
-    7taeMkHVnsyTT9XYOF7xcqxbsHXxXcG4edcG3lxI2y9LX5nnzH0bmquxThB6fOAmd7RY
-    UWs9c/WHkwF8nGU91+WhnCgNlrx0rVnyU2VGm+VjTxUlTGx3KjvIF80nICwAKs5cjLnZ
-    Ddvg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740600591;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=mLir7XwBspBdDwsD/s9G81odxFhscf7wYuOasgJF8Ww=;
-    b=WSOgHRdGNOi8frT1q0qgQWxOcYzSNdl1disTsr1Gyl1FmDVwxCLYm9nUKNERUgcbde
-    GoXDQVaBNZb/CB5jm1wTcpBoIYiOsHgPUSDITqGQqrpWa7aZEvaMZoEEG8NAZMv0imF/
-    t76U6PpHJSIe25e7FPdc0xTlQkqI5ckQCS5ljCOqDNAA8eMtjL6ThtYZ5X53z0wZkrZV
-    GUnSKoLxOGESqAdjq5mdXkYSD3Z64PT2lj9zdHSMoBgCTpDhVmK3doE7YT4f+pAHzGsr
-    yLyPAjwCyU1YZHujPk9zvd0V4uSgDXXVXDhzNconm49whFLq+WYTnasSvH0xgBVbU3Me
-    gnVA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740600591;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=mLir7XwBspBdDwsD/s9G81odxFhscf7wYuOasgJF8Ww=;
-    b=ttIj/9tj3DTWbUc5eJsYVZ9MN7QEl5igNYyqQL+pGl0Ok+NoF0mGgG6o0B9kBrlFhd
-    DuuedRbacP2F4vIBXxBA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeD0Z"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.23 DYNA|AUTH)
-    with ESMTPSA id Qe5b2211QK9oiOH
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Wed, 26 Feb 2025 21:09:50 +0100 (CET)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740600818; c=relaxed/simple;
+	bh=TF4TzYXNw2Oi38vSU0OTyMYl18fy3bDaa6Vxd/ozT6A=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=iJ7lGsssZx5k/EKbdd1MPT+8uh8OPtcTNyWaL5nEpV3ukhJCW69yb1HadqGmL29FrrNjkQIGEfq5GldazhNtFlL1I/yeU5ZyX8wLYxJEJ50ay0uihL6g208OUNtZxyoc8uwTfs0xrbap7GBV/4MqTToWB4zE8pTyxdYywECx2Do=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com; spf=pass smtp.mailfrom=d3embedded.com; dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b=X/F+j/P5; arc=fail smtp.client-ip=40.107.220.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d3embedded.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VZLR1Vdkdmm+8ZVZw3SZurQ7hDZzO8Io1fWF01S2tnk/jCO/mybl+e6UrPOMB70r+y03Xv7Tj99gA284qmJCw0CPSBAcd2mmQn/Vp5SHh2AlHmu9pAO5LIlWd3Lu7W/P5HQZke02AeJm6xnbZh3pPg+ZQzpWI2Ha0rKjuVocPHjBe5WgQCDxdbzMZSBlOuBtOJhxTj5ya45o9p01OQbsUYQahU35q3rGtKehiiA9enBsPn2dT/VwWRBqsJLEzOV4BNYGANL40AS4p7+/wlkbHtKuuuRyIEsAi+VlsNnj503J0xf0nBxPmgNO5Qox34dBKBbIZdv1pF5Y/OEVB9DnOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HC3RNv0zRkL8JB3B9YbRuq05r11k79SCIrwFmV7QaRo=;
+ b=Mnwsi+s4xDw/1TIfNTCoX8IVTSz0oad4yAK+R7OUOslBbEF+Bk02hz0gIT/1l3ZX1DU2upXXfvkbsuNuIBB18EXrGCZS1Sz46HuDdZk17YeM+vKezIDVxfctjCMEBWfL219GhgqlHEYAi8ciyhBpok4vJ7/QLKTdtJRbDdzcoNaD0+Hh9jp3K0g2eH08iXeawSO+EcBQ6r5X4hpdm4cOzfAKUvoGrfET3ucEoKvFDbj9AtY7JbSFyRdTLdhUJ3X7g2ML9qGx4ncDjr3YDhXr3WK5d3fEGrgxPVPXqtkXXY57gLIaIQlNz4wH83rJ8tM5jGs27BkzzTvWZFlMGCQ/dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=d3embedded.com; dmarc=pass action=none
+ header.from=d3embedded.com; dkim=pass header.d=d3embedded.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=d3engineering.onmicrosoft.com; s=selector2-d3engineering-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HC3RNv0zRkL8JB3B9YbRuq05r11k79SCIrwFmV7QaRo=;
+ b=X/F+j/P5oGkvb/36zIN3mTW09SAWASFVE72V+4LA3VfkZ9Vryv5TMMjrw5M5Zjf4fUIyTBGl0FBWxbrOYL8TyNaZ66K9bRcaB+6meUiY9ccWmj4Wfhgy5tI+iPt2w0NytlSWCeqUBsjSN5+QgtyCZw+4vEx30/jBT38UYJ2p8Oo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=d3embedded.com;
+Received: from MN2PR14MB4207.namprd14.prod.outlook.com (2603:10b6:208:1d6::13)
+ by CY5PR14MB5559.namprd14.prod.outlook.com (2603:10b6:930:39::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Wed, 26 Feb
+ 2025 20:13:29 +0000
+Received: from MN2PR14MB4207.namprd14.prod.outlook.com
+ ([fe80::1232:fdf5:3cae:d9d7]) by MN2PR14MB4207.namprd14.prod.outlook.com
+ ([fe80::1232:fdf5:3cae:d9d7%3]) with mapi id 15.20.8466.020; Wed, 26 Feb 2025
+ 20:13:29 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Feb 2025 15:13:27 -0500
+Message-Id: <D82NHO05EBSQ.3AZF1VYBU17V5@d3embedded.com>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-media@vger.kernel.org>
+Cc: =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ "Abel Vesa" <abel.vesa@linaro.org>, "Achath Vaishnav" <vaishnav.a@ti.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Benjamin Mugnier"
+ <benjamin.mugnier@foss.st.com>, "Biju Das" <biju.das.jz@bp.renesas.com>,
+ "Bjorn Andersson" <quic_bjorande@quicinc.com>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>, "Elinor Montmasson"
+ <elinor.montmasson@savoirfairelinux.com>, "Fabio Estevam"
+ <festevam@gmail.com>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "Hans
+ Verkuil" <hverkuil@xs4all.nl>, "Javier Carrasco"
+ <javier.carrasco@wolfvision.net>, "Jianzhong Xu" <xuj@ti.com>, "Julien
+ Massot" <julien.massot@collabora.com>, "Kieran Bingham"
+ <kieran.bingham@ideasonboard.com>, "Kory Maincent"
+ <kory.maincent@bootlin.com>, "Laurent Pinchart"
+ <laurent.pinchart@ideasonboard.com>, "Mauro Carvalho Chehab"
+ <mchehab@kernel.org>, "Mikhail Rudenko" <mike.rudenko@gmail.com>, "Nishanth
+ Menon" <nm@ti.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Rob
+ Herring" <robh@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Stuart Burtner" <sburtner@d3embedded.com>, "Tero Kristo"
+ <kristo@kernel.org>, "Thakkar Devarsh" <devarsht@ti.com>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Umang Jain"
+ <umang.jain@ideasonboard.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ "Will Deacon" <will@kernel.org>, "Zhi Mao" <zhi.mao@mediatek.com>
+Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
+From: "Sebastian LaVine" <slavine@d3embedded.com>
+X-Mailer: aerc 0.20.1
+References: <20250212195656.69528-1-slavine@d3embedded.com>
+ <20250212195656.69528-3-slavine@d3embedded.com>
+ <416d75fd-40d0-45d7-9590-0322abb480ca@linaro.org>
+In-Reply-To: <416d75fd-40d0-45d7-9590-0322abb480ca@linaro.org>
+X-ClientProxiedBy: BLAPR03CA0072.namprd03.prod.outlook.com
+ (2603:10b6:208:329::17) To MN2PR14MB4207.namprd14.prod.outlook.com
+ (2603:10b6:208:1d6::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH 2/4] pinctrl: ingenic: add x1600 support
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <1D2A7741-EFC1-4144-B2E8-C5707BBF9A93@goldelico.com>
-Date: Wed, 26 Feb 2025 21:09:39 +0100
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Andreas Kemnade <andreas@kemnade.info>,
- Tim Bysun <tim.bysun@ingenic.com>,
- linux-gpio@vger.kernel.org,
- devicetree <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-mips@vger.kernel.org,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C4FCA3DA-67C9-4553-8506-4EC5AC81E3D0@goldelico.com>
-References: <cover.1740590093.git.hns@goldelico.com>
- <f633a14ccafc596e4611a1fae3e1c958ddfac2dc.1740590093.git.hns@goldelico.com>
- <627ed9f29819e42e8efa449d87eb2ddbc6acb8a1.camel@crapouillou.net>
- <1D2A7741-EFC1-4144-B2E8-C5707BBF9A93@goldelico.com>
-To: Paul Cercueil <paul@crapouillou.net>,
- Paul Boddie <paul@boddie.org.uk>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR14MB4207:EE_|CY5PR14MB5559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55f0034d-d6ed-4885-5abf-08dd56a2091b
+X-LD-Processed: b7153db5-3376-478b-b601-92ce9bc0d3bc,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?akNoTWVrbEJkbk9DWUNvamtaWnJjb2loOURCTC9Ia0tWdHljSlU1eXFHQ0d3?=
+ =?utf-8?B?cWZtRGt3SDV5K2tHd0NoS0I4bFNyYjV1aDZxWUZtdTVPWUVtcGpoZmFxdUxG?=
+ =?utf-8?B?bXZZREhyMjJ1T0xtZ2hSMG5iZVdIZDY3cEVFK2RvWXZhUldOSEpYZDdKY1hI?=
+ =?utf-8?B?NWltWk0xeUFDNHpIei9LeFkybG5TSTZTMDdEQlFuZWptVi8xcnBGb3oxVDZP?=
+ =?utf-8?B?Z0MrQURqQ0xGTFhnSFJXMUdqWmhOdTRORU1iTWFOaDlPcmNMb1FvaTcxR1JS?=
+ =?utf-8?B?YUhuc1ZPai9qcndzMGxZNXp3bS9XVUViUnZ0ZXQ3N2EwQkplOWNCSjVPSnBk?=
+ =?utf-8?B?WlFpNVFmTmJ4dzFMdDZNSEtWVytZNnNReEdJaE5kUWVDeG5WNXhQdVE0TXNz?=
+ =?utf-8?B?YkMvaU5XeWI2Nm1HbzBqdkdyeDRrZDdIRXpaRjNMajgwNnhHMGsxSmxOblFo?=
+ =?utf-8?B?YUpTb0pCdG1sZU9pbFl2cVJYUUliUUxhNlhqZiszT1NEY2FTK2dLTVJWdE5E?=
+ =?utf-8?B?MlUxb2wrdDQrRXcwdVErMXlPWHBVSzJPbTU3Z1p4bWJlZjVkM1daN1pEei9N?=
+ =?utf-8?B?dTJ3SVdsZi9heDFUQkRIK0p3V2U4TTlDeFdENnVLQW05ck91L0Z0Vy9xZnQr?=
+ =?utf-8?B?VlRBenFqOVkxeUt3a3RtQUdTWCt4TmtwMlNydkpYQWRRU3ZjNlBUSys3V1Y3?=
+ =?utf-8?B?eDFoaWVqb21WL2U0L0VtWjN5c1l2UVZsTUtqNmhqbWwxenRRZlE4a1NDRGJV?=
+ =?utf-8?B?RVJpdUs1ZkU1TEhRVkFrdHFCOUh3NkJ2cDc2d3Rkd0o0dHg2OGNGdWt5MnhS?=
+ =?utf-8?B?UUtGaXN5VU5kNFk4eE8zSVNLem4xdXRscloxQzZrZHhmN1JjSURUSUtCMno0?=
+ =?utf-8?B?SnY3MHBmVEN4ZUdjMHdsSk1PdEYvcDluRUU2RU1CNUpPTHVtOGh5K3Rld0Y3?=
+ =?utf-8?B?ZWVkTmQ0bTA0V2hQMURXQTdydDlaL3FuUHIzcU1uVUpVU2QwSzhwUmVDcFVN?=
+ =?utf-8?B?RTlLaHNwSmZ2OGVSdWYzN3Q0bkk1Mm1QZEhTaTM1QVZqQjJleDZtL1pxd3dL?=
+ =?utf-8?B?b0tTaXdXU21YYVFKMFFTeWVxVUgyK3VTUG5YQXNwQ1lTdDBSZXdMSkpaanhq?=
+ =?utf-8?B?ZjZiS3lUc0JVa3FSbld0L1h3SWRsNHJjUUQzOW42amVOM3VVVlE0aVdYbG51?=
+ =?utf-8?B?VWl2SElMd0JPSFhvQ0pvcFU5SVl1L1JzdUJjV05pNmZjWWdWZkZPYmZDRG1w?=
+ =?utf-8?B?eG9sdGl0L2IrbWRwZFF1WXpiK3IwTGZnQ0FQUmc2Z2dWOTM5clNBYUE5enpW?=
+ =?utf-8?B?U21EMXZMMjNTdUplZmkzTlVLQ3BJMXBqd0ptZ1FTSDNhRWpSSTJXMVFqUHA3?=
+ =?utf-8?B?UGMvVS9RVXFXWUNUMWhpVnBDc2ZoYWIvdWFEeFRHZ1RyTjZqNUpJZDI4QnNu?=
+ =?utf-8?B?N3MvT1Flblc4Um15SnM2L2UvTEVRWDZIbnY3Z0d3V3dBOWVqUnRSc3oxRU10?=
+ =?utf-8?B?L1phOHN1eFd0MzZEVW5xdElGWjliRkxZWlRjV1N1MzZhSy9FYmVmTGJ2dXVH?=
+ =?utf-8?B?aytjRXY0MnFNMDZaakxxaDl3K0ZKT3NGS1hocFdyRVg1VDBaMGJyckZnZVpk?=
+ =?utf-8?B?OWxQdWZFKy9zQnAzbHNoaU9VRk8vdVV0WkZKTGMyNUFlYUczbWhXRU1jTGFw?=
+ =?utf-8?B?MWxncndiZjEzdTdYODFRQk1pS3lXZ3lKWDJ5emhGay9qeHVWTDhQb0NUVnBG?=
+ =?utf-8?B?M3R2Um1NZEwrOEg4S0xJS093a3RNeDF6MHJzNWxIeUVIc3VNT0wxaC9yeDIr?=
+ =?utf-8?B?SWd1RkpJTEppVlVzZkI2SjExSHFWQlNGcHhSaWV1eUl3OG1PUGd2ajF3ZFZn?=
+ =?utf-8?Q?ihzTW0wV6UpEs?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR14MB4207.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TFh4cldJcGdGVmQxZWlobmk3bXhzd1RFT0dWRnk5clF2dlVQejBST0dGUUg0?=
+ =?utf-8?B?VnpiL0FaZHo4Y0NMY2VIVWdhcnRoWWpESTRRRG9EeklaTnNvckJsbXU0anF0?=
+ =?utf-8?B?aHJ1ZWVmY0laWEIrOW9VRWt6OGNaMGZxclNIQmdLN29ZS2FhVmVZTTlPaWZN?=
+ =?utf-8?B?NVpSZ0hwK0w2Zkp1cWhPOHRaQ0hKdk9wSkJ2M3pwWnIySVo0TVRob2EwdGZQ?=
+ =?utf-8?B?RjdvTTI2OHhQYkF0YTdMRU9IdksyQWlFaEZzRmNkK2RlOHA1SG14SkZpM2JM?=
+ =?utf-8?B?cVF6WWRqMFBZSTVCbmVXV0grTVRpVU14N25EbWFTR1JEUyt1WHFqNTlTK0dF?=
+ =?utf-8?B?V2VUcHRLcXAzc2w2Q0o3ZkcwRTNuSnRlRzJadFBYeWVUT2lNVVJMUGxnSXhN?=
+ =?utf-8?B?QkFYdGdUcHN2eG5xY2hQamJrUzVXQ0pEcWJPYWU3alRUQ0lmUW91c3ZwTG9V?=
+ =?utf-8?B?aHVVMmd6ZUtVNFVDY1I0NGp2YTdIcFZVYlNlVHFrZER1cGNITFFTRHVIUEhD?=
+ =?utf-8?B?SmZuOGFKWDZzK1ErMnVQRG9XUzBXVHh4dnU0ZE9sNXVqbFV3bjFGUmN3bFlG?=
+ =?utf-8?B?clRiNSt0MU5walppSTdCVGpCVzRnMmMzRU83WG9EVFJKWXBJTkpXaVYvU3Vr?=
+ =?utf-8?B?d3F1RnhaZml1OXhiNFpxdU1yREErSjQ5cDdiRjZLbEF1cXJ2NGpNdjdJUHBj?=
+ =?utf-8?B?bk5yanJDUjlQeHJIaDQ0eUpMYkF6dWltM2tpeWp6eFJEVXZhSkVKQnVlbmpI?=
+ =?utf-8?B?V0lCdk5mQVRJMm5qUXlBN2FaOGdrdzRpV0JLSS8zMjlMcmNaU1ZBblYyYUJE?=
+ =?utf-8?B?NDQ3YlA1T3lvWjRRQmlnL2tHK2hQblFOSlhoTlV6UnM4emJsRnM1RGdtSEZY?=
+ =?utf-8?B?TERDSm1kWUZSelhzN01wcW5mVVJCaEVOTzJYaWZuOFFNaUJFODNqUTFwK0VG?=
+ =?utf-8?B?RnhRSitETXJkMlE1SmxVWG83dFJrREVSVTFEMUliVksxMW1EZUQrdVFPcElG?=
+ =?utf-8?B?SHJyK3kxNmZMcVAvcGJzbXdHcEh3a2FBMzNWbzhteTFZMnVTSWtEZ3crS0lx?=
+ =?utf-8?B?SlMxbUpqazdjelU2NkY1UXVTSW1MQXpZR1hNNFM0TFRXQ2VlZjdsaFdpcjc1?=
+ =?utf-8?B?cUViYUYxcDBaLysxblVDSitTNmppa2dCMHRRdVVPbjFlVkJMcllRRE9zU2VX?=
+ =?utf-8?B?MEtOc3lrMjdqN2g0MEtZZTZUbDUrOC9pTjdMU0c4eXpRb2tXbm5zc3Q2V2ND?=
+ =?utf-8?B?eUpUNXM0V2tnZlYzM2R6ajF2RENJK0dMZWRmRDMxZjFOZnNiNDdDN1grTzFC?=
+ =?utf-8?B?K0lmVFJaUWR6Z2d4T2JucS9XR3U4ZzVabS8rNXVYa3pKNjhNcWRxT2tnUU05?=
+ =?utf-8?B?R093MEdpYkR4NGNNQzMyN3E0L0d3MjlHT0JFN1Fualc3dWd4UG84K3ZsRkox?=
+ =?utf-8?B?NXY2SlRQSk1LcERGSy9SM1FsMk0vd0h0VDBJVEhXL2c1T3g1Q2lLaXk2MHBu?=
+ =?utf-8?B?MGRxYjVOVWxPcWFCQ25PaExJS3N0bjloU0wrS0YyVFJFelZLY1dJUkp1eW0v?=
+ =?utf-8?B?OWYwRXkvTGdIYk9yNGNrRWdZQzFRc0U4ZnowUU5acmZpUjJrKzJtTlpBRGt2?=
+ =?utf-8?B?am0vQ0duQTlxQ254YXRtNUIvUXlsN1F6cG15SG55OE9KWXhONDhqZkRYUEEz?=
+ =?utf-8?B?Sng5alJpMzFXVnJZUzQrTHZpWlBHdmFyQmF3YWxlZnBlMlNaUGFDUU96TjBo?=
+ =?utf-8?B?c0tzWmJsWFJuQ2FoTDhUb0ZheXVCRkI4SnV1UFUwbFI3VEJCUXBnTHFWMTBV?=
+ =?utf-8?B?dTdYVk9oRWk0YmcxZkp3ZVNvZHNoa0hEM1d5dFZWbTVodC8yTzQwL3pGWGlH?=
+ =?utf-8?B?akI1MCtrTlAvdEtrdTBoOVI1SFZCa2Z5dVBQUzJ4Q3Y0WTVwMVk5Um1KeTQw?=
+ =?utf-8?B?SVh5T3k5VXJKdjd4V216VXpTc2g5Mk96SkRRWUNUY25BQXJYeUVIMTVFM2o2?=
+ =?utf-8?B?RDVFK1FSSW42RGlRQmc4OG91L3hsdHplS2NVUFpjSWRSS2p4ZnA3bWhkREFE?=
+ =?utf-8?B?enNpcXpCNkxiY0x3dVdDTlFKZk1kUU4ydEQ3em44RnJYaGZNclNJUy9iT290?=
+ =?utf-8?Q?0bqK3Q6YYq4xX0GYU7W8gFsfS?=
+X-OriginatorOrg: d3embedded.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55f0034d-d6ed-4885-5abf-08dd56a2091b
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR14MB4207.namprd14.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 20:13:29.5865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b7153db5-3376-478b-b601-92ce9bc0d3bc
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1SPJPZApB+Oo8X5Wi/AUe1L0E3QeWQWZgorW0Gw6ruczafyA3G0kbHL2gvDUBTcp7bcgSn4ggxUWAOzsT3Do9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR14MB5559
 
-Hi all,
+On Wed Feb 12, 2025 at 3:11 PM EST, Krzysztof Kozlowski wrote:
+> On 12/02/2025 20:56, Sebastian LaVine wrote:
+>>
+>> ...
+>>
+>> +static int imx728_reset(struct imx728 *imx728)
+>> +{
+>> +
+>> +       int ret =3D 0;
+>> +
+>> +       // Prefer hardware reset if available.
+>> +       if (!IS_ERR_OR_NULL(imx728->reset_gpio)) {
+>
+> Here can be ERR (although why?) but...
+>
+>> +               gpiod_set_value_cansleep(imx728->reset_gpio, 1);
+>>
+>> ...
+>>
+>> +static int imx728_power_off(struct imx728 *imx728)
+>> +{
+>> +
+>> +       if (imx728->reset_gpio) {
+>
+> Here cannot.
+>
+>> +               gpiod_set_value_cansleep(imx728->reset_gpio, 1);
+>> +
+>> +               usleep_range(1, 10);
+>> +       }
+>> +       clk_disable_unprepare(imx728->clk);
+>> +       return 0;
+>> +}
+>> +
+>>
+>> ...
+>>
+>> +static int imx728_probe(struct i2c_client *client)
+>> +{
+>> +       struct imx728 *imx728;
+>> +       struct v4l2_subdev *sd;
+>> +       struct v4l2_ctrl_handler *ctrl_hdr;
+>> +       int ret;
+>> +
+>> +       imx728 =3D devm_kzalloc(&client->dev, sizeof(*imx728), GFP_KERNE=
+L);
+>> +       if (!imx728)
+>> +               return -ENOMEM;
+>> +
+>> +       imx728->dev =3D &client->dev;
+>> +
+>> +       imx728->regmap =3D devm_cci_regmap_init_i2c(client, 16);
+>> +       if (IS_ERR(imx728->regmap))
+>> +               return PTR_ERR(imx728->regmap);
+>> +
+>> +       imx728->reset_gpio =3D devm_gpiod_get_optional(imx728->dev,
+>> +                                            "reset", GPIOD_OUT_LOW);
+>> +       if (IS_ERR(imx728->reset_gpio))
+>> +               return PTR_ERR(imx728->reset_gpio);
+>
+> So can it be ERR after that point? Looks like not.
+>
 
-> Am 26.02.2025 um 20:42 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
->=20
-> Hi Paul,
->=20
->> Am 26.02.2025 um 19:43 schrieb Paul Cercueil <paul@crapouillou.net>:
->>=20
->> Hi Nikolaus, and everyone involved,
->>=20
->> Le mercredi 26 f=C3=A9vrier 2025 =C3=A0 18:16 +0100, H. Nikolaus =
-Schaller a
->> =C3=A9crit :
->>> From: Paul Boddie <paul@boddie.org.uk>
->>>=20
->>> Add support for the Lumissil/Ingenic X1600 SoC.
->>>=20
->>> It uses shadow registers to commit changes to multiple pinctrl
->>> registers in parallel.
->>>=20
->>> Define specific Chip ID, register offsets, pin tables etc.
->>>=20
->>> Handling the unique X1600_GPIO_PU only for the x1600 but
->>> not for x1830 and above must be carefully taken into account.
->>>=20
->>> Co-authored-by: Andreas Kemnade <andreas@kemnade.info>
->>> Co-authored-by: H. Nikolaus Schaller <hns@goldelico.com>
->>> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
->>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>> ---
->>> drivers/pinctrl/pinctrl-ingenic.c | 242
->>> +++++++++++++++++++++++++++++-
->>> 1 file changed, 240 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
->>> b/drivers/pinctrl/pinctrl-ingenic.c
->>> index bc7ee54e062b5..dfdc89ece9b8a 100644
->>> --- a/drivers/pinctrl/pinctrl-ingenic.c
->>> +++ b/drivers/pinctrl/pinctrl-ingenic.c
->>>=20
+I see what you mean -- I'll change the check in imx728_reset to a simple
+null check in v4. Thanks.
 
-...
+> (Jumping back up to previous inline feedback)
+>
+> ...
+>
+>> +
+>> +static int imx728_set_stream(struct v4l2_subdev *sd, int enable)
+>> +{
+>> +       struct imx728 *imx728 =3D to_imx728(sd);
+>> +       int ret;
+>> +
+>> +       mutex_lock(&imx728->lock);
+>
+> Just use guard. That's actually perfect candidate.
+>
 
->>> +static int x1600_pwm_pwm0_pins[] =3D { 0x40, };
->>> +static int x1600_pwm_pwm1_pins[] =3D { 0x41, };
->>> +static int x1600_pwm_pwm2_pins[] =3D { 0x42, };
->>> +static int x1600_pwm_pwm3_pins[] =3D { 0x58, };
->>> +static int x1600_pwm_pwm4_pins[] =3D { 0x59, };
->>> +static int x1600_pwm_pwm5_pins[] =3D { 0x33, 0x5a, };
->>> +static int x1600_pwm_pwm6_pins[] =3D { 0x29, 0x34, };
->>> +static int x1600_pwm_pwm7_pins[] =3D { 0x2a, 0x35, };
->>=20
->> Just a quick question about these ones: why are there 2 pins here? If
->> you have the PWM5/6/7 function on two different pins then you should
->> probably have two groups.
->=20
-> I think they are added through INGENIC_PIN_GROUP_FUNCS()
-> to x1600_groups[].
->=20
-> So the pins list is different from pwm0 to 4 which
-> uses INGENIC_PIN_GROUP().
+Okay -- I'll include this change in v4. I'm not so familiar with using
+this interface, so please let me know if this is incorrect:
 
-I have now checked with the programming manual.
+diff --git a/drivers/media/i2c/imx728.c b/drivers/media/i2c/imx728.c
+index 4a6dfa0a6c58..d7d62e9917a4 100644
+--- a/drivers/media/i2c/imx728.c
++++ b/drivers/media/i2c/imx728.c
+@@ -9320,17 +9320,16 @@ static int imx728_set_stream(struct v4l2_subdev *sd=
+, int enable)
+        struct imx728 *imx728 =3D to_imx728(sd);
+        int ret;
 
-Yes, pwm5 to pwm7 can be pinmuxed to different pads,
-while pwm0 to pwm4 have only one option.
+-       mutex_lock(&imx728->lock);
++       guard(mutex)(&imx728->lock);
++
+-       if (imx728->streaming =3D=3D enable) {
++       if (imx728->streaming =3D=3D enable)
+-               mutex_unlock(&imx728->lock);
+                return 0;
+-       }
 
-E.g. pwm5: PC26 in function 1 or PB19 in function 2.
+        if (enable) {
+                ret =3D pm_runtime_get_sync(imx728->dev);
+                if (ret < 0) {
+                        pm_runtime_put_noidle(imx728->dev);
+-                       goto err_unlock;
++                       goto err;
+                }
 
-This is simular to what we have with uart2-data-a and
-uart2-data-b.
+                ret =3D imx728_start_stream(imx728);
+@@ -9349,15 +9348,12 @@ static int imx728_set_stream(struct v4l2_subdev *sd=
+, int enable)
+        __v4l2_ctrl_grab(imx728->ctrl.h_flip, enable);
+        __v4l2_ctrl_grab(imx728->ctrl.v_flip, enable);
 
-So I tend to agree that we need different pin groups
-("pwm5-a", "pwm5-b") and no need to use INGENIC_PIN_GROUP_FUNCS().
+-       mutex_unlock(&imx728->lock);
+-
+        return 0;
 
-Maybe we didn't realize since we have not yet used PWM in
-any x1600 based device.
+ err_runtime_put:
+        pm_runtime_put(imx728->dev);
 
-...
+-err_unlock:
+-       mutex_unlock(&imx728->lock);
++err:
+        dev_err(imx728->dev,
+                "%s: failed to setup streaming %d\n", __func__, ret);
+        return ret;
 
->>> +static int x1600_pwm_pwm5_funcs[] =3D { 2, 1, };
->>> +static int x1600_pwm_pwm6_funcs[] =3D { 1, 2, };
->>> +static int x1600_pwm_pwm7_funcs[] =3D { 1, 2, };
->>> +
->>> +static const struct group_desc x1600_groups[] =3D {
->>> + INGENIC_PIN_GROUP("uart0-data", x1600_uart0_data, 0),
->>> + INGENIC_PIN_GROUP("uart0-hwflow", x1600_uart0_hwflow, 0),
->>> + INGENIC_PIN_GROUP("uart1-data", x1600_uart1_data, 1),
->>> + INGENIC_PIN_GROUP("uart1-hwflow", x1600_uart1_hwflow, 1),
->>> + INGENIC_PIN_GROUP("uart2-data-a", x1600_uart2_data_a, 2),
->>> + INGENIC_PIN_GROUP("uart2-data-b", x1600_uart2_data_b, 1),
->>> + INGENIC_PIN_GROUP("uart3-data-b", x1600_uart3_data_b, 0),
->>> + INGENIC_PIN_GROUP("uart3-data-d", x1600_uart3_data_d, 2),
 
-...
+Thanks,
 
->>> + INGENIC_PIN_GROUP("pwm0", x1600_pwm_pwm0, 0),
->>> + INGENIC_PIN_GROUP("pwm1", x1600_pwm_pwm1, 0),
->>> + INGENIC_PIN_GROUP("pwm2", x1600_pwm_pwm2, 0),
->>> + INGENIC_PIN_GROUP("pwm3", x1600_pwm_pwm3, 1),
->>> + INGENIC_PIN_GROUP("pwm4", x1600_pwm_pwm4, 1),
->>> + INGENIC_PIN_GROUP_FUNCS("pwm5", x1600_pwm_pwm5,
->>> x1600_pwm_pwm5_funcs),
->>> + INGENIC_PIN_GROUP_FUNCS("pwm6", x1600_pwm_pwm6,
->>> x1600_pwm_pwm6_funcs),
->>> + INGENIC_PIN_GROUP_FUNCS("pwm7", x1600_pwm_pwm7,
->>> x1600_pwm_pwm7_funcs),
->>> + INGENIC_PIN_GROUP("mac", x1600_mac, 1),
->>> +};
->>> +
+--
+Sebastian
 
-If Paul Boddie agrees, I will add it to the V2.
-
-BR and thanks,
-Nikolaus
-
+Please be aware that this email includes email addresses outside of the org=
+anization.
 
