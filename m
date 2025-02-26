@@ -1,198 +1,299 @@
-Return-Path: <linux-kernel+bounces-533791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22730A45E9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:21:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65ACFA45EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DBE189AA5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7EB3B3748
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 12:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFAE221F26;
-	Wed, 26 Feb 2025 12:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="l1HqcCde";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="gIabMkuR"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E472222BF;
+	Wed, 26 Feb 2025 12:13:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F78221DBC;
-	Wed, 26 Feb 2025 12:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588042222AA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 12:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571915; cv=none; b=T24X2rH8NRmFWiwB4oly/vCvOS4fU10Oz3TBG8+Miyeq0yE5EbmRK4UFl6Egu+B9pYOYV87RhVSiB8Tz24g8aYA+gsB2VeSqTBMnWzO7OiXMpOXXmkQx8A4Gxzou7xDEvr6TP5DvXXWazMk9Kd0ynaatlzOoFHeP2lHis2VRBPg=
+	t=1740572004; cv=none; b=aKjwwihHApgEUOVidgXSCQgydKESH0teuNdaH6+xytJffjH6/hkHNpCRTaOLtdr2sTqr19NXlAGiruxksCHSJ1S71Q7MtWQWgA19IIDLzpa76j7LjzCHRPjNlmLYcq+BLdLdkG7foP2QUhO8+8Mb+860BllCQv49IOs8iJYE1eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571915; c=relaxed/simple;
-	bh=4YKkxTEO6/vhJgPKqZabGq41lX474BCo+ADgo5Kr4QM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hNMU7y+udm42TODrjLH3u8gB8C0tqMXnXODkvY+bBPRd8zRauVSqxfKHKFjLHMc4UbIAkdf8HFY01Drh+LANPSo8ieRylXlS+34oDX7MIr5Rwnlh0E51SXjxqLMk67unE8WBzFxyzA/QGXl50fG6fE/V0a1lx4xzuhL/8LQHrYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=l1HqcCde; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=gIabMkuR reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1740571913; x=1772107913;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/pmbTD4zoQM5iCGF3tYVmluO/FUN08Skf4yJBgTYALo=;
-  b=l1HqcCdeTx3Fa+38zlzTOv0Ycb/0mkf2WngqVYkO8pRSmYPTUJOafwAD
-   Z39i4tJ2+CWP1DyvQ2dVP43kTEAXL8LNFvJFp2hNHm8Qzc/HxT588d2IZ
-   8gt4NntvQivJEjNj8LGu1SLfefIS5aVe+DUNEowZMLO5aWWcdToJY+XME
-   N9vjQWae/imw7ftzdk7X2yIelMlM0nvqgCoJLs2kd1BWBdMhcA9klLp+k
-   6sZurQZNi+fcJrksCFXqfVupPzz6PVHoVxHCTb45xEJUu8cWmr1IIYqQP
-   JPbSMOUzON1cj5uSxBkhNNHK0hFnr7I8ejghO0RtNtuSed0p6mTVprTGN
-   g==;
-X-CSE-ConnectionGUID: gBzX4PJ4QQSiaqg7GG/68g==
-X-CSE-MsgGUID: Feg+Lb6pTEmmC38kdfvsRQ==
-X-IronPort-AV: E=Sophos;i="6.13,317,1732575600"; 
-   d="scan'208";a="42109020"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Feb 2025 13:11:44 +0100
-X-CheckPoint: {67BF0500-13-F75C4246-F0BD6D90}
-X-MAIL-CPID: 9D92D866341F7BCADD9B9A0C5F9DB091_3
-X-Control-Analysis: str=0001.0A00211C.67BF04FF.009E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5DAC5160D68;
-	Wed, 26 Feb 2025 13:11:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1740571900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/pmbTD4zoQM5iCGF3tYVmluO/FUN08Skf4yJBgTYALo=;
-	b=gIabMkuRWpL/0WTn84gsuE09kT3XzdhirDQnqP6YySN5f+D1ARPWj2u/wVPtieFB1gdcZe
-	q6/n7YBAaklGUKdnF5PMXh3pT4uerD+aERsadH3OVZvxhWdcuHrjkgYsJTDB9sfZkqJ/Uf
-	fWkaVTYM4eMGWTH+ncwDCfcEFhUk8gg2O39IMcAHp3WEh5INpWTYEd8pdUkuOy1RUxHueg
-	r+MAsUr0PNRuGIg/oqM/LII4ayDw1fTaj/86RoyKEznrfiEvPKOPnKNThe3Rq054bq87Pv
-	tytXSrKfgKQrSoT11unZwCYAo4eKenw/LvzVaZ9FU6xdGhLtsaxp4ROkKOJZmA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev, hongxing.zhu@nxp.com, Frank Li <Frank.Li@nxp.com>
-Subject:
- Re: [PATCH 4/5] arm64: dts: imx95: add PCIe's msi-map and iommu-map property
-Date: Wed, 26 Feb 2025 13:11:37 +0100
-Message-ID: <1995746.PYKUYFuaPT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250128211559.1582598-4-Frank.Li@nxp.com>
-References:
- <20250128211559.1582598-1-Frank.Li@nxp.com>
- <20250128211559.1582598-4-Frank.Li@nxp.com>
+	s=arc-20240116; t=1740572004; c=relaxed/simple;
+	bh=n0mTMVcMXCHo4cFhOCVXKXmn3S5jD95Jv4phZmcPhb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xo5rsNwsHAqa5oWveseU8WlKjEnoc1XUta7caS5rT/3XHsHQwoc6PXdx4T8DD/XMEnUoHWcIfbDHMDETTQah2Zqss+R8eEqd99GeMZQOZxQTbDnwAqUh11h1t/6pmjG7s8a7izklbSQxU3N5Mtol6DjuI16AtKh4AnGW8yj0JjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnGHc-0005WX-9U; Wed, 26 Feb 2025 13:13:00 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnGHa-002wlM-0h;
+	Wed, 26 Feb 2025 13:12:58 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnGHa-001YQP-0D;
+	Wed, 26 Feb 2025 13:12:58 +0100
+Date: Wed, 26 Feb 2025 13:12:58 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: aisheng.dong@nxp.com, robh@kernel.org, kernel@quicinc.com,
+	kernel@pengutronix.de, saravanak@google.com,
+	devicetree@vger.kernel.org, catalin.marinas@arm.com,
+	sashal@kernel.org, will@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, iommu@lists.linux.dev,
+	quic_ninanaik@quicinc.com, andy@black.fi.intel.com,
+	klarasmodin@gmail.com, robin.murphy@arm.com, hch@lst.de,
+	m.szyprowski@samsung.com
+Subject: Re: [PATCH v10 1/2] of: reserved_mem: Restruture how the reserved
+ memory regions are processed
+Message-ID: <20250226121258.gescny3ueyzau26t@pengutronix.de>
+References: <20241008220624.551309-1-quic_obabatun@quicinc.com>
+ <20241008220624.551309-2-quic_obabatun@quicinc.com>
+ <20250226115044.zw44p5dxlhy5eoni@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226115044.zw44p5dxlhy5eoni@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Frank,
+On 25-02-26, Marco Felsch wrote:
+> Hi,
+> 
+> On 24-10-08, Oreoluwa Babatunde wrote:
+> > Reserved memory regions defined in the devicetree can be broken up into
+> > two groups:
+> > i) Statically-placed reserved memory regions
+> > i.e. regions defined with a static start address and size using the
+> >      "reg" property.
+> > ii) Dynamically-placed reserved memory regions.
+> > i.e. regions defined by specifying an address range where they can be
+> >      placed in memory using the "alloc_ranges" and "size" properties.
+> > 
+> > These regions are processed and set aside at boot time.
+> > This is done in two stages as seen below:
+> > 
+> > Stage 1:
+> > At this stage, fdt_scan_reserved_mem() scans through the child nodes of
+> > the reserved_memory node using the flattened devicetree and does the
+> > following:
+> > 
+> > 1) If the node represents a statically-placed reserved memory region,
+> >    i.e. if it is defined using the "reg" property:
+> >    - Call memblock_reserve() or memblock_mark_nomap() as needed.
+> >    - Add the information for that region into the reserved_mem array
+> >      using fdt_reserved_mem_save_node().
+> >      i.e. fdt_reserved_mem_save_node(node, name, base, size).
+> > 
+> > 2) If the node represents a dynamically-placed reserved memory region,
+> >    i.e. if it is defined using "alloc-ranges" and "size" properties:
+> >    - Add the information for that region to the reserved_mem array with
+> >      the starting address and size set to 0.
+> >      i.e. fdt_reserved_mem_save_node(node, name, 0, 0).
+> >    Note: This region is saved to the array with a starting address of 0
+> >    because a starting address is not yet allocated for it.
+> > 
+> > Stage 2:
+> > After iterating through all the reserved memory nodes and storing their
+> > relevant information in the reserved_mem array,fdt_init_reserved_mem() is
+> > called and does the following:
+> > 
+> > 1) For statically-placed reserved memory regions:
+> >    - Call the region specific init function using
+> >      __reserved_mem_init_node().
+> > 2) For dynamically-placed reserved memory regions:
+> >    - Call __reserved_mem_alloc_size() which is used to allocate memory
+> >      for each of these regions, and mark them as nomap if they have the
+> >      nomap property specified in the DT.
+> >    - Call the region specific init function.
+> > 
+> > The current size of the resvered_mem array is 64 as is defined by
+> > MAX_RESERVED_REGIONS. This means that there is a limitation of 64 for
+> > how many reserved memory regions can be specified on a system.
+> > As systems continue to grow more and more complex, the number of
+> > reserved memory regions needed are also growing and are starting to hit
+> > this 64 count limit, hence the need to make the reserved_mem array
+> > dynamically sized (i.e. dynamically allocating memory for the
+> > reserved_mem array using membock_alloc_*).
+> > 
+> > On architectures such as arm64, memory allocated using memblock is
+> > writable only after the page tables have been setup. This means that if
+> > the reserved_mem array is going to be dynamically allocated, it needs to
+> > happen after the page tables have been setup, not before.
+> > 
+> > Since the reserved memory regions are currently being processed and
+> > added to the array before the page tables are setup, there is a need to
+> > change the order in which some of the processing is done to allow for
+> > the reserved_mem array to be dynamically sized.
+> > 
+> > It is possible to process the statically-placed reserved memory regions
+> > without needing to store them in the reserved_mem array until after the
+> > page tables have been setup because all the information stored in the
+> > array is readily available in the devicetree and can be referenced at
+> > any time.
+> > Dynamically-placed reserved memory regions on the other hand get
+> > assigned a start address only at runtime, and hence need a place to be
+> > stored once they are allocated since there is no other referrence to the
+> > start address for these regions.
+> > 
+> > Hence this patch changes the processing order of the reserved memory
+> > regions in the following ways:
+> > 
+> > Step 1:
+> > fdt_scan_reserved_mem() scans through the child nodes of
+> > the reserved_memory node using the flattened devicetree and does the
+> > following:
+> > 
+> > 1) If the node represents a statically-placed reserved memory region,
+> >    i.e. if it is defined using the "reg" property:
+> >    - Call memblock_reserve() or memblock_mark_nomap() as needed.
+> > 
+> > 2) If the node represents a dynamically-placed reserved memory region,
+> >    i.e. if it is defined using "alloc-ranges" and "size" properties:
+> >    - Call __reserved_mem_alloc_size() which will:
+> >      i) Allocate memory for the reserved region and call
+> >      memblock_mark_nomap() as needed.
+> >      ii) Call the region specific initialization function using
+> >      fdt_init_reserved_mem_node().
+> >      iii) Save the region information in the reserved_mem array using
+> >      fdt_reserved_mem_save_node().
+> > 
+> > Step 2:
+> > 1) This stage of the reserved memory processing is now only used to add
+> >    the statically-placed reserved memory regions into the reserved_mem
+> >    array using fdt_scan_reserved_mem_reg_nodes(), as well as call their
+> >    region specific initialization functions.
+> > 
+> > 2) This step has also been moved to be after the page tables are
+> >    setup. Moving this will allow us to replace the reserved_mem
+> >    array with a dynamically sized array before storing the rest of
+> >    these regions.
+> > 
+> > Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+> > ---
+> >  drivers/of/fdt.c             |   5 +-
+> >  drivers/of/of_private.h      |   3 +-
+> >  drivers/of/of_reserved_mem.c | 168 ++++++++++++++++++++++++-----------
+> >  3 files changed, 122 insertions(+), 54 deletions(-)
+> 
+> this patch got into stable kernel 6.12.13++ as part of Stable-dep-of.
+> The stable kernel commit is: 9a0fe62f93ede02c27aaca81112af1e59c8c0979.
+> 
+> With the patch applied I see that the cma area pool is misplaced which
+> cause my 4G device to fail to activate the cma pool. Below are some
+> logs:
+> 
+> *** Good case (6.12)
+> 
+> root@test:~# dmesg|grep -i cma
+> [    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
+> [    0.000000] OF: reserved mem: 0x0000000044200000..0x00000000541fffff (262144 KiB) map reusable linux,cma
+> [    0.056915] Memory: 3695024K/4194304K available (15552K kernel code, 2510K rwdata, 5992K rodata, 6016K init, 489K bss, 231772K reserved, 262144K cma-reserved)
+> 
+> *** Bad (6.12.16)
+> 
+> root@test:~# dmesg|grep -i cma
+> [    0.000000] Reserved memory: created CMA memory pool at 0x00000000f2000000, size 256 MiB
+> [    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
+> [    0.000000] OF: reserved mem: 0x00000000f2000000..0x0000000101ffffff (262144 KiB) map reusable linux,cma
+> [    0.056968] Memory: 3694896K/4194304K available (15616K kernel code, 2512K rwdata, 6012K rodata, 6080K init, 491K bss, 231900K reserved, 262144K cma-reserved)
+> [    0.116920] cma: CMA area linux,cma could not be activated
+> 
+> *** Good (6.12.16, revert 9a0fe62f93ed)
+> 
+> root@test:~# dmesg|grep -i cma
+> [    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
+> [    0.000000] OF: reserved mem: 0x0000000044200000..0x00000000541fffff (262144 KiB) map reusable linux,cma
+> [    0.060976] Memory: 3694896K/4194304K available (15616K kernel code, 2512K rwdata, 6012K rodata, 6080K init, 491K bss, 231900K reserved, 262144K cma-reserved)
+> 
+> Below is our reserved-memory dts node:
+> 
+> reserved-memory {
+> 	#address-cells = <2>; 
+> 	#size-cells = <2>; 
+> 	ranges;
+> 
+> 	linux,cma {
+> 		compatible = "shared-dma-pool";
+> 		reusable;
+> 		/*
+> 		 * The CMA area must be in the lower 32-bit address range.
+> 		 */
+> 		alloc-ranges = <0x0 0x42000000 0 0xc0000000>;
+> 		size = <0x0 0x10000000>;
+> 		alignment = <0 0x2000>;
+> 		linux,cma-default;
+> 	};
+> 
+> 	optee-core@40000000 {
+> 		reg = <0 0x40000000 0 0x1e00000>;
+> 		no-map;
+> 	};
+> 
+> 	optee-shm@41e00000 {
+> 		reg = <0 0x41e00000 0 0x200000>;
+> 		no-map;
+> 	};
+> 
+> 	m7_reserved: m7@80000000 {
+> 		reg = <0 0x80000000 0 0x1000000>;
+> 		no-map;
+> 	};
+> 
+> 	vdev0vring0: vdev0vring0@55000000 {
+> 		reg = <0 0x55000000 0 0x8000>;
+> 		no-map;
+> 	};
+> 
+> 	vdev0vring1: vdev0vring1@55008000 {
+> 		reg = <0 0x55008000 0 0x8000>;
+> 		no-map;
+> 	};
+> 
+> 	rsc_table: rsc-table@550ff000 {
+> 		reg = <0 0x550ff000 0 0x1000>;
+> 		no-map;
+> 	};
+> 
+> 	ram_console_buffer: ram-console-buffer@55100000 {
+> 		reg = <0 0x55100000 0 0x1000>;
+> 		no-map;
+> 	};
+> 
+> 	vdev0buffer: vdev0buffer@55400000 {
+> 		compatible = "shared-dma-pool";
+> 		reg = <0 0x55400000 0 0x100000>;
+> 		no-map;
+> 	};
+> };
+> 
+> My current workaround is to revert commit 9a0fe62f93ed and the
+> dep-chain: 2d1d620ff27b444 8de4e5a92282. But I would like to get a
 
-Am Dienstag, 28. Januar 2025, 22:15:58 CET schrieb Frank Li:
-> Add PCIe's msi-map and iommu-map property because i.MX95 support smmu and
-> its.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx95.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/d=
-ts/freescale/imx95.dtsi
-> index 6b8470cb3461a..2cebeda43a52d 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> @@ -1573,6 +1573,12 @@ pcie0: pcie@4c300000 {
->  			assigned-clock-parents =3D <0>, <0>,
->  						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
->  			power-domains =3D <&scmi_devpd IMX95_PD_HSIO_TOP>;
-> +			/* pcie0's Devid(BIT[7:6]) is 0x00, stream id(BIT[5:0]) is 0x10~0x17 =
-*/
-> +			msi-map =3D <0x0 &its 0x10 0x1>,
-> +				  <0x100 &its 0x11 0x7>;
+It's not 2d1d620ff27b444 but e61977c71494.
 
-Aren't you missing msi-map-mask =3D <0x1ff>; here? Similar to pcie1.
-Either way, with this change PCIe on pcie0 is not working anymore,
-regardless of msi-map-mask.
-
-Without msi-map-mask:
-> OF: /soc/pcie@4c300000: iommu-map, using mask 000001ff, id-base: 00000100=
-, out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> OF: /soc/pcie@4c300000: no msi-map translation for id 0x300 on (null)
-> r8169 0000:03:00.0: error -EINVAL: enable failure
-> r8169 0000:03:00.0: probe with driver r8169 failed with error -22
-
-With msi-map-mask:
-> OF: /soc/pcie@4c300000: iommu-map, using mask 000001ff, id-base: 00000100=
-, out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> OF: /soc/pcie@4c300000: msi-map, using mask 000001ff, id-base: 00000100, =
-out-base: 00000011, length: 00000007, id: 00000300 -> 00000011
-> r8169 0000:03:00.0: enabling device (0000 -> 0003)
-> r8169 0000:03:00.0: enabling Mem-Wr-Inval
-> r8169 0000:03:00.0: error -EIO: PCI read failed
-> r8169 0000:03:00.0: probe with driver r8169 failed with error -5
-
-Without msi-map/iommu-map:
-> r8169 0000:03:00.0: enabling device (0000 -> 0003)
-> r8169 0000:03:00.0: enabling Mem-Wr-Inval
-> r8169 0000:03:00.0 eth0: RTL8168g/8111g, d8:9d:b9:00:16:10, XID 4c0, IRQ =
-166
-> r8169 0000:03:00.0 eth0: jumbo features [frames: 9194 bytes, tx checksumm=
-ing: ko]
-> r8169 0000:03:00.0 enp3s0: renamed from eth0
-> r8169 0000:03:00.0: enabling bus mastering
-> r8169 0000:03:00.0 enp3s0: Link is Down
-
-pcie1 works as expected. But this is only a single PCIe device, rather than
-having a PCIe bridge.
-Any idea what's wrong here?
-
-Best regards,
-Alexander
-
-> +			iommu-map =3D <0x000 &smmu 0x10 0x1>,
-> +				    <0x100 &smmu 0x11 0x7>;
-> +			iommu-map-mask =3D <0x1ff>;
->  			fsl,max-link-speed =3D <3>;
->  			status =3D "disabled";
->  		};
-> @@ -1640,6 +1646,14 @@ pcie1: pcie@4c380000 {
->  			assigned-clock-parents =3D <0>, <0>,
->  						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
->  			power-domains =3D <&scmi_devpd IMX95_PD_HSIO_TOP>;
-> +			/* pcie1's Devid(BIT[7:6]) is 0x10, stream id(BIT[5:0]) is 0x18~0x1f =
-*/
-> +			msi-map =3D <0x0 &its 0x98 0x1>,
-> +				  <0x100 &its 0x99 0x7>;
-> +			msi-map-mask =3D <0x1ff>;
-> +			/* smmu have not Devid(BIT[7:6]) */
-> +			iommu-map =3D <0x000 &smmu 0x18 0x1>,
-> +				    <0x100 &smmu 0x19 0x7>;
-> +			iommu-map-mask =3D <0x1ff>;
->  			fsl,max-link-speed =3D <3>;
->  			status =3D "disabled";
->  		};
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+> proper solution without having revert commits in my downstream
+> patchstack.
+> 
+> Regards,
+>   Marco
+> 
+> 
 
