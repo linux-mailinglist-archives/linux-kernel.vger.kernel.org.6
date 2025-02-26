@@ -1,72 +1,94 @@
-Return-Path: <linux-kernel+bounces-533214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F574A456F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:47:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF5CA456F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19A507A5B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:46:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A0517249D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1407A18DB09;
-	Wed, 26 Feb 2025 07:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1052686AA;
+	Wed, 26 Feb 2025 07:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wgt9vG+a";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Wgt9vG+a"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LYhxfECj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8Cqk/sEs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LYhxfECj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8Cqk/sEs"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFA710F2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCB41898FB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 07:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740556050; cv=none; b=MIjdxU/EVcywnw9vW/LgNLY1BrVCRNOVDwN7YpfuniH0qKInlC/5kXE6XwpJF/H2XWH1mRmdEJJVhtMUlNTCWUM5Him1hlYvBPV4MvDWSSVw/k9r2M7fX/gHULya5SqSk0gyUC4cVRrwz1woo0TtvbkPjDAFsEi3wJ6bTc+S994=
+	t=1740556098; cv=none; b=MA2Q3Afr7MvHMTmZ0Sk7sXSxvZYeh6+BDPgX4W4mYay/kcW+AWmUD0M0MPsW+lFMZUzn6L1iS/Ok+z/HBbbKgWtZBDy4HYMwSXIvbTwfHKARr6dESx5PzknDOQEa/C75Q+qExuvAllZn79PSdquYjgCj+m1IgMHPvE4F4tkG01w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740556050; c=relaxed/simple;
-	bh=nQ+cW+o7LnCWrV+KibIhEBGe1pCHi8Dz54YIE4COhL4=;
+	s=arc-20240116; t=1740556098; c=relaxed/simple;
+	bh=ORQ/MWKZIVHZNPycW8K2CopfAf5d3bKuxLJzswEaJ5M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FYf/nK0fXecdb5rEZhQtBidIYLSkNXCx9v2Vt+Mb1NLyscnjhnFri/tNmpQ4wt+/CQjKhZdH32mlWG++ev6DgzVAeBhq6GHKQHj3iKJS3TWfj/mEY/Ew6leaoOQ9+wrHbsMHYXekzsnMwS3dh6E8C0mf/zQLhcyVkAfwC0GvN1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wgt9vG+a; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Wgt9vG+a; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 In-Reply-To:Content-Type; b=Sc9qhAeRYurHS694M2tIvLpCxWuJkavJDukh34DfxJlWuevniYqtzOiMQOVh065t7j8NNs62hK63LU8qHGJsNFINmgLugPrIzl0USMLZcKEFy0quVEqA2f2nEr85+A6JdYibWPOW4tMUWM71HgDJd2jOl9RlGxcqsL2ejLIvPbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LYhxfECj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8Cqk/sEs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LYhxfECj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8Cqk/sEs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8533621192;
-	Wed, 26 Feb 2025 07:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740556046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CE0BC1F387;
+	Wed, 26 Feb 2025 07:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740556094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQ+cW+o7LnCWrV+KibIhEBGe1pCHi8Dz54YIE4COhL4=;
-	b=Wgt9vG+apY+OJtFzwhc4nQb/dWyJmGYFPMALEIuSjoIf4kdoAM5bItkHqiWhRBRqv/tH4b
-	wcpqVaDIhG00XxjeCOowGNfqENN7sVG8n9s+x9M1DmcUbO2ZgwWEuZ3Mx6FeWY7EFLviRI
-	jzEPNONXq10NULz149g8wJleaTIZqEo=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=Wgt9vG+a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740556046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
+	b=LYhxfECjdPqZzgEPVTUL/6MtencREBbcGFR88mO88ljAB6l/2X6Fe2yyXl8UAdQbC+2sMJ
+	u9Mwcq78EjLe4ITfSpsOo20XD9wYt7fcScnkRd/l8Ha8csIEOr3VYCXUwuhfjnv2mrjKeI
+	6kChoaqp+K2qvuSU2ZTIcUZOvlrjhr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740556094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQ+cW+o7LnCWrV+KibIhEBGe1pCHi8Dz54YIE4COhL4=;
-	b=Wgt9vG+apY+OJtFzwhc4nQb/dWyJmGYFPMALEIuSjoIf4kdoAM5bItkHqiWhRBRqv/tH4b
-	wcpqVaDIhG00XxjeCOowGNfqENN7sVG8n9s+x9M1DmcUbO2ZgwWEuZ3Mx6FeWY7EFLviRI
-	jzEPNONXq10NULz149g8wJleaTIZqEo=
+	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
+	b=8Cqk/sEs8JIIYgK4SVTypbTraxTqFH61HSTeAJ/HapWAnXTrPa1/dWyT7cJgtIphJjUCUH
+	pBHyi/w0yuLh9RAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740556094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
+	b=LYhxfECjdPqZzgEPVTUL/6MtencREBbcGFR88mO88ljAB6l/2X6Fe2yyXl8UAdQbC+2sMJ
+	u9Mwcq78EjLe4ITfSpsOo20XD9wYt7fcScnkRd/l8Ha8csIEOr3VYCXUwuhfjnv2mrjKeI
+	6kChoaqp+K2qvuSU2ZTIcUZOvlrjhr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740556094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AXi7oYE/B19NFclfQfBHmsOffTkJ+UU8LrR/Gr1eww=;
+	b=8Cqk/sEs8JIIYgK4SVTypbTraxTqFH61HSTeAJ/HapWAnXTrPa1/dWyT7cJgtIphJjUCUH
+	pBHyi/w0yuLh9RAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5723013A53;
-	Wed, 26 Feb 2025 07:47:26 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A36213A53;
+	Wed, 26 Feb 2025 07:48:14 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WsdcEw7HvmfROAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Wed, 26 Feb 2025 07:47:26 +0000
-Message-ID: <d7b6eb29-c40c-4a81-861d-9d6dbeb6b727@suse.com>
-Date: Wed, 26 Feb 2025 08:47:25 +0100
+	id 2KBYJD7HvmcdOQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 07:48:14 +0000
+Message-ID: <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+Date: Wed, 26 Feb 2025 08:48:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,215 +96,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2022-49101: xen: delay xen_hvm_init_time_ops() if kdump is
- boot on vcpu>=32
-To: cve@kernel.org, linux-kernel@vger.kernel.org,
- linux-cve-announce@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <2025022600-CVE-2022-49101-e5e3@gregkh>
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+To: Arnd Bergmann <arnd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller <deller@gmx.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250225164436.56654-1-arnd@kernel.org>
 Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <2025022600-CVE-2022-49101-e5e3@gregkh>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------WAnUZmSa130UbcXYhZhrV4DL"
-X-Rspamd-Queue-Id: 8533621192
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250225164436.56654-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
-X-Spamd-Result: default: False [-5.41 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
+X-Spamd-Result: default: False [0.20 / 50.00];
+	RSPAMD_URIBL(4.50)[arndb.de:email];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.978];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[kernel.org,linuxfoundation.org,gmx.de];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	HAS_ATTACHMENT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.41
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:email]
+X-Spam-Score: 0.20
 X-Spam-Flag: NO
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------WAnUZmSa130UbcXYhZhrV4DL
-Content-Type: multipart/mixed; boundary="------------snNKD4lR1Rx0NT6DV8SvtOj0";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org,
- linux-cve-announce@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Message-ID: <d7b6eb29-c40c-4a81-861d-9d6dbeb6b727@suse.com>
-Subject: Re: CVE-2022-49101: xen: delay xen_hvm_init_time_ops() if kdump is
- boot on vcpu>=32
-References: <2025022600-CVE-2022-49101-e5e3@gregkh>
-In-Reply-To: <2025022600-CVE-2022-49101-e5e3@gregkh>
+Hi Arnd
 
---------------snNKD4lR1Rx0NT6DV8SvtOj0
-Content-Type: multipart/mixed; boundary="------------wslHRkB8lPIgDXg6G157CM0X"
+Am 25.02.25 um 17:44 schrieb Arnd Bergmann:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Dummycon is used as a fallback conswitchp for vgacon and fbcon
+> in the VT code, and there are no references to it if all three
+> are disabled, so just leave it out of the kernel image for
+> configurations without those.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/video/console/Kconfig | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+> index bc31db6ef7d2..1c4263c164ce 100644
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@ -47,8 +47,7 @@ config SGI_NEWPORT_CONSOLE
+>   	  card of your Indy.  Most people say Y here.
+>   
+>   config DUMMY_CONSOLE
+> -	bool
+> -	default y
+> +	def_bool VT || VGA_CONSOLE || FRAMEBUFFER_CONSOLE
 
---------------wslHRkB8lPIgDXg6G157CM0X
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+What about MDA_CONSOLE and STI_CONSOLE. Don't they require this as fallback?
 
-T24gMjYuMDIuMjUgMDI6NTUsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRGVzY3Jp
-cHRpb24NCj4gPT09PT09PT09PT0NCj4gDQo+IEluIHRoZSBMaW51eCBrZXJuZWwsIHRoZSBm
-b2xsb3dpbmcgdnVsbmVyYWJpbGl0eSBoYXMgYmVlbiByZXNvbHZlZDoNCj4gDQo+IHhlbjog
-ZGVsYXkgeGVuX2h2bV9pbml0X3RpbWVfb3BzKCkgaWYga2R1bXAgaXMgYm9vdCBvbiB2Y3B1
-Pj0zMg0KPiANCj4gVGhlIHNjaGVkX2Nsb2NrKCkgY2FuIGJlIHVzZWQgdmVyeSBlYXJseSBz
-aW5jZSBjb21taXQgODU3YmFhODdiNjQyDQo+ICgic2NoZWQvY2xvY2s6IEVuYWJsZSBzY2hl
-ZCBjbG9jayBlYXJseSIpLiBJbiBhZGRpdGlvbiwgd2l0aCBjb21taXQNCj4gMzg2NjliYTIw
-NWQxICgieDg2L3hlbi90aW1lOiBPdXRwdXQgeGVuIHNjaGVkX2Nsb2NrIHRpbWUgZnJvbSAw
-IiksIGtkdW1wDQo+IGtlcm5lbCBpbiBYZW4gSFZNIGd1ZXN0IG1heSBwYW5pYyBhdCB2ZXJ5
-IGVhcmx5IHN0YWdlIHdoZW4gYWNjZXNzaW5nDQo+ICZfX3RoaXNfY3B1X3JlYWQoeGVuX3Zj
-cHUpLT50aW1lIGFzIGluIGJlbG93Og0KPiANCj4gc2V0dXBfYXJjaCgpDQo+ICAgLT4gaW5p
-dF9oeXBlcnZpc29yX3BsYXRmb3JtKCkNCj4gICAgICAgLT4geDg2X2luaXQuaHlwZXIuaW5p
-dF9wbGF0Zm9ybSA9IHhlbl9odm1fZ3Vlc3RfaW5pdCgpDQo+ICAgICAgICAgICAtPiB4ZW5f
-aHZtX2luaXRfdGltZV9vcHMoKQ0KPiAgICAgICAgICAgICAgIC0+IHhlbl9jbG9ja3NvdXJj
-ZV9yZWFkKCkNCj4gICAgICAgICAgICAgICAgICAgLT4gc3JjID0gJl9fdGhpc19jcHVfcmVh
-ZCh4ZW5fdmNwdSktPnRpbWU7DQo+IA0KPiBUaGlzIGlzIGJlY2F1c2UgWGVuIEhWTSBzdXBw
-b3J0cyBhdCBtb3N0IE1BWF9WSVJUX0NQVVM9MzIgJ3ZjcHVfaW5mbycNCj4gZW1iZWRkZWQg
-aW5zaWRlICdzaGFyZWRfaW5mbycgZHVyaW5nIGVhcmx5IHN0YWdlIHVudGlsIHhlbl92Y3B1
-X3NldHVwKCkgaXMNCj4gdXNlZCB0byBhbGxvY2F0ZS9yZWxvY2F0ZSAndmNwdV9pbmZvJyBm
-b3IgYm9vdCBjcHUgYXQgYXJiaXRyYXJ5IGFkZHJlc3MuDQo+IA0KPiBIb3dldmVyLCB3aGVu
-IFhlbiBIVk0gZ3Vlc3QgcGFuaWMgb24gdmNwdSA+PSAzMiwgc2luY2UNCj4geGVuX3ZjcHVf
-aW5mb19yZXNldCgwKSB3b3VsZCBzZXQgcGVyX2NwdSh4ZW5fdmNwdSwgY3B1KSA9IE5VTEwg
-d2hlbg0KPiB2Y3B1ID49IDMyLCB4ZW5fY2xvY2tzb3VyY2VfcmVhZCgpIG9uIHZjcHUgPj0g
-MzIgd291bGQgcGFuaWMuDQo+IA0KPiBUaGlzIHBhdGNoIGNhbGxzIHhlbl9odm1faW5pdF90
-aW1lX29wcygpIGFnYWluIGxhdGVyIGluDQo+IHhlbl9odm1fc21wX3ByZXBhcmVfYm9vdF9j
-cHUoKSBhZnRlciB0aGUgJ3ZjcHVfaW5mbycgZm9yIGJvb3QgdmNwdSBpcw0KPiByZWdpc3Rl
-cmVkIHdoZW4gdGhlIGJvb3QgdmNwdSBpcyA+PSAzMi4NCj4gDQo+IFRoaXMgaXNzdWUgY2Fu
-IGJlIHJlcHJvZHVjZWQgb24gcHVycG9zZSB2aWEgYmVsb3cgY29tbWFuZCBhdCB0aGUgZ3Vl
-c3QNCj4gc2lkZSB3aGVuIGtkdW1wL2tleGVjIGlzIGVuYWJsZWQ6DQo+IA0KPiAidGFza3Nl
-dCAtYyAzMyBlY2hvIGMgPiAvcHJvYy9zeXNycS10cmlnZ2VyIg0KDQpQbGVhc2UgcmV2b2tl
-IHRoaXMgQ1ZFLiBUaGUgYnVnIGlzIGhhcHBlbmluZyBvbmx5IEFGVEVSIHRoZSBndWVzdCBo
-YXMNCmNyYXNoZWQgYWxyZWFkeS4NCg0KDQpKdWVyZ2VuDQo=
---------------wslHRkB8lPIgDXg6G157CM0X
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Best regards
+Thomas
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+>   
+>   config DUMMY_CONSOLE_COLUMNS
+>   	int "Initial number of console screen columns"
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
---------------wslHRkB8lPIgDXg6G157CM0X--
-
---------------snNKD4lR1Rx0NT6DV8SvtOj0--
-
---------------WAnUZmSa130UbcXYhZhrV4DL
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAme+xw0FAwAAAAAACgkQsN6d1ii/Ey9p
-SwgAjliBt5dNWP1anwVcFMaaAOs97qGqMT4xDhc1rs4d4dm7rFdsqSI5YOybmd/VSV+pU5OCpMU2
-knXApjyc8kxg4+AeAiQL/JJ31yJ1Maau8IXrfJ8aBl6GixkZWvAwBwyg+dDKvW/qVwXrz1GJzkZO
-KFwuRpjd+vCE95o8v2RkJbJBi3e5Kdy5//kXctP2/qhKnv7YFI3Sy/kDOYD7C0rtTxst/0EQguYh
-dTuO6No2n42zXE507zzyJ2Fzmv3rVwACwCGJV5Hondu6ZxMzzF5OazbJr14N4RxI1+3EmkifkLgi
-iIHqcElg0Po6G1SjeGYjkGqHVdkWFEOG4wodZppY5g==
-=dE/+
------END PGP SIGNATURE-----
-
---------------WAnUZmSa130UbcXYhZhrV4DL--
 
