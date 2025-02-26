@@ -1,237 +1,180 @@
-Return-Path: <linux-kernel+bounces-534922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3401A46CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:53:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0408EA46CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394AF165EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107B93AFA96
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C392459C7;
-	Wed, 26 Feb 2025 20:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6822561CA;
+	Wed, 26 Feb 2025 20:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4lh3PpB7"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2062.outbound.protection.outlook.com [40.107.236.62])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Aa6QASK0";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="YpQV3ZIU"
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC71723F434
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF67227560B;
+	Wed, 26 Feb 2025 20:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740603195; cv=fail; b=e4oxi/1PYA+1jbT+5PsPcQGyh4grSY5iKkOAErmyhFylHyCVLS37gIU0q+rZg24M7VBicU1zh88rfom7oD2JjXFnI0lp/i6SnI3e9SX5pLrSgihucqt8Mnj6T5OjDqYjr5r4AegohiWvQslCVryR72I2KSXlsTX6Ac322WCLG7E=
+	t=1740603536; cv=pass; b=ShzM+P2Hnfbmgz8UjOxW9dbP2/3N/M21nJGKzm+ywHeEqRKPe9OwNlazcQa33s+Bp43lb/zzpdvMUqkes2cQfN72QaGsxFt1ltdz/Gq63D2k7q28eesB4se3Dap/4Lf5GsSAeY4GyrqGbeZeokGS+ZkyFz2VeQ/4snPvLW41MNk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740603195; c=relaxed/simple;
-	bh=kqqzrLNl+0AQ0bqHEMXFzZgC+piV3qdcy2yhujrNR7w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KaBj3CQIzeVq+OlInM5GfeXk2aRRazPOqpIZUUWMKozBDMNE9HnrPNIPrO62oTbtdzkJpjTmOnXPnM7H6MoUVYNeR7F/cNfa5NbkUPvZfFuyn02IqYtT0AHjpSjPMaSgIJXEdzSsqVmFnYLGBNLX61Fq+WDwI1djVt7egAKSd6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4lh3PpB7; arc=fail smtp.client-ip=40.107.236.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c5tx9fnGjkLcd/uiLnbIPoTuKwuObPUZP1G5zXlyB3z+LSXEi7UwPJ1rSbfOE66sKamzLfJNI5pkOD0E7bhbS3w9bYbJTFNqvtcNUOc0VNurItk4pBN5t77qKWgIHEeU/1mg95WWToNN0OuVHO1Bwg1ivBejTbXQ4ohHlwr3lfJ2ftiKIte71XtEcIK6TL4qTDmZVX2kaXjKIhOg3pRCLT7pLD5NZykgy4yutv7NfwOhnC8YEBZvL6W7PuktwLObhQnEZEWskZCQbfA4hWmDBVLO2s9qoKRUjK0GQ3lqZ5/awgTwcMH0ViMA1Aj2wgp2iFAjkBIlQ5IJZhLS/ke+Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JBMpTm1rC4GOWHCxCg8IYC7jc66BaTMyppaKAqqoz6w=;
- b=EoED9kU9ZjOM0+0lTrX+0rBffWQCp2RzqZc2m6hF8n46dsFKVou+KW1dMjaeZp+ZyreWkNqjqelY/xxKlOOYgIyap0sdQqTDMdsMOG1XaxNReHlmqNTHE6O4dY7mJS1HY49knvszMkrW4ki1cQQgBKLiuQwREMmMq+y4tCxd421gkI+LgNoTRZkzNJml1iVm3P3oGIZQPk5sPvP+v0Vjf+5t5/cU70wK9AqPNvRw8n7WrEXmvQK3juBj5XGvugAptvCtHS38vJdfyWNZTSrskMfYhZ/BW03zpOVty28koHxaxVcXllIb/BgvL4NW1gRkkZHGo93Y33ziaLksluxH3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JBMpTm1rC4GOWHCxCg8IYC7jc66BaTMyppaKAqqoz6w=;
- b=4lh3PpB7CF95hY4XWksMueCluViwk5+ewjUYBffi+L6GSN+KXDoIr8Aw+xXSSd7WRjAK3QZkV+9y3wh7xwQufSjSZ4buUATi6UJUA6symgthMy1GeASglJYCO7sjkDZfyVjeg5T0TaSpwLkh6EONxmRFY8ylOFNXn4pg5CnhBIw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by MW4PR12MB6875.namprd12.prod.outlook.com (2603:10b6:303:209::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 26 Feb
- 2025 20:53:11 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%4]) with mapi id 15.20.8489.019; Wed, 26 Feb 2025
- 20:53:11 +0000
-Message-ID: <a9b791c7-2aa3-4cfe-a3b7-1ebbf7ab1d7b@amd.com>
-Date: Wed, 26 Feb 2025 13:53:06 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/amd/display: fix type mismatch in
- CalculateDynamicMetadataParameters()
-To: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>,
- Chaitanya Dhere <chaitanya.dhere@amd.com>
-Cc: Jun Lei <jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Fangzhi Zuo <jerry.zuo@amd.com>,
- Aric Cyr <aric.cyr@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20250226202853.13319-1-v.shevtsov@mt-integration.ru>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250226202853.13319-1-v.shevtsov@mt-integration.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0074.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:4::7) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	s=arc-20240116; t=1740603536; c=relaxed/simple;
+	bh=ItMIEect07iZrce8OqfHopyNgKyjZYgYrqhgxBBlGjA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=efykqYgJ12X+Vx9we7oAPWzscsGzaZodxhszDv+OQeFtyGWU2H+TqP+GEi9UKZDQJ78d5P27Jm74tOfB06hP9N8SHig05EHeeu3Cx0sgN7+VqkCS65fgadwH+TRsMd8vFPnefed7vMtWVlKtbjO408M4VTBPYdnObuK5ZLE8x50=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=Aa6QASK0; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=YpQV3ZIU; arc=pass smtp.client-ip=81.169.146.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740603349; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=TmnStTm7F9jfKZQAE26BHIjR7RdXSkpIJRGr2DQIoGYTZQP874+pXY59Ilv2f/SpZx
+    bKi5xQrYc9brfDAAzw6lnsJdPg8bk+wyGCO/YYcr1ilnubJnHJUtNTfLztmysR8ufjTu
+    eKcexDupQAMrRF0UJ30v5LdVXyqbwh/Ki4HJfV5RcEqjBLBvZmU7qLYQQo/jyCaMgwSM
+    v1OEt9Vk2rHO8otg1EilqmnsQBLRIemzcHraYNfqYc9tkYN9VCRPfGYFVkuL7EGge0zy
+    wEeOZAomlqJ+ijRtpKbBOzbHXrK6V/ImD7oCuanhtkOpGGsyEkgj7RX0PoCsRO/Nci8U
+    uDSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740603349;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=h3kwnl84GKFzcYqD2MZXAD5G+Hc11YASNteYVcGkOjw=;
+    b=DZN3SJxWWnVLVSpP76zQ5Z2uVDNJedT9sLF353DH+m1U311Z3d+VF1FeEmTC2AEG15
+    tz4nyFxNd3fjcl5yjw8KFBykqmwk6ORrwIJ3RbdWP6eTxKF3VEHhMyaIHO1TcxyAZmCD
+    IHQ1GdaYPeBzEQztaRKtsAxRzMighbj9hV13UwyFk38sUE7gM4CHQBDKNKVo2MMiCdzg
+    v4PYvnq6PW80IbliD4U0cSO0qhFw05PL70kGE0uOyxrAhoarfW2hlb+C9KdBC1jlOp5+
+    MKoWO8l11XP4/PG4U2mGezgI/yL57rGHrdxkTtznS9eHd64kDQ5mxtEaWn4N9SOs6ml5
+    DPbw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740603349;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=h3kwnl84GKFzcYqD2MZXAD5G+Hc11YASNteYVcGkOjw=;
+    b=Aa6QASK0lqZbPyqq+kwDc28DXnlwgUXsQGKhYAb0ihUmWJKe7xLIE4NQFMB9sF4OTI
+    gyYzvN3WIf0sSfVrrJnpz0xaB8kYYdP/Y+0ZqL4UMV0HfsBgFwmaZ+DpIdFTTnJvOjNQ
+    qwrShwWy1Xoa+PW/RPxzqEnkZkvUlVL/f/y6l7JnKxO33CfFZVp2r86hf4y6C/VvGCi7
+    3ReQonUM1FrkwRWZ805H2m3KVIPJ7j8GI61xIHslcUG67YkejYM3TwAUaUntG1dIlXGs
+    B221ApdYu0clk5BmhI41Tz77QY04X86M+MY8tB6NXdXro6CvcAi5rMwoUFHlaG8LsPio
+    41Xw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740603349;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=h3kwnl84GKFzcYqD2MZXAD5G+Hc11YASNteYVcGkOjw=;
+    b=YpQV3ZIUiPaYJtPqOQmucq9zNX0Y0s0RCOTaRO7ceLqtebmcXUKsjUmZ7S/ze5ZKpx
+    awLD6ZkE+fIoAqCzjAAA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeD0Z"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.23 DYNA|AUTH)
+    with ESMTPSA id Qe5b2211QKtnizH
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Wed, 26 Feb 2025 21:55:49 +0100 (CET)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|MW4PR12MB6875:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b792c16-710e-4d62-9129-08dd56a79484
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OWUyK0gwUWF1bUlZMFBjeTFVelJlY25zSURSZ2tCWUR1NUlYQlB4aEViTm5I?=
- =?utf-8?B?UVlOVlJTNGZJMnR1SHlydmcyaVZOY0hZb2RiVG93ejZkaUkzblYvYTlXSUpD?=
- =?utf-8?B?S29PVXRzamJ5cHFSWVdlMnh4MVFOQlFrcGYzcURORURJNmlTeTdyc2VoNlZi?=
- =?utf-8?B?a0xOT29TUGQyV0ZJSWxYYm1BSk4waUNZeklQVlBvR2cvUklsOG1TR0dFYVMv?=
- =?utf-8?B?bCtLdE5GYUZ3dHREdmsrdzRUakdVRFdJeFVhRDVPZllhaGpiUU5DMEpzYjJF?=
- =?utf-8?B?ZkdoY3V2aGlZZkdJOWh5UGxlMjdXMXhSSGxPSzJZaG96TkcwRGZOeVJKUG42?=
- =?utf-8?B?cngyQlpDNlhYaHgwNDU1MUQrZmVGdHpZMldNZ0U5RURaWSt5ZFN1eHAyTUdo?=
- =?utf-8?B?ZDlmUlcybEZ2LzN1TE1iclBKVDdFcHdUUEduQzRPRWdJc3hBM1BJMFpjZ3JI?=
- =?utf-8?B?a3pKUkhyclFpR0lidEVDc24zaERMM3M2MUM1YjZOWFM1VEU4MUppNFZ1SVVH?=
- =?utf-8?B?OTR1V2JpTnZiUEllRFpQNklITlI0dVE1TFhOVW5PV3J0bnUwZEZZZk92TW13?=
- =?utf-8?B?N0I3clp6NStWR3BHa3Uybm5SRGJKNWFDb2wrMTRZVnA5cEhrWUVhVjF6aEIy?=
- =?utf-8?B?cHZlcXRwRStqZGIrazhFSVJGcDRYR3BTNWlzNlNxY3JWZEZucWhQUTVaOUJm?=
- =?utf-8?B?dmpveHIyNXhqR0RLLzdvZTN5b1dmajVEenVNaHhORXhwTkFqY1ZQWitSeHV6?=
- =?utf-8?B?YjRzK3lOdnUrcTE4OTYzajhVS3A1WUFoUmR6NTZFaXFTNVhhR0dOajhwT3h1?=
- =?utf-8?B?OTgzZ002MjdVOWo2dGRsZUFOR1ZPS2FnajdTQjJBTGpiWE5lWGpBaEhsWXBy?=
- =?utf-8?B?c0dxWFV6d3J3NEcxOFRiRFZTM1FzMldvTTREcXVIeVZsdk1aS2JFSVRnZmpR?=
- =?utf-8?B?V3ZkNXRkS3BsWDE5UGk3SjdtcWUvVWpvWDZCZGlCYjZ5Tkt2OTNvRFRzZzB3?=
- =?utf-8?B?MkY1WUZnWTdSWEdWZEZ3YmhxbVQvOW96NkkrL0oweFU2Q0dJOHVzN2QxcHov?=
- =?utf-8?B?UlRrMmdUOFpIbFVQYjhxVWs4b3M4YTZhU0ZWMlB3N1NMWTQzRCtCKzkzS0hG?=
- =?utf-8?B?WllRN1BVVFFpRG9jR2RqVlhaNWowNCtLOFZxOXF2T0c5TXprZVRxNkxRMGZa?=
- =?utf-8?B?TG5pZklJb0pmSnQzdU1CMnZTdm1XdFpTRksvSE02RUZBVGtxeEJjWmNuOS9v?=
- =?utf-8?B?eTNJbk9zWUlSV3dISDBGVmYzYlJVcmh2MXFLUWh4alhjbWFNUEJKUkUzNkZG?=
- =?utf-8?B?M2dUOS9HTzQ5OThvT0xOQS9ydVdGa2pBVnBxcW9GSkhYZG1xMkszMFZTMklW?=
- =?utf-8?B?U3lFK29IUWJNZGdCb1VmSmJOK1lORUNvaUhSc3pGNXo4WTJkSFhBdkh5NzRG?=
- =?utf-8?B?WEV1MDIrbXhDaVhmUFZkOFRWdUVyNndZWENkSEpGdDlYeXlMa0RqTlU1ek1z?=
- =?utf-8?B?NGlmUTBJVmlsMG0yNU40a0p1MHRRdVFXczZ2MXB3OElXZUJVNWpHWENCa2dl?=
- =?utf-8?B?aHVwY3kvdTduTEk1YndlOEliZjAzOUloTDFVckpEL0orcURCcWovL25hOU5O?=
- =?utf-8?B?TTM1V0YvNWZuUlZEU3pENk0zUDlEcGp6bm1COHArdzd2T3FoZDIxREdqaE9R?=
- =?utf-8?B?dW9lVWFvejRpZXg1M2M5UlNTZ2tGQkFtWGVyOUhCRVlUQUlOL05HRTR1Q1Qr?=
- =?utf-8?B?S0RVbUd1bHJ1UXFBRjNkSU5vRUtTUk10elkvaVA5YTQwMTdYN01IUEp4NXpi?=
- =?utf-8?B?WmRyeVRCMjhXR3dBNGJMMVhQKzlqN2NyTWQ5UG9FbllnM0pSY3RWLzlxR3Jx?=
- =?utf-8?Q?YfS9o/avTh1MQ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OUx5MDdCbkE4SWozRUVWYXEyZTFUK1J6ZU94c0pJblFVamlhMFZCZUZUdXpx?=
- =?utf-8?B?Lyt5akt4bWdDbkhyWjlpRVovYW9tdCtZZ0dJREZqeWFSRzZhSXBCbUV4Wmxt?=
- =?utf-8?B?Rk5qeEhxaktSUEpiaUFuSm43UEdySjFSbmp0TGJQdCtKTmRVaXdxalN1b29H?=
- =?utf-8?B?Lzl4dVVQbkhHTUEydkdjTFlGclRHYjhNdC9wUUovWmkxbHN3dmFPWTVhU084?=
- =?utf-8?B?cEFKRFNya2xoNWZFRVNJTHhlZEFlbng4K0xOelA5NGpna2VvcDVWT0RIdE5h?=
- =?utf-8?B?cVBxYVJjY0xac0FVTCtHQWFHbGQ2RVFwZTFoQ2hmUlVxTStEU3E5MHltOWh1?=
- =?utf-8?B?S3hVdlpyWThNRjlUakNlbFVLbHRxeDh4WnRBL0k5SzlLcDF6MjI5ZTBZdmM4?=
- =?utf-8?B?cnQyZkhmZ2p4TGN4NHpYdTNtS1Z1L2xIcUN0ZngzZnJvMjJmYWl0bEg5ZFJa?=
- =?utf-8?B?OVN5OCttMDFUTVM2UVFPa014NkZxSGhkSTRTV01GaUIyWXRaM3R3QTN6bG9M?=
- =?utf-8?B?MW9KVUpBaVpEdHFvYXhnMXFISFppNFpTTHEvNkJWczlsVGlDSWEycjB5Zkt4?=
- =?utf-8?B?emZLaW9kbjkvZG41LzBFMVJIYTduY2VHTFdXbnZ5S1puMVc5RzVTb0ltUWYx?=
- =?utf-8?B?cms0eTI0TFY4VnhkeVNnMS9VY0MvQ2sydUdrOEZYcG5jUmh5SGZQUUJZSWpH?=
- =?utf-8?B?Vmt1Y2NYUkJLbmIvUEdkVXJ2UTlPMUJoaWRxZmpsQnNpSHlUSkNvNkx0YkVF?=
- =?utf-8?B?ZzhGOUFrTFBZNXlIZ3p3eUg3dzdEZkh1M3d2Mmp4OUdPS1VzSDN4YWx5MXRm?=
- =?utf-8?B?UXc5aWx4dHB0VjN6ZHhLZFBjT0JyQjhBRTFNM2tFUWtRRVhoOGVRSWQ1NkIz?=
- =?utf-8?B?blBoZjAzNWxIMWJpUTdCU1haLzRWRVo5eHprcnFzT2hPYWV6ZXZNVk8zcjBU?=
- =?utf-8?B?VkxDSk96SThlT3Z6M2tYSXFMczRRYjEva0hGV1hsclZpelZSUVBvY1lJZ0xq?=
- =?utf-8?B?UzgzT25SeU1NVXZ6MHNHT01rRFYwUFNHRTQ1ajU0Q3V5bFUrWDhrZFZQNm1t?=
- =?utf-8?B?b1ozWHhCR1E2OTA2QzZaSkNEY1NsU2N3QTIyd1p5djI5TVRiNUNxenE0VGxq?=
- =?utf-8?B?MXlDMUpROVZZS2x4MEpUMlNwUXFQV203NTc5YVE4enc3ZFBuVjhjT2MrMWlL?=
- =?utf-8?B?Y0dhRXhYYlZNVGlIQkEvQ3RxRFVLMnoyVVR4d25ZQmVxREUrdmxNdTBUUDYw?=
- =?utf-8?B?bUVUUjNPODlPMUpPaHJCV1dHZ2paTDNUTjBEWWM1Z1hlb2RVOUF5TGZET1o5?=
- =?utf-8?B?MWJML0hQUk9TcDlkMWtuVEc0dU15UVZ0RSs4aTd6eEpoSWU2SkFrOXFHOFVu?=
- =?utf-8?B?QVdtR1pMSVlvKy9tbUJvR1RlYzF3ZEtxVmpDbTdYVzhtaUpyVms5WEJYRmJD?=
- =?utf-8?B?MlNMQWtPVC9uamZsbDgyNTJVYTc4bmNVcHhUR1cxU05kUTY1OVdFS1Q1eWRp?=
- =?utf-8?B?SWloNXM5dUFNTlJPNVlTRG1GeUQyWmoxcHUwemxoNzJ2eHBVTEFUalVsdVBW?=
- =?utf-8?B?SVpXclphZThDT0dwOW9LcnMxR04vUDlBaXpKZVAwUy9BeWUwb1plSytDbzJW?=
- =?utf-8?B?QWxQWUtjajRMakFOZUF4d3lUNDV2WHI0S2QvKzh0b2JZWjBEWGNTbDlraHdu?=
- =?utf-8?B?VTJyVlUwNVFrNzBvNzg1K3p1VFhBK1B0SXI1M2YzTmcxa0x6UjJNVG5MSHFB?=
- =?utf-8?B?QnFjTVJmVm9HLzV5QlprWUlOaXdqZjZBdXhqa05yNDBIbFdCTmx0ZmhhYzJh?=
- =?utf-8?B?MlZlUHJmVnpxNVkwOENDWk9lVVVBRlFhazU3UWF6aCtwWHpPV0NSUzZldzFm?=
- =?utf-8?B?b1p2amFYQS9CM2N0djFJMVBqOG1CK2Z2RTk3STBYMGVPMGVvekh4aUlEc3Bm?=
- =?utf-8?B?Vnh1YW9EamRFcC9wMjkwd0ZLUkhGNEdwU0Fxa2hkSW1sRnRyVUdVb05EaHdF?=
- =?utf-8?B?eTVwazdoWmhMdE9oazBITHI0Q21YSWg5UlRmQnh4ZWtBNHZZUStVZ1loVnBO?=
- =?utf-8?B?Q0FEQmdpK01jQ1pUdVhXU1d3UFFjVFNIdTRNWmlaR081WWpvaDYwOGtYakZm?=
- =?utf-8?Q?yWw+C13Og0JgNfVhz923IkyKv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b792c16-710e-4d62-9129-08dd56a79484
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 20:53:10.9197
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U+B4XhM2NMQxvx0pEFMe69aVQcFSFxxVwJXuHqZ5+U98fNoSemoTWYNa6yo8Neq8DOiu1LtI+3r+CSD9VkJikg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6875
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH RESEND] phy: ingenic: fix unbalanced regulator_disable()
+ warning
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <ab308c135c3ea5e050bbfb0b94a832c8d52d5380.camel@crapouillou.net>
+Date: Wed, 26 Feb 2025 21:54:52 +0100
+Cc: Zhou Yanjie <zhouyanjie@wanyeetech.com>,
+ linux-phy@lists.infradead.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+ kernel@pyra-handheld.com,
+ linux-mips@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AF49A39E-0534-4ADC-8E50-606A636D167A@goldelico.com>
+References: <96da5fe557f3b2501447358895bd78decc4633ef.1735482146.git.hns@goldelico.com>
+ <ab308c135c3ea5e050bbfb0b94a832c8d52d5380.camel@crapouillou.net>
+To: Paul Cercueil <paul@crapouillou.net>,
+ Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-Reviewed-by: Alex Hung <alex.hung@amd.com>
+Hi,
 
-On 2/26/25 13:28, Vitaliy Shevtsov wrote:
-> There is a type mismatch between what CalculateDynamicMetadataParameters()
-> takes and what is passed to it. Currently this function accepts several
-> args as signed long but it's called with unsigned integers and integer. On
-> some systems where long is 32 bits and one of these unsigned int params is
-> greater than INT_MAX it may cause passing input params as negative values.
-> 
-> Fix this by changing these argument types from long to unsigned int and to
-> int respectively. Also this will align the function's definition with
-> similar functions in other dcn* drivers.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Fixes: 6725a88f88a7 ("drm/amd/display: Add DCN3 DML")
-> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-> ---
-> v3: Update the description to include int in addition to unsigned int.
-> v2: Change DynamicMetadataLinesBeforeActiveRequired type from unsigned int
->      to int as per Alex Hung's observation.
->      Add Fixes tag missed by chance.
-> 
->   .../amd/display/dc/dml/dcn30/display_mode_vba_30.c   | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> index cee1b351e105..f1fe49401bc0 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn30/display_mode_vba_30.c
-> @@ -281,10 +281,10 @@ static void CalculateDynamicMetadataParameters(
->   		double DISPCLK,
->   		double DCFClkDeepSleep,
->   		double PixelClock,
-> -		long HTotal,
-> -		long VBlank,
-> -		long DynamicMetadataTransmittedBytes,
-> -		long DynamicMetadataLinesBeforeActiveRequired,
-> +		unsigned int HTotal,
-> +		unsigned int VBlank,
-> +		unsigned int DynamicMetadataTransmittedBytes,
-> +		int DynamicMetadataLinesBeforeActiveRequired,
->   		int InterlaceEnable,
->   		bool ProgressiveToInterlaceUnitInOPP,
->   		double *Tsetup,
-> @@ -3265,8 +3265,8 @@ static double CalculateWriteBackDelay(
->   
->   
->   static void CalculateDynamicMetadataParameters(int MaxInterDCNTileRepeaters, double DPPCLK, double DISPCLK,
-> -		double DCFClkDeepSleep, double PixelClock, long HTotal, long VBlank, long DynamicMetadataTransmittedBytes,
-> -		long DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
-> +		double DCFClkDeepSleep, double PixelClock, unsigned int HTotal, unsigned int VBlank, unsigned int DynamicMetadataTransmittedBytes,
-> +		int DynamicMetadataLinesBeforeActiveRequired, int InterlaceEnable, bool ProgressiveToInterlaceUnitInOPP,
->   		double *Tsetup, double *Tdmbf, double *Tdmec, double *Tdmsks)
->   {
->   	double TotalRepeaterDelayTime = 0;
+I just wonder if anyone is picking this up?
+
+There seems to be no MAINTAINER specific for drivers/phy/ingenic.
+
+BR,
+Nikolaus
+
+> Am 02.01.2025 um 13:53 schrieb Paul Cercueil <paul@crapouillou.net>:
+>=20
+> Hi Nikolaus,
+>=20
+> Le dimanche 29 d=C3=A9cembre 2024 =C3=A0 15:22 +0100, H. Nikolaus =
+Schaller a
+> =C3=A9crit :
+>> if ingenic_usb_phy_exit is called the regulator is already disabled
+>> through ingenic_usb_phy_power_off() leading to
+>>=20
+>> [    5.367301] WARNING: CPU: 0 PID: 20 at
+>> drivers/regulator/core.c:2953 _regulator_disable+0x200/0x230
+>> [    5.368209] unbalanced disables for regulator-dummy
+>> [    5.370364] Modules linked in: phy_ingenic_usb
+>> ...
+>> [    5.373441] [<8054601c>] regulator_disable+0x40/0x80
+>> [    5.372952] [<c02450f8>] ingenic_usb_phy_exit+0x48/0x60
+>> [phy_ingenic_usb]
+>> [    5.374283] [<8050839c>] phy_exit+0xd8/0x104
+>> [    5.373104] [<80657a24>] __dwc2_lowlevel_hw_disable+0xe0/0xe8
+>> [    5.373393] [<80658ad4>] dwc2_driver_probe+0x818/0x834
+>> ...
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>=20
+> Looks good to me. The regulator is not enabled in
+> ingenic_usb_phy_init(), so it should not be disabled in
+> ingenic_usb_phy_exit().
+>=20
+> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+>=20
+> Cheers,
+> -Paul
+>=20
+>=20
+>> ---
+>>=20
+>> Notes:
+>>     Resent because linux-mips@vger.kernel.org was not automatically
+>> added by
+>>     get_maintainer.pl (drivers/phy/ingenic missing in MAINTAINERS
+>> record?)
+>>=20
+>>  drivers/phy/ingenic/phy-ingenic-usb.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>=20
+>> diff --git a/drivers/phy/ingenic/phy-ingenic-usb.c
+>> b/drivers/phy/ingenic/phy-ingenic-usb.c
+>> index eb2721f72a4c1..35984dd8a1bd7 100644
+>> --- a/drivers/phy/ingenic/phy-ingenic-usb.c
+>> +++ b/drivers/phy/ingenic/phy-ingenic-usb.c
+>> @@ -124,7 +124,6 @@ static int ingenic_usb_phy_exit(struct phy *phy)
+>>   struct ingenic_usb_phy *priv =3D phy_get_drvdata(phy);
+>> =20
+>>   clk_disable_unprepare(priv->clk);
+>> - regulator_disable(priv->vcc_supply);
+>> =20
+>>   return 0;
+>>  }
+
 
 
