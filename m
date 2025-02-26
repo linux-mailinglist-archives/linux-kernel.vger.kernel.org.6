@@ -1,161 +1,122 @@
-Return-Path: <linux-kernel+bounces-533992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27DEA46131
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:44:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EDCA4613C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C696918901C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:44:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AF63AABED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EBA21CC44;
-	Wed, 26 Feb 2025 13:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6121B9C8;
+	Wed, 26 Feb 2025 13:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6cR4tOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6tBQvtx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF2341C71;
-	Wed, 26 Feb 2025 13:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76025DDCD;
+	Wed, 26 Feb 2025 13:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740577442; cv=none; b=otPU6DrqiFVhoBCJR46UcBZTldy0Htid2DzPo2UIr832iEEePB0NUX35VqwpPgCxDjbV8XHp9jsDAZr5E+VnqzJVJNVLIjHnSBDqvgd0mSopJ158hV4neIr20kM3hzQfoijAG+rvYUYU3xjXcFcFB9hBkAHC5E6rIif25I4df7Y=
+	t=1740577621; cv=none; b=pgpHuKCwUaczhQUmXYoZxtuBeV24rHRROPwr5yT0B7o3Qg858iAAOAtC9PaqB4dZm3Chv1CVmB9+rMuaX4rNcGjclwp9Lucfmypox49cEZjYlp+9ArCfGs5tlI3Q2SUB6TjHt2TVbXGOU9PoeopjIjooFVnDQGxBqDdG99rZHvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740577442; c=relaxed/simple;
-	bh=Tep2lPN+rpct37RYjZ6pG1IE0OH1XeA8ffgdNjYTmdk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DusDiAofp+0b7MHAkjzDt9x1tmhaS/UEttDeosTNMJyIubmCgWTqrMYiaRep9wfwSURsIdqg+qxktqHZ0//sA9xFl4ZXJXC9RQyyagXAy79vsj4FjkaMMh2y2dLSgr2/km21FYIMXkrvckdCXwcZBSpV9IxR2CNQsX3STtdHd1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6cR4tOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E91BC4CED6;
-	Wed, 26 Feb 2025 13:43:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740577441;
-	bh=Tep2lPN+rpct37RYjZ6pG1IE0OH1XeA8ffgdNjYTmdk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B6cR4tOnA/dc6AUxmnq8mg22Rxr4zD1iC9tp//6N2Xq7pVIkHYTRr7/6oKtgsdnA+
-	 Gfni78fLcV6fRZ4tC9VjliGOnxVdM0G4YnfExsDn7DVrEVpq2dnv4ns4nQ7filLPUS
-	 TJ9ASSSS50WBHscudXgtQY91oFy8JozPLfuYggSD/ousMA5ii/3xQKcWiL3GWIOW3M
-	 YhJmUhCi3iXIuNYNFJj1LYAc44TT6TJPLH1yI5JJPzUrEZc+LZi45rxRLJzTjh/aKz
-	 buVaT/PugBHmpz96g4rnfgo7Ep3OpVuYknshYmF+m7g2taLbxmnzcKFAKKoSWX5An5
-	 fSnLo+WRvGw2g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 04/13] rust: hrtimer: allow timer restart from timer
- handler
-In-Reply-To: <6c2a299ec594fbaae294037e36c78cb37aaa7f33.camel@redhat.com>
-	(Lyude Paul's message of "Tue, 25 Feb 2025 16:46:56 -0500")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-4-5bd3bf0ce6cc@kernel.org>
-	<bbtTga1W7J8Ur61sLLE4K8a3B0oe5iDhuHVNs9dTAf8EX2PUf_jloAt7U3xki4WZB3IkWyPHErVMMLx_vwXXlg==@protonmail.internalid>
-	<0fb37c2b2d1a28d2096ffdb08df15404d870d68a.camel@redhat.com>
-	<877c5exuwu.fsf@kernel.org>
-	<ei-wpaJk-37J66majBflBYe_VA0QU4gcT2mJiTXB-kkkGHDXKoWZN2DVpKkKxCtmVFBcaVsCSZvHweJMEupknQ==@protonmail.internalid>
-	<6c2a299ec594fbaae294037e36c78cb37aaa7f33.camel@redhat.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 26 Feb 2025 14:43:49 +0100
-Message-ID: <878qpsvn1m.fsf@kernel.org>
+	s=arc-20240116; t=1740577621; c=relaxed/simple;
+	bh=ghYoPmkesmE/DQEdj+zyBDgNwpAW1ZQ1GHICBwEW7hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Za0y/mrBzLQonv3WYbyOOaOIp2I9dm9jaK1o3eOLZW6QaovK9SGVuFd71R0rgl2OYkX/SCLOVaF6EtEm3KZuJ8ilSBYE+o/JtCx1Q/SyGoEM/eXZBKWFErvhFE6LXk56u4YPP6FeJEGUaEYs2+PNhHcGcnae9RUnzBor5emo0SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6tBQvtx; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740577620; x=1772113620;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ghYoPmkesmE/DQEdj+zyBDgNwpAW1ZQ1GHICBwEW7hM=;
+  b=c6tBQvtxjF+rPWD2A6yrjdGvEnGkJfmb3XgudjbDDxtMLet63RAL98ws
+   CsUwKE2hjZLK1i6ECKVwLCojQ+DR+FNxPsTqUckfg8RhaNsJsXBDnAsTD
+   9cHbak6mAD2NCE8nVsjobp1/gBhW67QE9QbRWsm7W2Tv+x3sByqnDPx1c
+   K4RNhb3tHogI8GVi7M6Ze7fP5b52nRPEt1BLhNiEzLh4LIXaz7ZlSgUDS
+   ZWggx4/pjwekb8QIkqvjusCyLNiC/zD76KLsw+GnfpCdwKl0QLNevQR+e
+   UHA9L9wxy77Iwd9+oXexQyCEz0yrHshE6V9VQ+/c2Q2ZQHXu1aXVP8FIX
+   A==;
+X-CSE-ConnectionGUID: 11BQ+e1eQdW4LNLPAmDH6g==
+X-CSE-MsgGUID: XaSWX9BTS7a0+n6hHMm+3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="58840480"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="58840480"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 05:47:00 -0800
+X-CSE-ConnectionGUID: 4yKCyGZwSImGOCOMBTV8JQ==
+X-CSE-MsgGUID: c3S/ek64QHmxAkSq+S5Idg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="116895285"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 26 Feb 2025 05:46:57 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 61B7E2FB; Wed, 26 Feb 2025 15:46:56 +0200 (EET)
+Date: Wed, 26 Feb 2025 15:46:56 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: brgl@bgdev.pl, Paul Menzel <pmenzel@molgen.mpg.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-pci@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Linux logs new warning `gpio gpiochip0:
+ gpiochip_add_data_with_key: get_direction failed: -22`
+Message-ID: <Z78bUPN7kdSnbIjW@black.fi.intel.com>
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
+ <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+ <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+ <CACRpkdZbu=ii_Aq1rdNN_z+T0SBRpLEm-aoc-QnWW9OnA83+Vw@mail.gmail.com>
+ <Z78ZK8Sh0cOhMEsH@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z78ZK8Sh0cOhMEsH@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On Wed, Feb 26, 2025 at 03:37:47PM +0200, Andy Shevchenko wrote:
+> On Tue, Feb 25, 2025 at 10:25:00PM +0100, Linus Walleij wrote:
+> > On Mon, Feb 24, 2025 at 9:51 AM <brgl@bgdev.pl> wrote:
+> > 
+> > > In any case: Linus: what should be our policy here? There are some pinctrl
+> > > drivers which return EINVAL if the pin in question is not in GPIO mode. I don't
+> > > think this is an error. Returning errors should be reserved for read failures
+> > > and so on. Are you fine with changing the logic here to explicitly default to
+> > > INPUT as until recently all errors would be interpreted as such anyway?
+> > 
+> > Oh hm I guess. There was no defined semantic until now anyway. Maybe
+> > Andy has something to say about it though, it's very much his pin controller.
+> 
+> Driver is doing correct things. If you want to be pedantic, we need to return
+> all possible pin states (which are currently absent from GPIO get_direction()
+> perspective) and even though it's not possible to tell from the pin muxer
+> p.o.v. If function is I2C, it's open-drain, if some other, it may be completely
+> different, but pin muxer might only guesstimate the state of the particular
+> function is and I do not think guesstimation is a right approach.
+> 
+> We may use the specific error code, though. and document that semantics.
 
-> On Tue, 2025-02-25 at 09:58 +0100, Andreas Hindborg wrote:
->> "Lyude Paul" <lyude@redhat.com> writes:
->>
->> > On Mon, 2025-02-24 at 13:03 +0100, Andreas Hindborg wrote:
->> >
->> > Also, I feel like I might have asked this a few versions ago so hopefully i'm
->> > not asking again: but what's the reason for us not just using the
->> > discriminants of `HrTimerRestart` here:
->> >
->> > /// Restart policy for timers.
->> > #[repr(u32)]
->> > pub enum HrTimerRestart {
->> >     /// Timer should not be restarted.
->> >     NoRestart = bindings::hrtimer_restart_HRTIMER_NORESTART,
->> >     /// Timer should be restarted.
->> >     Restart = bindings::hrtimer_restart_HRTIMER_RESTART,
->> > }
->>
->> I forget if we discussed this, but it does not make much of a
->> difference, does it?
->>
->> With a Rust enum, we get a smaller storage type maybe with better
->> support for niche optimizations? And then pay a bit more for conversion.
->> All in all, I don't think it makes much difference.
->
-> No idea about performance wise, but I -think- it would actually cut down on
-> the code that you need - particularly for the larger enums here. Mainly
-> because you only would need to manually specify each variant for converting
-> from bindings::hrtimer_restart to HrTimerRestart, but not the other way
-> around:
->
->    /// Restart policy for timers.
->    #[repr(u32)]
->    pub enum HrTimerRestart {
->        /// Timer should not be restarted.
->        NoRestart = bindings::hrtimer_restart_HRTIMER_NORESTART,
->        /// Timer should be restarted.
->        Restart = bindings::hrtimer_restart_HRTIMER_RESTART,
->    }
->
->    impl From<bindings::hrtimer_restart> for HrTimerRestart {
->        fn from(value: u32) -> Self {
->            match value {
->                bindings::hrtimer_restart_HRTIMER_NORESTART => Self::NoRestart,
->                _ => Self::Restart,
->            }
->        }
->    }
->
->    impl From<HrTimerRestart> for bindings::hrtimer_restart {
->        fn from(value: HrTimerRestart) -> Self {
->            value as Self
->        }
->    }
+Brief looking at the error descriptions and the practical use the best (and
+unique enough) choice may be EBADSLT.
 
-I was implementing this, and it is fine for `HrTimerRestart`, but for
-`HrTimerMode` it does not work out. We have multiple flags with the same
-value:
-
-  error[E0081]: discriminant value `2` assigned more than once
-    --> /home/aeh/src/linux-rust/hrtimer/rust/kernel/time/hrtimer.rs:689:1
-      |
-  689 | pub enum HrTimerMode {
-      | ^^^^^^^^^^^^^^^^^^^^
-  ...
-  695 |     Pinned = bindings::hrtimer_mode_HRTIMER_MODE_PINNED,
-      |              ------------------------------------------ `2` assigned here
-  ...
-  702 |     AbsolutePinned = bindings::hrtimer_mode_HRTIMER_MODE_ABS_PINNED,
-      |                      ---------------------------------------------- `2` assigned here
-
-
-Which is unfortunate. I'll keep the old style for this one and convert
-the others where applicable.
-
-
-Best regards,
-Andreas Hindborg
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
