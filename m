@@ -1,126 +1,195 @@
-Return-Path: <linux-kernel+bounces-535104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD54A46F00
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:07:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EFEA46F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18340188C3BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFE33AE1FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 23:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1AB25BAA6;
-	Wed, 26 Feb 2025 23:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6622125F780;
+	Wed, 26 Feb 2025 23:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KveEzsr2"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA5E19597F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UKMSUvEv"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F401A19597F;
+	Wed, 26 Feb 2025 23:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740611253; cv=none; b=U8NzkDc0E4eQNao9G56gQ22FOmw7lL6xj/+ar7Od+CJL9a3nRqjOjLFyKScPzUSlsY/d6qWhAwWrd/C54I7Vl5he7jKkfKZEen6zo2zvTb0wn/zRzDap8H+5Z2cvEGaauzUaQZSwFcUe6zvvzjlgHLuzdtvoLFRirYbpq/Gzr0Q=
+	t=1740611340; cv=none; b=l93cbCSuq1ak/Fs0fzvKmbscknQifohEccsigjauQL18s9RHaG4PScCWe27ZN/CSxbhfMHHaLmQIJBffpUMhda7OQ99ydGyiTFnbYW2J4cTeP3wc32TYxRMOFLxTydETf0/QxQ7br9582Xhhzsvvi+AUI2SK5/aBcQCElBieEjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740611253; c=relaxed/simple;
-	bh=pRoo4kt1j3t3xYS1cGP1drmXvTtaQO/4Q2bHSnftOEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BXkOLFXMGX6aovdIGjrvuRwJYQsyU6TiHhFs3ef/Nz+ylQSktrdMJiFE+ukwVN0e1bKQk6bKdT0x8hdPI83Hw3s98Ugfwxqd8Iw47wCWGf/96zeRSYnAXan/MvZ9k9SOv3FqsA+l3ekzpnejnj7J7fqr9Iik3TOclalAa1jnknc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KveEzsr2; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54298ec925bso405916e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:07:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740611250; x=1741216050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6EFFgter9gAlebiFMms2NvzaWeJFYWFjYw0olSs4d0=;
-        b=KveEzsr2qELuw9BoXej6iff2qoCkSw+zea4oGkjD2TZck4/Gmssfn24Cy2xYdkBlHx
-         RKoMbsUgMNMIaCgDPVTw35qWsxZ54BSSizBs8yBxpq778k56+Xlnokra0APCJkWpquWl
-         V+wJcRMe/lNQiQObLpXuWxJ+lIv+M1CKdNcbyrBLWy9E8eTDsSrhEuuh3pN7d+1lgTrA
-         4RqdlTrMu86qAaxtzYv1nlHMbQS4WJQbN+AojjZkyJYKXrI/vmzjjKg7yOYx3xDPwa1I
-         f1XfydUwBq87UOqOagcp/ows6ZtYFki117zeSoE5cNSxsvHCOHOAtRbLZL66aEVakb15
-         iruQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740611250; x=1741216050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n6EFFgter9gAlebiFMms2NvzaWeJFYWFjYw0olSs4d0=;
-        b=knzE4JLKfJKWCJ21eDxrvRteYhJSq8yp+gWVGZuZxBv6sk8YH/VLdsTYnjhRQs2DpC
-         DwR6FrT9rdECCs8OIJbxc5e2HWnKmRhtaVkTSGn94R07apMWyUw7JbaiOJ3ZOq4FbRky
-         WaVZNnTSVYiMvBrDQEvyE3NSsha3h3bxUGvR0qg25t7FsI/Ypq94g6F7asHv8swIGm1e
-         3WriqDxHqClKU7X364ghElp1eiWj6DAXLXVjZGupSX7cDhjFbiHB9I1JL4h+X+hsVhhO
-         Vq7TKOvHHJHwabbJg7ajVGmXvNvlyd19cfyUhcGuYMftAhci5qIBjTw+BTz+peE9Bgys
-         yMiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN+4EVbZVffwG+81JsLS+J7hI3PQkV49DWWpaMPOqWTNh0fT36KFt49YEOcbJjMc9nGw7PL76Xek+BM8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfAah41R6djRb8ZkH+fjTL2ZmYPu5YZjE2D1drMd7oZz08h/cx
-	bLrofHEk7InTHWeJEvYcfaVruI/cP5KNIiEQBFUlq4p/1wlcb5XygAICxNm1AA6+D1ONhuiG6m0
-	xjVXgSsgYkaOuqjsI03Ygf8nrZpk=
-X-Gm-Gg: ASbGncuZ1upKibSX2rC6UNmtFGojkl9/2160eUiZpPf4eRedjt0n2osckC03i/zmveg
-	5/EWes80NfaVo4nfssG1MU5ZgH6zv44a3ldNpDTvZCgHk23xw3tEHizXdBenMghJdtK5INsEcsY
-	Vf9l8a/7s=
-X-Google-Smtp-Source: AGHT+IEuqB4IJ3OP9zoL3qsGgFn5WgCkzYkJqBEXvTaf6Vi7/Ve1nDsh1ZOGXPkSvwiNAEYISejaABGjP4jGd1d8vDQ=
-X-Received: by 2002:a05:6512:15aa:b0:545:944:aadd with SMTP id
- 2adb3069b0e04-5493c5aebadmr3654432e87.37.1740611250067; Wed, 26 Feb 2025
- 15:07:30 -0800 (PST)
+	s=arc-20240116; t=1740611340; c=relaxed/simple;
+	bh=ZebPFwCxMEWBUraXVn7cAy7LhzzBqgUECRkpu1XPMkE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iJHywbTcr0MYTI4AA+YUqPu2zZWlwCRNGTg2Yz9PICign6nZEGfTDeQIwxd6V0fkewcT9b/wZoAsD3z+vkHl6XdDah0ZdwVqDxzUZ0IOrhylTFyoOIkSWiqVaty+/2f8+0yEcK5IaIz2FynIhVQP06PdiEdYvAP2WunN2dPocMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UKMSUvEv; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7463B210EAC2;
+	Wed, 26 Feb 2025 15:08:58 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7463B210EAC2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740611338;
+	bh=lWL9w60RgCFJvxxxcjzNA366fYz5ZKlmrqBqiOc+Q/g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UKMSUvEv3THtmb9g5aJiCCDyMciP7ngSYzLOlZsEfYIlPXKPGvB2TRsNtJmqddGYU
+	 tH11c73Be9Yhta0hqTigHkzGT2UnIsvlEVX3bbhRoIlC/pLu04nIm977y8hCo9IvUo
+	 Tw6a0qyunjQu8u67QPyY/bCTHgaRgpP2difIJaac=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	mhklinux@outlook.com,
+	decui@microsoft.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	daniel.lezcano@linaro.org,
+	joro@8bytes.org,
+	robin.murphy@arm.com,
+	arnd@arndb.de,
+	jinankjain@linux.microsoft.com,
+	muminulrussell@gmail.com,
+	skinsburskii@linux.microsoft.com,
+	mrathor@linux.microsoft.com,
+	ssengar@linux.microsoft.com,
+	apais@linux.microsoft.com,
+	Tianyu.Lan@microsoft.com,
+	stanislav.kinsburskiy@gmail.com,
+	gregkh@linuxfoundation.org,
+	vkuznets@redhat.com,
+	prapal@linux.microsoft.com,
+	muislam@microsoft.com,
+	anrayabh@linux.microsoft.com,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	corbet@lwn.net
+Subject: [PATCH v5 00/10] Introduce /dev/mshv root partition driver
+Date: Wed, 26 Feb 2025 15:07:54 -0800
+Message-Id: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250226133703.3c9775c9e50e198abc9b9f6e@linux-foundation.org> <20250226225605.2000-1-sj@kernel.org>
-In-Reply-To: <20250226225605.2000-1-sj@kernel.org>
-From: bus710 <bus710@gmail.com>
-Date: Wed, 26 Feb 2025 15:07:18 -0800
-X-Gm-Features: AQ5f1JpzFvrGUf0R0qU0JfhyEu3jv6eTcZL62UzJE6wu__9AYfAiLdLM7x0iDbc
-Message-ID: <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
-Subject: Re: [PATCH] samples/damon: a typo in the kconfig - sameple
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 2:56=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
-:
->
-> On Wed, 26 Feb 2025 13:37:03 -0800 Andrew Morton <akpm@linux-foundation.o=
-rg> wrote:
->
-> > On Wed, 26 Feb 2025 10:42:04 -0800 SeongJae Park <sj@kernel.org> wrote:
-> >
-> > > From: bus710 <bus710@gmail.com>
-> >
-> > Full names are preferred, please.  Actually I think it's "required".
->
-> Thank you for letting me clearly know this.  I'll request full names to D=
-AMON
-> patch authors from next time.
->
-> bus710, we could still update the patch before it is merged into the main=
-line.
-> If you could, please let us know your full name and if we can update the =
-patch
-> with that.
->
-> >
-> > I'll apply it anyway due to the patch's minor nature, thanks.
->
-> I agree this is a simple enough patch that the name doesn't really matter=
-.
-> Thank you Andrew :)
->
->
-> Thanks,
-> SJ
+This series introduces support for creating and running guest virtual
+machines while running on the Microsoft Hypervisor[0] as root partition.
+This is done via an IOCTL interface accessed through /dev/mshv, similar to
+/dev/kvm. Another series introducing this support was previously posted in
+2021[1], and v4 of this series was last posted in 2023[2].
 
-Oh, yes. I was a little worried if I added too much noise for such a
-small work, but I shouldn't miss this opportunity to leave my name in
-Linux history.
-Let me prepare a new patch as soon as possible.
+Patches 1-4 are small refactors and additions to Hyper-V code.
+Patches 5-6 just export some definitions needed by /dev/mshv.
+Patches 7-9 introduce some functionality and definitions in common code, that
+is needed by the driver.
+Patch 10 contains the driver code.
+
+-----------------
+[0] "Hyper-V" is more well-known, but it really refers to the whole stack
+    including the hypervisor and other components that run in Windows
+    kernel and userspace.
+[1] Previous /dev/mshv patch series (2021) and discussion:
+https://lore.kernel.org/linux-hyperv/1632853875-20261-1-git-send-email-nunodasneves@linux.microsoft.com/
+[2] v4 (2023):
+https://lore.kernel.org/linux-hyperv/1696010501-24584-1-git-send-email-nunodasneves@linux.microsoft.com/
+
+-----------------
+Changes since v4:
+* Slim down the IOCTL interface significantly, via several means:
+  1. Use generic "passthrough" call MSHV_ROOT_HVCALL to replace many ioctls.
+  2. Use MSHV_* versions of some of the HV_* definitions.
+  3. Move hv headers out of uapi altogether, into include/hyperv/, see:
+https://lore.kernel.org/linux-hyperv/1732577084-2122-1-git-send-email-nunodasneves@linux.microsoft.com/
+* Remove mshv_vtl module altogther, it will be posted in followup series
+  * Also remove the parent "mshv" module which didn't serve much purpose
+* Update and refactor parts of the driver code for clarity, extensibility
+
+Changes since v3 (summarized):
+* Clean up the error and debug logging:
+  1. Add a set of macros vp_*() and partition_*() which call the equivalent
+     dev_*(), passing the device from the partition struct
+     * The new macros also print the partition and vp ids to aid debugging
+	   and reduce repeated code
+  2. Use dev_*() (mostly via the new macros) instead of pr_*() *almost*
+  everywhere - in interrupt context we can't always get the device struct
+  3. Remove pr_*() logging from hv_call.c and mshv_root_hv_call.c
+
+Changes since v2 (summarized):
+* Fix many checkpatch.pl --strict style issues
+* Initialize status in get/set registers hypercall helpers
+* Add missing return on error in get_vp_signaled_count
+
+Changes since v1 (summarized):
+* Clean up formatting, commit messages
+
+Nuno Das Neves (9):
+  hyperv: Convert Hyper-V status codes to strings
+  arm64/hyperv: Add some missing functions to arm64
+  hyperv: Introduce hv_recommend_using_aeoi()
+  acpi: numa: Export node_to_pxm()
+  Drivers/hv: Export some functions for use by root partition module
+  Drivers: hv: Introduce per-cpu event ring tail
+  x86: hyperv: Add mshv_handler irq handler and setup function
+  hyperv: Add definitions for root partition driver to hv headers
+  Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs
+
+Stanislav Kinsburskii (1):
+  x86/mshyperv: Add support for extended Hyper-V features
+
+ .../userspace-api/ioctl/ioctl-number.rst      |    2 +
+ arch/arm64/hyperv/hv_core.c                   |   17 +
+ arch/arm64/hyperv/mshyperv.c                  |    1 +
+ arch/arm64/include/asm/mshyperv.h             |   12 +
+ arch/x86/kernel/cpu/mshyperv.c                |   16 +-
+ drivers/acpi/numa/srat.c                      |    1 +
+ drivers/hv/Makefile                           |    5 +-
+ drivers/hv/hv.c                               |   12 +-
+ drivers/hv/hv_common.c                        |  105 +-
+ drivers/hv/hv_proc.c                          |   16 +-
+ drivers/hv/mshv.h                             |   30 +
+ drivers/hv/mshv_common.c                      |  161 ++
+ drivers/hv/mshv_eventfd.c                     |  833 ++++++
+ drivers/hv/mshv_eventfd.h                     |   71 +
+ drivers/hv/mshv_irq.c                         |  128 +
+ drivers/hv/mshv_portid_table.c                |   84 +
+ drivers/hv/mshv_root.h                        |  321 +++
+ drivers/hv/mshv_root_hv_call.c                |  876 +++++++
+ drivers/hv/mshv_root_main.c                   | 2329 +++++++++++++++++
+ drivers/hv/mshv_synic.c                       |  665 +++++
+ include/asm-generic/mshyperv.h                |   18 +
+ include/hyperv/hvgdk_mini.h                   |   64 +-
+ include/hyperv/hvhdk.h                        |  132 +-
+ include/hyperv/hvhdk_mini.h                   |   91 +
+ include/uapi/linux/mshv.h                     |  287 ++
+ 25 files changed, 6248 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/hv/mshv.h
+ create mode 100644 drivers/hv/mshv_common.c
+ create mode 100644 drivers/hv/mshv_eventfd.c
+ create mode 100644 drivers/hv/mshv_eventfd.h
+ create mode 100644 drivers/hv/mshv_irq.c
+ create mode 100644 drivers/hv/mshv_portid_table.c
+ create mode 100644 drivers/hv/mshv_root.h
+ create mode 100644 drivers/hv/mshv_root_hv_call.c
+ create mode 100644 drivers/hv/mshv_root_main.c
+ create mode 100644 drivers/hv/mshv_synic.c
+ create mode 100644 include/uapi/linux/mshv.h
+
+-- 
+2.34.1
+
 
