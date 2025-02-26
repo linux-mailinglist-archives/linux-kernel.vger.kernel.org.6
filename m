@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-534260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0668A464E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:34:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80576A464CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82EF3B8804
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF41D189FB6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D73225784;
-	Wed, 26 Feb 2025 15:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691E52253BC;
+	Wed, 26 Feb 2025 15:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B++7VAH5"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZWif5UKp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567C225765;
-	Wed, 26 Feb 2025 15:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C58225765;
+	Wed, 26 Feb 2025 15:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583701; cv=none; b=ArIAiMU50ohKX30H5CcwuMraIaqDJ8f2NCS3vDatYAhPkx4ZRjdjRvvFrAdhec7Bce6t7pXIb6sbJ8thxoyNoRbaV6v2qiSdKOCIm1KccD8gv4zzTIJCqBfSFjuIX484B20M3lkK2bnNJJBMVBvgqOO+xjSDHXanctd+PeZwrYs=
+	t=1740583731; cv=none; b=ShnlLQpv5oBIWczyo6SMSSDaf3xEjV2X+fPRrZZJGWK5ChFgyPAAw34p/SKC7dfmzPcvQMF1RgQi+b7gVphkT7yvDprbChfY5w5mmGprOFBkueVx8uz/Lv8Dfl3zShU7ir77aeHLL89BmvJt+Q5Pjl+t59R0MNC/zCa5VXYqxes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583701; c=relaxed/simple;
-	bh=zTxeGIRw7OHDygnCZSmMfmz6WRG2HM2bMn3JZySEUE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jirbst7zmKFa6mat32aiS/qmWw089OJwr2AcSD60NWqZnOxzzSkaHvTSK915lYoggQkOugPhoDsXigjzRXnLWI6nxR0YQYfxjHNuk8o8ntww0PDPQyZoXxZqPhXkx8I1Qq5sfi5P1UTc3h97TvunSpAj12dHnxqFaHHWDZeBJPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B++7VAH5; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f406e9f80so6303397f8f.2;
-        Wed, 26 Feb 2025 07:28:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740583697; x=1741188497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuGqDoxQ783XMsm/02hGJVXL6doll4p+2l07PIFfL9k=;
-        b=B++7VAH5LlYeVJUsTtA+kOl4fy8hNwvSPiwkSsMcwYrfpQ2H1RzaSCJDr+WSG46FAl
-         5otAHmzsIKH8MYPNiri5u7ipuF05C0GQ+5tzwSLwx3Oonj+Zw6ZvNmZIdIQttVrEBFy6
-         /0CGi88CS6WuR8h9h5Um4VS32pg030M/ElNCkPFLqBjpzNUFxr3tEut2f2vO+JTtUl8X
-         AwD2vVaQ6lE0TIrgyqnOgGxGoAGZ23IArlMUUWGxTmGnoMaZ9ilIyES2uTRxyZs5/m3+
-         K55/iX/9xk2h+agNMBH+0dvsWspPrQkeVOMPzWM0W7C/MIoOz79rekWFF1gzjohur3kB
-         079Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740583697; x=1741188497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VuGqDoxQ783XMsm/02hGJVXL6doll4p+2l07PIFfL9k=;
-        b=wuHuU43YvUzBH20lFV8VlJE2e3oWm83UoeXahwfPsAAgeXj/odX8EjZsisWrDgPXOI
-         o26CUvXIlXgN+RQgpBUjIcP5kYQdVoF673uMNVy5Q6ZMIb1DTBO1iLYL/1wxG2YHhhBc
-         AiF8pz6Dv6wNaRPOhKMsqw93tKnIuQ2PAoZvHf9PmD2ldeK3omS8zgMip2AYkOQAaYHr
-         7yE8DN7U30jjznI9B9G6w+GWsoX4eIGDDEUvR4CeVpY94efkXSzedzmZAABiSESYJRFe
-         n4eXqoD0n40cyDzY35qTfAU7WamrVyUxBg5L53YAcGeZUZpcyIoF+g8dhAePVHP4+swC
-         HVkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoF678nK/KjCxplZDNvC+XpydYEk2deiKbaLE/eeHFh9luiZgUtpJCCg8wYtegAhytuEwW9XLIM3jV@vger.kernel.org, AJvYcCVHm3SFBosczfbXUW2TcobOn7E4Q/B6pYkzYFnHUl5Grr+8A1UR2C8G2GQTeyjuFwiszvAw7quY10di@vger.kernel.org, AJvYcCWH4XEgjTiPtRgVVYB0zLUr/9PJ6ydreDZkeE+Odlq/Loars9FZF/nMk5HLqYII2Iq6T29afZfkBV22GpFJ@vger.kernel.org, AJvYcCXs0piygpXIx/rCjSnOGlDy7gxXjIn1pyFzeb2HVcy3q/n8hSCKNQUterhwtLOPwTr+CR6RdPc6C+WioL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWEwQlmSIDvpXjnZY9R+EBItE1nGht0znvyRUNSd5iO1jIHjkx
-	UBEaq/hgrjXtsiV1oEWKYfUiOqbXUCqVYqC2tLrGh3aB38DLKbXOO/db7IBmweVtJT+2aA8ij+i
-	jK7InqAk7ntnbjcBFJdIybevdDlHgMw==
-X-Gm-Gg: ASbGncsuAkcCBL1CzhRGfL8y6EO3aU8bKbsmKMiJSEg7L9Eh1bsv5m7IkqtjApQVNIW
-	9qcsdTOqBh9R3eFwej7xDK26kyfIfgg8QF0em8f85NSxuyxBBd0Rh733ltksFMPhSvkp7ewQMXy
-	KG5E5OyreA
-X-Google-Smtp-Source: AGHT+IE9iHkHtYre0Ww/O4P+hlZGUD9J0QPDn4LLcjjxgY8uho2r6TLAdxKxuw2+gHuEbXVzJp8f86byyYPZ21gkhxw=
-X-Received: by 2002:a05:6000:1f8b:b0:38d:ca55:76c3 with SMTP id
- ffacd0b85a97d-390d4f37710mr2967095f8f.11.1740583697332; Wed, 26 Feb 2025
- 07:28:17 -0800 (PST)
+	s=arc-20240116; t=1740583731; c=relaxed/simple;
+	bh=VM9I5nf065I8fnnLyyQf7REZw13uxwQJKBYV4xFx4ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIzCB8zpw1ZE+EH+QIKu/kuGdWFcv+eOIPkei6H8ISc37p3CbaN+zZdK9M4zxRJP5eda+PbfUBT1JHLrB8zbXIQxtw+xTu9C/teebwyHMW6q6Hj0VCh8jlh/rK0Et/VKdPVqJQ9tfkNgopLAqStqPnWZ/WyHhCnJRMp8AYjSdoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZWif5UKp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QC3YBl011835;
+	Wed, 26 Feb 2025 15:28:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=KRgrU4A1VYTDq8Ci0BpTJNNd91va9E
+	GiZLuXXspm07g=; b=ZWif5UKpel/mwtT2JewjQCnsRXXAs1UWeBOIJ61pCL077F
+	NH4x5r3T/3sn/aP3OzvkdiWKSxgt7YRPGcgJWk8XvyO9MaGUr9MsMVkS6HAd3L48
+	I+8X5ET9yT9Kc6f+KMUK7D4kwQ4Vl/4ID11PIXlgelpUV63R6wPUus+7Ufg4XA+/
+	yn09WPEfXBkVnl+U1VZfzhgVxFmhBjLSy7L0YNd39MV0bEiJ8v91YvSvSrUPvug+
+	XbAv130hHzSBAMDVAl78d0yAaVGpnS/TeJZeV9BVoCDZenE6TAzZ2JdI8g8aQ08s
+	t8afw7aQiw9e0L1jMRVaMUQOvObhpXameq/nfZuw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 451s19bh5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 15:28:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51QEx7Ah012515;
+	Wed, 26 Feb 2025 15:28:40 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ys9ykh23-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 15:28:40 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51QFSbcK33292596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Feb 2025 15:28:37 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E659420043;
+	Wed, 26 Feb 2025 15:28:36 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B367820040;
+	Wed, 26 Feb 2025 15:28:36 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 26 Feb 2025 15:28:36 +0000 (GMT)
+Date: Wed, 26 Feb 2025 16:28:35 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Let fprobe test consider already
+ enabled functions
+Message-ID: <20250226152835.23133Bd0-hca@linux.ibm.com>
+References: <20250226142703.910860-1-hca@linux.ibm.com>
+ <20250226235447.7fab8051b2968277ce6920db@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225143501.68966-1-clamor95@gmail.com> <20250225143501.68966-7-clamor95@gmail.com>
- <20250226151529.GA2338510-robh@kernel.org>
-In-Reply-To: <20250226151529.GA2338510-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 26 Feb 2025 17:28:05 +0200
-X-Gm-Features: AQ5f1JpfBmrEsWDEnmea28rAEDuFMtgEmxwSmG_wRDVyVb7z4GOiUoWN5URcBDs
-Message-ID: <CAPVz0n2rOuskKRTbmoFUJQb6ZFJ_nDESJMNE_iio=EsHWqZ4Og@mail.gmail.com>
-Subject: Re: [PATCH v1 6/9] dt-bindings: memory: Document Tegra114 External
- Memory Controller
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Georgi Djakov <djakov@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226235447.7fab8051b2968277ce6920db@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: u5n1Pw95785qS4QIXj8bi7KFPKJZm7pb
+X-Proofpoint-ORIG-GUID: u5n1Pw95785qS4QIXj8bi7KFPKJZm7pb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=591 mlxscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502260119
 
-=D1=81=D1=80, 26 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 17:15 Rob =
-Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Tue, Feb 25, 2025 at 04:34:58PM +0200, Svyatoslav Ryhel wrote:
-> > Document External Memory Controller found in the Tegra 4 SoC.
->
-> This all looks very close to tegra124. Could have missed something, but
-> I see 1 property difference and 'nvidia,emc-configuration' is slightly
-> different. I'd just add tegra114 to the existing schema. For
-> 'nvidia,emc-configuration', I would just list the range for the length.
-> It's just a list of magic register values, so we can't really do any
-> validation of it. And I don't care what register is which entry. If you
-> really want to document that, then keep the existing list and put 0
-> value entries for any registers that don't exist on tegra114 and put new
-> registers on the end of the list.
->
+On Wed, Feb 26, 2025 at 11:54:47PM +0900, Masami Hiramatsu wrote:
+> On Wed, 26 Feb 2025 15:27:03 +0100
+> Heiko Carstens <hca@linux.ibm.com> wrote:
+> 
+> > The fprobe test fails on Fedora 41 since the fprobe test assumption that
+> > the number of enabled_functions is zero before the test starts is not
+> > necessarily true. Some user space tools, like systemd, add BPF programs
+> > that attach to functions. Those will show up in the enabled_functions table
+> > and must be taken into account by the fprobe test.
+> 
+> Hmm, this ftrace selftests has been expected to be run without 
+> any BPF programs... Is there any other issue on other test cases?
 
-You are totally correct, my first intention was to reuse tegra124
-schema, but I did not knew how to handle the timing list correctly.
-Tegra114 version does not have one of the entries in that list. I have
-tried to use condition to define additional entry but yaml check
-continued to complain. Maybe you can show an example where similar
-situation is resolved? Thank you.
+At least on s390 all tests pass now.
 
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../nvidia,tegra114-emc.yaml                  | 431 ++++++++++++++++++
-> >  1 file changed, 431 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/memory-controller=
-s/nvidia,tegra114-emc.yaml
+That is of course except for the "add/remove/test uprobe events" test
+where I sent a patch. Not sure what will happen with that one:
+
+https://lore.kernel.org/all/20250220130102.2079179-1-hca@linux.ibm.com/
 
