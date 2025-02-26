@@ -1,361 +1,110 @@
-Return-Path: <linux-kernel+bounces-533566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B527A45C1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B331DA45C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 11:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB95B7A3364
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F961891284
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F0922422D;
-	Wed, 26 Feb 2025 10:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B22C20E020;
+	Wed, 26 Feb 2025 10:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zzg+ML9+"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="u8jNnmbp"
+Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEC742A9D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AC720CCEB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566973; cv=none; b=dPvv5cxjSRmGGu4b7Ghz1kidTTtYWEfvjcCy8hUIkPmirKHPDfEqfc33gEiKllkTNf3ylU0WR36bTWTVnZk0GEBWjHkRO2vur0y4892KTNw0mNJVlakymZLfqHmP7237V/Ycz8lXUSKscMh4NNU93e3uAfvMzafg254ppUvuRz4=
+	t=1740566982; cv=none; b=PyzYqRP9W8uxPNGppIKfyIoydaS2BBuC9cFDyl+hOxSBVZfxzUv13bIiVX8jzLNleG+XQ7WHAwapeDPFFTzycKT6xeTo8aaw4SecX8FKOGxi3FUns+9PVDmwCm8HZRzTAhNNHwfvJ3DEdfxgajOVuY4NtC/MJVIyJzgUkerc1Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566973; c=relaxed/simple;
-	bh=z9xcqV/UosO5ZJWe2c4vL/xb2rxKmkUhna/cQN331Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXkprgYZk2Hdbo0kPeLrR8xmf/wTaU9FWzh5gWtHJvxkDScYDHceOa28bMcsmt5FzxKNR1YSZNppy/4PlpUsxf9wIuHorHOAI+nNwr9/PFkM9rz97elND29csjophGJLvYXxlzJsjJNZS22gDpU7jtLIt0qKW6QOjGMrnCfirJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zzg+ML9+; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso441100a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 02:49:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740566970; x=1741171770; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pi6WJ28vvEWFjLtni81xp9MLpaIOuEpXCoL6YJHYkA4=;
-        b=zzg+ML9+snEOEw0qfvsAIJ6tzY8QGmFpLxDYMqs1jqsE2JbVD/fZVJOZOPplzkJikY
-         HLw3WkqLtQdo7BusCoB3etrYi0AwF+PD+kH49MFlI6u/V0P9uTSSJ/nkJyIufozkm8iv
-         I5b+/Wep6hE8t3+np58wOBrEOaK6tMfCqExnZ4+CUGMrkz8CC8GRdLkWxnDFcXGaeQ7g
-         qn5DYk1pbJwuJIwlJTAdCD75oyY8xhfWrN8LgZNxR/WJtgUPJIyRIyK7Qf9K31DleKuZ
-         9aNYv8WFIES2xU13VFiN/D0HAZ2aJ9XRaNPE73VJRXJ17y8gf78z+edoAnmgpIBrwyu9
-         mCUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740566970; x=1741171770;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pi6WJ28vvEWFjLtni81xp9MLpaIOuEpXCoL6YJHYkA4=;
-        b=v56jARQlYBVnsrQA/8KxkrvBGYZ7w/Hu2dCx6+zTfxEY7oZM4J1d6w7klh84iOHosw
-         uRMyQ5V9SM4MWEi1mF90DlitcC1ozjgrWo57jC6HbIFvWXH6WlWw5OkYR7FHfXQ1DeLd
-         FiIlChkH2kXKe5UuaOz9+3LCo3kpo/YIZkmeIYzDTKl1q3i+NGeEKTC6noEjAGZwDSMm
-         FNDdZzOm0XY7AoVeha3BtZzmIKBUrS6CHFWXDTDH61piLKJv3/fmN7Kv6fe3c0G3FKzR
-         QynmC13AYB+2visZAuAjimiZ/9Y7O0hrBe5+OZ8hv0z35ZuF1YlDvuMQp1zpT206fDCN
-         ZGUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhL3lAnNbV7w1WO0LpijVT8trQdWg64tFYKV8tS9k2vDMGzvj53gVTe9lueT71fPaWUm0iqfhHzGolEQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcSzm4hf/+iw4BNsaLnN1tiDVH8DKGbuZzUaTPRhImFmQDB14L
-	/NkLa22HRGz3VowweJ7t0Fq8ihbVWJTA9CzkzXhsIgnluQrYNg1jqT/AhWfaHaI=
-X-Gm-Gg: ASbGnctvPonCGMaTuBZOxYnwkyVq8lVVnZrHuEhWcNwZY0Y5pp0+po58dbHFSGlK/F3
-	13Go8fuKU7a7JR/c1/VkUmyz6OpFkHBkhfg6SEcivZPZGXIzETN8/qe/UeleYD+vJV65vnNWvHP
-	i8EIhLIRvyb27jno/4+tcUmYJ2bNkcKAzymZqYgiFLXUGz5Bh6OInhjYJX2CfYjFSga2SyaUIeH
-	UgbZ38P67nOuPZaRbMW9VN8mzkaufSspCYZb2WdpqWQXzGUMV6ihGixO28n0fPmiHVZAC4DOsTF
-	w9MsYwRQewAU4nxpuizLBc4T5KyqorE=
-X-Google-Smtp-Source: AGHT+IHboJc5jNRiF6+HVnUsvC83uOT9sWDzDzjF2aDgj8PSLcgjjjzDUmuVpcXr+wjn2QMqiog8WA==
-X-Received: by 2002:a17:907:971e:b0:abb:9d27:290e with SMTP id a640c23a62f3a-abeeef35497mr334786166b.41.1740566969952;
-        Wed, 26 Feb 2025 02:49:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed1cdc46bsm304605266b.20.2025.02.26.02.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:49:29 -0800 (PST)
-Date: Wed, 26 Feb 2025 13:49:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Meghana Malladi <m-malladi@ti.com>
-Cc: rogerq@kernel.org, danishanwar@ti.com, pabeni@redhat.com,
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
-	andrew+netdev@lunn.ch, bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, u.kleine-koenig@baylibre.com,
-	matthias.schiffer@ew.tq-group.com, schnelle@linux.ibm.com,
-	diogo.ivo@siemens.com, glaroque@baylibre.com, macro@orcam.me.uk,
-	john.fastabend@gmail.com, hawk@kernel.org, daniel@iogearbox.net,
-	ast@kernel.org, srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH net-next v3 3/3] net: ti: icssg-prueth: Add XDP support
-Message-ID: <d362a527-88cf-4cd5-a22f-7eeb938d4469@stanley.mountain>
-References: <20250224110102.1528552-1-m-malladi@ti.com>
- <20250224110102.1528552-4-m-malladi@ti.com>
+	s=arc-20240116; t=1740566982; c=relaxed/simple;
+	bh=/ksErclY+a2HfY+n6eyQP1xvxnb1/u05wmeZJj/ugy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ITKbE3IHzyrulVMy0mTozMu0UBIuR3k6l2lrxaCPVlUDKTHR51CZxhlcpHbkjgiLu1QmEu3T7yyPkgbn1asd3YU8XgEhQBzOHDcgBB3EfOSkXzkxuF95wkX5SWklnu9zefC6bYQM9pWJy9t4WyH12vjExnmYtmpry9osBNGx/7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=u8jNnmbp; arc=none smtp.client-ip=17.58.6.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=rZ/JKLqvgcs6sxz9YBuHcFMLh6kDf+x72Yif1lbgen4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=u8jNnmbpJbeehjrSua28dZ0/xMaBJoS73delakyASdo1yTPjiYiMhTZHl5m6a6D/Y
+	 uCkpbNxVjfvP09X8stV6LlLFTwwVJa8Ygzr2SdyFIZT2gzSr2Iq7cScxglsLfz+T8F
+	 RQt/ZThY+PMDeI48gg6gWlAOc3iR7Hj/4duOAzfxJz9xfFIhwz5ZUXU5YusMcBvFDV
+	 mN2zsXCGGiHn80xrDB6nHQ5JYm0V0D9TPFeL3k9FBsL0gmJhVaFyDERWQUzkfCqSZN
+	 kqvITJUr2BS1RYcNJUP9LTZ5/bv0FgMlIsH2a8c77mo9uTSojeII0oo3eNz7vJXkSR
+	 Ac0H71kX+3eCA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 2A81168011A;
+	Wed, 26 Feb 2025 10:49:34 +0000 (UTC)
+Message-ID: <aa24e5cf-3a32-4792-be0f-9b8d190730d2@icloud.com>
+Date: Wed, 26 Feb 2025 18:49:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224110102.1528552-4-m-malladi@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] of: Align macro MAX_PHANDLE_ARGS with
+ NR_FWNODE_REFERENCE_ARGS
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20250225-fix_arg_count-v4-0-13cdc519eb31@quicinc.com>
+ <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+ <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 05sHnAVq0PQ3X_GllbBMIWh8EHQfvioA
+X-Proofpoint-ORIG-GUID: 05sHnAVq0PQ3X_GllbBMIWh8EHQfvioA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1015
+ mlxlogscore=760 phishscore=0 mlxscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2502260086
 
-On Mon, Feb 24, 2025 at 04:31:02PM +0530, Meghana Malladi wrote:
-> @@ -541,7 +558,153 @@ void emac_rx_timestamp(struct prueth_emac *emac,
->  	ssh->hwtstamp = ns_to_ktime(ns);
->  }
->  
-> -static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
-> +/**
-> + * emac_xmit_xdp_frame - transmits an XDP frame
-> + * @emac: emac device
-> + * @xdpf: data to transmit
-> + * @page: page from page pool if already DMA mapped
-> + * @q_idx: queue id
-> + *
-> + * Return: XDP state
-> + */
-> +int emac_xmit_xdp_frame(struct prueth_emac *emac,
-> +			struct xdp_frame *xdpf,
-> +			struct page *page,
-> +			unsigned int q_idx)
-> +{
-> +	struct cppi5_host_desc_t *first_desc;
-> +	struct net_device *ndev = emac->ndev;
-> +	struct prueth_tx_chn *tx_chn;
-> +	dma_addr_t desc_dma, buf_dma;
-> +	struct prueth_swdata *swdata;
-> +	u32 *epib;
-> +	int ret;
-> +
-> +	void *data = xdpf->data;
-> +	u32 pkt_len = xdpf->len;
+On 2025/2/25 22:20, Andy Shevchenko wrote:
+> I would add here that the of.h includes fwnode.h already, so it doesn't
+> add any new compile time dependency.
+> 
 
-Get rid of these variables?
+thank you Andy for comments.
 
-> +
-> +	if (q_idx >= PRUETH_MAX_TX_QUEUES) {
-> +		netdev_err(ndev, "xdp tx: invalid q_id %d\n", q_idx);
-> +		return ICSSG_XDP_CONSUMED;	/* drop */
-> +	}
-> +
-> +	tx_chn = &emac->tx_chns[q_idx];
-> +
-> +	first_desc = k3_cppi_desc_pool_alloc(tx_chn->desc_pool);
-> +	if (!first_desc) {
-> +		netdev_dbg(ndev, "xdp tx: failed to allocate descriptor\n");
-> +		goto drop_free_descs;	/* drop */
-> +	}
-> +
-> +	if (page) { /* already DMA mapped by page_pool */
-> +		buf_dma = page_pool_get_dma_addr(page);
-> +		buf_dma += xdpf->headroom + sizeof(struct xdp_frame);
-> +	} else { /* Map the linear buffer */
-> +		buf_dma = dma_map_single(tx_chn->dma_dev, data, pkt_len, DMA_TO_DEVICE);
-> +		if (dma_mapping_error(tx_chn->dma_dev, buf_dma)) {
-> +			netdev_err(ndev, "xdp tx: failed to map data buffer\n");
-> +			goto drop_free_descs;	/* drop */
-> +		}
-> +	}
-> +
-> +	cppi5_hdesc_init(first_desc, CPPI5_INFO0_HDESC_EPIB_PRESENT,
-> +			 PRUETH_NAV_PS_DATA_SIZE);
-> +	cppi5_hdesc_set_pkttype(first_desc, 0);
-> +	epib = first_desc->epib;
-> +	epib[0] = 0;
-> +	epib[1] = 0;
-> +
-> +	/* set dst tag to indicate internal qid at the firmware which is at
-> +	 * bit8..bit15. bit0..bit7 indicates port num for directed
-> +	 * packets in case of switch mode operation
-> +	 */
-> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
-> +	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
-> +	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
-> +	swdata = cppi5_hdesc_get_swdata(first_desc);
-> +	if (page) {
-> +		swdata->type = PRUETH_SWDATA_PAGE;
-> +		swdata->data.page = page;
-> +	} else {
-> +		swdata->type = PRUETH_SWDATA_XDPF;
-> +		swdata->data.xdpf = xdpf;
-> +	}
-> +
-> +	cppi5_hdesc_set_pktlen(first_desc, pkt_len);
-> +	desc_dma = k3_cppi_desc_pool_virt2dma(tx_chn->desc_pool, first_desc);
-> +
-> +	ret = k3_udma_glue_push_tx_chn(tx_chn->tx_chn, first_desc, desc_dma);
-> +	if (ret) {
-> +		netdev_err(ndev, "xdp tx: push failed: %d\n", ret);
-> +		goto drop_free_descs;
-> +	}
-> +
-> +	return ICSSG_XDP_TX;
-> +
-> +drop_free_descs:
-> +	prueth_xmit_free(tx_chn, first_desc);
-> +	return ICSSG_XDP_CONSUMED;
-> +}
-> +EXPORT_SYMBOL_GPL(emac_xmit_xdp_frame);
-> +
-> +/**
-> + * emac_run_xdp - run an XDP program
-> + * @emac: emac device
-> + * @xdp: XDP buffer containing the frame
-> + * @page: page with RX data if already DMA mapped
-> + *
-> + * Return: XDP state
-> + */
-> +static int emac_run_xdp(struct prueth_emac *emac, struct xdp_buff *xdp,
-> +			struct page *page)
-> +{
-> +	struct net_device *ndev = emac->ndev;
-> +	int err, result = ICSSG_XDP_PASS;
-> +	struct bpf_prog *xdp_prog;
-> +	struct xdp_frame *xdpf;
-> +	int q_idx;
-> +	u32 act;
-> +
-> +	xdp_prog = READ_ONCE(emac->xdp_prog);
-> +	act = bpf_prog_run_xdp(xdp_prog, xdp);
-> +	switch (act) {
-> +	case XDP_PASS:
-> +		break;
-> +	case XDP_TX:
-> +		/* Send packet to TX ring for immediate transmission */
-> +		xdpf = xdp_convert_buff_to_frame(xdp);
-> +		if (unlikely(!xdpf))
+include/linux/of.h:
+struct device_node {
+...
+	struct fwnode_handle fwnode; // this type is defined by fwnode.h
+...
+}
 
-This is the second unlikely() macro which is added in this patchset.
-The rule with likely/unlikely() is that it should only be added if it
-likely makes a difference in benchmarking.  Quite often the compiler
-is able to predict that valid pointers are more likely than NULL
-pointers so often these types of annotations don't make any difference
-at all to the compiled code.  But it depends on the compiler and the -O2
-options.
+include/linux/fwnode.h:
+struct fwnode_handle {...}
 
-> +			goto drop;
-> +
-> +		q_idx = smp_processor_id() % emac->tx_ch_num;
-> +		result = emac_xmit_xdp_frame(emac, xdpf, page, q_idx);
-> +		if (result == ICSSG_XDP_CONSUMED)
-> +			goto drop;
-> +		break;
-> +	case XDP_REDIRECT:
-> +		err = xdp_do_redirect(emac->ndev, xdp, xdp_prog);
-> +		if (err)
-> +			goto drop;
-> +		result = ICSSG_XDP_REDIR;
-> +		break;
-> +	default:
-> +		bpf_warn_invalid_xdp_action(emac->ndev, xdp_prog, act);
-> +		fallthrough;
-> +	case XDP_ABORTED:
-> +drop:
-> +		trace_xdp_exception(emac->ndev, xdp_prog, act);
-> +		fallthrough; /* handle aborts by dropping packet */
-> +	case XDP_DROP:
-> +		ndev->stats.tx_dropped++;
-> +		result = ICSSG_XDP_CONSUMED;
-> +		page_pool_recycle_direct(emac->rx_chns.pg_pool, page);
-> +		break;
-> +	}
-> +
-> +	return result;
-> +}
-> +
-> +static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, int *xdp_state)
+So of.h must include fwnode.h
 
 
-xdp_state should be a u32 because it's a bitfield.  Bitfields are never
-signed.
+Perhaps, of.h needs to include fwnode.h *explicitly* even if this is
+another topic.
 
->  {
->  	struct prueth_rx_chn *rx_chn = &emac->rx_chns;
->  	u32 buf_dma_len, pkt_len, port_id = 0;
-> @@ -552,10 +715,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->  	struct page *page, *new_page;
->  	struct page_pool *pool;
->  	struct sk_buff *skb;
-> +	struct xdp_buff xdp;
->  	u32 *psdata;
->  	void *pa;
->  	int ret;
->  
-> +	*xdp_state = 0;
->  	pool = rx_chn->pg_pool;
->  	ret = k3_udma_glue_pop_rx_chn(rx_chn->rx_chn, flow_id, &desc_dma);
->  	if (ret) {
-> @@ -596,9 +761,21 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id)
->  		goto requeue;
->  	}
->  
-> -	/* prepare skb and send to n/w stack */
->  	pa = page_address(page);
-> -	skb = napi_build_skb(pa, PAGE_SIZE);
-> +	if (emac->xdp_prog) {
-> +		xdp_init_buff(&xdp, PAGE_SIZE, &rx_chn->xdp_rxq);
-> +		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
-> +
-> +		*xdp_state = emac_run_xdp(emac, &xdp, page);
-> +		if (*xdp_state == ICSSG_XDP_PASS)
-> +			skb = xdp_build_skb_from_buff(&xdp);
-> +		else
-> +			goto requeue;
-> +	} else {
-> +		/* prepare skb and send to n/w stack */
-> +		skb = napi_build_skb(pa, PAGE_SIZE);
-> +	}
-> +
->  	if (!skb) {
->  		ndev->stats.rx_dropped++;
->  		page_pool_recycle_direct(pool, page);
-> @@ -861,13 +1038,23 @@ static void prueth_tx_cleanup(void *data, dma_addr_t desc_dma)
->  	struct prueth_tx_chn *tx_chn = data;
->  	struct cppi5_host_desc_t *desc_tx;
->  	struct prueth_swdata *swdata;
-> +	struct xdp_frame *xdpf;
->  	struct sk_buff *skb;
->  
->  	desc_tx = k3_cppi_desc_pool_dma2virt(tx_chn->desc_pool, desc_dma);
->  	swdata = cppi5_hdesc_get_swdata(desc_tx);
-> -	if (swdata->type == PRUETH_SWDATA_SKB) {
-> +
-> +	switch (swdata->type) {
-> +	case PRUETH_SWDATA_SKB:
->  		skb = swdata->data.skb;
->  		dev_kfree_skb_any(skb);
-> +		break;
-> +	case PRUETH_SWDATA_XDPF:
-> +		xdpf = swdata->data.xdpf;
-> +		xdp_return_frame(xdpf);
-> +		break;
-> +	default:
-> +		break;
->  	}
->  
->  	prueth_xmit_free(tx_chn, desc_tx);
-> @@ -904,15 +1091,18 @@ int icssg_napi_rx_poll(struct napi_struct *napi_rx, int budget)
->  		PRUETH_RX_FLOW_DATA_SR1 : PRUETH_RX_FLOW_DATA;
->  	int flow = emac->is_sr1 ?
->  		PRUETH_MAX_RX_FLOWS_SR1 : PRUETH_MAX_RX_FLOWS;
-> +	int xdp_state_or = 0;
->  	int num_rx = 0;
->  	int cur_budget;
-> +	int xdp_state;
-
-Both xdp_state_or and xdp_state should be u32 because they are bitfields.
-
-regards,
-dan carpenter
-
->  	int ret;
->  
->  	while (flow--) {
->  		cur_budget = budget - num_rx;
->  
->  		while (cur_budget--) {
-> -			ret = emac_rx_packet(emac, flow);
-> +			ret = emac_rx_packet(emac, flow, &xdp_state);
-> +			xdp_state_or |= xdp_state;
->  			if (ret)
->  				break;
->  			num_rx++;
+> Both patches LGTM,
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 
