@@ -1,209 +1,114 @@
-Return-Path: <linux-kernel+bounces-534467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355BEA46751
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:03:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9A5A46724
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 17:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E970E189057E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3775F3A6629
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF88224228;
-	Wed, 26 Feb 2025 16:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0C622332B;
+	Wed, 26 Feb 2025 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B703/0uo"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R66MwYLJ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CEA22258E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A069621C9E8;
+	Wed, 26 Feb 2025 16:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740588866; cv=none; b=XtOCFehRMRO24CFsFu7zpc/z8e48p15ajXeFTIKr4LbN+XLpHLqCBLFUJbZm5LjgtabsWUJ+by8Hd5ANmyRHI1IKLmkj3bRQ2BA0Sa5BS2qz5/n5c1g6g8d3k6R8KsHTTQ8AffNz1iSDkXieHox6O4abQJ4ls55hUg0kFsU1ts4=
+	t=1740589032; cv=none; b=YQRKjKqfb8AA9LYQ/Q7AoMiKkCLxN3avUwazykfeTLsbctLW5OUlIx0n+mSFGJSOiqCQhrmz+cci6+WtFopuPlpsgN4xyerlmzlA/+bc1H6e/uWY7dHq4j+tDNemOCS2Cj8sGg1kNnsKoWUAIY5jK99izFPv67U2Va1CZMwRYSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740588866; c=relaxed/simple;
-	bh=C2Mob+k4J3IoAbjsCJdN2Pf4fKN/wfPJXERox26zYvs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JzVcIkdW3jkUyAZH1/ODAlR18si7+kvhGLsTVi8NbefpSSx98VsEJmmB81DRQVnb3U6iPUMmy+0So7VgBx4kQ59aSUVNVQIZY0tjTSdZnrGHoIwwWYNzDG6jt+upAUrVb3qNNR3wwVCgu3pBBKAFr/CPQuwFvZk12HzZZLEic/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B703/0uo; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-439950a45daso195185e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 08:54:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740588863; x=1741193663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XuMNXFiz3GQQsxpeqmzCHgRVoLvWr6tPdor7ZIiVrdE=;
-        b=B703/0uoW+BJN6uaPF6RWRc0PfZ0M/2Pkg2/uiks+44+dStni5mkPtwgx6hbmmyxsF
-         0OdBSCRxVu8k8bcgJ3pxaC7urA2a0KpY2JWI90ltdJo4FIY63s34jbYmmcd824kplEgU
-         ZvD62HSk84WW7ocOMvYOURDVmPZtrtgraRzSj/rE2FfiWRHcadEssFrAb/3bhhRP7XqW
-         vfhfHdF+/nwMftSFUZi6gXWYq7c2RVewpXj3Kz0qJ9ldzOn4ZYBFcuqNb6/VzfOUb0KT
-         j9Zt8cCeqhJGWwuSuOOKLJ+2Xk1VLrPuLYu9+aPDonOJsoNMFOfvC/U7nChX1/LzXvMD
-         b6EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740588863; x=1741193663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XuMNXFiz3GQQsxpeqmzCHgRVoLvWr6tPdor7ZIiVrdE=;
-        b=YW7QADMMzmbmeQgDt9ovt7xK2bcvadcLd55IcfdGtMbeHiWZSM/s/+IUy7b7T4SKxs
-         82uYhPT7BHbLLceKk9hKIkzlsbEgfEzt6J7WAUTyOWlQwazNLIXIwBSM8WgaPh6wuA4w
-         65mbPpi6m354Wt00lCRpJ44jWk5InRp9az0Aej56NFDz5y6SNrkTIdRJiRCcYyb3tBD1
-         dYFygQ8Xig81qnPFilJGJaX+06qKTGPPYRAzQouh98vHbIHtHfgsBHC7iu5wYFAGk2q8
-         4Gp/U+PRvosUdfwLnUNB9wv8LScUeW9Pcem70wZL1FsuIRwe6T5hSy9eyzfn1f7AyEux
-         VQZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFP+5yug9VDTzFbrZCzG8MhCxbnqsnzod+Ce99Q6TeDWjlyb9fJU1Hzrlx4ba5/b9b57ITPdxNHjYTWI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV/+xrz17YdcKiRf9Y9lr6ZMQR1rsE3vdaCYK0d+s3C4LHIPLG
-	PqH+Ok03fXHE6/sq2C2w2BXCWHHXz09uEa98IqisYaJqgqHWGika
-X-Gm-Gg: ASbGncsx/xaNc81Q/z95z8n+5I3NnFDJuNNZt9wbj3t+muDYJJoVCxfcXyHA9fCnY6s
-	n2NePtpOYagJPjyuf5jAWxhGyF2opJ4BfZtM13afj9U5HHFFYP3zzAJHT/KsubQ7Ec9W6837fyR
-	y3hvUYsrvSieRuZ5mBxTjAWf0vQRyMvf0UxUS/cCCZ2/bCmECwafDR9G2+cwfwVi7a+UhplsJuP
-	yERET1pedfpeTEfs35hMZw0QUKnyG2Bj84Gqm8sh8LQOjwh+Z7Qm37JtXjdYPjdDekin3qBaKSF
-	8BQmQ+q/OSptSob3DAT0pMyoJn5ypUZLP/duSBfSXHkB4X/IegjtR5ZPLG2C5tUH
-X-Google-Smtp-Source: AGHT+IGzw1JxAgCRr2hkHehSx21ZaK94xm+T4qbqC1Q9fKPlmg9xMtjNJBFuBwKL4xp8lj7A86l4rQ==
-X-Received: by 2002:a05:600c:1ca7:b0:439:9898:f18c with SMTP id 5b1f17b1804b1-43ab0f72a40mr64043405e9.26.1740588862923;
-        Wed, 26 Feb 2025 08:54:22 -0800 (PST)
-Received: from playground.localdomain ([188.25.208.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba587163sm27672515e9.36.2025.02.26.08.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 08:54:22 -0800 (PST)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Frank Li <Frank.li@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1740589032; c=relaxed/simple;
+	bh=3WAySbhme57idwUAMGNOyLnrc2/y3hBo3tmaf5OeDQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5OCRRu8DXZqPHuKt/7qgCroNeo8nC0OkIpezd4SjD1DLaeQk40g/BcP/EsHe8oTNyTSjyPkspu54cT0GhKBq79EoeWbX2zUPY3m3TMAi3mIJxH0D0dc0K6cJ2gQ1cCGYhCtKuCuiXVynY3ErqPTYKMZ0aY669PeJBxTRLXS37I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R66MwYLJ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=4DPt7QYp04Ry8rLHfov5JpGHMDqB3/VtlthfMAT+pZ4=; b=R66MwYLJidHJxRhnCf+eiGeZN5
+	NuHhuLecYei0nkUnyQvusL+YSy2EIEie0vhOvFTGZQJj80P3nDErhnVUkaZByJeChLf2W5Jvl2GPX
+	RoHDo9SkYGiz4rQa+f0OMvRT7ZECJt2d+dKbd8qfVH7a6vNT3Ag4LafQEdmEdfmfVQZA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tnKiR-000Jnk-0D; Wed, 26 Feb 2025 17:56:59 +0100
+Date: Wed, 26 Feb 2025 17:56:58 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] dt-bindings: bus: add documentation for the IMX AIPSTZ bridge
-Date: Wed, 26 Feb 2025 11:53:10 -0500
-Message-Id: <20250226165314.34205-2-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
-References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+Subject: Re: [PATCH net-next] net: sfp: add quirk for FS SFP-10GM-T copper
+ SFP+ module
+Message-ID: <3c4e6613-f7fc-4105-b4ce-d959769f2944@lunn.ch>
+References: <20250226141002.1214000-1-ms@dev.tdt.de>
+ <Z78neFoGNPC0PYjt@shell.armlinux.org.uk>
+ <d03103b9cab4a1d2d779b3044f340c6d@dev.tdt.de>
+ <20250226162649.641bba5d@kmaincent-XPS-13-7390>
+ <b300404d2adf0df0199230d58ae83312@dev.tdt.de>
+ <20250226172754.1c3b054b@kmaincent-XPS-13-7390>
+ <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <daec1a6fe2a16988b0b0e59942a94ca9@dev.tdt.de>
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed, Feb 26, 2025 at 05:51:42PM +0100, Martin Schiller wrote:
+> On 2025-02-26 17:27, Kory Maincent wrote:
+> > On Wed, 26 Feb 2025 16:55:38 +0100
+> > Martin Schiller <ms@dev.tdt.de> wrote:
+> > 
+> > > On 2025-02-26 16:26, Kory Maincent wrote:
+> > > > On Wed, 26 Feb 2025 15:50:46 +0100
+> > > > Martin Schiller <ms@dev.tdt.de> wrote:
+> > > >
+> > > >> On 2025-02-26 15:38, Russell King (Oracle) wrote:
+> > >  [...]
+> > >  [...]
+> > >  [...]
+> > > >>
+> > > >> OK, I'll rename it to sfp_fixup_rollball_wait.
+> > > >
+> > > > I would prefer sfp_fixup_fs_rollball_wait to keep the name of the
+> > > > manufacturer.
+> > > > It can't be a generic fixup as other FSP could have other waiting time
+> > > > values
+> > > > like the Turris RTSFP-10G which needs 25s.
+> > > 
+> > > I think you're getting two things mixed up.
+> > > The phy still has 25 seconds to wake up. With sfp_fixup_rollball_wait
+> > > there simply is an additional 4s wait at the beginning before we start
+> > > searching for a phy.
+> > 
+> > Indeed you are right, I was looking in older Linux sources, sorry.
+> > Still, the additional 4s wait seems relevant only for FS SFP, so it
+> > should
+> > be included in the function naming to avoid confusion.
+> > 
+> 
+> You may be right for the moment. But perhaps there will soon be SFP
+> modules from other manufacturers that also need this quirk.
 
-Add documentation for IMX AIPSTZ bridge.
+Since these are all kernel internal implementation details, we can
+rename them any time we want. There is no kernel ABI involved. So
+please use a name based on what we know now. If such a module does
+appear sometime in the future, we can change the name at that point.
 
-Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
-
-diff --git a/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
-new file mode 100644
-index 000000000000..dfcfe4a8ae74
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bus/fsl,imx8mp-aipstz.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Secure AHB to IP Slave bus (AIPSTZ) bridge
-+
-+description:
-+  The secure AIPS bridge (AIPSTZ) acts as a bridge for AHB masters
-+  issuing transactions to IP Slave peripherals. Additionally, this module
-+  offers access control configurations meant to restrict which peripherals
-+  a master can access.
-+
-+maintainers:
-+  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-+
-+properties:
-+  compatible:
-+    const: fsl,imx8mp-aipstz
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    enum: [1, 2]
-+
-+  "#size-cells":
-+    enum: [1, 2]
-+
-+  "#access-controller-cells":
-+    const: 0
-+
-+  ranges: true
-+
-+# borrowed from simple-bus.yaml, no additional requirements for children
-+patternProperties:
-+  "@(0|[1-9a-f][0-9a-f]*)$":
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      reg:
-+        items:
-+          minItems: 2
-+          maxItems: 4
-+        minItems: 1
-+        maxItems: 1024
-+      ranges:
-+        oneOf:
-+          - items:
-+              minItems: 3
-+              maxItems: 7
-+            minItems: 1
-+            maxItems: 1024
-+          - $ref: /schemas/types.yaml#/definitions/flag
-+    anyOf:
-+      - required:
-+          - reg
-+      - required:
-+          - ranges
-+
-+required:
-+  - compatible
-+  - reg
-+  - power-domains
-+  - "#address-cells"
-+  - "#size-cells"
-+  - "#access-controller-cells"
-+  - ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus@30df0000 {
-+      compatible = "fsl,imx8mp-aipstz";
-+      reg = <0x30df0000 0x10000>;
-+      power-domains = <&pgc_audio>;
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      #access-controller-cells = <0>;
-+      ranges;
-+    };
--- 
-2.34.1
-
+       Andrew
 
