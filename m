@@ -1,155 +1,92 @@
-Return-Path: <linux-kernel+bounces-533207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AFAA456E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:44:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C70FA456E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 08:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2526C189065B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8643A4A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 07:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDC026BD89;
-	Wed, 26 Feb 2025 07:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JegS85JW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD8226B96D;
+	Wed, 26 Feb 2025 07:44:34 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B374149C6F;
-	Wed, 26 Feb 2025 07:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F44F149C6F;
+	Wed, 26 Feb 2025 07:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740555834; cv=none; b=sOWd+ZKxky++nijuWkwudDcu51SiyMD3UFCb6KlxnDTUFrE/2kfpPfw1PP+crrPw0FkOVGijk15X/MFdKXqND+TbuqPbsSq84cTxTbcQgmuFPE2oj0++XB5d+9/PvGtqomb90RNfhrlWJBl1rEAOXciUsKgo6+vY6cawMtLcN9I=
+	t=1740555874; cv=none; b=HkxuRxMrtyiyO5qGAuZy0up1ln9e5D2W17irq9xR88efV6uCI1oUvpn8PSG9UnFumJRW5W8U5Fn6Mxi8W96aPNDxa204WOVDtAnhrEZ+yIHjdfDENtlQoXsPZvK/kjB3g3Y9RMewfoAJkhIyacZ/PUFdr0GRvFVc+u/Q7KjjD1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740555834; c=relaxed/simple;
-	bh=TlotOXl+MlcuWgcpW7R/wM9IAru7nzqbanYYiDA0BX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eytmxsNNcfwiq0LLpWix3vEfhrza1fX5HzofZHbuv/o+aVmAfYklZBveN9mAqCI+uIHl4IzxAo+gkq3iT4dnnU+kMYEA5KpurBw5LHIimsDQLI17oI4DEwBEuMFDEZs3dNo9GbenZotEymnqXehCVRZc6xoVWgKr/Vfn7UE1Jg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JegS85JW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1440CC4CED6;
-	Wed, 26 Feb 2025 07:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740555833;
-	bh=TlotOXl+MlcuWgcpW7R/wM9IAru7nzqbanYYiDA0BX8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JegS85JWKA51Szg3RS4UflboG3VFRSSTRphuZZPUthDC5T2rzXVfr61kbar4UyQj0
-	 FahDSOYOPKjAw4p29A8xVs99h9cAbTzotScnxwQuGeQoHZFOLZu4JiwOx+Sga+wh+e
-	 dCEl+gL4XwnBMDwrsqBEdfUNg+/98TwdpHZ44S3Cb9gkJY1RobBhoQJ/GN6kVWoouD
-	 Ka5C0Qh66f4JS84YBZRthLmmCrUlBJTsQ8M+V4K7w7qbPZyQTYTONw7SEsgYL9jPOH
-	 paLl21uTD95tea23OL3EhocYMs4daInWl+tw1RXJHXcMPCvkviyhIpHTPpukbmdsJ+
-	 /q1sXkdaBtMSQ==
-Message-ID: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
-Date: Wed, 26 Feb 2025 08:43:49 +0100
+	s=arc-20240116; t=1740555874; c=relaxed/simple;
+	bh=sVTr9P08wLEoZNATz96q1PTTYceN12xYE4kv7FxL9QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pi8dfJ7IAjuLqyVbpe1VHtNEQrSmtdphn/TfenawzfbxPlqpFwsvtn20qzmnNHpiOxUPaFpRTN/64/peP+4rXLYG2TzXu9oaFiKeSVgr1mufM8Bek5b5DiY1D02wkw3VMac2lwDgNLe4X95guCtZI7KSuQaC8EWyDcpR8tfyz7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220bfdfb3f4so30936515ad.2;
+        Tue, 25 Feb 2025 23:44:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740555872; x=1741160672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dQOCEjoccYRv48sIbAeIdqJWevhdKtzIw5YdKtxmEXE=;
+        b=qL4TPra3B0/Tq+TinpDUMKfH7MiBgdCWR5FJDadineEjbGq4aa97JAlvD37JtTT2H3
+         BZIJdtdhcfM0EMvz0Uz6UunYu6IcNcs4GcNCxWJY1mMY7zLcfQOqP/gwdOWU3lQHC+jh
+         uVRVxrxUCKrCYedrBPcxXKw/uURNAhLotV0mxUUV+O5EDUCzN9hvabRtI8v6+r+fXD5R
+         xw1ByKEv7nFQMqB+6S9eqroVtkiutHw127KCECjMPitmHza5ElWt8JEpK5hkr+FcPUwn
+         zOJV0hHN324t6N9rIG8qhuuoQrwMsnQfCy++pIoPtNX3QrEPOVQjMJ0JGpcxKsGREsIV
+         odNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW47vvAML3YKC0O2nyRQ27qk3r+P3OTcCX4jPJNtzzhDrDb2pS7VomBqmZa2Nw7/IAvv+7uvM9Sonrz@vger.kernel.org, AJvYcCXzVFDVQew7xzm8OcWUaQnSVTQWDG0wzDXzzhWuJcoe8SwkeP6iRP3TScBwwIpEqdIUc9jxoQWZVz83Vlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCLd7lzVorR9ao8LXRJpnfhaUGFd1WKihCsUTZ/bKq/9OSoAhq
+	M3gSBkTp7Hx6DmdgQNuu43HArnIX6e3S6Kf2LIxkm9VXoyp9NsI2
+X-Gm-Gg: ASbGncvDfNP/WTRnMEyH3ieNpGxPlbcqLH2UQXSHsVD2oL9Yzt7omFlEzWmNNnBUJrj
+	UhhcBmO+I0T5NlqgKL3gmr1mbZ5ILmtmF+K5BlAVs0RNDrrAL2At4RFrquIelXOtaXSOnCArutu
+	0tX7b2hoEzDTPNIEQpFuf/a15JYoSk8wBgEnRCEcX9nptwOAy8Q2L0KxCI0BMTl9UgcLztetOIu
+	v7/NF93fEgLNytYyW0l/B7eFbPNCtEp30GmgT+5ORH+2owiioH3PZnNXaOXoZ6SMVNsNGiiPTKD
+	/QymDQG+pENR9U64sT7AKmRF42xDfTRG02VLj0PdNUK3gRSctYFslWhs4QQ8
+X-Google-Smtp-Source: AGHT+IHRZRmiTH6c9ab75sTRBstxNyTvsl49ihEj5SrJcAYx5j6VbliD/Y3naIO/rnimqZvuLaHzDg==
+X-Received: by 2002:a17:903:1aee:b0:223:28a8:6101 with SMTP id d9443c01a7336-22328a8662dmr22567125ad.29.1740555870941;
+        Tue, 25 Feb 2025 23:44:30 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2230a0944d4sm26060085ad.140.2025.02.25.23.44.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 23:44:30 -0800 (PST)
+Date: Wed, 26 Feb 2025 16:44:28 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Hans Zhang <18255117159@163.com>
+Cc: jingoohan1@gmail.com, shradha.t@samsung.com,
+	manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, Frank.Li@nxp.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rockswang7@gmail.com, Niklas Cassel <cassel@kernel.org>
+Subject: Re: [v5] PCI: dwc: Add the debugfs property to provide the LTSSM
+ status of the PCIe link
+Message-ID: <20250226074428.GF951736@rocinante>
+References: <20250223141848.231232-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 RESEND] watchdog: s3c2410_wdt: Fix PMU register bits
- for ExynosAutoV920 SoC
-To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
- wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kyunghwan Seo <khwan.seo@samsung.com>
-References: <CGME20250226072535epcas2p46d41cb5cdd7ece18c898657c3c66a219@epcas2p4.samsung.com>
- <20250226072151.2123990-1-sw617.shin@samsung.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250226072151.2123990-1-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250223141848.231232-1-18255117159@163.com>
 
-On 26/02/2025 08:21, Sangwook Shin wrote:
-> From: Kyunghwan Seo <khwan.seo@samsung.com>
+Hello,
+
+> Add the debugfs property to provide a view of the current link's LTSSM
+> status from the root port device.
 > 
-> Fix the PMU register bits for the ExynosAutoV920 SoC.
-> This SoC has different bit information compared to its previous
-> version, ExynosAutoV9, and we have made the necessary adjustments.
-> 
-> rst_stat_bit:
->     - ExynosAutoV920 cl0 : 0
->     - ExynosAutoV920 cl1 : 1
-> 
-> cnt_en_bit:
->     - ExynosAutoV920 cl0 : 8
->     - ExynosAutoV920 cl1 : 8
-> 
-> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+>   /sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
 
-Resending while ignoring all previous emails, so we should do the work
-twice. If you ever wonder why your patches are not applied, you got answer.
+Applied to controller/dwc, thank you!
 
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-
-Best regards,
-Krzysztof
+	Krzysztof
 
