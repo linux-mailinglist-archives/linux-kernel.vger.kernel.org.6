@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-533933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7972FA4607B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD70A4607D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 14:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1181899541
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EF41899684
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 13:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B0321C177;
-	Wed, 26 Feb 2025 13:14:56 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45F116A395;
+	Wed, 26 Feb 2025 13:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b2PQexC2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4E5GYjNI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38226218ADF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 13:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A367464;
+	Wed, 26 Feb 2025 13:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740575695; cv=none; b=tKZiVtgrhkOOazVJN+YEUChWkiRTO6++fqu17dfcexyrjmM2ZaoLWOaOAPI50VgVd5I3HO0Fv5r0nkXUdkU6IGMNTtDa1TJ7T7Pxu7I4Q4MJPxK1Iw1bVmYI+ka7SiuHzRfVSBJ1ut5EAVK+plkcuxPf3hoBX9QEk42Hyl5HXsw=
+	t=1740575746; cv=none; b=CwZ7SKwlCnils+sfsrzPe2bWkHKkzVcfF6rLhBddPZzAGqAgebHg/bEqRJVXrJU5+1rFqZKXOrAY0uFNyZkFOZSamerUatO5YASskrFGCP3fF2Ik8+q7NdWEP9DbtpbqHxyU8z0cdTTXlwlrVJ8fT4IOjoO9JllOs2Ykeyz/mis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740575695; c=relaxed/simple;
-	bh=fMO0CmwbwSXaKQfx9Z7VKp4/ohvzolYlycdngoalUOE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=erIhw6iOIGn9fa+GniLvIb+h+yC+xuQYDOEqOOhfOk2L+TfDL7Qw6KKklMuBue6MqkFitXduU/x3G2aZAYc+OTMhfC2pqdwZ63Wou5iigVuiuJRtx0Ey9A+NGJvnihcz1wS9PGAW81/AQPJh//jD241OT5GE+oZZWoREjgIoQSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ce3bbb2b9dso56378755ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:14:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740575693; x=1741180493;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LT44ngzpj2qIg+ByCOKVHveGH744EEw7Xe4FUY3WFJI=;
-        b=BNwT+bg3xNX7YfywyTOdRwkIhmHN3t7dMiv2hg4EF4no0lavdYasWnXUjT3a1gelsl
-         /q4tVFyaTnWwHVA/UDWIpGd/+Qfdnow9XIuSvFS6MWNb73EPKbu0026fND4I/rOKI1TZ
-         qL+ByS5qdxEe3dq6PPjh66GvArmupuzkveWm+bnGQ079UXxjw7OpY+WGrqCaG6nblqWF
-         g0erMWXDUz1ePx1airAN0/mipLPpsksOYv++mgdT/mvLMYy6ZVA9scFF9Vqzagn1f0Ms
-         ND8lxM0b9qi3DqEpxFgcvD4Ct0rXGH6FnVEVpFKFyFaItt4dTjRwkNf4kt+vmbQjz5ou
-         +7zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9YE70vkdcfX82ekGfoos2Tlo3gdubzI1qLUkNR/UAokjMLr3qxdGcDn6Dd3z3GFC8RXioKrjUYl84Brk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9MLfcgcmfM5vSPrqPaE5X7pQB2NjhU9o0jJLB8/YWTpHf0+Bo
-	XOy4JaiSI71C9xFRnEpEORP/oioStWJdR4b3z5NQRyGIyUcBDEacPhNGJp0pcKjSjY3Hd3stLwc
-	yCIjTmyijJ4v5YJm/TLDRibG5z7xmv6wo+II5c9p6LJhXbllYa+3Gyt4=
-X-Google-Smtp-Source: AGHT+IGLok7Q6L17tCWYgePAj9eS//OxU2sD1U8w6kES41eeBugvXlenFJ+vjDOByDVpdyNr5Z0Ml5VylVLPI3spYckU7B7Wktay
+	s=arc-20240116; t=1740575746; c=relaxed/simple;
+	bh=FkgBNwq3LD9oQuZdQNKEH0bzz4rhSH5WEeCocjsWtrM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=r6Vl4/v27zCLcQC7OXm8FnNu7S6Xx6vuQQcLFKVm/AbBnVPiKrgKS3wbBJBCGtlFRYByhBKamJ+WmjOkuvvdvnFaSUCMYa3bADAMnnkEFEEnXDZC2XuGs31vwg5yyLm9OSe/dK8yHH4FFlcZJCJboDGlyRG/88Nf/wusH0MMeio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b2PQexC2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4E5GYjNI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 26 Feb 2025 13:15:29 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740575742;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eX/KYuODbm+Wqb3zKAhEP8DFi6hUGDg1DsHJjBmleWA=;
+	b=b2PQexC20YDn0CGYYEgQ3nxa2RJ6po88J3yoEwpqL7nCU6oqwVu9DKp7kVv2iXwKBD15Eq
+	FuvVE6SDClvshtuk6slMotXtDvkYt0o124PauKjFDS8evnp5GiYxUhqP0u/v9Bdep/xkXb
+	IciA/hVfdp/J8fON0KG+EeP8Q49jqysxP1pjQIcLowr64beSymZd7LbKoJ+ZpNjGFU++Bb
+	3f+0mEJJMcxVZqRspz2iO6Vqx9yfmzooQ3nYJyVm7xcsOG7lIeS0r3bgSJwl5rOHmepbzQ
+	UXfkFeGXRxGaq17mO9o+/3+bcyiruK0X5SzDyRquSixTaDj7dDon8ihBsYEFNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740575742;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eX/KYuODbm+Wqb3zKAhEP8DFi6hUGDg1DsHJjBmleWA=;
+	b=4E5GYjNIaujoWNsCpnjnY4kS5KB3wu+QS6qX7yCI7l7Y8oX8B20qOrnuJuebKNIh58nInm
+	bLRyKXxcoAIlY8Dg==
+From: "tip-bot2 for Benjamin Berg" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/fpu] vmlinux.lds.h: Remove entry to place init_task onto init_stack
+Cc: Benjamin Berg <benjamin.berg@intel.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241217202745.1402932-2-benjamin@sipsolutions.net>
+References: <20241217202745.1402932-2-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:388e:b0:3d3:d132:2cf3 with SMTP id
- e9e14a558f8ab-3d3d1322ee7mr43158565ab.7.1740575693328; Wed, 26 Feb 2025
- 05:14:53 -0800 (PST)
-Date: Wed, 26 Feb 2025 05:14:53 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bf13cd.050a0220.38b081.0158.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_free_keys
-From: syzbot <syzbot+f9bc4ca17b97b000cf78@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174057573055.10177.16342574148901727326.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the x86/fpu branch of tip:
 
-syzbot found the following issue on:
+Commit-ID:     2ec01bd7152f80795eab7b48706aa5db8d4a286a
+Gitweb:        https://git.kernel.org/tip/2ec01bd7152f80795eab7b48706aa5db8d4a286a
+Author:        Benjamin Berg <benjamin.berg@intel.com>
+AuthorDate:    Tue, 17 Dec 2024 21:27:43 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 26 Feb 2025 14:02:21 +01:00
 
-HEAD commit:    f15176b8b6e7 net: dsa: rtl8366rb: Fix compilation problem
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=105abfdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=f9bc4ca17b97b000cf78
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+vmlinux.lds.h: Remove entry to place init_task onto init_stack
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Since commit 0eb5085c3874 ("arch: remove ARCH_TASK_STRUCT_ON_STACK")
+there is no option that would allow placing task_struct on the stack.
+Remove the unused linker script entry.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d17d8b815d50/disk-f15176b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5a0f3ae436f7/vmlinux-f15176b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ea4ed42244ac/bzImage-f15176b8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f9bc4ca17b97b000cf78@syzkaller.appspotmail.com
-
-netdevsim netdevsim0 eth1: unset [1, 0] type 2 family 0 port 6081 - 0
-netdevsim netdevsim0 eth2: unset [1, 0] type 2 family 0 port 6081 - 0
-netdevsim netdevsim0 eth3: unset [1, 0] type 2 family 0 port 6081 - 0
-geneve1: entered promiscuous mode
-tipc: Resetting bearer <eth:syzkaller0>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 20544 at net/mac80211/key.c:1162 ieee80211_free_keys+0x567/0x680 net/mac80211/key.c:1161
-Modules linked in:
-CPU: 0 UID: 0 PID: 20544 Comm: syz.0.4199 Not tainted 6.14.0-rc3-syzkaller-00155-gf15176b8b6e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:ieee80211_free_keys+0x567/0x680 net/mac80211/key.c:1161
-Code: 01 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 f8 49 3f f6 90 0f 0b 90 e9 17 fc ff ff e8 ea 49 3f f6 90 <0f> 0b 90 4c 8b 64 24 20 e9 77 fe ff ff e8 d7 49 3f f6 e9 2d fe ff
-RSP: 0018:ffffc900035764a0 EFLAGS: 00010246
-RAX: ffffffff8b8270a6 RBX: 0000000000000001 RCX: 0000000000080000
-RDX: ffffc9000c4a9000 RSI: 000000000007ffff RDI: 0000000000080000
-RBP: ffffc90003576570 R08: ffffffff8b826ea7 R09: 1ffff920006aec48
-R10: dffffc0000000000 R11: fffff520006aec49 R12: 0000000000000002
-R13: ffff888029378d80 R14: 1ffff1100526f53a R15: dffffc0000000000
-FS:  00007ff4300856c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000400000000080 CR3: 0000000012152000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ieee80211_do_stop+0x1085/0x2380 net/mac80211/iface.c:583
- ieee80211_stop+0x43b/0x490 net/mac80211/iface.c:776
- __dev_close_many+0x216/0x350 net/core/dev.c:1719
- dev_close_many+0x24e/0x4c0 net/core/dev.c:1744
- dev_close+0x1c0/0x2c0 net/core/dev.c:1770
- ieee80211_stop+0xd5/0x490 net/mac80211/iface.c:767
- __dev_close_many+0x216/0x350 net/core/dev.c:1719
- __dev_close net/core/dev.c:1731 [inline]
- __dev_change_flags+0x30e/0x6f0 net/core/dev.c:9258
- dev_change_flags+0x8b/0x1a0 net/core/dev.c:9332
- do_setlink+0xcca/0x4300 net/core/rtnetlink.c:3118
- rtnl_group_changelink net/core/rtnetlink.c:3747 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3894 [inline]
- rtnl_newlink+0x156d/0x1d30 net/core/rtnetlink.c:4022
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6912
- netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2533
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- ____sys_sendmsg+0x53a/0x860 net/socket.c:2573
- ___sys_sendmsg net/socket.c:2627 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff42f18d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff430085038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007ff42f3a5fa0 RCX: 00007ff42f18d169
-RDX: 0000000000000000 RSI: 0000400000000140 RDI: 0000000000000008
-RBP: 00007ff42f20e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007ff42f3a5fa0 R15: 00007ffc858190c8
- </TASK>
-
-
+Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241217202745.1402932-2-benjamin@sipsolutions.net
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/asm-generic/vmlinux.lds.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 02a4adb..a1b0469 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -404,7 +404,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	__start_init_stack = .;						\
+ 	init_thread_union = .;						\
+ 	init_stack = .;							\
+-	KEEP(*(.data..init_task))					\
+ 	KEEP(*(.data..init_thread_info))				\
+ 	. = __start_init_stack + THREAD_SIZE;				\
+ 	__end_init_stack = .;
 
