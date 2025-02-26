@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-533049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E59A45528
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:59:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67792A4552C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 06:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E086E3A5577
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36443A7B4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 05:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CA52676DD;
-	Wed, 26 Feb 2025 05:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A1C267B83;
+	Wed, 26 Feb 2025 05:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="he5iouPD"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfAREa7N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2627211711
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902DE2673B2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 05:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740549558; cv=none; b=m7A/wujPMzoYHDsHpARV4B3uNTO7+O3TTrdHwEcajaDxcwxZClZreTn4s2KiGuHySPm8hnDD4szJzKFl221bb4VWaD7WCT0H0WQyZjiODITFjIkMRz0te6SC9m+24RCrLceiZtOvJn7gHo4kp3usery/G+ZiCj/B4V+aTj5i5X4=
+	t=1740549569; cv=none; b=nyyEig5fSFv1diCs6U63cnjIiPcK94TiITUjCRaPSHC8IQcnh4GEWQXIQUodcxv01McGWCTfXdI1T02BaC9ECTg/6dPOD1YF4fCS8a70R7BzFWh3vVBCHLMDY8scuUvlh/bb00ZhEz6QNAKz07yYGcojVlatATPsgDzeQKLRzpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740549558; c=relaxed/simple;
-	bh=20uJLoHJH8tsE+6AfrND96SpyUccdeO85E8ywgrZKF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpXdsUztS3y1bA4UTKKV2gjiOyYAWuEaatAzoRdxikZTNMl4PuFb2Aw1GRDIYWQi5A0jwx+EsdwMJkIyhuHYPNngnzdev1/tr3bfkp3bJhW+5NUsvun6QYh62gJfEFnVHxpUTM93EG35FLpIckZYqA3wcSZlyot8aasG13i+zis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=he5iouPD; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54622940ef7so7242545e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740549554; x=1741154354; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eMzggIt5lpYzzVkzOTc1TnN8z6VsZzZu0ORTornTWUU=;
-        b=he5iouPD7D3qYSZ8109SS5Gq3/lc3sUys2g+VezqM+MlY6qIn2ew55Nh2ytLa1Rhn6
-         LaS7PaT1vZ/KAJw98Vtm0sakwWw/60NkI+7TnH8qW3Xw+L6UQa+ScwGQkNcHflsyvPUe
-         Wa3+TpATZCPikwT+SLubd5odHYMs+kGlj53yq1k1nyJuCBx0H/SvvpaLYk7Nb3hBurHo
-         5ovA23D2CmmiPEWP8QpsOAwbe3zfmztYAYaZQqiSqUbu/HwOHtlfh7Z5H5BEM+BWKVR3
-         xeWqMuvCqMEGiZQ22VnX4VOXMZBZI2DuEcirRJHNLOU8LdxO0q/m9gbx+TdZsCv8XWCb
-         qXPg==
+	s=arc-20240116; t=1740549569; c=relaxed/simple;
+	bh=m7gnNaSnVIQnhwXaGmMm7ApeqEyKQEEPJJKfMSkYWew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kg/J8qxl8it/u4zZ9bvedS7G5z38CREQJtilVrlzkNv44TE7WFxkisYu7W6EyKlbvpH/7NWeNSowev22G4FUzJnO2HgX5Y/gyN3EdzZePZl1QZSumYN2mFxKiDtKJLgDeXdtB716lDd/h85nZHwXblzlx5UUkgi/oKonD8Z1Bd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PfAREa7N; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740549566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7gnNaSnVIQnhwXaGmMm7ApeqEyKQEEPJJKfMSkYWew=;
+	b=PfAREa7NjUAVOjJaRDNGG9uKIUR9M2DzXN5lsVlMkn9lOsJXJmfzrVJGDxQSeO0DTnxDvM
+	3rcdE0k7jhAunAEupe23L1YvdBq5L8+2kF6n3HqQDD2BuZh6MezaoA2zIMcXeHu6SgUQFP
+	qXwN6eqA8feelBQktZYdcEo72GuYBmg=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-P9QZXH3dOsCDZykap5fY8g-1; Wed, 26 Feb 2025 00:59:25 -0500
+X-MC-Unique: P9QZXH3dOsCDZykap5fY8g-1
+X-Mimecast-MFC-AGG-ID: P9QZXH3dOsCDZykap5fY8g_1740549564
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so21000859a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:59:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740549554; x=1741154354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eMzggIt5lpYzzVkzOTc1TnN8z6VsZzZu0ORTornTWUU=;
-        b=hCFSJZQCBKAo1HZIRc0Gc4q4BApO+YQU36TO4VxDM8Ybp+yRBJl+7FHpgdmD+kIDP7
-         O+Z7SIZBt3VeipP5nmQgRszpDGibn+TLHsdadqLTjoHDNH4itPSZU82LbvQWHYn3oAlw
-         0Q1aQ9RgkmXOzY4VAo4JXvCyqXmgYcrNYWucP6wc+GJeTEdeqsC9HplBP2fywaElTQea
-         8C+qW5L/IcE/V7QqW9LQvISNCBtalrvZSXKLybnwhi2UJ0tTYzVwYKoEvWfwol78O0/1
-         NQ+jxd4GQDK/slR5gS1+hQU7Daf1+rts9Hp/YRV+S+8cKGmSCgTioXnbxFhPrwgpTunx
-         9d4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWYdhSEtAAPMQTHU87WLiHn1Eul8xX4VddKWS0INODFh1PBC+QAz6SboVemNovjA4/32DejGeO64/d7soE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWEK6lFwfZVs5nOfd2D6Z4Pqr/pPf0V9ScgLYKF6utOb/gYQI
-	i4lmzQEJmDwRrN75W/9FT6M3ddJgqM4KGFv8QRiVbnI+uvQq+c2h6IOuUrJxRfw=
-X-Gm-Gg: ASbGncvhtQoJMktKqVwfqh5TJwT8h+Yx5TAKniK9LHej7fj+YEJaRULxVHPQ9LdCvDz
-	CVF5YfPzkEf4EsG5yCvRnMnqlAJg6XETTNCXLVLHdh1xFuqvhNZBQkdbXWA1MY3IdhzU3BG0rym
-	+aKGpi6JFRLmSjzUITV7usQHrLLMrQtaDP2HJsiq+83gVPwWeK5mBRcXvpyCMQfc88nK0v0vpe6
-	TmMBf1K4acv4k4siwif1VkZ5sxHArFeOlFG7x5aEE4P+yoXApnqVMdy13t63Bez0Yt65/dzcfvt
-	VgPGua6leCkeXgzUodQCReiovmr9OL3x0WwtTFBgfZxaUjHnCzioObr/WDIH6+mPuKW7oQQhdPh
-	Phkgt/w==
-X-Google-Smtp-Source: AGHT+IEoS4qwP4ua72xrTF0W1n0ce2ri8eECexu7dt46ZDMlqiICPAa9TU2+args7SmvRiq5CJK7wA==
-X-Received: by 2002:a05:6512:3f05:b0:545:646:7519 with SMTP id 2adb3069b0e04-5493c39db7cmr2155507e87.0.1740549553775;
-        Tue, 25 Feb 2025 21:59:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514f4d50sm346333e87.176.2025.02.25.21.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 21:59:12 -0800 (PST)
-Date: Wed, 26 Feb 2025 07:59:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Luca Weiss <luca@lucaweiss.eu>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] drm/panel: Add driver for DJN HX83112B LCD panel
-Message-ID: <xnbncjxfpc3cideza5cemnhskdpedqpiatmvxj3eu3xgtrv24n@iky5ghkh4grs>
-References: <20250225-fp3-display-v2-0-0b1f05915fae@lucaweiss.eu>
- <20250225-fp3-display-v2-3-0b1f05915fae@lucaweiss.eu>
+        d=1e100.net; s=20230601; t=1740549564; x=1741154364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m7gnNaSnVIQnhwXaGmMm7ApeqEyKQEEPJJKfMSkYWew=;
+        b=abBelpvkf+z0wiAavjUO7C8chGKK3oTk7iExjt7UHaLH9SeeptXNlD7uFYLpw0gne+
+         ke9IYVcpKt7hw9CPpanauB5r+j8VTqp/l1tcGpe8vGQDgnzp6VQptPU21y748O5m7pcM
+         bay9uwoOoqnd9doquBAuR+Ug6NKjK+kn3vJuKJ9uYjccrnzrhkcTa8+Hxph/dyfMbXCa
+         d66Ot9aurNi5HgINAPo4o96qEbjN6V3fJs3VQoHoASZeTjVVkEqHfpQBQw4Cy1gisQMw
+         QVgXFUvOS10Xc2GPAy2eUOEW8iDPQIN1jUn/uDWHLIqOO1ho/zLaxw+yhNnkcuFXaWoB
+         Yl0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXadlv/NzlZIhlfuviHkY7XKLoNzSKLYO/mApzJh0hyELPlY/hbDf+XX8Bahfgdn/M9iv6wsahRR0jdz2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm8omE/FAM3ajoN86uU8m0e/WiMfqO1u9nHODO51HWH2GKEB7v
+	2/G9CxHbaU6PHnKEfxkGKEURVb4/ZbFdRr4++1P8u0C/rUkxHFQ+UlQND/C53hDZ1iGM+FfzJxb
+	1/Jz9waDBWjtQ9TzG59bZeso2vkxN7Fq1FDCzWdbtimmsqHg5s7b/pbREl6GZY2EJsNr5UsvVTd
+	t1I88QKsLZtpH902YZ43h1FP6MgE1z0HAT3Vhg
+X-Gm-Gg: ASbGnctdq8Uh9YAn84qZM8/iD6xkWQzKrbxx9ApPvAVXNBTAN/ejwAfDchJKatEVsdc
+	XFEkxyScF5FumHNtyRizTcM1FAPazcFohzI6fglMnvY6YkyWWGHlPU4WeA9gszapAfokr1dN9CQ
+	==
+X-Received: by 2002:a17:90b:2803:b0:2f4:4003:f3ea with SMTP id 98e67ed59e1d1-2fe692c8403mr10781872a91.33.1740549563986;
+        Tue, 25 Feb 2025 21:59:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEjfukw25/3dRjwBrKqTgNYjNEca8F88lv26UtFCag9qeKPB/TQL+bJT6mEpFZEyRdR+HxO/f/07hSLXK/EZbY=
+X-Received: by 2002:a17:90b:2803:b0:2f4:4003:f3ea with SMTP id
+ 98e67ed59e1d1-2fe692c8403mr10781849a91.33.1740549563668; Tue, 25 Feb 2025
+ 21:59:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-fp3-display-v2-3-0b1f05915fae@lucaweiss.eu>
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de> <20250224152909.3911544-3-marcus.wichelmann@hetzner-cloud.de>
+In-Reply-To: <20250224152909.3911544-3-marcus.wichelmann@hetzner-cloud.de>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 26 Feb 2025 13:59:10 +0800
+X-Gm-Features: AWEUYZn3sINGV0LaU89f2SQBC-EkP65HckbvJbjb0aMWfaIJ_G6VZpbaC4mxxbg
+Message-ID: <CACGkMEt72ZwDQUUDPUrxiEJQLTWBQ25pP0wCO-FrZ2tZDj7itA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 2/6] net: tun: enable transfer of XDP metadata
+ to skb
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, willemdebruijn.kernel@gmail.com, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, 
+	mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	shuah@kernel.org, hawk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 10:14:31PM +0100, Luca Weiss wrote:
-> Add support for the 2160x1080 LCD panel from DJN (98-03057-6598B-I)
-> bundled with a HX83112B driver IC, as found on the Fairphone 3
-> smartphone.
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
->  drivers/gpu/drm/panel/Kconfig                |  10 +
->  drivers/gpu/drm/panel/Makefile               |   1 +
->  drivers/gpu/drm/panel/panel-himax-hx83112b.c | 430 +++++++++++++++++++++++++++
->  3 files changed, 441 insertions(+)
-> 
+On Mon, Feb 24, 2025 at 11:29=E2=80=AFPM Marcus Wichelmann
+<marcus.wichelmann@hetzner-cloud.de> wrote:
+>
+> When the XDP metadata area was used, it is expected that the same
+> metadata can also be accessed from TC, as can be read in the description
+> of the bpf_xdp_adjust_meta helper function. In the tun driver, this was
+> not yet implemented.
+>
+> To make this work, the skb that is being built on XDP_PASS should know
+> of the current size of the metadata area. This is ensured by adding
+> calls to skb_metadata_set. For the tun_xdp_one code path, an additional
+> check is necessary to handle the case where the externally initialized
+> xdp_buff has no metadata support (xdp->data_meta =3D=3D xdp->data + 1).
+>
+> More information about this feature can be found in the commit message
+> of commit de8f3a83b0a0 ("bpf: add meta pointer for direct access").
+>
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Acked-by: Jason Wang <jasowang@redhat.com>
 
--- 
-With best wishes
-Dmitry
+Thanks
+
 
