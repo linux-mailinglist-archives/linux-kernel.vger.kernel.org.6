@@ -1,204 +1,102 @@
-Return-Path: <linux-kernel+bounces-534230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1F0A4646D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:20:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4A5A46471
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 16:21:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF13D178A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:20:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE0F7A4BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 15:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16FC22423E;
-	Wed, 26 Feb 2025 15:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BCD2236FD;
+	Wed, 26 Feb 2025 15:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PA7ANbA8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FT/0M1Pe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btdCGLCa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="elTkrsiY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUaNq6kK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8833221DB3
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE9820AF8E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 15:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740583229; cv=none; b=emhzb+mLuR/04pyJXjUiRN7djNiOHcWvv2jbadvPsErx/RtlCAQFaOG8WcdeesARuc2ut1RZktJXPFDFmq/sbiu6Mtc7vL9c5yT15U22boTGHcpJGbOHtcfX+rbAES88UFuSg9GkApmsjnUxYzTjbjmwvMGXciB2FzJBhCg98v8=
+	t=1740583289; cv=none; b=aMNXYKbI/+iI1clrMn8YidQ2bLuEnVOEeFR99ohG+gM86l/6koOPiFUPQmNYBLK05LZggzNgY1GrTrXyHF23Dny5fJEHecnRy3JZFPxi6HkQak/Q99xf3E+y8gIL6XWeATmBJu9Bx4fLQ53UMUprd2fXHzak7BRr0r4Mp8Y3mZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740583229; c=relaxed/simple;
-	bh=Q86lEjphtQaGBuy6TaEFVjscKMHedHdqJO5v7MJsMgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shUzSysEUSs+itlOvQI24wAGMlZb41LPaZaus1X4XrLudvIfyfgy+TUh9PFmnZNhIl5leo95FSkrlAonNuCm+iSxWVjR6xO6gN04y56op/mTa+kdl1uXmjXpzxk8klvOMiDkUQBQ12gnJuUejbVji6XN6NdfqCzCCMdBwK7a66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PA7ANbA8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FT/0M1Pe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btdCGLCa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=elTkrsiY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1740583289; c=relaxed/simple;
+	bh=kGuDluKlBGVXw7uhB+/9lut/CvhX3J7r0WIB6MvbzaM=;
+	h=In-Reply-To:References:To:Cc:Subject:MIME-Version:Content-Type:
+	 From:Date:Message-ID; b=ozankCJgby01zHauz6WsZmsk6+MgWA3TYhC7XI8lkiZLicxh1cnV5x+VPnktKfno+JLHecLVW34n35hGj/Cyof8xzJk/OCIELMEzXvv/JNq1ruO2kU1wsLD3oPeM4qi6W9MsQWljFXfL+j9ZMLaDfYNd2LkgZpHHhe0TpxmT5rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUaNq6kK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740583287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NXbyCdmoziShPeJAChKxNKhUqohQ4PH+KJxEBCv0dis=;
+	b=OUaNq6kKnN6qIqFamH/9XfumkHhJoiLA90U727qZ/arSj8odc+hI5C71KjtpvAAQEMWHY5
+	eM1EjepujZfrgXfNfpUNHLMbapSMGgMeAedjDcAi+/2+Dv5204hbAwMP8XNrEywSiEHXGR
+	BUfD2xgIv4GRObU5YZC5+tCESTT/ATE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-iwyn0p17N66pFYe-_2Gb-g-1; Wed,
+ 26 Feb 2025 10:21:25 -0500
+X-MC-Unique: iwyn0p17N66pFYe-_2Gb-g-1
+X-Mimecast-MFC-AGG-ID: iwyn0p17N66pFYe-_2Gb-g_1740583283
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D99D92118D;
-	Wed, 26 Feb 2025 15:20:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740583225;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
-	b=PA7ANbA8z4rpx5ilJ/eo6hltQbAZL9ESOr/kHThgyAADi4CgZFK7grtEaLs8GYMnuy5jMq
-	otgHfTku92nc4xIksvZ3xflc3WuPE08MHTMhmlOhBu49S5J8H7PQU4d+E/4DTqF5Z5Duvs
-	jVKxPha86ocI5BKn7/LGnU+x0xr99ow=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740583225;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
-	b=FT/0M1Pe2Bww9+cQwX4r4b/LX6bnRfnE0fzals52RImAWaOTp+2p3RVmHzunz8Si6CGo2p
-	9J1QylVd0tZFHZAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=btdCGLCa;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=elTkrsiY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740583224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
-	b=btdCGLCaK/Qn0u+x4poHcAEULnZ01sh3PWPbMmOjPL5IhNtQWcOebwu59egiHupHjMF4uF
-	A4U/HY/6RPHV1dnbN2I9Uh2r2gVVDTLlEXw7NwOXUHeATB8Z0J0nBOcs8IjZI7AxpCg1y1
-	4ngUY2OaoRrtM7uELWUEmKd5CfAOnOY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740583224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
-	b=elTkrsiYYLsdz2tnZ9YckIAZAH7eyXl3fKcAYP5VX184CneZvktd6bKhi6NFvmPx5Pw1s2
-	H1pa5QuMihNJYHDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC5BB1377F;
-	Wed, 26 Feb 2025 15:20:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mOzHLTgxv2d1VwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 26 Feb 2025 15:20:24 +0000
-Date: Wed, 26 Feb 2025 16:20:23 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Naohiro Aota <Naohiro.Aota@wdc.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH] btrfs: zoned: Remove some code duplication
-Message-ID: <20250226152023.GX5777@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <74072f83285f96aba98add7d24c9f944d22a721b.1739974151.git.christophe.jaillet@wanadoo.fr>
- <D7X1HAEVN3TO.Z7JG9SRUODCE@wdc.com>
- <4cbdb517-2d4b-4f73-9822-a9c4ec794b54@wanadoo.fr>
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 48D2E1800264;
+	Wed, 26 Feb 2025 15:21:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 66FA3180035F;
+	Wed, 26 Feb 2025 15:21:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+In-Reply-To: <2602345.1740576046@warthog.procyon.org.uk>
+References: <2602345.1740576046@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Ihor Solodrai <ihor.solodrai@pm.me>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Paulo Alcantara <pc@manguebit.com>, Jeff Layton <jlayton@kernel.org>,
+    v9fs@lists.linux.dev, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix unbuffered writes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4cbdb517-2d4b-4f73-9822-a9c4ec794b54@wanadoo.fr>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: D99D92118D
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[wanadoo.fr];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2616590.1740580941.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From: David Howells <dhowells@redhat.com>
+Date: Wed, 26 Feb 2025 15:21:17 +0000
+Message-ID: <2635841.1740583277@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Feb 20, 2025 at 08:11:46AM +0100, Christophe JAILLET wrote:
-> Le 20/02/2025 à 06:55, Naohiro Aota a écrit :
-> > On Wed Feb 19, 2025 at 11:10 PM JST, Christophe JAILLET wrote:
-> >> This code snippet is written twice in row, so remove one of them.
-> >>
-> >> This was apparently added by accident in commit efe28fcf2e47 ("btrfs:
-> >> handle unexpected parent block offset in btrfs_alloc_tree_block()")
-> >>
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >>   fs/btrfs/zoned.c | 9 ---------
-> >>   1 file changed, 9 deletions(-)
-> >>
-> >> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> >> index b5b9d16664a8..6c4534316aad 100644
-> >> --- a/fs/btrfs/zoned.c
-> >> +++ b/fs/btrfs/zoned.c
-> >> @@ -1663,15 +1663,6 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
-> >>   	}
-> >>   
-> >>   out:
-> >> -	/* Reject non SINGLE data profiles without RST */
-> >> -	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
-> >> -	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
-> >> -	    !fs_info->stripe_root) {
-> >> -		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
-> >> -			  btrfs_bg_type_to_raid_name(map->type));
-> >> -		return -EINVAL;
-> >> -	}
-> >> -
-> >>   	/* Reject non SINGLE data profiles without RST. */
-> >>   	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
-> >>   	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
-> > 
-> > Thanks, but which repository/branch are you working with? I cannot
-> > find the duplicated lines in btrfs/for-next, linus/master, nor
-> > linux-stable. Also, the pointed commit seems wrong too.
-> 
-> Sorry for the lack of context.
-> 
-> This is based on linux-next. In my case -next-20250219
-> 
-> This can be seen at :
->   
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/btrfs/zoned.c?id=efe28fcf2e47aa5142bff2c284ea7337b40901e8#n1666
-> 
-> The commit Id is the one given at :
->   
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/fs/btrfs/zoned.c?id=efe28fcf2e47aa5142bff2c284ea7337b40901e8
+David Howells <dhowells@redhat.com> wrote:
 
-For the record, the patch has been removed from for-next, and it was
-actually wrong, probably a result of some rebase conflict.
+> Fixes: 9dc06eff2097 ("netfs: Fix wait/wake to be consistent about the wa=
+itqueue used")
+
+Actually, you can ignore this.  It's for a patch that's not upstream and c=
+an
+be folded in.
+
+David
+
 
