@@ -1,182 +1,182 @@
-Return-Path: <linux-kernel+bounces-534873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF5AA46C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:15:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFCAA46C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 21:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40FB16D999
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71FF3AAD90
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953C3275617;
-	Wed, 26 Feb 2025 20:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8742580F8;
+	Wed, 26 Feb 2025 20:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U2D/zDEX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M7MpuI+L"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F98C2755E0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740600902; cv=none; b=TbVCUByGg3vXwatuabQEyzXFDlHeOwINtdLqRGN3lnVdk3QODjyqFb3WD0QXU4JkDl7jiJqzIVjTuQGDddhmgG9RZyHxmsr6Ju1x5NyHpjYixr8sTT0CCZDg09ibuHTYeroF1iJShbevi2Aq2AJE49Ejq8aPwJ5xCKml5DXSsno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740600902; c=relaxed/simple;
-	bh=FMU1UcccTfNtBPIrz9Z0ZcZjiDjQMeBRhzovNeMI+IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqlHS1JWnJAmvds0E0h8jF1zsu27uJLDJCFQBTJDLBxFTmCTp1DX4Sr38d+OEAIo6cqX0a1vRxfQQLZLKvClXY11ryE53Zi0kxG80P369zDRC0LGId4TgRUzEguaAxYa0kIgYs5sIRgQt/VX1iLu4t6PbLnemqvuSw1ZLlXni1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U2D/zDEX; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740600901; x=1772136901;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FMU1UcccTfNtBPIrz9Z0ZcZjiDjQMeBRhzovNeMI+IU=;
-  b=U2D/zDEXfwTCGGxFA7sMivIeTvEJZN6HpPUifR48wl3cdxoUP+MyUXWi
-   HBZUgc9ciT0uD5kDQtYZk/9Gkg3LfjdOY3Rauvdur/IY52eSZe2Smo3JP
-   6nsjD8j5dP6SGrBthmFipkIZePnPKDvpSMYH/+TS8XbFBIFgkNvddJwlK
-   bAU+Z/piFPrdFz2FR12Rixaj3eqtiacmDDtIZDrYB7gPOJQZB/Y+QlDn2
-   4gpY91rfJNb+PrIbBkbMurQchMo5TSJcmJxw+nxDU4zdGO2SgT879ucBU
-   58vjHXeEer/vcUHdPAJC6869uz4fuLR7V0ZtYkqiGlLkj7Y9gReEdA9Zn
-   g==;
-X-CSE-ConnectionGUID: pfdAXGC+SwesjyrXLPNP2g==
-X-CSE-MsgGUID: cdn1nWECR2WxFgsptYGIAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="40645230"
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="40645230"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 12:15:00 -0800
-X-CSE-ConnectionGUID: 6VTgbGWnSAatsba1vM38rw==
-X-CSE-MsgGUID: GNNKMJUeRWW1r2Q08bGslA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="116841118"
-Received: from unknown (HELO desk) ([10.125.145.169])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 12:15:00 -0800
-Date: Wed, 26 Feb 2025 12:14:53 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250226201453.jgg6kucaathzmcvs@desk>
-References: <LV3PR12MB9265804700AB74A446F5220F94FC2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <LV3PR12MB926524EFB64F6FB361046C5E94FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217201910.crsu7xucsa4dz3ub@jpoimboe>
- <LV3PR12MB9265249E8D0FD3920C42A1A994FB2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250217233928.k3oem3bm7w63jzfr@jpoimboe>
- <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
- <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
- <20250220220440.ma5yfebhiovkqojt@jpoimboe>
- <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C3522332E;
+	Wed, 26 Feb 2025 20:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740601010; cv=fail; b=BiMkkwK0s6pOIn7jg2ODhHVPQyn2ii62Bl+l5zptNB9AlzCkl71KReScLeb2iLns+DZQXkYBt1yCvhnW9029qpmCfGzmwkS6HMMOIOSWBtXOnqo5apnEamI9vn8OtqjDo0d4zMP23dCiQqIpJGhraPXIKsdBeUXewklUJTvlkFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740601010; c=relaxed/simple;
+	bh=4TSgE6aow4y/CI0OOQrokPEy6qGfm7Iq5sn8GyDMrs4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JOrSmcrpaxBcGebYJfG1oPV6tfvccLRJEZJlrXG3U2rv/DcynOTRBGo1458imSQP/MUnghIUS16tLfMTtsO+Ls93sT+mjFsQdTDW5phY+qzDP/Ic6DxSNjSCDs4QcgxiyvphT/zKkU+5enUo660uQCGZw0AuO1xx3yfLLo63BMg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M7MpuI+L; arc=fail smtp.client-ip=40.107.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TkmkQXazz2Ag7UAN7+S7AEaO9zcucIahukYfMjuMWYXiYHSl3HNgzy30+haCrUNzG+9MjTPZmAA9Q39xIs4UflRzOomSKAiaQ44A7Er8wRU3Ja8AD0ayssuPsIl3cg7RUyvRDkFouabGIGPPNXH/agSr44eS0KCASrC4MO1k8H4x04LMreM1tri2nDfsn/GWbBhPgFtf27/BkrJSOOmj4RXXOTIT1H43ZnzJxAMUTWsT7DpLpRM/mY5Kg4abcLjRk99USmCA2v70DCwG0lgifROakc4iAcUzwubezrATeO04OtgRMPU5bWLhOwcaJids5Na+Sfft5OJtpLETp2CtBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0ADqWT4qaXL0SmK0U22God431q3y5RDr8U/+AT+sTRs=;
+ b=zHZcJoUtqyrQwL0BKE2XIqet50+Hi9gy72kWHqI8Kio3DqTokqSFb3bd6jqM3lFYmfFtYZPwnFbkTwjJ9TjgTDW1xTfGHp/AshkO268WzdaJHB2U+Q23k8Kk6w9YcLMlTyCBcG/STA8sW1QqJ0Ymue8fJ5yYRV/Hj2DuxciXdXD6QRiP/kKgUTQRAfvb90IqiMMnE0Q7BLlvc+ExvA11vIgVCEMLEroGPxERimSP/AX2188WHsp/rRnzIJsszYycEHXmtuEAUx+NNiquyUjtecFBa4BB4DI8MfCK38LKpoE78rN7qhuccL5ogPEqGiMB7N+ieQhUZuNi94lfMojBiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0ADqWT4qaXL0SmK0U22God431q3y5RDr8U/+AT+sTRs=;
+ b=M7MpuI+LFJaJ6h7fdQSKKFmfG6eS7Fj0MxeGFx49k38MJ+hkzbt1oPjEbwOT/sSXXQJl3v6uYp0RA4utmqwpKttFxoJ8DZKMPqbep04UPwrOcjZwlGwrwowVtc2LBwFOrONabxAwvGZlD9J/9AujgMvYVQV/AL9/JtN1OvHDkwBW/kqU68FHoCOFa7Xw1TpdGELo+C/0J3Xa5UtnRlL62Ri7oD+MDUJ0XYtdlujv8sfxdNA9PVFuBNbQ8oGjD4sSye/vKQcEWbhJhV1szIYCrvJZ829AAznBfXVi84j9VsR78/TROJ7cEtQkG7rTmRum9Gq3wm8EGATKTj3uZHDyzg==
+Received: from PH7P221CA0082.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::21)
+ by LV2PR12MB5965.namprd12.prod.outlook.com (2603:10b6:408:172::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.22; Wed, 26 Feb
+ 2025 20:16:44 +0000
+Received: from CY4PEPF0000EE34.namprd05.prod.outlook.com
+ (2603:10b6:510:328:cafe::28) by PH7P221CA0082.outlook.office365.com
+ (2603:10b6:510:328::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Wed,
+ 26 Feb 2025 20:16:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000EE34.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Wed, 26 Feb 2025 20:16:43 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Feb
+ 2025 12:16:27 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 26 Feb 2025 12:16:27 -0800
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Wed, 26 Feb 2025 12:16:26 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
+	<alex.williamson@redhat.com>
+CC: <jgg@nvidia.com>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+Subject: [PATCH v1 0/4] iommu: Isolate iova_cookie to actual owners
+Date: Wed, 26 Feb 2025 12:16:03 -0800
+Message-ID: <cover.1740600272.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE34:EE_|LV2PR12MB5965:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52c5f15b-5d2b-4d1a-ec93-08dd56a27ccd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WCUDC1+7WIw5xLhDO49d0La4d6ko7HQDikrIHG5S/eTQrk76dZH2F5ALgzvj?=
+ =?us-ascii?Q?NJFTlu8Em5NMoU8POP56eVLO/y3m0+iB9BQ/s7hooYuOL/tlP0FsXQxa4Nj0?=
+ =?us-ascii?Q?07R9TatH3MUkzgj4xOsFlx6ZaroTMzX2Cr9W5MVLtpMtECBvuV8kWAg/293K?=
+ =?us-ascii?Q?Zl+lpJEVVCwDDKOadggLGrnvakqEkeXtWzPrQKe7uY9G0RM8ZREENIxC8xrH?=
+ =?us-ascii?Q?AWCrwOfJinyjkhBZIcdop/jl/9Gsfz1k/aWU7sMQFcY8Jgu+KAmIhWS8wydg?=
+ =?us-ascii?Q?7v9Or2PtmJqcJqlXNtIGz3ESsEP87ioCjd8Ew/ue0JP07uJ7LtffajMfJXEq?=
+ =?us-ascii?Q?+ar9RAa2FnV+9Dnb0olmHgW6DZIEiUlKD+BT6MWW2kjA87aoSynpGjdC7U6s?=
+ =?us-ascii?Q?5vDknW4SEapYGrw4efTgEQWsh5Wd47uJwTACPNgFUnypv+K2PE2+UTNbrN6l?=
+ =?us-ascii?Q?wa9xjZdNFGA7trpE7mcHt0XuD18/uTH8l8YYNS4xkiMJp6u5RAg2otycvfWX?=
+ =?us-ascii?Q?E4OsLE0jvxstQYIEgKz7dAVyNVM4vvim+9Ky9DM91WKRvu4OHQPfLdazrcj9?=
+ =?us-ascii?Q?NVqUITgucq0skRsTjbV3DSItkmKLp1DyScOJZp63qb87tU44kXP1BEVTz4IO?=
+ =?us-ascii?Q?j5XNZQjqvUn4ZN6pMTw1wtWcmTcXH4KABjnV/ZpMFecvpK/j/EYyzGbkzuWz?=
+ =?us-ascii?Q?rgqGVxlqiW2GNbYs+YgtbP+Lc72kG1TDxIkmdugc7CP26q3t+O6OTaDX8/s9?=
+ =?us-ascii?Q?iC1ZaU/jYuVZASF4gNsmIPT3JxhP3z17PTEOSAVcEQ+PJoKTQKYaqwYgGYCt?=
+ =?us-ascii?Q?RWCLb6Yq7Tqdu3H8IoqYfEe7VsLWvHr3yjGxstxwZtMzWVO72Yb+8Wh97dKY?=
+ =?us-ascii?Q?bVS+dMGPJOm0tuVAxxEqsBHY/qlqeHRT0WELVSCgw/BOtKpvWkIRQ/ty154r?=
+ =?us-ascii?Q?73XCHGz97e7i38hgpB1djriz/e3Wv/3oMqUoUpbbfxgnMe0Szo2yMwiA46v8?=
+ =?us-ascii?Q?2y0RuAltucP6mcKMNRUO/vzxutpqVLTC0ophhI7xUilkC8/+QxxYx+wx4SZZ?=
+ =?us-ascii?Q?ty0lCu3RJAT34yXSHqP4lvYepV+Ze5F42b7J1HcSPHr6/cMtDv+dd2AMVohS?=
+ =?us-ascii?Q?Rh5YUhw0ifKrlcsuLrnbtXHH2R4GYov/yYoKYgQx+TDcMDcpYTJPtkw3Jrx7?=
+ =?us-ascii?Q?G4kvv8yGK3WUusTcI9PuMAQc5TZoQQi7LYcli15nJTBTOxRxgzn/UNBp3oAO?=
+ =?us-ascii?Q?HMrInnzOFPeA2YwJWh3E7ZQpYvYbXcRL8xaZIfFpn/hVDmupFVSSgsr4ObmU?=
+ =?us-ascii?Q?XYRD+wDCF1jM/thHLufQeLpORGsX3lmfp1SPw0T7ZeS23owO1VPOkvdZemp9?=
+ =?us-ascii?Q?wPgwXg+ayqI4pMm3mdLIf2Bif/wHPEezTO5ys9IiFxu5MQdCnoP/CVa+RP9D?=
+ =?us-ascii?Q?kpPjZIWPYsAlO3Cy5W4XIzzh7nFpBXHS77AN6PuNX2X37XmYa5gHF5X8QLwx?=
+ =?us-ascii?Q?u6uhRzps/9ESCMo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 20:16:43.3633
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52c5f15b-5d2b-4d1a-ec93-08dd56a27ccd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE34.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5965
 
-On Wed, Feb 26, 2025 at 06:57:05PM +0000, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> > -----Original Message-----
-> > From: Josh Poimboeuf <jpoimboe@kernel.org>
-> > Sent: Thursday, February 20, 2025 4:05 PM
-> > To: Borislav Petkov <bp@alien8.de>
-> > Cc: Kaplan, David <David.Kaplan@amd.com>; Thomas Gleixner
-> > <tglx@linutronix.de>; Peter Zijlstra <peterz@infradead.org>; Pawan Gupta
-> > <pawan.kumar.gupta@linux.intel.com>; Ingo Molnar <mingo@redhat.com>; Dave
-> > Hansen <dave.hansen@linux.intel.com>; x86@kernel.org; H . Peter Anvin
-> > <hpa@zytor.com>; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > On Tue, Feb 18, 2025 at 09:52:03AM +0100, Borislav Petkov wrote:
-> > > On Mon, Feb 17, 2025 at 11:05:01PM -0800, Josh Poimboeuf wrote:
-> > > > IMO, make them generic from the start, then there's less churn and
-> > > > it's easy to port the other arches.
-> > > >
-> > > > If we went with putting everything in "mitigations=", making them
-> > > > generic would be the obvious way to go anyway.
-> > >
-> > > Just to make sure we're all on the same page: we obviously cannot
-> > > enable and test and support a mitigaion on another arch like, say, arm64, or so.
-> > >
-> > > This needs to come from the respective arch maintainers themselves and
-> > > they'll have to say, yes, pls, enable it and we'll support it. We
-> > > should not go "oh, this would be a good idea to do on all arches"
-> > > without hearing from them first, even if it is a good idea on its face.
-> > >
-> > > That's why those are x86-only as they should be initially.
-> >
-> > I wasn't suggesting that this patch set should *enable* it on all arches.  Of course
-> > that would need to be reviewed by the respective arch maintainers.
-> >
-> > But looking ahead, this *will* be needed for the other arches, for the same reason
-> > we have a generic mitigations=off.  It's a user problem, not an arch-specific one.
-> > Users need a simple interface that works everywhere.  That's why I suggested
-> > integrating it into "mitigations=".
-> >
-> 
-> Talked with Boris on the side, he is ok with supporting this in mitigations=, with a warning message if you try to use these controls on yet-unsupported architectures.
-> 
-> Going back to the command line definition, I think that to help make the selection clearer we could consider the following format:
-> 
-> mitigations=[on/off],[attack vectors]
-> 
-> For example:
-> 
-> "mitigations=on,no_user_kernel" to enable all attack vectors except user->kernel
-> "mitigations=off,guest_host" to disable all vectors except guest->host
+Now, iommufd implements its own sw_msi function that does not touch the
+domain->iova_cookie but domain->iommufd_hwpt, as a domain owner pointer.
 
-This is a bit ambiguous, mitigations=off,guest_host could be interpreted as
-disabling guest->host and enabling all others. Using attack vectors with
-both =on and =off seems unnecessary.
+Isolate the iova_cookie from iommufd by putting it into the union where
+the iommufd_hwpt is located.
 
-Also, we currently don't have mitigations=on option, it's equivalent is =auto.
+This requires a set of preparations to move iommu_put_dma_cookie() out
+of the common path of iommu_domain_free() that iommufd still calls.
 
-static int __init mitigations_parse_cmdline(char *arg)
-{
-        if (!strcmp(arg, "off"))
-                cpu_mitigations = CPU_MITIGATIONS_OFF;
-        else if (!strcmp(arg, "auto"))
-                cpu_mitigations = CPU_MITIGATIONS_AUTO;
-        else if (!strcmp(arg, "auto,nosmt"))
-                cpu_mitigations = CPU_MITIGATIONS_AUTO_NOSMT;
-        else
-                pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
-                        arg);
+Make thing cleaner that any caller of iommu_get_dma/msi_cookie() should
+explicitly call the pairing iommu_put_dma/msi_cookie().
 
-        return 0;
-}
+This is a clean-up series for the sw_msi Part-1 core series, prior to
+the Part-2/3 series. It's on github:
+https://github.com/nicolinc/iommufd/commits/iommufd_msi_cleanup-v1
 
-Extending =auto to take attack vectors is going to be tricky, because it
-already takes ",nosmt" which would conflict with ",no_cross_thread".
+Thanks
+Nicolin
 
-How about we keep =off, and =auto as is, and add:
+Nicolin Chen (4):
+  iommu: Define iommu_get/put_msi_cookie() under CONFIG_IRQ_MSI_IOMMU
+  iommu: Add iommu_default_domain_free helper
+  iommu: Request iova_cookie owner to put cookie explicitly
+  iommu: Turn iova_cookie to dma-iommu private pointer
 
-  mitigations=selective,no_user_kernel,no_cross_thread,...
+ include/linux/iommu.h           | 12 ++++++++----
+ drivers/iommu/dma-iommu.c       | 12 ++++++++++++
+ drivers/iommu/iommu.c           | 13 +++++++++----
+ drivers/vfio/vfio_iommu_type1.c |  4 ++++
+ 4 files changed, 33 insertions(+), 8 deletions(-)
 
-Requiring the user to explicitly select attack vectors to disable (rather
-than to enable). This would be more verbose, but it would be clear that the
-user is explicitly selecting attack vectors to disable. Also, if a new
-attack vector gets added in future, it would be mitigated by default,
-without requiring the world to change their cmdline.
+
+base-commit: 598749522d4254afb33b8a6c1bea614a95896868
+-- 
+2.43.0
+
 
