@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-534717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8F5A46A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:55:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EA7A46A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B5D3ACD6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEFF71889B7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 18:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210C22376F4;
-	Wed, 26 Feb 2025 18:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DCA236A7A;
+	Wed, 26 Feb 2025 18:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WOy+655G"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KGSqJ6pY"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D6B236449
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643C1236A9C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740596116; cv=none; b=JGxRD1fEQ8Sw//WDi46PpxNcz7+XpQEjuG5OSPCbxXJiIoFU+fu6dlE9mLsVDEAxrURTcMRRrzF1rGy2hy6ThJzhnzplo366sCweOiALCsSjIOhx0rBJvCiqBl75wLVM0TltuDC8t06QYS9OE0p1uNt2+WTS2pEJx23s0MdjpsI=
+	t=1740596175; cv=none; b=eLOFHYjISpSTmx+tznPkCJvAmM6iUEfLGrxjZUSo9vPqLYdzJZA5iJ/AED4Gm2U0Eu6vl8k5njOIL3+N0NU5/TpnyEO52lZh1zKLC/ndHD6r7t+aQNvvw1EBHloqksbdO4d5rcaINFJR95JTCIafyauYn4HQId6Mhm3YZfNChww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740596116; c=relaxed/simple;
-	bh=3oc8qhgJaB+qEvfVeOdFIBZPr+vcrIabY8Hr67IuZWk=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=hlvDPr7y04MathUak270OfzZxeTBxepUj1p2PI3B/RNE1fRfjWvx3yMqgy5tKPQiSBpmW4Hzyke5c8S5Hj4TaQMoSLy4nyAUOPKS3OX2KxudjipklohHknZpNsofdRIRU0sP0GI2zxfuiyo3F2hdmW3BcH1zJUuL8sIyJc/nZdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WOy+655G; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc2b258e82so335061a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 10:55:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740596114; x=1741200914; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pMxjrmr+C2lqhTDO1AsbIyjKpGntAjw/Nw4lGuuG6FA=;
-        b=WOy+655GRlTqbi7xoiyFxeeB56NI2NmesFky22Qwy5WsgXcjOYIa2lwhtrF8FFVw5G
-         OqDiIKDRFt+TVOby+Rmu4ylIQYA0/ObHiH4VYEyWqP5sBBOGRWQgWa4fkHzgKmwRMak2
-         2d6kWe+bFe6uFZ6t/xafzo7Ycc1qb/UaBl8ihhzOjkeJoz/vHsQ347hd8PQ+uQ1skFxa
-         As5tIcdybRRdaTTaGkp2vVOX9UiYVVTilEkyNdbpDN2FWIg4YvR46eDWJewAAIMS5tzF
-         ifLnWIBRUBg2RXIsZdOG4orXbqYMCDNm22FpMX4Fn8bChqgkIVM/u7J+Kt9Zz4cdVYaz
-         xlow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740596114; x=1741200914;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMxjrmr+C2lqhTDO1AsbIyjKpGntAjw/Nw4lGuuG6FA=;
-        b=OLLe7LfTL9YQEUGNMBQnRdWT0+lWUHcTC61M9/u4shpLi5hsyNjdLI6YWBbTJZDv4b
-         DlNc8IS4nLCcJQRd6veIaGu+XkUbgZqSYZKFaLcc2CvCh/hcYj3tl4/jEDnr9Z82FGmD
-         QpKKalqX0KXkHKzFYhIQa9IwWqX7R6qyxtRCzavQgxflD6wtPDyTEXLBteeaU1c7QMeZ
-         5wwXthc8N8QDxx7mJ2PyarO5OKeZk6J/EdBBBsYUA+LUX0y+7m9uyOJcdc9v9yKiW4uj
-         PHFvTY3QTMJav7pIS2nVp50LU22xmIcIbZ8O1wCHzclDdK6sG/PNNEpNyhp1k9x8geXX
-         OOtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw8efSEtPx29dE+930EWm0KOx7cwA22Gkjn3fAOyMjpKJvOD9qGILj8nUys33qN6DJTxodquhwrDucCO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6hhpRVx54vMYWf6YRU8jnsSngtAPqPIIQmHOo6h+cDrkHbyQR
-	wE5SeZ3t6dkXc1DCuOnzgzXwvLxTD0TtwY1L3v3L2NKQ243pxqdvgtTybeQRSf2fWXc4gNkeoEg
-	1DOVGZBoT0kUUiL7WjJkKcg==
-X-Google-Smtp-Source: AGHT+IHXoYciUWfZJpCpSwX24N+e+ntqta9etAMpkRTScD6zTBwVRDGyD1SA1Qg0PQJM6OFM5du14J4bw5ZP8rzFVg==
-X-Received: from pjbqi7.prod.google.com ([2002:a17:90b:2747:b0:2f5:4762:e778])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:cf8e:b0:2fe:7fea:ca34 with SMTP id 98e67ed59e1d1-2fe7feaca86mr5657943a91.32.1740596114259;
- Wed, 26 Feb 2025 10:55:14 -0800 (PST)
-Date: Wed, 26 Feb 2025 18:55:12 +0000
-In-Reply-To: <diqz5xle9nwq.fsf@ackerleytng-ctop.c.googlers.com> (message from
- Ackerley Tng on Thu, 13 Feb 2025 09:47:33 +0000)
+	s=arc-20240116; t=1740596175; c=relaxed/simple;
+	bh=GJLG6HT2p/F44pvEf+vdQir4GFIdOm/KN9Mpn40nQZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSL5j8nbynSgaJMdZxmpd9B5sPpxdJRAllmbfiCL3Lyel+0gn19J0mGXMbijesfsFAJ2zJtOdZ7PoOV5Udg1gXcsQ0vGFvOpLLCb8d+2Ub1GQXQFWwCh8pIO5C7RpMupEFWSPu1OgNvLEhcRc+l5mUk9JkiMTui0DqWCjR3shMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KGSqJ6pY; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740596161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=R4cAkbTSz/JJdoqp8OKkTxMEEUgI6W1GWFWWM9AMUuk=;
+	b=KGSqJ6pY9pcbZNl3CC3YM9Y/0xKyMoZuIZo4rAAadNchrEPFIKCH9PHH0jDCmdKmSTPMDv
+	bQoWFQeRk95IUq2IyGsw8qkvfSgSiq/+vasAtDvAcM4TpQkKurSyL0gHRaXf4PRkbeP33u
+	SJMJVQnn1OCqBRvbSkzs1m91kNDLiJw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: James Smart <james.smart@broadcom.com>,
+	Ram Vegesna <ram.vegesna@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-hardening@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: elx: sli4: Replace deprecated strncpy() with strscpy()
+Date: Wed, 26 Feb 2025 19:55:26 +0100
+Message-ID: <20250226185531.1092-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqzldtsfsdr.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and cleanup
-From: Ackerley Tng <ackerleytng@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: peterx@redhat.com, tabba@google.com, quic_eberman@quicinc.com, 
-	roypat@amazon.co.uk, jgg@nvidia.com, david@redhat.com, rientjes@google.com, 
-	fvdl@google.com, jthoughton@google.com, seanjc@google.com, 
-	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com, 
-	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev, 
-	mike.kravetz@oracle.com, erdemaktas@google.com, vannapurve@google.com, 
-	qperret@google.com, jhubbard@nvidia.com, willy@infradead.org, 
-	shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
-	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
-	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
-	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
-	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-fsdevel@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Ackerley Tng <ackerleytng@google.com> writes:
+strncpy() is deprecated for NUL-terminated destination buffers; use
+strscpy() instead.
 
-> Peter Xu <peterx@redhat.com> writes:
->
->> On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
->>> +/**
->>> + * Removes folios in range [@lstart, @lend) from page cache of inode, updates
->>> + * inode metadata and hugetlb reservations.
->>> + */
->>> +static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
->>> +						   loff_t lstart, loff_t lend)
->>> +{
->>> +	struct kvm_gmem_hugetlb *hgmem;
->>> +	struct hstate *h;
->>> +	int gbl_reserve;
->>> +	int num_freed;
->>> +
->>> +	hgmem = kvm_gmem_hgmem(inode);
->>> +	h = hgmem->h;
->>> +
->>> +	num_freed = kvm_gmem_hugetlb_filemap_remove_folios(inode->i_mapping,
->>> +							   h, lstart, lend);
->>> +
->>> +	gbl_reserve = hugepage_subpool_put_pages(hgmem->spool, num_freed);
->>> +	hugetlb_acct_memory(h, -gbl_reserve);
->>
->> I wonder whether this is needed, and whether hugetlb_acct_memory() needs to
->> be exported in the other patch.
->>
->> IIUC subpools manages the global reservation on its own when min_pages is
->> set (which should be gmem's case, where both max/min set to gmem size).
->> That's in hugepage_put_subpool() -> unlock_or_release_subpool().
->>
->
-> Thank you for pointing this out! You are right and I will remove
-> hugetlb_acct_memory() from here.
->
+Compile-tested only.
 
-I looked further at the folio cleanup process in free_huge_folio() and I
-realized I should be returning the pages to the subpool via
-free_huge_folio(). There should be no call to
-hugepage_subpool_put_pages() directly from this truncate function.
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/scsi/elx/libefc_sli/sli4.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-To use free_huge_folio() to return the pages to the subpool, I will
-clear the restore_reserve flag once guest_memfd allocates a folio. All
-the guest_memfd hugetlb folios will always have the restore_reserve flag
-cleared.
+diff --git a/drivers/scsi/elx/libefc_sli/sli4.c b/drivers/scsi/elx/libefc_sli/sli4.c
+index 5e7fb110bc3f..d9a231fc0e0d 100644
+--- a/drivers/scsi/elx/libefc_sli/sli4.c
++++ b/drivers/scsi/elx/libefc_sli/sli4.c
+@@ -3804,7 +3804,7 @@ sli_cmd_common_write_object(struct sli4 *sli4, void *buf, u16 noc,
+ 	wr_obj->desired_write_len_dword = cpu_to_le32(dwflags);
+ 
+ 	wr_obj->write_offset = cpu_to_le32(offset);
+-	strncpy(wr_obj->object_name, obj_name, sizeof(wr_obj->object_name) - 1);
++	strscpy(wr_obj->object_name, obj_name);
+ 	wr_obj->host_buffer_descriptor_count = cpu_to_le32(1);
+ 
+ 	bde = (struct sli4_bde *)wr_obj->host_buffer_descriptor;
+@@ -3833,7 +3833,7 @@ sli_cmd_common_delete_object(struct sli4 *sli4, void *buf, char *obj_name)
+ 			 SLI4_SUBSYSTEM_COMMON, CMD_V0,
+ 			 SLI4_RQST_PYLD_LEN(cmn_delete_object));
+ 
+-	strncpy(req->object_name, obj_name, sizeof(req->object_name) - 1);
++	strscpy(req->object_name, obj_name);
+ 	return 0;
+ }
+ 
+@@ -3856,7 +3856,7 @@ sli_cmd_common_read_object(struct sli4 *sli4, void *buf, u32 desired_read_len,
+ 		cpu_to_le32(desired_read_len & SLI4_REQ_DESIRE_READLEN);
+ 
+ 	rd_obj->read_offset = cpu_to_le32(offset);
+-	strncpy(rd_obj->object_name, obj_name, sizeof(rd_obj->object_name) - 1);
++	strscpy(rd_obj->object_name, obj_name);
+ 	rd_obj->host_buffer_descriptor_count = cpu_to_le32(1);
+ 
+ 	bde = (struct sli4_bde *)rd_obj->host_buffer_descriptor;
+-- 
+2.48.1
 
-With the restore_reserve flag cleared, free_huge_folio() will do
-hugepage_subpool_put_pages(), and then restore the reservation in hstate
-as well.
-
-Returning the folio to the subpool on freeing is important and correct,
-since if/when the folio_put() callback is used, the filemap may not hold
-the last refcount on the folio, so truncation may not be when the folio
-should not be returned to the subpool.
-
->>> +
->>> +	spin_lock(&inode->i_lock);
->>> +	inode->i_blocks -= blocks_per_huge_page(h) * num_freed;
->>> +	spin_unlock(&inode->i_lock);
->>> +}
 
