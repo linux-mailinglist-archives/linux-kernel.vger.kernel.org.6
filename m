@@ -1,140 +1,153 @@
-Return-Path: <linux-kernel+bounces-533418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-533419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F31A459CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:17:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036D3A459D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 10:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26AF16AC19
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF125188A698
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 09:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CB0224220;
-	Wed, 26 Feb 2025 09:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8222423B;
+	Wed, 26 Feb 2025 09:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Ko46NzC3"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OV8WN3Qu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0DF258CED;
-	Wed, 26 Feb 2025 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C6F258CED
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 09:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561448; cv=none; b=PvpcKUgUIaKPGlT88aKv5Pij9yudEy0gbOdyVcNpBII5FgIC/0GVlFnqMYw31kJoT0ZRn4QIxZzeTT1DOKFp3Bs1xANQLSnCqkYJjoiH1Y9Alqc0b71mINnZDRWCare8rnB26CrnScr7EIn5Ono8haSiAh+06xgb1DNGqL2N6oc=
+	t=1740561524; cv=none; b=OVi7ZPXw1dfyXILoojADTqmoWDctrhiNUNzkjNppL2BRBaZYwYUziNiW2ashkuB3RYdaAi7IPCfQoJ4YI/o6NPf01yS1phoLGV0blQleUfCgLhJC3/HEElCWYDARuNFV5tvNVF/3K20LfrEAGO8RmMSJgzEQzCgK6jTCROQLikU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561448; c=relaxed/simple;
-	bh=UrvdQpPYbFyEzQ2dj9Ih1Yo65Ligf3U8qQjl/It0xdE=;
+	s=arc-20240116; t=1740561524; c=relaxed/simple;
+	bh=5zEfvEUUsLGTCHX4AwEafQpReN3akvlINVbTahuLpDc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AhYmxeVCSJiDhkb4uqDRx0eFhiF3nqUXNTweCFz86cwhwnKwRpa71XndPetx5lqpuqwEFW0hg1vHguE072k8Jn3dqjorwydFqnWfwhbLe3x/ZaYPEaOwRq0+Aro0LzD6j3k5mK35gPZEo9wRTo61VLQkwQzjy3iU2KwjOTjnPOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Ko46NzC3; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id C70472E07CBC;
-	Wed, 26 Feb 2025 11:17:21 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740561442;
-	bh=UrvdQpPYbFyEzQ2dj9Ih1Yo65Ligf3U8qQjl/It0xdE=;
-	h=Received:From:Subject:To;
-	b=Ko46NzC38Uto0/HdECvQEuenxC1oVRlMADJjViH4Fbmn0qJ86vGVzG5+HV65nWRcF
-	 ZtLxSt2MOQJZGw94BQqiJFC2szJLL08zRz2vavnJwV159K/sfJDI5kMOmFvThKSdGi
-	 j3xZwbnmLxFqVw/vvN9zJk/6hrRlTxEEWbyexrvA=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.167.51) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f51.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-545316f80beso5871927e87.1;
-        Wed, 26 Feb 2025 01:17:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUZUmLVXgEGDJVbUTsF/xGaBPOTljVvfdFvyqTrk+V9ut04FWAY2XZha+G2zEmNc87T6hQF9xW9HP/RU4XcM4RYMt2XTw==@vger.kernel.org,
- AJvYcCVOOrJEiIWCtMRzPQZCrJ+1NBO7ljGvR4B42pWSKnIU2A1F2oAEi68A9ehTfAx2t5G4qMSdd0j+ndqHHg==@vger.kernel.org,
- AJvYcCXyFz4Z/AiWn/RNhuORzSWhXPCL/Z1wUosg93tDozQT6lcZdBzZpihmUHui3wh6Mb9B5+zsvWleWcwH0ef2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDegkWK9PxbqZxog6bMfc7Z1otV1k57J0QJPxFHLNjt/vuuwZf
-	Mn5Ioq/v/3cZAUEEwU/zKOScuaimM1aenWJjPSi37amp56+7Ne+Qzk8Vvblv2KfjTc8kMM/7HYp
-	lDexqaAOh/L8ii/ufi+KXc0Oemjw=
-X-Google-Smtp-Source: 
- AGHT+IGE2unUDzjwlB+bHwcYrpsMI+bA11uuE3Y2N915MIkq7/W/KAO/zXWqzdfS2aUXpr/1kDL2iTudXSCcU3xlmWA=
-X-Received: by 2002:a05:6512:b98:b0:545:353:4d46 with SMTP id
- 2adb3069b0e04-548510d8085mr3569969e87.25.1740561438044; Wed, 26 Feb 2025
- 01:17:18 -0800 (PST)
+	 To:Cc:Content-Type; b=r4xrOi/Ji3Q5L9rdWj2HLeQJQHmE731sjR3DMpq48hcFb6gqHDSb3Irenf0arM+HSovf8fyk3XXvzrjwxGCWDb6LU8q0KuU7QUYW6Ium97o4AF46Uz9Eyumoqx0dNAVpFHJGZ/6CglqHP31CWzDXRlRKMa+VPO4Ym2UL9bUKT/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OV8WN3Qu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740561521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0MIbia0vRPyl/EASI4bbBzkpXlN9D9cFmNZ+w8QhjMs=;
+	b=OV8WN3QuZRSS9QE/BbwWQ69pDKW/5o/ZD6/MJD1R5MXMhunftpXUtbDaZKD9/uD/9n/06G
+	SYv5dzVm24aNW6NK1RBpb0aUbmYlZXJUPq2UhyHVbgI3Je2bq/nFJocy6UA5Rd5qX/YX8O
+	TJfXROk0Kqdzemek7SAIRKmBTSPySgY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-47-gTrcx5fGMFiKOyTIPtzVZA-1; Wed, 26 Feb 2025 04:18:39 -0500
+X-MC-Unique: gTrcx5fGMFiKOyTIPtzVZA-1
+X-Mimecast-MFC-AGG-ID: gTrcx5fGMFiKOyTIPtzVZA_1740561518
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f2f438fb6so7487800f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 01:18:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740561518; x=1741166318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0MIbia0vRPyl/EASI4bbBzkpXlN9D9cFmNZ+w8QhjMs=;
+        b=EJgDW6WCs7gtggPW91mjpbdVk1ATL++y1lWYQVGWrXS/p+6ag4m7yieJiqrMgPH0RW
+         ZhDLwe+KE4nwlIs33XavlZY+0cWKgy++KzKrreL4HB2ScKkstR1ugjpFt6IVuU/cvEPx
+         1sVIn+8ctV29+l3yhItKQ/kwZZXnXBZAo0ORU0mP/dJ6wQMBw0c7hdMCy74KSPYWX6iK
+         yGV+08e9T10BZwL1WQl9nFHea/ipAK3wY17CTg2Akfiy9ENI50CR3sFO+vG1UJYWRba6
+         mnMSXFZNsZYNY8C1JDTezgx7N1PFN5zz7AbJyEdYGNHdLhEBt/Gdq5yoA+L6yf4GLkYH
+         20Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxfjgyz4/fYi3hPbc2lg38oIM6yG+G4wwgOgENBpzEqxMjILeL6HaW3XEKZauxhnpnWWVKp+pL9+wTXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx81cApSRdPHicTR9HzlgtiiKAq9flNiAWAHZ1k/zFkVoX8bv/4
+	9g2dAB3C7489BZXlxCcmySDYCcbxbKsK9rDLdDw5RaIHaWLybedgupstYtGGmJYCJK7ni9gjWt2
+	9BY3XNqxnfd9+0EK6RUgqCUU2K5pzQ+Xc19n4KzetTVhKlCCeDXJIFQ7b2TTsTWzfnnOLqXF39c
+	b9FVtcnZM0jCsRQbRjD6NCI387F8DUMVnxziII
+X-Gm-Gg: ASbGncvixDd/4olJcu7MiqZZAU8JR1vXMve9yaTvE/cU3pVHSs3vKwAo+B6JAcXvodW
+	VHGOuDm1IPeY6ktziGZG6Nz7IBnCjVBTiZ2Cok0yw2+EAw9RATUS7r1lmdng06Y8K6bgtvvvGIw
+	==
+X-Received: by 2002:a5d:47af:0:b0:390:d61c:c777 with SMTP id ffacd0b85a97d-390d61cc85fmr1296790f8f.46.1740561517869;
+        Wed, 26 Feb 2025 01:18:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGM8QJcltKK3icbvaiTIyjEom27+uMjjmS3V6slM8kbmQaHs57lufLQIp1ODz/r9AND77qyPMNyl+BQOe7Hd40=
+X-Received: by 2002:a5d:47af:0:b0:390:d61c:c777 with SMTP id
+ ffacd0b85a97d-390d61cc85fmr1296733f8f.46.1740561517436; Wed, 26 Feb 2025
+ 01:18:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225081744.92841-3-luke@ljones.dev>
- <20250225141549.11165-1-lkml@antheas.dev>
- <027706ba7b19a4eefb51aeddb5d10cc235751780.camel@ljones.dev>
-In-Reply-To: <027706ba7b19a4eefb51aeddb5d10cc235751780.camel@ljones.dev>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Wed, 26 Feb 2025 10:17:06 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwGwjM7hGOm+6iDHg7Q1StbEYRm=cU-8Cx4v==V1d9W4=w@mail.gmail.com>
-X-Gm-Features: AQ5f1JoUUV8wL4l4QGiQyFCh4eYRWD5JRzpX6lnpzo7KYr3xHPc7DEnzTOG9sfo
-Message-ID: 
- <CAGwozwGwjM7hGOm+6iDHg7Q1StbEYRm=cU-8Cx4v==V1d9W4=w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: Refactor Ally suspend/resume
-To: Luke Jones <luke@ljones.dev>
-Cc: bentiss@kernel.org, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
-	jikos@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
+References: <20250224235542.2562848-1-seanjc@google.com> <20250224235542.2562848-2-seanjc@google.com>
+ <6475f9c7-304a-4e0b-8000-3dc5c8e718e9@redhat.com> <Z75f9GuA9NfKo37c@google.com>
+In-Reply-To: <Z75f9GuA9NfKo37c@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 26 Feb 2025 10:18:26 +0100
+X-Gm-Features: AQ5f1JqpfKleIgYhNDBuhYOTkE7mUvo6hlKxjC4ts72PAS8Q4WmxhhjJCWdlkGA
+Message-ID: <CABgObfZWqBm089dkOpWwX-d6Bgp84zP_0Gow4ow7ZKHov=8oxg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] KVM: x86: Free vCPUs before freeing VM state
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Aaron Lewis <aaronlewis@google.com>, 
+	Jim Mattson <jmattson@google.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174056144234.18095.2788953362654973868@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
 
-Hi Luke,
-using your maintainer status and your NDA creds to veto my comments
-will not go well for you if you end up breaking the driver.
+On Wed, Feb 26, 2025 at 1:27=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Wed, Feb 26, 2025, Paolo Bonzini wrote:
+> > On 2/25/25 00:55, Sean Christopherson wrote:
+> > > Free vCPUs before freeing any VM state, as both SVM and VMX may acces=
+s
+> > > VM state when "freeing" a vCPU that is currently "in" L2, i.e. that n=
+eeds
+> > > to be kicked out of nested guest mode.
+> > >
+> > > Commit 6fcee03df6a1 ("KVM: x86: avoid loading a vCPU after .vm_destro=
+y was
+> > > called") partially fixed the issue, but for unknown reasons only move=
+d the
+> > > MMU unloading before VM destruction.  Complete the change, and free a=
+ll
+> > > vCPU state prior to destroying VM state, as nVMX accesses even more s=
+tate
+> > > than nSVM.
+> >
+> > I applied this to kvm-coco-queue, I will place it in kvm/master too unl=
+ess
+> > you shout.
+>
+> Depends on what "this" is :-)
+>
+> My plan/hope is to land patches 1 and 2 in 6.14, i.e. in kvm/master
 
-Yes, I have done extensive testing with setting the powersave
-parameter. I have supported it since September. It is very easy to
-break the controller if you start writing to it randomly. In fact,
-when I pushed it out [1], it never got out of testing because I got
-three user reports about it so I had to make a revised version [2].
-Notice there is a day difference between the versions. We never needed
-a boot workaround for the original ally, and if you ask me, the reason
-your driver here includes that is because in all your testing you set
-the powersave parameter.
+I meant only 1, but if you want to have 2 as well then that's fine too.
 
-When it comes to RGB, without a quirk it looks to me as if the MCU
-hardlocks and stops accepting RGB commands. I am pretty sure I wrote
-to it manually, but excuse me if I am wrong as there have been 5
-months since I did the testing for it.
+As to kvm-coco-queue, based on Yan's reply I have 1 (of course), 4 and
+an extra patch to move kvm_x86_call(vm_destroy) at the very end of
+kvm_arch_destroy_vm; I'll post everything as soon as I finish building
+and testing.
 
-In your new armoury driver, you tried to make internal names
-accessible to users via the BIOS interface to make it more user
-friendly. In this case, you need to use the names Asus uses in
-Windows, otherwise users will get confused. Failing that, asus-wmi is
-a perfectly fine driver as it is, with mcu_powersave as an internal
-parameter.
+Paolo
 
-As far as I am concerned, the whole Ally issue boils down to the
-Modern Standby firmware notifications in the Linux kernel being in the
-wrong place. You can see it in the Microsoft documentation [3]. The
-Display Off call should happen when the display turns off, not after
-the kernel has suspended. This change will need to eventually happen,
-as Asus is not the only handheld manufacturer doing this. All
-manufacturers turn off their xpad controller via those notifications,
-including Lenovo, GPD, OneXPlayer, and MSI. Fortunately, this issue
-seems to only affect asus in a major way, although I suspect it causes
-a quality degradation in other manufacturers as well.
+> rest are firmly 6.15 IMO.  And based on Yan's feedback, I'm planning on a=
+dding a
+> few more cleanups (though I think they're fully additive, i.e. can go on =
+top).
+>
 
-Given that I do have a custom kernel now and i can rewrite it as I see
-fit, I am giving you carte blanche when it comes to the mainline
-kernel. As far as I am concerned, my Ally 1st gen/X integration
-finished last November. So I will not be revisiting it or doing any
-additional testing to validate any new claims or changes. I will just
-be removing them and pointing users to my kernel.
-
-Best,
-Antheas
-
-[1] https://github.com/hhd-dev/adjustor/releases/tag/v3.5.0
-[2] https://github.com/hhd-dev/adjustor/releases/tag/v3.5.1
-[3] https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/modern-standby-firmware-notifications
 
