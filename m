@@ -1,155 +1,158 @@
-Return-Path: <linux-kernel+bounces-534778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-534779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C91A46B0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:29:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D66BA46B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 20:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423B11885E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20FC716E982
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 19:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EDF23A9BE;
-	Wed, 26 Feb 2025 19:29:19 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9AE241675;
+	Wed, 26 Feb 2025 19:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MUigq/IT"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33999239097;
-	Wed, 26 Feb 2025 19:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAAB225413;
+	Wed, 26 Feb 2025 19:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598158; cv=none; b=NY5WxDT3Cno1u58CpjIsWHyee3E4XDAS0wYNzvfeQAdVQR6KswkSyqucm/VjMU8i5YzDHwv3ANRRGXF4F3pi0y23+ZalCcG2UZgtfD6LF9S3ZQg11MXWDKCTHfnyTpYjvHhLZqJBEcSHsuIbdWmWuYoBmhtQCnMCHMWXhZgA/Zo=
+	t=1740598215; cv=none; b=IgiEY1twAqeCj8jJbVYKfW+34XxqPy15ublxFVPzXSQRHcUNK89ARer+cZ3p6bkcmoP8fQ31b8tRGRJEOwL4phVNpRt270yIR0TzzKJg/ejIoY1xXX2nRAPhjo0iQBj9S+pHivS0WRKPw14NSHv/7W0psqIyQdtj0rgEnnx788M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598158; c=relaxed/simple;
-	bh=2ZUteOkaSTwBrgPlfemqClgy+FPwyulmg41Bi4EpecI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=ujHWqN7wb/E+xUoesthdCzeJlGH/DdVhLaf/3xlQrriD9VZih2WJvnYvLU62PF4wRVJG7vulGlOdnlrGahoLgajn7adeusPx+sYk79zN9oSLHfkZR9lpliRvyDBPtcfo+spwGoM+Pe/TMeKtC76HUAiYSz9W7fsrKTdWoh9MQ9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnN5b-0002zp-CB; Wed, 26 Feb 2025 20:29:03 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnN5b-000453-03;
-	Wed, 26 Feb 2025 20:29:03 +0100
-Message-ID: <0ec1f766-a0be-42ed-b505-0fc94205f724@hetzner-cloud.de>
-Date: Wed, 26 Feb 2025 20:29:01 +0100
+	s=arc-20240116; t=1740598215; c=relaxed/simple;
+	bh=gWaTp9bD+OUcTj6NoK8/bNlesYJYBPDzTDOzvI75MYw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=nClhtiNXXKfbhZIQG9xolj4HtwDzdXdDmGjqQUnx26t7kG9l45VXXyptAPDQDrYQ66g8RB5rXOicaBMjkH9uElc/8zhYmera1E7XSQ39Fz0SCSAhFsnIZhoCliacbYVX3r1+m2O5ul7vxhX0hXdZfL53CoX8AYNLlWYcQIE3xdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MUigq/IT; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
- ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- hawk@kernel.org
-References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
- <20250224152909.3911544-6-marcus.wichelmann@hetzner-cloud.de>
- <Z7yo3VfHofK-W7EY@mini-arch>
- <165bbf6e-ca06-4eac-a9a2-2033314aa027@hetzner-cloud.de>
- <Z79k0vKn39XsZ-j7@mini-arch>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-Subject: Re: [PATCH bpf-next v3 5/6] selftests/bpf: add test for XDP metadata
- support in tun driver
-In-Reply-To: <Z79k0vKn39XsZ-j7@mini-arch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1740598211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ibDkt/YwZAslRM610E5YWbcK7AITUoO3iRtmaQFSdf0=;
+	b=MUigq/ITvu7iFX7rXz6ixyHDpu3rpghRH8pKBBRhLIKb9hUY8zUX9JMV+kNmHDOAxvkGlr
+	rYkfT7tdCzQdABfSzztIKkMsM95zBquukQ182YGMrN+POaaEJPBZDgAeAHcrQlNkTC00Ie
+	Y+7udB3nHDnEo1w2uMWVOk2HP1+V9gqKpUsZ5BbAZIjEvo5DttroDSxm9SMuX5RK5uOSWx
+	UWQrm24ypvFfGtuX9aqteep7UqlxpGzuazQJrsyPvt7RpnmODTHNbtn8sLrCyc5ftrkZhZ
+	aNJ1nClICk4jhZ4Z78C6PqGh4Jr8GPDBnQsSNQaTwCrM966RO06yOKbMP6lkHQ==
+Date: Wed, 26 Feb 2025 20:30:11 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-mmc@vger.kernel.org
+Cc: ulf.hansson@linaro.org, git@hrdl.eu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: core: Trim trailing whitespace from card product
+ names
+In-Reply-To: <fb7fcecae737f3e8b279854d7c853000527cba9a.1740597891.git.dsimic@manjaro.org>
+References: <fb7fcecae737f3e8b279854d7c853000527cba9a.1740597891.git.dsimic@manjaro.org>
+Message-ID: <72e30ae1c761ef4a9d2c7ba9c7c8fc9d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27561/Wed Feb 26 10:36:26 2025)
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
+Hello,
 
-Am 26.02.25 um 20:00 schrieb Stanislav Fomichev:
-> On 02/26, Marcus Wichelmann wrote:
->> Am 24.02.25 um 18:14 schrieb Stanislav Fomichev:
->>> On 02/24, Marcus Wichelmann wrote:
->>>> [...]
->>>> +void test_xdp_context_tuntap(void)
->>>
->>> tap0 is already used by lwt tests, so there is a chance this new test
->>> will clash with it? Should we run your new test in a net namespace
->>> to be safe? Bastien recently added a change where you can make
->>> your test run in a net ns by naming the function test_ns_xxx.
->>>
->>
->> Ah, cool, I didn't know of that feature.
->>
->> For reference, you probably mean this one?
->> commit c047e0e0e435 ("selftests/bpf: Optionally open a dedicated namespace to run test in it")
+On 2025-02-26 20:26, Dragan Simic wrote:
+> Product names for some eMMC chips can include trailing whitespace, 
+> which
+> seems to be rather uncommon, but makes emitted messages and /sys 
+> properties
+> somewhat unsightly.  Here's such an example from a Pine64 PineNote, in 
+> which
+> "Biwin ", as the eMMC product name, contains trailing whitespace:
 > 
-> Yes.
->   
->> As long as the tests are not run in parallel, the test function SHOULD
->> clean up well enough behind itself that no conflicts should occur.
->> But having that bit of extra safety won't hurt.
+>   mmc0: new HS200 MMC card at address 0001
+>   mmcblk0: mmc0:0001 Biwin  115 GiB
+>   mmcblk0: p1 p2 p3 p4 p5 p6 p7
+>   mmcblk0boot0: mmc0:0001 Biwin  4.00 MiB
+>   mmcblk0boot1: mmc0:0001 Biwin  4.00 MiB
+>   mmcblk0rpmb: mmc0:0001 Biwin  4.00 MiB, chardev (249:0)
 > 
-> The test you're adding is gonna be running in parallel with most of the
-> other test cases. If you want it to be executed in a serial fashion
-> (which I don't think you do, running in parallel in a ns is a better
-> option), the function as to be called serial_test_xxx.
+> Trailing whitespace in /sys properties may even cause some unforeseen 
+> issues
+> with some scripts, so let's have the trailing whitespace trimmed in 
+> product
+> names for eMMC chips.  Although not observed yet by the author of these
+> changes, the same trailing whitespace may appear in SD card product 
+> names,
+> so let's trim them as well, which can't hurt.
 > 
+> Touch-up one commit as well, by using proper capitalization.
 
-Ah, I didn't know parallel execution is opt-out. Then I must have been
-lucky that it didn't cause issues.
+Oops, s/commit/comment/, sorry...  Just saw it, a few seconds too late. 
+:/
 
-Added it in the V4 patch series that I'll send in a bit.
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  drivers/mmc/core/mmc.c | 6 +++++-
+>  drivers/mmc/core/sd.c  | 4 ++++
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 6a23be214543..1522fd2b517d 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/stat.h>
+> +#include <linux/string.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/random.h>
+>  #include <linux/sysfs.h>
+> @@ -66,7 +67,7 @@ static int mmc_decode_cid(struct mmc_card *card)
+> 
+>  	/*
+>  	 * The selection of the format here is based upon published
+> -	 * specs from sandisk and from what people have reported.
+> +	 * specs from SanDisk and from what people have reported.
+>  	 */
+>  	switch (card->csd.mmca_vsn) {
+>  	case 0: /* MMC v1.0 - v1.2 */
+> @@ -109,6 +110,9 @@ static int mmc_decode_cid(struct mmc_card *card)
+>  		return -EINVAL;
+>  	}
+> 
+> +	/* some product names include trailing whitespace */
+> +	strim(card->cid.prod_name);
+> +
+>  	return 0;
+>  }
+> 
+> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+> index cc757b850e79..8eba697d3d86 100644
+> --- a/drivers/mmc/core/sd.c
+> +++ b/drivers/mmc/core/sd.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+>  #include <linux/stat.h>
+> +#include <linux/string.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/random.h>
+>  #include <linux/scatterlist.h>
+> @@ -95,6 +96,9 @@ void mmc_decode_cid(struct mmc_card *card)
+>  	card->cid.month			= unstuff_bits(resp, 8, 4);
+> 
+>  	card->cid.year += 2000; /* SD cards year offset */
+> +
+> +	/* some product names may include trailing whitespace */
+> +	strim(card->cid.prod_name);
+>  }
+> 
+>  /*
 
