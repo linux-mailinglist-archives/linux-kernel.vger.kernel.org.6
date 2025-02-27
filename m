@@ -1,231 +1,106 @@
-Return-Path: <linux-kernel+bounces-535689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3AFA47609
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:40:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CEEA4760C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6997B3A8BF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621243AEB3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122D421CFE2;
-	Thu, 27 Feb 2025 06:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0B721CFFB;
+	Thu, 27 Feb 2025 06:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SHZ1b3oD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+ENGLIW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C387415B102;
-	Thu, 27 Feb 2025 06:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0FC15B102;
+	Thu, 27 Feb 2025 06:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740638408; cv=none; b=Kei4cwGxG4knbVVALMg974JVz4GQB4jA++r7HRdNL/PYLxmRosFg33PZkvXyL/d/qhdnja+CelBc3SErGTGHKa+VsYoLhcntFJCzpL8y/42Cph45DYcS1uiThE+/L/7H16xL8wguS9DUVDpzUlKP9cLAmXl4TYQJJ4jL9m0NDHo=
+	t=1740638639; cv=none; b=oxfA07EkzSYjjS4OwazVT873o7rmuvUm2QApMa6zHfNCqOujkXIOY8xouK/52dt4IVFtfR9NOUddHYOgZE9BPrE8N+45NTsDYxDgMyoYRoFgj5LvNMV9BwAfBAmRXAY7ijB84FakJgTNXJEyeU8Ta2JxyhDIWeDOFsS7Hyf3J5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740638408; c=relaxed/simple;
-	bh=bSvauKUoYmQXHHhqbyBZCe3PiphAGdh8GNCKtDECzf4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aHTd09+Isr3DZ6NHpqhDfWVIZe433yD6Wg7mxtPhYkx6uCHuQd5KZOCK0QNevec7afKw8fuo57+kt/hBG7sQZGEG35/+PQg4vQ3Af+mHTwxoBSWVRpAfaFtzwdD33W0Hxtn3F89iOkzmoeO685zpb/PrEvxVkhf191OoGgtAXEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SHZ1b3oD; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740638407; x=1772174407;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=bSvauKUoYmQXHHhqbyBZCe3PiphAGdh8GNCKtDECzf4=;
-  b=SHZ1b3oDx+/6UE/VCS1APW8nUusTVlh3O9bYwQwG7qr92vNUaUrzOE5Z
-   etKYqsvhfZquDs3ogou2YAxHKs5i5O0x6aMp0I2Y+oAknuVAN1c6bbv7G
-   InXAtUxCt0gyN1UU+0M4jKQh7RIcBVFiu01XZ76VWjYTz/PnqCAdhM2rk
-   B5y1G0qQOT+SX2ch9TZVdTgZfgyPTPNyUiIQjLjlLgeg7e04ckPo3DUaN
-   yndJ2pungyN0BlQ5ZWhZczJVNYJeicHcYYT52A7qqU3KuZHuU+9gY2exq
-   QSDiM06W6lFdPc2hZgaSWnr/EaLVDYyTbNVfmkGUd7Rz6eJGirPf4ghVN
-   Q==;
-X-CSE-ConnectionGUID: O4OMGS9UQEOSlPNZhuF9WA==
-X-CSE-MsgGUID: 7a7cvTw2QEqn6GzgrsgP6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="44342261"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="44342261"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:40:06 -0800
-X-CSE-ConnectionGUID: SFm84HD9SE2YeA/U3oyU6A==
-X-CSE-MsgGUID: HEHIlPs+RwSkxmrxRzQZQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="116706260"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:40:03 -0800
-Message-ID: <a62bfd22-0469-46cc-954d-8331aa2922e9@linux.intel.com>
-Date: Thu, 27 Feb 2025 14:40:00 +0800
+	s=arc-20240116; t=1740638639; c=relaxed/simple;
+	bh=LAL9C2dIDVV/qqvptvhJffwvfvQ3/+Dly709lYEcfPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZtdd/2/CMKcN4iSepYoCNLG6BUocTlZmn/CBxDTHIPXxQDIUcQXuDWTAe+4kZY4tF0MU1xMpXq8gYym7nBo/ysYCSG4yPhfSsPQaLJycLygzQLP1ytaFgEFXm2DitX+y7sJgSwLi4xGIoTVs2SkSSo0HDZAvvwaBPi7IOGMT00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+ENGLIW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010EFC4CEDD;
+	Thu, 27 Feb 2025 06:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740638638;
+	bh=LAL9C2dIDVV/qqvptvhJffwvfvQ3/+Dly709lYEcfPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k+ENGLIWr4oOnN1MItJV4ynASZm2aLcMeEtL8ZnzgbJQTWmtBFnMysxiXYIC1Zlii
+	 ajrdKJzsOORqkOk7UKt2+GRxYriDBqLI4L1NPE+5Armcx7Ph64efpy5uSkyCHyE7QH
+	 oYr44U2XCCoJz5DInLhTg/rPN1pGMWz6nZUxeXErNH/jI3epoycQeNkQ1thfRR8M/X
+	 y2M9I/YHiy4hUIQ8MVQxThOlCSZDoMo9JtoIB+DUco680PGX789H9ugvzhJ5g6LG04
+	 eUTqMHuEkrFfiE1RSIeaVnwtyGfySE3mvm30qM1iV6sUZY2d9j2gihFxq5ShSqwn1d
+	 s3lTXSUdyy9hg==
+Date: Thu, 27 Feb 2025 12:13:54 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: linux-sound@vger.kernel.org, broonie@kernel.org, tiwai@suse.de,
+	linux-kernel@vger.kernel.org, pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: Re: [PATCH v2 09/16] soundwire: cadence: add BTP/BRA helpers to
+ format data
+Message-ID: <Z8AJqo6K7j3176cS@vaman>
+References: <20250224064451.33772-1-yung-chuan.liao@linux.intel.com>
+ <20250224064451.33772-10-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 18/24] perf/x86/intel: Support arch-PEBS vector
- registers group capturing
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
- <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
- <bda04ccd-fa90-4f14-89cc-9835de36bcfb@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <bda04ccd-fa90-4f14-89cc-9835de36bcfb@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224064451.33772-10-yung-chuan.liao@linux.intel.com>
 
+On 24-02-25, 14:44, Bard Liao wrote:
+> +
+> +static unsigned int sdw_cdns_write_pdi0_buffer_size(unsigned int actual_data_size)
+> +{
+> +	unsigned int total;
+> +
+> +	total = SDW_CDNS_BRA_HDR + SDW_CDNS_BRA_HDR_CRC + SDW_CDNS_BRA_HDR_CRC_PAD;
+> +
+> +	total += actual_data_size;
+> +	if (actual_data_size & 1)
+> +		total += SDW_CDNS_BRA_DATA_PAD;
+> +
+> +	total += SDW_CDNS_BRA_DATA_CRC + SDW_CDNS_BRA_DATA_CRC_PAD;
+> +
+> +	return total * 2;
+> +}
+> +
+> +static unsigned int sdw_cdns_write_pdi1_buffer_size(unsigned int actual_data_size)
+> +{
+> +	unsigned int total;
+> +
+> +	total = SDW_CDNS_BRA_HDR_RESP +	SDW_CDNS_BRA_HDR_RESP_PAD +
+> +		SDW_CDNS_BRA_FOOTER_RESP + SDW_CDNS_BRA_FOOTER_RESP_PAD;
+> +
+> +	return total * 2;
+> +}
 
-On 2/26/2025 4:08 PM, Mi, Dapeng wrote:
-> On 2/25/2025 11:32 PM, Peter Zijlstra wrote:
->> On Tue, Feb 18, 2025 at 03:28:12PM +0000, Dapeng Mi wrote:
->>> Add x86/intel specific vector register (VECR) group capturing for
->>> arch-PEBS. Enable corresponding VECR group bits in
->>> GPx_CFG_C/FX0_CFG_C MSRs if users configures these vector registers
->>> bitmap in perf_event_attr and parse VECR group in arch-PEBS record.
->>>
->>> Currently vector registers capturing is only supported by PEBS based
->>> sampling, PMU driver would return error if PMI based sampling tries to
->>> capture these vector registers.
->>> @@ -676,6 +709,32 @@ int x86_pmu_hw_config(struct perf_event *event)
->>>  			return -EINVAL;
->>>  	}
->>>  
->>> +	/*
->>> +	 * Architectural PEBS supports to capture more vector registers besides
->>> +	 * XMM registers, like YMM, OPMASK and ZMM registers.
->>> +	 */
->>> +	if (unlikely(has_more_extended_regs(event))) {
->>> +		u64 caps = hybrid(event->pmu, arch_pebs_cap).caps;
->>> +
->>> +		if (!(event->pmu->capabilities & PERF_PMU_CAP_MORE_EXT_REGS))
->>> +			return -EINVAL;
->>> +
->>> +		if (has_opmask_regs(event) && !(caps & ARCH_PEBS_VECR_OPMASK))
->>> +			return -EINVAL;
->>> +
->>> +		if (has_ymmh_regs(event) && !(caps & ARCH_PEBS_VECR_YMM))
->>> +			return -EINVAL;
->>> +
->>> +		if (has_zmmh_regs(event) && !(caps & ARCH_PEBS_VECR_ZMMH))
->>> +			return -EINVAL;
->>> +
->>> +		if (has_h16zmm_regs(event) && !(caps & ARCH_PEBS_VECR_H16ZMM))
->>> +			return -EINVAL;
->>> +
->>> +		if (!event->attr.precise_ip)
->>> +			return -EINVAL;
->>> +	}
->>> +
->>>  	return x86_setup_perfctr(event);
->>>  }
->>>  
->>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->>> index f21d9f283445..8ef5b9a05fcc 100644
->>> --- a/arch/x86/events/intel/core.c
->>> +++ b/arch/x86/events/intel/core.c
->>> @@ -2963,6 +2963,18 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
->>>  			if (pebs_data_cfg & PEBS_DATACFG_XMMS)
->>>  				ext |= ARCH_PEBS_VECR_XMM & cap.caps;
->>>  
->>> +			if (pebs_data_cfg & PEBS_DATACFG_YMMS)
->>> +				ext |= ARCH_PEBS_VECR_YMM & cap.caps;
->>> +
->>> +			if (pebs_data_cfg & PEBS_DATACFG_OPMASKS)
->>> +				ext |= ARCH_PEBS_VECR_OPMASK & cap.caps;
->>> +
->>> +			if (pebs_data_cfg & PEBS_DATACFG_ZMMHS)
->>> +				ext |= ARCH_PEBS_VECR_ZMMH & cap.caps;
->>> +
->>> +			if (pebs_data_cfg & PEBS_DATACFG_H16ZMMS)
->>> +				ext |= ARCH_PEBS_VECR_H16ZMM & cap.caps;
->>> +
->>>  			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
->>>  				ext |= ARCH_PEBS_LBR & cap.caps;
->>>  
->>> @@ -5115,6 +5127,9 @@ static inline void __intel_update_pmu_caps(struct pmu *pmu)
->>>  
->>>  	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_XMM)
->>>  		dest_pmu->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
->>> +
->>> +	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_EXT)
->>> +		dest_pmu->capabilities |= PERF_PMU_CAP_MORE_EXT_REGS;
->>>  }
->> There is no technical reason for it to error out, right? We can use
->> FPU/XSAVE interface to read the CPU state just fine.
-> I think it's not because of technical reason. Let me confirm if we can add
-> it for non-PEBS sampling.
+Argument is unused, why not define this as a static value?
 
-Hi Peter,
+> +
+> +static unsigned int sdw_cdns_read_pdi0_buffer_size(unsigned int actual_data_size)
+> +{
+> +	unsigned int total;
+> +
+> +	total = SDW_CDNS_BRA_HDR + SDW_CDNS_BRA_HDR_CRC + SDW_CDNS_BRA_HDR_CRC_PAD;
+> +
+> +	return total * 2;
+> +}
 
-Just double confirm, you want only PEBS sampling supports to capture SSP
-and these vector registers for both *interrupt* and *user space*? or
-further, you want PMI based sampling can also support to capture SSP and
-these vector registers? Thanks.
-
-
->
->
->>
->>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->>> index 4b01beee15f4..7e5a4202de37 100644
->>> --- a/arch/x86/events/intel/ds.c
->>> +++ b/arch/x86/events/intel/ds.c
->>> @@ -1437,9 +1438,37 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
->>>  	if (gprs || (attr->precise_ip < 2) || tsx_weight)
->>>  		pebs_data_cfg |= PEBS_DATACFG_GP;
->>>  
->>> -	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
->>> -	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
->>> -		pebs_data_cfg |= PEBS_DATACFG_XMMS;
->>> +	if (sample_type & PERF_SAMPLE_REGS_INTR) {
->>> +		if (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK)
->>> +			pebs_data_cfg |= PEBS_DATACFG_XMMS;
->>> +
->>> +		for_each_set_bit_from(bit,
->>> +			(unsigned long *)event->attr.sample_regs_intr_ext,
->>> +			PERF_NUM_EXT_REGS) {
->> This is indented wrong; please use cino=(0:0
->> if you worry about indentation depth, break out in helper function.
-> Sure. would modify it.
->
->
->>> +			switch (bit + PERF_REG_EXTENDED_OFFSET) {
->>> +			case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
->>> +				pebs_data_cfg |= PEBS_DATACFG_OPMASKS;
->>> +				bit = PERF_REG_X86_YMMH0 -
->>> +				      PERF_REG_EXTENDED_OFFSET - 1;
->>> +				break;
->>> +			case PERF_REG_X86_YMMH0 ... PERF_REG_X86_ZMMH0 - 1:
->>> +				pebs_data_cfg |= PEBS_DATACFG_YMMS;
->>> +				bit = PERF_REG_X86_ZMMH0 -
->>> +				      PERF_REG_EXTENDED_OFFSET - 1;
->>> +				break;
->>> +			case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMM16 - 1:
->>> +				pebs_data_cfg |= PEBS_DATACFG_ZMMHS;
->>> +				bit = PERF_REG_X86_ZMM16 -
->>> +				      PERF_REG_EXTENDED_OFFSET - 1;
->>> +				break;
->>> +			case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM_MAX - 1:
->>> +				pebs_data_cfg |= PEBS_DATACFG_H16ZMMS;
->>> +				bit = PERF_REG_X86_ZMM_MAX -
->>> +				      PERF_REG_EXTENDED_OFFSET - 1;
->>> +				break;
->>> +			}
->>> +		}
->>> +	}
->>>  
->>>  	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
->>>  		/*
+Here as well
+-- 
+~Vinod
 
