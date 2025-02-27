@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-537198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115A1A48916
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:34:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1279A48918
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA773ABDB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AA916DA10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32C1C07E6;
-	Thu, 27 Feb 2025 19:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBDD21ABA0;
+	Thu, 27 Feb 2025 19:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yEKuo4f"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ZfDTGNEp"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378E725F790
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E283A21ABA1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684864; cv=none; b=e0DWVsHNff/rYZL6VpdQsORKYeTj8VWYDRBFVVIa3Uyz+hdyQel1BJT3NgX6X/tkTcw7Wp53knxFBHIWjqKvpDWQWcP1widQMFh0hnObYKMGkD8HExYH4S0GdGMjI9asYEdeLJpDKpqkwdlt/pTl2///39GkxRZeiotmJqVg7SE=
+	t=1740684878; cv=none; b=LCTJGQpHp27Zcj9dRfruZYuiQiUyiXJ3u1MlYdZyhtzMxDo1kKT1zUsNUESiFhDurfKHaj2CnGX6zOWT7peWhwpo8Kn15Pm2WYfjd9aifincNxZfTBskWUY1wikYoilE8deT2hNAvuVYpZXGOM7xWd7YbOA0YpiluUW0bTUV4hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684864; c=relaxed/simple;
-	bh=iqMFOWoLHPzEE2F7btnovEmgqjRXPhaMKoi0v82VKo8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D5ZVshhfnb17DOQ99HQsYCE43L4KqV1QTc3d+eIz90HKK8mxsh0U8AV8c3RAVQhRI/vXBAIlhqHgBcwLAKLQLSKn7JWObN8yA5nT50tyOBVJoLVn9IobvD6pWt2oTDnaysqLBt0Jos8YX0D9aoycK87eBTWzlGTrVeYwxAbAErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yEKuo4f; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so4176268a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:34:22 -0800 (PST)
+	s=arc-20240116; t=1740684878; c=relaxed/simple;
+	bh=SPKq0f537XTA+GTcZbaHH1ds54HovQwjZ7yNek1b10I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Kc8NUN/c7WX7X8clhhMDWvwt+1fWsfDTwIZnkzgtzG+WBwgdRW+2/zI8AEG3X1MHKpdQsokit6SUUzTHk/X3TjQorwTT8UUE0pmjx7Jg7n//2LFgkPHTTWmxmsRoBDfszLKfI35iR0H20djBeRtP9wH8gfrjzyEe+FDA5yGLvxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ZfDTGNEp; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so9015195e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740684862; x=1741289662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a17KzYivCQNainroozlTYNEBao153DxG5A3TbD1B1BQ=;
-        b=3yEKuo4f/teswu2As+3lw0lv5gQhsJJufpp9x9e7MvRtpLNrOtlBkIvUrkNXTgdvZ2
-         xeNLH5hOCtY3wbvJr+LzCSCttMV2qRR7sHAC92Ks3Hmc3YOf23fS2nllS3gqwvLpTf/i
-         3A5+0FZsvxoOZE9eTC4iRXLHx3kZsaSUTDKRg15xa8PP5g/JB3tCFb9EWn6uxI5O530K
-         o7xZkCYweNtvEnZJbR1eccJ3w9ARwHUBtPf+hHcbDSJcmVEeIjyMiK7h1BnuaO9zN8wi
-         Xoxqah/370wMTEzVEumLM8XsjFFIT1tKbEEPf505/unuwD7QYQAaBqyzGTaulBPDtSTw
-         AlDw==
+        d=citrix.com; s=google; t=1740684875; x=1741289675; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPKq0f537XTA+GTcZbaHH1ds54HovQwjZ7yNek1b10I=;
+        b=ZfDTGNEpeGsh7gHjicK3G6CTRNsE0gLPkxAR7HO3xQVMvYqdZUYeRQZInYROvGgiu9
+         l1mH4JDWOD3ZWJZho8dCPHDfs/LyCD/Di9tF5PWyDytJQI01W7DyuwMJwGK1Mwxf4U74
+         D0FwS6qBoXG7G3OJvLliCJXeJoEqc9lDv3Boo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740684862; x=1741289662;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a17KzYivCQNainroozlTYNEBao153DxG5A3TbD1B1BQ=;
-        b=p5urkR1wZWY23ZlAxKYnh5dbr3V8Hod90S1+oXbdbs/qV/nJUHeko1MhsOpj2rnf+u
-         38ystJKd/YbcnFF4cnpoaExQP4W4p4/XYtwNmwHrCcpCNcn9QATbPGitQiTk10zJ0Itt
-         JwOmz6JDdJxYyHOzX8nATZULJVTpRfIt2ijS1uV2HNxTcEcsUDcOX8hdRFdIARDRcKXZ
-         SPDPuDDAzMmL4d668zcV359eQBYy8C/jxcE272nD5MXjbzKeQMKSwT3ieBBT/oeJK/Rv
-         DTMX53aOLBXDp7kHuwXCjS1Yp27Oxar7tFqOhqAGLqsROeWmR8LhWNbKPB4NtyYlvND7
-         RNPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdg34sJOexvohaFKXIVTdwSa56Kdj5CpHHQQD3yx6mzb+TLPh1r+jcZAZvgZKONzlzma8n/JA6tHPYaRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdNlq739Tw3t0BlFk03LH3Ax6cuN3/oQBoTxLHtp3h9bxlrQI9
-	YEABN+At5nSq8HYJpwYCV11rD6KPBJ4OTX8mVn7RT8G7YQawqcSND9ltRnQOL0dGxBH8w+sWnHr
-	bug==
-X-Google-Smtp-Source: AGHT+IF+7pMShNlkxX9Q3ftILKLxc4OcR65JsoK+DbBdUkSfdPP3enQqEnHoYWbV/VbGsPrN73yEXxb17ZE=
-X-Received: from pjboi16.prod.google.com ([2002:a17:90b:3a10:b0:2fc:1eb0:5743])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a89:b0:2ee:8ea0:6b9c
- with SMTP id 98e67ed59e1d1-2febab570b1mr1014148a91.12.1740684862557; Thu, 27
- Feb 2025 11:34:22 -0800 (PST)
-Date: Thu, 27 Feb 2025 19:34:21 +0000
-In-Reply-To: <88E181D6-323E-4352-8E4C-7B7191707611@nutanix.com>
+        d=1e100.net; s=20230601; t=1740684875; x=1741289675;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SPKq0f537XTA+GTcZbaHH1ds54HovQwjZ7yNek1b10I=;
+        b=JzHm3icgRf/2Em3fkIaMsHp4QUq8vkv/7ZVD4QPKKbosdPAikI+6Xa58sGVyW51cHY
+         +ihpSBhcHXQrahhAR3iRyxN7DkZgO3TGRbFlaxIoZPJ1WlfY8wVENSL89xXTLnz3JaPX
+         0jx20HM/+fUaK/ONirdbSH2wz6uNPCpqurW6qn+wjjbdaH/VbsLIbkZz+BO7VhM/yVv2
+         ASXdBB3Ezh1a/MNQLJQOHvG/cO8A8rNYdpAxM2mR4+MOZwteNn1Wsd/OVLK34uKnKpWk
+         vBwBbctJ+6HY02PSL1beqz3h6OeCMYLVdklNxFCckUrrgd8xqpw5AZW90NI/7FKj/n6v
+         X9sg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Fh45+gKKdfKWvDgF3YsjZTIPIxPpSwAVnQSK1PAFMmm9ebnOHiC1/+vm11vS0/NEsijqx3srhC1X6Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB4AwY63I9ccg1wSvUVVpq2iciuH7np+E84jq2C+ZhBL+RqeDW
+	MZqL4yMzmv65bvk+8wOgQxerIEkBTOvy3Jh49anAt/WeTm/HoPbTWdPoYMIyLzU=
+X-Gm-Gg: ASbGncvWYNntjMmLhubQIHomqTFY2KVt9C/L+rqwll2JadRu+qQJrl+dhShaFXY+1PJ
+	y2TGtl4McNiRaX7jFn2TZ4ui62CwXRlgpe5hl5m51/eO+FUu6jJTrWwY05YJ0yBNpQyVXUjPrhg
+	nySHHLEtOxotr2SsUf/5bUzQ1MC2f24zEabtqAfaqPCBCXBkqjtkC8Ew8RgX6OMhajZ6XfWJraD
+	H4Y+WE8/IyFYXNVaUZMwfI4CBOcyKuvlv3/+JxbnydiddPqfVRtrgGx9KBCtISWkoQPMgtcFUps
+	pqHVwSji2HZa8HpNlqON+7JUkz8htEH6zVR4bJANeZfwpEXxA6C1+ueX2bVO7ZwKyg==
+X-Google-Smtp-Source: AGHT+IG+21Iov3jBjBZ0Z0Nbab+ewYkTBsybyNKaOFWbXOUqpQ21hSo6NGuJ7oKLVF8mteEUZWnPDw==
+X-Received: by 2002:a05:600c:3505:b0:43a:b8eb:9e5f with SMTP id 5b1f17b1804b1-43ba66d588bmr4206255e9.3.1740684875179;
+        Thu, 27 Feb 2025 11:34:35 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b70b1sm2925254f8f.48.2025.02.27.11.34.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 11:34:34 -0800 (PST)
+Message-ID: <1a73d33b-e943-4ddd-9373-4678ff85c90a@citrix.com>
+Date: Thu, 27 Feb 2025 19:34:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227000705.3199706-1-seanjc@google.com> <20250227000705.3199706-3-seanjc@google.com>
- <73f00589-7d6d-489a-ae40-fefdf674ea42@suse.com> <88E181D6-323E-4352-8E4C-7B7191707611@nutanix.com>
-Message-ID: <Z8C-PRStaoikVlGx@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: nVMX: Decouple EPT RWX bits from EPT
- Violation protection bits
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: dave.hansen@intel.com
+Cc: bp@alien8.de, chang.seok.bae@intel.com, dave.hansen@linux.intel.com,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+ x86@kernel.org
+References: <7fa02be2-0884-4702-ae73-a3620938161b@intel.com>
+Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
+ and accessor macro
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <7fa02be2-0884-4702-ae73-a3620938161b@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025, Jon Kohler wrote:
-> > On Feb 27, 2025, at 1:52=E2=80=AFAM, Nikolay Borisov <nik.borisov@suse.=
-com> wrote:
-> >=20
-> > !-------------------------------------------------------------------|
-> > CAUTION: External Email
+On 2/27/25 19:03, Dave Hansen wrote:
 
-Noted.  :-D
+> On 2/27/25 10:44, Chang S. Bae wrote:
+>> The kernel has largely assumed that higher xstate component numbers
+>> correspond to later offsets in the buffer. However, this assumption
+>> does not hold for the non-compacted format, where a newer state
+>> component may have a lower offset.
+> Maybe "no longer holds" instead of "does not hold".
+>
+> This never happened before APX, right?
 
-> > |-------------------------------------------------------------------!
-> >=20
-> > On 27.02.25 =D0=B3. 2:07 =D1=87., Sean Christopherson wrote:
-> >> Define independent macros for the RWX protection bits that are enumera=
-ted
-> >> via EXIT_QUALIFICATION for EPT Violations, and tie them to the RWX bit=
-s in
-> >> EPT entries via compile-time asserts.  Piggybacking the EPTE defines w=
-orks
-> >> for now, but it creates holes in the EPT_VIOLATION_xxx macros and will
-> >> cause headaches if/when KVM emulates Mode-Based Execution (MBEC), or a=
-ny
-> >> other features that introduces additional protection information.
-> >> Opportunistically rename EPT_VIOLATION_RWX_MASK to EPT_VIOLATION_PROT_=
-MASK
-> >> so that it doesn't become stale if/when MBEC support is added.
-> >> No functional change intended.
-> >> Cc: Jon Kohler <jon@nutanix.com>
-> >> Cc: Nikolay Borisov <nik.borisov@suse.com>
-> >> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> >=20
-> > Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
->=20
-> LGTM, but any chance we could hold this until I get the MBEC RFC out?=20
+I'm afraid that AMD beat you there by a decade with LWP, index 63 but
+also overlaps the MPX state.
 
-No?  It's definitely landing before the MBEC support, and IOM it works quit=
-e nicely
-with the MBEC support (my diff at the bottom).  I don't see any reason to d=
-elay
-or change this cleanup.
+Except LWP support never became mainstream, and it also got sacrificed
+to make room for IBPB in microcode, so you can safely ignore it[1].
 
-> My apologies on the delay, I caught a terrible chest cold after we met ab=
-out
-> it, followed by a secondary case of strep!
+~Andrew
 
-Ow.  Don't rush on behalf of upstream, KVM has lived without MBEC for a lon=
-g time,
-it's not going anywhere.o
-
----
- arch/x86/include/asm/vmx.h     | 4 +++-
- arch/x86/kvm/mmu/paging_tmpl.h | 9 +++++++--
- arch/x86/kvm/vmx/vmx.c         | 7 +++++++
- 3 files changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index d7ab0ad63be6..61e31e915e46 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -587,9 +587,11 @@ enum vm_entry_failure_code {
- #define EPT_VIOLATION_PROT_READ		BIT(3)
- #define EPT_VIOLATION_PROT_WRITE	BIT(4)
- #define EPT_VIOLATION_PROT_EXEC		BIT(5)
-+#define EPT_VIOLATION_PROT_USER_EXEC	BIT(6)
- #define EPT_VIOLATION_PROT_MASK		(EPT_VIOLATION_PROT_READ  | \
- 					 EPT_VIOLATION_PROT_WRITE | \
--					 EPT_VIOLATION_PROT_EXEC)
-+					 EPT_VIOLATION_PROT_EXEC  | \
-+					 EPT_VIOLATION_PROT_USER_EXEC)
- #define EPT_VIOLATION_GVA_IS_VALID	BIT(7)
- #define EPT_VIOLATION_GVA_TRANSLATED	BIT(8)
-=20
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.=
-h
-index 68e323568e95..ede8207bf4d7 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -181,8 +181,9 @@ static inline unsigned FNAME(gpte_access)(u64 gpte)
- 	unsigned access;
- #if PTTYPE =3D=3D PTTYPE_EPT
- 	access =3D ((gpte & VMX_EPT_WRITABLE_MASK) ? ACC_WRITE_MASK : 0) |
--		((gpte & VMX_EPT_EXECUTABLE_MASK) ? ACC_EXEC_MASK : 0) |
--		((gpte & VMX_EPT_READABLE_MASK) ? ACC_USER_MASK : 0);
-+		 ((gpte & VMX_EPT_EXECUTABLE_MASK) ? ACC_EXEC_MASK : 0) |
-+		 ((gpte & VMX_EPT_USER_EXECUTABLE_MASK) ? ACC_USER_EXEC_MASK : 0) |
-+		 ((gpte & VMX_EPT_READABLE_MASK) ? ACC_USER_MASK : 0);
- #else
- 	BUILD_BUG_ON(ACC_EXEC_MASK !=3D PT_PRESENT_MASK);
- 	BUILD_BUG_ON(ACC_EXEC_MASK !=3D 1);
-@@ -511,6 +512,10 @@ static int FNAME(walk_addr_generic)(struct guest_walke=
-r *walker,
- 		 * ACC_*_MASK flags!
- 		 */
- 		walker->fault.exit_qualification |=3D EPT_VIOLATION_RWX_TO_PROT(pte_acce=
-ss);
-+		/* This is also wrong.*/
-+		if (vcpu->arch.pt_guest_exec_control &&
-+		    (pte_access & VMX_EPT_USER_EXECUTABLE_MASK))
-+			walker->fault.exit_qualification |=3D EPT_VIOLATION_PROT_USER_EXEC;
- 	}
- #endif
- 	walker->fault.address =3D addr;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 0db64f4adf2a..4684647ef063 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5806,6 +5806,13 @@ static int handle_ept_violation(struct kvm_vcpu *vcp=
-u)
-=20
- 	exit_qualification =3D vmx_get_exit_qual(vcpu);
-=20
-+	/*
-+	 * The USER_EXEC flag is undefined if MBEC is disabled.
-+	 * Note, this is wrong, MBEC should be a property of the MMU.
-+	 */
-+	if (!vcpu->arch.pt_guest_exec_control)
-+		exit_qualification &=3D ~EPT_VIOLATION_PROT_USER_EXEC;
-+
- 	/*
- 	 * EPT violation happened while executing iret from NMI,
- 	 * "blocked by NMI" bit has to be set before next VM entry.
-
-base-commit: 67983df09fc3f96d0d6107fe1a99d29460bab481
---=20
-
+[1] Other than for competitions of who did the silly thing first.
 
