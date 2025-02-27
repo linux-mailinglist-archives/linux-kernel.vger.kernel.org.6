@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-536980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFFBA4869B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:29:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C8FA486A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E090D162A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B44D3B6116
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14871DE4E1;
-	Thu, 27 Feb 2025 17:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C784B1DE3CB;
+	Thu, 27 Feb 2025 17:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGaZUP6v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JL52TaCD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0921DE3B3;
-	Thu, 27 Feb 2025 17:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677353; cv=none; b=FWu585ZHkw0QZJIm2+YTGnNa+GxTv9ldjeHVDmP1kuoPqogeqdqy4y/P3a4DimGhuoC0tjuQ8PY0HR+VLBqhZyxhBKmyF6HGdDHH2uL8byTh6xVxjrqi3GY7McugbREfpO/Frn6UDGH9db6BDhAhQ9ojBcCB9+wC+uluSvRAJq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677353; c=relaxed/simple;
-	bh=aKTihwdmWnVOPpFLB3ojexIrErAwzbOnNr/AECau6gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPiRq/H5cNELyRJpQvnA0gQ/XJt/H9I14JIttoQ7KdpebuWRCHDaasXexYP0XdJeI7Gi6xdMGEcZCwkoyp2JRFw2EvIPc8ixQIKTAZksg8DvEba+TtHmTV/LVyc+BR8sKgbkw7zk6xDJvs7qv0zBcOGq3x6qXnRYQYNX4D+wHSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGaZUP6v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70249C4CEDD;
-	Thu, 27 Feb 2025 17:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740677352;
-	bh=aKTihwdmWnVOPpFLB3ojexIrErAwzbOnNr/AECau6gU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=QGaZUP6vMkmo1Vav5QGZdq+Og+nzouJowmLkV2hUA7WgIdlSUS+wEN2ppKMeJl40A
-	 xQeQI77juhM2vmB5d7vWvFvvLh0j3WMDpP+lwvMC6PZgpOl34QZPP9zSaaGL366mXv
-	 ipTljD2mPs7r3SdUvnAZZG0P/X8iA8VUw1xQk/eUAg+Tst7w/lVatEe6gukESjrE98
-	 dXye4PkWXnBWJHDOQPo0BOKInK5lPdoyrv5ZLw3J7iECP4N4LARVbiHtDAKIhrwL/E
-	 Ad6Oohdp6DP0BVxbO2oQUydE89vD8+2D1iB32iSK2JXAUkkEAB1yblfgXLpx1DDJaT
-	 En8iYn+mGZKQA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 072ABCE0799; Thu, 27 Feb 2025 09:29:12 -0800 (PST)
-Date: Thu, 27 Feb 2025 09:29:12 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH RFC namespace] Fix uninitialized uflags in
- SYSCALL_DEFINE5(move_mount)
-Message-ID: <d8c20a28-2dc4-4b9d-bea0-0800aea0de30@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <e85f9977-0719-4de8-952e-8ecdd741a9d4@paulmck-laptop>
- <20250227-abbruch-geknickt-c6522ef250a7@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452F136351;
+	Thu, 27 Feb 2025 17:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740677477; cv=pass; b=Fuo6VdumJvj8w6YDNF3yr8LyIFZcgLtEvU8HEU7BFCIL4hcCxUalp79sXDLsxoDtOtzieu0ha9ALZ1L1vDO1kII4nu5FgL8VWYfY4rAppRpZFba0pmr2Y5STzUcHCIVLxkKgUD3Px3frrrr2/dSOTaZ5Cdk/Av/GaHD8yTGb+hs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740677477; c=relaxed/simple;
+	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=HM/4GydM6ZonVA6S4ZuUnJ8hsP/3csIzwjyMPsulgiAM1zLeVHLfnp71VK+N8DVh7Ha5lOXmmT8eEbFN0cbdU9pl8KJajDlTS1RiXfJgzWT6FI4HjHHdBe9M6t5JvoriKjs85F2gu2GoCYQhchE/QBOpMzJSe/O8CP+IRFpMqIo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JL52TaCD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740677409; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FTN4iejmJbD3zVMnol9SB/PeFykB9egs/6XaEr/QRjdTPaUdScVFt6lCZY6KEANYdHHDJy7fCZuRPdBEpKhrEFG7SHykfe5UPS7hwBGtm0xkzcnKbd5SR/flZeOajo7BsHmUaYtj9Oy6dqmuWmfeWKJ/d+BDkF/l/rqtyKNJqSg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740677409; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=; 
+	b=OU4vLbh9z0Wy5rSJIPqAAiv0qNUjz4AmXUiLWpQ6fsJ4kSSGuqcfvGLDSTn8l8rsgKSm+TYNAJvdbiFXFpff2EF+3lU9XW0t1n3J8Dt0zKrNbhbPtRxzDCmO/xocviDo06i+l3xHHXTQomiq4gfIwGQ8FnbThMVrM0Ysr0rng5E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740677409;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=;
+	b=JL52TaCD/b1D2zQ/WgtmajSca6k2sVDq6Nnt4Hj57q3CcJEGAv4w7b1HwGEUjIJr
+	xVwrhtV/sA5C2hjR/uK6oo5gsYD3G5J5JLwnyLLVnxa42ojnl2h8udtN5mKbNquqzsD
+	VGlODyRoOomK1FPb5kIcGn0UJJHSCdPZqrNCSB/E=
+Received: by mx.zohomail.com with SMTPS id 1740677406210259.24822276471855;
+	Thu, 27 Feb 2025 09:30:06 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227-abbruch-geknickt-c6522ef250a7@brauner>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v11 0/8] rust: Add IO polling
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+Date: Thu, 27 Feb 2025 14:29:45 -0300
+Cc: linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ netdev@vger.kernel.org,
+ andrew@lunn.ch,
+ hkallweit1@gmail.com,
+ tmgross@umich.edu,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ a.hindborg@samsung.com,
+ aliceryhl@google.com,
+ anna-maria@linutronix.de,
+ frederic@kernel.org,
+ tglx@linutronix.de,
+ arnd@arndb.de,
+ jstultz@google.com,
+ sboyd@kernel.org,
+ mingo@redhat.com,
+ peterz@infradead.org,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ vschneid@redhat.com,
+ tgunders@redhat.com,
+ me@kloenk.dev,
+ david.laight.linux@gmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4647720C-28CA-4E18-AD1E-55844CF078E6@collabora.com>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On Thu, Feb 27, 2025 at 09:13:10AM +0100, Christian Brauner wrote:
-> On Wed, Feb 26, 2025 at 11:18:49AM -0800, Paul E. McKenney wrote:
-> > The next-20250226 release gets an uninitialized-variable warning from the
-> > move_mount syscall in builds with clang 19.1.5.  This variable is in fact
-> > assigned only if the MOVE_MOUNT_F_EMPTY_PATH flag is set, but is then
-> > unconditionally passed to getname_maybe_null(), which unconditionally
-> > references it.
-> > 
-> > This patch simply sets uflags to zero in the same manner as is done
-> > for lflags, which makes rcutorture happy, but might or might not be a
-> > proper patch.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: <linux-fsdevel@vger.kernel.org>
-> > Cc: <linux-kernel@vger.kernel.org>
-> > ---
-> 
-> Hey Paul! Thank you for the patch. The fix is correct but I've already
-> taken a patch from Arnd yesterday. So hopefully you'll forgive me for
-> not taking yours. :)
+Hi Fujita,
 
-Thank you, and looking forward to seeing -next being fixed.  I guess I
-just need to be faster.  ;-)
+Would you be interested in working on read_poll_timeout_atomic() as =
+well?
 
-							Thanx, Paul
+There would be a user for that.
 
-> >  namespace.c |    2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 663bacefddfa6..80505d533cd23 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -4617,6 +4617,7 @@ SYSCALL_DEFINE5(move_mount,
-> >  	if (flags & MOVE_MOUNT_BENEATH)		mflags |= MNT_TREE_BENEATH;
-> >  
-> >  	lflags = 0;
-> > +	uflags = 0;
-> >  	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-> >  	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-> >  	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
-> > @@ -4625,6 +4626,7 @@ SYSCALL_DEFINE5(move_mount,
-> >  		return PTR_ERR(from_name);
-> >  
-> >  	lflags = 0;
-> > +	uflags = 0;
-> >  	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-> >  	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-> >  	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
+=E2=80=94 Daniel=20=
 
