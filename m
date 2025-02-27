@@ -1,225 +1,271 @@
-Return-Path: <linux-kernel+bounces-537294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89F3A48A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F4169A48A28
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39F33A7FFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9C83AC87E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D520F26F465;
-	Thu, 27 Feb 2025 20:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92C6270EBE;
+	Thu, 27 Feb 2025 20:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPVFcCbG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="n8na0CNb"
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCB21AF0C9
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F38026A0E8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740689475; cv=none; b=C2YOX0JKtv2FyAGmg1f1TyxVVGeQtdYM7mBfxsBBSzCLUpflFped92iFl1bNBv0HOhVvhZeOG/JpsGnZWtFZsuiGq7n7g02l710fY5AHI1TnDNqzZnRmplPzOfKVWJECD/yQD7FyYlWLcRwazLP4hRQH1RjpYxS2jxQ31u+aWM0=
+	t=1740689581; cv=none; b=ifHVQ07QEE1RkR7/D5e730zioVp2sYBDkE3Ol1/Q+xZxW+rV5DFg+zJOb5pYbwcceQIPpErlwGSHnr74LZ1y0xHkPwGrm6WF4SQUjRncqr1r3QKY39VaYmOz7Y2W62qSbEV8cMkbd8KCd3Z4qJjWNfgfigDcZN6N2m4PFRsiyMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740689475; c=relaxed/simple;
-	bh=Cuc0ZvqIUZjaJFxkBg3nGAz6XibjLy8dm1mBum2pLnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bpi5hjXWf2Z7R427nTH5ZbX9YfTMEcxcCtNVbOYK4MFOUbHh4v72gSxP2XbQmmtEOEwu/Qkk5BPc8KO+sNaSbYiSyo02BlslJ3NuTY7Pv+LtRDHwX3HXKmFB0hxLDlPviWX/DBGw5xe9D2ShIM4atEyYSJqXvfkTShfwZUCEd30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPVFcCbG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740689472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o0b9BgNrSRNcKxL7JJeoxnGNdFRVFSo7ngmVFsptsx8=;
-	b=KPVFcCbGpgirQOmSvyc313vcAEGR9C/TIp+R2bikiJnwj927yVOLqB7bCJMGM+5JBI4m+a
-	yB6YIURcQhJwN5Ie/YR2DJeIg5R09VNqnHzdfK9bVcSPr9eaWYBjWdb9l8yxHnL8n51D3y
-	PHFN0wwBvi//ReCX2QM79FtxZUaZlYw=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-zbKz8dTTP1CYg-0j8Obe8Q-1; Thu, 27 Feb 2025 15:51:10 -0500
-X-MC-Unique: zbKz8dTTP1CYg-0j8Obe8Q-1
-X-Mimecast-MFC-AGG-ID: zbKz8dTTP1CYg-0j8Obe8Q_1740689470
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47220fab76eso46485571cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:51:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740689470; x=1741294270;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o0b9BgNrSRNcKxL7JJeoxnGNdFRVFSo7ngmVFsptsx8=;
-        b=v4WUwg/Xu5NH4fy0QSwarz50Vesg0vs9MVAfkAcMsUS3KimrA3kgFawH8FrkrOzGZY
-         LfPotttDx7v6Tp51etYSfGQXICMd8JWliTCfDJC99FDxKw9ZYfGw7zG3NDYBtDMGR4g0
-         fpxQbN6IVXUMAoPUmrD9OqvzHzZtl9QXPe/OZfqUcVuhs0UhECPexJeQrY4FRCVU8h9o
-         8w7dNzHxVBYFA/8toUomhAHRgez2LtkJC+AthBA8O4slDVU+iQ6m96XYewdDOpVT1GBB
-         0l6h209ENna0pSVAxoHhikzLbjW/OXwGN5VeSgyZs5B4rm92bNe8/0vhiGfKTzU2xFWm
-         LsVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXY4ev7ya8Kk/3i6GYExF+Te93fR+dF38/h6jZjhW3yISGc4/uUeYENw2XAMbSAA6CyuIg7dnwGE4AwYQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqUv49IflUFPLmg1Xiv0tYTrVMDe8jw3lugW/7Ax4sEKGu69vv
-	H79w3Js0sadrX2VrKq6eMuPDE1f4CcDDnjmEohEzpNI44ZINxo49PKZQJ/W+Q7A7BMuYjrQEbmZ
-	hgJVSOjUVdDTZhkXVaZmeklJZdJmjFDELZcNjfp79M32h+oiXinvrWEEbPUewdg==
-X-Gm-Gg: ASbGncseobMCM5SZ7GPNm8Bd9ulfeEh0I0iIVqJg1NBs1S6Jk/+Kbw4U7irklGBz5UA
-	datxCTPNuWkSoDlTcAnX5BIguK6fNyz4KWRh/ncuIZLlBEhPFnRo3zelQIiTICYDxFatXE8bPSM
-	36b3qc2zHjGw2RJL9dwl+IFHrbGmTmt32ne8vUD4ouBTQLHw+0ojzZETlAtnUcJUjS66RilopZQ
-	uvCT7MF+MuTqaAY3EtBVx6PteZIDp+E/Q78QWtxcgAiTyvFzmJd9aDq+miBJtHvwacUxLXrrShR
-	7OV68JkAgnCORD4=
-X-Received: by 2002:a05:622a:6001:b0:474:bc8b:3f3d with SMTP id d75a77b69052e-474bc8b3fe6mr1682281cf.7.1740689469889;
-        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXSchHq2foaKrZLcs7V3jjAhGMmCw06E/p0SekC5qwicuW3MsABzATaaIO/h6J8cBe2E3BBA==
-X-Received: by 2002:a05:622a:6001:b0:474:bc8b:3f3d with SMTP id d75a77b69052e-474bc8b3fe6mr1682121cf.7.1740689469558;
-        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
-Received: from [192.168.2.110] ([70.52.24.57])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a11fdsm15260961cf.15.2025.02.27.12.51.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
-Message-ID: <7ca09134-271e-48aa-b965-14fddd0504d9@redhat.com>
-Date: Thu, 27 Feb 2025 15:50:58 -0500
+	s=arc-20240116; t=1740689581; c=relaxed/simple;
+	bh=PtP1bpBqeSFf381zyun/jOyP2jmFdNbL2J3mWsMRXV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loquZ3Q5Ni7YWx+1vjbDCzskcH6Wg8/fjRtxxgCBcoQjLKT21b+nWKpv0oB2toOKSRRKnh9lE810wWVrt3pGF283Jl6L0IkQ8vfVuUkmy9jikKBAs560DWTv6dbMf25m1tD+tZtjJNel78gMuPwxcYg+mXnYYiQDeoGNCtSdvrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=n8na0CNb; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z3k7L6ByyzRyM;
+	Thu, 27 Feb 2025 21:52:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1740689566;
+	bh=KS6xrFGgjYs9atlz8E4rvzvgxcNNoMOgGA57vst2enU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n8na0CNbRP6ZGug1Xk5UE168/v2nWk1lN83gXXozKVRZodi72wNx8Lb/f3kOGTo8V
+	 C9pB8DDRHspGOlMiYA5sdTRUKdAa0Tak4yi1cO7Cpjea5jYSrcwHm2TOkO6yINMiUk
+	 Xh94IinQhUxn4Q36L/nOsnLicud158YhfMgnw/84=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z3k7K59nPzv48;
+	Thu, 27 Feb 2025 21:52:45 +0100 (CET)
+Date: Thu, 27 Feb 2025 21:52:44 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/2] landlock: Multithreaded policy enforcement
+Message-ID: <20250227.iCaew6Uephie@digikod.net>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm: page_owner: use new iteration API
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, yuzhao@google.com, pasha.tatashin@soleen.com
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev
-References: <cover.1740434344.git.luizcap@redhat.com>
- <badc717329c288c58b7abf7513603aa3042c008c.1740434344.git.luizcap@redhat.com>
- <a196d780-c775-4f77-96f2-df3fe61af32f@redhat.com>
- <68e82e87-606e-4443-99d3-7de6f665ce05@redhat.com>
- <5bb20271-a92a-454e-90e7-8812fd01d31d@redhat.com>
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <5bb20271-a92a-454e-90e7-8812fd01d31d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250221184417.27954-2-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 2025-02-27 08:50, David Hildenbrand wrote:
-> On 25.02.25 23:30, Luiz Capitulino wrote:
->> On 2025-02-25 11:44, David Hildenbrand wrote:
->>> On 24.02.25 22:59, Luiz Capitulino wrote:
->>>> The page_ext_next() function assumes that page extension objects for a
->>>> page order allocation always reside in the same memory section, which
->>>> may not be true and could lead to crashes. Use the new page_ext
->>>> iteration API instead.
->>>>
->>>> Fixes: cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for gigantic folios")
->>>> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
->>>> ---
->>>>    mm/page_owner.c | 61 +++++++++++++++++++++++--------------------------
->>>>    1 file changed, 29 insertions(+), 32 deletions(-)
->>>>
->>>
->>> [...]
->>>
->>>>    void __reset_page_owner(struct page *page, unsigned short order)
->>>> @@ -293,11 +297,11 @@ void __reset_page_owner(struct page *page, unsigned short order)
->>>>        page_owner = get_page_owner(page_ext);
->>>>        alloc_handle = page_owner->handle;
->>>> +    page_ext_put(page_ext);
->>>>        handle = save_stack(GFP_NOWAIT | __GFP_NOWARN);
->>>> -    __update_page_owner_free_handle(page_ext, handle, order, current->pid,
->>>> +    __update_page_owner_free_handle(page, handle, order, current->pid,
->>>>                        current->tgid, free_ts_nsec);
->>>> -    page_ext_put(page_ext);
->>>
->>> I assume moving that is fine ...
->>>
->>> but I'll not that ...
->>>
->>>> -    for (i = 0; i < (1 << new_page_owner->order); i++) {
->>>> +    rcu_read_lock();
->>>> +    for_each_page_ext(&old->page, 1 << new_page_owner->order, page_ext, iter) {
->>>> +        old_page_owner = get_page_owner(page_ext);
->>>>            old_page_owner->handle = migrate_handle;
->>>> -        old_ext = page_ext_next(old_ext);
->>>> -        old_page_owner = get_page_owner(old_ext);
->>>>        }
->>>> +    rcu_read_unlock();
->>>>        page_ext_put(new_ext);
->>>>        page_ext_put(old_ext);
->>>
->>> ... here you are not moving it?
->>>
->>>
->>> In general, LGTM, only the remaining page_ext_put() are a bit confusing.
->>
->> Which part you found confusing: the fact that I'm not moving them up or that
->> we still make use of them?
+On Fri, Feb 21, 2025 at 07:44:16PM +0100, Günther Noack wrote:
+> Hello!
 > 
-> How we are deferring page_ext_put() when not actually working on these
-> values anymore. The page_owner itself should not go away here unless we
-> have a serious bug.
+> This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
+> landlock_restrict_self().  With this flag, the passed Landlock ruleset
+> will not only be applied to the calling thread, but to all threads
+> which belong to the same process.
 > 
-> To be precise, can't we simply do the following on top?
+> I am sending this intentionally early.  At this point, I am mostly
+> looking for high-level comments to check whether the general approach
+> is feasible at all and whether I am using appropriate concurrency
+> mechanisms for it.
 
-Yes, that looks good and I like how the new API allows for simpler code.
-
-My only concern is that if the user is not familiar with the page_ext
-internals, it might not be clear what page_ext_put() is actually
-protecting in which case it looks wrong that we're using a reference
-returned by get_page_owner() after releasing the lock. If you think
-that that's not an issue then I can apply this change on top.
+Thanks Günther!  This feature is indeed very important to be able to
+enforce consistent sandboxing.
 
 > 
-> diff --git a/mm/page_owner.c b/mm/page_owner.c
-> index c9d2c688eb981..12044340adf89 100644
-> --- a/mm/page_owner.c
-> +++ b/mm/page_owner.c
-> @@ -356,26 +356,24 @@ void __split_page_owner(struct page *page, int old_order, int new_order)
+> Motivation
+> ==========
 > 
->   void __folio_copy_owner(struct folio *newfolio, struct folio *old)
->   {
-> -       struct page_ext *old_ext;
-> -       struct page_ext *new_ext;
->          struct page_ext *page_ext;
->          struct page_ext_iter iter;
->          struct page_owner *old_page_owner;
->          struct page_owner *new_page_owner;
->          depot_stack_handle_t migrate_handle;
+> TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
+> multi-threaded Landlock enforcement is incompatible with Landlock's
+> signal scoping support.  Landlock can restrict the use of signals
+> across Landlock domains, but we need signals ourselves in user space
+> in ways that are not permitted any more under these restrictions.
 > 
-> -       old_ext = page_ext_get(&old->page);
-> -       if (unlikely(!old_ext))
-> +       page_ext = page_ext_get(&old->page);
-> +       if (unlikely(!page_ext))
->                  return;
-> +       old_page_owner = get_page_owner(page_ext);
-> +       page_ext_put(page_ext);
+> Enabling Landlock proves to be difficult in processes that are already
+> multi-threaded at the time of enforcement:
 > 
-> -       new_ext = page_ext_get(&newfolio->page);
-> -       if (unlikely(!new_ext)) {
-> -               page_ext_put(old_ext);
-> +       page_ext = page_ext_get(&newfolio->page);
-> +       if (unlikely(!page_ext))
->                  return;
-> -       }
-> +       new_page_owner = get_page_owner(page_ext);
-> +       page_ext_put(page_ext);
+> * Enforcement in only one thread is usually a mistake because threads
+>   do not normally have proper security boundaries between them.
 > 
-> -       old_page_owner = get_page_owner(old_ext);
-> -       new_page_owner = get_page_owner(new_ext);
->          migrate_handle = new_page_owner->handle;
->          __update_page_owner_handle(&newfolio->page, old_page_owner->handle,
->                                     old_page_owner->order, old_page_owner->gfp_mask,
-> @@ -402,9 +400,6 @@ void __folio_copy_owner(struct folio *newfolio, struct folio *old)
->                  old_page_owner->handle = migrate_handle;
->          }
->          rcu_read_unlock();
-> -
-> -       page_ext_put(new_ext);
-> -       page_ext_put(old_ext);
->   }
+> * Also, multithreading is unavoidable in some circumstances, such as
+>   when using Landlock from a Go program.  Go programs are already
+>   multithreaded by the time that they enter the "func main()".
 > 
->   void pagetypeinfo_showmixedcount_print(struct seq_file *m,
+> So far, the approach in Go[1] was to use libpsx[2].  This library
+> implements the mechanism described in nptl(7) [3]: It keeps track of
+> all threads with a linker hack and then makes all threads do the same
+> syscall by registering a signal handler for them and invoking it.
 > 
+> With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
+> gained the ability to restrict the use of signals across different
+> Landlock domains.
 > 
+> Landlock's signal scoping support is incompatible with the libpsx
+> approach of enabling Landlock:
+> 
+> (1) With libpsx, although all threads enforce the same ruleset object,
+>     they technically do the operation separately and end up in
+>     distinct Landlock domains.  When the ruleset uses
+>     LANDLOCK_SCOPE_SIGNAL, it becomes impossible to use cross-thread
+>     signals in that process.
+> 
+> (2) Cross-thread Signals are themselves needed to enforce further
+>     nested Landlock domains across multiple threads.  So nested
+>     Landlock policies become impossible there.
+> 
+> In addition to Landlock itself, cross-thread signals are also needed
+> for other seemingly-harmless API calls like the setuid(2) [4] and for
+> the use of libcap (co-developed with libpsx), which have the same
+> problem where the underlying syscall only applies to the calling
+> thread.
+> 
+> Implementation approach
+> =======================
+> 
+> The implementation is inspired by Jann Horn's earlier patch set for
+> cred_transfer() [5] as well as by the libpsx approach described in [2]
+> and [3].  In some way, it is a libpsx-like implementation in the
+> kernel:
+> 
+> When the flag is provided, the calling thread adds a task_work to all
+> threads to be executed through a pseudo-signal and makes them run it.
+> The logic is in the function restrict_one_thread().  The threads
+> execute the following phases in lock step (with a barrier
+> synchronization in between):
+> 
+> * Preparation Phase
+>   * Check that the thread meets all prerequisites
+>   * Create a new struct cred with prepare_creds()
+>   * Manipulate the struct cred as needed for policy enforcement
+>   * Write back possible errors to a shared memory location
+> * BARRIER: Wait for all threads to catch up to this point
+> * Commit Phase
+>   * Check that none of the threads had an error.
+>   * Invoke commit_creds() (or abort_creds() in case of error)
+> 
+> None of the functions used in the commit_phase() can return errors, so
+> at the time where each thread decides to commit, we are already sure
+> that it will work across all threads.
+> 
+> At the end, the calling thread waits for all task_work to finish
+> before returning from the syscall.
+> 
+> (The calling thread itself obviously does not schedule a task_work for
+> itself, but executes the same restrict_one_thread() logic inline.)
+> 
+> Open questions
+> ==============
+> 
+> The patch set is in early stages, and there are some open questions
+> for which I am seeking feedback:
+> 
+> Conceptual open questions
+> ~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * To what extent should we expect the threads to be in a known state?
+> 
+>   The single-threaded variant currently requires the
+>   PR_SET_NO_NEW_PRIVS flag or CAP_SYS_ADMIN as prerequisite for
+>   enforcing a Landlock ruleset.
+> 
+>   When we are in the multi-threaded variant, there are two main approaches:
+> 
+>   a) Expect same state on all threads: The simplest implementation
+>      would be that we expect all threads to also have
+>      PR_SET_NO_NEW_PRIVS or CAP_SYS_ADMIN, and to already be part of
+>      the same Landlock domain.  Otherwise, the operation is aborted on
+>      all threads.
+>   
+>   b) Pull all threads towards the same state: The 'synchronization'
+>      option would be that we implicitly establish the same
+>      PR_SET_NO_NEW_PRIVS and Landlock domain configuration on all
+>      threads.
+> 
+>      Weird case: If the calling thread has CAP_SYS_ADMIN but not
+>      PR_SET_NO_NEW_PRIVS, does this mean that a Landlock domain can be
+>      enabled on a thread without PR_SET_NO_NEW_PRIVS?  (We surely
+>      should not implicitly grant CAP_SYS_ADMIN to another thread?)
 
+We should assume that there is not security boundaries between threads,
+but we should also minimize inconsistent results.  So, no, we should not
+grant any particular privileges/capabilites to other threads but only
+drop them in a least surprising way for users.  See my proposal in reply
+to the first patch.
+
+>   
+>   Solutions in the middle between these two might also be possible.
+>   Depending on the approach, we might want to change the flag name to
+>   say something else but ..._TSYNC. (That name is just carried over
+>   from the similarly-named SECCOMP_FILTER_FLAG_TSYNC)
+
+The issue with Landlock also exists with PR_SET_NO_NEW_PRIVS, so we need
+to be able to synchronize both properties (as already possible with
+seccomp).
+
+> 
+> Implementation open questions
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * Are there better synchronization mechanisms for this purpose than
+>   task_work with barriers?
+
+I think it's the right approach, but the difficult part is handling
+errors in a safe and consistent way.
+
+> 
+> * Need to double check deadlock scenarios.
+> 
+> * Need to double check that we are not racing with a concurrent thread
+>   creation.
+> 
+> * Use the multi-threaded code for the single-threaded variant as well?
+> 
+>   At the current stage, I left the single-threaded code intact and
+>   copied some of its logic into the multi-threaded variant.  It is
+>   technically possible to unify this, if we are OK with the single
+>   threaded code using atomic operations and struct completion all by
+>   itself (or by interleaving many if-checks, but not sure whether
+>   that's worth it).
+
+Most of the single-threaded code can be reused.
+
+> 
+> * Does landlock_restrict_self() need to be interruptible?
+> 
+>   (For reference, Jann's patch [5] used
+>   wait_for_completion_interruptible())
+
+We should follow seccomp's footsteps as much as possible.
+
+> 
+> 
+> [1] https://github.com/landlock-lsm/go-landlock
+> [2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
+> [3] https://man.gnoack.org/7/nptl
+> [4] https://man.gnoack.org/2/setuid#VERSIONS
+> [5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
+> 
+> Günther Noack (2):
+>   landlock: Multithreading support for landlock_restrict_self()
+>   landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+> 
+>  include/uapi/linux/landlock.h                 |  10 +
+>  security/landlock/syscalls.c                  | 232 +++++++++++++++++-
+>  tools/testing/selftests/landlock/tsync_test.c |  94 +++++++
+>  3 files changed, 331 insertions(+), 5 deletions(-)
+>  create mode 100644 tools/testing/selftests/landlock/tsync_test.c
+> 
+> 
+> base-commit: 69e858e0b8b2ea07759e995aa383e8780d9d140c
+> -- 
+> 2.48.1
+> 
 
