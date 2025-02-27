@@ -1,146 +1,129 @@
-Return-Path: <linux-kernel+bounces-535543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DD1A4744E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:21:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70399A47454
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65423A2645
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5001A16EB63
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525941A38E3;
-	Thu, 27 Feb 2025 04:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207E41E8325;
+	Thu, 27 Feb 2025 04:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ljzXj/Ud"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oRog99tJ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F611C5F2E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF016188006
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740630081; cv=none; b=tDgdtDOZum3en4OGPIJ3uWNJJ5z+0JqIDu/XTqLnKrQZoNlgoRlCq7sFFdJkjEmfAA4IfEXQ9SGKQ53VgrnPW5uq32SpVHp3nIfric/0QnfFFrlfLJzbCSiYXtfHzd9Tb7Tes9mP3CIjzCg1GKSB2/JIAqnOgghZ2GWXw8AMZ4g=
+	t=1740630136; cv=none; b=unnz3LSgTc21EGo5EA5C1TQ3BpMAAIY/+G106G9W/X83hM7u1vbgDZDBvIvfILVzru2K7C1S1qQUsDwb8I47AHpthyByT9ManxNNeF5Oq7m1NpnGRaP/9UAKr8NawUwxDY+bNDY8rNlUaX9bNM0QVEXLOIWAqcZciWoKQnWdhBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740630081; c=relaxed/simple;
-	bh=vONQTVATfku8ju91m9tx3SK1gEvdjGryS6+VyLtnkQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M9QEm4bbOZHC4Hg8KqQ9zJWZDYwMTYzRHCo5RaydtUIymo5nUjc2ahWTPB2e2b3ItPBjXQxlvAj47rsPscG7VDJS+vdB3tggYEpIWku5ow9VgXYeL4yX/iUAUSlE13hqqqMhDMqnnZWgnf7MXGOq9nXiBJX4ceT3hdH6w84AWy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ljzXj/Ud; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740630077;
-	bh=vONQTVATfku8ju91m9tx3SK1gEvdjGryS6+VyLtnkQQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ljzXj/UdYyFhtlnHrB38EzCKO+xZZy2C7oBAePqx8BFjAED+5bt0nqLWwunR6Ux1X
-	 Yl5H54bGw9S+Gye4j5vWNNNiApgvC6DX6S6KqzcfVqM0Hvk5916owiCfJ9XaZO7fBH
-	 zLSyetMpwEMSWTT76kXSTMstytifzyme9VYdp3gc+4TsCByTuB/OYHLitGZRGJn/VX
-	 rx5PO23dLnmUAZDfIqEw2jza+hu6THGk/9GbQWb/M8s1UI8ZyGQdKWKF/QZ5t3EHcz
-	 fTEh7kaPymzUiFFdM7HRAnTEt4Yk9j6+5UePk/iliZ1uxgWmMue42PZlfw11zMSTAo
-	 IuTMW675SVskg==
-Received: from localhost.localdomain (unknown [171.76.83.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E896717E05EA;
-	Thu, 27 Feb 2025 05:21:13 +0100 (CET)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.fornazier@gmail.com,
-	airlied@gmail.com,
-	simona.vetter@ffwll.ch,
-	robdclark@gmail.com,
-	dmitry.baryshkov@linaro.org,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	valentine.burley@collabora.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/ci: fix merge request rules
-Date: Thu, 27 Feb 2025 09:50:50 +0530
-Message-ID: <20250227042058.409003-1-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740630136; c=relaxed/simple;
+	bh=5oIUiPUuW9/Wfa4lWUIfURolnu3e+cbmsD0Czuzj46U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NhYYEFH319PVu3i6zc1QXIyL+6XxB1q7npw8cCQ0ATFAHkxXBMabHsw97canAb3Q0ljae93mWEEku8Ft6h/QpPDxZtTtiFa2MgE17Kg2WNFUdm/Q298o+q3zZJQtCJeMssIol8S/JgTtBA1H6HuLT46UfwjwPq6VqMemcgldt+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oRog99tJ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-545316f80beso455559e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:22:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740630133; x=1741234933; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EuAUHe2HvirnbniJws2V/C5qa0J/b2o5CG4USvlKN/o=;
+        b=oRog99tJpPnueW6XTxb75LJJ5GtFoSaHHu09BtpB+DJoyvIVHgknmjAfbgoXn8DFiE
+         ELDgOzq2tkJEVvlBy/yN5GCAwf536TmWe3C7yRVNQLgZR8oO0EcN1adS2RmdBjgeYFYg
+         OtI2BpzXnm4crnRMdm2Gxvq9T/haAdT+GW58ohXTu2Hm5Q/OBha9bf+98X+PWltRMlSx
+         e32EE4KT1Ll3UyBqRQqo+PZGW6JfdRW75yNx0VZacQVlASYTux1bbTJATYvnxQWqfrC6
+         pG+gN33b0CNSHRGrFgjuxORq8QDiVdVE7fgXXJMkt55UtztKqLPBrXbtiFKJY0QYhvG5
+         O8Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740630133; x=1741234933;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EuAUHe2HvirnbniJws2V/C5qa0J/b2o5CG4USvlKN/o=;
+        b=Y95ueyvUovnUky09TJkH+aqJ6UUXLpbbSGJY6PoZ5agHgnkY4YZatJlNpUQHMoBv4M
+         mDRYvEd7Alh+n6z8eCXH/XzZApGVzWlvX8U3s5KpQSNIxlBT/cPvN26Y35gN2cMePylm
+         pCShvfow0joai4xvs2qw8w0vLksI7pHNkt/t3BsLn8n7UX3Ul+iMZBBuPcIUzyTCCgf+
+         HBUV+lFpjDxFwInE8WlBoWohzbMhYCqLvl6ITIWipQN51FY5qjsFn6swyBRIgVJIMJxf
+         AY/QxCsn2nw/qtzqHiIF+iFdVkwvtBdHGTfYHhRQCq3Vv0Awfwe9/jNVfMaOYjLaEWSX
+         QqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/aRbWtbMjaiDvIeKt8q4NVbh2FT6TRB8sjA43lxSEM6Br3RifkYxFUGxOmP0CUJ6HiRkFFArqs7ww/ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHZXLfAHzCg+2ueedP+Xmw17//RJMfaSG7unaIypU+grZWIKqG
+	3eWZ6g0IkXqakfdxZODLfs06WHAlSfZAzjihOadPYDSUH+atf3dvImvwHqBy+Ko=
+X-Gm-Gg: ASbGncsOrZlYV6hFJnu413LfU1JmEr401zJC6a3hYUA/aT/paYoOSOtmyC1LX7KTHp/
+	JL9pzUVqj24Wczvxk5zHrhcKUauyk8/M2I9reutip3USyHUxwa7sfzkheUzYT5H84wpZNWMcxuG
+	Vb92ieNsvSUx3vx0SGSQgUsb3BXQV2mjFYEJ7xDg4kG4qJMRJpeUtKB5fwnKp1QDdRbKRp+ydMd
+	UIOByrK3ydmu8k4Mc2CgC4sP5UZTM0YrQlYG4XUyd7lhMdIqOfFKz2Xp3T1zFgSq1x9X6cFMt2y
+	9gUE4kOmSIiVM2NGanas9wKSC9mhx2fXORe7h9tIUPmAfnJGp6jb9qS/a1MCFTdDeQPfMuJX2pZ
+	Aim3oVQ==
+X-Google-Smtp-Source: AGHT+IFVuxcTMXSGELJtG6vGwj4u7x9DOeXvKGs8bHxJRAKA8hCr0W76iJG58PMKSr6dsn2bX7BIrg==
+X-Received: by 2002:a05:6512:b98:b0:545:353:4d46 with SMTP id 2adb3069b0e04-548510d8085mr4709485e87.25.1740630132885;
+        Wed, 26 Feb 2025 20:22:12 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867c8f7dsm601111fa.48.2025.02.26.20.22.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 20:22:12 -0800 (PST)
+Date: Thu, 27 Feb 2025 06:22:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rudraksha Gupta <guptarud@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, wctrl@proton.me
+Subject: Re: [PATCH v3 2/2] ARM: dts: qcom: msm8960: Add tsens
+Message-ID: <jt4o4btmvfxorguh24yqr4mxfy64o47h5uql4swtveqxlo4q2e@2ozfhduyvvst>
+References: <20250226-expressatt-tsens-v3-0-bbf898dbec52@gmail.com>
+ <20250226-expressatt-tsens-v3-2-bbf898dbec52@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-expressatt-tsens-v3-2-bbf898dbec52@gmail.com>
 
-Merge request pipelines were only created when changes
-were made to drivers/gpu/drm/ci/, causing MRs that
-didn't touch this path to break. Fix MR pipeline rules
-to trigger jobs for all changes.
+On Wed, Feb 26, 2025 at 07:50:42PM -0800, Rudraksha Gupta wrote:
+> Copy tsens node from apq8064 and adjust these values:
+> - thermal-zones
+>   - adjust thermal-sensors
+>   - delete coefficients
+>   - trips
+>     - copy temperature and hystersis from downstream
+>     - delete cpu_crit
+> - qfprom
+>   - adjust compatible
+> - gcc
+>   - add syscon to compatible
+>   - tsens
+>     - change qcom,sensors to 5
 
-Run jobs automatically for marge-bot and scheduled
-pipelines, but in all other cases run manually. Also
-remove CI_PROJECT_NAMESPACE checks specific to mesa.
+I'd say, this is probably the most unusal commit message message that
+I've seen.
 
-Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
----
+Nevertheless,
 
-v2:
-  - Run jobs automatically for marge-bot and scheduled
-    pipelines, but in all other cases run manually. Also
-    remove CI_PROJECT_NAMESPACE checks specific to mesa.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
----
- drivers/gpu/drm/ci/gitlab-ci.yml | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-index f04aabe8327c..f4e324e156db 100644
---- a/drivers/gpu/drm/ci/gitlab-ci.yml
-+++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-@@ -143,11 +143,11 @@ stages:
-     # Pre-merge pipeline
-     - if: &is-pre-merge $CI_PIPELINE_SOURCE == "merge_request_event"
-     # Push to a branch on a fork
--    - if: &is-fork-push $CI_PROJECT_NAMESPACE != "mesa" && $CI_PIPELINE_SOURCE == "push"
-+    - if: &is-fork-push $CI_PIPELINE_SOURCE == "push"
-     # nightly pipeline
-     - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE == "schedule"
-     # pipeline for direct pushes that bypassed the CI
--    - if: &is-direct-push $CI_PROJECT_NAMESPACE == "mesa" && $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
-+    - if: &is-direct-push $CI_PIPELINE_SOURCE == "push" && $GITLAB_USER_LOGIN != "marge-bot"
- 
- 
- # Rules applied to every job in the pipeline
-@@ -170,26 +170,15 @@ stages:
-     - !reference [.disable-farm-mr-rules, rules]
-     # Never run immediately after merging, as we just ran everything
-     - !reference [.never-post-merge-rules, rules]
--    # Build everything in merge pipelines, if any files affecting the pipeline
--    # were changed
-+    # Build everything in merge pipelines
-     - if: *is-merge-attempt
--      changes: &all_paths
--      - drivers/gpu/drm/ci/**/*
-       when: on_success
-     # Same as above, but for pre-merge pipelines
-     - if: *is-pre-merge
--      changes:
--        *all_paths
--      when: manual
--    # Skip everything for pre-merge and merge pipelines which don't change
--    # anything in the build
--    - if: *is-merge-attempt
--      when: never
--    - if: *is-pre-merge
--      when: never
-+    - when: manual
-     # Build everything after someone bypassed the CI
-     - if: *is-direct-push
--      when: on_success
-+    - when: manual
-     # Build everything in scheduled pipelines
-     - if: *is-scheduled-pipeline
-       when: on_success
+> 
+> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+> ---
+>  arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 59 +++++++++++++++++++++++++++++++-
+>  1 file changed, 58 insertions(+), 1 deletion(-)
+> 
+
 -- 
-2.47.2
-
+With best wishes
+Dmitry
 
