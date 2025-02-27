@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-536578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26754A481CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D821A48188
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6913E189E59F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2C719C4329
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECCB23534A;
-	Thu, 27 Feb 2025 14:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1D2235348;
+	Thu, 27 Feb 2025 14:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="43dOkDkN"
-Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="H8T8ZpXT"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8862309AA;
-	Thu, 27 Feb 2025 14:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70E72309A8;
+	Thu, 27 Feb 2025 14:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666431; cv=none; b=t51LVgSLsLrQBZIPygYjpTruV+BMPZ8A3LV6wJ5Z20bjMahZ307ySdFQSJgcipr95MROB3d2d6IC0aex7Lj32tyscDH1n24j/vqd73+XcvXfonofMEZeg0d031QN1XFK9XriB/J/cgj3WuM43D2lmFc35Uovs05Nk17lFnU0Gfc=
+	t=1740666479; cv=none; b=HEQFVYd8p2SN3diXOywE8idK4Sh2wlEk1j3frgn3AonHAtEj3MVBA+wrFVe7ZAcDzPbkSospjRPLaV5+Yrozm+k+dzS1s6Nege7yxOivsWxUHS2s15buCI7UMMMcosHLaWwEcWmW2OJl2anrR6g8I7L1hpNoZ5XtrrvGcoT9qyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666431; c=relaxed/simple;
-	bh=dyyzHix7FsjYghq8qoqSFkJvh7rVpVdTIin/CCYr2f0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kfSo7n1PVw0QQrn97BwAsxV1Rv31iaDXKJNjJHZDXcr675wIfZGN6dpUCRUZWewJ/6cLwhf4cA/EkvdTrfx1j1jxB0rnXteBDtLeIotBa5DGbiCAFLYd/DI3fBgyOq3yX/YigKEX7J1gom+BKrlUAStaMIkA/AVzruWFZldxj2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=43dOkDkN; arc=none smtp.client-ip=45.141.101.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1740666427; bh=dyyzHix7FsjYghq8qoqSFkJvh7rVpVdTIin/CCYr2f0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=43dOkDkNeW12CX6HVHrQBWxjyOLO824YbGjbNZipf/6EbOlsoW57gGsEKGyhqMopH
-	 6BYCzQeTcFrtZwcHD+SC3cEHViLHh4dU/Hu+RjvnQP41H8cCanteRry+j0y6pPx9bQ
-	 LBrSaPdrtFQ/M1bTIt+AEL8QDHW+cOQ7yrHlsdbtekuNIK+0ZoXQa+dSFge58CNTv+
-	 ftMZ0N9HvPVdz9rpWdMtBUHTT1NEn663aGkccMCm5D5d5fT6TWLpFpKOcVEaeTMewX
-	 op2VWrOcxGKcYjaJlD/5G31/TqDJ1S2R2vecwCQ8My0Bb5gdRqB+T2JzAt562Z++9w
-	 BPFO+0lakXmRw==
-Received: from authenticated-user (box.trvn.ru [45.141.101.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id 7FD5195BB;
-	Thu, 27 Feb 2025 19:27:06 +0500 (+05)
-From: Nikita Travkin <nikita@trvn.ru>
-Date: Thu, 27 Feb 2025 19:26:49 +0500
-Subject: [PATCH v2 2/2] arm64: dts: qcom:
- sdm845-db845c-navigation-mezzanine: Drop CMA heap
+	s=arc-20240116; t=1740666479; c=relaxed/simple;
+	bh=d2kniXghzkVepyvN0Jxk7Th/uso/TF6hJ3QrHIX+78Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CRdxXER6rRk8qKUvE2w/o6vCrL0L4IuS5PgMLUKEXL6MvkHQHVm3v2amHvwj+CaHHRlNA6U9uMhlIWDcB0jcB3KjRZiDxf/ClTNFgK+Q5Tu0fz99AoGd1ou/7WF7gfzHUaGcmLbpPaU48CNHOqYFW10dzudr+9kr3hkfTmGaIbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=H8T8ZpXT; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 9755DA0C24;
+	Thu, 27 Feb 2025 15:27:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=WF9LzLHCkRSu0ysovFG2P0lkkTg7dv5c/Mx/XIoFkfI=; b=
+	H8T8ZpXTQFc2B2M7Ed0MP3NeBv3NqCye2OrVN1y+7RKuZaNJQXvItUo5/QlVapii
+	GweFKa4NhJ9ugM/Je3UVC10CkD0U3NNgAg8zJp4kvQotxExJm3ZsRA8RKOTRG7cF
+	PE3dgaCOI7PWAwETWC1ERBowo+fPK4KnPcr7OQDsA08hyEaH6/j/uifCspD4KaHl
+	XX0NW2P+XJH/btV6wnHbcfKyuYKSQUe1B7nWxIuY66Pc0Z5NZ3bcpUGS/50KfIRB
+	YC1UG8QAh+SRV1KZETDZyQYywUmkZauYVk0+QRTBNbDo4c6ltNt5sf4pZHSLzkNp
+	zxDvEgK7MnVlOfBPe8psG/367NS62hNbNY/1hsPr0r0KRL/0qKJHyeAWvfuXcBYU
+	uVtIf/Z2MNChv1JRly7Ps7WUtvx5N4xchZjBKPIAxmtRUhqyOicFX57WycqRhg/y
+	9snzjKnZAY2aMNs3DHcMcI4Lc9OjAdMKIB1t2ZfGYrPp5AAf3GsCSWUeq1E/Io0R
+	NEBumqGycbcS/Pp5nn1vIATnYlX1N67gz5PGBsy+dLB91ayrPHFTk6lkZ0XnDqYV
+	AHrMyY907PB7sxcOLGXVUmheuT5KU60Pko+NXwGaw2DgoZrhqWYaXBZZDTrU3/mu
+	+Jm0sP7YDHBXfLNRRfWsDMVsOZVRWINVv0dlaGf4Vn0=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Kamel
+ Bouhara" <kamel.bouhara@bootlin.com>, William Breathitt Gray
+	<wbg@kernel.org>, <Dharma.B@microchip.com>
+Subject: [PATCH v5 0/3] microchip-tcb-capture: Add Capture, Compare, Overflow etc. events
+Date: Thu, 27 Feb 2025 15:27:45 +0100
+Message-ID: <20250227142751.61496-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-qcom-nonroot-overlays-v2-2-bde44f708cbe@trvn.ru>
-References: <20250227-qcom-nonroot-overlays-v2-0-bde44f708cbe@trvn.ru>
-In-Reply-To: <20250227-qcom-nonroot-overlays-v2-0-bde44f708cbe@trvn.ru>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1652; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=dyyzHix7FsjYghq8qoqSFkJvh7rVpVdTIin/CCYr2f0=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBnwHY31v/qUb+Ww0+Cy5RNOAZPfXCgmUlag56Av
- yalMvI73RuJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZ8B2NwAKCRBDHOzuKBm/
- deyAD/44FkhDxt6L5t9CJ0wPuFvwCLuC18CrmMuVthy73E95n4tEhCtDrJMJOKhxfGhLwPmtuDw
- AXDbj4OnNYfwEjycNl7nYNcruWmRq726qnVpvjTgtHxnxDiJTGK8VPe9kIRgjBlOutuwWuvIh2j
- 0P6AuwTH+9gnQa7uXUOQA1l9QZrgDKG7MHIys99ZVxUsqGuTkLG2lCHRnHqLNAJvr6+5FYEW/ks
- 0UYtKjdOptdIuzEOuIU7X9Wcf+Bqn8gDWS9JUfnkM69GzH1d2a/xlLdztzboi7txzO5PT2QvO/j
- 7/8lnJDrlJoRjYC8YleqYALh3/ZiOM999PHkDZ8vPnwGQ3lrqOpPdOrjp57WukqDDlETtlW8ddD
- 9yrVU3TubCB4C5DiFrQALf51oz6MKkIyhtDxob7ts9EvGztNyx4f8zYLE7R9ZpjybWKXaxK8hh8
- Yf/Bs19lkQMs4pYk79j87EHB9XWmPa1l36yfGizMYnw0FMaH9fQZRD3jv4T0x87dR3FKvRwOE3k
- WZcNmrToXEkqOGpEp7+PCCelYxWh2qQQ09S203AfdiO8izlGeb6Pv6pNk92QNxU9CziZ+lPdbTQ
- fGd9/J9fK6oRmrbNzcFgl+fY/muavTrF6ZP+M3+GA8RjFkDx4ktvwJGi8kXADtQulqVE2mA34Ii
- VHa75qyfQaDC/ag==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1740666474;VERSION=7985;MC=20500670;ID=1457592;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637760
 
-Initially added, the cma heap was supposed to help with libcamera swisp,
-however a mistake was made such that the node was never applied as part
-of the overlay since the change was added to the overlay root ("/") and
-not with a reference to the target dtb root ("&{/}"). Moveover libcamera
-doesn't require CMA heap on Qualcomm platforms anymore as it can now use
-UDMA buffers instead.
+The TCB has three R/W-able "general purpose" hardware registers:
+RA, RB and RC. The hardware is capable of:
+* sampling Counter Value Register (CV) to RA/RB on a trigger edge
+* sending an interrupt of this change
+* sending an interrupt on CV change due to trigger
+* triggering an interrupt on CV compare to RC
+* stop counting after sampling to RB
 
-Drop the CMA heap node. This change has no effect on the final dtb.
+To enable using these features in user-space, an interrupt handler
+was added, generating the necessary counter events. On top, RA/RB
+registers are added as Count Extensions. To aid interoperation, a
+uapi header was also added, containing the various numeral IDs of
+the Extensions, Event channels etc.
 
-This reverts commit d40fd02c1faf8faad57a7579b573bc5be51faabe.
+Bence Csókás (3):
+  include: uapi: counter: Add microchip-tcb-capture.h
+  counter: microchip-tcb-capture: Add IRQ handling
+  counter: microchip-tcb-capture: Add capture extensions for registers
+    RA-RC
 
-Fixes: d40fd02c1faf ("arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Add cma heap for libcamera softisp support")
-Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 -----------
- 1 file changed, 11 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-index 59970082da45203311146cc5249298f6188bf67a..51f1a4883ab8f0ee7c66fab89c6e1a88c868d2f8 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-@@ -9,17 +9,6 @@
- #include <dt-bindings/clock/qcom,camcc-sdm845.h>
- #include <dt-bindings/gpio/gpio.h>
- 
--/ {
--	reserved-memory {
--		linux,cma {
--			compatible = "shared-dma-pool";
--			size = <0x0 0x8000000>;
--			reusable;
--			linux,cma-default;
--		};
--	};
--};
--
- &camss {
- 	vdda-phy-supply = <&vreg_l1a_0p875>;
- 	vdda-pll-supply = <&vreg_l26a_1p2>;
+ MAINTAINERS                                   |   1 +
+ drivers/counter/microchip-tcb-capture.c       | 137 ++++++++++++++++++
+ .../linux/counter/microchip-tcb-capture.h     |  49 +++++++
+ 3 files changed, 187 insertions(+)
+ create mode 100644 include/uapi/linux/counter/microchip-tcb-capture.h
 
 -- 
 2.48.1
+
 
 
