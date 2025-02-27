@@ -1,115 +1,152 @@
-Return-Path: <linux-kernel+bounces-537405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B4FA48B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:24:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449DFA48B71
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8213B188B9E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:24:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB29516CF92
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34E1286290;
-	Thu, 27 Feb 2025 22:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C91B3DAC13;
+	Thu, 27 Feb 2025 22:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVNGUWN2"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="On8udIuW"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DACF272903;
-	Thu, 27 Feb 2025 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF6F272907
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694935; cv=none; b=lRNTc9m0Y/3Z/JDRj8+0hBSz+9uvU85pGmDmalDom8JYYmebswnG7c2PaUl2tTKdxoWNJBmFRtsOl/pg2tPPKBoYaqNARbee69n1sJQ8c2vvhWU9kxDDJ55Kungf8bf0wL2edZ7tP3VUxQDyfqirj9owsyeBXR4eYAHHeK85zNY=
+	t=1740694955; cv=none; b=oghUAemBgVYJjodWtOXYdIbn2KTxsem5XZBA1o5poYZ/0dqz/TBjEBrzRWoU0QA2j4eVbGLpYHdboOX6tX6JwY4/9GayEvn4VMcVmgADSXerdjIpiDEZ3jbgKtfKAGOEIg/a3EzYr017BsEXt9gfyBEZcENIUpAdcXc/c6pw0CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694935; c=relaxed/simple;
-	bh=IGK/iXqK3IHYN8V9O5CsUAmKE0u/8x6GISZSDFKsQVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8v7HWoXBXqzmW1S+1iyan07O0041rS2PPnKMx270Odxd/B52WPDRt6JNOgqkdlrlGMR8g2uM2l0Qvpgi3wipk5QWvP/amWXucBDzunoXHyXDP9SZKMEQN87sqjLSH1qfi3J0WhQjTvE7RJH9ZIwccLqIxwm8hmTWU2gUyTm8lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVNGUWN2; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2235189adaeso21573965ad.0;
-        Thu, 27 Feb 2025 14:22:12 -0800 (PST)
+	s=arc-20240116; t=1740694955; c=relaxed/simple;
+	bh=Le3t4kyiotBAGEeTNlkwGJJUb6SlwUJPq/9Ayw35DTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GLSabvQDoUD0TB5tPoouEiVkEsD6SA8tWWm3fYPLx8pQsSTp0yji0fmHQA30Ia5I+vY65FK0QCnO7ufUCETI9RzysXK2+hkVNsSc8o082xA5TQuqUqVaqoswhOodhYoIUEJAUCMaGNZ15aNpi5yRzOlNfQSADrimjt+QNhAKVxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=On8udIuW; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f47ed1f40dso11516767b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694932; x=1741299732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3A/YDU9wrynchhvD7yFxdTu0UQIFwqV0VZoVEq/GoqM=;
-        b=MVNGUWN2G9JxQNALmZqUEbiO8qbW7uharw4bgta1zLvtqtOicztgfYV+umEdzPbSeH
-         YXG8YeAoaa93PAAfEWrfAfBonXYBcVugGCfVxQPtCdzl+5bbgJtkulztSrgi0i7zp5mw
-         ewi+146IcO5+MuI8zvXMYWAPBK4CP3GwQa+oHNvrH5P62Q8X+RhJEPBNl1zIWNC+C1y7
-         k/HKn6itcU7NJ84OOrUeAm0EWlEEg7H5ro9ps9IN/C8e0pISIVXEYlGsNf8sH6GlFz+c
-         ZkLFWg4hMp5wlhDubqkr5MruxYJ5xP5dCJxACQGjfK4eeK1bIq2KGWieXQcRs2B1cwDJ
-         DAMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694932; x=1741299732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1740694953; x=1741299753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3A/YDU9wrynchhvD7yFxdTu0UQIFwqV0VZoVEq/GoqM=;
-        b=g6m0V5/CZllV6qHFUEqAssQPUeHyxm25yr2OcKK68VkLGB7Ohw/EXcm5L95kI7WRHK
-         E0cdJkFRwvj3Z5Q6o5ZxTREnbeCfhyh6yoT7P/giZoFDrDe9bcgkb+dSoTRBfORpXN74
-         vTO8ABxkjQgr/Ev+fKWKkom18HHkb6DcOBll5y57NyZuzeGyv3NCG/EfQOm4QO2gu8wO
-         4AtT59ThXJWVUVFK8B0OmGLvDMu7pJVD5kjMoRYwS9gm5lfsbzW4WuJ+auKQQ8Jv5+Wm
-         HGzhyAU9WCE67SsgsPTqhBai9Aar93wLIjx0Ep3tMczKfeJ9ABSVXKGCsrkMRxb+X+01
-         Ucmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH0qcngbk6Uig7JAcr8JKFX8k5JNoqJzOfpHJ8OXYvgX7qfWGu7Tv8bMWTI2RpmUmxancLAI+POT8jKk9Q1TIx@vger.kernel.org, AJvYcCVnBxnKwiJGELUWhFITh3MhGKv12zxTpPibvsvTsOG6Hilr1Q/iY8uzbebnXw0yDY6o3s86VKnsUe8uE7NY@vger.kernel.org, AJvYcCW4cJqigF/TgwUhCgQrMuXVmA3T/03gLSqvpCt6TDxHWeCizMFMZ+/4xavd+8PQM3xavDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKJYEJvg4x7gCmAtUL/7dOaVeFLJkw76NRtoYYlSeL/jWUriqv
-	Lbmvvl/AjJQnhrHaIMxDuIVvTrPVDgzdC8YJxyZqdIOIgaEf0Kc=
-X-Gm-Gg: ASbGnctfxS81If1ctaguarSOCpOmz8IDv8/uKa745j6GbGHSLq6xvpj0I+OSoHg7yA+
-	FKAKx32Tzqce5rzAscgQOX0sdNVe8RCjNLw5HfZoHfNFTL/XX5VSOB0z1LTJvEpVUX9k0wzw76G
-	r/GKcmMieZpVPbVnDcpVMJ9lM6/NTWTvSoFtZmvyLRbXLQMwUz9eiZqJsMAyeED1CehRxhwbiJV
-	bKz28/bDgg52Ea4v7/pbgfOreg/cyLfBDhVP8Tr/2dvTVhw8dtSpAb+Lx4r704pWu/yDYUqn1vj
-	bqRhPiVO0uWDu/YDThf8aUrkew==
-X-Google-Smtp-Source: AGHT+IEpwV1ijof39CKBS0WmuWX5WdeZn4tgXBhdNnhYZANNQxoe3Xs2zw1eCMp/3m5XHqaUyaVitw==
-X-Received: by 2002:a17:902:d507:b0:21f:6ce8:29df with SMTP id d9443c01a7336-2234a1603efmr82879825ad.3.1740694932421;
-        Thu, 27 Feb 2025 14:22:12 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22350533186sm20520565ad.243.2025.02.27.14.22.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:22:11 -0800 (PST)
-Date: Thu, 27 Feb 2025 14:22:11 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 09/10] selftests/bpf: test_tunnel: Move ip6tnl
- tunnel tests to test_progs
-Message-ID: <Z8Dlk0-hOmZ9Aigb@mini-arch>
-References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
- <20250227-tunnels-v1-9-33df5c30aa04@bootlin.com>
+        bh=ScakE+ivXVszoVLy+xVwqAkmsKVwP1/+ubR/2bsYhJk=;
+        b=On8udIuWbca6dQrFAq6FYI9z1Rs+p3fyKu5wcC7uJ6XcJyM4o6VP2km9c3pkTD3cTP
+         722I+VKEQtfPHd1MJlkEPa+4iJ4c0JbrMEa5f7ojlzB/DAotMlRJ5J+atJZCPqyx5ACM
+         /pVS6qXjVHQ8IOuNEmA75zGVS6hD1Qy80pxvKkTquK1q7mtOXo/5BIJVD2xkY78i5gDr
+         8MzlxWWjG5q5lDZG5wkL+94XpEhKVh++Lx2j31iAg934zMXNXwQEJOl7WVyERRfbRXov
+         I5G+NURaWU0MHbRFlzheUtF+iZGWOrOJlpoXhuMlE7HAJusnJUeS+pCEiXWkngqyTza/
+         TyEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740694953; x=1741299753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ScakE+ivXVszoVLy+xVwqAkmsKVwP1/+ubR/2bsYhJk=;
+        b=fOdhXEBL2Q3Z7K0c/YOrZoAdPuZmZmJ/jC1sJMPisLgQ0m9r5iydlNoxVkapss8M2g
+         ZuOocfeGc2iD73XeTgs2CVwLFqKHgKdu0vaLil+o5ml2iS/rX+hYCh/E29o/xg2nNqyH
+         cTJK2iQRjiSUOX0uhtKYq5aYNyH3Bqb8+8yt9rDti9DOWlZAU31pNpebGAsnw1/y2eHS
+         VqPQsgWtJpXfEMGIhtWhQrBEfkHkkv8q5XgtGwmgUTGBZr7Qsv6QhLkzE9rQDv253Zq3
+         XL0WqrFoVgmWWOmEzJAsYZM1JLCI5R9eMIrvF+jVI1diLMjctXMT49ijh+Phx0NVHFEa
+         kwkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0XT3BdytQf4DjZGPes88bVnWWlRlLm0M4iBv/9/+SrfMHQkBVnUrnYigCjUzBJZ50Xsq6rt4UTA/7eV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL7AoAyhMGwKjBKFHQt39WWY7dc/m0ScXfc2sohT11yo/uKaZl
+	TDmuZ6Yh0lpg4Y1CTVIodWCqIK6Ozd/0VVfht1a46vfMy5xFkMyO8HRDNfbLbvFs5IBXzux+bAO
+	9hJZfnSAloPcq1xLEDT/KwSLq1Vi7lR/YS9yL
+X-Gm-Gg: ASbGncs3MwJF4nmFmzS2F86zo+SzCgqVSAC28pAVUlW6u3hOOi+bz7dlfoWb5zmvGCQ
+	wHjiGmskxuBj0douzWeCUQyimBriJaCZQO/kPvi3krKOyxyvSEtila2mLmAAP52B7QTpHx9y3l0
+	wMPj1OFAY=
+X-Google-Smtp-Source: AGHT+IGKPvb6uJOvINeQsM+iSOmGVr/Q+rN9nHiUXllkoj79N4+6rGnhZ88M/fTJmoa1TMKM7/1/9ZyZ0+zbdTUHg4o=
+X-Received: by 2002:a05:690c:4b8c:b0:6fd:3f9e:b7d6 with SMTP id
+ 00721157ae682-6fd4a074751mr20138727b3.19.1740694952817; Thu, 27 Feb 2025
+ 14:22:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227-tunnels-v1-9-33df5c30aa04@bootlin.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+In-Reply-To: <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 27 Feb 2025 17:22:22 -0500
+X-Gm-Features: AQ5f1JpGHD9sDTEfCNGPaQVwEKRNBeWrx8Lfv7PT8-K9hixoVfU0bPOCCzjhhe8
+Message-ID: <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
-> ip6tnl tunnels are tested in the test_tunnel.sh but not in the test_progs
-> framework.
-> 
-> Add a new test in test_progs to test ip6tnl tunnels. It uses the same
-> network topology and the same BPF programs than the script.
-> Remove test_ipip6() and test_ip6ip6() from the script.
-> 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+On Thu, Feb 27, 2025 at 3:41=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Mon, 2025-01-06 at 17:15 +0000, Eric Snowberg wrote:
+> > > On Jan 5, 2025, at 8:40=E2=80=AFPM, Paul Moore <paul@paul-moore.com> =
+wrote:
+> > > On Fri, Jan 3, 2025 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > >
+> > > > Regardless, back to Clavis ... reading quickly through the cover
+> > > > letter again, I do somewhat wonder if this isn't better integrated
+> > > > into the keyring proper; have you talked to both David and Jarkko
+> > > > about this?
+> > >
+> > > I realize I should probably expand on my thinking a bit, especially
+> > > since my comment a while regarding LSMs dedicated to enforcing access
+> > > control on keys is what was given as a reason for making Clavis a LSM=
+.
+> > >
+> > > I still stand by my comment from over a year ago that I see no reason
+> > > why we couldn't support a LSM that enforces access controls on
+> > > keyrings/keys.  What gives me pause with the Clavis LSM is that so
+> > > much of Clavis is resident in the keyrings themselves, e.g. Clavis
+> > > policy ACLs and authorization keys, that it really feels like it
+> > > should be part of the keys subsystem and not a LSM.  Yes, existing
+> > > LSMs do have LSM specific data that resides outside of the LSM and in
+> > > an object's subsystem, but that is usually limited to security
+> > > identifiers and similar things, not the LSM's security policy.
+>
+> Hi Jarkko, David,
+>
+> Both Paul's and my main concerns with this patch set is storing policy in=
+ the
+> keyring.  We would appreciate your chiming in here about storing key poli=
+cy in
+> the keyring itself.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+I'd still also like to see some discussion about moving towards the
+addition of keyrings oriented towards usage instead of limiting
+ourselves to keyrings that are oriented on the source of the keys.
+Perhaps I'm missing some important detail which makes this
+impractical, but it seems like an obvious improvement to me and would
+go a long way towards solving some of the problems that we typically
+see with kernel keys.
+
+--=20
+paul-moore.com
 
