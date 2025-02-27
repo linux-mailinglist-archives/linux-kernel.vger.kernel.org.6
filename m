@@ -1,207 +1,189 @@
-Return-Path: <linux-kernel+bounces-536687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCEBA48305
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:32:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B1EA48309
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:34:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B965188EFB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93313A2283
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DC02222BA;
-	Thu, 27 Feb 2025 15:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CF026B2C3;
+	Thu, 27 Feb 2025 15:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dFDuJiN/"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2079.outbound.protection.outlook.com [40.107.100.79])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WYGL3aY7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEBA13AA5D;
-	Thu, 27 Feb 2025 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670369; cv=fail; b=FCm0nSqnwUedF4mEzDl72KW4NUc+T8AbMZ7X3sm1tj/ZWV/x66KFf/47X/gvjPA8A97efE+pQf42n4lG8RllkCem4NhMcZ6u95wF6lft9g+8Hb7kHLwSbaL+tPEOf5CMCP4K4dG0Gudv3yz0isK2l73YTqNKSFjb1tLFRhnB6X4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670369; c=relaxed/simple;
-	bh=9Zh6XMyampM+o+7OhrMM0i3Ot1PlX/e2mMFn4n+hEzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=W0yxPx7/2fd0nrtt+pZ0+oeqeIGINLKk5gcnuBU97wDwwwwIjfRqn0VcJFgO5p5D8alsjsTO/GklpATW+Xpr1a1C5OS3ZDWuutv5Edpoyubww+tFj1IC0m/juPgB8re7z1mt+EOr3j26cLIZbluWzzAFKJeFVJzIzWWmK0j2Evw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dFDuJiN/; arc=fail smtp.client-ip=40.107.100.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t+GcWN10KOeD8/YPlYYoqHfZVUyVD2wLp4i8RoyAHacRKtzVFxYYPZ0YPpOiSPIA80F3tvTu0g7OZWiw/sAp+tNK16lbe2nCPJFKLkfGGBxK6ELZDJDs1MnCoqH9Xxy1fQRFDlVV0pGFvvgCgQwCI/GU7d+aoD6a1y5ZdVPI01RTYCSwlC81AF95RVY8GZqbEdd5by8bVdFzhulVV496SQFLudaIBociE8MhjVMAZyIra2CjFJQKu3qPwN7GfZTuqSuH8bms5LE2mXh4tnPFVkhDOyhEI263ZsJuVMHVkoF+hbEmLAtFCqKk3rt6UQdpay6/YYIk77mZofptpLgrHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Zh6XMyampM+o+7OhrMM0i3Ot1PlX/e2mMFn4n+hEzM=;
- b=P2MUdjua7+im7uDoO+4YDW51m4hlLLIq9O4aqvzNKH0FALTyANcBu6fqxb8L2S4sDxuxrWjgbNepXWQdrNB8ZIE7okwaTCyfpzvxsfsRTtPwCLQ67d2gSO1q1F9o+CPRC53JcB8iFpgDjtP+v+AkHv/20z1MEYwnrSNFXKLkxhO0kiBppT2rxv3ucrY+5P+V1cDaOYqXIunlPBJ6Oro0nkZaSasObnyMeKq+oNvQA/LAiuy+ivlC1CXi2OD9TOTuTJkywxQEhrcU5xkHjaYL97Nkhcym3LuDnbPlzl8ObBYp7PjkhIs13LTEPNyqOSL0eHz3GEqphRqrXbFOcxCKrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Zh6XMyampM+o+7OhrMM0i3Ot1PlX/e2mMFn4n+hEzM=;
- b=dFDuJiN/fmsLtftrQePiE3VaQT9y8fc4oxTJ4G74gGfY1cVBAUBgoAsfUi8gY5a7WK7M5o5UDicj4ESh/7yHEGBLCL1Ad9mX0DfduVGaiiuTvEYrnzufIzVNeHm+y0ByUDVRee3Ux+13b6WDkEgZEgRyOvZ6ukKmS6+Rn+hQ6z8LVXpmS4/dWDLWoCr/H48wY+NgfkKPIYLjLBEB8tg0CAjYcfX2rkpH28PaC7JELyKb1Esex4gdYBCoiI/ULs3ZUm9zuPv220fUpb1QMjDqg4aEvVwy7ifKrDtNNsYIJX1q77/Byn9jKy6p2rwRU5fnVR9/0lRhmpcD8uZ5DD/01w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
- by SN7PR12MB6909.namprd12.prod.outlook.com (2603:10b6:806:263::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.25; Thu, 27 Feb
- 2025 15:32:44 +0000
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
- 15:32:44 +0000
-Date: Thu, 27 Feb 2025 11:32:42 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	tglx@linutronix.de, maz@kernel.org, joro@8bytes.org,
-	will@kernel.org, shuah@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	baolu.lu@linux.intel.com, yi.l.liu@intel.com, yury.norov@gmail.com,
-	jacob.pan@linux.microsoft.com, patches@lists.linux.dev
-Subject: Re: [PATCH v2 3/7] iommu: Make iommu_dma_prepare_msi() into a
- generic operation
-Message-ID: <20250227153242.GG39591@nvidia.com>
-References: <cover.1740014950.git.nicolinc@nvidia.com>
- <4ca696150d2baee03af27c4ddefdb7b0b0280e7b.1740014950.git.nicolinc@nvidia.com>
- <5b9e15e1-8081-46ef-b9db-3872e98a6f35@arm.com>
- <20250221164400.GN50639@nvidia.com>
- <634c60ea-fec3-43ad-923a-cf9ba5e76065@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <634c60ea-fec3-43ad-923a-cf9ba5e76065@arm.com>
-X-ClientProxiedBy: BL1PR13CA0404.namprd13.prod.outlook.com
- (2603:10b6:208:2c2::19) To MW6PR12MB8663.namprd12.prod.outlook.com
- (2603:10b6:303:240::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1B82222BA
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740670435; cv=none; b=u3YOhXVvLwjNBtB5DU43gJTNJvjUWDhuGfFD8OUvOZoUG9/zmvqjRHnXAPUgEhJsU8vn0GTv7TTxAbZ4Qo7+Xiiqaz5jhKhiIMND05LSvodbIYjy5zKJw54zBvCSGfgD9iUXRMZWw79+kuf+tJCxBSBouW0Aq30EqE7xsKtrvtU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740670435; c=relaxed/simple;
+	bh=oI3/oHkWBAzRYMMnQNrLlL9q41JprPc7y/wLOgRx5Fs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kSDwu0wEn3hTE2vRbQ4z+wONWaO/Tt1gGgjim+ojg8EiOS0WFH07pZzoT4uRc+TVD73XbqWShelwCSB0JoSdVPxg6M/WTqR3Og7aVuJG698gUwR6TiAxMwiF1d9y8fQXlakWUY25o/NRQbGBg+FNRddqJjeAwPhEHiPE39lpCL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WYGL3aY7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740670432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PPuW+kLF/Esm0+hPOCoTH+xCIToBwTiEnm5vWhLRWw4=;
+	b=WYGL3aY7B5Ii1O/e1h9+Exqv+J7odr8AexR+VSlloQqJoo7vZWhKbxZAqKU0wooAC51tBn
+	fRVfyErnza81fWN7EyOmzjesdIQQGpMEVXjVBZvIkhPij9BNCX+2/1/2L5lzQDU4XwoYDx
+	XOxH3rykmrDyt5nqvDwuFLbeJXYhofs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-128-ACqwlQ9zPjWErbz57YU5Aw-1; Thu,
+ 27 Feb 2025 10:33:48 -0500
+X-MC-Unique: ACqwlQ9zPjWErbz57YU5Aw-1
+X-Mimecast-MFC-AGG-ID: ACqwlQ9zPjWErbz57YU5Aw_1740670427
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B4DBA1800986;
+	Thu, 27 Feb 2025 15:33:46 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.225.72])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D46031800358;
+	Thu, 27 Feb 2025 15:33:43 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v11 0/3] sched: Restructure task_mm_cid_work for predictability
+Date: Thu, 27 Feb 2025 16:33:24 +0100
+Message-ID: <20250227153329.672079-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|SN7PR12MB6909:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b050f2c-fd06-475d-0742-08dd5743faab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OKn1r7/8vOGoJ1nkN3BHg/PP2nTBr/H13fwaJRfhyyUL+jPo8yN17LWaE+ib?=
- =?us-ascii?Q?7GYhk0zntWXjv12VrQH6Y/vAvkU7FmhGlI6JfyjV0Trsoo2hYFPX3SBqry7u?=
- =?us-ascii?Q?CweIWGiS9ImOT5XruJ2IuJxvno/52L/1eOWQKi7ekq8hNxCfjBFEyUDbaY2+?=
- =?us-ascii?Q?kUzzHcjHHRQGEXrNshfDwOvtlmrnVOXBF415OfpHDnogkjcuZ8g4Map2YbYz?=
- =?us-ascii?Q?TOHMwOR4OhwWorqNNGIa92zQaEiHH1+/ubWlgRuAN+GPUF6b32YllIli3FTS?=
- =?us-ascii?Q?qXURMKqBPJvODSEU8XKZ3BD8kcOjKINRbgqaaSNs5SFTozwyUlEvj32lbVre?=
- =?us-ascii?Q?Ha2DWoMyTL1SVBI+LTR9i/ebGwMDmi0FzQMN9PUi2CLiBjHokWi2BqKnReM6?=
- =?us-ascii?Q?2dTf6EVCS1DKHdKk5lDZZtxEbODN5tnJRfJs7lxBsRouOV8lCTW1SmlgozPD?=
- =?us-ascii?Q?wSQmUOQdn4hY3KNh6R7Wn+XvqEuPMtkZSeWPWx7sy5nyuv/dhxXD1+8Lhaa1?=
- =?us-ascii?Q?9eBlsmAh2QcMccUKf5GylDjWL4N2aOX0F8fNZSDSX8+aIjvJw1wpESa1wFJW?=
- =?us-ascii?Q?PFL3Uykb4gqMqYb1iQkpHjgJszPZElD7UnViflBIR2BKgxACMYS7xAvCAH0P?=
- =?us-ascii?Q?59nXmdnxXgoQ8/aI1+i1ec1gcjClowlH6vjAQO96ih4J3MdvGOfhplZLI7aM?=
- =?us-ascii?Q?z22Bq6AQ12BYuQrBR4XW/0qDbwuOgqcSeedcSba73L/J1rswtlreRV9p7n1u?=
- =?us-ascii?Q?X6qGfFc45Xiu58GQXZIJ16R00Nfxc4Joreerhnpa5u8m2qq+8yrBBfzkVMgP?=
- =?us-ascii?Q?L/6r1OJg9CODaI21ghRQB0qw7oagri2KfJ10V8uOsNCZnuG7ogEo4Nawb594?=
- =?us-ascii?Q?mz+2MAtB3na7slliPE7jIt1fiSzTihKw/Xb6Ay2+PXxQ0SHXXXQ3XrHvvn12?=
- =?us-ascii?Q?AS3reWrLUdQ4zFp+Hk6yXmNR9Tyj1GlUZJr+68BVLNcEqVDq6f5ocTH71Pre?=
- =?us-ascii?Q?Kbu0uwM6FfB9CFSj7q64EbBtbKNSEt76daSJqKubuq/ryNjkLV6vMNDrFe6D?=
- =?us-ascii?Q?4LR0jvJC2mlFst2GvABh5kzNTXpPcogkoo87QK6QplqTHq7b6+QAEkQgRE5H?=
- =?us-ascii?Q?LTVJI5prrp7sBiz8h/hpFeOjcFMBwn2XpZDnhYDEWzb59auMRE7qiQQM7HD3?=
- =?us-ascii?Q?D2Rg56lotIltO3MmILqXkOi7YuRCYMDqwqnHAbOLB8UprmAPsjJbiGI5krY7?=
- =?us-ascii?Q?FnfbMLnpqwjNdQpTgr4lDDHPI29HL+r3dpE27tttczlh+E08w1OT4KitG0P0?=
- =?us-ascii?Q?RTBVQRNdndszRn4CX1jhnvpDU8CK/ib5ag0f45++C70XarDUM6X6GzE3l6QC?=
- =?us-ascii?Q?6vgHMg8eS+uNAUFOaoVJ11zp8+8q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nhxSyEfNBsD2t9L8dYKGVJqj1uPO7oRxkxmL19bDRQudisfs1ERwnHZ2TUZL?=
- =?us-ascii?Q?FMNiCXyELp4BFjpbdM71b/BHwnfOlso/q5NwJmjEt15qAwakDQNNupCWGC5C?=
- =?us-ascii?Q?r0lPzJLCVhEYdfT8Kt+Whu0YMHvG3lXHJKfOdxMOJ8UI+7x5UCat/5erwRfl?=
- =?us-ascii?Q?XXcwsUUqGvWSuF5i/c/xPNES5jgnqBjTivMCn451MnMPKHG/dOFXDzzXN8RM?=
- =?us-ascii?Q?1KOFyFIpTij62DN81AejxKM2XsAJp0JZBREBz36ZLUPXSmndy+JytYL0rP8H?=
- =?us-ascii?Q?lbVLpBRx4cg972s9r+ue8y0bGeg5Cl0VAo3D3FGpo6h2EYU1PWtuMwWC0D0t?=
- =?us-ascii?Q?YEkXpOYhgwK2fBBP6bUI2LAm2HJdvO6MELe9pT4BlVgkMhAsaDD5IKU6YeDM?=
- =?us-ascii?Q?FcHomvyiJe2BylTUaMjM8aqjkkPMTIsxlF+Bi2zCgVtnkk/E+bqOlfTRFHq3?=
- =?us-ascii?Q?GBw8ee5wrYo/Pih/GbqrWgMR3gIakbxrDKdSC0/ZPKSscNGbgLa76mpq4s/2?=
- =?us-ascii?Q?+kNp7cjLoz1eCNvvuP9DwIEj5hnCIaBWIx9R5W4Z3oPVLiOtaU0wLbSS3LGT?=
- =?us-ascii?Q?/8gI6Fbw25Q6A0e+1002pdQigspVUr6S1Kkz2sVSHSivtHfARip3qhZMwmkR?=
- =?us-ascii?Q?osmbfdujsdXVhNcW6GcbzsZdTg9m+uxHdEoZIoDrgVdSCNIOoImy8xurP+2C?=
- =?us-ascii?Q?fGbWnM7K8RHW5j98C5/ZPoF38hJQyHv6W80II0S4FW7Lf34EeHDuCwG91+G8?=
- =?us-ascii?Q?dFfNshs29cMCQiL8tErN6ZAilXs1mAJIdQFBhOcr52qPSd7NI+gf+SxnsfDR?=
- =?us-ascii?Q?ZdGHls22EESCNVu5tJl3vDjfsm60883DfbjkdCFmucuVKdclAOHsLhBDXIjB?=
- =?us-ascii?Q?SDtj9qrxroY0Mq/jZ1dhqfuYEoarslxg/z5oGzFA2LzSBJSS1i3TLgd1mGoQ?=
- =?us-ascii?Q?rTGkhgcoBPNqXLFRL2wnEQ2OrYbx0eMC6n51oaCEEu+GkMd4zw7ovKg2j25W?=
- =?us-ascii?Q?EmhUL8SvgT86se4Digi8gpmUXiYMIVu45ZJqrb9QzLj+S4lbHZqOobVZDmh+?=
- =?us-ascii?Q?90cpxd3bBPBZpFOm2nPXf3aA8BVnQpqgq3djG8+TidP9rhEEq/CnkKuszd5q?=
- =?us-ascii?Q?uj+XNqjOc2oJYbnwaPZi2I67YQgTN3hksv+QkyUdKILM6SuNjnZFrapBr9oV?=
- =?us-ascii?Q?ws6C0toJOiCHFmkh3ztuDXrj6Y9ctHpUIjPCE7Ujy94iqvBKEk7JeokKEv9S?=
- =?us-ascii?Q?V5es/54Fs25IgHXsqdxECc4BgB5dMjM8QJUSIaAqsw6Qsy0xmr7uV8VmQPlT?=
- =?us-ascii?Q?kAdjohqf2zppXdhh1c6fCDNYblnRKRG3VDcjJ0TytSkpgupJDbwu2ioTu0sc?=
- =?us-ascii?Q?V0+ajTmh/og2dn3tVkIt2CUPYbedAEMzr4w4vhv/WLrvhoUXlg6N1Y9P6a9A?=
- =?us-ascii?Q?J6JZI/hgrwq1SolxDSYvELPB+weRF6qUftcUndeUe3ONTOYdww6HRwzSYXDo?=
- =?us-ascii?Q?mxqQcKuiT9j42pOyb/tl9r2C/ptg4lm9nW2RnvXn4g7aFqLdmBFTZxajqPxd?=
- =?us-ascii?Q?NOaelLXjHKCoAL1FbXJYI57sw9QgElSx3S9bUq4a?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b050f2c-fd06-475d-0742-08dd5743faab
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 15:32:43.8622
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l9r9e+NRf0+UkhnobGoCCpnXISXiWHJilEyOl70Z8pbuhyDNLdhCLk7qksOm/EJY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6909
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Feb 27, 2025 at 11:21:28AM +0000, Robin Murphy wrote:
+This patchset moves the task_mm_cid_work to a preemptible and migratable
+context. This reduces the impact of this work to the scheduling latency
+of real time tasks.
+The change makes the recurrence of the task a bit more predictable.
 
-> It wouldn't need a hard dependency, it's easy to have a trivial built-in
-> stub function which becomes valid once the module loads - you literally have
-> the iommufd_driver infrastructure for precisely that sort of thing already.
+The behaviour causing latency was introduced in commit 223baf9d17f2
+("sched: Fix performance regression introduced by mm_cid") which
+introduced a task work tied to the scheduler tick.
+That approach presents two possible issues:
+* the task work runs before returning to user and causes, in fact, a
+  scheduling latency (with order of magnitude significant in PREEMPT_RT)
+* periodic tasks with short runtime are less likely to run during the
+  tick, hence they might not run the task work at all
 
-Yes, but I also kinda dislike using it because it bloats the built in
-kernel for a narrow use case..
+Patch 1 add support for prev_sum_exec_runtime to the RT, deadline and
+sched_ext classes as it is supported by fair, this is required to avoid
+calling rseq_preempt on tick if the runtime is below a threshold.
 
-> All I'm saying is to hide the callback detail in the IOMMUFD code because
-> being IOMMUFD modular is unique to IOMMUFD and not the rest of the core
-> code's problem.
+Patch 2 contains the main changes, removing the task_work on the
+scheduler tick and using a work_struct scheduled more reliably during
+__rseq_handle_notify_resume.
 
-Maybe we could use a global function pointer set/cleared on iommufd
-module load?
+Patch 3 adds a selftest to validate the functionality of the
+task_mm_cid_work (i.e. to compact the mm_cids).
 
-Regardless, we need to first find a way for the core code to tell if
-the domain is iommufd owned or not.
+Changes since V10:
+* Fix compilation errors with RSEQ and/or MM_CID disabled
 
-We should also make it so we can tell if dma-iommu.c is linked to that
-domain (eg vfio or the default_domain), then we can do the iova_cookie
-move without changing the destruction flows. This would be the missing
-union struct tag you mentioned in the other email.
+Changes since V9:
+* Simplify and move checks from task_queue_mm_cid to its call site
 
-What I've been thinking of is changing type into flags. I think we
-have now removed type from all drivers so this should be a small
-enough work.
+Changes since V8 [1]:
+* Add support for prev_sum_exec_runtime to RT, deadline and sched_ext
+* Avoid rseq_preempt on ticks unless executing for more than 100ms
+* Queue the work on the unbound workqueue
 
-Nicolin should be able to look into some followup here, it is not a
-small change.
+Changes since V7:
+* Schedule mm_cid compaction and update at every tick too
+* mmgrab before scheduling the work
 
-> And frankly otherwise, what even is the benefit of moving the iova_cookie
-> pointer into the union if we have to replace it with another whole pointer
-> to make it work?
+Changes since V6 [2]:
+* Switch to a simple work_struct instead of a delayed work
+* Schedule the work_struct in __rseq_handle_notify_resume
+* Asynchronously disable the work but make sure mm is there while we run
+* Remove first patch as merged independently
+* Fix commit tag for test
 
-It makes a lot more semantic sense that the domain owners all share a
-single "private data" pointer.
+Changes since V5:
+* Punctuation
 
-> This is just adding more code and more complexity in in
-> order to make struct iommu_domain... the same size it already is :/
+Changes since V4 [3]:
+* Fixes on the selftest
+    * Polished memory allocation and cleanup
+    * Handle the test failure in main
 
-That we get back the space we spent on sw_msi is a nice bonus.
+Changes since V3 [4]:
+* Fixes on the selftest
+    * Minor style issues in comments and indentation
+    * Use of perror where possible
+    * Add a barrier to align threads execution
+    * Improve test failure and error handling
 
-Jason
+Changes since V2 [5]:
+* Change the order of the patches
+* Merge patches changing the main delayed_work logic
+* Improved self-test to spawn 1 less thread and use the main one instead
+
+Changes since V1 [6]:
+* Re-arm the delayed_work at each invocation
+* Cancel the work synchronously at mmdrop
+* Remove next scan fields and completely rely on the delayed_work
+* Shrink mm_cid allocation with nr thread/affinity (Mathieu Desnoyers)
+* Add self test
+
+[1] - https://lore.kernel.org/lkml/20250220102639.141314-1-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250210153253.460471-1-gmonaco@redhat.com
+[3] - https://lore.kernel.org/lkml/20250113074231.61638-4-gmonaco@redhat.com
+[4] - https://lore.kernel.org/lkml/20241216130909.240042-1-gmonaco@redhat.com
+[5] - https://lore.kernel.org/lkml/20241213095407.271357-1-gmonaco@redhat.com
+[6] - https://lore.kernel.org/lkml/20241205083110.180134-2-gmonaco@redhat.com
+
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@redhat.org>
+To: Paul E. McKenney <paulmck@kernel.org>
+To: Shuah Khan <shuah@kernel.org>
+
+Gabriele Monaco (3):
+  sched: Add prev_sum_exec_runtime support for RT, DL and SCX classes
+  sched: Move task_mm_cid_work to mm work_struct
+  selftests/rseq: Add test for mm_cid compaction
+
+ include/linux/mm_types.h                      |  19 ++
+ include/linux/rseq.h                          |  13 ++
+ include/linux/sched.h                         |   7 +-
+ kernel/rseq.c                                 |   2 +
+ kernel/sched/core.c                           |  43 ++--
+ kernel/sched/deadline.c                       |   1 +
+ kernel/sched/ext.c                            |   1 +
+ kernel/sched/rt.c                             |   1 +
+ kernel/sched/sched.h                          |   2 -
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../selftests/rseq/mm_cid_compaction_test.c   | 200 ++++++++++++++++++
+ 12 files changed, 260 insertions(+), 32 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+
+
+base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
+-- 
+2.48.1
+
 
