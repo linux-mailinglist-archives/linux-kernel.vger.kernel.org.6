@@ -1,185 +1,164 @@
-Return-Path: <linux-kernel+bounces-535442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F8BA472FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0E0A47303
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCFD9188E52E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25F21887C35
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D5C1B0F32;
-	Thu, 27 Feb 2025 02:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D391B4232;
+	Thu, 27 Feb 2025 02:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tKpN6NKg"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NROAzE8G"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00271AA1E4
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365CB1AA1E4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740623105; cv=none; b=T4qb7fh4fxCJdTODve7oWvKvudTcO/tFaOfrflioZV2IQHPtTFZrx0LS/RUjJvpiPsHR3xJdY+ppt8wkDP0e9Tt4yqS5wn8Ln1UamVDOj89yF3STGwYRp/dSMz2c8sN+mqmDCWcKvxyYgSYpJfF41T8kkx7P0oSmlzKGzluVXkQ=
+	t=1740623118; cv=none; b=Ep/vTnd7nnejl7SCbZpDPqtPbJ1OgjfaObu/80hnCrHgJPqAVFclQyGA4VSOEoBz8Ai5DwnuxQ3ReFnWW5q98aCY9mGWU9RjzWm1gXV6DnqpMbtbAHjHrV1WuAXoK/R9bJdWr/HleR3fVtwS/C8RZZnnHRAjy3G4VJIk8h6p9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740623105; c=relaxed/simple;
-	bh=TQZmTPuXrWsBWP0UxIH5CePpJDuK/lT0ld31ANrFZnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cNdNshlo/xJ9dfqttzSRcXJAAofkaYfPyODKVhmyuUbyn1FvfdynvJBTh6nRQOvQ/+e4rUTzsw/LM59aZY13c1RHBz6fPQsaKCQdWotZvxL9A5N17HVsxCuZzn0HaUxNS4NhPqZDwYO+DrxkJUTOzBbxWgiUXOp27PGiiugD7/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tKpN6NKg; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <08e2e50a-f289-4019-9d74-62ecc45473e3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740623089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GKRxFCKu4oxfV1QzoclFLAwqr7hAo95BPBl9HIQDinE=;
-	b=tKpN6NKg6sJnT/SzcNzMIeFUIPKyWoXRe0iH44xHowIwU/Ny37tt8fimJE5m7BcPcOtea2
-	qc6c81VOr1vWbV++NsLtU0KJFDBgbiE/kgExIxSUb3sKf9/r5uoC336vrmADpaCL9ITq/B
-	k7Sgu+7h80pHH5nZi8V9RtUTEtnKBu4=
-Date: Thu, 27 Feb 2025 10:24:40 +0800
+	s=arc-20240116; t=1740623118; c=relaxed/simple;
+	bh=GI+BVzpsla5S77ixF6zzScQlWVEkGguh/pXHwFaIqGk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wr7XqG/vMn4URzLnbPRjZHTeYzTwKhKgn3vZ4auSRJJRRKd9quNX2Ra2OSePL10H2so45RLI4a0JmHgHkQM3fcNEvh2VU5HFoFyeytNDjiRUzmyX0PBY1N8KMsCRE/ZRS7+yiL555Udhjm21sdsMgweGX6QBjoTrAG6siSVYwag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NROAzE8G; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-545fed4642aso408736e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:25:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740623114; x=1741227914; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eUWtdB14jnh2w/XRiviqZD62FhazLUs+EUPGvTKghf8=;
+        b=NROAzE8GqHSrClfNBxLM6RaUx00bhft+uIyGrq2nqah1eaGKtqi32Ih6c9xZdSa67J
+         U9ALNH36DzWfsrHaQ23vzGDeon+MGiqSsMGP20g3p1Vjy8NIk0YKmiLDaZi10/CQwSZe
+         QLUTeujIM5lvOfkEzWWtaS28exCBrYYydWJxAYXzbX9YFmDUV/l/AP5Qf5VjnY/wC8bP
+         h7OBhZwUnYa7rl6zj0SFIF2YFvAdKV3NJc7D3VUpiiDwjPdbfHeO5zsSnt6V2JVT+cVu
+         aUamF67KsEVyjgl+oY6G5vbU4qz2kpDRfHrlIwuue9uCRq/qTNdoziKnby3LZYvi4muH
+         lq8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740623114; x=1741227914;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eUWtdB14jnh2w/XRiviqZD62FhazLUs+EUPGvTKghf8=;
+        b=Qhmh9dPZiVgEZzcA/e7o9WlHxEBwMLw+Sc9vM2d+2k2cq1bIm9aMtG1hd/hBiWKV38
+         Ucj+2ybAeO+27V2/I5SMN69mwZd5w57anN/HUF3IsOkXjNIhV3+VDeLBlkg/xp82qLZL
+         NKiZSaiV5e6eEkaU6z44FL1ILhJ63g/WBahgtjLnk5dEXUm4cZavkardEQ1iey4JoQzx
+         s4yaKtDMZqRWmo8Fx1KTH3TgxU2P3/5PaWIpBuFPLe3wUU3gxC8+wZ/0LRIp4J/evZ60
+         Dr9U6J++kD6ULav0QdsTuJwIwd95h6yMAZqeqnGQKVMUmKaHTTfXlQPACoTalLmU071D
+         z6BA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlL7xONzK5owF7QiVklTjyBnDKIQ5vAQz7DvdIotCAeaaXSeS0i65lYoyGV6IqnBzfkXxBsKoqAU0rLio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfmHnCH1SR8qsJcsTpSwKZjP8V1pPDHDhbOTj2/PiYGaVwxWXY
+	5h65+RfZlGCXEb4N5Iijd0pT6TnO9QYdDM5BjYi1Ja2ZlFo4zDR4vqOA3TlXcUg=
+X-Gm-Gg: ASbGncswE9iDRdKgfhA66YV/MCJVF4obUhDDCASfCmLIvLB0uCBfqXFPxNoLhww0Nbv
+	ii7Eyk739OEaCULiQ/DYixozQYrm/E0FksOtW73EQ6xwW7ZynxY0IEXsM2xue8UUrqwK/TxvosD
+	vSrTfaVQz+0YZt1co8D1lJxBfZsYyRCMRh/I4wCwqgSIimi263xVZMWUBef4eO7P17KWEirVSMQ
+	PvpkhMufPwhhAMa0nHDhAB3is+CJV8dmy7fUZfPskJ8xijgkOqEk82I820vRtvBKaF9Ab0/4Iit
+	I4LH8zvQ919dd0Dhv2MZExqJ18KTLTMGsw==
+X-Google-Smtp-Source: AGHT+IEcp3eou/4dlv37w4mxvS1t+d8IRoUwVQH8cDzzQZ+M5zz+OASkfl03BF8A1+GTRYY3AwRSGA==
+X-Received: by 2002:a05:6512:200e:b0:548:794f:f9dd with SMTP id 2adb3069b0e04-548794ffb8cmr4463067e87.10.1740623114210;
+        Wed, 26 Feb 2025 18:25:14 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549441742a0sm48067e87.5.2025.02.26.18.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 18:25:12 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 0/7] drm/msm/mdp4: rework LVDS/LCDC panel support
+Date: Thu, 27 Feb 2025 04:25:08 +0200
+Message-Id: <20250227-fd-mdp4-lvds-v3-0-c983788987ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
- zswap_cpu_comp_dead()
-To: Yosry Ahmed <yosry.ahmed@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- "David S. Miller" <davem@davemloft.net>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com,
- syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com, stable@vger.kernel.org
-References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIAATNv2cC/52PywqDMBBFf0Wy7kgePrvqfxQXqUk0VI1MJFTEf
+ 28UCu22yzNwDnc24jVa7ck12QjqYL11UwRxSUjby6nTYFVkwinPqGAlGAWjmjMYgvKg48VUhVF
+ 13ZKozKiNfZ25exPZoBth6VHLT4TTghW0poKzNBOCZzUwUKNdcE0fElffP124DXaS6FKH3VHtr
+ V8crufGwI/2v6Wo5Yf5+0XgQIHl0ug8Lysp2LfV7Pv+BvFbrbUmAQAA
+X-Change-ID: 20240317-fd-mdp4-lvds-e317f86fd99c
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2142;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=GI+BVzpsla5S77ixF6zzScQlWVEkGguh/pXHwFaIqGk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnv80GTG9htKZS4aIoUdR9qZ1oXGU6qMNP2/w7D
+ +V0XH1DRe2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7/NBgAKCRCLPIo+Aiko
+ 1X7kB/9IV/ZQTS+2xw+LYlJXcF50/7JBHGVTDk3fEUr5Vr4SUe7EC6Kz2ybH5fXb6pA6a+MkHtl
+ E4GfYnPdt86zcBggSdP4MAZUmk7mY0y6zumQLZW1rA86bd8adZuPhmfYrYZf8jVphdUtyVxH+Zf
+ t5MmFFV7ejM8FDsVVanMkElZlfNJhkKsO3vonUgGGGJU4wxEzeBZzTu5Qte70Y7FLSIK/PpndyO
+ UCYZHEu/uILCvTkRMc9NO+rXCv9MwIuL4hX/25Z+nxp1TeXspRNPW7iBzkabv+zkKM/VKWfFO8d
+ u8zuoo+vca87hzCm8ChPPROf1gJbyibdmMlS4SERUXzPVP4V
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 2025/2/27 02:56, Yosry Ahmed wrote:
-> Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
-> the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
-> (through crypto_exit_scomp_ops_async()).
-> 
-> On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
-> (through crypto_scomp_init_tfm()), and then allocates memory.
-> If the allocation results in reclaim, we may attempt to hold the per-CPU
-> acomp_ctx mutex.
-> 
-> The above dependencies can cause an ABBA deadlock. For example in the
-> following scenario:
-> 
-> (1) Task A running on CPU #1:
->      crypto_alloc_acomp_node()
->        Holds scomp_lock
->        Enters reclaim
->        Reads per_cpu_ptr(pool->acomp_ctx, 1)
-> 
-> (2) Task A is descheduled
-> 
-> (3) CPU #1 goes offline
->      zswap_cpu_comp_dead(CPU #1)
->        Holds per_cpu_ptr(pool->acomp_ctx, 1))
->        Calls crypto_free_acomp()
->        Waits for scomp_lock
-> 
-> (4) Task A running on CPU #2:
->        Waits for per_cpu_ptr(pool->acomp_ctx, 1) // Read on CPU #1
->        DEADLOCK
-> 
-> Since there is no requirement to call crypto_free_acomp() with the
-> per-CPU acomp_ctx mutex held in zswap_cpu_comp_dead(), move it after the
-> mutex is unlocked. Also move the acomp_request_free() and kfree() calls
-> for consistency and to avoid any potential sublte locking dependencies
-> in the future.
-> 
-> With this, only setting acomp_ctx fields to NULL occurs with the mutex
-> held. This is similar to how zswap_cpu_comp_prepare() only initializes
-> acomp_ctx fields with the mutex held, after performing all allocations
-> before holding the mutex.
-> 
-> Opportunistically, move the NULL check on acomp_ctx so that it takes
-> place before the mutex dereference.
-> 
-> Fixes: 12dcb0ef5406 ("mm: zswap: properly synchronize freeing resources during CPU hotunplug")
-> Reported-by: syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67bcea51.050a0220.bbfd1.0096.GAE@google.com/
-> Cc: <stable@vger.kernel.org>
-> Co-developed-by: Herbert Xu <herbert@gondor.apana.org.au>
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+The LCDC controller uses pixel clock provided by the multimedia clock
+controller (mmcc) instead of using LVDS PHY clock directly. Link LVDS
+clocks properly, taking MMCC into account.
 
-Looks good to me:
+MDP4 uses custom code to handle LVDS panel. It predates handling
+EPROBE_DEFER, it tries to work when the panel device is not available,
+etc. Switch MDP4 LCDC code to use drm_panel_bridge/drm_bridge_connector
+to follow contemporary DRM practices.
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+---
+Changes in v3:
+- Fixed commit message to explain that DT name is used in addition to
+  the global system table lookup (Konrad).
+- Link to v2: https://lore.kernel.org/r/20250220-fd-mdp4-lvds-v2-0-15afe5578a31@linaro.org
 
-Thanks!
+Changes in v2:
+- Rebase on top of msm-next.
+- Upgrade LVDS clock code to use clock providers and parent_data
+- Use LVDS clock from the MMCC instead of using LVDS PHY directly
+- Link to v1: https://lore.kernel.org/r/20220616090321.433249-1-dmitry.baryshkov@linaro.org
 
-> ---
-> 
-> v1 -> v2:
-> - Explained the problem more clearly in the commit message.
-> - Moved all freeing calls outside the lock critical section.
-> v1: https://lore.kernel.org/all/Z72FJnbA39zWh4zS@gondor.apana.org.au/
-> 
-> ---
->   mm/zswap.c | 30 ++++++++++++++++++++++--------
->   1 file changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index ac9d299e7d0c1..adf745c66aa1d 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -881,18 +881,32 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
->   {
->   	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
->   	struct crypto_acomp_ctx *acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
-> +	struct acomp_req *req;
-> +	struct crypto_acomp *acomp;
-> +	u8 *buffer;
-> +
-> +	if (IS_ERR_OR_NULL(acomp_ctx))
-> +		return 0;
->   
->   	mutex_lock(&acomp_ctx->mutex);
-> -	if (!IS_ERR_OR_NULL(acomp_ctx)) {
-> -		if (!IS_ERR_OR_NULL(acomp_ctx->req))
-> -			acomp_request_free(acomp_ctx->req);
-> -		acomp_ctx->req = NULL;
-> -		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
-> -			crypto_free_acomp(acomp_ctx->acomp);
-> -		kfree(acomp_ctx->buffer);
-> -	}
-> +	req = acomp_ctx->req;
-> +	acomp = acomp_ctx->acomp;
-> +	buffer = acomp_ctx->buffer;
-> +	acomp_ctx->req = NULL;
-> +	acomp_ctx->acomp = NULL;
-> +	acomp_ctx->buffer = NULL;
->   	mutex_unlock(&acomp_ctx->mutex);
->   
-> +	/*
-> +	 * Do the actual freeing after releasing the mutex to avoid subtle
-> +	 * locking dependencies causing deadlocks.
-> +	 */
-> +	if (!IS_ERR_OR_NULL(req))
-> +		acomp_request_free(req);
-> +	if (!IS_ERR_OR_NULL(acomp))
-> +		crypto_free_acomp(acomp);
-> +	kfree(buffer);
-> +
->   	return 0;
->   }
->   
+---
+Dmitry Baryshkov (7):
+      dt-bindings: display: msm: mdp4: add LCDC clock and PLL source
+      drm/msm/mdp4: drop mpd4_lvds_pll_init stub
+      drm/msm/mdp4: register the LVDS PLL as a clock provider
+      drm/msm/mdp4: use parent_data for LVDS PLL
+      drm/msm/mdp4: move move_valid callback to lcdc_encoder
+      drm/msm/mdp4: switch LVDS to use drm_bridge/_connector
+      arm: dts: qcom: apq8064: link LVDS clocks
+
+ .../devicetree/bindings/display/msm/mdp4.yaml      |   9 +-
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi           |  16 ++-
+ drivers/gpu/drm/msm/Makefile                       |   1 -
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c           |  34 ++++--
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h           |  16 +--
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  55 +++++-----
+ .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    | 121 ---------------------
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c      |  28 ++---
+ 8 files changed, 86 insertions(+), 194 deletions(-)
+---
+base-commit: 66054467b223f366fc463bb69aa7dcd050986e62
+change-id: 20240317-fd-mdp4-lvds-e317f86fd99c
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
