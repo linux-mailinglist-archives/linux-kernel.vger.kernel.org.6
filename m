@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-536616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084F1A48227
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:56:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4AAA481D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88181887261
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FFB3A4532
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8426223A9AE;
-	Thu, 27 Feb 2025 14:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="NXs/Siaj"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DFA239561;
-	Thu, 27 Feb 2025 14:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349A223BF9A;
+	Thu, 27 Feb 2025 14:42:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBB2236430
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667265; cv=none; b=XGbRpUSEk8tpqEa93bCD3Zc1Eif9uKmeVFs2trpMsNORnkNXBtPws0MPiDHpZwNE24EnsixI5aiYc5z/+EHOAHZlGHsROj4ufUC+/GD5nfje5Srv6migzwKx7emBDGfGn1HcOh8/XANAEUvyoctCFq9tjaRZdIbUtsWTx08A+IQ=
+	t=1740667327; cv=none; b=llMO0kU4/70KnotrC48nxw/WoQHmo2q7k+PmWDEySxPtiXildAxN6TYUL595hJEvHC5b8ibPxKoK7U2bT5aKxr2uXDK2LzCZU/HeEaHn7mBsmvwVeBEg08uglt7vtG1+lYWnWD6S32KutT8fJdQbHaLoDZ5T9ZmLu/E/6dR6GrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667265; c=relaxed/simple;
-	bh=N3lTEQDrw6c7LygGNJXaKT7D763HBGcbhJBy/5sCNdU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0D4pyAez2E+v8GIIZA1DQk5oHCu5otojb5EGpXDlcrbw6LW2F2wOCZ1eN4kUIueYx3hRZfEHSCPQ66Wi1c9RBvQQIkoNG1qeK0ilVSyQLlkwnOAwaubUR6uGT9rfg2fM3no5LX70vmeak/8B0ZfvTpsC3gMg4WWuMMXYmU5ghM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=NXs/Siaj; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id B910CA02D7;
-	Thu, 27 Feb 2025 15:41:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=RgGNxrUr8LJkEzv7yIWY
-	EgpM/6tPuhZMATjWdJfm/zw=; b=NXs/Siajzan1KhEv6oKWql6dKV5jRSIIaMJc
-	qEkz6blskcKq/6QfeXZgj8sePbd/sN+hlrgRasMgcBJu071PqzNojDDv8c3DCiZe
-	qgq2d5fxsdMSXD6kwsvzhp0LVB4xQnhFjwv46WX7byeY6uSOQ9ns3TZtS+Qx7LSi
-	0xBTPKReuSfI9DqkDPvGHhXN+d/w55MjZKNuIK/6UQR/I5EMkvH1Z7ULybrHZdEC
-	kGMTIiFpZFm64PDojncyh4yYqibJaq+FWQyt0FBJDuodqq/LHgc3A/GBhfsWvK6T
-	zogrPu5QZhvkxq2gK79Yvb6Z4Zld5qYJQdyv9gNdo1Ez8acSve2Evih8CkjCDLyw
-	Kh0tt/IUwEw3cjh75bcPeX1xqki7T2Hka5ZW6Y7I7Ph9reJWQI4NUhf9BHg54Cxq
-	Mchg/47qe/JE2shmX8hOYN/s4eOVvl7MKUmSbEiIYF2R/+Kl+lj6dqMK8mE/6wzD
-	nS+2ReFSgAIA4/tLTN8hdooTj4CHKb2JCxo9ncN0FHhkYahEfskEh6xdyoDZ6A1a
-	vfyJmti7pk8bOfrtPwckSaSXQF6zyu57PozQyPEC69Z+4sTE09FbIxfhIw2n4Tqf
-	vCN4crg/RNOU7LrLm4Zsz1GCG+Y5HIcjHD5SzvpjiXeKIeVmU9ZNGTYHtXXfPWiM
-	y9u2+j0=
-From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Kamel
- Bouhara" <kamel.bouhara@bootlin.com>, William Breathitt Gray <wbg@kernel.org>
-Subject: [PATCH v6 3/3] counter: microchip-tcb-capture: Add capture extensions for registers RA/RB
-Date: Thu, 27 Feb 2025 15:40:20 +0100
-Message-ID: <20250227144023.64530-4-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250227144023.64530-1-csokas.bence@prolan.hu>
-References: <20250227144023.64530-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1740667327; c=relaxed/simple;
+	bh=o+EOrruqKu0KKeck//QLLC0wRLaIlDz/2CoijozD7rY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNbKepQ6/5Upc5/m/n6+UEPJkgwNErD3+16vAbfQ2HWFP89Av2++itdh9kUC+dPQ6ANDXd0pH5xwL5hhgNiXu7AyA1OsLVQ99ZdFQIlm4CWe809uvkcRC3lxp6DqAMR8STnEHHUJ+lTfeNjUKcemdNBzJRaWx9M6Zb7Uj2v9nFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6868B2BCA;
+	Thu, 27 Feb 2025 06:42:20 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3179D3F673;
+	Thu, 27 Feb 2025 06:42:03 -0800 (PST)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: will@kernel.org,
+	catalin.marinas@arm.com,
+	maz@kernel.org,
+	steven.price@arm.com,
+	aneesh.kumar@kernel.org,
+	gshan@redhat.com,
+	robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH v3 0/3] arm64: realm: Fix DMA address for devices
+Date: Thu, 27 Feb 2025 14:41:47 +0000
+Message-ID: <20250227144150.1667735-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1740667261;VERSION=7985;MC=2016132060;ID=1459478;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852637760
 
-TCB hardware is capable of capturing the timer value to registers RA and
-RB. Add these registers as capture extensions.
+Linux can be run as a Confidential Guest in Arm CCA from Linux v6.13. The address
+space (GPA or IPA) of a Realm VM is split into two halves, with private bottom
+half and shared top half. In Linux we treat the "top" bit of the IPA space as
+an attribute, to indicate whether it is shared or not (MSB == 1 implies shared).
+Stage2 (GPA to PA) translations used by the CPU accesses, cover the full IPA space,
+and are managed by RMM. The "top" bit as attribute is only a software construct.
 
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
+At present any device passed through to a Realm is treated as untrusted and the
+Realm uses bounce buffering for any DMA, using the "decrypted" (shared) DMA
+buffers (i.e., IPA with top bit set). In Linux, we only send the "DMA" address
+masking the "top" bit. In Arm CCA, SMMU for untrusted devices are managed by the
+non-secure Host and thus it can be confusing for the host/device when an unmasked
+address is provided. Given there could be other hypervisors than Linux/KVM
+running Arm CCA guests, the Realm Guest must adhere to a single convention for
+the DMA address. This gets further complicated when we add support for trusted
+devices, which can DMA into the full Realm memory space, once accepted. Thus,
+a DMA masked address (with "top" bit lost) will prevent a trusted device from
+accessing a shared buffer.
 
-Notes:
-    Changes in v2:
-    * Add IRQs
-    Changes in v3:
-    * Move IRQs to previous patch
-    Changes in v4:
-    * Return the status of the regmap_*() operations
-    * Add names for the extension numbers
-    Changes in v6:
-    * Remove RC, as it is not a capture register
+To resolve this Arm has decided to standardise the DMA address used by the Realm
+to include the full IPA address bits (including the "top" bit, which Linux uses
+as an attribute). This implies, any DMA to a shared buffer must have the top bit
+of the IPA space set.
 
- drivers/counter/microchip-tcb-capture.c       | 56 +++++++++++++++++++
- .../linux/counter/microchip-tcb-capture.h     |  9 +++
- 2 files changed, 65 insertions(+)
+There is already a provision to do this in phys_to_dma* and dma_to_phys(), but
+that is specific to AMD SME and is quite the opposite of what we need for Arm CCA.
+i.e., For Arm CCA we need to set the bit for "decrypted" DMA and clear the bit
+for "encrypted".
 
-diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
-index cc12c2e2113a..4ba5e29138e7 100644
---- a/drivers/counter/microchip-tcb-capture.c
-+++ b/drivers/counter/microchip-tcb-capture.c
-@@ -254,6 +254,60 @@ static int mchp_tc_count_read(struct counter_device *counter,
- 	return 0;
- }
- 
-+static int mchp_tc_count_cap_read(struct counter_device *counter,
-+				  struct counter_count *count, size_t idx, u64 *val)
-+{
-+	struct mchp_tc_data *const priv = counter_priv(counter);
-+	u32 cnt;
-+	int ret;
-+
-+	switch (idx) {
-+	case COUNTER_MCHP_EXCAP_RA:
-+		ret = regmap_read(priv->regmap, ATMEL_TC_REG(priv->channel[0], RA), &cnt);
-+		break;
-+	case COUNTER_MCHP_EXCAP_RB:
-+		ret = regmap_read(priv->regmap, ATMEL_TC_REG(priv->channel[0], RB), &cnt);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (!ret)
-+		*val = cnt;
-+
-+	return ret;
-+}
-+
-+static int mchp_tc_count_cap_write(struct counter_device *counter,
-+				   struct counter_count *count, size_t idx, u64 val)
-+{
-+	struct mchp_tc_data *const priv = counter_priv(counter);
-+	int ret;
-+
-+	if (val > U32_MAX)
-+		return -ERANGE;
-+
-+	switch (idx) {
-+	case COUNTER_MCHP_EXCAP_RA:
-+		ret = regmap_write(priv->regmap, ATMEL_TC_REG(priv->channel[0], RA), val);
-+		break;
-+	case COUNTER_MCHP_EXCAP_RB:
-+		ret = regmap_write(priv->regmap, ATMEL_TC_REG(priv->channel[0], RB), val);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static DEFINE_COUNTER_ARRAY_CAPTURE(mchp_tc_cnt_cap_array, 2);
-+
-+static struct counter_comp mchp_tc_count_ext[] = {
-+	COUNTER_COMP_ARRAY_CAPTURE(mchp_tc_count_cap_read, mchp_tc_count_cap_write,
-+				   mchp_tc_cnt_cap_array),
-+};
-+
- static struct counter_count mchp_tc_counts[] = {
- 	{
- 		.id = 0,
-@@ -262,6 +316,8 @@ static struct counter_count mchp_tc_counts[] = {
- 		.num_functions = ARRAY_SIZE(mchp_tc_count_functions),
- 		.synapses = mchp_tc_count_synapses,
- 		.num_synapses = ARRAY_SIZE(mchp_tc_count_synapses),
-+		.ext = mchp_tc_count_ext,
-+		.num_ext = ARRAY_SIZE(mchp_tc_count_ext),
- 	},
- };
- 
-diff --git a/include/uapi/linux/counter/microchip-tcb-capture.h b/include/uapi/linux/counter/microchip-tcb-capture.h
-index ee72f1463594..5c015fafe42c 100644
---- a/include/uapi/linux/counter/microchip-tcb-capture.h
-+++ b/include/uapi/linux/counter/microchip-tcb-capture.h
-@@ -12,6 +12,9 @@
-  * Count 0
-  * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
-  * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
-+ * \__  Extension capture0    (RA register)
-+ * \__  Extension capture1    (RB register)
-+ * \__  Extension capture2    (RC register)
-  *
-  * It also supports the following events:
-  *
-@@ -30,6 +33,12 @@ enum counter_mchp_signals {
- 	COUNTER_MCHP_SIG_TIOB,
- };
- 
-+enum counter_mchp_capture_extensions {
-+	COUNTER_MCHP_EXCAP_RA,
-+	COUNTER_MCHP_EXCAP_RB,
-+	COUNTER_MCHP_EXCAP_RC,
-+};
-+
- enum counter_mchp_event_channels {
- 	COUNTER_MCHP_EVCHN_CV = 0,
- 	COUNTER_MCHP_EVCHN_RA = 0,
+This series converts the existing __sme_* helpers to a bit more generalised versions :
+dma_addr_decrypted() and dma_encrypted(). Also, while converting a DMA address back
+to CPU physical address requires clearing off any "encryption/decryption" bits.
+I have named this "dma_addr_canonical()". (The other options are :
+  * dma_addr_clear_encryption - Well, not just for encryption, but we clear decryption
+    too, so not ideal.
+  * dma_addr_normal
+  * dma_addr_clear
+  * dma_addr_default
+
+This also implies that the VMMs must take care to :
+
+ 1. Create the S2-SMMU mappings for VFIO at the "unprotected" alias.
+ 2. Always mask the "top" bit off any IPA it receives from the Realm for DMA.
+    KVM already does that today and no changes are required.
+
+A kvmtool branch with the changes above is available here [1]. There are two
+patches [2] & [3], that are really required on top of the Arm CCA support.
+
+Ideally it would be good to get this backported to v6.13 stable kernel releases
+to make sure that they are compliant with this change.
+
+Changes since v2:
+ Link: https://lkml.kernel.org/r/20250219220751.1276854-1-suzuki.poulose@arm.com
+  - Collect Acks & Reviews for Patch 1
+  - Rename helpers
+  	dma_encrypted		=> dma_addr_encrypted
+	dma_decrypted		=> dma_addr_unencrypted
+	dma_clear_encryption	=> dma_addr_canonical
+  - For Arm CCA, use PROT_NS_SHARED, set/clear only the top IPA bit.
+  - Drop dma_addr_encrypted() helper for Arm CCA as it is a NOP
+
+Changes since v1
+ Link: https://lkml.kernel.org/r/20250212171411.951874-1-suzuki.poulose@arm.com
+ - Follow Robin's suggestion to generalise the DMA address conversion helpers
+   to provide dma_{encrypte,decrypted,clear_encryption}. See PATCH 2 for more
+   details.
+ - Add a fix to the ordering of "__sme_clr" for dma_to_phys (PATCH 1)
+
+[1] git@git.gitlab.arm.com:linux-arm/kvmtool-cca.git cca/guest-dma-alias/v1
+[2] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/ea37a6eb968abe4c75be4a8a90808714657c2ef7
+[3] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/8afd0d5e6a7ee444dd0c1565fe94ecd831054a29
+
+Cc: Will Deacon <will@kernel.org>
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Gavin Shan <gshan@redhat.com>
+
+Suzuki K Poulose (3):
+  dma: Fix encryption bit clearing for dma_to_phys
+  dma: Introduce generic dma_addr_*crypted helpers
+  arm64: realm: Use aliased addresses for device DMA to shared buffers
+
+ arch/arm64/include/asm/mem_encrypt.h | 11 +++++++++++
+ include/linux/dma-direct.h           | 13 +++++++++----
+ include/linux/mem_encrypt.h          | 23 +++++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 4 deletions(-)
+
 -- 
-2.48.1
-
+2.43.0
 
 
