@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-536647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1490A48284
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:10:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6246A482A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CCA188A059
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46324170672
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B723816C;
-	Thu, 27 Feb 2025 15:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0822226AA8D;
+	Thu, 27 Feb 2025 15:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aMSXQCEc"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="UKh8opMs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IKGJDuEL"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AA266190
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD4B26A1A6;
+	Thu, 27 Feb 2025 15:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668598; cv=none; b=Br1CmIa1Ok3us6Zt4xlfBK96PAJHOTStx/ppuVp6dd24agrCv1nGbc4QDR+VS6YUsjRjnKM4LPQIQdaFv1bYj4nsRseEoYq+rxVSeol9QOQPscMyybw5YoeEAIKZ7xtBVovSTmzD9LWxxUB7wMdFwOYD3shU93atQmLMZlwP5WU=
+	t=1740668767; cv=none; b=bMhMzm2AaBaC8w2Q6RPLfa/vAVme1nqWDQXN6njGVmqJVfEINg3vtTB/2lZOJq+9e6CzQYfYOBEhOOArmb7/6BJu0WIQ31ylOFpTT4CJV9Bi2LwnzVmoNFiNNM0ReeC8tV2Q/PmPzsqK9Nc3kNws8/KozjN3H8b17TLnuq6rCPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668598; c=relaxed/simple;
-	bh=Tl40Fm+loygXp9JTJZ0Z7May9tG5QQ1he6NwlUmTUjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbwamZjxrhv4RmvDvnC4BnIku9+LDlTRrYYLrwt/W+XeJGBAyX3i50r/DDCyhwO2sUXpx8AaQgqs6JL+EhbCqeoJgXR4cWbPMS4ypPMOB8/dER1VfNNvMxHUKxsL7TOdubhWMSknDii5llU1fq6CaAzSVwVs9iDjYaOG6LLppv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aMSXQCEc; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30761be8fa8so12494081fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:03:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740668595; x=1741273395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jct5/sWNcnHp4YAXGTjpriX8VME8tdrztTmpTBFh3WQ=;
-        b=aMSXQCEcg8RqG+qJqVpEHWj9PPcUP9pfHJoA95HV4UjkVPTIxTlO9xGCMCDfaGEDLs
-         xL9NW4Hq/fGFgr4+sBdXSI7G9YcS4jViE6+/ufbI73tEC/jME4UsEzngv8WqVKOKpD73
-         IEKXy2jBQa9JNpoSdEe08jKb2NJyhQy1jjqaEHwS4WjTxDoMh4qP2lPSeAnS5raSjrTc
-         F3eastvt5F5PRTi7rzlBzAYEnb0BQYll7AE8s0eHCgSQOR0hVBWW8yEEBo2LlAM1Qdgn
-         odFjAf1lOCJixT3O40yz+ktjBwyPSs5QMQOCxFPKeacDK17EdFNw9UeQLKdSy/wIlI4T
-         I5nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740668595; x=1741273395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jct5/sWNcnHp4YAXGTjpriX8VME8tdrztTmpTBFh3WQ=;
-        b=t2ciTc5x5CVtarjQw18huPpq2zJyIHMpSdp9d64xv2lEsSY+K1qyqIRY6gQ3rtcWad
-         PcWdVlcMN+8cmdN8st8EQCzifmhRBAoFopTbXOlWMcSY2nGp0KkfVfoREpFWTj3zmU7y
-         qKv9/7sSl8SdKGS4KbRT0CVHj+H5gISbsZZUelTHdlrN/XOXjXfz1/HMvYAdqrVoQ+gt
-         ZLUiZPCcegEJyp547uwnw1pHfQ7oE38QXOrveFKzE8T6IM7i5ElUm/iypgUuyU7B/Xze
-         iUqtcBIWcdwCn8HkbXSvMeCNNS1928TqvSw2+gLG6Nn9G7GH5pugK3fWBmFJwCIW1pqx
-         BQoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWWD0oVyQaGtKp37539bdIoqL6k+JykV7EoJRksm2An/bTb4yLjIqAPKyffXrERNumNbwE9GcU554dyTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcucTwBAy/4HLFsSIfGX0+XDjwFXECjIsPihMh5SXwFlVO9Ky7
-	6+N2v4zRRKfakjZH9WoS5KgvXdirgfE25sOJJHomIrRllpA/XXj6ZYY5p+8rZQcv24GK2/Qhe0u
-	9Ars=
-X-Gm-Gg: ASbGnct98AS6mdYyXSpEEPwDVFnrugcIAr2N9Z9CCse4zU9ZbvJT8zOJbxHQuDPW5l8
-	ges5gM4OoSyf/xRE5qO4DGnNMyjD3xdf7PAPC2baq62a7gC1hGURbGVNzZ3H1QySpdudkYz96Zs
-	Dps2sgOpWgwTG+nRC1R9c+wjPD5jYUhRwlUG/KMKjSHbWs5/AryrUrvVcTaumHuTNfhdlsreKaQ
-	634yPZ+7WxvC84ILlTn/D8lb7pU1EKnzNAYrngHcPyhsqx+0HpbxMhQNUchX28U4BIVqVWXi0kf
-	WByoe33/7zAIlXw2poQnugJNsOWKgXceSB7kSynOhdJoeV0TPOoLxqWESNCuT0FGCzSEraIK0of
-	mcQ3nCQ==
-X-Google-Smtp-Source: AGHT+IGu6e9SzMnhpr5EnGH9g23xD2bFOtEakcdfl/ZUCRRGs5xA3LtI3CvuzfMuKxAB74Z8ujrfbg==
-X-Received: by 2002:a05:6512:3d16:b0:545:62c:4b29 with SMTP id 2adb3069b0e04-548510d2891mr6258092e87.22.1740668594423;
-        Thu, 27 Feb 2025 07:03:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443b11f0sm180701e87.114.2025.02.27.07.03.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 07:03:13 -0800 (PST)
-Date: Thu, 27 Feb 2025 17:03:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: Enable MMC
-Message-ID: <ryfawl6uykry5ds5kovujvepkwffdwitbqltx75wnnrqrbl4b2@i2pjwegs3u4n>
-References: <20250227094226.2380930-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1740668767; c=relaxed/simple;
+	bh=FsSkkWVRE5A+K0oLEhRfxK1WyJt0oRV08EFDZyOUJoY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eLxBwWkefEap6BvmcePeXctl4bbtDIPa83jisN5PhLFyLnxXfkNV2SOq6L7TCsnjclPE4+5o8M46cYuuqDCnZI7kUI45a4gpVtPN3nXAyjjOBZN1a0yAA6SaDvcp7DThUWIdO/FIp1gcM0w7oZBncjcJ/XuM5aaomMkjQbPkrk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=UKh8opMs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IKGJDuEL; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DF8E11140B90;
+	Thu, 27 Feb 2025 10:06:02 -0500 (EST)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-04.internal (MEProxy); Thu, 27 Feb 2025 10:06:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740668762;
+	 x=1740755162; bh=mBJu1LUBZD7huyP2Fqh3L6NWg2IhYufGL+1Vn+2FDk4=; b=
+	UKh8opMsCwvAVZdE00m1mCO5tFu68JmUTlO0gTbA33y00UtodSnMMEt7WGwJ44O4
+	SR+kFARoU8QFWeg8YXSY2/x9udGOXve9NsZUN5MQmL/Wk+mCbho8Ssw2WeIYTgSQ
+	pAgcw4903ZTkDaI9883t8Isgp1YLIMQH4oRvRSG2lsnBs+K6a5Ur1A7ODJlnLeUK
+	I/ovzifLAo5Gq/0iKHBwPuSEh5Jv+TQmKGGTf4EG7kM6mWGHLDZxe/UeMohwlvoP
+	TrFEp6Jgk0aQWDg8mZP1vU+lQFg6y29KhZFYtr5xMXi/EMnx2xaASfwfw17wv6NT
+	xABk6kXkJzIjkFQcKNC5Jw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740668762; x=
+	1740755162; bh=mBJu1LUBZD7huyP2Fqh3L6NWg2IhYufGL+1Vn+2FDk4=; b=I
+	KGJDuELaDLLWtOxASLb+GUKGdORsAJsgXY52yQP0rK4INpJaj2/uMjLp3daRJLgT
+	BM/JY+yKKYT9Bb72pRHzWT50f6Za06DrnIRrnYPkjUJfEWT5HTtFTdIW7n945EE6
+	xaz3RHkNZenXRy3XlWedPmjwQZX8tcVhxPdRsXQ1jOfcNxg+weq8lJkDFX7yRB/k
+	E096z1Cv6i3zHICJFIFJyuLYfR8UecxFczEOfG7OeMrAB5c/btvYM0QXEgklmzDR
+	rhs80k3bse5SuoodFrLS2aEkUSORA5YolqD0GZhl5B4C3DFNjOHFTYf95A2BpgAI
+	96BvzMzf5pTxyJXnhFyXg==
+X-ME-Sender: <xms:Wn_AZx5xjrGS-Pyj_DdZ4huDDCN0ciJlj4rcJXU0UUDHxEPt52Ijrw>
+    <xme:Wn_AZ-455SZniSlolirpV4t1_Wy88EaC46caDzPl_DJOtaSTQ58YxwMdRoI1qp1K6
+    5LtZ2GtouLf6nLSvDY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeejjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
+    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthht
+    ohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhhthhhonh
+    ihrdhlrdhnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihs
+    lhgrfidrkhhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehkuhgsrgeskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhi
+    shhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvh
+    eslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphht
+    thhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:Wn_AZ4fWbUQBZ8lV40EH9Gxs753wjQ1Xguvqbbg-2LHGtZW53_My4A>
+    <xmx:Wn_AZ6IN2ewPNHK4QfsbqiPc_DQuKCPFGBJy50WPtE96F-W2_S69uQ>
+    <xmx:Wn_AZ1IeRiRkBG7KrUGTBdzzstEMpDHnmqQ2R12fB4gd5gL354FpMw>
+    <xmx:Wn_AZzwxlwHNgv9SlJYs-9moKXo_z3nxzU8WgNmuVHVdA6e8ntQRkQ>
+    <xmx:Wn_AZyDpmM_1D89-dk9jtROtXpAUY-bH0vuomWAWb6YCMIgDk4fNRspZ>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 088FB3C0066; Thu, 27 Feb 2025 10:06:02 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227094226.2380930-1-quic_varada@quicinc.com>
+Date: Thu, 27 Feb 2025 10:05:41 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
+In-Reply-To: <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+References: <mpearson-lenovo@squebb.ca>
+ <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 03:12:26PM +0530, Varadarajan Narayanan wrote:
-> Enable MMC and relevant pinctrl entries.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> index b6e4bb3328b3..252687be9dc3 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> @@ -69,6 +69,14 @@ &qusb_phy_1 {
->  	status = "okay";
->  };
->  
-> +&sdhc {
-> +	pinctrl-0 = <&sdc_default_state>;
+Hi Andrew,
 
-Where is it defined?
-
-> +	pinctrl-names = "default";
-> +	supports-cqe;
-
-This property should be a part of the SoC dtsi.
-
-> +
-> +	status = "okay";
-> +};
-> +
->  &sleep_clk {
->  	clock-frequency = <32000>;
->  };
-> -- 
-> 2.34.1
+On Wed, Feb 26, 2025, at 5:52 PM, Andrew Lunn wrote:
+> On Wed, Feb 26, 2025 at 02:44:12PM -0500, Mark Pearson wrote:
+>> Issue is seen on some Lenovo desktop workstations where there
+>> is a false IRP event which triggers a link flap.
+>> Condition is rare and only seen on networks where link speed
+>> may differ along the path between nodes (e.g 10M/100M)
+>> 
+>> Intel are not able to determine root cause but provided a
+>> workaround that does fix the issue. Tested extensively at Lenovo.
+>> 
+>> Adding a module option to enable this workaround for users
+>> who are impacted by this issue.
+>
+> Why is a module option needed? Does the workaround itself introduce
+> issues? Please describe those issues?
+>
+> In general, module options are not liked. So please include in the
+> commit message why a module option is the only option.
 > 
 
--- 
-With best wishes
-Dmitry
+Understood. 
+
+The reason for the module option is I'm playing it safe, as Intel couldn't determine root cause.
+The aim of the patch is to keep the effect to a minimum whilst allowing users who are impacted to turn on the workaround, if they are encountering the issue.
+
+Issue details:
+We have seen the issue when running high level traffic on a network involving at least two nodes and also having two different network speeds are need. For example:
+[Lenovo WS] <---1G link---> Network switch <---100M link--->[traffic source]
+The link flap can take a day or two to reproduce - it's rare.
+
+We worked for a long time with the Intel networking team to try and root cause the issue but unfortunately, despite being able to reproduce the issue in their lab, they decided to not pursue the investigation. They suggested the register read as a workaround and we confirmed it fixes the problem (setup ran for weeks without issue - we haven't seen any side issues). Unfortunately nobody can explain why the fix works.
+
+I don't think the workaround should be implemented as a general case without support from Intel. 
+I considered a DMI quirk, but without root cause I do worry about unknown side effects.
+There is also the possibility of the issue showing up on other platforms we don't know of yet - and I wanted a way to be able to easily enable it if needed (e.g be able to tell a customer - try enabling this and see if it fixes it).
+
+A module option seemed like a good compromise, but I'm happy to consider alternatives if there are any recommendations.
+
+>> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> ---
+>>  drivers/net/ethernet/intel/e1000e/netdev.c | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>> 
+>> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+>> index 286155efcedf..06774fb4b2dd 100644
+>> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
+>> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+>> @@ -37,6 +37,10 @@ static int debug = -1;
+>>  module_param(debug, int, 0);
+>>  MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
+>>  
+>> +static int false_irp_workaround;
+>> +module_param(false_irp_workaround, int, 0);
+>> +MODULE_PARM_DESC(false_irp_workaround, "Enable workaround for rare false IRP event causing link flap");
+>> +
+>>  static const struct e1000_info *e1000_info_tbl[] = {
+>>  	[board_82571]		= &e1000_82571_info,
+>>  	[board_82572]		= &e1000_82572_info,
+>> @@ -1757,6 +1761,21 @@ static irqreturn_t e1000_intr_msi(int __always_unused irq, void *data)
+>>  	/* read ICR disables interrupts using IAM */
+>>  	if (icr & E1000_ICR_LSC) {
+>>  		hw->mac.get_link_status = true;
+>> +
+>> +		/*
+>> +		 * False IRP workaround
+>> +		 * Issue seen on Lenovo P5 and P7 workstations where if there
+>> +		 * are different link speeds in the network a false IRP event
+>> +		 * is received, leading to a link flap.
+>> +		 * Intel unable to determine root cause. This read prevents
+>> +		 * the issue occurring
+>> +		 */
+>> +		if (false_irp_workaround) {
+>> +			u16 phy_data;
+>> +
+>> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
+>
+> Please add some #define for these magic numbers, so we have some idea
+> what PHY register you are actually reading. That in itself might help
+> explain how the workaround actually works.
+>
+
+I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
+
+This approach, with magic numbers, is used all over the place in the driver and related modules, presumably contributed previously by Intel engineers. Can I push back on this request with a note that Intel would need to provide the register definitions for their components first.
+
+Thanks for the review. I'll give it a couple of days to see if any other feedback, and push a v2 with updated commit description.
+
+Mark
 
