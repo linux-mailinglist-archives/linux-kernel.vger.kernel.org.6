@@ -1,112 +1,76 @@
-Return-Path: <linux-kernel+bounces-537422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1730FA48B9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:31:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD67A48B9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E733A67E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6761D1682E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC57921D5B2;
-	Thu, 27 Feb 2025 22:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22D80BEC;
+	Thu, 27 Feb 2025 22:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvZZ10uq"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3NYbx5b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11B32777F6;
-	Thu, 27 Feb 2025 22:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D92777F6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695453; cv=none; b=tSPOa41r4cGarwi0Oq8P6Qq591SVAlOABctCI0AtzLmyWIzn1yCuT9BuGEIPNFrlQ23QsRITcSNIVOSGgfdkR2CZrOI8YKlZgHURZ2X7LzdhHWpCd8GkNcKeRCA5CsL+0dJ/fo5aNyv79YfIhnkea9cTfJIw4H7GqWqae+pDO7M=
+	t=1740695482; cv=none; b=hmpMthv6GVo7zZDt7dwUY9ESjyP4F6u6B82RPDljmx3sPdT00aJnVEH/TmPiLVksr1qUnnoh9Ua9+Sj+gjXxbeUDepA6m86tjVb/w1IgBu5SX+jRjTnl72FDlYbibUz89LRAD01Dw44EQDAdeLZTU226EZJGiwHyv2XJr8gYnfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695453; c=relaxed/simple;
-	bh=uE9/49ldtLVWgOIkRTyh7MU6b9DNqHVRykrBZis63qc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JG7XOBdR0CMtPHO/49r5UUtCxQ2ygcK6zM5H1srz6m3vW0NwrpTn0QXrws02xSQ5R7LAuciKbwh2nyNtn0PaauHZj7bf5Vl8JXn3dUSnNf2nIhKbXrYTC/XIz9dea+FHwhNLPJFiOId3m09ATyPTk7yGdTtj7ORAjOoWKDEDBMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvZZ10uq; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-390dd362848so1145785f8f.3;
-        Thu, 27 Feb 2025 14:30:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740695450; x=1741300250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qcRKzSB/2yPSFLC/yuaVKN3wLU16fzkLrF80SzPyqk0=;
-        b=YvZZ10uqfi31txCKA5c6BNE1xAxeQ8RIhnXha1L7Pp9mCGoQ0C9ffxshfCb+5h6vhO
-         e34fgdTRrJ+y5My8mss01L5MpXEexA0z8tBHiOWnAfhOQVhfrszjJs1JlxyJfHMvWAKS
-         2FawrBV9CKFjJIaBJbmiIagAV4fgpBuHQR5Zvr7D51i90CJrMrPydhn1g0tuYrijEDpS
-         u/lprMg8UbKI5NrEip8Bjd8fGNrksHtro9U8G3ygWEOxIjq94AwxTaX0eWHBfMhrmE97
-         JNz4hYTz+7xV/LPA9xGPufXaNCm085bCCNIC7v6st3aB/oFUx+EPxMG/wR3BG7wmw5fX
-         a49A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740695450; x=1741300250;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qcRKzSB/2yPSFLC/yuaVKN3wLU16fzkLrF80SzPyqk0=;
-        b=hMcr+diAq6MapXikFQg7/CCFPFuAVVQtbaebRAciwHnNbSxAjHo1fOhP2J9qUrzAnc
-         cT2yEH9E5kPltbVh9rGRpQiT18Uu/oS424ieF55BtUm4Co6UobSLXEdIYTN9l5Ne6hnj
-         5d3KSYmWmk7lgmoRIxq2ddTJ3ACUNE/duT1WTTZMipQPGXpRyDX98b0Lm39Pr4FRHxvl
-         GbJeJYH4LkEWt2d7wGCAEZBOp/9glX+6s7w1Heh3K+3HWeoAcPi6a674pthihLxXIo+N
-         B0fAnRb8JMSnyxgQEhB9C9NLUijZtpWWowLYTYisM/9F+f5anqRZf9mTOjI8VaqmVgZu
-         n2+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWEDyn/pw+gmZ86+he1bJSkz/+ANJJRLKWfhnqq19GSpWO4om44mBPL+f9V0HkqWVrURiIIISst3EIoC+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8ffDySaDFXKCFe8sSRBM42glXyANMPaaB07NVZs6J1ltAImqI
-	DomEYocRgtZXJJOM/NVjJ6bHOFt5WJOIPsfqwP4Fenrl3UDMFh8T
-X-Gm-Gg: ASbGncvfLgxFjEhq6aoZBlBw4jnQmADOMWbEkt98Gc4bUzoA2apT2ASmCmI6ZIiQkEt
-	dEiO+BldmXptW430rgc/DNnt/WyO14KCstlHsRs3I/712FhlfGL3XocLWmbGyuB4QkkSMjpBqNn
-	WwH3r9YqeVDdpkcN9iDHCJ1qBz3Rgdp1bcWzH/wlZjgU8LLJcnjMVIte36zDrKBOrbN3Q1UKBhj
-	u0mper2Fmt7sGap3UdLnc03ibWzkDpY2FAOZG+S71Yd5cdLXwzJtZkTdqYZ1HS4JYhrSYRo33+F
-	ZRrusZATVCfktnVJSToxNaIGZSw=
-X-Google-Smtp-Source: AGHT+IHZnNJjB6n1FrIv7bNTeIztKawFuFtQFZge5h5pQvXVo9m0pWHpuIzB0frMiVy6qLOpUKhORw==
-X-Received: by 2002:a5d:5885:0:b0:390:ec1d:7e4e with SMTP id ffacd0b85a97d-390eca63baemr664341f8f.49.1740695449747;
-        Thu, 27 Feb 2025 14:30:49 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43b7a27ab2asm35806225e9.32.2025.02.27.14.30.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:30:49 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "David E . Box" <david.e.box@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Subject: [PATCH][next] tools/arch/x86/intel_sdsi: Fix spelling mistake "Licencse" -> "License"
-Date: Thu, 27 Feb 2025 22:30:14 +0000
-Message-ID: <20250227223014.659189-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740695482; c=relaxed/simple;
+	bh=pqx/dBna2gN0mw5vkh78oJYeK4NjZT83W5IVrSFD3mM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=CjTwXQlRBeVAtOS5jKiZlK5+XodDrcyKjS0qgsIEL3ek013sqq2Uvg56w1OcV9Kj+xBEi6P/aWrPgnCdFY8WKppSNoznsnTAjMo2AaGypDKREWM28RWVgTL8/xggKEngJ+7EJV6WNmjX/STAxEn0MXvcv2xBVvr71ubPtPtfUKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3NYbx5b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D34C4CEDD;
+	Thu, 27 Feb 2025 22:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740695481;
+	bh=pqx/dBna2gN0mw5vkh78oJYeK4NjZT83W5IVrSFD3mM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=A3NYbx5bEmuOOSWoV8+Iw0WM21wGKV13eIIey1L6jkBedQBPEddimUVy3bTo2jSSy
+	 yTxFmSpXEsUslBiWnkkhcw209oiZdBmCtE8v6ZlIHufTFH6vfxpJAxxUK38MlS8NoH
+	 UHTCU+0fu7FGiMNDpLr5ulumjil9ytttk86XwmyDfPAIFJ/zcxzdHqatQuwacReIGy
+	 IiWOUJz9s47QWLa8SqzwFzoelXuzmk9NNTvOMnNTIDUtvxfeDw9LuWqmOjOWZjbYUs
+	 L94tdltVm9ge8WOdwOn7df9tuQaaBk8PBl7ANPeDAhedHHUEKcG4wBpG1Q8pKbYoTL
+	 i9Iml5c8EsYnw==
+Message-ID: <5ee4cd3e3e5b31c674b37e39be14a214.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <23BAA675A75EF4F5+20250218050552.57711-1-wangyuli@uniontech.com>
+References: <23BAA675A75EF4F5+20250218050552.57711-1-wangyuli@uniontech.com>
+Subject: Re: [PATCH] spmi: Only use Hikey 970 SPMI controller driver when ARM64
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, mayulong1@huawei.com, mchehab+huawei@kernel.org, zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com, WangYuli <wangyuli@uniontech.com>, Wentao Guan <guanwentao@uniontech.com>
+To: WangYuli <wangyuli@uniontech.com>
+Date: Thu, 27 Feb 2025 14:31:19 -0800
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-There is a spelling mistake in a literal string. Fix it.
+Quoting WangYuli (2025-02-17 21:05:52)
+> SPMI_HISI3670, the Hikey 970 SPMI controller driver, is only
+> required to use the Kirin 970 SPMI bus.
+>=20
+> And the Kirin 970 is an ARM64-based SoC, it cannot be used on
+> platforms of other architectures.
+>=20
+> Link: https://lore.kernel.org/all/b4810f476e41e7de4efdf28b42472ae4ffe7def=
+e.1597647359.git.mchehab+huawei@kernel.org/
+> Reported-by: Wentao Guan <guanwentao@uniontech.com>
+> Closes: https://github.com/deepin-community/kernel/pull/604
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/arch/x86/intel_sdsi/intel_sdsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/arch/x86/intel_sdsi/intel_sdsi.c b/tools/arch/x86/intel_sdsi/intel_sdsi.c
-index 766a5d26f534..0e12b59976de 100644
---- a/tools/arch/x86/intel_sdsi/intel_sdsi.c
-+++ b/tools/arch/x86/intel_sdsi/intel_sdsi.c
-@@ -315,7 +315,7 @@ static char *content_type(uint32_t type)
- {
- 	switch (type) {
- 	case  CONTENT_TYPE_LK_ENC:
--		return "Licencse key encoding";
-+		return "License key encoding";
- 	case CONTENT_TYPE_LK_BLOB_ENC:
- 		return "License key + Blob encoding";
- 	default:
--- 
-2.47.2
-
+Applied to spmi-next
 
