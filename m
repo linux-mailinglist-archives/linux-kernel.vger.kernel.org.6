@@ -1,204 +1,203 @@
-Return-Path: <linux-kernel+bounces-536661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C74A482C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:19:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101FFA482C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6FA1627CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:13:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C291316723A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B8626A0FC;
-	Thu, 27 Feb 2025 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7222B26A0E8;
+	Thu, 27 Feb 2025 15:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlMV9lS3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XJ4ZUnqj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBF3259493;
-	Thu, 27 Feb 2025 15:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE1025F7A2;
+	Thu, 27 Feb 2025 15:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669231; cv=none; b=ZFoBiNfLTvS9TLVv17juMvHOKNEjwbJYfPlLVQBT65UWy6G7941AAgfznAboaCRiUuXltG9NZSoOHiHipKC2G/cYTgzn9HGEwq+cZdxqniYh4eMqcC1rhcBFwx/xLXUc/mi3IFgDIs0Zt4eRHFjgOKo/eAxs4ORpzJF90yvrEqU=
+	t=1740669272; cv=none; b=beXBUmx28wzdrbgRjw9T/tziFVNqLClDRIM0GcTRdjDUTR/+pD5LU5GclXLz5eN31+KYjpCt14/79Xn6rQh1tZGzKTVNQGziRvIvugcQToyInybFUDZEc+9oVq1Ln3s8oik03iYa8+Zf4j9tYHJ54jHvtawiCr0vZIXZrT2iPq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669231; c=relaxed/simple;
-	bh=iRdlLeLNV1v/SdkmRrf//HdDAGmEp0/h9w4ViUssNHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=exN1RCs0lp4ENaaBQem+kSoEH7iQSjqlxbiVexLaK28lafCvNNsFAMdL8y4ZCJZdxB3krIBdiSVKoP+Z2Li6xlPrXH3kSzGKJiNvk7RqPaTrYEIKvjYNfOggVEUhDmnpjWEM/4dyt9ZMn6etUYMOuK3EqceNAt9ewRrDrSSG3+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlMV9lS3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A22C4CEDD;
-	Thu, 27 Feb 2025 15:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740669230;
-	bh=iRdlLeLNV1v/SdkmRrf//HdDAGmEp0/h9w4ViUssNHI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KlMV9lS37dpdw08l0ZO9yoYTuDxJ4zhPda/N50v/03oY2/UWS9pwfZc8fajaTrV11
-	 uYsB7hW9K9j6tYE4pcLxuha5pJp0rYMOuaZdUEQfLKeQ+v0OnQeMOPYTGmLYe1GwJ8
-	 8D/PtrCKkKjCNupk0/u0ha6GvrEZLlf6hixpN9MCfzc4O0NGAQIGDf6mPYbyLpCR8c
-	 7n25zAJcN1SF6DSQVnLZF2XS5bLjBeLRGDKX3o8laLNBPnhHOGVChdf78Kk1m8PxXY
-	 Gu6hygs/eIQMK2jeqKggfMzN74Yfw/J+t/XQkFVsToGsT27SwWuhNrybsKQI0ZuKCP
-	 8vMe+5FUiBLNQ==
-Date: Thu, 27 Feb 2025 16:13:43 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
- =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
- <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
- Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/21]Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250227161343.5249e9b8@foz.lan>
-In-Reply-To: <20250227143028.22372363@imammedo.users.ipa.redhat.com>
-References: <cover.1740653898.git.mchehab+huawei@kernel.org>
-	<20250227143028.22372363@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740669272; c=relaxed/simple;
+	bh=cVSgDCggYpw8xN5dH8v583jJU/1xhO0S9v5k3RuLRuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGrsiM7AzXhcUdq2k7vHK9dURoPZ2wPMxbkDqtYpTRx0MjjWKHL/xzOwtGvGOKlN9N7M0ASOxyaPy1swIvjeJTvVuCcFi2wBZjxUoFTrxFT6/ACBGp4vN/ETj/BD8owwNRaPbQw9j0RnDLnSPdVtunJKsEr1QkUYwOLmI1yeIzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XJ4ZUnqj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZG1Z/AvQvy2Nn3Xs8i93g3gloTg9fkysRZ6eqtmzy+k=; b=XJ4ZUnqjgLZkjeds3l3Ic0yv1U
+	ObWbqQi6a6BVYlVNqnxDtt6v37SdHaPvrZ4WvucLlDkmwBNF5rVBaagjMv7SAP5A0VHRZqP8VM4zF
+	Ulf9Mu+bTr7XlUC/vk40Z4an/G073wAhtzOI3kWlh6xrJzGQAOB1I7bdtJXWAXjcsnH9kImMFWda0
+	KrmcC5e1VfO/+8P8gLZIqGEVHIUmbrTOT51JakD1/1lobLxEbwUx2GLQDYbhkx8B6QhYqjHEJSQNB
+	8jULkx0X1hMsTiNPE5nsVuzZKQX4K29Sw1fWklz1jt55EUUyZFnCJ4bl2pEpbS58sJDkcpwJwnkwv
+	yL0wZQOA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tnfaO-000000009ty-35Id;
+	Thu, 27 Feb 2025 15:14:05 +0000
+Date: Thu, 27 Feb 2025 15:14:04 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
+ functions for folio_split()
+Message-ID: <Z8CBPF9_gDZuDjED@casper.infradead.org>
+References: <20250226210032.2044041-1-ziy@nvidia.com>
+ <20250226210032.2044041-3-ziy@nvidia.com>
+ <Z7_-XweaPpfdRz1h@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7_-XweaPpfdRz1h@casper.infradead.org>
 
-Em Thu, 27 Feb 2025 14:30:28 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> On Thu, 27 Feb 2025 12:03:30 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Thu, Feb 27, 2025 at 05:55:43AM +0000, Matthew Wilcox wrote:
+> On Wed, Feb 26, 2025 at 04:00:25PM -0500, Zi Yan wrote:
+> > +static int __split_unmapped_folio(struct folio *folio, int new_order,
+> > +		struct page *split_at, struct page *lock_at,
+> > +		struct list_head *list, pgoff_t end,
+> > +		struct xa_state *xas, struct address_space *mapping,
+> > +		bool uniform_split)
+> > +{
+> [...]
+> > +		/* complete memcg works before add pages to LRU */
+> > +		split_page_memcg(&folio->page, old_order, split_order);
+> > +		split_page_owner(&folio->page, old_order, split_order);
+> > +		pgalloc_tag_split(folio, old_order, split_order);
 > 
-> > Now that the ghes preparation patches were merged, let's add support
-> > for error injection.
-> > 
-> > On this version, HEST table got added to ACPI tables testing for aarch64 virt.
-> > 
-> > There are also some patch reorder to help reviewers to check the changes.
-> > 
-> > The code itself is almost identical to v4, with just a few minor nits addressed.  
+> At least split_page_memcg() needs to become aware of 'uniform_split'.
 > 
-> series still has checkpatch errors 'line over 80' which are not false positive,
-> it needs to be fixed
+>         if (folio_memcg_kmem(folio))
+>                 obj_cgroup_get_many(__folio_objcg(folio), old_nr / new_nr - 1);
+> 
+> If we're doing uniform_split, that calculation should be
+> 	old_order - new_order - 1
 
-The long line warnings are at the patch adding the Python script. IMO,
-all but one are false positives:
-
-1. Long lines at patch description because of the tool output example added
-   inside the commit description:
-
-	ERROR: line over 90 characters
-	#148: FILE: scripts/arm_processor_error.py:83:
-	+[Hardware Error]:     bus error, operation type: Generic read (type of instruction or data request cannot be determined)
-
-	ERROR: line over 90 characters
-	#153: FILE: scripts/arm_processor_error.py:88:
-	+[Hardware Error]:     Program execution can be restarted reliably at the PC associated with the error.
-
-	WARNING: line over 80 characters
-	#170: FILE: scripts/arm_processor_error.py:105:
-	+[Hardware Error]:    00000000: 13 7b 04 05 01                                   .{...
-
-	WARNING: line over 80 characters
-	#174: FILE: scripts/arm_processor_error.py:109:
-	+[Firmware Warn]: GHES: Unhandled processor error type 0x10: micro-architectural error
-
-	ERROR: line over 90 characters
-	#175: FILE: scripts/arm_processor_error.py:110:
-	+[Firmware Warn]: GHES: Unhandled processor error type 0x14: TLB error|micro-architectural error
-
-   IMO, breaking command output at the description is a bad practice.
-
-2. Big strings at help message:
-
-	WARNING: line over 80 characters
-	#261: FILE: scripts/arm_processor_error.py:196:
-	+                           help="Power State Coordination Interface - PSCI state")
-
-	ERROR: line over 90 characters
-	#276: FILE: scripts/arm_processor_error.py:211:
-	+                        help="Number of errors: 0: Single error, 1: Multiple errors, 2-65535: Error count if known")
-
-	WARNING: line over 80 characters
-	#278: FILE: scripts/arm_processor_error.py:213:
-	+                        help="Error information (UEFI 2.10 tables N.18 to N.20)")
-
-	ERROR: line over 90 characters
-	#287: FILE: scripts/arm_processor_error.py:222:
-	+                        help="Type of the context (0=ARM32 GPR, 5=ARM64 EL1, other values supported)")
+umm, old_order - new_order.  Anyway, here's a patch I've done on top of
+your work, but it probably needs to be massaged slightly and placed
+before your work?
 
 
-	WARNING: line over 80 characters
-	#1046: FILE: scripts/qmp_helper.py:442:
-	+                           help="Marks the timestamp as precise if --timestamp is used")
+From 190e13ed77e562eb59fa1fa4bfefdefe5d0416ed Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Mon, 28 Oct 2024 16:23:30 -0400
+Subject: [PATCH] mm: Separate folio_split_memcg() from split_page_memcg()
 
-	WARNING: line over 80 characters
-	#1048: FILE: scripts/qmp_helper.py:444:
-	+                           help=f"General Error Data Block flags: {gedb_flags_bits}")
+Folios always use memcg_data to refer to the mem_cgroup while pages
+allocated with GFP_ACCOUNT have a pointer to the obj_cgroup.  Since the
+caller already knows what it has, split the function into two and then
+we don't need to check.
 
-   Those might be changed if we add one variable per string to store the
-   help lines, at the expense of doing some code obfuscation.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/memcontrol.h |  7 +++++++
+ mm/huge_memory.c           |  6 ++++--
+ mm/memcontrol.c            | 18 +++++++++++++++---
+ 3 files changed, 26 insertions(+), 5 deletions(-)
 
-   I don't think doing it is a good idea.
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 57664e2a8fb7..155c3f81f4df 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1039,6 +1039,8 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ }
+ 
+ void split_page_memcg(struct page *head, int old_order, int new_order);
++void folio_split_memcg(struct folio *folio, unsigned old_order,
++		unsigned new_order, bool uniform_split);
+ 
+ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
+ {
+@@ -1463,6 +1465,11 @@ static inline void split_page_memcg(struct page *head, int old_order, int new_or
+ {
+ }
+ 
++static inline void folio_split_memcg(struct folio *folio, unsigned old_order,
++		unsigned new_order, bool uniform)
++{
++}
++
+ static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
+ {
+ 	return 0;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1e45064046a0..75fa9c9d9ec9 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3401,6 +3401,9 @@ static void __split_folio_to_order(struct folio *folio, int new_order)
+ 			folio_set_young(new_folio);
+ 		if (folio_test_idle(folio))
+ 			folio_set_idle(new_folio);
++#ifdef CONFIG_MEMCG
++		new_folio->memcg_data = folio->memcg_data;
++#endif
+ 
+ 		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
+ 	}
+@@ -3529,8 +3532,7 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
+ 			}
+ 		}
+ 
+-		/* complete memcg works before add pages to LRU */
+-		split_page_memcg(&folio->page, old_order, split_order);
++		folio_split_memcg(folio, old_order, split_order, uniform_split);
+ 		split_page_owner(&folio->page, old_order, split_order);
+ 		pgalloc_tag_split(folio, old_order, split_order);
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 16f3bdbd37d8..c2d41e1337cb 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3064,10 +3064,22 @@ void split_page_memcg(struct page *head, int old_order, int new_order)
+ 	for (i = new_nr; i < old_nr; i += new_nr)
+ 		folio_page(folio, i)->memcg_data = folio->memcg_data;
+ 
+-	if (folio_memcg_kmem(folio))
+-		obj_cgroup_get_many(__folio_objcg(folio), old_nr / new_nr - 1);
++	obj_cgroup_get_many(__folio_objcg(folio), old_nr / new_nr - 1);
++}
++
++void folio_split_memcg(struct folio *folio, unsigned old_order,
++		unsigned new_order, bool uniform_split)
++{
++	unsigned new_refs;
++
++	if (mem_cgroup_disabled() || !folio_memcg_charged(folio))
++		return;
++
++	if (uniform_split)
++		new_refs = (1 << (old_order - new_order)) - 1;
+ 	else
+-		css_get_many(&folio_memcg(folio)->css, old_nr / new_nr - 1);
++		new_refs = old_order - new_order;
++	css_get_many(&__folio_memcg(folio)->css, new_refs);
+ }
+ 
+ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
+-- 
+2.47.2
 
-3. Long class function names that are part of Python's standard library:
-
-	ERROR: line over 90 characters
-	#576: FILE: scripts/ghes_inject.py:29:
-	+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-
-   We can't change the big name of the argparse formatter. The only
-   possible fix would be to obfuscate it by doing:
-
-	format = argparse.ArgumentDefaultsHelpFormatter,
-	parser = argparse.ArgumentParser(formatter_class=format,
-
-   IMO this is a bad practice.
-
-4. False-positive warning disable for pylint coding style tool:
-
-	ERROR: line over 90 characters
-	#805: FILE: scripts/qmp_helper.py:201:
-	+        data.extend(value.to_bytes(num_bytes, byteorder="little"))  # pylint: disable=E1101
-
-	WARNING: line over 80 characters
-	#1028: FILE: scripts/qmp_helper.py:424:
-	+        g_gen = parser.add_argument_group("Generic Error Data")  # pylint: disable=E1101
-
-   AFAIKT, those need to be at the same line for pylint to process them
-   properly.
-
-5. A long name inside an indented block:
-
-	WARNING: line over 80 characters
-	#1109: FILE: scripts/qmp_helper.py:505:
-	+                                                   value=args.gen_err_valid_bits,
-
-   Again the only solution would be to obfuscate the argument, like:
-
-	a = args.gen_err_valid_bits
-
-							    value=a,
-
-   Not nice, IMHO.
-
-Now, there is one warning that I is not a false positive, which I ended
-missing:
-
-	WARNING: line over 80 characters
-	#1227: FILE: scripts/qmp_helper.py:623:
-	+            ret = self.send_cmd("qom-get", args, may_open=True, return_error=False)
-
-I'll fix it at the next respin.
-
-Regards,
-Mauro
 
