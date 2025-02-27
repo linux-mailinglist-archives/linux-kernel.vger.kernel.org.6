@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-535521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B66A473E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C63A473F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003F116DC89
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6E07A2D58
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341391E8357;
-	Thu, 27 Feb 2025 04:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202B4198A1A;
+	Thu, 27 Feb 2025 04:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIkDN2Ux"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tqsm4K2V"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A4BE65;
-	Thu, 27 Feb 2025 04:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B1BE65;
+	Thu, 27 Feb 2025 04:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740628804; cv=none; b=vFudqiH/P4mJt1OjuFtf1vjkiXleasg4qRsfITLLXfbCGBiMbzJecUjgiVfxYjncKUQSm9alRYtgDHm4VvlR8iG1rCQGPDgqEAMIljTbKdjBVlcIHffwSgnVry+QhVQiFqd+ZXdS1EMxU2t7jbDtbqfTNl0YNUjlRbVm7kJ7bXM=
+	t=1740629084; cv=none; b=gpbXlMHzlarieb5As3OlG0YJfFAbmuDprHYlyQ/EB6opkObc/3BaEK3bxVqMIHNP5k/2YeFNfCsObfjwovQyhKFxpZoA6qaGIiQjzUi/l6ovnb2TN+ykm5+ahK4/u5NUYfINAel6Dmp+7Wk2W98rSxt84OfvNFFTw62T8nL1/OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740628804; c=relaxed/simple;
-	bh=68mSty9VX6udrXOuMxWDec+7emoXAQ1FjDWyUxfk/OY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=E8CSwLAi265pjdOHQcvcqryWhehTLHBE8SQw+VIStAwdjhof1T4/y2vLViUfWw7AKxwyL1Ow2tJSt0lx9UZPdtELtMNJ7HzXhoRTcjSixmiprgasLZxGY3BGDIaiRzaQQOJVNBPtugZwfEu1HX02UnrCAK2ni0X4HXTgSpNxGi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIkDN2Ux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1233EC4CEDD;
-	Thu, 27 Feb 2025 04:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740628804;
-	bh=68mSty9VX6udrXOuMxWDec+7emoXAQ1FjDWyUxfk/OY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mIkDN2UxWvV2XThAuaoq7iokroCRxny5Bt/VFQQBeCpU3DGa1xTPfwqP/+feiHZYf
-	 HZVuRON4Rjy0VJm4H7DVvq7y7xjX0lqRX/vF/oRV2nVUViYwdvr6HmDcQ1FcIe1bYl
-	 OnUFg+86IzvFiLMIhSlE2gWQys/mHlDVCPUVQ+KEeosuVyAK7BlzFL0Lm2cDA38yYf
-	 gx4ygzjraOLNqB3dRvYO1EW4Vrel9RFDDAs634/wrEzbnJvmkJMMlUySodwpkthwBC
-	 7ODf5mpTtFNdVbGu2OowSJfl7yHYMQ+LF0MqVOo1zGEFsNH/KSDeqIkttF0v/At15z
-	 Uw+SquOvA29kQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346A4380CFE6;
-	Thu, 27 Feb 2025 04:00:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740629084; c=relaxed/simple;
+	bh=L49AgEInu75X3a5lu/WbDpQesPjoT1koyxZbS6v/y4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VtcGJ2W6CJA54UuTCAeRScOJwWQBovsBzXK5di0TTzFKNMpDFqShRlGIoVhrtw7VJDZBlTgHfA2GqlKdRv+8AMsSSwbH0N1W+pccf5YThBuSPogZ4kQJ93i+YYap6PSMhzL/7trNvkciZrZvIBuE3OA8zhJtldsSUE4boA7unjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tqsm4K2V; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740629078;
+	bh=CWz+QXeFH2u89wfikyy369PYPjDdtcy2aCpxfPF6ySk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tqsm4K2VvK1RHCJr03BmQAV0HWZzx4J8vdBAJUfFKUvOY1TvKnkSVrhKL0svYsRgK
+	 pPmnrvooOEmByluYvktwXgbVlknvJ0VWvLTz0nRIbvZcJwHIbU9h3eOAVPXFSzvSp/
+	 S0kDgMtOrB9kuGPTQw/86b4Ut0qoQQ9+zupIsgqpbwosIY+NZ7X1NNA7eD6DszAOG1
+	 sGpRgGFEE6ARYylvQvo5aOPU9oSiSknaEK+opo/Or21OA8nfYe52kPonILJJRk7z3Y
+	 76vFDJZz2goM3KVWqLfyJrnkhb+v28hfCR97MBP6QovajPfkDhKudoeijcQfT6KpL5
+	 Oea8nfMqtwTbQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3Hm65Qkmz4wcT;
+	Thu, 27 Feb 2025 15:04:38 +1100 (AEDT)
+Date: Thu, 27 Feb 2025 15:04:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the spi tree
+Message-ID: <20250227150438.280465e0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv2 net-next] bonding: report duplicate MAC address in all
- situations
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174062883599.960972.8510053469556402775.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Feb 2025 04:00:35 +0000
-References: <20250225033914.18617-1-liuhangbin@gmail.com>
-In-Reply-To: <20250225033914.18617-1-liuhangbin@gmail.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- razor@blackwall.org, horms@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/oJOY+=EAvUgN59ta036dl8Z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello:
+--Sig_/oJOY+=EAvUgN59ta036dl8Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi all,
 
-On Tue, 25 Feb 2025 03:39:14 +0000 you wrote:
-> Normally, a bond uses the MAC address of the first added slave as the bond’s
-> MAC address. And the bond will set active slave’s MAC address to bond’s
-> address if fail_over_mac is set to none (0) or follow (2).
-> 
-> When the first slave is removed, the bond will still use the removed slave’s
-> MAC address, which can lead to a duplicate MAC address and potentially cause
-> issues with the switch. To avoid confusion, let's warn the user in all
-> situations, including when fail_over_mac is set to 2 or not in active-backup
-> mode.
-> 
-> [...]
+The following commits are also in the mm tree as different commits
+(but the same patches):
 
-Here is the summary with links:
-  - [PATCHv2,net-next] bonding: report duplicate MAC address in all situations
-    https://git.kernel.org/netdev/net-next/c/28d68d396a1c
+  1d2e01d53a8e ("spi: spi-imx: convert timeouts to secs_to_jiffies()")
+  32fcd1b9c397 ("spi: spi-fsl-lpspi: convert timeouts to secs_to_jiffies()")
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+These are commits
 
+  442b53316118 ("spi: spi-imx: convert timeouts to secs_to_jiffies()")
+  d569a6881325 ("spi: spi-fsl-lpspi: convert timeouts to secs_to_jiffies()")
 
+in the mm-nonmm-unstable branch fo the mm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oJOY+=EAvUgN59ta036dl8Z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme/5FYACgkQAVBC80lX
+0Gz+rAf/W4mpbfSRJHNLUM+ygQe3Ltcywmvv3CDna37vyzLXMKZS6VVAQtMxyx5p
+wVHjk8bI7wz2JV8clJ3H5c1Mw/zWn5YlRGt2vjE0Gx1TBnPo/PJHhwuaz8SNxckt
+ku+gFNxqptB7Z1SKir6Cxoer4In01paXx61uKf7azKJr5Jr9B/aT4s1UmVMB84dI
+qtXDZ4BwqhDJCEgw9mC7Q3lQjEYubszStCSUmfaPQ0nmAe4c+bvj/9GljlduOyIl
+ZXCWX9ohtzWvnhudrYfs9f9zVRb6jaK1A18dgnkXJg/AqpraUkYv9ncDFyVm6/vt
+tdJyF/YyamzZr404sRTORYZLg4xzmQ==
+=HPH4
+-----END PGP SIGNATURE-----
+
+--Sig_/oJOY+=EAvUgN59ta036dl8Z--
 
