@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-536902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6B3A48591
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:47:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0610CA48597
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99AA73AA6A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1D83AA45D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5E41B394E;
-	Thu, 27 Feb 2025 16:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270D11CAA67;
+	Thu, 27 Feb 2025 16:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbx/yjtE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZg//mZS"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24D81B4241
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FC514EC5B;
+	Thu, 27 Feb 2025 16:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674788; cv=none; b=UcrexbWvr7I5cw2DNgao149qaixBIgN8A/XibOZaIrLpqeaGy/nJswfp2KNcQctrFT4l5qxxTM6zyOsUa0NzA1e6sCg2G8fR+LhLwTw5eSmxauVRtQO3JrMxyaYH8pICDKIJ8Zqpu2FPES1GpUR3t3woj2NuKpN96w087jskmFc=
+	t=1740674810; cv=none; b=VYPmMpAUTNUnmzUConlnYKgKMJiC34X9TEX6Slo51U1BmvoUnP+3gQvnulNsGnh+CAIHF7ZVqB+YiPCGKwVO8fDBqHhtvH5SdX93K/ltNRGjhElbtHzIOFpXU4iGtneqhhPMXn87eYnjZkJBruIqLyYjcS3tMhg2IqV9k6zli/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674788; c=relaxed/simple;
-	bh=67tiD0TMFvksK5IXmgM9ni7fSjLJOtAe0ZBDW22/UDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iHmY/aa/a6c2FgLk9WezXic+wBz0rQ4SllV0a0yE0/WDDv1C9/fo+CeQ7D+0CE7rANcnyQB9JFD5mxm1puAQxSq1U1BOaqUrD2H+GDJOHxfZJrWrkEBXHNA8LLOxivrYt3S9y3HvF1CRgL5gtg7A4ctt3pK6vmhYwLDn9CR44Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbx/yjtE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75ECC4CEE6;
-	Thu, 27 Feb 2025 16:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740674788;
-	bh=67tiD0TMFvksK5IXmgM9ni7fSjLJOtAe0ZBDW22/UDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mbx/yjtEVKHpXuRUPwgSu7KQiN+nc2mlvt859QZKoEEYoWIeBVczJ+ypaAXbo4c5t
-	 6pUbkFY4jV0x1rXVCXuGnNxDkgw10yMV6tO9CicxBgNROQgwmgbfvW3OVRszmd69CY
-	 jfhgGfWnNul9K3TBK0v5UEsnw4JCzTPk+HtFOScKxRcFDeuLE72sz8Q3YkOdG+iLfP
-	 Uspywu3dolEngk3tnUHnQ7Nrmxn4FZcrrIetAJEPxY6SmJ3cK/y0UL0nIErrkXmhov
-	 yzRGltt2dErPf+YzbjMU002Yl5QEwvBg0liWxPvpesbkkvIWfuRB8Xg7blQoC7NWyY
-	 QLR4D7jwMTPIg==
-Date: Thu, 27 Feb 2025 08:46:26 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v1] x86/insn: Fix linux/unaligned.h include path
-Message-ID: <Z8CW4ozmV4OwyXWm@google.com>
-References: <20250225193600.90037-1-irogers@google.com>
- <Z7-ylCsV43noci77@google.com>
+	s=arc-20240116; t=1740674810; c=relaxed/simple;
+	bh=fX3ywRsIqVxpoFZkdvVQUrL8YQh6bSzc2jVbJ48aZSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gm4Hdx1VtJ+WfF3gx2vxV7hXg3aapuYgPFebXrMvpx1lmNmtUSRCy9fgCL1hfN+gvpYkC5InbF4Ks84PTDtOJovoxKwdESGirFgyrjZhCViL5T7ht1MzLJyxjk1fWIMGEUxYAElDxu6NemdX96E3QD3zBrM+qOhH7wWnsWjcQbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZg//mZS; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2234a03cfa4so2500815ad.0;
+        Thu, 27 Feb 2025 08:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740674808; x=1741279608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ple9oZGdoMGXLg03C31vuZCEU1fuqGM+vXv7chZBAvw=;
+        b=TZg//mZS1eErL6It17tsbjNOvdReaHYHwt+I6yS5esBQCWvNZ9a/6DlAIbVv/sO9OZ
+         Phg9yUfQsGGQXpBWTk1itJRfmU92wdo4rWVJDH5vLOwQlVugG9lcoISO3fcjuwRwNR9S
+         ndT5vezhk8QIeOpwYgRbGuVcJ8fc7SX76Lb0hWFePbWVBfBanEOQxdw1YKmmGbmMKXBe
+         FWjK+cUQeBLpU129caIfdREc6tUGv75+eFYNJ6eEL5SpbloHw7MtmNAZQVV0rR5iT36u
+         2mzmIaIIa1Hm/IT3Y98b00roSDiz+aunNk247IfbqGXQjRc9ShKEi8tzD35Ox7Z1V1oo
+         qUbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740674808; x=1741279608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ple9oZGdoMGXLg03C31vuZCEU1fuqGM+vXv7chZBAvw=;
+        b=GJk47OigGTnFusNCJukQulh9LZuZJSPEvJVoef5leOugUoM/QVrm63fTDinx/O8HyM
+         tJ7tjXZ60DCgdw7JZnNLIBfXWkRqwXjGk0gSTdZuNS8DsLHH1mdPCs2GzL6Y/unPBDS7
+         3mxRqwmgPyuHhuSOewbJUmUST+N/JipsXki8CEBB9wQWhGY1H2LpBRIvSWabWGpq/ha1
+         +OqytcO9f6V9eMxqtBniKxJgSIvp5JSzcJCsntzmcs7x/HNXVTzavicQmzCyqd/qe93Y
+         F/PTMb/0w+ZQ/AO6C2VTQFIf2E2BeLxwsPIOBwI2cgSWe/bP32TykugFFLIo20F2VKrR
+         6yKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVREFMh1nuB5rd0aEdVtaNG1Y9CYjM1YuxPJ/o1IJDDR1QCnbIiZRpT0K9K6l+BemkLmruYYBqVgNKRfPBeuUU=@vger.kernel.org, AJvYcCWZMIatTlEPxuseUjDOeLxmFtTTA6RPLml/OoNBnsVAepf47AtDqUl5+VhEcoPVd77jv1sg7LQfaFw=@vger.kernel.org, AJvYcCX/h5RkL3HKdStFtSMdwixcfWiTnfbwxwEFoqErzLwYSii/F7qgvcXKePIEs89+T6KJqZKKGWW14CP4Lw2J@vger.kernel.org, AJvYcCXvEGlN4JK58efJ9C60zso0X55HcQVZ0T1enid4r4zubKVfYO8D7v5wVC6z3ehawzzXwp/xeUengHcu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzigv/2b9xjE6ixmGIhpQ9+Q3oqZ7MaPh4eFLXFATbUC1EJQ0rD
+	BiE+OJeREYa6sZhSfEoLhj1WUQEaif4fxkA67ToWomoJMh6MeT7bT/cJUIYqV37Zyui4oXy1CGU
+	viDy/upljoSOFkFwmOwzf4ezimxM=
+X-Gm-Gg: ASbGnctrecAm2yFqrjwFN0aTMOm35o85H8HeRXdeTldwhDfIomOYOqc7BIGUljIGs7I
+	IU9z77Rq938N/gG92ifTM3QjwT/7115auKPzIA6NUlp0PNYC/LElq6NL1gdI9EmkfPYXH8/qoXN
+	O12XCNquM=
+X-Google-Smtp-Source: AGHT+IGlQG/yKIie1e8xLCISJTHqKYSYyYkcckdnwfvRvkNTj3VfIDmMNMNqLPGi+gwJnBn/M+vxiBtIzuTX/OfcKOk=
+X-Received: by 2002:a17:903:198e:b0:223:5525:622f with SMTP id
+ d9443c01a7336-223552569bdmr14666395ad.1.1740674808381; Thu, 27 Feb 2025
+ 08:46:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7-ylCsV43noci77@google.com>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me> <2025022717-dictate-cortex-5c05@gregkh>
+ <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com>
+ <2025022752-pureblood-renovator-84a8@gregkh> <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
+In-Reply-To: <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 27 Feb 2025 17:46:35 +0100
+X-Gm-Features: AQ5f1Jrb54hpcI-WZSIX5cFh6LZtzJTx_jHD1IT6o1zi2EDpWunP6lD36EKxw88
+Message-ID: <CANiq72mHVbnmA_G1Fx3rz06RXA+=K5ERoWKjH-UDJ9cKxvKQ1g@mail.gmail.com>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are authenticated
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Alistair Francis <alistair@alistair23.me>, 
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, lukas@wunner.de, 
+	linux-pci@vger.kernel.org, bhelgaas@google.com, Jonathan.Cameron@huawei.com, 
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, 
+	ojeda@kernel.org, alistair23@gmail.com, a.hindborg@kernel.org, 
+	tmgross@umich.edu, gary@garyguo.net, alex.gaynor@gmail.com, 
+	benno.lossin@proton.me, Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adding Josh and Peter as it's used in objtool as well.
+On Thu, Feb 27, 2025 at 1:11=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> I don't think there is tooling for it today. We need the opposite of
+> bindgen, which does exist in a tool called cbindgen. Unfortunately,
+> cbindgen is written to only work in cargo-based build systems, so we
+> cannot use it.
 
-On Wed, Feb 26, 2025 at 04:32:20PM -0800, Namhyung Kim wrote:
-> On Tue, Feb 25, 2025 at 11:36:00AM -0800, Ian Rogers wrote:
-> > tools/arch/x86/include/linux doesn't exist but building is working by
-> > virtue of a -I. Building using bazel this fails. Use angle brackets to
-> > include unaligned.h so there isn't an invalid relative include.
-> 
-> Right, it's using tools/include/linux/unaligned.h.
+It doesn't require Cargo, e.g. see my reply to Daniel:
 
-Josh, are you ok with this?  I can carry this in the perf tools tree if
-you don't mind.
+    https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/top=
+ic/What.20is.20the.20status.20on.20C.20APIs.20for.20Rust.20kernel.20code.3F=
+/near/420712657
 
-Thanks,
-Namhyung
+Even if it did require something extra for complex usage or similar,
+we could ask the maintainers or I could perhaps come up with something
+to generate whatever inputs they need.
 
-> 
-> > 
-> > Fixes: 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/arch/x86/lib/insn.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
-> > index ab5cdc3337da..e91d4c4e1c16 100644
-> > --- a/tools/arch/x86/lib/insn.c
-> > +++ b/tools/arch/x86/lib/insn.c
-> > @@ -13,7 +13,7 @@
-> >  #endif
-> >  #include "../include/asm/inat.h" /* __ignore_sync_check__ */
-> >  #include "../include/asm/insn.h" /* __ignore_sync_check__ */
-> > -#include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
-> > +#include <linux/unaligned.h> /* __ignore_sync_check__ */
-> >  
-> >  #include <linux/errno.h>
-> >  #include <linux/kconfig.h>
-> > -- 
-> > 2.48.1.711.g2feabab25a-goog
-> > 
+Cheers,
+Miguel
 
