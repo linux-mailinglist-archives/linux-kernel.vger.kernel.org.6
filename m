@@ -1,164 +1,156 @@
-Return-Path: <linux-kernel+bounces-536041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9774DA47ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:53:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF95A47AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEBB16C694
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:53:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374C7189134D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35722A4D8;
-	Thu, 27 Feb 2025 10:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B07822A7E5;
+	Thu, 27 Feb 2025 10:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="iGSJl3Gp"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cZbOvmVS"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588C92288EA;
-	Thu, 27 Feb 2025 10:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883B522A1ED;
+	Thu, 27 Feb 2025 10:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653621; cv=none; b=pJUzI+GjGwKbOUY5rvD1Gd6lu9wx1Dlaku1wvnQ0Rj1+MIt/YH/vUp1I/4lOq3JlZNoKjnAekuBMQ4wyeM51xwerCatPFL34c2/v4av4AGs73dYS4EVWJfHaG/aRQt6DTdrcq/sTQ6OXOtUoFwFf2Ma4r6tR4VlLeINYTMGaWy8=
+	t=1740653635; cv=none; b=jNxMi8Sk/VBfcyUViYLx6NEeLAxjwbXBQqpNfqEx46x5KrEj1ions8POsZuS0jzMOVMJw1uOAs2Oo9LteQfIv1d4ac56LX6ac9vFW/n2tRWQvXvpjWM3JsxgmcnY5b8n3wxSMDxf5t5ppaOkyBGHUtTtW3AN9VzRttkyKQIhBo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653621; c=relaxed/simple;
-	bh=xMvaPdRrcmL6BJCVKZgOG4AoFPDlvs5iEvJIZcGu+rU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=l/SufJt4V+6OrYzXJ+SUJ7pCzmHZj9gXX1P6EC+kToOaKnzvp3SQLFlruHmfA86Q9zKXsKAnLbCXV/8+bxv8gxlR71/2vKGDYZZSFULFZvZPTX8+LJzTzyqh+cKGMRY+ia9UGxFcPbbNxqlUCV4VzG8s3COVsVJMXOOD1HOr0Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=iGSJl3Gp; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51RAqjb62113557
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 27 Feb 2025 02:52:45 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51RAqjb62113557
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1740653566;
-	bh=iYupelTJBZZSq7J8xhubWxdcLgejcAwSGpM6xMwz/24=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=iGSJl3GpZfFHJfjC+qMd2hf6ogdMv31YGNOE9B41XjmDAgij9l907e6ct3SkC87Co
-	 K6OMb2OvJ9QloQe6swe+6fArWUCi7LLTg7Wo27N5JutC1yrYbtqZarM5Grp1eoFl/J
-	 GwzRD8nzaHtZQpvj/O6dMjaWv86Gf9T9MZFKvs7+utHTMyMnadrNxUpgInZcO51gXD
-	 yKYSUIcFhcwQ7e+M27Dx8jl4o21Uh/7qh95lGx4ObnXUBpyhIqzLnHXqXf7PoecYuk
-	 iiEURvK109zM5c5nViWCvUOQ+3+lJ+h0fvkz6w06EIn5Evwcp/0XM3vpWaYwPfsfK/
-	 9XWDNckbNowrg==
-Date: Thu, 27 Feb 2025 02:52:44 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Eric Biggers <ebiggers@kernel.org>, Bill Wendling <morbo@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Justin Stitt <justinstitt@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org,
-        clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: [PATCH] x86/crc32: use builtins to improve code generation
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250227062859.GA2506@sol.localdomain>
-References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com> <20250227062859.GA2506@sol.localdomain>
-Message-ID: <68F134A3-5371-4E74-9942-2BC66984C18A@zytor.com>
+	s=arc-20240116; t=1740653635; c=relaxed/simple;
+	bh=sdOfjTsy+77H64MWfHOiCTHS7lU8BvIyjOzKYl/cLGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BUrgHcYRQlO1iQbdsTlXWKCNgxXkZJJEBAcr9gz7+QIw/xQNwqIVuB83l6R+klcZ/Qcg/6jn83UA4HxqneMM3SD12NgOaWnxoTFRqvdwurRUvEhM+EgNwILcrWheULpA0jVc/YhEdjg9U+YpchxrUDM6xWCpHIW/poWYp4keekc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cZbOvmVS; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id f6aa64a60aa58da8; Thu, 27 Feb 2025 11:53:51 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 03574D50215;
+	Thu, 27 Feb 2025 11:53:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740653631;
+	bh=sdOfjTsy+77H64MWfHOiCTHS7lU8BvIyjOzKYl/cLGM=;
+	h=From:Subject:Date;
+	b=cZbOvmVSqk0Uwf1Ho3FxGja5Kb+stWjnhb1oQeR2KFga544yII+3brJ2x417AdyAz
+	 4o4Ck+25I6ks/fMiC36hfVlqNfK2WAO8jVCCnMA6KLQKpUqNVQ4t5i7oQSOMG9UqFW
+	 YwX/IZZOb9c13jSRsnNV0JNLyFLA0TjznyeO7/nw9opq5a6uvBW8Lgq4LHPEmAKQc6
+	 +bqcl2yOcjFQ+NgkrN0ZN7IguQ78+GAv9PwfFowtdiUWS9i1lfxe/tPAbKuJ6amCGS
+	 h12sPtdsDZ+8UlE5Z4PI3GE31vXQxdT2UgLrnQpmB5BLUz6Irxdl9b+WP28eTg80FB
+	 akDaqxmX4/wrw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2] PM: sleep: Adjust check before setting power.must_resume
+Date: Thu, 27 Feb 2025 11:53:50 +0100
+Message-ID: <3353728.44csPzL39Z@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjedvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepjhhohhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On February 26, 2025 10:28:59 PM PST, Eric Biggers <ebiggers@kernel=2Eorg> =
-wrote:
->On Wed, Feb 26, 2025 at 10:12:47PM -0800, Bill Wendling wrote:
->> For both gcc and clang, crc32 builtins generate better code than the
->> inline asm=2E GCC improves, removing unneeded "mov" instructions=2E Cla=
-ng
->> does the same and unrolls the loops=2E GCC has no changes on i386, but
->> Clang's code generation is vastly improved, due to Clang's "rm"
->> constraint issue=2E
->>=20
->> The number of cycles improved by ~0=2E1% for GCC and ~1% for Clang, whi=
-ch
->> is expected because of the "rm" issue=2E However, Clang's performance i=
-s
->> better than GCC's by ~1=2E5%, most likely due to loop unrolling=2E
->>=20
->> Link: https://github=2Ecom/llvm/llvm-project/issues/20571#issuecomment-=
-2649330009
->> Cc: Thomas Gleixner <tglx@linutronix=2Ede>
->> Cc: Ingo Molnar <mingo@redhat=2Ecom>
->> Cc: Borislav Petkov <bp@alien8=2Ede>
->> Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
->> Cc: x86@kernel=2Eorg
->> Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->> Cc: Eric Biggers <ebiggers@kernel=2Eorg>
->> Cc: Ard Biesheuvel <ardb@kernel=2Eorg>
->> Cc: Nathan Chancellor <nathan@kernel=2Eorg>
->> Cc: Nick Desaulniers <nick=2Edesaulniers+lkml@gmail=2Ecom>
->> Cc: Justin Stitt <justinstitt@google=2Ecom>
->> Cc: linux-kernel@vger=2Ekernel=2Eorg
->> Cc: linux-crypto@vger=2Ekernel=2Eorg
->> Cc: llvm@lists=2Elinux=2Edev
->> Signed-off-by: Bill Wendling <morbo@google=2Ecom>
->> ---
->>  arch/x86/Makefile         | 3 +++
->>  arch/x86/lib/crc32-glue=2Ec | 8 ++++----
->>  2 files changed, 7 insertions(+), 4 deletions(-)
->
->Thanks!  A couple concerns, though:
->
->> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
->> index 5b773b34768d=2E=2E241436da1473 100644
->> --- a/arch/x86/Makefile
->> +++ b/arch/x86/Makefile
->> @@ -114,6 +114,9 @@ else
->>  KBUILD_CFLAGS +=3D $(call cc-option,-fcf-protection=3Dnone)
->>  endif
->>=20
->> +# Enables the use of CRC32 builtins=2E
->> +KBUILD_CFLAGS +=3D -mcrc32
->
->Doesn't this technically allow the compiler to insert CRC32 instructions
->anywhere in arch/x86/ without the needed runtime CPU feature check?  Norm=
-ally
->when using intrinsics it's necessary to limit the scope of the feature
->enablement to match the runtime CPU feature check that is done, e=2Eg=2E =
-by using
->the target function attribute=2E
->
->> diff --git a/arch/x86/lib/crc32-glue=2Ec b/arch/x86/lib/crc32-glue=2Ec
->> index 2dd18a886ded=2E=2Efdb94bff25f4 100644
->> --- a/arch/x86/lib/crc32-glue=2Ec
->> +++ b/arch/x86/lib/crc32-glue=2Ec
->> @@ -48,9 +48,9 @@ u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
->>  EXPORT_SYMBOL(crc32_le_arch);
->>=20
->>  #ifdef CONFIG_X86_64
->> -#define CRC32_INST "crc32q %1, %q0"
->> +#define CRC32_INST __builtin_ia32_crc32di
->>  #else
->> -#define CRC32_INST "crc32l %1, %0"
->> +#define CRC32_INST __builtin_ia32_crc32si
->>  #endif
->
->Do both gcc and clang consider these builtins to be a stable API, or do t=
-hey
->only guarantee the stability of _mm_crc32_*() from immintrin=2Eh?  At lea=
-st for
->the rest of the SSE and AVX stuff, I thought that only the immintrin=2Eh =
-functions
->are actually considered stable=2E
->
->- Eric
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-There is that=2E=2E=2E also are there compiler versions that we support th=
-at do not have -mcrc32 support?=20
+The check before setting power.must_resume in device_suspend_noirq()
+does not take power.child_count into account, but it should do that, so
+use pm_runtime_need_not_resume() in it for this purpose and adjust the
+comment next to it accordingly.
+
+Fixes: 107d47b2b95e ("PM: sleep: core: Simplify the SMART_SUSPEND flag handling")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+The previous version of this patch is here:
+
+https://lore.kernel.org/linux-pm/3548152.QJadu78ljV@rjwysocki.net/
+
+v1 -> v2:
+   * Changelog rewrite.
+   * Added the Fixes: tag.
+   * Refined the comment adjustment.
+
+---
+ drivers/base/power/main.c    |   13 ++++++-------
+ drivers/base/power/runtime.c |    2 +-
+ include/linux/pm_runtime.h   |    2 ++
+ 3 files changed, 9 insertions(+), 8 deletions(-)
+
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1382,14 +1382,13 @@
+ 	dev->power.is_noirq_suspended = true;
+ 
+ 	/*
+-	 * Skipping the resume of devices that were in use right before the
+-	 * system suspend (as indicated by their PM-runtime usage counters)
+-	 * would be suboptimal.  Also resume them if doing that is not allowed
+-	 * to be skipped.
++	 * Devices must be resumed unless they are explicitly allowed to be left
++	 * in suspend, but even in that case skipping the resume of devices that
++	 * were in use right before the system suspend (as indicated by their
++	 * runtime PM usage counters and child counters) would be suboptimal.
+ 	 */
+-	if (atomic_read(&dev->power.usage_count) > 1 ||
+-	    !(dev_pm_test_driver_flags(dev, DPM_FLAG_MAY_SKIP_RESUME) &&
+-	      dev->power.may_skip_resume))
++	if (!(dev_pm_test_driver_flags(dev, DPM_FLAG_MAY_SKIP_RESUME) &&
++	      dev->power.may_skip_resume) || !pm_runtime_need_not_resume(dev))
+ 		dev->power.must_resume = true;
+ 
+ 	if (dev->power.must_resume)
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1897,7 +1897,7 @@
+ 	pm_request_idle(link->supplier);
+ }
+ 
+-static bool pm_runtime_need_not_resume(struct device *dev)
++bool pm_runtime_need_not_resume(struct device *dev)
+ {
+ 	return atomic_read(&dev->power.usage_count) <= 1 &&
+ 		(atomic_read(&dev->power.child_count) == 0 ||
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -66,6 +66,7 @@
+ 
+ extern int pm_generic_runtime_suspend(struct device *dev);
+ extern int pm_generic_runtime_resume(struct device *dev);
++extern bool pm_runtime_need_not_resume(struct device *dev);
+ extern int pm_runtime_force_suspend(struct device *dev);
+ extern int pm_runtime_force_resume(struct device *dev);
+ 
+@@ -254,6 +255,7 @@
+ 
+ static inline int pm_generic_runtime_suspend(struct device *dev) { return 0; }
+ static inline int pm_generic_runtime_resume(struct device *dev) { return 0; }
++static inline bool pm_runtime_need_not_resume(struct device *dev) {return true; }
+ static inline int pm_runtime_force_suspend(struct device *dev) { return 0; }
+ static inline int pm_runtime_force_resume(struct device *dev) { return 0; }
+ 
+
+
 
 
