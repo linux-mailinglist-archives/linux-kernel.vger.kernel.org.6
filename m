@@ -1,120 +1,250 @@
-Return-Path: <linux-kernel+bounces-535599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DC2A474EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:52:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4330A474EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962393B14A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50D916F709
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744063FB0E;
-	Thu, 27 Feb 2025 04:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6F01E835A;
+	Thu, 27 Feb 2025 04:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH0OLVvG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RoFOOHtk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89132270022;
-	Thu, 27 Feb 2025 04:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58283FB0E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740631965; cv=none; b=Y50HesSWFiYQ7U6zolhEJIMzxWDEQaz32Wy853fnTBtud5kC2wyTel1YgJzZ6y6RwIp32RKu9ws5Pf1fXZkNSWT9nyP/EjjrTP0Y80hT/0GtIwYlEjk7feH5WQ0s+M5W9nYjHc8nk4hqEkQmKiaYDxdbc/ZJ6ASFamQ21k3E97I=
+	t=1740632056; cv=none; b=egLRt/wO09FG0pj5c/iTJag75zyhT9EUokZkYwR27USiU0kvXn3I73bh6lBBF+c7gO3hhVDYvscTbcmQB2zZ/GZCdsuCMY0ycfSmQ+7iEiju179JCO1LngH393tX6+Y5iL0yc12T8xxhP5ubBqNQsyk8XEOhhZk5DQx0tsTNqnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740631965; c=relaxed/simple;
-	bh=tuYNKQgyX5O6FR4LUMVu38G3HkU8er1qpaOkfa4P30I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UOKiIxyTaqPXQ3GpWVFVB5AQ7Ra3c4CBvEgAPO5nfA80VCBO3d4RXOxYXMqb5woVVe4m8I+BYVYEfLI7EXHS5wl4flys5cV5l+saEUIFgeEqTMsCPQ+qbKa9wIJs+BtK2G+ipjHh0kQcq3I4SQuJ2o2V6WRZXZVN+f3NWskCIAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH0OLVvG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2234338f2bbso1048675ad.3;
-        Wed, 26 Feb 2025 20:52:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740631963; x=1741236763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuYNKQgyX5O6FR4LUMVu38G3HkU8er1qpaOkfa4P30I=;
-        b=lH0OLVvGYP7JUMMOi1XoJOHy6mz55HQFWv3gGHAIxs+b09DCLpJjcTU9VRzrCIVJpI
-         jYX3ZGORhEAxyNQ6DXMCPR1f9Z+sw9MerzjhiS9gVFUfkdezgajxRQ+nkLGsI7y/vjVs
-         8rhIokAVe1M+NrFstH9zUQu9Zto9f6FgxwEUvwVxIfWxET3w9cYDIBk/CnDnTixaufii
-         eFokPkoscGLZuFFOZuKNQZVtvPVMODdeTI9rq4I5TP+x8zomlqRk+lkkxD85tgBDK61q
-         LP00VZR3q3tlrrpudgvQW8Qm5u7aO+jSty4XjHEDrvFK8y0wbmkPe3T1oYPy3PJUCyOd
-         QtYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740631963; x=1741236763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tuYNKQgyX5O6FR4LUMVu38G3HkU8er1qpaOkfa4P30I=;
-        b=gw0+zZ1Eb8Dzwv3dQKiZ7GhzpIRS5dNu0R4RtGAJ9E5xPIZX9qxOkft2nS3WhaAt58
-         oylNuAfDixL43Sjwr7Cymfei97F9BBqj/dZoV2qRJnaRrybGO9wGSunVs1jSTbLqrGKk
-         wQmz42vybQ/AHnbvIZ5bCjCpdzo99rf+IW/QkuP4iHD8Z1OmL9qLOXRzPNYciyUvYZIK
-         5JZwBAvBUi1/5YfbOfvuuzZoah16MqIdr22tQurpEwRhTciUAmjhMxaeeLGOMfSSFjaC
-         SBa3tiCK/aRoh90VTMOH2fCTG7cJXWo1cKEHiiPW4cpX1hXjOOf078pO8l2iDLxFRisH
-         gx7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+IHLMV7+8TcYA8mMUdDQr7SgV0vNgep2UcNQmpTfnFFnQBC9s7CNe6zTjvAzBfFPvyvVQMNIePLsHwvaI@vger.kernel.org, AJvYcCVRom95oZmwAcpeFG8GpZ0kgjfwhjQCuDp60KveLpW1xYXYkylRODRGXAHGAVrb3Rw8Y/zCJJdetePi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwnwKG9zldxZUXqsj4cbDPiEEDyts6O2cRatdrLrg96mYNL0AT
-	qqqdUJCLvvJPqyc8xvL5hfh9QqKONIIQ30ocNerHzjHJ+p8RqJax
-X-Gm-Gg: ASbGnct8AgjArfEP7Fd/OcinFCldZydNFLqmSq9gEb2enc1y02ZWSGHFv2RpSofeshF
-	+Lm5IzRRkDncY006vK+amVE01rQg0/S/mrpS8m7jKP9h9S9SQ1UXDM1odDqWEbcHbKDOzYF0/dC
-	HRLUFtrhWPlhxlQhItjTcCRRgU0lepgsC13DG0HqPSOVS0esiWFEO47g3vUfNTezY/fRclaJTrh
-	vS2XDnceaCMNmMc543cnAu3fRpTwg3RbJtNXbN+bqeXxvlSeAHpsOWC1/65jBcclaAD8BIQC/Se
-	qVEdTzkBPyJHxnihD9QG8nNKAztH9II=
-X-Google-Smtp-Source: AGHT+IFOTe85+dVh9Nr1Nayx3OAw0R9L2wT1EgUsr9R1XRN4JWbVGSkLM9SWP8BSj7wZqZPgFTcRFg==
-X-Received: by 2002:a05:6a00:641a:b0:734:3d2e:18b1 with SMTP id d2e1a72fcca58-7343d2e19b4mr12435868b3a.2.1740631962677;
-        Wed, 26 Feb 2025 20:52:42 -0800 (PST)
-Received: from rock-5b.. ([221.220.131.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe2b7d5sm535629b3a.6.2025.02.26.20.52.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 20:52:42 -0800 (PST)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: peter.chen@cixtech.com
-Cc: arnd@arndb.de,
-	catalin.marinas@arm.com,
-	cix-kernel-upstream@cixtech.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	marcin@juszkiewicz.com.pl,
-	robh@kernel.org,
-	will@kernel.org
-Subject: Re: [PATCH v2 0/6] arm64: Introduce CIX P1 (SKY1) SoC
-Date: Thu, 27 Feb 2025 12:52:36 +0800
-Message-ID: <20250227045236.2830419-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250226012136.854614-1-peter.chen@cixtech.com>
-References: <20250226012136.854614-1-peter.chen@cixtech.com>
+	s=arc-20240116; t=1740632056; c=relaxed/simple;
+	bh=NQl3Kropd5OekMlh1r+3EeI5CMMdc9zeGRnG8UmjcIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A13Rr6pWBYjzYWBUWNETIh7BvYRR1WWM1SK7q9U3eIG7DHtUl7sgBfsLdeReqcHdeX5e6v//TkjNRoSW6E5w6JHc7RkTqPcKdeQSq+JKNXWOcHHV/4wcgWGBjAPwEu1rtW/FGm+AgWsYrbzhTsoL5mtpmSLlAPuwLYQ1z0jZ28w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RoFOOHtk; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740632055; x=1772168055;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NQl3Kropd5OekMlh1r+3EeI5CMMdc9zeGRnG8UmjcIk=;
+  b=RoFOOHtk/88F2lPEhqDvMPjeDclXM2ruvPhIrUWeNsj9SgxR73BAr6ZJ
+   R7YAbn/mSE6AkTI8+r9H2unKN+hRLHcC8qFiMoW4CENgp26HmV37di+aB
+   5BczX6BL7oe4h8E7yDRux7okGXFGX/1Yt7yzG6EJeTLmA/IWOf/dLoUEm
+   dqhAoMdCYqLEza3yXgybgoV/pGEI9cPAYEDCcsqWUxXHrhl/DMFigU4Hv
+   NNoyzEzQrx+0iyFVnKsJjqkpRhSI98vPKAMhxUKhHKZ89Inq7ZWMeuXOW
+   2WRVIyH6Qnm6UXwwMTFKs+oAUEjNbXDImBApP9X8vX6YO9+ArxDCzjZYg
+   A==;
+X-CSE-ConnectionGUID: qUBzHyyHQPOicyeoWKUw1w==
+X-CSE-MsgGUID: 8lWKNR+ZTy6KXID2Rf7S7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="40747903"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="40747903"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 20:54:14 -0800
+X-CSE-ConnectionGUID: g0+f+jFrTBCBy3FZz0evSA==
+X-CSE-MsgGUID: NWB5NZXkR5eKpZmGLK4J/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="116940829"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 26 Feb 2025 20:54:11 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnVuS-000Cre-2c;
+	Thu, 27 Feb 2025 04:54:08 +0000
+Date: Thu, 27 Feb 2025 12:53:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: zhongjinji@honor.com, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, yuzhao@google.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	rientjes@google.com, vbabka@suse.cz, zhongjinji@honor.com,
+	yipengxiang@honor.com, liulu.liu@honor.com, feng.han@honor.com
+Subject: Re: [PATCH] mm/page_alloc: make the maximum number of highatomic
+ pageblocks resizable
+Message-ID: <202502271248.bHUExwvw-lkp@intel.com>
+References: <20250226024126.3718-1-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226024126.3718-1-zhongjinji@honor.com>
 
-Hi Peter,
+Hi,
 
-I'm really happy to see the linux mainline upstream work sent. And I have
-also reveived radxa orion o6 before the Chinese new year. I have heard
-that CIX is testing vendor kernel with ACPI. And now the mainline upstream
-work is based on devicetree. I want to know what the upstream work of CIX
-would go in the future, are we going to toggle to ACPI instead of
-devicetree?
+kernel test robot noticed the following build warnings:
 
-And it would be good to let outsiders know the plan/roadmap of upstream.
-For example collaboara is doing good job on upstreaming rockchip[1][2] and
-mediatek[3] socs.
+[auto build test WARNING on akpm-mm/mm-everything]
 
-[1] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3588/-/blob/main/mainline-status.md
-[2] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3576/-/blob/main/mainline-status.md?ref_type=heads
-[3] https://gitlab.collabora.com/mediatek/aiot/wiki/-/blob/main/mainline-status.md
+url:    https://github.com/intel-lab-lkp/linux/commits/zhongjinji-honor-com/mm-page_alloc-make-the-maximum-number-of-highatomic-pageblocks-resizable/20250226-121712
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250226024126.3718-1-zhongjinji%40honor.com
+patch subject: [PATCH] mm/page_alloc: make the maximum number of highatomic pageblocks resizable
+config: x86_64-buildonly-randconfig-006-20250227 (https://download.01.org/0day-ci/archive/20250227/202502271248.bHUExwvw-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502271248.bHUExwvw-lkp@intel.com/reproduce)
 
-Best regards,
-Jianfeng
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502271248.bHUExwvw-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   mm/page_alloc.c:6262:17: error: field name not in record or union initializer
+    6262 |                 .procname       = "highatomic_reserve_ratio",
+         |                 ^
+   mm/page_alloc.c:6262:17: note: (near initialization for 'page_alloc_sysctl_table')
+   mm/page_alloc.c:6263:17: error: field name not in record or union initializer
+    6263 |                 .data           = &highatomic_reserve_ratio,
+         |                 ^
+   mm/page_alloc.c:6263:17: note: (near initialization for 'page_alloc_sysctl_table')
+   mm/page_alloc.c:6263:35: error: initialization of 'const char *' from incompatible pointer type 'int *' [-Werror=incompatible-pointer-types]
+    6263 |                 .data           = &highatomic_reserve_ratio,
+         |                                   ^
+   mm/page_alloc.c:6263:35: note: (near initialization for 'page_alloc_sysctl_table[5].procname')
+   mm/page_alloc.c:6264:17: error: field name not in record or union initializer
+    6264 |                 .maxlen         = sizeof(highatomic_reserve_ratio),
+         |                 ^
+   mm/page_alloc.c:6264:17: note: (near initialization for 'page_alloc_sysctl_table')
+>> mm/page_alloc.c:6264:35: warning: initialization of 'const char *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
+    6264 |                 .maxlen         = sizeof(highatomic_reserve_ratio),
+         |                                   ^~~~~~
+   mm/page_alloc.c:6264:35: note: (near initialization for 'page_alloc_sysctl_table[6].procname')
+   mm/page_alloc.c:6265:17: error: field name not in record or union initializer
+    6265 |                 .mode           = 0644,
+         |                 ^
+   mm/page_alloc.c:6265:17: note: (near initialization for 'page_alloc_sysctl_table')
+>> mm/page_alloc.c:6265:35: warning: initialization of 'const char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    6265 |                 .mode           = 0644,
+         |                                   ^~~~
+   mm/page_alloc.c:6265:35: note: (near initialization for 'page_alloc_sysctl_table[7].procname')
+   mm/page_alloc.c:6266:17: error: field name not in record or union initializer
+    6266 |                 .proc_handler   = proc_dointvec_minmax,
+         |                 ^
+   mm/page_alloc.c:6266:17: note: (near initialization for 'page_alloc_sysctl_table')
+   mm/page_alloc.c:6266:35: error: initialization of 'const char *' from incompatible pointer type 'int (*)(const struct ctl_table *, int,  void *, size_t *, loff_t *)' {aka 'int (*)(const struct ctl_table *, int,  void *, long unsigned int *, long long int *)'} [-Werror=incompatible-pointer-types]
+    6266 |                 .proc_handler   = proc_dointvec_minmax,
+         |                                   ^~~~~~~~~~~~~~~~~~~~
+   mm/page_alloc.c:6266:35: note: (near initialization for 'page_alloc_sysctl_table[8].procname')
+   mm/page_alloc.c:6267:17: error: field name not in record or union initializer
+    6267 |                 .extra1         = SYSCTL_ZERO,
+         |                 ^
+   mm/page_alloc.c:6267:17: note: (near initialization for 'page_alloc_sysctl_table')
+   mm/page_alloc.c:6228:59: warning: missing braces around initializer [-Wmissing-braces]
+    6228 | static const struct ctl_table page_alloc_sysctl_table[] = {
+         |                                                           ^
+   mm/page_alloc.c:6269:9: error: expected identifier or '(' before '{' token
+    6269 |         {
+         |         ^
+   mm/page_alloc.c:6275:10: error: expected identifier or '(' before ',' token
+    6275 |         },
+         |          ^
+   mm/page_alloc.c:6174:12: warning: 'lowmem_reserve_ratio_sysctl_handler' defined but not used [-Wunused-function]
+    6174 | static int lowmem_reserve_ratio_sysctl_handler(const struct ctl_table *table,
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/suspend.h:5,
+                    from mm/page_alloc.c:28:
+   include/linux/swap.h:590:12: warning: 'folio_alloc_swap' defined but not used [-Wunused-function]
+     590 | static int folio_alloc_swap(struct folio *folio, gfp_t gfp_mask)
+         |            ^~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +6264 mm/page_alloc.c
+
+  6227	
+  6228	static const struct ctl_table page_alloc_sysctl_table[] = {
+  6229		{
+  6230			.procname	= "min_free_kbytes",
+  6231			.data		= &min_free_kbytes,
+  6232			.maxlen		= sizeof(min_free_kbytes),
+  6233			.mode		= 0644,
+  6234			.proc_handler	= min_free_kbytes_sysctl_handler,
+  6235			.extra1		= SYSCTL_ZERO,
+  6236		},
+  6237		{
+  6238			.procname	= "watermark_boost_factor",
+  6239			.data		= &watermark_boost_factor,
+  6240			.maxlen		= sizeof(watermark_boost_factor),
+  6241			.mode		= 0644,
+  6242			.proc_handler	= proc_dointvec_minmax,
+  6243			.extra1		= SYSCTL_ZERO,
+  6244		},
+  6245		{
+  6246			.procname	= "watermark_scale_factor",
+  6247			.data		= &watermark_scale_factor,
+  6248			.maxlen		= sizeof(watermark_scale_factor),
+  6249			.mode		= 0644,
+  6250			.proc_handler	= watermark_scale_factor_sysctl_handler,
+  6251			.extra1		= SYSCTL_ONE,
+  6252			.extra2		= SYSCTL_THREE_THOUSAND,
+  6253		},
+  6254		{
+  6255			.procname	= "percpu_pagelist_high_fraction",
+  6256			.data		= &percpu_pagelist_high_fraction,
+  6257			.maxlen		= sizeof(percpu_pagelist_high_fraction),
+  6258			.mode		= 0644,
+  6259			.proc_handler	= percpu_pagelist_high_fraction_sysctl_handler,
+  6260			.extra1		= SYSCTL_ZERO,
+  6261		},
+  6262			.procname	= "highatomic_reserve_ratio",
+> 6263			.data		= &highatomic_reserve_ratio,
+> 6264			.maxlen		= sizeof(highatomic_reserve_ratio),
+> 6265			.mode		= 0644,
+  6266			.proc_handler	= proc_dointvec_minmax,
+  6267			.extra1		= SYSCTL_ZERO,
+  6268		},
+  6269		{
+  6270			.procname	= "lowmem_reserve_ratio",
+  6271			.data		= &sysctl_lowmem_reserve_ratio,
+  6272			.maxlen		= sizeof(sysctl_lowmem_reserve_ratio),
+  6273			.mode		= 0644,
+  6274			.proc_handler	= lowmem_reserve_ratio_sysctl_handler,
+  6275		},
+  6276	#ifdef CONFIG_NUMA
+  6277		{
+  6278			.procname	= "numa_zonelist_order",
+  6279			.data		= &numa_zonelist_order,
+  6280			.maxlen		= NUMA_ZONELIST_ORDER_LEN,
+  6281			.mode		= 0644,
+  6282			.proc_handler	= numa_zonelist_order_handler,
+  6283		},
+  6284		{
+  6285			.procname	= "min_unmapped_ratio",
+  6286			.data		= &sysctl_min_unmapped_ratio,
+  6287			.maxlen		= sizeof(sysctl_min_unmapped_ratio),
+  6288			.mode		= 0644,
+  6289			.proc_handler	= sysctl_min_unmapped_ratio_sysctl_handler,
+  6290			.extra1		= SYSCTL_ZERO,
+  6291			.extra2		= SYSCTL_ONE_HUNDRED,
+  6292		},
+  6293		{
+  6294			.procname	= "min_slab_ratio",
+  6295			.data		= &sysctl_min_slab_ratio,
+  6296			.maxlen		= sizeof(sysctl_min_slab_ratio),
+  6297			.mode		= 0644,
+  6298			.proc_handler	= sysctl_min_slab_ratio_sysctl_handler,
+  6299			.extra1		= SYSCTL_ZERO,
+  6300			.extra2		= SYSCTL_ONE_HUNDRED,
+  6301		},
+  6302	#endif
+  6303	};
+  6304	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
