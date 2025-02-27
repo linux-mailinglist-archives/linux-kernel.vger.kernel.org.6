@@ -1,171 +1,138 @@
-Return-Path: <linux-kernel+bounces-536034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1DA47AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:48:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8E6A47AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13E23B147B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FDC16937E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1970C22839A;
-	Thu, 27 Feb 2025 10:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F422A4F7;
+	Thu, 27 Feb 2025 10:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hM6Gkssq"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGjukulC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38A82288EA;
-	Thu, 27 Feb 2025 10:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F33D229B3D;
+	Thu, 27 Feb 2025 10:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653216; cv=none; b=h3jU2aKJnNOiJwmj5ovah1JBZLWsgvJIRqbfIJGpD7nkDsZ05yrnh9RM29TTlA30WX/gtIfXmqXLUgvEe7+MT899cOxPS/HUAul32ZgehCcwXzxuKHlVhFTVR58lG2j9XWttUUVaimkOrIhDDgK0RkcOYNf/TZ0fYwVLIOMNAVU=
+	t=1740653261; cv=none; b=e8AlFY1/GjHW4gpfBq6ZT+lBqsXXR2F/aJGWOY8TE5kLEuu+7TOxo83GMrNPAer1uhm1mG9d4eR22VdN5F1KRMg1Cmnur7z9UlJsntiRWlLm2k7mvpMX3rGt4kqTdytmVL1MPv1bV3llXvU7TX0XQQqQU6JnAhXocnSt4SBH4Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653216; c=relaxed/simple;
-	bh=fFEnkANQ+TB1DMqxkrT4iVz+aKmjaV4cRTueGWDyFFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tluw3xknYEj05YVIsAys7coYC5WQWG65svvXqntuXoHENbPB4KWm2U0idcyV78W06yFOwWyObe9H/EM+XfdSOh+3ibsX24bw6KF99Pmx7U1F6kTwshoTyFmEJlyAOQQH1jD/vG3khDfANSXO41KHU+xamiaWAzsAvAeUuSeXJwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hM6Gkssq; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390dd35c78dso908217f8f.1;
-        Thu, 27 Feb 2025 02:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740653213; x=1741258013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jRQH+rhuKQldNnsltSF+H7OhLVbbDlEOTB+LhTVAS8k=;
-        b=hM6GkssqGstmLvJEDEQ+OyCPjkhOrzkdQFTD3eJuL5aOY/6iFLPhpVb6mh6DB8NPBK
-         0tEQIxuo51HvfBC/Uvd3QqBBLXQ1AxS2AzTbVnkUjkFmGcIa9U0CejiPJMjlYUhTZxJu
-         8FGrJwRCk4HiKg4v9PoE6pwLpdeUQssFXK9E5lWA9lrAe0+erhis4i4jcCTbfQOtmBd3
-         RHwlbBhI1nO4x0fxLahLDlS2+Q1WQBr174/YS+G3BMYEJpojC0LZbwwS1yf+IhvSahGA
-         iSSjCG4WYbAxRuRiSWQmA1UkfUFEn56SD3wVDWlBiur+ayHP46RorAXt8EXCylrYygXx
-         dmGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740653213; x=1741258013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jRQH+rhuKQldNnsltSF+H7OhLVbbDlEOTB+LhTVAS8k=;
-        b=SAQmTASxyeNSolxNcZgdCd8oFsJuMfT/NkaHURKQB0XbHP5jbtSUjA1O47O97k8DSd
-         j2k9ZxjdwGGeZC5ASpsu4TcTt1FIySWMFk6XHTlkZ/Bc0DlVC9xH5P3XTJx4qk7Eaeyo
-         xozOpjLQbldjbdZyvs/IbjWVmNUBQy7gcaNMgh5UuDNhvCjwMhvcB4TxOJ8l7i4KoEEq
-         VuO+VsrFSAlBnYpW/slI9JoNlpE42znrZX2kW/vqUvPXSzEyx+Nq8Ne/dNIyPByd3A0v
-         ChdoObGfYo0A4w/UVPgy/OL5c5liuhMD6oKfhxUO+75bNmzK13Xq2A+N4qgCYaKBO+Zm
-         2psw==
-X-Forwarded-Encrypted: i=1; AJvYcCUU31pKA9Ldm/J4M9X7qs91GIGf9yNxwh9YNXFeTzS7d2LIdludh9VzaL+cBltcYw2Y3XP4vYCbfnvxqEU=@vger.kernel.org, AJvYcCUcQMr/JDAcehKesmCjjpc+kwyGA51zZzJONu+XXTgo90DvNLDrM3SQ3xObzGgD8nLD6FuwoMS5yX6VJIc=@vger.kernel.org, AJvYcCWfveB5nEr2+tkPyLQd+/pzT1VeclThh1QkbsD0A4deAIMewAHtUSl/JaqshYkds28tsyapyhJDb/FD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaKTj2cjJ6Rfl6spcMjIxMWtlK8xKdPTzpMtsdWT3Fm+JOSjsA
-	mKma1vdMimuFzbH+fyoiY3EMfDlPhuXexAH8k7ZKO2FI4LWxbeNqCSRoiw==
-X-Gm-Gg: ASbGncvkBhRoAkX4OHcvMgYlGN1FVlSujDAF1ycCboXy/jfHySOP2dIqAGx0B8hox0Z
-	tLxSCuXiSyoautuaKeSfB0V35W1IsPvF/Bt+We6uVjhTEWN45Ic1CQlFJE2kWL6LD20DBdODmd4
-	o4ZhvJrLnJia3kXnZuo2CLvfjV0xrlHkiFQnQIiFfFe7q++jjKKaDMsx9uf9yjWZIwf6XSY7e3R
-	VkOPPZaww3WdxSxeCRhhKlD4bAjdUIotwkxHuQesxzLUWB2XKW4wWMlwU0I5YFEuFtSf/GG/kmA
-	AKsmadxKrEYTCc8/esatVXv9fpB8bfb8Zhw8dvB1FOLBuSCe5DjvWZlXYgMbCWYpSSLzd7y7nvz
-	I4c14MWQcS+Zu
-X-Google-Smtp-Source: AGHT+IFozguorFHo7fZZe5EaA6PBwZ6mncviZRLUXZtN6kT3BIH9c8VDVf6DFEtDUuzJVzJdjrOGOQ==
-X-Received: by 2002:a5d:59a7:0:b0:38d:d222:ee70 with SMTP id ffacd0b85a97d-390e1699a32mr2404891f8f.20.1740653212699;
-        Thu, 27 Feb 2025 02:46:52 -0800 (PST)
-Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d8e4sm1574882f8f.85.2025.02.27.02.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 02:46:51 -0800 (PST)
-Date: Thu, 27 Feb 2025 11:46:49 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, 
-	broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
-Subject: Re: [PATCH v2 5/6] spi: tegra210-quad: modify chip select (CS)
- deactivation
-Message-ID: <msvqwjnj6gb3gpnqtev5ebc7fpriprc3blrsg4yhjrwul63dza@dd5pmpjr2gd3>
-References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
- <20250212144651.2433086-1-va@nvidia.com>
- <20250212144651.2433086-6-va@nvidia.com>
+	s=arc-20240116; t=1740653261; c=relaxed/simple;
+	bh=faKqbIo9ohlJImOLrrHIkwjNGaccf93VmOWvmUtLnEg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Tmpx/s/LvifIyLVb7Vm+rKOnxcbsR9xnGFBx7yaJV3W1NYoUsf1e/7lhZKqZg2ZcAvqpkKDErwH3VX7ccCbh3pyeiui1PTCOp9dS2Hd06DYMdIBBwwplj/vVzN/3lt0pXA9LPfUEw+XZWYSULxE6e/yFHgr6XANhJ+Gp0KItWQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGjukulC; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740653259; x=1772189259;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=faKqbIo9ohlJImOLrrHIkwjNGaccf93VmOWvmUtLnEg=;
+  b=mGjukulC12kfBa9ndhjDjW010/RoXnaVQEOm5pppIOocBuWlnJowZXse
+   Y314WbFj+iemWaVmuIeON0Um44fXxhjHS4DzjEjKd8KZRZH++U+TtfeKW
+   J5l85X+KoXOVBxTKm/yUsbrGY0RcgeQa4SD3vSVRFp4oCrccLZZvBjmIo
+   w8ChHiRfk0u7woUnr/m1/c5Ylz7+Lm3sFAGNKAUzWM2p98jut4GhuAn3x
+   vYsmQxQ/CcG4wLvoIcZ2kOd72WcJ2KhM5c+iwhxgGySH7yky8S+qiihM1
+   xuBzNdFN81QUpzpgShkq8lIUca0Ys+913T8OYK3unAVX4XEqGQRuVXKEW
+   w==;
+X-CSE-ConnectionGUID: a8bFODgTTBCipZuva2/s1g==
+X-CSE-MsgGUID: PrzB74eyQZalYvft8dGFJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41663449"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="41663449"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:47:39 -0800
+X-CSE-ConnectionGUID: bDl6Q4biRAisW1awg+BeNw==
+X-CSE-MsgGUID: 9yUe7WxTQ2u7KZi8apzAAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="116783370"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.181])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:47:33 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Su Hui <suhui@nfschina.com>, lucas.demarchi@intel.com,
+ thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Cc: Su Hui <suhui@nfschina.com>, ilpo.jarvinen@linux.intel.com,
+ andriy.shevchenko@linux.intel.com, michael.j.ruhl@intel.com,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
+In-Reply-To: <20250227073205.1248282-1-suhui@nfschina.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250227073205.1248282-1-suhui@nfschina.com>
+Date: Thu, 27 Feb 2025 12:47:28 +0200
+Message-ID: <87senz3br3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qlfxoqvmbcrcawlt"
-Content-Disposition: inline
-In-Reply-To: <20250212144651.2433086-6-va@nvidia.com>
+Content-Type: text/plain
+
+On Thu, 27 Feb 2025, Su Hui <suhui@nfschina.com> wrote:
+> When build randconfig, there is an error:
+> ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
+> xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
+>
+> When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
+> 'intel_vsec_register'. Select INTEL_VSEC to fix this error.
+
+Documentation/kbuild/kconfig-language.rst:
+
+  Note:
+	select should be used with care. select will force
+	a symbol to a value without visiting the dependencies.
+	By abusing select you are able to select a symbol FOO even
+	if FOO depends on BAR that is not set.
+	In general use select only for non-visible symbols
+	(no prompts anywhere) and for symbols with no dependencies.
+	That will limit the usefulness but on the other hand avoid
+	the illegal configurations all over.
+
+This should likely be either
+
+	depends on INTEL_VSEC || INTEL_VSEC=n
+
+or
+
+	depends on INTEL_VSEC
 
 
---qlfxoqvmbcrcawlt
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 5/6] spi: tegra210-quad: modify chip select (CS)
- deactivation
-MIME-Version: 1.0
+BR,
+Jani.
 
-On Wed, Feb 12, 2025 at 02:46:50PM +0000, Vishwaroop A wrote:
-> Modify the chip select (CS) deactivation and inter-transfer delay
-> execution to be performed only during the DATA_TRANSFER phase when
-> the cs_change flag is not set. This ensures proper CS handling and
-> timing between transfers while eliminating redundant operations.
->=20
-> Fixes: 1b8342cc4a38 ("spi: tegra210-quad: combined sequence mode")
->=20
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
+
+
+>
+> Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
->  drivers/spi/spi-tegra210-quad.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-q=
-uad.c
-> index 2d7a2e3da337..04f41e92c1e2 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -1171,16 +1171,16 @@ static int tegra_qspi_combined_seq_xfer(struct te=
-gra_qspi *tqspi,
->  				ret =3D -EIO;
->  				goto exit;
->  			}
-> -			if (!xfer->cs_change) {
-> -				tegra_qspi_transfer_end(spi);
-> -				spi_transfer_delay_exec(xfer);
-> -			}
->  			break;
->  		default:
->  			ret =3D -EINVAL;
->  			goto exit;
->  		}
->  		msg->actual_length +=3D xfer->len;
-> +		if (!xfer->cs_change && transfer_phase =3D=3D DATA_TRANSFER) {
-> +			tegra_qspi_transfer_end(spi);
-> +			spi_transfer_delay_exec(xfer);
-> +		}
->  		transfer_phase++;
+>  drivers/gpu/drm/xe/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+> index b51a2bde73e2..7a60d96d2dd6 100644
+> --- a/drivers/gpu/drm/xe/Kconfig
+> +++ b/drivers/gpu/drm/xe/Kconfig
+> @@ -44,6 +44,7 @@ config DRM_XE
+>  	select WANT_DEV_COREDUMP
+>  	select AUXILIARY_BUS
+>  	select HMM_MIRROR
+> +	select INTEL_VSEC
+>  	help
+>  	  Experimental driver for Intel Xe series GPUs
 
-I'd prefer blank lines around the "if" block to make this less
-cluttered, but since this was always like this, either way:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---qlfxoqvmbcrcawlt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAQpkACgkQ3SOs138+
-s6EEpg//dVDXWz/PSPQmWy9On92DUNZ9uyazh6XBdJcDsrl/ntAOUD7+FzjnGJrO
-Ij8Dfgn8hDOHhgzQ9nhYhIY9QlK7L2wQOM6BbVZk674bQqXoi4XEjOBbM7Tj01uT
-7fQuefkQLaF7O3Ou8TuaEZ/SCWkN+iOciCVGOMMEjUI5uf+kShZFjw8y4WLkI7Pf
-lOjBN+PuzEZdatZBSkIv0NlvTjF2ZZ1pCPNLKLp4+NZgtunSaHvsYXtK+69k0X20
-OB9ObwG03SywlRsonmH3lotESMSS4/vdahlZqNArs3erPW/ZhrENVWAumy2hDq2w
-AblJayS7q0k+F3aP0RsrwQvDENOCe01c0M/2ZuSCxHFFqxa5lerTo3ejH06bIedG
-4zE+kPtgSK2VHtlBj670qNpkU3QV1cfWxGuJEctIvVgQvKmwv4mGB4paWXJLboaM
-gak+CtMT2BSqtUPoZkeuYIpQg40UYZ9eP3B4rRUHb+N9l7kO/8IbwJaBKMqj+irj
-970QGELVQjztHCj+xFeIR0ZhamtBtc0W+3T5s+E0tpdyzpsBHrvlGfiq3GoXLSva
-xJPicvJUA798YFjkfwpT5RJ3xnVZxxCDCG0sdILzmT7udNEhm+vkEhxXYHw8eh6O
-42pKQpmVvkI8DDieZg5xjZFQnyjE9e/8NCFz9WmFW2kANNt03CA=
-=0DfQ
------END PGP SIGNATURE-----
-
---qlfxoqvmbcrcawlt--
+-- 
+Jani Nikula, Intel
 
