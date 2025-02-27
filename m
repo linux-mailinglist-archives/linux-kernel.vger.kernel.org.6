@@ -1,177 +1,139 @@
-Return-Path: <linux-kernel+bounces-537377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5398EA48B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:06:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A02BA48B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:08:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4581B16C94F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EA93B6F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA7027128E;
-	Thu, 27 Feb 2025 22:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6648271826;
+	Thu, 27 Feb 2025 22:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XVL2s01x"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhpYy57d"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD287225775
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D626E968;
+	Thu, 27 Feb 2025 22:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740693993; cv=none; b=XkeKSnmhZdsQ27rlF6ubsvqQjmLb6owjpvHa+9kfgxf5mWjDTK5vuEc+Fy975rPUfINrSKrza3CgQAwVaslFNoaNZh6T5HTS/KY79MUfKoyEHTflyN9kYUlCojAS7wWXZlcQhUATcTGl+n5aLWvkRBUzec9cpQS+mIBTfUDtPH4=
+	t=1740694082; cv=none; b=GTcIg0cWF+uFCZOKm9zDlDTWARsGa8PxbllhHWEkjQH2MR29dHciBtLoZ8qp57vsSVN4RS4HQC/LZ2mxnjxSq2ILeLA5utjksznk+z06gn1xN/j4J6SMKBwU8bSkMv4anudl9FrrMDWPegcFjQVq2Dqi0AyEAvv45aluF5HfIGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740693993; c=relaxed/simple;
-	bh=5Q9dXnV2OU7GlUBrJYgNHKi5rIDnxJLNS92uttMHlkQ=;
+	s=arc-20240116; t=1740694082; c=relaxed/simple;
+	bh=UN+Ru2yjqJrkcSVGik6SXxWdueMW66UZG8XnISR/UP0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q3P40mZ4ZW/xg+xKJcLLCH+bmUlC4sJ4nxpfLS3ucCgVMR0VUrJyYrA2Jx/qSUyHAxsmlIS/6zKpbFjfV+F9KzPY2bXxEGEX/HiyAPKy6GTLGacraJrhCl/sZuNQZXI81WqM9YpQza0ujd0ILm6t3rfqTkkPeUJFNj2lwgVkTkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XVL2s01x; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-471f1dd5b80so20361cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:06:31 -0800 (PST)
+	 To:Cc:Content-Type; b=U5r0ePeealrT7vE7fpanMSYFkHnhX+NP3tI1J3uaQSJp0A1FtNYFQmssrf4MI/C8m4/I9LoW+nticZz//o8dGKNsFR7oijzW64hBOTRwNGUVw/5EtChyM8gsGw+AN7YnPcVVbalRzOH9657rt6p1DJizM3mD5dncxFlGqNAlE5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhpYy57d; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb892fe379so206176066b.0;
+        Thu, 27 Feb 2025 14:08:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740693990; x=1741298790; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740694079; x=1741298879; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=exaIoQIbo874p+9B0DlQldEF7QdZ2qt5VRBLmXNOHJ4=;
-        b=XVL2s01x8m09zH2U38ooIbtExojRJ5d9NSDwdDrkIURaoV8cV9aU0e6lcuLbHfpz0B
-         Rh0Mg7tG7Yssl7zVPjAKbsDnk/kGptD0ry2U0Z7mRzsgDaPcDVrX68wq5Ez6uuaxST+E
-         xvRSQ+lFz+Dzyg/cKmNNnuCwIhxFWyO5bBEoIy2urkto5DV3Des/0c6+UO3rxa259TL9
-         /0AGsQ/16zVydm0hrmjiUotmQ2QCXHgzEtRzSiKyiTPh+kY1BXwE96tR7sbsm4pq6KnK
-         zOwihvK7wyE1HftoHnNHxezHDjLzo866BhaoATjy5G4+PDnOjcbm+OC5DmE3MtlLkSQZ
-         HSlA==
+        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
+        b=nhpYy57dLJH1uPapQI7VnXH1HZpEkA4pWhCcg8ejbk5k7VSzfZokdbiZ5OA9YC10cE
+         L8WWibF6EYYyjJZSygxVWd5GUXsaITlN85fJtjgJFO/i9y4AhklroffS2bcHtAgckpGh
+         p6uZ2vDixkuJDv7q57KIIk+JfHG/X11fZFAKObCab8rx45rAPSZbY8h2bSquqBt6KPF0
+         Nam3Jb1s/FGOK+FFNJGfaffIxT6AjrhAQ9jaCuyTpZHBfoQkEEQxYj53XnINu9eNuXHX
+         ScVKgSgQ4OHHtnbNqlVGd7Aw3pXlefhif269O8U8pzcxGIiji8VwQ7nP6Fum2N9IC1hq
+         Lo0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740693990; x=1741298790;
+        d=1e100.net; s=20230601; t=1740694079; x=1741298879;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=exaIoQIbo874p+9B0DlQldEF7QdZ2qt5VRBLmXNOHJ4=;
-        b=V/lmaplGwmDoFhzVeeVamJ7oXKdk0CwU42lCGqHcE5Au49rOg7Px9eOelflWQ6t92U
-         GpkUt91wFuVuqJJBFRsYqsHIKtqu9WGa1e54vVyeAh0eLpgGu8c2PBcn2mdRHuBhfFqO
-         aMj1Vhrrfpt8gOBNyNZdHdiLJsmSLbjQQ1ke2D28WybQaH330nBG9zn98vVHhhquAkhg
-         0+fDOnLJdkOUOO8jqhnMCIhOdVwCMOdOBblr4NUk2ujPTlrgGn4GrVmGWy2+CcBh3RXL
-         kdE82fjedJVfEsu4oDZIiA4OmtViHUMc/v+udXfn0jk3yeqikOMtC0I3f1Toj5BpnpYK
-         kEig==
-X-Forwarded-Encrypted: i=1; AJvYcCXkGYeJeZT71cGrgEB3dLVgeobWSv4lzql8N5B8DBJU6zxMcQ7XaXxFCDjq/sFY0Q8x1lR+mvDGMtTvDHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZOcdcJkqpClw+kZCaV5CSmQhK12vsgGJwBZMwkIJNiv4vGgIu
-	NceBYKUgUWd+DoV0QfTxp+NIAyS1WIqWlBVyaHINm7F9wSVVS2uIaGgphov7oES1fucf4LYlFW1
-	Uo6H1Ryx/m/O9VsiNfafgsRMxrG4T6yWVd/ei
-X-Gm-Gg: ASbGncvZiMiMdWVzHLp6XFFOVa3kK56bmww36BIPfJYsP63zg8SFcXy1hmerhUx38h8
-	6YIJvSCumBUxatUDRqffNRr1F/rbPmilMLoXaWjjR+5S2uOjarcq6Cjxh+97pRQZFnmnei31LHO
-	kC2X5xWviWdGGkk7hThNe8PYGE+Bu2fEYgBiRKOg==
-X-Google-Smtp-Source: AGHT+IFpvl7aZXExG5hgmgTkv/JU8rJKQ04ySfj4maggC5ukM4GdGwcgmDYXokKyoHEJUAkBvZC3g4Y6GTYUgYzvl0w=
-X-Received: by 2002:a05:622a:1a8a:b0:471:eab0:ef21 with SMTP id
- d75a77b69052e-474bd0d397dmr161991cf.13.1740693990253; Thu, 27 Feb 2025
- 14:06:30 -0800 (PST)
+        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
+        b=LI8CsWzJ7kvh3ezXpDM2d/iuwSwPp7MmADVHgPQq/Pvt0DABfgJRagEKoqy6WEn8yB
+         hLzKMwPtENFvsGI1nGqKGjCYzt2t3qjk9HPDravQx55Vt+/WTKZr/qRg+xkEXMZ+2mKh
+         uAroUeiGXxNX1/IxVGj0G3Lgg+nqYq1nrR2oaYla9A47IdVxVujaOfPLXittmTwdZrwI
+         S+QVw98a3xZ6pydw9shAWJQ9KdXOs7hDBtgdNj9LaYO6iGnxnPdyz2rwpPNnOhs2qU3i
+         ohsIwJBmHhrqUf0iXgalFOYLIq+r+pllL8RV9jjsOhEhaqEuCiBx2+m2iSvx6nfRn2EL
+         gtIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVVhv9IOZbwmXAFCXnx3SnIp2NVENVXjbks7cWg+/I6vXQk+AsTOpHmYu8OSl++z2yUBMeZx5DDLMsttNS@vger.kernel.org, AJvYcCWnS0zVR4l7O7YQJ+wBadtQxvw20ijwv8OpdIFGDK2GZKpLkKHaMZQkDJMIg7CLkMc/RQPSUyIMylzH6ixp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv8nBQt+chqmVS1Vk7Hy4QBCAtjmBZZUAXN8Je7sz/7JX395gN
+	mk59Hi7KFd8Q5Jc7vcOMNXpN/6VwEkvDvXva0s8OJHydd/VXgy1QId7aG2MyDJ1A9ZMBmKE67W8
+	MtNA2dLBYT9DigMQ5KKnRqoiH+1c=
+X-Gm-Gg: ASbGncsleKffVWeH/iO0hATIaYzRNrTzcCW1WS9QF1uz1gN5nwnLqAwG9ITmB8KZya3
+	yTFwbaVHXUv5CyDDH441qMP+HYxjKy1+lj/iurCeT89v3gIaw7H6StJNVISZjHRPJSDn22SKTa1
+	nRGSz6c7A=
+X-Google-Smtp-Source: AGHT+IEBd5l3TXoINUYoCqfpZdrHIWch7LPPU/DVCUKfuAbX+iDCrpluTBxuviWEJtgjZj47tQXm4fxrqHTF+kGUQeE=
+X-Received: by 2002:a05:6402:34c6:b0:5de:4a8b:4c9c with SMTP id
+ 4fb4d7f45d1cf-5e4d6b62f6emr1432015a12.32.1740694078277; Thu, 27 Feb 2025
+ 14:07:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-In-Reply-To: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-From: Jianxiong Gao <jxgao@google.com>
-Date: Thu, 27 Feb 2025 14:06:18 -0800
-X-Gm-Features: AQ5f1JrgX1HCGO9jxqsT5pan3n3q7ChIHAUS1azxaXTIyAjrLA-6lzFR0u6BIGk
-Message-ID: <CAMGD6P2ewVZyZU26QRbhjn1ZEMHGnFhgCHq9dZyWw91R9jixnw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] tsm: Unified Measurement Register ABI for TVMs
-To: Cedric Xing <cedric.xing@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Dan Middleton <dan.middleton@linux.intel.com>, Mikko Ylinen <mikko.ylinen@linux.intel.com>, 
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20250227180407.111787-1-mjguzik@gmail.com> <20250227215834.GE25639@redhat.com>
+In-Reply-To: <20250227215834.GE25639@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 27 Feb 2025 23:07:45 +0100
+X-Gm-Features: AQ5f1JpvudCDW09pKlncHJMvLXGsrmhmZGJuFrf5IBX_27iIWhHqMRNvU_zS9vU
+Message-ID: <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
+Subject: Re: [PATCH] pipe: cache 2 pages instead of 1
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 23, 2025 at 7:23=E2=80=AFPM Cedric Xing <cedric.xing@intel.com>=
- wrote:
+On Thu, Feb 27, 2025 at 10:59=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
+ote:
+> > +static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
+> > +{
+> > +     struct page *page;
+> > +
+> > +     if (pipe->tmp_page[0]) {
+> > +             page =3D pipe->tmp_page[0];
+> > +             pipe->tmp_page[0] =3D NULL;
+> > +     } else if (pipe->tmp_page[1]) {
+> > +             page =3D pipe->tmp_page[1];
+> > +             pipe->tmp_page[1] =3D NULL;
+> > +     } else {
+> > +             page =3D alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
+> > +     }
+> > +
+> > +     return page;
+> > +}
 >
-> NOTE: This patch series introduces the Measurement Register (MR) ABI, and
-> is a continuation of the RFC series on the same topic [1].
+> Perhaps something like
 >
-> This patch series adds a unified interface to the TSM core, allowing TVM
-> (TEE VM) guest drivers to expose measurement registers (MRs) as attribute=
-s
-> (files) in sysfs. With this interface, applications can read and write
-> (extend) MRs like regular files, enabling usages like configuration
-> verification (e.g., verifying a TVM's configuration against digests store=
-d
-> in static/immutable MRs like MRCONFIGID on TDX or HOSTDATA on SEV) and
-> runtime measurements (e.g., extending the measurement of a container imag=
-e
-> to an RTMR before running it).
+>         for (i =3D 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
+>                 if (pipe->tmp_page[i]) {
+>                         struct page *page =3D pipe->tmp_page[i];
+>                         pipe->tmp_page[i] =3D NULL;
+>                         return page;
+>                 }
+>         }
 >
-> Patches included in this series:
+>         return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
+> ?
 >
-> - Patch 1 adds TSM APIs for TVM guest drivers to register/expose MRs
->   through sysfs.
-> - Patch 2 provides a sample module demonstrating the usage of the new TSM
->   APIs.
-> - The remaining patches update the TDX guest driver to expose TDX MRs
->   through the new TSM APIs.
+> Same for anon_pipe_put_page() and free_pipe_info().
 >
-> [1]: https://lore.kernel.org/linux-coco/20241210-tsm-rtmr-v3-0-5997d4dbda=
-73@intel.com/
+> This avoids the code duplication and allows to change the size of
+> pipe->tmp_page[] array without other changes.
 >
-> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
-> ---
-> Changes in v2:
-> - Added TSM_MR_MAXBANKS Kconfig option
-> - Updated Kconfig dependency for TSM_REPORTS
-> - Updated comments in include/linux/tsm.h
-> - Updated drivers/virt/coco/tsm-mr.c to use `IS_BUILTIN()` for determinin=
-g
->   if static buffer addresses can be converted to GPAs by `virt_to_phys()`
-> - Renamed function `tdx_mcall_rtmr_extend()` -> `tdx_mcall_extend_rtmr()`
-> - Link to v1: https://lore.kernel.org/r/20250212-tdx-rtmr-v1-0-9795dc49e1=
-32@intel.com
->
-> ---
-> Cedric Xing (4):
->       tsm: Add TVM Measurement Register support
->       tsm: Add TSM measurement sample code
->       x86/tdx: Add tdx_mcall_extend_rtmr() interface
->       x86/tdx: Expose TDX MRs through TSM sysfs interface
->
->  Documentation/ABI/testing/sysfs-kernel-tsm |  20 ++
->  MAINTAINERS                                |   3 +-
->  arch/x86/coco/tdx/tdx.c                    |  36 +++
->  arch/x86/include/asm/shared/tdx.h          |   1 +
->  arch/x86/include/asm/tdx.h                 |   2 +
->  drivers/virt/coco/Kconfig                  |  17 +-
->  drivers/virt/coco/Makefile                 |   2 +
->  drivers/virt/coco/tdx-guest/Kconfig        |  24 +-
->  drivers/virt/coco/tdx-guest/tdx-guest.c    | 115 +++++++++
->  drivers/virt/coco/{tsm.c =3D> tsm-core.c}    |   6 +-
->  drivers/virt/coco/tsm-mr.c                 | 383 +++++++++++++++++++++++=
-++++++
->  include/linux/tsm.h                        |  65 +++++
->  samples/Kconfig                            |  13 +
->  samples/Makefile                           |   1 +
->  samples/tsm/Makefile                       |   2 +
->  samples/tsm/tsm_mr_sample.c                | 107 ++++++++
->  16 files changed, 789 insertions(+), 8 deletions(-)
-> ---
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-> change-id: 20250209-tdx-rtmr-255479667146
->
-> Best regards,
-> --
-> Cedric Xing <cedric.xing@intel.com>
->
->
-Tested-by: Jianxiong Gao <jxgao@google.com>
-I have verified that the patchset works on Google Cloud.
 
+I have almost no opinion one way or the other and I'm not going to
+argue about this bit. I only note I don't expect there is a legit
+reason to go beyond 2 pages here. As in if more is warranted, the
+approach to baking the area should probably change.
+
+I started with this being spelled out so that I have easier time
+toggling the extra slot for testing.
+
+That said, I don't know who counts as the pipe man today. I can do the
+needful(tm) no problem.
 --=20
-Jianxiong Gao
+Mateusz Guzik <mjguzik gmail.com>
 
