@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-537076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C174A487CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:27:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5A3A487D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738EB3B0FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE793A4EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715A1F584C;
-	Thu, 27 Feb 2025 18:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9645B20E007;
+	Thu, 27 Feb 2025 18:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAi1QQPy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkkOkGnE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B371E521C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C3C1E521C;
+	Thu, 27 Feb 2025 18:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740680866; cv=none; b=TEZrLu9hWcC9cBDBFlNMhNrXdakqWUnh4wDueGyajJVgkz9AoZwmV4+/9HotwKzDWq8n3b0Rm1z3iRk09Pbmh60aI5HSR876W4CzCLczykLlCjkg0ZuI2xmwK4MSOi5mCstgTTPOaNCOOkxLkbXBgECXOrJKr771jBYuo+/kobk=
+	t=1740680948; cv=none; b=h8Hr9gKF+yAvliYJdqbu7embnoXHfzZLxDRThhA/VL9EaPX+ilHfV9Uu+ou57o0UAMP3aAsGPdW3kTeMSE42cCmEOz/4/cB19qdeMZaRbuf6F3ZnxT1zaOh+O4V4p72QIL/vsluvkd3IEYtuOlPD/1noQ8015TJig0Mq5Hjdw2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740680866; c=relaxed/simple;
-	bh=hNmnbUSTHmV0H243U8/9PejpskpGVKllufD74FbCwJ8=;
+	s=arc-20240116; t=1740680948; c=relaxed/simple;
+	bh=sVmoa+4UUba17FV2KXIDm1zoaJ2r3ry/WGxnUkYFfPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSZSW8g9YA4hnJ5NXk4thasDCBb6gn6LwF6uYR6pr1ag09S7g6275tfWb2De2KR9TabeCNWHzscX3/UIzI75rHNPy/dB2sRjPnRuNQbbgeYJCLKhfnpH/HyQiSsXCuHMMCkLxmmJz80/uLf6Sl9Q3xWsUb1W7DRoMXhyqhqLYoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAi1QQPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 895DEC4CEDD;
-	Thu, 27 Feb 2025 18:27:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=myvqSFpVgxasf9UByjsaNBffj4a2aHgSAncACq/FxH72WahWAE8GqfNpwA4b5/hBTghK11G4Of/PkuFc646mNHRHK2nXDKc/uwTq5I6H29FOFp6jPfDXHOkONjromEoALUMfwWzHhpyW54nAj8+rFldqJebPbWiE7AvIKixA0SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkkOkGnE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB7FC4CEDD;
+	Thu, 27 Feb 2025 18:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740680865;
-	bh=hNmnbUSTHmV0H243U8/9PejpskpGVKllufD74FbCwJ8=;
+	s=k20201202; t=1740680947;
+	bh=sVmoa+4UUba17FV2KXIDm1zoaJ2r3ry/WGxnUkYFfPc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rAi1QQPyLZT8I1dyOVPO25l8fn3mnurXKe4JGrFZN+V75Abs2eq/QPv+PiE07UlAz
-	 chHsQB6mEnDQG7rPJWs3obY/XgduP5q5UV3ppojUdRqPbp6fvDbNL9eGQpAvrOsN+e
-	 UWiHGH/3R7dFjvWWEw90/F0syQ0D6kjMDLP5/qAWwnL5smclwsUlG1IpboETKg0oxJ
-	 hl9wAJASgeffly3B++pkZgeLUcD0w0bduwF0P/I8jhEXgRUslGKB62PQ+lEOpYZdnM
-	 8/6P1zTMb2lbKDgeflerUTPujm0P1eObAcPdx/mwBRrBdzB1zcB/5jegTpMDAlIkC6
-	 63EGN835eqglw==
-Date: Thu, 27 Feb 2025 19:27:35 +0100
+	b=VkkOkGnEx56q945Szz4n+ofUXjHKm9fq0zgW1UZgiXq3ZkyFT+BNip1rviCNKJnf8
+	 RQuKIKgtdjUJ9lITpNTiK9pRPwQvF9PlkKqAEQbEtbOo98XOKgC/XaLjhxLy4Yja4N
+	 slBWxxW4f9nvMo2A0gYNIwn/ujKh5yNthy3RrzYWmm2sd6jNR8E3tEZQChALH2zcYZ
+	 hVeVwzGivPw6OrdjcOa+GGk2VKBNZWMt5LelAjL9krQ6rJ9/ljN+7fwLLW+RxkeRZl
+	 GEqW+QKYLbOYOAOtOXQl+Jjw8tee33S4MEWvvtXSmvKGPePPF0TGDW0td5abjSiq8Z
+	 c2Ynw44kbx1yQ==
+Date: Thu, 27 Feb 2025 19:28:49 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Matt Fleming <matt@readmodwrite.com>, Jakub Jelinek <jakub@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: CONFIG_KASAN triggers ASAN bug in GCC 13.3.0 and 14.1.0
-Message-ID: <Z8Cul8cbnYTFzMoK@gmail.com>
-References: <20241213190119.3449103-1-matt@readmodwrite.com>
- <CAFULd4Zrnn=1=1AP329Qw23b0Ume2A5Z-U2q-M62L1gcpJD4pg@mail.gmail.com>
- <CAENh_SRw-L3UtBiz2xg_X4szdMJmNg118gL8f2g8gN5w6hc3Nw@mail.gmail.com>
- <CAFULd4bwLyGiJ87fvT+N06ANchEQ0aGZdLvT-U3C8ROwCADr4Q@mail.gmail.com>
- <Z8BY_AZPQQm0BJTu@gmail.com>
- <CAFULd4aCBMXcco_GdTYu9Zmc5A6+Z=J4XrsjLXWe1dydRD0oDQ@mail.gmail.com>
- <Z8BekITYkuc4F4b1@gmail.com>
- <CAFULd4YsMAqqVApUdtib-n6JuaFzyOXmi3fBuUNKdnnNKK=iig@mail.gmail.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v5 0/9] Utilize cpu-type for CPU matching
+Message-ID: <Z8Cu2VJhDhum9mXd@gmail.com>
+References: <20241211-add-cpu-type-v5-0-2ae010f50370@linux.intel.com>
+ <Z8BdVzJKbxheqvme@gmail.com>
+ <20250227175129.v23sm56tkxcnlqvz@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4YsMAqqVApUdtib-n6JuaFzyOXmi3fBuUNKdnnNKK=iig@mail.gmail.com>
+In-Reply-To: <20250227175129.v23sm56tkxcnlqvz@desk>
 
 
-* Uros Bizjak <ubizjak@gmail.com> wrote:
+* Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
 
-> On Thu, Feb 27, 2025 at 1:46 PM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Uros Bizjak <ubizjak@gmail.com> wrote:
-> >
-> > > On Thu, Feb 27, 2025 at 1:22 PM Ingo Molnar <mingo@kernel.org> wrote:
-> > > >
-> > > >
-> > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
-> > > >
-> > > > > On Mon, Dec 16, 2024 at 5:20 PM Matt Fleming <matt@readmodwrite.com> wrote:
-> > > > > >
-> > > > > > On Sat, Dec 14, 2024 at 1:17 AM Uros Bizjak <ubizjak@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Does your config include CONFIG_UBSAN_BOOL=y ?
-> > > > > >
-> > > > > > Yes, it does!
-> > > > > >
-> > > > > > > There is a rare interaction between CONFIG_KASAN and CONFIG_UBSAN_BOOL
-> > > > > > > (aka -fsanitize=bool), reported in [1] and fixed for gcc-14.2 in [2].
-> > > > > > >
-> > > > > > > [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=111736#c42
-> > > > > > >
-> > > > > > > [2] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115172
-> > > > > > >
-> > > > > > > Otherwise, please attach your .config, and I'll look into this issue.
-> > > > > >
-> > > > > > Thanks. Disabling CONFIG_UBSAN_BOOL does indeed make the kernels boot again.
-> > > > > >
-> > > > > > Should CONFIG_UBSAN_BOOL have a dependency on GCC 14.4+ ?
-> > > > >
-> > > > > No, this is a very rare Oops that triggers only with gcc-14.1 version
-> > > > > and only when both KASAN and UBSAN are enabled. This is actually the
-> > > > > problem with sanitization of the percpu address when named address
-> > > > > spaces are enabled (IOW, sanitization of __seg_gs prefixed address).
-> > > > > UBSAN creates a temporary in memory, but forgets to copy memory tags,
-> > > > > including named address space qualifier from the original. Later ASAN
-> > > > > sanitizes this location as a normal variable (due to missing
-> > > > > qualifier), but actually should be disabled for __seg_gs prefixed
-> > > > > addresses.
-> > > > >
-> > > > > Your report is only *the second* since sanitizers were re-enabled with
-> > > > > named address spaces. gcc-14.2 that includes the fix is available
-> > > > > since August 2024, and since sanitizers are strictly development
-> > > > > tools, my proposed solution would be to simply upgrade the compiler to
-> > > > > gcc-14.2 release.
-> > > >
-> > > > So unless this is difficult to test for, it would be nice to have a
-> > > > compiler version cutoff for the feature. Especially if it's been
-> > > > reported twice already, chances are that a lot more people have
-> > > > experienced it already.
-> > > >
-> > > > The kernel build should avoid this known oops automatically.
-> > >
-> > > The patch could be as simple as:
-> > >
-> > > --cut here--
-> > > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > > index 95ea2b4b95db..c94c37889917 100644
-> > > --- a/arch/x86/Kconfig
-> > > +++ b/arch/x86/Kconfig
-> > > @@ -2370,7 +2370,7 @@ config CC_HAS_NAMED_AS
-> > >      depends on CC_IS_GCC
-> > >
-> > >  config CC_HAS_NAMED_AS_FIXED_SANITIZERS
-> > > -    def_bool CC_IS_GCC && GCC_VERSION >= 130300
-> > > +    def_bool CC_IS_GCC && GCC_VERSION >= 140200
-> > >
-> > >  config USE_X86_SEG_SUPPORT
-> > >      def_bool y
-> > > --cut here--
-> > >
-> > > but it will disable all sanitizers for a very rare Oops that needs the
-> > > combination of CONFIG_KASAN and CONFIG_UBSAN_BOOL.
-> >
-> > Can we not limit the version quirk to KASAN && UBSAN_BOOL?
+> On Thu, Feb 27, 2025 at 01:40:55PM +0100, Ingo Molnar wrote:
+> > 
+> > * Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+> > 
+> > > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > > ---
+> > > Pawan Gupta (9):
+> > >       x86/cpu: Prepend 0x to the hex values in cpu_debug_show()
+> > >       cpufreq: intel_pstate: Avoid SMP calls to get cpu-type
+> > >       perf/x86/intel: Use cache cpu-type for hybrid PMU selection
+> > >       x86/cpu: Remove get_this_hybrid_cpu_*()
+> > >       x86/cpu: Name CPU matching macro more generically (and shorten)
+> > >       x86/cpu: Add cpu_type to struct x86_cpu_id
+> > >       x86/cpu: Update x86_match_cpu() to also use cpu-type
+> > >       x86/bugs: Declutter vulnerable CPU list
+> > >       x86/rfds: Exclude P-only parts from the RFDS affected list
+> > 
+> > So it looks like this series, despite being complete, fell between the 
+> > cracks during the usual end-of-year distractions.
+> > 
+> > To get the ball rolling I have applied the first 4 patches to 
+> > tip:x86/cpu - the cpufreq one needed a small conflict resolution, and I 
+> > have adjusted the debug output of the first one to not break 
+> > pre-existing vertical tabulation.
 > 
-> I am testing the attached patch that resolves the issue.
+> Thanks for picking this up.
+> 
+> > Mind double checking the result in tip:x86/cpu and submit the remaining 
+> > 5 patches on top of it?
+> 
+> I had quick look, fixes and merge resolution LGTM. I will submit the
+> remaining 5 patches soonish.
 
-Thank you!
+Thanks!
 
 	Ingo
 
