@@ -1,300 +1,170 @@
-Return-Path: <linux-kernel+bounces-537259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B76A489C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:23:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F328A489BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8673B6670
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030B7188D618
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90B4270ED0;
-	Thu, 27 Feb 2025 20:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269CB26A1A4;
+	Thu, 27 Feb 2025 20:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="q/XU5a3A"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="f9b2XkW5"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A4C1C07E6;
-	Thu, 27 Feb 2025 20:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84141D6182
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687757; cv=none; b=FZY7wJXrSvkuV6ZiBB7ljgdGFpuWdp9cv0BcMa5XhtVP0gwVZCXXk4pHSVavkLNaHLOWgJi1Nz5czgAY0MZp4CkIDGKXC+QvmdqMT0G9893jsnU2Ngcr76xVWYv2qUd8t+FbdlL3c+Yjb6evJKNsTg8OKqh72U4Tiu9NI6nXPAM=
+	t=1740687743; cv=none; b=d8vZhnyCXT65TMxDr72yOX0ns3ZEe6wW+vwmS2lUxXgYV9shZj0GaUXUO3zdRMt94hDQWgk9/hVFwCfcGcNxhWS8dy8L0uLo0l2dl5jHGzJctewuOqoKwJDBUi2CeBLqMk6wPJmkMzGAgLv8i8I2tjCRF4GRkdgfZAXC208klrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687757; c=relaxed/simple;
-	bh=rbhrWLfbN/iHDAYvkA4DqppkfImUOQhKqaMxftZUO7I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JpgOEevnX3IGIXwN52jEI+D9tAFPwxO2zHOnQesOaXMOFwvovhEqgZiRzzCVtCg6ArcsgsKFrq08oAHopo8adGMbGR/a+xrJRP1qzEqoZpTsnR3/eyUX54KM9WEWCKgs2rWD/i8Zv1PV+R/YTR2kF+bW7UcwwxjD5JCapG8OR6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=q/XU5a3A; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51RKMDjO1958096
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 27 Feb 2025 14:22:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740687733;
-	bh=PvY8vqo+Sc7xLnuOcR8UDu8sTGqEi/shKhEi3DC002g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=q/XU5a3AmyilaV1602p6MrTg6bN2DR1roc1TCzfaB0dA88ceGKvCU4wLqAX42Sk5m
-	 GYNYm7gYuxMdwPw1/8UqIySCpTO4N6C2Z7SyCc+7gBAu7Oui17uljvTfrNr4Ls4mRV
-	 KiljherOxdkmXLjHAKluERCURPIhJQ1rngfMybIM=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RKMDws125061;
-	Thu, 27 Feb 2025 14:22:13 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 14:22:12 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 14:22:12 -0600
-Received: from localhost (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RKMCls066416;
-	Thu, 27 Feb 2025 14:22:12 -0600
-From: Chintan Vankar <c-vankar@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Peter Rosin
-	<peda@axentia.se>,
-        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>, <vigneshr@ti.com>,
-        <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <c-vankar@ti.com>
-Subject: [RFC PATCH 2/2] mux: mmio: Extend mmio-mux driver to configure mux with new DT property
-Date: Fri, 28 Feb 2025 01:52:06 +0530
-Message-ID: <20250227202206.2551305-3-c-vankar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250227202206.2551305-1-c-vankar@ti.com>
-References: <20250227202206.2551305-1-c-vankar@ti.com>
+	s=arc-20240116; t=1740687743; c=relaxed/simple;
+	bh=4JO84e2/jyvgpbFbferhNXNJSfOzWDotZb4WwEXenb8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHYMU7yA8fLJ859a9Fqfu0S0ZRlSYvFMp9eAbVJAM6mhItLp2EQGjw2awPV8NOlmI+FzmLkkcz2nmLbxU0rLqT+L7QEeFzHD9MjoJmgpzmaW0kuCceX+FX9TkOkVnkHs+KmKS0bOxdaTmDTcAYk6oKWjZR4jB3KkMhmcNwon9Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=f9b2XkW5; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 075E33F278
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:22:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1740687739;
+	bh=SiQZ4Rq+0GqJoxx2KQxyIG0Xut74ShpYg+ijgenLnUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=f9b2XkW5a3CXE4JkI7KICaqXcWzB40jn/BB0ClCLQXgCMA0v+gjJw5Sl9hJgD4P2B
+	 Cjxxm/jXFXz+A583hPIfYSwnuSSReZEzIeAd13S4bVJ+kv7DgR8MhqjdYQOZzAwAAk
+	 cEY17Kee4sAsJko7/g49qfcKt+xkkhm/F65YvD71R6JDnRDWcB5mkl4gM/ZL1ECCqO
+	 JaTDirOZBpbYLRJhDk9EqPrKqAV95tDrnPdOn0UI2aMfBVabcFU1a3FycPJZm6MW6S
+	 utcbZJUrpqkRQPjANSqlh4RhjmUCTikrjwXd1d1apr8FJ/uHEMGNafqd2m+JXYRPkC
+	 Z9gWL1eWOPJmQ==
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5e4cf414a68so1296123a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:22:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740687738; x=1741292538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SiQZ4Rq+0GqJoxx2KQxyIG0Xut74ShpYg+ijgenLnUA=;
+        b=j8zu1wh0w8SOf4/CNcdjvWTAhfBN3VrROSZf54qDsOqhrBbudSDna5wwC8Y/jyGtgG
+         Ixc79Fw/Oti1Wjrx3FHSW11C6njC9eiDuKZX0ufMAaRvYptezrjd5JmXTGhXe12cO2ME
+         g7bRpaMwh4b0D9rZTo5BeojIEFio++fuzYumFExp076G4NFefA7KR8RBZR9ostZ9aq22
+         yRwfikNpgJ8ZDQLRtvkdgLfXZvjCtYtF17NhcaZLOLzjEolQUVWHPHBQoRa2ApVZmMLs
+         /eBdSA/aGSob7/Hhak/xSffj7gF3dl9YcTqY5+QWhVxYmExI74XBsqK+QRau8bILG+CR
+         w7xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUj6kbnT1Mul5Tust0ayd7YobS33uGzFOYm4sOZa9EQ2gOu4gCdeo2Dk59XyOnFEHN4AELBLx2B2XJ3ufA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfWmA5jBs5H0N0kA4a8hSIe7JCI9G5gAVDD2l6OZxACnJA2Y+t
+	XwJ7uueFtbgydbyz9eVHCeWs2csgBUbPC70+5NzMV8fkumR02wit11u4+1kUCS7NMrSey+wpLy7
+	BUdZNv+OmmMTnrsksuuY4URfC5DIhn59YtuQCs4sbZpq4/2eiGmusi7UmlTgKNrpv3+68GAMu3A
+	PDXcJTUXfB/p9H/0RDyrgW8HhCWZy0X9396Yh4py7Kr+ZIGUab0XlN
+X-Gm-Gg: ASbGncuFfPIEmpYWaM5iW4geHs2i8rhAZT5o7OXffBGFBKIUY42hH4DR+pNa3M1NYRg
+	wBrJPZ9jRoVHQGL1+ZgV5Ty321KwBaMbNA0dI+9ZfyHeeOdXRhhG4qypAXHdqEJ26N6yNUZE=
+X-Received: by 2002:a05:6402:350f:b0:5e4:9348:72b4 with SMTP id 4fb4d7f45d1cf-5e4d6921bd4mr402494a12.0.1740687738517;
+        Thu, 27 Feb 2025 12:22:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHjN7GoLizYN8AYUswkeK50Pl1lF2BJudLqy3J78FpZbhUAfHe4ulxGizo03P2ZzrkYYxtjIXX1SIy4cdHOVZg=
+X-Received: by 2002:a05:6402:350f:b0:5e4:9348:72b4 with SMTP id
+ 4fb4d7f45d1cf-5e4d6921bd4mr402477a12.0.1740687738203; Thu, 27 Feb 2025
+ 12:22:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250218222209.1382449-1-alex.williamson@redhat.com>
+ <20250218222209.1382449-7-alex.williamson@redhat.com> <Z7UOEpgH5pdTBcJP@x1.local>
+ <20250218161407.6ae2b082.alex.williamson@redhat.com> <CAHTA-ua8mTgNkDs0g=_8gMyT1NkgZqCE0J7QjOU=+cmZ2xqd7Q@mail.gmail.com>
+ <20250219080808.0e22215c.alex.williamson@redhat.com> <CAHTA-ubiguHnrQQH7uML30LsVc+wk-b=zTCioVTs3368eWkmeg@mail.gmail.com>
+ <20250226105540.696a4b80.alex.williamson@redhat.com>
+In-Reply-To: <20250226105540.696a4b80.alex.williamson@redhat.com>
+From: Mitchell Augustin <mitchell.augustin@canonical.com>
+Date: Thu, 27 Feb 2025 14:22:07 -0600
+X-Gm-Features: AQ5f1JrZ1oPBmSEga4Ppqksx7nR2-OUM5LtfazwlWAiz0Eh4H51tt0_skrEMiXg
+Message-ID: <CAHTA-ubjxqs7Rh8ERXqFXCRAm7WoMMRQftSPLmrK61jra7+gYg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] vfio/type1: Use mapping page mask for pfnmaps
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	clg@redhat.com, jgg@nvidia.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MMIO mux driver is designed to parse "mux-reg-masks" and "idle-states"
-property independently to configure mux registers. Drawback of this
-approach is, while configuring mux-controller one need to specify every
-register of memory space with offset and mask in "mux-reg-masks" and
-register state to "idle-states", that would be more complex for devices
-with large memory space.
+Thanks Alex, that's super helpful and makes sense to me now!
 
-Add support to extend the mmio mux driver to configure a specific register
-or set of register in memory space.
+-Mitchell
 
-Signed-off-by: Chintan Vankar <c-vankar@ti.com>
----
- drivers/mux/mmio.c | 148 +++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 122 insertions(+), 26 deletions(-)
+On Wed, Feb 26, 2025 at 11:55=E2=80=AFAM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> On Wed, 19 Feb 2025 14:32:35 -0600
+> Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
+>
+> > > Thanks for the review and testing!
+> >
+> > Sure thing, thanks for the patch set!
+> >
+> > If you happen to have a few minutes, I'm struggling to understand the
+> > epfn computation and would appreciate some insight.
+>
+> Sorry, this slipped off my todo list for a few days.
+>
+> > My current understanding (very possibly incorrect):
+> > - epfn is intended to be the last page frame number that can be
+> > represented at the mapping level corresponding to addr_mask. (so, if
+> > addr_mask =3D=3D PUD_MASK, epfn would be the highest pfn still in PUD
+> > level).
+>
+> Actually epfn is the first pfn of the next addr_mask level page.  The
+> value in the parens (*pfn | (~addr_mask >> PAGE_SHIFT)) is the last pfn
+> within the same level page.  We could do it either way, it's just a
+> matter of where the +1 gets added.
+>
+> > - ret should be =3D=3D npages if all pfns in the requested vma are with=
+in
+> > the memory hierarchy level denoted by addr_mask. If npages is more
+> > than can be represented at that level, ret =3D=3D the max number of pag=
+e
+> > frames representable at addr_mask level.
+>
+> Yes.
+>
+> > - - (if the second case is true, that means we were not able to obtain
+> > all requested pages due to running out of PFNs at the current mapping
+> > level)
+>
+> vaddr_get_pfns() is called again if we haven't reached npage.
+> Specifically, from vfio_pin_pages_remote() we hit the added continue
+> under the !batch->size branch.  If the pfnmaps are fully PUD aligned,
+> we'll call vaddr_get_pfns() once per PUD_SIZE, vfio_pin_pages_remote()
+> will only return with the full requested npage value, and we'll only
+> call vfio_iommu_map() once.  The latter has always been true, the
+> difference is the number of times we iterate calling vaddr_get_pfns().
+>
+> > If the above is all correct, what is confusing me is where the "(*pfn)
+> > | " comes into this equation. If epfn is meant to be the last pfn
+> > representable at addr_mask level of the hierarchy, wouldn't that be
+> > represented by (~pgmask >> PAGE_SHIFT) alone?
+>
+> (~addr_mask >> PAGE_SHIFT) gives us the last pfn relative to zero.  We
+> want the last pfn relative to *pfn, therefore we OR in *pfn.  The OR
+> handles any offset that *pfn might have within the addr_mask page, so
+> this operation always provides the last pfn of the addr_mask page
+> relative to *pfn.  +1 because we want to calculate the number of pfns
+> until the next page.  Thanks,
+>
+> Alex
+>
 
-diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-index 30a952c34365..8937d0ea2b11 100644
---- a/drivers/mux/mmio.c
-+++ b/drivers/mux/mmio.c
-@@ -2,7 +2,7 @@
- /*
-  * MMIO register bitfield-controlled multiplexer driver
-  *
-- * Copyright (C) 2017 Pengutronix, Philipp Zabel <kernel@pengutronix.de>
-+ * Copyright (C) 2017-2025 Pengutronix, Philipp Zabel <kernel@pengutronix.de>
-  */
- 
- #include <linux/bitops.h>
-@@ -33,10 +33,84 @@ static const struct of_device_id mux_mmio_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, mux_mmio_dt_ids);
- 
-+static int reg_mux_get_controllers(const struct device_node *np, char *prop_name)
-+{
-+	int ret;
-+
-+	ret = of_property_count_u32_elems(np, prop_name);
-+	if (ret == 0 || ret % 2)
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+
-+static int reg_mux_get_controllers_extended(const struct device_node *np, char *prop_name)
-+{
-+	int ret;
-+
-+	ret = of_property_count_u32_elems(np, prop_name);
-+	if (ret == 0 || ret % 3)
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+
-+static int reg_mux_parse_dt(const struct device_node *np, bool *mux_reg_masks_state,
-+			    int *num_fields)
-+{
-+	int ret;
-+
-+	if (*mux_reg_masks_state) {
-+		ret = reg_mux_get_controllers_extended(np, "mux-reg-masks-state");
-+		if (ret < 0)
-+			return ret;
-+		*num_fields = ret / 3;
-+	} else {
-+		ret = reg_mux_get_controllers(np, "mux-reg-masks");
-+		if (ret < 0)
-+			return ret;
-+		*num_fields = ret / 2;
-+	}
-+	return ret;
-+}
-+
-+static int mux_reg_set_parameters(const struct device_node *np, char *prop_name, u32 *reg,
-+				  u32 *mask, int index)
-+{
-+	int ret;
-+
-+	ret = of_property_read_u32_index(np, prop_name,
-+					 2 * index, reg);
-+	if (!ret)
-+		ret = of_property_read_u32_index(np, prop_name,
-+						 2 * index + 1, mask);
-+
-+	return ret;
-+}
-+
-+static int mux_reg_set_parameters_extended(const struct device_node *np, char *prop_name, u32 *reg,
-+					   u32 *mask, u32 *state, int index)
-+{
-+	int ret;
-+
-+	ret = of_property_read_u32_index(np, prop_name,
-+					 3 * index, reg);
-+	if (!ret) {
-+		ret = of_property_read_u32_index(np, prop_name,
-+						 3 * index + 1, mask);
-+		if (!ret)
-+			ret = of_property_read_u32_index(np, prop_name,
-+							 3 * index + 2, state);
-+	}
-+
-+	return ret;
-+}
-+
- static int mux_mmio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-+	bool mux_reg_masks_state = false;
- 	struct regmap_field **fields;
- 	struct mux_chip *mux_chip;
- 	struct regmap *regmap;
-@@ -59,15 +133,19 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(regmap),
- 				     "failed to get regmap\n");
- 
--	ret = of_property_count_u32_elems(np, "mux-reg-masks");
--	if (ret == 0 || ret % 2)
--		ret = -EINVAL;
-+	if (of_property_present(np, "mux-reg-masks-state"))
-+		mux_reg_masks_state = true;
-+
-+	ret = reg_mux_parse_dt(np, &mux_reg_masks_state, &num_fields);
- 	if (ret < 0) {
--		dev_err(dev, "mux-reg-masks property missing or invalid: %d\n",
--			ret);
-+		if (mux_reg_masks_state)
-+			dev_err(dev, "mux-reg-masks-state property missing or invalid: %d\n",
-+				ret);
-+		else
-+			dev_err(dev, "mux-reg-masks property missing or invalid: %d\n",
-+				ret);
- 		return ret;
- 	}
--	num_fields = ret / 2;
- 
- 	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
- 				       sizeof(*fields));
-@@ -79,19 +157,25 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 	for (i = 0; i < num_fields; i++) {
- 		struct mux_control *mux = &mux_chip->mux[i];
- 		struct reg_field field;
--		s32 idle_state = MUX_IDLE_AS_IS;
-+		s32 state, idle_state = MUX_IDLE_AS_IS;
- 		u32 reg, mask;
- 		int bits;
- 
--		ret = of_property_read_u32_index(np, "mux-reg-masks",
--						 2 * i, &reg);
--		if (!ret)
--			ret = of_property_read_u32_index(np, "mux-reg-masks",
--							 2 * i + 1, &mask);
--		if (ret < 0) {
--			dev_err(dev, "bitfield %d: failed to read mux-reg-masks property: %d\n",
--				i, ret);
--			return ret;
-+		if (!mux_reg_masks_state) {
-+			ret = mux_reg_set_parameters(np, "mux-reg-masks", &reg, &mask, i);
-+			if (ret < 0) {
-+				dev_err(dev, "bitfield %d: failed to read mux-reg-masks property: %d\n",
-+					i, ret);
-+				return ret;
-+			}
-+		} else {
-+			ret = mux_reg_set_parameters_extended(np, "mux-reg-masks-state", &reg,
-+							      &mask, &state, i);
-+			if (ret < 0) {
-+				dev_err(dev, "bitfield %d: failed to read custom-states property: %d\n",
-+					i, ret);
-+				return ret;
-+			}
- 		}
- 
- 		field.reg = reg;
-@@ -115,16 +199,28 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 		bits = 1 + field.msb - field.lsb;
- 		mux->states = 1 << bits;
- 
--		of_property_read_u32_index(np, "idle-states", i,
--					   (u32 *)&idle_state);
--		if (idle_state != MUX_IDLE_AS_IS) {
--			if (idle_state < 0 || idle_state >= mux->states) {
--				dev_err(dev, "bitfield: %d: out of range idle state %d\n",
--					i, idle_state);
--				return -EINVAL;
-+		if (!mux_reg_masks_state) {
-+			of_property_read_u32_index(np, "idle-states", i,
-+						   (u32 *)&idle_state);
-+			if (idle_state != MUX_IDLE_AS_IS) {
-+				if (idle_state < 0 || idle_state >= mux->states) {
-+					dev_err(dev, "bitfield: %d: out of range idle state %d\n",
-+						i, idle_state);
-+					return -EINVAL;
-+				}
-+
-+				mux->idle_state = idle_state;
-+			}
-+		} else {
-+			if (state != MUX_IDLE_AS_IS) {
-+				if (state < 0 || state >= mux->states) {
-+					dev_err(dev, "bitfield: %d: out of range idle state %d\n",
-+						i, state);
-+					return -EINVAL;
-+				}
-+
-+				mux->idle_state = state;
- 			}
--
--			mux->idle_state = idle_state;
- 		}
- 	}
- 
--- 
-2.34.1
 
+--=20
+Mitchell Augustin
+Software Engineer - Ubuntu Partner Engineering
 
