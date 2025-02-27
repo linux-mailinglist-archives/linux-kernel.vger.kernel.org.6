@@ -1,79 +1,60 @@
-Return-Path: <linux-kernel+bounces-537174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8B2A488DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:20:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B65A488DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1882161A55
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:20:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8AD7A5770
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFDF26E944;
-	Thu, 27 Feb 2025 19:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770C626E65B;
+	Thu, 27 Feb 2025 19:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g1R4F8n5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF4Qv21A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE44526E649;
-	Thu, 27 Feb 2025 19:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE981E521C;
+	Thu, 27 Feb 2025 19:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684003; cv=none; b=F72t70xHNjcd9gV6Jyx5L57p8/0n1ChtVehOgnPlaO36IK7gWAl6O08651jnKCbrfZwVKI1auhwfl29r4/9jslUj7kJJIUHMLq6NgGH4aQ2YDvc0SZlq3d88vnXpzCp/DH9+8EaHCa6YNNPriHFR5ZvWUfa2GfAlFbA8xlcbBQM=
+	t=1740683948; cv=none; b=DEy0XzFIT+VAvcgIy4H7oQPY2QWefa8uG9bb7mG16maVmnOKM8DNtk2QerPgI+U+INFQBb83addEKuPWgAdYMMBK6cCiLWKUlzWRDxYOhpQhvLPiVZhCVcg3FKdUi/J4bmoEERIEiQ3AshRHyY91A9+0pozXB7hrtIb2+L79yz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684003; c=relaxed/simple;
-	bh=9/QRe7sLuF6mdR2aq8VzjCObcNBmWE07UKQPAvkDe2M=;
+	s=arc-20240116; t=1740683948; c=relaxed/simple;
+	bh=2X2qLNZH7uboiUyrahk+iO4ZuN93T5ESjCur/GZji1E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvZs/72DTxpkfsGFn/92bb/xxjZuTrqGHHeQh3gD7F0ZScYlZUuF3qof9AQQz1/z3m4MzerpLSuw71yoqIH4kH7fGsPGBLpzV4p3aE1NwM4LIsUlDSr59A14zcS7t7lAR+FhLLoaUmNwJxYUPrpKiO2sy7mRV7zJd5EqS80vaCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g1R4F8n5; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740684002; x=1772220002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9/QRe7sLuF6mdR2aq8VzjCObcNBmWE07UKQPAvkDe2M=;
-  b=g1R4F8n5AqLGSz+stq4EmCZzBn/jAzwx0wzHd/ISw7z1YtS4AqTNxHPh
-   OH8w5Ab5am9uykxS1Wa2w9YNjHJB6MVsD8tLD6qwc7eGSVpkhMiDIXTbd
-   m0CQn3eGkNLDckb3KggpgZt/hMeAflWkYDqK2vhG2U+H0J1JYHxlHxnUn
-   o0qmUNOtQ9C0Bu+1w7G4rmOJ27Gu4fAAforZRY5Q9DE0wLDmGeragO/W+
-   0u8+LXbPZUrOy7ikNG+ZBHA501eYnPBB02XOUMz0aohThbCVp86c3CWcM
-   K9CnJAwOFKklMX4aqKwTzM/y0I3bkTJfVHf9omLUC2rohm4Jf5ZK5mQSE
-   Q==;
-X-CSE-ConnectionGUID: 8GgRXRzFQjiLHVhXh0wXmQ==
-X-CSE-MsgGUID: gZ744N0cRsGs8sIFs5z40g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40838288"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="40838288"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:20:01 -0800
-X-CSE-ConnectionGUID: /eF76LhzRh2zzXKUwSgkvw==
-X-CSE-MsgGUID: PjrYJu1DRu+YRi9VAMtUgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117301546"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 27 Feb 2025 11:19:58 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnjQK-000Dvi-2H;
-	Thu, 27 Feb 2025 19:19:56 +0000
-Date: Fri, 28 Feb 2025 03:19:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huacai Chen <chenhuacai@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>, Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn, stable@vger.kernel.org
-Subject: Re: [PATCH] LoongArch: Use polling play_dead() when resuming from
- hibernation
-Message-ID: <202502280356.YjzMIJ8n-lkp@intel.com>
-References: <20250225111812.3065545-1-chenhuacai@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZ+aSb0WrX2xe5l8wMG5SMb9CCRNWMv6VMEvJg8jdC+qcJRNgWxedd8JAzi3rp9aL22UEgUYa2u9C/VeVABM5PjrzPqfj/Z32ZcTrnpufyjlkHEu+IFhvFilmI9aJiqI/nOquK3piqR9dBNjIbwrWKZano3kWjiD167QiRzCYqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF4Qv21A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F001C4CEDD;
+	Thu, 27 Feb 2025 19:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740683948;
+	bh=2X2qLNZH7uboiUyrahk+iO4ZuN93T5ESjCur/GZji1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mF4Qv21A9W/b3XEN2Y/n3BWwLDomwlfBqr/wmlWcLYIGmbDesbQyrR4vXDIm9qSuy
+	 1OUGVYbVOeABfF9fyCvn7viQ7Dx5Fwd7yUjzpoNVvI/yCgS4PGIP4Itg8dcz/xCQeW
+	 ldstY028QqjeBy6Jt3GGKnEC/KTxqUp7tnZ/+2yeNiSw2uFA1NR0TlYEAnDNQgxgl0
+	 MEqNvueaTN4u6CQVZ4rPA7qBh9zsLfWY9s4cVR6PTSMXwTD+4csw/n1GF3U/Oa6UQk
+	 DqaPET2/nmM2qtVymUArC4PDfdqfLr6xTqzdY5uefJG/5hMPWf1AsO+SAHIBFaDe3k
+	 PVA5wpYbhMBAw==
+Date: Thu, 27 Feb 2025 09:19:07 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+	memxor@gmail.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.15 v3 2/5] sched_ext: Declare
+ context-sensitive kfunc groups that can be used by different SCX operations
+Message-ID: <Z8C6q2VxuclLiR4p@slm.duckdns.org>
+References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB508018ABBD34FBAA089DD9F799C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,64 +63,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225111812.3065545-1-chenhuacai@loongson.cn>
+In-Reply-To: <AM6PR03MB508018ABBD34FBAA089DD9F799C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-Hi Huacai,
+On Wed, Feb 26, 2025 at 07:28:17PM +0000, Juntong Deng wrote:
+> This patch declare context-sensitive kfunc groups that can be used by
+             ^
+             declares
 
-kernel test robot noticed the following build warnings:
+> different SCX operations.
+...
+> +/* Each flag corresponds to a btf kfunc id set */
+> +enum scx_ops_kf_flags {
+> +	SCX_OPS_KF_ANY			= 0,
+> +	SCX_OPS_KF_UNLOCKED		= 1 << 1,
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+nit: Any specific reason to skip bit 0?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Huacai-Chen/LoongArch-Use-polling-play_dead-when-resuming-from-hibernation/20250225-192024
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250225111812.3065545-1-chenhuacai%40loongson.cn
-patch subject: [PATCH] LoongArch: Use polling play_dead() when resuming from hibernation
-config: loongarch-randconfig-001-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280356.YjzMIJ8n-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280356.YjzMIJ8n-lkp@intel.com/reproduce)
+> +	SCX_OPS_KF_CPU_RELEASE		= 1 << 2,
+> +	SCX_OPS_KF_DISPATCH		= 1 << 3,
+> +	SCX_OPS_KF_ENQUEUE		= 1 << 4,
+> +	SCX_OPS_KF_SELECT_CPU		= 1 << 5,
+> +};
+> +
+> +static const u32 scx_ops_context_flags[] = {
+> +	[SCX_OP_IDX(select_cpu)]		= SCX_OPS_KF_SELECT_CPU | SCX_OPS_KF_ENQUEUE,
+> +	[SCX_OP_IDX(enqueue)]			= SCX_OPS_KF_ENQUEUE,
+> +	[SCX_OP_IDX(dequeue)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(dispatch)]			= SCX_OPS_KF_DISPATCH | SCX_OPS_KF_ENQUEUE,
+> +	[SCX_OP_IDX(tick)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(runnable)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(running)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(stopping)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(quiescent)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(yield)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(core_sched_before)]		= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(set_weight)]		= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(set_cpumask)]		= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(update_idle)]		= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(cpu_acquire)]		= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(cpu_release)]		= SCX_OPS_KF_CPU_RELEASE,
+> +	[SCX_OP_IDX(init_task)]			= SCX_OPS_KF_UNLOCKED,
+> +	[SCX_OP_IDX(exit_task)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(enable)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(disable)]			= SCX_OPS_KF_ANY,
+> +	[SCX_OP_IDX(dump)]			= SCX_OPS_KF_DISPATCH,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502280356.YjzMIJ8n-lkp@intel.com/
+Shouldn't this be SCX_OPS_KF_UNLOCKED?
 
-All warnings (new ones prefixed by >>):
-
->> arch/loongarch/kernel/smp.c:451:24: warning: 'poll_play_dead' defined but not used [-Wunused-function]
-     451 | static void __noreturn poll_play_dead(void)
-         |                        ^~~~~~~~~~~~~~
-
-
-vim +/poll_play_dead +451 arch/loongarch/kernel/smp.c
-
-   450	
- > 451	static void __noreturn poll_play_dead(void)
-   452	{
-   453		register uint64_t addr;
-   454		register void (*init_fn)(void);
-   455	
-   456		idle_task_exit();
-   457		__this_cpu_write(cpu_state, CPU_DEAD);
-   458	
-   459		__smp_mb();
-   460		do {
-   461			__asm__ __volatile__("nop\n\t");
-   462			addr = iocsr_read64(LOONGARCH_IOCSR_MBUF0);
-   463		} while (addr == 0);
-   464	
-   465		init_fn = (void *)TO_CACHE(addr);
-   466		iocsr_write32(0xffffffff, LOONGARCH_IOCSR_IPI_CLEAR);
-   467	
-   468		init_fn();
-   469		BUG();
-   470	}
-   471	
+Thanks.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+tejun
 
