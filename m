@@ -1,245 +1,207 @@
-Return-Path: <linux-kernel+bounces-535820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C98A4779F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65839A477A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14E33A5E06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB4A3A989B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B421CC73;
-	Thu, 27 Feb 2025 08:21:47 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B2C224893;
+	Thu, 27 Feb 2025 08:22:27 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FBBA59;
-	Thu, 27 Feb 2025 08:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E9C221DB0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644507; cv=none; b=XQmZ/ptkkH91E4IL0h8vXtchc8nv4AqrfT2FYWZs+SVUgDiCeA9vKaZCV0uct3Q+T9Sde+HwUOYW85s4VaB1+r2rdYiSnLOK6r8W7IpufqikN13WeyjVzc/PI915SW7Qm9EoElnyXRYOeYHMkArVatVX1Ae/uCIZ6/+6c3RbFps=
+	t=1740644546; cv=none; b=mofGMxwLgwDzAzOp14JHvCToJn4unTYjYvOUPOCyhF0OVT0S6i3uiNngF/lKFIcfxS5ZNIC3jWPuKyrXaX+5bp4gOktyOfSykJYWcSLMoKvygWW+ktbQ7Zyoj2DQ/OhUQNHYL0kAIGCXs27r1WJ3vl5Hs37oTOGJU9goEoE61JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644507; c=relaxed/simple;
-	bh=eOBMEXvEguUn14qDd/SuzTeW7unn4Mrru+mt6VLUWHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s2vkOB+4BV2QPa72YDO/iyNiamDnY2TiSLq1X3Xq90URxHSzg7dsRuONBCIVas9cngmSmf3CYS64NHc/DWEV7eVB6jf10lfGZpbuEQ++HAC+e9Y3dG5eH+Rz0bfScQrxehRfKeCrh/ndC26nsek91ED64t4xZb0euolhrpOTD0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z3PMz5wPxz1dykB;
-	Thu, 27 Feb 2025 16:17:35 +0800 (CST)
-Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4AD5A1400CB;
-	Thu, 27 Feb 2025 16:21:41 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Feb 2025 16:21:41 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 27 Feb
- 2025 16:21:40 +0800
-Message-ID: <765d509f-112a-2173-43af-e657f59fddac@huawei.com>
-Date: Thu, 27 Feb 2025 16:21:39 +0800
+	s=arc-20240116; t=1740644546; c=relaxed/simple;
+	bh=I3uI1Jfhl5RceNORzTjevuDmTDtsNqkVAUebUcu1a1c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IjYQdMvV1UO6AZfLUYG1YuSbnhSSpwNyjFSFm7ILIS/okMEnTbuRTuzwZXfw2Carf6N8e5SeF6YDZB0UcmkVdiZ5eg/ZObiIX0yU0fHDNEQcRByK4d13TQA0aTmNKkXLW2EsPrC1usaVx2cwTrSZSoQbNr0cUANkAv3j1TXNfA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d289bf6c39so14481985ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:22:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740644544; x=1741249344;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lX/m3nnf7YLk7rWeS7FHGWYPncB5OtqoPav3Xi3zF38=;
+        b=fN2rbBWMl6WZPmSq1I6/+uEA5CfQl7R0YKFB9TYgKtR8eHCe8EQNZA0gn1lP38x/4l
+         WN7wQ+YAXqSaY2KX6EnjCrj9+2hlVwuW6PM1g6lccgovyOy3jsSPT+JEBT5D0W9hl6uw
+         uiiLh3mvn+6yzvI3Tf7zJ3REy/s9rKWKMhxH12LaErHE8BUVvwu+Z+tArAEyBFF6dtDz
+         /r69VuvGg/acr3AephfQWyouwppJo/P3MVyIrq5sJj6ml36LcvJAdXFohaq9Vp8MLV49
+         6z6cgO80Muc96JRvtW7uJ6wthK6EtwhwDsBWkQCb8GNNj7+djkrY0yMpI8ep/RM9qjlf
+         9w1A==
+X-Forwarded-Encrypted: i=1; AJvYcCW15bPUd4lTZIPNIUDpcV7E6n+r4eE7iP3v5cXzBjUonAqSp/aVNXk2kFr1HBgC1GC/y4/vZj7VwQsp21g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0W871J1OxBjBg3kgZGbFc7ENllsrW2x6KvTYCPIqiit0wxIGl
+	NbkG4Pk9EqYzL323ZnW83M6x2w5zcfz645gPjXVyuQGa7n5fS0mOZDDm9KbhOiMHXTb0t/7zZMV
+	SnxjZFOO8zTHtcFDAp0fLS9Qf//C1vzhIvDgkHesv5LQZR7Qvv6rbXVw=
+X-Google-Smtp-Source: AGHT+IHcQW6B6QePv0+ZxKqh9G7YYitC+fhui9RZFurMckxd1PhSpkzoTzpq8URaDrFbK27MtTatcCVY5c4VtP+QUYbVRAaqTMO/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [RFC] hwmon: (acpi_power_meter) Replace hwmon_device_register
-To: Guenter Roeck <linux@roeck-us.net>
-CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>,
-	<liuyonglong@huawei.com>, <jdelvare@suse.com>
-References: <20250225085158.6989-1-lihuisong@huawei.com>
- <8b59c8d0-4710-48ab-ad70-b2eddc74fa9e@roeck-us.net>
- <05bb1583-13c7-25f6-48fb-dc415b3206f9@huawei.com>
- <d765aeb3-3ca6-44a1-9337-2706621df903@roeck-us.net>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <d765aeb3-3ca6-44a1-9337-2706621df903@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+X-Received: by 2002:a05:6e02:184e:b0:3cd:d14c:be69 with SMTP id
+ e9e14a558f8ab-3d3dd2d9ea5mr17906235ab.11.1740644544319; Thu, 27 Feb 2025
+ 00:22:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 00:22:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c020c0.050a0220.222324.0011.GAE@google.com>
+Subject: [syzbot] [intel-wired-lan?] kernel BUG in pskb_expand_head (4)
+From: syzbot <syzbot+da65c993ae113742a25f@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, anthony.l.nguyen@intel.com, davem@davemloft.net, 
+	edumazet@google.com, intel-wired-lan@lists.osuosl.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	przemyslaw.kitszel@intel.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    ac9c34d1e45a Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10da9db0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1635bf4c5557b92
+dashboard link: https://syzkaller.appspot.com/bug?extid=da65c993ae113742a25f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ac9c34d1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a84d67d61e80/vmlinux-ac9c34d1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/951486618398/bzImage-ac9c34d1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+da65c993ae113742a25f@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:2178!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 16371 Comm: syz.2.2764 Not tainted 6.14.0-rc4-syzkaller-00052-gac9c34d1e45a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pskb_expand_head+0x6ce/0x1240 net/core/skbuff.c:2178
+Code: 7f 05 e8 35 98 f1 f8 8b 44 24 40 8b 74 24 44 29 f0 01 83 e0 00 00 00 e9 70 ff ff ff e8 4b 5e 8f f8 90 0f 0b e8 43 5e 8f f8 90 <0f> 0b e8 3b 5e 8f f8 41 81 cd 00 00 02 00 e9 46 fb ff ff e8 2a 5e
+RSP: 0018:ffffc9000d6f7160 EFLAGS: 00010246
+RAX: 0000000000080000 RBX: ffff88806c1f9400 RCX: ffffc900273e9000
+RDX: 0000000000080000 RSI: ffffffff892a810d RDI: 0000000000000005
+RBP: ffff88806c1f94cc R08: 0000000000000005 R09: 0000000000000001
+R10: 0000000000000002 R11: 0000000000000005 R12: 0000000000000002
+R13: 0000000000000820 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f5066b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 000000008000601c CR3: 0000000054770000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __skb_pad+0x18a/0x610 net/core/skbuff.c:2466
+ __skb_put_padto include/linux/skbuff.h:3843 [inline]
+ skb_put_padto include/linux/skbuff.h:3862 [inline]
+ eth_skb_pad include/linux/etherdevice.h:656 [inline]
+ e1000_xmit_frame+0x2d99/0x5800 drivers/net/ethernet/intel/e1000/e1000_main.c:3128
+ __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5160 [inline]
+ xmit_one net/core/dev.c:3806 [inline]
+ dev_hard_start_xmit+0x9a/0x7b0 net/core/dev.c:3822
+ sch_direct_xmit+0x1ae/0xc30 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:4045 [inline]
+ __dev_queue_xmit+0x13d4/0x43e0 net/core/dev.c:4621
+ dev_queue_xmit include/linux/netdevice.h:3313 [inline]
+ llc_sap_action_send_test_c+0x268/0x320 net/llc/llc_s_ac.c:144
+ llc_exec_sap_trans_actions net/llc/llc_sap.c:153 [inline]
+ llc_sap_next_state net/llc/llc_sap.c:182 [inline]
+ llc_sap_state_process+0x239/0x510 net/llc/llc_sap.c:209
+ llc_ui_sendmsg+0xd0d/0x14e0 net/llc/af_llc.c:993
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg net/socket.c:733 [inline]
+ ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
+ __sys_sendmmsg+0x2fa/0x420 net/socket.c:2709
+ __compat_sys_sendmmsg net/compat.c:360 [inline]
+ __do_compat_sys_sendmmsg net/compat.c:367 [inline]
+ __se_compat_sys_sendmmsg net/compat.c:364 [inline]
+ __ia32_compat_sys_sendmmsg+0x9d/0x100 net/compat.c:364
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf73de579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f506655c EFLAGS: 00000296 ORIG_RAX: 0000000000000159
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000080000c40
+RDX: 00000000842c97f7 RSI: 0000000000008014 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:pskb_expand_head+0x6ce/0x1240 net/core/skbuff.c:2178
+Code: 7f 05 e8 35 98 f1 f8 8b 44 24 40 8b 74 24 44 29 f0 01 83 e0 00 00 00 e9 70 ff ff ff e8 4b 5e 8f f8 90 0f 0b e8 43 5e 8f f8 90 <0f> 0b e8 3b 5e 8f f8 41 81 cd 00 00 02 00 e9 46 fb ff ff e8 2a 5e
+RSP: 0018:ffffc9000d6f7160 EFLAGS: 00010246
+RAX: 0000000000080000 RBX: ffff88806c1f9400 RCX: ffffc900273e9000
+RDX: 0000000000080000 RSI: ffffffff892a810d RDI: 0000000000000005
+RBP: ffff88806c1f94cc R08: 0000000000000005 R09: 0000000000000001
+R10: 0000000000000002 R11: 0000000000000005 R12: 0000000000000002
+R13: 0000000000000820 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f5066b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 000000008000601c CR3: 0000000054770000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
-在 2025/2/26 21:26, Guenter Roeck 写道:
-> On 2/26/25 02:19, lihuisong (C) wrote:
->> Hi Guenter,
->>
->> 在 2025/2/25 21:01, Guenter Roeck 写道:
->>> On 2/25/25 00:51, Huisong Li wrote:
->>>> When load this mode, we can see the following log:
->>>> "power_meter ACPI000D:00: hwmon_device_register() is deprecated. 
->>>> Please
->>>>   convert the driver to use hwmon_device_register_with_info()."
->>>>
->>>> So replace hwmon_device_register with hwmon_device_register_with_info.
->>>>
->>>> To avoid any changes in the display of some sysfs interfaces, some of
->>>> necessary changes in hwmon.c must be made:
->>>> 1> For 'power1_average_interval_max/min' interface, insert 
->>>> 'average' to the
->>>>     string corresponding to hwmon_power_average_interval_max/max in
->>>>     hwmon_power_attr_templates[]. I guess that is what's missing.
->>>> 2> Add some string attributes in power sensor type because of below 
->>>> items:
->>>>     a) power1_accuracy  --> display like '90.0%'
->>>>     b) power1_cap_hyst  --> display 'unknown' when its value is 
->>>> 0xFFFFFFFF
->>>>     c) power1_average_min/max --> display 'unknown' when its value is
->>>>                                   negative.
->>>> Note: All the attributes modified above in hwmon core are not used 
->>>> by other
->>>> drivers.
->>>>
->>>
->>> That is not a reason to change the ABI, much less so hiding the change
->>> in a driver patch.
->>>
->>>
->> I am trying to replace the deprecated hwmon_device_register with 
->> hwmon_device_register_with_info for acpi power meter driver.
->>
->> To avoid any changes in the display of some sysfs interfaces, there 
->> are two modifications in hwmon core as follows:
->
-> The only reason to change the hwmon core would be if it is wrong or if 
-> it needs to
-> be amended. Matching driver expectations is not a valid reason.
-Got it.
->
->> (1) The first modification in hwmon is as follows:
->> -->
->> @@ -646,8 +653,8 @@ static const char * const 
->> hwmon_power_attr_templates[] = {
->>       [hwmon_power_enable] = "power%d_enable",
->>       [hwmon_power_average] = "power%d_average",
->>       [hwmon_power_average_interval] = "power%d_average_interval",
->> -    [hwmon_power_average_interval_max] = "power%d_interval_max",
->> -    [hwmon_power_average_interval_min] = "power%d_interval_min",
->> +    [hwmon_power_average_interval_max] = 
->> "power%d_average_interval_max",
->> +    [hwmon_power_average_interval_min] = 
->> "power%d_average_interval_min",
->>       [hwmon_power_average_highest] = "power%d_average_highest",
->>
-> That is indeed a bug and should be fixed, but in a separate patch.
-will do it.
->
->> The string names, "power%d_interval_max/min", are missing 'average'.
->> I think the meaning of these attributes are unclear If no this word. 
->> It can be regarded as a fault.
->> And power attribute name in acpi power meter is 
->> "power1_average_interval_min/max".
->>
->> (2)The second modification changes the attribute of 'power_accuracy', 
->> 'power_cap_hyst', 'power_average_min' and 'power_average_max' from 
->> data to string.
->> It is appropriate to assign 'power_accuracy' to string attribute.
->
-> No. The ABI states that this is the accuracy in %. We don't append "mV"
-> to voltages, or "mA" to currents either. The unit is determined by the 
-> ABI,
-> which states that the expected value is a number reflecting %. If a 
-> driver
-> adds "%", it is a driver oddity, but not a hwmon bug. The whole point of
-> providing numeric values is to simplify parsing from userspace. Adding 
-> units
-> to the displayed value would not only be pointless (since the unit is 
-> defined
-> by the ABI) but also make parsing more difficult.
-Ack
->
->> Because it can be displayed as '%' and also include decimal point 
->> like acpi power meter driver, which is more in line with the meaning 
->> of this attribute.
->
-> Why ? Are you suggesting that all other attributes should provide 
-> units as well
-> "to be more in line with the meaning of those attributes" ?
->
-> It is absolutely not common to add units to sysfs attributes. We are 
-> not going
-> to do that, period.
-ok.
-What I mean is that is the display in power meter.
->
->> It might be better to keep other attributes as data types. But it 
->> breaks the cornor display of these attributes in acpi power meter 
->> driver as said below.
->>     a) power1_cap_hyst  --> display 'unknown' when its value is 
->> 0xFFFFFFFF
->>     b) power1_average_min/max --> display 'unknown' when its value is 
->> negative.
->
-> That is a driver problem, not a subsystem problem. If it is so 
-> important to retain
-> that (i.e., if for some reason some userspace program depends on it), 
-> just
-> implement the attributes in the driver.
-Yes
->
-> On a practical note, I do wonder what it means if ACPI reports those 
-> values.
-> It might simply mean that they are not supported. If so, the attributes
-> should not be instantiated in the first place.
-Agreed. But we still can't break ABI of this driver. will retain what it 
-was.
->
->>
->> I want to say that all the attributes modified above in hwmon core 
->> are not used by other drivers, so don't break ABI of some driver.
->
-> That is not a valid argument. Especially displaying values such as 
-> "unknown" or
-> starting to display units as part of an attributes _is_ an API break 
-> since that
-> is completely unexpected.
-Ack
->
->> These can't be solved in this driver side.
->
-> That is incorrect.
->
->>
->> AFAICS, acpi power meter driver can't replace the deprecated API 
->> because their sysfs interfaces will be broken if there's no any 
->> modification in hwmon core.
->>
->
-> That is simply wrong. The _with_info API supports non-standard attributes
-> with the extra_groups parameter. Just use that and implement the 
-> non-standard
-> attributes in the driver and explain why you are doing it in a comment.
->
->
-Ok, I will put these attributes above into extra_groups and add some 
-comments for them.
-Many thanks for your good suggestion.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Hi Guenter,
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-BTW, I have another problem as commit log described:
--->
-The path of these sysfs interfaces are modified accordingly if use 
-hwmon_device_register_with_info():
-Old: all sysfs interfaces are under acpi device, namely, path is 
-"/sys/class/hwmon/hwmon1/device/" ('device' in the path is a soft link 
-of acpi device)
-Now: all sysfs interfaces are under hwmon device, namely, path is 
-"/sys/class/hwmon/hwmon1/"
-What do you think about this?
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-/Huisong
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->
-> .
+If you want to undo deduplication, reply with:
+#syz undup
 
