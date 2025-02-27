@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-536913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22646A485B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:51:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B26A485D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9363A4A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65807188CB30
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FED1DDC0B;
-	Thu, 27 Feb 2025 16:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E7A1E51E2;
+	Thu, 27 Feb 2025 16:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKXbEBY1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkPMD6c0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23461DB122;
-	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2F51DE4E1;
+	Thu, 27 Feb 2025 16:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675027; cv=none; b=I2UGSRMz/YlmwKm+pI90bFMis4IjSmBgPKd5ScQiNpl2S4IJBCSSgC/duDbLyze27dDt77nJpt1LTVvFoyv3qMfYT5jhCQaXPZl7qDG8fyNXktAivWD6dYZ8itmOcTSmcb8P6oKH7gyjTeWQzrdhZFgTtD1zdsloHNpeCWFQBI0=
+	t=1740675029; cv=none; b=pGeQ9JYr1YZmikPdT5XwzeXUivI2oRAMryfsyfY96Z/q8o2K3s8B1jOXVOMUiw63liUK42uCuWpFDxTpvcTCpQbQhPgrfL99nDdWAG/vgzm6qUkAAOJPB5tEzrwMcanTbxtuIwWLLxi8Dp6R7Z8SY4POsiR7pRADgaaxj7GBz14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675027; c=relaxed/simple;
-	bh=JAe7NAiJZKeZrRwd/2AkQMazx4iDKgezMJFcr6WCo14=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=muS/l18bvfTCwPmRDAB67g4tFknf+1a6NpmaFzgVQkCilqKeXJQVyRYZNVC9BzXS63zfr8D4dQkWe2S6ZvSvKL9eljnkcfCZoG79yu/zCObC5geoLVBn1L9p7oIbPjyA3hCSEQ6vYAM7hEZhDG2vR7lH/eNY0GgOBfqrnv1hkcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKXbEBY1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCA7C4CEF4;
-	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
+	s=arc-20240116; t=1740675029; c=relaxed/simple;
+	bh=Nw3a/HqiA/9jZwNLrxFdA5F8h6oOiANM6gZUgomRjN8=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Jud7qATcvGnM+r6T1qSBqq2QAsV4QVYswpKjActbRrfJXxirW2K6/ZM/c6CaeOsDe4HLC19hP4Bn52nUwvhc0Zhatxw9Rw5dxV++VkVyGz6SW4i6K/hpa6DjWHVmPwAVirgqAVGirGIv/o3ut7o73D+KFZ1fdTEy+nB+IZFGAIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkPMD6c0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427CDC4CEEC;
+	Thu, 27 Feb 2025 16:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740675027;
-	bh=JAe7NAiJZKeZrRwd/2AkQMazx4iDKgezMJFcr6WCo14=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JKXbEBY1k8DrqkH96t6sCq71iBnahff6YsUjY/xSCLPy1ZcW69jUpFzu3J8L0Z7cy
-	 wrMXH+j4O9RaBRibak9FQc/J0Eohg4zT1+NYRVyZy0aOaSmg5Cm1ScIf1Syw5bKKDT
-	 Aw6XVA629tBugagj+5osdRIkOe9O2iBsWH2pZ/lVbDNvwALI5vDH90R4w5N8gsLY8t
-	 An5aDy6B2oLoFkpQkD8y3RWVQUN+2DCZefxHPKSAB20qw2MA1GV9IXF1mUDtpsC7jK
-	 iQTOcSMuXoTuW2QdeSYt81ddxQzKZ4OMZuTH+PWrkgfWiV431otDQpJ/yM7I0d+KNx
-	 jcDP6CJrT0RhA==
+	s=k20201202; t=1740675028;
+	bh=Nw3a/HqiA/9jZwNLrxFdA5F8h6oOiANM6gZUgomRjN8=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=UkPMD6c0kkXoht68ELlk6q8JqmzCyw7K0r2OSVEqiAdHz/m3a7sh5RLVlbd2uY15T
+	 ptNpaG15C1IM2U4nnOo12brMjOfzLUo/0eGMDBpe7Thkge5xIJJEG/R+7CqTeJU6sK
+	 uCb2Z+rsJ+p3YFdcjsIl280EkM0GLZez14K72CfXRIKKoHkcO60dt5SZtc3t02JaPc
+	 fMRwPrkVfvlMV2m/qC3bn0Oz0Zh3mvgICSnLjCVYs4CtUu7KxD+ie4aNGqCx82xbIu
+	 d8Xv5gGyKKBJZHsLm6jWFDMDc/Uu17rENV1b0IHXtpPgEt3x/G78iEFnKrRaYKawnF
+	 0vkP/6t1GLI6g==
 From: Namhyung Kim <namhyung@kernel.org>
-To: linux-perf-users@vger.kernel.org, irogers@google.com, cyy@cyyself.name, 
- James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
  Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- "Liang, Kan" <kan.liang@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Yoshihiro Furudera <fj5100bi@fujitsu.com>, 
- Weilin Wang <weilin.wang@intel.com>, Junhao He <hejunhao3@huawei.com>, 
- Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250226104111.564443-1-james.clark@linaro.org>
-References: <20250226104111.564443-1-james.clark@linaro.org>
-Subject: Re: [PATCH v2 0/3] perf pmu: Dynamically allocate tool PMU
-Message-Id: <174067502701.1401960.11028274407047299720.b4-ty@kernel.org>
-Date: Thu, 27 Feb 2025 08:50:27 -0800
+ Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+ Tim Chen <tim.c.chen@linux.intel.com>, 
+ Yicong Yang <yangyicong@hisilicon.com>, 
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kyle Meyer <kyle.meyer@hpe.com>, 
+ Ian Rogers <irogers@google.com>
+In-Reply-To: <20250210191231.156294-1-irogers@google.com>
+References: <20250210191231.156294-1-irogers@google.com>
+Subject: Re: [PATCH v3] perf cpumap: Reduce cpu size from int to int16_t
+Message-Id: <174067502823.1401960.12891801652873612376.b4-ty@kernel.org>
+Date: Thu, 27 Feb 2025 08:50:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,17 +67,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 26 Feb 2025 10:40:59 +0000, James Clark wrote:
-> A few minor fixes that I came across when poking around with the Perf
-> list behavior on hybrid Arm.
-> 
-> Changes since v1:
->   * Rename perf_pmus__new_tool_pmu() -> tool_pmu__new()
-> 
-> James Clark (3):
->   perf pmu: Dynamically allocate tool PMU
->   perf pmu: Don't double count common sysfs and json events
->   perf list: Document -v option deduplication feature
+On Mon, 10 Feb 2025 11:12:31 -0800, Ian Rogers wrote:
+> Fewer than 32k logical CPUs are currently supported by perf. A cpumap
+> is indexed by an integer (see perf_cpu_map__cpu) yielding a perf_cpu
+> that wraps a 4-byte int for the logical CPU - the wrapping is done
+> deliberately to avoid confusing a logical CPU with an index into a
+> cpumap. Using a 4-byte int within the perf_cpu is larger than required
+> so this patch reduces it to the 2-byte int16_t. For a cpumap
+> containing 16 entries this will reduce the array size from 64 to 32
+> bytes. For very large servers with lots of logical CPUs the size
+> savings will be greater.
 > 
 > [...]
 Applied to perf-tools-next, thanks!
