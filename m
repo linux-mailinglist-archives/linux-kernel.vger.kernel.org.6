@@ -1,252 +1,249 @@
-Return-Path: <linux-kernel+bounces-536115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD247A47BAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:16:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271B6A47BAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4225A3B6C15
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A581678E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084CA22FF44;
-	Thu, 27 Feb 2025 11:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56209230D0F;
+	Thu, 27 Feb 2025 11:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QC2IN5rY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCK+BRbj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C44C22FAE1;
-	Thu, 27 Feb 2025 11:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F822FDFA;
+	Thu, 27 Feb 2025 11:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654732; cv=none; b=tL2Pln2jiBiJKGy9jNcJ/67DEPNDr67qfqM4xNrIfsJI8daH7IyN4xa3rGzUEn8bGKhJB/oL+dp2k/cwjJSPv/yihuMiyyGcD5DiZaXZdQKzBKw778/F9Xn34Jrn3iu38Z2+5+33DMdx4vwZjlpHuOYXSekjmA8G8h18R20rJ6I=
+	t=1740654735; cv=none; b=LYariyQN3jgFhXZm6nE1T5/3UzPMJDhOo00J8fcRv969eVYNVTQK+wKE/cQ6d5XoMPgE2+UE9ypwW5zMUcfZIcu5Zhm9290IkecRqdyBvR3smnPyA9au0H/9aHv0CzLcqLFJFV6h/vvw/PIvk2ZYN600ESvpm1zz8J2UVsUrt1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654732; c=relaxed/simple;
-	bh=BAp6IZkgiyRD/RzyQXKxlsI0RKC6IU3pJOvuO9xE6Gk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Sm5aNK8J+DUfwmy/yZQL3wopzAywtq2gNFJ0+grQkaX0+scA6kVYTnpbbN/djhL6/NUJPlr1ntYDNwSzZHGnhahfcsAB5tGiasG+JmVmiqJY0H6DIpCuzFEC/sHupdhbQXZ8tV5ZVbkXWBdJjo1EmuSU7fbID3IHRJQGL7GzQHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QC2IN5rY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9VR8O014508;
-	Thu, 27 Feb 2025 11:11:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=VBvqaX
-	UQxcsvpwV2aX/7sxnJGxIeXk+ZIcUf4CT2b9Y=; b=QC2IN5rYDDWFE2ABCxRtcT
-	lFMnnHt/aIvwCyrOIz6oK2aHc/ktvSAQTyFS+39vqRypN8ohXp/kXsauhGhZC+hI
-	Evddbqs4+0a43bltlrgbf1OwzI07GgAxlrw1o/fUsyPy/nvB4Bfzl+tqn9cKpWbu
-	uyRUBcoOO1YV2CiMrwp25avbOmnVLnJP3NtRgkNmb2LFNJfbHpsmr2YL7BNJ0FRQ
-	juy2MjVe2TdsjoSh89m20XMQbzx0yt2B7qF264cMiFonhs/KctASCg9rXQjuFrwV
-	DQ707TUtl/MBaFI9EFmq35oAT/a1SqbRivnRU/2ZEudNB2paFuqhc4xqiaxyoBJg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452c3a2wp1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 11:11:51 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51RBBpnR013432;
-	Thu, 27 Feb 2025 11:11:51 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452c3a2wnx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 11:11:50 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51RAjVR7002570;
-	Thu, 27 Feb 2025 11:11:50 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jyxhd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 11:11:49 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51RBBmVw17695162
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 11:11:48 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4767E20043;
-	Thu, 27 Feb 2025 11:11:48 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2D1E920040;
-	Thu, 27 Feb 2025 11:11:42 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.240.191])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 27 Feb 2025 11:11:41 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740654735; c=relaxed/simple;
+	bh=dIHzKvs/CLNsdZuAwNYXUG9aLPMbUkYW5XbTPXy1O0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bbstXO7+BFp+kUcympdsI8IOyygS8LhHXeRcSNCnHhqyZ5emYbd6D3MAl0j8W7XP0afWJUxHWjJMdh1kTNIFqJTsyJKCY/0BzD1A8SwvCBX+tU3TUaCqOJ+mPPlJYSHsZiWufoFjVfFraCV5bHmoU4yKQtBXhTt+V7eCgY+0cDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCK+BRbj; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740654733; x=1772190733;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dIHzKvs/CLNsdZuAwNYXUG9aLPMbUkYW5XbTPXy1O0E=;
+  b=hCK+BRbjauu4ZHFnj/3xp4uZg3TAGVdT/4LZEb3Vt4kRBb9P3N+BimCP
+   kMXej31yJN+87MasCGS7dgaov7SgYRyUKXUBItOPuL8ZxpiljQNP41nLX
+   Q3sdhrObrjzUpPRBBF8xFgJOS2v4jyhKSfhzqi+QqXh9N2rKbYoztQ766
+   zyH8k0MEMtlxBd0hcHLJ/lUphcPVxk7I4UTJs3AjPRyscutUvAarIb6jc
+   T8L0GjxkD/FKBuNdUCr/PUDsIXTaAQjWnkysatCo2qQ/9Ok3akE6lQwVa
+   mlYAMc1QfrOBLTs/WeeqW5vYR0T8ORKS0IaYDu4Ui1tPpbQWYXZ7chWNo
+   Q==;
+X-CSE-ConnectionGUID: qhZaDQVaTGi4gqwEKNu58g==
+X-CSE-MsgGUID: XPgZsD1MQYyYkE+kIl7IgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45189910"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="45189910"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 03:12:13 -0800
+X-CSE-ConnectionGUID: DvvnP/QRSh+sCKXRZ1dYvA==
+X-CSE-MsgGUID: fPBUmL7WSq+SiESzEUf5cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154179048"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.220.110])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 03:12:11 -0800
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	broonie@kernel.org,
+	tiwai@suse.de,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH v3 15/16] soundwire: debugfs: add interface for BPT/BRA transfers
+Date: Thu, 27 Feb 2025 19:11:28 +0800
+Message-ID: <20250227111130.272698-16-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250227111130.272698-1-yung-chuan.liao@linux.intel.com>
+References: <20250227111130.272698-1-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v8 0/4] Tracing contention lock owner call stack
-From: Athira Rajeev <atrajeev@linux.ibm.com>
-In-Reply-To: <20250227003359.732948-1-ctshao@google.com>
-Date: Thu, 27 Feb 2025 16:41:28 +0530
-Cc: "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, nick.forrington@arm.com,
-        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-        bpf@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EB79B75A-896E-42B6-B206-314BA137E257@linux.ibm.com>
-References: <20250227003359.732948-1-ctshao@google.com>
-To: Chun-Tse Shao <ctshao@google.com>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: p3SUz25bm8BfibT94Qp1_itJ50ZotSFB
-X-Proofpoint-ORIG-GUID: xiDBKbydrwc80UQK6-AB1YvcbBUicya8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_05,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 clxscore=1015 adultscore=0 spamscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270083
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 
+Add code to show what codec drivers will need to do to enable BPT/BRA
+transfers. The only difference is to set the 'command_type' file to
+'1'. A zero-value will rely on regular read/write commands in Column0.
 
-> On 27 Feb 2025, at 5:58=E2=80=AFAM, Chun-Tse Shao <ctshao@google.com> =
-wrote:
->=20
-> For perf lock contention, the current owner tracking (-o option) only
-> works with per-thread mode (-t option). Enabling call stack mode for
-> owner can be useful for diagnosing why a system running slow in
-> lock contention.
->=20
-> Example output:
->  $ sudo ~/linux/tools/perf/perf lock con -abvo -Y mutex -E16 perf =
-bench sched pipe
->   ...
->   contended   total wait     max wait     avg wait         type   =
-caller
->=20
->         171      1.55 ms     20.26 us      9.06 us        mutex   =
-pipe_read+0x57
->                          0xffffffffac6318e7  pipe_read+0x57
->                          0xffffffffac623862  vfs_read+0x332
->                          0xffffffffac62434b  ksys_read+0xbb
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->          36    193.71 us     15.27 us      5.38 us        mutex   =
-pipe_write+0x50
->                          0xffffffffac631ee0  pipe_write+0x50
->                          0xffffffffac6241db  vfs_write+0x3bb
->                          0xffffffffac6244ab  ksys_write+0xbb
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->           4     51.22 us     16.47 us     12.80 us        mutex   =
-do_epoll_wait+0x24d
->                          0xffffffffac691f0d  do_epoll_wait+0x24d
->                          0xffffffffac69249b  do_epoll_pwait.part.0+0xb
->                          0xffffffffac693ba5  =
-__x64_sys_epoll_pwait+0x95
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->           2     20.88 us     11.95 us     10.44 us        mutex   =
-do_epoll_wait+0x24d
->                          0xffffffffac691f0d  do_epoll_wait+0x24d
->                          0xffffffffac693943  __x64_sys_epoll_wait+0x73
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->           1      7.33 us      7.33 us      7.33 us        mutex   =
-do_epoll_ctl+0x6c1
->                          0xffffffffac692e01  do_epoll_ctl+0x6c1
->                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->           1      6.64 us      6.64 us      6.64 us        mutex   =
-do_epoll_ctl+0x3d4
->                          0xffffffffac692b14  do_epoll_ctl+0x3d4
->                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->=20
->  =3D=3D=3D owner stack trace =3D=3D=3D
->=20
->           3     31.24 us     15.27 us     10.41 us        mutex   =
-pipe_read+0x348
->                          0xffffffffac631bd8  pipe_read+0x348
->                          0xffffffffac623862  vfs_read+0x332
->                          0xffffffffac62434b  ksys_read+0xbb
->                          0xfffffffface604b2  do_syscall_64+0x82
->                          0xffffffffad00012f  =
-entry_SYSCALL_64_after_hwframe+0x76
->  ...
->=20
-> v8:
->  Fix compilation error found by Athira Rajeev and Namhyung Kim.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+---
+ drivers/soundwire/debugfs.c | 84 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 68 insertions(+), 16 deletions(-)
 
-Tested with v8 and compiles fine, thanks for addressing the issue.
-
-Tested-by: Athira Rajeev <atrajeev@linux.ibm.com>
-
->=20
-> v7: lore.kernel.org/20250224184742.4144931-1-ctshao@google.com
->  Remove duplicate contention records.
->=20
-> v6: lore.kernel.org/20250219214400.3317548-1-ctshao@google.com
->  Free allocated memory in error patch.
->  Add description in man page.
->=20
-> v5: lore.kernel.org/20250212222859.2086080-1-ctshao@google.com
->  Move duplicated code into function.
->  Remove code to retrieve undesired callstack at the end of =
-`contention_end()`.
->  Other minor fix based on Namhyung's review.
->=20
-> v4: lore.kernel.org/20250130052510.860318-1-ctshao@google.com
->  Use `__sync_fetch_and_add()` to generate owner stackid automatically.
->  Use `__sync_fetch_and_add(..., -1)` to workaround compiler error from
->    `__sync_fetch_and_sub()`
->  Remove unnecessary include headers.
->  Dedicate on C-style comment.
->  Other minor fix based on Namhyung's review.
->=20
-> v3: lore.kernel.org/20250129001905.619859-1-ctshao@google.com
->  Rename/shorten multiple variables.
->  Implement owner stackid.
->  Add description for lock function return code in `contention_end()`.
->  Other minor fix based on Namhyung's review.
->=20
-> v2: lore.kernel.org/20250113052220.2105645-1-ctshao@google.com
->  Fix logic deficit in v1 patch 2/4.
->=20
-> v1: lore.kernel.org/20250110051346.1507178-1-ctshao@google.com
->=20
-> Chun-Tse Shao (4):
->  perf lock: Add bpf maps for owner stack tracing
->  perf lock: Retrieve owner callstack in bpf program
->  perf lock: Make rb_tree helper functions generic
->  perf lock: Report owner stack in usermode
->=20
-> tools/perf/Documentation/perf-lock.txt        |   5 +-
-> tools/perf/builtin-lock.c                     |  56 +++-
-> tools/perf/util/bpf_lock_contention.c         |  85 +++++-
-> .../perf/util/bpf_skel/lock_contention.bpf.c  | 245 +++++++++++++++++-
-> tools/perf/util/bpf_skel/lock_data.h          |   7 +
-> tools/perf/util/lock-contention.h             |   7 +
-> 6 files changed, 372 insertions(+), 33 deletions(-)
->=20
-> --
-> 2.48.1.658.g4767266eb4-goog
->=20
->=20
+diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
+index 5bf0d9552433..3099ea074f10 100644
+--- a/drivers/soundwire/debugfs.c
++++ b/drivers/soundwire/debugfs.c
+@@ -136,9 +136,10 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(sdw_slave_reg);
+ 
+-#define MAX_CMD_BYTES 256
++#define MAX_CMD_BYTES (1024 * 1024)
+ 
+ static int cmd;
++static int cmd_type;
+ static u32 start_addr;
+ static size_t num_bytes;
+ static u8 read_buffer[MAX_CMD_BYTES];
+@@ -162,6 +163,25 @@ static int set_command(void *data, u64 value)
+ DEFINE_DEBUGFS_ATTRIBUTE(set_command_fops, NULL,
+ 			 set_command, "%llu\n");
+ 
++static int set_command_type(void *data, u64 value)
++{
++	struct sdw_slave *slave = data;
++
++	if (value > 1)
++		return -EINVAL;
++
++	/* Userspace changed the hardware state behind the kernel's back */
++	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
++
++	dev_dbg(&slave->dev, "command type: %s\n", value ? "BRA" : "Column0");
++
++	cmd_type = (int)value;
++
++	return 0;
++}
++DEFINE_DEBUGFS_ATTRIBUTE(set_command_type_fops, NULL,
++			 set_command_type, "%llu\n");
++
+ static int set_start_address(void *data, u64 value)
+ {
+ 	struct sdw_slave *slave = data;
+@@ -197,9 +217,28 @@ static int set_num_bytes(void *data, u64 value)
+ DEFINE_DEBUGFS_ATTRIBUTE(set_num_bytes_fops, NULL,
+ 			 set_num_bytes, "%llu\n");
+ 
++static int do_bpt_sequence(struct sdw_slave *slave, bool write, u8 *buffer)
++{
++	struct sdw_bpt_msg msg = {0};
++
++	msg.addr = start_addr;
++	msg.len = num_bytes;
++	msg.dev_num = slave->dev_num;
++	if (write)
++		msg.flags = SDW_MSG_FLAG_WRITE;
++	else
++		msg.flags = SDW_MSG_FLAG_READ;
++	msg.buf = buffer;
++
++	return sdw_bpt_send_sync(slave->bus, slave, &msg);
++}
++
+ static int cmd_go(void *data, u64 value)
+ {
++	const struct firmware *fw = NULL;
+ 	struct sdw_slave *slave = data;
++	ktime_t start_t;
++	ktime_t finish_t;
+ 	int ret;
+ 
+ 	if (value != 1)
+@@ -216,40 +255,52 @@ static int cmd_go(void *data, u64 value)
+ 		return ret;
+ 	}
+ 
+-	/* Userspace changed the hardware state behind the kernel's back */
+-	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+-
+-	dev_dbg(&slave->dev, "starting command\n");
+-
+ 	if (cmd == 0) {
+-		const struct firmware *fw;
+-
+ 		ret = request_firmware(&fw, firmware_file, &slave->dev);
+ 		if (ret < 0) {
+ 			dev_err(&slave->dev, "firmware %s not found\n", firmware_file);
+ 			goto out;
+ 		}
+-
+-		if (fw->size != num_bytes) {
++		if (fw->size < num_bytes) {
+ 			dev_err(&slave->dev,
+-				"firmware %s: unexpected size %zd, desired %zd\n",
++				"firmware %s: firmware size %zd, desired %zd\n",
+ 				firmware_file, fw->size, num_bytes);
+-			release_firmware(fw);
+ 			goto out;
+ 		}
++	}
+ 
+-		ret = sdw_nwrite_no_pm(slave, start_addr, num_bytes, fw->data);
+-		release_firmware(fw);
++	/* Userspace changed the hardware state behind the kernel's back */
++	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
++
++	dev_dbg(&slave->dev, "starting command\n");
++	start_t = ktime_get();
++
++	if (cmd == 0) {
++		if (cmd_type)
++			ret = do_bpt_sequence(slave, true, (u8 *)fw->data);
++		else
++			ret = sdw_nwrite_no_pm(slave, start_addr, num_bytes, fw->data);
+ 	} else {
+-		ret = sdw_nread_no_pm(slave, start_addr, num_bytes, read_buffer);
++		memset(read_buffer, 0, sizeof(read_buffer));
++
++		if (cmd_type)
++			ret = do_bpt_sequence(slave, false, read_buffer);
++		else
++			ret = sdw_nread_no_pm(slave, start_addr, num_bytes, read_buffer);
+ 	}
+ 
+-	dev_dbg(&slave->dev, "command completed %d\n", ret);
++	finish_t = ktime_get();
+ 
+ out:
++	if (fw)
++		release_firmware(fw);
++
+ 	pm_runtime_mark_last_busy(&slave->dev);
+ 	pm_runtime_put(&slave->dev);
+ 
++	dev_dbg(&slave->dev, "command completed, num_byte %zu status %d, time %lld ms\n",
++		num_bytes, ret, div_u64(finish_t - start_t, NSEC_PER_MSEC));
++
+ 	return ret;
+ }
+ DEFINE_DEBUGFS_ATTRIBUTE(cmd_go_fops, NULL,
+@@ -291,6 +342,7 @@ void sdw_slave_debugfs_init(struct sdw_slave *slave)
+ 
+ 	/* interface to send arbitrary commands */
+ 	debugfs_create_file("command", 0200, d, slave, &set_command_fops);
++	debugfs_create_file("command_type", 0200, d, slave, &set_command_type_fops);
+ 	debugfs_create_file("start_address", 0200, d, slave, &set_start_address_fops);
+ 	debugfs_create_file("num_bytes", 0200, d, slave, &set_num_bytes_fops);
+ 	debugfs_create_file("go", 0200, d, slave, &cmd_go_fops);
+-- 
+2.43.0
 
 
