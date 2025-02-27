@@ -1,211 +1,330 @@
-Return-Path: <linux-kernel+bounces-535618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D82A4753C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:31:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC0EA47547
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9E83A78B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3361016EDFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A3F20E31D;
-	Thu, 27 Feb 2025 05:31:15 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9921E20B80D;
+	Thu, 27 Feb 2025 05:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZWBYkZY"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221511E5210;
-	Thu, 27 Feb 2025 05:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4711E521E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740634274; cv=none; b=H5Z5kK7dQGAI9sgNuXwFoeK2z2boVYUulf6CMVLFeE+1u5ybMYx3RLpNpvsl7fVvgwNoUxF9IABl9KCKwqL3G2fY3jGSxW5Fv9e0BmHUMOu6z5rtWe4Pjj3zPsKHe3dBViXTiGjRXXGzEYol4/ry2H6uThihM4jVfu5+7rMYLI0=
+	t=1740634679; cv=none; b=OSt5GibNQeyiOmSQjB2acg6npipTOIVeO+xeQ53/U2GZir9JStTpxms/YsZQ+dNbAw5ppdKdygthSJJo/zJRcWQWa4N7qKWporxe2+DxqEJ8hxFzrw01tFXPsM8XCCZXE00lkuucjj+jjlPu+m+Eea+OJ3Tl/3RlrQqyIwNjs8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740634274; c=relaxed/simple;
-	bh=Ubkpo2yfm2TxLNOmS+RA8sofbSaJ0lFhErUT9aL6IP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbA6bf7+MaIOraQZ3RJyaAKe0LUNMW0Oxc2p5G00+rUyLrAWG40LMtFEOe/FzxrXgFSwHc+KRS3ifiA1vOz8WeZfxLeuTjG5muI8z5hyQ9z/qsdb2C3Q2c3UgvLqBE1FCsAf5KSH8LrB6Y9EbC/PLCaso5yMKwiIQRUl/fIle6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id C767B2800B484;
-	Thu, 27 Feb 2025 06:31:08 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id C0E0B1AAC71; Thu, 27 Feb 2025 06:31:08 +0100 (CET)
-Date: Thu, 27 Feb 2025 06:31:08 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Joel Mathew Thomas <proxy0@tutamail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] PCI/bwctrl: Disable PCIe BW controller during reset
-Message-ID: <Z7_4nMod6jWd-Bi1@wunner.de>
-References: <20250217165258.3811-1-ilpo.jarvinen@linux.intel.com>
- <Z7RL7ZXZ_vDUbncw@wunner.de>
- <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com>
+	s=arc-20240116; t=1740634679; c=relaxed/simple;
+	bh=1rR8jJytB0xOWPKYHQktN0m5VHhgDH25+tdcqL5+DMc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=farK6XdTeTCFpck7p6uw0pnOrlC1OQkaFHGbTaQgNvxEAv7NHRAldKRHycrdkullh7USYgK2Vo4Xin/z/F8yqHiOXt7MNjWkfzGL+/6jhuapSOz8adgFOulamnziEwT7BCVAuSnpEo4/7ZWkeG1V47IQpNK+LA52ezR8a5vDeB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZWBYkZY; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220ec5c16e9so10948915ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:37:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740634677; x=1741239477; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gNXHD5DNJ0i81uXEwr6P8BHsc0a1tUaVvv2V9KdSOQI=;
+        b=1ZWBYkZYjea/v1ly1c9Lt8xM8ZEgBatTaI4xMfYbGMfoTbnOYMcBSCuz6hqng8vTeH
+         h5aucpU2P3tFzDSKFk425x1ZxbTVJAqP2UOX5rqh44pYqOYqzRDHLLwIRD/PHi6Goug9
+         6+eWEtb8UuKKIcE2aQclGwmdHSpOwrtV8pH1oEL9YG/Db2Q14r0yaMaA+9AGFSqMsLCG
+         BBROPOG5A+WzdfLe1hBmXTprngwy8nJ1Ll2mAtne8rEGX41JQUcAlLgqLJlTpaDSwQsD
+         yoin+/n5dwTwDWAYFkNw0S/FFO/4sNZLXUTBKQqak+gY/P9aL+AFVJt9fswldaXzebYD
+         /N6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740634677; x=1741239477;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gNXHD5DNJ0i81uXEwr6P8BHsc0a1tUaVvv2V9KdSOQI=;
+        b=TX7ASq5mTalPIb0GdLGn5uA22Gq6mZd5JBwbPd493SvGbGCJOzc0sWjbB9o3J/QAUS
+         Muqyqw1ue6CjkMfnRTRwfKZ9G6zGgo7BkEl8xIX52s0pDuQ2fl531HxKYV2tIZjzvs6u
+         FjSI3ViUa9jYYqYKxG7OBShbYX1V/L9JeW6AeKCGP4vSO0dnQ1oP2Mz+t8Z/VN8NhO7j
+         vu1wV7RiZh9ufOlCXeSw8GdhZDELNDjj/r6hQ/JQaQVsZHBJexlCLZkX9EDpFKpd8C97
+         /GNGWBsCXh0e9qgPL+qguCg1AA+E1dUCIHuNs4Gf0HRHz3TdnZkGFeUtcLG6MdENCKHg
+         NSeQ==
+X-Gm-Message-State: AOJu0YwbiRCUzUNpulXFqQkpNpeAGuOnd+wCpDTKrH0ub9uayCA+/Vvq
+	oFZOT+AW4wjR+FAGdEULIl07rvSrQSGQPuiW0zul7HvLjRlhtZVEtwbuwQCyX9OErFoETX0qdvH
+	jyQWjChSnyesu2OnGjbVJMmu99AH36TMqwmYoC6mCWJpjW53zC4gNLsPI1w+nzzzQI/O3J34AgJ
+	vlaNLQcxig7Y+usMARzqmhqqmhh7LOBMemRmhcbXp2
+X-Google-Smtp-Source: AGHT+IER97Jw/ACd2Odf62iA/qw1Yjy4n/9vLNreTndsODFm/yHM+CafP2o9GcFGYni3mrG3YWZG7HpI5c8=
+X-Received: from pfbfc4.prod.google.com ([2002:a05:6a00:2e04:b0:732:1e74:6e9a])
+ (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:174b:b0:730:9424:ea3e
+ with SMTP id d2e1a72fcca58-73426cd90a9mr30689926b3a.11.1740634677362; Wed, 26
+ Feb 2025 21:37:57 -0800 (PST)
+Date: Wed, 26 Feb 2025 21:34:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250227053738.788153-1-ctshao@google.com>
+Subject: [PATCH v1 1/2] perf record: Add 8-byte aligned event type PERF_RECORD_COMPRESSED2
+From: Chun-Tse Shao <ctshao@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Chun-Tse Shao <ctshao@google.com>, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, terrelln@fb.com, 
+	leo.yan@arm.com, dvyukov@google.com, ak@linux.intel.com, 
+	james.clark@linaro.org, christophe.leroy@csgroup.eu, ben.gainey@arm.com, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 24, 2025 at 05:13:15PM +0200, Ilpo Järvinen wrote:
-> On Tue, 18 Feb 2025, Lukas Wunner wrote:
-> > On Mon, Feb 17, 2025 at 06:52:58PM +0200, Ilpo Järvinen wrote:
-> > > PCIe BW controller enables BW notifications for Downstream Ports by
-> > > setting Link Bandwidth Management Interrupt Enable (LBMIE) and Link
-> > > Autonomous Bandwidth Interrupt Enable (LABIE) (PCIe Spec. r6.2 sec.
-> > > 7.5.3.7).
-> > > 
-> > > It was discovered that performing a reset can lead to the device
-> > > underneath the Downstream Port becoming unavailable if BW notifications
-> > > are left enabled throughout the reset sequence (at least LBMIE was
-> > > found to cause an issue).
-> > 
-> > What kind of reset?  FLR?  SBR?  This needs to be specified in the
-> > commit message so that the reader isn't forced to sift through a
-> > bugzilla with dozens of comments and attachments.
-> 
-> Heh, I never really tried to figure out it because the reset disable 
-> patch was just a stab into the dark style patch. To my surprise, it ended 
-> up working (after the initial confusion was resolved) and I just started 
-> to prepare this patch from that knowledge.
+The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+asan runtime error:
 
-If the present patch is of the type "changing this somehow makes the
-problem go away" instead of a complete root-cause analysis, it would
-have been appropriate to mark it as an RFC.
+  # Build with asan
+  $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
+  # Test success with many asan runtime errors:
+  $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
+   83: Zstd perf.data compression/decompression:
+  ...
+  util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
+  0x7f69e3f99653: note: pointer points here
+   d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+                ^
+  util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
+  0x7f69e3f99653: note: pointer points here
+   d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+                ^
+  ...
 
-I've started to dig into the bugzilla and the very first attachment
-(dmesg for the non-working case) shows:
+Since there is no way to align compressed data in zstd compression, this
+patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
+`data_size` to specify the actual compressed data size. The
+`header.size` contains the total record size, including the padding at
+the end to make it 8-byte aligned.
 
-  vfio-pci 0000:01:00.0: timed out waiting for pending transaction; performing function level reset anyway
+Tested with `Zstd perf.data compression/decompression`
 
-That message is emitted by pcie_flr().  Perhaps the Nvidia GPU takes
-more time than usual to finish pending transactions, so the first
-thing I would have tried would be to raise the timeout significantly
-and see if that helps.  Yet I'm not seeing any patch or comment in
-the bugzilla where this was attempted.  Please provide a patch for
-the reporter to verify this hypothesis.
+Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+---
+ tools/lib/perf/Documentation/libperf.txt      |  1 +
+ tools/lib/perf/include/perf/event.h           | 12 ++++++++++
+ .../Documentation/perf.data-file-format.txt   | 17 +++++++++++---
+ tools/perf/builtin-record.c                   | 23 +++++++++++++++----
+ tools/perf/util/event.c                       |  1 +
+ tools/perf/util/session.c                     |  5 +++-
+ tools/perf/util/tool.c                        | 11 +++++++--
+ 7 files changed, 59 insertions(+), 11 deletions(-)
 
+diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
+index 59aabdd3cabf..4072bc9b7670 100644
+--- a/tools/lib/perf/Documentation/libperf.txt
++++ b/tools/lib/perf/Documentation/libperf.txt
+@@ -210,6 +210,7 @@ SYNOPSIS
+   struct perf_record_time_conv;
+   struct perf_record_header_feature;
+   struct perf_record_compressed;
++  struct perf_record_compressed2;
+ --
+ 
+ DESCRIPTION
+diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
+index 37bb7771d914..09b7c643ddac 100644
+--- a/tools/lib/perf/include/perf/event.h
++++ b/tools/lib/perf/include/perf/event.h
+@@ -457,6 +457,16 @@ struct perf_record_compressed {
+ 	char			 data[];
+ };
+ 
++/*
++ * `header.size` includes the padding we are going to add while writing the record.
++ * `data_size` only includes the size of `data[]` itself.
++ */
++struct perf_record_compressed2 {
++	struct perf_event_header header;
++	__u64			 data_size;
++	char			 data[];
++};
++
+ enum perf_user_event_type { /* above any possible kernel type */
+ 	PERF_RECORD_USER_TYPE_START		= 64,
+ 	PERF_RECORD_HEADER_ATTR			= 64,
+@@ -478,6 +488,7 @@ enum perf_user_event_type { /* above any possible kernel type */
+ 	PERF_RECORD_HEADER_FEATURE		= 80,
+ 	PERF_RECORD_COMPRESSED			= 81,
+ 	PERF_RECORD_FINISHED_INIT		= 82,
++	PERF_RECORD_COMPRESSED2			= 83,
+ 	PERF_RECORD_HEADER_MAX
+ };
+ 
+@@ -518,6 +529,7 @@ union perf_event {
+ 	struct perf_record_time_conv		time_conv;
+ 	struct perf_record_header_feature	feat;
+ 	struct perf_record_compressed		pack;
++	struct perf_record_compressed2		pack2;
+ };
+ 
+ #endif /* __LIBPERF_EVENT_H */
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index 010a4edcd384..f5faceb0e248 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -604,6 +604,10 @@ contain information that otherwise would be in perf.data file's header.
+ 
+ 	PERF_RECORD_COMPRESSED 			= 81,
+ 
++The header is followed by compressed data frame that can be decompressed
++into array of perf trace records. The size of the entire compressed event
++record including the header is limited by the max value of header.size.
++
+ struct compressed_event {
+ 	struct perf_event_header	header;
+ 	char				data[];
+@@ -618,10 +622,17 @@ This is used, for instance, to 'perf inject' events after init and before
+ regular events, those emitted by the kernel, to support combining guest and
+ host records.
+ 
++	PERF_RECORD_COMPRESSED2			= 83,
+ 
+-The header is followed by compressed data frame that can be decompressed
+-into array of perf trace records. The size of the entire compressed event
+-record including the header is limited by the max value of header.size.
++8-byte aligned version of `PERF_RECORD_COMPRESSED`. `header.size` indicates the
++total record size, including padding for 8-byte alignment, and `data_size`
++specifies the actual size of the compressed data.
++
++struct perf_record_compressed2 {
++	struct perf_event_header	header;
++	__u64				data_size;
++	char				data[];
++};
+ 
+ Event types
+ 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 9af3f21fd015..d07ad670daa7 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -648,14 +648,27 @@ static int record__pushfn(struct mmap *map, void *to, void *bf, size_t size)
+ 	struct record *rec = to;
+ 
+ 	if (record__comp_enabled(rec)) {
++		struct perf_record_compressed2 *event = map->data;
++		size_t padding = 0;
++		u8 pad[8] = {0};
+ 		ssize_t compressed = zstd_compress(rec->session, map, map->data,
+ 						   mmap__mmap_len(map), bf, size);
+ 
+ 		if (compressed < 0)
+ 			return (int)compressed;
+ 
+-		size = compressed;
+-		bf   = map->data;
++		bf = event;
++		thread->samples++;
++
++		/*
++		 * The record from `zstd_compress` is not 8 bytes aligned, which would cause asan
++		 * error. We make it aligned here.
++		 */
++		event->data_size = compressed - sizeof(struct perf_record_compressed2);
++		event->header.size = PERF_ALIGN(compressed, sizeof(u64));
++		padding = event->header.size - compressed;
++		return record__write(rec, map, bf, compressed) ||
++		       record__write(rec, map, &pad, padding);
+ 	}
+ 
+ 	thread->samples++;
+@@ -1534,7 +1547,7 @@ static void record__adjust_affinity(struct record *rec, struct mmap *map)
+ 
+ static size_t process_comp_header(void *record, size_t increment)
+ {
+-	struct perf_record_compressed *event = record;
++	struct perf_record_compressed2 *event = record;
+ 	size_t size = sizeof(*event);
+ 
+ 	if (increment) {
+@@ -1542,7 +1555,7 @@ static size_t process_comp_header(void *record, size_t increment)
+ 		return increment;
+ 	}
+ 
+-	event->header.type = PERF_RECORD_COMPRESSED;
++	event->header.type = PERF_RECORD_COMPRESSED2;
+ 	event->header.size = size;
+ 
+ 	return size;
+@@ -1552,7 +1565,7 @@ static ssize_t zstd_compress(struct perf_session *session, struct mmap *map,
+ 			    void *dst, size_t dst_size, void *src, size_t src_size)
+ {
+ 	ssize_t compressed;
+-	size_t max_record_size = PERF_SAMPLE_MAX_SIZE - sizeof(struct perf_record_compressed) - 1;
++	size_t max_record_size = PERF_SAMPLE_MAX_SIZE - sizeof(struct perf_record_compressed2) - 1;
+ 	struct zstd_data *zstd_data = &session->zstd_data;
+ 
+ 	if (map && map->file)
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index c23b77f8f854..80c9ea682413 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -77,6 +77,7 @@ static const char *perf_event__names[] = {
+ 	[PERF_RECORD_HEADER_FEATURE]		= "FEATURE",
+ 	[PERF_RECORD_COMPRESSED]		= "COMPRESSED",
+ 	[PERF_RECORD_FINISHED_INIT]		= "FINISHED_INIT",
++	[PERF_RECORD_COMPRESSED2]		= "COMPRESSED2",
+ };
+ 
+ const char *perf_event__name(unsigned int id)
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 60fb9997ea0d..db2653322f9f 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1400,7 +1400,9 @@ static s64 perf_session__process_user_event(struct perf_session *session,
+ 	int err;
+ 
+ 	perf_sample__init(&sample, /*all=*/true);
+-	if (event->header.type != PERF_RECORD_COMPRESSED || perf_tool__compressed_is_stub(tool))
++	if ((event->header.type != PERF_RECORD_COMPRESSED &&
++	     event->header.type != PERF_RECORD_COMPRESSED2) ||
++	    perf_tool__compressed_is_stub(tool))
+ 		dump_event(session->evlist, event, file_offset, &sample, file_path);
+ 
+ 	/* These events are processed right away */
+@@ -1481,6 +1483,7 @@ static s64 perf_session__process_user_event(struct perf_session *session,
+ 		err = tool->feature(session, event);
+ 		break;
+ 	case PERF_RECORD_COMPRESSED:
++	case PERF_RECORD_COMPRESSED2:
+ 		err = tool->compressed(session, event, file_offset, file_path);
+ 		if (err)
+ 			dump_event(session->evlist, event, file_offset, &sample, file_path);
+diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
+index 3b7f390f26eb..37bd8ac63b01 100644
+--- a/tools/perf/util/tool.c
++++ b/tools/perf/util/tool.c
+@@ -43,8 +43,15 @@ static int perf_session__process_compressed_event(struct perf_session *session,
+ 		decomp->size = decomp_last_rem;
+ 	}
+ 
+-	src = (void *)event + sizeof(struct perf_record_compressed);
+-	src_size = event->pack.header.size - sizeof(struct perf_record_compressed);
++	if (event->header.type == PERF_RECORD_COMPRESSED) {
++		src = (void *)event + sizeof(struct perf_record_compressed);
++		src_size = event->pack.header.size - sizeof(struct perf_record_compressed);
++	} else if (event->header.type == PERF_RECORD_COMPRESSED2) {
++		src = (void *)event + sizeof(struct perf_record_compressed2);
++		src_size = event->pack2.data_size;
++	} else {
++		return -1;
++	}
+ 
+ 	decomp_size = zstd_decompress_stream(session->active_decomp->zstd_decomp, src, src_size,
+ 				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
+-- 
+2.48.1.658.g4767266eb4-goog
 
-> Logs do mention this:
-> 
-> [   21.560206] pcieport 0000:00:01.1: unlocked secondary bus reset via: pciehp_reset_slot+0x98/0x140
-> 
-> ...so it seems to be SBR.
-
-Looking at the vfio code, vfio_pci_core_enable() (which is called on
-binding the vfio driver to the GPU) invokes pci_try_reset_function().
-This will execute the reset method configured via sysfs.  The same
-is done on unbind via vfio_pci_core_disable().
-
-So you should have asked the reporter for the contents of:
-/sys/bus/pci/devices/0000:01:00.0/reset_method
-/sys/bus/pci/devices/0000:01:00.1/reset_method
-
-In particular, I would like to know whether the contents differ across
-different kernel versions.
-
-There's another way to perform a reset:   Via an ioctl.  This ends up
-calling vfio_pci_dev_set_hot_reset(), which invokes pci_reset_bus()
-to perform an SBR.
-
-Looking at dmesg output in log_linux_6.13.2-arch1-1_pcie_port_pm_off.log
-it seems that vfio first performs a function reset of the GPU on bind...
-
-[   40.171564] vfio-pci 0000:01:00.0: resetting
-[   40.276485] vfio-pci 0000:01:00.0: reset done
-
-...and then goes on to perform an SBR both of the GPU and its audio
-device...
-
-[   40.381082] vfio-pci 0000:01:00.0: resetting
-[   40.381180] vfio-pci 0000:01:00.1: resetting
-[   40.381228] pcieport 0000:00:01.1: unlocked secondary bus reset via: pciehp_reset_slot+0x98/0x140
-[   40.620442] vfio-pci 0000:01:00.0: reset done
-[   40.620479] vfio-pci 0000:01:00.1: reset done
-
-...which is odd because the audio device apparently wasn't bound to
-vfio-pci, otherwise there would have been a function reset.  So why
-does vfio think it can safely reset it?
-
-Oddly, there is a third function reset of only the GPU:
-
-[   40.621894] vfio-pci 0000:01:00.0: resetting
-[   40.724430] vfio-pci 0000:01:00.0: reset done
-
-The reporter writes that pcie_port_pm=off avoids the PME messages.
-If the reset_method is "pm", I could imagine that the Nvidia GPU
-signals a PME event during the D0 -> D3hot -> D0 transition.
-
-I also note that the vfio-pci driver allows runtime PM.  So both the
-GPU and its audio device may runtime suspend to D3hot.  This in turn
-lets the Root Port runtime suspend to D3hot.  It looks like the
-reporter is using a laptop with an integrated AMD GPU and a
-discrete Nvidia GPU.  On such products the platform often allows
-powering down the discrete GPU and this is usually controlled
-through ACPI Power Resources attached to the Root Port.
-Those are powered off after the Root Port goes to D3hot.
-You should have asked the reporter for an acpidump.
-
-pcie_bwnotif_irq() accesses the Link Status register without
-acquiring a runtime PM reference on the PCIe port.  This feels
-wrong and may also contribute to the issue reported here.
-Acquiring a runtime PM ref may sleep, so I think you need to
-change the driver to use a threaded IRQ handler.
-
-Nvidia GPUs are known to hide the audio device if no audio-capable
-display is attached (e.g. HDMI).  quirk_nvidia_hda() unhides the
-audio device on boot and resume.  It might be necessary to also run
-the quirk after resetting the GPU.  Knowing which reset_method
-was used is important to decide if that's necessary, and also
-whether a display was attached.
-
-Moreover Nvidia GPUs are known to change the link speed on idle
-to reduce power consumption.  Perhaps resetting the GPU causes
-a change of link speed and thus execution of pcie_bwnotif_irq()?
-
-
-> > This approach won't work if the reset is performed without software
-> > intervention.  E.g. if a DPC event occurs, the device likewise undergoes
-> > a reset but there is no prior system software involvement.  Software only
-> > becomes involved *after* the reset has occurred.
-> > 
-> > I think it needs to be tested if that same issue occurs with DPC.
-> > It's easy to simulate DPC by setting the Software Trigger bit:
-> > 
-> > setpci -s 00:01.1 ECAP_DPC+6.w=40:40
-> > 
-> > If the issue does occur with DPC then this fix isn't sufficient.
-> 
-> Looking into lspci logs, I don't see DPC capability being there for 
-> 00:01.1?!
-
-Hm, so we can't verify whether your approach is safe for DPC.
-
-
-> > Instead of putting this in the PCI core, amend pcie_portdrv_err_handler
-> > with ->reset_prepare and ->reset_done callbacks which call down to all
-> > the port service drivers, then amend bwctrl.c to disable/enable
-> > interrupts in these callbacks.
-> 
-> Will it work? I mean if the port itself is not reset (0000:00:01.1 in this 
-> case), do these callbacks get called for it?
-
-Never mind, indeed this won't work.
-
-Thanks,
-
-Lukas
 
