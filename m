@@ -1,137 +1,191 @@
-Return-Path: <linux-kernel+bounces-536635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF1AA48248
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:02:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726FCA4821E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D95170CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643113A63ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D1525DCEA;
-	Thu, 27 Feb 2025 14:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70A625E46D;
+	Thu, 27 Feb 2025 14:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3hfEzj2"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rJKktULN"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159FD25CC7B;
-	Thu, 27 Feb 2025 14:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FE925E452
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668001; cv=none; b=XFq2774RxCPlYI/CtNRkb1coSnJI6RkJwcCzWibUUXHXcxpBxf96ntshVgNQRFu29RUiNOd8jrJgNPB0xLbKPZVQofK8XYsnlRHenbBKiwOS8btMjQmVVl/IJBDc3vbQ45a2h4Kwgtbaa3oeSooqC+pXyqmN0BHJU4RucCZAC8k=
+	t=1740668092; cv=none; b=lBG8NjKVFfGvrwb/zzihtuPPpMXbbFFZWUxDysYqH3omCYgytSdvTxKDPAjNHhYR8rcNkV7AEUOBkIIo6vdwU3hilOPvesZ+1Wk8m/XsXmHwROfhEmTpILzM5KS6qjTpayeB0DPvCAGnyoe9GkHS6keojBfpa2E2CQnSk2YAdGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668001; c=relaxed/simple;
-	bh=q2GwVWz1/9PKFbqsPfnaphn+KW1rK4B8wqH9lN+LYOg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BsqfEljdgVfv6PmWLpUMV9NDAZjDZcKlRLS+sTyAiXN3fjsqjkXHKUXuLFJztg5bdZL3poob0e7X2vF3OtQfXGJzuY/f74S4YEZPUHQbUzw4ePRR2JBDhpNBcwBtMQlYq6RM/GoRkur+gGq7UCRH/3ZvSr20zute2SPYwUBLHxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3hfEzj2; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7430e27b2so166531366b.3;
-        Thu, 27 Feb 2025 06:53:19 -0800 (PST)
+	s=arc-20240116; t=1740668092; c=relaxed/simple;
+	bh=KboGCxx7OgmWNnz4unI5atpIG8j1s+NhJgz2Wlu5UaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXN2Pfpi2nwauQx5jhnX3IKJ2tSy2PyB0fwQYMksVsx3q3qnHe6Iun/0VbOzKvP5D4cJe8uC6JwxOreRCDdeAqZ9FcJE4daaEf673Os3KPzWPDoa666YA+sGOA7HUucDHJV2E2zSgZD/k3GxevNhcmBMdvSr5QyzEnPMv3ROQBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rJKktULN; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5439a6179a7so1226107e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:54:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740667998; x=1741272798; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=btvFNagWkKH+cMrctRR0r6pBNr9QjhwzZ0RP7CAU4ao=;
-        b=B3hfEzj2l6G3+7dgEspuM0Fz1Pc9R9NoXuFkSpgnUVBDjRI6hWrVqtzzAiW6dfXKWC
-         Uz5c0TrTK7GqCzGM7RKUemhrGjaNqABjurWgD3vzitGzNZAOqpACQEFrRp7evpQU1FJu
-         0F6VWhUZmBYv6zjhQs/QXKNR6sa+uZ8a1O9d8j0JzpWNulU8qYdZHKAoAY688Ac8g2h7
-         qY/zI+UDIECSTMF3aDqXEyXlo2Nobr+/osPqbkQ49U4wLLcKzxlJLdsdFuS5Gn4TsCeb
-         j/vPmZouwHpnrK+PUA2Mj3EZ9u8dO8BgCfq3RDmJ/lRgYtoAjiP0JkUr8ciRWkir+lVG
-         MVEQ==
+        d=linaro.org; s=google; t=1740668088; x=1741272888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sCMeltnZVSG7sz0LhzAVQweBa8yRnjaqRK41n2Tk0AM=;
+        b=rJKktULNRwmz5XhYh7Ao7P2IEkXIaqACQ8BjfV+6U2+0ipde90bPpyfp2DHYol3aEw
+         W/TcIzf9uZm4a9eW2uNIjX5BkP6/jvWigBzk/UIbEp5VKhoPH6tvgTdR7qXtPoDwbmaJ
+         L86Uml4QaHSqiT7mAp5nXR2PkzLt1lvEOseWmTQ0UyfATE3LZPgGmTZPLq8c84JesUZL
+         geqA4k3TdvE7EL7w2hZD78722+idldzwyqQRlPF9RsccMc+oFFFTFkE74S0MMHJ0HR0U
+         N4dcM1I1aPha080jaZAOsZtziHr7uGY4sDk521TnuVR01IkKTl27dxbrg217v9+XEt5T
+         SDRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740667998; x=1741272798;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=btvFNagWkKH+cMrctRR0r6pBNr9QjhwzZ0RP7CAU4ao=;
-        b=Zvaj5j3vvpj1qhRAl9o2G9cXCEQADK6ETPWsm8X75TvEPWvjFM3AnTFSpvbkISDr4r
-         Aq7QEqJk3fCgrfHHxAnzCw1XGMSkPyj27GS6KBCPLx9yHUHBe3CAi9cJCOF/9YaozhYN
-         lCrMZmtMXFGS8VzcZ2/AzcSrX9bzm8+pMBmJzQTJyj+iffqkGveSpOOCs12/yg/tJZRj
-         ewjgel+WfpzeGllLuNeAhy0g1yY2siL/TN6bSFPiPQ2TEpPbxjs2ARc9A5ctuoaOwgzX
-         YRj/xpDgygjkdTOP9UujkyNaFE0ugmVe2leBaxrixb7zBlOsGeEFXUbnXLSWPLCb1Sp0
-         J19g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwluOYb1IK//VA3Oeuja/WxIIKb3Wes6Sdy+zCMMXk0u5JYuFRLeHM1h3qxmUkO9jP81dC0w2ovA==@vger.kernel.org, AJvYcCXpCTshoMObynd9NCArYDpOWhh/4mpn2eR1aGmh+VVo0mqd3r/vauXDaz+KfwUYTgebOYVZO70Wy/8CViEA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFIjwhcy77JaSefMz4Ka9aDQ0RQ9ZsxT9LHLXaueD4k+2MtqKy
-	Fn2bv2xbmJ4tX9fH/Htv5SF2PJExRLBlDWj+yJWs4YT4qZNWY64/
-X-Gm-Gg: ASbGncsvhdpT+T4qPBgtHW/LJus2QZXLPD3/TLHotgLEWZVxJN3Tzvl23Sq/pa/RjgA
-	rIT/Vmoal8kjpL6Rni0potuc9qEI4z12+trPQe+fGU1MOwz+gC5zWaNd3b6AYu3ZdJlRWxZy+Fz
-	R1WphZ+KEe8vcoIsXOqupkGk/HbOb8RXxoWurg2FY+lbYNpZwxeUFUfDjv1eXVZQyQeH4sLo8IL
-	8zbEQon8N3DwSUvS01VNP/AgaqqvOGQGnDgyTFhwroyYjlo0vz9IZp9tgtBkUOiD/AjoM4cdOBk
-	UG9BG4pLEgg59U7ues/pzL4EOvQY1yfwkfvhosaepoV5ZI+EHrN+e7upmsw=
-X-Google-Smtp-Source: AGHT+IGn2fQD/9JMxb/2MtYLyJoSzNKDGBGxmXzWMWKWGR6SXcgpDtXhBLIo9EQkQaZSTh0DKetUoA==
-X-Received: by 2002:a17:907:9619:b0:abe:ebe2:6747 with SMTP id a640c23a62f3a-abeebe26b4amr1107777966b.9.1740667998056;
-        Thu, 27 Feb 2025 06:53:18 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:4215])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf1d1a84b7sm57963466b.19.2025.02.27.06.53.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 06:53:17 -0800 (PST)
-Message-ID: <1e84c070-ab32-4617-bd6a-352f2a744004@gmail.com>
-Date: Thu, 27 Feb 2025 14:54:14 +0000
+        d=1e100.net; s=20230601; t=1740668088; x=1741272888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sCMeltnZVSG7sz0LhzAVQweBa8yRnjaqRK41n2Tk0AM=;
+        b=bFrOOaFguzwLQC5fxEbMW0T6AmQJri/c0tgrTKhFrmZyFjM1HJnWv+Q+PxvqXycau1
+         G0PyLHOb5IPDgR1bPJMPIdzK1YqQfuTx3AnTdalmii0kF9ORlXF94nQGyCVN5zQB0urr
+         58UD8xSrooek7wI1eckD7gZkCA/9sQ1y+RcgDFwGvHiZnVtxCoA9pYLzVBqs15zSQfEV
+         KY5LlV7Tz/ohmvBBtmNzNIVz/eeN3DqSZdlF4Zn7B0370JviUeQvQ0jTjGdBNWA++br+
+         v6yXCwIKqHW+ZFgc6JPBWthvSsdLZaRaDBwkT5Jy+uR6TFX8Ng1rtIea/zIhBfwrvYII
+         QCcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXc+NrNUUXBNzSlOK/fglrtzE5RBUUkfDJG5Yf59hsoVr7/+DrhkN6lrexhWxb4rfoATkasXo9tY8xD/ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiRr7/gvRW0SBCeY77E9JH7hSyDdwqMha/nB5cac54QqH1oq21
+	wsiA1KRzuMCnRiwhiQYoyPL/iYIuRTbFnAqupT5Hl/25S29v6NdyCiePJbxmLEHSsvgDdy0EOqT
+	XA34=
+X-Gm-Gg: ASbGncsddXMYibzPdcDSZjivNcJ2FkGRo7SF+t2V4B/rYS1ED95SCvFPCpIR0mA4mVv
+	6UPIK7Q6qRCT4y1AALjhYJjNMhe7DTDo3HN3yGBK8bYgeameO7QlpKJ1XtZsEvdCNlNfFCN/yKi
+	kIlBPiJFBpdksBTYOUhTQVM8WWjtUslZAIFAykASridWt7jSDm7J9RQ6H4Rx7z3OIuYYBAt6juY
+	3Y9Eqp1orH6CWr3fvdkcMWr21ez3BA2aB3DadFnWfSQyo5DfjBfOP6mx+TKyTPyLmYVo1hYbD5G
+	bkrpURG4mNqyK/tYXFnvkZupXDFPTV+qzRiZlvmsza03apbHlTWZzBVhUXq7OcXhkFKXC46ycKN
+	jV/du8w==
+X-Google-Smtp-Source: AGHT+IF94UxahrgvKnqbDIyQP2SoOHuqTWRLMtDqEw4LEuHBKdFhk7jgfYz2acmAzH6fUFJ672CotA==
+X-Received: by 2002:a05:6512:308c:b0:545:4f00:f92a with SMTP id 2adb3069b0e04-5494332104amr1421507e87.20.1740668088335;
+        Thu, 27 Feb 2025 06:54:48 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549441741d4sm184217e87.33.2025.02.27.06.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 06:54:47 -0800 (PST)
+Date: Thu, 27 Feb 2025 16:54:45 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/23] arm64: dts: qcom: Add 'global' IRQ to supported
+ SoCs
+Message-ID: <26ohpisuitzaghsxbbyjgb2rbhrubu4ipt7zopyuakxbgyqi7i@xa3tjwlwwjoq>
+References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: fix build warning for !CONFIG_COMPAT
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Gabriel Krisman Bertazi <krisman@suse.de>,
- David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227132018.1111094-1-arnd@kernel.org>
- <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
-Content-Language: en-US
-In-Reply-To: <275033e5-d3fe-400a-9e53-de1286adb107@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
 
-On 2/27/25 13:49, Pavel Begunkov wrote:
-> On 2/27/25 13:20, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> A code rework resulted in an uninitialized return code when COMPAT
->> mode is disabled:
+On Thu, Feb 27, 2025 at 07:10:42PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> Hi,
 > 
-> As mentioned in the lkp report, it should be a false positive.
+> This series adds the Qualcomm specific 'global' IRQ to the supported SoCs.
+> This IRQ is used to receive the PCIe controller and link specific events
+> such as Link Up/Down, MSI, PTM etc... in the driver. Support for this IRQ
+> was already added to the pcie-qcom driver. So enabling this IRQ would allow
+> the driver to enumerate the endpoint device and also retrain the link when
+> the device is removed [1] without user intervention.
 > 
->>
->> io_uring/net.c:722:6: error: variable 'ret' is used uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
->>    722 |         if (io_is_compat(req->ctx)) {
->>        |             ^~~~~~~~~~~~~~~~~~~~~~
->> io_uring/net.c:736:15: note: uninitialized use occurs here
->>    736 |         if (unlikely(ret))
->>        |                      ^~~
->>
->> Since io_is_compat() turns into a compile-time 'false', the #ifdef
->> here is completely unnecessary, and removing it avoids the warning.
+> This series also adds missing MSI SPI IRQ to some of the SoCs.
 > 
-> I don't think __get_compat_msghdr() and other helpers are
-> compiled for !COMPAT. I'd just silence it like:
+> Testing
+> =======
+> 
+> This series was tested on Qualcomm RB5 board based on SM8250 SoC and
+> Qualcomm Ride MX board based on SA8775p SoC.
+> 
+> NOTE
+> ====
+> 
+> I've left a few SoCs in the tree like QCS404, SC8280XP due to lack of
+> documentation. Those will be added later.
 
-I guess we're relying on dead code elimination to prevent
-linking against them, if that's a normal practise and we
-do mandate compilers to do that, then it looks fine to me
+Also IPQ9574. For the series:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 > 
-> if (io_is_compat(req->ctx)) {
->      ret = -EFAULT;
-> #ifdef CONFIG_COMPAT
->      ...
-> #endif CONFIG_COMPAT
-> }
+> [1] https://lore.kernel.org/linux-pci/20250221172309.120009-1-manivannan.sadhasivam@linaro.org/
 > 
-> Let's see if Jens wants to fix it up in the tree.
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> Manivannan Sadhasivam (23):
+>       dt-bindings: PCI: qcom,pcie-sm8150: Add 'global' interrupt
+>       arm64: dts: qcom: sm8150: Add 'global' PCIe interrupt
+>       dt-bindings: PCI: qcom,pcie-sm8250: Add 'global' interrupt
+>       arm64: dts: qcom: sm8250: Add 'global' PCIe interrupt
+>       dt-bindings: PCI: qcom,pcie-sm8350: Add 'global' interrupt
+>       arm64: dts: qcom: sm8350: Add 'global' PCIe interrupt
+>       dt-bindings: PCI: qcom,pcie-sa8775p: Add 'global' interrupt
+>       arm64: dts: qcom: sa8775p: Add 'global' PCIe interrupt
+>       dt-bindings: PCI: qcom,pcie-sc7280: Add 'global' interrupt
+>       arm64: dts: qcom: sc7280: Add 'global' PCIe interrupt
+>       dt-bindings: PCI: qcom: Add 'global' interrupt for SDM845 SoC
+>       arm64: dts: qcom: sdm845: Add missing MSI and 'global' IRQs
+>       arm64: dts: qcom: msm8996: Add missing MSI SPI interrupts
+>       dt-bindings: PCI: qcom: Allow MSM8998 to use 8 MSI and one 'global' interrupt
+>       arm64: dts: qcom: msm8998: Add missing MSI and 'global' IRQs
+>       dt-bindings: PCI: qcom: Allow IPQ8074 to use 8 MSI and one 'global' interrupt
+>       arm64: dts: qcom: ipq8074: Add missing MSI and 'global' IRQs
+>       dt-bindings: PCI: qcom: Allow IPQ6018 to use 8 MSI and one 'global' interrupt
+>       arm64: dts: qcom: ipq6018: Add missing MSI and 'global' IRQs
+>       dt-bindings: PCI: qcom,pcie-sc8180x: Add 'global' interrupt
+>       arm64: dts: qcom: sc8180x: Add 'global' PCIe interrupt
+>       arm64: dts: qcom: sar2130p: Add 'global' PCIe interrupt
+>       arm64: dts: qcom: x1e80100: Add missing 'global' PCIe interrupt
+> 
+>  .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml | 10 ++--
+>  .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |  9 ++--
+>  .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml | 10 ++--
+>  .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  |  9 ++--
+>  .../devicetree/bindings/pci/qcom,pcie-sm8250.yaml  |  9 ++--
+>  .../devicetree/bindings/pci/qcom,pcie-sm8350.yaml  |  9 ++--
+>  .../devicetree/bindings/pci/qcom,pcie.yaml         | 14 ++++--
+>  arch/arm64/boot/dts/qcom/ipq6018.dtsi              | 20 +++++++-
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 40 ++++++++++++++--
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi              | 54 +++++++++++++++++++---
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi              | 20 +++++++-
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 28 ++++++++---
+>  arch/arm64/boot/dts/qcom/sar2130p.dtsi             | 12 +++--
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 14 ++++--
+>  arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 24 ++++++----
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi               | 40 ++++++++++++++--
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi               | 12 +++--
+>  arch/arm64/boot/dts/qcom/sm8250.dtsi               | 18 +++++---
+>  arch/arm64/boot/dts/qcom/sm8350.dtsi               | 12 +++--
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 18 +++++---
+>  20 files changed, 300 insertions(+), 82 deletions(-)
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250227-pcie-global-irq-dd1cd5688d71
+> 
+> Best regards,
+> -- 
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
 > 
 
 -- 
-Pavel Begunkov
-
+With best wishes
+Dmitry
 
