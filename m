@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-535941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A98DA47985
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:51:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 082CCA47989
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12FEF18919D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD35118915FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A8B228CBA;
-	Thu, 27 Feb 2025 09:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D63F227EBF;
+	Thu, 27 Feb 2025 09:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UPKGURUM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xmztMTrP"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F36270024
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3665270024
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740649854; cv=none; b=c0gmPInvj7H8bUgEPp/wnOn6t986yLS3l+Ivth6R/Ldow+L6X3sTs0sX1dGyOFQK4QlftG3/RoJ/JiTgF2X3ICJ4RSDfVLfUyCKFEACl1gNqqgOBIics4zMr/+V5aGM7g0NnPXG2Ugeyf13qxJ6Z0plriz42w4Zrs1G8F4s/ybE=
+	t=1740649894; cv=none; b=MsFvISqoWif/qdL4F77sMWj8EPTVLH+YcRfOak7isfSm5dLZpHUMG/wEmz+2CbyJqy32MsfGdhHNPitbnMJtKEDYsA5ztpEqQ2XXEeyWHjI1kuVbzmPSVG6yKn0DDPzC4cF5HiHOmJb0WoVoHS9u4YZ7Dmy3RI0x34tqa6XAlsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740649854; c=relaxed/simple;
-	bh=LYL9cYL6rj6biQ2SWuMn4r7Oi5SZYKYmnfyqUvUiymA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LVmTVLvvUHf9GmH71HmpZYJGSvxIhri4V2Va2jIrjsryCikJP46DeNVjVRu461SoPWyHNwA2EAYqOygbPv/sQ3gkGz7gqKtZmXCe1MQd8uqjVKUbUg0DycSu82gQuTJs+B0XRwMEypJehNqvsodedWFZySGiOGFNYKx5rLhKtE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UPKGURUM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740649851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LWAZvimGNk1tF+ANGXTAMRK6KN/D4dhCfoJh3bD4+uw=;
-	b=UPKGURUMSPMiHYKZDWnrCDZUM4jUrkxBwn5p3vsw7M6aHfg/IlX4roCWiVhiEMTFiMXRS7
-	PbnSBZuEp+dSryPIZk1LtUre3krHmh0/UVd8eEidJ4BvSXpXzySjj9iEIag8KBdTKV1BR+
-	/8Q7O3Ovg2SzXJ80XI3w+Umwyr/WIBs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-449-Pm_SPCUhOVGPJYG0ec9owQ-1; Thu, 27 Feb 2025 04:50:50 -0500
-X-MC-Unique: Pm_SPCUhOVGPJYG0ec9owQ-1
-X-Mimecast-MFC-AGG-ID: Pm_SPCUhOVGPJYG0ec9owQ_1740649849
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f3bac2944so285718f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:50:49 -0800 (PST)
+	s=arc-20240116; t=1740649894; c=relaxed/simple;
+	bh=nIdCJYwmuSe5QLt8/tDk5Es1wOqwuMzghxIYXnADvt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IBvycB8SHal08MEMUs/UNBY8kOGV/YeCMzdYMMx0rQEUYQOTjKSh+a4NNwEawHVgm6fPHQGEs9ZkzJ77ThstSYtWYnDBwPGFevlns6eK8PqihyA9QxawYHhJnmEEis8a5Xgyk+qAmQvSQWMxVfFbPmF2C2mkzDMkNkbT3czmHBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xmztMTrP; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3091fecb637so6660211fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:51:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740649891; x=1741254691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPTKCDlIl7OJpWbanUGrKwVYW5alvhhnOctJNOYGL3I=;
+        b=xmztMTrPqstlTj4VF63nNxleMDLZJOzAf9y7fU/C17X826HvKNou+RxWM/Leq/YthS
+         pSaobA2iHp8xbzl98vD2kDCK8E+IIcVQdwRtrz7gsBDsUitGcoXeMeQHVkvGQLVA0HrM
+         Y42Vcypkowh4isqC1GZNUOzjwnGc1D0ZYljmEPAmSxst8h2+ANrW4WpOyzSQjdJ/SwV8
+         g87ZNOlQsAft5ifNp+FYL0AIxE3y0LaCh2Kj2TiWCX7iDYNCJQDAW8Xc4/3uFPiaNO9t
+         M3A7CYq78pbgRkdkd5XdHmUcI8u52gYscnhSJ4L9htYCu7s8j+Xt3NzC3jJtZgIYlPto
+         46bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740649848; x=1741254648;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740649891; x=1741254691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LWAZvimGNk1tF+ANGXTAMRK6KN/D4dhCfoJh3bD4+uw=;
-        b=lHzVHdd38KxVHNNBGDwB8MnMINystmeproy0Uf2yRj3tJZVl01G7ERSBs7YDRxQz6s
-         amQLA4sjuB1XY2x1i+6iZMBz0rtZwJ2DGcg+9iWtpHeVxxl/e3EqBXWZN3Z/2EcR8fxk
-         8kXoum4BRXk1k+Ea2WP/o0EqKh49qN/CDyK207W6K05hn1Nlq3KwtdZ/yyTQgnxwPPlD
-         nxwV8+iSYpkJn+R606XyVQn9XaBbnTsv7ekwti0hZw0Sd5egrlk16BCtidj1ZO2KGezB
-         iQEdX3slMcB37xqATFoCnPpeYmHP+mrbFlOLxzo1v+6vYHaqH6eSVuf0tkfVYJGAhMYJ
-         Obuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/we+RkN2shW/xKp8B0UUFh9rIqcg2yoI7l//jasv0NC8clNunZbpiQ9vceDVABQbujJA8kg6EqKezswQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6+h7XKuNKm83GjcHuHsRRopu6vmIMLMFRtOQVLT1SNCwQ6BnW
-	k0Z3Ley03ZPRjzQwF5vC1g6Ye+kuADMgxX7eYbPraTfQhzcW8iK1cVCn10kEiNlQeXmFpXZdpHL
-	o+tizgTMldzWU4cTgsbuUi1sYQzWUT6H94l8wgfKk0PKWc4alj88072SnrD07ztBYw1OsWQ==
-X-Gm-Gg: ASbGncvhWc0kAW7IXOSCKLnqdy0SI6FJQ0liYgp2ZoszAhud3t3G+mocBgS77pb9OT4
-	y8IFiTSnw08tlLid9IHJIJCu++BYgUari50gZKBKMHXgGZuDWklP2kfzffr4IlpQ12gwEYfkwa/
-	DHv43rRof/jmHHXYdiZt7GTv8CzdKIHyi9ZvtzvmRxa8HLDx6Rp89dO/PEYX9WCYjdvpoG0HGa2
-	jJZi90s/HIn4pP3palZZ2a02BhNhxzyijlOLuC22iebY0OgdcP8RQSzJ5vZqM3jn9AK2u0N2tGN
-	ti3Mlx5VlC1xK1k4sk3FiwwaOI0oVgSCcAKQZ45LZLDIet6S8uvx+4EerY1J3KY=
-X-Received: by 2002:a05:6000:1acf:b0:38d:c2d4:2399 with SMTP id ffacd0b85a97d-390d4f84abamr5489407f8f.41.1740649848471;
-        Thu, 27 Feb 2025 01:50:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHSS29mgKIIJPNubRNiu6XSsP4jRdBTsm+jLItodsOd+ON4krsICtKTwhV6diQM03lS5OYCZA==
-X-Received: by 2002:a05:6000:1acf:b0:38d:c2d4:2399 with SMTP id ffacd0b85a97d-390d4f84abamr5489383f8f.41.1740649848097;
-        Thu, 27 Feb 2025 01:50:48 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965ddsm1532686f8f.18.2025.02.27.01.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 01:50:47 -0800 (PST)
-Date: Thu, 27 Feb 2025 10:50:46 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
- =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, Marcel
- Apfelbaum <marcel.apfelbaum@gmail.com>, Peter Maydell
- <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>, Yanan
- Wang <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/14] acpi/generic_event_device: add logic to detect
- if HEST addr is available
-Message-ID: <20250227105046.3c67b7c2@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20250227082638.7db90257@foz.lan>
-References: <cover.1740148260.git.mchehab+huawei@kernel.org>
-	<e9e0aafd7cc8613709171ec5d8a6d9d9be62d7c1.1740148260.git.mchehab+huawei@kernel.org>
-	<20250226165226.49b88429@imammedo.users.ipa.redhat.com>
-	<20250227081927.726a1938@foz.lan>
-	<20250227082638.7db90257@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=MPTKCDlIl7OJpWbanUGrKwVYW5alvhhnOctJNOYGL3I=;
+        b=N9+x7q4DvY/QObH7pPAYZlA4tCv+UDkayM+iHzNJoX1U0Q0NM04JE1ZiC5CHnMH0/E
+         mktU9xcFW/wNTCtgjEeqZMTHbWDLcaOluV4b2XF8FoclfdxyxJ3pgx+mVYXKjPivYvoE
+         SWJnOrpt+kwIvZn76f6KytV3MJshoSlOlDLByiOE4cR1sIONYJROVOgx+l34luSOXVRC
+         cGGt3o8qpjm2gbdFfzUZiZtB+iqJnSI9IbcNwc2z6deizBBDRWTiKYVvSmuNe2IeOCQp
+         BBdCWxmyH2qQn++bIQoyV429uLxUKCM2tf/owcWJ2q9NHXXFpmJEXgRTjpwZoJGcidy2
+         UlqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKd98Nn/a7ZpT/dDDmbjR3Ek2SQQ90vIFOwxsh73IjbdHIfKmPCnjTtJr1Iz6bfE6NBjdWbvp5MzzRTb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGOQaSAjMOSXqZRzaLXZlx9o1fnsiZZwvabJEn19ZaDf4+VgNo
+	g7ya00i7NHsvG/9pBkjD0OTYOEYJEFv4jKLPp3JJ0jNyNdkiEV/t95V33wF+YvOoAdqTrnOQMsh
+	nSIQyw1UQr+Xxa3iSVrdzxDQ4BIepTFDXyNBf4g==
+X-Gm-Gg: ASbGncsTq7iBV1DwOB0/LGph+EQ5XwEwiDDNeKEpX4A8zhv2pZ0YWNUu/9IJ1tES9Y9
+	anbldvzinoTA8AO98jU3hVWHSNWRGpmrlZyXliApnGad0oHEPj8uCkleQyWE1MHNMUhtIbektDs
+	5gU/Hdhx+kxPSVl+KGnjDEDS44dpFEjCShZ3SpQ5g=
+X-Google-Smtp-Source: AGHT+IHV94SNADU7TM0uXP0JNqa+v7Y/6UlvILj/sEpRtNH+X9zo9+97/YsgMeUyVxKY1oza4xTRi3YQuEbXYQdK8Hg=
+X-Received: by 2002:a2e:8748:0:b0:308:ec9d:d9c3 with SMTP id
+ 38308e7fff4ca-30a80c69428mr59844531fa.26.1740649890993; Thu, 27 Feb 2025
+ 01:51:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250224143134.3024598-1-koichiro.den@canonical.com> <20250224143134.3024598-2-koichiro.den@canonical.com>
+In-Reply-To: <20250224143134.3024598-2-koichiro.den@canonical.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 27 Feb 2025 10:51:20 +0100
+X-Gm-Features: AQ5f1Jr-SH-EZfbLqCfhrIpSm7vW10gLX-r5qO1PN-AmJ0AgvQUuhvPoXa45nGc
+Message-ID: <CAMRc=MegKxwX-RjQQcWMGe_JQyRCv82WRRbD0naYkeXshTGXGQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/9] gpio: aggregator: protect driver attr handlers
+ against module unload
+To: Koichiro Den <koichiro.den@canonical.com>, geert+renesas@glider.be
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Feb 2025 08:26:38 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Mon, Feb 24, 2025 at 3:31=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
+l.com> wrote:
+>
+> Both new_device_store and delete_device_store touch module global
+> resources (e.g. gpio_aggregator_lock). To prevent race conditions with
+> module unload, a reference needs to be held.
+>
+> Add try_module_get() in these handlers.
+>
+> For new_device_store, this eliminates what appears to be the most dangero=
+us
+> scenario: if an id is allocated from gpio_aggregator_idr but
+> platform_device_register has not yet been called or completed, a concurre=
+nt
+> module unload could fail to unregister/delete the device, leaving behind =
+a
+> dangling platform device/GPIO forwarder. This can result in various issue=
+s.
+> The following simple reproducer demonstrates these problems:
+>
+>   #!/bin/bash
+>   while :; do
+>     # note: whether 'gpiochip0 0' exists or not does not matter.
+>     echo 'gpiochip0 0' > /sys/bus/platform/drivers/gpio-aggregator/new_de=
+vice
+>   done &
+>   while :; do
+>     modprobe gpio-aggregator
+>     modprobe -r gpio-aggregator
+>   done &
+>   wait
+>
+>   Starting with the following warning, several kinds of warnings will app=
+ear
+>   and the system may become unstable:
+>
+>   ------------[ cut here ]------------
+>   list_del corruption, ffff888103e2e980->next is LIST_POISON1 (dead000000=
+000100)
+>   WARNING: CPU: 1 PID: 1327 at lib/list_debug.c:56 __list_del_entry_valid=
+_or_report+0xa3/0x120
+>   [...]
+>   RIP: 0010:__list_del_entry_valid_or_report+0xa3/0x120
+>   [...]
+>   Call Trace:
+>    <TASK>
+>    ? __list_del_entry_valid_or_report+0xa3/0x120
+>    ? __warn.cold+0x93/0xf2
+>    ? __list_del_entry_valid_or_report+0xa3/0x120
+>    ? report_bug+0xe6/0x170
+>    ? __irq_work_queue_local+0x39/0xe0
+>    ? handle_bug+0x58/0x90
+>    ? exc_invalid_op+0x13/0x60
+>    ? asm_exc_invalid_op+0x16/0x20
+>    ? __list_del_entry_valid_or_report+0xa3/0x120
+>    gpiod_remove_lookup_table+0x22/0x60
+>    new_device_store+0x315/0x350 [gpio_aggregator]
+>    kernfs_fop_write_iter+0x137/0x1f0
+>    vfs_write+0x262/0x430
+>    ksys_write+0x60/0xd0
+>    do_syscall_64+0x6c/0x180
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>    [...]
+>    </TASK>
+>   ---[ end trace 0000000000000000 ]---
+>
+> Fixes: 828546e24280 ("gpio: Add GPIO Aggregator")
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> ---
 
-> Em Thu, 27 Feb 2025 08:19:27 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
-> 
-> > Em Wed, 26 Feb 2025 16:52:26 +0100
-> > Igor Mammedov <imammedo@redhat.com> escreveu:
-> >   
-> > > On Fri, 21 Feb 2025 15:35:17 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> >   
-> > > > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > > > index 5346cae573b7..14d8513a5440 100644
-> > > > --- a/hw/acpi/generic_event_device.c
-> > > > +++ b/hw/acpi/generic_event_device.c
-> > > > @@ -318,6 +318,7 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
-> > > >  
-> > > >  static const Property acpi_ged_properties[] = {
-> > > >      DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
-> > > > +    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState, ghes_state.use_hest_addr, false),      
-> > > 
-> > > you below set it for 9.2 to false, so
-> > > shouldn't it be set to true by default here?    
-> > 
-> > Yes, but it is too early to do that here, as the DSDT table was not
-> > updated to contain the GED device.
-> > 
-> > We're switching it to true later on, at patch 11::
-> > 
-> > 	d8c44ee13fbe ("arm/virt: Wire up a GED error device for ACPI / GHES")  
+Geert, does this look good to you? I'd like to send this fix upstream
+first and backport it to stable.
 
-After sleeping on it,
-what you did here is totally correct.
-
-You are right, We can't really flip switch to true here
-since without 11/14 APEI will stop working properly.
-
-Perhaps add to commit message a note explaining why it's false
-in this patch and where it will be set to true.
-
-> 
-> Hmm... too many rebases that on my head things are becoming shady ;-)
-> 
-> Originally, this was setting it to true, but you requested to move it
-> to another patch during one of the patch reorder requests.
-> 
-> Anyway, after all those rebases, I guess it is now safe to set it
-> to true here without breaking bisectability. I'll move the hunk back
-> to this patch.
-> 
-> Thanks,
-> Mauro
-> 
-
+Bartosz
 
