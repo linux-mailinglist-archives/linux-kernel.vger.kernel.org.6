@@ -1,227 +1,177 @@
-Return-Path: <linux-kernel+bounces-537344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FAFA48ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:44:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36DAA48AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FA216BD48
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:44:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497EB188C570
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A549271291;
-	Thu, 27 Feb 2025 21:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9A270EA2;
+	Thu, 27 Feb 2025 21:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fHu0FEuA"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="byUc7cDF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F056271285
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9707B1E3DD7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692687; cv=none; b=QOikhllynBhB6FecTjnToWA+zqfmd03JS2GcRlMlf+LzTcx5wHteN/Y7tYGj5POIgf9AK4faO4VK4kjzDc8Eq10lZafcmZxVtL9v51Sj0Ll2CdG8dr05omdkJIMZfNbjDfxIYAQ94slX85pew7RdCHWonJQTEAzb3fWRrEhx+VI=
+	t=1740692714; cv=none; b=OTaFgeZucDdgrlKjpBVOAw0VIvY+7LQ2Tpy/yYJUcjEssV9lJllwwmrykySaRYnRTfpsUa9LVupYyeFuFEc544JyBZZ5PBp/RU6gtm2E7Y8laoE9D0GJDIKew7Rg81fowLm2wmcRx9iaM/gunGXakRSez/IF68c5AR7pL4nZ9nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692687; c=relaxed/simple;
-	bh=n6njHu7ybdBsZiHui7SoRCsudV2bX4MYy8gZpvTckbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FvGv3SnuWWrmgz9UOZJIWnwhSREoSrSomYehPrSyzjJ2SV6Ol9J3F/OsCGahS4oq3g87CTXUPT+J9w+Kg+WofW7+z8spXhVZfYtUL9hMIV+p2MoEs6P1Y0LOGKQYaP3hv/TakcOkcp9j11QAbLNbTqdlnAEzhEopl+8DEQPpULI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fHu0FEuA; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7272c81328bso95076a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:44:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740692685; x=1741297485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=41P9T7rAOn5C903KcslM4I+TaCE2v2OwMWOr2r9y6yc=;
-        b=fHu0FEuAOX/0jwIpdBgZIni3fAXQi4QC7sEnk6NuKZwTpmQFNsGxDPL9eIEwH4xCUz
-         QX+FmmryD4+D0nY/AIbV0dMeZQ/ZDBH28zdOhkAafTFz+HEWyu/jkXhvdfngbzOmF+U8
-         XTOalWs77FjGmZq7EqN8VCRxh2A+lKACmeXIo=
+	s=arc-20240116; t=1740692714; c=relaxed/simple;
+	bh=C8qfB6+wenyjSqnbDL3aZEselLtVlPaffdmp9czXrAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yd356/RwbuFqlIoafmrqSvORXbZmYNLH5RpafY4CFVkXDVTK2/dAnJjnFK2e0L/m9h/ZqokZzsG5xzwnckrHwhGYsq8ZvtMgjx4ULPQ8Pu11mQpZZ02nlH4TokBPRW1HHO4H+BPpiY2cz/fGoKmXAaLpsCSVdc0AoA340GBWEys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=byUc7cDF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RAmAeD003209
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:45:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pPBKVO+2HKSAMc7Se1bC13bCptlwACdJvuRTzPMifj8=; b=byUc7cDFabjRDYma
+	2ED9iqovTOEpSD2UVewCDm+HOWFJnTYLUgnX2puyPhPfHY3pXrB/nyl2fz3kz8Jk
+	oGkDDrB0O80taq43Raf6XsMdF1ySqJthhAaHgWi0n6PchthQ/wPg+JFCvpO3aJ5+
+	bhmdr2uX/lIzzgN8W4R68H10xaGt0JglEaTZm0ABT5f7AjOpLSlVY0oTHy2pCgXR
+	Zbq+A4O/gcV2ha22CYHxZJkKCifo5gxez6cot/GNaavDw8gdnrakGn3o5eZyk1vS
+	DWKcKpvNZbVhDL80H/XhhUDl4PjsKuXmcRNE1SU2TP8CGdqxkpkURIW7LiXjjaAe
+	WpV01A==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 452pm7huj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:45:11 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e892c72145so2411116d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:45:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740692685; x=1741297485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=41P9T7rAOn5C903KcslM4I+TaCE2v2OwMWOr2r9y6yc=;
-        b=rec3J2Ah9xd8KYZWmI7G/iItUy5aZhmThRWjFTa37yltCzHMMME9+qoWccWMWIF2QW
-         NxTaCDQ9Zo8JHvKphWw/dmL8wmN9L7cdgp2vnNM4RK3njxkUowj1nioMR3jwBWVw1ZL/
-         X4cgIwtbPmAUSU4Vp9cQWtbK6y6EudacYUjKMtsODuCL1K2JhKUUXFYtmTowrAuMZL5k
-         1FYtpV46Mai6s7EaVLpcQF3sU2U3IMVfqCIHHYWLe31C/3ycXGIcbL+nnhj+a/BEsh41
-         +uYgU7Ir299Njoq6syTsUMEKq1yZQsx8I9n8/KdL3hhH/FL+SYZXd7BJKq/IWm49AqpZ
-         nyKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPZ8V+qeva2udI//XGkMI+nHdr1OFNjeogi2Axc/Q0Mk+mv+XHvwama9lvlxlf/zeyZFjvbRJECEYJ2xE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweKjaHLN26e+HI/TJE2eRzRNgIx0K4ydYOM7wnlfI25K5q5/x1
-	l87Mv1unZWhsRhIyuP8813QPNqxKXyORThnWW3GLtNWj9OXQJxGeBNIh3PoZHorNTFKsdIPKpo7
-	X4g/AkCyvm6/rlAz2V+p7dXm8KozgghjfJEBc/R7bhmXLaFo=
-X-Gm-Gg: ASbGnctpB+WdKkUxlOucLS4jargMLYBkiANjOOpXEyxlQQcyA4Ibfdm8gfrUJSfkUSO
-	5xJz5wIHGGeVrREvSqufp4mikDAwLluDe2uIUwZs1zvxlbO+TnRgTzx8eiLAL8C7iVpcrNwRB6y
-	IN3nh7eKCWJTzS8j+kfT0xuKj6fzIbtKjXrhUS
-X-Google-Smtp-Source: AGHT+IFughb8ucHe5DsofFLYJInuUUcNg3DNnlqCne5qRA9aKO1ulCgbX8TUXLDOT+muClmgGU9fnGmggYJ9ApqcZz8=
-X-Received: by 2002:a05:6870:d8d0:b0:2b7:c7b4:7df7 with SMTP id
- 586e51a60fabf-2c178712c5cmr176343fac.11.1740692685142; Thu, 27 Feb 2025
- 13:44:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740692710; x=1741297510;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPBKVO+2HKSAMc7Se1bC13bCptlwACdJvuRTzPMifj8=;
+        b=I2FHUxExn2uc9Gv5PLomJvdO1y/hcQylB8ozjxgzvp+mXT/RyEfIyi0Z44LHCPCHQp
+         CVgBXMAHLhK2DvOtpUm2mFNORdlhdGXiWwEp/PJnTvvtHvl8P/5OO1kV59eumtJPDB0+
+         siDbfnHS6FQ3cDjTe9wt06yptdRVlx719y6rUcmKBaPNIPDRAENkTn8/ISWweuMVIbk9
+         BjNddPsriwgu4msxg8zYPIBWE8EKRsbIlp0mxaBAMPVtnXFW3aUymo1Ep0KzYDWxwP03
+         h0wjpcNQYko7yzrnnBilAQlzEBy4/AmURcyO3CpvoIAZFXcOK882d+Cac8fGOSeQm1rH
+         iZvg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6ANK1CG/nQCZ54eeIM2M4cHpciLoR8fpgzx1M79FeHvWgY1MjtLr2yzKiEiDr0h4zziKAJ8u1ioFTG80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8DhuNPCl2D3PocluPDAfYIE3cYhCG/fbU8W9oMupMkHm8TKzK
+	6lw9QYZGMuMPQTtZ9AM6aCdwGe8CsWOWxZv8jhgm6YzMc2vkO8RbNaqxnm8bnKQYS5DfSTdLzVa
+	FC/kQVLQaNRrn/OQTbvFKXdotEtFOdkK3N43RKbvLatP+xbcAZx1Iph2PahKJ6/E=
+X-Gm-Gg: ASbGncvm1IToUt1JS8DfIYYxuTCxFL1lnryCnoI4/8yiE/dXKbwrNL7O7hGNJEzZdrB
+	dgDjnP2sWEYbx1tVOx+Xr0zP6CSNgXy5JNc1DyXQ7waXSODE/0i4utsWc0zFFNek4SKy5qEThi6
+	ilR/t3wIu3VpxQ5vnynyl9UXHoqsv8BGpajum8eREN/QIx1r2RD3hzdvglQEDxyf5INXs1ipDSU
+	U2AIoDDl0eBWyVZxlyvDGNawmA64EJ+Y9LooKHWLOYvFcUcPBZZ8D9gYdcEmyRZU+bHaOakSQNn
+	eMQ/LXhOqT4df7bX1N4+woKLvmoYercBtAquanQCLYKgUlrOc/XfJqjfMHLW5I7JNTIP5Q==
+X-Received: by 2002:a05:6214:2aad:b0:6e4:2e03:c54c with SMTP id 6a1803df08f44-6e8a0d9dac7mr6021016d6.10.1740692710376;
+        Thu, 27 Feb 2025 13:45:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHL2H3h1fXY/M+zGEyzBHinGXz7e+qU8JKuFYeji+RiUMLgw7RNmuLoI3TzZXEd8LNSaq4xjg==
+X-Received: by 2002:a05:6214:2aad:b0:6e4:2e03:c54c with SMTP id 6a1803df08f44-6e8a0d9dac7mr6020696d6.10.1740692709869;
+        Thu, 27 Feb 2025 13:45:09 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dcb07sm182253466b.47.2025.02.27.13.45.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 13:45:09 -0800 (PST)
+Message-ID: <234cfd96-04f9-416a-84ee-fe127f81f49d@oss.qualcomm.com>
+Date: Thu, 27 Feb 2025 22:45:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-4-jeffxu@google.com>
- <20250225085728-24167715-8562-45a8-86cd-0ea503e4bc73@linutronix.de>
- <CABi2SkUwETzrBSYm0QV9+eoeo0kgA+r2JM4QaFpQqeTiidFEDA@mail.gmail.com> <20250226082701-9057b348-b074-488f-9aca-49ffbc78237f@linutronix.de>
-In-Reply-To: <20250226082701-9057b348-b074-488f-9aca-49ffbc78237f@linutronix.de>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 27 Feb 2025 13:44:33 -0800
-X-Gm-Features: AQ5f1Jr2cfmQo_Z39J7t8YiLBoePGb9dDRH-76W5jrebQ_aLePoCE7SzRjIwf7A
-Message-ID: <CABi2SkXwaJ=s3XqHKu1aFVfcacgxpQ5Ji1_BqaN+ch2i_RnA9Q@mail.gmail.com>
-Subject: Re: [PATCH v7 3/7] mseal, system mappings: enable x86-64
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] drm/msm/a6xx: Add support for Adreno 623
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jie Zhang <quic_jiezh@quicinc.com>
+References: <20250228-a623-gpu-support-v2-0-aea654ecc1d3@quicinc.com>
+ <20250228-a623-gpu-support-v2-3-aea654ecc1d3@quicinc.com>
+ <7ffcc2fc-c783-49de-b01f-9ffb442d2a72@oss.qualcomm.com>
+ <70c7f4fc-137c-442a-b65e-3743d7b1b736@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <70c7f4fc-137c-442a-b65e-3743d7b1b736@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Y9OByJ4h_IEM8YwVS3YEehwpKZzUaHQf
+X-Proofpoint-GUID: Y9OByJ4h_IEM8YwVS3YEehwpKZzUaHQf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_08,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 adultscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270161
 
-Hi Thomas
+On 27.02.2025 10:06 PM, Akhil P Oommen wrote:
+> On 2/28/2025 1:59 AM, Konrad Dybcio wrote:
+>> On 27.02.2025 9:07 PM, Akhil P Oommen wrote:
+>>> From: Jie Zhang <quic_jiezh@quicinc.com>
+>>>
+>>> Add support for Adreno 623 GPU found in QCS8300 chipsets.
+>>>
+>>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>> ---
+>>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c   | 29 +++++++++++++++++++++++++++++
+>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       |  8 ++++++++
+>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 +-
+>>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h     |  5 +++++
+>>>  4 files changed, 43 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> index edffb7737a97b268bb2986d557969e651988a344..53e2ff4406d8f0afe474aaafbf0e459ef8f4577d 100644
+>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> @@ -879,6 +879,35 @@ static const struct adreno_info a6xx_gpus[] = {
+>>>  			{ 0, 0 },
+>>>  			{ 137, 1 },
+>>>  		),
+>>> +	}, {
+>>> +		.chip_ids = ADRENO_CHIP_IDS(0x06020300),
+>>> +		.family = ADRENO_6XX_GEN3,
+>>> +		.fw = {
+>>> +			[ADRENO_FW_SQE] = "a650_sqe.fw",
+>>> +			[ADRENO_FW_GMU] = "a623_gmu.bin",
+>>> +		},
+>>> +		.gmem = SZ_512K,
+>>> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>>> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>>> +			ADRENO_QUIRK_HAS_HW_APRIV,
+>>> +		.init = a6xx_gpu_init,
+>>> +		.a6xx = &(const struct a6xx_info) {
+>>> +			.hwcg = a690_hwcg,
+>>
+>> You used the a620 table before, I'm assuming a690 is correct after all?
+> 
+> Correct. a690_hwcg array has the recommended values for a623.
 
-On Tue, Feb 25, 2025 at 11:35=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> On Tue, Feb 25, 2025 at 04:48:47PM -0800, Jeff Xu wrote:
-> > On Tue, Feb 25, 2025 at 12:08=E2=80=AFAM Thomas Wei=C3=9Fschuh
-> > <thomas.weissschuh@linutronix.de> wrote:
-> > > On Mon, Feb 24, 2025 at 10:52:42PM +0000, jeffxu@chromium.org wrote:
-> > > > From: Jeff Xu <jeffxu@chromium.org>
-> > > >
-> > > > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on x86-64,
-> > > > covering the vdso, vvar, vvar_vclock.
-> > > >
-> > > > Production release testing passes on Android and Chrome OS.
-> > > >
-> > > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > > > ---
-> > > >  arch/x86/Kconfig          |  1 +
-> > > >  arch/x86/entry/vdso/vma.c | 16 ++++++++++------
-> > > >  2 files changed, 11 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > > > index 87198d957e2f..8fa17032ca46 100644
-> > > > --- a/arch/x86/Kconfig
-> > > > +++ b/arch/x86/Kconfig
-> > > > @@ -26,6 +26,7 @@ config X86_64
-> > > >       depends on 64BIT
-> > > >       # Options that are inherently 64-bit kernel only:
-> > > >       select ARCH_HAS_GIGANTIC_PAGE
-> > > > +     select ARCH_HAS_MSEAL_SYSTEM_MAPPINGS
-> > > >       select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
-> > > >       select ARCH_SUPPORTS_PER_VMA_LOCK
-> > > >       select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-> > > > diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-> > > > index 39e6efc1a9ca..1b1c009f20a8 100644
-> > > > --- a/arch/x86/entry/vdso/vma.c
-> > > > +++ b/arch/x86/entry/vdso/vma.c
-> > > > @@ -247,6 +247,7 @@ static int map_vdso(const struct vdso_image *im=
-age, unsigned long addr)
-> > > >       struct mm_struct *mm =3D current->mm;
-> > > >       struct vm_area_struct *vma;
-> > > >       unsigned long text_start;
-> > > > +     unsigned long vm_flags;
-> > > >       int ret =3D 0;
-> > > >
-> > > >       if (mmap_write_lock_killable(mm))
-> > > > @@ -264,11 +265,12 @@ static int map_vdso(const struct vdso_image *=
-image, unsigned long addr)
-> > > >       /*
-> > > >        * MAYWRITE to allow gdb to COW and set breakpoints
-> > > >        */
-> > > > +     vm_flags =3D VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXE=
-C;
-> > > > +     vm_flags |=3D VM_SEALED_SYSMAP;
-> > > >       vma =3D _install_special_mapping(mm,
-> > > >                                      text_start,
-> > > >                                      image->size,
-> > > > -                                    VM_READ|VM_EXEC|
-> > > > -                                    VM_MAYREAD|VM_MAYWRITE|VM_MAYE=
-XEC,
-> > > > +                                    vm_flags,
-> > > >                                      &vdso_mapping);
-> > > >
-> > > >       if (IS_ERR(vma)) {
-> > > > @@ -276,11 +278,12 @@ static int map_vdso(const struct vdso_image *=
-image, unsigned long addr)
-> > > >               goto up_fail;
-> > > >       }
-> > > >
-> > > > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
-> > > > +     vm_flags |=3D VM_SEALED_SYSMAP;
-> > > >       vma =3D _install_special_mapping(mm,
-> > > >                                      addr,
-> > > >                                      (__VVAR_PAGES - VDSO_NR_VCLOCK=
-_PAGES) * PAGE_SIZE,
-> > > > -                                    VM_READ|VM_MAYREAD|VM_IO|VM_DO=
-NTDUMP|
-> > > > -                                    VM_PFNMAP,
-> > > > +                                    vm_flags,
-> > > >                                      &vvar_mapping);
-> > >
-> > > This hunk (and the vvar mapping in the arm64 patch) will conflict wit=
-h my
-> > > "Generic vDSO datapage" series.
-> > > That series is already part of the tip tree (branch timers/vdso) and =
-scheduled
-> > > for the next merge window.
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=3D=
-timers/vdso
-> > >
-> > > The conflict resolution is fairly easy:
-> > > Move the new flag logic into lib/vdso/datastore.c
-> > >
-> > Thank you for bringing this to my attention.
-> >
-> > In your change,  it seems lib/vdso/datastore.c implements a
-> > vdso_install_vvar_mapping(), then all the architectures call this
-> > function.
->
-> Correct.
->
-> At least all the architectures using the generic vDSO infrastructure,
-> which are the ones you care about.
-> Sparc for example has its own implementation.
->
-> > So merging conflict won't be as straightforward.
->
-> Wouldn't it be enough to unconditionally use VM_SEALED_SYSMAP in
-> vdso_install_vvar_mapping()?
-> The symbol is a noop on architectures or configurations where the new
-> functionality is not available or enabled.
->
-Yes. That will work.
+Thanks for double checking
 
-> > Maybe a better
-> > approach is that I continue resolving all the comments, based on the
-> > latest main. Then wait for your change to be merged and submit another
-> > version.
->
-> That would work, too. As you prefer.
-Great !
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Thanks
--Jeff
+Konrad
 
