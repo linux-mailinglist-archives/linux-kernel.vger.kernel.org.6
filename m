@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-537103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D8EA48815
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C81FEA48816
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132C8169D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40FB168B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE8826E63C;
-	Thu, 27 Feb 2025 18:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1644C26E946;
+	Thu, 27 Feb 2025 18:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XHaxI1wy"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KAfcam4Y"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB9E26BD9C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE26726E164
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681912; cv=none; b=GJH4JreX+WXKd+daJATZWgs/6rdk6DLE05CS1T+rpXIvXeMMAs3fa6rXdMFzyJLJ+BZwJ3JnSC5aFuRukqB83DGbs0KRmnfn/3iWZlGc3K6qL5dzc65tH7wZDE1LwP4kWRYJ+7JQlj5YM/womnAMjSr9LklNdPMOOakffi+ojAA=
+	t=1740681913; cv=none; b=BpKzF3f+rO2UeROOAh0nnpArsGrImy5CJQXzmeEpZr98TKIkGdHJa73Zas+bPkO0Ykl97yX1Y4P3iEA3mieKstRgh0VlTt61F0Jg0G9VZjFYvBfSzMX53G/quszqFVjsvfDQwLT54DszHOQ/b6Kdi/OZdPTEKwNXidw+2gjKEqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681912; c=relaxed/simple;
-	bh=V+c4s8pEeyQ6bzT+mGDkAOcPHrdzwdLVX510GsXvz8s=;
+	s=arc-20240116; t=1740681913; c=relaxed/simple;
+	bh=Ttb0stKkHrz//TRHFoP47ogiPUYTJSc9VP0jS2S74tw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TL5jR+lrvhNQMq+FvQbZqsgIkWHPpNaO792BkUGe9UmWWoyqu+7mlV1n/SqhNqxb5cfUgr1MqBzxJf0fFXDlGpddeP0eE0iS+VxB8EWnWKC7BlKVa4oelAi+CjYTno9CMLVA+YnQleZ0lknrnQgY27nJmsvYZsxIWn+lLXsoBfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XHaxI1wy; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=WPRLrpax8pv03PABPGKgq0pJ+gItgXSd7N8pEcopaFCyPzHwVp/oCSmCclY35RYZpIyKcniTbIx/lNZ9Qi/EF2rKVphm0Xwbg7i2F4aQYr0JMggGhOI92twNBqqbXlvFR2QwVtSCs5WwuvM5J6B7X2jeu8oDqZ2SstYcDPHfrH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KAfcam4Y; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740681911; x=1772217911;
+  t=1740681912; x=1772217912;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=V+c4s8pEeyQ6bzT+mGDkAOcPHrdzwdLVX510GsXvz8s=;
-  b=XHaxI1wy2wSurt96Ps0fuGVrUrjnUAW3jaPXMauvEtP455LgUoPtZuob
-   W+wpNS2ljJGJ2902kgl54C6E0g9Z0RygFSZz/iWOoY2t/LKGNzWn5VP45
-   +ClAfRiBorSb+siLgPGEsjjuJJ3MdHOcJY5K0KfRN85GWnYffPFuNmHeh
-   xqE1kZlLxtt1xVA3BZxMSysu75NcfrJbPlF9+UPOEv2RqC1xanVr1jYbJ
-   CvZy2kSYab0DBmKn4YgbS7apFWBWOAri8dBH0+gMBFtBC5A9Q5y/eZUsF
-   l+dMFCKKNWB2yf6pz3RksF9iWxbApgJUUetupyXrMXKDD5vqBxJAX0Xeq
-   g==;
-X-CSE-ConnectionGUID: l2BRdTR9Rm6tNxIATw54rg==
-X-CSE-MsgGUID: qaCpxfhvRMW4+8Kj5g8fmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720890"
+  bh=Ttb0stKkHrz//TRHFoP47ogiPUYTJSc9VP0jS2S74tw=;
+  b=KAfcam4Ykx4k+ZfC40NsFT6dsgVE/HUI+ubEv0aNxDqI2E+2o5oKTzU8
+   z8cB1bMzKyRdO/CM7mRmXUSa42PgzrRb2Sen1UhhYPfiYb3pAKIvg4Lb/
+   ZgLPn1ytP3mP6AyL+MuzUvnz7KoPCMMZcsBndVJszTa/btkqA2uQkwTN3
+   RURR98F/AEeCn4DRDWn2UoTDVAM44NrZYtGsJvkILrDUmvTzMOGFX7ixY
+   wFN3G0viEZYolPBosyLgTdOgYmjTpjfGfRAJ7QlRkeU2oPVhZrI/cBYAJ
+   nAZKsam3hQ1qvLnYPUnZpPdLEJCDn1zYoj7vJm8/FLLSctazKx6h0tNaR
+   Q==;
+X-CSE-ConnectionGUID: 93VtB3Z8RISA10DYIspvOw==
+X-CSE-MsgGUID: JwOG2sHqT5Gu2OqAa3uqSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720898"
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41720890"
+   d="scan'208";a="41720898"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:10 -0800
-X-CSE-ConnectionGUID: O1saL3dxRPShIsB4o2Eljw==
-X-CSE-MsgGUID: eBVRfu6mTf2Fswuj/H41Ug==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:11 -0800
+X-CSE-ConnectionGUID: ifDXZUN0SO+N9UFcLhmyGg==
+X-CSE-MsgGUID: iqrI5RlOS+CYu+08fuRxjw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117767409"
+   d="scan'208";a="117767420"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.154.132])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:09 -0800
+  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:10 -0800
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -65,9 +65,9 @@ Cc: x86@kernel.org,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH RFC v1 06/11] x86/fpu/mpx: Remove MPX xstate component support
-Date: Thu, 27 Feb 2025 10:44:51 -0800
-Message-ID: <20250227184502.10288-7-chang.seok.bae@intel.com>
+Subject: [PATCH RFC v1 07/11] x86/cpufeatures: Add X86_FEATURE_APX
+Date: Thu, 27 Feb 2025 10:44:52 -0800
+Message-ID: <20250227184502.10288-8-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
 References: <20250227184502.10288-1-chang.seok.bae@intel.com>
@@ -79,85 +79,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A new xstate component is set to occupy the position previously used by
-MPX in the non-compacted format, then creating a fundamental conflict
-between the two.
+Intel Advanced Performance Extensions (APX) introduce a new set of
+general-purpose registers, managed as an extended state component via the
+xstate management facility.
 
-Currently, xfeature_noncompact_order[] includes MPX, but the introduction
-of the new feature would cause a direct conflict there unless MPX is
-removed. Fortunately, MPX support has already been deprecated and
-effectively removed by commit:
+Before enabling this new xstate, define a feature flag to clarify the
+dependency in xsave_cpuid_features[]. APX is enumerated under CPUID level
+7 with EDX=1. Since this CPUID leaf is not yet allocated, place the flag
+in a scattered feature word.
 
-    45fc24e89b7c ("x86/mpx: remove MPX from arch/x86")
+While this feature is intended only for userspace, exposing it via
+/proc/cpuinfo is unnecessary. Instead, the existing arch_prctl(2)
+mechanism with the ARCH_GET_XCOMP_SUPP option can be used to query the
+feature availability.
 
-Explicitly disable the deprecated feature to reserve a space for the new
-xstate.
+Finally, clarify that APX depends on XSAVE.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
-Several code references to this feature macro remain, primarily on the
-KVM side. While they are likely to become obsolete after this patch,
-their cleanup has been deferred at this review stage: This can be
-addressed in a follow-up patch or included as an optional part of APX
-enablement, I suppose.
+Allocating a new feature word for this bit seems excessive at this stage,
+given that no other imminent features are quite known.
 ---
- arch/x86/include/asm/fpu/xstate.h | 2 --
- arch/x86/kernel/fpu/xstate.c      | 8 --------
- 2 files changed, 10 deletions(-)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
+ arch/x86/kernel/cpu/scattered.c    | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index 7f39fe7980c5..e87d36a31ab1 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -30,8 +30,6 @@
- 				      XFEATURE_MASK_ZMM_Hi256 | \
- 				      XFEATURE_MASK_Hi16_ZMM	 | \
- 				      XFEATURE_MASK_PKRU | \
--				      XFEATURE_MASK_BNDREGS | \
--				      XFEATURE_MASK_BNDCSR | \
- 				      XFEATURE_MASK_XTILE)
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 508c0dad116b..4f96515af7c3 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -483,6 +483,7 @@
+ #define X86_FEATURE_AMD_FAST_CPPC	(21*32 + 5) /* Fast CPPC */
+ #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
+ #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
++#define X86_FEATURE_APX			(21*32 + 8) /* Advanced Performance Extensions */
  
  /*
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index d04221d0fa0a..16f45fff8811 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -69,8 +69,6 @@ static unsigned short xsave_cpuid_features[] __initdata = {
- 	[XFEATURE_FP]				= X86_FEATURE_FPU,
- 	[XFEATURE_SSE]				= X86_FEATURE_XMM,
- 	[XFEATURE_YMM]				= X86_FEATURE_AVX,
--	[XFEATURE_BNDREGS]			= X86_FEATURE_MPX,
--	[XFEATURE_BNDCSR]			= X86_FEATURE_MPX,
- 	[XFEATURE_OPMASK]			= X86_FEATURE_AVX512F,
- 	[XFEATURE_ZMM_Hi256]			= X86_FEATURE_AVX512F,
- 	[XFEATURE_Hi16_ZMM]			= X86_FEATURE_AVX512F,
-@@ -101,8 +99,6 @@ static const enum xfeature xfeature_noncompact_order[] = {
- 	XFEATURE_FP,
- 	XFEATURE_SSE,
- 	XFEATURE_YMM,
--	XFEATURE_BNDREGS,
--	XFEATURE_BNDCSR,
- 	XFEATURE_OPMASK,
- 	XFEATURE_ZMM_Hi256,
- 	XFEATURE_Hi16_ZMM,
-@@ -360,8 +356,6 @@ static __init void os_xrstor_booting(struct xregs_state *xstate)
- 	 XFEATURE_MASK_ZMM_Hi256 |		\
- 	 XFEATURE_MASK_Hi16_ZMM	 |		\
- 	 XFEATURE_MASK_PKRU |			\
--	 XFEATURE_MASK_BNDREGS |		\
--	 XFEATURE_MASK_BNDCSR |			\
- 	 XFEATURE_MASK_PASID |			\
- 	 XFEATURE_MASK_CET_USER |		\
- 	 XFEATURE_MASK_XTILE)
-@@ -555,8 +549,6 @@ static bool __init check_xstate_against_struct(int nr)
- 	 */
- 	switch (nr) {
- 	case XFEATURE_YMM:	  return XCHECK_SZ(sz, nr, struct ymmh_struct);
--	case XFEATURE_BNDREGS:	  return XCHECK_SZ(sz, nr, struct mpx_bndreg_state);
--	case XFEATURE_BNDCSR:	  return XCHECK_SZ(sz, nr, struct mpx_bndcsr_state);
- 	case XFEATURE_OPMASK:	  return XCHECK_SZ(sz, nr, struct avx_512_opmask_state);
- 	case XFEATURE_ZMM_Hi256:  return XCHECK_SZ(sz, nr, struct avx_512_zmm_uppers_state);
- 	case XFEATURE_Hi16_ZMM:	  return XCHECK_SZ(sz, nr, struct avx_512_hi16_state);
+  * BUG word(s)
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index df838e3bdbe0..44ab6baeec42 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_AMX_TILE,			X86_FEATURE_XFD       },
+ 	{ X86_FEATURE_SHSTK,			X86_FEATURE_XSAVES    },
+ 	{ X86_FEATURE_FRED,			X86_FEATURE_LKGS      },
++	{ X86_FEATURE_APX,			X86_FEATURE_XSAVE     },
+ 	{}
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 16f3ca30626a..6c40d5af8479 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -54,6 +54,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_AMD_LBR_V2,		CPUID_EAX,  1, 0x80000022, 0 },
+ 	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
+ 	{ X86_FEATURE_AMD_HETEROGENEOUS_CORES,	CPUID_EAX, 30, 0x80000026, 0 },
++	{ X86_FEATURE_APX,			CPUID_EDX, 21, 0x00000007, 1 },
+ 	{ 0, 0, 0, 0, 0 }
+ };
+ 
 -- 
 2.45.2
 
