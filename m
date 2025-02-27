@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-536497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F6A48090
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:09:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C1DA48098
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77F7189462D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73DD3AE2B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F882309AA;
-	Thu, 27 Feb 2025 14:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C682356AE;
+	Thu, 27 Feb 2025 14:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K5va8Thr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gdTmA1Yd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF39233120
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4A232386;
+	Thu, 27 Feb 2025 14:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664987; cv=none; b=fCqZInUsv1g7bGXH6qxnYy9Pfb5nNURkWBUXZVLAtJF5s/f+cc1uexY1jZ+6r/C8+AsxPqsbJhspa2sJAf/pMESZPk0A95XzLVUeV4m92lcTOcAsTIJzscgauQkyBLgEKqrAl6i0pnAmDU7wQVkoIU2nfkF62KbmnqkaSzS4jV4=
+	t=1740665052; cv=none; b=JSqNtD+KcjFb5AhkXDinQX/aIc+mqsJe+MrgLtMjyGtN5o8VCnwJq47GAue6M5g0N2sgQct9vbcZupqfKnORmlO5ovuzOuzPCvXsZ8KQjqiBUFA6yVouDe2utXBtOa86MUEjg13u6l5tN/TmWL4+07gxwiVyq/BpnIu8TX2eug0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664987; c=relaxed/simple;
-	bh=rF4R9E3R8iJoYzAAad6PRC7+Gtk8GNmQmk4DUkE+qO8=;
+	s=arc-20240116; t=1740665052; c=relaxed/simple;
+	bh=x3EH1dzuRBajur9OoQyJceNpHCd35poZLxfrn1dV8aI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+iEQBihyPkgTUW+e/bj0qcToZ+L0h2Ht6B0qDoR36/N7X3atTqmUV3yH/s7Xk7cbClyn+ixtHucEjJzb8YnEQA2LLs4lCmNX9DdZV270BkwKyZlCtlyjoa1ueZxobiC79bW7TmHiukPuFQhCPmEjXYkugLbGaq1vq/oZZf2RE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K5va8Thr; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740664986; x=1772200986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rF4R9E3R8iJoYzAAad6PRC7+Gtk8GNmQmk4DUkE+qO8=;
-  b=K5va8ThrLQPIfZCOUYn5M+rSXg2mme0M/K6WZ46d1xjeLJEdAA//6o8p
-   HgnQXEVPtoQXDxPaOQdYBeytRHUIdHe0WOsPFaldVdhDxx4u2GxGEX2dL
-   0aQxZtGv7LHaoCRDtIiUm6J/F665dToUCo93EmA6lcQxYVjqwhiMYnjJJ
-   Py0geMS/KiewfHXe0bw0ZrxTCXbF1BTsFmsu7dsMljmXj5s1lKEzWswSE
-   dPzp6n9QLH8CpB6z10mdfPbLKSAvJaO3Y8i9bt/3e1ELbcVv7GOvqfRxT
-   GoJuMaXqtbEUDYGnJa25qlab1SAb7xTySuYDXpZPR7Xq0kbPWUnVC+fuV
-   Q==;
-X-CSE-ConnectionGUID: eda+zhRDSg6/hPCPMBr6uw==
-X-CSE-MsgGUID: wN2jW/sMRNWd9VRtWl9lsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="51761224"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="51761224"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:03:06 -0800
-X-CSE-ConnectionGUID: o50pmxeoTJuwCFXCEOFtNw==
-X-CSE-MsgGUID: WD927cQaTVePraIHBQJQ1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147951887"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:03:02 -0800
-Date: Thu, 27 Feb 2025 16:03:00 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, lee@kernel.org,
-	giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] mfd: intel-ehl: Introduce Intel Elkhart Lake PSE
- GPIO and TIO
-Message-ID: <Z8BwlFk-mnrMSxUe@black.fi.intel.com>
-References: <20250226061527.3031250-1-raag.jadav@intel.com>
- <20250226061527.3031250-5-raag.jadav@intel.com>
- <Z78VIjgkzf_GlauU@smile.fi.intel.com>
- <Z78VkEnJh8l9MWF7@smile.fi.intel.com>
- <Z7_0gJJL_h6lq4cz@black.fi.intel.com>
- <Z8ASOo-TcQrZtgbj@surfacebook.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcFjdhcN7kFOmZCCl7fMyjR5ISkI2eScxEQuTNxiOX9FmoEone3fCwMVmikpJtiFREPI/96VsIFjOhPOWJFsybLdj6p7UHkLOXqH9PEAutIaQcMPFX7hCIm73kRcsK7hmo45UpJD8McAosDlG9W0LP0ignFfoORT/uPU0loFv8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gdTmA1Yd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FFDC4CEDD;
+	Thu, 27 Feb 2025 14:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740665052;
+	bh=x3EH1dzuRBajur9OoQyJceNpHCd35poZLxfrn1dV8aI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gdTmA1YdBBfW6wo4+94dziVIHwE/P/95bRXfGAVJ01djQ6txE3jcUpLEmlIMdwGOF
+	 hgM7TgzqQvo+twf+pX9a3c08xDtQZZcsGtA8y+CTssAg/EalG6Oi2XdqOq1KeufcIX
+	 vhvx30CeBu71nUa+lv9/SjK7/HVmJTXmNCRENJ4o=
+Date: Thu, 27 Feb 2025 06:03:02 -0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lukas@wunner.de,
+	linux-pci@vger.kernel.org, bhelgaas@google.com,
+	Jonathan.Cameron@huawei.com, rust-for-linux@vger.kernel.org,
+	akpm@linux-foundation.org, boqun.feng@gmail.com,
+	bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, ojeda@kernel.org,
+	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
+	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
+ authenticated
+Message-ID: <2025022741-handwoven-game-df08@gregkh>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me>
+ <2025022717-dictate-cortex-5c05@gregkh>
+ <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com>
+ <2025022752-pureblood-renovator-84a8@gregkh>
+ <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8ASOo-TcQrZtgbj@surfacebook.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
 
-On Thu, Feb 27, 2025 at 09:20:26AM +0200, Andy Shevchenko wrote:
-> Thu, Feb 27, 2025 at 07:13:36AM +0200, Raag Jadav kirjoitti:
-> > On Wed, Feb 26, 2025 at 03:22:24PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Feb 26, 2025 at 03:20:35PM +0200, Andy Shevchenko wrote:
-> > > > On Wed, Feb 26, 2025 at 11:45:27AM +0530, Raag Jadav wrote:
-
-...
-
-> > > And also Subject, you have currently 3 different names for the same:
-> > > Kconfig, Subject, filename.
-> > 
-> > Yeah just trying to dial down the acronym syndrome, you know how it has
-> > plagued our minds.
+On Thu, Feb 27, 2025 at 01:11:01PM +0100, Alice Ryhl wrote:
+> On Thu, Feb 27, 2025 at 1:01 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Feb 27, 2025 at 12:52:02PM +0100, Alice Ryhl wrote:
+> > > On Thu, Feb 27, 2025 at 12:17 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Thu, Feb 27, 2025 at 01:09:41PM +1000, Alistair Francis wrote:
+> > > > > +     return rust_authenticated_show(spdm_state, buf);
+> > > >
+> > > > Here you have C code calling into Rust code.  I'm not complaining about
+> > > > it, but I think it will be the first use of this, and I didn't think
+> > > > that the rust maintainers were willing to do that just yet.
+> > > >
+> > > > Has that policy changed?
+> > > >
+> > > > The issue here is that the C signature for this is not being
+> > > > auto-generated, you have to manually keep it in sync (as you did above),
+> > > > with the Rust side.  That's not going to scale over time at all, you
+> > > > MUST have a .h file somewhere for C to know how to call into this and
+> > > > for the compiler to check that all is sane on both sides.
+> > > >
+> > > > And you are passing a random void * into the Rust side, what could go
+> > > > wrong?  I think this needs more thought as this is fragile-as-f***.
+> > >
+> > > I don't think we have a policy against it? I'm pretty sure the QR code
+> > > thing does it.
+> >
+> > Sorry, you are right, it does, and of course it happens (otherwise how
+> > would bindings work), but for small functions like this, how is the C
+> > code kept in sync with the rust side?  Where is the .h file that C
+> > should include?
 > 
-> Right, but in MFD we are trying to follow some common schema(s) for file names.
-> Currently the most clear one is for PMIC drivers. Let's keep going with the
-> rest as well.
+> I don't think there is tooling for it today. We need the opposite of
+> bindgen, which does exist in a tool called cbindgen. Unfortunately,
+> cbindgen is written to only work in cargo-based build systems, so we
+> cannot use it.
+> 
+> One trick you could do is write the signature in a header file, and
+> then compare what bindgen generates to the real signature like this:
+> 
+> const _: () = {
+>     if true {
+>         bindings::my_function
+>     } else {
+>         my_function
+>     };
+> };
+> 
+> This would only compile if the two function pointers have the same signature.
 
-Sure, I'm also a bit confused about how to wire up Kconfig here.
-Should PPS select MFD or depend on it?
+That feels just wrong :(
 
-Raag
+As this seems like it's going to be a longer-term issue, has anyone
+thought of how it's going to be handled?  Build time errors when
+functions change is the key here, no one remembers to manually verify
+each caller to verify the variables are correct anymore, that would be a
+big step backwards.
+
+thanks,
+
+greg k-h
 
