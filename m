@@ -1,128 +1,189 @@
-Return-Path: <linux-kernel+bounces-536363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9E9A47EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:13:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE9AA47EAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62926188C9B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141543AF50E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5585B22FAD3;
-	Thu, 27 Feb 2025 13:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D2822F166;
+	Thu, 27 Feb 2025 13:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SnADxcBo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vYuxsd95"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w6ULe8Xo"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4810D22F166
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61D722F177
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661979; cv=none; b=KkNek7ll0ZrKXSla6yUnvbc0lf/4MXQwZtdRxVDQUthiQWFHkxk5udcFrbpEMh/aypojQo7Bbf6022mqdGdbEc1vi29MeZNmfDbtFhpOK1PRo9MnBQ2AanHCscEKuyjjmFuL1rt373C1D7w3suWD/t+84UBO+7fHWgqAWfHwNv0=
+	t=1740662040; cv=none; b=j0J5WgTzy34FvcUn5SqXRfyzAnF6isBQhtn12UvREMaPX0/2A/Emo9WurGdlGeSREB+KSPXCwP4+gKwJa/nqmANNx3M1v0lw0ckPfVPYnh4+QzH2C3TQg4caVkLGzw0E2WevJH6vi/dzFHiGUcP8Aomd15o4Pltv+zz1cTtLUgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661979; c=relaxed/simple;
-	bh=br1ItqgpK4oPHlFfaRnp+bGo7K3fiD2/XoGsUMPrGQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWka9J+Ye0hodaHCAGnm4vHe8yd5IeDa/+sRaS+p+Hw8yuHEbfoZWKNDYuJjWfTMhQyxIGT9k5ooOxTB6mej7Dlae//F6kMMJWxdxUn/AJsIMbVrc8DQ+OKY2x02Zz0/0sdvNb/Ib/RgyPYUu3Wr9k9uIIDNzW3VUgahRvd+sUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SnADxcBo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vYuxsd95; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 14:12:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740661975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GrwCuKq+8QLlP1QccEafaU7GaW8/gXG12VivyEbamaY=;
-	b=SnADxcBofw29tg4lHY4kuVt5aKk7dEZGDapbgJiCMLLqM4UPO51zUfOJhI18iIhcuQn4gm
-	hUN340MV/4DEXB/SVypzPBrAhY1DaPn56bAM6XgZHCQYL4rTkeCIgXKVxyEeTocN3U1NxZ
-	c1kgyo1WRjMXqZGDmwfUc9K5o2YzQ03nkZBe0CUis5bk7EX3TtQ3E//nYiPpJK0hp4uehL
-	y7qncMKtdB1jTedOghjX3fvZtN1DjP3NSu5QK0NravTbfVJFMxd9RJKV4hTA6nESKaIHZ4
-	JbRnwF5V5zH7aE75OphFKOecdmzBZ+lv6NKJjTaVb9aRnVaTptDBkTacHGuVRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740661975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GrwCuKq+8QLlP1QccEafaU7GaW8/gXG12VivyEbamaY=;
-	b=vYuxsd95U5iuGkcDh2fQfQXprz7bIBPG7t9XgL1dsmHTM0u8wQod9hw7kkDtUS+zvk94Oj
-	LBphlteTpSmO0WAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 01/17] zram: sleepable entry locking
-Message-ID: <20250227131253.T_S_Icyt@linutronix.de>
-References: <20250221222958.2225035-1-senozhatsky@chromium.org>
- <20250221222958.2225035-2-senozhatsky@chromium.org>
- <20250224081956.knanS8L_@linutronix.de>
- <i2kgeeehfwzwo22vazakcq4at2m223nebb2xfrqfvsgawpmqya@zjhqhjshvhi3>
- <20250227120532.OsZr4v2A@linutronix.de>
- <irpjhnu7utkhf4dds5ghklsbdug6nf32ulsp52ibvym6t3wqfg@pqu7w6uvgbvw>
- <mwpl64zfj4zlv5bwysfzryjpnh6lg5tridhya3t7ly2ax2vt7x@jhmdmh7gwrmn>
+	s=arc-20240116; t=1740662040; c=relaxed/simple;
+	bh=RvYJJ5olkrH8g63o2yNdqaycpGOF7BuYhXeUvp7CudE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IsycFude76X0StaCmyRxGPRwaAtcWAPhaUHHojuoKRWnKRKaO7PMOhobZzWtXkZqw+13WirvwsTq+5vDmpzQ8CUKhRUYB/fIeiZdkheZBIMUPVjsachqJJqNzbAG3hw22Gr/IZZsEH25CG1Jz7olfOupdnZqFrFR82VjhSKXVXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w6ULe8Xo; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so5989855e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:13:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740662036; x=1741266836; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RvYJJ5olkrH8g63o2yNdqaycpGOF7BuYhXeUvp7CudE=;
+        b=w6ULe8XoIKz5NaxL+udSppHvVuC25aHUNbRUAONrrDwtNtMdhqhYg00HhkqOFSr6sw
+         l6DIIzGmmRKVzTC+3uZK+x43K80gfPfJBPpJzddK6vJIjt1deSeKiYMoKToFkmb8+Dt7
+         wV6kuIrYvWTKPs3ofiOFWq+KiXn12Go+0BJWtJKZxjvjwKEFWu/RB5HknYEZCdJKIEp5
+         ItkEKYP2fy+ys4nweHLm4J8bg9n205EUY7mEwat69NESmQoXvqUNQhglfIcP88WKygLE
+         DFJQSFFakdYokr9m/XLAvp1D6ip3zKttUdu3D5oOT+Ezha3JFJ8AMlNx5x68vUG/9el+
+         VMOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740662036; x=1741266836;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RvYJJ5olkrH8g63o2yNdqaycpGOF7BuYhXeUvp7CudE=;
+        b=I/ZIvIkQdZdxoNvypSR3AvOf3mnyFX2vtZnsIuFeCihdo0w2x+OgXN5t9C3JFhIZRW
+         V3XB8q7BkpOFZ+lByDBeZ/HsaJWZumkJAlZUkAgujI2bSvM6wIP+FmMPtrlsaIeayEEI
+         DcoKxCv6oUSrejk5Qp+eq3zaoIvrupIYg9ylIYgOiIe2e+OzyEKe8rMBaDK0pM/Y9nc8
+         8BEYOlNbVY4cKW/5BGESQ/2UDlo9/MurcV/3a4fOeOls6hh+Zqq7aR/5hpLbTzjg1OJz
+         /g5HQq5fJzoiuCOB3psa0eIja/zBd7XZiJc1Rk3s9GvK6PQRR30qYjEJECaUeDhSEz/j
+         QxNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXH+UwnKKyvFgPX8LdcZEN/SgebhUTiQKWkkdAahQUsDBDnC1nSka/SW2ERxsLXSNiLEhrWJZsM+VaUujs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeoZ4hQevdhZwOK8xV9FHyicPrMbqZ+KA/hg67JRZOktDpOB5m
+	h3QCJGiX/xUZxbDm3Xv20oOsDwiJX4i9b6MjFXHbWTqLLhIlNwQkB60T6vCKgLA=
+X-Gm-Gg: ASbGnct2icMr+WMOhwOJE2RNvm0P+SwV66FjGM/cNQpYVwvg1FgkfQGxVtBbBNDUzI7
+	g1uLjlNqRZoOu4/MW3VlCtCNbGZNDRfDAZRMpL4trYTyPFtPwg/HvO1LHWe4xaD3Oco0SO8EDI2
+	XOBtaC4SaLvC7fvIhA4fKzRDtg5CG6JpScF5qR9auvfCVRLTbwbSZUN+dStLsw3Wxz3h8JXQwHY
+	bU7jFXG4jDXfdd+deVdPSy1Nqaz6nQlpavI3itrECGF5ljnoCjx6Yf/D7SzLQHIdY081r6dK5gc
+	9tXNGPH2C8jJEh6YqHggOWPWJymjOQ==
+X-Google-Smtp-Source: AGHT+IE6n/c7/bx5gCSXDTH8aoqU0z7nzFeeaoRQoyzForW+cjpxgZs3kJk+NvWIxEA4pl6DiSKyiA==
+X-Received: by 2002:a05:6000:1864:b0:390:dbf5:407b with SMTP id ffacd0b85a97d-390dbf541d3mr5027668f8f.28.1740662036128;
+        Thu, 27 Feb 2025 05:13:56 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4847e62sm2021619f8f.67.2025.02.27.05.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:13:55 -0800 (PST)
+Message-ID: <503e105b71fa4271f40a2d3ca18ba13ed7d45a65.camel@linaro.org>
+Subject: Re: [PATCH v2 3/6] dt-bindings: mfd: add max77759 binding
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
+ Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Thu, 27 Feb 2025 13:13:54 +0000
+In-Reply-To: <20250227130451.GA1783593-robh@kernel.org>
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
+	 <20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.org>
+	 <20250227130451.GA1783593-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <mwpl64zfj4zlv5bwysfzryjpnh6lg5tridhya3t7ly2ax2vt7x@jhmdmh7gwrmn>
 
-On 2025-02-27 22:04:16 [+0900], Sergey Senozhatsky wrote:
-> On (25/02/27 21:42), Sergey Senozhatsky wrote:
-> > > ach. Got it. What about
-> > > 
-> > > | static void zram_slot_lock_init(struct zram *zram, u32 index)
-> > > | {
-> > > | 	static struct lock_class_key __key;
-> > > | 
-> > > | 	lockdep_init_map(slot_dep_map(zram, index),
-> > > | 			 "zram->table[index].lock",
-> > > | 			 &__key, 0);
-> > > | }
-> > > 
-> > > So every lock coming from zram belongs to the same class. Otherwise each
-> > > lock coming from zram_slot_lock_init() would belong to a different class
-> > > and for lockdep it would look like they are different locks. But they
-> > > are used always in the same way.
-> > 
-> > I see.  I thought that they key was "shared" between zram meta table
-> > entries because the key is per-zram device, which sort of made sense
-> > (we can have different zram devices in a system - one swap, a bunch
-> > mounted with various file-systems on them).
+On Thu, 2025-02-27 at 07:04 -0600, Rob Herring wrote:
+> On Wed, Feb 26, 2025 at 05:51:22PM +0000, Andr=C3=A9 Draszik wrote:
+> > The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> > includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> > Port Controller (TCPC), NVMEM, and a GPIO expander.
+> >=20
+> > This describes the top-level device.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> >=20
+> > ---
+> > v2:
+> > * rename expected nvmem subdev nodename to 'nvmem-0'
+> > =C2=A0 I'd have preferred just 'nvmem', but that matches nvmem-consumer=
+.yaml
+> > =C2=A0 and fails validation.
+> >=20
+> > Note: MAINTAINERS doesn't need updating, the binding update for the
+> > first leaf device (gpio) adds a wildcard matching all max77759 bindings
+> > ---
+> > =C2=A0.../devicetree/bindings/mfd/maxim,max77759.yaml=C2=A0=C2=A0=C2=A0=
+ | 104 +++++++++++++++++++++
+> > =C2=A01 file changed, 104 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml =
+b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..87e3737896a289998a18b67=
+932dbccacfb8e3150
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+> > @@ -0,0 +1,104 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
+> > +
+> > +maintainers:
+> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > +
+> > +description: |
+> > +=C2=A0 This is a part of device tree bindings for the MAX77759 compani=
+on Power
+> > +=C2=A0 Management IC for USB Type-C applications.
+> > +
+> > +=C2=A0 The MAX77759 includes Battery Charger, Fuel Gauge, temperature =
+sensors, USB
+> > +=C2=A0 Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+> > +
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759
+> > +
+> > +=C2=A0 interrupts:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 interrupt-controller: true
+> > +
+> > +=C2=A0 "#interrupt-cells":
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+> > +
+> > +=C2=A0 gpio-controller: true
+> > +
+> > +=C2=A0 "#gpio-cells":
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+>=20
+> Why do you have GPIO properties here and in the child node? Either would=
+=20
+> be valid, but both probably not. Putting them here is actually=20
+> preferred.
 
-Yes. So usually you do spin_lock_init() and this creates a key at _this_
-very position. So every lock initialized at this position shares the
-same class/ the same pattern.
+That's an oversight, I meant to put them into the child only, not here,
+since the child is the one providing the gpio functionality.
 
-> So the lock class is registered dynamically for each zram device
-> 
-> zram_add()
-> 	lockdep_register_key(&zram->lock_class);
-> 
-> and then we use that zram->lock_class to init zram->table entries.
-> 
-> We unregister the lock_class during each zram device destruction
-> 
-> zram_remove()
-> 	lockdep_unregister_key(&zram->lock_class);
-> 
-> Does this still put zram->table entries into different lock classes?
+What's the reason to have it preferred inside this parent node?
 
-You shouldn't need to register and unregister the lock_class. What you
-do should match for instance j_trans_commit_map in fs/jbd2/journal.c or
-__key in include/linux/rhashtable.h & lib/rhashtable.c.
+At least some bindings do specify it in the child node, e.g.:
+delta,tn48m-gpio.yaml
+kontron,sl28cpld-gpio.yaml
+xylon,logicvc-gpio.yaml
 
-At least based on my understanding so far.
+Cheers,
+Andre'
 
-Sebastian
 
