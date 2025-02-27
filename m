@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-537239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34442A48988
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E02AA4898F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0659C188868E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3503B413A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC63271827;
-	Thu, 27 Feb 2025 20:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E947127292A;
+	Thu, 27 Feb 2025 20:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnHlJzwu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9C26FA7B;
-	Thu, 27 Feb 2025 20:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XWXo4Go3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC6F26FA69;
+	Thu, 27 Feb 2025 20:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686949; cv=none; b=f/QMeIiSW5MxqzQXtERIFTpGSE+BJLCvwpW2Vsv6Q3VhAgAi0SQ55O9T9mE1dnXjpzFGs72SCr+umpmRmuDYG6NcuP2wLU7IyXqJxqc9UWVExG5gISbTMU4xg6a+9V/SqLPrj7RYe4g51ixxDt1KeFZKi50MXTDwfhbIoQ1cBfk=
+	t=1740686966; cv=none; b=mFHh+2Q7DgbSIdK5c2asx2dZy8oXZGaMaI0G7l3qsMygG0Ac/8PHUk632CBy02Z5xErip3SKZxCLXm3rnby750qu8JAg15Kp4PAi7MY16H8AMK9yq5nGnB2SL3TPZeg5zZX1Bv/cLZL9cBEk7UW20n0ZgdlaW4d5YBURR0ec0zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686949; c=relaxed/simple;
-	bh=j5VRDcgqEaXuWIDavjd4YEFkmlI9dTVUxhcuv8TxV1Y=;
+	s=arc-20240116; t=1740686966; c=relaxed/simple;
+	bh=fBrVCxpJBEfNKG9j/drwmbNUOrI/ARypiCduWRPTEBk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YpQZxBS1F6sdr4r+PxXmfzrmKnjX0C8tlNIGJIoUUsCp+BHyDP6z6Q/04pW8xfGH5kuEZ+8xqRPkTTNJ70GyLZutCqvhNBaJibH1Z4zEQSfTRXtfcYStiBqQCNz3TxMX7IAWkqsWynfYOhr3JKDQmXlgPhA9UBrnfYBAgYi0fQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnHlJzwu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A482C4CEE4;
-	Thu, 27 Feb 2025 20:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740686949;
-	bh=j5VRDcgqEaXuWIDavjd4YEFkmlI9dTVUxhcuv8TxV1Y=;
+	 In-Reply-To:Content-Type; b=bIxMUcD0jZKVuSlDcSkeVfKoLnHzlUt/qvcSF9HhGF6QgqHLKlOJW8ReOtgJlb5PxjZ2/r1st4k3jdxa1Mql81mdgR2vIlVarLUwe988TrqoA9ZlRyO6AY5wWxd/+JNN5a8CWiEIBfpHvipHgWHfY8L8rzb1YK1vJLwhnb59o3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XWXo4Go3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5429D210D0F6;
+	Thu, 27 Feb 2025 12:09:18 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5429D210D0F6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740686958;
+	bh=0GqjdZyUoxmHDoAKJ5CzA1TGTiAo0pCGgyNuqQwC4pk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YnHlJzwuNAhrmOtUQIOONlXKaDukIwGkh5SrT+AZR/hmITYF8E+hdIpjGMviggUAj
-	 drRRRPU+0AG9uF7+Y4DAsDNah8z1NEGiynbb4H7ZmAMNCtqMAPnrEG0/FOhod04EkA
-	 U4ma/Mnk6WCTXvtBPcsBSlNVHumJohdP7s+1dB7bS3+4Ek6MDDTe+rDOOTWJOBoHw7
-	 88UWXpeCccf5vEyjP4aC80SfJnsy4m7ljKWtpGIkinhTaVHGH1AKbnN9aIZYuM++b4
-	 snIDmnGQv2ZxWJoUBIBmwAuOY6ko8JXBsH0MG2WGHgZeI3Q2ACG+RqLz0uhhZvCWq4
-	 NJ3Oif7ZQ51KA==
-Message-ID: <d1fc8fea-5a2c-4b38-949c-8063cb76fadf@kernel.org>
-Date: Thu, 27 Feb 2025 14:09:08 -0600
+	b=XWXo4Go3v4bgG+YT+6NLUe6Yn3FzJT6MIqjH9PghDT44SASzCjT/VvrtPJxUF8KOz
+	 C0Y/nR1HtVTdtR0CENhtKR1yDaPVmrW69xydjw7SzGYZMrGNHYK2hfpKhQzCs9sD0y
+	 u7Fs6rW2rZ9Z+J8at3bW/IBwau4gfpLJxOnklqHg=
+Message-ID: <e949f5fc-44e2-437e-8b78-9e697ab1ac12@linux.microsoft.com>
+Date: Thu, 27 Feb 2025 12:09:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,179 +48,254 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a
- union
-To: kernel test robot <lkp@intel.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))"
- <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250226074934.1667721-5-superm1@kernel.org>
- <202502272001.nafS0qXq-lkp@intel.com>
+Subject: Re: [PATCH 2/7] Drivers: hv: Introduce hv_hvcall_*() functions for
+ hypercall arguments
+To: Michael Kelley <mhklinux@outlook.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20250226200612.2062-1-mhklinux@outlook.com>
+ <20250226200612.2062-3-mhklinux@outlook.com>
+ <45a1b6b5-407c-4518-9ea2-05341e93a67e@linux.microsoft.com>
+ <SN6PR02MB4157FF9AF372F252C6D8B0A1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <202502272001.nafS0qXq-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157FF9AF372F252C6D8B0A1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/27/2025 06:59, kernel test robot wrote:
-> Hi Mario,
+On 2/26/2025 5:50 PM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 4:15 PM
+>>
+>> On 2/26/2025 12:06 PM, mhkelley58@gmail.com wrote:
+>>> From: Michael Kelley <mhklinux@outlook.com>
+>>>
+>>> Current code allocates the "hyperv_pcpu_input_arg", and in
+>>> some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
+>>> page of memory allocated per-vCPU. A hypercall call site disables
+>>> interrupts, then uses this memory to set up the input parameters for
+>>> the hypercall, read the output results after hypercall execution, and
+>>> re-enable interrupts. The open coding of these steps leads to
+>>> inconsistencies, and in some cases, violation of the generic
+>>> requirements for the hypercall input and output as described in the
+>>> Hyper-V Top Level Functional Spec (TLFS)[1].
+>>>
+>>> To reduce these kinds of problems, introduce a family of inline
+>>> functions to replace the open coding. The functions provide a new way
+>>> to manage the use of this per-vCPU memory that is usually the input and
+>>> output arguments to Hyper-V hypercalls. The functions encapsulate
+>>> key aspects of the usage and ensure that the TLFS requirements are
+>>> met (max size of 1 page each for input and output, no overlap of
+>>> input and output, aligned to 8 bytes, etc.). Conceptually, there
+>>> is no longer a difference between the "per-vCPU input page" and
+>>> "per-vCPU output page". Only a single per-vCPU page is allocated, and
+>>> it provides both hypercall input and output memory. All current
+>>> hypercalls can fit their input and output within that single page,
+>>> though the new code allows easy changing to two pages should a future
+>>> hypercall require a full page for each of the input and output.
+>>>
+>>> The new functions always zero the fixed-size portion of the hypercall
+>>> input area so that uninitialized memory is not inadvertently passed
+>>> to the hypercall. Current open-coded hypercall call sites are
+>>> inconsistent on this point, and use of the new functions addresses
+>>> that inconsistency. The output area is not zero'ed by the new code
+>>> as it is Hyper-V's responsibility to provide legal output.
+>>>
+>>> When the input or output (or both) contain an array, the new functions
+>>> calculate and return how many array entries fit within the per-cpu
+>>> memory page, which is effectively the "batch size" for the hypercall
+>>> processing multiple entries. This batch size can then be used in the
+>>> hypercall control word to specify the repetition count. This
+>>> calculation of the batch size replaces current open coding of the
+>>> batch size, which is prone to errors. Note that the array portion of
+>>> the input area is *not* zero'ed. The arrays are almost always 64-bit
+>>> GPAs or something similar, and zero'ing that much memory seems
+>>> wasteful at runtime when it will all be overwritten. The hypercall
+>>> call site is responsible for ensuring that no part of the array is
+>>> left uninitialized (just as with current code).
+>>>
+>>> The new functions are realized as a single inline function that
+>>> handles the most complex case, which is a hypercall with input
+>>> and output, both of which contain arrays. Simpler cases are mapped to
+>>> this most complex case with #define wrappers that provide zero or NULL
+>>> for some arguments. Several of the arguments to this new function are
+>>> expected to be compile-time constants generated by "sizeof()"
+>>> expressions. As such, most of the code in the new function can be
+>>> evaluated by the compiler, with the result that the code paths are
+>>> no longer than with the current open coding. The one exception is
+>>> new code generated to zero the fixed-size portion of the input area
+>>> in cases where it is not currently done.
+>>>
+>>> [1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/tlfs
+>>>
+>>> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+>>> ---
+>>>  include/asm-generic/mshyperv.h | 102 +++++++++++++++++++++++++++++++++
+>>>  1 file changed, 102 insertions(+)
+>>>
+>>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>>> index b13b0cda4ac8..0c8a9133cf1a 100644
+>>> --- a/include/asm-generic/mshyperv.h
+>>> +++ b/include/asm-generic/mshyperv.h
+>>> @@ -135,6 +135,108 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
+>>>  	return status;
+>>>  }
+>>>
+>>> +/*
+>>> + * Hypercall input and output argument setup
+>>> + */
+>>> +
+>>> +/* Temporary mapping to be removed at the end of the patch series */
+>>> +#define hyperv_pcpu_arg hyperv_pcpu_input_arg
+>>> +
+>>> +/*
+>>> + * Allocate one page that is shared between input and output args, which is
+>>> + * sufficient for all current hypercalls. If a future hypercall requires
+>>> + * more space, change this value to "2" and everything will work.
+>>> + */
+>>> +#define HV_HVCALL_ARG_PAGES 1
+>>> +
+>>> +/*
+>>> + * Allocate space for hypercall input and output arguments from the
+>>> + * pre-allocated per-cpu hyperv_pcpu_args page(s). A NULL value for the input
+>>> + * or output indicates to allocate no space for that argument. For input and
+>>> + * for output, specify the size of the fixed portion, and the size of an
+>>> + * element in a variable size array. A zero value for entry_size indicates
+>>> + * there is no array. The fixed size space for the input is zero'ed.
+>>> + *
+>> It might be worth explicitly mentioning that interrupts should be disabled when
+>> calling this function.
 > 
-> kernel test robot noticed the following build warnings:
+> Agreed.
 > 
-> [auto build test WARNING on amd-pstate/bleeding-edge]
-> [cannot apply to rafael-pm/linux-next rafael-pm/bleeding-edge tip/x86/core amd-pstate/linux-next linus/master v6.14-rc4 next-20250227]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>>> + * When variable size arrays are present, the function returns the number of
+>>> + * elements (i.e, the batch size) that fit in the available space.
+>>> + *
+>>> + * The four "size" arguments are expected to be constants, in which case the
+>>> + * compiler does most of the calculations. Then the generated inline code is no
+>>> + * larger than if open coding the access to the hyperv_pcpu_arg and doing
+>>> + * memset() on the input.
+>>> + */
+>>> +static inline int hv_hvcall_inout_array(
+>>> +			void *input, u32 in_size, u32 in_entry_size,
+>>> +			void *output, u32 out_size, u32 out_entry_size)
+>> Is there a reason input and output are void * instead of void ** here?
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/cpufreq-amd-pstate-Invalidate-cppc_req_cached-during-suspend/20250226-155545
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git bleeding-edge
-> patch link:    https://lore.kernel.org/r/20250226074934.1667721-5-superm1%40kernel.org
-> patch subject: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a union
-> config: i386-buildonly-randconfig-003-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/reproduce)
+> Yes -- it must be void *, and not void **.  Consider a function like get_vtl()
+> in Patch 3 of this series where local variable "input" is declared as:
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202502272001.nafS0qXq-lkp@intel.com/
+> struct hv_input_get_vp_registers *input;
 > 
-> All warnings (new ones prefixed by >>):
+> Then the first argument to hv_hvcall_inout() will be of type
+> struct hv_input_get_vp_registers **. The compiler does not consider
+> this to match void ** and would generate an error. But
+> struct hv_input_get_vp_registers ** _does_ match void * and compiles
+> with no error. It makes sense when you think about it, though it
+> isn't obvious. I tried to use void ** initially and had to figure out
+> why the code wouldn't compile. :-)
 > 
->     In file included from drivers/cpufreq/amd-pstate.c:51:
->     In file included from drivers/cpufreq/amd-pstate-trace.h:15:
->     In file included from include/linux/trace_events.h:6:
->     In file included from include/linux/ring_buffer.h:5:
->     In file included from include/linux/mm.h:2224:
->     include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       505 |                            item];
->           |                            ~~~~
->     include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       512 |                            NR_VM_NUMA_EVENT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~~
->>> drivers/cpufreq/amd-pstate.c:914:41: warning: variable 'nominal_freq' is uninitialized when used here [-Wuninitialized]
->       914 |                 perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
->           |                                                       ^~~~~~~~~~~~
->     drivers/cpufreq/amd-pstate.c:902:38: note: initialize the variable 'nominal_freq' to silence this warning
->       902 |         u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
->           |                                             ^
->           |                                              = 0
->     3 warnings generated.
-> 
-> 
-> vim +/nominal_freq +914 drivers/cpufreq/amd-pstate.c
-> 
->     891	
->     892	/*
->     893	 * amd_pstate_init_freq: Initialize the nominal_freq and lowest_nonlinear_freq
->     894	 *			 for the @cpudata object.
->     895	 *
->     896	 * Requires: all perf members of @cpudata to be initialized.
->     897	 *
->     898	 * Returns 0 on success, non-zero value on failure.
->     899	 */
->     900	static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
->     901	{
->     902		u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
->     903		struct cppc_perf_caps cppc_perf;
->     904		union perf_cached perf;
->     905		int ret;
->     906	
->     907		ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
->     908		if (ret)
->     909			return ret;
->     910		perf = READ_ONCE(cpudata->perf);
->     911	
->     912		if (quirks && quirks->lowest_freq) {
->     913			min_freq = quirks->lowest_freq;
->   > 914			perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
->     915			WRITE_ONCE(cpudata->perf, perf);
->     916		} else
->     917			min_freq = cppc_perf.lowest_freq;
->     918	
->     919		if (quirks && quirks->nominal_freq)
->     920			nominal_freq = quirks->nominal_freq;
->     921		else
->     922			nominal_freq = cppc_perf.nominal_freq;
->     923	
->     924		min_freq *= 1000;
->     925		nominal_freq *= 1000;
->     926	
->     927		WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
->     928	
->     929		max_freq = perf_to_freq(perf, nominal_freq, perf.highest_perf);
->     930		lowest_nonlinear_freq = perf_to_freq(perf, nominal_freq, perf.lowest_nonlinear_perf);
->     931		WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
->     932	
->     933		/**
->     934		 * Below values need to be initialized correctly, otherwise driver will fail to load
->     935		 * max_freq is calculated according to (nominal_freq * highest_perf)/nominal_perf
->     936		 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
->     937		 * Check _CPC in ACPI table objects if any values are incorrect
->     938		 */
->     939		if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
->     940			pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
->     941				min_freq, max_freq, nominal_freq);
->     942			return -EINVAL;
->     943		}
->     944	
->     945		if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
->     946			pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
->     947				lowest_nonlinear_freq, min_freq, nominal_freq);
->     948			return -EINVAL;
->     949		}
->     950	
->     951		return 0;
->     952	}
->     953	
-> 
+Ah, that does make sense. Okay then, fair enough!
 
-The series is getting close (I think just one more patch needing review).
+>>
+>>> +{
+>>> +	u32 in_batch_count = 0, out_batch_count = 0, batch_count;
+>>> +	u32 in_total_size, out_total_size, offset;
+>>> +	u32 batch_space = HV_HYP_PAGE_SIZE * HV_HVCALL_ARG_PAGES;
+>>> +	void *space;
+>>> +
+>>> +	/*
+>>> +	 * If input and output have arrays, allocate half the space to input
+>>> +	 * and half to output. If only input has an array, the array can use
+>>> +	 * all the space except for the fixed size output (but not to exceed
+>>> +	 * one page), and vice versa.
+>>> +	 */
+>>> +	if (in_entry_size && out_entry_size)
+>>> +		batch_space = batch_space / 2;
+>>> +	else if (in_entry_size)
+>>> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - out_size);
+>>> +	else if (out_entry_size)
+>>> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - in_size);
+>>> +
+>>> +	if (in_entry_size)
+>>> +		in_batch_count = (batch_space - in_size) / in_entry_size;
+>>> +	if (out_entry_size)
+>>> +		out_batch_count = (batch_space - out_size) / out_entry_size;
+>>> +
+>>> +	/*
+>>> +	 * If input and output have arrays, use the smaller of the two batch
+>>> +	 * counts, in case they are different. If only one has an array, use
+>>> +	 * that batch count. batch_count will be zero if neither has an array.
+>>> +	 */
+>>> +	if (in_batch_count && out_batch_count)
+>>> +		batch_count = min(in_batch_count, out_batch_count);
+>>> +	else
+>>> +		batch_count = in_batch_count | out_batch_count;
+>>> +
+>>> +	in_total_size = ALIGN(in_size + (in_entry_size * batch_count), 8);
+>>> +	out_total_size = ALIGN(out_size + (out_entry_size * batch_count), 8);
+>>> +
+>>> +	space = *this_cpu_ptr(hyperv_pcpu_arg);
+>>> +	if (input) {
+>>> +		*(void **)input = space;
+>>> +		if (space)
+>>> +			/* Zero the fixed size portion, not any array portion */
+>>> +			memset(space, 0, ALIGN(in_size, 8));
+>>> +	}
+>>> +
+>>> +	if (output) {
+>>> +		if (in_total_size + out_total_size <= HV_HYP_PAGE_SIZE) {
+>>> +			offset = in_total_size;
+>>> +		} else {
+>>> +			offset = HV_HYP_PAGE_SIZE;
+>>> +			/* Need more than 1 page, but only 1 was allocated */
+>>> +			BUILD_BUG_ON(HV_HVCALL_ARG_PAGES == 1);
+>> Interesting... so the compiler is not compiling this BUILD_BUG_ON in your patchset
+>> because in_total_size + out_total_size <= HV_HYP_PAGE_SIZE is always known at
+>> compile-time?
+> 
+> Correct. And if for some future hypercall in_total_size + out_total_size is
+> *not* <= HV_HYP_PAGE_SIZE, the BUILD_BUG_ON() will alert the developer
+> to the problem. Depending on the argument requirements of this future
+> hypercall, the solution might require changing HV_HVCALL_ARG_PAGES to 2.
+> 
+>> So will this also fail if any of the args in_size, in_entry_size, out_size,
+>> out_entry_size are runtime-known?
+> 
+> Correct.  I should change my wording about "The four 'size' arguments are
+> expected to be constants" to ". . . must be constants". OTOH, if there's a need
+> to support non-constants for any of these arguments, some additional code
+> could handle that case. But the overall hv_hvcall_inout_array() function will
+> end up generating a lot of code to execute at runtime. I looked at the hypercall
+> call sites in the OHCL kernel tree, and didn't see any need for non-constants,
+> but I haven't looked yet at the v4 patch series you just posted.  Let me know
+> if you have a case requiring non-constants.
+> 
+I don't think we ever use non-constants. In fact I can't think of a case where these
+values aren't the result of a sizeof() (or 0).
 
-So if no other feedback for the series needing other fixes I will squash 
-this in to fix this issue when the series is merged.
+Overall I think this approach is looking quite nice and I'd be happy to adopt it
+in the mshv driver code when this is merged.
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index bd8bcda4e6eb0..034ee40681b4c 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -915,6 +915,12 @@ static int amd_pstate_init_freq(struct amd_cpudata 
-*cpudata)
-                 return ret;
-         perf = READ_ONCE(cpudata->perf);
+With the comment change mentioned above:
 
-+       if (quirks && quirks->nominal_freq)
-+               nominal_freq = quirks->nominal_freq;
-+       else
-+               nominal_freq = cppc_perf.nominal_freq;
-+       nominal_freq *= 1000;
-+
-         if (quirks && quirks->lowest_freq) {
-                 min_freq = quirks->lowest_freq;
-                 perf.lowest_perf = freq_to_perf(perf, nominal_freq, 
-min_freq);
-@@ -922,13 +928,7 @@ static int amd_pstate_init_freq(struct amd_cpudata 
-*cpudata)
-         } else
-                 min_freq = cppc_perf.lowest_freq;
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
--       if (quirks && quirks->nominal_freq)
--               nominal_freq = quirks->nominal_freq;
--       else
--               nominal_freq = cppc_perf.nominal_freq;
--
-         min_freq *= 1000;
--       nominal_freq *= 1000;
-
-         WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+> Michael
 
 
