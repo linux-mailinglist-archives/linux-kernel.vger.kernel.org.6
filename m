@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-537427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73D2A48BA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:34:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EED3A48BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83DDC7A33C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37454188A6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA62227B8E;
-	Thu, 27 Feb 2025 22:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD101B85DF;
+	Thu, 27 Feb 2025 22:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQhKqSFx"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsT7sTCn"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2052777F6;
-	Thu, 27 Feb 2025 22:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876342777F6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695676; cv=none; b=T0xDrm1AI3tpFN/cgiYrhmh/Ehr6yMY88v4L5gScxBqJauTSqbNMCOGTN/liKGTd+12E9u1z5KL2x8Npp+n1bS8SsoS4pSsv1AM2fYLuVHjh/wqfvNDBV2e9boPK3yq3WnQWBhJBacxRrndtWdT+9gVljQJlhPGM13pyrkrBKhw=
+	t=1740695719; cv=none; b=szudWiA4I+QRGd10AdjFfV0K+fqKhcu1ELVnMn4qQvoQvV7pNA2hTRERqwjyOegaBd0n0hAi5Rke+EbcdFtanuvEIrEO84suRx5C6QSNeqcUjwBKCGapNCpiIXIDTDHt7dtyNGX9Lwpvpotal1kVnmt7dm54BmSSkD/DS66Qt/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695676; c=relaxed/simple;
-	bh=FPaspswSl4uwBOHTp91J8a1KvERimw8bN24yIugWVhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qWjOy6wU2XSWaELJ6/t87Xn8P0aECNKeZr+75RZufPkSLGqnoPSS/Aiw0FNAtQoGEDtfNe2wtCdCsP9FeforEnL8nfKoY8VyDfoYRCCYGG/z2LNCS5gB/sKx46NPMuxEu+Mew7jgAnK9CI88Fm9qKIe87s3wPj+DcZCpguaqXmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQhKqSFx; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1740695719; c=relaxed/simple;
+	bh=pzgJZqp9/2jxPuKYv7SlvRY3rJR8w+poscUcNCqmU14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xw5+QyufNsN6gCuKo13rznr4ypsy+Y8iWsmN0VWb54UUhbBNDvQ5VwSomiOSrp0GGb7gcqKXPEZteBOrdIMbFi1MW+vdJgOVMgpTHU99pVyMGs/ijpEjL9330AcnjrMznIUMpV7BZ1Q3CNq6C/aC2DD3SbFdldZktb760srkN14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsT7sTCn; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f403edb4eso875854f8f.3;
-        Thu, 27 Feb 2025 14:34:34 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-471f9d11176so15437281cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:35:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740695672; x=1741300472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/XkA2KJAYNcmLWwTXUNyznolPWUbVcPY7c2GesTrXU=;
-        b=cQhKqSFxrXv4NvtM9ghd/YXUHtl89mYieL+aeMP5jclftb+HAHBl0pYm/q+HsbPXZj
-         HTa9WN6dC1AabbqIUn6R1nVsigJR+xK5xQ2oz7H3sGpy7Vgx5L5ShNYfE1Hr35t96xD9
-         0TSqWz/+YaBG8vz7QZNWz0eFnSpy+ufHhvvNYiaU3SONOAna3taDNjH+Kv/9/9eJ6tbl
-         GUjbx094zGHMbDN+3J5YwuPbhLNimGB1RGw9albAOLd32erNim+fQqgsBj6d0blcbHjL
-         HJkcgQ2NzofmDVsmayM/hUPDIaixYNmVSvtg4tqPdoEps/xliCRf9uHZ62bCT3XTjQSq
-         5HUA==
+        d=gmail.com; s=20230601; t=1740695717; x=1741300517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zFM8VWziXs6qPoRm1OGpOhZo/LlHLEag1S842GTC5Ws=;
+        b=YsT7sTCn+NqVmyphZKBJBZ3jFaPMpIt8/UWRtJgzhMw2TYfv7/bkWTehPywwksmZ4z
+         vIX9V3GJLYdnA50prbXbFuB85t3BU7aRrI9G9ysKFhK5oFv3DcJUOMedPQEJD9Rfvs3c
+         oS0jkSZlvPVbQWmApe9e1YF31fxJJSCsG5RR8KleGT6p5wjjOsFHYNZvsxDzCr/YQkEz
+         5NSSa7jYRbJ+0DTizqLuAa/+9JNIhxmh/EltsBgrx3Pp6HjL6kgnkTZVNGUL9F/EMxoM
+         gZhGbzz9HvizFIDimIuVfCgzyPPK/pBIQjF1Rf/CMe55CIBdkc62mQ5LJK1t8Y/kxx0A
+         o2gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740695672; x=1741300472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/XkA2KJAYNcmLWwTXUNyznolPWUbVcPY7c2GesTrXU=;
-        b=uYyQoTUZRTB+dsGUn+t9awqT/YvmdrEMe1OfNW5LjvWgQB+jB7hSnkvWWq/136tRui
-         TVI1uaVUAO8PU4cQC4PK5G/ED9LqyL2N4k5+pdWM+GklofosWNDpDTsFw9zR1UJ+j5rh
-         hsg6GC5ijTDSdvaW4hgJ1kWEbwrvJkpA7o8Ok19YbwPVVGYfKM31uCckCNtqFPVob6Mv
-         F3Ms7NXd0S5+SYp6ERPAZOOK/PwctEitggbdEbprHAs5baL+8K2LW8qLPA92PiCt3f4n
-         zxyn+QKrHrWxpGOe64YI0mjCoy2qN69YtijITXv/veTohB+X1U1WdaV+LEdD/4FnejAS
-         G+ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVBpJtFaTIPrdLz9DSKahUIBSdrSHHaealOAjBc7T+6kpzBzpfLEjWyEkktIaDfUCYj6ycBG8csL4oLhVFX@vger.kernel.org, AJvYcCVJuu14lfIuJ8/MvJKY7UmvtLkMmVL7PsV52bvaiUa+D8FvIJxh1AMZ2IFjqO/12h4XTwfGBNitOaM0kA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwt0zmXehQLoin8GRM7ANtP/SdjeFFyS8lZnL405sKT0Puf54S
-	oQoC3Tnd6Ald3edm69smCiGBIUsEiVLI/qyiBosWL5H+nujv+IDh
-X-Gm-Gg: ASbGncshywY27OyKp+rDoN5GTHiscmsXtzB41EXOMQffq5BiN6fHamJN6CUMCKCysZ5
-	VqBqilKSGyDCtzrzZJe0Fbaw188pB9sT5NY3lIsLk7gGjegzPbsOSTVvwKBZ6QRdcRJ6lMrNcaZ
-	tQYw5FiniE0rQkxiX0aEwmXJgJuXvp3gUQqxjBysCD3OYjbQBfCJNqgDvtpPh56XomUQWP7H2Qk
-	+AK8c7ElxbCUKaTPLfR8nGEdrjfmlfq6bh/Rdq/2aYo0DJV8r7jRzKDfdgDec2YeSYgztOQpRNg
-	qgT9rIquU5vKQ37cKzrfgwDDLhY=
-X-Google-Smtp-Source: AGHT+IHmp7aj0LBvS0mAv2h7rO04GLgzP1+JdVv3lD8iVvcnXGZVgu3Vj8sP18PAE3gbuVvAtt8uZA==
-X-Received: by 2002:a05:6000:184c:b0:390:e100:9d39 with SMTP id ffacd0b85a97d-390eca35d3amr764268f8f.37.1740695672553;
-        Thu, 27 Feb 2025 14:34:32 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47a6a78sm3206567f8f.23.2025.02.27.14.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:34:32 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] HID: debug: Fix spelling mistake "Messanger" -> "Messenger"
-Date: Thu, 27 Feb 2025 22:33:57 +0000
-Message-ID: <20250227223357.659460-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1740695717; x=1741300517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zFM8VWziXs6qPoRm1OGpOhZo/LlHLEag1S842GTC5Ws=;
+        b=t4lmDy5SnMgHivFY/g6o6GtQj20uQZYtQglr96d+qv5RSuhD36wyKfOV7TZ7HyVJ/B
+         X2Lf+sT4Q390F5W15RmQgpwNRblAWqB09p0V7qJQSDqvKSqs6xeH8ttiiJPopFdWb0pk
+         S1J8GB0EvUMpysnzCqFM3vkALll7a1cZe049/sQdwiR0dsI98r5p7qZj2Vt65C2uKUs5
+         1hxPx+TyACKHgdJXizt5U1Y0ujBK9pkNwvbw++l8EZOV6b/Tt3Q2iYfl8vXZ1vnmADB+
+         thB8YrepsyNdg5/ZjSYAFyIJerA7rpHQlpOKN8bi4Ekuo06LUWmYLs7Hjts5+LPtwqqK
+         gc7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWVPTypzHuCDtdZF8zsQ8s/8UGFDJvVWV+7UNFHrQO6Du57Evc7sqejPkct0fVyDfB2o+VtemLA7i3WQ9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx50UYzMVpanG73gLOjye4lfblqSgU+7BmfrseifUJyVWwv37I7
+	11+OXyJ82/gSwAdt/Pf2EfVREVFR2HGCwZDqHgyXAu3jZzxz7vT+zaF8iIjFerIXS2dgvzQy97g
+	QkKNuAB8M1ErBd7kxMDN71zu34Fg=
+X-Gm-Gg: ASbGncsPSoeRdDM3nAz8HDUpTY8YZCIMhdMhaRphtlAP5Xz9vJT71EXJP9eVxm92e4o
+	tsj2c3M0ijQmHJP6fje8ZZ32ejhRQe2w64uAIWFykexYKv8oAxbTHsFuanGAhp4aP7I/XI1EGNG
+	zykgvM6958xEd4024kIa+1+tw=
+X-Google-Smtp-Source: AGHT+IEKEh9+VP9PxT3Ome4pZ0WRyhZginhvWUAbbhlLQjq1Ic8MRf9Imw9JTqKSE/JzbaFoS6MWQBoZH8PBhIZstDg=
+X-Received: by 2002:a05:6214:2683:b0:6e8:97fb:12a9 with SMTP id
+ 6a1803df08f44-6e8a0d8fb33mr21616166d6.28.1740695717316; Thu, 27 Feb 2025
+ 14:35:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250227001445.1099203-1-nphamcs@gmail.com> <Z7-9o81kBfw4tFSz@google.com>
+ <20250227043141.GB110982@cmpxchg.org> <Z7_7vah_U1JzmpCX@google.com>
+ <20250227061616.GD110982@cmpxchg.org> <Z8AQPyY7Qpux0mO0@google.com>
+ <Z8AUaQamubA9lWae@google.com> <20250227160528.GF110982@cmpxchg.org>
+In-Reply-To: <20250227160528.GF110982@cmpxchg.org>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 27 Feb 2025 14:35:04 -0800
+X-Gm-Features: AQ5f1JrIyB8NeFMvyRWqGR1j-hVWPQwf0WPDBa5kdP0n3rnMfWnOIWA_Ki6zHH0
+Message-ID: <CAKEwX=NsHtTpOV+LSh2GHCMhF9GSKFhyXFNOTifKPk17UiN-ag@mail.gmail.com>
+Subject: Re: [PATCH v2] zswap: do not crash the kernel on decompression failure
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a literal string. Fix it.
+On Thu, Feb 27, 2025 at 8:05=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
+>
+> On Thu, Feb 27, 2025 at 07:29:45AM +0000, Yosry Ahmed wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hid/hid-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I like this actually,
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 541d682af15a..8433306148d5 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -3450,7 +3450,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_MACRO_RECORD_START] = "MacroRecordStart",
- 	[KEY_MACRO_RECORD_STOP] = "MacroRecordStop",
- 	[KEY_MARK_WAYPOINT] = "MarkWayPoint",	[KEY_MEDIA_REPEAT] = "MediaRepeat",
--	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messanger",
-+	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messenger",
- 	[KEY_NAV_CHART] = "NavChar",		[KEY_NAV_INFO] = "NavInfo",
- 	[KEY_NEWS] = "News",			[KEY_NEXT_ELEMENT] = "NextElement",
- 	[KEY_NEXT_FAVORITE] = "NextFavorite",	[KEY_NOTIFICATION_CENTER] = "NotificationCenter",
--- 
-2.47.2
+> I'd actually rather push those down into zeromap and zswap as well to
+> follow that pattern more closely:
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 9b983de351f9..1fb5ce1884bd 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -538,6 +538,7 @@ static bool swap_read_folio_zeromap(struct folio *fol=
+io)
+>
+>         folio_zero_range(folio, 0, folio_size(folio));
+>         folio_mark_uptodate(folio);
 
+There should be another folio_unlock() above I think.
+
+> +       folio_unlock(folio);
+>         return true;
+>  }
+>
 
