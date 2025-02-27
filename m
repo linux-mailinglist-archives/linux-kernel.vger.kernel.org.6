@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-536766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0750A48409
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:01:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324C9A4842A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8F57A6D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211FD1896BC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800321B21B5;
-	Thu, 27 Feb 2025 15:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B51B4159;
+	Thu, 27 Feb 2025 15:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+UIFuGD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJVvX8bg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EE31A8F71;
-	Thu, 27 Feb 2025 15:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66E1AAA10
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671733; cv=none; b=BbEOO0pC8/sKEpqabRaRHorYDoIytNjfyZBBDX8AFoLC7sGH1XT1r2cOAJpnOhWAqUVymrOUk4u+6ip0aMwNUPNX08pqX+GS4HT6murKrgH8ccDBsQMkEWiK7b+bGCmF0Gr/xtviAkbzJEy+XIJZ/LasPKEfwSZ2fj2fwhYqlNg=
+	t=1740671765; cv=none; b=j4OUVtpNZPHLxBnXxMS7mruE3rfVnM9ax/mnEiLT0SNxgrOfuPMOeEKfMskhtAyF1qddlVFY7lnJnftqrZZJ2eZw2OzF8tg1OMfEiYyeiIkuABklawT35b/esC5V13XhNvwKTbmCtxhpqqe/deheJ9zT6hrEnxkcR83ohtkwWXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671733; c=relaxed/simple;
-	bh=rguxfsI49eQ9tz5tUwlYijwyPiNkuMJxPbT9i5OxPkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dq228SEfkxwGCgvXBkDdco3B59vP5FYgHkQXEy06on8Gg48oDpGaqpLM1YYz9gOiVMbY7GHhaM3kblXSlxvynalbNoRdKyTICBCyPIBWIZsvhO1cHiqo5GQPVbxZaQrL1Iu+Pce4gWrEv0/NgyBaIvkzBoeG7rQ+UYV5OEnI40A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+UIFuGD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E24F4C4CEDD;
-	Thu, 27 Feb 2025 15:55:31 +0000 (UTC)
+	s=arc-20240116; t=1740671765; c=relaxed/simple;
+	bh=4XS/w8try2ACKldK10vEqyRkeuzlJ94ggQX1TVhimIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T6MbbvV4oz5wXiMgcj55DpOjEjKINFAWBz+rewiYC2/8grcG3BZL6BjSfBRW1rcIoACUR+pBTypEWrZSX0RcC7ROmhhZWjTQDCzXQG1RVWVlrALz+vNpHdznSVT+9Jh71HDB64uXINBrZigNBX3PAGoryJa1maXJhJkuTOyvCY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJVvX8bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F349C4CEDD;
+	Thu, 27 Feb 2025 15:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740671733;
-	bh=rguxfsI49eQ9tz5tUwlYijwyPiNkuMJxPbT9i5OxPkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j+UIFuGDGV2alEgyObw1drzkORF2NIUoVbG4Ew5JSdfKRCRcB/WWuNheccm1SV1Ow
-	 k6JzbMqI7fVziGOz0R01DEKqDqiwFpYh1NdvLWKaEV6bSd1cYDK1V6ul1430u6b62X
-	 XgR+okcI7BFnfBVPEr4fJSl1GjmDezXYKqbmnihLifpyEzUakoN4UMegValWDj7hko
-	 Ag6vAZRQzXX77YTmGtlnXqOwYbrQkDkUmsEURjf+5sqBZm/yxJOXWbZgubrOrNy2vd
-	 tlFM/7qPA9pw1bOVFfyAk9nydK9wlBB+ZQUDe/hlU09onX+jheMqivhA8LsWRGFifY
-	 ZIGtfM12LL8tw==
-Date: Thu, 27 Feb 2025 09:55:29 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Felipe Balbi <balbi@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Saravana Kannan <saravanak@google.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Frank Li <Frank.li@nxp.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] usb: dwc3: core: Don't touch resets and clocks
-Message-ID: <6v2kyk3rhss4itvo4dhwxyf3mp7ey7gh5abaklgwa27b4fw6ce@ofyuo3ortl4p>
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-3-4415e7111e49@oss.qualcomm.com>
- <w72zvfh3uf7crbkmuenxcjnu6moircjdy6rnbzszl4tjlm2jks@4z2k3iqt2ohi>
+	s=k20201202; t=1740671765;
+	bh=4XS/w8try2ACKldK10vEqyRkeuzlJ94ggQX1TVhimIo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DJVvX8bgnM1Jhf6pxMjjppij2hlo+Src2FEWjX/NJSALnw9Kzrb6D7q5NI4qjoJdQ
+	 gBXgDlvII2zh0LKKIS7Qay3V5+RIacVvXtWDRxD5ueL9hnXV8+w5LJRv+jH1grSB78
+	 E5ebxNYzkuRKk0C19f96t77Upv4lAYzodoC8/troFcn6NDvtjQFnjMwI7prp/iO/EX
+	 Ah34a152RATvOfXSZIrXmoHSVFnC3FZwb3h8ikzfVvO8atpUjI0YUAUfvZNLql4Car
+	 b6tnRpVFwYBUttXx/yXPFnik6FIqL6odEH/gbjJAn09XcAWmUBjj+GFwT5T1ossxGg
+	 tscYM0guOszGw==
+Date: Thu, 27 Feb 2025 16:56:00 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 17/21] tests/acpi: virt: update HEST table to accept
+ two sources
+Message-ID: <20250227165600.16a74895@foz.lan>
+In-Reply-To: <20250227165124.221ef1b2@foz.lan>
+References: <cover.1740653898.git.mchehab+huawei@kernel.org>
+	<9d57e2a6ec3f523eb7691347403f05ad40782b94.1740653898.git.mchehab+huawei@kernel.org>
+	<20250227141038.28501d73@imammedo.users.ipa.redhat.com>
+	<20250227141603.3957e78b@imammedo.users.ipa.redhat.com>
+	<20250227165124.221ef1b2@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <w72zvfh3uf7crbkmuenxcjnu6moircjdy6rnbzszl4tjlm2jks@4z2k3iqt2ohi>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 06:24:17AM +0200, Dmitry Baryshkov wrote:
-> On Wed, Feb 26, 2025 at 04:17:50PM -0800, Bjorn Andersson wrote:
-> > When the core is integrated with glue, it's reasonable to assume that
-> > the glue driver will have to touch the IP before/after the core takes
-> > the hardware out and into reset. As such the glue must own these
-> > resources and be allowed to turn them on/off outside the core's
-> > handling.
-> > 
-> > Allow the platform or glue layer to indicate if the core logic for
-> > clocks and resets should be skipped to deal with this.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > ---
-> >  drivers/usb/dwc3/core.c | 19 +++++++++++--------
-> >  drivers/usb/dwc3/glue.h |  1 +
-> >  2 files changed, 12 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > index d9f0a6782d36..aecdde8dc999 100644
-> > --- a/drivers/usb/dwc3/core.c
-> > +++ b/drivers/usb/dwc3/core.c
-> > @@ -2328,6 +2330,7 @@ static int dwc3_probe(struct platform_device *pdev)
-> >  
-> >  	probe_data.dwc = dwc;
-> >  	probe_data.res = res;
-> > +	probe_data.ignore_clocks_and_resets = false;
+Em Thu, 27 Feb 2025 16:51:24 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+
+> Em Thu, 27 Feb 2025 14:16:03 +0100
+> Igor Mammedov <imammedo@redhat.com> escreveu:
 > 
-> Isn't it a default value?
+> > On Thu, 27 Feb 2025 14:10:38 +0100
+> > Igor Mammedov <imammedo@redhat.com> wrote:
+> >   
+> > > On Thu, 27 Feb 2025 12:03:47 +0100
+> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > 
+> > > squash this patch into the next one
+> > > 
+> > > Also at this point there is no visible HEST changes yet, so a soon as you remove
+> > > white-list without enabling new HEST, the tests should start failing.
+> > > 
+> > > I suggest to move 20/21 before this patch,
+> > > as result one would see dsdt and hest diffs when running tests
+> > > and then you can use rebuild-expected-aml.sh to generate updated
+> > > tables and update them in one patch (that's what we typically do,
+> > > we don't split updates in increments).    
+> > 
+> > on top of that,
+> > it seems the patch doesn't apply for some reason.  
 > 
+> Hmm... perhaps the diffstat that I place here (produced by bios-tables-test
+> output) is causing some confusion when you're trying to apply the patch.
+> 
+> Any suggestions to avoid that?
 
-I like the false because it's explicit, but I have no strong attachment
-to it.
+Nevermind. I fixed by removing the name of the file before the diff, e.g.
+the description is now:
 
-That said, it's not the default value, because probe_data isn't
-zero-initialized. That would however make sense to do, in order to avoid
-surprises in the future when probe_data grows.
+  tests/acpi: virt: update HEST and DSDT tables
+    
+    - The HEST table now accept two sources;
+    - The DSDT tables now have a GED error device.
+    
+    @@ -1,39 +1,39 @@
+     /*
+      * Intel ACPI Component Architecture
+      * AML/ASL+ Disassembler version 20240322 (64-bit version)
+      * Copyright (c) 2000
+
+...
 
 Regards,
-Bjorn
-
-> >  
-> >  	return dwc3_core_probe(&probe_data);
-> >  }
-> > diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
-> > index e73cfc466012..1ddb451bdbd0 100644
-> > --- a/drivers/usb/dwc3/glue.h
-> > +++ b/drivers/usb/dwc3/glue.h
-> > @@ -17,6 +17,7 @@
-> >  struct dwc3_probe_data {
-> >  	struct dwc3 *dwc;
-> >  	struct resource *res;
-> > +	bool ignore_clocks_and_resets;
-> >  };
-> >  
-> >  int dwc3_core_probe(const struct dwc3_probe_data *data);
-> > 
-> > -- 
-> > 2.45.2
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Mauro
 
