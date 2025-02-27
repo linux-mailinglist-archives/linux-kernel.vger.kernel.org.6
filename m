@@ -1,195 +1,94 @@
-Return-Path: <linux-kernel+bounces-535808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69478A4777C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA99A47780
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD27917035A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A93B16E379
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35176229B21;
-	Thu, 27 Feb 2025 08:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFA222A804;
+	Thu, 27 Feb 2025 08:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leTdlBvO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILxBmEGl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB91223705;
-	Thu, 27 Feb 2025 08:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C5B228CB5;
+	Thu, 27 Feb 2025 08:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644100; cv=none; b=dFH3joTQ2yBqEREsPmZlhqbAkVg1etrHT52iGxkm1dOI1YyyagAVmft2Fiacn86TQdbpPj2DfBrJ6NyNgowoGcn64eZVwj5FLFVHPZ3KfQA7avNlf4zSmFEnQo96Y51IqLPVYbYDiA2KjyHfRkkqSZhDOa61o4oVqRbDAH2Ty3M=
+	t=1740644106; cv=none; b=pRGR+USIMPk21wSOBXRDylX0sMM9AnztdX2O19mvPtHhrNDSO/SVl6qeXYnmn+R6X+nJ2SS6uIjmDyVWkdhOqQeoZcJXQJN1l76asCyTeP3WGThAAFNG07d5SeH1nVnyNAYFoYFra0YpGgohJTmM2rY5valRpv6KqWWyI8Kcuy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644100; c=relaxed/simple;
-	bh=/3SmeavIPPYReTdlvxZX4Pbmr+aY589/IzJBgjNFja4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kqbHxnm5Lrd3zBYe5hOuWEY602Pnz+fSuIhawotIl3e3eeeLLxz4jUTQDivk2fYnG8ehzD7SE75DRwHxkRVzJDEjVrqupSvkKGei7SeVmlhquEBWq4VOUyT1w1mssjZKzfyrnrdq3OAPjdkYqqphHrEfIHLbAW9U7egO3NPrs+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leTdlBvO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A16BC4CEE9;
-	Thu, 27 Feb 2025 08:15:00 +0000 (UTC)
+	s=arc-20240116; t=1740644106; c=relaxed/simple;
+	bh=mkZPOtG0SE8QEywaKMiO1vrqsRdGcRWOFYs77JJYcg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFe/UijrV8pjTlT82kLm7qafKParDTgyVjEp5Of0c1yibT2xbjKpwMDCkbnf6pZu5wn2WUxcx5+VNkh1Jt636YEHUftws0niXh5YrWtxtPa4IJfWc1MamTWcb8HSPut4DQ5JpMEYzrJlr7wfOAmmTsfJ8GufLrLy/eUZQ169sdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILxBmEGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397A9C4CEE4;
+	Thu, 27 Feb 2025 08:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740644100;
-	bh=/3SmeavIPPYReTdlvxZX4Pbmr+aY589/IzJBgjNFja4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=leTdlBvOxLply4739USth94wtNEiJKpTCphPK1qRkxmyLNpQ61CqLVnEIhX5OWwZE
-	 HuYSFf5KjAgHfsE5EH0Fh95CJzbh04s766AIfYSlthD/hSwYlRX75TXbu0zrnFZx1k
-	 bWV5Kqep8cbaFnfP1zxkv/STaRw+zy76SERnf1iA9S/bKfa39XfXS+t7tZ1rTNuyTE
-	 XjQQZ8YZADIBrXiTKzBjYrhyAh94Z5TPPj4cYpBthRvvnyAf8I3bRH0d2IS/FkSNyA
-	 or9Tc1LOpC9jdsTnUHBiiRk1PIyjZrIHF/6HmaKJDjZ49MFVPgwZ110LE5eH+F/5SJ
-	 hFNMdKkGH+s5Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1tnZ34-000000006ml-0Krc;
-	Thu, 27 Feb 2025 09:15:14 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 8/8] arm64: dts: qcom: x1e78100-t14s: fix missing HID supplies
-Date: Thu, 27 Feb 2025 09:13:57 +0100
-Message-ID: <20250227081357.25971-9-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.3
-In-Reply-To: <20250227081357.25971-1-johan+linaro@kernel.org>
-References: <20250227081357.25971-1-johan+linaro@kernel.org>
+	s=k20201202; t=1740644105;
+	bh=mkZPOtG0SE8QEywaKMiO1vrqsRdGcRWOFYs77JJYcg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ILxBmEGlIn4jzE06wP+gi+o6yz5J+S/zP3Za3Ns+UXLGaML6u8RPvar7j4LeFHKGk
+	 8T7183CQSz2AtUl3CexXE0vl746INeDB48ii2lSnxYK8tgsCyBf8AQJmYVuQwr/xs4
+	 9ddgLw6gVOHIy5T5GzAiFaJMJUopNgL6j6NCSuR0LqkRqIH73QqflZjw5Ftr6pBQ3x
+	 8weip5xcB54R99BuVUo/4rgJNllanZhbveNPil47mhJ88FXdniJUY59y/MciQa25X1
+	 pLapgEQ0PTlRC9YZnlvTHmCVEbpxpdcQ15Jx9gXBTOoTAirRrU5whMN923sCHrF+gx
+	 ZyV2Dblsm4vwQ==
+Date: Thu, 27 Feb 2025 09:15:01 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [GIT PULL] KVM changes for Linux 6.14
+Message-ID: <20250227-teigtaschen-junitag-4dfb547792b4@brauner>
+References: <CAHk-=wiOSyfW3sgccrfVtanZGUSnjFidSbaP3tg9wapydb-u6g@mail.gmail.com>
+ <20250126185354.GB28135@redhat.com>
+ <CAHk-=wiA7wzJ9TLMbC6vfer+0F6S91XghxrdKGawO6uMQCfjtQ@mail.gmail.com>
+ <20250127140947.GA22160@redhat.com>
+ <CABgObfaar9uOx7t6vR0pqk6gU-yNOHX3=R1UHY4mbVwRX_wPkA@mail.gmail.com>
+ <20250204-liehen-einmal-af13a3c66a61@brauner>
+ <CABgObfaBizrwP6mh82U20Y0h9OwYa6OFn7QBspcGKak2r+5kUw@mail.gmail.com>
+ <20250205-bauhof-fraktionslos-b1bedfe50db2@brauner>
+ <20250226-portieren-staudamm-10823e224307@brauner>
+ <20250226190322.GL8995@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226190322.GL8995@redhat.com>
 
-Add the missing HID supplies to avoid relying on other consumers to keep
-them on.
+On Wed, Feb 26, 2025 at 08:03:23PM +0100, Oleg Nesterov wrote:
+> Sorry, didn't have time to actually read this patch, but after a quick
+> glance...
+> 
+> On 02/26, Christian Brauner wrote:
+> >
+> > @@ -3949,7 +3955,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+> >  	tid = (int)(intptr_t)file->private_data;
+> >  	file->private_data = NULL;
+> >  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
+> > -	     task;
+> > +	     task && !(task->flags & PF_USER_WORKER);
+> 
+> unless I am totally confused this looks "obviously wrong".
+> 
+> proc_task_readdir() should not stop if it sees a PF_USER_WORKER task, this
+> check should go into first_tid/next_tid.
 
-This also avoids the following warnings on boot:
-
-	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
-	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
-	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
-	i2c_hid_of 1-002c: supply vdd not found, using dummy regulator
-	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
-	i2c_hid_of 1-002c: supply vddl not found, using dummy regulator
-	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
-	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
-
-Note that VCC3B is also used for things like the modem which are not yet
-described so mark the regulator as always-on for now.
-
-Fixes: 7d1cbe2f4985 ("arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6")
-Cc: stable@vger.kernel.org	# 6.12
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-index 7f756ce48d2f..3ff0c65e374c 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -9,6 +9,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- 
- #include "x1e80100.dtsi"
-@@ -153,6 +154,23 @@ vreg_edp_3p3: regulator-edp-3p3 {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_misc_3p3: regulator-misc-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VCC3B";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550ve_8_gpios 6 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&misc_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vreg_nvme: regulator-nvme {
- 		compatible = "regulator-fixed";
- 
-@@ -580,6 +598,9 @@ touchpad@15 {
- 		hid-descr-addr = <0x1>;
- 		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
- 
-+		vdd-supply = <&vreg_misc_3p3>;
-+		vddl-supply = <&vreg_l12b_1p2>;
-+
- 		wakeup-source;
- 	};
- 
-@@ -591,6 +612,9 @@ touchpad@2c {
- 		hid-descr-addr = <0x20>;
- 		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
- 
-+		vdd-supply = <&vreg_misc_3p3>;
-+		vddl-supply = <&vreg_l12b_1p2>;
-+
- 		wakeup-source;
- 	};
- 
-@@ -602,6 +626,9 @@ keyboard@3a {
- 		hid-descr-addr = <0x1>;
- 		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
- 
-+		vdd-supply = <&vreg_misc_3p3>;
-+		vddl-supply = <&vreg_l15b_1p8>;
-+
- 		pinctrl-0 = <&kybd_default>;
- 		pinctrl-names = "default";
- 
-@@ -670,6 +697,9 @@ touchscreen@10 {
- 		hid-descr-addr = <0x1>;
- 		interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
- 
-+		vdd-supply = <&vreg_misc_3p3>;
-+		vddl-supply = <&vreg_l15b_1p8>;
-+
- 		pinctrl-0 = <&ts0_default>;
- 		pinctrl-names = "default";
- 	};
-@@ -779,6 +809,19 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550ve_8_gpios {
-+	misc_3p3_reg_en: misc-3p3-reg-en-state {
-+		pins = "gpio6";
-+		function = "normal";
-+		bias-disable;
-+		drive-push-pull;
-+		input-disable;
-+		output-enable;
-+		power-source = <1>; /* 1.8 V */
-+		qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
-+	};
-+};
-+
- &pmc8380_3_gpios {
- 	edp_bl_en: edp-bl-en-state {
- 		pins = "gpio4";
--- 
-2.45.3
-
+It's really a draft as I said. I'm more interested in whether this is a
+viable idea to separate kernel spawned workers into /proc/<pid>/worker
+and not show them in /proc/<pid>/task or if this is a non-starter. If so
+then I'll send an actual patch that also doesn't include
+code-duplication to no end. ;)
 
