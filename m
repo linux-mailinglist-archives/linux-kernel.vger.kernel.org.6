@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-537441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D728FA48BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:43:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF80A48BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5D6189241F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E59B16FF9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18201272922;
-	Thu, 27 Feb 2025 22:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2D1271835;
+	Thu, 27 Feb 2025 22:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXWwAvvQ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGc9uz2E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71A623E33B;
-	Thu, 27 Feb 2025 22:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C66923E339;
+	Thu, 27 Feb 2025 22:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696046; cv=none; b=dnRb6yYGNuMufJFM6c7ieF79nhVSfjjV/gRL71rCKV7c9UN6Q1vDdDp5L/xRNj7+lnMo+xbamTsM3JiQhaLHJVPdtwSoPzSJpu3Al1zY+s4BpQ6DCq5w1pPOYFXOjXQN1fxIxxLV9Ba4MHhmtyvrdiEdbailrDxKLVqo/7Agj1s=
+	t=1740696025; cv=none; b=STuW2aCdV49P7NMOSdljS6/HGoxDIc/X91m4Njgh01TB4VJXoZRF18I3Q5CRJ+2nCSyBHGxDSeXlu/3BplIWDjNCc6JpePX14/uU+G1OXovjRR4nYdwo8DP6fVzt83KWavOG6q1pa9k/Q+cYrrpiXX3tU+sVNsm4fVAac8yqa5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696046; c=relaxed/simple;
-	bh=4FpztWJBkYzLbgpzrZ8kFBwYl/EaKs00lCTCkSKF1yQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c2V7rmJ5gNk1Q2M06eLw2M1e7/5LZ8GEbgKqUFPHW6hNK48lB8EdaKZvEozIe6XQiCSxMiVRPZYtCyHZwZzIqaKRTl79jpPKjSduoDwVCISMtM9FSiuSWbwDKnLZMfGhzuxWWxSm8Mg70IGAwnOl1uK+HGtE5rZvcMDEvcZPvw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXWwAvvQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43989226283so10125625e9.1;
-        Thu, 27 Feb 2025 14:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740696042; x=1741300842; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
-        b=BXWwAvvQrGvMIef/3qMddsNW150v0BgZDKGR3V58PnlwZ8qGXKKq5y4AykkoDUaiGb
-         mxMysUJ1IxsBBeXVHnyhsFzV8sE0c7xZVRicB0HFWYCfLmr84qzXL3O+sULnzoXDvMh5
-         0HX1C+8uDzDEMRIairmeY9mzWU/BVnUXp74o0A6XrpItd5nsGjcbOry0/pdja+uwNTCu
-         aadFOuZaa6ot99SCEXjq2oqa/eNmkvq2LYXyh9ViV8cvUZ5HO7Q2VnoPUeOJh2aL177n
-         +n5rQHHaJmKT4813y6Ypah0mt2WSB2s9jIrp6XnhZ6VbLTo4vvqmrJQbanDI77rppFWY
-         pO8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740696042; x=1741300842;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
-        b=JVf7y4Tsdeesj/gvHacFJUxv6VET7woB+t8iN/nZFYhPqAcQEcRYC190H1clfKi7gE
-         JYLNW6Z7c3Ay0o4nY+LhP/1crynjSasotCyCVThgrVzK2gQwaBBm+jFuLfDLMJDZN+vc
-         PzH/1ntLp68T826rxA11joRsSZabmChFGifjzV++yZL2j4fKy35n81vAqvM5nQUs+4S0
-         pwDGT9et7i/zBy/heskDHoapN5pknY4RQhLCs6857WNGteSuhwv61iFu8tPPydBx1KnZ
-         GFat0zes+KN38hvZRXSY1gTosWKvqujflSUJDOTkkB6+BMtbOE062RrYSdqsfEX9soQn
-         QRXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0OPGAQnJthISaNo79g0ovTOo5IyqmEbualGJK+A/dQKfBbq0J3Zu3ZhvGuTMGcAtCPPfSa6Au3uikVV0=@vger.kernel.org, AJvYcCWSoZk/X9OtmPbK/ksnwk65plNTq4WWlJ0eqYbi9Jb+ajlcMg0E1QXwSLkuq0HGQPP4/StPkrsPSF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyRALnDWBT19Gk1vibt6mgsDXA9eIInAAzjSX/Y1t2fnF/WL1m
-	Pai45HWy4ewGV9pTOZ4m+CaCK8aou1WzZBvWjnlpiBwMtxoGc8/S
-X-Gm-Gg: ASbGncs54W1HRNL4GSZSR+JMSIYKmBUHs792IKxQv4tdsX6HmJLKkJRJ+Qhp5ZW/zPN
-	IV0sapIVdD34GVaP+YgA8fDepbCW6FIwLKsCxl0EeYpadxnqsAT0+da3ZGPi+NoYd8RDjnUtNTs
-	GLoC+ON+Xn784p3jQqPlFO9iWamVv6NgkRp5Pu/c5535vfpOqMk7Caerq+gIB7xh0tjztnljz6v
-	GgWa5zsO4JdZb+kTIqhXPbA0LOJhVsEPqf73Jkmbsb7GOwikUJwnoCDfHVnxPOG4DKf8bthbent
-	35sSQ9pveBXPk9xQm0Xh/BiUnQo=
-X-Google-Smtp-Source: AGHT+IHM6HEvjXh4zM4c1gmC8eykfelcPVykYPxPWzXLli1VTTBj6qkEd/hrQ+pc2XQ0Fu0UniZbLg==
-X-Received: by 2002:a05:6000:18a7:b0:38f:31fe:6d23 with SMTP id ffacd0b85a97d-390ec7d25edmr844668f8f.23.1740696041892;
-        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e484451fsm3340895f8f.63.2025.02.27.14.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal: core: Fix spelling mistake "Occurences" -> "Occurrences"
-Date: Thu, 27 Feb 2025 22:40:06 +0000
-Message-ID: <20250227224006.660164-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740696025; c=relaxed/simple;
+	bh=13NTXNZWcFnxPHI9L0mDYaLEzu0VRQ10xWOhuSITWTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsjAJQoAI+2Upy7QKA3iBQ2o4KXQ0OCf2zrT/oj1lGJjXWkdVFQlOamygoGMj9JMddIIS3tPWzD8YbmccMijiOVtgtldQ8GMC3djar6PZ3mfnDElvfoxJ/K8ghW5OE4WXna4qCrP3ZcSQly8fhwSeRqI/JZvoG3KGT3QcpB0fh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGc9uz2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A473C4CEE4;
+	Thu, 27 Feb 2025 22:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740696024;
+	bh=13NTXNZWcFnxPHI9L0mDYaLEzu0VRQ10xWOhuSITWTw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=lGc9uz2EpFAMbR1PZGUQV/E9W8uRLnwvFb+Col8euJh8/933xhTf226HhvjSUS3jY
+	 qFgpBcPGwbnWKhuViMRz2NbXIhDd7uXMU9wab6WPO64dEUjRRyqvSemeaFG6S+4iA9
+	 8YJy5ZEbAOCIXR6eMkyBO6/39Has2w7jp/qZpv3nSV+ED7gNE0goK/1uG8xXsD9pL0
+	 d5Lo0cwmsDup0cIL8CRThM+EedDmjaGC9JZh8U5QJ2om1XQynfibd/D4jqeEqgI9r3
+	 RFZsTFubqwH/LUbGZ/5BPTfFrxdk8E07e6iLK3QcAesPe1KAAVm9LeuIDU0AlSiA9f
+	 DpeuXI5s4smCQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3225ECE04CA; Thu, 27 Feb 2025 14:40:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:40:24 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin Uecker <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Ventura Jack <venturajack85@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Gary Guo <gary@garyguo.net>, airlied@gmail.com,
+	boqun.feng@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+	rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <27b845e5-1db3-4c67-8cf4-11454df3a8b0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+ <20250226162655.65ba4b51@gandalf.local.home>
+ <CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+ <20250226165619.64998576@gandalf.local.home>
+ <20250226171321.714f3b75@gandalf.local.home>
+ <CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+ <20250226173534.44b42190@gandalf.local.home>
+ <20250227204722.653ce86b@pumpkin>
+ <72bd8dc3-8a46-47b1-ac60-6b9b18b54f69@paulmck-laptop>
+ <20250227222030.3fd32466@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227222030.3fd32466@pumpkin>
 
-There is a spelling mistake in a seq_puts string. Fix it.
+On Thu, Feb 27, 2025 at 10:20:30PM +0000, David Laight wrote:
+> On Thu, 27 Feb 2025 13:41:15 -0800
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > On Thu, Feb 27, 2025 at 08:47:22PM +0000, David Laight wrote:
+> > > On Wed, 26 Feb 2025 17:35:34 -0500
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >   
+> > > > On Wed, 26 Feb 2025 14:22:26 -0800
+> > > > Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > > >   
+> > > > > > But if I used:
+> > > > > >
+> > > > > >         if (global > 1000)
+> > > > > >                 goto out;
+> > > > > >         x = global;      
+> > > > > 
+> > > > > which can have the TUCTOU issue because 'global' is read twice.    
+> > > > 
+> > > > Correct, but if the variable had some other protection, like a lock held
+> > > > when this function was called, it is fine to do and the compiler may
+> > > > optimize it or not and still have the same result.
+> > > > 
+> > > > I guess you can sum this up to:
+> > > > 
+> > > >   The compiler should never assume it's safe to read a global more than the
+> > > >   code specifies, but if the code reads a global more than once, it's fine
+> > > >   to cache the multiple reads.
+> > > > 
+> > > > Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
+> > > > And when I do use it, it is more to prevent write tearing as you mentioned.  
+> > > 
+> > > Except that (IIRC) it is actually valid for the compiler to write something
+> > > entirely unrelated to a memory location before writing the expected value.
+> > > (eg use it instead of stack for a register spill+reload.)
+> > > Not gcc doesn't do that - but the standard lets it do it.  
+> > 
+> > Or replace a write with a read, a check, and a write only if the read
+> > returns some other value than the one to be written.  Also not something
+> > I have seen, but something that the standard permits.
+> 
+> Or if you write code that does that, assume it can just to the write.
+> So dirtying a cache line.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thermal/thermal_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You lost me on this one.  I am talking about a case where this code:
 
-diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_debugfs.c
-index c800504c3cfe..0cf26ea63370 100644
---- a/drivers/thermal/thermal_debugfs.c
-+++ b/drivers/thermal/thermal_debugfs.c
-@@ -319,7 +319,7 @@ static int cdev_tt_seq_show(struct seq_file *s, void *v)
- 	int i = *(loff_t *)v;
- 
- 	if (!i)
--		seq_puts(s, "Transition\tOccurences\n");
-+		seq_puts(s, "Transition\tOccurrences\n");
- 
- 	list_for_each_entry(entry, &transitions[i], node) {
- 		/*
--- 
-2.47.2
+	x = 1;
 
+gets optimized into something like this:
+
+	if (x != 1)
+		x = 1;
+
+Which means that the "x != 1" could be re-ordered prior to an earlier
+smp_wmb(), which might come as a surprise to code relying on that
+ordering.  :-(
+
+Again, not something I have seen in the wild.
+
+							Thanx, Paul
 
