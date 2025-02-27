@@ -1,196 +1,251 @@
-Return-Path: <linux-kernel+bounces-535614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952DDA47530
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:24:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A490A47532
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DB3E168AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386333AEE1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A3F1F585C;
-	Thu, 27 Feb 2025 05:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BA61F9F5C;
+	Thu, 27 Feb 2025 05:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RmH1LHP9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CiNBxKT5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB1D1F5857
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD33A1F5857
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740633868; cv=none; b=i/b+CDhvRKbTPJbxcoahG/2CriQq6xjfBfaEEKA603fZG3OlOqmQERB1xnvzhFDI/aMclcD7EQE6HFwK4R7NzBYWOrx/mK5Q3c9kx+whNl0Gx5U0VcoVUhEwIleq/cSPjwAsNutf/7cxSFGM1bz/JmLG7ZNf4PZ+tjU9oMrPN70=
+	t=1740633992; cv=none; b=Y5UcnhPxFuZDO4ShrVG6wcOuM6xwN4kxC9iTMcOOimeojl59wNliNdGjIPy+CGBhXYwvTdF21xcYK6figtfkksHoinKN/WH8fWy5w0R8ZIDVQwlIoNV0iQDCF4EWI25Bc0EeOE6ZGgAPm2CAeCENPx8+DpGL8EVhTAOU24p0KaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740633868; c=relaxed/simple;
-	bh=47ds+4hGrY28VgZ3hza+Gb+h0Ld/NmG/YiG2BZEJFxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V0oYrMGTCKsbjAQsZrN1OBGarhzfawt0hCDJLlduOceZQecnx1izMEuYx+mH1WJGuU6yZEyb2bShuXRoTqgQucQjpKrIZY2f12opjIYCLXBvivHgZNjRmJMXlJLmtjDggoWhD59/dXxa6F5LrDUwmx1FqUGl4XsZGV1yCMryECw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RmH1LHP9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-221ac1f849fso67555ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 21:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740633866; x=1741238666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bnEz81f237FPFDdRQFlVRCVwc99gvba5x2QOCkc+RR0=;
-        b=RmH1LHP9Er+ZTanjRwSRO4zB4wbaVbJkp4mK6Lb3GF7HZRTX2rYyviDZJXdljSkZD8
-         9KF5gmaUQ4HHpXS+zQZPFROYE9slovw3zjDLpGxhp7VxpV7H+iN3qjh7yLCYvDPRvg+C
-         S612hQODu/llEYl0Z9FM1MYdsKXm5Df9arNZ2lC0ldmDKSOC5UhI7r9+1j6vjDGr0IIn
-         V+ceJTq7alZUElVRbUv2iqy+BNwue/2GL5D9rEE0Ny+s4DThi/rjaBKrNGCgLTUys5aO
-         3vl1E6duYDpWsa+otbVzZnyr+boNOVIztAHwxwa09+BD6RJPiM6OYWDNWyDuAcgKTIDU
-         6HFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740633866; x=1741238666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bnEz81f237FPFDdRQFlVRCVwc99gvba5x2QOCkc+RR0=;
-        b=pya/TQYd0t++9Vvi52t9zompMXHYnPP4Bbkb3FpjRuqFA8INgRnU2N1Z95DpplyQFH
-         OpNVTP345MjljnPfWC5gMLOBdHcuhpCAdoOyd2lATAM52OlyK6PSOY761h3rERv0GIFx
-         u6FTctmGvuBHlAZG4Y7OFSqodnbRQMA4rdpDS5t2v5ZKszOBsa33NVKodJNKghV6zn+3
-         G7ho1uvX8wgm+ZodEOFeJ59wK4fbnZBWqphN5diQCvnTXGWjEYriBzjxvWx53diHjwKj
-         R7NXH3K6KwPSwB6SQASZkDraEGCuHWo1rojQdw2cRrZKerUcv8EEe1GNVd82p3bYcMqK
-         aqAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnwE9841zu6QEBa5QVORCoEavXWmDu2ihxCvjraISRJPjLrY8UDALPBah/Ynst8vihfVdk5q2Vne71YfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM4qgILKEpifTdTN/WVduoiVvg2OCf48gg8IQoti1Wx3r0YK+4
-	qbRmDxbwdiJtw3UKXJUXOzj1L6raIkPCoQfsi9T8xmchEbMstvun/qN7z1Oqt9bh0xLU+pWHjgW
-	AdxrtZhq0qRq5DcgdY5Nh++EZtSneXMa1mMkr
-X-Gm-Gg: ASbGncstPJ/mKh8T4erlw/IkHbR9dZM1VfDkxKF6CBEXTaiW+tf70VtV4TgAe2cSxoN
-	kQXGuPdT3Dk2D72ONTH4966k7piVeWOYPA9/qoAGMD0SlVCBmF8xkYYAkoOAeR4+A3XmyuGERvB
-	zNeBir2+eP
-X-Google-Smtp-Source: AGHT+IESGHDEUIPVrjNTh39ynN60aQSgX7N+PvnUqhcTHIKp7IZB5bqsgXo3vv32FxrjQl6qmhQtj7bSXHofxTNEMow=
-X-Received: by 2002:a17:902:f7cc:b0:200:97b5:dc2b with SMTP id
- d9443c01a7336-223517240a4mr1111615ad.15.1740633866391; Wed, 26 Feb 2025
- 21:24:26 -0800 (PST)
+	s=arc-20240116; t=1740633992; c=relaxed/simple;
+	bh=QsLOmOWrH2QCKP0gkojxfG4ZAlKdqpTNrpKXybsyags=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dB/GXrCsISB7QKM6G1Kv0vh5WMpcdITx9chbtWL2EyRlUhfEmimlHwwWqw7z6mZD6tv4va3pN6iWABpUaFIjWyU5LCDd0xSYpJbTWFloNNYxeYwMvaFx0MnRjn77ZRz26Py39genrcqXvte568HWWdsoP4TtLwJD9E34tia71sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CiNBxKT5; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740633991; x=1772169991;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QsLOmOWrH2QCKP0gkojxfG4ZAlKdqpTNrpKXybsyags=;
+  b=CiNBxKT5wqYPrKOqTvkJgU0asbGgjueLbjhI7y00snQzpifdPPFWZ9xq
+   EM1HWaAQGd6fxsAgzToM9SFxxfkRs9JUaRLqPA2M1zLSvEGTZcMPkuDzm
+   qgwmGn+daOzNtpjuX6ftNLRbdNR1wKoL2gSZ3TL4j+iYIaIDfieNkrHQx
+   PU0FwcHstnbS6iPA32XkpwefsE3aqHaaB2Mtt5LjqBTltNTdCmuKGgYqK
+   qBuulnN3B9liRsEiQZVOQvz9rTrcCuJAvALv1xMxF/uajlOa2bKAP2G7M
+   PZw2dODmsTAZMCuv3GtZgPClKATSUPkx0lbn36Keh6a0TVpJluZWOxqmZ
+   w==;
+X-CSE-ConnectionGUID: yGR2jzkpTW6Wrux6WfTDkw==
+X-CSE-MsgGUID: iKm330sRSu2wVZk4LuOSZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41639213"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="41639213"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:26:30 -0800
+X-CSE-ConnectionGUID: 8YA5gkAtSqucOs2B0u928A==
+X-CSE-MsgGUID: 9wyp9ikvRE+TXckO1c0Wuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="117409621"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Feb 2025 21:26:28 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnWPh-000Ct8-0F;
+	Thu, 27 Feb 2025 05:26:25 +0000
+Date: Thu, 27 Feb 2025 13:25:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: zhongjinji@honor.com, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, yuzhao@google.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	rientjes@google.com, vbabka@suse.cz, zhongjinji@honor.com,
+	yipengxiang@honor.com, liulu.liu@honor.com, feng.han@honor.com
+Subject: Re: [PATCH] mm/page_alloc: make the maximum number of highatomic
+ pageblocks resizable
+Message-ID: <202502271250.KUfFnxnl-lkp@intel.com>
+References: <20250226024126.3718-1-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219185657.280286-1-irogers@google.com> <Z702_CQ7nMx9fZQn@google.com>
- <CAP-5=fWYiQP84BMjm69xud4vYaRrutRG-RASKbxQaGSisRm7jA@mail.gmail.com> <Z7-rN8iGUpPe6b-1@google.com>
-In-Reply-To: <Z7-rN8iGUpPe6b-1@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 26 Feb 2025 21:24:15 -0800
-X-Gm-Features: AQ5f1JpYoEre35TWzYAHXMZBSPsriPeINrD-jPxutBzlTEFdOvLRV6EZPh8_ULw
-Message-ID: <CAP-5=fVAuCF4i8HQEGYx_ApcSuBg82pXCsgk98oU9-2Gm=NOcw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] perf: Support multiple system call tables in the build
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, guoren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-mips@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226024126.3718-1-zhongjinji@honor.com>
 
-On Wed, Feb 26, 2025 at 4:00=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Feb 24, 2025 at 08:22:50PM -0800, Ian Rogers wrote:
-> > On Mon, Feb 24, 2025 at 7:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> > >
-> > > On Wed, Feb 19, 2025 at 10:56:49AM -0800, Ian Rogers wrote:
-> > > > This work builds on the clean up of system call tables and removal =
-of
-> > > > libaudit by Charlie Jenkins <charlie@rivosinc.com>.
-> > > >
-> > > > The system call table in perf trace is used to map system call numb=
-ers
-> > > > to names and vice versa. Prior to these changes, a single table
-> > > > matching the perf binary's build was present. The table would be
-> > > > incorrect if tracing say a 32-bit binary from a 64-bit version of
-> > > > perf, the names and numbers wouldn't match.
-> > > >
-> > > > Change the build so that a single system call file is built and the
-> > > > potentially multiple tables are identifiable from the ELF machine t=
-ype
-> > > > of the process being examined. To determine the ELF machine type, t=
-he
-> > > > executable's header is read from /proc/pid/exe with fallbacks to us=
-ing
-> > > > the perf's binary type when unknown.
-> > >
-> > > Hmm.. then this is limited to live mode and potentially detect wrong
-> > > machine type if it reads an old data, right?
-> > >
-> > > Also IIUC fallback to the perf binary means it cannot use cross-machi=
-ne
-> > > table.  For example, it cannot process data from ARM64 on x86, no?  I=
-t
-> > > seems it should use perf_env.arch.
-> >
-> > The perf env arch is kind of horrid. On x86 it has the value x86 and
-> > then there is an extra 64bit flag, who knows how x32 should be encoded
-> > - but we barely support x32 as-is. I'd rather we added a new feature
-> > for the e_machine/e_flags of the executable and worked with those, but
-> > it is kind of weird with doing system wide mode. I didn't want to drag
-> > that into this patch series anyway as there is already enough here.
->
-> Right, I don't know how to handle x32 properly.  Maybe we can just
-> ignore it for now.
->
-> But anyway looking at /proc/PID for recorded data doesn't seem correct.
-> Can you please add a flag to do that only from trace__run() and just use
-> EM_HOST for trace__replay()?
+Hi,
 
-So I was hoping at some later point the e_machine on the thread could
-be populated from the data file - hence the accessor being on thread
-and not part of the trace code. We could add a global flag to thread
-to disable the reading from /proc but we do similar reading in
-machine.c for /proc/version, /proc/kallsyms, /proc/modules, etc. I
-think the chance a pid is recycled and the process has a different
-e_machine are remote enough that it is similar in nature. Adding the
-flag means we need to go and fix up all uses, we only need to set the
-flag in builtin-trace.c currently, but we've been historically bad at
-setting these globals and bugs creep in. I also don't think
-record/replay is working well and I didn't want the syscalltbl cleanup
-to turn into a perf trace record/replay fixing exercise.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Ian
+[auto build test ERROR on akpm-mm/mm-everything]
 
-> Later, we may need to add a misc flag or so to PERF_RECORD_FORK (and
-> PERF_RECORD_COMM with MISC_COMM_EXEC) to indicate non-standard ABI for a
-> new thread.  But it's not clear how to make it arch-independent.
->
-> >
-> > > One more concern is BPF.  The BPF should know about the ABI of the
-> > > current process so that it can augment the syscall arguments correctl=
-y.
-> > > Currently it only checks the syscall number but it can be different o=
-n
-> > > 32-bit and 64-bit.
-> >
-> > That's right. This change is trying to clean up
-> > tools/perf/util/syscalltbl.c and the perf trace usage. I didn't go as
-> > far as making BPF programs pair system call number with e_machine and
-> > e_flags, there is enough here and the behavior after these patches
-> > matches the behavior before - that is to assume the system call ABI
-> > matches that of the perf binary.
->
-> Right, the next step would be adding a BPF kfunc to identify the current
-> ABI.
->
-> Thanks,
-> Namhyung
->
+url:    https://github.com/intel-lab-lkp/linux/commits/zhongjinji-honor-com/mm-page_alloc-make-the-maximum-number-of-highatomic-pageblocks-resizable/20250226-121712
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250226024126.3718-1-zhongjinji%40honor.com
+patch subject: [PATCH] mm/page_alloc: make the maximum number of highatomic pageblocks resizable
+config: x86_64-buildonly-randconfig-001-20250227 (https://download.01.org/0day-ci/archive/20250227/202502271250.KUfFnxnl-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502271250.KUfFnxnl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502271250.KUfFnxnl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/page_alloc.c:19:
+   In file included from include/linux/mm.h:2302:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/page_alloc.c:44:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+   mm/page_alloc.c:2854:2: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
+    2854 |         __count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
+     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
+         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+   mm/page_alloc.c:2971:3: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
+    2971 |                 __count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
+     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
+         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+   mm/page_alloc.c:4743:2: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
+    4743 |         __count_zid_vm_events(PGALLOC, zone_idx(zone), nr_account);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
+     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
+         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+>> mm/page_alloc.c:6262:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6262 |                 .procname       = "highatomic_reserve_ratio",
+         |                 ^
+   mm/page_alloc.c:6263:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6263 |                 .data           = &highatomic_reserve_ratio,
+         |                 ^
+   mm/page_alloc.c:6264:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6264 |                 .maxlen         = sizeof(highatomic_reserve_ratio),
+         |                 ^
+   mm/page_alloc.c:6265:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6265 |                 .mode           = 0644,
+         |                 ^
+   mm/page_alloc.c:6266:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6266 |                 .proc_handler   = proc_dointvec_minmax,
+         |                 ^
+   mm/page_alloc.c:6267:3: error: field designator cannot initialize a non-struct, non-union type 'const struct ctl_table[]'
+    6267 |                 .extra1         = SYSCTL_ZERO,
+         |                 ^
+>> mm/page_alloc.c:6268:3: error: expected ';' at end of declaration
+    6268 |         },
+         |          ^
+         |          ;
+>> mm/page_alloc.c:6269:2: error: expected identifier or '('
+    6269 |         {
+         |         ^
+>> mm/page_alloc.c:6303:1: error: extraneous closing brace ('}')
+    6303 | };
+         | ^
+   6 warnings and 9 errors generated.
+
+
+vim +6262 mm/page_alloc.c
+
+  6227	
+  6228	static const struct ctl_table page_alloc_sysctl_table[] = {
+  6229		{
+  6230			.procname	= "min_free_kbytes",
+  6231			.data		= &min_free_kbytes,
+  6232			.maxlen		= sizeof(min_free_kbytes),
+  6233			.mode		= 0644,
+  6234			.proc_handler	= min_free_kbytes_sysctl_handler,
+  6235			.extra1		= SYSCTL_ZERO,
+  6236		},
+  6237		{
+  6238			.procname	= "watermark_boost_factor",
+  6239			.data		= &watermark_boost_factor,
+  6240			.maxlen		= sizeof(watermark_boost_factor),
+  6241			.mode		= 0644,
+  6242			.proc_handler	= proc_dointvec_minmax,
+  6243			.extra1		= SYSCTL_ZERO,
+  6244		},
+  6245		{
+  6246			.procname	= "watermark_scale_factor",
+  6247			.data		= &watermark_scale_factor,
+  6248			.maxlen		= sizeof(watermark_scale_factor),
+  6249			.mode		= 0644,
+  6250			.proc_handler	= watermark_scale_factor_sysctl_handler,
+  6251			.extra1		= SYSCTL_ONE,
+  6252			.extra2		= SYSCTL_THREE_THOUSAND,
+  6253		},
+  6254		{
+  6255			.procname	= "percpu_pagelist_high_fraction",
+  6256			.data		= &percpu_pagelist_high_fraction,
+  6257			.maxlen		= sizeof(percpu_pagelist_high_fraction),
+  6258			.mode		= 0644,
+  6259			.proc_handler	= percpu_pagelist_high_fraction_sysctl_handler,
+  6260			.extra1		= SYSCTL_ZERO,
+  6261		},
+> 6262			.procname	= "highatomic_reserve_ratio",
+  6263			.data		= &highatomic_reserve_ratio,
+  6264			.maxlen		= sizeof(highatomic_reserve_ratio),
+  6265			.mode		= 0644,
+  6266			.proc_handler	= proc_dointvec_minmax,
+  6267			.extra1		= SYSCTL_ZERO,
+> 6268		},
+> 6269		{
+  6270			.procname	= "lowmem_reserve_ratio",
+  6271			.data		= &sysctl_lowmem_reserve_ratio,
+  6272			.maxlen		= sizeof(sysctl_lowmem_reserve_ratio),
+  6273			.mode		= 0644,
+  6274			.proc_handler	= lowmem_reserve_ratio_sysctl_handler,
+  6275		},
+  6276	#ifdef CONFIG_NUMA
+  6277		{
+  6278			.procname	= "numa_zonelist_order",
+  6279			.data		= &numa_zonelist_order,
+  6280			.maxlen		= NUMA_ZONELIST_ORDER_LEN,
+  6281			.mode		= 0644,
+  6282			.proc_handler	= numa_zonelist_order_handler,
+  6283		},
+  6284		{
+  6285			.procname	= "min_unmapped_ratio",
+  6286			.data		= &sysctl_min_unmapped_ratio,
+  6287			.maxlen		= sizeof(sysctl_min_unmapped_ratio),
+  6288			.mode		= 0644,
+  6289			.proc_handler	= sysctl_min_unmapped_ratio_sysctl_handler,
+  6290			.extra1		= SYSCTL_ZERO,
+  6291			.extra2		= SYSCTL_ONE_HUNDRED,
+  6292		},
+  6293		{
+  6294			.procname	= "min_slab_ratio",
+  6295			.data		= &sysctl_min_slab_ratio,
+  6296			.maxlen		= sizeof(sysctl_min_slab_ratio),
+  6297			.mode		= 0644,
+  6298			.proc_handler	= sysctl_min_slab_ratio_sysctl_handler,
+  6299			.extra1		= SYSCTL_ZERO,
+  6300			.extra2		= SYSCTL_ONE_HUNDRED,
+  6301		},
+  6302	#endif
+> 6303	};
+  6304	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
