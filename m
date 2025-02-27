@@ -1,110 +1,107 @@
-Return-Path: <linux-kernel+bounces-537522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E14FA48CEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:47:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28BDA48CF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388A47A40E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A833B5E68
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD4923E329;
-	Thu, 27 Feb 2025 23:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960D923E33B;
+	Thu, 27 Feb 2025 23:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LNNo4/4S"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgKWI+Gs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0792C6A3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C68276D13;
+	Thu, 27 Feb 2025 23:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740700027; cv=none; b=uvErtDnrPRfl24QjRbxfrjwT0XAXo4Bvec3t4iLBp80g4A6OXQLjYaRiVa0AXUBlYaGOZ6I/8VgllKCeBWwxcrzyV0bsLyA9RezhK0D7xArADn1XC6K3U52Lw+mnySQmGwCdpS9I9hWHGiiUFKwLrynVKeJ9E7FrF8+0vs0PjIY=
+	t=1740700058; cv=none; b=EqSWhDla0b30x2fBsQJQvlLCtjJ2qyhgE5f91r54M1q179HPKeD8IuPkFJadaNy4UPMgbD5lYPRMpkbIvce6ZGHhlyBw4M9PvaDMpchB5DE7/NVakn3G9ebUzKqP760Ol6Bpi2wvg9Op//FGIqfpBnfCfW8dU1Dz0OGeM6OwUms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740700027; c=relaxed/simple;
-	bh=riHV1seuhU1QdFaRL1G/6dr2DRR6gYV8e9VC0evPPeE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rD09kwyfwTLI38ruy9DENiN+bMbY0UCJ998HqMpxJBRpYuDyDRQoth7WUgrtgMgYq+tAptgkRuc3/m1uiJvi/wUzi1M3j7q1XcFk/HoIEoDn7CpbUFuWJvR6ie9qVhImU+868NLB/TXeTTDtzMsxdDtQCKjldl9KBShRGKBupM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LNNo4/4S; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe916ba298so3236653a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:47:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740700025; x=1741304825; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCWfQ233PSWAs37mz2wPN/QFa/6k1QMX79a/XCJWF9g=;
-        b=LNNo4/4SxGoo4rspUheqP7rIDlwmrzx4g3SnThgVCwAqZEmcBCD5+CAwghpShTwSGr
-         BwWIz82zkCX53x2WE/kUtW+v2rMzFXynW2+VVEjidyuZjwd/c5YpI6V23LFO1zKo+Hsp
-         Qsdg0TNHv+RXQ8Ksvi1vu0cURqT83bqS2qtR+T8avINIrDBgSVykLN1sN437TBSt0Ftq
-         L39bsEh5guRboe8zQIkUBGB2z2ezCE7lUMEqcipVa/0AgDuLMadfwCxSJF/tDahUzXpJ
-         nEViEZkgtCLOKn6mfbSfi38Y1/0N1avTSnaaEZwkbzEzczxH8etvb4d/rZjzQpixsYfH
-         UKfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740700025; x=1741304825;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCWfQ233PSWAs37mz2wPN/QFa/6k1QMX79a/XCJWF9g=;
-        b=txfmKDxr7fzZpBJJQJxKILQzKb0hIbaZjFQ0f+8bsyVJU0sOtqMWjF6P6Qtszbrgp6
-         qqRGSdMqpDs3jODSqE8PJYlNWGF/ffkYEJrPSMzMiZJR5GwK6SwM7HcPhkbkPlU9x86t
-         1alWkG2fa72k11zcFmsTi2gT8EReghi7lrkxory0Uid8yx36/lUsSQyiIxYj/EPcyU52
-         uLqtvB1EOQOhqtIVdGuMBqUnTU7fnPwE3uJg7oGpQ9gvV2Eyf8PmRT+3qf85lQOcw+oF
-         Mq58ZCgn0jL8J6XjaViBmJ+Iu9JH1BDaxxSBN9TBRInnEnIjt1MfjW0qQFnoUR9uHbzU
-         cF3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcFdj7CCOYIPpnFzoKM4Cf/KgzlesweTvtJZlom3igIyrUIFA5nV3HxL0l76H9baOVNV0qJ/kK1VnBUv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxISVT4bEw9Tij/C2NJ7Ct/s+xw60BywFlErSLa8nZhFD7vBcIe
-	LUtjg4v43p2DuzVmn1Xdk6ofNOwBUvLpZaDRLbkAN8Mk1vqbOTrb/oR5Pmj6Jp9nMPB+9gKfrGc
-	9Iw==
-X-Google-Smtp-Source: AGHT+IHuJhugLoOALKL+bBHU8dYmihquWXJgCeAnlxsMLGlSruW3vsfZyq9aR+pdE7QTJi2WhpCLVWh7qaw=
-X-Received: from pjbpd10.prod.google.com ([2002:a17:90b:1dca:b0:2fa:15aa:4d1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d46:b0:2f5:88bb:118
- with SMTP id 98e67ed59e1d1-2febabf19bemr1619311a91.22.1740700025364; Thu, 27
- Feb 2025 15:47:05 -0800 (PST)
-Date: Thu, 27 Feb 2025 15:47:03 -0800
-In-Reply-To: <7f2b25c9-c92b-4b0a-bfd9-dda8b0b7a244@amazon.com>
+	s=arc-20240116; t=1740700058; c=relaxed/simple;
+	bh=c0oYsmyu//bfUW48faBRQo8ItRj/gBwXXjbw7H7EfQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jew09JcQsO+0V+LLjMCGbM1yX0aU60gQUFB9ciARidG43R9GaTJGfnWr0N+nkv5bLahM00WNTEcP0T0WV963V9tWwaQj0jHGVqX/d9cUre4DqqZS5j22O4xz++R5cTmZuJ5JZreGt0hvtc/ILirZgpPwKNlJAZpu3xWzA+zsis0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgKWI+Gs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57319C4CEDD;
+	Thu, 27 Feb 2025 23:47:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740700057;
+	bh=c0oYsmyu//bfUW48faBRQo8ItRj/gBwXXjbw7H7EfQE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=RgKWI+GspJn7hE7J9mcDJJ2vqB3NUtVCZFG4YE3vLwMRajxDv/fyEoclXVe+u/WAN
+	 jaQAFcaaqpw6/B3uIMG427FUVOVWVOjF5DPHhaBmg7GdF2gjYmRvOMzHMIa2w9PYE3
+	 nLvq8CAram0W7yR+6F9p8wT1rZ1x+ypelEc+iDD2JEdfelcUZWwOr91va0431r6Ny9
+	 b8x7N43CGE4DWZa0Qx/Fkj02WvppLE2Y6JQLNdj8CaqS3gqZ52ZkrehMjle4RTcbjt
+	 GkY6P9G3giZSYPyDdK8r0X/MqNVZva684PqoYv8UbEf7482/zYfiMaiY0AX9nlq1ke
+	 01QijDOrvvDsw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id F22ECCE04CA; Thu, 27 Feb 2025 15:47:36 -0800 (PST)
+Date: Thu, 27 Feb 2025 15:47:36 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rcu@vger.kernel.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH rcu 00/11] Lazy Preempt changes for v6.15
+Message-ID: <a43b531a-241e-4a0a-b373-5a111b519d0f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250225035516.26443-1-boqun.feng@gmail.com>
+ <87mse70xqn.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Z6u-WdbiW3n7iTjp@google.com> <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
- <Z7X2EKzgp_iN190P@google.com> <6eddd049-7c7a-406d-b763-78fa1e7d921b@amazon.com>
- <Z7d5HT7FpE-ZsHQ9@google.com> <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
- <Z75nRwSBxpeMwbsR@google.com> <946fc0f5-4306-4aa9-9b63-f7ccbaff8003@amazon.com>
- <Z8CWUiAYVvNKqzfK@google.com> <7f2b25c9-c92b-4b0a-bfd9-dda8b0b7a244@amazon.com>
-Message-ID: <Z8D5d85N3LJBJ2LD@google.com>
-Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
-From: Sean Christopherson <seanjc@google.com>
-To: Nikita Kalyazin <kalyazin@amazon.com>
-Cc: pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, jthoughton@google.com, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, 
-	graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, 
-	nsaenz@amazon.es, xmarcalx@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mse70xqn.fsf@oracle.com>
 
-On Thu, Feb 27, 2025, Nikita Kalyazin wrote:
-> On 27/02/2025 16:44, Sean Christopherson wrote:
-> > When it comes to uAPI, I want to try and avoid statements along the lines of
-> > "IF 'x' holds true, then 'y' SHOULDN'T be a problem".  If this didn't impact uAPI,
-> > I wouldn't care as much, i.e. I'd be much more willing iterate as needed.
-> > 
-> > I'm not saying we should go straight for a complex implementation.  Quite the
-> > opposite.  But I do want us to consider the possible ramifications of using a
-> > single bit for all userfaults, so that we can at least try to design something
-> > that is extensible and won't be a pain to maintain.
+On Thu, Feb 27, 2025 at 03:33:04PM -0800, Ankur Arora wrote:
 > 
-> So you would've liked more the "two-bit per gfn" approach as in: provide 2
-> interception points, for sync and async exits, with the former chosen by
-> userspace when it "knows" that the content is already in memory? 
+> Boqun Feng <boqun.feng@gmail.com> writes:
+> 
+> > Hi,
+> >
+> > Please find the upcoming changes for CONFIG_PREEMPT_LAZY in RCU. The
+> > changes can also be found at:
+> >
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git lazypreempt.2025.02.24a
+> >
+> > Paul & Ankur, I put patch #7 and #8 (bug fixes in rcutorture) before
+> > patch #9 (which is the one that enables non-preemptible RCU in
+> > preemptible kernel), because I want to avoid introduce a bug in-between
+> > a series, appreciate it if you can double check on this. Thanks!
+> 
+> Makes sense to me.
 
-No, all I'm saying is I want people think about what the future will look like,
-to minimize the chances of ending up with a mess.
+Looks good to me as well, and thank you for spotting this!
+
+							Thanx, Paul
 
