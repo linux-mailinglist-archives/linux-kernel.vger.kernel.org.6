@@ -1,190 +1,159 @@
-Return-Path: <linux-kernel+bounces-536063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393EAA47B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:04:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F025A47B24
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:04:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC84188A6FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9710B16B751
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D09C1DC997;
-	Thu, 27 Feb 2025 11:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2505722B8C7;
+	Thu, 27 Feb 2025 11:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnlIKAPm"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXqmDtea"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0CA1A3144;
-	Thu, 27 Feb 2025 11:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796C122AE4E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654230; cv=none; b=SYt6CJ11Efk+CxogWKferaIqOlHV4h9XCIPQo+3u2r3iRhOIkru+PkLNuI8zp97PMTuRKCG2/psAsDnNx4UHsSpvvXCD7U4eQNWI+jcdFWTOAf5S7sOescELtypGYD0VKaTVZ4v+U4eQeUkss5ErHfUzcRVnvmMSmLBx7bbfaM8=
+	t=1740654238; cv=none; b=mtUKJeKbR+fvjbGe7FzbigcAek2jifJjCCYk/htz72+GnM2uDrhRof7FgnBGwtaP0gFM2G6FKLuTNvCUncIsEhxARb64J6aXJNwq/p/YF3t24vggaqW+rmW8c6D3XbCwmNe6AytXHO8L32/wHy3U1NeDwWUYCrYkzSf9I0ZE4eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654230; c=relaxed/simple;
-	bh=fOx1fZDmWCp1Ci9WatOi+x02LNpZCXXhd2brVay/wW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=emdqyRg2lyb+UETj/8ViHYeoCm11kjWsw3orvh73iOOLZsuVhLZljXC2U55jiRhj0pr6A1p4ZOYuz+XBnENXylNbjlNhAN95Y7O7lkPJKUuXOxDsWFL+SuCP9aod5WS1g/ozv1KBW/I7uI6QQNVTciNF6gwD166w8/yr2JP4nKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnlIKAPm; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f3ee8a119so397384f8f.0;
-        Thu, 27 Feb 2025 03:03:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740654227; x=1741259027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hadUX4u1GfKPIphHcn1Ek4Hr3PvIl5P+IUNn+8yOy8=;
-        b=KnlIKAPmwD3vvaO3JU1AVjajh1nVZOfH+c8TDwJ+ijTP4OnyCEdOiVuCeFMs3IcZ8W
-         VSpFgSSY26QbfeE3sCJfSC7k3QU4weWUJN00imB+2MeMcpYk8IWhpN5ea45M7g8sGq87
-         3S9xrHX+F8sCE8pQeMZJAIkyBJjs/cYSa30yaxUMtlqzy4IS1awzw9bPrcrYbfQv/zAq
-         c1nxou1w5kzEhMRAYyH5mtxsc0BQzv/sQ0/y0lFCusp2hSh7LpZSc1X2py88De5z19Wz
-         yqoo3wefFiKuQ2sW1YJBQI/pzJ1QUxFepfAD6uEVwTLf/ryNmBYweIpzDll/IonuUOwk
-         iF8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740654227; x=1741259027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7hadUX4u1GfKPIphHcn1Ek4Hr3PvIl5P+IUNn+8yOy8=;
-        b=hVSFhvlPZtkKLIRQdhxffznPMhTzv6I+0whYZV1WJ5oxvMZ6TQJXeYlVflr1W8cWHp
-         gYRFV1gt1RjFw4GMkIaLSTtSYA5FuaGyvUfEBoohJjuZOWoQVsvD5w2BWdLgQhYMACYo
-         OiRknkr47/Ln8yZQCenda2I9URAVq/cfpNtKK3j8D6DQpOrfSHxrBPYe8S4X0JyZyGdf
-         BcLWNW3aA5iA0OZModa7xndktYyMrOHz6iA4rcJFIih9VPJgCPSei+O66qQEw3fSaG6b
-         lC9hWLgius1tazCBFqOHUURybiJTfehiTz+VUNFLJ9/eQ/7z+wptjXaY2bmGM4PXEXRl
-         rGhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUYHTyRoYlCYydz7y7AVxl/YlbtCiC3LGioZ4ed4bTu6ryc+53B01rlyRs9lJosmUb2akuuLfcaVcF@vger.kernel.org, AJvYcCWuCIZUBj6+IyLqm8mhAhXE6z9IJZxf37D9FB94eunhTTL4GSnZALdPRirSJlz/GHWCtyO/7oEV0Hczb0cd@vger.kernel.org, AJvYcCXICg/yLdJYOjPXL2HtcL77nSaO6HxyDcqROJqtWfPBQ09DtImj92PRWboyNPfgvWAknfNGhbKVNSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb/QQQfaZ/ul1vI5QfzOQ98SHayf3mZRXFw+k9gbjPyFvYgRUI
-	bKE+DXWDYeia7uIPyRHbA/udWW9S3W72VnzlL5U4xDsxb4gCf2tTShzbnpvYEoGHqCHcl15YCaa
-	yMtglOyy/lYwiiL5bdkkzuloQ2yI=
-X-Gm-Gg: ASbGncsXfW6zETt8hbv1UHyjciiWwsX2SVYzK2mECYovJVzGjTjJwerqCG63PuZ8iGC
-	ts89g8FihBlVxIvrT37TLeJg6dyNJr+k1/fDadpzNTRaZO1lQfETBKmjaPHWLSkd+W2RadNb/zo
-	r8tC/6WHBv
-X-Google-Smtp-Source: AGHT+IEEj51ZFF7H+ooOf776nU/dJ5DP50cQZhn9gIcpUHIVdKCAo09sypcuCvEs89ahCT8lxT6lgDEZJMVz7+RRv6o=
-X-Received: by 2002:a05:6000:2183:b0:390:dfe0:1320 with SMTP id
- ffacd0b85a97d-390dfe014b3mr2847546f8f.33.1740654227006; Thu, 27 Feb 2025
- 03:03:47 -0800 (PST)
+	s=arc-20240116; t=1740654238; c=relaxed/simple;
+	bh=XYmCAO03K7PjNg3F4YvDIfzrnLiWeCjqMYdceVKe+TU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dNXSWktXi4dzDZjWCME656juDiyWSwu9+4vXi8NPe+bdLuV2JXY3uwWNoRizrOVi72AOTHkL8RTKYMT93bjcvyN6Ef5613e96oNaJ8KCmO/Yz1/+7pWIpCsn3ogVpaUP3wgf6W4HaZGf+JBPB3R8035V8FF6UWn/R9UyMAvoHa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXqmDtea; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02597C4CEEF;
+	Thu, 27 Feb 2025 11:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740654238;
+	bh=XYmCAO03K7PjNg3F4YvDIfzrnLiWeCjqMYdceVKe+TU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TXqmDteaKPPHQ5FJ1CsXZ3js5G/Rn3n9BKvPS0epJ6FK+/vdCY7FoxkclCdvOb3LI
+	 vDAsaTNd5vo2Eg5s9mBVV5t1CCP3w1hvFOWx5h2/RnpgrYoVFxsiaoLRa5oMmmCgLX
+	 92J+Kksz5rxbagXq3Ulu7No5PveZvXBExTnzz68niRE70MDMae/U374De9L9DpXXGd
+	 19PUmmJC3EjxqxAAuzPbXJ69rKCjGaNfMxodv6I+aKf9hx/fPRoR+R3KAe65U9yTN/
+	 aaYbulm+TGxjmqxWBLKcOxCu+/0iiArkVuqjUFKs9jLXavuhrv6WImbERLvDzaoHb3
+	 RMP/0fIGJ3CTg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tnbgK-00000001mQu-0gLI;
+	Thu, 27 Feb 2025 12:03:56 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 06/21] acpi/ghes: add a firmware file with HEST address
+Date: Thu, 27 Feb 2025 12:03:36 +0100
+Message-ID: <ce0db0a85f31a58c44e25198f0ef3614c717cb07.1740653898.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1740653898.git.mchehab+huawei@kernel.org>
+References: <cover.1740653898.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226093700.44726-1-clamor95@gmail.com> <20250226093700.44726-2-clamor95@gmail.com>
- <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
-In-Reply-To: <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 27 Feb 2025 13:03:34 +0200
-X-Gm-Features: AQ5f1JppDCYqF1QXS5_vIgWet2sbqWFV8cK5PQx5sC6AY4BBWfoZ9BSho_RZCb0
-Message-ID: <CAPVz0n2kfxTJUkqrtLia6xBJ8t+fwjujjsc9k=mOk-P06bJH7A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-=D1=87=D1=82, 27 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 12:45 Krzy=
-sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
-> > +  maxim,fcharge-current-limit-microamp:
-> > +    description:
-> > +      Fast-Charge current limit
-> > +    minimum: 250000
-> > +    default: 500000
-> > +    maximum: 1550000
-> > +
-> > +  maxim,fcharge-timer-hours:
-> > +    description:
-> > +      Fast-Charge timer in hours. Setting this value 3 and lower or 11=
- and higher
-> > +      will disable Fast-Charge timer.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    default: 5
->
-> You still did not answer why this is board specific. This was rejected
-> in the past because of that reason and nothing here changed. Nothing
-> will change without detailed explanation, so use other interfaces if you
-> need user-space to configure it (see other drivers, e.g. maxim)
->
+Store HEST table address at GPA, placing its the start of the table at
+hest_addr_le variable.
 
-Btw, I have used this awesome example you have provided. Take a look
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+---
+ hw/acpi/ghes.c         | 20 +++++++++++++++++++-
+ include/hw/acpi/ghes.h |  7 ++++++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml?h=3Dv6.=
-14-rc4
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index 9243b5ad4acb..8ec423726b3f 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -30,6 +30,7 @@
+ 
+ #define ACPI_HW_ERROR_FW_CFG_FILE           "etc/hardware_errors"
+ #define ACPI_HW_ERROR_ADDR_FW_CFG_FILE      "etc/hardware_errors_addr"
++#define ACPI_HEST_ADDR_FW_CFG_FILE          "etc/acpi_table_hest_addr"
+ 
+ /* The max size in bytes for one error block */
+ #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
+@@ -341,6 +342,9 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+ {
+     AcpiTable table = { .sig = "HEST", .rev = 1,
+                         .oem_id = oem_id, .oem_table_id = oem_table_id };
++    uint32_t hest_offset;
++
++    hest_offset = table_data->len;
+ 
+     build_ghes_error_table(ags, hardware_errors, linker);
+ 
+@@ -352,6 +356,17 @@ void acpi_build_hest(AcpiGhesState *ags, GArray *table_data,
+                   ACPI_GHES_NOTIFY_SEA, ACPI_HEST_SRC_ID_SEA);
+ 
+     acpi_table_end(linker, &table);
++
++    if (ags->use_hest_addr) {
++        /*
++         * Tell firmware to write into GPA the address of HEST via fw_cfg,
++         * once initialized.
++         */
++        bios_linker_loader_write_pointer(linker,
++                                         ACPI_HEST_ADDR_FW_CFG_FILE, 0,
++                                         sizeof(uint64_t),
++                                         ACPI_BUILD_TABLE_FILE, hest_offset);
++    }
+ }
+ 
+ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+@@ -361,7 +376,10 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+     fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
+                     hardware_error->len);
+ 
+-    if (!ags->use_hest_addr) {
++    if (ags->use_hest_addr) {
++        fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
++            NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
++    } else {
+         /* Create a read-write fw_cfg file for Address */
+         fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+             NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index 5000891f163f..38abe6e3db52 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -70,9 +70,14 @@ enum {
+  * When use_hest_addr is false, the GPA of the etc/hardware_errors firmware
+  * is stored at hw_error_le. This is the default on QEMU 9.x.
+  *
+- * An GPA value equal to zero means that GHES is not present.
++ * When use_hest_addr is true, the stored offset is placed at hest_addr_le,
++ * meaning an offset from the HEST table address from etc/acpi/tables firmware.
++ * This is the default for QEMU 10.x and above.
++ *
++ * Whe both GPA values are equal to zero means that GHES is not present.
+  */
+ typedef struct AcpiGhesState {
++    uint64_t hest_addr_le;
+     uint64_t hw_error_le;
+     bool use_hest_addr;         /* Currently, always false */
+ } AcpiGhesState;
+-- 
+2.48.1
 
-Oh, I wonder why it uses so much values which duplicate battery? I
-know, it lacks battery, I assume that is why?
-
-> > +
-> > +  maxim,fcharge-rst-threshold-high:
-> > +    description:
-> > +      Set Fast-Charge reset threshold to -100 mV
-> > +    type: boolean
-> > +
-> > +  maxim,in-current-limit-microamp:
-> > +    description:
-> > +      Input current limit
-> > +    minimum: 100000
-> > +    default: 500000
-> > +    maximum: 1500000
-> > +
-> > +  maxim,topoff-timer-minutes:
-> > +    description:
-> > +      Top-Off timer minutes
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    enum: [0, 10, 20, 30, 40, 50, 60, 70]
-> > +    default: 30
->
-> Same.
->
-> > +
-> > +  maxim,topoff-current-threshold-microamp:
-> > +    description:
-> > +      Top-Off current threshold
-> > +    enum: [50000, 100000, 150000, 200000]
-> > +    default: 50000
-> > +
-> > +  maxim,fcharge-usb-current-limit-microamp:
-> > +    description:
-> > +      Fast-Charge USB current limit
-> > +    minimum: 100000
-> > +    default: 500000
-> > +    maximum: 1500000
-> > +
-> > +  maxim,fcharge-ac-current-limit-microamp:
-> > +    description:
-> > +      Fast-Charge AC current limit
-> > +    minimum: 100000
-> > +    default: 500000
-> > +    maximum: 1500000
-> > +
-> > +  maxim,usb-in-current-limit-microamp:
-> > +    description:
-> > +      USB Input current limit
-> > +    minimum: 100000
-> > +    default: 500000
-> > +    maximum: 1500000
-> > +
-> > +  maxim,ac-in-current-limit-microamp:
-> > +    description:
-> > +      AC Input current limit
-> > +    minimum: 100000
-> > +    default: 500000
-> > +    maximum: 1500000
->
-> Half of these properties as well are not suitable and duplicate existing
-> sysfs interface.
->
-> And for remaining, still no battery.
->
-> Best regards,
-> Krzysztof
->
 
