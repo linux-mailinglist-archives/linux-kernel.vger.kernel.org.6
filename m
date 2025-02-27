@@ -1,156 +1,245 @@
-Return-Path: <linux-kernel+bounces-537386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89618A48B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:18:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46642A48B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322CF16CAE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DF033A8716
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A01272922;
-	Thu, 27 Feb 2025 22:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F4A271829;
+	Thu, 27 Feb 2025 22:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQwIqjww"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lw+pIYNH"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B47272901;
-	Thu, 27 Feb 2025 22:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DAF225775
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694689; cv=none; b=kfbU0wk/XOuZvgaZIhlfWw/gSml4NruY/SeR0WDb46OUvw8yDA1H38JbkJydJfa2CrzhZW106jcscZcYM1IWMLiJqPYxg8vSlXaB+UU8oF7199anDrkBxJXhzVgu6J702iqzja2JaoGCRONZdGcB1ZX511EzhMugQ9rQvqy4QWA=
+	t=1740694685; cv=none; b=oj552YEz7hQYJ3lK/I0mMmezFoaBozoCc3NnvMHeMHCCOifeCXr9dFewkfcYZiUoSusSHdEbEY8KCXz+WIXp/buGv8YsgzsoFwkjNM/dH27hGkBZ9Ze4Fa1I58/xJVgBB+uZUKXerKVIEw+8orKP/49NaRA9UKLsWATRhXGNQuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694689; c=relaxed/simple;
-	bh=dpLPdoKIs3LeqgrVPPxuOQBBRUH3k8TIgoIASRxT7pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sebWuJ9OdzEjgm/sLQ68c9E+FcGS1Qg1rk2/I48EhPC/4jq83brzcwaA4ttJ0KZfnqzkJ++YgVkmopxszPLgkdvSciajHjqepw33/Z2r8xOR1NLuV9rYVFzx02305hIfcGZW9AGj70uzr6MAgtwr0umCP1PDFuzkfu2Kvzia+zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQwIqjww; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso10012055e9.0;
-        Thu, 27 Feb 2025 14:18:05 -0800 (PST)
+	s=arc-20240116; t=1740694685; c=relaxed/simple;
+	bh=2n2fTiECA/mEC2r42Aamsm1tkt+M3dx+N6nVkBuGQwQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fGn0mpfRcfD3fhqQx2P23D6HEfdu45iMdut0JBUEXYHY4tavfD4AorNS9w3/fHMCa9jrE6usQtUAeqRnYthDwiNmRfdTbUSD1gOF+JXaEiYsERKfCQeULr6d+mLFBc6CSCX7iQDjcLgEquBAo4FAU0+vKiVzRoBVRbsxMq6URTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lw+pIYNH; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc4fc93262so3131540a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:18:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694684; x=1741299484; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+qE7pAv4W7yuiRGioyB5dU0oQhIbvtWoB+MtssPnANU=;
-        b=BQwIqjwwjDGG+6h6R2MoWaDpqjK+12a4U2o+6l7r8UX/bXY0DLXhtfsrHJ6CF6PtM0
-         BHc4utV+vI/unmD+Hriqhhtxgf9dqu46nxDg/e9a47SznNQa2Tb8OGEY8joE0O/83ncn
-         1euVQnvwXfmnLe38TudXBqiBzu+mGwQu6civPi01pbf8WRyUHy22eubC6IkPRV3dkUUd
-         mRLlISoc1odI7Q7YtvtUh0CFQdR6VHZ0pb7GL64xKNhZ1pRbUIPx7HWOI2FPXHG2WDUN
-         1y+/lYdMk+zVTtG+fGLrlPSkC/rHVXIKbUg+jM2XxVkJD1+n6L8sHSHpYKgl9omLqT1W
-         Fh7w==
+        d=google.com; s=20230601; t=1740694683; x=1741299483; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSsPdpeGhBimYxX2APmO2De1m7wFKDQe+ScdUPoNEQ4=;
+        b=lw+pIYNHOd7Qy8nYRESUX222oPmhXYws5ugX8N+cyTGy0IRxVGMtWjp+4anUUs2jDV
+         ckw29PfK3gS/04CsSsoYl/KoJ2vTuyBWX0rvDG1i7pFDzwfWSMQg5Rcks6gohFmOgm1E
+         v1qJN0MBb+Y71FMYCsUxti3oa2ZOYOnydYSGFBHPKEdIcMYAHWEinfNLeAEmhYEipRgd
+         mL5SERsrgxlaeuLKqWNnq/frgmE5gBMXfFI4baZpKXra4cI9ZgmGO1gtU4W2vkmzP5nN
+         IqBn2QDGKAuHawvggw/oK11qkyHBA3qsO6Qby2N9JbZH1XvFiWKes21nX0VQ3L7+eV5C
+         t4UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694684; x=1741299484;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+qE7pAv4W7yuiRGioyB5dU0oQhIbvtWoB+MtssPnANU=;
-        b=oq31hlJYfNIME0+4oGnsSb1ptawUumvaEmi7h5xXhsMPW+d7x5RnL4sMp6s8hdpgn8
-         Wwz157wn93cu5Ws+kI8P28jWM/2lnIaaD6XwF0tiiFLelkNE3+jkCae2DE5bRwtQPDej
-         a3ZMzfG0o1QlzPN+CKaqSeAqeNtyv2gl/stvmXFvwnlkEy8n0XS+Uwq5hkm343nDFzzk
-         +MCQp2bv+IkbHdXtGrB7qc1ufHEi4KDvgj3q7BBacY/rqxLA+e0Robutn1t23XLL6Qan
-         TIM7W2jPK6IMNzBvqSwm91Gjw6QwctAsNBis/N7mt99+zPXyk+DRIa6QpCAe85zolqHg
-         1gYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1HE4E4NkEPVIs/WA/sHpbfNM04orucVRSGJGWlEaTdKILd8LZzu6Tv9wtUJDYjdwCpQftnGIGlhN3aYRJSXc=@vger.kernel.org, AJvYcCVTaWk4LTqPyIu63VQSh3Nv5xKVxw5LZ5DQHBM06Mx6yDqtMlF/6wVfVLBJr2BUiyK5kNRTsNceg+sPcBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeopchN4oSOi3K6dztnVapjebTCUJyzKoCcNr7qLNoy7k8kf30
-	AOZRO0/gELCocklNCiVqZchoaZq0Q+emopxl5eezjrGRPxm/fBht
-X-Gm-Gg: ASbGncvkPZ2jmja1cWR6pAp36FBZwImPhexW+fbS/zzmLRgUfZekKkfBAGzltb2CWnL
-	8ZKw8E/Ul9I66PUWFx78BPd3pZ98/UmmjxiXoqdInGYcqOmIiowVwc6f7ZXcm3LAO45vG5c6/LN
-	9pJCPkIuRylD6DJPKpE/Tbm1DzUX5xRh/jztle2Uii5r3/G/d7xA5kzq+4tjf9HyM7uvIU9b6/1
-	QQeN2l7Z0H31CxvZiOz9J78dkWRGl17Svq5R9/vUkEPsiQBy8C7kP5YGUVlJUmkY+zclMxcs+8c
-	ObYqQmbRoWmMDprrLTgQRAEDUNhwp+mmvnAKS9LStk4eLZTFB9mW0bkfAh1LIZy3
-X-Google-Smtp-Source: AGHT+IEIpLxegfdcRnz87rqWS26ts4HVv2BxORGQ1GFs3CHTjTrNYdNUUZHlhyGNdIE5bGGu90EjBQ==
-X-Received: by 2002:a05:600c:4351:b0:439:96a4:d2a8 with SMTP id 5b1f17b1804b1-43afdda613bmr39443845e9.5.1740694684396;
-        Thu, 27 Feb 2025 14:18:04 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27aa85sm35486045e9.28.2025.02.27.14.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:18:03 -0800 (PST)
-Date: Thu, 27 Feb 2025 22:18:01 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Ralf Jung <post@ralfj.de>, Ventura Jack <venturajack85@gmail.com>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo
- <gary@garyguo.net>, torvalds@linux-foundation.org, airlied@gmail.com,
- boqun.feng@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
- hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250227221801.63371d19@pumpkin>
-In-Reply-To: <rps5yviwyghhalaqmib3seqj62efzweixiqwb5wglzor4gk75n@oxki5lhsvhrf>
-References: <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
-	<780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
-	<CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
-	<f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
-	<CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
-	<7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
-	<CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
-	<d29ebda1-e6ca-455d-af07-ac1daf84a3d2@ralfj.de>
-	<CAFJgqgQ=dJk7Jte-aaB55_CznDEnSVcy+tEh83BwmrMVvOpUgQ@mail.gmail.com>
-	<651a087b-2311-4f70-a2d3-6d2136d0e849@ralfj.de>
-	<rps5yviwyghhalaqmib3seqj62efzweixiqwb5wglzor4gk75n@oxki5lhsvhrf>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1740694683; x=1741299483;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSsPdpeGhBimYxX2APmO2De1m7wFKDQe+ScdUPoNEQ4=;
+        b=n+Dz2mLXXG169wFbyohaxq4b2dyL29WVEmx7KjLfb44SYBTi5KjYCy0qMUWwOtNvdy
+         GyqmIBACk8TQA1GdNFMZeObP5klbYaXagftxgcbZi/PsukrQ0Q1yRabeAPTCp8siHe+Z
+         C7UbhK4MBVytK5vQWXJbsceZlTwX0tc3JwZJsd6YeIwtgPqyGm/GgCXYvKpnqcKb1Bxq
+         0JNGFLnDqBeUR/MY90PlHWKd1ox5YzJa2HsiNUXmS8ovgq0SAlRRs7PEJ6WKbXT2yc4d
+         kr8pVRfYcYJT0ESsKCIGmdrIcd972jJ3pBihmdwwZX+or37xLYbs6klA1zW3vplGfXOZ
+         cKUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr8ZFDqkW5Ucq7AX/zdnRAmqhZnntLCdtvfJPeY1fN7ILhlkMO7pQ5uZeSwMDkl5DHfiL4JcmBtyR10TA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0FTUHP1Bq4snUY8t7JszoA2fYT0mub6cLTNJw+vW02yVinjwN
+	hfD+eIrJbz8nhzeQqPsvEm9vjaYpe4c+SeTi3kWvoYvbltTVD+yQvP9CCCI7Isz5HnEiHAsOras
+	E3w==
+X-Google-Smtp-Source: AGHT+IFnpP1BpVR7GZ6CP9sWZxTMoJZvy+ULPkUSf8TSQDyPduCxJg7da4iBH3B09xjNUba1kYGOHyf1Hy0=
+X-Received: from pjyp16.prod.google.com ([2002:a17:90a:e710:b0:2f4:465d:5c61])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c07:b0:2ee:ab04:1037
+ with SMTP id 98e67ed59e1d1-2febab78d2bmr1712771a91.17.1740694683655; Thu, 27
+ Feb 2025 14:18:03 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:18:02 -0800
+In-Reply-To: <Z7/8EOKH5Z1iShQB@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250208105318.16861-1-yan.y.zhao@intel.com> <Z75y90KM_fE6H1cJ@google.com>
+ <Z76FxYfZlhDG/J3s@yzhao56-desk.sh.intel.com> <Z79rx0H1aByewj5X@google.com> <Z7/8EOKH5Z1iShQB@yzhao56-desk.sh.intel.com>
+Message-ID: <Z8Dkmu_57EmWUdk5@google.com>
+Subject: Re: [PATCH] KVM: selftests: Wait mprotect_ro_done before write to RO
+ in mmu_stress_test
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 27 Feb 2025 15:22:20 -0500
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
-
-> On Thu, Feb 27, 2025 at 08:45:09PM +0100, Ralf Jung wrote:
-> > Hi,
-> >   
-> > > > > If C was willing to break code as much as Rust, it would be easier to
-> > > > > clean up C.  
+On Thu, Feb 27, 2025, Yan Zhao wrote:
+> On Wed, Feb 26, 2025 at 11:30:15AM -0800, Sean Christopherson wrote:
+> > On Wed, Feb 26, 2025, Yan Zhao wrote:
+> > > On Tue, Feb 25, 2025 at 05:48:39PM -0800, Sean Christopherson wrote:
+> > > > On Sat, Feb 08, 2025, Yan Zhao wrote:
+> > > > > The test then fails and reports "Unhandled exception '0xe' at guest RIP
+> > > > > '0x402638'", since the next valid guest rip address is 0x402639, i.e. the
+> > > > > "(mem) = val" in vcpu_arch_put_guest() is compiled into a mov instruction
+> > > > > of length 4.
 > > > > 
-> > > > Is that true? Gcc updates do break code.  
+> > > > This shouldn't happen.  On x86, stage 3 is a hand-coded "mov %rax, (%rax)", not
+> > > > vcpu_arch_put_guest().  Either something else is going on, or __x86_64__ isn't
+> > > > defined?
+> > > stage 3 is hand-coded "mov %rax, (%rax)", but stage 4 is with
+> > > vcpu_arch_put_guest().
 > > > 
-> > > Surely not as much as Rust, right? From what I hear from users
-> > > of Rust and of C, some Rust developers complain about
-> > > Rust breaking a lot and being unstable, while I instead
-> > > hear complaints about C and C++ being unwilling to break
-> > > compatibility.  
+> > > The original code expects that "mov %rax, (%rax)" in stage 3 can produce
+> > > -EFAULT, so that in the host thread can jump out of stage 3's 1st vcpu_run()
+> > > loop.
 > > 
-> > Stable Rust code hardly ever breaks on a compiler update. I don't know which
-> > users you are talking about here, and it's hard to reply anything concrete
-> > to such a vague claim that you are making here. I also "hear" lots of
-> > things, but we shouldn't treat hear-say as facts.
-> > *Nightly* Rust features do break regularly, but nobody has any right to
-> > complain about that -- nightly Rust is the playground for experimenting with
-> > features that we know are no ready yet.  
-> 
-> It's also less important to avoid ever breaking working code than it was
-> 20 years ago: more of the code we care about is open source, everyone is
-> using source control, and with so much code on crates.io it's now
-> possible to check what the potential impact would be.
+> > Ugh, I forgot that there are two loops in stage-3.  I tried to prevent this race,
+> > but violated my own rule of not using arbitrary delays to avoid races.
+> > 
+> > Completely untested, but I think this should address the problem (I'll test
+> > later today; you already did the hard work of debugging).  The only thing I'm
+> > not positive is correct is making the first _vcpu_run() a one-off instead of a
+> > loop.
+> Right, making the first _vcpu_run() a one-off could produce below error:
+> "Expected EFAULT on write to RO memory, got r = 0, errno = 4".
 
-Do you really want to change something that would break the linux kernel?
-Even a compile-time breakage would be a PITA.
-And the kernel is small by comparison with some other projects.
+/facepalm
 
-Look at all the problems because python-3 was incompatible with python-2.
-You have to maintain compatibility.
+There are multiple vCPU, using a single flag isn't sufficient.  I also remembered
+(well, re-discovered) why I added the weird looping on "!":
 
-Now there are some things in C (like functions 'falling of the bottom
-without returning a value') that could sensibly be changed from warnings
-to errors, but you can't decide to fix the priority of the bitwise &.
+	do {                                                                    
+		r = _vcpu_run(vcpu);                                            
+	} while (!r);
 
-	David
+On x86, with forced emulation, the vcpu_arch_put_guest() path hits an MMIO exit
+due to a longstanding (like, forever longstanding) bug in KVM's emulator.  Given
+that the vcpu_arch_put_guest() path is only reachable by disabling the x86 specific
+code (which I did for testing those paths), and that the bug only manifests on x86,
+I think it makes sense to drop that code as it's super confusing, gets in the way,
+and is unreachable unless the user is going way out of their way to hit it.
 
+I still haven't reproduced the failure without "help", but I was able to force
+failure by doing a single write and dropping the mprotect_ro_done check:
 
-> 
-> This is a good thing as long as it's done judiciously, to evolve the
-> language towards stronger semantics and fix safety issues in the
-> cleanest way when found.
+diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
+index a1f3f6d83134..3524dcc0dfcf 100644
+--- a/tools/testing/selftests/kvm/mmu_stress_test.c
++++ b/tools/testing/selftests/kvm/mmu_stress_test.c
+@@ -50,15 +50,15 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+         */
+        GUEST_ASSERT(!READ_ONCE(all_vcpus_hit_ro_fault));
+        do {
+-               for (gpa = start_gpa; gpa < end_gpa; gpa += stride)
++               // for (gpa = start_gpa; gpa < end_gpa; gpa += stride)
+ #ifdef __x86_64__
+-                       asm volatile(".byte 0x48,0x89,0x00" :: "a"(gpa) : "memory"); /* mov %rax, (%rax) */
++                       asm volatile(".byte 0x48,0x89,0x00" :: "a"(end_gpa - stride) : "memory"); /* mov %rax, (%rax) */
+ #elif defined(__aarch64__)
+                        asm volatile("str %0, [%0]" :: "r" (gpa) : "memory");
+ #else
+                        vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
+ #endif
+-       } while (!READ_ONCE(mprotect_ro_done) && !READ_ONCE(all_vcpus_hit_ro_fault));
++       } while (!READ_ONCE(all_vcpus_hit_ro_fault));
+ 
+        /*
+         * Only architectures that write the entire range can explicitly sync,
 
+The below makes everything happy, can you verify the fix on your end?
+
+---
+ tools/testing/selftests/kvm/mmu_stress_test.c | 22 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
+index d9c76b4c0d88..a1f3f6d83134 100644
+--- a/tools/testing/selftests/kvm/mmu_stress_test.c
++++ b/tools/testing/selftests/kvm/mmu_stress_test.c
+@@ -18,6 +18,7 @@
+ #include "ucall_common.h"
+ 
+ static bool mprotect_ro_done;
++static bool all_vcpus_hit_ro_fault;
+ 
+ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ {
+@@ -36,9 +37,9 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ 
+ 	/*
+ 	 * Write to the region while mprotect(PROT_READ) is underway.  Keep
+-	 * looping until the memory is guaranteed to be read-only, otherwise
+-	 * vCPUs may complete their writes and advance to the next stage
+-	 * prematurely.
++	 * looping until the memory is guaranteed to be read-only and a fault
++	 * has occured, otherwise vCPUs may complete their writes and advance
++	 * to the next stage prematurely.
+ 	 *
+ 	 * For architectures that support skipping the faulting instruction,
+ 	 * generate the store via inline assembly to ensure the exact length
+@@ -47,6 +48,7 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ 	 * is low in this case).  For x86, hand-code the exact opcode so that
+ 	 * there is no room for variability in the generated instruction.
+ 	 */
++	GUEST_ASSERT(!READ_ONCE(all_vcpus_hit_ro_fault));
+ 	do {
+ 		for (gpa = start_gpa; gpa < end_gpa; gpa += stride)
+ #ifdef __x86_64__
+@@ -56,7 +58,7 @@ static void guest_code(uint64_t start_gpa, uint64_t end_gpa, uint64_t stride)
+ #else
+ 			vcpu_arch_put_guest(*((volatile uint64_t *)gpa), gpa);
+ #endif
+-	} while (!READ_ONCE(mprotect_ro_done));
++	} while (!READ_ONCE(mprotect_ro_done) && !READ_ONCE(all_vcpus_hit_ro_fault));
+ 
+ 	/*
+ 	 * Only architectures that write the entire range can explicitly sync,
+@@ -81,6 +83,7 @@ struct vcpu_info {
+ 
+ static int nr_vcpus;
+ static atomic_t rendezvous;
++static atomic_t nr_ro_faults;
+ 
+ static void rendezvous_with_boss(void)
+ {
+@@ -148,12 +151,16 @@ static void *vcpu_worker(void *data)
+ 	 * be stuck on the faulting instruction for other architectures.  Go to
+ 	 * stage 3 without a rendezvous
+ 	 */
+-	do {
+-		r = _vcpu_run(vcpu);
+-	} while (!r);
++	r = _vcpu_run(vcpu);
+ 	TEST_ASSERT(r == -1 && errno == EFAULT,
+ 		    "Expected EFAULT on write to RO memory, got r = %d, errno = %d", r, errno);
+ 
++	atomic_inc(&nr_ro_faults);
++	if (atomic_read(&nr_ro_faults) == nr_vcpus) {
++		WRITE_ONCE(all_vcpus_hit_ro_fault, true);
++		sync_global_to_guest(vm, all_vcpus_hit_ro_fault);
++	}
++
+ #if defined(__x86_64__) || defined(__aarch64__)
+ 	/*
+ 	 * Verify *all* writes from the guest hit EFAULT due to the VMA now
+@@ -378,7 +385,6 @@ int main(int argc, char *argv[])
+ 	rendezvous_with_vcpus(&time_run2, "run 2");
+ 
+ 	mprotect(mem, slot_size, PROT_READ);
+-	usleep(10);
+ 	mprotect_ro_done = true;
+ 	sync_global_to_guest(vm, mprotect_ro_done);
+ 
+
+base-commit: 557953f8b75fce49dc65f9b0f7e811c060fc7860
+-- 
 
