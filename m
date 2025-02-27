@@ -1,166 +1,199 @@
-Return-Path: <linux-kernel+bounces-536702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F0CA48329
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:39:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A9CA4834A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FF9188A719
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80E117061A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1B226A1CF;
-	Thu, 27 Feb 2025 15:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4174126E63D;
+	Thu, 27 Feb 2025 15:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DESr8ksR"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=phytecmesstechnikgmbh.onmicrosoft.com header.i=@phytecmesstechnikgmbh.onmicrosoft.com header.b="f2Qi5sYu"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2106.outbound.protection.outlook.com [40.107.249.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E6925F790
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670728; cv=none; b=HMcup/43296ywsSOAExqXsD4MSxBSuVwcZ3YoBmIyNvqJAvcvKD01YFdTvipbIJIeSQI8qunuNTjEWRi+2lZFpLrPYO96jDHMmcVge41SQt13vdXAilobxV95iX+0VQ39jSF+jzHkM5AirGVa1q3TVFbC+XIBgyXeoUdnW6tPEo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670728; c=relaxed/simple;
-	bh=6eAW2AaO6El97M04g7Ltr2OugcTyLJec8L7LtDutNTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DShwG2mD0hYth03E5rn3apm2jqDs94BsI0EsUBfi/Y4s4bJ77Nlax8qTwA2fII8at5RyMfvzb8yhqJKN3YxGjMTbdQnchUD4aDr1Rs0nlSzAEgO8j7aFe+9cxk0GoWUhShmB8KieHZBiIQbqjRQHKoPj60pDjDFAoyh5OUZLwF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DESr8ksR; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54838cd334cso1258578e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:38:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1653926B2D5;
+	Thu, 27 Feb 2025 15:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740670823; cv=fail; b=KXYsb8uV0ha/WEEIg9DL36H99WZxrPXLSnGwAfcPOoU4KVH5znWIAlEvZgoKfmHLpKc+/mmTT/TZsfuH5j2YzJXgDEOO5r2B+3bVnqgycBsJSMt8BVD3O+TWlC5q0Glb0K3m+PXOXf5Aw9t/f3Wxrxq8AK9OhS9zc16P2xl4KfU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740670823; c=relaxed/simple;
+	bh=opRf9PrYdEmYG5FgxmfevjKxowZ5JmUOGBm/DjZVrbA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=um07ssU0wYZDhlTkbfv89OCjzgz7QM5BPDVHdlWMLkoAdMpXCVAuRsXGN9a5SksUb7Ma3n0ENHUkmq/nd8Lv1132YRpeOa51ZYk60MfG2Rs6a8kCFDxv1Ooi6XxX5nSpFvJjlHKcz4oykfxm3vTXt4UdHxSFhs8z8/pT+49oMd8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.fr; spf=pass smtp.mailfrom=phytec.fr; dkim=pass (1024-bit key) header.d=phytecmesstechnikgmbh.onmicrosoft.com header.i=@phytecmesstechnikgmbh.onmicrosoft.com header.b=f2Qi5sYu; arc=fail smtp.client-ip=40.107.249.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.fr
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YdyiZ3NUjMOKvOGQvFTY7TJNnO4vF/xQ2kS2ZrkLhxMgcJj+ewoFOuYGPNutie9Z5TH538ABo5EO28gLyu575OFGsCNCsNhblUOHCjmBUVAkC4hTIFP/Pe7ImcPkgIvkmYHzijcji6u9xPgZW+pVnnWvRx3aIB9vAyrTDCT5vjExnxjHwRUJ2lZgHTv9Nb76ldFJ105j3+brTq+ceA+JEfxwJI7ZL2zBkJ38YD7Usr20uwOeGcWQW5Uyd2vb0T2OsIOiWmBgGAcdnTgXmaTMHCbhRI4G8TMcrBsctTrygLn7zwsMXcfpzRfd50mTyMd8rZeo9fjM4NQgPybKmWkrgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5PyA+aHoTSAY9fZ+lXdh3rZpa35IYxkJ0GJ/vezDlDA=;
+ b=u8HU/EKLdq9U175kdUFiaIWb4wcaLalWz9pG/ACe7xJbpp82O2Tq+dcH2AXbYixu7kKW8Jjd1kq+zxEJwznw7epZmyqToJ5OzQkCxDkBVpnGfITTNlG5syNNcebSDsfMjZROuuK47diHjGfvdwLLVhMO4yY/b3g62vn+pb2OLCx3DvI+7cW72+38rfVMM4R7AQEwC7qEG3YZP2CIYGQpZ49eKnYNctBZJ8kG16Iwa3Tqple8fyK7Acos0870/SbIvNRjkygxU6VbaYtFoOYGSVlNgDBHON8i0Sw6sGdStXG58/mUJ5WcdkSCThjD1xWgJoNKNlC4+x9QaRO38E5fkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 91.26.50.189) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=phytec.fr;
+ dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=phytec.fr; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740670723; x=1741275523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmJa4nq3xcrEbO8I6gQ8yH2cvEg/RJVZoqiHM7UJBfs=;
-        b=DESr8ksROIw4BsjpFqUo239D20MqFOZg+Dbn8FgRT77qFVrh5WYyjvFXcU4L9Gk3Qk
-         0042DHYTBXGZFH2wfuQ9+D8RaTgjY2EYKhq8u0ZD3jYrTB6DNV+s9K4mBHrd7Zovr46A
-         iFM6JJuuEHX+AqfS9DRVexqmKp4ZYXPC/WEqiqj25mGlO+4wGPwmXpeYqBnfBw0dtmPF
-         OLZuxHzGxXWOtWH4xrqMOBcZrv4WZai+bnkKKN99lipY/KaqSSSGXpybU26INrI5+1qK
-         V8er13PtXRJedrLxHYYstVxtSibRRCirKxXOuJWKEIzddxfzhWMj/0eg1jsRzRaC4Qyr
-         GakQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740670723; x=1741275523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmJa4nq3xcrEbO8I6gQ8yH2cvEg/RJVZoqiHM7UJBfs=;
-        b=w9fxBH3+5F53OrgNZ5bD86WxRpunOzPIcFEPGp29efGegX0LmO4qIQgunW3657uomf
-         tUUKTrDal563EEXz2TirCGFXsKYwJaN8CKPZvx5iX2q0godoQzeeqIyc5h21Ll4v0lND
-         DSq0yBubuDuGwdcxtpu6QO31Jry5rzbJtHycXPl8bS9S3LPFMw3WXkYJVRciS526rnqY
-         7rd60fLWAJ1aDrml9zQoR+albFDe5jkIPE2ukb9M1feCrDOjgekDMQK4rYGAP8C447xO
-         TwGiMP8i4VIFZdfx4NZBedD9TdAuV/eA8kdjWAIl21wR+ROD9di2Tn+15MWv53Yx16mA
-         RzqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXe9GNm0itwrGUx71cTf2NwjcJvz/Jj9O5oJuE+tPx22ikZeHVLUgln9/jql/bqGpWheFP+vMJLfkWmYNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz15y/VgECjbKMI8Pp1U10BZUzUVm2wRv/3RqwVpfgyFDmexwd+
-	m+gg9cOZSv1sRdEvsa5vsEnS4a8rotPBFcXAR6VtO1RSJ61ZFtPwwQnoacmNWGE=
-X-Gm-Gg: ASbGncvlEYgLpCxmyoYXsIZwI5AMOA94xrRxTmyiP/PyHmHdw2625fb9NMnlcghAH1Q
-	kyztbxVuxGh9FAFaRJvC+qW1iGxdSZiLshJJjoa9FkOg4etAXkNpbnfk9O7SUCH1WiUFh+u2L2r
-	pzrBkHDPko8k+mBGu36qT2XZ/o75Ahvd4mLzUgF5NctSJUQ/dUnJDiYEagxoFfGwadSh3xQDUFP
-	hVWzAaBOmgdpaSWSAIaayE46msJaFjzZ9yQ7T4+1Cag9BBQ0GWeB69K8Va4op2vYXZUSgmtBxRN
-	Sqv7MiH+TJwGqBIYN4m2+iA/bB0GBJjhujaoMI/LiGz+iIgbdeNufHxYF2zP69sHVMm37RdVpl1
-	oXveJFw==
-X-Google-Smtp-Source: AGHT+IGLNuY/DiXj5lSnsG6IMOYZEwkpNVtYtEF8TL4nLURfU4/52wLS36QXQ1sPlbQ5r323ZGXWiw==
-X-Received: by 2002:a05:6512:3f07:b0:545:a1a:556b with SMTP id 2adb3069b0e04-5493c373156mr5089100e87.0.1740670723108;
-        Thu, 27 Feb 2025 07:38:43 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443cd443sm185769e87.253.2025.02.27.07.38.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 07:38:42 -0800 (PST)
-Date: Thu, 27 Feb 2025 17:38:41 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-Message-ID: <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
-References: <20250222025102.1519798-1-shiyongbang@huawei.com>
- <20250222025102.1519798-8-shiyongbang@huawei.com>
- <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
- <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com>
- <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
- <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com>
- <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
- <5af62fa9-e71b-412f-8640-502f03fcaa52@huawei.com>
- <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
- <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com>
+ d=phytecmesstechnikgmbh.onmicrosoft.com;
+ s=selector1-phytecmesstechnikgmbh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5PyA+aHoTSAY9fZ+lXdh3rZpa35IYxkJ0GJ/vezDlDA=;
+ b=f2Qi5sYuikCWmlbIhUXUWhAjaNImJprbNuPNia3IFv36BT3+erQMciFKfDKMIlVrgUXoVp9LpNvkM/BYk5yCFBYICi4nVeGc7iVEXkcsJp5/1iq6ijwxxfjubfNx9AdMLxQj7eyl411M9AVEJwP+vsyE6qpHujWddlbEUHBNeYM=
+Received: from AS4PR10CA0016.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5d8::8)
+ by DB9P195MB2104.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:3db::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Thu, 27 Feb
+ 2025 15:40:13 +0000
+Received: from AM2PEPF0001C708.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5d8:cafe::f7) by AS4PR10CA0016.outlook.office365.com
+ (2603:10a6:20b:5d8::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.21 via Frontend Transport; Thu,
+ 27 Feb 2025 15:40:13 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.fr; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.fr;
+Received-SPF: Fail (protection.outlook.com: domain of phytec.fr does not
+ designate 91.26.50.189 as permitted sender) receiver=protection.outlook.com;
+ client-ip=91.26.50.189; helo=Diagnostix.phytec.de;
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ AM2PEPF0001C708.mail.protection.outlook.com (10.167.16.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 15:40:13 +0000
+Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 27 Feb
+ 2025 16:40:13 +0100
+Received: from Florix.phytec.de (172.25.0.13) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 27 Feb
+ 2025 16:40:13 +0100
+Received: from idefix.phytec.de (172.25.0.20) by mailrelayint.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 27 Feb 2025 16:40:13 +0100
+Received: from localhost.localdomain ([172.25.39.2])
+          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
+          with ESMTP id 2025022716401291-83 ;
+          Thu, 27 Feb 2025 16:40:12 +0100 
+From: Christophe Parant <c.parant@phytec.fr>
+To: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	<upstream@lists.phytec.de>
+Subject: [PATCH 00/11] Rework and fix STM32MP15x PHYTEC dts
+Date: Thu, 27 Feb 2025 16:40:01 +0100
+Message-ID: <20250227154012.259566-1-c.parant@phytec.fr>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 27.02.2025 16:40:12,
+	Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 27.02.2025 16:40:13
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM2PEPF0001C708:EE_|DB9P195MB2104:EE_
+X-MS-Office365-Filtering-Correlation-Id: dada8172-1bdc-44b5-1757-08dd574506eb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Uy5z777fiZhMr6a/9F6pBcUI8CRz0wwghmWluIn2VCKghlDZoj/pTUeNt6JW?=
+ =?us-ascii?Q?VL+WAVuSU+4SERXtS5P3Kz+c7/h1lvnFbxSoqjdAO5l3sypTE/cSB75lNfp9?=
+ =?us-ascii?Q?WWgpBa9OxTuDXWp2Yealn7jQUtnrqwYrw3g2p8s1Y8kOE6NLjyegnfB6Fqp6?=
+ =?us-ascii?Q?IGYoZ27cTF2gpCeboKIyx2DK7V8MHXuXWMMzKuzwFllUjRNSSzomShK5nwsq?=
+ =?us-ascii?Q?LPX5q48JQlwMdjYPD7QjmDJ6hwJ8cABkki/GAnkliv1g6o0LsCNDhiUwY+pF?=
+ =?us-ascii?Q?ch8WTqJnT700EpNn8AZmBh1PEZYZF+mSBp+6rTuJxR7NTaTfhyTe9Umq/nFM?=
+ =?us-ascii?Q?QinvttklEBn+ViypW/wGsCC6WWHZRzDMoQMMMZ8LUaWSso1g8WtQS9Qr+Wwm?=
+ =?us-ascii?Q?h/w0Wnnql2nNOXbDlNXGJAHmR4JQR/tWjMJ1Z5+Z1oA3OTtnsOgb4be3IcJ/?=
+ =?us-ascii?Q?61jXSh9PBHRP86RuxrenTJi12muEKhUl9y7nDZlaM278J8u+RI3TGrQN60xA?=
+ =?us-ascii?Q?vKl7dCCT8gg46LSzUjRKx9q+qhV119RBO5LUGcoPhChTgsmVy9rI4Lt7XW42?=
+ =?us-ascii?Q?ATJWWQaz3HM7A4rOfYWxrc32ofj5aT5QdHFc+6SJZIZUE2pkuaS/eZl1U8Zl?=
+ =?us-ascii?Q?+e0yVuY1yrZM+PY/ut5huGEvWTWPdFBB53y1qPVHXuS6Fzefrno9IWXWJivy?=
+ =?us-ascii?Q?Mcy4ZW1d49UsrciLalNOsnFVPmva/9JiJb3x71L64nvg7VoRSWDOOwYRZRB+?=
+ =?us-ascii?Q?aA6rjlMPdgbk6GpXBwah1jAE71xkQbPQErBfB/yUQ0QAtecbi49I1vSfS7es?=
+ =?us-ascii?Q?X0gBZqtXj32xABbUoDgDKbyetGtfQaSthd0pEf3NeLl3p2g2vEze1rQ6qwaP?=
+ =?us-ascii?Q?JzA04HHfePwbkGyG5VsGq93xk9GWmLGa1frfvYhT+HDKDG6MCgCRTkgBIbUr?=
+ =?us-ascii?Q?uEVrF7yh65f4U2SwrVITXBfIiTJ+iyGZYFXPlX6M+WucVTIIPSCmR4GT5cr7?=
+ =?us-ascii?Q?z6KprXDUkujXdgM4jv/NcZ6jeZHX0/qINGX6DdxNTqBSFWbF54IlfvHxBjCp?=
+ =?us-ascii?Q?DiZ4iRUQ96ugjVpZ9cRXDfhpY6R3iLwAnoILIodxdR7cJzS6hDIRPROC0hgx?=
+ =?us-ascii?Q?AMbzpOjJ0elIs5IRYDvjvCA7Amf2GCQ1uOkNYyM/q6bI1mXFoxChoAL4RdVu?=
+ =?us-ascii?Q?eBbVLyi9nfOuAwnNz/TH91XMiVUAMilTeBS5ZjJQfVAfIqCutHuqi2wVn3Hn?=
+ =?us-ascii?Q?6bzj+zkG+Xdx9mwqa5KOp9rLmOfeH4YQOCL7A10lQYAubP4R+TU3HcYA64BB?=
+ =?us-ascii?Q?ZI+Cxy6assIor3nYw8c+5ltUwS5kghARtQeRDQ5TfPAsO5lAoN2o3Vor6EN4?=
+ =?us-ascii?Q?qNw2KAmotUxtrHySby+VRD7BNAzU5mBjPPBaSNSwshhYBlkwpMrqKb1ob5Mc?=
+ =?us-ascii?Q?aBNir6euDrl07Zs7xpo2vfmSXJo3AbUgGgkfa+vA7rvbd3iOi/0qwqs0Vm0Y?=
+ =?us-ascii?Q?qVdKY+3534NcST8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.fr
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 15:40:13.6596
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dada8172-1bdc-44b5-1757-08dd574506eb
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C708.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P195MB2104
 
-On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
-> 
-> > On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
-> > > > On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
-> > > > > > On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
-> > > > > > > > > +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
-> > > > > > > > > +{
-> > > > > > > > > +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
-> > > > > > > > > +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
-> > > > > > > > > +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
-> > > > > > > > > +  int ret;
-> > > > > > > > > +
-> > > > > > > > > +  if (dp->hpd_status) {
-> > > > > > > > > +          hibmc_dp_hpd_cfg(&priv->dp);
-> > > > > > > > > +          ret = hibmc_dp_prepare(dp, mode);
-> > > > > > > > > +          if (ret)
-> > > > > > > > > +                  return ret;
-> > > > > > > > > +
-> > > > > > > > > +          hibmc_dp_display_en(dp, true);
-> > > > > > > > > +  } else {
-> > > > > > > > > +          hibmc_dp_display_en(dp, false);
-> > > > > > > > > +          hibmc_dp_reset_link(&priv->dp);
-> > > > > > > > > +  }
-> > > > > > > > If I understand this correctly, you are using a separate drm_client to
-> > > > > > > > enable and disable the link & display. Why is it necessary? Existing
-> > > > > > > > drm_clients and userspace compositors use drm framework, they should be
-> > > > > > > > able to turn the display on and off as required.
-> > > > > > > > 
-> > > > > > > Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
-> > > > > > > We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
-> > > > > > > the different video modes into DP registers.
-> > > > > > Why? The link training and mode programming should happen during
-> > > > > > pre_enable / enable stage (legacy or atomic).
-> > > > > Hi Dmitry,
-> > > > > 
-> > > > > Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
-> > > > > And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
-> > > > It should be userspace, who triggers the enable/disable (or it should
-> > > > be the in-kernel fbdev / fbcon, which interface through the generic
-> > > > drm_fbdev client).
-> > > Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
-> > > by user, but it won't call when HPD triggered .
-> > - Is HPD even properly delivered to userspace? What kind of compsitor
-> >    are you using? Is .detect working properly and reporting a correct
-> >    plug-in state?
-> 
-> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
-> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
-> I use Xorg, and the display service is GDM.
-> The .detect is called and the getting modes info is correct.
-> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
+This patch series rename and reorganize the STM32MP15x PHYTEC
+baseboard (phyBOARD-Sargas) and SoM (phyCORE-STM32MP15x) device tree
+files.
+Indeed, the current device tree naming and organization is not really
+consistent as it does not align with others STM32MP boards (use common
+dtsi file as much as possible, use one dtsi for SoM and one dtsi for
+baseboard).
 
-You can go to the display settings in GDM. It would be interesting to
-observe if it notes the second monitor or not. Last, but not least, you
-can use a simple tool like 'xrandr' under your XOrg session to set the
-display resolution.
+The series also fixes some important pinctrl issues and minor one (coding
+style). Additional pinctrl is also added for the optionnal interfaces
+that are not enabled by default (FMC, LTDC, DCMI, PWM).
 
--- 
-With best wishes
-Dmitry
+Christophe Parant (11):
+  ARM: dts: stm32: phycore-stm32mp15: Rename device tree files
+  ARM: dts: stm32: phyboard-sargas: Introduce SoM device tree
+  dt-bindings: arm: stm32: Rename STM32MP15x Phytec board and SoM
+  ARM: dts: stm32: Add new pinmux groups for phyboard-sargas and phycore
+  ARM: dts: stm32: phyboard-sargas: Fix uart4 and sai2 pinctrl
+  ARM: dts: stm32: phycore-stm32mp15: qspi: Fix memory map and pinctrl
+  ARM: dts: stm32: phycore-stm32mp15: Add dummy memory-node
+  ARM: dts: stm32: phyboard-sargas: Move aliases from dts to dtsi
+  ARM: dts: stm32: phycore-stm32mp15: Disable optional SoM peripherals
+  ARM: dts: stm32: phyboard-sargas and phycore: Fix coding style issues
+  ARM: dts: stm32: phyboard-sargas and phycore: Add optional interfaces
+
+ .../devicetree/bindings/arm/stm32/stm32.yaml  |   7 +-
+ arch/arm/boot/dts/st/Makefile                 |   2 +-
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi   | 164 +++++++++
+ .../st/stm32mp157c-phyboard-sargas-rdk.dts    |  42 +++
+ .../dts/st/stm32mp157c-phycore-stm32mp1-3.dts |  60 ---
+ .../dts/st/stm32mp15xx-phyboard-sargas.dtsi   | 285 +++++++++++++++
+ ...-som.dtsi =3D> stm32mp15xx-phycore-som.dtsi} | 344 ++++--------------
+ 7 files changed, 563 insertions(+), 341 deletions(-)
+ create mode 100644 arch/arm/boot/dts/st/stm32mp157c-phyboard-sargas-rdk.dts
+ delete mode 100644 arch/arm/boot/dts/st/stm32mp157c-phycore-stm32mp1-3.dts
+ create mode 100644 arch/arm/boot/dts/st/stm32mp15xx-phyboard-sargas.dtsi
+ rename arch/arm/boot/dts/st/{stm32mp157c-phycore-stm32mp15-som.dtsi =3D> s=
+tm32mp15xx-phycore-som.dtsi} (53%)
+
+--=20
+2.34.1
+
 
