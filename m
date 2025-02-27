@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-537008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05D8A48705
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:50:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5EEA48708
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA19316591D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2BA03B7715
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1558B1EFF84;
-	Thu, 27 Feb 2025 17:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1991E834E;
+	Thu, 27 Feb 2025 17:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLtlNYj1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="TmpSkyB0"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBC81D6182;
-	Thu, 27 Feb 2025 17:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3121AC43A;
+	Thu, 27 Feb 2025 17:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678638; cv=none; b=nkyBrJuP/GMxvccaPddqie83VrgUrq/96/MGxueNdGPjiISH6LKc5hDhMb/yXYK8sk3hXzCr0roq0uuJTcGQWmkmrCh5/a+k6mljUDGxLz2ni7VTPCDyXuwq3YlxKLQNmJYtPD5YucJzD/wPZ3UxihxMTu48EgO8bGbf3nr/qwA=
+	t=1740678679; cv=none; b=dQaLAf7XxomlVM+Y3QxuiKDG3sIwturRTILaRpkHbeclg4eFoHN6804eECEEDhy8uyFGNZ03o0vA1DnaanbomN7hf5ETVDhDSYMW55J+e+rRamjX5UHwhO+008I+t4vBC+qP3T0QkBp+rTima0WXcv7WyO1AnyQywnfQIJsunH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678638; c=relaxed/simple;
-	bh=pl3n5q+dUJ7OFTCDYuNcKxD9PmvXSqWrktdB02TglCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guuHV2QlRklyvLDy5sa/4syV6Q7cCQan+yfYs1pvnCBLSuJ8wfa55rHtQd87K9Pyc50PsKbqS4ud8XJFxr9ykaJXEOopi5y8Ln8nQeaYq2OWigGVLqzxuXmyaAoF2Vp5sU7J3Bpw0ZXcmKM8u/lVTzEVrTaQEv5dUmO0j2vudVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLtlNYj1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916C4C4CEDD;
-	Thu, 27 Feb 2025 17:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740678637;
-	bh=pl3n5q+dUJ7OFTCDYuNcKxD9PmvXSqWrktdB02TglCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NLtlNYj1s86GTe/TOqjMpmhUooZZfQFza8ifCBwFaGJVss4Y40eyXP+R2EVMFdab8
-	 0Tx58uPaLjmWAV7yuMNOh10gHOARwClh8Mq7IuqRyt7yG+opJp2duF+QrX4KV9CveT
-	 PztnDefqlS0MIec8x83p164Q7RrhpiWnZpmfvAMJQ7yB3tU+fbIwyhd9FnlKU2WSs1
-	 d8NDgBFmDVZ19s+ogcHZE6S/C6Ud4CXXJAs6dy7GQnEw11J6yprwGbtzJmSaWZkXtR
-	 km/oNuMLFxgjNgfWQgCoieTbK2DkH7FBYh58+uCBCR/Yx69HM8v5OPlx+KyJuDLwjs
-	 dqQiGWkgW4IvA==
-Date: Thu, 27 Feb 2025 17:50:33 +0000
-From: Lee Jones <lee@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: st1202: Fix an error handling path in
- st1202_probe()
-Message-ID: <20250227175033.GJ824852@google.com>
-References: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
- <20250220155834.GA824852@google.com>
- <307b6cbe-6079-4995-b395-b63de69edb4b@wanadoo.fr>
+	s=arc-20240116; t=1740678679; c=relaxed/simple;
+	bh=Uu53v7OAZd9cxabebPTJCIgKi3GUnTCTvQ8bGTllcBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ogqRr50J6GDDgfgPVzgrJZ/Ajm8ys1Tnl0noVYRksZcNsBf2IzkFKRzWuRg4dM2UltzOZoLDnSPlg2euGmYGDerJ5he7TGJXhIC3rOiRYoF9IFnQKmx8Gw9mE2vj7lNjWsAYAyNegazRQmgVb1KT+6Iq9RLKqIASCYYuTXoscE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=TmpSkyB0; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 8CB2C2E08F16;
+	Thu, 27 Feb 2025 19:51:12 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740678673;
+	bh=AJQ4Y3BRtnLTcKa09IOwGaYMDWWG5wbyuh+74vdzxWQ=; h=From:To:Subject;
+	b=TmpSkyB04uVIcRvIWtg8qk/50NU82ei7XnTJfRISdr/ewl07lOaf0T+AxR1EvBYXk
+	 36034Tzce6yabfxf3b7ff56E9mSKTz3Geu2oJ+VdzZ0FBnAFZgjtQtsJiXiwyUsHAs
+	 3M7IsKiJABqDkBLjD+1FfUIh6RuOkHgyS6a1YWNk=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: linux-sound@vger.kernel.org,
+	kailang@realtek.com
+Cc: linux-kernel@vger.kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	baojun.xu@ti.com,
+	simont@opensource.cirrus.com,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v2 0/2] ALSA: hda/realtek: Sort Ally X properly,
+ fix Asus Z13 2025 audio
+Date: Thu, 27 Feb 2025 18:51:05 +0100
+Message-ID: <20250227175107.33432-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <307b6cbe-6079-4995-b395-b63de69edb4b@wanadoo.fr>
+X-PPP-Message-ID: 
+ <174067867346.23193.5813168137912565692@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Sun, 23 Feb 2025, Christophe JAILLET wrote:
+The Ally X has two quirks in the kernel currently. This is due to the
+previous quirk not being sorted properly, whoopsies. Therefore, only one
+has to stay. During AB testing, the configs were found to be close to
+identical. Around 20 reboots later, it seems they feature a small pop
+when at full volume on boot at an identical probability.
 
-> Le 20/02/2025 à 16:58, Lee Jones a écrit :
-> > On Wed, 19 Feb 2025, Christophe JAILLET wrote:
-> > 
-> > > devm_mutex_init() may return -ENOMEM.
-> > > So this error should be handled in st1202_probe().
-> > 
-> > The start of a new sentence shouldn't warrant a line break.
-> > 
-> > > Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > >   drivers/leds/leds-st1202.c | 5 ++++-
-> > >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> > > index b691c4886993..4fc17d518292 100644
-> > > --- a/drivers/leds/leds-st1202.c
-> > > +++ b/drivers/leds/leds-st1202.c
-> > > @@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
-> > >   	if (!chip)
-> > >   		return -ENOMEM;
-> > > -	devm_mutex_init(&client->dev, &chip->lock);
-> > > +	ret = devm_mutex_init(&client->dev, &chip->lock);
-> > > +	if (ret < 0)
-> > 
-> > My assumption is that anything but 0 would be bad, thus:
-> > 
-> > 	if (ret)
-> 
-> Matter of taste. All other tests in this driver are "if (ret < 0)" or "if
-> (ret != 0)".
-> 
-> What do you prefer: consistency or concision? (my own choice goes to
-> consistency)
-> 
-> If you confirm concision, I'll send a v2 that also fix your other comment
-> above.
+Then, add the Asus Z13 2025 quirk to the list. In the V1 of this series,
+the Ally config was used, which (see above) is a bit ambitious. Testing
+found that the stock quirk works just as well, so use that instead.
 
-Ah, I just attempted to apply the patch, but it looks like it's already
-fixed in ("leds: st1202: Check for error code from devm_mutex_init()
-call").
+@Stefan: the Z13 is a big launch for Asus, could we do something to
+expedite things just for this laptop? As far as Bazzite is concerned,
+we shipped the stock quirk as of today, and included the firmware. This
+is moreso for mainline distributions.
+
+The Z13 was tested with the following firmware files:
+
+sha256sum *
+79cc046b2a1a89fd250dadfb47bdcb8a3c3d7df80452079f64e5417b237f4889  cs35l41-dsp1-spk-cali-10431fb3-l0.bin
+3027249f8a340a8fb0034d67e5af8787789c83e9b3623664dab744668272b54e  cs35l41-dsp1-spk-cali-10431fb3-r0.bin
+a8f3d1735c03383cd8567713e510034b0f98df0264fa7135e6e8186e0ea346de  cs35l41-dsp1-spk-prot-10431fb3-l0.bin
+f0cdcf6d72bc591dec8a7bacba3ad8b46742207807c1e3c7787171de66e6f815  cs35l41-dsp1-spk-prot-10431fb3-r0.bin
+e4e73d47203e0badc913b4a1317d48cb0e1b54d7d737f339148068f0cde34b16  cs35l41-dsp1-spk-prot-10431fb3.wmfw
+
+Changelog since V1:
+    - Revert Ally X config to use the stock quirk instead
+    - Use a stock quirk for the Z13 too
+
+Antheas Kapenekakis (2):
+  ALSA: hda/realtek: Remove (revert) duplicate Ally X config
+  ALSA: hda/realtek: Fix Asus Z13 2025 audio
+
+ sound/pci/hda/patch_realtek.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
+2.48.1
+
 
