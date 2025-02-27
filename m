@@ -1,159 +1,265 @@
-Return-Path: <linux-kernel+bounces-537309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3D7A48A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:10:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68CBA48A53
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF5C16133F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693C57A325A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E874426E976;
-	Thu, 27 Feb 2025 21:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A6C26FA66;
+	Thu, 27 Feb 2025 21:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="VB1WuXHK"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bWBQk1Bw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2DE225A50
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE44219A68
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740690624; cv=none; b=n15hrCpVd8bNCspXDjNme0D1hlbCEhNCryoCRNGe3ENdKIgZX1oPnWkUVuqTZbbW71ySrNrYdfj8krvOK1O1NrRJ/78xiAE1ni7z558ZUQwSForXRVElyGeO730ENCAqub6uBqvTdthoQwrf9IsugaM5PwoAE3jIqEF1BrPZfas=
+	t=1740690793; cv=none; b=u2XhyY/Yy0JXdx9NekbSDLkv3M0FVh8ZDZw2JyTb3gNE5JxUiCQncHLpgHj5P4UbXr56HuvYUYL0UNL/CIz3Bs3ag/nXB2tzLoC8d6XBXjxBA7xWYQjFltFTSrl/X+sgfL9p+oSkuKjOqqmdWV3R1IGciWKz3ibEwZaQtnRRsk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740690624; c=relaxed/simple;
-	bh=0EcUyBKZhTLQR3BYkYQDdRQDQ7f2tsUeTeRa4PvAtV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fea6F9HcTXXpXmEmPAaHgvYwf/8ffcIlyFK7d4K1mnhTEMgNyy9hoplt1SJc4wnldxjk0A0Gs8Gpir0j9aaE3hs9Uhl5xrE0+/8bI+hlhAyS4EJrkmcdmdN/jmdTZKoMSpXKcNv8gvvuQaXWiltPQZyaGX5t4tZjXn4MppLOYg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=VB1WuXHK; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f504f087eso1021693f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:10:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1740690621; x=1741295421; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=McVDA02T8ChyltXMoGQz21UDmm2WB9bHt1FmktyqO9g=;
-        b=VB1WuXHKBRFvNWav7ZbGBLkSPGATk50qjSOBIqx5EGGsKGsSgFe6FG5jKXev51DA7p
-         kRzl0jlbMg8C+WarGL7wFavg4oPoZE/LMCGsSywryS0ObkLCpFgu+VniNfkZ9ilxAE52
-         Uzi7iXqzuEkx704jpSFyTkbaSbkAh7gzzdPGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740690621; x=1741295421;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=McVDA02T8ChyltXMoGQz21UDmm2WB9bHt1FmktyqO9g=;
-        b=ork89SeRQLg7KXSnkt1JeudZUX2PAFkETNSKIau62HqsPgj6fcyfynFxzSDgoyGev3
-         WjzPRpK+Xr7SKsmqmbxqt8HY1kq8jTLCT3CcB0uBhsxFdw1c+ALXLHXmcSFSGzsK93Lm
-         W49FD9exCJFukkf+e5shm6u+gv/pEwU+PAijao+DXk7gEwK4SdWV9y7v9IWenlEuSRP7
-         gZVINAAvvhBSC6xIwIcRQuYYJNuFjddkGXG2vAIX+3W7H5htWucliNk4vA0/aaiGBOWp
-         H+RTtomDWyyF8XuL5petjcJMwbLo+3OLJlhCfqqP9fewpt5BS94yWK7GW2Ub0ggm90ak
-         aW/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcpigMWC69OsFJ+uwtVwSAWrv3OQbu/uK5KsQwlW1qu7+30CCR6MuAlvj0TsFWv3OVFsc5FuG/s5zYloE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/x7LT/8XMYumeBbPeP42pfMO7DLWT03rykJup2ep/sNgKOSHU
-	cmuOmLDIhPRdI7ILkPmTgszIzYD6Gj92+NtIB1jkd+Obumvku4pB2IxT++A/iFM=
-X-Gm-Gg: ASbGncvAdVJI7zqvUCbtdaq97hM/bSrYIXK6Xo2Pm/fTW6/agyGO+LWfYQhhgiWA6BC
-	z5tKmu1P5og6VQX8qHOF/up8B6mAsaq+VmhLFOD1TUcQ4skduFO++K1sycu7Sh3wl+Z29zRGtCG
-	kq08gyA/an/QCdkdPBlHxs81D6RECNUcBmaWMjXGCPxodfWv95Q+jK5XiqAMCnkjcPmVTyqiGll
-	+BBGE/i4fU64h7TMnB6V1qTkYyrj5MWoI2OzApnKX56m7tq0+YIMFNAMLnPHQmGfg6Nv6XyFmXu
-	JROFg/3fQN4kM1+6xbngDS0jRKjQSUUrvN09Gpmf461l+G3qdwpFQQbO3pGLk5/X/w==
-X-Google-Smtp-Source: AGHT+IFgQt1PVzqZnm4g8KGhIwZcUHnnyirC4gn2Ce/wzGC6Yq6y2mLyVO1IOZ3rKalzE2d9OwQfoQ==
-X-Received: by 2002:a5d:47cd:0:b0:38d:e481:c680 with SMTP id ffacd0b85a97d-390ec9bb569mr584403f8f.18.1740690620844;
-        Thu, 27 Feb 2025 13:10:20 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm3196795f8f.60.2025.02.27.13.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 13:10:20 -0800 (PST)
-Message-ID: <ea20d47e-88b9-46ab-9893-26bcf262d8b0@citrix.com>
-Date: Thu, 27 Feb 2025 21:10:19 +0000
+	s=arc-20240116; t=1740690793; c=relaxed/simple;
+	bh=SKCmTroUvDcIra/X5nBKjf+wiIUTlcAQ5y/YfKp6LCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBfQCjjct67tZcVVb0mrszonMiVR/CU0NnWtGnO+FG8R5HyTHpVdPTP5prJPC8p+k6ocU+JIMJEVMU3oJ7zIuZDNmEcL4hoS1RrqiMfaQOvM22DXo6LHWEJNVR4F4pQxdDnsIGV83BKw0VVKXkaOhP94lZAU/r6KDjZkiqcd5Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bWBQk1Bw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740690789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ueahIvfJRfywNE/7meugkTbE1OIWv9rmw5z68EndZF0=;
+	b=bWBQk1BwLK7qVMHovDqLT9M28cJkmM9nW6+8I0PImP4CEk8F9IYhf2Sys4xhZQkEJG6DfU
+	lUPZaiFM5LrCFsRlQqDOQlvcpRy4PThlHFEy09cQXTZ8REgcDGJynvrceM3SxoHUOeyzqE
+	HkjLyiPIwrZezyXVJMPPyQP8ySjQ82k=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-412-j1RmnW9aMBuo8_yyXdCx9Q-1; Thu,
+ 27 Feb 2025 16:13:07 -0500
+X-MC-Unique: j1RmnW9aMBuo8_yyXdCx9Q-1
+X-Mimecast-MFC-AGG-ID: j1RmnW9aMBuo8_yyXdCx9Q_1740690786
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C37E01800876;
+	Thu, 27 Feb 2025 21:13:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.102])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 418D21800988;
+	Thu, 27 Feb 2025 21:13:00 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 27 Feb 2025 22:12:35 +0100 (CET)
+Date: Thu, 27 Feb 2025 22:12:29 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250227211229.GD25639@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
- and accessor macro
-To: Ingo Molnar <mingo@kernel.org>
-Cc: bp@alien8.de, chang.seok.bae@intel.com, dave.hansen@intel.com,
- dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
- tglx@linutronix.de, x86@kernel.org
-References: <Z8C-xa7WB1kWoxqx@gmail.com>
- <94083f1c-dab1-4b57-bd45-a4d4f8ac262e@citrix.com>
- <Z8DFusMiUYPZ3ffd@gmail.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <Z8DFusMiUYPZ3ffd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 27/02/2025 8:06 pm, Ingo Molnar wrote:
-> * Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->> What options #1 and #4 will cause is the virt people to come after 
->> you with sharp implements for creating incompatibilities in an ABI.  
->> The XFEATUREs are the tag(ish) of the union that is the xsave buffer.
-> There's no incompatibility for a default-disabled feature that gets 
-> enabled by an AVX-aware host kernel and by AVX-aware guest kernels. 
-> What ABI would be broken?
+Sapkal, first of all, thanks again!
 
-I don't understand your question.
+On 02/27, Sapkal, Swapnil wrote:
+>
+> >1. with 1 fd instead of 20:
+> >
+> >/usr/bin/hackbench -g 16 -f 1 --threads --pipe -l 100000 -s 100
+>
+> With this I was not able to reproduce the issue. I tried almost 5000
+> iterations.
 
-XSAVE, and details about in CPUID, are a stated ABI (given in the SDM
-and APM), and available in userspace, including for userpace to write
-into a file/socket and interpret later (this is literally how we migrate
-VMs between different hosts).
+OK,
 
-You simply redefine what %xcr0.bnd_* (a.k.a. XFEATURES 3 and 4) mean,
-irrespective of what a guest kernel thinks it can get away with.
+> >2. with a size which divides 4096 evenly (e.g., 128):
+...
+> When I retain the number of
+> groups to 16 and change the message size to 128, it took me around 150
+> iterations to reproduce this issue (with 100 bytes it was 20 iterations).
+> The exact command was
+>
+> /usr/bin/hackbench -g 16 -f 20 --threads --pipe -l 100000 -s 128
 
-~Andrew
+Ah, good. This is good ;)
+
+> I will try to sprinkle some trace_printk's in the code where the state of
+> the pipe changes. I will report here if I find something.
+
+Great! but...
+
+Sapkal, I was going to finish (and test! ;) the patch below tomorrow, after
+you test the previous debugging patch I sent in this thread. But since you
+are going to change the kernel...
+
+For the moment, please forget about that (as Mateusz pointed buggy) patch.
+Could you apply the patch below and reproduce the problem ?
+
+If yes, please do prctl(666) after the hang and send us the output from
+dmesg, between "DUMP START" and "DUMP END". You can just do
+
+	$ perl -e 'syscall 157,666'
+
+to call prctl(666) and trigger the dump.
+
+Oleg.
+---
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index b0641f75b1ba..566c75a0ff81 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -376,6 +376,8 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 	}
+ 	if (pipe_empty(pipe->head, pipe->tail))
+ 		wake_next_reader = false;
++	if (ret > 0)
++		pipe->r_cnt++;
+ 	mutex_unlock(&pipe->mutex);
+ 
+ 	if (wake_writer)
+@@ -565,6 +567,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ out:
+ 	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+ 		wake_next_writer = false;
++	if (ret > 0)
++		pipe->w_cnt++;
+ 	mutex_unlock(&pipe->mutex);
+ 
+ 	/*
+@@ -695,6 +699,42 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 	return mask;
+ }
+ 
++static DEFINE_MUTEX(PI_MUTEX);
++static LIST_HEAD(PI_LIST);
++
++void pi_dump(void);
++void pi_dump(void)
++{
++	struct pipe_inode_info *pipe;
++
++	pr_crit("---------- DUMP START ----------\n");
++	mutex_lock(&PI_MUTEX);
++	list_for_each_entry(pipe, &PI_LIST, pi_list) {
++		unsigned head, tail;
++
++		mutex_lock(&pipe->mutex);
++		head = pipe->head;
++		tail = pipe->tail;
++		pr_crit("E=%d F=%d; W=%d R=%d\n",
++			pipe_empty(head, tail), pipe_full(head, tail, pipe->max_usage),
++			pipe->w_cnt, pipe->r_cnt);
++
++// INCOMPLETE
++pr_crit("RD=%d WR=%d\n", waitqueue_active(&pipe->rd_wait), waitqueue_active(&pipe->wr_wait));
++
++		for (; tail < head; tail++) {
++			struct pipe_buffer *buf = pipe_buf(pipe, tail);
++			WARN_ON(buf->ops != &anon_pipe_buf_ops);
++			pr_crit("buf: o=%d l=%d\n", buf->offset, buf->len);
++		}
++		pr_crit("\n");
++
++		mutex_unlock(&pipe->mutex);
++	}
++	mutex_unlock(&PI_MUTEX);
++	pr_crit("---------- DUMP END ------------\n");
++}
++
+ static void put_pipe_info(struct inode *inode, struct pipe_inode_info *pipe)
+ {
+ 	int kill = 0;
+@@ -706,8 +746,14 @@ static void put_pipe_info(struct inode *inode, struct pipe_inode_info *pipe)
+ 	}
+ 	spin_unlock(&inode->i_lock);
+ 
+-	if (kill)
++	if (kill) {
++		if (!list_empty(&pipe->pi_list)) {
++			mutex_lock(&PI_MUTEX);
++			list_del_init(&pipe->pi_list);
++			mutex_unlock(&PI_MUTEX);
++		}
+ 		free_pipe_info(pipe);
++	}
+ }
+ 
+ static int
+@@ -790,6 +836,13 @@ struct pipe_inode_info *alloc_pipe_info(void)
+ 	if (pipe == NULL)
+ 		goto out_free_uid;
+ 
++	INIT_LIST_HEAD(&pipe->pi_list);
++	if (!strcmp(current->comm, "hackbench")) {
++		mutex_lock(&PI_MUTEX);
++		list_add_tail(&pipe->pi_list, &PI_LIST);
++		mutex_unlock(&PI_MUTEX);
++	}
++
+ 	if (pipe_bufs * PAGE_SIZE > max_size && !capable(CAP_SYS_RESOURCE))
+ 		pipe_bufs = max_size >> PAGE_SHIFT;
+ 
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 8ff23bf5a819..48d9bf5171dc 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -80,6 +80,9 @@ struct pipe_inode_info {
+ #ifdef CONFIG_WATCH_QUEUE
+ 	struct watch_queue *watch_queue;
+ #endif
++
++	struct list_head pi_list;
++	unsigned w_cnt, r_cnt;
+ };
+ 
+ /*
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 4efca8a97d62..a85e34861b2e 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2483,6 +2483,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 
+ 	error = 0;
+ 	switch (option) {
++	case 666: {
++		extern void pi_dump(void);
++		pi_dump();
++		break;
++	}
+ 	case PR_SET_PDEATHSIG:
+ 		if (!valid_signal(arg2)) {
+ 			error = -EINVAL;
+
 
