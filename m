@@ -1,221 +1,190 @@
-Return-Path: <linux-kernel+bounces-536488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C86A48061
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:03:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57CEA4808C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39231891B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0C70164179
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2963022FF42;
-	Thu, 27 Feb 2025 13:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BD822A4CE;
+	Thu, 27 Feb 2025 14:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hncPcFpl"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+1zi50G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDB7270040;
-	Thu, 27 Feb 2025 13:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664796; cv=fail; b=swL5nkkDJro/kLl+uKixJCxIc4KtYI8YQudpQMKTwtlDQaq3ngxxn+Ygw8yuHO2o5eXA/2qExSA8FUoHctggWrl8Z87fgVGVafd1QBbOXde+l3m2vephabpMm58g8l8TVrm2/I18jIRCDKluDfyaHzbAfw00pu3Q6svuiidA9f8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664796; c=relaxed/simple;
-	bh=ABchOyxaETJT2IGfrQQceEoHt2Bj1SjyREwU90s02Pg=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sWonJmyM+jOBzQfSvsx6snVu8Xb22NdLw9GwCc3ag0cbGdJ5eyR2le2QuQhk4HOzO0Bnmgk7lT8ZhXBRKBZnD2jLd5urHk4H2f+T6JXafDbdpi6pIMttKSr4DO9Zb/9z4IqBhwQoTAQPPNP4yJHNt7jz85eTFsoO7B6Oa+3SIvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hncPcFpl; arc=fail smtp.client-ip=40.107.94.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=joRmc1GnwrdLOQL8g95Mty17c0S2rZt9jTaRFNWMDxWqo0OrmEmDC0DxNZewytBv/fIm6bkP5efyLf8zAwcbfAe/fIHhq3E6t2GFICL10PKGpN519q19DN0VekvYmO0aPbM1KXpXTLWPLnZYzXAQ0AzQTwsn7m3kA7gwaObscXf/rhGoHwn2c3WdC+v0yPa3oniUe5IvsfUB1IBeKW2WMbxR+8L7JH5dloUuIPDaaAecR8p7OyNveVcPXvV1cIQWDolJ1ZQYJELaOHZVJMNd7kZee7iVJPjF44/lMcFKNUMOLnTxRUao6nkKjYsNx4Cr6JBq6+gtuWuwGVq/aiILag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a5Vph5IzwlCAjeR3dcpI3bxuXc9lcxXOb4blKgtw+R4=;
- b=hnONixj7brCZrTWTbjt6cnEoQsttaqRwvMQ7s4cneIFGWBNOaEeSF32vUz5M5/2QHI8HazttJ33kEU/XfVe8X2pkkm2OzBnfYkhZx9R2oMXHBnyUgV+kVPk3B/N092U7srJKCfChztIDGa48LQtxgs85B64rZmRwvqbPH6hoaZ541XJam49KBKtLOSEVAHdDOple1HdedUN3P+B53EgcMOy0NRWyIgoHpjGuXVnloMB5vLAA0pb56Zemnptuxysf277ASEIeDSzhF1dduxNgx/fAZp/9fJ7SOlIEfIiWVIo4ly6wtv78A21Ad2vCdMIsU43wYmWH7TLNDFATI5Pmsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a5Vph5IzwlCAjeR3dcpI3bxuXc9lcxXOb4blKgtw+R4=;
- b=hncPcFplza5355RieYA+n5hm+xcr8hTRrSN8GDweSxeAcCuwzz7l8WwXcVn4nPaemjKzl7McOH/CU8AWG7TnWU4UOrUpD2O3A4T/Ls68qEmosm+NyyjVPtidcxIzeAnQOttKuNhjAaWR3QO47eK+O/hq7CNLTog7mBy2/sZc44Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by PH7PR12MB7212.namprd12.prod.outlook.com (2603:10b6:510:207::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Thu, 27 Feb
- 2025 13:59:51 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
- 13:59:51 +0000
-Message-ID: <095fe2d0-5ce4-4e0f-8f1b-6f7d14a20342@amd.com>
-Date: Thu, 27 Feb 2025 19:29:43 +0530
-User-Agent: Mozilla Thunderbird
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [PATCH v2 3/5] KVM: SVM: Manually context switch DEBUGCTL if LBR
- virtualization is disabled
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
- rangemachine@gmail.com, whanos@sergal.fun,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20250227011321.3229622-1-seanjc@google.com>
- <20250227011321.3229622-4-seanjc@google.com>
-Content-Language: en-US
-In-Reply-To: <20250227011321.3229622-4-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0035.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:22::10) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A729D29CE8;
+	Thu, 27 Feb 2025 14:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740664855; cv=none; b=i+GDAhy1ka41Mn+ZAeQ+Hc4AgtcNTeqcK0gmqpnmJUm1H6pLburXVxwCJy+EL+w++odVpvqqWncz2aHOxwF/kosfN8vpQvmQk65fpUr7nrFBRdQsSVu7XpUVGWwtxmxGXT2xGtMgeBeMlaRHiD53vcWnjAR7TSvuSlm90dZVn00=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740664855; c=relaxed/simple;
+	bh=aTJLLJdm6UwJ27+p+vuuj6DyutWD3bMFwLF2OQRevjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKIyKvSuCwXOE3wsdrQmPSICCcBqs6vXScF4vkJE+V0fXlb91Faj0B2zr1vXT2XzY0bSB/ELX7rLKbYFNKY1tENt1cEBmtNAqixjI2YdLR4Bg8TfieTAkJ479Ssp/BuJvmBYd5r6DX3sRzTR4RxE/bIG0gBmpmvS51awLlyEzUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+1zi50G; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740664854; x=1772200854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aTJLLJdm6UwJ27+p+vuuj6DyutWD3bMFwLF2OQRevjA=;
+  b=F+1zi50Gq9wb4ZOyzTkRdhpFPA2pSDV4WnZ5w0Ou7PiZTBvMVm6tFtGl
+   ZRissCBa31a5m4omYbkeFFNVjxwDEnKPITJkrtQ+YEYhPwBsZoMX9IcEn
+   IrldNs8OrkKSafv2dDgyzUBLoLZM4PIxBWqztJ42oBGxkS0sPTXNuhHDw
+   BMy93zVXvRpa3WKilR3B8kZ4NrtKSiRtJnLFVBgGuJUU9A9YCfrOA3a26
+   fKZAl456mwyEFQnbiU70sb9xs4om+NCcwmillGX3lfra+hvkIokWRdEpM
+   5GBxEXYEnhz7ft8NWqdmBZntDsZNgA4kk9cp6U63McbpFk09KZZvlH2an
+   Q==;
+X-CSE-ConnectionGUID: P3iKjWbSSO+VhPXkdwHg+A==
+X-CSE-MsgGUID: 8BpnNu1fSlSZGZOpOkHPng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40793044"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="40793044"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:00:53 -0800
+X-CSE-ConnectionGUID: dbRhm6LDRJO53/6aGMVrSQ==
+X-CSE-MsgGUID: STO1TeoJRq+arBfoq4pWOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="121976535"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 27 Feb 2025 06:00:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tneRU-000DRu-2p;
+	Thu, 27 Feb 2025 14:00:48 +0000
+Date: Thu, 27 Feb 2025 22:00:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rengarajan S <rengarajan.s@microchip.com>, unglinuxdriver@microchip.com,
+	broonie@kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, rengarajan.s@microchip.com
+Subject: Re: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy
+ implementation for x64 and bcm2711 processors
+Message-ID: <202502272153.zJWKuv3R-lkp@intel.com>
+References: <20250224125153.13728-1-rengarajan.s@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|PH7PR12MB7212:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05746a9a-c5e0-4e62-1a1c-08dd5737015e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emdaMExqTGFpVU5GTVRUKzVMZWVaM0ZadEpMc2U2Y0t0N3N1QStSMXdIdzB0?=
- =?utf-8?B?elpuTmN5NHJ4R1pzbzU1KzgxMzdkUUV0cGhacGVIOUViVjRDQlRjWStsS29t?=
- =?utf-8?B?SGNIdGZ4NUZQSUljZDNZUy9YRVFqQ1ZuVDZreWIwbXhGMytvd1EvMUo1MmZi?=
- =?utf-8?B?UXZzQzRGQUxpTTVLaHpDb2g0N3N3MCtrZDMzVDVORzVlYnVkS0R3MEFCZ05K?=
- =?utf-8?B?NGdCMy8xbkEyb0dGdHNqZVppaDJtN2RvZ1dXc0RUdWd2K3lxZHVNeDkzK2hs?=
- =?utf-8?B?eGNNaWFXRDhRc0I3T0Vxb2xDQ2NEYmxQSFdvaWlhN25HZVplN29GU1NBaWo0?=
- =?utf-8?B?R3VTNUZhaWRtbXdXazhqWlluNWREVnRNZnd4alBSQWJJSEhKbi9KZEFua0RL?=
- =?utf-8?B?RnhLWDBtcjRNaEZDUUZ0VTM5d01WY1dvZ1pZQ1lCNU5tRklOZmJWTStLdDE2?=
- =?utf-8?B?MDFiOWFsSlIyNUhpT3dCUFZwSWFIdE5FclZmNWNhMStOQ1NTNXRPVDVDZ3Z0?=
- =?utf-8?B?amVCakZCMHQySlViSDZUUHJOZzludEhoZmV3VU00N3B1SkFvaGh1cG5HYmdR?=
- =?utf-8?B?dlBWNWErMnlBdE9xSXZWdExQYkdySTcwRTJYMHY0WTN3ekJ0blpvWXRaSWxk?=
- =?utf-8?B?Y1g4cGY4YnZDVHlPdVNoS1pPVy9XVmEzOU5SOCtHeUx2V1J0WGI2UVBzTzNH?=
- =?utf-8?B?dXV4MTB5VEFiclZaa2F6cDNPRjlTcG1HRW5lM1kvTlRLUG1NLzJCNnJQSWlt?=
- =?utf-8?B?MExWQ0JnR0crcHA4QURaVE5JQzBTY2VicS9zRVJMS05pRFErNFRTT3FtNDFY?=
- =?utf-8?B?K1dYb0Q2L2FTb0Y0b25ubHRNTFZBRkdOR08wRDdWTmxLR3dISG1HRFIwUFFh?=
- =?utf-8?B?M1hLQjRnSHFvNkZyWWdMdGZhdjlzVno1a1Jza3hiMTltYTdSL1VRTmZLbzFK?=
- =?utf-8?B?dG9jb0MycGt6bWVyT0dnZHFtNWhXNTRiTkYwNEwyYmZjb0xVQ0hrT04yUEQx?=
- =?utf-8?B?eThEcng0NzdpYldONEtld0dYOTduQUJ0aVNBeEl3R05KcmZBVStJc2NSSm1s?=
- =?utf-8?B?cHV1ZUUrUG83SkhHMnRSdFVuYkR3K2FwWTE4MWZrd214YVEza1BqU2ZKU1FJ?=
- =?utf-8?B?NlFSK2txOFV5L08zK2k5NWNqbG9GZEVEWHRYdXk0ZGRjRU1XK09IckV5TW5y?=
- =?utf-8?B?cUJLNWZENjAzSXBTRzlUaTJBWk51NWI4TDZFRzRoaXBUU2J2aDdxcHRBbTFI?=
- =?utf-8?B?VzdyVTJPT2YzdWR4c0xHK3RpNXJ4SCtTL0VjNHRCc3R5UDJ3VytxanZVR1FZ?=
- =?utf-8?B?N3ZnSWZTOTNFdjM1SG5ONzUvc2RYazIrZFYrTHhjZjBWZ0hLa3doZnBRSmQx?=
- =?utf-8?B?U0FVQ3RyY2htZzI1azA3L2RGaVZMejRQUHJjVUFoZXVGZWYvWEJCL3JrKzgw?=
- =?utf-8?B?RU4vb2dobW5aMXF0VzN3T1F4Ri9JMUlrSGtJUkVwajUveWhJazNFQ2ROS2p6?=
- =?utf-8?B?ZDZ6bE1PQnp5Y2w2RDBSYTJZUEgwWTYzV0wvT0RCTHMxV1RqSzZaTm1kSXlK?=
- =?utf-8?B?emovQ1B3dmxHbStKUXMrdC9CTkJHOGM4ZGhTNHlQOVY3N0pIRG1DajE2ckJB?=
- =?utf-8?B?OUg5TDNLWklyRjR4SFE4SEMvUmJ2S3BZMmRYdnhSemE3RTNXY2Jzb3F2YW1O?=
- =?utf-8?B?aWtlOEE5N29tSjBrSEgyZ3l6b3NGeGtvRnRabFF0aW1WTExvckJQVERRUlhW?=
- =?utf-8?B?SC9DbnZaU0tqV1BTMGxhb1NzMkpheCtHb0dPbE04aW83R2o0RDlFYmg1U3Vi?=
- =?utf-8?B?UFFRSFhKaUZBOXd0WTJvNlBta2dsUm1JRmIxTXZSWko4R0taMHFiT0JRWEkr?=
- =?utf-8?Q?Cd2e8D/GID2aJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWdCU3A5ejNvZUZrN0hGczJjbks1SytjV0V1UksrNVl1K1RZWHNBck1aVzd6?=
- =?utf-8?B?Q1VTdnlseElpTVIrMUF3N0ZvNXc5L0hoSjVFdW9tdGE3RkNPL1pGaEdwQkQx?=
- =?utf-8?B?SmR6UnI3QTROVWRDNkVNMVhMWGpodmpjVzN6QmJiTlVYZ1YyQTkrTXFMaU5X?=
- =?utf-8?B?dHVRaEMzV1NQSVRhUzdqcHpINkNoNUk1Z1VkQ3dneUVJUktTdGlIVmNmT0Nn?=
- =?utf-8?B?NmhPelZhaldiU1BKUmhZR2RZU3JwdDNKYmtmOTc0T3V5cTZ1VUZHOVJsMkQ5?=
- =?utf-8?B?MHJycUd2R0hVUHo5eWVyQTVZYVZSeWlPRWJSQjFEY25CSFpLVU9Od2JWQjZi?=
- =?utf-8?B?dnh1NS9veEl0S21BUXhqNU9oT2t1L1ZOemt0Q29iNFdVSUlsdjViRC9MNVd2?=
- =?utf-8?B?SnUxeXE2ODYvYjVhMHJQRXdUREdQSmp1cFFMc2U3aVdObWVQRDJmbmJ5OU9u?=
- =?utf-8?B?Sm0yUEJwZm9LY0RjUFBzODIvYm5OTUFHNHl3MWR0UDVXUnc0V0t4cHVCa0Rs?=
- =?utf-8?B?K3AyLzFTbFR1RFN2SXV4TStoRTNQRGQ0VjVzRmpWeWVqMGw2ZWEzenhub0Iz?=
- =?utf-8?B?ZUozTUFtcnVNRFBQaCs3M2RKQitwNVZ0L3VTQXVQS1JwKytmZlFuOWNTR0ZB?=
- =?utf-8?B?RDhuZXJVczFxaE9ySFB0T0JTZWFuekNzZTloYXBzb0c1MG8vWFNwWUxtRVlH?=
- =?utf-8?B?Ry9GZGpKWU9VRjdZdDl3eUlORXVtMzN1cjU1ZlNrYStsdFpyUUVvZ0FBQkI1?=
- =?utf-8?B?NnM2ei9EVWZUL3QzS0ZKU0pEcU1YcklKbVJLSEVVZk1VeU5oZmtHYzJJTDBD?=
- =?utf-8?B?THFXOUR5SnRpdCtsanRhaW5STHFUQWxVakxoaTNTaE4vVjk2TjR3OGJNV2lm?=
- =?utf-8?B?NEVTTlJEZkhKclgzMXlCQ2ZKcjAzbWp1RGxXM3FhNVcrRFBBUlB3RjNwS05z?=
- =?utf-8?B?MUVLdUVZcUM0cWtueHRuTHA2NTg0OTNpSWdLWDVqSmF6VStGbzVIaTJNcFl4?=
- =?utf-8?B?ZU53OFBZWDJRZVhvQTBjWkt2V1dUMm5tVWVielZWOXMweDFIdEJGbUZXSjhQ?=
- =?utf-8?B?YzdZWjRvOUlSN24wT2VRL3plOE5aRmFWWFd3RkFGVWE4Y245TjNITDF5R3F6?=
- =?utf-8?B?VEk0ajdoYWtqU3JiRWppMTZYODI3TGY5Q3RDRkdWejF2dHhScXJaRGVjNkZo?=
- =?utf-8?B?aDhSMzFhVlhnQXlYQ0o2eHRFNTJkcWdKcVpSQzhQeFN6aXRwdEdqa1I3SGhS?=
- =?utf-8?B?YklGbU1kZVNqNjl5VFFJWkJLc3VhZnpxcDJpSUN3U0YxWTRQSTJHUU5Gc2FI?=
- =?utf-8?B?SnhUMTJjS1I1WXg4bXh1MmlTSFE2b0V3c1paVmpET3hwNHhRVEpjKzhJbkFG?=
- =?utf-8?B?c3Bqc3IrWEJaQVRKQTZaS1hneTNxMnIycHRlNkFYYzJWK0tQNVRUUnlGRnpZ?=
- =?utf-8?B?eEFwK29uR2NQUXZLNFIzNlptQmtUMjdEdUlMTFRPM0JkeDlYVTFQbGY1ek9w?=
- =?utf-8?B?ODJHcDRLT2YxUG9hOElLaFozWm1KUHhONzRLekhTNEwzYXovTnNtQnpGVFNy?=
- =?utf-8?B?QUVGSXFHcWF0TFAyZkJQQXE1SUpRS0FRME9ZM1FkaFVqK0JLNCtnQThOZDFz?=
- =?utf-8?B?M01RaTA3a3pKVmhHSkIrcUhmQmVYTXdIWWZ2c3NmY1BzSXBkakUzQ29aQmEw?=
- =?utf-8?B?eXBvQUtYbU9WSTUxNUsyaHVha3pXc2RUZjNVVDV2ci8xZnpzcTZWRWt3M0hu?=
- =?utf-8?B?TWdoZ2F1bENadmorU0M1dHlRWUZETHRKWit5ZFhkUkxHNUY0amFKYnRMMFFs?=
- =?utf-8?B?a3BRTnFMdnc1bDRWSytVMEcwRjRNMnRTZDJoNVhRRmpHKzNWOU9maGhaUXpI?=
- =?utf-8?B?QTJMU21uMGViYlhJTHByZkVJbHhRb3lWdENoeDJCSVJxYjloMUxuRjh5S2Nu?=
- =?utf-8?B?SEFlc2NrdWdTczN4Mm5EY3drb09IRmFUVGdDd2xXc1FpREJUaFFjRmFGbVJz?=
- =?utf-8?B?R0RYdGpLeUphbVd1dGYyY3FkZjg5UHo1WDhvL3Y2WUY2YVZmK3FGYnRVZi9X?=
- =?utf-8?B?WGdVOXE4NVFvQ0VJSVJFL2VpNy81eFVXQmFJUkRZYzZ5bE9sM0xESEUxQW5U?=
- =?utf-8?Q?dawgffrZ4HRE/jRQO5QDPxEg/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05746a9a-c5e0-4e62-1a1c-08dd5737015e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 13:59:51.7587
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iLGMbdvxZ0zdngpSFzj1OkEmvIS54BJqcgD5VbOI6/GkMYB5p4Fno9wzcLMj5L1GK7brI5nv0CwquOjGjEdbgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7212
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224125153.13728-1-rengarajan.s@microchip.com>
 
-Hi Sean,
+Hi Rengarajan,
 
-> @@ -4265,6 +4265,16 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->  	clgi();
->  	kvm_load_guest_xsave_state(vcpu);
->  
-> +	/*
-> +	 * Hardware only context switches DEBUGCTL if LBR virtualization is
-> +	 * enabled.  Manually load DEBUGCTL if necessary (and restore it after
-> +	 * VM-Exit), as running with the host's DEBUGCTL can negatively affect
-> +	 * guest state and can even be fatal, e.g. due to Bus Lock Detect.
-> +	 */
-> +	if (!(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK) &&
-> +	    vcpu->arch.host_debugctl != svm->vmcb->save.dbgctl)
-> +		update_debugctlmsr(0);
+kernel test robot noticed the following build errors:
 
-                ^^^^^^^^^^^^^^^^^^^^^
-You mean:
-                update_debugctlmsr(svm->vmcb->save.dbgctl);
-?
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on linus/master v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Somewhat related but independent: CPU automatically clears DEBUGCTL[BTF]
-on #DB exception. So, when DEBUGCTL is save/restored by KVM (i.e. when
-LBR virtualization is disabled), it's KVM's responsibility to clear
-DEBUGCTL[BTF].
+url:    https://github.com/intel-lab-lkp/linux/commits/Rengarajan-S/spi-mchp-pci1xxxx-Updated-memcpy-implementation-for-x64-and-bcm2711-processors/20250224-205745
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20250224125153.13728-1-rengarajan.s%40microchip.com
+patch subject: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy implementation for x64 and bcm2711 processors
+config: sparc-randconfig-001-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272153.zJWKuv3R-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272153.zJWKuv3R-lkp@intel.com/reproduce)
 
----
-@@ -2090,6 +2090,14 @@ static int db_interception(struct kvm_vcpu *vcpu)
- 	      (KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP)) &&
- 		!svm->nmi_singlestep) {
- 		u32 payload = svm->vmcb->save.dr6 ^ DR6_ACTIVE_LOW;
-+
-+		/*
-+		 * CPU automatically clears DEBUGCTL[BTF] on #DB exception.
-+		 * Simulate it when DEBUGCTL isn't auto save/restored.
-+		 */
-+		if (!(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK))
-+			svm->vmcb->save.dbgctl &= ~0x2;
-+
- 		kvm_queue_exception_p(vcpu, DB_VECTOR, payload);
- 		return 1;
- 	}
----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502272153.zJWKuv3R-lkp@intel.com/
 
-Thanks,
-Ravi
+All errors (new ones prefixed by >>):
+
+   drivers/spi/spi-pci1xxxx.c: In function 'pci1xxxx_spi_write_to_io':
+>> drivers/spi/spi-pci1xxxx.c:417:25: error: implicit declaration of function '__raw_writeq'; did you mean '__raw_writel'? [-Wimplicit-function-declaration]
+     417 |                         __raw_writeq(*(u64 *)from, to);
+         |                         ^~~~~~~~~~~~
+         |                         __raw_writel
+   drivers/spi/spi-pci1xxxx.c: In function 'pci1xxxx_spi_read_from_io':
+>> drivers/spi/spi-pci1xxxx.c:448:38: error: implicit declaration of function '__raw_readq'; did you mean '__raw_readl'? [-Wimplicit-function-declaration]
+     448 |                         *(u64 *)to = __raw_readq(from);
+         |                                      ^~~~~~~~~~~
+         |                                      __raw_readl
+
+
+vim +417 drivers/spi/spi-pci1xxxx.c
+
+   410	
+   411	static void pci1xxxx_spi_write_to_io(void __iomem *to, const void *from,
+   412					     size_t count, size_t size)
+   413	{
+   414		while (count) {
+   415			if (size == 8 && (IS_ALIGNED((unsigned long)to, 8)) &&
+   416			    count >= 8) {
+ > 417				__raw_writeq(*(u64 *)from, to);
+   418				from += 8;
+   419				to += 8;
+   420				count -= 8;
+   421			} else if (size >= 4 && (IS_ALIGNED((unsigned long)to, 4)) &&
+   422				   count >= 4) {
+   423				__raw_writel(*(u32 *)from, to);
+   424				from += 4;
+   425				to += 4;
+   426				count -= 4;
+   427			} else if (size >= 2 && (IS_ALIGNED((unsigned long)to, 2)) &&
+   428				   count >= 2) {
+   429				__raw_writew(*(u16 *)from, to);
+   430				from += 2;
+   431				to += 2;
+   432				count -= 2;
+   433			} else {
+   434				__raw_writeb(*(u8 *)from, to);
+   435				from += 1;
+   436				to += 1;
+   437				count -= 1;
+   438			}
+   439		}
+   440	}
+   441	
+   442	static void pci1xxxx_spi_read_from_io(void *to, const void __iomem *from,
+   443					      size_t count, size_t size)
+   444	{
+   445		while (count) {
+   446			if (size == 8 && (IS_ALIGNED((unsigned long)from, 8)) &&
+   447			    count >= 8) {
+ > 448				*(u64 *)to = __raw_readq(from);
+   449				from += 8;
+   450				to += 8;
+   451				count -= 8;
+   452			} else if (size >= 4 && (IS_ALIGNED((unsigned long)from, 4)) &&
+   453				   count >= 4) {
+   454				*(u32 *)to = __raw_readl(from);
+   455				from += 4;
+   456				to += 4;
+   457				count -= 4;
+   458			} else if (size >= 2 && (IS_ALIGNED((unsigned long)from, 2)) &&
+   459				   count >= 2) {
+   460				*(u16 *)to = __raw_readw(from);
+   461				from += 2;
+   462				to += 2;
+   463				count -= 2;
+   464			} else {
+   465				*(u8 *)to = __raw_readb(from);
+   466				from += 1;
+   467				to += 1;
+   468				count -= 1;
+   469			}
+   470		}
+   471	}
+   472	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
