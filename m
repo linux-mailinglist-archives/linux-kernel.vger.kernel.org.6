@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-535384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA59A471DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:59:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543D8A471EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24343A3956
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6909218849D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD7018FC67;
-	Thu, 27 Feb 2025 01:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3050C199239;
+	Thu, 27 Feb 2025 01:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDxU2T+f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFoEwWOQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E9B187FEC;
-	Thu, 27 Feb 2025 01:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B899139E;
+	Thu, 27 Feb 2025 01:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740621490; cv=none; b=FQ6mCaIJ/DuKwcjSaqEa3OPUhXMpYPWgXiXEcqc+Dd5xrRJp2vMOjzn6Xdc2uN3wJkPqJjulkilCDO0cIa+gbVyIbGcYeqlfpOd1VKMOQgONbPUZeKbSKwXxFuo4WFADctKDdyTLgRtZFlIRM6/WBV4TI/cYh2drxwUj7/Y7rE0=
+	t=1740621491; cv=none; b=OBWew91s938tykafDuvh8dkYPRsMDa3s786GsviV7bMH4y0f6y/5fgu7kPf03ABi6gc7IDfjsMHpS7eMk6HCCcB4hSsG2HCiBYtVeSgzJ/fQaX8ycVEjq1DhIcdOtOPTLxciuEFmor0jvu7E27lFXBW/vB6JqPkjL6IF3IejPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740621490; c=relaxed/simple;
-	bh=5EkDSCqQcPc4o5HB4towhIerpdJDJgqyUQWBno/4/Pc=;
+	s=arc-20240116; t=1740621491; c=relaxed/simple;
+	bh=tQqSkhuPbb1T5x6cMu4V0N9ePh3tWbcGixS02DkoMHk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VY7mfMfz+nuerfKgE/XQnXXjnp8udOXul4x6yyW2XsdPWBMnAVP3e14GOSZ9rx2cYIovEGzxI5BpBAuA5D9lbz/U8fdXv7Wlc5/0Sa5BqlslALi0g1u2qW85DqiPSl1LaO51gC6fGFNxnpzf3MW2gwxDw7pL5jk6eRvDoHwJBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDxU2T+f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DEDC4CEE8;
-	Thu, 27 Feb 2025 01:58:09 +0000 (UTC)
+	 MIME-Version; b=PCTV4A8N+lctoB5ruKDNlbfBgmPUBweZiTrRc/cOS9rTVAK9cy8TDlEhMtmW7OyqV3avPbBxU1ZbCkdN0686s9iANkjSgYBj/DEKxdnD2qzTqsf662u2Lx7oMVytQ924kqFqBLmRqHyurCMuC/f7sa9xIozzpMMklOYCXZ6nk9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFoEwWOQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04EEC4CEE8;
+	Thu, 27 Feb 2025 01:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740621490;
-	bh=5EkDSCqQcPc4o5HB4towhIerpdJDJgqyUQWBno/4/Pc=;
+	s=k20201202; t=1740621491;
+	bh=tQqSkhuPbb1T5x6cMu4V0N9ePh3tWbcGixS02DkoMHk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TDxU2T+fb1Lu8ku+Akhya8vo641/KoP0MnyQgPo0COrZXXJxSODx8ZPMPT/8/JWiY
-	 Qw5nEETyG1lvk2ANCOBqu0EPYsqsxFVnrL1JefU78M75Jtdkb5ySvMkEJxQzs2xAEl
-	 erL9Cnz1H+8q9AAe14/LG5wJDr7YqcVIctO4HIUD1rq0wl4fNrHocT41y9XIHnYnrL
-	 LsO/TA49RXhUn+jCEMyE5iE7B6JM4VDwmODLUy9xF9vqoKJl+qztmcgo9Hywnq5auD
-	 6W4m0xhWcIZ0G5zYqHY61r9bC1FBzJBtnln8ZRdvDGUd16d1yCuP9/nMdpY6RU8i/6
-	 VDt8wh5DSc79w==
+	b=YFoEwWOQMtYL3tiHZY1Klb9D+0FI6oiHIg3qJP9gQ78IuyJzv7mC4Z5XiRo+eS7nE
+	 +X9R8bAUwlgr0l6XZKdzqTkFzZMhmbd/P/Eha3YGAjfIylzddDwrO7+ZyoLTLWifu5
+	 Tu2FKElANpXcF/pdBlIchfNiSWjeMm3yJ1J+d1+450u2LbP2A3i/gN+uwdA4m690lK
+	 fMyX5xpGp9iB9GtaAZHtik2A0zQ/Jck7wC2VdhVNvpV4Q2movxtcZQMD9ZdPLGG+TZ
+	 rshdBICJI0Y7/Iu2K60V4q/eKP4SucGbQPACyRyshuj2ZwIBdhYJT7S5rtRc7HD2oa
+	 4SoI53OREUdiw==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
 	damon@lists.linux.dev,
 	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v2 8/9] mm/damon/paddr: respect ops_filters_default_reject
-Date: Wed, 26 Feb 2025 17:57:53 -0800
-Message-Id: <20250227015754.38789-9-sj@kernel.org>
+Subject: [RFC PATCH v2 9/9] Docs/mm/damon/design: update for changed filter-default behavior
+Date: Wed, 26 Feb 2025 17:57:54 -0800
+Message-Id: <20250227015754.38789-10-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250227015754.38789-1-sj@kernel.org>
 References: <20250227015754.38789-1-sj@kernel.org>
@@ -62,28 +64,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use damos->ops_filters_default_reject, which is set based on the
-installed filters' behaviors, from physical address space DAMON
-operations set.
+Update the design documentation for changed DAMOS filters default
+allowance behaviors.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/paddr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/mm/damon/design.rst | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 432ea4efdc4b..fee66a3cc82b 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -257,7 +257,7 @@ static bool damos_pa_filter_out(struct damos *scheme, struct folio *folio)
- 		if (damos_pa_filter_match(filter, folio))
- 			return !filter->allow;
- 	}
--	return false;
-+	return scheme->ops_filters_default_reject;
- }
+diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
+index 5af991551a86..ffea744e4889 100644
+--- a/Documentation/mm/damon/design.rst
++++ b/Documentation/mm/damon/design.rst
+@@ -581,9 +581,10 @@ When multiple filters are installed, the group of filters that handled by the
+ core layer are evaluated first.  After that, the group of filters that handled
+ by the operations layer are evaluated.  Filters in each of the groups are
+ evaluated in the installed order.  If a part of memory is matched to one of the
+-filter, next filters are ignored.  If the memory passes through the filters
++filter, next filters are ignored.  If the part passes through the filters
+ evaluation stage because it is not matched to any of the filters, applying the
+-scheme's action to it is allowed, same to the behavior when no filter exists.
++scheme's action to it depends on the last filter's allowance type.  If the last
++filter was for allowing, the part of memory will be rejected, and vice versa.
  
- static bool damon_pa_invalid_damos_folio(struct folio *folio, struct damos *s)
+ For example, let's assume 1) a filter for allowing anonymous pages and 2)
+ another filter for rejecting young pages are installed in the order.  If a page
+@@ -595,11 +596,6 @@ second reject-filter blocks it.  If the page is neither anonymous nor young,
+ the page will pass through the filters evaluation stage since there is no
+ matching filter, and the action will be applied to the page.
+ 
+-Note that the action can equally be applied to memory that either explicitly
+-filter-allowed or filters evaluation stage passed.  It means that installing
+-allow-filters at the end of the list makes no practical change but only
+-filters-checking overhead.
+-
+ Below ``type`` of filters are currently supported.
+ 
+ - Core layer handled
 -- 
 2.39.5
 
