@@ -1,163 +1,116 @@
-Return-Path: <linux-kernel+bounces-535980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D86A47A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E3CA47A0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD6C16DE9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF8416DE00
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71368227563;
-	Thu, 27 Feb 2025 10:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D134B229B21;
+	Thu, 27 Feb 2025 10:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e4sYQt5L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3ffahikF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JlIYfMy2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aBOvGw1d"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4dfJJcW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B916F288
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD705226D12
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740651676; cv=none; b=kEmI7XwMB6HWIyASmE/DOY9MHEzM0ulkwX/3xnTyIZv08RUmgw1+5SW3ftmg3Kczs4AFOu4smY2O+4/owOe3wTvtX5vFFiH/MjqPrj1/QbycCK1c50rpF5TB2ZTIeFUGr7r9o9GFUG6lBmm6SzunPs/Ce02i0jfl7izhRcX2kdo=
+	t=1740651689; cv=none; b=b1RlnJjw6SYv9+zvxbHOMiXlAvbiGbdxHXYcJFBltmSdLMqji26cvRZC+I1OvHZrdYsKS7sIVpDhzUZV/z29AAC9RuUzhNPwuycqfyMRak2tWQK0dQBU5KgVsXDXk0U1CGXitsJ2OeQn50GctYRqfJXBXvxpPt4Mp8A7wyP0j8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740651676; c=relaxed/simple;
-	bh=YoV0Ho8VbeX7QdfnW9hKC4inbEbS7ucIBRTNRRxc9H4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UiKbHD7X5adZ7h3/q/K+Z836We0vpwpyCtfGGNtu4Jayrvx453MvQj/3PPRXXw8jiEnnFlTebLSPhSonM1UQfTtnVIdwF54zzx4m37hAMK3Oil5pfW3AgHfSqC3+p+pHmb38yH/cn/nGLhKrLeWRiwkzjBVC6Ip47bmEve/JD1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e4sYQt5L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3ffahikF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JlIYfMy2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aBOvGw1d; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 324001F38A;
-	Thu, 27 Feb 2025 10:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740651673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1740651689; c=relaxed/simple;
+	bh=o1BZNEVFS1dVMoSsBkXWjgk8R2fxCteTGGv8kH5FZRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sWnD0LTwhLRIvJwrXBWlrk8cDqibccGR1YFsYvE7T/l0eDAqfmXZ7cIwGCXy6xZPjs+XguwAw0mvP0bgIRPM+3UFLpz1+OnBsqAwUuMyyffqyt28fKx0zjwhoI4Qo/TiWojA/wOyjYeVr6K59uAXO92uDeXgQKc4IihiMN4XtjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H4dfJJcW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740651687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yzzF53d4A8R5a5kWjqkAAyKX91eyek1MAytqRR0wP0Y=;
-	b=e4sYQt5L+K8DH6ZcE2tqdgdS0QqkUUEerzjE9/iN8OnJ+hr4wc9iwz2zWblx7OSu+4iY+Q
-	uvL48Aedtk+9Mo0gwpfNKdZvrHrMDn+OlVIQW6XYP/s+RT0H/a8zesDbCd+IswTV4Qk/Q6
-	vt+SGdoxik6CqIDtCQEasb7FSGpGe40=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740651673;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzzF53d4A8R5a5kWjqkAAyKX91eyek1MAytqRR0wP0Y=;
-	b=3ffahikFm8SXC2EOuM3dPF9kOGJ+rzXZZLBSzsUiG4eqB5dilyB2rE5njE2Nb7a+QHetyV
-	JdEdD/T1igGmJNAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740651672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzzF53d4A8R5a5kWjqkAAyKX91eyek1MAytqRR0wP0Y=;
-	b=JlIYfMy2CdlCI9JSf22WJQXl83Mc/KyEfJyUsnSlJ1w4lwIoEGSEycy6G3zuZBIRpLpAQ1
-	oWo6hV5oxpMlEVuVQRTetH71Cv+lggdgUYVaVLZf9hs+Co3rtqFUvgC/UbxBAfACk3SGgS
-	mUeaWd8zyf0X+2scf8cwLRluVk2LU/s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740651672;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzzF53d4A8R5a5kWjqkAAyKX91eyek1MAytqRR0wP0Y=;
-	b=aBOvGw1d86fnIPnqDKviMZd6KOSJo3EpQq65YUQEAz10gHU+Dplek1QfmxU2uEng1ttjhb
-	g3e+WCn72cPH8pDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF71A1376A;
-	Thu, 27 Feb 2025 10:21:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b8/YOJc8wGdxJQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 27 Feb 2025 10:21:11 +0000
-Date: Thu, 27 Feb 2025 11:21:11 +0100
-Message-ID: <87frjz7ko8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Charles Han <hanchunchao@inspur.com>
-Cc: <perex@perex.cz>,
-	<tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: seq: seq_oss_event: fix inconsistent indenting warning in note_on_event()
-In-Reply-To: <20250227092441.19044-1-hanchunchao@inspur.com>
-References: <20250227092441.19044-1-hanchunchao@inspur.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=srf0UyBfsQhgWVg+kEEi5uq5c/Ijj0vigRW8E83X9mw=;
+	b=H4dfJJcWWmIoWBgli8/lWuj9C5nJU0TTiwzz8hMCF8CgUOIjz7+kyWyp8XRaw0ZG0Ip18b
+	nxHIYZrHpoA8VghnhNV103n9KhiCcBgBXPuhLPwV1ygmHNDSQfCfYgMvRT2NcC6GwDxkdK
+	DHMdDdAkBM3s3ZvXJC0UTKiemLLM7m4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-549-LQZSDWhONqSQBmrSkOUVpA-1; Thu, 27 Feb 2025 05:21:24 -0500
+X-MC-Unique: LQZSDWhONqSQBmrSkOUVpA-1
+X-Mimecast-MFC-AGG-ID: LQZSDWhONqSQBmrSkOUVpA_1740651684
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4399c32efb4so7925695e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:21:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740651684; x=1741256484;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=srf0UyBfsQhgWVg+kEEi5uq5c/Ijj0vigRW8E83X9mw=;
+        b=IFwKPojblQj7o2K1qt3D4Hi03LDBBpMGj3dcFdo6sfpsjouf4pjcl0EFzTKu+BvKqJ
+         dCfIGA127MUbWJnVToKz4Wdju1kX4pzs+0m0QTwrfNZ0EWEDAuQJwabM9bDCoCUyjl7C
+         4SEp1WWjzfgO5AA/JEC2r4rBnxvpqPsvotEBhsqEPkhG/QoLm3n/ir84pYnvao+JKUSK
+         uUpVjUsbkexKH9wjevwWeH+W+X+yCC+2ymrxSC7fZSjC5h3YOeMlKtH+b8dQ5xnR1y0I
+         EgtHoGCGe5J0MzlCj317c/7mKpUXbOaCD2CMs/kHnS0DBoDVORzi6kMC4r8zF4/KGi5O
+         AkSw==
+X-Gm-Message-State: AOJu0YycGJzMbndoM1qRkR007ynOtlkZQlo2Rkesywbz3TVtzt8AC7t2
+	UvK89/OKPimzi5UmJkBg4a1Sixb9qJorguOw1METgOZ68ySQSL7tqaGksqnEkgSCftmhZZsEKPT
+	buZDnLMiD2ur5viDdTwUmJUndJ04pAdkp8BQAel2w82XzddFUdXvdVPciaYs8VA==
+X-Gm-Gg: ASbGncs7ekXKsXvgnYjUWmdQW9BZQg9bhDEkO41hwTnWQAK8jqCZRv5/KpqzfQuu/PH
+	q/53OhUQakNvAbV4fYMAbEqM3IW//DQobgfFr/U/+rvjps2JA3Md7jygDv1WWdH7FZatoFcm9JM
+	b2AQ0DRB/eP1HWzq+nIPpn5T4ZDmI6UyobBi6U8zf6MTOPg99rv4dVv1A9UQqNeSePQTwV0u5J5
+	m6jZdc225nVud2w7kzIeHLn8MY1AAui+Zn+yv3Sr0uP8v0fSmcNSZqIQ5Ud/Ef244VOZKHOZfo8
+	ep1REZ3WNydGVzhsCGE5kOWdJ01LVVb7YIOp6y6tqb7VjA==
+X-Received: by 2002:a05:600c:1e12:b0:439:9536:fa6b with SMTP id 5b1f17b1804b1-43b04dc34d4mr22315435e9.13.1740651683693;
+        Thu, 27 Feb 2025 02:21:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZWDrKeECYxNJn95VcTyTz8lUpAL/ZnP6A7sgL8cGevFRSHtccOSsEA7TN+V3kF26FxGrMmg==
+X-Received: by 2002:a05:600c:1e12:b0:439:9536:fa6b with SMTP id 5b1f17b1804b1-43b04dc34d4mr22315175e9.13.1740651683369;
+        Thu, 27 Feb 2025 02:21:23 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73704228sm17949285e9.15.2025.02.27.02.21.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 02:21:22 -0800 (PST)
+Message-ID: <f58b63fc-43aa-47ff-8ee4-4f515f7d7a7c@redhat.com>
+Date: Thu, 27 Feb 2025 11:21:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[inspur.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v7 8/8] selftest: net: add proc_net_pktgen
+To: Peter Seiderer <ps.report@gmx.net>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Artem Chernyshev <artem.chernyshev@red-soft.ru>,
+ Frederic Weisbecker <frederic@kernel.org>, Nam Cao <namcao@linutronix.de>
+References: <20250224092242.13192-1-ps.report@gmx.net>
+ <20250224092242.13192-9-ps.report@gmx.net>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250224092242.13192-9-ps.report@gmx.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 10:24:41 +0100,
-Charles Han wrote:
-> 
-> Fix below inconsistent indenting smatch warning.
-> smatch warnings:
-> sound/core/seq/oss/seq_oss_event.c:297 note_on_event() warn: inconsistent indenting
-> 
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
-> ---
->  sound/core/seq/oss/seq_oss_event.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
-> index 7b7c925dd3aa..9a42713c7bdd 100644
-> --- a/sound/core/seq/oss/seq_oss_event.c
-> +++ b/sound/core/seq/oss/seq_oss_event.c
-> @@ -294,7 +294,7 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
->  				/* set volume to zero -- note off */
->  			//	type = SNDRV_SEQ_EVENT_NOTEOFF;
->  			//else
-> -				if (info->ch[ch].vel)
-> +			if (info->ch[ch].vel)
->  				/* sample already started -- volume change */
->  				type = SNDRV_SEQ_EVENT_KEYPRESS;
->  			else
+On 2/24/25 10:22 AM, Peter Seiderer wrote:
+> +TEST_F(proc_net_pktgen, dev_cmd_min_pkt_size) {
+> +	ssize_t len;
+> +
+> +	// with trailing '\0'
 
-I'd rather clean up the commented-out dead lines and fix the indent as
-well.  The indent was because of the "else" line.
+... same here. Much more occurrences below.
 
-Care to resubmit with that?
+/P
 
-
-thanks,
-
-Takashi
 
