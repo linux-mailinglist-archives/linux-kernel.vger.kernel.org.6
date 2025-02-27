@@ -1,249 +1,145 @@
-Return-Path: <linux-kernel+bounces-537515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E085A48CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:35:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E6AA48CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A07A4633
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:34:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA202188F023
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CA023E326;
-	Thu, 27 Feb 2025 23:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07BA276D27;
+	Thu, 27 Feb 2025 23:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OVxnFCrQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipautFG6"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0F2276D23;
-	Thu, 27 Feb 2025 23:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353EECF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699306; cv=none; b=B4OGldiRbSGunqNCYI5DezEiffPPDOj0kuu6aAPnjENBWazc+nfzcKrRHjVSffL1mNsyRqLf4mG8mPV9PzR7igixb3qKhBm16pSEMXUpxfJo5+f53kFRtrw8sVOrVQ7+szZfi5aMkQ+mFE0p7oRKHbO8NQDqjRxetULhKzOs+oY=
+	t=1740699472; cv=none; b=J05CRcPXMvnK62EzD3Tk/OBL9Byzlyb05v8Pg8vOp4Ei4h1ET2mFfDAwWxt+hxdP1hh2iw4Xsip/ud4SQD6FJjVV3wvOn/30iThk9hvkh2FWF4pf/8+1W8syJCn7pHxprxFVysSzehPRzuRQoJ07QSswsp5QxjWPKOg07PInte0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699306; c=relaxed/simple;
-	bh=bkqOxOWQQQCLGRepn5os0rxwFT8Ja2Tsk0+nPgxMF3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MasEG80N0P8W1UGez0uTclmyq7LL0eeVp/iMbOnOPAJh3YaZDUFLkIt61w7H51ULfwFsYdAQCEh92lVP9gzBzTwwmMShumaatpMN/e3YGWQAgHGUF0z7efGdcRe6ISaTQUrBh5hegrlwG4rs5EmVuT+KwuF5soBXqa6Q6+giyZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OVxnFCrQ; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740699303; x=1772235303;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bkqOxOWQQQCLGRepn5os0rxwFT8Ja2Tsk0+nPgxMF3k=;
-  b=OVxnFCrQi5VuGZdkGCfVWiXvhNtab/f9aoizkV3migDpg+6W80C9cFEv
-   lIfmPizXCSxhfRlxZrvX84Xv2pOTipP3jA1wulhrNeKnqVtfMslQW3ipN
-   bgTXnDNljGwv37G8vp+WrsZmePuE43jor5cgnQZmchmmZGFvxluf5v+5C
-   RZTB+5IkQsGa+LHsJNeXIaMTHjdd7W6HMJildbJJTYxP9X6HmubTe4vps
-   PuyN+FsT7d6pKibyaHwfRsryl3C9Jq+wQ/Udfeog3H0KSUL2rHaeW4Qq/
-   8GssrL8dYb/CFdhXHSuH6/cWuKZT/C4CZosJta4ULDVaayNzjM/asXZe0
-   w==;
-X-CSE-ConnectionGUID: tTGGOBKcRpKm59+wFWRXTA==
-X-CSE-MsgGUID: /VBeWWvOQRGxbl0+8YKmew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41317907"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41317907"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 15:35:02 -0800
-X-CSE-ConnectionGUID: LZ4CqSA+TDGa2Oiwl5QCwQ==
-X-CSE-MsgGUID: 2bABavt/QpyPKQ46ixT8Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117356118"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 27 Feb 2025 15:34:59 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnnP6-000EB8-1f;
-	Thu, 27 Feb 2025 23:34:56 +0000
-Date: Fri, 28 Feb 2025 07:34:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Alisa-Dariana Roman <alisa.roman@analog.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v5 2/3] iio: adc: ad7191: add AD7191
-Message-ID: <202502280702.31rbuGw8-lkp@intel.com>
-References: <20250226115451.249361-3-alisa.roman@analog.com>
+	s=arc-20240116; t=1740699472; c=relaxed/simple;
+	bh=WbgiTFR8OLXl9EBrqSFd1T+tSTHxoHSLOquz5CCP0PY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrDJAPm50PYl9o2Orlv/T7bjcVrSl++5ym17D6V5HUnoyovVPBcGmTp28XP5yC1t/10UVVwFn7xLOWJX1wytRhLiegPZgCvCebFElvWPJStLE2n48HmvHTQGA7Mb38F4gaTflf5V3sfrAXDzlt62FFnSdlFmmYys7B2S/MJtaaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipautFG6; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abec8b750ebso233831466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:37:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740699469; x=1741304269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CGc/M4Idkv0pwDjroWrApK5Pl9QbkdaU6P/ll2uMees=;
+        b=ipautFG6dzwXeRvDsqzrJTT0SdQwi+fqageiZh+AbFoN0PYwST9//B8exAJL5LB3xK
+         mFFyofQ5U4LU2VFigYoteQD+Rx9/vedKguzqhDcolOi8x5SM6TAM3793CeiS3dF/JZEN
+         KrHwJps4n0UIKGVYPEyFBwJlfxYVBZgPOK3kHxgMC3zQWqLm2yfOcG63LjuKWd2AA8dy
+         a6GxreyBUo6fMCMdhy7aNwxvuZN9DAJCI0RQLZsR+oeleXwy5ZrH028JAgqC7bSDkwlH
+         sZLQQ9BGhiUnIqMP6iJaOPf3oDWJBv08+GtDbHr3OHcaSawA/TZJy5glSCzpoHADIuZk
+         QpJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740699469; x=1741304269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CGc/M4Idkv0pwDjroWrApK5Pl9QbkdaU6P/ll2uMees=;
+        b=iQAn5KBwlcQlF5Tyk/tCbFkL+DUqoBVcadf0lxpe5575QHULVl5e+XIRTb2jeH6y4I
+         nzKNKHwQIBLlzz86OlWfxn+jGNuvJKM7nMSFSFRMwsMFxUOYTddt66GPUCprfeUCJnic
+         +xYrWqW36re6aKwSa8+o/a71tnBFNnbEL/T5KBzpec128ia1n2yA1d5uOX+FEqu5VCO3
+         fyslxdSbPb22PAzmeU3TAJRhvwvt1r+FAM4a4JR8cEtAclHvkLBrZdJSdZH8opEtv2OF
+         91sOIUGD4TSzFftmzHZFIUlhqQ0FRoCQlsFiUaH9Tvqk5e1nh4fTJdgGo6vxyJuroOPb
+         NNVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjFLAkIW7dzpLW3Pb73qyKkQFuvtqbQbeFDmLhZj6kL3kDoqAYn2ZgoFqCggCB05oSC89/aSWCVN1jY0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzm9/LijbVPNZ1IyeELoTuxqqi6TdiJ/tORoxLH2Io4HJe9UQ2
+	+dXlXgUzARZM9J3ZG9Xe/B21+Ff7+6A9t4f0phh5CgsNIHc3lAn2
+X-Gm-Gg: ASbGncvByYkma+EqygHxBP/hi2LLfC7TphH3XLsbgAmB4U6BpanPUVaZ8a7mveL7Jdo
+	35a+DAFLkj4DedFGVMxoikEUmvX/OSxCHGhv66U4BrjaGiM8VMtHq9DKcXpCq3215gXYRc4eSUy
+	VjpM5u0+FBFSHOIiTkIuHmfapkA10OdNRjgX6vxt7YyUuAKfV+gLYC0BZ1TJOAlvQHtPkmAcLWe
+	q80y3RbA6pdx9c9k5NQpwct1nGGKIPJ82uTOHyHSWARQRhD3RHSsWCAB8dBLEPW6d5z+dNKATNQ
+	bsQTBWKh0O3lw0sofHNuQIlF8L7TPe3gDZei29Hoh7LT
+X-Google-Smtp-Source: AGHT+IEJcVjn3ZpyU+qcNsU8eoJanDnChcfkLru3SZxuIgNCauuDPyZOublah5knY8QfPW6TT9dHFg==
+X-Received: by 2002:a17:907:3e9e:b0:aba:6204:1c03 with SMTP id a640c23a62f3a-abf26831546mr126718066b.57.1740699468600;
+        Thu, 27 Feb 2025 15:37:48 -0800 (PST)
+Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b99a6sm199241366b.13.2025.02.27.15.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 15:37:47 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	rostedt@goodmis.org
+Cc: vschneid@redhat.com,
+	mgorman@suse.de,
+	bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	vincent.guittot@linaro.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [RFC PATCH] wait: avoid spurious calls to prepare_to_wait_event() in  ___wait_event()
+Date: Fri, 28 Feb 2025 00:36:52 +0100
+Message-ID: <20250227233652.142613-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226115451.249361-3-alisa.roman@analog.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Alisa-Dariana,
+In vast majority of cases the condition determining whether the thread
+can proceed is true after the first wake up.
 
-kernel test robot noticed the following build warnings:
+However, even in that there is an additional call to prepare_to_wait_event(),
+resulting in a spurious irq + lock trip.
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on robh/for-next linus/master v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Then it calls into finish_wait() to unlink itself.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alisa-Dariana-Roman/dt-bindings-iio-adc-add-AD7191/20250226-195853
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250226115451.249361-3-alisa.roman%40analog.com
-patch subject: [PATCH v5 2/3] iio: adc: ad7191: add AD7191
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280702.31rbuGw8-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280702.31rbuGw8-lkp@intel.com/reproduce)
+pre-check the condition instead after waking up instead.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502280702.31rbuGw8-lkp@intel.com/
+Stats gathared during a kernel build:
+bpftrace -e 'kprobe:prepare_to_wait_event,kprobe:finish_wait \
+		 { @[probe] = count(); }'
 
-All warnings (new ones prefixed by >>):
+@[kprobe:finish_wait]: 392483
+@[kprobe:prepare_to_wait_event]: 778690
 
->> drivers/iio/adc/ad7191.c:217:15: warning: variable 'pga_index' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
-     217 |                 for (i = 0; i < ARRAY_SIZE(gain); i++) {
-         |                             ^~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ad7191.c:224:35: note: uninitialized use occurs here
-     224 |                 st->scale_avail = &scale_buffer[pga_index];
-         |                                                 ^~~~~~~~~
-   drivers/iio/adc/ad7191.c:217:15: note: remove the condition if it is always true
-     217 |                 for (i = 0; i < ARRAY_SIZE(gain); i++) {
-         |                             ^~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ad7191.c:160:48: note: initialize the variable 'pga_index' to silence this warning
-     160 |         int odr_value, odr_index, pga_value, pga_index, i, ret;
-         |                                                       ^
-         |                                                        = 0
->> drivers/iio/adc/ad7191.c:179:15: warning: variable 'odr_index' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
-     179 |                 for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
-         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ad7191.c:186:36: note: uninitialized use occurs here
-     186 |                 st->samp_freq_avail = &samp_freq[odr_index];
-         |                                                  ^~~~~~~~~
-   drivers/iio/adc/ad7191.c:179:15: note: remove the condition if it is always true
-     179 |                 for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
-         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ad7191.c:160:26: note: initialize the variable 'odr_index' to silence this warning
-     160 |         int odr_value, odr_index, pga_value, pga_index, i, ret;
-         |                                 ^
-         |                                  = 0
-   drivers/iio/adc/ad7191.c:553:18: error: expected ';' after top level declarator
-     553 | MODULE_IMPORT_NS(IIO_AD_SIGMA_DELTA);
-         |                  ^
-   2 warnings and 1 error generated.
+As in calls to prepare_to_wait_event() almost double calls to
+finish_wait(). This evens out with the patch.
 
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-vim +217 drivers/iio/adc/ad7191.c
+One may worry about using "condition" twice. However, macros leading up
+to this one already do it, so it should be fine.
 
-   150	
-   151	static int ad7191_config_setup(struct iio_dev *indio_dev)
-   152	{
-   153		struct ad7191_state *st = iio_priv(indio_dev);
-   154		struct device *dev = &st->sd.spi->dev;
-   155		/* Sampling frequencies in Hz, see Table 5 */
-   156		static const u32 samp_freq[4] = { 120, 60, 50, 10 };
-   157		/* Gain options, see Table 7 */
-   158		const u32 gain[4] = { 1, 8, 64, 128 };
-   159		static u32 scale_buffer[4][2];
-   160		int odr_value, odr_index, pga_value, pga_index, i, ret;
-   161		u64 scale_uv;
-   162	
-   163		st->samp_freq_index = 0;
-   164		st->scale_index = 0;
-   165	
-   166		ret = device_property_read_u32(dev, "adi,odr-value", &odr_value);
-   167		if (ret && ret != -EINVAL)
-   168			return dev_err_probe(dev, ret, "Failed to get odr value.\n");
-   169	
-   170		if (ret == -EINVAL) {
-   171			st->odr_gpios = devm_gpiod_get_array(dev, "odr", GPIOD_OUT_LOW);
-   172			if (IS_ERR(st->odr_gpios))
-   173				return dev_err_probe(dev, PTR_ERR(st->odr_gpios),
-   174						     "Failed to get odr gpios.\n");
-   175	
-   176			st->samp_freq_avail = samp_freq;
-   177			st->samp_freq_avail_size = ARRAY_SIZE(samp_freq);
-   178		} else {
- > 179			for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
-   180				if (odr_value != samp_freq[i])
-   181					continue;
-   182				odr_index = i;
-   183				break;
-   184			}
-   185	
-   186			st->samp_freq_avail = &samp_freq[odr_index];
-   187			st->samp_freq_avail_size = 1;
-   188	
-   189			st->odr_gpios = NULL;
-   190		}
-   191	
-   192		mutex_lock(&st->lock);
-   193	
-   194		for (i = 0; i < ARRAY_SIZE(scale_buffer); i++) {
-   195			scale_uv = ((u64)st->int_vref_mv * NANO) >>
-   196				(indio_dev->channels[0].scan_type.realbits - 1);
-   197			do_div(scale_uv, gain[i]);
-   198			scale_buffer[i][1] = do_div(scale_uv, NANO);
-   199			scale_buffer[i][0] = scale_uv;
-   200		}
-   201	
-   202		mutex_unlock(&st->lock);
-   203	
-   204		ret = device_property_read_u32(dev, "adi,pga-value", &pga_value);
-   205		if (ret && ret != -EINVAL)
-   206			return dev_err_probe(dev, ret, "Failed to get pga value.\n");
-   207	
-   208		if (ret == -EINVAL) {
-   209			st->pga_gpios = devm_gpiod_get_array(dev, "pga", GPIOD_OUT_LOW);
-   210			if (IS_ERR(st->pga_gpios))
-   211				return dev_err_probe(dev, PTR_ERR(st->pga_gpios),
-   212						     "Failed to get pga gpios.\n");
-   213	
-   214			st->scale_avail = scale_buffer;
-   215			st->scale_avail_size = ARRAY_SIZE(scale_buffer);
-   216		} else {
- > 217			for (i = 0; i < ARRAY_SIZE(gain); i++) {
-   218				if (pga_value != gain[i])
-   219					continue;
-   220				pga_index = i;
-   221				break;
-   222			}
-   223	
-   224			st->scale_avail = &scale_buffer[pga_index];
-   225			st->scale_avail_size = 1;
-   226	
-   227			st->pga_gpios = NULL;
-   228		}
-   229	
-   230		st->temp_gpio = devm_gpiod_get(dev, "temp", GPIOD_OUT_LOW);
-   231		if (IS_ERR(st->temp_gpio))
-   232			return dev_err_probe(dev, PTR_ERR(st->temp_gpio),
-   233					     "Failed to get temp gpio.\n");
-   234	
-   235		st->chan_gpio = devm_gpiod_get(dev, "chan", GPIOD_OUT_LOW);
-   236		if (IS_ERR(st->chan_gpio))
-   237			return dev_err_probe(dev, PTR_ERR(st->chan_gpio),
-   238					     "Failed to get chan gpio.\n");
-   239	
-   240		return 0;
-   241	}
-   242	
+Also one may wonder about fences -- to my understanding going off and on
+CPU guarantees a full fence.
 
+ include/linux/wait.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 2bdc8f47963b..965a19809c7e 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -316,6 +316,9 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
+ 		}								\
+ 										\
+ 		cmd;								\
++										\
++		if (condition)							\
++			break;							\
+ 	}									\
+ 	finish_wait(&wq_head, &__wq_entry);					\
+ __out:	__ret;									\
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
