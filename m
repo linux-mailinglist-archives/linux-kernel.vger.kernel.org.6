@@ -1,95 +1,64 @@
-Return-Path: <linux-kernel+bounces-536857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A772DA48513
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:33:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B28A484FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179CE1886837
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500B13B7BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300B71B043D;
-	Thu, 27 Feb 2025 16:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11E71B0430;
+	Thu, 27 Feb 2025 16:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aIfOoQEy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+xrodu3M";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aIfOoQEy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+xrodu3M"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d13d2kOe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455F1B041C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2571ADFE4;
+	Thu, 27 Feb 2025 16:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673591; cv=none; b=Huli89p8SUw9LMTBwuFUHVcxAvgr4Uld/dnd46R03S4X1FV8MaaYNDHs5b92K0odlNT8LhInSH1sPOAiBj1g/jkowrC4ywu7l1LJQ+23/27bYhTPsXmJxksqb5izSayKo1cy0vf3ZQzv5Vz9bR64lFy2NguAdPl9ftZqXbGnwIg=
+	t=1740673592; cv=none; b=ePRWOCJRqZEhtqsHvWbUUADAUobsDtLLw4OAUTZbMK5Z6EdRCJqwQQ/JLP/Q6juMhNjo/AKZ9gVcL+K0Z10/KITs2+2yj4UHwypqMUQmwC0XwS+7bxrXx7+oa4mugyZn+lChp2384LPtiWdfDy10mD/oeffu38T4KDOQdl3kvCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673591; c=relaxed/simple;
-	bh=Z0SxxWVcDnyhS64XxmG9uTMQYJ/O9T1it72XhO+4Q+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=O7yjSytwTVKPdBADAs/B8uyP2KuJbuSgYvaipg2oChYxCWro+BlF7sIXHAvTnrS8Uv0mE5TcIGOPGiU23ZGwMua1TmMXZbKbzHBX4zC6ezL1RNCsq62ypQdGznH5uhsPGhH69bl+hBqyI+56pMzEIQCJ72yeG0wViUdJ2aNeNHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aIfOoQEy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+xrodu3M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aIfOoQEy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+xrodu3M; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A2AB021189;
-	Thu, 27 Feb 2025 16:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740673587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vyVsR4Q4LAukuHFIQ6wrluc/uk2zT74RbyvFHc6oqA4=;
-	b=aIfOoQEyATKjvnsYbdyhOhxoSvQ/7Di5oOvSAkV8rRy6HZEB/0OTC/lh0+IW1gsQcIwPoZ
-	ZvaC0xhSR77KED/aSYdd+OORnjm1+MnKSPai2wySBIloSaT7YvvvZcIGDObFTrqa4znxqa
-	dualDg/kDb7DEtro4k5fZoma5wsMves=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740673587;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vyVsR4Q4LAukuHFIQ6wrluc/uk2zT74RbyvFHc6oqA4=;
-	b=+xrodu3MZEtPxcgg9/ZC5I38RNqas2GH6u7JWgv6ePLBD9QJUM+fPRm0LOGYGkek4TtcOw
-	nZfJPm9ZMxlnyfBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=aIfOoQEy;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+xrodu3M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740673587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vyVsR4Q4LAukuHFIQ6wrluc/uk2zT74RbyvFHc6oqA4=;
-	b=aIfOoQEyATKjvnsYbdyhOhxoSvQ/7Di5oOvSAkV8rRy6HZEB/0OTC/lh0+IW1gsQcIwPoZ
-	ZvaC0xhSR77KED/aSYdd+OORnjm1+MnKSPai2wySBIloSaT7YvvvZcIGDObFTrqa4znxqa
-	dualDg/kDb7DEtro4k5fZoma5wsMves=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740673587;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vyVsR4Q4LAukuHFIQ6wrluc/uk2zT74RbyvFHc6oqA4=;
-	b=+xrodu3MZEtPxcgg9/ZC5I38RNqas2GH6u7JWgv6ePLBD9QJUM+fPRm0LOGYGkek4TtcOw
-	nZfJPm9ZMxlnyfBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C4491376A;
-	Thu, 27 Feb 2025 16:26:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kayXGTOSwGekIAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 27 Feb 2025 16:26:27 +0000
-Message-ID: <a206637e-f63b-432a-aaa2-2e947ae5f4d8@suse.cz>
-Date: Thu, 27 Feb 2025 17:26:26 +0100
+	s=arc-20240116; t=1740673592; c=relaxed/simple;
+	bh=aOEtGrd0ha6dFMRcsDJl3/p9JPpM9nkTTOP3TzlLibw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VlEENY5xPk/SV+FP86yTQl4h8jH7R8RAGLFnsiZuRSRJL2Zt7fHko35ykrUQSEqPwTABpHiefEqzp/RPfBhNI5699trAMK0eVCl9HX2orvUSyGWSSqbBksvF4+gXjr6AgqSFJsR38vUGtFDxwTU6cSfDbBKn7YqCGuPZSP/7fic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d13d2kOe; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740673591; x=1772209591;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aOEtGrd0ha6dFMRcsDJl3/p9JPpM9nkTTOP3TzlLibw=;
+  b=d13d2kOe/JKXGsQrXEYjzBdQ9nIrvKAtAtdbdFAhHStGZaEjlfN2vEqv
+   T7oBxv9QlNvXH1JUMB3RPI+23ygv3iYROLHDzDMQIIEDhO+vMF7QoeRW0
+   rx1tEjj33yNCgUcB/rplzdC+6NlumhG/JXpvAygM0iwBGkgAyCE1NT4Yi
+   tu9J42vGMGU0oxDuKdAFpQj+KtPTyj7/yTxmtqxv8l1jTK8JnzP/N98qG
+   p9AGUOQreJ4SO/DeneSxwRFdgXGAoUX4LlRwRJT1Nw866HetHn+MNfrW0
+   K7fNCV5rnCNZxoNOyh+qVb/MAO6VK1FUBfvCYaF6dRc07SmDMOy0KMPTK
+   g==;
+X-CSE-ConnectionGUID: ARz/swlaQDmwryO/T9ZySA==
+X-CSE-MsgGUID: QG+oOwCNTJiWerMKERZoTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52216686"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="52216686"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:26:30 -0800
+X-CSE-ConnectionGUID: sxRArCenSIipebFcB0lrGg==
+X-CSE-MsgGUID: V+OXs52SQ168w8Yj9uV8Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117595889"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:26:30 -0800
+Message-ID: <d20da175-2102-4ac0-bf91-0ab8f6b6b317@intel.com>
+Date: Thu, 27 Feb 2025 08:26:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,238 +66,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] mm: slub: Enhanced debugging in slub error
+Subject: Re: [PATCH] x86/crc32: use builtins to improve code generation
+To: Bill Wendling <morbo@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Eric Biggers <ebiggers@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Justin Stitt <justinstitt@google.com>, LKML <linux-kernel@vger.kernel.org>,
+ linux-crypto@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>
+References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: janghyuck.kim@samsung.com, harry.yoo@oracle.com,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <CGME20250226081354epcas2p44c2f53d569296ac2e5f8a7b01f4552fa@epcas2p4.samsung.com>
- <20250226081206.680495-1-hyesoo.yu@samsung.com>
- <c1db529b-f16c-4195-8832-8f2cecd84ece@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <c1db529b-f16c-4195-8832-8f2cecd84ece@suse.cz>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A2AB021189
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[samsung.com,oracle.com,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 2/27/25 17:12, Vlastimil Babka wrote:
-> On 2/26/25 09:11, Hyesoo Yu wrote:
->> Dear Maintainer,
->> 
->> The purpose is to improve the debugging capabilities of the slub allocator
->> when a error occurs. The following improvements have been made:
->> 
->>  - Added WARN() calls at specific locations (slab_err, object_err) to detect
->> errors effectively and to generate a crash dump if panic_on_warn is enabled.
->> 
->>  - Additionally, the error printing location in check_object has been adjusted to
->> display the broken data before the restoration process. This improvement
->> allows for a better understanding of how the data was corrupted.
->> 
->> This series combines two patches that were discussed seperately in the links below.
->> https://lore.kernel.org/linux-mm/20250120082908.4162780-1-hyesoo.yu@samsung.com/
->> https://lore.kernel.org/linux-mm/20250120083023.4162932-1-hyesoo.yu@samsung.com/
->> 
->> Thanks you.
+On 2/26/25 22:12, Bill Wendling wrote:
+>  #ifdef CONFIG_X86_64
+> -#define CRC32_INST "crc32q %1, %q0"
+> +#define CRC32_INST __builtin_ia32_crc32di
+>  #else
+> -#define CRC32_INST "crc32l %1, %0"
+> +#define CRC32_INST __builtin_ia32_crc32si
+>  #endif
 > 
-> Thanks. On top of things already mentioned, I added some kunit suppressions
-> in patch 2. Please check the result:
+>  /*
+> @@ -78,10 +78,10 @@ u32 crc32c_le_arch(u32 crc, const u8 *p, size_t len)
 > 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/log/?h=slab/for-6.15/fixes-cleanups
+>         for (num_longs = len / sizeof(unsigned long);
+>              num_longs != 0; num_longs--, p += sizeof(unsigned long))
+> -               asm(CRC32_INST : "+r" (crc) : "rm" (*(unsigned long *)p));
+> +               crc = CRC32_INST(crc,  *(unsigned long *)p);
 
-What do you think about the following patch on top?
+Could we get rid of the macros, please?
 
----8<---
-From c38dadde6293cacdb91f95afc3615c22dec5830a Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 27 Feb 2025 16:05:46 +0100
-Subject: [PATCH] mm, slab: cleanup slab_bug() parameters
+unsigned long crc32_ul(unsigned long crc, unsigned long data)
+{
+	if (IS_DEFINED(CONFIG_X86_64))
+		return __builtin_ia32_crc32di(crc, data)
+	else
+		return __builtin_ia32_crc32si(crc, data)
+}
 
-slab_err() has variadic printf arguments but instead of passing them to
-slab_bug() it does vsnprintf() to a buffer and passes %s, buf.
+I guess it could also do some check like:
 
-To allow passing them directly, turn slab_bug() to __slab_bug() with a
-va_list parameter, and slab_bug() a wrapper with fmt, ... parameters.
-Then slab_err() can call __slab_bug() without the intermediate buffer.
+	if (sizeof(int) == sizeof(long))
 
-Also constify fmt everywhere, which also simplifies object_err()'s
-call to slab_bug().
-
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index a9a02b4ae4d6..d94af020b305 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1017,12 +1017,12 @@ void skip_orig_size_check(struct kmem_cache *s, const void *object)
- 	set_orig_size(s, (void *)object, s->object_size);
- }
- 
--static void slab_bug(struct kmem_cache *s, char *fmt, ...)
-+static void __slab_bug(struct kmem_cache *s, const char *fmt, va_list argsp)
- {
- 	struct va_format vaf;
- 	va_list args;
- 
--	va_start(args, fmt);
-+	va_copy(args, argsp);
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
- 	pr_err("=============================================================================\n");
-@@ -1031,8 +1031,17 @@ static void slab_bug(struct kmem_cache *s, char *fmt, ...)
- 	va_end(args);
- }
- 
-+static void slab_bug(struct kmem_cache *s, const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	__slab_bug(s, fmt, args);
-+	va_end(args);
-+}
-+
- __printf(2, 3)
--static void slab_fix(struct kmem_cache *s, char *fmt, ...)
-+static void slab_fix(struct kmem_cache *s, const char *fmt, ...)
- {
- 	struct va_format vaf;
- 	va_list args;
-@@ -1088,12 +1097,12 @@ static void print_trailer(struct kmem_cache *s, struct slab *slab, u8 *p)
- }
- 
- static void object_err(struct kmem_cache *s, struct slab *slab,
--			u8 *object, char *reason)
-+			u8 *object, const char *reason)
- {
- 	if (slab_add_kunit_errors())
- 		return;
- 
--	slab_bug(s, "%s", reason);
-+	slab_bug(s, reason);
- 	print_trailer(s, slab, object);
- 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
- 
-@@ -1129,15 +1138,14 @@ static __printf(3, 4) void slab_err(struct kmem_cache *s, struct slab *slab,
- 			const char *fmt, ...)
- {
- 	va_list args;
--	char buf[100];
- 
- 	if (slab_add_kunit_errors())
- 		return;
- 
- 	va_start(args, fmt);
--	vsnprintf(buf, sizeof(buf), fmt, args);
-+	__slab_bug(s, fmt, args);
- 	va_end(args);
--	slab_bug(s, "%s", buf);
-+
- 	__slab_err(slab);
- }
- 
-@@ -1175,7 +1183,7 @@ static void init_object(struct kmem_cache *s, void *object, u8 val)
- 					  s->inuse - poison_size);
- }
- 
--static void restore_bytes(struct kmem_cache *s, char *message, u8 data,
-+static void restore_bytes(struct kmem_cache *s, const char *message, u8 data,
- 						void *from, void *to)
- {
- 	slab_fix(s, "Restoring %s 0x%p-0x%p=0x%x", message, from, to - 1, data);
-@@ -1190,7 +1198,7 @@ static void restore_bytes(struct kmem_cache *s, char *message, u8 data,
- 
- static pad_check_attributes int
- check_bytes_and_report(struct kmem_cache *s, struct slab *slab,
--		       u8 *object, char *what, u8 *start, unsigned int value,
-+		       u8 *object, const char *what, u8 *start, unsigned int value,
- 		       unsigned int bytes, bool slab_obj_print)
- {
- 	u8 *fault;
--- 
-2.48.1
-
-
+instead of CONFIG_X86_64, but the CONFIG_X86_64 will make it more
+obvious when someone comes through to rip out 32-bit support some day.
 
