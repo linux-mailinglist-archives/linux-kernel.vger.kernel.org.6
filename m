@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-537461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B328A48C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F73A48C3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C337A5342
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA437A5185
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9DC26FA4E;
-	Thu, 27 Feb 2025 23:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1915A23E335;
+	Thu, 27 Feb 2025 23:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKduXEHU"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZCfVjBe"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7FB14BF8F;
-	Thu, 27 Feb 2025 23:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E10327780C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697207; cv=none; b=BDMAMJgGF3cmEFAhOaSQkFwabbSSUhTa2d0VNLQL+w6jO5Y+h/DT/CvxRITrs1hE4M5xbgIZ6IpKMaKxT40EhcM6HuWInTSkZGoRQHrq1VzaoVJ62phBiV+iw+c9SFNreMEGidzTTq13QSFSMTlO6CetTsvZURR4Td9t1lnIZdo=
+	t=1740697250; cv=none; b=Svmg0HtnRArit+/UTX+74vNqQ0enPfCf5vrgdwrIZwXRxV2+hsZh5uiSVB03J4JU6iAzkm3Ry8qwBdmZ0ACsOxAmMQvG/OXASRE1KKkg89VsGwOzUrAoAJ7r2S9YLUAPrS233mKGKwcZ3l8USixe3BGuuYj+HAnGYxtXMbpabKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697207; c=relaxed/simple;
-	bh=plZB6nttI4h15XHAy2tUctm4vCwJqkaepq/yarLTXjw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eKUFsFCMlLd50p4El9t2u+cgYlFmB+bqOlrBskT7oI15xDe3ZHkLbH1BDBWReeqYs5yJlGDC5/gGa+LVon2NyJ2RgKuP+aY25KIGqFE0YEZvUZkyx4siy6+2/O3j6I/UO97+t7wdZpL2ddphDqRFS/m+gYopvWW/4az8u658WP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LKduXEHU; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso15822765e9.1;
-        Thu, 27 Feb 2025 15:00:05 -0800 (PST)
+	s=arc-20240116; t=1740697250; c=relaxed/simple;
+	bh=anKmamDt2JAR6SYLrGqIAXyBzFAE7px2UkFAQ1uHX48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B2KcM5HfpNk9QOt26rM+ebO/ccQMWRox2zXKyuCCjmgjIppGGPIgvyZLZMgEvEYKUy+ASefdqSaZaFPANkIcMIc9zb2gQ3ePw5I/FQQJ5xml4AyndedOhLJ6cpVjjgWDXOFXuGCCb+wfdDasvTnhFVWmlpeg6ktTs3D6d0l0o9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZCfVjBe; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so16871131fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:00:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740697204; x=1741302004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CSTTn8dgXr2XP2qmQgDysPC6clyA8S5gqjElXgR2Us8=;
-        b=LKduXEHU1CqRvnehJVWcwbJcUFxNEC3VQFbL+v5v2XtDzb/rksH56YRf/dHDK4zntc
-         9MBAeAqb60PRNftWi+S/DbXIExz5w7Ga9ZYi/Ow6ccSaLZH1fvjnYjfzGPg6LHMjiviD
-         V67wDfIU30VpjSLZYwkl4tY6K081ZKbcp5nm7m7ugrWid/GAOcpKH2h7bmqwcygIH0CL
-         v3k0XtqNG5+c6RDRW87srxLuFT04pUAB62Y5Sqz3DFHceYDFyj7jME24XdaKq8oXeLim
-         gByevqnedG+Xy61P9N+1Vati2a63g42bCgIpMKyGyglvfQVGVCU/7U2u02jzQr3Xw54G
-         e71A==
+        d=linaro.org; s=google; t=1740697246; x=1741302046; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qwFZZezvW0dBKzxzrpQ/61HBuqlXjI5bXEQd5dYgZNo=;
+        b=LZCfVjBe2x2iVCmnGisMc1nh1D7NSN20ltftQIz6DRDx6yZQYlNDc1kzCH2wsLdhJH
+         LiktB80lNzx/laWcqoeXNPtkNP1hUFjDYS8zeMK7tNDb8OMFchCCXGvu3aPA+GNltEyh
+         CpfA2R7GR1YWKtbWUzZQjj6Jnjf7p9iiHMQ6Uyvmg6MhifXN8ZgCOgSqWM9P0yOd+F/C
+         26ZrofOAAA6Hlmc5onW87So3QRrNMd1V5Rt0UJhYWgjgw+nGa9JbLgS00SzSa1R+x9R9
+         0DB0+gZ9PTY5lsAMOeebik2SNb5CVge9GVoGxkDY3IE9/cxN3zBDxc0KphUSRKofjnwd
+         NIXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697204; x=1741302004;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CSTTn8dgXr2XP2qmQgDysPC6clyA8S5gqjElXgR2Us8=;
-        b=KuzZKxkkdaUrudaxzYfGER7laffosE42F+8xQxa3mn/NPnWQqHk1wLC4BuN5TbxAdL
-         IorJKaFQUheK1HmywBGbhZZ9lz3NaUx2TBFE84PYXnvr0zIgNMS8xhrnLOwnSSFRnPtJ
-         JYjMKIimaxWKeiAWXA8LfkS0pY9wN5ijCGynz79AZISJpMCHL9wOeuG2Eeb6FR3vDF8U
-         lb+KPCuJ4foyDZx5Q/o+2JriXo3LbuxFLdkzqkx0Q4lKazBtPA7UMO84OXHKsEh7uAT0
-         tsGhK3nUwkaUjPVFDJYYGAJrmp6+GkTpPeh6ngKPjH2RtvnV8vU+QaqOhlom/Is4tQ+y
-         qJCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8CakssYPCB0bYfW/ct9DNjeieMIE02vrK71rAvl8g78COaINBNYch12UQ3LunHYXgFwIhzmZ5/oaf6JE=@vger.kernel.org, AJvYcCWAWwwPbWDF/QtS8WD2o5LPXOGldBQYKgfy/3Mer8OtIYfbfu6WI2rcxRCWlYUYwz2TNpicUSUI2JrqagLosCD1@vger.kernel.org, AJvYcCWn77oQYH6WlpylL2ZK4Y8cedkVzl2aZytm+9ctXYDnYHm3LQMS/IhtfIqg2l3KPn5Px4O7Ehq7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9EkL8gdg3D8yaP2msAOFscEbzNOxEMaB5deYBtWtX3fvqcn5q
-	No6Hft2MI04K1qJaev3h7VY2tgZG3fI0MON3hpweYPqKKj+vbf2S
-X-Gm-Gg: ASbGncv+3o5lvfEXNYVudJODvGCNhrYk1+jXdfJ7B9/hQjLNwWBM1C41TD88icO+xgq
-	C9d4gPXHcx9uYlhxk6z/auec2+4WCrU5GIZilQ7ItHvjYhAHOOEniWFX+WunQ+xXbX6UBKs2h+y
-	NT9BVR5Ppcv5BKaQ/ipOQTn9HQ85fxfT1wKLym20ADfunbaepoFymHyqs5ZOPtrFlTp+c/e/nMT
-	xPF/4Q65p0OUc1YNNwJ9WFKnKvOOQGnfvPbZ1xq4Vp0GDDhAwpKoZohmSSQYzM53HGK7btoW8Py
-	4LtGUnToL/wcKyn1GBlHnVvD9DE=
-X-Google-Smtp-Source: AGHT+IGhA9c+hj1Gic7ekykbUYYS9qnUrSWSLFMiD7OZScDPu+zoBa4VJZ5UI8HQ4/XW0j7pZUBIHg==
-X-Received: by 2002:a05:600c:46d1:b0:439:8544:1903 with SMTP id 5b1f17b1804b1-43ba674c80fmr7864085e9.20.1740697203440;
-        Thu, 27 Feb 2025 15:00:03 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43b73718abcsm36327565e9.22.2025.02.27.15.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:00:03 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] [NETFILTER]: nf_conntrack_h323: Fix spelling mistake "authenticaton" -> "authentication"
-Date: Thu, 27 Feb 2025 22:59:28 +0000
-Message-ID: <20250227225928.661471-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1740697246; x=1741302046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qwFZZezvW0dBKzxzrpQ/61HBuqlXjI5bXEQd5dYgZNo=;
+        b=IV22CCy/pzRHteflRtl7ClqQZ1vfUUsHY8rrFv6jKsyWA2hZWdzxlNsaFlwzDkHBUo
+         VgoPFZLfa/2epo+khQPHeEm/2HoY+OQXGurMEoHbIppK5935hIA5shkMJyv30h3IN3bm
+         0ZPtrPVMcogkSAHLDkeZZPUDYC+cUNm8Qb1gvKD2YMR9cxdqWm5zQiLwiNqbt7womc49
+         ei1rUFcd6cfCPehKgX1+EfFY8wTDNFM8+5pj0mfpc+ymTJdcVi137bwvW69KeBd4WTSd
+         kCcynToD/ew7uta9eKtUXILWGXOT6WVfn7H/rmAC7PxBH0/lGhejsLQOOhL6B+EVsEam
+         Q9Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCX0eZrdBhlz+quFUP7IAI5itOvuMT50poCRLORV+JIYSXCs2RUZKBEqZUGF7LIXxY+4iQye1Xtoes4vLEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLSX2K9HU4gR+q5elq8CIyHYrUH3GSIkOB7FJCK6wll6Ih9Y7L
+	TgBrS7z5SMjjwOG0TNFbJDm4OJWWODQefyDVB3SbsOuy4CuVLrpKjDryVvkVHz7l5+l7mhOALX+
+	4PPgeYf0t+8TfQBy+xMeo8HNzohcXZQIRDG4ifw==
+X-Gm-Gg: ASbGncsjSxMAgRGswOWw2eBuC/LfQ8UsLWqXNpH7IWyRV689E7gNVrSxdFG5LxVZD3J
+	DU4zMpOaKfxJ5yonD1xrHtoFXkwur2mBqWnvqlX2yr8X5onCA9FDxvji0xMQAQ6m8cACOkXHv2Q
+	mf7+QyZQg=
+X-Google-Smtp-Source: AGHT+IGDB6M3SfRRZWxdUGXX2+vM/pAqOBIuKSaF7zEvkP6CctCeQrrU0dd+T2vFb4hY7/S5th74SYa9xvKPHD/s7+E=
+X-Received: by 2002:a05:651c:b07:b0:308:ed6f:6e71 with SMTP id
+ 38308e7fff4ca-30b9324f3c2mr2703231fa.21.1740697245622; Thu, 27 Feb 2025
+ 15:00:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250211051801.470800-1-inochiama@gmail.com>
+In-Reply-To: <20250211051801.470800-1-inochiama@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 00:00:34 +0100
+X-Gm-Features: AQ5f1JpBMomU6BGhqr4xdLlZeYdSp5D6LLHZS3EpCT3eseLqQ-fhMILIKxtTpQ4
+Message-ID: <CACRpkdYfZ8izsBJaKUd__jXGHnDBU9Tha=2kozjzHssoppgY5w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] riscv: sophgo: Add pinctrl support for SG2042
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a literal string. Fix it.
+On Tue, Feb 11, 2025 at 6:18=E2=80=AFAM Inochi Amaoto <inochiama@gmail.com>=
+ wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/netfilter/nf_conntrack_h323_types.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> SG2042 has a simple pinctrl device for all configurable pins.
+> It supports setting pull up/down, drive strength and input schmitt
+> trigger.
+>
+> Add support for SG2042 and SG2044 pinctrl device.
+(...)
+> Inochi Amaoto (8):
+>   pinctrl: sophgo: avoid to modify untouched bit when setting cv1800
+>     pinconf
+>   pinctrl: sophgo: introduce generic data structure for cv18xx pinctrl
+>     driver
+>   pinctrl: sophgo: generalize shareable code of cv18xx pinctrl driver
+>   pinctrl: sophgo: introduce generic probe function
+>   dt-bindings: pinctrl: Add pinctrl for Sophgo SG2042 series SoC
+>   pinctrl: sophgo: add support for SG2042 SoC
+>   pinctrl: sophgo: add support for SG2044 SoC
 
-diff --git a/net/netfilter/nf_conntrack_h323_types.c b/net/netfilter/nf_conntrack_h323_types.c
-index fb1cb67a5a71..4f6433998418 100644
---- a/net/netfilter/nf_conntrack_h323_types.c
-+++ b/net/netfilter/nf_conntrack_h323_types.c
-@@ -1108,7 +1108,7 @@ static const struct field_t _SecurityCapabilities[] = {	/* SEQUENCE */
- 	 _NonStandardParameter},
- 	{FNAME("encryption") CHOICE, 2, 3, 3, SKIP | EXT, 0,
- 	 _SecurityServiceMode},
--	{FNAME("authenticaton") CHOICE, 2, 3, 3, SKIP | EXT, 0,
-+	{FNAME("authentication") CHOICE, 2, 3, 3, SKIP | EXT, 0,
- 	 _SecurityServiceMode},
- 	{FNAME("integrity") CHOICE, 2, 3, 3, SKIP | EXT, 0,
- 	 _SecurityServiceMode},
--- 
-2.47.2
+I applied these patches 1-7 to the pinctrl tree and created an immutable
+branch:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.gi=
+t/log/?h=3Dib-sophgo
 
+>   riscv: dts: sophgo: sg2042: add pinctrl support
+
+Apply this patch to the riscv/SoC tree.
+
+If it is required, that tree can pull in my immutable branch, which
+is based on v6.14-rc1.
+
+Yours,
+Linus Walleij
 
