@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-536729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4ECA4837C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:49:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7004AA48381
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8813B6FAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC431889DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEB6197A76;
-	Thu, 27 Feb 2025 15:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE56190470;
+	Thu, 27 Feb 2025 15:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qJVr79NW"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkalIQyl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52431624C3;
-	Thu, 27 Feb 2025 15:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97334433C8;
+	Thu, 27 Feb 2025 15:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671348; cv=none; b=BWO/Nc7gMmvcA+TdMsMxjzyLkJX/tR1J+I3h3NXqsBHRFLF1GXILxp7JAIX3GekhAHFhuj4V4HfZuaCEPa/WV8XItEaZiWeH0anuvpM1RF9NG7Pt6gcK9n2A5TcR//nnyO+t6BxJBya4Iwkeja8VBiUdhttkn1pTGxmqUsTm23E=
+	t=1740671411; cv=none; b=uJGalcqdrSIg3GTK38DWopX4FT+L3FEbhJzzF7iCZjAESsnQqVwv8kwriIiGpalhxdlmPpxqL6dgoHnslmp7wR2DXxf4zytujCLDYCYsp2n3pUbJcWKE9n9JKSNIEEazD/9rXXsQ+Zc0XYVNOE7Wh+UVz8qrAoVER4ZSBmA1Ffk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671348; c=relaxed/simple;
-	bh=zzZa7n5QAPPWcKQ/es+FdPtKkvbVk123mv32pczukr0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SuqsgE1+ZwwOnygGSijClVyREMXU6Uj//7sq8wS/Am6MMB6/Qa+ZjUlIOyp8dxiuX5NICHCAtxO3zbB6D0EoTJt2Z6YBg2moXFNapTidInde9jhjH+9ZKolBmcj8UiKaCLdQHNHJj0IO5Fci1utEl9oPURCAj1MmHoZ4TSOAGtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qJVr79NW; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 28826411AF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1740671336; bh=cqbT2RBDltaoqj4UWGIofvpGfTET89voDdxor1L4E9Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qJVr79NWJC/fbAi0+wjIfIVYMHAG8JeG/0T1+dFeN+xSPR8jqABgBC7koYbVLA3X8
-	 btow3rPgJRp9d46U/v97sGxcz6fhXQRLMS3xXTy+gqaY30mhW+73BRLY4j+LhVIyBO
-	 +F6gDJTk1KHaqe1Tz6ncIu+IeBcr/v98jcqdcI3wrhBQpd9grR73cLH0/Q5ToFoQ3T
-	 DVdMBxnkLbtmPSE4eZa9zqbH4pkH3+j27bpSfkPBEjqcysL0xORu60i4+sDgDzUhdg
-	 UaIg66B+DCpdIwv13NfK0i9hDlrhEuBpmjtN+44Zr+BYuqfU0tonyVlXGaoOZLqpFg
-	 rdAY2BxWPRD7w==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 28826411AF;
-	Thu, 27 Feb 2025 15:48:56 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>,
- live-patching@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
- joe.lawrence@redhat.com, Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-Subject: Re: [PATCH] docs: livepatch: move text out of code block
-In-Reply-To: <20250227150328.124438-1-vincenzo.mezzela@suse.com>
-References: <20250227150328.124438-1-vincenzo.mezzela@suse.com>
-Date: Thu, 27 Feb 2025 08:48:55 -0700
-Message-ID: <87bjunqtg8.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1740671411; c=relaxed/simple;
+	bh=CnDjPGevNGv431PW9uU0h0V3+GiSnFZ/hhVZ8LkUoUg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dY3b+Q6OJKdf/H9gB2ffQdDERnkvhDJyQm1n/huVdS4aL8R7PDkkkpXeNWjFTlrYFE5suTa7nYkWqEy1lhYkRLbWVBsktFDdpAUej8k2IMKLWJ1Lzbt3qdII4+XTaXP4bNs/WSSxxTtPtpNe7ffIUYyA679rM5JpGAtOV8Y9Kw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkalIQyl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2EA7C4CEDD;
+	Thu, 27 Feb 2025 15:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740671411;
+	bh=CnDjPGevNGv431PW9uU0h0V3+GiSnFZ/hhVZ8LkUoUg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OkalIQylskXmD6nTgqqYvluKl1K5HRqAoOmkKXzxHX3kGrl9VapXIeuwtITsLkSHX
+	 g5tlhVuxw7GOoQu14F3ZjQn+o0yHHNwUvGgx+ddoCddqdh4kwzEDaqP2u6mxN3/Bqv
+	 k8JKjr4vyz+xt8qny4knqlTbqRJYmfkeElQrWa1vo6z82rUYZgSsap53PlzY1dkfzW
+	 +Z52JBzqsw/f6fGAM6RsZgVLg2entobADJLMD0kPojgsXnmZxw78dHegtIMyQjJzme
+	 6vBnSWxcpWJh5dZqokwnUegSahnyu1fsFTw118TARKoXQV/aqXMtnaeIPmcj7UGO/V
+	 Ci5izX5sipsPQ==
+From: SeongJae Park <sj@kernel.org>
+To: bus710 <bus710@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] samples/damon: a typo in the kconfig - sameple
+Date: Thu, 27 Feb 2025 07:50:08 -0800
+Message-Id: <20250227155008.25388-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAJGd785bhaXV4=R8dL-yNdQLN3YsJL+L+XQH3jwqYdYCCy5LNA@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Vincenzo MEZZELA <vincenzo.mezzela@suse.com> writes:
+On Thu, 27 Feb 2025 07:35:00 -0800 bus710 <bus710@gmail.com> wrote:
 
-> Part of the documentation text is included in the readelf output code
-> block. Hence, split the code block and move the affected text outside.
->
-> Signed-off-by: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-> ---
->  Documentation/livepatch/module-elf-format.rst | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/livepatch/module-elf-format.rst b/Documentation/livepatch/module-elf-format.rst
-> index a03ed02ec57e..eadcff224335 100644
-> --- a/Documentation/livepatch/module-elf-format.rst
-> +++ b/Documentation/livepatch/module-elf-format.rst
-> @@ -217,16 +217,23 @@ livepatch relocation section refer to their respective symbols with their symbol
->  indices, and the original symbol indices (and thus the symtab ordering) must be
->  preserved in order for apply_relocate_add() to find the right symbol.
->  
-> -For example, take this particular rela from a livepatch module:::
-> +For example, take this particular rela from a livepatch module:
-> +
-> +::
+> I was wondering how others live with the git send-email all the time,
+> so I searched for alternatives.
+> Then I found out that some people use terminal email clients like
+> Mutt,
 
-The right fix here is to just delete the extra ":"
+Yes, dealing with mails is not easy for beginners.  I therefore introduced you
+hkml before:
+https://lore.kernel.org/20250225000925.1654-1-sj@kernel.org
 
->    Relocation section '.klp.rela.btrfs.text.btrfs_feature_attr_show' at offset 0x2ba0 contains 4 entries:
->        Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
->    000000000000001f  0000005e00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.printk,0 - 4
->  
-> -  This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol index is encoded
-> -  in 'Info'. Here its symbol index is 0x5e, which is 94 in decimal, which refers to the
-> -  symbol index 94.
-> -  And in this patch module's corresponding symbol table, symbol index 94 refers to that very symbol:
-> +This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol
-> +index is encoded in 'Info'. Here its symbol index is 0x5e, which is 94 in
-> +decimal, which refers to the symbol index 94.
-> +
-> +And in this patch module's corresponding symbol table, symbol index 94 refers
-> +to that very symbol:
-> +
-> +::
+If Mutt setup doesn't go well, and you haven't tried hkml yet, you could give
+hkml a try, too.
 
-You can put that extra colon here rather than introducing a separate
-"::" line.
+> and learned that the inline patch is the right way, not
+> attached.
+> Let me do the inline patch if there are more chances in the future.
+
+Yes, that should be the right approach.
+
 
 Thanks,
+SJ
 
-jon
+[...]
 
