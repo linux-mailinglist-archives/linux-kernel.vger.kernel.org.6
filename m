@@ -1,133 +1,205 @@
-Return-Path: <linux-kernel+bounces-537036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB2EA4874D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:08:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873FCA4874B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C15C3AF9CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5C1C1889B28
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDCA1EFF9F;
-	Thu, 27 Feb 2025 18:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0909C1EB5FE;
+	Thu, 27 Feb 2025 18:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g004y6jy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fu/pWpvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C931199239;
-	Thu, 27 Feb 2025 18:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62301199239;
+	Thu, 27 Feb 2025 18:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740679720; cv=none; b=j2SOXNV0E5ahXG5r6kOTMfd+6qNTkb/ppjUn6dMJ7DaCIlEcTOKAL+FwAnsABzhwskkkkJ3IVDv4zWURKEkyr8f+wQdkZ64HHx0vi9lvKU782azUZJ0TJiLPnzw8PSSKT0CiOt+rDuM6ojWqo+5VUxlQiV0Yz9dnxAhja9opJbo=
+	t=1740679702; cv=none; b=fX9OWAQWt7uVg1dKlM2W2YGErKnoKP8PSAIZnz15oGYgrDZQtsn4zPqZhi8b541FD2a2FaCtIKopyGS/xP4uywH0eRpr5588Y6FKmAzZDxuv1TJhxYIGFDc7tNu68542V4JIS9ZUMrfZfjF4alDOKQYOn3gGPMbEWCcnLm0Kzsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740679720; c=relaxed/simple;
-	bh=sWYq2BLlmh3rHjBO+mBEwtyLYmiYWvSIjBSTdkR7nMk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bB/TiaZLbgTl1ToTTkwkYADaCC/F13Hjp5YcXtJggZM164Ep/cmwsUWrCOssLBOvtcxc5wNQbcDF4qCW+FRaPZNpkF8L+4VeZR4NP1bZnfakcDhvCI0MEC+ceK9o8x/oYj0Q/JFFDMyfFXywowQszZPQzeWRJ828jVFBOTFcg2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g004y6jy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9oSU6005917;
-	Thu, 27 Feb 2025 18:08:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=qSr1jn029U/PH0+JcwV5hq
-	ViSKHamKOwz8L1wWw3xEM=; b=g004y6jyjLCTMiu8BlWQaCYelIXe8lr2gq+by/
-	KPxEhOMLGNkdUlyXWRFsQ7vuYCgIGBOe75gwqCh8jOjru/fBlnhC2iXFLLz/30sH
-	gOd74FtyRjKZuyyEioQc0iR29QZ+P2J/u32B6mQx+euOmaujieMAPp/JBBot4OXP
-	l2DakSNKcSYYST3iDvoUeEe9IRtrLdJ4mIzgIss5FHDrNgdbfY68/N2TzAdUwYBR
-	Ii8kJiSlK3ln7hEwDWc7F0xHbL/InyojYgzkevELBA/+ZSPO5qKxL7btyYUgCofk
-	3+eootrk8CxOmPuYv0r3ScOWVaQQ8Ob+jmAmxIaMlTnGqBQw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 452be6k760-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 18:08:35 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51RI8Z8l018601
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 18:08:35 GMT
-Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Feb 2025 10:08:32 -0800
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_yrangana@quicinc.com>
-Subject: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-Date: Thu, 27 Feb 2025 23:38:16 +0530
-Message-ID: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740679702; c=relaxed/simple;
+	bh=zn6+kaT0qr+KrKSEqCpSvIrTzLNZuK1KwZiw0gaP4cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDeSiM4892wfYfwrDgNepwpRZOBtUK4ydkH4pBUZJdJlQJT4rb/n1nIvzrCg/rEhJZ5BNaKZ+A3kJrkCejL+ew6Ah/oumMmMlqHnVYzZG1/RYKgvXSiw3z5DTMv1+geTBXxG3i5xZxeyPg7QPZsqnCzYc+e4CYMwqcVQcIQSXH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fu/pWpvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7B4C4CEDD;
+	Thu, 27 Feb 2025 18:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740679701;
+	bh=zn6+kaT0qr+KrKSEqCpSvIrTzLNZuK1KwZiw0gaP4cg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fu/pWpvjmYTZmmZWK2jGjOJqhdpINd/1icsNwK7DdUhvJ2Q/z9xwHQXQ76ukgx+KO
+	 XGq6Qz3LaQFrabwKM83cfFc7VVsS807sGk+fCIWmLi75tFHab1aH38jvygo57yTUYY
+	 3vRaZf7uEesdSIC2hSS3qhm2A18+a/6tA3QzmSv98u2sTC1QlOQ9E1XBDtKeis5faY
+	 dB/jXeunjQ6TjYQES0ggZ/JQFOehvph+Qt17+hdi5xtiudHYB3aYPoap4UEXzm08pp
+	 OPSXtOLfGm+QngYasUrbYbKL2zLVgcXkfbb5OnfPrOxEpnPWTZEQ0VD42lEL8Rd23N
+	 8GPSBW5ZjVbAw==
+Date: Thu, 27 Feb 2025 18:08:17 +0000
+From: Lee Jones <lee@kernel.org>
+To: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>
+Cc: patrick@stwcx.xyz, Pavel Machek <pavel@kernel.org>,
+	MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] leds: cat9532: support cat9532 in pca955x
+Message-ID: <20250227180817.GK824852@google.com>
+References: <20250224082815.1827487-1-delphine_cc_chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 75hC6mdmmP8HT9xUmrkhh93gxEFabo72
-X-Proofpoint-ORIG-GUID: 75hC6mdmmP8HT9xUmrkhh93gxEFabo72
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- impostorscore=0 mlxlogscore=725 phishscore=0 mlxscore=0 clxscore=1011
- lowpriorityscore=0 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502270134
+In-Reply-To: <20250224082815.1827487-1-delphine_cc_chiu@wiwynn.com>
 
-The initial QCE node change is reverted by the following patch 
-https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
-because of the build warning,
+On Mon, 24 Feb 2025, Delphine CC Chiu wrote:
 
-  sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
-    ...
-    'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+> From: MarshallZhan-wiwynn <marshall_zhan@wiwynn.com>
+> 
+> The CAT9532 chips are almost 100% compatible with PCA9552, except that
+> the CAT9532 uses the opposite polarity in register that sets on/off.
+> 
+> Compare the state at INPUT with the state of LSn and dynamically
+> adjust how you program LSn
+> 
+> Signed-off-by: MarshallZhan <marshall_zhan@wiwynn.com>
+> Signed-off-by: Delphine CC Chiu <delphine_cc_chiu@wiwynn.com>
+> ---
+>  drivers/leds/leds-pca955x.c | 41 +++++++++++++++++++++++++++++++------
+>  1 file changed, 35 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index 94a9f8a54b35..447da4a2d089 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -4,7 +4,7 @@
+>   *
+>   * Author: Nate Case <ncase@xes-inc.com>
+>   *
+> - * LED driver for various PCA955x I2C LED drivers
+> + * LED driver for various PCA955x and CAT9532 I2C LED drivers
+>   *
+>   * Supported devices:
 
-Add the QCE node back that fix the warnings.
+You not adding this device to the list of supported devices now?
 
-Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+>   *
+> @@ -145,6 +145,11 @@ static inline u8 pca955x_ledsel(u8 oldval, int led_num, int state)
+>  		((state & 0x3) << (led_num << 1));
+>  }
+>  
+> +static inline int pca955x_ledstate(u8 ls, int led_num)
+> +{
+> +	return (ls >> (led_num << 1)) & 0x3;
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23049cc58896..b0d77b109305 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
- 				 <&apps_smmu 0x481 0x00>;
- 		};
- 
-+		crypto: crypto@1dfa000 {
-+			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
-+			reg = <0x0 0x01dfa000 0x0 0x6000>;
-+			dmas = <&cryptobam 4>, <&cryptobam 5>;
-+			dma-names = "rx", "tx";
-+			iommus = <&apps_smmu 0x480 0x00>,
-+				 <&apps_smmu 0x481 0x00>;
-+			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
-+					 &mc_virt SLAVE_EBI1 0>;
-+			interconnect-names = "memory";
-+		};
-+
- 		stm: stm@4002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x4002000 0x0 0x1000>,
+Please describe what it is you're doing here.
+
+Maybe renaming 'ls' would help.
+
+> +}
+> +
+>  /*
+>   * Write to frequency prescaler register, used to program the
+>   * period of the PWM output.  period = (PSCx + 1) / 38
+> @@ -235,6 +240,21 @@ static int pca955x_read_pwm(struct i2c_client *client, int n, u8 *val)
+>  	return 0;
+>  }
+>  
+> +static int pca955x_read_input_bit(struct pca955x *pca955x, int led_num)
+> +{
+> +	u8 cmd = led_num / 8;
+> +	int input_state;
+> +
+
+Comment here.  What information does 'input state' provide?
+
+Why was the 'input state' not required for the PCA9552?
+
+> +	input_state= i2c_smbus_read_byte_data(pca955x->client, cmd);
+
+' ' after input_state.
+
+Doesn't checkpatch.pl usually catch these issues?  Did you run it?
+
+Maybe a function header comment would be better to describe what's
+happening here?
+
+> +	if (input_state < 0) {
+> +		dev_err(&pca955x->client->dev, "%s: reg 0x%x, err %d\n", 
+> +				__func__, led_num, input_state);
+> +		return input_state;
+> +	}
+> +	return (input_state >> (led_num % 8)) & 1;
+> +
+> +}
+> +
+>  static enum led_brightness pca955x_led_get(struct led_classdev *led_cdev)
+>  {
+>  	struct pca955x_led *pca955x_led = container_of(led_cdev,
+> @@ -251,10 +271,11 @@ static enum led_brightness pca955x_led_get(struct led_classdev *led_cdev)
+>  	ls = (ls >> ((pca955x_led->led_num % 4) << 1)) & 0x3;
+
+Changing all of these magic MOD and AND values to shift / mask defines
+would help readability greatly.
+
+>  	switch (ls) {
+>  	case PCA955X_LS_LED_ON:
+> -		ret = LED_FULL;
+> -		break;
+>  	case PCA955X_LS_LED_OFF:
+> -		ret = LED_OFF;
+
+I requested a comment here in the last version.
+
+> +		if (pca955x_read_input_bit(pca955x, pca955x_led->led_num))
+> +			ret = LED_FULL;
+> +		else
+> +			ret = LED_OFF;
+>  		break;
+>  	case PCA955X_LS_BLINK0:
+>  		ret = LED_HALF;
+> @@ -276,6 +297,8 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  	struct pca955x_led *pca955x_led;
+>  	struct pca955x *pca955x;
+>  	u8 ls;
+> +	u8 ls_last_state;
+> +	int input_bit;
+>  	int chip_ls;	/* which LSx to use (0-3 potentially) */
+>  	int ls_led;	/* which set of bits within LSx to use (0-3) */
+>  	int ret;
+> @@ -292,12 +315,18 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+>  	if (ret)
+>  		goto out;
+>  
+> +	ls_last_state = pca955x_ledstate(ls, ls_led);
+> +	input_bit = pca955x_read_input_bit(pca955x, pca955x_led->led_num);
+>  	switch (value) {
+>  	case LED_FULL:
+> -		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
+> +		ls = pca955x_ledsel(ls, ls_led,
+> +				(ls_last_state == input_bit) ? 
+> +				PCA955X_LS_LED_ON : PCA955X_LS_LED_OFF);
+>  		break;
+>  	case LED_OFF:
+> -		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_OFF);
+> +		ls = pca955x_ledsel(ls, ls_led,
+> +				(ls_last_state == input_bit) ? 
+> +				PCA955X_LS_LED_OFF : PCA955X_LS_LED_ON);
+>  		break;
+>  	case LED_HALF:
+>  		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK0);
+> -- 
+> 2.25.1
+> 
+
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
