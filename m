@@ -1,158 +1,145 @@
-Return-Path: <linux-kernel+bounces-536559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8784DA48135
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:29:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B60A480FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3DCB189C2EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B5E3A5C46
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD021CA14;
-	Thu, 27 Feb 2025 14:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C27231C9C;
+	Thu, 27 Feb 2025 14:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QSFYMRQo"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VldufT1A"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD99342AA1;
-	Thu, 27 Feb 2025 14:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075E17BA6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666087; cv=none; b=GHD+5y0ozGI3fDmWg1QdThZsBczw+QIuQv5FJXz482SnmkGcIFRzanDF1vMkr0nBKHP2RoFYl3KpZX08KDFpH7kzX0lEEfxxwlvmQyfty9NEmm36uwrM3vj92JhocveABzbzdtrtwqCawACkRZZKQxh+/c28jrpf03IvxJh4wG8=
+	t=1740666103; cv=none; b=sPiWe25SP9XC0/tUk0S7tXKr5t08ym1Y5ng9YFmAD0mrYdVU7u0BswYZWM7dgWtNkUF2aUNX07MG0tsM+ytveKo1rJuPjFaEs4Lfj833pDFtxhFVI1plvvOpB4NTdkspd3dwY1wcCPpao1pZc/eCnJdUaY3mSc7m5kjcNf9uhJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666087; c=relaxed/simple;
-	bh=gFa6GpKVLPwlHcDdDMyMTXz8bG022aq5QSyPy10QOa0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5fX5+Y6FYX9vDG3eGapSC+y12eGd7EzyzrzjO6WyYcnmCWc24N90U7D74EUYzs2Q/x8vyxv7bvUwMjcqfeL/lYIyEZWkI86u+zGciwJ4xDFQDgFiz2Ax1Yp2vu0RJhEp6uNpkLP6y2mSWzScC+lZ7Z4IyN/ZiIGwUJd6jpoFEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QSFYMRQo; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51REKtYe1783638
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 08:20:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740666055;
-	bh=lM/T3w7yUieqaJocZ0BLAs84QNCXgUrCL8lVLG4NWTs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=QSFYMRQocjgVFaCGWkMEyWi0F5TSes/NQaMaXjEAgo41xQLwoSAL/izLY3/DtIs/4
-	 HQkLhm44q6rSarjxpah6TdlvZxplsTPSnYPGHnh6MYHDQsms4GSovJvcQVP/MgO8e1
-	 YiG/ieHZ54+KkgQxOAAILN5QEVrgpZGRENbZjTSM=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51REKt4m009869
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Feb 2025 08:20:55 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 08:20:55 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 08:20:55 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51REKtcs097316;
-	Thu, 27 Feb 2025 08:20:55 -0600
-Date: Thu, 27 Feb 2025 08:20:55 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-CC: Andi Shyti <andi.shyti@kernel.org>, <vigneshr@ti.com>,
-        <aaro.koskinen@iki.fi>, <khilman@baylibre.com>, <rogerq@kernel.org>,
-        <tony@atomide.com>, <jmkrzyszt@gmail.com>, <reidt@ti.com>,
-        <wsa@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@kernel.org>
-Subject: Re: [PATCH] i2c: omap: fix IRQ storms
-Message-ID: <20250227142055.ndzavzysaenoducj@murky>
-References: <20250207185435.751878-1-andreas@kemnade.info>
- <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
- <20250220100745.05c0eff8@akair>
+	s=arc-20240116; t=1740666103; c=relaxed/simple;
+	bh=hBrf7c+UFiKZli5U1l7NtS9fbLhngdZIbJBDuc626pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HpMDxJZ+OuZYQmnwHTJBWRRki8Dp8ieXjhCitKRfkE2Q5Gb5G5kmj1g1iArCEwikknb60qyvTEDTpbADTe+XXZvHqDvwBGMOEBk89x0qQviP/JR1Q9yZdQ/Icy0SPOXTqsrPsxu7VPPa2brh+K3ZotxHCv1oZnK6huUEI4jX9mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VldufT1A; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EEtWdJ8PDIxGw+HxqjO8MiMDtE8KtosznzVhAqUzc1I=; b=VldufT1ApqRRkyV2LvMbtNHY/r
+	qZSWWnznT2RuTKELILooJeZ3kRbgMlrN7LGgwyt1T0WSi3jRByvdK0ZUepQxKKaGSdwUSH6zLsD8I
+	puOQgSQgWSa8fXXg5O4S8eQh6oOMvMje1c2kfxpUzOHzFhTWCOqOopb7e9Uc0wHSoOmwy2Bw0qva6
+	PU9szInus1EdLoW0gGVL+TT7sWFjbPo4D/XPoyjtXta5KeAebpXpAdkBQSH/vv7OMTX02h5HXUSF5
+	keYENhzT1Zini5hR3kcMd9LkrG2OFi4wce5OE621u+fWJj1OxcZxQMFdWC90a2umAZ+Qr8eEFDnuf
+	JMbv8hSA==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tnelQ-001cqJ-1A; Thu, 27 Feb 2025 15:21:30 +0100
+Message-ID: <9ce1f9f6-f69c-4b14-be79-f46542d7316f@igalia.com>
+Date: Thu, 27 Feb 2025 23:21:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250220100745.05c0eff8@akair>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched_ext: Add trace point to track sched_ext core events
+To: Andrea Righi <arighi@nvidia.com>
+Cc: tj@kernel.org, void@manifault.com, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org
+References: <20250226143327.231685-1-changwoo@igalia.com>
+ <Z8AWZBtrGN8h76AK@gpd3> <6a23642f-b3bf-4501-8464-f66bb9f1f57f@igalia.com>
+ <Z8Af9PRa7LrxHpfp@gpd3> <ea71a8d7-ba0f-4d43-9304-6544060a1bb6@igalia.com>
+ <Z8BEiHv3u8BsX3yG@gpd3>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z8BEiHv3u8BsX3yG@gpd3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10:08-20250220, Andreas Kemnade wrote:
-> Am Wed, 19 Feb 2025 20:22:13 +0100
-> schrieb Andi Shyti <andi.shyti@kernel.org>:
+
+
+On 25. 2. 27. 19:55, Andrea Righi wrote:
+> On Thu, Feb 27, 2025 at 07:23:23PM +0900, Changwoo Min wrote:
+>> On 25. 2. 27. 17:19, Andrea Righi wrote:
+>>> On Thu, Feb 27, 2025 at 05:05:54PM +0900, Changwoo Min wrote:
+>>> Otherwise there's the risk to break potential users of this tracepoint that
+> ...
+>>> Maybe we can call it @id or @event_id or similar and guarantee its
+>>> portability? What do you think?
+>>
+>> Now I think dropping @offset would be better in the long run
+>> because we can maintain scx_event_stats clean and do not create
+>> a source of confusion. Regarding the ease of using @name, adding
+>> an code example in the commit message will suffice, something
+>> like this:
+>>
+>> struct tp_add_event {
+>> 	struct trace_entry ent;
+>> 	u32 __data_loc_name;
+>> 	u64 delta;
+>> };
+>>
+>> SEC("tracepoint/sched_ext/sched_ext_add_event")
+>> int tp_add_event(struct tp_add_event *ctx)
+>> {
+>> 	char event_name[128];
+>> 	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
+>>          bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
+>>
+>> 	bpf_printk("name %s   delta %llu", event_name, ctx->delta);
+>> 	return 0;
+>> }
 > 
-> > Hi,
-> > 
-> > On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:
-> > > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
-> > > storms because NACK IRQs are enabled and therefore triggered but not
-> > > acked.
-> > > 
-> > > Sending a reset command to the gyroscope by
-> > > i2cset 1 0x69 0x14 0xb6
-> > > with an additional debug print in the ISR (not the thread) itself
-> > > causes
-> > > 
-> > > [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
-> > > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
-> > > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
-> > > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
-> > > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
-> > > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
-> > > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
-> > > repeating till infinity
-> > > [...]
-> > > (0x2 = NACK, 0x100 = Bus free, which is not enabled)
-> > > Apparently no other IRQ bit gets set, so this stalls.
-> > > 
-> > > Do not ignore enabled interrupts and make sure they are acked.
-> > > If the NACK IRQ is not needed, it should simply not enabled, but
-> > > according to the above log, caring about it is necessary unless
-> > > the Bus free IRQ is enabled and handled. The assumption that is
-> > > will always come with a ARDY IRQ, which was the idea behind
-> > > ignoring it, proves wrong.
-> > > It is true for simple reads from an unused address.
-> > > 
-> > > So revert
-> > > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
-> > > 
-> > > The offending commit was used to reduce the false detections in
-> > > i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
-> > > rare false detections (I have never seen such on my systems) is the
-> > > lesser devil than having basically the system hanging completely.
-> > > 
-> > > No more details came to light in the corresponding email thread since
-> > > several months:
-> > > https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
-> > > so no better fix to solve both problems can be developed right now.  
-> > 
-> > I need someone from TI or someone who can test to ack here.
-> > 
-> > Can someone help?
-> >
-> The original (IMHO minor) problem which should be fixed by c770657bd261
-> is hard to test, I have never seen that on any system (and as a
-> platform maintainer have a bunch of them) I have access to.
-> There is not much description anywhere about the system in which the
-> original system occured, and no reaction since several months from the
-> author, so I do not see anything which can be done.
-> Maybe it was just faulty hardware.
+> We can definitely add a BPF code example, but keep in mind that tracepoints
+> can be used also outside of BPF, like:
 > 
-> As said in the commit message, reverting it should be the lesser devil.
-> And that state was tested for many years.
+>   $ sudo perf trace -e sched_ext:sched_ext_add_event
+> 
+> In this case I think just having the name is totally fine.
 
-Can we not handle this slightly differently? leave the fix based on
-compatible? we know that the i2c controller changed over time. the
-i2cdetect bug fixed by c770657bd261 esp hard to find and fix.
+Sure.
 
+> 
+>>
+>> The downside of not having a numerical ID (@offset or @event_id)
+>> is the cost of string comparison to distinguish an event type. If
+>> we assume the probing the event is rare, it will be okay.
+>>
+>> @Tejun, @Andrea -- What do you think? Should we provide
+>> a portability-guaranteed @event_id after dropping @offset? Or
+>> would it be more than sufficient to have a string-type event name?
+> 
+> I think a tracepoint should be used mostly for tracing purposes, not in
+> critical hot paths. So, under this assumption, the overhead of the string
+> comparison is probably acceptable and it allows us to not worry too much
+> about breaking compatibility.
 
+I agree.
 
--- 
+> 
+> Also, perf trace allows to use filters based on strings, so in our case we
+> can do something like this for example:
+> 
+>   $ sudo perf trace -e sched_ext:sched_ext_add_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
+> 
+> While at it, what do you think about renaming this tracepoint
+> sched_ext_event or maybe sched_ext_core_event?
+
+To me, sched_ext_event sounds better than others as it is simple.
+
 Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Changwoo Min
 
