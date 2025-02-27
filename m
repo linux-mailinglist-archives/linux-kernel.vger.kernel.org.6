@@ -1,109 +1,104 @@
-Return-Path: <linux-kernel+bounces-535575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8FCA474B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:39:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF38A474B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640B1164473
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BFC16FBE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975BA21CC73;
-	Thu, 27 Feb 2025 04:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8942121D5A3;
+	Thu, 27 Feb 2025 04:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bk1eQrND"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XONjX9Od"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F6B21B9FA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E1D21C9FA
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740631064; cv=none; b=hTbsGRbNmf9QDmPycTcAWrGcxVS07IGLg2KVv9TepR2Tai+FE98OzFb+4lk6mU75OZ9Mi1+UEQdKVmZueY7O/MnS+7Ux+QUoS9fT7j8qryuB9Hteu8l6ASOGDkav3GX7y6H5C+xNUQVesZoDUFAo8gv8d7snMaqHxdEiewaonnY=
+	t=1740631064; cv=none; b=ZS7j4tRdul803OSz3yY+G00rOdlbU/DnMZj//CZAKivs2zlh4kx4NjQGagak1GskYJSMHFoXplV/R4m5XAozqmkKFO4/5UUbfrV+1tJfBpQ3xmrE4LCFgdAo6jg9g5DKVF/ErbE4E8fS8+bBuysrmrkqmK40qcw9nmLIDImQVEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740631064; c=relaxed/simple;
-	bh=mzPhRSU1K0z6zdHezeX9nAkdqjhhiEvRvVnPJfmgA5s=;
+	bh=5S/D15mlBm5rVEaGgheBTXf1FTPfbkRnfOmUMhCyPoE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aE4nEAgVz2pvjlBAiq/BRGxiXoejOJ03wYKRxAfAxXWnsl6IH0F3ItahMEpOELeoEO1T54VvFQjmBdpuUfiRDq5sPXweaP/THFmP5DnEDewQqLAP+oRl5ohCBLKKJ3fNt9OBiZ4RIBL706ygUP5YxBLGYWuKKNYwgX8EF2FvlwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bk1eQrND; arc=none smtp.client-ip=209.85.167.51
+	 MIME-Version:Content-Type; b=cUstglpG+iEKT6yBPj3wN/wn5fUohJha36h5SOplZ4s2uPzwLc5jOSTshhNONL09rJsLHwQTfCiJ8PdLxhLVkSZjvRAAFuqUdPQ0iBTodeQl6sEyxKLRe4CULgVc67MpVqzulFXdThzH1Svg7Zn176zTC557Jp0Qa0NWMuOgqHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XONjX9Od; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54622e97753so555542e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:37:40 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5461dab4bfdso530668e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:37:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740631059; x=1741235859; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740631061; x=1741235861; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kYSgKUYrO2YlmDkolp8bEhCgpgQOBl0qveOjHBhwpts=;
-        b=Bk1eQrND8qWbGuY4bBriEYXWm8dr2Wlkd5k2MqegmeEpvKXmFZLw8CSaMDyub2i4pc
-         gnLIZXdir+YzxldiX3km2iaqOIbkae/AosvO1h3MTv5wTnWR0GJ0L9CCJNqQUrYi6/26
-         owpZMooJDRqRlj6IiAZLZP0+rYFQeOeAdevu+95jUS+cASFCrCWk7mFMZ/S6klEwvzHJ
-         DPuXyEXHaUz2QhT5yEtUHRKxaxkO2XRWAFU3mssNSFHCpiCk2mHCQq1wv8b4P3WsYvsv
-         UIg177qxygZY7txGw4uv1CSwBzCct+0oIGSuJUYspVve2JuQFR3qP34K9blDQCFLo8rv
-         LBWg==
+        bh=zLdVuzI2TCYgAh/XWLKAjlWKrpOk/yX1LLIu0K4lYkg=;
+        b=XONjX9OdHR7hLBVuxrdiGctVnmhmU9xLpk3Oi1Lfr6gLk7o9OErcZzehFejXSah63P
+         9YzA7WBvkf9eXvM6rF/KgLITDY9MA4LlCZUlCdQgW0TYVJJ6+XtrRmZylDrW9bAv4USm
+         0nIIAumQkhkLocKhoYlR6vI9LzJjmiDdsXUtVNI817MDwmAdz8imxHheBJiou/jh7fvp
+         gx8xzwH+vlyUjhQlrcFh0XSufv2umpKvvRdJNtjdQ+eGbniNJRHKFTc6GZRIWSlGy6zp
+         40TThxKCGxn1iIVf7ba+oSu2kRF7g8aONmJAlHuTI3xXPVMe6rffrEgqo5xTHsjPwCn5
+         F6Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740631059; x=1741235859;
+        d=1e100.net; s=20230601; t=1740631061; x=1741235861;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kYSgKUYrO2YlmDkolp8bEhCgpgQOBl0qveOjHBhwpts=;
-        b=nqTe5BoZe3rAgAEVxjfWoMwIz8EtEM5cYXE4d3TVZIwGoqFTlnHgFjnm7qHGqKiVSo
-         1Rk5DpWDTqIinc5MSNLolwQul+zXcTb9rNIlsYZpuXaCJqNkrxWep+Ips+X15ExH7c3p
-         HoJH+COSV/5G6M5Y5ohnz7hL54zimJYp49vZRDjwQ1nL5k5jC5RIGhGCwzGLXO3wbVCi
-         jhkwGczihQQo5AZk71T0ATU34GQJJR5Gvf77tQsNvUao9Ed/I365vV6xsmYCiH+URFmk
-         xGyBoEr+qxS9X8Nyto2bOrrk9r0TDw7SFAq6UwoQtHqBVRIynXtJhLoIKVUkIDDlNOn+
-         xZyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfy+4gJayHcvxJucwNCJEgaDzN9eC8Jlkd1QIC1KbKOy2ZuKspAoLCd9K2FNbF+tVSGiK5y0Oj6f7UjHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpqJ5VCVXfWlkkHJbC9Pn5SdtNAxvETAhg+HaUr0GMi/wrHLtX
-	MwVXgkGEWq41hBOk0WsM753O1IF1SgaZ87dCe73Idx6SwoeQnHNxS9Zk7WIXwcM=
-X-Gm-Gg: ASbGnctW8Ij1q1POIvAKM18ThyDayvPOKUa4IioxatZUQXUKbVUn3EsVq4x7gHGH4Bk
-	na+FYUZncq5XXL9cZD6vl43lAKFapboB9Ey5iZGC8D396AWcblRzgNUfqtDTCzsNCVscStMWACX
-	emwQPBEQUmpovyaQwCuAElSnx5ELEJQa+zVhJ96XWFohnyS12hPMSBhj9kPdAXsEi9HrRHVsRN+
-	aaqNEg30m6iFUAY0ayFPOIpF3MB6AOoUwMonsDyU6BkAjMPeymch8rrdwMucOu7Hst9Bwegf3AF
-	yU1HYiecTjrem9P1+rLK9qjLpnVJ99g1TDUDsA9MGA==
-X-Google-Smtp-Source: AGHT+IFJTbOhodvzE89VyWlm98mXeqCjUzL4IWC2ENgI8KAMI2IbCSRQGTMlBENkiboZNnQ5ghsFCA==
-X-Received: by 2002:a05:6512:3b9b:b0:546:1ca7:81a1 with SMTP id 2adb3069b0e04-549432ccb18mr616846e87.3.1740631058787;
-        Wed, 26 Feb 2025 20:37:38 -0800 (PST)
+        bh=zLdVuzI2TCYgAh/XWLKAjlWKrpOk/yX1LLIu0K4lYkg=;
+        b=S5tg2xu4UbTHi4HQnidH9Xs2lhu8mh42c97Sr3r/6omqdp8p132ohkJD3lyK9mTzKg
+         2TIE4ceZ3La4Q8s1J+x+o7OE3Fm4Ss2VORbUQuPWPt8JeMSA9vBzHjNeHV8dy81kHdnZ
+         h3yDtjyNM5hcWSUjipNxY2Fc4kVN0UVFt1XhR1US0FEF/hIsNxN2jwyDcmY84vIc2uTy
+         cus6yGIdm5VuEIqmuF/mdmig4EQ0YOuQ4cwCqxg41idPNKFgrhfCzdI/aCGWHE5Vape7
+         3Mopfb/JE47RaQosK4KxZDGCs5EBj32aAIT4FoW/osrs9K8vOKvt89CT79dNWT5psCWR
+         TqvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhLBjlojeDRNzp/4HoEYp+EfdeLzcZHhTozajDlOfkhkNHnlTe0Q/FdksvCUGg3YNgCQaTzwRX5qDYX20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoZI+0MT+Vdv/RC+GJtxp2VZxsLFI+TS+h21AG8p+taayndbor
+	SlmNR3xJWmy95DkM875yS8ykCcQpbqmrduo6SMtFq2DSOxGefqBXVgUbvXAG9n0=
+X-Gm-Gg: ASbGncvjP8qNMcM/OoRcHz8rGmFOPPvEVgYJVnXkYdZEvE15TjTcUzz1spgZJutc70E
+	9EEGX8mhiNmFaqGrGuhKbaqDolAeSLvVAhCspajpXyD4gQ8YhlGjpxpCySa0VSEFxo1Fz8NJ43B
+	DtiA7W+DFIqxUN4jVJODu+O8anFlFabnn68hrncHdtcXBFoO3BeXWktSWPFVFhiDNsOlyyZbm3j
+	GGeZkCzoNk4ojr5pOYqoIhRLpkIJc/+J379H+iuh68VbnA5Xp9bRcFDJA1aDspiUzerfkIcpBKx
+	+X8o1vNY61tB9WEaeDIa1WXHFsPuwQAXlq8khYI5Qg==
+X-Google-Smtp-Source: AGHT+IGacFctMBxLdHDN1tWIihRZ45naAvEO/U64ZOz8X8unMaO6oCxI4XQ+wFwgv3egNhj+8j8tPA==
+X-Received: by 2002:a05:6512:10d4:b0:545:ae6:d740 with SMTP id 2adb3069b0e04-54838f4c919mr10727963e87.41.1740631061326;
+        Wed, 26 Feb 2025 20:37:41 -0800 (PST)
 Received: from umbar.unikie.fi ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443ccf45sm63485e87.229.2025.02.26.20.37.36
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443ccf45sm63485e87.229.2025.02.26.20.37.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 20:37:37 -0800 (PST)
+        Wed, 26 Feb 2025 20:37:40 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andersson@kernel.org,
-	konradybcio@kernel.org,
-	robdclark@gmail.com,
-	quic_abhinavk@quicinc.com,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	jonathan@marek.ca,
-	fekz115@gmail.com,
-	Danila Tikhonov <danila@jiaxyga.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Chandan Uddaraju <chandanu@codeaurora.org>,
+	Jeykumar Sankaran <jsanka@codeaurora.org>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	Archit Taneja <architt@codeaurora.org>,
+	Rajesh Yadav <ryadav@codeaurora.org>,
 	linux-arm-msm@vger.kernel.org,
 	freedreno@lists.freedesktop.org,
-	linux@mainlining.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 0/4] Add and enable the panel
-Date: Thu, 27 Feb 2025 06:37:22 +0200
-Message-Id: <174063096229.3733075.14794380891862567011.b4-ty@linaro.org>
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v2 0/4] drm/msm/dpu: follow rules for drm_atomic_helper_check_modeset()
+Date: Thu, 27 Feb 2025 06:37:23 +0200
+Message-Id: <174063096234.3733075.6920964252450515341.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250217222431.82522-1-danila@jiaxyga.com>
-References: <20250217222431.82522-1-danila@jiaxyga.com>
+In-Reply-To: <20250123-drm-dirty-modeset-v2-0-bbfd3a6cd1a4@linaro.org>
+References: <20250123-drm-dirty-modeset-v2-0-bbfd3a6cd1a4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,20 +109,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 18 Feb 2025 01:24:27 +0300, Danila Tikhonov wrote:
-> This patch series adds support for the Visionox RM692E5 panel, which is
-> used on the Nothing Phone (1) and then adds it to the DTS.
+On Thu, 23 Jan 2025 14:43:32 +0200, Dmitry Baryshkov wrote:
+> As pointed out by Simona, the drm_atomic_helper_check_modeset() and
+> drm_atomic_helper_check() require the former function is rerun if the
+> driver's callbacks modify crtc_state->mode_changed. MSM is one of the
+> drivers which failed to follow this requirement.
 > 
-> Before integrating the panel into the DTS, we update the DSI code to
-> allow bits-per-component (bpc) values of 10 and 12, since the Visionox
-> RM692E5 panel operates at 10 bpc.
+> Rework the MSM / DPU driver to follow the requirements of the
+> drm_atomic_helper_check_modeset() helper function.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/4] drm/msm/dsi: Allow values of 10 and 12 for bits per component
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/b0e71c2637d1
+[1/4] drm/msm/dpu: don't use active in atomic_check()
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/25b4614843bc
+[2/4] drm/msm/dpu: move needs_cdm setting to dpu_encoder_get_topology()
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/7d39f5bb82c0
+[3/4] drm/msm/dpu: simplify dpu_encoder_get_topology() interface
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/41921f231abf
 
 Best regards,
 -- 
