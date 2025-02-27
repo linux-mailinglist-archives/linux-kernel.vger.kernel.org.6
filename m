@@ -1,142 +1,140 @@
-Return-Path: <linux-kernel+bounces-536826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34150A484BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:22:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B28DA484A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F4B18969C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36953B0E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D10725F975;
-	Thu, 27 Feb 2025 16:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0091E1AF0C5;
+	Thu, 27 Feb 2025 16:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="eidkHi4r"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPf5znqq"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CCF1DE3C1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E218C1A5BBC;
+	Thu, 27 Feb 2025 16:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672777; cv=none; b=qSqLRdk5qyrq61CRwwf9wp0UKBwHMN061JKYErNN5M1u2njL0XOqBS437Pfh4W/j2Dy4alwYByAk+hqiR5amUBdgfylns7hcS5yYuLigtdZFGprYne4VvmME92/Qp2VxMfzxazaLbU6uv4J7YEbE3R1vR7GwMTf9EgQq++pi8Wk=
+	t=1740672857; cv=none; b=q7aSxSjTjN5U3YobXLIjel/Yrz9tN8PpHDT2FqQ47wwG+7dp5jg2t2yyS4pBR7t1GObcspkpIXjl4waqbMFAyPiSledN1T5KjkihM48BeqP9HNG0iKeR7HhjwiwP+I1ndW9NeJBEqx+7d296ml9o+amkM7IYOud3mt9Vp4e4BHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672777; c=relaxed/simple;
-	bh=u/jEDuM2cZEF60dp/4fSw3VAkOYWYed4gReCbmcZt2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbFQNZqD3/PM1DsBbgBj8J3t1VeiwCrI1ZHexyw86Gs+hG7ud057jUwOyUBRp0XWvSykMG8Fr8+hhqIXdVeMZai66oyKbpTyXUpVeNjM/AdnLwESWW033P9+WSH0Gd05roXJxDHby7CDBDXzzaDVYq9cuWByCkxJNhTU9xlIj2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=eidkHi4r; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3ce87d31480so3912995ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:12:54 -0800 (PST)
+	s=arc-20240116; t=1740672857; c=relaxed/simple;
+	bh=xjPwITNH7+ilrCrjqvms3FCSS3zQDyqwi+pfjCjZKy8=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=KS/RrwQRtw6GJIAGtDY2hwDzm3QXtcz4UJUzmr0fMitQ3B+5/AJa9SDcpOZ/gJjdaws+wpEcfPWPWwBeNL3g9bxR3j7oJUJCOebWdTMp+i7KNxJoqabPT/YDL8fGPMOAN8gEUU7LZRDa+6K8I//XA5KXTO6bdzP6ZgkRobt0G6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPf5znqq; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e41e18137bso8802996d6.1;
+        Thu, 27 Feb 2025 08:14:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1740672774; x=1741277574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A4a+PIYpn9cYVWDOKIU06eghAJvUip+lThQ1gAkAfoE=;
-        b=eidkHi4r87Fldfjn8a20pDRsC5czfcZEKFOpY4yI9jU3uuvB/0NPzEwwHG0HK7V0uz
-         Px9JEXICNZ7IUq3XNhB9eNDggzSNiAxdP6spz0YpSt0eVMf8q+Q2uAz6242vrs+cXpda
-         ZW1pSPKmHmVTf6W8Tfx7BISbP5dtXecGlRMnvRJlDAUqJgdZ/Fvlmxs7RzUz64MLDKOu
-         zgYhspehtPd+Wk0KhKkPmIfKFoMxv3mq31cWgtabi1yoR1QHSokfnJwVU7m9w9plrlpx
-         38H3S0RRrtpnGwl14RB6HeYtD1wlSI7w1enZ1GOW4gTvwkvU3SbxSfXhCGs/FAV9giUP
-         ETSQ==
+        d=gmail.com; s=20230601; t=1740672855; x=1741277655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=24tBlE0SjiGtrbKYq2EJ0HJHTRtUk/7GcqOiEwUKJXc=;
+        b=NPf5znqqhyeUxcGNp6rUQhej3Jwu0py7gcZJWoVDF7CTCsRKXHj2QXL+tiTlMDObSH
+         Bz+9vFEreoBSarHX3Z3b4EYuwmgqXhZQpRfPc7xLj6nhRJ3Tk45pTrxDh0VnIbFsxest
+         caPSMJJb4dN45qw2MpDXrAPaH8L7xmWid4oNprk5gLT1ACBUdV0ZUmsqYj74Grb3lN31
+         0IpRLakYdLuhZH2XpVp4DPIJwklDhBY5Kz5vJw79YFLxtZEbDMHIagFYKkVdVmIdO9yb
+         KJlnQwWhNrvQHc4R6oTb5q1CeAW/L8PbtslT6ra1AKGW6Y9cQ4t7n1FdTvAb+xdAEsUT
+         EKRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740672774; x=1741277574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A4a+PIYpn9cYVWDOKIU06eghAJvUip+lThQ1gAkAfoE=;
-        b=L8tZg7UYb3jByAlDLZK179/ot3Y+RvWLKkzZreQ0S5N63KcRh1PVerLanQ2OlVpZ5q
-         OULIHX2o5IpJ5+FlRA6OzliNgpImdvyPNkdjyHdTkJDG61h+zyulOt7HpOX91OZm7C0H
-         lSkrK3VSP+9RHKJbq4pFNNfMRqAEcI3t54KxljQWUQ3zm82kq6X7zR7g43gbB//E4DZh
-         0rV7keiMNytzSb8JLLCMyX90o9ivMWDq6luTNjp84pLtOWpNGo5YVFVZKx4+Icao9/Tx
-         UjRFOuZTvLmvQjwrXxMottTv4jaz5+EeBecSXGnUOrYAN705OqYMJQY8ltbCs6lbFkW2
-         k0cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQRUgIet+vKImhZnc0OcT3UV5AupIXYbv6r9WbOkuibhiqdeuIl36FVc//uhnP3PHqFuVHVOjJixhgBvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXTEOfS4lGBI5rHqXFzbgSKoDbBfzdxSwCaFfMH4EQE2rqVx6Z
-	hUnWyBkwbcAwJoKRkYMaENht1DYMO15zcb6bIQKbScP4E2tKVge+btnrVhv9/M4=
-X-Gm-Gg: ASbGncvXfppHJo+JCj6t+HHhNM658rj1BNNbFjThWsaObEEtgDVdJnzWaM5Pse3l5K7
-	RbK1NJ0ZaaYPwabQSCd6R491pOqQjZb/Mmbb/nXxJxSU149E6tcdysacnRnGJ0UsQNVwQpDEzJB
-	hCJJYuqSI12/EXHhubAo+Bbl0zTqm9MROTeVishMRVgqTsJsBiT1fpFz2tQS9ItUJ/UW8+DJ/10
-	ryWbBfPFBoA7O66Bj0fazmfEu3DicROdh+NwAQXazZJEawNpBhA8QNDHMpnA1oAzuHZhLxxMzCv
-	EMEIeTgp3X5Idu9puhom7BlfNi1lx94VGRJFM3hUZ1ouyI/V7m6rrfZtvPG+2dXvjQ==
-X-Google-Smtp-Source: AGHT+IECEOEF/3IgUpjExo3hn+o7d72t1ArCxVXIIzsvV1Vpk9+T4m/ul07rs6wpKxf4ijf45waAXQ==
-X-Received: by 2002:a92:c545:0:b0:3d1:79ec:bef2 with SMTP id e9e14a558f8ab-3d2fecce699mr113973395ab.6.1740672773762;
-        Thu, 27 Feb 2025 08:12:53 -0800 (PST)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d3deeca7ffsm3742305ab.53.2025.02.27.08.12.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 08:12:53 -0800 (PST)
-Message-ID: <8fce8a9c-7946-4e3c-bbf3-25f8b4f4466f@riscstar.com>
-Date: Thu, 27 Feb 2025 10:12:51 -0600
+        d=1e100.net; s=20230601; t=1740672855; x=1741277655;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=24tBlE0SjiGtrbKYq2EJ0HJHTRtUk/7GcqOiEwUKJXc=;
+        b=RUjBhLi691qBbat1M8VrHRPzf2k+8BlOWwk5I6+hDBMZv5EvP0BCbKbE3PCZriIKO9
+         JIEdAlNalT66yDutMSBuCWBODOTqUV0uzjsi6gvbkWk/J6zVUz+Z0jmUhVCmhfmo/4pW
+         pu1VefL4wwiXEWCW9dVPQilp70HwBI4MEsdoviVJILUde6b4qXdtQG35F2IBCNWEzX69
+         j1+aWGFs7CxjOvqSoH7FKkLrVoi5nv0UoBTMYHNyksh5X+4tVklm8cU35wYASJRgV3nQ
+         TxtuEC1wu3jmDThYL2rg2kurcbs9k6lvIojuv8AXA0DSlke5rzeOLEyQb4vzbsRSnB3x
+         mxiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPcm7nnE7pIFwAnuNgO6CL0dlNyyvJMtgXMQ4aUY34rVPMKZfJyQjq8f4YX/VuNEt4cNJmjDZc776uhzc=@vger.kernel.org, AJvYcCWS4/gONKPZ+zGXfBCJdLcYiBZpDjtBW6Vfqsy16NB53ekWZ1JLMjfIMlrTRLKTVL1cSdTaddwkjzzlo285n1Zy@vger.kernel.org, AJvYcCXXrw/oh2zQ3cOE69/lsv4uPI9GX4ip1Feo1sa9hLdasMMvq0LpdoLZYqMa5jqY1Xo2mYDOcUX9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGjLk8dilo+A+lT5+2TP6MHH6hr5KivIyY8QGYpesRYP2fQD5/
+	OucYNYSZ95yCpngLewB/OsyM6w383NdH/okSL62rKuwso9TGIdIe
+X-Gm-Gg: ASbGncuc0kcRjamzrkgynQkgZw0986F2gmpR704Bs0Cq85WsoXbFj6OT5717Eb3i/it
+	8KGLzlwCM3fdJAAcpFs8UZbrjM9DMcm9kA3gxFZuFlJCe83djNKQAc5ZJZELkMEHQAxqZDTxHFq
+	Cl5BzMOUuIhktcZJLkM933Fr3zCrotiag4F3aKJ0uHlLCv49a6TMM2/9fl3tNOxZklFOur4bsK0
+	DBKJ9FLYe8zz/nurQuuGdaQV2Liu22LWEp72T7LpthoPgc068cBPbApeB9Dq9VmP9fXFPg0bf60
+	EzyaDMavMUFqQST+PwTW967dj0uqWmJ8M53bOskYnOKnZEVzehg1K0BqIUGXD8ryuLfu8NrWLZp
+	tODw=
+X-Google-Smtp-Source: AGHT+IEJu4vloD9rj2kOOUuk3C/htCmuMUCZeR17Cj5CrXzt4cKMVQSg8k/DVcyp3lCVS27qzQf8Iw==
+X-Received: by 2002:ad4:5d4b:0:b0:6d8:b371:6a0f with SMTP id 6a1803df08f44-6e6b01adbb2mr356197126d6.31.1740672854455;
+        Thu, 27 Feb 2025 08:14:14 -0800 (PST)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976ec3absm11206356d6.122.2025.02.27.08.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 08:14:14 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:14:13 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Kevin Krakauer <krakauer@google.com>, 
+ netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-kernel@vger.kernel.org, 
+ Kevin Krakauer <krakauer@google.com>
+Message-ID: <67c08f55b0ae7_37f929294b0@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250226192725.621969-4-krakauer@google.com>
+References: <20250226192725.621969-1-krakauer@google.com>
+ <20250226192725.621969-4-krakauer@google.com>
+Subject: Re: [PATCH v2 3/3] selftests/net: deflake GRO tests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] irqdomain: support three-cell scheme interrupts
-To: Yixun Lan <dlan@gentoo.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev
-References: <20250227-04-gpio-irq-threecell-v1-0-4ae4d91baadc@gentoo.org>
- <20250227-04-gpio-irq-threecell-v1-1-4ae4d91baadc@gentoo.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250227-04-gpio-irq-threecell-v1-1-4ae4d91baadc@gentoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On 2/27/25 5:24 AM, Yixun Lan wrote:
-> The is a prerequisite patch to support parsing three-cell
-> interrupts which encoded as <instance hwirq irqflag>,
-> the translate function will always retrieve irq number and
-> flag from last two cells.
+Kevin Krakauer wrote:
+> GRO tests are timing dependent and can easily flake. This is partially
+> mitigated in gro.sh by giving each subtest 3 chances to pass. However,
+> this still flakes on some machines. Reduce the flakiness by:
 > 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> - Bumping retries to 6.
+> - Setting napi_defer_hard_irqs to 1 to reduce the chance that GRO is
+>   flushed prematurely. This also lets us reduce the gro_flush_timeout
+>   from 1ms to 100us.
+> 
+> Tested: Ran `gro.sh -t large` 1000 times. There were no failures with
+> this change. Ran inside strace to increase flakiness.
+> 
+> Signed-off-by: Kevin Krakauer <krakauer@google.com>
+
+Nice! Thanks
+
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+
 > ---
->   kernel/irq/irqdomain.c | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
+>  tools/testing/selftests/net/gro.sh        | 4 ++--
+>  tools/testing/selftests/net/setup_veth.sh | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index ec6d8e72d980f604ded2bfa2143420e0e0095920..cb874ab5e54a4763d601122becd63b6d759e55d2 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -1208,10 +1208,17 @@ int irq_domain_translate_twocell(struct irq_domain *d,
->   				 unsigned long *out_hwirq,
->   				 unsigned int *out_type)
->   {
+> diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
+> index aabd6e5480b8..9e3f186bc2a1 100755
+> --- a/tools/testing/selftests/net/gro.sh
+> +++ b/tools/testing/selftests/net/gro.sh
+> @@ -18,10 +18,10 @@ run_test() {
+>    "--smac" "${CLIENT_MAC}" "--test" "${test}" "--verbose" )
+>  
+>    setup_ns
+> -  # Each test is run 3 times to deflake, because given the receive timing,
+> +  # Each test is run 6 times to deflake, because given the receive timing,
 
-This function is meant for "twocell".  There is also another function
-irq_domain_translate_onecell().  Why don't you just create
-irq_domain_translate_threecell" instead?
-
-					-Alex
-
-
-> +	u32 irq, type;
-> +
->   	if (WARN_ON(fwspec->param_count < 2))
->   		return -EINVAL;
-> -	*out_hwirq = fwspec->param[0];
-> -	*out_type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-> +
-> +	irq = fwspec->param_count - 2;
-> +	type = fwspec->param_count - 1;
-> +
-> +	*out_hwirq = fwspec->param[irq];
-> +	*out_type = fwspec->param[type] & IRQ_TYPE_SENSE_MASK;
-> +
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(irq_domain_translate_twocell);
-> 
-
+Only if respinning: this was always imprecise: it is run up to X times. But
+exits immediately on success.
 
