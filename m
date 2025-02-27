@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-537374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C64FA48B0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61199A48B12
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCD616C8BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:04:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4624A3B6EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90079272918;
-	Thu, 27 Feb 2025 22:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA8227128E;
+	Thu, 27 Feb 2025 22:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxZTLGnN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ve8MGxtF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bmAbfUEg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1FE27290B;
-	Thu, 27 Feb 2025 22:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE7018FC84;
+	Thu, 27 Feb 2025 22:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740693859; cv=none; b=HpjrQTsM6oDH3pZ8VTqa5BF/oHqWKbOXfFdSd8EQhIa4yMHIybdRRcIp8P/yKwdR1BqHXxCMm/4jSZKELsgP6XSNCgQ2kEH3MYDiuImEYzD9yUad5h7bc18f1NEVkK/fidJqc0xXi7Mpa06w7wjlnRsGOGxCqlWheYDhsPpaMD4=
+	t=1740693915; cv=none; b=pvAhCRyH1pyj93vYcbjXGzXvrf5UqroLoGvRmcryBo2UnKf9Ym468fX1QLv5baDuO2e1uVv3hvSmrFuWCdzJtmUeb91NEch1V8eYsyCtdHYxn1+bWbrk2C33MtHU/pt2cWcK8dKcfMMELfPf226rdCJMGTiqCUmboxYk9modBts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740693859; c=relaxed/simple;
-	bh=8OhUuNJoGvKBi/xXdJRzG3+310qxdtLu5DkmfSui/14=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aNuLuZ7m0AD+OI6vuABUlYC6gkMEDvoLswiGbnw1odLfIpfaC+y4xsG2/CO4pR+XPykmmBj6wX5QqVzVNokgv3dT6PmK0RzOcUmzLpYNeU/HSTNGS4mhSSXqjeDAKAd8TIvVRIfoSwJ8j3yUCAvYUkVIuvbOAp+NHR/RRxbSqv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxZTLGnN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD15C4CEE7;
-	Thu, 27 Feb 2025 22:04:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740693858;
-	bh=8OhUuNJoGvKBi/xXdJRzG3+310qxdtLu5DkmfSui/14=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fxZTLGnNlY+00IW2BFMKDuRednd+97WhfqcyApcmqe0DvNvAfk1Px72s3tOaVyul7
-	 j29swFKRllBJhTpoJMf8smYzsLJvYVztY/7hfNs83DKdifJ5sfshCf9+2MfFBkmA8C
-	 gw8kO65IInHWiXFY2o0LoeE//7eATetkqT/3s1mYrT2Zl57C0aBoFCaosAxGEvGpmf
-	 Q0L5N2Tz8mWD/vW2s8OPNvYfSqoF+0Z1Zn9PAeZDEtE6JH3xXPA3T+atI8sKsgwL8M
-	 2K7q6RbgYae0/KjHV1QyzHrr/2nn5H8S2TYlwn2BXHf90yEsAsJ1ckf5N7dTg23b9X
-	 pkTTDClv2Rc3A==
-Date: Thu, 27 Feb 2025 16:04:17 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: bhelgaas@google.com, rafael.j.wysocki@intel.com, yinghai@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: fix reference leak in pci_alloc_child_bus()
-Message-ID: <20250227220417.GA19880@bhelgaas>
+	s=arc-20240116; t=1740693915; c=relaxed/simple;
+	bh=rJSmZUwx8MohAUR29+yGNNXCOA264ZiiiycjMhuevVE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=m87K667UaQpV9XyHZOaNUFRk/xOjfQ8ucIKqEb8eB4yyGkEQl+SSj7wCv3UtczY/3J+PGcnVrB0aqcuTGpHCHdiF3kCXtQvSbQwjeHp8N89gys1PSDfK43qgqobChcJ34gz9byZP9BJ1ztonp5d/W3LV/HBc7xy6nzRiCyKQBSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ve8MGxtF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bmAbfUEg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 22:05:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740693911;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GTpQ5EbG6SjGpPpOAiVkwn+OGtwO6bWLpX9/T3ss4bY=;
+	b=Ve8MGxtFb/9LEj6PF9rGE7llHjQjXe+XIiGIHBqyDFgMH0SEmgw2vsvWS4tWt+yyNKBIeu
+	qWbyXALlBNJ16zXyvXibuL1vv6pz4AYy2lfQjGqTpVPsMTZ+59+oEDQ9KjQ7Cwu97RUIl9
+	KWvJiwxsgk0twECSGniVjwANtV1b22Pq5vZ6rZSOaHYb1nJBXz5z2MbEerK+gH68wUxFQk
+	mNvEvjDgbMVQnDEsW+queXB9U0W6Mb2YL/goxtfdsC9mwoNx19gOhFEJlyZu17ziDpvOma
+	RAgZHdTZeavVkuYYucfn8a8xDQu+cgKfq6yAzLapN/wL3UueJLRI9caLONEeiA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740693911;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GTpQ5EbG6SjGpPpOAiVkwn+OGtwO6bWLpX9/T3ss4bY=;
+	b=bmAbfUEgJ8yrnLUyqarufYE2NL24sjmtqxakkKnfZLXOe63cWH01BlZdUGSGgpbq8koWtl
+	pDtsOrIQcdZpQIAg==
+From: "tip-bot2 for Zhang Kunbo" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/platform: Fix missing declaration of
+ 'x86_apple_machine'
+Cc: Zhang Kunbo <zhangkunbo@huawei.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241126015636.3463994-1-zhangkunbo@huawei.com>
+References: <20241126015636.3463994-1-zhangkunbo@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250202062357.872971-1-make24@iscas.ac.cn>
+Message-ID: <174069391043.10177.15698259773482528147.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 02, 2025 at 02:23:57PM +0800, Ma Ke wrote:
-> When device_register(&child->dev) failed, we should call put_device()
-> to explicitly release child->dev.
-> 
-> As comment of device_register() says, 'NOTE: _Never_ directly free
-> @dev after calling this function, even if it returned an error! Always
-> use put_device() to give up the reference initialized in this function
-> instead.'
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4f535093cf8f ("PCI: Put pci_dev in device tree as early as possible")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Applied with Ilpo's reviewed-by to pci/enumeration for v6.15, thanks!
+Commit-ID:     e008eeec7868a9ca6e159726aeb9bdbf2ab86647
+Gitweb:        https://git.kernel.org/tip/e008eeec7868a9ca6e159726aeb9bdbf2ab86647
+Author:        Zhang Kunbo <zhangkunbo@huawei.com>
+AuthorDate:    Tue, 26 Nov 2024 01:54:57 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 22:52:37 +01:00
 
-> ---
-> Changes in v3:
-> - modified the description as suggestions.
-> Changes in v2:
-> - added the bug description about the comment of device_add();
-> - fixed the patch as suggestions;
-> - added Cc and Fixes table.
-> ---
->  drivers/pci/probe.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 2e81ab0f5a25..51b78fcda4eb 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1174,7 +1174,10 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
->  add_dev:
->  	pci_set_bus_msi_domain(child);
->  	ret = device_register(&child->dev);
-> -	WARN_ON(ret < 0);
-> +	if (WARN_ON(ret < 0)) {
-> +		put_device(&child->dev);
-> +		return NULL;
-> +	}
->  
->  	pcibios_add_bus(child);
->  
-> -- 
-> 2.25.1
-> 
+x86/platform: Fix missing declaration of 'x86_apple_machine'
+
+Fix this sparse warning:
+
+  arch/x86/kernel/quirks.c:662:6: warning: symbol 'x86_apple_machine' was not declared. Should it be static?
+
+Signed-off-by: Zhang Kunbo <zhangkunbo@huawei.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241126015636.3463994-1-zhangkunbo@huawei.com
+---
+ arch/x86/kernel/quirks.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/quirks.c b/arch/x86/kernel/quirks.c
+index 6d0df6a..a92f18d 100644
+--- a/arch/x86/kernel/quirks.c
++++ b/arch/x86/kernel/quirks.c
+@@ -10,6 +10,8 @@
+ #include <asm/setup.h>
+ #include <asm/mce.h>
+ 
++#include <linux/platform_data/x86/apple.h>
++
+ #if defined(CONFIG_X86_IO_APIC) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
+ 
+ static void quirk_intel_irqbalance(struct pci_dev *dev)
 
