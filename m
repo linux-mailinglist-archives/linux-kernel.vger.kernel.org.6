@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-535328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32364A4716C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:42:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A26FA4715C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6F51886326
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499951695A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4F61C8636;
-	Thu, 27 Feb 2025 01:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743D51D5CE5;
+	Thu, 27 Feb 2025 01:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="25Zw1OxU"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CN7O9/qy"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CAF1BEF87
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EAF1C6FF8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740619554; cv=none; b=q2qf0E3hzQLrYiex6RI+laZCVXAr+JY7GMsCOJhaCldJhT1kR12L65o0Z1AwzJykn1kb9oxwo3zgh8qIGVnelelfSTwsLmgYeiTdxjR//j+KusarznAS4SGHAVuIhuk47FWCx6F2EnpYP7QFiTKBPllhrE5qBKEAB8YWTFLnB/4=
+	t=1740619555; cv=none; b=kdDbs05Pqk9Mo1iphmZg3FtQZRDUB+CINnXYcK6xMk2CCOToRHaE48nR9QXoW1+5KNJsaYfam+U/JrsOWvLMNGdVTGvcx6kCYN2CyLLcEiP5zCvxIMjAUow9xgndkpVuYpe8BL9fxpRPOoytbDXiBBLXW8QGnC/mVH4wwF3gadw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740619554; c=relaxed/simple;
-	bh=8wNkxswFWdGH1HQRrKpFkvy/1TsnRMIlEykX12vyE8U=;
+	s=arc-20240116; t=1740619555; c=relaxed/simple;
+	bh=dDR1QpQVcSQvKqFE0KvEiZ7AYWgfuYaS5/Kd55ia8vU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jS8uKePfaCJNPN0KaiT/lQjdCCMMFnDQ4niE62GPb7UcCxjkNZswVFbLVHxLPSgfp8lyQLTS+UWgEOxrbcO5xCYd6pmFxgOchhc/fCrL37Q66f7U2xE1tXDCMVTZnYOlLyBKFsYTXwVcnHi5XhkikOq7ut1wxlJsuT2QzURYRwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=25Zw1OxU; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=jq541uysl0qHad4pH37Ul9gNR8iipIkCOzgKh+g46nkWkdRdrxyYzk5iyVl79RZD4VaoFLnFkRnG4sv247kWymL5Ga/zgYvFn4MScJsHRFV11TjvnbJKKpgGyDY6/6i0MCBQdA48ip9phAn78db0xj7H4eyn5duCKaEMvWYTLp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CN7O9/qy; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc43be27f8so1428880a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:25:52 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22328fb6cbfso7431975ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:25:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740619552; x=1741224352; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740619554; x=1741224354; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/9g8YvMgE4u3p57YSBM8Zk/O02fgzICd+Y1XSuEDMWk=;
-        b=25Zw1OxU+5yPGgv5C+BWcIzSDzSiQgS9yLR8C9b+G/Ga9PQFfUfhQNrrKJcQ/UNCHG
-         CWWCiZgWydKcKq1W7hXeRaJNQRchuKJCCHC7icKZjjZ5leQJhsHgpZOvmmWblFWzAxF6
-         C3FsPysw+Ih/M1/A/LQrzdUbl8AsdLqw4T9G3aYvuAFIVvSISixTX0Gy1Is25aCJsNLh
-         OJsvJ9ud0W8dE918JCOAD4KmBSnBY9EGN2TysHGfFpyQqcE4RoBF2ROJzwXwsNA37Okp
-         YQbgsLPVIi2NvFNPNBi59xjUlLcEw2NOxJcKgUMrgExmsz96xOxj+TKc6ZFY9Zs3+yIG
-         C3dA==
+        bh=HpoG9IAubpCDT+wLYzi42QtAGv2cg0ICoGBus9dCqMw=;
+        b=CN7O9/qysEZ8W+P+Y8JduIxwXS2sDL4Me2lMWiDi7LESsP5BCCnccbncUpeSJTYcpi
+         AAmcjnGBP/RZG2mCGZUXAJli5V2K0JjJxClbE8h7gN+Mv2UwF8Ol0Kmr40EDP8blk3ox
+         VQBJvLq2wetwBcfB/3E6FhMIZ89PmZv4ZQ517KqAdNQC+jy+iGDrBE/QR9XsobDFT7rg
+         jR+uqqx/hhkgPUPwN6ORVzSwixoEFVPiX5rq7x1agydCpHnnfzaBtEgptafHe5yDhA16
+         8jevoINcvTB1L/WI5jekykFJU0LKVhHWqYiP2uPiZUaE3iLcZkcdJqqWYdOUSQG8mdoc
+         IU2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740619552; x=1741224352;
+        d=1e100.net; s=20230601; t=1740619554; x=1741224354;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/9g8YvMgE4u3p57YSBM8Zk/O02fgzICd+Y1XSuEDMWk=;
-        b=mxBJ0h8FeXGI8KhSUFYccD9LCq560LsJRnoUIHJ63efUvDykkyreSyNAZ/pETyh5vW
-         2bbvtpKlNUWyhEPjVMBb68kRqy+xLnaLKZbkf8XMAZT6342FCVRzSo/Ou/Rw8MMIUsQP
-         2hd8XY7bmZgF9RYTrUIlmr/HinOzKNV6WGu+/FrauivFzHYQn0XCs9us7cv5AwJKk6Ng
-         9z8ryN+meCVItwGaklLa2ei3j6sOXL1YPLaxXKMLu2+VD33YKnItIfOAUmdM6jMfUKQT
-         9bwhFCAsHJyPtLn7FfIeSjYPPEKtvkzpKoVJ+IunihrBWG/VhSPDGXXSGn3FUPFWYmqI
-         XmSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxRjl02f8w/N78BnrvFeezf0PdyH+KXRuMVAYdgrLrmiyQvWur/4to7LT2DntPhI/Vj9qR1hedjCSFN+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUWVdc81t5EtfVyZqoY4NujRFYD3W6GaYt4C2nekIDt4bAU0TR
-	Ys4inKDLS0DeloSyPZRqhwMPi2C0iim7blbJUdEgBkYUemi1AZQaSuu837kNv1d1LxHdbiwPWdf
-	AgA==
-X-Google-Smtp-Source: AGHT+IF65rUIuTMqRgVl+qHoagCMc0Oa679N7rInTQJ8+VGZg85VOD9YW+b2TmMSzy1ThwGbMVoYpUEMUg8=
-X-Received: from pjbse7.prod.google.com ([2002:a17:90b:5187:b0:2ee:4a90:3d06])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2248:b0:2fa:2124:8782
- with SMTP id 98e67ed59e1d1-2fe7e39f185mr8673035a91.25.1740619552385; Wed, 26
- Feb 2025 17:25:52 -0800 (PST)
+        bh=HpoG9IAubpCDT+wLYzi42QtAGv2cg0ICoGBus9dCqMw=;
+        b=DP4u5ouD89qh/LRbxB554YHqpbe7urTs1w1f2t6w039IytgEs0/3SOXy1kWWQR9hS/
+         VHiJGRBCt4kiEBJmJs5WqIXIXmbFnxhgZ4JC2phW6MeXUIi9Er7C3yXK66l943sh58ZD
+         YbdBhRLDmAzZdmrykZBDS3uZ23wG/t8gOMeyGmXMwE9AzSWKlLqP8g0/p+xAQahn5XJZ
+         EINn4ODsohGk3Bl12TB9q4F+xMct5F2S/EG2LB3Kcrsc+Blc2YYwzkze2zdjKi0N6Ejl
+         hZsOEWR+yzEW7JZifZ/BLKd2S37bG9Nl07HEDQd9WAXDNKJhYrakDW5Nt+3cbMQQJK/n
+         kJ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPh297yq2kZcfexarRHg02afxAxnkdw3TH0O4rVcrwP1wfz/zQ/O3KNLplGVZfamg8hB5sziGQgiadAqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEj3+44cx9Z18c9JTzt4et87/kG4Zfc1d8JerJdar9OR1tJl5N
+	zMQGx5YqwjHyC/VkladIyA0Ncxoq9nGUxy4AJzRD0iXx5LolqTugk08JxKepirkumb59mk0dPqq
+	rAA==
+X-Google-Smtp-Source: AGHT+IGescKmvLpkcPFFde/D5wUCncfjV68Ld5mkBOALQrlPwQFVWlWLOcBp8zNKxty+sQjM+lwnvjXZb/A=
+X-Received: from pjbsw3.prod.google.com ([2002:a17:90b:2c83:b0:2fa:15aa:4d2b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22c7:b0:220:cd7f:cde8
+ with SMTP id d9443c01a7336-22307b5b218mr150692835ad.29.1740619553863; Wed, 26
+ Feb 2025 17:25:53 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 17:25:36 -0800
+Date: Wed, 26 Feb 2025 17:25:37 -0800
 In-Reply-To: <20250227012541.3234589-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250227012541.3234589-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227012541.3234589-6-seanjc@google.com>
-Subject: [PATCH v2 05/10] KVM: SVM: Require AP's "requested" SEV_FEATURES to
- match KVM's view
+Message-ID: <20250227012541.3234589-7-seanjc@google.com>
+Subject: [PATCH v2 06/10] KVM: SVM: Simplify request+kick logic in SNP AP
+ Creation handling
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,79 +86,63 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Pankaj Gupta <pankaj.gupta@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When handling an "AP Create" event, return an error if the "requested" SEV
-features for the vCPU don't exactly match KVM's view of the VM-scoped
-features.  There is no known use case for heterogeneous SEV features across
-vCPUs, and while KVM can't actually enforce an exact match since the value
-in RAX isn't guaranteed to match what the guest shoved into the VMSA, KVM
-can at least avoid knowingly letting the guest run in an unsupported state.
+Drop the local "kick" variable and the unnecessary "fallthrough" logic
+from sev_snp_ap_creation(), and simply pivot on the request when deciding
+whether or not to immediate force a state update on the target vCPU.
 
-E.g. if a VM is created with DebugSwap disabled, KVM will intercept #DBs
-and DRs for all vCPUs, even if an AP is "created" with DebugSwap enabled in
-its VMSA.
+No functional change intended.
 
-Note, the GHCB spec only "requires" that "AP use the same interrupt
-injection mechanism as the BSP", but given the disaster that is DebugSwap
-and SEV_FEATURES in general, it's safe to say that AMD didn't consider all
-possible complications with mismatching features between the BSP and APs.
-
-Opportunistically fold the check into the relevant request flavors; the
-"request < AP_DESTROY" check is just a bizarre way of implementing the
-AP_CREATE_ON_INIT => AP_CREATE fallthrough.
-
-Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/sev.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ arch/x86/kvm/svm/sev.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 9aad0dae3a80..bad5834ec143 100644
+index bad5834ec143..ccac840ee7be 100644
 --- a/arch/x86/kvm/svm/sev.c
 +++ b/arch/x86/kvm/svm/sev.c
-@@ -3932,6 +3932,7 @@ void sev_snp_init_protected_guest_state(struct kvm_vcpu *vcpu)
- 
- static int sev_snp_ap_creation(struct vcpu_svm *svm)
- {
-+	struct kvm_sev_info *sev = to_kvm_sev_info(svm->vcpu.kvm);
- 	struct kvm_vcpu *vcpu = &svm->vcpu;
- 	struct kvm_vcpu *target_vcpu;
+@@ -3938,7 +3938,6 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
  	struct vcpu_svm *target_svm;
-@@ -3963,26 +3964,18 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
+ 	unsigned int request;
+ 	unsigned int apic_id;
+-	bool kick;
+ 	int ret;
  
+ 	request = lower_32_bits(svm->vmcb->control.exit_info_1);
+@@ -3956,18 +3955,10 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
+ 
+ 	target_svm = to_svm(target_vcpu);
+ 
+-	/*
+-	 * The target vCPU is valid, so the vCPU will be kicked unless the
+-	 * request is for CREATE_ON_INIT.
+-	 */
+-	kick = true;
+-
  	mutex_lock(&target_svm->sev_es.snp_vmsa_mutex);
  
--	/* Interrupt injection mode shouldn't change for AP creation */
--	if (request < SVM_VMGEXIT_AP_DESTROY) {
--		u64 sev_features;
--
--		sev_features = vcpu->arch.regs[VCPU_REGS_RAX];
--		sev_features ^= to_kvm_sev_info(svm->vcpu.kvm)->vmsa_features;
--
--		if (sev_features & SVM_SEV_FEAT_INT_INJ_MODES) {
--			vcpu_unimpl(vcpu, "vmgexit: invalid AP injection mode [%#lx] from guest\n",
--				    vcpu->arch.regs[VCPU_REGS_RAX]);
--			ret = -EINVAL;
--			goto out;
--		}
--	}
--
  	switch (request) {
  	case SVM_VMGEXIT_AP_CREATE_ON_INIT:
- 		kick = false;
- 		fallthrough;
+-		kick = false;
+-		fallthrough;
  	case SVM_VMGEXIT_AP_CREATE:
-+		if (vcpu->arch.regs[VCPU_REGS_RAX] != sev->vmsa_features) {
-+			vcpu_unimpl(vcpu, "vmgexit: mismatched AP sev_features [%#lx] != [%#llx] from guest\n",
-+				    vcpu->arch.regs[VCPU_REGS_RAX], sev->vmsa_features);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
- 		if (!page_address_valid(vcpu, svm->vmcb->control.exit_info_2)) {
- 			vcpu_unimpl(vcpu, "vmgexit: invalid AP VMSA address [%#llx] from guest\n",
- 				    svm->vmcb->control.exit_info_2);
+ 		if (vcpu->arch.regs[VCPU_REGS_RAX] != sev->vmsa_features) {
+ 			vcpu_unimpl(vcpu, "vmgexit: mismatched AP sev_features [%#lx] != [%#llx] from guest\n",
+@@ -4012,7 +4003,11 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
+ 
+ 	target_svm->sev_es.snp_ap_waiting_for_reset = true;
+ 
+-	if (kick) {
++	/*
++	 * Unless Creation is deferred until INIT, signal the vCPU to update
++	 * its state.
++	 */
++	if (request != SVM_VMGEXIT_AP_CREATE_ON_INIT) {
+ 		kvm_make_request(KVM_REQ_UPDATE_PROTECTED_GUEST_STATE, target_vcpu);
+ 		kvm_vcpu_kick(target_vcpu);
+ 	}
 -- 
 2.48.1.711.g2feabab25a-goog
 
