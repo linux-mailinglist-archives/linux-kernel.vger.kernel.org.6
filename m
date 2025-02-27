@@ -1,119 +1,162 @@
-Return-Path: <linux-kernel+bounces-536532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B7AA480AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:14:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386E5A48103
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DEC3A3746
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5512B420037
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C6C24338F;
-	Thu, 27 Feb 2025 14:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D482343C2;
+	Thu, 27 Feb 2025 14:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKWNtwWF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KUER0pru"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCBD2417C8;
-	Thu, 27 Feb 2025 14:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8008B270047;
+	Thu, 27 Feb 2025 14:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665230; cv=none; b=sj+RjvR4LCaYSRMWCFSF/JoDJU1SZoR9O2eaIes0kDJDFMVPqoHrKtc8zOqbFi7iEJW8UJiQNJaZoRmYVi5DHAq3M8KTC3Rr6hlX4qoq3BTk2glGm9kEhWF8y4ROcssrO5DEc8lvbvtgY3vJnl2lPMBnfjTxnz/oyMvQBIrX1dI=
+	t=1740665214; cv=none; b=hSpJL7+LbWmOCSUg54dJNuP8D7EN9a0D96ToH54g0iGbMOt5F1ILDdDd/DRpjAV/LotXbmsJtg0yIM9bvEK1o9PhvrQA6EZrBoX/sw8o+VUJp5Ru+lLPaHRctqkRSJun4CPQ1OGGTWue/QISBOlZ/fHzzFTcHrk2Fvgm60u+5mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665230; c=relaxed/simple;
-	bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kE8vZTwJRT3txsJ2rpegKmiOGx+F8VCDUP2qONV4PGFfs3NoJxd2NrqqDKHBTbcFyuFmbx0Q/KTtjoVdCaQ14OqK7znjtaBeiFqQ9mtcnjTVK9+FYadQhNuIJaqLjOCrgLqrKBdm7sl5P2GFA/TzaxATIvyrKm3g66Ut1Z6jigk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKWNtwWF; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1740665214; c=relaxed/simple;
+	bh=42WdhgXhdDMPXhJ4DI29Tw36HeAU88JIQbz7zLd0iqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lE5pDothkzhLHflXKOowP5lWG8kJJgcCJ8mZfYXn6ebnQETVEM2wmBOYudF1yOZQAIqdffnsV/tCvHt1tdqPJPfo73PQWRygsvr7wkPrlcGjXM4zHYjokt2ZyaOBBYJTWLsyU1k1LA/N0KZdqpO+T10z2cXD59L/Ur9I7JXRHUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KUER0pru; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740665229; x=1772201229;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
-  b=cKWNtwWFp3uRjZvCB2JCXumnWgX/En+skFCZMb8rfrJpo3tTjGWifpWP
-   4SjwLSNzUfUlOykg6LI8v+bngRCRk7LL/8aFQPvyysm/vYgmLQBMCP82T
-   v7yH2xQ82x+Z7/gqkW0W34GpQLBB5Tonfk5XlTEMEdk//Yr8WmvIbfY4q
-   o+eFlaY6jnkDsir0xGHy37i9D6vclOyDNK3Kw0XRf9gR3nmfN/cUuTFcN
-   fQBVFHi7d4571z0Nh2QPJxpW4zuRiu6FPDoz1pcLcpXQ44Xw+jKnlocua
-   1XQQQ7hgrytCv6KHQAdtL79fpaW9BJLLbBrupirtIQtugc4lfwUv13ov4
-   A==;
-X-CSE-ConnectionGUID: vOrBLuzJRdy8jZZbsoBlRg==
-X-CSE-MsgGUID: HSJs5alzTXKaIBA2mD5W3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41438120"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41438120"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:07:00 -0800
-X-CSE-ConnectionGUID: VMW8zrYCQHKWLJsjtbC5hQ==
-X-CSE-MsgGUID: qx3XXiPBQLGBUROwW1nV9A==
+  t=1740665212; x=1772201212;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=42WdhgXhdDMPXhJ4DI29Tw36HeAU88JIQbz7zLd0iqQ=;
+  b=KUER0pru0AOon9chZQZOI8ts7jfnDECsuemFwrFDPbJrcWlzbIZLNv+g
+   zVRafDQzVX0hq0mu6LhBVHM25DC40VbjGVPPy9ZajTIn22b0S4v9BglPL
+   OqgiRCnJHOsq6C7BNhF+txfzAKlvLTdZ9TFkUW+Qat4VIPuKkOroWUqJ7
+   P2PYlaS6Ncpqf/Hc6JuTxxbmkWNvZJ5EgVJa9OFhM3BVxvZRiOmt2HNLa
+   x+HvrCFwHL1A1UFAifSqCApjCef9uN9vgvkJ9968+W49kJk7j/iYl50sK
+   tOMY7ggVezH1Otya1TGcKRrunUZv/jJ++FL8OIv7NMNz5WLzvGmZm2XSH
+   w==;
+X-CSE-ConnectionGUID: ZhOuLE8sQkOWebt0vlN6iw==
+X-CSE-MsgGUID: Z97zpZdxTXKgPOd0YE7HeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41752955"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41752955"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:49 -0800
+X-CSE-ConnectionGUID: kMdXKLKDTRGPJH9PLlHl8A==
+X-CSE-MsgGUID: gZIzw05fTxGpUaQSHKHAbg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="116831792"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.220.154])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:58 -0800
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	broonie@kernel.org,
-	tiwai@suse.de,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH v4 16/16] ASoC: rt711-sdca: add DP0 support
-Date: Thu, 27 Feb 2025 22:06:15 +0800
-Message-ID: <20250227140615.8147-17-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
-References: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
+   d="scan'208";a="122151921"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:48 -0800
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 679FB20B5713;
+	Thu, 27 Feb 2025 06:06:46 -0800 (PST)
+Message-ID: <afdc5b07-9795-4049-8941-c2e3d2bbaa87@linux.intel.com>
+Date: Thu, 27 Feb 2025 09:06:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 13/24] perf/x86/intel: Update dyn_constranit base on
+ PEBS event precise level
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-14-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250218152818.158614-14-dapeng1.mi@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 
-DP0 is required for BPT/BRA transport.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
----
- sound/soc/codecs/rt711-sdca-sdw.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 2025-02-18 10:28 a.m., Dapeng Mi wrote:
+> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
+> sampling and precise distribution PEBS sampling. Thus PEBS constraints
+> should be dynamically configured base on these counter and precise
+> distribution bitmap instead of defining them statically.
+> 
+> Update event dyn_constraint base on PEBS event precise level.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  arch/x86/events/intel/core.c | 6 ++++++
+>  arch/x86/events/intel/ds.c   | 1 +
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 472366c3db22..c777e0531d40 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -4033,6 +4033,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
+>  		return ret;
+>  
+>  	if (event->attr.precise_ip) {
+> +		struct arch_pebs_cap pebs_cap = hybrid(event->pmu, arch_pebs_cap);
+> +
+>  		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
+>  			return -EINVAL;
+>  
+> @@ -4046,6 +4048,10 @@ static int intel_pmu_hw_config(struct perf_event *event)
+>  		}
+>  		if (x86_pmu.pebs_aliases)
+>  			x86_pmu.pebs_aliases(event);
+> +
+> +		if (x86_pmu.arch_pebs)
+> +			event->hw.dyn_constraint = event->attr.precise_ip >= 3 ?
+> +						   pebs_cap.pdists : pebs_cap.counters;
+>  	}
 
-diff --git a/sound/soc/codecs/rt711-sdca-sdw.c b/sound/soc/codecs/rt711-sdca-sdw.c
-index f5933d2e085e..e87e2e1bfff7 100644
---- a/sound/soc/codecs/rt711-sdca-sdw.c
-+++ b/sound/soc/codecs/rt711-sdca-sdw.c
-@@ -225,6 +225,14 @@ static int rt711_sdca_read_prop(struct sdw_slave *slave)
- 		j++;
- 	}
- 
-+	prop->dp0_prop = devm_kzalloc(&slave->dev, sizeof(*prop->dp0_prop),
-+				      GFP_KERNEL);
-+	if (!prop->dp0_prop)
-+		return -ENOMEM;
-+
-+	prop->dp0_prop->simple_ch_prep_sm = true;
-+	prop->dp0_prop->ch_prep_timeout = 10;
-+
- 	/* set the timeout values */
- 	prop->clk_stop_timeout = 700;
- 
--- 
-2.43.0
+The dyn_constraint is only required when the counter mask is different.
+I think the pebs_cap.counters should be very likely the same as the
+regular counter mask. Maybe something as below (not test).
+
+	if (x86_pmu.arch_pebs) {
+		u64 cntr_mask = event->attr.precise_ip >= 3 ?
+				pebs_cap.pdists : pebs_cap.counters;
+		if (cntr_mask != hybrid(event->pmu, intel_ctrl))
+			event->hw.dyn_constraint = cntr_mask;
+	}
+
+
+Thanks,
+Kan
+>  
+>  	if (needs_branch_stack(event)) {
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index 519767fc9180..615aefb4e52e 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -2948,6 +2948,7 @@ static void __init intel_arch_pebs_init(void)
+>  	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
+>  	x86_pmu.drain_pebs = intel_pmu_drain_arch_pebs;
+>  	x86_pmu.pebs_capable = ~0ULL;
+> +	x86_pmu.flags |= PMU_FL_PEBS_ALL;
+>  
+>  	x86_pmu.pebs_enable = __intel_pmu_pebs_enable;
+>  	x86_pmu.pebs_disable = __intel_pmu_pebs_disable;
 
 
