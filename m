@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-536337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA70A47E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:56:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC494A47E5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A2021697F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EB53AF8EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A986B22D7B4;
-	Thu, 27 Feb 2025 12:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387B222D7A3;
+	Thu, 27 Feb 2025 12:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yWz7TU2l"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bk5yk4pz"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418A222D7A3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0CA22D4F9
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661008; cv=none; b=ufeurm6+qQKRIKawsXzDQSC5suy2QPDgB08ccghgRdgub4SNsz82HrD/QZ5OcJj7sHtsvNyF976WYrtRn4YI5nGq/2aGvDwOgihsWLkDbLdGJkIAJsEhsCrhtl6KBQKYf1/zrgZLIk5lVllpzV6liBpFtcZ5Co4nUfcAmtl+lPg=
+	t=1740661068; cv=none; b=LXLESEXwkeV7sZzEsk4CN2yWvaHc6JEVgJTB7AMBHsI4UIeDeuISDemp2i47JhXKuWbYAl1uvueccMAykgyA20kXGsxieEGH4XHBtZe/vijULNDgnEz3Rex/B7xSzsQomAlF20qt+gxdeteU7qAOZnTFzVpaO2N0fP6QbprXp/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661008; c=relaxed/simple;
-	bh=fGUVzR1B88At1tVx8Gm7GT+20MR8uqyEANIRvn83vWQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TCcHok1Ks473sc/3cBhnSKb281u5jPuVwXFpKD0RuyiugSSzicgS+V/tNKvEqMWOZClU9S7cx3xe/falORt/d8xvjXDwmY9nVQ92v6yIuGD+6HYsWskzBeIjH+ZLhYbaj+a5fPpJ4sfvpBY9l+InCLZZOloMRs+62LYADfIk6Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yWz7TU2l; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f6475f747so419022f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:56:45 -0800 (PST)
+	s=arc-20240116; t=1740661068; c=relaxed/simple;
+	bh=+rMrTSbujll9t1goCljjQZX7rGGUeT4ByaL+2IU1WjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iqVMfj2Wshx5sX/b+wVHRaU/nzxyloBGNSccFfBh6Qom2YOrpqDrENyuFrBz1UQp5z9NrqTJnAd7rh0NKucnLiIVvcwYYGNUNNePmiTyvPch0RUQVM09tG6zQK5bR02YcGUqtYSr4LGL8uBW4IZplBztMrfsXXNwQLAXEcVQZb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bk5yk4pz; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-219f8263ae0so14752605ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:57:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740661004; x=1741265804; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fGUVzR1B88At1tVx8Gm7GT+20MR8uqyEANIRvn83vWQ=;
-        b=yWz7TU2lhoTGdvjPsFwGS6Qfi1BGhWmryyNLLx5BiSCm9mi4fRDLrWKFa5DxhOLvaI
-         b174a5YxWFZE9SLbAVBJpgDO/tKkokRc6ApHcHSN16uJNI/5QfRSzQwNX7y00vAjfqjk
-         SwEpLX9sEAjw7PkdK83UDZSQfYFwCyRPOLc/3drquVeWlxW7mko2r8WSSXBQHE323rbJ
-         FwXcc+z4/pdAdx/eS1HSjE0of2B4hVeYHiHp6gFeGzHBNyxUISe368D/mOlhEDZ3Xtun
-         tBKkmtH8VAm7UKJ9Vt6D48CFxdQ6rBwdoWnV7d4z7MwpIZukQeuuyWguWyr4A3PL6e2T
-         yuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740661004; x=1741265804;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740661066; x=1741265866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fGUVzR1B88At1tVx8Gm7GT+20MR8uqyEANIRvn83vWQ=;
-        b=INfipqglWsxbXLTnhAUmEhvKZEXBc97cqEzi8DfJ5LIxk83dc5XgFBL+nhhU020a3w
-         mpW7Axzpt89Zn9Ntk1eNRYTBScqoQIqD2rQjHvHishOChcizuTMSpXXSMqbhfF1XlWBU
-         xFst32H8jItpQkRUG/8rgJTf/P4h7gZuwsaJo2qkjGZsLs/Lo1/x/mZnwJkyhV0s4moE
-         Jb94skOshp2nI/7X/U6QCNTEtgLkyRG4m42h9NIRkbZOULe1iU9QK1qsxkdc+B+3eLnZ
-         3xEOxogkzqRaGDljNGlsqCc8V0140STko2WMv9PMU+1dVFV1LXp+8BWC5Bg+GHqcQCcD
-         PCIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAWeCdK0a8R5hv7kX2wC+7ZgIcczKOrto6Xd5j3h5mVM4aXQeuxHJtwJAKa2c8FRBzzwVFLVkCNOM8EcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJq1JufWkf8wjMwkokZ6BOV3XdkzFwsDQYwz/9wd2apxj43ev0
-	YU0O6UQ14NPJEanD0Vj6XfMFQtT7OD9mRVmOahXKVjhb8EctxH5sFQahKKxavd4=
-X-Gm-Gg: ASbGnctvqK+gx2/LBtYQVNyCyTnufNPo0z9MBlb4JsUXMLdfTghr9kqI01l74DO8J4/
-	xyk813LH3Q+bfhrdhDFgr2gbCu0DMgtyRcXog5iUzJHDG2GfUL43G+qlQa+NAQo3WSP/h7Q97QN
-	PeZQgKuUaOjnOyanG9s+Z6+SUlvaLDBF6P+E+cRC3mrqPoqOIThb+PtDs8DlRUsx72Ni55QRU5x
-	iEAYF43Dv7PW4Sorev0J2JwqmOKS76Skchol4sD+NrlOoqNvYbMpD8C1skWICsXm+eh0pW4NkBy
-	xuvJukMMd8zJf/E1z9XKjycRj53yeg==
-X-Google-Smtp-Source: AGHT+IGgA8QlJ26ze07J+YhYIMSkHS/YQRwZ6iJpXVMPjcqdJ2RpD+8zTEtTBFTsbNdl8L7SmDd0HA==
-X-Received: by 2002:a5d:6d82:0:b0:38f:2b49:7bfe with SMTP id ffacd0b85a97d-38f6f0ae7eamr23284725f8f.47.1740661004532;
-        Thu, 27 Feb 2025 04:56:44 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6739sm1953462f8f.22.2025.02.27.04.56.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 04:56:44 -0800 (PST)
-Message-ID: <77a8982401fdd8e986255a70e22f4fef290669cc.camel@linaro.org>
-Subject: Re: [PATCH v2 1/6] dt-bindings: gpio: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- devicetree@vger.kernel.org,  Kees Cook <kees@kernel.org>,
- linux-gpio@vger.kernel.org, Srinivas Kandagatla	
- <srinivas.kandagatla@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-  Will McVicker <willmcvicker@google.com>, Conor Dooley
- <conor+dt@kernel.org>, kernel-team@android.com,  Bartosz Golaszewski	
- <brgl@bgdev.pl>, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org,  Lee Jones <lee@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 27 Feb 2025 12:56:42 +0000
-In-Reply-To: <20250227125143.GA1672649-robh@kernel.org>
-References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
-	 <20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org>
-	 <174060184807.3654907.17826939583833772128.robh@kernel.org>
-	 <f3db83179b405ca056fd55abdd6c38adaedbaea0.camel@linaro.org>
-	 <20250227125143.GA1672649-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        bh=Pf96MEttABttkon6JyPzDs9JgVTWCcxQW9KTdzVlvqQ=;
+        b=bk5yk4pzjXG4HwuYyKM9b/NxZ2LememcHrSb71jaJOO0SyGkGb6dtyW290Yu6O2sT5
+         /lEy+/sgau97K7y138QvVduNVqIfTKEn3Ccc0lSz4pUBZuTYghBY9iR/ErAXCVoiVQ9y
+         1lEQXhzTY2M0wb7ABM2vs5ACXKHLDUBgi8XUP0Y6Supr85iqym4MbEj1xU+7lu4/d2lC
+         +hqMzqb0KPVed+xQZFf2YTE1qIX+MpHB6qUNITLZJ49Vzn9+y6cflbE/1I6YUJluGxPu
+         3aQj6D5mk1kcpB0d1xSLjkkA0gnpj087a2PeqaRu2BxhiNmQw1LFK78mWZZW+PMnb2OF
+         v2OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740661066; x=1741265866;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pf96MEttABttkon6JyPzDs9JgVTWCcxQW9KTdzVlvqQ=;
+        b=kxDSC7NApyimKv7Fus3/urIMBFA9zj5QBEvmX6jaSQlLvib9bU/0GZwKyWqOD9OU1q
+         FxYGBte8yS4No7XP5+RdZdX9WPQrHmmWdK4sVcsrdHusME4/OFghIF1zHFxL7wlR8tHL
+         FuK2wSZu0gfyJTBiucfkLQE+922ZHApkN10AUKDZ8OB9DrH+MJjkPAmRodHMzb7bHVfu
+         GL6e+rTgB6d03DAXnNZi3mixsf57UcK9pXRSKrFVcGc06uCJypPLUCqh7jntpWi5XtKc
+         TjnMVT7bbHIA7f2QqC8jB4Vo0CAevAMoc6SxRjL/aYhbFQEC433i7vQ4Zn81T2QPNg9y
+         6b3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWeCIiW+8D2iWFp5qmCOoBEUiIcNswPASvkEcnMz29VBjsKGlCE3MYl/SdZez77Ur1Dv435W0UTKrhl+AU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZNnjYLIIv/BkjIwYxo8x3cRVMc999bODe1bJwyCgYA0Hyu8nz
+	066mu/oHPb/xRMrnebey5lWxuR1g+yC39RZ9niq7Yx46jMuw/VDEadnYVW6WkCo=
+X-Gm-Gg: ASbGncv7CEDcuy0PQKsqFYxMYh/ytxUgeRuw/FdCue/pKVQDiLPOOTLxs3WHjm/Z52V
+	9eRtSew80UrcJVF6nvKw4rHcbQ6zvWU8r7kFI5epo1gbic8V9tsswga6ZZ+zmfRTiUlN8QAM2gq
+	pyvL/A+9o6yVFIDZWc6uk32HDfeHHYTQrMod6pQ6DIDJuGZ6w2IsVr9Kj5l7MLdoyOfI2SoukrH
+	uC6JsCWt15bJfMVKu6oL3hIItWswrFvWS9LOAusIzS8MOUSCuUjWKNDBfx9SyfBB9vKDKhSip65
+	LbGNZ3VpIBrCqJFGtueXhviX2W6DlLEUKltRcbvuIxF/lRCfDt+UpwkoIQlw3BAglaHJKMQ=
+X-Google-Smtp-Source: AGHT+IFx4pIh3JIPBr0kkMiUgEYGJKIIZ775OsAddLWn3ffImcN2wl1+nGQSMf4FINEK1qVgjm20Mw==
+X-Received: by 2002:a05:6a21:6d9a:b0:1ee:d6da:b646 with SMTP id adf61e73a8af0-1eef52d935emr44541622637.11.1740661066261;
+        Thu, 27 Feb 2025 04:57:46 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe48865sm1508632b3a.50.2025.02.27.04.57.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 04:57:45 -0800 (PST)
+Message-ID: <cf568ee0-8baf-4701-9e22-0b71792cf329@rivosinc.com>
+Date: Thu, 27 Feb 2025 13:57:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 02/10] riscv: Define arch_apei_get_mem_attribute
+ for RISC-V
+To: Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-efi@vger.kernel.org,
+ acpica-devel@lists.linux.dev
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, lenb@kernel.org,
+ james.morse@arm.com, tony.luck@intel.com, ardb@kernel.org, conor@kernel.org,
+ robert.moore@intel.com, sunilvl@ventanamicro.com, apatel@ventanamicro.com
+References: <20250227123628.2931490-1-hchauhan@ventanamicro.com>
+ <20250227123628.2931490-3-hchauhan@ventanamicro.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250227123628.2931490-3-hchauhan@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-02-27 at 06:51 -0600, Rob Herring wrote:
-> On Thu, Feb 27, 2025 at 11:19:55AM +0000, Andr=C3=A9 Draszik wrote:
->=20
-> > The error is because the binding's 'description:' references the
-> > mfd binding using the complete path and the mfd binding is added
-> > in a later patch only in this version of the series:
-> >=20
-> > =C2=A0 >=C2=A0... For additional information, see
-> > =C2=A0 > Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
-> >=20
-> > the error goes away if a relative path is used instead:
-> >=20
-> > =C2=A0 > ... For additional information, see
-> > =C2=A0 > ../mfd/maxim,max77759.yaml.
->=20
-> No, just ignore the error. I believe it gets fixed with the mfd binding=
-=20
-> applied. I'm not too concerned if refcheckdocs is bisectable.
 
-Thanks Rob, and yes, it does go away then.
 
-Cheers,
-Andre'
+On 27/02/2025 13:36, Himanshu Chauhan wrote:
+> ghes_map function uses arch_apei_get_mem_attribute to get the
+> protection bits for a given physical address. These protection
+> bits are then used to map the physical address.
+> 
+> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
+> ---
+>  arch/riscv/include/asm/acpi.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/acpi.h b/arch/riscv/include/asm/acpi.h
+> index 6e13695120bc..0c599452ef48 100644
+> --- a/arch/riscv/include/asm/acpi.h
+> +++ b/arch/riscv/include/asm/acpi.h
+> @@ -27,6 +27,26 @@ extern int acpi_disabled;
+>  extern int acpi_noirq;
+>  extern int acpi_pci_disabled;
+>  
+> +#ifdef	CONFIG_ACPI_APEI
+> +/*
+> + * acpi_disable_cmcff is used in drivers/acpi/apei/hest.c for disabling
+> + * IA-32 Architecture Corrected Machine Check (CMC) Firmware-First mode
+> + * with a kernel command line parameter "acpi=nocmcoff". But we don't
+> + * have this IA-32 specific feature on ARM64, this definition is only
+
+Hi Himanshu
+
+s/ARM/RISC-V
+
+Thanks,
+
+Clément
+
+> + * for compatibility.
+> + */
+> +#define acpi_disable_cmcff 1
+> +static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
+> +{
+> +	/*
+> +	 * Until we have a way to look for EFI memory attributes.
+> +	 */
+> +	return PAGE_KERNEL;
+> +}
+> +#else /* CONFIG_ACPI_APEI */
+> +#define acpi_disable_cmcff 0
+> +#endif /* !CONFIG_ACPI_APEI */
+> +
+>  static inline void disable_acpi(void)
+>  {
+>  	acpi_disabled = 1;
 
 
