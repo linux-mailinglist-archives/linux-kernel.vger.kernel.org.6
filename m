@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-536845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE39A48511
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:33:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC88EA484B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2665178378
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D9567A232D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF741AAA05;
-	Thu, 27 Feb 2025 16:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906941B040D;
+	Thu, 27 Feb 2025 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAQfOw3z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQHKb5GS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C571AA1F4;
-	Thu, 27 Feb 2025 16:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2061AA1DA;
+	Thu, 27 Feb 2025 16:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673314; cv=none; b=SJm3ywrhOQl9EZUoXo/poJj9WV1E8jKYf///9XRWuSKfhSPoutLsVppVpfPh1O45PcO0+2xZT2UIXK8PLbr+rRlOLltFdlYoedtI6vlC8MIvSnOmXKFgT7Mgdw9OJKY53u650u46x8wFWatFdjg9SVUlcmo/WI1nKFKD4Zezl9U=
+	t=1740673354; cv=none; b=QbRTUZy5ulFzBmBkFKglTW7bl/kI8yvsXcSQMd2mB8sZmbxDr2miCLWWo4CsmEm0P+utpVGzqmOlc88OYkWWYNDLW5dwoqpXIdz+uuq7NRJbVei71rVhXGIEwq9tIx0u10oq5nb7yGS95G1htj2t0KNZ+jIjLT+YoumU/MekDjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673314; c=relaxed/simple;
-	bh=YYoL9mXCjZe3ny9jvBdlXUqa1NlA6Q8+VWa6MkUbp5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SyOKWAMe+cNqgo0rkz4pxkjvG3WiPE/JPf9T9YhQFh+TPP/XoNCHVdcAFAD1wyEpmucE/7TuthPpocghHPrEJ/+2BXxKtTYjZXlMPtHXXYjasgkB/o3wq2b82pnDcqoleHSIlCQdgq+4SQ4GMrW3qS/KC+BwNhfq4mRbV8faP4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAQfOw3z; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740673314; x=1772209314;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YYoL9mXCjZe3ny9jvBdlXUqa1NlA6Q8+VWa6MkUbp5g=;
-  b=jAQfOw3zcvjjT8PlfQVBehOdI3jS3LEVEtUwFpGusiZtF8AAqkAOl2Bt
-   f8nBYIDEmYMIFtwx+N4x9wNqx2uc+FYf/MR4DEgFESFDt2iY0OnoWnUPR
-   KL8k/44LQDEznoJF7mwS06WDLUCnTuSY5rd9r+nCWhzc+PTd5T46vf3bL
-   iKasirni8mucyRIj4mm+eVoaK/yX1y1qE2k/hVIZXoldyTLZM5pJFmKZc
-   4xaZcpxJnKfqOgDzy/k862g/h/AxfEMGbljbT/hEDYRaG+wjwm0kPGcpS
-   Ee0k/IDGgMikbOpereqFKB3EgB5ey77/TcrLvWqz5sjbKpJh4vl0RvlOR
-   g==;
-X-CSE-ConnectionGUID: DRa/fQ7ZSRaWz4dt+YvJhA==
-X-CSE-MsgGUID: R4XM10wDTv2j1igdsfVOVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="58987922"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="58987922"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:21:53 -0800
-X-CSE-ConnectionGUID: z4BTEjR0TbS+jzRY3gjvtg==
-X-CSE-MsgGUID: yfCOwU0oR4248qzn6o5DbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="122085511"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:21:52 -0800
-Message-ID: <e5670ca8-e4ad-400f-8e46-6fd9a9637f96@intel.com>
-Date: Thu, 27 Feb 2025 09:21:51 -0700
+	s=arc-20240116; t=1740673354; c=relaxed/simple;
+	bh=7oJwvuZomMWiCSFUAia+pino3G8sWkHGl5wL803IjLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJN2AOkqJTD35o5Q6+QO9TsstXAQPCg0sycLkdGBRT2sSs3OXqsTX55RnUgaSnfXCwVQMar7VGFEyvElq3UKeFdsy5Mt9HfdGrBMm+J2XafdBzxQHWotlxXOAajLUCwKudhOWeNPG46jz3/0DjyrO67nis3T0Weh3JhbFDVBHbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQHKb5GS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6B5C4CEDD;
+	Thu, 27 Feb 2025 16:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740673353;
+	bh=7oJwvuZomMWiCSFUAia+pino3G8sWkHGl5wL803IjLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RQHKb5GSo139CsmkCQwX24SS+iDXoyAh0UP5nqNCwvuAFiCF64xYBpyjGVusK/Ywy
+	 BPnkwSbOy+Qe4YcVaKV5zVi9K6UkbF1FX8PgR3YhH8by94484RtCHeYp6vxbyynPqD
+	 FZSh7cPSOg4j+5hICQLlzGbfqjW+xk68cJC7cEaMCuneM7gQnHH4Uv9HBjzYHJnf0k
+	 K5pKA7Z+P6R9zxaFAeQHi/8D6WTHlT5g3G9AiWCxZGyTbG9rXhpF+QYrHxW/HQTnO6
+	 NABsh0la8VqbSRFAA38ogUMXoJoRTXZi63OD8UwYOp/WyF04RQgC/dloOEqO230Roe
+	 NI89VEcRKTi0w==
+Date: Thu, 27 Feb 2025 16:22:26 +0000
+From: Mark Brown <broonie@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shi Fu <shifu0704@thundersoft.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v3 14/20] ASoC: tas2764: Crop SDOUT zero-out mask based
+ on BCLK ratio
+Message-ID: <e13e0922-f51f-4ce3-8ff4-3dbce41864c9@sirena.org.uk>
+References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+ <20250227-apple-codec-changes-v3-14-cbb130030acf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] cxl/mem: Do not return error if CONFIG_CXL_MCE
- unset
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227101848.388595-1-ming.li@zohomail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250227101848.388595-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RQ2t0JCNkbhgW4MV"
+Content-Disposition: inline
+In-Reply-To: <20250227-apple-codec-changes-v3-14-cbb130030acf@gmail.com>
+X-Cookie: Swim at your own risk.
 
 
+--RQ2t0JCNkbhgW4MV
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2/27/25 3:18 AM, Li Ming wrote:
-> CONFIG_CXL_MCE depends on CONFIG_MEMORY_FAILURE, if
-> CONFIG_CXL_MCE is not set, devm_cxl_register_mce_notifier() will return
-> an -EOPNOTSUPP, it will cause cxl_mem_state_create() failure , and then
-> cxl pci device probing failed. In this case, it should not break cxl pci
-> device probing.
-> 
-> Add a checking in cxl_mem_state_create() to check if the returned value
-> of devm_cxl_register_mce_notifier() is -EOPNOTSUPP, if yes, just output
-> a warning log, do not let cxl_mem_state_create() return an error.
-> 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
+On Thu, Feb 27, 2025 at 10:07:41PM +1000, James Calligeros wrote:
+> From: Martin Povi=C5=A1er <povik+lin@cutebit.org>
+>=20
+> As per the datasheet, SDOUT bits must be zeroed out if the
+> corresponding TDM slot is invalid for a given clock ratio.
 
-Applied to cxl/next
+This seems like a fix?
 
-thanks!
-> ---
-> I hit this issue on my cxl_test environment with latest cxl-next. If
-> CONFIG_MEMORY_FAILURE is unset, all cxl pci devices will fail to probe.
-> 
-> ...
-> [    6.337952] cxl_mock_mem cxl_mem.6: probe with driver cxl_mock_mem failed with error -95
-> [    6.338880] cxl_mock_mem cxl_mem.4: probe with driver cxl_mock_mem failed with error -95
-> [    6.339593] cxl_mock_mem cxl_mem.9: probe with driver cxl_mock_mem failed with error -95
-> [    6.340588] cxl_mock_mem cxl_mem.2: probe with driver cxl_mock_mem failed with error -95
-> [    6.340914] cxl_mock_mem cxl_mem.0: probe with driver cxl_mock_mem failed with error -95
-> [    6.345762] cxl_mock_mem cxl_rcd.10: probe with driver cxl_mock_mem failed with error -95
-> [    6.345793] cxl_mock_mem cxl_mem.7: probe with driver cxl_mock_mem failed with error -95
-> ...
-> [    6.519824] cxl_pci 0000:c4:00.0: probe with driver cxl_pci failed with error -95
-> [    6.520178] cxl_pci 0000:38:00.0: probe with driver cxl_pci failed with error -95
-> ...
-> 
-> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
-> ---
->  drivers/cxl/core/mbox.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 13cac98846bc..d72764056ce6 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1503,7 +1503,9 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
->  	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
->  
->  	rc = devm_cxl_register_mce_notifier(dev, &mds->mce_notifier);
-> -	if (rc)
-> +	if (rc == -EOPNOTSUPP)
-> +		dev_warn(dev, "CXL MCE unsupported\n");
-> +	else if (rc)
->  		return ERR_PTR(rc);
->  
->  	return mds;
+--RQ2t0JCNkbhgW4MV
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfAkUEACgkQJNaLcl1U
+h9BLSAf/dKpfouQU0WEWnlQyGAZst+aDj7j5Va/OtzoOiOirCIqTRjok8L6HNuJ4
+pYiCTZFKXziWVijVOGyBiYcZDdEP9VnwPUjFTsqJftGoWyqxsiHI0dO9H1yEdXsH
+JBLwGduWkAMRrpofp6R8YILSpm8zeukGj5P9zaoCFNp4UEy/2G6RWB3tPFlLsKyp
+Y8x7BtRH/r399KpIiCd+5kF22sCtuQwtz8znricWctufvW4RhXxEGFGGBea8JkDJ
+EG9wHpDwjwUAChK++dODpRAHUTydKZj3nxnoyH8pLFFcWC/qAXQUHNOvZoClN7cF
+Xzfv+FEtTW2a2NmFadx2LHVrxvZgFA==
+=BqH6
+-----END PGP SIGNATURE-----
+
+--RQ2t0JCNkbhgW4MV--
 
