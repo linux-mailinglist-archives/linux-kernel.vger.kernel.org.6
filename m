@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-536768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BB8A4842B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:04:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F18A48405
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:01:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A786C166991
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF943A88F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C0E1B5ED1;
-	Thu, 27 Feb 2025 15:56:18 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611801BEF87;
+	Thu, 27 Feb 2025 15:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Oo9w98fR"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE1C1A8F71;
-	Thu, 27 Feb 2025 15:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F31A8F71;
+	Thu, 27 Feb 2025 15:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671778; cv=none; b=KBJ6hpNsdxNcvYW51tsYOHKdzUxMceqKUwPPly23QTQVusvJPzDnxXAqwdBk4dZESjgG8B0NLoOOi99dtx1TQQOTOnAQRPMrDnK/ZZ9BjjcuK/wXCsEu/d5RMYPJ/Klu1WyzWwuP5gp7zo3mKFv7GYWgTLVPt3P/QfOM05YTiVg=
+	t=1740671785; cv=none; b=toRdI9yYrOahygwKLXiXxd3JS67NvnUgCnJNTIvQaFoGDkHZcp0nNGKFvn0qnPxQ7ZqTu3Vwjod88jhN4DXKesp8hJ86KtowRCmdbRAKqwWd+XexgXbYFZTBBq4AOioc71dJyKkrAImRDkWtayT019wxio9XdMCKpAw7VxwwCSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671778; c=relaxed/simple;
-	bh=O31QWsWhEdJPcxEfijIzjG4zqGpZGtPaBd21f/eiGz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WrEtQVm7jIFd/QyrEKlzdcP/Qsb/BShMauEXph/KNlv/lRCzKY+NWhTE+oXm8T2Ga2vSomVOYlbCgejy4BAde93UzEfmrI0pcspcPn0yLO2RRyL9PZMjXqf11F6CKsQQddh0qaQsEu1maScdjnfS4twyJ+FUWEiYraguSBSuZUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-521b188df16so517184e0c.2;
-        Thu, 27 Feb 2025 07:56:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740671774; x=1741276574;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aFJ5Eia6UibVOcRma6ZeIYR+6LZRfE7cEm85FyS86v8=;
-        b=DPR38MHLIj2RKOoar/khWj4wVBbjZ2rdaH/z3Htw75YqVwXURQ1UWAYLYRsJfPy0Cf
-         rwxdrDCfIAqE9+zcrhJrEX4oEptxJ3nFKQi3+W0zF1LquMn+wrJTGGbS9h8ALrwM/HCS
-         elfOKONa+CvJ5h+0Ly4IOhGgw1xOXSfPnIx4pTvoTIwKJnieQBNFGJq6mUkHjHYoxtoZ
-         dRqylaenXbrRTlT7byAKwFiECeK5Emmdn4n+nrr/tqGCl0VjGW10G6z0aN6wxF9P5h1w
-         hz793neQx62Fqj/Kc00PmCF/u+bypb70/azJl1F3eNRddiP36r20gkRB5T4O0LspKmk5
-         TU6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWhz6Iui7xFuvEF6j7nTp6r85/mPMj81PginvlUOb4g5Fl9YieAUBQTNlVXbEzUvWJ90ZOAruL70EwAbw==@vger.kernel.org, AJvYcCXIwHfLnrPMSAEbYBWGXgeOKQDmFeu4zQrZ3WQmweh1QHttxPqvzju11CWQ8kZlX3KDk2k7FSkzQ42Z86Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhrimHh0zYR6sA30wU1ogY/UnwPN9MmPFnKZsBUmL5xQpqMvk/
-	mhtZpKweFwYqpgttIxPW8IjeO7FVld9n6eZQdVRZDCYQC+JJrgk2pJ9eDHT5
-X-Gm-Gg: ASbGncvbBoAc9mprew3xfLkhGFoV8JnpzScwD5Of1Sc0Z80yVtBPWDK/hpf0Ybtjuzy
-	xA2h8Bn8ECj28kNx5cXJy4HFp20TOhERfOp4WGUYgXS0faJxsCJLrWJ3ZTRrAnuV713JvsUaesm
-	8nbS1JfM2iwEaqtFvqNJ7jolez26UkmuBfrU0UlbVaWJabKAPs1uTnOw/FeILF7UO4zVN/9C4sJ
-	uPDhBP2tS7uZ2+NaYr0KEp7lKAMNog4Bl9eSU4wGCDr18PP5RZ2KFvkMAweGTpp+svkXUHm3dmc
-	VYqM8KIMqPNzNR+zfOGbdqb2J4teGSgFawT2I/ErOY0AHTX1MaLJddIqo6aoyA6q
-X-Google-Smtp-Source: AGHT+IGxxlttTFCzENGmbpmzgvG/XLbXV6mK9EjKBexXbDOoGO2AwYMonkV7I1J2ju1h0Fnc8qlWag==
-X-Received: by 2002:a05:6102:3e06:b0:4bb:e8c5:b172 with SMTP id ada2fe7eead31-4c00ad1da62mr7547632137.8.1740671774493;
-        Thu, 27 Feb 2025 07:56:14 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c03464628asm297107137.12.2025.02.27.07.56.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 07:56:14 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86715793b1fso483446241.0;
-        Thu, 27 Feb 2025 07:56:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+gsUyMHsOwrnfOg6Qkg9o3JXVPvQaHJsKuILF7agDjzoyJMI4T6pnDBYZK5lAXytOFNS5QktjXvYnN8U=@vger.kernel.org, AJvYcCVFc+oFc0JzgqtlZK1cac7qAkZLNbnla0bA/cC2CL8E2ng8M1cJeJJrJuRxZNeprDBqhYH4JRh8xPK8qQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:f0d:b0:4ba:eb24:fb06 with SMTP id
- ada2fe7eead31-4c00ad18a67mr6802085137.6.1740671773909; Thu, 27 Feb 2025
- 07:56:13 -0800 (PST)
+	s=arc-20240116; t=1740671785; c=relaxed/simple;
+	bh=2pSnNrN09Rs2zrWH8JjOUOcDIapOgrLstDzhoRnrrA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uL5r/AZc/1UkjpI/ZUH4gkcW5x90gUgkkxusyhNum20/5crtCLNHa8wVIQtlG+pF29IK/9lPsbbr++FriBYmegD6CjD2NHB5FI4iHDmoaIKVvpHR4kl/9ByKMLyUs8s4imZcbI9ir4PIH0XzjWwgMo+d+FzFyxqgNoU8OZxldEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Oo9w98fR; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 69D45A1B66;
+	Thu, 27 Feb 2025 16:56:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=UUqUozeRUbn4nbrTWMJQ
+	lf6Jo77GV6T+nGHxfg9jgGE=; b=Oo9w98fRv+aKEJIHDPo3VPKA/ET9wpJTZce1
+	Cx4ygAyZrV9UN67wIN0w64ESKqoHTC4VNIUK90yTwJtt+nX4sn78J+c3iZVCngfY
+	VvO0IbnWz+omdAWXRy53lKUVJXRaazsqlsGZz2Js3isGNuf1iayMxobZr/olXBzs
+	LbV0GQ5ChYuOmidh+1HHoXC4MIlHtg/9FqO3L2ejIW8NdA/lQ/7dcboXLHYypuy0
+	OINcAKjJLDQUtbrSTgQti3MnaISSfv9nDkPgln6d+JqmONBr4lq64mwfYDt3kYZZ
+	HrBPQwbvAomqpV/iPHO5ijQaWtfNqZxYh6sTZW1qUceCsAJFrjTt0MU0Xdq1IO9+
+	AjrW5+Ulrb6vWrF2VOCslJt63xG7ZsdUIF/9PUkJxnjJ1h5s/aAmCIVym3xnrjSe
+	kZ4xhFipH/+CzIdQFpkrhfrkiiZrO8hIeOS6K2SiuRQebNpEHPFcdw3zmzbvNiWK
+	Mi1GQSvvUdRqHeF5H6QA48jdrUbbEXbl2ktFj0mMcwB1J2vjlRIovcSYrXswMfw7
+	azPlssEGN8L3JC1hHgGHu3spJP0BfnioPmIdIFbf/LgN8OCygGBbM04EQafhupY6
+	vqdDOyND5XN4ShcjVuUNt/bgvS0hwDanT844Bm9FUVWfKCgnI8FldfdOMoEm0vHC
+	xeQFLPU=
+Message-ID: <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
+Date: Thu, 27 Feb 2025 16:56:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220113338.60ba2290@canb.auug.org.au> <20250224122318.228f695c@canb.auug.org.au>
- <20250224162048.7806bb1d@canb.auug.org.au> <CAPDyKFqBwari-MoRefG82kbxovVaLt3ewRVFihHoLbrOSWSnMQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFqBwari-MoRefG82kbxovVaLt3ewRVFihHoLbrOSWSnMQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 27 Feb 2025 16:56:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXQK2+-FaqK6FJWPYrS1TfASfZaJ0-VJBLdB53MZY_rxQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrjHlAbuysEEVA6IxbSRvlU9EscxxV1nIJdocuB7VXlKkNYNBw7_Ofvd80
-Message-ID: <CAMuHMdXQK2+-FaqK6FJWPYrS1TfASfZaJ0-VJBLdB53MZY_rxQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pmdomain tree
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+To: William Breathitt Gray <wbg@kernel.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Kamel Bouhara <kamel.bouhara@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Dharma.B@microchip.com>, Ludovic Desroches
+	<ludovic.desroches@microchip.com>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Jonathan Cameron <jic23@kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
+ <Z7h0AXV1zlgp9Nw-@ishi> <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
+ <Z7vihBqOgP3fBUVq@ishi> <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
+ <Z7_xTQeTzD-RH3nH@ishi> <20250227135330.GC182392@tpx1.home>
+ <Z8B1LDT-n2XTTp8q@ishi> <202502271437280a6701d8@mail.local>
+ <Z8CA9RTZWChh9cJW@ishi> <Z8CKQvRjqH9lwzgO@ishi>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <Z8CKQvRjqH9lwzgO@ishi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637760
 
-Hi Ulf,
+Hi,
 
-On Mon, 24 Feb 2025 at 13:27, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Mon, 24 Feb 2025 at 06:20, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > On Mon, 24 Feb 2025 12:23:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > On Thu, 20 Feb 2025 11:33:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > After merging the pmdomain tree, today's linux-next build (x86_64
-> > > > allmodconfig) failed like this:
-> > > >
-> > > > x86_64-linux-gnu-ld: vmlinux.o: in function `rockchip_do_pmu_set_power_domain':
-> > > > pm-domains.c:(.text+0x19aa103): undefined reference to `arm_smccc_1_1_get_conduit'
-> > > >
-> > > > Caused by commit
-> > > >
-> > > >   61eeb9678789 ("pmdomain: rockchip: Check if SMC could be handled by TA")
-> > > >
-> > > > $ grep CONFIG_HAVE_ARM_SMCCC_DISCOVERY .config
-> > > > $
-> > > >
-> > > > I have used the pmdomain tree from next-20250219 for today.
-> > >
-> > > I am still seeing this build failure.
-> >
-> > And now that commit from the pmdomain tree has been merged into the
-> > scsi-mkp tree and so the build failure happens there as well.
-> >
-> > I have used the scsi-mkp tree from next-20250221 for today.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
->
-> Stephen, thanks for reporting and sorry for the delay.
->
-> I have now fixed the problem on the next branch as well on the
-> immutable rockchip branch. Martin, please pull again.
+On 2025. 02. 27. 16:52, William Breathitt Gray wrote:
+> Sorry, let me step back for a moment because maybe I'm trying to solve
+> a problem that might not actually be a problem.
+> 
+> I see functionality settings available in the TC Block Mode Register
+> (BMR) that can affect multiple TCCs at a time. Are these BMR settings
+> exposed already to users in someway? If not, do we have a way to
+> introduce these settings if someone wants them; e.g. would the
+> AutoCorrection function enable bit be exposed as a sysfs attribute, or
+> configured in the devicetree?
+> 
+> Finally, if there's not much interest in general for exposing these BMR
+> settings, then I suppose there is no need to change how things are right
+> now with the microchip-tcb-capture module and we can just keep it the
+> way it is. That's my only concern, whether there are users that want to
+> control these settings but don't have a way right now.
 
-So this was fixed by adding a dependency on HAVE_ARM_SMCCC_DISCOVERY[1].
+My knee-jerk answer to this is that if they do, they will bring it up by 
+submitting a patch or bug request. But I'll let others chime in, we only 
+use an extremely small subset of the features of the TCBs.
 
-I am no Rockchip expert, but is this the correct fix?
-As arch/arm/boot/dts/rockchip/rk3036.dtsi uses enable-method =
-"rockchip,rk3036-smp", e.g. RK3036 does not depend on PSCI, so I assume
-you could run a kernel without PSCI support on RK3036 before?
+Bence
 
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git/commit/?h=next&id=bc4bc2a1609712e6c5de01be8a20341b710dc99b
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
