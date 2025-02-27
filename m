@@ -1,150 +1,190 @@
-Return-Path: <linux-kernel+bounces-535813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02897A47790
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:18:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77989A4779A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4AE188FCC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB594188FE26
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB372206BE;
-	Thu, 27 Feb 2025 08:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCEC2253E0;
+	Thu, 27 Feb 2025 08:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gcZpFac2"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Qo10uA5x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TWKnKn/7"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E11C133
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDF8223711;
+	Thu, 27 Feb 2025 08:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644246; cv=none; b=tl6r9zaDs0voB4GX2ddbUYTKFqnuqr5/M+oHIZt/qHFQpxCKfKd4z08XIf/QkadbW9TjJS/klYy/IV2sMzhsJKTOIzHksL5RfFPEH7pfyraubU+HGu2AjVsU+N5FTm1ArYawrhNhrYftrxn6Wc91jju0PvQFhHClQFk/1lCckZI=
+	t=1740644373; cv=none; b=h4Ot5er+pB8hhQVXQUO6LynR0kM20dUyehTyxUBtIA+3nskvYvGicSXXZE1rX4jzk5P2rGD5CMdr8eZiFqVECOgMvDacmbXVfSA7uIzePz3uqmwcd8R1ZeZWd3fJvDAHXJ8THA/3hWB8w81x/rMzBviRuSIHfEB2LlE9VUBfwDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644246; c=relaxed/simple;
-	bh=HUyNiTnU+aOLznnW1m5zi/UsNeJTOoxstXeUp0gGLAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oMCcL/4WGRttCO6DE/HwkC8Woo82HLvxg0eKWSWWGRYMoGtne3x4vmLVSgP5gOazkRQ2z7jhsBGWXkng6bVM0X5zyWspCN2MLb4c8HpE7m+nwPkBaOr43+db2QyhOAv4HNaGK5rDmPd3H9BFxsVN5G62IixcC+7Fz53quyB4JPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gcZpFac2; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4c0c12bccso1054130a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:17:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740644243; x=1741249043; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m83FfewmrcIOWT4jSZsPTdpYjRVnsXVlTkxFr7lMkMw=;
-        b=gcZpFac2mBRYJwPOBxppBLyuJjhrXtCrdPelDZTJjGDvOsHlH8Sg/ntcvyTJJHm22U
-         syCep4pFQOMh5J45+L5QztpU2gT2C9jZ591qHymtIAc50US7xutGGk33FjoSgVZM/Z+t
-         ZfrDydo9LGP5Gdz6mZFyeV7zr6D+15C6tgmxAbxg12q8gfrfUY3thp2Qzks2MgfYB9Om
-         HiXEhPxu+iZgUCeEY92CM/muKEX9qhQLaJoyknw3TxV3O34gnSxqaiom/rry+lp6pYFV
-         RMFMplno8x9g/XEMuZYgMsKO02h/Alti1XMVXq5e/b5wLuwLI8tqlXT3SvirrSJE2YRk
-         dBOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740644243; x=1741249043;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m83FfewmrcIOWT4jSZsPTdpYjRVnsXVlTkxFr7lMkMw=;
-        b=X+ttV1vLljFiR4HtvkgdeUuZooXapQGUxcoc8/4h5cNQZzAaU5yH3KqRqQBN9vPfpX
-         VgL94KqwvXjdnn8okmDlvG3OvaySKAiRc78MsaiP9VWxwOjmoL99aWdcITRp0NM50Jh3
-         AGE4TJHKbNlZTdANaPh5UqgwAcAqnftm47iefurb6eV3Tf9zVgPziKojEO5WVsZ/7J3B
-         8plX7NjZArK0Vou1LLMmq1CDBklmkDa+Ioq+9pQLTGhPwaHzalU/PCAr1PqTtYuTgK3T
-         UxWlod+9BL6U7Q5PwhYBe+VnTAiw97UFrLv3WfOQwd5XPeHkWQR059e9xH6wtfgYu34s
-         9ZAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW31hs7BQAPj5HdktURvqtOKa32E8aw04BTwPZAiGAUhOc38HE6iEQkbDa8RYVNzhAIqzRRXPh+GzqANDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8KZ92jvKgdGI6tnTarGjziMJr0Iqiw5//pX0C4rSFO9Ggfcbd
-	mtkq4gLW5HZE4qWnDpq5VWZfYr3dPiaskJwV3PcqE6RqDsn4QWl9daqnRnZ+ZSE=
-X-Gm-Gg: ASbGncuiKmbbraMJqUixmsIX5mMBydIZryCydphsT4mJvoYwGPAxMkm3xtrCjlnWEfx
-	P8SZr4oeiJ51ih4586TJHffhJTvSLIe1p3P1NaPie4Sas9mzOm5iuoaiWdonl+Dtj0dziqBUEDC
-	J88uo5EZC+dxy3Vu0h0t4Wm8mwh5FYytRqvrOkiMFbYuJSpcO8Y3CAHE8TrsLG4EfPm4VvvXQzv
-	wY+sihCsnngYzna+ZeDgYroQCDOrS2nasn6BSgk1D4QK0jKF4Nqf/5CHGNPWcyIrJGAXepW/lEZ
-	ldnXs/RoengGgqNlCx7t/YVur74ckiM=
-X-Google-Smtp-Source: AGHT+IEbSrUluaN/703N3zoDpsqy6bXDIk3HAXQAYyzGSL1JmFS4898+4YMi9izrmbhfSu0hCLM0BA==
-X-Received: by 2002:a05:6402:5285:b0:5e4:97bc:6577 with SMTP id 4fb4d7f45d1cf-5e497bc65dbmr10126655a12.20.1740644243331;
-        Thu, 27 Feb 2025 00:17:23 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c3fb4384sm740341a12.49.2025.02.27.00.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 00:17:22 -0800 (PST)
-Date: Thu, 27 Feb 2025 11:17:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] [PATCH] gpiolib: Fix Oops in gpiod_direction_input_nonotify()
-Message-ID: <0f3ea3f6-8ae3-4352-b790-de0642edc4a2@stanley.mountain>
+	s=arc-20240116; t=1740644373; c=relaxed/simple;
+	bh=WuQI1ITKOPVp5WgRE8s5tzHcfV10x3QWes8eKtMTqKc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Txi/b1mfEqPN1YCrBlOfkxHz/+u8oBd1AluPMZu8DNG54c3ruGPQJJtDAZ9IyKjT6KC4z/19AJ8jiQ8IfVkaTVwBVExuB1zv/OM6/iu7USIY/VGEiS6oSfJmmwqdYf3KiHX6JanNVzZkJ+0P1UoWdK0/mefFmCICFsHiPGfjYdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Qo10uA5x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TWKnKn/7; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 35FB61140B75;
+	Thu, 27 Feb 2025 03:19:30 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Thu, 27 Feb 2025 03:19:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740644370;
+	 x=1740730770; bh=J4sN4a1OZVim1rCZfmG4xp4g6SnKXjn/a7pXMNn9YAQ=; b=
+	Qo10uA5xy/QdV/njsAM9pdNEjw9gdlulUParp7/jtuT9MuJiRodwdxBlUC6snmSg
+	ZBdlx6cXV/iHQkWo392S+w7QE3H+qFWjKY5bchm6WzJWjNxhrEFId462HWwx79CN
+	sRYteNhUaqS32dMohd6VDFhM9lQfPAWOnGyt7MhRrhoex/YtUnHW084K8HaW2zMk
+	OSaAqtf4DNc6i/urvFIHNRz9vhzk5mQfcWNlludrlZnPGyfB+e58juv2IIVuCaFT
+	4e4nDmbplHcJfptBhw8TOzXGDBGgA7oD3qwRN9bA3PxwMHD4kEw+xBkQmpMxQ8Z1
+	xMEp9R/Sz/wEP6SVDoHWLQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740644370; x=
+	1740730770; bh=J4sN4a1OZVim1rCZfmG4xp4g6SnKXjn/a7pXMNn9YAQ=; b=T
+	WKnKn/7oNQpvbT2IVGC+P3eGDtXpBAN5bijQkowGPSB8eXkNztNCbNUU0bDbVy0u
+	b3umdtmdPNpNhK2A/XW/XKcqOtpA9US1t27EjAUBRjAAOfMjmXGmKDdVJ+BQ3bHg
+	yO3qa1y9EBHSFFJmaZZKSP8xno2jgaD7KY4V+xd4PCy5LcDlJXILVEwiUoP3fQM4
+	VpmUhKESwJ98SSu2P65DLCILhk9CZ7FyNcaKxlwFZSbw58vodgeJXlqAniFvLRBa
+	9fq5IYnromVRh2RAYuhobfgIh34VCdW5GyKw4nuUA/y5LIAsuPWNcej/C6/ltp5e
+	tDjXrsB4zIaEFKnlgW4Jg==
+X-ME-Sender: <xms:ESDAZ1Ta1E3WmZDKY9vR2D0E8y7ssuZjUfo5jrXhzt38CB0Oa4VpMA>
+    <xme:ESDAZ-yJLsXb8JldwKQJILOIhlrcOFlU9SVWDxKPiFc2MYHxwaWEZ1fkt604fVJja
+    KcjB_LmAz5BAGe51LQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekieeliecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
+    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehkrhiikheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkiheslh
+    hinhgrrhhordhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohes
+    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugi
+    hfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ESDAZ60Zq4ldJJTsAsafBsApk-rilkR5biwtI7okTJaT5M4n45wQvA>
+    <xmx:ESDAZ9DISk2aHqS2FwENgsZzDiEI4RtLPZmg5sWW5ZBje8R9Ck8rRg>
+    <xmx:ESDAZ-gkRtWDcuawOJx6whFHy25EQoIhY6qzLzND3-aviJCKwbpo4w>
+    <xmx:ESDAZxrDzIrAMB0IW_No4w4XaFXLq9ZVGPJGEdv2NyWKEGvXgsV7ug>
+    <xmx:EiDAZ5V8PYZR0ip7QkuneVHeCF0OSbc1Gt6YMwHtPbK0cpwX-UEcAkTG>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9F46D2220076; Thu, 27 Feb 2025 03:19:29 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Date: Thu, 27 Feb 2025 09:18:30 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Message-Id: <f9b8acf8-7ed5-4d9f-84d1-acdbaa9e96d8@app.fastmail.com>
+In-Reply-To: <Z78itKfsojtMpr_o@smile.fi.intel.com>
+References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
+ <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
+ <88ad89bc-9261-4af0-a7ab-28dd760af567@kernel.org>
+ <Z78itKfsojtMpr_o@smile.fi.intel.com>
+Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR() protections
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The gpiod_direction_input_nonotify() function is supposed to return zero
-if the direction for the pin is input.  But instead it accidentally
-returns GPIO_LINE_DIRECTION_IN (1) which will be cast into an ERR_PTR()
-in gpiochip_request_own_desc().  The callers dereference it and it leads
-to a crash.
+On Wed, Feb 26, 2025, at 15:18, Andy Shevchenko wrote:
+> On Tue, Feb 25, 2025 at 06:21:29PM +0100, Krzysztof Kozlowski wrote:
+>> On 25/02/2025 11:29, Arnd Bergmann wrote:
+>> 
+>> I tried to fix this in SPI, regulator and ASoC 2 years ago and Mark
+>> rejected such approach of dropping ACPI/of_match_ptr. AFAIU, Mark wants
+>> this to be fixed in more generic way, on the OF and ACPI common code,
+>> not per driver.
+>> 
+>> SPI:
+>> https://lore.kernel.org/all/7a65d775-cf07-4393-8b10-2cef4d5266ab@sirena.org.uk/
+>> 
+>> regulator:
+>> https://lore.kernel.org/all/20230310214553.275450-1-krzysztof.kozlowski@linaro.org/
+>> 
+>> ASoC:
+>> https://lore.kernel.org/all/20230310214333.274903-1-krzysztof.kozlowski@linaro.org/
+>
+> It was almost two years ago. Things may be changed :-)
+> At least I have no impediments so far with converting drivers I'm supporting in
+> the SPI. For ASoC there might be a new attempt by Cezary Rojewski in the future
+> (he does some cleanups in that area, and we discussed cleaning up ACPI_PTR() at
+>  minimum).
 
-I changed gpiod_direction_output_raw_commit() just for consistency but
-returning GPIO_LINE_DIRECTION_OUT (0) is fine.
+I skipped those three subsystems when I sent my backlog. Comparing
+what I have left with the version from the patches above I see
+that about 40% of the warnings in all three are already addressed
+in the meantime, leaving just
 
-Cc: stable@vger.kernel.org
-Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpio/gpiolib.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/regulator/pbias-regulator.c   | 2 +-
+ drivers/regulator/twl-regulator.c     | 2 +-
+ drivers/regulator/twl6030-regulator.c | 2 +-
+ drivers/spi/spi-armada-3700.c | 2 +-
+ drivers/spi/spi-img-spfi.c    | 2 +-
+ drivers/spi/spi-meson-spicc.c | 2 +-
+ drivers/spi/spi-meson-spifc.c | 2 +-
+ drivers/spi/spi-orion.c       | 2 +-
+ drivers/spi/spi-pic32-sqi.c   | 2 +-
+ drivers/spi/spi-pic32.c       | 2 +-
+ drivers/spi/spi-rockchip.c    | 2 +-
+ drivers/spi/spi-s3c64xx.c     | 2 +-
+ drivers/spi/spi-st-ssc4.c     | 2 +-
+ sound/soc/amd/acp3x-rt5682-max9836.c | 2 +-
+ sound/soc/atmel/sam9x5_wm8731.c      | 2 +-
+ sound/soc/codecs/rt1318.c            | 6 ++----
+ sound/soc/codecs/rt5514-spi.c        | 2 +-
+ sound/soc/qcom/lpass-sc7280.c        | 2 +-
+ sound/soc/samsung/aries_wm8994.c     | 2 +-
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e8678a6c82ea..d41812468e1c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2804,11 +2804,13 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- 		ret = gpiochip_direction_input(guard.gc,
- 					       gpio_chip_hwgpio(desc));
- 	} else if (guard.gc->get_direction) {
--		ret = gpiochip_get_direction(guard.gc, gpio_chip_hwgpio(desc));
--		if (ret < 0)
--			return ret;
-+		int dir;
-+
-+		dir = gpiochip_get_direction(guard.gc, gpio_chip_hwgpio(desc));
-+		if (dir < 0)
-+			return dir;
- 
--		if (ret != GPIO_LINE_DIRECTION_IN) {
-+		if (dir != GPIO_LINE_DIRECTION_IN) {
- 			gpiod_warn(desc,
- 				   "%s: missing direction_input() operation and line is output\n",
- 				    __func__);
-@@ -2851,12 +2853,14 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- 	} else {
- 		/* Check that we are in output mode if we can */
- 		if (guard.gc->get_direction) {
--			ret = gpiochip_get_direction(guard.gc,
-+			int dir;
-+
-+			dir = gpiochip_get_direction(guard.gc,
- 						     gpio_chip_hwgpio(desc));
--			if (ret < 0)
--				return ret;
-+			if (dir < 0)
-+				return dir;
- 
--			if (ret != GPIO_LINE_DIRECTION_OUT) {
-+			if (dir != GPIO_LINE_DIRECTION_OUT) {
- 				gpiod_warn(desc,
- 					   "%s: missing direction_output() operation\n",
- 					   __func__);
--- 
-2.47.2
+I send everything else that I have to address the warnings, and
+they are slowly making their way into the tree, as of today the
+remaining ones are
 
+ drivers/char/apm-emulation.c              | 5 ++---
+ drivers/char/tpm/tpm_ftpm_tee.c           | 2 +-
+ drivers/comedi/drivers/ni_atmio.c         | 2 +-
+ drivers/dma/img-mdc-dma.c                 | 2 +-
+ drivers/fpga/versal-fpga.c                | 2 +-
+ drivers/input/touchscreen/stmpe-ts.c      | 2 +-
+ drivers/mux/adg792a.c                     | 2 +-
+ drivers/net/ethernet/apm/xgene-v2/main.c  | 4 +---
+ drivers/net/ethernet/hisilicon/hns_mdio.c | 2 +-
+ drivers/rtc/rtc-fsl-ftm-alarm.c           | 2 +-
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c    | 2 +-
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c    | 2 +-
+ drivers/tty/serial/amba-pl011.c           | 6 +++---
+ drivers/tty/serial/ma35d1_serial.c        | 2 +-
+
+and I'm optimistic about most of them making it into the
+next merge window. Once few enough are left, I can send
+it again as a series that turns on the warning by default
+and hopefully by that time we can wear down Mark enough
+that he takes the patches even if he still disagrees ;-)
+
+      Arnd
 
