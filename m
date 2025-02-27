@@ -1,222 +1,157 @@
-Return-Path: <linux-kernel+bounces-536411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C821A47F47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343FAA47F3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D82161699
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C611897E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A30222FDE6;
-	Thu, 27 Feb 2025 13:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337022FF39;
+	Thu, 27 Feb 2025 13:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCtOb9Og"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="ihRs/256"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E62206AC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB782206AC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663035; cv=none; b=rz/8kY92ERjrQJctCE/dCYRsnE78ImUrfETHY3twt/oKMzaAuWu08v3ajnFsh/NsAZ4fqkTAT2jKJvpa391VcO2xH/3+gTU1i9XYbPnKESRO11QLBkxUZz039uP4U+5cV6aOUXXAl0smY+psWkb4iv170SMgoZjECduMvSLPmEQ=
+	t=1740663067; cv=none; b=Q17hO/+tzeyT/OZMKnV5jVQJA6+JtY/a8ws6uuR5B5bogF5zz3La1RmtgAMM5KLxEIEpMJ0EVN9aZgjwKKih++8t+36mtIYzdTio6g75+Tk9p3teWQTAGBnBry0jjKa++51qyludODjIny6F7c0QP65frlkKjL7/EzS63sjWeaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663035; c=relaxed/simple;
-	bh=DueZqCozERlca+RVkfx9tZTXSZg207xg5AFCIHcPtfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sSXDRsOwUdIzrmlp7t5dVhLy/JlxxOHt2lq3c7F+h+qv/cFLC3Tb7Z9717GzCFs/rd5DPXzcUv7cpWEQFyR/gFXwy1ICMKmbDK96KDx+PXPXV0A5J+BKsFcUJusnH3akZxtzPQV/gYKIJ6o9aNjLXNFZZEUcJW+3z7KT4A9lOTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCtOb9Og; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740663033;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=10kUSJV4EUd1FzHZvX0wjBLQDNiAVBrIFn/OMdDmjA4=;
-	b=bCtOb9OgSGr3G3UV6Ua+x4wHs32tc2b4RXTV/bkuzKMiyYFTFHJ2LmlXtdptxZ8Mp/m6fN
-	mnlod70VgHWqVbS29rxPC9Ys9B5zjyhUUloSyM0Ku+ea/N8JdSjhBm7jVQ7DWUikKpw1U3
-	cFl2S/kzp/GZh0sFYqLiWEO6Zjy5PKs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-WB_KKAaBNyiZF2GwKBJbHw-1; Thu, 27 Feb 2025 08:30:31 -0500
-X-MC-Unique: WB_KKAaBNyiZF2GwKBJbHw-1
-X-Mimecast-MFC-AGG-ID: WB_KKAaBNyiZF2GwKBJbHw_1740663030
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f255d44acso293401f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:30:31 -0800 (PST)
+	s=arc-20240116; t=1740663067; c=relaxed/simple;
+	bh=5K1DQgpCnV8OGVSz6GIqpEfTt8kjItGXwWAZ4X3AWLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qm73SVt5p92s8OamMee4cPaUer8Ws2Vf46Xk+tHCWxNFbsOQ41TN3mh/EkxFTq5reVcVREc6ZmD7OevJKV/sVzE7k3geJJctKV7ermRs3Vr0Xr0NXoDR0PlvQc03WtRMbp/08BUrh6rnxreL5zP9qGAQax/quj1fxASRgtlSqoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=ihRs/256; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e04f2b1685so1195062a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740663064; x=1741267864; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7wXFTKX1544/JIF02ehdLe2SrnajJcR6+uQqWAAhPPY=;
+        b=ihRs/256BSg5Z5Cbra1h9RobjQnf2t4kdPCyir05PZiMdHHq2oLTr9+YSTW2Uxs6a/
+         gprp/a+hdm2GYPbvkQZbSPKMOJ208igladzRPsXOF/+5oE6KnU+hy3oNqQ4Fo5stVxOX
+         UsEB92c8vXgcvgnlTbuKBOgiJidholdphkNBvweODGLqY9EkSzUx/Cbl/jGWqcSbafWy
+         iI2HFPvWEJXsEBGDS7v3+20X1//GKO7PokvUK11CmDnJB+rjSkNEk3ehgUg2iBRlZnHT
+         qLTnjIhXJYAAhMueyiZeni/wQoSlXZDOX7ordoirjSy3tCOCyHvjxouD4XgyY6lvWgy/
+         ZEZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740663030; x=1741267830;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10kUSJV4EUd1FzHZvX0wjBLQDNiAVBrIFn/OMdDmjA4=;
-        b=V5EG/rrB3wYMYyx32aUHN0rywMfyQQi3hP2s9cZ152xuhkOGzxyQtJAUEKdHRKZtq/
-         3N2HahRX0n7Z/viUd4DQMi/ugWs2N+GbVsZwe9EGGDRUAez3Po1uvTyrT+waTYLZ6hq/
-         jhGC/afWzXSaLrLIQgsjbpXA02G0nGu6bx4WKlVHxXgnXpwEhbWAa5lfUETWzAwuAV0e
-         96rjm8fTuF5TIzf9MmjFwrbFP3m71/MFG/KWwG6Ptt4UfrugmkHfoVuiaqiGBMUWtiey
-         QXtBRhQTd5Zmqgd5m8lxuwW6ecsXAzzswFxuwZJwiemjb7fMKSnKjBsSTKzKMBlfBjsx
-         lRcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJkzj5o7CxTSImwFOSKHc1KFHvIFzxsE+8VZ7v9YHYB82jkA5RfIlC4cOjFj1soVs98+kkvQtxg1YwZE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhfrnM46TaD8zHMTT9Z077dHZHNcFOuCII/efzUBbJvnRd8dkC
-	XxqX9pX0mXM9k2Ed5QOP0iDjScpJx9COlHGXQEqGyKC9PzM8F6Mt/QAYdoj4j3mJkqF7peTIXvh
-	6NAVYcz055F5hrRwNYETXEvs6W7VUIyGvxZYDgTa2ZCvZUa64mrI+ENY+uQvUjg==
-X-Gm-Gg: ASbGncsveLCekVF1Cz5Gi2WByy+PdjnoXb3HkeZUQWSE66qk4xPz2MwFTWU3aRf5Hss
-	v/9KTfLKUOxM3/pYJ8+eYJSuhZZtbKcIBabIwve1hL/XU4gG6ZuNQ0bycSggmpIDOe+yjm4CNdD
-	Y4TmJ1SnJNdUaymVqhe1m7z+sgLFM9OyDhKH3qrWir+VWcFxmQ1bM3v5l14PEcH39e35GPcLwIR
-	Qa25KNk4WxRMc+l/JT54v1UHLuRIWfzPH8gy8pIWZPoz2Imr/hul38wc0rzKvM+WhZS6eG2M/W+
-	iOSvEcvk9Gew74NNycdwoszF98Vlf6ICP/9/oqCiLcOfPTyrRRQ7G8GzbfV+QZg=
-X-Received: by 2002:a05:6000:1a89:b0:390:e9e7:ca70 with SMTP id ffacd0b85a97d-390e9e7cc41mr530497f8f.30.1740663030082;
-        Thu, 27 Feb 2025 05:30:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDkqUxDVICIl2asaXKqIUXiaJsWHY1QefjUZLHDH5yJP2etyBSJVoWL14wXy6Wvs131BU7Sg==
-X-Received: by 2002:a05:6000:1a89:b0:390:e9e7:ca70 with SMTP id ffacd0b85a97d-390e9e7cc41mr530476f8f.30.1740663029647;
-        Thu, 27 Feb 2025 05:30:29 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm2094064f8f.57.2025.02.27.05.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 05:30:29 -0800 (PST)
-Date: Thu, 27 Feb 2025 14:30:28 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
- =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
- <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
- Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/21]Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250227143028.22372363@imammedo.users.ipa.redhat.com>
-In-Reply-To: <cover.1740653898.git.mchehab+huawei@kernel.org>
-References: <cover.1740653898.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1740663064; x=1741267864;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wXFTKX1544/JIF02ehdLe2SrnajJcR6+uQqWAAhPPY=;
+        b=kJ9E7DIATds8hW3ASs5Q9DyVVC4B6X/L07xX/itI2846j8gjDpQoo2xo+XbcJ5Xi3L
+         0eMAFaq9yjRjHGHu6O8PKfu39FMydJL519FnTM8I5XYY8ofTbfFmZsE+CR/RnQ78BMkf
+         tnyVSb3SsJ6k4HwH2adQ1dr42SVza89ZJBBEUVPQxanSo/w6vgOXBQc9j3SGaZe2Qz+b
+         C4wbulPc5xv2cP/aPiDFYXIll1i/Cd/vX9C3jh5R99VWmDC6IR8VKCoGDrybDRxdZLnv
+         2gwqKx4PRRgS+3KqQ2LOE9M0fwAHJwx6W8GQDmCxZ7idEAkbb6C5WKYj/6VMSpn+lQhc
+         pH+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2+uYr7FsE4M+vQImkifF7IZnauKVOHnpeGQApFRS5stVpK6u5x7tFwZmnv+hOKxTmYI178M2OXVZzpM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfMBaDGcWIf936tQ9lTLunwpT99FRL3CxsbHQSyRqcQYNpbNW4
+	sBKJiBWCsRX6yorjttYdB65TMwXKf9LL+yK88707TJVnSvn98s2ds/9hMo/o4ww=
+X-Gm-Gg: ASbGncssPo+HMHlAJpnREdx8O+/pwKSALcMZmf7CydGz+SW4dPXLSnTYrPwhpibktxR
+	lBUkJhuAvXQwt+7kXKHKvuJBdsSL83woPt7NbIAHM0wKZUn7iJMp6HEZnSQDbWVcpXYxTc/gt8q
+	+nloRXpz+2WjHniRvIbCS79MaIitp1nTVAc0ubJ8oSgHOupRcJLd1PgZSLweXkPjC2lWyQa1145
+	Z1WeuRLgx9+1hB4EQDJzhZik5gD6qH8spcQ4GLWpypG5cyMnGHmdLpAUOjrwdXPyIWcl22KHdRg
+	pHWqhPHoFIxZC1pn+0xzyXvngej4S9fEZtY6lwvdPcO7g8BGyLpYhH+GNA==
+X-Google-Smtp-Source: AGHT+IE0aNnzvv1Qi4koQK1Hzo4GjpUtdykg2u0L4Pn0RkAUHo9vRWuUm6DYMvxfLSo0bViwlkQMRQ==
+X-Received: by 2002:a05:6402:2553:b0:5de:594d:e9aa with SMTP id 4fb4d7f45d1cf-5e4455c30f9mr28084142a12.8.1740663063527;
+        Thu, 27 Feb 2025 05:31:03 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0b86e84csm125023766b.0.2025.02.27.05.31.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 05:31:03 -0800 (PST)
+Message-ID: <f88b234a-37ec-46a4-b920-35f598ab6c38@blackwall.org>
+Date: Thu, 27 Feb 2025 15:31:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 net 1/3] bonding: move IPsec deletion to
+ bond_ipsec_free_sa
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
+ Jarod Wilson <jarod@redhat.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250227083717.4307-1-liuhangbin@gmail.com>
+ <20250227083717.4307-2-liuhangbin@gmail.com>
+ <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
+ <13cb4b16-51b0-4042-8435-6dac72586e55@blackwall.org>
+ <Z8Bm9i9St0zzDhRZ@fedora>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <Z8Bm9i9St0zzDhRZ@fedora>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 12:03:30 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On 2/27/25 15:21, Hangbin Liu wrote:
+> On Thu, Feb 27, 2025 at 11:21:51AM +0200, Nikolay Aleksandrov wrote:
+>>>> @@ -617,6 +611,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
+>>>>  
+>>>>  	mutex_lock(&bond->ipsec_lock);
+>>>>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+>>>> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
+>>>> +			list_del(&ipsec->list);
+>>>
+>>> To be able to do this here, you'll have to use list_for_each_entry_safe().
+>>>
+>>
+>> One more thing - note I'm not an xfrm expert by far but it seems to me here you have
+>> to also call  xdo_dev_state_free() with the old active slave dev otherwise that will
+>> never get called with the original real_dev after the switch to a new
+>> active slave (or more accurately it might if the GC runs between the switching
+>> but it is a race), care must be taken wrt sequence of events because the XFRM
+> 
+> Can we just call xs->xso.real_dev->xfrmdev_ops->xdo_dev_state_free(xs)
+> no matter xs->xso.real_dev == real_dev or not? I'm afraid calling
+> xdo_dev_state_free() every where may make us lot more easily.
+> 
 
-> Now that the ghes preparation patches were merged, let's add support
-> for error injection.
-> 
-> On this version, HEST table got added to ACPI tables testing for aarch64 virt.
-> 
-> There are also some patch reorder to help reviewers to check the changes.
-> 
-> The code itself is almost identical to v4, with just a few minor nits addressed.
+You'd have to check all drivers that implement the callback to answer that and even then
+I'd stick to the canonical way of how it's done in xfrm and make the bond just passthrough.
+Any other games become dangerous and new code will have to be carefully reviewed every
+time, calling another device's free_sa when it wasn't added before doesn't sound good.
 
-series still has checkpatch errors 'line over 80' which are not false positive,
-it needs to be fixed
+>> GC may be running in parallel which probably means that in bond_ipsec_free_sa()
+>> you'll have to take the mutex before calling xdo_dev_state_free() and check
+>> if the entry is still linked in the bond's ipsec list before calling the free_sa
+>> callback, if it isn't then del_sa_all got to it before the GC and there's nothing
+>> to do if it also called the dev's free_sa callback. The check for real_dev doesn't
+>> seem enough to protect against this race.
+> 
+> I agree that we need to take the mutex before calling xdo_dev_state_free()
+> in bond_ipsec_free_sa(). Do you think if this is enough? I'm a bit lot here.
+> 
+> Thanks
+> Hangbin
 
-> 
-> ---
-> v5:
-> - make checkpatch happier;
-> - HEST table is now tested;
-> - some changes at HEST spec documentation to align with code changes;
-> - extra care was taken with regards to git bisectability.
-> 
-> v4:
-> - added an extra comment for AcpiGhesState structure;
-> - patches reordered;
-> - no functional changes, just code shift between the patches in this series.
-> 
-> v3:
-> - addressed more nits;
-> - hest_add_le now points to the beginning of HEST table;
-> - removed HEST from tests/data/acpi;
-> - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
-> 
-> v2: 
-> - address some nits;
-> - improved ags cleanup patch and removed ags.present field;
-> - added some missing le*_to_cpu() calls;
-> - update date at copyright for new files to 2024-2025;
-> - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
-> - added HEST and DSDT tables after the changes to make check target happy.
->   (two patches: first one whitelisting such tables; second one removing from
->    whitelist and updating/adding such tables to tests/data/acpi)
-> 
-> 
-> Mauro Carvalho Chehab (21):
->   tests/acpi: virt: add an empty HEST file
->   tests/qtest/bios-tables-test: extend to also check HEST table
->   tests/acpi: virt: update HEST file with its current data
->   acpi/ghes: Cleanup the code which gets ghes ged state
->   acpi/ghes: prepare to change the way HEST offsets are calculated
->   acpi/ghes: add a firmware file with HEST address
->   acpi/ghes: Use HEST table offsets when preparing GHES records
->   acpi/ghes: don't hard-code the number of sources for HEST table
->   acpi/ghes: add a notifier to notify when error data is ready
->   acpi/ghes: create an ancillary acpi_ghes_get_state() function
->   acpi/generic_event_device: Update GHES migration to cover hest addr
->   acpi/generic_event_device: add logic to detect if HEST addr is
->     available
->   acpi/generic_event_device: add an APEI error device
->   tests/acpi: virt: allow acpi table changes at DSDT and HEST tables
->   arm/virt: Wire up a GED error device for ACPI / GHES
->   qapi/acpi-hest: add an interface to do generic CPER error injection
->   tests/acpi: virt: update HEST table to accept two sources
->   tests/acpi: virt: and update DSDT table to add the new GED device
->   docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
->   acpi/generic_event_device.c: enable use_hest_addr for QEMU 10.x
->   scripts/ghes_inject: add a script to generate GHES error inject
-> 
->  MAINTAINERS                                   |  10 +
->  docs/specs/acpi_hest_ghes.rst                 |  28 +-
->  hw/acpi/Kconfig                               |   5 +
->  hw/acpi/aml-build.c                           |  10 +
->  hw/acpi/generic_event_device.c                |  43 ++
->  hw/acpi/ghes-stub.c                           |   7 +-
->  hw/acpi/ghes.c                                | 231 ++++--
->  hw/acpi/ghes_cper.c                           |  38 +
->  hw/acpi/ghes_cper_stub.c                      |  19 +
->  hw/acpi/meson.build                           |   2 +
->  hw/arm/virt-acpi-build.c                      |  36 +-
->  hw/arm/virt.c                                 |  19 +-
->  hw/core/machine.c                             |   2 +
->  include/hw/acpi/acpi_dev_interface.h          |   1 +
->  include/hw/acpi/aml-build.h                   |   2 +
->  include/hw/acpi/generic_event_device.h        |   1 +
->  include/hw/acpi/ghes.h                        |  52 +-
->  include/hw/arm/virt.h                         |   2 +
->  qapi/acpi-hest.json                           |  35 +
->  qapi/meson.build                              |   1 +
->  qapi/qapi-schema.json                         |   1 +
->  scripts/arm_processor_error.py                | 476 ++++++++++++
->  scripts/ghes_inject.py                        |  51 ++
->  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
->  target/arm/kvm.c                              |   7 +-
->  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
->  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
->  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
->  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
->  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
->  tests/data/acpi/aarch64/virt/HEST             | Bin 0 -> 224 bytes
->  tests/qtest/bios-tables-test.c                |   2 +-
->  32 files changed, 1692 insertions(+), 91 deletions(-)
->  create mode 100644 hw/acpi/ghes_cper.c
->  create mode 100644 hw/acpi/ghes_cper_stub.c
->  create mode 100644 qapi/acpi-hest.json
->  create mode 100644 scripts/arm_processor_error.py
->  create mode 100755 scripts/ghes_inject.py
->  create mode 100755 scripts/qmp_helper.py
->  create mode 100644 tests/data/acpi/aarch64/virt/HEST
-> 
+Well, the race is between the xfrm GC and del_sa_all, in bond's free_sa if you
+walk the list under the mutex before calling real_dev's free callback and
+don't find the current element that's being freed in free_sa then it was
+cleaned up by del_sa_all, otherwise del_sa_all is waiting to walk that
+list and clean the entries. I think it should be fine as long as free_sa
+was called once with the proper device.
+
+
 
 
