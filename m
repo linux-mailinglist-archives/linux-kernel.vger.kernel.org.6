@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-536529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93975A480E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:22:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319B9A480E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171F0171411
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741FB189FE08
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10FC241CA0;
-	Thu, 27 Feb 2025 14:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0078424290B;
+	Thu, 27 Feb 2025 14:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nh6ngp4I"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yjw0PRQL"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F68823C8BE;
-	Thu, 27 Feb 2025 14:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A29A2405F9;
+	Thu, 27 Feb 2025 14:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665228; cv=none; b=gMPd6JsBfmBOSlqJEJwr7iX/+VeZflibFHc+xzHDuAcFl539YvZMgCxOkirWuv28vQuvEIxryJyiX2Z945e5MIeA7suN//0MDt2LDrNewxhr6hDz+n5IBKNX/CHni9jS6LmIY5lyuNu/m28djzKleKL/mpTbxZKWej5Sqxjv9zc=
+	t=1740665229; cv=none; b=GAzYk6gn95INoxrpBNpG2PQx4ssFiPcqdQvnrJDKR+BXcR2iqkze6tAUR0fJCVtkbkkqBg7eqtKzVfw1aPIbES7ijqOhO6DZPA6CVRsvZ8yUd509F0VXUMXyL8wr1vV+JnLjybdjQoxcyHjoTQRy4IrTZijuO2/lyKqcmSq6cVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665228; c=relaxed/simple;
-	bh=ysR+QHqvp71AWsOi8hjkD6DmFGaPhP+g6HFaUTZRV80=;
+	s=arc-20240116; t=1740665229; c=relaxed/simple;
+	bh=4FYYRgHH3VUyDZMaOWWCBzUBFsl/UaAcSjSpcX99lYk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m3h3k3Ps4GZjcGpGyD2m1evgygFAcrMNHGOw9Rnd9hhXVJph3BJAKOrm3gIMzzwarE+cBmyKBolgqvLioUDAn7Gcl6ifpE4UsOoEFEkk3jlqfrhv2yA1h2D/c99kK784JykeIbZmvYp63P5KmIBkk2xU6vau9bFXTr+EmaF+Xws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nh6ngp4I; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version:Content-Type; b=bpXpiD9JCCStcE4udJE3qSSzS+AfNnXiKEL7Fr4IDBC7vD6mePVykqVvD/wOT4JiMjDBH+NN70k4CwXi6S9d7UImddKeK7TZjuzBM2eMaZRuLHMYwAw1/EAQkrcZGIiyVrZSctqsmQrbem7UW6bevuJiLT5nKxoSLH/ZCroEWxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yjw0PRQL; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740665226; x=1772201226;
+  t=1740665227; x=1772201227;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ysR+QHqvp71AWsOi8hjkD6DmFGaPhP+g6HFaUTZRV80=;
-  b=Nh6ngp4IruPcLrg6fdk9UzcAqMqGzFAH1d2c11vSsfdhdMskJfT9uFPx
-   webx9ZzE5i6NSwCippDrX1x7ORtLcTUftshdyqY5pI15gL9FiZq/QE6GK
-   iwo5lJbAKHwicmJNqGZQdzKCFfEy14kghrIGaLJc8seG62IH7BAJkx/3f
-   qTjX3FJtE1OFyAyJfKfR92MaRPRsRltaJ3V5Q5c/lFq2aMYDMZFOnq+d/
-   88keUr7MKEOYnwjwM+7639gKXrh+5K4RQAD+JW0j1p1ga9CVkMH9fIhWd
-   ewZ8d58NXX2NCX1rmjlp5EbpJ1zfmwNWAQAkJFxQ6f48o/8KVhSGBhzpA
-   Q==;
-X-CSE-ConnectionGUID: f8VJr1aLT5O3YuiaaFq7hQ==
-X-CSE-MsgGUID: S9D1PzF1SOScUPTA3wV9aw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41438102"
+  bh=4FYYRgHH3VUyDZMaOWWCBzUBFsl/UaAcSjSpcX99lYk=;
+  b=Yjw0PRQL8PgNB2Vj369kUhrbDZP9P77LCminfcXhTxwo/FGSG62ihcgz
+   TVIUH2+0RqWECepVWDxnInHAAMi7dXt12IJSnRdp0Xw+qUCWzsacOHoxQ
+   gqDh4rT1q0XhnK4v9trSYN57aTQ7cKehI82jq975JUuYyT4JHIbzOkoJb
+   uE7KE1a/omNEhiT7RneF1vBkGXw0mWcqCHiq3SxmId/zdRFNDJXAW+uqR
+   uQLViWmV4beAMNygwCFNVxK7zyBQikQpz1U39RtcwKBfMDNP9EWM5MXYG
+   CxEHFSizwQ29DgHoyQ4ZAgoP1WD/3OuEQFeal8DGHo4Td4f2yOQq53eMm
+   A==;
+X-CSE-ConnectionGUID: gXeXc6LOSAS81vXeGCkI/A==
+X-CSE-MsgGUID: 67CT2ig2QwGF8Kak9aRmoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41438108"
 X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41438102"
+   d="scan'208";a="41438108"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:54 -0800
-X-CSE-ConnectionGUID: HFcq4G++SPC2ozDqBsP3kg==
-X-CSE-MsgGUID: W0N/9iuxTryvI73UfPaSGA==
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:56 -0800
+X-CSE-ConnectionGUID: 9tRrxREyTMGSSqBQxV2dxg==
+X-CSE-MsgGUID: EaZFtUPXSv2RkYtUMCg2ng==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="116831737"
+   d="scan'208";a="116831753"
 Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.220.154])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:52 -0800
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:54 -0800
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	broonie@kernel.org,
@@ -66,9 +66,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH v4 13/16] soundwire: intel_ace2x: add BPT send_async/wait callbacks
-Date: Thu, 27 Feb 2025 22:06:12 +0800
-Message-ID: <20250227140615.8147-14-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH v4 14/16] ASoC: SOF: Intel: hda-sdw-bpt: add CHAIN_DMA support
+Date: Thu, 27 Feb 2025 22:06:13 +0800
+Message-ID: <20250227140615.8147-15-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
 References: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
@@ -81,9 +81,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+When the firmware is involved, the data can be transferred with a
+CHAIN_DMA on LNL+.
 
-Add support for BTP API using Cadence and hda-sdw-bpt helpers.
+The CHAIN_DMA needs to be programmed before the DMAs per the
+documentation. The states are not exactly symmetrical, on stop we must
+do a PAUSE and RESET.
+
+The FIFO size of 10ms was determined experimentally. With the minimum
+of 2ms, errors were reported by the codec, likely because of xruns.
+
+The code flow deals with the two TX and RX CHAIN_DMAs in symmetrical
+ways, i.e.
+alloc TX
+alloc RX
+enable TX
+enable RX
+disable RX
+disable TX
+free RX
+free TX
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
@@ -91,346 +108,187 @@ Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
 Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
 Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 ---
- drivers/soundwire/intel_ace2x.c | 312 ++++++++++++++++++++++++++++++++
- 1 file changed, 312 insertions(+)
+ sound/soc/sof/intel/hda-sdw-bpt.c | 126 ++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/drivers/soundwire/intel_ace2x.c b/drivers/soundwire/intel_ace2x.c
-index e305c6258ca9..5b31e1f69591 100644
---- a/drivers/soundwire/intel_ace2x.c
-+++ b/drivers/soundwire/intel_ace2x.c
-@@ -13,12 +13,320 @@
- #include <linux/soundwire/sdw_intel.h>
- #include <sound/hdaudio.h>
+diff --git a/sound/soc/sof/intel/hda-sdw-bpt.c b/sound/soc/sof/intel/hda-sdw-bpt.c
+index bc7a3172656f..1327f1cad0bc 100644
+--- a/sound/soc/sof/intel/hda-sdw-bpt.c
++++ b/sound/soc/sof/intel/hda-sdw-bpt.c
+@@ -14,12 +14,80 @@
  #include <sound/hda-mlink.h>
-+#include <sound/hda-sdw-bpt.h>
- #include <sound/hda_register.h>
- #include <sound/pcm_params.h>
- #include "cadence_master.h"
- #include "bus.h"
- #include "intel.h"
+ #include <sound/hda-sdw-bpt.h>
+ #include <sound/sof.h>
++#include <sound/sof/ipc4/header.h>
+ #include "../ops.h"
+ #include "../sof-priv.h"
++#include "../ipc4-priv.h"
+ #include "hda.h"
  
-+static int sdw_slave_bpt_stream_add(struct sdw_slave *slave, struct sdw_stream_runtime *stream)
+ #define BPT_FREQUENCY		192000 /* The max rate defined in rate_bits[] hdac_device.c */
+ #define BPT_MULTIPLIER		((BPT_FREQUENCY / 48000) - 1)
++#define BPT_CHAIN_DMA_FIFO_MS	10
++/*
++ * This routine is directly inspired by sof_ipc4_chain_dma_trigger(),
++ * with major simplifications since there are no pipelines defined
++ * and no dependency on ALSA hw_params
++ */
++static int chain_dma_trigger(struct snd_sof_dev *sdev, unsigned int stream_tag,
++			     int direction, int state)
 +{
-+	struct sdw_stream_config sconfig = {0};
-+	struct sdw_port_config pconfig = {0};
-+	int ret;
++	struct sof_ipc4_fw_data *ipc4_data = sdev->private;
++	bool allocate, enable, set_fifo_size;
++	struct sof_ipc4_msg msg = {{ 0 }};
++	int dma_id;
 +
-+	/* arbitrary configuration */
-+	sconfig.frame_rate = 16000;
-+	sconfig.ch_count = 1;
-+	sconfig.bps = 32; /* this is required for BPT/BRA */
-+	sconfig.direction = SDW_DATA_DIR_RX;
-+	sconfig.type = SDW_STREAM_BPT;
++	if (sdev->pdata->ipc_type != SOF_IPC_TYPE_4)
++		return -EOPNOTSUPP;
 +
-+	pconfig.num = 0;
-+	pconfig.ch_mask = BIT(0);
-+
-+	ret = sdw_stream_add_slave(slave, &sconfig, &pconfig, 1, stream);
-+	if (ret)
-+		dev_err(&slave->dev, "%s: failed: %d\n", __func__, ret);
-+
-+	return ret;
-+}
-+
-+static int intel_ace2x_bpt_open_stream(struct sdw_intel *sdw, struct sdw_slave *slave,
-+				       struct sdw_bpt_msg *msg)
-+{
-+	struct sdw_cdns *cdns = &sdw->cdns;
-+	struct sdw_bus *bus = &cdns->bus;
-+	struct sdw_master_prop *prop = &bus->prop;
-+	struct sdw_stream_runtime *stream;
-+	struct sdw_stream_config sconfig;
-+	struct sdw_port_config *pconfig;
-+	unsigned int pdi0_buffer_size;
-+	unsigned int tx_dma_bandwidth;
-+	unsigned int pdi1_buffer_size;
-+	unsigned int rx_dma_bandwidth;
-+	unsigned int data_per_frame;
-+	unsigned int tx_total_bytes;
-+	struct sdw_cdns_pdi *pdi0;
-+	struct sdw_cdns_pdi *pdi1;
-+	unsigned int num_frames;
-+	int command;
-+	int ret1;
-+	int ret;
-+	int dir;
-+	int i;
-+
-+	stream = sdw_alloc_stream("BPT", SDW_STREAM_BPT);
-+	if (!stream)
-+		return -ENOMEM;
-+
-+	cdns->bus.bpt_stream = stream;
-+
-+	ret = sdw_slave_bpt_stream_add(slave, stream);
-+	if (ret < 0)
-+		goto release_stream;
-+
-+	/* handle PDI0 first */
-+	dir = SDW_DATA_DIR_TX;
-+
-+	pdi0 = sdw_cdns_alloc_pdi(cdns, &cdns->pcm, 1,  dir, 0);
-+	if (!pdi0) {
-+		dev_err(cdns->dev, "%s: sdw_cdns_alloc_pdi0 failed\n", __func__);
-+		ret = -EINVAL;
-+		goto remove_slave;
-+	}
-+
-+	sdw_cdns_config_stream(cdns, 1, dir, pdi0);
-+
-+	/* handle PDI1  */
-+	dir = SDW_DATA_DIR_RX;
-+
-+	pdi1 = sdw_cdns_alloc_pdi(cdns, &cdns->pcm, 1,  dir, 1);
-+	if (!pdi1) {
-+		dev_err(cdns->dev, "%s: sdw_cdns_alloc_pdi1 failed\n", __func__);
-+		ret = -EINVAL;
-+		goto remove_slave;
-+	}
-+
-+	sdw_cdns_config_stream(cdns, 1, dir, pdi1);
-+
-+	/*
-+	 * the port config direction, number of channels and frame
-+	 * rate is totally arbitrary
-+	 */
-+	sconfig.direction = dir;
-+	sconfig.ch_count = 1;
-+	sconfig.frame_rate = 16000;
-+	sconfig.type = SDW_STREAM_BPT;
-+	sconfig.bps = 32; /* this is required for BPT/BRA */
-+
-+	/* Port configuration */
-+	pconfig = kcalloc(2, sizeof(*pconfig), GFP_KERNEL);
-+	if (!pconfig) {
-+		ret =  -ENOMEM;
-+		goto remove_slave;
-+	}
-+
-+	for (i = 0; i < 2 /* num_pdi */; i++) {
-+		pconfig[i].num = i;
-+		pconfig[i].ch_mask = 1;
-+	}
-+
-+	ret = sdw_stream_add_master(&cdns->bus, &sconfig, pconfig, 2, stream);
-+	kfree(pconfig);
-+
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "add master to stream failed:%d\n", ret);
-+		goto remove_slave;
-+	}
-+
-+	ret = sdw_prepare_stream(cdns->bus.bpt_stream);
-+	if (ret < 0)
-+		goto remove_master;
-+
-+	command = (msg->flags & SDW_MSG_FLAG_WRITE) ? 0 : 1;
-+
-+	ret = sdw_cdns_bpt_find_buffer_sizes(command, cdns->bus.params.row, cdns->bus.params.col,
-+					     msg->len, SDW_BPT_MSG_MAX_BYTES, &data_per_frame,
-+					     &pdi0_buffer_size, &pdi1_buffer_size, &num_frames);
-+	if (ret < 0)
-+		goto deprepare_stream;
-+
-+	sdw->bpt_ctx.pdi0_buffer_size = pdi0_buffer_size;
-+	sdw->bpt_ctx.pdi1_buffer_size = pdi1_buffer_size;
-+	sdw->bpt_ctx.num_frames = num_frames;
-+	sdw->bpt_ctx.data_per_frame = data_per_frame;
-+	tx_dma_bandwidth = div_u64((u64)pdi0_buffer_size * 8 * (u64)prop->default_frame_rate,
-+				   num_frames);
-+	rx_dma_bandwidth = div_u64((u64)pdi1_buffer_size * 8 * (u64)prop->default_frame_rate,
-+				   num_frames);
-+
-+	dev_dbg(cdns->dev, "Message len %d transferred in %d frames (%d per frame)\n",
-+		msg->len, num_frames, data_per_frame);
-+	dev_dbg(cdns->dev, "sizes pdi0 %d pdi1 %d tx_bandwidth %d rx_bandwidth %d\n",
-+		pdi0_buffer_size, pdi1_buffer_size, tx_dma_bandwidth, rx_dma_bandwidth);
-+
-+	ret = hda_sdw_bpt_open(cdns->dev->parent, /* PCI device */
-+			       sdw->instance, &sdw->bpt_ctx.bpt_tx_stream,
-+			       &sdw->bpt_ctx.dmab_tx_bdl, pdi0_buffer_size, tx_dma_bandwidth,
-+			       &sdw->bpt_ctx.bpt_rx_stream, &sdw->bpt_ctx.dmab_rx_bdl,
-+			       pdi1_buffer_size, rx_dma_bandwidth);
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "%s: hda_sdw_bpt_open failed %d\n", __func__, ret);
-+		goto deprepare_stream;
-+	}
-+
-+	if (!command) {
-+		ret = sdw_cdns_prepare_write_dma_buffer(msg->dev_num, msg->addr, msg->buf,
-+							msg->len, data_per_frame,
-+							sdw->bpt_ctx.dmab_tx_bdl.area,
-+							pdi0_buffer_size, &tx_total_bytes);
-+	} else {
-+		ret = sdw_cdns_prepare_read_dma_buffer(msg->dev_num, msg->addr,	msg->len,
-+						       data_per_frame,
-+						       sdw->bpt_ctx.dmab_tx_bdl.area,
-+						       pdi0_buffer_size, &tx_total_bytes);
-+	}
-+
-+	if (!ret)
-+		return 0;
-+
-+	dev_err(cdns->dev, "%s: sdw_prepare_%s_dma_buffer failed %d\n",
-+		__func__, command ? "read" : "write", ret);
-+
-+	ret1 = hda_sdw_bpt_close(cdns->dev->parent, /* PCI device */
-+				 sdw->bpt_ctx.bpt_tx_stream, &sdw->bpt_ctx.dmab_tx_bdl,
-+				 sdw->bpt_ctx.bpt_rx_stream, &sdw->bpt_ctx.dmab_rx_bdl);
-+	if (ret1 < 0)
-+		dev_err(cdns->dev, "%s:  hda_sdw_bpt_close failed: ret %d\n",
-+			__func__, ret1);
-+
-+deprepare_stream:
-+	sdw_deprepare_stream(cdns->bus.bpt_stream);
-+
-+remove_master:
-+	ret1 = sdw_stream_remove_master(&cdns->bus, cdns->bus.bpt_stream);
-+	if (ret1 < 0)
-+		dev_err(cdns->dev, "%s: remove master failed: %d\n",
-+			__func__, ret1);
-+
-+remove_slave:
-+	ret1 = sdw_stream_remove_slave(slave, cdns->bus.bpt_stream);
-+	if (ret1 < 0)
-+		dev_err(cdns->dev, "%s: remove slave failed: %d\n",
-+			__func__, ret1);
-+
-+release_stream:
-+	sdw_release_stream(cdns->bus.bpt_stream);
-+	cdns->bus.bpt_stream = NULL;
-+
-+	return ret;
-+}
-+
-+static void intel_ace2x_bpt_close_stream(struct sdw_intel *sdw, struct sdw_slave *slave,
-+					 struct sdw_bpt_msg *msg)
-+{
-+	struct sdw_cdns *cdns = &sdw->cdns;
-+	int ret;
-+
-+	ret = hda_sdw_bpt_close(cdns->dev->parent /* PCI device */, sdw->bpt_ctx.bpt_tx_stream,
-+				&sdw->bpt_ctx.dmab_tx_bdl, sdw->bpt_ctx.bpt_rx_stream,
-+				&sdw->bpt_ctx.dmab_rx_bdl);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s:  hda_sdw_bpt_close failed: ret %d\n",
-+			__func__, ret);
-+
-+	ret = sdw_deprepare_stream(cdns->bus.bpt_stream);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s: sdw_deprepare_stream failed: ret %d\n",
-+			__func__, ret);
-+
-+	ret = sdw_stream_remove_master(&cdns->bus, cdns->bus.bpt_stream);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s: remove master failed: %d\n",
-+			__func__, ret);
-+
-+	ret = sdw_stream_remove_slave(slave, cdns->bus.bpt_stream);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s: remove slave failed: %d\n",
-+			__func__, ret);
-+
-+	cdns->bus.bpt_stream = NULL;
-+}
-+
-+#define INTEL_BPT_MSG_BYTE_ALIGNMENT 32
-+
-+static int intel_ace2x_bpt_send_async(struct sdw_intel *sdw, struct sdw_slave *slave,
-+				      struct sdw_bpt_msg *msg)
-+{
-+	struct sdw_cdns *cdns = &sdw->cdns;
-+	int ret;
-+
-+	if (msg->len % INTEL_BPT_MSG_BYTE_ALIGNMENT) {
-+		dev_err(cdns->dev, "BPT message length %d is not a multiple of %d bytes\n",
-+			msg->len, INTEL_BPT_MSG_BYTE_ALIGNMENT);
++	switch (state) {
++	case SOF_IPC4_PIPE_RUNNING: /* Allocate and start the chain */
++		allocate = true;
++		enable = true;
++		set_fifo_size = true;
++		break;
++	case SOF_IPC4_PIPE_PAUSED: /* Stop the chain */
++		allocate = true;
++		enable = false;
++		set_fifo_size = false;
++		break;
++	case SOF_IPC4_PIPE_RESET: /* Deallocate chain resources and remove the chain */
++		allocate = false;
++		enable = false;
++		set_fifo_size = false;
++		break;
++	default:
++		dev_err(sdev->dev, "Unexpected state %d", state);
 +		return -EINVAL;
 +	}
 +
-+	dev_dbg(cdns->dev, "BPT Transfer start\n");
++	msg.primary = SOF_IPC4_MSG_TYPE_SET(SOF_IPC4_GLB_CHAIN_DMA);
++	msg.primary |= SOF_IPC4_MSG_DIR(SOF_IPC4_MSG_REQUEST);
++	msg.primary |= SOF_IPC4_MSG_TARGET(SOF_IPC4_FW_GEN_MSG);
 +
-+	ret = intel_ace2x_bpt_open_stream(sdw, slave, msg);
-+	if (ret < 0)
-+		return ret;
++	/* for BPT/BRA we can use the same stream tag for host and link */
++	dma_id = stream_tag - 1;
++	if (direction == SNDRV_PCM_STREAM_CAPTURE)
++		dma_id += ipc4_data->num_playback_streams;
 +
-+	ret = hda_sdw_bpt_send_async(cdns->dev->parent, /* PCI device */
-+				     sdw->bpt_ctx.bpt_tx_stream, sdw->bpt_ctx.bpt_rx_stream);
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "%s:   hda_sdw_bpt_send_async failed: %d\n",
-+			__func__, ret);
++	msg.primary |=  SOF_IPC4_GLB_CHAIN_DMA_HOST_ID(dma_id);
++	msg.primary |=  SOF_IPC4_GLB_CHAIN_DMA_LINK_ID(dma_id);
 +
-+		intel_ace2x_bpt_close_stream(sdw, slave, msg);
++	/* For BPT/BRA we use 32 bits so SCS is not set */
 +
-+		return ret;
-+	}
++	/* CHAIN DMA needs at least 2ms */
++	if (set_fifo_size)
++		msg.extension |=  SOF_IPC4_GLB_EXT_CHAIN_DMA_FIFO_SIZE(BPT_FREQUENCY / 1000 *
++								       BPT_CHAIN_DMA_FIFO_MS *
++								       sizeof(u32));
 +
-+	ret = sdw_enable_stream(cdns->bus.bpt_stream);
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "%s: sdw_stream_enable failed: %d\n",
-+			__func__, ret);
-+		intel_ace2x_bpt_close_stream(sdw, slave, msg);
-+	}
++	if (allocate)
++		msg.primary |= SOF_IPC4_GLB_CHAIN_DMA_ALLOCATE_MASK;
 +
-+	return ret;
++	if (enable)
++		msg.primary |= SOF_IPC4_GLB_CHAIN_DMA_ENABLE_MASK;
++
++	return sof_ipc_tx_message_no_reply(sdev->ipc, &msg, 0);
 +}
+ 
+ static int hda_sdw_bpt_dma_prepare(struct device *dev, struct hdac_ext_stream **sdw_bpt_stream,
+ 				   struct snd_dma_buffer *dmab_bdl, u32 bpt_num_bytes,
+@@ -46,6 +114,21 @@ static int hda_sdw_bpt_dma_prepare(struct device *dev, struct hdac_ext_stream **
+ 	}
+ 	*sdw_bpt_stream = bpt_stream;
+ 
++	if (!sdev->dspless_mode_selected) {
++		struct hdac_stream *hstream;
++		u32 mask;
 +
-+static int intel_ace2x_bpt_wait(struct sdw_intel *sdw, struct sdw_slave *slave,
-+				struct sdw_bpt_msg *msg)
-+{
-+	struct sdw_cdns *cdns = &sdw->cdns;
-+	int ret;
++		/* decouple host and link DMA if the DSP is used */
++		hstream = &bpt_stream->hstream;
++		mask = BIT(hstream->index);
 +
-+	dev_dbg(cdns->dev, "BPT Transfer wait\n");
++		snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL, mask, mask);
 +
-+	ret = hda_sdw_bpt_wait(cdns->dev->parent, /* PCI device */
-+			       sdw->bpt_ctx.bpt_tx_stream, sdw->bpt_ctx.bpt_rx_stream);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s: hda_sdw_bpt_wait failed: %d\n", __func__, ret);
++		snd_hdac_ext_stream_reset(bpt_stream);
 +
-+	ret = sdw_disable_stream(cdns->bus.bpt_stream);
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "%s: sdw_stream_enable failed: %d\n",
-+			__func__, ret);
-+		goto err;
++		snd_hdac_ext_stream_setup(bpt_stream, format);
 +	}
 +
-+	if (msg->flags & SDW_MSG_FLAG_WRITE) {
-+		ret = sdw_cdns_check_write_response(cdns->dev, sdw->bpt_ctx.dmab_rx_bdl.area,
-+						    sdw->bpt_ctx.pdi1_buffer_size,
-+						    sdw->bpt_ctx.num_frames);
+ 	if (hdac_stream(bpt_stream)->direction == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		struct hdac_bus *bus = sof_to_bus(sdev);
+ 		struct hdac_ext_link *hlink;
+@@ -63,6 +146,8 @@ static int hda_sdw_bpt_dma_deprepare(struct device *dev, struct hdac_ext_stream
+ 				     struct snd_dma_buffer *dmab_bdl)
+ {
+ 	struct snd_sof_dev *sdev = dev_get_drvdata(dev);
++	struct hdac_stream *hstream;
++	u32 mask;
+ 	int ret;
+ 
+ 	ret = hda_cl_cleanup(sdev->dev, dmab_bdl, true, sdw_bpt_stream);
+@@ -83,6 +168,22 @@ static int hda_sdw_bpt_dma_deprepare(struct device *dev, struct hdac_ext_stream
+ 		snd_hdac_ext_bus_link_clear_stream_id(hlink, stream_tag);
+ 	}
+ 
++	if (!sdev->dspless_mode_selected) {
++		/* Release CHAIN_DMA resources */
++		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
++					hdac_stream(sdw_bpt_stream)->direction,
++					SOF_IPC4_PIPE_RESET);
 +		if (ret < 0)
-+			dev_err(cdns->dev, "%s: BPT Write failed %d\n", __func__, ret);
-+	} else {
-+		ret = sdw_cdns_check_read_response(cdns->dev, sdw->bpt_ctx.dmab_rx_bdl.area,
-+						   sdw->bpt_ctx.pdi1_buffer_size,
-+						   msg->buf, msg->len, sdw->bpt_ctx.num_frames,
-+						   sdw->bpt_ctx.data_per_frame);
-+		if (ret < 0)
-+			dev_err(cdns->dev, "%s: BPT Read failed %d\n", __func__, ret);
++			dev_err(sdev->dev, "%s: chain_dma_trigger PIPE_RESET failed: %d\n",
++				__func__, ret);
++
++		/* couple host and link DMA */
++		hstream = &sdw_bpt_stream->hstream;
++		mask = BIT(hstream->index);
++
++		snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL, mask, 0);
 +	}
 +
-+err:
-+	intel_ace2x_bpt_close_stream(sdw, slave, msg);
-+
-+	return ret;
-+}
-+
- /*
-  * shim vendor-specific (vs) ops
-  */
-@@ -753,7 +1061,11 @@ const struct sdw_intel_hw_ops sdw_intel_lnl_hw_ops = {
- 	.sync_check_cmdsync_unlocked = intel_check_cmdsync_unlocked,
+ 	return 0;
+ }
  
- 	.program_sdi = intel_program_sdi,
-+
-+	.bpt_send_async = intel_ace2x_bpt_send_async,
-+	.bpt_wait = intel_ace2x_bpt_wait,
- };
- EXPORT_SYMBOL_NS(sdw_intel_lnl_hw_ops, "SOUNDWIRE_INTEL");
+@@ -95,6 +196,20 @@ static int hda_sdw_bpt_dma_enable(struct device *dev, struct hdac_ext_stream *sd
+ 	if (ret < 0)
+ 		dev_err(sdev->dev, "%s: SDW BPT DMA trigger start failed\n", __func__);
  
- MODULE_IMPORT_NS("SND_SOC_SOF_HDA_MLINK");
-+MODULE_IMPORT_NS("SND_SOC_SOF_INTEL_HDA_SDW_BPT");
++	if (!sdev->dspless_mode_selected) {
++		/* the chain DMA needs to be programmed before the DMAs */
++		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
++					hdac_stream(sdw_bpt_stream)->direction,
++					SOF_IPC4_PIPE_RUNNING);
++		if (ret < 0) {
++			dev_err(sdev->dev, "%s: chain_dma_trigger failed: %d\n",
++				__func__, ret);
++			hda_cl_trigger(sdev->dev, sdw_bpt_stream, SNDRV_PCM_TRIGGER_STOP);
++			return ret;
++		}
++		snd_hdac_ext_stream_start(sdw_bpt_stream);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -103,6 +218,17 @@ static int hda_sdw_bpt_dma_disable(struct device *dev, struct hdac_ext_stream *s
+ 	struct snd_sof_dev *sdev = dev_get_drvdata(dev);
+ 	int ret;
+ 
++	if (!sdev->dspless_mode_selected) {
++		snd_hdac_ext_stream_clear(sdw_bpt_stream);
++
++		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
++					hdac_stream(sdw_bpt_stream)->direction,
++					SOF_IPC4_PIPE_PAUSED);
++		if (ret < 0)
++			dev_err(sdev->dev, "%s: chain_dma_trigger PIPE_PAUSED failed: %d\n",
++				__func__, ret);
++	}
++
+ 	ret = hda_cl_trigger(sdev->dev, sdw_bpt_stream, SNDRV_PCM_TRIGGER_STOP);
+ 	if (ret < 0)
+ 		dev_err(sdev->dev, "%s: SDW BPT DMA trigger stop failed\n", __func__);
 -- 
 2.43.0
 
