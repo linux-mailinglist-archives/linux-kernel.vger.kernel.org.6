@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-537005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6E0A486FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:49:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CBEA486FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85979165C33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1E8165D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CEB1EB5D6;
-	Thu, 27 Feb 2025 17:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBFF1EFF9C;
+	Thu, 27 Feb 2025 17:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Up8hxUD2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRC9CMEb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B7A1D5CD3;
-	Thu, 27 Feb 2025 17:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172341E51E7;
+	Thu, 27 Feb 2025 17:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678556; cv=none; b=AeZP92reg7dX6/u2fv8032wFxr77WvYBJLmfP3neLAhDC1MgrzRUrgd0m6aC9ra5Xqtb0mN30tgw9L0Uxu0zBlBsKIqyq0z/QQsensGLaH/g5MenCkmPHlruLe4WcjkGO5LTE8Exn99FYw2FqDAvZBWfE0jvLfby2244fyY8Qzw=
+	t=1740678558; cv=none; b=QGaj5ucAGRtch3CA68hs/y+yhA6mqCxv4uxtaWn9ZpQUZJtiy+Kfh9w9/x2+tPp808McHzVN6pv93d1IA9g3XZACkGHTUWsbTadUjYQzQ+Y+KviyVYeykdieIq7fA0Q5v2R5C6F7XU+ywyeV2lp24O+S2LHBexTfe8qcf5BWlfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678556; c=relaxed/simple;
-	bh=ez8brVd0JnnAlkQbw2j67F0woWc/khO90+OnRBROpyw=;
+	s=arc-20240116; t=1740678558; c=relaxed/simple;
+	bh=hbOcWRR965qL+r3t+KOoQIZ6pqo51J3oCtyYdu/MbP8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZ6Gi9oXAFNUzPu+y7IzjBuOTC4p2OkxUcrveGl8cCJmSgEGE1BHyK2wzL6W6lkdMelAQDFqxEH9GZKc2FeUyaWskBfZTZdY2hiAJMV4e46jL7FQ+ty2q08Iu/tGyDZjPFCgc7Pppr39CE5Fb9HuN7MuLGgNAPgJuC3ckxWLfJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Up8hxUD2; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fm/S2S+gpk9FDG8Q/qvhmLc6wRELUjZQNT6uySP69qUtLClVVEDwbkiAO1rKzBnxw2rP+4xT2UJiTozszqFlRdciM+UqQfrxYM1pDHXlbo/tVBC8ZPaLWP47lOBshktWrt9io//cu+Gb7PQn/ov+6k67Hy8NLVffS5ATDnc018U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRC9CMEb; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740678554; x=1772214554;
+  t=1740678556; x=1772214556;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ez8brVd0JnnAlkQbw2j67F0woWc/khO90+OnRBROpyw=;
-  b=Up8hxUD2oWi8alur3SKKqZrmauPCZuEXmOqLPJS0uk9AHyoHmyCSc0Hv
-   jjjlWWwnjp9H1dGKPRyI5/C0ZVEcisHf2S4w+GBmXMqnSgrkMYK0/2Ufs
-   Lxnxdfb92cJSViKO6EbYdu+dAjJlM21BoDN1/SAcqhnsfhpMz+6kaJh0+
-   LwS8df+7UYa68J+6l5bUjpwZKuMDr8tjxhE2XLPYecpKpJPx/H3pd1IcW
-   lkym7QCiTBgxZROI8XNfhFOmCJoOGmv1S78dIASOd31K+d6I9G1EuKMHi
-   8sAvjmvBKYAqJsXgc0rc5kkFZGDCFzC7jUQyJ63rW/hFksCskj0L8Pr5z
-   w==;
-X-CSE-ConnectionGUID: EMBQ//g/TzO0zYFAUgvztQ==
-X-CSE-MsgGUID: 79nJrxn5RXC06bkNqmhpmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45498987"
+  bh=hbOcWRR965qL+r3t+KOoQIZ6pqo51J3oCtyYdu/MbP8=;
+  b=eRC9CMEbSw91m9MKdtFIALTXHdePzXEhMRanjuPXzLktTxSKsx0FQ/IG
+   0it4Neh5y9184DEnohQxRgyMOgrlM0pQVIQ2zXoFlv4CddpjaI7d592Qs
+   nAEiDKfu7yUWRHS9Xbw5pd5eYq2sCX5RDLn835kJYy7i0SnQDzefRbt4h
+   c3eyZdDACbMftHZKBFfGyYJkD3Gbdz96aH6OjUdOYSNH+QcNe5XWYqoiC
+   W4Exqf9xCbygpsY3PzpDCpNxsQjK5EVtX4ep3ZXrWMx3VSPMdyGJtDPa8
+   g7dzEit1XaGm3REFAc5jUhTTrEBvyHL5vqzlWIP6n+mwyhi5PBp9d/7k+
+   g==;
+X-CSE-ConnectionGUID: XLGVswL3Rfa16ts4q2dg7g==
+X-CSE-MsgGUID: ahRYtFKqR0qSZtSFKP117g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41503217"
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="45498987"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 09:49:13 -0800
-X-CSE-ConnectionGUID: b/1sFD2SSWqbRg1BOPQzhg==
-X-CSE-MsgGUID: hJH0vHKbTMuTqTWqf5o/Lw==
+   d="scan'208";a="41503217"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 09:49:16 -0800
+X-CSE-ConnectionGUID: od8b3YkhQHOqc5lLH407AA==
+X-CSE-MsgGUID: qM2gFwLiQoGeQ9Pbh3oF7w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117118264"
+   d="scan'208";a="117753696"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 27 Feb 2025 09:49:09 -0800
+  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 09:49:09 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tni0R-000DnF-0k;
+	id 1tni0R-000DnH-0q;
 	Thu, 27 Feb 2025 17:49:07 +0000
-Date: Fri, 28 Feb 2025 01:48:50 +0800
+Date: Fri, 28 Feb 2025 01:48:52 +0800
 From: kernel test robot <lkp@intel.com>
-To: Antheas Kapenekakis <lkml@antheas.dev>, mario.limonciello@amd.com,
-	mpearson-lenovo@squebb.ca
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ilpo.jarvinen@linux.intel.com, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, rafael@kernel.org,
-	hdegoede@redhat.com, me@kylegospodneti.ch,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: Re: [PATCH 3/3] ACPI: platform_profile: Do not hide options missing
- in secondary handlers
-Message-ID: <202502280150.DkqQsO8C-lkp@intel.com>
-References: <20250224195059.10185-4-lkml@antheas.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>, rostedt@goodmis.org,
+	mark.rutland@arm.com, alexei.starovoitov@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org,
+	mhiramat@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, mathieu.desnoyers@efficios.com, nathan@kernel.org,
+	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+	dongml2@chinatelecom.cn, akpm@linux-foundation.org, rppt@kernel.org,
+	graf@amazon.com, dan.j.williams@intel.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH bpf-next v2] add function metadata support
+Message-ID: <202502280123.BNaCYT2A-lkp@intel.com>
+References: <20250226121537.752241-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,68 +86,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250224195059.10185-4-lkml@antheas.dev>
+In-Reply-To: <20250226121537.752241-1-dongml2@chinatelecom.cn>
 
-Hi Antheas,
+Hi Menglong,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14-rc4 next-20250227]
-[cannot apply to rafael-pm/linux-next rafael-pm/bleeding-edge]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on bpf-next/master]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/ACPI-platform_profile-Add-support-for-secondary-handlers/20250225-035455
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250224195059.10185-4-lkml%40antheas.dev
-patch subject: [PATCH 3/3] ACPI: platform_profile: Do not hide options missing in secondary handlers
-config: i386-buildonly-randconfig-003-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280150.DkqQsO8C-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/add-function-metadata-support/20250226-202312
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250226121537.752241-1-dongml2%40chinatelecom.cn
+patch subject: [PATCH bpf-next v2] add function metadata support
+config: i386-randconfig-062-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280123.BNaCYT2A-lkp@intel.com/config)
 compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280150.DkqQsO8C-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280123.BNaCYT2A-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502280150.DkqQsO8C-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280123.BNaCYT2A-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+   kernel/trace/kfunc_md.c:12:23: sparse: sparse: symbol 'kfunc_mds' redeclared with different type (different address spaces):
+   kernel/trace/kfunc_md.c:12:23: sparse:    struct kfunc_md [noderef] __rcu *[addressable] [toplevel] kfunc_mds
+   kernel/trace/kfunc_md.c: note: in included file:
+   include/linux/kfunc_md.h:16:24: sparse: note: previously declared as:
+   include/linux/kfunc_md.h:16:24: sparse:    struct kfunc_md *extern [addressable] [toplevel] kfunc_mds
+   kernel/trace/kfunc_md.c:186:20: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct kfunc_md *md @@     got struct kfunc_md [noderef] __rcu * @@
+   kernel/trace/kfunc_md.c:186:20: sparse:     expected struct kfunc_md *md
+   kernel/trace/kfunc_md.c:186:20: sparse:     got struct kfunc_md [noderef] __rcu *
+>> kernel/trace/kfunc_md.c:98:25: sparse: sparse: non size-preserving pointer to integer cast
 
->> drivers/acpi/platform_profile.c:248: warning: Function parameter or struct member 'secondary' not described in '_aggregate_choices'
+vim +98 kernel/trace/kfunc_md.c
 
-
-vim +248 drivers/acpi/platform_profile.c
-
-77be5cacb2c2d8 Mario Limonciello   2024-12-05  239  
-06ec24388f1de6 Mario Limonciello   2024-12-05  240  /**
-06ec24388f1de6 Mario Limonciello   2024-12-05  241   * _aggregate_choices - Aggregate the available profile choices
-06ec24388f1de6 Mario Limonciello   2024-12-05  242   * @dev: The device
-06ec24388f1de6 Mario Limonciello   2024-12-05  243   * @data: The available profile choices
-06ec24388f1de6 Mario Limonciello   2024-12-05  244   *
-06ec24388f1de6 Mario Limonciello   2024-12-05  245   * Return: 0 on success, -errno on failure
-06ec24388f1de6 Mario Limonciello   2024-12-05  246   */
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  247  static int _aggregate_choices(struct device *dev, void *data, bool secondary)
-06ec24388f1de6 Mario Limonciello   2024-12-05 @248  {
-06ec24388f1de6 Mario Limonciello   2024-12-05  249  	struct platform_profile_handler *handler;
-06ec24388f1de6 Mario Limonciello   2024-12-05  250  	unsigned long *aggregate = data;
-06ec24388f1de6 Mario Limonciello   2024-12-05  251  
-06ec24388f1de6 Mario Limonciello   2024-12-05  252  	lockdep_assert_held(&profile_lock);
-d960f14800b581 Kurt Borja          2025-01-15  253  	handler = to_pprof_handler(dev);
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  254  
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  255  	if (handler->ops->secondary != secondary)
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  256  		return 0;
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  257  
-06ec24388f1de6 Mario Limonciello   2024-12-05  258  	if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-06ec24388f1de6 Mario Limonciello   2024-12-05  259  		bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  260  	else if (handler->ops->secondary)
-724b0dfe3faddb Antheas Kapenekakis 2025-02-24  261  		bitmap_or(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LAST);
-06ec24388f1de6 Mario Limonciello   2024-12-05  262  	else
-06ec24388f1de6 Mario Limonciello   2024-12-05  263  		bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LAST);
-06ec24388f1de6 Mario Limonciello   2024-12-05  264  
-06ec24388f1de6 Mario Limonciello   2024-12-05  265  	return 0;
-06ec24388f1de6 Mario Limonciello   2024-12-05  266  }
-06ec24388f1de6 Mario Limonciello   2024-12-05  267  
+    10	
+    11	static u32 kfunc_md_count = ENTRIES_PER_PAGE, kfunc_md_used;
+  > 12	struct kfunc_md __rcu *kfunc_mds;
+    13	EXPORT_SYMBOL_GPL(kfunc_mds);
+    14	
+    15	static DEFINE_MUTEX(kfunc_md_mutex);
+    16	
+    17	
+    18	void kfunc_md_unlock(void)
+    19	{
+    20		mutex_unlock(&kfunc_md_mutex);
+    21	}
+    22	EXPORT_SYMBOL_GPL(kfunc_md_unlock);
+    23	
+    24	void kfunc_md_lock(void)
+    25	{
+    26		mutex_lock(&kfunc_md_mutex);
+    27	}
+    28	EXPORT_SYMBOL_GPL(kfunc_md_lock);
+    29	
+    30	static u32 kfunc_md_get_index(void *ip)
+    31	{
+    32		return *(u32 *)(ip - KFUNC_MD_DATA_OFFSET);
+    33	}
+    34	
+    35	static void kfunc_md_init(struct kfunc_md *mds, u32 start, u32 end)
+    36	{
+    37		u32 i;
+    38	
+    39		for (i = start; i < end; i++)
+    40			mds[i].users = 0;
+    41	}
+    42	
+    43	static int kfunc_md_page_order(void)
+    44	{
+    45		return fls(DIV_ROUND_UP(kfunc_md_count, ENTRIES_PER_PAGE)) - 1;
+    46	}
+    47	
+    48	/* Get next usable function metadata. On success, return the usable
+    49	 * kfunc_md and store the index of it to *index. If no usable kfunc_md is
+    50	 * found in kfunc_mds, a larger array will be allocated.
+    51	 */
+    52	static struct kfunc_md *kfunc_md_get_next(u32 *index)
+    53	{
+    54		struct kfunc_md *new_mds, *mds;
+    55		u32 i, order;
+    56	
+    57		mds = rcu_dereference(kfunc_mds);
+    58		if (mds == NULL) {
+    59			order = kfunc_md_page_order();
+    60			new_mds = (void *)__get_free_pages(GFP_KERNEL, order);
+    61			if (!new_mds)
+    62				return NULL;
+    63			kfunc_md_init(new_mds, 0, kfunc_md_count);
+    64			/* The first time to initialize kfunc_mds, so it is not
+    65			 * used anywhere yet, and we can update it directly.
+    66			 */
+    67			rcu_assign_pointer(kfunc_mds, new_mds);
+    68			mds = new_mds;
+    69		}
+    70	
+    71		if (likely(kfunc_md_used < kfunc_md_count)) {
+    72			/* maybe we can manage the used function metadata entry
+    73			 * with a bit map ?
+    74			 */
+    75			for (i = 0; i < kfunc_md_count; i++) {
+    76				if (!mds[i].users) {
+    77					kfunc_md_used++;
+    78					*index = i;
+    79					mds[i].users++;
+    80					return mds + i;
+    81				}
+    82			}
+    83		}
+    84	
+    85		order = kfunc_md_page_order();
+    86		/* no available function metadata, so allocate a bigger function
+    87		 * metadata array.
+    88		 */
+    89		new_mds = (void *)__get_free_pages(GFP_KERNEL, order + 1);
+    90		if (!new_mds)
+    91			return NULL;
+    92	
+    93		memcpy(new_mds, mds, kfunc_md_count * sizeof(*new_mds));
+    94		kfunc_md_init(new_mds, kfunc_md_count, kfunc_md_count * 2);
+    95	
+    96		rcu_assign_pointer(kfunc_mds, new_mds);
+    97		synchronize_rcu();
+  > 98		free_pages((u64)mds, order);
+    99	
+   100		mds = new_mds + kfunc_md_count;
+   101		*index = kfunc_md_count;
+   102		kfunc_md_count <<= 1;
+   103		kfunc_md_used++;
+   104		mds->users++;
+   105	
+   106		return mds;
+   107	}
+   108	
 
 -- 
 0-DAY CI Kernel Test Service
