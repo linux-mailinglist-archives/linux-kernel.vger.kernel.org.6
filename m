@@ -1,440 +1,109 @@
-Return-Path: <linux-kernel+bounces-535392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B0CA471F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:09:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6753BA471F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F285D1649E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D95A01648FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE4D161321;
-	Thu, 27 Feb 2025 02:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960317A318;
+	Thu, 27 Feb 2025 02:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="OUTyybaw"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MemwB/t2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D760156F28;
-	Thu, 27 Feb 2025 02:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F48517A30A;
+	Thu, 27 Feb 2025 02:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622144; cv=none; b=pMwK/HvSGOp1TM1zkWhYGsSYMVdrx6kSPLSFM+7TgLXQDe76Oh65qV+2BJZ12bzmXfJbnCd8GPRIp9cG1+aXgDEoiHnjb2YTM55aZRopcsNcBIN2V+LL7bwjD3WKSK//R+tBzlhB7kkOuFcIlykos4hzFBBGrAezliqVZ+7waKg=
+	t=1740622149; cv=none; b=BKgesT2A6DE84oA13nU+qYs1Z7WbBRELL2Pqdd6DPG6+Ump5w+7HnspRfhl43/FAdYk7cvXcrz1yJseiHM/YiJa04TGWvv9KXNQQQOXm+hb6uSLqNqm9Wr8SacKu+R7przOfa+zBrDVbIcL4p4VTJF2G2fYImj/Bo97k9QU7MZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622144; c=relaxed/simple;
-	bh=bf/XeIMdTAtmnI/9KSoJMzut1BWK5buVLRcUwxQ/iMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkZLJNx3iXUJC2kI/4d1rJ8NIcCDoSmJ9/KYHgQELHIT40XQJyl5L8eusZfu7l94Pm0pFcsWgJdGiL73a/h7/kSjobr9A73y/fhJvrAKNVVgoBcZeoXzEABp+dqBDaUa45o1hXqwhsTdQ/2g36o/w2VDMDIQzIkoFRFgjle+RFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=OUTyybaw; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=4qRigQ7XX02JFNaadjJDRp50X+7DY+xm7FhkNR3X6hY=; b=OUTyybawnu2GU6l4DTMRkjrwWr
-	pGMDbUYp+6UVb3KThrI2RjKGwXGIaOL540EDlNsTDaFpqJ3IzvhX0pTZRkBwkx+iCdF+3hbbJKCmP
-	DwDsdBy6kPY52ojOOsuu9nRhT9lU+yjfvjySuRoGaRPFiPyYXy98icX/xmKx2ccnFuK3rHZiyb7b3
-	yEaRG+3IMjfjWUhLqYQ4M8ky69/131PKbzTW8MrOvSf8wciA2eCZORg7M1Y+15R/fKcvqzustPpdt
-	MlJfICCiVTjCX8wzUM8w15zTHPJxiqoR0O7fDNb8+XeJ76sFMQmsXH9kCaqbz7tl06Qoz9kzhorSA
-	D/jnbDCA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tnTKa-0028WH-0i;
-	Thu, 27 Feb 2025 10:08:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 27 Feb 2025 10:08:56 +0800
-Date: Thu, 27 Feb 2025 10:08:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Nitin Gupta <nitingupta910@gmail.com>,
-	Richard Purdie <rpurdie@openedhand.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
-	Dave Rodgman <dave.rodgman@arm.com>
-Subject: [v2 PATCH] crypto: lzo - Fix compression buffer overrun
-Message-ID: <Z7_JOAgi-Ej3CCic@gondor.apana.org.au>
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
- <20250226130037.GS5777@twin.jikos.cz>
- <Z7_D4i5yifwdXjwZ@gondor.apana.org.au>
+	s=arc-20240116; t=1740622149; c=relaxed/simple;
+	bh=YKQPDFWLbcBJaFaNyrtcFXPUNWbF9I/UCfWEsAk8UFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IFPV5oqri2K5iUQDddgsFAr/jDI2NyVCWfq2ORY1bOtuglKYGQ03jJV0CP0OWZiHTmBf2LehVqykl9aq4kV6/QYup7hVJdHlybVitcEXNvc4E9tqySvfhgNCmVP53kGNb5JZbtzyRlc1PxHlyYNBAd1wfI+4bNDW6VwJPTUgwl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MemwB/t2; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740622149; x=1772158149;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YKQPDFWLbcBJaFaNyrtcFXPUNWbF9I/UCfWEsAk8UFs=;
+  b=MemwB/t2emj03nTLlX98lI9TCyXsWw0++rZMkt5TLE6k2D+MWe+L+SbA
+   cCPVMGRFLyoJmPlmIhlaZKYz+jh6VCMRsXv2MRaemWieJr/2OfTHaMbdS
+   YOjF+X6ZSX+bI2LtPUEndN/J6tlaOIp8FOSWqGc+TmPBPWjX1U16HAOrN
+   fal7SP+R2yiWnrWQk3uXCUcPCZ9sSkO2+GlaQ+1+RWqTZ1XoZCeCBHw53
+   8OIygBav59OOCN+aTwPBnMRM+8WlNrpRhRjqFATIfNkmYTCikhngy0lI/
+   2lmKkJkOInhusTMXm0Xm5LVPzVfaOcpErb92PYfWp3v2H/AodOgniKIFR
+   g==;
+X-CSE-ConnectionGUID: 7+FH4WRFSZ+rFzjoBPAJog==
+X-CSE-MsgGUID: W4+Z38KIQUymzsXvEjgUjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41518705"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="41518705"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 18:09:08 -0800
+X-CSE-ConnectionGUID: 3zzLp7cqRfyU7rbEN+VXvw==
+X-CSE-MsgGUID: ft54dxorTYCOfas6YWGQKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121003116"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 18:09:03 -0800
+Message-ID: <5bce57a6-f554-4a54-bf87-08a30c60bea9@linux.intel.com>
+Date: Thu, 27 Feb 2025 10:09:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7_D4i5yifwdXjwZ@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
+ initialize PEBS_BASE MSR
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+ <20250225112543.GM11590@noisy.programming.kicks-ass.net>
+ <000043b8-1284-46f3-b117-9ece905f218e@linux.intel.com>
+ <20250226094841.GT11590@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250226094841.GT11590@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Unlike the decompression code, the compression code in LZO never
-checked for output overruns.  It instead assumes that the caller
-always provides enough buffer space, disregarding the buffer length
-provided by the caller.
 
-Add a safe compression interface that checks for the end of buffer
-before each write.  Use the safe interface in crypto/lzo.
+On 2/26/2025 5:48 PM, Peter Zijlstra wrote:
+> On Wed, Feb 26, 2025 at 02:19:15PM +0800, Mi, Dapeng wrote:
+>> On 2/25/2025 7:25 PM, Peter Zijlstra wrote:
+>>> On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
+>>>> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
+>>>> buffer physical address. This patch allocates arch-PEBS buffer and then
+>>>> initialize IA32_PEBS_BASE MSR with the buffer physical address.
+>>> Just to clarify, parts with ARCH PEBS will not have BTS and thus not
+>>> have DS?
+>> No, DS and BTS still exist along with arch-PEBS, only the legacy DS based
+>> PEBS is unavailable and replaced by arch-PEBS.
+> Joy. Is anybody still using BTS now that we have PT? I thought PT was
+> supposed to be the better BTS.
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
----
- crypto/lzo-rle.c              |  2 +-
- crypto/lzo.c                  |  2 +-
- include/linux/lzo.h           |  8 +++
- lib/lzo/Makefile              |  2 +-
- lib/lzo/lzo1x_compress.c      | 99 ++++++++++++++++++++++++++---------
- lib/lzo/lzo1x_compress_safe.c | 18 +++++++
- 6 files changed, 103 insertions(+), 28 deletions(-)
- create mode 100644 lib/lzo/lzo1x_compress_safe.c
+Yeah, I suppose no one still use BTS, but suppose it would need a long time
+to drop BTS on HW.
 
-diff --git a/crypto/lzo-rle.c b/crypto/lzo-rle.c
-index 0631d975bfac..0abc2d87f042 100644
---- a/crypto/lzo-rle.c
-+++ b/crypto/lzo-rle.c
-@@ -55,7 +55,7 @@ static int __lzorle_compress(const u8 *src, unsigned int slen,
- 	size_t tmp_len = *dlen; /* size_t(ulong) <-> uint on 64 bit */
- 	int err;
- 
--	err = lzorle1x_1_compress(src, slen, dst, &tmp_len, ctx);
-+	err = lzorle1x_1_compress_safe(src, slen, dst, &tmp_len, ctx);
- 
- 	if (err != LZO_E_OK)
- 		return -EINVAL;
-diff --git a/crypto/lzo.c b/crypto/lzo.c
-index ebda132dd22b..8338851c7406 100644
---- a/crypto/lzo.c
-+++ b/crypto/lzo.c
-@@ -55,7 +55,7 @@ static int __lzo_compress(const u8 *src, unsigned int slen,
- 	size_t tmp_len = *dlen; /* size_t(ulong) <-> uint on 64 bit */
- 	int err;
- 
--	err = lzo1x_1_compress(src, slen, dst, &tmp_len, ctx);
-+	err = lzo1x_1_compress_safe(src, slen, dst, &tmp_len, ctx);
- 
- 	if (err != LZO_E_OK)
- 		return -EINVAL;
-diff --git a/include/linux/lzo.h b/include/linux/lzo.h
-index e95c7d1092b2..4d30e3624acd 100644
---- a/include/linux/lzo.h
-+++ b/include/linux/lzo.h
-@@ -24,10 +24,18 @@
- int lzo1x_1_compress(const unsigned char *src, size_t src_len,
- 		     unsigned char *dst, size_t *dst_len, void *wrkmem);
- 
-+/* Same as above but does not write more than dst_len to dst. */
-+int lzo1x_1_compress_safe(const unsigned char *src, size_t src_len,
-+			  unsigned char *dst, size_t *dst_len, void *wrkmem);
-+
- /* This requires 'wrkmem' of size LZO1X_1_MEM_COMPRESS */
- int lzorle1x_1_compress(const unsigned char *src, size_t src_len,
- 		     unsigned char *dst, size_t *dst_len, void *wrkmem);
- 
-+/* Same as above but does not write more than dst_len to dst. */
-+int lzorle1x_1_compress_safe(const unsigned char *src, size_t src_len,
-+			     unsigned char *dst, size_t *dst_len, void *wrkmem);
-+
- /* safe decompression with overrun testing */
- int lzo1x_decompress_safe(const unsigned char *src, size_t src_len,
- 			  unsigned char *dst, size_t *dst_len);
-diff --git a/lib/lzo/Makefile b/lib/lzo/Makefile
-index 2f58fafbbddd..fc7b2b7ef4b2 100644
---- a/lib/lzo/Makefile
-+++ b/lib/lzo/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--lzo_compress-objs := lzo1x_compress.o
-+lzo_compress-objs := lzo1x_compress.o lzo1x_compress_safe.o
- lzo_decompress-objs := lzo1x_decompress_safe.o
- 
- obj-$(CONFIG_LZO_COMPRESS) += lzo_compress.o
-diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-index 47d6d43ea957..c89d97bf9693 100644
---- a/lib/lzo/lzo1x_compress.c
-+++ b/lib/lzo/lzo1x_compress.c
-@@ -18,11 +18,19 @@
- #include <linux/lzo.h>
- #include "lzodefs.h"
- 
--static noinline size_t
--lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
--		    unsigned char *out, size_t *out_len,
--		    size_t ti, void *wrkmem, signed char *state_offset,
--		    const unsigned char bitstream_version)
-+#ifndef LZO_SAFE
-+#define LZO_SAFE(name) name
-+#define HAVE_OP(x) 1
-+#endif
-+
-+#define NEED_OP(x) if (!HAVE_OP(x)) goto output_overrun
-+
-+static noinline int
-+LZO_SAFE(lzo1x_1_do_compress)(const unsigned char *in, size_t in_len,
-+			      unsigned char **out, unsigned char *op_end,
-+			      size_t *tp, void *wrkmem,
-+			      signed char *state_offset,
-+			      const unsigned char bitstream_version)
- {
- 	const unsigned char *ip;
- 	unsigned char *op;
-@@ -30,8 +38,9 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 	const unsigned char * const ip_end = in + in_len - 20;
- 	const unsigned char *ii;
- 	lzo_dict_t * const dict = (lzo_dict_t *) wrkmem;
-+	size_t ti = *tp;
- 
--	op = out;
-+	op = *out;
- 	ip = in;
- 	ii = ip;
- 	ip += ti < 4 ? 4 - ti : 0;
-@@ -116,25 +125,32 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 		if (t != 0) {
- 			if (t <= 3) {
- 				op[*state_offset] |= t;
-+				NEED_OP(4);
- 				COPY4(op, ii);
- 				op += t;
- 			} else if (t <= 16) {
-+				NEED_OP(17);
- 				*op++ = (t - 3);
- 				COPY8(op, ii);
- 				COPY8(op + 8, ii + 8);
- 				op += t;
- 			} else {
- 				if (t <= 18) {
-+					NEED_OP(1);
- 					*op++ = (t - 3);
- 				} else {
- 					size_t tt = t - 18;
-+					NEED_OP(1);
- 					*op++ = 0;
- 					while (unlikely(tt > 255)) {
- 						tt -= 255;
-+						NEED_OP(1);
- 						*op++ = 0;
- 					}
-+					NEED_OP(1);
- 					*op++ = tt;
- 				}
-+				NEED_OP(t);
- 				do {
- 					COPY8(op, ii);
- 					COPY8(op + 8, ii + 8);
-@@ -151,6 +167,7 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 		if (unlikely(run_length)) {
- 			ip += run_length;
- 			run_length -= MIN_ZERO_RUN_LENGTH;
-+			NEED_OP(4);
- 			put_unaligned_le32((run_length << 21) | 0xfffc18
- 					   | (run_length & 0x7), op);
- 			op += 4;
-@@ -243,10 +260,12 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 		ip += m_len;
- 		if (m_len <= M2_MAX_LEN && m_off <= M2_MAX_OFFSET) {
- 			m_off -= 1;
-+			NEED_OP(2);
- 			*op++ = (((m_len - 1) << 5) | ((m_off & 7) << 2));
- 			*op++ = (m_off >> 3);
- 		} else if (m_off <= M3_MAX_OFFSET) {
- 			m_off -= 1;
-+			NEED_OP(1);
- 			if (m_len <= M3_MAX_LEN)
- 				*op++ = (M3_MARKER | (m_len - 2));
- 			else {
-@@ -254,14 +273,18 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 				*op++ = M3_MARKER | 0;
- 				while (unlikely(m_len > 255)) {
- 					m_len -= 255;
-+					NEED_OP(1);
- 					*op++ = 0;
- 				}
-+				NEED_OP(1);
- 				*op++ = (m_len);
- 			}
-+			NEED_OP(2);
- 			*op++ = (m_off << 2);
- 			*op++ = (m_off >> 6);
- 		} else {
- 			m_off -= 0x4000;
-+			NEED_OP(1);
- 			if (m_len <= M4_MAX_LEN)
- 				*op++ = (M4_MARKER | ((m_off >> 11) & 8)
- 						| (m_len - 2));
-@@ -282,11 +305,14 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 				m_len -= M4_MAX_LEN;
- 				*op++ = (M4_MARKER | ((m_off >> 11) & 8));
- 				while (unlikely(m_len > 255)) {
-+					NEED_OP(1);
- 					m_len -= 255;
- 					*op++ = 0;
- 				}
-+				NEED_OP(1);
- 				*op++ = (m_len);
- 			}
-+			NEED_OP(2);
- 			*op++ = (m_off << 2);
- 			*op++ = (m_off >> 6);
- 		}
-@@ -295,14 +321,20 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 		ii = ip;
- 		goto next;
- 	}
--	*out_len = op - out;
--	return in_end - (ii - ti);
-+	*out = op;
-+	*tp = in_end - (ii - ti);
-+	return LZO_E_OK;
-+
-+output_overrun:
-+	return LZO_E_OUTPUT_OVERRUN;
- }
- 
--static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
--		     unsigned char *out, size_t *out_len,
--		     void *wrkmem, const unsigned char bitstream_version)
-+static int LZO_SAFE(lzogeneric1x_1_compress)(
-+	const unsigned char *in, size_t in_len,
-+	unsigned char *out, size_t *out_len,
-+	void *wrkmem, const unsigned char bitstream_version)
- {
-+	unsigned char * const op_end = out + *out_len;
- 	const unsigned char *ip = in;
- 	unsigned char *op = out;
- 	unsigned char *data_start;
-@@ -326,14 +358,18 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
- 	while (l > 20) {
- 		size_t ll = min_t(size_t, l, m4_max_offset + 1);
- 		uintptr_t ll_end = (uintptr_t) ip + ll;
-+		int err;
-+
- 		if ((ll_end + ((t + ll) >> 5)) <= ll_end)
- 			break;
- 		BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
- 		memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
--		t = lzo1x_1_do_compress(ip, ll, op, out_len, t, wrkmem,
--					&state_offset, bitstream_version);
-+		err = LZO_SAFE(lzo1x_1_do_compress)(
-+			ip, ll, &op, op_end, &t, wrkmem,
-+			&state_offset, bitstream_version);
-+		if (err != LZO_E_OK)
-+			return err;
- 		ip += ll;
--		op += *out_len;
- 		l  -= ll;
- 	}
- 	t += l;
-@@ -342,20 +378,26 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
- 		const unsigned char *ii = in + in_len - t;
- 
- 		if (op == data_start && t <= 238) {
-+			NEED_OP(1);
- 			*op++ = (17 + t);
- 		} else if (t <= 3) {
- 			op[state_offset] |= t;
- 		} else if (t <= 18) {
-+			NEED_OP(1);
- 			*op++ = (t - 3);
- 		} else {
- 			size_t tt = t - 18;
-+			NEED_OP(1);
- 			*op++ = 0;
- 			while (tt > 255) {
- 				tt -= 255;
-+				NEED_OP(1);
- 				*op++ = 0;
- 			}
-+			NEED_OP(1);
- 			*op++ = tt;
- 		}
-+		NEED_OP(t);
- 		if (t >= 16) do {
- 			COPY8(op, ii);
- 			COPY8(op + 8, ii + 8);
-@@ -368,31 +410,38 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
- 		} while (--t > 0);
- 	}
- 
-+	NEED_OP(3);
- 	*op++ = M4_MARKER | 1;
- 	*op++ = 0;
- 	*op++ = 0;
- 
- 	*out_len = op - out;
- 	return LZO_E_OK;
-+
-+output_overrun:
-+	return LZO_E_OUTPUT_OVERRUN;
- }
- 
--int lzo1x_1_compress(const unsigned char *in, size_t in_len,
--		     unsigned char *out, size_t *out_len,
--		     void *wrkmem)
-+int LZO_SAFE(lzo1x_1_compress)(const unsigned char *in, size_t in_len,
-+			       unsigned char *out, size_t *out_len,
-+			       void *wrkmem)
- {
--	return lzogeneric1x_1_compress(in, in_len, out, out_len, wrkmem, 0);
-+	return LZO_SAFE(lzogeneric1x_1_compress)(
-+		in, in_len, out, out_len, wrkmem, 0);
- }
- 
--int lzorle1x_1_compress(const unsigned char *in, size_t in_len,
--		     unsigned char *out, size_t *out_len,
--		     void *wrkmem)
-+int LZO_SAFE(lzorle1x_1_compress)(const unsigned char *in, size_t in_len,
-+				  unsigned char *out, size_t *out_len,
-+				  void *wrkmem)
- {
--	return lzogeneric1x_1_compress(in, in_len, out, out_len,
--				       wrkmem, LZO_VERSION);
-+	return LZO_SAFE(lzogeneric1x_1_compress)(
-+		in, in_len, out, out_len, wrkmem, LZO_VERSION);
- }
- 
--EXPORT_SYMBOL_GPL(lzo1x_1_compress);
--EXPORT_SYMBOL_GPL(lzorle1x_1_compress);
-+EXPORT_SYMBOL_GPL(LZO_SAFE(lzo1x_1_compress));
-+EXPORT_SYMBOL_GPL(LZO_SAFE(lzorle1x_1_compress));
- 
-+#ifndef LZO_SAFE
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("LZO1X-1 Compressor");
-+#endif
-diff --git a/lib/lzo/lzo1x_compress_safe.c b/lib/lzo/lzo1x_compress_safe.c
-new file mode 100644
-index 000000000000..371c9f849492
---- /dev/null
-+++ b/lib/lzo/lzo1x_compress_safe.c
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ *  LZO1X Compressor from LZO
-+ *
-+ *  Copyright (C) 1996-2012 Markus F.X.J. Oberhumer <markus@oberhumer.com>
-+ *
-+ *  The full LZO package can be found at:
-+ *  http://www.oberhumer.com/opensource/lzo/
-+ *
-+ *  Changed for Linux kernel use by:
-+ *  Nitin Gupta <nitingupta910@gmail.com>
-+ *  Richard Purdie <rpurdie@openedhand.com>
-+ */
-+
-+#define LZO_SAFE(name) name##_safe
-+#define HAVE_OP(x) ((size_t)(op_end - op) >= (size_t)(x))
-+
-+#include "lzo1x_compress.c"
--- 
-2.39.5
 
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
