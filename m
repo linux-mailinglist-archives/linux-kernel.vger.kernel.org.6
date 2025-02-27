@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-537373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BFDA48B0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:04:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C64FA48B0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2191886A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:04:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCD616C8BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF063271824;
-	Thu, 27 Feb 2025 22:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90079272918;
+	Thu, 27 Feb 2025 22:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3r0tyFq"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxZTLGnN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFC418FC84;
-	Thu, 27 Feb 2025 22:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1FE27290B;
+	Thu, 27 Feb 2025 22:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740693856; cv=none; b=quIfAQDx8qkjRkpjEHWfomuiRHcZDebciuNzILIqmyFT0nZHb8n2XMlP0YzWnB6+YJ8rBE4WQ97DdeljI98c2XhUxmvqqSYqM400m9JB67vLSeyfXA5FMyzMszURPdiKJ+LVwCDS+lcGuEMlgLgedvatEJ+47iKe/om9ymV3BrQ=
+	t=1740693859; cv=none; b=HpjrQTsM6oDH3pZ8VTqa5BF/oHqWKbOXfFdSd8EQhIa4yMHIybdRRcIp8P/yKwdR1BqHXxCMm/4jSZKELsgP6XSNCgQ2kEH3MYDiuImEYzD9yUad5h7bc18f1NEVkK/fidJqc0xXi7Mpa06w7wjlnRsGOGxCqlWheYDhsPpaMD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740693856; c=relaxed/simple;
-	bh=xngXQqYEAcf/7AhQRNhKxM2ws1Kd8055O4/vXTYh1qg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VCv79byYN7VuSpsvj0HqA1WbvOc6qTOJuSgt19L1/aVvLr3f0rEMdwa3Q8NWALudiDxA1iuX4MaDqKXufi2TlcgB9tWq9MwzDaPZp/6ljmwyHsQiuhH8C4Fl7HFh91AKa/o0bj1RJYr4vptGnsdcrH1QZ3FMw54UtvUBVHHMolE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3r0tyFq; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso9648015e9.3;
-        Thu, 27 Feb 2025 14:04:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740693853; x=1741298653; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTEICTXX0v/2ycsWLKp/kEJBl5CKbsp967v5/0zdLMY=;
-        b=I3r0tyFq9X6+3koEpAkWH74+MZndeCO6RBjQqlPKQrP3F0dMRFctjGgi/nOq4Fyri/
-         y0pGEoF/0IgQdgi0OJKbAISBm6USBt64OpOSQtiCyh1Uc3bwErgDFVDCo/wxFFBT7IfS
-         R3JD3TOXTncjFbvpHrrd6LQSmeIyqnpjCi/zwBsjqLILFlviY+jTfsIEcPiC7/P/AUhh
-         U+1UUAX45DgrAJ6x7qGT8tzWf+S0yv3FA8f2KcWmmjwT/yiccF6kuvsaLM9tqKkprnXe
-         lH51OhbCHxkBfZVtONF4qfqQN5kexVxMjFUtioL8pGfWkQWmgG0d7kiDEu76Uf0Mmhqv
-         /8FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740693853; x=1741298653;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CTEICTXX0v/2ycsWLKp/kEJBl5CKbsp967v5/0zdLMY=;
-        b=aRjVkor9ygC0FgRRZ/I1wpl7Falf/3ouwq4+ir+M5dwmjsFD5fRtfBBKc8xvKMtWGV
-         T/CMkXbhDG/6781TySz5KGYltLeT199JlbTkxpNODnU/ugAUlizbxvPFB+P1Bazdr6s9
-         DhqT1zPU5vJspGtuweIxLMzT929MvtKVbZMM4DoFyP8iuHn8XN8yUpxFMOKuJXSRH6EI
-         44bK6OdNS+9jdXuKp5PJQaukwMH2PQkJmvdJj4x5Zhk1buXK0i5zLp6YgowW8ussESvu
-         Fep2lD8K5CAelte2B7xMhlGkILXyyR0BZ9Vyp9HLOcTm7GdkJBQnt5LcTeZsHInJ0X9S
-         J2mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXrFv/hTlyhFe0iaXpkphP2NJL27wH1gqdKEHMypVlTNO52fMk1iFZfOqyJCvoLUTq096jLWyb1tDoDNWJwQujMw==@vger.kernel.org, AJvYcCVzppzRLWM6LTHgMAD7tSac8OKQ545hpKOznQO2g/dqFdHxQa8MocMXHuRHSXEqe8tVOiHnadDTU7IUQCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiuXdbyiZqdLtICQXgsv13ZsXp275i5wd9oLujVFlrMOmql+gw
-	75lYyV+AJXT06CGdjieyhsybf+sL5U5KZeZ+wV4LmAQw8HdA6IYy
-X-Gm-Gg: ASbGncu5EUS9Uh29+zCtJU6W/q9C0qCN0eFYlvBjXqJeSyKxowwlB17Zxx+1du4qvW9
-	EhE4OPqFPtmSyPf1Uu3inVuHgfF0p3WE8PcsL6BUh50wjzwNWCxzlt9nE96BGlzNf1IGxVVb7tZ
-	8aC4LDVi00F25uJn408u/472pwtlrc3zD4CR4vGzD7U+NqfZFhdIhoJHG8FBonqMwVMG1/9Hz8+
-	AuBWhlX9yS/KL5B3KIogEWf0X5znIE6d4ZWKx2zRe2/wexvB2lrj/sRF1IkV7eGSjJr+pQCU95o
-	CuIUH3gBblfSQ8Bv6qL2jtEHlLM=
-X-Google-Smtp-Source: AGHT+IHYQVSTiCOehgMLftDnItrbUgzcs+nCocHyjI2ZzAf9fDCP0/5iMgqxOIVpoWgvLX6RiklQrw==
-X-Received: by 2002:a05:600c:4687:b0:439:7b5e:820a with SMTP id 5b1f17b1804b1-43ba66e1baamr7596765e9.11.1740693852611;
-        Thu, 27 Feb 2025 14:04:12 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43b73718abcsm35271345e9.22.2025.02.27.14.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:04:12 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf test: Fix spelling mistake "sythesizing" -> "synthesizing"
-Date: Thu, 27 Feb 2025 22:03:37 +0000
-Message-ID: <20250227220337.656384-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740693859; c=relaxed/simple;
+	bh=8OhUuNJoGvKBi/xXdJRzG3+310qxdtLu5DkmfSui/14=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aNuLuZ7m0AD+OI6vuABUlYC6gkMEDvoLswiGbnw1odLfIpfaC+y4xsG2/CO4pR+XPykmmBj6wX5QqVzVNokgv3dT6PmK0RzOcUmzLpYNeU/HSTNGS4mhSSXqjeDAKAd8TIvVRIfoSwJ8j3yUCAvYUkVIuvbOAp+NHR/RRxbSqv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxZTLGnN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD15C4CEE7;
+	Thu, 27 Feb 2025 22:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740693858;
+	bh=8OhUuNJoGvKBi/xXdJRzG3+310qxdtLu5DkmfSui/14=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fxZTLGnNlY+00IW2BFMKDuRednd+97WhfqcyApcmqe0DvNvAfk1Px72s3tOaVyul7
+	 j29swFKRllBJhTpoJMf8smYzsLJvYVztY/7hfNs83DKdifJ5sfshCf9+2MfFBkmA8C
+	 gw8kO65IInHWiXFY2o0LoeE//7eATetkqT/3s1mYrT2Zl57C0aBoFCaosAxGEvGpmf
+	 Q0L5N2Tz8mWD/vW2s8OPNvYfSqoF+0Z1Zn9PAeZDEtE6JH3xXPA3T+atI8sKsgwL8M
+	 2K7q6RbgYae0/KjHV1QyzHrr/2nn5H8S2TYlwn2BXHf90yEsAsJ1ckf5N7dTg23b9X
+	 pkTTDClv2Rc3A==
+Date: Thu, 27 Feb 2025 16:04:17 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: bhelgaas@google.com, rafael.j.wysocki@intel.com, yinghai@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: fix reference leak in pci_alloc_child_bus()
+Message-ID: <20250227220417.GA19880@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250202062357.872971-1-make24@iscas.ac.cn>
 
-There are spelling mistakes in two TEST_ASSERT_VAL messages. Fix
-them.
+On Sun, Feb 02, 2025 at 02:23:57PM +0800, Ma Ke wrote:
+> When device_register(&child->dev) failed, we should call put_device()
+> to explicitly release child->dev.
+> 
+> As comment of device_register() says, 'NOTE: _Never_ directly free
+> @dev after calling this function, even if it returned an error! Always
+> use put_device() to give up the reference initialized in this function
+> instead.'
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 4f535093cf8f ("PCI: Put pci_dev in device tree as early as possible")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/perf/tests/mmap-thread-lookup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied with Ilpo's reviewed-by to pci/enumeration for v6.15, thanks!
 
-diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
-index ddd1da9a4ba9..446a3615d720 100644
---- a/tools/perf/tests/mmap-thread-lookup.c
-+++ b/tools/perf/tests/mmap-thread-lookup.c
-@@ -229,11 +229,11 @@ static int mmap_events(synth_cb synth)
- static int test__mmap_thread_lookup(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
- {
- 	/* perf_event__synthesize_threads synthesize */
--	TEST_ASSERT_VAL("failed with sythesizing all",
-+	TEST_ASSERT_VAL("failed with synthesizing all",
- 			!mmap_events(synth_all));
- 
- 	/* perf_event__synthesize_thread_map synthesize */
--	TEST_ASSERT_VAL("failed with sythesizing process",
-+	TEST_ASSERT_VAL("failed with synthesizing process",
- 			!mmap_events(synth_process));
- 
- 	return 0;
--- 
-2.47.2
-
+> ---
+> Changes in v3:
+> - modified the description as suggestions.
+> Changes in v2:
+> - added the bug description about the comment of device_add();
+> - fixed the patch as suggestions;
+> - added Cc and Fixes table.
+> ---
+>  drivers/pci/probe.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 2e81ab0f5a25..51b78fcda4eb 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1174,7 +1174,10 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+>  add_dev:
+>  	pci_set_bus_msi_domain(child);
+>  	ret = device_register(&child->dev);
+> -	WARN_ON(ret < 0);
+> +	if (WARN_ON(ret < 0)) {
+> +		put_device(&child->dev);
+> +		return NULL;
+> +	}
+>  
+>  	pcibios_add_bus(child);
+>  
+> -- 
+> 2.25.1
+> 
 
