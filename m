@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-535692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D594AA47617
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:54:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6776A4761C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26F8188EB01
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF38F16E0F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D222165F1;
-	Thu, 27 Feb 2025 06:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA494A1A;
+	Thu, 27 Feb 2025 06:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hyo8AY5e"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LfA3cnA1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E5D4A1A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1C61E833E;
+	Thu, 27 Feb 2025 06:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740639268; cv=none; b=taJM1tuYFxqAZqp2YPqyl5wtWq9nWAGCajhTH9zI+yAGSoJAGqKlMiN3nunNvLpvrqYd/11agHgw6wpj4f3sNXnj47ijFphpOyuI8nKirrPc57cQg8zcMo+6P1AHdmZGLEDltDFLyIDt2tGBUNfmG+eVw3Hi0ZIcxBdpIGSpMYU=
+	t=1740639313; cv=none; b=p5V4553tY2+sljKzer8jqZCGqjMVSaSJo1w7t5RrHvFn4NjPWEN11M/IF2iIwGvDE59MdT7ZmbXlQLL9EjLlvuKIlUFbRQHCD/yHLyJVBssObP5zmkSM5ER3ptkncbJJ4pSTl550hYW1CRg+6S+K2AF5XatqRMmroegwKRRGaWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740639268; c=relaxed/simple;
-	bh=lzORzd0bbuVVhlmBUyJmEfYlw5eqNKYZeCEP+JpbZTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBAQ8nM6EVhtDMK9fmXCt+OFgR9fCdQ7q87JKO1JxYsztTv48QDlVv+ZjFh6kAX+saYCUfYt7z5WRr3PwNpf9VWfAxpWA+y4Lyw9W+IgI4oSC34oc8obTJSoukRGoDrjAQEdbR1ersOIeviUAOfGuX4hF1tfscnC5LqaUhGtod0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hyo8AY5e; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2211cd4463cso9598245ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:54:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740639266; x=1741244066; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lH2C/n46Yht8kzUV4sr5Zn74fCCKRKj2j+yhvxYr5To=;
-        b=hyo8AY5eb9VaJY6jH9Z0Awsh1Iehc+5t2noYTRUtWjSTIc9he5k2e/ir5x6GFZ5cLv
-         uQ+wTWLiSwtXP/UbnHxN1UexVU2F8MGn7bTUbgjQkdWtGLgZLgnKACH8StyA42vUZlne
-         wcji2R1Ta41FdgwRdqvKrxysoD8v95WmfCyAk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740639266; x=1741244066;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lH2C/n46Yht8kzUV4sr5Zn74fCCKRKj2j+yhvxYr5To=;
-        b=Zikvh6tGgjNaKjiSuvkgrkYmMM2F4wC4o5H8YZ9wOLQRU57SeF4LMq+0thEFwicQJv
-         WuOV1UaCa8yzBTXyRoisNTZmTyZ5dCqUAk4VamE31lPdxX2EVWUlFr3zRK5ctS5wAgVA
-         cgF3iVE7IQtIhPqRsB10/1Pa0AZlLhUE6qPOBjLY6WoiaCiTHB6hbCYK+Dw+tWlsvz49
-         TKoe4y6cxgvB4wjlhnjZKq+yoAyyyE7kipFGFOWMczPZUOsUleCO+kWgJyfMiryYqguY
-         90Qa0gkqwJiQc10ff6VnkRjYaC/JloHvxYfgcDqSmU2MC2MRp+jWIZR7fFJQo8VyOyk5
-         PF9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTuExfYS+UVMXw/LosRY3ffQNHJQQyonYEPx6T5h+8RYq/p+cNT2XfK6JhljqxJMUmSXu91mzXqMWnCvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdcjjpKmYR6KgqikNjzZ1umyEFqLVcy066q9y5D/nFoV+C/NW9
-	5NCsfrddqAXZcqTGZ+fuBss28cI0S73ATlo+bbOWOHLd0aY/usHFE8P7i6nlxA==
-X-Gm-Gg: ASbGncuwOQeDXAFxJQyvg1cPbGo8pQvgLRb0semLLS0mlFUuJZ7pWk16b/A0Z7PCzka
-	zmwNstdKGzjUdhCYhAsJhlYGVJzLXCaZw+eleYZJ/TEVCE/5LcvyZSKnq4uypLWuD9K4ooYR6A1
-	cniz9dM4Jhij5xouAgOxaJ8FtGHJty43tukAeCd1kUYn2JKv11wwmYr5WbVlqPTnPzyJlpTdBse
-	5p9L+ihu02e4d+mcpuGDrZy/obi40AODMLXVwIiX7XvOXiYdOgTF8cy10BYDe3/j+HvLHajhqSA
-	I9zsqkG/fhFjot6BD2GxtWf0P2JhPA==
-X-Google-Smtp-Source: AGHT+IGSM3FsMOChRapiomjr2yB8jTVLSryznMtKWSN4x+YoPzsnwyLngheGCEYZdw2ccKAMG5s3yg==
-X-Received: by 2002:a17:902:dad0:b0:220:fe51:1aab with SMTP id d9443c01a7336-22307e675camr183025785ad.38.1740639265908;
-        Wed, 26 Feb 2025 22:54:25 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:a9c0:1bc1:74e3:3e31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050fdafsm7123465ad.214.2025.02.26.22.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 22:54:25 -0800 (PST)
-Date: Thu, 27 Feb 2025 15:54:19 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 14/19] zsmalloc: introduce new object mapping API
-Message-ID: <4zyr3n2h275zrzgseyvhani2m3avsonobqpg7xzumsnm5rzum2@b7c2xenjkidz>
-References: <20250227043618.88380-1-senozhatsky@chromium.org>
- <20250227043618.88380-15-senozhatsky@chromium.org>
- <Z7_8koiBRTfQ81bb@google.com>
+	s=arc-20240116; t=1740639313; c=relaxed/simple;
+	bh=Rah8554CJPSuI7hwR5a69ntf02EFSwA2o+FpvqCaGvE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CuyB9HDud0MNmZHLys2toF827HVjzqh0iKxgEjY7e4MNSPKN6bOmcdsVXBq3EJ3cFG3T0T593MzIDouBkA4+bBAJy1UtHnvWUVs1lzwYkZFgFRW8OYtvuxsTopgt7Psr5vhYppGVyWsw89aDGKzvKqjeJrUyna41yVEVwUFKfj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LfA3cnA1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QJmFXv000916;
+	Thu, 27 Feb 2025 06:54:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ma23cpCB+sH7jcQve34WZ3
+	A6EACzxMqLV01mpm0XXVA=; b=LfA3cnA1gZTAAzprf+0lcQatixN96a5VKLAWfW
+	q7UorttdCkjUrbj0tThxrHN6xCewY0gYiLJPc1AiCoBN5ay0v2UNxEyfpLki0cDi
+	VxSl5tFTyMW9XCtbQxwspzwDUTOTmTqFut1ahdpsJR4iLk+1Nh64u8wSUPa7oR3i
+	kA6IGB8ssxsZRcnIGXJSrZ9yq5adup2xVDQ71TOAI80T2d3OCI5gTzXdOCh+34/W
+	aHxHxkzm1c0tYRE5BDhu/JyTl5BzdIHDaNtsAixw5krcDQURrG38BDVsvMugTVDI
+	0zjMXKZPIHbTEyLba/2+7XwanZgWYwbm8tNPFsDWaA7HCz3g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451pu9cnwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 06:54:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R6suYG011018
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 06:54:56 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 26 Feb 2025 22:54:52 -0800
+From: Stone Zhang <quic_stonez@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_miaoqing@quicinc.com>,
+        <quic_zhichen@quicinc.com>, <quic_yuzha@quicinc.com>,
+        Stone Zhang
+	<quic_stonez@quicinc.com>
+Subject: [PATCH v2 0/2] Enable WLAN for qcs8300-ride
+Date: Thu, 27 Feb 2025 14:54:37 +0800
+Message-ID: <20250227065439.1407230-1-quic_stonez@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7_8koiBRTfQ81bb@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3cO1lSlamPALVcWCCqUuizKA8OKf9azX
+X-Proofpoint-ORIG-GUID: 3cO1lSlamPALVcWCCqUuizKA8OKf9azX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=753 malwarescore=0 suspectscore=0 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270051
 
-On (25/02/27 05:48), Yosry Ahmed wrote:
-> > The old API will stay around until the remaining users switch
-> > to the new one.  After that we'll also remove zsmalloc per-CPU
-> > buffer and CPU hotplug handling.
-> > 
-> > The split of map(RO) and map(WO) into read_{begin/end}/write is
-> > suggested by Yosry Ahmed.
-> > 
-> > Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> 
-> I see my Reviewed-by was removed at some point. Did something change in
-> this patch (do I need to review it again) or was it just lost?
+Enable the WLAN subsystem of the qcs8300 ride board. The WCN6855 wireless
+chip is attached to PCIe interface 0.
 
-No, nothing has changed.  I am actually not sure why it's not there
-anymore... Sorry.
+This patch series depends on:
+- pmic
+https://lore.kernel.org/all/20250108-adds-spmi-pmic-peripherals-for-qcs8300-v3-0-ee94642279ff@quicinc.com/
+- pcie
+https://lore.kernel.org/all/20241220055239.2744024-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Rename the nodes name according to DTS coding style (Konrad & Krzysztof)
+- Provide regulator-min/max-microvolt to the regulators (Konrad)
+
+Stone Zhang (2):
+  arm64: dts: qcom: qcs8300: add a PCIe port for WLAN
+  arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
+
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 100 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi     |   9 ++
+ 2 files changed, 109 insertions(+)
+
+
+base-commit: 40b8e93e17bff4a4e0cc129e04f9fdf5daa5397e
+prerequisite-patch-id: 7777ec69b5f2389a2efdb0bda561b067da72abfb
+prerequisite-patch-id: e6140f9abf38172e77875f126da90bde6e1829cb
+prerequisite-patch-id: c4e0283b4bce4c4e0566d7783f8ccd7fcaaebd3f
+prerequisite-patch-id: 7678941813d86157f57b11c3596089ba86080fd6
+prerequisite-patch-id: c87e5f1cb29568c24566e8a960d6c8dd0be5969d
+prerequisite-patch-id: f80a486c6e34dfb62f09faf0eb3fae586cda85ec
+prerequisite-patch-id: 0e2cb7a4d8779539a58261111deea6bd6b750f6f
+prerequisite-patch-id: abc8aa5792945decdcba9d5c1e43072402f5a65f
+prerequisite-patch-id: edd904882daa9ed31340710e36905c82c4552c8e
+prerequisite-patch-id: e68c6ea627fb6d61af3518720dfb765f6285bb22
+prerequisite-patch-id: 564513b0c808e8166d57f0537a9a057fe9cafa77
+prerequisite-patch-id: e68c6ea627fb6d61af3518720dfb765f6285bb22
+-- 
+2.45.2
+
 
