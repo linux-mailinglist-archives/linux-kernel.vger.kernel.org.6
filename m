@@ -1,82 +1,109 @@
-Return-Path: <linux-kernel+bounces-537326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB53A48A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:32:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337A0A48A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB94188D08A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2390316CDBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0055271277;
-	Thu, 27 Feb 2025 21:32:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A82E271277;
+	Thu, 27 Feb 2025 21:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bILzo0OY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C589218823;
-	Thu, 27 Feb 2025 21:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2792B270ECA;
+	Thu, 27 Feb 2025 21:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740691959; cv=none; b=flARFKv/pDk0WBi6iUlsIIZ2y3RSeBjI0/QDPXdU+55WqCL6GeFVPlxbXtMhVHMT+2N5X1SspNvejYcItTWuWZeffvNdmHIxZaLPW1Xa9+SC2KDZLoNPllbbMp6eEI0mXgPkc2y+shhXakQy6Rf6JRdsoaxUJQhnOWKg2rNMsIQ=
+	t=1740692007; cv=none; b=A2wxboeFsDLJH/hM41a6xWeHoX721cXIqEF0mk+zVNjv0JQ7lXMWcDbGWxVuHreK4o3WCUiQ1Fsush+F9oG6V9fKLN+gNATN0ZNTZUkt29+pW+pkroI1z8/FPQGqmA0rb4Kdgo0pYW8xCKnSIaqANXaHle3DT0XNjVC+lRMnuIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740691959; c=relaxed/simple;
-	bh=E3atdKrHAqEQcNejYjymMr9w/+VUCvBazKROwVdpSPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jTZSOGedDvQvz7pE3EkosHFn/m02k2+weRlrpOEsHLtgCcnarDiCG1e0njm0U+0c3XiIfVXOQT6QqBzePc0fx3qlayVb9Z44lpHHmoigYJbLbrcYm0nS9Z4jw9VP4eC9aGQ/yl/bqHEccTIeiVZ0ernOegrSMSGuOQ+dVS94Dt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2C2C4CEDD;
-	Thu, 27 Feb 2025 21:32:36 +0000 (UTC)
-Date: Thu, 27 Feb 2025 16:33:19 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Martin Uecker
- <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E. McKenney"
- <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura Jack
- <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250227163319.5b19a68a@gandalf.local.home>
-In-Reply-To: <20250227204722.653ce86b@pumpkin>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
-	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-	<20250226162655.65ba4b51@gandalf.local.home>
-	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
-	<20250226165619.64998576@gandalf.local.home>
-	<20250226171321.714f3b75@gandalf.local.home>
-	<CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
-	<20250226173534.44b42190@gandalf.local.home>
-	<20250227204722.653ce86b@pumpkin>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740692007; c=relaxed/simple;
+	bh=A7IYSizZTizig/Tk1UV473McV8kLlCEq+JAQvQsW6yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gEMu9E7VxjdrJqW9ca+q1qXaF4Li8XUXn8sv9glFAangbRJ7VsJZBekEfaMN7FROHEaBch3jb3r39EHy4bEIjQJdB/QKlSxhhwkQTEDQpXHIQOTG3lwzXkQHfUqcIv0At6HH/7NguqBm5KliVMqlrGagXEdYyO6wGV39ZrThI+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bILzo0OY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740692001;
+	bh=WTS8Q4RLwrClAXjD7MGFKZ+JWwquOzgx7VpIOnxxkGY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bILzo0OYuVxqxz1bkxmV7Uinu92jZ7Qb3H99JMr8g3FBvhNxeaXDfsDp2ecKpbj5R
+	 vV1du+hkqOVvdTRHfphPfx6rbwC8G3RZ1DiPhl5RH6VEouB/2vHy1CJuURwqeUB2GH
+	 KQ30CAuCUhAuXYDqFFTJdynyyN45y8vFjXiZmySsMF/0Fpsd1jBtfmUF2DRbY024cP
+	 r3m1FoxgbgpORZ/B6eVClkvN1mqHklMc0Rg6zq5ozyHd4cWuTEyM/fP9BFgD2Dm5Yk
+	 U91mqiiRS7e8PcIdfzVv5gt51TqMY8FYp9Tp+W+17eAdQPxrspbeHKlxinObC34Ldc
+	 mpaMwi46+4yfg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3l2910vVz4wyh;
+	Fri, 28 Feb 2025 08:33:21 +1100 (AEDT)
+Date: Fri, 28 Feb 2025 08:33:20 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the amdgpu tree
+Message-ID: <20250228083320.1c42a84a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/=Yg+UUnvXCDEgzdRzWebWUN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/=Yg+UUnvXCDEgzdRzWebWUN
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Feb 2025 20:47:22 +0000
-David Laight <david.laight.linux@gmail.com> wrote:
+Hi all,
 
-> Except that (IIRC) it is actually valid for the compiler to write something
-> entirely unrelated to a memory location before writing the expected value.
-> (eg use it instead of stack for a register spill+reload.)
-> Not gcc doesn't do that - but the standard lets it do it.
+In commit
 
-I call that a bug in the specification ;-)
+  7d74877801bf ("drm/amdkfd: Fix Circular Locking Dependency in 'svm_range_=
+cpu_invalidate_pagetables'")
 
--- Steve
+Fixes tag
+
+  Fixes: 3e5199134e47 ("drm/amdkfd: pause autosuspend when creating pdd")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: 438b39ac74e2 ("drm/amdkfd: pause autosuspend when creating pdd")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=Yg+UUnvXCDEgzdRzWebWUN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfA2iAACgkQAVBC80lX
+0GxVfQf/Qa1uOMUImnN/6O01pxwmcQu9LSMyWhKBaNik5hS70z2+8+h+CA90KwOo
+ApJH7jpNUHTCPHU0sQz/TnsrmSVdvtj0QAUtOItCTc/HeQUUwrkvU7nVYwfvdeSL
+u/Iajii/bpnkEOz9CVC11ZENhQeiEbpwjNqgM3Lysg12Yxmx/24/zQ44gVv3uHwB
+5QHNTqej/F7crU8Pu8ZPtTwYGk0ihVJE+XBBl2f1w8vvutGF37s/4A3v/jCs4Dmi
+dshJ7f5QPvE63DUJ1xXXQoECK9pJCbkxKSDmtgZppYLXTcEm5heWvAWN0OOgm74d
+jkHUDbQgieXlczUo0xDdN+E0axMTHw==
+=QH0A
+-----END PGP SIGNATURE-----
+
+--Sig_/=Yg+UUnvXCDEgzdRzWebWUN--
 
