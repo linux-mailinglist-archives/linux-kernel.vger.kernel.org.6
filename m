@@ -1,295 +1,167 @@
-Return-Path: <linux-kernel+bounces-536399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B54A47F20
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:29:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1329A47F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E2018982DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF131889B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E362376E6;
-	Thu, 27 Feb 2025 13:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395BA2356C3;
+	Thu, 27 Feb 2025 13:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Qn2JbTKL"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W0Ta88iu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4112356BC;
-	Thu, 27 Feb 2025 13:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBCA2356C0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740662680; cv=none; b=ja5YS/VbhljZdU1tqYyMrhitGLnptroKtjaj9JmtfR6X6BhXZXjkhKle+o1xUmhUgonYQAIvsQRx3VUAcczfXdWFAiXqdQPQMJjpcozWcKACKoCDboirvahZo71am3OJT+0ubJiN3KYZPEr81LOyLNPAvAc7PBsfQOIdk6nbBY0=
+	t=1740662813; cv=none; b=VqjdXFyXYADjtRWocqC5zlZ6/w8UhwUxrzuXgvXfrLLIUTZk4rjY2dTmH9U7hpsm7eur0fWWSCPu3WpAhx6AP44jsAsfuBh9OliMrdqYFKPPyliY4dmpJbhRgoDdW4G4wA2v9tTv4D4D10wwKfV/iWJsJqBSgaRSbsl4N0xFLwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740662680; c=relaxed/simple;
-	bh=ITagGTuza+iR15t7opNU3Qq6476FMYcERfhKVz54Sxo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RcHdYo6gZLJW5CV5EtPUB2qCnl3Qd2aXCfjLmuP/7bl7NYTeb0Je0QKNlQnD/lfJvAUd0c2ztFCteOc6DSvBAddBunvSaV0NQLmuEfeFY6hNaL0UqZKTJlIWlyZrfyDW/H2bjlQNugoCsIDZ4kAFw1RvgJhIir56T009i0A6Qzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Qn2JbTKL; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3564344281;
-	Thu, 27 Feb 2025 13:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740662676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F5iP14eZwyuKdEASQCjopxMOFmpr40OqDKrxtNJLgPY=;
-	b=Qn2JbTKLNbqm3ldew3ZOxScg1q4Xo0zdEw3JrDNmU7+AKb/Sg3+hsbAAfUxiqw1HPnlk6f
-	TNYWx8E8nq9kKCFMURRMLctWRQWNlvOhacIJZwI9gpeglAiXRb+Ak2CX/r/c4Brq38FU6d
-	VQfOjEUIW1fOy9XTpeH27zzCJu1W7IsWt+28Usy0V1HRjW6e5x2wcFBYjOKVSYnl3kyh8h
-	IZlLWolF/VzA0jVZrcGoUoQgS2p3qaqTbFR3SChnqNaKr+ujLFTanNfduXTvgvtU5KL0P1
-	DYXxHiWVn72SQEQeikfX/Rx08rOKocw3Su9TzTW5K21sb0+Bqm0gUQ8LZb4afg==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Thu, 27 Feb 2025 14:24:25 +0100
-Subject: [PATCH bpf-next 10/10] selftests/bpf: test_tunnel: Remove
- test_tunnel.sh
+	s=arc-20240116; t=1740662813; c=relaxed/simple;
+	bh=4B35fmDEzZqql9YmZjw5vZ/pcL///qBcV9SAfQqRYLI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=VwCPfRWPTarB0H3vOlaK0pmF3SfNVABa76ebzLEP/quqRa2FOFVb3HZJL/benZayW2jXr7Qg0rq4DNt1Lwx7M8UHUFhNlarDDsChQ63FztI24hNfTAyuP2nxrHm+m5j4nyA8o2diGDLEDpeB15hK1i+U2456rkFtN5GI7eoYJuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W0Ta88iu; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740662811; x=1772198811;
+  h=date:from:to:cc:subject:message-id;
+  bh=4B35fmDEzZqql9YmZjw5vZ/pcL///qBcV9SAfQqRYLI=;
+  b=W0Ta88iuZUaNb2qwSTkvdvH++iDyQyyIc2eMrzJLLuE3UMwB7xOrTuum
+   ibb+N1jMk613opFBuBY/kYJUu+TYiPlm3MWWxCqYi5DgmqcthOsPcKtpQ
+   qCab4j7GCa4WDERO56bd0GCD1vfP63xgvu/0Rxxd7Ar8KSTCe3YAf3vEB
+   kDYJPSx9H0UnQMHHvRaAA/LeMG9w6hA/YAXg4JkGDV4FHWpGVA+48Db2M
+   dskZv2383dYx0JixTLbzqLUP1XsZRDXC4YxUz3n72uFVqMROW94vwJi6z
+   Ii2pri5i4dRU6K3KdHluUuMRh6hpfbZQqNXx8HAoPmQ+NM655cotNz/mL
+   Q==;
+X-CSE-ConnectionGUID: eDFA1p0EQ1qeoT+nGzWu/w==
+X-CSE-MsgGUID: ic2KnLJDQNaJJlIQmZUvnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="51757711"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="51757711"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 05:26:51 -0800
+X-CSE-ConnectionGUID: +97dFZXJScaNQXVMkSx24g==
+X-CSE-MsgGUID: l0c/FCE+QXWe4eitNunCfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="116821379"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 27 Feb 2025 05:26:50 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnduZ-000DPE-36;
+	Thu, 27 Feb 2025 13:26:47 +0000
+Date: Thu, 27 Feb 2025 21:24:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/core] BUILD REGRESSION
+ dfebe7362f6f461d771cdb9ac2c5172a4721f064
+Message-ID: <202502272134.xIfaoU0x-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-tunnels-v1-10-33df5c30aa04@bootlin.com>
-References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
-In-Reply-To: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpedfuegrshhtihgvnhcuvehurhhuthgthhgvthculdgvuefrhfcuhfhouhhnuggrthhiohhnmddfuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeefudfhuedttdeiffetffeljeffkeevveeiuddtgeejleeftdejgedtjedttdfhnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepleenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehkphhsihhnghhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrohhluhhosehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhug
- idqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: bastien.curutchet@bootlin.com
 
-All tests from test_tunnel.sh have been migrated into test test_progs.
-The last test remaining in the script is the test_ipip() that is already
-covered in the test_prog framework by the NONE case of test_ipip_tunnel().
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
+branch HEAD: dfebe7362f6f461d771cdb9ac2c5172a4721f064  x86/ibt: Optimize the fineibt-bhi arity 1 case
 
-Remove the test_tunnel.sh script and its Makefile entry
+Error/Warning (recently discovered and may have been fixed):
 
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile       |   1 -
- tools/testing/selftests/bpf/test_tunnel.sh | 179 -----------------------------
- 2 files changed, 180 deletions(-)
+    https://lore.kernel.org/oe-kbuild-all/202502270859.WfFkfHBC-lkp@intel.com
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index abfb450c26bb360ad23ff1201fb113557d3eced1..e6a02d5b87d123cef7e6b41bfbc96d34083f38e1 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -100,7 +100,6 @@ TEST_FILES = xsk_prereqs.sh $(wildcard progs/btf_dump_test_case_*.c)
- 
- # Order correspond to 'make run_tests' order
- TEST_PROGS := test_kmod.sh \
--	test_tunnel.sh \
- 	test_lwt_seg6local.sh \
- 	test_lirc_mode2.sh \
- 	test_xdp_vlan_mode_generic.sh \
-diff --git a/tools/testing/selftests/bpf/test_tunnel.sh b/tools/testing/selftests/bpf/test_tunnel.sh
-deleted file mode 100755
-index 165023d1b5f70fd48ff05f0a53a332ef50e175da..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/bpf/test_tunnel.sh
-+++ /dev/null
-@@ -1,179 +0,0 @@
--#!/bin/bash
--# SPDX-License-Identifier: GPL-2.0
--
--# End-to-end eBPF tunnel test suite
--#   The script tests BPF network tunnel implementation.
--#
--# Topology:
--# ---------
--#     root namespace   |     at_ns0 namespace
--#                      |
--#      -----------     |     -----------
--#      | tnl dev |     |     | tnl dev |  (overlay network)
--#      -----------     |     -----------
--#      metadata-mode   |     native-mode
--#       with bpf       |
--#                      |
--#      ----------      |     ----------
--#      |  veth1  | --------- |  veth0  |  (underlay network)
--#      ----------    peer    ----------
--#
--#
--# Device Configuration
--# --------------------
--# Root namespace with metadata-mode tunnel + BPF
--# Device names and addresses:
--# 	veth1 IP: 172.16.1.200, IPv6: 00::22 (underlay)
--# 	tunnel dev <type>11, ex: gre11, IPv4: 10.1.1.200, IPv6: 1::22 (overlay)
--#
--# Namespace at_ns0 with native tunnel
--# Device names and addresses:
--# 	veth0 IPv4: 172.16.1.100, IPv6: 00::11 (underlay)
--# 	tunnel dev <type>00, ex: gre00, IPv4: 10.1.1.100, IPv6: 1::11 (overlay)
--#
--#
--# End-to-end ping packet flow
--# ---------------------------
--# Most of the tests start by namespace creation, device configuration,
--# then ping the underlay and overlay network.  When doing 'ping 10.1.1.100'
--# from root namespace, the following operations happen:
--# 1) Route lookup shows 10.1.1.100/24 belongs to tnl dev, fwd to tnl dev.
--# 2) Tnl device's egress BPF program is triggered and set the tunnel metadata,
--#    with remote_ip=172.16.1.100 and others.
--# 3) Outer tunnel header is prepended and route the packet to veth1's egress
--# 4) veth0's ingress queue receive the tunneled packet at namespace at_ns0
--# 5) Tunnel protocol handler, ex: vxlan_rcv, decap the packet
--# 6) Forward the packet to the overlay tnl dev
--
--BPF_FILE="test_tunnel_kern.bpf.o"
--BPF_PIN_TUNNEL_DIR="/sys/fs/bpf/tc/tunnel"
--PING_ARG="-c 3 -w 10 -q"
--ret=0
--GREEN='\033[0;92m'
--RED='\033[0;31m'
--NC='\033[0m' # No Color
--
--config_device()
--{
--	ip netns add at_ns0
--	ip link add veth0 type veth peer name veth1
--	ip link set veth0 netns at_ns0
--	ip netns exec at_ns0 ip addr add 172.16.1.100/24 dev veth0
--	ip netns exec at_ns0 ip link set dev veth0 up
--	ip link set dev veth1 up mtu 1500
--	ip addr add dev veth1 172.16.1.200/24
--}
--
--add_ipip_tunnel()
--{
--	# at_ns0 namespace
--	ip netns exec at_ns0 \
--		ip link add dev $DEV_NS type $TYPE \
--		local 172.16.1.100 remote 172.16.1.200
--	ip netns exec at_ns0 ip link set dev $DEV_NS up
--	ip netns exec at_ns0 ip addr add dev $DEV_NS 10.1.1.100/24
--
--	# root namespace
--	ip link add dev $DEV type $TYPE external
--	ip link set dev $DEV up
--	ip addr add dev $DEV 10.1.1.200/24
--}
--
--test_ipip()
--{
--	TYPE=ipip
--	DEV_NS=ipip00
--	DEV=ipip11
--	ret=0
--
--	check $TYPE
--	config_device
--	add_ipip_tunnel
--	ip link set dev veth1 mtu 1500
--	attach_bpf $DEV ipip_set_tunnel ipip_get_tunnel
--	ping $PING_ARG 10.1.1.100
--	check_err $?
--	ip netns exec at_ns0 ping $PING_ARG 10.1.1.200
--	check_err $?
--	cleanup
--
--	if [ $ret -ne 0 ]; then
--                echo -e ${RED}"FAIL: $TYPE"${NC}
--                return 1
--        fi
--        echo -e ${GREEN}"PASS: $TYPE"${NC}
--}
--
--attach_bpf()
--{
--	DEV=$1
--	SET=$2
--	GET=$3
--	mkdir -p ${BPF_PIN_TUNNEL_DIR}
--	bpftool prog loadall ${BPF_FILE} ${BPF_PIN_TUNNEL_DIR}/
--	tc qdisc add dev $DEV clsact
--	tc filter add dev $DEV egress bpf da object-pinned ${BPF_PIN_TUNNEL_DIR}/$SET
--	tc filter add dev $DEV ingress bpf da object-pinned ${BPF_PIN_TUNNEL_DIR}/$GET
--}
--
--cleanup()
--{
--        rm -rf ${BPF_PIN_TUNNEL_DIR}
--
--	ip netns delete at_ns0 2> /dev/null
--	ip link del veth1 2> /dev/null
--	ip link del ipip11 2> /dev/null
--}
--
--cleanup_exit()
--{
--	echo "CATCH SIGKILL or SIGINT, cleanup and exit"
--	cleanup
--	exit 0
--}
--
--check()
--{
--	ip link help 2>&1 | grep -q "\s$1\s"
--	if [ $? -ne 0 ];then
--		echo "SKIP $1: iproute2 not support"
--	cleanup
--	return 1
--	fi
--}
--
--enable_debug()
--{
--	echo 'file ipip.c +p' > /sys/kernel/debug/dynamic_debug/control
--}
--
--check_err()
--{
--	if [ $ret -eq 0 ]; then
--		ret=$1
--	fi
--}
--
--bpf_tunnel_test()
--{
--	local errors=0
--
--	echo "Testing IPIP tunnel..."
--	test_ipip
--	errors=$(( $errors + $? ))
--
--	return $errors
--}
--
--trap cleanup 0 3 6
--trap cleanup_exit 2 9
--
--cleanup
--bpf_tunnel_test
--
--if [ $? -ne 0 ]; then
--	echo -e "$(basename $0): ${RED}FAIL${NC}"
--	exit 1
--fi
--echo -e "$(basename $0): ${GREEN}PASS${NC}"
--exit 0
+    vmlinux.o: warning: objtool: do_jit+0x597: relocation to !ENDBR: memcpy_orig+0x0
 
--- 
-2.48.1
+Error/Warning ids grouped by kconfigs:
 
+recent_errors
+`-- x86_64-buildonly-randconfig-002-20250227
+    `-- vmlinux.o:warning:objtool:do_jit:relocation-to-ENDBR:memcpy_orig
+
+elapsed time: 1451m
+
+configs tested: 66
+configs skipped: 2
+
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                  randconfig-001-20250226    gcc-13.2.0
+arc                  randconfig-002-20250226    gcc-13.2.0
+arm                  randconfig-001-20250226    gcc-14.2.0
+arm                  randconfig-002-20250226    clang-21
+arm                  randconfig-003-20250226    gcc-14.2.0
+arm                  randconfig-004-20250226    gcc-14.2.0
+arm64                randconfig-001-20250226    gcc-14.2.0
+arm64                randconfig-002-20250226    gcc-14.2.0
+arm64                randconfig-003-20250226    clang-21
+arm64                randconfig-004-20250226    gcc-14.2.0
+csky                 randconfig-001-20250227    gcc-14.2.0
+csky                 randconfig-002-20250227    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250227    clang-14
+hexagon              randconfig-002-20250227    clang-16
+i386       buildonly-randconfig-001-20250226    gcc-12
+i386       buildonly-randconfig-002-20250226    gcc-12
+i386       buildonly-randconfig-003-20250226    gcc-12
+i386       buildonly-randconfig-004-20250226    clang-19
+i386       buildonly-randconfig-005-20250226    gcc-12
+i386       buildonly-randconfig-006-20250226    gcc-12
+loongarch            randconfig-001-20250227    gcc-14.2.0
+loongarch            randconfig-002-20250227    gcc-14.2.0
+nios2                randconfig-001-20250227    gcc-14.2.0
+nios2                randconfig-002-20250227    gcc-14.2.0
+openrisc                         allnoconfig    gcc-14.2.0
+parisc                           allnoconfig    gcc-14.2.0
+parisc               randconfig-001-20250227    gcc-14.2.0
+parisc               randconfig-002-20250227    gcc-14.2.0
+powerpc                          allnoconfig    gcc-14.2.0
+powerpc              randconfig-001-20250227    clang-19
+powerpc              randconfig-002-20250227    gcc-14.2.0
+powerpc              randconfig-003-20250227    clang-19
+powerpc64            randconfig-001-20250227    clang-17
+powerpc64            randconfig-002-20250227    clang-21
+powerpc64            randconfig-003-20250227    gcc-14.2.0
+riscv                            allnoconfig    gcc-14.2.0
+riscv                randconfig-001-20250226    clang-18
+riscv                randconfig-002-20250226    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250226    gcc-14.2.0
+s390                 randconfig-002-20250226    clang-15
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250226    gcc-14.2.0
+sh                   randconfig-002-20250226    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20250226    gcc-14.2.0
+sparc                randconfig-002-20250226    gcc-14.2.0
+sparc64              randconfig-001-20250226    gcc-14.2.0
+sparc64              randconfig-002-20250226    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250226    clang-18
+um                   randconfig-002-20250226    gcc-12
+x86_64     buildonly-randconfig-001-20250226    clang-19
+x86_64     buildonly-randconfig-002-20250226    clang-19
+x86_64     buildonly-randconfig-003-20250226    gcc-12
+x86_64     buildonly-randconfig-004-20250226    clang-19
+x86_64     buildonly-randconfig-005-20250226    gcc-12
+x86_64     buildonly-randconfig-006-20250226    gcc-12
+xtensa               randconfig-001-20250226    gcc-14.2.0
+xtensa               randconfig-002-20250226    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
