@@ -1,120 +1,173 @@
-Return-Path: <linux-kernel+bounces-536659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F8A482B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:16:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B43A4829B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687C91889C05
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE8E83B426F
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25E726A1C7;
-	Thu, 27 Feb 2025 15:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58E2309A1;
+	Thu, 27 Feb 2025 15:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="XXUlFRJo"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1DgGDbo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFB026A1AC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F7123BCE3;
+	Thu, 27 Feb 2025 15:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669142; cv=none; b=QrD16WAEkFSBUMRx1iDvCj85A31IrBqiPF0nzdYemXQD+9EOYG+I9o3uEw6KSBQ5y3yLviJB6YxRcADwuWXW5lP2Z4sasGAF6lqJfzP57/az1XZ0ZgsN577cVtqPC5o5ww8BUN1Qv+TLm421oR4vDATUPnUq+rncxMJdDHkxnLA=
+	t=1740669178; cv=none; b=HJpkJwKvehVmjM0tsxVufJA4SbI19sIa2AtYcSVAq9yaAvgjXJS0sC0OIh5YWkC4O9izuauEkbfNrOggdiMM3sI4UD3E03Had2tAkgv2AznFa+ql4YDzdXcOv3CGrlwMjevLYNorJR7B8OyaepbEnOwUSppGw52vRkWLmiDYoPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669142; c=relaxed/simple;
-	bh=biSojK3aYrH5alpEFwNMM02JPcIaJeMqtWJC7TMKk3Y=;
+	s=arc-20240116; t=1740669178; c=relaxed/simple;
+	bh=7STf7KR5l+VejlzjpR6E9zLjagUfqiPeoLC/F4HyI+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gz5+N5Dk0zmoyIldV/R9mCmywetHazsNRXIpIgKmjHtkv/PWtRD4Ewu66VYj+rV4xm/HZxEge5aJWWTnamyy2niM8b1Vhx/4sDqjSGvbENRqxQMuTM7H0irfDE6Bsw4iHU7dedobu6ffghwLKV4YCYWr+wbnNzYuoYCFsOUERAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=XXUlFRJo; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4721325e3b5so7939141cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1740669139; x=1741273939; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LNx8YZQIjNLm0mZInU+TMEOrRGJoGKSTKhShcPs50Ok=;
-        b=XXUlFRJoW4wPfZjg4H8o/bL1jqKGTsvAQDXVcpbrlaItWHmXnPWFTqZTFxFjRzz0Ih
-         D//Q3WhQV9YpUiT/tPuD0pgcK0b0HkQVaf/LcQFWYVy8Ir+ru0QjL/y04FTgXMmeGs/t
-         LCESLlrl9zCZYwhyZveCY9ojGPNKloFFTaH7j86/2pfpRwgoZmGnV00QDNg14XeEZZnY
-         mC3it7/dD7NCFBM3Kae4RVxNJA2xRl7EEiGOTWP2bJGsLhRN+TESQAul5PqCuyBUBNO+
-         dQVcOpNmtKMwODMO4sK+5VWWymcGamp9SVW0W2XB4WlWPJWQgxwNyv7ED2jHotrvikI8
-         DJkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740669139; x=1741273939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LNx8YZQIjNLm0mZInU+TMEOrRGJoGKSTKhShcPs50Ok=;
-        b=WQRb1sc7Pml0HeG89dRgB43e+7qWeLn+i/AEerizpyZPlGYljgUeXXYidk+DSEszGI
-         KxhjzPeMKquMW0hYuWTlPRNB22KLdc7ai6kOnjGW3wnc/deApMBXpFoL7uAgONV2VvOS
-         fg5BrqTCTwa1n9P2wetUuZoK+xa0dXUcbbDx3/2TJlvpgg5bvB5bZn+fiyzik44kTDaz
-         8zTJ+2G+mO6iKbb7lbXeWImWsdjimJBpiwSS7o98mBcPHZe8DbTEFE7Pn7cGEUaPAony
-         WKSs+6fQvvOIjkBhJHAeX8LAn1O+B5amwkb1IMK+7RAoTDJBiRU6afnkStGZ8xdfTpkt
-         aGhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUawFewMAxaONB2SX7piHPHcypOmW8Z6w/6oP7H7+F03EfiAQ92cU2qAW2Z7QyWPDAelg6sQ2i1Bh1vwy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvi/7zm+INiTb6UQ8zXnqyqP1SCmSSdt9GXWcxiBZWaoqfR6wP
-	/nTpbMgcYO6Fff7eg5389leFHBp+YK//t1g04pKUE/L/a2T7X3ApWTjnjPZBdA==
-X-Gm-Gg: ASbGncviJZVNHERE0/xEew1l5RcNXspq9F7Uf/fckMMZxjcQ1l/SRHh+BeChouVs3NC
-	DPCdyrV+z+BcckjUyWwn06sBKIzT6ccQaDC9UFEDhYg7wo9wsvObGS+XmNGr+YiwK+VFfmpt/xc
-	ucXWcxrFDqFobgKXwETlBgklV4bmBNf5VvWlpdSvgnaZZJ6tZb9kdJOckxmuX5BH6+tzBYbgBCn
-	lcmHhLHvvB0AbGcTpn+Y8o1jz9ImFZ6DlTARSesv8TIrugSZE1RSniIpsWbTx0fdOT72FC3I9/g
-	XNNgnYRk+g25g2+fP9OM9FzICZE4qc0sVypDx0EFzyM8
-X-Google-Smtp-Source: AGHT+IFpyrujk1OpBqdflL1MiDLfKUylvOBhU5A06YFvWgA27FYmaDjkhww5yqqypilPXGwM0RZvjQ==
-X-Received: by 2002:ac8:598f:0:b0:471:f272:9861 with SMTP id d75a77b69052e-4737725c45emr159740651cf.33.1740669139443;
-        Thu, 27 Feb 2025 07:12:19 -0800 (PST)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4746b5ee0f4sm11952951cf.30.2025.02.27.07.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 07:12:19 -0800 (PST)
-Date: Thu, 27 Feb 2025 10:12:16 -0500
-From: "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
-To: Pawel Laszczak <pawell@cadence.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
-	"christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>,
-	"make_ruc2021@163.com" <make_ruc2021@163.com>,
-	"peter.chen@nxp.com" <peter.chen@nxp.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pawel Eichler <peichler@cadence.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] usb: xhci: lack of clearing xHC resources
-Message-ID: <6034ee47-7f95-4917-b4c5-fa9ab6078f73@rowland.harvard.edu>
-References: <20250226071646.4034220-1-pawell@cadence.com>
- <PH7PR07MB95385E2766D01F3741D418ABDDC22@PH7PR07MB9538.namprd07.prod.outlook.com>
- <a78164bc-67c4-4f31-bbe1-609e19134ddf@rowland.harvard.edu>
- <PH7PR07MB9538F28D5F4F6706363CC78EDDCD2@PH7PR07MB9538.namprd07.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsiRELZich8Oe7y4101ideISEkRPt5hCvPcNgcWOqPFbDYSZl0trx1RJjEnVZLUIDgOmzqsafvXKv/bowJ8h1He3I0uSQIA1DvJX8JgA6RXth+cV8GKwqGp6H8z8+C31uc255rkWevI2dZsv5WV6ss0DCUuz++Vq4we9rhGWh1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1DgGDbo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EC8C4CEDD;
+	Thu, 27 Feb 2025 15:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740669178;
+	bh=7STf7KR5l+VejlzjpR6E9zLjagUfqiPeoLC/F4HyI+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y1DgGDbozJrXDySPeEwcaVWIuwFMGuBU00Hfx+8kMP+fKJY6gA5/1nay2+MTvwBIv
+	 4mlESna60cg4Rx8ZpkUFHIf72oTAo+wQkVqvzL2jRCf8mtuoT89MRQ7V0Mx+xxdDgb
+	 DMLu4CX1A8UtRup4TE8qLARxpydaweF/KQ/RYldAkeNPxpdQiO9hMsyUvGJi+FiAFA
+	 4YVF2Yvaql9XEu5BxTQLTtFdAlw0rFgskYkC1LezmR3ALXNVyS+BPbo/Y2KNzdhkpR
+	 wbuLSfMTjnO0iOP7AbCaaYxJDgrlZXEHybbIm7lfi36SX1rUKFrl7cFR+HNrRsY5j9
+	 ZxOgqZ+gtOglQ==
+Date: Fri, 28 Feb 2025 00:12:53 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	=?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dharma.B@microchip.com,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+Message-ID: <Z8CA9RTZWChh9cJW@ishi>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
+ <Z7h0AXV1zlgp9Nw-@ishi>
+ <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
+ <Z7vihBqOgP3fBUVq@ishi>
+ <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
+ <Z7_xTQeTzD-RH3nH@ishi>
+ <20250227135330.GC182392@tpx1.home>
+ <Z8B1LDT-n2XTTp8q@ishi>
+ <202502271437280a6701d8@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="S63rS5Zp1ngJmb2c"
+Content-Disposition: inline
+In-Reply-To: <202502271437280a6701d8@mail.local>
+
+
+--S63rS5Zp1ngJmb2c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH7PR07MB9538F28D5F4F6706363CC78EDDCD2@PH7PR07MB9538.namprd07.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-BTW, since the patch doesn't touch the xHCI driver, the Subject: 
-shouldn't say "usb: xhci: ...".  It would be better to put "usb: hub: 
-..."
+On Thu, Feb 27, 2025 at 03:37:28PM +0100, Alexandre Belloni wrote:
+> On 27/02/2025 23:22:36+0900, William Breathitt Gray wrote:
+> > On Thu, Feb 27, 2025 at 02:53:30PM +0100, Kamel Bouhara wrote:
+> > > On Thu, Feb 27, 2025 at 01:59:57PM +0900, William Breathitt Gray wrot=
+e:
+> > > > Let me make sure I understand the situation correctly. This SoC has=
+ two
+> > > > Timer Counter Blocks (TCB) and each TCB has three Timer Counter Cha=
+nnels
+> > > > (TCC); each TCC has a Counter Value (CV) and three general registers
+> > > > (RA, RB, RC); RA and RB can store Captures, and RC can be used for
+> > > > Compare operations.
+> > > >
+> > > > If that is true, then the correct way for this hardware to be expos=
+ed is
+> > > > to have each TCB be a Counter device where each TCC is exposed as a
+> > > > Count. So for this SoC: two Counter devices as counter0 and counter=
+1;
+> > > > count0, count1, and count2 as the three TCC; i.e. counter0/count{0,=
+1,2}
+> > > > and counter1/count{0,1,2}.
+> >=20
+> > [...]
+> >=20
+> > > > Kamel, what would it take for us to rectify this situation so that =
+the
+> > > > TCC are organized together by TCB under the same Counter devices?
+> > >=20
+> > > Hello,
+> > >=20
+> > > Indeed, each TCC operates independently except when quadrature mode is
+> > > enabled. I assume this approach was taken to provide more flexibility=
+ by
+> > > exposing them separately.
+> > >=20
+> > > Currently only one channel is configured this would need to rework the
+> > > driver to make the 3 TCCs exposed.
+> > >=20
+> > > Greetings,
+> > > Kamel
+> >=20
+> > Skimming through the driver, it looks like what we'll need is for
+> > mchp_tc_counts[] to have all three TCCs defined, then have
+> > mchp_tc_probe() match on a TCB node and configure each TCC. Once that's
+> > setup, then whenever we need to identify which TCC a callback is
+> > exposing, we can get it from count->id.
+> >=20
+> > So for example, the TC_CV register offset is calculated as 0x00 +
+> > channel * 0x40 + 0x10. In the count_read() callback we can leverage
+> > count->id to identify the TCC and thus get the respective TC_CV register
+> > at offset + count->id * 0x40 + 0x10.
+> >=20
+>=20
+> We can't do that because the TCC of a single TCB can have a mix of
+> different features. I struggled with the breakage to move away from the
+> one TCB, one feature state we had.
+> Be fore this, it was not possible to mix features on a single TCB, now,
+> we can have e.g. the clocksource on TCC 0 and 1 of TCB0 and a PWM on
+> TCC 2. mchp_tc_probe must not match on a TCB node...
 
-On Thu, Feb 27, 2025 at 07:05:17AM +0000, Pawel Laszczak wrote:
-> >Doing it this way, you will call hcd->driver->reset_device() multiple times for the
-> >same device: once for the hub(s) above the device and then once for the device
-> >itself.  But since this isn't a hot path, maybe that doesn't matter.
-> 
-> Yes, it true but the function xhci_discover_or_reset_device which is associated with
-> hcd->driver->reset_device() include the checking whether device is in SLOT_STATE_DISABLED.
-> It allows to detect whether device has been already reset and do not repeat the
-> reset procedure.
+Okay I see what you mean, if we match on a TCB mode then we wouldn't be
+able to define the cases where one TCC is different from the next in the
+same TCB.
 
-Okay.  Please resubmit the patch with the changes we discussed (and fix 
-the kerneldoc problem pointed out by the kernel build checker).
+The goal however isn't to support all functionality (i.e. PWM-related
+settings, etc.) in the counter driver, but just expose the TCB
+configuration options that affect the TCCs when configured for counter
+mode. For example, the sysfs attributes can be created, but they don't
+have to be available until the TCC is in the appropriate mode (e.g.
+return -EBUSY until they are in a counter mode).
 
-Alan Stern
+Is there a way to achieve that? Maybe there's a way we can populate the
+sysfs tree on the first encountered TCC, and then somehow indicate when
+additional TCCs match. Attributes can become available then dynamically
+based on the TCCs that match.
+
+William Breathitt Gray
+
+--S63rS5Zp1ngJmb2c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8CA9QAKCRC1SFbKvhIj
+KzfbAQDlTYiUlgbcGQwRUT570H/RH0ghKls+Gy2YmhpCVscIcAD9E/gGa6CbXDL+
+5KRRytXkMqv0z8iXRNmCVcaYM07jxw4=
+=xdBI
+-----END PGP SIGNATURE-----
+
+--S63rS5Zp1ngJmb2c--
 
