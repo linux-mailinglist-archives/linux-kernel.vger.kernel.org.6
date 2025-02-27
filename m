@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-536459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F05A47FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:50:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE9EA47FDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652473A3F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16F91897455
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AB2235342;
-	Thu, 27 Feb 2025 13:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778EA2356C2;
+	Thu, 27 Feb 2025 13:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="anFzPdUQ"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WNZmzX+W"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AF523315A;
-	Thu, 27 Feb 2025 13:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A82356B3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663843; cv=none; b=W+an3o99aZzuetSfn8g08ADau9buY4a8YCwsogNJ31919mLZg0eTToFaa9NZbzyAk98CKlu28FOP0+0rFPX2C7TUrPvIU1o7AoCuCa90s22WCKhn0bv1PeU7c3A3Z+VjbCzjVqt3d4I7vH3+fKTUKUvl0C5Dy3AkL9f18agwnjY=
+	t=1740663954; cv=none; b=sO+hVoacXtbz6qsejgc97vMBrK5qmsMc6+ZEao5/RwPaSnZZQ7adaOBJyu8BUzTl1azDNxIkTCsOkMK+V0JKf5wjm0XAyEasX+I28RXe+Zhu+zX1z/xW/Ihb+qLYYs9jmhsKvzm0HVUf2DZQcjg0fyAdCwGM+HaBCMx6ZWBD3/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663843; c=relaxed/simple;
-	bh=E1tItyhsdyHVm7O80WpksBei03ebvO569NYx/R7zPUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGtwEEGNtluGOGDDQR5ketZIWpymUXITuVY8X1Y8i9GK3vlTzmKHjMHSemGikdHGkzr/Ti1jxoWIzVL2RgI0n29Cg2R1iBB/KZkyJALfEzEGPF0fFgeKUChNTGsXF3bJvTaVqqoFATJVOaNTu6CMNDSoF1UJcSrH3LyZen1M+Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=anFzPdUQ; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 928514417E;
-	Thu, 27 Feb 2025 13:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740663839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lhlR+7f2JUXzhLMWN3jt/w5we+Qtj74Pupwkai953Cs=;
-	b=anFzPdUQ5hWO/UtFrlmX98ISSK9yulAbQK5tkN0Zeerwn/0bENTCl7g67V9t4p0nNwWGvK
-	eHpfzl7L8CG3cVHN7kuymK3x/obkDi7tdkq2Mt4wFHijRSAdNVNw96s8vVXZp2OHAY3HYX
-	JElTnW721xXhfPsm0+nt7CAGISQvfRxaMX1gyWmtDGcWqamM5/RpGnpLm0EyAex6ofleHF
-	EnvnCR2ZsAHMNnONqRNSJhtBdmgOCUrais2QMITR14JDmLVwJ2p/K0d1m6JvRjc2zH4WtR
-	Tj9ZKmJFapraKpmcMKgfwt/hlaCkAa0sZfBudE78StqszCof1RZF3k79GWwjcA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 4/9] i2c: atr: split up i2c_atr_get_mapping_by_addr()
-Date: Thu, 27 Feb 2025 14:43:59 +0100
-Message-ID: <6056224.MhkbZ0Pkbq@fw-rgant>
-In-Reply-To: <20250225113939.49811-5-demonsingur@gmail.com>
-References:
- <20250225113939.49811-1-demonsingur@gmail.com>
- <20250225113939.49811-5-demonsingur@gmail.com>
+	s=arc-20240116; t=1740663954; c=relaxed/simple;
+	bh=DN4L8XiO/ZiZHQzxZriFPSaUZlt9cpmpkm9a2OnGF34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o6f11GW/8UU6B0h9EoI2KgqyK7TSPjzPRmSeqPImF8vnYjkFJ9tyMrlDGjfGqbbJl+UFNLBIMYVq0xqUAwtgPdagvz47S6R8DmpE5I5B3pe6euKypUqR/czVn8kJbXKLS+2o42ElY6O6UZ2iTi8Np7WUJRqik2w0La1HAYy4YZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WNZmzX+W; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f5fc33602so670530f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:45:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740663951; x=1741268751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGQnt5hRpa/WkmZ8nxEca9c9CkE5rmVoY/G7NcVEo2M=;
+        b=WNZmzX+WMNwj0Gqgvrq8SOIxCkqxVfZKBiHFrnBXIL2TPOd9WOPXZtAl/jGWJpiuN9
+         cfha+rO4JqyOUSGoT9rYtnu4j0k4YgZmhwnPRVcBbCpLTGEa9EMsPE9KU+HYz7+0/NN2
+         uRbMfOGo5Xw5mQMxnQW2h63gw4xbCQL2BNsH+CWEtQW93LBLNFVXPVCIWMRmuaZdukqp
+         mR4A0rzsstMdJkTdcWRxKs9WiNECSDN3xfG/2GwhDjYgbvsNhrgD6oa8NEUF2sTbgBlL
+         CavkrK7AfrcQceYf2KKJtPvk21kcQT4zMPAw8SscjAt1riCMNCEzx6Yn8NOLETTwZ+j+
+         pNXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740663951; x=1741268751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZGQnt5hRpa/WkmZ8nxEca9c9CkE5rmVoY/G7NcVEo2M=;
+        b=bnZPp0PZGPVTyu3Z8f0qRYWqCq+CumCItHQO9ZfSR7PH833m1BjYGNI+Tp2g+LHraf
+         yu3Ryx2KatQxZUqCaBBkGiWHoXe6/Z1TTEhmwo7t2/zvTfcrIeB9CyoHucM+hGvqZFNQ
+         2SH2Tcis5WfIVOxblxcZ66CpqKhF9JodFUc5pc8pLqiQrqI79RYzsLP+rEDAZuEZpEli
+         wD/oTh+FtMFXZL/fd+mBBE1Pq/GAwiuXNo5DqM/83NInsEFuLSqlprj9evJtCWLrhw9s
+         o5gzAs2ZEveoig9PlI8el/XCoJfgLRyZ0vQXXJoxMR2D868lkOsD8zBiGHsDDW1Fpg6d
+         pqzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWijeJLaW3ic2iIAYuRpaHlCiVbkechhCPhCpgdbbjYLKYv2oP8SXumf+rMFNHFLwQ3al871CIilX79xFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymuJjGAcVp489g5UYbuCPeuGLNG6Ho3BIsZ+Nan64CwxQn6Krq
+	RNr96/u8qiYJVgM7P9ZOJBHHWmlBZHqwtky/j/PArbEH/mcMpqFMimY/kqPRupI=
+X-Gm-Gg: ASbGncsl9UO+OcbvNMjU/Nu8h1ve13ttiDLZeGvHFHvBRPcn0rjDjtOJsg9Vz8FotV9
+	+oq3kl6cZ5LljkQ+oUvywqvvTC8UEbxTF7mAXRcQ1c+jwa5go/cATnQAEoMmq827cdItHOofhl5
+	Oye9WnQNXCAvIAcuM4FRPAXo7qjPEw8CYaNMpOFyntQ2uTnI11Sss4jks81pvZrb9fdxBR72X/9
+	Uft1GJcB42nczJwDlY0D70NGb8Q+anH/Qhsisp7xXsnvwuw2MLRMsmAC6O4gNd5zGGJtWyWT872
+	WTXhWdAosuIq4pez+BzP81ROVFtPJ++WFhFXGw==
+X-Google-Smtp-Source: AGHT+IEiCWqrduAOLZxpuElcccKeHTR0Gejhv1QsxlgggvIlFVbf1lQCCkOKANvMmmoAYK8EUYhVvQ==
+X-Received: by 2002:a05:6000:156c:b0:38d:cc9c:630c with SMTP id ffacd0b85a97d-390e166b1bbmr2598483f8f.10.1740663951082;
+        Thu, 27 Feb 2025 05:45:51 -0800 (PST)
+Received: from localhost.cz ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7b6asm2174595f8f.51.2025.02.27.05.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:45:50 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>
+Subject: [PATCH v4 0/1] MIPS: Fix idle VS timer enqueue
+Date: Thu, 27 Feb 2025 14:45:38 +0100
+Message-ID: <20250227134539.267169-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1848248.VLH7GnMWUR";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeeiudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsr
- ghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Transfer-Encoding: 8bit
 
---nextPart1848248.VLH7GnMWUR
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Date: Thu, 27 Feb 2025 14:43:59 +0100
-Message-ID: <6056224.MhkbZ0Pkbq@fw-rgant>
-In-Reply-To: <20250225113939.49811-5-demonsingur@gmail.com>
-MIME-Version: 1.0
+This patch aims to fix idle routine while the CPU receive an interrupt,
+because __r4k_wait() only checks if TIF_NEED_RESCHED is set before
+going to sleep.
+The same behavior has been changed in LoongArch [1].
 
-On mardi 25 f=C3=A9vrier 2025 12:39:32 heure normale d=E2=80=99Europe centr=
-ale Cosmin=20
-Tanislav wrote:
-> The i2c_atr_get_mapping_by_addr() function handles three separate
-> usecases: finding an existing mapping, creating a new mapping, or
-> replacing an existing mapping if a new mapping cannot be created
-> because there aren't enough aliases available.
->=20
-> Split up the function into three different functions handling its
-> individual usecases to prepare for better usage of each one.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->  drivers/i2c/i2c-atr.c | 108 ++++++++++++++++++++++++++++++------------
->  1 file changed, 79 insertions(+), 29 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-> index f2485d1670a2..9c4e9e8ec802 100644
-> --- a/drivers/i2c/i2c-atr.c
-> +++ b/drivers/i2c/i2c-atr.c
-> @@ -239,9 +239,26 @@ static void i2c_atr_release_alias(struct
-=2E..
-> +	i2c_atr_destroy_c2a(&c2a);
-> +	i2c_atr_release_alias(chan->alias_pool, alias);
-> +	return NULL;
-> +}
-> +
-> +static struct i2c_atr_alias_pair *
-> +i2c_atr_create_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
-> +{
+Code (cross) compiled successfully and I manage to test it on a VM
+emulating a malta board. I ran QEMU with:
 
-I've missed this on my first review of this patch, but shouldn't=20
-i2c_atr_create_mapping_by_addr() also get a lockdep annotation, just like t=
-he=20
-other two mapping functions?
+qemu-system-mips64el -M malta -m 2G -kernel vmlinux -serial stdio -drive \
+file=rootfs.ext2,format=raw -append "rootwait root=/dev/sda" -cpu 5Kc
 
-Thanks,
+rootfs generated using buildroot (malta default configuration).
 
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+- [1] https://github.com/chenhuacai/linux/commit/a8aa673ea46c03b3f62992ffa4ffe810ac84f6e3
 
---nextPart1848248.VLH7GnMWUR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+---
+Changes in v3:
+ - changed "daddiu k0, 1" with PTR_ADDIU k0, 5
+ - replaced CONFIG_CPU_MICROMIPS with 3 _ssnop followed by _ehb
+ - integrated the commit message with explanation about
+   CONFIG_CPU_MICROMIPS replacement
 
------BEGIN PGP SIGNATURE-----
+Changes in v2:
+ - Changes introduced by Huacai:
+    https://lore.kernel.org/linux-mips/20250214105047.150835-1-marco.crivellari@suse.com/T/#m75d9c587829e15e0d7baec13078be4e65c936408
 
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmfAbB8ACgkQ3R9U/FLj
-284/Ag/7BpI8uRhcHuXyBUlz7P3cfv+AcNDmKU9srWmCJkPO1bUWvxUAHhTH2osS
-JTncTkEDPVxaSUv40ZW/QV8bV3Q2fPo7SeeGdOCFbxbF430zBvnmWgLTDc+OwXCh
-GqJzL1uIArOwfsjNJT0XdsZS3qhQzJJk2XhxWkctAuypeNyHxdM+OMiLBQ/ypK9Q
-eIDRAPa2PtutpvJ6akIxQBV8+wPsZJve8MVy3ij1KqKMEAFW+q9fuoZT8qh6HyGL
-aiPltdPEqKkIHUxcYWFpOWvA0iBPtw+U7i/3mEJA1dYiIMbjTuxbB+eOgigCOG4v
-2c4I+eRp/o+gBninEkQHmjnwiIrkLSOoF+ME2h7/1q2bHDXaJJOdV7VKb+/tW0U6
-yYf9X6GzlY8WsOyM11qwgXF/cLEYxew5NMmA3KZ+uM/T6vjZp1w7VsD3a1ux694P
-M9NRAu4dbXSDV8jM3IcJmdcuctpvWeL+P9da35Mqdy/lTN8vp5wCiyxKE6g3oT9V
-5oFVneC4daw2k+ChPfWuxtX9cZhAR5m+yrsG2mp9JvQhfIcH2fETOqSLXK5XeKJa
-jtu/TAxZVA7jTYsmYyGfDRAo1A5FLSrtcoPSuHtY2H/bfskFDgpXn+gi2y5vPmsD
-FO1AptS+1k0n+Fe84E0DjzKmGZC8HlA6gKtf0nMXONa4RlkVuZc=
-=vAIB
------END PGP SIGNATURE-----
+Marco Crivellari (1):
+  MIPS: Fix idle VS timer enqueue
 
---nextPart1848248.VLH7GnMWUR--
+ arch/mips/kernel/genex.S | 42 ++++++++++++++++++++++------------------
+ arch/mips/kernel/idle.c  |  1 -
+ 2 files changed, 23 insertions(+), 20 deletions(-)
 
-
+-- 
+2.48.1
 
 
