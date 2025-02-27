@@ -1,175 +1,96 @@
-Return-Path: <linux-kernel+bounces-536404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE31FA47F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:31:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DAFA47F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:35:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20ECB1898CA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:28:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBCF17089E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18DB2343D2;
-	Thu, 27 Feb 2025 13:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D262356AB;
+	Thu, 27 Feb 2025 13:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Viqxhn1T"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApZouFlz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3176222F38C;
-	Thu, 27 Feb 2025 13:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B937022FF44;
+	Thu, 27 Feb 2025 13:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740662754; cv=none; b=mHL3+EvCl0mwYpeX12tZ4ibsYExJodyDrLPegwyvYGzTSAtkhXMkhwAQ5rjjbKz87Uwu9OHmC6P5Eb6JbfpXD7ArX84Eh0zidEzFgEKSpX4d2/g+2MsYQMftd0lwC6mJUZTxcJozFKgz7JuLyJi8mhATMU07CVJE6uKGPbLvEn8=
+	t=1740662806; cv=none; b=JC08JfIdoXV5bbA59dfa8NMlntrGlJp/5AUBoFiEb7i9xYenMkRT5LHVzKkQTBbGQeU5ChTqFPawOi/iySk8hb6nwKjKPuynZo/95mZwXx0mdnzSqLcxUv3k+Fnz5xmUVlbqXq8Sks6T2VUBelu5TZCyzZOvX7pDbU6I/75xuHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740662754; c=relaxed/simple;
-	bh=xhIbnn19xYJykk9ajpzhPJWiLKMhdCbhFzYt9+0wUzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g5QJVdO9F3KcD61clHsR8lZumuIJgpgCXH1xAIYAWWWp/jdGeh15LSxozfU6fUxmddmxmez7Ku9lYnOf5bakh5blR8gmiou5oHS77wpb86QO8AR8Yr4XkvO+ymWHbM17nALsIZYfRMhv+jtErRm9EHb/qjd3DhTkHgvujnMsfcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Viqxhn1T; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 264BE433D6;
-	Thu, 27 Feb 2025 13:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740662750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/TdedDa3vdjABWC4gCUJO3yynX77VFd8JSQhuT9S5yY=;
-	b=Viqxhn1TBC3XzKkMKtp9KDDaZB3ys1TiHV4zLbQ9dCQleTP7pQGH4xi/lfX7zrYh1cf0i3
-	Zy+I/to2IlIRMJn8ZF2PKFE2WaHM8luzsSJ7pUQQIWiL0BxYIKf1eMqELE0Ath3hWoFGgw
-	QIgzlaanBSEfvJP7L+Ad6zUJB2jqMQ3ayhi4tXX1a1+ec6Bc3FwuWVYH4RWLLW539h9mTr
-	tOOipMGmIditZEZB+/fFJRIHwbgYSPv8uDB1Whi8n17vkqeUd2gvgmrOGJB6zXWB+6ItXU
-	vF2eU591x2cSmlQeX+ntetxAMh5xE0gjwdxGbTwX3p5NBlvK+NM2DxtGcoSaoQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 3/9] i2c: atr: find_mapping() -> get_mapping()
-Date: Thu, 27 Feb 2025 14:25:45 +0100
-Message-ID: <3008657.e9J7NaK4W3@fw-rgant>
-In-Reply-To: <20250225113939.49811-4-demonsingur@gmail.com>
-References:
- <20250225113939.49811-1-demonsingur@gmail.com>
- <20250225113939.49811-4-demonsingur@gmail.com>
+	s=arc-20240116; t=1740662806; c=relaxed/simple;
+	bh=RC9g2s3NtsKBwCNvPMR9F7//Ad1mLMvFg97XbB1Mns4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4qhldAVMEOrWMMsp6fwRfwpMigfLZt77+QtLKxhyDRbuwib63582ADrNtu+ouRwme2y4LDiX2O9Da/9ekgqAyJODwN0+xcJFnLBUCOQCRlc1/1ICtM56v0fJqgHThOCV2CT8nuDgzMgNQYE97ClcMbUfmCgDrwD5ZVhAOcir6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApZouFlz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1311FC4CEDD;
+	Thu, 27 Feb 2025 13:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740662806;
+	bh=RC9g2s3NtsKBwCNvPMR9F7//Ad1mLMvFg97XbB1Mns4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ApZouFlzCoMM3a08NtHo/cO8aR2RuP+Zuvy+v9gYdAE7AXWp3nxAzdasiRGhxZE08
+	 Y+On2ijNI+JpMyNukXjvRIsVlofWqXUaz2FtPonBRCRjbrKbTSfmpfjhyR4MLFCDF1
+	 kNEH06vftgX3E3dwTHY9Vh1sLX2vEhGJ3eXEQ1HWq0iVTnIRcLejwQ9ZXNI6R+d1ch
+	 CfeLpuRyb16wJ8P2oHfPQ+gTLnXyz1ImGGoxseHCPT6/m0m2Km70l+tQkfzkInylXG
+	 fsNPrJ06Ol08vhU9iKDkWPKOY9wj/9H6eFOSG5VQkCHkQ0qdYHFT5C4Sk/8rEC6mv/
+	 BV54XChRrgOqw==
+Date: Thu, 27 Feb 2025 07:26:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: reset: syscon-reboot: support reset
+ modes
+Message-ID: <20250227132644.GA1924628-robh@kernel.org>
+References: <20250227-syscon-reboot-reset-mode-v3-0-959ac53c338a@linaro.org>
+ <20250227-syscon-reboot-reset-mode-v3-1-959ac53c338a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3367768.aeNJFYEL58";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieekkeffvdeugfekjeegfefhvdetuefhtdelieduheeileduledvteelgefgffffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdpr
- hgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250227-syscon-reboot-reset-mode-v3-1-959ac53c338a@linaro.org>
 
---nextPart3367768.aeNJFYEL58
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 3/9] i2c: atr: find_mapping() -> get_mapping()
-Date: Thu, 27 Feb 2025 14:25:45 +0100
-Message-ID: <3008657.e9J7NaK4W3@fw-rgant>
-In-Reply-To: <20250225113939.49811-4-demonsingur@gmail.com>
-MIME-Version: 1.0
+On Thu, Feb 27, 2025 at 10:46:13AM +0000, André Draszik wrote:
+> Add support for specifying different register/mask/value combinations
+> for different types of reset.
+> 
+> In particular, update the binding to allow platforms to specify the
+> following reset modes: soft, warm, cold, hard.
+> 
+> Linux can perform different types of reset using its reboot= kernel
+> command line argument, and some platforms also wish to reset
+> differently based on whether or not e.g. contents of RAM should be
+> retained across the reboot.
+> 
+> The new properties match the existing properties, just prefixed with
+> one of the reset modes mentioned above.
 
-On mardi 25 f=C3=A9vrier 2025 12:39:31 heure normale d=E2=80=99Europe centr=
-ale Cosmin=20
-Tanislav wrote:
-> A find operation implies that a null result is not an error.
->=20
-> Use get naming to clarify things and to prepare for splitting up the
-> logic inside this function.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> ---
->  drivers/i2c/i2c-atr.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-> index f6033c99f474..f2485d1670a2 100644
-> --- a/drivers/i2c/i2c-atr.c
-> +++ b/drivers/i2c/i2c-atr.c
-> @@ -241,7 +241,7 @@ static void i2c_atr_release_alias(struct
-> i2c_atr_alias_pool *alias_pool, u16 ali
->=20
->  /* Must be called with alias_pairs_lock held */
->  static struct i2c_atr_alias_pair *
-> -i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
-> +i2c_atr_get_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
->  {
->  	struct i2c_atr *atr =3D chan->atr;
->  	struct i2c_atr_alias_pair *c2a;
-> @@ -335,7 +335,7 @@ static int i2c_atr_map_msgs(struct i2c_atr_chan *chan,
-> struct i2c_msg *msgs, for (i =3D 0; i < num; i++) {
->  		chan->orig_addrs[i] =3D msgs[i].addr;
->=20
-> -		c2a =3D i2c_atr_find_mapping_by_addr(chan, msgs[i].addr);
-> +		c2a =3D i2c_atr_get_mapping_by_addr(chan, msgs[i].addr);
->=20
->  		if (!c2a) {
->  			dev_err(atr->dev, "client 0x%02x not mapped!\n",
-> @@ -428,7 +428,7 @@ static int i2c_atr_smbus_xfer(struct i2c_adapter *ada=
-p,
-> u16 addr,
->=20
->  	mutex_lock(&chan->alias_pairs_lock);
->=20
-> -	c2a =3D i2c_atr_find_mapping_by_addr(chan, addr);
-> +	c2a =3D i2c_atr_get_mapping_by_addr(chan, addr);
->=20
->  	if (!c2a) {
->  		dev_err(atr->dev, "client 0x%02x not mapped!\n", addr);
-> @@ -536,7 +536,7 @@ static void i2c_atr_detach_addr(struct i2c_adapter
-> *adapter,
->=20
->  	mutex_lock(&chan->alias_pairs_lock);
->=20
-> -	c2a =3D i2c_atr_find_mapping_by_addr(chan, addr);
-> +	c2a =3D i2c_atr_get_mapping_by_addr(chan, addr);
->  	if (!c2a) {
->  		 /* This should never happen */
->  		dev_warn(atr->dev, "Unable to find address mapping\n");
+This would be why we don't do "simple" or "generic" bindings. There's 
+always one more variation needing yet more properties to handle it. We 
+also draw the line at encoding register accesses into DT. If we wanted 
+that, we would have created a language for doing that (or started using 
+Forth in FDT).
 
-Looks good to me. This is more of a preparation/improvement patch rather th=
-an=20
-a fix so I think it's okay to leave it in your series.
+You need a specific binding for your h/w. If you can make it work with a 
+"generic" driver, then that's great, but that's an OS decision which can 
+change if needed. The binding can't change.
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-
-
---nextPart3367768.aeNJFYEL58
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmfAZ9kACgkQ3R9U/FLj
-285C5Q/7B6+cggNuHY6tdArMV371AqqVTkom8lS/9Yu0c9VxAyJ5WE/z0vPCcTur
-E3XJkwCQGueUYwfvUbe3updmRTqnDdam7XZgv0h4ihpQOy7lAwhe7pNkYIL+19CG
-yNL2x9zXgiP2cat/BiNj22xTrCd76faA8CIrtFPQDNQE46PslZ7TbBlPvIWO9l1w
-KsS6ZCW4GGkJuXUFIx7u9t4axDEnfRa13zL8EbTlXjGRwVqcq6nuUCYQnvYlp3v3
-iNrazLf3KSH519hNbfZeTL5woGZ4PVGP+tWggkamImQ90jg/ORc7LgWtlhZls5m/
-two1OGvfgwAs83hk18SHqKzFsPGLH2yx0qdXsnrNOWUSbKZ8zIclIyz+yxQGdv+Y
-KzCvK6jMTtygvOqtmJpkXvQbUgL3RoiRKGR7AZQMsbe16Yh28jMmznQuBjI0K4PE
-hbj8SjF2bIR/t/nHNG6RUk1qKOivAJTXkUm8aimkJzgPJf/u0yfmEb6EKSGozmpD
-7kyruQYpYIbTjOFwhF3JT1nTF847xPKuYsep0xCOE259VQcyGySsrGQqu8VMmtah
-P1j+5/+hdGptqzwWo8x5CO+GiCYa9Ui15ElLuDDb78hfS7kgOIRARK0YKE0PdXXR
-+FGB16w/5UZq0XHhyHkwd9pMsHWhZAlcl3te3SiPKVapAjZOSo8=
-=ZN+t
------END PGP SIGNATURE-----
-
---nextPart3367768.aeNJFYEL58--
-
-
-
+Rob
 
