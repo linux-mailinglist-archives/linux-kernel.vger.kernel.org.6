@@ -1,378 +1,160 @@
-Return-Path: <linux-kernel+bounces-535453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7B2A47313
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:38:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5F0A47307
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C6C16831E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50713AD750
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1B194A44;
-	Thu, 27 Feb 2025 02:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYKMU42J"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F217A2F7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CF31B0439;
+	Thu, 27 Feb 2025 02:32:38 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CBE17A2F7;
+	Thu, 27 Feb 2025 02:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740623519; cv=none; b=PV28oCak6pAKCS2Gq622ff/ay74YrCBSXlY1zvUxWazoxh4+FjTq40NWsjTjyqq34HeCjulYBmA9lyGcGLd+1IfXJkh2TMUnpB42GFadThd6ONfN1T6KYSo6S9nAgPUx8lCXQQGnaq2iVA9EtTWamfeTGpOaiE7LtX0/Qc+3zbY=
+	t=1740623558; cv=none; b=P7/RXIYU9ALKoQydZAIW5dBzEfo5hZvIAjAZQwc6s+gmwu5tLoOrhQuRTb9g/cYkHlawLB0vPgbHwfxhRNu73DTj+iGUi9GBh920VKjVvT+232tEHV5DUA4GZbgBpbERUybb2O0cl6o2Wds+MTmWwwp8xzh+FjDoQ2Icq1fLU9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740623519; c=relaxed/simple;
-	bh=luHG1Y5KsNSo/DhWFzwtutrMted5f6Dk0kFRk2t85Ng=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EgbEtyVwCg1epid1mBOK5U4eiTGcZKb01gdCaqlWEiYWIAarV/YWEquCN8FvPXSCWACY2YqMWZF7gIYTdmqAGiJT/7/lbRAQaPtODfAxYk63E2K7KDvA3e+GI60An/D1FgQLW8tJ8IVym8QOxU5MKWPw/EbH3/LRIt0W+EeUedk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYKMU42J; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54527a7270eso396153e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:31:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740623513; x=1741228313; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pe28A92x1GiXAYhXNOQnMWm/JVmD+9I9ysLZzus4GUg=;
-        b=GYKMU42JmnyIzyz5K2yChRbPSqvpSGSbRE2QU6TPpi86PVYnqoP6Wqx+Clam0CexT8
-         jVteud+imQSNqLykTa9hc+LOcNiUe+ZdzpRbdxUn6L2RCGMDU3w8u3kRX9/4xvGXN5ZX
-         lGZU0zZFXxZX28BZLVHN9a8B1cYwVlhnOS4HSjvgeBCHBw1PlNwHDPyG8MHPNvvwCF6S
-         rgyHcn10I/d3Q0Wg3UoZ5d1UWdS31RY2LEVjfnu850hCBBTt8YdTxVLwlRWvp3vpMwRX
-         sMULrSPqBRigVaDt0EFKqgmSKrY/IPLDPbdl0rjyWLq9WT1kqfIAqbR41EhN5HyWjXSC
-         jTWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740623513; x=1741228313;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pe28A92x1GiXAYhXNOQnMWm/JVmD+9I9ysLZzus4GUg=;
-        b=oLSLMV4S1PQ4cYouLayXUugrhd4iiVuHkeeqrDCyjzLDVCrtDV/uHfY6lyNGAECjNP
-         l4o+k9ZE/lf/i4ghWjE41GkP8DKvV4+GPkqqG6qCqTm3MrLIMA3EqELXDKa2ZUbdvle4
-         lxCTmDHaQFl/DH3VTHdWnoWyOGHLeZiz7FecCR5MliRtsne4c/6Udoq6lnk52tde5ZlB
-         t0VlAt/CKBnBOvTqiFKI/WsHssX5+WRFs26HBB18wH6duChyyJX0ASsOAd7bYKHNLOxv
-         ppPKeV4gK1UI+NUTtF8ZOarXFUrc1++vstPpdRDy5XauKlAbwMGsbPT8R5hFOfa/uA7X
-         rPfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsPhhXRmFgjpvWUibhKp0OUFHrauhqTOAe0Y5de5xiPd+b8qOzbKj0fdECDF6q3bw0RrGgdHlf68U3g24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqXCOxLq4YMSGREaxJC7p6tL1xauhiCaEUu7ooZp+JLi5V9+3V
-	y+yVSZ6DDrsgLI//2N60XFmRR0sogKzitF5nUnBwRVtGhO+myWaFFCTB3q9m5Vo=
-X-Gm-Gg: ASbGncs/zFV1tNXcuXe8Y3gjZDW/hT3uCmLzHkKYLUIb6Q0fiB5nUs0HysubWqp1784
-	kHDWKb3OUGYCkSikZYtBRBLe14BCORgU8yYYalAO/MnWCZbTlTbTkUfiDKNDvxPkhvVTvFnt7Qr
-	l5zqow589LmJXYgDUpSEKiggjqLBegmEZYwMRXXqs/9ApaeSb6PZRpwarthJii/nFp+mbNp/eEb
-	5FypgJH5KZVMMlBACZqwY6gX8h615SckYbR6u7gNc7hN0CcgNB75buo4c2Hjt/egORFA0PnHjUx
-	r9lV5TXfaCcoegmQcRyqABRr6Qi3TrAYFw==
-X-Google-Smtp-Source: AGHT+IGsG9tTMBoFX+p4C5ZcgIDjAg5knIHTqwpKvZsGh7bP+qxxtuuQn/PArlbHj3skC9/mmGbWww==
-X-Received: by 2002:a05:6512:3b2b:b0:545:a1a:5576 with SMTP id 2adb3069b0e04-5483914012cmr11505631e87.22.1740623513446;
-        Wed, 26 Feb 2025 18:31:53 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443be377sm49269e87.167.2025.02.26.18.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 18:31:52 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 27 Feb 2025 04:31:49 +0200
-Subject: [PATCH v6] drm/msm/dpu: allow sharing SSPP between planes
+	s=arc-20240116; t=1740623558; c=relaxed/simple;
+	bh=rcZzV1+yyOYgRs0JzYcXNOpIDUWuhSnP4b3WaJ28ETQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fTawSKTYCOXgwROa3z09JlANqhlA2t8SZcZSc/g7mkhX4Pg2/BmnP4JJG8swpadvwNv0R6EhLCfLTnW2IyWubD2lm/FsK5Ce0TeZg3nS0F4az79lJMPaX/w/5xQK9TRVp8a+DKpYexB50HtNl4qlNx0XIll8TypDfg6kjCl0XKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-21-67bfcebd10c6
+Message-ID: <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
+Date: Thu, 27 Feb 2025 11:32:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, gregkh@linuxfoundation.org, rakie.kim@sk.com,
+ akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
+ dan.j.williams@intel.com, Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
+ horen.chuang@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+ yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
+ memoryless nodes
+Content-Language: ko
+To: Joshua Hahn <joshua.hahnjy@gmail.com>, gourry@gourry.net,
+ harry.yoo@oracle.com, ying.huang@linux.alibaba.com
+References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
+ <20250226213518.767670-2-joshua.hahnjy@gmail.com>
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250226213518.767670-2-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-dpu-share-sspp-v6-1-4d469910f399@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJTOv2cC/3XMQQrCQAyF4auUrI04oxOrK+8hXQxt2gakMyRal
- NK7O3bv8n/wvgWMVdjgWi2gPItJmkrQroJ2jNPAKF1p8Ad/ct4F7PILbYzKaJYznkMMRMytqwO
- UU1bu5b2B96b0KPZM+tn8OfzWv9Qc0CFR6DyRq4/95faQKWraJx2gWdf1C20uMr+tAAAA
-X-Change-ID: 20241215-dpu-share-sspp-75a566eec185
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10508;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=luHG1Y5KsNSo/DhWFzwtutrMted5f6Dk0kFRk2t85Ng=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnv86W44TO3Fj2x1ye0TDqmCpBPagsJ4F3ft1JR
- M/feYMd/SKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7/OlgAKCRCLPIo+Aiko
- 1ZTxB/9s+6yAAjS+vBIq/IS7czbaoyjphlANfKv5w/YKkG+fIrAk/OL+eqNN1gI5AHMZEwOmSyE
- p/DFI9mKilYWMkWlPrW9RLEzUoNZGu3taB3ldKhhw8ZWhYcpQb+6pYYEPqHpsDQFUR2TOlimoBc
- g+ZHeV82UGtHCAzSjSvVVesQo59vejgFTXXdu6OB+FjqJ3dyfDp3NMkWrF5Vw+6idkFlQ8UY4us
- bGr3kamsz7KljeTtmCFQMCdrZA7s/4HE8B7WrxQNavmtLJNMNFTuF3Xgt3X441E95COMGYcxKtl
- V5oqG5sSYwwEicrNtqhc6EyYPEpK7ZYz6O3bvTZi1oWfzK3L
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsXC9ZZnoe7ec/vTDZZcMbeYs34Nm8X0qRcY
+	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
+	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
+	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
+	9O0SuDLmX9vMWtArUrFvk2wD4yy+LkZODgkBE4l/H1oZYey3u7ewg9i8ApYS2zd9YQKxWQRU
+	Ja437GGBiAtKnJz5BMwWFZCXuH9rBlA9FwezQAuzxKRTq5hBEsICURI7X/0Fa2YWEJGY3dkG
+	FhcRKJI4PuMz2DIhgUKJq3v7wWw2ATWJKy8ngdVzCthJfP/XwALRaybRtbWLEcKWl9j+dg4z
+	yDIJgUvsEgc6trNAXC0pcXDFDZYJjIKzkBw4C8nuWUhmzUIyawEjyypGocy8stzEzBwTvYzK
+	vMwKveT83E2MwCheVvsnegfjpwvBhxgFOBiVeHgjxPenC7EmlhVX5h5ilOBgVhLh5czcky7E
+	m5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qBccnziKnchY8+
+	tHfVqh6SqeN0jzQoyNpnMuO+9lwj1t6b9zzSdQx/T/i48V6n7oI1z2+d59q69//2KXd/N7G2
+	/L9+sOjl4ZMvDrjKqCr90/WZI/JO/9SCR5f1xSz1k6Jsd+XPPVe0bOq6z3a2kR9+SPhKspy4
+	/OT39u3+Ll8mCKot1Xq+bOvM5SFKLMUZiYZazEXFiQC7PhKr3gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXCNUNLT3fvuf3pBjc6dCzmrF/DZjF96gVG
+	ixM3G9ksft49zm7RvHg9m8XqTb4W95c9Y7G43X+O1WLVwmtsFse3zmO32HcRqOHw3JOsFjsf
+	vmWzWL6vn9Hi8q45bBb31vxntZj7ZSqzxaFrz1ktVq/JsPi9bQWbg4jH4TfvmT12zrrL7tHd
+	dpndo+XIW1aPxXteMnlsWtXJ5rHp0yR2jxMzfrN47Hxo6bGwYSqzx/65a9g9zl2s8Pj49BaL
+	x7fbHh6LX3xg8vi8SS5AIIrLJiU1J7MstUjfLoErY/61zawFvSIV+zbJNjDO4uti5OSQEDCR
+	eLt7CzuIzStgKbF90xcmEJtFQFXiesMeFoi4oMTJmU/AbFEBeYn7t2YA1XNxMAu0MEtMOrWK
+	GSQhLBAlsfPVX7BmZgERidmdbWBxEYEiieMzPjOC2EIChRJX9/aD2WwCahJXXk4Cq+cUsJP4
+	/q+BBaLXTKJraxcjhC0vsf3tHOYJjHyzkNwxC8mKWUhaZiFpWcDIsopRJDOvLDcxM8dUrzg7
+	ozIvs0IvOT93EyMwXpfV/pm4g/HLZfdDjAIcjEo8vBHi+9OFWBPLiitzDzFKcDArifByZu5J
+	F+JNSaysSi3Kjy8qzUktPsQozcGiJM7rFZ6aICSQnliSmp2aWpBaBJNl4uCUamDMFIib5Gk3
+	k5v/NMe01Yfnavur5qyY2/HmNfv3R00Khz+rP+XhKHrPlqjX1Ll9VbjBkd8bA/PtCiV5Vz3S
+	4Wb4W9R1oGyRnd4P1oPnNv+POnuQdR0L69YdRT9ufd3+d+WVOcdM9/pKPVEQUvjVxbSp5mCu
+	6hRpH/n/NxdWm7h+W+tdcHrNxZnWSizFGYmGWsxFxYkAqqI149MCAAA=
+X-CFilter-Loop: Reflected
 
-Since SmartDMA planes provide two rectangles, it is possible to use them
-to drive two different DRM planes, first plane getting the rect_0,
-another one using rect_1 of the same SSPP. The sharing algorithm is
-pretty simple, it requires that each of the planes can be driven by the
-single rectangle and only consecutive planes are considered.
+Hi Joshua,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-This patch has been deferred from v4 of virtual wide patchset to
-simplify the merging path. Now as the wide planes have been merged, pick
-up the patch that allows sharing of the SSPPs between two planes.
----
-Changes in v6:
-- Fixed typo (consecutive) in the commit message (Abhinav)
-- Renamed prev_plane_state to prev_adjancent_plane_state (Abhinav)
-- Renamed prev_pstate to prev_adjancent_pstate as a followup to the
-  previous change
-- Link to v5: https://lore.kernel.org/r/20241215-dpu-share-sspp-v5-1-665d266183f9@linaro.org
+On 2/27/2025 6:35 AM, Joshua Hahn wrote:
+> We should never try to allocate memory from a memoryless node. Creating a
+> sysfs knob to control its weighted interleave weight does not make sense,
+> and can be unsafe.
+> 
+> Only create weighted interleave weight knobs for nodes with memory.
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> ---
+>   mm/mempolicy.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 4cc04ff8f12c..50cbb7c047fa 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
+>   		return err;
+>   	}
+>   
+> -	for_each_node_state(nid, N_POSSIBLE) {
 
-Changes in v5:
-- Rebased on top of the current msm-next-lumag
-- Renamed dpu_plane_try_multirect() to dpu_plane_try_multirect_shared()
-  (Abhinav)
-- Link to v4: https://lore.kernel.org/dri-devel/20240314000216.392549-11-dmitry.baryshkov@linaro.org/
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 156 +++++++++++++++++++++++++-----
- 1 file changed, 130 insertions(+), 26 deletions(-)
+Actually, we're aware of this issue and currently trying to fix this.
+In our system, we've attached 4ch of CXL memory for each socket as
+follows.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index af3e541f60c303eb5212524e877129359b5ca98c..11c4d5dfd9703b27b7ffde34e9b4f92ec956c3c0 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -887,10 +887,9 @@ static int dpu_plane_atomic_check_nosspp(struct drm_plane *plane,
- 	return 0;
- }
- 
--static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
--						   struct dpu_sw_pipe_cfg *pipe_cfg,
--						   const struct msm_format *fmt,
--						   uint32_t max_linewidth)
-+static int dpu_plane_is_multirect_capable(struct dpu_hw_sspp *sspp,
-+					  struct dpu_sw_pipe_cfg *pipe_cfg,
-+					  const struct msm_format *fmt)
- {
- 	if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
- 	    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect))
-@@ -902,10 +901,6 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
- 	if (MSM_FORMAT_IS_YUV(fmt))
- 		return false;
- 
--	if (MSM_FORMAT_IS_UBWC(fmt) &&
--	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
--		return false;
--
- 	if (!test_bit(DPU_SSPP_SMART_DMA_V1, &sspp->cap->features) &&
- 	    !test_bit(DPU_SSPP_SMART_DMA_V2, &sspp->cap->features))
- 		return false;
-@@ -913,6 +908,27 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
- 	return true;
- }
- 
-+static int dpu_plane_is_parallel_capable(struct dpu_sw_pipe_cfg *pipe_cfg,
-+					 const struct msm_format *fmt,
-+					 uint32_t max_linewidth)
-+{
-+	if (MSM_FORMAT_IS_UBWC(fmt) &&
-+	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
-+		return false;
-+
-+	return true;
-+}
-+
-+static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
-+						   struct dpu_sw_pipe_cfg *pipe_cfg,
-+						   const struct msm_format *fmt,
-+						   uint32_t max_linewidth)
-+{
-+	return dpu_plane_is_multirect_capable(sspp, pipe_cfg, fmt) &&
-+		dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth);
-+}
-+
-+
- static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
- 				       struct drm_atomic_state *state,
- 				       const struct drm_crtc_state *crtc_state)
-@@ -1001,6 +1017,69 @@ static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dp
- 	return true;
- }
- 
-+static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
-+					  struct dpu_plane_state *prev_adjancent_pstate,
-+					  const struct msm_format *fmt,
-+					  uint32_t max_linewidth)
-+{
-+	struct dpu_sw_pipe *pipe = &pstate->pipe;
-+	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
-+	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
-+	struct dpu_sw_pipe *prev_pipe = &prev_adjancent_pstate->pipe;
-+	struct dpu_sw_pipe_cfg *prev_pipe_cfg = &prev_adjancent_pstate->pipe_cfg;
-+	const struct msm_format *prev_fmt = msm_framebuffer_format(prev_adjancent_pstate->base.fb);
-+	u16 max_tile_height = 1;
-+
-+	if (prev_adjancent_pstate->r_pipe.sspp != NULL ||
-+	    prev_pipe->multirect_mode != DPU_SSPP_MULTIRECT_NONE)
-+		return false;
-+
-+	if (!dpu_plane_is_multirect_capable(pipe->sspp, pipe_cfg, fmt) ||
-+	    !dpu_plane_is_multirect_capable(prev_pipe->sspp, prev_pipe_cfg, prev_fmt))
-+		return false;
-+
-+	if (MSM_FORMAT_IS_UBWC(fmt))
-+		max_tile_height = max(max_tile_height, fmt->tile_height);
-+
-+	if (MSM_FORMAT_IS_UBWC(prev_fmt))
-+		max_tile_height = max(max_tile_height, prev_fmt->tile_height);
-+
-+	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-+	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+
-+	r_pipe->sspp = NULL;
-+
-+	if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &&
-+	    dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_linewidth) &&
-+	    (pipe_cfg->dst_rect.x1 >= prev_pipe_cfg->dst_rect.x2 ||
-+	     prev_pipe_cfg->dst_rect.x1 >= pipe_cfg->dst_rect.x2)) {
-+		pipe->sspp = prev_pipe->sspp;
-+
-+		pipe->multirect_index = DPU_SSPP_RECT_1;
-+		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-+
-+		prev_pipe->multirect_index = DPU_SSPP_RECT_0;
-+		prev_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-+
-+		return true;
-+	}
-+
-+	if (pipe_cfg->dst_rect.y1 >= prev_pipe_cfg->dst_rect.y2 + 2 * max_tile_height ||
-+	    prev_pipe_cfg->dst_rect.y1 >= pipe_cfg->dst_rect.y2 + 2 * max_tile_height) {
-+		pipe->sspp = prev_pipe->sspp;
-+
-+		pipe->multirect_index = DPU_SSPP_RECT_1;
-+		pipe->multirect_mode = DPU_SSPP_MULTIRECT_TIME_MX;
-+
-+		prev_pipe->multirect_index = DPU_SSPP_RECT_0;
-+		prev_pipe->multirect_mode = DPU_SSPP_MULTIRECT_TIME_MX;
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static int dpu_plane_atomic_check(struct drm_plane *plane,
- 				  struct drm_atomic_state *state)
- {
-@@ -1098,13 +1177,14 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
- static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
- 					      struct dpu_global_state *global_state,
- 					      struct drm_atomic_state *state,
--					      struct drm_plane_state *plane_state)
-+					      struct drm_plane_state *plane_state,
-+					      struct drm_plane_state *prev_adjancent_plane_state)
- {
- 	const struct drm_crtc_state *crtc_state = NULL;
- 	struct drm_plane *plane = plane_state->plane;
- 	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
- 	struct dpu_rm_sspp_requirements reqs;
--	struct dpu_plane_state *pstate;
-+	struct dpu_plane_state *pstate, *prev_adjancent_pstate;
- 	struct dpu_sw_pipe *pipe;
- 	struct dpu_sw_pipe *r_pipe;
- 	struct dpu_sw_pipe_cfg *pipe_cfg;
-@@ -1116,6 +1196,8 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
- 							   plane_state->crtc);
- 
- 	pstate = to_dpu_plane_state(plane_state);
-+	prev_adjancent_pstate = prev_adjancent_plane_state ?
-+		to_dpu_plane_state(prev_adjancent_plane_state) : NULL;
- 	pipe = &pstate->pipe;
- 	r_pipe = &pstate->r_pipe;
- 	pipe_cfg = &pstate->pipe_cfg;
-@@ -1134,24 +1216,42 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
- 
- 	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
- 
--	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
--	if (!pipe->sspp)
--		return -ENODEV;
-+	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
-+		if (!prev_adjancent_pstate ||
-+		    !dpu_plane_try_multirect_shared(pstate, prev_adjancent_pstate, fmt,
-+						    dpu_kms->catalog->caps->max_linewidth)) {
-+			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-+			if (!pipe->sspp)
-+				return -ENODEV;
- 
--	if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
--					      pipe->sspp,
--					      msm_framebuffer_format(plane_state->fb),
--					      dpu_kms->catalog->caps->max_linewidth)) {
--		/* multirect is not possible, use two SSPP blocks */
--		r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
--		if (!r_pipe->sspp)
-+			r_pipe->sspp = NULL;
-+
-+			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-+			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+
-+			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-+			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+		}
-+	} else {
-+		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-+		if (!pipe->sspp)
- 			return -ENODEV;
- 
--		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
--		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+		if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
-+						      pipe->sspp,
-+						      msm_framebuffer_format(plane_state->fb),
-+						      dpu_kms->catalog->caps->max_linewidth)) {
-+			/* multirect is not possible, use two SSPP blocks */
-+			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-+			if (!r_pipe->sspp)
-+				return -ENODEV;
- 
--		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
--		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-+			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+
-+			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-+			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-+		}
- 	}
- 
- 	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
-@@ -1164,6 +1264,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
- 			       unsigned int num_planes)
- {
- 	unsigned int i;
-+	struct drm_plane_state *prev_adjancent_plane_state = NULL;
- 
- 	for (i = 0; i < num_planes; i++) {
- 		struct drm_plane_state *plane_state = states[i];
-@@ -1173,9 +1274,12 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
- 			continue;
- 
- 		int ret = dpu_plane_virtual_assign_resources(crtc, global_state,
--							 state, plane_state);
-+							     state, plane_state,
-+							     prev_adjancent_plane_state);
- 		if (ret)
--			return ret;
-+			break;
-+
-+		prev_adjancent_plane_state = plane_state;
- 	}
- 
- 	return 0;
+         node0             node1
+       +-------+   UPI   +-------+
+       | CPU 0 |-+-----+-| CPU 1 |
+       +-------+         +-------+
+       | DRAM0 |         | DRAM1 |
+       +---+---+         +---+---+
+           |                 |
+       +---+---+         +---+---+
+       | CXL 0 |         | CXL 4 |
+       +---+---+         +---+---+
+       | CXL 1 |         | CXL 5 |
+       +---+---+         +---+---+
+       | CXL 2 |         | CXL 6 |
+       +---+---+         +---+---+
+       | CXL 3 |         | CXL 7 |
+       +---+---+         +---+---+
+         node2             node3
 
----
-base-commit: 89839e69f6154feecd79bd01171375225b0296e9
-change-id: 20241215-dpu-share-sspp-75a566eec185
+The 4ch of CXL memory are detected as a single NUMA node in each socket,
+but it shows as follows with the current N_POSSIBLE loop.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+$ ls /sys/kernel/mm/mempolicy/weighted_interleave/
+node0 node1 node2 node3 node4 node5
+node6 node7 node8 node9 node10 node11
+
+> +	for_each_node_state(nid, N_MEMORY) {
+
+But using N_MEMORY doesn't fix this problem and it hides the entire CXL
+memory nodes in our system because the CXL memory isn't detected at this
+point of creating node*.  Maybe there is some difference when multiple
+CXL memory is detected as a single node.
+
+We have to create more nodes when CXL memory is detected later.  In 
+addition, this part can be changed to "for_each_online_node(nid)"
+although N_MEMORY is also fine here.
+
+We've internally fixed it using a memory hotpluging callback so we can
+upload another working version later.
+
+Do you mind if we continue fixing this work?
+
+Thanks,
+Honggyu
+
+>   		err = add_weight_node(nid, wi_kobj);
+>   		if (err) {
+>   			pr_err("failed to add sysfs [node%d]\n", nid);
 
 
