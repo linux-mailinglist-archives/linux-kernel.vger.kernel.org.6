@@ -1,160 +1,200 @@
-Return-Path: <linux-kernel+bounces-535454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5F0A47307
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2696A47318
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50713AD750
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0383B165AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CF31B0439;
-	Thu, 27 Feb 2025 02:32:38 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CBE17A2F7;
-	Thu, 27 Feb 2025 02:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E83814D43D;
+	Thu, 27 Feb 2025 02:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jxcFJSZl"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D4F270036
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740623558; cv=none; b=P7/RXIYU9ALKoQydZAIW5dBzEfo5hZvIAjAZQwc6s+gmwu5tLoOrhQuRTb9g/cYkHlawLB0vPgbHwfxhRNu73DTj+iGUi9GBh920VKjVvT+232tEHV5DUA4GZbgBpbERUybb2O0cl6o2Wds+MTmWwwp8xzh+FjDoQ2Icq1fLU9o=
+	t=1740623839; cv=none; b=LKq1SQIGnXZzvdITpt9YjsrjI4LkODgEy3Qa+Vg3X/0JCoBDNngB8BAAftOgdd3gYWj5MtKsqeqMNf4HKtGlBQviZFTkLZAWr/TMZOuPA2X8G1a57BnAtQa+bIXp1G20KS2XCe8G82nKNIBVYOkZKdBIRgXNUQrbBhzQO4trTP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740623558; c=relaxed/simple;
-	bh=rcZzV1+yyOYgRs0JzYcXNOpIDUWuhSnP4b3WaJ28ETQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fTawSKTYCOXgwROa3z09JlANqhlA2t8SZcZSc/g7mkhX4Pg2/BmnP4JJG8swpadvwNv0R6EhLCfLTnW2IyWubD2lm/FsK5Ce0TeZg3nS0F4az79lJMPaX/w/5xQK9TRVp8a+DKpYexB50HtNl4qlNx0XIll8TypDfg6kjCl0XKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-21-67bfcebd10c6
-Message-ID: <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
-Date: Thu, 27 Feb 2025 11:32:26 +0900
+	s=arc-20240116; t=1740623839; c=relaxed/simple;
+	bh=1aZdARq/05akDVNrrnIv2omWGAC66gwQQ+XGXmNHV/U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kM+CQ7UoBzjaTLjlihJp9cwvwy48sChSfiLMkjVUMNHjLZYFWMHOarJVXiv+6TDT8LavLPJLedDlaEwXKuFEo1O7JQPsLOxpZHZcWGhZ6YYuy4t8xOBYwuqkQ2KogLXeLvMwLup34QeTQZaKpjJoUxnKwLlw+QzyAaBfdLHQZPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jxcFJSZl; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f4bc408e49so4382927b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:37:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740623837; x=1741228637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2/JikIOXuq+9YZgvX/I0sOxCDWRqOTZNtQmLEPFnPo=;
+        b=jxcFJSZl6z8fGdRT2porIfYDggnpsL7VMVBzeWsLqD8jde/dk9Z4WfDPi1jtnTg7QM
+         +QExUQ1yLnG45yGT3EwFI0iiUqAVn0zWMWEh5RlELtBSxZitoF5TLW4YvWG8HD6kV4M7
+         GhaHgBUf0MH86VZ5s7u6/xDPxj26Kjr3Jn37JUJjUBYhW76/itjzotBKkkvOlg1xelJj
+         JPG/ab6RBfqab5fHGHvJXOcC3k+iUfGUv5Cc8vmvQxAhrrazIkjMQeELPH5ltzKoij6C
+         wTBJ9zEH4THhzXUT7fvyQes9Yxz5FK99MrLxd3POXeHt2STp4I+0Bv6JMNs+RWVOPZia
+         aedg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740623837; x=1741228637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w2/JikIOXuq+9YZgvX/I0sOxCDWRqOTZNtQmLEPFnPo=;
+        b=vzlazfe4nVYF/0Uyqg+9tNChfAc6HXCbFPnA4ztlTTrJhIBfB0W3+7Gj2hTwhhlbtc
+         Xg990lSsx7tu4slY6ObFgnxKDK/fDw0aIlmtLaDQ58kArr+LUXwWA7zuGu5hT1BOJf6f
+         x30/R9A1Y9AN9D348cXI3CRb6sidAoAYen8tz9cvQ11NqiTEif6qOQv+KLQ4BKyA/Hso
+         CtCAZenYKDBJRm6dWPCZnltMn3y785WL3rhMNjx/quqaI0XCl3oYsYFHq4QXUVYEZ40N
+         HrsOzEBUUe/h8EIbNUFKRrdze33MPg1H4qj4pDPXKW4jcbDW6AwzJCyVTmkJvz4N32JL
+         wXgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjt2nDSuOOCbGZPSSKeTSRgOZrawP+BzPJAI5UF5xlbkiErfNizhHKR6V2GX5Q7DHboFtKYf+YXsdTics=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFEBPmeewyn2YwzcPhRwub5BYbxUn5xVjV0Y6CQfwQIgTmd1Kk
+	9dG8TvjWslMvmk3DZ2A2dpkrraV46lI/bN2SXDZ4wbrYEhao2rH7NpRyKU+nIosoSCJCDU/SZ9/
+	TiIf7LnAklw1Jx6WwdKnU/QkhABNv8Zten5dhQg==
+X-Gm-Gg: ASbGnctTp653b/ix9tlgq6PP9orUsMEICuoUQt7kdr6ODi3L9RZIMiOgqgrrnNsMGhD
+	5np9OMf5SmhiZ0kqDIFvw8kI9uxkw0bCZtABpZaKGh+xzvUFxRX+Y/m/HM9GvElzFEGeGapRsoU
+	RVdqd0FalZt6qf
+X-Google-Smtp-Source: AGHT+IGSw0gtdKcK4e/gjlWOJp54+6uLHAkVBNTZI2SEuatfi8tmEUqUfZLol5dS7eJGj3x1CROAqXjTXvG9Xlr25R0=
+X-Received: by 2002:a05:690c:4512:b0:6f9:ac35:4483 with SMTP id
+ 00721157ae682-6fd2207a924mr52773417b3.25.1740623837083; Wed, 26 Feb 2025
+ 18:37:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, gregkh@linuxfoundation.org, rakie.kim@sk.com,
- akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
- dan.j.williams@intel.com, Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
- horen.chuang@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Content-Language: ko
-To: Joshua Hahn <joshua.hahnjy@gmail.com>, gourry@gourry.net,
- harry.yoo@oracle.com, ying.huang@linux.alibaba.com
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <20250226213518.767670-2-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsXC9ZZnoe7ec/vTDZZcMbeYs34Nm8X0qRcY
-	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
-	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
-	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
-	9O0SuDLmX9vMWtArUrFvk2wD4yy+LkZODgkBE4l/H1oZYey3u7ewg9i8ApYS2zd9YQKxWQRU
-	Ja437GGBiAtKnJz5BMwWFZCXuH9rBlA9FwezQAuzxKRTq5hBEsICURI7X/0Fa2YWEJGY3dkG
-	FhcRKJI4PuMz2DIhgUKJq3v7wWw2ATWJKy8ngdVzCthJfP/XwALRaybRtbWLEcKWl9j+dg4z
-	yDIJgUvsEgc6trNAXC0pcXDFDZYJjIKzkBw4C8nuWUhmzUIyawEjyypGocy8stzEzBwTvYzK
-	vMwKveT83E2MwCheVvsnegfjpwvBhxgFOBiVeHgjxPenC7EmlhVX5h5ilOBgVhLh5czcky7E
-	m5JYWZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qBccnziKnchY8+
-	tHfVqh6SqeN0jzQoyNpnMuO+9lwj1t6b9zzSdQx/T/i48V6n7oI1z2+d59q69//2KXd/N7G2
-	/L9+sOjl4ZMvDrjKqCr90/WZI/JO/9SCR5f1xSz1k6Jsd+XPPVe0bOq6z3a2kR9+SPhKspy4
-	/OT39u3+Ll8mCKot1Xq+bOvM5SFKLMUZiYZazEXFiQC7PhKr3gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXCNUNLT3fvuf3pBjc6dCzmrF/DZjF96gVG
-	ixM3G9ksft49zm7RvHg9m8XqTb4W95c9Y7G43X+O1WLVwmtsFse3zmO32HcRqOHw3JOsFjsf
-	vmWzWL6vn9Hi8q45bBb31vxntZj7ZSqzxaFrz1ktVq/JsPi9bQWbg4jH4TfvmT12zrrL7tHd
-	dpndo+XIW1aPxXteMnlsWtXJ5rHp0yR2jxMzfrN47Hxo6bGwYSqzx/65a9g9zl2s8Pj49BaL
-	x7fbHh6LX3xg8vi8SS5AIIrLJiU1J7MstUjfLoErY/61zawFvSIV+zbJNjDO4uti5OSQEDCR
-	eLt7CzuIzStgKbF90xcmEJtFQFXiesMeFoi4oMTJmU/AbFEBeYn7t2YA1XNxMAu0MEtMOrWK
-	GSQhLBAlsfPVX7BmZgERidmdbWBxEYEiieMzPjOC2EIChRJX9/aD2WwCahJXXk4Cq+cUsJP4
-	/q+BBaLXTKJraxcjhC0vsf3tHOYJjHyzkNwxC8mKWUhaZiFpWcDIsopRJDOvLDcxM8dUrzg7
-	ozIvs0IvOT93EyMwXpfV/pm4g/HLZfdDjAIcjEo8vBHi+9OFWBPLiitzDzFKcDArifByZu5J
-	F+JNSaysSi3Kjy8qzUktPsQozcGiJM7rFZ6aICSQnliSmp2aWpBaBJNl4uCUamDMFIib5Gk3
-	k5v/NMe01Yfnavur5qyY2/HmNfv3R00Khz+rP+XhKHrPlqjX1Ll9VbjBkd8bA/PtCiV5Vz3S
-	4Wb4W9R1oGyRnd4P1oPnNv+POnuQdR0L69YdRT9ufd3+d+WVOcdM9/pKPVEQUvjVxbSp5mCu
-	6hRpH/n/NxdWm7h+W+tdcHrNxZnWSizFGYmGWsxFxYkAqqI149MCAAA=
-X-CFilter-Loop: Reflected
+References: <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-0-8d5f5f426eb2@linaro.org>
+ <20250226-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v7-11-8d5f5f426eb2@linaro.org>
+ <f7a1a1ef-bab7-4024-bfca-a9fa33f189b5@quicinc.com>
+In-Reply-To: <f7a1a1ef-bab7-4024-bfca-a9fa33f189b5@quicinc.com>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Thu, 27 Feb 2025 10:37:06 +0800
+X-Gm-Features: AQ5f1JpajceI_JjtWnScexhP25AZZx5gURBP9Id9s4kjX02P38LidJgsE8Muoks
+Message-ID: <CABymUCNgwWf8cvNB0thWP3AmHYK5WDv9AwyhhE1q5X7sYCArsA@mail.gmail.com>
+Subject: Re: [PATCH v7 11/15] drm/msm/dpu: split PIPES_PER_STAGE definition
+ per plane and mixer
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joshua,
+Jessica Zhang <quic_jesszhan@quicinc.com> =E4=BA=8E2025=E5=B9=B42=E6=9C=882=
+7=E6=97=A5=E5=91=A8=E5=9B=9B 09:38=E5=86=99=E9=81=93=EF=BC=9A
+>
+>
+>
+> On 2/26/2025 4:31 AM, Jun Nie wrote:
+> > The stage contains configuration for a mixer pair. Currently the plane
+> > supports just one stage and 2 pipes. Quad-pipe support will require
+> > handling 2 stages and 4 pipes at the same time. In preparation for that
+> > add a separate define, PIPES_PER_PLANE, to denote number of pipes that
+> > can be used by the plane.
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  2 +-
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   | 14 +++++++-------
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h   |  4 ++--
+> >   4 files changed, 11 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm=
+/msm/disp/dpu1/dpu_crtc.c
+> > index 193818b02197d0737c86de7765d98732fa914e8e..81474823e6799132db71c97=
+12046d359e3535d90 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > @@ -463,7 +463,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_=
+crtc *crtc,
+> >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format->alpha_=
+enable)
+> >                       bg_alpha_enable =3D true;
+> >
+> > -             for (i =3D 0; i < PIPES_PER_STAGE; i++) {
+> > +             for (i =3D 0; i < PIPES_PER_PLANE; i++) {
+> >                       if (!pstate->pipe[i].sspp)
+> >                               continue;
+> >                       set_bit(pstate->pipe[i].sspp->idx, fetch_active);
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/=
+drm/msm/disp/dpu1/dpu_hw_mdss.h
+> > index ba7bb05efe9b8cac01a908e53121117e130f91ec..5f010d36672cc6440c69779=
+908b315aab285eaf0 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> > @@ -34,6 +34,7 @@
+> >   #define DPU_MAX_PLANES                      4
+> >   #endif
+> >
+> > +#define PIPES_PER_PLANE                      2
+> >   #define PIPES_PER_STAGE                     2
+> >   #ifndef DPU_MAX_DE_CURVES
+> >   #define DPU_MAX_DE_CURVES           3
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
+m/msm/disp/dpu1/dpu_plane.c
+> > index ef44af5ab681c8f526333fa92531a2225983aa09..d67f2ad20b4754ca4bcb759=
+a65a39628b7236b0f 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -1078,7 +1078,7 @@ static int dpu_plane_virtual_atomic_check(struct =
+drm_plane *plane,
+> >                * resources are freed by dpu_crtc_assign_plane_resources=
+(),
+> >                * but clean them here.
+> >                */
+> > -             for (i =3D 0; i < PIPES_PER_STAGE; i++)
+> > +             for (i =3D 0; i < PIPES_PER_PLANE; i++)
+> >                       pstate->pipe[i].sspp =3D NULL;
+> >
+> >               return 0;
+> > @@ -1129,7 +1129,7 @@ static int dpu_plane_virtual_assign_resources(str=
+uct drm_crtc *crtc,
+> >       pipe_cfg =3D &pstate->pipe_cfg[0];
+> >       r_pipe_cfg =3D &pstate->pipe_cfg[1];
+> >
+> > -     for (i =3D 0; i < PIPES_PER_STAGE; i++)
+> > +     for (i =3D 0; i < PIPES_PER_PLANE; i++)
+> >               pstate->pipe[i].sspp =3D NULL;
+> >
+> >       if (!plane_state->fb)
+> > @@ -1241,7 +1241,7 @@ void dpu_plane_flush(struct drm_plane *plane)
+> >               /* force 100% alpha */
+> >               _dpu_plane_color_fill(pdpu, pdpu->color_fill, 0xFF);
+> >       else {
+> > -             for (i =3D 0; i < PIPES_PER_STAGE; i++)
+> > +             for (i =3D 0; i < PIPES_PER_PLANE; i++)
+>
+> Hi Jun,
+>
+> Is there a reason why only this case was changed to PIPES_PER_PLANE but
+> _dpu_plane_color_fill() only loops over PIPES_PER_STAGE?
+>
+> Similarly, I see that dpu_plane_danger_signal_ctrl() also only loops
+> over PIPES_PER_STAGE.
+>
+> Thanks,
+>
+> Jessica Zhang
+>
+It is missed and should be converted to PIPES_PER_PLANE in
+_dpu_plane_color_fill.
+Thanks for pointing this out!
 
-On 2/27/2025 6:35 AM, Joshua Hahn wrote:
-> We should never try to allocate memory from a memoryless node. Creating a
-> sysfs knob to control its weighted interleave weight does not make sense,
-> and can be unsafe.
-> 
-> Only create weighted interleave weight knobs for nodes with memory.
-> 
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> ---
->   mm/mempolicy.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 4cc04ff8f12c..50cbb7c047fa 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
->   		return err;
->   	}
->   
-> -	for_each_node_state(nid, N_POSSIBLE) {
-
-Actually, we're aware of this issue and currently trying to fix this.
-In our system, we've attached 4ch of CXL memory for each socket as
-follows.
-
-         node0             node1
-       +-------+   UPI   +-------+
-       | CPU 0 |-+-----+-| CPU 1 |
-       +-------+         +-------+
-       | DRAM0 |         | DRAM1 |
-       +---+---+         +---+---+
-           |                 |
-       +---+---+         +---+---+
-       | CXL 0 |         | CXL 4 |
-       +---+---+         +---+---+
-       | CXL 1 |         | CXL 5 |
-       +---+---+         +---+---+
-       | CXL 2 |         | CXL 6 |
-       +---+---+         +---+---+
-       | CXL 3 |         | CXL 7 |
-       +---+---+         +---+---+
-         node2             node3
-
-The 4ch of CXL memory are detected as a single NUMA node in each socket,
-but it shows as follows with the current N_POSSIBLE loop.
-
-$ ls /sys/kernel/mm/mempolicy/weighted_interleave/
-node0 node1 node2 node3 node4 node5
-node6 node7 node8 node9 node10 node11
-
-> +	for_each_node_state(nid, N_MEMORY) {
-
-But using N_MEMORY doesn't fix this problem and it hides the entire CXL
-memory nodes in our system because the CXL memory isn't detected at this
-point of creating node*.  Maybe there is some difference when multiple
-CXL memory is detected as a single node.
-
-We have to create more nodes when CXL memory is detected later.  In 
-addition, this part can be changed to "for_each_online_node(nid)"
-although N_MEMORY is also fine here.
-
-We've internally fixed it using a memory hotpluging callback so we can
-upload another working version later.
-
-Do you mind if we continue fixing this work?
-
-Thanks,
-Honggyu
-
->   		err = add_weight_node(nid, wi_kobj);
->   		if (err) {
->   			pr_err("failed to add sysfs [node%d]\n", nid);
-
+Regards,
+Jun
 
