@@ -1,109 +1,162 @@
-Return-Path: <linux-kernel+bounces-536849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB27A4852C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB3AA484ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0F1E1754E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CCB3B2A99
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F71B3956;
-	Thu, 27 Feb 2025 16:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14D1B4F04;
+	Thu, 27 Feb 2025 16:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOKBAi98"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooyREol4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E401B041C;
-	Thu, 27 Feb 2025 16:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4227D197A76;
+	Thu, 27 Feb 2025 16:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673426; cv=none; b=gC+xhSHP621dN839C+RRc+VxC+YlYWP8G5pHUGbFmdiaqxtZOvqG/bkDTY5mTBZvIFfqWOFR46lm11PAwKqkR1BIJWSygZYzsuhf/ebVzGHXIZKa6wyjdMiIEYoDHjHGOsNKmeH/gGeN22k3IQGg64Kxpn8zoPP6q9S2KvDlBGw=
+	t=1740673434; cv=none; b=q7QPgJ5SHCKNHnZKQhkEuOM9NP0nDGua2DR+UZmFXFGH1lmyDCrmZiEjGgfqx2B8dPJHl6xUliM5m8c7mBHcdUMTAuqw6pX4Wh839V7A4DabOhhu99V3vmQaxMYBPRtDqQs5NEv71r6d3t1mk59ibgMk2mxI53u3ZqPq3BmTdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673426; c=relaxed/simple;
-	bh=hRTLLI+V63ZTqfAe2Vku07MrmJYqxX3HszgPccCeGOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pmQFgwfuQhCq67b4d9GT+v7ZqKb/J6AfHYkAKLuPv0Gc34pjyN7ZvIX1HGdieka3VINhlnI4mr/CoeycKsApG717k2US2H7XwlqI/jQ4AhOD7l+Grm/iJKpda+H7AjWlgubzNM3Aj5YhoT3zUzoIgjYu64rQ682dFmWWQpLPLxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOKBAi98; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A91C4CEEA;
-	Thu, 27 Feb 2025 16:23:40 +0000 (UTC)
+	s=arc-20240116; t=1740673434; c=relaxed/simple;
+	bh=ljBeMFyMCPp2tgDw/rm8zyRJPmoHwGLm7BWWwGGi2cs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OVc+b/pdmW4eNP0bojTb3yoYi0uWHE1Lbxd7c/lLICwE1dsxdhrvf9XGAJ8Rf0gT9YN45K6cA1pIO6gHx5Kula4I0r1FS8HtU7KPmeJVPJIC3p03d4ZHbDek0ZuABOe6wnOFC+dYfK0BTe1kYo2t4Sq/Z8BqLCjU0+AW3QMB+5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooyREol4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CD5C4CEEA;
+	Thu, 27 Feb 2025 16:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740673425;
-	bh=hRTLLI+V63ZTqfAe2Vku07MrmJYqxX3HszgPccCeGOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VOKBAi98ARB2s4C+nQkth1QQmgpZpAeJmIoDnuzPYAwSqYKdRPiLglOJh8K0wJ2Tt
-	 RSiMHP/IG9omE9EJU1TckpKuoetbPqgaC7FkGj8rUa/LixV48XsdNRNAaZviudNXNc
-	 TV0sCWnh1ZPqVu8qdKJyRQR4HwLJZAEP5L1ZkBNSy0HqMWilDYwRr5Vs+/jq1EU86Q
-	 L7daRO6SIg4pyL+ht5dMplMTMrww8zGlyXFZNIkTROX3CoDBQ9YbMP8DcHnFZdiKKe
-	 WJkqLLBEqG+yioiIUltbt6FiOaCEMcEkYkLF7QfrtSzxHov2TBYuNZtPZRurTNPD1H
-	 7HRl3rBU8bTFw==
-Date: Thu, 27 Feb 2025 16:23:37 +0000
-From: Mark Brown <broonie@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH v3 15/20] ASoC: tas2764: Enable main IRQs
-Message-ID: <f3eecce4-51d1-4414-af85-680d51e588fa@sirena.org.uk>
-References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
- <20250227-apple-codec-changes-v3-15-cbb130030acf@gmail.com>
+	s=k20201202; t=1740673433;
+	bh=ljBeMFyMCPp2tgDw/rm8zyRJPmoHwGLm7BWWwGGi2cs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ooyREol4Qm9MpAnZvC0rSg2vLu8mpT23sR48HGqzQ69hK+66r0gnFq+BeGaTAypKA
+	 qnvv+kWZb2C83k16k9u3ahaspwjtDJei6FaxXHb4jywYYq69t9NcPN64HOZ584b584
+	 4gQPl8Kh8tLCTdgS1KpYj5n9PRtPgzAWBG95uaxWt2//54XC1jvDhdF9KnYaju5dII
+	 FgDxUkomnyR3mtmgX19YGgPI2wOmXSdrXBO/QLACSHctniWpsoK3UsVYm2nvET+L1u
+	 62o+TITCfzrCr8V8uz8n839WV4rkrnHWb8eLIwgFq1R4L+e5BmUtEeGiORsxDgJr23
+	 F3VTU/l+Ee5wg==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2bcceee7a5eso720991fac.0;
+        Thu, 27 Feb 2025 08:23:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV80rgg8BJADNh83EPZufhFKm0xDM3KOXd7O0x6ToFwU3ZhuWXb3Rwvgv+aNcdrMlTdsXfwbrKJ0qVQt2M=@vger.kernel.org, AJvYcCXYp/Q6IQiPcgD79n0viVXNCoUgXiMuY+iEJ2c4J9nh9Y4FHch0pYPXRPkuY3OZR9hEFYwZfKFFKIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8jkeMUiTsWbFAo/a6UMBvt4YIoAOEHT2Wo/dLamPN/Az57pb
+	4TmG5BlQyRqm7fxe8EorYbhm694djjXAJBVPpqzhpnvjJroEQJNGzxgcSknJ/In5v8ZjHGiN4sj
+	Lsl1JtIZGgr8+GqAg/SintF8yjFo=
+X-Google-Smtp-Source: AGHT+IGG/hcyxa8S8kKpi22K2YfWARIiFkABqUSIB7oiuS84r0+705VX+sigsDNdT22dVcZEKacVJvLF2Xnj4RB9jsI=
+X-Received: by 2002:a05:6871:a910:b0:297:24ad:402f with SMTP id
+ 586e51a60fabf-2bd51572451mr16597022fac.12.1740673433017; Thu, 27 Feb 2025
+ 08:23:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Xh/2KfVmmxBW7uMY"
-Content-Disposition: inline
-In-Reply-To: <20250227-apple-codec-changes-v3-15-cbb130030acf@gmail.com>
-X-Cookie: Swim at your own risk.
-
-
---Xh/2KfVmmxBW7uMY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
+In-Reply-To: <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Feb 2025 17:23:41 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqSr_h3d_TxKsJqP5cWEiNZ9THfcg74f0QT47d8kIaL35zTbpSQxLDGg_8
+Message-ID: <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 10:07:42PM +1000, James Calligeros wrote:
-> From: Hector Martin <marcan@marcan.st>
->=20
-> IRQ handling was added in commit dae191fb957f ("ASoC: tas2764: Add IRQ
-> handling") however that same commit masks all interrupts coming from
-> the chip. Unmask the "main" interrupts so that we can see and
-> deal with a number of errors including clock, voltage, and current.
+On Thu, Feb 27, 2025 at 4:45=E2=80=AFPM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >
+> > Hi Everyone,
+> >
+> > Initially, this was an attempt to address the problems described by
+> > Saravana related to spawning async work for any async device upfront
+> > in the resume path:
+> >
+> > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@goo=
+gle.com/
+> >
+> > but then I realized that it could be extended to the suspend path and
+> > used for speeding it up, which it really does.
+>
+> Btw, maybe I didn't  word it correctly, but my patch series was meant
+> to speed up the non-async case too.
 
-Shouldn't this also be a fix?
+If "the non-async case" means the case with "async" suspend/resume
+disabled entirely, I don't think that the ordering in which devices
+are processed can be changed just because there are no known
+dependencies.
 
---Xh/2KfVmmxBW7uMY
-Content-Type: application/pgp-signature; name="signature.asc"
+> I was going to get around sending a v2 of my series, but was caught up
+> with some other work. But I'm okay if you want to finish up my effort
+> -- less work for me and I can focus on the other aspects of suspend :)
+>
+> Maybe add a Suggested-by: to the patches?
 
------BEGIN PGP SIGNATURE-----
+Yeah, I can do that.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfAkYkACgkQJNaLcl1U
-h9C91Qf/W/xSSm2MphMfElXu776JaJ/c1ogrwQljVZCAXT9K+gX9xynwVnjtnhPA
-a+bPEHDxgCkxvLEcjdp7sbx4h1lNjPJ+bnrlymPPUdrg4GErmcU1+QVB9bRcm0ub
-hjhLx72qSHcKK/FSWn6AwFSy8a2nqWIhbbDvBFngHptBslxBs05eaqkQGyGIn6pT
-cj1U7BtFotULFKVvrLmV+jV1Lgy688Elo6eRif4Tfpk2/2Yo0VJ9vFe6LuajFZTO
-uZgYX7VKIcySWUGCoX2o2TYZFWRSlH8kPlQn9YO65qk/gh3KJERgnkHgGYgjREwv
-dSrBxeNszlSMQUHFe7IexiRxFp/yPw==
-=B8ch
------END PGP SIGNATURE-----
+> I definitely want to review the series, but very busy this week with
+> some other work. I'll get to this next week for sure.
 
---Xh/2KfVmmxBW7uMY--
+That should be fine.
+
+> > Overall, the idea is that instead of starting an async work item for ev=
+ery
+> > async device upfront, which is not very efficient because the majority =
+of
+> > those devices will not be able to make progress due to dependencies any=
+way,
+> > the async handling is only started upfront for the devices that are lik=
+ely
+> > to be able to make progress.  That is, devices without parents in the r=
+esume
+> > path and leaf devices (ie. devices without children or consumers) in th=
+e
+> > suspend path (the underlying observation here is that devices without p=
+arents
+> > are likely to have no suppliers too whereas devices without children th=
+at
+> > have consumers are not unheard of).  This allows to reduce the amount o=
+f
+> > processing that needs to be done to start with.
+> >
+> > Then, after processing every device ("async" or "sync"), "async" proces=
+sing
+> > is started for some devices that have been "unblocked" by it, which are=
+ its
+> > children in the resume path or its parent and its suppliers in the susp=
+end
+> > path.  This allows asynchronous handling to start as soon as it makes s=
+ense
+> > without delaying the "async" devices unnecessarily.
+> >
+> > Fortunately, the additional plumbing needed to implement this is not
+> > particularly complicated.
+> >
+> > The first two patches in the series are preparatory.
+> >
+> > Patch [3/5] deals with the resume path for all device resume phases.
+> >
+> > Patch [4/5] optimizes the "suspend" phase which has the most visible ef=
+fect (on
+> > the systems in my office the speedup is in the 100 ms range which is ar=
+ound 20%
+> > of the total device resume time).
+> >
+> > Patch [5/5] extend this to the "suspend late" and "suspend noirq" phase=
+s.
+> >
+> > Thanks!
 
