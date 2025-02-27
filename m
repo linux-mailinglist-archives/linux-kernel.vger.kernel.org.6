@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-536174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBADA47C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAA0A47C6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085F33A8987
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E63A959F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D7022B8B6;
-	Thu, 27 Feb 2025 11:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8875D22B59F;
+	Thu, 27 Feb 2025 11:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNG9Z3A8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TVHtNsCQ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBBD227BB6;
-	Thu, 27 Feb 2025 11:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB68227BB6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740656431; cv=none; b=su1XHelx363zXcE9k+J3e9Q3GzUjb4on/B40tfVEteDwMGDls+3uwEeQDNMku3hwhEhyNwCYutkLYfFPGxvx9O2kQNKH3UYZqYSQzLJroHBd+CIB5zs3oeoT/i3/fIZZ8LLgAcM/bU7BlazbQfENtA+d7AS93zj8sUitWdfvtUA=
+	t=1740656515; cv=none; b=XFYERdUBZbavk6P4ELQfNcR0K8HqrAS5xjsWkYDif4C38f+fftoI+/6Q7VhKY7KGP3PZOsI5hzxcfpTNCHDDidkpHTWrJHb++hFzfUihm7e4BmP1BOS4YF4JcrSGaDhn/nLYs9OBZ0ODOjVNKjDqOq1FJN4yy+Ez0hw6h5XnBag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740656431; c=relaxed/simple;
-	bh=hEB2hqFHBOBdOtzwkpUfYvrQrvSm1kIZ0LvI/t/8bSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ruyURjvMSOGm1kTI9iEjgQbW1DoKokngNmq1kAjToXgwiA7sSK6ZNaxJo5PmDQKqhNjpKyWe3EMnkLjtpQUuttK3N3mHowLQHLZLOtdNtVQc1YCErAwOD38CtHTnQuOOkRr28JdbPnxox1qsJ4aySfqein3jKBtcdWJH0riQctU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNG9Z3A8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A22C4CEDD;
-	Thu, 27 Feb 2025 11:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740656430;
-	bh=hEB2hqFHBOBdOtzwkpUfYvrQrvSm1kIZ0LvI/t/8bSw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rNG9Z3A8Wx7q3/D69m+/QDlU5Yox/B0WqhiXXdlGfhxW3IOWAv9nsFNKHfucJoGtk
-	 +DvmGuy6V484T6Vv3fBIn+mMbCj18kBE4nxf9PseqjK5rOQbXXCvKlv0cfw28qoAFc
-	 NEa4e2XlqivEwwKcndSxAYWOpN7CqZXqYk16x6fdrGlfXTt6e+3f9cOt+FFKrvXnQ5
-	 ZBOb7D6qN9Int2tv4pV0Bzg6WdA6OrCt70GB617+rnIDYcn863fUQZqKk5MsUdtlIL
-	 2uUNJZir7AJEK9IRFXw1ZZ4UyXvd0d0bqcQIbe4D7aoTXQ68LIpAVZy4neQk2SMbEH
-	 MMaeV0nF5vh8A==
-Message-ID: <5c8642e3-d821-4d71-9808-99fde3db92e8@kernel.org>
-Date: Thu, 27 Feb 2025 12:40:21 +0100
+	s=arc-20240116; t=1740656515; c=relaxed/simple;
+	bh=UhKXDiNbRqaboqPw0T80ytsUVX3HsBZbgLiN+7XE8OM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKWyV/uMXWeJYcWO2QshQiXyzIyhKzFwO5czQsL2zVXH/nY8r3w3kO5T2YAZDJjbSX3SuUga9KM1xQfdn1syuQ08cthqUnc2qlngncX9PBOV/y3XyWkA7fcvpqYh9SFF+9+7NFGXkhH9OvhoHumoYdO7OO85VHdfe845g/8/PEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TVHtNsCQ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390e702d481so228153f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740656511; x=1741261311; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwEpUuK+jWtI1tmmhcd2Ps377ooQ2BUExOECDJXtCwY=;
+        b=TVHtNsCQ+uf3km+XW0EXHotVVwm7SeSd02hQWroOBV54Ny2XdskynuW54VpT2pIuch
+         0iDsLZgFNcFIjCnzCSDVZ0bL1DfW86kNitM1ml2uNEtIe8vSdtx/xl9jY/xitmaVyXGs
+         nJZsUqOijUpDX1y9p0UkXteUYCFs/jaYa1sbITf7nPKUjHAF610dT/fGHM+hoVgzIBUV
+         +6MwkTWI9Hx8yqe5H9R5jy1367nCRqnfd+w5m9VxGB0X4U5N3jpoaj1QbD1e4vtzXSGI
+         k5lrBs+vyTxHaqtJ+MGh7GX3Uj5k4JZoYmYo/h/zXp8WO+7xTNDEx93+aGOsG/5wNnjE
+         ZR/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740656511; x=1741261311;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hwEpUuK+jWtI1tmmhcd2Ps377ooQ2BUExOECDJXtCwY=;
+        b=Ff0vwsCP7lbn6QDLtg/iC3G1loORajkXQ2cljd8XD3UhFoEt7GvWTnsy4ANfikrWxk
+         W4q0YzX3MPGsdVzqEZF/nV66/OV+gVBmCWgGyi7ZbQNFDC4SRqIVQJedkorW0274lKE9
+         lXDBH36BGzt7LyZjXK7JNMZQ4c1dwYo0pLQIqeKWaAauEjx5BbCsKPuH0M0WAwnJSMCF
+         m5tZrt6ByrbtJTj5/NilTzrATFGLHS9WTAl3R0Ct9MegqiMJYt9d8FIYkyEvYZLw3Vuv
+         HSYWLWbYMWP2K+FdOX4iGXibY5DDvjuFOmvNBJBh0qbIAn9BnQ4oAZLJ+ePmBIPWqq7b
+         K34w==
+X-Forwarded-Encrypted: i=1; AJvYcCXMUhdcBOEpNMzevsLOAD+2gsb8pdUWcBZYvu3DtjP74FRlpdQKPQH7+k8ZP0BEmRaQp1uUkT+ODsJBqJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrklwE0duAFWetyg4b3SxuYnJGvHT7WqaIl5FY4G9HXJgd18Qz
+	OwYnMXi1eAgnJYLhrdi+EZ/WJj/BBUBXtpsyse0TGis09n2Pju0elUbrNnpDGR0=
+X-Gm-Gg: ASbGncsrR5OhQ7v/52o/Ipqr+IcHxqrEX8zlEkOhZc6F9ka8+FEiV8wK5AE3//GWjf+
+	jiw2E3JSITzEEALnsB5IlViQiqhSj1xEE/dXseyoWb/XPQJOcF+962wMh9LrAuJNGE/OO+HjV8Z
+	Z5hfYfLDVJP/VE/4JrOA63XBQ2NivQvIqEV1CA09tHQwspSVIuKNc1CmAjsH70ozRR7XAwnqrnN
+	tRBUUyxayf+EN4+WbZcPj/8jlfpkwJWb7MtO522eS4gRwvQnhdrqAGz0LdFFwaO4O4vaXstnZqZ
+	XodfXBXWCMvuJrEohO71BiL++aKWVqkHCiKcqigGGYuciUln6A==
+X-Google-Smtp-Source: AGHT+IHhjeOslwW9uSp+o4eY+qrm98tuCNP/ecH8cpSNvE8u2fsXagBDR6tQzlCttFKBTeIo1ABeWw==
+X-Received: by 2002:a05:6000:1541:b0:38f:355b:13e9 with SMTP id ffacd0b85a97d-390cc602582mr10421273f8f.15.1740656511286;
+        Thu, 27 Feb 2025 03:41:51 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485d6cdsm1738374f8f.84.2025.02.27.03.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 03:41:50 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>
+Subject: [PATCH v3 0/1] MIPS: Fix idle VS timer enqueue
+Date: Thu, 27 Feb 2025 12:41:40 +0100
+Message-ID: <20250227114141.242421-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] dt-bindings: PCI: Add binding for Toshiba TC956x
- PCIe switch
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- chaitanya chundru <quic_krichai@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
- quic_vbadigan@quicnic.com, amitk@kernel.org, dmitry.baryshkov@linaro.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- jorge.ramirez@oss.qualcomm.com
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
- <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
- <304a92ea-1a73-1400-a020-dd2e0f14bfd0@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <304a92ea-1a73-1400-a020-dd2e0f14bfd0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/02/2025 04:53, Krishna Chaitanya Chundru wrote:
->>> +
->>> +patternProperties:
->>> +  "^pcie@[1-3],0$":
->>> +    description:
->>> +      child nodes describing the internal downstream ports
->>> +      the tc956x switch.
->>> +    type: object
->>> +    $ref: "#/$defs/tc956x-node"
->>> +    unevaluatedProperties: false
->>> +
->>> +$defs:
->>> +  tc956x-node:
->>> +    type: object
->>> +
->>> +    properties:
->>> +      tc956x,tx-amplitude-microvolt:
->>
->> You already got comments on this.
->>
-> In V3 I got a comment saying "-microvolt does not work for you?"
-> so based on this we changed to microvolt.
+This patch aims to fix idle routine while the CPU receive an interrupt,
+because __r4k_wait() only checks if TIF_NEED_RESCHED is set before
+going to sleep.
+The same behavior has been changed in LoongArch [1].
 
+Code (cross) compiled successfully and I manage to test it on a VM
+emulating a malta board. I ran QEMU with:
 
-And then what pops up when you test? Drop ref which is pointed out by
-testing, example-schema and all other bindings.
+qemu-system-mips64el -M malta -m 2G -kernel vmlinux -serial stdio -drive \
+file=rootfs.ext2,format=raw -append "rootwait root=/dev/sda" -cpu 5Kc
 
-Best regards,
-Krzysztof
+rootfs generated using buildroot (malta default configuration).
+
+- [1] https://github.com/chenhuacai/linux/commit/a8aa673ea46c03b3f62992ffa4ffe810ac84f6e3
+
+---
+Changes in v3:
+ - changed "daddiu k0, 1" with PTR_ADDIU k0, 5
+ - replaced CONFIG_CPU_MICROMIPS with 3 _ssnop followed by _ehb
+ - integrated the commit message with explanation about 
+   CONFIG_CPU_MICROMIPS replacement
+
+Changes in v2:
+ - Changes introduced by Huacai:
+    https://lore.kernel.org/linux-mips/20250214105047.150835-1-marco.crivellari@suse.com/T/#m75d9c587829e15e0d7baec13078be4e65c936408
+
+Marco Crivellari (1):
+  MIPS: Fix idle VS timer enqueue
+
+ arch/mips/kernel/genex.S | 40 ++++++++++++++++++++++------------------
+ arch/mips/kernel/idle.c  |  1 -
+ 2 files changed, 22 insertions(+), 19 deletions(-)
+
+-- 
+2.48.1
+
 
