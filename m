@@ -1,175 +1,188 @@
-Return-Path: <linux-kernel+bounces-537214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED46FA48938
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:50:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC41CA4893D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E8C16A7CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA057A6AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C58F26F457;
-	Thu, 27 Feb 2025 19:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A5A26F457;
+	Thu, 27 Feb 2025 19:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="m+BFMpm6"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2056.outbound.protection.outlook.com [40.107.236.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iPTUGS1B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD95A1E3DD7;
-	Thu, 27 Feb 2025 19:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740685842; cv=fail; b=o6aihey2aLDUWV+dsgiGR91ikq86K8qkOqbktwOoO/QUWqLLH9xjAvVeLnt2uXe7rLF2eTgqz7Ksgdz+pVIVpsWZ6KMArnjFlYD0fPk3+jN0P+VLCoHYhMC6gZfsJQBcmQtmteyRaCMe1fwvgCBTLI8EpA2fLDIUK37BhZg6W7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740685842; c=relaxed/simple;
-	bh=s1YnAcMyft/Lj20qEepr2pBjljAMJqVpaN8uO1fxYv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Sqm78h61SS4hVIgICWufTGYOkPLz12XTv+oFfRdCA5k9/oZ3mp+E1iz/6ptkZLm1clPxyUYFWn4/W3qBI53cOG7SOU9vjiJ8tDKnxeFvAsUh5d0bmirkFnnpGRPwhThk0CebsQaKp3MMG8zYM4oL3605yzhwSI7IxYpMWd0OcPg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=m+BFMpm6; arc=fail smtp.client-ip=40.107.236.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ek3uvL1hw5lIFcKIqDr6wjbn+0YU8LPK7isyCi/ltj0rRJZJ+4qNSq6eBaUxhPsbpsoSrpfK6fubPPlArhc170amI0vY3lH+po4L6FObdckilF/YVozXgSjXilyotG/OtaJqtmxAD7baHBly6YbhIwOiU8ZVsV3FkUefz3UxHXYSkbkz2hOxfDbrJBnVRzPA4H5ehgXtu4iWe2vud/ltbbF7N0MiC774lgyaRF1jYdG4Gsigg2qxJQiBk35mQw4y88gt3gyiglkLoIQZ2ZnBpIheB0BZL86a00VlvfEBSPYcLuLZlRXmrhutvOKqEebf4n+k90697no/y7JgfK+PUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dholVvtiggUzVnBaLTWESOSFn0evx4/OUbTefhPpaxs=;
- b=GhTYXfxBv6qFOcT09nO8fdwczt8BYoV8GsOcrGf9yZ5/vnldQNbo5BA74uSKGrCpSDzkBpM7XBNmMrrDt3K6oEuR1LlQAHbwabGkYPDAZlwp/BY7UxK1Znyx2zHBgHCTNx+6pEaBIsEFpVtDTXx8sIGfTRbG+dAtI41fK+T9H2sYZLjPlVsjQ0tTqQyH5Be442S8DEsTjoFBsEao0+X9nCwUnM1FJoPzspuUwnXwIN3PkVRYxA36M0QQo5Z4iMDlZoM382aTRd6vtq5y2UcRZDdZXsbNkpuW53/W1xkWhhrTKkB6XJKWAci+NrxUjzqKomn7ppfu9cW1ndpEaSh3TQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dholVvtiggUzVnBaLTWESOSFn0evx4/OUbTefhPpaxs=;
- b=m+BFMpm6sK8Qn+7MkuuYnTvrhQjgT0tbaS5SgAAnFV7kf8hpZ3yMYNGztTWdMwhZd9wMY9IxIMw48tZzJgUmMaQ8/WQTI4obDWfIwwQi2JzGjJWpnUR9HFtLA0qsmll5I1ywdZuoCfl7X27bYaKoUI01oTTd/r5VySw4VwqdsWfV7Dj7QwGBSE/3HnfnnlGdSxb0TggRvY6u5tRWkAd3hfQu4HviFpsFe4OhIOsJFpuDfnyxqaAGCa7nOwKSHeA9tDT04ODkUcsorB8lTCcD9QKK4ArUbydF8R5A670+sVWo+4oMHHKZ9wbg/rG8J1H8v6K48rthBtTeMrMW0rAM3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
- by CY5PR12MB6480.namprd12.prod.outlook.com (2603:10b6:930:33::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
- 2025 19:50:37 +0000
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
- 19:50:37 +0000
-Date: Thu, 27 Feb 2025 15:50:36 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, will@kernel.org,
-	alex.williamson@redhat.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] iommu: Add iommu_default_domain_free helper
-Message-ID: <20250227195036.GK39591@nvidia.com>
-References: <cover.1740600272.git.nicolinc@nvidia.com>
- <64511b5e5b2771e223799b92db40bee71e962b56.1740600272.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64511b5e5b2771e223799b92db40bee71e962b56.1740600272.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BL1PR13CA0121.namprd13.prod.outlook.com
- (2603:10b6:208:2bb::6) To MW6PR12MB8663.namprd12.prod.outlook.com
- (2603:10b6:303:240::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14B626B2C7;
+	Thu, 27 Feb 2025 19:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740685896; cv=none; b=Bp4nMYp7mJTg3H/Odb4YcGfGFOjg2eEt6xOVQJSW0X3yvwQi1UcdH7IwEKdb/hZd2twWjb9+KWj2TnC63Mvs1tlDNDGz8V75yo9cM036Cl5Xn3m9xjJ++CihbsI8JzeqbB0mpUciF+mszboUYFsHSW4EiaL4NTAuCfRd/RU0G+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740685896; c=relaxed/simple;
+	bh=EIbSUrM/Ujz1F3JimGdI96usqoFo8t4yf/dEL8vd+xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+w2P6DYabZBuEF5ICSQ6sIRpITK165JM7DhoxUIfb2uWM+RrYO5piyEU9GBbmRoX0A8IwoSSavc7rfqunQopM36b+0Gc63V3nekqMoeUp5viyeelOdChkLG0z2+d5i2VxQ89fRGiuhbo9QyKCrM541j6GulDOaTXh/e+ePrPJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iPTUGS1B; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740685895; x=1772221895;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EIbSUrM/Ujz1F3JimGdI96usqoFo8t4yf/dEL8vd+xk=;
+  b=iPTUGS1BRdEspshs028jBNv5yv/YAsjmYUOi1L+x3ChB45MMVoUtsmRT
+   TGoBXyF2wsBqLuxbiE4u9Os2B1EGSCgWkshzJWiANf8F4EB1m6f817fnw
+   Ba7hk2o7iHMD/g3vMXRvt9MMHobB0p7B28yEXlGXtn/ndFBhrBkQ9m56r
+   UlARyTBoOhWQnQlAm803ThQqMfDjcmMDBQ9Jek3grWcFFULH+pSGPbPg3
+   0FDCuNp+9QreDn9W7dZjYmkKwzdA1Eungb8PafVECid/EVORCZqsilYAa
+   EiyG7n84sUGxnapCLCeONSwiQhHeeQ86BnTye6p0NdxioOv8CcK3sSQM9
+   Q==;
+X-CSE-ConnectionGUID: LJ3zR2cBT2+RF6pdUw9r5w==
+X-CSE-MsgGUID: vJiw3xNgRAy52TcUmRgmnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52584913"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="52584913"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:51:34 -0800
+X-CSE-ConnectionGUID: Zrhe8OtdQKee0BQsxRg1pA==
+X-CSE-MsgGUID: FIZQc2wET9uoV0D4HJo0Zg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="147945234"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 27 Feb 2025 11:51:32 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnjur-000Dxy-19;
+	Thu, 27 Feb 2025 19:51:29 +0000
+Date: Fri, 28 Feb 2025 03:50:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rengarajan S <rengarajan.s@microchip.com>, unglinuxdriver@microchip.com,
+	broonie@kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	rengarajan.s@microchip.com
+Subject: Re: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy
+ implementation for x64 and bcm2711 processors
+Message-ID: <202502280356.AulpRaPU-lkp@intel.com>
+References: <20250224125153.13728-1-rengarajan.s@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|CY5PR12MB6480:EE_
-X-MS-Office365-Filtering-Correlation-Id: b80ddcc3-d604-4af1-a94a-08dd576801c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gK81KaNmovFTeV31pP/y/4PI+3HpUJUxOa0IZFbEe32SQGrLBsFB2Itn8le2?=
- =?us-ascii?Q?2BKbFtReD+1fRUL00yjTSbZJ1Wrv5CK0MthprDaAKCm4jhbMvPzijzvf0NmE?=
- =?us-ascii?Q?gQ8b3EZkplMAuWV5/uOqoSin2SS1AVOo8qEvA0TojwoGqdRJZd56UQCN2eiL?=
- =?us-ascii?Q?eLPC5SHIamqyVMJ2joqsyLu9GTiHq5TwHTvSJ+rvMoOJI0Yf8+KZiOHzhcsf?=
- =?us-ascii?Q?QMjc8UZSG6gbRciUwBLcGa9r2bFi4U6H/5ojsii+mlgY3IZm92/yJyBYhcfG?=
- =?us-ascii?Q?2tp9glqB8/yoJWGMNfrlb8fZjuDzICkvSEkje2X0bgsbtiS6CsqNOw8jiHhK?=
- =?us-ascii?Q?02neDl6euE6nIjB0lRdAbRIvkqmc2XhDDl+ul0NBxptjbCuvamFPuh6pVtdu?=
- =?us-ascii?Q?OBSrH1kSOwgJDdOl4Zg+aTv1V+CSkmSRSQABBoY2ukggFE2LMIAddx9bL9d6?=
- =?us-ascii?Q?Hin3B4njlDd+LsdoOypI9Bh6IaTvzj9JUuCj/wKTm/CmTzPH2YaesvO1ahxx?=
- =?us-ascii?Q?0bVxW+BjKQN1qp5c69cnfkM5JW2e6TZqZJchk6lyWkqXyNoWs7NKZXfoJjcV?=
- =?us-ascii?Q?SbIBudo2s9HZtN9gfv5qCusj3U65q5YYiRjGueWbVt77FllWpkIHETd6ydwV?=
- =?us-ascii?Q?6+lnALk7ztohsbswG/4SkiFlKOVQaZgV5Lh8CoHwFy/3pX867zvbhHf7Ely2?=
- =?us-ascii?Q?sY4AZ0TdJx0yE5snsWQYHkZc+8zT6Jmgr1n+B8V23bWJmeKyaowUct+gUuVI?=
- =?us-ascii?Q?FZ3MgtFaYfPgCaquVCY0NFOoNtZR3dRBga8R3d2XqEUUKw6KafaB+WKtcT8X?=
- =?us-ascii?Q?wJ3DKn4j8bzTJXT8N3GyGVodENYuNBfi85y3bKYfWjDzgbgcbib59WeD83lB?=
- =?us-ascii?Q?MtshE06CvMLVkwl5ZBemkPhv0EuNHg0WbU6ZctoyZPNlEJG0Bec3ds0wS2vH?=
- =?us-ascii?Q?2Y+62+LdxglDSNvQ2a8mr03WOH/KP23BhNTOLJQeRgafdUAU6JOj4IaCwtVa?=
- =?us-ascii?Q?7vjnlKkyycSOP04k8/aI2KebNxJO2yVqBrbIuSC52QbYXnY8iMSkB3C2yCsW?=
- =?us-ascii?Q?4bO7EVw001XAd4LqoscykcJsFAaUQ4YVxmGI/R/HSIshc2f8fQQ8tc8CrxJ2?=
- =?us-ascii?Q?heWu2Qpnv+IO8YC1n5r/BlkAe82XGYtxEBuqu2xit4uBWP1tpUrzfDzMF1dd?=
- =?us-ascii?Q?6ag4aecSo1SLMDb7P3QOX9Fw5A6y36gX4iI+Gi/Aq1xhuGkUcak/GTGmO894?=
- =?us-ascii?Q?faubS718BdXGamfT3QnOpNyOir4WP7IooDcu+EgTfXm1h7YWFZAAKf+Cdeoi?=
- =?us-ascii?Q?9w6ffijNpTeoDzfDqo8xb+arrBLHAQkDTm1PvrCXw1bNk+u2apIaIDvOCcrN?=
- =?us-ascii?Q?HG6PvPVe8sLIeKhSawnuvjA9BlY6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/vlwlB3V4RlWfi0EmE3W4hFEvB1Qs5O5KvAPUUvlAh7lXrSzVHh917LAPAC3?=
- =?us-ascii?Q?5ZlTPpJO2ABTe4pWPzfw540UtVACV5+IAwVCMZtp0GM2yM0ZSzQ0uSfhkOkY?=
- =?us-ascii?Q?Kf7v10b/B14NQXAYKT+Hy9kZN7gMc2TnkxEbokICXa+wLWyzU5qgyuFFT4FP?=
- =?us-ascii?Q?x1BTnieVQPE7nebESrUBef0dQtbh47Ul4xSylj4rv4DU0Co5R7xyvSDRoevf?=
- =?us-ascii?Q?p8nvyJ6Y4FPv1x/JZHBcX5rCWOABrhtdGF3DZwNccMZyujatFV0KEpjcd9B4?=
- =?us-ascii?Q?931WR2fYjnJgX96s5/gzPAsJl0t38YkMwQPsawI4IubLVdg68EAtLequaZR1?=
- =?us-ascii?Q?7fW+YAJOs71VDaUYsadbyIv94l29a0kg5XwmX/czbm9EgiWRV2wZCLUeC1pp?=
- =?us-ascii?Q?65vyg6nRZGGqBnOgdmWC/T+JeBQUyDAJPlBTyViERPmA00HwPtHE/JhR7y1T?=
- =?us-ascii?Q?D4GNTc7oMAgrqLnTWXzz6I6Ad536bvyS1JM844EggcfHerbI5APAZ/pIzz4a?=
- =?us-ascii?Q?aeMVM+wIA5ZOUxTjy9e2r7aOMO+lUxZv4llHsoRhcgctYXFDPYozIbSR1P5P?=
- =?us-ascii?Q?zolEsrQbjGnruQKlu0cLj4wVqANyN9z8xIT+oQ8KiY6d+P01KoEv/Ghn1G+N?=
- =?us-ascii?Q?fBPvcLxlXehxfjnIgxFh3MKzAzgv5zVgCYHf/HugPeXBB3s1zEZlmdndMChK?=
- =?us-ascii?Q?CV+aL+nOANlowcGneDIOzAio1VbRqALi3kuzH5ZOPhDxXjZwj6Ofog3hjtjt?=
- =?us-ascii?Q?V2DjEsadeGRp3ej3gCF/e7rU5XuAN/NLzbHz/ZVI256+KRixv/p42xIkBcsX?=
- =?us-ascii?Q?UI5RiJEksvE6j0NTv13y0LalnuJzY0gswz2SY2eAypqUo/G3TpluJN0zUvKx?=
- =?us-ascii?Q?Tj9B5lAzcXSK5CqYkVb6dh/G/XlxiCVkxCgnIlipkfGT6YL3IMR8V9WFu1dt?=
- =?us-ascii?Q?5IIPyQiLb6gb/NlEnHZ8nz260K1VIRuEhOl82PrEqnd3JnprTXRpiwt9bQAL?=
- =?us-ascii?Q?4CC0qaVjeetKhmVO+YhOVzClV+ZTPv6o9g60zdJMn/RnKQZDYuDaZ08/8BJz?=
- =?us-ascii?Q?m1qOIsE/ezhdYxbckTo3FOkfWmxU5368NnPMsIEdqh3HJbk04kVKltSpfJhx?=
- =?us-ascii?Q?2M0u5vit6x0xt4kW57gnBIozxNkAAtXGUIYnXH5pntdeqT5FiAEIQWJRVbhK?=
- =?us-ascii?Q?Wk9za7tfmqu4O5D+iWjrBp8lcqz63pwv9dJLAy4cD1JLJbK3jbOWudhjU/PG?=
- =?us-ascii?Q?KE+GLGMIdbLxtkE+X0HTyLmEd1iyAEBdrQnSjSWkwU238jSiktzitMky6kgz?=
- =?us-ascii?Q?kSZbrydcc4lPNQ3+lRNeMEv/HGQ1V6jgTlBx97DehVweSlGo2+8nfh7Zg9IA?=
- =?us-ascii?Q?FEYc3mR/P9ikiZUauKHyOgpz5PyPotnZT3YXWDj3XWSqzT7bB7JwRcv0F6dz?=
- =?us-ascii?Q?i7PhqSSLwiOcaufhdSoBeKPglcT6aA4PPK47rHcgdLVEfp6Sfyi95mZ9kgdm?=
- =?us-ascii?Q?0MJmwFQJzNL5D/LnqzLzs/58ttaYUNJkRknzB1GwCJE5WRL4chlaKhCiYEYP?=
- =?us-ascii?Q?z/8iVMz4BQPDEpzMCKSrKhO+3FuHf2LAq8n3zvu8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b80ddcc3-d604-4af1-a94a-08dd576801c6
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 19:50:37.6588
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rqmVI+Mjwg9Xwrg5OmeI6SfmjpsrWg1ybnKLH/K4/rM1VgPnIrA+yoZ8fOWzcJh9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6480
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224125153.13728-1-rengarajan.s@microchip.com>
 
-On Wed, Feb 26, 2025 at 12:16:05PM -0800, Nicolin Chen wrote:
-> The iommu_put_dma_cookie() will be moved out of iommu_domain_free(). For a
-> default domain, iommu_put_dma_cookie() can be simply added to this helper.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommu.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+Hi Rengarajan,
 
-Let's try to do what Robin suggested and put a private_data_owner
-value in the struct then this patch isn't used, we'd just do
+kernel test robot noticed the following build errors:
 
-      if (domain->private_data_owner == DMA)
-	iommu_put_dma_cookie(domain);
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on linus/master v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Instead of this change and the similar VFIO change
+url:    https://github.com/intel-lab-lkp/linux/commits/Rengarajan-S/spi-mchp-pci1xxxx-Updated-memcpy-implementation-for-x64-and-bcm2711-processors/20250224-205745
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20250224125153.13728-1-rengarajan.s%40microchip.com
+patch subject: [PATCH v1 for-next] spi: mchp-pci1xxxx: Updated memcpy implementation for x64 and bcm2711 processors
+config: arm-randconfig-002-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280356.AulpRaPU-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280356.AulpRaPU-lkp@intel.com/reproduce)
 
-Thanks,
-Jason
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280356.AulpRaPU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/spi/spi-pci1xxxx.c:417:4: error: call to undeclared function '__raw_writeq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     417 |                         __raw_writeq(*(u64 *)from, to);
+         |                         ^
+>> drivers/spi/spi-pci1xxxx.c:448:17: error: call to undeclared function '__raw_readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     448 |                         *(u64 *)to = __raw_readq(from);
+         |                                      ^
+   2 errors generated.
+
+
+vim +/__raw_writeq +417 drivers/spi/spi-pci1xxxx.c
+
+   410	
+   411	static void pci1xxxx_spi_write_to_io(void __iomem *to, const void *from,
+   412					     size_t count, size_t size)
+   413	{
+   414		while (count) {
+   415			if (size == 8 && (IS_ALIGNED((unsigned long)to, 8)) &&
+   416			    count >= 8) {
+ > 417				__raw_writeq(*(u64 *)from, to);
+   418				from += 8;
+   419				to += 8;
+   420				count -= 8;
+   421			} else if (size >= 4 && (IS_ALIGNED((unsigned long)to, 4)) &&
+   422				   count >= 4) {
+   423				__raw_writel(*(u32 *)from, to);
+   424				from += 4;
+   425				to += 4;
+   426				count -= 4;
+   427			} else if (size >= 2 && (IS_ALIGNED((unsigned long)to, 2)) &&
+   428				   count >= 2) {
+   429				__raw_writew(*(u16 *)from, to);
+   430				from += 2;
+   431				to += 2;
+   432				count -= 2;
+   433			} else {
+   434				__raw_writeb(*(u8 *)from, to);
+   435				from += 1;
+   436				to += 1;
+   437				count -= 1;
+   438			}
+   439		}
+   440	}
+   441	
+   442	static void pci1xxxx_spi_read_from_io(void *to, const void __iomem *from,
+   443					      size_t count, size_t size)
+   444	{
+   445		while (count) {
+   446			if (size == 8 && (IS_ALIGNED((unsigned long)from, 8)) &&
+   447			    count >= 8) {
+ > 448				*(u64 *)to = __raw_readq(from);
+   449				from += 8;
+   450				to += 8;
+   451				count -= 8;
+   452			} else if (size >= 4 && (IS_ALIGNED((unsigned long)from, 4)) &&
+   453				   count >= 4) {
+   454				*(u32 *)to = __raw_readl(from);
+   455				from += 4;
+   456				to += 4;
+   457				count -= 4;
+   458			} else if (size >= 2 && (IS_ALIGNED((unsigned long)from, 2)) &&
+   459				   count >= 2) {
+   460				*(u16 *)to = __raw_readw(from);
+   461				from += 2;
+   462				to += 2;
+   463				count -= 2;
+   464			} else {
+   465				*(u8 *)to = __raw_readb(from);
+   466				from += 1;
+   467				to += 1;
+   468				count -= 1;
+   469			}
+   470		}
+   471	}
+   472	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
