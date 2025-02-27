@@ -1,269 +1,333 @@
-Return-Path: <linux-kernel+bounces-536032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DA8A47AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:47:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DFFA47AB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1693B065B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28D61890741
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A68022B8B5;
-	Thu, 27 Feb 2025 10:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4C722C352;
+	Thu, 27 Feb 2025 10:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GommgqJB"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqe2S42D"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C7322A4E1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB33229B28
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653203; cv=none; b=hh58yWY8lGQ+Dkh0n5vZ6Jg4Lz7tYwNuUAb1S/hMRp5o59qG3j26QTSE3ojPPlYbrVR+oJQNvRvPupdikNLlaESrqtMvtJEN35F2h7TOPsFZVakrlHTSDfWfJIZll7q/UqE9ByvjRda7irQmtL/Yx51M7exdAZbH6c6dm7/wpkw=
+	t=1740653206; cv=none; b=jHqDrcjyld5a+rMFiqnPwXajYyh2neUsMEUEZ41zyzO0GsUAxGnlJZZWfVa8ass1fITMqLN5go3BQ4Xna0SMYU5XOjeu9xvf2k8NH2mAeg36Yu9B2EqyhZA4Bn66bjtUI6ogTP7tdyNMctS2QuwC4vbCg5eay9OSrUs72aMgTOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653203; c=relaxed/simple;
-	bh=W9D+anLswderraXRnZUvbxnOgYIsKuJjLY7iig4it4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GSQog1H11xCfXHfOWPbWPb5ppeeq1NFX8B6IFrb5eTY/eHKK8Y5y8H7KOqED1Zoo0wr7m0aAqyaawHbv8XEL0VzMXNVXvKNnZLoI+caoR0PeZ8PQnkq0kC690VHchbL43W0REd2hFfsItenfxChPhin5f9ash585LTt+C2j4ecM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GommgqJB; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1740653206; c=relaxed/simple;
+	bh=AS3enx0VSPZL/LhABYPa+TSz10WDZDGg6A6JN682kI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4qTQgpm4aHH2Sq1vZgyOK7ZxNsESQNBHlq+Z4Naz16zg0hxlaFcN00MMWZ7u1Eh4S/XRGAtM/cKtf+ZWTORURunFNxp58yl/Jkc/XDkIrB4R3SKtAUmLMG4sxWT5kMTMSWBl2rfgQj2dM+jLKFTbebhr24xk8O5GWQcbArA2lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqe2S42D; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso1175803a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:46:40 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22185cddbffso32796745ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:46:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740653199; x=1741257999; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2GinroxZiXaUl0iulTclS3Q5Hjx+0LaS8RfRGW3GbBU=;
-        b=GommgqJBDnmdCWUQoaT/QRdTmY4OZMLY4f/lOQxdY3kKNUeZ/Kh9UTxpVkOimpzOg1
-         7IiL9URGjV3A1ZmfU+jVStjqJCC/ACb+SukMt9LcTfzudK2jAzQhG3jUcgCsHgT5qjNw
-         xHdmwj5xg3Kso1JBMzfgJYKheV/jDJtHuWTpNRgZBgW9FnLzuoC4sgtxRb1tPPfGkAK0
-         iTkbE+8O6bSEqMQTIZnALNvJSXiipBycvL7E1mNtsx4WWuq+5/DC9wm3IKTcCZxxtHb6
-         PvuoD21i4ZTag2K9CiGyoAyFI3ktwX2nbjVGx+bwwcYW7UBUY6kznuYcO4KLmho0M5AQ
-         xEVg==
+        d=linaro.org; s=google; t=1740653204; x=1741258004; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ17O1ETSxMB6WInt+9mPKK8vZgNC8yXnaT9wjZuPyc=;
+        b=kqe2S42DhMEljlD0HzQGXbeaMNtRAtgCYJy9RWXcijUfesOyMsxdEXmIcomxEmyDki
+         3OqX6tfVQhGC4enBCBkPnCQOzDQhaMb5GkIuGpNCiOBgGcsVC0abuo5F8LN0AL+d872q
+         wTFxIhVOtK3Cmf2JJd+I6vDCnyqIBvkqnC5afiHZC6JMCoOnU5u2h8fjcZIKaEWktTYs
+         ahroWKMSPfxtU5J+8Jy/M67kkbA8NkAMBlm20Q9q/FM151tii79/peWE2PsSm4p7a39k
+         DdkwebMuln2soYyZ2h61hHu+j5lF4bwprSxvLN6qOv1nW1RmglucTRHg/QG7/GIUu0/m
+         3xyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740653199; x=1741257999;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GinroxZiXaUl0iulTclS3Q5Hjx+0LaS8RfRGW3GbBU=;
-        b=F0drAhJfwwmfdXb0e5IPNI7zURzU/Zj2XvhWNlrlSj2eOATaqZ3opk3Y5FDgzh/p4o
-         MuD5fpasPEthicA3uWtcduFIP/3KFvu9yNtmINMER/U1QcX0foP0nJsne0VZgQB+N1NM
-         tiOZD9yzp3j8kGg2v8CcQxNyDIIMYDMKhWwfLxIVnMEFjYThbbZNbH/cM2R0ogngrpGF
-         2yFtE2qQsOetawYFGTnkTIUKkXrWK70kk/HoWGnu/Bnqr1WFoJWmXxkwi3BhZnbda5mp
-         0OygwDnP7uBOE0M2iGyyeE8BX8kYa/5TkFT6R9uf2gPSRZUuvyeOkNkX7IfX7pHNRQH6
-         XSow==
-X-Forwarded-Encrypted: i=1; AJvYcCVNqdoXPUYGCrqhE8D6xL/nzVFG/T7NaxskwmZs+uVpg9Ys9jgDq0uxo9bt/jdB89gzNzhAYC8fq60ydy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRDO42g0sNezYHhW0BBLNwVWkGSoNBlen3yStjqoO4LIyri+Sy
-	BWSwT82RXAn1DBK6E/bWKuQ7KPH5skKcQ6m1MdcnNiMyzQcjOSHVMYyIcCKN4EguIj1v0yEqv6t
-	cX+o=
-X-Gm-Gg: ASbGncsH5cxoAp7hufS0xmTc/wJiThr6s5eclLu0xKXNOwgqe6QG5w9MCkehNHGuYVq
-	Ec/j/Nj9mon9kV8RmsoP0bsg3/35sOqsNWF0cxjw0osYG84k/hqsKnXcAVxdqSpeuwf0QToqEPU
-	XQcvi+Jx0ZrtpVzup1hQIOwFtrCtn9MEWkzrSA3bQ+tffPItvGbMp0JQkkuGTarF44XMUCMKsTf
-	HRRAOT/4/+5qvyk7QjOhW/J2A5slMU2WZ1E1/Yr+ZD5xU5P4/xxKJmTHdqEQr5RBFbxyyElOMmi
-	vwnB4QIibFVXqYra+UTyGdvp9yMhR9/gEbEGJtud4WpKvVaFAWWiskULm4AmYl3D6i87OPTz0xR
-	1vNO1OZnQ2g==
-X-Google-Smtp-Source: AGHT+IFqCgtaEn18UyqkDgMvhRqj12YBC1o82ZagmdpxbrZDloQykLk5OMYN37B77iU31+3OfQ8GNw==
-X-Received: by 2002:a05:6402:27d3:b0:5e0:82a0:50ab with SMTP id 4fb4d7f45d1cf-5e4a0e160e3mr9376148a12.27.1740653198730;
-        Thu, 27 Feb 2025 02:46:38 -0800 (PST)
-Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb5ad8sm901032a12.34.2025.02.27.02.46.38
+        d=1e100.net; s=20230601; t=1740653204; x=1741258004;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WQ17O1ETSxMB6WInt+9mPKK8vZgNC8yXnaT9wjZuPyc=;
+        b=X9Nx1bDJWjlLzBmtvM0NGEarBTBD0xkZ6bT0frAXAjix8su3qO1qN3pCUZ4wH/e6bx
+         AdSrI/kq/s080St6k9qSZjbO0Tj0r737LYiNlhur1sL6kcV9jkFaDZs5tvvFbqcwRbdd
+         kZCn0+ZiNaDwnyeFS0QNcsveNs0PGZhlTcd5Ywh7JUfjbNKttROmIOnybhiMsIy75q1D
+         BOYgKoNEerQlwqNheFSMbCleM8QFbQcIG+0DKVf6c6AWtcGCHs+g5LIHX+n/jO5BL5It
+         lapu5YRvu7Cc0Wz5sRAi0ca9Qj1r2dXSO6MIvyfJMRWRCMoRXOId07ZpFCiNNNTnBldt
+         HqTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYsNyxEXGGnQ3sfcu3jOioIAhgFO1EQXNY1dIARhKWq/JKMjLUgHMg8S8nhg61eJgM1Hc/xQV9GQUvBRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrRZM95qB61zMTeK4NAjh3W6hdlpzye0wl0nDkXEf7e6WyhCPj
+	uoXS415uJD0vdWJ9ZLx/QVE5EG+DkBfKARf36j8AlghVrxSnvfPp0lfB+Z6iRSY=
+X-Gm-Gg: ASbGncsa9fLgHRySNGGIaVIacSR4I/zqvRUTKRxr3v2eHXnJIxC7iQ+m4oPB9IS0me4
+	TTCIFhlpltpUqL1qck62BMpgLPqYZHcKe1L9Zijf/OYtiJt0EGmban2vDlWw123K5MvNSthxc/S
+	+0Sq2LWAEOeoBwWcc/qJ2k7iKUWQ8+y+6+LvyPf9oJ0Yl/geYoG5bZRbRcXT1FSuAeifr6Yp5Dd
+	EN8p+tHYfPtUfONUmQEy7snDXb5xs7ZUfiTOJML//amziB1Vi2LIAZkAjhsszmMi7RNGTixLDXZ
+	jASIz/04J0hE3TMTTd4cpm+/rgY=
+X-Google-Smtp-Source: AGHT+IFw4U0Y14YqPHkOmM5GU7Aq2wPyaDmhjFD9e9oU7c3e7wrArjCROYbH+bI75H21AnEXa+gYfQ==
+X-Received: by 2002:a05:6a21:398b:b0:1f0:e2a9:fb2a with SMTP id adf61e73a8af0-1f2e3845c72mr4667894637.4.1740653203753;
+        Thu, 27 Feb 2025 02:46:43 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7dedf5b3sm1071213a12.73.2025.02.27.02.46.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 02:46:38 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 27 Feb 2025 10:46:14 +0000
-Subject: [PATCH v3 2/2] power: reset: syscon-reboot: support different
- reset modes
+        Thu, 27 Feb 2025 02:46:43 -0800 (PST)
+Date: Thu, 27 Feb 2025 16:16:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@redhat.com,
+	gary@garyguo.net, linux-kernel@vger.kernel.org,
+	linux@rasmusvillemoes.dk, ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu,
+	vincent.guittot@linaro.org, yury.norov@gmail.com
+Subject: Re: [PATCH 1/2] rust: Add initial cpumask abstractions
+Message-ID: <20250227104640.sa6vqdz7j5hwjigs@vireshk-i7>
+References: <CAH5fLggyEXyyaFNnmBCPOSX051TiFyAp0B8GfahbPg=+LrtUWA@mail.gmail.com>
+ <20250225180223.763026-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250227-syscon-reboot-reset-mode-v3-2-959ac53c338a@linaro.org>
-References: <20250227-syscon-reboot-reset-mode-v3-0-959ac53c338a@linaro.org>
-In-Reply-To: <20250227-syscon-reboot-reset-mode-v3-0-959ac53c338a@linaro.org>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225180223.763026-1-aliceryhl@google.com>
 
-Linux supports a couple different reset modes, but this driver here
-doesn't distinguish between them and issues the same syscon register
-write irrespective of the reset mode requested by the kernel.
+On 25-02-25, 18:02, Alice Ryhl wrote:
+> diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
+> +/// This corresponds to the C type alias `cpumask_var_t`.
+> +pub struct CpumaskBox {
+> +    #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+> +    ptr: NonNull<Cpumask>,
+> +    #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
+> +    mask: Cpumask,
+> +}
+>  
+> +impl CpumaskBox {
+> +    pub fn new(_flags: Flags) -> Result<Self, AllocError> {
+> +        Ok(Self {
+> +            #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+> +            ptr: {
+> +                let mut ptr: *mut bindings::cpumask = ptr::null_mut();
+> +                unsafe { bindings::zalloc_cpumask_var(&mut ptr, _flags.as_raw()) };
+> +                NonNull::new(ptr.cast()).ok_or(AllocError)?
+> +            },
+>              #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
+> -            // SAFETY: The pointer was earlier initialized from the result of `KBox::into_raw()`.
+> -            unsafe {
+> -                drop(KBox::from_raw(self.ptr))
+> -            };
+> -        }
+> +            mask: unsafe { core::mem::zeroed() },
 
-Update this driver to support most of Linux' reset modes: cold, hard,
-warm, and soft.
+This will work correctly, yes, but I wasn't sure if the Rust code
+should do this or depend on the C API and call zalloc_cpumask_var().
+The implementation of struct cpumask allows this to work right now,
+but any change where some internal state management is done, for
+example, within the structure may break the Rust side.
 
-The actions to take for these are taken from DT, and are all new
-optional properties. The property names match the existing properties
-supported but should be prefixed with the reset mode.
+I am okay with this way of doing it if that looks okay to you.
 
-This change is meant to be backwards compatible with existing DTs, and
-if Linux requests a reset mode that this driver doesn't support, or
-that the DT doesn't specify, the reset is triggered using the fallback
-/ default entry.
+I have made following changes over your diff.
 
-As an example why this is useful, other than properly supporting the
-Linux reboot= kernel command line option or sysfs entry, this change
-allows platforms to e.g. default to a more secure cold-reset, but
-also to do a warm-reset in case RAM contents needs to be retained
-across the reset.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/power/reset/syscon-reboot.c | 96 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 85 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/power/reset/syscon-reboot.c b/drivers/power/reset/syscon-reboot.c
-index d623d77e657e4c233d8ae88bb099bee13c48a9ef..81b917a531b8bf04d7c5e7027bdc3290f2183eb0 100644
---- a/drivers/power/reset/syscon-reboot.c
-+++ b/drivers/power/reset/syscon-reboot.c
-@@ -14,11 +14,29 @@
- #include <linux/reboot.h>
- #include <linux/regmap.h>
- 
--struct syscon_reboot_context {
--	struct regmap *map;
-+/* REBOOT_GPIO doesn't make sense for syscon-reboot */
-+static const struct {
-+	enum reboot_mode mode;
-+	const char *prefix;
-+} prefix_map[] = {
-+	{ .mode = REBOOT_COLD, .prefix = "cold"  },
-+	{ .mode = REBOOT_WARM, .prefix = "warm"  },
-+	{ .mode = REBOOT_HARD, .prefix = "hard"  },
-+	{ .mode = REBOOT_SOFT, .prefix = "soft"  },
-+};
-+
-+struct reboot_mode_bits {
- 	u32 offset;
- 	u32 value;
- 	u32 mask;
-+	bool valid;
-+};
-+
-+struct syscon_reboot_context {
-+	struct regmap *map;
-+
-+	struct reboot_mode_bits mode_bits[REBOOT_SOFT + 1];
-+	struct reboot_mode_bits catchall;
- 	struct notifier_block restart_handler;
- };
- 
-@@ -28,9 +46,16 @@ static int syscon_restart_handle(struct notifier_block *this,
- 	struct syscon_reboot_context *ctx =
- 			container_of(this, struct syscon_reboot_context,
- 					restart_handler);
-+	const struct reboot_mode_bits *mode_bits;
-+
-+	if (mode < ARRAY_SIZE(ctx->mode_bits) && ctx->mode_bits[mode].valid)
-+		mode_bits = &ctx->mode_bits[mode];
-+	else
-+		mode_bits = &ctx->catchall;
- 
- 	/* Issue the reboot */
--	regmap_update_bits(ctx->map, ctx->offset, ctx->mask, ctx->value);
-+	regmap_update_bits(ctx->map, mode_bits->offset, mode_bits->mask,
-+			   mode_bits->value);
- 
- 	mdelay(1000);
- 
-@@ -60,12 +85,61 @@ static int syscon_reboot_probe(struct platform_device *pdev)
- 	if (of_property_read_s32(pdev->dev.of_node, "priority", &priority))
- 		priority = 192;
- 
--	if (of_property_read_u32(pdev->dev.of_node, "offset", &ctx->offset))
--		if (of_property_read_u32(pdev->dev.of_node, "reg", &ctx->offset))
-+	/* try to catch enum reboot_mode changing in any incompatible way */
-+	BUILD_BUG_ON(ARRAY_SIZE(prefix_map) != ARRAY_SIZE(ctx->mode_bits));
-+	BUILD_BUG_ON(ARRAY_SIZE(ctx->mode_bits) <= REBOOT_COLD);
-+	BUILD_BUG_ON(ARRAY_SIZE(ctx->mode_bits) <= REBOOT_WARM);
-+	BUILD_BUG_ON(ARRAY_SIZE(ctx->mode_bits) <= REBOOT_HARD);
-+	BUILD_BUG_ON(ARRAY_SIZE(ctx->mode_bits) <= REBOOT_SOFT);
-+
-+	for (int i = 0; i < ARRAY_SIZE(prefix_map); ++i) {
-+		const char * const prefix = prefix_map[i].prefix;
-+		struct reboot_mode_bits * const mode_bits =
-+			&ctx->mode_bits[prefix_map[i].mode];
-+		char prop[32];
-+
-+		snprintf(prop, sizeof(prop), "%s-offset", prefix);
-+		if (of_property_read_u32(pdev->dev.of_node, prop,
-+					 &mode_bits->offset)) {
-+			snprintf(prop, sizeof(prop), "%s-reg", prefix);
-+			if (of_property_read_u32(pdev->dev.of_node, prop,
-+						 &mode_bits->offset))
-+				continue;
-+		}
-+
-+		snprintf(prop, sizeof(prop), "%s-value", prefix);
-+		if (of_property_read_u32(pdev->dev.of_node, prop,
-+					 &mode_bits->value)) {
-+			/*
-+			 * unlike catchall below, don't support old binding
-+			 * here
-+			 */
-+			dev_err(dev, "'%s' is mandatory\n", prop);
-+			continue;
-+		}
-+
-+		snprintf(prop, sizeof(prop), "%s-mask", prefix);
-+		mask_err = of_property_read_u32(pdev->dev.of_node, prop,
-+						&mode_bits->mask);
-+
-+		if (mask_err)
-+			/* support value without mask */
-+			mode_bits->mask = 0XFFFFFFFF;
-+
-+		mode_bits->valid = true;
-+	}
-+
-+	/* catch-all entry */
-+	if (of_property_read_u32(pdev->dev.of_node, "offset",
-+				 &ctx->catchall.offset))
-+		if (of_property_read_u32(pdev->dev.of_node, "reg",
-+					 &ctx->catchall.offset))
- 			return -EINVAL;
- 
--	value_err = of_property_read_u32(pdev->dev.of_node, "value", &ctx->value);
--	mask_err = of_property_read_u32(pdev->dev.of_node, "mask", &ctx->mask);
-+	value_err = of_property_read_u32(pdev->dev.of_node, "value",
-+					 &ctx->catchall.value);
-+	mask_err = of_property_read_u32(pdev->dev.of_node, "mask",
-+					&ctx->catchall.mask);
- 	if (value_err && mask_err) {
- 		dev_err(dev, "unable to read 'value' and 'mask'");
- 		return -EINVAL;
-@@ -73,11 +147,11 @@ static int syscon_reboot_probe(struct platform_device *pdev)
- 
- 	if (value_err) {
- 		/* support old binding */
--		ctx->value = ctx->mask;
--		ctx->mask = 0xFFFFFFFF;
-+		ctx->catchall.value = ctx->catchall.mask;
-+		ctx->catchall.mask = 0xFFFFFFFF;
- 	} else if (mask_err) {
--		/* support value without mask*/
--		ctx->mask = 0xFFFFFFFF;
-+		/* support value without mask */
-+		ctx->catchall.mask = 0xFFFFFFFF;
- 	}
- 
- 	ctx->restart_handler.notifier_call = syscon_restart_handle;
+Thanks for your help in simplifying the code.
 
 -- 
-2.48.1.711.g2feabab25a-goog
+viresh
 
+-------------------------8<-------------------------
+
+diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
+index f82dafbc4e61..d56f7dc9d762 100644
+--- a/rust/kernel/cpumask.rs
++++ b/rust/kernel/cpumask.rs
+@@ -13,20 +13,28 @@
+ #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+ use core::ptr::{self, NonNull};
+ 
++#[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++use core::mem::MaybeUninit;
++
++use core::ops::{Deref, DerefMut};
++
+ /// This corresponds to the C type `struct cpumask`.
+ #[repr(transparent)]
+-pub struct Cpumask {
+-    mask: Opaque<bindings::cpumask>,
+-}
++pub struct Cpumask(Opaque<bindings::cpumask>);
+ 
+ impl Cpumask {
+-    /// Creates a reference to an existing `struct cpumask` pointer.
++    /// Creates a mutable reference to an existing `struct cpumask` pointer.
+     ///
+     /// # Safety
+     ///
+     /// The caller must ensure that `ptr` is valid for writing and remains valid for the lifetime
+     /// of the returned reference.
+-    pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask) -> &'a mut Self {
++    pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self {
++        // For this configuration, `cpumask_var_t` is defined as `[cpumask; 1]`.
++        #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++        let ptr: *mut bindings::cpumask = ptr as *mut _;
++
++        // SAFETY: Guaranteed by the safety requirements of the function.
+         unsafe { &mut *ptr.cast() }
+     }
+ 
+@@ -36,7 +44,12 @@ pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask) -> &'a mut Self {
+     ///
+     /// The caller must ensure that `ptr` is valid for reading and remains valid for the lifetime
+     /// of the returned reference.
+-    pub unsafe fn from_raw<'a>(ptr: *const bindings::cpumask) -> &'a Self {
++    pub unsafe fn from_raw<'a>(ptr: *const bindings::cpumask_var_t) -> &'a Self {
++        // For this configuration, `cpumask_var_t` is defined as `[cpumask; 1]`.
++        #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++        let ptr: *const bindings::cpumask = ptr as *const _;
++
++        // SAFETY: Guaranteed by the safety requirements of the function.
+         unsafe { &*ptr.cast() }
+     }
+ 
+@@ -45,41 +58,37 @@ pub fn as_raw(&self) -> *mut bindings::cpumask {
+         self as *const Cpumask as *mut bindings::cpumask
+     }
+ 
+-    /// Sets CPU in the cpumask.
+-    ///
+-    /// Update the cpumask with a single CPU.
++    /// Sets `cpu` in the cpumask.
+     pub fn set(&mut self, cpu: u32) {
+-        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
++        // SAFETY: `mask` is guaranteed to be valid for the lifetime of `self`. And it is safe to
+         // call `cpumask_set_cpus()` for any CPU.
+         unsafe { bindings::cpumask_set_cpu(cpu, self.as_raw()) };
+     }
+ 
+-    /// Clears CPU in the cpumask.
+-    ///
+-    /// Update the cpumask with a single CPU.
++    /// Clears `cpu` in the cpumask.
+     pub fn clear(&mut self, cpu: i32) {
+-        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
++        // SAFETY: `mask` is guaranteed to be valid for the lifetime of `self`. And it is safe to
+         // call `cpumask_clear_cpu()` for any CPU.
+         unsafe { bindings::cpumask_clear_cpu(cpu, self.as_raw()) };
+     }
+ 
+     /// Sets all CPUs in the cpumask.
+     pub fn set_all(&mut self) {
+-        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
++        // SAFETY: `mask` is guaranteed to be valid for the lifetime of `self`. And it is safe to
+         // call `cpumask_setall()`.
+         unsafe { bindings::cpumask_setall(self.as_raw()) };
+     }
+ 
+-    /// Gets weight of a cpumask.
++    /// Gets weight of the cpumask.
+     pub fn weight(&self) -> u32 {
+-        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
++        // SAFETY: `mask` is guaranteed to be valid for the lifetime of `self`. And it is safe to
+         // call `cpumask_weight()`.
+         unsafe { bindings::cpumask_weight(self.as_raw()) }
+     }
+ 
+     /// Copies cpumask.
+     pub fn copy(&self, dstp: &mut Self) {
+-        // SAFETY: `ptr` is guaranteed to be valid for the lifetime of `self`. And it is safe to
++        // SAFETY: `mask` is guaranteed to be valid for the lifetime of `self`. And it is safe to
+         // call `cpumask_copy()`.
+         unsafe { bindings::cpumask_copy(dstp.as_raw(), self.as_raw()) };
+     }
+@@ -94,26 +103,65 @@ pub struct CpumaskBox {
+ }
+ 
+ impl CpumaskBox {
++    /// Creates an initialized instance of the `CpumaskBox`.
+     pub fn new(_flags: Flags) -> Result<Self, AllocError> {
+         Ok(Self {
+             #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+             ptr: {
+                 let mut ptr: *mut bindings::cpumask = ptr::null_mut();
++
++                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
++                // that, it is always safe to call this method.
+                 unsafe { bindings::zalloc_cpumask_var(&mut ptr, _flags.as_raw()) };
+                 NonNull::new(ptr.cast()).ok_or(AllocError)?
+             },
++
+             #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++            // SAFETY: FFI type is valid to be zero-initialized.
+             mask: unsafe { core::mem::zeroed() },
+         })
+     }
++
++    /// Creates an uninitialized instance of the `CpumaskBox`.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that the returned `CpumaskBox` is properly initialized before
++    /// getting used.
++    unsafe fn new_uninit(_flags: Flags) -> Result<Self, AllocError> {
++        Ok(Self {
++            #[cfg(CONFIG_CPUMASK_OFFSTACK)]
++            ptr: {
++                let mut ptr: *mut bindings::cpumask = ptr::null_mut();
++
++                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
++                // that, it is always safe to call this method.
++                unsafe { bindings::alloc_cpumask_var(&mut ptr, _flags.as_raw()) };
++                NonNull::new(ptr.cast()).ok_or(AllocError)?
++            },
++            #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++            // SAFETY: Guaranteed by the safety requirements of the function.
++            mask: unsafe { MaybeUninit::uninit().assume_init() },
++        })
++    }
++
++    /// Clones cpumask.
++    pub fn try_clone(cpumask: &Cpumask) -> Result<Self> {
++        // SAFETY: The returned cpumask_box is initialized right after this call.
++        let mut cpumask_box = unsafe { Self::new_uninit(GFP_KERNEL) }?;
++
++        cpumask.copy(&mut cpumask_box);
++        Ok(cpumask_box)
++    }
+ }
+ 
+ // Make CpumaskBox behave like a pointer to Cpumask.
+-impl core::ops::Deref for CpumaskBox {
++impl Deref for CpumaskBox {
+     type Target = Cpumask;
+ 
+     #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+     fn deref(&self) -> &Cpumask {
++        // SAFETY: The caller owns CpumaskBox, so it is safe to deref the cpumask.
+         unsafe { &*self.ptr.as_ptr() }
+     }
+ 
+@@ -123,9 +171,23 @@ fn deref(&self) -> &Cpumask {
+     }
+ }
+ 
++impl DerefMut for CpumaskBox {
++    #[cfg(CONFIG_CPUMASK_OFFSTACK)]
++    fn deref_mut(&mut self) -> &mut Cpumask {
++        // SAFETY: The caller owns CpumaskBox, so it is safe to deref the cpumask.
++        unsafe { self.ptr.as_mut() }
++    }
++
++    #[cfg(not(CONFIG_CPUMASK_OFFSTACK))]
++    fn deref_mut(&mut self) -> &mut Cpumask {
++        &mut self.mask
++    }
++}
++
+ impl Drop for CpumaskBox {
+     fn drop(&mut self) {
+         #[cfg(CONFIG_CPUMASK_OFFSTACK)]
++        // SAFETY: It is safe to free the cpumask.
+         unsafe {
+             bindings::free_cpumask_var(self.as_raw())
+         };
 
