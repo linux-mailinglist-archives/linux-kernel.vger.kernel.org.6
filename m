@@ -1,83 +1,163 @@
-Return-Path: <linux-kernel+bounces-536859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9E5A48527
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEA0A4852E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEABF173414
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C556A1894DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BFB1B0421;
-	Thu, 27 Feb 2025 16:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE5A1AF0C5;
+	Thu, 27 Feb 2025 16:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sflvuWkX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="aKHt2hRN"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D711A3178
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD01ADFE4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673649; cv=none; b=FcK6tD6HFvhXRX7KeeLubeN13vY+xb8nLEfWaqXsFIVyjCsNX+1klvu324n2O7zlsyIifpzFetCuPqLdz93kqK3sveYUgDbOIb8SJ3gfm20Y6I96EnoVQSDCbWCCc0bXZFfU+YPLOeqUx/VBP+HeksgsHL8xBGmdurPjEY83uow=
+	t=1740673791; cv=none; b=IUA3/DRqprsMNBIQyMTKwMz/x9wHdfXT6nXwVibbnOV7cBixHsiw/MbcstpICxRCroOPFK1yUH3bQ2pFD0Q3dSTsSdKO2I0XG8QrzeY4v6MPnglv2LAIMyJfsBiDTKKT2MZFE0ttRORIQdsFFND8b4b+ZctVzfE5O1Nz8I7pXu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673649; c=relaxed/simple;
-	bh=CqfgSenLX0g4/F+BPmO4k7pBbeoQY+ChNLkUs2hFiO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fATjahTCCmtRTLSZiK0tUeaViaUopmqNFyaZ/7+jWvP4L9KvCVAXvnRhpkKVkSohg1FhCM/B6PvdMDtPMaHr88xBAm+1EG82TbFLk3AiKcaHUY9JqFaibmlKnyrYImjGKukSK3jS2RVxN5LPFkIp6D679Q6dgSLUtLizkLMXH3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sflvuWkX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D769C4CEDD;
-	Thu, 27 Feb 2025 16:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740673648;
-	bh=CqfgSenLX0g4/F+BPmO4k7pBbeoQY+ChNLkUs2hFiO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sflvuWkXKWbDYL212qkVg3GDGJ8FoYujaTBndVsQxAJqoVFx36hhI7W2NcWAqMefz
-	 MO1RNegYJUEGjvK2h5ebT6XfGUIHmfGYlrcWtdQEUR9La7agj9eKtFAd2HCrQTokBl
-	 aova2gecbzO1eDMsc34FWbNCufUo8oKJs6nCmlFoOGpl++Obt+fj/MjZE3wxg+/C+2
-	 Ru1a++5+NBDDfYaFBp2qB/17Rknbu0WCZ34f943KncalWPC2Q5snvkjOj6khwznDb0
-	 jOtOi+KLaqY0Oam7gH6wqZ78Zf5pvN4J2LmPfP/9kRV9e0dS7LWEl3gUMee+Q8HcUN
-	 sW03y7kznxGkg==
-Date: Thu, 27 Feb 2025 06:27:27 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.15] tools/sched_ext: Provide a compatible
- helper for scx_bpf_events()
-Message-ID: <Z8CSb4qe3xwx5Rdm@slm.duckdns.org>
-References: <20250227091138.253809-1-arighi@nvidia.com>
+	s=arc-20240116; t=1740673791; c=relaxed/simple;
+	bh=PgRYUUeTT1JBmil9ECVJeO3haSqsaiggs8Yz5Nhgtw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KbjPeAZJ5UF1E+IDrLdXkNGbXMKeRT+PF4v29bt12wJVaSL4foqrTtV7F+TxBasAlBLqduy3ERrg1wltxETrHNCVV6ByIQ68vlMljxCBnJsStpwWarjwT8/BcE1laqoP1BFseuJVqba2bVfXk0n9ZvEQDt98vFKJfVveRIlLBGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=aKHt2hRN; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=uyV67zBxhxQ45yLPsz+CN/F+f5ojkxID4+JV1MJhHxc=;
+	b=aKHt2hRNqQgkGbX+Y0tqd5xrl5PNcuC6dvFM+lszxu3eoFiMxmtoT8JruHbdnwYf4AHQUdrKjRm23
+	 ixMiwngJ+F8ASW6i1nWbftovrMwIIpFd2h3uIEDX+lwVCVLdOSIO9oHs0Kt5Gt7Kt8OPJKmbdcNJAw
+	 QNkTVg0y1oOodskw61ZoOGmefMYn9emWguSXLLJi1GvJe/cu/wRDVXNZTbr4GFlGTlLFHth9GkX0nq
+	 ybfhZdqG9Wf6N0pbKgYMPKfvGN9dZtvSjjPMT6d1a4J+AkU+4MsykZML2Z2KgSGkHglFDnyxop6Nip
+	 lb6lXQoZEW3lE5XlG9bth9iv0bEIZVw==
+X-MSG-ID: e6781c98-f527-11ef-a399-00505681446f
+From: David Jander <david@protonic.nl>
+To: linux-kernel@vger.kernel.org
+Cc: linux-iio@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Nuno Sa <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	David Jander <david@protonic.nl>
+Subject: [RFC PATCH 0/7] Add Linux Motion Control subsystem
+Date: Thu, 27 Feb 2025 17:28:16 +0100
+Message-ID: <20250227162823.3585810-1-david@protonic.nl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227091138.253809-1-arighi@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 10:11:38AM +0100, Andrea Righi wrote:
-> Introduce __COMPAT_scx_bpf_events() to use scx_bpf_events() in a
-> compatible way also with kernels that don't provide this kfunc.
-> 
-> This also fixes the following error with scx_qmap when running on a
-> kernel that does not provide scx_bpf_events():
-> 
->  ; scx_bpf_events(&events, sizeof(events)); @ scx_qmap.bpf.c:777
->  318: (b7) r2 = 72                     ; R2_w=72 async_cb
->  319: <invalid kfunc call>
->  kfunc 'scx_bpf_events' is referenced but wasn't resolved
-> 
-> Fixes: 9865f31d852a4 ("sched_ext: Add scx_bpf_events() and scx_read_event() for BPF schedulers")
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+Request for comments on: adding the Linux Motion Control subsystem to the
+kernel.
 
-Applied to sched_ext/for-6.15.
+The Linux Motion Control subsystem (LMC) is a new kernel subsystem and
+associated device drivers for hardware devices that control mechanical
+motion. Most often these are different types of motors, but can also be
+linear actuators for example.
 
-Thanks.
+This subsystem defines a new UAPI for motion devices on the user-space
+side, as well as common functionality for hardware device drivers on the
+driver side.
+
+The UAPI is based on a ioctl() interface on character devices representing
+a specific hardware device. The hardware device can control one or more
+actuators (motors), which are identified as channels in the UAPI. It is
+possible to execute motions on individual channels, or combined
+affecting several selected (or all) channels simutaneously. Examples of
+coordinated movements of several channels could be the individual axes
+of a 3D printer or CNC machine for example.
+
+On the hardware side, this initial set of patches also includes two drivers
+for two different kinds of motors. One is a stepper motor controller
+device that containes a ramp generator capable of autonomously executing
+controlled motions following a multi-point acceleration profile
+(TMC5240), as well as a simple DC motor controller driver that can control
+DC motors via a half-bridge or full H-bridge driver such as the TI DRV8873
+for example.
+
+Towards the IIO subsystem, LMC supports generating iio trigger events that
+fire at certain motion events, such as passing a pre-programmed position or
+when reaching the motion target position, depending on the capabilities of
+the hardware device. This enables for example triggering an ADC measurement
+at a certain position during a movement.
+
+In the future, making use of PREEMPT_RT, even dumb STEP/DIR type stepper
+motor controller drivers may be implemented entirely in the kernel,
+depending on some characteristics of the hardware (latency jittter,
+interrupt latency and CPU speed mainly).
+
+The existence of this subsystem may affect other projects, such as
+Linux-CNC and Klipper for example.
+
+This code is already in use controlling machines with up to 16 stepper
+motors and up to 4 DC motors simutaneously. Up to this point the UAPI
+has shown to be adequate and sufficient. Careful thought has gone into
+the UAPI design to make sure it coveres as many use-cases as possible,
+while being versioned and extensible in the future, with backwards
+compatibility in mind.
+
+David Jander (7):
+  drivers: Add motion control subsystem
+  motion: Add ADI/Trinamic TMC5240 stepper motor controller
+  motion: Add simple-pwm.c PWM based DC motor controller driver
+  Documentation: Add Linux Motion Control documentation
+  dt-bindings: motion: Add common motion device properties
+  dt-bindings: motion: Add adi,tmc5240 bindings
+  dt-bindings: motion: Add motion-simple-pwm bindings
+
+ .../bindings/motion/adi,tmc5240.yaml          |   60 +
+ .../devicetree/bindings/motion/common.yaml    |   52 +
+ .../bindings/motion/motion-simple-pwm.yaml    |   55 +
+ Documentation/motion/index.rst                |   18 +
+ Documentation/motion/motion-uapi.rst          |  555 ++++++++
+ Documentation/subsystem-apis.rst              |    1 +
+ MAINTAINERS                                   |   13 +
+ drivers/Kconfig                               |    2 +
+ drivers/Makefile                              |    2 +
+ drivers/motion/Kconfig                        |   42 +
+ drivers/motion/Makefile                       |    5 +
+ drivers/motion/motion-core.c                  |  823 ++++++++++++
+ drivers/motion/motion-core.h                  |  172 +++
+ drivers/motion/motion-helpers.c               |  590 +++++++++
+ drivers/motion/motion-helpers.h               |   23 +
+ drivers/motion/simple-pwm.c                   |  199 +++
+ drivers/motion/tmc5240.c                      | 1157 +++++++++++++++++
+ include/uapi/linux/motion.h                   |  229 ++++
+ 18 files changed, 3998 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/motion/adi,tmc5240.yaml
+ create mode 100644 Documentation/devicetree/bindings/motion/common.yaml
+ create mode 100644 Documentation/devicetree/bindings/motion/motion-simple-pwm.yaml
+ create mode 100644 Documentation/motion/index.rst
+ create mode 100644 Documentation/motion/motion-uapi.rst
+ create mode 100644 drivers/motion/Kconfig
+ create mode 100644 drivers/motion/Makefile
+ create mode 100644 drivers/motion/motion-core.c
+ create mode 100644 drivers/motion/motion-core.h
+ create mode 100644 drivers/motion/motion-helpers.c
+ create mode 100644 drivers/motion/motion-helpers.h
+ create mode 100644 drivers/motion/simple-pwm.c
+ create mode 100644 drivers/motion/tmc5240.c
+ create mode 100644 include/uapi/linux/motion.h
 
 -- 
-tejun
+2.47.2
+
 
