@@ -1,257 +1,178 @@
-Return-Path: <linux-kernel+bounces-535882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71DDA47877
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:00:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025D0A4787B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39B31703AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8AE188B285
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00170226545;
-	Thu, 27 Feb 2025 08:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87352227B83;
+	Thu, 27 Feb 2025 09:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R50s8NUv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4aSWHuO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD80225A47
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3E15DBB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646793; cv=none; b=Z27Wv1DV305hG8X0lvogOxtSnCgD4g+tb2ayd5y0jD9sf1SessXQ9+bg5yAw4I8YFYNpNc5cq16cL6oQ1GPxHDbc7V+UK7UUDFp7wTJXMqBZdIomoD2z2rlPBIjcifkrPj4W0v+M6m18Q2X3aZf2mnbOgCHZUZLAvGuLMzvf/G8=
+	t=1740646840; cv=none; b=WAad119nO9gH8V4CE0iBu7Feo685DXeMLQp5AnifnxJ5zYfACGc1RxOikWZ0YZxXKhlA2bHt8ZcyNDRfU9cgysfDozz0M6AWoUezQ9YS0uD2lbkyQBuSaWPuxyLJwtig1KvB9DACQGmdQr+kAI6VFGOWk/fIrMdWH+nDIzRmPCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646793; c=relaxed/simple;
-	bh=+0w5pxZl6eu5LUe9m4QPfCY8rfPht4lXtsBkbK6WTpY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ex1/9zBA0tpbURSrNDgr8Nnid/NR64tTT6mtCH9ZfhpnpFfBulZzdOeBu7QoPergADFTHBE5CBJXAGhzESQLs0RpQegh2ihHxv55kqGWT3roeTTbcUqVy+doWe+ATI+tX8JPCn9Z0cOjmK5JozlCnRyG0wdJPo2JvJHkp96C478=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R50s8NUv; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740646792; x=1772182792;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=+0w5pxZl6eu5LUe9m4QPfCY8rfPht4lXtsBkbK6WTpY=;
-  b=R50s8NUvXCfc21J3gRbGZMuNrfICb6akin8lrJvKkkKCe2iNhaAC3o+W
-   zUoq6o+CZ2PG8b8w5IoQmMKRmaoVzwVErGXDRwKerYlM53NUoSnC0pVen
-   dxyMuiNrt/KrCcL2QgkECPVWuCkqUJl+doy910IQWsTvHiEg5e5AIhYVD
-   6pcPyAiyiruDI3TJU0vgQs4oG69GTn1Xc2P3qYlUMqRAvc0/JlOvq1FWI
-   F5YHnm2be8Yu5pLQdTG0pzkSDmpTc4339V3RWFhfjmx8f5J0MyKJA7CLl
-   tV/Vzqbw1ZHWIh3ysQMKNX791P1pIrMOGHou4u1c154jCSDrjThSI/DyI
-   w==;
-X-CSE-ConnectionGUID: td1LJgfBT4yTovVAKwormA==
-X-CSE-MsgGUID: tW7kr0ITTQebnDioD9cJ3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52939409"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52939409"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 00:59:51 -0800
-X-CSE-ConnectionGUID: lue+0kPXQ+2uMDYapBVZqg==
-X-CSE-MsgGUID: 7WfixO/GRYiG4T6NyakPHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="147786129"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.181])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 00:59:45 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v8 2/2] drm/debugfs: add top-level 'bridges' file
- showing all added bridges
-In-Reply-To: <20250226-drm-debugfs-show-all-bridges-v8-2-bb511cc49d83@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250226-drm-debugfs-show-all-bridges-v8-0-bb511cc49d83@bootlin.com>
- <20250226-drm-debugfs-show-all-bridges-v8-2-bb511cc49d83@bootlin.com>
-Date: Thu, 27 Feb 2025 10:59:41 +0200
-Message-ID: <877c5b4vb6.fsf@intel.com>
+	s=arc-20240116; t=1740646840; c=relaxed/simple;
+	bh=wLcIqSvKIjEPPXohXxqrzrzQz7/YJbG+gZ111fPnCuo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=McJiB8M3pZi9T9lRcsR1wio6wjbtAvjHtyJ/wa4iIXRzfw4aGveZzdIj/NpJWSPwJdUfq0aGiycc8uW/9Rl1YhF4kFI8qKXzNZ/RCINY1EVxF0OektJ/h9IwGd9Q2ueQjlNiBFsJxq9IC9VBJNJacpTv4Gb2n77tojf8GkYbPmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U4aSWHuO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so4471955e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:00:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740646837; x=1741251637; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ryfOT/9fnlUXs2jw9rNXfn6i7wfwlIdVEsz/YdDgxDU=;
+        b=U4aSWHuOabKD7eT8tZd9sI7RXm6jFfDnZxHzuO3WUUWEXwITHfMOob+Q/DgwR9p1y2
+         9h0mK0C/wjNlulxMePpQcTaBQ4tZTxTkGgkHhDkjEF9/LqcU7gUEeJrKkm9RoDgFWy57
+         v/T6Y8oV6ZufLiRnW84Gjwgvk3xwLRzrAeFRl9ory/YabbSMbr9r1M2ZUNxt10WUhYl8
+         2d3mYZLj+KwUWfuRG5Ge4iuEZfFsw/34B7FCSvRpWIfV5y093cDRasYPSE5eqUI+nW+2
+         ItCocr97KKICZNmaR+MXM8IUDEaSrizPNUvIrzEHhu9zPzyG9ATMQGgoCO5Pw88bXbe1
+         T8MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740646837; x=1741251637;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ryfOT/9fnlUXs2jw9rNXfn6i7wfwlIdVEsz/YdDgxDU=;
+        b=OYSniNyC7XaZcKSFxLL44nyrl9EUIGoPqY8BRnQVbP3D/akwWs3yGMH6cggXek5Hc3
+         aHhHcLEc2tGjJ4QYm0nu0rWZTr8/W61KM0iH8XZUMfGovCDOqL8xePUuV/VBp6UAyCFL
+         EDJucmeH+GB8wuG2223HiCC9D8fBn52cKEMjZxDmrUJxkanZcJTpjG+IWpznJqbMGSVC
+         TYS4qSGhw/vaekGhQuiN7cJckmZbkkNNS/5EY7x0Mym7xDHR/tQc0sbUoSZPtlVrcmvT
+         qaSVKxrs1lbooB3Nn0Oj5ywWev9ZxTK5ooUkQLhwqwQcxd3IHn6zibscsjtxq5jUTOlF
+         GNMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGAY1adIMJRVYWVzSUVIyUsLFYp5bL86MXXCodvcPDVKRAIFeftafNxie1/w2vrtISQRoa0JbZWBcXxqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf1N6BqqfUPRxXBjjT+OocYuj3mkH7kRHlfZVJm5SLjub04ebZ
+	kT+SLbPDJreQSUVpP8osEEvPv1tNmYmPDfSaOavMuQiQ21kU39awH454HMhlrlk=
+X-Gm-Gg: ASbGncuLXQOpDteK7gbn/PaSMJp0cho6ugf61CwMucsAHsawpQcNaf3TZk3SHMD8Cnn
+	vORNjircw2MxLxPnNOIU1lwPjczaO5WuBvbQ8TJ4KD3a18bOZl4GF3Mw3WaGrzxnH7yHvbXAyXd
+	AGdDlC8KTYWrIMKnj5yg06ShN6suVElfmHBKIC8UqWuN36HW2OoCjk6vAS2LwqB5E9vzBEJ7Hcs
+	T42ZFyTnTD+nIv/5j3DXtHLCtMy5yCXOHw7YK8lrjvWMOHPdsgxkbVQzxrR+iz5ZIjR/xCU5/QH
+	/1uTRKp+slzipqRcqbW+VfQsjL34gD2Y6Hi88Gv07Wn0q1Q=
+X-Google-Smtp-Source: AGHT+IHievm8gWz45p5sNrOYMG1P+647wrNImmrzzm1mqySSQ11WrwVeQKf/Y/R6wOELf3fJMHEVxQ==
+X-Received: by 2002:a05:600c:4507:b0:439:8e95:795b with SMTP id 5b1f17b1804b1-439aebf38b2mr216472595e9.31.1740646837192;
+        Thu, 27 Feb 2025 01:00:37 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba57145esm47170715e9.30.2025.02.27.01.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 01:00:36 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v5 0/2] dt-bindings: display: qcom,sm8[56]50-mdss: properly
+ document the interconnect paths
+Date: Thu, 27 Feb 2025 10:00:31 +0100
+Message-Id: <20250227-topic-sm8x50-mdss-interconnect-bindings-fix-v5-0-bf6233c6ebe5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK8pwGcC/6WSQW7DIBBFr2Kx7kSAje1EVdV7VF0AMyRINaRAr
+ FRR7l7ibBJllXb5R+L9Lz1OLFPylNmmObFEs88+hhrUS8PsToctgceameRScckHKHHvLeRpPCo
+ OE+YMPhRKNoZAtoDxAX3YZnD+CIjrQTkpW+SKVeI+UT0vbR+fNe98LjH9LOWzuFz/1jML4DAqa
+ QT2mqjr37980CmuYtqyS9Es/wGXFe4GIc2Irq/PH+DtDVzw5+BthavOrnu9RmkG9wDvbuHtc/C
+ uwlunubGdRGzHO/j5KiTR96FaL1crzOhMYOM0+bJp5n4lOkhWXORNlLNe/sOmeV32CKHu9xz2u
+ STSE2ABb23NqAtd9ZDWoxGcpHbDzY63OuT8C1UUKraGAgAA
+X-Change-ID: 20250207-topic-sm8x50-mdss-interconnect-bindings-fix-dd975f223d05
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2885;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=wLcIqSvKIjEPPXohXxqrzrzQz7/YJbG+gZ111fPnCuo=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnwCmzM5vdV3Yc+/5FKv/Q82r7E+LZ51TBaryd+Ogz
+ 7A7PaFCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8ApswAKCRB33NvayMhJ0UOQD/
+ 0V28hcIwwn5YKa6JxVWYN5bWzlLDwhCcBzIgBLcuxrd3g+R4zSMz5AICC8BirZ7NmXl6z1rOfq/lYF
+ UpEBU2nkbMCmSRtXckAeNPScNA4qISeWJhjMkDx6/uLc0j5pFZb2gTllrdC+uMnYZhEkvssmRL504O
+ Al9o81KGQyKCO8gfA+fEOEKu0zPzMq9aWNM4edC8WmwUi543s8bp155dbSutGTifAZDl3NUbD5A1Zi
+ pruHThJw8U22o/a47qOJc5tvNQHq26eaNSAcL7phyLNDbMMrGg5DaYCu5AXol4mGwJ8+trnJO/8hke
+ ExS+p/pwCywrY6061COSUymdzJjkMGk1rQwq/jWvHFACfCHtQjCePwxKARL2rvc4dtGWKfsT70eNsa
+ CKD6l7xq+mFPAadktBMssmxQIU8v+5u/KrShbVwZuk5GFIiU9n28Y1WAyM/fjjXdCjHFi4oCQN2SS+
+ 5p8o9JftmZYOPEuFHwfxafMWV68RSrmTlgU9zY+GOaBBJneiZXRuaaw7ZLnb3os73YExrvOzzR7u+e
+ pRW/bnyS7cFsy4LDS3HEYNYvskshT58ebmTI/27Ek+XUU9EdY9ulTyU0NivsUXeA14wRdpJe9a+gtB
+ UOJG/AYmddSHWU8Nf3DfXPkme2gSGF6q6yWT4PooMuVZLVmEWpeicByywx6Q==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Wed, 26 Feb 2025, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> The global bridges_list holding all the bridges between drm_bridge_add()
-> and drm_bridge_remove() cannot be inspected via debugfs. Add a file showing
-> it.
->
-> To avoid code duplication, move the code printing a bridge info to a common
-> function.
+The mdp1-mem is not supported on the SM8550 & SM8650 SoCs, so properly document
+the mdp0-mem and cpu-cfg interconnect entries.
 
-Going forward, please separate refactoring (extracting the function)
-from the functional changes (adding the new debugfs) to independent
-patches. It's just easier to review.
+This fixes the following errors:
+display-subsystem@ae00000: interconnects: [[200, 3, 7, 32, 1, 7]] is too short
+        from schema $id: http://devicetree.org/schemas/display/msm/qcom,sm8650-mdss.yaml#
+display-subsystem@ae00000: interconnect-names: ['mdp0-mem'] is too short
+        from schema $id: http://devicetree.org/schemas/display/msm/qcom,sm8650-mdss.yaml#
 
-Anyway, I reviewed this one, so no need to roll another version.
+Depends on:
+- https://lore.kernel.org/all/20250115-topic-sm8x50-upstream-dt-icc-update-v1-0-eaa8b10e2af7@linaro.org/#t
 
-And thanks for doing this; I believe the end result is better.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v5:
+- Drop applied bindings patches
+- Updated commit msg with Dmitry's suggestion
+- Link to v4: https://lore.kernel.org/r/20250213-topic-sm8x50-mdss-interconnect-bindings-fix-v4-0-3fa0bc42dd38@linaro.org
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Changes in v4:
+- Add review tags
+- Rebased on top of https://lore.kernel.org/all/20250115-topic-sm8x50-upstream-dt-icc-update-v1-0-eaa8b10e2af7@linaro.org/#t
+- Use ICC tags
+- Link to v3: https://lore.kernel.org/r/20250210-topic-sm8x50-mdss-interconnect-bindings-fix-v3-0-54c96a9d2b7f@linaro.org
 
->
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->
-> ---
->
-> Changed in v8:
-> - add the file in drm_bridge.c, which avois the added #if CONFIG_DEBUG_FS
-> - fix incorrect (but harmless) idx increment in
->   drm_bridge_debugfs_show_bridge()
->
-> Changed in v7:
-> - move implementation to drm_bridge.c to avoid exporting bridge_list and
->   bridge_mutex
->
-> This patch was added in v6.
-> ---
->  drivers/gpu/drm/drm_bridge.c | 72 ++++++++++++++++++++++++++++++--------------
->  drivers/gpu/drm/drm_drv.c    |  2 ++
->  include/drm/drm_bridge.h     |  1 +
->  3 files changed, 53 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index a6bf1a565e3c3a8d24de60448972849f6d86ba72..9c6e35d41ed54a14d5745e684a341c907ed84d6b 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -1336,6 +1336,49 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
->  EXPORT_SYMBOL(of_drm_find_bridge);
->  #endif
->  
-> +static void drm_bridge_debugfs_show_bridge(struct drm_printer *p,
-> +					   struct drm_bridge *bridge,
-> +					   unsigned int idx)
-> +{
-> +	drm_printf(p, "bridge[%u]: %ps\n", idx, bridge->funcs);
-> +	drm_printf(p, "\ttype: [%d] %s\n",
-> +		   bridge->type,
-> +		   drm_get_connector_type_name(bridge->type));
-> +
-> +	if (bridge->of_node)
-> +		drm_printf(p, "\tOF: %pOFfc\n", bridge->of_node);
-> +
-> +	drm_printf(p, "\tops: [0x%x]", bridge->ops);
-> +	if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-> +		drm_puts(p, " detect");
-> +	if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> +		drm_puts(p, " edid");
-> +	if (bridge->ops & DRM_BRIDGE_OP_HPD)
-> +		drm_puts(p, " hpd");
-> +	if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> +		drm_puts(p, " modes");
-> +	if (bridge->ops & DRM_BRIDGE_OP_HDMI)
-> +		drm_puts(p, " hdmi");
-> +	drm_puts(p, "\n");
-> +}
-> +
-> +static int allbridges_show(struct seq_file *m, void *data)
-> +{
-> +	struct drm_printer p = drm_seq_file_printer(m);
-> +	struct drm_bridge *bridge;
-> +	unsigned int idx = 0;
-> +
-> +	mutex_lock(&bridge_lock);
-> +
-> +	list_for_each_entry(bridge, &bridge_list, list)
-> +		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
-> +
-> +	mutex_unlock(&bridge_lock);
-> +
-> +	return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(allbridges);
-> +
->  static int encoder_bridges_show(struct seq_file *m, void *data)
->  {
->  	struct drm_encoder *encoder = m->private;
-> @@ -1343,33 +1386,18 @@ static int encoder_bridges_show(struct seq_file *m, void *data)
->  	struct drm_bridge *bridge;
->  	unsigned int idx = 0;
->  
-> -	drm_for_each_bridge_in_chain(encoder, bridge) {
-> -		drm_printf(&p, "bridge[%u]: %ps\n", idx++, bridge->funcs);
-> -		drm_printf(&p, "\ttype: [%d] %s\n",
-> -			   bridge->type,
-> -			   drm_get_connector_type_name(bridge->type));
-> -
-> -		if (bridge->of_node)
-> -			drm_printf(&p, "\tOF: %pOFfc\n", bridge->of_node);
-> -
-> -		drm_printf(&p, "\tops: [0x%x]", bridge->ops);
-> -		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-> -			drm_puts(&p, " detect");
-> -		if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> -			drm_puts(&p, " edid");
-> -		if (bridge->ops & DRM_BRIDGE_OP_HPD)
-> -			drm_puts(&p, " hpd");
-> -		if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> -			drm_puts(&p, " modes");
-> -		if (bridge->ops & DRM_BRIDGE_OP_HDMI)
-> -			drm_puts(&p, " hdmi");
-> -		drm_puts(&p, "\n");
-> -	}
-> +	drm_for_each_bridge_in_chain(encoder, bridge)
-> +		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
->  
->  	return 0;
->  }
->  DEFINE_SHOW_ATTRIBUTE(encoder_bridges);
->  
-> +void drm_bridge_debugfs_params(struct dentry *root)
-> +{
-> +	debugfs_create_file("bridges", 0444, root, NULL, &allbridges_fops);
-> +}
-> +
->  void drm_bridge_debugfs_encoder_params(struct dentry *root,
->  				       struct drm_encoder *encoder)
->  {
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index 3cf440eee8a2ab3de134d925db8f1d2ce68062b7..22e8cd0a6a37a0ac25535e9d570da25571b0b2bc 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -38,6 +38,7 @@
->  #include <linux/xarray.h>
->  
->  #include <drm/drm_accel.h>
-> +#include <drm/drm_bridge.h>
->  #include <drm/drm_cache.h>
->  #include <drm/drm_client_event.h>
->  #include <drm/drm_color_mgmt.h>
-> @@ -1120,6 +1121,7 @@ static int __init drm_core_init(void)
->  	}
->  
->  	drm_debugfs_root = debugfs_create_dir("dri", NULL);
-> +	drm_bridge_debugfs_params(drm_debugfs_root);
->  
->  	ret = register_chrdev(DRM_MAJOR, "drm", &drm_stub_fops);
->  	if (ret < 0)
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 0890acfe04b99b1ccbbff10b507cb8c2b2705e06..2a99d70865571f24db0ca75c758cfd09d3a5d459 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -1108,6 +1108,7 @@ static inline struct drm_bridge *drmm_of_get_bridge(struct drm_device *drm,
->  }
->  #endif
->  
-> +void drm_bridge_debugfs_params(struct dentry *root);
->  void drm_bridge_debugfs_encoder_params(struct dentry *root, struct drm_encoder *encoder);
->  
->  #endif
+Changes in v3:
+- make sure we use cpu-cfg instead
+- Link to v2: https://lore.kernel.org/r/20250207-topic-sm8x50-mdss-interconnect-bindings-fix-v2-0-f712b8df6020@linaro.org
 
+Changes in v2:
+- fixed example in qcom,sm8550-mdss.yaml
+- Link to v1: https://lore.kernel.org/r/20250207-topic-sm8x50-mdss-interconnect-bindings-fix-v1-0-852b1d6aee46@linaro.org
+
+---
+Neil Armstrong (2):
+      arm64: dts: qcom: sm8550: add missing cpu-cfg interconnect path in the mdss node
+      arm64: dts: qcom: sm8650: add missing cpu-cfg interconnect path in the mdss node
+
+ arch/arm64/boot/dts/qcom/sm8550.dtsi | 6 ++++--
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 7 +++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+---
+base-commit: 379487e17ca406b47392e7ab6cf35d1c3bacb371
+change-id: 20250207-topic-sm8x50-mdss-interconnect-bindings-fix-dd975f223d05
+prerequisite-message-id: <20250115-topic-sm8x50-upstream-dt-icc-update-v1-0-eaa8b10e2af7@linaro.org>
+prerequisite-patch-id: b2052194cecb6796ba6f1e58e0aaa9a7267f3d0b
+prerequisite-patch-id: a3def6c1e27e43153ae1f63343a092021926af8f
+prerequisite-patch-id: 7daf103007dc6f7ed97ce26c67799766197e0cfd
+prerequisite-patch-id: 68b4f5c2bce33ce6034716cfe4f7b9e2cd2d0f98
+prerequisite-patch-id: 8b4cfaa99eb145b533a6ca63f4813e38649d6c8f
+prerequisite-patch-id: a0d5112490c42e1c7752371d6b3818fda5c06bbf
+prerequisite-patch-id: 7b72193dd00f7a2e8fef3f36e6e53fab4691a65b
+prerequisite-patch-id: 8e3be7c0aae177f77e42570c28a1ad22aef25768
+prerequisite-patch-id: 8a641540de8fd86787102b3e682fa8baca295d66
+prerequisite-patch-id: 8b31e6775ccb7811557ece74172dda96f368f0c5
+
+Best regards,
 -- 
-Jani Nikula, Intel
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
