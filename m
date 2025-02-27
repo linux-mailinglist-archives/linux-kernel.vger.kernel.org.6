@@ -1,387 +1,156 @@
-Return-Path: <linux-kernel+bounces-536698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC30A48320
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:37:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CDFA4831F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEEA3B5F4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBA9169066
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA9926B94B;
-	Thu, 27 Feb 2025 15:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCF026BD8F;
+	Thu, 27 Feb 2025 15:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ojQBK1wI"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D/S5g08A"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C929026B2C3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ECC26B956
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670647; cv=none; b=IFb7eT1U6mw4Xa79hPXnoJJL9bRLetjpsIgYQjB5BeMZsMwSAgmsRD/mtTpCDV5KAMiaf9qY9Dp0ukM/vYT41o4za3SWMGGDmRjJZGK2fxkfxdfsAd1hEBt0NM68GjI6cbpAnHlgdOIE9sdsFBmZm84iZgLivViDHIODKD1e6bw=
+	t=1740670650; cv=none; b=KePsLXIAQTiJ6aCh/jOCh0IJO48/rSzbCv7aVHgdko3U0aUYnbTuMiBs0t41l5Hqj8r4hj+VSf3ubhNaKJ1052hm5KG5u1vL/QdxLcwKdzx2M6Em9NJJhyDpQnYgQIWG+1TGKyLxQ4EnJXQj8HIXrelBJETHHZAWkONINM2QIqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670647; c=relaxed/simple;
-	bh=u+2QV1zMceSvL1rwFfEaGR9fpcmpAEZP8CsqkauyPHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YsaBs1wzxvBNCG0pxu3k4/f8auKxHYprjqeYZEgJyVQM046gZ+HYCCT244paBBTe/tZcUF0e17YeYiD5WcTGQ68WotEi1s7CzfwUYEx3Zi2xPlmSbA/f/cn8rn6476dNM/Nxc4eA0TD9JXNkClDUQirO3mXxlOR584ZzXN814RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ojQBK1wI; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e53ef7462b6so921916276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:37:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740670644; x=1741275444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LKNvlpFVUKxwsWoVw37H9cWMQYyKOQSTR+W3w1pVEHo=;
-        b=ojQBK1wIytd2ruk3+pI4YqeqYppxuhaPhBGNWuDJa8zNf87cgKm87vHoVZnEb9LXoW
-         5+M9fXOWFPjQLEKL0BkjB04szRecJBFokxyx6nPUhw5xANnSoERqN80CaNhWMI5bwQAl
-         zy5DzCk3tZW9ghG/8jQ42k4uNDXZoTT+7y9COSClFtcjg43b++R2dzi9OhNcSrVIbAMe
-         w2atd7J9MbyEnuUTgNaSDm0HzLCqJoGS+NYIR4Cz6E3EsDEfFMKVJ2ICONIfzo+DPSm2
-         mwp9/BnFLBlkIbrydh4EHU7nE8OOY12dKhhflmwymSp8lrzzAybj2flx9jHo6pSQnprK
-         zoCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740670644; x=1741275444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LKNvlpFVUKxwsWoVw37H9cWMQYyKOQSTR+W3w1pVEHo=;
-        b=IGHK9mg7BAPgMvEGdFbefjU3LQzxzcAVXifSZRmT7uPOcdF5TnRAHJmotEcwu7dYxX
-         twP50GXej/V5hEmqn35zfaqgUEYbGfoisTExtqyHn0LzzM/1GWZSC/T5oRDiuXYkV8hk
-         cAYkj/LQZjboUM1LV81e2SSFA4ewqu9MRj9XLVvMZATEywMmd7EaVXvDQrhKznB25AvS
-         9cV1Be+d1Qmv240lnCsQytdWH+dsBo+GbwzoVgFw/Bbsl/WjZK70EkZNgdTsYSf3sblo
-         aWeMsZtR47v92V+1XzB68caQjnSPq7/zRewjQHBxVbzSH5qIquM0dnFmomhkMboTJhWm
-         msWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhENQy9nyYMr21/2d5VqHi3sB0k7IRuS+U8vl3AoPDRuHbyIGITshnSCQaiuCyHYAUfglE6zcflC6Meb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJlGUJSqbQH89ylvZCXO0KtepSFBK7Q40EQK2kjha9CGkM6KjV
-	LdrlE+kY/572ZlNuD5p9Nkm+x7u9l3r0JSG1HNbimVYniTI1WrHaiiKbAZ3ntSdhLs4UYnNzS21
-	6be4QqSTKPRYgVB0MXocOx0NEFz83ExKIAu48
-X-Gm-Gg: ASbGncv6sv5bOp14QxOUZiIx2NZhQipPxmqczdzs6WVyaac2uLDF20FDtkKXzVTliab
-	7GkSZc1mGedFvaoMR+UmUF4Ey1je69wymiK2G9ml0s/pcVZS3Xbf+d0qJ4zUKGE84EPQnshAnhv
-	QHSuvgQjI=
-X-Google-Smtp-Source: AGHT+IFaoqTgEdm5NgNzFc0dXgFUoGusSTRC/LY0JaiWipBUJbbrfSACHKTw3kUxWRYTx7CH4Kpwv54vAb4UMk+Oe6U=
-X-Received: by 2002:a05:6902:27ca:b0:e60:89bc:6e11 with SMTP id
- 3f1490d57ef6-e6089bc6ea1mr5247276276.42.1740670643443; Thu, 27 Feb 2025
- 07:37:23 -0800 (PST)
+	s=arc-20240116; t=1740670650; c=relaxed/simple;
+	bh=YSfOedZsS9fhkjfavHE8j9CyTUQjpp15uxo4izlmrDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4YQlI5IvUMGzzJPFCEUl84lp4DiziWsq8YzxBqx2tnPf0/lbEvniWAwrX7mcctHmD16uTmj4QexOP98rvj2xf+dK9et+y7P2m9z1DoJgfsSahZtl1iUUApO/vWPKHitar0bOXt/eHii/LDFo1XXaV2DrGUSqHS0Ov0oahRgQsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D/S5g08A; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BE60740E021F;
+	Thu, 27 Feb 2025 15:37:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BmXz8mYpK-Ca; Thu, 27 Feb 2025 15:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740670642; bh=Ey3zLxzeuLgTN8qAiZwyTCIfqo8HvA69W8Yppkcokpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D/S5g08Ag75qocSsLSue27WY9xHHy1nICitRVwd19Sp3vjVSgfPh5K5sR6Pp3Stu1
+	 9L6m/jP30oR6lClR8SlLuaqImzea/GCFnKtUMDrXDCHLO6hhhpItPwYczRhP4ADla3
+	 HsfiLlWcJYJPynZzbnsPKmOwDts8+BEKwKcarrrRdnSYvTHK1IC8xxYnPTLzVOOUZk
+	 pxx1Sq2BFQPxr+Px1Nwk15geYqvIv6ffw3ssXiF+JpAjDI8Oj+DVZCU+TTFw7XMt1f
+	 MqdUV68VQwRMMWnTfFjJnMe8ANKHtrA3rm2SLhG4MnFOocwEEX9RSLIsRCHH+E87xM
+	 FAnYwV8Mq7nravewKgdf3JLFrPJr+0IcSr9C661PkNwZ7o+jChY7lkjszE6j4Grr2z
+	 ZZVLeqJw6GsqfVh3NM1BVcDDQjKUN6pTaPcmsLRAjpvqMDh1CyBPo5h7m8aPqb/+ts
+	 NUv+N02ezdp6sQ0wx4qzUftbohg5syZooCR+Ok0Ww6XL+ZBKYIzWtyp1gPe7emE8Fn
+	 RyUubiPe6+CKw7jcYoYGn/ENEjWs+8gnfu9EFUN9gjZLOFqL6xHR9HasptjtloSC7x
+	 /GAP5i4d04gN2OB31qgVM/HsydaWsroUePpuE1GSuJv/Kk+/QkLfk/wLOUmYExIBId
+	 XOfOvIU2JTnhhqMX9tZwehkE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9B28440E01A3;
+	Thu, 27 Feb 2025 15:37:12 +0000 (UTC)
+Date: Thu, 27 Feb 2025 16:37:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250227153707.GGZ8CGoyaSgX6FkVWY@fat_crate.local>
+References: <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226221324.hq2nevnnnrpgo75n@desk>
+ <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
+ <20250227003528.hnviwrtzs7jc3juj@desk>
+ <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
+ <20250227034813.booxbhxnff66dnqx@desk>
+ <20250227140858.GEZ8Bx-tTaQF8D5WBj@fat_crate.local>
+ <LV3PR12MB9265B1854AB766EBB7F098D294CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250227150143.GFZ8B-V8nIdSlV7ng7@fat_crate.local>
+ <LV3PR12MB92651F3CE777A3723B61835594CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224045237.1290971-1-chharry@google.com> <2025022431-ditto-shy-c62f@gregkh>
- <CADg1FFeW5EXOJTqTS+jwBphGnDSCreNwM8hcFOhB1Tatdti6QA@mail.gmail.com>
- <2025022407-polo-disgrace-9655@gregkh> <CADg1FFehoZr3DmDhV_ri69+XBHLQcpKjoxLMaVhQUdzRuhST9A@mail.gmail.com>
- <CABBYNZLhR+OJQnYZ5vN5HjgiWwKrXvOse-pXhCcTdFpJrrzsNg@mail.gmail.com>
- <CADg1FFdtr2gnKy5VfFoCm4+0cGRJkvsOBRXtrcLSaMJwGjhBUQ@mail.gmail.com> <CABBYNZJX2hA8D++hb9d3nvCz4M1rfFrzpMPMQ8p0Bq8FTHZhig@mail.gmail.com>
-In-Reply-To: <CABBYNZJX2hA8D++hb9d3nvCz4M1rfFrzpMPMQ8p0Bq8FTHZhig@mail.gmail.com>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Thu, 27 Feb 2025 23:36:46 +0800
-X-Gm-Features: AQ5f1Jr3ZghbFTCeSwTBoRc0I_Bxb-ncIBaS6rj3ktcNyBpZRXvFynHYgHtNwQI
-Message-ID: <CADg1FFdKfoJLxD+0A=j=kSLtMPLL-JptcWP1qH0Oo0SttN8k2g@mail.gmail.com>
-Subject: Re: [PATCH v2] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-bluetooth@vger.kernel.org, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB92651F3CE777A3723B61835594CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Hi Luiz,
+On Thu, Feb 27, 2025 at 03:22:08PM +0000, Kaplan, David wrote:
+> In this case, I think it is clearer to say
+> mitigations=auto;no_guest_guest
+> 
+> That way, the admin is explicitly saying they don't want certain protection.
+> This seems much harder to mess up.
 
-On Thu, Feb 27, 2025 at 10:37=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Hsin-chen,
->
-> On Wed, Feb 26, 2025 at 9:22=E2=80=AFPM Hsin-chen Chuang <chharry@google.=
-com> wrote:
-> >
-> > Hi Luiz,
-> >
-> > On Thu, Feb 27, 2025 at 4:55=E2=80=AFAM Luiz Augusto von Dentz
-> > <luiz.dentz@gmail.com> wrote:
-> > >
-> > > Hi Hsin-chen,
-> > >
-> > > On Mon, Feb 24, 2025 at 2:13=E2=80=AFAM Hsin-chen Chuang <chharry@goo=
-gle.com> wrote:
-> > > >
-> > > > On Mon, Feb 24, 2025 at 2:44=E2=80=AFPM Greg KH <gregkh@linuxfounda=
-tion.org> wrote:
-> > > > >
-> > > > > On Mon, Feb 24, 2025 at 02:25:52PM +0800, Hsin-chen Chuang wrote:
-> > > > > > Hi Greg,
-> > > > > >
-> > > > > > On Mon, Feb 24, 2025 at 2:10=E2=80=AFPM Greg KH <gregkh@linuxfo=
-undation.org> wrote:
-> > > > > > >
-> > > > > > > On Mon, Feb 24, 2025 at 12:52:32PM +0800, Hsin-chen Chuang wr=
-ote:
-> > > > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
-> > > > > > > >
-> > > > > > > > Automatically configure the altsetting for USER_CHANNEL whe=
-n a SCO is
-> > > > > > > > connected. This adds support for the USER_CHANNEL to transf=
-er SCO data
-> > > > > > > > over USB transport.
-> > > > > > > >
-> > > > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute=
- to control USB alt setting")
-> > > > > > > > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
-> > > > > > > > ---
-> > > > > > > >
-> > > > > > > > Changes in v2:
-> > > > > > > > - Give up tracking the SCO handles. Only configure the alts=
-etting when
-> > > > > > > >   SCO connected.
-> > > > > > > > - Put the change behind Kconfig/module parameter
-> > > > > > > >
-> > > > > > > >  drivers/bluetooth/Kconfig | 11 ++++++++++
-> > > > > > > >  drivers/bluetooth/btusb.c | 46 +++++++++++++++++++++++++++=
-++++++++++++
-> > > > > > > >  2 files changed, 57 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/=
-Kconfig
-> > > > > > > > index 4ab32abf0f48..7c497f878732 100644
-> > > > > > > > --- a/drivers/bluetooth/Kconfig
-> > > > > > > > +++ b/drivers/bluetooth/Kconfig
-> > > > > > > > @@ -56,6 +56,17 @@ config BT_HCIBTUSB_POLL_SYNC
-> > > > > > > >         Say Y here to enable USB poll_sync for Bluetooth US=
-B devices by
-> > > > > > > >         default.
-> > > > > > > >
-> > > > > > > > +config BT_HCIBTUSB_AUTO_SET_ISOC_ALT
-> > > > > > > > +     bool "Auto set isoc_altsetting for USER_CHANNEL when =
-SCO connected"
-> > > > > > > > +     depends on BT_HCIBTUSB
-> > > > > > > > +     default n
-> > >
-> > > Maybe we can do just:
-> > >
-> > >  default y if CHROME_PLATFORMS
-> > >
-> > > > > > > > +     help
-> > > > > > > > +       Say Y here to enable auto set isoc_altsetting for U=
-SER_CHANNEL
-> > > > > > > > +       when SCO connected
-> > > > > > > > +
-> > > > > > > > +       This can be overridden by passing btusb.auto_set_is=
-oc_alt=3D[y|n]
-> > > > > > > > +       on the kernel commandline.
-> > > > > > > > +
-> > > > > > > >  config BT_HCIBTUSB_BCM
-> > > > > > > >       bool "Broadcom protocol support"
-> > > > > > > >       depends on BT_HCIBTUSB
-> > > > > > > > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/=
-btusb.c
-> > > > > > > > index de3fa725d210..af93d757911b 100644
-> > > > > > > > --- a/drivers/bluetooth/btusb.c
-> > > > > > > > +++ b/drivers/bluetooth/btusb.c
-> > > > > > > > @@ -34,6 +34,8 @@ static bool force_scofix;
-> > > > > > > >  static bool enable_autosuspend =3D IS_ENABLED(CONFIG_BT_HC=
-IBTUSB_AUTOSUSPEND);
-> > > > > > > >  static bool enable_poll_sync =3D IS_ENABLED(CONFIG_BT_HCIB=
-TUSB_POLL_SYNC);
-> > > > > > > >  static bool reset =3D true;
-> > > > > > > > +static bool auto_set_isoc_alt =3D
-> > > > > > > > +     IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTO_SET_ISOC_ALT);
-> > > > > > > >
-> > > > > > > >  static struct usb_driver btusb_driver;
-> > > > > > > >
-> > > > > > > > @@ -1113,6 +1115,42 @@ static inline void btusb_free_frags(=
-struct btusb_data *data)
-> > > > > > > >       spin_unlock_irqrestore(&data->rxlock, flags);
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > +static void btusb_sco_connected(struct btusb_data *data, s=
-truct sk_buff *skb)
-> > > > > > > > +{
-> > > > > > > > +     struct hci_event_hdr *hdr =3D (void *) skb->data;
-> > > > > > > > +     struct hci_ev_sync_conn_complete *ev =3D
-> > > > > > > > +             (void *) skb->data + sizeof(*hdr);
-> > > > > > > > +     struct hci_dev *hdev =3D data->hdev;
-> > > > > > > > +     unsigned int notify_air_mode;
-> > > > > > > > +
-> > > > > > > > +     if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT)
-> > > > > > > > +             return;
-> > > > > > > > +
-> > > > > > > > +     if (skb->len < sizeof(*hdr) || hdr->evt !=3D HCI_EV_S=
-YNC_CONN_COMPLETE)
-> > > > > > > > +             return;
-> > > > > > > > +
-> > > > > > > > +     if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->s=
-tatus)
-> > > > > > > > +             return;
-> > > > > > > > +
-> > > > > > > > +     switch (ev->air_mode) {
-> > > > > > > > +     case BT_CODEC_CVSD:
-> > > > > > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVS=
-D;
-> > > > > > > > +             break;
-> > > > > > > > +
-> > > > > > > > +     case BT_CODEC_TRANSPARENT:
-> > > > > > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRA=
-NSP;
-> > > > > > > > +             break;
-> > > > > > > > +
-> > > > > > > > +     default:
-> > > > > > > > +             return;
-> > > > > > > > +     }
-> > > > > > > > +
-> > > > > > > > +     bt_dev_info(hdev, "enabling SCO with air mode %u", ev=
-->air_mode);
-> > > > > > > > +     data->sco_num =3D 1;
-> > > > > > > > +     data->air_mode =3D notify_air_mode;
-> > > > > > > > +     schedule_work(&data->work);
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  static int btusb_recv_event(struct btusb_data *data, struc=
-t sk_buff *skb)
-> > > > > > > >  {
-> > > > > > > >       if (data->intr_interval) {
-> > > > > > > > @@ -1120,6 +1158,11 @@ static int btusb_recv_event(struct b=
-tusb_data *data, struct sk_buff *skb)
-> > > > > > > >               schedule_delayed_work(&data->rx_work, 0);
-> > > > > > > >       }
-> > > > > > > >
-> > > > > > > > +     /* Configure altsetting for HCI_USER_CHANNEL on SCO c=
-onnected */
-> > > > > > > > +     if (auto_set_isoc_alt &&
-> > > > > > > > +         hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
-> > > > > > > > +             btusb_sco_connected(data, skb);
-> > > > > > > > +
-> > > > > > > >       return data->recv_event(data->hdev, skb);
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > @@ -4354,6 +4397,9 @@ MODULE_PARM_DESC(enable_autosuspend, =
-"Enable USB autosuspend by default");
-> > > > > > > >  module_param(reset, bool, 0644);
-> > > > > > > >  MODULE_PARM_DESC(reset, "Send HCI reset command on initial=
-ization");
-> > > > > > > >
-> > > > > > > > +module_param(auto_set_isoc_alt, bool, 0644);
-> > > > > > > > +MODULE_PARM_DESC(auto_set_isoc_alt, "Auto set isoc_altsett=
-ing for USER_CHANNEL when SCO connected");
-> > > > > > >
-> > > > > > > This is not the 1990's, why are you adding new module paramet=
-ers when we
-> > > > > > > have so many other more proper ways to do this?  And really, =
-this would
-> > > > > >
-> > > > > > Sorry but could you please provide an example to guard a featur=
-e like this.
-> > > > >
-> > > > > Depends on what you want to do with this configuration.  Why is i=
-t an
-> > > > > option at all?  Why can't it "just work"?  Module parameters are =
-a pain
-> > > >
-> > > > I would like to hand this question to Luiz. I believe this patch ju=
-st
-> > > > works because this configuration is defined in the spec.
-> > > > I think Luiz's point is to project the potential existing user, but
-> > > > there's probably no User channel user sending SCO data with the lat=
-est
-> > > > btusb driver because:
-> > > > a) There's no way to configure alt setting from userspace
-> > > > b) Before eafcfcfca97d, SCO data would be rejected since User chann=
-el
-> > > > shouldn't be able to modify hci_conn_num
-> > >
-> > > Perhaps you can just use CHROME_PLATFORMS (suggested above) in Kconfi=
-g
-> > > to enable intercepting of the events, etc, so we don't need any
-> > > runtime parameters.
-> >
-> > I'm afraid that this doesn't resolve Greg's comment below because the
-> > multiple controllers are still bonded to the same config.
->
-> Well that would be enabled for every controller plugged into the system.
+So if we want to protect *only* against malicious VMs, the cmdline should be
 
-To clarify, I'm totally fine with runtime parameters and/or any
-Kconfig like CHROME_PLATFORMS, although I'd prefer the current patch
-more.
+mitigations:off;no_guest_guest
 
-But I guess Greg's point is that the multiple controllers should be
-able to have different configurations at the same time. I'd respect
-your decision to accept this patch or another patch with
-CHROME_PLATFORMS, but I guess it's better to convince Greg first.
+off being the policy to disable the other vectors because admin wants to have
+her performance back.
 
->
-> > Also I would hesitate to put this Chrome devices specific because
-> > project Floss shall be able to run on a general Linux environment.
->
-> It can be enabled for Linux in general, it just not enabled by default
-> which can be changed later if someone decides to use Floss outside of
-> Chrome OS, that said I very much doubt Google would be supporting
-> anything other then Chrome based platforms or Floss don't depend on
-> Android vendor HCI commands? At least the Android documentation seems
+Right?
 
-Floss doesn't depend on Android extensions - Our hardwares doesn't
-support that either :p
+Which then makes this one:
 
-> to suggest a bunch of vendor commands are required:
->
-> https://source.android.com/docs/core/connect/bluetooth/hci_requirements
->
-> > If you have a strong opinion to guard this behind a flag, perhaps we
-> > could try other options suggested by Greg (configfs or maybe back to
-> > sysfs).
->
-> I think those would be more complicated then handling this via
-> Kconfig, besides I think this works best since there is no new API
-> introduced, just a new Kconfig option which can be enabled in any
-> platform/distro.
->
-> > >
-> > > > > to configure, we have loads of other ways to do this now (configf=
-s,
-> > > > > debugfs for debugging stuff, sysfs for device-specific things, et=
-c.)
-> > > > >
-> > > > > > > not work at all for multiple controllers in teh same system, =
-right?
-> > > > > >
-> > > > > > Do you mean we can't have separate parameters for different
-> > > > > > controllers? Yes that's true, but why would a user want the dif=
-ferent
-> > > > > > behavior on the same machine?
-> > > > >
-> > > > > Why would you prevent them from allowing this to happen for a
-> > > > > device-specific option?
-> > > > >
-> > > > > thanks,
-> > > > >
-> > > > > greg k-h
-> > > >
-> > > > --
-> > > > Best Regards,
-> > > > Hsin-chen
-> > >
-> > >
-> > >
-> > > --
-> > > Luiz Augusto von Dentz
-> >
-> >
-> > Best Regards,
-> >
-> > Hsin-chen
->
->
->
-> --
-> Luiz Augusto von Dentz
+mitigations=off;guest_host
 
+equivalent.
 
-Best Regards,
+Uff.
 
-Hsin-chen
+> My argument is it's probably better to err on the side of security.
+
+Probably. As you can realize, I'm playing the devil's advocate in all this
+so that we can see how we feel about it.
+
+> To me this seems like an unlikely use case, so maybe it's ok to be a bit more verbose.
+
+Right, that use case is for benchmarkers. :)
+
+> Ok, I can add that to the series.
+
+Thx.
+
+> But there's already an 'auto,nosmt' option.  So I thought we wanted to leave
+> that alone and use it as the base.
+
+There's that. And "nosmt" is actually the cross-thread attack vector.
+
+I guess what we should do here is to leave "auto,nosmt" alone and use
+"cross_thread" for the attack vector and not allow "nosmt" in the new
+mitigations specification scheme.
+
+IOW, the set of the attack vectors will be:
+
+list_of_vectors = {user_kernel, user_user, guest_host, guest_guest,
+cross_thread }
+
+Or the no_ versions of them respectively.
+
+Hmmm.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
