@@ -1,124 +1,130 @@
-Return-Path: <linux-kernel+bounces-536608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B2BA48215
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFBDA48213
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C90B17A866
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CFC164027
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AD623AE9A;
-	Thu, 27 Feb 2025 14:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507DC23F267;
+	Thu, 27 Feb 2025 14:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="35xqrGF4"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AYdYQIzI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20826237717
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6A7239082
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667187; cv=none; b=XtmZItmYJnudqav3VLsNQMtTyTgMz2XISTn1y9H+6MBf7OSI06py8lOJyVnB+GEMAVGTm5sPWcg9DUL+6BLTGxMsxOcXNd9V/Nix8+b4X9mL+ASceu1B6vgD8F0t98xbARNcbknPW20efEBSsYQYgbXa3Ib6U8/UdKT4GbOFGFs=
+	t=1740667199; cv=none; b=TiJ8ot73rx/kCpc8njG0tPeChdaNLuZDT9fxyET5GFNoMMX2AutJVxsOnizsojYA63BN4iIhhHzWQ8zVvcjXpFo1pdh/ehyCT56jnyV4nxlvng3b80ijXsZsqPYvkd8npCiSHyzrVZgQAQCxCw9h2u8N9Q64PYdXcRyTM/phja4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667187; c=relaxed/simple;
-	bh=C42kb8jZYl09xjQISSvxQc2ob3/FWGQuxy1rlAyDRgo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iHec+10IagdcPG8ua84qvVxXUsWJP3/MGlkqGJ+C/PKujHJdmCmpVRl6lG3e+ELtBmRmJXv17rxCOOQnX+C8Srh5cFWg2Ihg5PF18HtctudFNJtO/ri4XU4ehax5gaRE1U+aFNEWJ05bCtc+hIkW8iWDLrt5SAWo2i2kIsJ+L+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=35xqrGF4; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8fa38f6eso2266887a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:39:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740667185; x=1741271985; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxH+On3rOFzz2SdFAE8SEry5Nrx+QsPGCIQtGhiP8po=;
-        b=35xqrGF4JmSollVj8v6VmwqKWC2sC13040OWTzu9qYwqilPSaXQskv8CH9KBEps29X
-         Mp/SYRuA7KwzesRDzAE8J8WQTU3BzFQMsYYcB7P8mc05fNZ/VN4W0iRBhW7FUuAm8QLi
-         QKyPXqEGpZ8PaMWJ9jDraoHndvKrMmsYyIjrNqbaUmI7hLjNrv178C8obyq2P7D25U/3
-         /5C9x8BIWWpuDUgV5LzJ/bQ0bV5EafJQ9SMg2ku0hNF6Isdttq2Buc9xL67glaeBtf3Q
-         39uR8m59WdglqMr2AIlUPJWk/O/U1DRM0estyqLyuH7LRjARQnoB6Yh1q1XHN1Md27DU
-         6Vcw==
+	s=arc-20240116; t=1740667199; c=relaxed/simple;
+	bh=3HNj2lcv7MZvcwGA/FLxym27Q2rgYaCGFXQoXk1HxUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WyxQ1CMNIYnjz5Vu0mFi3beN7PGp8lYRpg0yEK4z+ZRYw0WsPhg9//+J9zNt8kvxxZlb99EIy/x8/sXSXYuhgQtIsbfVLcUBTs+Zz0KkCpOl5nBNOn4box85kQwsBM9gCPtpyQD5l0AHGFjKdPRFzYwDOT/tgUy+cowGTVU1UuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AYdYQIzI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740667197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jyqUBZB6nKc/r+VKm621tlxSSaBd845l3542H86vZ7E=;
+	b=AYdYQIzIu6gczQSz3f1wWqhXMQv1Fq6U8Fp+yVJfWtcw4JELv53h2bgYDGseVUydbbbT36
+	ClUvy5y/CtYf6X2gA2J1zSsMtmmea4HiY+FwyOL6tdt92l+ZF9aggxViAgB+BN/vxNppDa
+	Uxg4DjT7Hi2SkNpPxdvwIoETHzPxwgU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-uLiyrFC3OWyFmuO2vyFGKg-1; Thu, 27 Feb 2025 09:39:55 -0500
+X-MC-Unique: uLiyrFC3OWyFmuO2vyFGKg-1
+X-Mimecast-MFC-AGG-ID: uLiyrFC3OWyFmuO2vyFGKg_1740667194
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390d5f1e05cso393389f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:39:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740667185; x=1741271985;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxH+On3rOFzz2SdFAE8SEry5Nrx+QsPGCIQtGhiP8po=;
-        b=w6AroUAH6ei6VwPOdSr1YDuf6HgkFbXld2Q8ADqhm29DlQ4Emi/OhO8WiG23Pkcp8y
-         5j5/xcsG3Z04NtWgaWd/5R8BKT4x++6mqILu/o98yRJ8Ds3GMhEqK38lCt0kYnZVl9Es
-         c4TYqVz9c4DFaOv5wivHFl7Fclav1Zxun+6Cr+TZyLnzrxiu46kuDGlPibisZ687ElA7
-         mhXtJqRdYYD/uE/nmGs7417M1pC/pGTG1Zr6v3WbaIgiaJ+reJrLWhKZb+Apa4S1xXQ+
-         fwBGgghZz8fNd0G+aLAqbFPB4cZDFuuhyiVyATNn8xdz96ZMt3fVrTHDKbdWp7Myeqs2
-         Ukuw==
-X-Gm-Message-State: AOJu0YzO1YCCCY0+k0J1uR4G0w4X40H4a5TY/3tqf0UTwewMWTyZPUq7
-	YpPIy8Yzwc+JYg3xLyoRYnM1vZIEDW7OjlmzaFpllYMV/sZsS1RpUbgH8/L+/pXQ1YbUqLe/ti+
-	83g==
-X-Google-Smtp-Source: AGHT+IFJ3wN5DANqSer5hQVwE1SxZTBD0Lvfi1B1zqpxom5zbstWSZgZeTQEsaQZtulu7UPNR3qjkDRor8w=
-X-Received: from pjbsh16.prod.google.com ([2002:a17:90b:5250:b0:2fb:fa62:d40])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5407:b0:2ee:c91a:ad05
- with SMTP id 98e67ed59e1d1-2fe68ac9087mr16599772a91.3.1740667185442; Thu, 27
- Feb 2025 06:39:45 -0800 (PST)
-Date: Thu, 27 Feb 2025 06:39:44 -0800
-In-Reply-To: <f114eb3a8a21e1cd1a120db32258340504464458.camel@amazon.com>
+        d=1e100.net; s=20230601; t=1740667194; x=1741271994;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyqUBZB6nKc/r+VKm621tlxSSaBd845l3542H86vZ7E=;
+        b=oIhHMTAZnGgFkyiY7gcR5o0s3ytbJJJbPBnBlKP4zkEqqKGGfMFglu59rrIvjKnKBX
+         OWu+Fw3E3VGy1V044OH8cDmDLAW6FtUlgeUs37pUlAiygLJijb6YcwVr3PtCfESB2tSg
+         uva5HdHTub/P3ozpXVxcA2A3utAHP8MVjrNlrOyynPL0lHOoZE6RWBjmH1byM2kNS5K+
+         Acsr8Y7frNi8o0KUMnp7/6KtVMKA0+sHuQE7aIiRrXVsaOHa4ciya4ZrcaEJT/+5oaRn
+         Y4lYFtgXuN/3TaUquVoT1nNAMx4/7vpfVBgsJWSERkFBeQODBjurs+vTVObCRDf7uJZ0
+         4lLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQar/H85712X0sdaOML35hYl94CWP0qfMBt5RRDMmnzPU2FXPewBWULVJb8MdN8jVlFxX+3JS2uE22Crg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXXCNqiGoxP7+edacS1FYRNWf3CPmcIFAKIe9x1y5L3tQfVM9E
+	Sg0FIzEe9yvLg/+TOy0HrOxIa4SCGAYDt5FIaMAoAUClD4vzcq+aDJkyBtjXOkXwxb2GNsIUco7
+	1EJV6gPqS+I/oIbVcf8zsrkprnWylvFzW+FcUlSWQ564A65dJ8ONVcR9bueMsm8GW0WT6qQ==
+X-Gm-Gg: ASbGncvH+HXvWXb8aLAkjwyX0tfiP2Vii7jwS61xdbOOvfsUf7WHQaT/VP/5BEo4Ab8
+	GDnUv6XIRl3tMNGc7uOdLFQBfzxITEhruq6EYwI8FWM3cthTR+Jg9mOeNUmO1G9JhBFxak4aXim
+	q92Ysu/9ro76R3x+b9rA4AtbEiYHlSA3zIxTkvTBfb6hi2M7XDxhpaa2vI21cQ9lN+ZFwQ3QCxq
+	1S3L2ry3LEGp0A/aRzeyTp501lHl/xKAA2EQyMQoCV09+G9fDkv4wOSXZ3jiDvvthZJRIOUa2O8
+	i9q1B5EEKSQnuEXEnQoAAlnkj9s17ZHFKx4ajRM9kdhM/Q==
+X-Received: by 2002:a5d:5886:0:b0:390:d6b2:c74d with SMTP id ffacd0b85a97d-390d6b2c8e2mr5688443f8f.35.1740667194116;
+        Thu, 27 Feb 2025 06:39:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGcWa/eBKcaZPmm9VXX7NkW/71dFoXSJxP3YfdCAmJI+JSIQx4UhJs1j3Idz3PrIeHcoy0Y2g==
+X-Received: by 2002:a5d:5886:0:b0:390:d6b2:c74d with SMTP id ffacd0b85a97d-390d6b2c8e2mr5688418f8f.35.1740667193800;
+        Thu, 27 Feb 2025 06:39:53 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7b6asm2336666f8f.51.2025.02.27.06.39.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 06:39:53 -0800 (PST)
+Message-ID: <5913bf70-de74-4915-9ba1-9cd92dde6945@redhat.com>
+Date: Thu, 27 Feb 2025 15:39:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250218202618.567363-1-sieberf@amazon.com> <Z755r4S_7BLbHlWa@google.com>
- <e8cd99b4c4f93a581203449db9caee29b9751373.camel@amazon.com>
- <Z7-A76KjcYB8HAP8@google.com> <f114eb3a8a21e1cd1a120db32258340504464458.camel@amazon.com>
-Message-ID: <Z8B5MMCzBGwkTT0X@google.com>
-Subject: Re: [RFC PATCH 0/3] kvm,sched: Add gtime halted
-From: Sean Christopherson <seanjc@google.com>
-To: Fernand Sieber <sieberf@amazon.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pktgen: avoid unused-const-variable warning
+To: Peter Seiderer <ps.report@gmx.net>
+Cc: Arnd Bergmann <arnd@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250225085722.469868-1-arnd@kernel.org>
+ <20250226191723.7891b393@gmx.net>
+ <4c260b13-3b08-409d-a88a-e5bbb3c18e03@redhat.com>
+ <20250227152154.4da61f2f@gmx.net>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250227152154.4da61f2f@gmx.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025, Fernand Sieber wrote:
-> On Wed, 2025-02-26 at 13:00 -0800, Sean Christopherson wrote:
-> > On Wed, Feb 26, 2025, Fernand Sieber wrote:
-> > > On Tue, 2025-02-25 at 18:17 -0800, Sean Christopherson wrote:
-> > > > And if you're running vCPUs on tickless CPUs, and you're doing
-> > > > HLT/MWAIT passthrough, *and* you want to schedule other tasks on those
-> > > > CPUs, then IMO you're abusing all of those things and it's not KVM's
-> > > > problem to solve, especially now that sched_ext is a thing.
-> > > 
-> > > We are running vCPUs with ticks, the rest of your observations are
-> > > correct.
-> > 
-> > If there's a host tick, why do you need KVM's help to make scheduling
-> > decisions?  It sounds like what you want is a scheduler that is primarily
-> > driven by MPERF (and APERF?), and sched_tick() => arch_scale_freq_tick()
-> > already knows about MPERF.
+On 2/27/25 3:21 PM, Peter Seiderer wrote:
+> On Thu, 27 Feb 2025 12:35:45 +0100, Paolo Abeni <pabeni@redhat.com> wrote:
+>> I think the unused define is preferable; I think pre-processor defines
+>> are cheaper than static const.
 > 
-> Having the measure around VM enter/exit makes it easy to attribute the
-> unhalted cycles to a specific task (vCPU), which solves both our use
-> cases of VM metrics and scheduling. That said we may be able to avoid
-> it and achieve the same results.
+> In which regards cheaper (out of interest)?
 > 
-> i.e
-> * the VM metrics use case can be solved by using /proc/cpuinfo from
-> userspace.
-> * for the scheduling use case, the tick based sampling of MPERF means
-> we could potentially introduce a correcting factor on PELT accounting
-> of pinned vCPU tasks based on its value (similar to what I do in the
-> last patch of the series).
+> Both (with and without static) produce the same code see e.g.
 > 
-> The combination of these would remove the requirement of adding any
-> logic around VM entrer/exit to support our use cases.
-> 
-> I'm happy to prototype that if we think it's going in the right
-> direction?
+> 	https://godbolt.org/z/Tsr1jM45r
+> 	https://godbolt.org/z/6sr1o8da3
 
-That's mostly a question for the scheduler folks.  That said, from a KVM perspective,
-sampling MPERF around entry/exit for scheduling purposes is a non-starter.
+I must admit I was unsure the compiler would always optimize out the
+constant.
+
+I guess the macro could still produce shorter build time (by a few clock
+cycles, nothing measurable ;), so in the end it boils down again to a
+personal preference.
+
+Cheers,
+
+Paolo
+
+
 
