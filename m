@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-535863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C438A47842
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:51:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6338EA47843
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01EAD1890E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F650188F7B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5729F226D02;
-	Thu, 27 Feb 2025 08:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B8226183;
+	Thu, 27 Feb 2025 08:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfrG/Vr4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e+Rh34TE"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C38226551;
-	Thu, 27 Feb 2025 08:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E6F22259F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646227; cv=none; b=YnO+WglicHoRED3/BOvSOvgWIOIs3qX0dcIaeO0/NVdf83f84SdDT3EF0jig7rx5i8XfolcU7lTxuvcTkCPWmp1veqmM1+m2XI3PA+SToc+8TrW+X7H4Re7zwqZwisHEpgCofLZs3m1dTQINfQShk5telRtC9J1r6/zhXX+vQMk=
+	t=1740646288; cv=none; b=TGWdylmh73wRrhriTEqpCIWAN5P1gtSFj+Tmstm71rTqHlPg3JgQ+JViBCC5YsbcbHSR50noqvN+D6fjshFHw6scp9EWujR9GZLi6uymlx0Dk9qs7u3MSuGWBiAdDMZ6VGlSGPOZpnU9ra/Ta0bUJywDzEvwyObH1Ek5levXnco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646227; c=relaxed/simple;
-	bh=EE3knrHH8YT3ZkzHF6A+tlFuX23SQHUMMiwsbGXbq+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dv9+1YWlXVFG8vWnaLO4kmUbZ3A91nNRmb2UjUAGrmmR/F8IYw4W6d1l4PpVntq13/vgtYYNvJgQU45kfeSmmpy5a45K+F89adbQGH3RCCIzlXh/UKqp2kQNQxNAmFuMtGxbq7gYYaX2yUTw/BbcFV6ZkUBAfv4TrBOtQ+06sPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfrG/Vr4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F10C4CEDD;
-	Thu, 27 Feb 2025 08:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740646227;
-	bh=EE3knrHH8YT3ZkzHF6A+tlFuX23SQHUMMiwsbGXbq+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JfrG/Vr40qTIY21lVpJ4sUtXo/+HrBEhlXEK+jtOK2rQ28R7KRABEh4iej9OIYaEe
-	 Xw3SQegimknFRuuE8ls1DjHg1agt/IytsqPUVQ6SFEiW2RGHCVBy7GP7e3u+j2S00e
-	 evqnHZFaWiEeoFNvtDeB+b6v3EeydfwPQmJkZODct3nB54D+ZIlXrfJ0HGgZS8zx67
-	 Kn1YPsXB/YH9sf3mMEXTvLYy55uM7ZG0YGjOPui0Pxz7uxZGAzS/Jpl60eYg2YlOaU
-	 H4spQcj+fSJ8ewu1cONdhPSBntYrJp3LesznJQ6GmITs7g7oVtG7uUmpucD8Omtezy
-	 VI9qsCnYmJVQw==
-Date: Thu, 27 Feb 2025 09:50:23 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh@kernel.org>, 
-	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
-Message-ID: <20250227-sceptical-phenomenal-wolverine-56e3cf@krzk-bin>
-References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
- <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
- <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
- <20250226145931.GA2314060-robh@kernel.org>
- <3f7b031d-7b83-4a00-996d-aabb26278b67@roeck-us.net>
+	s=arc-20240116; t=1740646288; c=relaxed/simple;
+	bh=XRLC0F/OAsAwom1j0csoEiThelHrO4BRXhTdff3PTk8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O8iC8bGbQfkPqsGqXf75jKgM7YCc2pOtolGH3a42VFuMAZh7nyUNrQ+EDxtJ3hXspUi/otpaw8m/qEJpvTMxuqhfcwsySpu1XgEQb6V7l332o8uAPAZq84OMX8X46nL4Udj1iHX7QFhHE4AXT+GDbPj4pBpOBkdFKUfyYtj0/GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e+Rh34TE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f31f7732dso406922f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:51:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740646285; x=1741251085; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iOauLP0ELqLr6qyOysf0Ro17F/zd6+Uf/b2CaRN4fKo=;
+        b=e+Rh34TEAGkVvDCmDUEgmHqZ6JBtY55E7Ehl61VFKx2RJBrbMb+0FdkMJKkPqj4fX0
+         41RV1N2Ym65caNwWqvmEnWZv2f9Mdc4DP2rG4IwbkNS4u+AFiwx4VGI/NTtwMFZrgHJD
+         SIbRKsRwJ1ThCp745YiuRMbvb/MDU5TDIQhh46i2xMjD7mFiZ6TExGEEnpJPfEeJLyT8
+         hecVianDqN7YhXxpp1LKNiqK6jxmXxnuHx8ZtmIBDO4ftGZ44IHLkxZnpS7umpo33UDJ
+         hTrVblAzu/6mbMv+tFo6hkLtrzwljB1scHu97rBmmpXxjxEcSossEf1HPLdqb+jO39Rw
+         M9jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740646285; x=1741251085;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iOauLP0ELqLr6qyOysf0Ro17F/zd6+Uf/b2CaRN4fKo=;
+        b=JObg9PY8U7xCjexA0L+653bJvZjt13lHACKvWbdAXUK8gHAb6Vs62DQJ+gOQYv4Nr7
+         slWcERMTtGjOyFqYygLwbjwcyfJV0we/1cIppNlKu224dDgcd5OFBczRxnnD4FZFhM9K
+         7bq/M4N33mGxlCJgbB5RNgGAvE0obYqxvqxPdJ9t+d+R/QK1s6Xoj8HIgG7aOvwrlBQZ
+         RmZdtdHJPws2xYVdmsARolNjyuNlk/Y597OWMdDuyUXeSNqOseKNx0jKf9u7qOYVrR8W
+         TQGdWQQFP+TunAriguZxLfsa4As+9SQwKrt+2rfWMgV5jpJu8ibIohUfopwYPvvJNgNn
+         3KbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRNg1OXLFIZ8n8EYaCz9lx7L+Hdb5jOGB19Z8bYWZMCm2oIYqUhfZM00lIggJT0cOx1Ep2JGoGPYKEvL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRNm39xY9gsaIpLWq6ceClXL/002tRsp1uLLQgQFntLoCExT5n
+	l1hGA8wsLu+tSQWdW7zKofNPwq2shoQOk6kwN8EFCSICCQNW0426J42JKjZoob8=
+X-Gm-Gg: ASbGncvp6vSWLndOeeQgCaebph+eMoCaV+Tdja+CTOMbiSHoIs0e4FzBL8dRdaLitsg
+	JzhdChkkWMbQRU0q2NtfLVANgoeiWBinHyZRBj60hbEoI0lgd3JVBIm6Hj7UTMyQCDLuWIiNE0t
+	ST24X9CXz7ZdeNGKsCkUKXoNcxwPBX7anse8tjRUvX307GblUSjqWzCDkHUFQS+TYUB18VBc0ye
+	5+kG+gLgP06YSzkjIKACvibGTR1DwuyeT4aP9ICmDPW4cLJFGPSJksatmZlUoJpHhdsuhLP1uoi
+	bb7rMJ6llIK4vKu/kkRkdcgU8wUHUU/DG0Tk1vqc9n8DwYE=
+X-Google-Smtp-Source: AGHT+IH6UhR57ulZYuKyh09s5uYszlWMtP35nMK2waRENXknVY9Xjvy0uz9MTrTjTI3i0IEmvmMtYg==
+X-Received: by 2002:a5d:6d0e:0:b0:390:e005:65b0 with SMTP id ffacd0b85a97d-390e164b43amr2112628f8f.3.1740646284792;
+        Thu, 27 Feb 2025 00:51:24 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e484486bsm1329159f8f.65.2025.02.27.00.51.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 00:51:24 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Thu, 27 Feb 2025 09:51:21 +0100
+Subject: [PATCH v2] arm64: defconfig: enable Qualcomm IRIS & VIDEOCC_8550
+ as module
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3f7b031d-7b83-4a00-996d-aabb26278b67@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250227-topic-sm8x50-upstream-iris-defconfig-v2-1-13b490a4f402@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAIgnwGcC/5XNTQ6CMBCG4auYrh3TjpYfV97DsCgwwCTSkikSD
+ OHuVm7g8v0W37OpSMIU1f20KaGFIwefAs8n1QzO9wTcplao0WpEC3OYuIE4FqvV8J7iLORGYOE
+ ILXVN8B33UNssy9Dc8hq1SleTUMfrwTyr1APHOcjnUBfzW/8EFgMGCmdyQjLltS0fL/ZOwiVIr
+ 6p937+Lcqi82QAAAA==
+X-Change-ID: 20250225-topic-sm8x50-upstream-iris-defconfig-b56662147b20
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1431;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=XRLC0F/OAsAwom1j0csoEiThelHrO4BRXhTdff3PTk8=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnwCeLDum95n+pn0C1lqAR/CAGSzOjk7OzPoO2Ns42
+ xhwYqq+JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8AniwAKCRB33NvayMhJ0TCYD/
+ 9MSTCXn+P8EBqr5oWbDRM6p8c0tAHYK5DyWCyhXAMuJQFGu/qWYfhzc5svdagvtEE7YQH4t++3wS+A
+ tRo9lSEejUZ3BNY+YlPEtYaI5caz+FgeJI7krmOsS4ZtdiN11uuer1Jz8yKkS2yqH1vpZEEXmai/vG
+ FSDIoYtM6y1YgaQKiFK1eBvizdpPYk/zRdutyT4nxRBacGyzkZrHOEqBd1qrxQeBsTkga6GTlu2htY
+ deV9pjZXR72BPeNtptZfwOhTF1EiGeh6toBqpdaD+6qEYMAnIWXK1+EiY86KR8valmX6LrB475VPdh
+ kNJ/8Kkvj7QmXRb2cmQpcT3vQFEd/rh68b5+xH6LY5w3/+FjhdVMb+n0q0DvER9OZjBuFZm14E3Aon
+ rD/teM9SFkWBFnRvZoB27NsuWvHTvC9OQrF9+KxPZQinzKbsJRfW1SxNatp3ym6tMkrcONzHOyz6PZ
+ al21RkGzNT6LUgMr9hsNeB7yPx6rNf6GwwA8yuz5xEqzG618deZHMN9mgf+sxilzqWoN638HNsuXJ3
+ EDCPYe8wQPKvuUOQb2/HwkSYVUQo0tytIGCAwYCKZjPNcGNj3ipuIN6iewsS0Grw4CEMYdL3K+e6e3
+ y8e7+L5j1bB28jfA8UtmCNSnFYYSB/ialrQTijo1zJJUsOBf6FLJLZ/Gq1qw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Wed, Feb 26, 2025 at 11:17:48AM -0800, Guenter Roeck wrote:
-> On 2/26/25 06:59, Rob Herring wrote:
-> > On Wed, Feb 26, 2025 at 09:20:40AM +0100, Krzysztof Kozlowski wrote:
-> > > On Tue, Feb 25, 2025 at 09:01:13PM +0800, Cedric Encarnacion wrote:
-> > > > Add Analog Devices LT3074 Ultralow Noise, High PSRR Dropout Linear
-> > > > Regulator.
-> > > > 
-> > > > Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > > > ---
-> > > >   .../bindings/hwmon/pmbus/adi,lt3074.yaml           | 64 ++++++++++++++++++++++
-> > > >   MAINTAINERS                                        |  7 +++
-> > > >   2 files changed, 71 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000000000000000000000000000000..714426fd655a8daa96e15e1f789743f36001ac7a
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
-> > > > @@ -0,0 +1,64 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/hwmon/pmbus/adi,lt3074.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Analog Devices LT3074 voltage regulator
-> > > > +
-> > > > +maintainers:
-> > > > +  - Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > > > +
-> > > > +description: |
-> > > > +  The LT3074 is a low voltage, ultra-low noise and ultra-fast transient
-> > > > +  response linear regulator. It allows telemetry for input/output voltage,
-> > > > +  output current and temperature through the PMBus serial interface.
-> > > > +
-> > > > +  Datasheet:
-> > > > +    https://www.analog.com/en/products/lt3074.html
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - adi,lt3074
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  regulators:
-> > > > +    type: object
-> > > > +    description: |
-> > > > +      list of regulators provided by this controller.
-> > > 
-> > > You have only one regulator, so drop the "regulators". vout could be
-> > > here, but since you do not have any other resources, I doubt it stands
-> > > on its own either. This is even visible in your DTS - you named the
-> > > device as regulator, so logically this is the regulator. Regulator does
-> > > not have regulators (otherwise they could also have regulators... so
-> > > triple regulator).
-> > > 
-> > > hwmon code might need some changes, but that's not really relevant for
-> > > proper hardware description.
-> > 
-> > Normally, I would agree, but it seems generic pmbus code expects this
-> > structure. This just came up with changing another binding maintained by
-> > 'Not Me' to follow this structure. We're stuck with the existing way, so
-> > I don't know that it is worth supporting 2 ways forever. OTOH, is it
-> > guaranteed that these devices will only ever be pmbus devices or that
-> > other regulator devices which are not handled as pmbus devices currently
-> > will be in the future. If so, more flexibility in the bindings will be
-> > needed.
-> > 
-> 
-> I would appreciate if someone would explain to me what the problems with
-> the current PMBus code actually are. I have seen several comments claiming
+In order to support the Qualcomm IRIS driver on the Qualcomm SM8550
+platform, enable the IRIS and the VIDEOCC_8550 dependency as modules.
 
-Not exactly a problem but missing feature. pmbus code (at least one of
-macros I looked at) expects regulator node and some sort of child of it
-(vout), while such simple devices should be:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Reorder iris before venus
+- Link to v1: https://lore.kernel.org/r/20250225-topic-sm8x50-upstream-iris-defconfig-v1-1-8a17e2e193d9@linaro.org
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-regulator {
-	compatible = "adi,lt3074";
-	regulator-name = "vout";
-	regulator-min-microvolt = "100000";
-	regulator-max-microvolt = "100000";
-};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index a1cc3814b09b31ee659536a64b7db704153d6fe9..9d51d5bfb8158b297be2ecf8e645ef829ca27661 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -846,6 +846,7 @@ CONFIG_VIDEO_IMX8_ISI=m
+ CONFIG_VIDEO_IMX8_ISI_M2M=y
+ CONFIG_VIDEO_IMX8_JPEG=m
+ CONFIG_VIDEO_QCOM_CAMSS=m
++CONFIG_VIDEO_QCOM_IRIS=m
+ CONFIG_VIDEO_QCOM_VENUS=m
+ CONFIG_VIDEO_RCAR_ISP=m
+ CONFIG_VIDEO_RCAR_CSI2=m
+@@ -1395,6 +1396,7 @@ CONFIG_SM_TCSRCC_8650=y
+ CONFIG_SM_TCSRCC_8750=m
+ CONFIG_SA_VIDEOCC_8775P=m
+ CONFIG_SM_VIDEOCC_8250=y
++CONFIG_SM_VIDEOCC_8550=m
+ CONFIG_QCOM_HFPLL=y
+ CONFIG_CLK_GFM_LPASS_SM8250=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
 
-so without any of regulators and regulators/vout subnodes.
-
-> that the code should be changed, but I have no idea what the expected changes
-> actually are or, in other words, what the PMBus code should be doing
-> differently.
-
-I did not investigate much into pmbus code, but this might be as simple
-as accepting arguments for .of_match and .regulators_node and then
-accepting NULLs as them as well. Or a new macro which assigns NULLs
-there.
-
-Regulator core handles .regulators_node=NULL already.
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20250225-topic-sm8x50-upstream-iris-defconfig-b56662147b20
 
 Best regards,
-Krzysztof
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
