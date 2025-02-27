@@ -1,144 +1,378 @@
-Return-Path: <linux-kernel+bounces-535452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0637A47302
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7B2A47313
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9BF3AEBF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C6C16831E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0041AF0CE;
-	Thu, 27 Feb 2025 02:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1B194A44;
+	Thu, 27 Feb 2025 02:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NWnE91Al"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYKMU42J"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B5C15B102
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F217A2F7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740623427; cv=none; b=OA05uqQDICgtOCoExMObO8GaperVs5kYflvrRtasDxR284GvCUlTYYZQr9CDKwas4jZVbKYsQ2phN6LIic0QlYGyzFrbEs505Zf15HF6vkj0pRC9Vy4YjZTzoWXhvWjKeK8uDvPs3ZquZddp1fGFVFe4BuOpI//95Zd66jMzUak=
+	t=1740623519; cv=none; b=PV28oCak6pAKCS2Gq622ff/ay74YrCBSXlY1zvUxWazoxh4+FjTq40NWsjTjyqq34HeCjulYBmA9lyGcGLd+1IfXJkh2TMUnpB42GFadThd6ONfN1T6KYSo6S9nAgPUx8lCXQQGnaq2iVA9EtTWamfeTGpOaiE7LtX0/Qc+3zbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740623427; c=relaxed/simple;
-	bh=eFPNjbqeh7Zfliv2plXYbO6k4fkvgOaHAVfhYBRDa6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EuArGaEVViq0PNpC4KSkfX0lRLeEsqI6zzYeE0bWwgf1JBs6/X8Otjh5S2vDTUq+Ig2QOOf3mAHHs2+dXqITsYoycrbkxaKhMBN274pP1V1fW3wPJja+84ULZ1xZhcuFEkAmFAJIjwxlWXaXsOyP7p6+mocUVZMa8epElCOE3X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NWnE91Al; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7486a582-5143-4b4f-ae97-3a06089b630c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740623422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sbOYPimeqO3tk023X9SrOfwdCZQmqLyKIJkaK9p9QJE=;
-	b=NWnE91AlMZmfwO4cduShqKb8KSd5wIDIOmzp5Yqy9P8th8GFxZiVDZHkTJzPXwBVIuBsEb
-	wYP06zvgyKCw3v1MDEGBDamqyMG7CqCVdmGguIvWvQv3Ap20oSgns5xuHmfl/fHi0yTBqy
-	2hRf/OtuhD7fOAqrXQwl7NikHodjg2U=
-Date: Thu, 27 Feb 2025 10:30:15 +0800
+	s=arc-20240116; t=1740623519; c=relaxed/simple;
+	bh=luHG1Y5KsNSo/DhWFzwtutrMted5f6Dk0kFRk2t85Ng=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EgbEtyVwCg1epid1mBOK5U4eiTGcZKb01gdCaqlWEiYWIAarV/YWEquCN8FvPXSCWACY2YqMWZF7gIYTdmqAGiJT/7/lbRAQaPtODfAxYk63E2K7KDvA3e+GI60An/D1FgQLW8tJ8IVym8QOxU5MKWPw/EbH3/LRIt0W+EeUedk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYKMU42J; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54527a7270eso396153e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740623513; x=1741228313; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pe28A92x1GiXAYhXNOQnMWm/JVmD+9I9ysLZzus4GUg=;
+        b=GYKMU42JmnyIzyz5K2yChRbPSqvpSGSbRE2QU6TPpi86PVYnqoP6Wqx+Clam0CexT8
+         jVteud+imQSNqLykTa9hc+LOcNiUe+ZdzpRbdxUn6L2RCGMDU3w8u3kRX9/4xvGXN5ZX
+         lGZU0zZFXxZX28BZLVHN9a8B1cYwVlhnOS4HSjvgeBCHBw1PlNwHDPyG8MHPNvvwCF6S
+         rgyHcn10I/d3Q0Wg3UoZ5d1UWdS31RY2LEVjfnu850hCBBTt8YdTxVLwlRWvp3vpMwRX
+         sMULrSPqBRigVaDt0EFKqgmSKrY/IPLDPbdl0rjyWLq9WT1kqfIAqbR41EhN5HyWjXSC
+         jTWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740623513; x=1741228313;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pe28A92x1GiXAYhXNOQnMWm/JVmD+9I9ysLZzus4GUg=;
+        b=oLSLMV4S1PQ4cYouLayXUugrhd4iiVuHkeeqrDCyjzLDVCrtDV/uHfY6lyNGAECjNP
+         l4o+k9ZE/lf/i4ghWjE41GkP8DKvV4+GPkqqG6qCqTm3MrLIMA3EqELXDKa2ZUbdvle4
+         lxCTmDHaQFl/DH3VTHdWnoWyOGHLeZiz7FecCR5MliRtsne4c/6Udoq6lnk52tde5ZlB
+         t0VlAt/CKBnBOvTqiFKI/WsHssX5+WRFs26HBB18wH6duChyyJX0ASsOAd7bYKHNLOxv
+         ppPKeV4gK1UI+NUTtF8ZOarXFUrc1++vstPpdRDy5XauKlAbwMGsbPT8R5hFOfa/uA7X
+         rPfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsPhhXRmFgjpvWUibhKp0OUFHrauhqTOAe0Y5de5xiPd+b8qOzbKj0fdECDF6q3bw0RrGgdHlf68U3g24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqXCOxLq4YMSGREaxJC7p6tL1xauhiCaEUu7ooZp+JLi5V9+3V
+	y+yVSZ6DDrsgLI//2N60XFmRR0sogKzitF5nUnBwRVtGhO+myWaFFCTB3q9m5Vo=
+X-Gm-Gg: ASbGncs/zFV1tNXcuXe8Y3gjZDW/hT3uCmLzHkKYLUIb6Q0fiB5nUs0HysubWqp1784
+	kHDWKb3OUGYCkSikZYtBRBLe14BCORgU8yYYalAO/MnWCZbTlTbTkUfiDKNDvxPkhvVTvFnt7Qr
+	l5zqow589LmJXYgDUpSEKiggjqLBegmEZYwMRXXqs/9ApaeSb6PZRpwarthJii/nFp+mbNp/eEb
+	5FypgJH5KZVMMlBACZqwY6gX8h615SckYbR6u7gNc7hN0CcgNB75buo4c2Hjt/egORFA0PnHjUx
+	r9lV5TXfaCcoegmQcRyqABRr6Qi3TrAYFw==
+X-Google-Smtp-Source: AGHT+IGsG9tTMBoFX+p4C5ZcgIDjAg5knIHTqwpKvZsGh7bP+qxxtuuQn/PArlbHj3skC9/mmGbWww==
+X-Received: by 2002:a05:6512:3b2b:b0:545:a1a:5576 with SMTP id 2adb3069b0e04-5483914012cmr11505631e87.22.1740623513446;
+        Wed, 26 Feb 2025 18:31:53 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443be377sm49269e87.167.2025.02.26.18.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 18:31:52 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 27 Feb 2025 04:31:49 +0200
+Subject: [PATCH v6] drm/msm/dpu: allow sharing SSPP between planes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
- zswap_cpu_comp_dead()
-To: Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Eric Biggers <ebiggers@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, "David S. Miller"
- <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-mm@kvack.org, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com, stable@vger.kernel.org
-References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
- <20250226200016.GB3949421@google.com> <Z796VjPjno2PLTut@google.com>
- <20250226211628.GD3949421@google.com> <Z7-GaVJHC_1ynigx@google.com>
- <CAKEwX=O8zQj3Vj=2G6aCjK7e2DDs+VBUhRd25AefTdcvFOT-=A@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <CAKEwX=O8zQj3Vj=2G6aCjK7e2DDs+VBUhRd25AefTdcvFOT-=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250227-dpu-share-sspp-v6-1-4d469910f399@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAJTOv2cC/3XMQQrCQAyF4auUrI04oxOrK+8hXQxt2gakMyRal
+ NK7O3bv8n/wvgWMVdjgWi2gPItJmkrQroJ2jNPAKF1p8Ad/ct4F7PILbYzKaJYznkMMRMytqwO
+ UU1bu5b2B96b0KPZM+tn8OfzWv9Qc0CFR6DyRq4/95faQKWraJx2gWdf1C20uMr+tAAAA
+X-Change-ID: 20241215-dpu-share-sspp-75a566eec185
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10508;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=luHG1Y5KsNSo/DhWFzwtutrMted5f6Dk0kFRk2t85Ng=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnv86W44TO3Fj2x1ye0TDqmCpBPagsJ4F3ft1JR
+ M/feYMd/SKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ7/OlgAKCRCLPIo+Aiko
+ 1ZTxB/9s+6yAAjS+vBIq/IS7czbaoyjphlANfKv5w/YKkG+fIrAk/OL+eqNN1gI5AHMZEwOmSyE
+ p/DFI9mKilYWMkWlPrW9RLEzUoNZGu3taB3ldKhhw8ZWhYcpQb+6pYYEPqHpsDQFUR2TOlimoBc
+ g+ZHeV82UGtHCAzSjSvVVesQo59vejgFTXXdu6OB+FjqJ3dyfDp3NMkWrF5Vw+6idkFlQ8UY4us
+ bGr3kamsz7KljeTtmCFQMCdrZA7s/4HE8B7WrxQNavmtLJNMNFTuF3Xgt3X441E95COMGYcxKtl
+ V5oqG5sSYwwEicrNtqhc6EyYPEpK7ZYz6O3bvTZi1oWfzK3L
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 2025/2/27 07:47, Nhat Pham wrote:
-> On Wed, Feb 26, 2025 at 1:23 PM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
->>
->> On Wed, Feb 26, 2025 at 09:16:28PM +0000, Eric Biggers wrote:
->>> On Wed, Feb 26, 2025 at 08:32:22PM +0000, Yosry Ahmed wrote:
->>>> On Wed, Feb 26, 2025 at 08:00:16PM +0000, Eric Biggers wrote:
->>>>> On Wed, Feb 26, 2025 at 06:56:25PM +0000, Yosry Ahmed wrote:
->>>>>> Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
->>>>>> the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
->>>>>> (through crypto_exit_scomp_ops_async()).
->>>>>>
->>>>>> On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
->>>>>> (through crypto_scomp_init_tfm()), and then allocates memory.
->>>>>> If the allocation results in reclaim, we may attempt to hold the per-CPU
->>>>>> acomp_ctx mutex.
->>>>>
->>>>> The bug is in acomp.  crypto_free_acomp() should never have to wait for a memory
->>>>> allocation.  That is what needs to be fixed.
->>>>
->>>> crypto_free_acomp() does not explicitly wait for an allocation, but it
->>>> waits for scomp_lock (in crypto_exit_scomp_ops_async()), which may be
->>>> held while allocating memory from crypto_scomp_init_tfm().
->>>>
->>>> Are you suggesting that crypto_exit_scomp_ops_async() should not be
->>>> holding scomp_lock?
->>>
->>> I think the solution while keeping the bounce buffer in place would be to do
->>> what the patch
->>> https://lore.kernel.org/linux-crypto/Z6w7Pz8jBeqhijut@gondor.apana.org.au/ does,
->>> i.e. make the actual allocation and free happen outside the lock.
->>
->> I am fine with a solution like that if Herbert is fine with it. Although
->> as I mentioned, I think this patch is nice to have anyway.
->>
->>>
->>>>> But really the bounce buffering in acomp (which is what is causing this problem)
->>>>> should not exist at all.  There is really no practical use case for it; it's
->>>>> just there because of the Crypto API's insistence on shoehorning everything into
->>>>> scatterlists for no reason...
->>>>
->>>> I am assuming this about scomp_scratch logic, which is what we need to
->>>> hold the scomp_lock for, resulting in this problem.
->>>
->>> Yes.
->>>
->>>> If this is something that can be done right away I am fine with dropping
->>>> this patch for an alternative fix, although it may be nice to reduce the
->>>> lock critical section in zswap_cpu_comp_dead() to the bare minimum
->>>> anyway.
->>>
->>> Well, unfortunately the whole Crypto API philosophy of having a single interface
->>> for software and for hardware offload doesn't really work.  This is just yet
->>> another example of that; it's a problem caused by shoehorning software
->>> compression into an interface designed for hardware offload.  zcomp really
->>> should just use the compression libs directly (like most users of compression in
->>> the kernel already do), and have an alternate code path specifically for
->>> hardware offload (using acomp) for the few people who really want that.
->>
->> zcomp is for zram, zswap does not use it. If zswap is not going to use
->> the crypto API we'll want something like zcomp or maybe reuse zcomp
->> itself. That's a problem for another day :)
-> 
-> I'm actually thinking whether we should expose the zcomp API and use
-> it for zswap. There are a couple of parameters for zstd I wanna play
-> with, which zcomp/zram seems to already support, but not the crypto
-> API (zstd level, dictionary, etc.).
+Since SmartDMA planes provide two rectangles, it is possible to use them
+to drive two different DRM planes, first plane getting the rect_0,
+another one using rect_1 of the same SSPP. The sharing algorithm is
+pretty simple, it requires that each of the planes can be driven by the
+single rectangle and only consecutive planes are considered.
 
-Ah, agree! Actually I also think we should use the zcomp API in zswap,
-if its API meets our requirements.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+This patch has been deferred from v4 of virtual wide patchset to
+simplify the merging path. Now as the wide planes have been merged, pick
+up the patch that allows sharing of the SSPPs between two planes.
+---
+Changes in v6:
+- Fixed typo (consecutive) in the commit message (Abhinav)
+- Renamed prev_plane_state to prev_adjancent_plane_state (Abhinav)
+- Renamed prev_pstate to prev_adjancent_pstate as a followup to the
+  previous change
+- Link to v5: https://lore.kernel.org/r/20241215-dpu-share-sspp-v5-1-665d266183f9@linaro.org
 
-> 
-> But yes, a different problem for another day :)
+Changes in v5:
+- Rebased on top of the current msm-next-lumag
+- Renamed dpu_plane_try_multirect() to dpu_plane_try_multirect_shared()
+  (Abhinav)
+- Link to v4: https://lore.kernel.org/dri-devel/20240314000216.392549-11-dmitry.baryshkov@linaro.org/
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 156 +++++++++++++++++++++++++-----
+ 1 file changed, 130 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+index af3e541f60c303eb5212524e877129359b5ca98c..11c4d5dfd9703b27b7ffde34e9b4f92ec956c3c0 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -887,10 +887,9 @@ static int dpu_plane_atomic_check_nosspp(struct drm_plane *plane,
+ 	return 0;
+ }
+ 
+-static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+-						   struct dpu_sw_pipe_cfg *pipe_cfg,
+-						   const struct msm_format *fmt,
+-						   uint32_t max_linewidth)
++static int dpu_plane_is_multirect_capable(struct dpu_hw_sspp *sspp,
++					  struct dpu_sw_pipe_cfg *pipe_cfg,
++					  const struct msm_format *fmt)
+ {
+ 	if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
+ 	    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect))
+@@ -902,10 +901,6 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+ 	if (MSM_FORMAT_IS_YUV(fmt))
+ 		return false;
+ 
+-	if (MSM_FORMAT_IS_UBWC(fmt) &&
+-	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
+-		return false;
+-
+ 	if (!test_bit(DPU_SSPP_SMART_DMA_V1, &sspp->cap->features) &&
+ 	    !test_bit(DPU_SSPP_SMART_DMA_V2, &sspp->cap->features))
+ 		return false;
+@@ -913,6 +908,27 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+ 	return true;
+ }
+ 
++static int dpu_plane_is_parallel_capable(struct dpu_sw_pipe_cfg *pipe_cfg,
++					 const struct msm_format *fmt,
++					 uint32_t max_linewidth)
++{
++	if (MSM_FORMAT_IS_UBWC(fmt) &&
++	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
++		return false;
++
++	return true;
++}
++
++static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
++						   struct dpu_sw_pipe_cfg *pipe_cfg,
++						   const struct msm_format *fmt,
++						   uint32_t max_linewidth)
++{
++	return dpu_plane_is_multirect_capable(sspp, pipe_cfg, fmt) &&
++		dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth);
++}
++
++
+ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+ 				       struct drm_atomic_state *state,
+ 				       const struct drm_crtc_state *crtc_state)
+@@ -1001,6 +1017,69 @@ static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dp
+ 	return true;
+ }
+ 
++static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
++					  struct dpu_plane_state *prev_adjancent_pstate,
++					  const struct msm_format *fmt,
++					  uint32_t max_linewidth)
++{
++	struct dpu_sw_pipe *pipe = &pstate->pipe;
++	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
++	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
++	struct dpu_sw_pipe *prev_pipe = &prev_adjancent_pstate->pipe;
++	struct dpu_sw_pipe_cfg *prev_pipe_cfg = &prev_adjancent_pstate->pipe_cfg;
++	const struct msm_format *prev_fmt = msm_framebuffer_format(prev_adjancent_pstate->base.fb);
++	u16 max_tile_height = 1;
++
++	if (prev_adjancent_pstate->r_pipe.sspp != NULL ||
++	    prev_pipe->multirect_mode != DPU_SSPP_MULTIRECT_NONE)
++		return false;
++
++	if (!dpu_plane_is_multirect_capable(pipe->sspp, pipe_cfg, fmt) ||
++	    !dpu_plane_is_multirect_capable(prev_pipe->sspp, prev_pipe_cfg, prev_fmt))
++		return false;
++
++	if (MSM_FORMAT_IS_UBWC(fmt))
++		max_tile_height = max(max_tile_height, fmt->tile_height);
++
++	if (MSM_FORMAT_IS_UBWC(prev_fmt))
++		max_tile_height = max(max_tile_height, prev_fmt->tile_height);
++
++	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++
++	r_pipe->sspp = NULL;
++
++	if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &&
++	    dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_linewidth) &&
++	    (pipe_cfg->dst_rect.x1 >= prev_pipe_cfg->dst_rect.x2 ||
++	     prev_pipe_cfg->dst_rect.x1 >= pipe_cfg->dst_rect.x2)) {
++		pipe->sspp = prev_pipe->sspp;
++
++		pipe->multirect_index = DPU_SSPP_RECT_1;
++		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
++
++		prev_pipe->multirect_index = DPU_SSPP_RECT_0;
++		prev_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
++
++		return true;
++	}
++
++	if (pipe_cfg->dst_rect.y1 >= prev_pipe_cfg->dst_rect.y2 + 2 * max_tile_height ||
++	    prev_pipe_cfg->dst_rect.y1 >= pipe_cfg->dst_rect.y2 + 2 * max_tile_height) {
++		pipe->sspp = prev_pipe->sspp;
++
++		pipe->multirect_index = DPU_SSPP_RECT_1;
++		pipe->multirect_mode = DPU_SSPP_MULTIRECT_TIME_MX;
++
++		prev_pipe->multirect_index = DPU_SSPP_RECT_0;
++		prev_pipe->multirect_mode = DPU_SSPP_MULTIRECT_TIME_MX;
++
++		return true;
++	}
++
++	return false;
++}
++
+ static int dpu_plane_atomic_check(struct drm_plane *plane,
+ 				  struct drm_atomic_state *state)
+ {
+@@ -1098,13 +1177,14 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+ 					      struct dpu_global_state *global_state,
+ 					      struct drm_atomic_state *state,
+-					      struct drm_plane_state *plane_state)
++					      struct drm_plane_state *plane_state,
++					      struct drm_plane_state *prev_adjancent_plane_state)
+ {
+ 	const struct drm_crtc_state *crtc_state = NULL;
+ 	struct drm_plane *plane = plane_state->plane;
+ 	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+ 	struct dpu_rm_sspp_requirements reqs;
+-	struct dpu_plane_state *pstate;
++	struct dpu_plane_state *pstate, *prev_adjancent_pstate;
+ 	struct dpu_sw_pipe *pipe;
+ 	struct dpu_sw_pipe *r_pipe;
+ 	struct dpu_sw_pipe_cfg *pipe_cfg;
+@@ -1116,6 +1196,8 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+ 							   plane_state->crtc);
+ 
+ 	pstate = to_dpu_plane_state(plane_state);
++	prev_adjancent_pstate = prev_adjancent_plane_state ?
++		to_dpu_plane_state(prev_adjancent_plane_state) : NULL;
+ 	pipe = &pstate->pipe;
+ 	r_pipe = &pstate->r_pipe;
+ 	pipe_cfg = &pstate->pipe_cfg;
+@@ -1134,24 +1216,42 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+ 
+ 	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
+ 
+-	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+-	if (!pipe->sspp)
+-		return -ENODEV;
++	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
++		if (!prev_adjancent_pstate ||
++		    !dpu_plane_try_multirect_shared(pstate, prev_adjancent_pstate, fmt,
++						    dpu_kms->catalog->caps->max_linewidth)) {
++			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
++			if (!pipe->sspp)
++				return -ENODEV;
+ 
+-	if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+-					      pipe->sspp,
+-					      msm_framebuffer_format(plane_state->fb),
+-					      dpu_kms->catalog->caps->max_linewidth)) {
+-		/* multirect is not possible, use two SSPP blocks */
+-		r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+-		if (!r_pipe->sspp)
++			r_pipe->sspp = NULL;
++
++			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++
++			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++		}
++	} else {
++		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
++		if (!pipe->sspp)
+ 			return -ENODEV;
+ 
+-		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++		if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
++						      pipe->sspp,
++						      msm_framebuffer_format(plane_state->fb),
++						      dpu_kms->catalog->caps->max_linewidth)) {
++			/* multirect is not possible, use two SSPP blocks */
++			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
++			if (!r_pipe->sspp)
++				return -ENODEV;
+ 
+-		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+-		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++
++			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
++			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
++		}
+ 	}
+ 
+ 	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+@@ -1164,6 +1264,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+ 			       unsigned int num_planes)
+ {
+ 	unsigned int i;
++	struct drm_plane_state *prev_adjancent_plane_state = NULL;
+ 
+ 	for (i = 0; i < num_planes; i++) {
+ 		struct drm_plane_state *plane_state = states[i];
+@@ -1173,9 +1274,12 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+ 			continue;
+ 
+ 		int ret = dpu_plane_virtual_assign_resources(crtc, global_state,
+-							 state, plane_state);
++							     state, plane_state,
++							     prev_adjancent_plane_state);
+ 		if (ret)
+-			return ret;
++			break;
++
++		prev_adjancent_plane_state = plane_state;
+ 	}
+ 
+ 	return 0;
+
+---
+base-commit: 89839e69f6154feecd79bd01171375225b0296e9
+change-id: 20241215-dpu-share-sspp-75a566eec185
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
