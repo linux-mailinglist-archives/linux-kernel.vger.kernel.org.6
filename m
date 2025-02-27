@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-536044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7D9A47AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:55:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A954FA47B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9303116D2BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51D691891C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCF122A4F3;
-	Thu, 27 Feb 2025 10:55:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E697522A4F3;
+	Thu, 27 Feb 2025 10:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QhrhG1MN"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E421DC997;
-	Thu, 27 Feb 2025 10:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914901DC997
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653706; cv=none; b=W9y3VVhZ9SFeBgbbSuZ7HWMBXLWyoFJOtBEG+N4v8LwMWvkok4YQ86um2ToxtgmVW8HwxM9djj8YlGjLDYz/GMw3kPjlBq9qeNW6vyFk9pT7muRnOegWzfAgxxFI456ynS7E6nX7fIFwknZbaNV6GjnisM5bd59R8GjX0SCbfwk=
+	t=1740653904; cv=none; b=HPRhjsl91y9r+2DAkaazhFvbpHCt4nypI1EspSJ+Z/+azHmyb3AnHrx5g9rd6m8TA40/KG6IxXZu/ZBvIH5izatx10EkVEnb49AAPPWNs0sqqVddD6njfjk/P/qwhdKYZgyg0eCUn1zUbcDhfrmf0FPashD9xgR504pQxHi4o6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653706; c=relaxed/simple;
-	bh=au2uGxWas7Tjk9gJv8TRw03CCJBiNltN8pVoM9Agk/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWTuHc+OIty/b8Nrs0WuA4ea0coQa29T67/tmw9lb4lmVXauoUHCNVg1NooAmRzNwQFXH+0ETKh0d2ckNqhu/14xeEo/OEQR7lLoAnho6awiTL0M5P6ykRKSFE3KHDiGnoHn+K2MIXxbJaNkQopWcdHKljK83a5YzD1kvJxBxDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0075C4CEDD;
-	Thu, 27 Feb 2025 10:55:02 +0000 (UTC)
-Date: Thu, 27 Feb 2025 10:55:00 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Steven Price <steven.price@arm.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v7 09/11] arm64: Enable memory encrypt for Realms
-Message-ID: <Z8BEhK8P7FXgG11f@arm.com>
-References: <20241017131434.40935-1-steven.price@arm.com>
- <20241017131434.40935-10-steven.price@arm.com>
- <5aeb6f47-12be-40d5-be6f-847bb8ddc605@arm.com>
- <Z79lZdYqWINaHfrp@arm.com>
- <20250227002330.GA24899@willie-the-truck>
+	s=arc-20240116; t=1740653904; c=relaxed/simple;
+	bh=teTDa3liTei2AdNqaa9IqgRmnKDfj0qKFfTebiwSFag=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S2sm2zmjskrWJIID2CMb5+VHlzM7ZY0+Z/eyi9byIWPkfpUKUQCaqVudeWysoBauwJMgZ28BTXvwDtPXKghX5FYwhqa8rp1xsXRngdSN/U6ERy8H0y4ukAu6fBWphvd1nhMomz1WPpGcSZGIOM7gLszAKpjN4fHHLm/XmX++Dzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QhrhG1MN; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740653903; x=1772189903;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=teTDa3liTei2AdNqaa9IqgRmnKDfj0qKFfTebiwSFag=;
+  b=QhrhG1MNfXqM0BrH9/XB+Pg10P9SYp4w0HbvfV1uEkBcN4w4EOlTW36n
+   w0F7qg0YweAt235spcpx0ry4K5Rvgog60Oiu+jTHbYkU5ppS42IOgf1nF
+   SdcdjAl6NZ2qKCfzl9nDh6br6tcNkOwVrGULFQoR2xTYPZZIdIKJ9ious
+   SlkDScLF6kqh9uavzvZokDYzk0Ba0CDmCgUKoHWDN+i2Z92vu/qnQSQnN
+   s61eBAG0lO9EhAUSuQnHA0RwLPrJAF/PCJE4oNpDkRucdfIhY+es6M9QS
+   Yhh/lWaH4sVlh741hIM40aaUUC3nog620qLAGn65kj4iAIsOjbna+Ho42
+   w==;
+X-CSE-ConnectionGUID: JWjrnE6DQtWZk0nVbJYONA==
+X-CSE-MsgGUID: JCcOmOIfRpqgToz9BX0Zsw==
+X-IronPort-AV: E=Sophos;i="6.13,319,1732604400"; 
+   d="scan'208";a="269594456"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Feb 2025 03:58:22 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 27 Feb 2025 03:58:12 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 27 Feb 2025 03:58:10 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <p.zabel@pengutronix.de>, <Steen.Hegelund@microchip.com>,
+	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<herve.codina@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>
+Subject: [PATCH v4] reset: mchp: sparx5: Fix for lan966x
+Date: Thu, 27 Feb 2025 11:55:02 +0100
+Message-ID: <20250227105502.25125-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227002330.GA24899@willie-the-truck>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Feb 27, 2025 at 12:23:31AM +0000, Will Deacon wrote:
-> On Wed, Feb 26, 2025 at 07:03:01PM +0000, Catalin Marinas wrote:
-> > On Wed, Feb 19, 2025 at 02:30:28PM +0000, Steven Price wrote:
-> > > > @@ -23,14 +25,16 @@ bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED
-> > > >  bool can_set_direct_map(void)
-> > > >  {
-> > > >  	/*
-> > > > -	 * rodata_full and DEBUG_PAGEALLOC require linear map to be
-> > > > -	 * mapped at page granularity, so that it is possible to
-> > > > +	 * rodata_full, DEBUG_PAGEALLOC and a Realm guest all require linear
-> > > > +	 * map to be mapped at page granularity, so that it is possible to
-> > > >  	 * protect/unprotect single pages.
-> > > >  	 *
-> > > >  	 * KFENCE pool requires page-granular mapping if initialized late.
-> > > > +	 *
-> > > > +	 * Realms need to make pages shared/protected at page granularity.
-> > > >  	 */
-> > > >  	return rodata_full || debug_pagealloc_enabled() ||
-> > > > -	       arm64_kfence_can_set_direct_map();
-> > > > +		arm64_kfence_can_set_direct_map() || is_realm_world();
-> > > >  }
-> > > 
-> > > Aneesh pointed out that this call to is_realm_world() is now too early 
-> > > since the decision to delay the RSI detection. The upshot is that a 
-> > > realm guest which doesn't have page granularity forced for other reasons 
-> > > will fail to share pages with the host.
-> > > 
-> > > At the moment I can think of a couple of options:
-> > > 
-> > > (1) Make rodata_full a requirement for realm guests. 
-> > >     CONFIG_RODATA_FULL_DEFAULT_ENABLED is already "default y" so this 
-> > >     isn't a big ask.
-> > > 
-> > > (2) Revisit the idea of detecting when running as a realm guest early. 
-> > >     This has the advantage of also "fixing" earlycon (no need to 
-> > >     manually specify the shared-alias of an unprotected UART).
-> > > 
-> > > I'm currently leaning towards (1) because it's the default anyway. But 
-> > > if we're going to need to fix earlycon (or indeed find other similar 
-> > > issues) then (2) would obviously make sense.
-> > 
-> > I'd go with (1) since the end result is the same even if we implemented
-> > (2) - i.e. we still avoid block mappings in realms.
-> 
-> Is it, though? The config option is about the default behaviour but there's
-> still an "rodata=" option on the command-line.
+With the blamed commit it seems that lan966x doesn't seem to boot
+anymore when the internal CPU is used.
+The reason seems to be the usage of the devm_of_iomap, if we replace
+this with devm_ioremap, this seems to fix the issue as we use the same
+region also for other devices.
 
-Yeah, that's why I suggested the pr_err() to only state that it cannot
-set the direct map and consider rodata=full rather than a config option.
-We already force CONFIG_STRICT_KERNEL_RWX.
+Fixes: 0426a920d6269c ("reset: mchp: sparx5: Map cpu-syscon locally in case of LAN966x")
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+Tested-by: Herve Codina <herve.codina@bootlin.com>
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+v3->v4:
+- update commit message to match the actual changes
+- add comment explaining why we can't use devm_of_iomap
+v2->v3:
+- forward error from of_address_to_resource
+- use devm_ioremap instead of_iomap
+v1->v2:
+- make sure to use iounmap when driver is removed
+---
+ drivers/reset/reset-microchip-sparx5.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-But we can also revisit the decision not to probe the RSI early.
-
+diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
+index aa5464be7053b..6d3e75b33260e 100644
+--- a/drivers/reset/reset-microchip-sparx5.c
++++ b/drivers/reset/reset-microchip-sparx5.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+@@ -72,14 +73,22 @@ static struct regmap *mchp_lan966x_syscon_to_regmap(struct device *dev,
+ 						    struct device_node *syscon_np)
+ {
+ 	struct regmap_config regmap_config = mchp_lan966x_syscon_regmap_config;
+-	resource_size_t size;
++	struct resource res;
+ 	void __iomem *base;
++	int err;
++
++	err = of_address_to_resource(syscon_np, 0, &res);
++	if (err)
++		return ERR_PTR(err);
+ 
+-	base = devm_of_iomap(dev, syscon_np, 0, &size);
+-	if (IS_ERR(base))
+-		return ERR_CAST(base);
++	/* It is not possible to use devm_of_iomap because this resource is
++	 * shared with other drivers.
++	 */
++	base = devm_ioremap(dev, res.start, resource_size(&res));
++	if (!base)
++		return ERR_PTR(-ENOMEM);
+ 
+-	regmap_config.max_register = size - 4;
++	regmap_config.max_register =  resource_size(&res) - 4;
+ 
+ 	return devm_regmap_init_mmio(dev, base, &regmap_config);
+ }
 -- 
-Catalin
+2.34.1
+
 
