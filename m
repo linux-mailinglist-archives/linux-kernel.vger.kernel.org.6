@@ -1,178 +1,159 @@
-Return-Path: <linux-kernel+bounces-536010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B84A47A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:38:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A6BA47A77
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC42C3B1412
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA9D16D62E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF31225A29;
-	Thu, 27 Feb 2025 10:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96022A1ED;
+	Thu, 27 Feb 2025 10:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dvDVnCT8"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPeGQvTV"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A6B21ABB4
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4EE21ABB4;
+	Thu, 27 Feb 2025 10:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740652679; cv=none; b=U/Hj5v0qpAJRaUY1VbAXHjvYfMPpkFgky+H7KfnFUnR4hT7Qz55Fbajlcvl5ga1bp5MJsA+CBwjQCr/G/JiZqnfj4jndFa+K7UpuOWGEcHFTT7jZj75GFQKpFVloD7ctOwetAOTzMxBskrixOo9MAY/Ysipv8mc/xqeDIyGY9Gc=
+	t=1740652796; cv=none; b=k6jMpBwxPAiFVeD2VoDohm0ni2APzfAITvBN+RzPP0oP6m/+dvl00ViHzCCzy7tACLPY/vsVAPN2++wjBKwKSj7xk6cTlOnwyg1zTWYq2QgU8pVYyH2IgKAvcs9CtQ70Zr5wlqOycyJZYoJvzl1aAh0xWt7f3h91exMbBOoEyIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740652679; c=relaxed/simple;
-	bh=Txiv0GNTP8DGlYvTjBfM0J81bv9A0WhZ76PlMqt/6+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLX5Fk0Oq/9Jl8YIgoLHrCyfUqt7kSQZ3j+VXkstggGFXZ52aCVjVAAg1WrH/KGEi4p6zljyF5k6Tx5GBVBFjfhaTQNJW+KMuZjrTkEyB4VgXaEeWkOqm9AkN5ueG6n8VSb5vQ7p8ViWGQsUxYPviRGrsE0rol24VZkq6cVFCE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dvDVnCT8; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fe9596a582so194476a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:37:57 -0800 (PST)
+	s=arc-20240116; t=1740652796; c=relaxed/simple;
+	bh=4Z5THPHBB0PyNdgQ73XQc7tWD13PorYiOsgFnskGl+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gz/tb17Awrdi9283PtHqebGIklOeFRhYPEHA7+E0G+EUYoosLcaYPbB2OV+oq+ifzc74lb2162qr1Zsv3tNlnziXtWsT3B4p21vxt5BjKKxnAfSZxXous4AfwrmW3KFl0BqSHWciSttYit/zdkEaeC8kThROkRzPO+Thdszkjos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPeGQvTV; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f325dd9e6so400764f8f.1;
+        Thu, 27 Feb 2025 02:39:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740652677; x=1741257477; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DV/4+EIKBxHU9rDR8HjaAlgwx72Pm8lEHt843SwpNpU=;
-        b=dvDVnCT8/LfSjdZINBh31asLOi1pKIpKPfFRXP0L5RJ0ifD3b1RorjVr+4WDv0BPeR
-         pZvUFZO4LaLad+igGoWbL07yhJOQ+bucwyE8ihUEpjiIX9LahU1ePrZV088ZUrNO13nS
-         U2uOBaHtqsI8G9AgGho+RDYZzQwwaic6TsHgikfjPN74soPu+k49cbilKHNR4OcmUZRw
-         59abPwYOmy4JZdyBsFzz73ACip2TwK8z9nzxRfANsVsuiFvV40sdNpKA99iH8Iq6zQJW
-         uoHjQHjsSuPkLmIL7P53xLVmU6BVbjNu9GfA3WVUEkSe77w8amVgjIa+LCr3eVLnphHY
-         ZZ+w==
+        d=gmail.com; s=20230601; t=1740652793; x=1741257593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBNOuunCwK0S7uvVT7lUa1QkbPinEv6RhOlxsz3h1co=;
+        b=fPeGQvTVE58N6BSy+ua7dqbVmtpdoXnQ0OZyp8fluuahv4wBqhf2g806jGP/3pA/ba
+         bRskVGUZRiF1qd6C0ClBXPEmMfSDHCKWS2JYIr3AWoQp1UNGbd1nWpTR7/ORAFY3e89R
+         6RXM5sW45KPizUM5xrzwQRZj6C9+Ri3r22L5y905ySDOl6uc++8dqcprLt+SY6asO847
+         GqI2ev8noZUoUnKdqeF78V08X/Ru3sZcln2dD4714qy9Bq31w5sNX0zZB9MTHUcW2fWe
+         eFxXoKVUZBWj8ePq6Wd5Zl4h1sutwBLQebYHv7LwHgn3/xeo5kg+89MvdLKiiJ+GCD3N
+         QO7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740652677; x=1741257477;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DV/4+EIKBxHU9rDR8HjaAlgwx72Pm8lEHt843SwpNpU=;
-        b=nRZe4i+XfRXT937ICNzPSeDj+OmlLjyzo6AIIuFhLL3s+69u1Nid/LDr7xcFQpBJqv
-         2CLwnLdCO+ffIisiBAQCjdxRQnzWKse7INfyiI0r5Qfe3i+HMcDfGdzmsquaIqiCnnY6
-         9/Y60gbm/NXTQ1c+a3dWeVqdS7T9OzcFUKy/t4XEi0Lr73pFGTRpeygfHo2B46I86bV/
-         d+JNw2oe780qXe1w12SgsLAFTtGu3DLMeoRjVRO9F8bAIVTAjt+HWhYxfWtXx5G82Pp4
-         WHju9cU54gLBlc39BlT0loFluIPJviDg0Cz0WhWPuoda6PlDpeKnfB8dVY9tyifWqpbQ
-         Nn1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2bkTLpjmuhcgfu/XoENuPiuteq5ZxxPKab8c4It7qSvSP6rYNNGzKFFERRFH9ABFphtuz2luppX3dGyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBYVg1lHZcOYGN8thAe3ys2gl/wRk0qK6aAyDqDRabIl89Bbwi
-	2AJm2gStMgbq/NElLmz9KWalxWetIW50zeSVWMDxWoHLNZPAKAil0RB1qJ3Bi10=
-X-Gm-Gg: ASbGncss/wAUmowRQ/YMFy2S4oeIAFtZztT+RYFLZRaq2xbGyCS1ITwrl+Ko2Khkc/v
-	xkwqY1yqChrpuaSmaCQEC8c/+/bkx39uCKzCClkKX7LCUD/+i/jwizyRK0/ewBuuTc2t8sT4yTn
-	GONpRB3NVs15FH1g5emAfj6KUEz3lK4FeGHJ7sXQa8BBKbGL/0TAk1Z7JUwbXtZ3YL6MSzTiaLY
-	PMpJLaTT2nsbgOjbS53xAGdLGeQwmTCaO+4DnmWLbVcTeIqc+uV1bY9NbOhH6l0iiA6X+BCldt9
-	M7RLlI0j9h+nfQ4xgS6GoKsbdHOS2TIit7zlXUesuj0aR0afeA==
-X-Google-Smtp-Source: AGHT+IF3E5oQo5TmO1ZbvJta2mk5C4leDe1bchlXF4Xyba/pdZ/HKHpPajKrTqwrefFmXv5KCnX2hQ==
-X-Received: by 2002:a17:90b:a11:b0:2fe:8e19:bcd7 with SMTP id 98e67ed59e1d1-2fe8e19c0c0mr2872297a91.5.1740652676848;
-        Thu, 27 Feb 2025 02:37:56 -0800 (PST)
-Received: from [10.254.225.63] ([139.177.225.243])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2feb0057317sm543180a91.0.2025.02.27.02.37.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 02:37:55 -0800 (PST)
-Message-ID: <15581a04-867f-4fc2-ab01-f4bd23e3c035@bytedance.com>
-Date: Thu, 27 Feb 2025 18:37:45 +0800
+        d=1e100.net; s=20230601; t=1740652793; x=1741257593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PBNOuunCwK0S7uvVT7lUa1QkbPinEv6RhOlxsz3h1co=;
+        b=t9DNkrFXoPg6XE+tRsWLw56/CwPpdZ0pwtHMLoFUL4K5aHVpU7oIy7oDf/Q1q6z+Oo
+         x2ajE5M9ntpRNC0jIOfa+60M7IZ/X/JUPgI8AIuic3xYoeZuFX9PG3qi5PZ8GSIubh3B
+         gfipqTTIcvfaQFII+evrTQ4Ex/MbX9scfgI/BSqQEOKcfElX6je/CyEg3mbUEl/cB8/U
+         a8RNjWJ3tyFtkOOrMPoT0w01E0E+boRGhK20ukjQ5UK0UjbcGxds04x3cUYAPYpw5w9w
+         7RaSrGuBuR4+5PggagbvsrvqWXyddNaZMLkUgXaPCDmLUHvLmbdwEd7GCY1htTdHJDju
+         vzzw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4wpdcA9cDeEDa0A5LhQ/ZQJKiShgH/2/T0p3AHNs1JQcOFOvSD7Q2RLJ8Fqn3T7THntZxrtv0PdHfXcI=@vger.kernel.org, AJvYcCWYWmbhcReL0uaMc9Bs7U3CZxhVisMlp/JB+7HE+fn114jw/5nWFK54NLoo4e5urJXL0EaFZc0Sm4xD@vger.kernel.org, AJvYcCXc7U4HSXEa6cZW+uRAYqMCAGUbSkGQ/iK8Bckdp+TDHN9XIagjwg399Tys07yQ2GmkIeyA8TvyrW2a1l0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPwXB64j06MIXjqLfp3wyz2qsnH8tiZUIJi/o+fpIrmbsNx+Zk
+	3pfgeQ911apkZOJsAKgxx5Duq0a9y5kHyNbyDH2gOLtZNGFCs37n
+X-Gm-Gg: ASbGncu2nww71Pp4nxQqQ3h3H1LDae3221cLZic4JMnFyP+DcL0SACuxfWnSM6UJlc1
+	qNKt1hbWLe1i+Ahlsf3s/VY4wPLEcOLd639vTpJGzhLh1CYR1BIWTToculSTMiyAlHI3lNm1vhn
+	rc34Zr0xRYQQFqbSH7y6IlbgKD8Q5avF5PxFXHTGkfemOP832fIkddUo6vIu7z1zYUVSH2KyTQP
+	jBbVHAjJW0svIbkUZZS7jjcBmBcENs41Rx9YgW9s/B5Pv4xHX8cc16+Xpe6kdtvK/5k4WS4siKI
+	ofgLNHpWlaF+sQQluI0iaP9tFjzVo/Y1voMueSZEd38DQHNnzjsNwyaI5xbOLQWYYEG1fUXnPuG
+	Oy912AAPvvBMY
+X-Google-Smtp-Source: AGHT+IH+VMXOi+Mhh3bGfInYKPLcazEFfAbSm2XIe+YZ54dISGf+tuIRq1SvNTEluwvTdl0cMpYLsg==
+X-Received: by 2002:a5d:5f8a:0:b0:38f:260f:b319 with SMTP id ffacd0b85a97d-390d4f84733mr7161091f8f.44.1740652792586;
+        Thu, 27 Feb 2025 02:39:52 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479652dsm1644708f8f.16.2025.02.27.02.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 02:39:51 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:39:49 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Vishwaroop A <va@nvidia.com>
+Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, 
+	broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
+Subject: Re: [PATCH v2 1/6] arm64: tegra: Configure QSPI clocks and add DMA
+Message-ID: <a26g7pt3pll5d6jmkucdychrectbaa27ft65cuw7mrlirupx63@ijeqgow2s4ij>
+References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
+ <20250212144651.2433086-1-va@nvidia.com>
+ <20250212144651.2433086-2-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] cgroup/rstat: Fix forceidle time in cpu.stat
-Content-Language: en-US
-To: Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Bitao Hu <yaoma@linux.alibaba.com>, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, Yury Norov
- <yury.norov@gmail.com>, Chen Ridong <chenridong@huawei.com>
-Cc: "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250209061322.15260-1-wuyun.abel@bytedance.com>
- <20250209061322.15260-2-wuyun.abel@bytedance.com>
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <20250209061322.15260-2-wuyun.abel@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4znkw4cymmoafvku"
+Content-Disposition: inline
+In-Reply-To: <20250212144651.2433086-2-va@nvidia.com>
 
-Hi Tejun, can you please pick this fix? Since there is no objections..
 
-Thanks!
+--4znkw4cymmoafvku
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/6] arm64: tegra: Configure QSPI clocks and add DMA
+MIME-Version: 1.0
 
-On 2/9/25 2:13 PM, Abel Wu wrote:
-> The commit b824766504e4 ("cgroup/rstat: add force idle show helper")
-> retrieves forceidle_time outside cgroup_rstat_lock for non-root cgroups
-> which can be potentially inconsistent with other stats.
-> 
-> Rather than reverting that commit, fix it in a way that retains the
-> effort of cleaning up the ifdef-messes.
-> 
-> Fixes: b824766504e4 ("cgroup/rstat: add force idle show helper")
-> Signed-off-by: Abel Wu <wuyun.abel@bytedance.com>
+On Wed, Feb 12, 2025 at 02:46:46PM +0000, Vishwaroop A wrote:
+> Set QSPI0_2X_PM to 199.99 MHz and QSPI0_PM to 99.99 MHz using
+> PLLC as the parent clock. These frequencies allow Quad IO DT
+> reads up to 99.99 MHz, which is the fastest that can be
+> achieved considering various PLL and clock divider constraints.
+>=20
+> Populate the DMA and IOMMU properties for the Tegra234 QSPI devices to
+> enable DMA support.
+>=20
+> Signed-off-by: Vishwaroop A <va@nvidia.com>
 > ---
->   kernel/cgroup/rstat.c | 29 +++++++++++++----------------
->   1 file changed, 13 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> index 5877974ece92..c2784c317cdd 100644
-> --- a/kernel/cgroup/rstat.c
-> +++ b/kernel/cgroup/rstat.c
-> @@ -613,36 +613,33 @@ static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat
->   void cgroup_base_stat_cputime_show(struct seq_file *seq)
->   {
->   	struct cgroup *cgrp = seq_css(seq)->cgroup;
-> -	u64 usage, utime, stime, ntime;
-> +	struct cgroup_base_stat bstat;
->   
->   	if (cgroup_parent(cgrp)) {
->   		cgroup_rstat_flush_hold(cgrp);
-> -		usage = cgrp->bstat.cputime.sum_exec_runtime;
-> +		bstat = cgrp->bstat;
->   		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
-> -			       &utime, &stime);
-> -		ntime = cgrp->bstat.ntime;
-> +			       &bstat.cputime.utime, &bstat.cputime.stime);
->   		cgroup_rstat_flush_release(cgrp);
->   	} else {
-> -		/* cgrp->bstat of root is not actually used, reuse it */
-> -		root_cgroup_cputime(&cgrp->bstat);
-> -		usage = cgrp->bstat.cputime.sum_exec_runtime;
-> -		utime = cgrp->bstat.cputime.utime;
-> -		stime = cgrp->bstat.cputime.stime;
-> -		ntime = cgrp->bstat.ntime;
-> +		root_cgroup_cputime(&bstat);
->   	}
->   
-> -	do_div(usage, NSEC_PER_USEC);
-> -	do_div(utime, NSEC_PER_USEC);
-> -	do_div(stime, NSEC_PER_USEC);
-> -	do_div(ntime, NSEC_PER_USEC);
-> +	do_div(bstat.cputime.sum_exec_runtime, NSEC_PER_USEC);
-> +	do_div(bstat.cputime.utime, NSEC_PER_USEC);
-> +	do_div(bstat.cputime.stime, NSEC_PER_USEC);
-> +	do_div(bstat.ntime, NSEC_PER_USEC);
->   
->   	seq_printf(seq, "usage_usec %llu\n"
->   			"user_usec %llu\n"
->   			"system_usec %llu\n"
->   			"nice_usec %llu\n",
-> -			usage, utime, stime, ntime);
-> +			bstat.cputime.sum_exec_runtime,
-> +			bstat.cputime.utime,
-> +			bstat.cputime.stime,
-> +			bstat.ntime);
->   
-> -	cgroup_force_idle_show(seq, &cgrp->bstat);
-> +	cgroup_force_idle_show(seq, &bstat);
->   }
->   
->   /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/d=
+ts/nvidia/tegra234.dtsi
+> index 2601b43b2d8c..0ac2d3aba930 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -2948,6 +2948,13 @@
+>  				 <&bpmp TEGRA234_CLK_QSPI0_PM>;
+>  			clock-names =3D "qspi", "qspi_out";
+>  			resets =3D <&bpmp TEGRA234_RESET_QSPI0>;
+> +			assigned-clocks =3D <&bpmp TEGRA234_CLK_QSPI0_2X_PM>,
+> +					  <&bpmp TEGRA234_CLK_QSPI0_PM>;
+> +			assigned-clock-rates =3D <199999999 99999999>;
+> +			assigned-clock-parents =3D <&bpmp TEGRA234_CLK_PLLC>;
+> +			dma-names =3D "rx", "tx";
 
+Other than the dma-names property which was already discussed, this
+looks fine.
+
+Thierry
+
+--4znkw4cymmoafvku
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAQPUACgkQ3SOs138+
+s6GgyQ//S5JgXIXb+r9r+GLX2BMYavKQT5LaHF3pKS453MqqbEXkhJX2/AH5w0yX
+uPjL5JuS47HyBaey26DxbHmoKUwdaFOFmstOJCs8qmzeox34XrXOeZpeXr2rhBCF
+y0Irvpw7HOvDGjYplqLur9NW+KQgOM6eJrGyes1Mc3hbVsUlWVFPNofN0eh4+aI5
+b0nwV3+93VvLYjPwr6Zi9SbVt+pjdhj+iPbZym3L7ZV0qo8R+SZ7ON+cB4lf3QWe
+dfC8FPNaD1dit/fOmpAM2BpPFBMnhg74i8kqkg8OqL2RpsjLqp+Tcm+U1TK0INiz
+NIcXtdqbXhk8Bornqwuxq3pA9E8xrpfZTrClLRR+HdgyR6I0ad0BxHYwyEPy60ZJ
+w0CzeZXlyjZeVaAqHPjPiY1e6oVAYDK0DqR34KgIiUS26XmliQgDGWdXQ5AcDLGe
+Wyp0tiHwVyvyAvTuOgZ1GkpmOZkppo7KNm9dvANgjS8fvxJVv5EAyIGRKEz9a3wi
+TtaUUFmBsZX9H8kcHAVs0mra5qLG6HTQ/tmu6wEQhf5jhNXYpFvCSZdfNgsOPV5h
+G3xw/r85MPogzEcIfAchOGW7G91XVnPeoF3NDlv6M5X/xoloveFwmN9qiJriuknt
+T2R+pHbXdKcvoKWnSJsV5aO55NzEjRRT4YHkV4mBD29AXM50LMs=
+=zY8k
+-----END PGP SIGNATURE-----
+
+--4znkw4cymmoafvku--
 
