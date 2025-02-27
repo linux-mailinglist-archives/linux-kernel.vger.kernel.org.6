@@ -1,307 +1,281 @@
-Return-Path: <linux-kernel+bounces-535289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7BBA470EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:23:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82EF4A470CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EFA188E35C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:23:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C5437A88D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A5C1B21B4;
-	Thu, 27 Feb 2025 01:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B63383A2;
+	Thu, 27 Feb 2025 01:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wzcuMUHd"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WftKV585"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2721D1B21B8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F0A4A35;
+	Thu, 27 Feb 2025 01:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740619182; cv=none; b=rfWVG2u3QE7V5JpRLOmZsaHYr1nxn1QPb00M3fIdXKnGFQZ2ocjvkJq8Ao/oI+WtK+FAVR4Z1GThFIqU8ab8sSqw1b8QBNVBhGVzoqye405tbNauCf3/Lt4XOdFPWK+Zu4J7zJDLCKJFag4PCwgOH6CKmAdbNbMmnbCs/AMIeNI=
+	t=1740619131; cv=none; b=LgzuCHbAlTfh6/5yqJq2mmOrD9sBwJnVyEC0JYQ0ml1nd4VGRI/HmsU5pTFi7+1zMSyn9sQg9AmqZ6xNoVIKltn/O/Z29kVlmQ6HJRMHxgroUt5yRbwGhfkdAjwBryATUAeZ02PTv7W2EzebQSHaAlsDowBfiGX24sStaFZgt4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740619182; c=relaxed/simple;
-	bh=muCxjCHO7J+3+X5r8iv+4HI0QOLZcNmEcwoDvK/pCAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7if9salBCRgC0AhxwTILGPNOxNq399ulHhkDttjGWKHlSSXpY7gsFnoYEJr6LwUHKG7ShgqIqLy4NaZgREQ+m3ZorE8zGEMRgumjiO6LpzzNDsrsAClwPoxnycwkKuVDTRCt08FXNaakfW2xaSfM3DSMzSyN6n6YiBp+ecoI4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wzcuMUHd; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 27 Feb 2025 01:19:31 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740619177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tn0bCA8vmXCFisYbnlg1+ph/3V4Z5kayGOAi96rwN8M=;
-	b=wzcuMUHdz0UHoju4Vymz/grmhzKu69MtfKKpZuR2AUxFB5rLy3rxM3mv0ZT6WpPHlRkPis
-	cPRtdqF2M8MYc+F08qt2usqXhfnVa5ydVHH8eB+jPxbuxwkZEFp8xpvCQdtd5Ii53Lv0pN
-	M0xIPAGDUL1AyUyI5X5qoulOf5Iq20c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] zswap: do not crash the kernel on decompression
- failure
-Message-ID: <Z7-9o81kBfw4tFSz@google.com>
-References: <20250227001445.1099203-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1740619131; c=relaxed/simple;
+	bh=HhUhlhjRar2n+oEQ4HGfUAieFs+HeIQJMtyvSs6i4zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HoH7JGKm591erCz82EoJP9mtS8dxTjItq8VbpOuyJyz6hVMbg/F1/1063jvJgVRkiVWM71xtD4ObTTwTsaWi6XH5S/o3dRbFpUZzvme1SJ054LOFn4t1Dk+tWhLii1ctZwt2jCRmKP1S204QfVy5FvvbsO57zdX4IjxC7rHJqnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WftKV585; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740619130; x=1772155130;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HhUhlhjRar2n+oEQ4HGfUAieFs+HeIQJMtyvSs6i4zk=;
+  b=WftKV585HET9IDTgqbYq7disXC6q+081ZaQSBXWHKsNUlijsypYKliPk
+   UX6j7VM3EkDGGcxJatBzvF6sd7bM1GPHMXpIFRL19NnYSjJgZXyrGmh6T
+   P37hgmFIRgaF8VO1u4XZbioXQ7NiIvvXk4V5NTjsPVdbqRd6Qa8bc/zY3
+   03miQ/F5LNHVM36QEb9ETip0UFPiCznGcK5Ke5Xq5T3jY0/2i35IGgpaL
+   3uxNuY+sNEHw71Ov4ik8YtCLaguohNw59/DOpCFELGLn2gII/pvQOQgKR
+   UYyTau+jbeYtYYX8S4wImZlZEx/b2nC3qOg989JbLVaDVyub0H/XzY5fi
+   w==;
+X-CSE-ConnectionGUID: YCjk3vbhRfuOQIWuDttTfg==
+X-CSE-MsgGUID: cYCpXazZTHeyhZjmPITlSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="63959580"
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="63959580"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 17:18:49 -0800
+X-CSE-ConnectionGUID: RQg1tI2SQrqbtY4T0P0NKw==
+X-CSE-MsgGUID: tpvsrkJWSISkP+4EZjYRVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
+   d="scan'208";a="116674823"
+Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 17:18:46 -0800
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com,
+	linux-kernel@vger.kernel.org,
+	binbin.wu@linux.intel.com
+Subject: [PATCH v2 00/20] KVM: TDX: TDX "the rest" part
+Date: Thu, 27 Feb 2025 09:20:01 +0800
+Message-ID: <20250227012021.1778144-1-binbin.wu@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227001445.1099203-1-nphamcs@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 04:14:45PM -0800, Nhat Pham wrote:
-> Currently, we crash the kernel when a decompression failure occurs in
-> zswap (either because of memory corruption, or a bug in the compression
-> algorithm). This is overkill. We should only SIGBUS the unfortunate
-> process asking for the zswap entry on zswap load, and skip the corrupted
-> entry in zswap writeback. The former is accomplished by returning true
-> from zswap_load(), indicating that zswap owns the swapped out content,
-> but without flagging the folio as up-to-date. The process trying to swap
-> in the page will check for the uptodate folio flag and SIGBUS (see
-> do_swap_page() in mm/memory.c for more details).
+Hi,
 
-We should call out the extra xarray walks and their perf impact (if
-any).
+This patch series adds the support for EPT violation/misconfig handling and
+several TDVMCALL leaves, adds a bunch of wrappers to ignore the operations
+not supported by TDX guests, and the document.
 
-> 
-> See [1] for a recent upstream discussion about this.
-> 
-> [1]: https://lore.kernel.org/all/ZsiLElTykamcYZ6J@casper.infradead.org/
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
-> ---
->  mm/zswap.c | 94 ++++++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 67 insertions(+), 27 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 6dbf31bd2218..e4a2157bbc64 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -62,6 +62,8 @@ static u64 zswap_reject_reclaim_fail;
->  static u64 zswap_reject_compress_fail;
->  /* Compressed page was too big for the allocator to (optimally) store */
->  static u64 zswap_reject_compress_poor;
-> +/* Load or writeback failed due to decompression failure */
-> +static u64 zswap_decompress_fail;
->  /* Store failed because underlying allocator could not get memory */
->  static u64 zswap_reject_alloc_fail;
->  /* Store failed because the entry metadata could not be allocated (rare) */
-> @@ -996,11 +998,13 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
->  	return comp_ret == 0 && alloc_ret == 0;
->  }
->  
-> -static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> +static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  {
->  	struct zpool *zpool = entry->pool->zpool;
->  	struct scatterlist input, output;
->  	struct crypto_acomp_ctx *acomp_ctx;
-> +	int decomp_ret;
-> +	bool ret = true;
->  	u8 *src;
->  
->  	acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
-> @@ -1025,12 +1029,25 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
->  	sg_init_table(&output, 1);
->  	sg_set_folio(&output, folio, PAGE_SIZE, 0);
->  	acomp_request_set_params(acomp_ctx->req, &input, &output, entry->length, PAGE_SIZE);
-> -	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
-> -	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
-> +	decomp_ret = crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait);
-> +	if (decomp_ret || acomp_ctx->req->dlen != PAGE_SIZE) {
-> +		ret = false;
-> +		zswap_decompress_fail++;
-> +		pr_alert_ratelimited(
-> +			"decompression failed with returned value %d on zswap entry with swap entry value %08lx, swap type %d, and swap offset %lu. compression algorithm is %s. compressed size is %u bytes, and decompressed size is %u bytes.\n",
+This patch series is the last part needed to provide the ability to run a
+functioning TD VM.  We think this is in pretty good shape at this point and
+ready for handoff to Paolo.
 
-This is a very long line. I think we should break it into multiple
-lines. I know multiline strings are frowned upon by checkpatch, by this
-exist (see the warning in mem_cgroup_oom_control_write() for example),
-and they are definitely better than a very long line imo.
 
-> +			decomp_ret,
-> +			entry->swpentry.val,
-> +			swp_type(entry->swpentry),
-> +			swp_offset(entry->swpentry),
-> +			entry->pool->tfm_name,
-> +			entry->length,
-> +			acomp_ctx->req->dlen);
-> +	}
->  
->  	if (src != acomp_ctx->buffer)
->  		zpool_unmap_handle(zpool, entry->handle);
->  	acomp_ctx_put_unlock(acomp_ctx);
-> +	return ret;
+Base of this series
+===================
+This series is based on kvm-coco-queue up to the end of "TDX interrupts",
+plus one PAT quirk series. Stack is:
+ - '31db5921f12d ("KVM: TDX: Handle EXIT_REASON_OTHER_SMI")' from
+   kvm-coco-queue.
+ - PAT quirk series
+   "KVM: x86: Introduce quirk KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT" [0].
 
-Not a big deal but we could probably store the length in a local
-variable and move the check here, and avoid needing 'ret'.
 
->  }
->  
->  /*********************************
-> @@ -1060,6 +1077,7 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_NONE,
->  	};
-> +	int ret = 0;
->  
->  	/* try to allocate swap cache folio */
->  	si = get_swap_device(swpentry);
-> @@ -1081,8 +1099,8 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	 * and freed when invalidated by the concurrent shrinker anyway.
->  	 */
->  	if (!folio_was_allocated) {
-> -		folio_put(folio);
-> -		return -EEXIST;
-> +		ret = -EEXIST;
-> +		goto put_folio;
->  	}
->  
->  	/*
-> @@ -1095,14 +1113,17 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  	 * be dereferenced.
->  	 */
->  	tree = swap_zswap_tree(swpentry);
-> -	if (entry != xa_cmpxchg(tree, offset, entry, NULL, GFP_KERNEL)) {
-> -		delete_from_swap_cache(folio);
-> -		folio_unlock(folio);
-> -		folio_put(folio);
-> -		return -ENOMEM;
-> +	if (entry != xa_load(tree, offset)) {
-> +		ret = -ENOMEM;
-> +		goto delete_unlock;
-> +	}
-> +
-> +	if (!zswap_decompress(entry, folio)) {
-> +		ret = -EIO;
-> +		goto delete_unlock;
->  	}
->  
-> -	zswap_decompress(entry, folio);
-> +	xa_erase(tree, offset);
->  
->  	count_vm_event(ZSWPWB);
->  	if (entry->objcg)
-> @@ -1118,9 +1139,14 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
->  
->  	/* start writeback */
->  	__swap_writepage(folio, &wbc);
-> -	folio_put(folio);
->  
-> -	return 0;
-> +put_folio:
-> +	folio_put(folio);
-> +	return ret;
-> +delete_unlock:
-> +	delete_from_swap_cache(folio);
-> +	folio_unlock(folio);
-> +	goto put_folio;
+Notable changes since v1 [1]
+============================
+Patch "KVM: x86: Add a switch_db_regs flag to handle TDX's auto-switched
+behavior" is moved to "KVM: TDX: TD vcpu enter/exit" [2].
 
-I think I suggested a way to avoid this goto in v1:
-https://lore.kernel.org/lkml/Z782SPcJI8DFISRa@google.com/.
+Rebased after adding tdcall_to_vmx_exit_reason() in [3] and the way to
+get exit_qualification, ext_exit_qualification.
 
-Did this not work out?
+For EPT MISCONFIG, bug the VM and return -EIO.  The handling is deferred
+until tdx_handle_exit() because tdx_to_vmx_exit_reason() is called by
+'noinstr' code with interrupt disabled.
 
->  }
->  
->  /*********************************
-> @@ -1620,6 +1646,20 @@ bool zswap_store(struct folio *folio)
->  	return ret;
->  }
->  
-> +/**
-> + * zswap_load() - load a page from zswap
-> + * @folio: folio to load
-> + *
-> + * Returns: true if zswap owns the swapped out contents, false otherwise.
-> + *
-> + * Note that the zswap_load() return value doesn't indicate success or failure,
-> + * but whether zswap owns the swapped out contents. This MUST return true if
-> + * zswap does own the swapped out contents, even if it fails to write the
-> + * contents to the folio. Otherwise, the caller will try to read garbage from
-> + * the backend.
-> + *
-> + * Success is signaled by marking the folio uptodate.
-> + */
->  bool zswap_load(struct folio *folio)
->  {
->  	swp_entry_t swp = folio->swap;
-> @@ -1644,6 +1684,17 @@ bool zswap_load(struct folio *folio)
+Add SEPT local retry and wait for SEPT zap logic to provide a clean
+solution to avoid the blind SEPT retries.
 
-The comment that exists here (not visible in the diff) should be
-abbreviated now that we already explained the whole uptodate thing
-above, right?
+Morph the following guest requested exit reasons (via TDVMCALL) to KVM's
+tracked exit reasons:
+ - Morph PV CPUID to EXIT_REASON_CPUID
+ - Morph PV HLT to EXIT_REASON_HLT
+ - Morph PV RDMSR to EXIT_REASON_RDMSR
+ - Morph PV WRMSR to EXIT_REASON_WRMSR
 
->  	if (WARN_ON_ONCE(folio_test_large(folio)))
->  		return true;
->  
-> +	entry = xa_load(tree, offset);
-> +	if (!entry)
-> +		return false;
-> +
+Check RVI pending (bit 0 of TD_VCPU_STATE_DETAILS_NON_ARCH field) only for
+HALTED case with IRQ enabled in tdx_protected_apic_has_interrupt().
 
-A small comment here pointing out that we are deliberatly not setting
-uptodate because of the failure may make things more obvious, or do you
-think that's not needed?
+For PV RDMSR/WRMSR handling, marshall values to the appropriate x86
+registers to leverage the existing kvm_emulate_{rdmsr,wrmsr}(), and
+implement complete_emulated_msr() callback to set return value/code to
+vp_enter_args.
 
-> +	if (!zswap_decompress(entry, folio))
-> +		return true;
-> +
-> +	count_vm_event(ZSWPIN);
-> +	if (entry->objcg)
-> +		count_objcg_events(entry->objcg, ZSWPIN, 1);
-> +
->  	/*
->  	 * When reading into the swapcache, invalidate our entry. The
->  	 * swapcache can be the authoritative owner of the page and
-> @@ -1656,21 +1707,8 @@ bool zswap_load(struct folio *folio)
->  	 * files, which reads into a private page and may free it if
->  	 * the fault fails. We remain the primary owner of the entry.)
->  	 */
-> -	if (swapcache)
-> -		entry = xa_erase(tree, offset);
-> -	else
-> -		entry = xa_load(tree, offset);
-> -
-> -	if (!entry)
-> -		return false;
-> -
-> -	zswap_decompress(entry, folio);
-> -
-> -	count_vm_event(ZSWPIN);
-> -	if (entry->objcg)
-> -		count_objcg_events(entry->objcg, ZSWPIN, 1);
-> -
->  	if (swapcache) {
-> +		xa_erase(tree, offset);
->  		zswap_entry_free(entry);
->  		folio_mark_dirty(folio);
->  	}
-> @@ -1771,6 +1809,8 @@ static int zswap_debugfs_init(void)
->  			   zswap_debugfs_root, &zswap_reject_compress_fail);
->  	debugfs_create_u64("reject_compress_poor", 0444,
->  			   zswap_debugfs_root, &zswap_reject_compress_poor);
-> +	debugfs_create_u64("decompress_fail", 0444,
-> +			   zswap_debugfs_root, &zswap_decompress_fail);
->  	debugfs_create_u64("written_back_pages", 0444,
->  			   zswap_debugfs_root, &zswap_written_back_pages);
->  	debugfs_create_file("pool_total_size", 0444,
-> 
-> base-commit: 598d34afeca6bb10554846cf157a3ded8729516c
-> -- 
-> 2.43.5
+Skip setting of return code when the value is TDVMCALL_STATUS_SUCCESS
+because r10 is always 0 for standard TDVMCALL exit.
+
+Get/set tdvmcall inputs/outputs from/to vp_enter_args directly in struct
+vcpu_tdx. After dropping helpers for read/write a0~a3 in [3].
+
+Added back MTRR MSRs access, but drop the special handling for TDX guests,
+just align with what KVM does for normal VMs.
+
+Dropped tdx_cache_reg().
+
+Updated documents.
+
+
+TODO
+====
+Macrofy vt_x86_ops callbacks suggested by Sean. [4]
+
+
+Overview
+========
+EPT violation
+-------------
+EPT violation for TDX will trigger X86 MMU code.
+Note that instruction fetch from shared memory is not allowed for TDX
+guests, if it occurs, treat it as broken hardware, bug the VM and return
+error.
+(*New Updated*)
+SEPT local retry and wait for SEPT zap logic provides a clean solution to
+avoid the blind SEPT retries.
+
+EPT misconfiguration
+--------------------
+EPT misconfiguration shouldn't happen for TDX guests. If it occurs, bug the
+VM and return error.
+
+TDVMCALL support
+----------------
+Supports are added to allow TDX guests to issue CPUID, HLT, RDMSR/WRMSR and
+GetTdVmCallInfo via TDVMCALL.
+
+- CPUID
+  For TDX, most CPUID leaf/sub-leaf combinations are virtualized by the TDX
+  module while some trigger #VE.  On #VE, TDX guest can issue a TDVMCALL
+  with the leaf Instruction.CPUID to request VMM to emulate CPUID
+  operation.
+
+- HLT
+  TDX guest can issue a TDVMCALL with HLT, which passes the interrupt
+  blocked flag. Whether the interrupt is allowed or not is depending on the
+  interrupt blocked flag.  For NMI, KVM can't get the NMI blocked status of
+  TDX guest, it always assumes NMI is allowed.
+
+- MSRs
+  Some MSRs are virtualized by TDX module directly, while some MSRs will
+  trigger #VE when guest accesses them.  On #VE, TDX guests can issue a
+  TDVMCALL with WRMSR or RDMSR to request emulation in VMM.
+
+Operations ignored
+------------------
+TDX protects TDX guest state from VMM, and some features are not supported
+by TDX guest, a bunch of operations are ignored for TDX guests, including:
+accesses to CPU state, VMX preemption timer, accesses to TSC offset and 
+multiplier, setup MCE for LMCE enable/disable, and hypercall patching.
+
+
+Repos
+=====
+Due to "KVM: VMX: Move common fields of struct" in "TDX vcpu enter/exit" v2
+[2], subsequent patches require changes to use new struct vcpu_vt, refer to
+the full KVM branch below.
+
+It requires TDX module 1.5.06.00.0744 [4], or later as mentioned in [2].
+A working edk2 commit is 95d8a1c ("UnitTestFrameworkPkg: Use TianoCore
+mirror of subhook submodule").
+
+The full KVM branch is here:
+https://github.com/intel/tdx/tree/tdx_kvm_dev-2025-02-26
+
+A matching QEMU is here:
+https://github.com/intel-staging/qemu-tdx/tree/tdx-qemu-wip-2025-02-18
+
+
+Testing 
+=======
+It has been tested as part of the development branch for the TDX base
+series. The testing consisted of TDX kvm-unit-tests and booting a Linux
+TD, and TDX enhanced KVM selftests. It also passed the TDX related test
+cases defined in the LKVS test suite as described in: 
+https://github.com/intel/lkvs/blob/main/KVM/docs/lkvs_on_avocado.md
+
+
+[0] https://lore.kernel.org/kvm/20250224070716.31360-1-yan.y.zhao@intel.com
+[1] https://lore.kernel.org/kvm/20241210004946.3718496-1-binbin.wu@linux.intel.com
+[2] https://lore.kernel.org/kvm/20250129095902.16391-1-adrian.hunter@intel.com
+[3] https://lore.kernel.org/kvm/20250222014225.897298-1-binbin.wu@linux.intel.com
+[4] https://lore.kernel.org/kvm/Z6v9yjWLNTU6X90d@google.com
+[5] https://github.com/intel/tdx-module/releases/tag/TDX_1.5.06
+
+Binbin Wu (1):
+  KVM: TDX: Enable guest access to MTRR MSRs
+
+Isaku Yamahata (16):
+  KVM: TDX: Handle EPT violation/misconfig exit
+  KVM: TDX: Handle TDX PV CPUID hypercall
+  KVM: TDX: Handle TDX PV HLT hypercall
+  KVM: x86: Move KVM_MAX_MCE_BANKS to header file
+  KVM: TDX: Implement callbacks for MSR operations
+  KVM: TDX: Handle TDX PV rdmsr/wrmsr hypercall
+  KVM: TDX: Enable guest access to LMCE related MSRs
+  KVM: TDX: Handle TDG.VP.VMCALL<GetTdVmCallInfo> hypercall
+  KVM: TDX: Add methods to ignore accesses to CPU state
+  KVM: TDX: Add method to ignore guest instruction emulation
+  KVM: TDX: Add methods to ignore VMX preemption timer
+  KVM: TDX: Add methods to ignore accesses to TSC
+  KVM: TDX: Ignore setting up mce
+  KVM: TDX: Add a method to ignore hypercall patching
+  KVM: TDX: Make TDX VM type supported
+  Documentation/virt/kvm: Document on Trust Domain Extensions (TDX)
+
+Yan Zhao (3):
+  KVM: TDX: Detect unexpected SEPT violations due to pending SPTEs
+  KVM: TDX: Retry locally in TDX EPT violation handler on RET_PF_RETRY
+  KVM: TDX: Kick off vCPUs when SEAMCALL is busy during TD page removal
+
+ Documentation/virt/kvm/api.rst           |  13 +-
+ Documentation/virt/kvm/x86/index.rst     |   1 +
+ Documentation/virt/kvm/x86/intel-tdx.rst | 255 ++++++++++++
+ arch/x86/include/asm/shared/tdx.h        |   1 +
+ arch/x86/include/asm/vmx.h               |   2 +
+ arch/x86/kvm/vmx/main.c                  | 482 ++++++++++++++++++++---
+ arch/x86/kvm/vmx/posted_intr.c           |   3 +-
+ arch/x86/kvm/vmx/tdx.c                   | 381 +++++++++++++++++-
+ arch/x86/kvm/vmx/tdx.h                   |  16 +
+ arch/x86/kvm/vmx/tdx_arch.h              |  13 +
+ arch/x86/kvm/vmx/x86_ops.h               |   6 +
+ arch/x86/kvm/x86.c                       |   1 -
+ arch/x86/kvm/x86.h                       |   2 +
+ 13 files changed, 1113 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/virt/kvm/x86/intel-tdx.rst
+
+-- 
+2.46.0
+
 
