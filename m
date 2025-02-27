@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-535653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E820A47599
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:57:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBB1A475B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:00:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAE7170833
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F194F188A301
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73372153C5;
-	Thu, 27 Feb 2025 05:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE6221C189;
+	Thu, 27 Feb 2025 06:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2bnllZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0YN2OtI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361401C5D6E;
-	Thu, 27 Feb 2025 05:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626321B9DD;
+	Thu, 27 Feb 2025 06:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740635783; cv=none; b=BBOEsmc15D+pEXaZO1A7IFTE+wQp/fCVDQtZcUv/k6jskpx847fVyb9p/jBeCU5laFCrHrsZqjlrjqVSAfgv88gxuxu4R5jJ56yB/b2enZBkwRvo1ptEbD6QpIcyVBcQXOZh3m6tIGN0MGZEXA6gksTkGd/r02hsvTvNl+q+Y90=
+	t=1740636035; cv=none; b=tG5v+Tk2evrPYGOruozB6qwAaM+tSjXRheCD9cU2gf7KfdL4Dn3S2olHqzE0csxpiKfsJId82ArkYdWK2jlgTD646omdBffJ0OnjFQyvoBrXZmb3VOc9/iqdAApMPR1n+AtqGRrRYIX1ZQyJrSa6zN4W8PjuY+CIUrWlRq2KdSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740635783; c=relaxed/simple;
-	bh=Qs9KlJ2e3nsU7Zdb+mxSOy0BPAa0JMo2sv/AdzdVSww=;
+	s=arc-20240116; t=1740636035; c=relaxed/simple;
+	bh=wghXbd5IbpTMH6PzuvfZWZWny5yH0iTqVnlU3Razxj8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7+jTVxi4tMIwCXTVc6+YflOnSfHeVC5APeYQxqe2hn23DMXXt5Zc8CyZQo6KqDaAPVxDL/3BCOFEEDpOYyy2RsHEuE4nou9G1qo24dGhavwgK193+64ug9hTwie7L+kvUH40k8lW6SzqrdbWzEZoMSM7o/4CAxKBNFDPeobP/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2bnllZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C31C4CEDD;
-	Thu, 27 Feb 2025 05:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740635782;
-	bh=Qs9KlJ2e3nsU7Zdb+mxSOy0BPAa0JMo2sv/AdzdVSww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W2bnllZQv48CZI9ThMiGQAP/KEvinCY9XJE+zMx6WpY54EUp8pBZa9gICGPovWZB6
-	 ofX2cm9UwYn5TeNXRHIBqLvEVKHfBZzeO5aqAJCV6HfXF+V2ZvpPtTz3Jwvwl1mm1g
-	 oPUmuXlGRlf/b+NEJiGOpl8BzunbG16GEyFH//aDJIgyZ2OF+HD56fW1G4JaPl57Fp
-	 EC+ck1XIiYVEKGwoko39TJ999jdQepDp39ikB+qRnIy4FVS5ZLuiWwdoAj8Fcu7smp
-	 IQth4DKd2pDrxKGzGyQttW1PLrxMsIsA98iEOGjA/Fmdnpzo6KORiM1ZFDVpYT86HD
-	 aets8RZZaQ8RQ==
-Date: Thu, 27 Feb 2025 11:26:17 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC
- dependency)
-Message-ID: <Z7/+gXVFVzGadc4z@vaman>
-References: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnIu8e4qaZSZyPFiCBDlnmQ1QhV4fk+rouN+0vTY1+xv9AvwPgCS5a/OPA7rcnNkykB/7z/UDF6/GHxaDzlcjsnRYadH0XYp51xtyOhAmVooSH64Td+CgIy8FMQwaToyYKAT9quaLdYNqCTEKdFiqK8DU+hbo9N6/cjeUgqPXMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0YN2OtI; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740636034; x=1772172034;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wghXbd5IbpTMH6PzuvfZWZWny5yH0iTqVnlU3Razxj8=;
+  b=F0YN2OtI50FOUioZ28r4RCf+Xytmjy82+mBMfPeytXqU9tahYG04wFZ9
+   EMfQdiXPqlaAVfZoiakmkuN8+IP/h86fMZIvSIusAcfKJoQSST/tgY8Sm
+   W/+D3d8g3BEA9SE/faE5rYIindLNxA23a1zaChPBycFKmZLKDhIUJns5c
+   7Y5DY2FV3frDkf3G+21dBXOJUiOdYX4rQy78kPaREhpMcmrOST1Up7q+2
+   aX3psAHbddFLfOqEln9ePoeEM5b2188Lc3NTh92gQC7fLt2rzTexWcEuv
+   qdsnCZkXqzBH3I56ijaGVBmRh35BuOqxmLC8eW9ROZ2CX24EZCUjXCaps
+   w==;
+X-CSE-ConnectionGUID: 3/e05AYDTTizWMmtuN2xDA==
+X-CSE-MsgGUID: tQH+W898TSa+RUgBRmopdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52149070"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="52149070"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:00:26 -0800
+X-CSE-ConnectionGUID: tzi6/lT1TmCx8F+X9J7WyA==
+X-CSE-MsgGUID: 8rgcTR3WTLO693wDEZ0llA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="116719266"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:00:22 -0800
+Date: Thu, 27 Feb 2025 06:56:39 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shahar Shitrit <shshitrit@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>
+Subject: Re: [PATCH net-next 3/4] net/mlx5: Expose crr in health buffer
+Message-ID: <Z7/+lxTndCRC6OtE@mev-dev.igk.intel.com>
+References: <20250226122543.147594-1-tariqt@nvidia.com>
+ <20250226122543.147594-4-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,74 +82,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250226122543.147594-4-tariqt@nvidia.com>
 
-Hi Krzysztof,
-
-On 15-02-25, 10:41, Krzysztof Kozlowski wrote:
-
-Can you revise the title to "phy: exynos5-usbdrd: dont depend on type-c"
-or something relevenant which describes the change rather than the
-Fix something!
-
-> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
-> USB DRD PHY does not really depend on Type-C for these devices at all.
-> Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
-> missing for exynos_defconfig and as result Exynos5422-based boards like
-> Hardkernel Odroid HC1 failed to probe USB.
+On Wed, Feb 26, 2025 at 02:25:42PM +0200, Tariq Toukan wrote:
+> From: Shahar Shitrit <shshitrit@nvidia.com>
 > 
-> Drop incorrect dependency and rely on module to be reachable by the
-> compiler.
-
-Changelog lgtm
-
+> Expose crr bit in struct health buffer. When set, it indicates that
+> the error cannot be recovered without flow involving a cold reset.
+> Add its value to the health buffer info log.
 > 
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Closes: https://krzk.eu/#/builders/21/builds/6139
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
-> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
+> Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 > ---
+>  drivers/net/ethernet/mellanox/mlx5/core/health.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> Patch for issue in linux-next
-> ---
->  drivers/phy/samsung/Kconfig              | 1 -
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
->  2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index 7fba571c0e2b..e2330b0894d6 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
->  	tristate "Exynos5 SoC series USB DRD PHY driver"
->  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->  	depends on HAS_IOMEM
-> -	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
-
-So how would this dependency be sorted..?
-
->  	depends on USB_DWC3_EXYNOS
->  	select GENERIC_PHY
->  	select MFD_SYSCON
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index ff2436f11d68..e8a9fef22107 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -1456,7 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+> index 665cbce89175..c7ff646e0865 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+> @@ -96,6 +96,11 @@ static int mlx5_health_get_rfr(u8 rfr_severity)
+>  	return rfr_severity >> MLX5_RFR_BIT_OFFSET;
+>  }
+>  
+> +static int mlx5_health_get_crr(u8 rfr_severity)
+> +{
+> +	return (rfr_severity >> MLX5_CRR_BIT_OFFSET) & 0x01;
+> +}
+> +
+>  static bool sensor_fw_synd_rfr(struct mlx5_core_dev *dev)
 >  {
->  	int ret;
->  
-> -	if (!IS_ENABLED(CONFIG_TYPEC))
-> +	if (!IS_REACHABLE(CONFIG_TYPEC))
->  		return 0;
->  
->  	if (device_property_present(phy_drd->dev, "orientation-switch")) {
-> -- 
-> 2.43.0
+>  	struct mlx5_core_health *health = &dev->priv.health;
+> @@ -442,12 +447,15 @@ static void print_health_info(struct mlx5_core_dev *dev)
+>  	mlx5_log(dev, severity, "time %u\n", ioread32be(&h->time));
+>  	mlx5_log(dev, severity, "hw_id 0x%08x\n", ioread32be(&h->hw_id));
+>  	mlx5_log(dev, severity, "rfr %d\n", mlx5_health_get_rfr(rfr_severity));
+> +	mlx5_log(dev, severity, "crr %d\n", mlx5_health_get_crr(rfr_severity));
+>  	mlx5_log(dev, severity, "severity %d (%s)\n", severity, mlx5_loglevel_str(severity));
+>  	mlx5_log(dev, severity, "irisc_index %d\n", ioread8(&h->irisc_index));
+>  	mlx5_log(dev, severity, "synd 0x%x: %s\n", ioread8(&h->synd),
+>  		 hsynd_str(ioread8(&h->synd)));
+>  	mlx5_log(dev, severity, "ext_synd 0x%04x\n", ioread16be(&h->ext_synd));
+>  	mlx5_log(dev, severity, "raw fw_ver 0x%08x\n", ioread32be(&h->fw_ver));
+> +	if (mlx5_health_get_crr(rfr_severity))
+> +		mlx5_core_warn(dev, "Cold reset is required\n");
+I wonder if it shouldn't be right after the print about crr value to
+tell the user that cold reset is required because of that value.
 
--- 
-~Vinod
+Patch looks fine, thanks.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+
+>  }
+
+>  
+>  static int
+> -- 
+> 2.45.0
 
