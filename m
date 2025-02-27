@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-536379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E05A47EE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C7DA47EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56CE3A4FB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFFA179274
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9440322F38C;
-	Thu, 27 Feb 2025 13:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0213E22F38E;
+	Thu, 27 Feb 2025 13:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpjlQW8z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cmo0FOmm"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0044422171A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF9422D4F4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740662442; cv=none; b=IFyQQCpuWdAnuAIFOSYExuSA8Lde0CyX98xlTvuZ51n3qQY52hpXJbxZJXrzChs9V/DCcQil8Ralo8qMXPdr4KuQ/pfaPf7Hz/QVzKQHKm8DQvOs/d3Sy7aBXZAk1B1H/NnNf33bQud6ezwE/HK5sTxGdsrbedDIe1A6Fch12tE=
+	t=1740662448; cv=none; b=KOCPimC1BRA0O+OUKdfO4w8oBd/bXN3eyXxH0ySZ8tWzL7jqz72nDaA6/xQ6iql0hzwxoBf0i0ntpQhLRJp/1o6CVVHjv+g3+4EfAg3bNWEv1FLJgCNuR0BK34aa57HXbM2+CoJruW4Mhh485fkXdO+Md99+7DP9wEKnbdARqcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740662442; c=relaxed/simple;
-	bh=FLYX4MtQxNdE09SlMrP22m+WXbicdAzLZnnz94YMMU8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gdnsJhy1nrTEw25gfHWsg6kMsYZMoLrn1EDxO920CP9oKBPr3/NAiyWENR/khDEjVcbGxSuNnGmOMXAC1XaTtFSS/7CHloBLzje3AfrZ+I/QsiCfbfKoxU73ZC8OnxMPk/LNswq9QyzF7gz/HY8qCAUyB2qKuSF0wzzzaGtL968=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpjlQW8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAE0C4CEDD;
-	Thu, 27 Feb 2025 13:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740662441;
-	bh=FLYX4MtQxNdE09SlMrP22m+WXbicdAzLZnnz94YMMU8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QpjlQW8zNpmJ08WB9JTBJqlF36PognoNnSxjJT4tKa/l4ZaFM4w5dpNn+VhYJjU5s
-	 OEotBr056p3g1inqlXhP9bDQpWQ9686G5QktZbrtWl/m0Fi2c3OGLt1gHEUmuqqzyW
-	 7M2nS6lvIxRpR6Kus5NMH92N8IDOYpiX+fF00t3gvEn7Bx+0k83cm5qeRokiID3461
-	 3EBuBvfN/aEO8C3a/C10HFjRnfka4BhCcUdtH1r4OnDqVeLg1nXJ9Go8txXaqCZS5B
-	 MMuls9Q5smhRdLfS+6lbTeGPVAiA9jHTeu/9uFKMMmDSVqQqNxUmTuG6PHSVYO70or
-	 rE82cHC1EXnPQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Vishal Sagar <vishal.sagar@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: xlnx: zynqmp_dpsub: fix Kconfig dependencies for ASoC
-Date: Thu, 27 Feb 2025 14:20:32 +0100
-Message-Id: <20250227132036.1136600-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740662448; c=relaxed/simple;
+	bh=4B317E33tuHgdv4ZtlRKJE7smFPGAFVLSWP8bLWNHVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UL9pfmpNrDXOALSqUiSA6pURioxse1YndOsEHWL3VTDTUlbSinnhRJkRxmqElCOUYS4X8i2HvmJl09VNOQclY+VSk11PjysnRS0ZN+fRT9E+9CHvQy4dVz/j0FuoLs6QCNMm3QHKwe//aSyHqG1jofSxaGe3tKFLVkRiyicQJXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Cmo0FOmm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-222e8d07dc6so17063035ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740662446; x=1741267246; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k0X5NRD7qbqiDiJP/6CHajV83B5iot3wBBgQ9wxynos=;
+        b=Cmo0FOmm42yJEi9XFzkGwBoGSwAGvjXWT7PItoxoSvf/CWwj/hs7HvzAIcNzhBihJJ
+         zN6vyVkPrp9f3xuaVWdhF/32UfbWvPbgZYyAw+upICHXliMcJgILlp+D/oRe3GVNAJRM
+         o7FBPj89rynq1obKomR88CMQVstInnJNi47yU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740662446; x=1741267246;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k0X5NRD7qbqiDiJP/6CHajV83B5iot3wBBgQ9wxynos=;
+        b=mltZhb9ngAzsLB6k/qqDZmxqDiu/kIdlgQ3fnkOsMe6L1xZkEbuAS5PcbPmUSQoOsH
+         RriwNicPkoeXCcSnzzTCIex9nrU1M5Mm4NFVYlaa8Sq03Z4hYg4DbcrSmr9EuxB6tIDf
+         nkf+8wy74dak3S3cYjdMPUJrLumDDLtApz9+SqXQdEusxDnZQFqsowlRbWW6TW/kxQSY
+         +3MiNAHjdd528xRK9kBOqeUG+oJGc9eQJiPOPNgqfqii5dUXYu3pGwbEYqvxti+tvGAH
+         LV0zkxGyDK2VUTUvVbaUUwHhyjoOamScOgmVKLwzg/5IWt45KDrgTFLhagxIVHzel6DE
+         pp/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXU9FOAx8+z70pwo1AXsbiRQdEfc9FRf0g4jzUrR/8BvhDoU4iphlFbbu29KvlpYok5wXymg2byUTcQQAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyADSLGcNDFeyCucF72IqAqdz6K/l8tC2EXHTG40/3eJzUYIee
+	Bcjd30Jn1+2em2a30sqnh3F0V1DHm/DWzD/1lF+BRMGQlyEKFqf4wyZSPHZprg==
+X-Gm-Gg: ASbGncsEOxsEOkdaFFCRKqzry1bqWHF3zYwlcIfbxgDD/FIGYhDnP/rvc7WHKoDY4/o
+	aO1DoOc97AIR5xEBqDfH/AstzZHtNGv6Aet9WXDCfV2tPqW7ExOu3Xj3ypxRAqVuJxcv7kVMpQV
+	4fRStlM56s2761sivsayxAorXHC9l8ful+0JW/GonBkOdU1Xo/WDceaInHqp7+onNv+cqhA3tC7
+	gB3zcYVjetbj7FEDXKrQxn/ubr7LzrTiKA07AssYf5w/hkru+erHQShrbNS+ZPH6ZBq6Rcwt4Xd
+	OoQyUuQ6zgrAodXHtN8SYEDx/a7Lug==
+X-Google-Smtp-Source: AGHT+IG++fNxUGLMn5iiBI3kkDvuQHaieV5JWml7A7GasfzSnf9frDmJlQk1q3iU9FLDaJxew95ddA==
+X-Received: by 2002:a17:903:1984:b0:221:751f:cfbe with SMTP id d9443c01a7336-2234ad4e189mr61357585ad.19.1740662446124;
+        Thu, 27 Feb 2025 05:20:46 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:a9c0:1bc1:74e3:3e31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fae29sm13965295ad.95.2025.02.27.05.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:20:45 -0800 (PST)
+Date: Thu, 27 Feb 2025 22:20:39 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 01/17] zram: sleepable entry locking
+Message-ID: <toahcdrrcijxi5atfblz5q6o47j4mbkpe2lpvbbp5yczsdj6j2@2lbc43nhdbgt>
+References: <20250221222958.2225035-1-senozhatsky@chromium.org>
+ <20250221222958.2225035-2-senozhatsky@chromium.org>
+ <20250224081956.knanS8L_@linutronix.de>
+ <i2kgeeehfwzwo22vazakcq4at2m223nebb2xfrqfvsgawpmqya@zjhqhjshvhi3>
+ <20250227120532.OsZr4v2A@linutronix.de>
+ <irpjhnu7utkhf4dds5ghklsbdug6nf32ulsp52ibvym6t3wqfg@pqu7w6uvgbvw>
+ <mwpl64zfj4zlv5bwysfzryjpnh6lg5tridhya3t7ly2ax2vt7x@jhmdmh7gwrmn>
+ <20250227131253.T_S_Icyt@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227131253.T_S_Icyt@linutronix.de>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On (25/02/27 14:12), Sebastian Andrzej Siewior wrote:
+> > > I see.  I thought that they key was "shared" between zram meta table
+> > > entries because the key is per-zram device, which sort of made sense
+> > > (we can have different zram devices in a system - one swap, a bunch
+> > > mounted with various file-systems on them).
+> 
+> Yes. So usually you do spin_lock_init() and this creates a key at _this_
+> very position. So every lock initialized at this position shares the
+> same class/ the same pattern.
+> 
+> > So the lock class is registered dynamically for each zram device
+> > 
+> > zram_add()
+> > 	lockdep_register_key(&zram->lock_class);
+> > 
+> > and then we use that zram->lock_class to init zram->table entries.
+> > 
+> > We unregister the lock_class during each zram device destruction
+> > 
+> > zram_remove()
+> > 	lockdep_unregister_key(&zram->lock_class);
+> > 
+> > Does this still put zram->table entries into different lock classes?
+> 
+> You shouldn't need to register and unregister the lock_class. What you
+> do should match for instance j_trans_commit_map in fs/jbd2/journal.c or
+> __key in include/linux/rhashtable.h & lib/rhashtable.c.
 
-The new audio code fails to build when sounds support is in a loadable
-module but the GPU driver is built-in:
+I see, thank you.
 
-x86_64-linux-ld: zynqmp_dp_audio.c:(.text+0x6a8): undefined reference to `devm_snd_soc_register_card'
-x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1bc): undefined reference to `snd_soc_info_volsw'
-x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f0): undefined reference to `snd_soc_get_volsw'
-x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f4): undefined reference to `snd_soc_put_volsw'
-
-Change the Kconfig dependency to disallow the sound support in this
-configuration.
-
-Fixes: 3ec5c1579305 ("drm: xlnx: zynqmp_dpsub: Add DP audio support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/xlnx/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/xlnx/Kconfig b/drivers/gpu/drm/xlnx/Kconfig
-index dbecca9bdd54..cfabf5e2a0bb 100644
---- a/drivers/gpu/drm/xlnx/Kconfig
-+++ b/drivers/gpu/drm/xlnx/Kconfig
-@@ -22,6 +22,7 @@ config DRM_ZYNQMP_DPSUB_AUDIO
- 	bool "ZynqMP DisplayPort Audio Support"
- 	depends on DRM_ZYNQMP_DPSUB
- 	depends on SND && SND_SOC
-+	depends on SND_SOC=y || DRM_ZYNQMP_DPSUB=m
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	help
- 	  Choose this option to enable DisplayPort audio support in the ZynqMP
--- 
-2.39.5
-
+Let me try static keys then (in zram and in zsmalloc).  Will need
+a day or two to re-run the tests, and then will send out an updated
+series.
 
