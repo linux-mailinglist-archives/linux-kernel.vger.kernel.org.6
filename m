@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-537083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8282BA487E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:35:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E41DA487E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495E218861D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453ED166664
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD681DF270;
-	Thu, 27 Feb 2025 18:35:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C367C17A303
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6E1DF270;
+	Thu, 27 Feb 2025 18:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JF3XOS5M"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8054717A303;
+	Thu, 27 Feb 2025 18:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681340; cv=none; b=AiJmnTwnGozm36jkMBfC0UNWnSRnWPXRIlYY7EKCpjegK83DSop6saG82zQD0Why8JwG9eaAi+QLyH9wZkTLy47XUqFi02yfMVt+NJMQSxnIM/UAV7MeZsRxtxca/NYeIzJyzxentOT2c58aENT1SpfseeL/O8BZqaulPKa8Y0A=
+	t=1740681398; cv=none; b=IeK4Rkzo6C3t9XT5EF3a3/M55c8iMAQqg4WcrfBQYQT0EgnHzG8U8PLHY2+Fe3QF9dx0VFAwmQW2zhg8cPjRvpjJwvlAk5QiPiaw1m7l9wXtuIitS2LjfvjRmrC6youYcP02TxSIAdFAB5GIUT7/VPGU57luc0KryVTUtfipkDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681340; c=relaxed/simple;
-	bh=9ByLine/BML7cSO8X0cHw0zBxpNQCbOBi+Xn8+HaENE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsRdZJKFdEYrW8zLXLtJ0JlhJ3WBjNVNKEo6Nid3n/yADxENLMJq285MDkhoKnoP27jtHJyFqPcg2gbdpfnrgmGgDOiZKfejvxZZj9sSjX5jUWsoMeP2+4m2nnKJmNTvA+jyOQ7sJcYL/Rlpxg2ufWsNuxkIMEHcMnfmbMR8ux4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77A751516;
-	Thu, 27 Feb 2025 10:35:53 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EDB93F5A1;
-	Thu, 27 Feb 2025 10:35:31 -0800 (PST)
-Date: Thu, 27 Feb 2025 18:35:26 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, catalin.marinas@arm.com,
-	will@kernel.org, oleg@redhat.com, sstabellini@kernel.org,
-	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
-	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, kees@kernel.org, aliceryhl@google.com,
-	ojeda@kernel.org, samitolvanen@google.com, masahiroy@kernel.org,
-	rppt@kernel.org, xur@google.com, paulmck@kernel.org, arnd@arndb.de,
-	puranjay@kernel.org, broonie@kernel.org, mbenes@suse.cz,
-	sudeep.holla@arm.com, guohanjun@huawei.com, prarit@redhat.com,
-	liuwei09@cestc.cn, Jonathan.Cameron@huawei.com, dwmw@amazon.co.uk,
-	kristina.martsenko@arm.com, liaochang1@huawei.com, ptosi@google.com,
-	thiago.bauermann@linaro.org, kevin.brodsky@arm.com,
-	Dave.Martin@arm.com, joey.gouly@arm.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -next v6 8/8] arm64: entry: Switch to generic IRQ entry
-Message-ID: <Z8CwbmCXguCEfJvx@J2N7QTR9R3>
-References: <20250213130007.1418890-1-ruanjinjie@huawei.com>
- <20250213130007.1418890-9-ruanjinjie@huawei.com>
- <xhsmh4j0fl0p3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1740681398; c=relaxed/simple;
+	bh=qGam9q2Wb8/VVNVvHNeMZHt9Ml2j0ZC7vdhzuxX/ZWE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RrEN5472Hj9+KYRzha651ewEdpezIE6Euq6Bx49F9mBSrv0NQtRs5kP6K4JpMhW5cjZdeuJ55d9q8i0Bf5upwNKxtlWb/tK7XZigU+p/eyaYKvealkJ/oeM1nXnTnfRd1gBgJtcwBceXmX2ex6NAmhU/GBuno/4qnQXQvZ1wWSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JF3XOS5M; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2211acda7f6so31022465ad.3;
+        Thu, 27 Feb 2025 10:36:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740681397; x=1741286197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QpIlxxPEai/SDn4PIrxxbnvGT1Avpr1LrIq94eXJgOg=;
+        b=JF3XOS5MdT6qrfAfRw7ZDLUPoRT7pul9MyVtrnVxeeV+ZwoTpJKwVMPJPP5YAPOx5a
+         raORxgmAUw1VkT5M5/TyHLODNZK/03tfGLmqbsoXb+Ns8GHvSk7HUWNWwSkD2psN7nJ0
+         /kH2WzOyhEvJHMd4mGWmfcXRNa7thCxd17hTFxgHmNSAbblSpAWNYX+piskmuIZzVTVn
+         LTnpBcUTOjH4QE7Yw2ppF8J/BuK7pOjVhnP/PVnXoqGv5lkovFkzLjIsKFSMkaNRzXkw
+         8JH/o58AJeLT+nj55DMtPpuG0FttOy1GSdLMMsItYYsDaufp2+zufNWe1StTcZLC/rSC
+         G8ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740681397; x=1741286197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QpIlxxPEai/SDn4PIrxxbnvGT1Avpr1LrIq94eXJgOg=;
+        b=DrmCNEGBLPiEx7aRc5D7G7LFnumWrxQEDIiIQBmJPWo+awPmVQ7AnFBAHSy/+jfaVO
+         yO0CGzZRNSsc54XQIPZPUeYCSK0pLZcxwopX5FiUKDHUt6WYLo3iV/hzQ9e1mqsm+YQW
+         q97G+iyKa7ZL7SazlzstWj4KAffjLxVVlfCRK1qA9doOUb9QoG6dq1d8Jcwyd0gq4qwL
+         JXk5Wca/SaSEHeNIlIoLC1tsADysDPNbVc1hY+HmBQBQm6WgWXFaim6SebJamH6nGCjb
+         nAjDTnUSVxwnMN5zo2hLC4Mt9oFV/8vkSF+qe4432wIQi8dGaAFLN0JhZ8ag8Y8znZuP
+         YREw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBcYeurs6He42xov02gTP68zPO6vbETnpoygD8uhoiCvZaTncBWdoBkjFO29BCsZ659HstqVJG9+pwpss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPEOPiwWOutJnf9EqUAx4Djyn0Bg0AKA+ze7XtZc3hytlzPDeT
+	qNPqhCJQHrgt7tKMCLGCOCwXl2nMftCvdujOCw1/E5IODPbEYEaB5t9KWQ==
+X-Gm-Gg: ASbGncsBgOWdtbkiqbBDnbmSpdJ7irih3isiiyOFqM7MB+DRpufEfcpc1QNHXJWT/CH
+	DLzi6narmIAsm2fRjrJxKgFYhkZKUIuj2XUtOaWhnzvBXcJClkoFqKsg0S56uFpI6qnh1GLOkfp
+	GGSVYeDfzjqGK01FjOUnLU26P/N5skrIAErQVhs0TOyhpeRHL7SwPohsCFiCW2WQF2z1JeWENCv
+	BJxPe1yuaA93hG+EJuF2K1f6ERDXdGJCxi48NJBzx8F/hI23+UcU5r/zm1/4qMgBUo63KmLYskb
+	H4WLr34Lp5FxEM3chZN7tVq8CP2ZWpR7y8Eg
+X-Google-Smtp-Source: AGHT+IG6rRWnF57hS836EW9gX5+d7s9O45VdwXJEMzi2XPiXXEc1SPVloTwINp9oRbk1GJfJ7mv4pw==
+X-Received: by 2002:a05:6a20:c998:b0:1ee:c7c8:cb0 with SMTP id adf61e73a8af0-1f2f4e72965mr200189637.38.1740681396572;
+        Thu, 27 Feb 2025 10:36:36 -0800 (PST)
+Received: from embed-PC.. ([2401:4900:1cb5:84b:96dd:21a7:7ff3:7964])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf29e9sm1831809a12.10.2025.02.27.10.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 10:36:36 -0800 (PST)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: Fix Macro name
+Date: Fri, 28 Feb 2025 00:06:28 +0530
+Message-Id: <20250227183628.7915-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmh4j0fl0p3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 07:08:56PM +0100, Valentin Schneider wrote:
-> On 13/02/25 21:00, Jinjie Ruan wrote:
-> > Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
-> > to use the generic entry infrastructure from kernel/entry/*.
-> > The generic entry makes maintainers' work easier and codes
-> > more elegant.
-> >
-> > Switch arm64 to generic IRQ entry first, which removed duplicate 100+
-> > LOC and make Lazy preemption on arm64 available by adding a
-> > _TIF_NEED_RESCHED_LAZY bit and enabling ARCH_HAS_PREEMPT_LAZY.
-> 
-> Just a drive-by comment as I'm interested in lazy preemption for arm64;
-> this series doesn't actually enable lazy preemption, is that for a
-> follow-up with the rest of the generic entry stuff?
-> 
-> From a quick glance, it looks like everything is in place for enabling it.
+Add missing underscore in PCI_CFGA_BUS macro definition for consistency.
 
-Sorry, there's been some fractured discussion on this on the
-linux-rt-users list:
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219744
 
-  https://lore.kernel.org/linux-rt-users/20241216190451.1c61977c@mordecai.tesarici.cz/
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ arch/mips/include/asm/mach-rc32434/pci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The TL;DR is that lazy preemption doesn't actually depend on generic
-entry, and we should be able to enable it on arm64 independently of this
-series. I'd posted a quick hack which Mike Galbraith cleaned up:
+diff --git a/arch/mips/include/asm/mach-rc32434/pci.h b/arch/mips/include/asm/mach-rc32434/pci.h
+index 3eb767c8a4ee..e17ce82d02ba 100644
+--- a/arch/mips/include/asm/mach-rc32434/pci.h
++++ b/arch/mips/include/asm/mach-rc32434/pci.h
+@@ -167,7 +167,7 @@ struct pci_msu {
+ #define PCI_CFGA_DEV		0x0000f800
+ #define PCI_CFGA_DEV_INTERN	0
+ #define PCI_CFGA_BUS_BIT	16
+-#define PCI CFGA_BUS		0x00ff0000
++#define PCI_CFGA_BUS		0x00ff0000
+ #define PCI_CFGA_BUS_TYPE0	0
+ #define PCI_CFGA_EN		(1 << 31)
 
-  https://lore.kernel.org/linux-rt-users/a198a7dd9076f97b89d8882bb249b3bf303564ef.camel@gmx.de/
+--
+2.34.1
 
-... but that was never posted as a new thread to LAKML.
-
-Would you be happy to take charge and take that patch, test it, and post
-it here (or spin your own working version)? I was happy with the way it
-looks but hadn't had the time for testing and so on.
-
-I expect that we'll merge the generic entry code too, but having them
-separate is a bit easier for bisection and backporting where people want
-lazy preemption in downstream trees.
-
-Mark.
 
