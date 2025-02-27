@@ -1,217 +1,195 @@
-Return-Path: <linux-kernel+bounces-536356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E49A47E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:07:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02928A47E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC2116F298
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA147188944D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E4A22F174;
-	Thu, 27 Feb 2025 13:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B63622F14D;
+	Thu, 27 Feb 2025 13:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XCEEYepn"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MW+rBpWZ"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CF122E3EC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE79521ABBE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661649; cv=none; b=P8IX4o1Np2N4IMc3U7IMqmtyKD6YJQiHVZmHcnphtGhmdS5hRoQbxad0710PjhfXL3r5nSkSWjwF/J61CdWMvq1pQqmz9eGcCBQobXR99/sXOV8JZ+JnMyYlUj7nz7B7gC1yVd6b4Gwl2Xr6u9zChqIqxR82ramboDdjc5hr6fk=
+	t=1740661717; cv=none; b=hDu4nL5VTeqiVkuFQZcf5a3sZr6TUFkAjYKg2QC9DR9oWSpuqBmdwDu5VX6xH4EiHDD/UAM598IauSBZ3AqF4wZKCj/mIaaAUjmd9COfl7VKYFXHr4GGDXTgauPOmbUFOTwDj5XznJV4yZnNIdAR5/eStvyEYb0tYwPt+OGsggo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661649; c=relaxed/simple;
-	bh=XL5kn7VGM3DLfqXNKKS9zls2n6nLce6SliFfWaxMstc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EDw/ylnaPmdFxx//s+vy2T6j4wnH7CHf7MIXQ2IWaJK7FNrHfDBDyeG5PIX1m/V13H3auIlvLcXxyIMnpgHLsD6wyjoOYkhETGX2aMoiSZf55uGhl3L3mpPGwz6qWExdO7mWdJfP4vBJGLW4sAbR1pN/l5mMiEs+8p9FtF1I9uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XCEEYepn; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e4b410e48bso1360347a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:07:26 -0800 (PST)
+	s=arc-20240116; t=1740661717; c=relaxed/simple;
+	bh=XVHlC8x3itEURXt5LJzCblyJmCQ+leneZrT/azQ6zrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgWp6kBCe0X6sVe2vT46bP4xPqNd8tSR0g62dIJBGplTl4zHHApPvOifGD+6WrvhFCJdYoQDZR0kUPirblrKBKJX14iiTPF2vQjLOU77k+577Wkylz/uWyd099ZWPgdEBTfK051+rSkk8zR3czgvd/i00fr7pK2mSOAXECkzrAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MW+rBpWZ; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb7520028bso114570866b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:08:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740661645; x=1741266445; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JTyMrNqruIfN80FNenPnWbn1JyAg6VWCPasiwyXp9FI=;
-        b=XCEEYepnOtcYlzOvGQVa5HBoZE+sD2IyfaRSWs3zkhagsWaT5zyd9SrPWU57iI7yDy
-         oq6CnHQ6jSDQjFJ8N6qJUFBk7aej0IU+7tjmB4U5lc5S7i4MZd5f5o1VB1eMbJnvwCfQ
-         3RFYPZSTRBPYqzj/MH9zh9qHShLujMgrE5oYiagB4KRAD4Ju38PX6cQ2SAsSo3pWb2np
-         0MQbzrhx1q3FoLb/Y3rg5DlhMAHHCWIcr335MAL1/bZJUOTTDyiU5WhpTRedGcZuT1IQ
-         PMrbaORjmz9twMHU+vFd7dXET69Wj4yspxbFj/R9xM0H2DQ2gPgA0/Gh1fO1e20J8PDt
-         sE2g==
+        d=suse.com; s=google; t=1740661714; x=1741266514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ltZavpJgM+BS7J/L1W7hHYg1KSQyKOJV5k3lMLLU0v4=;
+        b=MW+rBpWZDfCxhYTIacYGP6b3EGrN54C7uHNaQrRrhmcmHNqit5noXDQZ3dM7NU8+T/
+         FITRdP4TkN9oEo0l1XUSwFFth1RR3QqUZlIlPDXZt92re2Jm4VBG7cl3P2AofN45hgU9
+         VGrWVpZfRI7zMlFgzFrqerK4pweLmUtqAXmGEHoVg2S2Gk3C+GUb7WASyO5rY3aM7e/8
+         cJt9wze2KmVMqJ39QBLUeiUyUv2jRJCP/f47ygMzy3taVymWdG5KLshr9N5JSwCbtQnw
+         JdOESi+zJzFyjtNhBJldMBLfU+dTAUc+Je5vkg0+djC8dCEDN0ILrH9YFt22CTgwG40A
+         FFyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740661645; x=1741266445;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1740661714; x=1741266514;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JTyMrNqruIfN80FNenPnWbn1JyAg6VWCPasiwyXp9FI=;
-        b=LtiK4kUuxLD6UGN0xYFpdbOX99ST/HlYOnuX3jxOGmlSI6GT7fwKu4bh3K8PIiGGJ3
-         ma/VWuYRZ4u1IlL//0mFdCxRkrIxwYBdArvImV3NZXTZZBgfjdVO2z0x09kcDmNBZEoB
-         0OYUrzDhMSfcmvRFd6+AKYxiufttkP0HOeTszpsXsUdQTe/t3dINCzP/VkwmvSTfmNcU
-         KbR8uT29xqDtTdZFWzkvcbP5/eBDkFj+TmPTNkFEkqkmEKeHzb8Rby8k505NmwKeCvul
-         nOwTz2F82YxS8r2RzPdayevm0qI3qLJGuGD4S+WYeF/9IIEcqU0rCw3lDJkdoM/9yxZa
-         cyNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWM/YLMMYP+qdY4WU4lsL6E+vEF3YM/X8tN9pgDx29viX/ljZD1bikvFyNfPertTH2Jbn+OZd9KijDYblk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNlIoem+f00iibQ6/FfGSR/L8OavX8ZtlDpgcjVQSyvoFYTuqO
-	qj+1/DNo+ntzpJT4aubRdfTnJGGnNk97BF3O0Ux4Iy6ICnobomxlzRR5O9p4EVc=
-X-Gm-Gg: ASbGnctrudD0fv42vXCNWJzyYfiP1QD/sI+yuMBulkSyoUyUDuXNBSANLrTEyPPGI6H
-	V505D2os85rSuUk2z185GwSKmVKfZKB+0PxUSSxSr3KCAUWgSsy4n2ct2iBiY+dQOqkGvUwJV9J
-	szixA+ONAaSzsZClKHHuOfOsEIYJEA7wgZPd0Zy8isQ1azvxwJlkgNr7Fl8jSpo6ZUpSVk2dWhj
-	eRJwYL8iCghHvj5OCKyVC5xuN+bmxGp69r+7qRx+EVc3jznI0cLSyeeovSDIWeiXWcIma67gZ0+
-	yPGFu43HP7Nx3KYcMIk8bAU=
-X-Google-Smtp-Source: AGHT+IGjfWHYiaAXdrqA594SKctf+/MPGNFwOKZ2m/oLfiL1GNAvt9xOlxqJ0+a9h6IWKjELe4604Q==
-X-Received: by 2002:a05:6402:2b86:b0:5d9:a54:f8b4 with SMTP id 4fb4d7f45d1cf-5e0b70dc05emr25956467a12.11.1740661645077;
-        Thu, 27 Feb 2025 05:07:25 -0800 (PST)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a6ab7sm1071222a12.74.2025.02.27.05.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 05:07:24 -0800 (PST)
-Date: Thu, 27 Feb 2025 15:07:21 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] backlight: pwm_bl: Read back PWM period from provider
-Message-ID: <Z8BjiRjLin8jTE8j@linaro.org>
-References: <20250226-pwm-bl-read-back-period-from-hw-v1-1-ccd1df656b23@linaro.org>
- <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
+        bh=ltZavpJgM+BS7J/L1W7hHYg1KSQyKOJV5k3lMLLU0v4=;
+        b=GK0uUETTL5z6yezkX+q6EpdJC/A/KAoMcTZGNPROlnlPVqB01eZoBBDGDHClCBRfPm
+         QAoOFQUpwV1wJBCh4GTeGaDko4qHmG6redvWYwY3+rrSagGAKUJHTlrJHRF7Me1gPiCL
+         FcWzCjDjKN5QYgcrMiiV4TogwMEDc0MukPIiIuQoGx56xdAqtB4B50Wc3oCbQu/c2BH/
+         c/oGAAbeoF0D5yvALIrH66C85j2csnyQO6XRZ1J5wFINnKC3mhoWvPnOUybY5q7JTVuB
+         2BI+7+9ouKGKTADaV9rswLmzrfV2oJyawIeOj/QztsN86B1jnB8EX0xJudC1hiaWwdkm
+         HWYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxadYUNsXViqR61d2IaCXUsu+WLMs2NkLu1d+XstXb2X+MDMEBUZkg2RUthUjJKCgM97nSANFmzjUst5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEZ+jb9s+7dwtnHudAFBxV2Ytq358mHgTkhsPW751c42GRealK
+	PtT79H4zWHwpqgxC6bOkJpRWhd+Qlw5limEKKzORory0SNEjd8rnE0J23aqLgRQ=
+X-Gm-Gg: ASbGncuAebmjDF0jsNa6SdPCY7nDJ2RMcz8MDowVgeEU1teN5Lcyy76Ou/rmu/EUSEA
+	IZkE9P2RtuNJeMNIqnplP8ORDdTEAs6G4wJg12WBG/yIw8Wq7XnY6QsEk4+kkhXlz0390foypF3
+	vu+CJ1BQLFvgZTIDXdUD8+XRcI4yNl7LnfOO3gbnmL1jbXKfBjajtDfUdNkIZ51uCsa5rcGbotN
+	+5/4Ln8pq+J4qEwbJmQeSB2vnw5SUd6ACpgRwhzPC9nLX4qBPK3NWVM7d/yeSfD2KYz4wBG6Ejm
+	9gOYz3xNL7OL9LvcnFVbtBTmKVagfg==
+X-Google-Smtp-Source: AGHT+IF8xXvncbhY1CLeRlJWNXq/FAdjs4IJuCR6PP00b7u2RBTgTCDqFTFJhcfvFK58DwA1Shkcpg==
+X-Received: by 2002:a17:906:3105:b0:ab7:f2da:8122 with SMTP id a640c23a62f3a-abeeecfd662mr823323066b.3.1740661713789;
+        Thu, 27 Feb 2025 05:08:33 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6f5363sm118658866b.123.2025.02.27.05.08.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 05:08:33 -0800 (PST)
+Message-ID: <957f038b-4d68-468c-9e14-9c38f1ed6a2f@suse.com>
+Date: Thu, 27 Feb 2025 14:08:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] kernel: refactor lookup_or_create_module_kobject()
+To: Shyam Saini <shyamsaini@linux.microsoft.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ code@tyhicks.com, christophe.leroy@csgroup.eu, hch@infradead.org,
+ mcgrof@kernel.org, frkaya@linux.microsoft.com, vijayb@linux.microsoft.com,
+ linux@weissschuh.net, samitolvanen@google.com, da.gomez@samsung.com,
+ gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org
+References: <20250211214842.1806521-1-shyamsaini@linux.microsoft.com>
+ <20250211214842.1806521-3-shyamsaini@linux.microsoft.com>
+ <4039ec74-8b46-417e-ad71-eff22239b90f@suse.com> <87wmdjo9yp.fsf@prevas.dk>
+ <e8ba9f36-e33d-4c53-9d34-ff611cb1c221@suse.com>
+ <20250225172445.GA28595@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250225172445.GA28595@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25-02-26 17:34:50, Uwe Kleine-König wrote:
-> Hello,
+On 2/25/25 18:24, Shyam Saini wrote:
+> On Tue, Feb 25, 2025 at 09:33:10AM +0100, Petr Pavlu wrote:
+>> On 2/21/25 11:42, Rasmus Villemoes wrote:
+>>> On Thu, Feb 13 2025, Petr Pavlu <petr.pavlu@suse.com> wrote:
+>>>
+>>>> On 2/11/25 22:48, Shyam Saini wrote:
+>>>>> In the unlikely event of the allocation failing, it is better to let
+>>>>> the machine boot with a not fully populated sysfs than to kill it with
+>>>>> this BUG_ON(). All callers are already prepared for
+>>>>> lookup_or_create_module_kobject() returning NULL.
+>>>>>
+>>>>> This is also preparation for calling this function from non __init
+>>>>> code, where using BUG_ON for allocation failure handling is not
+>>>>> acceptable.
+>>>>
+>>>> I think some error reporting should be cleaned up here.
+>>>>
+>>>> The current situation is that locate_module_kobject() can fail in
+>>>> several cases and all these situations are loudly reported by the
+>>>> function, either by BUG_ON() or pr_crit(). Consistently with that, both
+>>>> its current callers version_sysfs_builtin() and kernel_add_sysfs_param()
+>>>> don't do any reporting if locate_module_kobject() fails; they simply
+>>>> return.
+>>>>
+>>>> The series seems to introduce two somewhat suboptimal cases.
+>>>>
+>>>> With this patch, when either version_sysfs_builtin() or
+>>>> kernel_add_sysfs_param() calls lookup_or_create_module_kobject() and it
+>>>> fails because of a potential kzalloc() error, the problem is silently
+>>>> ignored.
+>>>>
+>>>
+>>> No, because (IIUC) when a basic allocation via kzalloc fails, the kernel
+>>> complains loudly already; there's no reason for every caller of
+>>> kmalloc() and friends to add their own pr_err("kmalloc failed"), that
+>>> just bloats the kernel .text.
+>>
+>> I wasn't suggesting to log a kmalloc() error specifically. The idea was
+>> that if lookup_or_create_module_kobject() fails for whatever reason,
+>> kernel_add_sysfs_param() and version_sysfs_builtin() should log the
+>> failure to create/get the kobject.
+>>
+>>>
+>>>> Similarly, in the patch #4, when module_add_driver() calls
+>>>> lookup_or_create_module_kobject() and the function fails, the problem
+>>>> may or may not be reported, depending on the error.
+>>>>
+>>>> I'd suggest something as follows:
+>>>> * Drop the pr_crit() reporting in lookup_or_create_module_kobject().
+>>>
+>>> No, because that reports on something other than an allocation failing
+>>> (of course, it could be that the reason kobject_init_and_add or
+>>> sysfs_create_file failed was an allocation failure, but it could
+>>> also be something else), so reporting there is the right thing to do.
+>>
+>> The error message says:
+>> pr_crit("Adding module '%s' to sysfs failed (%d), the system may be unstable.\n", name, err);
+>>
+>> I think it was appropriate for locate_module_kobject() to do this error
+>> reporting when the function was only called by code in kernel/params.c
+>> and in the boot context. Now that the patch makes the function available
+>> to external callers, I'm not sure if it should remain reporting this
+>> error.
+>>
+>> The function itself shouldn't directly make the system unstable when it
+>> fails. Each caller can appropriately determine how to handle the error.
+>> Functions kernel_add_sysfs_param() and version_sysfs_builtin() don't
+>> have much of an option and can only log it, but module_add_driver()
+>> could roll back its operation.
+>>
 > 
-> On Wed, Feb 26, 2025 at 05:31:08PM +0200, Abel Vesa wrote:
-> > The current implementation assumes that the PWM provider will be able to
-> > meet the requested period, but that is not always the case. Some PWM
-> > providers have limited HW configuration capabilities and can only
-> > provide a period that is somewhat close to the requested one. This
-> > simply means that the duty cycle requested might either be above the
-> > PWM's maximum value or the 100% duty cycle is never reached.
+> before this patch series [1] kset_find_obj() was called in module_add_driver()
+> and the function immediately returned when no valid module_kobject was found,
 > 
-> If you request a state with 100% relative duty cycle you should get 100%
-> unless the hardware cannot do that. Which PWM hardware are you using?
-> Which requests are you actually doing that don't match your expectation?
-
-The PWM hardware is Qualcomm PMK8550 PMIC. The way the duty cycle is
-controlled is described in the following comment found in lpg_calc_freq
-of the leds-qcom-lpg driver:
-
-/*
- * The PWM period is determined by:
- *
- *          resolution * pre_div * 2^M
- * period = --------------------------
- *                   refclk
- *
- * Resolution = 2^9 bits for PWM or
- *              2^{8, 9, 10, 11, 12, 13, 14, 15} bits for high resolution PWM
- * pre_div = {1, 3, 5, 6} and
- * M = [0..7].
- *
- * This allows for periods between 27uS and 384s for PWM channels and periods between
- * 3uS and 24576s for high resolution PWMs.
- * The PWM framework wants a period of equal or lower length than requested,
- * reject anything below minimum period.
- */
-
-So if we request a period of 5MHz, that will not ever be reached no matter what config
-is used. Instead, the 4.26 MHz is selected as closest possible.
-
-Now, the pwm_bl is not aware of this limitation and will request duty cycle values that
-go above 4.26MHz.
-
->  
-> > This could be easily fixed if the pwm_apply*() API family would allow
-> > overriding the period within the PWM state that's used for providing the
-> > duty cycle. But that is currently not the case.
+> module_add_driver returns immediately if some error is encountered or module_kobject
+> is not found in lookup_or_create_module_kobject()
+> Since module_kobject() is anyway no-op if it [2] returns early so it shouldn't require
+> any rollback, right?
 > 
-> I don't understand what you mean here.
-
-What I was trying to say is that the PWM generic framework currently doesn't
-allow overriding the PWM state's period with one provided by the consumer,
-when calling pwm_apply_might_sleep().
-
-Also, the pwm_get_state_hw() doesn't cache the state either.
-
-This results in always having to call pwm_get_state_hw() before calling
-pwm_apply_might_sleep().
-
-On top of that, pwm_get_state_hw() doesn't default to the cached value if the
-provider doesn't implement the ->get_state() op.
-
-Please correct me if I'm wrong about these.
-
+> Assuming rollback is not required for module_add_driver() in lookup_or_create_module_kobject()
+> failure scenario, what should be the appropriate messaging from pr_crit() if it
+> fails in module_add_driver()?
 > 
-> > So easiest fix here is to read back the period from the PWM provider via
-> > the provider's ->get_state() op, if implemented, which should provide the
-> > best matched period. Do this on probe after the first ->pwm_apply() op has
-> > been done, which will allow the provider to determine the best match
-> > period based on available configuration knobs. From there on, the
-> > backlight will use the best matched period, since the driver's internal
-> > PWM state is now synced up with the one from provider.
-> > [...]
-> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> > index 237d3d3f3bb1a6d713c5f6ec3198af772bf1268c..71a3e9cd8844095e85c01b194d7466978f1ca78e 100644
-> > --- a/drivers/video/backlight/pwm_bl.c
-> > +++ b/drivers/video/backlight/pwm_bl.c
-> > @@ -525,6 +525,17 @@ static int pwm_backlight_probe(struct platform_device *pdev)
-> >  		goto err_alloc;
-> >  	}
-> >  
-> > +	/*
-> > +	 * The actual period might differ from the requested one due to HW
-> > +	 * limitations, so sync up the period with one determined by the
-> > +	 * provider driver.
-> > +	 */
-> > +	ret = pwm_get_state_hw(pb->pwm, &pb->pwm->state);
-> 
-> As a consumer you're not supposed to write to &pb->pwm->state. That's a
-> layer violation. Please call pwm_get_state_hw() with a struct pwm_state
-> that you own and save the relevant parts in your driver data.
+> [1] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/base/module.c#L48
+> [2] https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/base/module.c#L58
 
-Yep, that is indeed wrong. Maybe making the pwm opaque might be a good idea as well.
+Sorry, I partly misunderstood the different context in which
+module_add_driver() is called. I still think my suggestion makes some
+sense, but looking again, the current version seems ok to me too.
 
-[1] Calling pwm_get_state_hw() would be wrong if the provider doesn't implement the ->get_state(),
-as I mentioned above.
-
-But are you suggesting we replace all calls to pwm_get_state() with
-pwm_get_state_hw() in pwm_bl?
-
-I can do that, but the concern from [1] still stands.
-
-> 
-> > +	if (ret && ret != -EOPNOTSUPP) {
-> > +		dev_err(&pdev->dev, "failed to get PWM HW state");
-> > +		goto err_alloc;
-> > +	}
-> > +
-> >  	memset(&props, 0, sizeof(struct backlight_properties));
-> >  
-> >  	if (data->levels) {
-> 
-> Best regards
-> Uwe
-
-Thanks for reviewing,
-Abel
+-- 
+Thanks,
+Petr
 
