@@ -1,325 +1,200 @@
-Return-Path: <linux-kernel+bounces-536226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A5EA47CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:10:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6635A47CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 941F616E968
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D913A033B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74A522FACE;
-	Thu, 27 Feb 2025 12:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BMe+FVpY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF33B22B8A9;
+	Thu, 27 Feb 2025 12:06:29 +0000 (UTC)
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2128.outbound.protection.outlook.com [40.107.255.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD3022E3F0;
-	Thu, 27 Feb 2025 12:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658087; cv=none; b=lSuHMcKubXcdhajbNoOBuUuBmkTd8GDw8C3UuNDi4fgvXL1SsITRtc5aIozNhGH4tnaKrFJfVoU2mveJwNwOfzBgt5rXG6QRYGumfWM9R9S00i0RLAH3T93HJKDA6YIRGxn89QCoYPxMwisxvYrHp6UWpBU5EFB7p8kFs2EVVDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658087; c=relaxed/simple;
-	bh=T0a5obLc4j2fbIOEajzfIFERecp2iIvOq4FtVxjBxXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMnNr9qLX8MXl5Y5fGXNOv55tsXlwAhZQ6Yg3Iz39sl6IPKGRFnNBSheAf6OhkR8cDSSoXM7686EFSS0Mgz+dElGkXirYVHNI5Rkv6J0+IrE+gg8aqn2+gE/qWX/jefJqUlmkYAiHGnss7U+wV1capU11mET9MCV0xYE43IFMFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BMe+FVpY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1CEF740E0202;
-	Thu, 27 Feb 2025 12:08:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iN0oCAlGWdj8; Thu, 27 Feb 2025 12:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740658078; bh=klXDwLNu+GdgxiSQ4cKCu+o7Hgj9jWo4+xGGDdoiKyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BMe+FVpYcnybJXXM2DdS37JwfSoPjAjvLDkEei7ZnqXysLs4iK+doGH7m/kT0gYh7
-	 ++DAAp3QJBrwYKZDWMkcrgrTUol6djyrM3PAJLTG5gwHcjuWEVB8zNoukan/C/PQ11
-	 VBeOyvhKkj6uHDj32a7Vl0dKvIogDTdExZn6ec3gXiNFsTi+RwX2Vi4pQDzZVNTgHZ
-	 ZxQKdTlmVprEPa0V7BJX6GypLd04/lkwSOyDPqwnLOi4ISZjn0WbRawbQ+HbKLji+v
-	 2nr/ZmneryOruZtGuC9hKOSlT8Qmj0ks+9xX+oUwgVHadfc6UNYe9EDSWRKyFsmqcQ
-	 fH5+662Bb9j7+crgFmGFms2EFfEwKBW416LJ3uC/q8CeBjMKIWr+A4nt6CzMP9lOXn
-	 Z02/yORitAPE040Sg3gv+PjB2rD2WmrOLlcsTWfgfRltYkWm3z7o52Hn5LPPVQ4JVo
-	 in/A7jJlP3/Z1XOb8F5WC/dnYg1y0mm5oNrg7k3EtHqcOn4Yfs2XAscnEr0T+ky2O1
-	 Nap2xfrlYXyJvYDw5LNMmUSVqYjSMSWbxCSUtNERR+0ekVMQKOKCsJ6Q+8F8HrrIqr
-	 7ubOOnDQNwweaU76vvfKs8TK4hKox8lItZKO9Nh3aofHkBlHoJzNjbCoK3ke/kT4xj
-	 A0pA8X13r5RWpUZJZYjU738s=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3CE2240E01AE;
-	Thu, 27 Feb 2025 12:06:13 +0000 (UTC)
-Date: Thu, 27 Feb 2025 13:06:07 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Brian Cain <bcain@quicinc.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, kvm@vger.kernel.org,
-	linux-efi@vger.kernel.org, Ofir Weisse <oweisse@google.com>,
-	Junaid Shahid <junaids@google.com>
-Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
-Message-ID: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
-References: <20250110-asi-rfc-v2-v2-0-8419288bc805@google.com>
- <20250110-asi-rfc-v2-v2-3-8419288bc805@google.com>
- <20250219105503.GKZ7W4h6QW1CNj48U9@fat_crate.local>
- <CA+i-1C2xK8hzMQ8Y-=-7iYy+27nnouQZu1NdWG0qa35t+OQLqw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E10522C32D;
+	Thu, 27 Feb 2025 12:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.128
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740657989; cv=fail; b=buskAP4/Z6JtnpSsKJBoeodrOH3MN+8VjxEMxtbRBNOi+GEoE6nZZPBfUyjv3PN7/pTMh0I07gBQfMkBi4yDWecwiRlqsZZPhd38SYygqc9XGUNyDqxorc6C7W2fHp6ilSNPzgvxWFhlOhQy0Dg1S0/CON6PdqGlzxd+jHWCgm0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740657989; c=relaxed/simple;
+	bh=d0/7uNbq1x9JWcd6Kq7Sty0J0pz1f5vwim1AkpW9irw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ETzKbZ13Dh3e1Ad0AGgaUYKizpqP/HACx+x/MV0uGIOdMkysTEsok5yjMsU9Al3ETRxYP5OhorX0wrdN3rHWp8LfSIWU5wl8povXwN5ZEwSxohoGINWVs9aFt7t1NSGQZ7eaBV01FXF4cNClHD6bWK2knt58sMFEBU5ldHHPkAs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.255.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kUCmvqtK1r4pZjxq1rzy9NyVvAVvAmyOsMbQuiPfgVaxfeYDtxdkNJscZTLHZ03wq8Th1QNPCNDSYPbsiZ5rtv07/lzpk4dqy8zf8qwPOkNw739supIwWaqOLocPj+eiNgdwSmvM17K/6hFuSumYih1m7dZWn9w5M7bj3I7fuy5md8WruQIFMFp9loLwkYUuho9zZllpM88y8iUKlimBVOxef3Sqowf5YO1r10Qi6i0fv26hMBxzZVO9mkmhiNGLOhpbvqUtS3L8MXSqYCdvqYRv8+SPwSkhAZ1BbW8qHMKxn6bCW8W0R+mKjLPZE4umsxnFgaWVhIxXGK0opX56eA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gIctAosM0FHAL2lrsPDZJsgydsMBBLaQN0rTC6oieAI=;
+ b=bX5at//DXaNwcjC+lKUyTNoBSXrhK6ThSwOp98SlZxJnidTK4zIL7cBeL2UMC9jpBJYLLwL5DPWDCMyrXo7njLxRXJbBn1G8XIWplT2x8m32kuJYTVoLKWX7+v7tDOefEnVDLidgwf3CApMZuhGj6SWXOHecpmka52ng5uhyQ/+BwU7r+2iwrJYTb+EseWdhsF1LpoCFSu7Xbm3nTCeTr+Myd6P8cW1MzOSzrmFu+FTKp1OXAQtQRDapNFl+W15SbEGxWiGUOYzItPBRn3v/oK6OJg/tGHCG0oEOF1fsZxstB/OEP+hZXs/EEXL/BeUHKYliE7sUCyMMaBENbUXHbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG3P274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::31) by
+ SEZPR06MB6744.apcprd06.prod.outlook.com (2603:1096:101:17f::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.20; Thu, 27 Feb 2025 12:06:21 +0000
+Received: from SG1PEPF000082E4.apcprd02.prod.outlook.com
+ (2603:1096:4:be:cafe::12) by SG3P274CA0019.outlook.office365.com
+ (2603:1096:4:be::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.19 via Frontend Transport; Thu,
+ 27 Feb 2025 12:06:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E4.mail.protection.outlook.com (10.167.240.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 12:06:20 +0000
+Received: from localhost.localdomain (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 8F1F941604E4;
+	Thu, 27 Feb 2025 20:06:19 +0800 (CST)
+From: Peter Chen <peter.chen@cixtech.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl,
+	Peter Chen <peter.chen@cixtech.com>
+Subject: [PATCH v3 0/6] arm64: Introduce CIX P1 (SKY1) SoC
+Date: Thu, 27 Feb 2025 20:06:13 +0800
+Message-Id: <20250227120619.1741431-1-peter.chen@cixtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+i-1C2xK8hzMQ8Y-=-7iYy+27nnouQZu1NdWG0qa35t+OQLqw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E4:EE_|SEZPR06MB6744:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 5c289c89-46e3-48c0-4161-08dd572725b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q0KPmqssaIsx3x4TA5eG9hLE8rexJzZivcPSuEXBC35rBZyzMBYza5jXS1i4?=
+ =?us-ascii?Q?W/1APyGL3ChQF/5vmo9FMqd5J8hAFryF5374JuYFrp+ppqTaQx3NHJwe5Uap?=
+ =?us-ascii?Q?0tlcrEQQqAGzGuZDII6AN+572JmneYF3e8b7NzuENFaT1+XKPlQKIFf1/tAX?=
+ =?us-ascii?Q?2RTQu7IZ6KivaFweOY12pCh7mtFPp4LbNadKuAOxqHtkDSIY5v1Ze8m7OzRs?=
+ =?us-ascii?Q?mM/e6aDKrJ5vnSQH70YgfKtSR5khAmTSTGCXh+16NgOolp8PvOAU/eg7b91M?=
+ =?us-ascii?Q?N6vqkmmyVCrd8UsyFD/gDZPtVdpu7sD1mE3xxPyMO+O84a9bFWcxXaTqFol2?=
+ =?us-ascii?Q?0fz8sOIrY5gsIK8ScyF2ZoGRx0Kn0FDjH0RBEkaKoNAUXgGdybIhExC3i6I4?=
+ =?us-ascii?Q?inkyTf5hefMsL8Nul0CBPBmXjGlc7nShbqlAjSh1/SkZqzawY6fSXXKdnxBA?=
+ =?us-ascii?Q?SznT3Knf3fbP4V8dU946f+u+SS0ZtSR+OUD3LEMQi3HWt0MDRJYBy8LjBQRE?=
+ =?us-ascii?Q?Ba1S77oIUhxuDicbmrLYad/YTjzWebD8EHu/1nYtJGu42/t7D8L/gI6sTCPF?=
+ =?us-ascii?Q?tRJMYjCM0KASMA1tTzJ1VZmjIDttiqELlWg+Xo9bpbR0f5LUxr7JK+KZDL3W?=
+ =?us-ascii?Q?GmSJrGrWPgoKlEcGrhvo8NyMCiAvF6gEz+ynSKqryIX66t+iPE0jr5/im8cd?=
+ =?us-ascii?Q?gj5Hu2oESgsfVTkHrngtDvl1APnhID0Ntnf7DQxue3louPZRuLj2y8wzh3IG?=
+ =?us-ascii?Q?ceMqB6QUYkerQse5MO/eOii1QpylTXNnifm8kjxbyULfm8fQehbZC5Xld35W?=
+ =?us-ascii?Q?9M5BhYqjg/SRjMUVSMV8Hd6qjPtObq3WRCTgjMN73vjAaBr8KEe1MkUMWzPI?=
+ =?us-ascii?Q?FgLoAvVY5JtIw5aVTuIBHtzh12W1KEeH39/qx2iAs2gNedTuL9se+8cb96QV?=
+ =?us-ascii?Q?iQTVDDPxemFOdiM/gHE2bn9YBG1ZU4ZDhueHadNimZsd/d1B5C8tInmTchEX?=
+ =?us-ascii?Q?5+v+vIOGgZli3NRyYAkmtX0h7Yfn/yF7UP8+Y303KSKQM9Kdt69abDxTRkz8?=
+ =?us-ascii?Q?iDJKhZmY19bXoUjQd/lah7hlHjUag6nd/bgqOvfO8ZApJPRc1zxL3As3Ay+f?=
+ =?us-ascii?Q?agciuhnWKlTvF4IoI8eIAKPND30f/IiluWlc6OQeaBZKjnhzxtXKpnBS+BTj?=
+ =?us-ascii?Q?vyVnN1vAh+VZkYuS0RReCdjl+CvEuH9g7aMY+d+RlLqH7gIDuiMv4qZl1/Ba?=
+ =?us-ascii?Q?0TE1hmAWxcJ7V8BHEgbuzeCZdHw3LcyATV/f88FDx1Nlzjt92lArrLqLpKfK?=
+ =?us-ascii?Q?wic21o+ZFW8ziu8//mnPJmNU6xULHw3jHVVRKOKLbisoEOoZJ04KR5fj1MNT?=
+ =?us-ascii?Q?POKGqv6OYi3eSovWGRaJCSCB3waaORZgqbxwNy5SuIQkLHvvuw2B4CzrxACY?=
+ =?us-ascii?Q?67q4mPLdBluh751v5RdpRrtZ2rU5ZL4C?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 12:06:20.2670
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c289c89-46e3-48c0-4161-08dd572725b4
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG1PEPF000082E4.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6744
 
-On Wed, Feb 19, 2025 at 02:53:03PM +0100, Brendan Jackman wrote:
-> Argh, sorry, GMail switched back to HTML mode somehow. Maybe I have to
-> get a proper mail client after all.
+Cixtech P1 (internal name sky1) is high performance generic Armv9 SoC.
+Orion O6 is the world's first open source Arm V9 Motherboard built by
+Radxa. You could find brief introduction for SoC and related boards at:
+https://radxa.com/products/orion/o6#overview
 
-Yap, wouldn't be such a bad idea. And yes, it ain't easy - we have a whole doc
-about it:
+In this series, we add initial SoC and board support for Kernel building.
+Patch 1-2: Add dt-binding doc for CIX and its sky1 SoC
+Patch 3: add related maintainter entry
+Patch 4-5: add Arm64 build support
+Patch 6: add initial dts support for SoC and Orion O6 board
 
-Documentation/process/email-clients.rst
+To run upstream kernel at Orion O6 board, you need to use BIOS
+released by Radxa:
+https://docs.radxa.com/en/orion/o6/bios/install-bios
 
-> OK, sounds like I need to rewrite this explanation! It's only been
-> read before by people who already knew how this thing worked so this
-> might take a few attempts to make it clear.
-> 
-> Maybe the best way to make it clear is to explain this with reference
-> to KVM. At a super high level, That looks like:
-> 
-> ioctl(KVM_RUN) {
->     enter_from_user_mode()
->     while !need_userspace_handling() {
->         asi_enter();  // part 1
->         vmenter();  // part 2
->         asi_relax(); // part 3
->     }
->     asi _exit(); // part 4b
->     exit_to_user_mode()
-> }
-> 
-> So part 4a is just referring to continuation of the loop.
-> 
-> This explanation was written when that was the only user of this API
-> so it was probably clearer, now we have userspace it seems a bit odd.
-> 
-> With my pseudocode above, does it make more sense? If so I'll try to
-> think of a better way to explain it.
+Changes for v3:
+- Patch 1: Add Krzysztof Kozlowski's Acked-by Tag
+- Patch 2: Add Krzysztof Kozlowski's Reviewed-by Tag
+- Patch 6: Fix two dts coding sytle issues
 
-Well, it is still confusing. I would expect to see:
+Changes for v2:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=vendor-prefixes.yaml
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=arm/cix.yaml
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Re-order the patch set, and move vendor-perfixes to the 1st patch.
+- Patch 4: Ordered Kconfig config entry by alpha-numerically
+- Patch 5: Corrects the Ack tag's name
+- Patch 6: see below.
+1) Corrects the SoF tag's name
+2) Fix several coding sytle issues
+3) move linux,cma node to dts file
+4) delete memory node, memory size is passed by firmware
+5) delete uart2 node which will be added in future patches
+6) Improve for pmu and cpu node to stands for more specific cpu model
+7) Improve the timer node and add hypervisor virtual timer irq
 
-ioctl(KVM_RUN) {
-    enter_from_user_mode()
-    while !need_userspace_handling() {
-        asi_enter();  // part 1
-        vmenter();  // part 2
-        asi_exit(); // part 3
-    }
-    asi_switch(); // part 4b
-    exit_to_user_mode()
-}
+Fugang Duan (1):
+  arm64: Kconfig: add ARCH_CIX for cix silicons
 
-Because then it is ballanced: you enter the restricted address space, do stuff
-and then you exit it without switching address space. But then you need to
-switch address space so you have to do asi_exit or asi_switch or wnatnot. And
-that's still unbalanced.
+Peter Chen (5):
+  dt-bindings: vendor-prefixes: Add CIX Technology Group Co., Ltd.
+  dt-bindings: arm: add CIX P1 (SKY1) SoC
+  MAINTAINERS: Add CIX SoC maintainer entry
+  arm64: defconfig: Enable CIX SoC
+  arm64: dts: cix: add initial CIX P1(SKY1) dts support
 
-So from *only* looking at the usage, it'd be a lot more balanced if all calls
-were paired:
-
-ioctl(KVM_RUN) {
-    enter_from_user_mode()
-    asi_switch_to();			<-------+
-    while !need_userspace_handling() {		|
-        asi_enter();  // part 1		<---+	|
-        vmenter();  // part 2		    |	|
-        asi_exit(); // part 3		<---+	|
-    }						|
-    asi_switch_back(); // part 4b	<-------+
-    exit_to_user_mode()
-}
-
-(look at me doing ascii paintint :-P)
-
-Naming is awful but it should illustrate what I mean:
-
-	asi_switch_to
-	  asi_enter
-	  asi_exit
-	asi_switch_back
-
-Does that make more sense?
-
-> asi_enter() is actually balanced with asi_relax(). The comment says
-> "if we are in it" because technically if you call this asi_relax()
-> outside of the critical section, it's a nop. But, there's no reason to
-> do that, so we could definitely change the comment and WARN if that
-> happens.
-
-See above.
-
-> 
-> >
-> > > +#define ASI_TAINT_OTHER_MM_CONTROL   ((asi_taints_t)BIT(6))
-> > > +#define ASI_NUM_TAINTS                       6
-> > > +static_assert(BITS_PER_BYTE * sizeof(asi_taints_t) >= ASI_NUM_TAINTS);
-> >
-> > Why is this a typedef at all to make the code more unreadable than it needs to
-> > be? Why not a simple unsigned int or char or whatever you need?
-> 
-> 
-> My thinking was just that it's nicer to see asi_taints_t and know that
-> it means "it holds taint flags and it's big enough" instead of having
-> to remember the space needed for these flags. But yeah I'm fine with
-> making it a raw integer type.
-
-You're thinking of some of those rules here perhaps?
-
-https://kernel.org/doc/html/latest/process/coding-style.html#typedefs
-
-Probably but then you're using casts (asi_taints_t) to put in integers in it.
-Does it matter then?
-
-Might as well use a plain int and avoid the casts, no? Unless there's a real
-good reason to have a special type and it is really really good this way...?
-
-> Well it needs to be disambiguated from the field below (currently
-> protect_data) but it could be control_to_flush (and data_to_flush).
-> 
-> The downside of that is that having one say "prevent" and one say
-> "protect" is quite meaningful. prevent_control is describing things we
-> need to do to protect the system from this domain, protect_data is
-> about protecting the domain from the system. However, while that
-> difference is meaningful it might not actually be helpful for the
-> reader of the code so I'm not wed to it.
-> 
-> Also worth noting that we could just combine these fields. At present
-> they should have disjoint bits set. But, they're used in separate
-> contexts and have separate (although conceptually very similar)
-> meanings, so I think that would reduce clarity.
-
-Ok, I guess it'll tell us what is better once we stare at that code more. :)
-
-> Ack, I've set up a local thingy to spellcheck all my commits so
-> hopefully you should encounter less of that noise in future.
-
-Yeah, I use the default vim spellchecker and it simply works.
- 
-> For the pronouns stuff I will do my best but you might still spot
-> violations in older text, sorry about that.
-
-No worries.
-
-> What this field is describing is: when we run the untrusted code, what
-> happens? I don't mean "what does the kernel do" but what physically
-> happens on the CPU from an exploit point of view.
-> 
-> For example setting ASI_TAINT_USER_DATA in this field means "when we
-> run the untrusted code (i.e. userspace), userspace data gets left
-> behind in sidechannels".
-> 
-> "Should be set" in the comment means "this field should be set to
-> record that a thing has happened" not "this field being set is a
-> requirement for some API" or something. So I don't think "required" is
-> right but this is hard to name.
-> 
-> That commentary should also be expanded I think, since "should be set"
-> is pretty ambiguous. And maybe if we called it "to_set" it would be
-> more obvious that "set" is a verb? I'm very open to suggestions.
-
-I think the explanations you give here should be condensed into comments over
-those things. They're really helpful.
-
-Thx.
+ .../devicetree/bindings/arm/cix.yaml          |  26 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   8 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/cix/Makefile              |   2 +
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  26 +++
+ arch/arm64/boot/dts/cix/sky1.dtsi             | 216 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ 9 files changed, 288 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/cix.yaml
+ create mode 100644 arch/arm64/boot/dts/cix/Makefile
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+ create mode 100644 arch/arm64/boot/dts/cix/sky1.dtsi
 
 -- 
-Regards/Gruss,
-    Boris.
+2.25.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
