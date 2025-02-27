@@ -1,160 +1,109 @@
-Return-Path: <linux-kernel+bounces-537332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B72A48AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:35:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3916FA48AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC95116CCDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE03E3B6789
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F45E271275;
-	Thu, 27 Feb 2025 21:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B5271260;
+	Thu, 27 Feb 2025 21:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jdFrtzEU"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cl5pzA5l"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9E426FA5D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E341A9B2A;
+	Thu, 27 Feb 2025 21:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692077; cv=none; b=f90I93hSQY77BJjtVZVxNbYz/t1cUD701lucpHCGebrtsDlUk5qs88XXslJXR3xC91ckd22Y3L7Oys2HJOo5DvjN73Ly3o6RfuMq4H+chdbvWUOSj4AmL5N53axl8TuWxob/uKUgwepXwN7gYoHFCcT9ojkJAhWx7lOYan1nZsI=
+	t=1740692170; cv=none; b=mIPkgm4kAggjSHZW4EMImvDG5R7P4+Fd+essFineaIeyoyqG3L1XGbatjm3klDFRGg68rsja0jbXu3gsCkQNcw+zew6EJdmvpdx9tZmJK0hSZERWdveHLY/+0acjrVykSFm59bTX9Kj0HhLNrzfrvRP9VrrY8BinIThbhDGaVso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692077; c=relaxed/simple;
-	bh=LKtB0xO4FJIdCvbj/YY12A0aar2WBAUQgx5dPzVDHd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrTDUFn2Irw0d9KGcTunxGXqt6ekHhmdaHpe4++gvV7zLNJu34zPnZHN9PHcFK2i22GzvhLfxl+08ODL7gId7TEeYepB2deOgfEUBuLA9Fv5bMa6YQjYaP8EZEJmy/l5O12fXL0Y0e6pC3PbLO/jr1BQNZphlKQpwWpWvmyqJkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jdFrtzEU; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=uHZuuz0IVdaWI7A2r3gR44iE1/btqOd/7KwGlKdv5sI=; b=jdFrtzEUfaFAzTI9
-	BJ8cCJoE1TwRf58Eu7+tc5sa3fEyoHA9qWklQvSLpqFMg61A/jQYwXJCuUH1EKRAOkRb81x2jpj+Q
-	Vn/6Ge4D61oCnoP/lyM7JRLGb+xDNZkqsXvhgh+IXdI55vNFJQpkL0icNSfGX/Y6223lo6n/L2ATa
-	rNM8p8th8Wf0T7WEX9+gHzEbJ9iHQeGEHYn0pKXk/4PkLg/zWIaYNUroa5HDFi9fXarYZtHuQtxH1
-	xU44NNGG4tRbmr4mJkPyCHLDN/Ea5i/Y/z8S6pfZb8oN5y4n8YB2SfSzHsKqf7YdxyOncIwEgYZv/
-	KxrAYc4ENdzcXhv8Sw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tnlWH-001TD8-1R;
-	Thu, 27 Feb 2025 21:34:13 +0000
-Date: Thu, 27 Feb 2025 21:34:13 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: airlied@gmail.com, simona@ffwll.ch
-Cc: hdegoede@redhat.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/vboxvideo: Remove unused hgsmi_cursor_position
-Message-ID: <Z8DaVW_U-QtBVSMf@gallifrey>
-References: <20241215220014.452537-1-linux@treblig.org>
+	s=arc-20240116; t=1740692170; c=relaxed/simple;
+	bh=l9LpAhbNzWY6DmznpsZqrWzjfBHkws5zyMPx3Os3mOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cwxmRqSekVIwwibYAg7UJrCRr1WNN5rBoPl++Bm6Ai7slhnaL6+W+GJYpOwh9lq8XjJLHTpZvNnqY7afK/d/Sy2mZHMbeFLaSEXzwX+NWt9nCwIZFFhNIZNWQK27l5+Rf1wAIRyYU5c6I+TioXM7dEiNOygOKunqspvkXzyLMA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cl5pzA5l; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740692165;
+	bh=kcG08LvB7I7SuMqpZt/s5KiRL3OfvVwy7rZOKtdF0hQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Cl5pzA5l1w63w9EyZ2Kz4uWIeHkLPgAvMxLOockCgqtgIN05EsZZ2klj7ps71o4+c
+	 iyOvqRuRXfWGKDh2MV25FPQ+ZeUK9dj6RfFUsHNrQABEfwtsE9+XBWuRdRNiYGdm1T
+	 25RY7CErkkK8FqXrc+sVB8W14njU0HNH6O10kS4GcbcZXzv6bYXLW4ZS7DJslYNEXe
+	 /Eb+igHVZElOyFPPqPmLqNz3MraMmUgNtIja12BgoBsJJ7Iw+j+0sIKljzzFf+obAn
+	 CZMe8CN00m654JoBKgwU0hL9QswThFRaGv26GYGZfQUFvwCCW8O9GmQFrPDHMLCNWv
+	 +Rm8YDfHA1Jrw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3l5J647Xz4x3p;
+	Fri, 28 Feb 2025 08:36:04 +1100 (AEDT)
+Date: Fri, 28 Feb 2025 08:36:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Brian Gerst <brgerst@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the tip tree
+Message-ID: <20250228083604.1ae1462c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20241215220014.452537-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 21:31:52 up 295 days,  8:45,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: multipart/signed; boundary="Sig_/rQlasSNfDX0Nv+v/1.Yqq6d";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> hgsmi_cursor_position() has been unused since 2018's
-> commit 35f3288c453e ("staging: vboxvideo: Atomic phase 1: convert cursor to
-> universal plane")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+--Sig_/rQlasSNfDX0Nv+v/1.Yqq6d
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi David, Simona,
-  Will this one be picked up by drm-next?  It got Hans's
-review back on 16 Dec.
-( in 2513e942-6391-4a96-b487-1e4ba19b7aeb@redhat.com )
+Hi all,
 
-  Thanks,
+In commit
 
-Dave
+  18cdd90aba79 ("x86/bpf: Fix BPF percpu accesses")
 
-> ---
->  drivers/gpu/drm/vboxvideo/hgsmi_base.c      | 37 ---------------------
->  drivers/gpu/drm/vboxvideo/vboxvideo_guest.h |  2 --
->  2 files changed, 39 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vboxvideo/hgsmi_base.c b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> index 87dccaecc3e5..db994aeaa0f9 100644
-> --- a/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> +++ b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
-> @@ -181,40 +181,3 @@ int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
->  
->  	return rc;
->  }
-> -
-> -/**
-> - * hgsmi_cursor_position - Report the guest cursor position.  The host may
-> - *                         wish to use this information to re-position its
-> - *                         own cursor (though this is currently unlikely).
-> - *                         The current host cursor position is returned.
-> - * Return: 0 or negative errno value.
-> - * @ctx:              The context containing the heap used.
-> - * @report_position:  Are we reporting a position?
-> - * @x:                Guest cursor X position.
-> - * @y:                Guest cursor Y position.
-> - * @x_host:           Host cursor X position is stored here.  Optional.
-> - * @y_host:           Host cursor Y position is stored here.  Optional.
-> - */
-> -int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
-> -			  u32 x, u32 y, u32 *x_host, u32 *y_host)
-> -{
-> -	struct vbva_cursor_position *p;
-> -
-> -	p = hgsmi_buffer_alloc(ctx, sizeof(*p), HGSMI_CH_VBVA,
-> -			       VBVA_CURSOR_POSITION);
-> -	if (!p)
-> -		return -ENOMEM;
-> -
-> -	p->report_position = report_position;
-> -	p->x = x;
-> -	p->y = y;
-> -
-> -	hgsmi_buffer_submit(ctx, p);
-> -
-> -	*x_host = p->x;
-> -	*y_host = p->y;
-> -
-> -	hgsmi_buffer_free(ctx, p);
-> -
-> -	return 0;
-> -}
-> diff --git a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> index 55fcee3a6470..643c4448bdcb 100644
-> --- a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> +++ b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
-> @@ -34,8 +34,6 @@ int hgsmi_query_conf(struct gen_pool *ctx, u32 index, u32 *value_ret);
->  int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
->  			       u32 hot_x, u32 hot_y, u32 width, u32 height,
->  			       u8 *pixels, u32 len);
-> -int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
-> -			  u32 x, u32 y, u32 *x_host, u32 *y_host);
->  
->  bool vbva_enable(struct vbva_buf_ctx *vbva_ctx, struct gen_pool *ctx,
->  		 struct vbva_buffer *vbva, s32 screen);
-> -- 
-> 2.47.1
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Fixes tag
+
+  Fixes: 9d7de2aa8b41 ("Use relative percpu offsets")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
+
+i.e. Fixes: 9d7de2aa8b41 ("x86/percpu/64: Use relative percpu offsets")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/rQlasSNfDX0Nv+v/1.Yqq6d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfA2sQACgkQAVBC80lX
+0Gzsfwf6Aq8rkAHG74RSNc8lZ4sNPaYyucYHKRJm1XR82k8LPmNCW7aahKE02ngd
+/CwSsXGHH1nfUQWi0wSI7xUWFmOysVGN4ziyT/iqM7mNLM7We0ca2s7EoHZMRbKk
+66PgVWN4YhEsgfc2XqNmxj1Kq7l8lBmimIU9aDR/CNheWqzlhfndCR40kZ+ldF/+
+xchEzAJ42L8KGAA+4/mBytZRt/Cd/hutLE8WNiIsH4iC1WkMOdYL0KknOR2a94RK
+4P6kzLTCpDRLmQ5XFMpkPvxl4o3IQMdFLPQiks8819D2mB6BGC3EWBNtVHH0hOgY
+OSE87YWqJIWxHlm8Xt40Z3P0jUZ0eg==
+=wqSc
+-----END PGP SIGNATURE-----
+
+--Sig_/rQlasSNfDX0Nv+v/1.Yqq6d--
 
