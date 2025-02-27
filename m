@@ -1,164 +1,75 @@
-Return-Path: <linux-kernel+bounces-536865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6531AA48526
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8516A4851D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3A718941C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD2D1885CCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B111B21AA;
-	Thu, 27 Feb 2025 16:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398F81A3178;
+	Thu, 27 Feb 2025 16:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cd7hWh9R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBeeZdWc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0808C1A3178
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982851B042C;
+	Thu, 27 Feb 2025 16:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673755; cv=none; b=PYoLJQZgDjvCIMMS8L6se9D40iuPiBSw9w+Hpk38GmYcb1PV0C0FSzBq2h6zLRRaYrkXesPPqhB2fo10BLljxr/OV1r9TFgU4OlUiqkBesVBXkqNFWiff991+P/fjmPhtqD5D1vSsHXWZjtPtgRCWy9CeXGuJWG//duvh/G8buw=
+	t=1740673714; cv=none; b=qCmVaJnkvLT0YUeo3ulIh78WcKEIxPAIItxXQSbQg3IyK8sEqOs4Gl1d/Vexui0XswXgZclkxDWoIafuQ4Y6mlY00ttvHcVp6CggyZgtM8CuQ9Va5KWnIsOx0Wdwfdez5qFqgcdW7RTLBvhmvz99Va5s3NLETqFDlynC2VDH5i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673755; c=relaxed/simple;
-	bh=yrMuOSjm/jqiKg0lhnawuMT9c85TQRcYVvXqCxieIUo=;
+	s=arc-20240116; t=1740673714; c=relaxed/simple;
+	bh=nlgrdyxvDg9Msf9RSpAvUlzdgflilHFr210SiuZW5v4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pI+yLZlAyjcI3OXahtmA4OMBrvZ7Dy2edtcjwDSaTOsUvWKitGXbadqZNKiPYx81sjz+lYImbC+M6QbwOv5zz80pPTr2FiODh2VqlmkzVSPVASKojl/KToJKYkS7UivAo2mJH9Lu5Gws/6kGA1nTUTODYXYULyXpepKtL5/4ICY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cd7hWh9R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740673752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TmLTV3AzY05mWRUecIUfKc1ZwM7Hko7ZFa2ydUcdbps=;
-	b=cd7hWh9R+Jq3cehhBQs5VTYxYdOITKBzso0Tsd2aGQDAM6W30Hny8g30tgopF2jGG2BrYs
-	Cp9NysfpiPzWivBzhD3zVo6r0Xguwpj0lbOHbEUKmTKZ7JCDhc5eu8wC6scBeJl3vebYCH
-	twSpE80IXNmgnkeSsXX5Wk6untEreeg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-2jbdCydEN-CDxZIecaeR2g-1; Thu,
- 27 Feb 2025 11:29:10 -0500
-X-MC-Unique: 2jbdCydEN-CDxZIecaeR2g-1
-X-Mimecast-MFC-AGG-ID: 2jbdCydEN-CDxZIecaeR2g_1740673749
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83C4A1800878;
-	Thu, 27 Feb 2025 16:29:08 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.102])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 020461944D02;
-	Thu, 27 Feb 2025 16:29:03 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 27 Feb 2025 17:28:38 +0100 (CET)
-Date: Thu, 27 Feb 2025 17:28:32 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250227162831.GC25639@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250227125040.GA25639@redhat.com>
- <CAGudoHHKf_FXrrNJQCqvC50QSV87u+8sRaPQwm6rWvPeirO2_A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7vYYaleH1bbzm8tMiNfOZWEkbSpBMvqp5i2sTciSkfp8hJwtyJ9+OQaOxJ4sAAHJFf0HyPDwNZPUeSK5UTmDT/5lPIooooQ2Afgy2YQxJG7HT2ZYywR05TCKb4MPkf8K5fiU6o1HIZkNc+s9s438bCE9hbC93UAhVvv32UUvn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBeeZdWc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AABEC4CEDD;
+	Thu, 27 Feb 2025 16:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740673714;
+	bh=nlgrdyxvDg9Msf9RSpAvUlzdgflilHFr210SiuZW5v4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hBeeZdWcqwzeqys/WZB9/VUaFZ4fK7/I33rER38nD19stGoeus0P2r141WgZvMtuM
+	 ALkiqzz471ITb79as+rXYTFps2UJpQOEDSQFGnKY6/2KEqDKKTemjc/ftta6R8Pm3j
+	 orT8EtceFuFxgGRRSh8PM94vd3GTaekQ8aiegmqA5NNwFRi9m5HAYvMk8vlhKPF7NM
+	 08udq7qSyCawhHT8ydhLmUhEGbehCdmT1zgKQBz4LtKTHYUi0pFUjlmI7mGYreSML6
+	 mXRp4ud45pi+iRGhezWJlOOIb4NENDJjYUOekaUA8Zs+mBCkToHdbISw3qVxToWJT8
+	 E0X659wToZqmQ==
+Date: Thu, 27 Feb 2025 06:28:33 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Documentation: add task lifecycle summary
+Message-ID: <Z8CSsWJhODjGlKF2@slm.duckdns.org>
+References: <20250227155733.292672-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHHKf_FXrrNJQCqvC50QSV87u+8sRaPQwm6rWvPeirO2_A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250227155733.292672-1-arighi@nvidia.com>
 
-On 02/27, Mateusz Guzik wrote:
->
-> On Thu, Feb 27, 2025 at 1:51 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > Sapkal, I don't think this can explain the hang, receiver()->read()
-> > should wake this writer later anyway. But could you please retest
-> > with the patch below?
-> >
-> > Thanks,
-> >
-> > Oleg.
-> > ---
-> >
-> > diff --git a/fs/pipe.c b/fs/pipe.c
-> > index b0641f75b1ba..222881559c30 100644
-> > --- a/fs/pipe.c
-> > +++ b/fs/pipe.c
-> > @@ -455,6 +455,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
-> >          * page-aligns the rest of the writes for large writes
-> >          * spanning multiple pages.
-> >          */
-> > +again:
-> >         head = pipe->head;
-> >         was_empty = pipe_empty(head, pipe->tail);
-> >         chars = total_len & (PAGE_SIZE-1);
-> > @@ -559,8 +560,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
-> >                 kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
-> >                 wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
-> >                 mutex_lock(&pipe->mutex);
-> > -               was_empty = pipe_empty(pipe->head, pipe->tail);
-> >                 wake_next_writer = true;
-> > +               goto again;
-> >         }
-> >  out:
-> >         if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-> >
->
-> I think this is buggy.
->
-> You get wakeups also when the last reader goes away. The for loop you
-> are jumping out of makes sure to check for the condition, same for the
-> first mutex acquire. With this goto you can get a successful write
-> instead of getting SIGPIPE. iow this should goto few lines higher.
+On Thu, Feb 27, 2025 at 04:57:33PM +0100, Andrea Righi wrote:
+> Understanding the lifecycle of a task in sched_ext can be not trivial,
+> therefore add a section to the main documentation that summarizes the
+> entire workflow of a task using pseudo-code.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Yes, yes, and then we need to remove another pipe->readers check
-in the main loop.
+Applied to sched_ext/for-6.15.
 
-> I am not sure about the return value. The for loop bumps ret with each
-> write, but the section you are jumping to overwrites it.
+Thanks.
 
-Ah, yes, thanks, I missed that.
-
-OK, I'll make another one tomorrow, I need to run away.
-
-Until then, it would be nice to test this patch with hackbench anyway.
-
-> However, I do think something may be going on with the "split" ops,
-> which is why I suggested going from 100 bytes where the bug was
-> encountered to 128 for testing purposes. If that cleared it, that
-> would be nice for sure. :>
-
-Yes, but note that the same scenario can happen with 128 bytes as well.
-It doesn't really matter how many bytes < PAGE_SIZE the sleeping writer
-needs to write, another writer can steal the buffer released by the
-last reader in any case.
-
-Thanks!
-
-Oleg.
-
+-- 
+tejun
 
