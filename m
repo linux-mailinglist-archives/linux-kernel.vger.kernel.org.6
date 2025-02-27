@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-537383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37665A48B2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:16:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0F5A48B35
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4077D16C99A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB4316C9E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F66D270EC9;
-	Thu, 27 Feb 2025 22:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA32271824;
+	Thu, 27 Feb 2025 22:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a8fhmwwA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pjxzayxk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5bxON9E"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC77221F13;
-	Thu, 27 Feb 2025 22:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6016A225A48;
+	Thu, 27 Feb 2025 22:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694591; cv=none; b=tsGgXecdgGr/7HT7oe+upskjjpSTav3maStV8ufddImbcRYG8+qpxxDwSU974DMxJLlLG80BVtQ0eIJh4daE9eRHrzCyppI+H0bk9YNNFNqJ3zR7pDGw+LLTsMUtYLJJ0UEyY7Z+P8TIG0bXyOn54a5ePv5nNF7+yvvshP8OoEo=
+	t=1740694647; cv=none; b=YiscVXbC72QEjKGP6GQvol8CVFh/XVvGJsAl74BcJcVeDsKH2bR0PFEWk210qR1zLgyU4YIUcOCw6uIf4LX5Y1POLNn3CdSgVjS+Tpq1cYFMupeVPVz5aeJawHuqLSt3aMyMHpcMBhGa2OnD82ydmzbIJ7XhXYzc7ACLpFX8Dzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694591; c=relaxed/simple;
-	bh=U8qUmHpj3dVYbRs7Z7FWaNtxyegIa/qelQKjBv5eLSY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AcGQRZHhNe71aXabIsKwlw4nRXyPtqJKkaHpjdzDe1WJ53U4+6dbPmgetsY0r45Y/4ZVBwVAN7ke735oS9YMcN5eimDrZnXxLqCj1B9nP+L3RWA+f+8X+4ERYtkfpPFjpbu5TBc9acPI4uc8RfV0p6Sh4Ph2fFRIfJL/BY56uuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a8fhmwwA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pjxzayxk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 22:16:26 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740694587;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cm4aUgVKTiF7f/dRdPWxX2laOs5h0A+54a9mrPyA2uA=;
-	b=a8fhmwwA9P8jNivd2p4/nJ2yZr0Nnozrrg/IhSpxE+GiOtpm2zunsf4oA0LUd5WN8qd2+c
-	LKp7PfThtKtKHzwnxEOsPGiP5m3EdAQGHvchz57M1RY2ZJe5KmL42/nDz6Zm1o4VvPaQTQ
-	1gB3Q2BGfHAPDl591knCpPo1R0sGt5kPzpw/mD2pE1/yTVquQP/6fm7JHzlCp1VkI87yr0
-	0WC9sxkvkPgy0yhdoQS8IKUfKny8aM7HZygKQq2TyFAgU9YGLiiwggkqr+UATp5+fsYIcI
-	t203oAzOPIGcWOzbPsHgdsjAJBRP/cDywMnKQ0ld4p0AFXqD9GgqZAvMavKCjA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740694587;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cm4aUgVKTiF7f/dRdPWxX2laOs5h0A+54a9mrPyA2uA=;
-	b=pjxzayxkitI1hN053IqrL29GgQJ6QpX65RXC/aXv+Fy4km7RhyieMI5CCOocearXAO5vul
-	vqsSfImKKd2TA+Bg==
-From: "tip-bot2 for Kevin Loughlin" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/sev: Add missing RIP_REL_REF() invocations during
- sme_enable()
-Cc: Kevin Loughlin <kevinloughlin@google.com>, Ingo Molnar <mingo@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241122202322.977678-1-kevinloughlin@google.com>
-References: <20241122202322.977678-1-kevinloughlin@google.com>
+	s=arc-20240116; t=1740694647; c=relaxed/simple;
+	bh=1UDX2cBC01g5eOq81gMwt1eGtZxI4CzsIOv8RDNWcuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iwyGDlWSbx8n88JL3QfFLz+JjlbN2SqKwG6yCm6IG9ydiYCrscIlXPWUQTZF8QXlrxVyjrnGMYJxbp5tFzlc7YfsDcY6p91y4jyNzoS/VAUWWo0X7AEgPjdqLZbCFDMUsz9GFV/x1oZbs6sxq0gmlA+oTTYsnaxDNbiXlhQGrAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5bxON9E; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2234daaf269so40022885ad.3;
+        Thu, 27 Feb 2025 14:17:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740694645; x=1741299445; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtWIjNlWm7vnqv+thl0o42TinZDODXYSuqfAGagu6J8=;
+        b=J5bxON9E5WgJvVFu4mRZRvs7+p38TZUCEwa+myJXQOwb/1HFJwGPNPoHIbFuJ2tbOe
+         ByFoyJJS5a59bqM0gzwI4E5Cev1uwGKiPZ+Bb0CoGuXiYgvZX13a/uM6Io5h5b26qWKD
+         zI1QayppXaHuZJ5fys4zDVmGI7oXIjJ481F//DhgFbdE7iEaJsX4c44kBEBmhgS/NyL8
+         uE/ZA111m5SGYXzaNP32hO+K4SmVSou29QXVUhQU5eVJxjrND0Xf+qyaETY5FZgMI3PW
+         vRZbZF5V8eWsQgO4Szs3IN/c3ruY4aEnh4wHesbQopyJ1to8C/iW+v5OO3yzoBozw40M
+         EJ8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740694645; x=1741299445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtWIjNlWm7vnqv+thl0o42TinZDODXYSuqfAGagu6J8=;
+        b=uzcDKdNoUPTZwfPchsN+obSSBYVKNOVr3Z3MPBkxXJnnAiJIVziE7ChYNXLPvsNd/m
+         taBm8XV+VCQJHuUj6EkQveEoZQ92svyIlIRvQ/YgYwncngr/DuLGXAwMVmqqQDfPsEhd
+         BZOLg1a9HofejKuvJikJTwrBentgF0o1cc0rW9BUh2dxUfUFrYZ5J0NY4un+KRY77ex7
+         VY1X3OKGJT+Hfb6c5w/i6q7qmL0KtwIpiWm5ctJIbVYGGIZz2exagRGAt0QkqgdluEua
+         /EIxBA8jMHjFa63ec5QpEDUifcmbbUAnD7XAncYnZRwdLkXynp3LkyjETBjcOUTPaA7v
+         MFtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8sVPmQrc8rqW5blcd5SOJlDe9KTpckI1RllKS6vBxkwF8KIwrOdQgozx+b6lbt0/GG30=@vger.kernel.org, AJvYcCVH1NwJVEYoGnFhBK+UN+IrcOocdUY9Wb5mS3kZf4QTD6REjeOwje0It9W82bUREc991xBKKPXVjS/udBnT@vger.kernel.org, AJvYcCXb7/6tyH1gKLElMiFVVZkC+W2hWbTOjdHgk+8SkdF+NPF25hDUa4YhPC2FGxxDT4ULWy5DfTVhWkli77hRod8b@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOyx9fJ2F0vvf3PLQOjy+qIe1i64KqLSJuqdZiL5XbyytxVkz1
+	n4qtn0YK0aAhdYdBCJns6m8GsWrEU5pG1eEzE7NtXpIb8ruVQik=
+X-Gm-Gg: ASbGncukNHtwl4XH5ytVrSwPiwAZ5+/aKxNdwYOsJFKTu2pm8Eft8ztfxD0YgR+BZ3m
+	FYGd3q6u/+66P8WOCCA5qGRwl3NN6Z0glzpEC629NjGSYCoiSFyFGlfTj366lOPQOuEPgS8/YgX
+	wvDLcy6T8ifJsAzxR+1RGpTY58XDrILYp8ryNCTW7/21lA6IOIIizWTN/moxN1BXXa4IjbXRdeP
+	kCjwixeCkKrXN0IDACaQPEo6HiJeFwdP880lY+8u/muW/0Xdk1spQUBgxYhx4A05HFMWuCiFKyj
+	SuDsx+urOUPXgn20qPbWpSaD9A==
+X-Google-Smtp-Source: AGHT+IEC9wUltlqSimc9UlOHUUdvuJW+F3/FOIxa0//HGrcPPCSuGGTNe6wHvfrLRp+80e3bS157Lw==
+X-Received: by 2002:a05:6a20:7283:b0:1f0:e7a4:8f7c with SMTP id adf61e73a8af0-1f2f4e01444mr1464842637.36.1740694645558;
+        Thu, 27 Feb 2025 14:17:25 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aee7ddf206bsm2061142a12.6.2025.02.27.14.17.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 14:17:25 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:17:24 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 03/10] selftests/bpf: test_tunnel: Move gre
+ tunnel test to test_progs
+Message-ID: <Z8DkdFZ084a6CTt8@mini-arch>
+References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
+ <20250227-tunnels-v1-3-33df5c30aa04@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174069458621.10177.15982017592902412155.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227-tunnels-v1-3-33df5c30aa04@bootlin.com>
 
-The following commit has been merged into the x86/sev branch of tip:
+On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
+> gre tunnels are tested in the test_tunnel.sh but not in the test_progs
+> framework.
+> 
+> Add a new test in test_progs to test gre tunnels. It uses the same
+> network topology and the same BPF programs than the script.
+> Remove test_gre() and test_gre_no_tunnel_key() from the script.
+> 
+> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
-Commit-ID:     72dafb567760320f2de7447cd6e979bf9d4e5d17
-Gitweb:        https://git.kernel.org/tip/72dafb567760320f2de7447cd6e979bf9d4e5d17
-Author:        Kevin Loughlin <kevinloughlin@google.com>
-AuthorDate:    Fri, 22 Nov 2024 20:23:22 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 23:01:33 +01:00
-
-x86/sev: Add missing RIP_REL_REF() invocations during sme_enable()
-
-The following commit:
-
-  1c811d403afd ("x86/sev: Fix position dependent variable references in startup code")
-
-introduced RIP_REL_REF() to force RIP-relative accesses to global variables,
-as needed to prevent crashes during early SEV/SME startup code.
-
-For completeness, RIP_REL_REF() should be used with additional variables during
-sme_enable():
-
-  https://lore.kernel.org/all/CAMj1kXHnA0fJu6zh634=fbJswp59kSRAbhW+ubDGj1+NYwZJ-Q@mail.gmail.com/
-
-Access these vars with RIP_REL_REF() to prevent problem reoccurence.
-
-Fixes: 1c811d403afd ("x86/sev: Fix position dependent variable references in startup code")
-Signed-off-by: Kevin Loughlin <kevinloughlin@google.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/r/20241122202322.977678-1-kevinloughlin@google.com
----
- arch/x86/mm/mem_encrypt_identity.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index e6c7686..9fce5b8 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -565,7 +565,7 @@ void __head sme_enable(struct boot_params *bp)
- 	}
- 
- 	RIP_REL_REF(sme_me_mask) = me_mask;
--	physical_mask &= ~me_mask;
--	cc_vendor = CC_VENDOR_AMD;
-+	RIP_REL_REF(physical_mask) &= ~me_mask;
-+	RIP_REL_REF(cc_vendor) = CC_VENDOR_AMD;
- 	cc_set_mask(me_mask);
- }
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
