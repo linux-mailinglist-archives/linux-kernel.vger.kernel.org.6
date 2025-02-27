@@ -1,204 +1,219 @@
-Return-Path: <linux-kernel+bounces-536650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6246A482A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3526A48298
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46324170672
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0716168E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0822226AA8D;
-	Thu, 27 Feb 2025 15:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009E026A1C4;
+	Thu, 27 Feb 2025 15:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="UKh8opMs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IKGJDuEL"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ch1slloU"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD4B26A1A6;
-	Thu, 27 Feb 2025 15:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC71263C62;
+	Thu, 27 Feb 2025 15:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668767; cv=none; b=bMhMzm2AaBaC8w2Q6RPLfa/vAVme1nqWDQXN6njGVmqJVfEINg3vtTB/2lZOJq+9e6CzQYfYOBEhOOArmb7/6BJu0WIQ31ylOFpTT4CJV9Bi2LwnzVmoNFiNNM0ReeC8tV2Q/PmPzsqK9Nc3kNws8/KozjN3H8b17TLnuq6rCPg=
+	t=1740668760; cv=none; b=ciPsu4NbJK5i0V2P+XtfI5X7gl1q6lU9wK1vqQWoixyuaZNEAQ2ZwOkl2yz1L/Y7IJceEaGVo/x13YbnX540X0KfkpBJw6NiuMO/GtON78NHcN8eVZIBQju1OyQVorwkZ7u811jGpMUYcrt7xzvA3WVXwxnnDtwgigUtTg7e5nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668767; c=relaxed/simple;
-	bh=FsSkkWVRE5A+K0oLEhRfxK1WyJt0oRV08EFDZyOUJoY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eLxBwWkefEap6BvmcePeXctl4bbtDIPa83jisN5PhLFyLnxXfkNV2SOq6L7TCsnjclPE4+5o8M46cYuuqDCnZI7kUI45a4gpVtPN3nXAyjjOBZN1a0yAA6SaDvcp7DThUWIdO/FIp1gcM0w7oZBncjcJ/XuM5aaomMkjQbPkrk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=UKh8opMs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IKGJDuEL; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DF8E11140B90;
-	Thu, 27 Feb 2025 10:06:02 -0500 (EST)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-04.internal (MEProxy); Thu, 27 Feb 2025 10:06:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740668762;
-	 x=1740755162; bh=mBJu1LUBZD7huyP2Fqh3L6NWg2IhYufGL+1Vn+2FDk4=; b=
-	UKh8opMsCwvAVZdE00m1mCO5tFu68JmUTlO0gTbA33y00UtodSnMMEt7WGwJ44O4
-	SR+kFARoU8QFWeg8YXSY2/x9udGOXve9NsZUN5MQmL/Wk+mCbho8Ssw2WeIYTgSQ
-	pAgcw4903ZTkDaI9883t8Isgp1YLIMQH4oRvRSG2lsnBs+K6a5Ur1A7ODJlnLeUK
-	I/ovzifLAo5Gq/0iKHBwPuSEh5Jv+TQmKGGTf4EG7kM6mWGHLDZxe/UeMohwlvoP
-	TrFEp6Jgk0aQWDg8mZP1vU+lQFg6y29KhZFYtr5xMXi/EMnx2xaASfwfw17wv6NT
-	xABk6kXkJzIjkFQcKNC5Jw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740668762; x=
-	1740755162; bh=mBJu1LUBZD7huyP2Fqh3L6NWg2IhYufGL+1Vn+2FDk4=; b=I
-	KGJDuELaDLLWtOxASLb+GUKGdORsAJsgXY52yQP0rK4INpJaj2/uMjLp3daRJLgT
-	BM/JY+yKKYT9Bb72pRHzWT50f6Za06DrnIRrnYPkjUJfEWT5HTtFTdIW7n945EE6
-	xaz3RHkNZenXRy3XlWedPmjwQZX8tcVhxPdRsXQ1jOfcNxg+weq8lJkDFX7yRB/k
-	E096z1Cv6i3zHICJFIFJyuLYfR8UecxFczEOfG7OeMrAB5c/btvYM0QXEgklmzDR
-	rhs80k3bse5SuoodFrLS2aEkUSORA5YolqD0GZhl5B4C3DFNjOHFTYf95A2BpgAI
-	96BvzMzf5pTxyJXnhFyXg==
-X-ME-Sender: <xms:Wn_AZx5xjrGS-Pyj_DdZ4huDDCN0ciJlj4rcJXU0UUDHxEPt52Ijrw>
-    <xme:Wn_AZ-455SZniSlolirpV4t1_Wy88EaC46caDzPl_DJOtaSTQ58YxwMdRoI1qp1K6
-    5LtZ2GtouLf6nLSvDY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeejjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
-    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
-    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthht
-    ohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhhthhhonh
-    ihrdhlrdhnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihs
-    lhgrfidrkhhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehkuhgsrgeskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhi
-    shhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvh
-    eslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphht
-    thhopehprggsvghnihesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:Wn_AZ4fWbUQBZ8lV40EH9Gxs753wjQ1Xguvqbbg-2LHGtZW53_My4A>
-    <xmx:Wn_AZ6IN2ewPNHK4QfsbqiPc_DQuKCPFGBJy50WPtE96F-W2_S69uQ>
-    <xmx:Wn_AZ1IeRiRkBG7KrUGTBdzzstEMpDHnmqQ2R12fB4gd5gL354FpMw>
-    <xmx:Wn_AZzwxlwHNgv9SlJYs-9moKXo_z3nxzU8WgNmuVHVdA6e8ntQRkQ>
-    <xmx:Wn_AZyDpmM_1D89-dk9jtROtXpAUY-bH0vuomWAWb6YCMIgDk4fNRspZ>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 088FB3C0066; Thu, 27 Feb 2025 10:06:02 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740668760; c=relaxed/simple;
+	bh=oXqhsdtyWBieXn06oTfoaCEtTQ5CBE/Y6q/em512ijo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u1FcHqsZRcikZGzdo4Demms9WrlBeNlK3ufDK5gBxYrNoL8Wgx59d42Jvmeb/rN4aBE7AQ5eJcuYp14WjEiEfN5BO78eHaC4i+UVDQGxxDL7A7m48oJ0sW6661FEWeYrZiJyb07DSgV7bVbLAD+gM++DEcL09gNBnInmXOUoBJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ch1slloU; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30613802a6bso11748591fa.1;
+        Thu, 27 Feb 2025 07:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740668756; x=1741273556; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sFYNYStHehokVGFs8JvRJvS2RWuC59EczsVRJ3j5mJs=;
+        b=Ch1slloUBbfdTFNxvO2NEQT8Nk75thEGtkN7fZEhgSeEHLVf3qrSaumOITTakNFe5Q
+         nfvWbimTv2sXdvQ8TrGnTkqnrhCrjEIUIfrHXjzaFVR9wvUyzqPnmqXtWOWynikPn5Aa
+         4hw4MZysv+AVw7PGI1gpH92JmeBjy9uEIeQ/x8++1C0lirGyJdYSME2Mf8hybxbr/sVe
+         QfRVDUkozsjIAMHoBpoJ2wQjX+KIhbKxApStmwbp9WtGpQLeAD1AvgmkvX5InaEctWEx
+         f4aRgcpc/PKbA4fQzcZutzcihAJkuVXb19bkehaUOlSCLkvFvSO/LbjQDoB+CyJBJrSd
+         rfRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740668756; x=1741273556;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sFYNYStHehokVGFs8JvRJvS2RWuC59EczsVRJ3j5mJs=;
+        b=hmD4yG6MEsGIHivQUnfiOaNXH0GGD9noUxJlCdJaohjJMywOWzZ55IBLQlELhqncCI
+         f/PHfO8FhTFItskIu0wYES0tJWrx3nlr9+2xlgivKLVVwneI3ENMOymMuq0rczYIqQ3F
+         9r+erjOKkaDqp37WnMw6fBizd3ZgdsVv0z6vJWcVM67lw9Mzru2I/KW+kahSW2hw8lFt
+         RUkBFqb/6r7tGJH0pVaMjy3HEEw7QUbjN2uLTaEOO5VtpfX/UZHVWPJnQh8j//3k1zvK
+         J+pLQlCbOzWOZbufUIm29KD9qzbmScR3hzi8LKf+hzM7d3sp0HNnCBzuF9qP5TkvvtR7
+         8SLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCGSFncJMoRwZAzL1mXRgUKzCmGOd5J4qM3INu7ZtqBqOD+Y8ed9KHQNWaJavqHfxfazLMoTu0ZT9NVWao@vger.kernel.org, AJvYcCVF304C8AKkcg/uTMllBF92gfOJMOZTk5vgcni12Ss5anf0ZpF45aUw+uqnKvdASl66Xf4Bknd01ObJCQ==@vger.kernel.org, AJvYcCVVs6IMLiG3hADUFuodW5aR/Q6FQbQ9CHcFAWTLunh6wkraEBBBv1wRpdrm7sTVXTRbLrR/+RF8yfP6@vger.kernel.org, AJvYcCVYzGs8MVVqs2m+4+DZemMSyH6/mr89JIRWbvUdtDbnrWjgNktKZQg0HGAUgHAY8IkkOJ1uZmTwWi0s@vger.kernel.org, AJvYcCW4XwOo+ynd6npXjU7W3B9T28BsGKocHHEnfUn2JSdybX+SvkSfhDM3fFMqTzXrSfr3MBh3Tz41rYOQYEI2qHs94pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDJ/UAmOcaCsTeb1A7LD7WDFqZgyS1Dl6bfYqfRAtPKpLV1T6g
+	VI3Rb0Qsh1RujsDbb5cQWUaydO9nCtiTuEETr46VPA5aRcKI7RdO
+X-Gm-Gg: ASbGnct2QJyWQ44gLRwGv7o/a9m5aoaNye6oedYgdj2mN2Xg0LaNwN2YhpQqHT7BGKt
+	yx0lBPOADxdmj+nAUDxm5dgDezelESMDmWxOU1Rvegt5RSuGCRDoA7uPZf7jrdk/5mDbixnnAbr
+	i6aOw89gyoYJxy4DbdN59D61sZcF44gHCh51/sK3CP8S/zZAG0hXjbVS2PD0NnUHbEKqD/xcgQt
+	X3yoa/v0kxSYyor/xuHciYuQ2+/MGmnTupfyfrBgLyFKNPysJPr7MEIX3wv7wT+uiItMg2oQaPv
+	4IdgOh+/XE2TJ0wWbXBe3QZFq5VDklm++KrgmDQ3xiT8YqTZDAlWbmbxUO7AfCn27xfGPDvf693
+	CGSHPg64=
+X-Google-Smtp-Source: AGHT+IF3+FJMbqYsi707hLsELdOrDSp5KTIGs397vlzqq1TcBifloHPzl8dDPN/iBLJu+00pSGcwSw==
+X-Received: by 2002:a2e:b617:0:b0:308:f827:f901 with SMTP id 38308e7fff4ca-30a80c41998mr58001921fa.21.1740668755929;
+        Thu, 27 Feb 2025 07:05:55 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a7546sm1885721fa.5.2025.02.27.07.05.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 07:05:54 -0800 (PST)
+Message-ID: <c9424f3e-1ff0-4c01-823a-19801cc3e7a7@gmail.com>
+Date: Thu, 27 Feb 2025 17:05:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 27 Feb 2025 10:05:41 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
-In-Reply-To: <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
-References: <mpearson-lenovo@squebb.ca>
- <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
- <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
-Subject: Re: [PATCH] e1000e: Link flap workaround option for false IRP events
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/10] property: Add
+ device_get_child_node_count_named()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
+ <Z72QAOA9xXbP16K-@kuha.fi.intel.com> <Z72Zp8tpnvlFGdQ_@smile.fi.intel.com>
+ <ad39b453-7e5b-49bd-a4fd-6a4988636130@gmail.com>
+ <Z72d7TzZ21WITW3f@smile.fi.intel.com>
+ <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
+ <Z73M3Ua6u1FpgBEK@smile.fi.intel.com>
+ <720f9c69-ca1f-45cb-9f6e-c8e4703c9aad@gmail.com>
+ <Z78g_uiXumn4mvET@smile.fi.intel.com>
+ <d7982b76-3da7-47ff-b2b2-f964610af1f7@gmail.com>
+ <Z8B7h4_IWz43gFhO@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z8B7h4_IWz43gFhO@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
-
-On Wed, Feb 26, 2025, at 5:52 PM, Andrew Lunn wrote:
-> On Wed, Feb 26, 2025 at 02:44:12PM -0500, Mark Pearson wrote:
->> Issue is seen on some Lenovo desktop workstations where there
->> is a false IRP event which triggers a link flap.
->> Condition is rare and only seen on networks where link speed
->> may differ along the path between nodes (e.g 10M/100M)
->> 
->> Intel are not able to determine root cause but provided a
->> workaround that does fix the issue. Tested extensively at Lenovo.
->> 
->> Adding a module option to enable this workaround for users
->> who are impacted by this issue.
->
-> Why is a module option needed? Does the workaround itself introduce
-> issues? Please describe those issues?
->
-> In general, module options are not liked. So please include in the
-> commit message why a module option is the only option.
+On 27/02/2025 16:49, Andy Shevchenko wrote:
+> On Thu, Feb 27, 2025 at 10:01:49AM +0200, Matti Vaittinen wrote:
+>> On 26/02/2025 16:11, Andy Shevchenko wrote:
+>>> On Wed, Feb 26, 2025 at 04:04:02PM +0200, Matti Vaittinen wrote:
+>>>> On 25/02/2025 15:59, Andy Shevchenko wrote:
+>>>>> On Tue, Feb 25, 2025 at 03:29:17PM +0200, Matti Vaittinen wrote:
+>>>>>> On 25/02/2025 12:39, Andy Shevchenko wrote:
+>>>>>>> On Tue, Feb 25, 2025 at 12:29:31PM +0200, Matti Vaittinen wrote:
+>>>>>>>> On 25/02/2025 12:21, Andy Shevchenko wrote:
+>>>>>>>>> On Tue, Feb 25, 2025 at 11:40:16AM +0200, Heikki Krogerus wrote:
+> 
+> ...
+> 
+>>>>>>>>>>
+>>>>>>>>>> I did not check how many users are you proposing for this, but if
+>>>>>>>>>> there's only one, then IMO this should not be a global function yet.
+>>>>>>>>>> It just feels to special case to me. But let's see what the others
+>>>>>>>>>> think.
+>>>>>>>>>
+>>>>>>>>> The problem is that if somebody hides it, we might potentially see
+>>>>>>>>> a duplication in the future. So I _slightly_ prefer to publish and
+>>>>>>>>> then drop that after a few cycles if no users appear.
+>>>>>>>>
+>>>>>>>> After taking a very quick grep I spotted one other existing place where we
+>>>>>>>> might be able to do direct conversion to use this function.
+>>>>>>>>
+>>>>>>>> drivers/net/ethernet/freescale/gianfar.c
+>>>>>>>>
+>>>>>>>> That'd be 2 users.
+>>>>>>>
+>>>>>>> I haven't checked myself, I believe your judgement,
+>>>>>>
+>>>>>> I took a better look and you obviously shouldn't believe :) The gianfar used
+>>>>>> of_node instead of the fwnode. So, it'd be a single caller at starters.
+>>>>>
+>>>>> ...which is the same as dev_of_node(), which means that you can use your
+>>>>> function there.
+>>>>
+>>>> I'm unsure what you mean. The proposed function
+>>>> device_get_child_node_count_named() takes device pointer. I don't see how
+>>>> dev_of_node() helps converting node to device?
+>>>
+>>> dev_of_node() takes the device pointer and dev_fwnode() takes that as well,
+>>> it means that there is no difference which one to use OF-centric or fwnode
+>>
+>> The proposed device_get_child_node_count_named() takes a device pointer. I
+>> don't see how dev_of_node() helps if there is just of_node and no device
+>> pointer available in the calling code.
+> 
+> ???
+> 
+> The loops are working on
+> 
+> 	struct device_node *np = pdev->dev.np;
+> 
+> which is the equivalent to
+> 
+> 	struct device_node *np = dev_of_node(&pdev->dev);
+> 
+> which takes device pointer.
+> 
+>> (Well, as I wrote below, I could
+>> alter the gianfar code by dropping the gfar_of_group_count(), so that I have
+>> the device pointer in caller). Anyways, I don't see how dev_of_node() should
+>> help unless you're proposing I add a of_get_child_node_count_named() or
+>> somesuch - which I don't think makes sense.
+> 
+> Are you forbidding yourself to change the function prototype to take a device
+> pointer instead of device_node one? :-)
 > 
 
-Understood. 
+This is our point of misunderstanding. As I wrote, and as you can see 
+from the prototype, the function _is_ taking the device pointer. Hence I 
+didn't understand how dev_of_node() should help us.
 
-The reason for the module option is I'm playing it safe, as Intel couldn't determine root cause.
-The aim of the patch is to keep the effect to a minimum whilst allowing users who are impacted to turn on the workaround, if they are encountering the issue.
+>>> API in this particular case. Just make sure that the function (and there
+>>> is also a second loop AFAICS) takes struct device *dev instead of struct
+>>> device_node *np as a parameter.
+>>
+>> I think I lost the track here :)
+> 
+> Make gfar_of_group_count() to take device pointer. As simple as that.
 
-Issue details:
-We have seen the issue when running high level traffic on a network involving at least two nodes and also having two different network speeds are need. For example:
-[Lenovo WS] <---1G link---> Network switch <---100M link--->[traffic source]
-The link flap can take a day or two to reproduce - it's rare.
+that'd just make the gfar_of_group_count() a wrapper of the 
+of_get_child_node_count_named(). I prefer killing whole 
+gfar_of_group_count().
 
-We worked for a long time with the Intel networking team to try and root cause the issue but unfortunately, despite being able to reproduce the issue in their lab, they decided to not pursue the investigation. They suggested the register read as a workaround and we confirmed it fixes the problem (setup ran for weeks without issue - we haven't seen any side issues). Unfortunately nobody can explain why the fix works.
 
-I don't think the workaround should be implemented as a general case without support from Intel. 
-I considered a DMI quirk, but without root cause I do worry about unknown side effects.
-There is also the possibility of the issue showing up on other platforms we don't know of yet - and I wanted a way to be able to easily enable it if needed (e.g be able to tell a customer - try enabling this and see if it fixes it).
-
-A module option seemed like a good compromise, but I'm happy to consider alternatives if there are any recommendations.
-
->> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> ---
->>  drivers/net/ethernet/intel/e1000e/netdev.c | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->> 
->> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
->> index 286155efcedf..06774fb4b2dd 100644
->> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
->> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
->> @@ -37,6 +37,10 @@ static int debug = -1;
->>  module_param(debug, int, 0);
->>  MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
->>  
->> +static int false_irp_workaround;
->> +module_param(false_irp_workaround, int, 0);
->> +MODULE_PARM_DESC(false_irp_workaround, "Enable workaround for rare false IRP event causing link flap");
->> +
->>  static const struct e1000_info *e1000_info_tbl[] = {
->>  	[board_82571]		= &e1000_82571_info,
->>  	[board_82572]		= &e1000_82572_info,
->> @@ -1757,6 +1761,21 @@ static irqreturn_t e1000_intr_msi(int __always_unused irq, void *data)
->>  	/* read ICR disables interrupts using IAM */
->>  	if (icr & E1000_ICR_LSC) {
->>  		hw->mac.get_link_status = true;
->> +
->> +		/*
->> +		 * False IRP workaround
->> +		 * Issue seen on Lenovo P5 and P7 workstations where if there
->> +		 * are different link speeds in the network a false IRP event
->> +		 * is received, leading to a link flap.
->> +		 * Intel unable to determine root cause. This read prevents
->> +		 * the issue occurring
->> +		 */
->> +		if (false_irp_workaround) {
->> +			u16 phy_data;
->> +
->> +			e1e_rphy(hw, PHY_REG(772, 26), &phy_data);
->
-> Please add some #define for these magic numbers, so we have some idea
-> what PHY register you are actually reading. That in itself might help
-> explain how the workaround actually works.
->
-
-I don't know what this register does I'm afraid - that's Intel knowledge and has not been shared.
-
-This approach, with magic numbers, is used all over the place in the driver and related modules, presumably contributed previously by Intel engineers. Can I push back on this request with a note that Intel would need to provide the register definitions for their components first.
-
-Thanks for the review. I'll give it a couple of days to see if any other feedback, and push a v2 with updated commit description.
-
-Mark
+Yours,
+	-- Matti
 
