@@ -1,305 +1,252 @@
-Return-Path: <linux-kernel+bounces-537148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E011A4888A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:07:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0DBA488A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B21E188BC6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 788723AA7A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E0F26B979;
-	Thu, 27 Feb 2025 19:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8475B26E965;
+	Thu, 27 Feb 2025 19:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPKm1jVx"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLKKK0U1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFDD21858D;
-	Thu, 27 Feb 2025 19:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740683229; cv=none; b=Mj0mbqiMdCn9sP8YCwlbxX3vwnBq1HxG5eSJtnQQdi69G/Rb8KhJI8Sy/0Xp6YhqsTZY6ImQxC39o8zb2cLWr/ST5PSwnVDw6hF62N4wbqOuLu8oc9kvwbUWRf3BmuHReaqLq5SxKukLbQN3ZUa5ZYhgHnQWuRcGTpAw5GmV61U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740683229; c=relaxed/simple;
-	bh=wJ7LS04maCw8spcI4TrOxqyLwpxqVVvP5R5S2mwqQbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SRzE9GQe5E5XJZlethSGWVoEq2mpry6snl8GroWiFcYOEOJY2o6OOCt4IRbrN3IHXQAtkzGS3XFSQY0wFOIA2okHndaTMrqGS24Zt6HHnwCnd7zn1wlftZoaHZGFMyN8hyMaGSj5QpLZHLUP0P99ir9z5oOm0fdQQBDyy+FglEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lPKm1jVx; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54524740032so1280924e87.3;
-        Thu, 27 Feb 2025 11:07:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740683224; x=1741288024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9xy3Oj2ldzTgrhOEQY5Rr8+ha+y2IXOarnF1z09Z2lU=;
-        b=lPKm1jVx8yo7uOLho9SHh1n6wKk1jxKX4v9hzPzVEj3/BnoVQesOjJ0BtKj8uIYvtg
-         uAbO7gwvUYuEhlhX0cf9YTaaSLkVnNQtrQwcADUqZDmEcpY7SUZWynmlJCUaxbIFb4ey
-         HcJcrA3SFjrzzREN8USES0TxomaybTCzUfjOS7bFdnADLdTOgC2DT/fTapz0JYOrKSWu
-         67DYIxnFdDphsSaL/w5ag+EMEQdlJbtgZkshrT3MS2kEl0g+DsJmPAaptbVImI8dHTjw
-         k2NY0MhiU2nCw1uul2d0hmmleToI8+zuPYRjSaqjgoHeE5lzG/m6i2D73VcnZRQbDVmR
-         kjLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740683224; x=1741288024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9xy3Oj2ldzTgrhOEQY5Rr8+ha+y2IXOarnF1z09Z2lU=;
-        b=kZgMj22DQKzbVK/eX4NmlqVoQ3C31COGpapjr52M8vK2H8GYMVPcVmFY7sy8r123PL
-         77nZgkN7ZY1KyMq+RXRpfroVGFhLyi8rvceqNb6y6qnFyuda6+bMT+sHvokfXz6jylCz
-         5o0MLzfNS+l9+EnKtqhGXDt3waPAwG6y8NFHazK+vbXl+Utb3/EijlQHxv0/mWkkspWf
-         KDrZEIUf9BVm/JfwQoGq4V/D6FvDv9ndNYF04Gzf37zUbcUzNpgX6YwAlQoxefy4yk8Q
-         QmYxEik6PYxBimR3rHyMAmIhWMR29Zv/EigCgZHhuGt2Ap9m6FkUDj5PLUCSWjE1+1dB
-         OgWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVB65KRHrIIXZ6/O5+kedujXAB2c6aZF6xVedsjT+Fegqn7ZD5P+g13klVx2IL3fVvYK4V0PZgy3jFB6U=@vger.kernel.org, AJvYcCXiFLkkI5oODWx7lJ1/qW3+/6DZQ/wsIFn/8gj/USh5owak9vdHfvR9DHhY7VmDwxCuS8lmQ6vc7zj7h0avLoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFBU4cyHNK6nP00d5IzpBOs4rfHLq5mKhKHz/9MoP2RVAxVpVP
-	G13gSvZ9bEFIoyzgJt/YgImlQGG+hilhIkF7mgIM8AkPN7XzKjkow2TyRRRb7ZxsVBkzomH+S2E
-	EAkw81IuBA1zsFWfgH7be0bQAi4o=
-X-Gm-Gg: ASbGncuL6jBGKQWlVKP+TqkBOXpgu7E8GsqhhI58vzs0soIMsarO0tcaBE7xL30aOVZ
-	+oROHhUBNzF3aX1U16pSjXAGeaEdgpSSmK5UXkYzA1t5vNqHtAXP5RhU4hTprJ9s4txoh73YMeH
-	FdYrFYf55N
-X-Google-Smtp-Source: AGHT+IHUshUoYHkR9uVcI3jDioRWIALbex8qiEz8jjAKgU/6UJe7mUJOpyTCm2OKbQMksLIjSmuA73tf1gj4Os1F0qc=
-X-Received: by 2002:a05:6512:2820:b0:545:5a5:b69f with SMTP id
- 2adb3069b0e04-5494c107e18mr305357e87.9.1740683224218; Thu, 27 Feb 2025
- 11:07:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F992702B3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740683496; cv=fail; b=BZPya6FbaBhBfY0O3hBRJeCcSxrYb8JmmvcBB+OgW+I9hDMrgkV/+nZ59SUFM9dJJGNHh9yNSLYwWF6ae60aJ4LnEX0wCKoWTR9K1l0CEmk8LE5kTJrHNtXX1WMwCtuGObRTUPG3TBuiVvMmm72q/z6vsyA9nk3PTtJMvg7gSHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740683496; c=relaxed/simple;
+	bh=25RSBCidwuG4WPVuaZnYKf2NCErzKZBdXN/EMLqI8qg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CusRP/bcVVNlkrRq/BOK8Bq65SvFuM4MMszA9Wga7S6ejt00EUSmQ7idk7FkufIO3HEQqLypDkRb6bHAZJiEygI8KDrosN7yzVsCrQFBJbWDLXsKoLvupVa/0N/AJEMYKSgGzeongkXoAC9khuhSlxd73ea1tbmulYkSwaSwLw8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLKKK0U1; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740683495; x=1772219495;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=25RSBCidwuG4WPVuaZnYKf2NCErzKZBdXN/EMLqI8qg=;
+  b=ZLKKK0U1i14mIpClgevG8O/0vJVRRZsmW7MevtIm/rL6eFDrE1Nrgu76
+   +bnoilgv0SQAJFy2lX8qOW6Fcddpaglf6Th2AKRgim3rJFLO7xKLt/ub0
+   97ZQ4paBMz6YcWlivBpc84DVrvTpcDniXUvf8QVJ+V4JFl9OJzmTHwKk/
+   vwwXE1Sbk0POv8AG9N/Vjomg1FBbMDPj2EupopInTE7o3uNPQGAk1tuKQ
+   GBUS1vbdVhNuxHO78tQksGc+1nMVNNzt9bR7ysCgTxTWq0YBGvXqWsMBO
+   qud+duUhdMZM5o5t/8XzO4pakOAczbKsPHMv3bEOvHounKLP5595kijeS
+   w==;
+X-CSE-ConnectionGUID: nQE7LfPZTlSM5GmRFN0vuQ==
+X-CSE-MsgGUID: 90adwUqJQ0ymyDe7gfuhMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40837282"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="40837282"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:10:46 -0800
+X-CSE-ConnectionGUID: N8oEM1swTpeY75rDuzq6Nw==
+X-CSE-MsgGUID: E5TJueUMR7uxTF8sBGFJgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117299084"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:10:44 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 27 Feb 2025 11:10:44 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 27 Feb 2025 11:10:44 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.41) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 27 Feb 2025 11:10:43 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N6y1VDBEbC8V4Yr/pGbsazZQ938FIYpfXqWVz6KUmYEOTK808iA/noihC7TqyYqv22XULlWRTTtIr02RT6t3OCkDd8TCeIe5fwp1K0YNlfKMI95uCii0AnpbB7PmAURDCW9UYDywiN9TUIVIbEO6GGu4t3um+u/8hA/n5WvWufZ+TJGmqR/BsdeZNXwtv8BnkyckMmWREtRtn0MoOL/Ikob0qrrSNxJOSaZmYf8+rGsDTvQGoqhP3xuMvSpdGmSKZ2Luk7xGBVKtu1eSK1p+LJuMUSsAfY/6VnAcFs3rB7jBVt3y9/a4Ewct6i+8HZgtejqWSOrzmj3NgmiabsHSKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Syrr4XyStuVgy7hID1hpbeX/gKo/9F7ZhSS9T2wnig=;
+ b=BVDHkk16jPAGJ6IL5q7WrTZM1h4CxO47qZEzcCrytmFHmZMOhiJ8pQCyeEDISW97zYgg3m3RF3H74Oi+rvE6qmzz/3E1YUU8fkDEgEZ+wBicffRCkIoXxDLMOo8JsbFZLyZIawxLDWZ2cHzCH6GXmcbcXUIOtrge2tv3sgtYg+eVgGGxX1sSaa7UcyfJJk/fy74DFGHBq5NvgIVUqfi8V4Uxlge1TW6F6bbIksciXPV0zENEL87SJX2uvJFgY5Vjgwa7ANpL8xMq8P0Kgv6a/yxM9+dSPWqLl8u2xIrgQmnUKzyozFo0SJZGX57UpxNUj5u7XVr5GVONClQEHgyyGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by PH0PR11MB5782.namprd11.prod.outlook.com (2603:10b6:510:147::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Thu, 27 Feb
+ 2025 19:10:00 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%3]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
+ 19:10:00 +0000
+Date: Thu, 27 Feb 2025 13:09:55 -0600
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Tamir Duberstein <tamird@gmail.com>
+CC: <da.gomez@kernel.org>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Nathan
+ Chancellor" <nathan@kernel.org>, Nick Desaulniers
+	<nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
+	"Masahiro Yamada" <masahiroy@kernel.org>, Justin Stitt
+	<justinstitt@google.com>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Klaus Jensen <k.jensen@samsung.com>, Theodore Ts'o
+	<tytso@mit.edu>, <gost.dev@samsung.com>, Barry Song <baohua@kernel.org>,
+	Daniel Gomez <da.gomez@samsung.com>
+Subject: Re: [PATCH RESEND v3] drm/xe: xe_gen_wa_oob: replace
+ program_invocation_short_name
+Message-ID: <fzigsonsdbtvo6aorgvzlh4mvbpvikbz6iwh6h5jx53e7zd7m4@munr3ea5nbme>
+References: <20250224-macos-build-support-xe-v3-1-d2c9ed3a27cc@samsung.com>
+ <be5abg6u6wm62nhak7xrhtlkqxcekael6ztnkatwqxcil44x5y@p6yrbfingm4e>
+ <CAJ-ks9=gaxW2191c+K0E0MgjsQWLYoKxJZLxGb6RMbPRVHc4tQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9=gaxW2191c+K0E0MgjsQWLYoKxJZLxGb6RMbPRVHc4tQ@mail.gmail.com>
+X-ClientProxiedBy: MW4PR03CA0212.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::7) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
- <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
- <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de> <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
- <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de> <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
- <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de> <CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
- <d29ebda1-e6ca-455d-af07-ac1daf84a3d2@ralfj.de>
-In-Reply-To: <d29ebda1-e6ca-455d-af07-ac1daf84a3d2@ralfj.de>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Thu, 27 Feb 2025 12:06:50 -0700
-X-Gm-Features: AQ5f1JrjxNgL0EUlJ7aAqjswwz9TyAVgr8OSzI_jWIv3Ro6Vgwf5kx2j5898JCg
-Message-ID: <CAFJgqgQ=dJk7Jte-aaB55_CznDEnSVcy+tEh83BwmrMVvOpUgQ@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Ralf Jung <post@ralfj.de>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH0PR11MB5782:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2038ae22-5bac-4a5a-0f4d-08dd576254e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eE83eGVwdmMzSVVVWlZiNEc3KzkzOUwrbmRxWEYxeU9BTlZMM2U5LzYxNGx2?=
+ =?utf-8?B?YlJiTEFQSGx6d2t3YzJHUEFOKzU5MkdSRUdUTEkyKzFqRFpYL1lQQXpLWVNi?=
+ =?utf-8?B?Ymg5V3pPL2pSVkRKUEZPdGRvWjJSVGRvUDRtaVRTMHp3S1Q5azJuU1I0enVx?=
+ =?utf-8?B?aTZ2NlM5aWdkS3JTcGFQRzhpZTJrdHZtMzkwVjNUZ2MyWld4TmNGTnByUlhv?=
+ =?utf-8?B?dnRvUTdpZ1FkdnJ4bFhTTjNUU1BzVlJVam5PYUpMNGYraXJOQWs5YzEyaUhZ?=
+ =?utf-8?B?Vm5iWEltajRqTTdza25wS2dSTTJaclRISEVGaTlqWWQ1eGFLOXFZMkdmb3M2?=
+ =?utf-8?B?UklnRnBaZWZOcW5PWjFNRlFvdGlnNzY2UHBCRmhGWTlMdVBLU2xxWEI0a3ZY?=
+ =?utf-8?B?U3JrMnZvY0hKSFBsWi9qTjYyQWYrU3hLM3BGK3B0d1YyMGdvYzY3amFVWGpV?=
+ =?utf-8?B?dGs0ZkJxUTZwVmwralZDSEdoTnhhNGU5dTBrWVJpNkRZdHY0VTg2VXV5VnQv?=
+ =?utf-8?B?M0I5cmFKdi84WWV4N29wTU83WjFUdkJ5TUNwM21EN1U2TFhMY0hFMVkxTWNv?=
+ =?utf-8?B?dHJnb3JCSW54TlczQWxGQ0pPOVhIbWpHdWxIRlllcDYwelZmcFV5dzR1Z2xr?=
+ =?utf-8?B?UklkOUVUSHdhcnduTy9vRUF6MnRJQXRIUEM0WW8vRjVrWjN5U0hSeGRIT213?=
+ =?utf-8?B?TEYwUUNmMGhySXozUDhpM28zY3lhcWFSLy9zalh3Ri9zdTBsN0k3RTE2TW1F?=
+ =?utf-8?B?cGtPcnIyVVdzTHJ0cjJWVFJlS0FIUUkwRTU4Y0k0dnJKcElPWVhLNlVjZGlR?=
+ =?utf-8?B?Qkt5ZlQxZlY2Q1lwVGpyZGpWaGttck5vNFVMdmRwKy82SmhEZzRKcVZoZzJJ?=
+ =?utf-8?B?OGNlUi9RY2NJWGRIV1p2cFlnaU4yMlpURnBwOUhRMTM3OWJIZ1NyRVJ4ZFdu?=
+ =?utf-8?B?OUltMm5UVHBNakZEYTRRbFlTLzk1cXlWODV2RFRUaWIvd3FmNVUxWTdoNkVy?=
+ =?utf-8?B?b1hCa09QTCszR2RUNWpnZ24zQ3BVWEtWd014UUV4OThma2EvQ3psSGMraVB2?=
+ =?utf-8?B?dmZuQjlnUGdURVZmblI2RWdRRXFRUHFEdXNTOWROTFZJcDE5Q0NHWi9OMEI5?=
+ =?utf-8?B?SWFINmdIT1dKOEJVUlgwV3dra2tCd015ZHhhL3VMeTM3SXpmbzFDYi9zZW9n?=
+ =?utf-8?B?dzVXTkFuZVg4bkM2MW9TM2gvY0JQMTFwZG9QeU9qZUlDZ2ViY21BbVRYbHJT?=
+ =?utf-8?B?QmtlNklicUc5eUV1QTU0bEVmN05mSElIckxpZ0pwQnFEZERQUnY3S3lFWmZI?=
+ =?utf-8?B?MEZWRis2TDhHOGFOamhJR04zcUxlR3RkVG9QZFd6WWNNNituSGYxaXh3cWMw?=
+ =?utf-8?B?YzMvYmd3Rmw0ZTFsNnMzS0RLMTdyZWdsS1VZR0E0UWxBL1dMdzFtM0FEcXIv?=
+ =?utf-8?B?dGtEeFRwL0ZwemtDczEzTElzT1hjaFZVK2dNU1ZBNytnbzFMMlowZlh1Y3gz?=
+ =?utf-8?B?bGx6TzRpanNMemZKMFFGYnBGUEsvT0d0Yjd5WkRsYzFDdW9xdHRDQ1hudS9S?=
+ =?utf-8?B?SDhOa0U0UTdSTU9KTDBDdkpYR2NuOE9CY1pkR2JRaHk3TkltMnh2L2ttbFF6?=
+ =?utf-8?B?TlY3Y3VtdThHMkF5ckx0TW93Q0lWbUdJeExUc2JkcWN2ZUxwMHNhZHVQNDVW?=
+ =?utf-8?B?OVNUN244Rnc4eURidGVlZVRjVURWaFRNZURKRXRlZ2tFQjA2aFFZb3NIQitB?=
+ =?utf-8?B?RWtoV01PbExqbnQrVlRXYTUrc0hTcG5seThkTHZTSG9aN3YwcWVtS0ZUbmVI?=
+ =?utf-8?B?Unl1cTd1cHQwcnRFL3dqS0pOUThDUHIwRFRYQmxBcUlNcE9mbDFQbklpYTg0?=
+ =?utf-8?Q?8dLFMm1dxyX46?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dlZiTXpQVWJGSHkvSndDa1VKdEtnbWd5MjhOeHFmZ3luSmw5VlNPcVFwTFc0?=
+ =?utf-8?B?QmplbEEzQlhucitlTHRaTmppNjRIUHlWc2YwWlZudUJVRFlKSHQ1cm05REhx?=
+ =?utf-8?B?Z2FBczIwbGVySFQ5MXR4MjVONW5PdHROT2JQT1dzdTRFcXJkaVpPM2RDZkw3?=
+ =?utf-8?B?Ulk5T2ZhTW8xeVJzZ0hDem9CaVhtR0lnU3o1eDZqcWNudFhZRVpHYWtFZml4?=
+ =?utf-8?B?VnREbXp0bGVHMUNiY0ZaenVSVjR5YnV4YmV4OUtSL0V1NWo0UTRRVXZ3MVZy?=
+ =?utf-8?B?bldHdmhhMzVFVDZtMzdkT2gvdWsxTmdzNENtcVVJQ0NmN3lNc2pubm9ZWFQ4?=
+ =?utf-8?B?UmlvYzdrSzdiTklSTlE0c0YyQTEyc2VGRFphSWRZTUxLSFpWV1Iwd3RCYllO?=
+ =?utf-8?B?VWI4eHo1OFhRQmJ1ajhoa3VqUktJaXZmT1VCcmhXZVFiSE93cW9HODV4dUhW?=
+ =?utf-8?B?MEUvbHNqKzVjMjM0SVJpbk5NWWY3cDh1OVB0TU5SSFV0K29WNzhHdmZGVTVZ?=
+ =?utf-8?B?YzRTdVNJNFdMSHU0ZUlRK1B1dHNIUTlTY291ZlQ0SVErN0ozc2twNjVCbjVJ?=
+ =?utf-8?B?azdMMWIxWGV5bzZuMWpqcW9LcUwyWlNzbWFhTGhMVmowWGlaWGlBRjJ1MXhu?=
+ =?utf-8?B?VlYvTDdTczAwdlRyb1NUV1VUeU1wS1BvQ0NMc1lrTnZiVGlHYmhTZ0lyVlBM?=
+ =?utf-8?B?VE5vVnJzK0pvVGpLMHZja1RkMkpyVHloaHR3bW1hQkExQU1ibFpKbWlsTWFn?=
+ =?utf-8?B?bWtPVHhNbGVWeDVDdElTWEdab0JUak1ScXZ0eE5JSE43Z3pwR05pTzBhZ0s1?=
+ =?utf-8?B?cFAvcUEvK21IZEdjWXkrRjQ2NXRBZWFFY0syUUlMaStmekNkRnR2TWNReER0?=
+ =?utf-8?B?TXRrbmFPOUUraWo4b2RvSjJzelg3NnFxR3JhWjEyZTdJRmdTQW9ENDdpMHZh?=
+ =?utf-8?B?VklzY0NkUWtSOTFieXgxaW4yTE8rbFVicVI3eTE2QXFzUUNGb25TZHZ5MVho?=
+ =?utf-8?B?TkM5SkVFeFE5eEdnM2tRbkhQMGZHQU9HT1dicEwxMkE3RW95alJrMzRjU2Ft?=
+ =?utf-8?B?K25iSmNLeHZDQTJFNk5yY2Rhamw1dTJrYXU5eGd6bzBTN09KbFkvZ3pMM3pm?=
+ =?utf-8?B?eGMxeE9DWGNjam9UU1d5ZUNnNXhHZUJBbkgxVW9ldENKdUxpVUVna3FGSmov?=
+ =?utf-8?B?Wno1bkFraWVMczlTcG1qZXlBR3lkcEh1WjkzZjNBSHpoV0VHeHozcHFESkk1?=
+ =?utf-8?B?QU9JRTNKaDIxTktCWmwwUXV4U05uK0loRitWWWZrK3dKN1psUTd6VFF2VnBp?=
+ =?utf-8?B?TWwwR0pWTXE2b215dlJVMlZzVnJLZExoeGZobDBNTHZmTzFXMEgwR0g1NWFG?=
+ =?utf-8?B?bHlnT1JUNjdJb2lQWEVia0ZUeWZ6QmplcXNFSUhtLzZ0bDdRc3l0NjJuWjJh?=
+ =?utf-8?B?MTRMYXFUNUNEOURrSkJoaDA1L21sKzJtYUtNQWtEcUFGcUpUVDRTdHVOcmtC?=
+ =?utf-8?B?bmJFcjZETTBsU21kYjBONWZJYlZORlRzNFFIVXdITEZ2TWxwd2w1Wm9Ydk1q?=
+ =?utf-8?B?c2xMUDE3N0RvVjBUYWZFUS81UWg5cVlaV0xiM0dtVFJaQmNKT3hXcThMZFRU?=
+ =?utf-8?B?L245QTJzL0IvaS8wSTlLbU1yS0NHM2dPTlN4MXNFcFlSbHozWm8rUlo3b0dp?=
+ =?utf-8?B?SFN4YjJhcVFrNnhUeDI0aktVZUZITzNwRmI2VmxVWWZNUGk3T1ZIMGU4RmhJ?=
+ =?utf-8?B?WWNVWWZzTDNDbGtIVDNyQmlQRVQvZnU1ZHR3WUFhK0hDUWI5clBuZmZySEFL?=
+ =?utf-8?B?dkJPdHYwY3VIOVNORGxLT0o1eldEME9pZVNYTHBrK1daOEVwYjBRMWFibkVx?=
+ =?utf-8?B?NkpyMVVJeTcxQUlHYmZ1NlE2NXdhaE05K3B1OEc1WUo2K0NWMDdHcmUxUjgz?=
+ =?utf-8?B?Tk1tYnpITzRYMFhHdUZuY291a3lDc21COW53L2t3bndPeVdkL1o1Z1RsS3N6?=
+ =?utf-8?B?bEtTSWM4aWczc1EwN0Q3bnZVM2gxa0ZkcVZqYUdnVDc0ZDlvZFZIUkxKdHFH?=
+ =?utf-8?B?YUpDaXRkWTh2MEcvTk0rOWtYZUJnOGdtM214d2FKQ2hVNXlQb2hla0VUaXRv?=
+ =?utf-8?B?bVpVTFJBYVJvYWxDbmFDb2hMbEZCREFlQmtNYzJnWnJVeHVpc09NVlJEK29J?=
+ =?utf-8?B?b3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2038ae22-5bac-4a5a-0f4d-08dd576254e3
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 19:10:00.1120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iiS6yYjz8f+fKyoItTtBpcF8zAb3QtXIojRTnzkMVJ+W1JSjHBQ6MV/1tgadGP+OOy87pu48VWDTYrWkvZzEA+nGW43v7WwqGftu94MxWvg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5782
+X-OriginatorOrg: intel.com
 
-On Thu, Feb 27, 2025 at 10:58=E2=80=AFAM Ralf Jung <post@ralfj.de> wrote:
-> >> https://godbolt.org/z/rjaWc6EzG
-> >
-> > That example uses a compiler-specific attribute AFAIK, namely
-> >
-> >      __attribute__((noinline))
-> >
-> > When using compiler-specific attributes and options, the
-> > original language is arguably no longer being used, depending
-> > on the attribute. Though a language being inexpressive and
-> > possibly requiring compiler extensions to achieve some goals,
-> > possibly like in this C example, can be a disadvantage in itself.
+On Thu, Feb 27, 2025 at 08:39:21AM -0500, Tamir Duberstein wrote:
+>Hi Lucas, chiming in here since I also care about building on macOS.
 >
-> That attribute just exists to make the example small and fit in a single =
-file.
-> If you user multiple translation units, you can achieve the same effect w=
-ithout
-> the attribute. Anyway compilers promise (I hope^^) that that particular
-> attribute has no bearing on whether the code has UB. So, the question of =
-whether
-> the program without the attribute has UB is still a very interesting one.
+>On Mon, Feb 24, 2025 at 10:05 AM Lucas De Marchi
+><lucas.demarchi@intel.com> wrote:
+>>
+>> Is this the approach taken for other similar issues you had? Note that
+>> argv[0] and program_invocation_short_name are not the same thing. For
+>> this particular binary I don't really care and if it's the approach
+>> taken in other places, I'm ok using it.
 >
-> At least clang treats this code as having UB, and one can construct a sim=
-ilar
-> example for gcc. IMO this is not backed by the standard itself, though it=
- can be
-> considered backed by some defect reports -- but those were for earlier ve=
-rsions
-> of the standard so technically, they do not apply to C23.
-
-That is fair. For C++26, I suspect that the behavior will actually
-be officially defined as "erroneous behavior". For C, it is very
-unfortunate if the compilers are more strict than the standard
-in this case.
-
-I wonder why if that is the case here. C and C++ (also before C++26)
-differ on that subject. The differences between C and C++ have
-likely caused bugs and issues for both compilers and users.
-Though the cause could also be something else.
-
-I am surprised that the C standard is lax on this point in some
-cases. It is related to values that are or are not trap representations/
-non-value representations, and variables that could or could
-not be registers, as I understand one explanation I found.
-
-> > Rust is more willing to break existing code in projects, causing
-> > previously compiling projects to no longer compile. rustc does this
-> > rarely, but it has happened, also long after Rust 1.0.
-> >
-> >  From last year, 2024.
-> >
-> >      https://internals.rust-lang.org/t/type-inference-breakage-in-1-80-=
-has-not-been-handled-well/21374
-> >          "Rust 1.80 broke builds of almost all versions of the
-> >          very popular time crate (edit: please don't shoot the
-> >          messenger in that GitHub thread!!!)
-> >
-> >          Rust has left only a 4-month old version working.
-> >          That was not enough time for the entire Rust
-> >          ecosystem to update, especially that older
-> >          versions of time were not yanked, and users
-> >          had no advance warning that it will stop working.
-> >
-> >          A crater run found a regression in over 5000 crates,
-> >          and that has just been accepted as okay without
-> >          any further action! This is below the level of stability
-> >          and reliability that Rust should have."
-> >
-> > If C was willing to break code as much as Rust, it would be easier to
-> > clean up C.
+>Believe it or not, this is the only place that
+>program_invocation_short_name has ever been used in the kernel. There
+>have been numerous instances of:
 >
-> Is that true? Gcc updates do break code.
-
-Surely not as much as Rust, right? From what I hear from users
-of Rust and of C, some Rust developers complain about
-Rust breaking a lot and being unstable, while I instead
-hear complaints about C and C++ being unwilling to break
-compatibility.
-
-Rust does admittedly a lot of the time have tools to
-mitigate it, but Rust sometimes go beyond that.
-C code from 20 years ago can often be compiled
-without modification on a new compiler, that is a common
-experience I hear about. While I do not know if that
-would hold true for Rust code. Though Rust has editions.
-The time crate breaking example above does not
-seem nice.
-
-> > A fear I have is that there may be hidden reliance in
-> > multiple different ways on LLVM, as well as on rustc.
-> > Maybe even very deeply so. The complexity of Rust's
-> > type system and rustc's type system checking makes
-> > me more worried about this point. If there are hidden
-> > elements, they may turn out to be very difficult to fix,
-> > especially if they are discovered to be fundamental.
-> > While having one compiler can be an advantage in
-> > some ways, it can arguably be a disadvantage
-> > in some other ways, as you acknowledge as well
-> > if I understand you correctly.
+>#define _GNU_SOURCE /* for program_invocation_short_name */
 >
-> The Rust type system has absolutely nothing to do with LLVM. Those are
-> completely separate parts of the compiler. So I don't see any way that LL=
-VM
-> could possibly influence our type system.
-
-Sorry for the ambiguity, I packed too much different
-information into the same block.
-
-> > You mention ossifying, but the more popular Rust becomes,
-> > the more painful breakage will be, and the less suited
-> > Rust will be as a research language.
+>but never any actual callers (that I could find in the git history)
+>other than this one.
 >
-> I do not consider Rust a research language. :)
-
-It reminds me of Scala, in some ways, and some complained
-about Scala having too much of a research and experimental
-focus. I have heard similar complaints about Rust being
-too experimental, and that was part of why they did not
-wish to adopt it in some organizations. On the other hand,
-Amazon Web Services and other companies already
-use Rust extensively. AWS might have more than 300
-Rust developer employed. The more usage and code,
-the more painful breaking changes might be.
-
-> > I hope that any new language at least has its
-> > language developers ensure that they have a type
-> > system that is formalized and proven correct
-> > before that langauge's 1.0 release.
-> > Since fixing a type system later can be difficult or
-> > practically impossible. A complex type system
-> > and complex type checking can be a larger risk in this
-> > regard relative to a simple type system and simple
-> > type checking, especially the more time passes and
-> > the more the language is used and have code
-> > written in it, making it more difficult to fix the language
-> > due to code breakage costing more.
+>> I was expecting you'd take the acks and merge it all through a single
+>> tree since you received push back on the need to build the kernel in
+>> macOS.  Is this the only thing missing and you'd want it to go through
+>> drm?
 >
-> Uff, that's a very high bar to pass.^^ I think there's maybe two language=
-s ever
-> that meet this bar? SML and wasm.
+>I believe the other patches have been applied or dropped. When I last
+>tested building allmodconfig this was the only issue I ran into (macOS
+>arm64), so I asked Daniel for this resend.
 
-You may be right about the bar being too high.
-I would have hoped that it would be easier to achieve
-with modern programming language research and
-advances.
+fair enough.  Pushed to drm-xe-next since nobody ever reads the
+usage for this helper tool and it doesn't really matter if now it's ugly.
 
-> >>> There are some issues in Rust that I am curious as to
-> >>> your views on. rustc or the Rust language has some type
-> >>> system holes, which still causes problems for rustc and
-> >>> their developers.
-> >>>
-> >>>       https://github.com/lcnr/solver-woes/issues/1
-> >>>       https://github.com/rust-lang/rust/issues/75992
-> >>>
-> >>> Those kinds of issues seem difficult to solve.
-> >>>
-> >>> In your opinion, is it accurate to say that the Rust language
-> >>> developers are working on a new type system for
-> >>> Rust-the-language and a new solver for rustc, and that
-> >>> they are trying to make the new type system and new solver
-> >>> as backwards compatible as possible?
-> >>
-> >> It's not really a new type system. It's a new implementation for the s=
-ame type
-> >> system. But yes there is work on a new "solver" (that I am not involve=
-d in) that
-> >> should finally fix some of the long-standing type system bugs. Specifi=
-cally,
-> >> this is a "trait solver", i.e. it is the component responsible for dea=
-ling with
-> >> trait constraints. Due to some unfortunate corner-case behaviors of th=
-e old,
-> >> organically grown solver, it's very hard to do this in a backwards-com=
-patible
-> >> way, but we have infrastructure for extensive ecosystem-wide testing t=
-o judge
-> >> the consequences of any given potential breaking change and ensure tha=
-t almost
-> >> all existing code keeps working. In fact, Rust 1.84 already started us=
-ing the
-> >> new solver for some things
-> >> (https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html) -- did you no=
-tice?
-> >> Hopefully not. :)
-> >
-> > If it is not a new type system, why then do they talk about
-> > backwards compatibility for existing Rust projects?
+Lucas De Marchi
+
 >
-> If you make a tiny change to a type system, is it a "new type system"? "n=
-ew type
-> system" sounds like "from-scratch redesign". That's not what happens.
-
-I can see your point, but a different type system would be
-different. It may be a matter of definition. In practice, the
-significance and consequences would arguably depend on
-how much backwards compatibility it has, and how many and
-how much existing projects are broken.
-
-So far, it appears to require a lot of work and effort for
-some of the Rust language developers, and my impression
-at a glance is that they have significant expertise, yet have
-worked on it for years.
-
-Best, VJ.
+>Cheers.
+>Tamir
 
