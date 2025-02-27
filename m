@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-537423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD67A48B9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0ACA48BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6761D1682E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F06188C31F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22D80BEC;
-	Thu, 27 Feb 2025 22:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FDF1E1DF3;
+	Thu, 27 Feb 2025 22:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3NYbx5b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/hNhaWA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D92777F6
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485AB2777F6;
+	Thu, 27 Feb 2025 22:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695482; cv=none; b=hmpMthv6GVo7zZDt7dwUY9ESjyP4F6u6B82RPDljmx3sPdT00aJnVEH/TmPiLVksr1qUnnoh9Ua9+Sj+gjXxbeUDepA6m86tjVb/w1IgBu5SX+jRjTnl72FDlYbibUz89LRAD01Dw44EQDAdeLZTU226EZJGiwHyv2XJr8gYnfI=
+	t=1740695543; cv=none; b=mqjZ5KdNhbtPUFREiy0+TWhwMdu7QTQLP74B53LAPR061tLATSXXhT5UGwURIVi/y5TgACx+5JpBR7svwuqjz0SMHmcBMuiFajS0MQzMxCUuHmDi1lOXiyP0cQWEtwBYCCm8EHUFGUMJZATIBmzR4b9IEmQiccOzeyLSosLjK48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695482; c=relaxed/simple;
-	bh=pqx/dBna2gN0mw5vkh78oJYeK4NjZT83W5IVrSFD3mM=;
+	s=arc-20240116; t=1740695543; c=relaxed/simple;
+	bh=k6e8ofzrBt9aHKWkZMG3dJtLmoBrQbP6qnALTS2lQdI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=CjTwXQlRBeVAtOS5jKiZlK5+XodDrcyKjS0qgsIEL3ek013sqq2Uvg56w1OcV9Kj+xBEi6P/aWrPgnCdFY8WKppSNoznsnTAjMo2AaGypDKREWM28RWVgTL8/xggKEngJ+7EJV6WNmjX/STAxEn0MXvcv2xBVvr71ubPtPtfUKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3NYbx5b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D34C4CEDD;
-	Thu, 27 Feb 2025 22:31:21 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=M7JGoHa32q4HWEcb0V70enhKs/un2lgKaXbYaui8thhdnmL+AHClheZyBfvIjyriLMagZUs/dvb9DAojGK/RYoAXrvvmBZTS3b8wIlOTdIWKY3PcKqQTbBqc7dC7W1g+TZu5uYgmMHNFr/bRe8FSaMfmzFt1VxH+r4mXfwiySmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/hNhaWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161D5C4CEDD;
+	Thu, 27 Feb 2025 22:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740695481;
-	bh=pqx/dBna2gN0mw5vkh78oJYeK4NjZT83W5IVrSFD3mM=;
+	s=k20201202; t=1740695543;
+	bh=k6e8ofzrBt9aHKWkZMG3dJtLmoBrQbP6qnALTS2lQdI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=A3NYbx5bEmuOOSWoV8+Iw0WM21wGKV13eIIey1L6jkBedQBPEddimUVy3bTo2jSSy
-	 yTxFmSpXEsUslBiWnkkhcw209oiZdBmCtE8v6ZlIHufTFH6vfxpJAxxUK38MlS8NoH
-	 UHTCU+0fu7FGiMNDpLr5ulumjil9ytttk86XwmyDfPAIFJ/zcxzdHqatQuwacReIGy
-	 IiWOUJz9s47QWLa8SqzwFzoelXuzmk9NNTvOMnNTIDUtvxfeDw9LuWqmOjOWZjbYUs
-	 L94tdltVm9ge8WOdwOn7df9tuQaaBk8PBl7ANPeDAhedHHUEKcG4wBpG1Q8pKbYoTL
-	 i9Iml5c8EsYnw==
-Message-ID: <5ee4cd3e3e5b31c674b37e39be14a214.sboyd@kernel.org>
+	b=H/hNhaWAVRKKe3XZoM8aE+Jxa6aolkEyh1d6I4j1+iH+3E9HGKKLb9LdoFcJatXsL
+	 eDcqBLfAPj5Z6OWNkystoQ0BqtnVavVl7/masmi+87CnxdmkDfggsT3gIdmexq8jvX
+	 S19uIXKOBnZzJQTOya790x0e7iKBTnrYoIDuSYij2rUoGvPeuWX4KnBTtJdyi8Gzy9
+	 bn5ZM9IVamjZ9/1wIPh6jCP8QlCm/I1Ppb//1UNOaIzJ4xPVHqXORoM1LIIP2tU5bJ
+	 N43UcaPi1aKd4kcATSus3TbDuEEmxi2YauzUK4xpZ1Hr1GOcDZHOXpIaTdZsNrw+zp
+	 cGktaOohkmQ3Q==
+Message-ID: <14dcbc0a6000aa43feda3681a3ad7548.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,28 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <23BAA675A75EF4F5+20250218050552.57711-1-wangyuli@uniontech.com>
-References: <23BAA675A75EF4F5+20250218050552.57711-1-wangyuli@uniontech.com>
-Subject: Re: [PATCH] spmi: Only use Hikey 970 SPMI controller driver when ARM64
+In-Reply-To: <20250221075058.14180-2-friday.yang@mediatek.com>
+References: <20250221075058.14180-1-friday.yang@mediatek.com> <20250221075058.14180-2-friday.yang@mediatek.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mayulong1@huawei.com, mchehab+huawei@kernel.org, zhanjun@uniontech.com, niecheng1@uniontech.com, chenlinxuan@uniontech.com, WangYuli <wangyuli@uniontech.com>, Wentao Guan <guanwentao@uniontech.com>
-To: WangYuli <wangyuli@uniontech.com>
-Date: Thu, 27 Feb 2025 14:31:19 -0800
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Cc: Friday Yang <friday.yang@mediatek.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, Friday Yang <friday.yang@mediatek.com>, Garmin Chang <garmin.chang@mediatek.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Yong Wu <yong.wu@mediatek.com>
+Date: Thu, 27 Feb 2025 14:32:21 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting WangYuli (2025-02-17 21:05:52)
-> SPMI_HISI3670, the Hikey 970 SPMI controller driver, is only
-> required to use the Kirin 970 SPMI bus.
+Quoting Friday Yang (2025-02-20 23:50:53)
+> On the MediaTek platform, some SMI LARBs are directly connected to
+> the SMI Common, while others are connected to the SMI Sub-Common,
+> which in turn is connected to the SMI Common. The hardware block
+> diagram can be described as follows.
 >=20
-> And the Kirin 970 is an ARM64-based SoC, it cannot be used on
-> platforms of other architectures.
->=20
-> Link: https://lore.kernel.org/all/b4810f476e41e7de4efdf28b42472ae4ffe7def=
-e.1597647359.git.mchehab+huawei@kernel.org/
-> Reported-by: Wentao Guan <guanwentao@uniontech.com>
-> Closes: https://github.com/deepin-community/kernel/pull/604
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
+>              SMI-Common(Smart Multimedia Interface Common)
+>                  |
+>          +----------------+------------------+
 
-Applied to spmi-next
+Applied to clk-next
 
