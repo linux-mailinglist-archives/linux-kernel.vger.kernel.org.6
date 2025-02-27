@@ -1,178 +1,133 @@
-Return-Path: <linux-kernel+bounces-536949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92041A48646
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:10:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF441A48653
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E962F1888894
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090B617822F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742691C6FF8;
-	Thu, 27 Feb 2025 17:05:36 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CB01DE3B3;
+	Thu, 27 Feb 2025 17:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bCxsA/uB"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3831AC435;
-	Thu, 27 Feb 2025 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F3F1DDA2D;
+	Thu, 27 Feb 2025 17:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675936; cv=none; b=tE/52Yu88acYh59FHdjL+AQxWhV+88gTQQR9PKP331NUpY0Yjmo35F8+76EGY3NAZv9jVGuwpb/Bn+KGntTDXp2M0MeVe+QFzC1anCwr0bOuuWhvU1wazLch+RFFJSJK1H2sJHONoguFeyygG4L7dCWkm1gHyXjjt8WFS+u3+qs=
+	t=1740675938; cv=none; b=rhD2nQyVmlmdqVv7DuHa5SikmlVPgfEwneO/UhnhY3p5/MC6Y7Z5YrcSW960w5hqalK1JBY0ipodux8EI5FpokmTqMQCYJiwJO+o8dHa8MgW7zC72rQBFm27EwkL1be3sXnessVHKYm/bx52w9fekdM44RBsUxrW5TpQafGYFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675936; c=relaxed/simple;
-	bh=1tZSLN4X+l32NGHBqbq/zSf3s6/20SE6aOLhpRj9kIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZWl3/0xbCi/V6mVek0R//lwXA4PzbhX1kN9LZ+y4kLGAnW1wxOniJ1FMeuXqUprQmOSyjn7yzUklnJznznEk/PNxgz0cazqGQszs1BNmCZ14zIpMZ0yyyXYFLDbx8qyZ19OR3FiINAaQ+Goumpad9xCmmDvzVO6dxABvvYs6LAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e89a2501a0so6420106d6.1;
-        Thu, 27 Feb 2025 09:05:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740675932; x=1741280732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ACi7nERFPWMWiBfUXY4B9J4MEAONq+xaiL87Es4sw0U=;
-        b=pTBQz0+VXLc0llaDuGSlKwoy/7rjK9k8Hs+0h61AqsJ3b3j+KsPmwHtvyTjBliI/OO
-         H072IwW1k4NwGvj8nU1viP7YSIUyMyhay6XSvH9r0ssNW16KMgt2v7/8h7/9EKev/bNM
-         fq6FPWTaqcd2jEpnHOE8bI39dhO+u7TqEBY4TDOWo1IE7v601z+F9wDQuzsahK+B5TYK
-         s6G1oKMegVa96TUQ0OtxHNpXu/P/I+4Rk+lbd0/IB00Yw5ejJCA6OgXwzAOPJsWwVjN4
-         wHmaIOcWfG7NQE2T/qZXJ3ywbGXOip5AlNmg747Kxjnk1syEMAyiee0x4+HNvBYE2Yrl
-         fgWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM7FVyzlNmIgdPHtMDbjQ0x9OjKN2mB974lAPQ8l6/L7OnnFPjLIg57BadPPuXT6wKIBKZ1+XKOcMVew==@vger.kernel.org, AJvYcCWeF+vFukdWTRnEjLKogMOhSXPFOWiY7Kda8ErbFCZs7cHoRGR+V+gUHYk29l07VGX6uaDWP7tb327y8l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsdzO188PKFd0G5a7dui17J7dAl1X2uGr7QVujng4DGPvvnUD2
-	ojHajyg63SvetdtAARyTUBOf37aOqKSfv5Mv/yiyfFpkypLMbr5IbuXQ5oRq
-X-Gm-Gg: ASbGncu2nrLlfkENFvUwX3QviLkI5g+Qp7BtWo2cr1FNjwvqw8cyYgn695295NS9SYK
-	Qc0P/HMUQ5yswINgojjjsAlLvaIwmFunhSlAJj3PyIoTGhnFE8+JJwHCh2K+AadWYwAuVel5hrN
-	1cuZNRjtBHaV13GeSrdPdzgQYpNqkvlhoG2xC5oYkdy6C+ZByDMd8cN5i3ykrHStZM/Qu7O5eXP
-	yc79tXDj9VDekYqZ9PlyDxua0kA4iv5RkBiSVeQpMrmhHEQtJsu1M+98RD+4wAXh/fmTllkOMAx
-	qVo3jmC8FMDRe/6khkyyBOtpitcJlE8rsWQKrXGESgtOYBvTOXFoGAxBtxAuDOpFj/0U
-X-Google-Smtp-Source: AGHT+IGt2870N0U7Cr2YaCx2fitE4hO3Dn1nv6OV2Cw7RFDFw1CmLdrZ6tbrUa7qPOrXVF0McxSnZg==
-X-Received: by 2002:a05:6214:500f:b0:6e8:9c3b:af08 with SMTP id 6a1803df08f44-6e8a0d6d748mr2650426d6.30.1740675931856;
-        Thu, 27 Feb 2025 09:05:31 -0800 (PST)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976da639sm11649136d6.116.2025.02.27.09.05.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 09:05:31 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47208e35f9cso13812041cf.3;
-        Thu, 27 Feb 2025 09:05:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwux9BI5EULfcPXLxvGrEe8/UYSqGDOG0I2v7MEzv6yRAxj1jYJ1eoSey7O2InHB6TyM7swdB7eDcRq7I=@vger.kernel.org, AJvYcCVYfKZxyCxxkf5AzrkyYiTCVTnKMbv4p23ynRhcbld1N593eDnOlRHHpK9wFcZ73rgkDojVMfyaYRw4jQ==@vger.kernel.org
-X-Received: by 2002:ad4:5eca:0:b0:6e5:a0fc:f663 with SMTP id
- 6a1803df08f44-6e8a0acbcccmr3656746d6.0.1740675930964; Thu, 27 Feb 2025
- 09:05:30 -0800 (PST)
+	s=arc-20240116; t=1740675938; c=relaxed/simple;
+	bh=6K6RMuFqw/0yA8o+/CTvB3vW+m44k9m9LPe8/wSzQGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBg0Oqm/w14U/nS1BxflL29a772Sul68xmFAM4s1pgOYQygm7yZYmAwyDKcno45VXysSOw9UyBoQnb8x3g9IINf9RYJzjgCD+M1XmatZeil/Qvmf0uaN3rYLoRkDK1LPWTHwXTzD+s4WLSxv+lvUxo01UQDOufK8sEucsh5Z8aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bCxsA/uB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 206AF6A6;
+	Thu, 27 Feb 2025 18:04:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740675846;
+	bh=6K6RMuFqw/0yA8o+/CTvB3vW+m44k9m9LPe8/wSzQGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bCxsA/uBn8Roii7nvPfKx5n6xPZL7bvOmsR03e6MYuo5F1rEuUaT/IQcgdIergUH2
+	 fSoNdeEwoNdwohz6Bhze9Yd9195IU04lOE1YT8YByG/hjsK46/0iL4n4NuxECjDjq+
+	 tJiXr1m4A1pCk/YO9xgQnI8Wz31UosUIgtoGWbJ0=
+Date: Thu, 27 Feb 2025 18:05:31 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Mikhail Rudenko <mike.rudenko@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dafna Hirschfeld <dafna@fastmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: rkisp1: allow non-coherent video capture buffers
+Message-ID: <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
+References: <20250102-b4-rkisp-noncoherent-v1-1-bba164f7132c@gmail.com>
+ <20250103152326.GP554@pendragon.ideasonboard.com>
+ <87bjw9s4s3.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220113338.60ba2290@canb.auug.org.au> <CAPDyKFqBwari-MoRefG82kbxovVaLt3ewRVFihHoLbrOSWSnMQ@mail.gmail.com>
- <CAMuHMdXQK2+-FaqK6FJWPYrS1TfASfZaJ0-VJBLdB53MZY_rxQ@mail.gmail.com> <15141602.O6BkTfRZtg@diego>
-In-Reply-To: <15141602.O6BkTfRZtg@diego>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 27 Feb 2025 18:05:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU102nhmHoxo+z2XCxNf+gLFuBnAZamtW+V=WjKFX9rjA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrYTz4pgiQMro2bimmhPKLQZRU8C5t7-vnLd2jGJdIsD8fGO4kgjg7FPho
-Message-ID: <CAMuHMdU102nhmHoxo+z2XCxNf+gLFuBnAZamtW+V=WjKFX9rjA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the pmdomain tree
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Shawn Lin <shawn.lin@rock-chips.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87bjw9s4s3.fsf@gmail.com>
 
-Hi Heiko,
+Hi Mikhail
 
-On Thu, 27 Feb 2025 at 17:16, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
-> Am Donnerstag, 27. Februar 2025, 16:56:01 MEZ schrieb Geert Uytterhoeven:
-> > On Mon, 24 Feb 2025 at 13:27, Ulf Hansson <ulf.hansson@linaro.org> wrot=
-e:
-> > > On Mon, 24 Feb 2025 at 06:20, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> > > > On Mon, 24 Feb 2025 12:23:18 +1100 Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
-> > > > > On Thu, 20 Feb 2025 11:33:38 +1100 Stephen Rothwell <sfr@canb.auu=
-g.org.au> wrote:
-> > > > > > After merging the pmdomain tree, today's linux-next build (x86_=
-64
-> > > > > > allmodconfig) failed like this:
-> > > > > >
-> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `rockchip_do_pmu_se=
-t_power_domain':
-> > > > > > pm-domains.c:(.text+0x19aa103): undefined reference to `arm_smc=
-cc_1_1_get_conduit'
-> > > > > >
-> > > > > > Caused by commit
-> > > > > >
-> > > > > >   61eeb9678789 ("pmdomain: rockchip: Check if SMC could be hand=
-led by TA")
-> > > > > >
-> > > > > > $ grep CONFIG_HAVE_ARM_SMCCC_DISCOVERY .config
-> > > > > > $
-> > > > > >
-> > > > > > I have used the pmdomain tree from next-20250219 for today.
-> > > > >
-> > > > > I am still seeing this build failure.
-> > > >
-> > > > And now that commit from the pmdomain tree has been merged into the
-> > > > scsi-mkp tree and so the build failure happens there as well.
-> > > >
-> > > > I have used the scsi-mkp tree from next-20250221 for today.
-> > > >
-> > > > --
-> > > > Cheers,
-> > > > Stephen Rothwell
-> > >
-> > > Stephen, thanks for reporting and sorry for the delay.
-> > >
-> > > I have now fixed the problem on the next branch as well on the
-> > > immutable rockchip branch. Martin, please pull again.
+On Tue, Jan 14, 2025 at 07:00:39PM +0300, Mikhail Rudenko wrote:
+>
+> Hi Laurent,
+>
+> On 2025-01-03 at 17:23 +02, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+>
+> > On Thu, Jan 02, 2025 at 06:35:00PM +0300, Mikhail Rudenko wrote:
+> >> Currently, the rkisp1 driver always uses coherent DMA allocations for
+> >> video capture buffers. However, on some platforms, using non-coherent
+> >> buffers can improve performance, especially when CPU processing of
+> >> MMAP'ed video buffers is required.
+> >>
+> >> For example, on the Rockchip RK3399 running at maximum CPU frequency,
+> >> the time to memcpy a frame from a 1280x720 XRGB32 MMAP'ed buffer to a
+> >> malloc'ed userspace buffer decreases from 7.7 ms to 1.1 ms when using
+> >> non-coherent DMA allocation. CPU usage also decreases accordingly.
 > >
-> > So this was fixed by adding a dependency on HAVE_ARM_SMCCC_DISCOVERY[1]=
-.
-> >
-> > I am no Rockchip expert, but is this the correct fix?
-> > As arch/arm/boot/dts/rockchip/rk3036.dtsi uses enable-method =3D
-> > "rockchip,rk3036-smp", e.g. RK3036 does not depend on PSCI, so I assume
-> > you could run a kernel without PSCI support on RK3036 before?
+> > What's the time taken by the cache management operations ?
 >
-> All still relevant 32bit Rockchip SoCs (rv11*) already switched over to
-> PSCI. So if one uses some sort of distro-kernel (or one simply built from
-> the in-kernel defconfig), PSCI support will be in there already.
-
-OK.
-
-> So the only case where this is relevant, is for kernels custom-build for
-> one specific soc type.
+> Sorry for the late reply, your question turned out a little more
+> interesting than I expected initially. :)
 >
-> The rk3036 (and rk3128) are from the same era as the rk3288 - 2014 .
-> That's more than 10 years ago. And we're not talking about these old
-> boards not working anymore - just a _possible_ size increase in very
-> special cases (of not using any distro-like kernel).
+> When capturing using Yavta with MMAP buffers under the conditions mentioned
+> in the commit message, ftrace gives 437.6 +- 1.1 us for
+> dma_sync_sgtable_for_cpu and 409 +- 14 us for
+> dma_sync_sgtable_for_device. Thus, it looks like using non-coherent
+> buffers in this case is more CPU-efficient even when considering cache
+> management overhead.
 >
-> arm32 psci.o is 176kb ... and even my r3036-kylin board came with 512MB
-> ram. So personally I'm not too worried.
+> When trying to do the same measurements with libcamera, I failed. In a
+> typical libcamera use case when MMAP buffers are allocated from a
+> device, exported as dmabufs and then used for capture on the same device
+> with DMABUF memory type, cache management in kernel is skipped [1]
+> [2]. Also, vb2_dc_dmabuf_ops_{begin,end}_cpu_access are no-ops [3], so
+> DMA_BUF_IOCTL_SYNC from userspace does not work either.
+>
+> So it looks like to make this change really useful, the above issue of
+> cache management for libcamera/DMABUF/videobuf2-dma-contig has to be
+> solved. I'm not an expert in this area, so any advice is kindly welcome. :)
 
-My worry is not so much about the size increase, but about
-CONFIG_ROCKCHIP_PM_DOMAINS becoming disabled when
-running "make oldconfig" if CONFIG_PSCI is disabled.
+It would be shame if we let this discussion drop dead.. cache
+management policies are relevant for performances, specifically for
+cpu access, and your above 7.7ms vs 1.1 ms test clearly shows that.
 
-Gr{oetje,eeting}s,
+>
+> [1] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n411
 
-                        Geert
+I would like to know from Hans if the decision to disallow cache-hints
+for dmabuf importers is a design choice or is deeply rooted in other
+reasons I might be missing.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+I'm asking because the idea is for libcamera to act solely as dma-buf
+importer, the current alloc-export-then-import trick is an helper for
+applications to work around the absence of a system allocator.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+If the requirement to disable cache-hints for importers cannot be
+lifted, for libcamera it means we would not be able to use it.
+
+
+> [2] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n829
+> [3] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-dma-contig.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n426
+>
+> --
+> Best regards,
+> Mikhail Rudenko
+>
 
