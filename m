@@ -1,202 +1,194 @@
-Return-Path: <linux-kernel+bounces-535371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F375DA471C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF24A471E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B42B3A1EDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D1C18863E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED373477;
-	Thu, 27 Feb 2025 01:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D5470814;
+	Thu, 27 Feb 2025 01:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0q7l5VE"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuEyTT0v"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD661171A7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC0C1F94A;
+	Thu, 27 Feb 2025 01:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740621140; cv=none; b=J4WV1XFIm5uxW6RzdAzm69UPxrBydM0rOP6LNiXw6D7KepnFjkA8C5Y/NfYK5FRcFB735gRaAQGY8OKVTQIj8qu2z5QCaKVu1rwVpgi9/rTeIxTOdp4CkeNoQ6SnQMHNpDdrr6VQ+BMKJAEf4EMPOLrUmnhHuAGziLtjw/PKkTU=
+	t=1740621164; cv=none; b=BHcFUiJ7qo9ACuuF6cMNsgQCp4z0pqd+cQ1++X6qlIfcROwQ4YKN54VkTgFu6sp/s6Zv5xtklBisbSdBE6UkqpWis4w5o0+mQ701FEWv0TyQpzNSHPUex5rVjB8jogm5XhKlcVBOzQwlctQinETUTzBa0tJAzECFpBGu2vEGT3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740621140; c=relaxed/simple;
-	bh=hw0EClt+KjkHr0wYgycl8DBygEnJ+tS0JF3ygXoPC0Y=;
+	s=arc-20240116; t=1740621164; c=relaxed/simple;
+	bh=YjKKT691QN0DPGRmJjP9TtTEtKQK38mNUGvDi7DJwQo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ACrczfWw/Ab+sWlPRtnoHVxIEk5XI9REfnq3/PObcFMfnajrEgzit8LFRnpGPPblNLbTF7ZUjOhlK7wMNUqq99DQuDKbQ5Kt7BfApNjCJ/IyknH/mhQx3dypci8DeLUTTDGOwVQU4FrDBdJGigKymS8hWo1SVSadtQJA8sCnRII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0q7l5VE; arc=none smtp.client-ip=209.85.167.49
+	 To:Cc:Content-Type; b=JABDbWDHgVdHYZqAPFDiakf4z2ZG0HOnWMzlu0nkNzPhmbgEdvqnQFKQRCVm+FrION8Ishg2OmztiNsbotO1gFgiYi9o9uUr07mO3llINkLU29WI7eN7aTm+YCMN9ut9UvDTOGL16SeCMavgJhS+5vG73lDdCE3rP76zfzZfXQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UuEyTT0v; arc=none smtp.client-ip=209.85.161.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-548409cd2a8so382773e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:52:18 -0800 (PST)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5fcd665af4eso121891eaf.2;
+        Wed, 26 Feb 2025 17:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740621137; x=1741225937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vs6sgyWXbWBHmwIbHfXNzUCb7NF+eaNhgtfcPW0/cz4=;
-        b=N0q7l5VE7+Vq4nb6j24HT2TstbHLioqooIyp79KjTwWFm1RKcq+tEhzHUPJhoVQmQ3
-         T3pyyq3lwX4BLGfD4TlinZ6bxqAQTbRUGKxQxwx36+xJSlVcI4Kw4lNayvmNbiAVdQJV
-         iwh8a7QFbdcsPZDuqBdrjdUHseKr+gtK18W1O3TZV7K2qMnaITTN7yejTOGpae/t+acO
-         x2IOTJ38wjepGyWtnlvw2/gU+hP7C5YxUn7GMJoAV3mv7hdUR8JhlEqwv+4Tmg58EvVT
-         XCShvBEj0j8aXb/AUZNfZa0sPGAinWq3usVY3xpPnm8XeFRDcN9TxfHA6Hia60px54LM
-         amJA==
+        d=gmail.com; s=20230601; t=1740621162; x=1741225962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ixz4rke/Pu4MIs/yXHWsa0RBvJ804N4RrG8GmiSG7vE=;
+        b=UuEyTT0v8+Mk09j7UCoiPg5J7oJZrIxYJBTDJ5bM9YpyUAbE2Z/uxXhyx1QNd4Bh8I
+         1X/TpEoUnVQxohtkUA5uMRqDWLFqAcUoTQ7eIH4j8fNFabOVU44wI7X2rv5rICxYRC00
+         joRH9zLGRX76/d2ybBQJtkUcoZnbJdu6zMA8LjEY2m1E+qWNbFmeYIi9v/9tfdttgg5u
+         /QZa/AdPqmbjThk4xRaq8n4V7+MkLA5S5Z/Q9iarnIayupwENeZ06/f52ZecS8PwTgbp
+         nszg3LVVTqzbS3xDDt6GEyq577mv0sS6vSYlyjZn0qxeBk32k1NAsEUhjFumGTvC6Sf9
+         6otg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740621137; x=1741225937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vs6sgyWXbWBHmwIbHfXNzUCb7NF+eaNhgtfcPW0/cz4=;
-        b=b6KYplPIfaAY/3UuQlKxonVf7RUG3DFsuDRaLtn9rCbhWyJo7X06+0ooXtr2GCbwu6
-         PtixgfFVxWgkZnGHEMsC8oKzaq4zaGh3AM6g6xJTL3tXoUq4FYSVtErungjd50vxENYs
-         KFLz+Tav4mscTxfzUwZahPsFWobfM5p90VKd9LS+cZIpXbt2Y7BytkiZtCb9rL1+CyJj
-         AOkAZ+T3jRUk4OOR8E88qo4EIlMs4MvVmEE53xQwoSDonfvD6mr2DB0NiRiOW14aoeW2
-         ThuM1/su4qTWzOhy0K3tEcXZ1mdhJ1RtDubrQVikiP6oFXAM5yMJJiDDYvdWqogIxsgB
-         Td/A==
-X-Gm-Message-State: AOJu0YwajqmRkrr8VSBDVwzu+4OL50O4jVQbCQHvP/c1lkgNu1Tq+sB3
-	GHDlnnzb3TIvUVKxWCg4eCx1R/X+RDCG5CwLqSaVyuhcySneId85D5AaoQOwawQLgwgPr/HbPi2
-	c1FmDoJjTvwlFeHddytBvgQoYX7dN/u8=
-X-Gm-Gg: ASbGncuNmK0XDeyNYd2ukMsR+mET5EU6/Bvn7sQHCrgyl9G9DG06iL/eqSf0uZWE1M3
-	7h3TLC1kCKlxSJs8LJGuskdddokL61QgauzwRbhIV5YJObYTKg2aSPn8obr69pEqlXjOJcmSGkC
-	I9i0a+/UFIkRKPhfcv6rjgsQ==
-X-Google-Smtp-Source: AGHT+IEd+hG/yPItb+W9brTEJT1Zr6lOlZJb38THk8NC1KWwlxmq1Nb1AjPu0k2fDm4dUgHW9SpO6G5z2ZG4okSXgww=
-X-Received: by 2002:a05:6512:a93:b0:546:2f7a:38b9 with SMTP id
- 2adb3069b0e04-548510ce891mr6380082e87.3.1740621136299; Wed, 26 Feb 2025
- 17:52:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740621162; x=1741225962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ixz4rke/Pu4MIs/yXHWsa0RBvJ804N4RrG8GmiSG7vE=;
+        b=YEGC4G0+y8s4FnRJX1iaTNRUjcG03aX8LqcukaPcYqAF4cA/BZ1pT5HpU8wbil0iR4
+         1dl4j8rKjOo78t0peFmWE7/f3EkXnxQMzymEy+id5V+6DwMu/HKdpX5GZihF939+Les4
+         udkt3F8ZB0+tgx3GTsDewFXoX67+DAD9NI7f87yvUWO9kANGbpPd5N4mtnH6MsxOnHfN
+         raNcU7e9Ywv8hS/03rTTz89yPWJIXhH2i6EyMNB+XpygvlRzJMZqLxYtCqHyBJvnWyg8
+         fa4+bCKPNIB/+VAVS6/NNMu9SxdPCrFwwZIlNHR5sTk8H/BKTLvSC62JLI1l97Yr6yxm
+         PqPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKqmr9pocXnstzQAgn3j0y0f6QcEq4hgliW/MqjcUyJczBKEff+Jo9HwiRm+gLA2Ah6BUKQrx8yLRJUL0=@vger.kernel.org, AJvYcCWdqYBNidbeObLlE0EpvKkGbAxKPww89z4wnpJH0fUVAXI/GkX0z7mtGm1qBiMyuUZPkvCkJtwaXpc=@vger.kernel.org, AJvYcCXYoBLS3/YVTu8iWlB4KEgJhc3XeHSBtJPEiqGBAeS0akuAGqoHyTtG6ISU0Va535qpTJzgHd9AXzlIzzSW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR6UvJFsTs0TQb2Vbul9nSm4NRzrA8bhI/v8Z3dau6gmzKO/IX
+	WR+YLwtOZ7c7qklKwpwxoUhDyVIKCzB8wZmZdqfXwgMPs/Ijnu2GYOeYksbPCLdBe/EG3TS9yTI
+	DLo8sMKbZvGvFaLGMJLGzJ3vAjrSHB/fpABM=
+X-Gm-Gg: ASbGnctbRN8fc8w9F2Nr0PWj9NPgeDK3oh6at4rBu9YSI/yYhSL5wfrHq4zk+GPCgTL
+	j/bAG0bpudEHrMdu3OaxPj8r/TayBwjIK5AiDJ+GJF/JR14cohIc9dCSREPamei4W1MmtDfEJy7
+	F36YdzKpozQAWhcxuFmPEnsbtgA876GOIKoi8KRUk=
+X-Google-Smtp-Source: AGHT+IGqnXgTmRNVtKjZ/iy4Us2fHmhfpIjxOOKmUbGHr3+Ih8p+w6kJGd3DiiswHNSoSt374klMkalELnpHhT8BfD0=
+X-Received: by 2002:a05:6808:1513:b0:3f3:f90b:f1b3 with SMTP id
+ 5614622812f47-3f425a658admr16487647b6e.5.1740621162105; Wed, 26 Feb 2025
+ 17:52:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226180531.1242429-1-brgerst@gmail.com> <20250226202309.GB29387@noisy.programming.kicks-ass.net>
- <CAMzpN2hbbMdB8bf9deRefvFoQ_iRjB1o9edkgFSZvcjRzsVgdQ@mail.gmail.com>
-In-Reply-To: <CAMzpN2hbbMdB8bf9deRefvFoQ_iRjB1o9edkgFSZvcjRzsVgdQ@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 26 Feb 2025 20:52:04 -0500
-X-Gm-Features: AQ5f1JoINaySo6SdP4qDmT_eSbRGDY2F_6MVrnDUziqXk2_xWtp4NypMyheB2uw
-Message-ID: <CAMzpN2hEeBR0tn+sNON4uXTiqy1CfoLHGjQuwEWcRMuQJPb4eg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] Add a percpu subsection for cache hot data
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, 
-	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com> <20250225-memory-drm-misc-next-v1-6-9d0e8761107a@redhat.com>
+In-Reply-To: <20250225-memory-drm-misc-next-v1-6-9d0e8761107a@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 27 Feb 2025 09:52:06 +0800
+X-Gm-Features: AQ5f1Jo4V-x_aMe6cNu_t6bm5DyuMpmkfFoBZmOQ95iqLbLXuNwjk8JtAQUipWI
+Message-ID: <CAAfSe-vGC2bA10yNRjSkLo3Y=2K8HJvssuM8qLeB=57vQk1eZg@mail.gmail.com>
+Subject: Re: [PATCH RESEND 06/12] drm/sprd: move to devm_platform_ioremap_resource()
+ usage
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>, 
+	Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>, 
+	Tian Tao <tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
+	John Stultz <jstultz@google.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 8:29=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wro=
-te:
+On Wed, 26 Feb 2025 at 06:22, Anusha Srivatsa <asrivats@redhat.com> wrote:
 >
-> On Wed, Feb 26, 2025 at 3:23=E2=80=AFPM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 01:05:19PM -0500, Brian Gerst wrote:
-> > > Add a new percpu subsection for data that is frequently accessed and
-> > > exclusive to each processor.  This replaces the pcpu_hot struct on x8=
-6,
-> > > and is available to all architectures and the core kernel.
-> > >
-> > > ffffffff842fa000 D __per_cpu_hot_start
-> > > ffffffff842fa000 D hardirq_stack_ptr
-> > > ffffffff842fa008 D __ref_stack_chk_guard
-> > > ffffffff842fa008 D __stack_chk_guard
-> > > ffffffff842fa010 D const_cpu_current_top_of_stack
-> > > ffffffff842fa010 D cpu_current_top_of_stack
-> > > ffffffff842fa018 D const_current_task
-> > > ffffffff842fa018 D current_task
-> > > ffffffff842fa020 D __x86_call_depth
-> > > ffffffff842fa028 D this_cpu_off
-> > > ffffffff842fa030 D __preempt_count
-> > > ffffffff842fa034 D cpu_number
-> > > ffffffff842fa038 D __softirq_pending
-> > > ffffffff842fa03a D hardirq_stack_inuse
-> > > ffffffff842fa040 D __per_cpu_hot_end
-> >
-> > The above is useful, but not quite as useful as looking at:
-> >
-> > $ pahole -C pcpu_hot defconfig-build/vmlinux.o
-> > struct pcpu_hot {
-> >         union {
-> >                 struct {
-> >                         struct task_struct * current_task; /*     0    =
- 8 */
-> >                         int        preempt_count;        /*     8     4=
- */
-> >                         int        cpu_number;           /*    12     4=
- */
-> >                         u64        call_depth;           /*    16     8=
- */
-> >                         long unsigned int top_of_stack;  /*    24     8=
- */
-> >                         void *     hardirq_stack_ptr;    /*    32     8=
- */
-> >                         u16        softirq_pending;      /*    40     2=
- */
-> >                         bool       hardirq_stack_inuse;  /*    42     1=
- */
-> >                 };                                       /*     0    48=
- */
-> >                 u8                 pad[64];              /*     0    64=
- */
-> >         };                                               /*     0    64=
- */
-> >
-> >         /* size: 64, cachelines: 1, members: 1 */
-> > };
-> >
-> > A slightly more useful variant of your listing would be:
-> >
-> > $ readelf -Ws defconfig-build/vmlinux | sort -k 2 | awk 'BEGIN {p=3D0} =
-/__per_cpu_hot_start/ {p=3D1} { if (p) print $2 " " $3 " " $8 } /__per_cpu_=
-hot_end/ {p=3D0}'
-> > ffffffff834f5000 0 __per_cpu_hot_start
-> > ffffffff834f5000 8 hardirq_stack_ptr
-> > ffffffff834f5008 0 __ref_stack_chk_guard
-> > ffffffff834f5008 8 __stack_chk_guard
-> > ffffffff834f5010 0 const_cpu_current_top_of_stack
-> > ffffffff834f5010 8 cpu_current_top_of_stack
-> > ffffffff834f5018 0 const_current_task
-> > ffffffff834f5018 8 current_task
-> > ffffffff834f5020 8 __x86_call_depth
-> > ffffffff834f5028 8 this_cpu_off
-> > ffffffff834f5030 4 __preempt_count
-> > ffffffff834f5034 4 cpu_number
-> > ffffffff834f5038 2 __softirq_pending
-> > ffffffff834f503a 1 hardirq_stack_inuse
-> > ffffffff834f5040 0 __per_cpu_hot_end
-> >
-> > as it also gets the size for each symbol. Allowing us to compute the
-> > hole as 0x40-0x3b, or 5 bytes.
+> Replace platform_get_resource + devm_ioremap
+> with just devm_platform_ioremap_resource()
 >
-> If all the variables in this section are scalar or pointer types,
-> SORT_BY_ALIGNMENT() should result in no padding between them.  I can
-> add a __per_cpu_hot_pad symbol  to show the actual end of the data
-> (not aligned to the next cacheline like __per_cpu_hot_end).
+> Used Coccinelle to do this change. SmPl patch:
+> @rule_2@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource(pdev,0);
+>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-Is this better? (from System.map)
+Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
-ffffffff834f5000 D __per_cpu_hot_start
-ffffffff834f5000 D hardirq_stack_ptr
-ffffffff834f5008 D __ref_stack_chk_guard
-ffffffff834f5008 D __stack_chk_guard
-ffffffff834f5010 D const_cpu_current_top_of_stack
-ffffffff834f5010 D cpu_current_top_of_stack
-ffffffff834f5018 D const_current_task
-ffffffff834f5018 D current_task
-ffffffff834f5020 D __x86_call_depth
-ffffffff834f5028 D this_cpu_off
-ffffffff834f5030 D __preempt_count
-ffffffff834f5034 D cpu_number
-ffffffff834f5038 D __softirq_pending
-ffffffff834f503a D hardirq_stack_inuse
-ffffffff834f503b D __per_cpu_hot_pad
-ffffffff834f5040 D __per_cpu_hot_end
-
-
-Brian Gerst
+> ---
+>  drivers/gpu/drm/sprd/sprd_dpu.c | 9 +--------
+>  drivers/gpu/drm/sprd/sprd_dsi.c | 9 +--------
+>  2 files changed, 2 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
+> index cb2816985305fd19eac27413c214681a5a1e9ffa..65cd5aa1634eee5a6735ccffa4ee3979844d92ce 100644
+> --- a/drivers/gpu/drm/sprd/sprd_dpu.c
+> +++ b/drivers/gpu/drm/sprd/sprd_dpu.c
+> @@ -784,16 +784,9 @@ static int sprd_dpu_context_init(struct sprd_dpu *dpu,
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct dpu_context *ctx = &dpu->ctx;
+> -       struct resource *res;
+>         int ret;
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!res) {
+> -               dev_err(dev, "failed to get I/O resource\n");
+> -               return -EINVAL;
+> -       }
+> -
+> -       ctx->base = devm_ioremap(dev, res->start, resource_size(res));
+> +       ctx->base = devm_platform_ioremap_resource(pdev, 0);
+>         if (!ctx->base) {
+>                 dev_err(dev, "failed to map dpu registers\n");
+>                 return -EFAULT;
+> diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
+> index 8fc26479bb6bce0aa94914f49d0986a7e19326c1..1668bb4166ab0ad3812c5654244544a9caf249a6 100644
+> --- a/drivers/gpu/drm/sprd/sprd_dsi.c
+> +++ b/drivers/gpu/drm/sprd/sprd_dsi.c
+> @@ -901,15 +901,8 @@ static int sprd_dsi_context_init(struct sprd_dsi *dsi,
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct dsi_context *ctx = &dsi->ctx;
+> -       struct resource *res;
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!res) {
+> -               dev_err(dev, "failed to get I/O resource\n");
+> -               return -EINVAL;
+> -       }
+> -
+> -       ctx->base = devm_ioremap(dev, res->start, resource_size(res));
+> +       ctx->base = devm_platform_ioremap_resource(pdev, 0);
+>         if (!ctx->base) {
+>                 drm_err(dsi->drm, "failed to map dsi host registers\n");
+>                 return -ENXIO;
+>
+> --
+> 2.48.1
+>
 
