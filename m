@@ -1,171 +1,139 @@
-Return-Path: <linux-kernel+bounces-537182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5E7A488F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:25:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F511A488F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471BA1889BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F4C168FF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC9A26E96F;
-	Thu, 27 Feb 2025 19:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7503826F467;
+	Thu, 27 Feb 2025 19:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIkpYg7+"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="KEn55KSf"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439925D911;
-	Thu, 27 Feb 2025 19:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA4A26E95D;
+	Thu, 27 Feb 2025 19:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684336; cv=none; b=kBsf3KTyD+H/pAp9qbIhC9VdLta0ZAzcGnnrvjlU8SN8gAJ5PZuO7Vh8dFXk2ZRlP05rbTrsr078uvR8lg2V7SxvuxmPzrSirBt7beq7Hm64qIIUZbrnmraJUdPP99XAPjUs40HV5qsRzKozkCLgK2wd2+w67Qw7wEfXyNbIVAc=
+	t=1740684363; cv=none; b=Ymo3L9dKz/QCsE8b5pGdAT1M7lc0wOS2BKDet+wZpoBT1jTLPFdOth0ZEYCvlwvpkwSsPC33NIstDkH+wVlJUlnfJMuytMUQ/BRaOyMmahFIDF9CUklw843JGvEHp3XfmZL5zrtC82IeVdyGGpYtlvR2EshhWdrW8tqSXbvXOok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684336; c=relaxed/simple;
-	bh=I4osQ5RPj6E7bXAobrn2V0yGZ0kIauATo/Cf+WI8eCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ciL1SMYOY2dyoRK5Hom0B8jyK888AwjsCPFgy3d7ngEHUEEXumVNSfxH/ftQALxMbQ9teSaRlr2bK0aPU/ojPW8pFn6Z6ANLXOHVac60M7bALcBx0pWYdLnfzrORJO9ECa4u3mCIOrRjSNHEQqZdLABkLH1lXtziOS10HbESaiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIkpYg7+; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5485646441cso1401551e87.2;
-        Thu, 27 Feb 2025 11:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740684333; x=1741289133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cocSoxI0vBLolc8jUN8YVirpU/dxiOfgNogxYs9IIlU=;
-        b=YIkpYg7+7tYmpr7UVMzDA4tEJQkWwCZtOu0YJ3COFAxkPWdH4VKQrvhLmg8EpLym6b
-         2RSvmwjzPbuSs817BpWejdtGq+JsjyV/o7GUsjablqIQFMNO1omRkrf8/Q4ZdgsfgWCN
-         fUFpiia0Zi+2yKchrD0zu0UWTG9HZVOMXutey52kI+qaf5Z8I0MRGoRX9wUi3huj8tpK
-         qvrm5vWtNZ+TgNvWY6tNyCpFBoZJEe7waxqlbntwBUhYY0aKC8CG/MhwvUfSreoHYE36
-         mpyguEQOsvhq9X0TqmoOaSU7PqLzScMJyPQ1KoX9gsMeZtR+Cfk8RZhR4dTwXvpdcMwK
-         slnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740684333; x=1741289133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cocSoxI0vBLolc8jUN8YVirpU/dxiOfgNogxYs9IIlU=;
-        b=GYPre0N8YMcAYcjpFyjt+CpxAEzbentr/ZoaT/x7HofZrhEc/40pmPq0d+hoc2yWgU
-         7C1XG/wOhrMKN9U6eBTuHO2YU/6msktxaQHZ/Gao3ETB+yP5XKZXB9k/0Wk+OsFTuA2t
-         J60IoQu8KyfFwoOWASPKFDor9w6cfcSXwQVlnLp6drVNinEmTh9PqmbTKEKUTT6PKcSR
-         aCzG+m7ZlgwyYyLucHVR0F3BHl3h+SFaCCWWVK/BPWipsQcGW8rKXfxBYl8PLj5JGal9
-         49n6lY7qsUzvvkknNk/kiR6A6hBwx3IlRmtDhRY2FqHKYmmvwJt75k78YvQOhZMxHmKb
-         xSvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKt4UDhtldXpdSy5sOeCIF1Fj8rKPB0uq/nb4VKYTtYvb3XeB2gIIZy9bORqbl+2iuY6kKo/OQPMGbYFgi140=@vger.kernel.org, AJvYcCXPDetVFxnGbpGVD3fjt4/Cg0McBxpU+oyE3HMilkNvWTn95Mm951dGuQ0XcTTty+k2NGmEY6HFrNwhmJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN7wUwsYbO5PFAy9Z3C6N0LBv31N0e2VQLwgkW73OOWwcEJxCp
-	32i22d00Co++WwZqM/oy9/TA0LU5QLGJoy2rlU9hm7fP4sDVHCzX/1bjjLhGi7fUjuI8ZHEtXdO
-	9OoQUlib2fMqCtJULkG1FUUB73h8=
-X-Gm-Gg: ASbGnctBcNMjY/viNuVn8jv8ufXGQt4sd0qSnT60ei80+H7BUslYnKVurfvgGTl/SjY
-	I9CWmN8IVclHm1QotSv/VYbOGqJ2Hk+vLNIyvg6/uO1b0y2XFfR0YVO26a//POtCTZMrzCHMDLc
-	LjffYjZ05F
-X-Google-Smtp-Source: AGHT+IFSs2bI1kvd8svQvV0yYqC4L2f0QU31S933XS4fK48/mlI2CA8/SvzCilIe1uYB4dcFtVyxl2+NSdpFe8SrYp0=
-X-Received: by 2002:a05:6512:4021:b0:546:2f44:ee99 with SMTP id
- 2adb3069b0e04-5494c11b5b0mr270889e87.17.1740684332213; Thu, 27 Feb 2025
- 11:25:32 -0800 (PST)
+	s=arc-20240116; t=1740684363; c=relaxed/simple;
+	bh=+MnmQAWHaliLVDUS1hWbgMPHvuQn4za/3sOMfuhi2tg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mve14Sny01Z4KkCANuae3v3ucRZObHC6cMQ61XZl/wnbxwp2s8HHDyWrFKFEZcHycKay41W7nYKCyuBCi/+Tvg/OXSqPQlv7apaI626yCOe/0nX8ORAbGio6VuuLZxgCcPVRlbsvmKejx/mdRhFPj9V9+iv0cmL6cVf4ROX2iIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=KEn55KSf; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RFjKPt005358;
+	Thu, 27 Feb 2025 11:25:39 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=L+Ymq3rUGoUbchUwObBot+u
+	Zi50aDDGM2O9Rfhoc+HQ=; b=KEn55KSfKjOgs+58LJClx6Gp2al7aRI4Rf0MOEz
+	0UpNy8WIyjqnxAO81CTwvEq8noosLoQQgogsrBxKKqHOq3afDOjbW3OrLeyki1hR
+	I4lwa/9svz5mbjkUVfZTyGBBSD73TG9v60fcSZ0/O4DbfUP4uAyT+TrHBb16gjAF
+	xOSeAPm+yPbftSwuRCQcOlYfjfc+3uffkc3pmhHIevqiqZ4o++PTJ9vAL0cd8coi
+	79amE9Pr6sDHr9hSWqHDZSs41h0qB0PkCDyRoD/GYaCgXIMSJGrlcdaokzqTwg9D
+	E+NwFd6tUVPZPMv2W/8lbOAGliydm6FkOwrjOudnUJGiSbw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 452tyjrhbm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 11:25:39 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 27 Feb 2025 11:25:38 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 27 Feb 2025 11:25:38 -0800
+Received: from wd-ubuntu-24-04.marvell.com (wd-ubuntu-24-04.marvell.com [10.111.132.113])
+	by maili.marvell.com (Postfix) with ESMTP id 1EA733F7079;
+	Thu, 27 Feb 2025 11:25:38 -0800 (PST)
+From: Wilson Ding <dingwei@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
+        <sebastian.hesselbarth@gmail.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <salee@marvell.com>, <gakula@marvell.com>,
+        Wilson Ding <dingwei@marvell.com>
+Subject: [PATCH v3 0/3] Add Armada8K reset controller support
+Date: Thu, 27 Feb 2025 11:25:33 -0800
+Message-ID: <20250227192536.2426490-1-dingwei@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
- <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
- <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de> <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
- <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de> <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
- <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de> <CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
- <CANiq72mw_zo4ai7QWD5eLN_oFXE1RVkotFsGS+f=6LRmJoHM7Q@mail.gmail.com>
-In-Reply-To: <CANiq72mw_zo4ai7QWD5eLN_oFXE1RVkotFsGS+f=6LRmJoHM7Q@mail.gmail.com>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Thu, 27 Feb 2025 12:25:16 -0700
-X-Gm-Features: AQ5f1Jpv6efWrpBsz_NNHvYeXfkaD5e-40YnVta7Hcw-aWaliwo1gWLR8BsXl_0
-Message-ID: <CAFJgqgR+hFY3XkUusq0HkdgUEp54kpQH7zJi8WcgYNB7i33ygA@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Ralf Jung <post@ralfj.de>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Gary Guo <gary@garyguo.net>, torvalds@linux-foundation.org, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: -cHPloBC-hxEftL3iYoYFCczjX1kjUaK
+X-Authority-Analysis: v=2.4 cv=UIYnHDfy c=1 sm=1 tr=0 ts=67c0bc33 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=T2h4t0Lz3GQA:10 a=Jdwyv6mE_Hljsyy0yKYA:9
+X-Proofpoint-GUID: -cHPloBC-hxEftL3iYoYFCczjX1kjUaK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
 
-On Thu, Feb 27, 2025 at 10:59=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Thu, Feb 27, 2025 at 6:34=E2=80=AFPM Ventura Jack <venturajack85@gmail=
-.com> wrote:
-> >
-> > I have seen some Rust proponents literally say that there is
-> > a specification for Rust, and that it is called rustc/LLVM.
-> > Though those specific individuals may not have been the
-> > most credible individuals.
->
-> These "Some say..." arguments are not really useful, to be honest.
+Armada8K has one simple register for unit soft reset, which is part of
+the system controller register area. The simple reset code doesn't
+support register access via regmap for the syscon devices. This patch
+series created a new driver based on the simple reset code, and add
+Armada8K support then.
 
-I disagree, I think they are fine to mention, especially
-if I add any necessary and relevant caveats.
+Thanks,
+Wilson
 
-> > A fear I have is that there may be hidden reliance in
-> > multiple different ways on LLVM, as well as on rustc.
-> > Maybe even very deeply so. The complexity of Rust's
-> > type system and rustc's type system checking makes
-> > me more worried about this point. If there are hidden
-> > elements, they may turn out to be very difficult to fix,
-> > especially if they are discovered to be fundamental.
->
-> If you have concrete concerns (apart from the ones you already raised
-> so far which are not really applicable), please explain them.
->
-> Otherwise, this sounds a bit like an appeal to fear, sorry.
+---
 
-But the concrete concerns I raised are applicable, I am
-very sorry, but you are wrong on this point as far as I can tell.
+Changes in v3:
+  - Abandoned the use of the 'offset' property to specify the register
+    offset.
+  - Dropped the changes to 'cp110-system-controller.txt'.
+  - Created a new dt-binding head file to define the reset lines.
+  - Fixed the errors and warnings reported by dt_binding_check and
+    dtbs_check.
 
-And others also have fears in some related topics. Like the
-example I mentioned later in the email.
+Changes in v2:
+  - Created a new driver for SYSCON device instead of extending the
+    simple reset code.
+  - Allow to retreive the register offset from the 'reg' property as
+    an alternative to the 'offset' property.
+  - Allow to retrevie the register size from the 'reg' property to
+    calculate the number of reset lines.
+  - Added the new dt-binding files to document the device-tree scheme
+    and fix DT check issues.
+  - Updated the device-tree node name to 'reset-controller' to follow
+    the name conventions.
 
->>[Omitted] several
->> issues are labeled with "S-fear".
->>
->>      https://github.com/lcnr/solver-woes/issues
+Changes in v1:
+  - Init version.
 
-Do you have any thoughts on those issues labeled
-with "S-fear"?
+Wilson Ding (3):
+  dt-bindings: reset: Add Armada8K reset controller
+  reset: Add support for Armada8K reset controller
+  arm64: dts: marvell: cp11x: Add reset controller node
 
-And the argument makes logical sense. And Ralf Jung
-did discuss the issues of osssification and risk of
-overfitting.
+ .../reset/marvell,armada8k-reset.yaml         |  48 +++++
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi |   8 +
+ drivers/reset/Kconfig                         |  12 ++
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-simple-syscon.c           | 188 ++++++++++++++++++
+ .../reset/marvell,armada8k-reset.h            |  27 +++
+ include/linux/reset/reset-simple.h            |   3 +
+ 7 files changed, 287 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/marvell,armada8k-reset.yaml
+ create mode 100644 drivers/reset/reset-simple-syscon.c
+ create mode 100644 include/dt-bindings/reset/marvell,armada8k-reset.h
 
-I am convinced that succeeding in having at least
-two major Rust compilers, gccrs being the most
-promising second one AFAIK, will be helpful directly, and
-also indirectly allay some concerns that some people have.
+-- 
+2.43.0
 
-> > You mention ossifying, but the more popular Rust becomes,
-> > the more painful breakage will be, and the less suited
-> > Rust will be as a research language.
->
-> Rust is not a research language -- I guess you may be including
-> features that are not promised to be stable, but that means even C
-> would a research language... :)
-
-I have heard others describe Rust as experimental,
-and used that as one justification for not adopting
-Rust. On the other hand, companies like Amazon
-Web Services have lots of employed Rust developers,
-AWS more than 300, and Rust is probably among the
-20 most used programming languages. Comparable
-in usage to Scala AFAIK, if for instance Redmonk's
-rankings are used.
-
-Best, VJ.
 
