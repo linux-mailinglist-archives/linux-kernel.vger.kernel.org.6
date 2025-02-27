@@ -1,190 +1,155 @@
-Return-Path: <linux-kernel+bounces-535514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCEDA473CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:51:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1450A473CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4809418897CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89FB16A353
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D2F1E5207;
-	Thu, 27 Feb 2025 03:51:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2203F17A300;
-	Thu, 27 Feb 2025 03:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49B17A30F;
+	Thu, 27 Feb 2025 03:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="ZlVh6G+C"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7EB194A44
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740628299; cv=none; b=nKlr8CuBaisKzf1pASEmdvcYqdEZRW1xDSIq1HJtS+wVMQ7+WkU2Rj3J5r4bFgxsFYDlkNHSl3q7d5WGll/jB2wTQwlOeAHTqHxxyBL+hP/TdcH9cO5fVi1nZAhEeQhmUKmjQUT8KKwvI3JQ8snaYrJYVTJX65DyNBtZsg8nGs0=
+	t=1740628324; cv=none; b=eL0VvMtf3NQEiyIDG4YGKXvlu65Z0QiEDsa5zm1i448uGW+Ao6RPHUPEwgDy/98OJUkbUrk2vgSkzfJiqyEC916jfWMGiu9F4yAArp+Mnh84+e0xamCUpWY/106YcXCajGJyqhcAuY0iilnYSZT+1ShYNwBoLeLi1d48yF8OoGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740628299; c=relaxed/simple;
-	bh=3oh9lEpSsnhMJBwfR+eU55Pw3Lvex7Rob+/9aI21bmA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tEYnqkNEwYkifibfo/M/4cs0xL/AZBNLYWhavUSkRUe/ESlDeLKrsXVGxnhOF7bxjuKYWEzkfUUSeQC/EGspiVR5uj2L+cDyw8MKjRn3TA8+VeTGD7IYO94i5CWiLyT2nfFDWkgzVm/nZ42zFI4JmqnOiSsmOj9+Z3Gp5TCdvnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 078241515;
-	Wed, 26 Feb 2025 19:51:51 -0800 (PST)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.40.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AEA443F6A8;
-	Wed, 26 Feb 2025 19:51:30 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	catalin.marinas@arm.com,
-	mark.rutland@arm.com,
-	robh@kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH V3] arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
-Date: Thu, 27 Feb 2025 09:21:19 +0530
-Message-Id: <20250227035119.2025171-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740628324; c=relaxed/simple;
+	bh=LhXyiRP95p2qnegONw9qq9lcl5m6OeJobMPGwRkHiek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7yN8Cn7Kxr6T8ZBDBVZ4zJqWshmnRgqhkhT+pKncS+IXTs7DxtrNGFVtpIDffxDatXprRMWo+NDQPA2lTz+kdqq7GFU3uaTuPEC5TH4BaK3KhJSPjPyImt3z4F2B922FU1N/2Na6YSVNZZR2JKiwM9yS4sl/8dOcDzn1HN5gOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=ZlVh6G+C; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7be8f28172dso47723085a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:52:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740628321; x=1741233121; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D152tJB0jt/kqzpF9TVSogVELjlgAH9yv/g2cEtnuuc=;
+        b=ZlVh6G+C/9MPE0caP27V2TypkOxS3LwkK0OvHxDJ+lSNUJZnNlnJGnyM+RH7aVGrBm
+         e4eSV07OYtFQqswbOiLGt+dq74Knoh0QRZC0xrHlAi0JCOCPHUC7D/5l8GJ7eGAbelTb
+         JkkB/oNkdofTomnJN0KLwoPQYFKicVdCkz66uYB2LjssSpf+nSIjWhSEx0fekTwzrg22
+         x40k/9pWIXRHniHtvZXtoj3ZEjqsL6dkYgaWc9kA+20+7ib4A6Tn/B26APq7KdPn0osw
+         +R4MveOrJwRffD3DABCBpmPjlIgGTQEBbwzTqunKIewBcm9/aVzBuMRCkfWti2dgA/ug
+         tbWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740628321; x=1741233121;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D152tJB0jt/kqzpF9TVSogVELjlgAH9yv/g2cEtnuuc=;
+        b=CM2kK1FK8lh6ZJwz+y0mWyvdo/q2dv3YlmfwsvDwTkZNooDiI4FGTVe08uQiPpv7uH
+         NMhqCf8znYdeiZT1F3pZ1u0JiuQf6V/I/q/p6hrj8E8lUd641zNDYxfgako8NW8UGLWi
+         FZl7z8zWhaS3ffRYZRahxQh3qpUMnsC4t+1b4RvydMYGlX4kKb+ECizmV+q8wQdQmz8M
+         +5sAuEQs18NJXqtaGhLWYKwuJTa3wE8jlerKt5WdKWcoriHWEgTunYbkMH3pW5k6tfmu
+         vTqCY/o76sZMypf4MMkwu7T9fLEysbbTFRKGnaoDsMSnyUEBjCxdNezCZFLHDg5ot5Ng
+         IL7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVBcj7H2JzH8YG450cRfP5OXBIZNUpQJnpjxLaXQfphmodMOeY3xcyoIfuIg7gSH/RRjeWBy1B1VTA1PU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq9SC7sEJnUTlTeh5zXa5ZO15ITas6Lhp1Fem5Z/YmurxzC+cB
+	GkxdWDxWJbcKLd5yT/OeNxMOok8J+O7sCT+NFrxYc6m7ao8dzmF+w11Ze6dELN8=
+X-Gm-Gg: ASbGncvpG5rlB/8qo1GnBrCtBfYpgj/59Us7jnDAyGIc6lY3XiJCrPoNNHjR1yS0lCt
+	UcKD8URQLs1WaJojjddcxKdCYb86N6IvsSbIcSMdHFW0OkLYrYB41AkXWkIkXRaCA0aPNFspGlP
+	RBeD328h9G5XTC0Tv9jm6bvtQJhyYJRBkxNfzQcQqY5rlZ3N0G/o8XfKILg2iKqUg/i6TCq8P47
+	nrFqb6Mi8j0OJVMmiUjreCc2ZVkbas0Kcl6J70IqSb30bfpz6OM6NPY2yGHSX0SuWZGVLrq8+Wb
+	FfgiyTv7/QzfHhXDq3784C/K
+X-Google-Smtp-Source: AGHT+IF/njoBngyhpwfoM24JZp8O9ADqy3RWhB/v2KYJBKIGxtN8S2AjLfLLwyTh/X6l3uH8JOV/lw==
+X-Received: by 2002:a05:620a:370c:b0:7c0:8359:7130 with SMTP id af79cd13be357-7c247f2582cmr963274785a.18.1740628321185;
+        Wed, 26 Feb 2025 19:52:01 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36fef5beesm57800585a.32.2025.02.26.19.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 19:52:00 -0800 (PST)
+Date: Wed, 26 Feb 2025 22:51:55 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	"T.J. Mercier" <tjmercier@google.com>, Tejun Heo <tj@kernel.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: add hierarchical effective limits for v2
+Message-ID: <20250227035155.GA110982@cmpxchg.org>
+References: <20250205222029.2979048-1-shakeel.butt@linux.dev>
+ <mshcu3puv5zjsnendao73nxnvb2yiprml7aqgndc37d7k4f2em@vqq2l6dj7pxh>
+ <ctuqkowzqhxvpgij762dcuf24i57exuhjjhuh243qhngxi5ymg@lazsczjvy4yd>
+ <5jwdklebrnbym6c7ynd5y53t3wq453lg2iup6rj4yux5i72own@ay52cqthg3hy>
+ <20250210225234.GB2484@cmpxchg.org>
+ <Z6rYReNBVNyYq-Sg@google.com>
+ <bg5bq2jakwamok6phasdzyn7uckq6cno2asm3mgwxwbes6odae@vu3ngtcibqpo>
+ <t574eyvdp5ypg5enpnvfusnjjbu3ug7mevo5wmqtnx7vgt66qu@sblnf7trrpxs>
+ <rpwhn5zwemr63x4tafcheekdmqullcjvvabdgrm3jgtbtfwgki@6sxglgvtgzof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <rpwhn5zwemr63x4tafcheekdmqullcjvvabdgrm3jgtbtfwgki@6sxglgvtgzof>
 
-FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
-access from EL1 requires appropriate EL2 fine grained trap configuration
-via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
-Otherwise such register accesses will result in traps into EL2.
+On Wed, Feb 26, 2025 at 01:13:28PM -0800, Shakeel Butt wrote:
+> Sorry for the late response.
+> 
+> On Mon, Feb 17, 2025 at 06:57:46PM +0100, Michal Koutný wrote:
+> > Hello.
+> > 
+> 
+> [...]
+> 
+> > > The most simple explanation is visibility. Workloads that used to run
+> > > solo are being moved to a multi-tenant but non-overcommited environment
+> > > and they need to know their capacity which they used to get from system
+> > > metrics.
+> > 
+> > > Now they have to get from cgroup limit files but usage of
+> > > cgroup namespace limits those workloads to extract the needed
+> > > information.
+> > 
+> > I remember Shakeel said the limit may be set higher in the hierarchy for
+> > container + siblings but then it's potentially overcommitted, no?
+> > 
+> > I.e. namespace visibility alone is not the problem. The cgns root's
+> > memory.max is the shared medium between host and guest through which the
+> > memory allowance can be passed -- that actually sounds to me like
+> > Johannes' option b).
+> > 
+> > (Which leads me to an idea of memory.max.effective that'd only present
+> > the value iff there's no sibling between tightest ancestor..self. If one
+> > looks at nr_tasks, it's partial but correct memory available. Not that
+> > useful due to the partiality.)
+> > 
+> > Since I was originally fan of the idea, I'm not a strong opponent of
+> > plain memory.max.effective, especially when Johannes considers the
+> > option of kernel stepping back here and it may help some users. But I'd
+> > like to see the original incarnations [2] somehow linked (and maybe
+> > start only with memory.max as
+> > that has some usecases).
+> 
+> Yes, I can link [2] with more info added to the commit message.
+> 
+> Johannes, do you want effective interface for low and min as well or for
+> now just keep the current targeted interfaces?
 
-Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
-grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
-bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
-PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
+I think it would make sense to do min, low, high, max for memory in
+one go, as a complete new feature, rather than doing them one by one.
 
-Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_FGT2
-based registers to be accessible in EL2.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kvmarm@lists.linux.dev
-Fixes: 0bbff9ed8165 ("perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access control")
-Fixes: d8226d8cfbaf ("perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter")
-Cc: stable@vger.kernel.org
-Tested-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-Changes in V3:
-
-- Added 'MDCR_EL3.EnPM2 = 0b1' as a booting requirement per Mark
-- Added 'Fixes:' and 'CC: stable' tags per Mark
-
-Changes in V2:
-
-https://lore.kernel.org/all/20250203050828.1049370-8-anshuman.khandual@arm.com/
-
- Documentation/arch/arm64/booting.rst | 22 ++++++++++++++++++++++
- arch/arm64/include/asm/el2_setup.h   | 25 +++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
-
-diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-index cad6fdc96b98..dee7b6de864f 100644
---- a/Documentation/arch/arm64/booting.rst
-+++ b/Documentation/arch/arm64/booting.rst
-@@ -288,6 +288,12 @@ Before jumping into the kernel, the following conditions must be met:
- 
-     - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
- 
-+  For CPUs with the Fine Grained Traps 2 (FEAT_FGT2) extension present:
-+
-+  - If EL3 is present and the kernel is entered at EL2:
-+
-+    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
-+
-   For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
- 
-   - If EL3 is present and the kernel is entered at EL2:
-@@ -382,6 +388,22 @@ Before jumping into the kernel, the following conditions must be met:
- 
-     - SMCR_EL2.EZT0 (bit 30) must be initialised to 0b1.
- 
-+  For CPUs with the Performance Monitors Extension (FEAT_PMUv3p9):
-+
-+ - If EL3 is present:
-+
-+    - MDCR_EL3.EnPM2 (bit 7) must be initialised to 0b1.
-+
-+ - If the kernel is entered at EL1 and EL2 is present:
-+
-+    - HDFGRTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-+    - HDFGRTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-+    - HDFGRTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-+
-+    - HDFGWTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-+    - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-+    - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-+
-   For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
- 
-   - If the kernel is entered at EL1 and EL2 is present:
-diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-index 25e162651750..1a0071faf57e 100644
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -233,6 +233,30 @@
- .Lskip_fgt_\@:
- .endm
- 
-+.macro __init_el2_fgt2
-+	mrs	x1, id_aa64mmfr0_el1
-+	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
-+	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
-+	b.lt	.Lskip_fgt2_\@
-+
-+	mov	x0, xzr
-+	mrs	x1, id_aa64dfr0_el1
-+	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMUVer_SHIFT, #4
-+	cmp	x1, #ID_AA64DFR0_EL1_PMUVer_V3P9
-+	b.lt	.Lskip_pmuv3p9_\@
-+
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMICNTR_EL0
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
-+	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
-+.Lskip_pmuv3p9_\@:
-+	msr_s   SYS_HDFGRTR2_EL2, x0
-+	msr_s   SYS_HDFGWTR2_EL2, x0
-+	msr_s   SYS_HFGRTR2_EL2, xzr
-+	msr_s   SYS_HFGWTR2_EL2, xzr
-+	msr_s   SYS_HFGITR2_EL2, xzr
-+.Lskip_fgt2_\@:
-+.endm
-+
- .macro __init_el2_gcs
- 	mrs_s	x1, SYS_ID_AA64PFR1_EL1
- 	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
-@@ -283,6 +307,7 @@
- 	__init_el2_nvhe_idregs
- 	__init_el2_cptr
- 	__init_el2_fgt
-+	__init_el2_fgt2
-         __init_el2_gcs
- .endm
- 
--- 
-2.25.1
-
+Tejun, what's your take on this, considering other controllers as
+well? Does that seem like a reasonable solution to address the "I'm in
+a namespace and can't see my configuration" problem?
 
