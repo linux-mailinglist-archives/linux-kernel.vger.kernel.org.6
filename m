@@ -1,180 +1,139 @@
-Return-Path: <linux-kernel+bounces-536088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C4FA47B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:09:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C841A47B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3AA1891839
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA1E3B5217
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6FA22CBD8;
-	Thu, 27 Feb 2025 11:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pq91ovwN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7011F22D4E3;
+	Thu, 27 Feb 2025 11:05:43 +0000 (UTC)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B6F22B8BE;
-	Thu, 27 Feb 2025 11:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CF22B8BE;
+	Thu, 27 Feb 2025 11:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654332; cv=none; b=lgRKdFsxxJsLxw6E+LgH/UiJekVIulHV2k4DN+oiXe6hlaWQ3/HNFRE5g7kamA6o7ly5NrnGAUHTlVZ3EwIpE5uIBLz/ameu5AA75Z3SwD/78Vp0CfiI8zLd4ee98l5toUVhzNIIj2RhL7s5SCLucMwFtmxh8N4PpxPdusoPass=
+	t=1740654343; cv=none; b=rHxXYxaWOqqd4l0UCoT7g7q0elP/dlXaWoD8iYxcNtIgWJNyf6n4JC1ahu1pSa5VD9bFHF4IzTceUjnfvpEOl0vwEKMTFAqD6Oqh9T/feneulp4XeKaHnoqAHI+nwOyVvEKKnrcarnTknoR1Y0dvugzsDvlN/CgWc6ISzVpWF3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654332; c=relaxed/simple;
-	bh=30VEPafuYaXUOzx4ugW+Q9XaK63O/Un27g6xe0Hutbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8v3szjo6BXqqwsdRipra1Fn7qmwl0BxawV6N8flzaM4cDB/hNbxvgyApbwzM8fHsjKNwpNxEISp7PYkFO8H5C3v6LORM110Dt0vTZgWRO8EtnvwEbCUMyG6wZe04lJPKxUS0KPrz6Hn5AICTdlyogqE2UZitXObWjSLk9FbztM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pq91ovwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8F1C4CEDD;
-	Thu, 27 Feb 2025 11:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740654332;
-	bh=30VEPafuYaXUOzx4ugW+Q9XaK63O/Un27g6xe0Hutbk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Pq91ovwNVBny9JMf8+HSNMd53hixAs09BNZdZs5+XZvukQo19RDYmaAYsKuKnRqbO
-	 6qo83flXm7EcwbmofLf+K/qhsk3B2bAqdNTMyY/WKXRgvC0HaoCsudv+HdBkrxGgIy
-	 W4UCV9K8pWXY1D6xpT48SrVORm8c4TjrcMZJLrS0G06NvYq+PWtK/eobNmfWXSBSh/
-	 CVsZJQvI+myXNB+tNggscbw4QICP4mKpEB9mI3ofP3VY4nQvRUr5s9XHr7OZbBwiCw
-	 Ng8h4v4zAUUE26KyhVo+9/xOxpgQphhwKFZmhAOYf68HoY/Kn1nPA1H87h4vqpLuKN
-	 BwGFkzU7lAAHg==
-Date: Thu, 27 Feb 2025 12:05:25 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
- =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
- <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
- <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
- Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
- <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/14] Change ghes to use HEST-based offsets and add
- support for error inject
-Message-ID: <20250227120525.66c348a0@foz.lan>
-In-Reply-To: <20250227105454.69e3d459@imammedo.users.ipa.redhat.com>
-References: <cover.1740148260.git.mchehab+huawei@kernel.org>
-	<20250227105454.69e3d459@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740654343; c=relaxed/simple;
+	bh=MhZ8GViVcNwezLnWisT12m9Ev684ayMaSWy/I8zydqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bybi/zPz6WEjFPzvDi4EjPkhO8gdPzvik7fJoYb3i8+Dt16aAH20fOqLMfTGvYWzck/ikbOV9WUdMWuWxSuWLvss9HQ/ESJl+9mlzbI+/QiT8UhkLAL9TY4dLAMir3JIyYhEIhgdsIUNUqy6F1mraSCaDLc6+M9+R6aidJU9MWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86929964ed3so653061241.0;
+        Thu, 27 Feb 2025 03:05:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740654339; x=1741259139;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YOYklwSkIF61N5d7gWtZ1gNcm4VTd2AmRb5PcLCTllw=;
+        b=udWgP3IzBqLH3pdI5ygLouUQrd/zdY3+uy20vNg7UWCpTwkk6Fp9XSrWPYZG0es2G0
+         VFjVoLxRu6QRp030bqLlYvHKe8B9cvhArkkrGtiIhKPiNmY3bCBAyCL6jzijrlNTllzB
+         T1a6bhZlc75GipYgPS1BZLK0iCabiDZ4/4vVsJHx87d6MwHsqmRteX42DW2HicqemV5f
+         fPTV1Hy7UDf5vV0I7IaHrtguRC1cG0B9lE6VaiSoPtARmpRQhvCqOjokpShTsYIe6at5
+         Fp+0+5DKvPTW8H02Q+idFLUT6ACFY+nFPBdUS7v1BhOwVNYnORr4e+5cVhN2NSxXOeRX
+         JX+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzE4dfkWgQvVKqzxBCmzS3a7p3Q9jLM0LWURr9cFnqv//Q7E41idlXRqfvdY13f8ig30Y0Qs165oaB+yU=@vger.kernel.org, AJvYcCW4NkySLEnKtWSf0k77q3J6curgnKHbusi5RH0RkUwoZWEveGmKj0GE0O8hdlwDhbUFPvyheFLognXV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC9hCNXWrrO/0AooU2+oiaySmnP57kT+bcxT3JrCQ6xvmwaEla
+	8xzwBSoy6SpE+FjEiemv35XV7OZ2QrHBh1E/rOgaLBWGL19kn7iJfzbmDWC0
+X-Gm-Gg: ASbGnctfGXhm2aPzJWyzzIlOkwURAH3de94021kq3+DCn8qdqMuLLH4mzhbTaZXzxWg
+	pm0DIg7HBGc3XbzKH7Uc1alZX5NOgZ0YNxaYqJaKFgcuMG4IO3gexFBM186azMYpbtijGJdKZeY
+	8M4+CUGNa0b8qlCyiAoO6f5VbgW4lXFQH4erBy5bEhx3ulCiFRAjkI+/FcQa4JRcERSMcXEKEKB
+	5PpiPsEGgA8HrCknxcd1iLoaafUl0GdSE4qWCT/xHFtluQcOoeavkGeLfotL30JD66PeKFgrlkR
+	CsOrogw0cLuWdT0uzl7VD4sFrpnh+OgWAxyVqbZHqILsGhWkcrQ8ZgOmf2jQSB4E
+X-Google-Smtp-Source: AGHT+IHv7oPpmabrcdY3QkNxSys2ank8rtHd6dcs+JywcuWtGg9ghXQ/3lLbIKcm7asT8qX9bfhcAQ==
+X-Received: by 2002:a05:6102:3a0b:b0:4b1:1eb5:8ee5 with SMTP id ada2fe7eead31-4c01e30e820mr4391767137.25.1740654338994;
+        Thu, 27 Feb 2025 03:05:38 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86b3dd25c96sm176082241.31.2025.02.27.03.05.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 03:05:38 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86b2d91997eso666465241.2;
+        Thu, 27 Feb 2025 03:05:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVLDs2CJCqBKGhJyYPFcYhTWHeoJ/lLxNVF8jAdTUfWVI/Cjd2J6+n0dkBqaboxpVie6wff1kcTTa+uFUw=@vger.kernel.org, AJvYcCXk4wZbScvAdpSbNJdzLoQzZ1kN174YCKTC9prH9YZFX08DXDYN+WJU0fzoNbMxPc+BVcgLLtM0NJCM@vger.kernel.org
+X-Received: by 2002:a05:6102:508f:b0:4bc:82f:b4bc with SMTP id
+ ada2fe7eead31-4c01e30be50mr4589548137.22.1740654338310; Thu, 27 Feb 2025
+ 03:05:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250226-m68k-rtc-v1-0-404641ec62e6@igalia.com> <20250226-m68k-rtc-v1-2-404641ec62e6@igalia.com>
+In-Reply-To: <20250226-m68k-rtc-v1-2-404641ec62e6@igalia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Feb 2025 12:05:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW_13wOxD0Q0PVCUXBwC9y8iKXTcwH=m5tvX856S9ZU1w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo7H3mkaD1WVTZTrun2RLr9xWvAG0froFsy3cqeS4yVfaaDlHw2vtfEAEI
+Message-ID: <CAMuHMdW_13wOxD0Q0PVCUXBwC9y8iKXTcwH=m5tvX856S9ZU1w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] m68k: rtc: dp8570a: make it a proper RTC class driver
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Em Thu, 27 Feb 2025 10:54:54 +0100
-Igor Mammedov <imammedo@redhat.com> escreveu:
+Hi Thadeu,
 
-> On Fri, 21 Feb 2025 15:35:09 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Now that the ghes preparation patches were merged, let's add support
-> > for error injection.
-> > 
-> > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
-> > table and hardware_error firmware file, together with its migration code. Migration tested
-> > with both latest QEMU released kernel and upstream, on both directions.
-> > 
-> > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
-> >    to inject ARM Processor Error records.
-> > 
-> > ---
-> > v4:
-> > - added an extra comment for AcpiGhesState structure;
-> > - patches reordered;
-> > - no functional changes, just code shift between the patches in this series.
-> > 
-> > v3:
-> > - addressed more nits;
-> > - hest_add_le now points to the beginning of HEST table;
-> > - removed HEST from tests/data/acpi;
-> > - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
-> > 
-> > v2: 
-> > - address some nits;
-> > - improved ags cleanup patch and removed ags.present field;
-> > - added some missing le*_to_cpu() calls;
-> > - update date at copyright for new files to 2024-2025;
-> > - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
-> > - added HEST and DSDT tables after the changes to make check target happy.
-> >   (two patches: first one whitelisting such tables; second one removing from
-> >    whitelist and updating/adding such tables to tests/data/acpi)
-> > 
-> > 
-> > 
-> > Mauro Carvalho Chehab (14):
-> >   acpi/ghes: prepare to change the way HEST offsets are calculated
-> >   acpi/ghes: add a firmware file with HEST address
-> >   acpi/ghes: Use HEST table offsets when preparing GHES records
-> >   acpi/ghes: don't hard-code the number of sources for HEST table
-> >   acpi/ghes: add a notifier to notify when error data is ready
-> >   acpi/ghes: create an ancillary acpi_ghes_get_state() function
-> >   acpi/generic_event_device: Update GHES migration to cover hest addr
-> >   acpi/generic_event_device: add logic to detect if HEST addr is
-> >     available
-> >   acpi/generic_event_device: add an APEI error device
-> >   tests/acpi: virt: allow acpi table changes for a new table: HEST
-> >   arm/virt: Wire up a GED error device for ACPI / GHES
-> >   tests/acpi: virt: add a HEST table to aarch64 virt and update DSDT
-> >   qapi/acpi-hest: add an interface to do generic CPER error injection
-> >   scripts/ghes_inject: add a script to generate GHES error inject
-> > 
-> >  MAINTAINERS                                   |  10 +
-> >  hw/acpi/Kconfig                               |   5 +
-> >  hw/acpi/aml-build.c                           |  10 +
-> >  hw/acpi/generic_event_device.c                |  43 ++
-> >  hw/acpi/ghes-stub.c                           |   7 +-
-> >  hw/acpi/ghes.c                                | 231 ++++--
-> >  hw/acpi/ghes_cper.c                           |  38 +
-> >  hw/acpi/ghes_cper_stub.c                      |  19 +
-> >  hw/acpi/meson.build                           |   2 +
-> >  hw/arm/virt-acpi-build.c                      |  37 +-
-> >  hw/arm/virt.c                                 |  19 +-
-> >  hw/core/machine.c                             |   2 +
-> >  include/hw/acpi/acpi_dev_interface.h          |   1 +
-> >  include/hw/acpi/aml-build.h                   |   2 +
-> >  include/hw/acpi/generic_event_device.h        |   1 +
-> >  include/hw/acpi/ghes.h                        |  54 +-
-> >  include/hw/arm/virt.h                         |   2 +
-> >  qapi/acpi-hest.json                           |  35 +
-> >  qapi/meson.build                              |   1 +
-> >  qapi/qapi-schema.json                         |   1 +
-> >  scripts/arm_processor_error.py                | 476 ++++++++++++
-> >  scripts/ghes_inject.py                        |  51 ++
-> >  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
-> >  target/arm/kvm.c                              |   7 +-
-> >  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
-> >  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
-> >  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
-> >  29 files changed, 1677 insertions(+), 79 deletions(-)
-> >  create mode 100644 hw/acpi/ghes_cper.c
-> >  create mode 100644 hw/acpi/ghes_cper_stub.c
-> >  create mode 100644 qapi/acpi-hest.json
-> >  create mode 100644 scripts/arm_processor_error.py
-> >  create mode 100755 scripts/ghes_inject.py
-> >  create mode 100755 scripts/qmp_helper.py
-> >   
-> 
-> once you enable, ras in tests as 1st patches and fixup minor issues
-> please try to do patch by patch compile/bios-tables-test testing, to avoid
-> unnecessary respin in case at table change crept in somewhere unnoticed. 
+On Wed, 26 Feb 2025 at 13:27, Thadeu Lima de Souza Cascardo
+<cascardo@igalia.com> wrote:
+> In the past, each rtc implementation had to rewrite the same ioctls in
+> order to be compatible. But since 2006, a common RTC interface has been
+> introduced. Use it for the last user of RTC_MINOR.
+>
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
-Just submitted v5.
+Thanks for your patch!
 
-I took some extra care to avoid bisect issues. Still checkpatch 
-had some warnings, but they seemed false positives.
+> --- a/arch/m68k/bvme6000/rtc.c
+> +++ b/arch/m68k/bvme6000/rtc.c
 
-Thanks,
-Mauro
+>
+>  static int __init rtc_DP8570A_init(void)
+>  {
+> +       struct platform_device *pdev;
+> +
+>         if (!MACH_IS_BVME6000)
+>                 return -ENODEV;
+>
+>         pr_info("DP8570A Real Time Clock Driver v%s\n", RTC_VERSION);
+> -       return misc_register(&rtc_dev);
+> +
+> +       pdev = platform_device_register_data(NULL, "rtc-generic", -1,
+> +                                            &dp8570a_rtc_ops,
+> +                                            sizeof(dp8570a_rtc_ops));
+
+Doesn't this conflict with the creation of the same device in rtc_init()[1]?
+
+On BVME6000, mach_hwclk is set:
+
+    arch/m68k/bvme6000/config.c:    mach_hwclk           = bvme6000_hwclk;
+
+> +
+> +       return PTR_ERR_OR_ZERO(pdev);
+>  }
+>  module_init(rtc_DP8570A_init);
+
+[1] https://elixir.bootlin.com/linux/v6.13.4/source/arch/m68k/kernel/time.c#L144
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
