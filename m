@@ -1,176 +1,181 @@
-Return-Path: <linux-kernel+bounces-536817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B7AA4848D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:17:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFE3A484A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3EC3ABFB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B97188F7D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCEC1B424D;
-	Thu, 27 Feb 2025 16:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127E61BEF87;
+	Thu, 27 Feb 2025 16:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3fqiv1Y"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="bBnWSgf2"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296951B372C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A15C1B3950;
+	Thu, 27 Feb 2025 16:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672464; cv=none; b=ofBacO1qxv9oCFYlVLdSrMyLuVlc/Z34rZoC9m6WgEFjjlOfyjF0XV9G7Wwh9JwjzqSKAOCbx5GK+rwyRZSHutckA6ZzlkOv4Y/M9uldUZ+RnDG1Z48qx6Z9i3jj4Ot1EuMlTAu1ze462GZ9+4bSm0Gh/leHfuXlloG4ced/E+I=
+	t=1740672483; cv=none; b=kTxZxy+4148zgOkISEAk+FoKwph6rCriIGZ5oHykr45/aff3HiuALa4NwsGMRYrNhaAuigjShXKia/7XCe5BSuBQeVMu2iD2CXfP70nSOon0V4ftilRlJK+y+GfzTXjVUPFdHMWwt7C6GlfgmpTZyYo9vMvpIt8QQrMqtO5e2kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672464; c=relaxed/simple;
-	bh=CWV28ba7/pK0pfEMDt6BpVkKjS1yOP/DZbLPMFCESts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HrukfdPqyzBeZuOqXnOq1iVgKS+EqnG04T9dMpv8FfveERQBdVSMPdpDHJNgKCCiKjpGeCGqaEWcG6hBzy26Rsqp/eHlLDSUHNYuAyDkC05+0E3LuuJ6DMSANeuVYMcTIwyKTvob2j3Od202u4dtPgzo2wRRGJ19YWWl8GiOy8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3fqiv1Y; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30918c29da2so12653451fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740672460; x=1741277260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xb088OdXJlTA9IPSpcKjiPeuNEBwco6JwP3ohVxG/tQ=;
-        b=R3fqiv1YYZSIwyl573OWxgWA4kDjbCNBiTwSx+oI6zNaYF/DkAMuPWNbIdv8+mAUQC
-         2wFfrTFS5AujvsmQali8BzjoP5jSjo9ocbc8B+9T7GivCk1QaAWGvYl8APZ+0sA5S2uJ
-         odT3J7tRzrUvKo32MxFbAXISg228wgNa9Pi2ZdupkV8eHSojiYg3saYGfyF/qPZZ9OIs
-         Ln+f/R2GLB6yqctHEhDp6Q38OacpgM3CfY6vDndLlRLUCEtd9aL3zkW0iMJK7V5QxpT8
-         2m0ss6qr14x+k2NpFE1ZPMih9GXAXFBygivBcdBo8WgZFEqKAUEcLuLU+sEKlEUZeVYZ
-         xOtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740672460; x=1741277260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xb088OdXJlTA9IPSpcKjiPeuNEBwco6JwP3ohVxG/tQ=;
-        b=toODP3R89w9ZO5Yl2MsWdDrKh55E6SUw5vK/5ZqmHIiUB9fMJz2rms9nuPeqmGY4SQ
-         0lQ453yN3czbCtgjgUwUhWBRU7+OCSVoT2LvUh/3Q2F6MAspKqI3IV9tnAGfayLBrgfi
-         WCALa0Aupfwk60ypUrCjuxpFlLywuLq4h8usgqMU1FC6I8n6RdLjvqzkgy/u9FROPwhP
-         hXahKtF+yOCN2+OQeb/Oby2WrneAWHAffVw0v/6pXCJdBNrBCFP5wawo/HYqv8daMwUi
-         lappnfpiqkyPmPcOozODNPEqeh2ub0OgkJwQK/Yvng9WWY2527uvOnMcbKcsMDpcWU/C
-         MpYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFYQA4JHnm9AsjemoGZk+z1ivoLd2fWiQ1rzkNmcVFMdid/0sYgIdRYW6NisjnJTEAXSupJwda7vrKDXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYlZp9x9HW21sJ7fD+MGwW9jxwjg595+sOw8pw4pmQJL7iXKmc
-	AM6DVibE/wO0VGIaTvyvlQQcN4piafpd95SuMj2cozeRQfL973Kjxva8gF6jfN8=
-X-Gm-Gg: ASbGncsTdEdkLxXc3rkAb5zGevHENoeYAbVlQwak9Hc96LWfJEs8+YjvLfPDijNKRrA
-	icx+UNXgW+BH9etr6KX7/znxi9PNZVOlGDCbalAomffOsXg0xybAOBZl1n6N9/Y+XGNHT7Si7PS
-	ci4URQ/TpLb0V99uI3rk65hoXLUoZ/BK/K3VD0KNRDmUzzrR/GgDo/Aggacxf6n8GNUXpFOQzW3
-	LkLM/G3H4ExbUJMmyq8kULjPRmKPbpb6TsSMUNxcaNqA3Ms67hXgo44CJr/18pWbaRS18qTWByO
-	rNHXLXtkAwKAplDwqrJwVIFDf9SsSVMpuwBmjiyt387KwWcXHln0xcL4CSzF2RXxOKBNVHBJmW/
-	K2zrkWQ==
-X-Google-Smtp-Source: AGHT+IE2tBs2MLi0CVU9yzfVsEhz9N65BqwobeMX6DA+APv9dvpZztToWRbeHRYswXJcbcUI2FoZ8A==
-X-Received: by 2002:a2e:b607:0:b0:309:2747:e30 with SMTP id 38308e7fff4ca-30a80bff08amr59492871fa.10.1740672460272;
-        Thu, 27 Feb 2025 08:07:40 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b8688a8e3sm1946411fa.112.2025.02.27.08.07.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 08:07:38 -0800 (PST)
-Date: Thu, 27 Feb 2025 18:07:36 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Felipe Balbi <balbi@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Saravana Kannan <saravanak@google.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Frank Li <Frank.li@nxp.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] usb: dwc3: core: Don't touch resets and clocks
-Message-ID: <x45slyuz5bboqzqdyhgd22dx4vfsam6unvzymrmjvunef7cpfv@ixqrlvyzt4jp>
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-3-4415e7111e49@oss.qualcomm.com>
- <w72zvfh3uf7crbkmuenxcjnu6moircjdy6rnbzszl4tjlm2jks@4z2k3iqt2ohi>
- <6v2kyk3rhss4itvo4dhwxyf3mp7ey7gh5abaklgwa27b4fw6ce@ofyuo3ortl4p>
+	s=arc-20240116; t=1740672483; c=relaxed/simple;
+	bh=N7+PIP/u/EXnsYW1te2ETYmSDhz1b3A22sY96b93gQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCaxuxyaLuihGHeYxNZlx87heTBYDi7O7aEjcdW5LbBtPOx6uCLHAhDCs/RTCba5lG34jgNKwy9feLKiTpuFQpWS1K4982CqFmRlxsQMTxSZy0kPXDnSyh1p/X2bG3qUifI6wU20mgphyDdNADTMj/kCYbHnijlmVcNbzXwReJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=bBnWSgf2; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z3bpb3VrFz8srK;
+	Thu, 27 Feb 2025 17:07:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1740672471; bh=1ZhNgcCn5cZnUuzeMSL8VZ2F71Q+VzQTBJcd0+1+j1o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From:To:CC:
+	 Subject;
+	b=bBnWSgf2rQDw0eQmbPQOGBqE+dif5J/EtcnklD8jOSWYiNFw53zbUkG0Zna5udkgL
+	 C2Q/GiKEq6PNkyCJRReUGY6xiCVFlSp7c3rDGGhXljMuB6RO8u8GR5PH1SgYFPEIQW
+	 rpMk0HV4yPJvu9GMfVfd/zErRXXE8M6DMTii+rC2h6MJyZa4/w+p9/pboVf19pYfQx
+	 c0S0b7pUbQ/pQiYh7Qzs8dDgOjHuspheIfC5qzZ2SHs7eNHCgGiLEVEeV6oolqCmqM
+	 ziDFbYCl7vIgXdnPFLribmG6A2OY0BwyiuzRWcqhCHtU4H3TMcTouCeRzQkIvIBQva
+	 Er4gB2fFkIkdw==
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 91.57.235.199
+Received: from [192.168.212.208] (p5b39ebc7.dip0.t-ipconnect.de [91.57.235.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX18yIGrez3keadnnnZZCFhsb+TdVPKW3B3A=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z3bpW05Kjz8sc4;
+	Thu, 27 Feb 2025 17:07:46 +0100 (CET)
+Message-ID: <e8041b56-396b-427f-b9cb-d51004a40f57@fau.de>
+Date: Thu, 27 Feb 2025 17:07:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6v2kyk3rhss4itvo4dhwxyf3mp7ey7gh5abaklgwa27b4fw6ce@ofyuo3ortl4p>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/9] bpf: Fall back to nospec if v1 verification fails
+To: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
+ Xu Kuohai <xukuohai@huaweicloud.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ Henriette Herzog <henriette.herzog@rub.de>,
+ Cupertino Miranda <cupertino.miranda@oracle.com>,
+ Matan Shachnai <m.shachnai@gmail.com>,
+ Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+ Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>,
+ bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Maximilian Ott <ott@cs.fau.de>, Milan Stephan <milan.stephan@fau.de>
+References: <20250224203619.594724-1-luis.gerhorst@fau.de>
+ <20250224204744.599963-1-luis.gerhorst@fau.de>
+Content-Language: en-US, de-DE
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+Autocrypt: addr=luis.gerhorst@fau.de; keydata=
+ xsDNBF9/RhUBDADTS3EXP9KrrMCDf8wDsQQ6wo89/PuvocEhcczmuI0GbstTmnucDWy9xWRn
+ LbnsPoOHFf90oNhsRkyQuTZ3Yg8sv/ciOHvlyhArYcqlIfF6nVbZqUr1H/SnCA3mihuBSWdg
+ b+5Yp7DyVjcvU7T9VlYo+oxZRVbXgRWofGEZX+1fH0m0DUXQNldg+n8INrTYgWU9EtuDAbO8
+ 9ZJS+4VqxPTqbgR6n+jz1mGJRwbEf9zA9XTrb356EMVJwf4vO6aUjTHWQlXVyuYn91IwSQd3
+ v5mIxudOGhyvstqHZaueA4zAvqlTvzPJRjhbxJL/1PzsS3hZdm0WEJtsg1pZzBTCyPil18n6
+ sThRZ320REIJMdjqGSuy0pfxTthpfOz275NtzyErpuWb/HYEUvEyC/nek53svzQ8BzGQN1gK
+ x2K0VZVGHanxyNNQOy6RhNE22NwlhzJhLRsaXe6SYZ+g2b2X0VRd1aoHy4iAoeJTfRqWBqFi
+ QUO+OZXDIhv0VgRg07HfEBUAEQEAAc0kTHVpcyBHZXJob3JzdCA8bHVpcy5nZXJob3JzdEBm
+ YXUuZGU+wsEUBBMBCgA+AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE8RiC/5eRnCBr
+ LQFrE1Mn8QWMoOoFAmW80/AFCQ+jj1sACgkQE1Mn8QWMoOr4fAwA0GaGWox1os5l4+HsTC+c
+ HCrUFTaejPaTUusYwMe7GYvV3JFhOFQjoR3Ul2npadD5v7l0R7lPKpk1LS5UVudlxTno6Ide
+ ygpPGnhiKM7Vnj1QPVqBI2c4xhDH4lPbvGovBiQyUHC1w7WE5MohmfJjFhKLzPgBy3xjTlGr
+ v4B8c76r7H2VlZackbqDb5XfPmsxGhTLB1zFJsnXyZjapW1mK+q0kaqbS94IhOXfTyOSxfYy
+ rGzr05zgxVKDxA/dEAR0CEmxSGs9VJN/axqfudPeh4b/Bm1OmJzB4KGlJtIi/DxNYzxtebMw
+ FwSGTAiqgM1QQBcOtqfZoh4dDKvUD6CrC+a0yhCyrfCtgMoKTeRs4FeuhoTA52tLclZ9lw1p
+ +AYywnCl60NL3NGhvQlY5yGpXodpybDFUL2mbyyzv/ZO2C7X1onCUz1eglU9xvydEwRIQcTy
+ x3f/HqNxl8/kASYZnTySgeW6+fAt4lohFJMdNSshZ47Wsz7Nd569fb9l4+7YzsDNBF9/RhUB
+ DADb6khMqzEYTye7dtyhPLSTBG5KzKPsVkm2o4WMiVwGmSTpsGUZtqJs1P0fYutustnEkBud
+ BhWydQ/Rt5LQAqLKafeSNE/39PIV8Ro57FytqyQV14S7dRw2JUw722dSoa5+yGjGBVCHY8J/
+ theOctUlJr/nbl67QUi3QKwPdnPmCa0fazZBFo6eLouWAS8rma+CKmTL2qSoithdMfGax2mx
+ Ks5FdadXFKtEJSWwQL7E2iNwMcxPPezoNtEX1TJtQQgLqSx4lsQ/EdAclP6ZybQgpR6oS8bL
+ h0PxL0tQakQq8cJPzr7pKxTcffEJIBxoij05FAKAJTkPh/yJyf2kTCPCa2gjJPsO14NMoQ/C
+ Yz7WAKFHWDG7k4PyPAi798xLlNN7cin2ELlBTtIKt/CSDHgD/1bXS2EmWwRTPj+mmHbOcFnr
+ 6+4esIzAcri8uVCiEBGP7M2EdLJwCWFGucYO8TuhUWQ+UeJfASDOFQ7hckO+b/TojD07cn2e
+ h6hTuxGwkT8AEQEAAcLA/AQYAQoAJgIbDBYhBPEYgv+XkZwgay0BaxNTJ/EFjKDqBQJlvNQc
+ BQkPo4+HAAoJEBNTJ/EFjKDqz60L/RfSHfSgq1ENwpqX469SdEUpBZHs9lFZDXl8K70dAGpA
+ ucgI/mJi9fKw1acNd6qWr5adp5yHotgrB/OLR9MydJobjk63ZJAG5/Cn7MG0Do/X4kIMajQ3
+ LXWhUffNFTLDtu7KOSwV8+MvbhVCIfnLGukxy5IzZtCyQ74bnirARiPaFYgWPOqDgvaOCi9d
+ u/5/GWjj+H1c9JckesiKmNllReuVdq4h1CrMKbsqGhcJtLTaVuxH3UUki3vQCwSl0y9xatuY
+ oLjiv8TJpa/DM3GjGHqZvHvNy6HU0xlEDYKAdlOAbh507rq5SgFF1zRz+ErIUURf4fnoTotN
+ FHtkZqJsFuf15WQsR21+WAiproSxGIIRYvWqIXfMi8CIb/AIaATFepcqbU4X33ORK0dQCExn
+ NZNGTK8FpLb0C80pvMreO2wTzz3Jif72dVHchs9uACVF83Qir8FnCqrLfvnn87eusueqnSS/
+ Bjq2LIJlJ8czDxmxpGv0CjsHjGkXwBgsoeAK9A==
+Organization: I4
+In-Reply-To: <20250224204744.599963-1-luis.gerhorst@fau.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 09:55:29AM -0600, Bjorn Andersson wrote:
-> On Thu, Feb 27, 2025 at 06:24:17AM +0200, Dmitry Baryshkov wrote:
-> > On Wed, Feb 26, 2025 at 04:17:50PM -0800, Bjorn Andersson wrote:
-> > > When the core is integrated with glue, it's reasonable to assume that
-> > > the glue driver will have to touch the IP before/after the core takes
-> > > the hardware out and into reset. As such the glue must own these
-> > > resources and be allowed to turn them on/off outside the core's
-> > > handling.
-> > > 
-> > > Allow the platform or glue layer to indicate if the core logic for
-> > > clocks and resets should be skipped to deal with this.
-> > > 
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > > ---
-> > >  drivers/usb/dwc3/core.c | 19 +++++++++++--------
-> > >  drivers/usb/dwc3/glue.h |  1 +
-> > >  2 files changed, 12 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > > index d9f0a6782d36..aecdde8dc999 100644
-> > > --- a/drivers/usb/dwc3/core.c
-> > > +++ b/drivers/usb/dwc3/core.c
-> > > @@ -2328,6 +2330,7 @@ static int dwc3_probe(struct platform_device *pdev)
-> > >  
-> > >  	probe_data.dwc = dwc;
-> > >  	probe_data.res = res;
-> > > +	probe_data.ignore_clocks_and_resets = false;
-> > 
-> > Isn't it a default value?
-> > 
-> 
-> I like the false because it's explicit, but I have no strong attachment
-> to it.
+On 24/02/2025 21:47, Luis Gerhorst wrote:
+> +		} else if (error_recoverable_with_nospec(err) && state->speculative) 
+> {
+> +			WARN_ON_ONCE(env->bypass_spec_v1);
+> +			WARN_ON_ONCE(env->cur_state != state);
+> +
+> +			/* Prevent this speculative path from ever reaching the
+> +			 * insn that would have been unsafe to execute.
+> +			 */
+> +			cur_aux(env)->nospec = true;
 
-I'm more biased to the 'make unusal cases stand out', which means the
-defaults can go away to highlight non-default cases.
+This allows us to accept more programs, but it has the downside that 
+Spectre v1 mitigation now requires BPF_NOSPEC to be emitted by every JIT 
+for archs vulnerable to Spectre v1. This currently is not the case, and 
+this patch therefore may regress BPF's security.
 
-> 
-> That said, it's not the default value, because probe_data isn't
-> zero-initialized. That would however make sense to do, in order to avoid
-> surprises in the future when probe_data grows.
+The regression is limited to systems vulnerable to Spectre v1, have 
+unprivileged BPF enabled, and do NOT emit insns for BPF_NOSPEC. The 
+latter is not the case for x86 64- and 32-bit, arm64, and powerpc 64-bit 
+and they are therefore not affected by the regression. According to [1], 
+LoongArch and mips are not vulnerable to Spectre v1 and therefore also 
+not affected by the regression.
 
-:-)
+Also, if any of those regressed systems is also vulnerable to Spectre 
+v4, the system was already vulnerable to Spectre v4 attacks based on 
+unpriv BPF before this patch and the impact is therefore further 
+limited.
 
-> 
-> Regards,
-> Bjorn
-> 
-> > >  
-> > >  	return dwc3_core_probe(&probe_data);
-> > >  }
-> > > diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
-> > > index e73cfc466012..1ddb451bdbd0 100644
-> > > --- a/drivers/usb/dwc3/glue.h
-> > > +++ b/drivers/usb/dwc3/glue.h
-> > > @@ -17,6 +17,7 @@
-> > >  struct dwc3_probe_data {
-> > >  	struct dwc3 *dwc;
-> > >  	struct resource *res;
-> > > +	bool ignore_clocks_and_resets;
-> > >  };
-> > >  
-> > >  int dwc3_core_probe(const struct dwc3_probe_data *data);
-> > > 
-> > > -- 
-> > > 2.45.2
-> > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
+As far as I am aware, it is unclear which other architectures (besides 
+x86 64- and 32-bit, arm64, powerpc 64-bit, LoongArch, and mips) 
+supported by the kernel are vulnerable to Spectre v1 but not to Spectre 
+v4. Also, I am not sure if barriers are available on these 
+architectures. Implementing BPF_NOSPEC on these architectures therefore 
+appears non-trivial (probably impossible) to me. Searching gcc / the 
+kernel for speculation barrier implementations for these architectures 
+yielded no result. Any input is very welcome.
 
--- 
-With best wishes
-Dmitry
+As an alternative, one could still reject programs if the architecture 
+does not emit BPF_NOSPEC (e.g., by removing the empty BPF_NOSPEC-case 
+from all JITs except for LoongArch and mips where they appear 
+justified). However, this will cause rejections on these archs and some 
+may have to re-add the empty case. Even if this happens, some may not do 
+it and only rejecting the programs on some archs might complicate BPF 
+selftests.
+
+Do you think the potential regression is acceptable or should we err on 
+the side of caution?
+
+[1] a6f6a95f25803500079513780d11a911ce551d76 ("LoongArch, bpf: Fix jit 
+to skip speculation barrier opcode")
 
