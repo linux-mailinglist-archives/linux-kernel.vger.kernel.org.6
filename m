@@ -1,288 +1,162 @@
-Return-Path: <linux-kernel+bounces-537049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57931A48781
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:13:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEAFA4877F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EF73A24F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD3E18828EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDDB1F5821;
-	Thu, 27 Feb 2025 18:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225DD1F582C;
+	Thu, 27 Feb 2025 18:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U59ib/nN"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF571EB5DA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PmR8jm+e"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C7722FF4D;
+	Thu, 27 Feb 2025 18:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740679787; cv=none; b=aYwmWcc1RuHA248PC6Okei95IMkXRlNAeCYX4K33Y7M7hEh8vQSzHhoDCCWv5SH9A6SYcB6ZUmxo8lNjwNvd8z0mOwn9BlqYuurPwP+/qQI46OBbEu43aGFKihsj6WBoYkl8bxq4rV9dWWDeOfNZ2ppDUnWFfUrDrT/9fls4Yqw=
+	t=1740679802; cv=none; b=bfrOx3wPMGKIkgBzdCE0QjGEw8EA1TGitYocZfeVTXUBCt0ztcSd9QjRVAJ/mYUJZoQbzJ66VcS1a84ONa//+hqnSHAJwz2+MzmVNBa8btecLtvowIeNPhKdEQDTim2njlQV9+4GR2UmvegGBCFqs3qsrA9M/++XlB1F4tv2Fmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740679787; c=relaxed/simple;
-	bh=xdChzCxZLgxBax8Z0/iBsu5xox6O3W/RGdDinFxDb9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUnaUjTiCpHTta/YVtRj8fLYpVKpa3VRpapacDO6KlILi7CWDzDNuTvLL29ueEwtNwRyIE606gi/tFP6tuKlK2XaIWJXwEPjUfwfcuK2BHqtH6fqfTEAx0KyKI14z/epgHzhcURJtIGUmvVqbyojN42EGAm8VG08nfbeuA7KLDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U59ib/nN; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abb7a6ee2deso191933166b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:09:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740679783; x=1741284583; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfjpGp1L26OhdaNqt/gYg8OwWNQRpw6uVt+zy1eXaNU=;
-        b=U59ib/nNARlrKFR8mHOnfDsq/hWYqQri9rMx4rJlDZLJhdTvv68qQQu6+By17g8eUx
-         5MrNsm2krTGjM/10dLbBCdeXEl59o0PplSPigAIOpq2zpyzchVopxIO0XIz4NmT5UVDM
-         IBXXpIEybBkMuOG5mT34UsCo8wSC71UdJgcdmMUF8CMpvdRzTTyazrbdWfbu8BGBmoA9
-         WheLGhN9rbxsEt8GDKsYkezjJKt/UhIB1MkkVn2zq9ZkhHOu7dpnLpcNc4+ttY+rjoLa
-         jiiH/JymZ7n006IChsJMobyNasIVSGpdiZkiCMaKpoU3bfjMRLfX0n5v3Azg57+QRmFu
-         epPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740679783; x=1741284583;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfjpGp1L26OhdaNqt/gYg8OwWNQRpw6uVt+zy1eXaNU=;
-        b=wNmC84W9v/ml3nbpOSZ3BBRUiKRd9rDWdvOiUi+rWwKsdGkD80993p+rJ5zjiIW43q
-         oPMEFeBaP47ZKCrqfwKRS66+6OyMNONsxmLbUkb7mtinh1DMaqeEB7VsUMg2yKTgctly
-         c9ABl6QfmgZD5XLFGqW6oy0J0P0JJuX2UKk3X0YtBST1VpK2aIIuZqYSenY2pF3s6P96
-         hub9mscSdURSEyG9iAQDSJyuhQVyCOCeQq0nGaMQ8pfsMlqvEyHtnn7uQISx0MXobIg6
-         PEhhj+jqwyjPHjkKfDB+0QTRNL/ByQovCqtHOvsAf/WAjXYzMJk27qAC0qL51JJDZYqU
-         dnrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyTxWCeWQzMgoJ5R5Sqpzpkc4Xj1v8fOtU7djzA2cuV429mXH9FoSPcTOpL5irvCEaEYZVFesB/DZWGAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8vhEvbPF4w7LzWmS+PI484wPa8DZWoTQy5H9tjBbUQSCKZdS/
-	VBvStSS9CfjEkUgK5NCXmQzKD4O9doASTjMolxxOs/wXw5WCtTN6gcd91qZsaCI=
-X-Gm-Gg: ASbGncuMqz5JQe2ua378RZyguqtdl+J3rPyjsX+z4P7xiALOcQSuV+D+iB5yb2g9Xj2
-	YcZGAVHp1/69Xb4De0PC2GPm5eVc2mfYYP+yQUDOtBbBO8TVfjqVH+Z9y1XxiUn5V2tVpiPdDym
-	taltn5HGN7qLkWV3XzkkLK2auDg6AfMG1X1UqdSpuHnwZ0IJRTJ7JhPyJUrIyKgG3PNwPvCApsY
-	OBmgUPzsGYNc+0q+PlsP4ihL7Vf6kdInqIbWLxG1PsDANw8R6UkvKLm1/h/YH4l1dV3robD9kJC
-	Vq98dkHzIcGO+34D2XadaU8mMNXhflkBWF2oB3senhUC16NuSBDLkMAkYy0yZzcu
-X-Google-Smtp-Source: AGHT+IG5jhPAhA4gLbl+6jNfxZsQy6dhnuwfbakZ2ECzbDoT+qIk3FvugKFPtllN44+P1qWPzxitZQ==
-X-Received: by 2002:a17:907:988:b0:abe:ff13:d0c4 with SMTP id a640c23a62f3a-abf261cd53cmr53791366b.32.1740679783111;
-        Thu, 27 Feb 2025 10:09:43 -0800 (PST)
-Received: from localhost (p200300f65f2c000400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f2c:4::1b9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9a90sm159028166b.34.2025.02.27.10.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 10:09:41 -0800 (PST)
-Date: Thu, 27 Feb 2025 19:09:39 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Anjelique Melendez <quic_amelende@quicinc.com>, 
-	Kamal Wadhwa <quic_kamalw@quicinc.com>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] leds: rgb: leds-qcom-lpg: Fix pwm resolution for Hi-Res
- PWMs
-Message-ID: <ioater5m23lhkmyik3hurozol6vtyx6ovac3phmvcphrmmprwb@igggmox3jz5m>
-References: <dfthocttum7dscotngi6l2hz6bpdwfgrdxpvkcv6bdux3lt66d@iqfvmntvzyut>
- <Z7zVgeM+7P7SLWIu@linaro.org>
- <vc7irlp7nuy5yvkxwb5m7wy7j7jzgpg73zmajbmq2zjcd67pd2@cz2dcracta6w>
- <Z7161SzdxhLITsW3@linaro.org>
- <5euqboshlfwweie7tlaffajzg3siiy6bm3j4evr572ko54gtbv@7lan3vizskt3>
- <Z8B2Bl/9uD3jPvQi@linaro.org>
- <j55de6bbipoavqx25w2s6qr7n6fv6w7bj3lrgyag4dlvvddbqv@shn22aqcqeci>
- <Z8CIY2OJUMqIOHGU@linaro.org>
- <Z8CTqdFafLY17C25@linaro.org>
- <Z8CbSvlG856oxQRw@linaro.org>
+	s=arc-20240116; t=1740679802; c=relaxed/simple;
+	bh=UJ29GXqR1xOqD5wP4/T1f63UJV4YWobyXBoSuD/X/ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ih/Vca/ypYrXYC3Q9huRJvyaQVjJkdGHIFedTsjz0U5sFtewRNa96w41XfhNfWR0J4PVCccxnadypJMNXzJ8gwIgDhxA+aL2Hxh7aV9lhmUcAB7gjCfKEPxEdL90gowvD4k208bgE/JgMLJmhOk1IHMRFPQldotOiZ0RqKiX4c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PmR8jm+e; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 10CD5210D0D8;
+	Thu, 27 Feb 2025 10:10:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 10CD5210D0D8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740679800;
+	bh=KeYtkcgDZD7jrGalV3gn7cspJ+K9p8TNK/AvqR9qhMM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PmR8jm+eJp9kQKiEE+jGdsgon6HrbL9A7dQ3q/qr39B3aqwYrYfU9urOx4uE5QKhf
+	 30NvnRXCZS7W9GcXPKmZoAUTNcacqW43TCgCLebkks/X3aBEKEJj6T4r0IFN13E8HE
+	 PPVD/rmzFnTxYicN4iD+Zx91upc7yZ5qBUnIk9CE=
+Message-ID: <c0df9fd7-6e09-4326-b4f4-2524140dc86b@linux.microsoft.com>
+Date: Thu, 27 Feb 2025 10:09:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="coiu4r2gfvk33wam"
-Content-Disposition: inline
-In-Reply-To: <Z8CbSvlG856oxQRw@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 03/10] arm64/hyperv: Add some missing functions to
+ arm64
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
+ joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-4-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <1740611284-27506-4-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---coiu4r2gfvk33wam
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] leds: rgb: leds-qcom-lpg: Fix pwm resolution for Hi-Res
- PWMs
-MIME-Version: 1.0
 
-Hello,
+On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
+> These non-nested msr and fast hypercall functions are present in x86,
+> but they must be available in both architetures for the root partition
+> driver code.
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>   arch/arm64/hyperv/hv_core.c       | 17 +++++++++++++++++
+>   arch/arm64/include/asm/mshyperv.h | 12 ++++++++++++
+>   include/asm-generic/mshyperv.h    |  2 ++
+>   3 files changed, 31 insertions(+)
+> 
+> diff --git a/arch/arm64/hyperv/hv_core.c b/arch/arm64/hyperv/hv_core.c
+> index 69004f619c57..e33a9e3c366a 100644
+> --- a/arch/arm64/hyperv/hv_core.c
+> +++ b/arch/arm64/hyperv/hv_core.c
+> @@ -53,6 +53,23 @@ u64 hv_do_fast_hypercall8(u16 code, u64 input)
+>   }
+>   EXPORT_SYMBOL_GPL(hv_do_fast_hypercall8);
+>   
+> +/*
+> + * hv_do_fast_hypercall16 -- Invoke the specified hypercall
+> + * with arguments in registers instead of physical memory.
+> + * Avoids the overhead of virt_to_phys for simple hypercalls.
+> + */
+> +u64 hv_do_fast_hypercall16(u16 code, u64 input1, u64 input2)
+> +{
+> +	struct arm_smccc_res	res;
+> +	u64			control;
+> +
+> +	control = (u64)code | HV_HYPERCALL_FAST_BIT;
+> +
+> +	arm_smccc_1_1_hvc(HV_FUNC_ID, control, input1, input2, &res);
+> +	return res.a0;
+> +}
+> +EXPORT_SYMBOL_GPL(hv_do_fast_hypercall16);
+> +
+>   /*
+>    * Set a single VP register to a 64-bit value.
+>    */
+> diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
+> index 2e2f83bafcfb..2a900ba00622 100644
+> --- a/arch/arm64/include/asm/mshyperv.h
+> +++ b/arch/arm64/include/asm/mshyperv.h
+> @@ -40,6 +40,18 @@ static inline u64 hv_get_msr(unsigned int reg)
+>   	return hv_get_vpreg(reg);
+>   }
+>   
+> +/*
+> + * Nested is not supported on arm64
+> + */
+> +static inline void hv_set_non_nested_msr(unsigned int reg, u64 value)
+> +{
+> +	hv_set_msr(reg, value);
+> +}
+> +static inline u64 hv_get_non_nested_msr(unsigned int reg)
+> +{
+> +	return hv_get_msr(reg);
+> +}
+> +
+>   /* SMCCC hypercall parameters */
+>   #define HV_SMCCC_FUNC_NUMBER	1
+>   #define HV_FUNC_ID	ARM_SMCCC_CALL_VAL(			\
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+> index c020d5d0ec2a..258034dfd829 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -72,6 +72,8 @@ extern void * __percpu *hyperv_pcpu_output_arg;
+>   
+>   extern u64 hv_do_hypercall(u64 control, void *inputaddr, void *outputaddr);
+>   extern u64 hv_do_fast_hypercall8(u16 control, u64 input8);
+> +extern u64 hv_do_fast_hypercall16(u16 control, u64 input1, u64 input2);
+> +
+>   bool hv_isolation_type_snp(void);
+>   bool hv_isolation_type_tdx(void);
+>   
 
-On Thu, Feb 27, 2025 at 07:05:14PM +0200, Abel Vesa wrote:
-> On 25-02-27 18:32:41, Abel Vesa wrote:
-> > On 25-02-27 17:44:35, Abel Vesa wrote:
-> > > On 25-02-27 16:25:06, Uwe Kleine-K=F6nig wrote:
-> > > > Hello Abel,
-> > > >=20
-> > > > On Thu, Feb 27, 2025 at 04:26:14PM +0200, Abel Vesa wrote:
-> > > > > On 25-02-27 10:58:47, Uwe Kleine-K=F6nig wrote:
-> > > > > > Can you please enable CONFIG_PWM_DEBUG, enable pwm tracing (
-> > > > > >=20
-> > > > > > 	echo 1 > /sys/kernel/debug/tracing/events/pwm/enable
-> > > > > >=20
-> > > > > > ) then reproduce the problem and provide the output of
-> > > > > >=20
-> > > > > > 	cat /sys/kernel/debug/tracing/trace
-> > > > > >=20
-> > > > > > .
-> > > > >=20
-> > > > > $ cat trace
-> > > > > # tracer: nop
-> > > > > #
-> > > > > # entries-in-buffer/entries-written: 13/13   #P:12
-> > > > > #
-> > > > > #                                _-----=3D> irqs-off/BH-disabled
-> > > > > #                               / _----=3D> need-resched
-> > > > > #                              | / _---=3D> hardirq/softirq
-> > > > > #                              || / _--=3D> preempt-depth
-> > > > > #                              ||| / _-=3D> migrate-disable
-> > > > > #                              |||| /     delay
-> > > > > #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-> > > > > #              | |         |   |||||     |         |
-> > > > >         modprobe-203     [000] .....     0.938668: pwm_get: pwmch=
-ip0.0: period=3D1066407 duty_cycle=3D533334 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.938775: pwm_apply: pwm=
-chip0.0: period=3D5000000 duty_cycle=3D0 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.938821: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D0 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.938936: pwm_apply: pwm=
-chip0.0: period=3D4266537 duty_cycle=3D0 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.938982: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D0 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.939274: pwm_apply: pwm=
-chip0.0: period=3D5000000 duty_cycle=3D921458 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > >         modprobe-203     [000] .....     0.939320: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D921355 polarity=3D0 enabled=3D1 err=3D0
-> > > > >         modprobe-203     [000] .....     0.939434: pwm_apply: pwm=
-chip0.0: period=3D4266537 duty_cycle=3D921355 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > >         modprobe-203     [000] .....     0.939480: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D921355 polarity=3D0 enabled=3D1 err=3D0
-> > > > >  systemd-backlig-724     [006] .....     9.079538: pwm_apply: pwm=
-chip0.0: period=3D5000000 duty_cycle=3D5000000 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > >  systemd-backlig-724     [006] .....     9.079585: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D4266537 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > >  systemd-backlig-724     [006] .....     9.079698: pwm_apply: pwm=
-chip0.0: period=3D4266537 duty_cycle=3D4266537 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > >  systemd-backlig-724     [006] .....     9.079750: pwm_get: pwmch=
-ip0.0: period=3D4266537 duty_cycle=3D4266537 polarity=3D0 enabled=3D1 err=
-=3D0
-> > > > > $
-> > > > >=20
-> > > > > >=20
-> > > > > > I didn't take a deeper dive in this driver combination, but her=
-e is a
-> > > > > > description about what *should* happen:
-> > > > > >=20
-> > > > > > You're talking about period in MHz, the PWM abstraction uses
-> > > > > > nanoseconds. So your summary translated to the PWM wording is (=
-to the
-> > > > > > best of my understanding):
-> > > > > >=20
-> > > > > >   1. PWM backlight driver requests PWM with .period =3D 200 ns =
-and
-> > > > > >      .duty_cycle =3D 200 ns.
-> > > > > >=20
-> > > > > >   2. leds-qcom-lpg cannot pick 200 ns exactly and then chooses =
-=2Eperiod =3D
-> > > > > >      1000000000 / 4.26666 MHz =3D 234.375 ns
-> > > > > >     =20
-> > > > > >   3. leds-qcom-lpg then determines setting for requested .duty_=
-cycle
-> > > > > >      based on .period =3D 200 ns which then ends up with someth=
-ing bogus.
-> > > >=20
-> > > > The trace looks better than what I expected. 2. is fine here becaus=
-e it
-> > > > seems when Sebastian wrote "driver requests PWM with 5 MHz period" =
-that
-> > > > meant period =3D 5000000 ns. That was then rounded down to 4266537 =
-ns. And
-> > > > the request for period =3D 5000000 ns + duty_cycle =3D 5000000 ns w=
-as
-> > > > serviced by configuring period =3D 4266537 ns + duty_cycle =3D 4266=
-537 ns.
-> > > > So that's a 100 % relative duty configuration as intended.
-> > > >=20
-> > > > So just from the traces I don't spot a problem. Do these logs not m=
-atch
-> > > > what actually happens on the signal?
-> > >=20
-> > > What I do not get is why do we expect 2 pwm_get() and 2 pwm_apply()
-> > > calls each time ?
-> >=20
-> > OK, so the second pwm_apply() is due to CONFIG_PWM_DEBUG.
+Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
 
-ack. This is done just for the tests implemented in CONFIG_PWM_DEBUG, as
-are the two pwm_get()s.
+-- 
+Thank you,
+Roman
 
-> > But still, the first pwm_apply() requests duty cycle of 5MHz:
-
-5 ms, yes. But it cannot give you 5 ms and so you get 4.266 ns.
-
-> > systemd-backlig-724     [006] .....     9.079538: pwm_apply: pwmchip0.0=
-: period=3D5000000 duty_cycle=3D5000000 polarity=3D0 enabled=3D1 err=3D0
-> >=20
-> > So since the period is 4.26MHz, due to the knobs selected by the
-> > provider, this duty cycle will result in a PWM value that is above the
-> > selected resolution, as I already mentioned.
-
-"above the selected resolution"? Do you mean you don't get the exact
-value that you requested?
-
-> On top of that, the duty cycle in debugfs is also reported as 5000000ns
-> when in fact it is 4266666ns, as the trace shows.
-
-Yes. Consider that a relict from the times when there was no
-pwm_get_state_hw(). Both values are interesting in different situations.
-So just telling the real parameters isn't the optimal way forward
-either.
-
-Something like the patch I showed in
-https://lore.kernel.org/all/7bcnckef23w6g47ll5l3bktygedrcfvr7fk3qjuq2swtoff=
-hec@zs4w4tuh6qvm/
-would make you a bit luckier I guess. Feel free to polish that one a bit
-(e.g.  by checking the return value of pwm_get_state_hw() and acting
-sensible in reply to it) and send a proper patch. (A Suggested-by for me
-is enough for such a patch, grab authorship yourself.)
-
-> > > Need to dig a bit further.
-> > >=20
-> > > But meanwhile, if the first pwm_apply() call goes all the way to the
-> > > provider, then the duty cycle value, when translated to the actual PWM
-> > > value that gets written to reg, will overflow.
-
-No it will not. The .duty_cycle value (also 5000000 ns) will reach the
-lowlevel PWM driver together with .period =3D 5000000 ns. Both are rounded
-down to 4266666ns. I see no overflow.=20
-
-Best regards
-Uwe
-
---coiu4r2gfvk33wam
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfAqmEACgkQj4D7WH0S
-/k59Lwf/c53g1pFJpL0c/xEQriO8AL4IHT0MyM5FXUa7J9I1fDnHwffLa/y4ul2C
-XbhoexOvuSO4NCktkZ8qWHGofl0MFX5NeNkgI4z972nPSpoQwXb1qyrhX9igA9nS
-OlUyWmqG0kBTOUgnm8rb14NHtHl50p5PR2kxs2pqNnm5m4QYsvc/HWkQCjKWx6WO
-Z6TiBcVTByGFdJ3EFIhE0kydakv0cKthMTFbgUGRlR3k3u35DUoWyOicT3uvaUMB
-zyhZTK9kFV7HbXW+XceARMrE3+19oMa65csNYv9X6Ta+MXOzrwV86U8wPmfIi+E0
-UaCwkC2Gd7Es8lxpkY/unI0K++ytTQ==
-=IqCH
------END PGP SIGNATURE-----
-
---coiu4r2gfvk33wam--
 
