@@ -1,212 +1,171 @@
-Return-Path: <linux-kernel+bounces-535792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3D9A47747
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:07:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A74A4773C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D341744CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFCC3B3BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED66822836C;
-	Thu, 27 Feb 2025 08:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bH0IgmiF"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6006F228C98;
+	Thu, 27 Feb 2025 08:02:44 +0000 (UTC)
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021136.outbound.protection.outlook.com [52.101.129.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565492222B8;
-	Thu, 27 Feb 2025 08:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740643317; cv=none; b=uhBd/wXhUGMrvPszQgCj4r4zH82JIKhGOCfsrXIRoijuBU67DjP8sN9St8qb3098eA/klCusyktUHr6Rk49HVkZAa8tuvy+kAX4txEJwzHxv9KWnbQPufX7p9eOzbcFst546TaPz5gmJL3nkbrszcFDJS022XaWO84amyszi9go=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740643317; c=relaxed/simple;
-	bh=runjjTr95i43OiT1nxM0NLq9jU5kyxMdjAifU3Y72ZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYzYpwW4t2rKaXewoZigSxvIvIFAswUHxKf1C4TAIu8rP5Djf5KDdNcv8nuBujDt0u4uPCak4AkMTgbbeKncZ8noo2WDYmDYX22Kb96jyCYKpCqyb0ovSTRgs8TLmO4D30xby7JnA4fHBE7+xOSgolOGj5nTy3OJzovoMmWR+EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bH0IgmiF; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54298ec925bso963233e87.3;
-        Thu, 27 Feb 2025 00:01:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740643313; x=1741248113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nDtuSF+uNvwU/olXT0/1pp58GsxviGqVNXkV33zGjbs=;
-        b=bH0IgmiFcPevoY2hqONYARZZmNLCwMY0AfK9x7thqbgPf4J+Qn4hBAcN4pQrZdPGtn
-         McbOOwHbxpOO+7bjb8sRMU2W2Dg87h62N2jihV+zCmC/9jpDi9VNkXdeQe344sW+hzFI
-         YDzEyoax1yxUuIuAQsOdd9IYFRLSlQmjoFK3OamCegJstxIThmsNoRuwNZzN5frCOzVi
-         Qov1wO1hWKs4A5wQl3KU16hTjNjuCv9nzS1TTbFZz1nJ+om+OjRdQcEz1o+VwqT+3W/i
-         j6eYFHdEk/YpbRhOac6A9J1ZbfjZSY7OVIs/DAaFrjPfKkb2s4McUW5uV3eiBdTw4XIN
-         Hx5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740643313; x=1741248113;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nDtuSF+uNvwU/olXT0/1pp58GsxviGqVNXkV33zGjbs=;
-        b=R2oStxMYjyAK8xz7CelsV2cxglL9rGkJ384Awfzo+8IqjUR12N3Fgq9vLzApenM9zK
-         Ol5lk804Got6QYHLGT1edKka40463xxd4/E0iwPfUkPhFl3H+aPKiEilnxf6Bhb0x1Bx
-         h/3KE3rw5nUh/BZFAs7Z6/z6Ni0nxJ/F0/0Xqo5/1hbUi/MruijkYEg9rIcyLGlPMjDj
-         kXv+y/Nm6YI8TMvoJv4AayZHIVVA+ocM0Vu5i1yBj8eL6QAP5uP9RjfNOPYh4gqyTEtU
-         XS+pc5MMRhbmejwgh9xFRe7HF4OheYoR8RetDTAqHutJ8iOmgcSkA0Yp137PWsNILtms
-         FLvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9BRPb9UiMYR2nxIxAsiGeLQWlBPCV7B6VF06ZnM/iTjtXtt7S9ZXofMqMUVylaxZ89BvwciE3GvUfm4DD@vger.kernel.org, AJvYcCVv/EIZF+V5AntFDLd6F+ICMZ8qw6wVr4torMdM17P0K33j8UFPNt5yIdBTcD8JsZYHovgyjwCA7oLGrA==@vger.kernel.org, AJvYcCWYgdGo/urCe2P5C8zJ/PK9b2oJMLiLcyeWqoYat6gKQ8fhPwPQVD+LoFdCD4GXjiTquYliHZRdVkrF@vger.kernel.org, AJvYcCWhNLLCjC1tETtdbXjgZe6EhzMqFGOCX8BoXEjJbvMnWBoj3wZbWQ1GRzQtgsgMX6Rskz4crolJLCNUfl5L8FVqURw=@vger.kernel.org, AJvYcCWpyfxJfrazKeaaqoEmseP8EjcCE179XprKS0SXG2wfVeENEz0ueD2GfkVVTIrY3tuCnCP44dX1v1D+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0jwv8oyT5NQzkjDl4y8rJ2IvY9tCV0TdHvOZmzQDwZWSS/O62
-	QVvBkOzsr9VwozZBFTKFnStdhe/YoxnGiROtXI09TKKpx4BzK8kw
-X-Gm-Gg: ASbGncu9+YoOvt8Mw6OMO4OHwlEr9JKZAFwM0C0Q6Kf3STV0dt1o+alh2+iiuYSsDDI
-	YRhGl/PQFBDRuZ35rbHNaL/Xlfm7DLTjavgH7G6QwP96fJaJNVqbALTMkb8Z7HZxOiF3MJvQzqL
-	I0VrbpKVZCf8LrMqcxfH7m2TVAd+lkri9jXbnNYfmDaKNKGUVLRnaReKXioZ5hGJKolo2xbmcQb
-	8TpDKStd6XUUJdAMDQJ6VyycYE/aYkHIsoiCpB0T5hQf8pAZ96SYxTkCx5vBgwWY304afoIhxst
-	8cESDawJOummLbGNu4DsTM0Am3o0N500WWj58D9QINc5L8VquZM8iBl/p9P5TWWHcSIiGEykWCn
-	tYPZjwvU=
-X-Google-Smtp-Source: AGHT+IFjVjmK2qHUacoPpo4OU31ZwGA6d9bKKSSD59w0ISV0sOUUwTnyPiZ3gMGZR/v96mmqDXra0A==
-X-Received: by 2002:a19:8c09:0:b0:549:43f8:824 with SMTP id 2adb3069b0e04-54943f8098dmr558221e87.26.1740643313017;
-        Thu, 27 Feb 2025 00:01:53 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443bebd5sm98564e87.209.2025.02.27.00.01.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 00:01:51 -0800 (PST)
-Message-ID: <d7982b76-3da7-47ff-b2b2-f964610af1f7@gmail.com>
-Date: Thu, 27 Feb 2025 10:01:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94476224B0C;
+	Thu, 27 Feb 2025 08:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.136
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740643363; cv=fail; b=FoXvLYtsynr8PFdfDEYlcLgVOx9nkeftJ91wqtsRUA6gTAsY0+lGaQEcRko1RewaJID+tTluLhNjgW83Vn1UkJE4vZm8BsfyKtpb/Ge6fJ6A1OETS7yeDw39AmmGyUf7KgZIf3UhL5bCV5Urvr25UAWlOyXizDGPZ4Oa4CyL5+w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740643363; c=relaxed/simple;
+	bh=bcV5UQKUDHLhpDdNhASwxNaXhFW2KhMHuw4U3smrGPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doPgVLkRA3PbM3Qbxj6Py+L1BFBDiKGlDJuGIHD99LrMn8L2PjS0186CF9Y/9SUfRKk8yUqSt/O4sX86XHJRRFJvBSflmnEwxlIWRHI4fv5LMnK25HSaaWACWv0hcw8JzT399BGkbWhogTmmpeRGzEkOiCmAOEIRPti2ZNrbYNk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.129.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w3Ho67NT1GGHYegZR53ey/yX0FU6wuOhlnptfN7e6uEYb2xmHGx/7Mxiop4URttsjFYnR7id2mnBMcUkVWjDsyVIbek8pKzPyBDe/wW8f4sv7uVbyNwRE3AAg9Pg/qMWnm0IDmHrooPYoPT2gmk4rVirif7viTsUiaw54vk/t/Od9a/v7Lmj3G/UmtbiktfabtNGq1++VS85WwnhF0zV4LAWHnW+OP9W4lFrLesfETsZ2RfSPtntpGPV/OXuyTFE/m+9csz3t6/ws7dcwrDCwWVvB2gnmGI6SsEWO03LK8nzQVT2AmWW4nfmq1Sz+uEHibEAtFPk6AxFvq3xWzGFQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7G8oAH/Ew6gLeT9TcrpZ2QKWMwxr9IDnpJF8qnubCAc=;
+ b=py6XJVbPUSi0DIqFi6ihw3j10QRxSKiVnAskXVFx1g+h9oRMHOj6kuqk0LtChV4JLY5C2Q96LGNN+4HjYMLgpf1hIrCZkbFRn84b8Ii7sz9SRlaiK4aei8kgw2nufQ2bcQfYDjDkA6fIscW5xt9oLrlpH1A9tCl0oe2toCUcnhm3VNI+nCn7TXcU7H54rN76VgFgrmKr9EJYDYjapUYSQoYQKG7ZweAz6UMoYnrgC6pMdmWlRsrC2cUC0V3mWIJVU5qHq/l97K4zP3a2H3hvFjcMCuxoMlA6n2DBqijZF2bhGDF6snXGjjaUJUhv6+qV09Z+LbeY6+71dkazUJln/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from PS2PR01CA0072.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:57::36) by KL1PR0601MB5726.apcprd06.prod.outlook.com
+ (2603:1096:820:bc::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
+ 2025 08:02:37 +0000
+Received: from HK2PEPF00006FAE.apcprd02.prod.outlook.com
+ (2603:1096:300:57:cafe::99) by PS2PR01CA0072.outlook.office365.com
+ (2603:1096:300:57::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.21 via Frontend Transport; Thu,
+ 27 Feb 2025 08:02:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ HK2PEPF00006FAE.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 08:02:36 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id B602A41604E4;
+	Thu, 27 Feb 2025 16:02:35 +0800 (CST)
+Date: Thu, 27 Feb 2025 16:02:30 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: arnd@arndb.de, catalin.marinas@arm.com, cix-kernel-upstream@cixtech.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	marcin@juszkiewicz.com.pl, robh@kernel.org, will@kernel.org
+Subject: Re: [PATCH v2 0/6] arm64: Introduce CIX P1 (SKY1) SoC
+Message-ID: <Z8AcFq9bDuW0oiD5@nchen-desktop>
+References: <20250226012136.854614-1-peter.chen@cixtech.com>
+ <20250227045236.2830419-1-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/10] property: Add
- device_get_child_node_count_named()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
- <Z72QAOA9xXbP16K-@kuha.fi.intel.com> <Z72Zp8tpnvlFGdQ_@smile.fi.intel.com>
- <ad39b453-7e5b-49bd-a4fd-6a4988636130@gmail.com>
- <Z72d7TzZ21WITW3f@smile.fi.intel.com>
- <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
- <Z73M3Ua6u1FpgBEK@smile.fi.intel.com>
- <720f9c69-ca1f-45cb-9f6e-c8e4703c9aad@gmail.com>
- <Z78g_uiXumn4mvET@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z78g_uiXumn4mvET@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227045236.2830419-1-liujianfeng1994@gmail.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FAE:EE_|KL1PR0601MB5726:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86aff9b7-7882-4f7d-c66a-08dd5705197e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3WRHRP5kyJdhSG1LfbekWqssubqtz/2zKmel4f11ZmXSVfazHXvMOcbOe6+2?=
+ =?us-ascii?Q?IqZvNjryLKw2/S5AbR6vNmzE3O9UPy4TQGhh5cGLc6dnHkoiMTXVVpG9+hth?=
+ =?us-ascii?Q?cNhwRKfcXD0Eb72K8MYzVRbKsCU4zBxudzbi4gYIjmt+gEiW12SXhsDS13xh?=
+ =?us-ascii?Q?geEpsK1N09mnIZPBQKGz4qAG7XkJ4Wn0I/9qzXy9QVK/fEaWmOhmYvAUafSF?=
+ =?us-ascii?Q?d3Pf35xTDPKccmsq2JyebOEmK/OeNn2yhHb4LnfS2URMchsizqZMf9d+AAZu?=
+ =?us-ascii?Q?tAlNkWkh4DVxLj6EAa0wZKANugiBNAJmOa4VJfxwm33QIZEDDbrqo97McD0z?=
+ =?us-ascii?Q?CyrktcLD2ntLcFkDJmbHy9RAHrdiLJSniJvk7QsR+7kpwvQjHmOZNrQJFOOs?=
+ =?us-ascii?Q?srB2BI1Bua6FtC40SXPvXjzoboVAIvPqQK09D/DoFeuOXJI1qr2uH1SxIQjd?=
+ =?us-ascii?Q?HHIH1bProNEFtZmJXecF5FuQ2YLFbZxj8Ppq2314j04cag0b5ThqLukMy5Nu?=
+ =?us-ascii?Q?I36RbpXVDltCnaEYC6ER0kh3QVo/bX3zVHD/vZ5lw9fT1H1R8ZrUFWyd6gty?=
+ =?us-ascii?Q?URHSEsbZiCPc4eDs9GJKz4XGO1eLb5oZrFNGKhYnx+OR8hfBoyDE/pE2tDWV?=
+ =?us-ascii?Q?+IRfYyvGWFiZ6dFytli6TW2K9LBZcAgSSSp9MwF5uh85sCQeoPI7JnC886OB?=
+ =?us-ascii?Q?l49VwhB0AGGOuEjcYZR6+xYfeCBkaEJZlKal4ipXlbWqK+6TsJN1mQutcTnL?=
+ =?us-ascii?Q?pZ1Xsix/XvRXhYSWqnfCnf7qrtxuFo3Z8Cx6OwdbeHhQgbscQ4B0Q1j0RNM8?=
+ =?us-ascii?Q?NGL+x09MhJXIXOHLWv6p8jx5d5t7NgF5F96nubHfFYPPrvGLhlWBJJIvw341?=
+ =?us-ascii?Q?zj1qnuZNRgsqk2zBbf64xAOZLQCJakyYGCN7i68HGzMIl93FU7DT20N0o+u9?=
+ =?us-ascii?Q?PN7HHbbWF+Ct1HbkE74Hrxa7k6V2yIGnXZmO/hyAU6LUZmzWv2BpMORv5brO?=
+ =?us-ascii?Q?vfbaMVZ2uYuetwzpOwPn77li75Qgjs1kydQJnw9yxCb7QmBN224S8s0x0xJc?=
+ =?us-ascii?Q?Zqasr9wMaG/Y4OdiE8SGHOuhDTCYZukY1QQ1///yoCmc0QTYc0u/5bTAMgbP?=
+ =?us-ascii?Q?rpYn9UtB1ZKylaeTr6eqB8duQ3iMxZiNGy/Icvw4Qs4EqNy7lEbDoefc6F2r?=
+ =?us-ascii?Q?uHE/HfPj5hmuCKxmGrrz0Iz0Vfzb6Bu+PNBFo/vyXE85ANURiv6Q7H7hr0SM?=
+ =?us-ascii?Q?VSL4h3Po7rqtfeftc4nciIEmckN1HDR+2zz4u/ETx6Yg6nPV3Vj/b15Rtlzp?=
+ =?us-ascii?Q?xwmWfDAImeJVaWfSTgxpjT4uBjiWMQEBjfiMk6V+9m4P7yAdTNksnUoQuT/i?=
+ =?us-ascii?Q?UnJ7wmm8DYjI2sBR6NiJZjj4TB3bp8ATjIjAlrFBGXREbSQDpEzLXxV5Y2fp?=
+ =?us-ascii?Q?oChS16f+uN3SPs/inne2sSODsuuq4WjriDfwDUJqUh8Kz3f3sSy9rCw9fqYa?=
+ =?us-ascii?Q?sp/RK4r0mEKsexc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 08:02:36.7545
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86aff9b7-7882-4f7d-c66a-08dd5705197e
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FAE.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5726
 
-On 26/02/2025 16:11, Andy Shevchenko wrote:
-> On Wed, Feb 26, 2025 at 04:04:02PM +0200, Matti Vaittinen wrote:
->> On 25/02/2025 15:59, Andy Shevchenko wrote:
->>> On Tue, Feb 25, 2025 at 03:29:17PM +0200, Matti Vaittinen wrote:
->>>> On 25/02/2025 12:39, Andy Shevchenko wrote:
->>>>> On Tue, Feb 25, 2025 at 12:29:31PM +0200, Matti Vaittinen wrote:
->>>>>> On 25/02/2025 12:21, Andy Shevchenko wrote:
->>>>>>> On Tue, Feb 25, 2025 at 11:40:16AM +0200, Heikki Krogerus wrote:
+On 25-02-27 12:52:36, Jianfeng Liu wrote:
+> Hi Peter,
 > 
-> ...
+> I'm really happy to see the linux mainline upstream work sent. And I have
+> also reveived radxa orion o6 before the Chinese new year. I have heard
+> that CIX is testing vendor kernel with ACPI. And now the mainline upstream
+> work is based on devicetree. I want to know what the upstream work of CIX
+> would go in the future, are we going to toggle to ACPI instead of
+> devicetree?
 > 
->>>>>>>>
->>>>>>>> I did not check how many users are you proposing for this, but if
->>>>>>>> there's only one, then IMO this should not be a global function yet.
->>>>>>>> It just feels to special case to me. But let's see what the others
->>>>>>>> think.
->>>>>>>
->>>>>>> The problem is that if somebody hides it, we might potentially see
->>>>>>> a duplication in the future. So I _slightly_ prefer to publish and
->>>>>>> then drop that after a few cycles if no users appear.
->>>>>>
->>>>>> After taking a very quick grep I spotted one other existing place where we
->>>>>> might be able to do direct conversion to use this function.
->>>>>>
->>>>>> drivers/net/ethernet/freescale/gianfar.c
->>>>>>
->>>>>> That'd be 2 users.
->>>>>
->>>>> I haven't checked myself, I believe your judgement,
->>>>
->>>> I took a better look and you obviously shouldn't believe :) The gianfar used
->>>> of_node instead of the fwnode. So, it'd be a single caller at starters.
->>>
->>> ...which is the same as dev_of_node(), which means that you can use your
->>> function there.
->>
->> I'm unsure what you mean. The proposed function
->> device_get_child_node_count_named() takes device pointer. I don't see how
->> dev_of_node() helps converting node to device?
+> And it would be good to let outsiders know the plan/roadmap of upstream.
+> For example collaboara is doing good job on upstreaming rockchip[1][2] and
+> mediatek[3] socs.
 > 
-> dev_of_node() takes the device pointer and dev_fwnode() takes that as well,
-> it means that there is no difference which one to use OF-centric or fwnode
-
-The proposed device_get_child_node_count_named() takes a device pointer. 
-I don't see how dev_of_node() helps if there is just of_node and no 
-device pointer available in the calling code. (Well, as I wrote below, I 
-could alter the gianfar code by dropping the gfar_of_group_count(), so 
-that I have the device pointer in caller). Anyways, I don't see how 
-dev_of_node() should help unless you're proposing I add a 
-of_get_child_node_count_named() or somesuch - which I don't think makes 
-sense.
-
-> API in this particular case. Just make sure that the function (and there
-> is also a second loop AFAICS) takes struct device *dev instead of struct
-> device_node *np as a parameter.
-
-I think I lost the track here :)
-
->> I think I could actually kill the whole gfar_of_group_count() function and
->> replace it with a direct call to the device_get_child_node_count_named() -
->> but I am not at all convinced that'd be worth including the property.h to a
->> file which is currently using only of_* -stuff. Well, I suppose it can be
->> asked from netdev peeps but I am not convinced they see it as a great idea.
->>
->> If I misunderstood your meaning - please elaborate.
+> [1] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3588/-/blob/main/mainline-status.md
+> [2] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3576/-/blob/main/mainline-status.md?ref_type=heads
+> [3] https://gitlab.collabora.com/mediatek/aiot/wiki/-/blob/main/mainline-status.md
 > 
-> The driver is quite old
 
-I remember having to modify this driver somewhere around 2010 or so. :) 
-Time flies.
+Hi Jianfeng,
 
-> and has a lot of room to improve. Briefly looking it
-> may be almost fully converted to fwnode, but it's not your call (only if you
-> wish). Nevertheless, using agnostic APIs if they reduce code base is fine.
-> We have drivers that do OF and fwnode mixed approach (for various reasons,
-> one of which is the new API that is absent in OF realm.
+Thanks for your interesting of our hardware. Radxa will open our
+v6.1 device tree vendor kernel source code at the beginning of next month.
+For ACPI vendor kernel source code based on v6.6, it has planned to open
+at Q2 of this year.
 
-Well, we can propose this to netdev people but I wouldn't be surprized 
-if they requested full of_node => fwnode rewrite instead of removing 
-simple looking loop and bringing mixture of fwnode and of_node in driver.
+For upstream, we will submit support based on device tree first, since
+some common code changes are needed for supporting ACPI well at Arm,
+it may involve lots of discussion. After most of IP drivers are
+supported by upstream kernel, we will start ACPI upstream work.
 
-Yours,
-	-- Matti
+For upstream status record for CIX SoC, we will find some public place
+for it.
 
+-- 
+
+Best regards,
+Peter
 
