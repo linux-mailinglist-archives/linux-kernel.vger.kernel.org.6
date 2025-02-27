@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-537256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D69A489BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:21:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F082A489B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C0F3A9275
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18332188C907
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E688626FA68;
-	Thu, 27 Feb 2025 20:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32248270EC9;
+	Thu, 27 Feb 2025 20:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CvlEYPyq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBHfbYVe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B71D6182;
-	Thu, 27 Feb 2025 20:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF3026FA73;
+	Thu, 27 Feb 2025 20:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687707; cv=none; b=fRmdOzSz19kx0mO5iA6DVQKhnOCxdgc8GN0j/KHWkdGWF93wWQP1ffaU5KSyRXIeqDUxUOzB+iKZUe2V26pfG2bqqWE5eFbXEnGfwxDSt0+TqBMlKVogUYsqYvJxkxo9hYvzyizS0lMRm2kYTJnw7Na+yRGC97gXHyfmHfR2EJA=
+	t=1740687667; cv=none; b=UtCZQGtVi+xLN/gIErDLb/ufDhmlylG4oCguZOPM4bPRc+Uidp1oj3Uf7wWykeRTqCTZHjmWZIcupYQ3uWYtGQ81eJRng9tuQq3crz4owIeID8QGMfYCbrJu9oX5PgqG/M3pntjZRuT/TlV3S+eynWlFpM68QwLiRGd1/RO0OEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687707; c=relaxed/simple;
-	bh=yJLvp2oI0sbx31hYDIXLNAAq0hg/gtAY3C68UTWPF8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBCpu4gmKEoAR8/g1CAH2WRHFlaKJ0J8L5n2HrQN47GrlzEO0iosB89Tw73hm0SwKRJha2OmYnVX0BzSR3Wa15O3Ur1WSGF+ofYuphxFYLslqCNhtOmiA26X0Sbw4PZhshp4RS+Z4ZjUaK3V3M0vRKtMvJDWbSoCKiDGwgsIujI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CvlEYPyq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CCFC4CEDD;
-	Thu, 27 Feb 2025 20:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740687706;
-	bh=yJLvp2oI0sbx31hYDIXLNAAq0hg/gtAY3C68UTWPF8A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CvlEYPyqID3xG6JZnddwKCBj86r3Ccp80AYP8Ur+fzaXY/aU9kwpIhJiV7j0AEFfC
-	 ikcFpnhFkTSSMgHP+SXGqfjt9zHxjNb7cz9GA8d1V9by1Vo7X4ytcXHk0q7Rxzzs97
-	 f0YbwqkoW1aVPUHeNo9CPAAGczlcJVUYyF5h0YEk=
-Date: Thu, 27 Feb 2025 12:20:36 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] xhci: Restrict USB4 tunnel detection for USB3 devices to
- Intel hosts
-Message-ID: <2025022709-unread-mystified-ddf1@gregkh>
-References: <20250227194529.2288718-1-maz@kernel.org>
+	s=arc-20240116; t=1740687667; c=relaxed/simple;
+	bh=zhgA8lTVYegivj3+EBhgdMTn2Pg98qesetiRioNRoMo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yo11p94UiS1s9gl3sfxoL2jINKKWeowEF1Yjsb3Uf229bbvm1gVYESnsbgkP7jpm3CWmaI/TXR8Yf/DY7jgMhq4v11m8kGfyRTW5eYquWQkk9TLXyXOoJVljxaa1N+IU86bfqsdpX058zcToJKMkADYyR+kXpKp9bifkyaWcI4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBHfbYVe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C91C4CEE4;
+	Thu, 27 Feb 2025 20:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740687665;
+	bh=zhgA8lTVYegivj3+EBhgdMTn2Pg98qesetiRioNRoMo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FBHfbYVe2+Y9RRSmqefAlel/As32WxZhKbbPD3xR7XlI1ZpP03vvcbXDT47FbLzJK
+	 OOVkoxZn/4XSTDwy8lFv9RSdCOuOGqpGPbl+Jvv7FN02GTbGPBLuasboS7lilMipHX
+	 pnLJOxSPlD86U+3Nk4XilKgRG5w/dyxdcuo1hsWWC9G80wrblb0u4CXIMycaepKUzL
+	 s2plX5hvsMFI+dI5iLC4RwOcJs55yej/FVge1GVkgmmq+heiCIwpCzkGeMDBBw2lCk
+	 I+MOajgKy829ndtFsVDcK1YEiv1H+bz6V//+GhmtArln1+kQWr81qSDssHCqfy//H2
+	 Pjs//4GtZgsCg==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2c13ec72605so505011fac.0;
+        Thu, 27 Feb 2025 12:21:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUTiJwa7s3a7atAjcf8EAPAhdjbxMD4pQd4amBeSu8rr/zZzeViQwqd9zb69Uy8r+k1BF/UejXh375g5QG7@vger.kernel.org, AJvYcCV+yyGFoF0+3RLE4UgVoSdfqwSbCeuDCgDoAQqPN3384nCdTPxAassEzaCq8mpUJfk53s8qL2oWgY0=@vger.kernel.org, AJvYcCXO1n6WldVSRp3WYk1QBzqYFJjNSRrhyhQ+PnNRzyi5l8rnvLG1qfPEu13zIIXuRcqsXabZo/ivsrfKpBOpxHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqvKh1GqutQHzD3PfWnu1tCZ+izY3qroNXyLXYonONOSvH8R1F
+	qfinOT9w+cOQoLpX/VkUyxcXvC+cb7vkp73V4wbjRl/V3rkDiFO20qdXUmRTHmtKI2YksHG9JtN
+	7otFGLDWPvAvVneCi+rJiaSWoeCQ=
+X-Google-Smtp-Source: AGHT+IF96SqJIW4mVo1lyssliOdrmZiV4MWUl27EC9mWKW/Y+yznOetIfl7XasPSTISTnP3CvLcKZOXTKrbfxjeNK5M=
+X-Received: by 2002:a05:6870:9a1c:b0:29e:671b:6003 with SMTP id
+ 586e51a60fabf-2c17874d20amr387145fac.32.1740687664295; Thu, 27 Feb 2025
+ 12:21:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227194529.2288718-1-maz@kernel.org>
+References: <cceb7f8864c43f046cf1c19c3bbcc38a7a57adc5.1740426540.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cceb7f8864c43f046cf1c19c3bbcc38a7a57adc5.1740426540.git.christophe.jaillet@wanadoo.fr>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Feb 2025 21:20:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0heBqYxm4GKN+qRD4Av0FBXQ_HvAhxqd7F+1Zeg9_YG8g@mail.gmail.com>
+X-Gm-Features: AQ5f1JqvOKeZYSCbqVhP6TK4aZ30CmAT7tomqX60PmVO52rKxjibULcDTdD4GQI
+Message-ID: <CAJZ5v0heBqYxm4GKN+qRD4Av0FBXQ_HvAhxqd7F+1Zeg9_YG8g@mail.gmail.com>
+Subject: Re: [PATCH] thermal: intel: Remove a useless operation in int340x_thermal_zone_add()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 07:45:29PM +0000, Marc Zyngier wrote:
-> When adding support for USB3-over-USB4 tunnelling detection, a check
-> for an Intel-specific capability was added. This capability, which
-> goes by ID 206, is used without any check that we are actually
-> dealing with an Intel host.
-> 
-> As it turns out, the Cadence XHCI controller *also* exposes an
-> extended capability numbered 206 (for unknown purposes), but of
-> course doesn't have the Intel-specific registers that the tunnelling
-> code is trying to access. Fun follows.
-> 
-> The core of the problems is that the tunnelling code blindly uses
-> vendor-specific capabilities without any check (the Intel-provided
-> documentation I have at hand indicates that 192-255 are indeed
-> vendor-specific).
-> 
-> Restrict the detection code to Intel HW for real, preventing any
-> further explosion on my (non-Intel) HW.
-> 
-> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: stable@vger.kernel.org
-> Fixes: 948ce83fbb7df ("xhci: Add USB4 tunnel detection for USB3 devices on Intel hosts")
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+On Mon, Feb 24, 2025 at 8:50=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'zone_trips' has just been allocated with kzalloc(), so .flags is known t=
+o
+> be 0. Remove the useless | when assigning THERMAL_TRIP_FLAG_RW_TEMP.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/usb/host/xhci-hub.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-> index 9693464c05204..69c278b64084b 100644
-> --- a/drivers/usb/host/xhci-hub.c
-> +++ b/drivers/usb/host/xhci-hub.c
-> @@ -12,6 +12,7 @@
->  #include <linux/slab.h>
->  #include <linux/unaligned.h>
->  #include <linux/bitfield.h>
-> +#include <linux/pci.h>
->  
->  #include "xhci.h"
->  #include "xhci-trace.h"
-> @@ -770,9 +771,16 @@ static int xhci_exit_test_mode(struct xhci_hcd *xhci)
->  enum usb_link_tunnel_mode xhci_port_is_tunneled(struct xhci_hcd *xhci,
->  						struct xhci_port *port)
->  {
-> +	struct usb_hcd *hcd;
->  	void __iomem *base;
->  	u32 offset;
->  
-> +	/* Don't try and probe this capability for non-Intel hosts */
-> +	hcd = xhci_to_hcd(xhci);
-> +	if (!dev_is_pci(hcd->self.controller) ||
-> +	    to_pci_dev(hcd->self.controller)->vendor != PCI_VENDOR_ID_INTEL)
-> +		return USB_LINK_UNKNOWN;
+> This was added in commit cca52f696952 ("thermal: intel: Set
+> THERMAL_TRIP_FLAG_RW_TEMP directly")
+> ---
+>  drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c=
+ b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> index 8dca6a6aceca..b43d848e66b8 100644
+> --- a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> +++ b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> @@ -143,7 +143,7 @@ struct int34x_thermal_zone *int340x_thermal_zone_add(=
+struct acpi_device *adev,
+>         for (i =3D 0; i < trip_cnt; i++) {
+>                 zone_trips[i].type =3D THERMAL_TRIP_PASSIVE;
+>                 zone_trips[i].temperature =3D THERMAL_TEMP_INVALID;
+> -               zone_trips[i].flags |=3D THERMAL_TRIP_FLAG_RW_TEMP;
+> +               zone_trips[i].flags =3D THERMAL_TRIP_FLAG_RW_TEMP;
+>                 zone_trips[i].priv =3D THERMAL_INT_TO_TRIP_PRIV(i);
+>         }
+>
+> --
 
-Ugh, nice catch.
-
-Mathias, want me to just take this directly for now and not wait for you
-to resend it?
-
-thanks,
-
-greg k-h
+Applied as 6.15 material with edits in the subject and changelog, thanks!
 
