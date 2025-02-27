@@ -1,102 +1,101 @@
-Return-Path: <linux-kernel+bounces-536592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4A9A481DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:46:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AAFA481E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACC7424926
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D44D19C3D0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0364E2356B1;
-	Thu, 27 Feb 2025 14:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA9523534E;
+	Thu, 27 Feb 2025 14:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="S8Ppehat"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tlDrLlQP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D45156C62;
-	Thu, 27 Feb 2025 14:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A991422DFB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666622; cv=none; b=cMeXLziGcUq8w9JxKGBXam3QIvL6hJ5yhkJuzr43dMYl3KC2VdFGv2WEqCj6QHKsYESzy3rWE1qE0mRKt86eZFWeq671S0HCr58uO4OJpfWlzz5rVAVehCwahZpPFOhx0/jMXoh2DjeL4ajkTZAhDavwaZnxjka+/yJZMdvLvnw=
+	t=1740666662; cv=none; b=nh/TcOgcJ49HWp1Nagh5jVjAytkUOy88cZSULBY5mTHGAnlbbIgZ13P4jaK9n5sECH6zzRy8iKK5OBegkb5XCRSKBEa1RhxEa387bEwzeeFfxlzH9WiYduQz9Ba7BP6kIKyLKQA0fKeEnCGnvy0TkcEPHuxunf2oTOmKGupgB6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666622; c=relaxed/simple;
-	bh=ieucAQ/i0HJh1IYOkkqVgRRjfm1JSIor9mC+iMLbvBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tznv1eDx4po22O9bsROVzf2+ng81OWP+qp5FcBlQdFG8kcbD59y3Yj/ijNApoPMsnMIgMiUsTmX5DKLolxCv4h0oD9Kk6jN3J4Uo04uCp4K2JMYt9HL4VyOTHYXp6r/5B/LaBmk+MCvggAhnxv0Vn6MQ8fRUQvS+AE1Y6iFZxLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=S8Ppehat; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A5C4DA0D06;
-	Thu, 27 Feb 2025 15:30:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=guEftXoNJKwkM6Mgjwbl
-	Uug0shsafyPZ98TWKbr7I9Q=; b=S8PpehatVRCtCf2eASlnS5FG74i8rgudDSzZ
-	nz3fu+p7mkqrT6tV8O/LT108g8j9betYkx/Vct15GKoMnyYaxv6S6z1DZneRJRXh
-	rJ+6ENF1WVLRwtN/Kk+pIWAazdVDr4cnR1u7PZ3mdtsSoot81dDzLkVh+m46vFhL
-	X13dQaUTqqbjLtA29XDI/0w26IsQFta8o1B3TnIUk9q7/Vbkx3bTmb8Y6enAYsGe
-	ItQ3AGz4cyUsh5GUYiMufs/Ftdp6JVZYYcCaZ/tebRZzx1c9ALb5DbE6C1xA9e5c
-	nehWTKefs0drnbq93Pf3fax331pKQFAP4MS14UmtwplREBKSspKA9MaVTWYglo7B
-	dbbOqePnO8awc3KzrwHKSAUKUGvJNj60CG4oR0m6bjMw7Cs82aoQGDEZ1kd0erU5
-	HTaibORh+a9ANaEvN57dmu2qaDT3gKAOTcUXca3YFTT6EkmqsXZsN/liX4czvAn9
-	d43y7evKZiARubXamnrbn649flDFYMVmrYnfXuN0egYSrw0WUt1rHCmgTuuYA4Ap
-	qXZiXF2r2MhdYy7qBIxhPV4VUcAWSGVYCQD9PjvAUOPI2xbILfxBlGdz6I5/YyMw
-	ys2b/LmeDkEOCWC98zXcgg8UEAJIOlZHvr/4M3kawN7+F1Z6HlACxhPxG/v3Yvps
-	G99VtWQ=
-Message-ID: <d1468825-aa4f-4f0b-aade-04bf61aa7c40@prolan.hu>
-Date: Thu, 27 Feb 2025 15:30:16 +0100
+	s=arc-20240116; t=1740666662; c=relaxed/simple;
+	bh=TcY8I0aBWWwbvIhRVEZCFrgBV1txXYPMWwRUkY95OSk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DYD5/KYjDeFGeGeRM/6NlwtHf2BAJjV+Kh/eWntwuvITvSzSceszgs2/U7d3YfXnGsGd3h8SlOOZ0/j2YBCwkQxhquu3dc6OvgOwMQv9AW5944F6YM6WuMLjAwr5RD05x0RG1ZJEE+MIv1JRbYZZUY/W+oJHyc4DV032Df0FZYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tlDrLlQP; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc1c7c8396so2284555a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:31:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740666660; x=1741271460; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BYwe2IugO2DWfvdwgV6MhO4KxmKJ8dY5lREV+02bg0=;
+        b=tlDrLlQPUVhxO08hEnSFOaGmTIc1oRY+iicheqSGCS7Njfy+zeR4KPvgUhw4N3XvCv
+         PcE8h30crGcx85lsK/0ZvbLhhzmhuBrrz2xPbCmoeRqjN+PKg20LpkJSPEse/hiuw9vn
+         +AiaM86Yw6xiL9gy+07bQq08rQDsxVkpmNgzFvxQmg8L8Rx9o4uJg4hnuBZaykr1xjCU
+         qBsiY+m/cNg1LRGvnkXYL2Nm85wbXkvN2kwOjAjYcVnI1WxTwzD0H4PpmVP1d5dzIoSZ
+         PecKoke0ZfPBQUqCXa7OF795WBMY8zhz+hThu0E0v4pRH+BVxhR3NaZ/bELTdso1/ddc
+         77sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740666660; x=1741271460;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BYwe2IugO2DWfvdwgV6MhO4KxmKJ8dY5lREV+02bg0=;
+        b=HNGGDk3i71j3qXkFcza0fUPofn/nOjoVxSUYPqjll1UbagRxj+lkYfuuPLQgHFrlY/
+         mBT0OGLzvqxBArz7kK4J9ZG2sRpM0WMLAva76+ug9D8wZbBRSOSxoKAkZgui+sbh5KRx
+         n2jbaX+C22ziip11z7kx4yHPBgNPdtQE1HZJpSR3X8o/3jo8rpz5g/gqP4TejEHDHbiE
+         rPPyjC6v+noPw7Dhk/L8WuzltGWzn9b+OZ7MVqx5I4Z3IWanMxfTo1BHCKge4qHGw3Kz
+         PD0pC98Dc0aHGlQYG5TCs2neZJVTiGG5YKLnoqzgNYvrUNjkG39VCItYXNLVxH6hEOkH
+         q3Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSr7+Jcrjc3pVpRARrRkzI/ucbgzp8D4snLXseMfXuCo5/lUMbu8mqHQbiGQeGyat4XGjJkb+6UH4LfVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDlETWICj2IBjXQYc2HTKAae5uFLWduxxy3x2UF/rpr51Yj5zR
+	iQRR0m2EJTf/KAQKcwU9xMQrrss9iGybbO98mpV0LUCUxLg/6bGtd/s4zBsnyoxLjJ2VSmC/YaY
+	AJg==
+X-Google-Smtp-Source: AGHT+IEHXMKLhKy4AekC0miRv9oCxzQ0iAUerHTQpPQKorolelo+UjobEgU72Wcwpwa0Yjm+cH9EclQbehw=
+X-Received: from pjbsg17.prod.google.com ([2002:a17:90b:5211:b0:2fa:2661:76ac])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d87:b0:2ee:f076:20fb
+ with SMTP id 98e67ed59e1d1-2fce86cf0b7mr46370564a91.17.1740666660022; Thu, 27
+ Feb 2025 06:31:00 -0800 (PST)
+Date: Thu, 27 Feb 2025 06:30:58 -0800
+In-Reply-To: <1fe17606-d696-43f3-b80d-253b6aa80da7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] counter: microchip-tcb-capture: Add capture
- extensions for registers RA-RC
-To: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Kamel Bouhara <kamel.bouhara@bootlin.com>, William Breathitt Gray
-	<wbg@kernel.org>
-References: <20250227142751.61496-1-csokas.bence@prolan.hu>
- <20250227142751.61496-4-csokas.bence@prolan.hu>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20250227142751.61496-4-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852637760
+Mime-Version: 1.0
+References: <20250227011321.3229622-1-seanjc@google.com> <20250227011321.3229622-4-seanjc@google.com>
+ <095fe2d0-5ce4-4e0f-8f1b-6f7d14a20342@amd.com> <1fe17606-d696-43f3-b80d-253b6aa80da7@amd.com>
+Message-ID: <Z8B3IvwtGqz8aCHD@google.com>
+Subject: Re: [PATCH v2 3/5] KVM: SVM: Manually context switch DEBUGCTL if LBR
+ virtualization is disabled
+From: Sean Christopherson <seanjc@google.com>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, rangemachine@gmail.com, whanos@sergal.fun
+Content-Type: text/plain; charset="us-ascii"
 
-Hi,
-
-On 2025. 02. 27. 15:27, Bence Csókás wrote:
-> TCB hardware is capable of capturing the timer value to registers RA and
-> RB. On top, it is capable of triggering on compare against a third
-> register, RC. Add these registers as extensions.
+On Thu, Feb 27, 2025, Ravi Bangoria wrote:
+> > Somewhat related but independent: CPU automatically clears DEBUGCTL[BTF]
+> > on #DB exception. So, when DEBUGCTL is save/restored by KVM (i.e. when
+> > LBR virtualization is disabled), it's KVM's responsibility to clear
+> > DEBUGCTL[BTF].
 > 
-> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> ---
+> Found this with below KUT test.
 > 
-> Notes:
->      Changes in v2:
->      * Add IRQs
->      Changes in v3:
->      * Move IRQs to previous patch
->      Changes in v4:
->      * Return the status of the regmap_*() operations
->      * Add names for the extension numbers
+> (I wasn't sure whether I should send a separate series for kernel fix + KUT
+> patch, or you can squash kernel fix in your patch and I shall send only KUT
+> patch. So for now, sending it as a reply here.)
 
-Uhh, I sent the wrong version of this patch... Will re-send it shortly...
+Go ahead and send the KUT test.  They two repositories evolve independently no
+matter the order, just put a Link to lore of the kernel fix/discussion.
 
-Bence
-
+Thanks a ton for writing a test!
 
