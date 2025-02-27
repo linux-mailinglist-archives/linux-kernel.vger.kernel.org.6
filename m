@@ -1,172 +1,118 @@
-Return-Path: <linux-kernel+bounces-537347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B46A48AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:47:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B28A48ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70CA016C250
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E99E16CAF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0302027126F;
-	Thu, 27 Feb 2025 21:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C4E272904;
+	Thu, 27 Feb 2025 21:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZC34UkN2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C5A1CEAA3;
-	Thu, 27 Feb 2025 21:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lOuYeJA3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878831CEAA3;
+	Thu, 27 Feb 2025 21:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692846; cv=none; b=IxlC6rYE0EOgNsl2v976HMTBh3V3f+9KMr/kBINYTF8f8RO6/zOVYEc9r00dYyDAR2ErZc8SLO5q3VeczL6rqaLi4lhk9k6NbKMD6A4ovfsfNUfUbqwEBE1kEMGjzCxX1J43woAVihlfZnCFIEHKEnotlPJxGgJseAc9zUTf+gQ=
+	t=1740692852; cv=none; b=t6KRDreC/hNIiP86TRB93Ldhh+3SzOCX0m1vgb2oxs6hYd/hWKzxl5IN+2DUaN4jviGszk4GpFqCrEbiEutdjdhWONMYcCeFmX3meGln6A+VKcxPVcOvNBI+5GNhs3Xogjy1f+wwZEbUEIq2EMGmNJLFC1HOlsHdOIeyuTSBrts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692846; c=relaxed/simple;
-	bh=mzX5XybLuSNvnhruhydyeIUW1bh3JlK4zTTBNy9zFd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNpWCICZRjfeuCKZXAZHZ7c0aCRpr/AMDwxc7c2j2ZUbdCOdnIeCcyQpJpUSk0Yg3+ti1GWkgHTzHxa7/4os7mefFJC7vO5hKW1MgSgww5JMwD/tng0MLS/yf1B8Bym67peN7KJVDrTHw1Odn7gb5+I3+9dAjU4LDDWLgGfm3ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZC34UkN2; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740692844; x=1772228844;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mzX5XybLuSNvnhruhydyeIUW1bh3JlK4zTTBNy9zFd4=;
-  b=ZC34UkN2WptDqMmjN3sbg1YWqGj/o6uzkH/h6tZJpCtRaZPEm8xTrsky
-   B6DQvwVlz7BFLpxJm+OFLyJmCx3vQ5HqKg0kdMY9vemBMUnfrrJqXpPYU
-   IB/aGLXQIay4GiVJyVgDTpnK8ZgnzsDMXJQXF5wbTgAHho7NTGKvSFxfT
-   KfD/VZiRNDh/N6CRKikaX7TpqhQkuOc7aRFnZNB5xM+iTCMPe5FCgWVfU
-   90ReHfEe5nQFqGwH1e7yU6XsBok//gO2IkQgHYqR5GL+DcQomcgfTPKeY
-   /rsG8PT7ZJpmeKxzME7oX/fmAts92Pu3Qdks4Fh7WDvnRH+OrUOhVjwpT
-   g==;
-X-CSE-ConnectionGUID: 34uGhsMGToGaQNwk1e48xg==
-X-CSE-MsgGUID: saPEbmZpT+ShVmMKj30Lkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41309602"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41309602"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 13:47:24 -0800
-X-CSE-ConnectionGUID: qacc7SupTEKz/6lA3UjX2Q==
-X-CSE-MsgGUID: YsubvpYwSkajhPy5QT79zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="140372458"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.94])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 13:47:23 -0800
-Date: Thu, 27 Feb 2025 13:47:21 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	s=arc-20240116; t=1740692852; c=relaxed/simple;
+	bh=9FCDbYrZ+pmLez9tTc/X4RjK/3Ba6W2VlI1SDaCLe6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bj9KmvAbgJ237bjSdL5hO/QgAwb4S5JAceSX7gHl/5MB1DvGOdet61HMU6GPggbVX53XI5MPsQ/dfC2g4/fqtuiUxW3mhAwIL+HWGZ3lvMNTU7TVhj/p6qmUOJxHd6nxjsngo/aVGgMdYcne0oDws868U75cJbTqWNSTuGGbjeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lOuYeJA3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AEEFE210D0F6;
+	Thu, 27 Feb 2025 13:47:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AEEFE210D0F6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740692849;
+	bh=rcuQi3g5qOU/R6HpYnilX9s27PZ0U7+hs5GNfw7R11o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lOuYeJA3wBuNFJXaLyLBjKveedBeayr2PRDzbXq9jo3SkrrE4oGh927cZidbIRsq4
+	 yJUDiXl3oIfnYBPrY3FrvY9rYEMSAbRWe+6gFPT0IdnYvW99sLfBzP1PrnjPcJOFFl
+	 F9+/eL65hBUmr+rNlIvPdnZRFoh4iREb6n10tcDU=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	decui@microsoft.com,
+	haiyangz@microsoft.com,
+	hpa@zytor.com,
+	kys@microsoft.com,
+	mingo@redhat.com,
+	ssengar@linux.microsoft.com,
+	tglx@linutronix.de,
+	wei.liu@kernel.org,
+	x86@kernel.org,
+	linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
- parsing
-Message-ID: <Z8DdafbX6_tbM4DW@aschofie-mobl2.lan>
-References: <20250227103251.390147-1-ming.li@zohomail.com>
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	sunilmut@microsoft.com
+Subject: [PATCH hyperv-next v3 0/2] x86/hyperv: VTL mode reboot fixes
+Date: Thu, 27 Feb 2025 13:47:26 -0800
+Message-ID: <20250227214728.15672-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227103251.390147-1-ming.li@zohomail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 06:32:51PM +0800, Li Ming wrote:
-> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
-> decoder capability, But according to the implementation of
-> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
+The first patch defines a specialized machine emergency restart
+callback not to write to the physical address of 0x472 which is
+what the native_machine_emergency_restart() does unconditionally.
 
-How does a check against the spec maximums benefit this driver? Is there
-a bad path we avoid by checking and quitting at this point.
+I first wanted to tweak that function[1], and in the course of
+the discussion it looked as the risks of doing that would
+outweigh the benefit: the bare-metal systems have likely adopted
+that behavior as a standard although I could not find any mentions
+of that magic address in the UEFI+ACPI specification.
 
-Might this catch silly decoder counts that the driver previously
-ignored?
+The second patch removes the need to always supply "reboot=t"
+to the kernel command line in the OpenHCL bootloader[2]. There is
+no other option at the moment; when/if it appears the newly added
+callback's code can be adjusted as required.
 
-> 
-> Per CXL specification, the values ranges of decoder_count and
-> target_count are limited. Adding a checking for the values of them
-> in case hardware initialized them with wrong values.
+[1] https://lore.kernel.org/all/20250109204352.1720337-1-romank@linux.microsoft.com/
+[2] https://github.com/microsoft/openvmm/blob/7a9d0e0a00461be6e5f3267af9ea54cc7157c900/openhcl/openhcl_boot/src/main.rs#L139
 
-Similar question - is this catching something sooner, rather than
-later?
+[V3]:
+    - Added verbs to the patch titles.
+      ** Thank you, Ingo!**
 
-> 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> ---
-> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
-> ---
->  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 70cae4ebf8a4..a98191867c22 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
->  	return true;
->  }
->  
-> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
-> +{
-> +	/*
-> +	 * CXL r3.2 section 8.2.4.20.1
-> +	 * CXL devices shall not advertise more than 10 decoders,
-> +	 * CXL switches and HBs may advertise up to 32 decoders.
-> +	 */
-> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
-> +		return -EINVAL;
-> +	else if (cxlhdm->decoder_count > 32)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * CXL r3.2 section 8.2.4.20.1
-> +	 * target count is applicable only to CXL upstream port and HB.
-> +	 * The number of target ports each decoder supports should be
-> +	 * one of the numbers 1, 2, 4 or 8.
-> +	 */
-> +	if (!is_cxl_endpoint(cxlhdm->port) &&
-> +	    cxlhdm->target_count != 1 &&
-> +	    cxlhdm->target_count != 2 &&
-> +	    cxlhdm->target_count != 4 &&
-> +	    cxlhdm->target_count != 8)
-> +		return -EINVAL;
+[V2]: https://lore.kernel.org/linux-hyperv/97010881-4b5e-4fb7-b8b3-b6c9e440e692@linux.microsoft.com/
+    - Fixed the warning from the kernel robot about using C23.
+      ** Thank you, kernel robot!**
 
-Maybe instead of manual bitwise checks try
-	(!is_power_of_2(cxlhdm->target_count) || cxlhdm->target_count > 8))
+    - Tightened up wording in the comments and the commit
+      descriptions.
+      ** Thank you, Saurabh!**
+
+    - Dropped the CC: stable tag as there is no specific commit
+      this patch series fixes.
+      ** Thank you, Saurabh!**
+
+[V1]: https://lore.kernel.org/linux-hyperv/20250117210702.1529580-1-romank@linux.microsoft.com/
+
+Roman Kisel (2):
+  x86/hyperv: Add VTL mode emergency restart callback
+  x86/hyperv: Add VTL mode callback for restarting the system
+
+ arch/x86/hyperv/hv_vtl.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * devm_cxl_setup_hdm - map HDM decoder component registers
->   * @port: cxl_port to map
-> @@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
->  	}
->  
->  	parse_hdm_decoder_caps(cxlhdm);
-> -	if (cxlhdm->decoder_count == 0) {
-> +	rc = cxlhdm_decoder_caps_verify(cxlhdm);
-> +	if (rc) {
->  		dev_err(dev, "Spec violation. Caps invalid\n");
+base-commit: 3a7f7785eae7cf012af128ca9e383c91e4955354
+-- 
+2.43.0
 
-Can you move the dev_err to the verify function and include the
-specific invalid capability.
-
-
---Alison
-
->  		return ERR_PTR(-ENXIO);
->  	}
-> -- 
-> 2.34.1
-> 
 
