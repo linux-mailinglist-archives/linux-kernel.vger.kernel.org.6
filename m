@@ -1,177 +1,150 @@
-Return-Path: <linux-kernel+bounces-535704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D6DA4763F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D106A47640
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FE43B1526
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B053A587F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D14721E0BE;
-	Thu, 27 Feb 2025 07:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYO+tYcI"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AD521B9CB;
+	Thu, 27 Feb 2025 07:04:41 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14821E087
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FF0221542
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740639853; cv=none; b=MyZpeGd+5sItxRV/2XaoH0Bo6WM7qrNITZ7QXRTR6/xbyfSfruW4UPgrUjO7wYLALD7amI2T9ZWPUVgMWj4ZqqK7U7kdjguHZJLV6p9p4CmWYF8gPASbEpuRg83E7KlbqEsBUJVKgUlr4Tbe4bSv3rI+NbCfht5GuN9sjNb3Jqc=
+	t=1740639880; cv=none; b=GNugUKbOSY4MJjYSNA7ILxPpK3IzPMhLtpz6OmOAEdbPAQ26pHDkGFnucPC8iTdpBqsKPSZdhH4dzH2PnzB89/ppX6YWQwTO+n8Zd7tkgxO42SLkIDcR3KyN1aGoMsrGuNlEAG6E9P2y0lzdeaqGwdmBf63oexO33GZwxxbIQ+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740639853; c=relaxed/simple;
-	bh=wGhmY4K+cfsz+Ts0JI7fTq+0yQhI6j1x0t4HpKbP2FI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JvG2N6wdJdXanQhJUndzhlT8AsehxhdqOc3I7Y+gGS2CZciYOAyL91B6TAdFk9abpeEdpVf873NpyPONr8h98XBAp4KTs6adbgZHOnEAZ1GPTwpxVofQ3b1syu6Glne01RujWCZdAW2ZjF7Uz33QEDylZX37tCuvknc41MJZH4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYO+tYcI; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30b83290d39so5369231fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740639850; x=1741244650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pSnAlORQX9yo5NqS9jLGuSkbz6XSEuBHk2B9Ea63/k=;
-        b=MYO+tYcI/N1Mj/Hif7F1y2VrYX0BDt4zY3cSouYbqojRGJhIc0BLbFtSJcAToA2v5u
-         8/6aVa3AtnBVLNHG4VpKaHB4Dx708opPPPcZjY3h3YhO5pyjR8b6HX6PfpX/xvWbTbR9
-         pZL5Bb16PesKAdUCImrpcArh7zbCrFgAuPueAPeOip8qEZoldI0x0H5paT3Qi1aL1rR5
-         u3cjCmtKPWGOI5hNHmBS0+HuPVFWfiN8YpC5hdO0jA7eq0S4t4WTURs79zgaUf8GHqq+
-         AeDcoeB4QoCptFATuB1wWGUNhXMOlO7anD7bLT8I1F6XEWJEfuzJXL96WsLRnB1nITla
-         fE8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740639850; x=1741244650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5pSnAlORQX9yo5NqS9jLGuSkbz6XSEuBHk2B9Ea63/k=;
-        b=dAYtKHSalvg2361RRSpcZP1ZRg/KkxPy6n5dTxvGNd3Gd8YLTAd1L1LCHX59WnOqBD
-         tt9yLUcJjl2qWAR3ro3cILvmP7U4xZ3ynJKu5tpZUNiJzgeIM1DCaDLbTYIcBjEl7sUa
-         8JaZ13FG6NY1v5jz1ybA4DlhKP5okM0QIsqgELFBBr4n748l6rUBT25DSeM24dqi8g/F
-         7eCduVdq5G0z0kceUY408M7CWUC5IWSyN0bJWyFzZxFWe3JR6hNwyam1uOIY7La0vtt3
-         XJ5fkim0PDE+t2ZUBE97VsSodCA5MXKQ0MvUxA9BPpG1ob4Qhqs4sbe8MHPFWW14oBaL
-         /3Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuemyHYU3Jv0yWm0vPcnNwhfZSQegtNrjQLtQh19oyvIAMf6ScPJRo4ZA7WDM1Vz/0rF2Xf2L1GJ4Qx3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqPagrcZlmCo2/HtPkcJz3oHnfsWDrXRjq/MBiveYoxP+j/0Iy
-	FlSGarup4wXaPipJ4zgROslPH8dnuTlhjnAUavQ+t9ygyL2na+FE89TZC1thIOed6UUVRBkbRDi
-	dR1S06baSDyFpytKwk0STayLmYaQ=
-X-Gm-Gg: ASbGncu9bMmxt51TERZ1jlG2Vbd6BB7WmnnWxEROhQr2hpp+EKr0CH47WJqMbifCOje
-	g/Ntf894CpAZuMvjqBux2WjIWWAZCvbdrJ/0p6xldw1bh0Ibnjoth8MtOc+3an9ik+h6zhvibya
-	VFvfMWhvE=
-X-Google-Smtp-Source: AGHT+IEJB9xY5jdV4yA0qX96NmnQQAhEOgjMykCaPQFjWaqdpoNDmqQyMdSO8o9a1TpCdng2oPuHncXDTZDKMC+urTU=
-X-Received: by 2002:a05:651c:220a:b0:2ff:d0c4:5ffe with SMTP id
- 38308e7fff4ca-30a5989ec23mr108942871fa.16.1740639849425; Wed, 26 Feb 2025
- 23:04:09 -0800 (PST)
+	s=arc-20240116; t=1740639880; c=relaxed/simple;
+	bh=E1P3SIAYAWhybl/UsUeGA/UsCtA/rwx7cWZPws1FXU8=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FRbve2+rZYumHZExR7WWc+ODWobmtu1dClSAsAj7gPjwtXJ11iPfBg03Tt/Xsb+SDEdp8wRyXOQgTWOsDEKEDkTt5IA5GO5ywyjzGRoeLSeixkzOzX/uJnmiriXZUfpp7JaZS3imjKK2OBXzHDupouyW5sNf7onEGXFQp0o6n3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z3Mg13vpHz1dyn1;
+	Thu, 27 Feb 2025 15:00:29 +0800 (CST)
+Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
+	by mail.maildlp.com (Postfix) with ESMTPS id D8AA7140154;
+	Thu, 27 Feb 2025 15:04:34 +0800 (CST)
+Received: from [10.174.179.24] (10.174.179.24) by
+ kwepemg200013.china.huawei.com (7.202.181.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 27 Feb 2025 15:04:33 +0800
+Subject: Re: Softlockup when test shmem swapout-swapin and compaction
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
+ <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
+CC: Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>, Hugh
+ Dickins <hughd@google.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, Lance
+ Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>, Ryan
+ Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Zi
+ Yan <ziy@nvidia.com>
+From: Liu Shixin <liushixin2@huawei.com>
+Message-ID: <acbfc1da-f743-b11b-191c-ce6e476f1709@huawei.com>
+Date: Thu, 27 Feb 2025 15:04:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226133703.3c9775c9e50e198abc9b9f6e@linux-foundation.org>
- <20250226225605.2000-1-sj@kernel.org> <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
-In-Reply-To: <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
-From: bus710 <bus710@gmail.com>
-Date: Wed, 26 Feb 2025 23:03:57 -0800
-X-Gm-Features: AQ5f1JpVLtjZYY8z8VdY3q00BIa0I40J0PTII1FHJ04t63xdJqRQe8KrnJyuBBs
-Message-ID: <CAJGd784+kQ8NXSp1=9tZW+4wYvTh6SkW7ySaB0TVGcinjjcEdQ@mail.gmail.com>
-Subject: Re: [PATCH] samples/damon: a typo in the kconfig - sameple
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: multipart/mixed; boundary="000000000000e855b8062f1a4bde"
+In-Reply-To: <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200013.china.huawei.com (7.202.181.64)
 
---000000000000e855b8062f1a4bde
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 3:07=E2=80=AFPM bus710 <bus710@gmail.com> wrote:
+
+On 2025/2/26 15:22, Baolin Wang wrote:
+> Add Zi.
 >
-> On Wed, Feb 26, 2025 at 2:56=E2=80=AFPM SeongJae Park <sj@kernel.org> wro=
-te:
-> >
-> > On Wed, 26 Feb 2025 13:37:03 -0800 Andrew Morton <akpm@linux-foundation=
-.org> wrote:
-> >
-> > > On Wed, 26 Feb 2025 10:42:04 -0800 SeongJae Park <sj@kernel.org> wrot=
-e:
-> > >
-> > > > From: bus710 <bus710@gmail.com>
-> > >
-> > > Full names are preferred, please.  Actually I think it's "required".
-> >
-> > Thank you for letting me clearly know this.  I'll request full names to=
- DAMON
-> > patch authors from next time.
-> >
-> > bus710, we could still update the patch before it is merged into the ma=
-inline.
-> > If you could, please let us know your full name and if we can update th=
-e patch
-> > with that.
-> >
-> > >
-> > > I'll apply it anyway due to the patch's minor nature, thanks.
-> >
-> > I agree this is a simple enough patch that the name doesn't really matt=
-er.
-> > Thank you Andrew :)
-> >
-> >
-> > Thanks,
-> > SJ
+> On 2025/2/26 15:03, Liu Shixin wrote:
+>> Hi all,
+>>
+>> I found a softlockup when testing shmem large folio swapout-swapin and compaction:
+>>
+>>   watchdog: BUG: soft lockup - CPU#30 stuck for 179s! [folio_swap:4714]
+>>   Modules linked in: zram xt_MASQUERADE nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter ip_tantel_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nfit libnvdimm kvm_intel kvm rapl cixt4 mbcache jbd2 sr_mod cdrom ata_generic ata_piix virtio_net net_failover ghash_clmulni_intel libata sha512_ssse3
+>>   CPU: 30 UID: 0 PID: 4714 Comm: folio_swap Kdump: loaded Tainted: G             L     6.14.0-rc4-next-20250225+ #2
+>>   Tainted: [L]=SOFTLOCKUP
+>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>>   RIP: 0010:xas_load+0x5d/0xc0
+>>   Code: 08 48 d3 ea 83 e2 3f 89 d0 48 83 c0 04 48 8b 44 c6 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 02 75 08 48 3d
+>>   RSP: 0000:ffffadf142f1ba60 EFLAGS: 00000293
+>>   RAX: ffffe524cc4f6700 RBX: ffffadf142f1ba90 RCX: 0000000000000000
+>>   RDX: 0000000000000011 RSI: ffff9a3e058acb68 RDI: ffffadf142f1ba90
+>>   RBP: fffffffffffffffe R08: ffffadf142f1bb50 R09: 0000000000000392
+>>   R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000011
+>>   R13: ffffadf142f1bb48 R14: ffff9a3e04e9c588 R15: 0000000000000000
+>>   FS:  00007fd957666740(0000) GS:ffff9a41ac0e5000(0000) knlGS:0000000000000000
+>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>   CR2: 00007fd922860000 CR3: 000000025c360001 CR4: 0000000000772ef0
+>>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>   PKRU: 55555554
+>>   Call Trace:
+>>    <IRQ>
+>>    ? watchdog_timer_fn+0x1c9/0x250
+>>    ? __pfx_watchdog_timer_fn+0x10/0x10
+>>    ? __hrtimer_run_queues+0x10e/0x250
+>>    ? hrtimer_interrupt+0xfb/0x240
+>>    ? __sysvec_apic_timer_interrupt+0x4e/0xe0
+>>    ? sysvec_apic_timer_interrupt+0x68/0x90
+>>    </IRQ>
+>>    <TASK>
+>>    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+>>    ? xas_load+0x5d/0xc0
+>>    xas_find+0x153/0x1a0
+>>    find_get_entries+0x73/0x280
+>>    shmem_undo_range+0x1fc/0x640
+>>    shmem_evict_inode+0x109/0x270
+>>    evict+0x107/0x240
+>>    ? fsnotify_destroy_marks+0x25/0x180
+>>    ? _atomic_dec_and_lock+0x35/0x50
+>>    __dentry_kill+0x71/0x190
+>>    dput+0xd1/0x190
+>>    __fput+0x128/0x2a0
+>>    task_work_run+0x57/0x90
+>>    syscall_exit_to_user_mode+0x1cb/0x1e0
+>>    do_syscall_64+0x67/0x170
+>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>   RIP: 0033:0x7fd95776eb8b
+>>
+>> If CONFIG_DEBUG_VM is enabled, we will meet VM_BUG_ON_FOLIO(!folio_test_locked(folio)) in
+>> shmem_add_to_page_cache() too.  It seems that the problem is related to memory migration or
+>> compaction which is necessary for reproduction,  although without a clear why.
+>>
+>> To reproduce the problem, we need firstly a zram device as swap backend, and then run the
+>> reproduction program. The reproduction program consists of three parts:
+>>   1. A process constantly changes the status of shmem large folio by these interfaces:
+>>          /sys/kernel/mm/transparent_hugepage/hugepages-<size>/shmem_enabled
+>>   2. A process constantly echo 1 > /proc/sys/vm/compact_memory
+>>   3. A process constantly alloc/free/swapout/swapin shmem large folios.
+>>
+>> I'm not sure whether the first process is necessary but the second and third are. In addition,
+>> I tried hacking to modify compaction_alloc to return NULL, and the problem disappeared,
+>> so I guess the problem is in migration.
+>>
+>> The problem is different with https://lore.kernel.org/all/1738717785.im3r5g2vxc.none@localhost/
+>> since I have confirmed this porblem still existed after merge the fixed patch.
 >
-> Oh, yes. I was a little worried if I added too much noise for such a
-> small work, but I shouldn't miss this opportunity to leave my name in
-> Linux history.
-> Let me prepare a new patch as soon as possible.
-
-Hi all,
-
-Please find the attached patch.
-Based on the latest one, from @Andrew Morton I just replaced my ID
-with my real name as well as updated the subject.
-
-Thank you,
-Seongjun Kim
-
---000000000000e855b8062f1a4bde
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0002-samples-damon-a-typo-in-the-kconfig-sameple.patch"
-Content-Disposition: attachment; 
-	filename="0002-samples-damon-a-typo-in-the-kconfig-sameple.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m7n00g7d0>
-X-Attachment-Id: f_m7n00g7d0
-
-RnJvbTogU2VvbmdqdW4gS2ltIDxidXM3MTBAZ21haWwuY29tPgpTdWJqZWN0OiBbUEFUQ0ggdjJd
-IHNhbXBsZXMvZGFtb246IGEgdHlwbyBpbiB0aGUga2NvbmZpZyAtIHNhbWVwbGUKRGF0ZTogV2Vk
-LCAyNiBGZWIgMjAyNSAxMDo0MjowNCAtMDgwMAoKVGhlcmUgaXMgYSB0eXBvIGluIHRoZSBLY29u
-ZmlnIGZpbGUgb2YgdGhlIGRhbW9uIHNhbXBsZSBtb2R1bGUuICBDb3JyZWN0Cml0OiBzL3NhbWVw
-bGUvc2FtcGxlLwoKTGluazogaHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvci8yMDI1MDIyNjE4NDIw
-NC4yOTM3MC0xLXNqQGtlcm5lbC5vcmcKU2lnbmVkLW9mZi1ieTogU2VvbmdqdW4gS2ltIDxidXM3
-MTBAZ21haWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBTZW9uZ0phZSBQYXJrIDxzakBrZXJuZWwub3Jn
-PgpSZXZpZXdlZC1ieTogU2VvbmdKYWUgUGFyayA8c2pAa2VybmVsLm9yZz4KU2lnbmVkLW9mZi1i
-eTogQW5kcmV3IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCgogc2FtcGxl
-cy9kYW1vbi9LY29uZmlnIHwgICAgNCArKy0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCAyIGRlbGV0aW9ucygtKQoKLS0tIGEvc2FtcGxlcy9kYW1vbi9LY29uZmlnfnNhbXBsZXMt
-ZGFtb24tYS10eXBvLWluLXRoZS1rY29uZmlnLXNhbWVwbGUKKysrIGEvc2FtcGxlcy9kYW1vbi9L
-Y29uZmlnCkBAIC0zLDcgKzMsNyBAQAogbWVudSAiREFNT04gU2FtcGxlcyIKCiBjb25maWcgU0FN
-UExFX0RBTU9OX1dTU0UKLSAgICAgICBib29sICJEQU1PTiBzYW1lcGxlIG1vZHVsZSBmb3Igd29y
-a2luZyBzZXQgc2l6ZSBlc3RpbWF0aW9uIgorICAgICAgIGJvb2wgIkRBTU9OIHNhbXBsZSBtb2R1
-bGUgZm9yIHdvcmtpbmcgc2V0IHNpemUgZXN0aW1hdGlvbiIKICAgICAgICBkZXBlbmRzIG9uIERB
-TU9OICYmIERBTU9OX1ZBRERSCiAgICAgICAgaGVscAogICAgICAgICAgVGhpcyBidWlsZHMgREFN
-T04gc2FtcGxlIG1vZHVsZSBmb3Igd29ya2luZyBzZXQgc2l6ZSBlc3RpbWF0aW9uLgpAQCAtMTUs
-NyArMTUsNyBAQCBjb25maWcgU0FNUExFX0RBTU9OX1dTU0UKICAgICAgICAgIElmIHVuc3VyZSwg
-c2F5IE4uCgogY29uZmlnIFNBTVBMRV9EQU1PTl9QUkNMCi0gICAgICAgYm9vbCAiREFNT04gc2Ft
-ZXBsZSBtb2R1bGUgZm9yIGFjY2Vzcy1hd2FyZSBwcm9hY3RpdmUgcmVjbGFtYXRpb24iCisgICAg
-ICAgYm9vbCAiREFNT04gc2FtcGxlIG1vZHVsZSBmb3IgYWNjZXNzLWF3YXJlIHByb2FjdGl2ZSBy
-ZWNsYW1hdGlvbiIKICAgICAgICBkZXBlbmRzIG9uIERBTU9OICYmIERBTU9OX1ZBRERSCiAgICAg
-ICAgaGVscAogICAgICAgICAgVGhpcyBidWlsZHMgREFNT04gc2FtcGxlIG1vZHVsZSBmb3IgYWNj
-ZXNzLWF3YXJlIHByb2FjdGl2ZQpfCg==
---000000000000e855b8062f1a4bde--
+> Could you check if your version includes Zi's fix[1]? Not sure if it's related to the shmem large folio split.
+>
+> [1] https://lore.kernel.org/all/AF487A7A-F685-485D-8D74-756C843D6F0A@nvidia.com/
+> .
+>
+Already include this patch when test.
 
