@@ -1,68 +1,61 @@
-Return-Path: <linux-kernel+bounces-535652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E46A47595
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E820A47599
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD7816FE08
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAE7170833
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AFA2153C5;
-	Thu, 27 Feb 2025 05:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73372153C5;
+	Thu, 27 Feb 2025 05:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fvb1Ijpo"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2bnllZQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F42C1C5D6E;
-	Thu, 27 Feb 2025 05:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361401C5D6E;
+	Thu, 27 Feb 2025 05:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740635765; cv=none; b=NekH+/TZlThwNhALCfabfWlV4kJCRZ15VyxtndmQL9cuVl2+v6+0Kd8Gj34KiDMVwePD2fKYtIJfxMM+GyNweX39lQNmdlAcssYrEfcMKUirquEODzakXarK44xbneY+46rvRqxiYT6j7F0t0eudlk122JplNWrwqWMsizyFxtM=
+	t=1740635783; cv=none; b=BBOEsmc15D+pEXaZO1A7IFTE+wQp/fCVDQtZcUv/k6jskpx847fVyb9p/jBeCU5laFCrHrsZqjlrjqVSAfgv88gxuxu4R5jJ56yB/b2enZBkwRvo1ptEbD6QpIcyVBcQXOZh3m6tIGN0MGZEXA6gksTkGd/r02hsvTvNl+q+Y90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740635765; c=relaxed/simple;
-	bh=u8IgI8tRH0G1btZhh6wTH82DrPz4/Z28ROmlt+Cnl2Q=;
+	s=arc-20240116; t=1740635783; c=relaxed/simple;
+	bh=Qs9KlJ2e3nsU7Zdb+mxSOy0BPAa0JMo2sv/AdzdVSww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gp1huAWQT3ctaFA8dL1q23QEzU6pJkLaKRXJScnHU6P8875zR5tL7tq2KFhRZb3Jz1Ks1bGBDpYwNGnzJxIwhXMkqRE8ceu8747rfd379ZdptObAt7i+aHpBSTRkJkBBqxc8qNfQwEJo/KQRraAa5eYQX6P7NPmcX3ulrLL/0Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Fvb1Ijpo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pjOMWKX5cZm5qqlTrleQLdM8yGGKiB75apGd9kxx0Nw=; b=Fvb1IjpooHryAvRO8frQnR/6Gw
-	ckfc+d6l49fRoOn8jCyXQ3r748XmMOUpZ1gUL80kulKaV58IiwqKAHnVBDhWkf0TEakaODpvJ5rC0
-	Mbhe+xnju3Pt+Nqu15PBSTDf88bdlpJPdpswwiKdMgKOPFQXMFAWX2Jc/Wuy9C9dmmciQZMsK0jTR
-	eutzq8XFVm21VIoQnWvILTFLVHGqRD7wVBwNQT5zCXY88NjstC29Pdtwp3xzlm9r8B/hOekVxrgc8
-	xLWn+aOGYsxuA7mjQr/6PVlXukhtlCby+2bmftgNzt4fudlxkwIEUAAMjWD3ErLBSQg9ofGoFTTZ3
-	l/HVG+5Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tnWs3-0000000H2JW-0sDF;
-	Thu, 27 Feb 2025 05:55:43 +0000
-Date: Thu, 27 Feb 2025 05:55:43 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-Message-ID: <Z7_-XweaPpfdRz1h@casper.infradead.org>
-References: <20250226210032.2044041-1-ziy@nvidia.com>
- <20250226210032.2044041-3-ziy@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7+jTVxi4tMIwCXTVc6+YflOnSfHeVC5APeYQxqe2hn23DMXXt5Zc8CyZQo6KqDaAPVxDL/3BCOFEEDpOYyy2RsHEuE4nou9G1qo24dGhavwgK193+64ug9hTwie7L+kvUH40k8lW6SzqrdbWzEZoMSM7o/4CAxKBNFDPeobP/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2bnllZQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C31C4CEDD;
+	Thu, 27 Feb 2025 05:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740635782;
+	bh=Qs9KlJ2e3nsU7Zdb+mxSOy0BPAa0JMo2sv/AdzdVSww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W2bnllZQv48CZI9ThMiGQAP/KEvinCY9XJE+zMx6WpY54EUp8pBZa9gICGPovWZB6
+	 ofX2cm9UwYn5TeNXRHIBqLvEVKHfBZzeO5aqAJCV6HfXF+V2ZvpPtTz3Jwvwl1mm1g
+	 oPUmuXlGRlf/b+NEJiGOpl8BzunbG16GEyFH//aDJIgyZ2OF+HD56fW1G4JaPl57Fp
+	 EC+ck1XIiYVEKGwoko39TJ999jdQepDp39ikB+qRnIy4FVS5ZLuiWwdoAj8Fcu7smp
+	 IQth4DKd2pDrxKGzGyQttW1PLrxMsIsA98iEOGjA/Fmdnpzo6KORiM1ZFDVpYT86HD
+	 aets8RZZaQ8RQ==
+Date: Thu, 27 Feb 2025 11:26:17 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC
+ dependency)
+Message-ID: <Z7/+gXVFVzGadc4z@vaman>
+References: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,27 +64,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226210032.2044041-3-ziy@nvidia.com>
+In-Reply-To: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
 
-On Wed, Feb 26, 2025 at 04:00:25PM -0500, Zi Yan wrote:
-> +static int __split_unmapped_folio(struct folio *folio, int new_order,
-> +		struct page *split_at, struct page *lock_at,
-> +		struct list_head *list, pgoff_t end,
-> +		struct xa_state *xas, struct address_space *mapping,
-> +		bool uniform_split)
-> +{
-[...]
-> +		/* complete memcg works before add pages to LRU */
-> +		split_page_memcg(&folio->page, old_order, split_order);
-> +		split_page_owner(&folio->page, old_order, split_order);
-> +		pgalloc_tag_split(folio, old_order, split_order);
+Hi Krzysztof,
 
-At least split_page_memcg() needs to become aware of 'uniform_split'.
+On 15-02-25, 10:41, Krzysztof Kozlowski wrote:
 
-        if (folio_memcg_kmem(folio))
-                obj_cgroup_get_many(__folio_objcg(folio), old_nr / new_nr - 1);
+Can you revise the title to "phy: exynos5-usbdrd: dont depend on type-c"
+or something relevenant which describes the change rather than the
+Fix something!
 
-If we're doing uniform_split, that calculation should be
-	old_order - new_order - 1
+> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
+> USB DRD PHY does not really depend on Type-C for these devices at all.
+> Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
+> missing for exynos_defconfig and as result Exynos5422-based boards like
+> Hardkernel Odroid HC1 failed to probe USB.
+> 
+> Drop incorrect dependency and rely on module to be reachable by the
+> compiler.
 
+Changelog lgtm
+
+> 
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Closes: https://krzk.eu/#/builders/21/builds/6139
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
+> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Patch for issue in linux-next
+> ---
+>  drivers/phy/samsung/Kconfig              | 1 -
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+> index 7fba571c0e2b..e2330b0894d6 100644
+> --- a/drivers/phy/samsung/Kconfig
+> +++ b/drivers/phy/samsung/Kconfig
+> @@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
+>  	tristate "Exynos5 SoC series USB DRD PHY driver"
+>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+>  	depends on HAS_IOMEM
+> -	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+
+So how would this dependency be sorted..?
+
+>  	depends on USB_DWC3_EXYNOS
+>  	select GENERIC_PHY
+>  	select MFD_SYSCON
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index ff2436f11d68..e8a9fef22107 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -1456,7 +1456,7 @@ static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
+>  {
+>  	int ret;
+>  
+> -	if (!IS_ENABLED(CONFIG_TYPEC))
+> +	if (!IS_REACHABLE(CONFIG_TYPEC))
+>  		return 0;
+>  
+>  	if (device_property_present(phy_drd->dev, "orientation-switch")) {
+> -- 
+> 2.43.0
+
+-- 
+~Vinod
 
