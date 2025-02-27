@@ -1,195 +1,135 @@
-Return-Path: <linux-kernel+bounces-535632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9081A47555
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:43:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FA5A47556
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADBD3AF99C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:43:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B8916E98E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B9920E32A;
-	Thu, 27 Feb 2025 05:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDEE209F3E;
+	Thu, 27 Feb 2025 05:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c+Ux8MC4"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bfhCq9Jj"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528EF1FF618
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7711E5210
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740635022; cv=none; b=gfftSVgQITJwEb2skui1mjUfkXgby/xRBPeXEO5zEECivwrvo6qG/IpzGlLQ28Yhnmx7Qb86wBQZbHOEf1cvlTTLnzUIyoPrW10/GTZm+woggcZxl+iimuH0SJTEiPeCPjMb9TLJwoHplN5gMZ4V+Ke2JohuTNrceSaku6vSaEk=
+	t=1740635080; cv=none; b=BBg37Lqr9nEcIupCsYDcjwQUR4oSjY7sOJqejFdMf7PwUgq47jXywTTH3yFsmpOprCHbhqGZHe0/Lu0ZhGbVk7sHDb59Bjtm+lxSMMZ7L+JOgU+r6tPI06meC8JvxWSXvK8ORt6I3om0CE3NtljeG3FMLgJJQftjAvFcOj1Wnzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740635022; c=relaxed/simple;
-	bh=B6NyqJmXDBDX7QrfCoQa9fWnNvDvTd6x1XI5NEhpcyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bzQ4Kaqxj2jUvIM9FbITUOwaDOK7ifem3xHtT6yLkFemOTsjmF7ooi2s3HcJ4IPzazuhSU1sQ4c1iEHB+7DcC+Oqy4gGtDj2a0a3tXnsgbbnPO5O6UHzfY8Xt9eCFeof7IESZc3aXkHQupOAfiQeQI+x/B+pyhIG/M84+fcMRNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c+Ux8MC4; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51R5hPKN2268666
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Feb 2025 23:43:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740635005;
-	bh=pua2zXp1jw7grNnA4fzr8f5cpwKZpduTsNicfAzkgmQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=c+Ux8MC4eV0fM8InaCXSdNF40HxIzMUiL1yfobXxQFc9jDVrYjB2/orVl2aseDbf6
-	 R5/B/5upL7VWp4jgAhg+hLA23jxgeBJCRrGXLB6N06hXuHHRK09ysCeIoEdFPjD9ss
-	 8TMxqG5oRK7t+bvbL4a+Hj0MFeMK/cvbWc1hbvoA=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51R5hPOo016976
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Feb 2025 23:43:25 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Feb 2025 23:43:25 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Feb 2025 23:43:25 -0600
-Received: from [172.24.27.144] (lt9560gk3.dhcp.ti.com [172.24.27.144])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51R5hMcN038150;
-	Wed, 26 Feb 2025 23:43:23 -0600
-Message-ID: <f1d61696-a5c0-4727-ab52-526294a2a5f9@ti.com>
-Date: Thu, 27 Feb 2025 11:13:22 +0530
+	s=arc-20240116; t=1740635080; c=relaxed/simple;
+	bh=oEo1qjWXwvmV+GAlxNnksywkGBv9YY6iJ2nMcFwsIAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFyjTHJT9aw2QmkGmj1M74ZFkmvTI1btd3+AaN12pO01kWsV0fJoAEKNXmyCMAZ11HxQ3J/i63tFQKhYUper1XIYjvAjvhB5KhlvfOP2fhhgz4ImamJhm5yy3a6DXC9VztcbMe67Kge6oBRh8ptKqqqkvZJKqKwh5UjogCn8ovk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bfhCq9Jj; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 27 Feb 2025 05:44:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740635076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ERFgDI+aEGThEtR4yr1u5l1He+Oh0pNjxy51oH28XYU=;
+	b=bfhCq9JjZq9L5aFtZPxk1fa1qWyZuVgIo/bgY4wCBec0FvHVZD4+7CQOHLiM/8JOjP5XE4
+	ZqSU7hSJSFYj+4175CeWuu6k7Pwm0mL95991iBSSqqXcTYh+bt42yB13oPbZvGBK6zqCn0
+	z01q9dyKNo1dP+EinZcYjqK9dtX6VwQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] zswap: do not crash the kernel on decompression
+ failure
+Message-ID: <Z7_7vah_U1JzmpCX@google.com>
+References: <20250227001445.1099203-1-nphamcs@gmail.com>
+ <Z7-9o81kBfw4tFSz@google.com>
+ <20250227043141.GB110982@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH] arm64: defconfig: Enable HSR driver
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>
-CC: <quic_bjorande@quicinc.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        "Anwar, Md Danish"
-	<danishanwar@ti.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-References: <20240419060013.14909-1-r-gunasekaran@ti.com>
- <686f583d-6bf4-4486-b9e4-20c1e268eda6@ti.com>
- <d4954e5e-e51f-41c0-bca5-6e14b4640022@linaro.org>
- <0d33dea6-c021-4f2a-bb3f-92efd6eebd18@ti.com>
- <6081917c-9c20-48fc-baaf-7ac9a9679a72@linaro.org>
- <1982291f-4a02-4ed2-b4bf-778a2fe0ad9e@ti.com>
- <a3fc706c-3825-49fc-beea-3fea7d9c0038@linaro.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <a3fc706c-3825-49fc-beea-3fea7d9c0038@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227043141.GB110982@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 2/26/2025 5:36 PM, Krzysztof Kozlowski wrote:
-> On 26/02/2025 12: 54, Malladi, Meghana wrote: > Hi Krzysztof, > > On 
-> 2/26/2025 4: 18 PM, Krzysztof Kozlowski wrote: >> On 26/02/2025 11: 44, 
-> Malladi, Meghana wrote: > > > On 2/26/2025 1: 35 >> PM, Krzysztof Kozlowski
-> ZjQcmQRYFpfptBannerStart
-> This message was sent from outside of Texas Instruments.
-> Do not click links or open attachments unless you recognize the source 
-> of this email and know the content is safe.
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
-> updgPX1FFo0b4GXEXdPDfwTBSgIATJM2ZirviWBzo9UAByA7dipk7rbevgVn7EQb6- 
-> DBhdHMpW7WhdxsrgH8RrHp6HnyASM$>
-> ZjQcmQRYFpfptBannerEnd
+On Wed, Feb 26, 2025 at 11:31:41PM -0500, Johannes Weiner wrote:
+> On Thu, Feb 27, 2025 at 01:19:31AM +0000, Yosry Ahmed wrote:
+> > On Wed, Feb 26, 2025 at 04:14:45PM -0800, Nhat Pham wrote:
+> > >  	if (WARN_ON_ONCE(folio_test_large(folio)))
+> > >  		return true;
+> > >  
+> > > +	entry = xa_load(tree, offset);
+> > > +	if (!entry)
+> > > +		return false;
+> > > +
+> > 
+> > A small comment here pointing out that we are deliberatly not setting
+> > uptodate because of the failure may make things more obvious, or do you
+> > think that's not needed?
+> >
+> > > +	if (!zswap_decompress(entry, folio))
+> > > +		return true;
 > 
-> On 26/02/2025 12:54, Malladi, Meghana wrote:
->> Hi Krzysztof,
->> 
->> On 2/26/2025 4:18 PM, Krzysztof Kozlowski wrote:
->>> On 26/02/2025 11: 44, Malladi, Meghana wrote: > > > On 2/26/2025 1: 35 
->>> PM, Krzysztof Kozlowski wrote: >> On 26/02/2025 07: 18, Malladi, Meghana 
->>> wrote: > Hi all, > > Apologies in >> case you are receiving this email
->>> ZjQcmQRYFpfptBannerStart
->>> This message was sent from outside of Texas Instruments.
->>> Do not click links or open attachments unless you recognize the source 
->>> of this email and know the content is safe.
->>> Report Suspicious
->>> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
->>> updq3RaPV007wGXFFrPD30z5a3GGYjpJweyhUcIfUTTaUs-8q0QpC4Yk9azBiFp7cBAf2Knk6fnVs4Fs-zRjTMEn8kmpiGo$>
->>> ZjQcmQRYFpfptBannerEnd
->>>
->>> On 26/02/2025 11:44, Malladi, Meghana wrote:
->>>>
->>>>
->>>> On 2/26/2025 1:35 PM, Krzysztof Kozlowski wrote:
->>>>> On 26/02/2025 07: 18, Malladi, Meghana wrote: > Hi all, > > Apologies in 
->>>>> case you are receiving this email for the second time. > Any reason why 
->>>>> this patch hasn't been merged yet. Other than re-basing > this to the 
->>>>> tip, anything
->>>>> ZjQcmQRYFpfptBannerStart
->>>>> This message was sent from outside of Texas Instruments.
->>>>> Do not click links or open attachments unless you recognize the source 
->>>>> of this email and know the content is safe.
->>>>> Report Suspicious
->>>>> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
->>>>> updgnZav1ue7gKXOnHOpH5hg8gLmw9Osqsqh- 
->>>>> KTLRTnBEurV_VetrG7mzU898vB_5xFrYgbRkkuuFMBobM-uhFAmUgccRSk$>
->>>>> ZjQcmQRYFpfptBannerEnd
->>>>>
->>>>> On 26/02/2025 07:18, Malladi, Meghana wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Apologies in case you are receiving this email for the second time.
->>>
->>> BTW, Arnd when responded with Ack described the process.
->>>
->> 
->> Yes, I wanted to re-confirm before posting it again (just in case).
->> 
->>>>>> Any reason why this patch hasn't been merged yet. Other than re-basing 
->>>>>> this to the tip, anything else which needs to be addressed to get this 
->>>>>> merged?
->>>>>
->>>>> I don't think you sent it to your platform maintainers, so no one would
->>>>> apply it. Usually people ignore emails they did not receive, although I
->>>>> am here an exception tracking missing-DT-patchwork things... :)
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>>
->>>>
->>>> Hello Arnd/Krzysztof,
->>>>
->>>> Thank you for the replies :)
->>>> Was having ambiguity since this is not TI specific change. Wanted to 
->>>> confirm before re-posting. Will post v2 patch including TI platform 
->>>> maintainers.
->>>
->>> It is not TI specific? Then which upstream boards benefit from this if
->>> not TI?
->>>
->> 
->> This change enables generic HSR protocol support in the kernel which is 
->> required for HSR driver support in TI boards. When I said "not TI 
->> specific" - I meant this change is not internal to TI driver. Hope this 
->> clarifies the miscommunication from my earlier mail.
+> How about an actual -ev and have this in swap_read_folio():
+
+Good idea, I was going to suggest an enum but this is simpler.
+
 > 
-> Yes, sure, but this defconfig change benefits and is sent for certain TI
-> upstream boards, so it is TI upstream maintainers field. It still fits
-> the "Submitting Patches for Given SoC" in SoC maintainer profile.
+>         ret = zswap_load(folio);
+>         if (ret != -ENOENT) {
+>                 folio_unlock(folio);
+>                 goto finish;
+>         }
 > 
-
-Okay, I got your point now. So as long as this defconfig benefits TI 
-SoCs, it should be sent with maintainer profile. I will keep that in 
-mind for future patches as well. Thanks for clarifying this.
-
-Best Regards,
-Meghana
-
-> Best regards,
-> Krzysztof
+> 	read from swapfile...
 > 
+> Then in zswap_load(), move uptodate further up like this (I had
+> previously suggested this):
+> 
+> 	if (!zswap_decompress(entry, folio))
+> 		return -EIO;
+> 
+> 	folio_mark_uptodate(folio);
+> 
+> and I think it would be clear, even without or just minimal comments.
 
+Another possibility is moving folio_mark_uptodate() back to
+swap_read_folio(), which should make things even clearer imo as the
+success/failure logic is all in one place:
+
+	ret = zswap_load(folio);
+	if (ret != -ENOENT) {
+		folio_unlock(folio);
+		/* Comment about not marking uptodate */
+		if (!ret)
+			folio_mark_uptodate();
+		goto finish;
+	}
+
+or we can make it crystal clear we have 3 distinct cases:
+
+	ret = zswap_load(folio);
+	if (!ret) {
+		folio_unlock(folio);
+		folio_mark_uptodate();
+		goto finish;
+	} else if (ret != -ENOENT) {
+		/* Comment about not marking uptodate */
+		folio_unlock(folio);
+		goto finish;
+	}
+
+WDYT?
+		
 
