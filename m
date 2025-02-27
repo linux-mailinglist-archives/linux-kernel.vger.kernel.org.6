@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-536000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F95A47A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:34:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72B9A47A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E58D3B2AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:33:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63ED7A3FC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576E822A7EB;
-	Thu, 27 Feb 2025 10:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2822A1EC;
+	Thu, 27 Feb 2025 10:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="i1ps2cCh"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="KrKtpelL"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47263229B15
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C92229B3D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740652435; cv=none; b=CTdOnuVnmYNql3GoO0HnUBDeMgWkjSC+6nHHc9QMoKrZLymLXeLE5VyuFvAqEF4Aked5XiJRUtgO2fjym4HaeOE9OBcOr4i9oyEYNxs+KZPcJBisfWvRrBtvdNdtUl8wB/m1ffoEOwunEEXuKJTnYqvQcFUMVLQQxEnUeIZf6ac=
+	t=1740652436; cv=none; b=h1IfVLwtW4MCePqmDMR7lDUVxcNUfb+tLwInj41b7rLVn9IewY56viBCRCjOPxkWF8Pn//vSBujlR6xAj/AbjV0ewnDCL91XAbljKLAUEvv5IFG4p+fxrryBslZpx0zVReSiqH+2UyKvI+eNuS8ehIIqI254SM7Y306mY91eSZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740652435; c=relaxed/simple;
-	bh=ARqIPR+p2tpe5EaKR1df/smz8PWDinQX9DhGTpM5U7s=;
+	s=arc-20240116; t=1740652436; c=relaxed/simple;
+	bh=yNg0EW/sSTagffgojXuqqjjQihItDBy+BD9n5x9G7iU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uOI9lHk1EFDlOTDOw6vnFEZXVi7A4+hD+1pk2QETo/iDIBKyYIFoP0aWJJuRLCtOq35mYgFjXvv6ocNAFdfPtntXqeJ/WLwv/SdPnEUK/eXUkiYHAoeFVadQrp4mOwOhNsgV8PyBwkIt6kSLfLwrU3JJj6EHBa/Bzo7sPpc5zPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=i1ps2cCh; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=sKqBPrBp6w3SO+qPbkcXalTGVw/7CytH+ZMy7rufB28tcaOpg9ngqLnKGjvn8ge4qReQJGebLyKGw9wdzgNEXBBOVuUGPvC3ZZYds8aBmeVrXyor4gsJv9OPFqQhG3w3Rx2nOkcn1S5Qr4aWF/K2I3vHE2fYiPonte/d481bB6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=KrKtpelL; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4398ec2abc2so7012255e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:33:52 -0800 (PST)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f488f3161so404744f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:33:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1740652431; x=1741257231; darn=vger.kernel.org;
+        d=fairphone.com; s=fair; t=1740652432; x=1741257232; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uZWB2hgX1A7RofWkTIOTroK4Gv7om7GgUCL4jMU0GpM=;
-        b=i1ps2cCh2Y5wzu+0KcCR1y3U62S5qnHyT0tySW3HsK80vQeaZ7nkJkcHes4KOW9T3n
-         +F9YAsgmwrm+38u+eodmkCa2UEw3EoEPva2ehxyUZsNt+2aP3RZEjbu8kkeVZABVvmUI
-         BCbGC1gbsPMazcnTY2hhcgPC8YyLMCNkAFrXXgkZ9VqZIKVBXs0/oe5098FWSXFkI/DB
-         LvnL2pwO7HfXB3TYWQ3bemAHPdmMzMkMWkAVCeT+rHOi0lJpiDHm6t2X9aDHF7orygYt
-         Rkq3aVhvEg+OJOkJ9Xi8rPc8KANvtavM15lEsw7ZJAzTDGDdCrCcS5QpCiPiLpABnV33
-         Ay7A==
+        bh=m6I9Y2sm2ZO37jUC9MCmxExXieoBlnX+XT5yv3CFjg4=;
+        b=KrKtpelLhQZkTVtkt4uBTi1dJlqgq62w57BMfhUah4dK7iAXWCow6YEK0+uSieNpSJ
+         e+lgAM87LbDXBvJv89ujLZ8K8LPPkCU5GaPeLJy039jB4pE7uitCKy0GHZycSQXFQU9m
+         739vz1FQO6Mbg75ygwxYE9HmtAdHX7yEfoxAC5aBiyytjVb+N6Edn51TyH025QpAZOif
+         mG/KYXOZ1BJB19kubx798uwA5bh/uSgBhXFzYujhzNFH0nI0hf+W8fO9xkKbrTMIAzZm
+         NS1SPYiiHdBo7Pby/u2GctH7ow4L1o95AWfOFTATGQyO1t61nx5mgbE9Eo4q7bDShbo/
+         8LHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740652431; x=1741257231;
+        d=1e100.net; s=20230601; t=1740652432; x=1741257232;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uZWB2hgX1A7RofWkTIOTroK4Gv7om7GgUCL4jMU0GpM=;
-        b=DUO3ABmDOEI/o3z8EcyXMiO4BWnFt/wZMY9Lnu0OanxHgvyG91YeQ9Veqn7etgGa1k
-         nKT/aZN8iEvMzETfSEZuWOBb/zVSCH6a0xRP2kDLCwkfMK1XyQTEvRbYyg0N7bekXbbh
-         UCH8XhAni8pt0lxfJIrbfDhhw2WYUx58V6YGcyIvBl0DlOhUcV/1puOs3NHiqNe37BwO
-         fvtHoIXie+Leqq8B2V1AtM2a47AMb6C4lMSWJILBEstc3R2mkAX7mroz8+Qx9lU+Lj2R
-         GpIbWP7jfvqn3HgUvGny5OxHNn5s5m6suVx6fsBvVTo8maXtVh2F1auhILsdwSDt3x8E
-         WWTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtY+FDxJA3uNRjR2Ed8czEjv8rDBt/8PCVEcskneuqFfsXIhFw53RuDv4Lmw3tlGMHaqL+diEgNXCXXIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVWfhZr1uZa7YqpydNu91CI/8rk+jQWA4+LLRNe6z+cAksaBPS
-	pb7qgDRAVdK3ila+HW0s2K2U+oUmPHrJxdq73NPHuTurSAxVNmwCbLU4iq6p04M=
-X-Gm-Gg: ASbGncvF0qIADZjCS8PJ5rd3jboj3oCi6ZIoap6w8ZHR5UwcLHxASsox1zQkhzXVzbo
-	i4KEd6jJs7ah3OgdRrtgt8uzbwPuts9gbSOKwQ9qghdRFiwjfoetlEavR1uZAJurMhHwi7SFgFX
-	e3Lrk2U1XSZD+bS83qS38Jjl9wFx6nz8dwG+xgnTF42nRKCJrfNMrcIioGTdMBIl6RScMoR+sxL
-	VgIVvKPQdxF/r4Xz26SbiVnrr1c7ivUrMNMKpwlMfUYImOh93v/N9A1sG496OLXXzc76UaQJkgL
-	vFZ5NjmEs3efTXSdVOm9DLs5opwseixs6EcIB2EPNmmQmaM3lUdpvFsRXoCGZRSpLOrxutSpCOM
+        bh=m6I9Y2sm2ZO37jUC9MCmxExXieoBlnX+XT5yv3CFjg4=;
+        b=mW2AEqZcm8DqwN+hJDBUyQ8AsdEcPqGlr2gZIUp+x4XzDwMJHm50je2JCVSR+u/Azw
+         VjfCDXo3Gk39eRXsmvhkUvu5aQNgpR9euCr7q4KEV8WKHqkw4sWxUipwHhw58DuilyKV
+         d6RdP6x8dzAZhC5JJhuULYj8C7SB3PxxS6oWWKth8zQOeuVxfil64Jw9liwUk7GMXgoU
+         RBJfHYzriZaQHi48PXdwwInWIsAZSuxbmWDiNKCv9JHzmfYXDYrJ2DJGHpvS3ZtxehAu
+         0WCnb2BZSiDNwJTD89HUkRmk8geYooYq8dgcBHzKS4sdGWpJSq4qjHvBkC2ZMP7nuKqd
+         TA4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUT7Q+7v1Af9b95SOM9SICbs5PpzBgjlC2sPRS19hZEDVZHTH/cTcYjkx8H6eAGuaoJBF7gEQ3h0hXLwgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5i9RZy+YA1ouwt6L7vJdEeGSOEdBRNbpMJ8cnI52mx5X2GUQb
+	GAVUf2HLQZgkG1iZ02f/QrV5pYlcPJAQfcRpdjckiv5G9qv+XJJ/gzKmKrXh9Pk=
+X-Gm-Gg: ASbGncvCKfOQFjVAqUdyFJByRMQhW76tJOn2J5SewPmcAXeRU+WVwMtw/ECoVzZd+px
+	Ro0K7zPPRl9bVisJJM9KIKdpUYkz1Tpqf8nuMj2G79MWDgwez6qYMpjxGIcdgtGxGxvrA56sQML
+	zbwjY0y1HxKJPfSHmgE3VvO4g2PLLQSmB6Q8eftjfnX9sJAKmbb9JcgYuMo/lNsR8RrUGfCwjts
+	N5Kh48Mr8vUELObaRYzN9cipum6qQ8PFxUSdUVCO849dutMZFJBYJjvJo3D+rXZQ1cKB0tiyrOx
+	hdnxYX2ulAWI6ih+d2ng57aY0J+T4If/ZkF9iPuCMx5W07XMup2W95slci7LiXJopYmFXq4bad0
 	=
-X-Google-Smtp-Source: AGHT+IHWaUYc9t6tW0emQRrLnAiI/h4VX2LetyBut2pWf/Sr4AARB4vXq14BdTbHgSxE6htiNBuHmA==
-X-Received: by 2002:a05:600c:4ed4:b0:439:4700:9eb3 with SMTP id 5b1f17b1804b1-43ab8fd1e98mr55737585e9.3.1740652431477;
-        Thu, 27 Feb 2025 02:33:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFCt9u0coO8uHw2mLPkv/N6QOb1W05JtNtgr7XbEDzVKeQRsZ/jpOW0SzEfoBUonlsoaSDtAw==
+X-Received: by 2002:a5d:6c6e:0:b0:38d:cdac:fc02 with SMTP id ffacd0b85a97d-38f70772b89mr17494957f8f.4.1740652432196;
+        Thu, 27 Feb 2025 02:33:52 -0800 (PST)
 Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27ab2asm17854305e9.32.2025.02.27.02.33.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27ab2asm17854305e9.32.2025.02.27.02.33.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 27 Feb 2025 02:33:51 -0800 (PST)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 27 Feb 2025 11:33:40 +0100
-Subject: [PATCH 1/3] net: ipa: Fix v4.7 resource group names
+Date: Thu, 27 Feb 2025 11:33:41 +0100
+Subject: [PATCH 2/3] net: ipa: Fix QSB data for v4.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-ipa-v4-7-fixes-v1-1-a88dd8249d8a@fairphone.com>
+Message-Id: <20250227-ipa-v4-7-fixes-v1-2-a88dd8249d8a@fairphone.com>
 References: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
 In-Reply-To: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
 To: Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -94,66 +94,30 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.2
 
-In the downstream IPA driver there's only one group defined for source
-and destination, and the destination group doesn't have a _DPL suffix.
+As per downstream reference, max_writes should be 12 and max_reads
+should be 13.
 
 Fixes: b310de784bac ("net: ipa: add IPA v4.7 support")
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- drivers/net/ipa/data/ipa_data-v4.7.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/net/ipa/data/ipa_data-v4.7.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ipa/data/ipa_data-v4.7.c b/drivers/net/ipa/data/ipa_data-v4.7.c
-index c8c23d9be961b1b818e8a1592a7f7dd76cdd5468..7e315779e66480c2a3f2473a068278ab5e513a3d 100644
+index 7e315779e66480c2a3f2473a068278ab5e513a3d..e63dcf8d45567b0851393c2cea7a0d630afa20cd 100644
 --- a/drivers/net/ipa/data/ipa_data-v4.7.c
 +++ b/drivers/net/ipa/data/ipa_data-v4.7.c
-@@ -28,12 +28,10 @@ enum ipa_resource_type {
- enum ipa_rsrc_group_id {
- 	/* Source resource group identifiers */
- 	IPA_RSRC_GROUP_SRC_UL_DL			= 0,
--	IPA_RSRC_GROUP_SRC_UC_RX_Q,
- 	IPA_RSRC_GROUP_SRC_COUNT,	/* Last in set; not a source group */
- 
- 	/* Destination resource group identifiers */
--	IPA_RSRC_GROUP_DST_UL_DL_DPL			= 0,
--	IPA_RSRC_GROUP_DST_UNUSED_1,
-+	IPA_RSRC_GROUP_DST_UL_DL			= 0,
- 	IPA_RSRC_GROUP_DST_COUNT,	/* Last; not a destination group */
+@@ -38,8 +38,8 @@ enum ipa_rsrc_group_id {
+ /* QSB configuration data for an SoC having IPA v4.7 */
+ static const struct ipa_qsb_data ipa_qsb_data[] = {
+ 	[IPA_QSB_MASTER_DDR] = {
+-		.max_writes		= 8,
+-		.max_reads		= 0,	/* no limit (hardware max) */
++		.max_writes		= 12,
++		.max_reads		= 13,
+ 		.max_reads_beats	= 120,
+ 	},
  };
- 
-@@ -81,7 +79,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
- 		},
- 		.endpoint = {
- 			.config = {
--				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL_DPL,
-+				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL,
- 				.aggregation	= true,
- 				.status_enable	= true,
- 				.rx = {
-@@ -128,7 +126,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
- 		},
- 		.endpoint = {
- 			.config = {
--				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL_DPL,
-+				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL,
- 				.qmap		= true,
- 				.aggregation	= true,
- 				.rx = {
-@@ -197,12 +195,12 @@ static const struct ipa_resource ipa_resource_src[] = {
- /* Destination resource configuration data for an SoC having IPA v4.7 */
- static const struct ipa_resource ipa_resource_dst[] = {
- 	[IPA_RESOURCE_TYPE_DST_DATA_SECTORS] = {
--		.limits[IPA_RSRC_GROUP_DST_UL_DL_DPL] = {
-+		.limits[IPA_RSRC_GROUP_DST_UL_DL] = {
- 			.min = 7,	.max = 7,
- 		},
- 	},
- 	[IPA_RESOURCE_TYPE_DST_DPS_DMARS] = {
--		.limits[IPA_RSRC_GROUP_DST_UL_DL_DPL] = {
-+		.limits[IPA_RSRC_GROUP_DST_UL_DL] = {
- 			.min = 2,	.max = 2,
- 		},
- 	},
 
 -- 
 2.48.1
