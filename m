@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-535974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3086FA479EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:14:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4076A479F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA74189179B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5101891EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2EB229B27;
-	Thu, 27 Feb 2025 10:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6711F20F07F;
+	Thu, 27 Feb 2025 10:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IpjobHDH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="aCPCR/UV"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7345B227EAE;
-	Thu, 27 Feb 2025 10:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1801527B4;
+	Thu, 27 Feb 2025 10:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740651250; cv=none; b=Y2lMbwMvHJMaZgRCwkN3swlqyyq0PnKzpejZ6N8xDcjCN3a0EER/xwaG/Gac+38Cdj2+ixMEeg4O7H84T1eGvotbH8QJ/RNriZI24j6mOikQx3uq4b6rj0mVqgEcyTkgD5RHUFTK5OJvKn1EyGqt7j13MpP4K80tCCRoNgqN1Us=
+	t=1740651330; cv=none; b=jX4LDBH4y/FcshE/HBsGahQI4i776j6BSJntcLg7mz+/U8EpKxxEB6fPs40zG2xX+YzgywpAbmQT6gWA1rGk/ugPFcMASBB9L/d7qf+rAthK/rCG/3ERNPIXNU6jZEnKczBlgnoYonCB3SJkXnzYLjLhgHYfWWfD4y0PC95ZMqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740651250; c=relaxed/simple;
-	bh=gseLAHp4E+Igv9cI7PtONJP3gJHTR/dnFqtpGS6PFxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6uGdH5uVQ/pQ4mlwWOaL6DsbX2VWZVrzRhjpz4/cSGwCCwY4FWnjrtiIVDdxIE6fV9tsl+lOReUXSpLu9xzTmu7aVg1sUFZrToU5bVgoWxdObDlshX/deRGYTMYicxq0Ek8rY63iVVZN50+hTQXi1ZgpEFT1RRwhNI1/fnI0js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IpjobHDH; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740651248; x=1772187248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gseLAHp4E+Igv9cI7PtONJP3gJHTR/dnFqtpGS6PFxQ=;
-  b=IpjobHDHjgdy3oJJP9oYg2jfMWY1elIzZCD4IhS4zeUeqWfkATf82pb5
-   XIXNw4M2svecqJnWl4DQfsk/PNlVwTFAHkHvUVYAfVBrMuO3UjQ6Ceoya
-   Bm/B04Xf9a9+icubcLUJpx2RqDLr0xAm82GH5hSymjgQeJBUnQ7Nt/pds
-   pgbGNLk50Uikczor9ddWWIXkdVEVL9HKQkdSVv+y5knXWIZbf82/u3KEb
-   VRZhjlbbsQtVkYVy8AEuHpsx05j01oNLVDmneb5b3AmFvPk1WndQzt5cA
-   YHhb7xSEPLdBlihHBX+MpUvufpY8rfQl6F7qYpguU4zW8vwbrlXPm7Yuk
-   g==;
-X-CSE-ConnectionGUID: OMaUPBQQTH2TOX35vrQtgA==
-X-CSE-MsgGUID: aC9+0EINReqXz8LaEJkKQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52172112"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="52172112"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:14:07 -0800
-X-CSE-ConnectionGUID: h0+jg6i9R0yBDlukY4UbCg==
-X-CSE-MsgGUID: /TMiIC0sRceQC7YLEYVTJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="122096659"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:14:05 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1E68F11F944;
-	Thu, 27 Feb 2025 12:14:02 +0200 (EET)
-Date: Thu, 27 Feb 2025 10:14:02 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mathis Foerst <mathis.foerst@mt.com>
-Cc: linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, manuel.traut@mt.com
-Subject: Re: [PATCH v1 2/8] MT9M114: Add pad-slew-rate DT-binding
-Message-ID: <Z8A66l02Et4J7hj4@kekkonen.localdomain>
-References: <20250226153929.274562-1-mathis.foerst@mt.com>
- <20250226153929.274562-3-mathis.foerst@mt.com>
+	s=arc-20240116; t=1740651330; c=relaxed/simple;
+	bh=sJtGvH6T3YnBZqj3leXQ+q1WiYFWcKZltELvoGu/mQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpNozFAMU1/aEzTpbI4mtI+LUadZCL5dttpJvC8qVg+ab9R+vOZUnup1aDX5AXZstbw0mT2RMh8+GrJJfJlS1DdVVTi3KHKsunQk5PseWD0JVK/NR07IzGn5LEgepdh9aebIdKO70QCSUGWmoEO/4KW+mMrcnpdT5gA13EVcXcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=aCPCR/UV; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740651305;
+	bh=sJtGvH6T3YnBZqj3leXQ+q1WiYFWcKZltELvoGu/mQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=aCPCR/UVqnaOY57DQCiujuO4Gxmn+k2jwY4mFBIqDZVOFdzRBDJ1XI9G12cam75Xr
+	 jxcBEW/lSf0xvWTEAb9nwG058z+uemNATudMb8VAJQfWRgJcatC80cOcuVC8y1LFS0
+	 YC5VrQ2cbRlFdytT98OpeuDO/fkow/skz/KCVcTg=
+X-QQ-mid: bizesmtpip3t1740651293tq8l0eh
+X-QQ-Originating-IP: epTPV+fe7KvLKKL+kURLRX8Vo49pXsGehJKwdj6aKug=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 27 Feb 2025 18:14:52 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 4524885663681403227
+Message-ID: <6107DFE9C8CE6962+3fb1c557-9903-45e0-82e9-659bc50b3695@uniontech.com>
+Date: Thu, 27 Feb 2025 18:14:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226153929.274562-3-mathis.foerst@mt.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] MIPS: dec: Create reset.h
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, macro@orcam.me.uk,
+ niecheng1@uniontech.com, zhanjun@uniontech.com
+References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+ <65F124DA37C9CC6A+20250218125633.666501-1-wangyuli@uniontech.com>
+ <Z8A0JeFYfBxXOFCD@alpha.franken.de>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <Z8A0JeFYfBxXOFCD@alpha.franken.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------XLgaN7Uhu4ShdeXLdG0nf6KM"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NJvWNRsNVoV4P1vqh3LLXa1xOjN6GrfNUJgaYueIY/+9YjKqT8EEHbHl
+	MmB1vKKPJNwtNSXvnMWS4B0Y64xX40jTV8zz4xy95yTkqgsl3AHQfrcqh+pfb4Zf9pe0fq+
+	bYUbn1kTz/dmC8SnqvUvPy1BaavgLcyjhB/jf9l3STH5aj63q0zmWqmbv9CgGNLBWkraoAo
+	8tgmQ/PCNYMR2SuGBnANyHZPBjqXKuUGumpHJAfak/2hhtmXc/gvdWO8hE5MvymgA6kOK32
+	HHyz9g8n8suNE1JtdBHYUjKthlSBR/BWbcLFjdG+UdMthD3XkVXi99tsaJPuMqCFULSyOSn
+	/9+qQw30Etas5Hj5MOk8WwI1HI+Xl0e9cOFOYTW+2XcOsHuij9QuOlFy37EsjM4Tb3IuOzQ
+	qgaDzcADTm7E+unqN44euFaaorkYM4hoT6f+92H3+vqWq0mT2JuWDH74oCB9yHMu5wCSdR8
+	bqe6nKeLPOFFCoKh+chliHUiqJNWBSf/ep0M1iFWdcAFrQs5gGR3VljwAfuURpdFt0DfNxr
+	k/BwQOmVSmN+F0dNOxrhhp+3mC1rBLoKJHaNkXqt75B8fWFIahiOyTwVLdQDL1FLxWh/zd+
+	EaJxerlPVSiNgZcM0i6/YWZFj9ZUG6eMPt4WnQ4DXdlN1mmTHYam0l5SgKUDuimCeMa93AW
+	3QlbW9c8LjLYVYELMlCbXTwJDNLbW6JnGVW7h3i7cjHiOsZjQXiI5RdMyjQt2cGB/uF/Rjm
+	AikJjs2j+9/Oww7GNvni2J4v8B+tQg4U8FpoAW4FLRrnDECjg5e1HPaINCGBsHOtizwxCbG
+	ZeVGpy1+OEWaRY/pkDrlzBtvGfZ76ufwDntgMXELVosacbNyTOkYNKYzytW6C0atFDbieAL
+	hSJbDmfZpSPiSldLYzNw4ThkKEhi+bGUOSPIIuz+KzZnp7VN2pGQ6b/FnMDYOLqasb0c+t4
+	ueORVYMq3pI6Uw2QIT3a4ojD8jdK26tZuWxx7MiwxFO6ftAA8/xTCvzJlmJl/HbzZJ20j08
+	4zJaxlZnLSJacFKqsUjWyNlq5/63SE9vZfwy/GcQfand1lxWRU
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Mathis,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------XLgaN7Uhu4ShdeXLdG0nf6KM
+Content-Type: multipart/mixed; boundary="------------sI41dO22yyiiCcjZ0xfXjL0d";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: chenlinxuan@uniontech.com, guanwentao@uniontech.com,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, macro@orcam.me.uk,
+ niecheng1@uniontech.com, zhanjun@uniontech.com
+Message-ID: <3fb1c557-9903-45e0-82e9-659bc50b3695@uniontech.com>
+Subject: Re: [PATCH 2/7] MIPS: dec: Create reset.h
+References: <487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com>
+ <65F124DA37C9CC6A+20250218125633.666501-1-wangyuli@uniontech.com>
+ <Z8A0JeFYfBxXOFCD@alpha.franken.de>
+In-Reply-To: <Z8A0JeFYfBxXOFCD@alpha.franken.de>
 
-On Wed, Feb 26, 2025 at 04:39:23PM +0100, Mathis Foerst wrote:
-> The MT9M114 supports the different slew rates (0 to 7) on the output pads.
+--------------sI41dO22yyiiCcjZ0xfXjL0d
+Content-Type: multipart/mixed; boundary="------------ft40PnVA9sxs4ZBn4yUN4WoV"
 
-"the output pads" probably means pixel data interface (DVP or CSI-2)
-signals in this cases? I suppose this is about clock modulation?
-It'd be good to say that.
+--------------ft40PnVA9sxs4ZBn4yUN4WoV
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-> At the moment, this is hardcoded to 7 (the fastest rate).
-> The user might want to change this values due to EMC requirements.
-> 
-> Add the 'pad-slew-rate' property to the MT9M114 DT-bindings for selecting
-> the desired slew rate.
-> 
-> Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
-> ---
->  .../devicetree/bindings/media/i2c/onnn,mt9m114.yaml         | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> index 72e258d57186..666afe10c538 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> @@ -74,6 +74,12 @@ properties:
->      description: Bypass the internal PLL of the sensor to use EXTCLK directly as SYSCLK.
->      type: boolean
->  
-> +  onnn,slew-rate:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
+SGksIFRob21hcywNCg0KT24gMjAyNS8yLzI3IDE3OjQ1LCBUaG9tYXMgQm9nZW5kb2VyZmVy
+IHdyb3RlOg0KPiBJIGRvbid0IHRoaW5rIHRoaXMgY29weXJpZ2h0IGlzIGFwcHJvcHJpYXRl
+LCB5b3UgYXJlIG9ubHkgbW92aW5nIGNvZGUNCj4geW91IGhhdmVuJ3Qgd3JpdHRlbi4NCj4N
+Cj4gVGhvbWFzLg0KPg0KSSBhZ3JlZSB3aXRoIHlvdXIgcG9pbnQuDQoNCkkganVzdCAidGhv
+dWdodCIgSSBzaG91bGQgd3JpdGUgaXQgdGhhdCB3YXkgYmVmb3JlLg0KDQpJIGNhbiBzdWJt
+aXQgYSBwYXRjaCB2MiB0byBmaXggdGhpcy4NCg0KRG8geW91IHRoaW5rIGl0J3MgYmV0dGVy
+IHRvIGtlZXAgdGhlIG9yaWdpbmFsIGNvcHlyaWdodCBpbiByZXNldC5jIG9yIA0KanVzdCBy
+ZW1vdmUgdGhhdCBsaW5lIGFsdG9nZXRoZXI/DQoNClRoYW5rcywNCg0KLS0gDQpXYW5nWXVs
+aQ0K
+--------------ft40PnVA9sxs4ZBn4yUN4WoV
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-No need to make this 8-bit (i.e. just use 32 bits).
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-> +    description: Slew rate ot the output pads DOUT[7:0], LINE_VALID, FRAME_VALID and PIXCLK
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
 
-Please wrap at 80 characters.
+--------------ft40PnVA9sxs4ZBn4yUN4WoV--
 
-Is there more information on the effect than 7 is the fastest?
+--------------sI41dO22yyiiCcjZ0xfXjL0d--
 
-> +    minimum: 0
-> +    maximum: 7
+--------------XLgaN7Uhu4ShdeXLdG0nf6KM
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Please also add a default.
+-----BEGIN PGP SIGNATURE-----
 
-> +
->  required:
->    - compatible
->    - reg
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ8A7GwUDAAAAAAAKCRDF2h8wRvQL7pKe
+AQClFY+r58078ndUlvPjyRD9x9a7eqaI6nXljFOvc68+NwD7BJJYyVFxWqDQ3ctaq47F/pm0YHAT
+1qD2W+1mgoQMwwU=
+=0HQ6
+-----END PGP SIGNATURE-----
 
--- 
-Regards,
-
-Sakari Ailus
+--------------XLgaN7Uhu4ShdeXLdG0nf6KM--
 
