@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-536735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BEFA48394
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:53:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975CDA48400
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15BC23B2C0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7808C17446E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457141ACEDB;
-	Thu, 27 Feb 2025 15:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C03E270EAC;
+	Thu, 27 Feb 2025 15:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pRcKd7+N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GHono95o"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198981AAA05;
-	Thu, 27 Feb 2025 15:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2126FA77;
+	Thu, 27 Feb 2025 15:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671569; cv=none; b=TAZjqAg5/7nnai4ByP4cJVPv8JSnoFFlilL2u5YGK6GEN8RNumyHbtz3JoqLzpqhGrntS9B2RFYWkEn5MpEA1gE/fO9929b/FqsnMAt292PX65vlAg4N7Yb9PG3ycSDu3Yuw03nGfkYz/sqTcz7JvY/pMcWbOz8BVZLD/r1vOSA=
+	t=1740671595; cv=none; b=NY8aYQRJbKpeSwWzERHXxld/FWEGbHuBZguRiu94Zy9ohMMf7ALEdfC+s8TxOy6fpGJtWrkclLLZLCJwh7eqfdxFWejexOYSqmtmYXRl8GOvPTeU1x/S+gKWcgTkEyhzfBj0vtb73xSpRG8371ibrkdMYYUXXwsjuFi+KvA1gs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671569; c=relaxed/simple;
-	bh=ZpjANrkvsSnHCk6h/AbL6jM93e39NH50QwlC+ZXsiUo=;
+	s=arc-20240116; t=1740671595; c=relaxed/simple;
+	bh=cp3KlP5kz8uShLGylSzqchQUQS7t4AEaR6YGK7e5dDw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyV/2W3VHvz6NzR5HwItiR3xwQgWzO1EdRuAk9ga+e+WyDtZaQI4KSyErfuvwiituxUHvfftOb/EwlUcvWqW4HQQpWmv8mUVjFAcWONMctKZ82NVOP2vNh32A5EjX+P6HWv+qoNUq4f23BlSCrOV5KAbgRwPHI38HTNZsdjdVrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pRcKd7+N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R8ftHx011791;
-	Thu, 27 Feb 2025 15:52:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6tGP+sqFgniXRjVGKZE3XbgZS6XrIMuMCDwtYl/eIWM=; b=pRcKd7+NwptSfZYQ
-	5PSLP5t49P8ElMD6P5MbL6wqCHgJKSqy7kIGnAee7Doz2rfUNz8PmnRhdLKqQFps
-	v9yb9dPuLXxsuMYYGlNQuPRKnXvjXmNMsx61JdpAI+7zP0zGpM1ZJccvaN9MUqzQ
-	fOeuDuwRfL9rnNmMRuGQWyBizgqxzx4H222OeV/ksT9K7RIDZUyMqyqk3nO3VB+K
-	A6XwhcnTGm8HhZnLqSKfxRG3WZK4k5GyW4GmJPsXcnzDKWgSBD8sgWnKZsBZqmvc
-	X4HDX3g2L/MbeITyFt1OrRcatXPhkMAxMSDH/z2zK73FHXfkKMuCGvESnyS8GGAS
-	1n3YLg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prke88e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 15:52:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51RFqhZT029927
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 15:52:43 GMT
-Received: from 0d558f49c4ed.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Feb 2025 07:52:38 -0800
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Jeff Johnson
-	<jeff.johnson@oss.qualcomm.com>,
-        Mike Tipton <mdtipton@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Raviteja Laggyshetty
-	<quic_rlaggysh@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V9 1/7] dt-bindings: interconnect: Add EPSS L3 compatible for SA8775P
-Date: Thu, 27 Feb 2025 15:52:07 +0000
-Message-ID: <20250227155213.404-2-quic_rlaggysh@quicinc.com>
+	 MIME-Version:Content-Type; b=NEm0VZ5MVq7u/l/1bzceQiBhBdiYSJ+f5ti81WYThYVaP9UUEt9GN6DtAPLKf49Yjk9ocEsmY4XLCtXCcF2OGAp8/+aQfuTMvBatMDEAe4ha1fZtNKbuQqGL/uvjSVnY3lAXoTt9Op3ZE5HOqhTcI7RSWqi8VftJCeYqMzh/TnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=GHono95o; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740671594; x=1772207594;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=cp3KlP5kz8uShLGylSzqchQUQS7t4AEaR6YGK7e5dDw=;
+  b=GHono95oKgFdg+QERy6LNIHuFIEi+UTB4v8ZEFys8gl2+2V1QA6pASVO
+   +JLLGgoKa9PKN4IOs5jW+qqgHG2PwquhcxvPNXy0XpBoUeRGhTDwwbP9C
+   ymniWpm+0EKR3HjruK+TgGVk53TNFwuHxlzhMo/fWWo2UW8TbmwmmBcrZ
+   h9ecBdNku5jqhM2KTBrHCtucKfNn06LqYZQ+gj98sCqP3spem7/YxJF1S
+   tBihSsKIztD+ThyCzumwvfoOp50vyT6cYBb9ohewB6j1+Ch3Re1zgyIJH
+   7Ywyky1dRPx+3Fu3oWkmfXB+0wb0vrf7BS5q20M+C92jqXkJeNzIbOB0X
+   w==;
+X-CSE-ConnectionGUID: xBkIAngZQVSwQhIMCQbtUA==
+X-CSE-MsgGUID: dQw/PgHsT4ugpCXfq8lnRQ==
+X-IronPort-AV: E=Sophos;i="6.13,320,1732604400"; 
+   d="scan'208";a="38638186"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Feb 2025 08:53:00 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 27 Feb 2025 08:52:47 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 27 Feb 2025 08:52:47 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <claudiu.beznea@tuxon.dev>, <sre@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<p.zabel@pengutronix.de>
+CC: <linux@armlinux.org.uk>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-rtc@vger.kernel.org>, "Ryan
+ Wanner" <Ryan.Wanner@microchip.com>
+Subject: [PATCH v3 21/21] ARM: dts: microchip: sama7d65: Add RTT timer to curiosity board
+Date: Thu, 27 Feb 2025 08:52:08 -0700
+Message-ID: <f00b44b41ff12948d33adc4987983d7d6619759d.1740671156.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
-References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
+In-Reply-To: <cover.1740671156.git.Ryan.Wanner@microchip.com>
+References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,48 +80,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4Bj7UTujf7BUmlp1hsQ5VJYSf_i6PX44
-X-Proofpoint-ORIG-GUID: 4Bj7UTujf7BUmlp1hsQ5VJYSf_i6PX44
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 lowpriorityscore=0 phishscore=0 clxscore=1011 malwarescore=0
- impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270120
 
-Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
-SA8775P SoCs.
-The L3 instance on the SA8775P SoC is similar to those on SoCs
-like SM8250 and SC7280. These SoCs use the PERF register instead
-of L3_REG for programming the performance level, which is managed
-in the data associated with the target-specific compatibles.
-Since the hardware remains the same across all EPSS-supporting SoCs,
-the generic compatible is retained for all SoCs.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Add RTT timer with backup register for SAMA7D65_Curiosity board.
+
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-index 4ac0863205b3..cd4bb912e0dc 100644
---- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-+++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-@@ -28,6 +28,7 @@ properties:
-           - const: qcom,osm-l3
-       - items:
-           - enum:
-+              - qcom,sa8775p-epss-l3
-               - qcom,sc7280-epss-l3
-               - qcom,sc8280xp-epss-l3
-               - qcom,sm6375-cpucp-l3
+diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+index 30fdc4f55a3b..3105fe1766c3 100644
+--- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
++++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+@@ -141,6 +141,10 @@ pinctrl_uart6_default: uart6-default {
+ 	};
+ };
+ 
++&rtt {
++	atmel,rtt-rtc-time-reg = <&gpbr 0x0>;
++};
++
+ &sdmmc1 {
+ 	bus-width = <4>;
+ 	pinctrl-names = "default";
 -- 
 2.43.0
 
