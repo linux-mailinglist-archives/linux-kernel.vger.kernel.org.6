@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-536345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500C0A47E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:00:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E79DA47E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF6B3B30F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:00:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767507A6178
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FBA22CBC9;
-	Thu, 27 Feb 2025 13:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B08222E3E6;
+	Thu, 27 Feb 2025 13:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLuFVM23"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxxeGOBQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E3621ABBE
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE17B1662EF;
+	Thu, 27 Feb 2025 13:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661211; cv=none; b=mCcptEeZJoycF2nx5c5eH6XJBt5vcMjOpHiGjkX/t39qX4bOx2qdftn9bvtd7u1tKXtoyU3ZmfSbj1GQI324m+bvGnyOzYO21rsaR13Gi6UiUZuk2qMRn3NESyW9FpESQ80dO+jZPpxC/U3jU5xLZWQxUEKRAcQE55Ik30ilVWI=
+	t=1740661267; cv=none; b=SOShBZ0fNPjbYAexURfFR0m58R/tMlOgqc2SLavSK5FXUdCgBql4jtvASrEkbeeXd4B2RwpLa6YL4sReIxmYC6U+pfuKd4CFXP06e4QeLEEVddd5MPweoEbDg/dcsJtoRgHSsKktblOSZm2kcF/e9jfnPBAVt6AhnWIB6Id8wCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661211; c=relaxed/simple;
-	bh=XrLSTN02dFRcO/fXv16CTFH33qJLSqpqFHueqwiFOZw=;
+	s=arc-20240116; t=1740661267; c=relaxed/simple;
+	bh=z3pintefSsyMkJnMeutqAQeGN0565pFuBIHnnkujcy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HD6HPpHoDC+OabLob5FDhT6kTlGnHKETXYpTVFB1urrupDrqDMBRhsAe15gtIgNGFn/m/t4JWjCAmylefzXuKW212Dg3vdOYq1KXEWmK0bixhHBjqQB62/AO933cXrV0zAl3GkMnSssAtSoxCW+QRrdwWj4gz+Dr2m/Kwb+Z1H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLuFVM23; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D06C4CEDD;
-	Thu, 27 Feb 2025 13:00:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2pHVRYdfwj66VTqRuLHFKUzfTBcvF5ycbL/L9KmQNEBl/DAwTffTb5jsidQDPRocSzYzueSbj9FFJ+rA6/Dj1chQgFrUaYfYkKsyGirymDyELzRdDkgIWOctU2uww2w6+XkNoei4Xo/YMUhzUg43Ll8oP6RxXOfn+u29G7yc/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxxeGOBQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BE29C4CEDD;
+	Thu, 27 Feb 2025 13:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740661210;
-	bh=XrLSTN02dFRcO/fXv16CTFH33qJLSqpqFHueqwiFOZw=;
+	s=k20201202; t=1740661267;
+	bh=z3pintefSsyMkJnMeutqAQeGN0565pFuBIHnnkujcy0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZLuFVM23k0MYwthMW45SEF7SBL3/Ow9d7isJ3kC40fbPZ39d72tP3ysdiszNo+ggM
-	 MHy5i2pHL61WX+YXyX/1Ad7StUOg7Tb2NIv1lbQZfyaWryfJjaka5ezzokdkc9M4zH
-	 8f3Vj50nAE7wpOd4LQzfZWLBCJx9+VuX0NcIVDr97my2w26DtFJwN9QsVKimsaxRsj
-	 mKGjhm3nSfGWJb2DXUPZ2eJvNRduwqutnRI4dZSZ2hRYaHfJtXiWOi9dXQqrcejKWH
-	 zH6du15wY8RlAAEz2cQh+dFInMda9jLiox6SnkITFBLH9DRcabIY57vIg+u/NnQST4
-	 2fLgN9xRhAyeQ==
-Date: Thu, 27 Feb 2025 14:00:00 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Yu-Chun Lin <eleanor15x@gmail.com>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/bootflag: Replace open-coded parity calculation with
- parity8()
-Message-ID: <Z8Bh0BQssbZZQxeT@gmail.com>
-References: <20250227125616.2253774-1-ubizjak@gmail.com>
+	b=SxxeGOBQmK/Y9Kq7U7tKvhyyWjftGn0Bg1abgzVLRSOacxVxMqhw+81PX6sf2wR6p
+	 eU4dfmmOw06WTOIHDMiz/2NXuqPlDgjvpF5t/ShIYgwKo4cYG+X+UMVa7vh66zrN3C
+	 HpYGB/5AQjfAMwkA6P+mzyEaWx+9iuUVuRB8Mdxxjxk9A9WeXKXsqeIUqJY+6mrBmG
+	 VZy13hApBt/SwUW1FWGl/+1gyABkw2bIw879y/AqC3kSILlTBwLcEAuFWcF+cKdOoO
+	 L02i4z0Rp/WPHtkbqozzjO7ietU0QBuW2iGBKn21X/KR6f59oRBOi/kNmECN2f9Vv/
+	 OqaaVEWRDDeLg==
+Date: Thu, 27 Feb 2025 07:01:05 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>, kernel-team@android.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-hardening@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Kees Cook <kees@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Will McVicker <willmcvicker@google.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: gpio: add max77759 binding
+Message-ID: <174066126476.1782541.10525442176806771329.robh@kernel.org>
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
+ <20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250227125616.2253774-1-ubizjak@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250226-max77759-mfd-v2-1-a65ebe2bc0a9@linaro.org>
 
 
-* Uros Bizjak <ubizjak@gmail.com> wrote:
-
-> Refactor parity calculations to use the standard parity8() helper. This
-> change eliminates redundant implementations and improves code
-> efficiency.
+On Wed, 26 Feb 2025 17:51:20 +0000, André Draszik wrote:
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
 > 
-> [ubizjak: Updated the patch to apply to the current source.]
+> This describes its GPIO module.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
+> ---
+> v2:
+> * drop 'interrupts' property and sort properties alphabetically
+> ---
+>  .../bindings/gpio/maxim,max77759-gpio.yaml         | 44 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 +++
+>  2 files changed, 50 insertions(+)
+> 
 
-Please preserve the original From line in these cases - I fixed that 
-up by adding:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-  From: Kuan-Wei Chiu <visitorckw@gmail.com>
-
-Probably the Git rebase/conflict-resolution step made you the author 
-without warning.
-
-Thanks,
-
-	Ingo
 
