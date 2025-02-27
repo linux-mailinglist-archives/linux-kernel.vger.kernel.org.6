@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-536633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A3AA48201
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:50:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1564A480CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8377B3A5B5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF88E3AB1DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B39725D1ED;
-	Thu, 27 Feb 2025 14:50:05 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6F5232379
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A801E23315D;
+	Thu, 27 Feb 2025 14:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlwsU0LP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A15642AA1;
+	Thu, 27 Feb 2025 14:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667804; cv=none; b=eAQU3Va+vELAfUkb8FanAe2ofZcY6ul4l9PCNAWXPcJUhL7EUa7kuFR+7xPP0XcxmIorET9Ycgau4xtVHxSE8y0WS4EjCAAQfUGah2SbKAb/k10zJw55blW6KXK8SkZW+wovtkndHLXKO8uTXiBjcxN8LtYYqmm5bPTq5CtaNi4=
+	t=1740665808; cv=none; b=XAzUHLE1VoB1TsY/irVesJu1o5gRLLfInDms19Pl1lbBUqeYgSmnvv9bWbVshg5vL9QauayetomzIan2jwWMfp35yCGcymDcT3m32b4iV38tcKNaU+YFP1wTfOlQRY0v1C8FVQSLNfiO1psIQ4oYV3ezZahUAFqXvDOyL28Uvis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667804; c=relaxed/simple;
-	bh=neRENxf1Lo7oNnqEmZF/Bu+fkuNcBaQkyltD/4I912w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gU9k5lFlPGkgqFylZzR7WWNXMVoWrywkVzYK5AbwwrMNjldBIjFWh+iTBSWqT00CO1rxAOfYRvxrKUt4rmuqcQO8ICdBxBB603Ej39mSlNX4stCPfl3Hvy0o0/Se98bTZe8FMD2+dvgWNP2MG5g52fH2+lhYYdXje5AASojCRwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z3YK96mwzz9sTK;
-	Thu, 27 Feb 2025 15:15:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PdWIFlqYCtlL; Thu, 27 Feb 2025 15:15:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z3YK36WdMz9sSr;
-	Thu, 27 Feb 2025 15:15:35 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CC23B8B78B;
-	Thu, 27 Feb 2025 15:15:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id MJ5KskemWaxm; Thu, 27 Feb 2025 15:15:35 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 72F768B77C;
-	Thu, 27 Feb 2025 15:15:35 +0100 (CET)
-Message-ID: <c68287f7-ad00-46fc-a92e-06e0c9074139@csgroup.eu>
-Date: Thu, 27 Feb 2025 15:15:35 +0100
+	s=arc-20240116; t=1740665808; c=relaxed/simple;
+	bh=Zli1w6J+6GpdC1pqueDXgdtrSsQiukUHIGExKKQ9BMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCL5HJHHrnSx9evhlR7vcOP+9QtLDaFA+V1MtPhVIwT73fc/wTFjtVua4lxWFMVoJdD4ghd7ZGVZINvB5gkbBqvGwrn+2kXIP3Dmfw3LDbAkrRRcKz3aVC7PzKeRaj7Lk5qXsAg/O+n/GRIG0CfdOWEuTXsdh3ojJXE+wpKGPg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlwsU0LP; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740665806; x=1772201806;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zli1w6J+6GpdC1pqueDXgdtrSsQiukUHIGExKKQ9BMg=;
+  b=BlwsU0LPGQe4L3pgyVu3MRk848HN/gOavasAYUIxtOVZKjCtf7bqsV83
+   lvYvd25GKZQr7o3+eWUGMRvNXO7RCIPlejyqKSJ09rmD6HopDJ+ep6BjP
+   McLo4qk6M6z+en7rA66pRaqn9GcY+kCnY+jTVVG6ae0cGUqF1MgJusM35
+   2OUiRqrANcH3mFBHJNP9vRo782uknuxmc317fmIHJtUceFj1Yp9Lg7nYk
+   v7qmaIS5UswatSe07pGXxAAhGcqW5IVE6hQaznMaVeQqSsgjla7W+ZCrj
+   IU3DmR4dzL8/9xw7XLcrhTLv1aRk2EqqA8N/VGWOnPDDrj5E7se7wOw5m
+   Q==;
+X-CSE-ConnectionGUID: c9EAsjjmRVe54dkdxpL7ug==
+X-CSE-MsgGUID: VEKWu1PMQdG9rDbyBUypcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40794896"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="40794896"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:16:46 -0800
+X-CSE-ConnectionGUID: /S01jM+pSKi6UbhfsOlUwQ==
+X-CSE-MsgGUID: 7e72FeMgSSSMsWC3AOxD6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="121980716"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 27 Feb 2025 06:16:44 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnegq-000DT6-2r;
+	Thu, 27 Feb 2025 14:16:40 +0000
+Date: Thu, 27 Feb 2025 22:15:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	thierry.bultel@linatsea.fr
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v3 08/13] serial: sh-sci: Introduced function pointers
+Message-ID: <202502272135.CkFShaQV-lkp@intel.com>
+References: <20250226130935.3029927-9-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [next-20250226]Build Failure
-To: Michael Kelley <mhklinux@outlook.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Kees Cook <kees@kernel.org>
-References: <adbe8dd1-a725-4811-ae7e-76fe770cf096@linux.vnet.ibm.com>
- <20250227123804.5dd71cef@canb.auug.org.au>
- <14193c98-fb30-4ee8-a19a-fe85d1230d74@csgroup.eu>
- <SN6PR02MB4157A0C1B4F85D8A289E5CE9D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <SN6PR02MB4157A0C1B4F85D8A289E5CE9D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226130935.3029927-9-thierry.bultel.yh@bp.renesas.com>
+
+Hi Thierry,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tty/tty-testing]
+[also build test ERROR on tty/tty-next next-20250227]
+[cannot apply to geert-renesas-drivers/renesas-clk tty/tty-linus geert-renesas-devel/next linus/master v6.14-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Bultel/dt-bindings-clock-Add-cpg-for-the-Renesas-RZ-T2H-SoC/20250226-221033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250226130935.3029927-9-thierry.bultel.yh%40bp.renesas.com
+patch subject: [PATCH v3 08/13] serial: sh-sci: Introduced function pointers
+config: sh-randconfig-001-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272135.CkFShaQV-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272135.CkFShaQV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502272135.CkFShaQV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/tty/serial/sh-sci.c:2918:35: error: 'sci_poll_put_char' undeclared here (not in a function)
+    2918 |         .poll_put_char          = sci_poll_put_char,
+         |                                   ^~~~~~~~~~~~~~~~~
 
 
+vim +/sci_poll_put_char +2918 drivers/tty/serial/sh-sci.c
 
-Le 27/02/2025 à 15:05, Michael Kelley a écrit :
-> From: Christophe Leroy <christophe.leroy@csgroup.eu> Sent: Thursday, February 27, 2025 2:43 AM
->>
->> Le 27/02/2025 à 02:38, Stephen Rothwell a écrit :
->>> Hi Venkat,
->>>
->>> CC Kees Cook for advice.  This is a result of the tests added in commit
->>>
->>>     bbeb38b8487a ("string.h: Validate memtostr*()/strtomem*() arguments more carefully")
->>>
->>> from the kspp tree.
->>>
->>> I note that the comment about memtostr() says "Copy a possibly
->>> non-NUL-term string".
->>
->> Can you tell more about your config and your environment ?
->>
->> I just tested with ppc64_defconfig and ppc64le_defconfig, with gcc 12.4,
->> gcc 13.2 and gcc 14.2 and didn't get that build error.
->>
->> Christophe
-> 
-> FWIW, I see the same build failures related to __must_be_noncstr()
-> when building natively on x86 and on arm64. In both cases, it's an
-> Ubuntu 20.04 installation with gcc 9.4.0 and binutils 2.34.
-> 
+  2911	
+  2912	static const struct sci_port_ops sci_port_ops = {
+  2913		.read_reg		= sci_serial_in,
+  2914		.write_reg		= sci_serial_out,
+  2915		.clear_SCxSR		= sci_clear_SCxSR,
+  2916		.transmit_chars		= sci_transmit_chars,
+  2917		.receive_chars		= sci_receive_chars,
+> 2918		.poll_put_char		= sci_poll_put_char,
+  2919		.set_rtrg		= scif_set_rtrg,
+  2920		.rtrg_enabled		= scif_rtrg_enabled,
+  2921		.shutdown_complete	= sci_shutdown_complete,
+  2922		.prepare_console_write	= sci_prepare_console_write,
+  2923		.console_save		= sci_console_save,
+  2924		.console_restore	= sci_console_restore,
+  2925		.suspend_regs_size	= sci_suspend_regs_size,
+  2926	};
+  2927	
 
-Looks like I get that problem only with GCC 8.5 and GCC 9.5.
-
-I don't get it with gcc 10.3 nor 11.3 nor 12.4 nor 13.2 nor 14.2
-I don't get it either with gcc 5.5 or 7.5
-
-Christophe
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
