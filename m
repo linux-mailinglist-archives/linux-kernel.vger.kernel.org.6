@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-536657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743A8A482B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:17:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF8CA482BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187C91629E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A08166600
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B098D2356D2;
-	Thu, 27 Feb 2025 15:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4345126A0E9;
+	Thu, 27 Feb 2025 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUFP87Dt"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUiMJRgS"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5109725CC95
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC5B25EF95;
+	Thu, 27 Feb 2025 15:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669100; cv=none; b=TZ7v39EJLybxLiy0wRtJgCmpBg9OXkzh74hrX0eIgVkVev+LqwAvWWwx/9MetafkM3Z/+jUDmvY1qmt2nS+Pfp9/ERv/hLk4i+z2St0IRpTWmbMAQOOmMMYPmVIdpG9AM1iqFcT3+kgu/fI46IMkY9w768Y/q7LBD+UMUxHhag8=
+	t=1740669136; cv=none; b=nqaqfYS+C2xY/jfPY2r0IA/t+uCLiAWpv0jvZ+4PFFnk3mZ1H3LmZPp5h/eVjMXxYdQcwWX1by84Jz7fHxo3mwn7EbDAIrAJao1w5U2Kd4I2WxIDFugLQbRuOjo9nhSo+vYL6xgJHaUf8OBVOVDjOFr6sShigFMfVNKbnnwhTnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669100; c=relaxed/simple;
-	bh=44BNYiLW2yCxONzcBxyBR7IADrkxuDTkruh9GOEQ0ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTgTvGX+v7tut3eWuLMLkvZEHBHmfXdVe82rYJNcV1GxjXpr6MMcBur8znxeN6+f8EYunoWVYjqdwO0NZD1qrhy//Fsz5EuXxrpJHqRgIIf1NKk/r5rz92bUwD6qddNig6p4T5/ruKNsX0hjvK0znlQuB6XVng0xHBCuJdJ1Bz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HUFP87Dt; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30a69c1a8d3so12151841fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:11:37 -0800 (PST)
+	s=arc-20240116; t=1740669136; c=relaxed/simple;
+	bh=hJrwlkkUVzio2wpaktL0L/Hd3mV1lQuzrfSl9WaxFYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZEo2MwDsthTWq7UTsq/Z77aRE2njcjDuPPv+Tzi3YaM9EaeiCCo3mata46c7CVP//9Q5ilnUIx/aHWn/0+0OjpVzwKO4KPBJAK/7lOTRxoQdGIaBGnY5n9QbieH7TVaMpu3HN+PIrE0pLmlD9dpjvWYWazTRCreEdoCJDVwcSy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUiMJRgS; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30b8f0c514cso436841fa.2;
+        Thu, 27 Feb 2025 07:12:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740669096; x=1741273896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+t6Tt0jg0KxPZB1LakHJIKAhXRLp/GXu0dW03Mj8Cwo=;
-        b=HUFP87DtG5S7EZtQzX8Cjegv3hPOwOBNRbcQQTozETOtBvwfTBbp1o5uOjlJhrxoip
-         +jY9VjlDCXKeEGWRl71rQW8OsmpyEpQ/hBA7JefYCsXQiGXyb9RvfOBcEBTxWj6AExKD
-         MOCl17/0YxbPFVxlfPWIDHL+DReP0U3wYrGspRDzel5DBLuKowBxx7xwE1gQEUVXrtyl
-         /7ikhJC4gOpvE6Ieg12l+nd6f8xHHyRyVoWoJK9u2iCAT0+L8vNL6OeSiDzFkj2ngkEI
-         8HZuFxwWx9P/ewIdlGhABDABc9RXnVcemAtNep2aNuX+5YO+HgzS5cUI18iKMWW3lZWn
-         CzUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740669096; x=1741273896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740669133; x=1741273933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+t6Tt0jg0KxPZB1LakHJIKAhXRLp/GXu0dW03Mj8Cwo=;
-        b=vyy1pr+Exij1jzfUMoUMdREFzTQKoPylNj6+1a/E00cDjuTZmIZ+vt6c4tcB5TD3SJ
-         YDM6JnH7hvwsRYxzabCJqNLCbmCuys6LVGNGwzDsXl3sPS+IbBgh6gw2DEdKjNvJrj85
-         EW0zJ0C6BdeKMDLZTTeQN1xKHBYQVMlEgNEu8rsIAWA4i0YRbPBBvRFiMdzQgrF3aZ4x
-         vx9EIaVypb+2OunLAo0LMiWudcBO8kvYSougnqMQ6P2TrcRll9YxfuYP28dHhimHGCi3
-         I7wdt4uQNc9sJmcPXnp37g2tBpFi1G3DURnc4r72n86tm5Phth6sfUpO4gri/uPRs8Bn
-         zMMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUedHYgkanvVGjouMcftmIhjavDcX+biTin6jMAw2CdWxQeb9AZygDyZkVpaVWY3p9SGHF1edtXY0jmAVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRALKVzmL4lEZVjWbAPtWjUfl+hC+m3zAV2PCFixOd6XB4LNne
-	J87anuOCJmsgNT5pc1+KaaxCGkvmQUILZB5sCAjGKBOQrmXr01rUdLt5DTZwkUbu99/gP254yTd
-	xW4M=
-X-Gm-Gg: ASbGnctzvfVujLhR4/XUnHfjHinM8VH4Z6px0HtpCRB1/rlCe5GwOGxg4BKyH1avtql
-	RbCkjNGgkc/eavLjTL73IE75e+rZb6r5Uc+eaYv8KT/VpqNSfX2yRTvy9dWySrARv1sTssaAA4g
-	ZkV99hBXf5HKmeum5Z7KrLRLP3Dou7s0JQSObmtqa4V2Tgyn8YxghYgSg9i/7nYUdnAlNBvWyAQ
-	wdn+jFsOHHWkuSh7BfdpLpDZ+11wwmysj8n1Wvxzu64ksbbeep2nwYd+QzynNh0F34OmLqJl6Fy
-	Q+W1Hdud7qDjOl4cjlJUitZcXi8ALqMgd8kbfHJgV+0RT/9VI6FLvfq4tTXtKEd9E8PuYAxSuvd
-	Xbz/haw==
-X-Google-Smtp-Source: AGHT+IGgnwEjREgD/grYv1CY7G2mqND2p+JVQ6PM1HUjMevqU6xFcdofK3dLNsfRSqBL6gSR90jkvw==
-X-Received: by 2002:a05:6512:6ce:b0:545:441:52d2 with SMTP id 2adb3069b0e04-54838ef4c73mr13673229e87.23.1740669096378;
-        Thu, 27 Feb 2025 07:11:36 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417a491sm182907e87.78.2025.02.27.07.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 07:11:35 -0800 (PST)
-Date: Thu, 27 Feb 2025 17:11:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sm8650: switch to
- interrupt-cells 4 to add PPI partitions
-Message-ID: <fdlsw6mctzfutashmlve7eubgbx6nfzwsft2mnslmgsdrrwuve@pudlwja2y6g5>
-References: <20250227-topic-sm8650-pmu-ppi-partition-v2-0-b93006a65037@linaro.org>
- <20250227-topic-sm8650-pmu-ppi-partition-v2-1-b93006a65037@linaro.org>
+        bh=Gfn+uCBojQ5GG4YhEtPCwqVqkPReqrK18jN+sTrUXsk=;
+        b=lUiMJRgSpkQZ7I87tRjErpeTY1z+fGGtk10HXB5a+HWt9JDZ523VdnxWOgWzZzxjO1
+         g2WOAQRnb26oA7313QBQMBQpJqXwMODMu7yW86aN9YvMjzFbSve1Z3ZIf9XocngaMXMA
+         pYyDebv2jskc4SraENyk+KuP2uxMtmdK46G2yUgh/ANpZDm+2oBoGbhx4lM0XwdCyc1J
+         iswTmrEd3CTXaIygZYf467iZLRhTAa0OrhFO8czAooPaKpks2LffB/3bAXNAFmpfrJQ9
+         gamVSb/qcIWWFC8SGZy/dKneWEkkyWmgkCcwzehrSX4E1zaNiUYk+YJcVhANinTPTjf3
+         lmFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740669133; x=1741273933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gfn+uCBojQ5GG4YhEtPCwqVqkPReqrK18jN+sTrUXsk=;
+        b=LSiEu8UJ4tFRHWtlTaJwjB7mLumz4/fsfeK0etROh9YMMabRiyOQRPoeA+uULprhxc
+         Qx7AdDzwNtS4ncj6SYFzdl+A4dwxbY7tTMulRvYzpdLH96xZnjYmBFfyZgaJdT3ENWrL
+         ki9aM5dkx4E6bEglT0DA5+Xw93kWlhkTyKRns+DdYFVmdQf4Bf8lvahl94YN7cpblkm9
+         pWaP2EQ2r6lcnougOe45siWZcaBOvqF11oMTFb7zrnU6HjbYe4poT9fNCPf3hAPM9nii
+         keaVE3t1pM9qTttCJhe9WBzfPhF6/xLJ16T+KtOmRuDGF0Mpdb+Wwmuq2+DDPsALX6Rs
+         xQiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOlMQZ0ozgYPEEXwVfsZI3GtUAOvhqS5QmSwR9xK/YHACRPqtVe7M+RK0K8Bc/oeYXVRh7ugFIb/yzZ5E=@vger.kernel.org, AJvYcCUzBWJ0CojA573awJ+kCHsL/feLc7CSeo1eLIHgC/Rl13in0Njtj2B8k8eLThKKw1UYWoo6T0fit0y4Vw7qyVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZiU0DifDiyEytOYuTG0kZ/gpqGGzW3+EtcZbwXfqIqJkRfInI
+	4Ho88yXWaKPz660HfOwUaGGeh064FuDz8qKrMgrh9Xls+NSuC06vHd0kz7WMMca8QE0TyWshLQR
+	QhEJ4R0BBsdatxKd6FXQiPVPKTrY=
+X-Gm-Gg: ASbGncuYhTbGFM630PNcmUxasPQgRVl0cUPnBUUhY+C1vXpR7biLoKK32x/SnrQ2er7
+	WOTYvHNDzlJHY7UhzDmTNhYSn+3fTDL659m1YGESVnoskb0xtikqMzG3hEXRm2GeCl237p8wNFB
+	Tg51od81vO
+X-Google-Smtp-Source: AGHT+IFYBk+YziZEk93I++dkzEEbDPv17C0AA2w6xghnGW4Zz4shpUZmiwyGABiKGPFGjhTpVLPMBVow9YrGLugSLhU=
+X-Received: by 2002:a05:6512:15a9:b0:540:1f75:1b05 with SMTP id
+ 2adb3069b0e04-5493c57ab8amr5115849e87.19.1740669132707; Thu, 27 Feb 2025
+ 07:12:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227-topic-sm8650-pmu-ppi-partition-v2-1-b93006a65037@linaro.org>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAFJgqgREAj-eP-d244WpqO-9H48ajZh83AxE31GqoONZ=DJe-g@mail.gmail.com>
+ <CAH5fLghEMtT663SNogAGad-qk7umefGeBKbm+QjKKzoskjOubw@mail.gmail.com>
+ <CAFJgqgRxfTVxrWja=ZW=mTj1ShPE5s-atAqxzMOq5poajMh=4A@mail.gmail.com>
+ <91dbba64-ade3-4e46-854e-87cd9ecaa689@ralfj.de> <CAFJgqgTTgy=yae68AE29oJQc7Bi+NvkgsrBtOkVUvRt1O0GzSQ@mail.gmail.com>
+ <6983015e-4d6a-44d4-9f2e-203688263018@ralfj.de> <CAFJgqgTJ+GBvdkZf4bPHPoUgJj5ZzENZaLzVV2bnDOEG+3OMtw@mail.gmail.com>
+ <7ab2de35-8fc8-42cf-9464-81384e227dba@ralfj.de>
+In-Reply-To: <7ab2de35-8fc8-42cf-9464-81384e227dba@ralfj.de>
+From: Ventura Jack <venturajack85@gmail.com>
+Date: Thu, 27 Feb 2025 08:11:59 -0700
+X-Gm-Features: AQ5f1JofZL_Q1A2kDOrsV-NIHTRm574zSmREXnrOEzf8tZhCp6mWng88DDVecc8
+Message-ID: <CAFJgqgTeq0Zer8b1Dk0D2Cvo3t5BUTqxh_7OF7eCkLtjmm8Mcg@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Ralf Jung <post@ralfj.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 10:04:39AM +0100, Neil Armstrong wrote:
-> The ARM PMUs shares the same per-cpu (PPI) interrupt, so we need to switch
-> to interrupt-cells = <4> in the GIC node to allow adding an interrupt
-> partition map phandle as the 4th cell value for GIC_PPI interrupts.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8650.dtsi | 542 +++++++++++++++++------------------
->  1 file changed, 271 insertions(+), 271 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index de960bcaf3ccf6e2be47bf63a02effbfb75241bf..273170a2e9499b900b3348307f13c9bc1a9a7345 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -1417,17 +1417,17 @@ opp-3302400000 {
->  
->  	pmu-a520 {
->  		compatible = "arm,cortex-a520-pmu";
-> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
+On Wed, Feb 26, 2025 at 2:39=E2=80=AFPM Ralf Jung <post@ralfj.de> wrote:
+> > On the other hand, RefinedRust reuses code from Miri.
+>
+> No, it does not use code from Miri, it is based on RustBelt -- my PhD the=
+sis
+> where I formalized a (rather abstract) version of the borrow checker in C=
+oq/Rocq
+> (i.e., in a tool for machine-checked proofs) and manually proved some pie=
+ces of
+> small but tricky unsafe code to be sound.
 
-Why are you changing the interrupt type? Should that be coming as a part
-of the next patch?
+I see, the reason why I claimed it was because
 
->  	};
->  
->  	pmu-a720 {
->  		compatible = "arm,cortex-a720-pmu";
-> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
->  	};
->  
->  	pmu-x4 {
->  		compatible = "arm,cortex-x4-pmu";
-> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
->  	};
->  
->  	psci {
+    https://gitlab.mpi-sws.org/lgaeher/refinedrust-dev
+        "We currently re-use code from the following projects:
+        miri: https://github.com/rust-lang/miri (under the MIT license)"
 
--- 
-With best wishes
-Dmitry
+but that code might be from RustBelt as you say, or maybe some
+less relevant code, I am guessing.
+
+Best, VJ.
 
