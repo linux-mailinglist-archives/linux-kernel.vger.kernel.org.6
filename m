@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-535818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A1CA4779B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:20:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FCCA4779D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B553A5DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28BE0162649
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3B3221DB0;
-	Thu, 27 Feb 2025 08:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411B41E5721;
+	Thu, 27 Feb 2025 08:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jno52Y+p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VrHzvZqp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A0DA59;
-	Thu, 27 Feb 2025 08:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3740FA59
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644451; cv=none; b=qkhu4ierUXwtjGvxamg8GdkSx+Kcc5Kh6+NExdNBwfPXJ7moNsOUP8FPPQ481DAC5OGE1HiqsrFgUdCOwB/R3sgkoHXT9dK3lcL50/StB/+aoCDi6yQlHXGdTogrsnkQkp6ipIYmAmYLYFW3BrLaIDjwO5iISBHKp4oX4SevBlc=
+	t=1740644470; cv=none; b=Cac9I5zSyvO2FOEb5P/zhK/lD9my/x7ZcizCYJg8tUUjz9ySJGMHh7y0QaA67I1XdtX6UMxWhZP/qLHPksoNa4DmXkRJ0rsd2fiXngGLTDEs5UExGuSg8EfLgh5d4Zg3AVcyWZU5ARGWlm8DUsUAbkpGEATgnXkrjIEpFSUBqD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644451; c=relaxed/simple;
-	bh=4ffz2MO6+Bn9pTFZqNJARYS9yBa3M1fEfZf1jWfeuZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZTgIT9CF9rTJgWSLn0aOxWkf18hUbuwuR8zr0OyK1yywCcH8UYpSKmpQ2GAzRdxpbOvKYuLALLzd9c3R3xUy2u1jG4uztRDib33TenQAZM502ldCtmjCwY0vvz1M4Hrnn49+ynkS2MvZ0/zF5nibQCDxAPZJaNfm2FObAv8rPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jno52Y+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3790C4CEDD;
-	Thu, 27 Feb 2025 08:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740644451;
-	bh=4ffz2MO6+Bn9pTFZqNJARYS9yBa3M1fEfZf1jWfeuZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jno52Y+p0y0rkxxqKEwyjRQtikEA+nCRBI1ijB/0h3csf9VeX2Ga3bz6B6CH8eQcf
-	 X6dXc/bA38gFwQ8u5XgycUufL3J2HAFQMrziO3fpnCSRFZbFO0T2ZF+Up0MUweuKpX
-	 vxr/YGicslV0+tQ6a46KJp+JQaYeb4kBre+N1fY68mLwlK41NzFeiukSt5cSh1ME1S
-	 sE1B/3popzwjPDoOLOLtg4PlcEI++MHSisxtC6OmwazZgW/LkOgblKhfOT2AOBfS+q
-	 qS2oTmvlO6Gkue+fGTTlvmmm0r5MwfpdmTgqZSIaMOrSKHJC7jI5oH5Hpkm4bU8l0r
-	 aH61UBq4yk1pw==
-Date: Thu, 27 Feb 2025 00:20:49 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Andi Kleen <ak@linux.intel.com>, Chun-Tse Shao <ctshao@google.com>,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, terrelln@fb.com,
-	leo.yan@arm.com, dvyukov@google.com, james.clark@linaro.org,
-	christophe.leroy@csgroup.eu, ben.gainey@arm.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf record: Add 8-byte aligned event type
- PERF_RECORD_COMPRESSED2
-Message-ID: <Z8AgYUnNkSA_Q36F@google.com>
-References: <20250227053738.788153-1-ctshao@google.com>
- <Z8AAcZXtuD7O3TAV@tassilo>
- <CAP-5=fU4rVkTS07Uq8g9roO4kXq_z2R0CgMX55YFXFWMHzWTGw@mail.gmail.com>
+	s=arc-20240116; t=1740644470; c=relaxed/simple;
+	bh=tKJ+yth8ev19KlGJZ3+pzqr1l9cZRFzf8DLc14xlgJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GOdX/3k5lGPSXYz4rAStqszcAVr6cfAfDrKdFsi6ETF7dgGJM6DHqyR8RzYVMnOkNDtbarpGR3z49Ld4eDEbD/T/z9BJp62yD+cyP4gneIpqpLUZuft10UDqtuqH7ISz+GYW7O6toyuq+SqatPICcDIJbNWAEY8EE++bTlf5R84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VrHzvZqp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740644465;
+	bh=tKJ+yth8ev19KlGJZ3+pzqr1l9cZRFzf8DLc14xlgJA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VrHzvZqpiKxDs8wkCmp53jU7ntvOlrol9fnucm/GnSGSZwdJmccY8Ml+ltBwnKmSE
+	 fiQx918TruV7AWqfiiODKtaten/2SVvmqnto8lBZkGLSqqdcBPbHTc/acuVu+mqj58
+	 PqMvaWUSBkqusWqwlwiLYgTvRoT9n0/Rd2sm+YB865Xey7mP7AwBpmB29KeUIb2f/L
+	 DU/OTmgJmnXt0RfxqA10y8g9Gq+4GmsSGOLi3tFvyJFfZIhphUI27j5R99eG+O39vQ
+	 Y/ISAV38gxFCqKfFJj7wT7WembEaetVaHk8qrBgDN2D1PtUTm19alNuxNwh8t/PgZH
+	 efJ9WSLlNlzPw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BDAFE17E0605;
+	Thu, 27 Feb 2025 09:21:04 +0100 (CET)
+Date: Thu, 27 Feb 2025 09:21:00 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [RFC PATCH 1/4] drm/panfrost: Use
+ GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
+Message-ID: <20250227092100.7e9dfca1@collabora.com>
+In-Reply-To: <20250226183043.140773-2-ariel.dalessandro@collabora.com>
+References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
+	<20250226183043.140773-2-ariel.dalessandro@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU4rVkTS07Uq8g9roO4kXq_z2R0CgMX55YFXFWMHzWTGw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 10:20:36PM -0800, Ian Rogers wrote:
-> On Wed, Feb 26, 2025 at 10:04 PM Andi Kleen <ak@linux.intel.com> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 09:34:06PM -0800, Chun-Tse Shao wrote:
-> > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
-> > > asan runtime error:
-> >
-> > It seems pointless. Most architectures have cheap unaligned accesses
-> > these days.
-> >
-> > Just disable that error?
+On Wed, 26 Feb 2025 15:30:40 -0300
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+
+> As done in panthor, define and use these GPU_MMU_FEATURES_* macros,
+> which makes code easier to read and reuse.
 > 
-> The perf_event_header in perf_event.h is:
-> ```
-> struct perf_event_header {
-> __u32 type;
-> __u16 misc;
-> __u16 size;
-> };
-> ```
-> so it is assuming at least 4-byte alignment. 8-byte alignment is
-> assumed in many places in tools/lib/perf/include/perf/event.h. We pad
-> events to ensure the alignment in about 30 places already:
-> ```
-> $ grep -r PERF_ALIGN tools/perf|grep u64|wc -l
-> 32
-> ```
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 
-I vaguely remember that it needs 8 bytes alignment to deal with partial
-mmap-ed data on 32-bit machines so that it can make sure the header is
-not across the mmap boundary.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-Thanks,
-Namhyung
-
-
-> Having sanitizers I think is a must, if we allow unaligned events we'd
-> need to introduce helper functions or memcpys to workaround the
-> unaligned undefined behavior. I think the padding is a less worse
-> alternative and one that was already picked.
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c  | 6 ++++--
+>  drivers/gpu/drm/panfrost/panfrost_regs.h | 2 ++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> Thanks,
-> Ian
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index b91019cd5acb..7df2c8d5b0ae 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -615,6 +615,8 @@ static void panfrost_drm_mm_color_adjust(const struct drm_mm_node *node,
+>  
+>  struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  {
+> +	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
+> +	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
+>  	struct panfrost_mmu *mmu;
+>  
+>  	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
+> @@ -633,8 +635,8 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  
+>  	mmu->pgtbl_cfg = (struct io_pgtable_cfg) {
+>  		.pgsize_bitmap	= SZ_4K | SZ_2M,
+> -		.ias		= FIELD_GET(0xff, pfdev->features.mmu_features),
+> -		.oas		= FIELD_GET(0xff00, pfdev->features.mmu_features),
+> +		.ias		= va_bits,
+> +		.oas		= pa_bits,
+>  		.coherent_walk	= pfdev->coherent,
+>  		.tlb		= &mmu_tlb_ops,
+>  		.iommu_dev	= pfdev->dev,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> index c7bba476ab3f..b5f279a19a08 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> @@ -16,6 +16,8 @@
+>  #define   GROUPS_L2_COHERENT		BIT(0)	/* Cores groups are l2 coherent */
+>  
+>  #define GPU_MMU_FEATURES		0x014	/* (RO) MMU features */
+> +#define  GPU_MMU_FEATURES_VA_BITS(x)	((x) & GENMASK(7, 0))
+> +#define  GPU_MMU_FEATURES_PA_BITS(x)	(((x) >> 8) & GENMASK(7, 0))
+>  #define GPU_AS_PRESENT			0x018	/* (RO) Address space slots present */
+>  #define GPU_JS_PRESENT			0x01C	/* (RO) Job slots present */
+>  
+
 
