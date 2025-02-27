@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-536822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4CCA4847F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:15:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E892DA4849C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A82A47A3337
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEFF3BBA40
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BCC1CD205;
-	Thu, 27 Feb 2025 16:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A7B1DC9B8;
+	Thu, 27 Feb 2025 16:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9jgtNv2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="duYvUfIW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B601A841C;
-	Thu, 27 Feb 2025 16:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850291D90A9;
+	Thu, 27 Feb 2025 16:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672620; cv=none; b=GZG6nq7MrQVo6djmHmGiUP/yZc1RcKotaKvsGdTzZcb8JDU3fbjpqosCjw8t7iqvt9HOKCoXrpSTUS/5uATsfJxTaLZNcP/H+VCfODK+5e2pQOJDRcYerUn3A5fwS2UQFN4xQsN3aBqp050A0pMZanjzpDKNyzmfPUCFF6lHrcg=
+	t=1740672681; cv=none; b=Q6d/QwMPcsd4oKIAKMTN+NufbH38DIx0Xfpdtd89b6qIJsshp+C6ocwNnOawazkT0TzTASMyccBdRiWUAhKb5WWsYjYvIj9C0cHnQu7DXjksMP0s/oZ7Ik+YMWvvSCRX6yRPGD+lfBc6tz75Zwnf/wq8siVpZa4/cePoelA7GlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672620; c=relaxed/simple;
-	bh=YCYZEqDU29mV/oNhQzvKUezViExGkTYP3v0Ttd1er+E=;
+	s=arc-20240116; t=1740672681; c=relaxed/simple;
+	bh=AasfbRxE5RxG0WVQv7bHsR9rMbwQ2B1BEQlbmPOtDd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMGOTR68klGUrH665855e42vUAr2YR1OnlHHwOX3OsKP2nN+5U/XMOHz5g5KKfTQ7yNJoqgd3wKg8v6EAMJ6hywOyAv/uNjSNF+cWhglfpdvX7bXMjVlcx1YGvjzXnr/OEm0nYcEOQqr2DtbLgbXtA31tQtba00zA/twI+FaPRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9jgtNv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 727BDC4CEE7;
-	Thu, 27 Feb 2025 16:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740672619;
-	bh=YCYZEqDU29mV/oNhQzvKUezViExGkTYP3v0Ttd1er+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9jgtNv2TfNW57fbo62ipO3IfdMDTIdaY+Q2mzg4eQ8YdQsp0h/yXw3FkSA8Myfmi
-	 V6d7RW0ZzMYMlsAwg6z3dlyUaiIdZCwtyw3yLiD/au7CHcZTSMl9HP1Ager722NGzk
-	 B3jIc9TGXbZ3SgNkr1tU0bobTT1MwYTyQk+/ABjjOdbdnE4DzqNZOSQpaWJfNlPfii
-	 UheFk+CcWHIroX7zRZOT7vM/PoPJEJ8N0Gyw4ddK6rK2/xzLQ/IOwd+AyuppJeNWKG
-	 2h0UF/GQJLHjn1KsDMfHs96xZT2QERoEWPJ2TfanTIbmAa7dig1BdnJHPPKvmZfUd5
-	 NeNRRvg4anqOw==
-Date: Thu, 27 Feb 2025 16:10:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ASoC: mediatek: mt8188: Fix uninitialized variable
- msk
-Message-ID: <7e26d6f8-a920-4933-9f27-52f08a975acf@sirena.org.uk>
-References: <20250226161847.567160-1-colin.i.king@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZij0nKT1JoobPUEFf3uhQOsfjpBFDySdLn/ipUYpT474wZjAPl3h0mR6OPjkuIPuDzz/ru7V7waiemf1UXrGHe+thVCFCommGvhTVwh26d+W9H1+q6nNqBLCJ2OR7F9ARTkQwlykbvPK5SVMiK2OvFowJwRSpPUgrWe1VzQnTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=duYvUfIW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3R+G0Ru66nijwIA8AzEk+aq6Up3B3H5obO4zwh9G9NA=; b=duYvUfIWSCqtN6b670YA4LrKth
+	eGlyqL7GgZSVYWL+evwmdpGuNk0aPzh3xZ5/fZFAaDaJ+2OTALsIt5o61+yqWv0khg4VSM8gGUORo
+	FbkYrK/F37mhYni+nnVPWHOh7yRD5tgcOE7YLl8L5TB4XCAMBl7hNeaAf/TwE0ey07lQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tngTh-000eCE-MQ; Thu, 27 Feb 2025 17:11:13 +0100
+Date: Thu, 27 Feb 2025 17:11:13 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrei Botila <andrei.botila@oss.nxp.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH 0/3] net: phy: nxp-c45-tja11xx: add support for TJA1121
+ and errata
+Message-ID: <6c37165e-4b8a-41fd-b9c1-9e2b8d39162f@lunn.ch>
+References: <20250227160057.2385803-1-andrei.botila@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pWySIzzNsqHTGnmF"
-Content-Disposition: inline
-In-Reply-To: <20250226161847.567160-1-colin.i.king@gmail.com>
-X-Cookie: Swim at your own risk.
-
-
---pWySIzzNsqHTGnmF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250227160057.2385803-1-andrei.botila@oss.nxp.com>
 
-On Wed, Feb 26, 2025 at 04:18:47PM +0000, Colin Ian King wrote:
-> The variable msk not initialized and is being bit-wise or'd with values
-> in a for-loop, leading to an undefined result. Fix this by initializing
-> msk to zero before the for-loop.
+On Thu, Feb 27, 2025 at 06:00:53PM +0200, Andrei Botila wrote:
+> This patch series adds support for TJA1121 and two errata for latest
+> silicon version of TJA1120 and TJA1121.
 
-Arnd sent a version of this that picked up reviews from the Mediatek
-people so I applied that one, should be fixed in tomorrow's -next.
+Should the errata fixes be back ported to stable for the TJA1120? If
+so, you need to base them on net, and include a Fixes: tag. Adding the
+new device is however net-next material.
 
---pWySIzzNsqHTGnmF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfAjmUACgkQJNaLcl1U
-h9Cs1Af+MSLOz0trHITEydA1HvWLS0Wo5bVckllFyYx804ML5J1ygfDeFai7jkCg
-xvv6G4/0iIDehHzjt6Dgx9QchR7zs1jYHqYB18VHczyC1FmDxAZqsJP8BiLdiZAc
-LmJqP7Ja/AKV38HZ7PRzNumF6+wleFdUFGSFUjTVPeQhY3gBBA6m+/yzt9OsBmnq
-vFaxQQO7gi0K1o/FGNtYrFVvd9M/daCguvavPfHWUFA4CRTc/sMKCEfmxPwTcqQl
-4Qy2pG9lptEg0Z2NWfDyk7eS9lXPZgMae4Ce9OXhQFR8UnLprTGz9xXoQjvGQ7qm
-UhKi612TSq9alxvM1gAim+feYjpyTg==
-=YEY3
------END PGP SIGNATURE-----
-
---pWySIzzNsqHTGnmF--
+	Andrew
 
