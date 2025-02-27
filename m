@@ -1,173 +1,210 @@
-Return-Path: <linux-kernel+bounces-535537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B048A47432
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:16:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EAFA47442
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F17516F27D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:16:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD21B1891197
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9D81EB5D6;
-	Thu, 27 Feb 2025 04:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F701EB5E3;
+	Thu, 27 Feb 2025 04:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NlPO6rBT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NWd8fN+/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802041E5207;
-	Thu, 27 Feb 2025 04:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7CA1D63CD
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740629579; cv=none; b=ezPN6aytkKAD9HNizceUqYK5b2N1ztBc+kLxqZWYDiNcUIjt059NMdrOZLsKqEZC5eVI8L3dqY02GGiGa3Z0P+BmTaBFJWyuL7YfumjqY2sf70sx8qf4Qb08yqHsga58fxIWzzaAr7Cg7nPqw4nQplLCbg6a+wlzdf+wj53xenw=
+	t=1740629738; cv=none; b=Chi1dXqvBUGwzeH6AOYW8YDHzpLs0lthRCL8rrvSje+9K5LvLt1Z1Agog6oebSJGrpBeE0pFSQ4ltHCX7uyIK9+A1pkx+YMWrA1Rf4ylVpHh8++CLLzCpAibuM8+pbp6MBot6hR+6532LjZLsxePvBHKZ8iMJISb9XjFLTRH6JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740629579; c=relaxed/simple;
-	bh=7hNfSdaBpAjAXL4fbQbkNnXkPgT70sZdShzH/VMIpGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Eo6BLaT7IJHMtIPeuiuD+vyWWF6m3VSt1wdULsa4Y2rsxvgNuk+8/p65KARHBlLb+45aNSyEonuk587RjCOlUj2vyzmGvrGaPKq0KMM+CoOt2dzeaSRN+W6//Xhbu7+MRRvv1CHY/6B/TIC1NaRa4zQPbXHQ0Sr6uetb4y3rXFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NlPO6rBT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QKA2VA015807;
-	Thu, 27 Feb 2025 04:12:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CgoBpOnoOrfm1X3xouyNtXTVotFFxXtRzJZgZUINa78=; b=NlPO6rBTcG7IAcEX
-	7dtDvvAmI9C/82B3NXFZ0zq+40hnSKBGFyGXunJhNvjaNiMtyWpCIn7ThULJ7lRV
-	pj0Py/rIzHH6NRjWXUWgsSykL3sVjsaHMZypMCsjpWt6ykBImaUk9hrbUPLtf+Vz
-	CxoykuRoMJ6eyhEZHp8vLpBXsNauceqJlT1/wKV8pVy8KZiYGV95geCiAFNhUFIl
-	Xg+tIStdB01sv2ohoa/CWhlhSvGzrGhKNUiojL3HxV2AD6kn3UFTZ8YHS/mHgoJf
-	BWnpZxR9KiWc2/tvMWQRVfAf0ZtQPRd2zrRXVsEJxoKVsVB7hy5BpYPFl1ka7kmZ
-	ndgsEg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prnm7u0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 04:12:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R4Cjcm016903
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 04:12:45 GMT
-Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
- 2025 20:12:42 -0800
-Message-ID: <72cc2c52-1d0d-4a60-93da-14acd5947f1f@quicinc.com>
-Date: Thu, 27 Feb 2025 09:42:39 +0530
+	s=arc-20240116; t=1740629738; c=relaxed/simple;
+	bh=i0P3oKURB+E0lUIrcY5OeJO3AwVoYL0kp6OuxUk1Ptw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=brNUXTy1dzPHZv0ogLmczprl4hqtMruACcQt6aim9Gj5Mv52nbyIrY18ksw8IjXIPesvBDbVjyBWcQzjWSNmpWVt96b04KvZ6yNGWLbMcSX3yjn4MfaxUAINR4nct9e8DY0xvrpdglhJtUAwmmqfiSHsR8KV8U8ndRL+1NJSP1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NWd8fN+/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740629735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LzMafZg7Owg9vjJaHS40UzrgTQRclUEj2q21FtbKF/A=;
+	b=NWd8fN+/1UBgBjXfptzlyTqaLXbQpuyk+8/nt/zcTq5Ut7iBraKCA4yvUjXYIGbFgRp1hL
+	nbHKBXQTYuRIys9uq+ZfT2aUtkp44UHRqkyRVG4GG39o/g1cRSnf6eJoASlyzi+2CjPVbG
+	iW28Q/zH0Yp/466/lecpY9wDBzzKWyU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-212-WVLY5IonPhKzJ87A7qlsJw-1; Wed,
+ 26 Feb 2025 23:15:31 -0500
+X-MC-Unique: WVLY5IonPhKzJ87A7qlsJw-1
+X-Mimecast-MFC-AGG-ID: WVLY5IonPhKzJ87A7qlsJw_1740629729
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F211119560B9;
+	Thu, 27 Feb 2025 04:15:25 +0000 (UTC)
+Received: from starship.lan (unknown [10.2.18.180])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3F5DF180035E;
+	Thu, 27 Feb 2025 04:15:23 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Shuah Khan <shuah@kernel.org>,
+	James Houghton <jthoughton@google.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Anup Patel <anup@brainfault.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: [PATCH] KVM: selftests: access_tracking_perf_test: add option to skip the sanity check
+Date: Wed, 26 Feb 2025 23:15:22 -0500
+Message-Id: <20250227041522.1734260-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-idp: Update protected clocks
- list
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250206-protected_clock_qcm6490-v1-1-5923e8c47ab5@quicinc.com>
- <j43f4wu6wgoho2tl4crckemnngyvek5mma6ghkdyqcivk65dcf@gfsimovfuqy5>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <j43f4wu6wgoho2tl4crckemnngyvek5mma6ghkdyqcivk65dcf@gfsimovfuqy5>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mxXmZeDxVKZnQT026c7BtIvJr_SkthBU
-X-Proofpoint-ORIG-GUID: mxXmZeDxVKZnQT026c7BtIvJr_SkthBU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_02,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270030
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+Add an option to skip sanity check of number of still idle pages,
+and force it on, in case hypervisor or NUMA balancing
+is detected.
 
+Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+---
+ .../selftests/kvm/access_tracking_perf_test.c | 23 +++++++++++++++++--
+ .../testing/selftests/kvm/include/test_util.h |  1 +
+ tools/testing/selftests/kvm/lib/test_util.c   | 22 ++++++++++++++++++
+ 3 files changed, 44 insertions(+), 2 deletions(-)
 
-On 2/26/2025 10:12 AM, Bjorn Andersson wrote:
-> On Thu, Feb 06, 2025 at 03:43:21PM +0530, Taniya Das wrote:
->> Certain clocks are not accessible on QCM6490-IDP board,
->> thus mark them as protected.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
->> Mark few clocks as protected on IDP of QCM6490.
->>
->> This patchset is separated out from the series[1] to remove dependency from
->> the LPASS reset.
->> [1]: https://lore.kernel.org/all/20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com/
->> ---
->>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 21 +++++++++++++++++++++
-> 
-> I merged the patch adding this board in November 2023, are you saying
-> that for the last 15 months no one has actually booted it!?
-> 
-
-I am not sure, I had got request to help boot the board which was not
-due to these clocks.
-
->>  1 file changed, 21 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> index 9209efcc49b57a853c4dd55ac52cd4dc98d7fe86..346b9a377e611cd3e32cf00d44e87b363bada07a 100644
->> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> @@ -759,3 +759,24 @@ &wifi {
->>  
->>  	status = "okay";
->>  };
->> +
->> +&gcc {
-> 
-> As you know, we sort nodes by address (if they have one), then
-> alphabetically. So this does not belong here.
-> 
-> Regards,
-> Bjorn
-> 
->> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
->> +			   <GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
->> +			   <GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
->> +			   <GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
->> +			   <GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
->> +			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
->> +			   <GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
->> +			   <GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
->> +			   <GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
->> +			   <GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
->> +			   <GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
->> +			   <GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
->> +			   <GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
->> +			   <GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
->> +			   <GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
->> +			   <GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
->> +			   <GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
->> +			   <GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
->> +};
->>
->> ---
->> base-commit: 808eb958781e4ebb6e9c0962af2e856767e20f45
->> change-id: 20250206-protected_clock_qcm6490-4019e6a61d0b
->>
->> Best regards,
->> -- 
->> Taniya Das <quic_tdas@quicinc.com>
->>
+diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+index 3c7defd34f56..eafaecf086c4 100644
+--- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
++++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+@@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
+ /* Whether to overlap the regions of memory vCPUs access. */
+ static bool overlap_memory_access;
+ 
++static bool skip_sanity_check;
++
+ struct test_params {
+ 	/* The backing source for the region of memory. */
+ 	enum vm_mem_backing_src_type backing_src;
+@@ -185,7 +187,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
+ 	 */
+ 	if (still_idle >= pages / 10) {
+ #ifdef __x86_64__
+-		TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
++		TEST_ASSERT(skip_sanity_check,
+ 			    "vCPU%d: Too many pages still idle (%lu out of %lu)",
+ 			    vcpu_idx, still_idle, pages);
+ #endif
+@@ -342,6 +344,8 @@ static void help(char *name)
+ 	printf(" -v: specify the number of vCPUs to run.\n");
+ 	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
+ 	       "     them into a separate region of memory for each vCPU.\n");
++	printf(" -u: Skip check that after dirtying the guest memory, most (90%%) of\n"
++	       "it is reported as dirty again");
+ 	backing_src_help("-s");
+ 	puts("");
+ 	exit(0);
+@@ -359,7 +363,7 @@ int main(int argc, char *argv[])
+ 
+ 	guest_modes_append_default();
+ 
+-	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
++	while ((opt = getopt(argc, argv, "hm:b:v:os:u")) != -1) {
+ 		switch (opt) {
+ 		case 'm':
+ 			guest_modes_cmdline(optarg);
+@@ -376,6 +380,9 @@ int main(int argc, char *argv[])
+ 		case 's':
+ 			params.backing_src = parse_backing_src_type(optarg);
+ 			break;
++		case 'u':
++			skip_sanity_check = true;
++			break;
+ 		case 'h':
+ 		default:
+ 			help(argv[0]);
+@@ -386,6 +393,18 @@ int main(int argc, char *argv[])
+ 	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
+ 	__TEST_REQUIRE(page_idle_fd >= 0,
+ 		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
++
++
++	if (skip_sanity_check == false) {
++		if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
++			printf("Skipping idle page count sanity check, because the test is run nested\n");
++			skip_sanity_check = true;
++		} else if (is_numa_balancing_enabled()) {
++			printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
++			skip_sanity_check = true;
++		}
++	}
++
+ 	close(page_idle_fd);
+ 
+ 	for_each_guest_mode(run_test, &params);
+diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
+index 3e473058849f..1bc9b0a92427 100644
+--- a/tools/testing/selftests/kvm/include/test_util.h
++++ b/tools/testing/selftests/kvm/include/test_util.h
+@@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
+ void backing_src_help(const char *flag);
+ enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
+ long get_run_delay(void);
++bool is_numa_balancing_enabled(void);
+ 
+ /*
+  * Whether or not the given source type is shared memory (as opposed to
+diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
+index 8ed0b74ae837..1271863613fa 100644
+--- a/tools/testing/selftests/kvm/lib/test_util.c
++++ b/tools/testing/selftests/kvm/lib/test_util.c
+@@ -163,6 +163,28 @@ size_t get_trans_hugepagesz(void)
+ 	return size;
+ }
+ 
++
++bool is_numa_balancing_enabled(void)
++{
++	int ret;
++	int val;
++	struct stat statbuf;
++	FILE *f;
++
++	ret = stat("/proc/sys/kernel/numa_balancing", &statbuf);
++	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
++			"Error in stating /proc/sys/kernel/numa_balancing");
++
++	if (ret != 0)
++		return false;
++
++	f = fopen("/proc/sys/kernel/numa_balancing", "r");
++	ret = fscanf(f, "%d", &val);
++
++	TEST_ASSERT(val == 0 || val == 1, "Unexpected value in /proc/sys/kernel/numa_balancing");
++	return val == 1;
++}
++
+ size_t get_def_hugetlb_pagesz(void)
+ {
+ 	char buf[64];
+-- 
+2.26.3
 
 
