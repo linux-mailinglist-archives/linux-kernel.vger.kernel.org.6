@@ -1,220 +1,180 @@
-Return-Path: <linux-kernel+bounces-536094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F85A47B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:10:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C4FA47B5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E167A21EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3AA1891839
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B156722F151;
-	Thu, 27 Feb 2025 11:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6FA22CBD8;
+	Thu, 27 Feb 2025 11:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ozIJ/Y7+"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pq91ovwN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A85322DFA7;
-	Thu, 27 Feb 2025 11:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B6F22B8BE;
+	Thu, 27 Feb 2025 11:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654464; cv=none; b=mWzhD0l4qE/kK1Zyb4quFOi9QmUsGAaXGdDsogNl0NCPeMtdT9kQf7qMwLFukFzvV2rjiHnDosDqYc3jcEc8ooC8Cz5+nc03VgUBUUQC4lT2MJN5dPbRavNif5WpnPWgDBZ3AbnfEwxH96p4eN+cZe8NkoSTSXBEaXRzz7pto+U=
+	t=1740654332; cv=none; b=lgRKdFsxxJsLxw6E+LgH/UiJekVIulHV2k4DN+oiXe6hlaWQ3/HNFRE5g7kamA6o7ly5NrnGAUHTlVZ3EwIpE5uIBLz/ameu5AA75Z3SwD/78Vp0CfiI8zLd4ee98l5toUVhzNIIj2RhL7s5SCLucMwFtmxh8N4PpxPdusoPass=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654464; c=relaxed/simple;
-	bh=zuNxJDcwOt+AZSFS7EuNKwbkIx0p8GUHFRIHGKFQ1Z8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rDzzbACEOLB60iTbxYjq6uI39NrNIGiRXde+L60CKawBnR0jhO+RYHiG3U5qwPxq54qEZBvbB8WM+L/zPEVc+BqqraGmm7aDBb1xSG+SJ4OYAipaMJWuLsPuB0k+8Wyyrq9JQ2n8liaiQlJbhUMTCaGu0X2vE0WRtm24Rt3ybA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ozIJ/Y7+; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9RQsm007985;
-	Thu, 27 Feb 2025 12:07:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	PmYOF4wGhNjibuwqHEkxWyFSrgjUr3eu12e+XRp9DPU=; b=ozIJ/Y7+zHtMTIV7
-	hyQ1rotHYSzK19kFLs2TIDdp+GLHmUVuN0VaMXuLBVqQ23FjYCiMGNIsj+w36lKb
-	0pXpYWvkzhzh8JXR9OpyrJb28J+fxxf/9tILzBvZWoW2hRxEocfm98bAQsHOVcmB
-	VPOmGxWcjf4GF2WZpvKhKesKOO6pDWzxWa9eW7dr3BdKoFGFZzsdb7vfQKXVF98F
-	JriWOVgjuaO7ESanfU9VBE0dRaTzA8AeIqgAWnqClwmtxm49tridhXODbo0SWinA
-	MnpubI7+vcCcxL/gmg5nFp57ewF8IqyQ7keecJHGWEv6+58meEeK2u6ITzz7MJQV
-	7CozKg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451psrj758-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 12:07:26 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4815A40047;
-	Thu, 27 Feb 2025 12:06:16 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1CBF13E756B;
-	Thu, 27 Feb 2025 12:05:25 +0100 (CET)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Feb
- 2025 12:05:24 +0100
-Message-ID: <cf86046b-00e2-41cc-b93c-7ad6cb4d062e@foss.st.com>
-Date: Thu, 27 Feb 2025 12:05:24 +0100
+	s=arc-20240116; t=1740654332; c=relaxed/simple;
+	bh=30VEPafuYaXUOzx4ugW+Q9XaK63O/Un27g6xe0Hutbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S8v3szjo6BXqqwsdRipra1Fn7qmwl0BxawV6N8flzaM4cDB/hNbxvgyApbwzM8fHsjKNwpNxEISp7PYkFO8H5C3v6LORM110Dt0vTZgWRO8EtnvwEbCUMyG6wZe04lJPKxUS0KPrz6Hn5AICTdlyogqE2UZitXObWjSLk9FbztM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pq91ovwN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8F1C4CEDD;
+	Thu, 27 Feb 2025 11:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740654332;
+	bh=30VEPafuYaXUOzx4ugW+Q9XaK63O/Un27g6xe0Hutbk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pq91ovwNVBny9JMf8+HSNMd53hixAs09BNZdZs5+XZvukQo19RDYmaAYsKuKnRqbO
+	 6qo83flXm7EcwbmofLf+K/qhsk3B2bAqdNTMyY/WKXRgvC0HaoCsudv+HdBkrxGgIy
+	 W4UCV9K8pWXY1D6xpT48SrVORm8c4TjrcMZJLrS0G06NvYq+PWtK/eobNmfWXSBSh/
+	 CVsZJQvI+myXNB+tNggscbw4QICP4mKpEB9mI3ofP3VY4nQvRUr5s9XHr7OZbBwiCw
+	 Ng8h4v4zAUUE26KyhVo+9/xOxpgQphhwKFZmhAOYf68HoY/Kn1nPA1H87h4vqpLuKN
+	 BwGFkzU7lAAHg==
+Date: Thu, 27 Feb 2025 12:05:25 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
+ =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/14] Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250227120525.66c348a0@foz.lan>
+In-Reply-To: <20250227105454.69e3d459@imammedo.users.ipa.redhat.com>
+References: <cover.1740148260.git.mchehab+huawei@kernel.org>
+	<20250227105454.69e3d459@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
- <6fc80544-6fc3-4450-a0cc-bfc740fe97bb@kernel.org>
- <91f19306-4b31-41fe-8ad2-680b1a339204@foss.st.com>
- <00526b1d-b753-4ee5-8f83-67d27d66a43c@kernel.org>
- <264d7fb8-06c2-4ada-82bc-4d3a7cc5e184@foss.st.com>
- <46fbdccb-610a-4b73-8697-d7bcf4942a41@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <46fbdccb-610a-4b73-8697-d7bcf4942a41@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_05,2025-02-27_01,2024-11-22_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2/26/25 16:05, Krzysztof Kozlowski wrote:
-> On 26/02/2025 11:52, Clement LE GOFFIC wrote:
->> On 2/26/25 08:21, Krzysztof Kozlowski wrote:
->>> On 25/02/2025 16:51, Clement LE GOFFIC wrote:
->>>> On 2/25/25 14:04, Krzysztof Kozlowski wrote:
->>>>> On 25/02/2025 09:48, Clément Le Goffic wrote:
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
->>>>>> +
->>>>>> +description: |
->>>>>
->>>>>
->>>>> Do not need '|' unless you need to preserve formatting.
->>>>
->>>> Ok
->>>>
->>>>>> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
->>>>>> +  It allows to output internal signals on SoC's GPIO.
->>>>>> +
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    const: st,stm32mp-hdp
->>>>>
->>>>> There is a mess in STM SoCs. Sometimes you call SoC stm32, sometimes
->>>>> stm32mp and sometimes stm32mpXX.
->>>>>
->>>>> Define for all your STM contributions what is the actual SoC. This
->>>>> feedback was already given to ST.
->>>>>
->>>>>> +
->>>>>> +  reg:
->>>>>> +    maxItems: 1
->>>>>> +
->>>>>> +  clocks:
->>>>>> +    maxItems: 1
->>>>>> +
->>>>>> +patternProperties:
->>>>>> +  '-pins$':
->>>>>> +    type: object
->>>>>> +    $ref: pinmux-node.yaml#
->>>>>> +
->>>>>> +    properties:
->>>>>> +      function:
->>>>>> +        enum: [ "0", "1", "2", "3", "4", "5", "6", "7",
->>>>>> +                "8", "9", "10", "11", "12", "13", "14",
->>>>>> +                "15" ]
->>>>>
->>>>> Function which has a number is not really useful. What does it even express?
->>>>
->>>> As said in my previous answer, function names are very different from
->>>> one platform to another. Numbers were used as string to be generic.
->>>> I'll consider it in a V2.
->>>
->>> What does it mean "one platform to another"? This is one platform! Is
->>> this some sort of continuation of SoC compatible mess?
->>
->> I may used incorrectly the word platform.
->> This driver is the same for the three SoC families STM32MP13, STM32MP15
-> 
-> That's driver and it is fine, but we talk about hardware here. The
-> binding is for given specific hardware.
-> 
->> and STM32MP25 because the hardware is mostly the same.
->>
->> Why mostly ?
->>
->> The peripheral is behaving as a mux, there are 8 HDP ports, for each
->> port there is up to 16 possible hardware signals. Numbered from 0 to 15.
->> Each of this number represent a signal on the port.
->>
->> But the hardware signal behind the number is not the same from one SoC
->> family to another.
->> As example, in STM32MP15 family the HDP is able to output GPU hardware
->> signals because the family has a GPU but in the STM32MP13 family this
->> signal is not present.
-> 
-> It looks like you have clear mapping between function and port number
-> (your header also suggests that), so the function property should follow
-> that user-visible function.
-> 
-> Just like we do for many other architectures - it is not that very, very
-> different, I think. all of platform hardwares do not operate on strings
-> but some bits in registers (so numbers) but all (ideally) bindings
-> operate on strings. You created here exception on basis this is somehow
-> special, but the point is: it is not special.
-> 
->>
->> The purpose of my helpers was to give a readable name to facilitate the
->> configuration in boards devicetree's. If needed I can get rid of that
->> and use only the number as string.
-> 
-> If you use "names" you do not need even that helper header.
-> 
->>
->>> What are the exact functions written in datasheet?
->>
->> The exact functions name written in the datasheet are the ones of my
->> helper file without the HDP prefix.
-> 
-> so full strings "pwr_pwrwake_sys" and these should be used.
+Em Thu, 27 Feb 2025 10:54:54 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-Ok so in the V2, I'll keep the 'function' property of the pinmux and use 
-signal names such as 'pwr_pwrwake_sys' to select signals in the DT.
-The signal names are different from one SoC to another (stm32mp131, 
-stm32mp151 and stm32mp251) so I'll need compatible data and the 
-compatibles will be:
+> On Fri, 21 Feb 2025 15:35:09 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Now that the ghes preparation patches were merged, let's add support
+> > for error injection.
+> > 
+> > On this series, the first 6 patches chang to the math used to calculate offsets at HEST
+> > table and hardware_error firmware file, together with its migration code. Migration tested
+> > with both latest QEMU released kernel and upstream, on both directions.
+> > 
+> > The next patches add a new QAPI to allow injecting GHESv2 errors, and a script using such QAPI
+> >    to inject ARM Processor Error records.
+> > 
+> > ---
+> > v4:
+> > - added an extra comment for AcpiGhesState structure;
+> > - patches reordered;
+> > - no functional changes, just code shift between the patches in this series.
+> > 
+> > v3:
+> > - addressed more nits;
+> > - hest_add_le now points to the beginning of HEST table;
+> > - removed HEST from tests/data/acpi;
+> > - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
+> > 
+> > v2: 
+> > - address some nits;
+> > - improved ags cleanup patch and removed ags.present field;
+> > - added some missing le*_to_cpu() calls;
+> > - update date at copyright for new files to 2024-2025;
+> > - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+> > - added HEST and DSDT tables after the changes to make check target happy.
+> >   (two patches: first one whitelisting such tables; second one removing from
+> >    whitelist and updating/adding such tables to tests/data/acpi)
+> > 
+> > 
+> > 
+> > Mauro Carvalho Chehab (14):
+> >   acpi/ghes: prepare to change the way HEST offsets are calculated
+> >   acpi/ghes: add a firmware file with HEST address
+> >   acpi/ghes: Use HEST table offsets when preparing GHES records
+> >   acpi/ghes: don't hard-code the number of sources for HEST table
+> >   acpi/ghes: add a notifier to notify when error data is ready
+> >   acpi/ghes: create an ancillary acpi_ghes_get_state() function
+> >   acpi/generic_event_device: Update GHES migration to cover hest addr
+> >   acpi/generic_event_device: add logic to detect if HEST addr is
+> >     available
+> >   acpi/generic_event_device: add an APEI error device
+> >   tests/acpi: virt: allow acpi table changes for a new table: HEST
+> >   arm/virt: Wire up a GED error device for ACPI / GHES
+> >   tests/acpi: virt: add a HEST table to aarch64 virt and update DSDT
+> >   qapi/acpi-hest: add an interface to do generic CPER error injection
+> >   scripts/ghes_inject: add a script to generate GHES error inject
+> > 
+> >  MAINTAINERS                                   |  10 +
+> >  hw/acpi/Kconfig                               |   5 +
+> >  hw/acpi/aml-build.c                           |  10 +
+> >  hw/acpi/generic_event_device.c                |  43 ++
+> >  hw/acpi/ghes-stub.c                           |   7 +-
+> >  hw/acpi/ghes.c                                | 231 ++++--
+> >  hw/acpi/ghes_cper.c                           |  38 +
+> >  hw/acpi/ghes_cper_stub.c                      |  19 +
+> >  hw/acpi/meson.build                           |   2 +
+> >  hw/arm/virt-acpi-build.c                      |  37 +-
+> >  hw/arm/virt.c                                 |  19 +-
+> >  hw/core/machine.c                             |   2 +
+> >  include/hw/acpi/acpi_dev_interface.h          |   1 +
+> >  include/hw/acpi/aml-build.h                   |   2 +
+> >  include/hw/acpi/generic_event_device.h        |   1 +
+> >  include/hw/acpi/ghes.h                        |  54 +-
+> >  include/hw/arm/virt.h                         |   2 +
+> >  qapi/acpi-hest.json                           |  35 +
+> >  qapi/meson.build                              |   1 +
+> >  qapi/qapi-schema.json                         |   1 +
+> >  scripts/arm_processor_error.py                | 476 ++++++++++++
+> >  scripts/ghes_inject.py                        |  51 ++
+> >  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
+> >  target/arm/kvm.c                              |   7 +-
+> >  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+> >  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+> >  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+> >  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+> >  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+> >  29 files changed, 1677 insertions(+), 79 deletions(-)
+> >  create mode 100644 hw/acpi/ghes_cper.c
+> >  create mode 100644 hw/acpi/ghes_cper_stub.c
+> >  create mode 100644 qapi/acpi-hest.json
+> >  create mode 100644 scripts/arm_processor_error.py
+> >  create mode 100755 scripts/ghes_inject.py
+> >  create mode 100755 scripts/qmp_helper.py
+> >   
+> 
+> once you enable, ras in tests as 1st patches and fixup minor issues
+> please try to do patch by patch compile/bios-tables-test testing, to avoid
+> unnecessary respin in case at table change crept in somewhere unnoticed. 
 
-MP15: compatible = "st,stm32mp151-hdp";
-MP13: compatible = "st,stm32mp131-hdp";
-MP25: compatible = "st,stm32mp251-hdp";
+Just submitted v5.
 
+I took some extra care to avoid bisect issues. Still checkpatch 
+had some warnings, but they seemed false positives.
 
-> Best regards,
-> Krzysztof
-
+Thanks,
+Mauro
 
