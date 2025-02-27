@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-536931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B5DA485DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:57:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34F0A485E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:58:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00D73AA5EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:56:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8E507A2615
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2431D5AB7;
-	Thu, 27 Feb 2025 16:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97511D5CEE;
+	Thu, 27 Feb 2025 16:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Y7eFTTcb"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nVRA2TBB"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB6B1B85DF;
-	Thu, 27 Feb 2025 16:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9FA1B85DF;
+	Thu, 27 Feb 2025 16:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675407; cv=none; b=RmN/j4aD9squK9elFxKJdJ31ShBj2ix36UwmcqlkCqDGI03xLdA+6N57PaAUwPVy7hY7LWEHDklf3YHOHM124KZJEqr2c/3kvisPn5At/UVR1yDsYh84PgVdaT0qVJK0raDtMrXYpw0biMrsru4eoneH+0bn/HcMtNia6IO9yLo=
+	t=1740675524; cv=none; b=aZyX+KFZMh4JzN6XZGgj0jm2mp/lOL3pbTOdycwm8aZszKETrxrMyG1siyqpo6U9+ClZIqcc/5uucZ6dbh6X9cGyh4kzefxRBUhy/94eR9YB4Y2VPv/VSkhtcUshzvDOz7OTWFW0GbjEcotOkSTf1OgAEFeUl9VEm6QsPyXCwkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675407; c=relaxed/simple;
-	bh=dwwXz15rnLwyQwuT+VNMV11IHrHQZ+V83M9c6sj8G+c=;
+	s=arc-20240116; t=1740675524; c=relaxed/simple;
+	bh=BF0yF8kFMQXT0QxSykYVbynRi7cG6B6AsU7ek43xufU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUjMOXVXkW2h22aunzwWzJdc2IHZ2Ev37ACkVQ5ZRUiYNru3V2QpJlOJ7d3zeoRJ9iUKTq41Sk00a+kc+AlX+9hQ0o5kE4jkrK2TfzghCzKD/XoG/8CNoJWj5rEWf4wHaeMC9ZC5IaQz1KIO4RYIM0xr7ZP2sC7gpXhhBMtux54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Y7eFTTcb; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGGu8efP4HZNLodPRzdecmhWesDTIXUSJUMBIzdQVQCFcp2N0XSyP7LRJK4j9vVO7PPZLxQqo84JHWfqYrmLFvySbwzifhokIIMrI2ShcuQbrFLOC9lxKCumyDSfkkgmxWR6dm2D4Tk7F4mhHNlAdawFAKNNOqUHz8JI175ckxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nVRA2TBB; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hGUACzGWEEjLB5dmsGTv1IBmigcG0qIsLq4LcnANgeM=; b=Y7eFTTcb24BejeTcnuvUA5DmDZ
-	GB1IhmLscE+YZojLX4joqevIn79RR4atjCPLuNjbBePYTKH+hyGiu93j15N2kaaE7bAA2N7hOAd5s
-	t9+9+rHCCYdb/i386Gvdc7iXGLVNUvavbXCKL1tFeitPQtZiL7gjZqvTBUbnczEBP8UA=;
+	bh=Wyz3yYlSl94ESvxCALw65Qc4qM/IQVRncH1zZdG56AA=; b=nVRA2TBBg8uXm6MrZxO+ZUYaNJ
+	E3/vakk4ABu7gPOd09S6CkvK4zFaLECUL1nwOSK5Pwr2f6KqAEW51ueNEOANVLCzSTzme/6X4E1Je
+	WbsXf+UbRy2jbF3E5vfs3hVUOs6700oozuLGxCzk6cxLD/5nn45sl9LHjJkKy7FcJsLs=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tnhBg-000exF-8u; Thu, 27 Feb 2025 17:56:40 +0100
-Date: Thu, 27 Feb 2025 17:56:40 +0100
+	id 1tnhDZ-000ezS-IN; Thu, 27 Feb 2025 17:58:37 +0100
+Date: Thu, 27 Feb 2025 17:58:37 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Andrei Botila <andrei.botila@oss.nxp.com>
 Cc: Heiner Kallweit <hkallweit1@gmail.com>,
@@ -53,12 +53,12 @@ Cc: Heiner Kallweit <hkallweit1@gmail.com>,
 	Christophe Lizzi <clizzi@redhat.com>,
 	Alberto Ruiz <aruizrui@redhat.com>,
 	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 1/3] net: phy: nxp-c45-tja11xx: add support for TJA1121
-Message-ID: <4cd91b99-e88e-4f55-8fe7-8308cf6a35eb@lunn.ch>
+Subject: Re: [PATCH 0/3] net: phy: nxp-c45-tja11xx: add support for TJA1121
+ and errata
+Message-ID: <c0537f48-ed07-4afd-acf8-4d858ffa72e9@lunn.ch>
 References: <20250227160057.2385803-1-andrei.botila@oss.nxp.com>
- <20250227160057.2385803-2-andrei.botila@oss.nxp.com>
- <a9c98f2a-c5e9-43e3-b77a-0f20eb6cfa98@lunn.ch>
- <9de3e4c3-9f9e-41c0-9e2a-19e95e859c98@oss.nxp.com>
+ <6c37165e-4b8a-41fd-b9c1-9e2b8d39162f@lunn.ch>
+ <7f737895-339e-4a0a-abb4-cec8a61ba3b8@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,21 +67,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9de3e4c3-9f9e-41c0-9e2a-19e95e859c98@oss.nxp.com>
+In-Reply-To: <7f737895-339e-4a0a-abb4-cec8a61ba3b8@oss.nxp.com>
 
-> > Is there a way to tell them apart? Another register somewhere?
+On Thu, Feb 27, 2025 at 06:33:31PM +0200, Andrei Botila wrote:
+> On 2/27/2025 6:11 PM, Andrew Lunn wrote:
+> > On Thu, Feb 27, 2025 at 06:00:53PM +0200, Andrei Botila wrote:
+> > > This patch series adds support for TJA1121 and two errata for latest
+> > > silicon version of TJA1120 and TJA1121.
+> > 
+> > Should the errata fixes be back ported to stable for the TJA1120? If
+> > so, you need to base them on net, and include a Fixes: tag. Adding the
+> > new device is however net-next material.
 > 
-> Unfortunately no, TJA1120 and TJA1121 share the same hardware the only
-> difference being that TJA1121 has MACsec support while TJA1120 does not.
-> It is the same for TJA1103 and TJA1104.
+> The errata fixes don't have to be ported to stable.
 
-So the hardware can do MACsec, but it is disabled in firmware? Golden
-screw driver could be used?
-
-So you can tell them apart, otherwise you would offer MACsec on both.
-It might be worth adding a .match_phy_device to the driver, so you can
-have an entry per device. Just watch out for the semantics of
-.match_phy_device, it gets called before the IDs are looked at.
+An explanation why would be nice.
 
 	Andrew
 
