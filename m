@@ -1,247 +1,97 @@
-Return-Path: <linux-kernel+bounces-535910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93ADA478F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:22:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D83A478F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5493A3AFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ED323B2AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85892227BB6;
-	Thu, 27 Feb 2025 09:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="n6ytZsN9"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A9A227B95;
+	Thu, 27 Feb 2025 09:22:53 +0000 (UTC)
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF74227B83
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE815DBB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740648116; cv=none; b=JviURpUXwcKSkZXxctMnmKmolkHhaMtvp0AFKrFYIex64rZJb7ZZ9Xyfa7y1DAnaNBV23gbMRTl/Q+i59s6fJRjTangtFnHlbobeFTvgJ95nqSWlfpTOeJOcyZB6xjB6gLWyNcbuOX1uINeWKpXoih/Oi0JMBAM3f68RbjfW0eY=
+	t=1740648173; cv=none; b=qN4odzPmVdjLGe6XYQ164Nz18KFLYw4sfZV3sF1qVQwxjFc2Q/NVBmmy7ZTRYuR43zLhhu1VIP5BGgIrcJsFW7VWly/5oqv0Y/kgD+SPyB5YUaAzU27oNMnHy9Vgo+Cx6b7RXciF9O21y3aUppigyQE/HhFaZDaOygfMLSf04O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740648116; c=relaxed/simple;
-	bh=qJ6d6yyVEiOIzWKAFqn29zVljBDyaAUEI1J5TgXK8MA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ofGund55dNOqWbUOtK7HKsoOz4d1dq2WOmpc6oJuiKfzJLODC/I64LROwbp1o7Tdbk1ybNVp1Bt07PVlm/lePV9CbNTKuPr2Wm8jL34yEMYfVMY9gxFAhLmIMN9N7I3YXS/fWWjdn0lfDJmll0zdIscz9tzJ2IzVoEMGroGazYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=n6ytZsN9; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbb12bea54so127624866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740648113; x=1741252913; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QGKuyOFdmCrFZDueE7tG98lW1JYRuqGd31pjDPdwi0A=;
-        b=n6ytZsN9bCZOytA5VLbihqdX0iuFDF1y6DcGq8WceZddRdPOc33d+6PLBb+Ej454Kb
-         GfGyu2CNZ0u03yzImi5gZNQ4bRcqxQ5jlEa+nwhtYt0MXWZx8d9HLyEomoigX2Wmg9jr
-         YFOFpSaO4g7ZqUozXLMwYSQPhYOeZbJjGTIC11m2IHsqMwgaQo4gvh2FWqaby4AuvltE
-         Jk7Qo5bWETupQiI75zzai2Xk/JSkO8vGGXKflj7iW+kYVtD+wBmhV9RKbPYV8g5p7w+d
-         4z8H1xAFYOmlURRFX7gBKXHv2RsTGPfBojfdgq2mDGPmwfCERSs+3Tlg9t0Bv63fZooD
-         ljiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740648113; x=1741252913;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QGKuyOFdmCrFZDueE7tG98lW1JYRuqGd31pjDPdwi0A=;
-        b=XUceBOU+ZkdPkXfPGYBALl1CCJ03OcyoUpjyn2kgTWeEyndehLdI8CJA9pidS3Ay9y
-         jjSQqnrO4sh1MYpyym/bH+t9iIBP1QxFHe9o/4m5rMsJ7L+2rQqzmddP2vzbMXXfnzzB
-         asDnaAeylC8HHHrJ5i8PcXQP6OJjNUPeq8UaIQYWLeixb6cXYiA3Gisu3ciLjGp1ufLE
-         nDFJQeD3tl4vI+M4UFyyhdWG9gskm1KoisYeYoBPvz4PwvRnDYrZOu8/q03cAifS7yRN
-         HlfEW9FgJ0SrprfSjx0vc+e7MWpxr71rXBIOQpf84cZJwUAzlp9sOrC55D0hdmjNA8P8
-         ZqtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9SbmHvqC1Wl3ZLTfotpjOpLCSGCQCXpP6BOyCfvYsILuwdnjqkXO+b1jekngjouvHfg1ZmsXqdXM6wSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu0PXbV1HL/i/kwfvUMXgRcUEE4twTxjzB0MAIDPLBg9XnJHEb
-	IiSErVs4gGvb3U1BZfN3wfGYFG2IcBpEqhp647bGnmD0r8DjEplcohlCPVKK5fY=
-X-Gm-Gg: ASbGncs0tn520LatgqaSopaPI6izubWssKddFP5yYjU/gpz1AthIMeejcjMtWILwZ0o
-	iGwaVmFyA5tJC/UMlw0/j0NnQWgSZU7pmPhThdU+wOYPw9guCz/uuCjcDi4+OawaJxq+2fwMAv1
-	FBqI8umt1mU/pliOPVun8e/YCd8pPW7+30aqrTw4IetwaGoVfIl2lFEoCTZgaQ0nIDXcoQCGLZ0
-	zvP/QV+kvahp1xHABYVwwHRKuUdq0d1hIyQfASfE4n1164l5YVoK2gBI7qkEWYF4TnZGqqq/Oog
-	sxo2S/pQ5uq5bVoFhEYxQQlG928a3c4QjP0rHazSuwR8dG+KAL50QM2ZYg==
-X-Google-Smtp-Source: AGHT+IHD+cNx6yl3X1EnkFEtFKEHouxEwyh4QDe/AW5lHxTVz7/szNt45pitj7P8HvFW9mO2l6DKdg==
-X-Received: by 2002:a17:907:7fa3:b0:abb:b12b:e103 with SMTP id a640c23a62f3a-abed0dd817amr1443127466b.34.1740648113102;
-        Thu, 27 Feb 2025 01:21:53 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6e9c25sm91516366b.108.2025.02.27.01.21.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 01:21:52 -0800 (PST)
-Message-ID: <13cb4b16-51b0-4042-8435-6dac72586e55@blackwall.org>
-Date: Thu, 27 Feb 2025 11:21:51 +0200
+	s=arc-20240116; t=1740648173; c=relaxed/simple;
+	bh=eOp/FD4D8eR0d0RGSRsU2yTkVoBv0KN5V+bju7bAM00=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UoCGudQxYg7mioyaFQg/9+9nEja78dXKgC84XAqg60SxdpqTt8aTPPsIEvqtvZseCiwls7C9hWrBMnwB/UGpsEK2iZvhKIT8izNqQ4CamgMhYTxN83XoPF9Js66vYZSLURl5O6lbNzDn73+8RVQujQ2Y7Waa3naygeh+U/ZTUnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 652a27b3-f4ec-11ef-9d7a-005056bd6ce9;
+	Thu, 27 Feb 2025 11:22:42 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 27 Feb 2025 11:22:41 +0200
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: use the required minimum set of headers
+Message-ID: <Z8Au4WwXDlPQwfn2@surfacebook.localdomain>
+References: <20250225095210.25910-1-brgl@bgdev.pl>
+ <Z72fBfM4afo5SL0m@smile.fi.intel.com>
+ <20250226214613.1e814f9a@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 net 1/3] bonding: move IPsec deletion to
- bond_ipsec_free_sa
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
- Jarod Wilson <jarod@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227083717.4307-1-liuhangbin@gmail.com>
- <20250227083717.4307-2-liuhangbin@gmail.com>
- <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
-Content-Language: en-US
-In-Reply-To: <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226214613.1e814f9a@pumpkin>
 
-On 2/27/25 10:50, Nikolay Aleksandrov wrote:
-> On 2/27/25 10:37, Hangbin Liu wrote:
->> The fixed commit placed mutex_lock() inside spin_lock_bh(), which triggers
->> a warning:
->>
->>   BUG: sleeping function called from invalid context at...
->>
->> Fix this by moving the IPsec deletion operation to bond_ipsec_free_sa,
->> which is not held by spin_lock_bh().
->>
->> Additionally, delete the IPsec list in bond_ipsec_del_sa_all() when the
->> XFRM state is DEAD to prevent xdo_dev_state_free() from being triggered
->> again in bond_ipsec_free_sa().
->>
->> For bond_ipsec_free_sa(), there are now three conditions:
->>
->>   1. if (!slave): When no active device exists.
->>   2. if (!xs->xso.real_dev): When xdo_dev_state_add() fails.
->>   3. if (xs->xso.real_dev != real_dev): When an xs has already been freed
->>      by bond_ipsec_del_sa_all() due to migration, and the active slave has
->>      changed to a new device. At the same time, the xs is marked as DEAD
->>      due to the XFRM entry is removed, triggering xfrm_state_gc_task() and
->>      bond_ipsec_free_sa().
->>
->> In all three cases, xdo_dev_state_free() should not be called, only xs
->> should be removed from bond->ipsec list.
->>
->> Fixes: 2aeeef906d5a ("bonding: change ipsec_lock from spin lock to mutex")
->> Reported-by: Jakub Kicinski <kuba@kernel.org>
->> Closes: https://lore.kernel.org/netdev/20241212062734.182a0164@kernel.org
->> Suggested-by: Cosmin Ratiu <cratiu@nvidia.com>
->> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
->> ---
->>  drivers/net/bonding/bond_main.c | 34 ++++++++++++++++++++++-----------
->>  1 file changed, 23 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
->> index e45bba240cbc..683bf1221caf 100644
->> --- a/drivers/net/bonding/bond_main.c
->> +++ b/drivers/net/bonding/bond_main.c
->> @@ -537,6 +537,10 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
->>  	}
->>  
->>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->> +		/* Skip dead xfrm states, they'll be freed later. */
->> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
->> +			continue;
->> +
->>  		/* If new state is added before ipsec_lock acquired */
->>  		if (ipsec->xs->xso.real_dev == real_dev)
->>  			continue;
->> @@ -560,7 +564,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
->>  	struct net_device *bond_dev = xs->xso.dev;
->>  	struct net_device *real_dev;
->>  	netdevice_tracker tracker;
->> -	struct bond_ipsec *ipsec;
->>  	struct bonding *bond;
->>  	struct slave *slave;
->>  
->> @@ -592,15 +595,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
->>  	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
->>  out:
->>  	netdev_put(real_dev, &tracker);
->> -	mutex_lock(&bond->ipsec_lock);
->> -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->> -		if (ipsec->xs == xs) {
->> -			list_del(&ipsec->list);
->> -			kfree(ipsec);
->> -			break;
->> -		}
->> -	}
->> -	mutex_unlock(&bond->ipsec_lock);
->>  }
->>  
->>  static void bond_ipsec_del_sa_all(struct bonding *bond)
->> @@ -617,6 +611,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
->>  
->>  	mutex_lock(&bond->ipsec_lock);
->>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
->> +			list_del(&ipsec->list);
+Wed, Feb 26, 2025 at 09:46:13PM +0000, David Laight kirjoitti:
+> On Tue, 25 Feb 2025 12:44:21 +0200
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 > 
-> To be able to do this here, you'll have to use list_for_each_entry_safe().
+> > On Tue, Feb 25, 2025 at 10:52:10AM +0100, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > 
+> > > Andy suggested we should keep a fine-grained scheme for includes and
+> > > only pull in stuff required within individual ifdef sections. Let's
+> > > revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
+> > > gpio/consumer.h") and make the headers situation even more fine-grained
+> > > by only including the first level headers containing requireded symbols
+> > > except for bug.h where checkpatch.pl warns against including asm/bug.h.  
+> > 
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > 
+> > FWIW, I have checked the current state of affairs of linux/bug.h vs. asm/bug.h
+> > and found no possible issues with the dependencies. While linux/bug.h drags
+> > more than needed into this header it won't prevent cleaning up the rest of
+> > the headers. So for now we can stick with linux/bug.h, but at some point it
+> > would be better to be more pedantic on this.
+> > 
 > 
-
-One more thing - note I'm not an xfrm expert by far but it seems to me here you have
-to also call  xdo_dev_state_free() with the old active slave dev otherwise that will
-never get called with the original real_dev after the switch to a new
-active slave (or more accurately it might if the GC runs between the switching
-but it is a race), care must be taken wrt sequence of events because the XFRM
-GC may be running in parallel which probably means that in bond_ipsec_free_sa()
-you'll have to take the mutex before calling xdo_dev_state_free() and check
-if the entry is still linked in the bond's ipsec list before calling the free_sa
-callback, if it isn't then del_sa_all got to it before the GC and there's nothing
-to do if it also called the dev's free_sa callback. The check for real_dev doesn't
-seem enough to protect against this race.
-
-Cheers,
- Nik
-
->> +			kfree(ipsec);
->> +			continue;
->> +		}
->> +
->>  		if (!ipsec->xs->xso.real_dev)
->>  			continue;
->>  
->> @@ -640,6 +640,7 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
->>  	struct net_device *bond_dev = xs->xso.dev;
->>  	struct net_device *real_dev;
->>  	netdevice_tracker tracker;
->> +	struct bond_ipsec *ipsec;
->>  	struct bonding *bond;
->>  	struct slave *slave;
->>  
->> @@ -659,13 +660,24 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
->>  	if (!xs->xso.real_dev)
->>  		goto out;
->>  
->> -	WARN_ON(xs->xso.real_dev != real_dev);
->> +	if (xs->xso.real_dev != real_dev)
->> +		goto out;
->>  
->>  	if (real_dev && real_dev->xfrmdev_ops &&
->>  	    real_dev->xfrmdev_ops->xdo_dev_state_free)
->>  		real_dev->xfrmdev_ops->xdo_dev_state_free(xs);
->>  out:
->>  	netdev_put(real_dev, &tracker);
->> +
->> +	mutex_lock(&bond->ipsec_lock);
->> +	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->> +		if (ipsec->xs == xs) {
->> +			list_del(&ipsec->list);
->> +			kfree(ipsec);
->> +			break;
->> +		}
->> +	}
->> +	mutex_unlock(&bond->ipsec_lock);
->>  }
->>  
->>  /**
+> A 'fun' activity is to pick a random file add "#define _IOW xxx" at the
+> top and see where ioctl.h is is first included from.
+> (I've not got a build machine up at the moment.)
 > 
+> Then start fixing that include sequence.
+> Moving a few headers around is otherwise pretty pointless.
+
+Have you tried to help with reviewing this?
+
+https://lwn.net/ml/linux-kernel/YdIfz+LMewetSaEB@gmail.com/
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
