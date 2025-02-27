@@ -1,257 +1,260 @@
-Return-Path: <linux-kernel+bounces-535502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97A2A473A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:37:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C02A47474
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A13171DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4EB3A2BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5179D1D5AA8;
-	Thu, 27 Feb 2025 03:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oVF89agC"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C3A1D63CD;
+	Thu, 27 Feb 2025 04:27:46 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2104.outbound.protection.partner.outlook.cn [139.219.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7391D86F1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740627440; cv=none; b=m2yLREqoWRPkMx4iwwulp4L5UfTq49PR/rFO4qFXXV3F14O+6+vmaMT6b+hXSSv6/Co/9vuOGTwjAL10q5wdNguo4op2BVmUwu6scsyVuOJ8wkdQCbdfB96p6Cgjn8DhKxX1J0pNm/H1DQaVaSIcosFAdD8KzRCFJH/zrWcLHL0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740627440; c=relaxed/simple;
-	bh=lSumbw1PWf7tSByOP5CKs66VRaIHHh6tWApRYCGgNjo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=Rx8VosnrM3Z0thFJ1WG4npc8vIAhtxS3xezdmwdqTXMP9UGe2B5glciCxbWk5+tCh42pNCXeuGKLqcriMt1VxK2l8G8lNaP+8HqIGGPJzKW0TwtVyeLUpAsz6G7Wfd1TmnlCxtrG6UJstUbAuAQRAI/wzNtpKttoZ9vMp3YJkjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oVF89agC; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250227033716epoutp037761af4e782df520895d2830239161b5~n8254ft141710417104epoutp03_
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:37:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250227033716epoutp037761af4e782df520895d2830239161b5~n8254ft141710417104epoutp03_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740627436;
-	bh=rJUWO7g9RjJRp9fZlO7QpyX9lTOA51pukK5hQ5BEOsw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oVF89agC/G7UYT4ieerLuP7AhDgYHyfLqW+HYmb74iFS65Ea48PIGYB7bw38wnwGZ
-	 zSabbPkFT1xVG61T8ydRUvYOjafCKZ18mBRLZdHbdnOWfP8fLky8EM5W3yVQpjS24t
-	 lccX5qmq75VneHb2ihwKQL55e/7tVfCdORzHGHiw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20250227033716epcas5p3e5c9f9958f59dca7b91d2bf26f839b7d~n825aMZYV1825818258epcas5p3O;
-	Thu, 27 Feb 2025 03:37:16 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z3H8W0Lb3z4x9Py; Thu, 27 Feb
-	2025 03:37:15 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	59.EB.19933.AEDDFB76; Thu, 27 Feb 2025 12:37:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226103145epcas5p12873b39b9b467f35a38151e1938976d4~nu3gUOMuK3171031710epcas5p19;
-	Wed, 26 Feb 2025 10:31:45 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250226103145epsmtrp16cae50a09d5d8d4e288ba32326fc4ed9~nu3gTSt412262222622epsmtrp1W;
-	Wed, 26 Feb 2025 10:31:45 +0000 (GMT)
-X-AuditID: b6c32a4a-c1fda70000004ddd-e6-67bfddeacc9e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	65.B5.23488.19DEEB76; Wed, 26 Feb 2025 19:31:45 +0900 (KST)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226103142epsmtip1527f0d1050a1c8f0fe72e6a3929311c6~nu3d6d-Dt0651706517epsmtip1n;
-	Wed, 26 Feb 2025 10:31:42 +0000 (GMT)
-From: Swathi K S <swathi.ks@samsung.com>
-To: rmk+kernel@armlinux.org.uk
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, krzk+dt@kernel.org, swathi.ks@samsung.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-Subject: Re: [PATCH net-next] net: stmmac: dwc-qos: clean up clock
- initialisation
-Date: Wed, 26 Feb 2025 15:56:34 +0530
-Message-Id: <20250226102634.4584-1-swathi.ks@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <E1tlRMP-004Vt5-W1@rmk-PC.armlinux.org.uk>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WTe0xbVRzHd27b2xYoXAvigTggV5fBJqxFHrduDJ3LcuP4A8MkxkS7Sm/a
-	QrntelsURyYCK46ERxNlSpAVtzkGgekdYHlNYAq4ySbg0DroqDwi3dzYKEu6BbCloP99fs/v
-	7/zOOQKOuAONFGhoI2WgFVocDeB2Xo3bGe+a/kElmW2UEZ7FWkBcmLHxiPqbZVzizI83eMT8
-	0F98wt7fhRCLdQ6U+LWzikews5M8YqK7HiUqJud4RMNqK48YsoYTj6/fA8TXHW4+4Vzq5RPj
-	1RaEcH9n578qJicmxzhk+0U7Qs5Xd/DJrrppPmllTSTbfAolL5/7mOyyLSPkgyu3ULKqvRmQ
-	A1ek5DIblRn0Tt4+NaVQUoYYis7RKTW0Kg0/nCV/XZ6cIpHGS2VEKh5DK/KpNPxgRmb8IY3W
-	ezg8pkChNXldmQqGwffs32fQmYxUjFrHGNNwSq/U6pP0CYwinzHRqgSaMr4ilUgSk72JR/PU
-	49bt+k78w8bZBbQY/Pl8BRAKIJYEH7rMSAUIEIixHgAv9Exx/MYjAB2jJTy/8RjAkfIFzlZJ
-	+Xz/ZqAPwBb7INdvuAE0e1iuLwvFYuHvTd/zfRyGRUGzdRr1MQcb4ECHM8HHoVgWvL3yCPiY
-	i+2A8+zABoswGTyz1LapFg1bvu3fYCGWCpdOtaE+MYiNCKC9/A7wJx2Et0uvIn4Oha7hdr6f
-	I+FitXmT5bCl6hbXz2o4/cSC+jkd9v9W7/ULvMPFwUvde/zu7fDza22If+ZgWPl0brO9CNoa
-	tvgFuHp3crNlBOw8/4DvawMxEj49H+rfSQWAJdXjoAZE1f2vYAWgGURQeiZfRTHJ+kSa+uC/
-	S8vR5bNg4/3uesMGnDNLCYMAEYBBAAUcPEwk1PSqxCKlovAjyqCTG0xaihkEyd79WTiRz+bo
-	vB+ANsqlSTJJUkpKSpLs5RQp/pyotKtMJcZUCiOVR1F6yrBVhwiEkcVIGD38E0pI24ruWjVT
-	f3/5UiC7jvyxbbQYp0drPxVT6t3K431flYpQ55Hw6Rr9nfhvmkZ2TFxOJ2tuckTRwZF9cZoJ
-	ffwnvQuthXOBIXvdq2hR4hehFvNbscKOA2M/z0iPhr99uOWa7VjjkdRDGRaFrbZkRZua+0xr
-	Q/abotxa9X42wIGzzjWb/H7Q8Gup1wvGCoveDX7oLPFs2xnIVka4P1uP7Q7JNr24LshwpV88
-	ea/Pc87zfvTZvY6ZS1FDK6O7104UeFwnRCXq5cogebUmfy3xn7PuMOFS2Y2p08dPhxT88sR1
-	v8fByAsOHMNkTezicnZ9Vot5SCk56cJz37Nn4VxGrZDu4hgYxb8yUgurSAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRfSyUcQDH/Z53cjyO9PPenmm7riVXVr9aa7aWnmVWaaaUdPE4ymF3XmKr
-	pCSnedlCM3HMpiPi1CHmrYZppciVjMlLZRPKS0nUsP77bN/Pvt8/vgwunsLtmfDIGEEVKY/g
-	KDPC8Jxz3pn9rVnhnp1ihZYmcwEqG6knUUHPLQIVvXhNoomOURoNtDZgaDJ/mEJvDBkk0o8Z
-	SdT3rIBCGuM4iQpXKknUobVFiy+nACp5Ok+jT7NNNOrNzMbQfM0A7Snm+4xvcf6JbgDjJzKf
-	0nxD/hDNa/WxvL48jeJrS6/zDfVzGD/T3E/xGU/KAd/WLOPn9M4nzAPMDoYIEeFxgmrXoQtm
-	Yb1ap2gDd6V47DOVBD46aoApA1kPmDrRSmqAGSNmGwFcyLlNbQR28MfNHHKDraFu9Qu9If0A
-	sPL34LpEsRL4/mEdvcY2rDO8rR2i1iSc7cdhsVaPawDDWLMnYW0yt+YQ7DY4oW8Dayxi98Oi
-	2Sp8Y8AFVlS3rrMpuw/OplWt94vZvTCr8xGWBSy0wKQc2AnRaqVCGSyLlkUK8W5quVIdG6lw
-	C45S6sH6IVJJPZheTN7VDjAGtAPI4JyNyDS8SSEWhcgTEgVVVJAqNkJQtwMHhuC2iHSy0wox
-	q5DHCJcFIVpQ/U8xxtQ+CTO3r98T2r/8/eiBlbK0a6Lp+LwHZ934HYW879Xzq8Nlf3IXMgyf
-	egy6CmXOgprQLWepAyVFfZ3idGmKd2fjfbki8JLE3U/l+2FEMmdudL4xFnJP9jNA07V9+djP
-	O+cs97l2OVYW4c3ShOqEpl8aD3aqRW8SN30w9F3MUveBGWzGATtiEbj57vVZolBREWr08uo3
-	afT1afvL+FugrzWbSkIGXVJXd49xl1stHWzc7BpXXimVxv1+daRrWV5Q92FJ/k1vanzS1aR0
-	tc9l8jERP2pOR9DSU55E1cWcpR586xkfLpRATk7pPsNWQotjokYC8fbftv5vBkXHK69aZXKE
-	Okwuk+IqtfwfUGfyHv8CAAA=
-X-CMS-MailID: 20250226103145epcas5p12873b39b9b467f35a38151e1938976d4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250226103145epcas5p12873b39b9b467f35a38151e1938976d4
-References: <E1tlRMP-004Vt5-W1@rmk-PC.armlinux.org.uk>
-	<CGME20250226103145epcas5p12873b39b9b467f35a38151e1938976d4@epcas5p1.samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB091A38E3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740630465; cv=fail; b=kFR8WrjJQS67K2yw/NEDQX7nNNqcjx9hMbIUPcCUlj7Q7wxhsoXBZoF8hFTmMsYmAquUL24GwdLSfVTuyCIVpqm7LE0I1tnEdVt0BtvKrdjxsn3kf6U090Mdy0YRTQDAWNRb2uVFBcy0uVTdT4o4jdqyW8aZJzJhEnvaC+nBCGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740630465; c=relaxed/simple;
+	bh=Lwa0IQliJ8BEq4SCAgogG4k3+h2UD0EMaoYsPZcVxZ0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=o/jKeee+5Jgl/yJiL0x6ZLRQlm0zaeEkEhwFCvcDgUsJ5l9T3dufHkUQXGL6/VM5JD+RqDkOQrwV6zX/A+6o5ducTgtF2SrDaHKQX+ffcVaVQ+fS6ybUtre6LwVoh2qxgMSjLrBB7mlRP5otbulUJ3266ubLxlclfVL7E+ydtvs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RqjnT87fIiPv5bHoL5rPzYNe/aX2iYcioYUyQ48m57ZzAMF4gVeYBJEbZHVD/MURHCpbb3xUNLtFCPGPwdZDahnKeQxhgBBdpr9Kls5NfMHm/kiObR8FYeimO8/ZNqihxOrZdlciiwq3qUmi4so9sLzbTT3+RFpSSq0L+08OjZrllCnJqP1Bx+CoVI/H4SqZKYIgmtPIMuNXbL0FduuPIDkIgJb/E4lnxuydApXd2S20SuLy9yIkA+SHN+8t6MAIe2Fyb8jK6yW7PoDRzJtmP0KaUU0K/KnKNmR3UPjjyuKd7gx3Fqzx6KprE/eCh35S4rez9SylYIlicUsx7bx6aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CuU7TopDyERisMhKE6D7jEs+WRec+Ri4qO4291jwkOw=;
+ b=B3++D47Bb/zu2zsYaIRFJyAzcYi5W7CHLNWh06om8JoLwbR7PGxJiF/LDRMnsawH/iQHN7KtLdxnpyajzLPav/7JLVtoLzwCeI5mADC4Nd7ltfeR7eR/fjHdjlg6R7LrHAiLfns48tAGhQu3SvhrP4bQgm3MioTlcFFraUrSAo7VaZFoeat6IHRKD4EdRAbMZFfbLGWuBqpec8DV0ssjCOtT2drrSk/7MrevcevLobhARnoQ9X6x0DVliJLu210MeWJXaU41MyzSdOh50Cxy7oyc8pNz0/i9bdYC0PYZalP+b2BzlCoPuAhLiETx8VLOThKVMtEBdZwaMHYHIu2rCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:e::11) by ZQ0PR01MB1239.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1c::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.15; Thu, 27 Feb
+ 2025 02:53:51 +0000
+Received: from ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn
+ ([fe80::6949:6e77:b17f:c6d0]) by
+ ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn ([fe80::6949:6e77:b17f:c6d0%4])
+ with mapi id 15.20.8489.014; Thu, 27 Feb 2025 02:53:51 +0000
+From: Tingbo Liao <tingbo.liao@starfivetech.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
+	<alex@ghiti.fr>
+CC: Tingbo Liao <tingbo.liao@starfivetech.com>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Fix the __riscv_copy_vec_words_unaligned implementation
+Thread-Topic: Fix the __riscv_copy_vec_words_unaligned implementation
+Thread-Index: AduIwkod/W+x7D/lR1mCACD0gkE+/A==
+Date: Thu, 27 Feb 2025 02:53:51 +0000
+Message-ID:
+ <ZQ0PR01MB098393466A0CB4722C8D62279BCDA@ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB0983:EE_|ZQ0PR01MB1239:EE_
+x-ms-office365-filtering-correlation-id: 208bfd26-625f-4dbc-2e06-08dd56d9f75f
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|41320700013|366016|8096899003|4053099003|38070700018;
+x-microsoft-antispam-message-info:
+ 3i5rtAniRYq0gaefUXzTzIDceKSEJi5EaGwO9QpDYzii6iDtWc/rN3vncdbmH40mv/FQR0QnnCSDSMABteLmrKog+zTjUDUvOcQcXJrSeBefNPBnZ2uQ3VMwaNqhbgHFLJQpUF0sskuqtniT8mZI2HjIaQRqvTFXvdqwiZw7AgqDvoTUZoYk+r2kwh135xpSEqmAJMfGff4q+cZS/4u2Swq62Ry3aATES6CFhKwk/DdivMZFjOpGAngCOlqQG4UGZgbwifqNpgn/NgsHNuSNL0SfZu/dVHiYDgYxO8J2bG0ZanJeJlOk1OA0jlXHTF4YKAvJGnQsXbm0wGjK91DB+OMqHvWg0O/FHbLLnMBi0iMtiFjvOc3QL7j28bVqkMbv5IH3oqzaVu8wEAx5+iWPWEMmkAhbrQwuZCrN5B5bWzzArgwm7Dese86Wc4vbJun/zU+kSTEcUED39fMvzVa/dRdsUH/C4hnNPhv4uqw4OQm9ENGuOo9ozg+FIGqb9NUDONUaZjyC20QDTg7YSNbaWdkoATfiv2YkJzbJ9YPDvv+tBd79QHj6E9sorBiG8ThDkITKbeC76I1/cNopyxlo3a1GPt+Gq3HGpm2FmYGZ7p8=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(8096899003)(4053099003)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?h+l9gBKOx4HSvau50G1VTDEkH1dbgB+A2pvVuUaSgaqiChzYWeANdcFjO+nH?=
+ =?us-ascii?Q?BUpCx54m1wtGhx5XqicgZtoMhnraE5Wjq0AdR10SbWiT2GdShjtsNIVD+Olh?=
+ =?us-ascii?Q?9QGRztla9ta9hx4kHZtBecY29HMd/kXjy8x/VF/DSHb5VTdAV5lLvI+rE25r?=
+ =?us-ascii?Q?YNEAKRjDGCxBQy3EJ/wyTTwgG9dzPjnTrMhLlf8mewSmU/nNFjg/ATq8Ilvv?=
+ =?us-ascii?Q?VcihwJaDv5Gat4diRf6qBO5yW54Gc8UHcY0EzUiAyVA8iY6jR5JlY+t3g5Ec?=
+ =?us-ascii?Q?nezpTkOhCSMCBNxy93s0G4VIxVX8wUKbEWBbHaCJM67LoTJqbTVHIoqYXuVG?=
+ =?us-ascii?Q?PPwlNAn0uBvZ7iPTPmr9ysxElOK1ARSn8x3iQ5yV6CB1MdJIM9MqDzWjlSXo?=
+ =?us-ascii?Q?aAs9XcPJBGemZ0JZRONMsr1GS/WK9BNB6zQWVTYwj15PU37ij6Wosawg6F1N?=
+ =?us-ascii?Q?CkdUPE1KG4p6RpBelztiQp1XBa+0Bnq/aA8NoQBRn7Bc0t3aYRqDNTUw+78Y?=
+ =?us-ascii?Q?8Xc2kFTewZpuSq/gCI8I0UR+Qi1VlpR3wYuzFRLuo5OsnOMgExWNtDlanyc8?=
+ =?us-ascii?Q?SrxcTwkDcwgXHoOdxklhmybOz0Rn3DvlhWZl6Q/r7GQG3WyL89PiZFOVh8Az?=
+ =?us-ascii?Q?DEJ7XxLxJSACJHuo0ZuUNLoy4pQqyKC6ialENmvD15MPemLOlpD85M4ScUDz?=
+ =?us-ascii?Q?R2SRFa8vMTrD82pIvmJeERwy2Zqf4QpF4k/s1wJJxIV6YwNAhVei6TXTXU2x?=
+ =?us-ascii?Q?GTFm8e4yNVW1pcGYqlVa0fx/2Dx6ZrJzalVGXGRCisBtD/r1nFHGZ/6+pXbs?=
+ =?us-ascii?Q?QV5Q9S+GxyXzIzKYh/tSf1dEitSg/C9RZwBe0B813Ok6oO6mTMMljFK9PCFl?=
+ =?us-ascii?Q?BBsHl9FTbREIWuQLy7Kt5LUrkWFT/KKmSq5lESH2p0wqNm8YUCu2iitEeHjK?=
+ =?us-ascii?Q?h2rDHK5FdLW0dubdbUsh5jYyQDswreQHiF8MVLvGDwRsPhsOU7NwTA13ePcT?=
+ =?us-ascii?Q?k+inlti3gJuvJy9jlD4QdVfc1i0XUFj0xaMTTlZHc5ipQ3deYjIb96iO8Ie5?=
+ =?us-ascii?Q?tIyU7cvienW84c67pFrOnN14DnXAvMtSKKoUWn6QR7Ron6/1dUrXCl/xCGFF?=
+ =?us-ascii?Q?RFHCG70/hiBkXi4x2SeEruZE/cXatLEnpHKVspPxj48Rr0m6y+6AboM7HuCm?=
+ =?us-ascii?Q?ifva9q7iFYgvoFi2vObFo8PxKXgTWjONUsqiTV3fMKdskcL0K0tc+6YI821F?=
+ =?us-ascii?Q?Rfp9yKRLov7k3jKyW5MDnDma+U0bjq0JbPPaIHwmdkD+WwR4val2hu+MfpHW?=
+ =?us-ascii?Q?iFu4SjGEsn5ScDNyIisxM6JWwYnv/m0pI84T+4gkBDYGJEP9SCLjzmip7b8H?=
+ =?us-ascii?Q?0PrnirD3gPRpOdFxArFMYQY6wW+bxci0/9lPuKtfyKtz+ywmcII8RXdrVJj7?=
+ =?us-ascii?Q?5eih1FyPINcjbYI+cZMuJrWFSu5+e7IlIzI4y5YFnMIWsTKSPqipJn8kTrdj?=
+ =?us-ascii?Q?cA4bSnHq66ShbLr+i5EYGrvModZ0dUBB9TfWyETcoaD6fCD5259rGj0p0VXI?=
+ =?us-ascii?Q?msWGckWZGCC9sdDcF3CShqEJepX3t5//hikX7zU5?=
+Content-Type: multipart/mixed;
+	boundary="_004_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB0983.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 208bfd26-625f-4dbc-2e06-08dd56d9f75f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 02:53:51.4297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Xe585u6bQ372dA3GpDwDJQuwH7Yb1W7uxCqqRMPrcSiLv8KLK72uInlyALctAuSIhr4Smc4QRf/wWifB5rQ5ZNXrg1r7QCgtqhzKpCsLQec=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1239
 
->Precedence: bulk
->X-Mailing-List: netdev@vger.kernel.org
->List-Id: <netdev.vger.kernel.org>
->List-Subscribe: <mailto:netdev+subscribe@vger.kernel.org>
->List-Unsubscribe: <mailto:netdev+unsubscribe@vger.kernel.org>
->MIME-Version: 1.0
->Content-Disposition: inline
->Content-Transfer-Encoding: 8bit
->Content-Type: text/plain; charset="utf-8"
->Message-Id: <E1tlRMP-004Vt5-W1@rmk-PC.armlinux.org.uk>
->Sender: Russell King <rmk@armlinux.org.uk>
->Date: Fri, 21 Feb 2025 11:38:25 +0000
->
->Clean up the clock initialisation by providing a helper to find a
->named clock in the bulk clocks, and provide the name of the stmmac
->clock in match data so we can locate the stmmac clock in generic
->code.
->
->Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
->---
->dwc_eth_find_clk() should probably become a generic helper given that
->plat_dat->clks is part of the core platform support code, but that
->can be done later when converting more drivers - which I will get
->around to once I've got the set_clk_tx_rate() patch series out that
->someone else needs to make progress.
->
-> .../stmicro/stmmac/dwmac-dwc-qos-eth.c        | 32 +++++++++++--------
-> 1 file changed, 18 insertions(+), 14 deletions(-)
->
->diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
->index 392574bdd4a4..9e2035d1fb86 100644
->--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
->+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
->@@ -35,6 +35,16 @@ struct tegra_eqos {
-> 	struct gpio_desc *reset;
-> };
-> 
->+static struct clk *dwc_eth_find_clk(struct plat_stmmacenet_data *plat_dat,
->+				    const char *name)
->+{
->+	for (int i = 0; i < plat_dat->num_clks; i++)
->+		if (strcmp(plat_dat->clks[i].id, name) == 0)
->+			return plat_dat->clks[i].clk;
->+
->+	return 0;
->+}
->+
-> static int dwc_eth_dwmac_config_dt(struct platform_device *pdev,
-> 				   struct plat_stmmacenet_data *plat_dat)
-> {
->@@ -121,12 +131,7 @@ static int dwc_qos_probe(struct platform_device *pdev,
-> 			 struct plat_stmmacenet_data *plat_dat,
-> 			 struct stmmac_resources *stmmac_res)
-> {
->-	for (int i = 0; i < plat_dat->num_clks; i++) {
->-		if (strcmp(plat_dat->clks[i].id, "apb_pclk") == 0)
->-			plat_dat->stmmac_clk = plat_dat->clks[i].clk;
->-		else if (strcmp(plat_dat->clks[i].id, "phy_ref_clk") == 0)
->-			plat_dat->pclk = plat_dat->clks[i].clk;
->-	}
->+	plat_dat->pclk = dwc_eth_find_clk(plat_dat, "phy_ref_clk");
-> 
-> 	return 0;
-> }
->@@ -237,18 +242,12 @@ static int tegra_eqos_probe(struct platform_device *pdev,
-> 
-> 	eqos->dev = &pdev->dev;
-> 	eqos->regs = res->addr;
->+	eqos->clk_slave = data->stmmac_clk;
-> 
-> 	if (!is_of_node(dev->fwnode))
-> 		goto bypass_clk_reset_gpio;
-> 
->-	for (int i = 0; i < data->num_clks; i++) {
->-		if (strcmp(data->clks[i].id, "slave_bus") == 0) {
->-			eqos->clk_slave = data->clks[i].clk;
->-			data->stmmac_clk = eqos->clk_slave;
->-		} else if (strcmp(data->clks[i].id, "tx") == 0) {
->-			eqos->clk_tx = data->clks[i].clk;
->-		}
->-	}
->+	eqos->clk_tx = dwc_eth_find_clk(data, "tx");
-> 
-> 	eqos->reset = devm_gpiod_get(&pdev->dev, "phy-reset", GPIOD_OUT_HIGH);
-> 	if (IS_ERR(eqos->reset)) {
->@@ -312,15 +311,18 @@ struct dwc_eth_dwmac_data {
-> 		     struct plat_stmmacenet_data *data,
-> 		     struct stmmac_resources *res);
-> 	void (*remove)(struct platform_device *pdev);
->+	const char *stmmac_clk_name;
-> };
-> 
-> static const struct dwc_eth_dwmac_data dwc_qos_data = {
-> 	.probe = dwc_qos_probe,
->+	.stmmac_clk_name = "apb_pclk",
-> };
-> 
-> static const struct dwc_eth_dwmac_data tegra_eqos_data = {
-> 	.probe = tegra_eqos_probe,
-> 	.remove = tegra_eqos_remove,
->+	.stmmac_clk_name = "slave_bus",
-> };
-> 
-> static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->@@ -360,6 +362,8 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
-> 	if (ret)
-> 		return dev_err_probe(&pdev->dev, ret, "Failed to enable clocks\n");
-> 
->+	data->stmmac_clk = dwc_eth_find_clk(plat_dat, data->stmmac_clk_name);
->+
-> 	ret = data->probe(pdev, plat_dat, &stmmac_res);
-> 	if (ret < 0) {
-> 		dev_err_probe(&pdev->dev, ret, "failed to probe subdriver\n");
+--_004_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_
+Content-Type: multipart/alternative;
+	boundary="_000_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_"
 
-Hi Russell,
-Tested this patch on FSD platform and it works.
-Please feel free to add Tested-by: Swathi K S <swathi.ks@samsung.com>
+--_000_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
--Swathi
+Hi All:
 
->-- 
->2.30.2
+  We correct the VEC_S macro definition to fix the implementation of vector=
+ words copy in the case of unalignment in RISC-V.
+
+Thanks.
+
+Best Regards,
+
+Tingbo
+
+
+--_000_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:DengXian;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:DengXian;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:DengXian;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:DengXian;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.5pt;
+	mso-ligatures:none;}
+/* Page Definitions */
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"ZH-CN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word;text-justify-trim:punctuation">
+<div class=3D"WordSection1">
+<p style=3D"line-height:200%"><span lang=3D"EN-US" style=3D"font-size:14.0p=
+t;line-height:200%;font-family:&quot;Times New Roman&quot;,serif;color:blac=
+k">Hi All:</span><span lang=3D"EN-US"><o:p></o:p></span></p>
+<p style=3D"line-height:200%"><span lang=3D"EN-US" style=3D"font-size:14.0p=
+t;line-height:200%;font-family:&quot;Times New Roman&quot;,serif;color:blac=
+k">&nbsp; We correct the VEC_S macro definition to fix the implementation o=
+f vector words copy in the case of unalignment in RISC-V.<o:p></o:p></span>=
+</p>
+<p style=3D"line-height:15.75pt"><span lang=3D"EN-US" style=3D"font-size:14=
+.0pt;font-family:&quot;Times New Roman&quot;,serif;color:black">Thanks.</sp=
+an><span lang=3D"EN-US"><o:p></o:p></span></p>
+<p><span lang=3D"EN-US" style=3D"font-size:14.0pt;font-family:&quot;Times N=
+ew Roman&quot;,serif;color:black">Best Regards,</span><span lang=3D"EN-US">=
+<o:p></o:p></span></p>
+<p><span lang=3D"EN-US" style=3D"font-size:14.0pt;font-family:&quot;Times N=
+ew Roman&quot;,serif;color:black">Tingbo</span><span lang=3D"EN-US"><o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+</div>
+</body>
+</html>
+
+--_000_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_--
+
+--_004_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_
+Content-Type: application/octet-stream;
+	name="0001-Fix-the-__riscv_copy_vec_words_unaligned-implementation.patch"
+Content-Description:
+ 0001-Fix-the-__riscv_copy_vec_words_unaligned-implementation.patch
+Content-Disposition: attachment;
+	filename="0001-Fix-the-__riscv_copy_vec_words_unaligned-implementation.patch";
+	size=1099; creation-date="Thu, 27 Feb 2025 02:49:28 GMT";
+	modification-date="Thu, 27 Feb 2025 02:53:51 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSA0NjE4Njg0MzViM2ZiMzQ2Y2YwZTBiNDBhMmFmMDlmMWZjNThkMDA0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiAidGluZ2JvLmxpYW8iIDx0aW5nYm8ubGlhb0BzdGFyZml2ZXRl
+Y2guY29tPgpEYXRlOiBUaHUsIDI3IEZlYiAyMDI1IDA5OjMxOjQ5ICswODAwClN1YmplY3Q6IFtQ
+QVRDSF0gRml4IHRoZSBfX3Jpc2N2X2NvcHlfdmVjX3dvcmRzX3VuYWxpZ25lZCBpbXBsZW1lbnRh
+dGlvbgoKQ29ycmVjdCB0aGUgVkVDX1MgbWFjcm8gZGVmaW5pdGlvbiB0byBmaXggdGhlIGltcGxl
+bWVudGF0aW9uCm9mIHZlY3RvciB3b3JkcyBjb3B5IGluIHRoZSBjYXNlIG9mIHVuYWxpZ25tZW50
+IGluIFJJU0MtVi4KClNpZ25lZC1vZmYtYnk6IHRpbmdiby5saWFvIDx0aW5nYm8ubGlhb0BzdGFy
+Zml2ZXRlY2guY29tPgotLS0KIGFyY2gvcmlzY3Yva2VybmVsL3ZlYy1jb3B5LXVuYWxpZ25lZC5T
+IHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpk
+aWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9rZXJuZWwvdmVjLWNvcHktdW5hbGlnbmVkLlMgYi9hcmNo
+L3Jpc2N2L2tlcm5lbC92ZWMtY29weS11bmFsaWduZWQuUwppbmRleCBkMTZmMTlmMWIzYjYuLjdj
+ZTRkZTZmNmU2OSAxMDA2NDQKLS0tIGEvYXJjaC9yaXNjdi9rZXJuZWwvdmVjLWNvcHktdW5hbGln
+bmVkLlMKKysrIGIvYXJjaC9yaXNjdi9rZXJuZWwvdmVjLWNvcHktdW5hbGlnbmVkLlMKQEAgLTEx
+LDcgKzExLDcgQEAKIAogI2RlZmluZSBXT1JEX1NFVyBDT05DQVRFTkFURShlLCBXT1JEX0VFVykK
+ICNkZWZpbmUgVkVDX0wgQ09OQ0FURU5BVEUodmxlLCBXT1JEX0VFVykudgotI2RlZmluZSBWRUNf
+UyBDT05DQVRFTkFURSh2bGUsIFdPUkRfRUVXKS52CisjZGVmaW5lIFZFQ19TIENPTkNBVEVOQVRF
+KHZzZSwgV09SRF9FRVcpLnYKIAogLyogdm9pZCBfX3Jpc2N2X2NvcHlfdmVjX3dvcmRzX3VuYWxp
+Z25lZCh2b2lkICosIGNvbnN0IHZvaWQgKiwgc2l6ZV90KSAqLwogLyogUGVyZm9ybXMgYSBtZW1j
+cHkgd2l0aG91dCBhbGlnbmluZyBidWZmZXJzLCB1c2luZyB3b3JkIGxvYWRzIGFuZCBzdG9yZXMu
+ICovCi0tIAoyLjQ2LjAKCg==
+
+--_004_ZQ0PR01MB098393466A0CB4722C8D62279BCDAZQ0PR01MB0983CHNP_--
 
