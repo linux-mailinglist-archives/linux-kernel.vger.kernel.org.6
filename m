@@ -1,166 +1,115 @@
-Return-Path: <linux-kernel+bounces-537455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF74A48C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:49:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D0BA48C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:51:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086A2188BD3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B593B5DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2692271839;
-	Thu, 27 Feb 2025 22:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AA023E32E;
+	Thu, 27 Feb 2025 22:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhhXveEp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsdqezS6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C7323E352;
-	Thu, 27 Feb 2025 22:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC227781F;
+	Thu, 27 Feb 2025 22:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696524; cv=none; b=eUPqpSLJnGLBKFuFaGbNkA+VSdHAxyHDCIGNYnVuvHnkhwRmhSdJ5UzIqZI5WR0t/rzHVC463EEfYoZvRwgx25MhpUq/Nn13xgMJ6vC0LerAfupySt5Ztxr5fdWgSFMi4VHD77RV77KGrnxaIcSKLkN38w5Dq7T52nCcrMVRsLU=
+	t=1740696684; cv=none; b=RBufhoA+p80t+7k+1MhSv7SHI2SEyR2h/1jkztsp905v7l3moSATros2WSNdvPnXKDPSmK3z4obRmi5iol88jgYh31pLKob2ZY4M3zzIJ3uJQ0OBi/GnVHzcQuIbRGmXeq+T+Qp92ueow6YWilpQyp6GAo53khNBBHsagLxgKgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696524; c=relaxed/simple;
-	bh=5dLuIAnj4GerB++3zMLGjP08kKlVE0y/APjV7HD4j0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CwvJ2pJ/4QbTOj0sALOUfMzYtwrYv2O5xiUT/Gwpg9UWsNYKtxpa92CNnxAapV+rLNcpmHw/rCfuDk7f3GDZ514WTbvU6X18CHL4H1QbquLLgDKnF54mKCmlEPKnNIvyeCgy2JZN5nSqOYiQ8K7oKTCtBcYXYCSxq07E5bqoKn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhhXveEp; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740696522; x=1772232522;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5dLuIAnj4GerB++3zMLGjP08kKlVE0y/APjV7HD4j0I=;
-  b=KhhXveEp0pES82fjIObBWHU+msFPgZR9eAsOJAEeB2Nod0yeFNeVncr1
-   Ccith8YE82XRscKHpEt3z4NE3v5kc2TjagxRqFMneBP0EHazuN29VjSoE
-   lFbTnpBCwBr/g5tfbf0SuO9Rh2PiJismp1JtSokB3hKaCxyxsIjBssmZk
-   UPFCvsyFgrowDuw3LY3/Y+RUerdMfEc1TJrEmU5aJjduUPIlBoxa491mC
-   XczTn6/pzF5WiUIojNv1meGThZj9IoK6T4tC5dqa3fMnJzul5kqv/2cEs
-   3DatW/BPx91HIZdnoQdAabHKNt72G5HeTH5KuZSTMpIKCJy8gowHzdv9l
-   g==;
-X-CSE-ConnectionGUID: TBWivM9LSdGRmtkkQmBj6A==
-X-CSE-MsgGUID: YxMj/IwkT32giSQ2IP8zQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="64077570"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="64077570"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 14:48:40 -0800
-X-CSE-ConnectionGUID: R2pLDkmiRtKb9+XyaT7yvw==
-X-CSE-MsgGUID: a9f4NdGZTIWS7KICWckfQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117187056"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 14:48:39 -0800
-From: Tony Luck <tony.luck@intel.com>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v2 4/4] acpi_mrrm: fake for testing, do not apply!
-Date: Thu, 27 Feb 2025 14:48:28 -0800
-Message-ID: <20250227224828.306537-5-tony.luck@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250227224828.306537-1-tony.luck@intel.com>
-References: <20250227224828.306537-1-tony.luck@intel.com>
+	s=arc-20240116; t=1740696684; c=relaxed/simple;
+	bh=ZNi7C6bEWTzQUwdQGL5EqHY5BUfHTwi74qKGhnSGiYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LaOIJYgJjiBoS7YsRflNH0aLwphUci0KEvD9hV0nt124z00O6fXRzoTMUBiJCFTf5aDPBqN4//MPFd2PGZLRZ6Z8mpiyKXxe9jblsunxa/DpVLBG36WcdC4sfUIqXDC1JrSttO8u7+a+jZlJemrZfvRAjUA5SoGm9jGW7A4+tYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsdqezS6; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so10069475e9.3;
+        Thu, 27 Feb 2025 14:51:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740696681; x=1741301481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
+        b=SsdqezS6Is+jwtBJtMIxYH/o1eRMpljnkeR1K0JE/pDVo3llt7wy1Ugv1OwTwMVvQh
+         GepGuEhODCVaPD6NuGpgDZx7YXsWtAfTBALDUwCXvMozLVBIocjp51SbbpQoeowvorQI
+         jBVsAgkpYZnGGofclNd181aSx2FMO9ASyFPJqr4wTFzLIOoDvKv5ynaWha6u/zpPxo4z
+         SCRWn9WAnDje3wUOf2qddCf86qeBMhZGwWCBw0ySFEEgl7VIxoO5xNTXt8KYOojz68Ar
+         Wbwd2yGE7rxiX1FAUTcYz/P2wMhQJdzy/liS31E83g1HIpkhJf8w027r5xFLbO7R3GEn
+         gInw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740696681; x=1741301481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
+        b=MpvrzStpXQvFaINI/6EQJYTDI0eNc8vSqTTTjJ5Qet/v6QWLkPISSA60DwHgHk9O0z
+         ioDuBS4aGYumNWrPOA6RtuCFYjshcTnL1P00Tr0qu5lXAdXI5ECvFRlKrur/tUMMNIjf
+         ION+exDvDqRESIiZFFF59CaguX43jK4i2kB9ofdCTm7wXWZkzkjRTFtH/wKnpNHKSN5A
+         X1BF0lc+i/I2ya0II5EeH8gef33MpO2NRQTl2unILjha/VcPtY54/5LmgArJpso0lrxA
+         cuj1bZqwpMb/q0vO3CamnQzgtwgZNO1bFvjSG6BK1dzjwCOhVD/VRDA2CncaHz0fZk2r
+         zedA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRhmZR/wisiGV+cx0a8twkT6lx+B1YPwIrmE0lNQv3MDaTfh41g6MuyZlF4rcDCw+IzSgHcbpe7a1U2w==@vger.kernel.org, AJvYcCW/64BrlhyJJTI5a5FEJp8GE6Wq5o2X+InkwGvW34VyXFxVxe2hUF92HqrCfkj2YKPxSA1xt6wdKlq7eIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4egEdupzxAPcRwsHiNemglpKac3CWC4cj8TVep4hr424uqSUk
+	jHDhZTA2CVWBaHVyCmb65k+ptPMkvpg5VWl8waRo1mu9pWQ/ldMEutoJ5sDppfw=
+X-Gm-Gg: ASbGncv8gbp9xBZRWKHh4DRHtxJyOcG/bVE7aVMlZnfC+42ZakjD/soq536AVeSjp8U
+	+qDk+DiCy8J2hEpZ2Uh5eRg1/UslimQSz+Ixrvbuui6wBXeKwCYN5CEaVd046HIiIOMmjEJbcG9
+	3BSZNp5vx0w4wbSDADIVDkWXHwtzcD7HmlqLM2oYcziUfrbnB61g7RQFhLtkJrYEy2Epejx9yFK
+	Zd+x8l/xIeya3zY2yTEupOTPaXwNciRt0Y0sQaWnAMMR76/98NNHZWAzZg+k3NHx2gZwqv2ZE5A
+	ABol+sAPgCxD04dSH0e0MzQ7vog=
+X-Google-Smtp-Source: AGHT+IHPqkfBSHNgZwgyytyFDMty3HvWbsqx8cQXA84xBSInA6L2qPeZF8jWee0m6ovCoUw5FTOGkg==
+X-Received: by 2002:a05:600c:502b:b0:439:9828:c447 with SMTP id 5b1f17b1804b1-43ba7d6635cmr1864125e9.17.1740696681215;
+        Thu, 27 Feb 2025 14:51:21 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba58760bsm66555595e9.38.2025.02.27.14.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 14:51:20 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
+Date: Thu, 27 Feb 2025 22:50:46 +0000
+Message-ID: <20250227225046.660865-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Dummy MRRM table for a 2 socket system with memory map:
+There is a spelling mistake in a lpfc_printf_log message. Fix it.
 
-						LocalAccess RemoteAccess
-0-3.5G		DDR on socket 0			0	    1
-2G-512G		More DDR on socket 0		0	    1
-512G-1T		DDR on socket 1			0	    1
-1T-2T		Reserved for CXL on socket 0	2	    3
-2T-3T		Reserved for CXL on socket 1	2	    3
-
-This tags all local DDR access in region 0, remote DDR in region 1,
-local CXL in region 2, and remote CXL in region 3.
-
-Presented to user like this:
-
-$ cd /sys/firmware/acpi
-$ grep ^ memory_ranges/*/*
-memory_ranges/range0/base:0x0
-memory_ranges/range0/length:0xe0000000
-memory_ranges/range0/local_region_id:0x0
-memory_ranges/range0/remote_region_id:0x1
-memory_ranges/range1/base:0x100000000
-memory_ranges/range1/length:0x7f00000000
-memory_ranges/range1/local_region_id:0x0
-memory_ranges/range1/remote_region_id:0x1
-memory_ranges/range2/base:0x8000000000
-memory_ranges/range2/length:0x8000000000
-memory_ranges/range2/local_region_id:0x0
-memory_ranges/range2/remote_region_id:0x1
-memory_ranges/range3/base:0x10000000000
-memory_ranges/range3/length:0x100000000000
-memory_ranges/range3/local_region_id:0x2
-memory_ranges/range3/remote_region_id:0x3
-memory_ranges/range4/base:0x200000000000
-memory_ranges/range4/length:0x100000000000
-memory_ranges/range4/local_region_id:0x2
-memory_ranges/range4/remote_region_id:0x3
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/acpi/acpi_mrrm.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/acpi_mrrm.c b/drivers/acpi/acpi_mrrm.c
-index 1f7d0381a628..16f0ca7072e0 100644
---- a/drivers/acpi/acpi_mrrm.c
-+++ b/drivers/acpi/acpi_mrrm.c
-@@ -147,11 +147,35 @@ static __init int add_boot_memory_ranges(void)
- 	return ret;
- }
- 
-+#define FAKE 1
-+#ifdef FAKE
-+static const u8 fake_mrrm[] = {
-+	0x4D,0x52,0x52,0x4D,0xE0,0x00,0x00,0x00,0x01,0x3A,0x49,0x4E,0x54,0x45,0x4C,0x00,
-+	0x49,0x4E,0x54,0x45,0x4C,0x20,0x49,0x44,0x02,0x00,0x00,0x00,0x49,0x4E,0x54,0x4C,
-+	0x12,0x12,0x24,0x20,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x03,0x00,0x00,0x01,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,
-+	0x00,0x00,0x00,0x00,0x7F,0x00,0x00,0x00,0x03,0x00,0x00,0x01,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,0x00,0x00,
-+	0x00,0x00,0x00,0x00,0x80,0x00,0x00,0x00,0x03,0x00,0x00,0x01,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,
-+	0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x03,0x00,0x02,0x03,0x00,0x00,0x00,0x00,
-+	0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x20,0x00,0x00,
-+	0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x03,0x00,0x02,0x03,0x00,0x00,0x00,0x00
-+};
-+#endif
-+
- static __init int mrrm_init(void)
- {
- 	int ret;
- 
-+#ifdef FAKE
-+	ret = acpi_parse_mrrm((struct acpi_table_header *)fake_mrrm);
-+#else
- 	ret = acpi_table_parse(ACPI_SIG_MRRM, acpi_parse_mrrm);
-+#endif
- 
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index 18c0365ca305..8ca590e8469b 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -3524,7 +3524,7 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
+ 	if (phba->fc_topology &&
+ 	    phba->fc_topology != bf_get(lpfc_mbx_read_top_topology, la)) {
+ 		lpfc_printf_log(phba, KERN_WARNING, LOG_SLI,
+-				"3314 Toplogy changed was 0x%x is 0x%x\n",
++				"3314 Topology changed was 0x%x is 0x%x\n",
+ 				phba->fc_topology,
+ 				bf_get(lpfc_mbx_read_top_topology, la));
+ 		phba->fc_topology_changed = 1;
 -- 
-2.48.1
+2.47.2
 
 
