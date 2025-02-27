@@ -1,173 +1,143 @@
-Return-Path: <linux-kernel+bounces-537087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAEDA487F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:41:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3414BA48804
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9734C166E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:41:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD22188845A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0034420B1E1;
-	Thu, 27 Feb 2025 18:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8925EF9C;
+	Thu, 27 Feb 2025 18:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/N4Oe7t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZoK0+1M"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3D71E0E13;
-	Thu, 27 Feb 2025 18:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0C621C160
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681655; cv=none; b=HpywpFzZ/k5VwB4WW0Ewz6XO033NQorogG/JwiT8MK+VZEefA2BOS7Ka953vs+kh9bdDloS7SMG7xF1+1g3x9RHZoa7rKjZJ0wRjC0X+jV0jidlD/PMfhs1kij55mx0h+vmXXvjSPJ1bS1MeJ6/XuHXLNAGF9QmuJ5vDNnjF/OI=
+	t=1740681702; cv=none; b=Aw71HX3u9hg2jgU2gQwuyauOjBYrnmPCSwkutN+ZRPMjj65kz55mBbWkHtzVia7LNm2tl/T7LvKc0wM60kxX6tqhwbQZKqyxDjeo5rzwr6BAJ2zBgBu3g3g87l5HjtQAKBqL6HGHCdv/OIFkmcmlKvMHajF0JARBGDfE1MA6fV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681655; c=relaxed/simple;
-	bh=vIiOrfEhLsagNIxyFmXo7VnTxM/KF0Q81OADteh7vHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=AQ82zcM1jmrdYjij4oj6oR3ogLvb8/DyhESkxwgvy4IPzU1kkBksXQqufdVX736UPPvmuwL6oYsNcFvg2k1aInpxDW+NZ1XnbNgI8ZtCXLV9sr/T3EMvE0+GC6m939QFdcOHM97URXoMWH4JnzefNblDUCJQGWchGyVSMz+f22A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/N4Oe7t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB3DC4CEE4;
-	Thu, 27 Feb 2025 18:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740681654;
-	bh=vIiOrfEhLsagNIxyFmXo7VnTxM/KF0Q81OADteh7vHQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=g/N4Oe7theyxINQUAaSoVJbRB99oTPw8aKnUURXcvkJKcOTqZDisbu5T1lfFupipx
-	 ZcCz5t9bbOoWRrcim82hDpxCKZmJ7QE4Gde+4j0oH3ByU+h0X7eu6Kliu2EO9OgKX1
-	 GIIIroYjrmwE+BtS9AR2BLVx3/BMWw2k+AF+9RAeV8S7+U0hYevV7rxUUlBPImuRbV
-	 XbvbYmXmS+l+AYhd+hy5R4QzZD7dgVfVhe+Jdq2k0jU8Q5T8IxP8BV3ZeHQeShVYZe
-	 cOcCacIfhAelWFlt/2YTEYKYgOOyMXoJ1Y1Cjr1zMf9glmU3syBMLwtbMc+D4Nuevy
-	 7TAe6onKvQKLQ==
-Date: Thu, 27 Feb 2025 12:40:53 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4] PCI/ACPI: _DSM PRESERVE_BOOT_CONFIG function rev id
- doesn't match with spec
-Message-ID: <20250227184053.GA609152@bhelgaas>
+	s=arc-20240116; t=1740681702; c=relaxed/simple;
+	bh=ETOaYhPjXGmZkiakzSlAaPfRYM+txKLp21G5z67NWO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kM+zRDxkF5hnRCQ25HJXFMVeoJJqiacaUcwoa/HJMYy8mGd9Drg9dvOtlix0/9MQJVFhZCuSjMctXdasfBXVYWqe2zYuIzLOczrER6ZXQuCkz2NFuVlD0EXXzRIDTnuCXOAbcQGTLM0X5X6RZCDPTY7VRPSMNTL13VOgp5IdQsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZoK0+1M; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740681700; x=1772217700;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ETOaYhPjXGmZkiakzSlAaPfRYM+txKLp21G5z67NWO8=;
+  b=kZoK0+1MUi+lD8MYIhGbe62Hgr8Mq1ur4qcYEgNyPfnnp4j1PZwDbP7I
+   O0TUA8+Do0lqSat2k0bbjv0klmzL/A0ddLsfa30eLK09Rgt/jd1vXZZYW
+   cjeLi5ulfbmpW9ZuDazz+tI5NLSyYkO4bHiFTeTYDQerzbjA4QeriSY4B
+   CPgRGuNzXiWJQ9/T+XGPkbMSWI0kLuYjcVN8oQEjgJXMsjNl4Xn+Hh4+Z
+   +2bOEfxHY5DFJbV7nsfcrK/NRZLBXW/yIToyB0tCWBipff+jpmk91avgo
+   LF0AMBnZEkytpoOcjNh23dz4d0LhIlPY5G0ZarK4Fn5/Fww/yuQ+4l656
+   Q==;
+X-CSE-ConnectionGUID: 1K+SbC0rQFKAEGfHzm3LFg==
+X-CSE-MsgGUID: 3GRFel2nQS6WNoHUnEn8QA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53000319"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="53000319"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:41:40 -0800
+X-CSE-ConnectionGUID: gkbmOA3aRQOyTDlqaaSsCA==
+X-CSE-MsgGUID: F+YkDjecTxGbHL20R9byeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="122054644"
+Received: from jgarnacx-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.170])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:41:39 -0800
+Date: Thu, 27 Feb 2025 10:41:33 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/speculation: Simplify and make CALL_NOSPEC consistent
+Message-ID: <20250227184133.lxm43awa2jgdpl4q@desk>
+References: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
+ <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241216052751.5460-1-zhoushengqing@ttyinfo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
 
-On Mon, Dec 16, 2024 at 05:27:51AM +0000, Zhou Shengqing wrote:
-> Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> for PCI. Preserve PCI Boot Configuration Initial Revision ID changed to 2.
-> But the code remains unchanged, still 1.
+On Thu, Feb 27, 2025 at 12:49:48AM +0000, Andrew Cooper wrote:
+> On 26/02/2025 9:03 pm, Pawan Gupta wrote:
+> > @@ -420,20 +420,28 @@ static inline void call_depth_return_thunk(void) {}
+> >  
+> >  #ifdef CONFIG_X86_64
+> >  
+> > +/*
+> > + * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
+> > + * to the retpoline thunk with a CS prefix when the register requires
+> > + * a REX prefix byte to encode. Also see apply_retpolines().
+> > + */
 > 
-> v4:Initialize *obj to NULL.
-> v3:try revision id 1 first, then try revision id 2.
-> v2:add Fixes tag.
+> Technically, both comments aren't quite accurate.  __CS_PREFIX() emits a
+> conditional CS prefix in a manner compatible with
+> -mindirect-branch-cs-prefix, not the full 5/6 byte jmp/call.
 
-Thanks for working on this issue.
+You are right, I will update the comment, and also the ASSEMBLY version
+where this comment came from:
 
-  - Thanks for the revision history.  For future posts, put it below
-    the "---" line so it's in the email but not part of the commit log.
+  /*
+   * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
+   * to the retpoline thunk with a CS prefix when the register requires
+   * a REX prefix byte to encode. Also see apply_retpolines().
+   */
+  .macro __CS_PREFIX reg:req
+          .irp rs,r8,r9,r10,r11,r12,r13,r14,r15
+          .ifc \reg,\rs
+          .byte 0x2e
+          .endif
+          .endr
+  .endm
 
-  - I think there's a leak in pci_acpi_preserve_config() because it
-    doesn't free "obj" before it returns true.  If you agree, add a
-    preparatory patch to fix this.
-
-  - Add a preparatory patch to return false early in
-    pci_acpi_preserve_config() if !ACPI_HANDLE(&host_bridge->dev) so
-    the body of the function is unindented, similar to what
-    acpi_pci_add_bus() does.
-
-  - Add another preparatory patch that adds acpi_check_dsm() of the
-    desired function/rev ID for DSM_PCI_PRESERVE_BOOT_CONFIG,
-    DSM_PCI_POWER_ON_RESET_DELAY, DSM_PCI_DEVICE_READINESS_DURATIONS.
-    Move the "Evaluate PCI Boot Configuration" comment above the
-    acpi_check_dsm() since it applies to the whole function, not just
-    the rev 1 code in this patch.
-
-  - Rework this patch so it only adds acpi_check_dsm() and
-    acpi_evaluate_dsm_typed() for rev 2.
-
-  - Throughout, wrap code and comments to fit in 80 columns because
-    that's the convention for the rest of the file.
-
-  - You can use "BIT(DSM_PCI_PRESERVE_BOOT_CONFIG)" and similar
-    instead of "1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG" when calling
-    acpi_check_dsm().
-
-  - Add a [0/n] cover letter when posting the series.  Each patch
-    should be a response to the cover letter.  "git format-patch" and
-    "git send-email" will do that for you automatically.
-
-> Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
+> > +#define __CS_PREFIX(reg)				\
+> > +	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15;		\
+> > +	.ifc \\rs, \reg;				\
 > 
-> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-> ---
->  drivers/pci/pci-acpi.c | 42 ++++++++++++++++++++++++++++++++----------
->  1 file changed, 32 insertions(+), 10 deletions(-)
+> Why are these escaped differently?  Given they're all \r of some form or
+> another, I guess something is going wonky with __stringify(), but its
+> still weird for them to be different.
 > 
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index af370628e583..f805cd134019 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -123,19 +123,41 @@ phys_addr_t acpi_pci_root_get_mcfg_addr(acpi_handle handle)
->  bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->  {
->  	if (ACPI_HANDLE(&host_bridge->dev)) {
-> -		union acpi_object *obj;
-> +		union acpi_object *obj = NULL;
->  
->  		/*
-> -		 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-> -		 * exists and returns 0, we must preserve any PCI resource
-> -		 * assignments made by firmware for this host bridge.
-> +		 * Per PCI Firmware r3.2, released Jan 26, 2015,
-> +		 * DSM_PCI_PRESERVE_BOOT_CONFIG Revision ID is 1.
-> +		 * But PCI Firmware r3.3, released Jan 20, 2021,
-> +		 * changed sec 4.6.5 to say
-> +		 * "lowest valid Revision ID value: 2". So try revision 1
-> +		 * first for old platform, then try revision 2.
->  		 */
-> -		obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
-> -					      &pci_acpi_dsm_guid,
-> -					      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
-> -					      NULL, ACPI_TYPE_INTEGER);
-> -		if (obj && obj->integer.value == 0)
-> -			return true;
-> +		if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev), &pci_acpi_dsm_guid, 1,
-> +				   1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG)) {
-> +			/*
-> +			 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-> +			 * exists and returns 0, we must preserve any PCI resource
-> +			 * assignments made by firmware for this host bridge.
-> +			 */
-> +			obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
-> +						      &pci_acpi_dsm_guid,
-> +						      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
-> +						      NULL, ACPI_TYPE_INTEGER);
-> +			if (obj && obj->integer.value == 0)
-> +				return true;
-> +		}
-> +
-> +		if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev), &pci_acpi_dsm_guid, 2,
-> +				   1ULL << DSM_PCI_PRESERVE_BOOT_CONFIG)) {
-> +			obj = acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
-> +						      &pci_acpi_dsm_guid,
-> +						      2, DSM_PCI_PRESERVE_BOOT_CONFIG,
-> +						      NULL, ACPI_TYPE_INTEGER);
-> +			if (obj && obj->integer.value == 0)
-> +				return true;
-> +		}
-> +
->  		ACPI_FREE(obj);
->  	}
->  
-> -- 
-> 2.39.2
-> 
+> Do you have a fully pre-processed source to hand to see how CALL_NOSPEC
+> ends up?
+
+Below is the pre-processed source for test_cc() generated with "make arch/x86/kvm/emulate.i".
+
+- This is with double backslash in ".ifc \\rs, \reg":
+
+	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \\rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "call __x86_indirect_thunk_%V[thunk_target]\n"
+                                                                                  ^
+	This ends up emitting the CS prefix byte correctly:
+
+	2e e8 51 c9 32 01       cs call ffffffff824289e0
+
+- This is with single backslash in ".ifc \\rs, \reg":
+
+	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "c      all __x86_indirect_thunk_%V[thunk_target]\n"
+                                                                                  ^
+	This version does not emit the CS prefix byte:
+
+	e8 52 c9 32 01          call   ffffffff824289e0
+
+I tried looking in gcc inline assembly documentation but could not find
+anything that would explain this. :(
 
