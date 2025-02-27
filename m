@@ -1,118 +1,227 @@
-Return-Path: <linux-kernel+bounces-537233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEC3A48968
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34442A48988
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2891890267
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0659C188868E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432F62702D7;
-	Thu, 27 Feb 2025 20:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC63271827;
+	Thu, 27 Feb 2025 20:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm+jiQVE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnHlJzwu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD4626FA73;
-	Thu, 27 Feb 2025 20:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9C26FA7B;
+	Thu, 27 Feb 2025 20:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686880; cv=none; b=i4tGBxo7/ohlF98HlOLH0ORHogG6cCfkfIlj4KKHkDFZ1I5HlptrSQwfXAeeIm/H3gH50Tv47V9GCkD9g1vyZT0VG8nVrKhcV1dKpDggOyi1Mj6eB8zqTWMC7Wsq+m8tsCGqFRyEmKkdOgzYTaf2LzGX7QiX9L8+bgKe9Nwu7/Q=
+	t=1740686949; cv=none; b=f/QMeIiSW5MxqzQXtERIFTpGSE+BJLCvwpW2Vsv6Q3VhAgAi0SQ55O9T9mE1dnXjpzFGs72SCr+umpmRmuDYG6NcuP2wLU7IyXqJxqc9UWVExG5gISbTMU4xg6a+9V/SqLPrj7RYe4g51ixxDt1KeFZKi50MXTDwfhbIoQ1cBfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686880; c=relaxed/simple;
-	bh=qzrV7ojG37Gb87LwnmyFT03tAi+5cM0gi1gFMUwOnSg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UMbT4zEnixADfjnAwiUrNbeEgkmrZlmMB2FgHJoqAuEWgZhukkR/9XWf0N3OgpzBx6z9pWF8G8BuNoXchQtoXzoipDleb2gI68THgs+NPQRgmhE9tL+UvX0cYZ8EnLrLctpqO43N1bqe15XB3nPsqo6m0R60ThCMO3xK80kC55Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm+jiQVE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6027BC4CEE4;
-	Thu, 27 Feb 2025 20:08:00 +0000 (UTC)
+	s=arc-20240116; t=1740686949; c=relaxed/simple;
+	bh=j5VRDcgqEaXuWIDavjd4YEFkmlI9dTVUxhcuv8TxV1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YpQZxBS1F6sdr4r+PxXmfzrmKnjX0C8tlNIGJIoUUsCp+BHyDP6z6Q/04pW8xfGH5kuEZ+8xqRPkTTNJ70GyLZutCqvhNBaJibH1Z4zEQSfTRXtfcYStiBqQCNz3TxMX7IAWkqsWynfYOhr3JKDQmXlgPhA9UBrnfYBAgYi0fQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnHlJzwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A482C4CEE4;
+	Thu, 27 Feb 2025 20:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740686880;
-	bh=qzrV7ojG37Gb87LwnmyFT03tAi+5cM0gi1gFMUwOnSg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Wm+jiQVETdhzpdKjuXSx8EyQpLWsIwCCInB8UTvsDaXula4vn5SYpUL5wwmhljKYr
-	 C0rHLXmqRLLjwjKbOREYhyU5K9Fz9lXhwAa7/LrK3OwAqH+j8xfOCpWfqRzehfqBc1
-	 sVpKg2zTHC/fLVyF074bYCUrKyFhvvqYV/aTn3JDEz/Ihj5+LpVSfkRzPxphdgKQyh
-	 nbUTymGW+3kWJBqEkg5qhIBxenfGpCrI4E5JjQ+R6tSh3bM8XoXfc4se4uqdPU1sEJ
-	 KnS93UaP8pCdIeJKQYXl5pGBLEHVTc/dVA+Kq2YOw7DrsnQesOyaEiUf1JeG6NAX3s
-	 tgNrI/NMjC+tQ==
-Message-ID: <250d7040fac61c408d648996e275aedc.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740686949;
+	bh=j5VRDcgqEaXuWIDavjd4YEFkmlI9dTVUxhcuv8TxV1Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YnHlJzwuNAhrmOtUQIOONlXKaDukIwGkh5SrT+AZR/hmITYF8E+hdIpjGMviggUAj
+	 drRRRPU+0AG9uF7+Y4DAsDNah8z1NEGiynbb4H7ZmAMNCtqMAPnrEG0/FOhod04EkA
+	 U4ma/Mnk6WCTXvtBPcsBSlNVHumJohdP7s+1dB7bS3+4Ek6MDDTe+rDOOTWJOBoHw7
+	 88UWXpeCccf5vEyjP4aC80SfJnsy4m7ljKWtpGIkinhTaVHGH1AKbnN9aIZYuM++b4
+	 snIDmnGQv2ZxWJoUBIBmwAuOY6ko8JXBsH0MG2WGHgZeI3Q2ACG+RqLz0uhhZvCWq4
+	 NJ3Oif7ZQ51KA==
+Message-ID: <d1fc8fea-5a2c-4b38-949c-8063cb76fadf@kernel.org>
+Date: Thu, 27 Feb 2025 14:09:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jjz9bg0pg.fsf@starbuckisacylon.baylibre.com>
-References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com> <20250120-amlogic-clk-drop-clk-regmap-tables-v3-1-126244146947@baylibre.com> <508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org> <1jjz9bg0pg.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH v3 1/4] clk: add a clk_hw helpers to get the clock device or device_node
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 27 Feb 2025 12:07:57 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a
+ union
+To: kernel test robot <lkp@intel.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))"
+ <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250226074934.1667721-5-superm1@kernel.org>
+ <202502272001.nafS0qXq-lkp@intel.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <202502272001.nafS0qXq-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Jerome Brunet (2025-02-27 02:07:39)
-> On Wed 26 Feb 2025 at 17:01, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > Quoting Jerome Brunet (2025-01-20 09:15:30)
-> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >> index 9b45fa005030f56e1478b9742715ebcde898133f..9818f87c1c56ab9a3782c2=
-fd55d3f602041769c3 100644
-> >> --- a/drivers/clk/clk.c
-> >> +++ b/drivers/clk/clk.c
-> >> @@ -365,6 +365,39 @@ const char *clk_hw_get_name(const struct clk_hw *=
-hw)
-[...]
-> >> + * Return: the struct device associated with the clock, or NULL if th=
-ere
-> >> + * is none.
-> >> + */
-> >> +struct device *clk_hw_get_dev(const struct clk_hw *hw)
-> >> +{
-> >> +       return hw->core->dev;
-> >
-> > Maybe we should increment the device refcount and require callers to
-> > put_device(). Now's our chance to make the change!
->=20
-> I'm afraid this would lead to a lot of boilerplate code and mis-managemen=
-t,
-> especially in the clock ops.
+On 2/27/2025 06:59, kernel test robot wrote:
+> Hi Mario,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on amd-pstate/bleeding-edge]
+> [cannot apply to rafael-pm/linux-next rafael-pm/bleeding-edge tip/x86/core amd-pstate/linux-next linus/master v6.14-rc4 next-20250227]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/cpufreq-amd-pstate-Invalidate-cppc_req_cached-during-suspend/20250226-155545
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git bleeding-edge
+> patch link:    https://lore.kernel.org/r/20250226074934.1667721-5-superm1%40kernel.org
+> patch subject: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a union
+> config: i386-buildonly-randconfig-003-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/config)
+> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202502272001.nafS0qXq-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>     In file included from drivers/cpufreq/amd-pstate.c:51:
+>     In file included from drivers/cpufreq/amd-pstate-trace.h:15:
+>     In file included from include/linux/trace_events.h:6:
+>     In file included from include/linux/ring_buffer.h:5:
+>     In file included from include/linux/mm.h:2224:
+>     include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       505 |                            item];
+>           |                            ~~~~
+>     include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>       511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>       512 |                            NR_VM_NUMA_EVENT_ITEMS +
+>           |                            ~~~~~~~~~~~~~~~~~~~~~~
+>>> drivers/cpufreq/amd-pstate.c:914:41: warning: variable 'nominal_freq' is uninitialized when used here [-Wuninitialized]
+>       914 |                 perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
+>           |                                                       ^~~~~~~~~~~~
+>     drivers/cpufreq/amd-pstate.c:902:38: note: initialize the variable 'nominal_freq' to silence this warning
+>       902 |         u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
+>           |                                             ^
+>           |                                              = 0
+>     3 warnings generated.
+> 
+> 
+> vim +/nominal_freq +914 drivers/cpufreq/amd-pstate.c
+> 
+>     891	
+>     892	/*
+>     893	 * amd_pstate_init_freq: Initialize the nominal_freq and lowest_nonlinear_freq
+>     894	 *			 for the @cpudata object.
+>     895	 *
+>     896	 * Requires: all perf members of @cpudata to be initialized.
+>     897	 *
+>     898	 * Returns 0 on success, non-zero value on failure.
+>     899	 */
+>     900	static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
+>     901	{
+>     902		u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
+>     903		struct cppc_perf_caps cppc_perf;
+>     904		union perf_cached perf;
+>     905		int ret;
+>     906	
+>     907		ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
+>     908		if (ret)
+>     909			return ret;
+>     910		perf = READ_ONCE(cpudata->perf);
+>     911	
+>     912		if (quirks && quirks->lowest_freq) {
+>     913			min_freq = quirks->lowest_freq;
+>   > 914			perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
+>     915			WRITE_ONCE(cpudata->perf, perf);
+>     916		} else
+>     917			min_freq = cppc_perf.lowest_freq;
+>     918	
+>     919		if (quirks && quirks->nominal_freq)
+>     920			nominal_freq = quirks->nominal_freq;
+>     921		else
+>     922			nominal_freq = cppc_perf.nominal_freq;
+>     923	
+>     924		min_freq *= 1000;
+>     925		nominal_freq *= 1000;
+>     926	
+>     927		WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+>     928	
+>     929		max_freq = perf_to_freq(perf, nominal_freq, perf.highest_perf);
+>     930		lowest_nonlinear_freq = perf_to_freq(perf, nominal_freq, perf.lowest_nonlinear_perf);
+>     931		WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
+>     932	
+>     933		/**
+>     934		 * Below values need to be initialized correctly, otherwise driver will fail to load
+>     935		 * max_freq is calculated according to (nominal_freq * highest_perf)/nominal_perf
+>     936		 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
+>     937		 * Check _CPC in ACPI table objects if any values are incorrect
+>     938		 */
+>     939		if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
+>     940			pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
+>     941				min_freq, max_freq, nominal_freq);
+>     942			return -EINVAL;
+>     943		}
+>     944	
+>     945		if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
+>     946			pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
+>     947				lowest_nonlinear_freq, min_freq, nominal_freq);
+>     948			return -EINVAL;
+>     949		}
+>     950	
+>     951		return 0;
+>     952	}
+>     953	
+> 
 
-Don't we have __release() helpers? Not sure what boilerplate you're
-talking about.
+The series is getting close (I think just one more patch needing review).
 
->=20
-> Would it be better if clock core took care of that, at least for the ops
-> part ? I mean incrementing and decrementing the ref count based on the
-> clk_hw registration. That would make things a lot easier for clock
-> users.
+So if no other feedback for the series needing other fixes I will squash 
+this in to fix this issue when the series is merged.
 
-Meh, I don't know. We've been assuming that the device is present
-because the driver will be unbound and the clks unregistered before the
-device can disappear. Nothing enforces that though so things could go
-wrong if we have a bug somewhere vs. knowing for sure that the refcount
-is incremented here. What you're suggesting is a bigger change, pushing
-down the reference counting so that as long as the clk is registered the
-device is known to be valid.
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index bd8bcda4e6eb0..034ee40681b4c 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -915,6 +915,12 @@ static int amd_pstate_init_freq(struct amd_cpudata 
+*cpudata)
+                 return ret;
+         perf = READ_ONCE(cpudata->perf);
 
-Looking into the crystal ball of the future shows me that this will get
-wrapped in rust and at that point we'll be sharing the reference (likely
-not mutable) with the caller. If we do proper reference counting at the
-start that will make it easier to convert code, but it probably doesn't
-matter much because any rust clk provider would use the rust wrapper
-where we could handle the refcount logic.
++       if (quirks && quirks->nominal_freq)
++               nominal_freq = quirks->nominal_freq;
++       else
++               nominal_freq = cppc_perf.nominal_freq;
++       nominal_freq *= 1000;
++
+         if (quirks && quirks->lowest_freq) {
+                 min_freq = quirks->lowest_freq;
+                 perf.lowest_perf = freq_to_perf(perf, nominal_freq, 
+min_freq);
+@@ -922,13 +928,7 @@ static int amd_pstate_init_freq(struct amd_cpudata 
+*cpudata)
+         } else
+                 min_freq = cppc_perf.lowest_freq;
 
->=20
-> If the consumer of the API uses it for something that may outlive the
-> clk_hw, then it is up to it to properly increment the ref count since it
-> is clearly not clock stuff.
+-       if (quirks && quirks->nominal_freq)
+-               nominal_freq = quirks->nominal_freq;
+-       else
+-               nominal_freq = cppc_perf.nominal_freq;
+-
+         min_freq *= 1000;
+-       nominal_freq *= 1000;
 
-Sure. I'm fine to not change anything. Mostly thinking out loud.
+         WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
+
 
