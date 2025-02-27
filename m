@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-535383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4414AA471DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:59:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8E3A471DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F543AC46E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA573AD0A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37CC17A318;
-	Thu, 27 Feb 2025 01:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E241922D4;
+	Thu, 27 Feb 2025 01:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFg4aUZp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjWj45f8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6C817A305;
-	Thu, 27 Feb 2025 01:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7162A18B495;
+	Thu, 27 Feb 2025 01:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740621488; cv=none; b=Y+4xNoTrNEDRS+Ky3x1KKY1Ae7iHbbtPYhEVzg0vD0QU/HVdxDzLaBmoXW2G+L82lTBYWqxbhHk3I3LZG1WztUd6xjppiFvn0jKevQUWfzZx3hdryYDveXjRWr/W5utvRm0Ontw/b9FfouG5t2kQNRxbzVfR55yB3FJb8cZFt84=
+	t=1740621490; cv=none; b=J7QcLfMZconKtGgaZzJhmCQritHbdqST5ZIaQTE3JPE289G9ZzJR1tbyEmYOS8NoB9qsHL0cqa//EeS2pD1KMacP+mzMXObTle7q+bRKIeQsExlRDBWgC1FuWV1RQeMoZALdDP8HwFdTpYMipozv0UIMWN067vAwq4gjMk2+tAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740621488; c=relaxed/simple;
-	bh=S9XFinRzq8Qckj8OZ3J96suStAifVelwVdFkfT6lwsE=;
+	s=arc-20240116; t=1740621490; c=relaxed/simple;
+	bh=o7Tb1fqSTBTcTFBCmPVioCKVuRP26jC84n9gdZN/Nso=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pl8De+r34pl66l0sKkenOuLAIlVDkLzFUQ7NK6sxC1gAv/dvhLC6gu10TsfBZQU7nYMlNlUR3ucmgGXnebeAAz5Kre/jb6rtihRYF0S7SJR9bfUjui4Vt1Fp8ft1R52Ah/mw/ap3XjuM0r85fZh0d1RLmMMVQjQgMFyo+Har0aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFg4aUZp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B480AC4CEE9;
-	Thu, 27 Feb 2025 01:58:07 +0000 (UTC)
+	 MIME-Version; b=Rmq/SEGtJHccUMnwFOqAJgDAmIp8RrjYb4iCJ1bqDVRdNfwoBj17iV/eJVYsIhXrrDgZJJ36zGwSr0yRv+pb9od3mMMpjr+AoqEecpW5a/sFVF0rHvq3+S6E7xMPLTz7Tnk682Xg7LUPw0j8nZx/kcmNECIcx1bJPgqns4kuguw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjWj45f8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C248FC4CED6;
+	Thu, 27 Feb 2025 01:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740621487;
-	bh=S9XFinRzq8Qckj8OZ3J96suStAifVelwVdFkfT6lwsE=;
+	s=k20201202; t=1740621489;
+	bh=o7Tb1fqSTBTcTFBCmPVioCKVuRP26jC84n9gdZN/Nso=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WFg4aUZpcvDAJt0FMFBylM4KTG431Bd2TRJeJRv7JGBWoHnrsuUQdQLRTT84gi0aN
-	 jSZn4AmmhGfesBe8je+1OKX9QewD8rGm8sTkaO/ueid/QTNyvwT/+bt/E4+QTn49tA
-	 F/24IP1GLwnSIyFU6EZq9BzGAlFDJbaacDr4NPETqZ/0IKg9mthPql3jFwtf3NJiJh
-	 6cIwyyXOylr8SoA/vObsNNTb/TsoqtEETIzcj6b/6SQmhJnzD3xykHaiIbr7HlfThh
-	 SOyhSqCFz3q+HZKSfR1FkujwGAGN5Pf5yOTLzdgRXwDkOP7mmrJh0MBaBrIl3aOTiK
-	 PcaKpNlf9SmUQ==
+	b=RjWj45f8qr9qybW6WhIY7KWi/G9KlZfLpHRUkMdyTAbkuEei4cWOQ3htE9tfpt9yM
+	 La6TSblyuWFzAtcsqfzTo//ggqbrT3jquB0NjWz35ZhFhKRT+fcmhqDlWyO44XmENh
+	 1c20ENmIjra3EJ2LCQ7QJheQo8AylmISq4gXx95fJ4NrieksEzbjyuVUQBRp2zClyZ
+	 NN/uFghaiRogYtUyrVFzf2AtQKC6tI3kqCXvTa7aNoUKF0pmVRiWz/kzD3wmIj2igS
+	 yJvd3XrlexS0UxTYRE2f/3aI4wfT16zwn3fCurB10mcV4wYOpSHMMLFoUkHTaknxgc
+	 5B7O5uX1B4r9Q==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
@@ -48,9 +48,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v2 6/9] mm/damon: add default allow/reject behavior fields to struct damos
-Date: Wed, 26 Feb 2025 17:57:51 -0800
-Message-Id: <20250227015754.38789-7-sj@kernel.org>
+Subject: [RFC PATCH v2 7/9] mm/damon/core: set damos_filter default allowance behavior based on installed filters
+Date: Wed, 26 Feb 2025 17:57:52 -0800
+Message-Id: <20250227015754.38789-8-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250227015754.38789-1-sj@kernel.org>
 References: <20250227015754.38789-1-sj@kernel.org>
@@ -62,38 +62,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Current default allow/reject behavior of filters handling stage has made
-before introduction of the allow behavior.  For allow-filters usage, it
-is confusing and inefficient.
+Decide whether to allow or reject by default on core and opertions layer
+handled filters evaluation stages.  It is decided as the opposite of the
+last installed filter's behavior.  If there is no filter at all, allow
+by default.  If there is any operations layer handled filters, core
+layer's filtering stage sets allowing as the default behavior regardless
+of the last filter of core layer-handling ones, since the last filter of
+core layer handled filters in the case is not really the last filter of
+the entire filtering stage.
 
-It is more intuitive to decide the default filtering stage allow/reject
-behavior as opposite to the last filter's behavior.  The decision should
-be made separately for core and operations layers' filtering stages,
-since last core layer-handled filter is not really a last filter if
-there are operations layer handling filters.
-
-Keeping separate decisions for the two categories can make the logic
-simpler.  Add fields for storing the two decisions.
+Also, make the core layer's DAMOS filters handling stage uses the newly
+set behavior field.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- include/linux/damon.h | 3 +++
- 1 file changed, 3 insertions(+)
+ mm/damon/core.c | 34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index add82fdc1117..1d8479f57f85 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -497,6 +497,9 @@ struct damos {
- 	unsigned long next_apply_sis;
- 	/* informs if ongoing DAMOS walk for this scheme is finished */
- 	bool walk_completed;
-+	/* whether to reject core/ops filters umatched regions */
-+	bool core_filters_default_reject;
-+	bool ops_filters_default_reject;
- /* public: */
- 	struct damos_quota quota;
- 	struct damos_watermarks wmarks;
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 78126a5145fd..8661f64ab1b4 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -864,6 +864,32 @@ static int damos_commit_ops_filters(struct damos *dst, struct damos *src)
+ 	return 0;
+ }
+ 
++/**
++ * damos_filters_default_reject() - decide whether to reject memory that didn't
++ *				    match with any given filter.
++ * @filters:	Given DAMOS filters of a group.
++ */
++static bool damos_filters_default_reject(struct list_head *filters)
++{
++	struct damos_filter *last_filter;
++
++	if (list_empty(filters))
++		return false;
++	last_filter = list_last_entry(filters, struct damos_filter, list);
++	return last_filter->allow;
++}
++
++static void damos_set_filters_default_reject(struct damos *s)
++{
++	if (!list_empty(&s->ops_filters))
++		s->core_filters_default_reject = false;
++	else
++		s->core_filters_default_reject =
++			damos_filters_default_reject(&s->filters);
++	s->ops_filters_default_reject =
++		damos_filters_default_reject(&s->ops_filters);
++}
++
+ static int damos_commit_filters(struct damos *dst, struct damos *src)
+ {
+ 	int err;
+@@ -871,7 +897,11 @@ static int damos_commit_filters(struct damos *dst, struct damos *src)
+ 	err = damos_commit_core_filters(dst, src);
+ 	if (err)
+ 		return err;
+-	return damos_commit_ops_filters(dst, src);
++	err = damos_commit_ops_filters(dst, src);
++	if (err)
++		return err;
++	damos_set_filters_default_reject(dst);
++	return 0;
+ }
+ 
+ static struct damos *damon_nth_scheme(int n, struct damon_ctx *ctx)
+@@ -1490,7 +1520,7 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
+ 		if (damos_filter_match(ctx, t, r, filter))
+ 			return !filter->allow;
+ 	}
+-	return false;
++	return s->core_filters_default_reject;
+ }
+ 
+ /*
 -- 
 2.39.5
 
