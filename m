@@ -1,110 +1,197 @@
-Return-Path: <linux-kernel+bounces-535627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8642DA4754B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:40:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27100A47552
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7087E7A3929
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23ABF3AEA9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B7720CCE2;
-	Thu, 27 Feb 2025 05:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956951E5210;
+	Thu, 27 Feb 2025 05:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hY6PMFIr"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="GsbisALS"
+Received: from esa3.hc1455-7.c3s2.iphmx.com (esa3.hc1455-7.c3s2.iphmx.com [207.54.90.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20A217A301;
-	Thu, 27 Feb 2025 05:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6120CCE2;
+	Thu, 27 Feb 2025 05:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740634850; cv=none; b=AjCJhPg4aEMjTn9XuPF57jxH6u2+uWpYNoAlzKRe8vcULpFd65ZoB36xfwNhT24ci4o4QTOeV5WHJD5vECjv1/3/0cxd1xaa8iX5bwT1IakxGnMV9tg3cBJjBvYqP0geE7b9dh1KVJO+aLPfCSj9nrngmY+QFf+Fd0vOWiWvpGU=
+	t=1740634985; cv=none; b=MRRCdfB2UfdNrS2n0d5sGOXesK3Qrm97EQHP15KjXNfqtSXnxrWSAfkw1SkDaQ/pN9lcQto5ITqx/rSMByg+B7Xh0Xk5N2MrEvuNb+SwjH1oWS9lBkghIS8RCcPSUwKrNf4vbpaE1SDBgfCnWzBxbV1X2tUNpcy/z4PkaYohP0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740634850; c=relaxed/simple;
-	bh=OOYxUhmeLINl/mx2gdk+NoAGXB6QcbSlnxwbQ1XbYzY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nHoQQ5F2JpQnR0Kgo/4E2rVrTUBPNDkUVdvV3nsynUR6qWB64U6pzJqrnjilRDz2MTmIkyj749j7cuW38c0JVQNloOu2tfqfg+j+sS2rFfvzdB5OgOuVLy7ffTjQAG4WdLQNLHqSq4rZakphQf8btVLozT/GRckJnPCC2vbEfWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hY6PMFIr; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f88509dad2so5680177b3.3;
-        Wed, 26 Feb 2025 21:40:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740634847; x=1741239647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOYxUhmeLINl/mx2gdk+NoAGXB6QcbSlnxwbQ1XbYzY=;
-        b=hY6PMFIrZg/5sSyURkn8sdMkdoS2LJO3Ay9oItzjcwQLSRjzWKgwoeVZ9gAs/J+unq
-         MbWT99ZvcO2u9HHIFyHxDunmMQ8HZ1D82oEVpc2lFqI4SorUpczwx8QjzRWPG1S1paD1
-         /Mfqb3RDODqJl7KNUSPxeMe0pwkB4dus8HalraDX9Hd8zKjB//OkexQ0IeLMU8rm1xB3
-         l6uKYSQmOCRCr1rGyHfr9Hk3digo01HfxanYoeCpuBstESyIJcs+CZAnS3FJfDcbHre/
-         NxnuBYNTIAGxnocuEwQpJMHmER2Yi4IA4/33mfVnP4wWF1VxoT/O2uEv5u2Hq6MI9aU1
-         oxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740634847; x=1741239647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOYxUhmeLINl/mx2gdk+NoAGXB6QcbSlnxwbQ1XbYzY=;
-        b=CTFwJ2Rh14ftSnCQ0n8cRPlTCey2R6/PxP33rHtCmb4AQKMwBhQZ3RnXC3x9ujeNyq
-         net2uUMJMbi7UqgkruTXPZnHiajT0G0z7bGYlNZSeY4RFcpvFfumOlPVf5ZR7OLSTHkj
-         mPdTTc71l+DioCEoa/D2MksX5Vugm/UFD31FMIAAlWB7UOfxjbC2vtkQtUROH3JimZ8r
-         iwFOya7Y3Y0SNW+Obwwrl6uQd2YGNPNHnwIqr3InXwc31i5SXMWxM60So77D/rRE5FSa
-         VWu7c5klM8/zzevwBrJFhSKSNJTv92ZeKV/farydEIQrR2tw9GX6GnqTLcHRdZF9D0Ik
-         KyYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxrCZ1qmFf7TZJXK0H7c5JD5tZf3WD9+GKmc6zTPzXWBJmtvBdy7m7psRUkkzqvdgDXfHbHwYLf/U3HSX/HmKDw==@vger.kernel.org, AJvYcCW3Qrwc9ocPSoOnItCQtKz5EK0NnAsn4cioxpVXkGs7p6aFWMqIejT1XevnQDRNjGWxU7w3t71VU+j2d/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWYDVIELt9EuE/XfLYFqhw0K04SHOAIoUYXPn88+etdC6rUiJq
-	TVPF3fhvB1zLaajjQilGlYxE8h3LHxcvEKUVhIXoJMEhUca8KGjlkUjSFpXWztJKGtRrtQPzfv+
-	WtjLr6ttZpn6VDOrmElxha2w/Eoo=
-X-Gm-Gg: ASbGncsSLMXAmjMjwDE3t807MJiDh+tuIy7t5ThQ1ogNZRrSsmfiYVck4ARO7Z0GCZW
-	hg9C0XR6N/no4sTc3bNFtf0JnabwnXYym5VOdSlntQ/OV56VudqvoKFJLTfRXe+RFLQVu8WrTiZ
-	6WDEgXRQ==
-X-Google-Smtp-Source: AGHT+IEiCwzUIxLiT9ApM1O30LFyhfyMY+s+1Pj+UNjNc5YoGLFOIFD/au1usXKgRzsp6uXp7entrnBDdLRzn2M2mOQ=
-X-Received: by 2002:a05:690c:450e:b0:6ef:9e74:c0b8 with SMTP id
- 00721157ae682-6fbcc7a3a77mr213751177b3.17.1740634847408; Wed, 26 Feb 2025
- 21:40:47 -0800 (PST)
+	s=arc-20240116; t=1740634985; c=relaxed/simple;
+	bh=7ioaoaFEqmOjduVcLT1zN2cDU+hoCGDa+V7RfZiay3o=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=A4ozzFj2VcGrLvRvKNgSU+XwkgKzYPmtBe7fxMvdANrBGTvxrdE25T3roL1fF9gR1eHrSAACBf3qX2HO9ohOrybHuhUNn7HAqIn7gYZT2YTRjdJCzYd9697fSXL6tIYT4chx7mpJRZ0S2QmGt+kyB4NGutbKDzgQwyH2Ppyq32g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=GsbisALS; arc=none smtp.client-ip=207.54.90.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1740634984; x=1772170984;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7ioaoaFEqmOjduVcLT1zN2cDU+hoCGDa+V7RfZiay3o=;
+  b=GsbisALSQdQpyIZmo/OaeFB/e/cu42FLd6J3/flcAsok5HuNBbKByizN
+   nZL0QZu2ms6A62jp0T6pd/5wl20IrsQ71e2vGaYfYzmTjo3pwxOyOE8o+
+   nqDsxlYOwHU5Vdnn4sTCMnigqlUXBARebvApSccWgs5JuUfuxJ3vSzZEt
+   u55PWiSLTvML7mwG1UBNzlF1s43DIk6R5BMxymFsbioRnK8RRm9kAe2yw
+   cVG+nWY4Rx/ar3Ii4zEisWVFoKSvl9Pdw8LzBQ44Orw+Ra10tvHZVa5Yg
+   dzBDCrGjTj233Nin8i4CPhiGtxCGg3kQ0ueAseDqHVH5AQ9troL9jTi+o
+   w==;
+X-CSE-ConnectionGUID: Hs/UU8qKQMGiharzNw7V9A==
+X-CSE-MsgGUID: 1RkmxL6JTb+3CsLpEv6lhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="191325972"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732546800"; 
+   d="scan'208";a="191325972"
+Received: from unknown (HELO yto-r4.gw.nic.fujitsu.com) ([218.44.52.220])
+  by esa3.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 14:41:52 +0900
+Received: from yto-m1.gw.nic.fujitsu.com (yto-nat-yto-m1.gw.nic.fujitsu.com [192.168.83.64])
+	by yto-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id F2D20D5019;
+	Thu, 27 Feb 2025 14:41:49 +0900 (JST)
+Received: from yto-om3.fujitsu.com (yto-om3.o.css.fujitsu.com [10.128.89.164])
+	by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id C51F3D0925;
+	Thu, 27 Feb 2025 14:41:49 +0900 (JST)
+Received: from sm-x86-mem01.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by yto-om3.fujitsu.com (Postfix) with ESMTP id 04DE54005847B;
+	Thu, 27 Feb 2025 14:41:48 +0900 (JST)
+From: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+To: John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Akio Kakuno <fj3333bs@aa.jp.fujitsu.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>
+Subject: [PATCH] Remove some PMU events for FUJITSU-MONAKA
+Date: Thu, 27 Feb 2025 05:40:45 +0000
+Message-Id: <20250227054045.1340090-1-fj5100bi@fujitsu.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109075108.7651-1-irogers@google.com> <20250109075108.7651-2-irogers@google.com>
-In-Reply-To: <20250109075108.7651-2-irogers@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 26 Feb 2025 21:40:36 -0800
-X-Gm-Features: AQ5f1JqiOTOyp_dzIzvx-A2UxBFF9mHcQnsAg2XK_GhnzVqitRIlrwczXqIrHII
-Message-ID: <CAH0uvohxfk0wYv8NB5i7dZJ2+0PX22iqVAJqWLGqKykrqC-RgQ@mail.gmail.com>
-Subject: Re: [PATCH v1 01/11] perf debug: Avoid stack overflow in recursive
- error message
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Ian,
+The following events are not counted properly:
 
-On Wed, Jan 8, 2025 at 11:51=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> In debug_file, pr_warning_once is called on error. As that function
-> calls debug_file the function will yield a stack overflow. Switch the
-> location of the call so the recursion is avoided.
+0x0037 LL_CACHE_MISS_RD
+0x400B L3D_CACHE_LMISS_RD
+0x0396 L2D_CACHE_REFILL_L3D_MISS
+0x039A L2D_CACHE_REFILL_L3D_MISS_PRF
+0x039B L2D_CACHE_REFILL_L3D_MISS_HWPRF
+0x039C L2D_CACHE_REFILL_L3D_HIT
+0x03A0 L2D_CACHE_REFILL_L3D_HIT_PRF
+0x03A1 L2D_CACHE_REFILL_L3D_HIT_HWPRF
 
-May I ask how it created the recursion? Too ignorant to understand sorry...
+Specifically, these events are always counted as misses,
+regardless of whether the L3 prefetch is a hit or a miss.
+So I remove these events in l3_cache.json, ll_cache.json
 
-Thanks,
-Howard
+Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+---
+ .../arch/arm64/fujitsu/monaka/l3_cache.json   | 34 -------------------
+ .../arch/arm64/fujitsu/monaka/ll_cache.json   |  4 ---
+ 2 files changed, 38 deletions(-)
+
+diff --git a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/l3_cache.json b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/l3_cache.json
+index 3f3e0d22ac68..917b9b5bf8bb 100644
+--- a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/l3_cache.json
++++ b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/l3_cache.json
+@@ -37,11 +37,6 @@
+         "EventName": "L2D_CACHE_REFILL_L3D_CACHE_HWPRF",
+         "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_CACHE caused by hardware prefetch access."
+     },
+-    {
+-        "EventCode": "0x0396",
+-        "EventName": "L2D_CACHE_REFILL_L3D_MISS",
+-        "BriefDescription": "This event counts operations that cause a miss of the L3 cache."
+-    },
+     {
+         "EventCode": "0x0397",
+         "EventName": "L2D_CACHE_REFILL_L3D_MISS_DM",
+@@ -57,21 +52,6 @@
+         "EventName": "L2D_CACHE_REFILL_L3D_MISS_DM_WR",
+         "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_MISS caused by demand write access."
+     },
+-    {
+-        "EventCode": "0x039A",
+-        "EventName": "L2D_CACHE_REFILL_L3D_MISS_PRF",
+-        "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_MISS caused by prefetch access."
+-    },
+-    {
+-        "EventCode": "0x039B",
+-        "EventName": "L2D_CACHE_REFILL_L3D_MISS_HWPRF",
+-        "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_MISS caused by hardware prefetch access."
+-    },
+-    {
+-        "EventCode": "0x039C",
+-        "EventName": "L2D_CACHE_REFILL_L3D_HIT",
+-        "BriefDescription": "This event counts operations that cause a hit of the L3 cache."
+-    },
+     {
+         "EventCode": "0x039D",
+         "EventName": "L2D_CACHE_REFILL_L3D_HIT_DM",
+@@ -87,16 +67,6 @@
+         "EventName": "L2D_CACHE_REFILL_L3D_HIT_DM_WR",
+         "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_HIT caused by demand write access."
+     },
+-    {
+-        "EventCode": "0x03A0",
+-        "EventName": "L2D_CACHE_REFILL_L3D_HIT_PRF",
+-        "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_HIT caused by prefetch access."
+-    },
+-    {
+-        "EventCode": "0x03A1",
+-        "EventName": "L2D_CACHE_REFILL_L3D_HIT_HWPRF",
+-        "BriefDescription": "This event counts L2D_CACHE_REFILL_L3D_HIT caused by hardware prefetch access."
+-    },
+     {
+         "EventCode": "0x03A2",
+         "EventName": "L2D_CACHE_REFILL_L3D_MISS_PFTGT_HIT",
+@@ -151,9 +121,5 @@
+         "EventCode": "0x03AC",
+         "EventName": "L2D_CACHE_REFILL_L3D_MISS_FR_L3",
+         "BriefDescription": "This event counts the number of L3 cache misses where the requests access L3 cache in the different socket from the requests."
+-    },
+-    {
+-        "ArchStdEvent": "L3D_CACHE_LMISS_RD",
+-        "BriefDescription": "This event counts access counted by L3D_CACHE that is not completed by the L3D cache, and  a Memory-read operation, as defined by the L2D_CACHE_REFILL_L3D_MISS events."
+     }
+ ]
+diff --git a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/ll_cache.json b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/ll_cache.json
+index a441b84729ab..c2325855eda3 100644
+--- a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/ll_cache.json
++++ b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/ll_cache.json
+@@ -2,9 +2,5 @@
+     {
+         "ArchStdEvent": "LL_CACHE_RD",
+         "BriefDescription": "This event counts access counted by L3D_CACHE that is a Memory-read operation, as defined by the L2D_CACHE_REFILL_L3D_CACHE events."
+-    },
+-    {
+-        "ArchStdEvent": "LL_CACHE_MISS_RD",
+-        "BriefDescription": "This event counts access counted by L3D_CACHE that is not completed by the L3D cache, and a Memory-read operation, as defined by the L2D_CACHE_REFILL_L3D_MISS events."
+     }
+ ]
+-- 
+2.43.0
+
 
