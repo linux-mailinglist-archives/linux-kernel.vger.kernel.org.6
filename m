@@ -1,95 +1,147 @@
-Return-Path: <linux-kernel+bounces-536998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91B4A486D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:41:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04749A486E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C4D71888AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE051188A53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749151DF250;
-	Thu, 27 Feb 2025 17:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBB51DF97C;
+	Thu, 27 Feb 2025 17:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KmAQpiep"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zgw/CVow"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B3F1DE884
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CAE1DEFEB;
+	Thu, 27 Feb 2025 17:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678063; cv=none; b=p5SbsTnkPp6AJ46DRIge6cmDzVw3dOUuu2z3Cek9vW8+V9cDAmtb2aeaG8AHJMiRQ3y4tgYDKKeOhhpeCLEvhsuVs6ge0R9B+XRfu1iuzAHQAQXw8QqyeKWZeVEYEmcRyIKWtbFKcldKYtMZNqXFXZe/BBUxJL/sJuWrcpDhChk=
+	t=1740678240; cv=none; b=djFYh5idSOCgfjnb6ElcZS0sDPqr5PsRzCXXF6TTR3UoDRosouHkh/PuLVjK/KgTIaSfivt9Lusl3GBgqKUceZ/mqCp7fLLCe18Ur1nY2cq8zw7bfiLdGc6x8RAvEYBg5K85AB07vctdVAa8EVyskkn8pYQNurEwjpwGTpeRWU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678063; c=relaxed/simple;
-	bh=iJRxVaTtxnoERXUpMpoBNWSM0ZxK+oaomsKPSuKCxuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s55nqEGPSp2aYF5UHw/Vw46olqu6zIXjr6fnlrM9aPKDq/eMS5IeoolQ0Tu2Y3U9rGv5/UBWESxdAE4RXdlejOGokiraNOp1pDY/dood15vu+9JeF21h0iNBp0DgvDcfgDqxNUY3IbCj41Txsd6WaLb+Auu90KgwzTn1UAB9vIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KmAQpiep; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740678058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LtW5EyiYN8qDte8Np1uuhB8NxmEozhwwfYVBmt/mcc8=;
-	b=KmAQpiepNGLKc9zPdXJZslDbW0Cs5rYAriSFQv7G9K79WQIgEnwcAgjxaJGhEfJuHQRJs8
-	ag26V26XhiVe2Wa/pHnRZURHq1Tuh76xN7W9UTqaYCcdqoxPjTo/19uw0unoCmhCjKDmcB
-	2MPcAnoUP1kT69TAa5ViEBmhn1htMYU=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Patryk Biel <pbiel7@gmail.com>,
-	Ninad Palsule <ninad@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (pmbus/core) Replace deprecated strncpy() with strscpy()
-Date: Thu, 27 Feb 2025 18:39:33 +0100
-Message-ID: <20250227173936.7746-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740678240; c=relaxed/simple;
+	bh=CJMTauSRCEWnlEAWxjoYy7NZ0L4FJshH0qmAshtRy2E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJbMGNdBbKiuUhdOpR/Hx81TalK+T2JGYmFoxpkL64eSHkiVGe+RiCs96hncui6GONxoFq+/vXUPxxH/JoQ1GWn9nrokfcKl5u2g5iHyXwWhy9b0LEKmidAKW3ZPCthzMtOkrZ5gmp/yh3KG2utNgkuELpaq6hdyX5luQHiWlkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zgw/CVow; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54943bb8006so1210409e87.0;
+        Thu, 27 Feb 2025 09:43:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740678237; x=1741283037; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X3vEaodisrvKcNhPG/ww/1OyCGncwG4JxfefrvjSq2w=;
+        b=Zgw/CVowjlcw9KCeqDPZZl/bZ0diW6phcVyDgz7Md4PKbgSACu44zDGKiCd9/tf6sg
+         4QMfNCOdfbuk7bcYtKxjl8OYP2SeMjpFWE4OWVw9drvNYhUbDPQOeOKAVEOz6TO/Ko6+
+         sUNIInHV26wuKMPRzDtwxrSScx3GG5ekEjLONUVkcndMl2XGY8oCBErImxwZ1oFcPH0A
+         ogULPUBr0nmNR0LFiEnj0lhtNfXgCvY0VTkjcywlk6zz7ad4Re2rVpXGSzU/NGeoHhns
+         NL6D9ADP+wFdlQ5ic2CIziK3PFki/fV5sl1f+yNUDfpbh7KhtWijeJfsUfRp6Q728QnX
+         qLvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740678237; x=1741283037;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X3vEaodisrvKcNhPG/ww/1OyCGncwG4JxfefrvjSq2w=;
+        b=D6qjrNZKF0xz/TWF6WKzSP9Nlw+408Bdof3Uvukp6yksqL/7ks1eltTsKimax3jZu7
+         AgXWiQCEsuMig/OJHSRpcTxw5hB0JUn+LsA6oVmKqPqVJcBpRVHOYsmLVKwJTlK/qIQG
+         4kXzr19a1rEPdqZcnDWr3oNt/EvuosZh46eYah2AnXC1ReVf8P9jup/5XwwWSc4iIn2J
+         j5PcbJlzRf4GvIKc1TOpyvxK3LoB6OZmvYzSRTLfwLekLJDaiaoxZ3TO6zAVAxDmCfy+
+         mrxvyezYIQ4ITMpBH9nosN8um9cn4QH0FUElFRTgOmrpjTRBg+ldtHVcIlsd6j2eOhzp
+         rsbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT6JQG5+b+wKq20fUf7O5XcSzoIumWn4gNMZjJ7xbV2XLCjEpvXqD7P8O0mSWQhnvCettA@vger.kernel.org, AJvYcCVrbq8emfwmz+T5R5nDYrg8bnTVpILCZoMUDCQFZ1Hs5KtCyaeRNMWro+F3c3MZqt9RzJmTZjTJ6SrtJBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgV5tSrYYEjoFU8Mid/OQJWDsCTsBfbWXFx8YII+qg5KGblZBd
+	JzGiTdQzoeJUXgeFw+Eel3HtG+OV2J42OOa5xf06cgsH4c0n1gr4
+X-Gm-Gg: ASbGncsoJduz9By7kVZtGPcFmZQZf6y4ZZyAywms3lXm/tbhIow5nHxObzZIdQmhgGb
+	BLwak98B2yl0FPz+WIs/Gl2DQB2ANVF4nenb43KHrjPazLV7LyNoMQFt5rxptIg5vTpO5/ewJdG
+	jS6eoMQsKsogodtaVXfzTLqXzCwN2rO1wahsUDaUP9cZNtDmhsbhxmwCBBazLOub4Cmp4pMYTh8
+	7Pa8lhN46wRjsnpRuRt3cUD4CSr/2fQka0fm4nYeK83qmUreM3mlB4mwkaMCi+esLR7qFOcv9Mc
+	LdXD4n18hm2bGmRns3z2OjEofJKAGieT5P+7xxGhPhJ55Ejg
+X-Google-Smtp-Source: AGHT+IGLQeTGJpG2m7C1VeIlUSZuQjnIL1ku5l1tB/izF3+EkRVVl1HYHlLSBB4oXrSJjG74ftT/oA==
+X-Received: by 2002:a05:6512:281d:b0:545:5d:a5d8 with SMTP id 2adb3069b0e04-5494c10c5efmr143109e87.7.1740678236456;
+        Thu, 27 Feb 2025 09:43:56 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443cd45dsm215760e87.252.2025.02.27.09.43.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 09:43:55 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 27 Feb 2025 18:43:53 +0100
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z8CkWWR4IYmrsXKg@pc636>
+References: <20250227131613.52683-1-urezki@gmail.com>
+ <20250227131613.52683-3-urezki@gmail.com>
+ <Z8CdB0Hzvdu5ZVSI@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8CdB0Hzvdu5ZVSI@Mac.home>
 
-strncpy() is deprecated for NUL-terminated destination buffers; use
-strscpy() instead.
+Hello, Boqun!
 
-Compile-tested only.
+> Hi Ulad,
+> 
+> I put these three patches into next (and misc.2025.02.27a) for some
+> testing, hopefully it all goes well and they can make it v6.15.
+> 
+> A few tag changed below:
+> 
+> On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
+> > Switch for using of get_state_synchronize_rcu_full() and
+> > poll_state_synchronize_rcu_full() pair to debug a normal
+> > synchronize_rcu() call.
+> > 
+> > Just using "not" full APIs to identify if a grace period is
+> > passed or not might lead to a false-positive kernel splat.
+> > 
+> > It can happen, because get_state_synchronize_rcu() compresses
+> > both normal and expedited states into one single unsigned long
+> > value, so a poll_state_synchronize_rcu() can miss GP-completion
+> > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
+> > run.
+> > 
+> > To address this, switch to poll_state_synchronize_rcu_full() and
+> > get_state_synchronize_rcu_full() APIs, which use separate variables
+> > for expedited and normal states.
+> > 
+> > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
+> 
+> I switch this into "Closes:" per checkpatch.
+> 
+Thanks!
 
-Link: https://github.com/KSPP/linux/issues/90
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/hwmon/pmbus/pmbus_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
+> > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
+> Would you or Paul double-check the Reviewed-by should be here?
+> 
+Probably. But i do not remember that i got a review from Paul. Might
+be wrong and have missed that :)
 
-diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-index 787683e83db6..cdde8b03a6e9 100644
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -1470,8 +1470,7 @@ static int pmbus_add_label(struct pmbus_data *data,
- 	snprintf(label->name, sizeof(label->name), "%s%d_label", name, seq);
- 	if (!index) {
- 		if (phase == 0xff)
--			strncpy(label->label, lstring,
--				sizeof(label->label) - 1);
-+			strscpy(label->label, lstring);
- 		else
- 			snprintf(label->label, sizeof(label->label), "%s.%d",
- 				 lstring, phase);
--- 
-2.48.1
+Anyway, thank you for adding.
 
+--
+Uladzislau Rezki
 
