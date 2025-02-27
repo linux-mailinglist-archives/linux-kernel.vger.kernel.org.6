@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-537188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF5DA48902
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 157AFA48903
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9251316C46D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2012016C34C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0326F441;
-	Thu, 27 Feb 2025 19:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C25B26E966;
+	Thu, 27 Feb 2025 19:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YoZzQPsL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cj5H6TeP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AE325D911;
-	Thu, 27 Feb 2025 19:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4742B26E95E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684500; cv=none; b=kjL+eQ3Mm1VOmvY5N1eBJYzTdITu4yeWB6WgOZjoKB/E5zdz7ifYv21cKYxwTxgBBJwGfYLN67aIHGLi2I6GqWFtwSrZM4EC/kLuqn2+hcphZau6AQmyUOJDhUWZWXjRI2jVMrRUtEbHQgXJrHUFuClMlDpWe7/r+45jYU3JsRk=
+	t=1740684573; cv=none; b=bxKxTBgWzXAexsVf94lU/c96X7kBYywnnrkakqd70EMnbH0plcvOF/QWeEiMaV3Xp6QlbsD77QG6jVhjSWsuBWj8JNyCNeM4DxyYN5a3ecHm/cxB2xioAaYhiJpcpRlOxwWcEZ0Lyev29kb7pmSMC+L1UYYzONn21rAuuP10KN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684500; c=relaxed/simple;
-	bh=MkFWz9GAf3oox55gTVAIQaaz6t4udTfaAcoiCLU/aeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i/drWJSk6tSWEp33prAu02eoxB+4d7olhLicc+4qx7O0Yw2MbAfu0qd9uSO6HbbIkBryX2LMtcoRILDTbzjMPXERzWsR066EJrgMDy2pESj9G7ZGrAdX8sBZKZ8O3aBbbCFvfePYG44yGYREE+H6Q5pybebrYAXsdq+kPHLChso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YoZzQPsL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJ0vQk012055;
-	Thu, 27 Feb 2025 19:28:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RdjIqGF+ISOqLN7KsR39TGSa+NABYH6lIW0NjEcfAZM=; b=YoZzQPsL3wSi3TlV
-	qrUtJwdv02vxq692FjQ4amIOteyIhE0na11FI78TnAj0TCn5r/DIiT+g5Jeb+mM7
-	Sqn1a7wd7IsICn0jzOUZk8+dvoIsof6iQLuOQk3xd2iFkxlG1muzkcNVjsdrOKty
-	nko9oSJ610LROyQg46LwsDqPbaveWPF7uqF3HE+TaGDQCSj/TMNpNZtHNFTdBKFM
-	aYGeUeGzvElth+cYEuyPCK0QA+/noYZwQqiN1D7RTFQEuWOkALiHkhYVXaXRnUfn
-	7euaVlD5ue0XMCEBjTRgiULoKqJGvqnCpjEqsgiaxTTcHeyLbeesCLWETsVRp9FH
-	yk4CRw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prketqf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 19:28:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51RJS5Yk016619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 19:28:05 GMT
-Received: from [10.71.114.206] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Feb
- 2025 11:28:04 -0800
-Message-ID: <bdf2034d-4c96-4b99-b472-520227ff930d@quicinc.com>
-Date: Thu, 27 Feb 2025 11:28:05 -0800
+	s=arc-20240116; t=1740684573; c=relaxed/simple;
+	bh=23SsvAKulhP3ALEN2HoH/NuLHmKdlVV6mEe7MxtqadE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xy4s9noj0grCMD/LixsOq8Lr5I6VZMThKZmY+60VcwC1HF/8dPD2pHO1KDjMxab9k/LZ04pSkqWYPmVPmQ3oGE3ELELw1NxsuEhKjWCVzcn5YKRqvGPZSxsgd+5FGujrT+gAthgTVAqq0vcVm8vYdfFbMy46OFa5M3BMfKs0AQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cj5H6TeP; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740684572; x=1772220572;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=23SsvAKulhP3ALEN2HoH/NuLHmKdlVV6mEe7MxtqadE=;
+  b=cj5H6TePeQ2n+hoysDMduZOvSg1zb1+Vo0hpS5P9grs+C/500IScQbgh
+   xqtFDmqXzLYr2BX6QdvM7I76C9zhdUtGzGCuyQlcSIm3cndTgUl5hp5FD
+   ReeAzbGmDJl2fE9f8iv6O+b9FDUNd7d+vUU3yUT562JsPvn17fNDzL4OB
+   8XE33Z1Jhp/kJvM3+uzwLutlxkEtsaWSLfquUyXsfOc6IdxVN76spBWZt
+   uoWNAWYd3OreyZOdq8x185ygbq2RFPKzXI54jexv3qoz/PIwT8Um3A299
+   qnLY3gmEnaNYLHAUTAtl2AuScpPGVLowyfamWQ7uHwosDCf4J5GpwoRti
+   Q==;
+X-CSE-ConnectionGUID: ffhhTPuDSRSy/snyEjBMXA==
+X-CSE-MsgGUID: /FPUdslmRV6c221PDlrJnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="40838923"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="40838923"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:29:31 -0800
+X-CSE-ConnectionGUID: tLpF088yT0iVP2nsVhccvQ==
+X-CSE-MsgGUID: bHzAPuuESwGQqYABbxzfCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117303290"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 27 Feb 2025 11:29:28 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnjZW-000DwU-1L;
+	Thu, 27 Feb 2025 19:29:26 +0000
+Date: Fri, 28 Feb 2025 03:29:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Brian Gerst <brgerst@gmail.com>
+Subject: Re: [PATCH v2 01/11] percpu: Introduce percpu hot section
+Message-ID: <202502280328.SFEgOJ50-lkp@intel.com>
+References: <20250226180531.1242429-2-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: sm8750: Add USB support to SM8750
- platforms
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250113-sm8750_usb_master-v1-0-09afe1dc2524@quicinc.com>
- <20250113-sm8750_usb_master-v1-7-09afe1dc2524@quicinc.com>
- <g47ac6bzxqyqbkuqsvuwm5vdc7x5wjfppv6fj4mftwyjlyuz7t@jzmw2kfa2jnp>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <g47ac6bzxqyqbkuqsvuwm5vdc7x5wjfppv6fj4mftwyjlyuz7t@jzmw2kfa2jnp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6SmfXuZus25YPP3QZn62hCs8W0rJgGSe
-X-Proofpoint-ORIG-GUID: 6SmfXuZus25YPP3QZn62hCs8W0rJgGSe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
- impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=797 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270144
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226180531.1242429-2-brgerst@gmail.com>
 
-Hi Dmitry,
+Hi Brian,
 
-On 2/27/2025 10:29 AM, Dmitry Baryshkov wrote:
-> On Mon, Jan 13, 2025 at 01:52:13PM -0800, Melody Olvera wrote:
->> From: Wesley Cheng <quic_wcheng@quicinc.com>
->>
->> Enable USB support on SM8750 MTP and QRD variants. SM8750 has a QMP combo
->> PHY for the SSUSB path, and a M31 eUSB2 PHY for the HSUSB path.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts |  24 ++++++
->>  arch/arm64/boot/dts/qcom/sm8750-qrd.dts |  24 ++++++
->>  arch/arm64/boot/dts/qcom/sm8750.dtsi    | 134 ++++++++++++++++++++++++++++++++
->>  3 files changed, 182 insertions(+)
->>
-> 
->> +
->> +		usb_dp_qmpphy: phy@88e8000 {
->> +			compatible = "qcom,sm8750-qmp-usb3-dp-phy";
->> +			reg = <0x0 0x088e8000 0x0 0x3000>;
-> 
-> If I understand anything correctly, this should be 0x4000, not 0x3000.
-> You have missed the DP part of it.
+kernel test robot noticed the following build errors:
 
-ACK, will fix that. Thanks.
+[auto build test ERROR on 79165720f31868d9a9f7e5a50a09d5fe510d1822]
 
-Thanks
-Wesley Cheng
+url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Gerst/percpu-Introduce-percpu-hot-section/20250227-021212
+base:   79165720f31868d9a9f7e5a50a09d5fe510d1822
+patch link:    https://lore.kernel.org/r/20250226180531.1242429-2-brgerst%40gmail.com
+patch subject: [PATCH v2 01/11] percpu: Introduce percpu hot section
+config: arm64-allnoconfig (https://download.01.org/0day-ci/archive/20250228/202502280328.SFEgOJ50-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280328.SFEgOJ50-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280328.SFEgOJ50-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> aarch64-linux-ld:./arch/arm64/kernel/vmlinux.lds:107: syntax error
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
