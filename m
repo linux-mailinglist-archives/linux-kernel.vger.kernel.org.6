@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-536887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C16A48556
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 456BDA4855B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:41:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417EF3A3D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B8B3A6B96
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7191B4155;
-	Thu, 27 Feb 2025 16:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731FD1B3955;
+	Thu, 27 Feb 2025 16:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Ph8oWogX";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pJlstLFH"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="akOV67KC"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109E41B0409
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582EC1B394E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674378; cv=none; b=Wo65ZC+4n31mzfkd+Myf+6xozR9vLiNBVErY1jRSeWRdx7obvo6Jzj/BHn0fw87eQQNfc2pstmSo6H6iweiMZWu45+U+JxIxGJGLNPEpedot3GRBl/h33WT51BI9Iahz0TFUJXfDhhpfICJ7yNuDWozVR/BeAxHt44P/3RMlRSY=
+	t=1740674385; cv=none; b=Z8pjtea3gDR4oe/aqOhxFk0kFbrcV4c8cdncgW4xeAXtQ0rIUzJH9hpUJdEJng06PRhFMjdn9kUeFB4XyFHNIMPMaXrnweVC8ex8ilZSL6jvb6GnBuj1O3V9cqLyuB8mwPNuuWL8hv4DTkmyk1vG1sMHeyjJl0V5IjCAnc1X9vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674378; c=relaxed/simple;
-	bh=64o8j6cVEr9JbVAK2DAuDX0P8B2k0DQFx3sNT2u0wnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rb3U6dyeLHTgFA80V6gZWK35KZLnMJSMyTCk2/7+v+vdVEyGzMt5uU0odZj6UyUKWPVQsyE21V9nelnSrGQ0IARk4HRvQVDgJ2DD1ZCPjov7xAuUdgqYOWvM0JTwjgcw6VWDOZgMQVQUpEluG8VsxtFFs3Hhz2oDKXslrMVnNyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Ph8oWogX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pJlstLFH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5BB7F1F38A;
-	Thu, 27 Feb 2025 16:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740674374; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=13okJ43oCKHgKKB8RsUnHCLh7BL/drDJTLZToPO9fPk=;
-	b=Ph8oWogXkPo5WUr9R3rgvnl0I7dxDrOf5Jg5kr0HKMi3hVVygeFPqLO3JEf0IZMVplnq7g
-	Wcl7lO2yy2oD8qafeccxapdXwdDSduftN7ixPwqpbSijm0r31ysammZ0e7KVdRNzl7qBPA
-	Z3BgzCF1zE5+qwJUyo8DaAwpQ/LUDt8=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740674373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=13okJ43oCKHgKKB8RsUnHCLh7BL/drDJTLZToPO9fPk=;
-	b=pJlstLFH16KY+cAt4l2WfHCuvKck3c71JaQM/Yuz4I+MUYmOUUEQzLq244qt+59EbQTSP0
-	dlluK4h/XrHSfonBXuAPzs24vol5RaMVELKWb6oVh98DD/+t55q48ZXmmCuLvVduowveAp
-	LG0M0DpHMHYjgRRr/Fl8+2N+mdgUxxU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 06AB91376A;
-	Thu, 27 Feb 2025 16:39:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Aj9AAEWVwGcNJQAAD6G6ig
-	(envelope-from <vincenzo.mezzela@suse.com>); Thu, 27 Feb 2025 16:39:33 +0000
-From: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-To: live-patching@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1740674385; c=relaxed/simple;
+	bh=tSvgh1gnqbBUp+pOKDxBFcFMzDCL9KkB2ZMAPDvL6t8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fiQwbMQxOLfVRNDDgJY9hUyKpkw0VU72tFSU6Oo8tUOk8e6atI5sDiPD4rZWI+V1Ix/64BHWMOS7HYnMJ9eZtlow5n/vK04uS1BLw5ZEOsE7cxVpCJ/2G8JhTVBqV7HISJtsWwHKBvpWCDbi/sd2SR2NQFBmsPfgwM9UhwVTjFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=akOV67KC; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22128b7d587so24088125ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:39:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740674384; x=1741279184; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lU6TulGrlmG4KlNsYp6ILx7vjJst+VSlmCV1XTMvdnI=;
+        b=akOV67KC498bmbxXh+TmewYAFKeIfyYliAugaB81lXztzx6/8tY98G0vQVpOIUaImu
+         g+gEkuw94+nwFPYrlze6GVClPda1VH9iVP749luV5mrOYLdeQZfyB2jSU6K2b1Pb1YKC
+         G1uE7wvL56YE1tpSHIEPp5bdfK3zOPrubvdXBM57APGbFySkzb00CRZ8xkweJ7+etFE1
+         zwzNU69ewuH2JWuh9rL3iQEzJJ+qKPvze/ONhUplzwTTKP53E362JMdO5y8q2PHW51v/
+         gBCxhphDWZdz1KJYRLYQygP57LBR95sIUEgssFQC50YqwvVscJWE5wvaWUYEhLde0X2p
+         qE5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740674384; x=1741279184;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lU6TulGrlmG4KlNsYp6ILx7vjJst+VSlmCV1XTMvdnI=;
+        b=G0kegnoAFj/XxXlaNoZOnjl9/zVPS9ohWqKcqZoALxDP5NrrRtayKOJ2h9/kYqKQHQ
+         ZHr9YsgL99k9oDllY0Fye6oF4+VxdoQlt7DfCry/2R5qAP8EdVbeM0IHAl+egLotS7UK
+         qmwGMwq4j5b7QtDTSpLcX4LolGzST3Sc8fBNZ9Hib8RdlItWOQR2+vYg8+MFsjiyIzPS
+         9X6NgavhH/cxGey5/e0lZpkqGUPoxelpw9onOgYKtVW35fOEvPb/h9fQLf0xYlj/Y6to
+         kh08OgevCGsRREFQOCtL08yKsoPxZYRbiG7K7oelmwWQXgiYe2jt9f2tRnPBmktbzzd5
+         CYBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNYVZ093xkor3UCy4x1oJnRvziDO8X+EV5xydxkmd5Rf+Ve9Z23QdQSREuvnwxyiz97iJjt1IY0ClvGWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCuEeoSkviswULc9oTpUltOc8upB/bdmsPkVexp5FuwnLQpiDp
+	9xMGKOep+D/oio/kGMjNxVbuIkOtusiCFyr9C4OYQWlPQW3nBejsUMtYU/LfLw==
+X-Gm-Gg: ASbGnctgp0vuxDrbJR4nYdVDKQIBut5wmgQtrpXuGHYIP6CUZGhoYegGe95UE65xeO0
+	Q5lYUekc0JrdQ7FpwYsW0bkMSVUvp3NHq2qodVFdXdVAJDmeBN1/aI368ZgLbU02HpK0eAiylhD
+	pRYratg7itKqjnQY5hM0GNVZz6PnFbOK9RvK/33pybbHBk8Vm/m7D+BOwE5SDcl/5S/bCeO1BnF
+	qPMWl69x6HvvYvLSqMHePVHLl4PEGevMpGbDY2qWgI/aYOQwBfc1PeE6Y7vKzrgNqEhAT0sKJvG
+	Fq+RByAiu1u3gXtpJZIMfc10VjRyaZ2s5Lp3
+X-Google-Smtp-Source: AGHT+IGjVr6y7dk/NnaehBxWXZ5Z15rh1gbNg00OEsuqQ8qkTGeQI6wsgYKPU0Nh3/UelzRQKc/AYg==
+X-Received: by 2002:a17:902:ea0b:b0:220:f91a:4650 with SMTP id d9443c01a7336-22320081109mr134100515ad.19.1740674383644;
+        Thu, 27 Feb 2025 08:39:43 -0800 (PST)
+Received: from thinkpad ([120.60.51.181])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223505293ddsm16787555ad.229.2025.02.27.08.39.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 08:39:43 -0800 (PST)
+Date: Thu, 27 Feb 2025 22:09:37 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: tglx@linutronix.de, kw@linux.com, kwilczynski@kernel.org,
+	bhelgaas@google.com, cassel@kernel.org, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com,
-	corbet@lwn.net,
-	Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-Subject: [PATCH v2] docs: livepatch: move text out of code block
-Date: Thu, 27 Feb 2025 17:39:29 +0100
-Message-ID: <20250227163929.141053-1-vincenzo.mezzela@suse.com>
-X-Mailer: git-send-email 2.48.1
+Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
+Message-ID: <20250227163937.wv4hsucatyandde3@thinkpad>
+References: <20250227162821.253020-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250227162821.253020-1-18255117159@163.com>
 
-Part of the documentation text is included in the readelf output code
-block. Hence, split the code block and move the affected text outside.
+On Fri, Feb 28, 2025 at 12:28:21AM +0800, Hans Zhang wrote:
+> Add to view the addresses and data stored in the MSI capability or the
+> addresses and data stored in the MSIX vector table.
+> 
+> e.g.
+> root@root:/sys/bus/pci/devices/<dev>/msi_irqs# ls
+> 86  87  88  89
+> root@root:/sys/bus/pci/devices/<dev>/msi_irqs# cat *
+> msix
+>  address_hi: 0x00000000
+>  address_lo: 0x0e060040
+>  msg_data: 0x00000000
+> msix
+>  address_hi: 0x00000000
+>  address_lo: 0x0e060040
+>  msg_data: 0x00000001
+> msix
+>  address_hi: 0x00000000
+>  address_lo: 0x0e060040
+>  msg_data: 0x00000002
+> msix
+>  address_hi: 0x00000000
+>  address_lo: 0x0e060040
+>  msg_data: 0x00000003
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>  kernel/irq/msi.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+> index 396a067a8a56..a37a3e535fb8 100644
+> --- a/kernel/irq/msi.c
+> +++ b/kernel/irq/msi.c
+> @@ -503,8 +503,18 @@ static ssize_t msi_mode_show(struct device *dev, struct device_attribute *attr,
+>  {
+>  	/* MSI vs. MSIX is per device not per interrupt */
+>  	bool is_msix = dev_is_pci(dev) ? to_pci_dev(dev)->msix_enabled : false;
+> +	struct msi_desc *desc;
+> +	u32 irq;
+> +
+> +	if (kstrtoint(attr->attr.name, 10, &irq) < 0)
+> +		return 0;
+>  
+> -	return sysfs_emit(buf, "%s\n", is_msix ? "msix" : "msi");
+> +	desc = irq_get_msi_desc(irq);
+> +	return sysfs_emit(
+> +		buf,
+> +		"%s\n address_hi: 0x%08x\n address_lo: 0x%08x\n msg_data: 0x%08x\n",
+> +		is_msix ? "msix" : "msi", desc->msg.address_hi,
+> +		desc->msg.address_lo, desc->msg.data);
 
-Signed-off-by: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
----
-Changes in v2:
-- Fixed usage of "::" in literal blocks
+Sysfs is an ABI. You cannot change the semantics of an attribute.
 
- Documentation/livepatch/module-elf-format.rst | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+- Mani
 
-diff --git a/Documentation/livepatch/module-elf-format.rst b/Documentation/livepatch/module-elf-format.rst
-index a03ed02ec57e..5d48778d4dfc 100644
---- a/Documentation/livepatch/module-elf-format.rst
-+++ b/Documentation/livepatch/module-elf-format.rst
-@@ -217,16 +217,19 @@ livepatch relocation section refer to their respective symbols with their symbol
- indices, and the original symbol indices (and thus the symtab ordering) must be
- preserved in order for apply_relocate_add() to find the right symbol.
- 
--For example, take this particular rela from a livepatch module:::
-+For example, take this particular rela from a livepatch module::
- 
-   Relocation section '.klp.rela.btrfs.text.btrfs_feature_attr_show' at offset 0x2ba0 contains 4 entries:
-       Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-   000000000000001f  0000005e00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.printk,0 - 4
- 
--  This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol index is encoded
--  in 'Info'. Here its symbol index is 0x5e, which is 94 in decimal, which refers to the
--  symbol index 94.
--  And in this patch module's corresponding symbol table, symbol index 94 refers to that very symbol:
-+This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol
-+index is encoded in 'Info'. Here its symbol index is 0x5e, which is 94 in
-+decimal, which refers to the symbol index 94.
-+
-+And in this patch module's corresponding symbol table, symbol index 94 refers
-+to that very symbol::
-+
-   [ snip ]
-   94: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT OS [0xff20] .klp.sym.vmlinux.printk,0
-   [ snip ]
 -- 
-2.48.1
-
+மணிவண்ணன் சதாசிவம்
 
