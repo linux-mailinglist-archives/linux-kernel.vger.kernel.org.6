@@ -1,210 +1,258 @@
-Return-Path: <linux-kernel+bounces-537138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB18BA48861
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:59:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6EBA4885D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689243B8F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:58:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64381614A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE14E26E653;
-	Thu, 27 Feb 2025 18:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="PtjhLhrO"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543026BD90;
+	Thu, 27 Feb 2025 18:57:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3AD26E152
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776D91D4335;
+	Thu, 27 Feb 2025 18:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740682663; cv=none; b=HfOAxJF8F4tlla4NxBnTX6k3jE795jb4HdA0T/QhGwM+VwddDwdmrQHzhPX9usmNIWwh0vR2eokpTb6w5s+apBZanzIWIqtfII32vnDzaBK9YjttJFGzvFPMmi9HJvGyEWSTmKUjIj0ZIFO70pkhrveyGF6MaEqiiUW4ffaLEN4=
+	t=1740682659; cv=none; b=T1T3LOvp/qCM6bVRG9DuxJwwucosp0Vw4rxx2NecUdsJwUxlh18NE6/hb9bZ7Wkl5dJvoI1XJz7PCnPXMGOVJJ+GjgjVu4KAhge9vRrRcJkYI4na2KfbUo0yr3/XidTHoFA2d1OF3W99HzHhfCk0xnRHG/X0LO1kbzNItriVWlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740682663; c=relaxed/simple;
-	bh=aqlUYqQFO0WiVM+HE9BfnxX9AV+PYDtS/WqY3R6HL4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bhz8CRodRoPrbMwh0HLVsKxd2o0huOvB5sxosLnc1NOvti+vedWf0pICOtWP09Lg+aA7bGBs6OwmPfrbtuETbZn3t2f3+lv04nnbrYx8kFmL/IwEX0Fg4C59DcavMbxYh3BaleoEZR14UCCZwJk1vqUXmpGLk/4WaeaRhff5TtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=PtjhLhrO; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so9647355e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:57:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1740682659; x=1741287459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GdS04PpKeU7zg1t4iBTxl5qGH5rRifO/DD2Xb6F4WkI=;
-        b=PtjhLhrOZFNVLPI5P+vnNP69wOCGdfVQ1wDmTeplJU3Ni7ZtjtZWqzhlsUlky0gXLH
-         OqcRdQXSvW5WWx5FGfQjHzI6sq2XP3AcgFYTIdPK8PT6tgHMCuH7GDFMR+StjbbnwLay
-         cZ0QoqX8iqc73D+CQwMFF82Otan+/3RmkQaec=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740682659; x=1741287459;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GdS04PpKeU7zg1t4iBTxl5qGH5rRifO/DD2Xb6F4WkI=;
-        b=H4cjqM0vKG3UNgTvBngE1JKbyf2IIT4miyX0KFXxVZaS30EZGv+CgsP6pm79Sq1gaZ
-         nUSNEM/jHMQAPzk0hOfHKZ3ZQKTMDnISJ4TYboU2Du3SyoEIqKi2SBApt7k/QtHCwJQl
-         7HLXJ4eH9So9gxGnO4BT7WGpBIwd+keKBx1Dfj/lylbQcAM+bExnGFTULkZ97s9seYTd
-         xAFN8rXxfz1XTxknVermyX1m3ktlBllAxshZWqp8SfZt/FalOeUN1rVarVPud0YIlyMD
-         VSn6KzaWNF3rqqBHkiS2tECnl0PhW+A1/DP4n2Un9yvVWG1ppb86qawICxoxbF35d+Cg
-         hMsw==
-X-Forwarded-Encrypted: i=1; AJvYcCViOzJtGafbiE4kq7Wd8z0GiZAN4xT3Fg1pDoIyYmtD9J987tRd+wvQ00jQLwmLF0p0Eyv0pbNxEWLqHO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYkvIz80Qorn1LE9CyDDbxgFnW6q7+1rA/zcdv185SONhevG28
-	1UZBM2xSOJWXLAEL0EoM+1XC6LFacJRz6VRMe19DO83lTHrsVh8uYChaBOiU6N91ygdmJqZDdQw
-	A
-X-Gm-Gg: ASbGncuPMiL8TJImjqG3vvHCWVQAJtddg48cAAVVLAOnnGb6l51aZm9lotJQR4mC/bt
-	6XdaLZuac73UMy22z4Ylvx25VE6/lD/E4wOKebYZkcYj1FilzysJ3eeXYAikvwOkHWO93JFvCU6
-	eEG9QZLpFk3oTUNcQ4xdcsRRUNy9020SMYCFH+IoFs9sSzNU76HZH1wahmV94gJHmLigM2MK4dz
-	0PCE6KSXuiPuPpGHqh8NkzWm0fDw86JzimsmRsiD2PXuQz8uZPWIdtbFC+uZR0NT5+Vl9/t2SZx
-	norMSRFdeHdWUhBeTQtdCNjdrWVmUdaEz2LC7KYvIwFccax5YU/u62/an+cK6ZQijQ==
-X-Google-Smtp-Source: AGHT+IFojfssGhwDq8JmP73bUocxfgQKUG/b5kGk48FXHSDhUgTYsUlnXpixmg7n1vLb87lthp6jWQ==
-X-Received: by 2002:a5d:59a5:0:b0:38f:4f07:fabf with SMTP id ffacd0b85a97d-390eca26c17mr236298f8f.53.1740682659265;
-        Thu, 27 Feb 2025 10:57:39 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba532ba6sm63487185e9.12.2025.02.27.10.57.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 10:57:38 -0800 (PST)
-Message-ID: <15253834-fb89-408f-8269-65413ad29f7a@citrix.com>
-Date: Thu, 27 Feb 2025 18:57:37 +0000
+	s=arc-20240116; t=1740682659; c=relaxed/simple;
+	bh=m+2s+O4tHRelC89taiEqdahnzEKvH/ygc+ZUyR8XqpI=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=PWrqG5B7LqmJpnlIv31uKzi1MNLJwLYLXXFT8pajYZVZGUEbMgGr6npiyzE2Nv2VnbVl1NocrhtLCOKB17j/MW1S9f0AfwId8yuxHiDNx9VEGo1jaQbBo2DzocatkWizE5tQVTZwj51eCmu9YxmAn1JHSmD+buOudxYCMQihBO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3597C4CEDD;
+	Thu, 27 Feb 2025 18:57:38 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tnj5S-00000009nQY-2Z1Q;
+	Thu, 27 Feb 2025 13:58:22 -0500
+Message-ID: <20250227185804.639525399@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 27 Feb 2025 13:58:04 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Guo Ren <guoren@kernel.org>,
+ Donglin Peng <dolinux.peng@gmail.com>,
+ Zheng Yejian <zhengyejian@huaweicloud.com>
+Subject: [PATCH v4 0/4] ftrace: Add function arguments to function tracers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/speculation: Simplify and make CALL_NOSPEC consistent
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
- <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
- <20250227184133.lxm43awa2jgdpl4q@desk>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20250227184133.lxm43awa2jgdpl4q@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 27/02/2025 6:41 pm, Pawan Gupta wrote:
-> On Thu, Feb 27, 2025 at 12:49:48AM +0000, Andrew Cooper wrote:
->> On 26/02/2025 9:03 pm, Pawan Gupta wrote:
->>> @@ -420,20 +420,28 @@ static inline void call_depth_return_thunk(void) {}
->>>  
->>>  #ifdef CONFIG_X86_64
->>>  
->>> +/*
->>> + * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
->>> + * to the retpoline thunk with a CS prefix when the register requires
->>> + * a REX prefix byte to encode. Also see apply_retpolines().
->>> + */
->> Technically, both comments aren't quite accurate.  __CS_PREFIX() emits a
->> conditional CS prefix in a manner compatible with
->> -mindirect-branch-cs-prefix, not the full 5/6 byte jmp/call.
-> You are right, I will update the comment, and also the ASSEMBLY version
-> where this comment came from:
->
->   /*
->    * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
->    * to the retpoline thunk with a CS prefix when the register requires
->    * a REX prefix byte to encode. Also see apply_retpolines().
->    */
->   .macro __CS_PREFIX reg:req
->           .irp rs,r8,r9,r10,r11,r12,r13,r14,r15
->           .ifc \reg,\rs
->           .byte 0x2e
->           .endif
->           .endr
->   .endm
->
->>> +#define __CS_PREFIX(reg)				\
->>> +	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15;		\
->>> +	.ifc \\rs, \reg;				\
->> Why are these escaped differently?  Given they're all \r of some form or
->> another, I guess something is going wonky with __stringify(), but its
->> still weird for them to be different.
->>
->> Do you have a fully pre-processed source to hand to see how CALL_NOSPEC
->> ends up?
-> Below is the pre-processed source for test_cc() generated with "make arch/x86/kvm/emulate.i".
->
-> - This is with double backslash in ".ifc \\rs, \reg":
->
-> 	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \\rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "call __x86_indirect_thunk_%V[thunk_target]\n"
->                                                                                   ^
-> 	This ends up emitting the CS prefix byte correctly:
->
-> 	2e e8 51 c9 32 01       cs call ffffffff824289e0
->
-> - This is with single backslash in ".ifc \\rs, \reg":
->
-> 	asm("push %[flags]; popf; " ".irp rs,r8,r9,r10,r11,r12,r13,r14,r15; .ifc \rs, \%V[thunk_target]; .byte 0x2e; .endif; .endr;" "c      all __x86_indirect_thunk_%V[thunk_target]\n"
->                                                                                   ^
-> 	This version does not emit the CS prefix byte:
->
-> 	e8 52 c9 32 01          call   ffffffff824289e0
->
-> I tried looking in gcc inline assembly documentation but could not find
-> anything that would explain this. :(
 
-It's because it's about plain C strings.
+These patches add support for printing function arguments in ftrace.
 
-\r (from \rs) is Carriage Return (ASCII 0x0d).
+Example usage:
 
-After AS's macro expansion, \reg becomes \% which is not a valid escape
-character, so the \ gets left intact.
+function tracer:
 
-\reg should become \\reg or you'll probably get a compiler complaining
-eventually.
+ ~# cd /sys/kernel/tracing/
+ ~# echo icmp_rcv >set_ftrace_filter
+ ~# echo function >current_tracer
+ ~# echo 1 >options/func-args
+ ~# ping -c 10 127.0.0.1
+[..]
+ ~# cat trace
+[..]
+            ping-1277    [030] ..s1.    39.120939: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    39.120946: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    40.179724: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    40.179730: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    41.219700: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    41.219706: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    42.259717: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    42.259725: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    43.299735: icmp_rcv(skb=0xa0ecab00) <-ip_protocol_deliver_rcu
+            ping-1277    [030] ..s1.    43.299742: icmp_rcv(skb=0xa0ecac00) <-ip_protocol_deliver_rcu
 
-~Andrew
+function graph:
+
+ ~# cd /sys/kernel/tracing
+ ~# echo icmp_rcv >set_graph_function
+ ~# echo function_graph >current_tracer
+ ~# echo 1 >options/funcgraph-args
+
+ ~# ping -c 1 127.0.0.1
+
+ ~# cat trace
+
+ 30)               |  icmp_rcv(skb=0xa0ecab00) {
+ 30)               |    __skb_checksum_complete(skb=0xa0ecab00) {
+ 30)               |      skb_checksum(skb=0xa0ecab00, offset=0, len=64, csum=0) {
+ 30)               |        __skb_checksum(skb=0xa0ecab00, offset=0, len=64, csum=0, ops=0x232e0327a88) {
+ 30)   0.418 us    |          csum_partial(buff=0xa0d20924, len=64, sum=0)
+ 30)   0.985 us    |        }
+ 30)   1.463 us    |      }
+ 30)   2.039 us    |    }
+[..]
+
+This was last posted by Sven Schnelle here:
+
+  https://lore.kernel.org/all/20240904065908.1009086-1-svens@linux.ibm.com/
+
+As Sven hasn't worked on it since, I decided to continue to push it
+through. I'm keeping Sven as original author and added myself as
+"Co-developed-by".
+
+Changes since v3: https://lore.kernel.org/linux-trace-kernel/20250225222601.423129938@goodmis.org/
+
+- kernel test robot flagged that this broke builds of archictecuters
+  that do not support function args access.
+  This was due to missing #ifdefs around calls of functions those archs
+  do not implement.
+
+- For archs that do not support function graph tracer, the irqsoff trace
+  uses trace_function, but that now has a new parameter.
+
+- Here's the diff between v3 and this series:
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 86d828b9dc7c..cb13c88abfd6 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2895,10 +2895,12 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
+ 	entry->ip			= ip;
+ 	entry->parent_ip		= parent_ip;
+ 
++#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+ 	if (fregs) {
+ 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
+ 			entry->args[i] = ftrace_regs_get_argument(fregs, i);
+ 	}
++#endif
+ 
+ 	if (static_branch_unlikely(&trace_function_exports_enabled))
+ 		ftrace_exports(event, TRACE_EXPORT_FUNCTION);
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 472ec5d623db..32da87f45010 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -21,6 +21,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/ctype.h>
+ #include <linux/once_lite.h>
++#include <linux/ftrace_regs.h>
+ 
+ #include "pid_list.h"
+ 
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 49fcf665cb58..71b2fb068b6b 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -132,10 +132,12 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
+ 	entry = ring_buffer_event_data(event);
+ 	entry->graph_ent = *trace;
+ 
++#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+ 	if (fregs) {
+ 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
+ 			entry->args[i] = ftrace_regs_get_argument(fregs, i);
+ 	}
++#endif
+ 
+ 	trace_buffer_unlock_commit_nostack(buffer, event);
+ 
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 0ce00fe66d0c..c8bfa7310a91 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -299,7 +299,13 @@ __trace_function(struct trace_array *tr,
+ }
+ 
+ #else
+-#define __trace_function trace_function
++static inline void
++__trace_function(struct trace_array *tr,
++		 unsigned long ip, unsigned long parent_ip,
++		 unsigned int trace_ctx)
++{
++	return trace_function(tr, ip, parent_ip, trace_ctx, NULL);
++}
+ 
+ static enum print_line_t irqsoff_print_line(struct trace_iterator *iter)
+ {
+
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20241223201347.609298489@goodmis.org/
+
+- Removed unneeded headers
+
+- Put back removed '\n' that was accidentally erased.
+
+- Do not use bpf_get_btf_vmlinux() to get btf element as
+  btf_find_func_proto() will handle that.
+
+- Fixed how structures are printed
+
+Changes since Sven's work:
+
+- Made the kconfig option unconditional if all the dependencies are set.
+
+- Not save ftrace_regs in the ring buffer, as that is an abstract
+  descriptor defined by the architectures and should remain opaque from
+  generic code. Instead, the args are read at the time they are recorded
+  (with the ftrace_regs passed to the callback function), and saved into
+  the ring buffer. Then the print function only takes an array of elements.
+
+  This could allow archs to retrieve arguments that are on the stack where
+  as, post processing ftrace_regs could cause undesirable results.
+
+- Made the function and function graph entry events dynamically sized
+  to allow the arguments to be appended to the event in the ring buffer.
+  The print function only looks to see if the event saved in the ring
+  buffer is big enough to hold all the arguments defined by the new
+  FTRACE_REGS_MAX_ARGS macro and if so, it will assume there are arguments
+  there and print them. This also means user space will not break on
+  reading these events as arguments will simply be ignored.
+
+- The printing of the arguments has some more data when things are not
+  processed by BPF. Any unsupported argument will have the type printed
+  out in the ring buffer. 
+
+- Also removed the spaces around the '=' as that's more in line to how
+  trace events show their fields.
+
+- One new patch I added to convert function graph tracing over to using
+  args as soon as the user sets the option even if function graph tracing
+  is enabled. Function tracer did this already by default.
+
+
+
+Steven Rostedt (1):
+      ftrace: Have funcgraph-args take affect during tracing
+
+Sven Schnelle (3):
+      ftrace: Add print_function_args()
+      ftrace: Add support for function argument to graph tracer
+      ftrace: Add arguments to function tracer
+
+----
+ include/linux/ftrace_regs.h          |   5 +
+ kernel/trace/Kconfig                 |  12 +++
+ kernel/trace/trace.c                 |  14 ++-
+ kernel/trace/trace.h                 |   5 +-
+ kernel/trace/trace_entries.h         |  12 ++-
+ kernel/trace/trace_functions.c       |  46 +++++++++-
+ kernel/trace/trace_functions_graph.c | 172 ++++++++++++++++++++++++++++-------
+ kernel/trace/trace_irqsoff.c         |  12 ++-
+ kernel/trace/trace_output.c          | 103 ++++++++++++++++++++-
+ kernel/trace/trace_output.h          |   9 ++
+ kernel/trace/trace_sched_wakeup.c    |   4 +-
+ 11 files changed, 340 insertions(+), 54 deletions(-)
 
