@@ -1,230 +1,197 @@
-Return-Path: <linux-kernel+bounces-537032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D360A4873C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:04:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00977A48745
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494051890EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56ADC1888F58
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8681EFF80;
-	Thu, 27 Feb 2025 18:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0C41F582F;
+	Thu, 27 Feb 2025 18:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lj5xxQ2X"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXhWdZT+"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022CF1DDA3D;
-	Thu, 27 Feb 2025 18:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1B9199239;
+	Thu, 27 Feb 2025 18:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740679464; cv=none; b=uQCKpGsRBRhbP9H6jFmt4UN1iCq1LXoBP0Gu9JpBT3pNJFn/UbGSMYA4ljjDOf2vR/xhK4A/SxWcHctVXfOdW6g4h+HcQVd96/Bka48LrzCXqSswuLp08yPKWMOjC9av5SZKdmOcb7FhxmQvsxCaGzkzbLacep9Swr9kIGRsM2k=
+	t=1740679537; cv=none; b=YhdjqBQZUKT1Qrl+Fcr2004Q4olIvQod7hUAVDQK/zcg697uF16zMHzuxtjDya5qnI+9/LPv/n6UHXVSzlgvq58kTaWCV/GTPIJI1lAa/L9S8WgYgM62M8+KK87rSQho/Kd8A/+BlU3ZjhFP+EXsIr8TRC4+urT/u0WYlKXu490=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740679464; c=relaxed/simple;
-	bh=iSjuS89FEZ15XYsSuWXx6li3MNVymA0EpMw0imDyXZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qk/hbGpLMrQvM03a5wTC4vkIUYKiGTloKaUNIJIM+iO/bjpWRV7YZCOa79+cQTuOzq2yRfArljb1kTGbDy7Gouzo8T0kESLlxSKo+SqULF1QNmVYIMzbqenSB+C1OGtGEx98eByP38Gad88fXsx7/512oZ23aNbL8nQI+vMMVEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lj5xxQ2X; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1740679537; c=relaxed/simple;
+	bh=OqW0tsQmgxjdGZPx5rAhLoVP8V4pb2gw1BYl3oruHT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LgDV0vBNodeEfsiCl+HwZUeMnFVnsjwphR1i5TMLYKxZRc5oZLY2mxWZ7ciZ3E6Bvu7gjywfmmYbN9pSqAKYHHiHnw6/FKrjGaWQsg3B9HM6kJqjO8esNBOYF0v/GiYoJzrh0QMAOvKM2xQxApaDoQ16Wu9O5ql4DjVWuOYGE4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXhWdZT+; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54524740032so1210788e87.3;
-        Thu, 27 Feb 2025 10:04:22 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22128b7d587so26093375ad.3;
+        Thu, 27 Feb 2025 10:05:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740679461; x=1741284261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p64rkc2/wV0ej6a0OX3NpwSYfnbAOnRa6XnC1VmKW3I=;
-        b=Lj5xxQ2XmruUUOsuDT9m2U2+vvM3g+SYStwc833A47SID9ghyM0jD59iGuWpLCNshE
-         8AlVZLHzpY+d1HpXhscAIoQRvvbKgsfvhOcmlL5z8N2HFiF6CCY66EeAVgwwE9CFKze6
-         4fizWgRJjVuVjz1nOeDkpvFN43WjReaCVSBhF27Pq7ZvARMyyKblUhX7eWubeaZSHKYz
-         /kcDeKTHbXdoMSOCOIFANwkNFWQamPqnASugKYR2qMi67Oof9N9l8LX21E3qxRyna9WI
-         VpbtcEWWjSUMIUazRnrm00HoinhLAYfw2M5fOBuNNtuS2X7M5oxnPMn6ANS13rIrnvvn
-         /Mqg==
+        d=gmail.com; s=20230601; t=1740679533; x=1741284333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WlMEi7Una8TwxGaYzKJCUvFP5cGs/B6xguOFMjaN1Ww=;
+        b=WXhWdZT++ZKFUZZuuaJgXszFfZKOpoSM/O04xrXT+dCiWQGM5+73jDujpOsXqYHnKM
+         g9/PD2QiA40krUYtxjZWSMrDKF8TY2xBMgm7YbMLnErz8J87FgcVKACbY1TXCUEUvJfH
+         5eJzjYEsqQ8OSXuU6lmpWcoLkpjFNoVNMmTNdg4SBcbdwMFO+WheE7bsRe3xutyyaUZZ
+         taI5ldwnLBniPDkCI6+dY1H/Ccn1j3HsEX78vXmSa748gAFparbsKHEu85Y/qSi1Gna3
+         4aW08JbW6UXbf9Hwv9j2WB+HICj7SJhR9c8WoDWGn3zIPHxTzEaQ+Pz4/nZ6NdhtbPsC
+         GO6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740679461; x=1741284261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p64rkc2/wV0ej6a0OX3NpwSYfnbAOnRa6XnC1VmKW3I=;
-        b=E5RCq7BpYYK+ff5t7Ru3ADGJZh97eT9xRtbwv3KGe5vp+q/ag/JHrGWAWqUpg8ZnAT
-         rUVel5bo0moCS/DWAcnZyKtEdxhr/ZSRtBAIDOAv+xR1Lbfv0nP9YWoWkyme/GSi3NLW
-         ggDhiFb1m8kzF/f/C+r5vIfV1qKD69t/w8+St/eECYz0UXiaYtQYdnTui2pkvTmqttQB
-         aDkoT6UjR5CBrHu2qgIZihIDShU/KSSeBOmJKrihc6mj+wam8mjlOTkYf152PQ+MRxFH
-         CSwEywWpQSXpZ7dX363ydw1L6PcJkEc6a+Z/jgRPqQBMAjAk+l87M4YnmZ1z5XmkFzQn
-         Z8Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNyLNuF6XqaxzY07czOwt9+cpdnqmBAkbAvX4O1No72zu9xuAjSiXSaAHoqKDIseA4lkrt1uqCN95osvXP@vger.kernel.org, AJvYcCXJ29/BslbpjhVMEdln7bJqSuK2C9NkGvHMI59AvFE/yxc2ETehgCT4FQoTGB07DX9VWgfVShx3xFlPVdKw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/1ncjfHI/xRiU4aCYoQTHTd7BPfbQT/mERkU9To7fjSp9/DTe
-	OmhYoNKD5WS/ETDH8MgfhInQnnVjvoG7nwLEYQrOnLYmGjq8fWMv
-X-Gm-Gg: ASbGnctHPCYX0cngsMqJ2f5cWnvl071zS66tTQklATtvOJLD01YHbeXSSGz6q0gqJS2
-	s8Huye/YRWR8SN/HpoY7RSpDoo0F+glrZyV7RMBijNsLHP4tkqNadaNlUlkx1w8Gn/YMyTzAgkX
-	YaFUGTBvvROEhtx7wh4VPnJ6Crr1i4WZ4TDWt8gOXs5OJoob9wcOoUKdbwJWjGouSOIydYZ6jTr
-	mUu1k5Vw+Oe0aoBQ44SFwGf5qS669WKmzwhvNCnsaa7795yxGux5CQPo8eCLWMD87FYrp2SuTMs
-	HkgnkDPDdfy7Xg6ZnIdOx39SgfxWy0e+JXvKUVDt0IX3
-X-Google-Smtp-Source: AGHT+IEWSzLX5rXDnH6GIqDb+xXExjOnXpxrGLpCDB+AkWNgim9KIb74ynx2zh+Wm2ppFgvjkcbakw==
-X-Received: by 2002:ac2:4e11:0:b0:549:3af5:3530 with SMTP id 2adb3069b0e04-5494c354573mr208245e87.48.1740679460523;
-        Thu, 27 Feb 2025 10:04:20 -0800 (PST)
-Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0ba6b5sm157274066b.30.2025.02.27.10.04.17
+        d=1e100.net; s=20230601; t=1740679533; x=1741284333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WlMEi7Una8TwxGaYzKJCUvFP5cGs/B6xguOFMjaN1Ww=;
+        b=XtaUh+eB/z5dw3gFcWewVPWWyW9dDEBIj4Stz2ikvwqJ9pwiBO2poKzAMupGacarG/
+         OJ+Fr6okO7zh+TwrXVOE9Pf9FhVc0XA50QIwc3u67zmuPEZzw7cXBtD0EAK5hTaSmK3u
+         MtfbBN0LQIGg54C1IuoZoG0GKVhl+bD2+ixE4GewvmvdFEpAJNm9+xD2D5gmMhJ4Azfa
+         5W/ybXTiMZcw3KTB06QugZhaBl+CbReqnK6l6z6DCgBmiReNiUT1+sM6KDM96CPV5l6i
+         5i05+OxTX4ypaTpKpg0PlxHXtcwgtB5zO2YFUqncXo7gkslh8yCebX8vE/P6kCstbBk0
+         9hTw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5z/4n8RaGNON2r6gttDPg27P4q0C9P//6AU4aB9ov6a2FmHm31ZUdPI4Fg/z6edP63ud/jxUu7M8etbY=@vger.kernel.org, AJvYcCUloTK7+5mLRr2JHYPKOeUnb8UWf6nax04Na2odSWkSdxQxVJ7u2M9NAarAqkbf544jVG+QGNZQPs9XlbWE@vger.kernel.org, AJvYcCV/6edSUYe4Icqo5rO05+Z99SWddner0zPXeZ8D9HMIBJc8u422XI/osqfAA/62fjnKkXgDKnxtSPUCiChJ@vger.kernel.org, AJvYcCV5O7ONXrrvXoiTzUhbga9I5ODFf6ZHJhOn7MBWLUFZ5/sJyFxAAsjycGnRmQ87xuaaFFEpfg7jDDWhnz0=@vger.kernel.org, AJvYcCV8w1FFuhbgINSlUhDwMbMZy6CminDJrsTdG3rBs37YjQEYm9w3Uv/QazZLDf9gqehte3j72SXY@vger.kernel.org, AJvYcCWvei9fQ/+f3Dd4L/7BpHlby/dVl5zabazVEZAzB0yy7FQoO9UgEFDIJjv/VgrADJUYQ4Q=@vger.kernel.org, AJvYcCXt4G3iGa4Zy6O0GWfwK+HOAXLDaDQ5xs0ZBAEr/2Z5RfZomVUKO/4DLbPIEwOA2kQwpgt9HKgKVacBtTpbK2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6G+IvkEVXjMvp/tBK/0KlwVtCFA9kKLVE5Myw4gs4IOSBozeo
+	uM7adgKhJq3kBiUzCdGvET5MgYrLHz66E/yxOCl3nEDAHFcOVwj8XmRDEl1zBWQ=
+X-Gm-Gg: ASbGncsfecPtMrsqPwlsOOrIlawfEP9l0pIAU68Oze4g1QwD1iNdNo0Yj5sd82ISFLm
+	uzjGLjD73igTHNmT1gAYRgNBKFaPr7Oz4Z1Devhv8o+iqguu58i9CdXn+IjBtBppvw3NZXw2mS+
+	aKQHO0WRgf/YXNU75qW2ooaNk9SFhRER3eJodMc3BOux0MAz6MX6DmhPpj+GIeXRF4LhnH+3Et4
+	Yf5T776+KRyLSUMVYJkujEIQ3v4CzJxbz6Pc2Tl8GVvwAN1R2ZBeVIn+sNQIGBgtx8QhtSN+5GO
+	z50GVUK/BrMVMfFbICctl6UMukYAdnpvlOIhx6AGrQuO0/2+kQ==
+X-Google-Smtp-Source: AGHT+IEnEhzc2owT1KH+D6qO8Y01zbjbSELOHxZjQy0YabJgdb+peb2Mulxfa+PI8nU5R7zu0Cxkog==
+X-Received: by 2002:a05:6a00:806:b0:732:2170:b6a3 with SMTP id d2e1a72fcca58-734ac44b986mr473864b3a.21.1740679532704;
+        Thu, 27 Feb 2025 10:05:32 -0800 (PST)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a00600e1sm2015088b3a.171.2025.02.27.10.05.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 10:04:19 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	oleg@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] pipe: cache 2 pages instead of 1
-Date: Thu, 27 Feb 2025 19:04:07 +0100
-Message-ID: <20250227180407.111787-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 27 Feb 2025 10:05:32 -0800 (PST)
+Date: Thu, 27 Feb 2025 13:05:29 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+	alistair@popple.id.au, linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
+Message-ID: <Z8CpaaHv0ahHFVuK@thinkpad>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-3-visitorckw@gmail.com>
+ <Z7zIBwH4aUA7G9MY@thinkpad>
+ <20250226222911.22cb0c18@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226222911.22cb0c18@pumpkin>
 
-User data is kept in a circular buffer backed by pages allocated as
-needed. Only having space for one spare is still prone to having to
-resort to allocation / freeing.
+On Wed, Feb 26, 2025 at 10:29:11PM +0000, David Laight wrote:
+> On Mon, 24 Feb 2025 14:27:03 -0500
+> Yury Norov <yury.norov@gmail.com> wrote:
+> ....
+> > +#define parity(val)					\
+> > +({							\
+> > +	u64 __v = (val);				\
+> > +	int __ret;					\
+> > +	switch (BITS_PER_TYPE(val)) {			\
+> > +	case 64:					\
+> > +		__v ^= __v >> 32;			\
+> > +		fallthrough;				\
+> > +	case 32:					\
+> > +		__v ^= __v >> 16;			\
+> > +		fallthrough;				\
+> > +	case 16:					\
+> > +		__v ^= __v >> 8;			\
+> > +		fallthrough;				\
+> > +	case 8:						\
+> > +		__v ^= __v >> 4;			\
+> > +		__ret =  (0x6996 >> (__v & 0xf)) & 1;	\
+> > +		break;					\
+> > +	default:					\
+> > +		BUILD_BUG();				\
+> > +	}						\
+> > +	__ret;						\
+> > +})
+> > +
+> 
+> You really don't want to do that!
+> gcc makes a right hash of it for x86 (32bit).
+> See https://www.godbolt.org/z/jG8dv3cvs
 
-In my testing this decreases page allocs by 60% during a -j 20 kernel
-build.
+GCC fails to even understand this. Of course, the __v should be an
+__auto_type. But that way GCC fails to understand that case 64 is
+a dead code for all smaller type and throws a false-positive 
+Wshift-count-overflow. This is a known issue, unfixed for 25 years!
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/pipe.c                 | 67 +++++++++++++++++++++++++++------------
- include/linux/pipe_fs_i.h |  2 +-
- 2 files changed, 48 insertions(+), 21 deletions(-)
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=4210
+ 
+> You do better using a __v32 after the 64bit xor.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 19a7948ab234..2508d14e8812 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -112,20 +112,47 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- 	pipe_lock(pipe2);
- }
- 
-+static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-+{
-+	struct page *page;
-+
-+	if (pipe->tmp_page[0]) {
-+		page = pipe->tmp_page[0];
-+		pipe->tmp_page[0] = NULL;
-+	} else if (pipe->tmp_page[1]) {
-+		page = pipe->tmp_page[1];
-+		pipe->tmp_page[1] = NULL;
-+	} else {
-+		page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-+	}
-+
-+	return page;
-+}
-+
-+static void anon_pipe_put_page(struct pipe_inode_info *pipe,
-+			       struct page *page)
-+{
-+	if (page_count(page) == 1) {
-+		if (!pipe->tmp_page[0]) {
-+			pipe->tmp_page[0] = page;
-+			return;
-+		}
-+
-+		if (!pipe->tmp_page[1]) {
-+			pipe->tmp_page[1] = page;
-+			return;
-+		}
-+	}
-+
-+	put_page(page);
-+}
-+
- static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
- 				  struct pipe_buffer *buf)
- {
- 	struct page *page = buf->page;
- 
--	/*
--	 * If nobody else uses this page, and we don't already have a
--	 * temporary page, let's keep track of it as a one-deep
--	 * allocation cache. (Otherwise just release our reference to it)
--	 */
--	if (page_count(page) == 1 && !pipe->tmp_page)
--		pipe->tmp_page = page;
--	else
--		put_page(page);
-+	anon_pipe_put_page(pipe, page);
- }
- 
- static bool anon_pipe_buf_try_steal(struct pipe_inode_info *pipe,
-@@ -493,27 +520,25 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
- 			struct pipe_buffer *buf;
--			struct page *page = pipe->tmp_page;
-+			struct page *page;
- 			int copied;
- 
--			if (!page) {
--				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
--				if (unlikely(!page)) {
--					ret = ret ? : -ENOMEM;
--					break;
--				}
--				pipe->tmp_page = page;
-+			page = anon_pipe_get_page(pipe);
-+			if (unlikely(!page)) {
-+				if (!ret)
-+					ret = -ENOMEM;
-+				break;
- 			}
- 
- 			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
- 			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
-+				anon_pipe_put_page(pipe, page);
- 				if (!ret)
- 					ret = -EFAULT;
- 				break;
- 			}
- 
- 			pipe->head = head + 1;
--			pipe->tmp_page = NULL;
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
- 			buf->page = page;
-@@ -847,8 +872,10 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	if (pipe->watch_queue)
- 		put_watch_queue(pipe->watch_queue);
- #endif
--	if (pipe->tmp_page)
--		__free_page(pipe->tmp_page);
-+	if (pipe->tmp_page[0])
-+		__free_page(pipe->tmp_page[0]);
-+	if (pipe->tmp_page[1])
-+		__free_page(pipe->tmp_page[1]);
- 	kfree(pipe->bufs);
- 	kfree(pipe);
- }
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 8ff23bf5a819..eb7994a1ff93 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -72,7 +72,7 @@ struct pipe_inode_info {
- #ifdef CONFIG_WATCH_QUEUE
- 	bool note_loss;
- #endif
--	struct page *tmp_page;
-+	struct page *tmp_page[2];
- 	struct fasync_struct *fasync_readers;
- 	struct fasync_struct *fasync_writers;
- 	struct pipe_buffer *bufs;
--- 
-2.43.0
+It should be an __auto_type. I already mentioned. So because of that,
+we can either do something like this:
 
+  #define parity(val)					\
+  ({							\
+  #ifdef CLANG                                          \
+  	__auto_type __v = (val);			\
+  #else /* GCC; because of this and that */             \
+  	u64 __v = (val);			        \
+  #endif                                                \
+  	int __ret;					\
+
+Or simply disable Wshift-count-overflow for GCC.
+
+> Even the 64bit version is probably sub-optimal (both gcc and clang).
+> The whole lot ends up being a bit single register dependency chain.
+> You want to do:
+
+No, I don't. I want to have a sane compiler that does it for me.
+
+> 	mov %eax, %edx
+> 	shrl $n, %eax
+> 	xor %edx, %eax
+> so that the 'mov' and 'shrl' can happen in the same clock
+> (without relying on the register-register move being optimised out).
+> 
+> I dropped in the arm64 for an example of where the magic shift of 6996
+> just adds an extra instruction.
+
+It's still unclear to me that this parity thing is used in hot paths.
+If that holds, it's unclear that your hand-made version is better than
+what's generated by GCC.
+
+Do you have any perf test?
+
+Thanks,
+Yury
 
