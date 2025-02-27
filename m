@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-537130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98758A4884F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:53:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227D1A48852
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F76B3B79C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303671889F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9397126BD9C;
-	Thu, 27 Feb 2025 18:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A09207644;
+	Thu, 27 Feb 2025 18:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOIzM+7p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsvFlZap"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE2326B95D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFDE482EF;
+	Thu, 27 Feb 2025 18:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740682338; cv=none; b=Q5YTGor9eLoGZeZPLmmq5cCGc1CUpf5egvZWXrUL51doCRSASzDNGgHf1iPe5IgL4In1WO5uah1YsRPDHIzHbbUdKDAqPCjYRNpacC0JwTbJUZlGE6zxzpdk86ZscMtdFFxHQDOi9l2sxDtMW6RqclRYcsk+mN3/2+JO/AgNdFY=
+	t=1740682410; cv=none; b=VDarxh8S/kWmngczJhVV1Gzv1+goZU2qew8chXZDsU7+hJSFXkLUYihRqJkfR3keUg2/Wo1li6wcVA650q9GQCnN53qym0jOuwKE0JnLY4UXvp3KHk9Ra5zTBteNqOxjQSEVMRVmAMZNG1srEnVXT1rWSiHDE7OKaug7d8qX3+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740682338; c=relaxed/simple;
-	bh=iZEYr3WPS7WmwFveTUVtD47soCK/VR0eQDCz8IwU/P0=;
+	s=arc-20240116; t=1740682410; c=relaxed/simple;
+	bh=tiI29qrmeWsjWhA18quuPEWgXxbDfdCAkCEs7/zzF+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRfkyZK2N3DCqXjVTs6InKx7ndQ4jY/mb1N0Zse9n6CBP2XcPtdRkvFHlVqJtSEjulR4NxXvjjGgCJElVhOQ/PpcjGwuF0PNI/JvhWiGXPDNJ/XQD4ZRViPWobFM+3FKIIqoL5vkooYP2KtBlhVyEQli/VQXH6FqKglcpeJO5pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOIzM+7p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B89C4CEDD;
-	Thu, 27 Feb 2025 18:52:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePVUBaxudU3pze6M29iSg1TQvYNqXJZnGXWjiBBU6cRXVM9fA8AvCBXX0/S6d0okHsrGVsZ4eu0oWGUj13Jx9aKiA4sSN0i+vebISW0DJfsvLy3WDyZYGlQL0TgHMPaqZuEcnGgNhRR5vBRaWE2NMe2DF9VWEBuSH7yqltfERx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsvFlZap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A039CC4CEDD;
+	Thu, 27 Feb 2025 18:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740682335;
-	bh=iZEYr3WPS7WmwFveTUVtD47soCK/VR0eQDCz8IwU/P0=;
+	s=k20201202; t=1740682409;
+	bh=tiI29qrmeWsjWhA18quuPEWgXxbDfdCAkCEs7/zzF+Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GOIzM+7pHGqcS/i2OhQnYq3impNLgJFTK5RwACFBXaZwsPewOTRKdx8sBWEGSCPBH
-	 b3dzvUzIUBoXMhy/wOJi80g3gweexvoFXW9OsY7SJ0qaDdflTU+GEhGjNo0gQoqq+t
-	 mZzgTIo1glZT7yIuOa8ZxOg8+gyFM0TmqW8v7DqGRRhfsHrl7tNH72LHx21lkeJKjC
-	 A1OfOher3ROIX7CmxUuHWZ7r7Zk1pq6UWnBdOvz/9Dd6eOK+CLRMvlBFvOUWktvm3L
-	 iDZbV1qKSRYgfHqA6wifXz9qNC+FmJg3pLhAYyWCULQB2g6G3vygugChVTH9h3+y4l
-	 4vGKPTod3Ff/w==
-Date: Thu, 27 Feb 2025 19:52:01 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Subject: Re: [PATCH RFC v1 01/11] x86/fpu/xstate: Simplify
- print_xstate_features()
-Message-ID: <Z8C0UYHV9q10bKoF@gmail.com>
-References: <20250227184502.10288-1-chang.seok.bae@intel.com>
- <20250227184502.10288-2-chang.seok.bae@intel.com>
+	b=FsvFlZapXhT5CcYIEibfq8venNzobLYytQrJ8IEvtwwsfaHzuHaYkYjfB8n5QSYFN
+	 vOM/s4KZgiHrQ5PjoGfZjj4S8xqp/Uy7Obx2g5zG/tGurnaozGPv1b0lnBbonP3mXl
+	 R5f8bLeBbr2FB8PlZfZBu/2KC/iiDVi6jELeIPmcEg4ehqN0Az+1dnjr9h3YVEVQMD
+	 qygq5CF2xV97LN3RUgmmwRrW1Yjz2I41YHl473d/hhJYjG21ZFVYX0NNRzdXgsmNVg
+	 W16PX4dASKlBcXBYk0/rWT/YDDxhaFg8vwQpk6r5vlz3tHatyCESicigrYrI5nbRF+
+	 mi6iFDcQHBkhQ==
+Date: Thu, 27 Feb 2025 19:53:24 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Anindya Sundar Gayen <anindya.sg@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH] i2c-algo-bit: cpu_relax/ yield replaced with cond_resched
+Message-ID: <2neytitd4amwksu25ujj6qcgnu3gqrg25t242d5czalwfibt35@cqv4y3ncgfbt>
+References: <CGME20250225121943epcas5p129c54f2e9ad44af2ce342c26267fe38a@epcas5p1.samsung.com>
+ <20250225113724.14653-1-anindya.sg@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,31 +57,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227184502.10288-2-chang.seok.bae@intel.com>
+In-Reply-To: <20250225113724.14653-1-anindya.sg@samsung.com>
 
+On Tue, Feb 25, 2025 at 05:07:24PM +0530, Anindya Sundar Gayen wrote:
+> cpu_relax/ yield replaced with better flexible approach in kernel
+> with cond_resched.
 
-* Chang S. Bae <chang.seok.bae@intel.com> wrote:
+they are three different functions normally used in different
+contexts, I would need a better justification for this patch.
 
-> print_xstate_features() currently invokes print_xstate_feature() multiple
-> times on separate lines, which can be simplified in a loop.
-> 
-> print_xstate_feature() already checks the feature's enabled status and is
-> only called within print_xstate_features(). Inline print_xstate_feature()
-> and iterate over features in a loop to streamline the enabling message.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> ---
-> I find it difficult to justify using separate lines for printing when
-> they can be efficiently grouped under a simple for-loop. While this
-> cleanup isn't directly related to APX, it felt like a necessary
-> improvement, especially when new xstates are introduced.
-
-Agreed, and I've picked up this simplification independently in 
-tip:x86/fpu.
-
-Thanks,
-
-	Ingo
+Andi
 
