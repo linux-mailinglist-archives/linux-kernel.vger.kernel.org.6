@@ -1,262 +1,393 @@
-Return-Path: <linux-kernel+bounces-535718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814C5A4765F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F591A47660
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A1A1885B47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F361885520
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CF2221DA6;
-	Thu, 27 Feb 2025 07:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58C422171C;
+	Thu, 27 Feb 2025 07:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Px0HCK5z"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2048.outbound.protection.outlook.com [40.107.101.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BIuMrOgC"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68F8220687;
-	Thu, 27 Feb 2025 07:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740640358; cv=fail; b=jTpyNThZ1IwoBEGD8fGT8KxvZEzeQE9ZKNseGRCtlWZVNpfVkLl19VWgJAvBqGTOeUUH1XAQZs+78hC/B1vOZq+K1HJh8H4ALT2qPAGX44kMByx74RszgwCT5mG9gW4V83Q/x3cVWQBCq6YJVsykY0Sy/n9t8bi1mHzd9SMhI14=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740640358; c=relaxed/simple;
-	bh=hA6qrOGQtbAYvWCXywVfIOv5XobkGsaTn3qZ1gQWZyk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lu20xeA0x4vNs0DXyw27snHy5CQXErpSfppO+XJ1O1EK6ZrsTPXEyECpMFfHYcdJD7IozwjlAu4UtgtrKf8UIA2xmv6L+7PqnI4SSHSzrrD7rorZgLQ+6H9wnr8VKNxH8Cef5Ccm6YhQunKIEgznTww88DxOnDKRhHKdW+uIsu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Px0HCK5z; arc=fail smtp.client-ip=40.107.101.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lAQqE2Hfm3TdO1haMSstxFsZrXKrD+uNOGTgg3XepQ2Yoo9NustZvaBPKLj5qInew5/YMapjDB03uDOafHcaQf0TsCEQSFbVrm1zN3IKF0YIZ9Sc1W9zxqfXs48NyoN0rtGe7jsmP2Ni04oexNWb3+7XlXwJKAZHjR2i9Gz4bJ+zW5NHM2w0oadTOkDWipd4s/IbYfKjQ2v7rkKInp7OJ7Hkshg+Gj5VzUiG43Wfm0kDvrExjRXWEOdWxFk+grl9shwccbPuD1NLCnwVFHEMOBhuUCpn5Ilwr2/xQe2umPzYoXVKXVXk4MXaHaBYi0rm4zchu/UT3Kccpe+4Lb0J6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p1xKDzNDzzhKMU1ro09fch1P8R83ykJpFzCS4gLpSeI=;
- b=XLlrtZ7eFdYxU3qZkpmT6+nJNx2BiqUulHE69Jw1CkAYQzVTSCChpeeFuO3FGPtQlRguBBc1dkGRTm1GJ0Vrb1APk7QLNvaApscpUjuRyFV772NIkEQ3I3xeroVB8e4WL2xZfLbchX3zv5zHdUqGWgSpP/+uflV78PrLy6yXCDN2XrImmcQKyE6mokzLMrXg4SJDyYM2HWKRMBxkcaCD/cadO//2tzT4FYIsU7kEusE1dkkmTaqsNWpKoNERSSOzXLvLp6acKs6qpQ3IrRGaMGLiqOE+K4R7+12SFbm3P3m6Yte/GJt8FkbwnOxv5PBL+cJzDNZ6aEvRaRmKaga0Ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p1xKDzNDzzhKMU1ro09fch1P8R83ykJpFzCS4gLpSeI=;
- b=Px0HCK5z9agsV4DSNnh1tKL2k6OSypVmOkBC4bnRNqcxjSdvqFCt051QDshhzN+HYgNzjp6ND5TYZ8fSfyOKe6g7Q7sQN0L9UH43V8lZHp9vY2aw9W6OKGcmKKqcDDZHKGaDHEDBL/0d+Fo/XN4I4+X3SILn7ZhLWV+6maQv+mo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB8200.namprd12.prod.outlook.com (2603:10b6:8:f5::16) by
- SA5PPFDC35F96D4.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Thu, 27 Feb
- 2025 07:12:35 +0000
-Received: from DS0PR12MB8200.namprd12.prod.outlook.com
- ([fe80::e3c2:e833:6995:bd28]) by DS0PR12MB8200.namprd12.prod.outlook.com
- ([fe80::e3c2:e833:6995:bd28%4]) with mapi id 15.20.8466.020; Thu, 27 Feb 2025
- 07:12:33 +0000
-Message-ID: <4443bdf2-c8ea-4245-a23f-bb561c7e734e@amd.com>
-Date: Thu, 27 Feb 2025 08:12:26 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/10] KVM: SVM: Require AP's "requested" SEV_FEATURES
- to match KVM's view
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, Alexey Kardashevskiy <aik@amd.com>
-References: <20250227012541.3234589-1-seanjc@google.com>
- <20250227012541.3234589-6-seanjc@google.com>
-Content-Language: en-US
-From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
-In-Reply-To: <20250227012541.3234589-6-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FRYP281CA0015.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::25)
- To DS0PR12MB8200.namprd12.prod.outlook.com (2603:10b6:8:f5::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA2A22068A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740640374; cv=none; b=m9MJpEcopeaSun5J33oQGZ+S7+nVF8RtbHrFHFOXtNefWD1HAjYxah25lheIKDNwiSfFEWGObUjVK75iQh6UctX+D/URmlkSfgTsbwb47H6pltoqFuOH5W/uRj+G82OLv8kQO5RfjxO7lh7DlZXSxMqQP26wKlk2wAGmUo/JAm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740640374; c=relaxed/simple;
+	bh=jcWM9NpGSNTS645q0+/uGnQujHJyt1o3XYGI9AHv8Ec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uMwMPoo3bRUe7D3BMdGXAuje5rtefIZCmm5YM8TANUkNla4Z2UxfDlkRF9Wvx/YxyU4GYWVvplKjGAdFfWUpEm9r/9283ufFQBKvzvqsZ54J+ULhvhgpkNVahnwuGXXrtf5IuEiPbP0OfscDarUMqTeUa3ggl4uyXhFgiQcEgOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BIuMrOgC; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-221ac1f849fso78825ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740640370; x=1741245170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UhkOz7u1U3PreeWOEqe+niiEzqkjN6j7foSOEu5bfPk=;
+        b=BIuMrOgCqZOuINp//rxTUp4DDbsh2mila12pT3vTFQt5T7ajtdeaVOrUDXVe7TPGlg
+         ZVA3jSngfHnV+2vlUXS54Yl1on6YrHjstL2tC7EEN/PgFH697KfUZELPPk9+yn5T+u2G
+         5naFdCB6dyzHkq6sUYUtDpT87/Bd/kGDZ/QaYBzvAq4VzujnFYXxZ6BF01HWuU89fLsK
+         BbSCEdmC7eI4lynOR7QwMWrTeAhaknPUsFqXTiu1s53MXna9IjRicQPKrj+UtKcmOM7Z
+         hMuuiSIrY7ECFvDChLeQVbIVlQwZV/kV+U9WKLgh2omCBPHbhQjNjxtht+Epcpmv/djO
+         ZJgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740640370; x=1741245170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UhkOz7u1U3PreeWOEqe+niiEzqkjN6j7foSOEu5bfPk=;
+        b=Zf3ioNVKgW6K8kexBKIw5nbdVCndVy5NHBQOOHVAc0UZZKA3Y0cExNIYQCxanbSbYv
+         bOdlVF2ozBQZRzgRjfAw5SvSzh6Ii4y3jMJ3pbGTkWiYGvywQWUZORceYLaC3lruqTPl
+         ijd5rMvIeA7uDU7QrVrGtKtq9gs1j1/xjxAoc2BEbncHxhzvwMJQVsANw0Ar6QFLxbie
+         sUh3twJrCaMOv8zqAkQ3d5MfNCcWsSb3WaAVX+YrKIQ+fi82NMBPYSl3o9qse4w+Mt0U
+         j9+nG54vZH3Jt5+B7NdQfAydC7YV2XuJZxBI+MPcf3Abu1SaV+ZvnAGxbvA66hoKhy3L
+         0zqQ==
+X-Gm-Message-State: AOJu0Yx5W4JsklnMXzlKxkT2VcJMGst/CgtHS6NPvjw9Je7uZdSb2oIx
+	eTWNYKYy0bQgRn8QBNaW4dpZ1O9DlOmR060krtlQ4AItciw8pHFg3ElAU82RoGeI15SlnkMfF2T
+	GOHTtIt524ZUwal0Q4lCieT169zsCXIUHgCB7
+X-Gm-Gg: ASbGncteJQj2euxPMAhE/m/1ZvvHDIf8eyqaY7T47vCjPICiEmp3OBp4L4i9UUpydVm
+	14UEe63W/J1X8lYQncEFDIs5lHZZJ8xBAhU9+FJ0Mg/e6/bnZ5xIrT3RvVExPc65EkwfYecFGeN
+	78dq8CSX3v
+X-Google-Smtp-Source: AGHT+IEDm1LEfkb0IAuPxTVJg0XP6FduTJY9xue38G9/rWT727qBQ0NS4uq+X1hnqmtdIg6PJj+VZ/Qkl2BT4iZ9z+Q=
+X-Received: by 2002:a17:902:f68d:b0:215:86bf:7e46 with SMTP id
+ d9443c01a7336-223517240eemr1291535ad.7.1740640369813; Wed, 26 Feb 2025
+ 23:12:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8200:EE_|SA5PPFDC35F96D4:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1db9be20-9dab-4b2e-1ee4-08dd56fe1b24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cnR1dUxpSWtnQ2NudTczcFVQR1JjQmt6RHA4NXBCeEV1WS9kSkxxc09HeDBE?=
- =?utf-8?B?YVQxVEhTOHBZMkt1aHRsY2MxMzYrdEdVK0NCTHVpc01JRTI2WHM4OHhmbmZo?=
- =?utf-8?B?WXZ0aFZUdTdvWmhWd3RPYzhLVDhYL2ZpaHJnQkhydU55QnZHelNHYjVXVTNh?=
- =?utf-8?B?L2pkWnY5WXhEKzR4eW42eCtiLzhzMDM2bTJ6eTR1UXY2Yk5BbXR6MjNlNG9F?=
- =?utf-8?B?eTdSVDZCNlJpZnoyZ05leXl1bEJGeUFrbnNnSUFPK1hsUXBSSURhUXFQbXR5?=
- =?utf-8?B?QUV3QUVaMi9WNmF5bVdZbk56b0pBYjRqczg3ZDdYTWN6NzJ2UGJ2THR6OHl2?=
- =?utf-8?B?VHlCejV6V2pPL1ovSXJZTmZ5RVREdG10OVZJRlNnSjNONGtWV0JaMGpNbEcv?=
- =?utf-8?B?MGdwT2toK3ZvdTNyOEp3ZHNLd0NrK2VEaWU4VGhwSGsrOG5qd2E4ZTkydGl6?=
- =?utf-8?B?UTFubmkwclpuK0k0Q1hhdmJhNVdyZEdaQjR6ZG1VT1VSbVEvbkpnWmJ3eHR3?=
- =?utf-8?B?OFlXaFBvUTNVajEwVi9nMUNEZldtVlNOdlBNbzYyaFRVOXMzMU1tNWYyUjVE?=
- =?utf-8?B?MW5DQUFnaFBzdTZKVW5hV0JMNTF6UHhsRytia2p3MkhwN2xGVldFQUx3RFEy?=
- =?utf-8?B?L0FVTUF1ais0WlV6eHpaaHJMV2drSGxyZyt3R1RHQzllaUJNSk5HL2FWU3A0?=
- =?utf-8?B?TEx4QXZWdHo4MllGQ1JBdUVQN2pVRURlNnROaHl4REQwYmF3MnFHRGdvMTNy?=
- =?utf-8?B?NitBaHdudWNISkhveFU4bUxTZVB6RTMxTzJqMzhGNGpPb2pyYTdWdk1Banli?=
- =?utf-8?B?N3M4OEZUYzlVaDJhWHRkVmNNN1hRWDlhRHdxd09jeXFMR08vZDQ1K3A2K3BK?=
- =?utf-8?B?VlJoRmpSTUVhaXNYUFhObmxxV1hkWXh5cFBtdGgvZDhod2RPNFFZWWtYS0Q2?=
- =?utf-8?B?djVVTHlZU0k0NU51WmFmbU1KL0dEdXYvWHJ2ZDc2WnFVR1I5R1E4SzFGbHRt?=
- =?utf-8?B?c3JWd1Jua28zVEY2Y203NFNGc3p2eHBWc2pkLytmcklZaE9kTHRseW1JbGpo?=
- =?utf-8?B?djA0M0cvVDlmR05uMmRjenlGZXlrMzBWdWdrQkpZN2pseEVyc2tlenVOdXNT?=
- =?utf-8?B?VkZPWEUvbERlZ1BTQW85cG02bko2R29lM2Jpb3VQY0NlRkdYSWdTTzhUQmlM?=
- =?utf-8?B?TnpXWFdONkFrTmxKSEVRZEZFdWJqZGQzc1BrOTBnUWxMZnU5clFxWERMUU1v?=
- =?utf-8?B?YkNmM2I2T090N0hKWFZVR2s1SjVIbVdKZ25ObDVWbzJkUUhvQ0ZsWHBKcnJG?=
- =?utf-8?B?NVlONGVkS1FHblJ2TythdjdzMHpqTkxDY3R2MElFZzN4c1lpdStkUGhuYjFY?=
- =?utf-8?B?RzFOWk1jN2xVUXhJK1lQMVoycHdBb1NLNTMrbk9aNDAwR2dBQW9qUklQWGQv?=
- =?utf-8?B?c0dyY21LUXRKTmp6ZklWazViQjFwNW83N2QzMUgzd2N2eml6dXZ6VWJvank2?=
- =?utf-8?B?VURPbHNzUTAvc0o4VzBKMTJWMmdBK01WbktNaVhHWXVpeDdMSFM1TEdFckYw?=
- =?utf-8?B?N20wSlNXMVVlbU5oWThrR1BNNTZnWHN2VlhTeDViK3VpbzRBYWRnYUxJY1Z4?=
- =?utf-8?B?R1hFYXlkNWhjUXBob2dVQkFMVkFhRHJzMy9sUWZjZXpIRVVqOWloTTQ0OFhU?=
- =?utf-8?B?eFlhSDJia3JTdnFZVmI4Ymt1ZlQ0dktiazVRckZMZU9vUTRkZXBMVVRhNFlS?=
- =?utf-8?B?WnFDNk11eS9BbVZHMU9sOW15USs2aysvL3N2dG1PZHdLWG0zQXJyOGVMRHhr?=
- =?utf-8?B?YVN3aFNnU1pkZHlONmswbEs2cG5OdCtBRmw4ZUhuMDY5N0RVQzdYMGZNYis4?=
- =?utf-8?Q?/lb808x4lRxWJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8200.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MWZ0RTFuR0VOMDZwUVh3OG1kc2tmVlFEMDZCVDNhMEdnZGVEbElsYlpZYUVN?=
- =?utf-8?B?d29BVUZmdDF3dTArcXRZRkdHcTJqakpiejZPMWJwUzZBSGJDT3l3SkJ5SEZ6?=
- =?utf-8?B?cExIM1lSdDcxenAvNDdVQ1AwUFlZN3lRR1gzZFp0VzJiN3piNU5jMXFZVko1?=
- =?utf-8?B?cnc1YjN1UGowR3pjam8wUjlzM1lLSyt5NlBLZFB4N1dVZjF1Y2J1SThPbXZ5?=
- =?utf-8?B?ekNOTlJLcEY4ZzQ0aTNidFlMc3J0TTdRSFJDMjB2OXJiL0h2eUJpMkFVMS9Z?=
- =?utf-8?B?aHMwdXhtTWZPYTY4dFRDK2w0ZlJPQWpCM01henY0eFdzelJ2QlVvWisxVHBF?=
- =?utf-8?B?c3l1dGdlSjlKL1l6cS80TU1RYlZjbWVLeFhIdC9aZmtNMGNoVlErK2JmMnZu?=
- =?utf-8?B?cUpJQjBuZ3p3ZzJXTmNLTkh2MHRpaHF3cUlwZFI5RFNwMEcwNEZ0cWFXRmk3?=
- =?utf-8?B?bXpVZEw5TUVMMThUOTIzT25RL2JxTkFoNWd0cWQzWW1KbUgrOCsxby9rT2x2?=
- =?utf-8?B?ZTZ5RjJQeGdjTG1qaUxIR3ZPZDQvOEhMZjdpOS9uQ1JFbzlDZDd3L21sdlE3?=
- =?utf-8?B?Q2pRckF0eDgwb2lVZ1pXNUE5T0N5WTFMNGtoZnI3MjFOL0I3L0lJb1hzSlli?=
- =?utf-8?B?c1IrRTNLTnJhc0h1cnZtQUxJcmFIOW55YjJVSDBRMlJpV1ZEdXllVUlDNWdR?=
- =?utf-8?B?ODZQU0s0UExGeXNwbGJNbThoMzNZcHFLbDFMWGxNM0NkY3NwOERwSG1OUm1o?=
- =?utf-8?B?cDNEc3hmOGYvaU1iMk1QZURCV2kxV2M1TkZzUjVSdzBQUzYwNDI2bXM3cStn?=
- =?utf-8?B?QUJEdmRUMGtEQ2M0dXFIL3pFWHYwcEE2d3h2eEw5aWhqYlVhbmRBMUxsUjZB?=
- =?utf-8?B?ZTJRUmVQZkQzZkVrbW9CcmZNZzloQzY1dHEvK0JBa0wwRnRnMEJBbk5DUUY4?=
- =?utf-8?B?VDV1QUlySE00cUgxREhZeVFkZnU0VHZ3Mmkxdm1JUFlFblB3TXBHbzUyVEt0?=
- =?utf-8?B?SjJOeHMrYTRzNHB4Y0NUcWh2Z08vSHM2ZFIvUlh3a1NPd1J5MWVueGwrckth?=
- =?utf-8?B?YXVnd1Fxck5CRVVLVmlJRms1MnBaemVMcVBxL3k3NmVwa2kzNS9PSFk0bk0w?=
- =?utf-8?B?VEx2TzY2MzRkVEhkd2UxVmJpNCtTZi9PdFZyS25jTFdwRmxWbVJkaXZxTUly?=
- =?utf-8?B?TC9jRGxzMnpFaUsyTUM5eDAxRC8rUGRSZ3lCc1lxSVlGcnZyT1R3Rzl0NTZ3?=
- =?utf-8?B?bDZaY2wvYXY5a3gvWkYxdlZQcU1WOExsN00yYmtSaDNYNDlrTXpoZkxJd0lT?=
- =?utf-8?B?TGtUSlh1d0RrT2pUZE9lRlltdllvNHFoaHdDTXRoWmg1d0RWczE1aHdkK1Zt?=
- =?utf-8?B?OFg2enUvVWo2R3U0UHhaR3FVdzY2VDkySGd0NXN0QjdPZWRXelozS05qemhL?=
- =?utf-8?B?R1Z5amNsODhteVdseVZLZTVjU3V5aTNCaXg5NElGOXQyL1Q1WjB6cklFbUZ4?=
- =?utf-8?B?V2hpQzFBQmFPUUpmemVJMXg0VGZ3ZVRNeDNkTlUxVFU4a0JMaWp4cURXRjdF?=
- =?utf-8?B?SUhtaGZ4cFl4bUJ0OXh3QmUySlI4MDEyamRkbGZIZGpqMmRXVnIvTTg0SjFq?=
- =?utf-8?B?ZXU3bG50K3Y1cEluajhLRVNKdE1BVWFJcGcxOXVFUTdwSXJnTStLZGk2cWNv?=
- =?utf-8?B?QlhEb3Q3V3lwVHY3ZWFreEEybXpveVRRRjYyV2lmT1NlYk9qQjd2ZnR6aHlY?=
- =?utf-8?B?em9lcUUrU05OSzVqV3NYdHBkTnlSZzZiSjcyVXNPUjczckxnTmx2L0ZKdnhX?=
- =?utf-8?B?WDRadTg1R1VncjVJNnd1aC9jMml4STA0UWl2eUNEQmV0V3Rkak9VbXU0eWE3?=
- =?utf-8?B?VUtiRENWdUFrRVVHamplWnVXWFdsQWF3YXlCUWduVmVtL1ZUai80ODByeW9D?=
- =?utf-8?B?R1pUMk9qRVROS3loN0ZQZ0VnOWNobUtiaUQ4MWF4Q2FtY09EV3ZTL1Z2TC85?=
- =?utf-8?B?cFRrZnYxMytFbm9OOE5SSXBQclZ2U3lmUUJvS2VReldYSzlBWW9sZzdJOG1Z?=
- =?utf-8?B?RlZka2EzbXNUZG4vcnRQekxxMGlOVGpWaHY3TktPRHFkUTEzampIRERuL3kx?=
- =?utf-8?Q?Q0HtT3PYX3l9WIt3Yw7bK/BHj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1db9be20-9dab-4b2e-1ee4-08dd56fe1b24
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8200.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 07:12:33.6413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Br0a92zwKz/qNiFjH5CvyDEajDbu6WYW37kpLfmIddtwx0CY2VuEcBEGmjP+yz1mwNfQBQpcqxBnnFH9N9jxTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFDC35F96D4
+References: <20250227053738.788153-1-ctshao@google.com>
+In-Reply-To: <20250227053738.788153-1-ctshao@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 26 Feb 2025 23:12:37 -0800
+X-Gm-Features: AQ5f1JpJmtwCkC475leJkHi8dbdwLRVdTLqfvU7KJU9f7qJHZsjzlPveTYpt5nQ
+Message-ID: <CAP-5=fUU05CJhXJuSPt61+H8jC07YuVtkCZwf9Dcawa0AGffSg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf record: Add 8-byte aligned event type PERF_RECORD_COMPRESSED2
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com, 
+	dvyukov@google.com, ak@linux.intel.com, james.clark@linaro.org, 
+	christophe.leroy@csgroup.eu, ben.gainey@arm.com, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/27/2025 2:25 AM, Sean Christopherson wrote:
-> When handling an "AP Create" event, return an error if the "requested" SEV
-> features for the vCPU don't exactly match KVM's view of the VM-scoped
-> features.  There is no known use case for heterogeneous SEV features across
-> vCPUs, and while KVM can't actually enforce an exact match since the value
-> in RAX isn't guaranteed to match what the guest shoved into the VMSA, KVM
-> can at least avoid knowingly letting the guest run in an unsupported state.
-> 
-> E.g. if a VM is created with DebugSwap disabled, KVM will intercept #DBs
-> and DRs for all vCPUs, even if an AP is "created" with DebugSwap enabled in
-> its VMSA.
-> 
-> Note, the GHCB spec only "requires" that "AP use the same interrupt
-> injection mechanism as the BSP", but given the disaster that is DebugSwap
-> and SEV_FEATURES in general, it's safe to say that AMD didn't consider all
-> possible complications with mismatching features between the BSP and APs.
-> 
-> Opportunistically fold the check into the relevant request flavors; the
-> "request < AP_DESTROY" check is just a bizarre way of implementing the
-> AP_CREATE_ON_INIT => AP_CREATE fallthrough.
-> 
-> Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Looks good. Even makes code simpler.
-
-A minor query below.
-
-Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-
+On Wed, Feb 26, 2025 at 9:37=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> w=
+rote:
+>
+> The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+> asan runtime error:
+>
+>   # Build with asan
+>   $ make -C tools/perf O=3D/tmp/perf DEBUG=3D1 EXTRA_CFLAGS=3D"-O0 -g -fn=
+o-omit-frame-pointer -fsanitize=3Dundefined"
+>   # Test success with many asan runtime errors:
+>   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
+>    83: Zstd perf.data compression/decompression:
+>   ...
+>   util/session.c:1959:13: runtime error: member access within misaligned =
+address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte =
+alignment
+>   0x7f69e3f99653: note: pointer points here
+>    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 0=
+0 00 00  00 00 00 ff 07 00 00
+>                 ^
+>   util/session.c:2163:22: runtime error: member access within misaligned =
+address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte a=
+lignment
+>   0x7f69e3f99653: note: pointer points here
+>    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 0=
+0 00 00  00 00 00 ff 07 00 00
+>                 ^
+>   ...
+>
+> Since there is no way to align compressed data in zstd compression, this
+> patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
+> `data_size` to specify the actual compressed data size. The
+> `header.size` contains the total record size, including the padding at
+> the end to make it 8-byte aligned.
+>
+> Tested with `Zstd perf.data compression/decompression`
+>
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 > ---
->   arch/x86/kvm/svm/sev.c | 23 ++++++++---------------
->   1 file changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 9aad0dae3a80..bad5834ec143 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3932,6 +3932,7 @@ void sev_snp_init_protected_guest_state(struct kvm_vcpu *vcpu)
->   
->   static int sev_snp_ap_creation(struct vcpu_svm *svm)
->   {
-> +	struct kvm_sev_info *sev = to_kvm_sev_info(svm->vcpu.kvm);
->   	struct kvm_vcpu *vcpu = &svm->vcpu;
->   	struct kvm_vcpu *target_vcpu;
->   	struct vcpu_svm *target_svm;
-> @@ -3963,26 +3964,18 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
->   
->   	mutex_lock(&target_svm->sev_es.snp_vmsa_mutex);
->   
-> -	/* Interrupt injection mode shouldn't change for AP creation */
-> -	if (request < SVM_VMGEXIT_AP_DESTROY) {
-> -		u64 sev_features;
-> -
-> -		sev_features = vcpu->arch.regs[VCPU_REGS_RAX];
-> -		sev_features ^= to_kvm_sev_info(svm->vcpu.kvm)->vmsa_features;
-> -
-> -		if (sev_features & SVM_SEV_FEAT_INT_INJ_MODES) {
+>  tools/lib/perf/Documentation/libperf.txt      |  1 +
+>  tools/lib/perf/include/perf/event.h           | 12 ++++++++++
+>  .../Documentation/perf.data-file-format.txt   | 17 +++++++++++---
+>  tools/perf/builtin-record.c                   | 23 +++++++++++++++----
+>  tools/perf/util/event.c                       |  1 +
+>  tools/perf/util/session.c                     |  5 +++-
+>  tools/perf/util/tool.c                        | 11 +++++++--
+>  7 files changed, 59 insertions(+), 11 deletions(-)
+>
+> diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Do=
+cumentation/libperf.txt
+> index 59aabdd3cabf..4072bc9b7670 100644
+> --- a/tools/lib/perf/Documentation/libperf.txt
+> +++ b/tools/lib/perf/Documentation/libperf.txt
+> @@ -210,6 +210,7 @@ SYNOPSIS
+>    struct perf_record_time_conv;
+>    struct perf_record_header_feature;
+>    struct perf_record_compressed;
+> +  struct perf_record_compressed2;
+>  --
+>
+>  DESCRIPTION
+> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include=
+/perf/event.h
+> index 37bb7771d914..09b7c643ddac 100644
+> --- a/tools/lib/perf/include/perf/event.h
+> +++ b/tools/lib/perf/include/perf/event.h
+> @@ -457,6 +457,16 @@ struct perf_record_compressed {
+>         char                     data[];
+>  };
+>
+> +/*
+> + * `header.size` includes the padding we are going to add while writing =
+the record.
+> + * `data_size` only includes the size of `data[]` itself.
+> + */
+> +struct perf_record_compressed2 {
+> +       struct perf_event_header header;
+> +       __u64                    data_size;
+> +       char                     data[];
 
-'SVM_SEV_FEAT_INT_INJ_MODES' would even be required in any future 
-use-case, maybe?
+Just to note that data_size has to be u16 or smaller due to
+header.size, so I think you can save some bytes by using a u16 or u8
+(for the u8 you could just count the amount of padding and: data_size
+=3D header.size - padding_size).
 
 Thanks,
-Pankaj
-> -			vcpu_unimpl(vcpu, "vmgexit: invalid AP injection mode [%#lx] from guest\n",
-> -				    vcpu->arch.regs[VCPU_REGS_RAX]);
-> -			ret = -EINVAL;
-> -			goto out;
-> -		}
-> -	}
-> -
->   	switch (request) {
->   	case SVM_VMGEXIT_AP_CREATE_ON_INIT:
->   		kick = false;
->   		fallthrough;
->   	case SVM_VMGEXIT_AP_CREATE:
-> +		if (vcpu->arch.regs[VCPU_REGS_RAX] != sev->vmsa_features) {
-> +			vcpu_unimpl(vcpu, "vmgexit: mismatched AP sev_features [%#lx] != [%#llx] from guest\n",
-> +				    vcpu->arch.regs[VCPU_REGS_RAX], sev->vmsa_features);
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +
->   		if (!page_address_valid(vcpu, svm->vmcb->control.exit_info_2)) {
->   			vcpu_unimpl(vcpu, "vmgexit: invalid AP VMSA address [%#llx] from guest\n",
->   				    svm->vmcb->control.exit_info_2);
+Ian
 
+> +};
+> +
+>  enum perf_user_event_type { /* above any possible kernel type */
+>         PERF_RECORD_USER_TYPE_START             =3D 64,
+>         PERF_RECORD_HEADER_ATTR                 =3D 64,
+> @@ -478,6 +488,7 @@ enum perf_user_event_type { /* above any possible ker=
+nel type */
+>         PERF_RECORD_HEADER_FEATURE              =3D 80,
+>         PERF_RECORD_COMPRESSED                  =3D 81,
+>         PERF_RECORD_FINISHED_INIT               =3D 82,
+> +       PERF_RECORD_COMPRESSED2                 =3D 83,
+>         PERF_RECORD_HEADER_MAX
+>  };
+>
+> @@ -518,6 +529,7 @@ union perf_event {
+>         struct perf_record_time_conv            time_conv;
+>         struct perf_record_header_feature       feat;
+>         struct perf_record_compressed           pack;
+> +       struct perf_record_compressed2          pack2;
+>  };
+>
+>  #endif /* __LIBPERF_EVENT_H */
+> diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/p=
+erf/Documentation/perf.data-file-format.txt
+> index 010a4edcd384..f5faceb0e248 100644
+> --- a/tools/perf/Documentation/perf.data-file-format.txt
+> +++ b/tools/perf/Documentation/perf.data-file-format.txt
+> @@ -604,6 +604,10 @@ contain information that otherwise would be in perf.=
+data file's header.
+>
+>         PERF_RECORD_COMPRESSED                  =3D 81,
+>
+> +The header is followed by compressed data frame that can be decompressed
+> +into array of perf trace records. The size of the entire compressed even=
+t
+> +record including the header is limited by the max value of header.size.
+> +
+>  struct compressed_event {
+>         struct perf_event_header        header;
+>         char                            data[];
+> @@ -618,10 +622,17 @@ This is used, for instance, to 'perf inject' events=
+ after init and before
+>  regular events, those emitted by the kernel, to support combining guest =
+and
+>  host records.
+>
+> +       PERF_RECORD_COMPRESSED2                 =3D 83,
+>
+> -The header is followed by compressed data frame that can be decompressed
+> -into array of perf trace records. The size of the entire compressed even=
+t
+> -record including the header is limited by the max value of header.size.
+> +8-byte aligned version of `PERF_RECORD_COMPRESSED`. `header.size` indica=
+tes the
+> +total record size, including padding for 8-byte alignment, and `data_siz=
+e`
+> +specifies the actual size of the compressed data.
+> +
+> +struct perf_record_compressed2 {
+> +       struct perf_event_header        header;
+> +       __u64                           data_size;
+> +       char                            data[];
+> +};
+>
+>  Event types
+>
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 9af3f21fd015..d07ad670daa7 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -648,14 +648,27 @@ static int record__pushfn(struct mmap *map, void *t=
+o, void *bf, size_t size)
+>         struct record *rec =3D to;
+>
+>         if (record__comp_enabled(rec)) {
+> +               struct perf_record_compressed2 *event =3D map->data;
+> +               size_t padding =3D 0;
+> +               u8 pad[8] =3D {0};
+>                 ssize_t compressed =3D zstd_compress(rec->session, map, m=
+ap->data,
+>                                                    mmap__mmap_len(map), b=
+f, size);
+>
+>                 if (compressed < 0)
+>                         return (int)compressed;
+>
+> -               size =3D compressed;
+> -               bf   =3D map->data;
+> +               bf =3D event;
+> +               thread->samples++;
+> +
+> +               /*
+> +                * The record from `zstd_compress` is not 8 bytes aligned=
+, which would cause asan
+> +                * error. We make it aligned here.
+> +                */
+> +               event->data_size =3D compressed - sizeof(struct perf_reco=
+rd_compressed2);
+> +               event->header.size =3D PERF_ALIGN(compressed, sizeof(u64)=
+);
+> +               padding =3D event->header.size - compressed;
+> +               return record__write(rec, map, bf, compressed) ||
+> +                      record__write(rec, map, &pad, padding);
+>         }
+>
+>         thread->samples++;
+> @@ -1534,7 +1547,7 @@ static void record__adjust_affinity(struct record *=
+rec, struct mmap *map)
+>
+>  static size_t process_comp_header(void *record, size_t increment)
+>  {
+> -       struct perf_record_compressed *event =3D record;
+> +       struct perf_record_compressed2 *event =3D record;
+>         size_t size =3D sizeof(*event);
+>
+>         if (increment) {
+> @@ -1542,7 +1555,7 @@ static size_t process_comp_header(void *record, siz=
+e_t increment)
+>                 return increment;
+>         }
+>
+> -       event->header.type =3D PERF_RECORD_COMPRESSED;
+> +       event->header.type =3D PERF_RECORD_COMPRESSED2;
+>         event->header.size =3D size;
+>
+>         return size;
+> @@ -1552,7 +1565,7 @@ static ssize_t zstd_compress(struct perf_session *s=
+ession, struct mmap *map,
+>                             void *dst, size_t dst_size, void *src, size_t=
+ src_size)
+>  {
+>         ssize_t compressed;
+> -       size_t max_record_size =3D PERF_SAMPLE_MAX_SIZE - sizeof(struct p=
+erf_record_compressed) - 1;
+> +       size_t max_record_size =3D PERF_SAMPLE_MAX_SIZE - sizeof(struct p=
+erf_record_compressed2) - 1;
+>         struct zstd_data *zstd_data =3D &session->zstd_data;
+>
+>         if (map && map->file)
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index c23b77f8f854..80c9ea682413 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -77,6 +77,7 @@ static const char *perf_event__names[] =3D {
+>         [PERF_RECORD_HEADER_FEATURE]            =3D "FEATURE",
+>         [PERF_RECORD_COMPRESSED]                =3D "COMPRESSED",
+>         [PERF_RECORD_FINISHED_INIT]             =3D "FINISHED_INIT",
+> +       [PERF_RECORD_COMPRESSED2]               =3D "COMPRESSED2",
+>  };
+>
+>  const char *perf_event__name(unsigned int id)
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 60fb9997ea0d..db2653322f9f 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -1400,7 +1400,9 @@ static s64 perf_session__process_user_event(struct =
+perf_session *session,
+>         int err;
+>
+>         perf_sample__init(&sample, /*all=3D*/true);
+> -       if (event->header.type !=3D PERF_RECORD_COMPRESSED || perf_tool__=
+compressed_is_stub(tool))
+> +       if ((event->header.type !=3D PERF_RECORD_COMPRESSED &&
+> +            event->header.type !=3D PERF_RECORD_COMPRESSED2) ||
+> +           perf_tool__compressed_is_stub(tool))
+>                 dump_event(session->evlist, event, file_offset, &sample, =
+file_path);
+>
+>         /* These events are processed right away */
+> @@ -1481,6 +1483,7 @@ static s64 perf_session__process_user_event(struct =
+perf_session *session,
+>                 err =3D tool->feature(session, event);
+>                 break;
+>         case PERF_RECORD_COMPRESSED:
+> +       case PERF_RECORD_COMPRESSED2:
+>                 err =3D tool->compressed(session, event, file_offset, fil=
+e_path);
+>                 if (err)
+>                         dump_event(session->evlist, event, file_offset, &=
+sample, file_path);
+> diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
+> index 3b7f390f26eb..37bd8ac63b01 100644
+> --- a/tools/perf/util/tool.c
+> +++ b/tools/perf/util/tool.c
+> @@ -43,8 +43,15 @@ static int perf_session__process_compressed_event(stru=
+ct perf_session *session,
+>                 decomp->size =3D decomp_last_rem;
+>         }
+>
+> -       src =3D (void *)event + sizeof(struct perf_record_compressed);
+> -       src_size =3D event->pack.header.size - sizeof(struct perf_record_=
+compressed);
+> +       if (event->header.type =3D=3D PERF_RECORD_COMPRESSED) {
+> +               src =3D (void *)event + sizeof(struct perf_record_compres=
+sed);
+> +               src_size =3D event->pack.header.size - sizeof(struct perf=
+_record_compressed);
+> +       } else if (event->header.type =3D=3D PERF_RECORD_COMPRESSED2) {
+> +               src =3D (void *)event + sizeof(struct perf_record_compres=
+sed2);
+> +               src_size =3D event->pack2.data_size;
+> +       } else {
+> +               return -1;
+> +       }
+>
+>         decomp_size =3D zstd_decompress_stream(session->active_decomp->zs=
+td_decomp, src, src_size,
+>                                 &(decomp->data[decomp_last_rem]), decomp_=
+len - decomp_last_rem);
+> --
+> 2.48.1.658.g4767266eb4-goog
+>
 
