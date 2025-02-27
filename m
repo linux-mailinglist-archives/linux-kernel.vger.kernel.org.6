@@ -1,97 +1,159 @@
-Return-Path: <linux-kernel+bounces-537023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBB8A48728
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:00:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DD1A4872B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FD71890C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0CAA3B872D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBE11EB5FF;
-	Thu, 27 Feb 2025 17:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C341F582F;
+	Thu, 27 Feb 2025 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q9T9093D"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5481DB361;
-	Thu, 27 Feb 2025 17:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eZry2d5r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858401B85D1;
+	Thu, 27 Feb 2025 18:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740679181; cv=none; b=ZuB6wGid/idLsXZIY/WCdIyYLD2tzaeBbxiVZUuKxTWnhBcS/moIUECO7wtRAnxq5NUE3dEaon655nbAOIqEFhNK0840hQh41pszeUnJN89rrvIYNL6Sbs54xp9l8dWJKWuBlActnUwrNZOQ2xewN4OhzSoor8n070xqOiueaQM=
+	t=1740679275; cv=none; b=oQsELHG8eJt/7NJZdOCrAU6JMMf898xNIUrLO/oj0mjC9alh90ICGjAv8G/C7v+npbROerys3UBb339a/DlIesD2WIb/bm/RsE+jZqcGIDGjm6qr0XqLiUO6i1Dxy8y0urDXFFUuBc03HXGVfX7Kwo8rVk40bfyRHuMeSQWDmbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740679181; c=relaxed/simple;
-	bh=5NIXZUiqqKyQCGzzMTtqpeyMILyPsOILmtm36AbcP+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWqpJgC0OJfgOEpIq/Fqs8p0GyZJ1uv5yrJzZrm/n5qcwYpg8E/FFpJnqM91n9w5Fr+G+TT/2glH4hEyxaPo8h1PAqbAH0PlxdaLsmjA4nBxqRJMvgPsNZY6BQ9ZFU8qcITVhOYKLQNnlQCA2p+QIIVyvmCPPS/nBhN3gVa2mo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q9T9093D; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3653B2107A9A;
-	Thu, 27 Feb 2025 09:59:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3653B2107A9A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740679179;
-	bh=1cWNu+rL2XdcdJVhPLU9VIeXn64oBQqcNz36m3NYwI0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q9T9093DwMoOphebD28z8327uEo6bfOM00Eldccj/caewO1Vyph91pM+MjCyVmF8u
-	 GAQEXjYW8M1QfAV0wuqX8/+q4COSEOzbOnvSWcFZ6GvELBURwtxXIN7qrDgQ1Vo52J
-	 s3uD5tx6MbUdInEm1O/OhLl5ddUtj04ozTG374YE=
-Message-ID: <681a8922-b743-42cb-8793-ece9ae8919c1@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 09:59:39 -0800
+	s=arc-20240116; t=1740679275; c=relaxed/simple;
+	bh=3XVFYbbjNamhUDzQJ1R+kHQaWqC9SxhecKBhmHXEdwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhDE+IyseBxRmh+2KjXFrt3zxDRcgIIC/b8B4uCbeZY4cn101iLFZlJybsMHU6wjuKpmdHCBYDMWD+25NlbAjUnykKRTGvkJ45/w5YWJHtOXBt/20l4M6faxWx/OvOrnlwAGvaV3SYqIuF7nBKUuMObxdiPbZj5qJNBKbKhn2+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eZry2d5r; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740679274; x=1772215274;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3XVFYbbjNamhUDzQJ1R+kHQaWqC9SxhecKBhmHXEdwU=;
+  b=eZry2d5rOkKoFkLbFYbMKMutmkUP+SlhezKMdtU0c1VhCCmdCZlpGcsR
+   7bduBeUsMoaHBhkAp5nHfm++UKIIYsqzL74AUYlLhAkJpyJTiSBElu0GX
+   y0Im5q3vfzEDj3aBPehd6b4nqTI+dGjaFHeoSxPXvr6qCpB5Dde30kvqP
+   zgepH6Is5Z3EzQ3DyuqC1jPzkhmKTMTSdzWXd24IkQ9YniZtE1Fsfx2Tv
+   RYJwZ+iU7ZkCiN/xFOa9jKui4GVFmmeGLyX70n32v6ulIUJh5buYT3ikT
+   VEDtWbdvJfl0ccNKDAzmWWBFQooAiPSNNAzadnbQQrzGCa3lpeTW3AeGf
+   w==;
+X-CSE-ConnectionGUID: 0XzKtTjZSSCzS6Nb8mOuLQ==
+X-CSE-MsgGUID: vYlRsMUbTDKBpFooupSwDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41716243"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="41716243"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:01:13 -0800
+X-CSE-ConnectionGUID: T7NanKZkRee0egOgOybplw==
+X-CSE-MsgGUID: /jHVGTofTdOOaYGs+DVVvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="122222209"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 27 Feb 2025 10:01:10 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tniC4-000DoM-1b;
+	Thu, 27 Feb 2025 18:01:08 +0000
+Date: Fri, 28 Feb 2025 02:00:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Longfang Liu <liulongfang@huawei.com>, alex.williamson@redhat.com,
+	jgg@nvidia.com, shameerali.kolothum.thodi@huawei.com,
+	jonathan.cameron@huawei.com
+Cc: oe-kbuild-all@lists.linux.dev, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@openeuler.org,
+	liulongfang@huawei.com
+Subject: Re: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
+Message-ID: <202502280126.kuSX5nFF-lkp@intel.com>
+References: <20250225062757.19692-2-liulongfang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/10] x86/mshyperv: Add support for extended Hyper-V
- features
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-3-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1740611284-27506-3-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225062757.19692-2-liulongfang@huawei.com>
+
+Hi Longfang,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on awilliam-vfio/next]
+[also build test WARNING on awilliam-vfio/for-linus linus/master v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Longfang-Liu/hisi_acc_vfio_pci-fix-XQE-dma-address-error/20250225-143347
+base:   https://github.com/awilliam/linux-vfio.git next
+patch link:    https://lore.kernel.org/r/20250225062757.19692-2-liulongfang%40huawei.com
+patch subject: [PATCH v4 1/5] hisi_acc_vfio_pci: fix XQE dma address error
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280126.kuSX5nFF-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280126.kuSX5nFF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280126.kuSX5nFF-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c: In function 'vf_qm_version_check':
+>> drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:357:17: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+     357 |                 if (vf_data->major_ver < ACC_DRV_MAJOR_VER ||
+         |                 ^~
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:360:25: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+     360 |                         return -EINVAL;
+         |                         ^~~~~~
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c: In function 'vf_qm_get_match_data':
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:448:30: error: 'ACC_DRV_MAR' undeclared (first use in this function)
+     448 |         vf_data->major_ver = ACC_DRV_MAR;
+         |                              ^~~~~~~~~~~
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:448:30: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:449:30: error: 'ACC_DRV_MIN' undeclared (first use in this function)
+     449 |         vf_data->minor_ver = ACC_DRV_MIN;
+         |                              ^~~~~~~~~~~
 
 
+vim +/if +357 drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
 
-On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
-> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-[...]
->   
-> -	pr_info("Hyper-V: privilege flags low 0x%x, high 0x%x, hints 0x%x, misc 0x%x\n",
-> -		ms_hyperv.features, ms_hyperv.priv_high, ms_hyperv.hints,
-> +	pr_info("Hyper-V: privilege flags low 0x%x, high 0x%x, ext 0x%x, hints 0x%x, misc 0x%x\n",
-> +		ms_hyperv.features, ms_hyperv.priv_high,
-> +		ms_hyperv.ext_features, ms_hyperv.hints,
->   		ms_hyperv.misc_features);
+   352	
+   353	static int vf_qm_version_check(struct acc_vf_data *vf_data, struct device *dev)
+   354	{
+   355		switch (vf_data->acc_magic) {
+   356		case ACC_DEV_MAGIC_V2:
+ > 357			if (vf_data->major_ver < ACC_DRV_MAJOR_VER ||
+   358			    vf_data->minor_ver < ACC_DRV_MINOR_VER)
+   359				dev_info(dev, "migration driver version not match!\n");
+   360				return -EINVAL;
+   361			break;
+   362		case ACC_DEV_MAGIC_V1:
+   363			/* Correct dma address */
+   364			vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+   365			vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
+   366			vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
+   367			vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
+   368			vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
+   369			vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
+   370			break;
+   371		default:
+   372			return -EINVAL;
+   373		}
+   374	
+   375		return 0;
+   376	}
+   377	
 
-Would using %#x instead of 0x%x be better in your opinion?
-
-[..]
 -- 
-Thank you,
-Roman
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
