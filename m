@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-536561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B60A480FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D43A480FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B5E3A5C46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:22:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1713A3FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C27231C9C;
-	Thu, 27 Feb 2025 14:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7A42309A8;
+	Thu, 27 Feb 2025 14:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VldufT1A"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRpFTLhJ"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075E17BA6
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5034521CA14;
+	Thu, 27 Feb 2025 14:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666103; cv=none; b=sPiWe25SP9XC0/tUk0S7tXKr5t08ym1Y5ng9YFmAD0mrYdVU7u0BswYZWM7dgWtNkUF2aUNX07MG0tsM+ytveKo1rJuPjFaEs4Lfj833pDFtxhFVI1plvvOpB4NTdkspd3dwY1wcCPpao1pZc/eCnJdUaY3mSc7m5kjcNf9uhJU=
+	t=1740666105; cv=none; b=GxvyhJWTlfKvRDRlK5OzbDdmJdme5wK+OWW6kR0REeuNDzh0SjM7WvGmAaig32v8DbO3TiKo1pTe0fy2yRqoqgbR8PAiRkxBlMmdr17IQCVkSsYi5W6q11uTOLF/EnOi9ZIBYOnpXn+dVj2rX8ZlNMCyVFHl8QHKXmqosGljkCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666103; c=relaxed/simple;
-	bh=hBrf7c+UFiKZli5U1l7NtS9fbLhngdZIbJBDuc626pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HpMDxJZ+OuZYQmnwHTJBWRRki8Dp8ieXjhCitKRfkE2Q5Gb5G5kmj1g1iArCEwikknb60qyvTEDTpbADTe+XXZvHqDvwBGMOEBk89x0qQviP/JR1Q9yZdQ/Icy0SPOXTqsrPsxu7VPPa2brh+K3ZotxHCv1oZnK6huUEI4jX9mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VldufT1A; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EEtWdJ8PDIxGw+HxqjO8MiMDtE8KtosznzVhAqUzc1I=; b=VldufT1ApqRRkyV2LvMbtNHY/r
-	qZSWWnznT2RuTKELILooJeZ3kRbgMlrN7LGgwyt1T0WSi3jRByvdK0ZUepQxKKaGSdwUSH6zLsD8I
-	puOQgSQgWSa8fXXg5O4S8eQh6oOMvMje1c2kfxpUzOHzFhTWCOqOopb7e9Uc0wHSoOmwy2Bw0qva6
-	PU9szInus1EdLoW0gGVL+TT7sWFjbPo4D/XPoyjtXta5KeAebpXpAdkBQSH/vv7OMTX02h5HXUSF5
-	keYENhzT1Zini5hR3kcMd9LkrG2OFi4wce5OE621u+fWJj1OxcZxQMFdWC90a2umAZ+Qr8eEFDnuf
-	JMbv8hSA==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tnelQ-001cqJ-1A; Thu, 27 Feb 2025 15:21:30 +0100
-Message-ID: <9ce1f9f6-f69c-4b14-be79-f46542d7316f@igalia.com>
-Date: Thu, 27 Feb 2025 23:21:23 +0900
+	s=arc-20240116; t=1740666105; c=relaxed/simple;
+	bh=jDiKd5u/UNI0PpWyrmjqelJqvH1haIS0fYaKH/QWppw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZL/t2ZWCJNSfx+K3Yo52xPxXJbzntfW4dxOrNlfAMlar90TIYFq5wCmvMN/y3teDDSJaSaAsHPD21hUyQil8csQ3HuXCVQNI/qHAUpHO47ryCuNKAEspbQBFO23KIEiVGMJj1hviChcZq8VryG4A+hoNInCbnP2AZjHX6VUmdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRpFTLhJ; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-307c13298eeso12716841fa.0;
+        Thu, 27 Feb 2025 06:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740666101; x=1741270901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jDiKd5u/UNI0PpWyrmjqelJqvH1haIS0fYaKH/QWppw=;
+        b=XRpFTLhJdur6pPeaeA714OqV3lgnKemJ+KcxdZNE1US3PSeo7kUoyJxa3c5BMHAZ0T
+         kVqLdnum5Hs/IlcWCP8KHH7/OxcWl8Mem8WTGRYD9oUnYG4rj+adoJC6MHumbbkqsXSP
+         452EN2Qbil72XKMc5FdyAysjfjbbRArb/l6MssMtlg5VBRq+abwFQdWmCEdd9/LZDup6
+         dpegh0ryzObWUbZdunGdAJgqM33AVjD2IVKLOJQkuXI8nP0gIyCkd8CUkY3q7oqvAm4u
+         Do32PFYSC3epvYziAQJi0sc+Zs1M9+PKvEtNC8bP3MwYF/7aJrEwzIiqohOgLhVv80v5
+         MB/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740666101; x=1741270901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jDiKd5u/UNI0PpWyrmjqelJqvH1haIS0fYaKH/QWppw=;
+        b=aaWVy14uYjVVQ7pFJPi0F1GC2yyrXkWYjNBhoqWrcBCr1UAkCG7EKbsMovSV92LTCS
+         ax9fiRlZyLyCMgopUZrONH2s/txep35zmMaDqZtY/tZohf5Uf12VwytVd4KRJu1achzY
+         llj1UL18NWsJzAE2YdE7MQsLzIVq6ezvZXJCeCMNRIXSNL9kOTgbYgrXUKxOcRla07hU
+         vyKcAx1WcZ2eJp0A1nr4w59KVGMDbmam9PTQfvT13S63on9u+2lIXcsUmn49Dz6eMBvl
+         Qc27fshccJGbT3atFQCBQhnEMSGBxAtzX6KSGqqRy8GydGIctGi2gDig7Kc7U6bnZxPx
+         xvzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiliBe+/dFT+uuZJf8/quIMPf07MBzLAM5FnsGtjrsEpoNjBxxpOYE/0A/ibqkrOBTssboFwt5DNI9Eo0=@vger.kernel.org, AJvYcCWq67UIE4qR4oWPhJvMB8p9kkxlnoh78Jps4y+sEL+V6q5ATHs18SppzMMlPuVFSjNz0pZTPOwBMAWBm868sM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrH2OKezD1aBNDNZCMREuDfeLQkSY3FElsKDCMice+xiF4rj6x
+	ASZ2PLLNY8XzFd+d/OaCglctZOZW3gJBNONaYac8HHdjknu3QVD5B0bV5s+vfrSUQ9xy8d4OSkq
+	nTpBvLEaJ9A3Xitg27jsAbicYZcE=
+X-Gm-Gg: ASbGncutt+PL5lh7vOokIVjuQV5w/0xEZUBjE6Gz++CB21glFyrlLLzusA7Jggmu/4/
+	DXK36GggbjGeML3UddY1OvMDJZiVpYHS1enkm5d9yL4xoB+RpGyLzKp5kEp0XWl3B0VSIjJP6b+
+	4POsT/PdlQ
+X-Google-Smtp-Source: AGHT+IG8QcFnsM4lFejfj+y9wVmwF6dAuaeJdmE8EIPO23hcK5koKsJkkZMquT3UfIGMPD5V0moetP1n9GXZ3jY+Dv8=
+X-Received: by 2002:a2e:ad0b:0:b0:309:2999:77d4 with SMTP id
+ 38308e7fff4ca-30b84650d3dmr18509101fa.6.1740666101136; Thu, 27 Feb 2025
+ 06:21:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: Add trace point to track sched_ext core events
-To: Andrea Righi <arighi@nvidia.com>
-Cc: tj@kernel.org, void@manifault.com, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org
-References: <20250226143327.231685-1-changwoo@igalia.com>
- <Z8AWZBtrGN8h76AK@gpd3> <6a23642f-b3bf-4501-8464-f66bb9f1f57f@igalia.com>
- <Z8Af9PRa7LrxHpfp@gpd3> <ea71a8d7-ba0f-4d43-9304-6544060a1bb6@igalia.com>
- <Z8BEiHv3u8BsX3yG@gpd3>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z8BEiHv3u8BsX3yG@gpd3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+ <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de> <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+ <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+In-Reply-To: <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+From: Ventura Jack <venturajack85@gmail.com>
+Date: Thu, 27 Feb 2025 07:21:24 -0700
+X-Gm-Features: AQ5f1Jp4j22pclUqXy_NRJGy5SyMDK7pivJm3KtHZ3o9BTX4Sjg-8m5F9ik4fjs
+Message-ID: <CAFJgqgSjRwOUkcC5v6wGcfQ-53oWyWW+wBg3PZ-w7vRweHekpw@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Martin Uecker <uecker@tugraz.at>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ralf Jung <post@ralfj.de>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 26, 2025 at 1:00=E2=80=AFPM Martin Uecker <uecker@tugraz.at> wr=
+ote:
+>
+> I think C++ messed up a lot (including time-travel UB, uninitialized
+> variables, aliasing ules and much more), but I do not see
+> the problem here.
 
+C++26 actually changes the rules of reading uninitialized
+variables from being undefined behavior to being
+"erroneous behavior", for the purpose of decreasing instances
+that can cause UB. Though programmers can still opt-into
+the old behavior with UB, on a case by case basis, for the
+sake of performance.
 
-On 25. 2. 27. 19:55, Andrea Righi wrote:
-> On Thu, Feb 27, 2025 at 07:23:23PM +0900, Changwoo Min wrote:
->> On 25. 2. 27. 17:19, Andrea Righi wrote:
->>> On Thu, Feb 27, 2025 at 05:05:54PM +0900, Changwoo Min wrote:
->>> Otherwise there's the risk to break potential users of this tracepoint that
-> ...
->>> Maybe we can call it @id or @event_id or similar and guarantee its
->>> portability? What do you think?
->>
->> Now I think dropping @offset would be better in the long run
->> because we can maintain scx_event_stats clean and do not create
->> a source of confusion. Regarding the ease of using @name, adding
->> an code example in the commit message will suffice, something
->> like this:
->>
->> struct tp_add_event {
->> 	struct trace_entry ent;
->> 	u32 __data_loc_name;
->> 	u64 delta;
->> };
->>
->> SEC("tracepoint/sched_ext/sched_ext_add_event")
->> int tp_add_event(struct tp_add_event *ctx)
->> {
->> 	char event_name[128];
->> 	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
->>          bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
->>
->> 	bpf_printk("name %s   delta %llu", event_name, ctx->delta);
->> 	return 0;
->> }
-> 
-> We can definitely add a BPF code example, but keep in mind that tracepoints
-> can be used also outside of BPF, like:
-> 
->   $ sudo perf trace -e sched_ext:sched_ext_add_event
-> 
-> In this case I think just having the name is totally fine.
-
-Sure.
-
-> 
->>
->> The downside of not having a numerical ID (@offset or @event_id)
->> is the cost of string comparison to distinguish an event type. If
->> we assume the probing the event is rare, it will be okay.
->>
->> @Tejun, @Andrea -- What do you think? Should we provide
->> a portability-guaranteed @event_id after dropping @offset? Or
->> would it be more than sufficient to have a string-type event name?
-> 
-> I think a tracepoint should be used mostly for tracing purposes, not in
-> critical hot paths. So, under this assumption, the overhead of the string
-> comparison is probably acceptable and it allows us to not worry too much
-> about breaking compatibility.
-
-I agree.
-
-> 
-> Also, perf trace allows to use filters based on strings, so in our case we
-> can do something like this for example:
-> 
->   $ sudo perf trace -e sched_ext:sched_ext_add_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
-> 
-> While at it, what do you think about renaming this tracepoint
-> sched_ext_event or maybe sched_ext_core_event?
-
-To me, sched_ext_event sounds better than others as it is simple.
-
-Regards,
-Changwoo Min
+Best, VJ.
 
