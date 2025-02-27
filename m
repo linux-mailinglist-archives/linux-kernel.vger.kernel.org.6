@@ -1,46 +1,64 @@
-Return-Path: <linux-kernel+bounces-537118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1178A48834
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8889CA48849
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4ACF3A598C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A073F3B4447
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1C215776;
-	Thu, 27 Feb 2025 18:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF49420C03C;
+	Thu, 27 Feb 2025 18:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FNbW9YBu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782351DE3A4;
-	Thu, 27 Feb 2025 18:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VwGUYh65"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7441DE3A4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740682232; cv=none; b=tYtu/78MqZeepEOoksvPR8jrliROE9N42smaAZZbg3L0ZynJK0Ip7TDvUx01N0Rog39Lhb249JkBM/6cOeXZkgDht0N5YpKylE4rzVgMM5+wzr92L+ElxpenovHsSklRbnUrseEFF4rzw2k/mVfJMNBu7iXOPZDhgacrsepT3vM=
+	t=1740682308; cv=none; b=FGvfxwkV3D+x4Mpn7xnwRznHoqqkhZ3IkB4CJh0C7kIuXOqALl9jiJKTA7DFTnJcMptcrTnbKAZs9ociTaSgl9yBd8/O2MY7UOc6YVGyOd6+PvSMDIeiFp8N9tMEE2JT/9PkHFcOQepFE6HT7kRytQAnd+xtDs0ketchh3c21kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740682232; c=relaxed/simple;
-	bh=F1lTmqgjHYJPjcmbtxE/n3iAXCq4SZkVmt5nqUeZPXY=;
+	s=arc-20240116; t=1740682308; c=relaxed/simple;
+	bh=EO75y3HPx9T7mAWN1+O/DhVxnz4ga/I/MPE79Lvb36k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUAbgYd+WIY89QNALCaSsR9uBKRLzqDEcEVKRwFBqz1yAXKXFwNuyPrcMg2/EtvjN+qyyOmRCQeWDoUsIIJ/2YQKb2qi0uK56A4ybbuB+pWwKnIbT1zTkolVWhTfDRm77C5UBEAoI/6jPwMfVII+7dCL0dRsU9AWhkOsncMCeYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FNbW9YBu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9B421210D0D8;
-	Thu, 27 Feb 2025 10:50:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9B421210D0D8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740682231;
-	bh=dHwZT1w8oWRsXa8H/+DiZfRcRSkOTyh9HqlMdGrYI/Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FNbW9YBuPokWfkhV8B0zMJtN5945pEMQP20InF/WOW6hK0iLB5iSFm7uJafeCDov9
-	 ygoVc1l10LfK0HlQbcUkAzGjyXWi8ArYK0CYgWh0b61j196eOqg//F7JMoJtHcRzGr
-	 /mlcu6UBD8g84zdCQtIgCvdToz5xVsg4gg8RkKH4=
-Message-ID: <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 10:50:30 -0800
+	 In-Reply-To:Content-Type; b=G3Hn7W9Ly2eH8H0y7efIChfcombeywero00Js9TCyZZW93TyUhaSUlJ2vpO7GrqC/LMsrq5ZNNxE+MRGjmx/HCwCPhwApcUqmEx1/DGPrfFFNgbBKoiATHUrcuxI/ruzIVUO4IPphtLTZPm4sf+QzxPwGXSTgGxpoMbNw71xwBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VwGUYh65; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740682307; x=1772218307;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EO75y3HPx9T7mAWN1+O/DhVxnz4ga/I/MPE79Lvb36k=;
+  b=VwGUYh655muPLv3Lef/0VLBYuw+1o0HNB7arLdSW6fE029DBYlbroUp+
+   VltTjOkDDpM1WQLo3YCK38Q23yaKJXjvO4VuYflZKQW50KFKJfi1gZQcv
+   P10qRVteAp9Dmngt+tyGRVuHJAoq1n5e6EtGbToTGvSx6ma/QMmBP4yYB
+   7Pl0471JPaPTsX2RB8nXDwgo8zT1pJ0M+i6x7ORKrmPk/dYkup8jZl0lO
+   5842ShuBR9FVW1j8hVNQydVxDinGaXnNv4AfhDekxAXf58MSm11uxTZDx
+   3dJOrw26E3ukT0Ndm4oPG0GcbFvPgpVGa91dfb1VPNp149SwEYhTIZmxf
+   A==;
+X-CSE-ConnectionGUID: IvBwEbEBSgismTfFnTQmOQ==
+X-CSE-MsgGUID: t3spYdacQNSc7PLZx7dIPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52577793"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="52577793"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:51:47 -0800
+X-CSE-ConnectionGUID: fP61LXdlSX2mkZC4nPMrKw==
+X-CSE-MsgGUID: 5aSEk75CTYCh7ODtvMWLWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="147931881"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:51:46 -0800
+Message-ID: <8c81e0f1-4fae-41c7-a0d5-c27076a122f3@intel.com>
+Date: Thu, 27 Feb 2025 10:51:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,69 +66,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
- expose /dev/mshv to VMMs
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+Subject: Re: [PATCH RFC v1 01/11] x86/fpu/xstate: Simplify
+ print_xstate_features()
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+ <20250227184502.10288-2-chang.seok.bae@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250227184502.10288-2-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 2/27/25 10:44, Chang S. Bae wrote:
+> I find it difficult to justify using separate lines for printing when
+> they can be efficiently grouped under a simple for-loop. While this
+> cleanup isn't directly related to APX, it felt like a necessary
+> improvement, especially when new xstates are introduced.
 
+Yeah, this approach made some sense when the string was defined there too:
 
+        print_xstate_feature(XSTATE_OPMASK,     "AVX-512 opmask");
+        print_xstate_feature(XSTATE_ZMM_Hi256,  "AVX-512 Hi256");
+	...
 
-On 2/26/2025 3:08 PM, Nuno Das Neves wrote:
-> Provide a set of IOCTLs for creating and managing child partitions when
-> running as root partition on Hyper-V. The new driver is enabled via
-> CONFIG_MSHV_ROOT.
-> 
+But it doesn't now that the strings are in a separate structure.
 
-[...]
-
-
-As I understood, the changes fall into these buckets:
-
-1. Partition management (VPs and memory). Built of the top of fd's which
-    looks as the right approach. There is ref counting etc.
-2. Scheduling. Here, there is the mature KVM and Xen code to find
-    inspiration in. Xen being the Type 1 hypervisor should likely be
-    closer to MSHV in my understanding.
-3. IOCTL code allocation. Not sure how this is allocated yet given that
-    the patch series has been through a multi-year review, that must be
-    settled by now.
-4. IOCTLs themselves. The majority just marshals data to the
-    hypervisor.
-
-Despite the rather large size of the patch, I spot-checked the places
-where I have the chance to make an informed decision, and could not find
-anything that'd stand out as suspicious to me. Going to extrapolate that
-the patch itself should be good enough. Given that this code has been in
-development and validation for a few years, I'd vote to merge it. That
-will also enable upstreaming the rest of the VTL mode code that powers
-Azure Boost (https://github.com/microsoft/OHCL-Linux-Kernel)
-
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-
--- 
-Thank you,
-Roman
-
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 
