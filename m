@@ -1,133 +1,178 @@
-Return-Path: <linux-kernel+bounces-537251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E24A489AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:18:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F41A489AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812A0188B362
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6443A98E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEADE26A0FD;
-	Thu, 27 Feb 2025 20:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F242526A1A4;
+	Thu, 27 Feb 2025 20:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpbRLRIF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcB2z9z3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488C01C07E6
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1211C07E6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687477; cv=none; b=nTE6M7BK10bYSebCdY4Vv1MZChFcWV02QnuZYVGK+yQLIeXyUbq2h0qvwPnQ3slwRC/PLAgRm5x95n01PDe7J4YJSB22y+RTOi4NXybIbQW7Yufbduk2lvUZtd0c/uSHhHlwXWx5xKhKtD6RvnTr6jD2c4UmU8RFvvAebh/T+N4=
+	t=1740687536; cv=none; b=g+4KTfzzXiEO9R0HppEUelZ1Mypj/rhIyH76UfdxoNPOjcBhQikreIb2LP7u5ktbpKueauikje9fDxkUtlmWHJRAk73dBQdKzN4fOJ/IHju2iJnFMksF4HELWJQkW2urEZAYJ2MTSLgRHdYk+yAIburloWWEeKw5kCPi9MF99rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687477; c=relaxed/simple;
-	bh=G/054Nv3DeDkCI6uFnnAcRJt0QJ+9qUsRTrMWf+Ayi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjoLmYWkMJEbVb1gh/wW6ny8lfbxf5naNBnmyLwapnAX95n/gstumNKsFl+VNTlxJoohuY4ypkqfLoULrEK0+txijAcvzPEqVb1uUl1wjYFx5rKJzJCr7iAMvCsNFE+EzwcFBAd7ITD4PogpZo/EjihwxI92MK1Krry3v6K8pQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpbRLRIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 599FDC4CEDD;
-	Thu, 27 Feb 2025 20:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740687475;
-	bh=G/054Nv3DeDkCI6uFnnAcRJt0QJ+9qUsRTrMWf+Ayi0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DpbRLRIF+KR68tniydOvRXbQ5JVa/T1O/frJZrvpWmV1JlDNJJwjyszjCqDHWl0nA
-	 n8jVQ2d4xc5n1UMd7KdmmRE77txsGv8Wj1w2Qt4InwklIPmLKMpTreTYDuyPcV8uUu
-	 TDW16JHaBEDmFpTO9XyX6jjjPguCZL6Zc/wqG4M1VfH8JTXn3pi7NWR2oopEJXhXqO
-	 pkyAe0AGGayIIznw2/Di1CLhKtrXGq8EkIq6Aonj5vfhuh85T2WEzGzbaEqASnIrC/
-	 3ttJVsaR2g9AR/NVqS1wt5sxbUYLOegG9LKzzSks2vNxLbfXqfv6meIAILu2sbDEEn
-	 lWjEppu87rsww==
-Date: Thu, 27 Feb 2025 21:17:48 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>,
-	Alexander Shishkin <alexander.shishkin@intel.com>,
-	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] x86/cpufeature: Add feature dependency checks
-Message-ID: <Z8DIbMcUWEQYlL5w@gmail.com>
-References: <20241210224037.3052555-1-sohil.mehta@intel.com>
- <Z8Cy-IonwmCGNkkQ@gmail.com>
- <8b174f56-191b-45bd-93ec-4c6444c770a5@intel.com>
+	s=arc-20240116; t=1740687536; c=relaxed/simple;
+	bh=+TweW/BFWyrYX8cKdXeRzDCMX/yo1PPVIyK0g0icqF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ontq5rSn0L5Gjzv3038t+y/7BFla6nowXpv6c+ro3r1yx/AvzbmEEef9oXI6JmaBF73ujBoC9RzDlDv8tWbtlnILVt79zsz3zy55UEJXtniKPDKqc5ez2EVAWEBBhrlgAWOFc/fQTbUSYocMCu1Hh6x646ONnPT53cluGr+D2k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcB2z9z3; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740687534; x=1772223534;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+TweW/BFWyrYX8cKdXeRzDCMX/yo1PPVIyK0g0icqF8=;
+  b=UcB2z9z3jpznWCONS0mUiENsMjY75amBToS2EtaCsLVB6JrugKVe1yEF
+   kfHR42NIEIAys129S9tGPAxJN6h953fex1hbmTfU++/t0sjAaelxPq3np
+   fH+UfE1ssTkwyrmK4unQQ+kdnNHPVQ9GtT7rxZsshx7MUKdbbXXi3rBfS
+   enN+OhdUNntxwUzVc2NRD1zrq5fMQYy9Xz3NfNVrqrxxaFD+wFBcBQqFj
+   +tvIG99CEzU1okZYm0CluAHJCggJFCCr15x3SEPxQORt7GtjZ0jZtUZ6V
+   dfcfLfgtwG62q5RoaayYvgBJA7B4Mx8kFPV1sOxY3ywMvu6nL21CQ9lm+
+   g==;
+X-CSE-ConnectionGUID: HZ/eFDEjSX62jri8Bhp1Ew==
+X-CSE-MsgGUID: jhTLtH32QCG85SlJ78RdeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53010325"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="53010325"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 12:18:54 -0800
+X-CSE-ConnectionGUID: G1tsPvtWS5WyCNQLylqTlA==
+X-CSE-MsgGUID: Od6FgnaSTjG3VYl/FTgLTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="140350410"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 12:18:54 -0800
+Message-ID: <4c71fc86-2d70-4d50-b041-d6ef8c1baf4c@intel.com>
+Date: Thu, 27 Feb 2025 12:19:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b174f56-191b-45bd-93ec-4c6444c770a5@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
+ and accessor macro
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+ <20250227184502.10288-3-chang.seok.bae@intel.com>
+ <Z8C3ZcMgHuBtIjFR@gmail.com> <674db309-e206-4bb4-bf99-b3c39bff7973@intel.com>
+ <Z8C-xa7WB1kWoxqx@gmail.com> <af4ec757-22fd-4438-91fc-d8778998bf07@intel.com>
+ <Z8DE0K2EEDe1dQdh@gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z8DE0K2EEDe1dQdh@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2/27/25 12:02, Ingo Molnar wrote:
+>>> There's a 4th option:
+>>>
+>>>    4. Reuse XFEATURES 3/4 (MPX) only on APX-aware kernels, keep it 
+>>>       disabled for old kernels.
+>>>
+>>> Problem solved.
+>> The worry boils down to code in the kernel or userspace doing this:
+>>
+>> 	if (XGETBV(0) & 0x11)
+>> 		do_mpx_gunk();
+> New, APX-aware kernels wouldn't be doing this, why would they?
 
-* Sohil Mehta <sohil.mehta@intel.com> wrote:
+New, updated software is rarely the problem. It would not be a problem
+in this case either.
 
-> On 2/27/2025 10:46 AM, Ingo Molnar wrote:
+The problem is with old OSes/VMMs and even old userspace on new kernels.
+XGETBV() is unprivileged, so the concern extends to userspace and kernel.
+
+>> So, sure, we could try to make sure that new kernels don't have any 
+>> do_mpx_gunk() in them, but that doesn't help old kernels or other 
+>> OSes/VMMs.
+> Old kernels would *never* see this bit enabled if it's disabled by 
+> default on bootup ...
 > 
-> >> +void filter_feature_dependencies(struct cpuinfo_x86 *c)
-> >> +{
-> >> +	char feature_buf[16], depends_buf[16];
-> >> +	const struct cpuid_dep *d;
-> >> +
-> >> +	for (d = cpuid_deps; d->feature; d++) {
-> >> +		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
-> >> +			pr_info("CPU%d: Disabling feature %s due to missing feature %s\n",
-> >> +				smp_processor_id(),
-> >> +				x86_feature_name(d->feature, feature_buf),
-> >> +				x86_feature_name(d->depends, depends_buf));
-> >> +			do_clear_cpu_cap(c, d->feature);
-> >> +		}
-> >> +	}
-> > 
-> > So let's not disable any CPU features actively for the time being, how 
-> > about issuing a pr_warn() only about the dependency violation?
-> > 
-> > I think the main problem is when these problems slip through 100% 
-> > unnoticed.
-> > 
-> 
-> I guess you are right. Highlighting the issue is the main part. Beyond
-> that we can leave the system behavior as-is for now.
-> 
-> Most of the listed dependencies seem to be spec-driven, though the
-> kernel might create arbitrary dependencies for security reasons such as
-> making LAM depend on LASS[1]. I think those can probably be handled on a
-> case by case basis during specific feature enabling.
-> 
-> For the new pr_warn(), I am considering printing it only once per
-> feature instead of printing it on every CPU (which could be 100s).
+> VMMs would boot with it default-disabled as well, they can enable it 
+> themselves.
 
-Yeah.
+The problem is with code which is logically like this:
 
-> But that would mean tracking it in a global feature_warn bitmap.
-> 
-> 	DECLARE_BITMAP(feature_warn, MAX_FEATURE_BITS);
-> 
-> Another option would be run the scan only on the BSP. But that could
-> cause some issues to be missed[2].
+        cpuid_count(CPUID_LEAF_XSTATE, 0, &eax, &ebx, &ecx, &edx);
+        fpu_kernel_cfg.max_features = eax + ((u64)edx << 32);
+	fpu_kernel_cfg.max_features &= SUPPORTED_FEATURE_MASK;
+	xsetbv(fpu_kernel_cfg.max_features);
 
-Just use pr_warn_once().
+In that code, the kernel asks the CPU which features it supports and
+then it enables all those features. In an old kernel,
+SUPPORTED_FEATURE_MASK would contain the two MPX XFEATURES.
 
-Yes, this might cause subsequent CPU feature dependency problems to 
-stay unreported, but the hope here is that these are rare and get 
-fixed, right?
+So I'm not _quite_ sure what you meant when you said:
 
-Thanks,
+> Old kernels would *never* see this bit enabled if it's disabled by
+> default on bootup ...
 
-	Ingo
+Because old kernel very much do see the MPX bits in CPUID and very much
+do enable them by default via XSETBV.
+
+But I suspect I'm misunderstanding what you mean by "this bit" in first
+place. Could you explain in some more detail, please?
 
