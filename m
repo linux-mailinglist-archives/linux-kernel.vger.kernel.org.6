@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-535899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E562EA478B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 204F4A478BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ABD16E1AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C268A16E19A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E21227B8E;
-	Thu, 27 Feb 2025 09:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE964227BA6;
+	Thu, 27 Feb 2025 09:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0SYf27+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K7/WSRID"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1144B2222BA;
-	Thu, 27 Feb 2025 09:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C368E227599;
+	Thu, 27 Feb 2025 09:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647331; cv=none; b=ie2ZpgmzmdvQY6HbF53wiG/Xb9of170zQLGNTVtxXQBUNq6VFDu72WQwUuYzbej+au64IEMRbc7W0249aAAua75OuhVrFxryp3LKlTH6bJfLOD6nk6FnciXEwmjt50Koqr54y0Jmu5/TEZgVpG6vijBhLYOriu3pdMq9BaXtkqg=
+	t=1740647397; cv=none; b=R3vvH9JcLwq++d66J/DpRMtm3aq5V/uyetqxBMKzHZ5V/wYRS5OymVoQhZc/23KOA5Jhh34eSLfhWNiwJDnWwu7T5ecQdLOwQ6Uf4KdPhWbIabV6E1a+14wbmo/81QWdk+QXwVe5m4JO/WcU1abggX10J24gCZs2PKTPO7+1nAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647331; c=relaxed/simple;
-	bh=JOL+QBSvYEPxGbstJirDhY6SK7GKdJbrZwpNPl+HZxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8zf6dkynhTEMZYpq+ULSqX6AseqsQX9J5/yPMnlRASD3lYeHQw3xtaybVg9BmmIY3O2PyC+vvYk21Wreemv/9KOWAzHPNCYijjYvfctRGDILOq0aUzhPHzz/KAy1ZL0OjGCTK5KXWu02RDwQL1wHVbDOq2ZSHNiQ9HTE/wNvQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0SYf27+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38779C4CEDD;
-	Thu, 27 Feb 2025 09:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740647330;
-	bh=JOL+QBSvYEPxGbstJirDhY6SK7GKdJbrZwpNPl+HZxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0SYf27+idIvmyfRAYY6kViB6BJ2c7mO085i8JKFH9zyWuRonms+/fNmrZfgHrXDR
-	 S7izsZnEXpawhnsxVFAcFmev3o9Du/OS0AVMKIjuaYQmkikcRQDVLik82ZP/lZdRz0
-	 3zByjM+7W3edgmlQuxgUDnDu9ddNTC5hvygf3Z7cLtIx5QMHjfT7x6C4cQMiAAov8c
-	 dIW/SvdGm7KF5ki985K4R11cJpdmkxpqvaWorMxpF8Mv0Py+28p+J+xWB4qmBow1nU
-	 PW8UOdOldXWMMX8ZDBtA6mJ/ZYR4AUIeoeRJvmU7BS9eifZbVLNofwpRPjnT0Wt+e9
-	 cAqghIOYBuqGQ==
-Date: Thu, 27 Feb 2025 10:08:42 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Cc: kees@kernel.org, shuah@kernel.org, skhan@linuxfoundation.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH sysctl-next v2] selftests/sysctl: fix wording of help
- messages
-Message-ID: <segxcbty2dr7oawsyxytxeo3lwyknfgrunb2glbdcj4fpn6nj2@s3wigyuldgxr>
-References: <20250221102151.5593-1-bharadwaj.raju777@gmail.com>
+	s=arc-20240116; t=1740647397; c=relaxed/simple;
+	bh=q4fTeH/nbZrefwpHXFO12Wt1mXAveSSHfKduO66DD4o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HZCcFj+MHCpGk3at7ZeTuZlenstzpmAsALsA3ArpaEXgMS2PBi+Tctm6CrDBUm0YYvZURJNn9Wy1Q5n3q2ZtJE4k0RluIOSeWryT/00R54OZ9ZP8aSY3DpDhV42N75PQT9t0xMZ5FssRxOoueZZELbcuVcJPPtvumiRMbOj6cao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K7/WSRID; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R8xjtH015835;
+	Thu, 27 Feb 2025 09:09:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uNP+sYpdWfNUyQbmq6LgNiGEAnkG36MM90R8M1Njlpo=; b=K7/WSRIDkP7tJK6l
+	LnHHjhqNHKhsauweDELC0vWU/alNCdvNNptoMUPk/U/I1+FhhQZODYJ7k+oO3qmv
+	MLwX9BRcDAjQZA5btHr1GVPxBzxeYd87OlEg0Qe4mn+fuLi2K0/JzmvE8PFgoRrH
+	bItnB2I5n3Ngc3VWwP1iaD1r4SdeeTb6dlVGIrPJRY2N+44Tf5+kinAfOl192uk3
+	y6EYCP0fZxwclGSJXRnw1QDpO/c6hkEWYHFBC4aljck+6p/uAgr1OFNoNs+uOMK8
+	aMM+zoflq87gJLThc0/wvalYpUD2myyVzhB2ps9JA5APUbCbOfv+uiphE3DEvL3l
+	L0h8iw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prnn1y1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 09:09:49 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R99mWU012790
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 09:09:48 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Feb 2025 01:09:45 -0800
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <johannes@sipsolutions.net>, <miriam.rachel.korenblit@intel.com>,
+        <syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com>
+CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_zhonhan@quicinc.com>, <syzkaller-bugs@googlegroups.com>
+Subject: [RFC PATCH] wifi: mac80211: Prevent disconnect reports when no AP is associated
+Date: Thu, 27 Feb 2025 17:09:32 +0800
+Message-ID: <20250227090932.1871272-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <67bf36d3.050a0220.38b081.01ff.GAE@google.com>
+References: <67bf36d3.050a0220.38b081.01ff.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221102151.5593-1-bharadwaj.raju777@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZnuO2-MDAEpci2UNhs0ZfTQBhNSFOfi5
+X-Proofpoint-ORIG-GUID: ZnuO2-MDAEpci2UNhs0ZfTQBhNSFOfi5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270069
 
-On Fri, Feb 21, 2025 at 03:51:49PM +0530, Bharadwaj Raju wrote:
-> Fix grammar such as "number amount of times is
-> recommended" etc -> "the recommended number of
-> times".
-> 
-> Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-> ---
->  tools/testing/selftests/sysctl/sysctl.sh | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-> index f6e129a82ffd..db1616857d89 100755
-> --- a/tools/testing/selftests/sysctl/sysctl.sh
-> +++ b/tools/testing/selftests/sysctl/sysctl.sh
-> @@ -857,7 +857,7 @@ list_tests()
->  	echo
->  	echo "TEST_ID x NUM_TEST"
->  	echo "TEST_ID:   Test ID"
-> -	echo "NUM_TESTS: Number of recommended times to run the test"
-> +	echo "NUM_TESTS: Recommended number of times to run the test"
->  	echo
->  	echo "0001 x $(get_test_count 0001) - tests proc_dointvec_minmax()"
->  	echo "0002 x $(get_test_count 0002) - tests proc_dostring()"
-> @@ -884,7 +884,7 @@ usage()
->  	echo "Valid tests: 0001-$MAX_TEST"
->  	echo ""
->  	echo "    all     Runs all tests (default)"
-> -	echo "    -t      Run test ID the number amount of times is recommended"
-> +	echo "    -t      Run test ID the recommended number of times"
->  	echo "    -w      Watch test ID run until it runs into an error"
->  	echo "    -c      Run test ID once"
->  	echo "    -s      Run test ID x test-count number of times"
-> @@ -898,7 +898,7 @@ usage()
->  	echo Example uses:
->  	echo
->  	echo "$TEST_NAME.sh            -- executes all tests"
-> -	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recommended"
-> +	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 the recommended number of times"
->  	echo "$TEST_NAME.sh -w 0002    -- Watch test ID 0002 run until an error occurs"
->  	echo "$TEST_NAME.sh -s 0002    -- Run test ID 0002 once"
->  	echo "$TEST_NAME.sh -c 0002 3  -- Run test ID 0002 three times"
-> -- 
-> 2.48.1
-> 
+syzbot reports that cfg80211_tx_mlme_mgmt is using uninit-value:
 
-pushed this to sysctl-next; thx.
+=====================================================
+BUG: KMSAN: uninit-value in cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
+cfg80211_tx_mlme_mgmt+0x155/0x300 net/wireless/mlme.c:226
+ieee80211_report_disconnect net/mac80211/mlme.c:4238 [inline]
+ieee80211_sta_connection_lost+0xfa/0x150 net/mac80211/mlme.c:7811
+ieee80211_sta_work+0x1dea/0x4ef0
+ieee80211_iface_work+0x1900/0x1970 net/mac80211/iface.c:1684
+cfg80211_wiphy_work+0x396/0x860 net/wireless/core.c:435
+process_one_work kernel/workqueue.c:3236 [inline]
+process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
+worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
+kthread+0x6b9/0xef0 kernel/kthread.c:464
+ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
+Local variable frame_buf created at:
+ieee80211_sta_connection_lost+0x43/0x150 net/mac80211/mlme.c:7806
+ieee80211_sta_work+0x1dea/0x4ef0
+=====================================================
+
+The reason is that the local variable frame_buf on the stack cannot be
+initialized by default. However one more question is that avoiding the
+uninit-value bug by explicitly initializing it is not enough. Since commit
+687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit"), if there
+is no AP station, frame_buf has no chance to be assigned a valid value.
+The function ieee80211_report_disconnect should not continue executing
+with the frame_buf parameter that is merely initialized to zero.
+
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Fixes: 687a7c8a7227 ("wifi: mac80211: change disassoc sequence a bit")
+Reported-by: syzbot+5a7b40bcb34dea5ca959@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67bf36d3.050a0220.38b081.01ff.GAE@google.com/
+---
+Please kindy help thoroughly review this patch as I am not a wireless network expert.
+
+ net/mac80211/mlme.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index 4e8f0a5f6251..4f3b535b1174 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -4414,6 +4414,10 @@ static void ieee80211_report_disconnect(struct ieee80211_sub_if_data *sdata,
+ 		.u.mlme.data = tx ? DEAUTH_TX_EVENT : DEAUTH_RX_EVENT,
+ 		.u.mlme.reason = reason,
+ 	};
++	struct sta_info *ap_sta = sta_info_get(sdata, sdata->vif.cfg.ap_addr);
++
++	if (WARN_ON(!ap_sta))
++		return;
+ 
+ 	if (tx)
+ 		cfg80211_tx_mlme_mgmt(sdata->dev, buf, len, reconnect);
+@@ -8070,7 +8074,7 @@ static void ieee80211_sta_timer(struct timer_list *t)
+ void ieee80211_sta_connection_lost(struct ieee80211_sub_if_data *sdata,
+ 				   u8 reason, bool tx)
+ {
+-	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN];
++	u8 frame_buf[IEEE80211_DEAUTH_FRAME_LEN] = {0};
+ 
+ 	ieee80211_set_disassoc(sdata, IEEE80211_STYPE_DEAUTH, reason,
+ 			       tx, frame_buf);
 -- 
+2.25.1
 
-Joel Granados
 
