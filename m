@@ -1,186 +1,150 @@
-Return-Path: <linux-kernel+bounces-535889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07106A47895
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:04:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22CDA47898
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88111673B9
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15C93B1E6D
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5600227B94;
-	Thu, 27 Feb 2025 09:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22D322618F;
+	Thu, 27 Feb 2025 09:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lL8Y66jD"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mpsib+GG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4346F1EB5F3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BA722652D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647053; cv=none; b=jzsRM4JwUNQ1XAO2J/zq2rJhLhs9j0cNk7uPnFwFmNxlYyR1df4hoJ0s55te2+ozl+hz6+laJMYoHS/QVaKuvy7+AGwOh1pEd4QGwtjDuyakZOGW2hZw81HKit/EliYAwvlAW9cTe1OIQ0vr7SUoabs+h9nvS6xeVEbdi0SSGQc=
+	t=1740647054; cv=none; b=WqOnwTDQHvnstM2XncioqTGED4w7iXRfW34xDpIz4A1q6OTE9MV+c5GxuAEFEA8F4PNFhuWPypDNZmCQi6jcS33V7hayJ0tedt94TkHx3oTb+kdABDg63lno5F4oZ7kJ9XIk6MKQ1lcAEBrFkGMdmg2yrTs25klLyNLbW7FD40o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647053; c=relaxed/simple;
-	bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdiklzSBroyl+kVnzCAjBAGLmc4pZE7LuGktgfjdU8x6kPsQhGl6fcKmYniNT5/ilL3ck+2zcIFv6ag3cLAauk4iAaYHqcRrFoaamrb8UDgyJo+oZskuC/M9PpGmcMw/CRyXPTsMZADjQhum4je7200ZjBoAzzd7Ky/1PjMmyRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lL8Y66jD; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso1002088a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740647049; x=1741251849; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
-        b=lL8Y66jDOUwgyUv8f42uWlPPXupIM5tWbRmnJmZxpfNDTafi0Vq2Za3VKHogQU4jU0
-         bVJZulC4NsjfHUprNjon4vIxfEi++1z10QMQwow1/1KIUS3TuoSYZmVe/ihwjjaBACwT
-         ea2+GrwVzJNb9X/u2saiYrRD6zaZ3Y/wvMh6Q//Se6Wkp4kNf6D8iu/+jS5/R2uWKQfj
-         fxM9scyFrR/7O9pvpzv0Ti/IJsTkg5bEtTlvgk9rSqfRtdXPT5G2mLZg2fDljogYbFOH
-         M8GrXPjrNTYQW9nFzUckyJl2PbaJCfovMqDDxmSVsJGdMqYvjbHWYRe9OBCjiUP6g4Pg
-         uXWQ==
+	s=arc-20240116; t=1740647054; c=relaxed/simple;
+	bh=u42Ak1Pq8Y1bErL2ZVfxQnVap2YnXcFLZGDObYLYRiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lP/BIcven3z9Q5WHnFpwSbUw/NqkMBiJhSoTe+HQINr6wkGcKIk8V3gFO+dp8+sJTRyDVhFg4Zk4qnHWLZHrq0IoH/0VxW2Ta63Hk7N3RwqUw2cDfBS3I7xM7lSar+YflofKvvpmtNYbFTArz/9U2fnqe2hx6N2S8g6b3soISnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mpsib+GG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R7kdlQ023823
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:04:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ISIpvDLr4nm46G4XgdEgTIb0RhLt9O3O1FoP7hEvHq4=; b=Mpsib+GGht62Gc7s
+	n4NuZ3WOyVpgMdj6M+UTLJDKu880SS3jOBz0EIFOmxEOlE8qAfgfHWxYhkf3yd58
+	u9kCWOJqEOfcnNcV7Qh+Yluv1LVg58aIPocqsZBGL04NdLumH81bDwM+LGfIBBg+
+	DGdailFSJ1IctjUA54FPRsJEU9o+C6xpXl56PcSjJ8iTc5SMGAYNbwQOmRW//iU6
+	bFBsEioWiFJfWe+IPtGSA/kBxPtS7rITJhYHcw5lBfk/d7/svqT9jeIr3TAsUfMf
+	WkucAuUflQEe3ghGcyg8SO+W/sEAdKkdFlhTuTGVcY0bFYct4yN+8w9+vKGR1Axp
+	FGhu/A==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmn08n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:04:11 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7be6f20f0a4so15152585a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:04:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740647049; x=1741251849;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
-        b=JI2uSAJKBgJ+ppNM1nuE+jCzauZOQxeHtWm9INriRtpSFgQPq0/2hwfXmPtXRF5Nuu
-         POkIjrK96Qid12Zn8HURemxdQ47QLQ4Fde0n2j0KL0rJzzdEnDCgEM9bBbP/cVO5Pr50
-         IuQsOjE3InjGxCyiB7jGM2zQ0NS4LMfYmlrzTcZF0n6Dij5c3ejxoxEq25xezk3CLiti
-         BBiO3FFip9hjYG75sGke1vpW9U9QYHGCe4c1likW9jYS/13mE2HScHWztujegVwpizo9
-         97nULsWduneC0fh/+MgVn1YOcuH6/tbwOi6ByT7hGoBALIbfhG7/uXiUOHBLEBQwrW3F
-         DrIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSYDMT93WMVFkc1d5kmxL7C/snzBBbNOPVtG+UvnV8zmcVtqiyWcruEYD1dzDP/jMRXfNUQqMWDqy6ebQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNCBpmzaMdlh+ypP7rXrbkVz8SZHhsDqNHb4oEXcUIFiVKJ6ZR
-	MYh+KWu4RIiqEvsqixryZiLPHJdFApWuk6YN/RTqyKsP8xiTjnwclfgoxqw5FW8CpVtgW7X7Smq
-	/25wDBDg4eD+4xkXoVgha8cO9Ds+pHSzgQviI6Ksjyo51a9av5Qc=
-X-Gm-Gg: ASbGncsbW1rwqbWHgUq2CbkLM9IyjherHFM93LOrGgfTOaRUd+09Jxlp6ISCZEKP+d9
-	fEAVLjsGlDbwwbxUjmYcGK4tUjouYrC3PduSr9vUb+bVHYIhS3xkvvio3hyOG2o0HORzkc/l37A
-	TDEpk8ivSrhcty11DUAfCQCxMtnTfVB6WgEddu
-X-Google-Smtp-Source: AGHT+IEL8jwJ7+Gx3xJdJeHDsZTHpaCquM4MW1jp1zytycJLxfwfsjyTlAbBkYEONnTUZIEzwyZgbc0AuBqEo7yItF8=
-X-Received: by 2002:a05:6402:26ce:b0:5db:f423:19c5 with SMTP id
- 4fb4d7f45d1cf-5e4a0d45ba9mr8937725a12.5.1740647049379; Thu, 27 Feb 2025
- 01:04:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740647051; x=1741251851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ISIpvDLr4nm46G4XgdEgTIb0RhLt9O3O1FoP7hEvHq4=;
+        b=RCUwVnBvZppInb7Rn9Xh/ZJLqaJKOaho/E1MHcaX7S82WDhdMgMZhoXLZ3JEuMDoia
+         M8tbvFuCf1QVd2r+giUJAlliHXNkMqJxVkEV0ypVduWcatBEP45NEhs/deKGNtvjvyFq
+         fiDwJq67HfHiAX7tUXiScqAqJnSDRdOYs6HCtsRohs2SmvtW5XIAvPJ/KHltLCEbDFsY
+         Gn1hxcr8yCblnb8KXYJ3v4//E9pEAErVRFoIq02sINuss4ihjTrfN1JtpciyK5e15qTu
+         G0hCYRah40+CMQ1ZyJzLOqXu3YhSHADxITZl9ItlWLtC/HivUET3y55RQlyUAPNCdhf0
+         EJzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZYuNJ8GHzwoEWMUVFv4mZINPj1E/j8VWsf9mlJJGfo5+GsiWS38FrTafdqx7eR7S8gbt0uw4hQgOdFG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUu3hqhjGZyC5Il0fEPcrNdwRnlin6ttLhi75xN8O0Bz0U9FYS
+	aUARypZOCbrdVVhu7GFz06YotKc4xPvh3rasFSjPIaikmAigVljrbQCmirbfwnigGLOdCsJkdSn
+	kIbHknoiIHL+7WjscS9oHbwDIWjZlgtp6D/45yLTpzCuaT3BI8L8LDmqM5fsKbCQ=
+X-Gm-Gg: ASbGncs88QFGSlHuluKNmxspOBovNUaUoSuqH3so57XLFqCTcxRkyIfh2bzKR49W27z
+	cBR0PNdbcBJUu8AGlHT+mb7QimM7oBC6fCXXsG1zAmiONHun/4aHUKDLZA74Tmo7PUBkSnjF8jE
+	RWALotH+qmRgdKx4NGiAtanGlPmLr+AHvorelUYgwk8uJ6s8XZ2Jxf6b5rhrd+KDtuoY5Wobf0x
+	rpF0TcgETqyXfMahdmBhunIH5P5Rpf+gGJypoqcE5vd4zC9E8X9XvvK7KBv4N7a1KUbgVUmWdwX
+	RFAbFeS7hyktUfsbnqOVbkvY24slFT/Bh2OVQEXzv7FAsuqQr/qZn/J07fihU9VxLsf+GA==
+X-Received: by 2002:a05:622a:1a96:b0:472:147f:1dba with SMTP id d75a77b69052e-472228d5fdemr128421521cf.4.1740647050845;
+        Thu, 27 Feb 2025 01:04:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFR+YpAMmMQyxSjZPXR+O/quj/d9e8NAkyiIF0cnW6DFrG6HqpBefPVaVbaehbYTKv4y3sMnw==
+X-Received: by 2002:a05:622a:1a96:b0:472:147f:1dba with SMTP id d75a77b69052e-472228d5fdemr128421341cf.4.1740647050539;
+        Thu, 27 Feb 2025 01:04:10 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c755c98sm89714266b.142.2025.02.27.01.04.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 01:04:10 -0800 (PST)
+Message-ID: <1687d1fe-a9d2-436f-b219-6e7cb3d2414b@oss.qualcomm.com>
+Date: Thu, 27 Feb 2025 10:04:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218202618.567363-1-sieberf@amazon.com> <20250218202618.567363-4-sieberf@amazon.com>
- <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com> <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
-In-Reply-To: <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 27 Feb 2025 10:03:58 +0100
-X-Gm-Features: AQ5f1JpPsBJHinsoIgFp7A0EoT2EP8A_Ofo81ZptF2TzVMQisI0TKNHfxPF_aj0
-Message-ID: <CAKfTPtBoVCnoO+vScNXRqXXWwRBT0MGOqeeAZ4VeAB+pPZVrCw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
-To: "Sieber, Fernand" <sieberf@amazon.com>
-Cc: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] ARM: dts: qcom: msm8960: Add tsens
+To: Rudraksha Gupta <guptarud@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wctrl@proton.me
+References: <20250226-expressatt-tsens-v3-0-bbf898dbec52@gmail.com>
+ <20250226-expressatt-tsens-v3-2-bbf898dbec52@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250226-expressatt-tsens-v3-2-bbf898dbec52@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: rj--rPAh39jh71dEeN_M39A_pDyCCy3b
+X-Proofpoint-ORIG-GUID: rj--rPAh39jh71dEeN_M39A_pDyCCy3b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_04,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=931
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502270068
 
-On Thu, 27 Feb 2025 at 09:27, Sieber, Fernand <sieberf@amazon.com> wrote:
->
-> On Thu, 2025-02-27 at 08:34 +0100, Vincent Guittot wrote:
-> > On Tue, 18 Feb 2025 at 21:27, Fernand Sieber <sieberf@amazon.com>
-> > wrote:
-> > >
-> > > With guest hlt/mwait/pause pass through, the scheduler has no
-> > > visibility into
-> > > real vCPU activity as it sees them all 100% active. As such, load
-> > > balancing
-> > > cannot make informed decisions on where it is preferrable to
-> > > collocate
-> > > tasks when necessary. I.e as far as the load balancer is concerned,
-> > > a
-> > > halted vCPU and an idle polling vCPU look exactly the same so it
-> > > may decide
-> > > that either should be preempted when in reality it would be
-> > > preferrable to
-> > > preempt the idle one.
-> > >
-> > > This commits enlightens the scheduler to real guest activity in
-> > > this
-> > > situation. Leveraging gtime unhalted, it adds a hook for kvm to
-> > > communicate
-> > > to the scheduler the duration that a vCPU spends halted. This is
-> > > then used in
-> > > PELT accounting to discount it from real activity. This results in
-> > > better
-> > > placement and overall steal time reduction.
-> >
-> > NAK, PELT account for time spent by se on the CPU.
->
-> I was essentially aiming to adjust this concept to "PELT account for
-> the time spent by se *unhalted* on the CPU". Would such an adjustments
-> of the definition cause problems?
+On 27.02.2025 4:50 AM, Rudraksha Gupta wrote:
+> Copy tsens node from apq8064 and adjust these values:
+> - thermal-zones
+>   - adjust thermal-sensors
+>   - delete coefficients
+>   - trips
+>     - copy temperature and hystersis from downstream
+>     - delete cpu_crit
 
-Yes, It's not in the scope of PELT to know that a se is a vcpu and if
-this vcpu is halted or not
+Oh you most certainly want a critical trip point so that your device
+doesn't become an oven.. I can't unfortunately find anything that would
+definitely state what the max temperature is, but I guess that you
+wouldn't want this thing heating up above 95C anyways, so we can take
+a conservative (likely undervalued) guess like that.
 
->
-> > If your thread/vcpu doesn't do anything but burn cycles, find another
-> > way to report thatto the host
->
-> The main advantage of hooking into PELT is that it means that load
-> balancing will just work out of the box as it immediately adjusts the
-> sched_group util/load/runnable values.
->
-> It may be possible to scope down my change to load balancing without
-> touching PELT if that is not viable. For example instead of using PELT
-> we could potentially adjust the calculation of sgs->avg_load in
-> update_sg_lb_stats for overloaded groups to include a correcting factor
-> based on recent halted cycles of the CPU. The comparison of two
-> overloaded groups would then favor pulling tasks on the one that has
-> the most halted cycles. This approach is more scoped down as it doesn't
-> change the classification of scheduling groups, instead it just changes
-> how overloaded groups are compared. I would need to prototype to see if
-> it works.
+> - qfprom
+>   - adjust compatible
+> - gcc
+>   - add syscon to compatible
+>   - tsens
+>     - change qcom,sensors to 5
+> 
+> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+> ---
 
-This is not better than PELT
+In your commit message, focus on what you're adding. The fact that you
+copy it from somewhere else is secondary. Describe what (and why) you're
+doing in this patch, and only briefly mention that it's based on another
+piece.
 
->
-> Let me know if this would go in the right direction or if you have any
-> other ideas of alternate options?
-
-The below should give you some insights
-
-https://lore.kernel.org/kvm/CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com/
-
-I don't think that you need any change in the scheduler. Use the
-current public scheduler interfaces to adjust the priority of your
-vcpu. As an example switching your thread to SCHED_IDLE is a good way
-to say that your thread has a very low priority and the scheduler is
-able to handle such information
-
->
-> > Furthermore this breaks all the hierarchy dependency
->
-> I am not understanding the meaning of this comment, could you please
-> provide more details?
->
-> >
-> > >
-> > > This initial implementation assumes that non-idle CPUs are ticking
-> > > as it
-> > > hooks the unhalted time the PELT decaying load accounting. As such
-> > > it
-> > > doesn't work well if PELT is updated infrequenly with large chunks
-> > > of
-> > > halted time. This is not a fundamental limitation but more complex
-> > > accounting is needed to generalize the use case to nohz full.
->
->
->
-> Amazon Development Centre (South Africa) (Proprietary) Limited
-> 29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-> Registration Number: 2004 / 034463 / 07
+Konrad
 
