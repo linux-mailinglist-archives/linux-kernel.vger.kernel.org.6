@@ -1,184 +1,246 @@
-Return-Path: <linux-kernel+bounces-537338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E892DA48AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:39:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454CAA48AB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F247316BAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE683A84F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E86271285;
-	Thu, 27 Feb 2025 21:39:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875327128E;
+	Thu, 27 Feb 2025 21:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifD9LFyf"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90E61A9B2A;
-	Thu, 27 Feb 2025 21:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532611A9B2A;
+	Thu, 27 Feb 2025 21:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692342; cv=none; b=On9AaZeKk59kTs6PSJvMNfeHJ9ExfNQQ7wIMRxQJH4gFHEeWHiIbydU3gpWcDR6J+JONkitQWCSy40MIfo0H0pXdf79NRkIvVhooCN0y5BSl7Ayws1SBpQ4Fj3/RqVKmlmMDEqPVVVNZWcBK4pRzGOkjWpcOtzvb1UAj8eJDZxo=
+	t=1740692454; cv=none; b=UI8sb9QwwJxZIKo2Muh5OGxS12n+NraWaHQpAcHvsZtZZwT3tDUaBIEFxrunhp14a+HG18mrmPcMj7CQt/evc6hbCaBPR5KH/D73YW4mYZ9t8/VL5NB/XkIGD5JwqjAH2t+T/r6nd4WD0QI9NtljssHucsq7YyjZIVF5nfGRRng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692342; c=relaxed/simple;
-	bh=0uqM8Rb45de9VzXCu+WOiz+KSieLYf5N5HE7pAVf0ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qHtx/1fOlQBrQKHs7SOVu8SDIRH9bm9V20/yu7VyiVjOsjwaKPi7/81aNHTmbVG5Sht4dRHd6zKlrDprbMfmVkZDwamuwFSR0vlS/l9myXF0j4xQGpa9c5NQUa96NLMz6SWwKIwgI13gwwSKdQ9SpSEVei5MoWPLbz/8jiJ8+nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1B6C4CEDD;
-	Thu, 27 Feb 2025 21:39:01 +0000 (UTC)
-Date: Thu, 27 Feb 2025 16:39:44 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>, Tomas
- Glozar <tglozar@redhat.com>
-Subject: [PATCH] tracing: Fix bad hist from corrupting named_triggers list
-Message-ID: <20250227163944.1c37f85f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740692454; c=relaxed/simple;
+	bh=L80Hlu8u8o5Ot4DJmrVS3vc1lu4qJoip5Aoy1QOg3tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pc0EhZ0tBQDhrvXWZ0Dirf4TKjJVWZBNWODXXvP9b8vu4Et8ZbQmL0oNxTh0s8H766QrzCIbtKY11Bo9QZ54GWD+sz6LEylf9+/e9n9cY4upY0YNcvq1vJkMQ74V5VienNxGHGNkRp75429qjtk7i8FoK0I9RNpbnqyFw6yVJkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ifD9LFyf; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54843052bcdso1242378e87.1;
+        Thu, 27 Feb 2025 13:40:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740692450; x=1741297250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r485+lRjbUqyvnC85LY4WqpLa9nC9htuImJ9LIfqUKQ=;
+        b=ifD9LFyfIn0Uce2rcKCD8P/KFpCn5LX9edfRNTMckBQxSAC+UsEpmMPkKuBeikyTaU
+         jSG/KgsdMWv/e1/a+1yUikPCkQpKaTAgXofFcMW0x9aReN/6CFauW1VYxke9M+AxMTdc
+         I7hs3F69I2A8yY4Pzm3icL6WIFh0ZPXXLiBs2ZtDorv6S0nooZEL3VToMCnl0wVMDosW
+         3+Q1kTZ9jyxKDwojMyi+kan//+9cHVkYRFqLL9H6O+jv3hZlbgPr0YNUnriSJIiMCQZQ
+         5G64ZOu6EtmSjuwITpldtVHISowibDY24bQB0X6x4jLZBejY5IH6SkiOsABjWhi7cUHS
+         6kCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740692450; x=1741297250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r485+lRjbUqyvnC85LY4WqpLa9nC9htuImJ9LIfqUKQ=;
+        b=O6Xg0RsDFwVqo4ww3Xkn7ZfNS8dHsyXv8+m8OPIhB7WlrTiKejvl7KRgo7xVmVFHXL
+         cHChmzD59r+HzwkMh5QQ7mw6TGNJUaJlhq1EiV2i7P84dCbMT1GSrC40Bl3+pyjEavQN
+         Hz1t4W7aFpBNciYylnSeMuxdq20TDzvg5QaV/MFnszA0ANohmal2vBaPof3Qwxe382rz
+         mor/Bvcwa1atnuIMXhZQ6NsI27Xiw6UvmwKdbgEa+qXR4nFdTWl17tfWCB7/MWIDjgY4
+         mrGvgrPgYW6bP7FiIx9DS/V6t+DmDzx9M+b+yrHquycSfS35hozlsQppNliC8hV5dFdY
+         AyLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlRxo3hzeQC6haJcjgw3/2SWElI579wbXAheoRsEFkNii4xmrNh8bDEkHYKGVU4sReHCrCEy5ZyAXUOWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp5ZnUILHG3r1dKu8ZNVruDrWGzGwoVS843xfmkstUdKX/KBoI
+	+DBQ0x0AjvBoe32ooQpvE4yEPcF1tdYwionQ5YLlr/snA7HRWEpx73C1wnscgsgc83jOmcnCfzM
+	Hb9LTI3kuiWWFVUew8OAID5M1TuzCH4Zz50A=
+X-Gm-Gg: ASbGncvqJE8QM8y33nJloMaQgo14YjqAg+axnruRuFH9wNkXg2aHq39SVe7rBUBYw6m
+	9K1maPr0C/6BZqdVOm299rf2Ye9knKYfppNZsfYLijtz+AB6kwraHgocZBBdIp0GXP8uzaCYqHR
+	Mf+Zak7g==
+X-Google-Smtp-Source: AGHT+IHc/Epr7Ps+0AR+8pRbVCia557Ml9EMV/xnohQ/bDgHDHT8kiVp140V7y6FhpaXwbFME5SmOFEqm3/MMUqyuaE=
+X-Received: by 2002:a19:521a:0:b0:549:4df0:76 with SMTP id 2adb3069b0e04-5494df00079mr133755e87.4.1740692450037;
+ Thu, 27 Feb 2025 13:40:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250227171417.4023415-1-chharry@google.com>
+In-Reply-To: <20250227171417.4023415-1-chharry@google.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 28 Feb 2025 02:40:37 +0500
+X-Gm-Features: AQ5f1JoMkjAaQBE1fZYPMwpPqsgvE_QCMmnXVYFBRCrp0nJBRvjDWUeAH45XxtE
+Message-ID: <CABBYNZ+QdWQ49ZMxPLj86d=kjr7Sf38LR1PrYrPhU8kZMQuh0A@mail.gmail.com>
+Subject: Re: [PATCH v3] Bluetooth: btusb: Configure altsetting for HCI_USER_CHANNEL
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: linux-bluetooth@vger.kernel.org, gregkh@linuxfoundation.org, 
+	pmenzel@molgen.mpg.de, chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Hsin-chen,
 
-The following commands causes a crash:
+On Thu, Feb 27, 2025 at 12:14=E2=80=AFPM Hsin-chen Chuang <chharry@google.c=
+om> wrote:
+>
+> From: Hsin-chen Chuang <chharry@chromium.org>
+>
+> Automatically configure the altsetting for HCI_USER_CHANNEL when a SCO
+> is connected.
+>
+> The motivation is to enable the HCI_USER_CHANNEL user to send out SCO
+> data through USB Bluetooth chips, which is mainly used for bidirectional
+> audio transfer (voice call). This was not capable because:
+>
+> - Per Bluetooth Core Spec v5, Vol 4, Part B, 2.1, the corresponding
+>   alternate setting should be set based on the air mode in order to
+>   transfer SCO data, but
+> - The Linux Bluetooth HCI_USER_CHANNEL exposes the Bluetooth Host
+>   Controller Interface to the user space, which is something above the
+>   USB layer. The user space is not able to configure the USB alt while
+>   keeping the channel open.
+>
+> This patch intercepts the HCI_EV_SYNC_CONN_COMPLETE packets in btusb,
+> extracts the air mode, and configures the alt setting in btusb.
+>
+> This patch is tested on ChromeOS devices. The USB Bluetooth models
+> (CVSD, TRANS alt3 and alt6) could work without a customized kernel.
+>
+> Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control US=
+B alt setting")
+> Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+> ---
+>
+> Changes in v3:
+> - Remove module parameter
+> - Set Kconfig to default y if CHROME_PLATFORMS
+>
+> Changes in v2:
+> - Give up tracking the SCO handles. Only configure the altsetting when
+>   SCO connected.
+> - Put the change behind Kconfig/module parameter
+>
+>  drivers/bluetooth/Kconfig | 11 ++++++++++
+>  drivers/bluetooth/btusb.c | 43 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+>
+> diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> index 4ab32abf0f48..cdf7a5caa5c8 100644
+> --- a/drivers/bluetooth/Kconfig
+> +++ b/drivers/bluetooth/Kconfig
+> @@ -56,6 +56,17 @@ config BT_HCIBTUSB_POLL_SYNC
+>           Say Y here to enable USB poll_sync for Bluetooth USB devices by
+>           default.
+>
+> +config BT_HCIBTUSB_AUTO_SET_ISOC_ALT
+> +       bool "Auto set isoc_altsetting for HCI_USER_CHANNEL when SCO conn=
+ected"
+> +       depends on BT_HCIBTUSB
+> +       default y if CHROME_PLATFORMS
+> +       help
+> +         Say Y here to enable auto set isoc_altsetting for HCI_USER_CHAN=
+NEL
+> +         when SCO connected
+> +
+> +         When enabled, btusb intercepts the HCI_EV_SYNC_CONN_COMPLETE pa=
+ckets
+> +         and configures isoc_altsetting automatically for HCI_USER_CHANN=
+EL.
+> +
+>  config BT_HCIBTUSB_BCM
+>         bool "Broadcom protocol support"
+>         depends on BT_HCIBTUSB
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index de3fa725d210..2642d2ca885f 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -34,6 +34,8 @@ static bool force_scofix;
+>  static bool enable_autosuspend =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTOSUS=
+PEND);
+>  static bool enable_poll_sync =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_POLL_SYNC=
+);
+>  static bool reset =3D true;
+> +static bool auto_set_isoc_alt =3D
+> +       IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTO_SET_ISOC_ALT);
+>
+>  static struct usb_driver btusb_driver;
+>
+> @@ -1113,6 +1115,42 @@ static inline void btusb_free_frags(struct btusb_d=
+ata *data)
+>         spin_unlock_irqrestore(&data->rxlock, flags);
+>  }
+>
+> +static void btusb_sco_connected(struct btusb_data *data, struct sk_buff =
+*skb)
+> +{
+> +       struct hci_event_hdr *hdr =3D (void *) skb->data;
+> +       struct hci_ev_sync_conn_complete *ev =3D
+> +               (void *) skb->data + sizeof(*hdr);
+> +       struct hci_dev *hdev =3D data->hdev;
+> +       unsigned int notify_air_mode;
+> +
+> +       if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT)
+> +               return;
+> +
+> +       if (skb->len < sizeof(*hdr) || hdr->evt !=3D HCI_EV_SYNC_CONN_COM=
+PLETE)
+> +               return;
+> +
+> +       if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->status)
+> +               return;
+> +
+> +       switch (ev->air_mode) {
+> +       case BT_CODEC_CVSD:
+> +               notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
+> +               break;
+> +
+> +       case BT_CODEC_TRANSPARENT:
+> +               notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANSP;
+> +               break;
+> +
+> +       default:
+> +               return;
+> +       }
+> +
+> +       bt_dev_info(hdev, "enabling SCO with air mode %u", ev->air_mode);
+> +       data->sco_num =3D 1;
+> +       data->air_mode =3D notify_air_mode;
+> +       schedule_work(&data->work);
+> +}
+> +
+>  static int btusb_recv_event(struct btusb_data *data, struct sk_buff *skb=
+)
+>  {
+>         if (data->intr_interval) {
+> @@ -1120,6 +1158,11 @@ static int btusb_recv_event(struct btusb_data *dat=
+a, struct sk_buff *skb)
+>                 schedule_delayed_work(&data->rx_work, 0);
+>         }
+>
+> +       /* Configure altsetting for HCI_USER_CHANNEL on SCO connected */
+> +       if (auto_set_isoc_alt &&
+> +           hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
+> +               btusb_sco_connected(data, skb);
+> +
+>         return data->recv_event(data->hdev, skb);
+>  }
+>
+> --
+> 2.48.1.658.g4767266eb4-goog
 
- ~# cd /sys/kernel/tracing/events/rcu/rcu_callback
- ~# echo 'hist:name=bad:keys=common_pid:onmax(bogus).save(common_pid)' > trigger
- bash: echo: write error: Invalid argument
- ~# echo 'hist:name=bad:keys=common_pid' > trigger
+This has been merged, I did some minor rewording here and there but
+the logic remains the same, now we can problem revert b16b327edb4d
+("Bluetooth: btusb: add sysfs attribute to control USB alt setting")?
 
-Because the following occurs:
-
-event_trigger_write() {
-  trigger_process_regex() {
-    event_hist_trigger_parse() {
-
-      data = event_trigger_alloc(..);
-
-      event_trigger_register(.., data) {
-        cmd_ops->reg(.., data, ..) [hist_register_trigger()] {
-          data->ops->init() [event_hist_trigger_init()] {
-            save_named_trigger(name, data) {
-              list_add(&data->named_list, &named_triggers);
-            }
-          }
-        }
-      }
-
-      ret = create_actions(); (return -EINVAL)
-      if (ret)
-        goto out_unreg;
-[..]
-      ret = hist_trigger_enable(data, ...) {
-        list_add_tail_rcu(&data->list, &file->triggers); <<<---- SKIPPED!!! (this is important!)
-[..]
- out_unreg:
-      event_hist_unregister(.., data) {
-        cmd_ops->unreg(.., data, ..) [hist_unregister_trigger()] {
-          list_for_each_entry(iter, &file->triggers, list) {
-            if (!hist_trigger_match(data, iter, named_data, false))   <- never matches
-                continue;
-            [..]
-            test = iter;
-          }
-          if (test && test->ops->free) <<<-- test is NULL
-
-            test->ops->free(test) [event_hist_trigger_free()] {
-              [..]
-              if (data->name)
-                del_named_trigger(data) {
-                  list_del(&data->named_list);  <<<<-- NEVER gets removed!
-                }
-              }
-           }
-         }
-
-         [..]
-         kfree(data); <<<-- frees item but it is still on list
-
-The next time a hist with name is registered, it causes an u-a-f bug and
-the kernel can crash.
-
-Move the code around such that if event_trigger_register() succeeds, the
-next thing called is hist_trigger_enable() which adds it to the list.
-
-A bunch of actions is called if get_named_trigger_data() returns false.
-But that doesn't need to be called after event_trigger_register(), so it
-can be moved up, allowing event_trigger_register() to be called just
-before hist_trigger_enable() keeping them together and allowing the
-file->triggers to be properly populated.
-
-Cc: stable@vger.kernel.org
-Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist triggers")
-Reported-by: Tomas Glozar <tglozar@redhat.com>
-Tested-by: Tomas Glozar <tglozar@redhat.com>
-Reviewed-by: Tom Zanussi <zanussi@kernel.org>
-Closes: https://lore.kernel.org/all/CAP4=nvTsxjckSBTz=Oe_UYh8keD9_sZC4i++4h72mJLic4_W4A@mail.gmail.com/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20250225125356.29236cd1@gandalf.local.home
-
-- Remove extra blank line.
-
- kernel/trace/trace_events_hist.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 261163b00137..ad7419e24055 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -6724,27 +6724,27 @@ static int event_hist_trigger_parse(struct event_command *cmd_ops,
- 	if (existing_hist_update_only(glob, trigger_data, file))
- 		goto out_free;
- 
--	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
--	if (ret < 0)
--		goto out_free;
-+	if (!get_named_trigger_data(trigger_data)) {
- 
--	if (get_named_trigger_data(trigger_data))
--		goto enable;
-+		ret = create_actions(hist_data);
-+		if (ret)
-+			goto out_free;
- 
--	ret = create_actions(hist_data);
--	if (ret)
--		goto out_unreg;
-+		if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
-+			ret = save_hist_vars(hist_data);
-+			if (ret)
-+				goto out_free;
-+		}
- 
--	if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
--		ret = save_hist_vars(hist_data);
-+		ret = tracing_map_init(hist_data->map);
- 		if (ret)
--			goto out_unreg;
-+			goto out_free;
- 	}
- 
--	ret = tracing_map_init(hist_data->map);
--	if (ret)
--		goto out_unreg;
--enable:
-+	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
-+	if (ret < 0)
-+		goto out_free;
-+
- 	ret = hist_trigger_enable(trigger_data, file);
- 	if (ret)
- 		goto out_unreg;
--- 
-2.47.2
-
+--=20
+Luiz Augusto von Dentz
 
