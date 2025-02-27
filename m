@@ -1,257 +1,264 @@
-Return-Path: <linux-kernel+bounces-535764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D30A476DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0F7A476E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03DB3AC2B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:50:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747B93AC31B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FF84A1A;
-	Thu, 27 Feb 2025 07:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8656B2222B7;
+	Thu, 27 Feb 2025 07:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/NvBEXn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="ErXoKAOu"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F91E521D;
-	Thu, 27 Feb 2025 07:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740642621; cv=none; b=fxe+Rk5I/tadHUQThhXOIAL/Og61Tpr15IE3XC/2vwUHsij1H3aCiqXT1YgKgOPg94RXPOxXqCIaOg081JnSzhST8wvEB+qPiEWpqPPyuIFaib0LMGvmGGwwE3UQHu40mlvoRk4gxeIppqyqxPKgl9ocGO7wd+hTfudbeRop49I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740642621; c=relaxed/simple;
-	bh=S9F2e7lRkRHtdgYVDmpNIrj//smsh+2ow+191iLu8q4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqUbHT37mUJZ+SGbzbLZOHuuP9Rvff/U0jXBQO6/TD/ChCh8490oY/jz691M7BY+0Y1Ewinn8VUTKg/gtT186kE5dRKB0sg5ww46j7Z7yP6oDVF3P/iBnzCVuinrb56fW4jQQ9C/1Xqm1OWEjuMk11k3VGewDi07hcjNgjxeLtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/NvBEXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE188C4CEDD;
-	Thu, 27 Feb 2025 07:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740642621;
-	bh=S9F2e7lRkRHtdgYVDmpNIrj//smsh+2ow+191iLu8q4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B/NvBEXn9z9ZunU9RAfNjOW8+Nq5YR/vfOkOe1VJ4pmmXBHUjWCaXAKvCrhNsygYw
-	 NUulPAwVlCYGpXawY88uFu3QJf5fUgU5VCTYUUX4setaP/QOBuwiLrdhp249cPWhH/
-	 Ks9J9EkmNz0ntJ4Y7AE3bOMYISkN0pDrSL12Pbg773bk4Y4/8RxW87wOMqELVXn25M
-	 InCFlJ3sZSMNU7O7OUbrDu9aJs664HLwtyyedZ9KXSwuto192lrpuA2AbOpzEslP0j
-	 7CWpfoBzp+m0oq7a5+SZTozPobse3D9wzNkILUCL4l3maJA8z0c1qsZ8S4SvxrJ/QB
-	 t2+scGfZrGjvw==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-543d8badc30so672604e87.0;
-        Wed, 26 Feb 2025 23:50:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXoRM2M6E7qSlEZm6kmd6z9CiSXaz6rceWtQzHPlvzcHQ1lF2kJZVxkOsxA3CuOxCH7/nl+OdsE6+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyut12W2jrhyfDIqcnvvOSgd/bU+fAwNxGxZW+qMskfFDXFuTZo
-	SwbYVDeF8dHwqAzILfEqvxx8apFf4YNFCGGU2oPlOSUYwjM7STKZY3i3AMmjGUfM/uTZFQ0I/ZZ
-	2ZTIhGiC4crzmZox9aAkksYwOQmw=
-X-Google-Smtp-Source: AGHT+IHWEL1CdAYVLlEtN6d4NWSiBrd1AluWIZPywKB1C2n2QQO7LcEEEv/DooBX39mSH3Bib2QjhA8X0mcjDkiIkNI=
-X-Received: by 2002:a05:6512:3b84:b0:545:4d1:64c0 with SMTP id
- 2adb3069b0e04-548510dc454mr7011683e87.27.1740642620001; Wed, 26 Feb 2025
- 23:50:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E524C213E71;
+	Thu, 27 Feb 2025 07:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740642644; cv=fail; b=nE6BFJXbFlY7g9D6a0MheySrvn9V9kSjcbvJZQIiSdeKy1HexBPbT80ocm0wStB2OMkL69sBrpeG+M8Vr1ro0HTgIpyeQGGkwkmsuBDR8agZclwFOK2MGNVUW5te5VQG03OF5qz2k/Phc2kNMtXED40i4B70oRbnoTm7derys6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740642644; c=relaxed/simple;
+	bh=//Inah7UKe0puilghYtZMqxoC28Vyhxl3HOCGDJB31g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EyLYQYdmHSHERQROV4aBeexmyZegZib3D23c63DbbjaasG8Up9PykgUbrzo7gYGYicQ7iBUe5geIQfOytlV+uLUEfL5XsnkhIPXP5KGEbqpDYBWNBv5R2o39yDUnFw3XrNspUhG/oHd2qjv2/RUhc0pEUhOhwAz1HQH7x0BPX0E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=ErXoKAOu; arc=fail smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=sandisk.com; i=@sandisk.com; q=dns/txt;
+  s=dkim.sandisk.com; t=1740642642; x=1772178642;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=//Inah7UKe0puilghYtZMqxoC28Vyhxl3HOCGDJB31g=;
+  b=ErXoKAOuoV3FupUQ9iXlx15zHBXXAnpHRvOowfitCwaT1cDHQVB2XMHi
+   L4bQCN8T5HPtXtp5zcLWzhY1NZopQi4JdXl8oylS9yswwk0M/pP29Fi63
+   ZdWvwKbTfzAbWp/XHS1Wh6gYSH1/2WkcEKUz5IluFQu6T7RtZ7yAdIZVn
+   Y7jYpvf986429iDVupmCt8OP7lkDG9NqxCLSfBthCK+l46D+LMaHXqeEm
+   E88gm1z8IMMoYzbNvLjtitBChFdSQderdVWm1ikGaHO7YtfccbdaR7Xtz
+   SFbElmUziI4TleAFDFxSfA6JFwzDkltjnOckNzby0Yur3bN4EA318kaY3
+   Q==;
+X-CSE-ConnectionGUID: hVPNaeJcQ3qTLB3Gnm9Rnw==
+X-CSE-MsgGUID: iVNIm1p+RfyOP1UCOKj0Og==
+X-IronPort-AV: E=Sophos;i="6.13,319,1732550400"; 
+   d="scan'208";a="40304942"
+Received: from mail-bn7nam10lp2042.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.42])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Feb 2025 15:50:40 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nx+cWLJJgpMAc2VgqS3VJ546AWwMWvPlTBgi21vr8dAzaisjV5wxeMrEFosDGTq2k/z28P36bbWKYpzklxH1el4M77/o/2L7VGwmX/tiQx/3qtfhYaI3nztlilHoN4p9keEsvONkN15wr6EY4/TPpLbLA+gKkQdllNpP0z61SSO9Ep92Qsw9pQVQubl/qIgu32cVorbChoMGmaCr2UkIhGQxvGGngAMptkwi6SVemLYvr0nZfAh6mTWBpmBANbK1K2p+V8EAII79aA6xPABH/LoGmmu9FLNsJSGa6q4nm37FUWVNe8fQuu0uWALHH4TRA+GIo0YcUaFiXOXmKqvqdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PbwbU9wSGEJ4GY6TJyJ6Cd3R7QIUYt9IER+ZoAO7nD0=;
+ b=qPuqM07R+JumacQiMFEQAfDBEThRpLc+UKHansMGoK36mDW/yWVleI6YEK8meRofmuF8TQzRhR2zLs7Q8NrbjZ7vyawE2nJm4JXMcvMSHlXGfdylOzLEdOSxp8UhjnhJiFjWl5QpXwg0bM9znvpXJYgS9aBWjo8T8Bh/VcTLh90LufqqHVGhP1l+83jism9dhXsPkPPC5BdeQxdkZNo2aiHG2ONnDuGWVPVK6YuGjK6NHqpL9LqU8bZxu5jpL9rxb8xrgsb1PIeG6u9eO4mtXTc3pI77ktLVh0STL0j4LtTHOqGjm43yiM5GWiH9RJB7K7ecwpsLAVoMF6NQj9jACQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sandisk.com; dmarc=pass action=none header.from=sandisk.com;
+ dkim=pass header.d=sandisk.com; arc=none
+Received: from PH7PR16MB6196.namprd16.prod.outlook.com (2603:10b6:510:312::5)
+ by CO6PR16MB4194.namprd16.prod.outlook.com (2603:10b6:303:b0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
+ 2025 07:50:38 +0000
+Received: from PH7PR16MB6196.namprd16.prod.outlook.com
+ ([fe80::e087:8329:baea:5808]) by PH7PR16MB6196.namprd16.prod.outlook.com
+ ([fe80::e087:8329:baea:5808%7]) with mapi id 15.20.8445.013; Thu, 27 Feb 2025
+ 07:50:38 +0000
+From: Avri Altman <Avri.Altman@sandisk.com>
+To: Guan Wang <guan.wang.jy@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+CC: Avri Altman <avri.altman@wdc.com>, Adrian Hunter
+	<adrian.hunter@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jens
+ Axboe <axboe@kernel.dk>, "guan.wang.jy@renesas.com"
+	<guan.wang.jy@renesas.com>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] mmc: block: add reset workaround for partition switch
+ failures
+Thread-Topic: [PATCH] mmc: block: add reset workaround for partition switch
+ failures
+Thread-Index: AQHbhnkI2Zb3iXnL20S8S3IGdxu6ELNaxv2w
+Date: Thu, 27 Feb 2025 07:50:38 +0000
+Message-ID:
+ <PH7PR16MB6196112328A147FC59643B76E5CD2@PH7PR16MB6196.namprd16.prod.outlook.com>
+References: <20250224045918.3321394-1-guan.wang.jy@renesas.com>
+In-Reply-To: <20250224045918.3321394-1-guan.wang.jy@renesas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sandisk.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR16MB6196:EE_|CO6PR16MB4194:EE_
+x-ms-office365-filtering-correlation-id: ca895420-29b4-455d-e643-08dd57036d43
+wdcipoutbound: EOP-TRUE
+wdcip_bypass_spam_filter_specific_domain_inbound: TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|10070799003|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?po5ZzDC6z0ebPSC85reDO+aycGgo5/GlMKOA+cpGwjigCIwJ3HjAV3m07aHd?=
+ =?us-ascii?Q?B/XaMAjzKA4CIE/bvmelVO20MruwBRkCmm/yPbScJHdiWHcl/IOEbGF/sYmS?=
+ =?us-ascii?Q?MAQ92n/i6q9iUmvTn6snJ5GEg0bWojW6rp+VzLIIzKoCbnv/B8PH59zHBonT?=
+ =?us-ascii?Q?gRmYcKG/v2P3NlpcoqJByqM2xqjDsM1U2AZzlgKYSO10z4QLCQYr8VdmCjyX?=
+ =?us-ascii?Q?4tdGXJpvBeoZr2kimMtFRDrNvMMdDtQCcNa2m9AN8DWD9jUYCMEq18Z/8Z8B?=
+ =?us-ascii?Q?Rep1d+rdBMNxqO/LAHGAInTekR9P1xkcwr1Va4VAhbQ1fI+J87QP87cY1rOA?=
+ =?us-ascii?Q?TBOiLlbl7NiXEnLC3YqzNg25vEnTTwFrbCabjBJ2Cum28bBxotLTNx9F/TRq?=
+ =?us-ascii?Q?Ix0u0Lvz1jQyML55rXX/WUuf1d97XKPBINEGAcuExLODsDeMoGwz3IsKq1aS?=
+ =?us-ascii?Q?4B0nkJarmnyn+8UbUmjuSO0ha6nEd+ivYmaRlxaW1F8RZ8t6wAJGEfLWdIR+?=
+ =?us-ascii?Q?s+WEYqFbHbKJ3cojs4HLLyFUD/zfw5t5gJtNii3JrSwVY7rSTHgMmsMpUzIP?=
+ =?us-ascii?Q?hO0zzPcoJ1X4skn18DKz7go+x0nOdvsXqXLTXkZ15yZUHMXl51oK7ukm+HY2?=
+ =?us-ascii?Q?4oFnOS0drij0qftjnwTDN+ddHeINGPtuXPRHMacdhMjf+HVrDhl1cRWRf9jz?=
+ =?us-ascii?Q?HjBz3W90OimZ5IkeSxNMgzzP0+iPYz9VJGzuOhnnl3WSKydyptToTm/eI0Ud?=
+ =?us-ascii?Q?vER+FgEq8cj6TRTidgqbrxZMqHlCgXDIRMZD4BprE8hPthVczVpRHKoG+75t?=
+ =?us-ascii?Q?xyDo8t+esCePd5Vr9OvBLvPkTX+p8/5UBgQIJPtyun289gaGCXYh/vUM5Bsm?=
+ =?us-ascii?Q?561FIONBtQ9Cnp9IrSKq+ypbRvTTpuB7boZV/HHc/eYurj4zj9s9C9IV1OEb?=
+ =?us-ascii?Q?uqQ5+dhYkZMc8AGD4chHmyC9+3tilsyTouAloAA77JK5cSRUt9UGkCFrBuvd?=
+ =?us-ascii?Q?9SK9pRP2L61kjxPO8MbXEh3FDBwKEjzyyIffgqm2NU7JwCN09f9rB1NJtnJq?=
+ =?us-ascii?Q?AIbcitJFnmEpLIOXSBW/+mox1xtOJv0EqCBL18hKlCC4O39R2evCDboYYYYU?=
+ =?us-ascii?Q?GVT3WlRm8348yUjP/XCVsp0rV5yjhKzrDiGcjDL2oHaiS5KgAUab153LX5Ez?=
+ =?us-ascii?Q?8qQ41CqeFrOAVwGn+ypXAMhNEhB0Do7OZKt67bu8qtHebaPPr0/QzgY1fqn5?=
+ =?us-ascii?Q?/Hl8wHhZbr3egY5JvNJCWGNYASjZXbqFJdNUzD24GgmKNkQEToaP433lBM2B?=
+ =?us-ascii?Q?OJutUCxh8vq/LFycGWQuMg0qhR0bJLrUu/J2dr5Ua48ZmVCh+LdzaNKqLnJ4?=
+ =?us-ascii?Q?S5Skb6+LpEDrc4l5sH66atnHWzXaQ217iVH7zdQq414nFot7BEPjtQ9gN2xS?=
+ =?us-ascii?Q?v9zkhabipvKkUk2E3QIMJig+d2ho2wpx?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR16MB6196.namprd16.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3JeaP+8OjrCDyQVl+3UySe67D3TjQRd5yDvFiSvv16b6/BFXyWjiSfJe0usg?=
+ =?us-ascii?Q?trK8ZMlcAoZpP9zy9K9hXmckBzz/LWyhVo7/tUZjXbn9g1yOIuYTp2JCPrip?=
+ =?us-ascii?Q?hhN6jx5tGhEvnRinjJZZpgAcI3TK22UiSI/WPvhgyvMG1kdXwl4sEcRV9WVs?=
+ =?us-ascii?Q?F3kh2bICZemEeBYt6ISzEpeTAvj92DKmpd9QQnKtrTzF4X7iHC6iocy227Wv?=
+ =?us-ascii?Q?KsG8n8EOwAY5Y8X4palREi68R193sptwpwVZY4QSiRS8FuNwp8yukK8/Bsc9?=
+ =?us-ascii?Q?u4wmg8bN6eqXwnzUy/MdISvNND6GIOSXZIRmXvfrqbgw+h2X+Wv23rLqUzim?=
+ =?us-ascii?Q?CF37cSNG9M7qkIz6l7da2gM6FOKDAeXxFR0MWfwBE/QlH7tSlZi0UK2dd4RP?=
+ =?us-ascii?Q?Sds81naQZxeHfHf+9KJcrQEBZt4OxHSt+iPZBTQVDBfp1mT8/7Cv4FsG1gCo?=
+ =?us-ascii?Q?amYBZSIdLwR2QTRRfYSB7o6gDyOKDAfuRN5pgLoe7kv/rjk1GtOq34t3mZz5?=
+ =?us-ascii?Q?t8n66kFaMGPsespq/uyPRxRDnmJwJKQzNK7fpKe3JggxWNgNBMHF+f04JnAM?=
+ =?us-ascii?Q?Sur8XuHYWrHz6dVn3XIkDsRNopPHNKUiUTznG0nVffAx9LcZiTvix2kf9qAA?=
+ =?us-ascii?Q?Mmx11LuLJa6g5Rpguwi+/UxfySzHZqYUWNj2YFO17IXtIy20+4S/3heiIUbU?=
+ =?us-ascii?Q?n4GyLacnTT8PvgF2dfJp1qC5T134XbtgKXPAOzgCzTruWA7dxu7wMIvoeii2?=
+ =?us-ascii?Q?gM1NlQhGMjGIn0EF2ushJDyUXLUKVMqgZxD1bxgE/Fy1DWDtvsew90dUSl2s?=
+ =?us-ascii?Q?nnNwiDG05ymIUbgYIEyscBXg0kgPSPiZ+sINjHMOrv1l0WtKDD/+VbmbkRWh?=
+ =?us-ascii?Q?U7lGzat+sx6LkSRZhbWj9yTpp1/1eHkLBlYxfetI4lqoGKxv6oL2KHDGJ4pF?=
+ =?us-ascii?Q?ntWMkkdnUai29T6k1wk5UJ4rrJoRHfIl/j6gsnvXO3WiOXJSxkwqL3nGuyBG?=
+ =?us-ascii?Q?KXBXgvKNGBZD8Q9qa7RUdgy7aPLS901dEZAZc41QGmSR2PQ3ch3EgqwG2FUn?=
+ =?us-ascii?Q?uOE9FmF8LySrklc4lihoJglB3yHU31HsTHyEqe5GJ4aGBWB8s9kqbOfSlrUg?=
+ =?us-ascii?Q?P3Mbvmhc5TAVi8Skdzs294ys27vgZdgelel/xGI3fUvmN4dEzvuv41Y6n17X?=
+ =?us-ascii?Q?rHlyuZmvmVfioUXfQJ8kjvoJHF05EaJZAAjMjuvwXRrLl4TBxB2u0fxIwttX?=
+ =?us-ascii?Q?tTmd0wFOjiur4G31pN6uxgE5GUPk8MSwJMy3W19AGrwerxGSmG+CImxkaq9p?=
+ =?us-ascii?Q?ZmH8Pva4GFsGl4uh2MKNmIKxDda1b807s/pr7Oxro4wV+yAJ9zQ1OqyixOOT?=
+ =?us-ascii?Q?Tebr/6izXOtUyorKcpckaFqyvTuhoeyxwOF29wi/iahGuxc7GXVNaypKtmVG?=
+ =?us-ascii?Q?RFJlIncwUNsps6TVNlM2u/s00bfpJF228LSEKW+n+E2853e0Ous2esIi/yF6?=
+ =?us-ascii?Q?UqZhS4oH6uD0ffvn5CjbGfytLibAPPKXx5Dz/3OGsU1PTd4dY3pXB9ppzO2R?=
+ =?us-ascii?Q?ICl8JqEmT4BHsNV6gxWkCnWUtenNzLWNp63sDaocstfLr9+/2K7MKwfKThje?=
+ =?us-ascii?Q?YFBRKBbRgJMJPp3znKSmYTzmq0+bhBYCcrE+2PHNeYS7?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226201839.2374631-1-pjones@redhat.com>
-In-Reply-To: <20250226201839.2374631-1-pjones@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 27 Feb 2025 08:50:08 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGoZ5RB4GWs_YTG7g+vGZokwe3yF-ri5BV4vOBinhqfLQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqPg0a_qnsvgproOVYZdvPH5EHWsCax5Bh00K5KLJQaqgl9mR85caZgAkk
-Message-ID: <CAMj1kXGoZ5RB4GWs_YTG7g+vGZokwe3yF-ri5BV4vOBinhqfLQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: don't map the entire mokvar table to determine its size
-To: Peter Jones <pjones@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Lenny Szubowicz <lszubowi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	75w7KvWo/pg3F4U+weeuG4ZY6HIRF2e6ubQh/iWkW/1oxzld4SdUj6A8ebLe8yTDlpGrPPk4GPNS75qLeBfGnT0I/WwbMedy0QVbzqH4b1c2p+VihnzYuPT/dOtxrojE/F7FGMtPNyIUCo+fhXBh/Y/cehDWHQ/IzLIgOZddoPrWTLaGEMGmYZrQcfdlQ6FvkszQBVfHHHLYYwQw7Os9AOgbGmapMmdn6kk6y3TkKOwpdjfClCqHwYj7iNN1gRb9bbqaX9tbZHBqu5snPBF6yBuHDYUXpLpMSPD6/7nLOjn7QQlYD30M1lhnj8CZ0mdmC6S0qOlamBKGVzs438XSljft2hC1l30T0JJAp2bKlTYESiMDutGI1OWtpmcikKDVAjYkuNy5SOzqwFqnv/jJJYW9DcxIqICWqAeMt4gjQbwMPs/nX1XfSWBRif7IWfpVazE1HRQmoCO1aNaiXLb78dzNZJFCh5ajlELbCoYnP+tsDLnYEnHy8PrTn6rL9wYbdkzjrq8NuN7QOLpvHluZj2Po5zpuiCauNP8LV8decJbnaam78Ml9oAXe2x6mLeSW/6Vhiap5+aWITgBprAECB2fiFmmczJrFFFrdWTZ6IcYPjP86GWw3Mv9Z+9uZ13bis6HcYkHnqs0rMP0vF/z8BQ==
+X-OriginatorOrg: sandisk.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR16MB6196.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca895420-29b4-455d-e643-08dd57036d43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 07:50:38.5657
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ffe0ff2-35d0-407e-a107-79fc32e84ec4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5v3zVR38eHrMs6raPKvqnF7+U7TYeqH/S2LCeMVrpOT84aw9VDjnXZJnZzWLxvi557lTz+ND6p67ubYx9uMNWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR16MB4194
 
-On Wed, 26 Feb 2025 at 21:18, Peter Jones <pjones@redhat.com> wrote:
->
-> Currently when validating the mokvar table, we (re)map the entire table
-> on each iteration of the loop, adding space as we discover new entries.
-> If the table grows over a certain size, this fails due to limitations of
-> early_memmap(), and we get a failure and traceback:
->
->   ------------[ cut here ]------------
->   WARNING: CPU: 0 PID: 0 at mm/early_ioremap.c:139 __early_ioremap+0xef/0x220
->   Modules linked in:
->   CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.15-200.fc41.x86_64 #1
->   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20250221-6.copr8698600 02/21/2025
->   RIP: 0010:__early_ioremap+0xef/0x220
->   Code: e5 00 f0 ff ff 48 81 e5 00 f0 ff ff 4c 89 6c 24 08 41 81 e4 ff 0f 00 00 4c 29 ed 48 89 e8 48 c1 e8 0c 41 89 c7 83 f8 40 76 04 <0f> 0b eb 82 45 6b ee c0 41 81 c5 ff 05 00 00 45 85 ff 74 36 83 3d
->   RSP: 0000:ffffffff96803dd8 EFLAGS: 00010002 ORIG_RAX: 0000000000000000
->   RAX: 0000000000000041 RBX: 0000000000000001 RCX: ffffffff97768250
->   RDX: 8000000000000163 RSI: 0000000000000001 RDI: 000000007c4c3000
->   RBP: 0000000000041000 R08: ffffffffff201630 R09: 0000000000000030
->   R10: 000000007c4c3000 R11: ffffffff96803e20 R12: 0000000000000000
->   R13: 000000007c4c3000 R14: 0000000000000001 R15: 0000000000000041
->   FS:  0000000000000000(0000) GS:ffffffff97291000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: ffff9f1d8000040e CR3: 00000000653a4000 CR4: 00000000000000f0
->   Call Trace:
->    <TASK>
->    ? __early_ioremap+0xef/0x220
->    ? __warn.cold+0x93/0xfa
->    ? __early_ioremap+0xef/0x220
->    ? report_bug+0xff/0x140
->    ? early_fixup_exception+0x5d/0xb0
->    ? early_idt_handler_common+0x2f/0x3a
->    ? __early_ioremap+0xef/0x220
->    ? efi_mokvar_table_init+0xce/0x1d0
->    ? setup_arch+0x864/0xc10
->    ? start_kernel+0x6b/0xa10
->    ? x86_64_start_reservations+0x24/0x30
->    ? x86_64_start_kernel+0xed/0xf0
->    ? common_startup_64+0x13e/0x141
->    </TASK>
->   ---[ end trace 0000000000000000 ]---
->   mokvar: Failed to map EFI MOKvar config table pa=0x7c4c3000, size=265187.
->
-> Mapping the entire structure isn't actually necessary, as we don't ever
-> need more than one entry header mapped at once.
->
-> This patch changes efi_mokvar_table_init() to only map each entry
-> header, not the entire table, when determining the table size.  Since
-> we're not mapping any data past the variable name, it also changes the
-> code to enforce that each variable name is NUL terminated, rather than
-> attempting to verify it in place.
->
-> Signed-off-by: Peter Jones <pjones@redhat.com>
+Hi,
+> Some eMMC devices (e.g., BGSD4R and AIM20F) may enter an unresponsive
+> state
+> after encountering CRC errors during RPMB writes (CMD25). This prevents t=
+he
+> device from switching back to the main partition via CMD6, blocking furth=
+er
+> I/O operations.
+Different cards on the same platform?
+Can you share which platform, and few lines from the log supporting your an=
+alysis?
+
+>=20
+> The root cause is suspected to be a firmware/hardware issue in specific
+> eMMC models. A workaround is to perform a hardware reset via
+> mmc_hw_reset()
+> when the partition switch fails, followed by a retry.
+Same fw bug in 2 different products?
+
+Why do we need to fix it here?
+The ioctl will eventually return an error, and reset is needed anyway.
+If the eMMC is the primary storage,  the platform is rebooting without bein=
+g aware what went wrong.
+
+Thanks,
+Avri
+
+>=20
+> Add a workaround that:
+> 1. If initial partition switch fails after rpmb access
+> 2. Performs mmc card reset using mmc_hw_reset()
+> 3. Retries switching to main partition
+> This helps resolve cases where the device becomes unresponsive after
+> RPMB operations.
+>=20
+> Signed-off-by: Guan Wang <guan.wang.jy@renesas.com>
 > ---
->  drivers/firmware/efi/mokvar-table.c | 41 +++++++++--------------------
->  1 file changed, 13 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/firmware/efi/mokvar-table.c b/drivers/firmware/efi/mokvar-table.c
-> index 5ed0602c2f7..66eb83a0f12 100644
-> --- a/drivers/firmware/efi/mokvar-table.c
-> +++ b/drivers/firmware/efi/mokvar-table.c
-> @@ -103,7 +103,6 @@ void __init efi_mokvar_table_init(void)
->         void *va = NULL;
->         unsigned long cur_offset = 0;
->         unsigned long offset_limit;
-> -       unsigned long map_size = 0;
->         unsigned long map_size_needed = 0;
->         unsigned long size;
->         struct efi_mokvar_table_entry *mokvar_entry;
-> @@ -134,48 +133,34 @@ void __init efi_mokvar_table_init(void)
->          */
->         err = -EINVAL;
->         while (cur_offset + sizeof(*mokvar_entry) <= offset_limit) {
-> -               mokvar_entry = va + cur_offset;
-> -               map_size_needed = cur_offset + sizeof(*mokvar_entry);
-> -               if (map_size_needed > map_size) {
-> -                       if (va)
-> -                               early_memunmap(va, map_size);
-> -                       /*
-> -                        * Map a little more than the fixed size entry
-> -                        * header, anticipating some data. It's safe to
-> -                        * do so as long as we stay within current memory
-> -                        * descriptor.
-> -                        */
-> -                       map_size = min(map_size_needed + 2*EFI_PAGE_SIZE,
-> -                                      offset_limit);
-> -                       va = early_memremap(efi.mokvar_table, map_size);
-> -                       if (!va) {
-> -                               pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%lu.\n",
-> -                                      efi.mokvar_table, map_size);
-> -                               return;
-> -                       }
-> -                       mokvar_entry = va + cur_offset;
-> +               if (va)
-> +                       early_memunmap(va, sizeof(*mokvar_entry));
-> +               va = early_memremap(efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
-> +               if (!va) {
-> +                       pr_err("Failed to map EFI MOKvar config table pa=0x%lx, size=%zu.\n",
-> +                              efi.mokvar_table + cur_offset, sizeof(*mokvar_entry));
-> +                       return;
->                 }
-> +               mokvar_entry = va;
->
->                 /* Check for last sentinel entry */
->                 if (mokvar_entry->name[0] == '\0') {
->                         if (mokvar_entry->data_size != 0)
->                                 break;
->                         err = 0;
-> +                       map_size_needed = cur_offset + sizeof(*mokvar_entry);
->                         break;
->                 }
->
-> -               /* Sanity check that the name is null terminated */
-> -               size = strnlen(mokvar_entry->name,
-> -                              sizeof(mokvar_entry->name));
-> -               if (size >= sizeof(mokvar_entry->name))
-> -                       break;
-> +               /* Enforce that the name is null terminated */
-> +               mokvar_entry->name[sizeof(mokvar_entry->name)-1] = '\0';
->
->                 /* Advance to the next entry */
-> -               cur_offset = map_size_needed + mokvar_entry->data_size;
-> +               cur_offset += sizeof(*mokvar_entry) + mokvar_entry->data_size;
->         }
->
->         if (va)
-> -               early_memunmap(va, map_size);
-> +               early_memunmap(va, sizeof(*mokvar_entry));
->         if (err) {
->                 pr_err("EFI MOKvar config table is not valid\n");
->                 return;
+>  drivers/mmc/core/block.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index 4830628510e6..29388786624c 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -1174,8 +1174,24 @@ static void mmc_blk_issue_drv_op(struct
+> mmc_queue *mq, struct request *req)
+>  				break;
+>  		}
+>  		/* Always switch back to main area after RPMB access */
+> -		if (rpmb_ioctl)
+> -			mmc_blk_part_switch(card, 0);
+> +		if (rpmb_ioctl) {
+> +			if (mmc_blk_part_switch(card, 0)) {
+> +				pr_warn("%s: failed to switch back to main
+> area, will reset and switch again\n",
+> +						md->disk->disk_name);
+> +
+> +				/*
+> +				 * Reset eMMC device if partition switch fails.
+> +				 * Some eMMC devices may get stuck by write
+> CRC error in RPMB,
+> +				 * preventing switch back to main partition.
+> This workaround
+> +				 * helps recover from this error state.
+> +				 */
+> +				mmc_hw_reset(card);
+> +
+> +				if (mmc_blk_part_switch(card, 0))
+> +					pr_err("%s: failed to switch back to
+> main area even after reset\n",
+> +						   md->disk->disk_name);
+> +			}
+> +		}
+>  		else if (card->reenable_cmdq && !card->ext_csd.cmdq_en)
+>  			mmc_cmdq_enable(card);
+>  		break;
+> --
+> 2.25.1
 
-Thanks for the fix.
-
-Should we add something like the below to avoid mapping the same page
-over and over again? Or is this premature optimization?
-
-
---- a/drivers/firmware/efi/mokvar-table.c
-+++ b/drivers/firmware/efi/mokvar-table.c
-@@ -99,13 +99,13 @@
-  */
- void __init efi_mokvar_table_init(void)
- {
-+       struct efi_mokvar_table_entry __aligned(1) *mokvar_entry, *next_entry;
-        efi_memory_desc_t md;
-        void *va = NULL;
-        unsigned long cur_offset = 0;
-        unsigned long offset_limit;
-        unsigned long map_size_needed = 0;
-        unsigned long size;
--       struct efi_mokvar_table_entry *mokvar_entry;
-        int err;
-
-        if (!efi_enabled(EFI_MEMMAP))
-@@ -142,7 +142,7 @@
-                        return;
-                }
-                mokvar_entry = va;
--
-+next:
-                /* Check for last sentinel entry */
-                if (mokvar_entry->name[0] == '\0') {
-                        if (mokvar_entry->data_size != 0)
-@@ -156,7 +156,19 @@ void __init efi_mokvar_table_init(void)
-                mokvar_entry->name[sizeof(mokvar_entry->name) - 1] = '\0';
-
-                /* Advance to the next entry */
--               cur_offset += sizeof(*mokvar_entry) + mokvar_entry->data_size;
-+               size = sizeof(*mokvar_entry) + mokvar_entry->data_size;
-+               cur_offset += size;
-+
-+               /*
-+                * Don't bother remapping if the current entry header and the
-+                * next one end on the same page.
-+                */
-+               next_entry = (void *)((unsigned long)mokvar_entry + size);
-+               if (((((unsigned long)(mokvar_entry + 1) - 1) ^
-+                     ((unsigned long)(next_entry + 1) - 1)) &
-PAGE_MASK) == 0) {
-+                       mokvar_entry = next_entry;
-+                       goto next;
-+               }
-        }
-
-        if (va)
 
