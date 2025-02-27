@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-535635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284FDA4755A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:46:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73347A4755F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE711882374
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E9F16F106
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57C5209F3E;
-	Thu, 27 Feb 2025 05:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF04209F3E;
+	Thu, 27 Feb 2025 05:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGVF9yEO"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NnfxxYai"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E034923C9;
-	Thu, 27 Feb 2025 05:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3182A1E8325
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740635188; cv=none; b=UQE7Mr/7RcyRE7ptRg06Dv3MJxdaLSk436qeWEj5kq35bZtyk5IFnyq3BT1c569XVz5aVLqbiZui/vC1l+NzT/gyweJp34Jx/TisSqjfIJEv3uJLUNWTKtTTDgzRRx2S9qaNDKtIOADU6PxUBASvCSvHvXmNdL7xdkwUYHfRIWQ=
+	t=1740635295; cv=none; b=HVT6AwVI9kX7iuVXpZG5yeq3NxccGqPZSqmN5z4IH44meAuVPyocDLsPUJiVZzM6dnvTfkLJCzaIM7201kz0Q7tDLqVZFEycmvIP52GKv1CzuCab7ChugeY8M80Q+oMR1HyEjAqpay2i3uQrH2xEHkSUYJBb4vV8PtxpoNesWzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740635188; c=relaxed/simple;
-	bh=eYJwDtZADtElVi9D4MbUQ4sDdr8vV4wstXBdam4cgMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h6m5EJiHdgVuTdNerzGo8OPnuu8vOyYFmIuyKT+EUJSENYWinScr2ago4mApTQQLdwUwCIJYc3twzowLQhaNpKuY9IcijgDlOw2M8Ooz+xDgXU9v5ozI8T/9h7e7xhD+rp6iLD2sbfk8pjkHqCM5CDZZqaVK4t1V1jcy8htKY0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGVF9yEO; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f77b9e0a34so4380887b3.2;
-        Wed, 26 Feb 2025 21:46:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740635186; x=1741239986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LI04exR2yDAWb4WrSgtjk6OP2Gj9wO+tiWBJo3HZHvg=;
-        b=fGVF9yEOz3oG/sTrp92YsTr0f3hjmeNedwixg7NrxRaBXI7AOiVU3gXCzSjaVVZlfa
-         8QW5sokkDMEfLaMDswfusGfxBsFi7hglMu/1xgw3n5PAQl0/ZlvuBMyOw6MN3jW/HVA5
-         RjTcrSnntZc6WJT4+hSp+GUT+5itCTXMkJcQQZ1im4WLDHvpHuXDuqj0ajgJWbQtm3ew
-         uXd/4MNpyfi40rAw6OINtq3ITCQonKnDJTBEnfj55xrXhxscAG4GmV+c48f22OXbQ037
-         4Ja3aoXR8w0glvdAXzy/3bASwiRvyJo99fgPGJPxW5fIS0MV5wYn6R5po2Q/pXBhvWvK
-         Ux3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740635186; x=1741239986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LI04exR2yDAWb4WrSgtjk6OP2Gj9wO+tiWBJo3HZHvg=;
-        b=f2N/vmRzXF2VO1HX0SNX3372p1xjqbinXHU8uV7ZWr5Pqk7cA8Rt2AincFBOQcShNc
-         qY3771IUSuSQ0ZLo0cuVjDks4tPHQPaEB0dPejZaRjaOrRt0KFNOSxOsb/4D/EUdGs8N
-         w7Lc/WFgXqECQagVnB78NNn/pPf5ALqhOwXltQKhea4AMJ9x2dFHK/SrZGBf+qFJUQci
-         Mhd293S4wfMZasPj79dn1fOSjFmdevS7aBTTX79KYpefkBaPbuZnK20RRZicUDR8VKSt
-         OB9i1ez6QdXPo4z/ZjTVIwKYJZV7TU3JjfyzOhPOzQgB6yzQ22Wo8uT93EYSCDqspbp1
-         bArQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJiXohMCgUdrn+cEV1Ky+F/kZ0bFUTgfMbHk/wSY5lDYQuwRvTKuMSLTS1boyuX1BQtCHm4QrA+BtAlqjZ2+e+Uw==@vger.kernel.org, AJvYcCUN4vsjBIDoiQPZ+iVaiC5O8qCxM0c2CHgr55islakOLrZcQ7D3utd82vBkFeOLFsCj6csVctFnujM/2zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqPL7YJuO3T87479kW7aAYPuhqcUKTRoWrnpigyPaiGkArswev
-	gyOuLopOl3DLAmXjtTv5Amr8CBY6rNYKpXVjvCB+1vEosANvwlJKORyNAul8HvyCefcmJJjH6uJ
-	kAywKH2uULVAaocLkoSErWnTe6uQ=
-X-Gm-Gg: ASbGncs8a5ugeViLellRK0PgJ/tNEDbeW6+wa/8xu2oW7r1HrPRihoqvojAZG/Mf3d6
-	gVlE8DANEQXRcuoan32MZ74pfcJ4B70oTAv2ExLhyh4k5KFT+vHolAYiBpmZoPjJXS2rx8HH6OW
-	0EgpctAQ==
-X-Google-Smtp-Source: AGHT+IHUeNu0/+cIrjaweXhSO2pZYGHo0g4t+54vjdcP+SKlzLHK/AIt8c12/IX31eKN+uFKlgzLGAj8CkHuJGYJXgQ=
-X-Received: by 2002:a05:690c:3387:b0:6f9:d938:9262 with SMTP id
- 00721157ae682-6fd220b0ca6mr65496357b3.37.1740635185864; Wed, 26 Feb 2025
- 21:46:25 -0800 (PST)
+	s=arc-20240116; t=1740635295; c=relaxed/simple;
+	bh=MTqdsDl/80NWEf3qEyWS1bUvUc1sPKhrHxJ7ySe0neU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqzkQpC+A3ZdbqLoVEeb4elkRJORV6CwuWXyrgSoUNJ27SwqKKU3KTSBM2zqDYKv7cDdJ46qntfZZ+/G5FumVmt7IuNO5UdC9POM5TEtD52zKd/0TU590hKd5sfP4WxgV6FZuCAmIA3SzIqMgGQjXAYAyJrFyHzHtqEA6TdVBlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NnfxxYai; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 27 Feb 2025 05:48:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740635286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4TkQ8UrhrrQr19zoNVeArPkdnwKAuEj5fc35ftPO8E=;
+	b=NnfxxYaiQFZIfNf1wYPc3S8quk/CqgB+eHNUeSTKeAtdm+oZA5COBTyleDiadlulaa3MGC
+	5nLn7EOi7zJpsD5MrNRD+xCnVtZVzppDCcXt6fx2II7N3DaW92/jshuqNErGni5gzqabrj
+	aIKZstGxkNUsp5Hp7/2xGF6lHskPSeY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 14/19] zsmalloc: introduce new object mapping API
+Message-ID: <Z7_8koiBRTfQ81bb@google.com>
+References: <20250227043618.88380-1-senozhatsky@chromium.org>
+ <20250227043618.88380-15-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109075108.7651-1-irogers@google.com> <20250109075108.7651-11-irogers@google.com>
-In-Reply-To: <20250109075108.7651-11-irogers@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 26 Feb 2025 21:46:15 -0800
-X-Gm-Features: AQ5f1Jr6j5phXjEj7e9lBp9_L4DHo1Czztuta0Y-SSWI3Phhj6_a8B60A6is2Rs
-Message-ID: <CAH0uvoj=PJMbOR_iQDFxRsGN+Q04tkkHdAceReHoZANOtv3uCA@mail.gmail.com>
-Subject: Re: [PATCH v1 10/11] perf python: Add evlist.config to set up record options
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227043618.88380-15-senozhatsky@chromium.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Thu, Feb 27, 2025 at 01:35:32PM +0900, Sergey Senozhatsky wrote:
+> Current object mapping API is a little cumbersome.  First, it's
+> inconsistent, sometimes it returns with page-faults disabled and
+> sometimes with page-faults enabled.  Second, and most importantly,
+> it enforces atomicity restrictions on its users.  zs_map_object()
+> has to return a liner object address which is not always possible
+> because some objects span multiple physical (non-contiguous)
+> pages.  For such objects zsmalloc uses a per-CPU buffer to which
+> object's data is copied before a pointer to that per-CPU buffer
+> is returned back to the caller.  This leads to another, final,
+> issue - extra memcpy().  Since the caller gets a pointer to
+> per-CPU buffer it can memcpy() data only to that buffer, and
+> during zs_unmap_object() zsmalloc will memcpy() from that per-CPU
+> buffer to physical pages that object in question spans across.
+> 
+> New API splits functions by access mode:
+> - zs_obj_read_begin(handle, local_copy)
+>   Returns a pointer to handle memory.  For objects that span two
+>   physical pages a local_copy buffer is used to store object's
+>   data before the address is returned to the caller.  Otherwise
+>   the object's page is kmap_local mapped directly.
+> 
+> - zs_obj_read_end(handle, buf)
+>   Unmaps the page if it was kmap_local mapped by zs_obj_read_begin().
+> 
+> - zs_obj_write(handle, buf, len)
+>   Copies len-bytes from compression buffer to handle memory
+>   (takes care of objects that span two pages).  This does not
+>   need any additional (e.g. per-CPU) buffers and writes the data
+>   directly to zsmalloc pool pages.
+> 
+> In terms of performance, on a synthetic and completely reproducible
+> test that allocates fixed number of objects of fixed sizes and
+> iterates over those objects, first mapping in RO then in RW mode:
+> 
+> OLD API
+> =======
+> 
+> 3 first results out of 10
+> 
+>   369,205,778      instructions        #    0.80  insn per cycle
+>    40,467,926      branches            #  113.732 M/sec
+> 
+>   369,002,122      instructions        #    0.62  insn per cycle
+>    40,426,145      branches            #  189.361 M/sec
+> 
+>   369,036,706      instructions        #    0.63  insn per cycle
+>    40,430,860      branches            #  204.105 M/sec
+> 
+> [..]
+> 
+> NEW API
+> =======
+> 
+> 3 first results out of 10
+> 
+>   265,799,293      instructions        #    0.51  insn per cycle
+>    29,834,567      branches            #  170.281 M/sec
+> 
+>   265,765,970      instructions        #    0.55  insn per cycle
+>    29,829,019      branches            #  161.602 M/sec
+> 
+>   265,764,702      instructions        #    0.51  insn per cycle
+>    29,828,015      branches            #  189.677 M/sec
+> 
+> [..]
+> 
+> T-test on all 10 runs
+> =====================
+> 
+> Difference at 95.0% confidence
+>    -1.03219e+08 +/- 55308.7
+>    -27.9705% +/- 0.0149878%
+>    (Student's t, pooled s = 58864.4)
+> 
+> The old API will stay around until the remaining users switch
+> to the new one.  After that we'll also remove zsmalloc per-CPU
+> buffer and CPU hotplug handling.
+> 
+> The split of map(RO) and map(WO) into read_{begin/end}/write is
+> suggested by Yosry Ahmed.
+> 
+> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-On Wed, Jan 8, 2025 at 11:51=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> Add access to evlist__config that is used to configure an evlist with
-> record options.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/python.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->
-
-<SNIP>
-
-> +               .user_interval       =3D ULLONG_MAX,
-> +               .freq                =3D 4000,
-> +               .target              =3D {
-> +                       .uses_mmap   =3D true,
-> +                       .default_per_cpu =3D true,
-> +               },
-> +               .nr_threads_synthesize =3D 1,
-> +               .ctl_fd              =3D -1,
-> +               .ctl_fd_ack          =3D -1,
-> +                       .no_buffering =3D true,
-> +                       .no_inherit =3D true,
-
-Are these indentations intentional?
-
-Thanks,
-Howard
+I see my Reviewed-by was removed at some point. Did something change in
+this patch (do I need to review it again) or was it just lost?
 
