@@ -1,97 +1,120 @@
-Return-Path: <linux-kernel+bounces-537086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C650A487F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E67A487FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968D0166CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0886218882EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4007C1F5852;
-	Thu, 27 Feb 2025 18:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00B221858D;
+	Thu, 27 Feb 2025 18:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjQl7a++"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=valentin-vidic.from.hr header.i=@valentin-vidic.from.hr header.b="jzd1jcNw"
+Received: from valentin-vidic.from.hr (valentin-vidic.from.hr [116.203.65.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98754270023;
-	Thu, 27 Feb 2025 18:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AE9270023;
+	Thu, 27 Feb 2025 18:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.65.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681598; cv=none; b=OcyPDdXH8moBfZg9YT8HEbDntoOlPW4H9HOa13s4u7/SJ6K9/ChYhXNd07/BJe7QYNTyuOrnt1TskkayzWg+UdTdrBxjqhMUPhWPofUIuvFfnYdowg9pLWQ42+bjr7WjLe75bXVtan/jr77wRdBky0J8qQkSJA1V3RFy2PaafJA=
+	t=1740681655; cv=none; b=XxQQUkHJVZyzq5/iYrhtiG36ZG0eAA4JksTzZTd1biHJ/LdbKlQcvxhrE3OzXvj0CPAMk8k6kpFp5D/fvLldd2tNkyDY1+X/3USzGHwXDm2BNzb49GVkoXuLq/Z1iCeaTXD8xdhmD3eL6e0aTAWnz6E3bSjIn4i7AdYURf7NJ9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681598; c=relaxed/simple;
-	bh=9JxcV8DByVOuCAju7rp3CM7HpTlI82fPLJS8ZDOW6Lc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=kWFaX6LwcuEDLQq3+m2Kd1KkJkA5uzfNJn9xk7K+NCgNfRixEnMYsrYHULtzvtx+A9zPKkj7y9IcRkg8SzfRQhliBIaUvYkKQiI1afSC9+1yW2kfFTXYWk064g6QEFMGjElvDhqtxyP81jSvSOf2dV20gQk7E0Uy83U4eOun2co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjQl7a++; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71228C4CEDD;
-	Thu, 27 Feb 2025 18:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740681598;
-	bh=9JxcV8DByVOuCAju7rp3CM7HpTlI82fPLJS8ZDOW6Lc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=JjQl7a++dv2I37RvOmSjAhWtu6N8GV7/0sT/CeqeFk+dp7RxN28b2SQkWkwBWBXLA
-	 UCckl3kgoptzxpzjv1O25zQbeRWh0nK73bkcGqtMXM/ZIWLrzRx4woGAxd3DqEczCF
-	 pgwNgrFyrNap6wcqm2B8z2qU0yKspyFAEuXPyaCsh0haiyatSBDTF+YyI6H3FhszTs
-	 oKqbr5cgIfrXx6Qwp6j++QMGjAtGF/le+IQEGBVkSnmGF2A2GKnyxuj2YSqhdXSBg+
-	 W5DDbRDz5al2wvN5tQY/tSlbHbVsqeN5Og/lqzPQI5fDTKQESeQQvkpWq7MFWJ0zQx
-	 bKnSKLX9pTSDA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE81A380AACB;
-	Thu, 27 Feb 2025 18:40:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740681655; c=relaxed/simple;
+	bh=3OffKzEDazgHk2DMS3TSy5nHESANR3JLuAHyR5OcAH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bjqt/cwd7tIg1bWqehFodKQgwGG1zdrm6U9GKGwqvyv/TFuRohF6Fvq6/wV3e52fORmTLwU7V9JGONd09ddrob/4r+s8qkQRUyfEIrjQ9Ti/3K5ZLXJu7MoYancNns9Y4vb8fYnRtavFfnjDp4P1zly1e1F9GnAchpzIrLUYCh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=valentin-vidic.from.hr; spf=pass smtp.mailfrom=valentin-vidic.from.hr; dkim=pass (4096-bit key) header.d=valentin-vidic.from.hr header.i=@valentin-vidic.from.hr header.b=jzd1jcNw; arc=none smtp.client-ip=116.203.65.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=valentin-vidic.from.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valentin-vidic.from.hr
+X-Virus-Scanned: Debian amavis at valentin-vidic.from.hr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=valentin-vidic.from.hr; s=2024; t=1740681645;
+	bh=3OffKzEDazgHk2DMS3TSy5nHESANR3JLuAHyR5OcAH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jzd1jcNwt7Sb4GQl62MFaN8kv3b0y6DgScpWOL+TEppayqTwnuu0fPWHWWL4YdSmI
+	 Z+/c/Qe7cpq5sJZ0n0DW5Vy55LE2059ehKQZuOuLc0MEDIIoXqRfciZYdhPIGZj6+1
+	 cg0UNaDKpxu50fq8D2to5cfzzI0ed14j6k8hAIyIdDquNSbRDeQQniahr4iXpAm8X7
+	 X8CSQwpScFr2ce5od1dbAtRPw7Ai4S7OlcbxS3T/W6aIy7Fz1dtpM/SSAikAtUQIUo
+	 SqypYR/kx58KrUmlVC5koznk6aJg8fAa7bMKrk3UGfLx7ImsaGtfpQ+qEpqy/uBXfT
+	 Kqs4eMLrvPxWU0PUC9k+1Wzsz8CQSYiYuzGGYcetFAmEzx1+Sn7X1ey10VM1kGCfKx
+	 PJof1rIs9R89buOcsiENvIQFqvTbNY0hk8Ni52h/JL4+NX26Dc3xt2APrZnls4sEUV
+	 CJBDP2KibaXgIrTkY33Ep9w/+AmJU/3aP4XGfOp4Yo6YcQtDDsqoUpanNKmyoNjVI1
+	 Lu8aKzlcpb1c2/FuMr5Dzqh1j1H7LoDgGrDV6l03bpgMqZHbEj1n8cPxrnp3hwk021
+	 WwNqeaEI7HS02yhZH2ePz1gCR5Al94bHIJpCDyC20H1b4I5tr1LEDbWD4fAdVWn3RK
+	 ILijXKhg79hdpQdn+NDlB0bQ=
+Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
+	id AACC330A58; Thu, 27 Feb 2025 19:40:45 +0100 (CET)
+Date: Thu, 27 Feb 2025 19:40:45 +0100
+From: Valentin =?utf-8?B?VmlkacSH?= <vvidic@valentin-vidic.from.hr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH] tty: pty: remove redundant local variable
+Message-ID: <Z8CxraJaTBFuKSIQ@valentin-vidic.from.hr>
+References: <20250226204707.1941274-1-vvidic@valentin-vidic.from.hr>
+ <2025022632-syrup-regretful-79df@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bpf/selftests: test_select_reuseport_kern: remove unused
- header
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174068163051.1525690.12908480621215552864.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Feb 2025 18:40:30 +0000
-References: <20250227-remove_wrong_header-v1-1-bc94eb4e2f73@bootlin.com>
-In-Reply-To: <20250227-remove_wrong_header-v1-1-bc94eb4e2f73@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
-	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
- bastien.curutchet@bootlin.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022632-syrup-regretful-79df@gregkh>
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Martin KaFai Lau <martin.lau@kernel.org>:
-
-On Thu, 27 Feb 2025 15:08:23 +0100 you wrote:
-> test_select_reuseport_kern.c is currently including <stdlib.h>, but it
-> does not use any definition from there.
+On Wed, Feb 26, 2025 at 04:49:45PM -0800, Greg Kroah-Hartman wrote:
+> On Wed, Feb 26, 2025 at 09:47:07PM +0100, Valentin Vidic wrote:
+> > The value of to is only used once, so no need to store it in a
+> > variable.
+> > 
+> > Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+> > ---
+> >  drivers/tty/pty.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
+> > index df08f13052ff..c6eb711500b6 100644
+> > --- a/drivers/tty/pty.c
+> > +++ b/drivers/tty/pty.c
+> > @@ -110,12 +110,10 @@ static void pty_unthrottle(struct tty_struct *tty)
+> >  
+> >  static ssize_t pty_write(struct tty_struct *tty, const u8 *buf, size_t c)
+> >  {
+> > -	struct tty_struct *to = tty->link;
+> > -
+> >  	if (tty->flow.stopped || !c)
+> >  		return 0;
+> >  
+> > -	return tty_insert_flip_string_and_push_buffer(to->port, buf, c);
+> > +	return tty_insert_flip_string_and_push_buffer(tty->link->port, buf, c);
 > 
-> Remove stdlib.h inclusion from test_select_reuseport_kern.c
+> does this actually change the resulting code any?
 > 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> "to" actually means something here, the tty is the "from" and the link
+> is the "to" where the data is going, so having it be "to" makes the code
+> easier to understand by humans, which is the first goal of code.
+> Maintaining it for long periods of time is key.
 > 
-> [...]
+> Otherwise your change "tty->link->port" doesn't make it all that obvious
+> that the this is being written not to the tty device itself, but to
+> somewhere else, right?
 
-Here is the summary with links:
-  - bpf/selftests: test_select_reuseport_kern: remove unused header
-    https://git.kernel.org/bpf/bpf-next/c/0b9363131daf
+Right, the resulting code does not change, it only simplifies the
+function. For example, already the next one is very similar and does not
+use the helper variable:
 
-You are awesome, thank you!
+static unsigned int pty_write_room(struct tty_struct *tty)
+{
+        if (tty->flow.stopped)
+                return 0;
+        return tty_buffer_space_avail(tty->link->port);
+}
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Valentin
 
