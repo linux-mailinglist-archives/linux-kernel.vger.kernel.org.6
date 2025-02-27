@@ -1,107 +1,131 @@
-Return-Path: <linux-kernel+bounces-537246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE043A48998
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:15:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A261AA489A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56853B72CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DEE2188B28F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE6C26E95D;
-	Thu, 27 Feb 2025 20:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFADB26FA59;
+	Thu, 27 Feb 2025 20:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pYDrdXhw"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xq4l3YRf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9141BEF7D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303F1C07E6;
+	Thu, 27 Feb 2025 20:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687350; cv=none; b=E5mOcnE4bZyRtftrN9MziPo92S3D9tNwed+Rn+4kcdv58MhAKOLhGqOEqmODUNYFwIYhZUohYR3QY6Gl+PoUJQuvyDlupgRiGKHQavr1zV52HloEbczlrxM7HXG61NoDSTjkiPTwMZuVMxh/aaRaqOW0OP5D0iRLPerip11XgFg=
+	t=1740687407; cv=none; b=s0T2SngFtn/M3ZH4EWjul92/DG2Oqe+hMsbVsQoLeUBspwpmyaz08w/oF9kBzJjycQg1y3YABzBz2c/Tar+MWkdjdTRKdpx4oehMok3oF7Qky+FVOxD0U5lDa6D4W4sBetSWBZhwOd3HoFd3al51mpQfWcg7EjOYFpmtHjnLE4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687350; c=relaxed/simple;
-	bh=+XWik2wC1ffv2ovjVvxk5rjvVyKAKeQWJsIjHTOse/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyucqB05ssp3CKbKPHJy01aEqhdstSDMNJMJlk4yO4jreOJMwtVdM6nKNd8CmD5azt6MehdxznoW8kcBhRU5FDx5fDvcSUZJMwLEvE1GbCBlwKOgZbcmEUPL8j/bMMlT7yFJiUzpSJQs3EVmnEHgpT/vEANUe7uoabcJHETk/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pYDrdXhw; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abec925a135so181894866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:15:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740687346; x=1741292146; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Jo/OqPqJ4zSpDM0RDYOakC9S8mm3ipT209j6FvCsm0=;
-        b=pYDrdXhwqXIU8Alrfsj6kOhr82EW00Yj4UDXWrRssABoW0DloZOHUVfDD0dJArCAYd
-         AQKSLCDSEKHohG29S8X+UUqM/SFLavcs09hOfTYq/EeJ8usB9MYTx+RNxj4gVDoGLsK/
-         m/mVQTjFFBQsPKr+OiLDwHtjx/YGbkwQIBJ16CRkWl9pAIAL+VIBMOSUumnIt+DlLQR1
-         Q5Ik2gArh2Nbw5PX/u3SiUpFDuOl7uIdltoLhOPcM7XEUUoxqC4R5kGF167mo0IWRxfX
-         Iyc1ofnIML2wbDFay9AT9jRUd2mwn/NDWXzVPDN4Enbb2aXtPdvb4jPqdlnfplpvlOXh
-         oNFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740687346; x=1741292146;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Jo/OqPqJ4zSpDM0RDYOakC9S8mm3ipT209j6FvCsm0=;
-        b=UwuYWP0H2rQ4Vt9DmYrE4F3tNHYtiFMIcpMLaf2nZutFMB2Ek0udZXvvPHQT0H4bsB
-         QDYEKXBPbDfln05YUVi2a62r1uw3PTmIseEfQy2zvA+9qy7AvelrLU5xpeHUizdlczo6
-         yO4lLIcL4Ag0rw9PxvByiu4ovp4fE8FFgJC+65kFkp/3/QQGPQf/PuLmT1Zy5bXWKteQ
-         fWSt1AJQ7XTkNPaMZmMZvPcEKc29see8lFG0aewA/HIYQ6lsu2ZOzqcoyhaWBdCcfdiT
-         W31Uoh23nQwo15mpz9YKmuj+b6q+L50Urb0/pz6QrVOpiZPBTY9iy+QmAj0M7SgzQglN
-         rAxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO9itZbyZyU4xutGSAbRBA3QRSmvQSpHtM+M/FjF6GOTemS3hl20z4/1K0PZmb0tWuhUcA/20TOX+E9II=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykWFJ83HFkMDxc6PugyO1xN6vCOdeJsLZuZLnglyjpnHWv+Q5u
-	/ci7SpAsDZyEdR2qVUk+SAkwqcJIYFRDBXAbvoz9XDyvBB10zAuCph3HaspbU24=
-X-Gm-Gg: ASbGncviZQWHjUgCKJs2gfeDjp8Ds6mZpOkQBi7rbFM4SDFB7YBx4A4mk7jzOXxNr64
-	RwnmtcJG3KXsduFqETUx13kh4SlcQvX9QE0WY8SLoDTH7ugq0zFsR5O7XExsvEdW9rCjj8Sj712
-	w+ExO/yIV8Dcqd8QP9N1GUGOyA3ArAqrMQn1CLZALZICdvqbSau5ph/8FZXHgJEF7IWUXnu0Uhq
-	oIKHLHfsVCdK8nc35zR1QMix1vaYv+W7cl8cEZHVxcpRdoQzLTYvIgBI5LEwc+6Trs/fUVbsC7E
-	mZpvrH7ljRkdCbcc5ebFwr/LRptv1i4=
-X-Google-Smtp-Source: AGHT+IHEAa1ZZ8N7si4N7Iok01NnKREzA8Tp47LFBm6mrX2/YZngu4ctMzki6E6aFIm+hAJtSsGbmA==
-X-Received: by 2002:a17:906:7310:b0:ab7:bb93:56ef with SMTP id a640c23a62f3a-abf25fa9fb3mr79625166b.19.1740687346341;
-        Thu, 27 Feb 2025 12:15:46 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c755bb3sm173114566b.139.2025.02.27.12.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 12:15:46 -0800 (PST)
-Date: Thu, 27 Feb 2025 23:15:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xhci: Fix bcdUSB initialization
-Message-ID: <a8659c74-ec76-456d-962f-1690581da162@stanley.mountain>
-References: <20250227193400.109593-1-abhishektamboli9@gmail.com>
+	s=arc-20240116; t=1740687407; c=relaxed/simple;
+	bh=MxcjkzDPIHcg3KNj0lmIWncZ3FmlSU1NI7T34ONrkGI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=JSGNcXhEhcgH/7aAZwAB4vdcf+8dfH7mcXh4RNSiUSxsrD7cxCe5SAGda9rE8P449Wo6vCW+C9pFHPUPlwIyUATcLozOP81e41KmsEDTWc+XupEYJ9KgWy1mDQ+KTYilt7cn8Z5AMXG0+6lcmztJdpU8FSkiFSPcS5k7qyiIdIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xq4l3YRf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RHRcvo000916;
+	Thu, 27 Feb 2025 20:16:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gVxDPMjtgXGvK9HK5aQoDB
+	lcDQ1gOnuA/pbSsHiXW4s=; b=Xq4l3YRf9uwU8b1thtuKv59mwm/r2+XOPY9iYX
+	SnIt+KukofHt8yz786k6uJP/vtXcjG+rJ1R+XbrQ4lepAq8LrXoFVTFcgiv6uUKz
+	3YLrt+vksM6ijm4JeeSZx2xNwrV/vu6ZYwNtlJD6Rdb0DDnskunmpEDN3j/FYSkL
+	nBja3r2ThB8rUN0vIu5pmfTopmx6UU1ZVPcqebfdCi1wETD1+giShJrSznOvTGa7
+	p645xPsh4kqgHuRDN3y1xhRaiE/TvlFP7G9Hz2ngJy3+JGqrGdb25L+VkXj4SIQD
+	qB1KDe6ybVd9Sx9f+QvIqMn76erc4L+wmbqzByzmlBcimdFQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451pu9f28a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 20:16:39 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51RKGcIf013462
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 20:16:38 GMT
+Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Feb 2025 12:16:34 -0800
+From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Subject: [PATCH v2 0/2] Enable TRNG for QCS615 Platform
+Date: Fri, 28 Feb 2025 01:45:53 +0530
+Message-ID: <20250228-enable-trng-for-qcs615-v2-0-017aa858576e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227193400.109593-1-abhishektamboli9@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPnHwGcC/3WNywrCMBBFf6XM2pE8+gBX/od0kU6n7YAmNqlFK
+ f13o+DS5Tlwz90gcRROcCo2iLxKkuAzmEMBNDk/MkqfGYwylTLGInvXXRmX6EccQsSZUq0rbFR
+ NRNrqzjWQx/fIgzy/4UubeZK0hPj6/qz6Y3/J8l9y1ajQmtJy1/S2rNx5fgiJpyOFG7T7vr8BO
+ /w9rb4AAAA=
+X-Change-ID: 20250223-enable-trng-for-qcs615-706ccc131ba7
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinaba
+ Rakshit" <quic_arakshit@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 04CD-ma_JhHqTPZZJSobxqNZIvPf_IMl
+X-Proofpoint-ORIG-GUID: 04CD-ma_JhHqTPZZJSobxqNZIvPf_IMl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=682 malwarescore=0 suspectscore=0 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270150
 
-On Fri, Feb 28, 2025 at 01:04:00AM +0530, Abhishek Tamboli wrote:
-> Initialize bcdUSB to 0 to prevent undefined behaviour
-> if accessed without being explicitly set.
-> 
-> Fix the following smatch error:
-> drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc()
-> error: uninitialized symbol 'bcdUSB'
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
+Add device-tree nodes to enable TRNG for QCS615
 
-The concern here would be that xhci->num_port_caps is <= 0.  That's
-probably not possible so it's likely a false positive.
+This patch series depends on the below patch series:
+https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/ - Reviewed
 
-regards,
-dan carpenter
+Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+---
+Changes in v2:
+- Sort device node address-wise and document qcs615-trng alphabetically.
+- Link to v1: https://lore.kernel.org/r/20250224-enable-trng-for-qcs615-v1-0-3243eb7d345a@quicinc.com
+
+---
+Abhinaba Rakshit (2):
+      dt-bindings: crypto: qcom,prng: document QCS615
+      arm64: dts: qcom: qcs615: add TRNG node
+
+ Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi                    | 5 +++++
+ 2 files changed, 6 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250223-enable-trng-for-qcs615-706ccc131ba7
+
+Best regards,
+-- 
+Abhinaba Rakshit <quic_arakshit@quicinc.com>
+
 
