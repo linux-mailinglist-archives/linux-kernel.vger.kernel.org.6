@@ -1,164 +1,221 @@
-Return-Path: <linux-kernel+bounces-536470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59EAA47FFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:53:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A415A4803A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 655627A384F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE05616842D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C181022E3F4;
-	Thu, 27 Feb 2025 13:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC0123098D;
+	Thu, 27 Feb 2025 13:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KxUtgjmW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ph04i7/u"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695922DFB3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A101322A1F1;
+	Thu, 27 Feb 2025 13:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664410; cv=none; b=BAAV/r/JkdwHiVccgidKE225Alebwa+h0EfYdvMCuBWGk5aLQiQMQRguRiM92ClFzaZJ9Wmv9TNzlTGWVBH1eSZmkKrGceGUYQf/rG4WbugGsRtu2IjYL3DCXEYXyT+8xSrxFtITLg5cHKC/5omSMuGNzZcws/ULa21Ty7U/yHw=
+	t=1740664423; cv=none; b=Rhny/R7ES+RdR9zAxtoCAnSbPEWJeq1JfRuaD3ZIQJegEB1K7M6ZIGDjeCqahg5MI7F63l7P04CBDZ7zvZPTF0EnJra/QCSdi5fTkiYvjVBLdoYueHE3p4x2kG9vmgsWpGpN0vGuHKaoUk83tkt+JR3x6v1b+Q+FaFBqRVkbCXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664410; c=relaxed/simple;
-	bh=T1CaZpJQma5SSl9LTn/59DpYxDdZIFxagXEuc5TvuQA=;
+	s=arc-20240116; t=1740664423; c=relaxed/simple;
+	bh=/0CuoKUVLpuPQxhmceRCN2FzvQjGgaTD8xNVJQ2xppM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1ktgxUmm7LtO0QAGKjRjDzbIzFPbjADIistJHnCF6VM7KhY8tHqhJvlUrjol4BC/aAuxakrLuqpNVwC8pArq6XLu4cc2zs9i4RmnXk73QPIxDRdExwLXdM+ufaP+izp96Y98U0Eimml/Lf9opHiNNhcByUKN8Mfk2yzjFmOhcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KxUtgjmW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740664407;
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3wALqHf/BMnewmaIR20OiZIOQPwfPcJrhBqLGBnj9s3kGYuO+rjwiAi0TjCyuDtU+JHqP5P3Bd7hetTvMCLVkMBVIKoWze7J/IIRaEjmAyrxNhUB1MjcPj0oZUQz9XS6gMwyI/acxwTsS3IBtMXo+VaYDt6yjHQNSNePpn6zjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ph04i7/u; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C0CEA4438F;
+	Thu, 27 Feb 2025 13:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740664413;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RL6Y5H30649Urq1xqWEDkjGFFeWUivLSNvhpjDkGyQQ=;
-	b=KxUtgjmWVfCh2qiIPxUKHyP45Dog3Kbatnty5Igsqs4wohEQ+fVRCK2uV+G+04qGPZYINl
-	G33Fx3Pv3mYu862VEk1VW3rEL/or5gI2P4kyCQBCoCrXVNVudrCycgvqihvwxIFPC5Duuv
-	ejiB0G+yPczLkOcMPGc5UCE86QRRln4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-XqlCnelDNpCzSIWsExUyTw-1; Thu,
- 27 Feb 2025 08:53:25 -0500
-X-MC-Unique: XqlCnelDNpCzSIWsExUyTw-1
-X-Mimecast-MFC-AGG-ID: XqlCnelDNpCzSIWsExUyTw_1740664403
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 136181954B20;
-	Thu, 27 Feb 2025 13:53:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.102])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2014519560AE;
-	Thu, 27 Feb 2025 13:53:17 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 27 Feb 2025 14:52:52 +0100 (CET)
-Date: Thu, 27 Feb 2025 14:52:41 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Manfred Spraul <manfred@colorfullife.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250227135240.GB25639@redhat.com>
-References: <20250102140715.GA7091@redhat.com>
- <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
- <20250227125040.GA25639@redhat.com>
+	bh=EeCUlXoRiIADqC0A6H/S/j5kKXNEbT6nm8SE/1r17qQ=;
+	b=ph04i7/uF97NWN9Q/xcyILvei0QmxZGcWpHgwk+dk6cATY7Rbz8qrbqossVyYXCDTN8VrE
+	+2KnBDvGM2wSumFg5efROxq9mQu5iSPrZBMsBGBmBcInAzZ2DFVKIMyTtvNLrEt0YmmS+m
+	jvP3e4VaWmyT/YV6YX6alWc56YgOkcV1FEYLmOz7nN7Hs6eUMeKXYy/NHQf1AuWNuDtImL
+	pH3rvUuuFFTEuRY3oD68EXFYG9cM7ALopL7ws3ferGtpqGRjG6+MNBdnWmi7C6tB8aivPi
+	0DmUTjEdgpVCX+t2jc2vD1tIpa5GdBqboPHwMBkbL4R3VILx0fqKs4WRq9BjNA==
+Date: Thu, 27 Feb 2025 14:53:30 +0100
+From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dharma.B@microchip.com,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+Message-ID: <20250227135330.GC182392@tpx1.home>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
+ <Z7h0AXV1zlgp9Nw-@ishi>
+ <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
+ <Z7vihBqOgP3fBUVq@ishi>
+ <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
+ <Z7_xTQeTzD-RH3nH@ishi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250227125040.GA25639@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7_xTQeTzD-RH3nH@ishi>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeeifecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefmrghmvghluceuohhuhhgrrhgruceokhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfefhlefgueektddvhfegveduvefftdevgfejffegveevvdekgfffleffteevfeehnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrieefrddvtddvrdegtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrieefrddvtddvrdegtddphhgvlhhopehtphiguddrhhhomhgvpdhmrghilhhfrhhomhepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepfigsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghsohhkrghsrdgsvghntggvsehprhholhgrnhdrhhhupdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeffhhgrrhhmrgdrueesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehluhguohhvihgtrdguvghsrhhotghhvghssehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomh
+X-GND-Sasl: kamel.bouhara@bootlin.com
 
-Forgot to mention...
-
-Even if this patch is likely "offtopic", it probably makes sense.
-However, it is "incomplete" in that there are other scenarious.
-
-Again, the pipe is full. A writer W1 tries to write 4096 bytes and
-sleeps. A writer W2 tries to write 1 byte and sleeps too.
-
-A reader reads 4096 bytes, updates pipe->tail and wakes W1.
-
-Another writer comes, writes 1 byte and "steals" the buffer released
-by the reader.
-
-W1 sleeps again, this is correct. But nobody will wake W2 which could
-succeed.
-
-This (and the previous more simple scenario) means that
-
-	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-		wake_next_writer = false;
-
-before return in anon_pipe_write() is not really right in this sense.
-
-Oleg.
-
-On 02/27, Oleg Nesterov wrote:
+On Thu, Feb 27, 2025 at 01:59:57PM +0900, William Breathitt Gray wrote:
+> On Wed, Feb 26, 2025 at 01:58:37PM +0100, Csókás Bence wrote:
+> > On 2025. 02. 24. 4:07, William Breathitt Gray wrote:
+> > > On Fri, Feb 21, 2025 at 03:14:44PM +0100, Csókás Bence wrote:
+> > > > On 2025. 02. 21. 13:39, William Breathitt Gray wrote:
+> > > > > First, register RC seems to serve only as a threshold value for a
+> > > > > compare operation. So it shouldn't be exposed as "capture2", but rather
+> > > > > as its own dedicated threshold component. I think the 104-quad-8 module
+> > > > > is the only other driver supporting THRESHOLD events; it exposes the
+> > > > > threshold value configuration via the "preset" component, but perhaps we
+> > > > > should introduce a proper "threshold" component instead so counter
+> > > > > drivers have a standard way to expose this functionality. What do you
+> > > > > think?
+> > > >
+> > > > Possibly. What's the semantics of the `preset` component BTW? If we can
+> > > > re-use that here as well, that could work too.
+> > >
+> > > You can find the semantics of each attribute under the sysfs ABI doc
+> > > file located at Documentation/ABI/testing/sysfs-bus-counter. For the
+> > > `preset` component, its essential purpose is to configure a value to
+> > > preset register to reload the Count when some condition is met (e.g.
+> > > when an external INDEX/SYNC trigger line goes high).
+> >
+> > Hmm, that doesn't really match this use case. All right, then, for now, I'll
+> > skip the RC part, and then we can add it in a later patch when the
+> > "threshold" component is in place and used by the 104-quad-8 module.
 >
-> Hmm...
-> 
-> Suppose that pipe is full, a writer W tries to write a single byte
-> and sleeps on pipe->wr_wait.
-> 
-> A reader reads PAGE_SIZE bytes, updates pipe->tail, and wakes W up.
-> 
-> But, before the woken W takes pipe->mutex, another writer comes and
-> writes 1 byte. This updates ->head and makes pipe_full() true again.
-> 
-> Now, W could happily merge its "small" write into the last buffer,
-> but it will sleep again, despite the fact the last buffer has room
-> for 4095 bytes.
-> 
-> Sapkal, I don't think this can explain the hang, receiver()->read()
-> should wake this writer later anyway. But could you please retest
-> with the patch below?
-> 
-> Thanks,
-> 
-> Oleg.
-> ---
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index b0641f75b1ba..222881559c30 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -455,6 +455,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  	 * page-aligns the rest of the writes for large writes
->  	 * spanning multiple pages.
->  	 */
-> +again:
->  	head = pipe->head;
->  	was_empty = pipe_empty(head, pipe->tail);
->  	chars = total_len & (PAGE_SIZE-1);
-> @@ -559,8 +560,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
->  		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
->  		mutex_lock(&pipe->mutex);
-> -		was_empty = pipe_empty(pipe->head, pipe->tail);
->  		wake_next_writer = true;
-> +		goto again;
->  	}
->  out:
->  	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+> Understood, I'll work on a separate patchset introducing a "threshold"
+> component (perhaps "compare" is a better name) to the 104-quad-8 and
+> once that is complete we can add it to the microchip-tcb-capture as its
+> own patch to support the RC register functionality.
+>
+> > > In the same vein, move the uapi header introduction to its own patch.
+> > > That will separate the userspace-exposed changes and make things easier
+> > > for future users when bisecting the linux kernel history when tracking
+> > > down possible bugs.
+> >
+> > Isn't it better to keep API header changes in the same commit as the
+> > implementation using them? That way if someone bisects/blames the API
+> > header, they get the respective implementation as well.
+>
+> Fair enough, we'll keep the header together with the implementation.
+>
+> > > and it looks like this chip has
+> > > three timer counter channels described in section 54. Currently, the
+> > > microchip-tcb-capture module is exposing only one timer counter channel
+> > > (as Count0), correct? Should this driver expose all three channels (as
+> > > Count0, Count1, and Count2)?
+> >
+> > No, as this device is actually instantiated per-channel, i.e. in the DT,
+> > there are two TCB nodes (as the SoC has two peripherals, each with 3
+> > channels), and then the counter is a sub-node with `reg = <0/1/2>`,
+> > specifying which timer channel to use. Or, in quadrature decode mode, you'd
+> > have two elements in `reg`, i.e. `reg = <0>, <1>`.
+>
+> So right now each timer counter channel is exposed as an independent
+> Counter device? That means we're exposing the timer counter blocks
+> incorrectly.
+>
+> You're not at fault Bence, so you don't need to address this problem
+> with your current patchset, but I do want to discuss it briefly here so
+> we can come up with a plan for how to resolve it for the future. The
+> Generic Counter Interface was nascent at the time, so we likely
+> overlooked this problem at the time. I'm CCing some of those present
+> during the original introduction of the microchip-tcb-capture driver so
+> they are aware of this discussion.
+>
+> Let me make sure I understand the situation correctly. This SoC has two
+> Timer Counter Blocks (TCB) and each TCB has three Timer Counter Channels
+> (TCC); each TCC has a Counter Value (CV) and three general registers
+> (RA, RB, RC); RA and RB can store Captures, and RC can be used for
+> Compare operations.
+>
+> If that is true, then the correct way for this hardware to be exposed is
+> to have each TCB be a Counter device where each TCC is exposed as a
+> Count. So for this SoC: two Counter devices as counter0 and counter1;
+> count0, count1, and count2 as the three TCC; i.e. counter0/count{0,1,2}
+> and counter1/count{0,1,2}.
+>
+> With that setup, configurations that affect the entire TCB (e.g. Block
+> Mode Register) can be exposed as Counter device components. Furthermore,
+> this would allow users to set Counter watches to collect component
+> values for the other two Counts while triggering off of the events of
+> any particular one, which wouldn't be possible if each TCC is isolated
+> to its own Counter device as is the case right now.
+>
+> Regardless, the three TCC of each TCB should be grouped together
+> logically as they can represent related values. For example,  when using
+> the quadrature decoder TTC0 CV can represent Speed/Position while TTC1
+> CV represents rotation, thus giving a high level of precision on motion
+> system position as the datasheet points out.
+>
+> Kamel, what would it take for us to rectify this situation so that the
+> TCC are organized together by TCB under the same Counter devices?
 
+Hello,
+
+Indeed, each TCC operates independently except when quadrature mode is
+enabled. I assume this approach was taken to provide more flexibility by
+exposing them separately.
+
+Currently only one channel is configured this would need to rework the
+driver to make the 3 TCCs exposed.
+
+Greetings,
+Kamel
+
+>
+> > > > The `mchp_tc_count_function_write()` function already disables PWM mode by
+> > > > clearing the `ATMEL_TC_WAVE` bit from the Channel Mode Register (CMR).
+> > >
+> > > So capture mode is unconditionally set by mchp_tc_count_function_write()
+> > > which means the first time the user sets the Count function then PWM
+> > > mode will be disabled. However, what happens if the user does not set
+> > > the Count function? Should PWM mode be disabled by default in
+> > > mchp_tc_probe(), or does that already happen?
+> >
+> > You're right, and it is a problem I encounter regularly: almost all HW
+> > initialization happens in `mchp_tc_count_function_write()`, the probe()
+> > function mostly just allocates stuff. Meaning, if you want to do anything
+> > with the counter, you have to set the "increase" function first (even
+> > though, if you `cat function`, it will seem like it's already in "increase"
+> > mode). I don't know if it was deliberate, or what, but again, that would be
+> > a separate bugfix patch.
+>
+> That does seem like an oversight that goes back to the original commit
+> 106b104137fd ("counter: Add microchip TCB capture counter"). I'll submit
+> a bug fix patch later separately to address this and we can continue
+> discussions about the issue there.
+>
+> William Breathitt Gray
+
+
+
+--
+Kamel Bouhara, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
