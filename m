@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-536976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F4EA4868C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:26:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D928A48690
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495EF3B5CD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:26:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41EC47A2CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51341DE2A8;
-	Thu, 27 Feb 2025 17:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7511DE3A4;
+	Thu, 27 Feb 2025 17:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EusWscYM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCSrc9wY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1C21A08B1;
-	Thu, 27 Feb 2025 17:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC741DE2A7;
+	Thu, 27 Feb 2025 17:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677201; cv=none; b=syyI7UMvgLm1gvWmZ50XnnxzElAeWvARBWTeiVfQGc4irVtGXyZBRJhpFGWAsCOxFeny7CgntgDvJuRZCI8tAkwyklvVwlKjo4hsmZBqorIRIDASzjknKXjMARszh/rmiQTrDKaoC1u7plBZQx963FP0wrw+WEABiLRLM2thNO8=
+	t=1740677240; cv=none; b=M8WpeoANxzBn/vvT9RP8DBPtdKeVfxH1L0X1wIlIjMH9WUlD4g6YN+nx+3p2fg74OKARvsnZ8Jg0p0tnYs1oOOzD/4EkC3wf/uUrYTGehk8Ny69vk4jaBnQ8Q0v2PT2aqxCBYti561Jtvuuv+bHWHmRDh1smw7lYCfg/RaNIm2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677201; c=relaxed/simple;
-	bh=EL5qmbfDecAAkENf6EuP4jZVLrTznPY05PZNhRIWt7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqQbc1Unm5im6k/REGsElH29vStII5ffqSYJlI9Is6+YLCFGNgL2LCGVSreGF3EAI0JWg7p6ffFL1K4bPfNok9lpsME+cWUq/+/P24zs8sG+t2xhTWG2jEfy9eJ6mzLT7noRYkjXZ8/B1bk9n/Jz8JIYTPKrfSB/xIVpHYMhpvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EusWscYM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3521C4CEDD;
-	Thu, 27 Feb 2025 17:26:40 +0000 (UTC)
+	s=arc-20240116; t=1740677240; c=relaxed/simple;
+	bh=krunXr5w8ZQ2DT47MBNeiyRY+vqHzT6dlAWTnz9cDh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TwiE7bc0OInN9wOGbCiLa6EU/8Sfb1nDj3zaU4YwfFxBVGvtlhrjUEpBm07D94rJLoPPp2VZ34N1kzmkVYrAanHwRQ5Qsg4Mk40m0AYH6TQ3AX/EUrnBZN+IXnY1IHH+gIg5Sj46+POgVLizrAHEVTssrrjywusjIepR8cefQQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCSrc9wY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A47BC4CEDD;
+	Thu, 27 Feb 2025 17:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740677200;
-	bh=EL5qmbfDecAAkENf6EuP4jZVLrTznPY05PZNhRIWt7k=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=EusWscYMMIbPGrpiz8cBeqMfVWSkXjNMXjKCmtLjoMS/9lnt0JEo5t9RZI+sXeOXm
-	 a7s+I6f+EumsdjoJsPGncxWeou0qh90pnxMiahZJpP742+em+xEmidRJft2BLthIk1
-	 3IGm/UM2gOEXSOVUcV28iO8C2qTeFzKSOhdjLdpdnSe1a4tK7F1iqrOjZhOsUr7nG+
-	 HcuivcbRNmmlZn7SoJeBWg+P3psU0iiji+F8tUhYI0HB62MOPzh9nZk/qkB8qcgr1k
-	 HzNOYLPIOsOm86sB/4IqNuVT9VsCA4HhGwpzL4RLi89HEKo1V38VsxbrjI+MF6q6gJ
-	 AuHP0HrmSuWjA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 69422CE0799; Thu, 27 Feb 2025 09:26:40 -0800 (PST)
-Date: Thu, 27 Feb 2025 09:26:40 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250227131613.52683-1-urezki@gmail.com>
- <20250227131613.52683-3-urezki@gmail.com>
- <Z8CdB0Hzvdu5ZVSI@Mac.home>
+	s=k20201202; t=1740677240;
+	bh=krunXr5w8ZQ2DT47MBNeiyRY+vqHzT6dlAWTnz9cDh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cCSrc9wYu5ICYApSHYsALJbFjD73ZCkPDinzcfu6xp/mEL0fXgEbFmYrZfwSbpiu+
+	 xZ4fcUsRRPPy+A8J4P5u4R4cRv7gi9RzR+HpL8lh0RDQWwr2jQS8olIXzosV+/X/oi
+	 yMyUJZz41NGibTX2yEaY8x1060MMKo197laumUc2UN1IXrRj3U+kmqymNMW9KU/ylG
+	 UJ4WroMXDylHZdxO3O6ebEhulChc/GBo2vX4qasYG4CJlaFMHc8Hs9M0b9SNXnXyMd
+	 GsPkQgtFrnh4HXdVu6Y0Gf+mIKaJbn2rpx2DjfdwljRmPx7aRwo08IMr5WdQgp30Wi
+	 ESpzFPhdM/0ww==
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: lgirdwood@gmail.com, peter.ujfalusi@linux.intel.com, 
+ yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+In-Reply-To: <20250217140159.2288784-1-ckeepax@opensource.cirrus.com>
+References: <20250217140159.2288784-1-ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 0/4] Add SDCA register map support
+Message-Id: <174067723773.191869.7077783208967189821.b4-ty@kernel.org>
+Date: Thu, 27 Feb 2025 17:27:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8CdB0Hzvdu5ZVSI@Mac.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
-> Hi Ulad,
+On Mon, 17 Feb 2025 14:01:55 +0000, Charles Keepax wrote:
+> This series is the next step of adding SDCA support. Here we add
+> helper functions to allow drivers to easily use the SDCA DisCo
+> information to create a register map for the device.
 > 
-> I put these three patches into next (and misc.2025.02.27a) for some
-> testing, hopefully it all goes well and they can make it v6.15.
+> The basic idea here is the code takes the list of SDCA controls parsed
+> from DisCo and uses primarily the Access Mode to determine if the
+> register should be marked as readable/writable etc. Further more
+> some additional concepts such as DisCo Constants and Defaults are
+> handled. There is some potential confusion, as DisCo Constants are
+> handled as an entry in the regmap defaults table, whereas a DisCo
+> Default is simply handled as a write to the register. Alas the naming
+> confusion is an unavoidable result of the slight impedance mismatch
+> between the two systems.
 > 
-> A few tag changed below:
-> 
-> On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Switch for using of get_state_synchronize_rcu_full() and
-> > poll_state_synchronize_rcu_full() pair to debug a normal
-> > synchronize_rcu() call.
-> > 
-> > Just using "not" full APIs to identify if a grace period is
-> > passed or not might lead to a false-positive kernel splat.
-> > 
-> > It can happen, because get_state_synchronize_rcu() compresses
-> > both normal and expedited states into one single unsigned long
-> > value, so a poll_state_synchronize_rcu() can miss GP-completion
-> > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-> > run.
-> > 
-> > To address this, switch to poll_state_synchronize_rcu_full() and
-> > get_state_synchronize_rcu_full() APIs, which use separate variables
-> > for expedited and normal states.
-> > 
-> > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-> 
-> I switch this into "Closes:" per checkpatch.
-> 
-> > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-> > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> 
-> You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
-> Would you or Paul double-check the Reviewed-by should be here?
+> [...]
 
-I am good with keeping my Reviewed-by tags.
+Applied to
 
-							Thanx, Paul
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> Regards,
-> Boqun
-> 
-> > ---
-> >  include/linux/rcupdate_wait.h | 3 +++
-> >  kernel/rcu/tree.c             | 8 +++-----
-> >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/rcupdate_wait.h b/include/linux/rcupdate_wait.h
-> > index f9bed3d3f78d..4c92d4291cce 100644
-> > --- a/include/linux/rcupdate_wait.h
-> > +++ b/include/linux/rcupdate_wait.h
-> > @@ -16,6 +16,9 @@
-> >  struct rcu_synchronize {
-> >  	struct rcu_head head;
-> >  	struct completion completion;
-> > +
-> > +	/* This is for debugging. */
-> > +	struct rcu_gp_oldstate oldstate;
-> >  };
-> >  void wakeme_after_rcu(struct rcu_head *head);
-> >  
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 8625f616c65a..48384fa2eaeb 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -1632,12 +1632,10 @@ static void rcu_sr_normal_complete(struct llist_node *node)
-> >  {
-> >  	struct rcu_synchronize *rs = container_of(
-> >  		(struct rcu_head *) node, struct rcu_synchronize, head);
-> > -	unsigned long oldstate = (unsigned long) rs->head.func;
-> >  
-> >  	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) &&
-> > -		!poll_state_synchronize_rcu(oldstate),
-> > -		"A full grace period is not passed yet: %lu",
-> > -		rcu_seq_diff(get_state_synchronize_rcu(), oldstate));
-> > +		!poll_state_synchronize_rcu_full(&rs->oldstate),
-> > +		"A full grace period is not passed yet!\n");
-> >  
-> >  	/* Finally. */
-> >  	complete(&rs->completion);
-> > @@ -3247,7 +3245,7 @@ static void synchronize_rcu_normal(void)
-> >  	 * snapshot before adding a request.
-> >  	 */
-> >  	if (IS_ENABLED(CONFIG_PROVE_RCU))
-> > -		rs.head.func = (void *) get_state_synchronize_rcu();
-> > +		get_state_synchronize_rcu_full(&rs.oldstate);
-> >  
-> >  	rcu_sr_normal_add_req(&rs);
-> >  
-> > -- 
-> > 2.39.5
-> > 
+Thanks!
+
+[1/4] regcache: Add support for sorting defaults arrays
+      commit: fd80df352ba1884ce2b62dd8d9495582308101b7
+[2/4] ASoC: SDCA: Add generic regmap SDCA helpers
+      commit: e3f7caf74b795621252e3c25b4a9fb6888336ef1
+[3/4] ASoC: SDCA: Add regmap helpers for parsing for DisCo Constant values
+      commit: 28c12866c22c2826ccbd8c82dc353f02ab2deea5
+[4/4] ASoC: SDCA: Add helper to write out defaults and fixed values
+      commit: c143755d8cce31e770234732ff23134993b0550f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
