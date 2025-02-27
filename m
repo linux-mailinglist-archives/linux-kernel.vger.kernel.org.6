@@ -1,111 +1,204 @@
-Return-Path: <linux-kernel+bounces-536769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F18A48405
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:01:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E5CA48431
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF943A88F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1F31894ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611801BEF87;
-	Thu, 27 Feb 2025 15:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466E41C6FEA;
+	Thu, 27 Feb 2025 15:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Oo9w98fR"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XKBE7wrM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0F31A8F71;
-	Thu, 27 Feb 2025 15:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671785; cv=none; b=toRdI9yYrOahygwKLXiXxd3JS67NvnUgCnJNTIvQaFoGDkHZcp0nNGKFvn0qnPxQ7ZqTu3Vwjod88jhN4DXKesp8hJ86KtowRCmdbRAKqwWd+XexgXbYFZTBBq4AOioc71dJyKkrAImRDkWtayT019wxio9XdMCKpAw7VxwwCSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671785; c=relaxed/simple;
-	bh=2pSnNrN09Rs2zrWH8JjOUOcDIapOgrLstDzhoRnrrA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uL5r/AZc/1UkjpI/ZUH4gkcW5x90gUgkkxusyhNum20/5crtCLNHa8wVIQtlG+pF29IK/9lPsbbr++FriBYmegD6CjD2NHB5FI4iHDmoaIKVvpHR4kl/9ByKMLyUs8s4imZcbI9ir4PIH0XzjWwgMo+d+FzFyxqgNoU8OZxldEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Oo9w98fR; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 69D45A1B66;
-	Thu, 27 Feb 2025 16:56:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=UUqUozeRUbn4nbrTWMJQ
-	lf6Jo77GV6T+nGHxfg9jgGE=; b=Oo9w98fRv+aKEJIHDPo3VPKA/ET9wpJTZce1
-	Cx4ygAyZrV9UN67wIN0w64ESKqoHTC4VNIUK90yTwJtt+nX4sn78J+c3iZVCngfY
-	VvO0IbnWz+omdAWXRy53lKUVJXRaazsqlsGZz2Js3isGNuf1iayMxobZr/olXBzs
-	LbV0GQ5ChYuOmidh+1HHoXC4MIlHtg/9FqO3L2ejIW8NdA/lQ/7dcboXLHYypuy0
-	OINcAKjJLDQUtbrSTgQti3MnaISSfv9nDkPgln6d+JqmONBr4lq64mwfYDt3kYZZ
-	HrBPQwbvAomqpV/iPHO5ijQaWtfNqZxYh6sTZW1qUceCsAJFrjTt0MU0Xdq1IO9+
-	AjrW5+Ulrb6vWrF2VOCslJt63xG7ZsdUIF/9PUkJxnjJ1h5s/aAmCIVym3xnrjSe
-	kZ4xhFipH/+CzIdQFpkrhfrkiiZrO8hIeOS6K2SiuRQebNpEHPFcdw3zmzbvNiWK
-	Mi1GQSvvUdRqHeF5H6QA48jdrUbbEXbl2ktFj0mMcwB1J2vjlRIovcSYrXswMfw7
-	azPlssEGN8L3JC1hHgGHu3spJP0BfnioPmIdIFbf/LgN8OCygGBbM04EQafhupY6
-	vqdDOyND5XN4ShcjVuUNt/bgvS0hwDanT844Bm9FUVWfKCgnI8FldfdOMoEm0vHC
-	xeQFLPU=
-Message-ID: <077f23f1-3e5f-423c-aa97-ee7fcdf1475d@prolan.hu>
-Date: Thu, 27 Feb 2025 16:56:17 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19808197A76;
+	Thu, 27 Feb 2025 15:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740671857; cv=fail; b=SMSzGCv65wRfgW8ONrvps5+/OpnsMf89wIfWZjDNe9FNNEpQ6hQB1SYhI1ENVSdhHmsC2VC0p+x5c2SvDnrgyDFShpxX6TgPnlfwUoqnGj2rjX+an+4L7yXprg84W5isjBjWSOPcXK3Ov8yj9D9yYZAWmIBTFNHOSDlFv/VC+So=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740671857; c=relaxed/simple;
+	bh=3kThPrExOjhdXrHa0fA+3qIkGP+WZHMqjl4f/H3HSL4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DzCt4G+7RhDwIBuPEoQxpQ4QONng1X0SSORhXN8cIShFr9T1Vm/hrNGl0gAriWLbBVvYDGOjHIZjlS/lMH73BO1htGVosG4Y+MeBxP+eZKm2NZ5QwsXi5Cm3FiyyFxenBddysfbXophFMtyW9Euck87s2amPy+Wwx5hlKeMrID0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XKBE7wrM; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740671855; x=1772207855;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=3kThPrExOjhdXrHa0fA+3qIkGP+WZHMqjl4f/H3HSL4=;
+  b=XKBE7wrMjWlsAKiDIgw+VzE6GfTxG2nyjBmotQp+h+lvtuml0iwWQu8X
+   zsQJ1UfTICK2hrD2SXTmC3ogpnK9GkBOkPp9tGKebbd2Zl/YVgmh5ZJeZ
+   17Hcbmds922Ucu6M4IoDY8tFPSOqckczPFLBtpMd4f60mBk5pUwBb/naF
+   8hLjDpP6r8fQKN96Y0ZbZgl8uv2lmi7nT8ks6ef+BHQEVRWfT5hcE2Zj9
+   sHvHZ1p+WuoGEgAR3nHz5mBg4p6+UW4i+krttDE6cZRoQbaRdKQ80tPhG
+   55vJAcaYba3+JWxTycyqPEkl7TaKvnL7aum0QfOStBurLOFtR8fnjgxpG
+   g==;
+X-CSE-ConnectionGUID: GgsLu96hRUqcQVc4XaMJWA==
+X-CSE-MsgGUID: 0rOoBJnpSzahQ4wWXZSv1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41273974"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="41273974"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:57:32 -0800
+X-CSE-ConnectionGUID: +UtQI9MbSxe+yUPlzlyYTw==
+X-CSE-MsgGUID: Fv2jtx1iTfmZSOG+WI7XuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121190517"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:57:28 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 27 Feb 2025 07:57:27 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 27 Feb 2025 07:57:27 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 27 Feb 2025 07:57:26 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ykgedm6v7aPo4+Eg5yGeBBQFmWCjtEPouxOP9St7gqA2yeSOk2QW1C88NSW0WgSaKvs+Ks7LJgiiFDZPFNlGEqKUXYc3QXCJSVWBPjaWsMItScG7Utu9stAicaclTQc1sFR3UYMD/mkNPuT2v3De8829AvjQa2l/4NydySPWqIrN2y7ziReB0b6jhbqd5ZSHSPoc+0DCKbH5RLYfsx5at736ZyrlOlD0sHzHqF4K+eJXuXFYOi5w/ysHFKaH+/HNLUu6cfkFR72fLkjkC3iUTs3Mgjtr3x8w6IFyjMmiUGOqBZy8yIpOCnm5KlqjASiRshoyzD+ig1SZi6iEPy7IvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M2/BjG4O/yuZoVH6tafylqq9jZ2JFw1LJWmICPlrFn8=;
+ b=OoZ4UZnZdx76c2FUj9TnQ0d3ENdaWZD7CO7Eh5iXPYF8InKlqj23byXgiK9KJUsYbuUMvmsLEYv+V5XeDlah1M+ZagK1WPAJFVLFbX6tmTer0gMl/qfwClR41QWezFIGvxTuswa1Os0vFtdsaA4q0aeSxSXJByOO5Iw9QLpovjIUGKykYFJE1/2+Y9Gph9dECmSSbDip6uAx9N2Kbb2ub6ApNJGPR7WHrUXTvMzNJ2DSpwmNKdNZLNdBCujWEJarKsGtJ3R5KcicYJURS6osCVlEqdXAWdXz2xCdH00XDmAcpqtnj/usHf6SqHa70erFrQgE05pB1dgvMYXKLIp/dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by DS7PR11MB5968.namprd11.prod.outlook.com (2603:10b6:8:73::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.26; Thu, 27 Feb 2025 15:57:10 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
+ 15:57:09 +0000
+Date: Thu, 27 Feb 2025 09:57:12 -0600
+From: Ira Weiny <ira.weiny@intel.com>
+To: Li Ming <ming.li@zohomail.com>, <dave@stgolabs.net>,
+	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Li Ming
+	<ming.li@zohomail.com>
+Subject: Re: [PATCH v1 1/1] cxl/mem: Do not return error if CONFIG_CXL_MCE
+ unset
+Message-ID: <67c08b5857c0_b295929481@iweiny-mobl.notmuch>
+References: <20250227101848.388595-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250227101848.388595-1-ming.li@zohomail.com>
+X-ClientProxiedBy: MW4PR03CA0022.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::27) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
- Overflow etc. events
-To: William Breathitt Gray <wbg@kernel.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Kamel Bouhara <kamel.bouhara@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Dharma.B@microchip.com>, Ludovic Desroches
-	<ludovic.desroches@microchip.com>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Jonathan Cameron <jic23@kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-References: <20250211151914.313585-3-csokas.bence@prolan.hu>
- <Z7h0AXV1zlgp9Nw-@ishi> <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
- <Z7vihBqOgP3fBUVq@ishi> <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
- <Z7_xTQeTzD-RH3nH@ishi> <20250227135330.GC182392@tpx1.home>
- <Z8B1LDT-n2XTTp8q@ishi> <202502271437280a6701d8@mail.local>
- <Z8CA9RTZWChh9cJW@ishi> <Z8CKQvRjqH9lwzgO@ishi>
-Content-Language: en-US, hu-HU
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <Z8CKQvRjqH9lwzgO@ishi>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94852637760
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|DS7PR11MB5968:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a1ad2e1-3986-4cd1-419a-08dd5747647b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ak1dm3n2NXzXZMJ+rEPgbu5xwEyImNPkHNt7kq8Qob0KdurekVq++e0JO649?=
+ =?us-ascii?Q?dph+5/onAEaFyebHL2Bzbi6YR+XfVWft4XTFw215LqHxOez7hYg1xrUk4vEM?=
+ =?us-ascii?Q?xfTDJnKW9fvpJZqju6sDwY0M37KqqPBpg1IfPRTrdpMVb3SvB6S7iyI7zpAT?=
+ =?us-ascii?Q?ssYcbKN+bvrO32UOYQgdFe6gK5zda05XnwvkElWZBx5vcf6UYnKUGpaTvvra?=
+ =?us-ascii?Q?mXxi0eqS18+n5ynpiyOorqX/6bLabfOwlNNULw0SE1UZTqhIy34i7uyjqPzq?=
+ =?us-ascii?Q?mo3i/0LUjvth3myxAJeiVVh5MiXMeCAj0Y2oCs8ZAAWqhCzxFO6tbMM3SaA7?=
+ =?us-ascii?Q?mthSA14ClML+C0yE7HK/2kbD7+lTy+tU7HbmDavHwcis6r+bjBCzEojDROv2?=
+ =?us-ascii?Q?1GVrRbZ+Nhj0NHsHwRgF57lY/Mv7odWHUPLtiq9E7LUz5GJCsW5Ilcp/c/Ku?=
+ =?us-ascii?Q?bn+rbd+xA8j5Il6v73ph0f/RyRbJZItrNGMmlvL6Ox3HNRog7zldTG4kmjGo?=
+ =?us-ascii?Q?I5K3TDyf8wbMtNGE2P/Fgx25InVr8PDNVcvPlY5Jm4DfB8kvdoO5ttXOiYIo?=
+ =?us-ascii?Q?vG8AXOthEnJES+5BnVJjqLpwNVeMkId+puuWj5YtkbMj/2B/+JSV4uIGa6qz?=
+ =?us-ascii?Q?byaj0PLLRCjE9guOCxjC7WVSQMJEv6qOtYzmWRdGh9qNUQv7yFU7X70rO9nP?=
+ =?us-ascii?Q?/AQIh67KvZ5E986xdzDl11FRMXBEGfo8nzRtDFQkNFHZ7ySU3P945iCx91qp?=
+ =?us-ascii?Q?CUJAFC9JODfo5nnaPg/y1asytfyzWAymUG7lDpw60bFyfTGGPm+mYgNbTTrw?=
+ =?us-ascii?Q?0qIrmyRMrYqqP5MF72zO6qA1sUAIPA4MTurV5yXln3beyBNkajKnai/mD705?=
+ =?us-ascii?Q?P/Z4RcZQGMfWbxuBlnOLO/tjrMcTKKCjwr6o2Z/8kD5knu02vK2ZBebPSQuD?=
+ =?us-ascii?Q?F9JAVOYIg48bbl69tmnh9kVgr1uZm0+0+Rclu09MpsdiLQkLd1EKwkDE9n4N?=
+ =?us-ascii?Q?n21WkPFG7qRt3sT/SNx/JyhbYYIcdeXWs/MKprPMMbt/HNnND5o8wHw3uTCe?=
+ =?us-ascii?Q?p3YGb9UfGhnbQ79Hjc0ys5QPgIHZRodMPwruXoAcDX8qtMQ1mgzQfHzleHjz?=
+ =?us-ascii?Q?Dlsg5epwzyGzRYJqf7zS2chKr0VcG2ej0saUxNh++Raw8iHKeBi0B90F6Im4?=
+ =?us-ascii?Q?iLgsAh3tI0A/qne2k4Equ0k2YS9AG8X6Z3pbZ0loNE3fv6QqEUvtXq35zv8I?=
+ =?us-ascii?Q?Mtz2sxUCS0zaxYg75ekV/U/Aw+eCkEZ5uTImLqaXrnJXcxjfwBr3Hsz374y/?=
+ =?us-ascii?Q?uZPEdKjY5nI94wZAJTviLpdqNQvl51onzdNmyd7n3YiBXaCyi0AcAJ+eZHTv?=
+ =?us-ascii?Q?KgdfnuziENx2VjCvAEBmBAMi6agW?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0nR/mxvKihp6Hu355+PX3p68MR+f0qKcdXqzDIvusxxLX3L1Bg6jo+viQ4uv?=
+ =?us-ascii?Q?0lPo9GBurRcDi3tCKPsMteR1idnz8PMYDD5nhcNX1cJq+3hFJOuo6tRFKMIQ?=
+ =?us-ascii?Q?DGLZ9CRrxupc9CGSsm1Xzn3q1m0NkDVL+B97QBrkLoozPfQJdy+q00iN1BRW?=
+ =?us-ascii?Q?xdXB4CFK6kJ06dSPxwzngXeez4W1WJDHSVLTa9V7AclznODnqyGc9Neg4KNj?=
+ =?us-ascii?Q?S/EiGMm00axurvZ4/dUI4Nm2Wy3Czn7s13u5eTtav4dvxZZWIEqu0em8PJPO?=
+ =?us-ascii?Q?NkrgOGzlRnQIpRhT16YghiZXcsKgyUOVIl/huqyHvcsp+lvL4xBcM68yT5fL?=
+ =?us-ascii?Q?veHttgLB8+HxTY4WKHWQwT4B6TFTt1Sa5+EeijVXUXvgEB6y0M0UqN8o/Rpd?=
+ =?us-ascii?Q?Kcgoy4SINsnCdDruy+etUg3OC1wDTaPc/FE8KA/TyFK4zYiarUfUWwCZQSWW?=
+ =?us-ascii?Q?bS49+7iDPNrkuNfyFgcwnNlVQ4wnJxPp7oKXci4YVAKF7is4/m0QiVauWP20?=
+ =?us-ascii?Q?/tpxsu6z84ioF73yb/eDSFku13wlbT22Pzeo1X0fMZSgFqOtye5wPdFZR+JQ?=
+ =?us-ascii?Q?K2bTBFuAkyQ4fM9VXiRbG4vFUlFLXLmPXQLp6gfn1P0Gu1mPU3xMOf01gsXi?=
+ =?us-ascii?Q?5M7kLNzP29LbhSXdKKkWhlRwJGnTwf7Q4PSYKRnbombSCa326Kne4drqQcDP?=
+ =?us-ascii?Q?eorvWdOT1h76z80etenqsBCI1Ha1HFOsdwZIlUpu9LGNRe3l4VNPEHNpxcc0?=
+ =?us-ascii?Q?4P00g1wfchBfxtRTBxf2Gk1AHWTMKnrXK00PKlgmxFdoHGtvhbrDll6BisBV?=
+ =?us-ascii?Q?tgZ7+Yaok9bLpWRk9GfyI9xCeOmiRLGXXyt32z2lPMFgnZvUqSsHX4LKgKaz?=
+ =?us-ascii?Q?i0pD+CjzOSE/uSREhTzqvIxSVh5xPeVbYPaUKXwSTz4FnSo6B1DAGhCbA6yu?=
+ =?us-ascii?Q?AqPCLdCHIcEbAkDyWyG8vxX36nNFGqoxXqDGFP1yhjOWnYBqu4Tj/6QPne8Q?=
+ =?us-ascii?Q?S6e+l/Weyvk4DZKdj0wU/qH/YpU1ZbqGLH9brVkMSFbUpgn4gEVO+wT8x0AB?=
+ =?us-ascii?Q?IyRRPEZiqcD+mgWXXmx+m7qE2a16abxyCN15hQ97/41qOtQhgIBRy3xw+3f0?=
+ =?us-ascii?Q?mx6qOykzLNrxdm1iUTpL9gOVdGDzYu7OfFs0rECTsaWa7G8zR26YmtXyCBWQ?=
+ =?us-ascii?Q?yLU2IsTJTmrPZVmBY5e0++391F3nDPRBCKmRYMSuAJDr4+4w8tKePx8vdkQ1?=
+ =?us-ascii?Q?2R+vrXAXTa/6IcPg+hiD3Tn79amYJ5ISU6yafqtGq9XIA9yRUV2R29YvMXNq?=
+ =?us-ascii?Q?Lcv+BTXFJ1+zP30IsEnts3Krq+VtZPx1ZQh+wr8elwwi6GVoXuZQ7WiWQi2T?=
+ =?us-ascii?Q?0YXvkx17EFkKSSgX+38vzSFqpaQwiffJ+vjHDh1LGhE3wWb4kBh895gvVpCy?=
+ =?us-ascii?Q?s8sLq/vOJ9AopZip0H3bHgJMUAEXHmT6BLVOcMmME4myiFPyTXwp6H09fgML?=
+ =?us-ascii?Q?DPnPJi6LkoYZtgprAlMwrFjtD4f5+nnowL18iQMeaJMNkwqtc0GTX8Z9/AaT?=
+ =?us-ascii?Q?LcAT/1GF01Hs/zsSMPO9Mtm154F11Mg0XhvV1UiS?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a1ad2e1-3986-4cd1-419a-08dd5747647b
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 15:57:09.8302
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xyGpuEcTLbU2Hf/8+fq6Dlr8bwRKUT5GoJirJcX2xEwA5u1SvIQ7g7DKsnQs86hAmTgQYBAxCrYkJ/haQ6/GRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB5968
+X-OriginatorOrg: intel.com
 
-Hi,
-
-On 2025. 02. 27. 16:52, William Breathitt Gray wrote:
-> Sorry, let me step back for a moment because maybe I'm trying to solve
-> a problem that might not actually be a problem.
+Li Ming wrote:
+> CONFIG_CXL_MCE depends on CONFIG_MEMORY_FAILURE, if
+> CONFIG_CXL_MCE is not set, devm_cxl_register_mce_notifier() will return
+> an -EOPNOTSUPP, it will cause cxl_mem_state_create() failure , and then
+> cxl pci device probing failed. In this case, it should not break cxl pci
+> device probing.
 > 
-> I see functionality settings available in the TC Block Mode Register
-> (BMR) that can affect multiple TCCs at a time. Are these BMR settings
-> exposed already to users in someway? If not, do we have a way to
-> introduce these settings if someone wants them; e.g. would the
-> AutoCorrection function enable bit be exposed as a sysfs attribute, or
-> configured in the devicetree?
+> Add a checking in cxl_mem_state_create() to check if the returned value
+> of devm_cxl_register_mce_notifier() is -EOPNOTSUPP, if yes, just output
+> a warning log, do not let cxl_mem_state_create() return an error.
 > 
-> Finally, if there's not much interest in general for exposing these BMR
-> settings, then I suppose there is no need to change how things are right
-> now with the microchip-tcb-capture module and we can just keep it the
-> way it is. That's my only concern, whether there are users that want to
-> control these settings but don't have a way right now.
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
 
-My knee-jerk answer to this is that if they do, they will bring it up by 
-submitting a patch or bug request. But I'll let others chime in, we only 
-use an extremely small subset of the features of the TCBs.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-Bence
-
+[snip]
 
