@@ -1,225 +1,244 @@
-Return-Path: <linux-kernel+bounces-535932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DC1A4796D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:38:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBEDA4796E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8B4171C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5859A3B22AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C316E227E83;
-	Thu, 27 Feb 2025 09:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB1F227E8D;
+	Thu, 27 Feb 2025 09:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEGzQbdL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="u6PFrDzK"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FDE270024;
-	Thu, 27 Feb 2025 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2B1226177
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740649111; cv=none; b=iiwIYFAkigPAXQ+v06eQoKE2G6NdArL+/eb8R4E0n83H9pQJJmA906/MnMHv6BQhjWqdPAj3QY2hD4VboWi2vzxTmQLyDS1d8p4GhCONWuPJYwY47rs/WdE7I8x58JgrUseskSfz1sTvldW0/nnn3ScrEYv7e6NbQVOqwVWbs0Y=
+	t=1740649128; cv=none; b=rRExjqvSfRlTTZOiYQKbqzgQw/XVkNNX3+D+LSY/BnKflQRubbfjedspe2q9/YA875h6oIa5zp8QSX311CTqaZABU5xf+MYUBXW+j1ksLqZ3gvu2393YrH+5aUJ7VoF9GRUbUVFApFHWcCEnytXZANZW0JD1JUe8beFWcXx8jww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740649111; c=relaxed/simple;
-	bh=kuUelbCc3mh5KwVn0L2IifL5eirbW8cOf0PVGvfIwfM=;
+	s=arc-20240116; t=1740649128; c=relaxed/simple;
+	bh=klcyv/tjVkjs4m6UAHjQfCID6SW72sqaBFJeCg7JikA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DWGO1TZD4K6iTaCNGJ4nTLuf4GIoiHWtDS9RsuegEaFvx0so8yTsVuP2jHbSAPhDSFlJ0Mon4Cn8elI1HLUfARI6WN9fHM1WQMsPgyk8fuUmS+nq480FcwVKPhnlGM52uAFmdFWr7CGMhj9VM008CROQT0lzAHzWE9ev7H4ytpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEGzQbdL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49661C4CEDD;
-	Thu, 27 Feb 2025 09:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740649110;
-	bh=kuUelbCc3mh5KwVn0L2IifL5eirbW8cOf0PVGvfIwfM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OEGzQbdLP4sU0C751iv3CJOKm5AjF33WraZlCvE17HOBNTUg/0FIeocRFVJc7P69E
-	 9FtPiFuEn6iF8IGyn4S97hjGVQfePe2iesSo09ewwhHRu3lHOQd+aHISiU33ch7Gh/
-	 7DTJNNyLUQOtLpxL/E1dkZJvs0vA03DXU0k1exTcABBRa9VZzjAlYlceFE5FwesySH
-	 CP1gM3h2+qtX0BuFpkP2ouJ/zuSxX4ijSEho720RULkXkjMClQkE1g9BClhlFnCPoT
-	 r7rOki/bKHmDZs3n9gbZfNt+DKaYUmYA7c4mU36OwvBNtz2pGnEdW5102cpP+FGVEU
-	 lj7IMXCnw7v/g==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Indu Bhagat <indu.bhagat@oracle.com>, Weinan Liu <wnliu@google.com>
-Cc: irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org,
- mark.rutland@arm.com, peterz@infradead.org, roman.gushchin@linux.dev,
- rostedt@goodmis.org, will@kernel.org
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-In-Reply-To: <91fae2dc-4f52-4f38-9135-66935a421322@oracle.com>
-References: <4356c17a-8dba-4da0-86dd-f65afb8145e2@oracle.com>
- <20250225235455.655634-1-wnliu@google.com>
- <da6aad99-3461-47fd-b9d8-65f8bb446ae1@oracle.com>
- <mb61ph64h9f8m.fsf@kernel.org>
- <91fae2dc-4f52-4f38-9135-66935a421322@oracle.com>
-Date: Thu, 27 Feb 2025 09:38:16 +0000
-Message-ID: <mb61peczjybg7.fsf@kernel.org>
+	 MIME-Version:Content-Type; b=W0V1zuYAclrM8VBsM+ItITpKL0uYnmZp8hkUqVWN+xsOXlWYPwkFeDQ/7CetGCpqDnU1lvF5SgMqae5yEts/g4smXhEofTeunD/pNk4Z/5PczJHwWBKzYLklkdeU+81TZhk0p/byzTbtWteaQalFfSvQIWcT/wo+ZlAa3+z3URI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=u6PFrDzK; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f403edb4eso357455f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:38:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740649123; x=1741253923; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSFMyHZjL2sLB+0egAbBkuSTNnV3nLYFcpeSny0Lnto=;
+        b=u6PFrDzKtHyB66OdTUfN0SGd6NiQf5FLusKcUQeUKphGOUKuVCcouGOnkAH0UHqk7D
+         z0+1vLuOUp1ef8I3y26+qQZnx9AjAZp2iaLZOdbd3nEMGHvR/q3Syjcjt+m2H5YGlyKr
+         AjaxhmUFIZJE9x7jW3+ObNIFudJ72dY4C8YJtskwCfkr0sQVYXjtas+qWJRLq7uhCaWn
+         sdX23vvmQqDY+AmqhQxfjHcTmyBXUnaHKHGVt1V6TgWp9S6/AQTXJgNspHE2Dg4Tuh7F
+         XcPeIcAATwz4yc87FqJsAn5J5N4/ErTpUGm3OAGMZHTxxHxvDXSYtyvGQ9CR5hVAes0C
+         uz4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740649123; x=1741253923;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XSFMyHZjL2sLB+0egAbBkuSTNnV3nLYFcpeSny0Lnto=;
+        b=OqkDvwsWdsQu8xtSqBHkZsR4VIh/UGXhoKJz1NAEKdt2DTFdTDr9aZPjoeBlXJA/P4
+         YwvzqLp7KOv83BwwOfw9qRYKRdmInFZkMMleldH8ZeXC7fk4t82kzDhCzAsRNjMxegyJ
+         vhSG5plHF/8FYYlFxGcMLwUpj6QBzwCTAVeNaEnitsL2Wohpe3NNALNlrhqxSQY+0EKz
+         /H/vGTS0LMWqUTULz6B5IkF/XYfGHuiWljZGQ+efkGmyemapdIPNl6snNx8ZPBwX6GYN
+         KqrRfmNSd1Zu+vAw9QJQEu04ZeotR0uhRL/NmtGyDZv3mqQFSsrtyKFhQwSoJYjHoTtG
+         TiWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV14Z7+HfiXN/StKn/JuqxdTZpoUQ41fZcgSbt+mSnwmmRYIZJHuzf5xZhd56uwtI5+iIW/kgESnsLVcck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKpiIvjCMkiKvJV48MbIak7iwsTEdpAVN7fp44KtuExv0xdkZA
+	bZFgpDV1D4OqXRqQ55weGG/p/xYrGyC8y9ZnXmAx9nMXT3Vg5+/VZ2zCet7gCgYSbliQlcqD/iP
+	cAjA=
+X-Gm-Gg: ASbGncvJwReaXQ0MFom/1JfWnEOFBMLBjFI5lzsngoWl8wQEAWUUdnVg5OoC+4RW9Gw
+	dvifhB1NA+h+afxo5zPA7JpyH8nvUgR+V72JXAh24N2TWUcMJo2fbvuGXFQAw3SJXNOI8Z2NqrN
+	xfGJC0Xt4MXFb1tQ6jMZI8eUpCL9lik1nbjddm4gY2Xde3YnEdRqowRB72/Ud2J8GPJ746qF+N2
+	cPxTDFiheYQkRnMQlEo0B6kJz6mVF7s3cAHJmPigfSbSWa6pQa65cbwuNmw2h2KHleTxHek7Oev
+	9GFW9f163d0uy9A/J1xP0wGxuw==
+X-Google-Smtp-Source: AGHT+IFUel99Gq412qHUYoqq4QU0Kh33QuQ9q7aFAyceuOEGM3mTTh0OtaZyPMhSjBmzd7LFLY/Vng==
+X-Received: by 2002:a5d:64a9:0:b0:390:e853:85bd with SMTP id ffacd0b85a97d-390e8538bfdmr865626f8f.48.1740649122847;
+        Thu, 27 Feb 2025 01:38:42 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ede3:f33f:7555:723d])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e479652dsm1484719f8f.16.2025.02.27.01.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 01:38:42 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: <linux@martijnvandeventer.nl>
+Cc: "'Neil Armstrong'" <neil.armstrong@linaro.org>,  "'Michael Turquette'"
+ <mturquette@baylibre.com>,  "'Stephen Boyd'" <sboyd@kernel.org>,  "'Kevin
+ Hilman'" <khilman@baylibre.com>,  "'Martin Blumenstingl'"
+ <martin.blumenstingl@googlemail.com>,
+  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
+  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
+ attached
+In-Reply-To: <003301db888e$8ea84e90$abf8ebb0$@martijnvandeventer.nl>
+	(linux@martijnvandeventer.nl's message of "Wed, 26 Feb 2025 21:39:39
+	+0100")
+References: <20250213221702.606-1-linux@martijnvandeventer.nl>
+	<1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>
+	<003301db888e$8ea84e90$abf8ebb0$@martijnvandeventer.nl>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Thu, 27 Feb 2025 10:38:41 +0100
+Message-ID: <1jplj3g21q.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Wed 26 Feb 2025 at 21:39, <linux@martijnvandeventer.nl> wrote:
 
-Indu Bhagat <indu.bhagat@oracle.com> writes:
-
-> On 2/26/25 2:23 AM, Puranjay Mohan wrote:
->> Indu Bhagat <indu.bhagat@oracle.com> writes:
->>=20
->>> On 2/25/25 3:54 PM, Weinan Liu wrote:
->>>> On Tue, Feb 25, 2025 at 11:38=E2=80=AFAM Indu Bhagat <indu.bhagat@orac=
-le.com> wrote:
->>>>>
->>>>> On Mon, Feb 10, 2025 at 12:30=E2=80=AFAM Weinan Liu <wnliu@google.com=
-> wrote:
->>>>>>> I already have a WIP patch to add sframe support to the kernel modu=
-le.
->>>>>>> However, it is not yet working. I had trouble unwinding frames for =
-the
->>>>>>> kernel module using the current algorithm.
->>>>>>>
->>>>>>> Indu has likely identified the issue and will be addressing it from=
- the
->>>>>>> toolchain side.
->>>>>>>
->>>>>>> https://sourceware.org/bugzilla/show_bug.cgi?id=3D32666
->>>>>>
->>>>>> I have a working in progress patch that adds sframe support for kern=
-el
->>>>>> module.
->>>>>> https://github.com/heuza/linux/tree/sframe_unwinder.rfc
->>>>>>
->>>>>> According to the sframe table values I got during runtime testing, l=
-ooks
->>>>>> like the offsets are not correct .
->>>>>>
->>>>>
->>>>> I hope to sanitize the fix for 32666 and post upstream soon (I had to
->>>>> address other related issues). =C2=A0Unless fixed, relocating .sframe
->>>>> sections using the .rela.sframe is expected to generate incorrect out=
-put.
->>>>>
->>>>>> When unwind symbols init_module(0xffff80007b155048) from the kernel
->>>>>> module(livepatch-sample.ko), the start_address of the FDE entries in=
- the
->>>>>> sframe table of the kernel modules appear incorrect.
->>>>>
->>>>> init_module will apply the relocations on the .sframe section, isnt i=
-t ?
->>>>>
->>>>>> For instance, the first FDE's start_addr is reported as -20564. Addi=
-ng
->>>>>> this offset to the module's sframe section address (0xffff80007b15a0=
-40)
->>>>>> yields 0xffff80007b154fec, which is not within the livepatch-sample.=
-ko
->>>>>> memory region(It should be larger than 0xffff80007b155000).
->>>>>>
->>>>>
->>>>> Hmm..something seems off here. =C2=A0Having tested a potential fix fo=
-r 32666
->>>>> locally, I do not expect the first FDE to show this symptom.
->>>>>
->>>>
->>=20
->> Hi,
->>=20
->> Sorry for not responding in the past few days.  I was on PTO and was
->> trying to improve my snowboarding technique, I am back now!!
->>=20
->> I think what we are seeing is expected behaviour:
->>=20
->>   | For instance, the first FDE's start_addr is reported as -20564. Addi=
-ng
->>   | this offset to the module's sframe section address (0xffff80007b15a0=
-40)
->>   | yields 0xffff80007b154fec, which is not within the livepatch-sample.=
-ko
->>   | memory region(It should be larger than 0xffff80007b155000).
->>=20
->>=20
->> Let me explain using a __dummy__ example.
->>=20
->> Assume Memory layout before relocation:
->>=20
->>   | Address | Element                                 | Relocation
->>   |  ....   | ....                                    |
->>   |   60    | init_module (start address)             |
->>   |   72    | init_module (end address)               |
->>   |  ....   | .....                                   |
->>   |   100   | Sframe section header start address     |
->>   |   128   | First FDE's start address               | RELOC_OP_PREL ->=
- Put init_module address (60) - current address (128)
->>=20
->> So, after relocation First FDE's start address has value 60 - 128 =3D -68
->>=20
+> Hi Jerome,
 >
-> For SFrame FDE function start address is :
+> Thank you for reviewing, and apologies for my late response due to a holiday.
 >
-> "Signed 32-bit integral field denoting the virtual memory address of the=
-=20
-> described function, for which the SFrame FDE applies.  The value encoded=
-=20
-> in the =E2=80=98sfde_func_start_address=E2=80=99 field is the offset in b=
-ytes of the=20
-> function=E2=80=99s start address, from the SFrame section."
+>> On Thu 13 Feb 2025 at 23:17, Martijn van Deventer
+>> <linux@martijnvandeventer.nl> wrote:
+>> 
+>> > When booting SM1 or G12A boards without a dislay attached to HDMI,
+>> > the kernel shows the following warning:
+>> >
+>> > [CRTC:46:meson_crtc] vblank wait timed out
+>> > WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682
+>> drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>> > CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
+>> > Tainted: [C]=CRAP
+>> > pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> > pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>> > lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>> > Call trace:
+>> >  drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>> >  drm_atomic_helper_commit_tail_rpm+0x84/0xa0
+>> >  commit_tail+0xa4/0x18c
+>> >  drm_atomic_helper_commit+0x164/0x178
+>> >  drm_atomic_commit+0xb4/0xec
+>> >  drm_client_modeset_commit_atomic+0x210/0x270
+>> >  drm_client_modeset_commit_locked+0x5c/0x188
+>> >  drm_fb_helper_pan_display+0xb8/0x1d4
+>> >  fb_pan_display+0x7c/0x120
+>> >  bit_update_start+0x20/0x48
+>> >  fbcon_switch+0x418/0x54c
+>> >  el0t_64_sync+0x194/0x198
+>> >
+>> > This happens when the kernel disables the unused clocks.
+>> > Sometimes this causes the boot to hang.
+>> >
+>> > By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
+>> > clocks will not be disabled.
+>> >
+>> > This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
+>> > make VCLK2 and ENCL clock path configurable by CCF").
+>> 
+>> It looks like DRM needs those clock enabled regardless of connection
+>> status on HDMI. Even with this change applied, you would get the same
+>> problem again if the bootloader does not take of turning the clock on,
+>> which is not a given.
+>> 
+>> CLK_IGNORE_UNUSED gives not guarantee a clock will be enabled or stay
+>> enabled at any point.
+>> 
+>> A proper fix to this issue should be done in DRM, IMO.
 >
-> So, in your case, after applying the relocations, you will get:
-> S + A - P =3D 60 - 128 =3D -68
+> I know and I totally agree. Unfortunately, I don't have access to any vendor 
+> documentation, nor do I have any real knowledge about the DRM/HDMI 
+> subsystem to fix that.
+
+You have identified which clocks are not properly claimed, by what they
+are not claimed and even when. 50% of the job is done. Thanks for this.
+
 >
-> This is the distance of the function start address (60) from the current=
-=20
-> location in SFrame section (128)
+> And I guess if it were as easy as adding a clock to the DT and calling 
+> clk_prepare_enable on it in the probe function, Neil would have done that 
+> already.
 >
-> But what we intend to store is the distance of the function start=20
-> address from the start of the SFrame section.  So we need to do an=20
-> additional step for SFrame FDE:  Value +=3D r_offset
+> So, all I can do, for now, is revert to the previous situation when it did  work
+> for (probably) most boards.
 
-Thanks for the explaination, now it makes sense.
+Maybe so, but it does not make this change appropriate. The problem
+is the DRM driver which does not enable what it needs to properly
+operate. This should be fixed.
 
-But I couldn't find a relocation type in AARCH64 that does this extra +=3D
-r_offset along with PREL32.
-
-The kernel's module loader is only doing the R_AARCH64_PREL32 which is
-why we see this issue.
-
-How is this working even for the kernel itself? or for that matter, any
-other binary compiled with sframe?
-
-From=20my limited undestanding, the way to fix this would be to hack the
-relocator to do this additional step while relocating .sframe sections.
-Or the 'addend' values in .rela.sframe should already have the +r_offset
-added to it, then no change to the relocator would be needed.
-
-> -68 + 28 =3D -40
-> Where 28 is the r_offset in the RELA.
 >
-> So we really expect a -40 in the relocated SFrame section instead of -68=
-=20
-> above.  IOW, the RELAs of SFrame section will need an additional step=20
-> after relocation.
->
+>> >
+>> > Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path
+>> configurable by CCF").
+>> > Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+>> > ---
+>> >  drivers/clk/meson/g12a.c | 12 ++++++------
+>> >  1 file changed, 6 insertions(+), 6 deletions(-)
+>> >
+>> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+>> > index cfffd434e998..1651898658f5 100644
+>> > --- a/drivers/clk/meson/g12a.c
+>> > +++ b/drivers/clk/meson/g12a.c
+>> > @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+>> >  			&g12a_vclk2_input.hw
+>> >  		},
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_GATE,
+>> > +		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> >
+>> > @@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
+>> >  		.ops = &meson_vclk_gate_ops,
+>> >  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw
+>> },
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_PARENT,
+>> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> >
+>> > @@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+>> >  		.ops = &clk_regmap_gate_ops,
+>> >  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_PARENT,
+>> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> >
+>> > @@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+>> >  		.ops = &clk_regmap_gate_ops,
+>> >  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_PARENT,
+>> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> >
+>> > @@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+>> >  		.ops = &clk_regmap_gate_ops,
+>> >  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_PARENT,
+>> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> >
+>> > @@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+>> >  		.ops = &clk_regmap_gate_ops,
+>> >  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>> >  		.num_parents = 1,
+>> > -		.flags = CLK_SET_RATE_PARENT,
+>> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> >  	},
+>> >  };
+>> 
 
-Thanks,
-Puranjay
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZ8AyiRQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nc64AQCrImK/xT/H/sSJyKH/7xwB1DnkIwCd
-H+TAPuqrhqK6YwD/S/fgUeM06UgZceakvwwGL0B6KlZyow2qyPBm9thb3wI=
-=IByT
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Jerome
 
