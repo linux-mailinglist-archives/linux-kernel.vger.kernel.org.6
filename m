@@ -1,178 +1,182 @@
-Return-Path: <linux-kernel+bounces-535492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75775A47386
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:20:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DA5A4738D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38ABC188EEF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:20:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 530337A63A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3738518787A;
-	Thu, 27 Feb 2025 03:20:15 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E7F433C8;
-	Thu, 27 Feb 2025 03:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCF118D63A;
+	Thu, 27 Feb 2025 03:26:53 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBC6433C8;
+	Thu, 27 Feb 2025 03:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740626414; cv=none; b=ClMav7odxlCnFIrvYfMyHWD+wj8rylx4w5xQbJ+Y1Z1QMDBi2N2LonWyWQ+tuLFMyUAieZV8eDAiKGRG4ew/xY/+q5ShfrcJpJXeyTE1uyn9bJZ+xTThkh786SlCFCcJPvSeLZh0SyA0C3HjGFnMYlb0juqJjPVMPqLIo1rcG0Q=
+	t=1740626813; cv=none; b=JOOziXww+4gSJ0/dX4wuu6a5ICv/IIqd7gp1xdE8gkaiMRN+UQZe22sixZC5OJkMXadah75eh9zjw7FsZi8sWlJphH25utdF0Aj0wVrL/nnV7ALL48TK5iyN99Z7nGofNMGVZGEIlWdv76p/9eS3cIlvJRRbi3TATMQ/zBDVbpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740626414; c=relaxed/simple;
-	bh=R1oUGUJ3OqUHv0YN/Ju4WgkqxoyLksUqGo2pit4ydF4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=M80bLhKAsDUe+TnuiAK9GawNn2ObWG/y4ochw/gKm8mPjhzS5Rlk2X2+TLqf25wD4lEn0x3xnBs779gif/W8uzMzCU6CRrphjBSU8sHZ8U4rvoTLjaitwDjLmetvL+3xtu0IlSoAwAR4rQxqPBgN2xxYa+q8CTpaFkIXooGxzAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-83-67bfd9e6a2cf
-Message-ID: <c43c64f4-e697-468e-80af-87bd02a95ba2@sk.com>
-Date: Thu, 27 Feb 2025 12:20:03 +0900
+	s=arc-20240116; t=1740626813; c=relaxed/simple;
+	bh=kHrgT+eGXWxskQXGY/v3bbTVYXzRBd8UcfF4UWA/gng=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZUXzgBD++iehnNRsy17KA+77zWw1d3yXQXgrQhuyK+r4GdgdK4Xo9WC3AjvjH8NTa28aZYORkdan/hq1A44N0M6DeezJGSwoKQviGhF5Hm+WsXlYLsyZKyvtHytpbGGTZ+tCh6ZSCBRwHNqU3IxrRL6nVa6IlgBtBp8R6ldrp8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R3L8oi015977;
+	Wed, 26 Feb 2025 19:26:40 -0800
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 451ptmhmej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 26 Feb 2025 19:26:40 -0800 (PST)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 26 Feb 2025 19:26:39 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 26 Feb 2025 19:26:34 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <alexander.deucher@amd.com>,
+        <daniel.wheeler@amd.com>, <mario.limonciello@amd.com>,
+        <josip.pavic@amd.com>, <aurabindo.pillai@amd.com>,
+        <sohaib.nadeem@amd.com>, <gregkh@linuxfoundation.org>,
+        <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <Rodrigo.Siqueira@amd.com>, <christian.koenig@amd.com>,
+        <Xinhui.Pan@amd.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <wayne.lin@amd.com>, <sashal@kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <charlene.liu@amd.com>, <gabe.teeger@amd.com>,
+        <amd-gfx@lists.freedesktop.org>, <Nicholas.Kazlauskas@amd.com>
+Subject: [PATCH 6.1.y] drm/amd/display: fixed integer types and null check locations
+Date: Thu, 27 Feb 2025 11:26:33 +0800
+Message-ID: <20250227032633.4176866-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, gregkh@linuxfoundation.org, rakie.kim@sk.com,
- akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
- dan.j.williams@intel.com, Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
- horen.chuang@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Content-Language: ko
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>, gourry@gourry.net,
- harry.yoo@oracle.com, ying.huang@linux.alibaba.com
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
-In-Reply-To: <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsXC9ZZnoe6zm/vTDX6d4LeYs34Nm8X0qRcY
-	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
-	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
-	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
-	9O0SuDI27MoouC9VMbWtha2B8aZoFyMnh4SAicTH3q9sXYwcYPa0AwIgYV4BS4nnXU/ZQWwW
-	AVWJ/193sEHEBSVOznzCAmKLCshL3L81A6iGi4NZoIVZYtKpVcwgCWGBKImdr/4ygdjMAiIS
-	szvbwOJsAmoSV15OAouLCBRJHJ/xmRGkWUhgIaPErJ4HLCBHcApYSZw6zAHRaybRtbWLEcKW
-	l2jeOpsZpF5C4Bq7xOynU9khHpCUOLjiBssERsFZSA6chWT3LCSzZiGZtYCRZRWjUGZeWW5i
-	Zo6JXkZlXmaFXnJ+7iZGYAwvq/0TvYPx04XgQ4wCHIxKPLwR4vvThVgTy4orcw8xSnAwK4nw
-	cmbuSRfiTUmsrEotyo8vKs1JLT7EKM3BoiTOa/StPEVIID2xJDU7NbUgtQgmy8TBKdXAuEJD
-	47rW7e49RrxxOU83GGr8cDjVv+gc92oZ3gnBDEZ3O/Pkv82XPFTwaGvWyu3c0nIlq8W1H6w8
-	98E0xrtCr3+K0uuVuXuaom1Pqfc73NeLDrBk2ChouOv5rHdum/Ut9l+6u2oBT0Abs8jR3UK7
-	MiWztj7gv3J1/7SdZ2K8Zz9bYcH5V8VzvhJLcUaioRZzUXEiAOhEgyvdAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsXCNUNLT/fpzf3pBoeWmVvMWb+GzWL61AuM
-	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPhuSdZLXY+
-	fMtmsXxfP6PF5V1z2CzurfnPajH3y1Rmi0PXnrNarF6TYfF72wo2BxGPw2/eM3vsnHWX3aO7
-	7TK7R8uRt6wei/e8ZPLYtKqTzWPTp0nsHidm/Gbx2PnQ0mNhw1Rmj/1z17B7nLtY4fHx6S0W
-	j2+3PTwWv/jA5PF5k1yAQBSXTUpqTmZZapG+XQJXxoZdGQX3pSqmtrWwNTDeFO1i5OCQEDCR
-	mHZAoIuRk4NXwFLieddTdhCbRUBV4v/XHWwQcUGJkzOfsIDYogLyEvdvzQCq4eJgFmhhlph0
-	ahUzSEJYIEpi56u/TCA2s4CIxOzONrA4m4CaxJWXk8DiIgJFEsdnfGYEaRYSWMgoMavnAQvI
-	EZwCVhKnDnNA9JpJdG3tYoSw5SWat85mnsDINwvJHbOQrJiFpGUWkpYFjCyrGEUy88pyEzNz
-	TPWKszMq8zIr9JLzczcxAqN1We2fiTsYv1x2P8QowMGoxMMbIb4/XYg1say4MvcQowQHs5II
-	L2fmnnQh3pTEyqrUovz4otKc1OJDjNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGRse6
-	tvgfko7WarMv1GxP7ri0gSHjxrrrG5QDPP8qxaUr1/CG/67/c8pyo/UWAaEvn9IFxbLuBZVe
-	fryNZcfG4Li5jyQO67o3TFyeWPFy735Ha/ZFriVVSuo26aHNH08lL/ryJtCj8f2zYFkebq22
-	pdNurJjk89+w4o/Y74y+BPk+hyX87ifUlViKMxINtZiLihMBTgQItdICAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Proofpoint-GUID: aMIR4xxGOCX5NeqdwxXpYEWFVpqL_Trx
+X-Authority-Analysis: v=2.4 cv=TuEchCXh c=1 sm=1 tr=0 ts=67bfdb70 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=T2h4t0Lz3GQA:10 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=fmNT8XcYnNex_eyvA98A:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: aMIR4xxGOCX5NeqdwxXpYEWFVpqL_Trx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_01,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ adultscore=0 phishscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
+ clxscore=1011 impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502100000
+ definitions=main-2502270025
 
+From: Sohaib Nadeem <sohaib.nadeem@amd.com>
 
+[ Upstream commit 0484e05d048b66d01d1f3c1d2306010bb57d8738 ]
 
-On 2/27/2025 11:32 AM, Honggyu Kim wrote:
-> Hi Joshua,
-> 
-> On 2/27/2025 6:35 AM, Joshua Hahn wrote:
->> We should never try to allocate memory from a memoryless node. Creating a
->> sysfs knob to control its weighted interleave weight does not make sense,
->> and can be unsafe.
->>
->> Only create weighted interleave weight knobs for nodes with memory.
->>
->> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->> ---
->>   mm/mempolicy.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index 4cc04ff8f12c..50cbb7c047fa 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct 
->> kobject *root_kobj)
->>           return err;
->>       }
->> -    for_each_node_state(nid, N_POSSIBLE) {
-> 
-> Actually, we're aware of this issue and currently trying to fix this.
-> In our system, we've attached 4ch of CXL memory for each socket as
-> follows.
-> 
->          node0             node1
->        +-------+   UPI   +-------+
->        | CPU 0 |-+-----+-| CPU 1 |
->        +-------+         +-------+
->        | DRAM0 |         | DRAM1 |
->        +---+---+         +---+---+
->            |                 |
->        +---+---+         +---+---+
->        | CXL 0 |         | CXL 4 |
->        +---+---+         +---+---+
->        | CXL 1 |         | CXL 5 |
->        +---+---+         +---+---+
->        | CXL 2 |         | CXL 6 |
->        +---+---+         +---+---+
->        | CXL 3 |         | CXL 7 |
->        +---+---+         +---+---+
->          node2             node3
-> 
-> The 4ch of CXL memory are detected as a single NUMA node in each socket,
-> but it shows as follows with the current N_POSSIBLE loop.
-> 
-> $ ls /sys/kernel/mm/mempolicy/weighted_interleave/
-> node0 node1 node2 node3 node4 node5
-> node6 node7 node8 node9 node10 node11
-> 
->> +    for_each_node_state(nid, N_MEMORY) {
+[why]:
+issues fixed:
+- comparison with wider integer type in loop condition which can cause
+infinite loops
+- pointer dereference before null check
 
-Thinking it again, we can leave it as a separate patch but add our patch 
-on top of it.
+Cc: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Josip Pavic <josip.pavic@amd.com>
+Acked-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
+Signed-off-by: Sohaib Nadeem <sohaib.nadeem@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[ To fix CVE-2024-26767, delete changes made in drivers/gpu/drm/amd/display/dc/link/link_validation.c
+ for this file is deleted in linux-6.1 ]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test.
+---
+ .../gpu/drm/amd/display/dc/bios/bios_parser2.c   | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-The only concern I have is having only N_MEMORY patch hides weight
-setting knobs for CXL memory and it makes there is no way to set weight 
-values to CXL memory in my system.
-
-IMHO, this and our patch is better to be submitted together.
-
-Thanks,
-Honggyu
-
-> 
-> But using N_MEMORY doesn't fix this problem and it hides the entire CXL
-> memory nodes in our system because the CXL memory isn't detected at this
-> point of creating node*.  Maybe there is some difference when multiple
-> CXL memory is detected as a single node.
-> 
-> We have to create more nodes when CXL memory is detected later.  In 
-> addition, this part can be changed to "for_each_online_node(nid)"
-> although N_MEMORY is also fine here.
-> 
-> We've internally fixed it using a memory hotpluging callback so we can
-> upload another working version later.
-> 
-> Do you mind if we continue fixing this work?
-> 
-> Thanks,
-> Honggyu
-> 
->>           err = add_weight_node(nid, wi_kobj);
->>           if (err) {
->>               pr_err("failed to add sysfs [node%d]\n", nid);
-> 
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index 4d2590964a20..75e44d8a7b40 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -1862,19 +1862,21 @@ static enum bp_result get_firmware_info_v3_2(
+ 		/* Vega12 */
+ 		smu_info_v3_2 = GET_IMAGE(struct atom_smu_info_v3_2,
+ 							DATA_TABLES(smu_info));
+-		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
+ 		if (!smu_info_v3_2)
+ 			return BP_RESULT_BADBIOSTABLE;
+ 
++		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
++
+ 		info->default_engine_clk = smu_info_v3_2->bootup_dcefclk_10khz * 10;
+ 	} else if (revision.minor == 3) {
+ 		/* Vega20 */
+ 		smu_info_v3_3 = GET_IMAGE(struct atom_smu_info_v3_3,
+ 							DATA_TABLES(smu_info));
+-		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
+ 		if (!smu_info_v3_3)
+ 			return BP_RESULT_BADBIOSTABLE;
+ 
++		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
++
+ 		info->default_engine_clk = smu_info_v3_3->bootup_dcefclk_10khz * 10;
+ 	}
+ 
+@@ -2439,10 +2441,11 @@ static enum bp_result get_integrated_info_v11(
+ 	info_v11 = GET_IMAGE(struct atom_integrated_system_info_v1_11,
+ 					DATA_TABLES(integratedsysteminfo));
+ 
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
+ 	if (info_v11 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
+ 
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v11->gpucapinfo);
+ 	/*
+@@ -2654,11 +2657,12 @@ static enum bp_result get_integrated_info_v2_1(
+ 
+ 	info_v2_1 = GET_IMAGE(struct atom_integrated_system_info_v2_1,
+ 					DATA_TABLES(integratedsysteminfo));
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
+ 
+ 	if (info_v2_1 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
+ 
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v2_1->gpucapinfo);
+ 	/*
+@@ -2816,11 +2820,11 @@ static enum bp_result get_integrated_info_v2_2(
+ 	info_v2_2 = GET_IMAGE(struct atom_integrated_system_info_v2_2,
+ 					DATA_TABLES(integratedsysteminfo));
+ 
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
+-
+ 	if (info_v2_2 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
+ 
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v2_2->gpucapinfo);
+ 	/*
+-- 
+2.25.1
 
 
