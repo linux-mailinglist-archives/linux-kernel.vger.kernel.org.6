@@ -1,302 +1,266 @@
-Return-Path: <linux-kernel+bounces-537443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51520A48BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6195A48BE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06373A3E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6223A41E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527023E343;
-	Thu, 27 Feb 2025 22:42:59 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A8522B5BC;
+	Thu, 27 Feb 2025 22:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tg4UT1rG"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1DC1B85DF;
-	Thu, 27 Feb 2025 22:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696178; cv=none; b=OgxUzVnKHASt+6xIEkJQI22WEQlDsh9Tms9vtZNFr7bbA6QVXVU553702fvf+XMU5dNBnkvkFLBdUjLMJxlYHJS1uHWO2f/sQwi6QYSW8CLxvX8o9/2+pyUanNxr0SL/NAtWrH/TT1E5LEOr3ya5FJeMJnd18sArzLzDNSXzeHI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696178; c=relaxed/simple;
-	bh=bRN9W/jiiMdYoVHjdJLsd3qhbWtVbub56tSRtcv27LY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJYQ6a4apGWqNYmxILe5hGg+cY77uJHnD09SJF+ml913QRzwsYmOcrZ1pEvffm50itkVsvJkDVayb1mGeQEeWjRBrZUliG3bxVP1qVuKJeVuDUxQSd8joF1PUGAysMpcrhNCoL9hEvANsdBT1lyAkAnPfSAFsBw7Xf/y1lOS/As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id B3B9330000873;
-	Thu, 27 Feb 2025 23:42:46 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A2180448C26; Thu, 27 Feb 2025 23:42:46 +0100 (CET)
-Date: Thu, 27 Feb 2025 23:42:46 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	bhelgaas@google.com, Jonathan.Cameron@huawei.com,
-	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org,
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
-	wilfred.mallawa@wdc.com, aliceryhl@google.com, ojeda@kernel.org,
-	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
-	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
- authenticated
-Message-ID: <Z8DqZlE5ccujbJ80@wunner.de>
-References: <20250227030952.2319050-1-alistair@alistair23.me>
- <20250227030952.2319050-10-alistair@alistair23.me>
- <2025022717-dictate-cortex-5c05@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEA227781A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740696286; cv=fail; b=YSZIxL/OdH4UjOu4WRYE/7Ys0nWb58CEkZJukmJcqaWnPUeeLwMA5Xuiznfmf4SL0g+CZlLT43yKgxE0I961evZrAG0+M399FbPnAKGltO3M6SgokcwZwduqjWu19OI0G2S1BcDFIDCVIFLWgxAl6KSMqz8ZzPaYJLdvxMc2kzc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740696286; c=relaxed/simple;
+	bh=31K0cO5DuTt5CXOwhxwS4eJ65Z1baAao1nBHD/RmPtI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LUi4qcqyKLwe3imHcRdZmxrsenovQ4agCrvn2fC3q2uXQADkKoUHdGoVI28URbhfoc2UuUdfOeu3MrQNmDOF64z06E1OZe7yYG1qW/wJyEXdH36sZWXDSpncI9dTlDaX0nbdTfmUNna4ENQ8ZBeek/q8LycrbHLcfIzdjQ0Rccw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tg4UT1rG; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nMC6q0oFTCsGfudm+9j+dXqLWbcBGZGZMTH/vZ06FFG5fZ+QvzNmSUDgDW5adKxaEpWYHOOpF+QQp8W/jplkSu1Iy12FGWxbK9YAKV7qm87wSFCRv9AnQafbse6SkKYndIz/br7kba4YK/K+/BymbFoebLmO6pO6sw+XqF7r3+AhEP/ACHKDJJJBmmZj9f4QJ3PUdtZjZeDzHND+p3tBa6zFDCCFmmktkRjc5COZLO3jMTnwNzs/eDn9KvqEd4daSf2GX1eCSfqYtP60ddmJPx2vTz6bZtiCKXP4lHmLIqMneHkWeBexGendgKdy0A+Qz6ykeQyOvrdosXXO3Cge+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2Ynnt1DrD8u8kp5TPoQVS4PseVNckG3PMRGJ3D/dlMw=;
+ b=FE+uC9/ssVjb8+RwUCTNMfVXlACcDE7OR3SwR+3rifIYJhXYb+lkmaDw8onyKCwGc9+SoEjb454I/ebWP/7XdRqm5hrZm1uryV238Gz0C0A/ox+wUkdYTm2Nvo7oJ72ADmKFdtDdDZVUtUYUp2ZqCPfsOZBs24uIaVKxKBK6pwP2iz3NefgNC9jd/QisiofTi2EtNdpJqZLZyLK9GP+rmwkrMWYBGpltxs8htZMW5Dv69aotLMtJAQoLdFaeEFJyH4YEeXBJlRX2DZM31mrWXOcwCuoNf4vb8vr9BDoPBdWcXaUUD4DgaG/YGyFG438eDNIV33S8PBe13i3LmenjDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2Ynnt1DrD8u8kp5TPoQVS4PseVNckG3PMRGJ3D/dlMw=;
+ b=tg4UT1rGLLltybOSOFxsWRwunEWx8/jmNBbFY38pXa3KgSu6hbccHrxpGy1mblIeTAMs8PKLESdqYlJ/XPC66R2NmGz20rRrsdyYaoebzLTnMPBVJuVXNV74ah8v4hDPYCzp7v7v9uhcHNLqY+M4T6rgID5FjG9hwJAap2Yv4R0BdubVQyOQhv9YcQszL2qOOA8+8TLP8JtuG+J6Feekj+2bI8WdQw08hC8EIf4S6pl6/rx3tGTlL9rURCOfV22DvwiMlQ7hKlgoi1MvlHukuzWDtqXYrdAw1Dh7A8hj1DF9vExqt7bmw1+Fg4eJt/AbLaMoQFlPGuduB87vWYtiTA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB2661.namprd12.prod.outlook.com (2603:10b6:a03:67::13)
+ by PH8PR12MB7159.namprd12.prod.outlook.com (2603:10b6:510:229::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Thu, 27 Feb
+ 2025 22:44:41 +0000
+Received: from BYAPR12MB2661.namprd12.prod.outlook.com
+ ([fe80::f4fa:1948:9ea6:1ee2]) by BYAPR12MB2661.namprd12.prod.outlook.com
+ ([fe80::f4fa:1948:9ea6:1ee2%7]) with mapi id 15.20.8466.016; Thu, 27 Feb 2025
+ 22:44:40 +0000
+Message-ID: <d46cdf05-828c-4089-a418-3fb1b47f78e9@nvidia.com>
+Date: Thu, 27 Feb 2025 14:44:40 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 12/42] x86/resctrl: Move rdt_find_domain() to be
+ visible to arch and fs code
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>
+References: <20250207181823.6378-1-james.morse@arm.com>
+ <20250207181823.6378-13-james.morse@arm.com>
+ <acdfa4ee-e293-49f3-8e53-900b9db63ddb@intel.com> <Z7cK1FpQCgBVSGHq@arm.com>
+ <0672ad74-782e-48b9-8591-7e0bdec84845@intel.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <0672ad74-782e-48b9-8591-7e0bdec84845@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0088.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::33) To BYAPR12MB2661.namprd12.prod.outlook.com
+ (2603:10b6:a03:67::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025022717-dictate-cortex-5c05@gregkh>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2661:EE_|PH8PR12MB7159:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ba155d9-2fda-486f-deb4-08dd57805215
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0hrWCtvNG4rSTVINFBhNWJkMkpyblBMOWZXWTNWUU1qSG1TZ2NiRHpxQmFx?=
+ =?utf-8?B?YVhaV0lFdk9HNnFmbVU1bE4rUSs4S3lra2dRR0hNY01YL0p5dWhVOVYwU2hD?=
+ =?utf-8?B?U2hmakFLejErQVNyZFhnbUhFTTIrb3ZrTktGR0hNN0hoUzFnajBvaFFpcitF?=
+ =?utf-8?B?SjU2UXdBc3ErZ1BXcE56M1VuYU1yVFdSNHRwNWxLQ1VGU1UySW5zM1NyanZy?=
+ =?utf-8?B?NVBoYUFxZFhaeHM1enVvbGY0ZnRLMFdteThjU3lqUFJ3NlBURENjU3poWURw?=
+ =?utf-8?B?MndVbnQzbGt1NER1cGNpSTZYZGptL0VBdTJiWlNJTUJwMHZYSlpBeUM2bEVi?=
+ =?utf-8?B?emY3RG9aU3E0cWJLaFhlbEFlVFJXN2dSVklBd1pja3Vjdno2RFdRRHF2WTE3?=
+ =?utf-8?B?a0RLNU93MWN5RDZXQUEwbXhJcVVLU0FXTEt4L1RmR3VjbTlYWXF6ZHYwTyti?=
+ =?utf-8?B?ZHpRR3pOaWpHanp5UDVvUWtYcVRVVGQyay9pNUVPc00xTWNWaHhOczBrWm5o?=
+ =?utf-8?B?dWV6eG90T2FlK2ZSU1dqOVlDeVNFZ01JQUcrYy92L0tOTkJVWWpRVm4vdWY2?=
+ =?utf-8?B?RlUyYXR1NHhLSEkxVWdxUlFwREFMcGhIcVpuT1VBbWVzZFlwTytPdWJNaFZy?=
+ =?utf-8?B?ZW80UlhqRDA1dXp6RittTWJ0djNHaHRIdS9oc0dQeUl5VGY5d3dtTmV1am94?=
+ =?utf-8?B?ZXJhZ3hIaVREMkV5cXc3Z0RYZzZuTnpuMWcwZ1FaNlREcytESm9mY0dIQmRv?=
+ =?utf-8?B?ZWs0a054UFlwUUlScEl5WHFjNXpLU2xabFJtVEtHeTlkUHZwRm91NXA0cVVn?=
+ =?utf-8?B?OEpaZlAwMG9pcy8yZVBlSnU3Vk1DRDJOaDg5QlUwU3NpQklEbEl5dXpDNU9J?=
+ =?utf-8?B?VC9MelFuMWJSb2FsRkQ2TlhHWUdPVW5xa1k4ajh1L2krSXJPOVU4UnZKOGVE?=
+ =?utf-8?B?VE1SZHI0Z0phcTcwYXVQYkp5TDk1ay9yYWV1cHdPNk1HUENCZmtJMFA0d2E4?=
+ =?utf-8?B?cE8rbUlmNlI0NmZDOTZNVTB4WFZ2am5wSkpsNXV1d0NrMkVUdGNXd0NmZjQ2?=
+ =?utf-8?B?OU1hbW1qQ2tCR3ZsZGFZb0tDc2lici9JK0JXdERGY2NGQmFoeFJFc0ZNcGJB?=
+ =?utf-8?B?VlZPUEZTZWJrcjN0bUNia1RPZ0FvMEh6NFRSdUxlaFN5bmQ1SUZhNTQ5bktC?=
+ =?utf-8?B?VkkvOERWL3cveVhoc2c1R0lpb2NJcUNoUnR1UVdIckRpSmJCK1FGVzFiQjQz?=
+ =?utf-8?B?YklXUFphL3NiZ1pTYXpWQ1pENXJzNlBDbENiaVFTQWYyYnc2aVF4YmtKNWZq?=
+ =?utf-8?B?WTVYNDRnN1l2aVUyOWJYWlZjVXJKaE9yVzZBU3Bic1Z3VkhNUFU1ZEdCQU5u?=
+ =?utf-8?B?eXc4Q2lWUzM3OVJRNSsvYml0TTA3YTdGTzh0TG9rbHRQWVpoZGIyKzhMSzdT?=
+ =?utf-8?B?bFBZMXpYVkZTTlA0MU5ZUFFVM0tFMndpMFdJNWxMbFR6L2Z1aGFPNFFER1dH?=
+ =?utf-8?B?VEdKeGsrRlBtd3BXRHRqVU1rRHVLenJZUDV4cmtNWjhKYTQ4d3B1NmpXdklt?=
+ =?utf-8?B?THNWNUNzQm1lQ2drVG9ycitwVndrWkR2WFlMTjRodExpUWVYWHdKNmxQLzBv?=
+ =?utf-8?B?TkVKY1lCNVQ4aHIvZmlvM0ZiSVlyZDRiYjBWejBrcjVoeWM3ZHMveU1TMkh5?=
+ =?utf-8?B?UXpwNDZGUzl4QnZEZWZHQmxKV2V4aFdobkNUb1R0WHk4ZHhSdHdsUnlMcWpY?=
+ =?utf-8?B?cy9LWSszZDMrS3l2TmUvYk1NanUvakdjd2MvbVhSemp6eG55TzdsSWJieTNH?=
+ =?utf-8?B?TEQyRnB5OFFJVWZSdURqYVkxVkhIc3pFekFRa0M2QnZwblpFNDVoMnN0eEhm?=
+ =?utf-8?Q?LInord/m3Utgx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2661.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TGw0UnI5WlAxbHpTcU1lWGVva1l0L2NNR0tjTXZENDFYZlZzaEozTTdQVlpy?=
+ =?utf-8?B?NkVRRytmMWwzSXE5azZhWEt2UkZnb09MWU1RbkhKakUxejhTSDhTaHZBemZH?=
+ =?utf-8?B?VXBZN0hLcWlwVEg3dDRlbk1hNzYyMU5MM2JzTVNFQWhwUy81bzRmcXU3YnBW?=
+ =?utf-8?B?bXpkc1ZjcE9ocXdabUlWd3hpSjNKcUErWDN5Q2xpRXNuK2NnWUFYV3JhMjhq?=
+ =?utf-8?B?cWV1QzlKejVGOUdVQXRqdG5HSWhPcmt0Z0RqaEh2UVlHU2o1OHBMK01VRXRr?=
+ =?utf-8?B?Uyt0ZUZjMzRiNVBnMFFiYjJpTUM4WTZJdGJjNFpXZVpmMGxpL3F6czVWMXJW?=
+ =?utf-8?B?akxxRjBaeVpFREszRlBrZENZemV0SUgySnVDNnZ4YjUzQnF4dlluTEZCU3R3?=
+ =?utf-8?B?ZHJwQ0tWY004RHFDazB6OHNVeFhtUWtkT01PREM5cVZyK240ZGhyWEprMWJq?=
+ =?utf-8?B?ei9ZbDQ4STlUUGdUaDhLQ080b2dGNkxlbnRaanppdXd4OEVnS1ZaTDc1R1lE?=
+ =?utf-8?B?WjRvaEp6Nm9YL0N3YitZWG1KcjJ0ZVJNNEJNOXp3dHFhQXlaUG1pMnRiY0JQ?=
+ =?utf-8?B?UmEvN0l2clNOVlVZYTJ0aUZ0VkVwNlB4NTREZUgxd1AvbVdGeVoxR21kSWpS?=
+ =?utf-8?B?TGNUNDRyWGVOaWRHY1BxQ0ZwZ2JMODRVZWswT0ExTGQ3ZC85TXBUeXF0alJp?=
+ =?utf-8?B?K24yZUNab0lxbkpNZW5IeVV2SjVSSzhqTFhqelA4MGxMNzZJQ3VRT1NDYStZ?=
+ =?utf-8?B?QXNsSnZudWZqNFRuRGtueFVrZnQzbkhyb1U3NmcvdjNtZjEyMU45K25BOHVy?=
+ =?utf-8?B?UWVwNlorbEo0ZWhaUkhlTUxxcDhZQXFvKzFWM21qaWZkY3JZTmQyTXBndXBD?=
+ =?utf-8?B?YmUyQUIrMDdyM2Q4Nzd6ZVIzZ1oxUFQ5aDJWUVJwR1JKdCszRVNrL1hhYXdy?=
+ =?utf-8?B?Q2N0cFlKUzdxUFV6cnpxWjNIT21XTDFHTUlTbkNNa29SMHVMVUdhdHRNQ3VV?=
+ =?utf-8?B?cGw1VnhDeU9yREwxRUpNZndoRk10QW5zWUpMK2Q2eU5zVU55NG5GdUV6VGZG?=
+ =?utf-8?B?ZTl0c3o1Q1BYbEpTZTNTbVk0RnNUd2hVVThvYzdVV0F1T01ocFlRbHcwdkRh?=
+ =?utf-8?B?TGZaZUUvNk9oeGp2NXJOelpIb1RKZFhIV1hYR0VybVFkUVRkQ0hCcGVFYzFU?=
+ =?utf-8?B?YzhXVXA3NmVUQm95WDhlMU9PZnVkOUNEWmFOcTM1enNyOUliZUZXcmVtcWZj?=
+ =?utf-8?B?aEJPRW90TW00ZVFnSjVhSDY2RDJsL1NQWGxyeUxVUS9mMVp3Z0Y3RUFiWUJU?=
+ =?utf-8?B?cEkwMWJhRkV5VjhWZVJaSDZwTWp4RWU0VXBpK0ZtVzlZNHdNUmhZK1NNWU1N?=
+ =?utf-8?B?bE1kR2RRYkozN2tMSjFSWGhWNkpKdWpHNFdURjZlcndxNDdIUmtoUDZHTVM5?=
+ =?utf-8?B?Szc5RXlPTnFHckk1YnhuSDVLM0h5Ull6NHZkWHJrL0Y0MGgzR0twUTFnT25r?=
+ =?utf-8?B?dDdBRnpMSGljQmcvdUpNVU5pR3VMcmlpQlVXNlZMbnc4VU5lbGRaaWVNdjRK?=
+ =?utf-8?B?bGFUQ3lrYmdaNUZERUl2bS9hMWw4RWFqd1N1QzF1bXRXcTVkVmppZnFwVC9X?=
+ =?utf-8?B?REphY0NGNWczMmFOOXJvd3VHMUx6bStwYTdFVzhBVm1OZzVPdFd5dFJzYnhY?=
+ =?utf-8?B?bnlDMEF0NWlXakpmamJoeE40TDBIK0pOcC9iREVKWnZsSTQ4OXB3RHh0VWFR?=
+ =?utf-8?B?ZXJXbWhyRzN3N0xsL0pIYk50WTBLSUxTMThhaXhGUUgyNkJxd2dEMS9PT2FQ?=
+ =?utf-8?B?WEZMenpoaVlNSWVyS0U3Yk4wbzIyQlhvMzBWOCtHYlhaR0tVYjdFRHVMMjVE?=
+ =?utf-8?B?b3ZqaTlsSmphUm5xQnhFV0lUb2Rocy9abWN0bkx5L1FlcE44YnM4U3I1ZnFF?=
+ =?utf-8?B?SnlJOWs1QnhyUGlYTEVid3hoSzVIRDVZdHhBZEI3V05PVUZQMmhReHdFWjB4?=
+ =?utf-8?B?eGphemJ5R25tRmMwdU5mSDZzRGtIY0M5YWsxWGdSamVySVdDUUdkYUlObXEr?=
+ =?utf-8?B?enlDbkR5eFFsdXhlUFgrZEttcGZkWExaNmNIRytSZXp2b0szQ3dWUnFveGZl?=
+ =?utf-8?Q?dc4mWZ5WMbZciFRfpykXwv1nG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ba155d9-2fda-486f-deb4-08dd57805215
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2661.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 22:44:40.5021
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JK7NMl5YLnQImWaUyIWgmB6cIqn4PcMETHhfQIhRQFPK4VxczAzG70rbTL9WR/fQlMtIdlGWnkSYFXZ9kR80bA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7159
 
-On Thu, Feb 27, 2025 at 03:16:40AM -0800, Greg KH wrote:
-> On Thu, Feb 27, 2025 at 01:09:41PM +1000, Alistair Francis wrote:
-> > The PCI core has just been amended to authenticate CMA-capable devices
-> > on enumeration and store the result in an "authenticated" bit in struct
-> > pci_dev->spdm_state.
-> > 
-> > Expose the bit to user space through an eponymous sysfs attribute.
-> > 
-> > Allow user space to trigger reauthentication (e.g. after it has updated
-> > the CMA keyring) by writing to the sysfs attribute.
-> > 
-> > Implement the attribute in the SPDM library so that other bus types
-> > besides PCI may take advantage of it.  They just need to add
-> > spdm_attr_group to the attribute groups of their devices and amend the
-> > dev_to_spdm_state() helper which retrieves the spdm_state for a given
-> > device.
-> > 
-> > The helper may return an ERR_PTR if it couldn't be determined whether
-> > SPDM is supported by the device.  The sysfs attribute is visible in that
-> > case but returns an error on access.  This prevents downgrade attacks
-> > where an attacker disturbs memory allocation or DOE communication
-> > in order to create the appearance that SPDM is unsupported.
-> 
-> I don't like this "if it's present we still don't know if the device
-> supports this", as that is not normally the "sysfs way" here.  Why must
-> it be present in those situations?
+Hi, James, Reinette,
 
-That's explained above.
+On 2/20/25 08:01, Reinette Chatre wrote:
+> Hi Catalin,
+>
+> On 2/20/25 2:58 AM, Catalin Marinas wrote:
+>> On Wed, Feb 19, 2025 at 03:24:06PM -0800, Reinette Chatre wrote:
+>>> On 2/7/25 10:17 AM, James Morse wrote:
+>>>> rdt_find_domain() finds a domain given a resource and a cache-id.
+>>>> This is used by both the architecture code and the filesystem code.
+>>>>
+>>>> After the filesystem code moves to live in /fs/, this helper will no
+>>>> longer be visible.
+>>>>
+>>>> Move it to the global header file. As its now globally visible, and
+>>>> has only a handful of callers, swap the 'rdt' for 'resctrl'.
+>> [...]
+>>>> --- a/include/linux/resctrl.h
+>>>> +++ b/include/linux/resctrl.h
+>>>> @@ -372,6 +372,40 @@ static inline void resctrl_arch_rmid_read_context_check(void)
+>>>>   		might_sleep();
+>>>>   }
+>>>>   
+>>>> +/**
+>>>> + * resctrl_find_domain() - Search for a domain id in a resource domain list.
+>>>> + * @h:		The domain list to search.
+>>>> + * @id:		The domain id to search for.
+>>>> + * @pos:	A pointer to position in the list id should be inserted.
+>>>> + *
+>>>> + * Search the domain list to find the domain id. If the domain id is
+>>>> + * found, return the domain. NULL otherwise.  If the domain id is not
+>>>> + * found (and NULL returned) then the first domain with id bigger than
+>>>> + * the input id can be returned to the caller via @pos.
+>>>> + */
+>>>> +static inline struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h,
+>>>> +							 int id,
+>>>> +							 struct list_head **pos)
+>>> Could you please provide a motivation for why this needs to be inline now?
+>> It's in a header now, to avoid the compiler complaining about unused
+>> static functions wherever this file is included. The alternative is a
+>> prototype declaration and the actual implementation in a .c file.
+> resctrl_find_domain() is currently in a .c file (arch/x86/kernel/cpu/resctrl/core.c)
+> with a prototype declaration (in arch/x86/kernel/cpu/resctrl/internal.h). This patch
+> switches resctrl_find_domain() to be inline without a motivation.
+>
+> After a fresh reading of "The inline disease" in Documentation/process/coding-style.rst
+> I do see a few red flags related to making this function inline. The function is certainly
+> larger than the rule of thumb of "3 lines" and considering the number of call sites I do
+> not see how bloating the kernel is justified.
 
-Unfortunately there is no (signed) bit in Config Space which tells us
-whether authentication is supported by a PCI device.  Rather, it is
-necessary to exchange several messages with the device through a
-DOE mailbox in config space to determine that.  I'm worried that an
-attacker deliberately "glitches" those DOE exchanges and thus creates
-the appearance that the device does not support authentication.
-
-Let's say the user's policy is to trust legacy devices which do not
-support authentication, but require authentication for newer NVMe drives
-from a certain vendor.  An attacker may manipulate an authentication-capable
-NVMe drive from that vendor, whereupon it will fail authentication.
-But the attacker can trick the user into trusting the device by glitching
-the DOE exchanges.
-
-Of course, this is an abnormal situation that users won't encounter
-unless they're being attacked.  Normally the attribute is only present
-if authentication is supported.
-
-I disagree with your assessment that we have bigger problems.
-For security protocols like this we have to be very careful
-to prevent trivial circumvention.  We cannot just shrug this off
-as unimportant.
-
-The "authenticated" attribute tells user space whether the device
-is authenticated.  User space needs to handle errors anyway when
-reading the attribute.  Users will get an error if authentication
-support could not be determined.  Simple.
-
-
-> What is going to happen to suddenly
-> allow it to come back to be "alive" and working while the device is
-> still present in the system?
-
-The device needs to be re-enumerated by the PCI core to retry
-determining its authentication capability.  That's why the
-sysfs documentation says the user may exercise the "remove"
-and "rescan" attributes to retry authentication.
-
-
-> I'd prefer it to be "if the file is there, this is supported by the
-> device.  If the file is not there, it is not supported", as that makes
-> things so much simpler for userspace (i.e. you don't want userspace to
-> have to both test if the file is there AND read all entries just to see
-> if the kernel knows what is going on or not.)
-
-Huh?  Read all entries?  The attribute contains only 0 or 1!
-
-Or you'll get an error reading it.
-
-
-> Also, how will userspace know if the state changes from "unknown" to
-> "now it might work, try it again"?
-
-User space has to explicitly remove and rescan the device.
-Otherwise its authentication capability remains unknown.
-
-Again, this is in the abnormal situation when the user is being attacked.
-There is no automatic resolution to this scenario, deliberately so.
-
-The user needs to know that there may be an attack going on.
-The user may then act on it at their own discretion.
-
-
-> > Subject to further discussion, a future commit might add a user-defined
-> > policy to forbid driver binding to devices which failed authentication,
-> > similar to the "authorized" attribute for USB.
-> 
-> That user-defined policy belongs in userspace, just like USB has it.
-> Why would the kernel need this?  Or do you mean that the kernel provides
-> a default like USB does and then requires userspace to manually enable a
-> device before binding a driver to the device is allowed?
-
-The idea is to bring up PCI device authentication.
-And as a first step, expose to user space whether authentication succeeded.
-
-We can have a discussion what other functionality is desirable to make
-this useful.  I am open to any ideas you might have.  The commit
-message merely makes suggestions as to what might be interesting
-going forward.
-
-
-> > Alternatively, authentication success might be signaled to user space
-> > through a uevent, whereupon it may bind a (blacklisted) driver.
-> 
-> How will that happen?
-
-The SPDM library can be amended to signal a uevent when authentication
-succeeds or fails and user space can then act on it.  I imagine systemd
-or some other daemon might listen to such events and do interesting things,
-such as binding a driver once authentication succeeds.
-
-
-> > A uevent signaling authentication failure might similarly cause user
-> > space to unbind or outright remove the potentially malicious device.
-> 
-> Again how?  Who will be sending nthose uevents?  Who will be listening
-> to them?  What in the kernel is going to change to know to send those
-> events?  Why is any of this needed at all?  :)
-
-None of this is needed.  It's just a suggestion.
-
-Maybe you have better ideas.  Be constructive!  Make suggestions!
-
-
-> > +		If the kernel could not determine whether authentication is
-> > +		supported because memory was low or communication with the
-> > +		device was not working, the file is visible but accessing it
-> > +		fails with error code ENOTTY.
-> 
-> Not good.  So this means that userspace can not trust that if the file
-> is there it actually works, so it has to do more work to determine if it
-> is working (as mentioned above).  Just either have the file if it works,
-> or not if it does not please.
-
-No no no.
-
-Quoting Destiny's Child here. ;)
+Agree with Reinette.
 
 
-> > +		This prevents downgrade attacks where an attacker consumes
-> > +		memory or disturbs communication in order to create the
-> > +		appearance that a device does not support authentication.
-> 
-> If an attacker can consume kernel memory to cause this to happen you
-> have bigger problems.  That's not the kernel's issue here at all.
-> 
-> And "disable communication" means "we just don't support it as the
-> device doesn't say it does", so again, why does that matter?
+Plus, resctrl_find_domain() is only called during setup and CPU hot plug 
+which are not run time paths and won't impact run time performance. 
+inline doesn't help the performance but makes the kernel bigger.
 
-Reacting to potential attacks sure is the kernel's business.
+I can see the function is moved from arch/x86/kernel/cpu/resctrl/core.c 
+and there is no corresponding fs/resctrl/core.c.
 
+If your motivation is to avoid fs/resctrl/core.c (which is much small) 
+to have one less file and just host the function in .h, please consider 
+to create fs/resctrl/core.c and put the function in it and declare it in 
+the .h file. So there won't be inline issue any more.
 
-> > +		The reason why authentication support could not be determined
-> > +		is apparent from "dmesg".  To re-probe authentication support
-> > +		of PCI devices, exercise the "remove" and "rescan" attributes.
-> 
-> Don't make userspace parse kernel logs for this type of thing.  And
-> asking userspace to rely on remove and recan is a mess, either show it
-> works or not.
-
-I'd say looking in dmesg to determine whether the user is being attacked
-is perfectly fine, as is requiring the user to explicitly act on a
-potential attack.
+>> (drive-by comment, I don't really understand this subsystem to make a
+>> meaningful contribution)
+>>
+> Thanks for taking a look. The idea is not unique to resctrl.
+>
+> Reinette
+>
+Thanks.
 
 
-> > --- a/drivers/pci/cma.c
-> > +++ b/drivers/pci/cma.c
-> > @@ -171,8 +171,10 @@ void pci_cma_init(struct pci_dev *pdev)
-> >  {
-> >  	struct pci_doe_mb *doe;
-> >  
-> > -	if (IS_ERR(pci_cma_keyring))
-> > +	if (IS_ERR(pci_cma_keyring)) {
-> > +		pdev->spdm_state = ERR_PTR(-ENOTTY);
-> 
-> Why ENOTTY?
+-Fenghua
 
-We use -ENOTTY as return value for unsupported reset methods in the
-PCI core, see e.g. pcie_reset_flr(), pcie_af_flr(), pci_pm_reset(),
-pci_parent_bus_reset(), pci_reset_hotplug_slot(), ...
-
-We also use -ENOTTY in pci_bridge_wait_for_secondary_bus() and
-pci_dev_wait().
-
-It was used here to be consistent with those existing occurrences
-in the PCI core.
-
-If you'd prefer something else, please make a suggestion.
-
-
-> > +static ssize_t authenticated_store(struct device *dev,
-> > +				   struct device_attribute *attr,
-> > +				   const char *buf, size_t count)
-> > +{
-> > +	void *spdm_state = dev_to_spdm_state(dev);
-> > +	int rc;
-> > +
-> > +	if (IS_ERR_OR_NULL(spdm_state))
-> > +		return PTR_ERR(spdm_state);
-> > +
-> > +	if (sysfs_streq(buf, "re")) {
-> 
-> I don't like sysfs files that when reading show a binary, but require a
-> "magic string" to be written to them to have them do something else.
-> that way lies madness.  What would you do if each sysfs file had a
-> custom language that you had to look up for each one?  Be consistant
-> here.  But again, I don't think you need a store function at all, either
-> the device supports this, or it doesn't.
-
-I'm not sure if you've even read the ABI documentation in full.
-
-The store method is needed to reauthenticate the device,
-e.g. after a new trusted root certificate was added to the
-kernel's .cma keyring.
-
-Originally I allowed any value to be written to the "authenticated"
-attribute to trigger reauthentication.  I changed that to "re"
-(actually any word that starts with "re") because I envision that
-we may need additional verbs to force authentication with a specific
-certificate slot or to force-trust a device despite missing its
-root certificate in the .cma keyring.
-
-Thanks,
-
-Lukas
 
