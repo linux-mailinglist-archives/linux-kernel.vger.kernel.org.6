@@ -1,127 +1,186 @@
-Return-Path: <linux-kernel+bounces-535888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AEBA47892
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:03:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07106A47895
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:04:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1203B2A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88111673B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F785227EA4;
-	Thu, 27 Feb 2025 09:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5600227B94;
+	Thu, 27 Feb 2025 09:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLspYqEw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lL8Y66jD"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BA22576C;
-	Thu, 27 Feb 2025 09:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4346F1EB5F3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646985; cv=none; b=SXR8cJvgeK28GNoIUbBSC2CPnlCrYcK/9dVqrQpjDaOGIlyGtuwOtFQzhJipfNsUeKFa/BIMsHrA1G2R803n1cQaxQVYJz9d+QJehmR/Yf+HaVqdBnH8oJyFsNBBR3+r4BDXyug7fcHXuRTj/6ijAVIDeeyMWCfqhxBC2jokAUY=
+	t=1740647053; cv=none; b=jzsRM4JwUNQ1XAO2J/zq2rJhLhs9j0cNk7uPnFwFmNxlYyR1df4hoJ0s55te2+ozl+hz6+laJMYoHS/QVaKuvy7+AGwOh1pEd4QGwtjDuyakZOGW2hZw81HKit/EliYAwvlAW9cTe1OIQ0vr7SUoabs+h9nvS6xeVEbdi0SSGQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646985; c=relaxed/simple;
-	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiKcbViOayNAePsy0pUklxZwqZAKz5ZhJDjiW/QdW5lHGaxT+Vo5tfm0VqNhLPVFOMwAeAQi6wKqh5GEy+E3dflZVAGVaC6KcIWdzpA9FRLlTu4DM+sBdi+mk0OWcEJ+q7823JMaOAgky+oPyeIZyWfWStoybPumk/gacdR9Byw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLspYqEw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7E3C4CEDD;
-	Thu, 27 Feb 2025 09:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740646984;
-	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nLspYqEw609cIT0ad0o594ZSe9+944oOqgtsX4PvzoyBCh2CjxvcaZKHcRlfZbkg3
-	 o98sgutNPNtNQvtB1V2TWfdkxk0jvPKNau6dHa8OKjnpZRzHC9C6ErL5o2r0XNXfYe
-	 ynD51HJPuofVM3zovm3pWhAZDAaeGPoIRj6tCVyu8o4t7sFTQlvipwFQwyRdAzsR2d
-	 B6voWJuIrlI+Cf1lPSYN2ZjYhqS7rvygaip7lyyFeeh6HBrO8Q/DpezIvl2iQUtyVl
-	 OXwKmfMuglQQ5kuzM1Q6kxE36HyfrIokC3I3woeNs2DsuZou71wXc13B0RkvyLg9Ys
-	 NykE1mhZbbdJQ==
-Date: Thu, 27 Feb 2025 10:02:45 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, Yaron Avizrat <yaron.avizrat@intel.com>, 
-	Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Nicolas Palix <nicolas.palix@imag.fr>, James Smart <james.smart@broadcom.com>, 
-	Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Selvin Xavier <selvin.xavier@broadcom.com>, 
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, cocci@inria.fr, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
-	ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, 
-	Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH v3 00/16] Converge on using secs_to_jiffies() part two
-Message-ID: <3apo7evpkvcy5mafw7zdatr3n7lytugvfmumq2zou4nifyptnc@ucbu4c5g5jrq>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <79b24031-5776-4eb3-960b-32b0530647fb@sirena.org.uk>
- <hJl1qb89zCHWejINoRSGGIO0m7NNi3wAmY9N_VC7royLnZoyL-ZozLkmLO-vCPlYc55-IPh76PIB_2_aKKjp1A==@protonmail.internalid>
- <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
+	s=arc-20240116; t=1740647053; c=relaxed/simple;
+	bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mdiklzSBroyl+kVnzCAjBAGLmc4pZE7LuGktgfjdU8x6kPsQhGl6fcKmYniNT5/ilL3ck+2zcIFv6ag3cLAauk4iAaYHqcRrFoaamrb8UDgyJo+oZskuC/M9PpGmcMw/CRyXPTsMZADjQhum4je7200ZjBoAzzd7Ky/1PjMmyRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lL8Y66jD; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso1002088a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:04:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740647049; x=1741251849; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
+        b=lL8Y66jDOUwgyUv8f42uWlPPXupIM5tWbRmnJmZxpfNDTafi0Vq2Za3VKHogQU4jU0
+         bVJZulC4NsjfHUprNjon4vIxfEi++1z10QMQwow1/1KIUS3TuoSYZmVe/ihwjjaBACwT
+         ea2+GrwVzJNb9X/u2saiYrRD6zaZ3Y/wvMh6Q//Se6Wkp4kNf6D8iu/+jS5/R2uWKQfj
+         fxM9scyFrR/7O9pvpzv0Ti/IJsTkg5bEtTlvgk9rSqfRtdXPT5G2mLZg2fDljogYbFOH
+         M8GrXPjrNTYQW9nFzUckyJl2PbaJCfovMqDDxmSVsJGdMqYvjbHWYRe9OBCjiUP6g4Pg
+         uXWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740647049; x=1741251849;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9UELi51ewmWIjHiA7B4nlgq4NGyPCYajQTc5lxmZ59Y=;
+        b=JI2uSAJKBgJ+ppNM1nuE+jCzauZOQxeHtWm9INriRtpSFgQPq0/2hwfXmPtXRF5Nuu
+         POkIjrK96Qid12Zn8HURemxdQ47QLQ4Fde0n2j0KL0rJzzdEnDCgEM9bBbP/cVO5Pr50
+         IuQsOjE3InjGxCyiB7jGM2zQ0NS4LMfYmlrzTcZF0n6Dij5c3ejxoxEq25xezk3CLiti
+         BBiO3FFip9hjYG75sGke1vpW9U9QYHGCe4c1likW9jYS/13mE2HScHWztujegVwpizo9
+         97nULsWduneC0fh/+MgVn1YOcuH6/tbwOi6ByT7hGoBALIbfhG7/uXiUOHBLEBQwrW3F
+         DrIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSYDMT93WMVFkc1d5kmxL7C/snzBBbNOPVtG+UvnV8zmcVtqiyWcruEYD1dzDP/jMRXfNUQqMWDqy6ebQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNCBpmzaMdlh+ypP7rXrbkVz8SZHhsDqNHb4oEXcUIFiVKJ6ZR
+	MYh+KWu4RIiqEvsqixryZiLPHJdFApWuk6YN/RTqyKsP8xiTjnwclfgoxqw5FW8CpVtgW7X7Smq
+	/25wDBDg4eD+4xkXoVgha8cO9Ds+pHSzgQviI6Ksjyo51a9av5Qc=
+X-Gm-Gg: ASbGncsbW1rwqbWHgUq2CbkLM9IyjherHFM93LOrGgfTOaRUd+09Jxlp6ISCZEKP+d9
+	fEAVLjsGlDbwwbxUjmYcGK4tUjouYrC3PduSr9vUb+bVHYIhS3xkvvio3hyOG2o0HORzkc/l37A
+	TDEpk8ivSrhcty11DUAfCQCxMtnTfVB6WgEddu
+X-Google-Smtp-Source: AGHT+IEL8jwJ7+Gx3xJdJeHDsZTHpaCquM4MW1jp1zytycJLxfwfsjyTlAbBkYEONnTUZIEzwyZgbc0AuBqEo7yItF8=
+X-Received: by 2002:a05:6402:26ce:b0:5db:f423:19c5 with SMTP id
+ 4fb4d7f45d1cf-5e4a0d45ba9mr8937725a12.5.1740647049379; Thu, 27 Feb 2025
+ 01:04:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
+References: <20250218202618.567363-1-sieberf@amazon.com> <20250218202618.567363-4-sieberf@amazon.com>
+ <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com> <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
+In-Reply-To: <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 27 Feb 2025 10:03:58 +0100
+X-Gm-Features: AQ5f1JpPsBJHinsoIgFp7A0EoT2EP8A_Ofo81ZptF2TzVMQisI0TKNHfxPF_aj0
+Message-ID: <CAKfTPtBoVCnoO+vScNXRqXXWwRBT0MGOqeeAZ4VeAB+pPZVrCw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
+To: "Sieber, Fernand" <sieberf@amazon.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 12:38:51PM -0800, Andrew Morton wrote:
-> On Wed, 26 Feb 2025 11:29:53 +0000 Mark Brown <broonie@kernel.org> wrote:
-> 
-> > On Tue, Feb 25, 2025 at 08:17:14PM +0000, Easwar Hariharan wrote:
-> > > This is the second series (part 1*) that converts users of msecs_to_jiffies() that
-> > > either use the multiply pattern of either of:
-> > > - msecs_to_jiffies(N*1000) or
-> > > - msecs_to_jiffies(N*MSEC_PER_SEC)
+On Thu, 27 Feb 2025 at 09:27, Sieber, Fernand <sieberf@amazon.com> wrote:
+>
+> On Thu, 2025-02-27 at 08:34 +0100, Vincent Guittot wrote:
+> > On Tue, 18 Feb 2025 at 21:27, Fernand Sieber <sieberf@amazon.com>
+> > wrote:
 > > >
-> > > where N is a constant or an expression, to avoid the multiplication.
+> > > With guest hlt/mwait/pause pass through, the scheduler has no
+> > > visibility into
+> > > real vCPU activity as it sees them all 100% active. As such, load
+> > > balancing
+> > > cannot make informed decisions on where it is preferrable to
+> > > collocate
+> > > tasks when necessary. I.e as far as the load balancer is concerned,
+> > > a
+> > > halted vCPU and an idle polling vCPU look exactly the same so it
+> > > may decide
+> > > that either should be preempted when in reality it would be
+> > > preferrable to
+> > > preempt the idle one.
+> > >
+> > > This commits enlightens the scheduler to real guest activity in
+> > > this
+> > > situation. Leveraging gtime unhalted, it adds a hook for kvm to
+> > > communicate
+> > > to the scheduler the duration that a vCPU spends halted. This is
+> > > then used in
+> > > PELT accounting to discount it from real activity. This results in
+> > > better
+> > > placement and overall steal time reduction.
 > >
-> > Please don't combine patches for multiple subsystems into a single
-> > series if there's no dependencies between them, it just creates
-> > confusion about how things get merged, problems for tooling and makes
-> > everything more noisy.  It's best to split things up per subsystem in
-> > that case.
-> 
-> I asked for this.  I'll merge everything, spend a few weeks gathering
-> up maintainer acks.  Anything which a subsystem maintainer merges will
-> be reported by Stephen and I'll drop that particular patch.
+> > NAK, PELT account for time spent by se on the CPU.
+>
+> I was essentially aiming to adjust this concept to "PELT account for
+> the time spent by se *unhalted* on the CPU". Would such an adjustments
+> of the definition cause problems?
 
-I'm removing this from my queue then and let it go through your tree.
-Cheers,
+Yes, It's not in the scope of PELT to know that a se is a vcpu and if
+this vcpu is halted or not
 
-Carlos
+>
+> > If your thread/vcpu doesn't do anything but burn cycles, find another
+> > way to report thatto the host
+>
+> The main advantage of hooking into PELT is that it means that load
+> balancing will just work out of the box as it immediately adjusts the
+> sched_group util/load/runnable values.
+>
+> It may be possible to scope down my change to load balancing without
+> touching PELT if that is not viable. For example instead of using PELT
+> we could potentially adjust the calculation of sgs->avg_load in
+> update_sg_lb_stats for overloaded groups to include a correcting factor
+> based on recent halted cycles of the CPU. The comparison of two
+> overloaded groups would then favor pulling tasks on the one that has
+> the most halted cycles. This approach is more scoped down as it doesn't
+> change the classification of scheduling groups, instead it just changes
+> how overloaded groups are compared. I would need to prototype to see if
+> it works.
 
-> 
-> This way, nothing gets lost.  I take this approach often and it works.
-> 
-> If these were sent as a bunch of individual patches then it would be up
-> to the sender to keep track of what has been merged and what hasn't.
-> That person will be resending some stragglers many times.  Until they
-> give up and some patches get permanently lost.
-> 
-> Scale all that across many senders and the whole process becomes costly
-> and unreliable.  Whereas centralizing it on akpm is more efficient,
-> more reliable, more scalable, lower latency and less frustrating for
-> senders.
-> 
+This is not better than PELT
+
+>
+> Let me know if this would go in the right direction or if you have any
+> other ideas of alternate options?
+
+The below should give you some insights
+
+https://lore.kernel.org/kvm/CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com/
+
+I don't think that you need any change in the scheduler. Use the
+current public scheduler interfaces to adjust the priority of your
+vcpu. As an example switching your thread to SCHED_IDLE is a good way
+to say that your thread has a very low priority and the scheduler is
+able to handle such information
+
+>
+> > Furthermore this breaks all the hierarchy dependency
+>
+> I am not understanding the meaning of this comment, could you please
+> provide more details?
+>
+> >
+> > >
+> > > This initial implementation assumes that non-idle CPUs are ticking
+> > > as it
+> > > hooks the unhalted time the PELT decaying load accounting. As such
+> > > it
+> > > doesn't work well if PELT is updated infrequenly with large chunks
+> > > of
+> > > halted time. This is not a fundamental limitation but more complex
+> > > accounting is needed to generalize the use case to nohz full.
+>
+>
+>
+> Amazon Development Centre (South Africa) (Proprietary) Limited
+> 29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+> Registration Number: 2004 / 034463 / 07
 
