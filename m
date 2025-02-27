@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-536234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD6EA47D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:11:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA68BA47D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8788A188D998
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9D016A8F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CB822F15E;
-	Thu, 27 Feb 2025 12:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FA3231CAE;
+	Thu, 27 Feb 2025 12:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGtFlery"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU2fr45F"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0104C22F145;
-	Thu, 27 Feb 2025 12:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0640C22F145;
+	Thu, 27 Feb 2025 12:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658165; cv=none; b=HttmhrqmGg8vdCESKNYhpQN1F8mQWkC8B5gaplli4d3MxWnrzjv+UeMeEVPtD0FOmIrn7pCfaaPVh7GKEM1+xNue0AdetFxPGzjkMmeB0MuG5eAqCAUUQmbnP3fw+C1ffWQOTt2hjqhz3QzS73XKULRYF5S6iZthDCICgkTfeX4=
+	t=1740658173; cv=none; b=hSV/KvttDMrOs6Ew0nRp5BjfYgXB3sfgW3uZ0DroMUQUi7kk9bJZXgQHhN9410En4NdqJF462L7vUk78v7VTPu5jG5mROOGNQuVf5/dpsQW2bQtaP4xLt+Ox99k8QKrgTgCvn3D11hSIXIPGnV8EahhtkScMEPYNMr3Sck3sJuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658165; c=relaxed/simple;
-	bh=Io6kDR2zBBh3aBpK4VSy+F5NUnkYFLQhjOt7NCyhIZ0=;
+	s=arc-20240116; t=1740658173; c=relaxed/simple;
+	bh=y9R3gC4DcFYDFbAgeXOJCoKDJMqg1SlzEiGmhUycXwc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UbHy41SZXdtBNW1xden2l2+bAuV6NsqfAema3oAJMn+sHzAJxnxZYASVEFOtsC0TUsVwsPyehy4DjsHxWIz2QSL3GjG9WGA2IbAbQOw9WsmO2wTmVnH1cIX33jiYXOByoFKc1Xa6+bPvBD3GuRspC22sYZsJEVeLPS3JyD7J46Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGtFlery; arc=none smtp.client-ip=209.85.214.175
+	 In-Reply-To:To:Cc; b=PCcjwzah84QuxPkG/IaEdqUb7RAR0I0Q+rrs2AXqGEE6GElkMTjG44MOGcuLErqK5KJKnW1P2rCmh+ub70o/n1vE4gu8RYX26n/7IgyjWIswtVD+zt4+OVCapW7i2CA8F1su0lLFSNiUy3sDbaZvw3ysskFpYWymRTb3kvYj+3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EU2fr45F; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2234bec7192so20837555ad.2;
-        Thu, 27 Feb 2025 04:09:23 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22328dca22fso11797225ad.1;
+        Thu, 27 Feb 2025 04:09:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740658163; x=1741262963; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740658171; x=1741262971; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dzpCBkvNFe+4cxCFesd8njDke2bm077RZxzjdl44kWk=;
-        b=aGtFlery3pTEQm8VqULwCArnWJt7O8GOUNE2dF3tVoQAkZ5+knMVCYIQmXYLHsXWua
-         AQqYsaFPTjT07OcraBQl+eotdM1GY+y/Sv4iml/BdjsUTAD5USa3O3U1lg1rTZJ7Tg8O
-         S/JOR+SxaA4IsHCQ315kNt9eRQ7OsUb11vlQHCfdG1XgwkbEkobJNCqRUsu8HQqtDEhN
-         exOJtpaV+iic4Vtk415uX1brNR+ndFKZ9XeYk+pZWO3TeU2JlB6PT/ZVlQfgKqeRx+mP
-         P6usJkDDwfwfXB+2/4UOMGf0wjAiJd/BEIW+nefngV7ojUlcjNKsVteh8knUlMQtiYKQ
-         xpzA==
+        bh=EeoXHbMNaZZnZxWSox36s26riivTYQEGCI8dhE09lK8=;
+        b=EU2fr45Fgi4EMIGdRt5xgDGnbHBiIugqgpozhRMHgpnyerc1fvLB3DSkJuzq1k1aKK
+         ZvAEOk6LZkCL+EiF6LivmclE59oQfRNwLph0OzXJUUvsKUmQZ8UljVCMYQL0mbrROpxy
+         uuBRxu/DEyUjom9O1wxgV2/xuBdTs1WJeIOE7F0qS0Sl0vwjgs0XKP4gxmOUjY1WvNk6
+         6m9IIYTbnuhDwQkCsyCTkzohYnffrR6XEa4framViG5bwqgg8gjSWHUTLtg7iBgF/Y6P
+         Xergo1hl48SA0dLh+Mpom4tYNDMGr39IhDWjjNVmh6GZS6C0sRc2hdtrH49SC6CYKJ1m
+         bYhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740658163; x=1741262963;
+        d=1e100.net; s=20230601; t=1740658171; x=1741262971;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dzpCBkvNFe+4cxCFesd8njDke2bm077RZxzjdl44kWk=;
-        b=KL9mGIVSmhLex3gXUEvhO58ITuXljN4T4IGTJ2wsEqQUN0i6aBPbXl/6o1KMHC7++z
-         o+UZDtKpViCPlZ8zVKa3CsmbgGkC/JmTesXRhU8aWDfDfDDtCBYkMohdMlIT+PJKa4fj
-         +WH5IDb0cI/3OwIYLIXlONNVRDrnUz7CfUKAVDaPFxPOU17vxNsYtmEPSWL3t+gnOVcX
-         yTvAleRg4nx64ZDTtMQig/Aq4Bx0cwaf4w9YfrFoApenvEIXMFI88asti0rFGCK0saDn
-         rgjhYuWstz6+Z30PgxM/DcKABId2W6ak8TDjcE857/iX1RBUbF4VatB17qIDkBM3kS50
-         HVEw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Zk5Xi/UyJkIn0jxv5XtVtnqp5VVFq/9sriVGfPyxx6crTJFm26gqXiSSuumrQQbL+t4LEJS4IvGBwrY=@vger.kernel.org, AJvYcCVSp2wy9Dh4p2dHMHzBNWXXRTpaPJhlJBwfJ9wN9IvfWMGDPTG66q7GR2VJk3JOpeXt+b86ZrO6FptaoJw=@vger.kernel.org, AJvYcCVrlipuJBHQ/YQ5ItlOm/A9I+dnzvqyMpc4lJM/bRRjvXh+/Liih3fQ4HfOGBGAYK9P870GyCmtfa0U@vger.kernel.org, AJvYcCXGB0KEtHGhrCerxkfxg9lRt280eeqAUjqQn6eh7jsuKB7YqjBNiD/fMpKA6N3R651tUkhbPNwksaBi5wz/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx57bOqq23ibKBW37YWK4a7DynNQu5UDeVAGbym0Inx9uJ1rn1N
-	+VzmHJp/XYmmCA7Pw2l1gvHfRX3G4B54FTZg2SCF+hQwyBSCqwSI
-X-Gm-Gg: ASbGncusM9J8UvaQ1SogvLD5wlTvlTB5tr4uxsO2HgasNeWP7cec8gMJQskyhBye/8M
-	fkzmaS/OEUSAt9nnYOImBpS1r5vYnlljyqzqegi3Mm86u5O1gVpDkrYeIcMw4ANDRSpwNUP279x
-	s34syPsc8fYeegZpH7WRKWLdqHzG+WlJynb4kLK0IVNCbuValvVC/YxSP1Ug/01Y1FmZa8J8lhI
-	9Bs0Pwga0M9U4vNYavfHlYDr9Q+JXQjWc1vxDV/MjjO54UffZugX65punsJyRkeaNuyg36JyQRm
-	64y+K82/EBMWoMqsXVTACO5k7lJAumWhTfcA00Y2vQg8UKI1UPyeU40QOBH1CqdClHJ7QsGKAcV
-	Qj3MKkW7x0EO4u7pSGktz
-X-Google-Smtp-Source: AGHT+IFmjn8gZmsAiVDDh0ytBwNsGDZKLbshMCoMfcZDZX53iA6NwZyLI9KPUoJ8hC8j1OBKRPgFng==
-X-Received: by 2002:a05:6a21:348b:b0:1ee:6d23:20ab with SMTP id adf61e73a8af0-1f10ad33426mr10797861637.10.1740658163129;
-        Thu, 27 Feb 2025 04:09:23 -0800 (PST)
+        bh=EeoXHbMNaZZnZxWSox36s26riivTYQEGCI8dhE09lK8=;
+        b=dm53QJ3RgRjJwCTjFal/HphkvVIYsAn2jGtim3xbeyYP0mJJF0pGEVOLPjAr6bV96T
+         Si99YImdRpdWK6pskXu86LMkngWl2cjnCBBqpEd3JVmvdAuD6Kd8VOsdnrepscTi+NYs
+         WO+CdiuCoEG7GijhIdElYn+HZZzsjQ830EMRJ7CldjoosGvp0bNmvoiMqh6evQQcw1EB
+         bg4t1Rh/dIr7D3xr8R9w9wupniT8EIorJ6wD+Vi62FPT+Sf1kjar4BZz0eJ+/vlg6TKq
+         p+iRJAlm62qimZJD3CKYFSL7MOrpEEaCqciBazJKIaPWIA4dSsvIl489kNzwY3m+6Jo0
+         dDmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0GJBofJtTEMOXapNEjKBlSWv3K90jrYrbiRJi31hGD7yyPa7+OWVpmyILjO4kYtzqbD65t2JcaQg4Pu8=@vger.kernel.org, AJvYcCVpY63GFsVS47LPiv6mNU1HVPR1O5cIezMhSFteHT1ftCGMakVM0FTE97vA9XiF5KTwMwhXX8xc2hNJh4s=@vger.kernel.org, AJvYcCX+BaW8rFyUr42wNwrEXpQRJWZQd3caBA7pFBUKTCc0yidfGtbRiC2R78y1LBeHLU3NwHlNd/nrsmhk@vger.kernel.org, AJvYcCXJvGp0oG4lYtMBvIzcxy2lEmoLkgBY1nKVZLDOPUG74rt5tJJGawIMOhU0SLN36NZoJMf7k2CcyTdqltX9@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn5XE2d63y0j0U05JHcXM3Wnv4Fqe1w6dHdzcMZRnYPE8uUwZc
+	hywXfRDcdS3cR0wbhPAIGVbNN1yw9rh2VxsRISi/jHgUTGdxC2+m
+X-Gm-Gg: ASbGncttLv0S7X11TWr1BvOD/d4Njf2jJQbrmHLbxTYgt4dXjEB2NfNQ+626YqyH4Cb
+	kPj2fd6Fq4sPfki1CJTNwTieI1T62n1yfB3eiOfZlXBeljtfXfyGY5VWqvb4weFvi52iEV+s7i2
+	dCfw4GlSJwZITSVC5qI6NPseR6ixw0TohV9zANr60VPFL2x+Jtt+ivopiBsIYOP00lDN1uGwLrh
+	Co4SRUQdRZP/4fihimplZZcDdnjNoHvVm0Tp6Nf2MuY+Bi+kjZP7Mki7649gx9QYmaeIlzsXtMb
+	dzuRyU8GKLPixEMGfj6JaFDmuZm0ll9fcu6VdJJt7NTNuWgHCRd0GoZ/5RzyviJLND1iy8+lSGj
+	bE2jcvZ16xKhojgyICF4T
+X-Google-Smtp-Source: AGHT+IGQyu6iPi0iwFfK9ojHPFOpbCezULBKbxEBCo5/jEYx233lkSxpnDwz+L55Flf/FLjGS3vkww==
+X-Received: by 2002:a05:6a20:840d:b0:1ee:c631:6057 with SMTP id adf61e73a8af0-1f0fc78fac2mr22023526637.34.1740658171206;
+        Thu, 27 Feb 2025 04:09:31 -0800 (PST)
 Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de19cdasm1074217a12.24.2025.02.27.04.09.15
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de19cdasm1074217a12.24.2025.02.27.04.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 04:09:22 -0800 (PST)
+        Thu, 27 Feb 2025 04:09:30 -0800 (PST)
 From: James Calligeros <jcalligeros99@gmail.com>
-Date: Thu, 27 Feb 2025 22:07:31 +1000
-Subject: [PATCH v3 04/20] ASoC: tas2764: Add control concerning overcurrent
- events
+Date: Thu, 27 Feb 2025 22:07:32 +1000
+Subject: [PATCH v3 05/20] ASoC: tas2770: Factor out set_ivsense_slots
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250227-apple-codec-changes-v3-4-cbb130030acf@gmail.com>
+Message-Id: <20250227-apple-codec-changes-v3-5-cbb130030acf@gmail.com>
 References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
 In-Reply-To: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -101,70 +100,85 @@ Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
  asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
  Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2014;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2333;
  i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=Edes/eOYgyHscimA5rczgRo/u/EfWQDXOVtLP4SmgoA=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDOkHQk+eSplRlP06a+asbVk3RG4v45kS3HlD41piy4Ebv
- I/Ptl6Q7ihlYRDjYpAVU2TZ0CTkMduI7Wa/SOVemDmsTCBDGLg4BWAiM7IY/ify85+1OLTn+g61
- jQ82TjrzaZNH0PSLXa2n89e6KNl35egxMryN8lyzreNViu5qp4aSt1GKu19OFN54eqtyg/Kyq5F
- HF7IAAA==
+ bh=2q7/AnA+S3zg5UY6950rlfHRPwEmvXdr4IHaVW0DiDY=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOkHQk9GbI52PlW/wYJpQ1Kqw3N9Q3uzmV4qBWX3j2Uxr
+ jaufnO9o5SFQYyLQVZMkWVDk5DHbCO2m/0ilXth5rAygQxh4OIUgIlEfGZk+HHQ8qHWhOWFF6pe
+ X03j3udy/d1byenfb6ptFj+Z0SO+dzkjw+HgpvtlrD+EUi0n+vw8vS98Sf26y0GJjsl3V3OsWL9
+ 0LwsA
 X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
  fpr=B08212489B3206D98F1479BDD43632D151F77960
 
 From: Martin Povišer <povik+lin@cutebit.org>
 
-Add control to expose the option of autoretry behavior on overcurrent
-events in the codec.
+Add a new explicit function for the setting of I/V sense TDM slots.
 
 Reviewed-by: Neal Gompa <neal@gompa.dev>
 Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
 Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 ---
- sound/soc/codecs/tas2764.c | 9 +++++++++
- sound/soc/codecs/tas2764.h | 4 ++++
- 2 files changed, 13 insertions(+)
+ sound/soc/codecs/tas2770.c | 40 +++++++++++++++++--------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2764.c b/sound/soc/codecs/tas2764.c
-index d9b4f898789fa9b59c94c97e3b130950b88c3a76..08aa7ee34256896915f3ed6438b8b8827ce240c7 100644
---- a/sound/soc/codecs/tas2764.c
-+++ b/sound/soc/codecs/tas2764.c
-@@ -634,12 +634,21 @@ static SOC_ENUM_SINGLE_DECL(
- 	tas2764_hpf_enum, TAS2764_DC_BLK0,
- 	TAS2764_DC_BLK0_HPF_FREQ_PB_SHIFT, tas2764_hpf_texts);
+diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+index 863c3f672ba98dd74a5ba1b15d650a90f91176a1..4a86fcec0c1ecab45b9ebcdfc90c78f3290c6fa6 100644
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -189,6 +189,31 @@ static int tas2770_mute(struct snd_soc_dai *dai, int mute, int direction)
+ 	return tas2770_update_pwr_ctrl(tas2770);
+ }
  
-+static const char * const tas2764_oce_texts[] = {
-+	"Disable", "Retry",
-+};
++static int tas2770_set_ivsense_transmit(struct tas2770_priv *tas2770,
++					int i_slot, int v_slot)
++{
++	struct snd_soc_component *component = tas2770->component;
++	int ret;
 +
-+static SOC_ENUM_SINGLE_DECL(
-+	tas2764_oce_enum, TAS2764_MISC_CFG1,
-+	TAS2764_MISC_CFG1_OCE_RETRY_SHIFT, tas2764_oce_texts);
++	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG5,
++					    TAS2770_TDM_CFG_REG5_VSNS_MASK |
++					    TAS2770_TDM_CFG_REG5_50_MASK,
++					    TAS2770_TDM_CFG_REG5_VSNS_ENABLE |
++					    v_slot);
++	if (ret < 0)
++		return ret;
 +
- static const struct snd_kcontrol_new tas2764_snd_controls[] = {
- 	SOC_SINGLE_TLV("Speaker Volume", TAS2764_DVC, 0,
- 		       TAS2764_DVC_MAX, 1, tas2764_playback_volume),
- 	SOC_SINGLE_TLV("Amp Gain Volume", TAS2764_CHNL_0, 1, 0x14, 0,
- 		       tas2764_digital_tlv),
- 	SOC_ENUM("HPF Corner Frequency", tas2764_hpf_enum),
-+	SOC_ENUM("OCE Handling", tas2764_oce_enum),
- };
- 
- static const struct snd_soc_component_driver soc_component_driver_tas2764 = {
-diff --git a/sound/soc/codecs/tas2764.h b/sound/soc/codecs/tas2764.h
-index 69c0f91cb423986f7f0ded0b2160927f024d957d..3251dc0106e07862dd69efd69fa0e40c3858ecb7 100644
---- a/sound/soc/codecs/tas2764.h
-+++ b/sound/soc/codecs/tas2764.h
-@@ -44,6 +44,10 @@
- 
- #define TAS2764_CHNL_0  TAS2764_REG(0X0, 0x03)
- 
-+/* Miscellaneous */
-+#define TAS2764_MISC_CFG1		TAS2764_REG(0x0, 0x06)
-+#define TAS2764_MISC_CFG1_OCE_RETRY_SHIFT  5
++	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG6,
++					    TAS2770_TDM_CFG_REG6_ISNS_MASK |
++					    TAS2770_TDM_CFG_REG6_50_MASK,
++					    TAS2770_TDM_CFG_REG6_ISNS_ENABLE |
++					    i_slot);
++	if (ret < 0)
++		return ret;
 +
- /* TDM Configuration Reg0 */
- #define TAS2764_TDM_CFG0		TAS2764_REG(0X0, 0x08)
- #define TAS2764_TDM_CFG0_SMP_MASK	BIT(5)
++	return 0;
++}
++
+ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
+ {
+ 	int ret;
+@@ -221,19 +246,8 @@ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG5,
+-					    TAS2770_TDM_CFG_REG5_VSNS_MASK |
+-					    TAS2770_TDM_CFG_REG5_50_MASK,
+-					    TAS2770_TDM_CFG_REG5_VSNS_ENABLE |
+-		tas2770->v_sense_slot);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG6,
+-					    TAS2770_TDM_CFG_REG6_ISNS_MASK |
+-					    TAS2770_TDM_CFG_REG6_50_MASK,
+-					    TAS2770_TDM_CFG_REG6_ISNS_ENABLE |
+-					    tas2770->i_sense_slot);
++	ret = tas2770_set_ivsense_transmit(tas2770, tas2770->i_sense_slot,
++					   tas2770->v_sense_slot);
+ 	if (ret < 0)
+ 		return ret;
+ 
 
 -- 
 2.48.1
