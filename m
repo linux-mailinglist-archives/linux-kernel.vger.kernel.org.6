@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-535951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07621A479B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:02:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5745DA479C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C99D47A29CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:01:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D7A7A297A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BD9228C99;
-	Thu, 27 Feb 2025 10:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfrPz2JJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C672C6A3;
-	Thu, 27 Feb 2025 10:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7FD22B590;
+	Thu, 27 Feb 2025 10:04:45 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCF821B9EE;
+	Thu, 27 Feb 2025 10:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740650525; cv=none; b=lx+WnJQZKHmnRFpiXhttsotgfL+mRaX7NVrx/9fbnAHGAFTSjGiD+0IAlRjiw1WmWlzdqUdagFMl2sOgXKcKQfas9H/tHhtSjhLTi9+vMnHrdB2UWqP5Qe+COj4CmnltFGC3EsHFaQzFNxDXnt4k8mb2OFaypiyGL5Syhc6k0ow=
+	t=1740650684; cv=none; b=nSFQK9QTggNbrmjcoCs9HGpzvmVbYuvY/1VneZmUPOQN4ZTq4GKGQK1lUsRDrSQjkgXVDEorrqnFRv5fDANrSjdEwkRwJV01gXj0+CFZoxB2LzK9UFq2hGds4qGzmQpxn8a0mZC8knJPGstMFKJT3pHZU1nACNzQ/YzIM7/PQw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740650525; c=relaxed/simple;
-	bh=WFRK26x5tVbWE7gyjrMMLUCQC1MZqXSZkDzOkUqv5oY=;
+	s=arc-20240116; t=1740650684; c=relaxed/simple;
+	bh=cuAnZJrmKQ+otBs+gYixXb6DpO7Z6ef3tS3CsIpqqQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckhIYCYYL1fpEwgQLYr88DbVy/bOXMcfBlwbTPK3Z01jlF7vmwCbiAclJMPb18UBgO+ZLcrBLTLOhIas4ztaCJwATuDEN//29yUKvcYWnzapSh4EI8g57mujPHJbRljbyeSKw1xRiNXLpfk5mfSMrH6F4Ni4R0altwGv320WHTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfrPz2JJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD98C4CEDD;
-	Thu, 27 Feb 2025 10:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740650524;
-	bh=WFRK26x5tVbWE7gyjrMMLUCQC1MZqXSZkDzOkUqv5oY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OfrPz2JJYBEDgWaFe3BuGfbg3eo3kF2eDRLJsTPndeTB4aLJd5thUDGFyC9NWCkYH
-	 2N2bCKSPMaqvYVDFRLyiEXe+NVt4ISgScLzFIH34TkEYDWhp4DfubKBQLfDMUwj7gV
-	 FFIJZTOexQVX8Wq6e541mI+MummpB92u4DMWRPaTvhfHrxCvKYruxrxcExyBvjFcAN
-	 tI/QsEnO5rLleFbRdBWeBkDMEaFVH38F3cW1c23YTRDGdnORsx2fMOrDRdLw5Twuvk
-	 2TemwYoi63k+IPrJtu6WZmYX1wL0nXwBS2MPy8SRocu3iWb/qrQVpeoG336elucQsN
-	 nj+/MEBqIGoGg==
-Date: Thu, 27 Feb 2025 11:01:55 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, paulmck@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
-Message-ID: <Z8A4E_AyDlSUT5Bq@pollux>
-References: <20241219170425.12036-1-dakr@kernel.org>
- <20241219170425.12036-8-dakr@kernel.org>
- <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
- <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
- <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
- <Z72jw3TYJHm7N242@pollux>
- <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n5Uwu8VW1L1mKrbQ3d2sxR7iFuYCuMeMi2crDYHVfPeGw7ds9zHhNQKLlDeNmNJnpeKEw75T0IrlPUeWSYwrv3igMOiKe3ewLxVZJzFezwbn63l0GjXuBXcnLR3BiKxtUMpfXbUY9Ah/4meiA/cCaOV5GUXcaCHj/7OL3W+ABes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tnakv-0007xg-00; Thu, 27 Feb 2025 11:04:37 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C0CCCC043C; Thu, 27 Feb 2025 11:03:32 +0100 (CET)
+Date: Thu, 27 Feb 2025 11:03:32 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-mips@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, harveyhuntnexus@gmail.com,
+	devicetree@vger.kernel.org, yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mips: dts: ralink: mt7628a: update system controller
+ node and its consumers
+Message-ID: <Z8A4dGWgGn39S0Ek@alpha.franken.de>
+References: <20250224053411.924015-1-sergio.paracuellos@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,121 +50,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
+In-Reply-To: <20250224053411.924015-1-sergio.paracuellos@gmail.com>
 
-On Thu, Feb 27, 2025 at 11:25:55AM +1100, Alistair Popple wrote:
-> On Tue, Feb 25, 2025 at 12:04:35PM +0100, Danilo Krummrich wrote:
-> > On Tue, Feb 25, 2025 at 04:50:05PM +1100, Alistair Popple wrote:
+On Mon, Feb 24, 2025 at 06:34:11AM +0100, Sergio Paracuellos wrote:
+> Current MT7628A device tree file system controller node is wrong since it is
+> not matching bindings. Hence, update it to match current bindings updating
+> it also to use new introduced clock constants.
 > 
-> > I think build_assert() is not widely used yet and, until the situation improves,
-> > we could also keep a list of common pitfalls if that helps?
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+> Hi Thomas,
 > 
-> I've asked a few times, but are there any plans/ideas on how to improve the
-> situation?
-
-I just proposed a few ones. If the limitation can be resolved I don't know.
-
-There are two different cases.
-
-	(1) build_assert() is evaluated in const context to false
-	(2) the compiler can't guarantee that build_assert() is evaluated to
-	    true at compile time
-
-For (1) you get a proper backtrace by the compiler. For (2) there's currently
-only the option to make the linker fail, which doesn't produce the most useful
-output.
-
-If we wouldn't do (2) we'd cause a kernel panic on runtime, which can be
-enforced with CONFIG_RUST_BUILD_ASSERT_ALLOW=y.
-
-> I'm kind of suprised we're building things on top of a fairly broken
-> feature without an idea of how we might make that feature work. I'd love to
-> help, but being new to R4L no immediately useful ideas come to mind.
-
-The feature is not broken at all, it works perfectly fine. It's just that for
-(2) it has an ergonomic limitation.
-
-> > > Unless the code absolutely cannot compile without them I think it would be
-> > > better to turn them into runtime errors that can at least hint at what might
-> > > have gone wrong. For example I think a run-time check would have been much more
-> > > appropriate and easy to debug here, rather than having to bisect my changes.
-> > 
-> > No, especially for I/O the whole purpose of the non-try APIs is to ensure that
-> > boundary checks happen at compile time.
+> This is the missing patch to be applied in the series [0] because of some
+> build errors.
 > 
-> To be honest I don't really understand the utility here because the compile-time
-> check can't be a definitive check. You're always going to have to fallback to
-> a run-time check because at least for PCI (and likely others) you can't know
-> for at compile time if the IO region is big enough or matches the compile-time
-> constraint.
-
-That's not true, let me explain.
-
-When you write a driver, you absolutely have to know the register layout. This
-means that you also know what the minimum PCI bar size has to be for your driver
-to work. If it would be smaller than what your driver expects, it can't function
-anyways. In Rust we make use of this fact.
-
-When you map  a PCI bar through `pdev.iomap_region_sized` you pass in a const
-generic (`SIZE`) representing the *expected* PCI bar size. This can indeed fail
-on run-time, but that's fine, as mentioned, if the bar is smaller than what your
-driver expect, it's useless anyways.
-
-If the call succeeds, it means that the actual PCI bar size is greater or equal
-to `SIZE`. Since `SIZE` is known at compile time all subsequent I/O operations
-can be boundary checked against `SIZE` at compile time, which additionally makes
-the call infallible. This works for most I/O operations drivers do.
-
-However, sometimes we need to do I/O ops at a PCI bar offset that is only known
-at run-time. In this case you can use the `try_*` variants, such as
-`try_read32()`. Those do boundary checks against the actual size of the PCI bar,
-which is only known at run-time and hence they're fallible.
-
+> Changes in v4:
+> - update syntax in mail file from /include/ to #include.
+> - Fix build errors in 'usb-phy' node.
 > 
-> So this seems more like a quiz for developers to check if they really do want
-> to access the given offset. It's not really doing any useful compile-time bounds
-> check that is preventing something bad from happening, becasue that has to
-> happen at run-time. Especially as the whole BAR is mapped anyway.
+> Thanks a lot.
+> 
+> Best regards,
+>     Sergio Paracuellos
+> 
+> [0]: https://lore.kernel.org/linux-mips/CAMhs-H-8N766PMZMwmV8B3e=65pPZHA4ntnRWDMoqR-U_xULfA@mail.gmail.com/T/#mab23157e03609456bb59d3b5dfc71fe16359a419
+> 
+>  .../ralink/gardena_smart_gateway_mt7688.dts   |  2 +-
+>  arch/mips/boot/dts/ralink/mt7628a.dtsi        | 40 ++++++++++++-------
+>  arch/mips/boot/dts/ralink/omega2p.dts         |  2 +-
+>  3 files changed, 27 insertions(+), 17 deletions(-)
 
-See the explanation above.
+applied to mips-next.
 
-> 
-> Hence why I think an obvious run-time error instead of an obtuse and difficult
-> to figure out build error would be better. But maybe I'm missing some usecase
-> here that makes this more useful.
+Thomas.
 
-No, failing the boundary check at compile time (if possible) is always better
-than failing it at run-time for obvious reasons.
-
-> 
-> > > I was hoping I could suggest CONFIG_RUST_BUILD_ASSERT_ALLOW be made default yes,
-> > > but testing with that also didn't yeild great results - it creates a backtrace
-> > > but that doesn't seem to point anywhere terribly close to where the bad access
-> > > was, I'm guessing maybe due to inlining and other optimisations - or is
-> > > decode_stacktrace.sh not the right tool for this job?
-> > 
-> > I was about to suggest CONFIG_RUST_BUILD_ASSERT_ALLOW=y to you, since this will
-> > make the kernel panic when hitting a build_assert().
-> > 
-> > I gave this a quick try with [1] in qemu and it lead to the following hint,
-> > right before the oops:
-> > 
-> > [    0.957932] rust_kernel: panicked at /home/danilo/projects/linux/nova/nova-next/rust/kernel/io.rs:216:9:
-> > 
-> > Seeing this immediately tells me that I'm trying to do out of bound I/O accesses
-> > in my driver, which indeed doesn't tell me the exact line (in case things are
-> > inlined too much to gather it from the backtrace of the oops), but it should be
-> > good enough, no?
-> 
-> *smacks forehead*
-> 
-> Yes. So to answer this question:
-> 
-> > or is decode_stacktrace.sh not the right tool for this job?
-> 
-> No, it isn't. Just reading the kernel logs properly would have been a better
-> option! I guess coming from C I'm just too used to jumping straight to the stack
-> trace in the case of BUG_ON(), etc. Thanks for point that out.
-
-Happy I could help.
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
