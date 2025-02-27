@@ -1,80 +1,59 @@
-Return-Path: <linux-kernel+bounces-536346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6F0A47E70
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 500C0A47E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7803B2F17
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF6B3B30F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB5B22F38C;
-	Thu, 27 Feb 2025 13:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FBA22CBC9;
+	Thu, 27 Feb 2025 13:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="agm56xQo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLuFVM23"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841CC22CBC9;
-	Thu, 27 Feb 2025 13:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E3621ABBE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661219; cv=none; b=XJ9PRyMQJ6MKr1ibQ0v0KfeqadL5CQpOuBJfg25MwGRr+w9uSINbYTix0fJjUk3sAbI9uI5V5Q0QwdwvCqG6zhHoqciafve7vZA7E4OTcY2jdJag8K6yTj6lIvEv0Oc2aJ5suSxnPz6bxK6Dpt4u/OWJtfNmJm+UtXmMFuvvBIY=
+	t=1740661211; cv=none; b=mCcptEeZJoycF2nx5c5eH6XJBt5vcMjOpHiGjkX/t39qX4bOx2qdftn9bvtd7u1tKXtoyU3ZmfSbj1GQI324m+bvGnyOzYO21rsaR13Gi6UiUZuk2qMRn3NESyW9FpESQ80dO+jZPpxC/U3jU5xLZWQxUEKRAcQE55Ik30ilVWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661219; c=relaxed/simple;
-	bh=2mFz4lpVNmQKP/Q1EhCFSSIbsnnObvCiZrlUAld3VxM=;
+	s=arc-20240116; t=1740661211; c=relaxed/simple;
+	bh=XrLSTN02dFRcO/fXv16CTFH33qJLSqpqFHueqwiFOZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gm0unelpzh8HtvhquEeXWnr1mGuIt1Az8bFupiBuV0ijkzDyrRk7cGvYcNfM/AY5o686t0oWxez1ysVgw5BSCSHmFIIx4Im59hUnemzZakoAcUbxHXjJihPTgCjz+w6k85tbCoq0m3hrMEIhBU+tgFskjSY4n1VUsLrQdvE8A3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=agm56xQo; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740661218; x=1772197218;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2mFz4lpVNmQKP/Q1EhCFSSIbsnnObvCiZrlUAld3VxM=;
-  b=agm56xQoaNqM4Wlu/3Gr7ZktDBTyV9LZM6hXy+lH+O0bBStxjL+7JyNw
-   prevDDEhDXIHEe1YLvEOWPwJzIAEVqIzaQEhCyCuygq/VJfHPUxp04tlj
-   CgIBbDkcSDi/lwuXwSOTgo0dnnM1sOXp4xICpQqF4urmKX2oLHnQVafxg
-   S9uP8+LcokHXdyDN/TnSLEzt6ZBZ2Yi/hlSJgoq6S/7q8GacSjOwciWOK
-   jqpPcHOCEO4oHQv0FZRiPuLqNXKp3qWYcFd/d3+MAZXCYIQ0ZhMS3l4+m
-   K7D4AxM8ZD+PKeCr03JJXY7NKmY0AAUoZ0YXTyJy6RBXb9KFp51cDm1+i
-   Q==;
-X-CSE-ConnectionGUID: UxpvQFazR5aKCM8/ujg+Hg==
-X-CSE-MsgGUID: D2hMVgJFSU+rCdBMGObyUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45461991"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="45461991"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 05:00:17 -0800
-X-CSE-ConnectionGUID: T5Qu8YulQMOuVgbweWlyow==
-X-CSE-MsgGUID: do31TZN6TS2CfwKU86Q70g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116887772"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 27 Feb 2025 05:00:14 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tndUq-000DN4-02;
-	Thu, 27 Feb 2025 13:00:12 +0000
-Date: Thu, 27 Feb 2025 20:59:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <superm1@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	"(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <linux-kernel@vger.kernel.org>,
-	linux-pm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a
- union
-Message-ID: <202502272001.nafS0qXq-lkp@intel.com>
-References: <20250226074934.1667721-5-superm1@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HD6HPpHoDC+OabLob5FDhT6kTlGnHKETXYpTVFB1urrupDrqDMBRhsAe15gtIgNGFn/m/t4JWjCAmylefzXuKW212Dg3vdOYq1KXEWmK0bixhHBjqQB62/AO933cXrV0zAl3GkMnSssAtSoxCW+QRrdwWj4gz+Dr2m/Kwb+Z1H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLuFVM23; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D06C4CEDD;
+	Thu, 27 Feb 2025 13:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740661210;
+	bh=XrLSTN02dFRcO/fXv16CTFH33qJLSqpqFHueqwiFOZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZLuFVM23k0MYwthMW45SEF7SBL3/Ow9d7isJ3kC40fbPZ39d72tP3ysdiszNo+ggM
+	 MHy5i2pHL61WX+YXyX/1Ad7StUOg7Tb2NIv1lbQZfyaWryfJjaka5ezzokdkc9M4zH
+	 8f3Vj50nAE7wpOd4LQzfZWLBCJx9+VuX0NcIVDr97my2w26DtFJwN9QsVKimsaxRsj
+	 mKGjhm3nSfGWJb2DXUPZ2eJvNRduwqutnRI4dZSZ2hRYaHfJtXiWOi9dXQqrcejKWH
+	 zH6du15wY8RlAAEz2cQh+dFInMda9jLiox6SnkITFBLH9DRcabIY57vIg+u/NnQST4
+	 2fLgN9xRhAyeQ==
+Date: Thu, 27 Feb 2025 14:00:00 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Yu-Chun Lin <eleanor15x@gmail.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/bootflag: Replace open-coded parity calculation with
+ parity8()
+Message-ID: <Z8Bh0BQssbZZQxeT@gmail.com>
+References: <20250227125616.2253774-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,125 +62,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226074934.1667721-5-superm1@kernel.org>
-
-Hi Mario,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on amd-pstate/bleeding-edge]
-[cannot apply to rafael-pm/linux-next rafael-pm/bleeding-edge tip/x86/core amd-pstate/linux-next linus/master v6.14-rc4 next-20250227]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/cpufreq-amd-pstate-Invalidate-cppc_req_cached-during-suspend/20250226-155545
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git bleeding-edge
-patch link:    https://lore.kernel.org/r/20250226074934.1667721-5-superm1%40kernel.org
-patch subject: [PATCH v5 04/19] cpufreq/amd-pstate: Move perf values into a union
-config: i386-buildonly-randconfig-003-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272001.nafS0qXq-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502272001.nafS0qXq-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/cpufreq/amd-pstate.c:51:
-   In file included from drivers/cpufreq/amd-pstate-trace.h:15:
-   In file included from include/linux/trace_events.h:6:
-   In file included from include/linux/ring_buffer.h:5:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/amd-pstate.c:914:41: warning: variable 'nominal_freq' is uninitialized when used here [-Wuninitialized]
-     914 |                 perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
-         |                                                       ^~~~~~~~~~~~
-   drivers/cpufreq/amd-pstate.c:902:38: note: initialize the variable 'nominal_freq' to silence this warning
-     902 |         u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
-         |                                             ^
-         |                                              = 0
-   3 warnings generated.
+In-Reply-To: <20250227125616.2253774-1-ubizjak@gmail.com>
 
 
-vim +/nominal_freq +914 drivers/cpufreq/amd-pstate.c
+* Uros Bizjak <ubizjak@gmail.com> wrote:
 
-   891	
-   892	/*
-   893	 * amd_pstate_init_freq: Initialize the nominal_freq and lowest_nonlinear_freq
-   894	 *			 for the @cpudata object.
-   895	 *
-   896	 * Requires: all perf members of @cpudata to be initialized.
-   897	 *
-   898	 * Returns 0 on success, non-zero value on failure.
-   899	 */
-   900	static int amd_pstate_init_freq(struct amd_cpudata *cpudata)
-   901	{
-   902		u32 min_freq, max_freq, nominal_freq, lowest_nonlinear_freq;
-   903		struct cppc_perf_caps cppc_perf;
-   904		union perf_cached perf;
-   905		int ret;
-   906	
-   907		ret = cppc_get_perf_caps(cpudata->cpu, &cppc_perf);
-   908		if (ret)
-   909			return ret;
-   910		perf = READ_ONCE(cpudata->perf);
-   911	
-   912		if (quirks && quirks->lowest_freq) {
-   913			min_freq = quirks->lowest_freq;
- > 914			perf.lowest_perf = freq_to_perf(perf, nominal_freq, min_freq);
-   915			WRITE_ONCE(cpudata->perf, perf);
-   916		} else
-   917			min_freq = cppc_perf.lowest_freq;
-   918	
-   919		if (quirks && quirks->nominal_freq)
-   920			nominal_freq = quirks->nominal_freq;
-   921		else
-   922			nominal_freq = cppc_perf.nominal_freq;
-   923	
-   924		min_freq *= 1000;
-   925		nominal_freq *= 1000;
-   926	
-   927		WRITE_ONCE(cpudata->nominal_freq, nominal_freq);
-   928	
-   929		max_freq = perf_to_freq(perf, nominal_freq, perf.highest_perf);
-   930		lowest_nonlinear_freq = perf_to_freq(perf, nominal_freq, perf.lowest_nonlinear_perf);
-   931		WRITE_ONCE(cpudata->lowest_nonlinear_freq, lowest_nonlinear_freq);
-   932	
-   933		/**
-   934		 * Below values need to be initialized correctly, otherwise driver will fail to load
-   935		 * max_freq is calculated according to (nominal_freq * highest_perf)/nominal_perf
-   936		 * lowest_nonlinear_freq is a value between [min_freq, nominal_freq]
-   937		 * Check _CPC in ACPI table objects if any values are incorrect
-   938		 */
-   939		if (min_freq <= 0 || max_freq <= 0 || nominal_freq <= 0 || min_freq > max_freq) {
-   940			pr_err("min_freq(%d) or max_freq(%d) or nominal_freq(%d) value is incorrect\n",
-   941				min_freq, max_freq, nominal_freq);
-   942			return -EINVAL;
-   943		}
-   944	
-   945		if (lowest_nonlinear_freq <= min_freq || lowest_nonlinear_freq > nominal_freq) {
-   946			pr_err("lowest_nonlinear_freq(%d) value is out of range [min_freq(%d), nominal_freq(%d)]\n",
-   947				lowest_nonlinear_freq, min_freq, nominal_freq);
-   948			return -EINVAL;
-   949		}
-   950	
-   951		return 0;
-   952	}
-   953	
+> Refactor parity calculations to use the standard parity8() helper. This
+> change eliminates redundant implementations and improves code
+> efficiency.
+> 
+> [ubizjak: Updated the patch to apply to the current source.]
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please preserve the original From line in these cases - I fixed that 
+up by adding:
+
+  From: Kuan-Wei Chiu <visitorckw@gmail.com>
+
+Probably the Git rebase/conflict-resolution step made you the author 
+without warning.
+
+Thanks,
+
+	Ingo
 
