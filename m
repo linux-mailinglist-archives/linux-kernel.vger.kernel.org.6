@@ -1,96 +1,136 @@
-Return-Path: <linux-kernel+bounces-536327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E05DA47E3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:50:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65142A47E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DEFE167C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D363A4F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7427122D781;
-	Thu, 27 Feb 2025 12:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC43222E406;
+	Thu, 27 Feb 2025 12:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSQH8kPn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wev+BA6s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06A8224246;
-	Thu, 27 Feb 2025 12:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB2522C322
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740660599; cv=none; b=OFRXgxDTtJHWwlEAwZzX9DiBMJxZsttUExhMHPtPMq3q9ubvwTmDZDI7hnqenEiPz3iRygKGoggB1nG2t8pgRiJLHN+XOWGfFv/Mh1gkQKcjhGKtGXBln0+uTavaJqQGnd6cOPyGma+eVYRhSA+32cgLhaSPC2jkTQWvzypIcCE=
+	t=1740660688; cv=none; b=ev1kFUIMwECcI/dLRahLG57y1Sd7levRGuWOKkGbCt9UXnMFR1lFB8kuIZazGlACC+lvQ4FkS4y8SIeEj5J/8DueZmnzfZdSRFo5eBqy6JZnIWMXjhe3YyQNhf3A/7CcStWqtc4zH8AWRtqUI/4rCpSL4J8hEmnTgzdOb9Ew6BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740660599; c=relaxed/simple;
-	bh=lcCAG0zJ+YM/7eU+3qkL571+VKtb7CvJLlvLTnG82WA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=D6N6K5K5DywB+ETqu+A+VKFPS78boh+s5cacLQcrMEJwkZOOk+xvC5rn81hb37zdF3p+Iry70EnwL+i5w/NUBRRNbhiFVDTI1C7gIf6uFWJ6TvDpwYaIMjxBuGtWuRGyOLG51gRLZuf1joiCyjIwamvBnXy5ZAJgvW9izcbbhPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSQH8kPn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F73C4CEDD;
-	Thu, 27 Feb 2025 12:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740660599;
-	bh=lcCAG0zJ+YM/7eU+3qkL571+VKtb7CvJLlvLTnG82WA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cSQH8kPnM8oCUU0NPKxtZZUbBozFHkOQccxj6deNcsALJhu66rA3RGKpJIaWHvAPZ
-	 4Mzeb6rLXRwClsqjQ2QowamAcSvuTTl0FlrJ9EO2YTtd4uYPTDYLq28oGGT1s8yPuG
-	 1V32pwo+AqEjRCu7poDF2omu4gSPXxNHu6kHjltrdM+Aem/aF85/oKLD7bLaXqtdox
-	 kLZ66GZSrt9C6P1lc6ibrVtWjPqqxvVM4dfq5oBMbc6FQyOUEgX72fcR8k1KwNQPJL
-	 DpnpZ14Ayjo1PxvHmn+ucW+p6QOrjAuUOcwINcjgsC/TfUZZJC1G8/irZyPNw0XjWQ
-	 RE2AAjpL7ar5g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E60380AA7F;
-	Thu, 27 Feb 2025 12:50:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740660688; c=relaxed/simple;
+	bh=vdi+8jTWjZYz/RHVgO0M2Zx7hSKBCDbLtDrSTa1rt4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0goS6MzOXngMy+pWFTUWV9pDbuYbkdjGhAml9KI+F5f6Ebx+eRq7UHePBE2HZYSUnOP8buMw0sLEOYVyORKc2AUhuFNGqIn/O8odyRolQUsz+DVnDOyovce8HQ0Mj5eZTcy0y1jPN0WNYK3a2VxdLqPnKGSSDfacOFH+LPluqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wev+BA6s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740660685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UbloUz+eJ/WCG3EOzg2ItWNL8OM0MgfqtuYj2xSHwUM=;
+	b=Wev+BA6s4xWGVsu36M1np7aBgg+5l8XrqgbSaikWAZokRrRoGPdBZaF2pzvE3AeHcxNXRc
+	PD0OO2pGh4OHZvwtADRshvji0mubACAtG9CrzHB4+ibVz0v6uDH5Uh5MD3Nql1h5t6N1gV
+	DfPOXs+pf2xagARJkrP/vP2FLQpBPhw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-oS7l12EmP26kW4E-x8fdOg-1; Thu,
+ 27 Feb 2025 07:51:21 -0500
+X-MC-Unique: oS7l12EmP26kW4E-x8fdOg-1
+X-Mimecast-MFC-AGG-ID: oS7l12EmP26kW4E-x8fdOg_1740660678
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBB4F1902F59;
+	Thu, 27 Feb 2025 12:51:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.102])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4DCA4180035E;
+	Thu, 27 Feb 2025 12:51:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 27 Feb 2025 13:50:47 +0100 (CET)
+Date: Thu, 27 Feb 2025 13:50:41 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Manfred Spraul <manfred@colorfullife.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250227125040.GA25639@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2] net: hisilicon: hns_mdio: remove incorrect ACPI_PTR
- annotation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174066063126.1416539.11160314303110298496.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Feb 2025 12:50:31 +0000
-References: <20250225163341.4168238-1-arnd@kernel.org>
-In-Reply-To: <20250225163341.4168238-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: shenjian15@huawei.com, salil.mehta@huawei.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- arnd@arndb.de, horms@kernel.org, u.kleine-koenig@baylibre.com,
- krzysztof.kozlowski@linaro.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello:
+Hmm...
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Suppose that pipe is full, a writer W tries to write a single byte
+and sleeps on pipe->wr_wait.
 
-On Tue, 25 Feb 2025 17:33:32 +0100 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Building with W=1 shows a warning about hns_mdio_acpi_match being unused when
-> CONFIG_ACPI is disabled:
-> 
-> drivers/net/ethernet/hisilicon/hns_mdio.c:631:36: error: unused variable 'hns_mdio_acpi_match' [-Werror,-Wunused-const-variable]
-> 
-> [...]
+A reader reads PAGE_SIZE bytes, updates pipe->tail, and wakes W up.
 
-Here is the summary with links:
-  - [1/2] net: hisilicon: hns_mdio: remove incorrect ACPI_PTR annotation
-    https://git.kernel.org/netdev/net-next/c/9355f7277d69
-  - [2/2] net: xgene-v2: remove incorrect ACPI_PTR annotation
-    https://git.kernel.org/netdev/net-next/c/01358e8fe922
+But, before the woken W takes pipe->mutex, another writer comes and
+writes 1 byte. This updates ->head and makes pipe_full() true again.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Now, W could happily merge its "small" write into the last buffer,
+but it will sleep again, despite the fact the last buffer has room
+for 4095 bytes.
 
+Sapkal, I don't think this can explain the hang, receiver()->read()
+should wake this writer later anyway. But could you please retest
+with the patch below?
+
+Thanks,
+
+Oleg.
+---
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index b0641f75b1ba..222881559c30 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -455,6 +455,7 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 	 * page-aligns the rest of the writes for large writes
+ 	 * spanning multiple pages.
+ 	 */
++again:
+ 	head = pipe->head;
+ 	was_empty = pipe_empty(head, pipe->tail);
+ 	chars = total_len & (PAGE_SIZE-1);
+@@ -559,8 +560,8 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+ 		mutex_lock(&pipe->mutex);
+-		was_empty = pipe_empty(pipe->head, pipe->tail);
+ 		wake_next_writer = true;
++		goto again;
+ 	}
+ out:
+ 	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
 
 
