@@ -1,127 +1,258 @@
-Return-Path: <linux-kernel+bounces-536566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF77A481BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:42:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198CCA48137
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09D617B080
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DD43B156E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C062327A7;
-	Thu, 27 Feb 2025 14:23:50 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9578B232367;
+	Thu, 27 Feb 2025 14:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mOP5hwDV"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2073.outbound.protection.outlook.com [40.107.223.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7678727003D;
-	Thu, 27 Feb 2025 14:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666229; cv=none; b=Ymwc3y4lig8HU+cgRJnHvW7AiIcBYEruHAPhrlCVSLE+KJaiaUI5UwuVaBbSpzL7mJKS4b0jDERuZIlDPNnvFQQ2KtGnW2pWGhGGw15hNd4cAUHTn9BFsFFAm6b6vwUvBu6xdQ4XmyuwVLjmsFexDIW+X3chOzTJv60vIcgkEm4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666229; c=relaxed/simple;
-	bh=FXTWjU43vw0zfWOyrcsBYNI3pvYkwvFmrv/IKcr3Wi4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TVKsubcDCrZYoFOsGux/R/Cka2sCsi0BXUel7lOKdi/ObYJwZNzoEVgIIFW0L53W9Qwu3rph7JDSEdVVeFjykVSRU4wi+zpIganGCrWZRdJFSJ2EC8h9dp3e+ylMXF2YxqwLzL0SKDMHrEddPHp5lH99mvYYmvrOP8Og8oMGgDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnenW-0005Ec-9i; Thu, 27 Feb 2025 15:23:34 +0100
-Received: from [78.47.5.107] (helo=sdn-nic-test01..)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tnenW-000B1d-1R;
-	Thu, 27 Feb 2025 15:23:34 +0100
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com,
-	jasowang@redhat.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	hawk@kernel.org,
-	marcus.wichelmann@hetzner-cloud.de,
-	Willem de Bruijn <willemb@google.com>
-Subject: [PATCH bpf-next v4 6/6] selftests/bpf: fix file descriptor assertion in open_tuntap helper
-Date: Thu, 27 Feb 2025 14:23:30 +0000
-Message-ID: <20250227142330.1605996-7-marcus.wichelmann@hetzner-cloud.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227142330.1605996-1-marcus.wichelmann@hetzner-cloud.de>
-References: <20250227142330.1605996-1-marcus.wichelmann@hetzner-cloud.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37B423959A;
+	Thu, 27 Feb 2025 14:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740666237; cv=fail; b=r+Do0fN9FwYzj92fjCCM7sQ5K2PdY8TNsNHxpcSvlbclWBIS3IgbLTMNqgexhOZ0cQt/hOQSbUPYKn8U0b6VxSTnfECVnROSP6/vk4OwX7grcMnAacmLcQCN7tte2hi5D7qYnV91WhbBlydkqwh25MaQBedGZawGhOaDwm7l2R4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740666237; c=relaxed/simple;
+	bh=dkJxJNxyE5fjpQehad5R/y6R3FHEt+GHKGPFDIH3fD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=r8r/jrhVvru6cN6oGHqV4GSwY6VYQrJ4avtkVFKxSbdD0irnFW85Ltd1ISL/nHZIsLQln2zlHxMHxtrQYjxo3ndqAxUw5OemnM6IDyOw0dz/RIjEtcomg5qMAVV3zM9fQoFHzaxv5EWeEiCOd0/MYViUnOxo+dOohHyR9ch33Z8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mOP5hwDV; arc=fail smtp.client-ip=40.107.223.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lGdZcBRRiKBrpzYbSfso+iNloaxRPhVeYoYF/+YCbe/BBpq2gmlvuSn2kRYr/Re1A0exUBTbxsByoffq2ssHPWxLDT/JB/hRFwK/DS2M86p91SapaAY0/j+cCaKj0Pg2F8aRw7M1WcNbXyd0V4Hf6G6xLa/HRSjf1NVdguCL3RAiwO/peD2kqixGT9fVZ5sUmhI5iQgGnZxqWVd+ChuKo10dWpq5WKJUQDIqM0aMk9wZv+2opc2hT3aoOW2wml2uCNqDYv44sC5tzTygMRmsjXdFt26MTPtNXKIRBB2RobY3aZaD4QXJRYu8IGrX6SbxlXkFSMoeykQ+8Gc+PODrkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=afu03q5238/lQBxyOw8nKirxLROv5NDOcregH3Dajxg=;
+ b=pEMls04K/nPVfuUWDu9JykKxKn3G8EiFwDC/ybzXMNxbtgbSbzFh+3ZZgfSV6Xi8vQMgiK6Z0sQFezkJJO87z1cIXXXxxIxx7OUZeiWQW6vavcxZ9ldbPyFpQj30SIJoWKI5834EmZzBiU0MjXKUavgbyPiS4SR5xRYHL3i91TCOJ0ftS00zwB5Xgf+md3DvZWL0zId4PGtxT846HujqwflIgEE2NI7G62ja0liQk+OuDSlq7Fl7ELUw3xzH22Bf4cC/bVMd7iHcDVSGkg/CORzK8Zw4eZh5D1KVEce8oJi/CkzoAOPx4KRNdgZSrW4gTlDmlg6GeiV4mWGQ9K3QRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=afu03q5238/lQBxyOw8nKirxLROv5NDOcregH3Dajxg=;
+ b=mOP5hwDV5M3LwFcjFmTpFC/jDVQdyAUMx8Uch3l5DGC9ZQBtQq1tfhsRA79N+BnqhZAoWDw2mmxaAYq7byrryGQ83yz8FgWdabC0c4h0mZ0tRcXx2GGXelzdiGa4THQCn5+VPY1kv5qDo0MOM+gaFLEAp61kBUFeAIMvD7ablvoSpPDav7LptMQGHaoUDWIdPPXAhMHsM6Ef+oWMNSP6aFwg9nCufM8VdtP+AG17T6hj6Gwwb7B95DVXtT9drvy3vfMU27918kLRV3sxErUz+mPh/1u53GsdIBKw6nCXdqQyCCFf23zegeqtJa56fWSPzw+knnO5q0ZbF5nko4TCFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB8245.namprd12.prod.outlook.com (2603:10b6:8:f2::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
+ 2025 14:23:51 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8466.016; Thu, 27 Feb 2025
+ 14:23:50 +0000
+Date: Thu, 27 Feb 2025 10:23:49 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250227142349.GD39591@nvidia.com>
+References: <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
+ <20250225225756.GA4959@nvidia.com>
+ <Z75WKSRlUVEqpysJ@cassiopeiae>
+ <20250226004916.GB4959@nvidia.com>
+ <Z75riltJo0WvOsS5@cassiopeiae>
+ <20250226172120.GD28425@nvidia.com>
+ <Z7-IHgcVVS8XBurW@cassiopeiae>
+ <20250226234730.GC39591@nvidia.com>
+ <2025022644-fleshed-petite-a944@gregkh>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022644-fleshed-petite-a944@gregkh>
+X-ClientProxiedBy: MN2PR22CA0025.namprd22.prod.outlook.com
+ (2603:10b6:208:238::30) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27562/Thu Feb 27 10:48:50 2025)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB8245:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86490536-4328-42cd-6488-08dd573a5b28
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LDWRjYBcKqmAAy0qwuzfUjXt6nBBf6P47nqYmexNQAirnGHHdChh5YZjnmh8?=
+ =?us-ascii?Q?sDKAfcZzs6U85v+Z+Pjwfqzm49v9kS2MVIaUlqq8qtkPPY0jdmlygEgc2eS/?=
+ =?us-ascii?Q?oTlJ65doPZUADF0V89ok4xx8mhG9ftn6xVLOCAeXwEecpzdJGomYtD1vGq6j?=
+ =?us-ascii?Q?mE0oi1Jehsairzh4SI0OtorMPIOEsUYUip4HuUrNfOfyfW4EfsyoERglPGwO?=
+ =?us-ascii?Q?yfbIKUO+Hvrlu6CBeciz40kkHa+1ILokl4DthXyx++S/6ZkTIQVxeZ8aGxcu?=
+ =?us-ascii?Q?DSejIM8iKFQlYHvVWGph0wSi0gQc5Yrns6Dv1TgwvlBIoUcHbumkkTm9DMwE?=
+ =?us-ascii?Q?Ph6qqdf0kzywspdt/m5So/tyTbuSn2HDsgdHqQQ/cqXnwcSddmcxm4KFQ6cz?=
+ =?us-ascii?Q?y+PPJjx7eA/5SKC5PuWAV3meg+Jzvxk7enjMa0Yeg0CDj9E/CyW/MvuQmdl6?=
+ =?us-ascii?Q?MdQ9crng7e4L3ICSDxJjLphI7NwBpcTdbEIP5jhIZH5Md9nJLJGNpM3s8tLN?=
+ =?us-ascii?Q?6yi8lvo48ka2Zn2yf04VvQBUJFFkPPdfG+TdVgMCxPqBL8zBGAxDHe468jbJ?=
+ =?us-ascii?Q?+8qQVIkNiMt+onspqvbNmeia2fyGXh+gl819Sl1g1lAqr9MbKvHUiurh4IGQ?=
+ =?us-ascii?Q?eL8+yDYF5qrg7CYC8w3Qt3yzOqfPTmjzi2z/HX1B6jkboMimuiIjNYjug4iA?=
+ =?us-ascii?Q?HxA7aoJRxAWGEsMrzzOHEEaT7A0M0pGOG6CS5qKGvk/u3rSoqyY8ViFd6mmF?=
+ =?us-ascii?Q?ky6C+215fC421CGhL5TjbOsu8Bn3L15nLMEHiCPfKezC+U12Hov/x6bKLgb5?=
+ =?us-ascii?Q?KLku2m/9qOOMmH6Uxs+v0iiGksLStad/1Rp0XKgdSM+DM1THWW/b3YU1Mtco?=
+ =?us-ascii?Q?vZKdA/WEKrAwFkYeuf7vc4QmPovH/DZ5bjqMYzXOVHhs+iEFfhRtmGSv30ET?=
+ =?us-ascii?Q?9OzoDmWN4/5xsMxpE3CyUEAnrD47nrZJ1b5/k0TQnQ5UaasbVTiOFr+ZdjxE?=
+ =?us-ascii?Q?Qx66pZd90UXP1lweZXWTyCAYOgvQ8ZoX6Vn3AY0ufW/+UrJ8AUcNFXoofPa3?=
+ =?us-ascii?Q?YGBGoa4u0h3ZMQoJuc32q3NMIJkQGmXmiiHLgh0+tJ/e4yGO8BDoMmBgzWYh?=
+ =?us-ascii?Q?lLRBBXPHULDmrVuoPFjhTTZwLjE4xSbK7rupJRDxYkE8xOTCvLe86i6qwzJ/?=
+ =?us-ascii?Q?xd36Z7Vu4cRBRz2GdHgzAaSOj01OVojHKiTLiz9MkorBV3/X0/+iLynUcEcl?=
+ =?us-ascii?Q?IXF+q0t6A9lIIV0vGRJGmSfqKQN3lkwmuuE9u0PmzvK91gnYCjIWh4SUL+OV?=
+ =?us-ascii?Q?d8bWu5sIwW32t6Q7phhdfAvuhRQsIpG025puQJDs2ok6tFWtIfHEScXx4V31?=
+ =?us-ascii?Q?KH3blXrghG2P6S0n2Nu/d0b0p+30?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kskd7AIO2xWpEyWdTYyt+8L+Au8BdFw6GzxC90T66LgXzGy6oTj8mcdeKvsQ?=
+ =?us-ascii?Q?oEiptpgGaxLU+lzI1sNlTK3QNk0AvadtO/KR9KSNG3WeLnlgCulNU/IOktYF?=
+ =?us-ascii?Q?XtPlNDHNclBTArrrarGIZ57JrQgqPTHJzttUeficA5bAquZyidtYRL/5boZu?=
+ =?us-ascii?Q?P2XePhiYZ9aCMo5moU/BcUZBbhByzz8khhJATNBNcsNvVgqx6cdpmMFu/b78?=
+ =?us-ascii?Q?7IEYKz7B5PYZPsWRMRBhSwhEWvFK+cClaRxZaj3HDZjpeurms2/mq8MwAm2P?=
+ =?us-ascii?Q?e+PQeAfVUntfoYQ5SCK+g1P87O0HTFtd0hWeA3ryvuWPuU7ugu/sQTnqrntZ?=
+ =?us-ascii?Q?asS8+ogefnLS1+6e6dYtnnzQd6vCwctRzm3QDpBEXBhpveGRAcAKRVXWeUnx?=
+ =?us-ascii?Q?j0loXzdOr2XAysePYWtmiyvWytZNQ1pKRy4WMjq3MMChShbcWfOznWotX5MY?=
+ =?us-ascii?Q?OSXI8hpHaK+Uo3456900/Qja7ddil0ZOMzfjeJjSdNZfJckPfg2RrnLkPpyM?=
+ =?us-ascii?Q?bhZRfO23t+ON1+b/9jo3XHqTPEKPmHwMv9QPbRt+7xg1PFi130Zyu82ZdBs6?=
+ =?us-ascii?Q?aU1jftvIeLrm+rumPd93JgUUzN0Q9dYWUJXMQIdxrhkiMM/LyUhu433sSarP?=
+ =?us-ascii?Q?TZShNYgzyrYqIZhB8zbOVxTGOb2YL97jCKZtAwFPI5x6hvhjUoXkPWvybOTG?=
+ =?us-ascii?Q?IB+ARIxpAePNX+BLaE21K6k8LgWSTUmBd3/de1OflO5p4cAbcd32LZF4xITc?=
+ =?us-ascii?Q?U0thWejuzgkQ8Vxznq85FcBpwGNzblFTeRYIWb8hq4iuD+vM+EtX5X3bUwfN?=
+ =?us-ascii?Q?SCktiXK5jxNqU6SGb7I+x8UDDXxsceQvD3b/G/oAp5Y+59OgIyDlUag8zFCe?=
+ =?us-ascii?Q?uwWvF4UICWzxv0UW6vL/gTifIlK6ZjqRemNiTZQYE+ecFmG1suYa5KaWF3ud?=
+ =?us-ascii?Q?7AhARiCDnSLSdQxP/b2LVlyXScL1ogSpHfHShU8Z/AX3It6S6er2ftKPI5H2?=
+ =?us-ascii?Q?TUemyC5ptdcTkFxAzG4swQqoAT5Uu1HTAlW5IRJn+5hUlYiWrFv1hm+h+ms1?=
+ =?us-ascii?Q?FqC4euEGryEOwV4ZDoWWb4UZiaeUrUhQJuLvebF4ytTdUnFBUhHN/9mZ5taw?=
+ =?us-ascii?Q?/pPOLIaWvCQrAMB03maNG0sGeVSVvmhodXkf9YuZG2Joaq0Sne7LNLmxWaKb?=
+ =?us-ascii?Q?dSWrmUph0R9oJWhpTo6OA8/5ao1DsJqDnpAi8AsEhZCv0TvRO7zSGRwJd4sM?=
+ =?us-ascii?Q?83jOaV680m8nwnKZ+GaMj01WWTLH2a7RfZjCbWgb6AZ2XKi4tPAq6HzVFlwv?=
+ =?us-ascii?Q?uBe9Jsa0ikbVtONqX7tFIeMUM3C2dJe6lpDVNfD7+KyZF0MFZGpxL8vCae4X?=
+ =?us-ascii?Q?p3q7GWKoh2Auayq430xa0vIOuvFQgGtCiLnggYctuIaTpzIpsZ0t8FTFU9lB?=
+ =?us-ascii?Q?arbEv4mJ6t7oDcLWfPG1CvbZD4CWgWNEGKE9tA9JPqeDviTytMrK8ZeEE/l+?=
+ =?us-ascii?Q?DARX7VO+ruBMpLYXxroFWskEJdJgfGYEYZgQsZRCcT4xW/zVfZjhmwH0SyvJ?=
+ =?us-ascii?Q?sk6oKl7T+/RgWH3iM/A=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86490536-4328-42cd-6488-08dd573a5b28
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 14:23:50.7379
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GXqEnSsoing5JYzIPi1TS6qL/OYpPbvYg/8m3snL/mVGrNqnP8Zp4kDz7IH7CAS4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8245
 
-The open_tuntap helper function uses open() to get a file descriptor for
-/dev/net/tun.
+On Wed, Feb 26, 2025 at 05:02:23PM -0800, Greg KH wrote:
+> On Wed, Feb 26, 2025 at 07:47:30PM -0400, Jason Gunthorpe wrote:
+> > The way misc device works you can't unload the module until all the
+> > FDs are closed and the misc code directly handles races with opening
+> > new FDs while modules are unloading. It is quite a different scheme
+> > than discussed in this thread.
+> 
+> And I would argue that is it the _right_ scheme to be following overall
+> here.  Removing modules with in-flight devices/drivers is to me is odd,
+> and only good for developers doing work, not for real systems, right?
 
-The open(2) manpage writes this about its return value:
+There are two issues and I've found these discussions get confused
+about two interrelated things:
 
-  On success, open(), openat(), and creat() return the new file
-  descriptor (a nonnegative integer).  On error, -1 is returned and
-  errno is set to indicate the error.
+1) Module lifetime and when modules are refcounted
+2) How does device_driver remove() work, especially with hot unplug
+   and /sys/../unbind while the module is *still loaded*.
 
-This means that the fd > 0 assertion in the open_tuntap helper is
-incorrect and should rather check for fd >= 0.
+Noting, very explicitly, that you can unbind a device_driver without
+unloading the module.
 
-When running the BPF selftests locally, this incorrect assertion was not
-an issue, but the BPF kernel-patches CI failed because of this:
+#1 should be strictly based around the needs of function pointers in
+the system. Ie stuff like ".owner = THIS_MODULE".
 
-  open_tuntap:FAIL:open(/dev/net/tun) unexpected open(/dev/net/tun):
-  actual 0 <= expected 0
+#2 is challenging when the driver has a file descriptor.
 
-Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
----
- tools/testing/selftests/bpf/network_helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+AFAIK there are only two broad choices:
+ a) wait for all FDs to close in remove() (boo!)
+ b) leave the FDs open but disable them and complete remove(). eg
+    return -ENODEV to all system calls
 
-diff --git a/tools/testing/selftests/bpf/network_helpers.c b/tools/testing/selftests/bpf/network_helpers.c
-index e1cfa1b37754..9b59bfd5d912 100644
---- a/tools/testing/selftests/bpf/network_helpers.c
-+++ b/tools/testing/selftests/bpf/network_helpers.c
-@@ -571,7 +571,7 @@ int open_tuntap(const char *dev_name, bool need_mac)
- 	struct ifreq ifr;
- 	int fd = open("/dev/net/tun", O_RDWR);
- 
--	if (!ASSERT_GT(fd, 0, "open(/dev/net/tun)"))
-+	if (!ASSERT_GE(fd, 0, "open(/dev/net/tun)"))
- 		return -1;
- 
- 	ifr.ifr_flags = IFF_NO_PI | (need_mac ? IFF_TAP : IFF_TUN);
--- 
-2.43.0
+I think the kernel community has a strong preference for (b), but rdma
+had started with (a) long ago. So we fixed it to (b), netdev does (b),
+so do alot of places because (a) is, frankly, awful.
 
+Now.. how does that relate to module unbinding? The drivers are
+unbound now because we properly support hotunplug via (b). So when is
+it OK to allow a module with no bound drivers to remove while a zombie
+FD is still open?
+
+That largely revolves around who owns the struct file_operations. For
+misc_dev the driver module would own it, so it is impossible to unload
+the driver module even if the device driver was hot unplugged/unbound.
+
+For a subsystem, like rdma, the subsystem can own the
+file_operations. Now to allow the driver module to be unloaded we
+"simply" require the subsystem to fence all driver callbacks during
+device driver remove and subsystem unregister. ie if the subsystem
+knows it no longer can call the driver then it no longer needs a
+refcount on the driver module.
+
+This fence was necessary anyhow for RDMA because drivers had the
+pre-existing assumption that unregister was fencing all driver
+callbacks by waiting for the FDs to close. Drivers did not handle UAF
+races with something like pci_iounmp() and their concurrent driver
+callback threads.
+
+Once the fence was built it was straightforward to also allow driver
+module unload since the core code has NULL'd its copy of all the
+driver function pointers during unregister.
+
+Further, I'd argue this is the best model for subsystems to
+follow. Allowing driver code to continue to run after subsystem
+unregister forces the driver to deal with UAF removal races. This is
+too hard for drivers to implement correctly, and prevents unloading
+the driver module after the drivers have been unbound.
+
+Why do people care? Aside from obvious hot-unplug cases, like physical
+PCI hot plug on high-avaibility servers hated (a), there was a strong
+desire from folks running software HA schemes to be able to upgrade
+the driver module with minimal hits. They want to leave the
+application running and it is able to fast-recover when the FD becomes
+-ENODEV by opening a new one and keeping most of their internal state
+alive.
+
+> What is the requirement that means that you have to do this for function
+> pointers? 
+
+I'm just pointing out that function pointers are not guaranteed to be
+valid forever in the linux model. Every function pointer is somehow
+being protected by a lifecycle that links back to the module
+lifecycle.
+
+Most of the time a driver author can ignore function pointer lifecycle
+analysis, but not always..
+
+Jason
 
