@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-535397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAD8A471FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:13:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E25A47201
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FEF3AA433
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F98D188176F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96911714AC;
-	Thu, 27 Feb 2025 02:12:44 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6AC14A0A8;
+	Thu, 27 Feb 2025 02:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXazGrrx"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305F31F94A;
-	Thu, 27 Feb 2025 02:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228111482E7;
+	Thu, 27 Feb 2025 02:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622364; cv=none; b=aFJd8TaL+fXSTVN/NIb0mOrE1hVKuAHMzoF2TS2ahyUFOXwg0DUAnS6oz2ZDvfTX/loGARXbIoBodYyW+Rp1A8dRK8UJQJPWOniUZUTtwT2dv75Cq7MRcI+xzjjeyhPI13QvVvsj0K5nknthTq4aUGAPhLoGJYlwpSutlyyG1lY=
+	t=1740622374; cv=none; b=klu9bHCWZ7Vqd9mm9ibzfJgSOuRwCMwPJ29j8vvbKSk2lq8C7CVAAabxmm0NkKU+5FXkmU8VX9APWl4cvVYFcemclwwtjZRR2nwXEu5AaAosTfngfTJedvWKlbkjfWhzwKuKTK7sLvFoqczbDY+R28IBb67yNyD4NuA4e1O+DJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622364; c=relaxed/simple;
-	bh=ifqPnkz/Cmbgn+vhwLS0hFqMZK55t0zaXonRqB2y7X0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6jX8JUXclpogKlh+R5L+jsfaOIMqe6OLMhZR+Wdqh3JFyMLWFPxLQPHylvzcFvOOxvPO2mZDEIsoYGuMuNsVcPUIGCpB8Xfh1JKJZA5sc4F0WN9jAxG8VuJicN3z+sasf6nE+zwmpH9ZPKuAYAe9L4YrKzqpQfBlVruUCebi6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id ED35D34315C;
-	Thu, 27 Feb 2025 02:12:41 +0000 (UTC)
-Date: Thu, 27 Feb 2025 02:12:31 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
-Message-ID: <20250227021231-GYA46699@gentoo>
-References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
- <20250226010108-GYA44567@gentoo>
- <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
- <20250226115957-GYA45508@gentoo>
- <20250226135635-GYA45740@gentoo>
- <87tt8gemm4.ffs@tglx>
+	s=arc-20240116; t=1740622374; c=relaxed/simple;
+	bh=Ji43QirnLWxUXnqatW9H8FRgicNepO9UGBb5s7EDnY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pxKoZkXVIDU6Metl42AmdBBuGEHpTUyFrOQhZ1NfSDIy0WzexMxxcX6EtPJBLMjPIP349LbsiI3rX8SnP9E3QeXdEg7YnkJydskP7G7iN3/dCRfCpN/nFXIlkDFx3jiCg8uF+Z5gW8qIDRog++gqn/szf516XjcQ5vm2qi6kBuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXazGrrx; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abb79af88afso78095866b.1;
+        Wed, 26 Feb 2025 18:12:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740622371; x=1741227171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ji43QirnLWxUXnqatW9H8FRgicNepO9UGBb5s7EDnY0=;
+        b=RXazGrrxNPSrU8oPeq4jdL3hb8vAoUCQzJBgGCsscQF+b6od9DdNg97GgQgtDmhUXL
+         0/Fre9mLqieAD1h0lwDjJr84FPsPhn0zTrm3A3fDs8txlHQR/M7vGg6odEftMczHWpgb
+         Fhdx3z692ny2Gfl0YdfaQIVzk2RTdAohtj37Fm0W+UlBEv/F5p7eXIWrP/WWH65r2sDT
+         Oqku5nl0LV+FhH+Pz4bOfrd941r6WA8zRE4/zyUfb9Md7Ft8YlQ0/7kxZzpSmfr+y2yn
+         epTo4ZOihRywlHkwcTXlcCWG5GPYqqPGPnnnydtQxRTWyvArNyqNeprU+za7gQxXQmYt
+         eKOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740622371; x=1741227171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ji43QirnLWxUXnqatW9H8FRgicNepO9UGBb5s7EDnY0=;
+        b=mliP/Treu7O8mZktEgloyIMVrjzIObnwEfjUJsCEkE+f+VfnDSZ9S+okJpX3kJJXqm
+         O0rfTypy2WKDOewHl7bJwS5ZM6vl2/qU+CEjbKmgsDS9L9m38XTciCxf9sRGmH8nHQjY
+         sekS6eEhC4quq6PvCPm3yYqHOybxzUCP3CeuTAbeZ2NyGcqcu55V1ZLBRjpZXTxDMY3l
+         sdjVBjXIktJwCt3CIE/2W1dkgBN7vvH1zyMi2mqevsNxqnZzfWtL68/YinJj4h/qdRtW
+         H9bsuoFVc1Uk23Qykqlz+XIvriFoRuBC/NXF/rPPwmcRqhQp6DckbpPCJyy56fKTkPLy
+         bqlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPwXP5OjRriJAVGBmxnFu2G55pGmyUGx4UfoRwkgYMav9DSNUQk9AYUKhWF5IygqxQoigtuYKpuAQ=@vger.kernel.org, AJvYcCXnUSBxZsaEtJYLflbUqwwtR864KNR1qCpPQWLUX1bh7IwRhyuoWmYa9faXUQPgMA92lQQieaZYXq3c+fpV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrOLNqzwr7vj5dlN4Iuo0PQnKqRPkVE7OJgulinGqTB76ACNWB
+	+J/ZMxJFa2rsOtHaR+0UNqcw3Z8VajAzIF25UB1zgwyxEW/U6SpzteC58OcP3ViCHxldYKpa/2j
+	e/NrGfT5Y+sP93SrTTYxZuYQIyA==
+X-Gm-Gg: ASbGncvtb5nXvb8NovDRyv7CGtUZFKPhAKgNqQRQ682qHGo18lBBnCQp03dy48Vy15t
+	m3GgfX1dbvspMxf2PemfwO/KmAkNWioxj51vjyncFlxXdJOb6fjUJaKxkfWGsie0i9GhrNitAF8
+	wuuAHocYKnDSO6rEzPBsBuBx1FMSbkSD/+m9ysHMr2
+X-Google-Smtp-Source: AGHT+IHT13vTR0kWj4ZrwhphGcwIOVy7CyAkUnvryXOEjJ/H2PVdPSrbH2xZfZk15WtnvnDCvp0Mkb5Lrcyb3LaVMd8=
+X-Received: by 2002:a17:907:728a:b0:aba:608d:4a22 with SMTP id
+ a640c23a62f3a-abc09a09707mr2626636966b.21.1740622371069; Wed, 26 Feb 2025
+ 18:12:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tt8gemm4.ffs@tglx>
+References: <20250220040029.27596-1-kfting@nuvoton.com> <20250220040029.27596-2-kfting@nuvoton.com>
+ <nantj66w7l7bmk2sz6i2akyaw7cievmeuuvpl3622wj5xmdmtm@g4rcuwxghxdp>
+In-Reply-To: <nantj66w7l7bmk2sz6i2akyaw7cievmeuuvpl3622wj5xmdmtm@g4rcuwxghxdp>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Thu, 27 Feb 2025 10:12:39 +0800
+X-Gm-Features: AQ5f1JrZiTk_IXo8TxlPqW73GZxuhoBbuhyIROT0bdFgIPbl2r9cCmk--GAg3es
+Message-ID: <CACD3sJYWC+=Q726rS+bVdyu2+1Oh7vXQfPn=8RWwJdT4G7VA3A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] i2c: npcm: disable interrupt enable bit before devm_request_irq
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas Gleixner:
+Hi Andi:
 
-On 16:45 Wed 26 Feb     , Thomas Gleixner wrote:
-> On Wed, Feb 26 2025 at 13:56, Yixun Lan wrote:
-> > sounds we need to implement .select() or .match() in irq_domain_ops,
-> > then find the irq_domain.. here is a prototype version 
-> > diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> > index 995e5e0ec2db..c4d18267e86e 100644
-> > --- a/kernel/irq/irqdomain.c
-> > +++ b/kernel/irq/irqdomain.c
-> > @@ -553,7 +553,7 @@ struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
-> >  	 */
-> >  	mutex_lock(&irq_domain_mutex);
-> >  	list_for_each_entry(h, &irq_domain_list, link) {
-> > -		if (h->ops->select && bus_token != DOMAIN_BUS_ANY)
-> > +		if (h->ops->select /* && bus_token != DOMAIN_BUS_ANY */)
-> 
-> This breaks existing usage and reintroduces the regression, which was
-> fixed with the commit which added the bus token check....
-> 
-right, I shouldn't change it.
+Thank you for your comments.
 
-would setting a bus token explicitly for spacemit gpio be a good idea?
-in drivers/gpio/gpio-spacemit-k1.c, something like:
+Andi Shyti <andi.shyti@kernel.org> =E6=96=BC 2025=E5=B9=B42=E6=9C=8827=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=886:18=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Tyrone,
+>
+> On Thu, Feb 20, 2025 at 12:00:29PM +0800, Tyrone Ting wrote:
+> > The customer reports that there is a soft lockup issue related to
+> > the i2c driver. After checking, the i2c module was doing a tx transfer
+> > and the bmc machine reboots in the middle of the i2c transaction, the i=
+2c
+> > module keeps the status without being reset.
+>
+> ...
+>
+> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+>
+> I guess we also need:
+>
+> Fixes: 56a1485b102e ("i2c: npcm7xx: Add Nuvoton NPCM I2C controller drive=
+r")
+> Cc: <stable@vger.kernel.org> # v5.8+
+>
+> I'm now applying the patch to the i2c/i2c-host-fixes with these
+> tags
+>
+> Please, let me know if you think that's not the case.
+>
 
-irq_domain_update_bus_token(girq->domain, DOMAIN_BUS_WIRED);
+Thank you for your help on including these tags into the patch.
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+> Thanks,
+> Andi
+
+Regards,
+Tyrone
 
