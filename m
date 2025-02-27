@@ -1,138 +1,219 @@
-Return-Path: <linux-kernel+bounces-535681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA0DA475E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:21:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D35A475ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC5B188CB80
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000923AF6FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86FF21B9DF;
-	Thu, 27 Feb 2025 06:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0C721ABA1;
+	Thu, 27 Feb 2025 06:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5E79zdB"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30411DDD1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IiiXZxtj"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B787217668;
+	Thu, 27 Feb 2025 06:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740637309; cv=none; b=pY7Nltb4I/yUUomhVRTzPsf0pDypaf+rRSz8RDLQqyHCz1tJPgnJAAAn3wSP4IgUHba1kMpwyGbQvZrJW2wnE9/I06X6cg92Rg36PFYHdQUF7MibhbiHwwtha/0R8GvXyTgPwRcw1iQBplfu1FZcfUWAxNixtkyn8hvUEiueAs4=
+	t=1740637469; cv=none; b=fB0GJfWKCQV7WdfIM4itzCYvfy8kTSVwlmqXUYGSX/zArCP3BU135RuDNDJIpsqBR247SLQMKOhrHsEvDylzF72Cb6BGgzWB0U4UsMfcFhPcNm9HOKqz1zpjae3VekIqj2bLijLBX4cjoPowxcj5gUvpyKDfb8qpeBjAnAgQo5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740637309; c=relaxed/simple;
-	bh=9BQwvYLFuyKz8+vOPc/7vB9NDt1wrVlSjQz/uL+F0iM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KZC7lTS+lhhUom4JIyyix9/+0DHgKmWI9g+dGPFwVPYqCLMI61MxZ5jMFAF63wZll1MkeNzyxzWk07Bwx1kDQOPHB1I36jNRPgT4FrGrb6p/XVfCqN/BYqmoQSilCtwEwbC6KffXApKqmd+LDa6acP+BjYXFNlQbkjmGtRLFEig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C5E79zdB; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2212222d4cdso91205ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:21:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740637307; x=1741242107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qLGPv8wfagepaDcd3kRNoXQJFGOdNe+csTfwazr/hns=;
-        b=C5E79zdBts/WekRaOqTBW4NUd7jNOx26K33t+64WyuwT5g0zYwEiNR4DqGHuqZ/ZLj
-         1kY8Jxtf9jBOp2c/SNYSSXI4gbHj++an0Yey9cDM5kvtwMD4FTn5EDJcd3UwLbkUw6p2
-         rk+RA/KjjppJ7slmUr6F9vj+FjBLCviuqdr7rrGwrZXKPJ6pRzq90fKCErrgV9oGZrta
-         teNty+Mw2iXcuNeiIMoxuNwFrj9KW1Bs+HM+sCDQmD6FbYWLWpi2TkcMGz3fgrTyexa1
-         5bphDqUWu16jV3EGpYRFluLfVbOuRDUdV464diDhiSfQIgcUpdZ4Yk7A42tOPPct9GUG
-         A6tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740637307; x=1741242107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qLGPv8wfagepaDcd3kRNoXQJFGOdNe+csTfwazr/hns=;
-        b=glflwsZygg3tsQpREPXWq0hSqvXmTUcjo2hxyQVHr5WhCNC4kvRlGME0e9JoWoSLVX
-         Ai55ULkweXTbXei3nY8HVTO8h0y0HjxdTtn2iWryvLK8QIqUsHImyUVQip8RRQ/sHRFK
-         tn9Cj0SEzjdlgPgFsmqmKjKEk2gkb7JImnP57/bS/C3H7QT22e+8hsFS0l8vLogxHEyC
-         DS3GCP9opWWavLxibDNrs1jVkJZStNsMt41HWUAoTgFiOREcfnri0ufuvtR25Ezgb+sx
-         Rxj6xzIldEUgMJLBzQ/eoK1j61eu/OUryR2Wh5U84qI8Xt281VMViDb5GmTtnZ37FqW+
-         eL9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFPQ0BqS/KqKwPD4ePZukjuYcC6CfZG3Uf6FyfBQvZbWLf4q+SWRwpPfL22bsiDHvKjlF3cPCAF9JVwDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzds9bgz26C8+L5avS42Lpg+7hioKtShASOhRe9ZbkhhPpUyMgq
-	SX9FTBFhX0fUO5QdDX62N8ikI7NJyjYjWOkJSs4Hf61GNmIHBWDA0hYoJGLdGXD/g0+mo+vhwMp
-	5MI0pbSYv4VH9VWaAy5eeMPxlzVVoxhZ1Tipz
-X-Gm-Gg: ASbGncuIBUzEjkKAoDpwKvxMCG8RwTVnvkXkqbHB2mMIHlWadQR4Z90gveaKi39zfC+
-	ZPjcuBzYrrJWpptB0Ko+QqE+jcvMk093hqM9OJwHjqdZ5ZSyVCNfLts1y0XR+1fnp8F9PIiEgsQ
-	EbmQ7sUJ8d
-X-Google-Smtp-Source: AGHT+IFEuuEK6gaJuEGoSW8v3ux9ytfx/BKpe7Ddlphni4oexNX3FSPoLq0aEXkLj+RhJyqZhVf2g6IeAdF1OYoSh3c=
-X-Received: by 2002:a17:902:f802:b0:215:8232:5596 with SMTP id
- d9443c01a7336-2234d5c9a54mr1849385ad.16.1740637306890; Wed, 26 Feb 2025
- 22:21:46 -0800 (PST)
+	s=arc-20240116; t=1740637469; c=relaxed/simple;
+	bh=cvVhSyfG3Llv19e36sgi4Oj67qfW0LlBbrAQfDLlM5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L2ROv1+TH//qei2Aicd2jV7q0CxY9+M/+GOmQSZfERrfu9J+ZWSgpLCxVWf1A6YMdUBoEqWPNDXo1WRrdkzKmRPYJV7Kz+Q/8pfiX3vwo7Wo3TtcxEqJJbRgVE7wwC3iLGoYlPLkOO/4oN6Diq04Ymu1b1RHoh5anBg3mZeW+q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IiiXZxtj; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.69.26] (unknown [167.220.238.90])
+	by linux.microsoft.com (Postfix) with ESMTPSA id EA61D210C33B;
+	Wed, 26 Feb 2025 22:24:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EA61D210C33B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740637467;
+	bh=oagN7OifPBSXYGb/2XU8XwAwZMchQAyE71yF9nncgIU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IiiXZxtjVndxLKpoGh1PdwQEgGxu6WiGjIvBo4uDdOOuSviTNstdbWkkGPzE8CfaR
+	 fQpkTfrk3OXS95NHomYI/2Oh60iCmBHxdN5ReS5f+8WLxpP9liOsoyi3nY+4IAn8Dk
+	 7N95g+QnY7PNSA2+udhKrcHSVyPpyq5bI8vQTw3U=
+Message-ID: <960501c2-5ab2-4c81-86ac-a4477c0f708a@linux.microsoft.com>
+Date: Thu, 27 Feb 2025 11:54:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109075108.7651-1-irogers@google.com> <20250109075108.7651-11-irogers@google.com>
- <CAH0uvoj=PJMbOR_iQDFxRsGN+Q04tkkHdAceReHoZANOtv3uCA@mail.gmail.com>
-In-Reply-To: <CAH0uvoj=PJMbOR_iQDFxRsGN+Q04tkkHdAceReHoZANOtv3uCA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 26 Feb 2025 22:21:35 -0800
-X-Gm-Features: AQ5f1Jq9EUr_I848tMwfXYm17qUq1MvC7vt3jNKL1cfdGcj5Bzyn94grIV-BDHM
-Message-ID: <CAP-5=fXpfBJCENkHGd=mDKCBOhCmVr0ieF5-MvUbbV03DSA_hg@mail.gmail.com>
-Subject: Re: [PATCH v1 10/11] perf python: Add evlist.config to set up record options
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>, Long Li <longli@microsoft.com>
+References: <20250225052001.2225-1-namjain@linux.microsoft.com>
+ <2025022504-diagnosis-outsell-684c@gregkh>
+ <9ee65987-4353-42c6-b517-d6f52428f718@linux.microsoft.com>
+ <2025022515-lasso-carrot-4e1d@gregkh>
+ <541c63d6-8ae6-4a32-8a02-d86eea64827e@linux.microsoft.com>
+ <2025022627-deflate-pliable-6da0@gregkh>
+ <0a694947-809d-48b2-9138-d3f6175fe09d@linux.microsoft.com>
+ <2025022643-predict-hedge-8c77@gregkh>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <2025022643-predict-hedge-8c77@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 9:46=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Hello,
->
-> On Wed, Jan 8, 2025 at 11:51=E2=80=AFPM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > Add access to evlist__config that is used to configure an evlist with
-> > record options.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/python.c | 33 +++++++++++++++++++++++++++++++++
-> >  1 file changed, 33 insertions(+)
-> >
->
-> <SNIP>
->
-> > +               .user_interval       =3D ULLONG_MAX,
-> > +               .freq                =3D 4000,
-> > +               .target              =3D {
-> > +                       .uses_mmap   =3D true,
-> > +                       .default_per_cpu =3D true,
-> > +               },
-> > +               .nr_threads_synthesize =3D 1,
-> > +               .ctl_fd              =3D -1,
-> > +               .ctl_fd_ack          =3D -1,
-> > +                       .no_buffering =3D true,
-> > +                       .no_inherit =3D true,
->
-> Are these indentations intentional?
 
-Nope, not sure what happened. I'll fix it in v2.
 
-Thanks and thanks for the tags!
-Ian
+On 2/26/2025 8:03 PM, Greg Kroah-Hartman wrote:
+> On Wed, Feb 26, 2025 at 05:51:46PM +0530, Naman Jain wrote:
+>>
+>>
+>> On 2/26/2025 3:33 PM, Greg Kroah-Hartman wrote:
+>>> On Wed, Feb 26, 2025 at 10:43:41AM +0530, Naman Jain wrote:
+>>>>
+>>>>
+>>>> On 2/25/2025 2:09 PM, Greg Kroah-Hartman wrote:
+>>>>> On Tue, Feb 25, 2025 at 02:04:43PM +0530, Naman Jain wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 2/25/2025 11:42 AM, Greg Kroah-Hartman wrote:
+>>>>>>> On Tue, Feb 25, 2025 at 10:50:01AM +0530, Naman Jain wrote:
+>>>>>>>> On regular bootup, devices get registered to vmbus first, so when
+>>>>>>>> uio_hv_generic driver for a particular device type is probed,
+>>>>>>>> the device is already initialized and added, so sysfs creation in
+>>>>>>>> uio_hv_generic probe works fine. However, when device is removed
+>>>>>>>> and brought back, the channel rescinds and device again gets
+>>>>>>>> registered to vmbus. However this time, the uio_hv_generic driver is
+>>>>>>>> already registered to probe for that device and in this case sysfs
+>>>>>>>> creation is tried before the device gets initialized completely.
+>>>>>>>>
+>>>>>>>> Fix this by moving the core logic of sysfs creation for ring buffer,
+>>>>>>>> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+>>>>>>>> attributes for the channels are defined. While doing that, make use
+>>>>>>>> of attribute groups and macros, instead of creating sysfs directly,
+>>>>>>>> to ensure better error handling and code flow.
+>>
+>> <snip>
+>>
+>>>>>>>> +static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
+>>>>>>>> +				       const struct bin_attribute *attr,
+>>>>>>>> +				       struct vm_area_struct *vma)
+>>>>>>>> +{
+>>>>>>>> +	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
+>>>>>>>> +
+>>>>>>>> +	if (!channel->mmap_ring_buffer)
+>>>>>>>> +		return -ENODEV;
+>>>>>>>> +	return channel->mmap_ring_buffer(channel, vma);
+>>>>>>>
+>>>>>>> What is preventing mmap_ring_buffer from being set to NULL right after
+>>>>>>> checking it and then calling it here?  I see no locks here or where you
+>>>>>>> are assigning this variable at all, so what is preventing these types of
+>>>>>>> races?
+>>>>>>>
+>>>>>>> thanks,
+>>>>>>>
+>>>>>>> greg k-h
+>>>>>>
+>>>>>> Thank you so much for reviewing.
+>>>>>> I spent some time to understand if this race condition can happen and it
+>>>>>> seems execution flow is pretty sequential, for a particular channel of a
+>>>>>> device.
+>>>>>>
+>>>>>> Unless hv_uio_remove (which makes channel->mmap_ring_buffer NULL) can be
+>>>>>> called in parallel to hv_uio_probe (which had set
+>>>>>> channel->mmap_ring_buffer to non NULL), I doubt race can happen here.
+>>>>>>
+>>>>>> Code Flow: (R, W-> Read, Write to channel->mmap_ring_buffer)
+>>>>>>
+>>>>>> vmbus_device_register
+>>>>>>      device_register
+>>>>>>        hv_uio_probe
+>>>>>> 	  hv_create_ring_sysfs (W to non NULL)
+>>>>>>            sysfs_update_group
+>>>>>>              vmbus_chan_attr_is_visible (R)
+>>>>>>      vmbus_add_channel_kobj
+>>>>>>        sysfs_create_group
+>>>>>>          vmbus_chan_attr_is_visible  (R)
+>>>>>>          hv_mmap_ring_buffer_wrapper (critical section)
+>>>>>>
+>>>>>> hv_uio_remove
+>>>>>>      hv_remove_ring_sysfs (W to NULL)
+>>>>>
+>>>>> Yes, and right in here someone mmaps the file.
+>>>>>
+>>>>> I think you can race here, no locks at all feels wrong.
+>>>>>
+>>>>> Messing with sysfs groups and files like this is rough, and almost never
+>>>>> a good idea, why can't you just do this all at once with the default
+>>>>> groups, why is this being added/removed out-of-band?
+>>>>>
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
+>>>>
+>>>> The decision to avoid creating a "ring" sysfs attribute by default
+>>>> likely stems from a specific use case where it wasn't needed for every
+>>>> device. By creating it automatically, it keeps the uio_hv_generic
+>>>> driver simpler and helps prevent potential race conditions. However, it
+>>>> has an added cost of having ring buffer for all the channels, where it
+>>>> is not required. I am trying to find if there are any more implications
+>>>> of it.
+>>>
+>>> You do know about the "is_visable" attribute callback, right?  Why not
+>>> just use that instead of manually mucking around with the
+>>> adding/removing of sysfs attributes at all?  That is what it was
+>>> designed for.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> Hi Greg,
+>> Yes, I am utilizing that in my patch. For differentiating channels of a
+>> uio_hv_generic device, and for *selectively* creating sysfs, we
+>> introduced this field in channel struct "channel->mmap_ring_buffer",
+>> which we were setting only in uio_hv_generic. But, by the time we set
+>> this in uio_hv_generic driver, the sysfs creation has already gone
+>> through and sysfs doesn't get updated dynamically. That's where there
+>> was a need to call sysfs_update_group. I thought the better place to
+>> keep sysfs_update_group would be in vmbus driver, where we are creating
+>> the original sysfs entries, hence I had to add the wrapper functions.
+>> This led us to the race condition we are trying to address now.
+>>
+>>
+>> @@ -1838,6 +1872,10 @@ static umode_t vmbus_chan_attr_is_visible(struct
+>> kobject *kobj,
+>>   	     attr == &chan_attr_monitor_id.attr))
+>>   		return 0;
+>>
+>> +	/* Hide ring attribute if channel's mmap_ring_buffer function is not yet
+>> initialised */
+>> +	if (attr ==  &chan_attr_ring_buffer.attr && !channel->mmap_ring_buffer)
+>> +		return 0;
+>> +
+>>   	return attr->mode;
+> 
+> Ok, that's good.  BUT you need to change the detection of this to be
+> before the device is set up in the driver.  Why can't you do it in the
+> device creation logic itself instead of after-the-fact when you will
+> ALWAYS race with userspace?
+> 
+> thanks,
+> 
+> greg k-h
 
->
-> Thanks,
-> Howard
+Sure, will check more on this. Thanks.
+
+Regards,
+Naman
+
 
