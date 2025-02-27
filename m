@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-536728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34993A48378
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4ECA4837C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E16F3A30FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:48:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8813B6FAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DFA19E968;
-	Thu, 27 Feb 2025 15:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEB6197A76;
+	Thu, 27 Feb 2025 15:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ig5dzZ8T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qJVr79NW"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5CF1624C3;
-	Thu, 27 Feb 2025 15:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52431624C3;
+	Thu, 27 Feb 2025 15:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671321; cv=none; b=Sb0C+uYqm69kbqBLIYrn57c+0Ss/LNuP9mwQQYGpYEboeAmysE9dCTfav6g5/tVdULPILpRzpPg9EvvHEjsfNKn40FzYrFm9e+0di2mH8NeVuFYz6GJxy0kEweYYnIjtHTwIC4QWsNoiIKh3WzPDc3pSVhGryi0HAKB9VWei70k=
+	t=1740671348; cv=none; b=BWO/Nc7gMmvcA+TdMsMxjzyLkJX/tR1J+I3h3NXqsBHRFLF1GXILxp7JAIX3GekhAHFhuj4V4HfZuaCEPa/WV8XItEaZiWeH0anuvpM1RF9NG7Pt6gcK9n2A5TcR//nnyO+t6BxJBya4Iwkeja8VBiUdhttkn1pTGxmqUsTm23E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671321; c=relaxed/simple;
-	bh=CLYYqdvqAO/1n/BWxTVd5NjOz2LQ7O10iJ3SeN8ieto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogUXIv+9nMUmKeoaNUf0DNgwv7IKagsmHzYxrIhrDHtTpSBE9+2sn5TPglmz18CPLsLeCHMbXXRfqchxUpx/uqpv8rP+pqbbbFfTUM9nIIocBy88daT6htbPDr39SNWl2yXIqSsGMHHaEBblTEXvGdwwW2YN7VPSoQWqpg9waWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ig5dzZ8T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86C62C4CEDD;
-	Thu, 27 Feb 2025 15:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740671320;
-	bh=CLYYqdvqAO/1n/BWxTVd5NjOz2LQ7O10iJ3SeN8ieto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ig5dzZ8TAwZWWEUogbZOP0QgD1qHUzsLdbmSun7YoUzDjsEP0GthlUE9htneHutDB
-	 VaGxjs5Zrax/HT0PddHlA1xYxsrIoWEPVMGSvtKu8iX8aetP+G/BehmXtmd3VEr4jk
-	 emRqbvQnnJCENiFdXXZsm+8WqTtKpKvlCx8o47TyAoMyuHPGBQYtSqE1aKJZq9RpZ/
-	 WcONZgDt4qBH8kT6NwAjrNzLFHRzpsp4BVFzb/zg/yQf5adlkKhmXNshvNnNtYLZSO
-	 wdn7F9NnUAv9M0iagr6jCpFuQkB1xfD2XJ2VPQrTppcC3fOjc3M70M9VrFwyTk58oY
-	 wxL5i48eqfGSA==
-Date: Thu, 27 Feb 2025 15:48:33 +0000
-From: Lee Jones <lee@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Val Packett <val@packett.cool>, Fabien Parent <parent.f@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Eddie Huang <eddie.huang@mediatek.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: (subset) [PATCH 4/9] mfd: mt6397: Add support for MT6392 pmic
-Message-ID: <20250227154833.GF824852@google.com>
-References: <20241226050205.30241-1-val@packett.cool>
- <20241226050205.30241-5-val@packett.cool>
- <173920541986.1887800.1972669785800121190.b4-ty@kernel.org>
- <CAL_Jsq+PPYeFxr=utwZLemUVCzk5iabtMckOJmNy1-LO39cqeQ@mail.gmail.com>
+	s=arc-20240116; t=1740671348; c=relaxed/simple;
+	bh=zzZa7n5QAPPWcKQ/es+FdPtKkvbVk123mv32pczukr0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SuqsgE1+ZwwOnygGSijClVyREMXU6Uj//7sq8wS/Am6MMB6/Qa+ZjUlIOyp8dxiuX5NICHCAtxO3zbB6D0EoTJt2Z6YBg2moXFNapTidInde9jhjH+9ZKolBmcj8UiKaCLdQHNHJj0IO5Fci1utEl9oPURCAj1MmHoZ4TSOAGtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qJVr79NW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 28826411AF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1740671336; bh=cqbT2RBDltaoqj4UWGIofvpGfTET89voDdxor1L4E9Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qJVr79NWJC/fbAi0+wjIfIVYMHAG8JeG/0T1+dFeN+xSPR8jqABgBC7koYbVLA3X8
+	 btow3rPgJRp9d46U/v97sGxcz6fhXQRLMS3xXTy+gqaY30mhW+73BRLY4j+LhVIyBO
+	 +F6gDJTk1KHaqe1Tz6ncIu+IeBcr/v98jcqdcI3wrhBQpd9grR73cLH0/Q5ToFoQ3T
+	 DVdMBxnkLbtmPSE4eZa9zqbH4pkH3+j27bpSfkPBEjqcysL0xORu60i4+sDgDzUhdg
+	 UaIg66B+DCpdIwv13NfK0i9hDlrhEuBpmjtN+44Zr+BYuqfU0tonyVlXGaoOZLqpFg
+	 rdAY2BxWPRD7w==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 28826411AF;
+	Thu, 27 Feb 2025 15:48:56 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>,
+ live-patching@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
+ joe.lawrence@redhat.com, Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
+Subject: Re: [PATCH] docs: livepatch: move text out of code block
+In-Reply-To: <20250227150328.124438-1-vincenzo.mezzela@suse.com>
+References: <20250227150328.124438-1-vincenzo.mezzela@suse.com>
+Date: Thu, 27 Feb 2025 08:48:55 -0700
+Message-ID: <87bjunqtg8.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+PPYeFxr=utwZLemUVCzk5iabtMckOJmNy1-LO39cqeQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, 25 Feb 2025, Rob Herring wrote:
+Vincenzo MEZZELA <vincenzo.mezzela@suse.com> writes:
 
-> On Mon, Feb 10, 2025 at 10:37 AM Lee Jones <lee@kernel.org> wrote:
-> >
-> > On Thu, 26 Dec 2024 01:58:04 -0300, Val Packett wrote:
-> > > Update the MT6397 MFD driver to support the MT6392 PMIC.
-> > >
-> > >
-> >
-> > Applied, thanks!
-> >
-> > [4/9] mfd: mt6397: Add support for MT6392 pmic
-> >       commit: 896b1eb4ca771b37ea50feb4d90a78dd4e9cb388
-> 
-> This should be dropped. Missing the sender's S-o-b and the rest of the
-> series has issues still.
+> Part of the documentation text is included in the readelf output code
+> block. Hence, split the code block and move the affected text outside.
+>
+> Signed-off-by: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
+> ---
+>  Documentation/livepatch/module-elf-format.rst | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/livepatch/module-elf-format.rst b/Documentation/livepatch/module-elf-format.rst
+> index a03ed02ec57e..eadcff224335 100644
+> --- a/Documentation/livepatch/module-elf-format.rst
+> +++ b/Documentation/livepatch/module-elf-format.rst
+> @@ -217,16 +217,23 @@ livepatch relocation section refer to their respective symbols with their symbol
+>  indices, and the original symbol indices (and thus the symtab ordering) must be
+>  preserved in order for apply_relocate_add() to find the right symbol.
+>  
+> -For example, take this particular rela from a livepatch module:::
+> +For example, take this particular rela from a livepatch module:
+> +
+> +::
 
-Are you sure you're commenting on the correct patch?
+The right fix here is to just delete the extra ":"
 
-> Signed-off-by: Fabien Parent <parent.f@gmail.com>
+>    Relocation section '.klp.rela.btrfs.text.btrfs_feature_attr_show' at offset 0x2ba0 contains 4 entries:
+>        Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+>    000000000000001f  0000005e00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.printk,0 - 4
+>  
+> -  This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol index is encoded
+> -  in 'Info'. Here its symbol index is 0x5e, which is 94 in decimal, which refers to the
+> -  symbol index 94.
+> -  And in this patch module's corresponding symbol table, symbol index 94 refers to that very symbol:
+> +This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol
+> +index is encoded in 'Info'. Here its symbol index is 0x5e, which is 94 in
+> +decimal, which refers to the symbol index 94.
+> +
+> +And in this patch module's corresponding symbol table, symbol index 94 refers
+> +to that very symbol:
+> +
+> +::
 
--- 
-Lee Jones [李琼斯]
+You can put that extra colon here rather than introducing a separate
+"::" line.
+
+Thanks,
+
+jon
 
