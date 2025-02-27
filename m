@@ -1,171 +1,133 @@
-Return-Path: <linux-kernel+bounces-535654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5E5A4759E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:57:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDE6A475A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A5516FA04
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D45A3A6C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521B6215779;
-	Thu, 27 Feb 2025 05:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58378217F5D;
+	Thu, 27 Feb 2025 05:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eQI4y+Ht"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498AB214A96;
-	Thu, 27 Feb 2025 05:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8X07Jon"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0197221516A;
+	Thu, 27 Feb 2025 05:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740635821; cv=none; b=PFDZtPux8wnMh1V1498x0YZmTO12UDF1kxEGu9aUEnZJ4n8XQLEsi6brDcSMdkW8fXFEKzkwvBIrzFN6PDsO+i0qAuWoybI0BRUor8RNQytRZhE4ZTYp1EpyvtfJaJb5YkdwDjzBddUzwyydr2vYMbTl214P1xXy5qwcOIf/kPs=
+	t=1740635871; cv=none; b=C1LIT6aQWNfNvAEepznUZl4xtP7N8kR2mPdFjZf4Ovr3GD3St3ZU7vjA7YAK3yP9J2zjeoJCrYG2sfc6p5A4UilWlZ4wk0cLm8w/b7O8KYhjJA3hRM9uaj80Pn8oSQSjb4wc12x6z5bhQoxLUI4ZRReSop2+siUlPsFKbpMBPKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740635821; c=relaxed/simple;
-	bh=n/7501i6uez9aq/kEbc0SV9ZotnO1lRKSkI807l1+yo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KZcYNRn+fWGwRNEZ8VeeP1R6cB4nyYYFuCFGBsG1no4gY2FTtKG60WuMDKFW0TZWTd2oSTUDWOxicwzMo8JggxhI7QIETix0UiVZz9h0+puK5WHOQ2VPR+wokQy60qmo+u7TOMUsLf4Mrh0+UxPUbRHdVtNr4S1CUcXu47w1iE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=eQI4y+Ht; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.224.197] (unknown [20.236.11.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 91976210C33B;
-	Wed, 26 Feb 2025 21:56:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 91976210C33B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740635819;
-	bh=W/MkXUhHX7zH6oQ/rHTcpceutPj8HQjNkQ+KPUdG8HE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=eQI4y+Ht6gcca5/C4U2sEvpTwt7K8Tzgnteh+WyGhNwCTshnKA0XUsTDM9eYfZeIh
-	 QjkJYSyHomtHB13FhD0M5CcZVt7UgmmGKqHH++pn/K4lVYxywy06xenvAsZSRgtPnE
-	 PIn+AldosomUdd9VeWpBXVnsKZVDKLcOS1bKbEns=
-Message-ID: <5f3d660d-fe2e-4ac1-94a7-66d6c8ffe579@linux.microsoft.com>
-Date: Wed, 26 Feb 2025 21:56:56 -0800
+	s=arc-20240116; t=1740635871; c=relaxed/simple;
+	bh=2SafO12uI4h/H25nQ13IVaO/mucCyOzb83y4kdC0s7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+uHoEdBjb3nN+9xOt3fmfmXBSQXtde1AIcE6959jzqeqLp/PU2wPwze5OSUZPOFXaQ8EKarDeHJDE9vFEDluDG1BVy9Ae2fp2J5NkutO2Jf769sz4GlqeRcROfTIX+5lUVCX0Kev29dkncZL46AbW/E9C7oNbx7hmZJsQJH/7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8X07Jon; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740635870; x=1772171870;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2SafO12uI4h/H25nQ13IVaO/mucCyOzb83y4kdC0s7E=;
+  b=M8X07JonQpr5Y2m0dWCfz5XWPY4n3vEEO8yOnQMh0iwWupQjW4tS68R+
+   wquGznzy4w/bLBkKiYhN14+Ufh3ZRFdLYu8smEcPl5a6kuJkQ72aeCxBL
+   vJBZk17IDJRg9f42wcijYybbuH5v0jhi6dO6kIgahax7Efrixpot7vA0V
+   xErsLBIDtSbQ6vPsvxPdIOQ6toK5oLRg4BfIxST8S3zx7X1/QgdMA7y4V
+   X1ardlYPHOYROyHuBq4MhAbRWhvZAPjIjgh+eBEfXcPZhvA6ZAm9yBMzN
+   6OtL/7/g/KtO72cmzlQbLiVEM8/iube2SnIKO1uqz4qRk8VxWWL+5Zipz
+   Q==;
+X-CSE-ConnectionGUID: ppCewY0qRwGwOYpQhRycAA==
+X-CSE-MsgGUID: E9vSov/iQ2C7gWadoGgtIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="29113642"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="29113642"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:57:49 -0800
+X-CSE-ConnectionGUID: 1O0BGv2cRtizHUdxu57vMA==
+X-CSE-MsgGUID: gCMMkIefR4GuMUemt9rdFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154113781"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 26 Feb 2025 21:57:43 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnWtn-000Cvi-2T;
+	Thu, 27 Feb 2025 05:57:37 +0000
+Date: Thu, 27 Feb 2025 13:57:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Will Deacon <will@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH] crypto: lib/Kconfig - Select and hide arch options
+Message-ID: <202502271317.S0YZiPk1-lkp@intel.com>
+References: <Z76aUfPIbhPAsHbv@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
- eahariha@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
- catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
- arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-Subject: Re: [PATCH v5 03/10] arm64/hyperv: Add some missing functions to
- arm64
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-4-git-send-email-nunodasneves@linux.microsoft.com>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <1740611284-27506-4-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z76aUfPIbhPAsHbv@gondor.apana.org.au>
 
-On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
-> These non-nested msr and fast hypercall functions are present in x86,
-> but they must be available in both architetures for the root partition
+Hi Herbert,
 
-nit: *architectures*
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on herbert-cryptodev-2.6/master]
+[also build test ERROR on next-20250226]
+[cannot apply to soc/for-next linus/master v6.14-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> driver code.
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->  arch/arm64/hyperv/hv_core.c       | 17 +++++++++++++++++
->  arch/arm64/include/asm/mshyperv.h | 12 ++++++++++++
->  include/asm-generic/mshyperv.h    |  2 ++
->  3 files changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm64/hyperv/hv_core.c b/arch/arm64/hyperv/hv_core.c
-> index 69004f619c57..e33a9e3c366a 100644
-> --- a/arch/arm64/hyperv/hv_core.c
-> +++ b/arch/arm64/hyperv/hv_core.c
-> @@ -53,6 +53,23 @@ u64 hv_do_fast_hypercall8(u16 code, u64 input)
->  }
->  EXPORT_SYMBOL_GPL(hv_do_fast_hypercall8);
->  
-> +/*
-> + * hv_do_fast_hypercall16 -- Invoke the specified hypercall
-> + * with arguments in registers instead of physical memory.
-> + * Avoids the overhead of virt_to_phys for simple hypercalls.
-> + */
-> +u64 hv_do_fast_hypercall16(u16 code, u64 input1, u64 input2)
-> +{
-> +	struct arm_smccc_res	res;
-> +	u64			control;
-> +
-> +	control = (u64)code | HV_HYPERCALL_FAST_BIT;
-> +
-> +	arm_smccc_1_1_hvc(HV_FUNC_ID, control, input1, input2, &res);
-> +	return res.a0;
-> +}
-> +EXPORT_SYMBOL_GPL(hv_do_fast_hypercall16);
-> +
+url:    https://github.com/intel-lab-lkp/linux/commits/Herbert-Xu/crypto-lib-Kconfig-Select-and-hide-arch-options/20250226-125220
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/Z76aUfPIbhPAsHbv%40gondor.apana.org.au
+patch subject: [PATCH] crypto: lib/Kconfig - Select and hide arch options
+config: s390-randconfig-002-20250227 (https://download.01.org/0day-ci/archive/20250227/202502271317.S0YZiPk1-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502271317.S0YZiPk1-lkp@intel.com/reproduce)
 
-I'd like this to have been in arch/arm64/include/asm/mshyperv.h like its x86
-counterpart, but that's just my personal liking of symmetry. I see why it's here
-with its slow and 8-byte brethren.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502271317.S0YZiPk1-lkp@intel.com/
 
->  /*
->   * Set a single VP register to a 64-bit value.
->   */
-> diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
-> index 2e2f83bafcfb..2a900ba00622 100644
-> --- a/arch/arm64/include/asm/mshyperv.h
-> +++ b/arch/arm64/include/asm/mshyperv.h
-> @@ -40,6 +40,18 @@ static inline u64 hv_get_msr(unsigned int reg)
->  	return hv_get_vpreg(reg);
->  }
->  
-> +/*
-> + * Nested is not supported on arm64
-> + */
-> +static inline void hv_set_non_nested_msr(unsigned int reg, u64 value)
-> +{
-> +	hv_set_msr(reg, value);
-> +}
+All errors (new ones prefixed by >>):
 
-empty line preferred here, also reported by checkpatch
+   s390-linux-ld: arch/s390/crypto/chacha-glue.o: in function `chacha20_s390':
+>> chacha-glue.c:(.text+0x30e): undefined reference to `chacha_crypt_generic'
+   s390-linux-ld: arch/s390/crypto/chacha-glue.o: in function `chacha_crypt_arch':
+   chacha-glue.c:(.text+0x3f6): undefined reference to `chacha_crypt_generic'
 
-> +static inline u64 hv_get_non_nested_msr(unsigned int reg)
-> +{
-> +	return hv_get_msr(reg);
-> +}
-> +
->  /* SMCCC hypercall parameters */
->  #define HV_SMCCC_FUNC_NUMBER	1
->  #define HV_FUNC_ID	ARM_SMCCC_CALL_VAL(			\
-> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-> index c020d5d0ec2a..258034dfd829 100644
-> --- a/include/asm-generic/mshyperv.h
-> +++ b/include/asm-generic/mshyperv.h
-> @@ -72,6 +72,8 @@ extern void * __percpu *hyperv_pcpu_output_arg;
->  
->  extern u64 hv_do_hypercall(u64 control, void *inputaddr, void *outputaddr);
->  extern u64 hv_do_fast_hypercall8(u16 control, u64 input8);
-> +extern u64 hv_do_fast_hypercall16(u16 control, u64 input1, u64 input2);
-> +
-
-checkpatch warns against putting externs in header files, and FWIW, if hv_do_fast_hypercall16()
-for arm64 were in arch/arm64/include/asm/mshyperv.h like its x86 counterpart, you probably
-wouldn't need this?
-
->  bool hv_isolation_type_snp(void);
->  bool hv_isolation_type_tdx(void);
->  
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
