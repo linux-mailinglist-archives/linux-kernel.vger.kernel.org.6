@@ -1,106 +1,251 @@
-Return-Path: <linux-kernel+bounces-535386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543D8A471EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:04:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FF5A471E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6909218849D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9493B07BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3050C199239;
-	Thu, 27 Feb 2025 01:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6AE1465AE;
+	Thu, 27 Feb 2025 01:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFoEwWOQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFine1U6"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B899139E;
-	Thu, 27 Feb 2025 01:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B577E0E4;
+	Thu, 27 Feb 2025 01:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740621491; cv=none; b=OBWew91s938tykafDuvh8dkYPRsMDa3s786GsviV7bMH4y0f6y/5fgu7kPf03ABi6gc7IDfjsMHpS7eMk6HCCcB4hSsG2HCiBYtVeSgzJ/fQaX8ycVEjq1DhIcdOtOPTLxciuEFmor0jvu7E27lFXBW/vB6JqPkjL6IF3IejPP8=
+	t=1740621593; cv=none; b=KXdn8kPLAcUtRUvEVb5/Idojn1Zm/a1SXN5ltOP0X9fpyOmKgUl/VRdOAKxvi0LhqqnQr9GJfqxF3cisBtG/sQJjfiOd4w3ITVLC5X1fLfYrxOkSjuRchgOkaQslL/v59wS5n0L0AWacsVWvJ3z7+qrgVwz8IvlAHZsoEnc+voc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740621491; c=relaxed/simple;
-	bh=tQqSkhuPbb1T5x6cMu4V0N9ePh3tWbcGixS02DkoMHk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PCTV4A8N+lctoB5ruKDNlbfBgmPUBweZiTrRc/cOS9rTVAK9cy8TDlEhMtmW7OyqV3avPbBxU1ZbCkdN0686s9iANkjSgYBj/DEKxdnD2qzTqsf662u2Lx7oMVytQ924kqFqBLmRqHyurCMuC/f7sa9xIozzpMMklOYCXZ6nk9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFoEwWOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04EEC4CEE8;
-	Thu, 27 Feb 2025 01:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740621491;
-	bh=tQqSkhuPbb1T5x6cMu4V0N9ePh3tWbcGixS02DkoMHk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YFoEwWOQMtYL3tiHZY1Klb9D+0FI6oiHIg3qJP9gQ78IuyJzv7mC4Z5XiRo+eS7nE
-	 +X9R8bAUwlgr0l6XZKdzqTkFzZMhmbd/P/Eha3YGAjfIylzddDwrO7+ZyoLTLWifu5
-	 Tu2FKElANpXcF/pdBlIchfNiSWjeMm3yJ1J+d1+450u2LbP2A3i/gN+uwdA4m690lK
-	 fMyX5xpGp9iB9GtaAZHtik2A0zQ/Jck7wC2VdhVNvpV4Q2movxtcZQMD9ZdPLGG+TZ
-	 rshdBICJI0Y7/Iu2K60V4q/eKP4SucGbQPACyRyshuj2ZwIBdhYJT7S5rtRc7HD2oa
-	 4SoI53OREUdiw==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v2 9/9] Docs/mm/damon/design: update for changed filter-default behavior
-Date: Wed, 26 Feb 2025 17:57:54 -0800
-Message-Id: <20250227015754.38789-10-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250227015754.38789-1-sj@kernel.org>
-References: <20250227015754.38789-1-sj@kernel.org>
+	s=arc-20240116; t=1740621593; c=relaxed/simple;
+	bh=f0Z5kRx+dR4soY3vCbMiYydu9e/yMavT0U1XWdNsNXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pgeJHa3a7pnbiTP9sGeK+oeCW8Fs1xxIDApR3CIkiuwQ5WBwyN8s5Q+Qq4s+9UYm5ypJB2o20l5X2H5/8Qr1marE4501+yBpO7tN7jzQKbPMsrmSU0bv1xjjup1whSFiDDi3P7yQE73L1mluUOVvbUUNDBeqStJkREYmq9hfQE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFine1U6; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso2841575e9.1;
+        Wed, 26 Feb 2025 17:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740621590; x=1741226390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yqwvNkA3NWkjysaFqna5rqnzFyhX/oYcK1gAr6tgHOk=;
+        b=SFine1U6VtHiLB/HVVQJaA3Ba3zmBNrsafDo44Tfu3D0Yu4Mcc1vsUTNMVlbShcFzV
+         nwCFtWjacDocDnFQwKXyw8N31kSR4xAML/Tv3znuY5+j9LHOnG2Syy6eKmzWoOemuuRF
+         3LCqVxgNF0fJhToYspJu+HudNGEXnBQLgGNnn7Du89H2hqi/NRPZwSL+hc4g1ZMARspA
+         t7+DBanC+M+6gBXJOQb/8p6cIjxyBIsAGUtyWtgiGq3NYavMIgVzdIawC73tS48XB4P6
+         jmwD0cPDZ1eBqjqEc7Ao6w4bIZbynuJXry4J64YV4OlkFb8cCLnOSMHKysgyxIjCIhew
+         NO+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740621590; x=1741226390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yqwvNkA3NWkjysaFqna5rqnzFyhX/oYcK1gAr6tgHOk=;
+        b=KGlUCMu1AW0mWLS2XrH8nEDL439HDu6GfvdDR59Z+c80sczZhTeoGKSQTdhhRfmLdq
+         XGtOA3VToXDebyVUtXzu3JQtzpZ9Kei6cdAB3e7JDxHjxpfKYS2RkL4f0TmA0do500gR
+         sepcVE56msBlqUgiat8xPm+MFeNpeV+1AUKVhtYzvfC6MsVNGODYMyZk+L2MkfhlLEXH
+         6MgzR76NlDuI/Aag2hgm8rJc44HG0z++EH7/HdXWr5X/TVP3nI322DlqTL9xqr0/YN8V
+         DNye7hdkA/llc5DNTFZsHxbqrgk2nG22we+zDVy6LGHb8lEmPT1a2/XmMa3ek08nUXH0
+         o/Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdxnBS7NbdOpSq6YOa4vp7TBjgmzvITDVyT1RZm7QE0coYJeMCNCSdLxA71o7ZwxGx47K3@vger.kernel.org, AJvYcCX8LZrRWZPBZ6AsI+z/S+5PzjtaVW5/bnDbmMaRlZ/fQbVOwPnG71dnbBxzG/y8e4BKIxqNJP3nAx/T4uRy@vger.kernel.org, AJvYcCXgz6iXZRN3hv9Fss1nALUBVo0jhgZ5/7JoLFQcRvbameIfQJ+nMgGV4+XU2KDmX7HYLws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvRfzKR7ZpGRuU3ArDwK4bVOhHhDJc7X43P4c1x00LW6bl2FRV
+	CFqWEBmQNkPSookNuBMpr2jeOx7lhxZ2qqmmyKMjGnAzK2opkuKpehx/iHcvPToQEbEymlAfLeW
+	LBCaS53qHwiPVVKwpU8XRaD2X7a3/Pger
+X-Gm-Gg: ASbGncvJb4dO4VJUIxXblGlN21Bbn5gVdIGvgFENnEKl1RpHTpu+6yD8F2TQypv8rw2
+	j06uRZ0j+khz5AFQzET/MJPW8sRaJarM5I3T2Voj5eJKq1kGHnSy8Dugbds1WZ1TVtR36Lg/LRd
+	0vxWOFtgp6Kq7/AMLy10JKuHI=
+X-Google-Smtp-Source: AGHT+IG+rtsSCV3WwzXwUaqCz1Qu9gUmgxusmLrBia8mvrVBQVfM6F0oN7T2bQb+eJJ0g9Uc0Bw6f8Z/K8uOajf3xoU=
+X-Received: by 2002:a05:600c:1383:b0:439:8a44:1e65 with SMTP id
+ 5b1f17b1804b1-439aeafaa00mr201026955e9.7.1740621589446; Wed, 26 Feb 2025
+ 17:59:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250204082848.13471-1-hotforest@gmail.com> <20250204082848.13471-3-hotforest@gmail.com>
+ <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com> <8734gr3yht.fsf@toke.dk>
+ <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com> <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+ <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com> <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
+ <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com> <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com>
+In-Reply-To: <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 26 Feb 2025 17:59:38 -0800
+X-Gm-Features: AQ5f1JrtDlHPcrwBLDwNsRZeFDc4x5hD9HvSyCtZKrQ1g-q1TNCxTEiwMqcqRMI
+Message-ID: <CAADnVQJU9OWAWFk89P6i1RK6vXkuee5s76suHjF+uP+V4iepqQ@mail.gmail.com>
+Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
+ map atomically
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: Zvi Effron <zeffron@riotgames.com>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Cody Haas <chaas@riotgames.com>, 
+	Hou Tao <hotforest@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the design documentation for changed DAMOS filters default
-allowance behaviors.
+On Wed, Feb 26, 2025 at 5:48=E2=80=AFPM Hou Tao <houtao@huaweicloud.com> wr=
+ote:
+>
+> Hi,
+>
+> On 2/27/2025 7:17 AM, Zvi Effron wrote:
+> > On Tue, Feb 25, 2025 at 9:42=E2=80=AFPM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> >> On Tue, Feb 25, 2025 at 8:05=E2=80=AFPM Hou Tao <houtao@huaweicloud.co=
+m> wrote:
+> >>> Hi,
+> >>>
+> >>> On 2/26/2025 11:24 AM, Alexei Starovoitov wrote:
+> >>>> On Sat, Feb 8, 2025 at 2:17=E2=80=AFAM Hou Tao <houtao@huaweicloud.c=
+om> wrote:
+> >>>>> Hi Toke,
+> >>>>>
+> >>>>> On 2/6/2025 11:05 PM, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
+> >>>>>> Hou Tao <houtao@huaweicloud.com> writes:
+> >>>>>>
+> >>>>>>> +cc Cody Haas
+> >>>>>>>
+> >>>>>>> Sorry for the resend. I sent the reply in the HTML format.
+> >>>>>>>
+> >>>>>>> On 2/4/2025 4:28 PM, Hou Tao wrote:
+> >>>>>>>> Currently, the update of existing element in hash map involves t=
+wo
+> >>>>>>>> steps:
+> >>>>>>>> 1) insert the new element at the head of the hash list
+> >>>>>>>> 2) remove the old element
+> >>>>>>>>
+> >>>>>>>> It is possible that the concurrent lookup operation may fail to =
+find
+> >>>>>>>> either the old element or the new element if the lookup operatio=
+n starts
+> >>>>>>>> before the addition and continues after the removal.
+> >>>>>>>>
+> >>>>>>>> Therefore, replacing the two-step update with an atomic update. =
+After
+> >>>>>>>> the change, the update will be atomic in the perspective of the =
+lookup
+> >>>>>>>> operation: it will either find the old element or the new elemen=
+t.
+> >>>> I'm missing the point.
+> >>>> This "atomic" replacement doesn't really solve anything.
+> >>>> lookup will see one element.
+> >>>> That element could be deleted by another thread.
+> >>>> bucket lock and either two step update or single step
+> >>>> don't change anything from the pov of bpf prog doing lookup.
+> >>> The point is that overwriting an existed element may lead to concurre=
+nt
+> >>> lookups return ENOENT as demonstrated by the added selftest and the
+> >>> patch tried to "fix" that. However, it seems using
+> >>> hlist_nulls_replace_rcu() for the overwriting update is still not
+> >>> enough. Because when the lookup procedure found the old element, the =
+old
+> >>> element may be reusing, the comparison of the map key may fail, and t=
+he
+> >>> lookup procedure may still return ENOENT.
+> >> you mean l_old =3D=3D l_new ? I don't think it's possible
+> >> within htab_map_update_elem(),
+> >> but htab_map_delete_elem() doing hlist_nulls_del_rcu()
+> >> then free_htab_elem, htab_map_update_elem, alloc, hlist_nulls_add_head=
+_rcu
+> >> and just deleted elem is reused to be inserted
+> >> into another bucket.
+>
+> No. I mean the following procedure in which the lookup procedure finds
+> the old element and tries to match its key, one update procedure has
+> already deleted the old element, and another update procedure is reusing
+> the old element:
+>
+> lookup procedure A
+> A: find the old element (instead of the new old)
+>
+>               update procedure B
+>               B: delete the old element
+>               update procedure C on the same CPU:
+>               C: reuse the old element (overwrite its key and insert in
+> the same bucket)
+>
+> A: the key is mismatched and return -ENOENT.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/mm/damon/design.rst | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+This is fine. It's just normal reuse.
+Orthogonal to 'update as insert+delete' issue.
 
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index 5af991551a86..ffea744e4889 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -581,9 +581,10 @@ When multiple filters are installed, the group of filters that handled by the
- core layer are evaluated first.  After that, the group of filters that handled
- by the operations layer are evaluated.  Filters in each of the groups are
- evaluated in the installed order.  If a part of memory is matched to one of the
--filter, next filters are ignored.  If the memory passes through the filters
-+filter, next filters are ignored.  If the part passes through the filters
- evaluation stage because it is not matched to any of the filters, applying the
--scheme's action to it is allowed, same to the behavior when no filter exists.
-+scheme's action to it depends on the last filter's allowance type.  If the last
-+filter was for allowing, the part of memory will be rejected, and vice versa.
- 
- For example, let's assume 1) a filter for allowing anonymous pages and 2)
- another filter for rejecting young pages are installed in the order.  If a page
-@@ -595,11 +596,6 @@ second reject-filter blocks it.  If the page is neither anonymous nor young,
- the page will pass through the filters evaluation stage since there is no
- matching filter, and the action will be applied to the page.
- 
--Note that the action can equally be applied to memory that either explicitly
--filter-allowed or filters evaluation stage passed.  It means that installing
--allow-filters at the end of the list makes no practical change but only
--filters-checking overhead.
--
- Below ``type`` of filters are currently supported.
- 
- - Core layer handled
--- 
-2.39.5
+> It can be reproduced by increasing ctx.loop in the selftest.
+> >>
+> >> I'm not sure whether this new hlist_nulls_replace_rcu()
+> >> primitive works with nulls logic.
+> >>
+> >> So back to the problem statement..
+> >> Are you saying that adding new to a head while lookup is in the middle
+> >> is causing it to miss an element that
+> >> is supposed to be updated assuming atomicity of the update?
+> >> While now update_elem() is more like a sequence of delete + insert?
+> >>
+> >> Hmm.
+> > Yes, exactly that. Because update_elem is actually a delete + insert (a=
+ctually
+> > an insert + delete, I think?), it is possible for a concurrent lookup t=
+o see no
+> > element instead of either the old or new value.
+>
+> Yep.
+> >
+> >>> I see. In v2 I will fallback to the original idea: adding a standalon=
+e
+> >>> update procedure for htab of maps in which it will atomically overwri=
+te
+> >>> the map_ptr just like array of maps does.
+> >> hold on. is this only for hash-of-maps ?
+> > I believe this was also replicated for hash as well as hash-of-maps. Co=
+dy can
+> > confirm, or use the reproducer he has to test that case.
+>
+> The fix for hash-of-maps will be much simpler and the returned map
+> pointer will be correct. For other types of hash map, beside switching
+> to hlist_nulls_replace_rcu(),
+
+It's been a long time since I looked into rcu_nulls details.
+Pls help me understand that this new replace_rcu_nulls()
+is correct from nulls pov,
+If it is then this patch set may be the right answer to non-atomic update.
+
+And for the future, please please focus on "why" part in
+the cover letter and commit logs instead of "what".
+
+Since the only thing I got from the log was:
+"Currently, the update is not atomic
+because the overwrite of existing element happens in a two-steps way,
+but the support of atomic update is feasible".
+
+"is feasible" doesn't explain "why".
+
+Link to xdp-newbie question is nice for additional context,
+but reviewers should not need to go and read some thread somewhere
+to understand "why" part.
+All of it should be in the commit log.
+
+> map may still be incorrect (as shown long time ago [1]), so I think
+> maybe for other types of map, the atomic update doesn't matter too much.
+>
+> [1]:
+> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.c=
+om/
+
+A thread from 3 years ago ?! Sorry, it's not helpful to ask
+people to page-in such an old context with lots of follow ups
+that may or may not be relevant today.
 
