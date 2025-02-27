@@ -1,109 +1,175 @@
-Return-Path: <linux-kernel+bounces-535393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6753BA471F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:09:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746E3A471F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D95A01648FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E7D3AD775
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960317A318;
-	Thu, 27 Feb 2025 02:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F084C1494A9;
+	Thu, 27 Feb 2025 02:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MemwB/t2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0BReojG"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F48517A30A;
-	Thu, 27 Feb 2025 02:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44D884D34
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622149; cv=none; b=BKgesT2A6DE84oA13nU+qYs1Z7WbBRELL2Pqdd6DPG6+Ump5w+7HnspRfhl43/FAdYk7cvXcrz1yJseiHM/YiJa04TGWvv9KXNQQQOXm+hb6uSLqNqm9Wr8SacKu+R7przOfa+zBrDVbIcL4p4VTJF2G2fYImj/Bo97k9QU7MZA=
+	t=1740622205; cv=none; b=Kku491CLekKwMYx7IZe7xRZ+qbvB8jTFDEPVJCtskiiGdI3E4xvU0x0W3PBQrEWrrApmNvwnBZZBA28pL09r6HbELd3CJFZgjBacrOYDImdooKa4GwoRSotXIZRmKlqU7PaXZF3njq9agVNkyffXLMd1kHoiP30U0NOYJt3viDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622149; c=relaxed/simple;
-	bh=YKQPDFWLbcBJaFaNyrtcFXPUNWbF9I/UCfWEsAk8UFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFPV5oqri2K5iUQDddgsFAr/jDI2NyVCWfq2ORY1bOtuglKYGQ03jJV0CP0OWZiHTmBf2LehVqykl9aq4kV6/QYup7hVJdHlybVitcEXNvc4E9tqySvfhgNCmVP53kGNb5JZbtzyRlc1PxHlyYNBAd1wfI+4bNDW6VwJPTUgwl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MemwB/t2; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740622149; x=1772158149;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YKQPDFWLbcBJaFaNyrtcFXPUNWbF9I/UCfWEsAk8UFs=;
-  b=MemwB/t2emj03nTLlX98lI9TCyXsWw0++rZMkt5TLE6k2D+MWe+L+SbA
-   cCPVMGRFLyoJmPlmIhlaZKYz+jh6VCMRsXv2MRaemWieJr/2OfTHaMbdS
-   YOjF+X6ZSX+bI2LtPUEndN/J6tlaOIp8FOSWqGc+TmPBPWjX1U16HAOrN
-   fal7SP+R2yiWnrWQk3uXCUcPCZ9sSkO2+GlaQ+1+RWqTZ1XoZCeCBHw53
-   8OIygBav59OOCN+aTwPBnMRM+8WlNrpRhRjqFATIfNkmYTCikhngy0lI/
-   2lmKkJkOInhusTMXm0Xm5LVPzVfaOcpErb92PYfWp3v2H/AodOgniKIFR
-   g==;
-X-CSE-ConnectionGUID: 7+FH4WRFSZ+rFzjoBPAJog==
-X-CSE-MsgGUID: W4+Z38KIQUymzsXvEjgUjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41518705"
-X-IronPort-AV: E=Sophos;i="6.13,318,1732608000"; 
-   d="scan'208";a="41518705"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 18:09:08 -0800
-X-CSE-ConnectionGUID: 3zzLp7cqRfyU7rbEN+VXvw==
-X-CSE-MsgGUID: ft54dxorTYCOfas6YWGQKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121003116"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 18:09:03 -0800
-Message-ID: <5bce57a6-f554-4a54-bf87-08a30c60bea9@linux.intel.com>
-Date: Thu, 27 Feb 2025 10:09:01 +0800
+	s=arc-20240116; t=1740622205; c=relaxed/simple;
+	bh=GTBVZlJ6z+c5FM2Dou0EhEVrsHEbtWySsGPwLR73Yp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kGR54jUgZhrXWd7AZVZlqao0/dHj0WvEV7/ze+5O73zShjBClF22S0SBwX9vbmRLHy5em8511tmBESn6LJRavTwv69BFXmjBXXy51vdH/fhD1zBz8/WImYoHO5E4Dvb4cZuBmrSyPh0VCsxKmwgMttO5A75lwC6Q6gTJHg8dRhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0BReojG; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54527a7270eso383192e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:10:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740622202; x=1741227002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x4l7VnYEHFwyEI/iiluR5ke5vhEE3/FWKUuodBvFewo=;
+        b=f0BReojGCJFKTsyP4JFOXPAZi7TruIIf9dztex6m+0IrCkc3zHc5JsO98x4/Tvmisj
+         rvvuL/Oa9JZYBVGmbz7s7RxCsMqoIm76pvs3S0w3JM5d/n2DwtcuVjavKO3RUXeqMC41
+         Dr/0DJnjXFYU6+7rWKu+msIDTO+PmCIHgIJ6d8dLk/pZvR47DWYoSi5Rlc7uaJ/Xuf5f
+         gXvMLcH6RaPh5D9LLqckS2i+Xl6AKir3bCc1zDBeGY3gBExHJhlH6AqEA5HgDSXaNyrv
+         wUEGWAdWtrg8ZSZn/B6gRC8WUoHc7yxMuMn5WsiUlVP3xaU3X+1cj6yP3PwpQQYLPbj1
+         8OGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740622202; x=1741227002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x4l7VnYEHFwyEI/iiluR5ke5vhEE3/FWKUuodBvFewo=;
+        b=FIzoBUJ6tV9Yz8wOJ+E2WBJ64MkVAUJ1tFHG+0a4B4Mw8Ugt3GobojhdQTQQNMRIY9
+         ULEU6IHV4tVE6R+ztvRgdpX1l2k5Tw6bBgDO4XSOBvooUtwaNIifIKa06R+yVgo3R7TD
+         KXu6Coa90yUfOxtRfCxA6D0/L4pnjEqq9KGJl32XbsBqHE+IqzZK7ipet3kpMK3aWH2J
+         oIr/P08VLEu+oAwxhgdKHxHZX8pRCIE+tdyxbYYaUvBK2qWLXabePLH5zqP/df1ZtalG
+         ht+FKDPG6CAVQINdNeOopH0eOjse4LzDTQJBsB07K+U9M5dvmwRsCoPqyj8kRYWjhsjM
+         j2tg==
+X-Gm-Message-State: AOJu0YxeEWa00TAtTf+5gbynsQ7P37OO8up+Zf3qowvdwhRXrm4uahp6
+	ByVsncxQ1jDo8tf/k3KC7WrtgRThFwjtRevpODVEkh0P4mHAlcpdrde52knvDEK0uoUFLpuQbrM
+	9Vv1L+OhY8LopQEZaI5E529JHpA==
+X-Gm-Gg: ASbGncuSpdiwNAA52VDMqiGB8hE/Fxkr8ZsNK6iXT/GBH0t88oxGOnXjKjpIGLD+PIp
+	3Jj6oSDKqdkxIkIqg9y2n1B+PAXSQ8Ga8De5VjCaNvsbCe+OntAgTqp9zzLiNpc2LkhOt+tyDyo
+	1FJnGW7OS20WcFpblgmn3Wag==
+X-Google-Smtp-Source: AGHT+IG9keNBFOWSkf5uTrb/OPd1PQMa/DQ/6WDFH3IgtyIeLBuxyFXaU5nea6uzuwaulr1eVyn92E8kT+QG7qijCC4=
+X-Received: by 2002:a05:6512:b1c:b0:545:4b0:3dce with SMTP id
+ 2adb3069b0e04-5483912fdd8mr10074400e87.1.1740622201377; Wed, 26 Feb 2025
+ 18:10:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
- initialize PEBS_BASE MSR
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
- <20250225112543.GM11590@noisy.programming.kicks-ass.net>
- <000043b8-1284-46f3-b117-9ece905f218e@linux.intel.com>
- <20250226094841.GT11590@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250226094841.GT11590@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250226180531.1242429-1-brgerst@gmail.com> <20250226180531.1242429-2-brgerst@gmail.com>
+ <CAFULd4ZP58hPacGp+n_bBZV0e7nomzLMdX7OOu3DEeGe2OxomA@mail.gmail.com>
+In-Reply-To: <CAFULd4ZP58hPacGp+n_bBZV0e7nomzLMdX7OOu3DEeGe2OxomA@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Wed, 26 Feb 2025 21:09:49 -0500
+X-Gm-Features: AQ5f1JqvSsVUKjFXIi-AL8ZStMI-_Wyn76ZAu7NQvDRbSjUkPLtgJliYKJgYlTc
+Message-ID: <CAMzpN2gc-OGabKXyEAQSeRRdahWfEosoFapRx6bERxJQxCD+SQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] percpu: Introduce percpu hot section
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 26, 2025 at 2:36=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wro=
+te:
+>
+> On Wed, Feb 26, 2025 at 7:05=E2=80=AFPM Brian Gerst <brgerst@gmail.com> w=
+rote:
+> >
+> > Add a subsection to the percpu data for frequently accessed variables
+> > that should remain cached on each processor.  These varables should not
+> > be accessed from other processors to avoid cacheline bouncing.
+> >
+> > This will replace the pcpu_hot struct on x86, and open up similar
+> > functionality to other architectures and the kernel core.
+> >
+> > Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> > ---
+> >  include/asm-generic/vmlinux.lds.h | 10 ++++++++++
+> >  include/linux/percpu-defs.h       | 12 ++++++++++++
+> >  2 files changed, 22 insertions(+)
+> >
+> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vm=
+linux.lds.h
+> > index 92fc06f7da74..92dd6065fd0a 100644
+> > --- a/include/asm-generic/vmlinux.lds.h
+> > +++ b/include/asm-generic/vmlinux.lds.h
+> > @@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PR=
+OPELLER_CLANG)
+> >         . =3D ALIGN(PAGE_SIZE);                                        =
+   \
+> >         __nosave_end =3D .;
+> >
+> > +#define CACHE_HOT_DATA(align)                                         =
+ \
+> > +       . =3D ALIGN(align);                                            =
+   \
+> > +       *(SORT_BY_ALIGNMENT(.data..hot.*))                             =
+ \
+> > +       . =3D ALIGN(align);
+> > +
+> >  #define PAGE_ALIGNED_DATA(page_align)                                 =
+ \
+> >         . =3D ALIGN(page_align);                                       =
+   \
+> >         *(.data..page_aligned)                                         =
+ \
+> > @@ -1065,6 +1070,10 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_=
+PROPELLER_CLANG)
+> >         . =3D ALIGN(PAGE_SIZE);                                        =
+   \
+> >         *(.data..percpu..page_aligned)                                 =
+ \
+> >         . =3D ALIGN(cacheline);                                        =
+   \
+> > +       __per_cpu_hot_start =3D .;                                     =
+   \
+> > +       *(SORT_BY_ALIGNMENT(.data..percpu..hot.*))                     =
+ \
+> > +       . =3D ALIGN(cacheline);                                        =
+   \
+> > +       __per_cpu_hot_end =3D .;                                       =
+   \
+> >         *(.data..percpu..read_mostly)                                  =
+ \
+> >         . =3D ALIGN(cacheline);                                        =
+   \
+> >         *(.data..percpu)                                               =
+ \
+> > @@ -1112,6 +1121,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_P=
+ROPELLER_CLANG)
+> >                 INIT_TASK_DATA(inittask)                               =
+ \
+> >                 NOSAVE_DATA                                            =
+ \
+> >                 PAGE_ALIGNED_DATA(pagealigned)                         =
+ \
+> > +               CACLE_HOT_DATA(cacheline)                              =
+ \
+>
+> There is a typo in the above macro name.
+
+Fixed in the next version.
 
 
-On 2/26/2025 5:48 PM, Peter Zijlstra wrote:
-> On Wed, Feb 26, 2025 at 02:19:15PM +0800, Mi, Dapeng wrote:
->> On 2/25/2025 7:25 PM, Peter Zijlstra wrote:
->>> On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
->>>> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
->>>> buffer physical address. This patch allocates arch-PEBS buffer and then
->>>> initialize IA32_PEBS_BASE MSR with the buffer physical address.
->>> Just to clarify, parts with ARCH PEBS will not have BTS and thus not
->>> have DS?
->> No, DS and BTS still exist along with arch-PEBS, only the legacy DS based
->> PEBS is unavailable and replaced by arch-PEBS.
-> Joy. Is anybody still using BTS now that we have PT? I thought PT was
-> supposed to be the better BTS.
-
-Yeah, I suppose no one still use BTS, but suppose it would need a long time
-to drop BTS on HW.
-
-
+Brian Gerst
 
