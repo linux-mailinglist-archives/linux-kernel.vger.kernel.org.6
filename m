@@ -1,151 +1,224 @@
-Return-Path: <linux-kernel+bounces-537354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F0AA48AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:54:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199C0A48ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCBB916A258
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:54:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 979127A56C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B20227129B;
-	Thu, 27 Feb 2025 21:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB927127B;
+	Thu, 27 Feb 2025 21:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NchOCmf6"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ygmE1kbB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PTUaby59"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1B61CEAA3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C019227B8E;
+	Thu, 27 Feb 2025 21:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740693261; cv=none; b=hXof7rQgraGQRVJW4FXC1Txk7PbGAzvDT1MH1Si1Yygz4a7NXYWCG1akIBi8FKBo9RU3X/kRS6tDWidkw6E0p7Yd+YRfnk9Up334qx811NV032wkwKewlQCqqleqPiNE7/dUwu0ke7dG5u49i8ZadzSqn8nVmIYt5SMB4FfW24o=
+	t=1740693290; cv=none; b=SfL5GnLotCYKs+bZ6vaca9hPKu5n4S7e4PNY0cjZpTbF4sRjU4hizp//fUDTY+kby7gYv2+tdNvtB9qFd8OjT2ylYiULWYWnxEwxpP/mAXxfH0zG2p3VkLUgLUdIp2CUoureLVJN+DiLV+I8xczed/YUYvrnRJNg5YC04nqy0QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740693261; c=relaxed/simple;
-	bh=vQHbDRJK2BUW3sVk844uq3TqW7P1kixXvD0chqN70M0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EecN5xyOAt/nbPLP1EzexG8gIQ5RBXMkwOe0XEzItmV/QiwuVQjoZc8viNSRC2cHnA7+YpIS5w3DUXMHKsoEje0yCcfgzo9Pn20m2lrbVp5Neag8KVA6sVzC8SHRu81fqChFrt7KUL1sjQcFUIyuNwb7gZT9ZNxAtZmOibiU1Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NchOCmf6; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7272f1de42fso860911a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:54:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740693257; x=1741298057; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v/hXAHCtNLeAWG63+hcCl8SC7KoqJ0y7pVArSY1JtLE=;
-        b=NchOCmf6bMHnnHxl040Lq65ldRvmeF/mYcjC5nT+hsvtK6qv42bYpS99G0bAjOJTap
-         w8w94ygtA3AC/r34AY8yKXmM7BFHDRKAEe0B8oklM3AYnzu8RaPVtJye1MH2hdq4PSBI
-         DyNWr2e+BMyWKCqzAYiFvkt26qAzVlfpOKZ1bls/sZS/nSdOrqx/uiK4+mkVvHE9HN2b
-         swBdS4tM8H43/opyqAp7naksuCu6SbLoDl80Y/iL/yy8H/vCaJ1hn7BO1IZx4otdUmJl
-         kNWqicHO9OlFW+YNOItI8kF8Ovi0BVYkSFbs6EuQZbzPSOhZQQ6H0bl4EVrP34c9sps3
-         9HHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740693257; x=1741298057;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/hXAHCtNLeAWG63+hcCl8SC7KoqJ0y7pVArSY1JtLE=;
-        b=IqXmTHVFYP//HENHKGoC96x6MMW7Y9cF3A4sXazafdmobOnCXCPKgWLMFHDNiSd+2J
-         v5DX9e1KSao4N+Pe54vdVFrPpFM5ca1Hmtj/ayqBFsOD0nYRWOhEijQwVSRnS1H9mOfG
-         Cfu9M7YAF7ifDYLRd3WsZtnOoTSLvEpTbvTIW18fGkIkXAosic6oNs+zoul66sEqiPq2
-         JMgxdscTiF+LH6vlbqoxwqzECnbjGjW2MJAMqMJ3TXsWOCpHZO3q1oc5hoNwaLLpvzom
-         eU6wPsiHRd0xXXLwyi6dJIB+qK1MmxPQ121+TmeGTBANs/nuDo25K8uPHHAi+zV1VW9d
-         4nGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj50hfzzneJKauK/mJMsUxu+JdM21HDZnpQurzaPWuOx6eVEJKkmh5d6Ok33rpdVHXKKfxDrbYiu/2cHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykEzcERWb7MAmIexLrBvZMUmF/tNHb9ie9f6G6BXlvoP3PAzW/
-	wV9ZxHFB+xbkrwTos8V4W7Ks/8dNgLdVHQAEBFUluKMuMNZENCrtXpWy8lUdE8o=
-X-Gm-Gg: ASbGncv5wi++yrLcYEXKKLKi8KG+GXnBjxCN+usynGWVQDTFJMDWc57jfZNajVihQ69
-	OGgMCKIQE2YekfBposc1fyZnwr3xQskZIQnfp8RQyVFHe0gy9bVH3j4WkMHkuOvWEPKxL3Bh1+A
-	AvIc3tsP/xfxqnExd+PhefIUuuhca6TAmEUd83BIjgHRFVrNG1+5bfnScUzKFy7lcl6GGgE7YcH
-	XtnDQmWMD6ddFRrhJFMYQo4xcLp8uLjWSwBAC00hq1JB6Qk2M/Gk46J6sPHRDc1I7ckPtquGr2g
-	B9oRRmE5K8hPI5esecVaPhO0a8qrl14F1kFD5n96YmVfhUMKl2tmZ5P6Tqa9540=
-X-Google-Smtp-Source: AGHT+IGX6e+UTV3fnyRf7e6ZqTStb+426CrDeWO0t2ai6r0zce8y0wyvZGrnkjPKj62Xq0Vh0eHNCQ==
-X-Received: by 2002:a05:6830:6505:b0:726:ee0c:57e7 with SMTP id 46e09a7af769-728b8306535mr539540a34.24.1740693257155;
-        Thu, 27 Feb 2025 13:54:17 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-728afd76cc4sm404845a34.42.2025.02.27.13.54.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 13:54:15 -0800 (PST)
-Message-ID: <47ae0fa6-8005-4c8c-9409-3189ba6f42af@baylibre.com>
-Date: Thu, 27 Feb 2025 15:54:13 -0600
+	s=arc-20240116; t=1740693290; c=relaxed/simple;
+	bh=khDrHLa4Qs8uPHw7+pEioVlzD4ve9ZF4w3CL3gs0viE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HjOzLp8Orkq8w+yFBx1jeSrZ6/c+AdxjxBhcmVqLMi14+LCNwH1Ad/24/eM9NfRt1V4uZ1dCmecuFpk7DAiopKvr5wVjdncoGtzUJBX7CUDBBGhPm/3Qs3/8fzXMFfJZjkGUzy04vp2qnoIhxMYdGODq02ydhEfrtzyDjroP4i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ygmE1kbB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PTUaby59; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 21:54:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740693286;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b90qhnh5htzwEX2HGzEv3NWBUtZTVRHmCfZTvn3nRC0=;
+	b=ygmE1kbBxeI/Tb80BYZ31LB7LVKSLBi63tc+28H5+hyYqHf+qdCaHGhICp9dhX1UEua43A
+	FXqZ0N1Jo1964ILn4ptMgV4NKZISP+nDAeOq+rB0/Hovz+D/3MOdmc66Cuhn+I4hnOqvKY
+	pj57RAxzIZVLzaRXD0wztQ91U2Ir6QfXSVO58uTuhIQxaWhJv3dKiKWJPJgrsr4s5vwaLQ
+	k3S2UvGINCfe6sFP+ubvlcCk4WujM6ldsF4Ia4yNS9H/qL6ofZxNaecZCQXJylQqHIBsl3
+	8aUUAK23bKcBASh+0IrlvF6naDL+pYRvJpYSgsvuYYXwnubeuIOpmjA/YzESPA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740693286;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b90qhnh5htzwEX2HGzEv3NWBUtZTVRHmCfZTvn3nRC0=;
+	b=PTUaby59nLxSPNE2XTOsqaGquMccNQxz2GzqPyHSGSURVkxpda3Chi0SJUXePk09BA6GZ2
+	A2epY9lH0dAjgIAA==
+From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/ia32: Leave NULL selector values 0~3 unchanged
+Cc: "Xin Li (Intel)" <xin@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241126184529.1607334-1-xin@zytor.com>
+References: <20241126184529.1607334-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 12/17] iio: adc: ad7768-1: Add GPIO controller
- support
-To: 7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- marcelo.schmitt1@gmail.com
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
- <62cb9786b02adde118db9349617cb796585ceb02.1739368121.git.Jonathan.Santos@analog.com>
- <CACRpkdaSY7WH191makzPcZqLd-vBsC_f6yagWzBa65MrC+pjKA@mail.gmail.com>
- <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
- <Z8DazwTguF/gfKW1@JSANTO12-L01.ad.analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <Z8DazwTguF/gfKW1@JSANTO12-L01.ad.analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174069328263.10177.6796873487608898067.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 2/27/25 3:36 PM, Jonathan Santos wrote:
-> On 02/20, David Lechner wrote:
->> On 2/19/25 2:34 PM, Linus Walleij wrote:
->>> Hi Jonathan/Sergiu,
->>>
->>> thanks for your patch!
->>>
->>> On Wed, Feb 12, 2025 at 7:20 PM Jonathan Santos
->>> <Jonathan.Santos@analog.com> wrote:
->>>
->>>> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
->>>>
->>>> The AD7768-1 has the ability to control other local hardware (such as gain
->>>> stages),to power down other blocks in the signal chain, or read local
->>>> status signals over the SPI interface.
->>>>
->>>> This change exports the AD7768-1's four gpios and makes them accessible
->>>> at an upper layer.
->>>>
->>>> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
->>>> Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
->>>> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
->>>
->>> Is it not possible to use the gpio regmap library in this driver
->>> like we do in drivers/iio/addac/stx104.c?
->>>
->>> It cuts down the code size of simple GPIO chips on random
->>> chips quite a lot.
->>>
->>> Yours,
->>> Linus Walleij
->>
->> I think the answer is "no" since we need to hold a conditional lock
->> while accessing registers. Namely: iio_device_claim_direct_mode()/
->> iio_device_release_direct_mode().
->>
->> Unless we add some extra stuff to the gpio regmap implementation to
->> add optional callbacks to call these. Which could be worth it given
->> that quite a few ADCs provide GPIOs like this.
-> 
-> Since this patch set is quite large already, is it worth to do this
-> here? if you say it is necessary, i can try this.
-> 
->>
+The following commit has been merged into the x86/asm branch of tip:
 
-I'm a big fan of not trying to implement every single possible
-feature in one big patch series, but rather splitting it up.
+Commit-ID:     ad546940b5991d3e141238cd80a6d1894b767184
+Gitweb:        https://git.kernel.org/tip/ad546940b5991d3e141238cd80a6d1894b767184
+Author:        Xin Li (Intel) <xin@zytor.com>
+AuthorDate:    Tue, 26 Nov 2024 10:45:28 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 22:46:11 +01:00
+
+x86/ia32: Leave NULL selector values 0~3 unchanged
+
+The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
+and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
+GDT, selector values 0~3 all point to the NULL descriptor, thus values
+0, 1, 2 and 3 are all valid NULL selector values.
+
+When a NULL selector value is to be loaded into a segment register,
+reload_segments() sets its RPL bits.  Later IRET zeros ES, FS, GS, and
+DS segment registers if any of them is found to have any nonzero NULL
+selector value.  The two operations offset each other to actually effect
+a nop.
+
+Besides, zeroing of RPL in NULL selector values is an information leak
+in pre-FRED systems as userspace can spot any interrupt/exception by
+loading a nonzero NULL selector, and waiting for it to become zero.
+But there is nothing software can do to prevent it before FRED.
+
+ERETU, the only legit instruction to return to userspace from kernel
+under FRED, by design does NOT zero any segment register to avoid this
+problem behavior.
+
+As such, leave NULL selector values 0~3 unchanged and close the leak.
+
+Do the same on 32-bit kernel as well.
+
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20241126184529.1607334-1-xin@zytor.com
+---
+ arch/x86/kernel/signal_32.c | 62 ++++++++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+index ef65453..98123ff 100644
+--- a/arch/x86/kernel/signal_32.c
++++ b/arch/x86/kernel/signal_32.c
+@@ -33,25 +33,55 @@
+ #include <asm/smap.h>
+ #include <asm/gsseg.h>
+ 
++/*
++ * The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
++ * and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
++ * GDT, selector values 0~3 all point to the NULL descriptor, thus values
++ * 0, 1, 2 and 3 are all valid NULL selector values.
++ *
++ * However IRET zeros ES, FS, GS, and DS segment registers if any of them
++ * is found to have any nonzero NULL selector value, which can be used by
++ * userspace in pre-FRED systems to spot any interrupt/exception by loading
++ * a nonzero NULL selector and waiting for it to become zero.  Before FRED
++ * there was nothing software could do to prevent such an information leak.
++ *
++ * ERETU, the only legit instruction to return to userspace from kernel
++ * under FRED, by design does NOT zero any segment register to avoid this
++ * problem behavior.
++ *
++ * As such, leave NULL selector values 0~3 unchanged.
++ */
++static inline u16 fixup_rpl(u16 sel)
++{
++	return sel <= 3 ? sel : sel | 3;
++}
++
+ #ifdef CONFIG_IA32_EMULATION
+ #include <asm/unistd_32_ia32.h>
+ 
+ static inline void reload_segments(struct sigcontext_32 *sc)
+ {
+-	unsigned int cur;
++	u16 cur;
+ 
++	/*
++	 * Reload fs and gs if they have changed in the signal
++	 * handler.  This does not handle long fs/gs base changes in
++	 * the handler, but does not clobber them at least in the
++	 * normal case.
++	 */
+ 	savesegment(gs, cur);
+-	if ((sc->gs | 0x03) != cur)
+-		load_gs_index(sc->gs | 0x03);
++	if (fixup_rpl(sc->gs) != cur)
++		load_gs_index(fixup_rpl(sc->gs));
+ 	savesegment(fs, cur);
+-	if ((sc->fs | 0x03) != cur)
+-		loadsegment(fs, sc->fs | 0x03);
++	if (fixup_rpl(sc->fs) != cur)
++		loadsegment(fs, fixup_rpl(sc->fs));
++
+ 	savesegment(ds, cur);
+-	if ((sc->ds | 0x03) != cur)
+-		loadsegment(ds, sc->ds | 0x03);
++	if (fixup_rpl(sc->ds) != cur)
++		loadsegment(ds, fixup_rpl(sc->ds));
+ 	savesegment(es, cur);
+-	if ((sc->es | 0x03) != cur)
+-		loadsegment(es, sc->es | 0x03);
++	if (fixup_rpl(sc->es) != cur)
++		loadsegment(es, fixup_rpl(sc->es));
+ }
+ 
+ #define sigset32_t			compat_sigset_t
+@@ -105,18 +135,12 @@ static bool ia32_restore_sigcontext(struct pt_regs *regs,
+ 	regs->orig_ax = -1;
+ 
+ #ifdef CONFIG_IA32_EMULATION
+-	/*
+-	 * Reload fs and gs if they have changed in the signal
+-	 * handler.  This does not handle long fs/gs base changes in
+-	 * the handler, but does not clobber them at least in the
+-	 * normal case.
+-	 */
+ 	reload_segments(&sc);
+ #else
+-	loadsegment(gs, sc.gs);
+-	regs->fs = sc.fs;
+-	regs->es = sc.es;
+-	regs->ds = sc.ds;
++	loadsegment(gs, fixup_rpl(sc.gs));
++	regs->fs = fixup_rpl(sc.fs);
++	regs->es = fixup_rpl(sc.es);
++	regs->ds = fixup_rpl(sc.ds);
+ #endif
+ 
+ 	return fpu__restore_sig(compat_ptr(sc.fpstate), 1);
 
