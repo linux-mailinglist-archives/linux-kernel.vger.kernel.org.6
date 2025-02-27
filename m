@@ -1,96 +1,169 @@
-Return-Path: <linux-kernel+bounces-535527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EE8A47406
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23ECA473FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89FD3A5F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E4E16EA15
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251301D63CD;
-	Thu, 27 Feb 2025 04:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98041E5214;
+	Thu, 27 Feb 2025 04:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FqBqiK88"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73390155C83;
-	Thu, 27 Feb 2025 04:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AR5b7VId"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC09A14AA9
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740629534; cv=none; b=qf3Ppux+SoWQsWJXpVeQ1b96eAp7n4Np+OaBwUofIsFzY/6L6Gy00xt5TR9YK34U3A9VMxqfmJmI5nxBUV7jSIoVJDmpVHWhJVp61RzZASiZc5Vyb7+OAKhkIhOKHmWqf9j/ocPUQ8USLKlS2tycflb2mAiOa/fqzZURZ+IqQAU=
+	t=1740629512; cv=none; b=lEFe6SZQBmK8dKhb2GY1cAjE1xg4i+wOswbfOvPhXHrPN6SBBeQvrnNqcwLNOCtTPzg9HRAfo2xokIUPPH9T/VWtIvvrH17HjRHgn0I6qUEDGT0BtUqwPthP0cxNnGKzkMNns1AOQVZaNzDjkzaPm8Q/GNZbVbGWLvW7qk3iFaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740629534; c=relaxed/simple;
-	bh=ybY/sARb+gPAvCAk6Va97MKMqDLi75HCr3W/1QuDbMs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a6L+llLHhSCw4tuaN95/xi4Zr+/R2xtcEND/rwkO7fiOX0/NpcwKMsF5WYDnzyk8ZtBpBUdzi6KbCRWLqkFXU5rRgLUu2YWfEAlJhn3iSYMNVXBtXH45QP+13kM4xvbju8wGVjYfaWXVCSbxMKpLOCLu/qqnPy3M8hvyBNWN7NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FqBqiK88; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=sbeia
-	VhCJsLMybPrAPQBZ4W7ilebZ7V3fMGQzrDnTS0=; b=FqBqiK88aC2iOBfzZXzha
-	ls4fwk3FySNvb1NIhUQ32CJS5s7um1ZQP0NzXBHnKoJOfSb+flhXp++99fMiXsT1
-	R/6vHN2KHzl/iL54tzRs1vH2HjWVn7eUR9ChelP4K1g87MJHchplXgp+ij5N94td
-	tBqkoLSfDTmKzVvYOLlylo=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3r2_15b9no7HcOw--.42050S4;
-	Thu, 27 Feb 2025 12:11:34 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: mporter@kernel.crashing.org,
-	alex.bou9@gmail.com,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org,
-	Yang Yingliang <yangyingliang@huawei.com>
-Subject: [PATCH] rapidio: Add check for rio_add_net() in rio_scan_alloc_net()
-Date: Thu, 27 Feb 2025 12:11:31 +0800
-Message-Id: <20250227041131.3680761-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740629512; c=relaxed/simple;
+	bh=5vRVGr82CGiZh2Cbzj7pVxhSTU8sAZM5XF2eIwvjp+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WyXt2u4sUDGyEgeS3GVHmWAxOzvIj6euTY2FnASgKeeLO86z2iy9sSa3xDtOZVpA+MKoVrpFdBEXXp2s1PtXmLiHDne6xWN6ZhXZjwkKGP7xYTWYU+UrNeUw7skX4Mu866qId97P5z3caynKQeaheXcGbDaRuXQjohtMg6OJg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AR5b7VId; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R2R4qg001003
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:11:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FSAQvsYR3iMFmPabg5DWf8ziRODUsEKRzX7L+bsEUbE=; b=AR5b7VIdGtyIxdIO
+	XDWqh9b7PfITf0ErrUajHIGBZdCP8V2Bbqolk9ju1NQwt7g4ZTzmqnbsuAXl7Bbs
+	v8Ozs3ZToV2PMga0T3uFFJsr+uDDzEty6BG1Hzn34uS0zui/Ag2uLlvOxAxmBFzt
+	BOdrvPeSW0ypR1FW5Wr9nNWq4VNe0IE0t52zPZRnjmWe+RQZok2nKwTq+Z/LEsSr
+	JEWNroukeRz2iL6CycYLUJ9omVapte/XPS8c8OMcMg+m4YV9hxq1gdnwpsHlffnc
+	hKbGNF7kr8KD0DZVe8bPD3DcbwGC8TJ+azLWLF93f/Nfw7eMcbU+UmgXRLCKzyEF
+	BVvOMg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4523kca5h0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:11:49 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fe8fa38f6eso1202031a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:11:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740629509; x=1741234309;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSAQvsYR3iMFmPabg5DWf8ziRODUsEKRzX7L+bsEUbE=;
+        b=pU+fTENqOKRXU65vdVUaT0XkvJceJvVIPkC8WNVwf1+EKf3xgIkVJ+tAZqxuSf3B/q
+         ZBFejHomPxdNOPCJa/79GFKEaEx+yzLSvwYleyZS2swhbI47B8pG5CgRiVS9YtNmOSEY
+         whWS64U8jO2uOq0n30SVTP9S6Q3skRSpzlpHvJK0BqqWkgAXf/UAIN4JElUBW6RFI38V
+         F8kskyaEaqJdBBl8At96pE/BVbeh+xjj1bOCzf5stz25YqcLXtMmuiWwXBFeziHJLdc/
+         1/AT4s6YU886gO95NN00o1kwq6C9hnFR2d7Ie2U/MQDEUQum4toR+tOFyK+ltqumW60e
+         frMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwafB6SqRiIyBJhwDXaXUm/UBQMBN6Zj4vGgnnzxaem0cY6I/EqN3Qyu8hEL1vnjxJ7fBtYitc7wHgRTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX4xaapWwoVz1UQEf+o65BZ6rMr5vLoiiZBphTBfJP1kHg1ZPC
+	grAz4x7EUdka+X+kZjxyvkJQaeWuBJyZs+yBn0IbTwSPyiT4Juc3oiETd+qksUHz1mSGGkWnDd8
+	EbUJSdVCOkSMA7b0eEnZedN8kaKmqXIss24N6TN6l/FhvjqzeQChKZEJ/hAJ25cQ=
+X-Gm-Gg: ASbGnctrzTja7/HvecmqQt9JELFhebysUumxj1ohkAWWw47/O0BO2KRJZ9EKT5XJCVy
+	QDaMRSYoflK1gloaop2knXGCz1THbYuejCKchVLChRexN7oJSXVwy+M9mIjVBOMJo7RiARjj52H
+	1SyHU9lShZt6+6BpSUMBT3llO2QzV9zdWOYpyCyZsMUTgQqjbK1HbVRvwTMNP4onIwKPtk+R56F
+	pJhoi1lqKvLYayjJ/3NrKAbBbNC/ByyZ0r0qMBlQCHbJxFgyJ3qwg4WK/bMQidi7XaVp7MI7jPZ
+	PI10V8AU8wSneXl+KUz5xQyIxHNChEqv+0EbuKx1tYhR
+X-Received: by 2002:a05:6a21:32a8:b0:1ee:c598:7a90 with SMTP id adf61e73a8af0-1f0fc99bf90mr16869062637.39.1740629508907;
+        Wed, 26 Feb 2025 20:11:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFRIX3IkvZiOUdHKEbb1/zqOV6uSSXIJDZqwMP6rxtAvZaceoDHFXvQadYXggDDykHwRSrVbA==
+X-Received: by 2002:a05:6a21:32a8:b0:1ee:c598:7a90 with SMTP id adf61e73a8af0-1f0fc99bf90mr16869027637.39.1740629508534;
+        Wed, 26 Feb 2025 20:11:48 -0800 (PST)
+Received: from [10.92.199.34] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003eb65sm458168b3a.149.2025.02.26.20.11.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 20:11:48 -0800 (PST)
+Message-ID: <0dffeb3b-63b3-266e-d1e9-b8adda7cc0ec@oss.qualcomm.com>
+Date: Thu, 27 Feb 2025 09:41:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3r2_15b9no7HcOw--.42050S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrW3ur18WrWUKF43ZFWkZwb_yoWDCrb_WF
-	4fWw4fXrZYkF4xtrn09r4avrWS9r48Xrs7uFWaq393JFW3ZwnYgry8urW5G3y7u3y8Crn3
-	Z3Wqgr18ur17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRWGQhUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqAQBbme-3Uf9WgAAsm
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 00/10] PCI: Enable Power and configure the TC956x PCIe
+ switch
+Content-Language: en-US
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        chaitanya chundru <quic_krichai@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
+        amitk@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        jorge.ramirez@oss.qualcomm.com,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250227035737.q7qlexdcieubbphx@thinkpad>
+ <20250227035924.p43tpbtjmqszdww6@thinkpad>
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250227035924.p43tpbtjmqszdww6@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: -6aYzxzHTPATK1gKxcgiea_zg9k1cVSx
+X-Proofpoint-ORIG-GUID: -6aYzxzHTPATK1gKxcgiea_zg9k1cVSx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 spamscore=0 mlxlogscore=836
+ clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270029
 
-The return value of rio_add_net() should be checked. If it fails,
-put_device() should be called to free the memory and give up the
-reference initialized in rio_add_net().
 
-Fixes: e6b585ca6e81 ("rapidio: move net allocation into core code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/rapidio/rio-scan.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-index fdcf742b2adb..b9daacc7f1ec 100644
---- a/drivers/rapidio/rio-scan.c
-+++ b/drivers/rapidio/rio-scan.c
-@@ -871,7 +871,10 @@ static struct rio_net *rio_scan_alloc_net(struct rio_mport *mport,
- 		dev_set_name(&net->dev, "rnet_%d", net->id);
- 		net->dev.parent = &mport->dev;
- 		net->dev.release = rio_scan_release_dev;
--		rio_add_net(net);
-+		if (rio_add_net(net)) {
-+			put_device(&net->dev);
-+			net = NULL;
-+		}
- 	}
- 
- 	return net;
--- 
-2.25.1
+On 2/27/2025 9:29 AM, Manivannan Sadhasivam wrote:
+> On Thu, Feb 27, 2025 at 09:27:47AM +0530, Manivannan Sadhasivam wrote:
+>> On Tue, Feb 25, 2025 at 03:03:57PM +0530, Krishna Chaitanya Chundru wrote:
+>>> TC956x is the PCIe switch which has one upstream and three downstream
+>>> ports. To one of the downstream ports ethernet MAC is connected as endpoint
+>>> device. Other two downstream ports are supposed to connect to external
+>>> device. One Host can connect to TC956x by upstream port.
+>>>
+>>> TC956x switch power is controlled by the GPIO's. After powering on
+>>> the switch will immediately participate in the link training. if the
+>>> host is also ready by that time PCIe link will established.
+>>>
+>>> The TC956x needs to configured certain parameters like de-emphasis,
+>>> disable unused port etc before link is established.
+>>>
+>>> As the controller starts link training before the probe of pwrctl driver,
+>>> the PCIe link may come up as soon as we power on the switch. Due to this
+>>> configuring the switch itself through i2c will not have any effect as
+>>> this configuration needs to done before link training. To avoid this
+>>> introduce two functions in pci_ops to start_link() & stop_link() which
+>>> will disable the link training if the PCIe link is not up yet.
+>>>
+>>> Enable global IRQ for PCIe controller so that recan can happen when
+>>> link was up through global IRQ.
+>>>   
+>>
+>> Move these patches to a separate series.
+>>
+> 
+> Or you can just drop them. I have a series that adds global IRQ to most of the
+> SoCs and sc7280 is one of them.
+> 
+> - Mani
+fine for me, I will drop.
 
+- Krishna Chaitanya.
+> 
 
