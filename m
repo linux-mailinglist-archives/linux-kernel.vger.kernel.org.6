@@ -1,185 +1,134 @@
-Return-Path: <linux-kernel+bounces-536646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1E5A4827F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1490A48284
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5FD18940F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CCA188A059
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680FE26A0C3;
-	Thu, 27 Feb 2025 15:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B723816C;
+	Thu, 27 Feb 2025 15:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pn6XRNW5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aMSXQCEc"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68411154BF0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AA266190
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668526; cv=none; b=QF23+ky/W/Wgp4NEddzy5csicqjVclt5eSoJJaa6rcsfTQEM2IDEo+iilJznt7n4OmSSJ+IC2lEssBiecNdYUTx0cc1W356i76BOOg61X8KXi9319GdeAvaeuMrWfWODPAi4LV9ATvVddwBJHD6dNlP7N4IIqFh216nSnudOKtE=
+	t=1740668598; cv=none; b=Br1CmIa1Ok3us6Zt4xlfBK96PAJHOTStx/ppuVp6dd24agrCv1nGbc4QDR+VS6YUsjRjnKM4LPQIQdaFv1bYj4nsRseEoYq+rxVSeol9QOQPscMyybw5YoeEAIKZ7xtBVovSTmzD9LWxxUB7wMdFwOYD3shU93atQmLMZlwP5WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668526; c=relaxed/simple;
-	bh=z+Nj3qYcUKKM/dtNHjqvKQPyv6yD2YaLPYv1XpD4e5o=;
+	s=arc-20240116; t=1740668598; c=relaxed/simple;
+	bh=Tl40Fm+loygXp9JTJZ0Z7May9tG5QQ1he6NwlUmTUjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jT/CVmWKl9tJXFVR71zUJQHkqfPzNg8RE/t5/V43rmRf3vX5jMV/MmriUjreL6qHhnMorx6kF2knzFQEz1F9bQnGG3M8/Ygb2EKHSc7u4jG0+yQBCUGA1wcAao7hRidgs7Bv8Fi4pKcBxXFDPB9hWTlf+paH9JG7PdSjVayzQSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pn6XRNW5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0DE4740E0212;
-	Thu, 27 Feb 2025 15:02:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DKqSEh8EeHyd; Thu, 27 Feb 2025 15:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740668518; bh=E3ulQVFwquBzi928EN2lwTovsU2b0NQY03QuZAGaIgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pn6XRNW5tzZpRKNIK3gdI6f+/rnCdGk1ERCH2brQhXI7fKCpFmQp+mDn1I8qgcJId
-	 z+eN/sU4wS9uVFYNbdkZMx/MbV+rNhxvtyymW0hLU5srPmk3RgNmuwMBJJIwzoXKTm
-	 vGalgvvBkDkk3AUjuvdWWr4XerHpK5BRBgmZtwbMN5OOB2Y56qw07shCrvBTn8OSz9
-	 Xomn4Rnjq4pD7Tk/owirVkGYLVkWEo43rJlAxor7Z7rLUWup6UQO+p5Btv/ZbTQx7J
-	 OsQkYs1XjVXKOIultLBfZ6rxUDfIqwPYqZ1lMMSqqTEeBAaOziS+PTO/vSxGqkXaHP
-	 Pkil/SK4h8ellJ1AT6DQy7zxtsHeaiQYvWHx5Rj5RSXxBoJkd4zKFjGXtXP72YvuWp
-	 RAf9vOhfsnb4W8Dsk3w64cRwgyS3JRvEPYXsMHPDbwIn+hKU6RsFk4uWpUKxtMO3XF
-	 OLca3qkwLr4quSxTk1EpIPWoKW1MR+ZsUhyKtCyO5laml1Wg5tA6+J471GvdqYLcpc
-	 rmXwt7u8vyluvkdGuoJJ5BR9zMvGKP0UcI9iCoObLhYD2svD0fHcqZDX+XrFTNsOUe
-	 5FeXSREKQu8ct233DcMi3Wyxl3RavEAfm0Q+sN9LaA2hu5eo7U31WyF7dQNoD/NZNn
-	 bQJjYMb4+7XP+aW76cFj+fRs=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0F50540E01A3;
-	Thu, 27 Feb 2025 15:01:48 +0000 (UTC)
-Date: Thu, 27 Feb 2025 16:01:43 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250227150143.GFZ8B-V8nIdSlV7ng7@fat_crate.local>
-References: <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250226201453.jgg6kucaathzmcvs@desk>
- <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250226221324.hq2nevnnnrpgo75n@desk>
- <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
- <20250227003528.hnviwrtzs7jc3juj@desk>
- <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
- <20250227034813.booxbhxnff66dnqx@desk>
- <20250227140858.GEZ8Bx-tTaQF8D5WBj@fat_crate.local>
- <LV3PR12MB9265B1854AB766EBB7F098D294CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbwamZjxrhv4RmvDvnC4BnIku9+LDlTRrYYLrwt/W+XeJGBAyX3i50r/DDCyhwO2sUXpx8AaQgqs6JL+EhbCqeoJgXR4cWbPMS4ypPMOB8/dER1VfNNvMxHUKxsL7TOdubhWMSknDii5llU1fq6CaAzSVwVs9iDjYaOG6LLppv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aMSXQCEc; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30761be8fa8so12494081fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:03:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740668595; x=1741273395; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jct5/sWNcnHp4YAXGTjpriX8VME8tdrztTmpTBFh3WQ=;
+        b=aMSXQCEcg8RqG+qJqVpEHWj9PPcUP9pfHJoA95HV4UjkVPTIxTlO9xGCMCDfaGEDLs
+         xL9NW4Hq/fGFgr4+sBdXSI7G9YcS4jViE6+/ufbI73tEC/jME4UsEzngv8WqVKOKpD73
+         IEKXy2jBQa9JNpoSdEe08jKb2NJyhQy1jjqaEHwS4WjTxDoMh4qP2lPSeAnS5raSjrTc
+         F3eastvt5F5PRTi7rzlBzAYEnb0BQYll7AE8s0eHCgSQOR0hVBWW8yEEBo2LlAM1Qdgn
+         odFjAf1lOCJixT3O40yz+ktjBwyPSs5QMQOCxFPKeacDK17EdFNw9UeQLKdSy/wIlI4T
+         I5nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740668595; x=1741273395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jct5/sWNcnHp4YAXGTjpriX8VME8tdrztTmpTBFh3WQ=;
+        b=t2ciTc5x5CVtarjQw18huPpq2zJyIHMpSdp9d64xv2lEsSY+K1qyqIRY6gQ3rtcWad
+         PcWdVlcMN+8cmdN8st8EQCzifmhRBAoFopTbXOlWMcSY2nGp0KkfVfoREpFWTj3zmU7y
+         qKv9/7sSl8SdKGS4KbRT0CVHj+H5gISbsZZUelTHdlrN/XOXjXfz1/HMvYAdqrVoQ+gt
+         ZLUiZPCcegEJyp547uwnw1pHfQ7oE38QXOrveFKzE8T6IM7i5ElUm/iypgUuyU7B/Xze
+         iUqtcBIWcdwCn8HkbXSvMeCNNS1928TqvSw2+gLG6Nn9G7GH5pugK3fWBmFJwCIW1pqx
+         BQoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWWD0oVyQaGtKp37539bdIoqL6k+JykV7EoJRksm2An/bTb4yLjIqAPKyffXrERNumNbwE9GcU554dyTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcucTwBAy/4HLFsSIfGX0+XDjwFXECjIsPihMh5SXwFlVO9Ky7
+	6+N2v4zRRKfakjZH9WoS5KgvXdirgfE25sOJJHomIrRllpA/XXj6ZYY5p+8rZQcv24GK2/Qhe0u
+	9Ars=
+X-Gm-Gg: ASbGnct98AS6mdYyXSpEEPwDVFnrugcIAr2N9Z9CCse4zU9ZbvJT8zOJbxHQuDPW5l8
+	ges5gM4OoSyf/xRE5qO4DGnNMyjD3xdf7PAPC2baq62a7gC1hGURbGVNzZ3H1QySpdudkYz96Zs
+	Dps2sgOpWgwTG+nRC1R9c+wjPD5jYUhRwlUG/KMKjSHbWs5/AryrUrvVcTaumHuTNfhdlsreKaQ
+	634yPZ+7WxvC84ILlTn/D8lb7pU1EKnzNAYrngHcPyhsqx+0HpbxMhQNUchX28U4BIVqVWXi0kf
+	WByoe33/7zAIlXw2poQnugJNsOWKgXceSB7kSynOhdJoeV0TPOoLxqWESNCuT0FGCzSEraIK0of
+	mcQ3nCQ==
+X-Google-Smtp-Source: AGHT+IGu6e9SzMnhpr5EnGH9g23xD2bFOtEakcdfl/ZUCRRGs5xA3LtI3CvuzfMuKxAB74Z8ujrfbg==
+X-Received: by 2002:a05:6512:3d16:b0:545:62c:4b29 with SMTP id 2adb3069b0e04-548510d2891mr6258092e87.22.1740668594423;
+        Thu, 27 Feb 2025 07:03:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443b11f0sm180701e87.114.2025.02.27.07.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 07:03:13 -0800 (PST)
+Date: Thu, 27 Feb 2025 17:03:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: Enable MMC
+Message-ID: <ryfawl6uykry5ds5kovujvepkwffdwitbqltx75wnnrqrbl4b2@i2pjwegs3u4n>
+References: <20250227094226.2380930-1-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265B1854AB766EBB7F098D294CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
+In-Reply-To: <20250227094226.2380930-1-quic_varada@quicinc.com>
 
-On Thu, Feb 27, 2025 at 02:36:37PM +0000, Kaplan, David wrote:
-
-> My 2 cents is I think the negative option form is better.  That's because
-> I'd rather err on the side of safety if the user forgets something.
->
-> For instance, in the case of 'mitigations=off;guest_host' there would be no
-> guest->guest protection.  Did the user really intend for that?  Or did they
-> simply forget to think about that attack vector?  In this case, their error
-> leaves the system potentially insecure.
-
-Well, good question. It could be that or it could be that the admin only cares
-about protecting the host from malicious VMs but not the VMs amongst each
-other. Does this use case make sense?
-
-Probably. Maybe.
-
-So if the admin really wants to do that, then she'll have to say:
-
-mitigations=off;guest_host,no_guest_guest
-
-I guess that can be specified with this cmdline.
-
-I guess if she would want to enable both guest_host and guest_guest, then the
-cmdline should be
-
-mitigations=auto;no_user_kernel,no_user_user
-
-or the shorter version
-
-mitigations=;no_user_kernel,no_user_user
-
-Hmmm, something still feels weird... I still can't go "oh yeah, this is a good
-form." ;-\
-
-> But if we only support the opt-out form, like
-> 'mitigations=auto;no_guest_host' and the user forgot about guest->guest, it
-> would leave those protections enabled.  Potentially reducing performance
-> more than intended, but the system is more secure.
-
-Still don't know for sure what the admin wanted: more perf or more security?
-:-P
-
-> Because the existing kernel defaults things to on (the auto setting) and
-> requires action to disable mitigations, why not keep the same logic here and
-> only support the opt-out form?
+On Thu, Feb 27, 2025 at 03:12:26PM +0530, Varadarajan Narayanan wrote:
+> Enable MMC and relevant pinctrl entries.
 > 
-> Some specific use case examples might be:
-> 'mitigations=auto;no_guest_guest,no_guest_host' -- Running trusted VMs
-> 'mitigations=auto;no_user_kernel,no_user_user' -- Running untrusted VMs but trusted userspace (cloud provider setting)
-> 'mitigations=auto;no_cross_thread' -- Using core scheduling
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> index b6e4bb3328b3..252687be9dc3 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> @@ -69,6 +69,14 @@ &qusb_phy_1 {
+>  	status = "okay";
+>  };
+>  
+> +&sdhc {
+> +	pinctrl-0 = <&sdc_default_state>;
 
-I guess those make sense if you write them this way.
+Where is it defined?
 
-With the opt-out-only strategy, enabling a single vector would require you to
-specify all others as no_*.
+> +	pinctrl-names = "default";
+> +	supports-cqe;
 
-mitigations=auto,no_user_kernel,no_guest_host,no_guest_guest,no_cross_thread
+This property should be a part of the SoC dtsi.
 
-That'll give you user_user.
-
-Yeah, I guess we can't have the cake and eat it too. :-\
-
-Which reminds me: on boot we should printk which attack vector got enabled and
-which got disabled.
-
-And then have that same info in
-
-/sys/devices/system/cpu/vulnerabilities/attack_vectors
-
-or so.
-
-So that we can verify what got configured.
-
-> On the SMT piece, I think the proposal is:
-> 'auto;<attack vectors>' -- Default SMT protections (enable cheap ones like STIBP, but never disable SMT)
-> 'auto,nosmt;<attack vectors>' -- Full SMT protections, including disabling SMT if required
-
-Well, that's the question: cross-thread or nosmt is yet another attack vector.
-So if we define the format as I mentioned above, this should be
-
-auto;<attack_vectors>,nosmt or "cross_thread".
-
-Right?
+> +
+> +	status = "okay";
+> +};
+> +
+>  &sleep_clk {
+>  	clock-frequency = <32000>;
+>  };
+> -- 
+> 2.34.1
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+With best wishes
+Dmitry
 
