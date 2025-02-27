@@ -1,83 +1,213 @@
-Return-Path: <linux-kernel+bounces-535918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFDBA47906
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:26:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973FFA47905
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821AA171539
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:26:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4518A7A6151
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C78227E8D;
-	Thu, 27 Feb 2025 09:26:03 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537E9227E83;
+	Thu, 27 Feb 2025 09:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ly6losrb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JgzQTyGf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ly6losrb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JgzQTyGf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C37226D06;
-	Thu, 27 Feb 2025 09:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E915DBB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740648363; cv=none; b=DkfuykqGhFbKopHuWomPzcqTGhR+6wb6AHeXYh6EHbVGZYQMMOfTyK4M0MSUvbLU9TtWpR9WkuHsX+/NmhIa0Ph0gtWFUzxkiv5ywGDgRbJ4JvUKAUOiO4TDPWuyhfH94JwUUKNrqvv1O5oTErrQf0IO+DV/NcvMVW6WkYlw6qw=
+	t=1740648336; cv=none; b=B/uWOHB6TVBW8Xe+gh3FPBMeWqlDrxL7R2o3IeebrjVpvsjC68Cy01sKR0udDw5tIWRRHGbNtFYd2RJDN7l4XYga99XDJ3JvJzn3zafXiXyNGZ+0gStfxz3FLhese340LYGp6QLJVXguE5OvAALfblmZCpU2s6ikeyLqT3S/bfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740648363; c=relaxed/simple;
-	bh=51QJII6fUdiPIfCW79kJ4QsvgBBy1ihvI+vJ0EJXRJ4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EYGgAf3AZOYVStRiwlyQa8dSE0dE2HCN10fP06KHGegfwK0xV5lhbwCJsiZHgpyxfbIYVT4hmiFZekuk0SYsjFr6d2TxaTaUmwhRgCt6JILVW90FhZznBU6fcNXyyYHsp+QQBuhwhH+CzJtezhi7sDRX70f3c8CTTI8sBCG77Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201612.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202502271724453794;
-        Thu, 27 Feb 2025 17:24:45 +0800
-Received: from locahost.localdomain (10.94.4.82) by
- jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
- 15.1.2507.39; Thu, 27 Feb 2025 17:24:44 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <perex@perex.cz>, <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] ALSA: seq: seq_oss_event: fix inconsistent indenting warning in note_on_event()
-Date: Thu, 27 Feb 2025 17:24:41 +0800
-Message-ID: <20250227092441.19044-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740648336; c=relaxed/simple;
+	bh=BBKBgVRMWqRs5VaSUwZ2nSGGWtx6OJ0g5RpLBq2rPDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+25x6+kXc5o5vIyIHAB8zp65AoJQ/k4G6i/yJbo/NyPJB882XCj3xqrKiyHDjKesI83C9hju7kCfHjllaHHHorTznzxAjwSuup7yH+1lWqMaW73qTzNbRHu58Jdw1/21GWk21hmjZCuzJwioQCbA15ike0Fe6Ip6H31XKRgQLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ly6losrb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JgzQTyGf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ly6losrb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JgzQTyGf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2D1171F38A;
+	Thu, 27 Feb 2025 09:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740648333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=84jGCzOfenk39n3fQ2tGw741WbwinSTOHOE7D5W59+0=;
+	b=ly6losrbrIxeVYzL4cQBa9lQoYYLJNDmOdi/fKo9+bCVM1hw+dJ9CZOmMHGLsT/nxUAPIh
+	xSv4neyawmJstf+M2YQuGnr2cPTA7u783axf1610FzmljIhwoZobWcwBNo/gLkzCXLYs/Y
+	2orK899DYf2puPnd7FmgktiqFZMhc6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740648333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=84jGCzOfenk39n3fQ2tGw741WbwinSTOHOE7D5W59+0=;
+	b=JgzQTyGfkphco0WrGtXyX8Ub+v65qPaTxMtmX4GTH9Zay7YAt+UzW7AP1P90ZxIJd4rgoz
+	ztOnLjeHOir/9pDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740648333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=84jGCzOfenk39n3fQ2tGw741WbwinSTOHOE7D5W59+0=;
+	b=ly6losrbrIxeVYzL4cQBa9lQoYYLJNDmOdi/fKo9+bCVM1hw+dJ9CZOmMHGLsT/nxUAPIh
+	xSv4neyawmJstf+M2YQuGnr2cPTA7u783axf1610FzmljIhwoZobWcwBNo/gLkzCXLYs/Y
+	2orK899DYf2puPnd7FmgktiqFZMhc6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740648333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=84jGCzOfenk39n3fQ2tGw741WbwinSTOHOE7D5W59+0=;
+	b=JgzQTyGfkphco0WrGtXyX8Ub+v65qPaTxMtmX4GTH9Zay7YAt+UzW7AP1P90ZxIJd4rgoz
+	ztOnLjeHOir/9pDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E948813888;
+	Thu, 27 Feb 2025 09:25:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F0ysNowvwGcbEwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 27 Feb 2025 09:25:32 +0000
+Message-ID: <fb4c9b76-82dd-4227-9ee5-d7b52438bd0e@suse.de>
+Date: Thu, 27 Feb 2025 10:25:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025227172445306a30912b55c7cedf2b913425d7437d
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dummycon: only build module if there are users
+To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250225164436.56654-1-arnd@kernel.org>
+ <4d047af3-fd30-4fa4-aa3d-c0359856d750@suse.de>
+ <a2c0e681-2cdf-4dc9-82fc-be35f54ff795@app.fastmail.com>
+ <29ecc7c4-2887-4989-a1d3-aa76b44c0387@suse.de>
+ <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <79d35e3b-9a0d-41a5-ab07-797bfa1e19cb@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[arndb.de,kernel.org,linuxfoundation.org,gmx.de];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-sound/core/seq/oss/seq_oss_event.c:297 note_on_event() warn: inconsistent indenting
+Hi
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- sound/core/seq/oss/seq_oss_event.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Am 26.02.25 um 12:46 schrieb Arnd Bergmann:
+> On Wed, Feb 26, 2025, at 09:16, Thomas Zimmermann wrote:
+>> Am 26.02.25 um 08:55 schrieb Arnd Bergmann:
+>> Here's another general question. vgacon and fbcon only seem usable with
+>> CONFIG_VT=y. Wouldn't it make sense to have them depend on CONFIG_VT=y?
+>> dummycon could then be implemented as part of the vt code, maybe even
+>> become a vt-internal thing. The console code is complex, so I'm probably
+>> missing something here?
+> I think in theory one may have a system use fbcon purely to get the
+> boot logo, but not actually support VT.  I had also assumed there might
+> be a way to use fbcon as the console (i.e. printk) but not register
+> the tty, but it looks like the console code still requires vt.
+>
+> After I looked at the vt and conswitchp code some more, I wonder
+> if we could go the other way and instead of integrating it more
+> make the conswitchp logic optional: most of the complexity here
+> deals with switching between text console and fbcon dynamically,
+> but having any text console support is getting very rare (vga
+> on alpha/mips/x86-32, newport on mips-ip22, sti on parisc).
+>
+> If we do this, the conswitchp code could be merged with dummycon
+> in drivers/video/console, with the simpler alternative just
+> calling into fbcon functions. I'm not sure if we can already drop
+> vgacon from normal x86-64 distro configs, i.e. if there are cases
+> that are not already covered by any of efi-earlycon, efifb,
+> vga16fb, vesafb/uvesafb or a PCI DRM driver.
 
-diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
-index 7b7c925dd3aa..9a42713c7bdd 100644
---- a/sound/core/seq/oss/seq_oss_event.c
-+++ b/sound/core/seq/oss/seq_oss_event.c
-@@ -294,7 +294,7 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
- 				/* set volume to zero -- note off */
- 			//	type = SNDRV_SEQ_EVENT_NOTEOFF;
- 			//else
--				if (info->ch[ch].vel)
-+			if (info->ch[ch].vel)
- 				/* sample already started -- volume change */
- 				type = SNDRV_SEQ_EVENT_KEYPRESS;
- 			else
+Thanks for the lengthy answer. I don't want to add work to your todo 
+list. For vgacon, I wouldn't remove it yet, as there still exisits 
+x86_64 systems with plain VGA support.
+
+Best regards
+Thomas
+
+
+>
+>      Arnd
+>
+
 -- 
-2.43.0
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
