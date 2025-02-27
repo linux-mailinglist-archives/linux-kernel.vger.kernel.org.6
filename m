@@ -1,260 +1,145 @@
-Return-Path: <linux-kernel+bounces-537450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDCBA48BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:46:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FBFA48BFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03B3188F12C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:46:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1387D16D0E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C089227EA4;
-	Thu, 27 Feb 2025 22:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C889227EA8;
+	Thu, 27 Feb 2025 22:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lGVeiR+E"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34732777F0;
-	Thu, 27 Feb 2025 22:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jO8FT3dt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3FC2777F0;
+	Thu, 27 Feb 2025 22:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696392; cv=none; b=fZRVUkxL0uVMXT+3N8673swZoQFpui0ZIYG0Td0wVlAJ66buOlYTLVLC6iVYpzWMQCyBwNsVuqV5YkpxKC+IN/RcOIpX61Mni3xUked7VKCcQ7zjJwECIXUWDRMUcnHYxI+500D0/eIogkHhI6ncixcrTymtT069WFU9Hs442WM=
+	t=1740696520; cv=none; b=GeKSuFqVYyEX2iP0dk27lUycvio80gMV5fLSCKk2TwqXvCg+XHvFUySwIZp13ws+E0z3IOySZPaLXJgHD80WH90My12isZiE8S/g7pypxUMzhER8JJ9DoTWx1/87V+Qv/Ca/zYDS/R35feUn8Zn3+aboSbitHL8E1esjIgDwT/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696392; c=relaxed/simple;
-	bh=Q6Pa0KhEvlHtwBQPvl7cH5V19cFDAgMxXJL/DJvUHCE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=DYwWZGAt8YGiF6FZTra8ae69WYheXPRlNaiJ6cUn28yfRCspvZmDyCprjgi734oeeeTkoZIwUFP0YbluAgh88zBCDNSHCEjY4VWy/d3I/E5iK6CexKSUSx+JDmuOSM8nHpP2DGVRUkA8lJse9rLJqOnozaLghldODgnyXJZd8Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lGVeiR+E; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1212)
-	id 7133E210D0F2; Thu, 27 Feb 2025 14:46:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7133E210D0F2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740696390;
-	bh=aqBCcjB1GK85ZkCy3eKDq7vjs8P7hOhb3Um+ZUwqHwU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lGVeiR+EmAAjP23a2cMbYaJvaa52eX7lDcBNK530Z/qjh+OgbQCPGO+GBwkePJJIv
-	 sRekI3vtPozpaqqLxu0ar47xgem/MoE5SfVVkidjhVlp3IczOUsC5AA+m/cnC1wCr9
-	 oFglWIUtRtych1UOaEmbzyNy34PNtqAayX0ryTpQ=
-From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-To: wufan@kernel.org
-Cc: audit@vger.kernel.org,
-	corbet@lwn.net,
-	eparis@redhat.com,
-	jasjivsingh@linux.microsoft.com,
-	jmorris@namei.org,
-	linux-audit@redhat.com,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1740696520; c=relaxed/simple;
+	bh=e0RjurjURyeV3jmQZ5PTbWo/NvwJLTmtc7mi0B4tqKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kxJW4JKwM2YIT2utFyOrKVisIoXbWDdJEhz+2ldGzJlKL8yl6dfxsqfqNtlQFQmMSI9+7Dp73VF6burF1R8E3/N0ELqZAVb/3FyWew74H7CME+dCQVBuH7NOT4hVa81U6ELtbMkqyXtXiRboTREPPrIL+W8AB+5D8nq48Ja2onM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jO8FT3dt; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740696519; x=1772232519;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e0RjurjURyeV3jmQZ5PTbWo/NvwJLTmtc7mi0B4tqKo=;
+  b=jO8FT3dtVn0D0EOD3gLXkJCk7635Ir6ob4kgPXFv94DB9qn3bfjR6DJG
+   63W1ji+tVg6aGaQpI4RwJSdVk3uGa2MNYaXMDjtglLxiuea8sZc+eAB1N
+   rR27buLAIc4MAJy+8ibGl7yBXZA10S8HG/nFqoTdQB4JDjqSvYGTuzKRp
+   XNXUfp41PghOHieusjpq5Y6KvzFyh5ZpwzFiRqiNtONyeDolsESntYEBN
+   L2dIbgjIn2z5ZUfCuklG8GrijwG4P2fQTOXJykPinLLiFUnw+AiuefH3A
+   /D5MiO7rS2mVZOofxOhqRCim+h5jjz6C61nU5+EkV6KzPPYDBaKmDgcDR
+   g==;
+X-CSE-ConnectionGUID: /nbPfifcQyi2hYQL2Y0Phw==
+X-CSE-MsgGUID: HyJx7NmLSlKiO4ftoWwS0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="64077558"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="64077558"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 14:48:38 -0800
+X-CSE-ConnectionGUID: WAiM3Ce2TxCyCU5Gj8R5Wg==
+X-CSE-MsgGUID: wbjOuz/TRCa9JWfPAs6s3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117187041"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 14:48:38 -0800
+From: Tony Luck <tony.luck@intel.com>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com
-Subject: [PATCH v2] ipe: add errno field to IPE policy load auditing
-Date: Thu, 27 Feb 2025 14:46:17 -0800
-Message-Id: <1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <CAKtyLkFg2+8ciy4DM=g+vcTVvuRPNL2SHbN+m9ObErxtYXZYPw@mail.gmail.com>
-References: <CAKtyLkFg2+8ciy4DM=g+vcTVvuRPNL2SHbN+m9ObErxtYXZYPw@mail.gmail.com>
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v2 0/4] Add interfaces for ACPI MRRM table
+Date: Thu, 27 Feb 2025 14:48:24 -0800
+Message-ID: <20250227224828.306537-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thanks for reviewing it. Here's the example generated from real logs:
+Memory used to be homogeneous. Then NUMA came along. Later different
+types of memory (persistent memory, on-package high bandwidth memory,
+CXL attached memory).
 
-AUDIT_IPE_POLICY_LOAD(1422):
-audit:  AUDIT1422 policy_name="Test_Policy" policy_version=0.0.1 
-policy_digest =sha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4
-299DCA92BFFF4DB82E86D3 auid=1000 ses=3 lsm=ipe res=1 errno=0
+Each type of memory has its own performance characteristics, and users
+will need to monitor and control access by type.
 
-The above record shows a new policy has been successfully loaded into
-the kernel with the policy name, version, and hash with the errno=0.
+The MRRM solution is to tag physical address ranges with "region IDs"
+so that platform firmware[1] can indicate the type of memory for each
+range (with separate tags available for local vs. remote access to
+each range). Note that these ranges can include addresses reserved
+for future hotplugged memory.
 
-AUDIT_IPE_POLICY_LOAD(1422) with error:
+The region IDs will be used to provide separate event counts for each
+region for "perf" and for the "resctrl" file system to monitor and
+control memory bandwidth in each region.
 
-audit: AUDIT1422 policy_name=? policy_version=? policy_digest=?
-auid=1000 ses=3 lsm=ipe res=0 errno=-74
+Users will need to know the address range(s) that are part of each
+region. This patch series adds
+	/sys/firmware/acpi/memory_ranges/rangeX
+directories to provide user space accessible enumeration.
 
-The above record shows a policy load failure due to an invalid policy.
+-Tony
 
-I have updated the failure cases in new_policy() and update_policy(),
-which covers each case as well.
- 
-Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
----
- Documentation/admin-guide/LSM/ipe.rst |  2 ++
- security/ipe/audit.c                  | 10 ++++------
- security/ipe/fs.c                     | 17 ++++++++++++-----
- security/ipe/policy.c                 |  4 +---
- security/ipe/policy_fs.c              | 24 +++++++++++++++++++-----
- 5 files changed, 38 insertions(+), 19 deletions(-)
+[1] MRRM definition allow for future expansion for the OS to assign
+these region IDs.
 
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index 2143165f48c9..5dbf54471fab 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -453,6 +453,8 @@ Field descriptions:
- | errno          | integer    | No        | The result of the policy error as follows:        |
- |                |            |           |                                                   |
- |                |            |           | +  0: no error                                    |
-+|                |            |           | +  -EPERM: Insufficient permission                |
-+|                |            |           | +  -EEXIST: Same name policy already deployed     |
- |                |            |           | +  -EBADMSG: policy is invalid                    |
- |                |            |           | +  -ENOMEM: out of memory (OOM)                   |
- |                |            |           | +  -ERANGE: policy version number overflow        |
-diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-index f810f7004498..8df307bb2bab 100644
---- a/security/ipe/audit.c
-+++ b/security/ipe/audit.c
-@@ -21,7 +21,7 @@
- 
- #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
- 			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
--#define AUDIT_POLICY_LOAD_NULL_FMT "policy_name=? policy_version=? "\
-+#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
- 				   "policy_digest=?"
- #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=\"%s\" "\
- 				    "old_active_pol_version=%hu.%hu.%hu "\
-@@ -255,9 +255,8 @@ void ipe_audit_policy_activation(const struct ipe_policy *const op,
-  */
- void ipe_audit_policy_load(const struct ipe_policy *const p)
- {
--	int res = 0;
--	int err = 0;
- 	struct audit_buffer *ab;
-+	int err = 0;
- 
- 	ab = audit_log_start(audit_context(), GFP_KERNEL,
- 			     AUDIT_IPE_POLICY_LOAD);
-@@ -266,15 +265,14 @@ void ipe_audit_policy_load(const struct ipe_policy *const p)
- 
- 	if (!IS_ERR(p)) {
- 		audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
--		res = 1;
- 	} else {
--		audit_log_format(ab, AUDIT_POLICY_LOAD_NULL_FMT);
-+		audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
- 		err = PTR_ERR(p);
- 	}
- 
- 	audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=%d errno=%d",
- 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
--			 audit_get_sessionid(current), res, err);
-+			 audit_get_sessionid(current), !err, err);
- 
- 	audit_log_end(ab);
- }
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index 5b6d19fb844a..40805b13ee2c 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const char __user *data,
- 	char *copy = NULL;
- 	int rc = 0;
- 
--	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
--		return -EPERM;
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-+		rc = -EPERM;
-+		goto out;
-+	}
- 
- 	copy = memdup_user_nul(data, len);
--	if (IS_ERR(copy))
--		return PTR_ERR(copy);
-+	if (IS_ERR(copy)) {
-+		rc = PTR_ERR(copy);
-+		goto out;
-+	}
- 
- 	p = ipe_new_policy(NULL, 0, copy, len);
- 	if (IS_ERR(p)) {
-@@ -161,8 +165,11 @@ static ssize_t new_policy(struct file *f, const char __user *data,
- 	ipe_audit_policy_load(p);
- 
- out:
--	if (rc < 0)
-+	if (rc < 0) {
- 		ipe_free_policy(p);
-+		p = ERR_PTR(rc);
-+		ipe_audit_policy_load(p);
-+	}
- 	kfree(copy);
- 	return (rc < 0) ? rc : len;
- }
-diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-index 0f616e9fbe61..b628f696e32b 100644
---- a/security/ipe/policy.c
-+++ b/security/ipe/policy.c
-@@ -202,9 +202,7 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
- 	return new;
- err:
- 	ipe_free_policy(new);
--	new = ERR_PTR(rc);
--	ipe_audit_policy_load(new);
--	return new;
-+	return ERR_PTR(rc);
- }
- 
- /**
-diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-index 3bcd8cbd09df..74f4e7288331 100644
---- a/security/ipe/policy_fs.c
-+++ b/security/ipe/policy_fs.c
-@@ -12,6 +12,7 @@
- #include "policy.h"
- #include "eval.h"
- #include "fs.h"
-+#include "audit.h"
- 
- #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
- 
-@@ -288,25 +289,38 @@ static ssize_t getactive(struct file *f, char __user *data,
- static ssize_t update_policy(struct file *f, const char __user *data,
- 			     size_t len, loff_t *offset)
- {
-+	const struct ipe_policy *p = NULL;
- 	struct inode *root = NULL;
- 	char *copy = NULL;
- 	int rc = 0;
- 
--	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
--		return -EPERM;
-+	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-+		rc = -EPERM;
-+		goto out;
-+	}
- 
- 	copy = memdup_user(data, len);
--	if (IS_ERR(copy))
--		return PTR_ERR(copy);
-+	if (IS_ERR(copy)) {
-+		rc = PTR_ERR(copy);
-+		goto out;
-+	}
- 
- 	root = d_inode(f->f_path.dentry->d_parent);
- 	inode_lock(root);
- 	rc = ipe_update_policy(root, NULL, 0, copy, len);
-+	if (rc < 0) {
-+		inode_unlock(root);
-+		goto out;
-+	}
- 	inode_unlock(root);
- 
-+out:
- 	kfree(copy);
--	if (rc)
-+	if (rc) {
-+		p = ERR_PTR(rc);
-+		ipe_audit_policy_load(p);
- 		return rc;
-+	}
- 
- 	return len;
- }
+Changes since v1 posted at:
+  https://lore.kernel.org/all/20250210211223.6139-1-tony.luck@intel.com/
+
+1) Target /sys directory for the files moved from
+  /sys/devices/system/memory to /sys/firmware/acpi/memory.
+
+While the old target had a useful sounding name, it is really all about
+hotplug memory while this enumeration is about different types of memory
+with hotplug being a non-issue as memory ranges can describe addresses
+that are reserved for future addition of different types of memory.
+
+2) The ACPICA changes in patch one have been committed to the acpica
+git repository and will make their way into Linux for the next ACPICA
+release. Patch included here for convenience.
+
+3) I included a "testing" patch that provides a fake MRRM table so
+that anyone can compile and run this series to check things out.
+
+Tony Luck (4):
+  ACPICA: Define MRRM ACPI table
+  ACPI/MRRM: Create /sys/firmware/acpi/memory_ranges/rangeX ABI
+  ACPI: Add documentation for exposing MRRM data
+  acpi_mrrm: fake for testing, do not apply!
+
+ include/linux/acpi.h                          |   6 +
+ include/acpi/actbl1.h                         |   7 +
+ include/acpi/actbl2.h                         |  42 ++++
+ drivers/acpi/acpi_mrrm.c                      | 185 ++++++++++++++++++
+ Documentation/ABI/testing/sysfs-firmware-acpi |  16 ++
+ arch/x86/Kconfig                              |   1 +
+ drivers/acpi/Kconfig                          |   3 +
+ drivers/acpi/Makefile                         |   1 +
+ 8 files changed, 261 insertions(+)
+ create mode 100644 drivers/acpi/acpi_mrrm.c
+
+
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
 -- 
-2.34.1
+2.48.1
 
 
