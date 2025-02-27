@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-537183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAA2A488F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE57DA488FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1188C3AD341
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799A23A4DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3696626E96B;
-	Thu, 27 Feb 2025 19:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404726E95E;
+	Thu, 27 Feb 2025 19:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="iqKZCRay"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2TxopmCH"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC9826E958;
-	Thu, 27 Feb 2025 19:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976E526E957
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684362; cv=none; b=V6YRLYgNnTXBF5bC7vhECczpW8Q3NM8ezDA25XmCfPg3jbS1D1Kn82TDc+gp/zZ8XGZQcZ0MPQYSRRAbch6v+ayqdC/xIv2sPVD3yMZQA+INFwYk/1gF44rrhyAl5xwc04PqVxsRwF0owTVuT7ufBz4L1UwzwW4iS5mBCfDccDU=
+	t=1740684429; cv=none; b=Rsf0TMz4afM1UjhwcxaRL52COAqu/fFRe0k1eyBSVTw5ZsvtZWtIbX6PDRsKyb/gq6I02PdvRPWISn7ZpRAY35dEeW3bYbj0XB3HjiN45gUMQ+lRBfpzXBA8lAr6z9Uwhh47bbFUCEXOlTPkGZJJ1hCPEcbTmaCMsoPWVtqNBrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684362; c=relaxed/simple;
-	bh=a6NvEy6QBLiN8CY+IhF9/3XHktH32/23x1gAefp+5zg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZKw44noNLuNXxKiLJVhlUnCPzvJDSwE+pB4Vy6KkdGLTSIAgcQaE7Wvsj8bBxzWuwfE4cKOggdnGRFbyhZjcExml0inVA5KCYfy3TKvCELJThZXkMUDJi9Awre9s2toZnyj+eSYxLAb2Z5FqGk5FXzsI305Wmi1/YFEDC2nmGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=iqKZCRay; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RFjKPv005358;
-	Thu, 27 Feb 2025 11:25:40 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=b
-	YTLXJD40V2QUBA5lQJUGgPgBRx7eVqymsySQ7bcibY=; b=iqKZCRayiWsTCOtm6
-	MC4DlAwa5vb6bboPXL205jex4Ctny5Bm2umMCnF1La8FITfNL3OEIKb6hrfB+Arm
-	AIrRf/Jb1YIlrsVlt4KKA4sramAhrxZOA0iOgwtHJyJRQQJeRGzwc53wvUu6e55e
-	Rqu6ANnYijHb+vhPIo0ppugjXdwgj801+pih0i0NIxmvq4es+tKmWY0/1CCFq+eB
-	yLvCVuO/QXQwNIF+8ltgz8nplgCPUfXoIqhQskujZDdouN4qv0+DYU9Xqudek5uQ
-	9Nhy5mAFKbxRtgiStr3sTwowNbKKE6ftGxesOL+lXPpE6DO5WWbSmkjCcOZX+89m
-	vM4xw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 452tyjrhbm-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 11:25:40 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 27 Feb 2025 11:25:38 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 27 Feb 2025 11:25:38 -0800
-Received: from wd-ubuntu-24-04.marvell.com (wd-ubuntu-24-04.marvell.com [10.111.132.113])
-	by maili.marvell.com (Postfix) with ESMTP id 786455B6927;
-	Thu, 27 Feb 2025 11:25:38 -0800 (PST)
-From: Wilson Ding <dingwei@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
-        <sebastian.hesselbarth@gmail.com>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
-        <salee@marvell.com>, <gakula@marvell.com>,
-        Wilson Ding <dingwei@marvell.com>
-Subject: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add reset controller node
-Date: Thu, 27 Feb 2025 11:25:36 -0800
-Message-ID: <20250227192536.2426490-4-dingwei@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227192536.2426490-1-dingwei@marvell.com>
-References: <20250227192536.2426490-1-dingwei@marvell.com>
+	s=arc-20240116; t=1740684429; c=relaxed/simple;
+	bh=d1Qxg472CkVrkJspIto61QqE2XsIjtKw5J3xPkJikcY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+6IeuJSUqAKHo8Vq1yYrQLHS+m09rxzSC6+U1ESKjn/IkdcuuByaIAajedWjbPdqy4r2NtdkCcs3XLyY7bUHwC2Q0rsTdK88pq/UbvvI2uuirr7Pt6aswxYqdZSgNypaQSpehR/cFH+ETDlJP5md0lXbllVhXlCeqFsbmrLxMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2TxopmCH; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54843052b67so1286e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:27:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740684426; x=1741289226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UtLSNJVT+92AMNNdy2v/ceT4EU9CKE0f6wRbNLrZ7oU=;
+        b=2TxopmCHJ9v8GWtr7FbdgnCMwGCilGeXlaG2avMM5+IrJNSNvvm8qp3GPFvmuxHPgO
+         3/5I9UwOcaZdAj3dk0Uf3zb/+Ic8uWgzcNlgFhC1VOSP3VIrAUg1iKv/FJCoGwu9EcNY
+         Mx/4Rrho733WrpUPTjlyv1Quuiz5VnLvLDxH12MEWOmbP6+qVRmKU6X2ejaqm1ipsQ1c
+         3FXOQAUB0Each3LKu+MIxxicGkug6g4D98UQsVowTq9LzUXuGzw/0SxwC+AQVRtGM9oH
+         4lnA0Q5SbXQc8OF/fFq+PJSOemiixhP8UbbrlD5WpHQA4BQM31ZErsHW2HCdmpXWxnjm
+         xFDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740684426; x=1741289226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UtLSNJVT+92AMNNdy2v/ceT4EU9CKE0f6wRbNLrZ7oU=;
+        b=E4zHdb0eoFkY+euEc3Vy3Lf+zq1HuujKVZ7magUHdgMpVDaNTJq8tye0QCpt1K3Izo
+         lNAkqM2aQmluzAKcj6IuXbaC9uXXnjvTtj9NTrHTu42c4bORspVIUGEKa5LuLFSzZyiC
+         5DumjOt7mb3wav/DIU/2xEtUyCu+szH1xQfKDpEgWIKFcHaUa+x+ERHX78MQvN8Q1XqO
+         kEcBwbql8E4KeqPN0EczbYChqtZRGEnDrFyqVNo1/+nSN81HDOp4AW7PtGZjca+uJjQq
+         Flz4d5qiujCB4sA5kefSb80fxsQ4xFvlLosdQCGNCf3S5ZLgc/B7OAqsKiO/O+42LWiP
+         0TGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyTmMrOMJZnmvAp5p3lfcrJK0lpc0mNWpPVRtnYP1f+weF0+CPW29tv2Ag/zvhykaRMy+6EAtXBDGTjJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxotKy6B7xlw4mMfXxDSTbQOMgprOcVwEvXddyasC08PBrw4kc3
+	kSj47SqJWSoTlFkbCpblVlbQbeO9tn3TR3tkMS6cuTOu9sT8S0Uqmpc+i0qLNfEuxUJoADOXP+7
+	hVGMZdLlJGyF9nTAmBiGaqbU5RRRDO0HTuxTz
+X-Gm-Gg: ASbGncugFCX3nea4Rje1RKaIEGuvCfYUa4qFD/8FPLzbSXMk/n1PF44w9ld1esnsuK6
+	pHcE0L31DcjVB2wbAH4zZ4ArFCxi2HjSkxNHlY9WQz2I7o4gDwnQTBCAx/3MNgS8rVEz6rVUlr9
+	sPe2nen+f283KLeBU2ryq8SDK+ApqThDboSMT36N2V
+X-Google-Smtp-Source: AGHT+IEdSIwybUjSkkV5vNkBMcDTqOmFlDjP0ogUFLrcyG7hy/eEgdi+TbKAXYt1FUTQRVem2blej27QUoMzQ6ig7ik=
+X-Received: by 2002:a05:6512:3a84:b0:543:cf0c:ed14 with SMTP id
+ 2adb3069b0e04-5494debd8fdmr16005e87.5.1740684425486; Thu, 27 Feb 2025
+ 11:27:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: F9GJO5NrJ5WTW0ERHCE9qRfpK7xQkZIZ
-X-Authority-Analysis: v=2.4 cv=UIYnHDfy c=1 sm=1 tr=0 ts=67c0bc34 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=T2h4t0Lz3GQA:10 a=M5GUcnROAAAA:8 a=DYY7cqjbEommNVqY-hUA:9 a=cX4pScRg4-JUD0_czzmr:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: F9GJO5NrJ5WTW0ERHCE9qRfpK7xQkZIZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
+References: <20250225004704.603652-1-vannapurve@google.com>
+ <20250225004704.603652-3-vannapurve@google.com> <pvbwlmkknw7cwln4onmi5mujpykyaxisb73khlriq7pzqhgno2@nvu3cbchp4am>
+In-Reply-To: <pvbwlmkknw7cwln4onmi5mujpykyaxisb73khlriq7pzqhgno2@nvu3cbchp4am>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 27 Feb 2025 11:26:53 -0800
+X-Gm-Features: AQ5f1JpNkvOxWDJlk_d64tma-tOWc1scSvqjWSXHu6nUjd70ID7CCmOSArfFMN8
+Message-ID: <CAGtprH8mxENaH-Y0=b0kKJio=EG0OKt_qeguRBJECagXL4poPA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] x86/tdx: Fix arch_safe_halt() execution for TDX VMs
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: dave.hansen@linux.intel.com, kirill.shutemov@linux.intel.com, 
+	jgross@suse.com, ajay.kaher@broadcom.com, ak@linux.intel.com, 
+	tony.luck@intel.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com, 
+	seanjc@google.com, kai.huang@intel.com, chao.p.peng@linux.intel.com, 
+	isaku.yamahata@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
+	erdemaktas@google.com, ackerleytng@google.com, jxgao@google.com, 
+	sagis@google.com, afranji@google.com, kees@kernel.org, jikos@kernel.org, 
+	peterz@infradead.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, virtualization@lists.linux.dev, 
+	bcm-kernel-feedback-list@broadcom.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the reset controller node as a sub-node to the system controller
-node.
+On Wed, Feb 26, 2025 at 3:49=E2=80=AFAM Kirill A. Shutemov <kirill@shutemov=
+.name> wrote:
+>
+> On Tue, Feb 25, 2025 at 12:47:03AM +0000, Vishal Annapurve wrote:
+> > Direct HLT instruction execution causes #VEs for TDX VMs which is route=
+d
+> > to hypervisor via TDCALL. If HLT is executed in STI-shadow, resulting #=
+VE
+> > handler will enable interrupts before TDCALL is routed to hypervisor
+> > leading to missed wakeup events.
+> >
+> > Current TDX spec doesn't expose interruptibility state information to
+> > allow #VE handler to selectively enable interrupts. To bypass this
+> > issue, TDX VMs need to replace "sti;hlt" execution with direct TDCALL
+> > followed by explicit interrupt flag update.
+> >
+> > Commit bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+> > prevented the idle routines from executing HLT instruction in STI-shado=
+w.
+> > But it missed the paravirt routine which can be reached like this as an
+> > example:
+> >         acpi_safe_halt() =3D>
+> >         raw_safe_halt()  =3D>
+> >         arch_safe_halt() =3D>
+> >         irq.safe_halt()  =3D>
+> >         pv_native_safe_halt()
+>
+> I would rather use paravirt spinlock example. It is less controversial.
+> I still see no point in ACPI cpuidle be a thing in TDX guests.
+>
 
-Signed-off-by: Wilson Ding <dingwei@marvell.com>
----
- arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I will modify the description to include a paravirt spinlock example.
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-index 161beec0b6b0..c27058d1534e 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-@@ -226,6 +226,8 @@ CP11X_LABEL(rtc): rtc@284000 {
- 		CP11X_LABEL(syscon0): system-controller@440000 {
- 			compatible = "syscon", "simple-mfd";
- 			reg = <0x440000 0x2000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
- 
- 			CP11X_LABEL(clk): clock {
- 				compatible = "marvell,cp110-clock";
-@@ -273,6 +275,12 @@ CP11X_LABEL(gpio2): gpio@140 {
- 					 <&CP11X_LABEL(clk) 1 17>;
- 				status = "disabled";
- 			};
-+
-+			CP11X_LABEL(swrst): reset-controller@268 {
-+				compatible = "marvell,armada8k-reset";
-+				reg = <0x268 0x4>;
-+				#reset-cells = <1>;
-+			};
- 		};
- 
- 		CP11X_LABEL(syscon1): system-controller@400000 {
--- 
-2.43.0
-
+> >
+> > To reliably handle arch_safe_halt() for TDX VMs, introduce explicit
+> > dependency on CONFIG_PARAVIRT and override paravirt halt()/safe_halt()
+> > routines with TDX-safe versions that execute direct TDCALL and needed
+> > interrupt flag updates. Executing direct TDCALL brings in additional
+> > benefit of avoiding HLT related #VEs altogether.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: bfe6ed0c6727 ("x86/tdx: Add HLT support for TDX guests")
+> > Signed-off-by: Vishal Annapurve <vannapurve@google.com>
+>
+> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
 
