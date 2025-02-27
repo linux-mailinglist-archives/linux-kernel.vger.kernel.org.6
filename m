@@ -1,175 +1,111 @@
-Return-Path: <linux-kernel+bounces-536807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EEFA48482
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:16:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0294A48460
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675C91896BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:10:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFA97A7DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D54A26E158;
-	Thu, 27 Feb 2025 16:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FCF26E649;
+	Thu, 27 Feb 2025 16:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zf0vIVOq"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgCd7eHq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969C726D5BA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EEF271298;
+	Thu, 27 Feb 2025 16:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672277; cv=none; b=FXW8nmLPU2qdFUBOmEPM11WJqpfPhpUDTadXgaEZF3TbrRuEXgP7VpgCeys5QppHuekb8sPWOlJi+E4qz/55EibapXX2LKEt/e0ReAh9yxiKCFhekrMFbdfJNOV8CCfgtYl4Jl0mhKK9qWhAOOeBGU9PcX34g/uPbVlbNFpbAw4=
+	t=1740672290; cv=none; b=TwQ7x9yRVmolZ7IoVwkI5vsegWdumZdIFBMXjyzh+G3RbdKEUmD5hYKInUX42LZ+pIMmvknAr0ggzdKS0QYssyX5tzi+RsK7OW+BH9zSZNVWeUDxs9l0UxJPCpKYFRQt6KUGNevALc5pjOPeYR1mXQoF108NY8bwdJ60aAdFApY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672277; c=relaxed/simple;
-	bh=k/Ub0j4ZPZ5XJlCOR/aNVmHDxi435bw376+PW8znVRM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WbmAzulUuVSuXwyoEbK/As+fvpwCp+N8NpX3UIwuM12a9cH6d6IO6lwGjoo2K3N0m3fFe6eE7eDcst2Uwt5UjiwPa2lR2We8q9ER3vcsBdixeH9aJIy3SZMe0AIqIho8KklfEs3+22BdQl25hLjQreahYZZyqukBm000rz2eA90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zf0vIVOq; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43690d4605dso7810865e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740672274; x=1741277074; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fkITjQmr9TX/26VhCMssjv/ZXVYw9RYOTlGukmEo+nk=;
-        b=Zf0vIVOqkJ27JlI0LjgopLVeiTf4y55u1JT6Tdvd9bq2iXknTH4yJt0vXaZ/EKnmBE
-         Ve7IDf81b/C2NY8U7rIBqgSfrSvkNNDQwMYfj3IF0f9SFfiQgd2EzO1bK5ljT/wFFz0m
-         jGQuTrVctBKDFcqBdUtWw8Pq6ZIJOQuWhYLNzdoq56t09HUkLdbn1R5WafVnXhca46yw
-         MeJoteUo3SDqTcRzyn+mtz1BwikiBXK77hOlRM8SHGIhGJfqZIbH5uSSwjI4qOAzYZZa
-         f+Iq9VUybieeMjXRWsiX955kI9uiCkjWyzwaZrKahtuYLtVKrbUX0wJrLkNN0Xea8AN4
-         CZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740672274; x=1741277074;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fkITjQmr9TX/26VhCMssjv/ZXVYw9RYOTlGukmEo+nk=;
-        b=nNABHhQ3wlTmDDyGGcLD2e6Zlok792/633RucAeaaPaH2uPB3pyJiMO4nSQPcdkIoP
-         8JBlIBhikHYaTDZLCUeWZLGo9okn+OUys8JczAgl6NiiFtuE5MQaMdR/4gMI9ZhpLK/j
-         tZv8c3KAmCZ9S7kpJlHewXunBR/BxOi97NtDiJLLPmpgvUw2k6OYEtFm3+1WctPP4JVK
-         XsI33opaBIZ0+MZK/DWB+TJrAL5zq6EHynMQG2HW6eYLRjv4OxK6XLYZ/XNeh/42ScgG
-         LqIfKr8j5yrlPK8LKoG4eCK4ZHNxy9MiT2WSGs+MY7ukZhzecb2RqKLuLcM4P5oizgxy
-         RsIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkIVh/fA+HxhuftEN9mEp7glJLYSHnaXDwVd0t6HbQbHCJ/e+HG5C77VN5UYHFJ6vMZrmAugRd7LyzB2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqNtBwcJ3f3pWjDc2CYEtpjdyYz7JAKl5oKyT5M1lzMFgAtu5p
-	Hy6lKRrn9UNW8Z8I5+qb0ePXdt+Ldlyb1fb+OsaovAhg5h022OIhlMKGU8/vttgvitvA9bQ4iwI
-	l
-X-Gm-Gg: ASbGnctk3tX8eCXxuqzfc5SA5BElJFzYnLoBTEN1263CDdKwDkq4sOGogYIqt7tzGt2
-	lE50cowywfTKUtP71LjKxMvwqj1AB2L/Z2m2p/UmORaNrT0tK/YsuEgJBOWnY+GfxC/DPhS4jvl
-	BfrIl7GddfeQVp7ZOPSmGydnIQNW99JKZFCy/HDI0ZcGT7lX3Svep0xoBWp6MHyi5IJptD5u0BA
-	0SVTX+poDM1nydQDjS9Wj/scQZAI+DLUrI5iOgXd8FT88LimGm0ndUDNTpYORXqW8TXw6klACfM
-	dAWFBUd+UDz90yplX2CExvkEXI599hr1eaGZvRpsyMzRBYM=
-X-Google-Smtp-Source: AGHT+IGvE+jugbR/iYq1Tq9sdNrtTDnhF17ycAcebZLYaEztCw8UWLz01Kt1SnRaA91VfoNeOfYyuQ==
-X-Received: by 2002:a05:600c:3111:b0:439:9f42:c137 with SMTP id 5b1f17b1804b1-43ab0f31010mr115437385e9.11.1740672273805;
-        Thu, 27 Feb 2025 08:04:33 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5393e5sm58811225e9.20.2025.02.27.08.04.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 08:04:33 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 27 Feb 2025 17:04:30 +0100
-Subject: [PATCH v3 3/3] arm64: dts: qcom: sm8650: add PPI interrupt
- partitions for the ARM PMUs
+	s=arc-20240116; t=1740672290; c=relaxed/simple;
+	bh=cUvKS7WQsngYM/cLQtfCvYOzx4ln3nJsq1TrZ/4MPFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fFAkz/lOR1r2/Fzbu8qjXKeu2oLNRpLYUo06bQlCZlba5zKVkQqlJy8br8f+iQdpBLr5+DxUMnhM6viD41oRnU6XPrn5h2wrbUc8BZfUZkO2b+gOf+HSdl9MTQC6jS6/HFwc85kyQ6+Symqq1vCwwegCmJ8cBIzukszzjUHZBzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgCd7eHq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D790FC4CEE6;
+	Thu, 27 Feb 2025 16:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740672290;
+	bh=cUvKS7WQsngYM/cLQtfCvYOzx4ln3nJsq1TrZ/4MPFU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UgCd7eHqnEWWfha+aKtGhKB7EfDxtXDL1AuXhcDbNl03nnQFDdabk+lDOVc6ErtPn
+	 hJLxgw2EdH7REb4fz/f/09aKwCh1UV0dqXH81uBf4vFmq19u24qdBsUmRLsU/3y2eI
+	 oFisWVfXo9Sajmyl55NkZiSLt7driuwTpXF2w8LkZF1NT+Y/xLiUDwOT1i/1cqdUZU
+	 TXx7c+sDd0ldW0RshghvzH9dFVtz6PIZrT4eNzxxg3EETpr8tvp3F2+/U4RRgmJqeR
+	 WCxJtUATQxQosF/w8O3Zn2J+psiTDB1TE6ZFKONung5DjysV5COHjvnrbP53sv14ti
+	 kmYcEIW1MW82w==
+Date: Thu, 27 Feb 2025 10:04:48 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Muni Sekhar <munisekharrms@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernelnewbies <kernelnewbies@kernelnewbies.org>
+Subject: Re: pci: acpi: Query on ACPI Device Tree Representation and
+ Enumeration for Xilinx FPGA PCIe Endpoint functions
+Message-ID: <20250227160448.GA597390@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250227-topic-sm8650-pmu-ppi-partition-v3-3-0f6feeefe50f@linaro.org>
-References: <20250227-topic-sm8650-pmu-ppi-partition-v3-0-0f6feeefe50f@linaro.org>
-In-Reply-To: <20250227-topic-sm8650-pmu-ppi-partition-v3-0-0f6feeefe50f@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1833;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=k/Ub0j4ZPZ5XJlCOR/aNVmHDxi435bw376+PW8znVRM=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnwI0OSMi8BmNu9kqZwskc/n45+T5S+IDHSOwrFvgU
- aajWWiKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8CNDgAKCRB33NvayMhJ0UX2EA
- C9T+dPGwjHwrmCzRoZ58DcLXjiJra2ao+YaoCCUcvJ2CNuRapDYRTEEDR42Bby6k8+NEkO5WTW11cn
- We2VIjBvga0zu7mUqXQDLOZLUkXnBxPCTcaUHyJC8KMn+rvE/4rndUWpB8TH7uI3Nbl66uM0UJbIVQ
- DuXmiSZyHvZg9M/oGClFSIPb5lmBL7o3a3WSv5TOHIdFqEoG2xRyxBfR2Z7OtSyqx1sv44EzmFD08n
- vXqHyHcs8sKyGASDXcZBjXL6/KyZ8TvdgORvtKRR+wOYzCfLop0zo3lA3kk58Plb/kjaNK8J9BNWP+
- iifjroFtbm0rJHYr4ZhV8CLotj7urOla2cV2MEfflxT649RlHKjRWg0ZqQy+iLLlF+IXllhvDYql1G
- UJy4UhqOfvv8LeAWn26jhgFJSe8iS8dV2cQIfsoUpvJeX7dQ5aiTlEUHX9awUC7SY8MzVRlkbs0q9Q
- keLgDTgAR2WeDXQu7GdVre/gq/bSJ8hE2e4SS/Y4kBFMOybWew76uzkYOvnKOxwo/cdHedFdZUVbwz
- imjWxoOzsTPdEU8b/Nely2CnrN+gFAF2jg631BIKjeqaFXKslaZfknLxlEyMxhHPWSvAdaxYkgl08D
- s/vI0AOp8NK6sNN3ZN+8M4Wf+4pV5MHxpG33+FEkkrpcAGeFS4sBJVyc0Kdg==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHhAz+gUOK4Bn5ijO0H1b5=EtvD5W4GpOTtjP0--yVToNpkEDA@mail.gmail.com>
 
-The PMUs shares the same per-cpu (PPI) interrupt, so declare the proper
-interrupt partition maps and use the 4th interrupt cell to pass the
-partition phandle for each ARM PMU node.
+On Thu, Feb 27, 2025 at 07:25:32PM +0530, Muni Sekhar wrote:
+> Hi all,
+> 
+> I am currently working on a project involving a Xilinx FPGA connected
+> to an x86 CPU via a PCIe root port. The Xilinx FPGA functions as a
+> PCIe endpoint with single function capability and is programmed to
+> emulate the Soundwire Master controller. It can be dynamically
+> reprogrammed to emulate other interfaces as needed. Essentially, the
+> FPGA emulates an interface and connects to the CPU via the PCIe bus.
+> 
+> Given this setup, the BIOS does not have prior knowledge of the
+> function implemented in the Xilinx FPGA PCIe endpoint. I have a couple
+> of questions regarding this configuration:
+> 
+> Is it possible to define an ACPI Device Tree representation for this
+> type of hardware setup?
+> Can we achieve ACPI-based device enumeration with this configuration?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+If the FPGA is programmed before BIOS enumerates PCI devices, the FPGA
+would look just like any other PCI device, and BIOS would be able to
+read the Vendor ID and Device ID and would be able to size and program
+the BARs.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 273170a2e9499b900b3348307f13c9bc1a9a7345..58646b50bb437fd5eb2ac8cf3955be2db020d6e1 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -1417,17 +1417,17 @@ opp-3302400000 {
- 
- 	pmu-a520 {
- 		compatible = "arm,cortex-a520-pmu";
--		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster0>;
- 	};
- 
- 	pmu-a720 {
- 		compatible = "arm,cortex-a720-pmu";
--		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster1>;
- 	};
- 
- 	pmu-x4 {
- 		compatible = "arm,cortex-x4-pmu";
--		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster2>;
- 	};
- 
- 	psci {
-@@ -6590,6 +6590,20 @@ intc: interrupt-controller@17100000 {
- 			#size-cells = <2>;
- 			ranges;
- 
-+			ppi-partitions {
-+				ppi_cluster0: interrupt-partition-0 {
-+					affinity = <&cpu0 &cpu1>;
-+				};
-+
-+				ppi_cluster1: interrupt-partition-1 {
-+					affinity = <&cpu2 &cpu3 &cpu4 &cpu5 &cpu6>;
-+				};
-+
-+				ppi_cluster2: interrupt-partition-2 {
-+					affinity = <&cpu7>;
-+				};
-+			};
-+
- 			gic_its: msi-controller@17140000 {
- 				compatible = "arm,gic-v3-its";
- 				reg = <0 0x17140000 0 0x20000>;
+So I assume the FPGA is not programmed before BIOS enumeration, the
+FPGA doesn't respond at all when BIOS or Linux reads the Vendor ID,
+and you want to program the FPGA later and make Linux enumerate to
+find it.
 
--- 
-2.34.1
+From Linux's point of view, this is basically a hot-add of a PCI
+device.  If the Root Port supports hotplug and you have pciehp enabled
+(CONFIG_HOTPLUG_PCI_PCIE=y) and if the FPGA comes out of reset and
+brings up the PCIe link after being programmed, it all might "just
+work."  You can also force a complete re-enumeration by writing a
+non-zero value to /sys/bus/pci/rescan.
 
+I'm not sure why you would need ACPI or a device tree to be involved.
+ACPI and device tree are ways to tell the OS about devices that do not
+have a native enumeration protocol.  PCI devices (like the programmed
+FPGA) do support native enumeration, so generally we don't need ACPI
+or device tree descriptions of them.  PCI host bridges have a
+CPU-specific bus on the upstream side and a PCI bus on the downstream
+side, so they are not themselves PCI devices, and we do need ACPI or
+device tree descriptions for them.
+
+If you have something that doesn't work like you expect, can you post
+a complete dmesg log and any user commands you're using to program the
+FPGA?
+
+Bjorn
 
