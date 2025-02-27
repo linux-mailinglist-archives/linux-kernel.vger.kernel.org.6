@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-537099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32893A48810
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:45:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E217DA4880B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DB6A16954B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39948188A307
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8581F26B2DF;
-	Thu, 27 Feb 2025 18:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5267234984;
+	Thu, 27 Feb 2025 18:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DCul949R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lt6JE2OK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lb4fisJ6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F0126B966
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC75E21B9DD;
+	Thu, 27 Feb 2025 18:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681908; cv=none; b=mgFJYzyjfRoPWIv06cQxkU3UF2cIhbWZxBLUr7kUn0LvRnewbIPv5o3EhsIA6PcQhA/9Deui2PUGc9to0Zx1rfbIj467+b4W7+vBvZlM3au6Sl4s3/ChWlf3rau2fpLbKWVIJGckpiL6rLs8MNIasAZAwoa+aMHg9wrBJys/3Qw=
+	t=1740681891; cv=none; b=Y2VMdBSnPG4F/tR6QsSWbwXW6QGrDi+ihN31EsU8lVF2pejPYH12EzTJtB+39625RlC13LlDCPLpYEZqtTA54QyVGrD+p4hzHWkzoHVmp6VNHD51zg7juqECxykYc0hQqzARxQ65psv5ovOLl+b39duLHcfRHcREbwbJnPg/KKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681908; c=relaxed/simple;
-	bh=xeZi8+e1HOiLrt4irUuPbX2XdqRh/jCjNzv6den6hjA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SFwm7LM9AnL08Pz291p3Ykn/IJgdZlsES+cVYPV8bfUXLjM/Tq929ecBu2Vi+Ft4SXxQO9PWd8/Gl2N3BpTCyUF3QSywzcFBFVv4TmtsaxSmRd8ZLX6ofXOjfLZSkUSeXZWjyrZAmFC+IyfdZwpVdyON8O9/CiEfWKorxjHLfog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DCul949R; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740681907; x=1772217907;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xeZi8+e1HOiLrt4irUuPbX2XdqRh/jCjNzv6den6hjA=;
-  b=DCul949RLoe+T5Gbw7oU834iAFlBzT4ikYAhVs7bGze9Ms9Cnj8tj6+8
-   McjV1g7oUdWQ+sMRfXvwq27hjzBVhU3AvtZNY97KYuNhbZwOMILINITCp
-   2FYLb4UvslOTcrMngyhmysT110nAr5YY8lFfSW9Y+5q8La4KJPrHlrXuf
-   TkePphL+O0b1S3NQrUNwP/qdZ3E8T5miuY9wUAbXrZ0SW/xMTo8iy2rZb
-   ATYAg7ORlJK+h120AwGOxtFc30Yvl68FlnG/3lv1f4QvyrB9ZrZVnJqBO
-   pnBZ8uPw9xbAjCxGTTI6w1JrciRNrnfk3wjvcxJzTlpczHPiGGdAkdyWV
-   Q==;
-X-CSE-ConnectionGUID: YkWUJzCJRx+2RDS8RRezKQ==
-X-CSE-MsgGUID: VtchJlpES0Ka+WE98gJR/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720863"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41720863"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:06 -0800
-X-CSE-ConnectionGUID: n9kNdMlYTwKoPL5QDHGP2Q==
-X-CSE-MsgGUID: 0i7MoiuMRySCfb+c/giU/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117767380"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.154.132])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:06 -0800
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	chang.seok.bae@intel.com
-Subject: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table and accessor macro
-Date: Thu, 27 Feb 2025 10:44:47 -0800
-Message-ID: <20250227184502.10288-3-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
-References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1740681891; c=relaxed/simple;
+	bh=qZVa2FfIOD+tvjK1GniRWlmgNAwRhH43ndWjbEK69wM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hJ/VlNFIk03Gwy8WeDqWESEOo4T6ETaq9fKz+0T7M6UpHqR/W1aS6jEkQwnCkTeJYk/Pa0/+4rQmklrK3yqRz456xa9r1ZuIZrWVdjpvsM/SsmJ7FyV2h5BjzzgaLXyVH6jYHlv1j/7M4nX8zl5xaJt7P8WLD3N6A5hrs//h4oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lt6JE2OK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lb4fisJ6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 18:44:47 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740681888;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NaitRgbFIRxd5khauK0yKaY3/YMKSanBzbjMiCElCIc=;
+	b=lt6JE2OKvF8Q674TB2h5X/v6WJmW8c2uUf15J2cU/CW6/02QA18gsRDZge6MdgqFaeUQ1j
+	3Du34F/28zMYaP6YX646geKHC+njLu3jQdMSpjpvEKqp9GYPxR4BuLtbuaLbDvWnTnn4t1
+	wXE86PfrQp2nWPTwD9NSYD6YdCixb+UpFW6hvcZtvRfGLYbgEHOSN12l7i687n3AY0wb+F
+	TAFPhguKUPCAdWG5LaGM7PSSXYW/4W1GJ8LuCVXiQurLoL4DnwV//EvWHORS9Qqzsecd83
+	oZJn+88dqVLNj5hpYhiWwknHiz5qeDUWaLg/ldEo1qWTxxLCZaNzCSYlln8OXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740681888;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NaitRgbFIRxd5khauK0yKaY3/YMKSanBzbjMiCElCIc=;
+	b=lb4fisJ6UnmEaRxNOzHVrPJBjtwD3njkeAIsyb4hPMV4TmDL9G3BtDwC5ulc3VB0STxrKE
+	sFnYUdEIrifccNBA==
+From: "tip-bot2 for Chang S. Bae" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/fpu: Refine and simplify the magic number check
+ during signal return
+Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Oleg Nesterov <oleg@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241211014500.3738-1-chang.seok.bae@intel.com>
+References: <20241211014500.3738-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174068188734.10177.17059393969800577740.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The kernel has largely assumed that higher xstate component numbers
-correspond to later offsets in the buffer. However, this assumption does
-not hold for the non-compacted format, where a newer state component may
-have a lower offset.
+The following commit has been merged into the x86/fpu branch of tip:
 
-When iterating over xstate components in offset order, using the feature
-number as an index may be misleading. At the same time, the CPU exposes
-each component’s size and offset based on its feature number, making it a
-key for state information.
+Commit-ID:     dc8aa31a7ac2c4290ea974c13cb0094e08f8948f
+Gitweb:        https://git.kernel.org/tip/dc8aa31a7ac2c4290ea974c13cb0094e08f8948f
+Author:        Chang S. Bae <chang.seok.bae@intel.com>
+AuthorDate:    Tue, 10 Dec 2024 17:45:00 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 19:38:06 +01:00
 
-To provide flexibility in handling xstate ordering, add a mapping table:
-feature order -> feature number. This new array stores feature numbers in
-offset order, accompanied by an accessor macro.
+x86/fpu: Refine and simplify the magic number check during signal return
 
-The macro enables sequential traversal of xstate components based on
-their actual buffer positions, given a feature bitmask. This will be
-particularly useful for computing customized non-compacted format sizes
-and sequentially accessing xstate offsets over non-compacted buffers.
+Before restoring xstate from the user space buffer, the kernel performs
+sanity checks on these magic numbers: magic1 in the software reserved
+area, and magic2 at the end of XSAVE region.
 
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+The position of magic2 is calculated based on the xstate size derived
+from the user space buffer. But, the in-kernel record is directly
+available and reliable for this purpose.
+
+This reliance on user space data is also inconsistent with the recent
+fix in:
+
+  d877550eaf2d ("x86/fpu: Stop relying on userspace for info to fault in xsave buffer")
+
+Simply use fpstate->user_size, and then get rid of unnecessary
+size-evaluation code.
+
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/r/20241211014500.3738-1-chang.seok.bae@intel.com
 ---
-This lays the groundwork for handling APX, which has feature number 19
-but appears immediately after FEATURE_YMM, occupying the space previously
-reserved for the now-deprecated MPX state.
----
- arch/x86/kernel/fpu/xstate.c | 37 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ arch/x86/kernel/fpu/signal.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 6a41d1610d8b..cee9a1e454b7 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -91,6 +91,43 @@ static unsigned int xstate_flags[XFEATURE_MAX] __ro_after_init;
- #define XSTATE_FLAG_SUPERVISOR	BIT(0)
- #define XSTATE_FLAG_ALIGNED64	BIT(1)
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 8f62e06..6c69cb2 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -27,19 +27,14 @@
+ static inline bool check_xstate_in_sigframe(struct fxregs_state __user *fxbuf,
+ 					    struct _fpx_sw_bytes *fx_sw)
+ {
+-	int min_xstate_size = sizeof(struct fxregs_state) +
+-			      sizeof(struct xstate_header);
+ 	void __user *fpstate = fxbuf;
+ 	unsigned int magic2;
  
-+/*
-+ * Ordering of xstate components in non-compacted format:  The xfeature
-+ * number does not necessarily indicate its position in the XSAVE buffer.
-+ * This array defines the traversal order of xstate features, included in
-+ * XFEATURE_MASK_USER_SUPPORTED.
-+ */
-+static const enum xfeature xfeature_noncompact_order[] = {
-+	XFEATURE_FP,
-+	XFEATURE_SSE,
-+	XFEATURE_YMM,
-+	XFEATURE_BNDREGS,
-+	XFEATURE_BNDCSR,
-+	XFEATURE_OPMASK,
-+	XFEATURE_ZMM_Hi256,
-+	XFEATURE_Hi16_ZMM,
-+	XFEATURE_PKRU,
-+	XFEATURE_XTILE_CFG,
-+	XFEATURE_XTILE_DATA,
-+};
-+
-+static inline unsigned int next_xfeature_order(unsigned int i, u64 mask)
-+{
-+	for (; i < ARRAY_SIZE(xfeature_noncompact_order); i++) {
-+		if (mask & BIT_ULL(xfeature_noncompact_order[i]))
-+			break;
-+	}
-+
-+	return i;
-+}
-+
-+/* Iterate xstate features in non-compacted order */
-+#define for_each_extended_xfeature_in_order(i, mask)		\
-+	for (i = XFEATURE_YMM;					\
-+	     i = next_xfeature_order(i, mask),			\
-+	     i < ARRAY_SIZE(xfeature_noncompact_order);	\
-+	     i++)
-+
- /*
-  * Return whether the system supports a given xfeature.
-  *
--- 
-2.45.2
-
+ 	if (__copy_from_user(fx_sw, &fxbuf->sw_reserved[0], sizeof(*fx_sw)))
+ 		return false;
+ 
+-	/* Check for the first magic field and other error scenarios. */
+-	if (fx_sw->magic1 != FP_XSTATE_MAGIC1 ||
+-	    fx_sw->xstate_size < min_xstate_size ||
+-	    fx_sw->xstate_size > current->thread.fpu.fpstate->user_size ||
+-	    fx_sw->xstate_size > fx_sw->extended_size)
++	/* Check for the first magic field */
++	if (fx_sw->magic1 != FP_XSTATE_MAGIC1)
+ 		goto setfx;
+ 
+ 	/*
+@@ -48,7 +43,7 @@ static inline bool check_xstate_in_sigframe(struct fxregs_state __user *fxbuf,
+ 	 * fpstate layout with out copying the extended state information
+ 	 * in the memory layout.
+ 	 */
+-	if (__get_user(magic2, (__u32 __user *)(fpstate + fx_sw->xstate_size)))
++	if (__get_user(magic2, (__u32 __user *)(fpstate + current->thread.fpu.fpstate->user_size)))
+ 		return false;
+ 
+ 	if (likely(magic2 == FP_XSTATE_MAGIC2))
 
