@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-535181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F0A46FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:08:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CB7A46FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EDAD188D466
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FC73A8FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AD4322B;
-	Thu, 27 Feb 2025 00:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B32728EC;
+	Thu, 27 Feb 2025 00:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2xCzwEZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KpbkjT6g"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5E48F66;
-	Thu, 27 Feb 2025 00:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F51A47
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740614899; cv=none; b=VtU2dEWEaRqwgXsG9JuCqllXzuGEikXGrQtVAvXEG8jfT4QFKR3FD5D4U0p/7JbsWK1glwF0LJWgxMyQ+87/C2G2qA1EGWW0FnW6mJfXnjx848ut7Y25ZsWwMBU2S7hVHcaNjX/USZ29KMVVMauiBr8ibBt8PuRicogCVx2gIO8=
+	t=1740614947; cv=none; b=KsXUck56t8tCHUFAPk+wZnjrNjRYZnZr7LthqttrGXmiRpeS4Y8GEJjfV+rYt+9ygbzZ9OBEZ/VBpLhSxdQPoPFBBZ+9eqNkEc/oicsiJ9TE0TvyyoG871KopZcUwoCOcTrlrhOYp8yAbwndFY5GjfW8rxYVE7RleI6oZouHTkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740614899; c=relaxed/simple;
-	bh=xgs7rT60JFXEHjg9mQodKhFyFx8CjHFlo+z0Izl+sPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oDP806idcKop+jYjqlry9XFZ7gPpsqZe1CiA5LFvTv0eMKYTfTuTWaPu0OKPg0GB4yjIQOL8JVqK2T9b0SsVOxq314NTSS9TSjqA9Z/UK7JZi0q2A2JQngHSk3q3nxor8xQ4LhNu31LdIiwoa1fSqabdrIdyqXaQZUbfIh5Ng68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2xCzwEZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC32FC4CED6;
-	Thu, 27 Feb 2025 00:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740614898;
-	bh=xgs7rT60JFXEHjg9mQodKhFyFx8CjHFlo+z0Izl+sPE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=g2xCzwEZWvRK21RHGuJr1sXCfA+YRAmrbtRAF4GdHDCVQ3wVOMp9umP4H7FarbFdq
-	 7frYHCCegvUG0mb37YjiDdZI3TS/JXMRQoy8q3nP8xTtrzv/gKad+G/LeFkkA1GdFq
-	 +Xb/QGPx2cFkpgnS1M0vlAOmhAYWCMBFnU2lez3G/iFcVyxa7KOkyiINv+WN2gLZOZ
-	 3iXL2RslMqWfH1h/qfcGQk7RDLA0bYR35kyCAplYb7xyeHFgDhnBDatEcCUXqJi1Ug
-	 vIXiULOxDdWv9Ye3W2luRCJb+zAmf0jgS7eqPIm2IKSwpg2PlAXAvDncAFh4R3rhSd
-	 +wcSfEiHPTm/Q==
-Date: Wed, 26 Feb 2025 18:08:17 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v9 3/7] PCI: Add parent_bus_offset to resource_entry
-Message-ID: <20250227000817.GA565171@bhelgaas>
+	s=arc-20240116; t=1740614947; c=relaxed/simple;
+	bh=T93EluGlAaxHLNvDA5oGbMjnzf0LzeJetPK/nBd96dY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z6vKb/CSYc0PThO78a2BBNNaTQsLyARSkugduTGpaKum7qDYnwXM71oCD9y4eky/ba+UQF+pb4NmSXTMfTYUCpQq9WDDwFdVidCBv2DPlI2paZEwtoJm84DE/15jqbZT+aUdJVO1VGrUp8YSIjlhMMnlXNXK1bfmBbwMFg0yzb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KpbkjT6g; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fb8de54da9so2887797b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740614945; x=1741219745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxDDdJmrNTe6UPiTyr082HreUva1ZWAfMMzgjWcC55k=;
+        b=KpbkjT6gLFeHyNS5mt/AAAPUOMl+ChOWhqknh37UBwoU0vLPV7xqftF2F144K5d9jk
+         GO4ylHhEO+GYBc3Tv9TpFVWYXmJikuqtrJ0ytq3pCqS/teaeepgnTPB5pZGzBXZC7m9f
+         bOSsuDGkhmIYFu1/Et7PwZC4S/ja2Rs3aJVo8+4kLpGxAWC9ooWCp7hAOFJi4Z8qSrye
+         g0BcwQJfENKq4mLRdnb3S2h8+LXTI9QFAjAvLYvZO+3JSeGup3+YIUK6ESe4XSDF2rGW
+         lL28NXMY/tFOxggd1yJa0H6xVnA3HN68d9UAgjyOmdRHbc4285UGy/GBX9ctisFWlwkk
+         sMHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740614945; x=1741219745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fxDDdJmrNTe6UPiTyr082HreUva1ZWAfMMzgjWcC55k=;
+        b=tVMlIuiy1UJroCkRgLP9aQQYcU6fYXnI1kD+fDmoeDnYEyJyR9XUY8a96hqI1t3RsO
+         wcTGMFRISLmupnzfVVhRkN5iTYSoIDRHq5H1vYp3CqqAFjy429coNdyFBgUHXpuvBKvD
+         qsrsKBWBXTpSmh83bzLtXsY1McvwGAG1Wrpt617al8p5l9hC23IBtbb5UbKv4QRctMo7
+         PbgsG4cUXMSHEsHUHpFU7GMvBn088UzSUncrnnCPL5MIqgwvyt6orOUY/zAm4rD4n84B
+         rmEzPUhJj7LhbDWOACWjUrjGWfGoAkEPXTrsgui1CWzht19nRinm7aanx9cWNqqp2vot
+         ntPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJc3agbzG8Neb3lq2FA1R6DpZPOCbqhttmtGoD7mC1SQb+HCUYMQGgfPBHspgvOnMJ701vkdVgn+3VWBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/SMKp7fAEWA/YoT11zv8r9C/rRDNah4KHsDGJHUn4UuODyQ+N
+	5b0XgtyDeVaFqqJg4xQ4MJx2E4fprvHRtN0C68ZnlJ+oiW9yIGYHOoNI2Xr4ly5D2JifjMgsngi
+	WI629eNNggo/lwxSLUnDIubqtmZxWx5MGXrlRFnWu5Te/j27wAw==
+X-Gm-Gg: ASbGncvLA11LBeE7UFAEfZEV8p7m6IDDLpRWzRr9uVtO5XVbQEivUlZ/UGHsMDnIUJT
+	pqTp5S8Onn2hBFM3Drl3guL7KU2G8aMwv0PuLPAIGj9ZCu8YPRLH67R/S1fkbnJC5M+h/r18nfW
+	irZj5K8hk=
+X-Google-Smtp-Source: AGHT+IGsDgtv1KuxkNbzExf+EpIsoY+lM5NEnz/rT+LKaBz8EW3XsAlE+HFeGN6cBIjwcOMLp67F3eTv9peKYwEzbGU=
+X-Received: by 2002:a05:690c:6311:b0:6f9:4f93:c805 with SMTP id
+ 00721157ae682-6fd10a18bd9mr89838447b3.21.1740614944849; Wed, 26 Feb 2025
+ 16:09:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250128-pci_fixup_addr-v9-3-3c4bb506f665@nxp.com>
+References: <20241219172859.188117-1-linux@treblig.org> <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 26 Feb 2025 19:08:52 -0500
+X-Gm-Features: AQ5f1JrBAIqwrkawhZsoxnOQhIVUJoQVq-3y9hl2L-3pD5-ohnf4Qjl11DTqy_w
+Message-ID: <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+To: linux@treblig.org, serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 28, 2025 at 05:07:36PM -0500, Frank Li wrote:
-> Introduce `parent_bus_offset` in `resource_entry` and a new API,
-> `pci_add_resource_parent_bus_offset()`, to provide necessary information
-> for PCI controllers with address translation units.
-> 
-> Typical PCI data flow involves:
->   CPU (CPU address) -> Bus Fabric (Intermediate address) ->
->   PCI Controller (PCI bus address) -> PCI Bus.
-> 
-> While most bus fabrics preserve address consistency, some modify addresses
-> to intermediate values. 
+On Thu, Dec 19, 2024 at 1:28=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Thu, Dec 19, 2024 at 12:29=E2=80=AFPM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > The vanilla has_capability() function has been unused since 2018's
+> > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> >
+> > Remove it.
+> >
+> > Fixup a comment in security/commoncap.c that referenced it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  include/linux/capability.h |  5 -----
+> >  kernel/capability.c        | 16 ----------------
+> >  security/commoncap.c       |  9 +++++----
+> >  3 files changed, 5 insertions(+), 25 deletions(-)
+>
+> Now that Serge has the capabilities tree back up and running I'm
+> assuming he will grab this patch, if not just let me know Serge and I
+> can take it.
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-s/modify/translate/
+Bump this thread to make sure Serge sees it ...
 
-Specifically, they *translate* addresses, which means the same offset
-is added to every address in the range, as opposed to masking or some
-other transformation.
-
-I think we can take advantage of this to simplify the callers of
-.cpu_addr_fixup() later.
-
-Ironically, most of the .cpu_addr_fixup() implementations *do* mask
-the address, e.g., cdns_plat_cpu_addr_fixup() masks with 0x0fffffff.
-But I think this is actually incorrect because masking results in a
-many-to-one mapping, e.g.,
-
-  0x42000000 & 0x0fffffff == 0x02000000
-  0x52000000 & 0x0fffffff == 0x02000000
-
-But presumably the addresses we pass to cdns_plat_cpu_addr_fixup()
-don't cross a 256MB (0x10000000) boundary, so we could accomplish the
-same by subtracting 0x40000000:
-
-  0x42000000 - 0x40000000 == 0x02000000
-
-> +++ b/drivers/pci/of.c
-> @@ -402,7 +402,17 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  			res->flags &= ~IORESOURCE_MEM_64;
->  		}
->  
-> -		pci_add_resource_offset(resources, res,	res->start - range.pci_addr);
-> +		/*
-> +		 * IORESOURCE_IO res->start is io space start address.
-> +		 * IORESOURCE_MEM res->start is cpu start address, which is the
-> +		 * same as range.cpu_addr.
-> +		 *
-> +		 * Use (range.cpu_addr - range.parent_bus_addr) to align both
-> +		 * IO and MEM's parent_bus_offset always offset to cpu address.
-> +		 */
-> +
-> +		pci_add_resource_parent_bus_offset(resources, res, res->start - range.pci_addr,
-> +						   range.cpu_addr - range.parent_bus_addr);
-
-Wrap to fit in 80 columns like the rest of the file.  Will have to
-unindent the two lines of arguments to make this work.
+--=20
+paul-moore.com
 
