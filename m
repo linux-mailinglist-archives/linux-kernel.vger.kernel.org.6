@@ -1,150 +1,145 @@
-Return-Path: <linux-kernel+bounces-536693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32C7A48311
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:35:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18451A48316
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0674164424
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC0E3B5682
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96FC2356AE;
-	Thu, 27 Feb 2025 15:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3A326B959;
+	Thu, 27 Feb 2025 15:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDUtWH9p"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="2n352TG0"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A805026AAB2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103902222BA;
+	Thu, 27 Feb 2025 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670515; cv=none; b=JFPbr1HuJVybvOsptAthIDS/AWsi+yhzYj2+KW4saA+WRiGIIyHToN8stboacagErfyo17Atqf7Rkb0UFBYbjO3MtRTrUoIdUF4R/W+3Gg2QS1kC4Mp+ehO7T9rUNYpPHOLpuBnsdGFGeLEq1LrU1ICP+hLg1rVHNVAMTVx6dQw=
+	t=1740670572; cv=none; b=CJ3JdPMBf/6eDUokwOoNQ4KuiZtzCV/BH4jvxsKmj1gs3OOYfOrxalGLOkGuVDlvfd6ThbiuilHqP1Ll1nM7V2ep7mm1IaKA1k/isG18Zi9x9Afx/nhIUUnJ42K1WxG3Z4Seb4ddtqb4V+oYckhQsNGUnoeNZrjpWYsk9P4f6G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670515; c=relaxed/simple;
-	bh=THOgoUCPQEdt7Oe3vGYp8azSrWCOlikK8ngknxVD1fA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=usspNUZtO4rFrapni5VMK1L3ww9U3TRnp6PvcSbJkRtTEGmOUh7/v4z6zkJDpmyunp6CLQFL7uy5SbfMUOqBdSb3Ub6a26bDfrcf/uvuJguGq9RZ5+ukKIP+W6yXjzF8gVVW4b85a7+mufvI1eJeFGCKubj8jVhaYvQPGVqhFac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDUtWH9p; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-546210287c1so1037237e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:35:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740670512; x=1741275312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BJAVQXLJF41TwKPGAbCYXhqrLx4dqXncJmXzY8Kudhs=;
-        b=eDUtWH9ptRNs57nokhVDTCkaNR1Axib7A49Wzdlk50+OKtfZVguV5xDsTdDO3yiMQ6
-         sc5HRdo2VTuBcJOWsbzYW5p48jURSWNd9inq/E5nf/IbgbtKess7kqQvnTEHFjIZcJTk
-         08uAuu/dyDxQf294WYch5qfXYV22zrfRZcaT6/WZbSbFKWa0C8ZLKC/wStE5iVmuhTry
-         MUMhig0lg6xSvVmfnnecuK6qi8CD9zR7cdtPi8TP3XbMMcLZ4hiixVb5dnrq7iXg2Lnp
-         Z2Y5Q/fOxaDV2KixMwDzyLPPklN8RPRJ0uDxZ87kQh3YgqiPYzpHHsq02mJNsSeznk3H
-         tB2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740670512; x=1741275312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BJAVQXLJF41TwKPGAbCYXhqrLx4dqXncJmXzY8Kudhs=;
-        b=vNGgwdECppUCfnFv1CsuxUOb9AZ/ZdRYabCycuQZcthOFYY/9qwaTSFZ8EU2tzut59
-         yGHvdOWdhA3napILUGF8vI0E8XTUu+ugHTdzEM6m84ApMhtYEjpV871N6+DeZ2bxg17p
-         Avme1yOASAS6j3q/gQDvtA8QOVwEsZFLtU0Qb5IQwwqCizIYyGNT/5ClmEyR1ZsjJXtM
-         nDLYyZPKsvvVelwnFc/eNmI8Wt8C7vZ0gM3SjpHrtVNq2od9Sg2lMX9FpcuChKLIFZNy
-         +cwU5mj+owAEwXCRElta7+kT4QnKCI++g4vXjoAPjP1JwnmgXFGE4T8wxZQiOGu/FeqM
-         HgnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ/j3mCeE/Zgn5a2IofpEfa8nSH1jrCESHCmlv63ZeVwgrJ7QsJuXSPexcsdqKT1pcfcauREvY58DQe1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqDLd+Lp7P6CwJ7Gwu/cuYubTN5e/bP2u6UPKYmXl7unMggAeI
-	uuJoPUkTxAuk39wfjoyy9I+tih8uAMJdKZSP8RabmMxVM588CUDpDQiRuFYKwplSz38wvIx0uk3
-	MsTXPrsxrOhUrpmrmUtCus+4oO4JobpJa
-X-Gm-Gg: ASbGncufvsiL8wa6LCdJZk21YsF3pE+riW8jJ+qKYiLs5nQF8O6VwtZQuZHS4Oqet0M
-	JKjS/4TBdDEcSwXL3JNTBr35KHN5jZoUVCwrHu3m0k9brzePZY6YrJLc97krCM/xgbnXZY3y0ZC
-	OUFP/A7RM=
-X-Google-Smtp-Source: AGHT+IHkioLSrJ+spmAVkzxsOQKumBkTuuyrkNOUQFzsV1KMTNbozWKdNRWZKXkA2/o4oBp7wYg8ktbccLWtdz/oMp8=
-X-Received: by 2002:a05:6512:308a:b0:545:10bc:20ca with SMTP id
- 2adb3069b0e04-54839147d25mr13703939e87.24.1740670511542; Thu, 27 Feb 2025
- 07:35:11 -0800 (PST)
+	s=arc-20240116; t=1740670572; c=relaxed/simple;
+	bh=T7wvOszu/unZkBQdoGyUu95ygsw6g2gM1ljmXZ2ze90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iMWXAPLySaFBYahtvkU6DfvdPh3RrZ6haF21NDCRde3BnwqKAHRL3z+aWzJnAb0/DJZjCyVbuGe6tiaY0p681FKP7wIE3dZN3+rwqrY43QhZ60uc9EZcehPEV2mLhqU6dGQyvopi8++8Cd6Un1EimTBkneFjNGWdvRqvLEguCaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=2n352TG0; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 86A332E08EB1;
+	Thu, 27 Feb 2025 17:36:04 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740670566;
+	bh=eWpEwZhNxv2521cAw63u3P9hTVlN8O5YjZboZLx1fXw=; h=From:To:Subject;
+	b=2n352TG0UQI3JVZLkNIQYHWY0Ja8beT2nDRuRq1F8aZaSQ5SRjBRdx/iYqJxs+ACq
+	 sXmWlzCgSELCOJUnvqhWYktLyCvoZrrEANZh2TMx7c+e+LsvKsAk9r+qqUBaZ+T3EW
+	 fQNDNLviWf9sA+BhX96kQYyOhzAioellQwqbwpds=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: mario.limonciello@amd.com,
+	mpearson-lenovo@squebb.ca
+Cc: ilpo.jarvinen@linux.intel.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	rafael@kernel.org,
+	hdegoede@redhat.com,
+	me@kylegospodneti.ch,
+	luke@ljones.dev,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v2 0/2] ACPI: platform_profile: fix legacy sysfs with multiple
+ handlers
+Date: Thu, 27 Feb 2025 16:36:01 +0100
+Message-ID: <20250227153603.131046-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226133703.3c9775c9e50e198abc9b9f6e@linux-foundation.org>
- <20250226225605.2000-1-sj@kernel.org> <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
- <CAJGd784+kQ8NXSp1=9tZW+4wYvTh6SkW7ySaB0TVGcinjjcEdQ@mail.gmail.com>
-In-Reply-To: <CAJGd784+kQ8NXSp1=9tZW+4wYvTh6SkW7ySaB0TVGcinjjcEdQ@mail.gmail.com>
-From: bus710 <bus710@gmail.com>
-Date: Thu, 27 Feb 2025 07:35:00 -0800
-X-Gm-Features: AQ5f1JqUz4ttcsCrVT7lObPG6DvWRZ3OCO3KBiTMyelf27g9p6d60kOIKH2WNB0
-Message-ID: <CAJGd785bhaXV4=R8dL-yNdQLN3YsJL+L+XQH3jwqYdYCCy5LNA@mail.gmail.com>
-Subject: Re: [PATCH] samples/damon: a typo in the kconfig - sameple
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174067056588.31591.3695283512802745173@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-I was wondering how others live with the git send-email all the time,
-so I searched for alternatives.
-Then I found out that some people use terminal email clients like
-Mutt, and learned that the inline patch is the right way, not
-attached.
-Let me do the inline patch if there are more chances in the future.
+On the Asus Z13 (2025), a device that would need the amd-pmf quirk that
+was removed on the platform_profile refactor, we see the following output
+from the sysfs platform profile:
 
-On Wed, Feb 26, 2025 at 11:03=E2=80=AFPM bus710 <bus710@gmail.com> wrote:
->
-> On Wed, Feb 26, 2025 at 3:07=E2=80=AFPM bus710 <bus710@gmail.com> wrote:
-> >
-> > On Wed, Feb 26, 2025 at 2:56=E2=80=AFPM SeongJae Park <sj@kernel.org> w=
-rote:
-> > >
-> > > On Wed, 26 Feb 2025 13:37:03 -0800 Andrew Morton <akpm@linux-foundati=
-on.org> wrote:
-> > >
-> > > > On Wed, 26 Feb 2025 10:42:04 -0800 SeongJae Park <sj@kernel.org> wr=
-ote:
-> > > >
-> > > > > From: bus710 <bus710@gmail.com>
-> > > >
-> > > > Full names are preferred, please.  Actually I think it's "required"=
-.
-> > >
-> > > Thank you for letting me clearly know this.  I'll request full names =
-to DAMON
-> > > patch authors from next time.
-> > >
-> > > bus710, we could still update the patch before it is merged into the =
-mainline.
-> > > If you could, please let us know your full name and if we can update =
-the patch
-> > > with that.
-> > >
-> > > >
-> > > > I'll apply it anyway due to the patch's minor nature, thanks.
-> > >
-> > > I agree this is a simple enough patch that the name doesn't really ma=
-tter.
-> > > Thank you Andrew :)
-> > >
-> > >
-> > > Thanks,
-> > > SJ
-> >
-> > Oh, yes. I was a little worried if I added too much noise for such a
-> > small work, but I shouldn't miss this opportunity to leave my name in
-> > Linux history.
-> > Let me prepare a new patch as soon as possible.
->
-> Hi all,
->
-> Please find the attached patch.
-> Based on the latest one, from @Andrew Morton I just replaced my ID
-> with my real name as well as updated the subject.
->
-> Thank you,
-> Seongjun Kim
+$ cat /sys/firmware/acpi/platform_profile_choices
+balanced performance
+
+I.e., the quiet profile is missing. Which is a major regression in terms of
+power efficiency and affects both tuned, and ppd (it also affected my
+software but I fixed that on Saturday). This would affect any laptop that
+loads both amd-pmf and asus-wmi (around 15 models give or take?) and only
+get worse in 2025, as more laptops start to integrate amd-pmf.
+
+The problem stems from the fact that wmi handlers use different
+profiles than amd-pmf, which can load alongside them, and block their
+choices. This patch series is a mitigation of this issue, by making pmf
+accept all profiles through the legacy sysfs, and by making it a secondary
+handler.
+
+While we can argue about whether the secondary handler concept is
+necessary, alternatives such as renaming profiles in current drivers will
+break existing scripts that are tested for a particular manufacturer, and
+allowing amd-pmf override options may cause unforseen regressions in
+other wmi drivers.
+
++CC Luke
+
+Changelog since V1:
+    - merge patches 1 and 3 as per Rafael
+    - simplify secondary comment about secondary and make it last
+
+Behavior with this patch applied and asus-wmi, amd-pmf
+(maintains interop with 6.13):
+
+$ cat /sys/firmware/acpi/platform_profile_choices
+quiet balanced performance
+
+And writing quiet to it results in the profile being applied to both
+platform profile handlers.
+
+$ echo low-power > /sys/firmware/acpi/platform_profile
+bash: echo: write error: Operation not supported
+$ echo quiet > /sys/firmware/acpi/platform_profile
+$ cat /sys/class/platform-profile/platform-profile-*/{name,profile}
+asus-wmi
+amd-pmf
+quiet
+quiet
+
+Agreed ABI still works:
+$ echo quiet > /sys/class/platform-profile/platform-profile-0/profile
+$ echo quiet > /sys/class/platform-profile/platform-profile-1/profile
+bash: echo: write error: Operation not supported
+$ echo low-power > /sys/class/platform-profile/platform-profile-0/profile
+bash: echo: write error: Operation not supported
+$ echo low-power > /sys/class/platform-profile/platform-profile-1/profile
+
+Antheas Kapenekakis (2):
+  ACPI: platform_profile: Add handlers that do not occlude power options
+  ACPI: platform_profile: make amd-pmf a secondary handler
+
+ drivers/acpi/platform_profile.c    | 57 +++++++++++++++++++++++++-----
+ drivers/platform/x86/amd/pmf/spc.c |  3 ++
+ drivers/platform/x86/amd/pmf/sps.c |  8 +++++
+ include/linux/platform_profile.h   |  5 +++
+ 4 files changed, 65 insertions(+), 8 deletions(-)
+
+-- 
+2.48.1
+
 
