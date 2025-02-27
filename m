@@ -1,163 +1,141 @@
-Return-Path: <linux-kernel+bounces-535896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2C0A478AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:07:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2166A478B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C981891E01
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D466188F81B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA86227EB4;
-	Thu, 27 Feb 2025 09:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vfr/6Gqj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LGYXm/5O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1888B229B3C;
-	Thu, 27 Feb 2025 09:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DB8227599;
+	Thu, 27 Feb 2025 09:06:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1757E15DBB3;
+	Thu, 27 Feb 2025 09:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647103; cv=none; b=o5QPgJ2tl/cyYqFRSXk1osI+TWczRw78moT9ILp3upPklFQXUTw+/G25+nKcG97OKQ7w771ekZNomLCC27Dtxq1oG9b833/Z+kzGevgyR80SQkBrtGum+1SbqgI+KiffPKzJFcDEPzqpmXijJDheqmIywpUD48IEeD4UUsca4G0=
+	t=1740647219; cv=none; b=em5UJsMG7dcHKc2mwe7FZ75vqANY4zTkTCRt3Bh5Yg3Y9GrAxQXonAXucJ0XnbX+Y2CWPl9/ywL2ZE/gUgc8ncCz99VCPq3bsU2skq7+9AorDTBf2tH1jOBgiW2d8XrN+kcbJU7ElgxCA2SrK5yj3IJlvL5kdP5LfuOW7YQ9c5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647103; c=relaxed/simple;
-	bh=hJEgEsYMdc8r1P2YQfuOfXeRuCKjtmjxnSgr7JxGdCQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=bdKKYYRTEjHgxyQrXPow9N7vDMG7dO7WnhrocwEuWlqHx6nO3+c/deMw8W6sSGHZETHpcpe2MGfw6Z5sUxvuhfKv1jQrTLRiNr1BT7WJysBsoxDBdGnFediRBCCnVd1pqWUvD4wVhq8cJW2OJPgOFGfioxv9VUn1C3aB7H0zy9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vfr/6Gqj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LGYXm/5O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 09:04:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740647099;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ylzoQEmuhd4REW3S3P4w446IwA4hDH1SSyM5nagkaY=;
-	b=Vfr/6GqjWYQ9g80VrknnJIP9xjaXymi5T8E2kGer72cAY5tF5zgvqRXk4ZUlf8H2UhBZly
-	6E++ecrbATQ11OclMkIZiC1900aBExMzcPpJaiNahQvtyIg7+zt6kJdTHFx+tpqbYAMKWI
-	f2FkhFKDuXBV5hK3cp9SUazFqvVCKv58k4h2IhjWCPj6wWnqunDXCIDNS1CMRTxL6fXJ+z
-	zNLT8sNAHUgmErXGnn3BcXatYh4IJ3JdrgjR+G+ACBC7aoFej1ysV/Z6QYsDobK1AhUvrM
-	KEOGOA6ExB/hsN4Xa+WMtl5Swpph8IVuzPAiG39gARm4GG+FdsgeTSlrZnHDXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740647099;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ylzoQEmuhd4REW3S3P4w446IwA4hDH1SSyM5nagkaY=;
-	b=LGYXm/5OqmqekmJQ9g30aenqoxfJ+PZIKYgE0wU7w1YU0z0ap4kgprP/w3lZdD4ezE4VLU
-	GFpMKEp50RyMmiCQ==
-From: "tip-bot2 for Matthew Wilcox (Oracle)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Clear _PAGE_DIRTY for kernel mappings when we
- clear _PAGE_RW
-Cc: kernel test robot <oliver.sang@intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
-References: <174051422675.10177.13226545170101706336.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1740647219; c=relaxed/simple;
+	bh=wZEAa+KNPtOATnwUTBTv/f5qVnTpUFEkRttAQxd070M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OQh3xqcy4fYKH1kBYifhpTOFhOOqzzzqR1I1G8+Epj+coRj4DtkMx+RLrdW13A1l6j8isjcs/8JPN7tHweSnDN9pYa0gl+NumrO9kdmp83uRGH/wGbG1r7A3ub6nBQgHEuM0raf//F2bh7XKeBbTDkKNnNuJ/usOkslGTLwREQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D30BD2BCA;
+	Thu, 27 Feb 2025 01:07:11 -0800 (PST)
+Received: from [10.57.85.134] (unknown [10.57.85.134])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 776EF3F6A8;
+	Thu, 27 Feb 2025 01:06:50 -0800 (PST)
+Message-ID: <5520a2de-b536-4f36-975c-9ac98ad28906@arm.com>
+Date: Thu, 27 Feb 2025 09:06:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174064709593.10177.8365314982667248304.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] arm64: hugetlb: Fix huge_ptep_get_and_clear() for
+ non-present ptes
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+ Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250226120656.2400136-1-ryan.roberts@arm.com>
+ <20250226120656.2400136-3-ryan.roberts@arm.com> <Z79SR77ml5ckIzUv@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <Z79SR77ml5ckIzUv@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/mm branch of tip:
+On 26/02/2025 17:41, Catalin Marinas wrote:
+> On Wed, Feb 26, 2025 at 12:06:52PM +0000, Ryan Roberts wrote:
+>> arm64 supports multiple huge_pte sizes. Some of the sizes are covered by
+>> a single pte entry at a particular level (PMD_SIZE, PUD_SIZE), and some
+>> are covered by multiple ptes at a particular level (CONT_PTE_SIZE,
+>> CONT_PMD_SIZE). So the function has to figure out the size from the
+>> huge_pte pointer. This was previously done by walking the pgtable to
+>> determine the level and by using the PTE_CONT bit to determine the
+>> number of ptes at the level.
+>>
+>> But the PTE_CONT bit is only valid when the pte is present. For
+>> non-present pte values (e.g. markers, migration entries), the previous
+>> implementation was therefore erroneously determining the size. There is
+>> at least one known caller in core-mm, move_huge_pte(), which may call
+>> huge_ptep_get_and_clear() for a non-present pte. So we must be robust to
+>> this case. Additionally the "regular" ptep_get_and_clear() is robust to
+>> being called for non-present ptes so it makes sense to follow the
+>> behavior.
+>>
+>> Fix this by using the new sz parameter which is now provided to the
+>> function. Additionally when clearing each pte in a contig range, don't
+>> gather the access and dirty bits if the pte is not present.
+>>
+>> An alternative approach that would not require API changes would be to
+>> store the PTE_CONT bit in a spare bit in the swap entry pte for the
+>> non-present case. But it felt cleaner to follow other APIs' lead and
+>> just pass in the size.
+>>
+>> As an aside, PTE_CONT is bit 52, which corresponds to bit 40 in the swap
+>> entry offset field (layout of non-present pte). Since hugetlb is never
+>> swapped to disk, this field will only be populated for markers, which
+>> always set this bit to 0 and hwpoison swap entries, which set the offset
+>> field to a PFN; So it would only ever be 1 for a 52-bit PVA system where
+>> memory in that high half was poisoned (I think!). So in practice, this
+>> bit would almost always be zero for non-present ptes and we would only
+>> clear the first entry if it was actually a contiguous block. That's
+>> probably a less severe symptom than if it was always interpreted as 1
+>> and cleared out potentially-present neighboring PTEs.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+>> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>
+>> tmp
+>> ---
+> 
+> Random "tmp" here, otherwise the patch looks fine (can be removed when
+> applying).
 
-Commit-ID:     c1fcf41cf37f7a3fd3bbf6f0c04aba3ea4258888
-Gitweb:        https://git.kernel.org/tip/c1fcf41cf37f7a3fd3bbf6f0c04aba3ea4258888
-Author:        Matthew Wilcox (Oracle) <willy@infradead.org>
-AuthorDate:    Tue, 25 Feb 2025 19:37:32 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 09:58:17 +01:00
+Ugh, sorry. That's me squashing in the changes and forgetting to remove git's
+default catting of the 2 commit logs.
 
-x86/mm: Clear _PAGE_DIRTY for kernel mappings when we clear _PAGE_RW
+I'll assume Will can fix this up. If not shout and I'll repost.
 
-The bit pattern of _PAGE_DIRTY set and _PAGE_RW clear is used to mark
-shadow stacks.  This is currently checked for in mk_pte() but not
-pfn_pte().  If we add the check to pfn_pte(), it catches vfree()
-calling set_direct_map_invalid_noflush() which calls
-__change_page_attr() which loads the old protection bits from the
-PTE, clears the specified bits and uses pfn_pte() to construct the
-new PTE.
+Thanks,
+Ryan
 
-We should, therefore, for kernel mappings, clear the _PAGE_DIRTY bit
-consistently whenever we clear _PAGE_RW.  I opted to do it in the
-callers in case we want to use __change_page_attr() to create shadow
-stacks inside the kernel at some point in the future.  Arguably, we
-might also want to clear _PAGE_ACCESSED here.
 
-Note that the 3 functions involved:
-
-  __set_pages_np()
-  kernel_map_pages_in_pgd()
-  kernel_unmap_pages_in_pgd()
-
-Only ever manipulate non-swappable kernel mappings, so maintaining
-the DIRTY:1|RW:0 special pattern for shadow stacks and DIRTY:0
-pattern for non-shadow-stack entries can be maintained consistently
-and doesn't result in the unintended clearing of a live dirty bit
-that could corrupt (destroy) dirty bit information for user mappings.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/174051422675.10177.13226545170101706336.tip-bot2@tip-bot2
-Closes: https://lore.kernel.org/oe-lkp/202502241646.719f4651-lkp@intel.com
----
- arch/x86/mm/pat/set_memory.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 84d0bca..d174015 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -2628,7 +2628,7 @@ static int __set_pages_np(struct page *page, int numpages)
- 				.pgd = NULL,
- 				.numpages = numpages,
- 				.mask_set = __pgprot(0),
--				.mask_clr = __pgprot(_PAGE_PRESENT | _PAGE_RW),
-+				.mask_clr = __pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY),
- 				.flags = CPA_NO_CHECK_ALIAS };
- 
- 	/*
-@@ -2715,7 +2715,7 @@ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 		.pgd = pgd,
- 		.numpages = numpages,
- 		.mask_set = __pgprot(0),
--		.mask_clr = __pgprot(~page_flags & (_PAGE_NX|_PAGE_RW)),
-+		.mask_clr = __pgprot(~page_flags & (_PAGE_NX|_PAGE_RW|_PAGE_DIRTY)),
- 		.flags = CPA_NO_CHECK_ALIAS,
- 	};
- 
-@@ -2758,7 +2758,7 @@ int __init kernel_unmap_pages_in_pgd(pgd_t *pgd, unsigned long address,
- 		.pgd		= pgd,
- 		.numpages	= numpages,
- 		.mask_set	= __pgprot(0),
--		.mask_clr	= __pgprot(_PAGE_PRESENT | _PAGE_RW),
-+		.mask_clr	= __pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY),
- 		.flags		= CPA_NO_CHECK_ALIAS,
- 	};
- 
 
