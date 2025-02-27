@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-537333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3916FA48AA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:36:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C9AA48AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE03E3B6789
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B167A188D320
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B5271260;
-	Thu, 27 Feb 2025 21:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49A7271288;
+	Thu, 27 Feb 2025 21:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cl5pzA5l"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUOO1z1E"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E341A9B2A;
-	Thu, 27 Feb 2025 21:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EC31A9B2A;
+	Thu, 27 Feb 2025 21:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692170; cv=none; b=mIPkgm4kAggjSHZW4EMImvDG5R7P4+Fd+essFineaIeyoyqG3L1XGbatjm3klDFRGg68rsja0jbXu3gsCkQNcw+zew6EJdmvpdx9tZmJK0hSZERWdveHLY/+0acjrVykSFm59bTX9Kj0HhLNrzfrvRP9VrrY8BinIThbhDGaVso=
+	t=1740692183; cv=none; b=Z7RW3pS+Lgl6CvyOaYeNIAqWrhC7oXv1eHR38eso6HEzbAjycLC9fXwE1u7oyH3oOLfakFC/TYJGYBxQVXhd3b4I2Zm9owB4CWy/r84DFCA1ch5Ovf2aQLHhJFEA5KwpKFr9b6rH1f7ffZbW+45ho4KNnmsrRaubJg/qGPiqiys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692170; c=relaxed/simple;
-	bh=l9LpAhbNzWY6DmznpsZqrWzjfBHkws5zyMPx3Os3mOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cwxmRqSekVIwwibYAg7UJrCRr1WNN5rBoPl++Bm6Ai7slhnaL6+W+GJYpOwh9lq8XjJLHTpZvNnqY7afK/d/Sy2mZHMbeFLaSEXzwX+NWt9nCwIZFFhNIZNWQK27l5+Rf1wAIRyYU5c6I+TioXM7dEiNOygOKunqspvkXzyLMA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cl5pzA5l; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740692165;
-	bh=kcG08LvB7I7SuMqpZt/s5KiRL3OfvVwy7rZOKtdF0hQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Cl5pzA5l1w63w9EyZ2Kz4uWIeHkLPgAvMxLOockCgqtgIN05EsZZ2klj7ps71o4+c
-	 iyOvqRuRXfWGKDh2MV25FPQ+ZeUK9dj6RfFUsHNrQABEfwtsE9+XBWuRdRNiYGdm1T
-	 25RY7CErkkK8FqXrc+sVB8W14njU0HNH6O10kS4GcbcZXzv6bYXLW4ZS7DJslYNEXe
-	 /Eb+igHVZElOyFPPqPmLqNz3MraMmUgNtIja12BgoBsJJ7Iw+j+0sIKljzzFf+obAn
-	 CZMe8CN00m654JoBKgwU0hL9QswThFRaGv26GYGZfQUFvwCCW8O9GmQFrPDHMLCNWv
-	 +Rm8YDfHA1Jrw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3l5J647Xz4x3p;
-	Fri, 28 Feb 2025 08:36:04 +1100 (AEDT)
-Date: Fri, 28 Feb 2025 08:36:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Brian Gerst <brgerst@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20250228083604.1ae1462c@canb.auug.org.au>
+	s=arc-20240116; t=1740692183; c=relaxed/simple;
+	bh=aT6LCpQh/DUk/4C5yjN5YoQwJQsJ0wDh8MPAiZ/0uSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUV8Xmk0ZI8FPbf7zb1O/sNScipQF5NZpTlPV5RD28UIyYJpzhqxGMqHoM7SyYxRsRCYneY8p/7fsfInMOWYahEAygsoBK0csIoE6IAaIFbp93xoWVjXypCP8vYVFVijor1MsXrk1nIQ4hVNnx+3R35LWt0CKS65GeREwcELEvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUOO1z1E; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8a2fd46ddso11196d6.1;
+        Thu, 27 Feb 2025 13:36:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740692180; x=1741296980; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hHhkYScYoArvR/F5m50Hw9t1PzuS3cNkRvx1BFjMwv8=;
+        b=gUOO1z1E/WmMZ6Sv0rKm4tPGXcFaWEHTA+6q8Sx47AI5JdUfU3/55zPM8mSq70l2P8
+         BuO7nf76QbTwodNfV4TOxKLQqi49RpEChpX8Xiwy+40C1AIjco/UwYrxR04lAN+ruMlS
+         uWHqkf3vNpaXaeIApagiAUynRRJpiyhMw/E1212pCT5Drd51nRUh9F7TfeX8CyHUO8Z7
+         4n2IND2wXG6Api3Q228BL6nL+j9bZOo2pPut3oYfBO/LMbBV/Ezf7hJDm/oiD4gG92+W
+         NH0hqu30soGnLtuCYn4XcEjOUfrH68J1DmcxA5V47TtGaPQBy6/Y0IQ8bNR3N0NgfVs9
+         hsLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740692180; x=1741296980;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hHhkYScYoArvR/F5m50Hw9t1PzuS3cNkRvx1BFjMwv8=;
+        b=GTPVOAQR2pEo9K6UUhEL1oOfpX4TEuD2Iey5zKo0sRJZ8buQJHpsytNv8CHa13BTEJ
+         bJP+N4ZWP/3iOq//si2ZjwNP1zYTdPDnvs3jesZipBHOck4NXTGOjZGmDFSUYNu4VtLe
+         Ld26zFI7baHhUy41CYthfXqAxH98a9p3nSG/Imzu3Eii+/izB8OC6pblzKOs20g9Gym9
+         2qT+e3iGDgYCNxhwpkfbWTNKFIGmDAzkFTjL/I2zrGaQrYOXntamGTb0m0m4HW3UwtW+
+         V9F4Vn2WKer8x5zv0e+/eT1DZCrN9pGlhJp6k+lFjAToCJwMVBj0r7aHj9weKTBdlfSs
+         waNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkUSrUCgVrTdjkd43B2rUOBMjaH+pl8JI3JrvCis0O36JOgLa7U7TmQrFpvsJxQzqACcRY3DtJZPtk@vger.kernel.org, AJvYcCXTfCLj8/JQBhP4pEtnwpDdLuzlsS+hnYb2mDf05qsZT7K1HQybVts4uYuhr+xoLOLJ6F1qEi37jGLk@vger.kernel.org, AJvYcCXkbrz3miSpjbqLNsQDutQa3s6EbyLwRdxz3LRDCLXjE9sx+q+eQh+6UVfZVpWserC0W5Ey9qmiQGl4O978@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqUn0QwBzi+34uhsL1gEu0e81mTYq18W1MpLvQvrUOKmlGbSZP
+	DJTG0lsnzZY8JPAwac+O0HMKl2EUfTiFe0IPD5JxLtt0Sruu9Mxa
+X-Gm-Gg: ASbGncsBGx9F9YKMm6GtXFKM3/oYvCuB4lanSK4SqiCZOJojGtWnwvlskKMtWW43XtC
+	qQG8sxL7lNrQK8+6+Wum8cCBVXy38+amqzBIZ4Lp3v9ttDe/B1q++xra/r0/f/XQwOXoNB9cz21
+	lkQHw1FpTzMCMjdF+EzLqg0ScxCgDTyL80F7tegdSxWTmGm+1+o+zhSfKOonMxym64dXhFO1+vh
+	XLvMeBnWlkL22EyjQguVah1Aeh/R1kNq+/lDapDbcn94OB6pFSYm5X80HHg4Kenk/ob8pKk+5kL
+	Kor2lsTXHx4u09o2ayv5PY95AF1h2+yDbLo6LQaroZhqEVE=
+X-Google-Smtp-Source: AGHT+IHR/OUOc/tEgpDCPTt9nKJHRGg4bGS409xWq/BFnfnsG9F5vT8dzLfgr1Z6oagPe3mr7gB/Zg==
+X-Received: by 2002:ad4:596c:0:b0:6e6:5bd5:f3b5 with SMTP id 6a1803df08f44-6e8a0da79bcmr5186576d6.8.1740692180311;
+        Thu, 27 Feb 2025 13:36:20 -0800 (PST)
+Received: from JSANTO12-L01.ad.analog.com ([191.255.131.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897653799sm14308416d6.33.2025.02.27.13.36.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 13:36:19 -0800 (PST)
+Date: Thu, 27 Feb 2025 18:36:15 -0300
+From: Jonathan Santos <jonath4nns@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH RESEND v3 12/17] iio: adc: ad7768-1: Add GPIO controller
+ support
+Message-ID: <Z8DazwTguF/gfKW1@JSANTO12-L01.ad.analog.com>
+Reply-To: 7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com
+References: <cover.1739368121.git.Jonathan.Santos@analog.com>
+ <62cb9786b02adde118db9349617cb796585ceb02.1739368121.git.Jonathan.Santos@analog.com>
+ <CACRpkdaSY7WH191makzPcZqLd-vBsC_f6yagWzBa65MrC+pjKA@mail.gmail.com>
+ <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rQlasSNfDX0Nv+v/1.Yqq6d";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
 
---Sig_/rQlasSNfDX0Nv+v/1.Yqq6d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 02/20, David Lechner wrote:
+> On 2/19/25 2:34 PM, Linus Walleij wrote:
+> > Hi Jonathan/Sergiu,
+> > 
+> > thanks for your patch!
+> > 
+> > On Wed, Feb 12, 2025 at 7:20 PM Jonathan Santos
+> > <Jonathan.Santos@analog.com> wrote:
+> > 
+> >> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> >>
+> >> The AD7768-1 has the ability to control other local hardware (such as gain
+> >> stages),to power down other blocks in the signal chain, or read local
+> >> status signals over the SPI interface.
+> >>
+> >> This change exports the AD7768-1's four gpios and makes them accessible
+> >> at an upper layer.
+> >>
+> >> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> >> Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> >> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> > 
+> > Is it not possible to use the gpio regmap library in this driver
+> > like we do in drivers/iio/addac/stx104.c?
+> > 
+> > It cuts down the code size of simple GPIO chips on random
+> > chips quite a lot.
+> > 
+> > Yours,
+> > Linus Walleij
+> 
+> I think the answer is "no" since we need to hold a conditional lock
+> while accessing registers. Namely: iio_device_claim_direct_mode()/
+> iio_device_release_direct_mode().
+> 
+> Unless we add some extra stuff to the gpio regmap implementation to
+> add optional callbacks to call these. Which could be worth it given
+> that quite a few ADCs provide GPIOs like this.
 
-Hi all,
+Since this patch set is quite large already, is it worth to do this
+here? if you say it is necessary, i can try this.
 
-In commit
-
-  18cdd90aba79 ("x86/bpf: Fix BPF percpu accesses")
-
-Fixes tag
-
-  Fixes: 9d7de2aa8b41 ("Use relative percpu offsets")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-        git log -1 --format=3D'Fixes: %h ("%s")'
-
-i.e. Fixes: 9d7de2aa8b41 ("x86/percpu/64: Use relative percpu offsets")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rQlasSNfDX0Nv+v/1.Yqq6d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfA2sQACgkQAVBC80lX
-0Gzsfwf6Aq8rkAHG74RSNc8lZ4sNPaYyucYHKRJm1XR82k8LPmNCW7aahKE02ngd
-/CwSsXGHH1nfUQWi0wSI7xUWFmOysVGN4ziyT/iqM7mNLM7We0ca2s7EoHZMRbKk
-66PgVWN4YhEsgfc2XqNmxj1Kq7l8lBmimIU9aDR/CNheWqzlhfndCR40kZ+ldF/+
-xchEzAJ42L8KGAA+4/mBytZRt/Cd/hutLE8WNiIsH4iC1WkMOdYL0KknOR2a94RK
-4P6kzLTCpDRLmQ5XFMpkPvxl4o3IQMdFLPQiks8819D2mB6BGC3EWBNtVHH0hOgY
-OSE87YWqJIWxHlm8Xt40Z3P0jUZ0eg==
-=wqSc
------END PGP SIGNATURE-----
-
---Sig_/rQlasSNfDX0Nv+v/1.Yqq6d--
+> 
 
