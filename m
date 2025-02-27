@@ -1,209 +1,135 @@
-Return-Path: <linux-kernel+bounces-535361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBF0A471A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A39A471AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014D416413D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4E216462D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0583113B2BB;
-	Thu, 27 Feb 2025 01:48:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E44137750;
+	Thu, 27 Feb 2025 01:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psR4IJOi"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AD7171A7;
-	Thu, 27 Feb 2025 01:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C813817BA3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740620901; cv=none; b=T0l0A8p0M0/7DtNX2vGXbMiVqAdnLPL6sU08Qahu1EchHOS9hVLEEN+an/T0RkRsRlQoRUwWW4FnQHokn0xXySLKx0y8dFtdEcEPEH/Xr80eRecDne9CVO4scsVyzFBDpdAeobRaCcknz0yHD6aSkvCLLMbK/H6l8OeZKpkb1rY=
+	t=1740620946; cv=none; b=BJTC5tF0sQG0lX7Mm46uL0Ts2jZd2D5jyDOOLCnRAETJeKKZ0OowDNXyN4ophu3Xpqqx3JSkpU2beede2wMP625vaup9vQNyxJTALfeTpMhtsgMcdVx6newAj94kY/q6VL8rMhj9vg05nViAHL1vcj1irAeTed9xgcK2+pNS4n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740620901; c=relaxed/simple;
-	bh=hXCpgkhn+skhmHAhl4wNgROyDP88FR/s5XtSXYcjl7M=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fAXpFfr62FMkX5nFGIHrennZFnE23IjNgZDg5Wgg8rMEbKGueBbu/XzarrJK+CiI0SU2EqnsZdRVJIF+Vbk0cdvyhzTOHJDrjCYQJmxkJgXdbCqUrzY+A9Cdb2fsXIR2c9En45//mrLSnXeVNTndUzOHyAMurG6W93Aw9TiRM30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z3DkF6TwJz4f3kvt;
-	Thu, 27 Feb 2025 09:47:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 365681A183A;
-	Thu, 27 Feb 2025 09:48:13 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP3 (Coremail) with SMTP id _Ch0CgBH5sBWxL9nbZjDEw--.49894S2;
-	Thu, 27 Feb 2025 09:48:10 +0800 (CST)
-Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
- map atomically
-To: Zvi Effron <zeffron@riotgames.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
- bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>,
- Cody Haas <chaas@riotgames.com>, Hou Tao <hotforest@gmail.com>
-References: <20250204082848.13471-1-hotforest@gmail.com>
- <20250204082848.13471-3-hotforest@gmail.com>
- <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com>
- <8734gr3yht.fsf@toke.dk>
- <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com>
- <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
- <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com>
- <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
- <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com>
-Date: Thu, 27 Feb 2025 09:48:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1740620946; c=relaxed/simple;
+	bh=GR+iOS9PHyJX5l5gOqI4IGyQHkTVdNkvstXFCHs+wAc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=usPqZt5RAkLeOuAbKo9ZiO9YjaY1857GLW1DWFslLkLagMVhnd6Bm7zvT4jQ5f8HrbTJCIdWx45W4rzy+OcjCACap+OGrWW29H0uaodyumiNGfooFOPUq+fDIqzx48pFrV3BkQt2ihtAcQlmK92pNIsX4pTeK0ZZRxZ/J9/2LVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psR4IJOi; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbff6426f5so965969a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:49:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740620944; x=1741225744; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+EJ2Fw9Yw3pGtCS/WzQ4cMRKwHHs6j+YstrAgEehLYQ=;
+        b=psR4IJOiLoAkK++WDqIrepgIYX7r63q5vVs7a14jO9TQpVCbmDpMfZwpXLB2O3dtNA
+         ol5f5g02kqUntpg21/Ksf4uzkHT8aVKxDJOeu57PhWz5gNN6D+ooQ7lDtB4RGi8Jg8Zc
+         QJsX93BxqeJqOZ4n7sz8TinQPoQ7IK97U8I4loY9S+19IfukK4laiag6T+7KBAhqhVYo
+         C63vMKqxd6RgjVkv6akfZMfcqhf8ICIeLoA+eTZNYPnu+ktguTFAKsY2/7ZmlTPPOh+g
+         BfQXXBpbusJcOoV3bIGIN2g6QKp5meQgkdp9F9I2oWWsweBFQGL+8H2CnwFwmUlZUhtf
+         3Ewg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740620944; x=1741225744;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+EJ2Fw9Yw3pGtCS/WzQ4cMRKwHHs6j+YstrAgEehLYQ=;
+        b=WkRD9TOkaepsV0YB3cx0ZOTwDzf1ifCCJR8Ra4ZAmOt8uzUfMm6pJotGDN9BhjMyj9
+         NMoNilo+n6LNvjrUFwkIjaZaRzsvsb6tVxN2IZBgS8V+npWrMTzvJtB6iNgljzlqbqgI
+         yCs9WEuANaJ5UxYRf8cdH6xfuw9HvgR4tb8iXMUgzcKS0fXiyXwQSDAKeALNNcfPWxaZ
+         xTkzti9wHKEwhJ9LxVBbmYVNsrOrdmHgT4ZjMYxXPAKVSZGfyAKxmo9oihP0ZzeHBndl
+         tkdZRL3YNCY2a9uHoyytUprM/XUj3Kzh0nIndK9pzSm1Sv9LEzJJbmVA84XgXac6TS6U
+         XNGg==
+X-Gm-Message-State: AOJu0YyMvo+LhgZEVuiveudVFBRwk1rpCOGna8z9S2pB1UbQKW0BnRqF
+	mXRa1Rd46vo9lKubrOPZGICNj5/YZxcH1Co1HtatlnR9Q4liX5abIdCyYKbexFZpmsrGDFLA92O
+	yGw==
+X-Google-Smtp-Source: AGHT+IFMmd4sNvx0a1bKJ7axvPbAmID7ou+EpSP8fN8+WAF+gm479X2t9xItUh/oedkcJnsMd+O/z1oMVHM=
+X-Received: from pjbst5.prod.google.com ([2002:a17:90b:1fc5:b0:2fb:fa85:1678])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d64c:b0:2fe:a336:fe63
+ with SMTP id 98e67ed59e1d1-2fea3370023mr1821866a91.24.1740620944197; Wed, 26
+ Feb 2025 17:49:04 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 26 Feb 2025 17:48:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:_Ch0CgBH5sBWxL9nbZjDEw--.49894S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jr1kKr1xArWDGw4fZFWxCrg_yoW7XFyUpF
-	WrKF1UKrWDJ340qwn2yr1xZFWYyrn3Jw1jqr1DJFy5Arn8Kr1Sqr4xZa1F9F1UAr4rJr1j
-	vr17t3y3Z3ZrJFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250227014858.3244505-1-seanjc@google.com>
+Subject: [PATCH 0/7] x86, KVM: Optimize SEV cache flushing
+From: Sean Christopherson <seanjc@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Zheyun Shen <szy0127@sjtu.edu.cn>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Mingwei Zhang <mizhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+This is the combination of Kevin's WBNOINVD series[1] with Zheyun's targeted
+flushing series[2].  This is very, very lightly tested (emphasis on "very").
 
-On 2/27/2025 7:17 AM, Zvi Effron wrote:
-> On Tue, Feb 25, 2025 at 9:42 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
->> On Tue, Feb 25, 2025 at 8:05 PM Hou Tao <houtao@huaweicloud.com> wrote:
->>> Hi,
->>>
->>> On 2/26/2025 11:24 AM, Alexei Starovoitov wrote:
->>>> On Sat, Feb 8, 2025 at 2:17 AM Hou Tao <houtao@huaweicloud.com> wrote:
->>>>> Hi Toke,
->>>>>
->>>>> On 2/6/2025 11:05 PM, Toke Høiland-Jørgensen wrote:
->>>>>> Hou Tao <houtao@huaweicloud.com> writes:
->>>>>>
->>>>>>> +cc Cody Haas
->>>>>>>
->>>>>>> Sorry for the resend. I sent the reply in the HTML format.
->>>>>>>
->>>>>>> On 2/4/2025 4:28 PM, Hou Tao wrote:
->>>>>>>> Currently, the update of existing element in hash map involves two
->>>>>>>> steps:
->>>>>>>> 1) insert the new element at the head of the hash list
->>>>>>>> 2) remove the old element
->>>>>>>>
->>>>>>>> It is possible that the concurrent lookup operation may fail to find
->>>>>>>> either the old element or the new element if the lookup operation starts
->>>>>>>> before the addition and continues after the removal.
->>>>>>>>
->>>>>>>> Therefore, replacing the two-step update with an atomic update. After
->>>>>>>> the change, the update will be atomic in the perspective of the lookup
->>>>>>>> operation: it will either find the old element or the new element.
->>>> I'm missing the point.
->>>> This "atomic" replacement doesn't really solve anything.
->>>> lookup will see one element.
->>>> That element could be deleted by another thread.
->>>> bucket lock and either two step update or single step
->>>> don't change anything from the pov of bpf prog doing lookup.
->>> The point is that overwriting an existed element may lead to concurrent
->>> lookups return ENOENT as demonstrated by the added selftest and the
->>> patch tried to "fix" that. However, it seems using
->>> hlist_nulls_replace_rcu() for the overwriting update is still not
->>> enough. Because when the lookup procedure found the old element, the old
->>> element may be reusing, the comparison of the map key may fail, and the
->>> lookup procedure may still return ENOENT.
->> you mean l_old == l_new ? I don't think it's possible
->> within htab_map_update_elem(),
->> but htab_map_delete_elem() doing hlist_nulls_del_rcu()
->> then free_htab_elem, htab_map_update_elem, alloc, hlist_nulls_add_head_rcu
->> and just deleted elem is reused to be inserted
->> into another bucket.
+Note, I dropped Reviewed-by tags for patches to which I made non-trivial
+modifications.
 
-No. I mean the following procedure in which the lookup procedure finds
-the old element and tries to match its key, one update procedure has
-already deleted the old element, and another update procedure is reusing
-the old element:
+[1] https://lore.kernel.org/all/20250201000259.3289143-1-kevinloughlin@google.com
+[2] https://lore.kernel.org/all/20250128015345.7929-1-szy0127@sjtu.edu.cn
 
-lookup procedure A
-A: find the old element (instead of the new old)
-                                        
-              update procedure B
-              B: delete the old element
-              update procedure C on the same CPU:
-              C: reuse the old element (overwrite its key and insert in
-the same bucket)
+Relative to those series:
 
-A: the key is mismatched and return -ENOENT.
+ - Name the WBNOINVD opcode macro ASM_WBNOINVD to avoid a conflict with
+   KVM's CPUID stuff.
+ - Fix issues with SMP=n.
+ - Define all helpers in x86/lib.
+ - Don't return 0 from the helpers.
+ - Rename the CPU bitmap to avoid a naming collisions with KVM's existing
+   pCPU bitmap for WBINVD, and to not have WBINVD (versus WBNOINVD) in the
+   name.
+ - Fix builds where CPU bitmaps are off-stack.
+ - Massage comments.
+ - Mark a CPU as having done VMRUN in pre_sev_run(), but test to see if
+   the CPU already ran to avoid the locked RMW, i.e. to (hopefully) avoid
+   bouncing the cache line.
 
-It can be reproduced by increasing ctx.loop in the selftest.
->>
->> I'm not sure whether this new hlist_nulls_replace_rcu()
->> primitive works with nulls logic.
->>
->> So back to the problem statement..
->> Are you saying that adding new to a head while lookup is in the middle
->> is causing it to miss an element that
->> is supposed to be updated assuming atomicity of the update?
->> While now update_elem() is more like a sequence of delete + insert?
->>
->> Hmm.
-> Yes, exactly that. Because update_elem is actually a delete + insert (actually
-> an insert + delete, I think?), it is possible for a concurrent lookup to see no
-> element instead of either the old or new value.
+Kevin Loughlin (2):
+  x86, lib: Add WBNOINVD helper functions
+  KVM: SEV: Prefer WBNOINVD over WBINVD for cache maintenance efficiency
 
-Yep.
->
->>> I see. In v2 I will fallback to the original idea: adding a standalone
->>> update procedure for htab of maps in which it will atomically overwrite
->>> the map_ptr just like array of maps does.
->> hold on. is this only for hash-of-maps ?
-> I believe this was also replicated for hash as well as hash-of-maps. Cody can
-> confirm, or use the reproducer he has to test that case.
+Sean Christopherson (2):
+  x86, lib: Drop the unused return value from wbinvd_on_all_cpus()
+  KVM: x86: Use wbinvd_on_cpu() instead of an open-coded equivalent
 
-The fix for hash-of-maps will be much simpler and the returned map
-pointer will be correct. For other types of hash map, beside switching
-to hlist_nulls_replace_rcu(),  I think we also need to detect the reuse
-of element during the loop: if the element has been reused, the lookup
-should restart from the head again. However, even withing the above two
-fixes, the value returned by lookup procedure for other types of hash
-map may still be incorrect (as shown long time ago [1]), so I think
-maybe for other types of map, the atomic update doesn't matter too much.
+Zheyun Shen (3):
+  KVM: SVM: Remove wbinvd in sev_vm_destroy()
+  x86, lib: Add wbinvd and wbnoinvd helpers to target multiple CPUs
+  KVM: SVM: Flush cache only on CPUs running SEV guest
 
-[1]:
-https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.com/
->
->> How that non-atomic update manifested in real production?
->>
-> See [1] (in the cover letter for this series, also replicated below).
->
-> [1] : https://lore.kernel.org/xdp-newbies/07a365d8-2e66-2899-4298-b8b158a928fa@huaweicloud.com/T/#m06fcd687c6cfdbd0f9b643b227e69b479fc8c2f6
+ arch/x86/include/asm/smp.h           | 23 ++++++--
+ arch/x86/include/asm/special_insns.h | 19 ++++++-
+ arch/x86/kvm/svm/sev.c               | 79 +++++++++++++++++++---------
+ arch/x86/kvm/svm/svm.h               |  1 +
+ arch/x86/kvm/x86.c                   | 11 +---
+ arch/x86/lib/cache-smp.c             | 26 ++++++++-
+ 6 files changed, 119 insertions(+), 40 deletions(-)
+
+
+base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
