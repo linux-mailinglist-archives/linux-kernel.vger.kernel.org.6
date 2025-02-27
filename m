@@ -1,139 +1,212 @@
-Return-Path: <linux-kernel+bounces-536664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF8DA482C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:21:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB88A482CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6431689F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844EE16B257
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D3226A1D5;
-	Thu, 27 Feb 2025 15:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B044126AAA3;
+	Thu, 27 Feb 2025 15:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UDj3IAiS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbxGZtP6"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6535726A0B9;
-	Thu, 27 Feb 2025 15:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799A825EF86;
+	Thu, 27 Feb 2025 15:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669420; cv=none; b=aLIZJ7RgK2uyQR0tjRsdYvBwrv7NkyULcBd7obH9LbjSvtlGFwliHNf0yygLDYscEL/v2y6K5Tilbp8FQlM92siL6Nwt5E/Y9do+QK+ZaXWs30rZG/wGLCt1lTLl7Q8skxjXrRVSUWLwYgGu4Wl35kWvbCKDMOp3Qaie92ftwH0=
+	t=1740669488; cv=none; b=eSob+G+/PH7Rr1yOgNkbeuSWAa6+B2OZp3NxwiVxbEBYolFllyxJ5+nX5DBksL7lztEWVqk0XoJE/SA0SWkQ53bAUdjBF7SQgN7q2f/IgO5A4RtTsx+Erafy+D0hsnpFnDGDPLggn0+kKdZ2yGIuzsR2kGeE/VmyjBk5d3X/Jeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669420; c=relaxed/simple;
-	bh=xpitV625HIqwx7eYcgXZnDV02z63z9DmbM4MzyVJtxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G4o65xOgrkvU0hs4rJOYcyiTdmFc6FCaErFdIlBpcZSXaPmVC/Py19kh4lP0S5Jw/ipqRogyAMoa86cKNNt3Rl4cQlr7Pt215AgiHAm6W9QVdk0mM7HRFxNlU0o0QzB+4R5Ju0PwztY5fu3TxuPnXHxWsmbfvVec0X7gOKEOYog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UDj3IAiS; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740669419; x=1772205419;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xpitV625HIqwx7eYcgXZnDV02z63z9DmbM4MzyVJtxk=;
-  b=UDj3IAiSMxQUSWa9vpe7IY3ZZffg76cQl1+7yvUE8MYLaHJ2YP3hetmq
-   vKG7yf9d+3Cho4F/bwCP085KfU/QoY2sLQv0ZcyyeOK3bFYBhsU4ThSzL
-   WsiYzOmnuXYrFirLdES+w+Soumc8JYvEi3YM9akuaxA+Uoyr7giEQmlby
-   TroxQTjG877hE841Nmvm6VZYPI87QKxO3m6UHr60slvHtkxd7+dJ3DBvv
-   wiYwHobZXBCs/ak+mRAMJbPItA9DKe/34YMrfee17vMGkfnbtgOLhUgqF
-   CVo498AiQmMT6GPNkwNHFFN2KG1yAqcP0szW3wwI/8y2K5AIbMtRdk6Vq
-   Q==;
-X-CSE-ConnectionGUID: CZP4swWJQU6+0z+XJU8+rQ==
-X-CSE-MsgGUID: 7wn/7ikGRUyE0zdiy2Btaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41688964"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41688964"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:16:58 -0800
-X-CSE-ConnectionGUID: K4R4qhFgQ2WEBZVJyuvK8Q==
-X-CSE-MsgGUID: qtA4MuLTRUi+OSUgJdkI7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117549868"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:16:58 -0800
-Message-ID: <e272e791-3ada-4630-b3c5-ee8113248eec@intel.com>
-Date: Thu, 27 Feb 2025 08:16:56 -0700
+	s=arc-20240116; t=1740669488; c=relaxed/simple;
+	bh=6t5Fap2+DkrrxA8hPtgQtWQe5PBFSXmY2/OBWqSbOJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWFIS3ns3ASGe/J4BjVlkPEbyoHs3FXbKLeqpGKTGnj0EjaEsfOSePfIux0ik620w8l6ammtAmJt6tF8KaATJnBFjBgytjctsJOZjvg0UFkWUWoqC+61xt6aQhvRzZkcO5Y5YQnxFxIi3OdL7l10kiWrWmVQFum8Lxu27dhDcHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbxGZtP6; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c0ac2f439eso120931085a.0;
+        Thu, 27 Feb 2025 07:18:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740669485; x=1741274285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RGggIkK/XZzPteLqAYumoxClI9/TZi6ilC7vijsxqiM=;
+        b=jbxGZtP6HEJFGjzYfRVOTtmzHcFyjh2MqVMOvShwHCw5w8sMTDLMGQYRrmxnJCZEnE
+         dYGMzPanjTvEQkDdOqBKQas2D9RguhyBHc0/ofyNBw4Pvct9A+xdYqcnHHij7grdn3il
+         k0ZrDi8kHM+QlhRNJzPM2L1GLxGuEGeHRr431ezKlw1A1FcYR7e8BFqkYMQKrnGkCbds
+         mxCaeopt1Kl9ooCJ0VS063DULFPRCvFS3vuacpygKpK8RS8kreLYkX41jr+dGsJqJZ5s
+         4gyhYBHgB1+ynNJ7I+PbuvKasUwAwgq3Eiwsr6xs4XwBB2YZAtbTUL79uCbuaqYXUGnz
+         rsPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740669485; x=1741274285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RGggIkK/XZzPteLqAYumoxClI9/TZi6ilC7vijsxqiM=;
+        b=Xd/mt3ofCp3Kp+vDKrTVqp+Es60niq/BZeILuDZKMeQPK6xs5Mp/Hxx5xrepO2TOVZ
+         CcGKHleRdjIZJEH4AsUeHBKgR/OHXt86rGgI/cnCMGTy1hRx1rgwKWX7bgYfl0gc0rry
+         fiKJ1girV3c62EiRfCKEfbLDYdc/EsECZBXKPrwR+8cNGRHXzIqdpMSYv9u2UL1GBmR9
+         B3rSU4J7lGTpjFTe4vYBNxRXeldg0VJzzYbkTk1/VkIj4q7cjuxSCxl1fN5CCkGNmO5R
+         U0uE9318jnHNEk2pUzpc2mBIbz66B73qBA3sOEc8yzgCNwnIJquzCVoa92kUdugpv2nJ
+         /z3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Zo+Z8G3d7NVWpgNMfIDQUGlXAY/QJbrWcfKxjmEJTWdXR7eBgJCF6iC7tR5IhagpJXO1DFiFBHM2635r0Yc=@vger.kernel.org, AJvYcCXjDYI6MxwVtys3koiQNhFqXqlLOgamhFj9ImZiDbBBY9lFIWy9hR1FuXXxfltvLIAaUKyczppfKbX8G5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynpEbjaW8fypEWX72JtXdlipiBLjVd9lpRuBBQBkYREvQBdhc+
+	lee+p8/LHKeJIEzaZAi6lpLEBcRsj844DcOeoKwCu1osRUkreJHd
+X-Gm-Gg: ASbGncsM98p9BcENYdtJdXY51AEs3Iz6Nq4GdnsraQLEcc6cYU4M43pWuiNzbIw7y0m
+	lXKtfNCXsuE4PiWDfvuJU0YfRx1ppAcVSOZOmCUmWIAbNINuiAdTu7+AhZgiKuf9Bpjr8kVHuW9
+	jT8PtSxW80tgu+zHrpYE9pfBgbKZiiTC+3eMFuJaAk9UbgWpkhoELHCga6IriMOO1CBJxVezirY
+	382qa0RM4vCV24oXiIFcJs2vRPspsI5A3ve6u629HXqcV51eqYlyqZ1QPCBOERinvr0qUuE9gqr
+	Txe/4u5PoW5B/tiSFcLYq9d5P5vL5PtppSfmabyiH3oo0CRHHprIePDr9+QskuDtXpLNXY3pnuh
+	G6V1Us/JOoaEDh3a2
+X-Google-Smtp-Source: AGHT+IEq6UiJGiAn5J8WLSyd0NSIn0Gz699g7En/BXC3Xd/QEAVezFlMxxou7MPtwiZYDc1OaY4iKg==
+X-Received: by 2002:a05:620a:4508:b0:7c0:b7ca:70ec with SMTP id af79cd13be357-7c0cef4853emr3674139285a.41.1740669485263;
+        Thu, 27 Feb 2025 07:18:05 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe36sm115572385a.83.2025.02.27.07.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 07:18:04 -0800 (PST)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 46794120006D;
+	Thu, 27 Feb 2025 10:18:04 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Thu, 27 Feb 2025 10:18:04 -0500
+X-ME-Sender: <xms:LILAZ_0n7FGmGJITqMKE32EJqDyy7Mzle5qLOF40jUOUKhGz5PUfZQ>
+    <xme:LILAZ-FwrJixiSMy0LZApN6iZ3P5tpinDuFaAS_OzCXV9t5zpdL3s4A-476yKgaoC
+    PPcnauyTW5KvJH0jQ>
+X-ME-Received: <xmr:LILAZ_6NohMDVnPg6nF5cxXv5QjESw3A_S6s5LSYVBgruahHifKY8yP9UQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeekudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhgghesnhhvihguihgrrdgtohhmpdhrtg
+    hpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhgrghhn
+    vghlfhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprggtohhurhgsohhtsehnvhhiug
+    hirgdrtghomhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepjhhovghlsehjoh
+    gvlhhfvghrnhgrnhguvghsrdhorhhgpdhrtghpthhtohepjhhhuhgssggrrhgusehnvhhi
+    ughirgdrtghomhdprhgtphhtthhopegsshhkvghgghhssehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:LILAZ00V1NaJ4mvj1-dwMWGjY-pTlO3NLGn9enWCsVKsRyR1AXVXDQ>
+    <xmx:LILAZyEEsKioUNzF4sPKjWl06vG3bhu69SMl19pvBls-9V4UOFYQuw>
+    <xmx:LILAZ18E-uNORxHsgOKOQ3JOtrZTzPTOr4UiT0IRx0C6WLcEXbJZkA>
+    <xmx:LILAZ_nHko2mGSrMEiqf4tOvdP9950Gc_aexl4qnzS1hufAHlKN0-w>
+    <xmx:LILAZ-GnZXcGVrbFPYhz1nd--0hhGxQeONVznQF9J2ZrcQii6wBtc808>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Feb 2025 10:18:03 -0500 (EST)
+Date: Thu, 27 Feb 2025 07:18:02 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z8CCKl_yA74WjpQ1@Mac.home>
+References: <20250225210228.GA1801922@joelnvbox>
+ <20250225225756.GA4959@nvidia.com>
+ <Z75WKSRlUVEqpysJ@cassiopeiae>
+ <20250226004916.GB4959@nvidia.com>
+ <Z75riltJo0WvOsS5@cassiopeiae>
+ <20250226172120.GD28425@nvidia.com>
+ <Z7-IHgcVVS8XBurW@cassiopeiae>
+ <20250226234730.GC39591@nvidia.com>
+ <Z7-0pOmWO6r_KeQI@boqun-archlinux>
+ <20250227144618.GE39591@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] cxl/mem: Do not return error if CONFIG_CXL_MCE
- unset
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227101848.388595-1-ming.li@zohomail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250227101848.388595-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227144618.GE39591@nvidia.com>
 
-
-
-On 2/27/25 3:18 AM, Li Ming wrote:
-> CONFIG_CXL_MCE depends on CONFIG_MEMORY_FAILURE, if
-> CONFIG_CXL_MCE is not set, devm_cxl_register_mce_notifier() will return
-> an -EOPNOTSUPP, it will cause cxl_mem_state_create() failure , and then
-> cxl pci device probing failed. In this case, it should not break cxl pci
-> device probing.
+On Thu, Feb 27, 2025 at 10:46:18AM -0400, Jason Gunthorpe wrote:
+> On Wed, Feb 26, 2025 at 04:41:08PM -0800, Boqun Feng wrote:
+> > And if you don't store the HrTimerHandle anywhere, like you drop() it
+> > right after start a hrtimer, it will immediately stop the timer. Does
+> > this make sense?
 > 
-> Add a checking in cxl_mem_state_create() to check if the returned value
-> of devm_cxl_register_mce_notifier() is -EOPNOTSUPP, if yes, just output
-> a warning log, do not let cxl_mem_state_create() return an error.
+> Oh, I understand that, but it is not sufficient in the kernel.
 > 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-
-Thanks!
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-> ---
-> I hit this issue on my cxl_test environment with latest cxl-next. If
-> CONFIG_MEMORY_FAILURE is unset, all cxl pci devices will fail to probe.
+> You are making an implicit argument that something external to the
+> rust universe will hold the module alive until all rust destructors
+> are run. That is trivialy obvious in your example above.
 > 
-> ...
-> [    6.337952] cxl_mock_mem cxl_mem.6: probe with driver cxl_mock_mem failed with error -95
-> [    6.338880] cxl_mock_mem cxl_mem.4: probe with driver cxl_mock_mem failed with error -95
-> [    6.339593] cxl_mock_mem cxl_mem.9: probe with driver cxl_mock_mem failed with error -95
-> [    6.340588] cxl_mock_mem cxl_mem.2: probe with driver cxl_mock_mem failed with error -95
-> [    6.340914] cxl_mock_mem cxl_mem.0: probe with driver cxl_mock_mem failed with error -95
-> [    6.345762] cxl_mock_mem cxl_rcd.10: probe with driver cxl_mock_mem failed with error -95
-> [    6.345793] cxl_mock_mem cxl_mem.7: probe with driver cxl_mock_mem failed with error -95
-> ...
-> [    6.519824] cxl_pci 0000:c4:00.0: probe with driver cxl_pci failed with error -95
-> [    6.520178] cxl_pci 0000:38:00.0: probe with driver cxl_pci failed with error -95
-> ...
-> 
-> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
-> ---
->  drivers/cxl/core/mbox.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 13cac98846bc..d72764056ce6 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1503,7 +1503,9 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
->  	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
->  
->  	rc = devm_cxl_register_mce_notifier(dev, &mds->mce_notifier);
-> -	if (rc)
-> +	if (rc == -EOPNOTSUPP)
-> +		dev_warn(dev, "CXL MCE unsupported\n");
-> +	else if (rc)
->  		return ERR_PTR(rc);
->  
->  	return mds;
 
+The question in your previous email is about function pointer of hrtimer
+EAF because of module unload, are you moving to a broader topic here?
+If no, the for module unload, the argument is not implicit because in
+rust/macro/module.rs the module __exit() function is generated by Rust,
+and in that function, `assume_init_drop()` will call these destructors.
+
+> However, make it more complex. Run the destructor call for your
+> hrtimer in a workqueue thread. Use workqueue.rs. Now you don't have
+> this implicit argument anymore, and it will EAF things.
+> 
+
+Note that HrTimerHandle holds a "reference" (could be a normal
+reference, or an refcounted reference, like Arc) to the hrtimer (and the
+struct contains it), therefore as long as HrTimerHandle exists, the
+destructor call of the hrtimer won't be call. Hence the argument is not
+implicit, it literally is:
+
+* If a HrTimerHandle exists, it means the timer has been started, and
+  since the timer has been started, the existence of HrTimerHandle will
+  prevent the destructors of the hrtimer.
+
+* drop() on HrTimerHandle will 1) stop the timer and 2) release the
+  reference to the hrtimer, so then the destructors could be called.
+
+> Danilo argues this is a bug in workqueue.rs.
+> 
+> Regardless, it seems like EAF is an overlooked topic in the safety
+> analysis.
+> 
+
+Well, no. See above.
+
+> Further, you and Danilo are making opposing correctness arguments:
+> 
+>  1) all rust destructors run before module __exit completes
+
+What do you mean by "all rust destructor"? In my previous email, I was
+talking about the particular destructors of fields in module struct,
+right?
+
+>  2) rust destructors can run after driver removal completes
+> 
+
+I will defer this to Danilo, because I'm not sure that's what he was
+talking about.
+
+Regards,
+Boqun
+
+> I understand the technical underpinnings why these are different, but
+> I feel that if you can make #1 reliably true for __exit then it is
+> highly desirable to use the same techniques to make it true for
+> remove() too.
+> 
+> Jason
 
