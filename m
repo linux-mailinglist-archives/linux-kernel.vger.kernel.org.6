@@ -1,162 +1,135 @@
-Return-Path: <linux-kernel+bounces-535243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E40CA47083
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:50:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64351A4708B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F69188B58F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2A188CE84
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E34C2FA;
-	Thu, 27 Feb 2025 00:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BAD49620;
+	Thu, 27 Feb 2025 00:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="pCF6FuEn"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wNILA9DJ"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152041EEE6
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AEA38F91
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740617393; cv=none; b=RIAAAWaz7sEd+js4tSMtB6me5HIhfPZZBH/Scd31N3ICWd338NTvPo1Bp2wr0i/rwH3hM0SQ5wDlAT3WvWBrB9w4vXt+Fi9rtI+RCugoCW/37J1BwBi0aqs6W++weVQECo/3FwWRMc9aMVYltQd8M99ZBSw3t0hu9xvhIecqWTU=
+	t=1740617519; cv=none; b=CwPoB1iCFbcvtfaeEEUvNsRXZKxh4Y2l5RDmzIyjxpBy9Z9eOJTqjhwPzZxSRruQNu/ZcfhMOTqGGB+sFBvg/p//o1wZbuDq7Q4wK9tloWuPiKo7uMv/IELDGatQVvpa1hbclBML+X/rydZ3NdBea44T1eYLmLaPnwuM5KPatBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740617393; c=relaxed/simple;
-	bh=VKfKBSoKsWgdO+5+inyMfZQxtAALsjTA1Rz1kTOzju4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CssYSKEYR/nlnTXllFvDA+mKLNzQIK5lMm9nm8V7ll4rCSSroRNXIbuubTiz5vzPIcVGp7VoQtnu3rI05WN33u7qkK07E0tR9GNc4+RRwLpReXueORaAdF0y64yHTZpj/UeGtNwf9Gcflu1OUczo6foLwSqHoRbxhlVPSUXrpCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=pCF6FuEn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-439a1e8ba83so3878055e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:49:51 -0800 (PST)
+	s=arc-20240116; t=1740617519; c=relaxed/simple;
+	bh=Q7mNOkHjkgMmZIP6NY5cOonhJIgXhPCJV3iNp/QtlhY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kMlMYXfrYs+JsSuyfnvDEMMLOAhc8esotFYTX8gxW1CQSmWx4HNhvkC/XPYNTgKMEd1vBkN+vlIZuGMtJj4Z8Iy5urq++ruvzeACEhnnHwBPTYmHuvNBuRUkwFEmOPHimlGdYAQ3hiODkqgv3j4W29CX3hI4gj+gmsG45e2DiVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wNILA9DJ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220ff7d7b67so5948725ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:51:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1740617390; x=1741222190; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8IoVJnLvqM0mjAqtWpyGMN4QIA5NLPCn75z9KjHyIg=;
-        b=pCF6FuEnf9xwVWq5tUXKxmVikqRtTU4ntxC5RPqeOYEFZcOizRfX8/EHBdrUB080/R
-         EV4xlSfLg09u9IfgFEJZHKvbib1y8R2ZdadABrcvUIyII5MfZGLpgioxLXNFlvYFIUtT
-         JxAAg7q1Uxtm3hoP0FWeK+AJYjFihX1Crve+s=
+        d=google.com; s=20230601; t=1740617517; x=1741222317; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJotyZiERuL6yZQBDvDnm5IddJUBCXFIUhbBusTXxps=;
+        b=wNILA9DJwSfaz+/FgVDFsta5xGuj+gnGpK6sHsfci7ZXNns9WBL6UM+2o6J+Kqu61g
+         WxZZzY8vPV51whMMcnPQhK6dqbafOlE5cbqOsIEBWvJ3xhy4K0wRAcgr8RqsDNIZVTzx
+         2VBGJlqcaDa3q7aQmlKahTx5jvvtSeR2mHP61nbsKnucGHwH78hPFppZf31AlQndSVIR
+         tMF5GruKGgNthtNdrL2EEUzK/2/WxDPoV/f76xi98vKHzr2MQM3uW3C+NQzTweiHhYq8
+         PoJYYnLVBk6CiEtZR/d7InKoSjo8FcFNWr0X62Nc21GIEZg1/SZYuEaY++bqpnF5+Tpb
+         WM3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740617390; x=1741222190;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y8IoVJnLvqM0mjAqtWpyGMN4QIA5NLPCn75z9KjHyIg=;
-        b=D+wJpaj0HhdmTe2Q2spQj0cIttB93YQL8DUrN+x7Hel1eWqijqPVzN8TZAWe7zddGg
-         AB/Yb9HcohPAEAfg1Zbr55YfICBEco2Do02IeayDN3DHWQ0tvcHo0Q78wp/dI26B1Mz0
-         iFTZRU2OWX0r4sL2WXbxdU+jV/FG6Zx2MAos9HnNa/FHprxYsOI91UsX3NRljTVed6zJ
-         LhN9naK82L2jfXxZMkuNGe5hwi+DXF4xrCLczHeLjcQP8WeEH8gpOXfDWw3qUtVyDwLb
-         rDa7fSsAhk5hxZgFIrQUf4NaLEizhV/4LAFH+SzTPHGa9ryi5cajDijQKyLURqRtJPph
-         OooA==
-X-Gm-Message-State: AOJu0YylxZRDPcmH4ZM+D/NiNaYMX40jioY0m7IdgqRFRv0N80bauRRy
-	RAlt42apvEEyQcOS28fhTnvngym5tbvktHPKtS8kOUYS96iVluRV3zN4PynlhB7gCJMejcS2hGA
-	Y
-X-Gm-Gg: ASbGncsqiNXUMPsQWH5gk5vs1p9tbULi971t7Ga+M90+hxLldAoo32QErTSNLHd5zMr
-	KQqzn+7X3+mHnapgiUPNlUXHiUaKUUiXzfRYk8gQ6FyDjsLUJs/C/jvknNJxII5Zq6ktS1rYBMJ
-	OLWlNLEZ0L0bYP0sUOZ5t9m85lzsG35e48W2ewGRcJ0OaiJ+MkcFfIK2mywCRMti+KBb8nWl2Jf
-	jr/kZzXSyX709JMDO+THfOYktcah4WgwxDB+0iG2tqB2mlNngga97E4yjZ1Mb7amNHOfMRIL+CW
-	j66griQP1xw0d2zgnUW1jcDgi9oHPY0uLOmOKpwncg8wh6hmxmoK3uhqEqfDs2PVXw==
-X-Google-Smtp-Source: AGHT+IGpsPywBJAzXALDQ0K7XrDZ7T0bbJAVmRf7sfiVbZ5/xXkC0xIWYXubPm/rFRohJ/Ap0ZlT2g==
-X-Received: by 2002:a05:600c:3506:b0:439:9f97:7d6c with SMTP id 5b1f17b1804b1-439aebcfc40mr188435305e9.29.1740617390403;
-        Wed, 26 Feb 2025 16:49:50 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73718de4sm5642915e9.23.2025.02.26.16.49.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 16:49:49 -0800 (PST)
-Message-ID: <497a3694-cb0d-4678-9622-d9443bf8a40d@citrix.com>
-Date: Thu, 27 Feb 2025 00:49:48 +0000
+        d=1e100.net; s=20230601; t=1740617517; x=1741222317;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJotyZiERuL6yZQBDvDnm5IddJUBCXFIUhbBusTXxps=;
+        b=h+EQV/mptoC2er0tJCTyO3xPVmjsERd9pj7IOfT8ytG9R8nyWMl5BwQjq8xTMNJXOz
+         BEQe9mshmFvHlqF1wwREKYKbARzfV5Dzhi8HBHQJPv4nYNxX7zUjvWuw9p5z8Dv5KM+v
+         YdPqYplpqE6zJZtFHX3uT3yoRHPeyw7AlLJKaFwRn5v6vAdatRiboK4SM1XCMNqpRNHp
+         mgpIbmvzJpcGssBAGGiooqI6+Zha9EQPHpczEq0J/gowHNWDZgKtS8+t6bgJdZjVtiru
+         YhKKouIMvoFG/+pLEc3CfG3a3IMCDEW3oB0wPuIAqzSYK+57j6RldK2H82haNPtLJxKg
+         BInA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVh3nLP7BLQgEwP4BRKCOG1XwVDJTJ7poXJT7XMDYZrwnT16TLGWotWAWvDRpPpe6AE3UBqi86oFb3iio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4j4pNFquyJp3iJVrIk1Rrfon1ZHie7fvtK81ximAZSnbCH8CT
+	8+VV0laWlSqXpxEPvqg8T20BuYDAFK6AUXMm7h/vwqE6f6x7JRZLJ904IBmqaxqRrYKD5x/JC/H
+	Zug==
+X-Google-Smtp-Source: AGHT+IEL51u+VHZPqDrfRj4ysQhapPxjeZQ1gDCkR3XNIivE5W3G5YIUboDt4EBORJQZsRkmkIxq982vmL4=
+X-Received: from pjbeu5.prod.google.com ([2002:a17:90a:f945:b0:2ef:82c0:cb8d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d502:b0:21a:8300:b9ce
+ with SMTP id d9443c01a7336-221a002afb5mr402718905ad.49.1740617517337; Wed, 26
+ Feb 2025 16:51:57 -0800 (PST)
+Date: Wed, 26 Feb 2025 16:51:55 -0800
+In-Reply-To: <4c605b4e395a3538d9a2790918b78f4834912d72.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/speculation: Simplify and make CALL_NOSPEC consistent
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
- Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20250226-call-nospec-v1-1-4dde04a5c7a7@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250204004038.1680123-1-jthoughton@google.com>
+ <025b409c5ca44055a5f90d2c67e76af86617e222.camel@redhat.com>
+ <Z7UwI-9zqnhpmg30@google.com> <07788b85473e24627131ffe1a8d1d01856dd9cb5.camel@redhat.com>
+ <Z75lcJOEFfBMATAf@google.com> <4c605b4e395a3538d9a2790918b78f4834912d72.camel@redhat.com>
+Message-ID: <Z7-3K-CXnoqHhmgC@google.com>
+Subject: Re: [PATCH v9 00/11] KVM: x86/mmu: Age sptes locklessly
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 26/02/2025 9:03 pm, Pawan Gupta wrote:
-> @@ -420,20 +420,28 @@ static inline void call_depth_return_thunk(void) {}
->  
->  #ifdef CONFIG_X86_64
->  
-> +/*
-> + * Equivalent to -mindirect-branch-cs-prefix; emit the 5 byte jmp/call
-> + * to the retpoline thunk with a CS prefix when the register requires
-> + * a REX prefix byte to encode. Also see apply_retpolines().
-> + */
+On Wed, Feb 26, 2025, Maxim Levitsky wrote:
+> On Tue, 2025-02-25 at 16:50 -0800, Sean Christopherson wrote:
+> > On Tue, Feb 25, 2025, Maxim Levitsky wrote:
+> > What if we make the assertion user controllable?  I.e. let the user opt-out (or
+> > off-by-default and opt-in) via command line?  We did something similar for the
+> > rseq test, because the test would run far fewer iterations than expected if the
+> > vCPU task was migrated to CPU(s) in deep sleep states.
+> > 
+> > 	TEST_ASSERT(skip_sanity_check || i > (NR_TASK_MIGRATIONS / 2),
+> > 		    "Only performed %d KVM_RUNs, task stalled too much?\n\n"
+> > 		    "  Try disabling deep sleep states to reduce CPU wakeup latency,\n"
+> > 		    "  e.g. via cpuidle.off=1 or setting /dev/cpu_dma_latency to '0',\n"
+> > 		    "  or run with -u to disable this sanity check.", i);
+> > 
+> > This is quite similar, because as you say, it's impractical for the test to account
+> > for every possible environmental quirk.
+> 
+> No objections in principle, especially if sanity check is skipped by default, 
+> although this does sort of defeats the purpose of the check. 
+> I guess that the check might still be used for developers.
 
-Technically, both comments aren't quite accurate.  __CS_PREFIX() emits a
-conditional CS prefix in a manner compatible with
--mindirect-branch-cs-prefix, not the full 5/6 byte jmp/call.
+A middle ground would be to enable the check by default if NUMA balancing is off.
+We can always revisit the default setting if it turns out there are other problematic
+"features".
 
-> +#define __CS_PREFIX(reg)				\
-> +	.irp rs,r8,r9,r10,r11,r12,r13,r14,r15;		\
-> +	.ifc \\rs, \reg;				\
+> > > > Aha!  I wonder if in the failing case, the vCPU gets migrated to a pCPU on a
+> > > > different node, and that causes NUMA balancing to go crazy and zap pretty much
+> > > > all of guest memory.  If that's what's happening, then a better solution for the
+> > > > NUMA balancing issue would be to affine the vCPU to a single NUMA node (or hard
+> > > > pin it to a single pCPU?).
+> > > 
+> > > Nope. I pinned main thread to  CPU 0 and VM thread to  CPU 1 and the problem
+> > > persists.  On 6.13, the only way to make the test consistently work is to
+> > > disable NUMA balancing.
+> > 
+> > Well that's odd.  While I'm quite curious as to what's happening,
 
-Why are these escaped differently?  Given they're all \r of some form or
-another, I guess something is going wonky with __stringify(), but its
-still weird for them to be different.
+Gah, chatting about this offline jogged my memory.  NUMA balancing doesn't zap
+(mark PROT_NONE/PROT_NUMA) PTEs for paging the kernel thinks are being accessed
+remotely, it zaps PTEs to see if they're are being accessed remotely.  So yeah,
+whenever NUMA balancing kicks in, the guest will see a large amount of its memory
+get re-faulted.
 
-Do you have a fully pre-processed source to hand to see how CALL_NOSPEC
-ends up?
-
-~Andrew
+Which is why it's such a terribly feature to pair with KVM, at least as-is.  NUMA
+balancing is predicated on inducing and resolving the #PF being relatively cheap,
+but that doesn't hold true for secondary MMUs due to the coarse nature of mmu_notifiers.
 
