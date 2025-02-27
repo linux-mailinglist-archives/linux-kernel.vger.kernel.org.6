@@ -1,158 +1,357 @@
-Return-Path: <linux-kernel+bounces-536597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45443A481D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:45:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7298A481A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B1B175432
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3593A6330
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C382356BD;
-	Thu, 27 Feb 2025 14:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B591E236425;
+	Thu, 27 Feb 2025 14:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uX7+RApk"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuFJKCu6"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1243235C1E;
-	Thu, 27 Feb 2025 14:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B14E545;
+	Thu, 27 Feb 2025 14:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667004; cv=none; b=nvxo1qcIFCLLuAHd3j26M3xVFwiEdQrWWtK+3yOuYWJBltp+w4GwesG6Lfz1X3q23wyQPFJeSLXz42A06ns9ltqMAemCtdXe6uqvFfK3RbMat4hX7BHEADOLgzDQ3pVhxb48GjHfoqclPpEHmcMnNb5siuJku7HPzcW/76y2sgs=
+	t=1740667067; cv=none; b=buR6/BwJcE4Lm3xzmMAAQuXyIUG+ftW1o5WRBs3scOfgQdsPDGoL4hLxKByvkAhlZ79Ch7Bt6Vhvhq4x/w4WSkmQsELg8STsX4DneF2AVmt6aNTPI/l0h938msxg1Ygso2m1UohEcwa2K+x12ndlH+hFIvWaqh4p0vcsaIfu2x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667004; c=relaxed/simple;
-	bh=WmGu8UBqaNEqmafRoiJAt+i+0hSd9k9YyFoBqyDaSX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gFh02OplDqa1+ZOAB2vu7JORL+X76rALYiTaWaq0+B/m+t+iBFif4O0uhr8meZsbLkipkIYQq9PDtAZXfxYc0E/Y2NvM0OGxC/MGKDLPDY5dhwoEkPyADfSNKmR/tcaM6EaHF+T134zNbpiPdEWIPM+IQNJdT0PgJoDGXCJ3qdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uX7+RApk; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wRx4iYCJbJeKN/dTXbqUdgQQYMQgt3Y3UiAiJX4U/fo=; b=uX7+RApk9Vje/TfbBDrC0dz1Ix
-	j0FmoL+WbKpwyEFeZiMLsOd2l7kG52KGs71FlelByzo0bcK/nIUUXYvci9PFsSMy4A8XMH3CUDhB1
-	K0Jnp5gkDMcNq8db6BZ/fgzh2St+ew7cbLB3Q9p7dEwiaxyc+h44lYakjsElDJlsMJWNUMnqCB5o8
-	wm6K2+4p3pzlUlmJk3r+WOL7HEaTJ07aB5wWeipAbshaR9PUp0x5CQY4asCSyOUN5+AuynNtQrxUA
-	W+bgHwvd8gFOa3KnB28aLcIoNlmEjdGHe+x+ID6LNFY7iA3JpHlYwc+9A7MiVhV5DjAXayomaqIL1
-	m1NliMOQ==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tnf0C-0001Y4-5r; Thu, 27 Feb 2025 15:36:40 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- liujianfeng1994@gmail.com, sebastian.reichel@collabora.com,
- cristian.ciocaltea@collabora.com
-Subject:
- Re: [PATCH v2] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-Date: Thu, 27 Feb 2025 15:36:39 +0100
-Message-ID: <10619139.qUNvkh4Gvn@diego>
-In-Reply-To: <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
-References:
- <20250222223733.2990179-1-heiko@sntech.de>
- <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
+	s=arc-20240116; t=1740667067; c=relaxed/simple;
+	bh=vn5C2r+aZ+xpvJI6yJuTpRgPVaBIjP3Oy1M6JW6YsKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bw9WzNWpiWbdfbHGci5vPi9FqZdZObaORj1i8gctylqk4MjA91pTe5KRZJHST4NSKUsX4LIeAA6wLO/NPjTQUMqK6aklewHZMoa6AxCf/juZELoW3619lNONnA22OmbESeqXPN+3wjrcTX4xEYJMHOe/ol7lC/oIKmDa7AwH8QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuFJKCu6; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30a440effcfso23046971fa.0;
+        Thu, 27 Feb 2025 06:37:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740667062; x=1741271862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ImxLy1MOg3k3Qztfs1yXlUdMX6UMvSo4Arah4/7gd7c=;
+        b=MuFJKCu6bspb+bm0FaKWf8V5+OosjTnCmhnrCFdtN2ED76T6k/mA520x245RPTqETZ
+         T1sIl2Tc3nKGAkgO5WfFQ6iRrf3KZS5we1etTLHJmFiSuf3IUQ5ZmIdTvnDi0AvwUoeR
+         gAahTlGwOZ/2mnLkr5ib6ov0kKvKVRFIn4zyxel2lpYyL+BGp/kw2ADIesFVtinj3o0w
+         HQeII9VkOQ9BuOVMcf+wNB/vWpEvfb2GNG7fO9MlsrcSYOL99L/prrSI9IPW52MEnFrm
+         dK0SE/iGyWPW+75x4/EX06LaAKuYC8koy607zGqiPlj/kON/8UiQiiQdytKUnF0MJEPf
+         y/hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740667062; x=1741271862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ImxLy1MOg3k3Qztfs1yXlUdMX6UMvSo4Arah4/7gd7c=;
+        b=F3COcDbqMsN0Lb1ECdsi551S1G6wU2o99/XfyOL+Z6qEwJ6GXjAR4poXcAql6Nxr2D
+         H2X/0gWvdGXzzr0eurdwt9imK61f2UamWjRgstyCw3DwwZ9xoV/lFQXsS3YxMDZdP1M9
+         VoNYNwjtWGxkWwl8CUQ4nXZl7cz7Gu9xtokkp/kZY1eMaUT/p4DO3rFE7IFI6pWJyhjB
+         LKGQSDVrvgV9JF9JyvTL86eYnDS8YbnrnIoE3RXXo1zV0kcrdzcM+hPYE8emEqYC9Q/4
+         XscY3FzkAkKhVntfKr68vsd7lz2xyu3AxjPOp5TrOW1n75ytS1syb+W/BMitFWax/GNv
+         iuRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX0feyAlo4hOoc6l6EiN6n/LM+gUvhJQoSbTH0sQHI+DXkFIyd8j4iYqI3cew3kNXdNmt+O53Omut/C9qi@vger.kernel.org, AJvYcCWBTlVkNjDOFKEkZgirrm9MYMvn+YU5tQ6W4+H55ZxTdTQpc+IykD1TvDRMZDQJyekFC9NSMyetz8uwb/6popw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWBsw8Y/5BIrmCRI86khojw785wSRQcj95259JawBPFJQj9poH
+	mZk3lhVGr3znhIAHy3LnD9+aVxG043o21MhP/JoJ0uR1FxpKrA2qRhWgzJgaDqH6L2XkOLas2QV
+	STO1wL3r7bRogPrSe4Zk73e7XEDg=
+X-Gm-Gg: ASbGnctpI2lYR3QNG0Pqnk1z8NH9OWpsQj5dgNquavWHp1R+Nzfzvj5kdsJJtH+ocN0
+	A9MEq9vO8kB9sWqe2dkTI72YhQW/rS30mQmBaw8/mJb+id7UAMJCC+MRhsn8sx5zKBY6bEcg2yA
+	Du5jzvHQ==
+X-Google-Smtp-Source: AGHT+IHuPmDhkLaIVHYupCg69sbvN+YVg1RHKBoI33YR9lNZpCgSi714NbLho8KVivwRVUs7aCn2uPtKEt09zoVcf+Q=
+X-Received: by 2002:a05:651c:e13:b0:308:e956:66e with SMTP id
+ 38308e7fff4ca-30b84585759mr10530491fa.0.1740667061418; Thu, 27 Feb 2025
+ 06:37:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250224045237.1290971-1-chharry@google.com> <2025022431-ditto-shy-c62f@gregkh>
+ <CADg1FFeW5EXOJTqTS+jwBphGnDSCreNwM8hcFOhB1Tatdti6QA@mail.gmail.com>
+ <2025022407-polo-disgrace-9655@gregkh> <CADg1FFehoZr3DmDhV_ri69+XBHLQcpKjoxLMaVhQUdzRuhST9A@mail.gmail.com>
+ <CABBYNZLhR+OJQnYZ5vN5HjgiWwKrXvOse-pXhCcTdFpJrrzsNg@mail.gmail.com> <CADg1FFdtr2gnKy5VfFoCm4+0cGRJkvsOBRXtrcLSaMJwGjhBUQ@mail.gmail.com>
+In-Reply-To: <CADg1FFdtr2gnKy5VfFoCm4+0cGRJkvsOBRXtrcLSaMJwGjhBUQ@mail.gmail.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 27 Feb 2025 19:37:28 +0500
+X-Gm-Features: AQ5f1JptFhTylsgNLZrs7QfSJ8srxVJ3Zrmms9a3mGRGvspmeIvbXZGayg0n610
+Message-ID: <CABBYNZJX2hA8D++hb9d3nvCz4M1rfFrzpMPMQ8p0Bq8FTHZhig@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
+To: Hsin-chen Chuang <chharry@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-bluetooth@vger.kernel.org, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Hsin-chen,
 
-Am Mittwoch, 26. Februar 2025, 23:32:28 MEZ schrieb Stephen Boyd:
-> Quoting Heiko Stuebner (2025-02-22 14:37:33)
-> > of_clk_get_hw_from_clkspec checks all available clock-providers by
-> > compairing their of-nodes to the one from the clkspec. If no matching
-> > clock-provider is found, the function returns EPROBE_DEFER to cause a
-> > re-check at a later date.
-> > 
-> > If a matching clock-provider is found, an authoritative answer can be
-> > retrieved from it whether the clock exists or not.
-> > 
-> > This does not take into account that the clock-provider may never appear,
-> > because it's node is disabled. This can happen for example when a clock
-> > is optional, provided by a separate block which just never gets enabled.
-> > 
-> > One example of this happening is the rk3588's VOP, which has optional
-> > additional display-clock-supplies coming from PLLs inside the hdmiphy
-> > blocks. These can be used for better rates, but the system will also
-> > work without them.
-> > 
-> > The problem around that is described in the followups to:
-> > https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
-> > 
-> > As we already know the of-node of the presumed clock-provider, just add
-> > a check via of_device_is_available whether this is a "valid" device node.
-> > This prevents eternal defer-loops.
-> > 
-> > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> 
-> Applied to clk-next (unless this needs to fix something urgent?)
+On Wed, Feb 26, 2025 at 9:22=E2=80=AFPM Hsin-chen Chuang <chharry@google.co=
+m> wrote:
+>
+> Hi Luiz,
+>
+> On Thu, Feb 27, 2025 at 4:55=E2=80=AFAM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > Hi Hsin-chen,
+> >
+> > On Mon, Feb 24, 2025 at 2:13=E2=80=AFAM Hsin-chen Chuang <chharry@googl=
+e.com> wrote:
+> > >
+> > > On Mon, Feb 24, 2025 at 2:44=E2=80=AFPM Greg KH <gregkh@linuxfoundati=
+on.org> wrote:
+> > > >
+> > > > On Mon, Feb 24, 2025 at 02:25:52PM +0800, Hsin-chen Chuang wrote:
+> > > > > Hi Greg,
+> > > > >
+> > > > > On Mon, Feb 24, 2025 at 2:10=E2=80=AFPM Greg KH <gregkh@linuxfoun=
+dation.org> wrote:
+> > > > > >
+> > > > > > On Mon, Feb 24, 2025 at 12:52:32PM +0800, Hsin-chen Chuang wrot=
+e:
+> > > > > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > > > > >
+> > > > > > > Automatically configure the altsetting for USER_CHANNEL when =
+a SCO is
+> > > > > > > connected. This adds support for the USER_CHANNEL to transfer=
+ SCO data
+> > > > > > > over USB transport.
+> > > > > > >
+> > > > > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute t=
+o control USB alt setting")
+> > > > > > > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+> > > > > > > ---
+> > > > > > >
+> > > > > > > Changes in v2:
+> > > > > > > - Give up tracking the SCO handles. Only configure the altset=
+ting when
+> > > > > > >   SCO connected.
+> > > > > > > - Put the change behind Kconfig/module parameter
+> > > > > > >
+> > > > > > >  drivers/bluetooth/Kconfig | 11 ++++++++++
+> > > > > > >  drivers/bluetooth/btusb.c | 46 +++++++++++++++++++++++++++++=
+++++++++++
+> > > > > > >  2 files changed, 57 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kc=
+onfig
+> > > > > > > index 4ab32abf0f48..7c497f878732 100644
+> > > > > > > --- a/drivers/bluetooth/Kconfig
+> > > > > > > +++ b/drivers/bluetooth/Kconfig
+> > > > > > > @@ -56,6 +56,17 @@ config BT_HCIBTUSB_POLL_SYNC
+> > > > > > >         Say Y here to enable USB poll_sync for Bluetooth USB =
+devices by
+> > > > > > >         default.
+> > > > > > >
+> > > > > > > +config BT_HCIBTUSB_AUTO_SET_ISOC_ALT
+> > > > > > > +     bool "Auto set isoc_altsetting for USER_CHANNEL when SC=
+O connected"
+> > > > > > > +     depends on BT_HCIBTUSB
+> > > > > > > +     default n
+> >
+> > Maybe we can do just:
+> >
+> >  default y if CHROME_PLATFORMS
+> >
+> > > > > > > +     help
+> > > > > > > +       Say Y here to enable auto set isoc_altsetting for USE=
+R_CHANNEL
+> > > > > > > +       when SCO connected
+> > > > > > > +
+> > > > > > > +       This can be overridden by passing btusb.auto_set_isoc=
+_alt=3D[y|n]
+> > > > > > > +       on the kernel commandline.
+> > > > > > > +
+> > > > > > >  config BT_HCIBTUSB_BCM
+> > > > > > >       bool "Broadcom protocol support"
+> > > > > > >       depends on BT_HCIBTUSB
+> > > > > > > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/bt=
+usb.c
+> > > > > > > index de3fa725d210..af93d757911b 100644
+> > > > > > > --- a/drivers/bluetooth/btusb.c
+> > > > > > > +++ b/drivers/bluetooth/btusb.c
+> > > > > > > @@ -34,6 +34,8 @@ static bool force_scofix;
+> > > > > > >  static bool enable_autosuspend =3D IS_ENABLED(CONFIG_BT_HCIB=
+TUSB_AUTOSUSPEND);
+> > > > > > >  static bool enable_poll_sync =3D IS_ENABLED(CONFIG_BT_HCIBTU=
+SB_POLL_SYNC);
+> > > > > > >  static bool reset =3D true;
+> > > > > > > +static bool auto_set_isoc_alt =3D
+> > > > > > > +     IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTO_SET_ISOC_ALT);
+> > > > > > >
+> > > > > > >  static struct usb_driver btusb_driver;
+> > > > > > >
+> > > > > > > @@ -1113,6 +1115,42 @@ static inline void btusb_free_frags(st=
+ruct btusb_data *data)
+> > > > > > >       spin_unlock_irqrestore(&data->rxlock, flags);
+> > > > > > >  }
+> > > > > > >
+> > > > > > > +static void btusb_sco_connected(struct btusb_data *data, str=
+uct sk_buff *skb)
+> > > > > > > +{
+> > > > > > > +     struct hci_event_hdr *hdr =3D (void *) skb->data;
+> > > > > > > +     struct hci_ev_sync_conn_complete *ev =3D
+> > > > > > > +             (void *) skb->data + sizeof(*hdr);
+> > > > > > > +     struct hci_dev *hdev =3D data->hdev;
+> > > > > > > +     unsigned int notify_air_mode;
+> > > > > > > +
+> > > > > > > +     if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT)
+> > > > > > > +             return;
+> > > > > > > +
+> > > > > > > +     if (skb->len < sizeof(*hdr) || hdr->evt !=3D HCI_EV_SYN=
+C_CONN_COMPLETE)
+> > > > > > > +             return;
+> > > > > > > +
+> > > > > > > +     if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->sta=
+tus)
+> > > > > > > +             return;
+> > > > > > > +
+> > > > > > > +     switch (ev->air_mode) {
+> > > > > > > +     case BT_CODEC_CVSD:
+> > > > > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
+> > > > > > > +             break;
+> > > > > > > +
+> > > > > > > +     case BT_CODEC_TRANSPARENT:
+> > > > > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANS=
+P;
+> > > > > > > +             break;
+> > > > > > > +
+> > > > > > > +     default:
+> > > > > > > +             return;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > > +     bt_dev_info(hdev, "enabling SCO with air mode %u", ev->=
+air_mode);
+> > > > > > > +     data->sco_num =3D 1;
+> > > > > > > +     data->air_mode =3D notify_air_mode;
+> > > > > > > +     schedule_work(&data->work);
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >  static int btusb_recv_event(struct btusb_data *data, struct =
+sk_buff *skb)
+> > > > > > >  {
+> > > > > > >       if (data->intr_interval) {
+> > > > > > > @@ -1120,6 +1158,11 @@ static int btusb_recv_event(struct btu=
+sb_data *data, struct sk_buff *skb)
+> > > > > > >               schedule_delayed_work(&data->rx_work, 0);
+> > > > > > >       }
+> > > > > > >
+> > > > > > > +     /* Configure altsetting for HCI_USER_CHANNEL on SCO con=
+nected */
+> > > > > > > +     if (auto_set_isoc_alt &&
+> > > > > > > +         hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
+> > > > > > > +             btusb_sco_connected(data, skb);
+> > > > > > > +
+> > > > > > >       return data->recv_event(data->hdev, skb);
+> > > > > > >  }
+> > > > > > >
+> > > > > > > @@ -4354,6 +4397,9 @@ MODULE_PARM_DESC(enable_autosuspend, "E=
+nable USB autosuspend by default");
+> > > > > > >  module_param(reset, bool, 0644);
+> > > > > > >  MODULE_PARM_DESC(reset, "Send HCI reset command on initializ=
+ation");
+> > > > > > >
+> > > > > > > +module_param(auto_set_isoc_alt, bool, 0644);
+> > > > > > > +MODULE_PARM_DESC(auto_set_isoc_alt, "Auto set isoc_altsettin=
+g for USER_CHANNEL when SCO connected");
+> > > > > >
+> > > > > > This is not the 1990's, why are you adding new module parameter=
+s when we
+> > > > > > have so many other more proper ways to do this?  And really, th=
+is would
+> > > > >
+> > > > > Sorry but could you please provide an example to guard a feature =
+like this.
+> > > >
+> > > > Depends on what you want to do with this configuration.  Why is it =
+an
+> > > > option at all?  Why can't it "just work"?  Module parameters are a =
+pain
+> > >
+> > > I would like to hand this question to Luiz. I believe this patch just
+> > > works because this configuration is defined in the spec.
+> > > I think Luiz's point is to project the potential existing user, but
+> > > there's probably no User channel user sending SCO data with the lates=
+t
+> > > btusb driver because:
+> > > a) There's no way to configure alt setting from userspace
+> > > b) Before eafcfcfca97d, SCO data would be rejected since User channel
+> > > shouldn't be able to modify hci_conn_num
+> >
+> > Perhaps you can just use CHROME_PLATFORMS (suggested above) in Kconfig
+> > to enable intercepting of the events, etc, so we don't need any
+> > runtime parameters.
+>
+> I'm afraid that this doesn't resolve Greg's comment below because the
+> multiple controllers are still bonded to the same config.
 
-the area where this affects something for me is slated for 6.15, so
-personally I see no urge to have this in 6.14 - especially as the effect
-is present for so long already and nobody complained.
+Well that would be enabled for every controller plugged into the system.
 
-Though it looks like clk-next hasn't been pushed yet :-) .
+> Also I would hesitate to put this Chrome devices specific because
+> project Floss shall be able to run on a general Linux environment.
+
+It can be enabled for Linux in general, it just not enabled by default
+which can be changed later if someone decides to use Floss outside of
+Chrome OS, that said I very much doubt Google would be supporting
+anything other then Chrome based platforms or Floss don't depend on
+Android vendor HCI commands? At least the Android documentation seems
+to suggest a bunch of vendor commands are required:
+
+https://source.android.com/docs/core/connect/bluetooth/hci_requirements
+
+> If you have a strong opinion to guard this behind a flag, perhaps we
+> could try other options suggested by Greg (configfs or maybe back to
+> sysfs).
+
+I think those would be more complicated then handling this via
+Kconfig, besides I think this works best since there is no new API
+introduced, just a new Kconfig option which can be enabled in any
+platform/distro.
+
+> >
+> > > > to configure, we have loads of other ways to do this now (configfs,
+> > > > debugfs for debugging stuff, sysfs for device-specific things, etc.=
+)
+> > > >
+> > > > > > not work at all for multiple controllers in teh same system, ri=
+ght?
+> > > > >
+> > > > > Do you mean we can't have separate parameters for different
+> > > > > controllers? Yes that's true, but why would a user want the diffe=
+rent
+> > > > > behavior on the same machine?
+> > > >
+> > > > Why would you prevent them from allowing this to happen for a
+> > > > device-specific option?
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
+> > > --
+> > > Best Regards,
+> > > Hsin-chen
+> >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+> Best Regards,
+>
+> Hsin-chen
 
 
-> Please write a unit test (or many).
 
-Had to look a bit ... never noticed the kunit dtso files before.
-But will look into that :-) .
-
-> I also wonder if we should use a
-> different return value so that we don't try to look up the clk by name
-> (see clk_core_fill_parent_index()). We could go even further and stop
-> trying to find the clk over and over again too. Maybe -ENODEV can
-> indicate that and we can cache that parent entry value so we stop
-> trying.
-
-Pffff ... no clue :-)
-
-I.e. in the case I have, we're coming from clk_get_optional() [0].
-which is supposed to just return NULL if the clock is not found, so at
-least for the consumer view, the internals are not fixed and we could have
-different "internal" error codes.
-
-Not sure if more direct users of the of_clk_ functions would be affected
-though?
-
-
-In the case above, the optional clock is just a single one coming from a
-phy-block, which may probe later (needing defer) or never (if disabled).
-
-As for caching the ENODEV, I'm not sure how often we'd experience that?
-
-Like "normally" you have that one big clock-controller + maybe a number
-of smaller ones + maybe some blocks that expose one or two clocks
-to one specific user - in my case the hdmi-phy exposing its hdmi-pll
-for a nicer rate to the display controller when generating a hdmi output.
-
-Does a case exist where some never-probed clock controller would have
-so many clock-consumers that caching that single of-property check
-would matter?
-
-
-Heiko
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L3742
-
-
+--=20
+Luiz Augusto von Dentz
 
