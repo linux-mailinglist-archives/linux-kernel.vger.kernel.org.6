@@ -1,108 +1,196 @@
-Return-Path: <linux-kernel+bounces-536846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC88EA484B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:22:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DA5A484E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D9567A232D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C74F3A9F8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906941B040D;
-	Thu, 27 Feb 2025 16:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10651B3957;
+	Thu, 27 Feb 2025 16:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQHKb5GS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vGxpn2Lz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rL3B9CE0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vGxpn2Lz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rL3B9CE0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2061AA1DA;
-	Thu, 27 Feb 2025 16:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B0D1B042D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673354; cv=none; b=QbRTUZy5ulFzBmBkFKglTW7bl/kI8yvsXcSQMd2mB8sZmbxDr2miCLWWo4CsmEm0P+utpVGzqmOlc88OYkWWYNDLW5dwoqpXIdz+uuq7NRJbVei71rVhXGIEwq9tIx0u10oq5nb7yGS95G1htj2t0KNZ+jIjLT+YoumU/MekDjk=
+	t=1740673356; cv=none; b=ClYZvZPyRNBGYPF5utzs/cHjSR4ueX8lACBkVzUoKyouchbISgBZFtxLJn0rWWidbdFFrblPgA4k9V+Qd8gj62aimKdIN7cF4rufzFNBbbJCFTPXEVqAqQW+LluExeDwy8jfBok8w26NLXk2Vrtk00sNZC13yfG3H+JRZKyDg2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673354; c=relaxed/simple;
-	bh=7oJwvuZomMWiCSFUAia+pino3G8sWkHGl5wL803IjLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJN2AOkqJTD35o5Q6+QO9TsstXAQPCg0sycLkdGBRT2sSs3OXqsTX55RnUgaSnfXCwVQMar7VGFEyvElq3UKeFdsy5Mt9HfdGrBMm+J2XafdBzxQHWotlxXOAajLUCwKudhOWeNPG46jz3/0DjyrO67nis3T0Weh3JhbFDVBHbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQHKb5GS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6B5C4CEDD;
-	Thu, 27 Feb 2025 16:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740673353;
-	bh=7oJwvuZomMWiCSFUAia+pino3G8sWkHGl5wL803IjLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RQHKb5GSo139CsmkCQwX24SS+iDXoyAh0UP5nqNCwvuAFiCF64xYBpyjGVusK/Ywy
-	 BPnkwSbOy+Qe4YcVaKV5zVi9K6UkbF1FX8PgR3YhH8by94484RtCHeYp6vxbyynPqD
-	 FZSh7cPSOg4j+5hICQLlzGbfqjW+xk68cJC7cEaMCuneM7gQnHH4Uv9HBjzYHJnf0k
-	 K5pKA7Z+P6R9zxaFAeQHi/8D6WTHlT5g3G9AiWCxZGyTbG9rXhpF+QYrHxW/HQTnO6
-	 NABsh0la8VqbSRFAA38ogUMXoJoRTXZi63OD8UwYOp/WyF04RQgC/dloOEqO230Roe
-	 NI89VEcRKTi0w==
-Date: Thu, 27 Feb 2025 16:22:26 +0000
-From: Mark Brown <broonie@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>,
-	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shi Fu <shifu0704@thundersoft.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	Neal Gompa <neal@gompa.dev>
-Subject: Re: [PATCH v3 14/20] ASoC: tas2764: Crop SDOUT zero-out mask based
- on BCLK ratio
-Message-ID: <e13e0922-f51f-4ce3-8ff4-3dbce41864c9@sirena.org.uk>
-References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
- <20250227-apple-codec-changes-v3-14-cbb130030acf@gmail.com>
+	s=arc-20240116; t=1740673356; c=relaxed/simple;
+	bh=EJQswW+uV50ipsNAKIS0BlM7xVZL9rml7ToPuMbP644=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=nXGuLtdp/SNG6tPQ7CElHwA1MsZIHnR+/IiJU5J61tVtmUci7jpF304Sed/xzHE5IVQriv9C+WTEcOWbkIZMXxHGTTlBJXmd9ikp2A1wxiNL//lthkubKMxhgDj/UN+zvAOWxiM+YG1W7bC2EGUHC87JckrsawbAe8S3xpA8meE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vGxpn2Lz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rL3B9CE0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vGxpn2Lz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rL3B9CE0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5633D1F38A;
+	Thu, 27 Feb 2025 16:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740673353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7V56fokguSA/WYKJDRk2Eox6EGfnPhEQzwOcUhOq7IY=;
+	b=vGxpn2Lzk2RYRmUIjN/e8KtPfMf11jBw0/VCsvf3t2A4h/vyFR3ml6WUhuN3GWV3s/n147
+	C4LZS9yUSXFMl2ucKloJc0qk960mR739w2a3wJVGKFmnNc0mbLDwIbpDvql/Lyg97GU4Uk
+	ed9U+0SIPRvSyTr1r9ScYHHSZY1IHhE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740673353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7V56fokguSA/WYKJDRk2Eox6EGfnPhEQzwOcUhOq7IY=;
+	b=rL3B9CE0bUGINuE4+uJlPCYnz0p2RflPn4pKDaDjQ/MUgUmV+sHfdEbPrCEP8z8/R+PpU4
+	bHaIdF6CzFhNIDBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740673353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7V56fokguSA/WYKJDRk2Eox6EGfnPhEQzwOcUhOq7IY=;
+	b=vGxpn2Lzk2RYRmUIjN/e8KtPfMf11jBw0/VCsvf3t2A4h/vyFR3ml6WUhuN3GWV3s/n147
+	C4LZS9yUSXFMl2ucKloJc0qk960mR739w2a3wJVGKFmnNc0mbLDwIbpDvql/Lyg97GU4Uk
+	ed9U+0SIPRvSyTr1r9ScYHHSZY1IHhE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740673353;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7V56fokguSA/WYKJDRk2Eox6EGfnPhEQzwOcUhOq7IY=;
+	b=rL3B9CE0bUGINuE4+uJlPCYnz0p2RflPn4pKDaDjQ/MUgUmV+sHfdEbPrCEP8z8/R+PpU4
+	bHaIdF6CzFhNIDBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1EB551376A;
+	Thu, 27 Feb 2025 16:22:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id l+DkBUmRwGdZHwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 27 Feb 2025 16:22:33 +0000
+Date: Thu, 27 Feb 2025 17:22:32 +0100
+Message-ID: <87mse75pdj.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.14-rc5
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RQ2t0JCNkbhgW4MV"
-Content-Disposition: inline
-In-Reply-To: <20250227-apple-codec-changes-v3-14-cbb130030acf@gmail.com>
-X-Cookie: Swim at your own risk.
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
+Linus,
 
---RQ2t0JCNkbhgW4MV
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+please pull sound fixes for v6.14-rc5 from:
 
-On Thu, Feb 27, 2025 at 10:07:41PM +1000, James Calligeros wrote:
-> From: Martin Povi=C5=A1er <povik+lin@cutebit.org>
->=20
-> As per the datasheet, SDOUT bits must be zeroed out if the
-> corresponding TDM slot is invalid for a given clock ratio.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.14-rc5
 
-This seems like a fix?
+The topmost commit is fe1544deda605f6100cbff1d5aeb179c3aa1515c
 
---RQ2t0JCNkbhgW4MV
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
 
------BEGIN PGP SIGNATURE-----
+sound fixes for 6.14-rc5
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfAkUEACgkQJNaLcl1U
-h9BLSAf/dKpfouQU0WEWnlQyGAZst+aDj7j5Va/OtzoOiOirCIqTRjok8L6HNuJ4
-pYiCTZFKXziWVijVOGyBiYcZDdEP9VnwPUjFTsqJftGoWyqxsiHI0dO9H1yEdXsH
-JBLwGduWkAMRrpofp6R8YILSpm8zeukGj5P9zaoCFNp4UEy/2G6RWB3tPFlLsKyp
-Y8x7BtRH/r399KpIiCd+5kF22sCtuQwtz8znricWctufvW4RhXxEGFGGBea8JkDJ
-EG9wHpDwjwUAChK++dODpRAHUTydKZj3nxnoyH8pLFFcWC/qAXQUHNOvZoClN7cF
-Xzfv+FEtTW2a2NmFadx2LHVrxvZgFA==
-=BqH6
------END PGP SIGNATURE-----
+A collection of fixes.  The only slightly large change is for ASoC
+Cirrus codec, but that's still in a normal range.
+All the rest are small device-specific fixes and should be fairly
+safe to take.
 
---RQ2t0JCNkbhgW4MV--
+----------------------------------------------------------------
+
+Adrien Vergé (1):
+      ALSA: hda/realtek: Fix microphone regression on ASUS N705UD
+
+Bard Liao (2):
+      ASoC: SOF: Intel: don't check number of sdw links when set dmic_fixup
+      ASoC: Intel: sof_sdw: warn both sdw and pch dmic are used
+
+Chancel Liu (1):
+      ASoC: fsl: Rename stream name of SAI DAI driver
+
+Dmitry Panchenko (1):
+      ALSA: usb-audio: Re-add sample rate quirk for Pioneer DJM-900NXS2
+
+Hector Martin (3):
+      ASoC: tas2770: Fix volume scale
+      ASoC: tas2764: Fix power control mask
+      ASoC: tas2764: Set the SDOUT polarity correctly
+
+Nicolas Frattaroli (2):
+      ASoC: es8328: fix route from DAC to output
+      ASoC: dapm-graph: set fill colour of turned on nodes
+
+Richard Fitzgerald (2):
+      firmware: cs_dsp: Remove async regmap writes
+      ASoC: cs35l56: Prevent races when soft-resetting using SPI control
+
+Takashi Iwai (2):
+      ALSA: usb-audio: Avoid dropping MIDI events at closing multiple ports
+      ALSA: hda/realtek: Fix wrong mic setup for ASUS VivoBook 15
+
+---
+ drivers/firmware/cirrus/cs_dsp.c  | 24 +++---------
+ include/sound/cs35l56.h           | 31 +++++++++++++++
+ sound/pci/hda/cs35l56_hda_spi.c   |  3 ++
+ sound/pci/hda/patch_realtek.c     |  2 +-
+ sound/soc/codecs/cs35l56-shared.c | 80 +++++++++++++++++++++++++++++++++++++++
+ sound/soc/codecs/cs35l56-spi.c    |  3 ++
+ sound/soc/codecs/es8328.c         | 15 ++------
+ sound/soc/codecs/tas2764.c        | 10 ++++-
+ sound/soc/codecs/tas2764.h        |  8 +++-
+ sound/soc/codecs/tas2770.c        |  2 +-
+ sound/soc/fsl/fsl_sai.c           |  6 +--
+ sound/soc/fsl/imx-audmix.c        |  4 +-
+ sound/soc/intel/boards/sof_sdw.c  |  7 ++++
+ sound/soc/sof/intel/hda.c         | 18 +--------
+ sound/usb/midi.c                  |  2 +-
+ sound/usb/quirks.c                |  1 +
+ tools/sound/dapm-graph            |  2 +-
+ 17 files changed, 162 insertions(+), 56 deletions(-)
+
 
