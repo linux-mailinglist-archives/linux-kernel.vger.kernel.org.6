@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-536167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC69A47C50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:35:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C212BA47C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34831167376
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83C43A6931
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549EE22AE7B;
-	Thu, 27 Feb 2025 11:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FC622CBDC;
+	Thu, 27 Feb 2025 11:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWByfMdK"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHmsJEzQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6E02253A8;
-	Thu, 27 Feb 2025 11:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23DB2253A8;
+	Thu, 27 Feb 2025 11:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740656106; cv=none; b=cPL9fqRqlShQxc9QQAvuyOwBXsGqNGTx3LEW9XuU0AHhh+Lb5oFa+bZ0qqjQ06QtdfbB4FIyWaL/0EGpauobE2ig4Ev9TOcIlew7LJTgI63mwaCfuu2xXKQfbYB3OBa2pA+MCc2Bd4QebO1F7XRLPpyfUF24vKr14VoMVfIySbg=
+	t=1740656112; cv=none; b=cGpdqXDxO7iuNotKuUNI7PtE7Gju5Z0y8WsMSR6qhVOOLbDW3noQTVB3Th3/10ApOKLsS9TCp4IDqM/hwxs5b1neBn8iJoJMrzP6WwLdRi5jSt2IkMq9XanlT5/4ev60/LFVSu7/xYLMgoz4D+g44rpxgTSePkV/hBEQmtSbdeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740656106; c=relaxed/simple;
-	bh=ldwn/EiopZJQ++ZzPunfH17TEy2zzvdkMynUExTJI5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4gIRS1QbNMwMTZQhaeEklJGc8SgZEuIsLXu/w/0TS49AkSfV7aX0DKJk0rw4cVMK2walFiiTTFgvfiEk0KeMo71cTGxmQBUtn5gzHkfWIX1C6EongjT+ojcyWJkFuUZI/pnXExtIownqoyBCi6c+5VWCJfaIMr3RSSsprWiMew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWByfMdK; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30a303a656aso9044911fa.0;
-        Thu, 27 Feb 2025 03:35:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740656103; x=1741260903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldwn/EiopZJQ++ZzPunfH17TEy2zzvdkMynUExTJI5M=;
-        b=lWByfMdKj6ohae8ozHILwMpC4TPsqTuZggu/DHz7SrSY6CBSB6bKF2P/3glyNltpQ7
-         016Nqq6jIA+ICqnKfJfByYj2dGGfx1mCkFIeeQvWNEwM+GafiyNt7mXIMDQVvG2NJ7eK
-         XtKjturgpdUgNV+P82LocjFB1eKAc0+ekYLMhqpRtIlaf2qRJsHgTL7uc2FmkgKX3aW2
-         F78U468F3rsMLArFnJ6mcwsUJxUlwSwxjrXbE1/Z9Lh6q4i0QEYVDElO2eQgdm7x5B90
-         vreFr47J3y0OE3wa3zvxtaCyYRqTbp4t4DQiKHu9HpY5xmBKQaq6/G7i/6gcoA5LYsr+
-         DNJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740656103; x=1741260903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ldwn/EiopZJQ++ZzPunfH17TEy2zzvdkMynUExTJI5M=;
-        b=ks6cDs9n5S60PKa8sYI5U7i0etZPIexs+b8982xmCoufmNTiAWZUUl02mGdbpkibvX
-         krbGq6EdBRY5h0r5MqU1oas3PUly1V0pBVyNZ21MUXV1sRpoNEcYAejSL5WyITpzCk9D
-         T76qgHW3602c+GlVq4T6ihmD2n7dBq6GOro4h4Zu0o0m0ot7Zht8kFugnJbN+WtO/Q+c
-         rmEau7JHbAM2jOY7c1j4WMq8aYXeUwht+eFj7qvjCuYmjq3QVIKNPTHwfwVePr6q1JsC
-         elAMYN/2Cxn04Hec/GOBhXfYZb+GT6lXiAnP1MvgR4L2G7i7AqaV37izAWRV9pt0PheB
-         0gGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTKwSr2KBqNouHxff/AKclbxg/+Cc3DOR49IBJMlpN/2i5fnII2Dx+woAcUe58Ps1YkQznEsouDsutIDwuNos=@vger.kernel.org, AJvYcCWuFuh1L6oNYxVAsbjsy/1FmPlh8aZHKomTl2AD6UfHVR7Lm+ruNcofOHvj72zdTmu1vo727UylzXt/@vger.kernel.org, AJvYcCXCKxfxfiJpLiIbLSXy7azVXs7Vwi1FTsWOlChtcFgGUzOz6nVjbPDm0bZGt8gkztZXzx1lqYHbCAEKNDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3EJt4TXeYJP8934dtU1Qv+Iu4a1J8ZDa9U2dzo5QbDozw8mmi
-	R6WemHcyRMISWTnPTmn8pqro10ifQxgMJyz+q5puSDvy/X2o/wLGBPmBfTaWLT4h2Z7x9msMc2U
-	tmZHMwD0TarR7dZYw+CTNkj0B87w=
-X-Gm-Gg: ASbGncubz8dr2Jkah8EIYsx7+V4JrUpNrrV21IcD6MgXZ6EERPtr10+M7nAdyVT2iH7
-	SPLMAwRn+p9iCYWWhoHh8XuEkZrvN9NZkue9+bl1bXdBShPJkRjua4h/3feA6vlWofg3eD5k9Bb
-	WbvF72nwe2pZRiV2XMYTiMmBAZYSJDn8FOzj5h8/hg
-X-Google-Smtp-Source: AGHT+IGfOrPCkbMrZti+ZGk1EvzoYK3uaz1d4Bw2cJgZf/MCVPMPC0nhgo7sI8Z0VEVj/QUvOrKBtrvkFQZDRJz8Nv8=
-X-Received: by 2002:ac2:5b8d:0:b0:548:e44d:f3ee with SMTP id
- 2adb3069b0e04-548e44df52cmr4665298e87.10.1740656102882; Thu, 27 Feb 2025
- 03:35:02 -0800 (PST)
+	s=arc-20240116; t=1740656112; c=relaxed/simple;
+	bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GXrzBsrcVH8Wf3HNh2KDSKL/7c7ruz7KO+llNipbbfqbcCFG/SzCmNpz+QqCGL1uNuTXHRbbwN6si/4WtqKAYqu7ZRaNHJjU4utlLxLQDPAid2DKxUBar7T/FKl+FP0NzNCm2Bfc4rXdOtiz1v1hPh/83I5b0jbAPTZOjh3iZT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHmsJEzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39177C4CEE4;
+	Thu, 27 Feb 2025 11:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740656111;
+	bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YHmsJEzQeJeJG7tScJcX1VhaWytUO0RRE7k2SlPy+jtF8TOIoFRVsk6d/cBdEiLZs
+	 DofoE9H61qcheY32zoZdi0bcy+yXFYT035Xx3r/n2hZYeyW0vSKLwrGLihaDOWpZuD
+	 EBakHOUwTR3K4bgTDlm/ydk/qBBIj1JNOasqhLfmfO0uJfjDhxrLEzEd6fixlKujRV
+	 T+8pvVGnaQqr+loSkdvR2vyKWj4HQ7ykfTazivD3118mHJdL6nlEPX/n0AODsZ9YLl
+	 t6yt07oSLhHbjs/QIBcIyvB0upxV2VUN9Fx794u66B4mAxPS0nMeNvJ8OrqXT9l0/X
+	 +gHgoXuBVpRQg==
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-nfs@vger.kernel.org,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	ceph-devel@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	linux-fsdevel@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+Date: Thu, 27 Feb 2025 12:34:53 +0100
+Message-ID: <20250227-narzissen-haifisch-2bf97aeb50d8@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250227013949.536172-2-neilb@suse.de>
+References: <20250227013949.536172-1-neilb@suse.de> <20250227013949.536172-2-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com> <20250213142441.56532c18@eugeo>
-In-Reply-To: <20250213142441.56532c18@eugeo>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 27 Feb 2025 06:34:26 -0500
-X-Gm-Features: AQ5f1JqeXJBMpn3IDeg2JUq0K25kYq7vRyB5ZH5pUnKWBl2bps6_Fn4BTe1QRgo
-Message-ID: <CAJ-ks9mxUUQvbQp+cPx-5Vvs4gZQEkS=5NC9veuQ-qU9ZJn0JA@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: alloc: satisfy POSIX alignment requirement
-To: Gary Guo <gary@garyguo.net>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
-	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2022; i=brauner@kernel.org; h=from:subject:message-id; bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf8H36MVdGktGBUeTtOpUDH6Z3nzud3NchrNJcaKAe5 ZFgJ7W+o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKvVzP8T0rZ+3L6lG+Sa0r7 t+/ewD2DjzHD5ceFDoeNC1dZSxxTW8Dwm+2dn6h/yOv5e9L3xmv6XD0d7HZuWQZfgadE7vqXKze lcwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 9:24=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
->
-> On Thu, 13 Feb 2025 06:34:18 -0500
-> Tamir Duberstein <tamird@gmail.com> wrote:
->
-> > ISO C's `aligned_alloc` is partially implementation-defined; on some
-> > systems it inherits stricter requirements from POSIX's `posix_memalign`=
-.
-> >
-> > This causes the call added in commit dd09538fb409 ("rust: alloc:
-> > implement `Cmalloc` in module allocator_test") to fail on macOS because
-> > it doesn't meet the requirements of `posix_memalign`.
-> >
-> > Adjust the call to meet the POSIX requirement and add a comment. This
-> > fixes failures in `make rusttest` on macOS.
-> >
-> > Acked-by: Danilo Krummrich <dakr@kernel.org>
-> > Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module alloca=
-tor_test")
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> Reviewed-by: Gary Guo <gary@garyguo.net>
+On Thu, 27 Feb 2025 12:32:53 +1100, NeilBrown wrote:
+> Some filesystems, such as NFS, cifs, ceph, and fuse, do not have
+> complete control of sequencing on the actual filesystem (e.g.  on a
+> different server) and may find that the inode created for a mkdir
+> request already exists in the icache and dcache by the time the mkdir
+> request returns.  For example, if the filesystem is mounted twice the
+> directory could be visible on the other mount before it is on the
+> original mount, and a pair of name_to_handle_at(), open_by_handle_at()
+> calls could instantiate the directory inode with an IS_ROOT() dentry
+> before the first mkdir returns.
+> 
+> [...]
 
-Thanks for the reviews! Gentle ping: are more reviews required?
+Applied to the vfs-6.15.async.dir branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.async.dir branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.async.dir
+
+[1/6] Change inode_operations.mkdir to return struct dentry *
+      https://git.kernel.org/vfs/vfs/c/10a5b48c3eeb
+[2/6] hostfs: store inode in dentry after mkdir if possible.
+      https://git.kernel.org/vfs/vfs/c/28d16ecaa2a8
+[3/6] ceph: return the correct dentry on mkdir
+      https://git.kernel.org/vfs/vfs/c/948ec6393e44
+[4/6] fuse: return correct dentry for ->mkdir
+      https://git.kernel.org/vfs/vfs/c/ef04f867aeb2
+[5/6] nfs: change mkdir inode_operation to return alternate dentry if needed.
+      https://git.kernel.org/vfs/vfs/c/5ca75f993a4a
+[6/6] VFS: Change vfs_mkdir() to return the dentry.
+      https://git.kernel.org/vfs/vfs/c/9cdf09f608d0
 
