@@ -1,114 +1,85 @@
-Return-Path: <linux-kernel+bounces-535560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A8A47489
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:35:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58E0A4748A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C3C188C86D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14463A4841
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A5E1EB5CD;
-	Thu, 27 Feb 2025 04:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D70A1D90AE;
+	Thu, 27 Feb 2025 04:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b="idPKac2X";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kxNXMJ3Z"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N1jaiF/L"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284621EFF82;
-	Thu, 27 Feb 2025 04:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAC328F3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740630876; cv=none; b=KVeM/16bfFhPCJT39Rmt6RrDjNkgTjxBwW/jQ+N9Xg5cLW3NQnfdvsHqXkbEsjrGneYWxNcWywl4Es8hzUmGAZ2ITq+/ZSIqSJLsUQOLDxkvuSuvWQCaLe+t8GHumEno5Ph2C1lIxksRWrzRY1Ru6XQ5QZZQrd0FDp6YTX1fcks=
+	t=1740630994; cv=none; b=BUg6R3Hi+WRbk3I4W6rwpIxanv3s1tbqqOYfLS8MuUhdyDhi8Ml+G3w76UITc1DwG9PS9vKcxG+LRZGvuRC8xXMgUdw8PNwe/JAvqyWqghbMWCayYVJX+JsU/4DlWKPKO5bljhJ33zVZJkAhhXGNDBxgaOVE2KrVaAHTr4AEqx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740630876; c=relaxed/simple;
-	bh=yqe0zcuR8sL3PTTRNmUYhODGCjMj01+ChgLvyDdpsEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iO8/4oAdD7FM/e7/jEIZaKlPsAA7+xNyZJ/OAX9wqijBqvZiBKeNP1U8/lrDKOu2uIjv0Lli5HgesL93UFhU0LKMfcWB/vFuCtwbzM9PIGd0OgCOAzVAAYg+JbC+abOJtsJclgxuTbSuIeANSKIQQF/pDoqvFsF2HETmdgLYYks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me; spf=pass smtp.mailfrom=alistair23.me; dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b=idPKac2X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kxNXMJ3Z; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistair23.me
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 2A30311401DC;
-	Wed, 26 Feb 2025 23:34:34 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Wed, 26 Feb 2025 23:34:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1740630874; x=
-	1740717274; bh=wpuK8Wow745m20Ym4XzR/6KOmJYhJZqQ4EL2NWYAtFc=; b=i
-	dPKac2XUpZNTBOc1IOFWpnXZBTUVpeKuEdXdhbDkfD5au7rH/DFxaoZ18hNcTkrb
-	KZB4n3hKCQAZAYcZF0E+YIi8fH8KsDc5TADOjvfDewOxSvdgBi340rOlcgGymH/3
-	EsoTUp0PI71mW9d8PUchr+bYCFxyeFf1MRCWZ3qDqaX76v+dmwUTdeNQjmIPLKpO
-	kaUx+Gp+SGcj4CyA6jG/AENiivn7fJJIPAofAGxR+9wkJUKMPxiziapK701JQdWB
-	JJURrzKfimhV6s+lwen74kqCOKBj5XlDEooal+BRZOLnQD9rs5e8xvEaaEhE/edT
-	/yqj38eIgu02K2rUELifA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1740630874; x=1740717274; bh=w
-	puK8Wow745m20Ym4XzR/6KOmJYhJZqQ4EL2NWYAtFc=; b=kxNXMJ3ZehA/Dg3pm
-	ncnRN9KwRJL9rdq4tqzCGiFeF2jrHT7JH4SQxrXyXWM5mMtI27pU31/BCHJYsIOI
-	NCUqEsbaMVIhI2flmG6p1RdbHamd/gsCT6a0zDzoS87o0cpueZcj54FIwG3L48OI
-	W50SJPFoXk+j7ewqVMRQJg5bFq/3ONFPwSulEOFSXzHNf8VaTNPf0GH/ZgUMtB+K
-	IrFLmAEe5/iLigbMKvrNHHzDiikjchCEe4r0rzriwyMHhh7f6GU66FXH3SuFUR6H
-	XV8QR7ca4u2imuTFJaTUc7jqMopfCgbl/ZF4oWObuOIWZ0syZWzeWoOT4NBpcsO9
-	T2M6g==
-X-ME-Sender: <xms:Weu_Z5ITUmieytSRVWlmlk3hj2C2hpFpmRCx8sG5C9hwZAVvfD46nA>
-    <xme:Weu_Z1KdFRcJCIZ63r2pgny8VjYYtKluBEiEtgqMS5WkLRpeWJxRCaTakE4HWWdws
-    Pl2S1V37YswKp9UNVA>
-X-ME-Received: <xmr:Weu_ZxsAhFoyAk0pS2Jtq7qHjypvi9pWNpLoezkrgATJAkyHugLMsy1uxFqU5gi9oKxxYDpJv-4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekieehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvve
-    fufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehlihhsthgrihhrucfhrhgr
-    nhgtihhsuceorghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgvqeenucggtffrrg
-    htthgvrhhnpeeitdefkeetledvleevveeuueejffeugfeuvdetkeevjeejueetudeftefh
-    gfehheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grlhhishhtrghirhesrghlihhsthgrihhrvdefrdhmvgdpnhgspghrtghpthhtohepudeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehjohhnrghthhgrnhdrtggrmhgvrhhonheshhhurgifvghird
-    gtohhmpdhrtghpthhtoheplhhukhgrshesfihunhhnvghrrdguvgdprhgtphhtthhopegr
-    lhgvgidrfihilhhlihgrmhhsohhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopegthh
-    hrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopehktghhsehn
-    vhhiughirgdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurg
-    htihhonhdrohhrghdprhgtphhtthhopehlohhgrghnghesuggvlhhtrghtvggvrdgtohhm
-X-ME-Proxy: <xmx:Weu_Z6a5E-p3lM9XxcTaWnYv_SCVTQ0d8LsN95kiMTzERnCkpeV6FQ>
-    <xmx:Weu_Zwb0fLiOwWtXqjretJljm4re7aYTag0wVxmlzbRlSExdLUap5Q>
-    <xmx:Weu_Z-Dm33okHyH3Qz1PWzlHOsScuH9R_sxIK3S-WTu7oxg9MwRPPQ>
-    <xmx:Weu_Z-Ye4AMrsBfnPUOWcS8Ra9EaW6SiGRFnd9Sp7vl38BJREmtzyw>
-    <xmx:Wuu_Z2wgSMbu3HPoOb5Gh1v-ipbNifMZ48kCCl1WHm25BNz-nM5hhWkV>
-Feedback-ID: ifd214418:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Feb 2025 23:34:28 -0500 (EST)
-From: Alistair Francis <alistair@alistair23.me>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: alex.williamson@redhat.com,
-	christian.koenig@amd.com,
-	kch@nvidia.com,
-	gregkh@linuxfoundation.org,
-	logang@deltatee.com,
+	s=arc-20240116; t=1740630994; c=relaxed/simple;
+	bh=CRN3xG+LKYWwkTZPAe3FES8Wz3vHpMlOp2NDaU9QD5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BCRWiact66LGgqwogG+kvZp599mqzSUy8TmeSRaF1ptrMc2G+1hzXdl2mlihLSWrqQkuFTQw0+apf/Z5i61emxqFaKA2pCY2lSww+xuA/zefkeD6V16MEbnWmgivKCcAIaoh2ks6QmNZ9Gb3RS6489IjNSzef0P1k793q8p/yrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N1jaiF/L; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fe9759e5c1so924388a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740630991; x=1741235791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Z3DSKokSwZ5uHRtAT60BGaSiPztkv7dCrtMyW+YP6I=;
+        b=N1jaiF/LJLQ544hOeBTY5182qv8xxFgf9PxT+uQbn+xtRrFmPDywIBIhSEtKP1bSFT
+         q8yvE5HXzffnOayF1bDHASQCJwZlAr015wZjxOLy6skk8X0iTx0Ip8X7IFw9hUOzWuNg
+         chy5fpamOXrJQv8Jgtuorv2pFIn19x8TMQ/F0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740630991; x=1741235791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Z3DSKokSwZ5uHRtAT60BGaSiPztkv7dCrtMyW+YP6I=;
+        b=Ih7SDFeV700GcWID66XOv2k5gh8AOxH16ctV1x/I7CGmgsMLa+9HEvmadBEwn2d9vD
+         bVD7BX12XxdO/XfVD2FlD9V2AMOkQtLJyJ5nNnsOfFTbkksvzoOs8g0pXgFXHwS37ztq
+         /TdTW7ndJXA0fb3fPDAvo2aKW4nVubyEQ7dhMR4QAXwtFtOeduDetFZ8zmR+f6swcvGM
+         b43TwOEdconSzlDm54y4h+yiTrmwoDVh06pKzNIx55eCl9CbXrwTxQQeX3mi/tUY6o6P
+         I1ow8Bu9zLycge6arbRVJSxOWn8mtD7jDpiNV1iJ61Y26GFlwTAgc1T2OSKZz8svEG+m
+         TXJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOmb97PV1JYLFBeQcqkOJTYwztyGQ8TKun3vMrIi6HX8e6EjJ6z52UHqRHjSQfI6eomT151JxlgHZH8to=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsf1048/lBOSsZHfRP3a68+e2WHG1BDwT6kWFwpjebUBRCWfYE
+	azIqscmzElEvnJCwCc9ckVTeEPOVBOeSkEqClkK8iI89MSHjiwg3jztT/M3SSQ==
+X-Gm-Gg: ASbGncsrnVPJlLeGuoAdJlELlCVOl0oL0H3mN3tbmpAO1OUHclmXVmb33ORLzwfl//8
+	ZaJkjN5JzWiWYNPlCIQ6q9IpcDnPRHguD3bBQ6rJUtJXG1SpLw6WOfj2PPdyQwxvVt2UvVdpqXL
+	09jKvvmmNUPYxdazREbE+Tcml4JRM4woSivigeHA0TgDPQ/+mnHc1QyCmLcsrZtWuYLT7te6yGY
+	SXi5CTi/1Z2C1egeNVhqrAbdmJDbqD5Tzx/LxNJOr02IDI3elcjoy9PRW+ygwlCC4/oSAeEd4/z
+	KWe5P0cCsWQYnlnAqPxEsPUD79eS
+X-Google-Smtp-Source: AGHT+IG0BwI3VqlxpA9E0JnUzA5p7//9Vscs8Kzwmy/4s/mzmHLVasE2jLbYowS4VPG0rXYGyeNnuw==
+X-Received: by 2002:a05:6a20:3956:b0:1ee:d7b1:38ad with SMTP id adf61e73a8af0-1eef5178c60mr43093813637.0.1740630991182;
+        Wed, 26 Feb 2025 20:36:31 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:a9c0:1bc1:74e3:3e31])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aee7dedf5a8sm396321a12.70.2025.02.26.20.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 20:36:30 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Hillf Danton <hdanton@sina.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Minchan Kim <minchan@kernel.org>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	alistair23@gmail.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org,
-	Alistair Francis <alistair@alistair23.me>
-Subject: [PATCH v16 4/4] PCI/DOE: Allow enabling DOE without CXL
-Date: Thu, 27 Feb 2025 14:34:03 +1000
-Message-ID: <20250227043404.2452562-4-alistair@alistair23.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250227043404.2452562-1-alistair@alistair23.me>
-References: <20250227043404.2452562-1-alistair@alistair23.me>
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH v9 00/19] zsmalloc/zram: there be preemption
+Date: Thu, 27 Feb 2025 13:35:18 +0900
+Message-ID: <20250227043618.88380-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,35 +88,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-PCIe devices (not CXL) can support DOE as well, so allow DOE to be
-enabled even if CXL isn't.
+Currently zram runs compression and decompression in non-preemptible
+sections, e.g.
 
-Signed-off-by: Alistair Francis <alistair@alistair23.me>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
-v16:
- - No changes
+    zcomp_stream_get()     // grabs CPU local lock
+    zcomp_compress()
 
- drivers/pci/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+or
 
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 2fbd379923fd..fff4f3c6f6d3 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -122,7 +122,10 @@ config PCI_ATS
- 	bool
- 
- config PCI_DOE
--	bool
-+	bool "Enable PCI Data Object Exchange (DOE) support"
-+	help
-+	  Say Y here if you want be able to communicate with PCIe DOE
-+	  mailboxes.
- 
- config PCI_ECAM
- 	bool
--- 
-2.48.1
+    zram_slot_lock()       // grabs entry spin-lock
+    zcomp_stream_get()     // grabs CPU local lock
+    zs_map_object()        // grabs rwlock and CPU local lock
+    zcomp_decompress()
+
+Potentially a little troublesome for a number of reasons.
+
+For instance, this makes it impossible to use async compression
+algorithms or/and H/W compression algorithms, which can wait for OP
+completion or resource availability.  This also restricts what
+compression algorithms can do internally, for example, zstd can
+allocate internal state memory for C/D dictionaries:
+
+do_fsync()
+ do_writepages()
+  zram_bio_write()
+   zram_write_page()                          // become non-preemptible
+    zcomp_compress()
+     zstd_compress()
+      ZSTD_compress_usingCDict()
+       ZSTD_compressBegin_usingCDict_internal()
+        ZSTD_resetCCtx_usingCDict()
+         ZSTD_resetCCtx_internal()
+          zstd_custom_alloc()                 // memory allocation
+
+Not to mention that the system can be configured to maximize
+compression ratio at a cost of CPU/HW time (e.g. lz4hc or deflate
+with very high compression level) so zram can stay in non-preemptible
+section (even under spin-lock or/and rwlock) for an extended period
+of time.  Aside from compression algorithms, this also restricts what
+zram can do.  One particular example is zram_write_page() zsmalloc
+handle allocation, which has an optimistic allocation (disallowing
+direct reclaim) and a pessimistic fallback path, which then forces
+zram to compress the page one more time.
+
+This series changes zram to not directly impose atomicity restrictions
+on compression algorithms (and on itself), which makes zram write()
+fully preemptible; zram read(), sadly, is not always preemptible yet.
+There are still indirect atomicity restrictions imposed by zsmalloc().
+One notable example is object mapping API, which returns with:
+a) local CPU lock held
+b) zspage rwlock held
+
+First, zsmalloc's zspage lock is converted from rwlock to a special
+type of RW-lookalike look with some extra guarantees/features.  Second,
+a new handle mapping is introduced which doesn't use per-CPU buffers
+(and hence no local CPU lock), does fewer memcpy() calls, but requires
+users to provide a pointer to temp buffer for object copy-in (when
+needed).  Third, zram is converted to the new zsmalloc mapping API
+and thus zram read() becomes preemptible.
+
+v8 -> v9
+- dropped ifdef-s for lockdep dep_map and lock class (Sebastian)
+- dropped some !preempt/in_irq WARNS (Sebastian)
+- unified zsmalloc handle allocation flags
+- simplified post-processing slots scan loops
+
+Sergey Senozhatsky (19):
+  zram: sleepable entry locking
+  zram: permit preemption with active compression stream
+  zram: remove unused crypto include
+  zram: remove max_comp_streams device attr
+  zram: remove second stage of handle allocation
+  zram: no-warn about zsmalloc handle allocation
+  zram: remove writestall zram_stats member
+  zram: limit max recompress prio to num_active_comps
+  zram: filter out recomp targets based on priority
+  zram: rework recompression loop
+  zram: move post-processing target allocation
+  zsmalloc: rename pool lock
+  zsmalloc: make zspage lock preemptible
+  zsmalloc: introduce new object mapping API
+  zram: switch to new zsmalloc object mapping API
+  zram: permit reclaim in zstd custom allocator
+  zram: do not leak page on recompress_store error path
+  zram: do not leak page on writeback_store error path
+  zram: add might_sleep to zcomp API
+
+ Documentation/ABI/testing/sysfs-block-zram  |   8 -
+ Documentation/admin-guide/blockdev/zram.rst |  36 +--
+ drivers/block/zram/backend_zstd.c           |  11 +-
+ drivers/block/zram/zcomp.c                  |  48 ++-
+ drivers/block/zram/zcomp.h                  |   8 +-
+ drivers/block/zram/zram_drv.c               | 332 +++++++++----------
+ drivers/block/zram/zram_drv.h               |  18 +-
+ include/linux/zsmalloc.h                    |   8 +
+ mm/zsmalloc.c                               | 334 +++++++++++++++-----
+ 9 files changed, 485 insertions(+), 318 deletions(-)
+
+--
+2.48.1.658.g4767266eb4-goog
 
 
