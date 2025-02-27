@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-537210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194D8A4892D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:46:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC98A48932
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FD31887E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3508188F548
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491A626E97D;
-	Thu, 27 Feb 2025 19:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAB026FA4D;
+	Thu, 27 Feb 2025 19:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEuqgdWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZYKCxR9"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD61B0425;
-	Thu, 27 Feb 2025 19:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780AB1B0425;
+	Thu, 27 Feb 2025 19:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740685550; cv=none; b=VuhBSY2Qk+Xq1E5qpKujChGXJVFA2UBLs3AxuFpEjT1AN3mKEvuJQrohtWRr4HcV7NyH5uDqAejQKiPjrHTJc6tSyyvAxZq7MttG8ZVEvXqEvKriQSCtoIWWijlnna5mFMiSQh8ppqw9Sp92oxHG4DDVyHcJHujhC5Bg2kQDoPI=
+	t=1740685556; cv=none; b=gtL39guBAFAQfKknjvE96q6HeORevlQeihXaOz7YaUBJi4gheJQtWsigVDUM/+T+HRZ3sZ382PsbczBrjLqwzKv8zOr5hJFFWcU9GjZovxYkYwrtCAjyftcyzk9fqC7Ywm3vw2FaXQXotZ90nrAPU9PRukRt+3hS5+A9rgfe/fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740685550; c=relaxed/simple;
-	bh=ZXCrKOq4STAxpn0LbqL3XX+FU8M05shAqCoEyXVf51c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=abmkYW0EewewGQJlbUNZHvclXhmTsSaDBfzLXybCSNArrUSMO27Xp+D+k2rwp6d57g/gj7L1yZJjpUdaEQb20EYwsiCcy8VfP16uq4T1xVbiTUXnZ1Bv2fJAZBwgRgCGOn5cQ8deQbbvLHNYT7EqQijspAkrU0aoHSAphIaH13A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEuqgdWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14510C4FF0C;
-	Thu, 27 Feb 2025 19:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740685550;
-	bh=ZXCrKOq4STAxpn0LbqL3XX+FU8M05shAqCoEyXVf51c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NEuqgdWkYFoBCCqxldonqLYcPxKv9sZv8t8kW4ywOwltwMJwLwDUuOdWpYMiTmGAY
-	 76pN2jBy4lwiRma0WXn2O4u7Su5hVJ2g8VFnmeQgUYOBj3f0RcH+Zl2OLalokyvcMS
-	 V39hJFKeJi98vs2l3e49Dk2AQTcgMHXVC0vw4oORGEwwrvcO1uFeubVG+gIFx1LZst
-	 9IC/K+5QkL6SSZtmcyuz2KAg69DYT5d+MKWVnAemN+cek9l4SG0SEql5zrwWivciPx
-	 qVaH3gcX0BS+X7di5rWVjIOfjmVJ1VyQI7dQ5lSdZeAYxgNhBAv0pXMkXlIfIm3Abh
-	 Y7AwH0ik/OPxg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tnjpL-008o1r-S4;
-	Thu, 27 Feb 2025 19:45:47 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] xhci: Restrict USB4 tunnel detection for USB3 devices to Intel hosts
-Date: Thu, 27 Feb 2025 19:45:29 +0000
-Message-Id: <20250227194529.2288718-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740685556; c=relaxed/simple;
+	bh=fxGI2P73JAE1BbX3qBIJnpU9JmGHhCzRhZk02qu+4IA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8x2QFtGXF6gv4onJP0bGMSVXjgH4uezMNcwSoFoR6MBti2vPrYYX9V9kDdNgWHV8mkqqkDv5GQdhpMmdD467Vz7sWP27OE0JlgVlLex0y01Blwp5qtQ+iWcUH1ROPsNWfDts2/rCGq8V2sgRnDKEEdG4mDTh9fXLQPkf1Y2p0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZYKCxR9; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2feb9076cdcso800968a91.0;
+        Thu, 27 Feb 2025 11:45:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740685555; x=1741290355; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hKrLEfNlUSucizGljfgxzp9FYBz9EtVzZ87+jjh5zyk=;
+        b=FZYKCxR9GNIKjczjfyNiHlyTbC84ol4Zqe35r0U3q+D1qvBTX0/7rmHjJsrtAcdU8D
+         jEwoElUmbpPuEVqdvTJwz+stdlGpp91RfXfsYx1skiVJtW8uhkrUxiFNlNQ6qrOkoFth
+         rQ89ItD38s9KxC0tRyj659a72anxse4ZAcgBczwqIuu/pbm7sSmVeVh2dfEKsIk/mkUH
+         jtXR6yupIee91OUxtMGmWg1scxaRYBQ/lZpe/KjwKIQcXpjERS8x5N0uXja7Hnhn+kYb
+         F9AJKM7NzealZrKJrCbVu9GX4U0U3692sc8j5X5PzH2BAg9QFpJzwd/EF8HjAFEf49rh
+         ip7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740685555; x=1741290355;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hKrLEfNlUSucizGljfgxzp9FYBz9EtVzZ87+jjh5zyk=;
+        b=IQjd7ZRW9iL6NY2z9pMDOb85dshLtdNJTSm4LQv10BsvpBNK/ujCrNPtLc2b/iCGLe
+         KqdJkeNG4Zrp3xgE9kS7J/xAKw2y8DrHm1AC950YstfdM/+JPj1Otiq3vcRt9eOaHmsK
+         XFXFWkkEsTn70Ua7z50/1KLE1ENmqeev4jrzslde30brHD76czbhi/ExT4LQ/ax2H/om
+         o3YZ1og70GSPTgV+yYwjBo+8G+i7UmqKU820pH0/7Kk7lri9c+9K/7xM2hvmAPQKJRX9
+         NOJHa7Lztl8KYAQhWL6x2BnUicmnuKMZ0hEhwfd+FDwE2amGvhMFGWvNeW1S2frrbOCt
+         YIGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmF0Fq6clBV/OawBhLHUa4exARTwES/zoTRLtPT0qo0KC35dh2ojFTCH6PLYW8QAaqSsdUWnb1zrhlx2LO@vger.kernel.org, AJvYcCWV5iTzy8MnuZMBPf9npTu4Olp6BqHBYdNOclRcMNT11nNkENJAe5n09R2uVKyDogaPzNGB7Rw1@vger.kernel.org, AJvYcCWdkmo5sv6g3gQgW5UrF4tB5fJ7O89+b1nkd/wouOFBaTuOedTn+ARpr1nnAxPV0aqLgsJiv5fkj1BdpWFnko/t@vger.kernel.org, AJvYcCXzhCux8Yq9WoKbdxL/dcK8SjkpgemuU2o43LOWb36JYmBKbZCd/G8AjoJ5P/1p2OfY5SI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiQtW1GZ+19RkfkZGnVvObFrogdMiamf2IUrrXUoU5xx0emZZ4
+	+96jKb+PmCeekHyfqcphXwRO6cMLcckWeQWBVOBMbkHbIsBpgcWY
+X-Gm-Gg: ASbGncujawuASmenntDJqX4UbqoTnSYIWxAbZ3hZ7gvTz2lW8+ScPrf55Y8VpSmRGyB
+	0Q/c0vFQGnBiOLxtjCQEOQOzYawoV8PccNKAeR825NB19dCs+tYu+hygc5pCz5xx9bWmZHRbelt
+	+eo2adWDUSpt6RIFZLabJUjJLg/quNjWnrWbygR2twHy0RJTpZGXFUGKzDI/uqo+H8cYDhHlGRo
+	dWOM2CwGjNiHtz9zigvoWduGjonrLaC79nfidfQIeoyS2PLoj8O2fUAprWKiM1ymhz4G0eIpAAw
+	+5ay8NtVyR0phm62EJrCVABYk0ShMA==
+X-Google-Smtp-Source: AGHT+IF7KxgGQER56mHtTQNtxws1vcj+rbNToYaT+m7ci3YVeU2HRn/oym63rVGGHm8Fgqe9vgWxNg==
+X-Received: by 2002:a17:90b:1804:b0:2fe:8c22:48b0 with SMTP id 98e67ed59e1d1-2febab7876amr909701a91.15.1740685554682;
+        Thu, 27 Feb 2025 11:45:54 -0800 (PST)
+Received: from localhost ([129.210.115.104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350529edasm18978725ad.230.2025.02.27.11.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 11:45:54 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:45:53 -0800
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: cong.wang@bytedance.com, john.fastabend@gmail.com, jakub@cloudflare.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, andrii@kernel.org,
+	eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, mhal@rbox.co,
+	sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	mrpre@163.com,
+	syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
+Subject: Re: [PATCH bpf-next v1 1/3] bpf, sockmap: avoid using sk_socket
+ after free
+Message-ID: <Z8DA8TqMEYNziiT9@pop-os.localdomain>
+References: <20250226132242.52663-1-jiayuan.chen@linux.dev>
+ <20250226132242.52663-2-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, mathias.nyman@linux.intel.com, gregkh@linuxfoundation.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226132242.52663-2-jiayuan.chen@linux.dev>
 
-When adding support for USB3-over-USB4 tunnelling detection, a check
-for an Intel-specific capability was added. This capability, which
-goes by ID 206, is used without any check that we are actually
-dealing with an Intel host.
+On Wed, Feb 26, 2025 at 09:22:40PM +0800, Jiayuan Chen wrote:
+> Use RCU lock to protect sk_socket, preventing concurrent close and release
+> by another thread.
+> 
+> Because TCP/UDP are already within a relatively large critical section:
+> '''
+> ip_local_deliver_finish
+>   rcu_read_lock
+>   ip_protocol_deliver_rcu
+>       tcp_rcv/udp_rcv
+>   rcu_read_unlock
+> '''
+> 
+> Adding rcu_read_{un}lock() at the entrance and exit of sk_data_ready
+> will not increase performance overhead.
+> 
+> Reported-by: syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/bpf/6734c033.050a0220.2a2fcc.0015.GAE@google.com/
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-As it turns out, the Cadence XHCI controller *also* exposes an
-extended capability numbered 206 (for unknown purposes), but of
-course doesn't have the Intel-specific registers that the tunnelling
-code is trying to access. Fun follows.
+sock_def_readable() already acquires RCU read lock anyway.
 
-The core of the problems is that the tunnelling code blindly uses
-vendor-specific capabilities without any check (the Intel-provided
-documentation I have at hand indicates that 192-255 are indeed
-vendor-specific).
+Reviewed-by: Cong Wang <xiyou.wangcong@gmail.com>
 
-Restrict the detection code to Intel HW for real, preventing any
-further explosion on my (non-Intel) HW.
-
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org
-Fixes: 948ce83fbb7df ("xhci: Add USB4 tunnel detection for USB3 devices on Intel hosts")
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/usb/host/xhci-hub.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 9693464c05204..69c278b64084b 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -12,6 +12,7 @@
- #include <linux/slab.h>
- #include <linux/unaligned.h>
- #include <linux/bitfield.h>
-+#include <linux/pci.h>
- 
- #include "xhci.h"
- #include "xhci-trace.h"
-@@ -770,9 +771,16 @@ static int xhci_exit_test_mode(struct xhci_hcd *xhci)
- enum usb_link_tunnel_mode xhci_port_is_tunneled(struct xhci_hcd *xhci,
- 						struct xhci_port *port)
- {
-+	struct usb_hcd *hcd;
- 	void __iomem *base;
- 	u32 offset;
- 
-+	/* Don't try and probe this capability for non-Intel hosts */
-+	hcd = xhci_to_hcd(xhci);
-+	if (!dev_is_pci(hcd->self.controller) ||
-+	    to_pci_dev(hcd->self.controller)->vendor != PCI_VENDOR_ID_INTEL)
-+		return USB_LINK_UNKNOWN;
-+
- 	base = &xhci->cap_regs->hc_capbase;
- 	offset = xhci_find_next_ext_cap(base, 0, XHCI_EXT_CAPS_INTEL_SPR_SHADOW);
- 
--- 
-2.39.2
-
+Thanks!
 
