@@ -1,241 +1,249 @@
-Return-Path: <linux-kernel+bounces-537514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D6EA48CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:34:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E085A48CDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:35:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786F27A470D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:33:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A07A4633
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1B5276D27;
-	Thu, 27 Feb 2025 23:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CA023E326;
+	Thu, 27 Feb 2025 23:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XlAwjPyU";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kjJauOtt"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OVxnFCrQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5609276D15;
-	Thu, 27 Feb 2025 23:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699279; cv=fail; b=lRA+06AFoMzSQ2fhCpt9f7ihBxai7Y2qQb2SWbPN7g0MuJfHMOLLPG0L9TMGusRnbZa3ge36Qc/ziwmkHGx1MPeAPkyhp0gNP3Hxv1wyC9w0y7xSkpafqn++nxRHMinV5/MhBVGnKbkLM7NVRV7mwlajIwG0Kjmsdb3fNUjH9P4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699279; c=relaxed/simple;
-	bh=P6r18OuSK+PAUeCRKwBuZWKLTHf+Wb42PScoXeS/5Q0=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 Content-Type:MIME-Version; b=MUNOEkHfRtjkc0spvUnw6gYflQxsTEzREQWh04Oz5Ij6NbkSp8/cUCCXYEVrJ8Fl4UKZvorlR50Vqqsm4SJrJGN8tVrx39hYXWHvpHXv/cFcn2PTqyooZpJQyp7p/tyyJQ/IQsDJokokAEKBgAjf5ghsheKEb34p1kfc65h6LCc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XlAwjPyU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kjJauOtt; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RMTKO6032092;
-	Thu, 27 Feb 2025 23:33:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=uzGGljK9pmf0F4IuqU
-	iDsYbsPQndFOxv77raBvi6aVM=; b=XlAwjPyU3ICGxd81Qd2tdj+ZeWUu4Lt/mP
-	CtxssKSpg66REBsrkzVGyji+LIB/xljBapVzcUTA7b1CsDJ9FihHE+8eHc80IO1L
-	0CvidZZJuzbTttT4522lQ2ITufidz4k4yB26TpnDf4sf34xQrcEFYQQtAg+TldbL
-	qrpMUyBbKYkqoT2aNfNUY3o4w75uHcVYrUgc240/Vky1zMfUG26xGRjjS+6tQVwk
-	t69rHqksBAa1F3hyaVqj9K3/t89onxa1dPze1SZ1SIWEFvtr0+ni9OuP53YZ2RBs
-	Y0pcO4opQHPLFavIp2xNljLTmnIyf1XrzOw1ISnAHJL6zXqukc4Q==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451psccme9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 23:33:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51RMkSBZ025485;
-	Thu, 27 Feb 2025 23:33:58 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2172.outbound.protection.outlook.com [104.47.57.172])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44y51kf50t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 23:33:58 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vFIpGU14Qp0GZVQ/zEUGp/X868xJB2xM5AEUw/NxcaEbJOR3UJedkJuLNqQtaUTznEy7GFS3mE+e5gWuCIqbRo88Hqw4tOrGiJqQQOprF0NveurGcjN5TukJI73UKMNwh4QhNOxTuzfmG2Gf02Iaa7b3R6YnAVsH+/DMkdh0sne/zdhxkJQlUg2oCBgfU/O5Waf5o0vF98iLWU1fFsCHqo1MgVV2xKvlapjrEyk59gNgCs/OiISWTpsJl2gQINHPxzNoyd53F9TsY8ESB8kXrysEX4rkh9oqX8VcVat0ojG0why1Rgspt+gSeNFjPzyMMCPGRmNlMuf9GDaoq9eNnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uzGGljK9pmf0F4IuqUiDsYbsPQndFOxv77raBvi6aVM=;
- b=xvxygqyV8ElI9w9z9NBCGWji6R4pcmjhJwZdEU7ZVKp0xi7iDq96R4wbDI5sRxsJAiwJPd20JH6S4q2RffJd1lyxUcTec/IlLEOomJmpCs8uW8w3s/ZQhdh3iB2fwYg+yuD07VnwQwX0/cmjsmkEdRROHNbtGfduYIhanqNgR5eCMQnpgMnL7HU2G5PToDXZgkQ4bNMgys/ruuTYzvAmRoSR60uYhPHSdywCRy/fXqhSB9ctVO+AQB95T7TVSVn1JzxtazGqMm1ntTRjIGRSGtzVpLLmU1VAJkbfXg5QZpB0PQb2A8gQ8veIV7eDSn+DEn+04dNniXfX2nrl0+cKZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uzGGljK9pmf0F4IuqUiDsYbsPQndFOxv77raBvi6aVM=;
- b=kjJauOttJyfVb+1qiMUKRD+8Pq3tFNXtyuruXahH7AzV8e3HQ27EOWX5BCEBmPuEtxi+iQtLJbUuy4AkIlBJa93XUD57qdwvfaa1QZ4LFNnilafTjcVowLud0Y4dWpzGJSyYhNHAaDWEfedHsWL7f26F+oGfPxmBG8HP2iDiKhY=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by PH7PR10MB6508.namprd10.prod.outlook.com (2603:10b6:510:203::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Thu, 27 Feb
- 2025 23:33:06 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%2]) with mapi id 15.20.8466.020; Thu, 27 Feb 2025
- 23:33:06 +0000
-References: <20250225035516.26443-1-boqun.feng@gmail.com>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic
- Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Uladzislau Rezki
- <urezki@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan
- <jiangshanlai@gmail.com>,
-        Zqiang <qiang.zhang1211@gmail.com>,
-        Davidlohr
- Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra
- <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent
- Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann
- <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Masami
- Hiramatsu <mhiramat@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>,
-        Clark Williams
- <clrkwllms@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-rt-devel@lists.linux.dev, Ankur Arora <ankur.a.arora@oracle.com>
-Subject: Re: [PATCH rcu 00/11] Lazy Preempt changes for v6.15
-In-reply-to: <20250225035516.26443-1-boqun.feng@gmail.com>
-Date: Thu, 27 Feb 2025 15:33:04 -0800
-Message-ID: <87mse70xqn.fsf@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0083.namprd03.prod.outlook.com
- (2603:10b6:303:b6::28) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0F2276D23;
+	Thu, 27 Feb 2025 23:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740699306; cv=none; b=B4OGldiRbSGunqNCYI5DezEiffPPDOj0kuu6aAPnjENBWazc+nfzcKrRHjVSffL1mNsyRqLf4mG8mPV9PzR7igixb3qKhBm16pSEMXUpxfJo5+f53kFRtrw8sVOrVQ7+szZfi5aMkQ+mFE0p7oRKHbO8NQDqjRxetULhKzOs+oY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740699306; c=relaxed/simple;
+	bh=bkqOxOWQQQCLGRepn5os0rxwFT8Ja2Tsk0+nPgxMF3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MasEG80N0P8W1UGez0uTclmyq7LL0eeVp/iMbOnOPAJh3YaZDUFLkIt61w7H51ULfwFsYdAQCEh92lVP9gzBzTwwmMShumaatpMN/e3YGWQAgHGUF0z7efGdcRe6ISaTQUrBh5hegrlwG4rs5EmVuT+KwuF5soBXqa6Q6+giyZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OVxnFCrQ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740699303; x=1772235303;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bkqOxOWQQQCLGRepn5os0rxwFT8Ja2Tsk0+nPgxMF3k=;
+  b=OVxnFCrQi5VuGZdkGCfVWiXvhNtab/f9aoizkV3migDpg+6W80C9cFEv
+   lIfmPizXCSxhfRlxZrvX84Xv2pOTipP3jA1wulhrNeKnqVtfMslQW3ipN
+   bgTXnDNljGwv37G8vp+WrsZmePuE43jor5cgnQZmchmmZGFvxluf5v+5C
+   RZTB+5IkQsGa+LHsJNeXIaMTHjdd7W6HMJildbJJTYxP9X6HmubTe4vps
+   PuyN+FsT7d6pKibyaHwfRsryl3C9Jq+wQ/Udfeog3H0KSUL2rHaeW4Qq/
+   8GssrL8dYb/CFdhXHSuH6/cWuKZT/C4CZosJta4ULDVaayNzjM/asXZe0
+   w==;
+X-CSE-ConnectionGUID: tTGGOBKcRpKm59+wFWRXTA==
+X-CSE-MsgGUID: /VBeWWvOQRGxbl0+8YKmew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41317907"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="41317907"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 15:35:02 -0800
+X-CSE-ConnectionGUID: LZ4CqSA+TDGa2Oiwl5QCwQ==
+X-CSE-MsgGUID: 2bABavt/QpyPKQ46ixT8Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117356118"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 27 Feb 2025 15:34:59 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnnP6-000EB8-1f;
+	Thu, 27 Feb 2025 23:34:56 +0000
+Date: Fri, 28 Feb 2025 07:34:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Alisa-Dariana Roman <alisa.roman@analog.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v5 2/3] iio: adc: ad7191: add AD7191
+Message-ID: <202502280702.31rbuGw8-lkp@intel.com>
+References: <20250226115451.249361-3-alisa.roman@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|PH7PR10MB6508:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e203f84-2a3c-4724-2864-08dd57871605
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XYbd0LRnKmxZyac+xaDCCu3nfpK5OjdlS0xkfSCWP+4W6f7KhQWA/9prhYrk?=
- =?us-ascii?Q?GDzED+u9424PcVGrjOt6FnEAbZhTyN5+qFaNXJn7bBiiERvFuUxpNpes4wK5?=
- =?us-ascii?Q?DPK995vKniBRT94c8b5EWQaCI/JEjSCbcm8NEr0EjDkNng+2JGRY/icS0rZI?=
- =?us-ascii?Q?CBZ0YUYCQ+oaJw/F2wjjjHTScuW0xqOo3k5mJS5SPIVz/aLg4bNoUnwc87B7?=
- =?us-ascii?Q?8THfdWmYrKK/2SXredsMd2RAcTZdw1C5V5Rc4jDhFF3n16CBphO+GZZbKwBR?=
- =?us-ascii?Q?nsMg/4w1RvrzGnpE7wp7+dwYnfHrx4DLY00ny19FoDMfKbj28BdTyABuPCVz?=
- =?us-ascii?Q?1YQMwvgNbRAouQNURLvNTsWAfUI0kJv320b1OCFkaod1j+iGt1TJjo8LgeQ6?=
- =?us-ascii?Q?f8oCyveu8Tv3A7cIg79MH+lvf8EDqKIinXcC9a5e2iXRZ9bZQ4WmpXOb5kKe?=
- =?us-ascii?Q?CPl9HnVCyWAfL+7wiX+Hta2AZSO++NUOd8m0b2zfKStxD0Xvsq9lHiKQ3K/R?=
- =?us-ascii?Q?w5xyLNF/NCjsBckhZuXrmcwLOX0mCATq72DNj87MUSltimA0ATHcglu35mEq?=
- =?us-ascii?Q?fYXOzDXA4tXa+4kQEWcrMl0EUuI4ppa7HWQwz+lKo6hOuyNT/AlOGAZxsCha?=
- =?us-ascii?Q?H41jTq6JiSGZqQwW9b2zfde4g4LQYu71u7HoUxnQyEeh/Do98Hb8CFw1K/a5?=
- =?us-ascii?Q?+njMbj8VBI0hL/pm7/Rvo8h6qIcTDMP95mAvmP9r8OJSGLSXbDIsF4hYh6Pj?=
- =?us-ascii?Q?OLKzmZ7vLMNqgq54AKAeqikoWszLn1jv7xeIhcArDmCY7+i1xiGB88AyQACu?=
- =?us-ascii?Q?j270rFdTkE+lyvHKUPMP8nNQ8H15L3ZXqdyw8dQuT9R+lcIIEMgaLM6HGZCW?=
- =?us-ascii?Q?4opW13owyKOxoqlRRPFbr3/PSN2dXCxZRnFN+wkV9JxRBGL1lkkg417JGiZa?=
- =?us-ascii?Q?rGqZORAuLydaBPdV7LPeCCttqbiBnUayxmaBpt4p30ZtiTPSwbOizp/navF2?=
- =?us-ascii?Q?+c/qSWlXLl9ec1cfDE5mRphXeTjkOhYIIPes7hwO/XYek50mKUIh11/re7Ny?=
- =?us-ascii?Q?zEzDjBovza2mpgDdxLzlVn9jVnPS5misdLIH/A9OwHT8F0w+3Mh7MDiR+9sl?=
- =?us-ascii?Q?mWR6M9A1oM0S/V0oygyZZhhVoLlSMfLaXNqApAetDkIYanelbe/sMizy1nFg?=
- =?us-ascii?Q?AXf/xLEGtWZiqfMbClETy4519koz3LKBFDzcxDULbOBf+rdGNhbLw1t7YliA?=
- =?us-ascii?Q?TXzuOk8Oqw3f72RUBYrY7d7dS4by+tagXse1+04BOIg2VIOD6mZqyFOCYSGP?=
- =?us-ascii?Q?WIfsNC3GdKTMAVD7s3/2lQ6h8I3jMjWJ5QIovR3F5CyAMeojRy/wwPrl6lYm?=
- =?us-ascii?Q?8rJRt3BaJENyJ2iNVb8lu0HmP6iA?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?owStA+BFHC3OBTf//dFswuilkuTEM/3W/FhoquG49/Y97G72mvOpkgrMzHE/?=
- =?us-ascii?Q?z2JRfuqvZGniPKZeJoEDlXR2OhZEl4yTlBX4HOV9B2vdGx7KBgZvAsaOedS+?=
- =?us-ascii?Q?/6PTLlhjURczojz8NRGBS5UoQp6g1x680B+RQxqoBM9P3tgBhDE3L4xhHwWK?=
- =?us-ascii?Q?gGEMakQzd57HlaHn/u0b/Iq8GC+i3va85l+aPis8tQSN7rYXfsj8TH49Av6M?=
- =?us-ascii?Q?RDpRxIRFhTav7UZnF+M3lxcuDvLDn1PxbDk66XiwO/5yQKNk0TQOZ/7cr7+O?=
- =?us-ascii?Q?WxVqpG6WUdUipmQnVS+chS4mZcwB7tr7s3NNoV3YXHNLdnRdWW6ZcupyEbfR?=
- =?us-ascii?Q?6xMGH6WaAlJG7uWli0rhDDHb4TakKGz5wmXb+9Gq9klJ84pJBjAHCfSOD8NF?=
- =?us-ascii?Q?sGfT0dO6ldu5hzrcwHazHSAKpg1NlQx0OUR1c6sKglx5wllMn/2x/HibML6y?=
- =?us-ascii?Q?oYLPzOVjmVOUs+SZZGSBBnv1SaM2/prkzuWshnQnIWti/X0GrhUMqQf55kiu?=
- =?us-ascii?Q?3e6GH7UqxxIObGZRpQbYkxeGbIAD9cjMC/vUa8aK5biEkLXNCGnf8v03E2m4?=
- =?us-ascii?Q?YTqZgGYCzO7iTFfdrre7Yk0uG87EyE3kr0UWUBWz93OIJRZxrvLMB4u+USuU?=
- =?us-ascii?Q?9Ih43AoKZbx+6m7EhlPt4bIlj1GwCYPGIRYXDzLjkdHWE0Mk5yozGpYZppqw?=
- =?us-ascii?Q?qdoSx1r53XrGJz9+bsxECaFCR2QFOIl26YltWqmriH3mdvg87VAOtxWqu+9l?=
- =?us-ascii?Q?QJRGmdYDSemaoVBCFST8Q3ETya2N/VTN9GxVqFeHcU1DoNoCcLT0WN9t7YFw?=
- =?us-ascii?Q?tEDw3liE5az54WUJYy7jdMwjILFUgh5YV3IQkqtJgmwAcx92u8alL8GKcp5w?=
- =?us-ascii?Q?elS2qMk39c2a4gAqDzGj/MLaehCUdHJMnSEu9zYiJr5ail+j7EYXI0fpNPF1?=
- =?us-ascii?Q?TSH6VSOmugW9X7mR828axN60HKunQhYpUfbFWq47yiLSnvb6jNTbcF7lcvko?=
- =?us-ascii?Q?fSIv3pN1roGixCRTs6t8eKcEeAhc/4LfmaX346w8fzDG4eytmlnKQiM2PFpu?=
- =?us-ascii?Q?bkUVNStDaQ7/nJE+YFEs5o2TdS6TYImsQMOP24NGRbsihHT5/fjH88m0fX/a?=
- =?us-ascii?Q?9CV9i0RBnWDjAIpJjTZd+zdC6qi8Sy/pXCkp7jgyyFWmVVII5aBSpflYgk3O?=
- =?us-ascii?Q?c1LH9EgkjvweyCkqmJTCVHvshf5GeUVSg4LU7JyGffDIoMCAdgmdCyUk5DVx?=
- =?us-ascii?Q?B6gMYxs3RpyiHKXDXKLF4qyfB7xzlet2EngBj1I064TI4/C1F8oE8hcDGZiM?=
- =?us-ascii?Q?LHty9CZLrMQ0O8RURPGEOvWxDP1wwzj9JAdaT6tR7oXOK4j4nMLjt30kKSI/?=
- =?us-ascii?Q?/DORZDmrl+tc4DBX1zzDZfFODkGSOCbXRyRrOpswlu6p7fNK1oJnSQH6fwrd?=
- =?us-ascii?Q?CuC77kt3DfCORxcwUtii4FF4lEsLDpRf6Chu6lKnQ39hZyzMCuesBHQGAPMK?=
- =?us-ascii?Q?wHBIono/GN+M+AVgDAij7ch+w2UwY0HTqrZLbFnHM30pIRj9ZBsvmRoCx3Mm?=
- =?us-ascii?Q?07ACOL+dUCpzKjxczPuZexyp/XB5B7iDZwuAAlyZUFxfc+uOtkum8ZgEyQhk?=
- =?us-ascii?Q?fA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	UgxjJtA3OVDafg+jPltcoQGElIhU8vZppaTnTiUJtmfKZ27aJilhvCUEWcAs88kjwq2FFDnJq9VInGkEToItwGSCUc6UJfTelBLw0JJXn+lx2DskW+xs/drShXuo+9P4bgyxZ0rxnPKhOfOvrGermBnLL5lxIzvD8Zs4aIUfANcV0EI/4mS9pYuJCyBnSFVvzWC/vg3ABrPRpaQceQlpc148kgqSgVW4aNvlvAs7eErxwdVKODqeXsKh1AYqWqfftgKGQt4tcKcKcjsOvmoiCju7mhtEtIrkRUFsgpus5tvVUoYWhDkUx1Q2PWRMiPjvGkvNKtRYoUWZgBHrzyLMyDcV9T2+4L3LPcLb6mo/w5AnR4TjhLUTEK/pMQFXewF95QzMlUfNJb2ypNfROG3MY2Vp0NJs+OgXEc+U/YyH9TWIG+ifrJcgbLKBwdt9OKdAHi9UBrahPPAJz+VfmvTMWEyNVaGyYTfKPT9+BOINENIvMMQs6S+KCzQrh8fRhdOjQrct5is1DInqdONvBLWOPXOGaTWjhmT+7s+OOqgsVoe/S8nVzHEht91Yy0/mKRa+Sf8AW0+emS4SC+FQA+qLBKQzkDFZmU76MJdzjPfmjX0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e203f84-2a3c-4724-2864-08dd57871605
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 23:33:06.0809
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pbDUtV8v691FES6vvTpM/Agd9cVQ/gFXV82r9htNf93jyEG3neEkhGe50KS5nSLYUtkFdezzjQuQ2QnLPiPEzr0zFDV0ajvC82NLpCQcySo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6508
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_08,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxlogscore=549
- phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502270175
-X-Proofpoint-GUID: aqaf0ewwIbLRC8kZdaxgFQpR60Wv2ATs
-X-Proofpoint-ORIG-GUID: aqaf0ewwIbLRC8kZdaxgFQpR60Wv2ATs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226115451.249361-3-alisa.roman@analog.com>
+
+Hi Alisa-Dariana,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alisa-Dariana-Roman/dt-bindings-iio-adc-add-AD7191/20250226-195853
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250226115451.249361-3-alisa.roman%40analog.com
+patch subject: [PATCH v5 2/3] iio: adc: ad7191: add AD7191
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280702.31rbuGw8-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280702.31rbuGw8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280702.31rbuGw8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/adc/ad7191.c:217:15: warning: variable 'pga_index' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
+     217 |                 for (i = 0; i < ARRAY_SIZE(gain); i++) {
+         |                             ^~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad7191.c:224:35: note: uninitialized use occurs here
+     224 |                 st->scale_avail = &scale_buffer[pga_index];
+         |                                                 ^~~~~~~~~
+   drivers/iio/adc/ad7191.c:217:15: note: remove the condition if it is always true
+     217 |                 for (i = 0; i < ARRAY_SIZE(gain); i++) {
+         |                             ^~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad7191.c:160:48: note: initialize the variable 'pga_index' to silence this warning
+     160 |         int odr_value, odr_index, pga_value, pga_index, i, ret;
+         |                                                       ^
+         |                                                        = 0
+>> drivers/iio/adc/ad7191.c:179:15: warning: variable 'odr_index' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
+     179 |                 for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad7191.c:186:36: note: uninitialized use occurs here
+     186 |                 st->samp_freq_avail = &samp_freq[odr_index];
+         |                                                  ^~~~~~~~~
+   drivers/iio/adc/ad7191.c:179:15: note: remove the condition if it is always true
+     179 |                 for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad7191.c:160:26: note: initialize the variable 'odr_index' to silence this warning
+     160 |         int odr_value, odr_index, pga_value, pga_index, i, ret;
+         |                                 ^
+         |                                  = 0
+   drivers/iio/adc/ad7191.c:553:18: error: expected ';' after top level declarator
+     553 | MODULE_IMPORT_NS(IIO_AD_SIGMA_DELTA);
+         |                  ^
+   2 warnings and 1 error generated.
 
 
-Boqun Feng <boqun.feng@gmail.com> writes:
+vim +217 drivers/iio/adc/ad7191.c
 
-> Hi,
->
-> Please find the upcoming changes for CONFIG_PREEMPT_LAZY in RCU. The
-> changes can also be found at:
->
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git lazypreempt.2025.02.24a
->
-> Paul & Ankur, I put patch #7 and #8 (bug fixes in rcutorture) before
-> patch #9 (which is the one that enables non-preemptible RCU in
-> preemptible kernel), because I want to avoid introduce a bug in-between
-> a series, appreciate it if you can double check on this. Thanks!
+   150	
+   151	static int ad7191_config_setup(struct iio_dev *indio_dev)
+   152	{
+   153		struct ad7191_state *st = iio_priv(indio_dev);
+   154		struct device *dev = &st->sd.spi->dev;
+   155		/* Sampling frequencies in Hz, see Table 5 */
+   156		static const u32 samp_freq[4] = { 120, 60, 50, 10 };
+   157		/* Gain options, see Table 7 */
+   158		const u32 gain[4] = { 1, 8, 64, 128 };
+   159		static u32 scale_buffer[4][2];
+   160		int odr_value, odr_index, pga_value, pga_index, i, ret;
+   161		u64 scale_uv;
+   162	
+   163		st->samp_freq_index = 0;
+   164		st->scale_index = 0;
+   165	
+   166		ret = device_property_read_u32(dev, "adi,odr-value", &odr_value);
+   167		if (ret && ret != -EINVAL)
+   168			return dev_err_probe(dev, ret, "Failed to get odr value.\n");
+   169	
+   170		if (ret == -EINVAL) {
+   171			st->odr_gpios = devm_gpiod_get_array(dev, "odr", GPIOD_OUT_LOW);
+   172			if (IS_ERR(st->odr_gpios))
+   173				return dev_err_probe(dev, PTR_ERR(st->odr_gpios),
+   174						     "Failed to get odr gpios.\n");
+   175	
+   176			st->samp_freq_avail = samp_freq;
+   177			st->samp_freq_avail_size = ARRAY_SIZE(samp_freq);
+   178		} else {
+ > 179			for (i = 0; i < ARRAY_SIZE(samp_freq); i++) {
+   180				if (odr_value != samp_freq[i])
+   181					continue;
+   182				odr_index = i;
+   183				break;
+   184			}
+   185	
+   186			st->samp_freq_avail = &samp_freq[odr_index];
+   187			st->samp_freq_avail_size = 1;
+   188	
+   189			st->odr_gpios = NULL;
+   190		}
+   191	
+   192		mutex_lock(&st->lock);
+   193	
+   194		for (i = 0; i < ARRAY_SIZE(scale_buffer); i++) {
+   195			scale_uv = ((u64)st->int_vref_mv * NANO) >>
+   196				(indio_dev->channels[0].scan_type.realbits - 1);
+   197			do_div(scale_uv, gain[i]);
+   198			scale_buffer[i][1] = do_div(scale_uv, NANO);
+   199			scale_buffer[i][0] = scale_uv;
+   200		}
+   201	
+   202		mutex_unlock(&st->lock);
+   203	
+   204		ret = device_property_read_u32(dev, "adi,pga-value", &pga_value);
+   205		if (ret && ret != -EINVAL)
+   206			return dev_err_probe(dev, ret, "Failed to get pga value.\n");
+   207	
+   208		if (ret == -EINVAL) {
+   209			st->pga_gpios = devm_gpiod_get_array(dev, "pga", GPIOD_OUT_LOW);
+   210			if (IS_ERR(st->pga_gpios))
+   211				return dev_err_probe(dev, PTR_ERR(st->pga_gpios),
+   212						     "Failed to get pga gpios.\n");
+   213	
+   214			st->scale_avail = scale_buffer;
+   215			st->scale_avail_size = ARRAY_SIZE(scale_buffer);
+   216		} else {
+ > 217			for (i = 0; i < ARRAY_SIZE(gain); i++) {
+   218				if (pga_value != gain[i])
+   219					continue;
+   220				pga_index = i;
+   221				break;
+   222			}
+   223	
+   224			st->scale_avail = &scale_buffer[pga_index];
+   225			st->scale_avail_size = 1;
+   226	
+   227			st->pga_gpios = NULL;
+   228		}
+   229	
+   230		st->temp_gpio = devm_gpiod_get(dev, "temp", GPIOD_OUT_LOW);
+   231		if (IS_ERR(st->temp_gpio))
+   232			return dev_err_probe(dev, PTR_ERR(st->temp_gpio),
+   233					     "Failed to get temp gpio.\n");
+   234	
+   235		st->chan_gpio = devm_gpiod_get(dev, "chan", GPIOD_OUT_LOW);
+   236		if (IS_ERR(st->chan_gpio))
+   237			return dev_err_probe(dev, PTR_ERR(st->chan_gpio),
+   238					     "Failed to get chan gpio.\n");
+   239	
+   240		return 0;
+   241	}
+   242	
 
-Makes sense to me.
-
---
-ankur
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
