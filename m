@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-536412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343FAA47F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:34:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E6BA47F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C611897E45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586B73AC1EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337022FF39;
-	Thu, 27 Feb 2025 13:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4042B22FDF7;
+	Thu, 27 Feb 2025 13:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="ihRs/256"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PZ5Cer2V"
+Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB782206AC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD83322DFB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663067; cv=none; b=Q17hO/+tzeyT/OZMKnV5jVQJA6+JtY/a8ws6uuR5B5bogF5zz3La1RmtgAMM5KLxEIEpMJ0EVN9aZgjwKKih++8t+36mtIYzdTio6g75+Tk9p3teWQTAGBnBry0jjKa++51qyludODjIny6F7c0QP65frlkKjL7/EzS63sjWeaI=
+	t=1740663162; cv=none; b=VAlupGbUmSO9VaWfpsTWc1nHqGgZzxCceWDyo8/PUISrJEaUAOqSS7BSJd1xTPvQqXPaMcxwashVgBmmeVZTsFHLJ4Q2jl/ha6iAx4pZ0WBopFNX91Pg9HeLoojMakSXISO5ut1DsVxcDSCwGxHkXszdjzUtnBqVwuLIWlVNC4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663067; c=relaxed/simple;
-	bh=5K1DQgpCnV8OGVSz6GIqpEfTt8kjItGXwWAZ4X3AWLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qm73SVt5p92s8OamMee4cPaUer8Ws2Vf46Xk+tHCWxNFbsOQ41TN3mh/EkxFTq5reVcVREc6ZmD7OevJKV/sVzE7k3geJJctKV7ermRs3Vr0Xr0NXoDR0PlvQc03WtRMbp/08BUrh6rnxreL5zP9qGAQax/quj1fxASRgtlSqoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=ihRs/256; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e04f2b1685so1195062a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:31:05 -0800 (PST)
+	s=arc-20240116; t=1740663162; c=relaxed/simple;
+	bh=ZkqjquJmqyKCF3YVGXF3s6NPgWRXSZRfFKpweGnRmXM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qxR9sikqk8yyHdK0G8o2J+tvGZx3RfRKnSK58wUsWRikVhXMvldypyU9Qu2zSWzN92Xf2gXv/YydmDzBRj8TnK/oQOb1GVySGpnYGO9tssmYLN1Nus3dQ9bDpd3kwPDf5Yaj4Fso5BbJ8dx2h+ZVwQIiH5/0qXRTsfAXO/Gz89A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PZ5Cer2V; arc=none smtp.client-ip=209.85.160.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com
+Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-47217c14be9so31388381cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:32:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740663064; x=1741267864; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7wXFTKX1544/JIF02ehdLe2SrnajJcR6+uQqWAAhPPY=;
-        b=ihRs/256BSg5Z5Cbra1h9RobjQnf2t4kdPCyir05PZiMdHHq2oLTr9+YSTW2Uxs6a/
-         gprp/a+hdm2GYPbvkQZbSPKMOJ208igladzRPsXOF/+5oE6KnU+hy3oNqQ4Fo5stVxOX
-         UsEB92c8vXgcvgnlTbuKBOgiJidholdphkNBvweODGLqY9EkSzUx/Cbl/jGWqcSbafWy
-         iI2HFPvWEJXsEBGDS7v3+20X1//GKO7PokvUK11CmDnJB+rjSkNEk3ehgUg2iBRlZnHT
-         qLTnjIhXJYAAhMueyiZeni/wQoSlXZDOX7ordoirjSy3tCOCyHvjxouD4XgyY6lvWgy/
-         ZEZA==
+        d=google.com; s=20230601; t=1740663158; x=1741267958; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HyfS+UvHxKI14QQn8t0ml/VJXb1kYrctFLX+Mu/t1JE=;
+        b=PZ5Cer2VvgawBAiwj32e9OgWrX0Wc/394uBq8zscQBGuxPx+G3JcasoxLfxmnNxGKB
+         nHfvWjIfcacTtvsNFpK7Ohv9QpDnHZTScQseyAxAorFzDzvultHWOpWwSh0y7VpEeby3
+         xdOwH0IBEJS4LcH55uubqIdfAFB7en2Ztd37U2i6Agt6tW1MmZm4UkxY7gW38j8djDED
+         yr6WAWavJsNA6B69QZH2WW7CcS8uqNQVl94ZC0BmjYd/HSgmr8rLbHsXK4S2IIX2pF+6
+         V/ZHlv2d89OBWciWU2/GNJZQm+MXcbWU8+xE4Ym73yMKrHPmg8BkZlWRyPBtE6u3anxM
+         xt1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740663064; x=1741267864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wXFTKX1544/JIF02ehdLe2SrnajJcR6+uQqWAAhPPY=;
-        b=kJ9E7DIATds8hW3ASs5Q9DyVVC4B6X/L07xX/itI2846j8gjDpQoo2xo+XbcJ5Xi3L
-         0eMAFaq9yjRjHGHu6O8PKfu39FMydJL519FnTM8I5XYY8ofTbfFmZsE+CR/RnQ78BMkf
-         tnyVSb3SsJ6k4HwH2adQ1dr42SVza89ZJBBEUVPQxanSo/w6vgOXBQc9j3SGaZe2Qz+b
-         C4wbulPc5xv2cP/aPiDFYXIll1i/Cd/vX9C3jh5R99VWmDC6IR8VKCoGDrybDRxdZLnv
-         2gwqKx4PRRgS+3KqQ2LOE9M0fwAHJwx6W8GQDmCxZ7idEAkbb6C5WKYj/6VMSpn+lQhc
-         pH+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2+uYr7FsE4M+vQImkifF7IZnauKVOHnpeGQApFRS5stVpK6u5x7tFwZmnv+hOKxTmYI178M2OXVZzpM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfMBaDGcWIf936tQ9lTLunwpT99FRL3CxsbHQSyRqcQYNpbNW4
-	sBKJiBWCsRX6yorjttYdB65TMwXKf9LL+yK88707TJVnSvn98s2ds/9hMo/o4ww=
-X-Gm-Gg: ASbGncssPo+HMHlAJpnREdx8O+/pwKSALcMZmf7CydGz+SW4dPXLSnTYrPwhpibktxR
-	lBUkJhuAvXQwt+7kXKHKvuJBdsSL83woPt7NbIAHM0wKZUn7iJMp6HEZnSQDbWVcpXYxTc/gt8q
-	+nloRXpz+2WjHniRvIbCS79MaIitp1nTVAc0ubJ8oSgHOupRcJLd1PgZSLweXkPjC2lWyQa1145
-	Z1WeuRLgx9+1hB4EQDJzhZik5gD6qH8spcQ4GLWpypG5cyMnGHmdLpAUOjrwdXPyIWcl22KHdRg
-	pHWqhPHoFIxZC1pn+0xzyXvngej4S9fEZtY6lwvdPcO7g8BGyLpYhH+GNA==
-X-Google-Smtp-Source: AGHT+IE0aNnzvv1Qi4koQK1Hzo4GjpUtdykg2u0L4Pn0RkAUHo9vRWuUm6DYMvxfLSo0bViwlkQMRQ==
-X-Received: by 2002:a05:6402:2553:b0:5de:594d:e9aa with SMTP id 4fb4d7f45d1cf-5e4455c30f9mr28084142a12.8.1740663063527;
-        Thu, 27 Feb 2025 05:31:03 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0b86e84csm125023766b.0.2025.02.27.05.31.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 05:31:03 -0800 (PST)
-Message-ID: <f88b234a-37ec-46a4-b920-35f598ab6c38@blackwall.org>
-Date: Thu, 27 Feb 2025 15:31:01 +0200
+        d=1e100.net; s=20230601; t=1740663158; x=1741267958;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HyfS+UvHxKI14QQn8t0ml/VJXb1kYrctFLX+Mu/t1JE=;
+        b=NfwdKffZsu5QLHZ4f2IxxrVxTHH8Rf+dp3cHqR8sxIit/JPqVDqFvHb3ZvGT2xpXdM
+         SbG8j3VfN0RzeSNvccbUJ5vLSJSlunyvADofBHYAFMBTE5NqK/yj+nvueQumnLkNEtVQ
+         FpPVnl2JurSlMiKq1T90yef0UrBa4C+LJkC+Pn+XjAQK6Rl6JlrafN/1uoC4cQWhMJmn
+         TzkvZ0Gi9ovGLbbdPTFHjLs+FUqNaDZaIjsvk26dYTV1+6UXXbk2kejdPY1mg88PqWQY
+         sO1D0vpVSdqrM+Q9enueI+VYTUvw9m4fsxoLgw320Usg/8YCo3fjGDLdporOouicBe88
+         t0XA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4yDJzMhZPZQBKV1s4nF7chLEtcH62XE95fOI7KanO/jKpwOSNzE6aSAyCNMZYjpmSLmx78dm0Kh7GSYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz5ffGSKOYr8gKECzT3EOGezcFsunc+xO9wuSfdaV/FjIJbA6/
+	A87WRPyGQxfcWI3pPvYB4Po59CRH/2Pue74/KFxYZWTgj5/w8iX+fxgM8E+ED2f20RsiKDGLk8+
+	hS+jgyQ==
+X-Google-Smtp-Source: AGHT+IHvETM3+pn2QTpJ1tsLr3mG9ApdH9Fim1Cx8ibw/PLC8WURMDcwwL5DzLuRErYfJClH2Bb5qxGCi7L2
+X-Received: from qtbcm27.prod.google.com ([2002:a05:622a:251b:b0:472:122b:3255])
+ (user=bgeffon job=prod-delivery.src-stubby-dispatcher) by 2002:ac8:5d16:0:b0:472:1573:fa9c
+ with SMTP id d75a77b69052e-47377118705mr141991131cf.6.1740663158655; Thu, 27
+ Feb 2025 05:32:38 -0800 (PST)
+Date: Thu, 27 Feb 2025 08:32:36 -0500
+In-Reply-To: <20250226114815.758217-1-bgeffon@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 net 1/3] bonding: move IPsec deletion to
- bond_ipsec_free_sa
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
- Jarod Wilson <jarod@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227083717.4307-1-liuhangbin@gmail.com>
- <20250227083717.4307-2-liuhangbin@gmail.com>
- <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
- <13cb4b16-51b0-4042-8435-6dac72586e55@blackwall.org>
- <Z8Bm9i9St0zzDhRZ@fedora>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <Z8Bm9i9St0zzDhRZ@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250226114815.758217-1-bgeffon@google.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250227133236.1296853-1-bgeffon@google.com>
+Subject: [PATCH v3] mm: fix finish_fault() handling for large folios
+From: Brian Geffon <bgeffon@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Zi Yan <ziy@nvidia.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+	Brian Geffon <bgeffon@google.com>, stable@vger.kernel.org, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Marek Maslanka <mmaslanka@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/27/25 15:21, Hangbin Liu wrote:
-> On Thu, Feb 27, 2025 at 11:21:51AM +0200, Nikolay Aleksandrov wrote:
->>>> @@ -617,6 +611,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
->>>>  
->>>>  	mutex_lock(&bond->ipsec_lock);
->>>>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->>>> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
->>>> +			list_del(&ipsec->list);
->>>
->>> To be able to do this here, you'll have to use list_for_each_entry_safe().
->>>
->>
->> One more thing - note I'm not an xfrm expert by far but it seems to me here you have
->> to also call  xdo_dev_state_free() with the old active slave dev otherwise that will
->> never get called with the original real_dev after the switch to a new
->> active slave (or more accurately it might if the GC runs between the switching
->> but it is a race), care must be taken wrt sequence of events because the XFRM
-> 
-> Can we just call xs->xso.real_dev->xfrmdev_ops->xdo_dev_state_free(xs)
-> no matter xs->xso.real_dev == real_dev or not? I'm afraid calling
-> xdo_dev_state_free() every where may make us lot more easily.
-> 
+When handling faults for anon shmem finish_fault() will attempt to install
+ptes for the entire folio. Unfortunately if it encounters a single
+non-pte_none entry in that range it will bail, even if the pte that
+triggered the fault is still pte_none. When this situation happens the
+fault will be retried endlessly never making forward progress.
 
-You'd have to check all drivers that implement the callback to answer that and even then
-I'd stick to the canonical way of how it's done in xfrm and make the bond just passthrough.
-Any other games become dangerous and new code will have to be carefully reviewed every
-time, calling another device's free_sa when it wasn't added before doesn't sound good.
+This patch fixes this behavior and if it detects that a pte in the range
+is not pte_none it will fall back to setting a single pte.
 
->> GC may be running in parallel which probably means that in bond_ipsec_free_sa()
->> you'll have to take the mutex before calling xdo_dev_state_free() and check
->> if the entry is still linked in the bond's ipsec list before calling the free_sa
->> callback, if it isn't then del_sa_all got to it before the GC and there's nothing
->> to do if it also called the dev's free_sa callback. The check for real_dev doesn't
->> seem enough to protect against this race.
-> 
-> I agree that we need to take the mutex before calling xdo_dev_state_free()
-> in bond_ipsec_free_sa(). Do you think if this is enough? I'm a bit lot here.
-> 
-> Thanks
-> Hangbin
+Cc: stable@vger.kernel.org
+Cc: Hugh Dickins <hughd@google.com>
+Fixes: 43e027e41423 ("mm: memory: extend finish_fault() to support large folio")
+Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Reported-by: Marek Maslanka <mmaslanka@google.com>
+Signed-off-by: Brian Geffon <bgeffon@google.com>
+---
+ mm/memory.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Well, the race is between the xfrm GC and del_sa_all, in bond's free_sa if you
-walk the list under the mutex before calling real_dev's free callback and
-don't find the current element that's being freed in free_sa then it was
-cleaned up by del_sa_all, otherwise del_sa_all is waiting to walk that
-list and clean the entries. I think it should be fine as long as free_sa
-was called once with the proper device.
-
-
+diff --git a/mm/memory.c b/mm/memory.c
+index b4d3d4893267..f3054bbb3c1e 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5183,7 +5183,11 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 	bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
+ 		      !(vma->vm_flags & VM_SHARED);
+ 	int type, nr_pages;
+-	unsigned long addr = vmf->address;
++	unsigned long addr;
++	bool needs_fallback = false;
++
++fallback:
++	addr = vmf->address;
+ 
+ 	/* Did we COW the page? */
+ 	if (is_cow)
+@@ -5222,7 +5226,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 	 * approach also applies to non-anonymous-shmem faults to avoid
+ 	 * inflating the RSS of the process.
+ 	 */
+-	if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
++	if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
++	    unlikely(needs_fallback)) {
+ 		nr_pages = 1;
+ 	} else if (nr_pages > 1) {
+ 		pgoff_t idx = folio_page_idx(folio, page);
+@@ -5258,9 +5263,9 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto unlock;
+ 	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
+-		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
+-		ret = VM_FAULT_NOPAGE;
+-		goto unlock;
++		needs_fallback = true;
++		pte_unmap_unlock(vmf->pte, vmf->ptl);
++		goto fallback;
+ 	}
+ 
+ 	folio_ref_add(folio, nr_pages - 1);
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
