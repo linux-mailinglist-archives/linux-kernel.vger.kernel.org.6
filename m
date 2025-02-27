@@ -1,168 +1,219 @@
-Return-Path: <linux-kernel+bounces-535490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA47A4737A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BCCA47380
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258B93B79BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA753A87CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF69156230;
-	Thu, 27 Feb 2025 03:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6754318DB35;
+	Thu, 27 Feb 2025 03:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gvrtNv6q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6rKRC4O/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tqVz8+PW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u8SGqIMM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpIa8aii"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F5E78F4B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEC0270039;
+	Thu, 27 Feb 2025 03:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740626174; cv=none; b=hqOnWTNd5huHXCzFusJezHI5mcoWyjm2ZIL/yQ82tvYPvCSa7i/ox6ktP2MTP8PS4KffqBAjw01LTUWW/hRIwNEeIpcz0S5nb8MElxKR0kdKpgi9flL44pdjAOA5th1DDwPAyrmgpAiGU0l4BWrTizb1QKahvQaR7zh5eKiMZGU=
+	t=1740626242; cv=none; b=C/tKl99F9rXZ37dBsrkQVaN+muEn7OLPu1sjo5n5Nat3wLA2eyVlVOEDxxyss3K0XCW6yxd/GLV+BcnedA+1RUlcHpWRZY1jQveRwTB1p79Bu3xQ5cMKEGrYkZmaTV4JFkS9mBmr0tCosQijSMJpP7YzB1lJ1GyTRkXwX7xaCd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740626174; c=relaxed/simple;
-	bh=OUUTBlLgs8hhDhpQbI48kwB0jsY/hV5TLtbolSdDQu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZi6k7DgRkQDgai4Zf2LFcwHKDKxLEbP/QK9WpYDaUxPZx5KvyOJ7iOIt1dS0DRDKYzea9+Z/XQK1h5wwnLqKC77PlCy0MQgQrXR+osEWKto/GKxa+xsQ7949hBrmCoJcUB3fQg2FwdFKwmY1esa+a8HdTv4bmemG9azzSL6VQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gvrtNv6q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6rKRC4O/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tqVz8+PW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u8SGqIMM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 954381F455;
-	Thu, 27 Feb 2025 03:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740626170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+wUah66yWGlGNYhoY5BIf5XArhw0tYdOj4NduOe8c5A=;
-	b=gvrtNv6qiUy7AadtKgoaq6AYD95qDW19nn4pLDbHObVaqgcBVxaZen34PkL1TCENKlXPbY
-	WgpVBu2v4JjG2/yB1CFvWxPzpRze8Ngn18UUiaODO2Vo4KzyVgewLIfYT+jjsDVFRaMQOZ
-	4DpwI9ekElaY8QKE79yB6VVzS4Tw5Qg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740626170;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+wUah66yWGlGNYhoY5BIf5XArhw0tYdOj4NduOe8c5A=;
-	b=6rKRC4O//ouIx1MvZ7JnhCkzZtMIpyz4I5hRj0JEF9ULuaCS8TKnEUlVv76aa1FIef+Gbd
-	P+k/3GTusb/aANCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740626168;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+wUah66yWGlGNYhoY5BIf5XArhw0tYdOj4NduOe8c5A=;
-	b=tqVz8+PW0b1B3e1Qgvge1SGwB4cuy0iiclLNTh42GTDEukdKjHErvsMFP9wk8hYR+LMtOp
-	zgCz0R6RkWzvq6tPCNmVp1RlF6rznAEsDp+rVihQ099zb3w01rP6e/UU9Xz7RZG47DbB6s
-	KzuOfGXuGxXTp8ZLxN+kYQ9CTr27NAs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740626168;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+wUah66yWGlGNYhoY5BIf5XArhw0tYdOj4NduOe8c5A=;
-	b=u8SGqIMMryBCTEb7GqrMWiwcy30moNJ1cV2OKX/uSKhwy/ee4po50mB8HkFOkmoGjUhDEE
-	64uoVykEE5v/7uCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F4E313888;
-	Thu, 27 Feb 2025 03:16:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id M5voGvjYv2e5KgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 27 Feb 2025 03:16:08 +0000
-Date: Thu, 27 Feb 2025 04:16:07 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Nitin Gupta <nitingupta910@gmail.com>,
-	Richard Purdie <rpurdie@openedhand.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
-	Dave Rodgman <dave.rodgman@arm.com>
-Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
-Message-ID: <20250227031607.GY5777@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
- <20250226130037.GS5777@twin.jikos.cz>
- <Z7_D4i5yifwdXjwZ@gondor.apana.org.au>
+	s=arc-20240116; t=1740626242; c=relaxed/simple;
+	bh=9AS3Hc9v2DOGdZTMZqp5nK9ONH+qjbjZwNPhNyqpfS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZLEhYbn+fs3RLv20C6ymEGBwRh82sTyJ8E13k8ktkbiNB4+XdpANo9i3DNtVtGWZqmBz7AOCv7QWK/o892h0E59vNZK4PJEoeiE+kOi8YmK1PsmDwQlSmnTwiS1TUVlP6LxxSQAPf+DCFCcgWl7vLpLfzsyH4Y+sYSFkGnnX3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpIa8aii; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f378498c9so412460f8f.1;
+        Wed, 26 Feb 2025 19:17:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740626239; x=1741231039; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=186RQJEPxOQii793CYJkBqMJYUwTqOLmAOv049AKC2A=;
+        b=bpIa8aiiLXUn9ySxpKSWk0XC/MHapqfscsCyTWdBCG7VcyKUv+vn62+BBw+2cTX/E/
+         0sAkya3DN/VP7NrOqUDc87jQUlV3BWqaACLyJKmAuxGBIlkLZHaQXq8T8WpTzF6p6gAw
+         9kCl1vujes0APdHHJmapnIgy0wyRJYWq4W6KyaKFtetcVzeoLSAso1gq8yuASYASMtop
+         uBGN1fVbQihsKEXvRAtQ4csAMmJ0msgSjxXiUfakX9UX8+S/iFIEkeGC+/34eueIU1eC
+         nOw/Y1+OLDajfih+PdoSPfwMrNa/Lu7hoRqltpZ6IhxMlhBV0W5jL9niEvtR51RZJU0S
+         tXyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740626239; x=1741231039;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=186RQJEPxOQii793CYJkBqMJYUwTqOLmAOv049AKC2A=;
+        b=p2XHd8Qp3fPUW9dLv/rcuApSEwJuHLV+NdyO3sJsf8ACoPqQYM28OJ18oXiFkFhX1M
+         JI1ASx943C/99RtTNGxvUs/+cWWJEIZXPn8mrZ6avEw/B/cqL9zUs8+up2H/LXGfiyI7
+         PsTtFBf8b9sAas6JEjm3cnvX/oSSPDxaC4r3ZxU7k6zgyQwTTtkLhgVWxjcvxxB5ZLi4
+         cY8O0wOgJGQfuRXG04nARgOzZsBfnsoGO8aM8HWQ3USyE3IAMa925f646S90qQHTXmbj
+         mLW/QhE0eRJT7OaDA9OPQWuH+R2sBxcBh24AWo4dqohGncVvyhsRa8hfHWy9xeH9d4Wk
+         bpbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2vJ6HFyiuPTqBlO1VpNv9JyRWIsSI2T290ZgAlnQrwzBv0I585aF8lAbARJ/Hng8u4Hs=@vger.kernel.org, AJvYcCWkXKtlCQcJQZ+g6TX0eSZUaHFsJ3PcEHoKs1XZvw2Pw1T5OxbvGdN3fPn1HY8uQvbY4fBsU2LBCpH6Y+mc@vger.kernel.org, AJvYcCX3llmC1axla/kZ+c9GGU6/gMdNMkXjUwwFGLLy9y+fd4tztKcF5XkjiXKj+OR3fXSGWAOM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrJO41106RYLNZ4zROhoAIYkTmEmoRuJ4+/6z04WjtU8aHXgeh
+	3k8Uqe2f4JtITMKdXPcSoJchs8CyFeF8nqWWSUIP7XARhCJRISQs9lhfuz9QD9u5/uI4DyihMi2
+	TLSa9pH0mNrx36PiRXrOL0nUYb+s=
+X-Gm-Gg: ASbGncv919uGpsAKkf7fV/TGZE4WQnozDwbbOuOmRaQNGw7O3W8xNDni9f3mRfpZfuB
+	6iISCHpAcXz4xNOnc2+dZtB+W5Y3buddnKUjSznTvNYaFrgPknNQ4D5j7/kzOtx+YU8hXNjgw+N
+	7GaIsxjn+DSEGsUKP+iaEwZlg=
+X-Google-Smtp-Source: AGHT+IF1DGhFf9YwvPe6WrEE56EGDwZi4/BZ2x4+eFfkz5avtcJPkCN3jzsZ2Bh5Ry6Iyq4lQWFdUc5ZRSQ2wOdXM0Y=
+X-Received: by 2002:a05:6000:4027:b0:38f:4e30:6bbb with SMTP id
+ ffacd0b85a97d-390cc60a437mr11956487f8f.25.1740626239009; Wed, 26 Feb 2025
+ 19:17:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7_D4i5yifwdXjwZ@gondor.apana.org.au>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,openedhand.com,linux-foundation.org,chromium.org,oberhumer.com,arm.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:mid];
-	TO_DN_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
+References: <20250204082848.13471-1-hotforest@gmail.com> <20250204082848.13471-3-hotforest@gmail.com>
+ <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com> <8734gr3yht.fsf@toke.dk>
+ <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com> <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+ <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com> <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
+ <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
+ <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com> <CAADnVQJU9OWAWFk89P6i1RK6vXkuee5s76suHjF+uP+V4iepqQ@mail.gmail.com>
+ <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
+In-Reply-To: <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 26 Feb 2025 19:17:07 -0800
+X-Gm-Features: AQ5f1Jq1fcbJkFAdT5yUh773lJn5P-P9VjdWujeJsDT-CJu9e1AyvAlVcd4f_AU
+Message-ID: <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
+Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
+ map atomically
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: Zvi Effron <zeffron@riotgames.com>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Cody Haas <chaas@riotgames.com>, 
+	Hou Tao <hotforest@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 09:46:10AM +0800, Herbert Xu wrote:
-> On Wed, Feb 26, 2025 at 02:00:37PM +0100, David Sterba wrote:
+On Wed, Feb 26, 2025 at 6:43=E2=80=AFPM Hou Tao <houtao@huaweicloud.com> wr=
+ote:
+>
+> >>
+> >> lookup procedure A
+> >> A: find the old element (instead of the new old)
+> >>
+> >>               update procedure B
+> >>               B: delete the old element
+> >>               update procedure C on the same CPU:
+> >>               C: reuse the old element (overwrite its key and insert i=
+n
+> >> the same bucket)
+> >>
+> >> A: the key is mismatched and return -ENOENT.
+> > This is fine. It's just normal reuse.
+> > Orthogonal to 'update as insert+delete' issue.
+>
+> OK. However, it will break the lookup procedure because it expects it
+> will return an valid result instead of -ENOENT.
+
+What do you mean 'breaks the lookup' ?
+lookup_elem_raw() matches hash, and then it memcmp(key),
+if the element is reused anything can happen.
+Either it succeeds in memcmp() and returns an elem,
+or miscompares in memcmp().
+Both are expected, because elems are reused in place.
+
+And this behavior is expected and not-broken,
+because bpf prog that does lookup on one cpu and deletes
+the same element on the other cpu is asking for trouble.
+bpf infra guarantees the safety of the kernel.
+It doesn't guarantee that bpf progs are sane.
+
+> > It's been a long time since I looked into rcu_nulls details.
+> > Pls help me understand that this new replace_rcu_nulls()
+> > is correct from nulls pov,
+> > If it is then this patch set may be the right answer to non-atomic upda=
+te.
+>
+> If I understand correctly, only the manipulations of ->first pointer and
+> ->next pointer need to take care of nulls pointer.
+
+hmm. I feel we're still talking past each other.
+See if (get_nulls_value() =3D=3D ...) in lookup_nulls_elem_raw().
+It's there because of reuse. The lookup can start in one bucket
+and finish in another.
+
 > >
-> > Does it have to check for the overruns? The worst case compression
-> > result size is known and can be calculated by the formula. Using big
-> 
-> If the caller is using different algorithms, then yes the checks
-> are essential.  Otherwise the caller would have to allocate enough
-> memory not just for LZO, but for the worst-case compression length
-> for *any* algorithm.  Adding a single algorithm would have the
-> potential of breaking all users.
->  
-> > What strikes me as alarming that you insert about 20 branches into a
-> > realtime compression algorithm, where everything is basically a hot
-> > path.  Branches that almost never happen, and never if the output buffer
-> > is big enough.
-> 
-> OK, if that is a real concern then I will add a _safe version of
-> LZO compression alongside the existing code.
+> > And for the future, please please focus on "why" part in
+> > the cover letter and commit logs instead of "what".
+> >
+> > Since the only thing I got from the log was:
+> > "Currently, the update is not atomic
+> > because the overwrite of existing element happens in a two-steps way,
+> > but the support of atomic update is feasible".
+> >
+> > "is feasible" doesn't explain "why".
+> >
+> > Link to xdp-newbie question is nice for additional context,
+> > but reviewers should not need to go and read some thread somewhere
+> > to understand "why" part.
+> > All of it should be in the commit log.
+>
+> OK. My original thought is that is a reported problem, so an extra link
+> will be enough. Will try to add more context next time.
+> >
+> >> map may still be incorrect (as shown long time ago [1]), so I think
+> >> maybe for other types of map, the atomic update doesn't matter too muc=
+h.
+> >>
+> >> [1]:
+> >> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweiclou=
+d.com/
+> > A thread from 3 years ago ?! Sorry, it's not helpful to ask
+> > people to page-in such an old context with lots of follow ups
+> > that may or may not be relevant today.
+> Let me reuse part of the diagram above to explain how does the lookup
+> procedure may return a incorrect value:
+>
+> lookup procedure A
+> A: find the old element (instead of the new element)
+>
+>
+>               update procedure B
+>               B: delete the old element
+>               update procedure C on the same CPU:
+>
+>
+> A: the key is matched and return the value in the element
+>
+>               C: reuse the old element (overwrite its key and value)
+>
+> A: read the value (it is incorrect, because it has been reused and
+> overwritten)
 
-Makes sense, thanks. The in-kernel users are OK, but the crypto API also
-exports the compression so there's no guarantee it's used correctly. As
-it needs changes to the LZO code itself I don't see a better way than to
-have 2 versions, conveniently done by the macros as yo did.
+... and it's fine. It's by design. It's an element reuse behavior.
+
+Long ago hashmap had two modes: prealloc (default) and
+NO_PREALLOC (call_rcu + kfree)
+
+The call_rcu part was there to make things safe.
+The memory cannot be kfree-ed to the kernel until RCU GP.
+With bpf_mem_alloc hashmap elements are freed back to bpf_ma
+right away. Hashmap is doing bpf_mem_cache_free()
+(instead of bpf_mem_cache_free_rcu()) because users need speed.
+So since 2022 both prealloc and no_prealloc reuse elements.
+We can consider a new flag for the hash map like F_REUSE_AFTER_RCU_GP
+that will use _rcu() flavor of freeing into bpf_ma,
+but it has to have a strong reason.
+And soon as we add it the default with prealloc would need
+to use call_rcu() too, right?
+and that becomes nightmare, since bpf prog can easily DoS the system.
+Even if we use bpf_mem_cache_free_rcu() only, the DoS is a concern.
+Unlike new things like bpf_obj_new/obj_drop the hashmap
+is unpriv, so concerns are drastically different.
 
