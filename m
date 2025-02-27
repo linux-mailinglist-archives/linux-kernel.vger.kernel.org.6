@@ -1,199 +1,131 @@
-Return-Path: <linux-kernel+bounces-537019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00824A4871C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:56:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD4FA4871F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:58:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F11188A72C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BEA5169BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F7D1EB5FE;
-	Thu, 27 Feb 2025 17:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E3E1EB5DA;
+	Thu, 27 Feb 2025 17:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rBmYMHMm"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z4xoVcbg"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D2E1E51EC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D04F1BD9D0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678980; cv=none; b=dTKVi0gJuF7ovcrPIxk2MP5yQZUD6oQxnGqrdxxFhqlr/9jWCVy00yUGbm7cZmB2DhkHRNhVs8jyhLgJex+UfMn53GqrCWp17EKsrUhl0wbP98VB5DBsYbDlehAcPYex+Mn/f4jZulBHGXl0sLAykA9GVAICgQJvmiAgDqADs4M=
+	t=1740679109; cv=none; b=c+RJmlvCFazrPO2i4z6Zpiiv0iAb6IbnZ8cXKU/o5+D8ksKUK0woJKGXnxPux7mWH8y8myFjWOXSAxD0dzoBJJKPTpU0S+KOkImF1PuwiiuFT2nFcKHK+vp+6BtpTgUXvNVKerjubdm7HItVW6ftr8ox0rtsAaTFvBaSEb0OqB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678980; c=relaxed/simple;
-	bh=BW0N+XroGzAC2aSLYgKGbfNiqGvY/di0pt3t+bNk9Nw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qPxRgcUpL3lZKExZDVR68u+cjiXtGfK08c7T4llDxFDANIV84HFj3lo2ybXGTyn1AWabb1dfbB86sorYGYoF8Ug40qNueerupN4P0WET3LbiBQtKhoFbGSLY89AxvBUbyUUhJT9Dldxkdm8phAWzQsEZqrPMJotFluIYr1nzw8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rBmYMHMm; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1740679109; c=relaxed/simple;
+	bh=G0uPe1bQYN5d95vQKr7I4HNFRFMTII4scu4mntJt4OA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4w6rIvD0THwPT6OxKK/dnzUsKYtbH1/NjMGFKg9q5ipY7Z8o79mwEg8KdjXEcdneuQHjySvw9V4JKkWwlsGdbYC/doekZ6iBjEv4ozmLKtYxL+35P82Vnub1xb+MDhs+bVqubUOOwiukMNFWuFOyULvLWxOF/IRfaigNiRE7jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z4xoVcbg; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-471f1dd5b80so3771cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:56:18 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439849103c8so1685e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:58:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740678977; x=1741283777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9d3ie4HxJSBse0wdOCV6qSonqjqCosACOR6Iw/hvOY=;
-        b=rBmYMHMmngUbzfvi0jA+N/xbFJaBsusA1yEQmnEdJvuuoQKOmTjVIige6hwOjMKNcE
-         y/NkYHpK4TOAcc0FG9GLCSdrEssdfaD0JIgrhIUeSuuANQ4nutd4wqYpIbZHIMb3eZbU
-         zJk5s+J17UWYNqildTEEZFVF5L4kyWvtsGPbrD0sCu9LIdtjMQA4ITo2IHroFEJZhxzc
-         Bezdu4fvNNg0Cjtb6eZN7o8eFpfFZlA3e4E9/7y+67vH1sSrmPaimVDuZbcjXeHMOFsI
-         BIku1Hsty+Gu6D/LAV1voeGPxD41wLUS7EmeGwVuT2BkA2F+fB/ifxci8cITquK6p8DN
-         xGdA==
+        d=google.com; s=20230601; t=1740679106; x=1741283906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=witULyw7TtoqLetVGW1Y6LysfNxj0X5B05/dTt9izbo=;
+        b=Z4xoVcbg7AhTPYw/AY8k9tx0Vf9FekvgAOkqbL6YASJObrRif0aDMXMz3sh0ZXOgDf
+         yCeURyz30MBW60FXT4kI8DPxBRKsMIWXciM+/l1s//+PwWQPVCfnWymM7X+9Xh61Iefu
+         Y7nMioGDHap/RSkfpVL7JnmMpueNvLbhHBPcNWIerSkVXVdJi8YatKFR+tY1IjPKLuC2
+         2TZN2dOPsVv7G0ZwajTmLC8j0TXmWgqJUiPS+6gUwWKpsAAQKVDbpVAP8xjI94k3EHET
+         7kOxfh/UJa0CIqEyrgEa+mUYRBiMSwDYraWlmCmXMuz22djJef2u8Moyr0qOYorenH8K
+         WdGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740678977; x=1741283777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+9d3ie4HxJSBse0wdOCV6qSonqjqCosACOR6Iw/hvOY=;
-        b=PzxcZM9uh4TdfzbSgkioevZXCheMvRyyYvUF30QBVbHazvMAo0EG+j77zGQCKzXHXw
-         F/biaSoWrjZnbGYWX5fZFH7u45tUZBvJujzUI+ecYl6tXQQakPWUR3DiBmVVCMP4fhIT
-         kOaT8K98pRR6qP6+nqqBrlG/i96xn2e8rMYh/edYz69klM/339LcDXP0TzVt3eyZtwBy
-         cXXenNeP8tYb8QiPIRgGzwCigpqiI0xb5G2axqJlSlxEGH7A/rNE0+s10zcX2QzqczQ7
-         RDPl4NfEdj9RLNvCJ01N36wLIXAMjv2YmayjNUI146KoxHGktixlChhigIsdlo/f8lpr
-         zkgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAEzq++Kya6C1meD3Dm9GYftUm2oCxk49dO3EnRHw8k1gFMN2+JV8U8Zlg+Pb5+FU6x1cH7jOQ7yjliE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf7tzx2YCdAOG72hMf3HuAWPEVx0FdU/O4WDePXgHBGsfmZQTX
-	sHgB4yHqt5GuWYbvjE8tzatzB6IPvquwD19080YtcuYyJzo1bLLWg7yT4rPhy9uvEaYgBstHJBP
-	AYRJK245fhlkFo3jM/8mIOcWM1kgXkHDEt0Mk
-X-Gm-Gg: ASbGncs0Kd+SG8KlKb2M386rohT761yp+FXc7sOOmDv813+sTFx+WmeLUvQ0IR8Hvx1
-	aiM5rMP9iWYrFPwODFYan8MmLek+BEambYjtR5aVeDM56m1Z+o+4cXvTayqZaWy8vdUh1u79ECn
-	7//MX/
-X-Google-Smtp-Source: AGHT+IG+L20TESuHV8MCRDMpu3SQ2JPXYfo/HYNWO4fcfwaf+g/hyqXyUiSJyrdKH6KMgxz3ez9hLH5wTgOyJDmpByQ=
-X-Received: by 2002:a05:622a:1822:b0:463:95e2:71f8 with SMTP id
- d75a77b69052e-474bbdeb033mr41601cf.15.1740678977178; Thu, 27 Feb 2025
- 09:56:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740679106; x=1741283906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=witULyw7TtoqLetVGW1Y6LysfNxj0X5B05/dTt9izbo=;
+        b=J2tvAW6XhsGD79vVrpYa+cTXK1Hbg/Iwqa42htiFloxd8DVRJhowlrU80L/4+4gnuy
+         BqLQLvGSCI1cbH1EC94KvAyMIrlsJ69PM2WDIddxcMKF0FP+EYEcIjw+wTIZcOjuCzGH
+         3A2s7D8JJcw2z/Xg2fFQfBerCuyAqjqjgpK/dPfvI6/xtzbr7JyWxtNF2wHBTVxZxigW
+         kxBFN6Aq+MDJqiR7UDh9oG1LJUIMENfyQA9D4F1Lb34SMlk4zQYdrLPbLceIBT+CF3YU
+         7BMWb/zKHSDm53nEiYXzLqqdA9MzK2Nnh5F2b6I6b9rsVzzc6uWTCmA/HYnn8uhNx27m
+         VMMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEu2IanjJf6X/3Vnpp/IlAwLpQLLpazUCUJctX8O7NTmIMQsu6CLCjjKUxFP/yzfpsOpelre3FLCENfRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNGfXF/YGsRicpee7CHT6MC18BYQO8qYNryqDWpXlAChyQ3NXg
+	QqKv82dFBnFvMnEjajQJ/Q/22Qu3U0GJN7VCRHrkhZ9gSJGaiAlfSQ8pAF5rWg==
+X-Gm-Gg: ASbGncvQW4QziovgRtkOgD2HLQ4Fvp7Acmc7Z9VAAiC52UZvp1yFaq3WNUNnmpXrimh
+	YzQw00GHxfWmFnST3Wjf64YE6vzfNh6fVP1MFZ/KoVpLmPx8TXQSaXPwtvku2HBsIrNXEq3zs2L
+	O7h4NyXWRoYp9ndGP1k63+3TvOv45f+Ao2VIB0cpoQitfUUkpSZHPj64X4O78ay+vpL0vFdIpBG
+	9BNvjx+re7dXvKBF0WdLsWkk5IqGNTqOe8Va5bY+9wyd+fb89m8NNQv+Zh9Gl1IFfAhYCbi7YWh
+	5JFd7cakZlimwa/NVhYAU1ylhomQ+8lJ6y8IXVGuvzLj8CP6shVRQguBkYhUymP5PSQtPg==
+X-Google-Smtp-Source: AGHT+IGXNHWKRbpRDhtRxmSOQkQhsusbKI17eAfdufiuBuU7YJHxATrJHQS1X9gdlxiAiDFx96bvtA==
+X-Received: by 2002:a05:600c:3ca8:b0:439:9434:1b6c with SMTP id 5b1f17b1804b1-43ba6bb74a0mr15565e9.3.1740679105829;
+        Thu, 27 Feb 2025 09:58:25 -0800 (PST)
+Received: from google.com (100.235.22.34.bc.googleusercontent.com. [34.22.235.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a7868sm2738983f8f.24.2025.02.27.09.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 09:58:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 17:58:22 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	suzuki.poulose@arm.com, vdonnefort@google.com, will@kernel.org,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH 2/3] KVM: arm64: Map the hypervisor FF-A buffers on ffa
+ init
+Message-ID: <Z8CnvkUwGKxcz2hj@google.com>
+References: <20250226214853.3267057-1-sebastianene@google.com>
+ <20250226214853.3267057-3-sebastianene@google.com>
+ <Z8A3RLoZxVxcz3wj@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218181656.207178-1-fvdl@google.com> <20250218181656.207178-11-fvdl@google.com>
- <20250226180900.GA1042@cmpxchg.org> <CAPTztWaXZE=y4HBd7ZYW-1pTDrwxO3OBbwNJyu9vpuy22xx16A@mail.gmail.com>
- <20250227172014.GB115948@cmpxchg.org> <CAPTztWYgZ=fwOWv-sKs-wXHCqhPbmJm6qkrDqE+_0c1nUwWM3A@mail.gmail.com>
-In-Reply-To: <CAPTztWYgZ=fwOWv-sKs-wXHCqhPbmJm6qkrDqE+_0c1nUwWM3A@mail.gmail.com>
-From: Frank van der Linden <fvdl@google.com>
-Date: Thu, 27 Feb 2025 09:56:06 -0800
-X-Gm-Features: AQ5f1Joff56kT27_uqAZcjxnL1wjjuEUlKCzhWDshJcD4bEQQTOr128v3euCuF0
-Message-ID: <CAPTztWbv+SsK_AtxUw_dTE1FurYe6P6x39gL97o3pvk2_rx4Xw@mail.gmail.com>
-Subject: Re: [PATCH v4 10/27] mm/sparse: allow for alternate vmemmap section
- init at boot
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, yuzhao@google.com, usamaarif642@gmail.com, 
-	joao.m.martins@oracle.com, roman.gushchin@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8A3RLoZxVxcz3wj@bogus>
 
-On Thu, Feb 27, 2025 at 9:32=E2=80=AFAM Frank van der Linden <fvdl@google.c=
-om> wrote:
->
-> On Thu, Feb 27, 2025 at 9:20=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.o=
-rg> wrote:
-> >
-> > On Thu, Feb 27, 2025 at 08:47:18AM -0800, Frank van der Linden wrote:
-> > > On Wed, Feb 26, 2025 at 10:09=E2=80=AFAM Johannes Weiner <hannes@cmpx=
-chg.org> wrote:
-> > > >
-> > > > On Tue, Feb 18, 2025 at 06:16:38PM +0000, Frank van der Linden wrot=
-e:
-> > > > > @@ -489,6 +489,14 @@ config SPARSEMEM_VMEMMAP
-> > > > >         SPARSEMEM_VMEMMAP uses a virtually mapped memmap to optim=
-ise
-> > > > >         pfn_to_page and page_to_pfn operations.  This is the most
-> > > > >         efficient option when sufficient kernel resources are ava=
-ilable.
-> > > > > +
-> > > > > +config ARCH_WANT_SPARSEMEM_VMEMMAP_PREINIT
-> > > > > +     bool
-> > > > > +
-> > > > > +config SPARSEMEM_VMEMMAP_PREINIT
-> > > > > +     bool "Early init of sparse memory virtual memmap"
-> > > > > +     depends on SPARSEMEM_VMEMMAP && ARCH_WANT_SPARSEMEM_VMEMMAP=
-_PREINIT
-> > > > > +     default y
-> > > >
-> > > > oldconfig just prompted me on this, but it's not clear to me what i=
-t
-> > > > does. Not even after skimming the changelog of the patch to be hone=
-st.
-> > > >
-> > > > Can you please add a help text that explains the user-visible effec=
-ts
-> > > > of the toggle, as well as guidance as to who might care to change i=
-t?
-> > >
-> > > Hi Johannes,
-> > >
-> > > Thanks for your comment. How's this:
-> >
-> > Thanks for the quick reply!
-> >
-> > > Enables subsystems to pre-initialize memmap in their own way,
-> > > allowing for memory savings during boot. The HugeTLB code uses
-> > > this to initialize memmap for bootmem allocated gigantic hugepages
-> > > in a way that is done by HUGETLB_PAGE_OPTIMIZE_VMEMMAP. This
-> > > means saving this memory right away, instead of allocating it
-> > > first and then freeing it later. Not allocating these pages
-> > > at all during boot allows for specifying a bigger number of
-> > > hugepages on the kernel commandline on larger systems.
-> >
-> > That makes sense.
-> >
-> > But if it's infra code for a hugetlb feature, it should either be
-> > something that HUGETLB_PAGE_OPTIMIZE_VMEMMAP pulls in automatically,
-> > or at least be a hugetlb-specific option that pulls it in.
-> >
-> > Keep in mind that not everybody enables HUGETLBFS. In fact, hugetlb is
-> > default N. It's moot to ask users whether they want to enable infra
-> > code for a feature they aren't using, and default to Y no less. You're
-> > regressing innocent bystanders doing this.
->
-> The main reason that I added a separate config was:
->
-> 1) I could see other subsystems use this.
-> 2) The number of section flags is limited, so I wanted to put the one
-> I added inside an option instead of always using it.
->
-> If especially 2) is not a concern or can be solved differently, I'll
-> be happy to remove the option. I don't particularly like having it,
-> but I didn't see a better way.
->
-> Let me think of a way to clean this up a little, and suggestions are
-> welcome, of course.
->
-> - Frank
+On Thu, Feb 27, 2025 at 09:58:28AM +0000, Sudeep Holla wrote:
+> On Wed, Feb 26, 2025 at 09:48:52PM +0000, Sebastian Ene wrote:
+> > Map the hypervisor's buffers irrespective to the host and return
+> > a linux error code from the FF-A error code on failure. Remove
+> > the unmap ff-a buffers calls from the hypervisor as it will
+> > never be called and move the definition of the
+> > ffa_to_linux_error map in the header where it should belong to.
+> > Prevent the host from using FF-A if the hypervisor could not
+> > map its own buffers with Trustzone.
+> > 
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/ffa.c     | 46 ++++++++++++-------------------
+> >  drivers/firmware/arm_ffa/driver.c | 24 ----------------
+> >  include/linux/arm_ffa.h           | 24 ++++++++++++++++
 
-I'll just do:
+Hi Sudeep,
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 64d420e3c475..fb9831927a08 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -286,6 +286,7 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
-        def_bool HUGETLB_PAGE
-        depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
-        depends on SPARSEMEM_VMEMMAP
-+       select SPARSEMEM_VMEMMAP_PREINIT
+> 
+> Can you post the code movement from driver to the header as separate patch
+> so that I can take it separately to avoid conflicts with the other changes
+> I have. It could be just fine but I see no reason as why it can't be a
+> separate change or why it needs to be bundled here.
 
- config HUGETLB_PMD_PAGE_TABLE_SHARING
-        def_bool HUGETLB_PAGE
-diff --git a/mm/Kconfig b/mm/Kconfig
-index f984dd928ce7..44b52f8e5296 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -496,7 +496,6 @@ config ARCH_WANT_SPARSEMEM_VMEMMAP_PREINIT
- config SPARSEMEM_VMEMMAP_PREINIT
-        bool "Early init of sparse memory virtual memmap"
-        depends on SPARSEMEM_VMEMMAP && ARCH_WANT_SPARSEMEM_VMEMMAP_PREINIT
--       default y
+Yes, let me do that and I will spin up a v2.
 
-Does that seem ok? I'll send an mm-unstable follow-up patch.
+Thanks,
+Sebastian
 
-- Frank
+> 
+> -- 
+> Regards,
+> Sudeep
 
