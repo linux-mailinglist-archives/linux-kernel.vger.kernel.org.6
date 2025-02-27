@@ -1,103 +1,124 @@
-Return-Path: <linux-kernel+bounces-535608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D72A47512
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:13:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD94DA47514
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B931887E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4761316E1DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A7B1E8357;
-	Thu, 27 Feb 2025 05:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C161E8357;
+	Thu, 27 Feb 2025 05:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OholmMlP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="rnXDS1IT"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6E1E833A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105011E833A;
+	Thu, 27 Feb 2025 05:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740633223; cv=none; b=AH4Bv5RSXjtfZk16wJq+e1HO5jopRw3lchoLyNH9mBQM+tnJfPE7kot86A+O1ey0AjzhRFlTh2g6lqjT7yFokB62Mm3jT8JPjHJv+102kcIPHzavsO9AvorBhHPy/bGK+lRpJUBzmgRwL5Lpmx+Oc9GR1cAouuyqRxCSf+0c9L8=
+	t=1740633228; cv=none; b=JxlbTsacJxE2eVydeA02+8MbN8j892mdtbHO2J5Q1yNgLLv59I9jV3g1aMb9hDYbsQi0zk9Bp3k2mMjz4Ppwz2Z+dBTU+DF/LXGK09jzzQMDTXDE4HSO4rlexEntkGhaUxNwc5cDSCk2ZDb2MUknDcIf47gQ5JkYKCgRUtghppg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740633223; c=relaxed/simple;
-	bh=vvCV22so1Msx3O2wDekgW5ZeubkEpJeKdX6RQLEw3ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRfuK4V8vNJaBJZch9fUjE+JlnSe1v2ZAR9E4CRaOyWr9V6kNsE0fI7wHMoUazJK8OLvwy2GGyarq1y/HUj7hWCA+L4sWtWJDT7B5J6llikPYaSdkyToy55JZ6NecWK+jrcrEbKiDJWFhAyCpyLRHxYrBJ4LVaVcATVxQPCxxTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OholmMlP; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740633223; x=1772169223;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vvCV22so1Msx3O2wDekgW5ZeubkEpJeKdX6RQLEw3ls=;
-  b=OholmMlPH9GTuq9iusNS2+kOJLKvfBcUzc6+moKkJKNN+/E6qOCW7Nto
-   Mpp/xacsEEY24hC/mT8JVkb0tSdnELfG7II2DvtyGGn1L7Lui9ErYxAHF
-   MLS85wEeg3cfidvk4jXBWDufNrUGKVAjtqa+YUt3U/LL43Z/C+D6vi00G
-   dzwtDkuF4krwN4r8+Ew17hiVqYaxJVc0Wx0cHFvICXxbvKssAm3DRR0jL
-   DBWHL2ZAQNjPXwx9QcpCT0xu6xinuvdx2enL0ZCR6gm99XVwJNYyoE8bF
-   luQcMVUQ9Ls6NAba8cWjT1H+Ctikyo8sKVEX6mX213/LSVybCky34xx1U
-   g==;
-X-CSE-ConnectionGUID: H40WHVsuSSeVo6VKXgU29A==
-X-CSE-MsgGUID: IGS1ud9AQxitjqUI5o5tgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="51717152"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="51717152"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:13:42 -0800
-X-CSE-ConnectionGUID: Sf1gvKgHTPWja6E9c3QZvw==
-X-CSE-MsgGUID: r36inP5ISUuS8RMFxi4iig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="121928449"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:13:40 -0800
-Date: Thu, 27 Feb 2025 07:13:36 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] mfd: intel-ehl: Introduce Intel Elkhart Lake PSE
- GPIO and TIO
-Message-ID: <Z7_0gJJL_h6lq4cz@black.fi.intel.com>
-References: <20250226061527.3031250-1-raag.jadav@intel.com>
- <20250226061527.3031250-5-raag.jadav@intel.com>
- <Z78VIjgkzf_GlauU@smile.fi.intel.com>
- <Z78VkEnJh8l9MWF7@smile.fi.intel.com>
+	s=arc-20240116; t=1740633228; c=relaxed/simple;
+	bh=6mPELG30QvwhvudxXkhUdp/eArCX2wGHM95Gv1mHh8A=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=R+0ci8aOKfbt9xnPmMtQkDGWrGvjE4FaGnlc3isFxj197XXUlFEfD6p6HTsWxkCmV5uPOFkS6GVw3eHnEccH+lkzm8hE/lX1Xw+SzsbwNMgdPiDRjb172HlpYsMcJjlECiUyzegw1uUc9oHAMHnSRa/cqO/qztVrQmivchceOEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=rnXDS1IT; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z78VkEnJh8l9MWF7@smile.fi.intel.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1740633224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKlLjUCYt/7C/aUqa8V29qM6zcYxyzNvO3oU1xinEp8=;
+	b=rnXDS1ITz7j5pdL6P+8n7fNPA479Gk8yJfvWPtE2+/sE/I/iwGI2FIj0MSQFyctqGhw+xg
+	y/T92ZXJYsG9mjVaM9rAiZcANtjdpMkb55uSkqiIUWhh/WBUKyJ3wcK3ywnLWuzAfkkBsj
+	Tg5vHQfSKvJ+RsfnpNnVkAKv6srOknOdZg5lHdVk4SyyQEPketV3SZyjMBNhGZSnLGgTpA
+	V7+6iO8krA2trQOxU2frbjjxPzIMrjonr+T2a87mKMXzVWyttGhnltPsHpEPbnr6GWTog7
+	OGJD0CQO8MefGCjC2Ff1T5IX61kTxJUSaDPY7ijjXEdF2v2bF2aEQNbtvw7jJQ==
+Date: Thu, 27 Feb 2025 06:13:44 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: quentin.schulz@cherry.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dse@thaumatec.com, Heiko Stuebner
+ <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add overlay for tiger-haikou
+ video-demo adapter
+In-Reply-To: <20250226140942.3825223-4-heiko@sntech.de>
+References: <20250226140942.3825223-1-heiko@sntech.de>
+ <20250226140942.3825223-4-heiko@sntech.de>
+Message-ID: <9cfe09a2dc108ddac16368687d43e88d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, Feb 26, 2025 at 03:22:24PM +0200, Andy Shevchenko wrote:
-> On Wed, Feb 26, 2025 at 03:20:35PM +0200, Andy Shevchenko wrote:
-> > On Wed, Feb 26, 2025 at 11:45:27AM +0530, Raag Jadav wrote:
+Hello Heiko,
+
+On 2025-02-26 15:09, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > 
-> ...
+> This adds support for the video-demo-adapter DEVKIT ADDON CAM-TS-A01
+> (https://embedded.cherry.de/product/development-kit/) for the Haikou
+> devkit with Tiger RK3588 SoM.
 > 
-> > > +++ b/drivers/mfd/intel-ehl-gpio.c
-> > 
-> > We are usually align the file name and Kconfig option, and I like Kconfig
-> > choice, so intel_ehl_pse_gpio.c (also note the style with other intel_$SOC_*
-> > files in the folder.
+> The Video Demo adapter is an adapter connected to the fake PCIe slot
+> labeled "Video Connector" on the Haikou devkit.
+> 
+> It's main feature is a Leadtek DSI-display with touchscreen and a 
+> camera
+> (that is not supported yet). To drive these components a number of
+> additional regulators are grouped on the adapter as well as a PCA9670
+> gpio-expander to provide the needed additional gpio-lines.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-More than 3 words is a bit of an overstretch, no?
+The additions to the Makefile introduced in this patch are looking
+good to me, so please feel free to include
 
-> And also Subject, you have currently 3 different names for the same:
-> Kconfig, Subject, filename.
+Reviewed-by: Dragan Simic <dsimic@manjaro.org> # Makefile
 
-Yeah just trying to dial down the acronym syndrome, you know how it has
-plagued our minds.
-
-Raag
+> ---
+>  arch/arm64/boot/dts/rockchip/Makefile         |   5 +
+>  .../rk3588-tiger-haikou-video-demo.dtso       | 153 ++++++++++++++++++
+>  2 files changed, 158 insertions(+)
+>  create mode 100644
+> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+> b/arch/arm64/boot/dts/rockchip/Makefile
+> index db6017272ff1..4cddb5d2807d 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -158,6 +158,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-turing-rk1.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-coolpi-4b.dtb
+> @@ -214,3 +215,7 @@ rk3588-rock-5b-pcie-ep-dtbs := rk3588-rock-5b.dtb \
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtb
+>  rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
+>  	rk3588-rock-5b-pcie-srns.dtbo
+> +
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtb
+> +rk3588-tiger-haikou-video-demo-dtbs := rk3588-tiger-haikou.dtb \
+> +	rk3588-tiger-haikou-video-demo.dtbo
 
