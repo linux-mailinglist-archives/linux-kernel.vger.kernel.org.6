@@ -1,314 +1,184 @@
-Return-Path: <linux-kernel+bounces-537339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69490A48AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:39:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E892DA48AAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6BE7A517E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F247316BAD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C2327128C;
-	Thu, 27 Feb 2025 21:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NFvilmyF"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E86271285;
+	Thu, 27 Feb 2025 21:39:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B9C1A9B2A;
-	Thu, 27 Feb 2025 21:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90E61A9B2A;
+	Thu, 27 Feb 2025 21:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692380; cv=none; b=SdSTXymt3YEhONWX8YqrJI/eLzFUWKiiRxWKtT5qeKyacqBbnpmY1DKoXhOnYcfD3nf5jdQ3XKeyDSZt7pIbCJ6l16unF7RW+BzJKjFjLBZBU4gDGbvHR1lOAfRXXVsNiYaqZicvZ8qeYLxtkKeqzUjvuXACgJg5a5lHgbCu9jg=
+	t=1740692342; cv=none; b=On9AaZeKk59kTs6PSJvMNfeHJ9ExfNQQ7wIMRxQJH4gFHEeWHiIbydU3gpWcDR6J+JONkitQWCSy40MIfo0H0pXdf79NRkIvVhooCN0y5BSl7Ayws1SBpQ4Fj3/RqVKmlmMDEqPVVVNZWcBK4pRzGOkjWpcOtzvb1UAj8eJDZxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692380; c=relaxed/simple;
-	bh=Y3E7VGIAhO0Vv9/c8425Yr/gdlv8MZnGhkzpRUXwtNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bE4M1dWkQmU30IvoQsxLGzyUJTnU3lNP/lGlp0FsNHJpe2WpFKxXLwrEgdgjJIccJUO0Ei6dpCSKstdlpzPAur0FjFwW/zCBTtOmh3XlnSpa1ywIhEduq2CKGRLvouaWX9etDsjeGbZzYTH2LbwZFiGcGtZ2uzeFKWgao7vt4fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NFvilmyF; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51RLdRdo2469570
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 27 Feb 2025 15:39:27 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740692367;
-	bh=nVZYza+MC2QljsqmOtf10Gpoo5weCxof9ntu9Cj1Hxs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=NFvilmyFCUXFa6DvuSlPY4UKrb8yobGSZ6qeBJKJKx1G9vvOx0HPQlpIx6IOFRzYA
-	 MSbEhX8U2eK7UHYfu++1/mYI0Lgy28mBOQgbI5UhZ0gvUY4fZ3ASlWvpqf9U5R4yjO
-	 2WBZle8Txdr1tDLJVdK8xhpgfruOUa2SSBkjePUU=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RLdRCx038307;
-	Thu, 27 Feb 2025 15:39:27 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 15:39:27 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 15:39:27 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RLdQAv018642;
-	Thu, 27 Feb 2025 15:39:26 -0600
-Message-ID: <3b232103-3c02-4d7a-864c-45e6a3de3095@ti.com>
-Date: Thu, 27 Feb 2025 15:39:26 -0600
+	s=arc-20240116; t=1740692342; c=relaxed/simple;
+	bh=0uqM8Rb45de9VzXCu+WOiz+KSieLYf5N5HE7pAVf0ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qHtx/1fOlQBrQKHs7SOVu8SDIRH9bm9V20/yu7VyiVjOsjwaKPi7/81aNHTmbVG5Sht4dRHd6zKlrDprbMfmVkZDwamuwFSR0vlS/l9myXF0j4xQGpa9c5NQUa96NLMz6SWwKIwgI13gwwSKdQ9SpSEVei5MoWPLbz/8jiJ8+nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1B6C4CEDD;
+	Thu, 27 Feb 2025 21:39:01 +0000 (UTC)
+Date: Thu, 27 Feb 2025 16:39:44 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>, Tomas
+ Glozar <tglozar@redhat.com>
+Subject: [PATCH] tracing: Fix bad hist from corrupting named_triggers list
+Message-ID: <20250227163944.1c37f85f@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] mux: mmio: Extend mmio-mux driver to configure
- mux with new DT property
-To: Chintan Vankar <c-vankar@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
-        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>, <vigneshr@ti.com>,
-        <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250227202206.2551305-1-c-vankar@ti.com>
- <20250227202206.2551305-3-c-vankar@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250227202206.2551305-3-c-vankar@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2/27/25 2:22 PM, Chintan Vankar wrote:
-> MMIO mux driver is designed to parse "mux-reg-masks" and "idle-states"
-> property independently to configure mux registers. Drawback of this
-> approach is, while configuring mux-controller one need to specify every
-> register of memory space with offset and mask in "mux-reg-masks" and
-> register state to "idle-states", that would be more complex for devices
-> with large memory space.
-> 
-> Add support to extend the mmio mux driver to configure a specific register
-> or set of register in memory space.
-> 
-> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
-> ---
->   drivers/mux/mmio.c | 148 +++++++++++++++++++++++++++++++++++++--------
->   1 file changed, 122 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-> index 30a952c34365..8937d0ea2b11 100644
-> --- a/drivers/mux/mmio.c
-> +++ b/drivers/mux/mmio.c
-> @@ -2,7 +2,7 @@
->   /*
->    * MMIO register bitfield-controlled multiplexer driver
->    *
-> - * Copyright (C) 2017 Pengutronix, Philipp Zabel <kernel@pengutronix.de>
-> + * Copyright (C) 2017-2025 Pengutronix, Philipp Zabel <kernel@pengutronix.de>
->    */
->   
->   #include <linux/bitops.h>
-> @@ -33,10 +33,84 @@ static const struct of_device_id mux_mmio_dt_ids[] = {
->   };
->   MODULE_DEVICE_TABLE(of, mux_mmio_dt_ids);
->   
-> +static int reg_mux_get_controllers(const struct device_node *np, char *prop_name)
-> +{
-> +	int ret;
-> +
-> +	ret = of_property_count_u32_elems(np, prop_name);
-> +	if (ret == 0 || ret % 2)
-> +		ret = -EINVAL;
-> +
-> +	return ret;
-> +}
-> +
-> +static int reg_mux_get_controllers_extended(const struct device_node *np, char *prop_name)
-> +{
-> +	int ret;
-> +
-> +	ret = of_property_count_u32_elems(np, prop_name);
-> +	if (ret == 0 || ret % 3)
-> +		ret = -EINVAL;
-> +
-> +	return ret;
-> +}
-> +
-> +static int reg_mux_parse_dt(const struct device_node *np, bool *mux_reg_masks_state,
-> +			    int *num_fields)
-> +{
-> +	int ret;
-> +
-> +	if (*mux_reg_masks_state) {
-> +		ret = reg_mux_get_controllers_extended(np, "mux-reg-masks-state");
-> +		if (ret < 0)
-> +			return ret;
-> +		*num_fields = ret / 3;
-> +	} else {
-> +		ret = reg_mux_get_controllers(np, "mux-reg-masks");
-> +		if (ret < 0)
-> +			return ret;
-> +		*num_fields = ret / 2;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int mux_reg_set_parameters(const struct device_node *np, char *prop_name, u32 *reg,
-> +				  u32 *mask, int index)
-> +{
-> +	int ret;
-> +
-> +	ret = of_property_read_u32_index(np, prop_name,
-> +					 2 * index, reg);
-> +	if (!ret)
-> +		ret = of_property_read_u32_index(np, prop_name,
-> +						 2 * index + 1, mask);
-> +
-> +	return ret;
-> +}
-> +
-> +static int mux_reg_set_parameters_extended(const struct device_node *np, char *prop_name, u32 *reg,
-> +					   u32 *mask, u32 *state, int index)
-> +{
-> +	int ret;
-> +
-> +	ret = of_property_read_u32_index(np, prop_name,
-> +					 3 * index, reg);
+From: Steven Rostedt <rostedt@goodmis.org>
 
-This is some odd line wrapping, why newline at 55 chars here?
-You can go to 80 or 100 if it is readable.
+The following commands causes a crash:
 
-> +	if (!ret) {
+ ~# cd /sys/kernel/tracing/events/rcu/rcu_callback
+ ~# echo 'hist:name=bad:keys=common_pid:onmax(bogus).save(common_pid)' > trigger
+ bash: echo: write error: Invalid argument
+ ~# echo 'hist:name=bad:keys=common_pid' > trigger
 
-Just return early, no need for this MISRA-like "single return" junk.
+Because the following occurs:
 
-> +		ret = of_property_read_u32_index(np, prop_name,
-> +						 3 * index + 1, mask);
-> +		if (!ret)
-> +			ret = of_property_read_u32_index(np, prop_name,
-> +							 3 * index + 2, state);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->   static int mux_mmio_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct device_node *np = dev->of_node;
-> +	bool mux_reg_masks_state = false;
->   	struct regmap_field **fields;
->   	struct mux_chip *mux_chip;
->   	struct regmap *regmap;
-> @@ -59,15 +133,19 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   		return dev_err_probe(dev, PTR_ERR(regmap),
->   				     "failed to get regmap\n");
->   
-> -	ret = of_property_count_u32_elems(np, "mux-reg-masks");
-> -	if (ret == 0 || ret % 2)
-> -		ret = -EINVAL;
-> +	if (of_property_present(np, "mux-reg-masks-state"))
-> +		mux_reg_masks_state = true;
-> +
-> +	ret = reg_mux_parse_dt(np, &mux_reg_masks_state, &num_fields);
+event_trigger_write() {
+  trigger_process_regex() {
+    event_hist_trigger_parse() {
 
-Why are you passing this bool by pointer? You don't modify it in the function..
+      data = event_trigger_alloc(..);
 
->   	if (ret < 0) {
-> -		dev_err(dev, "mux-reg-masks property missing or invalid: %d\n",
-> -			ret);
-> +		if (mux_reg_masks_state)
-> +			dev_err(dev, "mux-reg-masks-state property missing or invalid: %d\n",
-> +				ret);
-> +		else
-> +			dev_err(dev, "mux-reg-masks property missing or invalid: %d\n",
-> +				ret);
->   		return ret;
->   	}
-> -	num_fields = ret / 2;
->   
->   	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
->   				       sizeof(*fields));
-> @@ -79,19 +157,25 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   	for (i = 0; i < num_fields; i++) {
->   		struct mux_control *mux = &mux_chip->mux[i];
->   		struct reg_field field;
-> -		s32 idle_state = MUX_IDLE_AS_IS;
-> +		s32 state, idle_state = MUX_IDLE_AS_IS;
->   		u32 reg, mask;
->   		int bits;
->   
-> -		ret = of_property_read_u32_index(np, "mux-reg-masks",
-> -						 2 * i, &reg);
-> -		if (!ret)
-> -			ret = of_property_read_u32_index(np, "mux-reg-masks",
-> -							 2 * i + 1, &mask);
-> -		if (ret < 0) {
-> -			dev_err(dev, "bitfield %d: failed to read mux-reg-masks property: %d\n",
-> -				i, ret);
-> -			return ret;
-> +		if (!mux_reg_masks_state) {
-> +			ret = mux_reg_set_parameters(np, "mux-reg-masks", &reg, &mask, i);
-> +			if (ret < 0) {
-> +				dev_err(dev, "bitfield %d: failed to read mux-reg-masks property: %d\n",
-> +					i, ret);
-> +				return ret;
-> +			}
-> +		} else {
-> +			ret = mux_reg_set_parameters_extended(np, "mux-reg-masks-state", &reg,
-> +							      &mask, &state, i);
-> +			if (ret < 0) {
-> +				dev_err(dev, "bitfield %d: failed to read custom-states property: %d\n",
-> +					i, ret);
-> +				return ret;
-> +			}
->   		}
->   
->   		field.reg = reg;
-> @@ -115,16 +199,28 @@ static int mux_mmio_probe(struct platform_device *pdev)
->   		bits = 1 + field.msb - field.lsb;
->   		mux->states = 1 << bits;
->   
-> -		of_property_read_u32_index(np, "idle-states", i,
-> -					   (u32 *)&idle_state);
-> -		if (idle_state != MUX_IDLE_AS_IS) {
-> -			if (idle_state < 0 || idle_state >= mux->states) {
-> -				dev_err(dev, "bitfield: %d: out of range idle state %d\n",
-> -					i, idle_state);
-> -				return -EINVAL;
-> +		if (!mux_reg_masks_state) {
-> +			of_property_read_u32_index(np, "idle-states", i,
-> +						   (u32 *)&idle_state);
+      event_trigger_register(.., data) {
+        cmd_ops->reg(.., data, ..) [hist_register_trigger()] {
+          data->ops->init() [event_hist_trigger_init()] {
+            save_named_trigger(name, data) {
+              list_add(&data->named_list, &named_triggers);
+            }
+          }
+        }
+      }
 
- From here down, both branches of this are almost identical, idle_state and
-your new "state" var do the same thing, why do you need both?
+      ret = create_actions(); (return -EINVAL)
+      if (ret)
+        goto out_unreg;
+[..]
+      ret = hist_trigger_enable(data, ...) {
+        list_add_tail_rcu(&data->list, &file->triggers); <<<---- SKIPPED!!! (this is important!)
+[..]
+ out_unreg:
+      event_hist_unregister(.., data) {
+        cmd_ops->unreg(.., data, ..) [hist_unregister_trigger()] {
+          list_for_each_entry(iter, &file->triggers, list) {
+            if (!hist_trigger_match(data, iter, named_data, false))   <- never matches
+                continue;
+            [..]
+            test = iter;
+          }
+          if (test && test->ops->free) <<<-- test is NULL
 
-Andrew
+            test->ops->free(test) [event_hist_trigger_free()] {
+              [..]
+              if (data->name)
+                del_named_trigger(data) {
+                  list_del(&data->named_list);  <<<<-- NEVER gets removed!
+                }
+              }
+           }
+         }
 
-> +			if (idle_state != MUX_IDLE_AS_IS) {
-> +				if (idle_state < 0 || idle_state >= mux->states) {
-> +					dev_err(dev, "bitfield: %d: out of range idle state %d\n",
-> +						i, idle_state);
-> +					return -EINVAL;
-> +				}
-> +
-> +				mux->idle_state = idle_state;
-> +			}
-> +		} else {
-> +			if (state != MUX_IDLE_AS_IS) {
-> +				if (state < 0 || state >= mux->states) {
-> +					dev_err(dev, "bitfield: %d: out of range idle state %d\n",
-> +						i, state);
-> +					return -EINVAL;
-> +				}
-> +
-> +				mux->idle_state = state;
->   			}
-> -
-> -			mux->idle_state = idle_state;
->   		}
->   	}
->   
+         [..]
+         kfree(data); <<<-- frees item but it is still on list
+
+The next time a hist with name is registered, it causes an u-a-f bug and
+the kernel can crash.
+
+Move the code around such that if event_trigger_register() succeeds, the
+next thing called is hist_trigger_enable() which adds it to the list.
+
+A bunch of actions is called if get_named_trigger_data() returns false.
+But that doesn't need to be called after event_trigger_register(), so it
+can be moved up, allowing event_trigger_register() to be called just
+before hist_trigger_enable() keeping them together and allowing the
+file->triggers to be properly populated.
+
+Cc: stable@vger.kernel.org
+Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist triggers")
+Reported-by: Tomas Glozar <tglozar@redhat.com>
+Tested-by: Tomas Glozar <tglozar@redhat.com>
+Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+Closes: https://lore.kernel.org/all/CAP4=nvTsxjckSBTz=Oe_UYh8keD9_sZC4i++4h72mJLic4_W4A@mail.gmail.com/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20250225125356.29236cd1@gandalf.local.home
+
+- Remove extra blank line.
+
+ kernel/trace/trace_events_hist.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 261163b00137..ad7419e24055 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -6724,27 +6724,27 @@ static int event_hist_trigger_parse(struct event_command *cmd_ops,
+ 	if (existing_hist_update_only(glob, trigger_data, file))
+ 		goto out_free;
+ 
+-	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
+-	if (ret < 0)
+-		goto out_free;
++	if (!get_named_trigger_data(trigger_data)) {
+ 
+-	if (get_named_trigger_data(trigger_data))
+-		goto enable;
++		ret = create_actions(hist_data);
++		if (ret)
++			goto out_free;
+ 
+-	ret = create_actions(hist_data);
+-	if (ret)
+-		goto out_unreg;
++		if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
++			ret = save_hist_vars(hist_data);
++			if (ret)
++				goto out_free;
++		}
+ 
+-	if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
+-		ret = save_hist_vars(hist_data);
++		ret = tracing_map_init(hist_data->map);
+ 		if (ret)
+-			goto out_unreg;
++			goto out_free;
+ 	}
+ 
+-	ret = tracing_map_init(hist_data->map);
+-	if (ret)
+-		goto out_unreg;
+-enable:
++	ret = event_trigger_register(cmd_ops, file, glob, trigger_data);
++	if (ret < 0)
++		goto out_free;
++
+ 	ret = hist_trigger_enable(trigger_data, file);
+ 	if (ret)
+ 		goto out_unreg;
+-- 
+2.47.2
+
 
