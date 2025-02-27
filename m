@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-535363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE096A471D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C17BA471D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF6D1893308
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204D41893CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BAE14A614;
-	Thu, 27 Feb 2025 01:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B8515624B;
+	Thu, 27 Feb 2025 01:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3kKPokN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SHGpuEdc"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAAC7A13A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6DE1482E7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740620948; cv=none; b=jYMqWBljtZbcvBdzewtKB1znolHxzN9bsTJLnGwIHDj1XdtA9ipwhhotbfDtuJi66x62uF4dCQRVfFkDAozcRdXCHLEk4L6F4nGRLLcBb1/C32+vxG+tAgQDkRcd4RRLFI+rIMYfLo2DPoE+6Lmq7KFkQuxSlekPgcSPCZV7dsc=
+	t=1740620949; cv=none; b=D/iwUfYbANAUxm5QjVLi6kCmYJOEzcTd2rEjm2aNvwsuJYQYpjsEfZhzOmcvQUMKRidOjiSVrhbfdG4xLIvjQQUiRbzOgo7omZMfhkQWfq1vOe8/B2oKuvoXhj8Ef0ja57lwb4iIwcai9XU8Sm8vIE+/OLhQ1xbkl4RKYYCBpyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740620948; c=relaxed/simple;
-	bh=FxXG4vu/6eu+p30+t5KxZky4GYe1qhhb4jfmOZkmPys=;
+	s=arc-20240116; t=1740620949; c=relaxed/simple;
+	bh=43j1TPRazK8BCh3mEM3X8xpew+6c1YDyF0sMhn/7bR8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tmDBnj9+Lm+aMXEacWEf2hsg/fVp+7yAXewuUTzK3LYJjegvJpb6NOY47JvkqGwyXv+PIvjpVzUnkPab84ExCZNkQJ6X2Rh0N2ijCjSvyvd9vY0be8I7AuLI/47gMRKAE/JQMflPu/4MqnVD1QSp6QGrVcKAsBMI3NssH5kWgkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e3kKPokN; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=ubpYsCvDOE0V9s9EeCSU93d3GcHXoIF9fvUPgBcflmfJYLUm5v/i4HkmNLTY5shBX6yP+9Yf5MTTGO+XHli2ISyj1pMxffW/MH/O6xmIygw2MsK6uLlB2kWhtQDkEhR+lvhT/lpf7O0Gz+U2ayl6aSZUYrBfcEJM8XiAweS1pLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SHGpuEdc; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2f81a0d0a18so1038416a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:49:06 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2217a4bfcc7so6547435ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 17:49:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740620946; x=1741225746; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740620947; x=1741225747; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=GpF7VaswH1+PtCwj7e39drWtyVDZ7wRi7CgpqaqVasQ=;
-        b=e3kKPokNWZVqZFPOx/8sfSaS2bGT4C+fNRqmy5rJox57LknJVn3pnJ/kePcs0Pc9bh
-         JwP6NswzFOzLV71S2T7b0SLyryZrL6ttwTORW8JBRblUjdb0XmUSME2rJPH1n8d6RDIy
-         7t/3cwQnd0k7iPrqW2E4/lOOdnaPPkXNH+F248A80OKLmxndlaY+38DjISn7iZpeN0H7
-         1N9sNv92fY2mrr4SVJlRqUTD8uBb2NRv8c3+YppbBbfiKr3wE8mqBDjeGzyYjDo6rKdP
-         poYUMdZqrzt0jBgMsWm0aayqPAaA9QbqWcxisSgzGiektVIJqPNdXe/cqsBboYxfsWN7
-         rzgQ==
+        bh=EonFhjKCFXLwW4g8Vs93xIs2sNaiaGoxwaxHmKn8ztc=;
+        b=SHGpuEdceExb/nYtvEI5uS5zY+Lys3ilHaJJwfpnnZWea0urDvO6IkGX9hfVLXtXLP
+         jOfV8ZaX9vcdQjD61/eTRXxYX7GNX3Nq9qp+JLnbC4b266VrpPzNjMIP0vhb5wcSbkvR
+         Fxhy9cKRd6xHN0e1qRYLhOUwPnWVKNTAOcIkHgaU9ShbMrze5srhfI1N47qPcYAi6BgJ
+         sIC1cDBL9P0VbRAvKu4/UWAJKwwto7PlNVbx1AIy4mI4OCxOX0jbdfnWu3wSrpEzc+Su
+         VfDpI7nSWbfSgJxKT5kAlkc8GTH4FkxTuPQy6sH5qBJOOFbhpDjlNkNzEMINKmD5Kquf
+         PQ5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740620946; x=1741225746;
+        d=1e100.net; s=20230601; t=1740620947; x=1741225747;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GpF7VaswH1+PtCwj7e39drWtyVDZ7wRi7CgpqaqVasQ=;
-        b=PRQadNUuYJhEfcs7AL1rSGtY/6yhYJ0QVw1/5Iy0BHkySFnybWf65sdJQ6Iu/IHTB+
-         izH0/Ov7We+sC73X43pYYM9Lr5z22CnCSuRbDKZSw67ym4LwPet6QNDjOEkiEDtcPF09
-         zrSo3ykGfspzaaN/qFLWC/Pvlt6xr9lDhrFEtPXxkEwslTqoC8sSmohlmrHv8Y8sguDn
-         tV9BO4dWxR+Kfs0WM36P50Kxs5vsQaJAQmWCdyiL/bbWOaxFjnUZINuZNHsZED1FnNdp
-         wSX2lYZD20c2bMjLRPwn6QH5dzhnyEqslOOXkx21pTGUyzIRZVq23ZDTi5JzsaKhMl2p
-         AN5A==
-X-Gm-Message-State: AOJu0Ywwwutba50+n+7zW3DfnU+R4IXbe10RtwtvUV/KnMKvppMZ1aDl
-	sIJdcaMDury0NvtwfQ9a3ULCXDcMD3kDW+JLS2Rj0uQJXcKwQgIfpQXg41r50mnxJVlxCNJniio
-	9Ug==
-X-Google-Smtp-Source: AGHT+IE1Ud6/nNgaJU0N0FB6mqBtnxDmIgHW50+GZisORAEZMHbHbI9bClZkETrXKUspUI8U9MdvNfjAVMA=
-X-Received: from pjz6.prod.google.com ([2002:a17:90b:56c6:b0:2fc:3022:36b8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:51:b0:2ee:ed1c:e451
- with SMTP id 98e67ed59e1d1-2fe68ae1b15mr15878436a91.15.1740620945822; Wed, 26
- Feb 2025 17:49:05 -0800 (PST)
+        bh=EonFhjKCFXLwW4g8Vs93xIs2sNaiaGoxwaxHmKn8ztc=;
+        b=vE2GqaXlhV+NDJadeQfnaWHzkcUDJmNfyMOPnv2Kqq+uIv1oCmTIZolFThDvSCW/l2
+         MyZBcIj3gF5XG2ioBHIipbi0mQtvaE4U7U9nFMiYx/cEeHuOpRrmzpmyqyyXuz4kA4aT
+         5s4hWBIIDGC9Gd/vT5qMfZG98bRipxPSNoJ0wZh2uh+4hjMZSNCkfbVvM/N81AfpnHGr
+         2Qb7i+sQaN+TD20JmWdCsDevLZd8HtbA/zQz4bBFPSc7CXD9iHUcbdz6RvRv7J1/3gvN
+         T+4lM9dMxKgJ5KA8gWIcWz+ih000DHSuQtYWECeAV1h+pCri1krZ0h3OJPf48+fcLHmA
+         MrpQ==
+X-Gm-Message-State: AOJu0YxWzJw1ImcgyF5Ifww/LP49/gNvERieSDjFckgivqUN90Bkye5x
+	Y9Px3m8o/gypsJ/l2RuOcoVFD2I9T9/PBjH+V63VIetBa3Vak3wjQcu7XFgJyC2ZdLVTcmSkcuN
+	uUg==
+X-Google-Smtp-Source: AGHT+IGE5mWIDU4Vs4EAjIB3CweF7rOyGspQLWufKH4bsvLgDhV8Q0xoTjomyWDxZBWJ7lKHEMgh7W8MY2M=
+X-Received: from plau19.prod.google.com ([2002:a17:903:3053:b0:220:e8a0:ec1d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d502:b0:220:f509:686a
+ with SMTP id d9443c01a7336-221a10f1e97mr389509235ad.29.1740620947569; Wed, 26
+ Feb 2025 17:49:07 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 17:48:52 -0800
+Date: Wed, 26 Feb 2025 17:48:53 -0800
 In-Reply-To: <20250227014858.3244505-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250227014858.3244505-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227014858.3244505-2-seanjc@google.com>
-Subject: [PATCH 1/7] KVM: SVM: Remove wbinvd in sev_vm_destroy()
+Message-ID: <20250227014858.3244505-3-seanjc@google.com>
+Subject: [PATCH 2/7] x86, lib: Drop the unused return value from wbinvd_on_all_cpus()
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -85,39 +85,55 @@ Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
 	Kevin Loughlin <kevinloughlin@google.com>, Mingwei Zhang <mizhang@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Zheyun Shen <szy0127@sjtu.edu.cn>
+Drop wbinvd_on_all_cpus()'s return value; both the "real" version and the
+stub always return '0', and none of the callers check the return.
 
-Before sev_vm_destroy() is called, kvm_arch_guest_memory_reclaimed()
-has been called for SEV and SEV-ES and kvm_arch_gmem_invalidate()
-has been called for SEV-SNP. These functions have already handled
-flushing the memory. Therefore, this wbinvd_on_all_cpus() can
-simply be dropped.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Zheyun Shen <szy0127@sjtu.edu.cn>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/sev.c | 6 ------
- 1 file changed, 6 deletions(-)
+ arch/x86/include/asm/smp.h | 5 ++---
+ arch/x86/lib/cache-smp.c   | 3 +--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 74525651770a..d934d788ac39 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -2879,12 +2879,6 @@ void sev_vm_destroy(struct kvm *kvm)
- 		return;
- 	}
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index ca073f40698f..ee61e322e2a1 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -111,7 +111,7 @@ void __noreturn hlt_play_dead(void);
+ void native_play_dead(void);
+ void play_dead_common(void);
+ void wbinvd_on_cpu(int cpu);
+-int wbinvd_on_all_cpus(void);
++void wbinvd_on_all_cpus(void);
  
--	/*
--	 * Ensure that all guest tagged cache entries are flushed before
--	 * releasing the pages back to the system for use. CLFLUSH will
--	 * not do this, so issue a WBINVD.
--	 */
--	wbinvd_on_all_cpus();
+ void smp_kick_mwait_play_dead(void);
  
- 	/*
- 	 * if userspace was terminated before unregistering the memory regions
+@@ -154,10 +154,9 @@ static inline struct cpumask *cpu_l2c_shared_mask(int cpu)
+ 
+ #else /* !CONFIG_SMP */
+ #define wbinvd_on_cpu(cpu)     wbinvd()
+-static inline int wbinvd_on_all_cpus(void)
++static inline void wbinvd_on_all_cpus(void)
+ {
+ 	wbinvd();
+-	return 0;
+ }
+ 
+ static inline struct cpumask *cpu_llc_shared_mask(int cpu)
+diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
+index 7af743bd3b13..079c3f3cd32c 100644
+--- a/arch/x86/lib/cache-smp.c
++++ b/arch/x86/lib/cache-smp.c
+@@ -14,9 +14,8 @@ void wbinvd_on_cpu(int cpu)
+ }
+ EXPORT_SYMBOL(wbinvd_on_cpu);
+ 
+-int wbinvd_on_all_cpus(void)
++void wbinvd_on_all_cpus(void)
+ {
+ 	on_each_cpu(__wbinvd, NULL, 1);
+-	return 0;
+ }
+ EXPORT_SYMBOL(wbinvd_on_all_cpus);
 -- 
 2.48.1.711.g2feabab25a-goog
 
