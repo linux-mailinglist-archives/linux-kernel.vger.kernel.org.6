@@ -1,131 +1,110 @@
-Return-Path: <linux-kernel+bounces-536474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4FDA4800D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:55:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09725A4800F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391AC1882980
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE533A8C4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC0623024C;
-	Thu, 27 Feb 2025 13:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB1E230D2B;
+	Thu, 27 Feb 2025 13:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="EmSqhOjV"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0hX1kzl"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4859842C0B;
-	Thu, 27 Feb 2025 13:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7329442C0B;
+	Thu, 27 Feb 2025 13:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664539; cv=none; b=uxWkGmToA8Q4/MCxWp5CybtpSXjs6r2nLSrKNk48iLwFzXg3ocqIX/Dv/Zup3JeIVMBWQLE3tAgSoJ05j709hR17qpEDp3yNXdA96bKskTAJVuu5W8fjdnudq/L4iPW7RIYzs0T/fcl4oGrigvYa0xAE8wSdMa0xfnARknr7I8I=
+	t=1740664545; cv=none; b=ou3P/zujlo0co6wVlGDhViVmZfaf3QJwp12ENoePD6Ct8X24cVDnDX4sNVRJdYfwT+j56LUzeWm531/1GJ/Tvb2IEy5hYVNVaK472ruN+EUnut9ZuolzfmFRwRaZlFYre502WZ6Huy7gVuceoUyU26AHHbN3M6ONaRwkwnLG5N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664539; c=relaxed/simple;
-	bh=MZ5feQNtisJgpeJy5xLzx0Y8Q+XnSBumrFimAbzZ9CM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+Pcq1A6JIUEL7mONV1k9pmiGik195G5LpNNi6a7/t/DF3T8B7vS8Bv2JMBn1bS1FupmHyAMK4OkF00cO1YW09CMsN7oq3L7yuhGCIPy3Ugtjm9qGUhEJJrHq3wfME9f9HhycJjku8a3V8B6Aulc7YQYNoiwX7lSdj9nyt8FDRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=EmSqhOjV; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740664527; bh=MZ5feQNtisJgpeJy5xLzx0Y8Q+XnSBumrFimAbzZ9CM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EmSqhOjVTv/5qycUfH0WaMucg+fhJaX+QaLJDaN7j5pv+AO3LHrkfHfhEz78bmFE8
-	 5Wmvn1X52+ZGUzV0+Stdk7alPHSvfNRXxNqy1bwepz5dx+8Bn1TEdqm3PBFf7I1NKc
-	 4yxnyQjNSmcPnthA3ukUCkq3/7nwB3yR/KSCtRhI=
-Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 62DA02052A91;
-	Thu, 27 Feb 2025 14:55:27 +0100 (CET)
-Message-ID: <f2c2d7ae-08c1-4122-a131-f5a65e9ed3d2@ralfj.de>
-Date: Thu, 27 Feb 2025 14:55:22 +0100
+	s=arc-20240116; t=1740664545; c=relaxed/simple;
+	bh=w5PrfAMbovUyS2QcIh8YSYSUSXSpcWOiTR0ekujNaVI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XNOJLieU1+FP+/L4Jnx8zSFlNzjrIr873x7YgYAbapduYsAARmnU8NJ3ITydQSfAdPjgRatEXDkr/Z+OLJNojv5fUHVeqg5xlUIy2OdSpQcmjW0myBc28FpheOXWRlGfQd8IT4PGAG/1foYIdR4ARpW0cFlXbrh3x8ZkVjMLleM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0hX1kzl; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3ffe06107so544144b6e.2;
+        Thu, 27 Feb 2025 05:55:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740664543; x=1741269343; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OT7lACv6pRY581pDMHaH4afYtbO0tkAIV0SUe++9Fbc=;
+        b=e0hX1kzlFnwJTsoBHVuOdsuVwHG5wc14P9gRc+uTMk09kuoGpojTf59X/2GbwzSrhO
+         HGGpcgjC/zQZdThBqkYh6hFFA6NDGQWW4mGTS63kNkfv8/OHMqZypY2rmRnLDyeRTkqt
+         l1gR3u0/7edY9HyjTockrv7faGZLaiHql73aZWK5votnIPluqXh4pHSWxHb2Dcy0fJd8
+         QgPepMOouom5g0QsbQungTS6zfGwhBeiKs0VV4QbTsfx4cL0BMPb4IwQa7vlcpm7V2l8
+         NC8/0BOVvq/QzTLj3UcibqxmXrt8qKXvNDvFEA+wQ/KgFuJHuBrHOw0xjG7o4VsHFM8L
+         95zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740664543; x=1741269343;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OT7lACv6pRY581pDMHaH4afYtbO0tkAIV0SUe++9Fbc=;
+        b=DAy7g95veKmUKgu7kwx8Ku2LE4cPA7ADnYXOJ5ZirUEFHTDTK3FQKT94MDkAQh1Woy
+         v7z/K3CD1auP1+7fVSzKTS/v3+8MToyB/g8nNbfc84JJtM0s7jRsZtsMLBCIKPWP9uZH
+         x1nUcVpWQuzZBcZIRQnGmlBZRD38BPN0d2W25C4st4pxNKIBgEcMmp1ACVwm2ZiKexUj
+         JJXpgVRj+my6qeTEjJiUYm3fQFy4sGpluqyb+dzpUEyBwFvdz7pPENlKU/u6i1wL9O1A
+         syF8KBgZ5CiBV/VTsyzxDiN3b5UUqnKm8+368feVMrlUw+fERMt1IlVJHvwwblFCvOXU
+         BjRw==
+X-Forwarded-Encrypted: i=1; AJvYcCW17C3oV2fX9nQd8ma0JJ5saZLVwIgkuwpanbXY9Nh5Y8QWM818E0l9ZeKvpndnnHTofVRtD4Zn+h1n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzceyjogx8tKMmvMdisGXRu9hjgIpz+IaaR1yMA8/cvRAyzq+6Z
+	5G0HbXx97wP3Cj4h7fVGQiHbFr8sUy2jAFPrCVQcSZ93y/IYT0T+5zRCQ29woF/iOPjY7XHnYxl
+	YE8W7IQXorbg5DI+foNT7zVUXAsEHBDJR
+X-Gm-Gg: ASbGnctV6cDJcc88Ubw8UGpvoyKauAmWNZPN/h1lsqagRca1renOlYyhLC/xX5KnHXq
+	VpdD+RKMXpCX9cU3p55z3SnVqrns/0i5GWtUCqvWzM+DtvWoX6Nrc1XWgNts1z5tmDcElTSTb5N
+	FkRgun1yGapw==
+X-Google-Smtp-Source: AGHT+IGAF+jqOIA63oG2XffgQF4AapKinr+0usIKi6jAeHtmbHO8o+QwlaLBANygf/4aAxP+v7gE5qpfJajcUdBYq+I=
+X-Received: by 2002:a05:6808:3c95:b0:3f3:b4f9:88df with SMTP id
+ 5614622812f47-3f4246a0d5cmr15595459b6e.3.1740664543203; Thu, 27 Feb 2025
+ 05:55:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Ventura Jack <venturajack85@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>,
- torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
- <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
- <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
- <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
- <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
- <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
- <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
- <20250226230816.2c7bbc16@pumpkin>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <20250226230816.2c7bbc16@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Thu, 27 Feb 2025 19:25:32 +0530
+X-Gm-Features: AQ5f1JqZqEz44uEHmPt8PWANB9y187aZ1esA5hLZJhdx60rNPy2ku4Lq6_zYjKQ
+Message-ID: <CAHhAz+gUOK4Bn5ijO0H1b5=EtvD5W4GpOTtjP0--yVToNpkEDA@mail.gmail.com>
+Subject: pci: acpi: Query on ACPI Device Tree Representation and Enumeration
+ for Xilinx FPGA PCIe Endpoint functions
+To: linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
 
 Hi all,
 
-> ...
->>> Unions in C, C++ and Rust (not Rust "enum"/tagged union) are
->>> generally sharp. In Rust, it requires unsafe Rust to read from
->>> a union.
->>
->> Definitely sharp. At least in Rust we have a very clear specification though,
->> since we do allow arbitrary type punning -- you "just" reinterpret whatever
->> bytes are stored in the union, at whatever type you are reading things. There is
->> also no "active variant" or anything like that, you can use any variant at any
->> time, as long as the bytes are "valid" for the variant you are using. (So for
->> instance if you are trying to read a value 0x03 at type `bool`, that is UB.)
-> 
-> That is actually a big f***ing problem.
-> The language has to define the exact behaviour when 'bool' doesn't contain
-> 0 or 1.
+I am currently working on a project involving a Xilinx FPGA connected
+to an x86 CPU via a PCIe root port. The Xilinx FPGA functions as a
+PCIe endpoint with single function capability and is programmed to
+emulate the Soundwire Master controller. It can be dynamically
+reprogrammed to emulate other interfaces as needed. Essentially, the
+FPGA emulates an interface and connects to the CPU via the PCIe bus.
 
-No, it really does not. If you want a variable that can hold all values in 
-0..256, use `u8`. The entire point of the `bool` type is to represent values 
-that can only ever be `true` or `false`. So the language requires that when you 
-do type-unsafe manipulation of raw bytes, and when you then make the choice of 
-the `bool` type for that code (which you are not forced to!), then you must 
-indeed uphold the guarantees of `bool`: the data must be `0x00` or `0x01`.
+Given this setup, the BIOS does not have prior knowledge of the
+function implemented in the Xilinx FPGA PCIe endpoint. I have a couple
+of questions regarding this configuration:
 
-> Much the same as the function call interface defines whether it is the caller
-> or called code is responsible for masking the high bits of a register that
-> contains a 'char' type.
-> 
-> Now the answer could be that 'and' is (or may be) a bit-wise operation.
-> But that isn't UB, just an undefined/unexpected result.
-> 
-> I've actually no idea if/when current gcc 'sanitises' bool values.
-> A very old version used to generate really crap code (and I mean REALLY)
-> because it repeatedly sanitised the values.
-> But IMHO bool just shouldn't exist, it isn't a hardware type and is actually
-> expensive to get right.
-> If you use 'int' with zero meaning false there is pretty much no ambiguity.
+Is it possible to define an ACPI Device Tree representation for this
+type of hardware setup?
+Can we achieve ACPI-based device enumeration with this configuration?
 
-We have many types in Rust that are not hardware types. Users can even define 
-them themselves:
+I would greatly appreciate any guidance or references to documentation
+that could help us achieve this.
 
-enum MyBool { MyFalse, MyTrue }
+Thank you for your time and assistance.
 
-This is, in fact, one of the entire points of higher-level languages like Rust: 
-to let users define types that represent concepts that are more abstract than 
-what exists in hardware. Hardware would also tell us that `&i32` and `*const 
-i32` are basically the same thing, and yet of course there's a world of a 
-difference between those types in Rust.
 
-Kind regards,
-Ralf
-
+-- 
+Thanks,
+Sekhar
 
