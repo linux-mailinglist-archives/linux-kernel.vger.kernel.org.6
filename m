@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-535823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D696A477A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:23:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669CFA477B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C9516F2C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E3CC17012D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B237223705;
-	Thu, 27 Feb 2025 08:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86186224884;
+	Thu, 27 Feb 2025 08:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KKv+96nF"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVUoSLwe"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DF522256C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181FEA59;
+	Thu, 27 Feb 2025 08:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644621; cv=none; b=MBYOYOj+Vpc6y4Ge3NkCwysYuPB46hlqSXDRdDN02hsh4MWSwOnVbVEg5fEuivySldX0imXTuZ92XHizAnpl5uJIKEGQsWwiSQPlDlld+YdALF0wPEdSRdAfSZXCDARX51eBwy1m1yTPKdrjitziCcieuvyJRt2N6B3XYVpelqc=
+	t=1740644664; cv=none; b=PJRmIGBo/N4XwmgywvJunOaDwrcG+4i3y96b2WqQ8AtXjH/shOkoB7qg2XAHOhY1fWTXY003dxsR9HaPVWW02kTQYTqiUzx9dOw7ZdaAwWL+VFUJ70dHi0Qfa8o0X5paZcxDQ/KFD/a0hEYPEysrbbeu4A5+Mo5ekclBSA+SXGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644621; c=relaxed/simple;
-	bh=W9KN5pvX9x9UeQfxZLl+Kx7zYQ6RgmMlCXWT3/BihSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5kAS+CdlcaZwj+daWUMcHbp3f9OBJP8C5W9j1KwIxw9CNuzX+ksxcaV/ExPw/cyf36pYKSb/WLljMl3nA4ZR6wjIdJoVv1abFeuU2BT8URKeqdowxU1eFxGngTJngGnsDj7elxlbEOYn8m13HZW3VP+7ZnTRb0/+EqA6FbKYsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KKv+96nF; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f24fc466aso357358f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:23:38 -0800 (PST)
+	s=arc-20240116; t=1740644664; c=relaxed/simple;
+	bh=Nb/Hgm4oStf7q+jlubqt6Dr9pzfPaYaAm6OB6hz1PCc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tf7wWX8DJVgI01XKa4Jv+elQV1zqNsmD1/kZmSbchF4BiSdyb+ZYjV2RjlRvvnafSn4ZyMA/1BGxgxyM9ZUGXC3ouHW4Ym0vxz/dXowPu24taP0k6UmCtxXOicKTlNNSrPdikCYZT0GVDAEA4gN6dvUblHa0IM3w/zzF/5Vkypc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVUoSLwe; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5439a6179a7so816366e87.1;
+        Thu, 27 Feb 2025 00:24:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740644617; x=1741249417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=etFPcrtk9Tgkn8uByeM46xjOYSvuZ71OIx9b3bGqazU=;
-        b=KKv+96nF6KDkbykifiOb7UD324A7P/DSR8ZsNPZtXS/y40uf0B5CUaD197pm2gXSgf
-         7IJSv/KFDsCvjyjSLlSw2zv43xO05YjUy+oF6HltCehdI1mhA7lLxSXCMQvvCtKlS0F1
-         EhjaeDJ0Y+HazepRl4J9lxw5W9l4ctgedYyUt042OHEZ3kLPDGDmM/NTHZfXFc1ccY13
-         S4LJlv0O+0It7ENrFP2r5Q07EdCpnqxLp3Vi4C38D0g6L0jJ17VMyw7/sGAnqmMnYHad
-         r7M0SGyczi9T8zztVWHkKpJyMAWW9VZuUtEEKX/gm7lUTMjE99/yBZyP6pf/qP1Mamny
-         hzbw==
+        d=gmail.com; s=20230601; t=1740644661; x=1741249461; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KMdKkT9T6eW8JPXgw7f6XF0ny6zLaa3x883xjhyN/zA=;
+        b=MVUoSLwecQOMH9BOWeGg40Adg4tLwwyO9sk/1Uubi7hkg+a4SX2qjoahkB9r+JsKW9
+         bXzG38swzA9JD3kK3CoEc4JBq+eNx84QDGwPj9+M4xBbhyTNWuR+rA7euLLkT/+md7+K
+         /Woe1RVIywFM5f10Xup/4sye3TLxI2aNU4LYDFx4Fe6jh98dUipZLdW/l8oxSiFaJHTk
+         z5oTQOXzJG3f2j/WXuK4fRQm5aqk6N5ExntaiFftEprxA79g5XfuT6+PLke0TAz85eB6
+         YS0YOYUhjoFLE73nFQF8pg55G+MpKNt/d8qTg8Jyx6sAhMLMQ4vN3wPCJghds+LuKy7R
+         2cKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740644617; x=1741249417;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=etFPcrtk9Tgkn8uByeM46xjOYSvuZ71OIx9b3bGqazU=;
-        b=OHF0mPulrKHPRAZgxWGCCMSs5Woq/I+xVCyDr7hhqoBw1YW6scpGsSFnQN5sPcS8L1
-         k+jG+9hxLI3U/YGLSSj6I7tvMWbeQVpV5ZDoG6LKyq0QK4oUemO/iYRmWms4w15t+6kM
-         FAQpX6yrqsUDd5v3VK+HTbGhYMOppyPZauGeeDnjJ6RJQLRGxn3XLNo/DpFKfOJH6v3N
-         tcyLQtxyLG3DgQXZAH/XvwyXrcCHT6VFBoV57AxeQPPuSwTo1Fet5ENwNpKmHHvSUpcV
-         xVCNeM30CY0gbQ9f0EnjQk5IM6XpXcxN3BouU9fmVSHBiW2qFdbBFniFQaLC/ANPLCy8
-         tEuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+VBf49SiCIXWMcGMVBxxVZKBkY1d8VDe3nij27GEgxxjTQOOBvfBG6eWamMpymcqhEX/JqjOgb6K/EQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye/a2s892FvKVjogsPxz5beGYm6UkCOXitFdwu3RRnQ9vPwwyl
-	efINHQtwpwBY1WM1eRYPWIGYp7TLGbVsoYoUV8lRkD3ZLtIyKwEVWcqtDvdkfQ==
-X-Gm-Gg: ASbGncsYKsDZkOD3teh+FF03VT8cIk6Ldhfpsie4lJFIg8PITXiOtr7thArz1e0Jd32
-	Sf2ZJNvVwOfSmesrNhtfU38B3SEBR4z9KAAzPRoneIsKyy87yLli5BmEj61Itkcyhrm8OjenPW2
-	vq2yGnf4JEkZmcotRsWNyJyAlhth//yLUfJ87JPe9Hpp9E6zv7pHKLd7dTPvWsyOh12fSaDVBTO
-	/1ickYTiwn2CsdtKqtqOEt7WwP6Skw9FlbykcdiwYOnZ5Sxt1aiIHlY3rZA1XbyjxvU5p2wb0rm
-	APY0kREFnr46pSPH0gmInzR93XGCP7tZj8B9RYEHJ/AgrdTnk7MGzKssN/4OX4h/9JmbyDGToKL
-	cV7c82QCa1E0=
-X-Google-Smtp-Source: AGHT+IGNO4lSsKzWr9bxAoIjTpTJaMHd6X1/Kf+c9UJluJGrqU3WSg6vtNZXxKPF+NoQckaCet6dJA==
-X-Received: by 2002:a5d:6c63:0:b0:38f:2a7f:b6cd with SMTP id ffacd0b85a97d-38f7079a134mr17580534f8f.20.1740644617014;
-        Thu, 27 Feb 2025 00:23:37 -0800 (PST)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5710f6sm48457185e9.29.2025.02.27.00.23.36
+        d=1e100.net; s=20230601; t=1740644661; x=1741249461;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMdKkT9T6eW8JPXgw7f6XF0ny6zLaa3x883xjhyN/zA=;
+        b=LuWRE2r8DnZiCOqt2qBmnfIaGGVnm58Pd+AqaRGlToSUHTwaZKB1dPTVsTtub56w74
+         BLLf1ZNIhCBurG34Bv9gX0Al3TF5vN4HKMjdrJW2UMbr1/Ra4Zqq0OKno8UdZL8jBhj1
+         4aHT8pEXXowaLJPiRXf074U0En3pQzl4Z1ikFrRP3+wV2KJNj+N+btvFXiSa3ltHiLd2
+         aeK35ZVYH4R0bmt0OC754YLUJeWfLYrYguC2dYugiDH8a4r7VrGrqz97kjVf551cP1wn
+         VE1kro7JCMcmZWflsCgzNiYzpO3qRNolvJWhDBuyx5ThP8tZaeBc9i7W4fgVnS3WxfbA
+         GSKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNsxDtLJR9IOuGYtzXMZjV+ALStmrER7YTdz7xj4pliJzdV0D8dyoQN2q/dEJto9j5i29QO7p8IBC9@vger.kernel.org, AJvYcCXn+KgEqxfLUAoREpuc8/9pCXP9hrVWlt21KZbcO+1Z664Ls0Awy5rcsYKkNCsu2iAblriMM/yI/TNrwoni@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbS6FNzy6R2Tmqz3Wvfwo3NAQiZrqQeXHP/fcw2rZNuqgkDPo3
+	vVKz4yGqjG2bnqoCB7uVgHwLU9LI3OV6yBVVQyY/Dsiu2codG/C9wp5mSA==
+X-Gm-Gg: ASbGncuwj41YJ3Ze7U1q2JqNMKTCYMybU1kYca4Tf40y/YhguF1cmv5UxtXov8sWdJo
+	wbfu0oZhrvgw4emFEnr+u5VKit6WlbVWLQq/rVWUJP355BqbM+fnJ2kd6o6cdX5EC1bgMuiK7dt
+	skQ6Gl9SXo8q2t9k5lB/8dpJwqFX71oxQLQPSe8XB+I7MpBsAvhwlGlVq5CZmO2ScF1GFhhXigv
+	QnSvTjqTXrSjNcIX6JpnWvNw1828X/oaqwtia8WzL6LgV+IxZ9PYy8/8xw7u3Tj/Bg7H+5+Zbt9
+	cnlL1vWf9KcDWnSo3h18906nd+nizd1AbtkAL8vSaAKCIGx5qiCe79fdEvL/BbXyo90Tk6U/Cz0
+	dQuV1o3I=
+X-Google-Smtp-Source: AGHT+IFXpgZteQzCMyngKYESsa8l1Q3yg0bIMEvwucuXw2MU6ApuyAwzf+m14YatM/t6Oej1nF7HQA==
+X-Received: by 2002:a05:6512:31d4:b0:546:1ffa:51ce with SMTP id 2adb3069b0e04-54943327ab8mr723861e87.21.1740644660919;
+        Thu, 27 Feb 2025 00:24:20 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417b636sm102821e87.94.2025.02.27.00.24.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 00:23:36 -0800 (PST)
-Message-ID: <22a46f43-d60c-465d-9ae7-4d84ca9108d4@suse.com>
-Date: Thu, 27 Feb 2025 09:23:35 +0100
+        Thu, 27 Feb 2025 00:24:18 -0800 (PST)
+Message-ID: <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
+Date: Thu, 27 Feb 2025 10:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,101 +81,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/pciback: Make missing GSI non-fatal
-To: Jason Andryuk <jason.andryuk@amd.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jiqian Chen <Jiqian.Chen@amd.com>, Huang Rui <ray.huang@amd.com>
-References: <20250226200134.29759-1-jason.andryuk@amd.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20250226200134.29759-1-jason.andryuk@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z71qphikHPGB0Yuv@mva-rohm>
+ <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
+ <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
+ <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
+ <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+In-Reply-To: <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 26.02.2025 21:01, Jason Andryuk wrote:
-> A PCI may not have a legacy IRQ.  In that case, do not fail assigning
-
-Nit: Missing "device".
-
-> to the pciback stub.  Instead just skip xen_pvh_setup_gsi().
+On 26/02/2025 13:42, Matti Vaittinen wrote:
+> On 26/02/2025 12:18, Linus Walleij wrote:
+>> On Wed, Feb 26, 2025 at 7:09 AM Matti Vaittinen
+>> <mazziesaccount@gmail.com> wrote:
+>>> On 25/02/2025 23:36, Linus Walleij wrote:
+>>>> we can maybe move it to struct gpio_device in
+>>>> drivers/gpio/gpiolib.h?
+>>>>
+>>>> This struct exist for every gpio_chip but is entirely gpiolib-internal.
+>>>>
+>>>> Then it becomes impossible to do it wrong...
+>>>
+>>> True. I can try seeing what it'd require to do that. But ... If there
+>>> are any drivers out there altering the valid_mask _after_ registering
+>>> the driver to the gpio-core ... Then it may be a can of worms and I may
+>>> just keep the lid closed :)
+>>
+>> That's easy to check with some git grep valid_mask
 > 
-> This will leave psdev->gsi == -1.  In that case, when reading the value
-> via IOCTL_PRIVCMD_PCIDEV_GET_GSI, return -ENOENT.  Userspace can used
+> True. I just tried. It seems mostly Ok, but...
+> For example the drivers/gpio/gpio-rcar.c uses the contents of the 
+> 'valid_mask' in it's set_multiple callback to disallow setting the value 
+> of masked GPIOs.
+> 
+> For uneducated person like me, it feels this check should be done and 
+> enforced by the gpiolib and not left for untrustworthy driver writers 
+> like me! (I am working on BD79124 driver and it didn't occur to me I 
+> should check for the valid_mask in driver :) If gpiolib may call the 
+> driver's set_multiple() with masked lines - then the bd79124 driver just 
+> had one unknown bug less :rolleyes:) )
+> 
+> I tried looking at the gpiolib to see how this works... It seems to me:
+> 
+> gpio_chip_set_multiple() does not seem to check for valid_mask. This is 
+> called from the gpiod_set_array_value_complex() - which gave me a 
+> headache as it is, as name says, complex. Well, I didn't spot valid_mask 
+> check but I may have missed a thing or 2...
+> 
+> If someone remembers straight away how this is supposed to work - I 
+> appreciate any guidance. If not, then I try doing some testing when I 
+> wire the BD79124 to my board for the next version of the BD79124 series.
 
-Nit: "use".
+I did some quick testing. I used:
 
-> this to distinquish from other errors.
+adc: adc@10 {
 
-Nit: "distinguish".
+...
 
-> --- a/drivers/xen/acpi.c
-> +++ b/drivers/xen/acpi.c
-> @@ -101,7 +101,7 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
->  
->  	pin = dev->pin;
->  	if (!pin)
-> -		return -EINVAL;
-> +		return -ENOENT;
->  
->  	entry = acpi_pci_irq_lookup(dev, pin);
->  	if (entry) {
+	channel@0 {
+		reg = <0>;
+	};
+	channel@1 {
+		reg = <1>;
+	};
+	/* ... up to the channel@6. */
 
-While I can understand this change, ...
+	gpio-controller;
+};
 
-> @@ -116,7 +116,7 @@ int xen_acpi_get_gsi_info(struct pci_dev *dev,
->  		gsi = -1;
->  
->  	if (gsi < 0)
-> -		return -EINVAL;
-> +		return -ENOENT;
->  
->  	*gsi_out = gsi;
->  	*trigger_out = trigger;
+which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7 
+unmasked.
 
-... I'd expect this needs to keep using an error code other than ENOENT.
-Aiui this path means the device has a pin-based interrupt, just that it's
-not configured correctly. In which case we'd better not allow the device
-to be handed to a guest. Unless there's logic in place (somewhere) to
-make sure it then would get to see a device without pin-based interrupt.
+Then I added:
+gpiotst {
+	compatible = "rohm,foo-bd72720-gpio";
+	rohm,dvs-vsel-gpios = <&adc 5 0>, <&adc 6 0>;
+};
 
-> --- a/drivers/xen/xen-pciback/pci_stub.c
-> +++ b/drivers/xen/xen-pciback/pci_stub.c
-> @@ -240,6 +240,9 @@ static int pcistub_get_gsi_from_sbdf(unsigned int sbdf)
->  	if (!psdev)
->  		return -ENODEV;
->  
-> +	if (psdev->gsi == -1)
-> +		return -ENOENT;
+and a dummy driver which does:
+gpio_array = devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
+				  GPIOD_OUT_LOW);
 
-This may, aiui, mean either of the two situations above. They would then
-need distinguishing, too, if user space is intended to derive decisions
-from the error code it gets.
+...
 
-Jan
+ret = gpiod_set_array_value_cansleep(gpio_array->ndescs,
+		gpio_array->desc, gpio_array->info, values);
+
+As a result the bd79124 gpio driver got it's set_multiple called with 
+masked pins. (Oh, and I had accidentally prepared to handle this as I 
+had added a sanity check for pinmux register in the set_multiple()).
+
+I suppose one can think this is a result of invalid DT and that drivers 
+shouldn't need to be prepared for that. But ... After supporting 
+customers who try to integrate IC drivers to their products ... I think 
+it's still better to be prepared. I definitely wouldn't blame the rcar 
+driver authors for their valid_mask sanity check :)
+
+After all this babbling, my point is that having the valid mask visible 
+for drivers is useful. Especially because there are cases where the 
+'valid_mask' can be directly compared to the 'mask' parameter in the 
+set_multiple. It's clear and efficient check, and I could assume the 
+set_multiple() is an optimized call, and thus being efficient makes sense.
+
+So... Long story short - I would still suggest keeping the valid_mask 
+visible and either taking just the doc update (as was done in the 
+original patch) - or skipping the valid_mask initialization in gpiolib 
+if driver provides non NULL value.
+
+What do you think?
+
+Yours,
+	-- Matti
 
