@@ -1,141 +1,189 @@
-Return-Path: <linux-kernel+bounces-535211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C8DA47032
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:28:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0CFA47047
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E9A161C63
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9163A87BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB414A24;
-	Thu, 27 Feb 2025 00:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335487404E;
+	Thu, 27 Feb 2025 00:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="qQCbbAe0"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tJGNsDd4"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307C4A47;
-	Thu, 27 Feb 2025 00:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E688A38F91
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740616082; cv=none; b=FiCANxIEOPZpb06/vDIFc8OfaO2lBSKUDNucVlHnVM01e52erkwTdjnESQkJo8t3bPEdHoXLScBGZuuRvy5rnIqlL4FM59+raymm7Kdq8SKvV2np2ihBWfJCyH948Z8AWEDDHG4WaA09u6LevgbGQeZPo1fhDDNwYgT8wCUMWOo=
+	t=1740616454; cv=none; b=GETwCJR1AiWFPFXcNZJmd5vU2slUNOgbAQd56vzb7fFSIB4FH1LGgPmozYMBFVJCr6jEOHZwXDRGRTwmOr+OX6HeGj8Cdh2NQsLIk4mNk32756te8hr7x5CSqFx7MegDuiSIEAnN12lR+q629kW8alnUKxxtlgbdb7drBmyw7ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740616082; c=relaxed/simple;
-	bh=cEEaCdBgUBGmqjtauYKieFfGvHm6RRG2x3Fw1BDiHLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOVgeIQ18e2U06C8JsZ3LoOEfdHisxCHoRgDELNJdcm0OwFnmmod6mdjxFqrV79tVHoRlXOUQDwxNXIoO1q3ohd0P4ovbprD3Qr5U44w3E+67MWIhkdmDvxu6ltjVyilN+8XoKlUxf6kyDkq0S4887xwy/eb3ikpwqzEI0vQrLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=qQCbbAe0; arc=none smtp.client-ip=212.227.126.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1740616056; x=1741220856; i=christian@heusel.eu;
-	bh=v9/RM7WxtXhrpa5s2wE6b9/tiJOcwX1NVtNIn3ShMvI=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qQCbbAe0tUg0LX0wWB07nEapzHBKc9j0Phic08Jru5kO5h4AD4zwf8fsYOJ9w1JD
-	 9ICYYrB8FJ2bNHhtyl9PdHIKl3Q9ot6spghtC9bZbakMrk6Elr3pysieidEKbrGaY
-	 XYERSQMVxwvDDMSeJtQOiY00+AmcBygnPM/0edeqC8dfJM3nkXex/prHwtuitKBXI
-	 dSMUlYQELHCJUVQfnRscgpJaGOzmNOPI38ma9NthNFCgWdYYNWKtWVAErXOxPl7zN
-	 b1D7ao54pFL6r2nky7OibpB/r15RTWjg2S11Ugms9pL41HJl1IT0mVw7BW9Ou4XFc
-	 +YMQmkfL9q/GiEa87g==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue011
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MIMOy-1tZ6GS24we-0080zT; Thu, 27
- Feb 2025 01:27:36 +0100
-Date: Thu, 27 Feb 2025 01:27:34 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-Message-ID: <5bc40b9f-847d-4e88-892a-2e9dc530df76@heusel.eu>
-References: <20250225064750.953124108@linuxfoundation.org>
+	s=arc-20240116; t=1740616454; c=relaxed/simple;
+	bh=nU3y6YFsyIHN1dmjBlB/Wl3ngK6IdRrA1IoHzKQzagI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Zy3VcOgkfNNI8F+Qca1sXyO1T5O3J3iz3KQBl17gYthITSBRSX/dOYDtZTBvtoEt1MMXrFI3KP0ngMuZOpRm0KKus0SOUuYAxzuC1/MwvIFJN8VqC6NCxWtz4u9TVkDMwe5o8EYTsBZRE5SuL4YKSeMK/hZ6qreXmLX2FL8Mgds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tJGNsDd4; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fbff6426f5so831161a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:34:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740616452; x=1741221252; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jUI6/1gyibvrTbWNNqX1qF+Ovy2PNmTRwmWu1BHDQsE=;
+        b=tJGNsDd4UQqaOUBjs7F3CpZelhQDaj3fW7BWfmUdKXHADURkk3RVKFwl+KUqmmovty
+         JdOjuHilYkHbff82Tbc7F+gRuL4cVBh/D7pc7yhutFqsp42LsLT3rDEyUhDxwimKBMYy
+         KtvqNMRup+Ycmqot92kIKlr5u9Bp932y9ox3jZ4K9GnXjX+EG0JZHPtf47ZK2EruTy6G
+         E/9KSgECtY6ZLih+mypFMSb2ckt5Z1XgQbbNIY2iLTezvUvhI2UBhr7H2lgWsdjLG+XF
+         MyrMQctISgrDGebABO1FopAdPgtNRAXDswi/gcXIg8Sh9Oz/XYahPFu31LqIDF6rA72L
+         8nRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740616452; x=1741221252;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jUI6/1gyibvrTbWNNqX1qF+Ovy2PNmTRwmWu1BHDQsE=;
+        b=eXt/vvsmT5C4Mb2r7joFsKEXj0BPUkroxG7r2/sxXJihxS9uxiC/2iETkADeaMtRPZ
+         h03sML9Wczd/Y9ooVYePDnBLOp61NHlI5l6NFRwPRncgsG9E1keh8pPg9OMweFEM3R0y
+         TlYRG0g2fLdqwOC9eRjWS/STUF7b46//uisjpvMBdJ0Il1f2IUJur4wKfcdjb2I/t6nd
+         54GgWTDTSTRx1PtcxT1tJ1c9N9B5k7Tf+Mkneec8WXC7R2AXMzGVnZKu4A/AyvoW29I5
+         fpz71Sl4S+bn2+hWF7ONIt2xAusDrfFvkAyJqyAHPy13k2d/o0lbEYKRXNIrZFwyNptI
+         Q+fA==
+X-Gm-Message-State: AOJu0YybYHdtupGc3zaxxeKKuH9u6XAzxqjZxYbtUA7HCEka9ZVWQ0pY
+	H+uMJuVdtUN+X0S2D5DoF9S29TjBWq0T3bcEd2pEgJpLUyXAJDmsS5rUKOmQGlippDK0yvHad78
+	YCKIIrK7J4lMZhpSTGsFb+z84l/C/5B3ICvfH6he5RBRU/ZC39RC4Bd19dP1Kp9QGlNH6lKJI6e
+	umsSaRAf6F0FuEnLv9prACO+F1dcQOLDF/yunbZIMD
+X-Google-Smtp-Source: AGHT+IHDAQK/BsvI6mzuilkbqC4HRSy4qcc5tMuIfa3jBRAGH5Fcp4vFyNJuSfyPfVtwa/ebYbFuN9eV1F4=
+X-Received: from pfbf4.prod.google.com ([2002:a05:6a00:ad84:b0:730:94db:d304])
+ (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a103:b0:1ee:de1d:5abc
+ with SMTP id adf61e73a8af0-1f0fc78bfe1mr13706786637.33.1740616451981; Wed, 26
+ Feb 2025 16:34:11 -0800 (PST)
+Date: Wed, 26 Feb 2025 16:28:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="btjuhk7ko4i3pdhu"
-Content-Disposition: inline
-In-Reply-To: <20250225064750.953124108@linuxfoundation.org>
-X-Provags-ID: V03:K1:QkW+7ndbyBUi7qhfVn6ne60ZsGGqiXLR0SWKiAV7tb840OZIypA
- 2KM1omOFhkvIWjz/S5UKBAqMGpCw1aa3l3GW9whV99QbSxA9TV/lpKawodOh1Oh75l0NHgv
- EhD1ZD4now7GkXlU+GVlMyOhsvLz8fA7tV2DeXpHk6rU/o8ehCBymDL0o7NF3cC+fwgh/ge
- l0h+En4y5UzKZG2kwwf3g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1X11xTailZw=;/k1t7ikSkO7zR9qUVjYtZ0lqqtC
- ns6z7O12QOzTycIQYA2mJyTUg0X3BRbmyEHUCyOSQQ7n9aCGtuJl3EA95Ip7JoUr0eY13r2GF
- B1JVZFXiAz/GOSQ03g7Gl1+Nd6kokKkzr9hFa/kdgUgO6VGPbhFkSlEoaOYBMuA1og6WEGYoM
- HBbBBQajzFawSg70X4gu5iLSWpMkK1YON4/CVxl5LfOWnGyOtUn78H5XT0SvS9k1lXAbYm3/f
- DbOH4ktA07NcAGlWUk2nNTa5ufjNp4q5ubvM5No5JW1qitWJKW4W9S1XKof8sf69TnMUkt3TC
- 7knJfyNi5Tk3RIqld/UIPD8AGP+9vMqdt5/wT4vDaAj/SCYADTBnuFZkySeeZwiXWFfd1Y66/
- qqcSOHBh0U8BUqxCDbX6FA3n1CLVkjZ5uTBwUCZdMbZMmEHUZ4WsW7wSlEqPfpiwgcsVAt9rR
- j1WHNQt/bDiPtvXVQ/sK1Bc8Dgz3AFZ6SqSs34qR5GVHPmjM/xTjvfebRnEtZcpE7bWBt0eZQ
- 0O+QcxAxwn73N6vn7VctrS77Lh1yyk4e9xMbWTs1VQVmqCiV6VXZX+4BhmQE2b5i2qAFJFHHA
- JSM1lCik2c/tdvzVSsUexuKNtdytdesbmvd2oFlSqFzTnyRYBJsqTsp+xw0bHY2fCJig/6v8u
- JRefu0Il43E8apYct3HxEngNZHTaR8eyeNHD7xKdfis+Alhjx5K1g1Ae4JyxLuwh+eB30Ebht
- l6TxsAGFGldajeVLNdruWvKJXgfvdKRBEdYGLrKbC4UjXj7AvxeJo7u2O98b4AXIInBl4/cHa
- tnyaIL76E1VxiFNQXLSNhF9FbRKmF2nBogr+pZ177KNk/tmra1zpKMBSrrdz8lcx3wC5Xwsg4
- sbHcLCgZYo/0OI7K19Mpvb/p//6mnIZ04pgNPc0nrcVU8980+uTLG3RqLGhPPTB6Cl+/vQukU
- hdxSX4MJvsxjBMqGBmKGMYz9zwZ7NThFeMg/c4CjtpPEL3okpazhR5MMGIuMleYxNlLHBR672
- +P4Je6CYkZ/MLbMI0+p7kgwEMRWV8GJ7WCUedXtz+nY71AVv+gv/EEeLGb8158BTQE3fqdxQj
- 0j1JtWu+w8dF1wYkIUIy4x/RXDqml9DApWtb6MU+2r+cPDxD5QAG6Mpmfm/WV5m9b1IDLVGsL
- jYEYyLZOd4ZFrHkOIQ9atmbrh8Gv4oks/XhUOGsqJALDntaSgzDJPA+rRdBxA5C8lSJ01Ku0C
- q0wfbMpqCRU/YpQn40TX1J+QoEe8RcoO84JbRUk1JqHAdHGuRyRGUTuuobYGLPtkCAPO8MTFn
- V7R4423Q3yeuE2aVWBjfmAcJSsrxYFoldpsYtx/TqCK/EbqEr0YNH0H9OXOGKqx95WR6y34cW
- ixr6CDYmkJtFw4hQ==
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250227003359.732948-1-ctshao@google.com>
+Subject: [PATCH v8 0/4] Tracing contention lock owner call stack
+From: Chun-Tse Shao <ctshao@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Chun-Tse Shao <ctshao@google.com>, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, nick.forrington@arm.com, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For perf lock contention, the current owner tracking (-o option) only
+works with per-thread mode (-t option). Enabling call stack mode for
+owner can be useful for diagnosing why a system running slow in
+lock contention.
 
---btjuhk7ko4i3pdhu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-MIME-Version: 1.0
+Example output:
+  $ sudo ~/linux/tools/perf/perf lock con -abvo -Y mutex -E16 perf bench sched pipe
+   ...
+   contended   total wait     max wait     avg wait         type   caller
 
-On 25/02/25 07:49AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
-> Anything received after that time might be too late.
->=20
+         171      1.55 ms     20.26 us      9.06 us        mutex   pipe_read+0x57
+                          0xffffffffac6318e7  pipe_read+0x57
+                          0xffffffffac623862  vfs_read+0x332
+                          0xffffffffac62434b  ksys_read+0xbb
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+          36    193.71 us     15.27 us      5.38 us        mutex   pipe_write+0x50
+                          0xffffffffac631ee0  pipe_write+0x50
+                          0xffffffffac6241db  vfs_write+0x3bb
+                          0xffffffffac6244ab  ksys_write+0xbb
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+           4     51.22 us     16.47 us     12.80 us        mutex   do_epoll_wait+0x24d
+                          0xffffffffac691f0d  do_epoll_wait+0x24d
+                          0xffffffffac69249b  do_epoll_pwait.part.0+0xb
+                          0xffffffffac693ba5  __x64_sys_epoll_pwait+0x95
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+           2     20.88 us     11.95 us     10.44 us        mutex   do_epoll_wait+0x24d
+                          0xffffffffac691f0d  do_epoll_wait+0x24d
+                          0xffffffffac693943  __x64_sys_epoll_wait+0x73
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+           1      7.33 us      7.33 us      7.33 us        mutex   do_epoll_ctl+0x6c1
+                          0xffffffffac692e01  do_epoll_ctl+0x6c1
+                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+           1      6.64 us      6.64 us      6.64 us        mutex   do_epoll_ctl+0x3d4
+                          0xffffffffac692b14  do_epoll_ctl+0x3d4
+                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
-Steam Deck (LCD variant)
+  === owner stack trace ===
 
---btjuhk7ko4i3pdhu
-Content-Type: application/pgp-signature; name="signature.asc"
+           3     31.24 us     15.27 us     10.41 us        mutex   pipe_read+0x348
+                          0xffffffffac631bd8  pipe_read+0x348
+                          0xffffffffac623862  vfs_read+0x332
+                          0xffffffffac62434b  ksys_read+0xbb
+                          0xfffffffface604b2  do_syscall_64+0x82
+                          0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+  ...
 
------BEGIN PGP SIGNATURE-----
+v8:
+  Fix compilation error found by Athira Rajeev and Namhyung Kim.
 
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAme/sXYACgkQwEfU8yi1
-JYVjhhAAuyxVEfOUbqPiHs4y7QAAN1o17DmuUcU9mCugogeB2WTof5h+Mx/n6y9U
-yXEk7fJ8CJtKXSONA3o3d66iYgvnLFDGpIDTA+4M1jdLPKFhOovItlPdyeGJ9buS
-+dGe9Vp4VnAE9gcP8fpslMuDO4GRnraLhhoyrilkQzGlIuSFyULy5/DLFPZTsafN
-O3eug/Ku7pXdl4dt9smJvWrdRSoW14Cuupsra+hEVEM97wRKoIHV8Wh0zldOwiWA
-eMaAYSnNoFbcBp89wFGYUudaa6+2sq9e6u/1mGKDb1jIcQfCafL39y5gE/KO5UGx
-6ZWmUXmvB1CBgwVtSqSVkDOolbhKoQfsiQFGxhSxwjIx9mch5iZ69BjHqf0/NROI
-ZGZKlFZg31X7cEj2mkjfwW7bS25XWRXDoIoQ9ApCM3ZgPTbQXf3ihFR3/sd+sY73
-19dyEvquasAMrQAhPyH6vutLyPG2D5h2kt7bu/OhptppGX9YtUnOtmW9Po/I84nA
-2YY/GSWfBhsRhle3OufyAqRBCub92TId/MnbotjRwfW/6kaXVaXoRjeFTHHGtzTN
-cjaFsIsifJ2qGx4O3LkYvtC4k7nrRwwqOLeJq3uWkziR0NZ3P9B4PGpLHtgwD+I5
-1CQr76GgW/gNwvQerIzZwB4Dj+QUilFRadSvpR/K8is8O+vveVE=
-=tD2E
------END PGP SIGNATURE-----
+v7: lore.kernel.org/20250224184742.4144931-1-ctshao@google.com
+  Remove duplicate contention records.
 
---btjuhk7ko4i3pdhu--
+v6: lore.kernel.org/20250219214400.3317548-1-ctshao@google.com
+  Free allocated memory in error patch.
+  Add description in man page.
+
+v5: lore.kernel.org/20250212222859.2086080-1-ctshao@google.com
+  Move duplicated code into function.
+  Remove code to retrieve undesired callstack at the end of `contention_end()`.
+  Other minor fix based on Namhyung's review.
+
+v4: lore.kernel.org/20250130052510.860318-1-ctshao@google.com
+  Use `__sync_fetch_and_add()` to generate owner stackid automatically.
+  Use `__sync_fetch_and_add(..., -1)` to workaround compiler error from
+    `__sync_fetch_and_sub()`
+  Remove unnecessary include headers.
+  Dedicate on C-style comment.
+  Other minor fix based on Namhyung's review.
+
+v3: lore.kernel.org/20250129001905.619859-1-ctshao@google.com
+  Rename/shorten multiple variables.
+  Implement owner stackid.
+  Add description for lock function return code in `contention_end()`.
+  Other minor fix based on Namhyung's review.
+
+v2: lore.kernel.org/20250113052220.2105645-1-ctshao@google.com
+  Fix logic deficit in v1 patch 2/4.
+
+v1: lore.kernel.org/20250110051346.1507178-1-ctshao@google.com
+
+Chun-Tse Shao (4):
+  perf lock: Add bpf maps for owner stack tracing
+  perf lock: Retrieve owner callstack in bpf program
+  perf lock: Make rb_tree helper functions generic
+  perf lock: Report owner stack in usermode
+
+ tools/perf/Documentation/perf-lock.txt        |   5 +-
+ tools/perf/builtin-lock.c                     |  56 +++-
+ tools/perf/util/bpf_lock_contention.c         |  85 +++++-
+ .../perf/util/bpf_skel/lock_contention.bpf.c  | 245 +++++++++++++++++-
+ tools/perf/util/bpf_skel/lock_data.h          |   7 +
+ tools/perf/util/lock-contention.h             |   7 +
+ 6 files changed, 372 insertions(+), 33 deletions(-)
+
+--
+2.48.1.658.g4767266eb4-goog
+
 
