@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-537471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CFCA48C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:04:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB525A48C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36B0169E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362763A9DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9538623E34E;
-	Thu, 27 Feb 2025 23:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97F623E358;
+	Thu, 27 Feb 2025 23:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TmKxl2ev"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCD3277817;
-	Thu, 27 Feb 2025 23:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qkPpQObi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB83522576A;
+	Thu, 27 Feb 2025 23:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697481; cv=none; b=Rcr3TdHGMnpNDX+0bbRlpQmWq4sEqXbY17JuU5Ag+eXWYkZ1dKaejmCE46gpIqI7VAgD21ksvpi3D+XmuAAxzEQmtMbvoZmNcuelBJV0LbAcsP74+J1Fk8zH8dKz19T7QLexhM74Rki4cyjFaw6WedT2FofPJUUItq4B3EW/orY=
+	t=1740697516; cv=none; b=MwIzSgue59gDcYqnMIP5XyGfDKqZyF38JreqRPQBk9o+fqMjFDXlnK+syqUljdPDlvAE3prcF0r/7PnGjmNgO1tcWrx2OP0OmrlK/OVwW3GVZwuy8uZkSL1SV9Rn5rk4AMmYWRDX5CuVJOCyfO1GsHqUzwff+fzoYZlbc6ZQTFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697481; c=relaxed/simple;
-	bh=KQnDSWfCyG4GFZ8z+w71H8Ba87KJiLSAkaj1oH1XyiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R32VUwqmdPSMyeeNURwW9hC5fOlMnROrTp57WUZFZ7CKgnmM9RIsQGhPlqB/73dW0Hiils/T/jUev2cFvG7axAF4m3jRPefHX3Ul72xsCHcCF8Vt76gYllJemT09OOtLzW1rRuiZLn1JfGIe3nWNaucT3O6he1wIz6X8xS9oW9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TmKxl2ev; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <84f25c32-1aa6-42d6-a5b1-efce822bfcd6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740697477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s53PsMsT+VnZgU2wt1QKLZK3VWcUDg2UEoFqQhBbfUs=;
-	b=TmKxl2ev/7M/7kekUDzsyg4xu4/zQ0gcoHcFm9HW//fxbejxAifn9SEiGLWsOsWJSLpks8
-	9sFT6ChRjHvb2hmy8pvRw9ui4rDdewvIDBIXcYaZ8f/afR5jSwHJsiA1aEh3uknP90Kn91
-	3NaCKozg+PAo/v7rQIHf28cPHu5sE3Y=
-Date: Thu, 27 Feb 2025 15:04:26 -0800
+	s=arc-20240116; t=1740697516; c=relaxed/simple;
+	bh=qTLFHhLq8Bo9TwUvIbv0W9sWnxrDof9IYRyG59P20N8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mTmT4m1qtiXmqwXu90oMgOz1w4JwmY4ptbmPDh/n4b0BxjdCFViVmUf8NioXeyujkioTv1QXr+oJIVhboKKrVsDFx9BeG85PKzj1zheu/5RGgShnCMvDxn70asgFeq9X+qfOgCYbUq1Ov7lfJFuLL2Wphtezazi1beL566PylxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qkPpQObi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 769CA210EAC0;
+	Thu, 27 Feb 2025 15:05:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 769CA210EAC0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740697511;
+	bh=dCjZ9jMbRkmsPS+4OvPLxv/lO9UYo97B0D5ofNvRttk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=qkPpQObiOfq236VL3tI2mDXngA4cs30KZVyxnx7UZmqoO4Z+PP1V3dKTXgl0ym5W7
+	 qMXyfTC13t91+BJwaSAJFCTKnoPVNvcXzrl4l2RzeByTYqZTGZ/27ctSzlj4kptFmW
+	 OeOnUXHhnxrYZun4MyIOGtSDxPpwz48NiW+qy72Q=
+Message-ID: <51612cb0-fa25-45c4-9d49-dc2580706a41@linux.microsoft.com>
+Date: Thu, 27 Feb 2025 15:05:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v1 1/3] bpf, sockmap: avoid using sk_socket after
- free
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: cong.wang@bytedance.com, john.fastabend@gmail.com, jakub@cloudflare.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
- mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, mhal@rbox.co,
- sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- mrpre@163.com, syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
-References: <20250226132242.52663-1-jiayuan.chen@linux.dev>
- <20250226132242.52663-2-jiayuan.chen@linux.dev>
+User-Agent: Mozilla Thunderbird
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org,
+ eahariha@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
+ catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
+ ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+ Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
+ gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
+ muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
+ lenb@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH v5 05/10] acpi: numa: Export node_to_pxm()
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20250226132242.52663-2-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <1740611284-27506-6-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2/26/25 5:22 AM, Jiayuan Chen wrote:
-> Use RCU lock to protect sk_socket, preventing concurrent close and release
-> by another thread.
+On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
+> node_to_pxm() is used by hv_numa_node_to_pxm_info().
+> That helper will be used by Hyper-V root partition module code
+> when CONFIG_MSHV_ROOT=m.
 > 
-> Because TCP/UDP are already within a relatively large critical section:
-> '''
-> ip_local_deliver_finish
->    rcu_read_lock
->    ip_protocol_deliver_rcu
->        tcp_rcv/udp_rcv
->    rcu_read_unlock
-> '''
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/acpi/numa/srat.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Adding rcu_read_{un}lock() at the entrance and exit of sk_data_ready
-> will not increase performance overhead.
+> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+> index 00ac0d7bb8c9..ce815d7cb8f6 100644
+> --- a/drivers/acpi/numa/srat.c
+> +++ b/drivers/acpi/numa/srat.c
+> @@ -51,6 +51,7 @@ int node_to_pxm(int node)
+>  		return PXM_INVAL;
+>  	return node_to_pxm_map[node];
+>  }
+> +EXPORT_SYMBOL_GPL(node_to_pxm);
+>  
+>  static void __acpi_map_pxm_to_node(int pxm, int node)
+>  {
 
-Can it use a Fixes tag?
+FWIW,
+
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
