@@ -1,80 +1,257 @@
-Return-Path: <linux-kernel+bounces-535963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44B7A479D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:11:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27DEA479D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7490E1891A89
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:11:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7052E7A249C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A31B228CB0;
-	Thu, 27 Feb 2025 10:10:59 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1416921B9EE;
+	Thu, 27 Feb 2025 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiYV5Xgp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6673227E9F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469ED227E95
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740651059; cv=none; b=WUbTtbBrbhxiqon2S4qM1CeOc5w2sLEt+T8Ah4ZDewoJDFuZyCL7al2SDW9ox4y7MKp72Sf1Zzmxze2GXAM/QJAHVwNoiFLDb+7LbekeuBsBBzcguB9YYuS3ajjzK8A0mecOY7pFXdvK+dGAZPrk5s1tfWdIOdvpQz7HalMC6zI=
+	t=1740651071; cv=none; b=faisQxTndcJFCJh9owA+tTxf2IZ77NUORtF2ePOvG7aleYTvxwPWiqt24GdNEnhfTQ4Nm/Gg0O1LDs3ns3mmgRXBSIUrC/hUaw6FgwKMTayvjb0laFxDo6i0Ahz27gyQu+oCG7IXJYSpuYtfVf/RMXE7l22/B4ECf8TnBbJU8FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740651059; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7X6/BnqxVGTGQtAeZekuDT7U4FHkP7s0EBJ0FlF3XZ0+Uwu7Eefa4eK38ep2FNE1b19V3Ukl8vjt/cyHwmEqrBHb4KhY5e+VKoCx5FSLUEkpWICP3phr+wDrId0z/wMXc97ScDNSa6kobWq4uS7sEn2VYBM+XCe+8A2fvBiyP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so4835035e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:10:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740651056; x=1741255856;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=OrqDzRwYMZDxfJL6Uo6w8mIR5lUpNBy5MsCvAnaeXd7Y4Iz07FQk430JogbGzLaz7g
-         3Ep9hDjbPg/sF0U6OK6hzHuHIF8vMF1tWs7QJFl53lWHLyZI/3VPpNqm5lKKi4tGBblo
-         8n8R3SzWsKNVOvAgP/LMn8Fel85B975hrJaGpvs+g2TGbgu52Afkorm5asgoujj3sbYE
-         XuTmpMETZTcjX0iYLuzT4kBtBjFA7fW5G8zkpZo5XZbXztrRnB0MUIUJ8wnLZW0oNp5c
-         dRp8IFOHa2Qs2ft6C0NYAMnyu8V8SXvPHh7V63f1a9RdLeX4cTGkXvhJxKgok9Pw7XX8
-         I7OA==
-X-Gm-Message-State: AOJu0YzkmXS+LEg5JtfBZCGxoJr6M/fY0/xDVqX3gOxTIvjVsVATodab
-	ev8WMPjJhwq5HHKAK+BAoxzSgDraBdz0GFL/FHFMWrEAV+uUt43T
-X-Gm-Gg: ASbGncvxCnl7UE4Y9I9G998Z9v5Cx1zueKr10ITwrLzGtUf0Bsg/T74afmx+pkjpity
-	yVpBy3Pe3Y8wviSSew+veXFcHMJtlQdp9HqyItMqn7xpcn2uxhyfgFoVO3HStQvncn+BG73u8Y7
-	hR9yp1bbng+boRVar4GG3JzI8X4DjkYBLofPkTt7cJ0HeKSaThFxSokw5YRf+srvDwDR7+WSxnV
-	YfqX6eSNXJXpCMFVvJ8ms9r3JBgdE26RabrJM5jukfe3RP2monGnHlUvAo7Pb/guwCB9JMXc+el
-	dlVOOiz9mpuyze2Yd8wQLx0RwW9ZiHVvsVCOHqElsjtos82WFDThB9m3eG7jvH/+1h/+
-X-Google-Smtp-Source: AGHT+IETf1ydKJC64LpbkEUtHd/+rj/dNLC+JvQG2PFcKRXO1/PPRN1fU2EB+mSFMbb+gxeNxS4Zqw==
-X-Received: by 2002:a05:600c:348f:b0:43b:a41b:ee7a with SMTP id 5b1f17b1804b1-43ba41bf043mr5335215e9.1.1740651055643;
-        Thu, 27 Feb 2025 02:10:55 -0800 (PST)
-Received: from [10.50.4.206] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5710b7sm49253495e9.25.2025.02.27.02.10.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 02:10:55 -0800 (PST)
-Message-ID: <98535ea8-2355-41a2-bd2e-2fb4b494fece@grimberg.me>
-Date: Thu, 27 Feb 2025 12:10:54 +0200
+	s=arc-20240116; t=1740651071; c=relaxed/simple;
+	bh=3VbG0f+R5quSXn4piQUIOSAIYO8Kb99nmMmrqQDcbgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jR0Z7tJGhQo7qquWxB+FckynWDdxW8WtYKcZ/t6cA5cAt8Y0OIPr2puMyPoKLY60IPVRNzbmfB3UHc3Kmp6MfIMOHJnJUCedxl7K3IWG8/UlwjWESZqWeApFuWQ01NR1s6OCPwZd7jwiuR6ibNUoPpHy5uWGzfXA9b1XZ6HC31I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiYV5Xgp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82F0C4CEE9;
+	Thu, 27 Feb 2025 10:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740651070;
+	bh=3VbG0f+R5quSXn4piQUIOSAIYO8Kb99nmMmrqQDcbgI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eiYV5XgphA4L9gSM2Liy1EkmaHuBYOrU+Oz6IdWNgqqX1RyDWbpU+95EgZ/R9Nk+H
+	 SXGGT1PU/Y6/qVFkWVPJFuLyLzlnJQ+SwMq2ZvB8S8J8p5uUzoa/A7gAvRV32Jkcub
+	 ocsEAN3Sywe+P5i247MUC1V4pUS2lPqfX6d9iedWnJNuKNpsvtwXfX1xHYcmOwvXyp
+	 mOg4qXUUzRzw3w7I5BDK4e6ZhiWhRWD2/OhQcwYqm7g4gRQtnrzCj28Aes8eXc64q2
+	 TKaZi5XKJidI+j2q3zy1KbjQrSBV5yrzK+O5MBXL4+zhC2PbJkb7qdV4MIAALEDov9
+	 AzbyKSR92m5gw==
+Date: Thu, 27 Feb 2025 11:11:05 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] acpi/ghes: Use HEST table offsets when
+ preparing GHES records
+Message-ID: <20250227111105.194037f1@foz.lan>
+In-Reply-To: <20250227102255.6843705e@imammedo.users.ipa.redhat.com>
+References: <cover.1738345063.git.mchehab+huawei@kernel.org>
+	<9610ff88cf6fdc59cbfc8871d653fd890391be1e.1738345063.git.mchehab+huawei@kernel.org>
+	<20250203153423.3e4de17c@imammedo.users.ipa.redhat.com>
+	<20250221070221.329bdfb0@foz.lan>
+	<20250225104327.0a2d1cb4@imammedo.users.ipa.redhat.com>
+	<20250226171406.19c2de6b@sal.lan>
+	<20250227102255.6843705e@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet-tcp: switch to using the crc32c library
-To: Eric Biggers <ebiggers@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250226062841.60688-1-ebiggers@kernel.org>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20250226062841.60688-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Em Thu, 27 Feb 2025 10:22:55 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
+
+> On Wed, 26 Feb 2025 17:14:06 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Em Tue, 25 Feb 2025 10:43:27 +0100
+> > Igor Mammedov <imammedo@redhat.com> escreveu:
+> >   
+> > > On Fri, 21 Feb 2025 07:02:21 +0100
+> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > >     
+> > > > Em Mon, 3 Feb 2025 15:34:23 +0100
+> > > > Igor Mammedov <imammedo@redhat.com> escreveu:
+> > > >       
+> > > > > On Fri, 31 Jan 2025 18:42:44 +0100
+> > > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > > > >         
+> > > > > > There are two pointers that are needed during error injection:
+> > > > > > 
+> > > > > > 1. The start address of the CPER block to be stored;
+> > > > > > 2. The address of the ack.
+> > > > > > 
+> > > > > > It is preferable to calculate them from the HEST table.  This allows
+> > > > > > checking the source ID, the size of the table and the type of the
+> > > > > > HEST error block structures.
+> > > > > > 
+> > > > > > Yet, keep the old code, as this is needed for migration purposes.
+> > > > > > 
+> > > > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > > > > ---
+> > > > > >  hw/acpi/ghes.c         | 132 ++++++++++++++++++++++++++++++++++++-----
+> > > > > >  include/hw/acpi/ghes.h |   1 +
+> > > > > >  2 files changed, 119 insertions(+), 14 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > > > > > index 27478f2d5674..8f284fd191a6 100644
+> > > > > > --- a/hw/acpi/ghes.c
+> > > > > > +++ b/hw/acpi/ghes.c
+> > > > > > @@ -41,6 +41,12 @@
+> > > > > >  /* Address offset in Generic Address Structure(GAS) */
+> > > > > >  #define GAS_ADDR_OFFSET 4
+> > > > > >  
+> > > > > > +/*
+> > > > > > + * ACPI spec 1.0b
+> > > > > > + * 5.2.3 System Description Table Header
+> > > > > > + */
+> > > > > > +#define ACPI_DESC_HEADER_OFFSET     36
+> > > > > > +
+> > > > > >  /*
+> > > > > >   * The total size of Generic Error Data Entry
+> > > > > >   * ACPI 6.1/6.2: 18.3.2.7.1 Generic Error Data,
+> > > > > > @@ -61,6 +67,25 @@
+> > > > > >   */
+> > > > > >  #define ACPI_GHES_GESB_SIZE                 20
+> > > > > >  
+> > > > > > +/*
+> > > > > > + * Offsets with regards to the start of the HEST table stored at
+> > > > > > + * ags->hest_addr_le,          
+> > > > > 
+> > > > > If I read this literary, then offsets above are not what
+> > > > > declared later in this patch.
+> > > > > I'd really drop this comment altogether as it's confusing,
+> > > > > and rather get variables/macro naming right
+> > > > >         
+> > > > > > according with the memory layout map at
+> > > > > > + * docs/specs/acpi_hest_ghes.rst.
+> > > > > > + */          
+> > > > > 
+> > > > > what we need is update to above doc, describing new and old ways.
+> > > > > a separate patch.        
+> > > > 
+> > > > I can't see anything that should be changed at
+> > > > docs/specs/acpi_hest_ghes.rst, as this series doesn't change the
+> > > > firmware layout: we're still using two firmware tables:
+> > > > 
+> > > > - etc/acpi/tables, with HEST on it;
+> > > > - etc/hardware_errors, with:
+> > > > 	- error block addresses;
+> > > > 	- read_ack registers;
+> > > > 	- CPER records.
+> > > > 
+> > > > The only changes that this series introduce are related to how
+> > > > the error generation logic navigates between HEST and hw_errors
+> > > > firmware. This is not described at acpi_hest_ghes.rst, and both
+> > > > ways follow ACPI specs to the letter.
+> > > > 
+> > > > The only difference is that the code which populates the CPER
+> > > > record and the error/read offsets doesn't require to know how
+> > > > the HEST table generation placed offsets, as it will basically
+> > > > reproduce what OSPM firmware does when handling	HEST events.      
+> > > 
+> > > section 8 describes old way to get to address to record old CPER,
+> > > so it needs to amended to also describe a new approach and say
+> > > which way is used for which version.
+> > > 
+> > > possibly section 11 might need some messaging as well.    
+> > 
+> > Ok, I'll modify it and place at the end of the series. Please
+> > see below if the new text is ok for you.
+> > 
+> > ---
+> > 
+> > [PATCH] docs/specs/acpi_hest_ghes.rst: update it to reflect some changes  
+> 
+> s/^^^/docs: hest: add new "etc/acpi_table_hest_addr" and update workflow/
+> 
+> > 
+> > While the HEST layout didn't change, there are some internal
+> > changes related to how offsets are calculated and how memory error
+> > events are triggered.
+> > 
+> > Update specs to reflect such changes.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > 
+> > diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
+> > index c3e9f8d9a702..f22d2eefdec7 100644
+> > --- a/docs/specs/acpi_hest_ghes.rst
+> > +++ b/docs/specs/acpi_hest_ghes.rst
+> > @@ -89,12 +89,21 @@ Design Details
+> >      addresses in the "error_block_address" fields with a pointer to the
+> >      respective "Error Status Data Block" in the "etc/hardware_errors" blob.
+> >  
+> > -(8) QEMU defines a third and write-only fw_cfg blob which is called
+> > -    "etc/hardware_errors_addr". Through that blob, the firmware can send back
+> > -    the guest-side allocation addresses to QEMU. The "etc/hardware_errors_addr"
+> > -    blob contains a 8-byte entry. QEMU generates a single WRITE_POINTER command
+> > -    for the firmware. The firmware will write back the start address of
+> > -    "etc/hardware_errors" blob to the fw_cfg file "etc/hardware_errors_addr".
+> > +(8) QEMU defines a third and write-only fw_cfg blob to store the location
+> > +    where the error block offsets, read ack registers and CPER records are
+> > +    stored.
+> > +
+> > +    Up to QEMU 9.2, the location was at "etc/hardware_errors_addr", and
+> > +    contains an offset for the beginning of "etc/hardware_errors".
+> > +
+> > +    Newer versions place the location at "etc/acpi_table_hest_addr",
+> > +    pointing to the beginning of the HEST table.
+> > +
+> > +    Through that such offsets, the firmware can send back the guest-side  
+>        ^^^^^^^^^^^^^^^^^^^^^^^^^ can't parse that, suggest to just drop the phrase
+> 
+> > +    allocation addresses to QEMU. They contain a 8-byte entry. QEMU generates
+> > +    a single WRITE_POINTER command for the firmware. The firmware will write
+> > +    back the start address of either "etc/hardware_errors" or HEST table at  
+>                 ^^^^ drop this?
+> 
+> > +    the correspoinding address firmware.
+> >  
+> >  (9) When QEMU gets a SIGBUS from the kernel, QEMU writes CPER into corresponding
+> >      "Error Status Data Block", guest memory, and then injects platform specific
+> > @@ -105,8 +114,6 @@ Design Details
+> >       kernel, on receiving notification, guest APEI driver could read the CPER error
+> >       and take appropriate action.
+> >  
+> > -(11) kvm_arch_on_sigbus_vcpu() uses source_id as index in "etc/hardware_errors" to
+> > -     find out "Error Status Data Block" entry corresponding to error source. So supported
+> > -     source_id values should be assigned here and not be changed afterwards to make sure
+> > -     that guest will write error into expected "Error Status Data Block" even if guest was
+> > -     migrated to a newer QEMU.
+> > +(11) kvm_arch_on_sigbus_vcpu() report RAS errors via a SEA notifications,
+> > +     when a SIGBUS event is triggered.  
+>  
+> >       The logic to convert a SEA notification
+> > +     into a source ID is defined inside ghes.c source file.  
+> that's cheating and not documentation by any means
+
+I'll drop the last paragraph. I guess that (11) were here to document a hack on the
+original design:
+	"supported source_id values should be assigned here".
+
+The new code doesn't do any assumptions like that. All it needs is that the caller
+need to specify the notification type (currently, SEA or GPIO).
+
+So, IMO the only thing eventually useful there is:
+
+	(11) kvm_arch_on_sigbus_vcpu() report RAS errors via a SEA notifications,
+	     when a SIGBUS event is triggered.  
+
+Yet, to be frank, I'm not sure if this should be documented. So perhaps
+the entire section (11) can be dropped.
+
+Thanks,
+Mauro
 
