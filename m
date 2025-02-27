@@ -1,65 +1,70 @@
-Return-Path: <linux-kernel+bounces-535207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84AF9A47026
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:23:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED14DA47027
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557A31885396
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E692B3A578F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256894C7C;
-	Thu, 27 Feb 2025 00:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC24C7C;
+	Thu, 27 Feb 2025 00:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tL83cyzx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2xqihso"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7767BA47;
-	Thu, 27 Feb 2025 00:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB926A47;
+	Thu, 27 Feb 2025 00:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740615809; cv=none; b=mjePfhGod1u+1VwHyoY7EOhoOqilF5BPavn9HTSLmqXj5ciilb2fNug+3sswYrA3YebEEiSMXScZu0mIe23TdYVoliFRPhHI5OEEhdfhg6JQ1ObjqxLuhmp991WER3vsDNRxWIcNAPD00ubt32f8Da2FSpDNw5stmJ1by0cCQ+I=
+	t=1740615819; cv=none; b=C8A6QN000qp6vcC3jd8GhCiqX2UbdoiUCT0VmmyQwBGe1t0oKVwHO6ko/CNyn2Bc01uYDauMdJ1JdYN+vgPdi5H/TiZ+GwR8eO/B5PQWigkfEfTyXIqqCFr1YabZFTn63oEZKZB93RFpFQmgpI5YTJFLk1GRQPhGpgMDPDx9B3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740615809; c=relaxed/simple;
-	bh=Snbn7RL/BEWOlEKJMOnfQXtsEkFO1ZODqdbhYhfuwis=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JAn/S7ep1sZrxVCKhwszsFQIt4s7m+j+2FUwojgzGWfvhSO2dPMYRKs01pfk4drWKRRFD29yBbSg7JFlTFeTJw23YZgwe8cWqqPcxRf9IhgsgwWz0pOeBv1T57ewveX8G1t21adl3C/7lsW/XGmHGeHyVKDnO9eKYN6tdHSj100=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tL83cyzx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2E91C4CED6;
-	Thu, 27 Feb 2025 00:23:28 +0000 (UTC)
+	s=arc-20240116; t=1740615819; c=relaxed/simple;
+	bh=arZMEBXiCeOAemtlaMD2whA3gu7IqKG3QKa02itcVOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ct1419r43mslC0blzX6OXIPuTiXVNFfJlPURZaP9biX3RN7zSa4rhZ7ulpIT3w/9ziCd3UEBt+pTn0rKC6Q+VYgdFpdBiAoo/INEzXN7/iKeCW9yuY4wTNgxHA1LyfUM39qe/IJC0pxIW67EcYrveipfylEMZhNEduyuGpemk4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2xqihso; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD563C4CED6;
+	Thu, 27 Feb 2025 00:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740615808;
-	bh=Snbn7RL/BEWOlEKJMOnfQXtsEkFO1ZODqdbhYhfuwis=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tL83cyzxc1jmWFi+Npy+ataI7BSMe3WmInn/gZ433hDXbfcUXE43I1HFOv1mKSDWe
-	 R/TFB1Y9hNmlzeSjIGXMoN8W7IC6rVYbyd1y7+fccn56zqBsfk2eok2QCDSkA+wKOs
-	 Vgin+CiJAEZyxgCZE4vw4l7TrWuolCUeRW3QXgWQSn++AUAFdEvoL4P9n3swqBWzxs
-	 jWySl0T4WQ9LQIg4poVHPxMxnIi68JL9rxSVx0uRSJOKynxbfviWne7o5czp4jxMQs
-	 vfdNO2dsIFSz4HFDF1jUDeopba30bsGitUiyXKL864E4UsNQ0EDs9pppksASriq5hb
-	 s1VOyJ48mrG8A==
-Date: Wed, 26 Feb 2025 18:23:26 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v9 3/7] PCI: Add parent_bus_offset to resource_entry
-Message-ID: <20250227002326.GA566507@bhelgaas>
+	s=k20201202; t=1740615818;
+	bh=arZMEBXiCeOAemtlaMD2whA3gu7IqKG3QKa02itcVOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r2xqihsoUtx0mnh8RLLIjEAjPgloTP001LONjPAwoV/xeiJy8u+h01ej7a1b68K+7
+	 jUWOnoHeJxZDumCmTj/ZzoZaZG9ydutU8FnLZBzWkpQMicwuNBvJXS2zrYCAs4X0PK
+	 9kteFfAcP9iTwJz0s6ulQ9jOb9Lt2ihSF97X8Vw3k+vC3npgDNha5RcKi1axciDgWl
+	 bQ11PamfREIi44x+J2k4VjfstgeKYqFPYJi2np1bifjKJWgWJtGvY9/9IF2ysvlNd/
+	 vbi3gA4SceTDZaht2tDFNVSpwr3sVxPgE21Im3ifhTnJ3VD2AkKkqxicmsGA5ts9Yd
+	 gDhpiL5fqcsDw==
+Date: Thu, 27 Feb 2025 00:23:31 +0000
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Price <steven.price@arm.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v7 09/11] arm64: Enable memory encrypt for Realms
+Message-ID: <20250227002330.GA24899@willie-the-truck>
+References: <20241017131434.40935-1-steven.price@arm.com>
+ <20241017131434.40935-10-steven.price@arm.com>
+ <5aeb6f47-12be-40d5-be6f-847bb8ddc605@arm.com>
+ <Z79lZdYqWINaHfrp@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,87 +73,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250128-pci_fixup_addr-v9-3-3c4bb506f665@nxp.com>
+In-Reply-To: <Z79lZdYqWINaHfrp@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jan 28, 2025 at 05:07:36PM -0500, Frank Li wrote:
-> Introduce `parent_bus_offset` in `resource_entry` and a new API,
-> `pci_add_resource_parent_bus_offset()`, to provide necessary information
-> for PCI controllers with address translation units.
+On Wed, Feb 26, 2025 at 07:03:01PM +0000, Catalin Marinas wrote:
+> On Wed, Feb 19, 2025 at 02:30:28PM +0000, Steven Price wrote:
+> > > @@ -23,14 +25,16 @@ bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED
+> > >  bool can_set_direct_map(void)
+> > >  {
+> > >  	/*
+> > > -	 * rodata_full and DEBUG_PAGEALLOC require linear map to be
+> > > -	 * mapped at page granularity, so that it is possible to
+> > > +	 * rodata_full, DEBUG_PAGEALLOC and a Realm guest all require linear
+> > > +	 * map to be mapped at page granularity, so that it is possible to
+> > >  	 * protect/unprotect single pages.
+> > >  	 *
+> > >  	 * KFENCE pool requires page-granular mapping if initialized late.
+> > > +	 *
+> > > +	 * Realms need to make pages shared/protected at page granularity.
+> > >  	 */
+> > >  	return rodata_full || debug_pagealloc_enabled() ||
+> > > -	       arm64_kfence_can_set_direct_map();
+> > > +		arm64_kfence_can_set_direct_map() || is_realm_world();
+> > >  }
+> > 
+> > Aneesh pointed out that this call to is_realm_world() is now too early 
+> > since the decision to delay the RSI detection. The upshot is that a 
+> > realm guest which doesn't have page granularity forced for other reasons 
+> > will fail to share pages with the host.
+> > 
+> > At the moment I can think of a couple of options:
+> > 
+> > (1) Make rodata_full a requirement for realm guests. 
+> >     CONFIG_RODATA_FULL_DEFAULT_ENABLED is already "default y" so this 
+> >     isn't a big ask.
+> > 
+> > (2) Revisit the idea of detecting when running as a realm guest early. 
+> >     This has the advantage of also "fixing" earlycon (no need to 
+> >     manually specify the shared-alias of an unprotected UART).
+> > 
+> > I'm currently leaning towards (1) because it's the default anyway. But 
+> > if we're going to need to fix earlycon (or indeed find other similar 
+> > issues) then (2) would obviously make sense.
 > 
-> Typical PCI data flow involves:
->   CPU (CPU address) -> Bus Fabric (Intermediate address) ->
->   PCI Controller (PCI bus address) -> PCI Bus.
-> 
-> While most bus fabrics preserve address consistency, some modify addresses
-> to intermediate values. The `parent_bus_offset` enables PCI controllers to
-> translate these intermediate addresses correctly to PCI bus addresses.
-> 
-> Pave the road to remove hardcoded cpu_addr_fixup() and similar patterns in
-> PCI controller drivers.
-> ...
+> I'd go with (1) since the end result is the same even if we implemented
+> (2) - i.e. we still avoid block mappings in realms.
 
-> +++ b/drivers/pci/of.c
-> @@ -402,7 +402,17 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
->  			res->flags &= ~IORESOURCE_MEM_64;
->  		}
->  
-> -		pci_add_resource_offset(resources, res,	res->start - range.pci_addr);
-> +		/*
-> +		 * IORESOURCE_IO res->start is io space start address.
-> +		 * IORESOURCE_MEM res->start is cpu start address, which is the
-> +		 * same as range.cpu_addr.
-> +		 *
-> +		 * Use (range.cpu_addr - range.parent_bus_addr) to align both
-> +		 * IO and MEM's parent_bus_offset always offset to cpu address.
-> +		 */
-> +
-> +		pci_add_resource_parent_bus_offset(resources, res, res->start - range.pci_addr,
-> +						   range.cpu_addr - range.parent_bus_addr);
+Is it, though? The config option is about the default behaviour but there's
+still an "rodata=" option on the command-line.
 
-I don't know exactly where it needs to go, but I think we can call
-.cpu_addr_fixup() once at startup on the base of the region.  This
-will tell us the offset that applies to the entire region, i.e.,
-parent_bus_offset.
-
-Then we can remove all the .cpu_addr_fixup() calls in
-cdns_pcie_host_init_address_translation(),
-cdns_pcie_set_outbound_region(), and dw_pcie_prog_outbound_atu().
-
-Until we can get rid of all the .cpu_addr_fixup() implementations,
-We'll still have that single call at startup (I guess once for cadence
-and another for designware), but it should simplify the current
-callers quite a bit.
-
->  	}
->  
->  	/* Check for dma-ranges property */
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 47b31ad724fa5..0d7e67b47be47 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1510,6 +1510,8 @@ static inline void pci_release_config_region(struct pci_dev *pdev,
->  void pci_add_resource(struct list_head *resources, struct resource *res);
->  void pci_add_resource_offset(struct list_head *resources, struct resource *res,
->  			     resource_size_t offset);
-> +void pci_add_resource_parent_bus_offset(struct list_head *resources, struct resource *res,
-> +					resource_size_t offset, resource_size_t parent_bus_offset);
->  void pci_free_resource_list(struct list_head *resources);
->  void pci_bus_add_resource(struct pci_bus *bus, struct resource *res);
->  struct resource *pci_bus_resource_n(const struct pci_bus *bus, int n);
-> diff --git a/include/linux/resource_ext.h b/include/linux/resource_ext.h
-> index ff0339df56afc..b6ec6cc318203 100644
-> --- a/include/linux/resource_ext.h
-> +++ b/include/linux/resource_ext.h
-> @@ -24,6 +24,7 @@ struct resource_entry {
->  	struct list_head	node;
->  	struct resource		*res;	/* In master (CPU) address space */
->  	resource_size_t		offset;	/* Translation offset for bridge */
-> +	resource_size_t		parent_bus_offset; /* Parent bus address offset for bridge */
->  	struct resource		__res;	/* Default storage for res */
->  };
->  
-> 
-> -- 
-> 2.34.1
-> 
+Will
 
