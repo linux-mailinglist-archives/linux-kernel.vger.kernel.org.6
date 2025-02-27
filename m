@@ -1,154 +1,94 @@
-Return-Path: <linux-kernel+bounces-537319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227AAA48A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:27:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A1FA48A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1D9B3B6435
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952C6188AEC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA69D26F460;
-	Thu, 27 Feb 2025 21:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19D6271271;
+	Thu, 27 Feb 2025 21:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hJDpGEUN"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="roEuPkyH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DD5271261;
-	Thu, 27 Feb 2025 21:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A821E51D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740691619; cv=none; b=LqAVCzTfyVOcuX7T3jMfRZ+Ojd9G5lHXC4oRmzq8jmz6Hz9dA5lvhj9MJZjz8pziPQ3hCTeTLwY+ITsHi2AEpmuye5znPhZEb/JypjBhjcjhRZQgDtGmYpvf1Ela7TpFK5DG/6rZnPXEh8XbPU9XQ8EKCyqCNF7QcdOBHDlZhDY=
+	t=1740691698; cv=none; b=k7KD52jTc/vgBh7D7sl+20yfR0cRVT/f8TRyngdwgIN2FcpPCm3CdcjVy691rdwP8AP+rq+V5nYegqWgIaTxSlKNEReBMbV0PREbNx+kCmtIkfmTmQYUN5TXxZ3qA8imZn9fkEpsdGWlEQVqylhqOw+gT0s0pwUnX3eSbiqio8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740691619; c=relaxed/simple;
-	bh=SSGtiAcfTZwQOgLB4uP0lR/hufwOZD07tQNztO2uvDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ti4W91LeVUisjXuXHB51XYWZsCJUv/aE2bMAj1os/BA6GjlOc7ZJcDfv8xcdDhLbuGmXidd5oqJXJ79eAcFELExbxCZyyE4dhSbnyI/pTNndaSqPxcs+CRIYDYctgO+zFXSyqDMFakJtgR0aeOHi5ESwZ2sOU6Q+5RFvotmR3/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hJDpGEUN; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51RLQWpl2467946
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 15:26:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740691592;
-	bh=0r8/l5Fgxp0PXZ6/Mu485HSHaQHgeKJXEbg15BrArFI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=hJDpGEUNg4W+3NQWWB/K6yz/EZCWgnI+ZHNdL0sKUnNnGRYa965r2mqnQadaaF78j
-	 mCbFRWhXBtdpGlXjLYJqlQNphlGjBJSlUVHPxX/ZCXFnzZEjTAP/+AufezwnYii9+3
-	 mtHVwWyPEUYQDw/npBw2t1duyRPc+1V/877kvay8=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51RLQWSc000906
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Feb 2025 15:26:32 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 15:26:31 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 15:26:32 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RLQVoi003731;
-	Thu, 27 Feb 2025 15:26:31 -0600
-Message-ID: <f3e69904-92f0-4de8-bfef-a315a6554a1c@ti.com>
-Date: Thu, 27 Feb 2025 15:26:31 -0600
+	s=arc-20240116; t=1740691698; c=relaxed/simple;
+	bh=Lisq9vSohjz+gAft57tJmPFBOCX3wlnuInjHm+rEYS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZlHp7C0FZoFDYBmTqC2ACphIOK+ZD2S5/aOtVUK2ZR4JClsOm7H4rsDaDJBiKby/BU2DcARwKPQ+Ht0Go6Fc1KByzdE/jbYtNJGrZ+FyooNSXn+s50HMqp6aDIlyilKUbddZcVPek5twnEuMSmnBngGQoEeCHbk9E3ES0ogxuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=roEuPkyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DB47C4CEDD;
+	Thu, 27 Feb 2025 21:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740691697;
+	bh=Lisq9vSohjz+gAft57tJmPFBOCX3wlnuInjHm+rEYS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=roEuPkyHxUt5iKjYQMrBuRjvL3/9LDy00mVFxgC5tsvT5Uo3v5VejDbBgDd22AGli
+	 jYSVk+IOGxpT0mCXXgMBeterOb5mlYn6jQJD+TFVsO1/ms0damDCni8H0llLIh5Wbv
+	 bQW9fKjbUwe3NExm1nw3gjsVHm0kt60QAgc/4+m2UVxtQhu+1J9d9xMG16RmjANSyV
+	 XVQxX4IzoZj70DWz/H0TYArLPNNzHlbKN8JrAE1UoDfWfxSTMBSAohxqNyE5EQmacc
+	 ra78xzLdFtY53m36OO1HpZiztvmo3pTrjnAfVMZec1CluuEbcp/EVEpfyO9S7frbcr
+	 81UEqdAvHit7g==
+Date: Thu, 27 Feb 2025 22:28:12 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: bp@alien8.de, chang.seok.bae@intel.com, dave.hansen@intel.com,
+	dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order
+ table and accessor macro
+Message-ID: <Z8DY7P6UJFyCg47Z@gmail.com>
+References: <Z8C-xa7WB1kWoxqx@gmail.com>
+ <94083f1c-dab1-4b57-bd45-a4d4f8ac262e@citrix.com>
+ <Z8DFusMiUYPZ3ffd@gmail.com>
+ <ea20d47e-88b9-46ab-9893-26bcf262d8b0@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] devicetree: bindings: mux: reg-mux: Update
- bindings for reg-mux for new property
-To: Chintan Vankar <c-vankar@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>,
-        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>, <vigneshr@ti.com>,
-        <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250227202206.2551305-1-c-vankar@ti.com>
- <20250227202206.2551305-2-c-vankar@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250227202206.2551305-2-c-vankar@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea20d47e-88b9-46ab-9893-26bcf262d8b0@citrix.com>
 
-On 2/27/25 2:22 PM, Chintan Vankar wrote:
-> DT-binding of reg-mux is defined in such a way that one need to provide
-> register offset and mask in a "mux-reg-masks" property and corresponding
-> register value in "idle-states" property. This constraint forces to define
-> these values in such a way that "mux-reg-masks" and "idle-states" must be
-> in sync with each other. This implementation would be more complex if
-> specific register or set of registers need to be configured which has
-> large memory space. Introduce a new property "mux-reg-masks-state" which
-> allow to specify offset, mask and value as a tuple in a single property.
+
+* Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+
+> > There's no incompatibility for a default-disabled feature that gets 
+> > enabled by an AVX-aware host kernel and by AVX-aware guest kernels. 
+> > What ABI would be broken?
 > 
-> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
-> ---
->   .../devicetree/bindings/mux/reg-mux.yaml      | 29 +++++++++++++++++--
->   1 file changed, 27 insertions(+), 2 deletions(-)
+> I don't understand your question.
+>
+> XSAVE, and details about in CPUID, are a stated ABI (given in the SDM 
+> and APM), and available in userspace, including for userpace to write 
+> into a file/socket and interpret later (this is literally how we 
+> migrate VMs between different hosts).
 > 
-> diff --git a/Documentation/devicetree/bindings/mux/reg-mux.yaml b/Documentation/devicetree/bindings/mux/reg-mux.yaml
-> index dc4be092fc2f..a73c5efcf860 100644
-> --- a/Documentation/devicetree/bindings/mux/reg-mux.yaml
-> +++ b/Documentation/devicetree/bindings/mux/reg-mux.yaml
-> @@ -32,11 +32,36 @@ properties:
->           - description: pre-shifted bitfield mask
->       description: Each entry pair describes a single mux control.
->   
-> -  idle-states: true
-> +  idle-states:
-> +    description: Each entry describes mux register state.
-> +
-> +  mux-reg-masks-state:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +    items:
-> +      items:
-> +        - description: register offset
-> +        - description: pre-shifted bitfield mask
-> +        - description: register value to be set
-> +    description: This property is an extension of mux-reg-masks which
-> +                 allows specifying register offset, mask and register
-> +                 value to be set in a single property.
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - reg-mux
-> +              - mmio-mux
+> You simply redefine what %xcr0.bnd_* (a.k.a. XFEATURES 3 and 4) mean, 
+> irrespective of what a guest kernel thinks it can get away with.
 
-These are the only two possible compatibles, is this "if" check needed?
+XFEATURES bits 3 and 4 are zero by default in the CPU, so the previous 
+ABI promise has been fully met: MPX is unavailable and disabled.
 
-> +    then:
-> +      properties:
-> +        mux-reg-masks: true
-> +        mux-reg-masks-state: true
+I propose a new addition, an extension of functionality: if a new CPUID 
+bit indicates it, and a new MSR is written, XFEATURES bit 3 becomes 
+active again - and the MPX area is now used by AVX. Obviously only 
+AVX-aware host and guest kernels would enable AVX.
 
-You need one, but cannot have both, right? There should be some
-way to describe that.
+Thanks,
 
-Also an example added below would be good.
-
-Andrew
-
-> +      maxItems: 1
->   
->   required:
->     - compatible
-> -  - mux-reg-masks
->     - '#mux-control-cells'
->   
->   additionalProperties: false
+	Ingo
 
