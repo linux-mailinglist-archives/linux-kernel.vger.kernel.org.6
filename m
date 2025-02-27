@@ -1,120 +1,85 @@
-Return-Path: <linux-kernel+bounces-535321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C3DA47146
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:37:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D056A4714F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF2C16DC21
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268B4163693
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDC22D4E4;
-	Thu, 27 Feb 2025 01:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F1478F43;
+	Thu, 27 Feb 2025 01:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byy/8z38"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2vu70uD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0291B5EA4
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543B9270038;
+	Thu, 27 Feb 2025 01:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740619411; cv=none; b=P6t0iWwp9j3vjqaj/ds8lnxk6TEvEvc5MQ4SjW0Q2W1JaYZL6+JsaS9lMIbn065EFTJQemVgA2C659iUN+yETxp12A9iG9NhycImgBbUjasGsgX5u7Z5Q3qpBWPTq1VGVCUU6n7GAr462F1ST6oHBQC7FTGoRM6Zb6Je+sS/ES0=
+	t=1740619521; cv=none; b=gkWkyWt4M8VQJDW/CfFWHr2mpbPShLiFZdCD/O+5Yxnysmsvxm0dcwHeK0mKFtwQtwVZvTusuZl1e8Qd4LxdSs4ZFfPoPrlQuJ6bVK1d3ICdUnPqu/OAR531tVDrYNgfF43t3PItznwhMyugCbFRC0ibhIU01AqTk/KN86lLOpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740619411; c=relaxed/simple;
-	bh=3rY5qLWrekvjZ4QCc0IKQqcEZOmzHa/KRRYhUhsCevQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4xDNn9Vugt7/Z1LnOyArHMJ6TGTe5nrG1x/XCmWlsn3EfXPtSakmg0odzeg5FSDdfhy8SDtSN4FYyiwBFBCWwT8FCKsS1q3hBSxGv2KiELY3Ar3mRzSK/L0y23lOV2nBUobcDswdVqiyI6TEQCQL7+98UVuzjyR95cZ/mxaGow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byy/8z38; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F259DC4CED6;
-	Thu, 27 Feb 2025 01:23:30 +0000 (UTC)
+	s=arc-20240116; t=1740619521; c=relaxed/simple;
+	bh=m62/7SvmUtw757E6Jq7wZPq5s4GWXKsm4qNDnbp74IU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pmpByWWNv8vkiflPFAq1bSw8f9KB0k9mlZ9w5vg23fQm3zWzuQrUa3WEf2+vKXYJ3bTYYGWHpI8L3wzOJLca0VLKB8b/VKmusDIuCDU16mLBH+aJMXqITzGCpoatBY8//SUnr5KitzYIDrzzGR6PCMGH7jKdV5m1+kIoJoY/dTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2vu70uD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67EAC4CEE2;
+	Thu, 27 Feb 2025 01:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740619411;
-	bh=3rY5qLWrekvjZ4QCc0IKQqcEZOmzHa/KRRYhUhsCevQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=byy/8z38+SGc55XKHUWJOzsWXTyJj+8fpipjMHNc1ZJWKHh3J9ntGGFK6m/s0M3qE
-	 Dl3YezpRJ9DwMBIcAvKabmfKIifHDDAMmrUmJ1CgEjsx+VJVBcqbbk3kgFshdyDHMz
-	 c6bbmjVLZVFLtWKP0wyHleM8o1rt0nYbTaWxH5rA8EcQdeHGZHDJTDLCjrZl/sprNj
-	 W6cV5BcXZcK/jHHj//d89nVVThgOSO3yskCgSRBa+7HdOtBcw/nGljYMxyWvmcJRsQ
-	 ZKcoOWTCad4gfQbl1J00yI/oHiUGfzz395zSpHnnByByRAuD6MaZ1ss/ZKJWT7vhKn
-	 ONDw1hLRPmL8A==
-Date: Wed, 26 Feb 2025 17:23:29 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: "Kaplan, David" <David.Kaplan@amd.com>, Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
-Message-ID: <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
-References: <LV3PR12MB9265041C9D8D4F3E5760F0B694FA2@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
- <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
- <20250220220440.ma5yfebhiovkqojt@jpoimboe>
- <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250226201453.jgg6kucaathzmcvs@desk>
- <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250226221324.hq2nevnnnrpgo75n@desk>
- <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
- <20250227003528.hnviwrtzs7jc3juj@desk>
+	s=k20201202; t=1740619521;
+	bh=m62/7SvmUtw757E6Jq7wZPq5s4GWXKsm4qNDnbp74IU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t2vu70uDJTXI0YfIToAq3wGTPusu3xpdKEzw9GotT/k7G05qRLfVp5gSTNVv5WJa1
+	 cJul9GlwKfq2SYLd9Aiin+EXrp/pIThCt4cY7VlJWHSorhjcQSIRyZf8E6XdIgqnFK
+	 HNyf+gypQ8D9AjzVgSkjpeGSW0f1eeWVeevo0Irs+USVjZnthYvohFWiS+ZGgqCFbi
+	 F/RN9FfPTJy5b2YW6uty5hHqGv1O/U+SaHOgpVnJPzr0/jOpnJXPms/Juecuy4QDPF
+	 XYs+V8IfEE788Os5veaxTS9Dg1pjh1nHrCKx/JGPlhNlCrN2bS0CdpLGNkVcepPIqZ
+	 lzfwMJgIStBWA==
+Date: Wed, 26 Feb 2025 17:25:19 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Saeed Mahameed <saeed@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan
+ <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3][next] net/mlx5e: Avoid a hundred
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <20250226172519.11767ac9@kernel.org>
+In-Reply-To: <Z79iP0glNCZOznu4@x130>
+References: <Z76HzPW1dFTLOSSy@kspp>
+	<Z79iP0glNCZOznu4@x130>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227003528.hnviwrtzs7jc3juj@desk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26, 2025 at 04:35:28PM -0800, Pawan Gupta wrote:
-> On Wed, Feb 26, 2025 at 03:44:40PM -0800, Josh Poimboeuf wrote:
-> > On Wed, Feb 26, 2025 at 02:13:24PM -0800, Pawan Gupta wrote:
-> > > On Wed, Feb 26, 2025 at 09:03:58PM +0000, Kaplan, David wrote:
-> > > > > Extending =auto to take attack vectors is going to be tricky, because it already
-> > > > > takes ",nosmt" which would conflict with ",no_cross_thread".
-> > > > >
-> > > > > How about we keep =off, and =auto as is, and add:
-> > > > >
-> > > > >   mitigations=selective,no_user_kernel,no_cross_thread,...
-> > > > >
-> > > > > Requiring the user to explicitly select attack vectors to disable (rather than to
-> > > > > enable). This would be more verbose, but it would be clear that the user is explicitly
-> > > > > selecting attack vectors to disable. Also, if a new attack vector gets added in future,
-> > > > > it would be mitigated by default, without requiring the world to change their cmdline.
-> > > > 
-> > > > I kind of like that.
-> > 
-> > While it might be true that we don't necessarily need both opt-in and
-> > opt-out options...
-> > 
-> > I'm missing the point of the "selective" thing vs just
-> > "auto,no_whatever"?
+On Wed, 26 Feb 2025 10:49:35 -0800 Saeed Mahameed wrote:
+> On 26 Feb 13:47, Gustavo A. R. Silva wrote:
+> >-struct mlx5e_umr_wqe {
+> >+struct mlx5e_umr_wqe_hdr {
+> > 	struct mlx5_wqe_ctrl_seg       ctrl;
+> > 	struct mlx5_wqe_umr_ctrl_seg   uctrl;
+> > 	struct mlx5_mkey_seg           mkc;
+> >+};
+> >+
+> >+struct mlx5e_umr_wqe {
+> >+	struct mlx5e_umr_wqe_hdr hdr;  
 > 
-> That was my first thought, but then I realized that in "auto,nosmt" nosmt
-> is the opposite of disabling the mitigation. It would be cleaner to have
-> "=selective,no_whatever" which is self-explanatory.
+> You missed or ignored my comment on v0, anyway:
+> 
+> Can we have struct mlx5e_umr_wq_hdr defined anonymously within
+> mlx5e_umr_wqe? Let's avoid namespace pollution.
 
-The "auto,nosmt,no_whatever" is indeed a bit confusing because of the
-opposite meanings of the word "no", but least it sort of makes some
-kind of sense if you consider the existing "auto,nosmt" option to be the
-starting point.
-
-And we could document it from that perspective: start with "auto" or
-"auto,smt" and then optionally append the ",no_*" options for the vectors
-you want to disable.
-
-IMO "selective" doesn't seem very self-explanatory, it says nothing to
-indicate "opting out of defaults", in fact it sounds to me more like
-opting in.  At least with "auto,no_whatever" it's more clear that it
-starts with the defaults and subtracts from there.
-
--- 
-Josh
+It's also used in struct mlx5e_rq, I don't think it can be anonymous?
 
