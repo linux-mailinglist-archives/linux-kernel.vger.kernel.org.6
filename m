@@ -1,161 +1,168 @@
-Return-Path: <linux-kernel+bounces-537096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A62A4880C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:45:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0155A4881A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1168188BE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002A01693BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD9B25EF9C;
-	Thu, 27 Feb 2025 18:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868F26F47D;
+	Thu, 27 Feb 2025 18:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="s4GkiV94"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKvFxEzq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716BB20409A;
-	Thu, 27 Feb 2025 18:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A778026F450
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681900; cv=none; b=GY4VVioRZLcM/iw708DCbVMJDHM+kbrgSUckHFv+stJQXReV/D++QIw5itWr4ExSEVW/QB6kRIc934wB+Tb9Pd33O9JGXmFXw8/uOpkrxZfQUFquNIVRzal40WwpEijUnMJT11wGNiibWzI1tiG+Gi6gMavtBLtJ9K3k+gQ18RE=
+	t=1740681918; cv=none; b=RlJKkTmn2j1AxKnhMV4uNSHtNKfYYU8bND2umLPipRIcC7qmTpnpDR/jQvubFJqYGgEMspQImzcAJpKn9L9oCIk3S9MYy1QURHQjIEyKUXqTAGPZHDOjS5C39VvmKAkYoJleIH/wlFFB6zFFuGl4hjqnEfrZXi2+CHsPaYihVME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681900; c=relaxed/simple;
-	bh=jPTjTgvjlrxaDcxejfvbSiaPv936H+Y8dBeB7m3EO0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4+FUBp4GROuKivEVPtOouIqFQLGt37IUlwXrMkmU8K8IdhEmIh6MyNEWZh9Te6CBLu+CnD4pvbLreWEggNU+zqPDfyBsiDhiWvLmO71bgz7L+x/pWRWQSstkmeFR/Ci6QUcXLIs7UgxcZ5Qq5NAab9f98N5qFzzf1w3wGp9nJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=s4GkiV94; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1740681896; bh=jPTjTgvjlrxaDcxejfvbSiaPv936H+Y8dBeB7m3EO0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s4GkiV94SUr13UlmFx0h+q55GTEas139UlMO9uqpC9/ZUfBBZTcvjVbKpiNuH5zg4
-	 Fsl/OnPe+fAWmNngvdLBJVBRQQRq5RIFDZ5J35RIMnvYnw70nyOLTJBSlFBSFNhvj5
-	 iSShteSlWLxZ4toVyL+0tOLF6xH9/pe+DrhQ1iuo=
-Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 870E22052A91;
-	Thu, 27 Feb 2025 19:44:56 +0100 (CET)
-Message-ID: <7d77b05f-393e-48d9-9f3f-31b80a64ae7a@ralfj.de>
-Date: Thu, 27 Feb 2025 19:44:56 +0100
+	s=arc-20240116; t=1740681918; c=relaxed/simple;
+	bh=gxC4YpulTjL4LyXhFMns9rIvzhJlui2aMfofQzc2VGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V9alKDl/WWxGMejvsw70lBe3Gu2HWA9RLwM9TxR2BG1AqUahSc/0p0B0XhY2+3zMrIFwpzEQSwFdeR/dBTjdMcqJeYibaxast3uyHC8hA7B7JNlffk8G952Pk2SuTeGO3B1sWCyaF+p9G87GG9wjE/wzM6JDutldfBQrNAOSrZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKvFxEzq; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740681917; x=1772217917;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gxC4YpulTjL4LyXhFMns9rIvzhJlui2aMfofQzc2VGA=;
+  b=RKvFxEzqZ1oKzq13b/wo2MSSHxGkAQso1gbfVAFzHYIYTLIqY+ESE+J9
+   lo8N2tsoKpwh/emqETfFoncdvvfIQCR7I6DDuTxtzumv7l/1PcRS96TnY
+   9Z6ok8UE4AUKc6i93nKZB6WQazDI4XvBZpOTPojGsKgFy0Phvs3DQy6jn
+   IHQubkLj/NAbOtT6HxN2zmacqO4yYsrfRsv4JLXf5b9mxImPigkDxUcM9
+   7r2db+H/fj0/z9cMi4rQ7UY9jq/PkGb81i5L7JeENH0IkFtJmqgVI0zcX
+   eZM+YP3nfMTkv02dODljUnq9r0aJT3RekjA+YeNK/kXxz6WCzZTjubSdf
+   w==;
+X-CSE-ConnectionGUID: Xf3AT+PnT2GyIPo0/VdN4A==
+X-CSE-MsgGUID: mdBPoQZHR3GJpksg+LCBlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720925"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="41720925"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:16 -0800
+X-CSE-ConnectionGUID: wfJMc+3LS82MOF+1S9p++A==
+X-CSE-MsgGUID: OfFZEz4oT+Whyw4Bl0hvkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117767455"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.154.132])
+  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:15 -0800
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	chang.seok.bae@intel.com
+Subject: [PATCH RFC v1 11/11] selftests/x86/apx: Add APX test
+Date: Thu, 27 Feb 2025 10:44:56 -0800
+Message-ID: <20250227184502.10288-12-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Martin Uecker <uecker@tugraz.at>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
- <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
- <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
- <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
- <09e282a9c02fb07ba4fc248f14c0173d9b19179a.camel@tugraz.at>
- <CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The extended general-purpose registers for APX may contain random data,
+which is currently assumed by the xstate testing framework. This allows
+the testing of the new userspace feature using the common test code.
 
-> So "safe rust" should generally not be impacted, and you can make the
-> very true argument that safe rust can be optimized more aggressively
-> and migth be faster than unsafe rust.
-> 
-> And I think that should be seen as a feature, and as a basic tenet of
-> safe vs unsafe. A compiler *should* be able to do better when it
-> understands the code fully.
+Invoke the test entry function from apx.c after enumerating the
+state component and adding it to the support list
 
-That's not quite how it works in Rust. One basic tenet of unsafe is that unsafe 
-does not impact program semantics at all. It would be very surprising to most 
-Rust folks if adding or removing or changing the scope of an unsafe block could 
-change what my program does (assuming the program still builds and passes the 
-usual safety checks).
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+---
+The patch depends on the selftest xstate series, which was just merged
+into the x86/fpu branch:
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=x86/fpu
 
-Now, is there an interesting design space for a language where the programmer 
-somehow marks blocks of code where the semantics should be "more careful"? 
-Absolutely, I think that is quite interesting. However, it's also not at all 
-clear to me how that should actually be done, if you try to get down to it and 
-write out the proper precise, ideally even formal, spec. Rust is not exploring 
-that design space, at least not thus far. In fact, it is common in Rust to use 
-`unsafe` to get better performance (e.g., by using a not-bounds-checked array 
-access), and so it would be counter to the goals of those people if we then 
-optimized their code less because it uses `unsafe`.
+Here is the original series posting:
+  https://lore.kernel.org/lkml/20250226010731.2456-1-chang.seok.bae@intel.com/
+---
+ tools/testing/selftests/x86/Makefile |  3 ++-
+ tools/testing/selftests/x86/apx.c    | 10 ++++++++++
+ tools/testing/selftests/x86/xstate.c |  3 ++-
+ tools/testing/selftests/x86/xstate.h |  1 +
+ 4 files changed, 15 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/x86/apx.c
 
-There's also the problem that quite a few optimizations rely on "universal 
-properties" -- properties that are true everywhere in the program. If you allow 
-even the smallest exception, that reasoning breaks down. Aliasing rules are an 
-example of that: there's no point in saying "references are subject to strict 
-aliasing requirements in safe code, but in unsafe blocks you are allowed to 
-break that". That would be useless, then we might as well remove the aliasing 
-requirements entirely (for the optimizer; we'd keep the borrow checker of 
-course). The entire point of aliasing requirements is that when I optimize safe 
-code with no unsafe code in sight, I can make assumptions about the code in the 
-rest of the program. If I cannot make those assumptions any more, because some 
-unsafe code somewhere might actually legally break the aliasing rules, then I 
-cannot even optimize safe code any more. (I can still do the always-correct 
-purely local aliasing analysis you mentioned, of course. But I can no longer use 
-the Rust type system to provide any guidance, not even in entirely safe code.)
-
-Kind regards,
-Ralf
-
-> 
->> There would certainly be opposition if this fundamentally
->> diverges from C++ because no compiler framework will seriously
->> consider implementing a completely different memory model
->> for C (or for Rust) than for C++.
-> 
-> Well, if the C++ peoiple end up working on some "safe C" model, I bet
-> they'll face the same issues.
-> 
->> I could also imagine that the problem here is that it is
->> actually very difficult for compilers to give the guarantess
->> you want, because they evolved from compilers
->> doing optimization for single threads and and one would
->> have to fix a lot of issues in the optimizers.  So the
->> actually problem here might be that nobody wants to pay
->> for fixing the compilers.
-> 
-> I actually suspect that most of the work has already been done in practice.
-> 
-> As mentioned, some time ago I checked the whole issue of
-> rematerializing loads, and at least gcc doesn't rematerialize loads
-> (and I just double-checked: bad_for_rematerialization_p() returns true
-> for mem-ops)
-> 
-> I have this memory that people told me that clang similarly
-> 
-> And the C standards committee already made widening stores invalid due
-> to threading issues.
-> 
-> Are there other issues? Sure. But remat of memory loads is at least
-> one issue, and it's one that has been painful for the kernel - not
-> because compilers do it, but because we *fear* compilers doing it so
-> much.
-> 
->             Linus
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index 28422c32cc8f..f703fcfe9f7c 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -19,7 +19,7 @@ TARGETS_C_32BIT_ONLY := entry_from_vm86 test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+ TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip syscall_numbering \
+-			corrupt_xstate_header amx lam test_shadow_stack avx
++			corrupt_xstate_header amx lam test_shadow_stack avx apx
+ # Some selftests require 32bit support enabled also on 64bit systems
+ TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
+ 
+@@ -136,3 +136,4 @@ $(OUTPUT)/nx_stack_64: CFLAGS += -Wl,-z,noexecstack
+ $(OUTPUT)/avx_64: CFLAGS += -mno-avx -mno-avx512f
+ $(OUTPUT)/amx_64: EXTRA_FILES += xstate.c
+ $(OUTPUT)/avx_64: EXTRA_FILES += xstate.c
++$(OUTPUT)/apx_64: EXTRA_FILES += xstate.c
+diff --git a/tools/testing/selftests/x86/apx.c b/tools/testing/selftests/x86/apx.c
+new file mode 100644
+index 000000000000..d9c8d41b8c5a
+--- /dev/null
++++ b/tools/testing/selftests/x86/apx.c
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#define _GNU_SOURCE
++
++#include "xstate.h"
++
++int main(void)
++{
++	test_xstate(XFEATURE_APX);
++}
+diff --git a/tools/testing/selftests/x86/xstate.c b/tools/testing/selftests/x86/xstate.c
+index 23c1d6c964ea..97fe4bd8bc77 100644
+--- a/tools/testing/selftests/x86/xstate.c
++++ b/tools/testing/selftests/x86/xstate.c
+@@ -31,7 +31,8 @@
+ 	 (1 << XFEATURE_OPMASK)	|	\
+ 	 (1 << XFEATURE_ZMM_Hi256) |	\
+ 	 (1 << XFEATURE_Hi16_ZMM) |	\
+-	 (1 << XFEATURE_XTILEDATA))
++	 (1 << XFEATURE_XTILEDATA) |	\
++	 (1 << XFEATURE_APX))
+ 
+ static inline uint64_t xgetbv(uint32_t index)
+ {
+diff --git a/tools/testing/selftests/x86/xstate.h b/tools/testing/selftests/x86/xstate.h
+index 42af36ec852f..f3c25193a3be 100644
+--- a/tools/testing/selftests/x86/xstate.h
++++ b/tools/testing/selftests/x86/xstate.h
+@@ -33,6 +33,7 @@ enum xfeature {
+ 	XFEATURE_RSRVD_COMP_16,
+ 	XFEATURE_XTILECFG,
+ 	XFEATURE_XTILEDATA,
++	XFEATURE_APX,
+ 
+ 	XFEATURE_MAX,
+ };
+-- 
+2.45.2
 
 
