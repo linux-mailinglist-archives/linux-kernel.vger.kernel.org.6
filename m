@@ -1,119 +1,207 @@
-Return-Path: <linux-kernel+bounces-535771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB91A476F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:58:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3203AA476F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E2947A3CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945ED188EBD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7362222B8;
-	Thu, 27 Feb 2025 07:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBCA225793;
+	Thu, 27 Feb 2025 07:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LYFRcNm9"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oCYHv0qe"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06001E832D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FB422576C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740643101; cv=none; b=oM2QbF1ncBo3msv/HBw8b7itI/5ByIB6EdI8L9s6ReAT7/XW9la9dhMHLOH523kl7TW5r7jLoOkBbA5o8F30MNAdKJ4n0DuodZi44FCSK3+58Ya2Qok8pP35Y2MlPv34ofqbJJ+xPo8Dsvhl+DWCBo5NDBJG54JUKOLmbYwARfU=
+	t=1740643157; cv=none; b=aMUKwY0EKVRdk8pyEJpNT+OzHpESmlU5DeVcOmlanlmnXLIXwIV3rJE0yjbWBv/CsunmzzlF/ExPWGDYkw8geunY81ZUy4F2Dqy3wD/rRJYeoEWg03IQ2+JB2AgjzrRtS+gla9SgXrVUtAbHcNRvCikIdojP22kYMxJOS5te1l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740643101; c=relaxed/simple;
-	bh=dBUoo4HkdPsPB/a09rol8wF45I3Q1kMtFXdsaoK/dik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rfNZL+8HF/ztLoXa38zfEqHAsI7QA6VN2ntpZRuVjAA9Eb6kwIzGrXlh0Uwkc7s3GBXt+ha09ZBaLJ13ME0Qdd4vDVdFLXVoyZFTjqgHvaVYpIwwtQkbyaG7O0UG97jprC3xjWi4up/9hv5rAj5XO65HGZPSDI7RAZSeYqwQO54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LYFRcNm9; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-439a1e8ba83so6084475e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:58:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740643098; x=1741247898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TN/1+Dvy1pIWqRV2HfuQkQI4NcLTbUVzevWMjjLr3SQ=;
-        b=LYFRcNm9wKn7KdMsUwTk1BfGHE4RNRz5m8k8qCYcD3tBfbA9qlJqwvfwl5VyNhhq3e
-         58g60rrXZL5xMLQsYRs4MS/TINoPmgbm3oz4n1GB45Cq04FFLcFhPF++GGAJHJqQgvwT
-         meWdFKdK+EPPskCKIgXfWIvXsmFRaywT5JBFC5dAlPjvvSTOKU3qM4KJ4Y1F4VGt+pJ1
-         avjvyXVhe0Er6fVoCh6WjgxkY/r7JBqFKffjvaJmYic/5Em38dtfJ1deHs6AVtEG1UnK
-         TrmwRE3L5BEae3FpohDmsAbwC6pEyqPJRNzN0wQaxg1FniGaPqMtjUNf4WzZfyN3EFUD
-         +Mqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740643098; x=1741247898;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TN/1+Dvy1pIWqRV2HfuQkQI4NcLTbUVzevWMjjLr3SQ=;
-        b=PjuWyRCI0Ma8Jnozr2adMA6p2wYotIvy2CTEJkknMbjX20MW3a0V5QQNMfg7k6tyOV
-         Gvv0N2xGKVhY7lXZiY5kLhft6ab7FFJYCc2BYwjWsYr/nOPTvSu5fSwCUaJb9WjpHVVH
-         vJU2EY27UXb+yqW+Ed4h+AS6V9gC6QGiW/wGco7fxRGHQLVgDC3TNfTmFIgN0AMMbMWD
-         IeYmPCGsETPiooR65+XHlOpKAAJbcm+d2kiZxzTwZM0h0tT7czRvxjsB5xuze46qBONo
-         BW5W62bhycM/z2tIZdTyX9F5MTNnccpji4ryDg2mqZXzGpv6vL3j31wO79QnyX+MeGHj
-         mRkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyPqM0RJRdC0mOTGbwxUD01V/Pchj3awRK7cuLkOJQ0cfAhrdGFGyMOXeAuR2dJCjxEx00t+xy+Uz1QuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSncnPdhiF+Yeb9pa6a2TNL6zyED54U1+VhDariSV1elUMNXdA
-	lG3oCNwFqzLwC8dLbSphInnbkYAM6nJe47GpZRsNak7oVYGNK64DGfM2sq40pP0=
-X-Gm-Gg: ASbGncufNSV5qrggGLBEhQki7MWf6YQG+prPev7jA1snnnXFe8SHYlyU7ifM2LLHrNr
-	hz9eSb8RRBCrpUs09xthlB5afIWOfZ6MzePVpTUfrEcZuz2KpS8BbR6nViEkCmG+CYHUKt/2xDs
-	Aj727HrdpOZJ7ivGH2lGXM0kcKDdoajpA3axP2FcIouGU94WFyabPCZi32QRzQ7/5ls/+ICw4Ws
-	byUuikY9oRlWmdWQXBRMYxlRaG6hF/uc1hVDsiEEoJxGc3MG9M/hy9C26JPz+NpvduZmSksugWq
-	0LeLUBIz8ZicGYQy63XsbZyHSw==
-X-Google-Smtp-Source: AGHT+IF3sBOLZBtF2H3ra7eCA0+civX2mMDDIXML6HJy3fFHHapQwfDiYWARVRPHDLlUQvdKc+mSSQ==
-X-Received: by 2002:a05:600c:5489:b0:439:86fb:7326 with SMTP id 5b1f17b1804b1-439aebb5558mr174988355e9.22.1740643097826;
-        Wed, 26 Feb 2025 23:58:17 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b50f:c403:bf52:2dbb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b947sm46155715e9.2.2025.02.26.23.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 23:58:17 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] gpiolib: fix bugs in retval sanitization
-Date: Thu, 27 Feb 2025 08:58:16 +0100
-Message-ID: <174064309353.7700.4012102526424090624.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250226-retval-fixes-v2-0-c8dc57182441@linaro.org>
-References: <20250226-retval-fixes-v2-0-c8dc57182441@linaro.org>
+	s=arc-20240116; t=1740643157; c=relaxed/simple;
+	bh=C7XpAVDvvpP636PA4phPjbxfcO/dKnkhfIXAYN/dxTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DShIwZuLJugpIXYySQM1t6u+pQpbizEb7P12rlx2bKpL7svDXYlINsyh36FSO8dPJWBRAkNR7w0amTTaFhGjz4xPK+aB2MVFdvlWrwoKiRk1891kFGCO301Zqaz8ALSb5KxNTcluOTcvWYFVBRGG0M9PG0Eowlm+UnTve4wbTsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oCYHv0qe; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R20mqA004420;
+	Thu, 27 Feb 2025 07:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=UHWZo9
+	17tMyC1vbiVE+IknaJRjo3mFkJ+Nfxkv9J5zg=; b=oCYHv0qeml8XFExkgmR/N6
+	UtdlACk2CgwXKZRuFuxEYSl7MUv3ivAI2zMmEAWN0S5FI5hJ52SbYqx577b99eCz
+	BL6kVbHj5ce3/B6wWiC1o5Qf6VUMFhPtDMMrncT6ToZ+tMRoKDmOvUOa21+t40fg
+	cfRQWN50/Qo2oF8FWcEj0OhI3vdyj5C0cIhL3lWsPUwLNtLw1vO6Sam2raVPSclO
+	onduqOjUAwUcRLooSwhYUU44NNsYUDUzv/a8oqQu+rGs9Xrg/Pxl7LRQqsBKeTSx
+	n6fb0g24nGsXGA/1OBTVuWAQB+a5SvwBPyfBnYZ2plm/h0UJyBGzgtus5EIrWa/g
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452ew0h949-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 07:58:36 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51R5mgNh026287;
+	Thu, 27 Feb 2025 07:58:36 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44yswnqdc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 07:58:35 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51R7wXRj48300432
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 07:58:34 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D4FC120043;
+	Thu, 27 Feb 2025 07:58:33 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3751520040;
+	Thu, 27 Feb 2025 07:58:32 +0000 (GMT)
+Received: from [9.39.16.153] (unknown [9.39.16.153])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Feb 2025 07:58:32 +0000 (GMT)
+Message-ID: <0d890fd4-5df0-4a19-a278-74c95aa19935@linux.ibm.com>
+Date: Thu, 27 Feb 2025 13:28:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] sched/cputime: issue with time accounting using default
+ configs
+To: frederic@kernel.org
+Cc: mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        maddy@linux.ibm.com, dietmar.eggemann@arm.com, riel@surriel.com,
+        linux-kernel@vger.kernel.org
+References: <20250211194558.803373-1-sshegde@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250211194558.803373-1-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rQJ8iYbosvmqu5GpfB0K_2utamuKt3j7
+X-Proofpoint-ORIG-GUID: rQJ8iYbosvmqu5GpfB0K_2utamuKt3j7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=675 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270056
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Wed, 26 Feb 2025 11:12:28 +0100, Bartosz Golaszewski wrote:
-> Here's a set of fixes to issues spotted in next after queuing the series
-> adding return value sanitization to GPIO core.
+On 2/12/25 01:15, Shrikanth Hegde wrote:
+> While experimenting with irq time accounting stumbled upon this issue
+> with cputime accounting while running simple benchmarks.
+> 
+> This is very likely a common issue across different archs unless one turns
+> on IRQ_TIME_ACCOUNTING. Took a look at src rpms of rhel and suse. Only
+> rhel on x86 seems to enable it.
+> 
+> (default configs)
+> CONFIG_VIRT_CPU_ACCOUNTING=y
+> CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
+> # CONFIG_IRQ_TIME_ACCOUNTING is not set
+> CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> all    3.41    0.00   73.81    0.00   22.00    0.00    0.10    0.00    0.00    0.67
+> all    3.39    0.00   73.30    0.00   22.71    0.01    0.01    0.00    0.00    0.58
+> 
+> (With CONFIG_IRQ_TIME_ACCOUNTING=y)
+> CONFIG_VIRT_CPU_ACCOUNTING=y
+> CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
+> CONFIG_IRQ_TIME_ACCOUNTING=y
+> CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> all    3.64    0.00   94.26    0.00    1.77    0.06    0.05    0.00    0.00    0.21
+> all    3.42    0.00   93.89    0.00    1.94    0.07    0.00    0.00    0.00    0.68
 > 
 > 
+> Forced NATIVE to be enabled by removing conditional check in NO_HZ_FULL.
+> CONFIG_VIRT_CPU_ACCOUNTING=y
+> # CONFIG_TICK_CPU_ACCOUNTING is not set
+> CONFIG_VIRT_CPU_ACCOUNTING_NATIVE=y
+> CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> all    5.78    0.00   92.55    0.00    1.56    0.00    0.00    0.00    0.00    0.11
+> all    6.14    0.00   91.86    0.00    1.68    0.02    0.00    0.00    0.00    0.29
+> 
+> Given the code, NATIVE accounting seems most accurate,
+> since it tracks enter/exit of user, hardirq, softirqs.
+> Though it comes with its own overhead.
+> 
+> 
+> Such a drastic difference w.r.t to *irq time*. That made me wonder why?
+> This happens because of when NO_HZ_FULL is chosen, NATIVE accounting
+> cannot be enabled and GENeric is the option.
+> GEN -> account_process_tick ->
+> 	-> if context tracking is enabled, do accounting based on it.
+> 	-> if irq_time accounting is enabled, do that.
+> 	-> If not, fall back to simple tick based accounting. With this
+> 	   whole tick duration can be attributed to IRQ. Which is not true.
+> 
+> NATIVE -> account_process_tick ->
+> 	vtime_flush - native based accounting.
+> 
+> 
+> The main concern is, context tracking is enabled only if NO_HZ_FULL=y and
+> (nohz_full= or isolcpus=) is set. Most of the kernels are built with
+> NO_HZ_FULL, but many may not pass the nohz_full=. (correct me if i am
+> wrong). This leads to context tracking isn't being enabled. Since irq
+> time isn't enabled either, it falls into simple tick based accounting.
+> 
+> A few ways to fix. Some may not be sane. These are the hacks that i have
+> tried.
+> 
+> 1. Looking at irq_time vs native accounting, seems like irq_time is
+> lightweight and close enough to native. maybe that can be a middle
+> ground. So enable it for the arch default configs. That way distros can
+> enable it. below patch is with this method.
+> NOTE: this needs more work still w.r.t to measuring the overhead.
+> 
+> 2. Select IRQ_TIME_ACCOUNTING in case of NO_HZ_FULL. This would fix this
+> accounting issue for all archs. But given a slight overhead, some archs
+> may not want it.
+> 
+> 3. If context tracking is not enabled, then do native way if archs
+> supports it. since native and irq_time are exclusive only one of them
+> can be enabled. This needs a lot of change given how the current code is
+> with macros. Also this meant decoupling native from NO_HZ_FULL.
+>   
+> Is this a problem worth fixing? are there any better way to fix it?
 
-Applied, thanks!
+Hi Frederic. Any comments on this?
 
-[1/3] gpiolib: don't use gpiochip_get_direction() when registering a chip
-      commit: 9becde08f1bc2857cd66f847eca2aaec3fc05c21
-[2/3] gpiolib: use a more explicit retval logic in gpiochip_get_direction()
-      commit: cc78604fd4799a8e8e9d23ea4898acd6b605982d
-[3/3] gpiolib: don't double-check the gc->get callback's existence
-      commit: 8a5680bffb2f681688b5788751c767fc380ff9b7
+This is a generic problem across different archs. Not sure whats the 
+best way to fix it. Convincing people to enable it in their config may 
+be one way.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> ---
+>   arch/powerpc/configs/ppc64_defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/powerpc/configs/ppc64_defconfig b/arch/powerpc/configs/ppc64_defconfig
+> index 465eb96c755e..9bc678d92384 100644
+> --- a/arch/powerpc/configs/ppc64_defconfig
+> +++ b/arch/powerpc/configs/ppc64_defconfig
+> @@ -3,6 +3,7 @@ CONFIG_POSIX_MQUEUE=y
+>   CONFIG_AUDIT=y
+>   CONFIG_NO_HZ_FULL=y
+>   CONFIG_NO_HZ=y
+> +CONFIG_IRQ_TIME_ACCOUNTING=y
+>   CONFIG_HIGH_RES_TIMERS=y
+>   CONFIG_BPF_SYSCALL=y
+>   CONFIG_BPF_JIT=y
+
 
