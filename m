@@ -1,163 +1,105 @@
-Return-Path: <linux-kernel+bounces-536945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC748A48615
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:04:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF12A48618
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DE857A64D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0237E7A655B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1BD1D5AD8;
-	Thu, 27 Feb 2025 17:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MWriXBF4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750331D5AD3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58B01D4335;
+	Thu, 27 Feb 2025 17:03:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B581DDA2F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675827; cv=none; b=ukXBX6RcJbeqnyYqcjrhV7WbnRrERBopjjpRZ9IIGGQiVKxVAmxC7e8ONuNVUYhVLLWRHODRb8h31TC5YE7nuKNdRPkJVj5+IuFb9O8+n1Q4S4Kcluq0tE34/m2nnlirJNoh5g45IHdkQCd9879rtr3qw2O3tTki1+GIH7P0m/I=
+	t=1740675839; cv=none; b=hq3NDoIZiLs/gMyZTnkRpgw9tMwbJmUPL77eJfdlMvzB96IBnqsOvMk4HtukXfX+H0mH9WECM7LVhXTnONWi+q3wQixYGQwjwhH3r9GyfOlaPlFqWs91BOH/7IE4GqTIEd3MD2zVJTKkPehNNN1Bu7Njk9mxuuaZkynkkELwjQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675827; c=relaxed/simple;
-	bh=HyDFN6xw3L7gjV6hkEPJk7jFVE7JOo+iGRLmVcSzufI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=fTbKJgddEFH5eiQ2KiVDXdTNy4w6nrYjWDaWz1MgpIi0ORbaGkEqrrc4E4gvnx7AtWxQnSAghuCRTP3a7WkD4O6k5/RID5zqj5hKsU9xfHnd6CQ62jCEz0OcNBI61+E1/suXtCg1qfzRKZhl3bCmhJhGWpyCqNWMa7PlVgV89sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MWriXBF4; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740675825; x=1772211825;
-  h=date:from:to:cc:subject:message-id;
-  bh=HyDFN6xw3L7gjV6hkEPJk7jFVE7JOo+iGRLmVcSzufI=;
-  b=MWriXBF45NpcO7+00GUIv3/uQqtJ1jx9LO6eTc9q9O16T0FL6+GU8kSo
-   ZHQ/iPuQ4OMKIFVz5CNFT5TfD2azH+tzJ1lSZJzhGWDPJgKVQFx2nQ6KA
-   TN2k2U+8rccTmHcMBwX1HNUuZGYPdOJ3eRjUYVDe3zoGt9ws6G/5R54Ml
-   aoS+G9drDBvUq5zlDBU2NaYpcuycWA5FDF0oKM2UwKR/VSTLGBMkfPd7S
-   Xa+QBJs3A9oTKidknKBu8f9kVnPdPKHWOdgNdkwJkux5legt40O5V49yK
-   1hIvjElLhqeQqM7bS//ee5LOWjRi/UeYF5tE6zrrfq7sXPAJIu0ipByLx
-   w==;
-X-CSE-ConnectionGUID: G1grKYFIQs6JevvrwZL64Q==
-X-CSE-MsgGUID: FBbwYDQ3SdKBvvkE8yPTCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="29182981"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="29182981"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 09:03:44 -0800
-X-CSE-ConnectionGUID: 1OjeLMbdRK2AFbU/Z0Khmw==
-X-CSE-MsgGUID: vHuAQYa+R9eQu3m1rz2k4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117609378"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 27 Feb 2025 09:03:43 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tnhIT-000DkO-0u;
-	Thu, 27 Feb 2025 17:03:41 +0000
-Date: Fri, 28 Feb 2025 01:03:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- 7a6b158e00c862ccfa7fe447682bd0bf5c229c73
-Message-ID: <202502280117.N7xXHN03-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740675839; c=relaxed/simple;
+	bh=0YCLYBIjSPadIF32crIzIKXRbc5uqe7HsLPnFMklQ5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BB72ztEwfUbaLckOyzI0oYrQKKUaFdhAt0+wyZf1yZCdU/g22cGZp1YMR1OJzLMNdAZgWOxPWrEsfdWXJq0cVJvpB6m8mhC4BFeX5hWBUOddKbvTd97/WlN49byKsCVWQ4Ru3Ya112J33t06doERZmC5+iKhzkPmDF4E2mpx3TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C834E1424;
+	Thu, 27 Feb 2025 09:04:12 -0800 (PST)
+Received: from [10.57.39.40] (unknown [10.57.39.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5C4A33F5A1;
+	Thu, 27 Feb 2025 09:03:55 -0800 (PST)
+Message-ID: <8e0cd41d-7cb1-4b78-9cc3-d7c92e86ec0c@arm.com>
+Date: Thu, 27 Feb 2025 17:03:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: realm: Use aliased addresses for device DMA
+ to shared buffers
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, will@kernel.org, maz@kernel.org,
+ steven.price@arm.com, aneesh.kumar@kernel.org, gshan@redhat.com,
+ robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
+ <20250227144150.1667735-4-suzuki.poulose@arm.com> <Z8CNRqJ6dJAG0Daa@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <Z8CNRqJ6dJAG0Daa@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-branch HEAD: 7a6b158e00c862ccfa7fe447682bd0bf5c229c73  posix-clock: Remove duplicate compat ioctl() handler
+On 27/02/2025 16:05, Catalin Marinas wrote:
+> On Thu, Feb 27, 2025 at 02:41:50PM +0000, Suzuki K Poulose wrote:
+>> When a device performs DMA to a shared buffer using physical addresses,
+>> (without Stage1 translation), the device must use the "{I}PA address" with the
+>> top bit set in Realm. This is to make sure that a trusted device will be able
+>> to write to shared buffers as well as the protected buffers. Thus, a Realm must
+>> always program the full address including the "protection" bit, like AMD SME
+>> encryption bits.
+>>
+>> Enable this by providing arm64 specific dma_addr_{encrypted, canonical}
+>> helpers for Realms. Please note that the VMM needs to similarly make sure that
+>> the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
+>> unprotected alias.
+>>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Robin Murphy <robin.murphy@arm.com>
+>> Cc: Steven Price <steven.price@arm.com>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+>> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> In case this goes in via the DMA API tree:
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-elapsed time: 1453m
+Thanks Catalin.
 
-configs tested: 71
-configs skipped: 2
+> 
+> (we could bikeshed on the names like unencrypted vs decrypted but I'm
+> not fussed about)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+It was initially decrypted, but Robin suggested that the DMA layer 
+already uses "encrypted" and "unencrypted" (e.g., 
+force_dma_unencrypted(), phys_to_dma_unencrypted() etc)
 
-tested configs:
-alpha                           allyesconfig    gcc-14.2.0
-arc                              allnoconfig    gcc-13.2.0
-arc                  randconfig-001-20250227    gcc-13.2.0
-arc                  randconfig-002-20250227    gcc-13.2.0
-arm                  randconfig-001-20250227    gcc-14.2.0
-arm                  randconfig-002-20250227    clang-17
-arm                  randconfig-003-20250227    gcc-14.2.0
-arm                  randconfig-004-20250227    clang-21
-arm64                randconfig-001-20250227    gcc-14.2.0
-arm64                randconfig-002-20250227    clang-19
-arm64                randconfig-003-20250227    gcc-14.2.0
-arm64                randconfig-004-20250227    gcc-14.2.0
-csky                 randconfig-001-20250227    gcc-14.2.0
-csky                 randconfig-002-20250227    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250227    clang-14
-hexagon              randconfig-002-20250227    clang-16
-i386       buildonly-randconfig-001-20250227    gcc-12
-i386       buildonly-randconfig-002-20250227    gcc-11
-i386       buildonly-randconfig-003-20250227    clang-19
-i386       buildonly-randconfig-004-20250227    gcc-12
-i386       buildonly-randconfig-005-20250227    gcc-11
-i386       buildonly-randconfig-006-20250227    clang-19
-loongarch            randconfig-001-20250227    gcc-14.2.0
-loongarch            randconfig-002-20250227    gcc-14.2.0
-m68k                             allnoconfig    gcc-14.2.0
-nios2                randconfig-001-20250227    gcc-14.2.0
-nios2                randconfig-002-20250227    gcc-14.2.0
-openrisc                         allnoconfig    gcc-14.2.0
-parisc                           allnoconfig    gcc-14.2.0
-parisc               randconfig-001-20250227    gcc-14.2.0
-parisc               randconfig-002-20250227    gcc-14.2.0
-powerpc                          allnoconfig    gcc-14.2.0
-powerpc              randconfig-001-20250227    clang-19
-powerpc              randconfig-002-20250227    gcc-14.2.0
-powerpc              randconfig-003-20250227    clang-19
-powerpc64            randconfig-001-20250227    clang-17
-powerpc64            randconfig-002-20250227    clang-21
-powerpc64            randconfig-003-20250227    gcc-14.2.0
-riscv                            allnoconfig    gcc-14.2.0
-riscv                randconfig-001-20250227    gcc-14.2.0
-riscv                randconfig-002-20250227    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                             allnoconfig    clang-15
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250227    clang-18
-s390                 randconfig-002-20250227    gcc-14.2.0
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250227    gcc-14.2.0
-sh                   randconfig-002-20250227    gcc-14.2.0
-sparc                randconfig-001-20250227    gcc-14.2.0
-sparc                randconfig-002-20250227    gcc-14.2.0
-sparc64              randconfig-001-20250227    gcc-14.2.0
-sparc64              randconfig-002-20250227    gcc-14.2.0
-um                              allmodconfig    clang-21
-um                               allnoconfig    clang-18
-um                              allyesconfig    gcc-12
-um                   randconfig-001-20250227    clang-17
-um                   randconfig-002-20250227    gcc-12
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20250227    clang-19
-x86_64     buildonly-randconfig-002-20250227    clang-19
-x86_64     buildonly-randconfig-003-20250227    gcc-12
-x86_64     buildonly-randconfig-004-20250227    gcc-12
-x86_64     buildonly-randconfig-005-20250227    clang-19
-x86_64     buildonly-randconfig-006-20250227    gcc-12
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20250227    gcc-14.2.0
-xtensa               randconfig-002-20250227    gcc-14.2.0
+Cheers
+Suzuki
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
 
