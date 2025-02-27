@@ -1,215 +1,138 @@
-Return-Path: <linux-kernel+bounces-535549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62C8A47469
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:26:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EE9A4746E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2A818874B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:26:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4150916F445
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFF71E521D;
-	Thu, 27 Feb 2025 04:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0AA1EB5C7;
+	Thu, 27 Feb 2025 04:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UEpVKR/7"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z9l9y78Q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B921A38E3;
-	Thu, 27 Feb 2025 04:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740630371; cv=fail; b=DSzVzYS6z/wqYOhDH3aHcPCdsSwjLx4xGyN5DFdEIylo/+NyWl1pSx4qY5112z3nfoMEdCd6VEdbUk2M7STvABpUVFevqlcsr7B1j8pJPvLRSOWY4dQKUn5K4mnZMA92pIjg4WIuwo2iL5bjesH1FfkotXFJLXJhAJ9wCLh7EiU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740630371; c=relaxed/simple;
-	bh=1QxNH2hHzCn+98tPlBhKUlkpWvjhO6MBMNs5hyZ5r2Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGbW99JcgWYPCTVvSY92WU2kIlZIz5P14D6xdkjpty9ShUYX6jrn7J0vNrTqrZTOxxVwbAqMFxqpGTmvUuCF0orrwFYBRf4ybbMiqlvxxD1UsH6yXHtxkuIdIRKpUfH+dyqzqsUKOQINFdH9s+J0LEu8uP7X/nq2U60yfhFv+2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UEpVKR/7; arc=fail smtp.client-ip=40.107.237.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qu8V7O7DO+c+LpEr3RCq2EJna3OF5dd0ZEg8cxa6E3TuFMwYE7Q1gfTV7ooJXKuHL7QTFKkzSRBHBWCL9V3vNHtM4NyRqRAwhtRRho6As4zjif+/lmD+kwWyUkL0G6aU9LlxAuCTUXWjSp07ihh33ki3O40pIpLWfIAAUmvganrGrCX9wUJeBvtmKvV1v6uWd9fLj+cfPqxltIZqAaqQvqSJ/xZpwgkIi+aXOaopWKmJ7mnBwnZyg4m24BGPWx6tsca9u46DnPCSqcrRJoeB0IjQG8JAHJZX0jgmeLGItBeZJ3QqFoO2PUd8kzq079xzYtQmE9WSrEiJ5Wm13But/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hIX0B9koQD5BnOZeIeeQUrLHR+zWKRrPwdiPtSmXdvI=;
- b=gA08EN9tWbkp6q81rQPXx/WVPKsT+bnC7/Rx922GBvWVqsosmuaJ433bkszk8F/FMq5QEqpgkJxX96D8E1tsiWqCTNtYzxI5GH2jSdOyxoa/bgjMgcyXmBNEzB2TPKi1rUUNT+xUr4/tB+JiU/5ZDh3RJN0CILGqAKxLny9geK4ZCtSn7Er5wQLsYuUWh81jAPDA/xdc9YEz1wH0MAR5VAacf5L/ybLdfRm4Oy7ganh4ERuJDX57IqLCLXx3RKiEK0RmAW1kjLojvI7org47XkgDXn8ZvBGRJcSMdnx1yCbR6+s7FAZsLd0h60BRASrIoiVYxYI2nzy5sWQiDPTiAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hIX0B9koQD5BnOZeIeeQUrLHR+zWKRrPwdiPtSmXdvI=;
- b=UEpVKR/7GdNbEh3SZEynjXneF3EhtmjiOmWnYeOKm6+RA0GumQykaQG7MTsoxXBV3CgfIQ0Vnlv8bc0n8LcIKirmsVv+XaoG4sfoCRvIrngPqiZm9ktZQ685pLaR1SoQlKkYnyf4jtpDHyri5K4hUWaTV/olWZbJwhPs2PNHcRo=
-Received: from DM6PR07CA0048.namprd07.prod.outlook.com (2603:10b6:5:74::25) by
- PH7PR12MB6812.namprd12.prod.outlook.com (2603:10b6:510:1b6::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
- 2025 04:26:05 +0000
-Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
- (2603:10b6:5:74:cafe::1a) by DM6PR07CA0048.outlook.office365.com
- (2603:10b6:5:74::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Thu,
- 27 Feb 2025 04:26:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 04:26:04 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
- 2025 22:26:03 -0600
-Received: from xhdlc210316.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 26 Feb 2025 22:25:33 -0600
-From: Sai Krishna Musham <sai.krishna.musham@amd.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <cassel@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
-	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
-	<sai.krishna.musham@amd.com>
-Subject: [PATCH v3 2/2] PCI: xilinx-cpm: Add support for PCIe RP PERST# signal
-Date: Thu, 27 Feb 2025 09:54:54 +0530
-Message-ID: <20250227042454.907182-3-sai.krishna.musham@amd.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20250227042454.907182-1-sai.krishna.musham@amd.com>
-References: <20250227042454.907182-1-sai.krishna.musham@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414481D935C;
+	Thu, 27 Feb 2025 04:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740630408; cv=none; b=X0yBZaTHbtRSpxlkoauIGsIRjBi5IceVmzXqRL64lynmVvIj8arQGWDt0rXxFvRuvyAYX9U8u2mLg6vPgZT+c3hgKHuQYQCrUiycxB1pVBAuxhHaSQH4sslqiqoCkKmTf/SQrf4lL1MgdqpITzxYnLLhm/1Klh5sysP1GKFkIdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740630408; c=relaxed/simple;
+	bh=3RWyJJzzq6v1nd9iBnaxQ/p73P3rqYIJGHwpi5gSqEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pyNPDsKSczu4462qJpohpzBWz2cT/HxBW31PblFbPFPA30twSazhM56kddVbtHltKkVjh1LzIEkpCR/oTQes7OYzy/cvL8IlVb6OHJnFMSB2o7XxFGIqCjN7KPlzU4a4H7IF8Sv5pZpvD7TV01FXmrBn8uMHS3EnzbMnUcL3g9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z9l9y78Q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QLn0a5017726;
+	Thu, 27 Feb 2025 04:26:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	U/T8a1Fx3ITU8GIQbqj0sTjwmK+KBWadvoZrZuc6APo=; b=Z9l9y78QXQinHBeP
+	oMyo05Bjq/gkpI0ok5dbrVRvn1ro2PXAN62lN9eAVnj4WlGkcox7vnJL8MuKfXTX
+	vzmnGw+aP6YcXBvM7rmkfx5nncGjrP/pym27PjFDENCvwSzNZbbL3DNfBmz9ccOX
+	txXg/u8/UYo3XO1GjUQ/NQqoT1uEVqCCLGjvnwgBqcmjqyfpd3mkMGlN9izhN8Oo
+	T04VmCayX6KHJ8iuHqNTfzQ7dUsFWQIAw/NU34fmyCdwGFrJWHj7ctL0dWIfxg4F
+	JTJ5A9GSHOWLF4wX46sTpBtFK1tBjazK9xQ/log8F7dVNN9L2jWPkH3Kwr6Fu4GR
+	ri3yGg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn48sv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 04:26:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R4QYN2017891
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 04:26:34 GMT
+Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
+ 2025 20:26:30 -0800
+Message-ID: <0ab2552a-3b8d-4b4f-8f9e-8b0c4f5bf6ea@quicinc.com>
+Date: Thu, 27 Feb 2025 09:56:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: sai.krishna.musham@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|PH7PR12MB6812:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0890e63f-51c1-4982-57db-08dd56e6d96c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BzdMcuy3PSUQxKdy6MRsJc8Qg540g5YIAWfApvqofAPcNjaQTfV+cjw6DhIc?=
- =?us-ascii?Q?K06dkt7S1SVpPsRgIFJRM4lB12cD0FrqJSViUnMaiSBNMhkfBXso8zWwXxoj?=
- =?us-ascii?Q?xdC7y/h2mG9V58mNfa6EFFyEH+ATE+nkxpsOcUJxlkkklLi5yzoHOg3Yxox8?=
- =?us-ascii?Q?uqOpG8lEBRjz+vZfXflLPzKrT1+cLfV5hC1LDTkKbYj7/PejP+8GXmB1Op0r?=
- =?us-ascii?Q?zRBo9Q0eBPV4MOFtdq7KYy7/VtrK2Wxh4drwkMFjh+JWPuvNjg+Z0R+QNtAG?=
- =?us-ascii?Q?phmdh0IJP23HmrJ8PA9seOY6uPZ6Ahhu3eWfRrXz7787SZ4HwVabMBY5Z004?=
- =?us-ascii?Q?UPsIfLexcHV2/FMJdu2LWlkVIB32DTsyp9Ybax+F66mvlvpw39o3o1tjh+q3?=
- =?us-ascii?Q?MGBYyUE0NMfv4Z1a4yfcAx4/tCOnJDRTcS6GSZgZA2mGRmdFSFKZdN8RgmYu?=
- =?us-ascii?Q?NDByRMsgLGYS44ukqhlHmpRg7k+dsERaApWspTs5V+fMdKa6yDia0kwaK/Bx?=
- =?us-ascii?Q?FuL7lqAq2CXaszck5ToiBWgGiqzQjc+7r5idiO7JCsETLngCzyON5RKDmw3k?=
- =?us-ascii?Q?XCH4RZWCYt3YGb3Pwn4+Ych/NzVTnF4lYBWhar7Smb9zXmhA85Yanf71KnB1?=
- =?us-ascii?Q?lRYcb9jDcMasmEbEUvN0fjM4GRsgyRX7/mMpx1CL8nHIgcQJzQdfDrB28MdY?=
- =?us-ascii?Q?Jiu+X8slkBHb4O7vkC/WuhRPnTdURo483q7SY8KVKj4X3WAFRFy5VUweudHk?=
- =?us-ascii?Q?dMUa2ByF3fomO82hqg1vBbMCjOqynYWqz2T0Iius3iIO4aqPd46PvusvQDj1?=
- =?us-ascii?Q?oxzjsI2A0VdQ982yHnMOXyqA9Fz8JTr3bEqrr0LneLkNMEP1hezAtsbXqy7Q?=
- =?us-ascii?Q?17OgUmt0Qdk16QedEyl8+JT0chuwgRavrauRzOuXIr+jyTlPDcdV2J9LlgLa?=
- =?us-ascii?Q?/itIWTJ2SU8w/4/D85Hs3K2eaSxpD01puw9br5wbjTXTCyd/RdUJS5LeaVjj?=
- =?us-ascii?Q?7Sq5za/98yCzH7regzDTsc8nfOm74xswEzfmAmdAYZfND7OAxKnnEMlnHZjb?=
- =?us-ascii?Q?FS3ePY+z0kejOGQZiDY3xtYasTG8kG3jXmpg9kXangjaqSIkh4kmLQrtUPuD?=
- =?us-ascii?Q?6trTSS+iahriOislhO7jNMMNEw0OhlV3+E+or4UBZalGqhS/ekdGLbg/FAVw?=
- =?us-ascii?Q?nuuwzcLwy3sbN/EVrcn7sHKx3s8cqRHbPKfr0e0vq1k+9MiuIAJWUPyI51t+?=
- =?us-ascii?Q?unoI1xJkv0DAugM6ueHayZSD7QFpBJ1biL9pVj0TXsuwjqjVDs8Dcio1lrOA?=
- =?us-ascii?Q?L2g+8EBzPY6nxhbLKlPCz/kdwHp4p1CqKdaB1ap8XTa+DfHZfJuYdKbugG6w?=
- =?us-ascii?Q?T5Tulj43/XPLJrOaNtIsAiWa9zwxk9lvXn41vtbRS4qq++Ar+jqktc3bvnzm?=
- =?us-ascii?Q?sj86ExduexuFwqVzUrjcTK5ifTU8oNIlqr0iyjugNOCO8rKy72FtDb7MeKXF?=
- =?us-ascii?Q?494OljUsFgftctA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 04:26:04.4982
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0890e63f-51c1-4982-57db-08dd56e6d96c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE38.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6812
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-idp: Update protected clocks
+ list
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250206-protected_clock_qcm6490-v1-1-5923e8c47ab5@quicinc.com>
+ <j43f4wu6wgoho2tl4crckemnngyvek5mma6ghkdyqcivk65dcf@gfsimovfuqy5>
+ <72cc2c52-1d0d-4a60-93da-14acd5947f1f@quicinc.com>
+ <o53nnmt5ypuoms3b37lehtmpwloudusr7647alehvnwsiltsyo@grd6ua7mh4o2>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <o53nnmt5ypuoms3b37lehtmpwloudusr7647alehvnwsiltsyo@grd6ua7mh4o2>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KIaSJOpMTn0nsZEDGeM9B3cYTXz2l3Gu
+X-Proofpoint-GUID: KIaSJOpMTn0nsZEDGeM9B3cYTXz2l3Gu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=572
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270031
 
-Add GPIO-based control for the PCIe Root Port PERST# signal.
 
-According to section 2.2 of the PCIe Electromechanical Specification
-(Revision 6.0), PERST# signal has to be deasserted after a delay of
-100 ms (T_PVPERL) to ensure proper reset sequencing during PCIe
-initialization.
 
-Adapt to use the GPIO framework and make reset optional to keep DTB
-backward compatibility.
-
-Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
----
-This patch depends on the following patch series.
-https://lore.kernel.org/all/20250217072713.635643-3-thippeswamy.havalige@amd.com/
-
-Changes for v3:
-- Use PCIE_T_PVPERL_MS define.
-
-Changes for v2:
-- Make the request GPIO optional.
-- Correct the reset sequence as per PERST#
-- Update commit message
----
- drivers/pci/controller/pcie-xilinx-cpm.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-index 81e8bfae53d0..558f1d602802 100644
---- a/drivers/pci/controller/pcie-xilinx-cpm.c
-+++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-@@ -6,6 +6,8 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-@@ -568,8 +570,24 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct pci_host_bridge *bridge;
- 	struct resource_entry *bus;
-+	struct gpio_desc *reset_gpio;
- 	int err;
- 
-+	/* Request the GPIO for PCIe reset signal */
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio)) {
-+		dev_err(dev, "Failed to request reset GPIO\n");
-+		return PTR_ERR(reset_gpio);
-+	}
-+
-+	/* Assert the reset signal */
-+	gpiod_set_value(reset_gpio, 1);
-+
-+	msleep(PCIE_T_PVPERL_MS);
-+
-+	/* Deassert the reset signal */
-+	gpiod_set_value(reset_gpio, 0);
-+
- 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*port));
- 	if (!bridge)
- 		return -ENODEV;
--- 
-2.44.1
-
+On 2/27/2025 9:50 AM, Dmitry Baryshkov wrote:
+> On Thu, Feb 27, 2025 at 09:42:39AM +0530, Taniya Das wrote:
+>>
+>>
+>> On 2/26/2025 10:12 AM, Bjorn Andersson wrote:
+>>> On Thu, Feb 06, 2025 at 03:43:21PM +0530, Taniya Das wrote:
+>>>> Certain clocks are not accessible on QCM6490-IDP board,
+>>>> thus mark them as protected.
+>>>>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>> Mark few clocks as protected on IDP of QCM6490.
+>>>>
+>>>> This patchset is separated out from the series[1] to remove dependency from
+>>>> the LPASS reset.
+>>>> [1]: https://lore.kernel.org/all/20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com/
+>>>> ---
+>>>>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 21 +++++++++++++++++++++
+>>>
+>>> I merged the patch adding this board in November 2023, are you saying
+>>> that for the last 15 months no one has actually booted it!?
+>>>
+>>
+>> I am not sure, I had got request to help boot the board which was not
+>> due to these clocks.
+> 
+> So, was the original submission in November 2023 broken or was it broken
+> by a later firmware upgrade which started to protect those clocks?
+> 
+That's a fair question, probably the later broke it.
 
