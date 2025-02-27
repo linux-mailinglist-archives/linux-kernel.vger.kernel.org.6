@@ -1,295 +1,252 @@
-Return-Path: <linux-kernel+bounces-536116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57D0A47BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD247A47BAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:16:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017FA3B6E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4225A3B6C15
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6232F22FF2E;
-	Thu, 27 Feb 2025 11:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084CA22FF44;
+	Thu, 27 Feb 2025 11:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T51glt1O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QC2IN5rY"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D0322ACCA;
-	Thu, 27 Feb 2025 11:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C44C22FAE1;
+	Thu, 27 Feb 2025 11:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654733; cv=none; b=OM/SpePsR6f6bAH6LVkZ1+ksytTqptxhZlgf1IFU7BrvJXVN2h7+chM4Q/oJsX2hRyT3SqJ0GerldxU02YIvm4HUK9m0xeQEkgT7Yby4B+Kdt4TxyLpmiuQZFtsjapORLi+l3XJolZJ1VV9o9aNBM4L8vVshaP2dA9LQz5UsnVI=
+	t=1740654732; cv=none; b=tL2Pln2jiBiJKGy9jNcJ/67DEPNDr67qfqM4xNrIfsJI8daH7IyN4xa3rGzUEn8bGKhJB/oL+dp2k/cwjJSPv/yihuMiyyGcD5DiZaXZdQKzBKw778/F9Xn34Jrn3iu38Z2+5+33DMdx4vwZjlpHuOYXSekjmA8G8h18R20rJ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654733; c=relaxed/simple;
-	bh=4FYYRgHH3VUyDZMaOWWCBzUBFsl/UaAcSjSpcX99lYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eO0Gqli+Rl/yfFSyudojTCJgJTd3ZiMJfUyaktf+5QV9iIxtpgw3q6oNMrAmts9JxZoxCLvG6Ac3MgRRrD/4/YSb4YfDAhA8qMmpnPEWJgB8VyYJUgaIOM1xbjsVtO+aHY91KaLFSpfPxfJhU23gAH2YZNLxL4HOdp0mMGMpdnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T51glt1O; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740654731; x=1772190731;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4FYYRgHH3VUyDZMaOWWCBzUBFsl/UaAcSjSpcX99lYk=;
-  b=T51glt1O1Pvv4b8Q0FeOpqyXVMO7QGD4PMhmOtMO5u/wUmJtxelGvTYh
-   rlMIMULZllZReJzCx4wB3w7/uHqTtm26/McCmHDM/okjrzXT5yr2bUHX1
-   2ysrd3VzRYhlmOCsuYDZp9cWJaD4DUidfHXwv/pD4QFvj2TXTkE42hL27
-   yLYqzI3MisqW+Mvjm5JzarwL59bNeAhQBjuPXa7CNqxVWPlgb/nu3OAsB
-   IS094/H9tmdL8oc91oO0F3n4+5pyu42OOi1hxXi26bcmDOD2pLoDFTQGs
-   o2FQbXBGTWQ1s+ZVgdG2rgKh+9lDz37Iv+oHsSu6SiWVeJGGiP6/Nig1Z
-   Q==;
-X-CSE-ConnectionGUID: AjgqPHkxRgSmV2ybSFVCVQ==
-X-CSE-MsgGUID: EHLmytdzQ8SFfkKMM4AcYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="45189902"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="45189902"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 03:12:11 -0800
-X-CSE-ConnectionGUID: 6lDc0jMBQ1WvWu+6rOXqhA==
-X-CSE-MsgGUID: Vs51CVOQS0qcxtws6/nReQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="154179043"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.220.110])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 03:12:09 -0800
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	broonie@kernel.org,
-	tiwai@suse.de,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH v3 14/16] ASoC: SOF: Intel: hda-sdw-bpt: add CHAIN_DMA support
-Date: Thu, 27 Feb 2025 19:11:27 +0800
-Message-ID: <20250227111130.272698-15-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227111130.272698-1-yung-chuan.liao@linux.intel.com>
-References: <20250227111130.272698-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1740654732; c=relaxed/simple;
+	bh=BAp6IZkgiyRD/RzyQXKxlsI0RKC6IU3pJOvuO9xE6Gk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Sm5aNK8J+DUfwmy/yZQL3wopzAywtq2gNFJ0+grQkaX0+scA6kVYTnpbbN/djhL6/NUJPlr1ntYDNwSzZHGnhahfcsAB5tGiasG+JmVmiqJY0H6DIpCuzFEC/sHupdhbQXZ8tV5ZVbkXWBdJjo1EmuSU7fbID3IHRJQGL7GzQHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QC2IN5rY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9VR8O014508;
+	Thu, 27 Feb 2025 11:11:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VBvqaX
+	UQxcsvpwV2aX/7sxnJGxIeXk+ZIcUf4CT2b9Y=; b=QC2IN5rYDDWFE2ABCxRtcT
+	lFMnnHt/aIvwCyrOIz6oK2aHc/ktvSAQTyFS+39vqRypN8ohXp/kXsauhGhZC+hI
+	Evddbqs4+0a43bltlrgbf1OwzI07GgAxlrw1o/fUsyPy/nvB4Bfzl+tqn9cKpWbu
+	uyRUBcoOO1YV2CiMrwp25avbOmnVLnJP3NtRgkNmb2LFNJfbHpsmr2YL7BNJ0FRQ
+	juy2MjVe2TdsjoSh89m20XMQbzx0yt2B7qF264cMiFonhs/KctASCg9rXQjuFrwV
+	DQ707TUtl/MBaFI9EFmq35oAT/a1SqbRivnRU/2ZEudNB2paFuqhc4xqiaxyoBJg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452c3a2wp1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 11:11:51 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51RBBpnR013432;
+	Thu, 27 Feb 2025 11:11:51 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452c3a2wnx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 11:11:50 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51RAjVR7002570;
+	Thu, 27 Feb 2025 11:11:50 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jyxhd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 11:11:49 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51RBBmVw17695162
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 11:11:48 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4767E20043;
+	Thu, 27 Feb 2025 11:11:48 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D1E920040;
+	Thu, 27 Feb 2025 11:11:42 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.240.191])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 27 Feb 2025 11:11:41 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v8 0/4] Tracing contention lock owner call stack
+From: Athira Rajeev <atrajeev@linux.ibm.com>
+In-Reply-To: <20250227003359.732948-1-ctshao@google.com>
+Date: Thu, 27 Feb 2025 16:41:28 +0530
+Cc: "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, nick.forrington@arm.com,
+        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+        bpf@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EB79B75A-896E-42B6-B206-314BA137E257@linux.ibm.com>
+References: <20250227003359.732948-1-ctshao@google.com>
+To: Chun-Tse Shao <ctshao@google.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: p3SUz25bm8BfibT94Qp1_itJ50ZotSFB
+X-Proofpoint-ORIG-GUID: xiDBKbydrwc80UQK6-AB1YvcbBUicya8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_05,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1015 adultscore=0 spamscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270083
 
-When the firmware is involved, the data can be transferred with a
-CHAIN_DMA on LNL+.
 
-The CHAIN_DMA needs to be programmed before the DMAs per the
-documentation. The states are not exactly symmetrical, on stop we must
-do a PAUSE and RESET.
 
-The FIFO size of 10ms was determined experimentally. With the minimum
-of 2ms, errors were reported by the codec, likely because of xruns.
+> On 27 Feb 2025, at 5:58=E2=80=AFAM, Chun-Tse Shao <ctshao@google.com> =
+wrote:
+>=20
+> For perf lock contention, the current owner tracking (-o option) only
+> works with per-thread mode (-t option). Enabling call stack mode for
+> owner can be useful for diagnosing why a system running slow in
+> lock contention.
+>=20
+> Example output:
+>  $ sudo ~/linux/tools/perf/perf lock con -abvo -Y mutex -E16 perf =
+bench sched pipe
+>   ...
+>   contended   total wait     max wait     avg wait         type   =
+caller
+>=20
+>         171      1.55 ms     20.26 us      9.06 us        mutex   =
+pipe_read+0x57
+>                          0xffffffffac6318e7  pipe_read+0x57
+>                          0xffffffffac623862  vfs_read+0x332
+>                          0xffffffffac62434b  ksys_read+0xbb
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>          36    193.71 us     15.27 us      5.38 us        mutex   =
+pipe_write+0x50
+>                          0xffffffffac631ee0  pipe_write+0x50
+>                          0xffffffffac6241db  vfs_write+0x3bb
+>                          0xffffffffac6244ab  ksys_write+0xbb
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>           4     51.22 us     16.47 us     12.80 us        mutex   =
+do_epoll_wait+0x24d
+>                          0xffffffffac691f0d  do_epoll_wait+0x24d
+>                          0xffffffffac69249b  do_epoll_pwait.part.0+0xb
+>                          0xffffffffac693ba5  =
+__x64_sys_epoll_pwait+0x95
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>           2     20.88 us     11.95 us     10.44 us        mutex   =
+do_epoll_wait+0x24d
+>                          0xffffffffac691f0d  do_epoll_wait+0x24d
+>                          0xffffffffac693943  __x64_sys_epoll_wait+0x73
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>           1      7.33 us      7.33 us      7.33 us        mutex   =
+do_epoll_ctl+0x6c1
+>                          0xffffffffac692e01  do_epoll_ctl+0x6c1
+>                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>           1      6.64 us      6.64 us      6.64 us        mutex   =
+do_epoll_ctl+0x3d4
+>                          0xffffffffac692b14  do_epoll_ctl+0x3d4
+>                          0xffffffffac6937e0  __x64_sys_epoll_ctl+0x70
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>=20
+>  =3D=3D=3D owner stack trace =3D=3D=3D
+>=20
+>           3     31.24 us     15.27 us     10.41 us        mutex   =
+pipe_read+0x348
+>                          0xffffffffac631bd8  pipe_read+0x348
+>                          0xffffffffac623862  vfs_read+0x332
+>                          0xffffffffac62434b  ksys_read+0xbb
+>                          0xfffffffface604b2  do_syscall_64+0x82
+>                          0xffffffffad00012f  =
+entry_SYSCALL_64_after_hwframe+0x76
+>  ...
+>=20
+> v8:
+>  Fix compilation error found by Athira Rajeev and Namhyung Kim.
 
-The code flow deals with the two TX and RX CHAIN_DMAs in symmetrical
-ways, i.e.
-alloc TX
-alloc RX
-enable TX
-enable RX
-disable RX
-disable TX
-free RX
-free TX
+Tested with v8 and compiles fine, thanks for addressing the issue.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
----
- sound/soc/sof/intel/hda-sdw-bpt.c | 126 ++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Tested-by: Athira Rajeev <atrajeev@linux.ibm.com>
 
-diff --git a/sound/soc/sof/intel/hda-sdw-bpt.c b/sound/soc/sof/intel/hda-sdw-bpt.c
-index bc7a3172656f..1327f1cad0bc 100644
---- a/sound/soc/sof/intel/hda-sdw-bpt.c
-+++ b/sound/soc/sof/intel/hda-sdw-bpt.c
-@@ -14,12 +14,80 @@
- #include <sound/hda-mlink.h>
- #include <sound/hda-sdw-bpt.h>
- #include <sound/sof.h>
-+#include <sound/sof/ipc4/header.h>
- #include "../ops.h"
- #include "../sof-priv.h"
-+#include "../ipc4-priv.h"
- #include "hda.h"
- 
- #define BPT_FREQUENCY		192000 /* The max rate defined in rate_bits[] hdac_device.c */
- #define BPT_MULTIPLIER		((BPT_FREQUENCY / 48000) - 1)
-+#define BPT_CHAIN_DMA_FIFO_MS	10
-+/*
-+ * This routine is directly inspired by sof_ipc4_chain_dma_trigger(),
-+ * with major simplifications since there are no pipelines defined
-+ * and no dependency on ALSA hw_params
-+ */
-+static int chain_dma_trigger(struct snd_sof_dev *sdev, unsigned int stream_tag,
-+			     int direction, int state)
-+{
-+	struct sof_ipc4_fw_data *ipc4_data = sdev->private;
-+	bool allocate, enable, set_fifo_size;
-+	struct sof_ipc4_msg msg = {{ 0 }};
-+	int dma_id;
-+
-+	if (sdev->pdata->ipc_type != SOF_IPC_TYPE_4)
-+		return -EOPNOTSUPP;
-+
-+	switch (state) {
-+	case SOF_IPC4_PIPE_RUNNING: /* Allocate and start the chain */
-+		allocate = true;
-+		enable = true;
-+		set_fifo_size = true;
-+		break;
-+	case SOF_IPC4_PIPE_PAUSED: /* Stop the chain */
-+		allocate = true;
-+		enable = false;
-+		set_fifo_size = false;
-+		break;
-+	case SOF_IPC4_PIPE_RESET: /* Deallocate chain resources and remove the chain */
-+		allocate = false;
-+		enable = false;
-+		set_fifo_size = false;
-+		break;
-+	default:
-+		dev_err(sdev->dev, "Unexpected state %d", state);
-+		return -EINVAL;
-+	}
-+
-+	msg.primary = SOF_IPC4_MSG_TYPE_SET(SOF_IPC4_GLB_CHAIN_DMA);
-+	msg.primary |= SOF_IPC4_MSG_DIR(SOF_IPC4_MSG_REQUEST);
-+	msg.primary |= SOF_IPC4_MSG_TARGET(SOF_IPC4_FW_GEN_MSG);
-+
-+	/* for BPT/BRA we can use the same stream tag for host and link */
-+	dma_id = stream_tag - 1;
-+	if (direction == SNDRV_PCM_STREAM_CAPTURE)
-+		dma_id += ipc4_data->num_playback_streams;
-+
-+	msg.primary |=  SOF_IPC4_GLB_CHAIN_DMA_HOST_ID(dma_id);
-+	msg.primary |=  SOF_IPC4_GLB_CHAIN_DMA_LINK_ID(dma_id);
-+
-+	/* For BPT/BRA we use 32 bits so SCS is not set */
-+
-+	/* CHAIN DMA needs at least 2ms */
-+	if (set_fifo_size)
-+		msg.extension |=  SOF_IPC4_GLB_EXT_CHAIN_DMA_FIFO_SIZE(BPT_FREQUENCY / 1000 *
-+								       BPT_CHAIN_DMA_FIFO_MS *
-+								       sizeof(u32));
-+
-+	if (allocate)
-+		msg.primary |= SOF_IPC4_GLB_CHAIN_DMA_ALLOCATE_MASK;
-+
-+	if (enable)
-+		msg.primary |= SOF_IPC4_GLB_CHAIN_DMA_ENABLE_MASK;
-+
-+	return sof_ipc_tx_message_no_reply(sdev->ipc, &msg, 0);
-+}
- 
- static int hda_sdw_bpt_dma_prepare(struct device *dev, struct hdac_ext_stream **sdw_bpt_stream,
- 				   struct snd_dma_buffer *dmab_bdl, u32 bpt_num_bytes,
-@@ -46,6 +114,21 @@ static int hda_sdw_bpt_dma_prepare(struct device *dev, struct hdac_ext_stream **
- 	}
- 	*sdw_bpt_stream = bpt_stream;
- 
-+	if (!sdev->dspless_mode_selected) {
-+		struct hdac_stream *hstream;
-+		u32 mask;
-+
-+		/* decouple host and link DMA if the DSP is used */
-+		hstream = &bpt_stream->hstream;
-+		mask = BIT(hstream->index);
-+
-+		snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL, mask, mask);
-+
-+		snd_hdac_ext_stream_reset(bpt_stream);
-+
-+		snd_hdac_ext_stream_setup(bpt_stream, format);
-+	}
-+
- 	if (hdac_stream(bpt_stream)->direction == SNDRV_PCM_STREAM_PLAYBACK) {
- 		struct hdac_bus *bus = sof_to_bus(sdev);
- 		struct hdac_ext_link *hlink;
-@@ -63,6 +146,8 @@ static int hda_sdw_bpt_dma_deprepare(struct device *dev, struct hdac_ext_stream
- 				     struct snd_dma_buffer *dmab_bdl)
- {
- 	struct snd_sof_dev *sdev = dev_get_drvdata(dev);
-+	struct hdac_stream *hstream;
-+	u32 mask;
- 	int ret;
- 
- 	ret = hda_cl_cleanup(sdev->dev, dmab_bdl, true, sdw_bpt_stream);
-@@ -83,6 +168,22 @@ static int hda_sdw_bpt_dma_deprepare(struct device *dev, struct hdac_ext_stream
- 		snd_hdac_ext_bus_link_clear_stream_id(hlink, stream_tag);
- 	}
- 
-+	if (!sdev->dspless_mode_selected) {
-+		/* Release CHAIN_DMA resources */
-+		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
-+					hdac_stream(sdw_bpt_stream)->direction,
-+					SOF_IPC4_PIPE_RESET);
-+		if (ret < 0)
-+			dev_err(sdev->dev, "%s: chain_dma_trigger PIPE_RESET failed: %d\n",
-+				__func__, ret);
-+
-+		/* couple host and link DMA */
-+		hstream = &sdw_bpt_stream->hstream;
-+		mask = BIT(hstream->index);
-+
-+		snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL, mask, 0);
-+	}
-+
- 	return 0;
- }
- 
-@@ -95,6 +196,20 @@ static int hda_sdw_bpt_dma_enable(struct device *dev, struct hdac_ext_stream *sd
- 	if (ret < 0)
- 		dev_err(sdev->dev, "%s: SDW BPT DMA trigger start failed\n", __func__);
- 
-+	if (!sdev->dspless_mode_selected) {
-+		/* the chain DMA needs to be programmed before the DMAs */
-+		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
-+					hdac_stream(sdw_bpt_stream)->direction,
-+					SOF_IPC4_PIPE_RUNNING);
-+		if (ret < 0) {
-+			dev_err(sdev->dev, "%s: chain_dma_trigger failed: %d\n",
-+				__func__, ret);
-+			hda_cl_trigger(sdev->dev, sdw_bpt_stream, SNDRV_PCM_TRIGGER_STOP);
-+			return ret;
-+		}
-+		snd_hdac_ext_stream_start(sdw_bpt_stream);
-+	}
-+
- 	return ret;
- }
- 
-@@ -103,6 +218,17 @@ static int hda_sdw_bpt_dma_disable(struct device *dev, struct hdac_ext_stream *s
- 	struct snd_sof_dev *sdev = dev_get_drvdata(dev);
- 	int ret;
- 
-+	if (!sdev->dspless_mode_selected) {
-+		snd_hdac_ext_stream_clear(sdw_bpt_stream);
-+
-+		ret = chain_dma_trigger(sdev, hdac_stream(sdw_bpt_stream)->stream_tag,
-+					hdac_stream(sdw_bpt_stream)->direction,
-+					SOF_IPC4_PIPE_PAUSED);
-+		if (ret < 0)
-+			dev_err(sdev->dev, "%s: chain_dma_trigger PIPE_PAUSED failed: %d\n",
-+				__func__, ret);
-+	}
-+
- 	ret = hda_cl_trigger(sdev->dev, sdw_bpt_stream, SNDRV_PCM_TRIGGER_STOP);
- 	if (ret < 0)
- 		dev_err(sdev->dev, "%s: SDW BPT DMA trigger stop failed\n", __func__);
--- 
-2.43.0
+>=20
+> v7: lore.kernel.org/20250224184742.4144931-1-ctshao@google.com
+>  Remove duplicate contention records.
+>=20
+> v6: lore.kernel.org/20250219214400.3317548-1-ctshao@google.com
+>  Free allocated memory in error patch.
+>  Add description in man page.
+>=20
+> v5: lore.kernel.org/20250212222859.2086080-1-ctshao@google.com
+>  Move duplicated code into function.
+>  Remove code to retrieve undesired callstack at the end of =
+`contention_end()`.
+>  Other minor fix based on Namhyung's review.
+>=20
+> v4: lore.kernel.org/20250130052510.860318-1-ctshao@google.com
+>  Use `__sync_fetch_and_add()` to generate owner stackid automatically.
+>  Use `__sync_fetch_and_add(..., -1)` to workaround compiler error from
+>    `__sync_fetch_and_sub()`
+>  Remove unnecessary include headers.
+>  Dedicate on C-style comment.
+>  Other minor fix based on Namhyung's review.
+>=20
+> v3: lore.kernel.org/20250129001905.619859-1-ctshao@google.com
+>  Rename/shorten multiple variables.
+>  Implement owner stackid.
+>  Add description for lock function return code in `contention_end()`.
+>  Other minor fix based on Namhyung's review.
+>=20
+> v2: lore.kernel.org/20250113052220.2105645-1-ctshao@google.com
+>  Fix logic deficit in v1 patch 2/4.
+>=20
+> v1: lore.kernel.org/20250110051346.1507178-1-ctshao@google.com
+>=20
+> Chun-Tse Shao (4):
+>  perf lock: Add bpf maps for owner stack tracing
+>  perf lock: Retrieve owner callstack in bpf program
+>  perf lock: Make rb_tree helper functions generic
+>  perf lock: Report owner stack in usermode
+>=20
+> tools/perf/Documentation/perf-lock.txt        |   5 +-
+> tools/perf/builtin-lock.c                     |  56 +++-
+> tools/perf/util/bpf_lock_contention.c         |  85 +++++-
+> .../perf/util/bpf_skel/lock_contention.bpf.c  | 245 +++++++++++++++++-
+> tools/perf/util/bpf_skel/lock_data.h          |   7 +
+> tools/perf/util/lock-contention.h             |   7 +
+> 6 files changed, 372 insertions(+), 33 deletions(-)
+>=20
+> --
+> 2.48.1.658.g4767266eb4-goog
+>=20
+>=20
 
 
