@@ -1,180 +1,206 @@
-Return-Path: <linux-kernel+bounces-536249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90E8A47D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F25A47D03
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16123A8CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864023B0F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B55623815D;
-	Thu, 27 Feb 2025 12:11:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E243A22B8D6;
+	Thu, 27 Feb 2025 12:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpQRU2F0"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B0A22DF9A;
-	Thu, 27 Feb 2025 12:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B73A101FF;
+	Thu, 27 Feb 2025 12:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658259; cv=none; b=ShTXwz9RDo5BegenSdS10R241G6PdK42gdJATnjoMs8HIjA3jmWDQQMwn4N6N0EJctj3gkVuvjKQpCduYQLw/K1JXqMYRUBXgsOVQ/r00sY38QoCxlGsBWbT7WYu0Gvoy4KNfCM8UxQc8o9Pa5y6BkchGIC6A4YgmesBkZL1lA0=
+	t=1740658134; cv=none; b=TeKCiQbWZgacXOiAXVoFxTM10PsK9ByFTyJ4bPAntJ6AhDCOOL919QiuWvwam30Nsz9xTS4h8vUAAuACe5DYEcbSVglAlDOw+7IGJHC6bE+QzCLEOs+0KFQlQ5D530kAIuK2hU9kSIOMTxv1A22mPA7drvx5d3UHuU39fssskLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658259; c=relaxed/simple;
-	bh=DL5WQ/m06BulIBUSol3oaMpPWqLdB+Y4lNopS+hQ/F8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iSi5w8BUDWXoEqIwWtKZRI8QaUzGRg9g6cpBnIZHy2I7xgZu5SsXkAiLtTgnCgbQoBO8DBAbo6MKCMmJkyTHH7qN8yWqgSjfEm+KsHsc47WFBx3vp/mY8ILy34yEP4MaSMFZ4rAGe+6XGhCNpfHplvSjBO8P7ksBl+SHYtnmbso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z3VXm140tz4f3js9;
-	Thu, 27 Feb 2025 20:10:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 07D981A06DC;
-	Thu, 27 Feb 2025 20:10:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3219KVsBnUNAxFA--.41103S4;
-	Thu, 27 Feb 2025 20:10:51 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: ming.lei@redhat.com,
-	tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk,
-	vgoyal@redhat.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2] blk-throttle: fix lower bps rate by throtl_trim_slice()
-Date: Thu, 27 Feb 2025 20:06:45 +0800
-Message-Id: <20250227120645.812815-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740658134; c=relaxed/simple;
+	bh=tql2RO8GL3XbRYzLyF10LrmaUQUmVqAYtQm0jp7XazI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rhKg1jC6v061UMcWYH1X9X6nsT99xPYUOZrTB45OciNypcOj9zciSqcKTUgw5DbFSItArGqSI/39ZTKMQCnx0dpIZaa/T9Jrtp20xLnUm3pSW4yloSaefRfuLuTUBYuuI72j6psizVtUr4t67tGlKSbjSnKXxOObNeL6H9qn2uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpQRU2F0; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22185cddbffso33975675ad.1;
+        Thu, 27 Feb 2025 04:08:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740658132; x=1741262932; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jgXAyWJlzyUT7W8oT86LCqJbT092n3CAES1oCH+us9Q=;
+        b=bpQRU2F02KYDVnGeSXRBP1K9d0T+jI8c2B7ZvDbGsjHfhiTPh254HLopUzbBdQQmtg
+         oOiYpik6txxfpJx+uwC9BqYSH9DWRHq0fIDjWKGFd8TklUbCYiBkuSXi0LbWeN2Ut2Dp
+         NCNYfAX6LuvydRsgOlPh9r/s8Vjukw4BNkev//ivNLZClXNgjHclr3hC5M27PH3xwPJk
+         TOeASV6R5BWZ1JR7QAOFk5Iqsx69zRrUKfA09z64SO6/7g841ituEsmtsuCs5MP0gyJv
+         gnka00WaAgZBozK/UR/XHK+V7Nsq5iD6OudjaL1aOKHgvQT5HA8q6vKo9pM0sVKS1czr
+         ti0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740658132; x=1741262932;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jgXAyWJlzyUT7W8oT86LCqJbT092n3CAES1oCH+us9Q=;
+        b=GUwg1MMWfFtWtQINB3t0j7afqPOyjzY4g065DwImJdwUQXPM2W9x7ffM2DMJupa3lJ
+         nvlhOtzcLCWDIyQoDpLpd872Z90Tztjq1N2HkRjvZqdMsJOHPG5+MXrnm13WPEF/2HB/
+         5W2owHeOzp/T3jmhz4NIzX5tZurHg9fqgZ4Zz+I+7GBqjXBoMml5HJrp7jI/5g4SEzKr
+         aqJNnbERIAfwrMm+zluSe7dv0qcKd9P3yY3HXIa/MnebA2ohXnA0Mksu09UEhIBW0orW
+         Rq+gFfmG0HqzuVv47wJK8vhNXp98LyVnvq2rI4FCrObWNgbBAjZ5haJN4yaLwFWT5yQY
+         A8Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5EdCD4WZ2+akNLuP5MD7XcCoz1iq6vyJ2DX2PyrkauCbXGsq6UaZ0RGpaNXPSC9yoG3iem9P9vFUqhn0=@vger.kernel.org, AJvYcCWjxAai77jDy2ukAyV225vsC+9dD33DqjuL92gGJ4te+dmC34Q2/O96GMpx2rLbR9SQxMoKIOJGdjLLDe+Q@vger.kernel.org, AJvYcCXBZuTiutEC3ngL+Y19gi8vW+poWvwukcStge+iWBpwk02eZNAeTj/Efs0YOQRyIdsg3Oqvh3u/8eGY@vger.kernel.org, AJvYcCXUyp3RWDhUwdgP00KXtU4SZB9htcC2d9wwqgU/DxU4VGlbB6T/XZ4Ydm/4k9O2f2VTsOr2dk7XExxzRRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhBqknXz1MECn9duYd4KBISr/VnfKerK75puZp/r69nKZvegle
+	A1e03wT1OnHIUCbcQjGkg8IPbGrj12oUIvtQqPQlVj0uLqAcnPIr
+X-Gm-Gg: ASbGncsCDK9KeqOiOHUev1VX7C+mgckzDEFP6NK+aMl1thRfhj/jg+FQEA2vxEpLCd/
+	yz476kxQ/cHAoJ6TT13io2K1L44k7+/+FHWQnBX1PvCWO7L+MfF/AoWkmbA/Y+Jxdvxjca0U3sF
+	3oDsQxvrc10IxrCBUrdsqXLl2t8IM0o0MAjdKCheWjt/+0S11l+tTbP39tyhydB7IqBUDEn5PkI
+	0zEnJf2nz8j90p1V4qqWY88Ae0FL+NZALW/CG+Wkzylla8/dxsPrzRlnYYsu23OgPPtf0DAQ8Jb
+	one/eZBUb2eFPd2mSBjPX7gpLJJw7nchcqpR3BbPToBWz2mb29HtRcrg4oG2KjTj61A7JLKSxzO
+	DkHPsoJDcW/ouGRmNSXBi
+X-Google-Smtp-Source: AGHT+IGpG3aYl9HWsQOldqhSuN29J84k9WJc0IYy7wzLeHC+7iHr1iy3v7s+wPTT3I+3pe465wAJnA==
+X-Received: by 2002:a05:6a21:6f0c:b0:1ee:d19c:45f9 with SMTP id adf61e73a8af0-1f2e39188d3mr5135935637.19.1740658131652;
+        Thu, 27 Feb 2025 04:08:51 -0800 (PST)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de19cdasm1074217a12.24.2025.02.27.04.08.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 04:08:51 -0800 (PST)
+From: James Calligeros <jcalligeros99@gmail.com>
+Subject: [PATCH v3 00/20] ASoC: tas27{64,70}: improve support for Apple
+ codec variants
+Date: Thu, 27 Feb 2025 22:07:27 +1000
+Message-Id: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3219KVsBnUNAxFA--.41103S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4DCr1fZFyDXw1kXry3XFb_yoW5tF43pF
-	W3Ar43WFW7XFy2kF43X3Z3Cay8C3yrGFy5Gwn5Cr4rA345Cr1xKFnxAr4Yya47A3s3uw4F
-	v3ZFvryxCr12yrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-B4-Tracking: v=1; b=H4sIAH9VwGcC/23NwQ6DIAyA4VcxnMcCVWB62nssOyhUJVExsJAtx
+ ncfuizx4PFv2q8LCegtBlJlC/EYbbBuSpFfMqL7euqQWpOaAAPBgBe0nucBqXYGNf1tBCpRCmk
+ 0RygMSZezx9a+d/XxTN3b8HL+sz+JfJv+PXHqRU4ZVZALWTbAG17eu7G2w1W7kWxehKNxOzcgG
+ WUOSrLWKGTqaKzr+gVhtMHr+gAAAA==
+X-Change-ID: 20250214-apple-codec-changes-6e656dc1e24d
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3916;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=tql2RO8GL3XbRYzLyF10LrmaUQUmVqAYtQm0jp7XazI=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOkHQk84PxRvSj/f26TnMf3zq6hn/pu8Jhf+/um1Z1Pnv
+ JNnmAVmdJSyMIhxMciKKbJsaBLymG3EdrNfpHIvzBxWJpAhDFycAjCRrAxGhs6n81dO2fhCyOrF
+ IYNyV3fWPwpLSmKXdHeuXqIZqX7m0iqGf1o8rpKShxfdM+A5V2x3RICdK+qU5izu3+ymgTl/L2p
+ fYAIA
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi all,
 
-The bio submission time may be a few jiffies more than the expected
-waiting time, due to 'extra_bytes' can't be divided in
-tg_within_bps_limit(), and also due to timer wakeup delay.
-In this case, adjust slice_start to jiffies will discard the extra wait time,
-causing lower rate than expected.
+This series introduces a number of changes to the drivers for
+the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+introduce (and improve in the case of TAS2770) support for the
+variants of these amps found in Apple Silicon Macs.
 
-Current in-tree code already covers deviation by rounddown(), but turns
-out it is not enough, because jiffies - slice_start can be a multiple of
-throtl_slice.
+Apple's variant of TAS2764 is known as SN012776, and as always with
+Apple is a subtly incompatible variant with a number of quirks. It
+is not publicly available. The TAS2770 variant is known as TAS5770L,
+and does not require incompatible handling.
 
-For example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
-slice is 20ms(2 jiffies), expected rate is 1000 / 1000 * 20 = 20 bytes
-per slice.
+Much as with the Cirrus codec patches, I do not
+expect that we will get any official acknowledgement that these parts
+exist from TI, however I would be delighted to be proven wrong.
 
-If user issues two 21 bytes IO, then wait time will be 30ms for the
-first IO:
+This series has been living in the downstream Asahi kernel tree[1]
+for over two years, and has been tested by many thousands of users
+by this point[2].
 
-bytes_allowed = 20, extra_bytes = 1;
-jiffy_wait = 1 + 2 = 3 jiffies
+[1] https://github.com/AsahiLinux/linux/tree/asahi-wip
+[2] https://stats.asahilinux.org/
 
-and consider
-extra 1 jiffies by timer, throtl_trim_slice() will be called at:
-
-jiffies = 40ms
-slice_start = 0ms, slice_end= 40ms
-bytes_disp = 21
-
-In this case, before the patch, real rate in the first two slices is
-10.5 bytes per slice, and slice will be updated to:
-
-jiffies = 40ms
-slice_start = 40ms, slice_end = 60ms,
-bytes_disp = 0;
-
-Hence the second IO will have to wait another 30ms;
-
-With the patch, the real rate in the first slice is 20 bytes per slice,
-which is the same as expected, and slice will be updated:
-
-jiffies=40ms,
-slice_start = 20ms, slice_end = 60ms,
-bytes_disp = 1;
-
-And now, there is still 19 bytes allowed in the second slice, and the
-second IO will only have to wait 10ms;
-
-This problem will cause blktests throtl/001 failure in case of
-CONFIG_HZ_100=y, fix it by preserving one extra finished slice in
-throtl_trim_slice().
-
-Fixes: e43473b7f223 ("blkio: Core implementation of throttle policy")
-Reported-by: Ming Lei <ming.lei@redhat.com>
-Closes: https://lore.kernel.org/linux-block/20250222092823.210318-3-yukuai1@huaweicloud.com/
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
-Changes from v1:
- - update commit message and comment, to mention rounddown().
- - add review tag by Ming, and ack tag by Tejun.
- block/blk-throttle.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Changes in v3:
+- Add Rob's Acked-by to Devicetree compatible additions
+- Dropped cherry-picked patches
+- Droped abuse of regulator API
+- Droped bespoke sysfs interface
+- Rationalised temperature reading for hwmon interface
+- Set SN012776 device ID with OF match data
+- Changed probe ops reliant on device ID to case/switch statement
+- Added documentation for new Devicetree properties
+- Improved a number of poor quality commit messages
+- Documented behaviour of die temperature ADC
+- Link to v2: https://lore.kernel.org/r/20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com
 
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 8d149aff9fd0..a52f0d6b40ad 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -599,14 +599,23 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
- 	 * sooner, then we need to reduce slice_end. A high bogus slice_end
- 	 * is bad because it does not allow new slice to start.
- 	 */
--
- 	throtl_set_slice_end(tg, rw, jiffies + tg->td->throtl_slice);
- 
- 	time_elapsed = rounddown(jiffies - tg->slice_start[rw],
- 				 tg->td->throtl_slice);
--	if (!time_elapsed)
-+	/* Don't trim slice until at least 2 slices are used */
-+	if (time_elapsed < tg->td->throtl_slice * 2)
- 		return;
- 
-+	/*
-+	 * The bio submission time may be a few jiffies more than the expected
-+	 * waiting time, due to 'extra_bytes' can't be divided in
-+	 * tg_within_bps_limit(), and also due to timer wakeup delay. In this
-+	 * case, adjust slice_start will discard the extra wait time, causing
-+	 * lower rate than expected. Therefore, other than the above rounddown,
-+	 * one extra slice is preserved for deviation.
-+	 */
-+	time_elapsed -= tg->td->throtl_slice;
- 	bytes_trim = calculate_bytes_allowed(tg_bps_limit(tg, rw),
- 					     time_elapsed) +
- 		     tg->carryover_bytes[rw];
+Changes in v2:
+- Changed author field of patch to match Martin's Signed-off-by
+- Added Neal's Reviewed-by to reviewed patches
+- Moved fixes to existing code to the top of the series
+- Removed tas2764's explicit dependency on OF
+- Removed complicated single-use tas2764 quirks macro and replaced with
+  if block
+- Added hwmon interface for codec die temp
+- Fixed a malformed commit message
+- Link to v1: https://lore.kernel.org/r/20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com
+
+---
+Hector Martin (5):
+      ASoC: tas2764: Enable main IRQs
+      ASoC: tas2770: Power cycle amp on ISENSE/VSENSE change
+      ASoC: tas2770: Add zero-fill and pull-down controls
+      ASoC: tas2770: Support setting the PDM TX slot
+      ASoC: tas2770: Set the SDOUT polarity correctly
+
+James Calligeros (6):
+      ASoC: dt-bindings: tas27xx: add compatible for SN012776
+      ASoC: dt-bindings: tas2770: add compatible for TAS5770L
+      ASoC: dt-bindings: tas27xx: document ti,sdout-force-zero-mask property
+      ASoC: tas2770: expose die temp to hwmon
+      ASoC: tas2764: expose die temp to hwmon
+      ASoC: dt-bindings: tas2770: add flags for SDOUT pulldown and zero-fill
+
+Martin Povišer (9):
+      ASoC: tas2764: Extend driver to SN012776
+      ASoC: tas2764: Add control concerning overcurrent events
+      ASoC: tas2770: Factor out set_ivsense_slots
+      ASoC: tas2770: Fix and redo I/V sense TDM slot setting logic
+      ASoC: tas2764: Reinit cache on part reset
+      ASoC: tas2764: Configure zeroing of SDOUT slots
+      ASoC: tas2764: Apply Apple quirks
+      ASoC: tas2764: Raise regmap range maximum
+      ASoC: tas2764: Crop SDOUT zero-out mask based on BCLK ratio
+
+ .../bindings/sound/ti,tas2770.yaml       |  13 ++
+ .../bindings/sound/ti,tas27xx.yaml       |   5 +
+ sound/soc/codecs/tas2764-quirks.h        | 180 +++++++++++++++++
+ sound/soc/codecs/tas2764.c               | 258 ++++++++++++++++++++++++-
+ sound/soc/codecs/tas2764.h               |  21 ++
+ sound/soc/codecs/tas2770.c               | 240 ++++++++++++++++++++---
+ sound/soc/codecs/tas2770.h               |  19 ++
+ 7 files changed, 706 insertions(+), 30 deletions(-)
+---
+base-commit: 32adeb9806ac5bf928514b62e6145bba12dfd71a
+change-id: 20250214-apple-codec-changes-6e656dc1e24d
+
+Best regards,
 -- 
-2.39.2
+James Calligeros <jcalligeros99@gmail.com>
 
 
