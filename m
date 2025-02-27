@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-537282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06AFA48A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:42:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD74EA48A10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790C63ADC04
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97E23A1CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6086426FDA0;
-	Thu, 27 Feb 2025 20:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBB226FA59;
+	Thu, 27 Feb 2025 20:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lbUGeptV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VcADpQHH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124AC21661C;
-	Thu, 27 Feb 2025 20:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85B91D61B9
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740688971; cv=none; b=TxJ/ibM0CD3eAhstcPavHNzXP3KiRinokQEYmAc8bgPFNbsQZED64ftBuc8vS9iI5LpKAvvIi29SlDdcpWgRa7wjZlq9eSTE6EMBNavLb2/XUNtaaBnyxgo/j/MgoiIZVy+gf3ZbLAAkGm9T0P1eNzRk1RD0BEo0Y7p3AoxTqNY=
+	t=1740689005; cv=none; b=pYYIxtpc8F4gJtD/zxfOoMHOq+h8oP1ElwyiQ6j8aVVRcmsSvDFxzWrmK4R5DtwsLgX7HGm+jrHvdGsd22shf3AXg6exkOVO9NYGUBRV8ymlE8Ny/H4+TYIz66ftX9BgwiRuSQh2aRpNVX1ZKBx3SGUpR0ryCrsgKHeH6atmrK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740688971; c=relaxed/simple;
-	bh=Ik/Sr/AYR8XNwacnrej64FWwcECuaQt6n9e3FOLudCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pBXlyP6sC7t4EVVx3p4HSHPtVb9ODVZjnDo4UBR7I8M3YfYd7236K3ZUevqug3ZORMzgtI3NaaGrDPW1d4TaN53HV0TW/NnZNiS9UJ1fmlPm1pxI4BqHZY2WxeEZwXnMHTjkysrT+D1XkmKIil0UdMb692n8Mh9ebm0XCf53+CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lbUGeptV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740688961;
-	bh=F52dFzypsQnN0/ZcWBvac4G2GfFNedfL8EpAY3+jHFo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lbUGeptV8jvRk8bGuX2QBUueTSXKpxZpYQLqTx90n4FrsK77coeeo1RZ1VR2Yx/M7
-	 u3sc/scPghm4xELTPQXdPnwEKmtQwppP+tctZO2eFpwVFFytJ+EznkXx5pWQoOwaQb
-	 nY1EdhxAx/tOI1G6I9HG5sD3twkIoc98N95ISiMwEdtm06JVIbc7+AXyJmfBXgpMq2
-	 b6DFWE3RiyhTc9Ddek5WJiG7nNhJ+xmrzP3KN6ZtkfBV+CkftDbFUok0gp/r6HmS7Y
-	 yeXgwxvf9/Us62rvwANOqxrfaTHkWfctAkcdvLjz8svWfEvIQmLehtT5687pdRkrEX
-	 DLqQxZDW2c6dg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3jvj0xtWz4wcT;
-	Fri, 28 Feb 2025 07:42:40 +1100 (AEDT)
-Date: Fri, 28 Feb 2025 07:42:40 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20250228074240.1010cab3@canb.auug.org.au>
+	s=arc-20240116; t=1740689005; c=relaxed/simple;
+	bh=CvdwKDg7xY2gSv0lU9vQ5UGiP0lcMBC5UMzd/6dg4G0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZfiZiWzfTr0RytTZjIwgzFTgQGAoPrayFk+ZZGC2e5WER6D4dsBFhZKQujfSFYmBNE2/Mjo5puqnlPvzxkPW0LxTpnS0s5LvFyE+ic6L8KI/hRF45t7qIaUTh7P+7qF0iSR5Usq2RZvliwgH6gDDGBVRDOPkhEklL+yOGwPTXxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VcADpQHH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740689002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kLzVMGpQ3+64AmofLOM+OD8cJgxT73OQ3RwaxSr2hSY=;
+	b=VcADpQHHFE4X0Fd6oTBo28t63RFLi0EfDvpBZWBZWpijlB/TwNhkNduAOJ9lcEgxRy5BgH
+	Bc91th4kCRVRj41xYRGPaH5MTkMdF5NGm9M01nmTSy9XsQPD6991n07elP6NTpLtpc5RoD
+	We1PmWicfoytVqWl6z3KJWJP9By5nmM=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-_CE9FGeyOSOlkUmJnaLfUw-1; Thu, 27 Feb 2025 15:43:21 -0500
+X-MC-Unique: _CE9FGeyOSOlkUmJnaLfUw-1
+X-Mimecast-MFC-AGG-ID: _CE9FGeyOSOlkUmJnaLfUw_1740689001
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-474bb848a7dso2879841cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:43:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740689001; x=1741293801;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kLzVMGpQ3+64AmofLOM+OD8cJgxT73OQ3RwaxSr2hSY=;
+        b=gOPVxFhELKuvhRb7cVJuoSorXOmXxzp0NfSpnThBFQV+8FYBVOv539waKj82ZQnZEj
+         uP+OeKfsbOdIuApx5YzMKHjftG5cFES97y9uMQHXrNv6cxUV0k4PgFM3uuUlUeVJZo65
+         9GvRJbiXF/W9oIy+sT2H67Atq/mWwC/Odel6EDGTjg3nZXnO6tOIBgYIXRtErwQyWUm8
+         tgLERnTWx2q54doMBMSUFaYgtytjFRGeBga4U4cFc2hluX8ROk1qxW8a9UslpGtGOXXq
+         kq2Xtv+GlbcEwvYtjDODv7cyCQn6+hR8bHOsUZ9LyrdbvIwgQbs8Gwh7cy+fSC1O+qyY
+         pUIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJO0od8KRqpuEsPPWdlF1aB+9mFbOLCyUaOE1o+HUV2Olu2dA0u9m/lb5pq/OoqJmMlQNMkfSnjfLjdW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzwyaebQnwzJGCWFcJ5c1RaPjRUGUgQpvE5P+qfi047lYsVEq5
+	KPXr4Uhl7Tp6m/xX4GD2rwDul/h9I3HxXhzS8eMeBFsAHvoZuDQVIoxXCZfiNNybsWrXVY3azR2
+	3HaBQA2ad1wJyZtWJldWPeG7msCkReQRYivEhtbebM2kIrKjn5KiEUdvKChfYdA==
+X-Gm-Gg: ASbGnct1dbaeE9dFRBCYsFZUg+gJFcOxFUFBQ8IThvpx5HAAQK15bpTbbFWUEPe3sZ8
+	hom/+glaHPtP7mbwUI6su4i0SaOTHOx8FM9d0cVZAywn7IbIF4v+8pXxlaXtLyvvG9XkOikfdt0
+	tDnN2mldvWkvWKI9kOTIwinLBupiqiLtxmV+bls0M7iTNuUqelc9Ny+Fovxs5zLlSTAFuNDgmNy
+	XLnf6DkvnFwjVVEHkGv4xE9XgZUGWGyAgmZvQYJvSxR5JR8snA6pgF7/x7TbnDgaD4x+oJ7np07
+	JYERSgZbjnXGawk=
+X-Received: by 2002:a05:622a:1ba1:b0:471:bd5e:d5e3 with SMTP id d75a77b69052e-474bc0f42f6mr8394281cf.38.1740689000791;
+        Thu, 27 Feb 2025 12:43:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE47+5mOAR+v6wUfVnqg2K6hIMrSfsz3wH5rCj9Z7Js/E9C5WjePcsXbpi83rsrpfI2eYeUrA==
+X-Received: by 2002:a05:622a:1ba1:b0:471:bd5e:d5e3 with SMTP id d75a77b69052e-474bc0f42f6mr8393941cf.38.1740689000497;
+        Thu, 27 Feb 2025 12:43:20 -0800 (PST)
+Received: from [192.168.2.110] ([70.52.24.57])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474721bfc76sm15531991cf.46.2025.02.27.12.43.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 12:43:19 -0800 (PST)
+Message-ID: <4196e42f-7b04-44a7-ac34-6ca2e9190c21@redhat.com>
+Date: Thu, 27 Feb 2025 15:43:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oPnzTyQZdyIRCgdNQSUi=U/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
+To: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>
+Cc: kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250225114638.2038006-1-ryan.roberts@arm.com>
+ <174052227763.2420464.2784848656225511807.b4-ty@kernel.org>
+Content-Language: en-US, en-CA
+From: Luiz Capitulino <luizcap@redhat.com>
+In-Reply-To: <174052227763.2420464.2784848656225511807.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/oPnzTyQZdyIRCgdNQSUi=U/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2025-02-27 13:50, Will Deacon wrote:
+> On Tue, 25 Feb 2025 11:46:36 +0000, Ryan Roberts wrote:
+>> When the range of present physical memory is sufficiently small enough
+>> and the reserved address space for the linear map is sufficiently large
+>> enough, The linear map base address is randomized in
+>> arm64_memblock_init().
+>>
+>> Prior to commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and
+>> use it consistently"), we decided if the sizes were suitable with the
+>> help of the raw mmfr0.parange. But the commit changed this to use the
+>> sanitized version instead. But the function runs before the register has
+>> been sanitized so this returns 0, interpreted as a parange of 32 bits.
+>> Some fun wrapping occurs and the logic concludes that there is enough
+>> room to randomize the linear map base address, when really there isn't.
+>> So the top of the linear map ends up outside the reserved address space.
+>>
+>> [...]
+> 
+> Applied the reduced version to arm64 (for-next/fixes), thanks!
+> 
+> [1/1] arm64/mm: Fix Boot panic on Ampere Altra
+>        https://git.kernel.org/arm64/c/2b1283e1ea9b
 
-Hi all,
+Just in case:
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+Tested-by: Luiz Capitulino <luizcap@redhat.com>
 
-  2a509818ec2d ("Bluetooth: L2CAP: Fix L2CAP_ECRED_CONN_RSP response")
-  980d6e2904df ("Bluetooth: Always allow SCO packets for user channel")
-
-These are commits
-
-  b25120e1d5f2 ("Bluetooth: L2CAP: Fix L2CAP_ECRED_CONN_RSP response")
-  bd30e8d7bfa6 ("Bluetooth: Always allow SCO packets for user channel")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/oPnzTyQZdyIRCgdNQSUi=U/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfAzkAACgkQAVBC80lX
-0GygbAf/aUebDEBx4OIdvd7wVRu31yLaQDA7p4a1ev6TWvOAkKR1nF1cnsBxli5N
-nn2wFAPsvA4FmddMFQM6cKWj69o6yoUTsGao5eQIk3UgGwdJqfo3D0qRKm1DkuBy
-XdzEg5LU99BI0JbL/TXhXhc8buGizk4xPfdUjL+rMP2qiyZNcGKO/Dx4Ox8IpDK3
-uMxev6JQaUCaARjRSDZF0VILOtmpZNAAGyHBvrhoSW2qcVd23+owMArwguTuDeCA
-Ev8AFkPDAIDPc7paVUZDY2Hi7j+cyt995ZRmI57wGTFvzSL2Eg2uRk+sXF53tdf4
-kIi9SuALkAd10IQ19M4U0jkz4i0boQ==
-=L6co
------END PGP SIGNATURE-----
-
---Sig_/oPnzTyQZdyIRCgdNQSUi=U/--
 
