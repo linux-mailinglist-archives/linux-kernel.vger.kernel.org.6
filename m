@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-535769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F21A476ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:56:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C70CA476E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BC93AEE99
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B96C1188A8FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F122236FC;
-	Thu, 27 Feb 2025 07:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B504922370F;
+	Thu, 27 Feb 2025 07:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Z+a6qNXl"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SXOLHzql"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1F2221F26;
-	Thu, 27 Feb 2025 07:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A13213E71
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740642948; cv=none; b=F4GV85fXCbNM2T/ENC9aaQxOoSgc3Er0fPEJLxqRiHwlw+ZsYMPbQtNiI3DrU4d4K6n00A8+vr1/9J0IXyaMBBSWnDvpSPXMmbsbFH5s/GPpYXXDwCcN17xXuW7RfAmzsl11UCcVmevOmx+1fHmaAGMhSbM7102yFeX3OwWzDqw=
+	t=1740642781; cv=none; b=oxgOtmgTpuusu1YSIjIdKpV3A4lml9OH7XwzUhGRZs8TmTM/JwKL7EZIH0qqjGbk2nmpt6na2MWAbkYDNkm7DamFr7zCB062/68gwvbbUXELs38nyIxKjACAp2xTz8Tg6ZRcNveuNln/ZwfYoh5+4oqDQYiztL5OJlp1bGeq5z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740642948; c=relaxed/simple;
-	bh=xI5HhNdKctaYZZh8qMdR+YfI/h8lxZX2RnqCQfmSGTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HtP4Wx+lGMLfFHob9soLJGcg7+h1J9K5Cu7Eof7wgTgVJcoM/hYJ6oeT/0t8gJE0PYJqZrk6oiy8qhde4AO2VbyQTRWcfLFh3tTGIm0vz7lP02/NgNRIocQ1kCVnSZN760CJxihC+2v+DBoC7M+kzy1FWcyzQSOlJL4H72qtk94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Z+a6qNXl; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FqSc7JMhq3/DGs0M9ECHpUHU9QBIzBw5prMUBxfWzAE=; t=1740642945; x=1741247745; 
-	b=Z+a6qNXlgpaBtdeJ9YSTqdAXJ3QaaqSU1207JCogqHry4xVWu7NyQK+PQNQaUWEwl5lWPRQc95Q
-	GclwyljhBUrpUtEse5aDxXp1NDBTxhnK/9lg3ClBPHNtzchoKRbTha4r+8l5sWjaZ/HdlWb2IZROp
-	5RKP6jfh0FMv9/hiVcB/1/wa5cWaRrY1HO7XNdOd0ZcboEYrNr8DiyQtfBClmREyIix0KVLUbiZDa
-	Qkt5KmImjKxg7/6qr3ZdRkrR/LLNa9wqzR1hCYlsNPgRDpzsYlusrvPhDQmvIShrillMneMn7v/H/
-	gr+NA58YQl0++SjoSdaA8Ml6FwSatUoW7+ew==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1tnYgk-00000000Ryt-0P9a; Thu, 27 Feb 2025 08:52:10 +0100
-Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1tnYgj-00000001gus-3brW; Thu, 27 Feb 2025 08:52:10 +0100
-Message-ID: <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Artur Rojek <contact@artur-rojek.eu>, Yoshinori Sato	
- <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Daniel Lezcano
-	 <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Uros
- Bizjak	 <ubizjak@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"	
- <jeff@coresemi.io>, Rob Landley <rob@landley.net>,
- linux-sh@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Thu, 27 Feb 2025 08:52:09 +0100
-In-Reply-To: <20250216175545.35079-1-contact@artur-rojek.eu>
-References: <20250216175545.35079-1-contact@artur-rojek.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	s=arc-20240116; t=1740642781; c=relaxed/simple;
+	bh=WAve0K61aiBm2H/kJcL9Z33ely0mkl7umME78jtqWNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ecvsZTwylBtUMP9GGR3bZK3sHicrHf0VyfmjeQUJWNqYti6XtJdy5gChgsq1nLeepgjscYxue/yDsDk0ozFWv67w2kD7BVS1dv/WjExsI0yBF7hxpnwIeRo90gvCI/GvwaowvpE9KWDexgp6e0wn3knyIshYQNtDUdJQY0D1M3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SXOLHzql; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f2f391864so272240f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:52:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740642778; x=1741247578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WAve0K61aiBm2H/kJcL9Z33ely0mkl7umME78jtqWNk=;
+        b=SXOLHzqlXhxb4jvoRIJJaRW67+Z98sGduAmYGrPWU3Nv3sqgsuWk5SGGYZOIJNweKv
+         jZyVHAFgoG7SwGXnIhbPxSLO8GoxDQzEEEUp4EJJCnyj/xFWCRAA8DnqbvoKrFk1pEjY
+         i+M5RNocw+yifwWy7D0XS6xCsYcA/p0TN5Jt0k0rhB1vGZyjwFHeyt7waolqBXl7wROH
+         upGc4/G4Wyp/ObOZy54Hjwy5BSCKBUIbowxvSSQkUnxMnLOHEFp+604fLOCZouQxcnLf
+         6nDfRxTb0sUkhHTbgpIBYFGd+tfACLBqmaZW8sM9rUe03FevcsAYOcAtVJeaOAmqUfcm
+         u7sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740642778; x=1741247578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WAve0K61aiBm2H/kJcL9Z33ely0mkl7umME78jtqWNk=;
+        b=TCPipa90qdRyu4XBV9kDXFrnoHiKd02/+ge3hHBN/WS4gEKq/QBOSlrDxp9w0nkqIo
+         sFiZ8J1uHwMRpDJ+9D9SZCCoSMl6eegmfFYDHUaKnu1QfB9+7DMJQCt8bmhdTV42e/Eb
+         YxjS3p42Gp3gz09xKDNUsyXUXdVtT4s89dhoY2L/YtztRjEE6OBPbScuqr8t4BWUwMl4
+         Y0BIZ2viioNxR9BCX8ujr3S7JXiC+xWrjXgXsF6DCmxHGOLc40W5ibYrrCiE3aQ1jaIw
+         BHGutXn7HjJC3HlIHhY5PJjGZLeaJ3ARoJGsdzGf5nGGKGBPheNlHQXjZbzKE2Y2hBNP
+         /5rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl5CD5gud3NqIK8gafBMxuWTgBqnqVqTO4XQGXZDmRsT/nTPh/i171GjoB9WXM9Dc8nJrJ66rOOP1U380=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylADK8wod5WWQdb7MeQ6Px9j88ZQ6LCGLxwFcCTSU/bAciwWlN
+	+oipGZdQVCcGPWZdGpK/ppDINlHy2NGmja7o4f9Xpk262RphvOhns3VKyY18sweHPjXf0i/DjKw
+	KHCzCihziNoIJD0KQXOhacY/iGvnzhJd+Cid4
+X-Gm-Gg: ASbGncvkuTLD/Qd0ft67hV2SuF9F9R1ckYKOOiDwuO7OVlttdgQIllItfBMfUz0Bxak
+	MQhk80q8wpbDEcsRTyiT4jy/X0CBbbErhrtnqvNJtXg3E5IgMm7HXXl+jcFI8/W88dGyW5gWKaq
+	Qr7Gq3knfx
+X-Google-Smtp-Source: AGHT+IHq/W1ckseU42DFdamVj9VolCNCEVXVrOQeYw+6Bv1YqodQtI+E8O2KwTAXHPbfpoMMUid6060aOourekauJZE=
+X-Received: by 2002:a5d:6d87:0:b0:38f:4251:5971 with SMTP id
+ ffacd0b85a97d-390d4f367a0mr4807927f8f.6.1740642777735; Wed, 26 Feb 2025
+ 23:52:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250227030952.2319050-1-alistair@alistair23.me> <20250227030952.2319050-20-alistair@alistair23.me>
+In-Reply-To: <20250227030952.2319050-20-alistair@alistair23.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 27 Feb 2025 08:52:45 +0100
+X-Gm-Features: AQ5f1Jqr2f3px356CRZa1JK9YL4d2jGf-uxwiU32ka-YgAtLTMIEvy1EGdGheLc
+Message-ID: <CAH5fLgjFvm-+jVpBsgU-sgOOzHic9DvcUMMg_z0G+37z5DWbPg@mail.gmail.com>
+Subject: Re: [RFC v2 19/20] rust: allow extracting the buffer from a CString
+To: Alistair Francis <alistair@alistair23.me>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, lukas@wunner.de, 
+	linux-pci@vger.kernel.org, bhelgaas@google.com, Jonathan.Cameron@huawei.com, 
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, 
+	ojeda@kernel.org, alistair23@gmail.com, a.hindborg@kernel.org, 
+	tmgross@umich.edu, gary@garyguo.net, alex.gaynor@gmail.com, 
+	benno.lossin@proton.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Artur,
+On Thu, Feb 27, 2025 at 4:12=E2=80=AFAM Alistair Francis <alistair@alistair=
+23.me> wrote:
+>
+> The kernel CString is a wrapper aroud a KVec. This patch allows
+> retrieving the underlying buffer and consuming the CString. This allows
+> users to create a CString from a string and then retrieve the underlying
+> buffer.
+>
+> Signed-off-by: Alistair Francis <alistair@alistair23.me>
 
-On Sun, 2025-02-16 at 18:55 +0100, Artur Rojek wrote:
-> this series fixes boot issues and allows J2 Turtle Board to boot
-> upstream Linux again.
->=20
-> Patch [1/2] enforces 8-byte alignment for the dtb offset.
->=20
-> Patch [2/2] resolves a problem with PIT interrupts failing to register.
+I believe the idiomatic naming for a method like this is `into_vec`.
 
-I can confirm that this series makes my J2 Turtle Board boot again!
-
-> Even with the above fixes, Turtle Board is prone to occasional freezes
-> related to clock source transition from periodic to hrtimers. I however
-> decided to send those two patches ahead and debug the third issue at a
-> later time.=20
-
-Yep, it just got stuck for me right after these messages at my first boot a=
-ttempt:
-
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:=
- 7645041785100000 ns
-futex hash table entries: 512 (order: 1, 8192 bytes, linear)
-NET: Registered PF_NETLINK/PF_ROUTE protocol family
-clocksource: Switched to clocksource jcore_pit_cs
-
-It boots past these messages on second attempt, although it's now stuck try=
-ing to start
-/init. However, it's still echoing <RETURN> strokes, so it might be an issu=
-e with Toybox.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Alice
 
