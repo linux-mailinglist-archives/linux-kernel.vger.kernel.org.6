@@ -1,142 +1,178 @@
-Return-Path: <linux-kernel+bounces-535493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E7FA47388
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:21:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75775A47386
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1594A3A812D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38ABC188EEF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA81A189B84;
-	Thu, 27 Feb 2025 03:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Je6MaUdS"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEDC15278E;
-	Thu, 27 Feb 2025 03:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3738518787A;
+	Thu, 27 Feb 2025 03:20:15 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E7F433C8;
+	Thu, 27 Feb 2025 03:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740626462; cv=none; b=CCAzb/SeJN0LTyZVNINkUp16nnqj7UPVXnZxeRnh4B1SoxH1g5T+1DkZGt7sq+9lmgEfh0OBqe8n2X+Wc1veUrJPvPtgW08iUX5Bc6GCYD0IAFb4mv5Uj+FJtneactkYNNFP7Enw4LFFO3I8Wj1MYmEe9tE49n7cAe/rmEpN/rE=
+	t=1740626414; cv=none; b=ClMav7odxlCnFIrvYfMyHWD+wj8rylx4w5xQbJ+Y1Z1QMDBi2N2LonWyWQ+tuLFMyUAieZV8eDAiKGRG4ew/xY/+q5ShfrcJpJXeyTE1uyn9bJZ+xTThkh786SlCFCcJPvSeLZh0SyA0C3HjGFnMYlb0juqJjPVMPqLIo1rcG0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740626462; c=relaxed/simple;
-	bh=7ekryrg0JkQnPhfhXHgplTQCEGv6EXtERN+54e6F2GA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=vAvwrc/dxcrRKjpYK0pUsZU0YiLC6umKHM3GKvLK4nDwHAkRab2z9DkZ4vh9SEiuKk47lb9f+jsEJxS9tztNi1afGEN0lXo6SjpRauLv+cRwtu85jWLBB0Uf5j0EvSxrTm2jnU+3eMC+Zka3ZTOuFGDx/HcuOgyOTfZZ+Mi+Wmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Je6MaUdS; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 51R3JpyhE1075058, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1740626392; bh=7ekryrg0JkQnPhfhXHgplTQCEGv6EXtERN+54e6F2GA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=Je6MaUdS08TqYxJa4Zapl7TGgIexaDOxCNee76uq4biGzSUtX/1S5GuW6wUJ93y37
-	 Mhsc39PEQlzYWP+BV/VQgQ21E9LrTvhhmVI+6MyTIBkiAaSJKI6U6v/rPTu6roxLkB
-	 IyhLzmjNm38wUkv/BV7uuiIdXCxJMN7wRw7XitYjhKuuXozz+AEguYc2sNN1G+1Xg6
-	 3TlZsLBGSJHgmRX/NRD1ruSFwqVZFvR+oGL/pOQN6dDLn85axexwTPBNsQbHr8de8b
-	 UsWqupskcB7LuDn1n1VwzlCJ0AwIDZDzqhWQByZ7J94iHkQ7yP6hZrYVC/dkXYD6Z0
-	 hJRJ/HwQovp9Q==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 51R3JpyhE1075058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 11:19:52 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Feb 2025 11:19:52 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 27 Feb 2025 11:19:51 +0800
-Received: from RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547]) by
- RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547%5]) with mapi id
- 15.01.2507.035; Thu, 27 Feb 2025 11:19:51 +0800
-From: Ricky WU <ricky_wu@realtek.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Thomas Haschka
-	<thomas.haschka@tuwien.ac.at>,
-        Bart Van Assche <bvanassche@acm.org>
-CC: "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "James.Bottomley@hansenpartnership.com"
-	<James.Bottomley@hansenpartnership.com>,
-        "martin.peterson@oracle.com"
-	<martin.peterson@oracle.com>
-Subject: RE: mmc0: error -95 doing runtime resume
-Thread-Topic: mmc0: error -95 doing runtime resume
-Thread-Index: AQHbiEvKs6LTi7Jk9ku8Dmbfc5C+U7NaeMRw
-Date: Thu, 27 Feb 2025 03:19:51 +0000
-Message-ID: <4e7162dfccbe44468f6a452896110cc8@realtek.com>
-References: <c2f50eac-3270-8dfa-2440-4c737c366b17@tuwien.ac.at>
- <8fd7f1d9-fc0d-4fa7-81be-378a3fc47d2a@acm.org>
- <CAPDyKFpwZt9rezBhBbe9FeUX1BycD2br6RRTttvAVS_C99=TiQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFpwZt9rezBhBbe9FeUX1BycD2br6RRTttvAVS_C99=TiQ@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740626414; c=relaxed/simple;
+	bh=R1oUGUJ3OqUHv0YN/Ju4WgkqxoyLksUqGo2pit4ydF4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=M80bLhKAsDUe+TnuiAK9GawNn2ObWG/y4ochw/gKm8mPjhzS5Rlk2X2+TLqf25wD4lEn0x3xnBs779gif/W8uzMzCU6CRrphjBSU8sHZ8U4rvoTLjaitwDjLmetvL+3xtu0IlSoAwAR4rQxqPBgN2xxYa+q8CTpaFkIXooGxzAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-83-67bfd9e6a2cf
+Message-ID: <c43c64f4-e697-468e-80af-87bd02a95ba2@sk.com>
+Date: Thu, 27 Feb 2025 12:20:03 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, gregkh@linuxfoundation.org, rakie.kim@sk.com,
+ akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
+ dan.j.williams@intel.com, Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
+ horen.chuang@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+ yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
+ memoryless nodes
+Content-Language: ko
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>, gourry@gourry.net,
+ harry.yoo@oracle.com, ying.huang@linux.alibaba.com
+References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
+ <20250226213518.767670-2-joshua.hahnjy@gmail.com>
+ <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
+In-Reply-To: <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsXC9ZZnoe6zm/vTDX6d4LeYs34Nm8X0qRcY
+	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
+	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
+	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
+	9O0SuDI27MoouC9VMbWtha2B8aZoFyMnh4SAicTH3q9sXYwcYPa0AwIgYV4BS4nnXU/ZQWwW
+	AVWJ/193sEHEBSVOznzCAmKLCshL3L81A6iGi4NZoIVZYtKpVcwgCWGBKImdr/4ygdjMAiIS
+	szvbwOJsAmoSV15OAouLCBRJHJ/xmRGkWUhgIaPErJ4HLCBHcApYSZw6zAHRaybRtbWLEcKW
+	l2jeOpsZpF5C4Bq7xOynU9khHpCUOLjiBssERsFZSA6chWT3LCSzZiGZtYCRZRWjUGZeWW5i
+	Zo6JXkZlXmaFXnJ+7iZGYAwvq/0TvYPx04XgQ4wCHIxKPLwR4vvThVgTy4orcw8xSnAwK4nw
+	cmbuSRfiTUmsrEotyo8vKs1JLT7EKM3BoiTOa/StPEVIID2xJDU7NbUgtQgmy8TBKdXAuEJD
+	47rW7e49RrxxOU83GGr8cDjVv+gc92oZ3gnBDEZ3O/Pkv82XPFTwaGvWyu3c0nIlq8W1H6w8
+	98E0xrtCr3+K0uuVuXuaom1Pqfc73NeLDrBk2ChouOv5rHdum/Ut9l+6u2oBT0Abs8jR3UK7
+	MiWztj7gv3J1/7SdZ2K8Zz9bYcH5V8VzvhJLcUaioRZzUXEiAOhEgyvdAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsXCNUNLT/fpzf3pBoeWmVvMWb+GzWL61AuM
+	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPhuSdZLXY+
+	fMtmsXxfP6PF5V1z2CzurfnPajH3y1Rmi0PXnrNarF6TYfF72wo2BxGPw2/eM3vsnHWX3aO7
+	7TK7R8uRt6wei/e8ZPLYtKqTzWPTp0nsHidm/Gbx2PnQ0mNhw1Rmj/1z17B7nLtY4fHx6S0W
+	j2+3PTwWv/jA5PF5k1yAQBSXTUpqTmZZapG+XQJXxoZdGQX3pSqmtrWwNTDeFO1i5OCQEDCR
+	mHZAoIuRk4NXwFLieddTdhCbRUBV4v/XHWwQcUGJkzOfsIDYogLyEvdvzQCq4eJgFmhhlph0
+	ahUzSEJYIEpi56u/TCA2s4CIxOzONrA4m4CaxJWXk8DiIgJFEsdnfGYEaRYSWMgoMavnAQvI
+	EZwCVhKnDnNA9JpJdG3tYoSw5SWat85mnsDINwvJHbOQrJiFpGUWkpYFjCyrGEUy88pyEzNz
+	TPWKszMq8zIr9JLzczcxAqN1We2fiTsYv1x2P8QowMGoxMMbIb4/XYg1say4MvcQowQHs5II
+	L2fmnnQh3pTEyqrUovz4otKc1OJDjNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGRse6
+	tvgfko7WarMv1GxP7ri0gSHjxrrrG5QDPP8qxaUr1/CG/67/c8pyo/UWAaEvn9IFxbLuBZVe
+	fryNZcfG4Li5jyQO67o3TFyeWPFy735Ha/ZFriVVSuo26aHNH08lL/ryJtCj8f2zYFkebq22
+	pdNurJjk89+w4o/Y74y+BPk+hyX87ifUlViKMxINtZiLihMBTgQItdICAAA=
+X-CFilter-Loop: Reflected
 
-PiArIFJpY2t5DQo+IA0KPiBPbiBGcmksIDIxIEZlYiAyMDI1IGF0IDE4OjIwLCBCYXJ0IFZhbiBB
-c3NjaGUgPGJ2YW5hc3NjaGVAYWNtLm9yZz4gd3JvdGU6DQo+ID4NCj4gPg0KPiA+IE9uIDIvMjEv
-MjUgNzo0MSBBTSwgVGhvbWFzIEhhc2Noa2Egd3JvdGU6DQo+ID4gPiBCdWcgRml4OiBibG9jazog
-SW1wcm92ZSBzdGFiaWxpdHkgb2YgU0QgY2FyZHMgaW4gTWljcm9zb2Z0IFN1cmZhY2UgR08gMiBh
-bmQNCj4gPiA+ICAgICAgICAgICAgICAgcG9zc2libHkgb3RoZXIgZGV2aWNlcy4NCj4gPiA+DQo+
-ID4gPg0KPiA+ID4gVGhlIGNvbW1pdCA2NWE1NThmNjZjMzA4DQo+ID4gPiAgICAgIGJsb2NrOiBJ
-bXByb3ZlIHBlcmZvcm1hbmNlIGZvciBCTEtfTVFfRl9CTE9DS0lORyBkcml2ZXJzDQo+ID4gPg0K
-PiA+ID4gYmFzaWNhbGx5IG1hZGUgdGhlIHVzZSBvZiBTRCBjYXJkcyBpbiBteSBNaWNyb3NvZnQg
-U3VyZmFjZSBHTyAyDQo+IGltcG9zc2libGUuDQo+ID4gPiBUaGUgY2FyZHMgZG8gc3RvcCBmdW5j
-dGlvbmluZyBhZnRlciBhYm91dCAxNSBtaW51dGVzLiBNb3N0bHkgYXQgaW8NCj4gPiA+IGludGVu
-c2l2ZSB0YXNrcy4NCj4gPiA+DQo+ID4gPiBBcyBvdXRsaW5lZCBpbiBodHRwczovL2J1Z3ppbGxh
-Lmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIxODgyMQ0KPiA+ID4gaSBiaXNlY3RlZCB0aGUg
-cHJvYmxlbSB0aGF0IHlpZWxkZWQgYW4gdW5zdGFibGUgb3BlcmF0aW9uIG9mIHRoZQ0KPiA+ID4g
-Y2FyZHJlYWRlciBvbiBteSBTdXJmYWNlIEdPIDIuDQo+ID4gPiBJIHN1Y2Nlc3NmdWxseSByZXZl
-cnNlZCB0aGUgY29tbWl0IDY1YTU1OGY2NmMzMDggaW4gNi4xMi4xNiB1c2luZw0KPiA+ID4gdGhl
-IGF0dGFjaGVkIHBhdGNoLiBBcyBJIHN1cHBvc2UgdGhlIGJ1ZyBpbnRyb2R1Y2VkIHdpdGggdGhp
-cyBjb21taXQNCj4gPiA+IG1pZ2h0IGhpdCBvdGhlciB1c2VycyBvZiBzZC1jYXJkcyBpbiBzaW1p
-bGFyIGhhcmR3YXJlIEkgc3VnZ2VzdCB0aGlzDQo+ID4gPiBjb21taXQgc2hhbGwgYmUgcmV2ZXJz
-ZWQsIGV2ZW4gaWYgdGhlIGltcHJvdmVkIHBlcmZvcm1hbmNlIG1pZ2h0IGJlDQo+IGdvbmUuDQo+
-ID4NCj4gPiBUaGFuayB5b3UgZm9yIGhhdmluZyBiaXNlY3RlZCB0aGlzIGlzc3VlIGFuZCBmb3Ig
-aGF2aW5nIHNoYXJlZCB0aGUNCj4gPiByZXN1bHQgb2YgdGhlIGJpc2VjdGlvbiBwcm9jZXNzLiBU
-aGlzIGlzIHZlcnkgdXNlZnVsIGluZm9ybWF0aW9uLg0KPiA+DQo+ID4gU2luY2UgdGhlIGNvbW1p
-dCBtZW50aW9uZWQgYWJvdmUgaXMgYWJvdXQgMS41IHllYXJzIG9sZCBhbmQgaGFzIG5vdA0KPiA+
-IGNhdXNlZCBhbnkgaXNzdWVzIGZvciBhbnlvbmUgd2hvIGlzIG5vdCB1c2luZyBhbiBTRCBjYXJk
-IHJlYWRlciwgdGhhdA0KPiA+IGNvbW1pdCBpcyBwcm9iYWJseSBub3QgdGhlIHJvb3QgY2F1c2Ug
-b2YgdGhlIHJlcG9ydGVkIGJlaGF2aW9yLiBBcmUgU0QNCj4gPiBjYXJkcyBjb250cm9sbGVkIGJ5
-IHRoZSBNTUMgZHJpdmVyPyBJZiBzbywgSSB0aGluayB0aGUgbmV4dCBzdGVwIGlzIHRvDQo+ID4g
-dGFrZSBhIGNsb3NlIGxvb2sgYXQgdGhlIE1NQyBkcml2ZXIuIEkgaGF2ZSBDYy1lZCB0aGUgTU1D
-IGRyaXZlcg0KPiBtYWludGFpbmVyLg0KPiANCj4gVGhlcmUgd2FzIGFub3RoZXIgdGhyZWFkIFsx
-XSB3aGVyZSBJIHRyaWVkIHRvIGxvb3AgaW4gUmlja3kgV3UsIGJ1dCB0aGVyZSB3YXMNCj4gbm8g
-cmVzcG9uc2UuIEkgaGF2ZSBhZGRlZCBoaW0gdG8gdGhpcyB0cmVhZCB0b28uDQo+IA0KSGkgVWxm
-LA0KQmVjYXVzZSBJIHdhcyB3YWl0aW5nIGZvciB0aGUgcmVzdWx0IHRoYXQgcmV2ZXJ0IDEwMWJk
-OTA3YjQyNCAoIm1pc2M6IHJ0c3g6IGp1ZGdlIEFTUE0gTW9kZSB0byBzZXQgUEVUWENGRyBSZWci
-KQ0KQ2FuIGZpeCB0aGlzIGlzc3VlIG9yIG5vdCwgYnV0IEkgZGlkIG5vdCBzZWUgYW55IHJlc3Bv
-bnNlLi4uDQoNCkhpIFRob21hcywNClRoaXMgaXNzdWUodGhpcyBtYWlsIHRocmVhZCkgYW5kIFsx
-XSBhcmUgdGhlIHNhbWUgaXNzdWU/DQpBbmQgdGhpcyBpc3N1ZSBvbmx5IGNhbiByZXByb2R1Y2Ug
-b24gc3VyZmFjZSBnbyAyPw0KSWYgc28sIEkgbmVlZCB0byBmaW5kIGNvcnJlY3QgcGxhdGZvcm0g
-dG8gcmVwcm9kdWNlIHRoaXMgaXNzdWUgb24gbXkgaGFuZA0KDQoNCj4gRm9yIHRoZSByZWNvcmQs
-IEkgYWdyZWUsIGV2ZW4gaWYgcmV2ZXJ0aW5nIDY1YTU1OGY2NmMzMDggc29sdmVzIHRoZSBpc3N1
-ZSwgaXQncw0KPiBub3QgdGhlIGNvcnJlY3QgZml4Lg0KPiANCj4gVW5sZXNzIHdlIGNhbiBnZXQg
-c29tZSBoZWxwIGZyb20gUmlja3ksIHdlIGNhbiB0cnkgdG8gZHJvcCBhc3NpZ25pbmcNCj4gIk1N
-Q19DQVBfQUdHUkVTU0lWRV9QTSIgaW4gcmVhbHRla19pbml0X2hvc3QoKSB0byBzZWUgaWYgdGhh
-dCBzb2x2ZXMgdGhlDQo+IHByb2JsZW0uIE9yIGlmIGRlYnVnZnMgaXMgZW5hYmxlZCwgd2UgY2Fu
-IGRpc2FibGUNCj4gTU1DX0NBUF9BR0dSRVNTSVZFX1BNIGZvciB0aGUgbW1jIGhvc3QgdmlhIHRo
-ZSAiY2FwcyIgZGVidWdmcy1ub2RlLg0KPiANCj4gVGhvbWFzIGNhbiB5b3UgdHJ5IHRvIGRyb3Ag
-TU1DX0NBUF9BR0dSRVNTSVZFX1BNIGFuZCBzZWUgaWYgdGhhdCBzb2x2ZXMNCj4gdGhlIHByb2Js
-ZW0/DQo+IA0KPiBLaW5kIHJlZ2FyZHMNCj4gVWZmZQ0KPiANCj4gWzFdDQo+IGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC9DQVBEeUtGcTQtZkwzb0hlVDlwaFRoV1FKcXppY0tlQTQ0N1dCSlVi
-dGMNCj4gS1BoZFoyZDFBQG1haWwuZ21haWwuY29tLw0K
+
+
+On 2/27/2025 11:32 AM, Honggyu Kim wrote:
+> Hi Joshua,
+> 
+> On 2/27/2025 6:35 AM, Joshua Hahn wrote:
+>> We should never try to allocate memory from a memoryless node. Creating a
+>> sysfs knob to control its weighted interleave weight does not make sense,
+>> and can be unsafe.
+>>
+>> Only create weighted interleave weight knobs for nodes with memory.
+>>
+>> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> ---
+>>   mm/mempolicy.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>> index 4cc04ff8f12c..50cbb7c047fa 100644
+>> --- a/mm/mempolicy.c
+>> +++ b/mm/mempolicy.c
+>> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct 
+>> kobject *root_kobj)
+>>           return err;
+>>       }
+>> -    for_each_node_state(nid, N_POSSIBLE) {
+> 
+> Actually, we're aware of this issue and currently trying to fix this.
+> In our system, we've attached 4ch of CXL memory for each socket as
+> follows.
+> 
+>          node0             node1
+>        +-------+   UPI   +-------+
+>        | CPU 0 |-+-----+-| CPU 1 |
+>        +-------+         +-------+
+>        | DRAM0 |         | DRAM1 |
+>        +---+---+         +---+---+
+>            |                 |
+>        +---+---+         +---+---+
+>        | CXL 0 |         | CXL 4 |
+>        +---+---+         +---+---+
+>        | CXL 1 |         | CXL 5 |
+>        +---+---+         +---+---+
+>        | CXL 2 |         | CXL 6 |
+>        +---+---+         +---+---+
+>        | CXL 3 |         | CXL 7 |
+>        +---+---+         +---+---+
+>          node2             node3
+> 
+> The 4ch of CXL memory are detected as a single NUMA node in each socket,
+> but it shows as follows with the current N_POSSIBLE loop.
+> 
+> $ ls /sys/kernel/mm/mempolicy/weighted_interleave/
+> node0 node1 node2 node3 node4 node5
+> node6 node7 node8 node9 node10 node11
+> 
+>> +    for_each_node_state(nid, N_MEMORY) {
+
+Thinking it again, we can leave it as a separate patch but add our patch 
+on top of it.
+
+The only concern I have is having only N_MEMORY patch hides weight
+setting knobs for CXL memory and it makes there is no way to set weight 
+values to CXL memory in my system.
+
+IMHO, this and our patch is better to be submitted together.
+
+Thanks,
+Honggyu
+
+> 
+> But using N_MEMORY doesn't fix this problem and it hides the entire CXL
+> memory nodes in our system because the CXL memory isn't detected at this
+> point of creating node*.  Maybe there is some difference when multiple
+> CXL memory is detected as a single node.
+> 
+> We have to create more nodes when CXL memory is detected later.  In 
+> addition, this part can be changed to "for_each_online_node(nid)"
+> although N_MEMORY is also fine here.
+> 
+> We've internally fixed it using a memory hotpluging callback so we can
+> upload another working version later.
+> 
+> Do you mind if we continue fixing this work?
+> 
+> Thanks,
+> Honggyu
+> 
+>>           err = add_weight_node(nid, wi_kobj);
+>>           if (err) {
+>>               pr_err("failed to add sysfs [node%d]\n", nid);
+> 
+
 
