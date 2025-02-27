@@ -1,162 +1,206 @@
-Return-Path: <linux-kernel+bounces-536850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB3AA484ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:28:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F06A4852A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CCB3B2A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:24:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D14717539C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14D1B4F04;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7381BE23F;
+	Thu, 27 Feb 2025 16:23:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21291B4F0A;
 	Thu, 27 Feb 2025 16:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooyREol4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4227D197A76;
-	Thu, 27 Feb 2025 16:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673434; cv=none; b=q7QPgJ5SHCKNHnZKQhkEuOM9NP0nDGua2DR+UZmFXFGH1lmyDCrmZiEjGgfqx2B8dPJHl6xUliM5m8c7mBHcdUMTAuqw6pX4Wh839V7A4DabOhhu99V3vmQaxMYBPRtDqQs5NEv71r6d3t1mk59ibgMk2mxI53u3ZqPq3BmTdhE=
+	t=1740673437; cv=none; b=nF6TEAm85z8R5vQ3RGrc0Hjvjrpwc8RmgPfvftButKctC5vhphYXyJqpyiI7Qg2a3hHISuk43DXPBnZVgtKlqfFH2HPVmhx/2kg03uiv9DOc5/TkG1qVn3d1mYi4ez2BgSk5TJ0tBzVsV3Puf+pjHFy+hJ/myiY8LMQ83X0oCtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673434; c=relaxed/simple;
-	bh=ljBeMFyMCPp2tgDw/rm8zyRJPmoHwGLm7BWWwGGi2cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVc+b/pdmW4eNP0bojTb3yoYi0uWHE1Lbxd7c/lLICwE1dsxdhrvf9XGAJ8Rf0gT9YN45K6cA1pIO6gHx5Kula4I0r1FS8HtU7KPmeJVPJIC3p03d4ZHbDek0ZuABOe6wnOFC+dYfK0BTe1kYo2t4Sq/Z8BqLCjU0+AW3QMB+5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooyREol4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CD5C4CEEA;
-	Thu, 27 Feb 2025 16:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740673433;
-	bh=ljBeMFyMCPp2tgDw/rm8zyRJPmoHwGLm7BWWwGGi2cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ooyREol4Qm9MpAnZvC0rSg2vLu8mpT23sR48HGqzQ69hK+66r0gnFq+BeGaTAypKA
-	 qnvv+kWZb2C83k16k9u3ahaspwjtDJei6FaxXHb4jywYYq69t9NcPN64HOZ584b584
-	 4gQPl8Kh8tLCTdgS1KpYj5n9PRtPgzAWBG95uaxWt2//54XC1jvDhdF9KnYaju5dII
-	 FgDxUkomnyR3mtmgX19YGgPI2wOmXSdrXBO/QLACSHctniWpsoK3UsVYm2nvET+L1u
-	 62o+TITCfzrCr8V8uz8n839WV4rkrnHWb8eLIwgFq1R4L+e5BmUtEeGiORsxDgJr23
-	 F3VTU/l+Ee5wg==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2bcceee7a5eso720991fac.0;
-        Thu, 27 Feb 2025 08:23:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV80rgg8BJADNh83EPZufhFKm0xDM3KOXd7O0x6ToFwU3ZhuWXb3Rwvgv+aNcdrMlTdsXfwbrKJ0qVQt2M=@vger.kernel.org, AJvYcCXYp/Q6IQiPcgD79n0viVXNCoUgXiMuY+iEJ2c4J9nh9Y4FHch0pYPXRPkuY3OZR9hEFYwZfKFFKIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc8jkeMUiTsWbFAo/a6UMBvt4YIoAOEHT2Wo/dLamPN/Az57pb
-	4TmG5BlQyRqm7fxe8EorYbhm694djjXAJBVPpqzhpnvjJroEQJNGzxgcSknJ/In5v8ZjHGiN4sj
-	Lsl1JtIZGgr8+GqAg/SintF8yjFo=
-X-Google-Smtp-Source: AGHT+IGG/hcyxa8S8kKpi22K2YfWARIiFkABqUSIB7oiuS84r0+705VX+sigsDNdT22dVcZEKacVJvLF2Xnj4RB9jsI=
-X-Received: by 2002:a05:6871:a910:b0:297:24ad:402f with SMTP id
- 586e51a60fabf-2bd51572451mr16597022fac.12.1740673433017; Thu, 27 Feb 2025
- 08:23:53 -0800 (PST)
+	s=arc-20240116; t=1740673437; c=relaxed/simple;
+	bh=Kli9Zrxx4tniLHZRafKhSWOIsjFG4RSiHz0gzAbi3IE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Szom/wiCl7e5qa5yikQka+t+iXrgDmuwxsXRWzjMJ0D+KL/LrlPlvzHHPm0wy+fYfNfs73wtd41suwL2hu442p0wyhz/yWK7Cb3pQhJVuEZzrQm109G/KkEoG1dloEODNiJLTlo9xR64ypgO07mto7Wd02wTopTrpi/qyhgU0Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 997C91516;
+	Thu, 27 Feb 2025 08:24:09 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC1373F673;
+	Thu, 27 Feb 2025 08:23:53 -0800 (PST)
+Date: Thu, 27 Feb 2025 16:23:49 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com,
+	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, kernel@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] coresight-tnoc: add nodes to configure flush
+Message-ID: <20250227162349.GB2157064@e132581.arm.com>
+References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
+ <20250226-trace-noc-driver-v2-3-8afc6584afc5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net> <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
-In-Reply-To: <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 27 Feb 2025 17:23:41 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqSr_h3d_TxKsJqP5cWEiNZ9THfcg74f0QT47d8kIaL35zTbpSQxLDGg_8
-Message-ID: <CAJZ5v0g3qOvESqvqiCnwVz2BYGHzrG8=nRQ8j36Qd_LC0io_Tw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-trace-noc-driver-v2-3-8afc6584afc5@quicinc.com>
 
-On Thu, Feb 27, 2025 at 4:45=E2=80=AFPM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
-net> wrote:
-> >
-> > Hi Everyone,
-> >
-> > Initially, this was an attempt to address the problems described by
-> > Saravana related to spawning async work for any async device upfront
-> > in the resume path:
-> >
-> > https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@goo=
-gle.com/
-> >
-> > but then I realized that it could be extended to the suspend path and
-> > used for speeding it up, which it really does.
->
-> Btw, maybe I didn't  word it correctly, but my patch series was meant
-> to speed up the non-async case too.
+On Wed, Feb 26, 2025 at 07:05:52PM +0800, Yuanfang Zhang wrote:
+> 
+> Two nodes for configure flush are added here:
+> 1. flush_req: write 1 to initiates a flush sequence.
+> 
+> 2. flush_state: read this node to get flush status. 0: sequence in
+> progress; 1: sequence has been completed.
+> 
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tnoc.c | 73 ++++++++++++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tnoc.h |  4 ++
+>  2 files changed, 77 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+> index fad8e61f05ef25989aba1be342c547f835e8953a..20231f28ddcb6a60d9b3c1ca3e0ca4d731dac39c 100644
+> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+> @@ -16,6 +16,78 @@
+>  #include "coresight-tnoc.h"
+>  #include "coresight-trace-id.h"
+> 
+> +static ssize_t flush_req_store(struct device *dev,
+> +                              struct device_attribute *attr,
+> +                              const char *buf,
+> +                              size_t size)
+> +{
+> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +       struct coresight_device *csdev = drvdata->csdev;
+> +       unsigned long val;
+> +       u32 reg;
+> +
+> +       if (kstrtoul(buf, 10, &val))
+> +               return -EINVAL;
+> +
+> +       if (val != 1)
+> +               return -EINVAL;
+> +
+> +       spin_lock(&drvdata->spinlock);
+> +       if (csdev->refcnt == 0) {
+> +               spin_unlock(&drvdata->spinlock);
+> +               return -EPERM;
+> +       }
+> +
+> +       reg = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
+> +       reg = reg | TRACE_NOC_CTRL_FLUSHREQ;
+> +       writel_relaxed(reg, drvdata->base + TRACE_NOC_CTRL);
 
-If "the non-async case" means the case with "async" suspend/resume
-disabled entirely, I don't think that the ordering in which devices
-are processed can be changed just because there are no known
-dependencies.
+How can userspace determine when to trigger a flush?
 
-> I was going to get around sending a v2 of my series, but was caught up
-> with some other work. But I'm okay if you want to finish up my effort
-> -- less work for me and I can focus on the other aspects of suspend :)
->
-> Maybe add a Suggested-by: to the patches?
+Generally, a driver kicks off a flush operation for a hardware before
+reading data from buffer or when disable a link path.  I don't know the
+hardware mechanism of TNOC, but seems to me, it does not make sense to
+let the userspace to trigger a hardware flush, given the userspace has
+no knowledge for device's state.
 
-Yeah, I can do that.
+Furthermore, based on my understanding for patch 02 and 03, the working
+flow is also concerned me.  IIUC, you want to use the driver to create
+a linkage and then use userspace program to poll state and trigger
+flushing.  Could you explain why use this way for managing the device?
 
-> I definitely want to review the series, but very busy this week with
-> some other work. I'll get to this next week for sure.
+Thanks,
+Leo
 
-That should be fine.
-
-> > Overall, the idea is that instead of starting an async work item for ev=
-ery
-> > async device upfront, which is not very efficient because the majority =
-of
-> > those devices will not be able to make progress due to dependencies any=
-way,
-> > the async handling is only started upfront for the devices that are lik=
-ely
-> > to be able to make progress.  That is, devices without parents in the r=
-esume
-> > path and leaf devices (ie. devices without children or consumers) in th=
-e
-> > suspend path (the underlying observation here is that devices without p=
-arents
-> > are likely to have no suppliers too whereas devices without children th=
-at
-> > have consumers are not unheard of).  This allows to reduce the amount o=
-f
-> > processing that needs to be done to start with.
-> >
-> > Then, after processing every device ("async" or "sync"), "async" proces=
-sing
-> > is started for some devices that have been "unblocked" by it, which are=
- its
-> > children in the resume path or its parent and its suppliers in the susp=
-end
-> > path.  This allows asynchronous handling to start as soon as it makes s=
-ense
-> > without delaying the "async" devices unnecessarily.
-> >
-> > Fortunately, the additional plumbing needed to implement this is not
-> > particularly complicated.
-> >
-> > The first two patches in the series are preparatory.
-> >
-> > Patch [3/5] deals with the resume path for all device resume phases.
-> >
-> > Patch [4/5] optimizes the "suspend" phase which has the most visible ef=
-fect (on
-> > the systems in my office the speedup is in the 100 ms range which is ar=
-ound 20%
-> > of the total device resume time).
-> >
-> > Patch [5/5] extend this to the "suspend late" and "suspend noirq" phase=
-s.
-> >
-> > Thanks!
+> +
+> +       spin_unlock(&drvdata->spinlock);
+> +
+> +       return size;
+> +}
+> +static DEVICE_ATTR_WO(flush_req);
+> +
+> +/*
+> + * flush-sequence status:
+> + * value 0: sequence in progress;
+> + * value 1: sequence has been completed.
+> + */
+> +static ssize_t flush_status_show(struct device *dev,
+> +                                struct device_attribute *attr,
+> +                                char *buf)
+> +{
+> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +       struct coresight_device *csdev = drvdata->csdev;
+> +       u32 val;
+> +
+> +       spin_lock(&drvdata->spinlock);
+> +       if (csdev->refcnt == 0) {
+> +               spin_unlock(&drvdata->spinlock);
+> +               return -EPERM;
+> +       }
+> +
+> +       val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
+> +       spin_unlock(&drvdata->spinlock);
+> +       return sysfs_emit(buf, "%lu\n", BMVAL(val, 2, 2));
+> +}
+> +static DEVICE_ATTR_RO(flush_status);
+> +
+> +static struct attribute *trace_noc_attrs[] = {
+> +       &dev_attr_flush_req.attr,
+> +       &dev_attr_flush_status.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group trace_noc_attr_grp = {
+> +       .attrs = trace_noc_attrs,
+> +};
+> +
+> +static const struct attribute_group *trace_noc_attr_grps[] = {
+> +       &trace_noc_attr_grp,
+> +       NULL,
+> +};
+> +
+>  static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
+>  {
+>         u32 val;
+> @@ -142,6 +214,7 @@ static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
+>                 return ret;
+> 
+>         desc.ops = &trace_noc_cs_ops;
+> +       desc.groups = trace_noc_attr_grps;
+>         desc.type = CORESIGHT_DEV_TYPE_LINK;
+>         desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
+>         desc.pdata = adev->dev.platform_data;
+> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
+> index b6bd1ef659897d8e0994c5e8514e8cbdd16eebd8..d0fe8f52709ff4147d66dbf90987595012cfaa4e 100644
+> --- a/drivers/hwtracing/coresight/coresight-tnoc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
+> @@ -10,6 +10,10 @@
+> 
+>  /* Enable generation of output ATB traffic.*/
+>  #define TRACE_NOC_CTRL_PORTEN  BIT(0)
+> +/* Writing 1 to initiate a flush sequence.*/
+> +#define TRACE_NOC_CTRL_FLUSHREQ        BIT(1)
+> +/* 0: sequence in progress; 1: sequence has been completed.*/
+> +#define TRACE_NOC_CTRL_FLUSHSTATUS     BIT(2)
+>  /* Writing 1 to issue a FREQ or FREQ_TS packet*/
+>  #define TRACE_NOC_CTRL_FREQTSREQ       BIT(5)
+>  /* Sets the type of issued ATB FLAG packets. 0: 'FLAG' packets; 1: 'FLAG_TS' packets.*/
+> 
+> --
+> 2.34.1
+> 
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
