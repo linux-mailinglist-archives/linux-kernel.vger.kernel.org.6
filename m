@@ -1,151 +1,217 @@
-Return-Path: <linux-kernel+bounces-536166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B10CA47C4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F953A47C47
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953B23B0B71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2059D3AD61E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4E022B59F;
-	Thu, 27 Feb 2025 11:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45E622AE7F;
+	Thu, 27 Feb 2025 11:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5aJlq2F"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQ4h6bzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABEC22AE6D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B353226863;
+	Thu, 27 Feb 2025 11:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740655999; cv=none; b=WcNhD9byJUU5BzcTZ01rgX7uURjsPRatEsgzyiW+ozFfLq03tzIQ4rQ70f9aNjOX2aR9nSw1a4jGwoIZhmbWj/vE2UxSmDZ5WfvOBhdiTjk1yAJPq/kXvYMU+2tbOyamYAePPzApu9SlpCqoRquZGCSyE1FrZjoUFPWLPF3w92U=
+	t=1740655971; cv=none; b=qwW0bnQnikFZHo6nQCwVu2T27zReQAr5351EPZRQYdijYxnr5KjCrGt/VuOuwio+CHjDXR8ohhI9p4vwxxgnFj5U5b6jwdjrpX2WEoPvezjPltn/kj6d5OjnyqJYa5Nf/jz85clgsJBj3DhqA1jLmWtg9Z5A0alM96FsC/7zAwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740655999; c=relaxed/simple;
-	bh=LO2N9vciU7HB99mtlW3h5ysZsPTzOm1mscKvDNw90XU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TwW65lLcfKRxg8+lTCbGS1zTY/OV8vca+rb2Qz4ssz38q2kBJvtyZviPTX9Xx8sRBk/TuH4MrLlVXWUK2TiX1+jYHajPfpn08ufaGkYN05jIyUReLmxdb1MnCgPVsB7i+wEEoOJNQMKuan3QKKOYYX244Sfp+B7focQKLiaCPxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5aJlq2F; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2234e5347e2so13318935ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740655995; x=1741260795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cg8yMwZ72Jlc0r5z1N3IiuaraHv4s6b2xThN5W01Djk=;
-        b=D5aJlq2F6R3GUVFt9YVYvhZSbEIyrGG1WMu63jw39i9UyiEW8h3xQDgfWN5Pycnn8P
-         beqrTO3UYTF8846iPQOltFhA1dkAD6wN6puK4jcojLYSt2ztSzGi9i2tx3dMkFy8F7Y8
-         3P9XUvlZfrALUIckJ3n71tffqsz1+ZFWZbAMasuiVZQ3Gy7K1ceewuk3Z8DOIU6Nricn
-         HKI1frdmWR289oCt0FpSOlm4NMj0HnV1FFhyvdPGR1hYfOyyT45CDAmLcC4VQhbRhJIZ
-         jJGWvxdM7sF3f+YSy4oeDBoDeCdtPGkLeFXR2pwUJ8mafwT3f8hiUkKPJhpxeUYviKDT
-         NCdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740655995; x=1741260795;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cg8yMwZ72Jlc0r5z1N3IiuaraHv4s6b2xThN5W01Djk=;
-        b=McJsm2QNuYwkCwlPxlFn2K8NM7u5OUKG09DywBS2AgWaH2Gua8Vw46Tvii0heFAYCr
-         I//lhvNfoED/Uta+txyeUSiKiUzmVaMsSH6xjT/DU/pdeBmY2EFGq5MbIdiJdLXcMVYt
-         fkiJA+p0y2msPp2NbpTIrpf1tBNW8u2TDm4jtB7FFtumQ9PJCPxMmdoFhkvQVAPjJer7
-         HPKaNGLStOWho2O3HpD8dayznJeHefeEe8b5Q5hnG4aQJd+15oT1PNUE1Fnsj+0JY6QU
-         8J45CyrvYWqq2ZhExJ/8EdY+prU+0wH/g1w8hz/kLOPGXqdkSXjons8cReA83x0K9h0C
-         vxgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPK/byf3jDJtVS6aqglt/qSebsYJxOfiBe93hlV2L4QXVya5D4/mQXXgenZ8mZvACUZS0+lQyDRA8N5NQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Iol4KWXU518fvMJIQkDxLFJWlQunCsDF50Fdseeyy0U4O897
-	8aNshDmgJZRgXCAsbb1DfjDI6kOKqmYO5KnpQWXWGbhbQENw2XxqOsLXJmRwjx+RrN44Hbrr0Pk
-	I
-X-Gm-Gg: ASbGncteRtFTfseNFnUcIfk/vuGE40OO46odmCA3h0Y4XDmwf2LVXmN8BZ8a2ubiOFT
-	OZndiMhwerQTka1A3YZy8bd1ptSKUXN2NoJ03HUckyRqk58M4US1klig+4VR0ECF7I0XwBXTg1h
-	/LMq9acl+NQMBwGrIJ5uJXwLFcDtMUSEtzwksafataf7HmQWc9rkh3oj32frhjeUFjAgaedfaLS
-	5kdpT7Y6/0AxgcO1tFYlvZx1sVyZQJbGC0Ha+5LmFEay+IOwkr4pMLahMHsT+GQ2p9P9skYzSAj
-	p2fxVNr4i83u6W/YAsElz1FiNqKp
-X-Google-Smtp-Source: AGHT+IG4VU2x6YDtNodsc0R4UfSHlwxikIm91sBEmZvthobIJS1xQjZsA9eqGdyUlDUdvBKd735Xuw==
-X-Received: by 2002:a05:6a00:4614:b0:732:13fd:3f1f with SMTP id d2e1a72fcca58-7348be7eeb2mr12060717b3a.24.1740655995332;
-        Thu, 27 Feb 2025 03:33:15 -0800 (PST)
-Received: from sumit-X1.. ([223.178.212.145])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe48858sm1343733b3a.51.2025.02.27.03.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 03:33:14 -0800 (PST)
-From: Sumit Garg <sumit.garg@linaro.org>
-To: akpm@linux-foundation.org,
-	herbert@gondor.apana.org.au,
-	jarkko@kernel.org,
-	jens.wiklander@linaro.org
-Cc: sumit.garg@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-crypto@vger.kernel.org,
-	Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH] MAINTAINERS: .mailmap: Update Sumit Garg's email address
-Date: Thu, 27 Feb 2025 17:02:28 +0530
-Message-ID: <20250227113228.1809449-1-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740655971; c=relaxed/simple;
+	bh=Zty7kMcpbAjyKYQmB6FvAoqZJmoDUlOF8/pOq0j6RP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W241RzelwsGYF9ZebgkoYUzMa/APpo5uRjIIMX9nq3nUJLUIDAl4AZB9H1nu4yn9PHC1neVV7SyM9Evu0ezBVEa/ajcBbKNCAuwZir7+KNDlS11RiPuIm6SvyrVnRN/JQE/th87l9nJ65bjgztSHTLTdOwWxt+EjnKn5Jf9n5zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQ4h6bzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67C4C4CEE4;
+	Thu, 27 Feb 2025 11:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740655970;
+	bh=Zty7kMcpbAjyKYQmB6FvAoqZJmoDUlOF8/pOq0j6RP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fQ4h6bzHi6GSUpTap9SRozMpoyIeIGwusAlV23uF3LBmRLYmGfMl1d3TMotaw1Zip
+	 1oBMrYWqBf5P3ArtGBIO2CRYWmXy/Axtg1Zc4YV0I+S+JhzmiP8uBbrIvJCg5xyIUW
+	 LQ0MYOOa4ig2nmI3JgSwp9YqRgQ/N5O3PAhy2rklq/rs8rmtIs+T3I4nTpx0ViWf3z
+	 e2k4TlA8zM05eQtOfbq6nvUYhtB6SrcDTHYJy8CqWafVxViyeOzRYNR/Zh3+URk4n6
+	 DQs6GaWwO5ZeMvKALQpue7GqmSkCrTpef9lUhkuax1KyPqdxTmJqHtp8sPnizihkk7
+	 /41zvLWBq99yA==
+Date: Thu, 27 Feb 2025 12:32:45 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z8BNXdf3CgqGYjPV@pollux>
+References: <2f062199-8d69-48a2-baa6-abb755479a16@nvidia.com>
+ <Z73rP4secPlUMIoS@cassiopeiae>
+ <20250225210228.GA1801922@joelnvbox>
+ <20250225225756.GA4959@nvidia.com>
+ <Z75WKSRlUVEqpysJ@cassiopeiae>
+ <20250226004916.GB4959@nvidia.com>
+ <Z75riltJo0WvOsS5@cassiopeiae>
+ <20250226172120.GD28425@nvidia.com>
+ <Z7-IHgcVVS8XBurW@cassiopeiae>
+ <20250226234730.GC39591@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226234730.GC39591@nvidia.com>
 
-Update Sumit Garg's email address to @kernel.org.
+On Wed, Feb 26, 2025 at 07:47:30PM -0400, Jason Gunthorpe wrote:
+> On Wed, Feb 26, 2025 at 10:31:10PM +0100, Danilo Krummrich wrote:
+> > Let's take a step back and look again why we have Devres (and Revocable) for
+> > e.g. pci::Bar.
+> > 
+> > The device / driver model requires that device resources are only held by a
+> > driver, as long as the driver is bound to the device.
+> > 
+> > For instance, in C we achieve this by calling
+> > 
+> > 	pci_iounmap()
+> > 	pci_release_region()
+> > 
+> > from remove().
+> > 
+> > We rely on this, we trust drivers to actually do this.
+> 
+> Right, exactly
+> 
+> But it is not just PCI bar. There are a *huge* number of kernel APIs
+> that have built in to them the same sort of requirement - teardown
+> MUST run with remove, and once done the resource cannot be used by
+> another thread.
+> 
+> Basically most things involving function pointers has this sort of
+> lifecycle requirement because it is a common process that prevents a
+> EAF of module unload.
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- .mailmap    | 1 +
- MAINTAINERS | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+You're still mixing topics, the whole Devres<pci::Bar> thing as about limiting
+object lifetime to the point where the driver is unbound.
 
-diff --git a/.mailmap b/.mailmap
-index a897c16d3bae..4a93909286d8 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -689,6 +689,7 @@ Subbaraman Narayanamurthy <quic_subbaram@quicinc.com> <subbaram@codeaurora.org>
- Subhash Jadavani <subhashj@codeaurora.org>
- Sudarshan Rajagopalan <quic_sudaraja@quicinc.com> <sudaraja@codeaurora.org>
- Sudeep Holla <sudeep.holla@arm.com> Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
-+Sumit Garg <sumit.garg@kernel.org> <sumit.garg@linaro.org>
- Sumit Semwal <sumit.semwal@ti.com>
- Surabhi Vishnoi <quic_svishnoi@quicinc.com> <svishnoi@codeaurora.org>
- Sven Eckelmann <sven@narfation.org> <seckelmann@datto.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b0cc181db74..616f859c5f92 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12861,7 +12861,7 @@ F:	include/keys/trusted_dcp.h
- F:	security/keys/trusted-keys/trusted_dcp.c
- 
- KEYS-TRUSTED-TEE
--M:	Sumit Garg <sumit.garg@linaro.org>
-+M:	Sumit Garg <sumit.garg@kernel.org>
- L:	linux-integrity@vger.kernel.org
- L:	keyrings@vger.kernel.org
- S:	Supported
-@@ -17661,7 +17661,7 @@ F:	Documentation/ABI/testing/sysfs-bus-optee-devices
- F:	drivers/tee/optee/
- 
- OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
--M:	Sumit Garg <sumit.garg@linaro.org>
-+M:	Sumit Garg <sumit.garg@kernel.org>
- L:	op-tee@lists.trustedfirmware.org
- S:	Maintained
- F:	drivers/char/hw_random/optee-rng.c
-@@ -23272,7 +23272,7 @@ F:	include/media/i2c/tw9910.h
- 
- TEE SUBSYSTEM
- M:	Jens Wiklander <jens.wiklander@linaro.org>
--R:	Sumit Garg <sumit.garg@linaro.org>
-+R:	Sumit Garg <sumit.garg@kernel.org>
- L:	op-tee@lists.trustedfirmware.org
- S:	Maintained
- F:	Documentation/ABI/testing/sysfs-class-tee
--- 
-2.43.0
+Shutting down asynchronous execution of things, i.e. workqueues, timers, IOCTLs
+to prevent unexpected access to the module .text section is a whole different
+topic.
 
+You seem to imply that if we ensure the latter, we don't need to enforce the
+former, but that isn't true.
+
+In other words, assuming that we properly enforce that there are no async
+execution paths after remove() or module_exit() (not necessarily the same),
+we still need to ensure that a pci::Bar object does not outlive remove().
+
+Device resources are a bit special, since their lifetime must be cap'd at device
+unbind, *independent* of the object lifetime they reside in. Hence the Devres
+container.
+
+For a memory allocation for instance (e.g. KBox<T>), this is different. If it
+outlives remove(), e.g. because it's part of the Module structure, that's fine.
+It's only important that it's dropped eventually.
+
+> 
+> This is all incredibly subtle and driver writers never seem to
+> understand it properly.. See below for my thoughts on hrtimer bindings
+> having the same EAF issue.
+
+I don't think it has, see Boqun's reply [1].
+
+> 
+> My fear, that is intensifying as we go through this discussion, is
+> that rust binding authors have not fully comprehended what the kernel
+> life cycle model and common design pattern actually is, and have not
+> fully thought through issues like module unload creating a lifetime
+> cycle for *function pointers*.
+
+I do *not* see where you take the evidence from to make such a generic
+statement.
+
+Especially because there aren't a lot of abstractions upstream yet that fall
+under this category.
+
+If you think that a particular abstraction has a design issue, you're very
+welcome to chime in on the particular mail thread and help improve things.
+
+But implying that no one considers this is not representing reality.
+
+> 
+> This stuff is really hard. C programers rarely understand it. Existing
+> drivers tend to frequenly have these bug classes. Without an obvious
+> easy to use Rust framework to, effectively, revoke function pointers
+> and synchronously destroy objects during remove, I think this will be
+> a recurring problem going forward.
+> 
+> I assume that Rust philsophy should be quite concerned if it does not
+> protect against function pointers becoming asynchronously invalid due
+> to module unload races. That sounds like a safety problem to me??
+
+Yes, it would be a safety problem. That's why HrTimer for instance implements
+the corresponding synchronization when dropped.
+
+> 
+> > We also trust drivers that they don't access the pointer originally
+> > returned by pci_iomap() after remove().
+> 
+> Yes, I get it, you are trying to use a reference tracking type design
+> pattern when the C API is giving you a fencing design pattern, they
+> are not compatible and it is hard to interwork them.
+> 
+> > Now, let's get back to concurrent code that might still attempt to use the
+> > pci::Bar. Surely, we need mechanisms to shut down all asynchronous execution
+> > paths (e.g. workqueues) once the device is unbound. But that's not the job of
+> > Devres<pci::Bar>. The job of Devres<pci::Bar> is to be robust against misuse.
+> 
+> The thing is once you have a mechanism to shutdown all the stuff you
+> don't need the overhead of this revocable checking on the normal
+> paths. What you need is a way to bring your pci::Bar into a safety
+> contract that remove will shootdown concurrency and that directly
+> denies references to pci::Bar, and the same contract will guarentee it
+> frees pci::Bar memory.
+
+This contract needs to be technically enforced, not by convention as we do in C.
+
+And with embedding the pci::Bar in Devres, such that it is automatically revoked
+when the device is unbound, we do exactly that.
+
+(Again, we don't do it primarily to protect against some concurrent access, we do
+it to forcefully ensure that a pci::Bar object can not outlive the device /
+driver binding.)
+
+If we don't do that, how else do we do it? How do we prevent a driver from
+keeping the pci::Bar (and hence the memory mapping and memory region reservation
+alive after the device has been unbound?
+
+> > But yes, once people start using workqueues for other modules, we
+> > surely need to extend the abstraction accordingly.
+> 
+> You say that like it will be easy, but it is exactly the same type of
+> lifetime issue as pci_iomap, and that seems to be quite a challenge
+> here???
+
+No, the workqueue implementation can so something similar to what Boqun
+explained for HrTimer [1].
+
+A workqueue lifetime also does not need a hard cap at device unbind, like device
+resources. If it is bound to the module lifetime for instance, that is fine too.
+
+Data that is accessed from a work item can't be freed under the workqueue by
+design in Rust.
+
+[1] https://lore.kernel.org/rust-for-linux/Z7-0pOmWO6r_KeQI@boqun-archlinux/
 
