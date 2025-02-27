@@ -1,72 +1,54 @@
-Return-Path: <linux-kernel+bounces-536073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13373A47B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:05:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8034BA47C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4D07A4B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643B93A8C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578AE22E002;
-	Thu, 27 Feb 2025 11:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989A722B5BC;
+	Thu, 27 Feb 2025 11:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ds9xIJMQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="d14/TOtj"
+Received: from mail-m155116.qiye.163.com (mail-m155116.qiye.163.com [101.71.155.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134922B5AC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C522ACD4;
+	Thu, 27 Feb 2025 11:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654238; cv=none; b=gaS1casnBvIbRnLH6VgqllPhX+gihsu60oVo+iynEMIwMoYQnRxtzkzr5307mpdsJiyaCsFF89puA++GLveI55QDHpWuPUP67VjeTznm2d9e6DR0IWYv6yUqgZeS1ZQc65fDfiBHskvms+T5HHveHnMMmx2sGKD767CSyKgyJJY=
+	t=1740656356; cv=none; b=Z+fWneV36CJ3AO50yCEGAutT1sP7HKkwZJwjoUf+VDia0oyaUpIE6re7cNcOFYlHrSs9oD/rEz+u5PJuiQs+JFfzSmTXLkVS75at8uHYql5Z3YJ/qNWUbXiXuko/HrfZg/KczjupyHeoxO+bFlJiGlS73Fju5alaNVoXEDPiwGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654238; c=relaxed/simple;
-	bh=vZyz76w9mbuLEkV6dVQdbcGEs4hMzqd0w9oBQQyU9u8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aaD7yV3dH+VCvON0/2a9eR6izb+g4iLjhEmKNOekWuAWkdrlLEQs9f3ERY1ELxtR+5HHpheNOTHWpf53hAdcFfhqi547Rq8Xcb81fTgZc0UdWQXAJ9KH2BIT3qzdtUFNtjlFHzUttD1Bk6Jg+TJAnbs3dYKEKVZRhF82a71K+Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ds9xIJMQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF32C4CEF8;
-	Thu, 27 Feb 2025 11:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740654238;
-	bh=vZyz76w9mbuLEkV6dVQdbcGEs4hMzqd0w9oBQQyU9u8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ds9xIJMQFvLMBiTa+Kyssak35WoSBoRhYtu14g6xCkjP0+7ozaqWz1doN+Pzv9q6b
-	 3GdlvU0MT0FDMG6ggkugVLbw0P/SekLRvlAFhN5tdxs/jH3f5Ld59hxMhNbJ218rE4
-	 d+z6MgFWEEkXt7ide6EhKxTVIXMrp28K+Co0fQf6LaB+ysswOFv+3FbNR2fEXHMmMN
-	 vTc5vKPMHezi1+tq3W1Q8W6PmKP4mrw7w3BLNJEV1lVQB1x01T17c5p3PwbYiZjNzL
-	 wnoZF91ehH+hiwiKwEEEAR/RnnvYSwehmRls2TYP7eyT9AcwVb29fVM4tqorSO5OGl
-	 MebN0kXXkgP5Q==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tnbgK-00000001mRI-1Lws;
-	Thu, 27 Feb 2025 12:03:56 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
-	Ani Sinha <anisinha@redhat.com>,
-	Eduardo Habkost <eduardo@habkost.net>,
-	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>,
-	Yanan Wang <wangyanan55@huawei.com>,
-	Zhao Liu <zhao1.liu@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 12/21] acpi/generic_event_device: add logic to detect if HEST addr is available
-Date: Thu, 27 Feb 2025 12:03:42 +0100
-Message-ID: <73e0b70ed4125dc07a85fb43281a7731f452750e.1740653898.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1740653898.git.mchehab+huawei@kernel.org>
-References: <cover.1740653898.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1740656356; c=relaxed/simple;
+	bh=F0Z8rEAxBeFsa2HkvMbrKUdPBypxHLSg3HJ0e7tEzLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KkMAfp8r1bOkG0ATSfBYpbnQeHpf7SmubchRXcvNQB53E5g3/yYff+4eWirLlO3W2hbE/eGVaZ1Bjtdi3OglXdRsV9D6G8kJAF/KZ/IOlwQ0yg++2FZnaL/NUO/q7RK4CD9kuK1j0o3jk/LDNXzlgu6x/3Kq0uFf9307Dj34wEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=d14/TOtj; arc=none smtp.client-ip=101.71.155.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id c65b3593;
+	Thu, 27 Feb 2025 19:03:45 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Simon Xue <xxm@rock-chips.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/2] iio: adc: rockchip_saradc: add rk3562
+Date: Thu, 27 Feb 2025 19:03:43 +0800
+Message-Id: <20250227110343.2342017-2-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250227110343.2342017-1-kever.yang@rock-chips.com>
+References: <20250227110343.2342017-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,98 +56,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQksfGlZDSkgdHR5DHx0eGEpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a954713a96603afkunmc65b3593
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhQ6Pio5SDIcEQ0hKB1KMk4U
+	HTQaCTNVSlVKTE9LTU5PSUlNQ0NNVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSktINwY+
+DKIM-Signature:a=rsa-sha256;
+	b=d14/TOtjg9Yv9IjbpxXKPiLx6J8K3jXLTfVGaC3MteGr+YUR1nakxXWmFC7YaspoSIZyajxEvl5bHRL7Dm33sLHHrc1OYfS1Z+sYcm6DqbJmhmBy05Pa3BVKUuK7DmPzkOp1MNqsg3X71TBqy1/l9tvrp21dafzoC//1S3mkqXE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=v2NdId1ozjR949P6fBcdgfhadjWxpSqZ7R8aXjvMQIE=;
+	h=date:mime-version:subject:message-id:from;
 
-Create a new property (x-has-hest-addr) and use it to detect if
-the GHES table offsets can be calculated from the HEST address
-(qemu 10.0 and upper) or via the legacy way via an offset obtained
-from the hardware_errors firmware file.
+From: Simon Xue <xxm@rock-chips.com>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+rk3562 is using v2 saradc with 8 channels.
+
+Signed-off-by: Simon Xue <xxm@rock-chips.com>
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 ---
- hw/acpi/generic_event_device.c |  1 +
- hw/arm/virt-acpi-build.c       | 18 ++++++++++++++++--
- hw/core/machine.c              |  2 ++
- 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-index 5346cae573b7..14d8513a5440 100644
---- a/hw/acpi/generic_event_device.c
-+++ b/hw/acpi/generic_event_device.c
-@@ -318,6 +318,7 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
+Changes in v2: None
+
+ drivers/iio/adc/rockchip_saradc.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip_saradc.c
+index a29e54754c8f..9995f95bafe0 100644
+--- a/drivers/iio/adc/rockchip_saradc.c
++++ b/drivers/iio/adc/rockchip_saradc.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * Rockchip Successive Approximation Register (SAR) A/D Converter
+- * Copyright (C) 2014 ROCKCHIP, Inc.
++ * Copyright (C) 2014 Rockchip Electronics Co., Ltd.
+  */
  
- static const Property acpi_ged_properties[] = {
-     DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
-+    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState, ghes_state.use_hest_addr, false),
+ #include <linux/bitfield.h>
+@@ -275,6 +275,25 @@ static const struct rockchip_saradc_data rk3399_saradc_data = {
+ 	.power_down = rockchip_saradc_power_down_v1,
  };
  
- static const VMStateDescription vmstate_memhp_state = {
-diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-index af5056201c22..03ee30b3b3f0 100644
---- a/hw/arm/virt-acpi-build.c
-+++ b/hw/arm/virt-acpi-build.c
-@@ -897,6 +897,10 @@ static const AcpiNotificationSourceId hest_ghes_notify[] = {
-     { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
- };
- 
-+static const AcpiNotificationSourceId hest_ghes_notify_9_2[] = {
-+    { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
++static const struct iio_chan_spec rockchip_rk3562_saradc_iio_channels[] = {
++	SARADC_CHANNEL(0, "adc0", 10),
++	SARADC_CHANNEL(1, "adc1", 10),
++	SARADC_CHANNEL(2, "adc2", 10),
++	SARADC_CHANNEL(3, "adc3", 10),
++	SARADC_CHANNEL(4, "adc4", 10),
++	SARADC_CHANNEL(5, "adc5", 10),
++	SARADC_CHANNEL(6, "adc6", 10),
++	SARADC_CHANNEL(7, "adc7", 10),
 +};
 +
- static
- void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
- {
-@@ -951,6 +955,8 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
- 
-     if (vms->ras) {
-         AcpiGedState *acpi_ged_state;
-+        static const AcpiNotificationSourceId *notify;
-+        unsigned int notify_sz;
-         AcpiGhesState *ags;
- 
-         acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
-@@ -958,9 +964,17 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
-         ags = &acpi_ged_state->ghes_state;
-         if (ags) {
-             acpi_add_table(table_offsets, tables_blob);
++static const struct rockchip_saradc_data rk3562_saradc_data = {
++	.channels = rockchip_rk3562_saradc_iio_channels,
++	.num_channels = ARRAY_SIZE(rockchip_rk3562_saradc_iio_channels),
++	.clk_rate = 1000000,
++	.start = rockchip_saradc_start_v2,
++	.read = rockchip_saradc_read_v2,
++};
 +
-+            if (!ags->use_hest_addr) {
-+                notify = hest_ghes_notify_9_2;
-+                notify_sz = ARRAY_SIZE(hest_ghes_notify_9_2);
-+            } else {
-+                notify = hest_ghes_notify;
-+                notify_sz = ARRAY_SIZE(hest_ghes_notify);
-+            }
-+
-             acpi_build_hest(ags, tables_blob, tables->hardware_errors,
--                            tables->linker, hest_ghes_notify,
--                            ARRAY_SIZE(hest_ghes_notify),
-+                            tables->linker, notify, notify_sz,
-                             vms->oem_id, vms->oem_table_id);
-         }
-     }
-diff --git a/hw/core/machine.c b/hw/core/machine.c
-index 02cff735b3fb..7a11e0f87b11 100644
---- a/hw/core/machine.c
-+++ b/hw/core/machine.c
-@@ -34,6 +34,7 @@
- #include "hw/virtio/virtio-pci.h"
- #include "hw/virtio/virtio-net.h"
- #include "hw/virtio/virtio-iommu.h"
-+#include "hw/acpi/generic_event_device.h"
- #include "audio/audio.h"
- 
- GlobalProperty hw_compat_9_2[] = {
-@@ -43,6 +44,7 @@ GlobalProperty hw_compat_9_2[] = {
-     { "virtio-balloon-pci-non-transitional", "vectors", "0" },
-     { "virtio-mem-pci", "vectors", "0" },
-     { "migration", "multifd-clean-tls-termination", "false" },
-+    { TYPE_ACPI_GED, "x-has-hest-addr", "false" },
- };
- const size_t hw_compat_9_2_len = G_N_ELEMENTS(hw_compat_9_2);
- 
+ static const struct iio_chan_spec rockchip_rk3568_saradc_iio_channels[] = {
+ 	SARADC_CHANNEL(0, "adc0", 10),
+ 	SARADC_CHANNEL(1, "adc1", 10),
+@@ -324,6 +343,9 @@ static const struct of_device_id rockchip_saradc_match[] = {
+ 	}, {
+ 		.compatible = "rockchip,rk3399-saradc",
+ 		.data = &rk3399_saradc_data,
++	}, {
++		.compatible = "rockchip,rk3562-saradc",
++		.data = &rk3562_saradc_data,
+ 	}, {
+ 		.compatible = "rockchip,rk3568-saradc",
+ 		.data = &rk3568_saradc_data,
 -- 
-2.48.1
+2.25.1
 
 
