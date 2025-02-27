@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-536020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2DFA47A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:44:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B8AA47A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8BA164F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0704B3B3D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBAC22D4C5;
-	Thu, 27 Feb 2025 10:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2635D22A816;
+	Thu, 27 Feb 2025 10:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sWVPqCAD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H7PAUxly"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MA2R6RIr"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4266722A4D5;
-	Thu, 27 Feb 2025 10:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC168229B00;
+	Thu, 27 Feb 2025 10:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740652947; cv=none; b=oanwCiUq7UQoSq86Yhe6vrmJDilpSiemHxazg/nd6KpnO6a8VRvz6D8pjj+ctjbEow/rmFQwabgsGbuymmhTjD5Ht9FbSWvihU//3LfgCSxuVGC6k2AVd4XLF4l2lAsf5YcOKIdZdNpIxG1SJ05OqT6bP496oNLBhCnmHgaZFQY=
+	t=1740652986; cv=none; b=LbMeMCd2k/3tf0bHG1scPdTNf9EspR5ddO89wWQM5QRaR/j5ZMR8t/x6UNuzgTkAN/0a7hTHAnxilZjc5Gc+74Lyq3Iu3zrbyxPlJvd4S65ggRo51Vb+w+IEWIOmGx8jp7wO9K7BaKuXFgl959anVMkmdTSRJA7HYpTcZbP67VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740652947; c=relaxed/simple;
-	bh=jnsFtE6gmAw3ZD1svqKae6yKy3yyxELo2vHClRkWzxY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=mtH9EH3qg8ts7WTBLxs4DviXtIIy1yxCz3wfvi07P7i1yqITNYddNR9OW162rj+htSGXpll0YEoAPp6BbRYKlEZO130EMuQ1MfTT//nClMtqLtMcuQR515hNwJu52Im39pBKq9h9CG7naH9n89VTgmTRo/C6TPlOUNwttjduGic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sWVPqCAD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H7PAUxly; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 10:42:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740652944;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vV2vyh0Mra6yvfavisH/CWoRg59+m6BlT+NLT5W/H9c=;
-	b=sWVPqCADUPtsnr+eYv3K9OthTa7zNtNbkZElVFvkKKEIL/8kx+XGHJ3+tC/g5L4p//EHXT
-	KqmfeRifpeuHpkr4VAeZ0Sh0xLxLA0JpB+Na2KfB2cVQbqT9iJ4DZcmj2I4cdyuigSExVM
-	/oMECymGp+HomGxNE2HdebzspXO5UgAzxeb4A4uhyZ7qDMW1NHOdy5M6aE/gxO5KqK4uyw
-	Dy3OtBiDoV+cFWvwlH1Yh7W1fZtJLyU0iE1IRvklT3Zg3etRWnbGwsbaJwfNRWRg5VIgLu
-	7f8tfOBt9Igqngge8n6rgIiiRwEnipGg6PCLmpH3GQpPKOH3gGWT0ukAOWUqJQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740652944;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vV2vyh0Mra6yvfavisH/CWoRg59+m6BlT+NLT5W/H9c=;
-	b=H7PAUxlyxeMZRtbMh1LdEPHuXozQtw433kw6VNvQH8pA9hihJJ14+KcEiCOuCHi0x5dGxC
-	0LfFD6nuFAmHgnCA==
-From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/Kconfig: Add cmpxchg8b support back to Geode CPUs
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250226213714.4040853-2-arnd@kernel.org>
-References: <20250226213714.4040853-2-arnd@kernel.org>
+	s=arc-20240116; t=1740652986; c=relaxed/simple;
+	bh=q/kXL5Us3S1TImJ8vPmYLcGTSwjqZYa/nCqiSG53O7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2ifTuw0R2CK+sPDEivf8vNVfYgCssfSfHXCiStJLd4+/SorTtH0L3nXTI/RKAIVBXVvlJmJaqSeBn80D/oJ742G/ZV9YSuSUIpllORQ5sMxQKNsg0MpeqwoOUp+YVLZlt+sFCWmL0dXo2RCIbB0tbjjDVVEyO8N7XHqDoY44ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MA2R6RIr; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so4998305e9.2;
+        Thu, 27 Feb 2025 02:43:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740652983; x=1741257783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BiNB3394BHNPK8DuKnzmxQtxRBBmLgR2/ry0wUMsOLA=;
+        b=MA2R6RIrAAMNPE7sV6SDsH2Ro0GtTW5MVwrwKLzsA4xbBubJBFk4hbSHKkRf3UAC31
+         e8HSKBWGbGnN5GmslsXnVfZ19YkL86AkTq/SSgAd8eW6U7DWNbcVhp9MzsHfv4QVFF2B
+         6zGotO1zfj7X6ZIE0isiH+1/oXhhM4Uy1pGn6xYppMz4p45A3RNn2xd7oMnuJXxadzfO
+         7m0gANql8gMW2lU1QlkuBbZ5WbOS+QBg7IV050wXr36duwvUdgbmR7oQF9j+zf3yCzE5
+         hqvx2T7cyq3epU3GiCqKz9bw7l+j1YM4O1rUBAGBE59RWV0ypHp/Bf8kaXpqLBqafW5N
+         z9sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740652983; x=1741257783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BiNB3394BHNPK8DuKnzmxQtxRBBmLgR2/ry0wUMsOLA=;
+        b=r0my6A7wCXhbd/sEuujpwROUtKwsvUBnSflaDrnp6yR1fn5MTcC0uY0XveulaIRtW0
+         QunFPcaCBmKQsj8vCrXGYmZL3PRl+dnSPb8mq6pX0CrSauCxgHHVT8IlS/E+yD0QrSk4
+         9n72eRG/6cTFgKVTDUvs9KLcAl+6YoCSthte4eWfuLcEew6nePkuBU5ByUpsP+z3CbpU
+         YOqVRzcoYUrq5CiXo1gBpcGT0PMcMaiTrAKSwiyYYb97ObiYvCo7TeD6lhSW/xox8WeT
+         DcXxOLcM/gn8xpXydVqatuT+cx+O307xcDQIwCIQd9yjWNBxDWha36W8Wr/WRDvgDsh1
+         PLXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYVGd0R5k01uqNsS1E4oyME7Rw8rHmMOujHsl9nVmIblcZcgAHB0bkjUsNelogjlBLH7F4doPm6S0S@vger.kernel.org, AJvYcCVwOFwImIBSWoa6tYFz+EAFOX38C7i7cAGQq5/0qqUwzHa3GGIJnHxv7Y9K0HtGlWAiVvs0cjjL4501jPE=@vger.kernel.org, AJvYcCX/S+ruhE8jtZS/Wr9hrTNxn/vtOMpj/W9q6UywWlQ6wl7FFzef2hOKQb1n4pO32HkEMkc4o9h8e+DSPr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ+4TEcX4a9ckY+6v1RbJCsMcl1jSLz0yX0gI8lkf02akQxyvr
+	T4c7LsS6LeHXkWMoM2OzV73+IZU7RZ4jzaBxKXpIyW3wV9o2zy2fE7VNFQ==
+X-Gm-Gg: ASbGncuQxdcuaQ+qzrhWrq6KpjlcQMck0gJf5HoCct4U55cIIvhwwL+HajsfLA+F14B
+	PY98t1DU51kacrLZfzZ7m0LdwleufGhjE4efylpR659+rtqK2vUdCqFp1f4Q0S8tPIf24x8bSl0
+	LlhgRoVNJE3RBA9WKTPgknmYTUC7h7ohU+47M2xnX33A1MDGBuDf/+/R1BtaOB091YpYzrqvtaE
+	TMq5oDanPRNFiLoj2yEJKp/6FfFfo1k+TSa0KDhgSlUOplfUcuP+X2Z7itnSMLOjzVs7svhmoii
+	ITdfewok+u40YK+iiSBZ2a10+6mm8hPkxHODA6YmVdYyQKTzf/rhKLnexbkzcg8zg0BQ1NQQRYy
+	WHHV2s0vBX9rO
+X-Google-Smtp-Source: AGHT+IHFm0dUQ/NPjHHsDvyLGniaYHPyJmvRPPSkxTkyil6HbVz1xJ2cyk/bcrn9hLQuuLZq/+2M1Q==
+X-Received: by 2002:a05:600c:458e:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-439ae221d72mr208925685e9.29.1740652982970;
+        Thu, 27 Feb 2025 02:43:02 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b97bsm50615215e9.8.2025.02.27.02.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 02:43:01 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:42:59 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Vishwaroop A <va@nvidia.com>
+Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, 
+	broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
+Subject: Re: [PATCH v2 2/6] spi: tegra210-quad: Update dummy sequence
+ configuration
+Message-ID: <accylk4mbwwaln3ruvolqouhxsxzwjengf3k4c6ypz3piolul6@ukojglmcka2x>
+References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
+ <20250212144651.2433086-1-va@nvidia.com>
+ <20250212144651.2433086-3-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174065294420.10177.7103824159597981558.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uz2pkkg3tjvjfanl"
+Content-Disposition: inline
+In-Reply-To: <20250212144651.2433086-3-va@nvidia.com>
 
-The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     6ac43f2be982ea54b75206dccd33f4cf81bfdc39
-Gitweb:        https://git.kernel.org/tip/6ac43f2be982ea54b75206dccd33f4cf81bfdc39
-Author:        Arnd Bergmann <arnd@arndb.de>
-AuthorDate:    Wed, 26 Feb 2025 22:37:05 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 11:19:05 +01:00
+--uz2pkkg3tjvjfanl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/6] spi: tegra210-quad: Update dummy sequence
+ configuration
+MIME-Version: 1.0
 
-x86/Kconfig: Add cmpxchg8b support back to Geode CPUs
+On Wed, Feb 12, 2025 at 02:46:47PM +0000, Vishwaroop A wrote:
+> Adding support for the dummy sequence configuration. The dummy sequence
+> introduces a delay between the command and the data phases of a
+> transfer. This delay, measured in clock cycles, allows the slave
+> device to prepare for data transmission, ensuring data integrity and
+> proper synchronization.
+>=20
+> Signed-off-by: Vishwaroop A <va@nvidia.com>
+> ---
+>  drivers/spi/spi-tegra210-quad.c | 31 ++++++++++++++++++++++++++-----
+>  1 file changed, 26 insertions(+), 5 deletions(-)
 
-An older cleanup of mine inadvertently removed geode-gx1 and geode-lx
-from the list of CPUs that are known to support a working cmpxchg8b.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Fixes: 88a2b4edda3d ("x86/Kconfig: Rework CONFIG_X86_PAE dependency")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250226213714.4040853-2-arnd@kernel.org
----
- arch/x86/Kconfig.cpu | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--uz2pkkg3tjvjfanl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 2a7279d..42e6a40 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -368,7 +368,7 @@ config X86_HAVE_PAE
- 
- config X86_CMPXCHG64
- 	def_bool y
--	depends on X86_HAVE_PAE || M586TSC || M586MMX || MK6 || MK7
-+	depends on X86_HAVE_PAE || M586TSC || M586MMX || MK6 || MK7 || MGEODEGX1 || MGEODE_LX
- 
- # this should be set for all -march=.. options where the compiler
- # generates cmov.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAQbMACgkQ3SOs138+
+s6Ff6RAAlXU8Q7C2JLdGnPQeITUXBqVMr19Qc1jw7721A1+FwGZSSx/xBY0C23J/
+RM7bqUuOcGPdy8F4oL3m+ACwhiAwJOq32qxKjRVf8UGRHY2zgeK3DL8m0KvLm1zg
+ehf0z/jtQNdJbM1sEekIiFlYrGMuhELqHAYrJdsxUhC+NiEJP/Vif0JTo/StveBP
+e43GoqUyI3QqGsHshEp1aHcyeOJoXRlwHvfrtchVlDNaN3RGad5C/a2UMIH0Q2F4
+m6rNBmqvSUfDzk4e9xS+NC5zMkUr5PustygCOcyuEHdhuJ7XH8FeGwOJ65QIj526
+AJ7YFJPVLxEriaeggXLws2/Jh32mivPLTr7CuVV6AN0oA4ESsAQbAxyFHwMYVd1J
+ZrGPkk9FxMEKJSIZbOAvR70xT52Y9NoctFr7nBo0/DZlMQ56m2k5gwh+vFUfU7Ql
+0WtPzJkRK7jCJFJ1LZTcv/37haxVyhVT41hrzgrXJ0LNYw8MprVh1wq4pncGaFLt
+TR2tsuCYSFJ/YOOIRDr2TvBCH67A36WdWI99tLIGoD4WAuSyPbA5r+bhY7lysV7D
+CHKFpyl5oxv++vZ+j3weszPpxLP4ZYrepRhPVTeNlpZmGCgYNm0T3AwoB4I+VkLL
+oB9m+IQk26clam6AF9z2FEYzvGjXxQUWOKx0UdZw0ySh2Kvnb2k=
+=t2rG
+-----END PGP SIGNATURE-----
+
+--uz2pkkg3tjvjfanl--
 
