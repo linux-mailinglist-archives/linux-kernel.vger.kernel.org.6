@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-535826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A78BA477CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:29:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9A5A477CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2CE2170D7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5AC03A2EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E491D22652E;
-	Thu, 27 Feb 2025 08:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94D022541B;
+	Thu, 27 Feb 2025 08:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bGjKnSIO"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkCcNxAH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584092253BB;
-	Thu, 27 Feb 2025 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F22EA59;
+	Thu, 27 Feb 2025 08:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644827; cv=none; b=rvhh5S3sfxyS4CpkXrdD/hmkn3MoqSgOi7HiRxZS/mWGEgemKMahHB0bEpc214O74068obJ+AdrQcIP98SqTs2JCa0wsnXclkjJnhLolLcc0sop7SWkiVBU9YTaHkIpwFehcB9t1FpJ7vdPd8Pp5rAfhyXnsyYue/GC6OAoZthE=
+	t=1740644903; cv=none; b=YVd3kHxRNzc7yMiw5Ie6bK9llLQ+IL8cT2Znz6XiL3skWz6R8H4hXbEAGZ1jDCI4WH2Q5fqpI8oQ4M9YmNTOMo2lnDt+sxVkScyKeYKq3CEUeZMg/1XQxeWcvESIVWO9SVMPLn9v/G6s51sCC8XVp6FHhkhkLrl6IkXryArFTXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644827; c=relaxed/simple;
-	bh=tP9uRHvs555G5VvnDDdHN0idiabXISPpl80F9hoD84U=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=It2gK3t15+D/BZEdQkgeP49cUlq0hvJmCT9Y6pB630f46U+xt+1JOQMnUyRNgPAPnJCsuMtjxQD7xH07vr2eX62zlqfBfAuIf0vsGxW3qU+io0TnT/vYQAOyI4CafizJArqfDAJnoZDVQaYF5ZVJ2xV2vz/HDX++2fUhOSF+CHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bGjKnSIO; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1740644825; x=1772180825;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:mime-version:content-transfer-encoding:subject;
-  bh=tP9uRHvs555G5VvnDDdHN0idiabXISPpl80F9hoD84U=;
-  b=bGjKnSIOdw6yfD3qw0SzKPb7YU4BHKErkGXzlZEIhuFX1DTk0KUZDt+e
-   l76LEAYXc8ZziCKtOM59fmSVNLe18cmR1EPl++C6D2Ma2h7IUZauV2a9p
-   PlTMd15QkaxE02I/kQxPcxImtuiqpDFyThBsi/CTKB6vJ6obF716L7o2T
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.13,319,1732579200"; 
-   d="scan'208";a="475728317"
-Subject: Re: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
-Thread-Topic: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:27:01 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:55064]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.24.106:2525] with esmtp (Farcaster)
- id cc38097c-cce8-4160-b5b8-aa5e715157df; Thu, 27 Feb 2025 08:27:01 +0000 (UTC)
-X-Farcaster-Flow-ID: cc38097c-cce8-4160-b5b8-aa5e715157df
-Received: from EX19D003EUB003.ant.amazon.com (10.252.51.36) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 27 Feb 2025 08:27:00 +0000
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19D003EUB003.ant.amazon.com (10.252.51.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 27 Feb 2025 08:27:00 +0000
-Received: from EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06]) by
- EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06%3]) with mapi id
- 15.02.1544.014; Thu, 27 Feb 2025 08:27:00 +0000
-From: "Sieber, Fernand" <sieberf@amazon.com>
-To: "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>
-CC: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com"
-	<mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>
-Thread-Index: AQHbiOoaCizytckQ8k+KkTn+O93XSLNa0OUA
-Date: Thu, 27 Feb 2025 08:27:00 +0000
-Message-ID: <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
-References: <20250218202618.567363-1-sieberf@amazon.com>
-	 <20250218202618.567363-4-sieberf@amazon.com>
-	 <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com>
-In-Reply-To: <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7B4C7BCB3896EF47B7EEB99ED30234E0@amazon.com>
+	s=arc-20240116; t=1740644903; c=relaxed/simple;
+	bh=mL+ScEVoosTCLqReMvWvb0hKdFm7SzXMaD7EnmZ5gQU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=beFmba2znEwpsZA5p8TdKpNLuad2VpUIRp0304iC9YM+OZYqWFnmJv6mEk1emnc9EKZgiS/UDQfDZI6BhnCoEm2FWFo3YqRSzEGrwkn0HP7rOFRIeYETb1ptdFiCRA0X4ZZ7YpuwmY8eB1oc79UOvWWqC/rpXLXFo2ymRbiSPUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkCcNxAH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB7C8C4CEDD;
+	Thu, 27 Feb 2025 08:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740644902;
+	bh=mL+ScEVoosTCLqReMvWvb0hKdFm7SzXMaD7EnmZ5gQU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UkCcNxAHNlb8KdOpVGBTAsjYUG5oG1EXqGPyEiclsxzBC4p+LOLBcG4nlsZ/bWo+k
+	 W+AZVnrXuaRNp4mDR5r14XtUQsblr0rPT8GQGXSvmHHye9M6QtKrggxgtlCWPBRshH
+	 VXHHQftNfX5UHocw4EVWQUQmUDQz4GzjrsIKq68nK/GgPYUU36Ou13zR4DA+XXyBwE
+	 VnpTHUvNXXG1VQHUqqmr5E8R4xbVpPoN8BgaUYrbR3al/9qF/BSs/eqYzBZCgu+gBm
+	 aUlhq9JEmKjqnqTOuaNi+lue7T7tGaier67NxH/nVOHEYQbBo2Sn4rUSxSu7KWkMMY
+	 sFWAD4mVSBNWA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <x86@kernel.org>,  <linux-riscv@lists.infradead.org>,
+  <linux-arm-kernel@lists.infradead.org>,  <loongarch@lists.linux.dev>,
+  <tglx@linutronix.de>,  <mingo@redhat.com>,  <bp@alien8.de>,
+  <dave.hansen@linux.intel.com>,  <peterz@infradead.org>,  <hpa@zytor.com>,
+  <paul.walmsley@sifive.com>,  <palmer@dabbelt.com>,
+  <aou@eecs.berkeley.edu>,  <catalin.marinas@arm.com>,  <will@kernel.org>,
+  <chenhuacai@kernel.org>,  <kernel@xen0n.name>,
+  <tangyouling@loongson.cn>,  <hejinyang@loongson.cn>,
+  <yangtiezhu@loongson.cn>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
+  <boqun.feng@gmail.com>,  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <aliceryhl@google.com>,  <tmgross@umich.edu>
+Subject: Re: [PATCH v3 0/5] rust: Add bug/warn abstractions
+In-Reply-To: <20250227.155417.1610168537890385926.fujita.tomonori@gmail.com>
+	(FUJITA Tomonori's message of "Thu, 27 Feb 2025 15:54:17 +0900")
+References: <yy_ESUuchCjlaGIJHzCPAcP_d9ucSD0CGXaoZNNkY7BmN5Ch1J8avsA9QpKO5LkTjlGpu99jl8NrFl5NFSQXuw==@protonmail.internalid>
+	<20250213135759.190006-1-fujita.tomonori@gmail.com>
+	<8734g0v6ke.fsf@kernel.org>
+	<aPT3Afc47I_dmAxy1DPVKUobcIJLV0rRUOXJX-ab6IFWqflSxdlOVQdJT0rxYQHjDBeWHDFjWsdXfiCOZ5hPWg==@protonmail.internalid>
+	<20250227.155417.1610168537890385926.fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 27 Feb 2025 09:28:11 +0100
+Message-ID: <87frjzu6zo.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI1LTAyLTI3IGF0IDA4OjM0ICswMTAwLCBWaW5jZW50IEd1aXR0b3Qgd3JvdGU6
-DQo+IE9uIFR1ZSwgMTggRmViIDIwMjUgYXQgMjE6MjcsIEZlcm5hbmQgU2llYmVyIDxzaWViZXJm
-QGFtYXpvbi5jb20+DQo+IHdyb3RlOg0KPiA+IA0KPiA+IFdpdGggZ3Vlc3QgaGx0L213YWl0L3Bh
-dXNlIHBhc3MgdGhyb3VnaCwgdGhlIHNjaGVkdWxlciBoYXMgbm8NCj4gPiB2aXNpYmlsaXR5IGlu
-dG8NCj4gPiByZWFsIHZDUFUgYWN0aXZpdHkgYXMgaXQgc2VlcyB0aGVtIGFsbCAxMDAlIGFjdGl2
-ZS4gQXMgc3VjaCwgbG9hZA0KPiA+IGJhbGFuY2luZw0KPiA+IGNhbm5vdCBtYWtlIGluZm9ybWVk
-IGRlY2lzaW9ucyBvbiB3aGVyZSBpdCBpcyBwcmVmZXJyYWJsZSB0bw0KPiA+IGNvbGxvY2F0ZQ0K
-PiA+IHRhc2tzIHdoZW4gbmVjZXNzYXJ5LiBJLmUgYXMgZmFyIGFzIHRoZSBsb2FkIGJhbGFuY2Vy
-IGlzIGNvbmNlcm5lZCwNCj4gPiBhDQo+ID4gaGFsdGVkIHZDUFUgYW5kIGFuIGlkbGUgcG9sbGlu
-ZyB2Q1BVIGxvb2sgZXhhY3RseSB0aGUgc2FtZSBzbyBpdA0KPiA+IG1heSBkZWNpZGUNCj4gPiB0
-aGF0IGVpdGhlciBzaG91bGQgYmUgcHJlZW1wdGVkIHdoZW4gaW4gcmVhbGl0eSBpdCB3b3VsZCBi
-ZQ0KPiA+IHByZWZlcnJhYmxlIHRvDQo+ID4gcHJlZW1wdCB0aGUgaWRsZSBvbmUuDQo+ID4gDQo+
-ID4gVGhpcyBjb21taXRzIGVubGlnaHRlbnMgdGhlIHNjaGVkdWxlciB0byByZWFsIGd1ZXN0IGFj
-dGl2aXR5IGluDQo+ID4gdGhpcw0KPiA+IHNpdHVhdGlvbi4gTGV2ZXJhZ2luZyBndGltZSB1bmhh
-bHRlZCwgaXQgYWRkcyBhIGhvb2sgZm9yIGt2bSB0bw0KPiA+IGNvbW11bmljYXRlDQo+ID4gdG8g
-dGhlIHNjaGVkdWxlciB0aGUgZHVyYXRpb24gdGhhdCBhIHZDUFUgc3BlbmRzIGhhbHRlZC4gVGhp
-cyBpcw0KPiA+IHRoZW4gdXNlZCBpbg0KPiA+IFBFTFQgYWNjb3VudGluZyB0byBkaXNjb3VudCBp
-dCBmcm9tIHJlYWwgYWN0aXZpdHkuIFRoaXMgcmVzdWx0cyBpbg0KPiA+IGJldHRlcg0KPiA+IHBs
-YWNlbWVudCBhbmQgb3ZlcmFsbCBzdGVhbCB0aW1lIHJlZHVjdGlvbi4NCj4gDQo+IE5BSywgUEVM
-VCBhY2NvdW50IGZvciB0aW1lIHNwZW50IGJ5IHNlIG9uIHRoZSBDUFUuwqANCg0KSSB3YXMgZXNz
-ZW50aWFsbHkgYWltaW5nIHRvIGFkanVzdCB0aGlzIGNvbmNlcHQgdG8gIlBFTFQgYWNjb3VudCBm
-b3INCnRoZSB0aW1lIHNwZW50IGJ5IHNlICp1bmhhbHRlZCogb24gdGhlIENQVSIuIFdvdWxkIHN1
-Y2ggYW4gYWRqdXN0bWVudHMNCm9mIHRoZSBkZWZpbml0aW9uIGNhdXNlIHByb2JsZW1zPw0KDQo+
-IElmIHlvdXIgdGhyZWFkL3ZjcHUgZG9lc24ndCBkbyBhbnl0aGluZyBidXQgYnVybiBjeWNsZXMs
-IGZpbmQgYW5vdGhlcg0KPiB3YXkgdG8gcmVwb3J0IHRoYXR0byB0aGUgaG9zdA0KDQpUaGUgbWFp
-biBhZHZhbnRhZ2Ugb2YgaG9va2luZyBpbnRvIFBFTFQgaXMgdGhhdCBpdCBtZWFucyB0aGF0IGxv
-YWQNCmJhbGFuY2luZyB3aWxsIGp1c3Qgd29yayBvdXQgb2YgdGhlIGJveCBhcyBpdCBpbW1lZGlh
-dGVseSBhZGp1c3RzIHRoZQ0Kc2NoZWRfZ3JvdXAgdXRpbC9sb2FkL3J1bm5hYmxlIHZhbHVlcy4N
-Cg0KSXQgbWF5IGJlIHBvc3NpYmxlIHRvIHNjb3BlIGRvd24gbXkgY2hhbmdlIHRvIGxvYWQgYmFs
-YW5jaW5nIHdpdGhvdXQNCnRvdWNoaW5nIFBFTFQgaWYgdGhhdCBpcyBub3QgdmlhYmxlLiBGb3Ig
-ZXhhbXBsZSBpbnN0ZWFkIG9mIHVzaW5nIFBFTFQNCndlIGNvdWxkIHBvdGVudGlhbGx5IGFkanVz
-dCB0aGUgY2FsY3VsYXRpb24gb2Ygc2dzLT5hdmdfbG9hZCBpbg0KdXBkYXRlX3NnX2xiX3N0YXRz
-IGZvciBvdmVybG9hZGVkIGdyb3VwcyB0byBpbmNsdWRlIGEgY29ycmVjdGluZyBmYWN0b3INCmJh
-c2VkIG9uIHJlY2VudCBoYWx0ZWQgY3ljbGVzIG9mIHRoZSBDUFUuIFRoZSBjb21wYXJpc29uIG9m
-IHR3bw0Kb3ZlcmxvYWRlZCBncm91cHMgd291bGQgdGhlbiBmYXZvciBwdWxsaW5nIHRhc2tzIG9u
-IHRoZSBvbmUgdGhhdCBoYXMNCnRoZSBtb3N0IGhhbHRlZCBjeWNsZXMuIFRoaXMgYXBwcm9hY2gg
-aXMgbW9yZSBzY29wZWQgZG93biBhcyBpdCBkb2Vzbid0DQpjaGFuZ2UgdGhlIGNsYXNzaWZpY2F0
-aW9uIG9mIHNjaGVkdWxpbmcgZ3JvdXBzLCBpbnN0ZWFkIGl0IGp1c3QgY2hhbmdlcw0KaG93IG92
-ZXJsb2FkZWQgZ3JvdXBzIGFyZSBjb21wYXJlZC4gSSB3b3VsZCBuZWVkIHRvIHByb3RvdHlwZSB0
-byBzZWUgaWYNCml0IHdvcmtzLg0KDQpMZXQgbWUga25vdyBpZiB0aGlzIHdvdWxkIGdvIGluIHRo
-ZSByaWdodCBkaXJlY3Rpb24gb3IgaWYgeW91IGhhdmUgYW55DQpvdGhlciBpZGVhcyBvZiBhbHRl
-cm5hdGUgb3B0aW9ucz8NCg0KPiBGdXJ0aGVybW9yZSB0aGlzIGJyZWFrcyBhbGwgdGhlIGhpZXJh
-cmNoeSBkZXBlbmRlbmN5DQoNCkkgYW0gbm90IHVuZGVyc3RhbmRpbmcgdGhlIG1lYW5pbmcgb2Yg
-dGhpcyBjb21tZW50LCBjb3VsZCB5b3UgcGxlYXNlDQpwcm92aWRlIG1vcmUgZGV0YWlscz8NCg0K
-PiANCj4gPiANCj4gPiBUaGlzIGluaXRpYWwgaW1wbGVtZW50YXRpb24gYXNzdW1lcyB0aGF0IG5v
-bi1pZGxlIENQVXMgYXJlIHRpY2tpbmcNCj4gPiBhcyBpdA0KPiA+IGhvb2tzIHRoZSB1bmhhbHRl
-ZCB0aW1lIHRoZSBQRUxUIGRlY2F5aW5nIGxvYWQgYWNjb3VudGluZy4gQXMgc3VjaA0KPiA+IGl0
-DQo+ID4gZG9lc24ndCB3b3JrIHdlbGwgaWYgUEVMVCBpcyB1cGRhdGVkIGluZnJlcXVlbmx5IHdp
-dGggbGFyZ2UgY2h1bmtzDQo+ID4gb2YNCj4gPiBoYWx0ZWQgdGltZS4gVGhpcyBpcyBub3QgYSBm
-dW5kYW1lbnRhbCBsaW1pdGF0aW9uIGJ1dCBtb3JlIGNvbXBsZXgNCj4gPiBhY2NvdW50aW5nIGlz
-IG5lZWRlZCB0byBnZW5lcmFsaXplIHRoZSB1c2UgY2FzZSB0byBub2h6IGZ1bGwuDQoKCgpBbWF6
-b24gRGV2ZWxvcG1lbnQgQ2VudHJlIChTb3V0aCBBZnJpY2EpIChQcm9wcmlldGFyeSkgTGltaXRl
-ZAoyOSBHb2dvc29hIFN0cmVldCwgT2JzZXJ2YXRvcnksIENhcGUgVG93biwgV2VzdGVybiBDYXBl
-LCA3OTI1LCBTb3V0aCBBZnJpY2EKUmVnaXN0cmF0aW9uIE51bWJlcjogMjAwNCAvIDAzNDQ2MyAv
-IDA3Cg==
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+
+> On Wed, 26 Feb 2025 20:39:45 +0100
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>
+>> How does this series compare/overlap with [1] ?
+>>
+>> [1] https://lore.kernel.org/all/20241126-pr_once_macros-v4-0-410b8ca9643=
+e@tuta.io/
+>
+> No overlap. Each solves a different problem. Both are necessary.
+>
+> This patchset enables Rust code to call C's BUG/WARN properly.
+>
+> Currently, Rust's BUG() is a simple wrapper for C's BUG()
+> (rust/helpers/bug.c). I added BUG() to rnull's init() and got the
+> following:
+>
+> # insmod /root/rnull_mod.ko
+> rnull_mod: Rust null_blk loaded
+> ------------[ cut here ]------------
+> kernel BUG at rust/helpers/bug.c:7!
+> Oops: invalid opcode: 0000 [#1] SMP
+> CPU: 0 UID: 0 PID: 31 Comm: insmod Not tainted 6.14.0-rc1+ #103
+> RIP: 0010:rust_helper_BUG+0x8/0x10
+> (snip)
+>
+> This is NOT debug information that we expect. The problem is that
+> BUG/WARN feature (lib/bug.c) can only be used from assembly.
+>
+> This patchset includes only warn() but with bug() implementation on
+> top of this patchset, I got:
+>
+> # insmod /root/rnull_mod.ko
+> rnull_mod: Rust null_blk loaded
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 31 at /home/fujita/git/linux-rust/drivers/block/rnul=
+l.rs:46 _RNvXCsafUg3oOYix8_5rnullNtB2_13NullBlkModu]
+> Modules linked in: rnull_mod(+)
+> CPU: 0 UID: 0 PID: 31 Comm: insmod Not tainted 6.14.0-rc1+ #104
+> RIP: 0010:_RNvXCsafUg3oOYix8_5rnullNtB2_13NullBlkModuleNtCsaYBeKL739Xz_6k=
+ernel13InPlaceModule4init+0x71/0x4f0 [rnull_mod]
+>
+>
+> The [1] patchset adds an abstraciton for include/linux/once_lite.h,
+> 'call a function once' feature, with pr_*_once() implementation.
+>
+> pr_*_once() just calls printk() once. Unlike BUG/WARN, no debug
+> information (call place, registers, stack trace, etc).
+>
+>
+> The only connection between two patchset is that WARN_ONCE() can be
+> built on top of both like the C side.
+
+Awesome, thanks for explaining =F0=9F=91=8D
+
+
+Best regards,
+Andreas Hindborg
+
 
 
