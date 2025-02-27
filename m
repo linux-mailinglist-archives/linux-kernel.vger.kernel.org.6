@@ -1,215 +1,158 @@
-Return-Path: <linux-kernel+bounces-536653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0476DA482A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D62A482A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9920F188892B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B53A188B6AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D7426A0E9;
-	Thu, 27 Feb 2025 15:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E2E26A1AB;
+	Thu, 27 Feb 2025 15:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LGMuad/R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="SZtVIS9f"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E342C0B;
-	Thu, 27 Feb 2025 15:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668920; cv=fail; b=hsUfj1BkGt+0RMyJPeeMtuoDod5eAtyGfez3ldWxlnHG9AtFDWpA0CQM9/eKx4aMRpQOjNA9uFVXMANfSiiqcBDExkX4GnTl58EgFf8k3/xC6UAC6yVNV5ZXQ5vCTu8uYNRYAnM1O694MeOnq2eGlGUzi4w2FuZ9A+tS4aDQe+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668920; c=relaxed/simple;
-	bh=0dB04sgWHXHY6erKJ93uTz/ZLI9T+x+aZfvhWUVAS64=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kupttrF25JtvjKa+SGHruCGxqQ04NELujcBddGRfXDh+GGFr6eYSNsb+fH5F5cNuly3HUm5+9M3chHdiSh3y3mWWsuEo9Ey+DFxmSzJXADJuCf3b6J3NR09ygX+CXsycaEZbKcICoaZ1b75GLDcxErhMiuATJYIo2fft0KVoA50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LGMuad/R; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740668919; x=1772204919;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=0dB04sgWHXHY6erKJ93uTz/ZLI9T+x+aZfvhWUVAS64=;
-  b=LGMuad/RPExHGkomziP/1dCFWmeEagacCTdweIqr4KF2HSpmwz+E/nnA
-   +NLPf2u55duHqCq3dPAhiWi6dKmkc4BvEB97M8ODAAwEzyonrhHfnu26g
-   96OhynV2as0B++YCBgnrjXz9Y8H12nn43aqr7LJlBTxH6K2vO4+qUvcCj
-   4vo/dyv2SU+A9b8PyvRbL6io4qJhVP2hJt7vPesEPEG+BW+PN3+QZMDzP
-   ksMz9mHyNA0RDQMG4NLunrUVvJ79/dYKuPI3XZOFzBk1pUZ+AIEt+HVPL
-   h1U18m3rg9/fCTKEBsmXkp9eauoVHvgpxyKPJf91xpE6ygBIjvcSvl/oa
-   Q==;
-X-CSE-ConnectionGUID: UMO/4ZxKRWyd5Qs71KJELA==
-X-CSE-MsgGUID: PKcIWDytSSaFdYLbplnvcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="64030441"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="64030441"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:08:38 -0800
-X-CSE-ConnectionGUID: lsk5zEmZQYeF4LVt4yRfaQ==
-X-CSE-MsgGUID: ABSsQkmmT3mQ3GIJvy0HBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="147968201"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:08:37 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 27 Feb 2025 07:08:36 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 27 Feb 2025 07:08:36 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.171)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 27 Feb 2025 07:08:33 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yvanWeNEIn8ycYqMxLXhdttbXHvRMyO6qScCEJiTd4LZ+Z83C95ZIW7+UD01q2/f2TpgAQiX/uxijwytNV2l2M7D6mgUYbm77RwmDcf/8DncdMXLMuZNSDOEmf64g9VxEqvPDz5fQGzXjTatEZXkJQw/yzQUzIDw7dXXj7BIO5rGnZe8+0HKh96k9BHL68sirohOQAMgoot3gYdsITg9LQGRRQfM5ilWf6F/IYxY3y3Z5D1qknxOWNjIdVjiSVe9pv+nraSOjletXsf9BUyCKSkdGVp13ZJlOS7D3U0qfGPWQtlOo/fq0TjCN2UhCIZm9nnnuIuE/eOfT9KDpqo9MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DSLHobSZ2maUKUHSiq0hUvp02tER7PPhmEJGn5QkCx8=;
- b=NrvPf8rBZ0jJlRVs9yxocO7dEh375QE1SPEZfPKffBaFIsQhlafFuIFXgm4tPgtGveB2d5s6zWaJ+i7ihT5dviL9wV6jj2otGMhIjgDy5jvwydQ4P9VRrmBktBu24SqTWooBdmu/zOThLmlPw2n7Bz5PE2qM7fSSTFNw5S3zE5qYNQeM/XE4RTcX+WNs/sUgd7rsG9KvfL8AtGdGRsg38VUh+ECql+7ClUirWZXVEIbvfHLGmS/SvUM4NKmuzuuj5T5WK0dw3yctbXeNEI7qHDyOjhHSD8dEFRXALC2DtchCkYoBrEhaGE3M2s4y85QvYppxEEbds1PA/C40So58xQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by PH7PR11MB5913.namprd11.prod.outlook.com (2603:10b6:510:137::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Thu, 27 Feb
- 2025 15:08:30 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
- 15:08:30 +0000
-Date: Thu, 27 Feb 2025 09:08:28 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Zheng Qixing <zhengqixing@huaweicloud.com>, <axboe@kernel.dk>,
-	<song@kernel.org>, <yukuai3@huawei.com>, <dan.j.williams@intel.com>,
-	<vishal.l.verma@intel.com>, <dave.jiang@intel.com>, <ira.weiny@intel.com>,
-	<dlemoal@kernel.org>, <kch@nvidia.com>, <yanjun.zhu@linux.dev>,
-	<hare@suse.de>, <zhengqixing@huawei.com>, <colyli@kernel.org>,
-	<geliang@kernel.org>, <xni@redhat.com>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-raid@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>
-Subject: Re: [PATCH V2 10/12] badblocks: return boolean from badblocks_set()
- and badblocks_clear()
-Message-ID: <67c07fec6b138_b295929498@iweiny-mobl.notmuch>
-References: <20250227075507.151331-1-zhengqixing@huaweicloud.com>
- <20250227075507.151331-11-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250227075507.151331-11-zhengqixing@huaweicloud.com>
-X-ClientProxiedBy: MW4P220CA0012.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:303:115::17) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766CA2309A1;
+	Thu, 27 Feb 2025 15:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740668933; cv=none; b=J7/fXy9CbpYW7LTqIxmNkJgV6eVVn1mX+EEln05BMGgQpONQhf3KGWPUseLPNZTGfu8ksm5PfgyIpln7f6BA/NKfuP0d24K6ARqqv2XBL7TGneS4/e9MlaPTon5XEZMbn0AchkCuknI8/6GiA20qIt3MuoN2lbHys/ECEjDjh74=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740668933; c=relaxed/simple;
+	bh=iP8PUJPcmKZSxlJFtwXJuimP1kWAHvhZ3In9+uE2P58=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JJX/MVUttGhd4Dj/uQDN5ex/XubKc1RMX5aWzB5RJsf8O5OOFFTi/ARlhKPtvM3dWVzoGY1SCEzqEdqkaRGyYXgcC0CME4acS0IEztvgiSnlF1wGFFTplylfwCCrhdUtQy9frZwvGjTKl2AhFK/rZAScSwsCYsVboh2VCqgM4EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=SZtVIS9f; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=qfpFFmDtQTEvG1J6T0okYpBJq/PXy8yQO3Kv+Yj8Xuw=; b=SZtVIS9fo/x2BdfamBxOP4pV0a
+	dLg6lC6/jOaZfl7jKBrGS1Keh9tfGqsYYjFqbrykxJ6KTbr3UsdAuf1Oo2TuQQsipSTgN5fLIcOkX
+	WyArqkpr1Jw+Mh3aQz6DJT7Uqkw+chTm8F/nzUHH/RDGcD6r7YMaJTk00mysRoWc8fL6fPj/0oSY4
+	2RvMRQJsBCrdxmgfyMBoP0YzmeFcZfR120EOT7KfeqWhZRCsM03qB+XNGr+dlaWqYOWhah1ZDYkA0
+	C42TAOWeitfL7S2MMMm9PFvXVejd0rKJTPmGk0AhvNx6fWavqXyf+URB9OY/1g+bHFTe8NMOMh0UK
+	njtuApAg==;
+Date: Thu, 27 Feb 2025 16:08:40 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Nishanth Menon <nm@ti.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, <vigneshr@ti.com>,
+ <aaro.koskinen@iki.fi>, <khilman@baylibre.com>, <rogerq@kernel.org>,
+ <tony@atomide.com>, <jmkrzyszt@gmail.com>, <reidt@ti.com>,
+ <wsa@kernel.org>, <linux-omap@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <stable@kernel.org>
+Subject: Re: [PATCH] i2c: omap: fix IRQ storms
+Message-ID: <20250227160840.086e48f0@akair>
+In-Reply-To: <20250227142055.ndzavzysaenoducj@murky>
+References: <20250207185435.751878-1-andreas@kemnade.info>
+	<c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
+	<20250220100745.05c0eff8@akair>
+	<20250227142055.ndzavzysaenoducj@murky>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|PH7PR11MB5913:EE_
-X-MS-Office365-Filtering-Correlation-Id: edcb5914-ce91-444f-5beb-08dd5740985f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4t5rDDyISW73jRnW8+t6UXQ9d6hp3m5+srzRlMBGZJmGttba4MaODyspvDl9?=
- =?us-ascii?Q?a4WcnagF1doGYdxoj8kYRVzjeUzGQUN9YbwGmvOh3bN24clpACl8JX97u+B1?=
- =?us-ascii?Q?UK+kdQoHbdDG2ifKnRSAQFL7HIpTz7+dTxL9xooNsffOqPIDT7dueWe/57BA?=
- =?us-ascii?Q?rlbpQJjaeN3Cbf9VhcWjmPu2JGDtMwXKoKfCcG78H34ozUwBdM1tO/W5PLgF?=
- =?us-ascii?Q?b+ZYSjFzb+r3qiNIaVjpyHZ/mD9Lv68HsRY70uMRJWgTUksX19hCJXLUH4Zy?=
- =?us-ascii?Q?wJLObWSgA4zc7lHIeBErY7zvDqFFJdefc1WgMXPQEAt3O1VK8v4vmMNuNW5z?=
- =?us-ascii?Q?DABDGuDOVYMuWcy3k5WLJVlE1VHXJV2RclUiV/GdxX3N8Fm7EwnPH3nDHSC7?=
- =?us-ascii?Q?JfH7XTTbRg8P8x1SdOGQaPS6BZ2veQRz0CxN8D3UO/45/SHSKmrv6Q7u+2VT?=
- =?us-ascii?Q?jG/EVGNMZ4y54Y5xzHMUHDFPRRnhdlE8yLjp90WgFYpoXU+6mqmBBRSuuvIa?=
- =?us-ascii?Q?GJ138vwU6xsQfFfSWGepy5gW5ZXp4gmZg/af4gIvcLNKXn35E1ZxovAF18Q+?=
- =?us-ascii?Q?1bEB1gFzmWKpyHGE8NLZ53+ztAvVs/8Rm18gsEheP+d5wgbtFTQPJdw1YbeW?=
- =?us-ascii?Q?hY+HGH1OqbuBu0YzYTJ71xAyderNhDv2/Kw1vpYvzrvUqcFClGvRJAgf8VtP?=
- =?us-ascii?Q?63Qxuzu9sEvLG5oMrgTQ0oi0Dxvp7jgcMANn6imyEyNcucjew/+f5A36cICz?=
- =?us-ascii?Q?Yqw7VEeWukZTm52/Kc/zG3yvGOj/LWFuQINdq1iJPy+I+DfKtdEaedUBF5HO?=
- =?us-ascii?Q?V76tXX1uzpx7j6amC2M9w5xPeIVwZx3O/WALHDSGotL8M+K4IcYWXg1D0i5V?=
- =?us-ascii?Q?1j1eNCSvBL778+WJ1C3cWKuuLKI88m/Td9f9RjuNF8gLGTCWpyqTb0PP5LmF?=
- =?us-ascii?Q?9DaPpVvfwlYc9P4y8GsZpNT2wPqghCa3MHjhsCxXZRL308BGykb/poC2xpE1?=
- =?us-ascii?Q?aMhLt+nKFw7Hz8hU6n5F8x4GfnYgoAHPQTAuUMKdNulkkrBBhLaCjcn38sxc?=
- =?us-ascii?Q?8tarZfqPXciZ0ubOAPxiwQG4halFNhLedwcwsRa3fIT7By9NK5I8/n1BWBga?=
- =?us-ascii?Q?5a8Zu34itmfSZ/1jjNCraUfAQU48j8fjeTD7oaUU6tsaXLclcHi4bRpYQdTJ?=
- =?us-ascii?Q?/2Hi7r49/no7CFZIhslAm0d7dHYgxi6OBF+enSb40185l07DJk9rSicujjrf?=
- =?us-ascii?Q?h+dHxt+GYuiuE2IKPF333J3m9pBF+NujMJwe9mXleZIk4leqK7Rar7Sl379Y?=
- =?us-ascii?Q?8OgTP0DOm1FjcL9WzXXzpduMRZXBnJL2ZtaZ/yY9ra7XT32H+ugJf6T6V/QI?=
- =?us-ascii?Q?3Hnl2CGa6MEBgwIoaEcqyEIs0aEzBN2wD9jpjFVFACjNbWhaoqpNGiHvy1GY?=
- =?us-ascii?Q?bZA9UDRihVk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6bYFBbABAMTDuhSezbI4e5BT+MMaAWCzOaamYMGAEGX1lHfN5ykztWUe0jGm?=
- =?us-ascii?Q?4wJjfIIa0MubkQ6OMkMG3UMKGWDri7zktvumx64Ik3v2ubHIXbpsjqo5++/U?=
- =?us-ascii?Q?d5W+BZ8YtpbrtgzBFwrs+qNc4dMWzwnk7JOWrV3OukXn8uf+LxEgeFYzDp/J?=
- =?us-ascii?Q?VJqKqcSz6zVBfCTFFHwSNhQsdOqowRM2Tx7FeQEYMEqEBzS0t/S9tIvde2wJ?=
- =?us-ascii?Q?Gdarm5iGOw0uFQ/Yzu7z0R6BU2FVo4XMmuyr5/9rp1or5kIFw7JCasjRiGSV?=
- =?us-ascii?Q?XNEv5iFJVkfThKo0X/snsRciC2DIR8+HwOu3WoXwmnp5K/3iWMsb0iEaZIlJ?=
- =?us-ascii?Q?skXuB4fdwh2sOetU774uTx4iH2eSJYz+xrMxuvjn6o/P5beHv87DgexmQVwo?=
- =?us-ascii?Q?vSaOembUKgzm4c/3q8gu3YFYKKi76Uf7rwqFBkSGXwsGlU2ATW4iI+dKlR2J?=
- =?us-ascii?Q?DaBfW42vBHpK5GjCqL6YukRRGKXyr8wxPjeo6sERo8q+Qcw8L6U8T5ccXyQL?=
- =?us-ascii?Q?DM+AP4Uei/U5giFcVTEVe3FOgCl7WQeJDX2AyGi0v8b5V6Sq1cxaAnDCfHXH?=
- =?us-ascii?Q?ueqlbbbdOqKQYa1dAK6i6SGvF3ttq9gtMYXoXSfr2tE7xpNB+HDsyNVxPDtG?=
- =?us-ascii?Q?9Xdfeg3hmN0nnjBl+qf+sdDC5BUVOG4A6o7dTHMeFzZS/e5vaWSW1vV5crc/?=
- =?us-ascii?Q?GAAg0i4fJko6JJAzE7D+b8Ddv+G66R5iAsuQ1Kn0JBBPngtP68REnXRLvkq+?=
- =?us-ascii?Q?TaLqrxy4b4mIgZJwStYs43CFkG4V2OzFeMx11IKDy4IwtGZE+ziVgJcApL/y?=
- =?us-ascii?Q?OqT+pXoIE5nnCjrsVBIUpj7R1+e2D/YI8xz9nr4GjlUjY5uR66uStn8T1UAm?=
- =?us-ascii?Q?dKBfoXCNgCllviE/qh9htiwmGp2uOCGB78EWHrTCk9pwAMqtlE6Byzv6EVFx?=
- =?us-ascii?Q?xIFcXNk5NrjHOt2SskRM6kKeL2k0mUMy/uY7/c36TfTwQj3zgdNZhDILdzEv?=
- =?us-ascii?Q?DfWSz8OVvkGTM7bTdVh50WOJV7QS+HB9/GuDvANAhALc86jpqaoWCsrnv787?=
- =?us-ascii?Q?HzDn9wd/Iq8CfZpCovwH7ApqH3/wVQPu8PrwLiaJPbyRu3mheWNYJAwq22aI?=
- =?us-ascii?Q?gL7OvNfIw9qlsy4AEf5cwP7UvnRfyXWqAEWmi3ni21K9h2sjwVDHP+AB6YiR?=
- =?us-ascii?Q?N65Yzvm8b2nzNwb5rUI3Lj9JNjyqJ9HwAo5jsxXAs6RUZzUH3I5KI1s2AcPZ?=
- =?us-ascii?Q?016fT2evb4NMT/vqSyo5tsbKMJnPC7WZitpqEZaR/NafyZeDsXdHQlHxyB0D?=
- =?us-ascii?Q?Iv1LgmsCnzaTCu45a8G4v6xpwBMPYaWqyKCR124914Q6QXYColaCRX1QNacz?=
- =?us-ascii?Q?VotUQLhJb0ilpCjiiuEyPX1t8AT4Yd0U9uGuLg297MDX2g/5ARkZARRdSV9a?=
- =?us-ascii?Q?zvXyKDkXvXHq3O1RxnMB+WT9FKssXHrwI3Wy61WZ2v7L1sNvMSd7Ao/U2Wyw?=
- =?us-ascii?Q?pax+W+8ec8wH6GaBdYuyKtzfMLa2iqBqLVeszgXMtp4/qrfVNURu5+oYzRFD?=
- =?us-ascii?Q?zahlHyhNoYMECPkPjtmFdW5RVB1zssonPZt/1Vu0?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: edcb5914-ce91-444f-5beb-08dd5740985f
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 15:08:30.4234
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WyLf2wAgcrLuob5585hG3+z3f6ejlL+GYlns0AYl+2ajtkl+jTqRoJE1n/5VMV12GSgJBbfXjSDwgywcad+BFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5913
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Zheng Qixing wrote:
-> From: Zheng Qixing <zhengqixing@huawei.com>
+Hi,
+
+Am Thu, 27 Feb 2025 08:20:55 -0600
+schrieb Nishanth Menon <nm@ti.com>:
+
+> On 10:08-20250220, Andreas Kemnade wrote:
+> > Am Wed, 19 Feb 2025 20:22:13 +0100
+> > schrieb Andi Shyti <andi.shyti@kernel.org>:
+> >   
+> > > Hi,
+> > > 
+> > > On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:  
+> > > > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> > > > storms because NACK IRQs are enabled and therefore triggered but not
+> > > > acked.
+> > > > 
+> > > > Sending a reset command to the gyroscope by
+> > > > i2cset 1 0x69 0x14 0xb6
+> > > > with an additional debug print in the ISR (not the thread) itself
+> > > > causes
+> > > > 
+> > > > [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+> > > > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+> > > > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+> > > > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+> > > > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > > repeating till infinity
+> > > > [...]
+> > > > (0x2 = NACK, 0x100 = Bus free, which is not enabled)
+> > > > Apparently no other IRQ bit gets set, so this stalls.
+> > > > 
+> > > > Do not ignore enabled interrupts and make sure they are acked.
+> > > > If the NACK IRQ is not needed, it should simply not enabled, but
+> > > > according to the above log, caring about it is necessary unless
+> > > > the Bus free IRQ is enabled and handled. The assumption that is
+> > > > will always come with a ARDY IRQ, which was the idea behind
+> > > > ignoring it, proves wrong.
+> > > > It is true for simple reads from an unused address.
+> > > > 
+> > > > So revert
+> > > > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> > > > 
+> > > > The offending commit was used to reduce the false detections in
+> > > > i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
+> > > > rare false detections (I have never seen such on my systems) is the
+> > > > lesser devil than having basically the system hanging completely.
+> > > > 
+> > > > No more details came to light in the corresponding email thread since
+> > > > several months:
+> > > > https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
+> > > > so no better fix to solve both problems can be developed right now.    
+> > > 
+> > > I need someone from TI or someone who can test to ack here.
+> > > 
+> > > Can someone help?
+> > >  
+> > The original (IMHO minor) problem which should be fixed by c770657bd261
+> > is hard to test, I have never seen that on any system (and as a
+> > platform maintainer have a bunch of them) I have access to.
+> > There is not much description anywhere about the system in which the
+> > original system occured, and no reaction since several months from the
+> > author, so I do not see anything which can be done.
+> > Maybe it was just faulty hardware.
+> > 
+> > As said in the commit message, reverting it should be the lesser devil.
+> > And that state was tested for many years.  
 > 
-> Change the return type of badblocks_set() and badblocks_clear()
-> from int to bool, indicating success or failure. Specifically:
+> Can we not handle this slightly differently? leave the fix based on
+> compatible? we know that the i2c controller changed over time. the
+> i2cdetect bug fixed by c770657bd261 esp hard to find and fix.
 > 
-> - _badblocks_set() and _badblocks_clear() functions now return
-> true for success and false for failure.
-> - All calls to these functions are updated to handle the new
-> boolean return type.
-> - This change improves code clarity and ensures a more consistent
-> handling of success and failure states.
-> 
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> Acked-by: Coly Li <colyli@kernel.org>
+Yes, if there are nicer solutions, then I agree. But if there is a case
+where NACK should be ignored, then we should either
 
-I'm not really sure this patch adds much.  But for the nvdimm part.
+a) not set it in OMAP_I2C_IE_REG
 
-Acked-by: Ira Weiny <ira.weiny@intel.com>
+or 
 
-[snip]
+b) do something more sophisticated in omap_i2c_isr_thread() to not do
+nonsense in that case.
+
+Even just not setting NACK in IE should improve things, so maybe the
+i2c get stuck but no IRQ storms. Of course conditions to do such could
+depend on compatible. I will investigate what you have sent me.
+
+Regards,
+Andreas
 
