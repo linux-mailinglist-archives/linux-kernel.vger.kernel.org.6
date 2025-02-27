@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-535433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516A8A472D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:32:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3269A47305
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A736D188AE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E65D57ABB61
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B4223875D;
-	Thu, 27 Feb 2025 02:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB3D23C8D0;
+	Thu, 27 Feb 2025 02:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kL48CMa5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p/38eAlX"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59772238D28
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC6C236A8B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622801; cv=none; b=lokRvmcr3pKT3Vqej289y46RhBs/9YhptsvJxKnTeGFLAIXji1eGpRdgA6fvLyjuIsDBN37SWtbv4jNj5hOyFP/pZrZKog1nh7A+ZXQHfUIJCE2v3+s9pwmtRwFGU2ROU0eqOKGeWj/b+rR4vLVmMIC4Fr1AJLKJtUBW3zWsSTA=
+	t=1740622802; cv=none; b=nUP06m8hn5DlUqlA7xdupZiUtSlCGh3TAFkraf3lcdmPE1uSRO/lIGwz3b5mrz4W6z0MYTqfqGpl/EvqwigksclO+u87flDE1pjrUW5FQoDcr2HEPcNPs3WkK6sxvgsGEhnI2neT5Yq1mlt3r1zGiGq/EdFfgBRYqtThyJ7PTn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622801; c=relaxed/simple;
-	bh=XdZRYBlPZyw/8jtawHaf0Gd25EjncrTXZSrOsMRCotM=;
+	s=arc-20240116; t=1740622802; c=relaxed/simple;
+	bh=QPB0hO3DgGDIpWXharYozGSl0kpmrn7uptJliWGGUbA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hX/I/6nDHGW/UpejXcAJI8Osn7ctXILGSClHBMNPr+AwZDUTDtqBft3i/cyFuI7OLQkUTPxf8YW+s5PNi+i2jfXaZEf8IeoGPTpz6WluW6pyJJ+bC3W5mh//EHyUbIronh9g+Em7VfXhiL4J4FcW0OQ/LDKA4lXWs5PNINV+x9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kL48CMa5; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=q7DP+n07CvEC2Zwn3U/SSy9lTBUMkYn7L4Y8aFZCx2F/ezPo2z1zEOSy4Wn42IQ13Tof9E0EELjFphT51/IH6/xH4vR8LuHndKdcbwGvMPGrbNEq+z65fpUTttCC8qLAwyQx8Zla7Mwlvtrf7jZgLdLFtRsMu4Hsf/+K4zDN6Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p/38eAlX; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe870bc003so993599a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:19:59 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc45101191so1080488a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:20:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740622799; x=1741227599; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740622800; x=1741227600; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZJJLySVHQgVgABAB7C0XZjDtBlLYwz9ES+Z1vP/8LE=;
-        b=kL48CMa5HC14aNbI0Clsz2W/FXFsbTLSaq66y5swjaYLwy92G2/KOpyXHgPIdH1wA0
-         7pdF7gDgm1KFZsaLOrC3vhi/1/NU1Kds9jeCo857ZMxKJy43ucAAGlVApPm80cP7fyJ4
-         Ak3WGFAoZWP9p56PU/FtWgNi8x8LSfI5aSLZeENPtLkZJawX/5O0IB3pAhCL9FIW8JUw
-         HQ5rSgm47il+rEQfdN6ul6S3Av+lh9JmyzPlpTfaPzPHACpvbCJxvWjLGa2SYgTuxu5F
-         HYMmTbNr5hAw8O7aWmxnWa8YRxFwGyF9JTHnUZwtFjhqZpYsP1zTTe2hSkBq5qh4Ig0g
-         4Dxg==
+        bh=SUWURP6DS00BmWQuQkka/ewYMygd0uN/XlEQWE3xarE=;
+        b=p/38eAlXVBlnzxMy4cgsnY0hH2hHTEIwimsxxtF21T0WkCtdNUw3WUnpEiNfrZFn9Z
+         wFtDE33Y8Q6RhXb+kvOuUE80VfYmhRdlnLd49oet2ZCZyx55S9HQ+lsJiB6EGohCoCXs
+         yLL8vgRDcZ6wUk8rxJ88gzM/Qb2l6l0lMsYQcfZKT5gQp9sEyP4GkQva5+PNY50SUmip
+         XmHnWKq3pm6Btq73RCSWaagC3bIfp68w0vXxHzgNxh7z5yAuk4tVWLZCO1DIjZ2rfERI
+         hq35r+/20Ic+WIA1yx9X+UhO8hvPB/Z6w5BYag0kiSpcpCLLBJ7aVZGWxDl1q8NxjtSx
+         6SLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740622799; x=1741227599;
+        d=1e100.net; s=20230601; t=1740622800; x=1741227600;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LZJJLySVHQgVgABAB7C0XZjDtBlLYwz9ES+Z1vP/8LE=;
-        b=EKQCdo6dC6KnD319qsGtDr3Uh7MvjCc2I62eo/G4HWnvJOXTvgsBjHQEKV3OEa0Fvu
-         SJO+Nq0g3NNyjHgHmErRIFcvoX+qFQTJwMe0uHHr01LA1/fpBhvoG1KUMO/Uzmm5WTIR
-         SspaJ0P4m9cNWovYmA4uHhYyAvwIdfaLzqTMcDtTwahnTvqJZlOpnokhXu5s/u+wgr2J
-         3cVLLJY1JqEZQadtMcoQ09Oa2QhEqNpdriFEYM5OqIGQRgEhQxEjm4kEP1CoUi/72Bqn
-         NGe71DXL58rhtr78Cx2NqxvkqfFd+ZzPLS61+y8sPRSCZtbakNzTk+ACkvfg2W+jxteH
-         cfVg==
-X-Gm-Message-State: AOJu0Yzl3xvHMiHpjYZDDXnV2vn+fypnutzuNZyx2TIQNX5n/ML+JvtS
-	DouGlVHpDq5mOiQ7fosZy4vf37BtF1NMxENzfKiT0lAu0IHsA6QvfJvDJ+CqZnCVOBVqDW+Dq3L
-	gJw==
-X-Google-Smtp-Source: AGHT+IGhmfOgzOy0w88MLax4aQJq7WSM6/RTmeD/HK48z8QB3SAzs8w4kTiAhr4wwBRMQkXZhflq/qsZ2GU=
-X-Received: from pjtq6.prod.google.com ([2002:a17:90a:c106:b0:2fc:11a0:c53f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:570c:b0:2fa:2c61:3e5a
- with SMTP id 98e67ed59e1d1-2fea12c36b0mr2515446a91.10.1740622798574; Wed, 26
- Feb 2025 18:19:58 -0800 (PST)
+        bh=SUWURP6DS00BmWQuQkka/ewYMygd0uN/XlEQWE3xarE=;
+        b=s8Wwe/88aA2LjndyeQzcgPYPwoIQ+jFnKb0vDkeNmz/M3rhs+kim66PEFaNIb5QkxM
+         CvtiSlOy5WJ/VMWVNjc8/2cZv5yr7HlYWxm1fh3tL34TDjxnY2d5kw4Vxx+f+jlxajTl
+         354A3r41lZScXJTzhLip7fRWxA2k6dHLXBj2qUVBYm9sx13rop7wlCpPkyWtWBgT7QNl
+         XTtWzlfONaKC/ooTA/PQcBYr6GsgKvN4oIQ3/DiM4C+fjrOnFzbImHruYLMBOuFkBAA2
+         MIlTZmHrEn0RLrgCXB1Q36rayEEsEFJe9m9PgwMw0L9FjkVwD7v4N5JKf/bfhiaY59xd
+         Uzcw==
+X-Gm-Message-State: AOJu0YwxQ3vaVo4Bm0zT+5PUODDGTNrzd3tVjvMMdkcGD0jM0e9Pya+j
+	hj0V7ZEu/d6w3zY5l87koKZieBMzu32XjbjUEZmN/MeDi1T4heEMetqoaz5I5O17AiFYtijEf8C
+	lUg==
+X-Google-Smtp-Source: AGHT+IEaJegSwuz7gp17gUBIq0YV/a5p90hmpWu2RxMMtE/LMlRmTHKg61dycPOdBb/l8JsfSEdKtOPrkAY=
+X-Received: from pjboh8.prod.google.com ([2002:a17:90b:3a48:b0:2fc:2b96:2d4b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4fcf:b0:2f8:34df:5652
+ with SMTP id 98e67ed59e1d1-2fce78beb41mr33366155a91.21.1740622800327; Wed, 26
+ Feb 2025 18:20:00 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 18:18:48 -0800
+Date: Wed, 26 Feb 2025 18:18:49 -0800
 In-Reply-To: <20250227021855.3257188-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,9 +74,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250227021855.3257188-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227021855.3257188-33-seanjc@google.com>
-Subject: [PATCH v2 32/38] x86/tsc: Rejects attempts to override TSC
- calibration with lesser routine
+Message-ID: <20250227021855.3257188-34-seanjc@google.com>
+Subject: [PATCH v2 33/38] x86/kvmclock: Mark TSC as reliable when it's
+ constant and nonstop
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -93,42 +93,82 @@ Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
 	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When registering a TSC frequency calibration routine, sanity check that
-the incoming routine is as robust as the outgoing routine, and reject the
-incoming routine if the sanity check fails.
+Mark the TSC as reliable if the hypervisor (KVM) has enumerated the TSC
+as constant and nonstop, and the admin hasn't explicitly marked the TSC
+as unstable.  Like most (all?) virtualization setups, any secondary
+clocksource that's used as a watchdog is guaranteed to be less reliable
+than a constant, nonstop TSC, as all clocksources the kernel uses as a
+watchdog are all but guaranteed to be emulated when running as a KVM
+guest.  I.e. any observed discrepancies between the TSC and watchdog will
+be due to jitter in the watchdog.
 
-Because native calibration routines only mark the TSC frequency as known
-and reliable when they actually run, the effective progression of
-capabilities is: None (native) => Known and maybe Reliable (PV) =>
-Known and Reliable (CoCo).  Violating that progression for a PV override
-is relatively benign, but messing up the progression when CoCo is
-involved is more problematic, as it likely means a trusted source of
-information (hardware/firmware) is being discarded in favor of a less
-trusted source (hypervisor).
+This is especially true for KVM, as the watchdog clocksource is usually
+emulated in host userspace, i.e. reading the clock incurs a roundtrip
+cost of thousands of cycles.
+
+Marking the TSC reliable addresses a flaw where the TSC will occasionally
+be marked unstable if the host is under moderate/heavy load.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kernel/tsc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kernel/kvmclock.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index be58df4fef66..ebcfaf7dcd38 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1309,8 +1309,13 @@ void tsc_register_calibration_routines(unsigned long (*calibrate_tsc)(void),
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index ce676e735ced..b924b19e8f0f 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -362,6 +362,7 @@ static void __init kvm_sched_clock_init(bool stable)
  
- 	if (properties & TSC_FREQUENCY_KNOWN)
- 		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
-+	else if (WARN_ON(boot_cpu_has(X86_FEATURE_TSC_KNOWN_FREQ)))
-+		return;
+ void __init kvmclock_init(void)
+ {
++	enum tsc_properties tsc_properties = TSC_FREQUENCY_KNOWN;
+ 	bool stable = false;
+ 
+ 	if (!kvm_para_available() || !kvmclock)
+@@ -400,18 +401,6 @@ void __init kvmclock_init(void)
+ 			 PVCLOCK_TSC_STABLE_BIT;
+ 	}
+ 
+-	kvm_sched_clock_init(stable);
+-
+-	tsc_register_calibration_routines(kvm_get_tsc_khz, kvm_get_tsc_khz,
+-					  TSC_FREQUENCY_KNOWN);
+-
+-	x86_platform.get_wallclock = kvm_get_wallclock;
+-	x86_platform.set_wallclock = kvm_set_wallclock;
+-#ifdef CONFIG_SMP
+-	x86_cpuinit.early_percpu_clock_init = kvm_setup_secondary_clock;
+-#endif
+-	kvm_get_preset_lpj();
+-
+ 	/*
+ 	 * X86_FEATURE_NONSTOP_TSC is TSC runs at constant rate
+ 	 * with P/T states and does not stop in deep C-states.
+@@ -422,8 +411,22 @@ void __init kvmclock_init(void)
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_CONSTANT_TSC) &&
+ 	    boot_cpu_has(X86_FEATURE_NONSTOP_TSC) &&
+-	    !check_tsc_unstable())
++	    !check_tsc_unstable()) {
+ 		kvm_clock.rating = 299;
++		tsc_properties = TSC_FREQ_KNOWN_AND_RELIABLE;
++	}
 +
- 	if (properties & TSC_RELIABLE)
- 		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
-+	else if (WARN_ON(boot_cpu_has(X86_FEATURE_TSC_RELIABLE)))
-+		return;
++	kvm_sched_clock_init(stable);
++
++	tsc_register_calibration_routines(kvm_get_tsc_khz, kvm_get_tsc_khz,
++					  tsc_properties);
++
++	x86_platform.get_wallclock = kvm_get_wallclock;
++	x86_platform.set_wallclock = kvm_set_wallclock;
++#ifdef CONFIG_SMP
++	x86_cpuinit.early_percpu_clock_init = kvm_setup_secondary_clock;
++#endif
++	kvm_get_preset_lpj();
  
- 	x86_platform.calibrate_tsc = calibrate_tsc;
- 	if (calibrate_cpu)
+ 	clocksource_register_hz(&kvm_clock, NSEC_PER_SEC);
+ 	pv_info.name = "KVM";
 -- 
 2.48.1.711.g2feabab25a-goog
 
