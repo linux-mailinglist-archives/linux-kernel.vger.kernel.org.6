@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-535574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83435A474B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:39:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA5AA474C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEEC3AA4CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:39:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23373188DDD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDFF1EFF84;
-	Thu, 27 Feb 2025 04:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E602F2222A0;
+	Thu, 27 Feb 2025 04:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gf3zVeij"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kjFxbXS0"
 Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CABC1EB5DF
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A5D21D3C4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740631059; cv=none; b=k9H+EUg4mS6KAh8JiHuqTa1bXMxo33YiRlujfAJA/cnyNObhOKqqxKgE5Q/xT1rRg8plB7e5KrdeqBuEnQ0qG3Z4aYv4SvE729F8aeYmPWRj+6LHdbeCFmvEsDWjDpQkOH8JY/JAP2oO64UFIDhBVRVtKvVn2IidXfSOCs9MMoM=
+	t=1740631067; cv=none; b=fcKBCxnxCH+3x5hGRLFTIO0OmGZpzhc5I5UZPXYjaKRCZaFLFkW4Dftz/XY0HQjE1Aa3AzyHGsZ8y8buOnp+NmcOmA4ueRTOwsDF+Z3C/3A9FQlRkJsTDV0WKJlUBCPgswhHI/2NPAiWL1Bz8RgzKVo2LXw3bE9yxNW2xJLbsW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740631059; c=relaxed/simple;
-	bh=odlz8hoQ26Jw3Tf67oa3XzcHo7Ity+kkxSjAfuSnavQ=;
+	s=arc-20240116; t=1740631067; c=relaxed/simple;
+	bh=9xIWo+qYBIjDJDoi7mgugd4aIKN7ipYPVG8X4/plwdA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tHXko/4kTlM1P9vMUh7t+EN07F1tpg5DlDL/UsRPo6tQhWnwJ9f1p9TfAqgPgAyBkBr/ywX1BMqPepTGAgG4e2LyMyfUFrp3f3rhh/QNZ9hObwhSgnKBG2G3DKrBmypEYrWD0qjl9yW+W6OjH/0jmwOcQwRd0gSNu7eiALU3cMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gf3zVeij; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=E+3yu3WhmZx2qU7MuOUMQ1T9Lpmblj9DHXooNwPYN6RYqQPl6DfVnGWYPtGi8NCHovpIwg0byQ63GDajIZgAtrbTN8hrJGeAjWYryKrLqSpdPgqWN0lUGWva1VTvf+JU8YjZUqagUf7+fnLFyGF452JaP+aIKTFXOEMUtMQku2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kjFxbXS0; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22114b800f7so8822775ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:37:37 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2211cd4463cso8011355ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740631057; x=1741235857; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740631063; x=1741235863; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZEqWbULFJyDHZ0uxeHUHEx9cW/XUYWqE9opCIKYGE7k=;
-        b=Gf3zVeijwf5loopOVzjPHrAWXaGIlSG0wN11j3KJslXJRVoNJI3+Zv3dBQINarSyN8
-         3+oJWnb3OLsigkxrkDwEwHl3qAEpP3Jn7Gj0+f64QVXrsSIG+HKCcAiyv7H3vCBs0vOl
-         DYmbWxnfeLD4tcpk+V8yIxzFxDC1aMw+8FWbw=
+        bh=GwrDBXsyO2EvEhOdvagCAu0rolY3IippWT1+2LO84LM=;
+        b=kjFxbXS0oAV7YQLKc21aEoFKAiaDr6cR6QOON+gW+R/8vdYY5/Rr+kfQhT3XEHZQ7Z
+         VQOfR1IEFEakNqTt171tjKeFlzae4v43jxoxAY4IkxmYUZH1kqxXEvR1fI0JLiOa7Vkm
+         /wnKAnNv1+i/otlohxB/VSTlh6z3tPlHCLesk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740631057; x=1741235857;
+        d=1e100.net; s=20230601; t=1740631063; x=1741235863;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZEqWbULFJyDHZ0uxeHUHEx9cW/XUYWqE9opCIKYGE7k=;
-        b=gLUeyL1GnrAUDlfRzH+GxhYKKQ7pYgoyR5H+7zklGbnIEfmUvWbIG42YzWUKPYZekI
-         PYwGCy62lsJfTaXRy7ReslHSgb7dQZwo0nnr0z5ohemxG+2iLFfNraHzYFejAtVaDmW8
-         04aIdShqJ8LpSHpq60sBOez4CiC2WpuZEmrubgc2qEz5uhO4UTwWByv7DbMFyZw6unB8
-         OwMw120jIaNok1+VfnWGdfkueBmajb1CfFfL4wuPtJzcbZO6WFtgDR9It/efxJ6YWD4E
-         D/k4JAyGzREjGIVQt5TUu0ozVfO+C8v0g+HZ+r98v3u54koAwdfEq4e39QejLkz4Wlyg
-         ww6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnmPXIAGhBrJpjHyNchq6EfTT8tq1sbDXIgRNfIdggsAtlgHbCGI/Aa/aGEMQErg3pXKqRNCb1R+K/T5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4OdvjRI6AQmCMR9lcvdI5Zg9rMMbfR9ub1kkxMwC7bWAev7WF
-	gU3eWkJ5Dd71id/d2eFjVaHdy1vj3NPyohiXGnihdOu/MyaddIj8xuQcVWye5g==
-X-Gm-Gg: ASbGncuWwZqi2fhCqSk67MAK0rLiof2hq9CBawUe1Cl4uE/tMPPMF4zQ/9nOm7uRBLD
-	7VQofX82KHAaP0D3IMCQ+P5d/ZcG6U0sTU8RMMMJlUCQMpYUsl1et+WKhU1ShvodOTOLMbTV3va
-	h/KCB1uljfQ5wEg9JMHcUxqte3qp+v41FbfLBRwhBYgYJjVGlvSRk5DU7luJi/ddZjpcEjD/Gl9
-	gnnTeYgj7xgiWT9dWkUjWbTUig9QjYl2kWOuHn7Ct8HE2wbGpYa8xkeMT1//mDqzUnkS0XQpvVl
-	vAv3uq9GUonLhfaR6gJmtBs2fQO2
-X-Google-Smtp-Source: AGHT+IGjRG1+LdYUr60qs0ikZWZDjzWHfWUJZUn2QU7B7wuT5jMjcjNdqY/z652mUps+J+R2kLTanA==
-X-Received: by 2002:a05:6a21:48d:b0:1f0:e7e2:127e with SMTP id adf61e73a8af0-1f10ad3ffabmr9855132637.23.1740631057375;
-        Wed, 26 Feb 2025 20:37:37 -0800 (PST)
+        bh=GwrDBXsyO2EvEhOdvagCAu0rolY3IippWT1+2LO84LM=;
+        b=WArbxgtEWGDlRWZyQ5bwTstQSLJHZzXLTCQ1pAwGS2B+I4jqazL3JZ6O29rYZ+S/Za
+         EOaJHWGdlVn6uAIsWsXBwboKeb2aSRAkudx0tbKIikn3Mpxpnx2DTTkKD26f4Fg2tKAx
+         h9XBPpjtAuRGRIxUMAymEAadNyHwzs5MhU1m7BCP+3rAoRtQFtn+8+tpUB2TKOu2bNOJ
+         7fQOBY7n6sKUknmmHMPaoDQdA5TVxZ3pRPdrb10KCy/OWVxFcB7gn1ndqB0+DsjhKMCD
+         SR1eiKf/VdrorzRd2cfT2FEMzpmos6obi2fBcYrMamD9vWvPoyggRFRjn3A3iFp+3Du4
+         1/Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4d6P5cdoPg2jxFvA98u703KIyhmffzScEHs46IwRu4xqpYwevx177CBCiava+wPWlcCkXi5l31o7WZTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywerm2kadlH22IMW6RUtJxz4GrQRsZkWaOSB87c/88SG+iCoDgY
+	wCuoTuCuv8itS2lobYMa6MdjNyF+ItKFmzdYQ4P+L4lQodP7clx/OC7rqHh7Mg==
+X-Gm-Gg: ASbGncs7hWIQqLbBzD3hp1GGSAiWz6O2LoglIT1mUzB7YMCEI2jg55kuzyWJqrwqY+i
+	tqLKNC5U3t14m3oSambmloO0uxzA6JCT1wgO5qI2wf5bz3sdNYAG8yt3bXsLhSeMQOuaomL9Q7y
+	m38xvYJV824nQtHNDcMTH6HOvJMWNCIWKlNCEER20cqBPycBprcQCZZLYquQNqtlMigYBYcBMbF
+	cjve184jKdqgmuWTo405wRKrBZ1ZBLvz1LZo4j0H2ru//SNPNmRWi6HYApWsFgwVwe2mI8hM4jV
+	PPg7X7Li8vuheYtHNkVgLVGltZVB
+X-Google-Smtp-Source: AGHT+IFrOSZSmfTMzWd5HqkTvrPS3qIgNLqZdoN+0693MnsV/OS8jz0BlediKk7QkapJlhesjLvlCw==
+X-Received: by 2002:aa7:84c8:0:b0:734:918a:4ecd with SMTP id d2e1a72fcca58-734918a5063mr4878646b3a.15.1740631063305;
+        Wed, 26 Feb 2025 20:37:43 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:a9c0:1bc1:74e3:3e31])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7349fe6c1desm500488b3a.73.2025.02.26.20.37.34
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-734a0024bd8sm501433b3a.91.2025.02.26.20.37.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 20:37:37 -0800 (PST)
+        Wed, 26 Feb 2025 20:37:42 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
@@ -78,9 +78,9 @@ Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH v9 12/19] zsmalloc: rename pool lock
-Date: Thu, 27 Feb 2025 13:35:30 +0900
-Message-ID: <20250227043618.88380-13-senozhatsky@chromium.org>
+Subject: [PATCH v9 13/19] zsmalloc: make zspage lock preemptible
+Date: Thu, 27 Feb 2025 13:35:31 +0900
+Message-ID: <20250227043618.88380-14-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 In-Reply-To: <20250227043618.88380-1-senozhatsky@chromium.org>
 References: <20250227043618.88380-1-senozhatsky@chromium.org>
@@ -92,155 +92,347 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The old name comes from the times when the pool did not have
-compaction (defragmentation).  Rename it to ->lock because these
-days it synchronizes not only migration.
+In order to implement preemptible object mapping we need a zspage lock
+that satisfies several preconditions:
+- it should be reader-write type of a lock
+- it should be possible to hold it from any context, but also being
+  preemptible if the context allows it
+- we never sleep while acquiring but can sleep while holding in read
+  mode
 
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+An rwsemaphore doesn't suffice, due to atomicity requirements, rwlock
+doesn't satisfy due to reader-preemptability requirement.  It's also
+worth to mention, that per-zspage rwsem is a little too memory heavy
+(we can easily have double digits megabytes used only on rwsemaphores).
+
+Switch over from rwlock_t to a atomic_t-based implementation of a
+reader-writer semaphore that satisfies all of the preconditions.
+
+The spin-lock based zspage_lock is suggested by Hillf Danton.
+
+Suggested-by: Hillf Danton <hdanton@sina.com>
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- mm/zsmalloc.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ mm/zsmalloc.c | 171 ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 118 insertions(+), 53 deletions(-)
 
 diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 817626a351f8..1424ee73cbb5 100644
+index 1424ee73cbb5..74a7aaebf7a0 100644
 --- a/mm/zsmalloc.c
 +++ b/mm/zsmalloc.c
-@@ -18,7 +18,7 @@
- /*
-  * lock ordering:
-  *	page_lock
-- *	pool->migrate_lock
-+ *	pool->lock
-  *	class->lock
-  *	zspage->lock
-  */
-@@ -223,8 +223,8 @@ struct zs_pool {
- #ifdef CONFIG_COMPACTION
- 	struct work_struct free_work;
- #endif
--	/* protect page/zspage migration */
--	rwlock_t migrate_lock;
-+	/* protect zspage migration/compaction */
-+	rwlock_t lock;
+@@ -226,6 +226,7 @@ struct zs_pool {
+ 	/* protect zspage migration/compaction */
+ 	rwlock_t lock;
  	atomic_t compaction_in_progress;
++	struct lock_class_key lock_class;
  };
  
-@@ -1206,7 +1206,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 	BUG_ON(in_interrupt());
- 
- 	/* It guarantees it can get zspage from handle safely */
--	read_lock(&pool->migrate_lock);
-+	read_lock(&pool->lock);
- 	obj = handle_to_obj(handle);
- 	obj_to_location(obj, &zpdesc, &obj_idx);
- 	zspage = get_zspage(zpdesc);
-@@ -1218,7 +1218,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 	 * which is smaller granularity.
- 	 */
- 	migrate_read_lock(zspage);
--	read_unlock(&pool->migrate_lock);
-+	read_unlock(&pool->lock);
- 
- 	class = zspage_class(pool, zspage);
- 	off = offset_in_page(class->size * obj_idx);
-@@ -1450,16 +1450,16 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
- 		return;
- 
- 	/*
--	 * The pool->migrate_lock protects the race with zpage's migration
-+	 * The pool->lock protects the race with zpage's migration
- 	 * so it's safe to get the page from handle.
- 	 */
--	read_lock(&pool->migrate_lock);
-+	read_lock(&pool->lock);
- 	obj = handle_to_obj(handle);
- 	obj_to_zpdesc(obj, &f_zpdesc);
- 	zspage = get_zspage(f_zpdesc);
- 	class = zspage_class(pool, zspage);
- 	spin_lock(&class->lock);
--	read_unlock(&pool->migrate_lock);
-+	read_unlock(&pool->lock);
- 
- 	class_stat_sub(class, ZS_OBJS_INUSE, 1);
- 	obj_free(class->size, obj);
-@@ -1796,7 +1796,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
- 	 * The pool migrate_lock protects the race between zpage migration
- 	 * and zs_free.
- 	 */
--	write_lock(&pool->migrate_lock);
-+	write_lock(&pool->lock);
- 	class = zspage_class(pool, zspage);
- 
- 	/*
-@@ -1833,7 +1833,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
- 	 * Since we complete the data copy and set up new zspage structure,
- 	 * it's okay to release migration_lock.
- 	 */
--	write_unlock(&pool->migrate_lock);
-+	write_unlock(&pool->lock);
- 	spin_unlock(&class->lock);
- 	migrate_write_unlock(zspage);
- 
-@@ -1956,7 +1956,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 	 * protect the race between zpage migration and zs_free
- 	 * as well as zpage allocation/free
- 	 */
--	write_lock(&pool->migrate_lock);
-+	write_lock(&pool->lock);
- 	spin_lock(&class->lock);
- 	while (zs_can_compact(class)) {
- 		int fg;
-@@ -1983,14 +1983,14 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 		src_zspage = NULL;
- 
- 		if (get_fullness_group(class, dst_zspage) == ZS_INUSE_RATIO_100
--		    || rwlock_is_contended(&pool->migrate_lock)) {
-+		    || rwlock_is_contended(&pool->lock)) {
- 			putback_zspage(class, dst_zspage);
- 			dst_zspage = NULL;
- 
- 			spin_unlock(&class->lock);
--			write_unlock(&pool->migrate_lock);
-+			write_unlock(&pool->lock);
- 			cond_resched();
--			write_lock(&pool->migrate_lock);
-+			write_lock(&pool->lock);
- 			spin_lock(&class->lock);
- 		}
- 	}
-@@ -2002,7 +2002,7 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 		putback_zspage(class, dst_zspage);
- 
- 	spin_unlock(&class->lock);
--	write_unlock(&pool->migrate_lock);
-+	write_unlock(&pool->lock);
- 
- 	return pages_freed;
+ static inline void zpdesc_set_first(struct zpdesc *zpdesc)
+@@ -257,6 +258,15 @@ static inline void free_zpdesc(struct zpdesc *zpdesc)
+ 	__free_page(page);
  }
-@@ -2014,10 +2014,10 @@ unsigned long zs_compact(struct zs_pool *pool)
- 	unsigned long pages_freed = 0;
  
- 	/*
--	 * Pool compaction is performed under pool->migrate_lock so it is basically
-+	 * Pool compaction is performed under pool->lock so it is basically
- 	 * single-threaded. Having more than one thread in __zs_compact()
--	 * will increase pool->migrate_lock contention, which will impact other
--	 * zsmalloc operations that need pool->migrate_lock.
-+	 * will increase pool->lock contention, which will impact other
-+	 * zsmalloc operations that need pool->lock.
- 	 */
- 	if (atomic_xchg(&pool->compaction_in_progress, 1))
- 		return 0;
-@@ -2139,7 +2139,7 @@ struct zs_pool *zs_create_pool(const char *name)
++#define ZS_PAGE_UNLOCKED	0
++#define ZS_PAGE_WRLOCKED	-1
++
++struct zspage_lock {
++	spinlock_t lock;
++	int cnt;
++	struct lockdep_map dep_map;
++};
++
+ struct zspage {
+ 	struct {
+ 		unsigned int huge:HUGE_BITS;
+@@ -269,7 +279,7 @@ struct zspage {
+ 	struct zpdesc *first_zpdesc;
+ 	struct list_head list; /* fullness list */
+ 	struct zs_pool *pool;
+-	rwlock_t lock;
++	struct zspage_lock zsl;
+ };
+ 
+ struct mapping_area {
+@@ -279,6 +289,85 @@ struct mapping_area {
+ 	enum zs_mapmode vm_mm; /* mapping mode */
+ };
+ 
++static void zspage_lock_init(struct zspage *zspage)
++{
++	struct zspage_lock *zsl = &zspage->zsl;
++
++	lockdep_init_map(&zsl->dep_map, "zspage->lock",
++			 &zspage->pool->lock_class, 0);
++	spin_lock_init(&zsl->lock);
++	zsl->cnt = ZS_PAGE_UNLOCKED;
++}
++
++/*
++ * The zspage lock can be held from atomic contexts, but it needs to remain
++ * preemptible when held for reading because it remains held outside of those
++ * atomic contexts, otherwise we unnecessarily lose preemptibility.
++ *
++ * To achieve this, the following rules are enforced on readers and writers:
++ *
++ * - Writers are blocked by both writers and readers, while readers are only
++ *   blocked by writers (i.e. normal rwlock semantics).
++ *
++ * - Writers are always atomic (to allow readers to spin waiting for them).
++ *
++ * - Writers always use trylock (as the lock may be held be sleeping readers).
++ *
++ * - Readers may spin on the lock (as they can only wait for atomic writers).
++ *
++ * - Readers may sleep while holding the lock (as writes only use trylock).
++ */
++static void zspage_read_lock(struct zspage *zspage)
++{
++	struct zspage_lock *zsl = &zspage->zsl;
++
++	rwsem_acquire_read(&zsl->dep_map, 0, 0, _RET_IP_);
++
++	spin_lock(&zsl->lock);
++	zsl->cnt++;
++	spin_unlock(&zsl->lock);
++
++	lock_acquired(&zsl->dep_map, _RET_IP_);
++}
++
++static void zspage_read_unlock(struct zspage *zspage)
++{
++	struct zspage_lock *zsl = &zspage->zsl;
++
++	rwsem_release(&zsl->dep_map, _RET_IP_);
++
++	spin_lock(&zsl->lock);
++	zsl->cnt--;
++	spin_unlock(&zsl->lock);
++}
++
++static __must_check bool zspage_write_trylock(struct zspage *zspage)
++{
++	struct zspage_lock *zsl = &zspage->zsl;
++
++	spin_lock(&zsl->lock);
++	if (zsl->cnt == ZS_PAGE_UNLOCKED) {
++		zsl->cnt = ZS_PAGE_WRLOCKED;
++		rwsem_acquire(&zsl->dep_map, 0, 1, _RET_IP_);
++		lock_acquired(&zsl->dep_map, _RET_IP_);
++		return true;
++	}
++
++	lock_contended(&zsl->dep_map, _RET_IP_);
++	spin_unlock(&zsl->lock);
++	return false;
++}
++
++static void zspage_write_unlock(struct zspage *zspage)
++{
++	struct zspage_lock *zsl = &zspage->zsl;
++
++	rwsem_release(&zsl->dep_map, _RET_IP_);
++
++	zsl->cnt = ZS_PAGE_UNLOCKED;
++	spin_unlock(&zsl->lock);
++}
++
+ /* huge object: pages_per_zspage == 1 && maxobj_per_zspage == 1 */
+ static void SetZsHugePage(struct zspage *zspage)
+ {
+@@ -290,12 +379,6 @@ static bool ZsHugePage(struct zspage *zspage)
+ 	return zspage->huge;
+ }
+ 
+-static void migrate_lock_init(struct zspage *zspage);
+-static void migrate_read_lock(struct zspage *zspage);
+-static void migrate_read_unlock(struct zspage *zspage);
+-static void migrate_write_lock(struct zspage *zspage);
+-static void migrate_write_unlock(struct zspage *zspage);
+-
+ #ifdef CONFIG_COMPACTION
+ static void kick_deferred_free(struct zs_pool *pool);
+ static void init_deferred_free(struct zs_pool *pool);
+@@ -992,7 +1075,9 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
  		return NULL;
  
+ 	zspage->magic = ZSPAGE_MAGIC;
+-	migrate_lock_init(zspage);
++	zspage->pool = pool;
++	zspage->class = class->index;
++	zspage_lock_init(zspage);
+ 
+ 	for (i = 0; i < class->pages_per_zspage; i++) {
+ 		struct zpdesc *zpdesc;
+@@ -1015,8 +1100,6 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+ 
+ 	create_page_chain(class, zspage, zpdescs);
+ 	init_zspage(class, zspage);
+-	zspage->pool = pool;
+-	zspage->class = class->index;
+ 
+ 	return zspage;
+ }
+@@ -1217,7 +1300,7 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
+ 	 * zs_unmap_object API so delegate the locking from class to zspage
+ 	 * which is smaller granularity.
+ 	 */
+-	migrate_read_lock(zspage);
++	zspage_read_lock(zspage);
+ 	read_unlock(&pool->lock);
+ 
+ 	class = zspage_class(pool, zspage);
+@@ -1277,7 +1360,7 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+ 	}
+ 	local_unlock(&zs_map_area.lock);
+ 
+-	migrate_read_unlock(zspage);
++	zspage_read_unlock(zspage);
+ }
+ EXPORT_SYMBOL_GPL(zs_unmap_object);
+ 
+@@ -1671,18 +1754,18 @@ static void lock_zspage(struct zspage *zspage)
+ 	/*
+ 	 * Pages we haven't locked yet can be migrated off the list while we're
+ 	 * trying to lock them, so we need to be careful and only attempt to
+-	 * lock each page under migrate_read_lock(). Otherwise, the page we lock
++	 * lock each page under zspage_read_lock(). Otherwise, the page we lock
+ 	 * may no longer belong to the zspage. This means that we may wait for
+ 	 * the wrong page to unlock, so we must take a reference to the page
+-	 * prior to waiting for it to unlock outside migrate_read_lock().
++	 * prior to waiting for it to unlock outside zspage_read_lock().
+ 	 */
+ 	while (1) {
+-		migrate_read_lock(zspage);
++		zspage_read_lock(zspage);
+ 		zpdesc = get_first_zpdesc(zspage);
+ 		if (zpdesc_trylock(zpdesc))
+ 			break;
+ 		zpdesc_get(zpdesc);
+-		migrate_read_unlock(zspage);
++		zspage_read_unlock(zspage);
+ 		zpdesc_wait_locked(zpdesc);
+ 		zpdesc_put(zpdesc);
+ 	}
+@@ -1693,41 +1776,16 @@ static void lock_zspage(struct zspage *zspage)
+ 			curr_zpdesc = zpdesc;
+ 		} else {
+ 			zpdesc_get(zpdesc);
+-			migrate_read_unlock(zspage);
++			zspage_read_unlock(zspage);
+ 			zpdesc_wait_locked(zpdesc);
+ 			zpdesc_put(zpdesc);
+-			migrate_read_lock(zspage);
++			zspage_read_lock(zspage);
+ 		}
+ 	}
+-	migrate_read_unlock(zspage);
++	zspage_read_unlock(zspage);
+ }
+ #endif /* CONFIG_COMPACTION */
+ 
+-static void migrate_lock_init(struct zspage *zspage)
+-{
+-	rwlock_init(&zspage->lock);
+-}
+-
+-static void migrate_read_lock(struct zspage *zspage) __acquires(&zspage->lock)
+-{
+-	read_lock(&zspage->lock);
+-}
+-
+-static void migrate_read_unlock(struct zspage *zspage) __releases(&zspage->lock)
+-{
+-	read_unlock(&zspage->lock);
+-}
+-
+-static void migrate_write_lock(struct zspage *zspage)
+-{
+-	write_lock(&zspage->lock);
+-}
+-
+-static void migrate_write_unlock(struct zspage *zspage)
+-{
+-	write_unlock(&zspage->lock);
+-}
+-
+ #ifdef CONFIG_COMPACTION
+ 
+ static const struct movable_operations zsmalloc_mops;
+@@ -1785,9 +1843,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 
+ 	VM_BUG_ON_PAGE(!zpdesc_is_isolated(zpdesc), zpdesc_page(zpdesc));
+ 
+-	/* We're committed, tell the world that this is a Zsmalloc page. */
+-	__zpdesc_set_zsmalloc(newzpdesc);
+-
+ 	/* The page is locked, so this pointer must remain valid */
+ 	zspage = get_zspage(zpdesc);
+ 	pool = zspage->pool;
+@@ -1803,8 +1858,15 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	 * the class lock protects zpage alloc/free in the zspage.
+ 	 */
+ 	spin_lock(&class->lock);
+-	/* the migrate_write_lock protects zpage access via zs_map_object */
+-	migrate_write_lock(zspage);
++	/* the zspage write_lock protects zpage access via zs_map_object */
++	if (!zspage_write_trylock(zspage)) {
++		spin_unlock(&class->lock);
++		write_unlock(&pool->lock);
++		return -EINVAL;
++	}
++
++	/* We're committed, tell the world that this is a Zsmalloc page. */
++	__zpdesc_set_zsmalloc(newzpdesc);
+ 
+ 	offset = get_first_obj_offset(zpdesc);
+ 	s_addr = kmap_local_zpdesc(zpdesc);
+@@ -1835,7 +1897,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	 */
+ 	write_unlock(&pool->lock);
+ 	spin_unlock(&class->lock);
+-	migrate_write_unlock(zspage);
++	zspage_write_unlock(zspage);
+ 
+ 	zpdesc_get(newzpdesc);
+ 	if (zpdesc_zone(newzpdesc) != zpdesc_zone(zpdesc)) {
+@@ -1971,9 +2033,11 @@ static unsigned long __zs_compact(struct zs_pool *pool,
+ 		if (!src_zspage)
+ 			break;
+ 
+-		migrate_write_lock(src_zspage);
++		if (!zspage_write_trylock(src_zspage))
++			break;
++
+ 		migrate_zspage(pool, src_zspage, dst_zspage);
+-		migrate_write_unlock(src_zspage);
++		zspage_write_unlock(src_zspage);
+ 
+ 		fg = putback_zspage(class, src_zspage);
+ 		if (fg == ZS_INUSE_RATIO_0) {
+@@ -2141,6 +2205,7 @@ struct zs_pool *zs_create_pool(const char *name)
  	init_deferred_free(pool);
--	rwlock_init(&pool->migrate_lock);
-+	rwlock_init(&pool->lock);
+ 	rwlock_init(&pool->lock);
  	atomic_set(&pool->compaction_in_progress, 0);
++	lockdep_register_key(&pool->lock_class);
  
  	pool->name = kstrdup(name, GFP_KERNEL);
+ 	if (!pool->name)
+@@ -2233,7 +2298,6 @@ struct zs_pool *zs_create_pool(const char *name)
+ 	 * trigger compaction manually. Thus, ignore return code.
+ 	 */
+ 	zs_register_shrinker(pool);
+-
+ 	return pool;
+ 
+ err:
+@@ -2270,6 +2334,7 @@ void zs_destroy_pool(struct zs_pool *pool)
+ 		kfree(class);
+ 	}
+ 
++	lockdep_unregister_key(&pool->lock_class);
+ 	destroy_cache(pool);
+ 	kfree(pool->name);
+ 	kfree(pool);
 -- 
 2.48.1.658.g4767266eb4-goog
 
