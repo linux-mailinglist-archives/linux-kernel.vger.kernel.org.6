@@ -1,188 +1,225 @@
-Return-Path: <linux-kernel+bounces-537293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB5DA48A1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89F3A48A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739CD1889B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39F33A7FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F2927183E;
-	Thu, 27 Feb 2025 20:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D520F26F465;
+	Thu, 27 Feb 2025 20:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gRNNqAGu"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPVFcCbG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6C271818
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCB21AF0C9
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740689326; cv=none; b=POSWNDb0iNYzKG9icCcQhNYbR9xD0IEqlRP/mWJw5neUVpXaNDkRWSFIYV4oucMqSBMRyih1zHXhTXH3eukWJQQDxD+eW4/m+WRaba+SjvRSSoPy+8Zwt54ueCthDDfPEQKcIsx/0gwNElRIWHbM5tPHzACN7ZwSF9Ap6Ai57QQ=
+	t=1740689475; cv=none; b=C2YOX0JKtv2FyAGmg1f1TyxVVGeQtdYM7mBfxsBBSzCLUpflFped92iFl1bNBv0HOhVvhZeOG/JpsGnZWtFZsuiGq7n7g02l710fY5AHI1TnDNqzZnRmplPzOfKVWJECD/yQD7FyYlWLcRwazLP4hRQH1RjpYxS2jxQ31u+aWM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740689326; c=relaxed/simple;
-	bh=uqFu6+AnpGHxr8NBX4Luk2zMRZ70uid9p7oor9n91K0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uEQyDsev6r5OYOIUEUMGWCVJbftVppNUL+Jx8bYaifi02i4w1vRNFhS/+9T7+LeyibJaAx1ZRc91GJfzCgBy1oM+RrY3cx+EmlzAnrRRHuHQXQk4JPssUwzqDvxcNwDPj9zwmSHJrzrRoKGwwr/gEpEK32dx7UyrWuaxbRBls8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gRNNqAGu; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJiY80016056;
-	Thu, 27 Feb 2025 20:48:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=9rOxR
-	8xV/873pof+AkJuZwF4Ju77egxXek8DyN5etOw=; b=gRNNqAGuqrxyrzWhstSKs
-	Ci96yqLVfG0pofsHzOswSLRK9TzfDpUMDWz5XN1sgTWv13nkL3UDSlElBumNqx9e
-	z8xK8lW6MsJESWhaOIbRt8Wj7rpe+i4pWJTCxeDASF03lVxXpxd8Zg2ntjpI3vkv
-	RFgUE+dBNbhv9m1EkfpnT7TK6aDS4syuYOrNrNulgwCTxA5GV+RxoyXA9H1gm4mb
-	SSR4ZES6EujTv7pnRuC3AImP2Hloi3Yh7FP78pyE0kDwultKRTt1Mx99GGL4P2cq
-	xY6YsqRkq2nBd9GdwTLYfQjSDrO/CMCJ4FijSpeashBdkP4xebzgVEFCpNlO8Ii/
-	g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451psf49m0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 20:48:37 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJGgfJ012623;
-	Thu, 27 Feb 2025 20:48:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51dws8s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 20:48:36 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51RKhrvo030883;
-	Thu, 27 Feb 2025 20:48:36 GMT
-Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 44y51dwrvc-7;
-	Thu, 27 Feb 2025 20:48:35 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        richard.weiyang@gmail.com,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>
-Subject: [PATCH v3 6/6] maple_tree: reorder mas->store_type case statements
-Date: Thu, 27 Feb 2025 20:48:23 +0000
-Message-ID: <20250227204823.758784-7-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227204823.758784-1-sidhartha.kumar@oracle.com>
-References: <20250227204823.758784-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1740689475; c=relaxed/simple;
+	bh=Cuc0ZvqIUZjaJFxkBg3nGAz6XibjLy8dm1mBum2pLnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bpi5hjXWf2Z7R427nTH5ZbX9YfTMEcxcCtNVbOYK4MFOUbHh4v72gSxP2XbQmmtEOEwu/Qkk5BPc8KO+sNaSbYiSyo02BlslJ3NuTY7Pv+LtRDHwX3HXKmFB0hxLDlPviWX/DBGw5xe9D2ShIM4atEyYSJqXvfkTShfwZUCEd30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPVFcCbG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740689472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o0b9BgNrSRNcKxL7JJeoxnGNdFRVFSo7ngmVFsptsx8=;
+	b=KPVFcCbGpgirQOmSvyc313vcAEGR9C/TIp+R2bikiJnwj927yVOLqB7bCJMGM+5JBI4m+a
+	yB6YIURcQhJwN5Ie/YR2DJeIg5R09VNqnHzdfK9bVcSPr9eaWYBjWdb9l8yxHnL8n51D3y
+	PHFN0wwBvi//ReCX2QM79FtxZUaZlYw=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-522-zbKz8dTTP1CYg-0j8Obe8Q-1; Thu, 27 Feb 2025 15:51:10 -0500
+X-MC-Unique: zbKz8dTTP1CYg-0j8Obe8Q-1
+X-Mimecast-MFC-AGG-ID: zbKz8dTTP1CYg-0j8Obe8Q_1740689470
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47220fab76eso46485571cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:51:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740689470; x=1741294270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o0b9BgNrSRNcKxL7JJeoxnGNdFRVFSo7ngmVFsptsx8=;
+        b=v4WUwg/Xu5NH4fy0QSwarz50Vesg0vs9MVAfkAcMsUS3KimrA3kgFawH8FrkrOzGZY
+         LfPotttDx7v6Tp51etYSfGQXICMd8JWliTCfDJC99FDxKw9ZYfGw7zG3NDYBtDMGR4g0
+         fpxQbN6IVXUMAoPUmrD9OqvzHzZtl9QXPe/OZfqUcVuhs0UhECPexJeQrY4FRCVU8h9o
+         8w7dNzHxVBYFA/8toUomhAHRgez2LtkJC+AthBA8O4slDVU+iQ6m96XYewdDOpVT1GBB
+         0l6h209ENna0pSVAxoHhikzLbjW/OXwGN5VeSgyZs5B4rm92bNe8/0vhiGfKTzU2xFWm
+         LsVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXY4ev7ya8Kk/3i6GYExF+Te93fR+dF38/h6jZjhW3yISGc4/uUeYENw2XAMbSAA6CyuIg7dnwGE4AwYQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqUv49IflUFPLmg1Xiv0tYTrVMDe8jw3lugW/7Ax4sEKGu69vv
+	H79w3Js0sadrX2VrKq6eMuPDE1f4CcDDnjmEohEzpNI44ZINxo49PKZQJ/W+Q7A7BMuYjrQEbmZ
+	hgJVSOjUVdDTZhkXVaZmeklJZdJmjFDELZcNjfp79M32h+oiXinvrWEEbPUewdg==
+X-Gm-Gg: ASbGncseobMCM5SZ7GPNm8Bd9ulfeEh0I0iIVqJg1NBs1S6Jk/+Kbw4U7irklGBz5UA
+	datxCTPNuWkSoDlTcAnX5BIguK6fNyz4KWRh/ncuIZLlBEhPFnRo3zelQIiTICYDxFatXE8bPSM
+	36b3qc2zHjGw2RJL9dwl+IFHrbGmTmt32ne8vUD4ouBTQLHw+0ojzZETlAtnUcJUjS66RilopZQ
+	uvCT7MF+MuTqaAY3EtBVx6PteZIDp+E/Q78QWtxcgAiTyvFzmJd9aDq+miBJtHvwacUxLXrrShR
+	7OV68JkAgnCORD4=
+X-Received: by 2002:a05:622a:6001:b0:474:bc8b:3f3d with SMTP id d75a77b69052e-474bc8b3fe6mr1682281cf.7.1740689469889;
+        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFXSchHq2foaKrZLcs7V3jjAhGMmCw06E/p0SekC5qwicuW3MsABzATaaIO/h6J8cBe2E3BBA==
+X-Received: by 2002:a05:622a:6001:b0:474:bc8b:3f3d with SMTP id d75a77b69052e-474bc8b3fe6mr1682121cf.7.1740689469558;
+        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
+Received: from [192.168.2.110] ([70.52.24.57])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a11fdsm15260961cf.15.2025.02.27.12.51.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 12:51:09 -0800 (PST)
+Message-ID: <7ca09134-271e-48aa-b965-14fddd0504d9@redhat.com>
+Date: Thu, 27 Feb 2025 15:50:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] mm: page_owner: use new iteration API
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, yuzhao@google.com, pasha.tatashin@soleen.com
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev
+References: <cover.1740434344.git.luizcap@redhat.com>
+ <badc717329c288c58b7abf7513603aa3042c008c.1740434344.git.luizcap@redhat.com>
+ <a196d780-c775-4f77-96f2-df3fe61af32f@redhat.com>
+ <68e82e87-606e-4443-99d3-7de6f665ce05@redhat.com>
+ <5bb20271-a92a-454e-90e7-8812fd01d31d@redhat.com>
+Content-Language: en-US, en-CA
+From: Luiz Capitulino <luizcap@redhat.com>
+In-Reply-To: <5bb20271-a92a-454e-90e7-8812fd01d31d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 mlxscore=0
- adultscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502270154
-X-Proofpoint-ORIG-GUID: lKETHqUtyLBnsXDOSH0cE46buP1f3N_E
-X-Proofpoint-GUID: lKETHqUtyLBnsXDOSH0cE46buP1f3N_E
 
-Move the unlikely case that mas->store_type is invalid to be the last
-evaluated case and put liklier cases higher up.
+On 2025-02-27 08:50, David Hildenbrand wrote:
+> On 25.02.25 23:30, Luiz Capitulino wrote:
+>> On 2025-02-25 11:44, David Hildenbrand wrote:
+>>> On 24.02.25 22:59, Luiz Capitulino wrote:
+>>>> The page_ext_next() function assumes that page extension objects for a
+>>>> page order allocation always reside in the same memory section, which
+>>>> may not be true and could lead to crashes. Use the new page_ext
+>>>> iteration API instead.
+>>>>
+>>>> Fixes: cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP for gigantic folios")
+>>>> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+>>>> ---
+>>>>    mm/page_owner.c | 61 +++++++++++++++++++++++--------------------------
+>>>>    1 file changed, 29 insertions(+), 32 deletions(-)
+>>>>
+>>>
+>>> [...]
+>>>
+>>>>    void __reset_page_owner(struct page *page, unsigned short order)
+>>>> @@ -293,11 +297,11 @@ void __reset_page_owner(struct page *page, unsigned short order)
+>>>>        page_owner = get_page_owner(page_ext);
+>>>>        alloc_handle = page_owner->handle;
+>>>> +    page_ext_put(page_ext);
+>>>>        handle = save_stack(GFP_NOWAIT | __GFP_NOWARN);
+>>>> -    __update_page_owner_free_handle(page_ext, handle, order, current->pid,
+>>>> +    __update_page_owner_free_handle(page, handle, order, current->pid,
+>>>>                        current->tgid, free_ts_nsec);
+>>>> -    page_ext_put(page_ext);
+>>>
+>>> I assume moving that is fine ...
+>>>
+>>> but I'll not that ...
+>>>
+>>>> -    for (i = 0; i < (1 << new_page_owner->order); i++) {
+>>>> +    rcu_read_lock();
+>>>> +    for_each_page_ext(&old->page, 1 << new_page_owner->order, page_ext, iter) {
+>>>> +        old_page_owner = get_page_owner(page_ext);
+>>>>            old_page_owner->handle = migrate_handle;
+>>>> -        old_ext = page_ext_next(old_ext);
+>>>> -        old_page_owner = get_page_owner(old_ext);
+>>>>        }
+>>>> +    rcu_read_unlock();
+>>>>        page_ext_put(new_ext);
+>>>>        page_ext_put(old_ext);
+>>>
+>>> ... here you are not moving it?
+>>>
+>>>
+>>> In general, LGTM, only the remaining page_ext_put() are a bit confusing.
+>>
+>> Which part you found confusing: the fact that I'm not moving them up or that
+>> we still make use of them?
+> 
+> How we are deferring page_ext_put() when not actually working on these
+> values anymore. The page_owner itself should not go away here unless we
+> have a serious bug.
+> 
+> To be precise, can't we simply do the following on top?
 
-Suggested-by: Liam R. Howlett <liam.howlett@oracle.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
- lib/maple_tree.c | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
+Yes, that looks good and I like how the new API allows for simpler code.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index d3aa5241166b..776693593ab9 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4093,15 +4093,6 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	unsigned char new_end = mas_wr_new_end(wr_mas);
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		MT_BUG_ON(mas->tree, 1);
--		return;
--	case wr_new_root:
--		mas_new_root(mas, wr_mas->entry);
--		break;
--	case wr_store_root:
--		mas_store_root(mas, wr_mas->entry);
--		break;
- 	case wr_exact_fit:
- 		rcu_assign_pointer(wr_mas->slots[mas->offset], wr_mas->entry);
- 		if (!!wr_mas->entry ^ !!wr_mas->content)
-@@ -4123,6 +4114,14 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	case wr_rebalance:
- 		mas_wr_bnode(wr_mas);
- 		break;
-+	case wr_new_root:
-+		mas_new_root(mas, wr_mas->entry);
-+		break;
-+	case wr_store_root:
-+		mas_store_root(mas, wr_mas->entry);
-+		break;
-+	case wr_invalid:
-+		MT_BUG_ON(mas->tree, 1);
- 	}
- 
- 	return;
-@@ -4187,19 +4186,10 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	unsigned char delta = height - wr_mas->vacant_height;
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		WARN_ON_ONCE(1);
--		break;
--	case wr_new_root:
--		ret = 1;
--		break;
--	case wr_store_root:
--		if (likely((mas->last != 0) || (mas->index != 0)))
--			ret = 1;
--		else if (((unsigned long) (entry) & 3) == 2)
--			ret = 1;
--		else
--			ret = 0;
-+	case wr_exact_fit:
-+	case wr_append:
-+	case wr_slot_store:
-+		ret = 0;
- 		break;
- 	case wr_spanning_store:
- 		if (wr_mas->sufficient_height < wr_mas->vacant_height)
-@@ -4219,10 +4209,19 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	case wr_node_store:
- 		ret = mt_in_rcu(mas->tree) ? 1 : 0;
- 		break;
--	case wr_append:
--	case wr_exact_fit:
--	case wr_slot_store:
--		ret = 0;
-+	case wr_new_root:
-+		ret = 1;
-+		break;
-+	case wr_store_root:
-+		if (likely((mas->last != 0) || (mas->index != 0)))
-+			ret = 1;
-+		else if (((unsigned long) (entry) & 3) == 2)
-+			ret = 1;
-+		else
-+			ret = 0;
-+		break;
-+	case wr_invalid:
-+		WARN_ON_ONCE(1);
- 	}
- 
- 	return ret;
--- 
-2.43.0
+My only concern is that if the user is not familiar with the page_ext
+internals, it might not be clear what page_ext_put() is actually
+protecting in which case it looks wrong that we're using a reference
+returned by get_page_owner() after releasing the lock. If you think
+that that's not an issue then I can apply this change on top.
+
+> 
+> diff --git a/mm/page_owner.c b/mm/page_owner.c
+> index c9d2c688eb981..12044340adf89 100644
+> --- a/mm/page_owner.c
+> +++ b/mm/page_owner.c
+> @@ -356,26 +356,24 @@ void __split_page_owner(struct page *page, int old_order, int new_order)
+> 
+>   void __folio_copy_owner(struct folio *newfolio, struct folio *old)
+>   {
+> -       struct page_ext *old_ext;
+> -       struct page_ext *new_ext;
+>          struct page_ext *page_ext;
+>          struct page_ext_iter iter;
+>          struct page_owner *old_page_owner;
+>          struct page_owner *new_page_owner;
+>          depot_stack_handle_t migrate_handle;
+> 
+> -       old_ext = page_ext_get(&old->page);
+> -       if (unlikely(!old_ext))
+> +       page_ext = page_ext_get(&old->page);
+> +       if (unlikely(!page_ext))
+>                  return;
+> +       old_page_owner = get_page_owner(page_ext);
+> +       page_ext_put(page_ext);
+> 
+> -       new_ext = page_ext_get(&newfolio->page);
+> -       if (unlikely(!new_ext)) {
+> -               page_ext_put(old_ext);
+> +       page_ext = page_ext_get(&newfolio->page);
+> +       if (unlikely(!page_ext))
+>                  return;
+> -       }
+> +       new_page_owner = get_page_owner(page_ext);
+> +       page_ext_put(page_ext);
+> 
+> -       old_page_owner = get_page_owner(old_ext);
+> -       new_page_owner = get_page_owner(new_ext);
+>          migrate_handle = new_page_owner->handle;
+>          __update_page_owner_handle(&newfolio->page, old_page_owner->handle,
+>                                     old_page_owner->order, old_page_owner->gfp_mask,
+> @@ -402,9 +400,6 @@ void __folio_copy_owner(struct folio *newfolio, struct folio *old)
+>                  old_page_owner->handle = migrate_handle;
+>          }
+>          rcu_read_unlock();
+> -
+> -       page_ext_put(new_ext);
+> -       page_ext_put(old_ext);
+>   }
+> 
+>   void pagetypeinfo_showmixedcount_print(struct seq_file *m,
+> 
+> 
 
 
