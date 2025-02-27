@@ -1,135 +1,88 @@
-Return-Path: <linux-kernel+bounces-537190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4136A48906
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:30:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CE6A4890D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400B4188B403
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C603AAB94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3556325F790;
-	Thu, 27 Feb 2025 19:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E8126E96E;
+	Thu, 27 Feb 2025 19:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gBJL3SU6"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UgYqOHjY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC28BEC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EB61F582C;
+	Thu, 27 Feb 2025 19:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684642; cv=none; b=f6URN2CSx31OWeHd6gN2JzjiBP0ADKLl5866bCfWJN5WRDXdZUTxutvktpQvfhLgqbmqPA3GWFft4wPEJlLeoOuVQS645IFo8Xgu1Nd90Wi9ufklhyapQMeqrCV0+5nYDYKn1MhIS0u0cL0VEfepBxBkI+uGkyFKsJpLI4BNh2s=
+	t=1740684776; cv=none; b=lS33DWwVE5+96PNcxcHHpSSzH0QOXQLSWheYfuACUKE8SyGM5Wk3t8euKepMSPWp86CknHs7ns0S8VAqaeuIUF4CMgVFPLOoV1anlJqEhLSfR04wP/DlSrZHT9vQ+GfeIDpZ3zDTgh2Sfvcy0UUpOUg5EQN44F6yLbSfzGzQeoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684642; c=relaxed/simple;
-	bh=8UOZQyyIStF2th0oM905lNc0OKLXsfylKuIzCLeIfU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EBJqLarDQO56RLcrzShKPw29nAv/x9x6JPjnnosvhY9UI94G4kfVZXOthwvRWqUWT5ZdH6A7BPZYxiR9k6clCrJuHJFSilGTmSJO6qe+sGvNfCoI506Ux90ZzYQoYlJ+ldIpLMM4o6THpELjWNiRngw1C76RGkFAcp0joQZiHbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gBJL3SU6; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54843052b67so1327e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:30:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740684639; x=1741289439; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxUdrSt37LrgTdQsNrS2fDoFyqBqPlpse33rB5xti5s=;
-        b=gBJL3SU6EPy/XL3WEPIGdcrX7VzrJgUbKCXs0CiPFMhox61RDM9mDXGklzDcdaj+fB
-         IILCltgESrwJH4b0QXmbXETjE7PagbwlzbtJ69s3Z4Du6wx2jr9tkXnQR5DiBLv2ftyB
-         cQDuX+hJ2hkFxYF67pGGq39Tc9x1qP892liLABMCAq7hgSf26tdqjNwGKpOVMPsEjQUh
-         9iM3PWmfPmgBX/WajJNyf8beYmQxsKDHkqV5qTClwyaqpTnaCByErBYpCeuOCd/yAZ/Q
-         HHFzYssyC1V/fHvjqKK6au9JRkYb/VTcKj1UxIRb9qtG/wN749pLtr2NrjaSS+UbDXUm
-         aRWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740684639; x=1741289439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxUdrSt37LrgTdQsNrS2fDoFyqBqPlpse33rB5xti5s=;
-        b=IVXb+sJvBbNSWFywZ+FWC+cxH76EYtuPPRZWz0A65h6A9sjeXjcMiL2rqyzlOCQSX7
-         4AKgBPf/eRgIR40q2mVSZK6xK+mmA+6QUBTJuvSOwqbz0Wv7Nm4ulHBYa/H3xzipWDps
-         HpKpAwB9g2rTiATFmAtfPhiL3NK13l409clgyTPqa28fxxZR9UcxWZ29YifTUPI65pnv
-         FJDK4o/Ya/i4K3eJHMoOgbJ/Ai24cc9buwJTfyMF522QWL5o4Eh4ASF2pE1Wg8A2QwJH
-         YxJn/Ds/Kgt2ndmDO/56Wjsjd0ZtyJH4lmzNQffYfAED1+Q7xTjtvY9eGxWUcvCon29H
-         PyuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJxxKK1TUgfoMzliIRefW4JTbO6dMfs9ZsTQAdWIUz7QqM6Dh3n53vNLeMvHkPo5bijvZMdT+nFbkT8gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlN3d3yVYZyzvyrOv9v6ruiZobPgyX+DVU2eS8Kg/1aKneOtxU
-	PzmefQC89aqeOT7fKFcqUDRJBQcpP9TZ9UGR7gnuPsaZaKg8vQjwk++4kDDu9Ptsgj9pmIJK1pO
-	Xdun5nOvveQOLyejIdR9Pqxeg548c05H0ZrUM
-X-Gm-Gg: ASbGncuNutF9fD+qM4g5Q8G8OjTazF8xDuWo6hvgo3IJh44J8T0CjJwXkKHvyBtx/+G
-	6SmHmR+b/hTwsoESXDAnG1TTV1Y+UBLxSZDXmh+9/6KZR6AD/rekXe6TJjQ9hMhPDv5iK4DAm6f
-	eQppvvaGDHqfXs4KN8a9XXHqZEviXW5nZgTlz8ZJzZ
-X-Google-Smtp-Source: AGHT+IGeAWqnGUQpzKOe+zSYlqhnj7nPf3RxfEHYv8obi8+zQSmDCtjuRvMXctYHZHy0zrx21F7TOUJhLatVjAxZhyM=
-X-Received: by 2002:a05:6512:e8c:b0:545:23b0:4247 with SMTP id
- 2adb3069b0e04-5494d733e9emr31508e87.2.1740684638497; Thu, 27 Feb 2025
- 11:30:38 -0800 (PST)
+	s=arc-20240116; t=1740684776; c=relaxed/simple;
+	bh=xgAhLKI0/uc43y94Gl/Yidxo45BKOvr9DUD5p03Bwn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5ygnoimrn+dTT+DykhvY9fKYmG3KkpH3fJf29ytLV+slW/R1suRgk96qVbh1qd5fzlyNyJFN8G90JCXYF/XgYcXbyalfMbRmHlH609j19zBX10LLO4LaKJvlDIg74cYCBwcg6iwxaN8Jm9ieszFKAKdnNiwWYi82gI/fVncVPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UgYqOHjY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93535C4CEDD;
+	Thu, 27 Feb 2025 19:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740684775;
+	bh=xgAhLKI0/uc43y94Gl/Yidxo45BKOvr9DUD5p03Bwn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UgYqOHjYM6ZsRIS2+UfyYo1kab5wmkKL3xQWQKGOMh6lzj8R5FKL1wceG0JxbpapF
+	 6c+nem+MMroVYeToYC6LpYYUJynrsFK060oCDnPZvFncDIsGjQCvpI7x8SmHVqAvj9
+	 PtcIKeQtJV4/ShvN0xhnUFfsT1DFIc+ffrXxRLic=
+Date: Thu, 27 Feb 2025 11:31:45 -0800
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Alistair Francis <alistair@alistair23.me>,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lukas@wunner.de, linux-pci@vger.kernel.org, bhelgaas@google.com,
+	Jonathan.Cameron@huawei.com, rust-for-linux@vger.kernel.org,
+	akpm@linux-foundation.org, boqun.feng@gmail.com,
+	bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, ojeda@kernel.org,
+	alistair23@gmail.com, a.hindborg@kernel.org, tmgross@umich.edu,
+	gary@garyguo.net, alex.gaynor@gmail.com, benno.lossin@proton.me,
+	Alistair Francis <alistair.francis@wdc.com>,
+	Emilio Cobos =?iso-8859-1?Q?=C1lvarez?= <emilio@crisal.io>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are
+ authenticated
+Message-ID: <2025022731-culprit-pushpin-58e2@gregkh>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me>
+ <2025022717-dictate-cortex-5c05@gregkh>
+ <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com>
+ <2025022752-pureblood-renovator-84a8@gregkh>
+ <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
+ <2025022741-handwoven-game-df08@gregkh>
+ <CANiq72n4UFUraYeHa6ar3=F61C_UxEJ1rq92aOF_hH9rtjN+Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225004704.603652-3-vannapurve@google.com> <202502272346.iiQ6Dptt-lkp@intel.com>
-In-Reply-To: <202502272346.iiQ6Dptt-lkp@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Thu, 27 Feb 2025 11:30:26 -0800
-X-Gm-Features: AQ5f1JpO7zRYi6DzcSKnE4B4trMunnGetNndbYlpp3x9XD6ERrRXOsIOqVyyKTY
-Message-ID: <CAGtprH_+GAVd1UmeCvT-JHq3OCn_3aTqwyjTRWNtLpoJPPfLPQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] x86/tdx: Fix arch_safe_halt() execution for TDX VMs
-To: kernel test robot <lkp@intel.com>
-Cc: dave.hansen@linux.intel.com, kirill.shutemov@linux.intel.com, 
-	jgross@suse.com, ajay.kaher@broadcom.com, ak@linux.intel.com, 
-	tony.luck@intel.com, thomas.lendacky@amd.com, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com, seanjc@google.com, 
-	kai.huang@intel.com, chao.p.peng@linux.intel.com, isaku.yamahata@gmail.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, erdemaktas@google.com, 
-	ackerleytng@google.com, jxgao@google.com, sagis@google.com, 
-	afranji@google.com, kees@kernel.org, jikos@kernel.org, peterz@infradead.org, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	virtualization@lists.linux.dev, bcm-kernel-feedback-list@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72n4UFUraYeHa6ar3=F61C_UxEJ1rq92aOF_hH9rtjN+Dg@mail.gmail.com>
 
-On Thu, Feb 27, 2025 at 8:25=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Vishal,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on tip/x86/core]
-> [also build test ERROR on tip/master linus/master v6.14-rc4 next-20250227=
-]
-> [cannot apply to tip/x86/tdx tip/auto-latest]
-> ...
-> All errors (new ones prefixed by >>):
->
->    In file included from arch/x86/kernel/process.c:6:
->    In file included from include/linux/mm.h:2224:
->    include/linux/vmstat.h:504:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      505 |                            item];
->          |                            ~~~~
->    include/linux/vmstat.h:511:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      512 |                            NR_VM_NUMA_EVENT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~~
-> >> arch/x86/kernel/process.c:937:32: error: use of undeclared identifier =
-'tdx_halt'; did you mean 'tdx_init'?
->      937 |                 static_call_update(x86_idle, tdx_halt);
->          |                                              ^~~~~~~~
->          |                                              tdx_init
+On Thu, Feb 27, 2025 at 05:47:01PM +0100, Miguel Ojeda wrote:
+> On Thu, Feb 27, 2025 at 3:04 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > As this seems like it's going to be a longer-term issue, has anyone
+> > thought of how it's going to be handled?  Build time errors when
+> > functions change is the key here, no one remembers to manually verify
+> > each caller to verify the variables are correct anymore, that would be a
+> > big step backwards.
+> 
+> I can look into it, after other build system things are done.
 
-Will fix this in the next version.
+Looks like Alice already sent a series to do this, so no need.
 
