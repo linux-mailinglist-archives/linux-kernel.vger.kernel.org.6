@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-537416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C868BA48B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:28:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78252A48B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DB71890C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:27:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 941977A31DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C66A276D92;
-	Thu, 27 Feb 2025 22:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15170277814;
+	Thu, 27 Feb 2025 22:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iTs1T47X"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBuOerOu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77361281375
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04882777FB;
+	Thu, 27 Feb 2025 22:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695065; cv=none; b=b0OBGE+J0+EIFRut0onrD5OQhoimXrdXQ4xZl5pnL3ILPNCmyBfyMFm8UdRddVDAWWaVrb+eQdR8y03gchibRdrv4TPuWIILo8WOXbAUkbd8rooLfcpUz56AgtsvEeVx9zIRtfqFq0MlFR5yPsEVu8pHafJDr3ihHwy2qAnTsZo=
+	t=1740695185; cv=none; b=Zj1rI0F9z3gnMTe99wq/dJ7gkiwDOcyXHVvgn1xJu+0mUWUKtL+0eH4fbUX5YG9nEl24B2B8FfV7sIGAjRV0am3Fde8XRE9kfTCvIDlS4JydNE/nsZUcGw9MPg3jNwPevQioQgNISGEqXSkZ6fWFkmO7tHiUyh5bNnlWD+uSso8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695065; c=relaxed/simple;
-	bh=l1iaY/46ebxN7Pxlf+bVDyGkotDM42snv/jC9ZbuKW8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WvA5tT5KXU0W7ZmH0TckXvnD3SHhAnpLRsm7jD2TbPxPaTX7VS7YnZl6+L7eZdU0fhqOleabVddYYmf+mkS0FvNdieH2X9q+2Do0DMURxVwx/ji2Vj5txqM4YwCcDp73vOoNDVSWrQLqB29H8Go8neIRBwzChuip4mPTBe6GhC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iTs1T47X; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fea8e4a655so3853601a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:24:24 -0800 (PST)
+	s=arc-20240116; t=1740695185; c=relaxed/simple;
+	bh=gtM20++jDrE+rF2NeuuL1OFtGokuhEHrZ/ogXcm8k/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2aRZexb/ETXtLBazm4MHgPWr6A+eAAq0lYb+is6Wmhg+RtwRUnsRgt86aY5hA7mOhub+0FDQyVGfkGp8+aRenW5tpGpdoQsvucCOQtHVaU7nK/jwP1Ma9VRzjIKOph9WcsXmaActuhj5epRD6c6vJC3HyozP/tDMHD2Y4z4C/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBuOerOu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22334203781so38472645ad.0;
+        Thu, 27 Feb 2025 14:26:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740695064; x=1741299864; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qlBu3O+qgW1GVmSpLZOxIdN+UM1bvdDqizmqLkAsDo=;
-        b=iTs1T47X2tYRwXd1yfZQAQ56agGwF4G9gaopbB7+ECzCa/slfOTia0fF2n8scE5qoN
-         zITmJmlA6c5ZmfMHip2HiUMY+GDJ5B8p2cabEEQ+ayqs2yFw8SDanyME+1PR2lNtibON
-         v6yd19RAYYMoTQtZkaa8UJz6Sw5ktGfWh4uY3rPAngPKrWh3Eewlf1/2Ng7KuphCu24l
-         8OHX80ADP2J2DUTT0n3846sVyNhNg9VNPPxw6WnGpeH5htuUw5zeU0GfTNJ2UhVX9oZ4
-         YtGPX2bSUgAT6Bon4lYYGQSAxkciUwmIq2CdwtPr+1tTEakPgu/oZAQgjOAHvSP8bi7j
-         ndQw==
+        d=gmail.com; s=20230601; t=1740695183; x=1741299983; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HRAmuYxHtn4qlykZoKH68H6MRsOoeB/MCYKeQWiydf8=;
+        b=LBuOerOuUcjRhfQBVdZYDSr0b1u6kWeSoy4j7AfwTcQ/K8NfwGGOQ7No0mO82Meff/
+         jGNHHHXl4dyPlKx5CoFsJtsYSUqFXgyw39d9P7S3ZKHCA05HPx6xq8au9bhrGFIq+oad
+         D7gMY14SKI3lP5tdf2PDEEB+2N4I0HpFTrOQUe4nksBSMSKv4kIZJ+mMHmjFMzH1yNGO
+         EpVSxYUctduKeAEUA284DvfT3E9mOKbh7+MW1KGuX+ggJq+NH/LwqozUjolpa5h1JsC6
+         f9xmKBmY9MNBgHFHrwQAMQHZANxJpIPvWjKDC8dVEKWPbdILTYRDANqj/C9IEJtwVLQT
+         2dSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740695064; x=1741299864;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0qlBu3O+qgW1GVmSpLZOxIdN+UM1bvdDqizmqLkAsDo=;
-        b=CQ41WtT5VhB11e03w+kcSEQssv8HrsqzcO9pG71GiTtQ6h1LKPvVvJsXmNTiza+hl9
-         LK7631wV0yEbZAKdECYyxLiwmxzrCwSUX/rlM7gZsIgTC5E4RHiass2soySkjmE/ecdb
-         1pgnMml+VEL+mEa0JpW3BHD967pLO7U1+P9UT9SxC7Q+nNEfz0tKkz4qRvULGl5Hvu7U
-         Kqri9u1HVj0Yd9N+jNornEMOlIZ1FU64styOgEVPNYZFGfQVb+2IRJT3ZxjizZm2M56T
-         DKK9SD+he29f7sYQIqLmV3dJ5euTBsb+k5Fo/cKRdx1MthHaJ+r3ECaI8RtsBuXovBc5
-         2qyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvZpx47vC5cX0FQVI84VD6xGIPAPp9hQAGZTkwac1DmbjBoA8DgC1jGk6iA/RLpR+BP9YyqZm0hN1f0Uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFy99gLyPXqHUTERjbqN6yF7I2HGunMBBdoL/2mHNaxuQJCFvt
-	IJdHnj8E88H7ktyBzYwAZ+TThUTzIYc51F3ds7YSQlno5SgaE/0BGeAKltPH26xqZbRQkdgYZN7
-	uzA==
-X-Google-Smtp-Source: AGHT+IEAR4cGG2gi7Xmxt0qd1akR25wwXozuUf+4YWN9m+W0e/uXX0xINJ03FxGe0avbJCicY+EqJQBZUo4=
-X-Received: from pjl3.prod.google.com ([2002:a17:90b:2f83:b0:2ef:d283:5089])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3845:b0:2ee:c9b6:c267
- with SMTP id 98e67ed59e1d1-2febab403a5mr1668829a91.9.1740695064085; Thu, 27
- Feb 2025 14:24:24 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 27 Feb 2025 14:24:11 -0800
-In-Reply-To: <20250227222411.3490595-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1740695183; x=1741299983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HRAmuYxHtn4qlykZoKH68H6MRsOoeB/MCYKeQWiydf8=;
+        b=JuwvITZrROgLd1Dw1CzJQaYFQ4ksxiGXXKl4y6dlyu+dBinJzROaVXAQmfWD57LgVl
+         llqGHNUH1ouyepB+bNgpyLW90elX/hvks/mhBiliSOQcZoNbp5NemqZmJScELgoP8aJZ
+         Z3JuLwS1gl7P/UtZlnbnGdu/ZWOiw6bZN+3vmiK+BMtoLP/AcZ7NlZa1ABAQiTvdYIoC
+         yfTdta47U7CEYdsKo9mf2s81wrLT3q7+PCjOBRZln0T3aGXELzdw4ECxh1Y6JB0xopPv
+         z99Wtgkg0Osge3z+E9veiaNg0almGY4t/3n5n9ra5la9/Tmd/CIlS8AOAL3Q5vBoTp04
+         1abQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx6Ww+F3sdv/T5RyALwutYwDsn7Q67fJBDg4jD3XtbjVt+09+aenPOrmeNiheRYbdxSnBsyiZrzLawR999@vger.kernel.org, AJvYcCWIXB3q0/94z5HjzWffycDAAwpRY9w+oeuvEvdCkQl3m4nOjcJkdp8+TSzNTEiB9zW2RzaTaOMLmejrD9hT8BtY@vger.kernel.org, AJvYcCXzIXS8ChIjZ6HYV7We9On9s8q6ogLTx0L/bARC+1rx0TkjY4cSRsFfl6dT61FUlZkKxTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOfAU1nmModPg+9+xV5wO3KYQL2RBXwPURScpgL5AM1HqxvfEF
+	ECSZ8RG0CObeomLiR98Op0BFqt9d76Q+4FBVYZIP7NI2FJjWA+Y=
+X-Gm-Gg: ASbGnct01SduJhvYusdMojpAblEW1daLT7kfy+uth0eKE/4Wikp6a31JjONOu1JsMr/
+	GOuBan2AQt3LZqSs9sDiMVqLNy2yNAokRqgnj76h557Su8x7t0/l1ZiFlb3fXV2mxGXXM3vnz5e
+	I1GVyQ9H9iULjaOULWVTUAr4tnEI/CNS1JebQvzrod0nu/9yI7SZMpC2ROYQfc64HwzPEFg1pE5
+	AZrK8Zij8WUWm7GCX5rIAa6N3XldNZ97jnF8mHEuSgbcHNhpOlMOYuvvRca9ZL15zYv1Z5idowv
+	eQNPUYronc9/2rMV3fkLM+RWcg==
+X-Google-Smtp-Source: AGHT+IEJQxSeClVai5A355sKLh6sw/aFvTF8JXX8Pd/cKD3GtL23IGmP4/0X1s8ZRpAGKrAk/jMSPQ==
+X-Received: by 2002:aa7:864e:0:b0:72a:83ec:b1cb with SMTP id d2e1a72fcca58-7349cea2519mr7370799b3a.0.1740695182960;
+        Thu, 27 Feb 2025 14:26:22 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-734a0024b61sm2334686b3a.107.2025.02.27.14.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 14:26:22 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:26:21 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+	shuah@kernel.org, hawk@kernel.org
+Subject: Re: [PATCH bpf-next v4 5/6] selftests/bpf: add test for XDP metadata
+ support in tun driver
+Message-ID: <Z8DmjRy9g_vFX4lj@mini-arch>
+References: <20250227142330.1605996-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250227142330.1605996-6-marcus.wichelmann@hetzner-cloud.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227222411.3490595-1-seanjc@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227222411.3490595-7-seanjc@google.com>
-Subject: [PATCH v3 6/6] KVM: SVM: Treat DEBUGCTL[5:2] as reserved
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Xiaoyao Li <xiaoyao.li@intel.com>, rangemachine@gmail.com, 
-	whanos@sergal.fun
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227142330.1605996-6-marcus.wichelmann@hetzner-cloud.de>
 
-Stop ignoring DEBUGCTL[5:2] on AMD CPUs and instead treat them as reserved.
-KVM has never properly virtualized AMD's legacy PBi bits, but did allow
-the guest (and host userspace) to set the bits.  To avoid breaking guests
-when running on CPUs with BusLockTrap, which redefined bit 2 to BLCKDB and
-made bits 5:3 reserved, a previous KVM change ignored bits 5:3, e.g. so
-that legacy guest software wouldn't inadvertently enable BusLockTrap or
-hit a VMRUN failure due to setting reserved.
+On 02/27, Marcus Wichelmann wrote:
+> Add a selftest that creates a tap device, attaches XDP and TC programs,
+> writes a packet with a test payload into the tap device and checks the
+> test result. This test ensures that the XDP metadata support in the tun
+> driver is enabled and that the metadata size is correctly passed to the
+> skb.
+> 
+> See the previous commit ("selftests/bpf: refactor xdp_context_functional
+> test and bpf program") for details about the test design.
+> 
+> The test runs in its own network namespace using the feature introduced
+> with commit c047e0e0e435 ("selftests/bpf: Optionally open a dedicated
+> namespace to run test in it"). This provides some extra safety against
+> conflicting interface names.
+> 
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
 
-To allow for virtualizing BusLockTrap and whatever future features may use
-bits 5:3, treat bits 5:2 as reserved (and hope that doing so doesn't break
-any existing guests).
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/svm.c | 11 -----------
- 1 file changed, 11 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 78664f9b45c5..fc9f9a624d93 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -3166,17 +3166,6 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 			break;
- 		}
- 
--		/*
--		 * AMD changed the architectural behavior of bits 5:2.  On CPUs
--		 * without BusLockTrap, bits 5:2 control "external pins", but
--		 * on CPUs that support BusLockDetect, bit 2 enables BusLockTrap
--		 * and bits 5:3 are reserved-to-zero.  Sadly, old KVM allowed
--		 * the guest to set bits 5:2 despite not actually virtualizing
--		 * Performance-Monitoring/Breakpoint external pins.  Drop bits
--		 * 5:2 for backwards compatibility.
--		 */
--		data &= ~GENMASK(5, 2);
--
- 		/*
- 		 * Suppress BTF as KVM doesn't virtualize BTF, but there's no
- 		 * way to communicate lack of support to the guest.
--- 
-2.48.1.711.g2feabab25a-goog
-
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
