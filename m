@@ -1,131 +1,106 @@
-Return-Path: <linux-kernel+bounces-537255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E514AA489B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:21:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496C3A489C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96B31675D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4879A7A7F80
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B2126E962;
-	Thu, 27 Feb 2025 20:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF2A271281;
+	Thu, 27 Feb 2025 20:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GRd0QJLr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7qetVH1Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ulKFegk0"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6282026F443;
-	Thu, 27 Feb 2025 20:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BD7270EA2;
+	Thu, 27 Feb 2025 20:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687687; cv=none; b=HOMKmfI43vKT980F9/ukmRB7mJOJxHezrrXovqbTf7P/pJohB45sIYzKxmgzzXY7RGJhKB04mmL4JCXeNMJ593pO1kZhccJVMn+xYarpwVAyCgDGJL2STGgL5BHj4dtNVrtzgSo1otL1qXlLVTnHHAX8XRvPqnBwSE74dCdqSJU=
+	t=1740687759; cv=none; b=PtHzyxajgNCm8i4Z4QNQJ/kHfkWZUdGDlvBIr+Ee6HJkDKgj33fEv7n7+XXJd0x1qsYGu6g/SVW+hDb1elwuFYZcuykmhkDx3rkxagoaw6jXhMtS/vPbXt8vZWIKmf5b6HrS64KjgU5YLGZsTDSte3hLO8YR+XbyqApJmBX+aT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687687; c=relaxed/simple;
-	bh=rATGIb8eOkGdpsr3UNt1z5AYAvAdTYeozpp0Xkop/ls=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=af9r35x0lejhIGHri8pppoNQFqOGEHKSFxAigaO/OrRsEEFosXxPVKcbNROX187xwbYPAXsVqsyDijMhlz+Qti3pgBYqu203+l5+x3YDqTFrxsdp6qI1xJwB5bJFUxUxlNfNYyKVFAc0LQ4KdHgElAoSzb/xZXqEcbtCtjk4WnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GRd0QJLr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7qetVH1Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 20:21:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740687683;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ONSa22HSm7xGBZSnEu6JEbkICzapN8ExCxJSd8trR4A=;
-	b=GRd0QJLrmdhz7MK42dppt/wJgCKIkIYA0Q9JlmD87I8rTSdEjWR7l4DyaZIKRUBTf/IeOA
-	zyZ8Z6zTPtiL6V5/cP+im96W/TNGGAkVvcbVxRT755XWhpinAc/mSo7ZG81G5zWJK7XtRq
-	7mxq/D/X0MtneUCFxdoNkzsLJ4PQ8SkGRKNmd3lAgmJHnelZ7WJtpmbxOsxNPr9FwrTVKd
-	O/uTUfjFaUUyMnyOEEqeIOATefBXKAZ0wMrxaUJUQI2ccRuSGphAO6RWBEtgK4aSKx4qUZ
-	VwIo9f5FKqq+IuZIg7VcHwXo/++6MiGsljVcYOsIieLXAL/VSWtxo1fB1R4QoA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740687683;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ONSa22HSm7xGBZSnEu6JEbkICzapN8ExCxJSd8trR4A=;
-	b=7qetVH1Z48HD4Z8nn0pW8nuDC3bj5PiXyV7Y5ndi06qOBYg3mvV6GthkkALiHX6fo1sUYP
-	p6jCgthWCXlMGTBA==
-From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/bpf: Fix BPF percpu accesses
-Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Uros Bizjak <ubizjak@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250227195302.1667654-1-brgerst@gmail.com>
-References: <20250227195302.1667654-1-brgerst@gmail.com>
+	s=arc-20240116; t=1740687759; c=relaxed/simple;
+	bh=00EyoF7vLNdQs2Bueq0tXZ0zNlhxqmJVVGmT+wmYoog=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VkWus7kEFMJsF0LZHXpAmXQrc+sRf14HKIblW6v/xbR8KCeL7K0OgURm92yjWjHtsCwdRGk+OIdT4HwhHP7hLU6yRT4lQ7KRi1voNzLTfnJpO7z8vVnSLPmtt0ekOTE8xUafddqd14XMd/y8qfDL6Ss5MsNRp7FaTafHkvtuNz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ulKFegk0; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51RKMA8T1857064
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 14:22:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740687730;
+	bh=GM37aq73FdzPHGYyhr84uUQgWksltpyBB1YERc+sLzU=;
+	h=From:To:CC:Subject:Date;
+	b=ulKFegk0lCBSojZvYYHxSldD/Ny8gqnpZCSAZsrnZjgfoUJsWJ9Weg0VDAS6b5QXO
+	 uhdYJKibZUEgrqNH0MY/UMMpFVG48MKB3v9xH6mjkwxglJAsmGACySpGVqvuukXqak
+	 0TkHEW01zZyE3xutXwKjoc1Qo0JsiFnfIB63fAwo=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51RKMAbR017795
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Feb 2025 14:22:10 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Feb 2025 14:22:10 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Feb 2025 14:22:09 -0600
+Received: from localhost (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51RKM9oD112735;
+	Thu, 27 Feb 2025 14:22:09 -0600
+From: Chintan Vankar <c-vankar@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Peter Rosin
+	<peda@axentia.se>,
+        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>, <vigneshr@ti.com>,
+        <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <c-vankar@ti.com>
+Subject: [RFC PATCH 0/2] Extend mmio-mux driver to configure mux with
+Date: Fri, 28 Feb 2025 01:52:04 +0530
+Message-ID: <20250227202206.2551305-1-c-vankar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174068768313.10177.13465442167535423659.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The following commit has been merged into the x86/asm branch of tip:
+This series extends mmio-mux driver's capability to configure driver in
+with extended property.
 
-Commit-ID:     18cdd90aba794333f4c6dce39f5c3fe642af5575
-Gitweb:        https://git.kernel.org/tip/18cdd90aba794333f4c6dce39f5c3fe642af5575
-Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Thu, 27 Feb 2025 14:53:02 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 21:10:03 +01:00
+In current driver implementation, driver is parsing register's offset,
+mask and value from two different device tree property which makes it
+complex to specify a specific register or set of registers. Introducing
+mux-reg-masks-states will make it easier to specify the same values for
+particular register or set of registers.
 
-x86/bpf: Fix BPF percpu accesses
+This series is based on linux next tagged next-20250227.
 
-Due to this recent commit in the x86 tree:
+Chintan Vankar (2):
+  devicetree: bindings: mux: reg-mux: Update bindings for reg-mux for
+    new property
+  mux: mmio: Extend mmio-mux driver to configure mux with new DT
+    property
 
-  9d7de2aa8b41 ("Use relative percpu offsets")
+ .../devicetree/bindings/mux/reg-mux.yaml      |  29 +++-
+ drivers/mux/mmio.c                            | 148 +++++++++++++++---
+ 2 files changed, 149 insertions(+), 28 deletions(-)
 
-percpu addresses went from positive offsets from the GSBASE to negative
-kernel virtual addresses.  The BPF verifier has an optimization for
-x86-64 that loads the address of cpu_number into a register, but was only
-doing a 32-bit load which truncates negative addresses.
+-- 
+2.34.1
 
-Change it to a 64-bit load so that the address is properly sign-extended.
-
-Fixes: 9d7de2aa8b41 ("Use relative percpu offsets")
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250227195302.1667654-1-brgerst@gmail.com
----
- kernel/bpf/verifier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 9971c03..f74263b 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -21692,7 +21692,7 @@ patch_map_ops_generic:
- 			 * way, it's fine to back out this inlining logic
- 			 */
- #ifdef CONFIG_SMP
--			insn_buf[0] = BPF_MOV32_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
-+			insn_buf[0] = BPF_MOV64_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
- 			insn_buf[1] = BPF_MOV64_PERCPU_REG(BPF_REG_0, BPF_REG_0);
- 			insn_buf[2] = BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 0);
- 			cnt = 3;
 
