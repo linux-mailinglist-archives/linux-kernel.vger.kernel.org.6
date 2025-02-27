@@ -1,436 +1,201 @@
-Return-Path: <linux-kernel+bounces-537065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93165A487B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:22:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6F2A487B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3667F188376F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155AC16AD68
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A981E8344;
-	Thu, 27 Feb 2025 18:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC0B1F5846;
+	Thu, 27 Feb 2025 18:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nde+9e5b"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="G3/XvC/X"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9FA17D355
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98831B424D;
+	Thu, 27 Feb 2025 18:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740680514; cv=none; b=rHoqQ2Ep0y59r9IqKB1xZNly+O7iZd4nw5Js0evhdUZwvXSGUsw89ZaxehTPMGoTeYLQEbwAGzrOMiYT8MCaJOJfj0a/rt3WqXF9R+dtpqhElfcsd1r8JN+gTbzbXO9e5V1273MV7nW53Gc+G56OTud1XiiFw6JpFfMCRel5QpE=
+	t=1740680655; cv=none; b=IAQzqka42/KsxeK8w11pbhtw1AAzWqHwSFYxP4VpEAsjwc/KbUxVCpeJebWfhXu3akz8h4RWJkftNFN0h+kK/8FFlh/HbHCHEPAvbN7A7pTmxY7tnycFFczsE//9FMTO83y9ZXfWx/4QxDbBXkA8B/gGmb1ahUIJj6d4LxyiMIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740680514; c=relaxed/simple;
-	bh=QWDO1e1shJVDCb1GSZyvp8J6tlabqkVyUA6I/bO95ww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zo+rnLdzKLtIQ7z3JJ4FxqaCLKaNUEijgHQaKHrEReRZ4EPBdt91NSI9L+/lESEPaoc2UEpmVu+LaNPGT3sWBQydmMBMv5+Y/D+GXaGLfixyD0raS/blH6R3kDzrJx/FNvxWZztdIUXDXV4jqxmrs+qkCeoNH3d2bErY1/v2jtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nde+9e5b; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb9709b5b5so229239266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:21:52 -0800 (PST)
+	s=arc-20240116; t=1740680655; c=relaxed/simple;
+	bh=I1CbooREzLYn9AAlLO5H4sUKHJxW7EPg7nEEHpyFmNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FFWuTyj8wYmrxXFj150GVeZijiDkf2/ls5hy3WKQPM1CYAZAQDivcgg0BiJGNSCm6FujP44nrXNASqqaqd//MVmGnH7OWWGKGJnxADAz4td94Zw6B1ADugjappO5nuTQXu2YzDqPx81cKIQwmCVeIimaXVT6GB9IUZ6I82VD3yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=G3/XvC/X; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740680511; x=1741285311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ol0ZRTN6kcATXeTr76xNFmdSj9gMYwq5K7wqpQOxJVg=;
-        b=Nde+9e5beR0uBMy9dHKKeAT4yC1hh8s0GT5PsGEbQc+0UNsWdq2BDCc6Z1wZ1ntDe/
-         llSC7C5acMBx1ZBqdI9DKp75pe/7/PlGd+I0AIXKnYLQKa0ObkdCxR/Z5w9vHw2ldW4o
-         B6TdM5Wj/5jv2vMiGc0t6BxuUDMHpvbdbKOETwhPvPK98ZXEb6i3RFf7J94XNIEcPZNK
-         gaQO9XL69xtMdEeCb0BXAx6f1e+lAyrQDnWCoY1/WRQKhiIX4CfDkO0d8UjqKtCEbe/G
-         Kd9TK5CGdyQkAaKuR5437zzx+NO8UG4AIEKJ7zwuZVxiXonVZMYNNmjZ600L4okcVfAb
-         kuhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740680511; x=1741285311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ol0ZRTN6kcATXeTr76xNFmdSj9gMYwq5K7wqpQOxJVg=;
-        b=sySld0GjUhP6fzdW+nvqiy9chz96pB8HLLAdfNYTyu4maDJ8WEElsrJDs/mAgU7dTJ
-         FO9I76wRvmmp/cF9Om5qmtNEKXseHwPA8f277qz9qyFyOrk6s40t7s1FBSGeKuBjCYDL
-         +0a/b5hF/ahjCQWl8GmSSk03DlD40n44Qh1LiVzbxEjbAQh7US1byifdNe6itOyPjcz5
-         IzxObKzCrkPCYQmdBUMIjVqubdTVQCITWcpRHdqEYnbRsujZVN0ZTNmcewbP+L/6DNhb
-         FBdZWIRYfJZy7z2Y05R4nZ0QrN0Z1F7u3zknDm9hf+dC3g8bVFIpSTGrxhGkwro/9RYI
-         2IBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUJrTgZiyjSjbT9ZIL+DrxRNeq9/P8eYbvZ/aVW1YdvqYUiI8A8valKMy8W+AcTXztTEMM0+2jIj/fl90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJezjHyH8e2m/0mmPrqUhtzLQndNbaQeubpqG6mcmyYvzsNvHO
-	YHBGIwvA/M+67yl2k07HOtkQytxcCk77tddZORbxm2orPsoSLi0fau1gzoP+TO5Om09iUdi4IPd
-	YMXdnk8Y/LxGn9mNbyCVimBE02HStl0ldplRT
-X-Gm-Gg: ASbGncuqyMFtURSYj7XcJitFc67VLc9UP9gKPHrNTgGnDso81ILgZKVtAc/y5HHspTJ
-	ae6bZozXHZCt7o1qNHzrkkIg12Q7cLg9kczFToxDIpCFljE3GoYAtr4h2KRAwPtPOcd+VHTUwVq
-	osrLyesQRcbJmdvcMEGPlR7Z/ZKXNcrcbvcLLE9vU=
-X-Google-Smtp-Source: AGHT+IFdJxZjTeKXHqk4VQO0mJdhppztUBerqGuv1cKf5tV9kj/c8LgRdwrwKegnpCV2P64KehdfUebfmmBECZAPOfo=
-X-Received: by 2002:a17:907:70a:b0:abb:b1a4:b0fe with SMTP id
- a640c23a62f3a-abf25da2d29mr45655066b.1.1740680510612; Thu, 27 Feb 2025
- 10:21:50 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740680653; x=1772216653;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=j3OPBGuyioaxsCKCSnyqb+F4cY9H+pA8vNbT+Ls4f/A=;
+  b=G3/XvC/X20YPL2O+wFXBQjsinccl8Xrr8olD/DNvb4u9vyeruoSySQ6O
+   j2XE1DuRKasNrTmRWGl4HI4hV/kULyXW60nyLoBj62xFDeO1k0AhNIZal
+   Q2Bk5rO+fxMlNcLuG1XSiVin7/Ci8M97xlPAKA9SzeoIkc+659CB2Jrff
+   g=;
+X-IronPort-AV: E=Sophos;i="6.13,320,1732579200"; 
+   d="scan'208";a="69833984"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 18:24:10 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.43.254:43332]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.1.85:2525] with esmtp (Farcaster)
+ id a2951172-87b8-49fe-bd0f-813ab7bbf005; Thu, 27 Feb 2025 18:24:08 +0000 (UTC)
+X-Farcaster-Flow-ID: a2951172-87b8-49fe-bd0f-813ab7bbf005
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 27 Feb 2025 18:24:08 +0000
+Received: from [192.168.19.93] (10.106.83.21) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Thu, 27 Feb 2025
+ 18:24:07 +0000
+Message-ID: <7f2b25c9-c92b-4b0a-bfd9-dda8b0b7a244@amazon.com>
+Date: Thu, 27 Feb 2025 18:24:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227053738.788153-1-ctshao@google.com> <CAP-5=fUU05CJhXJuSPt61+H8jC07YuVtkCZwf9Dcawa0AGffSg@mail.gmail.com>
- <Z8AjtizjixQb3qB6@google.com>
-In-Reply-To: <Z8AjtizjixQb3qB6@google.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Thu, 27 Feb 2025 10:21:38 -0800
-X-Gm-Features: AQ5f1JpRZXK75Wat68gde5nLE_5aEwd2BfxJVMfOxmwVAila5nrlGiOw-w2ni6I
-Message-ID: <CAJpZYjXm9BrSwTSri3qvoj0JarAgUqH6w_4PjanTsLTTNanZYQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] perf record: Add 8-byte aligned event type PERF_RECORD_COMPRESSED2
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com, 
-	dvyukov@google.com, ak@linux.intel.com, james.clark@linaro.org, 
-	christophe.leroy@csgroup.eu, ben.gainey@arm.com, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <jthoughton@google.com>,
+	<david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
+	<vkuznets@redhat.com>, <gshan@redhat.com>, <graf@amazon.de>,
+	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
+	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20241118123948.4796-1-kalyazin@amazon.com>
+ <Z6u-WdbiW3n7iTjp@google.com>
+ <a7080c07-0fc5-45ce-92f7-5f432a67bc63@amazon.com>
+ <Z7X2EKzgp_iN190P@google.com>
+ <6eddd049-7c7a-406d-b763-78fa1e7d921b@amazon.com>
+ <Z7d5HT7FpE-ZsHQ9@google.com>
+ <f820b630-13c1-4164-baa8-f5e8231612d1@amazon.com>
+ <Z75nRwSBxpeMwbsR@google.com>
+ <946fc0f5-4306-4aa9-9b63-f7ccbaff8003@amazon.com>
+ <Z8CWUiAYVvNKqzfK@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <Z8CWUiAYVvNKqzfK@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D006EUA002.ant.amazon.com (10.252.50.65) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On Thu, Feb 27, 2025 at 12:35=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Wed, Feb 26, 2025 at 11:12:37PM -0800, Ian Rogers wrote:
-> > On Wed, Feb 26, 2025 at 9:37=E2=80=AFPM Chun-Tse Shao <ctshao@google.co=
-m> wrote:
-> > >
-> > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can ca=
-use
-> > > asan runtime error:
-> > >
-> > >   # Build with asan
-> > >   $ make -C tools/perf O=3D/tmp/perf DEBUG=3D1 EXTRA_CFLAGS=3D"-O0 -g=
- -fno-omit-frame-pointer -fsanitize=3Dundefined"
-> > >   # Test success with many asan runtime errors:
-> > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -v=
-v
-> > >    83: Zstd perf.data compression/decompression:
-> > >   ...
-> > >   util/session.c:1959:13: runtime error: member access within misalig=
-ned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 b=
-yte alignment
-> > >   0x7f69e3f99653: note: pointer points here
-> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 =
-00 00 00 00  00 00 00 ff 07 00 00
-> > >                 ^
-> > >   util/session.c:2163:22: runtime error: member access within misalig=
-ned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 by=
-te alignment
-> > >   0x7f69e3f99653: note: pointer points here
-> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 =
-00 00 00 00  00 00 00 ff 07 00 00
-> > >                 ^
-> > >   ...
-> > >
-> > > Since there is no way to align compressed data in zstd compression, t=
-his
-> > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a fi=
-eld
-> > > `data_size` to specify the actual compressed data size. The
-> > > `header.size` contains the total record size, including the padding a=
-t
-> > > the end to make it 8-byte aligned.
-> > >
-> > > Tested with `Zstd perf.data compression/decompression`
-> > >
-> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > > ---
-> > >  tools/lib/perf/Documentation/libperf.txt      |  1 +
-> > >  tools/lib/perf/include/perf/event.h           | 12 ++++++++++
-> > >  .../Documentation/perf.data-file-format.txt   | 17 +++++++++++---
-> > >  tools/perf/builtin-record.c                   | 23 +++++++++++++++--=
---
-> > >  tools/perf/util/event.c                       |  1 +
-> > >  tools/perf/util/session.c                     |  5 +++-
-> > >  tools/perf/util/tool.c                        | 11 +++++++--
-> > >  7 files changed, 59 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/per=
-f/Documentation/libperf.txt
-> > > index 59aabdd3cabf..4072bc9b7670 100644
-> > > --- a/tools/lib/perf/Documentation/libperf.txt
-> > > +++ b/tools/lib/perf/Documentation/libperf.txt
-> > > @@ -210,6 +210,7 @@ SYNOPSIS
-> > >    struct perf_record_time_conv;
-> > >    struct perf_record_header_feature;
-> > >    struct perf_record_compressed;
-> > > +  struct perf_record_compressed2;
-> > >  --
-> > >
-> > >  DESCRIPTION
-> > > diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/inc=
-lude/perf/event.h
-> > > index 37bb7771d914..09b7c643ddac 100644
-> > > --- a/tools/lib/perf/include/perf/event.h
-> > > +++ b/tools/lib/perf/include/perf/event.h
-> > > @@ -457,6 +457,16 @@ struct perf_record_compressed {
-> > >         char                     data[];
-> > >  };
-> > >
-> > > +/*
-> > > + * `header.size` includes the padding we are going to add while writ=
-ing the record.
-> > > + * `data_size` only includes the size of `data[]` itself.
-> > > + */
-> > > +struct perf_record_compressed2 {
-> > > +       struct perf_event_header header;
-> > > +       __u64                    data_size;
-> > > +       char                     data[];
-> >
-> > Just to note that data_size has to be u16 or smaller due to
-> > header.size, so I think you can save some bytes by using a u16 or u8
-> > (for the u8 you could just count the amount of padding and: data_size
-> > =3D header.size - padding_size).
->
-> I was about to suggest using the header.misc in the existing
-> perf_record_compress.  As the padding is up to 7 byte, we could
->
->   header.type =3D PERF_RECORD_COMPRESS;
->   header.size =3D PERF_ALIGN(real_size, 8);
->   header.misc =3D header.size - real_size;
->
-> Assuming the old data doesn't set the misc field and have 0.  Then it
-> would be compatible with old data and get the real size in new data.
+On 27/02/2025 16:44, Sean Christopherson wrote:
+> On Wed, Feb 26, 2025, Nikita Kalyazin wrote:
+>> On 26/02/2025 00:58, Sean Christopherson wrote:
+>>> On Fri, Feb 21, 2025, Nikita Kalyazin wrote:
+>>>> On 20/02/2025 18:49, Sean Christopherson wrote:
+>>>>> On Thu, Feb 20, 2025, Nikita Kalyazin wrote:
+>>>>>> On 19/02/2025 15:17, Sean Christopherson wrote:
+>>>>>>> On Wed, Feb 12, 2025, Nikita Kalyazin wrote:
+>>>>>>> The conundrum with userspace async #PF is that if userspace is given only a single
+>>>>>>> bit per gfn to force an exit, then KVM won't be able to differentiate between
+>>>>>>> "faults" that will be handled synchronously by the vCPU task, and faults that
+>>>>>>> usersepace will hand off to an I/O task.  If the fault is handled synchronously,
+>>>>>>> KVM will needlessly inject a not-present #PF and a present IRQ.
+>>>>>>
+>>>>>> Right, but from the guest's point of view, async PF means "it will probably
+>>>>>> take a while for the host to get the page, so I may consider doing something
+>>>>>> else in the meantime (ie schedule another process if available)".
+>>>>>
+>>>>> Except in this case, the guest never gets a chance to run, i.e. it can't do
+>>>>> something else.  From the guest point of view, if KVM doesn't inject what is
+>>>>> effectively a spurious async #PF, the VM-Exiting instruction simply took a (really)
+>>>>> long time to execute.
+>>>>
+>>>> Sorry, I didn't get that.  If userspace learns from the
+>>>> kvm_run::memory_fault::flags that the exit is due to an async PF, it should
+>>>> call kvm run immediately, inject the not-present PF and allow the guest to
+>>>> reschedule.  What do you mean by "the guest never gets a chance to run"?
+>>>
+>>> What I'm saying is that, as proposed, the API doesn't precisely tell userspace
+>                                                                           ^^^^^^^^^
+>                                                                           KVM
+>>> an exit happened due to an "async #PF".  KVM has absolutely zero clue as to
+>>> whether or not userspace is going to do an async #PF, or if userspace wants to
+>>> intercept the fault for some entirely different purpose.
+>>
+>> Userspace is supposed to know whether the PF is async from the dedicated
+>> flag added in the memory_fault structure:
+>> KVM_MEMORY_EXIT_FLAG_ASYNC_PF_USER.  It will be set when KVM managed to
+>> inject page-not-present.  Are you saying it isn't sufficient?
+> 
+> Gah, sorry, typo.  The API doesn't tell *KVM* that userfault exit is due to an
+> async #PF.
+> 
+>>> Unless the remote page was already requested, e.g. by a different vCPU, or by a
+>>> prefetching algorithim.
+>>>
+>>>> Conversely, if the page content is available, it must have already been
+>>>> prepopulated into guest memory pagecache, the bit in the bitmap is cleared
+>>>> and no exit to userspace occurs.
+>>>
+>>> But that doesn't happen instantaneously.  Even if the VMM somehow atomically
+>>> receives the page and marks it present, it's still possible for marking the page
+>>> present to race with KVM checking the bitmap.
+>>
+>> That looks like a generic problem of the VM-exit fault handling.  Eg when
+> 
+> Heh, it's a generic "problem" for faults in general.  E.g. modern x86 CPUs will
+> take "spurious" page faults on write accesses if a PTE is writable in memory but
+> the CPU has a read-only mapping cached in its TLB.
+> 
+> It's all a matter of cost.  E.g. pre-Nehalem Intel CPUs didn't take such spurious
+> read-only faults as they would re-walk the in-memory page tables, but that ended
+> up being a net negative because the cost of re-walking for all read-only faults
+> outweighed the benefits of avoiding spurious faults in the unlikely scenario the
+> fault had already been fixed.
+> 
+> For a spurious async #PF + IRQ, the cost could be signficant, e.g. due to causing
+> unwanted context switches in the guest, in addition to the raw overhead of the
+> faults, interrupts, and exits.
+> 
+>> one vCPU exits, userspace handles the fault and races setting the bitmap
+>> with another vCPU that is about to fault the same page, which may cause a
+>> spurious exit.
+>>
+>> On the other hand, is it malignant?  The only downside is additional
+>> overhead of the async PF protocol, but if the race occurs infrequently, it
+>> shouldn't be a problem.
+> 
+> When it comes to uAPI, I want to try and avoid statements along the lines of
+> "IF 'x' holds true, then 'y' SHOULDN'T be a problem".  If this didn't impact uAPI,
+> I wouldn't care as much, i.e. I'd be much more willing iterate as needed.
+> 
+> I'm not saying we should go straight for a complex implementation.  Quite the
+> opposite.  But I do want us to consider the possible ramifications of using a
+> single bit for all userfaults, so that we can at least try to design something
+> that is extensible and won't be a pain to maintain.
 
-I was thinking the same way and realized the uninitialized `misc`
-problem while I was testing this implementation.
-Also I think it would be good to have a new type, at least if
-something wrong happens unexpectedly, we know that it is caused by old
-or new compressed event.
-
->
-> But unfortunately, I found process_comp_header() didn't reset the misc
-> field so it may have garbage in old data.  Then the above won't work. :(
->
-> Thanks,
-> Namhyung
->
-> >
-> > Thanks,
-> > Ian
-> >
-> > > +};
-> > > +
-> > >  enum perf_user_event_type { /* above any possible kernel type */
-> > >         PERF_RECORD_USER_TYPE_START             =3D 64,
-> > >         PERF_RECORD_HEADER_ATTR                 =3D 64,
-> > > @@ -478,6 +488,7 @@ enum perf_user_event_type { /* above any possible=
- kernel type */
-> > >         PERF_RECORD_HEADER_FEATURE              =3D 80,
-> > >         PERF_RECORD_COMPRESSED                  =3D 81,
-> > >         PERF_RECORD_FINISHED_INIT               =3D 82,
-> > > +       PERF_RECORD_COMPRESSED2                 =3D 83,
-> > >         PERF_RECORD_HEADER_MAX
-> > >  };
-> > >
-> > > @@ -518,6 +529,7 @@ union perf_event {
-> > >         struct perf_record_time_conv            time_conv;
-> > >         struct perf_record_header_feature       feat;
-> > >         struct perf_record_compressed           pack;
-> > > +       struct perf_record_compressed2          pack2;
-> > >  };
-> > >
-> > >  #endif /* __LIBPERF_EVENT_H */
-> > > diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/too=
-ls/perf/Documentation/perf.data-file-format.txt
-> > > index 010a4edcd384..f5faceb0e248 100644
-> > > --- a/tools/perf/Documentation/perf.data-file-format.txt
-> > > +++ b/tools/perf/Documentation/perf.data-file-format.txt
-> > > @@ -604,6 +604,10 @@ contain information that otherwise would be in p=
-erf.data file's header.
-> > >
-> > >         PERF_RECORD_COMPRESSED                  =3D 81,
-> > >
-> > > +The header is followed by compressed data frame that can be decompre=
-ssed
-> > > +into array of perf trace records. The size of the entire compressed =
-event
-> > > +record including the header is limited by the max value of header.si=
-ze.
-> > > +
-> > >  struct compressed_event {
-> > >         struct perf_event_header        header;
-> > >         char                            data[];
-> > > @@ -618,10 +622,17 @@ This is used, for instance, to 'perf inject' ev=
-ents after init and before
-> > >  regular events, those emitted by the kernel, to support combining gu=
-est and
-> > >  host records.
-> > >
-> > > +       PERF_RECORD_COMPRESSED2                 =3D 83,
-> > >
-> > > -The header is followed by compressed data frame that can be decompre=
-ssed
-> > > -into array of perf trace records. The size of the entire compressed =
-event
-> > > -record including the header is limited by the max value of header.si=
-ze.
-> > > +8-byte aligned version of `PERF_RECORD_COMPRESSED`. `header.size` in=
-dicates the
-> > > +total record size, including padding for 8-byte alignment, and `data=
-_size`
-> > > +specifies the actual size of the compressed data.
-> > > +
-> > > +struct perf_record_compressed2 {
-> > > +       struct perf_event_header        header;
-> > > +       __u64                           data_size;
-> > > +       char                            data[];
-> > > +};
-> > >
-> > >  Event types
-> > >
-> > > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.=
-c
-> > > index 9af3f21fd015..d07ad670daa7 100644
-> > > --- a/tools/perf/builtin-record.c
-> > > +++ b/tools/perf/builtin-record.c
-> > > @@ -648,14 +648,27 @@ static int record__pushfn(struct mmap *map, voi=
-d *to, void *bf, size_t size)
-> > >         struct record *rec =3D to;
-> > >
-> > >         if (record__comp_enabled(rec)) {
-> > > +               struct perf_record_compressed2 *event =3D map->data;
-> > > +               size_t padding =3D 0;
-> > > +               u8 pad[8] =3D {0};
-> > >                 ssize_t compressed =3D zstd_compress(rec->session, ma=
-p, map->data,
-> > >                                                    mmap__mmap_len(map=
-), bf, size);
-> > >
-> > >                 if (compressed < 0)
-> > >                         return (int)compressed;
-> > >
-> > > -               size =3D compressed;
-> > > -               bf   =3D map->data;
-> > > +               bf =3D event;
-> > > +               thread->samples++;
-> > > +
-> > > +               /*
-> > > +                * The record from `zstd_compress` is not 8 bytes ali=
-gned, which would cause asan
-> > > +                * error. We make it aligned here.
-> > > +                */
-> > > +               event->data_size =3D compressed - sizeof(struct perf_=
-record_compressed2);
-> > > +               event->header.size =3D PERF_ALIGN(compressed, sizeof(=
-u64));
-> > > +               padding =3D event->header.size - compressed;
-> > > +               return record__write(rec, map, bf, compressed) ||
-> > > +                      record__write(rec, map, &pad, padding);
-> > >         }
-> > >
-> > >         thread->samples++;
-> > > @@ -1534,7 +1547,7 @@ static void record__adjust_affinity(struct reco=
-rd *rec, struct mmap *map)
-> > >
-> > >  static size_t process_comp_header(void *record, size_t increment)
-> > >  {
-> > > -       struct perf_record_compressed *event =3D record;
-> > > +       struct perf_record_compressed2 *event =3D record;
-> > >         size_t size =3D sizeof(*event);
-> > >
-> > >         if (increment) {
-> > > @@ -1542,7 +1555,7 @@ static size_t process_comp_header(void *record,=
- size_t increment)
-> > >                 return increment;
-> > >         }
-> > >
-> > > -       event->header.type =3D PERF_RECORD_COMPRESSED;
-> > > +       event->header.type =3D PERF_RECORD_COMPRESSED2;
-> > >         event->header.size =3D size;
-> > >
-> > >         return size;
-> > > @@ -1552,7 +1565,7 @@ static ssize_t zstd_compress(struct perf_sessio=
-n *session, struct mmap *map,
-> > >                             void *dst, size_t dst_size, void *src, si=
-ze_t src_size)
-> > >  {
-> > >         ssize_t compressed;
-> > > -       size_t max_record_size =3D PERF_SAMPLE_MAX_SIZE - sizeof(stru=
-ct perf_record_compressed) - 1;
-> > > +       size_t max_record_size =3D PERF_SAMPLE_MAX_SIZE - sizeof(stru=
-ct perf_record_compressed2) - 1;
-> > >         struct zstd_data *zstd_data =3D &session->zstd_data;
-> > >
-> > >         if (map && map->file)
-> > > diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> > > index c23b77f8f854..80c9ea682413 100644
-> > > --- a/tools/perf/util/event.c
-> > > +++ b/tools/perf/util/event.c
-> > > @@ -77,6 +77,7 @@ static const char *perf_event__names[] =3D {
-> > >         [PERF_RECORD_HEADER_FEATURE]            =3D "FEATURE",
-> > >         [PERF_RECORD_COMPRESSED]                =3D "COMPRESSED",
-> > >         [PERF_RECORD_FINISHED_INIT]             =3D "FINISHED_INIT",
-> > > +       [PERF_RECORD_COMPRESSED2]               =3D "COMPRESSED2",
-> > >  };
-> > >
-> > >  const char *perf_event__name(unsigned int id)
-> > > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> > > index 60fb9997ea0d..db2653322f9f 100644
-> > > --- a/tools/perf/util/session.c
-> > > +++ b/tools/perf/util/session.c
-> > > @@ -1400,7 +1400,9 @@ static s64 perf_session__process_user_event(str=
-uct perf_session *session,
-> > >         int err;
-> > >
-> > >         perf_sample__init(&sample, /*all=3D*/true);
-> > > -       if (event->header.type !=3D PERF_RECORD_COMPRESSED || perf_to=
-ol__compressed_is_stub(tool))
-> > > +       if ((event->header.type !=3D PERF_RECORD_COMPRESSED &&
-> > > +            event->header.type !=3D PERF_RECORD_COMPRESSED2) ||
-> > > +           perf_tool__compressed_is_stub(tool))
-> > >                 dump_event(session->evlist, event, file_offset, &samp=
-le, file_path);
-> > >
-> > >         /* These events are processed right away */
-> > > @@ -1481,6 +1483,7 @@ static s64 perf_session__process_user_event(str=
-uct perf_session *session,
-> > >                 err =3D tool->feature(session, event);
-> > >                 break;
-> > >         case PERF_RECORD_COMPRESSED:
-> > > +       case PERF_RECORD_COMPRESSED2:
-> > >                 err =3D tool->compressed(session, event, file_offset,=
- file_path);
-> > >                 if (err)
-> > >                         dump_event(session->evlist, event, file_offse=
-t, &sample, file_path);
-> > > diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-> > > index 3b7f390f26eb..37bd8ac63b01 100644
-> > > --- a/tools/perf/util/tool.c
-> > > +++ b/tools/perf/util/tool.c
-> > > @@ -43,8 +43,15 @@ static int perf_session__process_compressed_event(=
-struct perf_session *session,
-> > >                 decomp->size =3D decomp_last_rem;
-> > >         }
-> > >
-> > > -       src =3D (void *)event + sizeof(struct perf_record_compressed)=
-;
-> > > -       src_size =3D event->pack.header.size - sizeof(struct perf_rec=
-ord_compressed);
-> > > +       if (event->header.type =3D=3D PERF_RECORD_COMPRESSED) {
-> > > +               src =3D (void *)event + sizeof(struct perf_record_com=
-pressed);
-> > > +               src_size =3D event->pack.header.size - sizeof(struct =
-perf_record_compressed);
-> > > +       } else if (event->header.type =3D=3D PERF_RECORD_COMPRESSED2)=
- {
-> > > +               src =3D (void *)event + sizeof(struct perf_record_com=
-pressed2);
-> > > +               src_size =3D event->pack2.data_size;
-> > > +       } else {
-> > > +               return -1;
-> > > +       }
-> > >
-> > >         decomp_size =3D zstd_decompress_stream(session->active_decomp=
-->zstd_decomp, src, src_size,
-> > >                                 &(decomp->data[decomp_last_rem]), dec=
-omp_len - decomp_last_rem);
-> > > --
-> > > 2.48.1.658.g4767266eb4-goog
-> > >
+So you would've liked more the "two-bit per gfn" approach as in: provide 
+2 interception points, for sync and async exits, with the former chosen 
+by userspace when it "knows" that the content is already in memory? 
+What makes it a conundrum then?  It looks like an incremental change to 
+what has already been proposed.  There is a complication that 2-bit 
+operations aren't atomic, but even 1 bit is racy between KVM and userspace.
 
