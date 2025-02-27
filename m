@@ -1,162 +1,201 @@
-Return-Path: <linux-kernel+bounces-536648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD584A48253
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:03:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACE5A48265
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35533A32BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:03:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5048717BAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C4626A0C7;
-	Thu, 27 Feb 2025 15:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5466225F795;
+	Thu, 27 Feb 2025 14:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fQcHyLnM";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DxhGKqdK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BU7cRs5O"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7C26A0B9
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C798725E837;
+	Thu, 27 Feb 2025 14:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668615; cv=none; b=HaYpOTrVxirTDyBNdEzZ+Bn+yhn7Ft2WWYAVflFCe8dx5YOgOC5OpJ6GFsTJ1+qxFhawvNMTqAPXjQDq+HsMvUyj8j8ab/F4fhK99Mooq6h0juIA3bsoQdevQbxZwsH9dyT6jbLwxlX/zTMhuiIIvd65OuWeoFu6WK022V3suo8=
+	t=1740668254; cv=none; b=YNvlKj46bgFZy5MxADQAeFdJtMWChojKFycg9+Td/1xiaw8h9JYmGUzmpZjL+OlqEIFCGnHohm5OT4V8mO5HOaEa4EVSAQzTlMwC6VwyiJaHiTNaquY0m4x8rAV8+afYfAi12nBM1BZ8Yhk5byvMaXkHHr7jLPJR2G6asVzaV20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668615; c=relaxed/simple;
-	bh=1FMpYSSNrm5jFXSaO7kwUtTWhd7AhGZ1E1RuRjpIB5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQbY+6jHTcXxKl75coRlOsJLep8nvGUEljvPsJkcbXhXFKxbgpPyr7QkIoLTSYaWmYZZg/UAO6KWssS08PlB2WgZ8wa3XuQV3dCAy5Pc3ok60l0WroAIPSabYK0My75ZzlgLrJY1gONkpdcnJGKm7jYieVGn0aNpEYgeKhaCcTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fQcHyLnM; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DxhGKqdK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DF46A1F457;
-	Thu, 27 Feb 2025 15:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740668612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ZgFUlmr6WcP558S1jjl25yNZ/UxRgb8t4jQCSQY55N8=;
-	b=fQcHyLnMj97VC2bhtz5W1GXdRl18vm5PEvAm2CqE61R5ia7w2Bj7TUkxtmMeIsejY2UX9L
-	OtRICJ8jeO+frGA004UH7ms0V5o3Wfh3lqzFOuoUkFlCZQvUK9Wvr0OZKZq7qT80p3vaMr
-	lAU95L3AdqD3s26EbsfIha7T08iI2JQ=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=DxhGKqdK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1740668611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ZgFUlmr6WcP558S1jjl25yNZ/UxRgb8t4jQCSQY55N8=;
-	b=DxhGKqdKwxTIqFQatcVqgpPEsImckyG7W7LlInKdXhyhoD32n+yGHoh4oE401kLDFDyvaJ
-	um3DSA8aTEhD1WvyAi/LCS4JsFTEOM17F6UTXknzRcVoIuknqnoHWfhb7BuKKxkXoXJv46
-	9YeN9nMUvE1gIGalqJ3dwbYJf5Oa1wc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 97BDF13888;
-	Thu, 27 Feb 2025 15:03:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1MGPI8N+wGfiAgAAD6G6ig
-	(envelope-from <vincenzo.mezzela@suse.com>); Thu, 27 Feb 2025 15:03:31 +0000
-From: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-To: live-patching@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com,
-	corbet@lwn.net,
-	Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
-Subject: [PATCH] docs: livepatch: move text out of code block
-Date: Thu, 27 Feb 2025 16:03:28 +0100
-Message-ID: <20250227150328.124438-1-vincenzo.mezzela@suse.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740668254; c=relaxed/simple;
+	bh=RlenwtE5mxdv5cb/MEos3p+JmVXLB2yGNlafSdQiqDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cLyWgsw9GpWkWlBV0fP6KEFQ9dKbc4WTPbCG9tziODZ7bSKLwuoH39ZmJ8L5zApPXs21Imhjal+SfThgKmCworNmo6kuiHejXqTxPLFaGfb3pD9b2sggEO49cmL5FFoYh+uIA6x45Yks+nGKzRi1VnT8nJNNbdFrc9sASDFvyXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BU7cRs5O; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 79B34441AB;
+	Thu, 27 Feb 2025 14:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740668250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vxxXj7qHDUKOxFYzmRI0KA+MFriKrU/fu0NUeDhbg/4=;
+	b=BU7cRs5OtfDkPDMGdgZwKTlTc5pmwx2JLI94bxKT/RK1ESGqwqZbYREl5ZEO0xxobAguDz
+	x7xX8uP5TrtRexTxHHMTjKle1BcWMPnoc2QV4gsf6L1tOTjiBe99bbZmYl2eDU9hG33LmO
+	uZENFBdzrcafa1Ebx9BYhNcXQTREL/ysPxNnvq5ubwzpKms1OxOWUKERpcgoSYZZ7ELn5g
+	IpuVo5M0I6ZKPbwz/EjjfTkxxpim5QMKhaXw/+uEeycd7JNmlSlKcrsa3eutNxMEbZFxPE
+	qb/+97DCYh0XjqGadp/wzZD6ysAsOrz1HLEbNnW7c912m2EAo70YLJQf2qy9pw==
+Date: Thu, 27 Feb 2025 15:57:27 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 06/12] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <20250227155727.7bdc069f@kmaincent-XPS-13-7390>
+In-Reply-To: <Z8AW6S2xmzGZ0y9B@pengutronix.de>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-6-3da486e5fd64@bootlin.com>
+	<20250220165129.6f72f51a@kernel.org>
+	<20250224141037.1c79122b@kmaincent-XPS-13-7390>
+	<20250224134522.1cc36aa3@kernel.org>
+	<20250225102558.2cf3d8a5@kmaincent-XPS-13-7390>
+	<20250225174752.5dbf65e2@kernel.org>
+	<Z76t0VotFL7ji41M@pengutronix.de>
+	<Z76vfyv5XoMKmyH_@pengutronix.de>
+	<20250226184257.7d2187aa@kernel.org>
+	<Z8AW6S2xmzGZ0y9B@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: DF46A1F457
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedukeejleefheelgeevffdugfeggeduudekgeelgfdviedvkedugefhffekudetvdenucffohhmrghinhephhhpvgdrtghomhdptghishgtohdrtghomhdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtr
+ dhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Part of the documentation text is included in the readelf output code
-block. Hence, split the code block and move the affected text outside.
+On Thu, 27 Feb 2025 08:40:25 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Signed-off-by: Vincenzo MEZZELA <vincenzo.mezzela@suse.com>
----
- Documentation/livepatch/module-elf-format.rst | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+> On Wed, Feb 26, 2025 at 06:42:57PM -0800, Jakub Kicinski wrote:
+> > On Wed, 26 Feb 2025 07:06:55 +0100 Oleksij Rempel wrote: =20
+> > > Here is one example how it is done by HP switches:
+> > > https://arubanetworking.hpe.com/techdocs/AOS-CX/10.08/HTML/monitoring=
+_6200/Content/Chp_PoE/PoE_cmds/pow-ove-eth-all-by.htm
+> > >=20
+> > > switch(config)# interface 1/1/1    <---- per interface
+> > > switch(config-if)# power-over-ethernet allocate-by usage
+> > > switch(config-if)# power-over-ethernet allocate-by class
+> > >=20
+> > > Cisco example:
+> > > https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/s=
+w/93x/power-over-ethernet/configuration/configuring-power-over-ethernet/m-c=
+onfiguring-power-over-ethernet.html
+> > >=20
+> > > switch(config)# interface ethernet1/1   <---- per interface
+> > > switch(config-if)# power inline auto =20
+> >=20
+> > I don't see any mention of a domain in these docs.
+> > This patchset is creating a concept of "domain" but does=20
+> > not expose it as an object. =20
+>=20
+> Ok, I see. @K=C3=B6ry, can you please provide regulator_summary with some
+> inlined comments to regulators related to the PSE components and PSE
+> related outputs of ethtool (or what ever tool you are using).
+>=20
+> I wont to use this examples to answer.
 
-diff --git a/Documentation/livepatch/module-elf-format.rst b/Documentation/livepatch/module-elf-format.rst
-index a03ed02ec57e..eadcff224335 100644
---- a/Documentation/livepatch/module-elf-format.rst
-+++ b/Documentation/livepatch/module-elf-format.rst
-@@ -217,16 +217,23 @@ livepatch relocation section refer to their respective symbols with their symbol
- indices, and the original symbol indices (and thus the symtab ordering) must be
- preserved in order for apply_relocate_add() to find the right symbol.
- 
--For example, take this particular rela from a livepatch module:::
-+For example, take this particular rela from a livepatch module:
-+
-+::
- 
-   Relocation section '.klp.rela.btrfs.text.btrfs_feature_attr_show' at offset 0x2ba0 contains 4 entries:
-       Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-   000000000000001f  0000005e00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.printk,0 - 4
- 
--  This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol index is encoded
--  in 'Info'. Here its symbol index is 0x5e, which is 94 in decimal, which refers to the
--  symbol index 94.
--  And in this patch module's corresponding symbol table, symbol index 94 refers to that very symbol:
-+This rela refers to the symbol '.klp.sym.vmlinux.printk,0', and the symbol
-+index is encoded in 'Info'. Here its symbol index is 0x5e, which is 94 in
-+decimal, which refers to the symbol index 94.
-+
-+And in this patch module's corresponding symbol table, symbol index 94 refers
-+to that very symbol:
-+
-+::
-+
-   [ snip ]
-   94: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT OS [0xff20] .klp.sym.vmlinux.printk,0
-   [ snip ]
--- 
-2.48.1
+On my side, I am not close to using sysfs. As we do all configurations thro=
+ugh
+ethtool I have assumed we should continue with ethtool.
+I think we should set the port priority through ethtool, but indeed the PSE
+power domain method get and set could be moved to sysfs as it is not someth=
+ing
+relative to the port but to a group of ports. Ethtool should still report t=
+he
+PSE power domain ID of a port to know which domain the port is.
 
+@Oleksij here it is:
+
+# cat /sys/kernel/debug/regulator/regulator_summary
+ regulator                      use open bypass  opmode voltage current    =
+ min     max
+---------------------------------------------------------------------------=
+------------
+ regulator-dummy                  5    4      0 unknown     0mV     0mA    =
+ 0mV     0mV=20
+    d00e0000.sata-target          1                                 0mA    =
+ 0mV     0mV
+    d00e0000.sata-phy             1                                 0mA    =
+ 0mV     0mV
+    d00e0000.sata-ahci            1                                 0mA    =
+ 0mV     0mV
+    spi0.0-vcc                    1                                 0mA    =
+ 0mV     0mV
+ pse-reg                          1    4      0 unknown     0mV     0mA    =
+ 0mV     0mV=20
+    pse-0-0020_pi0                0    1      0 unknown 53816mV  2369mA    =
+ 0mV     0mV=20
+       0-0020-pse-0-0020_pi0      0                                 0mA    =
+ 0mV     0mV
+    pse-0-0020_pi2                0    1      0 unknown 53816mV  2369mA    =
+ 0mV     0mV=20
+       0-0020-pse-0-0020_pi2      0                                 0mA    =
+ 0mV     0mV
+    pse-0-0020_pi7                0    1      0 unknown 53816mV  2369mA    =
+ 0mV     0mV=20
+       0-0020-pse-0-0020_pi7      0                                 0mA    =
+ 0mV     0mV
+ pse-reg2                         1    2      0 unknown     0mV     0mA    =
+ 0mV     0mV=20
+    pse-0-0020_pi1                0    0      0 unknown 53816mV  4738mA    =
+ 0mV     0mV=20
+ vcc_sd1                          2    1      0 unknown  1800mV     0mA  18=
+00mV  3300mV=20
+    d00d0000.mmc-vqmmc            1                                 0mA  18=
+00mV  1950mV
+
+# ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-get -=
+-json
+ '{"header":{"dev-name":"wan"}}'
+{'c33-pse-admin-state': 2,
+ 'c33-pse-avail-pw-limit': 127500,
+ 'c33-pse-pw-d-status': 2,
+ 'c33-pse-pw-limit-ranges': [{'max': 99900, 'min': 2000}],
+ 'header': {'dev-index': 4, 'dev-name': 'wan'},
+ 'pse-budget-eval-strat': 2,
+ 'pse-prio': 0,
+ 'pse-prio-max': 8,
+ 'pse-pw-d-id': 1}
+
+# ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-set -=
+-json
+ '{"header":{"dev-name":"wan"}, "pse-prio":1}'
+None
+# ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do pse-set -=
+-json
+'{"header":{"dev-name":"wan"}, "c33-pse-avail-pw-limit":15000}'
+None
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
