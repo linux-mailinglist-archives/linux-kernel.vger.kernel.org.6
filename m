@@ -1,125 +1,95 @@
-Return-Path: <linux-kernel+bounces-535212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDCDA47033
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:29:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF35A47036
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:32:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A56A47A7F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB451646AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212134C62;
-	Thu, 27 Feb 2025 00:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB4427004D;
+	Thu, 27 Feb 2025 00:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW47K3SK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXgHgaqn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B259323D;
-	Thu, 27 Feb 2025 00:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE54270042
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740616156; cv=none; b=VYRPsTaF1bp1+c8TlD1BxnbGfSvYp0WjOw8qyEQR/8IIBd0idJU9KyevyA3wg7xnwZesrRl7VMAy/SS6wBTCcMXYM8gj9DMsa6mXGu/Qo1bzow7EDJepeX+vOG4YJRzKx3JFNFhJa4SxEmfAYVOJdBn7QkgdTJQ4Ays/pH/elZw=
+	t=1740616342; cv=none; b=WOtjdbhr186xaV8UqbvwNjSI7F8Q+0x7H2bXkH9JaNpCSbCQ0xgLC3D6z7GW+H1fyMaXedfPWY+k5Vba78Ig/tP+tIVDV1XklkhfEAlK3wHALl9w9bbJ83rsCM+LyLq/DETfKlvMwZS3dHwUPC67gNZIoykC3Ykxvu2ajP/B/jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740616156; c=relaxed/simple;
-	bh=LXJIbPMkT+7UcF2UJzjcQfuNFcE1BU59ZW1aikiYshU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E7Qxl8FyLnQtNeiKxmc5ZDjVW4/gVOI+WRG916EFY1oaxt5jhy0p29xo4JmnlT6sAaSbvWhbAbUpG6hucyhKjiPlaF4h9/Razl9LlzrhWkKNW2AWwRZZAgbKigO6fN9xW/1DkHSp+AjPLs47BBWjGRaJGbQO6vtikBn2jzl9TCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW47K3SK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32C8C4CED6;
-	Thu, 27 Feb 2025 00:29:15 +0000 (UTC)
+	s=arc-20240116; t=1740616342; c=relaxed/simple;
+	bh=nCr6Ek4/31gn3Vg3fyHay+1KEzWWUzi367J1Ea1oAtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwKoT864Vair5Zya0IDtbfSnvzP/n+SbiMzDfZCDNg+w7s6sqKKYbuvW7zczxETLLmA5CaskSZq9GW9nuv/aC/Hn5JyLCa5R6I/GJ2L2q5OnOlFRQ5/e1E1l9RnkBBbIt9eMPgrS+VHeiiQTYul3NatxlIqeT+cdm/0UA4foKfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXgHgaqn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A87C4CED6;
+	Thu, 27 Feb 2025 00:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740616155;
-	bh=LXJIbPMkT+7UcF2UJzjcQfuNFcE1BU59ZW1aikiYshU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oW47K3SK0W9wVtM8OCRMHp9d6TXboaEtLsTJjp6nDq0xMDTku8JxPy8NHkXQTZtRI
-	 tOSZDquLxmBsUduUEi26OHXqfcdHioVHi3dEzss2vSuZOWI1HDMqjBOGKK3zQTTUgJ
-	 ivFs6wdb9hmxCjF8XBMmdGKM+QYC9oGBuoylxjXaRZlyXuQATlmfxKSOiQD0zq4Brb
-	 oINQ5JTFKR8Ygl+tvyoVu1z64sUKwNLMXOTnIjWG+RxdNlewi4SmgGVM9KOpCrHkEN
-	 VJgM29g0rOFsQQtPucEVazGiIFGiZRsi6hWfNNDgi2DKyNiMao0ZrCUtPJuNXgoMRv
-	 wGY7g4fjjhn4g==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 7/9] mm/damon/core: set damos_filter default allowance behavior based on installed filters
-Date: Wed, 26 Feb 2025 16:29:13 -0800
-Message-Id: <20250227002913.19359-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250220193509.36379-8-sj@kernel.org>
-References: 
+	s=k20201202; t=1740616341;
+	bh=nCr6Ek4/31gn3Vg3fyHay+1KEzWWUzi367J1Ea1oAtQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KXgHgaqnX2vdl0tWNNVXEB7AHnwHuKMbIpCe+C5Gy8Jh2HANj2g1TyeBJP/X/O4D9
+	 bB9yHovxJ6+eNjzlTnbTkesYvmhJoMiD/ve8uhjBFd/0UdDYYikxDqktEeRSo+hNMv
+	 Quv1N2v1b7zGmJHvYcve2oVo96Gg1djBIiWL3xBlJJK62CgzR2XuO5OOLbeA9e9c1z
+	 h9zJDCSNv2mN5EobcLmwA2LBOXDItNaaImvUjQtgbvF4cqYpevN4EJa1ps4T1YgyCL
+	 O13YQhWTZqniirz+tNGVxcQjNVfkmgpxzsT1AQvzMSmYrxlb4ZELyQzeTQCO3X6g8/
+	 Fd70fvzNMDEYw==
+Date: Wed, 26 Feb 2025 16:32:20 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH v1] x86/insn: Fix linux/unaligned.h include path
+Message-ID: <Z7-ylCsV43noci77@google.com>
+References: <20250225193600.90037-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250225193600.90037-1-irogers@google.com>
 
-On Thu, 20 Feb 2025 11:35:07 -0800 SeongJae Park <sj@kernel.org> wrote:
+On Tue, Feb 25, 2025 at 11:36:00AM -0800, Ian Rogers wrote:
+> tools/arch/x86/include/linux doesn't exist but building is working by
+> virtue of a -I. Building using bazel this fails. Use angle brackets to
+> include unaligned.h so there isn't an invalid relative include.
 
-> Decide whether to allow or reject by default on core and opertions layer
-> handled filters evaluation stages, based on the last-installed filter's
-> behavior.  It is the opposite of the last installed filter's behavior.
-> If there is any operations layer handled filters, core layer handled
-> filters stage keeps allowing as the default behavior, since the last
-> filter of core layer handled filters in the case is not really the last
-> filter of the entire filtering stage.
-
-The last sentence describing behavior is not really implemented with this
-commit.  See below.
-
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  mm/damon/core.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index 78126a5145fd..9744ab9ca5c5 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -864,6 +864,29 @@ static int damos_commit_ops_filters(struct damos *dst, struct damos *src)
->  	return 0;
->  }
->  
-> +/**
-> + * damos_filters_default_reject() - decide whether to reject memory that didn't
-> + *				    match with any given filter.
-> + * @filters:	Given DAMOS filters of a group.
-> + */
-> +static bool damos_filters_default_reject(struct list_head *filters)
-> +{
-> +	struct damos_filter *last_filter;
-> +
-> +	if (list_empty(filters))
-> +		return false;
-> +	last_filter = list_last_entry(filters, struct damos_filter, list);
-> +	return last_filter->allow;
-> +}
-> +
-> +static void damos_set_filters_default_reject(struct damos *s)
-> +{
-> +	s->core_filters_default_reject =
-> +		damos_filters_default_reject(&s->filters);
-> +	s->ops_filters_default_reject =
-> +		damos_filters_default_reject(&s->ops_filters);
-> +}
-
-->core_filters_default_reject should be 'false' if s->ops_filters is not empty,
-since the last one of ->ops_filters is not the real last filter.  But this code
-is not handling the case.
-
-I will fix this in the next revision.
-
+Right, it's using tools/include/linux/unaligned.h.
 
 Thanks,
-SJ
+Namhyung
 
-[...]
+> 
+> Fixes: 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/arch/x86/lib/insn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
+> index ab5cdc3337da..e91d4c4e1c16 100644
+> --- a/tools/arch/x86/lib/insn.c
+> +++ b/tools/arch/x86/lib/insn.c
+> @@ -13,7 +13,7 @@
+>  #endif
+>  #include "../include/asm/inat.h" /* __ignore_sync_check__ */
+>  #include "../include/asm/insn.h" /* __ignore_sync_check__ */
+> -#include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
+> +#include <linux/unaligned.h> /* __ignore_sync_check__ */
+>  
+>  #include <linux/errno.h>
+>  #include <linux/kconfig.h>
+> -- 
+> 2.48.1.711.g2feabab25a-goog
+> 
 
