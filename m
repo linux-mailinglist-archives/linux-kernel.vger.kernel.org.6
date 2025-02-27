@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-535973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73431A479E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:14:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3086FA479EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8044316B91C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA74189179B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40413229B03;
-	Thu, 27 Feb 2025 10:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2EB229B27;
+	Thu, 27 Feb 2025 10:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Lw8hEZER"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IpjobHDH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553A021B9EE;
-	Thu, 27 Feb 2025 10:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7345B227EAE;
+	Thu, 27 Feb 2025 10:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740651233; cv=none; b=uCYA/Alvkzp0/vQORtBJ09xdHH7qgEOEoq+7iRsUAdtLra8oUjAMt3xXhY3oN+nCI1UBG4SpWzQOt/u9deK9SGvT/QvgG9pEzswN1pY6d+IqXIVIVI+0CQG4PL0rX+ly8yNAm9MmX5gH/C2wH0VJwZyrq2cV6B6CNHFauNmsKbo=
+	t=1740651250; cv=none; b=Y2lMbwMvHJMaZgRCwkN3swlqyyq0PnKzpejZ6N8xDcjCN3a0EER/xwaG/Gac+38Cdj2+ixMEeg4O7H84T1eGvotbH8QJ/RNriZI24j6mOikQx3uq4b6rj0mVqgEcyTkgD5RHUFTK5OJvKn1EyGqt7j13MpP4K80tCCRoNgqN1Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740651233; c=relaxed/simple;
-	bh=ZYrecEk+Tp1l07obRlnqI5FqzHeKhzKzCSwOWo+CHy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thACHSz/YKdjeLhtkr1lLSeRKAvPKqfGf842CaGjnLSvks4rtu5DXLPvQ4a7qkmYaioeVbaN/TyilOrFNb97vZ4Y/PqpqQKZ0O6f8rmdC2muydBhF6R+59EYIg8c+GNzzUgyh+VXxaZIaQMlKCfV4v6u7xCxXqXr44N2OElEzrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Lw8hEZER; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740651216; x=1741256016; i=markus.elfring@web.de;
-	bh=ZYrecEk+Tp1l07obRlnqI5FqzHeKhzKzCSwOWo+CHy8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Lw8hEZERotn4tzrn0kcTaofnQX5bKVIGjdumqQyO/0yRjTQhY4uRjcB6K4hOWnJW
-	 IvsRWR2Fh/HyCzIox/Z2LagvRw7ZgKjhEhMXwCkQ6z9hZITVSLQKQuvZSOQHbqL3R
-	 lYx0I+vcjlmkJ1YsanH4J9jMKXY4mI7jFjXj4TumMXsajDvG0ft79gUAJuZy9D0UH
-	 r70tbenRYg7TR7xKX38qFcrosqZQs4ULiY3Nj1g592R2WCSLufJF6TbmcG82HtmNR
-	 C38u3zrITX3+YZ78I8J6KVrBfAsqTYeD0Q3upjLvrtmf0ZGoPh4z0icVfd7sR4UZP
-	 yNxDUHwvOm4+K0NbCw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.82]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8Bw1-1tsngp2m9r-00GHAT; Thu, 27
- Feb 2025 11:13:36 +0100
-Message-ID: <bc03e16b-3c6c-4379-8af0-28cd8e269508@web.de>
-Date: Thu, 27 Feb 2025 11:13:28 +0100
+	s=arc-20240116; t=1740651250; c=relaxed/simple;
+	bh=gseLAHp4E+Igv9cI7PtONJP3gJHTR/dnFqtpGS6PFxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6uGdH5uVQ/pQ4mlwWOaL6DsbX2VWZVrzRhjpz4/cSGwCCwY4FWnjrtiIVDdxIE6fV9tsl+lOReUXSpLu9xzTmu7aVg1sUFZrToU5bVgoWxdObDlshX/deRGYTMYicxq0Ek8rY63iVVZN50+hTQXi1ZgpEFT1RRwhNI1/fnI0js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IpjobHDH; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740651248; x=1772187248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gseLAHp4E+Igv9cI7PtONJP3gJHTR/dnFqtpGS6PFxQ=;
+  b=IpjobHDHjgdy3oJJP9oYg2jfMWY1elIzZCD4IhS4zeUeqWfkATf82pb5
+   XIXNw4M2svecqJnWl4DQfsk/PNlVwTFAHkHvUVYAfVBrMuO3UjQ6Ceoya
+   Bm/B04Xf9a9+icubcLUJpx2RqDLr0xAm82GH5hSymjgQeJBUnQ7Nt/pds
+   pgbGNLk50Uikczor9ddWWIXkdVEVL9HKQkdSVv+y5knXWIZbf82/u3KEb
+   VRZhjlbbsQtVkYVy8AEuHpsx05j01oNLVDmneb5b3AmFvPk1WndQzt5cA
+   YHhb7xSEPLdBlihHBX+MpUvufpY8rfQl6F7qYpguU4zW8vwbrlXPm7Yuk
+   g==;
+X-CSE-ConnectionGUID: OMaUPBQQTH2TOX35vrQtgA==
+X-CSE-MsgGUID: aC9+0EINReqXz8LaEJkKQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="52172112"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="52172112"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:14:07 -0800
+X-CSE-ConnectionGUID: h0+jg6i9R0yBDlukY4UbCg==
+X-CSE-MsgGUID: /TMiIC0sRceQC7YLEYVTJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="122096659"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:14:05 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 1E68F11F944;
+	Thu, 27 Feb 2025 12:14:02 +0200 (EET)
+Date: Thu, 27 Feb 2025 10:14:02 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mathis Foerst <mathis.foerst@mt.com>
+Cc: linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, manuel.traut@mt.com
+Subject: Re: [PATCH v1 2/8] MT9M114: Add pad-slew-rate DT-binding
+Message-ID: <Z8A66l02Et4J7hj4@kekkonen.localdomain>
+References: <20250226153929.274562-1-mathis.foerst@mt.com>
+ <20250226153929.274562-3-mathis.foerst@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [4/8] tracing: probe-events: Log errro for exceeding the number
- of arguments
-To: Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Hari Bathini
- <hbathini@linux.ibm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Shuah Khan <shuah@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>
-References: <174055075075.4079315.10916648136898316476.stgit@mhiramat.tok.corp.google.com>
- <516ea911-acc6-47c2-87d5-2df0a18468de@web.de>
- <20250227091904.a072168412d6d94efc5b0852@kernel.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250227091904.a072168412d6d94efc5b0852@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0fSE91QN7qSi8m6wzasRk1biQMjb4gyGsoug1Ocka6uVqFfSM/p
- x3dHlbI95miCm1GQ8FiyRYb05vUKcIsn1b/7GNe/srj8AVFHS+l8q+9iIaVIX+LpNiiy+A/
- aIrnCzszXDCMtvDnXvvFMKk/UQGcFsC7xkegVSrOkXYhIff+Bol260W+b6dVhxsitW0qiOi
- 5mcHqcg2N5lFlybq00U3Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:M95len23fBc=;3d80qJ+HAoyGgWtQxWzatIZPw3h
- q2eClVviWuc7Fr15Sa4EM5Pitm2zMp54CeCiYEL0WQ5lstvkRqA6NSkzejzJBFjh0EbFptGQO
- P1VNNvv45HNzKxxBJYxNFVwVvt19WNkpsnCcUYW0ZAi7vwEju2T8TlA6OoPiUxoNmZHm/5Ush
- OKn8SHG8ry9mlWw90rBx32T1kicfRhdWehuqGXUlCi1an3rsi4rdPXaXBw6+QHVPnvJ4VIu4m
- pZs8Y+kvVkmZh3pP/Dt6qUsqEeeVhsnjlZJmCUArNare8TAkUbl76UHnAs29Q/ZJ53no6kaZE
- kOYn64iFTUSFY3vMp0nuu4bfN8/YTWi2e3YJV8nfld6kk+epvk+G+q5TnKE/Ao1bye3vW4qWl
- E0hJZiWeqqRDKaetfaot85wPDo/rfI7Aalzr7p7PTPila35g104hTt1P4WGdKUgG2w4RoKA7U
- SIrDzbXf8sWqTvGIqU/V5JzJUVBbxrbKPRE/g6WRutvv29POvISd6L8BpK8QNaxa0cn52I771
- ObNwW5SM5O/Jb4Rjh+fBXWRRqBemosHy/SwD/tDlNA31lnLu6MrJVQrXuPc+7fRQCvoXKefSh
- MjJ/XGHk6VZLVuAGBb/ktCP4NfhN+2U9OKSitHN7ZlkdogIk9sS+Pn1sIaKpzJdySWvLMwWy7
- /0l3EpYLDCqctDcMWmI/6qlUuvBOlsVLWJtwY0tA76DNalc/RHIbuarrgpDB08/7CoiarIXLF
- zMKnf8VIJ74TqmqE3un7mK/P09VmdOMSabFPZewLQ9sGgQk8xQiF7wPQVYBqKCKYmeH7akoBK
- VuK1r8ukeo9bAqMNve0jdSFdZdyWtoaG8R2k9dcxZAr2L7vJ7F+Y2CpzgkE123JNP5Utfg5qa
- tYRI2hrJR99CgjbTGOyIQ2p+cZN97r+pMa3lRi5wEudqswCcXdVHZgL6CP6Uyiw1MdQqhpigN
- NDbqsyakQRPXXWmbHUEDd3ulWP/ZRaeIsTPGraEezrK9sO9Oyi9uKnva8koONNCrKH+iTYQQl
- AxE5W2dQMBPM7Su5Z4IDpEBsXEPTX3Vp/t4mABJo4G8C6dc/HHC5sC3kcj2aZXePaj4WVDm+p
- tsGHHCsmpnlKT/xaske3yZLs9tvmIKezr2unNUJLM2oPyr8kXYNn//yHS3K1rYEM4QSqR5NlP
- 2KD4cXCwikyzKjt2ygR8dMrY12Djx/PYp/k7aYIoryIkYfUx31YgRT0PEuyKxPew++Or4fndV
- iGC6rMmy4jmYiyEnFtw3ia3hRhvDc7xtfj5EcBgaRwXN1j1AKxsMGcS0WHXDFeIIEro2loGAw
- hmr3FU5JSHxz48FiJ3Gvw1a1VdsvVeR3TJwDjvkf9bDM0JalDj8vPTy+hev4B5uXVN+bP/gE5
- zGtbwZwU6S3JXIvs+lce54oUlj/oB93NZHV45epz0NebjBBxL3PXDbv9MkeuDXitTvwZTHcIg
- M5xeFsNNPnClKq0yVKrRiXF07O1g=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226153929.274562-3-mathis.foerst@mt.com>
 
->> May a bit of exception handling code be shared by an additional jump ta=
-rget?
->> Will another goto chain become helpful here?
->
-> Honestly, I don't want to introduce jump any more.
+Hi Mathis,
 
-Would you like to avoid any duplicate source code (including error handlin=
-g)?
+On Wed, Feb 26, 2025 at 04:39:23PM +0100, Mathis Foerst wrote:
+> The MT9M114 supports the different slew rates (0 to 7) on the output pads.
 
+"the output pads" probably means pixel data interface (DVP or CSI-2)
+signals in this cases? I suppose this is about clock modulation?
+It'd be good to say that.
+
+> At the moment, this is hardcoded to 7 (the fastest rate).
+> The user might want to change this values due to EMC requirements.
+> 
+> Add the 'pad-slew-rate' property to the MT9M114 DT-bindings for selecting
+> the desired slew rate.
+> 
+> Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
+> ---
+>  .../devicetree/bindings/media/i2c/onnn,mt9m114.yaml         | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> index 72e258d57186..666afe10c538 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+> @@ -74,6 +74,12 @@ properties:
+>      description: Bypass the internal PLL of the sensor to use EXTCLK directly as SYSCLK.
+>      type: boolean
+>  
+> +  onnn,slew-rate:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+
+No need to make this 8-bit (i.e. just use 32 bits).
+
+> +    description: Slew rate ot the output pads DOUT[7:0], LINE_VALID, FRAME_VALID and PIXCLK
+
+Please wrap at 80 characters.
+
+Is there more information on the effect than 7 is the fastest?
+
+> +    minimum: 0
+> +    maximum: 7
+
+Please also add a default.
+
+> +
+>  required:
+>    - compatible
+>    - reg
+
+-- 
 Regards,
-Markus
+
+Sakari Ailus
 
