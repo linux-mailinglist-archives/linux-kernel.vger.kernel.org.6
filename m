@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-536028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18947A47AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:46:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F747A47A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A633AFC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:46:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF857A3973
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8E22A1EF;
-	Thu, 27 Feb 2025 10:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22731227563;
+	Thu, 27 Feb 2025 10:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="HzBrk/ch"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a9GrcTYQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C007421D5BD;
-	Thu, 27 Feb 2025 10:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653170; cv=pass; b=i3O758Ra4VmswP/sdVJ44n8bLghYCzh+Ze1D48JJ6+plAq6/BhBZcKFmd5L6X/4sR3EI1bomZw/LuysN0z/l4XChwDMeFdOmuc6T8WUoSktpUWtEplEhPDj7dMmIi7KyeRegxSNND5YKKcHgfnHAgBy4fr33cP1WfgX9F4AwcBM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653170; c=relaxed/simple;
-	bh=RXp2uaebMws9GNxExFb5p/bX6mABVj8stv4/Nt9JqqE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I49j/62Q+Vrf9XR2I3tWjeMHgVHdniSmMlgFqd7d1ifZLG/aFSPrL9Pi9MGpypZr7p9pMFHa8rm9eam3JnaiQFywx1Q7Dk6y6Xrq7tCiuSvrwlY/MKiUNrcETpjpUt1lcbmgYMqXb3TsEdGrYEXVadwV1QdEam6a3JdAzVJ6n5U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=HzBrk/ch; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740653142; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QAqzH5e51QC84Asy5Gl6+jDY5aBORBuqA/YYneZYe++tHqB4ySvWRpbyVED+qn4z2uYqIq8Re2ZLdxe32tAzrqjFO07xlXaN+ZfbXy1Am8H9VIywDBL8fTqB+nnGC+ZQmKSnddZIvYFmHw8oscZyJVTT6w9Uh8+QtgqZACvlGYo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740653142; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Wq4e2lGDf1gHX1jSVAhR7jrg4z/HzsOIQlyDC5+tZVw=; 
-	b=b5lWyWkHbT53yMUATnvFKjV2OqmhV43NhHwKGJCpx49IVzNfFOmM80SjLml1XZu1Puzrw7UbLQ31E4Qj/3IhDC3lQIlxBEx3OVvAWFxpZSSVFcEGNzrJj4uIo6ip6XteVvclI/mBQM8dge2k0Y1DFsTpUOh7bgbD9feiQtG4F8g=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740653142;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=Wq4e2lGDf1gHX1jSVAhR7jrg4z/HzsOIQlyDC5+tZVw=;
-	b=HzBrk/ch7TSIAAEK9P9IqNeuu0hbXLlCk6nlqbhFwnuJ+VTVf7fvGJ2eACP+WMeq
-	AnrKCa3JpxEZUdA5qJ3scY0aRtIE8LFgUpaN5a185P4Q3NIgIJnn1ZP6+MwenvFVgS1
-	eqsQELM1xit8D4dVXsqIc1VqIAL5UgGs+3AEf2K0=
-Received: by mx.zohomail.com with SMTPS id 174065153918225.04211908368677;
-	Thu, 27 Feb 2025 02:18:59 -0800 (PST)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v1 1/1] cxl/mem: Do not return error if CONFIG_CXL_MCE unset
-Date: Thu, 27 Feb 2025 18:18:48 +0800
-Message-Id: <20250227101848.388595-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24E51527B4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740651581; cv=none; b=etUKNX5ZFiIRytehhdwJFt/pcs/im9BHibKTIVwcGrG0zur9Gcqlmsk24XtZdPNgTYJhvRDlASlVAFCVP00v0Qz5oUc/Ic6jprO3Nc8YQaCSID4Jpn6Vr6cUVKEIBs3x9cmQZ/WHFGs/6YmIYfPL+DXXrjhfYLbSPPLd03IUnqU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740651581; c=relaxed/simple;
+	bh=X4JPAH/sc62VN1bVz4QgZMmPV3NQvGqMYU+FfWMtWCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lyw6ybSf8js4jKQiAMzbWK/k/d2PKs+qt4Sbp7fKDDDn8UwhgWnHwGCUuOT+1exBk+J9Xocm2vRPeDaDuBQJvsbW5bbVQngw3dW+JK5qyr+iY6s84lBNzfrWG+2JaUk9JtWoe2aADiN4MJGoUUq5zlL9kTgImgoMAEbXLy94Or0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a9GrcTYQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740651578;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6UFnZA1KqxUR4AS86ehSRALNopd+p33rY6Keht7Hkxc=;
+	b=a9GrcTYQXaexE4satWF3s3YgrK6CStuO+kvu6Hbh1VxU/Bh/M19UQ0FqrhF3MSV4w/1IPp
+	+UO/1rch44TcmNz0x9zz23nu8PcsAxL2oLeUf/xQjc4Y88RD3XHxa4CsJrCJLVYRXQUnG4
+	ZMFDn5frcQhdw/SMtMsVx54f3WwzuuA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-u2M6ZyRsPxm4R0-cV1bAPg-1; Thu, 27 Feb 2025 05:19:37 -0500
+X-MC-Unique: u2M6ZyRsPxm4R0-cV1bAPg-1
+X-Mimecast-MFC-AGG-ID: u2M6ZyRsPxm4R0-cV1bAPg_1740651576
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4399a5afc72so3976615e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:19:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740651576; x=1741256376;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6UFnZA1KqxUR4AS86ehSRALNopd+p33rY6Keht7Hkxc=;
+        b=SgC8zX/gMKKD/I78uLna7XcA1yrlMyOsPLBMtxT8h977YMgtnsC5faUb84JkPGzftM
+         PuZhjsNhYilJWFugsUpqT8P6F8ZyyFMP0KZkFvmvIB9aI9nhcYnAWrTy+9t7cUnjXwO7
+         aeU35QlzEjQcjA88laEOiafP0Hz89X6eFydoIhScTOG8N/F/8TAoYX0EWGJg+Uz0AEsc
+         2brds1slAJd53el65rQaJldOJzcRGUDb+bFd0Pmp8uVi3Mq42quXaoUPuBuTjF0DexRg
+         KlpNIbwiSn1e5tgjvjxELXBAD8sVbr/+BtCSBdgRHzfmudoPuh+09yXrB30dIQ3mGpvy
+         sSXQ==
+X-Gm-Message-State: AOJu0YyItzge+WYW3qaDACeIOvbKlUw0NPvSeWLT+kVlyvxxJi/9jVgd
+	5PS5TYjCrLLw5fnICDBB/h0wwbo84HpUFD+lB0HGCqJ6l906TTUtYvej3ujGoFQNajZGcqfs5Bw
+	27VULnHIohkX98JkqT18+nV+9JCoep5fEsTM0VQglxDAHKM7Ctrg45Hpq4vMQZA==
+X-Gm-Gg: ASbGncujGPS+BHAuP7t+z6gT27ELItBftNcCp7PZAc71k16hzzqnFJhnhHXvIN7Fs72
+	vstNl+ErNmRREpvHVMbBPOMleRnR6MrfB/JFBp62fj5nU+sDoDM3+aPV0BAHipxI+Ewf/Ul1cde
+	iKlHCG+t0bHX32vLgV9Q9De9nkotfGR8lPDVQqG7vXLuaMTi7RZspz12dsnJO9ZmagHGcAMpsSZ
+	bTVkA0VxS1ohdvyvBmzyGmt5dfiAS9Ne5bXDL+Elx6vD6gUsothixxx9/CPMGnJzTDbhFxeK9Bc
+	1UFVQwVCppLStlvSf1wjxXf8kidOno1Apr7OkpL28QmB7g==
+X-Received: by 2002:a05:600c:500e:b0:439:8e46:ee73 with SMTP id 5b1f17b1804b1-439aeb2b5d6mr213595085e9.15.1740651576143;
+        Thu, 27 Feb 2025 02:19:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE1Vft26tcnQWraFswBGjedEu4sbaWKbanioc5YQRLPIC1rcPLoyFw5Ul1m0g3Nh69fGEHqEw==
+X-Received: by 2002:a05:600c:500e:b0:439:8e46:ee73 with SMTP id 5b1f17b1804b1-439aeb2b5d6mr213594825e9.15.1740651575811;
+        Thu, 27 Feb 2025 02:19:35 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4847fe5sm1557821f8f.73.2025.02.27.02.19.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 02:19:35 -0800 (PST)
+Message-ID: <02e13783-1f87-46a7-9396-96bf17e36a9f@redhat.com>
+Date: Thu, 27 Feb 2025 11:19:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr0801122716de977bd9e00a2b5c28e18100002d32307e1d5f90d233a291772ea7b3708ac78ed75be54432b0:zu08011227ef38a246c8a88b2f526a8e4500005b3e5ae75bf88b4d49f780fc15784300101d8f7c1cd7676f21:rf0801122d33b1b5e1b2c61fe3edadcd170000391eae13e37c3bc7e9c9e8a25b36e94bcccdc3cb3223ad2b7bad279585b042:ZohoMail
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v7 6/8] net: pktgen: fix mpls reset parsing
+To: Peter Seiderer <ps.report@gmx.net>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Artem Chernyshev <artem.chernyshev@red-soft.ru>,
+ Frederic Weisbecker <frederic@kernel.org>, Nam Cao <namcao@linutronix.de>
+References: <20250224092242.13192-1-ps.report@gmx.net>
+ <20250224092242.13192-7-ps.report@gmx.net>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250224092242.13192-7-ps.report@gmx.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-CONFIG_CXL_MCE depends on CONFIG_MEMORY_FAILURE, if
-CONFIG_CXL_MCE is not set, devm_cxl_register_mce_notifier() will return
-an -EOPNOTSUPP, it will cause cxl_mem_state_create() failure , and then
-cxl pci device probing failed. In this case, it should not break cxl pci
-device probing.
+On 2/24/25 10:22 AM, Peter Seiderer wrote:
+> diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+> index ae5e81e62733..bb13a4591709 100644
+> --- a/net/core/pktgen.c
+> +++ b/net/core/pktgen.c
+> @@ -915,8 +915,13 @@ static ssize_t get_labels(const char __user *buffer,
+>  
+>  		max = min(8, maxlen - i);
+>  		len = hex32_arg(&buffer[i], max, &tmp);
+> -		if (len <= 0)
+> +		if (len < 0)
+>  			return len;
+> +
+> +		// return empty list in case of invalid input and/or zero value
 
-Add a checking in cxl_mem_state_create() to check if the returned value
-of devm_cxl_register_mce_notifier() is -EOPNOTSUPP, if yes, just output
-a warning log, do not let cxl_mem_state_create() return an error.
+I'm sorry for nit picking, but C-99 comments should be avoided
 
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
-I hit this issue on my cxl_test environment with latest cxl-next. If
-CONFIG_MEMORY_FAILURE is unset, all cxl pci devices will fail to probe.
+Thanks,
 
-...
-[    6.337952] cxl_mock_mem cxl_mem.6: probe with driver cxl_mock_mem failed with error -95
-[    6.338880] cxl_mock_mem cxl_mem.4: probe with driver cxl_mock_mem failed with error -95
-[    6.339593] cxl_mock_mem cxl_mem.9: probe with driver cxl_mock_mem failed with error -95
-[    6.340588] cxl_mock_mem cxl_mem.2: probe with driver cxl_mock_mem failed with error -95
-[    6.340914] cxl_mock_mem cxl_mem.0: probe with driver cxl_mock_mem failed with error -95
-[    6.345762] cxl_mock_mem cxl_rcd.10: probe with driver cxl_mock_mem failed with error -95
-[    6.345793] cxl_mock_mem cxl_mem.7: probe with driver cxl_mock_mem failed with error -95
-...
-[    6.519824] cxl_pci 0000:c4:00.0: probe with driver cxl_pci failed with error -95
-[    6.520178] cxl_pci 0000:38:00.0: probe with driver cxl_pci failed with error -95
-...
-
-base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
----
- drivers/cxl/core/mbox.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-index 13cac98846bc..d72764056ce6 100644
---- a/drivers/cxl/core/mbox.c
-+++ b/drivers/cxl/core/mbox.c
-@@ -1503,7 +1503,9 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
- 	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
- 
- 	rc = devm_cxl_register_mce_notifier(dev, &mds->mce_notifier);
--	if (rc)
-+	if (rc == -EOPNOTSUPP)
-+		dev_warn(dev, "CXL MCE unsupported\n");
-+	else if (rc)
- 		return ERR_PTR(rc);
- 
- 	return mds;
--- 
-2.34.1
+Paolo
 
 
