@@ -1,121 +1,236 @@
-Return-Path: <linux-kernel+bounces-537220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082AFA48948
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:54:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90656A48943
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DDE3B29FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF35188F62C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A33226F464;
-	Thu, 27 Feb 2025 19:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E1526F466;
+	Thu, 27 Feb 2025 19:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8VWQnVW"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1FheZU2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C0E1E832D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776EA1E832D;
+	Thu, 27 Feb 2025 19:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686028; cv=none; b=XAP7njSCPQdazYh9wwz53omXTnUqfe3SwhlhhmCNfS3e2rUjOgaMfv9m+1uGG5mZrBmOH/YobuhZ3TJ/A+S/52dmII33GM8+4p+St7NmjP4khamrYTc2XMbvnsJzzf4WV7WYFBS++SkQ8gx/l5ATgurX1PgVpKM6ghc5mwgCMbE=
+	t=1740686009; cv=none; b=bN31Dn94+wwDoQE+X/K9pGnEfd5EN6L9afnLUfDn1Hphff2KYj4RuN4q/ImXxCHzKCTSGvJxVYvxGS7V3O2/cDxuqhLr9AX+xgOKaLChYEni17EG++hk8foPcFlmoRyxN1exsuLVliISD04O9WzRUTHfB1jkwuriNMk3QWyEWpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686028; c=relaxed/simple;
-	bh=Z1imD4nLMSM1TpzUcHNPyQuKWi5/3r6RBRHqdZrkJbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WmmKzVVPL9VVvOpkX1LQ+GXBTuGem9EbP/xqf4Bh6LxGyyB+926OcksK2vruTEF5e8fbMlYJb53oKXOgwJJmCxKTVVZEWJWafq2WcXtxtVOHme+hK39u+GqtBENUIvbVxXHKNKc2i89h97A+tKfmyrZ3CgrI25gE3RsSoCwHZ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8VWQnVW; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f3fca56050so824544b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:53:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740686026; x=1741290826; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0YsfZmBaPtMyAupU0HUUrIF0S/LhwRl9ecnK+DKhpRw=;
-        b=B8VWQnVWtI4qrNn/sj47NhWbR+/qI0NkmCXPrefhoKLjgYoa8QFK1HS5/YgnJwmx2B
-         jl6wJcJ6oUucPx9m5a+Rv6XrzX81fObJE0vfJswywsh08vTaTYXOu/gc36LWKt/dFUJd
-         Z1Gcme0XfrYWpUzXbHBTfEa1yujQMAqelURQNIKyYQG/uBU69aVK/+zOj6LPk+dRV/+J
-         xGMBkCDsOrXgMamk8Z8iSsQrg5B5+ZXI1AluJv+bvko+ho1IVjVFQJyBne/8Dzc7Dt+e
-         AolvF85blCrnSD4STlHw/7qRr8UUQN1e0wy/ws3/Z3iVEXS679KioC5dMC0MxOcbz6Rf
-         e5ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740686026; x=1741290826;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0YsfZmBaPtMyAupU0HUUrIF0S/LhwRl9ecnK+DKhpRw=;
-        b=heRclfNtJzOeHDNisZ2KHcVd/uxtB3DKNnlsc/RWsrLqOAgsvxNxB822qFsfi7tfVZ
-         vR/UZ/V1TeIDs45hW8Cf/T7DYwlq6CzRVl82bQU0HKHjtHyDSBJhl1+SX3boubrLM943
-         /B1xtryUr7oNqm51AHVqY2all6T5X6DP6gbnSQbf85cyIXA/kKR7JiRuarB0su+rKmKy
-         RB3IESxctikf+iEZjJam3jybT4HmM0O9n9VlWoiSWPxOEW+EvkH6DQ2FAw1BwuuWNanm
-         4rQ3fKKppcAw6RuNY2Qj3fboEK2CMpyEEAGKuuryOE1Njj0SOk8Nd3F0eyiFGqiQeluh
-         ww5A==
-X-Gm-Message-State: AOJu0YwWPNlts57zaQUneuxQXTUc9UG86lEptDTG2owDQcsZcRx8CfDr
-	1nhPJy6iKGsnpcGbqSRpdrDSDHVPfG/9DPGZur5+zD/5VXb41R2z/w2W
-X-Gm-Gg: ASbGncu1rVgCXZyBEpm9uvu7GJLjPTaasbksqfc2ORbDBkmBRclxInrqgsm9HCiJBzC
-	V1kVvrZPhOPOOy+0n20OJPJiaPJcpU6I6L+MGYuw1DRPh5kU6TGKd5JGON4LTaecXIcEmINdU94
-	k/GNToZHHduB10Rx4SKzLaU/a1hSPPMufFiWnhha6QNls4oSykP82BoMMBadqYL2a++yptR/S+B
-	pi244XiRMHuwlQE5VPQTabtzzE/2BcbitixiTbns960VOsQlpe/2raMIh2kKLScFJivHOl/6U/0
-	9yqCeKI=
-X-Google-Smtp-Source: AGHT+IEC7CV/1ufH17zNQ3pIKbKtW58xZ0kCv57ILXNRgmGnS5O1a8nVNkbTzCeGyOb7P+wTEhjtKw==
-X-Received: by 2002:a05:6808:38c9:b0:3f4:1197:29bc with SMTP id 5614622812f47-3f5584ff474mr446465b6e.10.1740686025738;
-        Thu, 27 Feb 2025 11:53:45 -0800 (PST)
-Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f5506c76c3sm353418b6e.18.2025.02.27.11.53.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 11:53:44 -0800 (PST)
-From: Brian Gerst <brgerst@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH -tip 1/1] x86/bpf: Fix BPF percpu accesses
-Date: Thu, 27 Feb 2025 14:53:02 -0500
-Message-ID: <20250227195302.1667654-1-brgerst@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740686009; c=relaxed/simple;
+	bh=Pybs4UBoKUiyRMTbYO8kBDo7Uwc8g6SoPNrJghcwkX0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jkBOh26B7tt1/6ydo30r6tG+Ro94nS5RZg82Z0dl2J+PXOCB2FzCaebSyVfM7a4ORthqkLZgMsj5lPfc1nREPJ+50PwqSQN6XUp5QHIGd4WIuxAN/qEGUJiUGKmTLb0aTeIeTDG1zbLQvKUF7INWJRMws8PBNLw94+LiwOmAivY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1FheZU2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641F1C4CEDD;
+	Thu, 27 Feb 2025 19:53:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740686008;
+	bh=Pybs4UBoKUiyRMTbYO8kBDo7Uwc8g6SoPNrJghcwkX0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=h1FheZU2m9MmaMkRZYDWhM1KYHFXHc1TpEzMtsbhQVH7Iq0KnCAfl6l+bswhgX6RY
+	 aLUwWkO38/dkK2WFixD/fZMeeUBmm5ZTYAUV6Yb+0JXc3/EBrZs5VHO7SAVgomJq0P
+	 SFhCRh5GzzqNfWK/vAYSke/KwJ1715AkdWxAe0sB8QQbLYMsxOWNUXmpGfNYs8458T
+	 iYh8ZhXsBSNPCJTzNYWpGtqdieBSjWUoG5IGs/6xArhap7CCu/6Cxqv66OHxEvRDSS
+	 4WkGehXi1ixjFi1o87ZhvTEFHG6uG5wJ3Nq6Knsu2M77rNKKm4/yDQlfASjueYTiCd
+	 Ipq9yj3Kd4O9Q==
+Message-ID: <0af3b796add9016c6e34b0b9b3eca673aaaa3a7d.camel@kernel.org>
+Subject: Re: [PATCH] tracing: Fix bad hist from corrupting named_triggers
+ list
+From: Tom Zanussi <zanussi@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+	 <mathieu.desnoyers@efficios.com>, Tomas Glozar <tglozar@redhat.com>
+Date: Thu, 27 Feb 2025 13:53:27 -0600
+In-Reply-To: <20250225125356.29236cd1@gandalf.local.home>
+References: <20250225125356.29236cd1@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Due to commit 9d7de2aa8b41 ("Use relative percpu offsets"), percpu
-addresses went from positive offsets from the GSBASE to negative kernel
-virtual addresses.  The BPF verifier has an optimization for x86-64 that
-loads the address of cpu_number into a register, but was only doing a
-32-bit load which truncates negative addresses.  Change it to a 64-bit
-load so that the address is properly sign-extended.
+Hi Steve,
 
-Fixes: 9d7de2aa8b41 ("Use relative percpu offsets")
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
- kernel/bpf/verifier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 2025-02-25 at 12:53 -0500, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+>=20
+> The following commands causes a crash:
+>=20
+> =C2=A0~# cd /sys/kernel/tracing/events/rcu/rcu_callback
+> =C2=A0~# echo 'hist:name=3Dbad:keys=3Dcommon_pid:onmax(bogus).save(common=
+_pid)' > trigger
+> =C2=A0bash: echo: write error: Invalid argument
+> =C2=A0~# echo 'hist:name=3Dbad:keys=3Dcommon_pid' > trigger
+>=20
+> Because the following occurs:
+>=20
+> event_trigger_write() {
+> =C2=A0 trigger_process_regex() {
+> =C2=A0=C2=A0=C2=A0 event_hist_trigger_parse() {
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D event_trigger_alloc(..);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 event_trigger_register(.., data) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmd_ops->reg(.., data, ..) [hi=
+st_register_trigger()] {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->ops->init() =
+[event_hist_trigger_init()] {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 save_n=
+amed_trigger(name, data) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 list_add(&data->named_list, &named_triggers);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D create_actions(); (return -EINVAL)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out_unreg;
+> [..]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D hist_trigger_enable(data, ...) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_add_tail_rcu(&data->list,=
+ &file->triggers); <<<---- SKIPPED!!! (this is important!)
+> [..]
+> =C2=A0out_unreg:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 event_hist_unregister(.., data) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmd_ops->unreg(.., data, ..) [=
+hist_unregister_trigger()] {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_for_each_entr=
+y(iter, &file->triggers, list) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!h=
+ist_trigger_match(data, iter, named_data, false))=C2=A0=C2=A0 <- never matc=
+hes
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 continue;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [..]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test =
+=3D iter;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test && test->=
+ops->free) <<<-- test is NULL
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test->=
+ops->free(test) [event_hist_trigger_free()] {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 [..]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 if (data->name)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 del_named_trigger(data) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_del(&data->named_list);=C2=A0 <<<<-- NE=
+VER gets removed!
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [..]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree(data); <<<-- frees=
+ item but it is still on list
+>=20
+> The next time a hist with name is registered, it causes an u-a-f bug and
+> the kernel can crash.
+>=20
+> Move the code around such that if event_trigger_register() succeeds, the
+> next thing called is hist_trigger_enable() which adds it to the list.
+>=20
+> A bunch of actions is called if get_named_trigger_data() returns false.
+> But that doesn't need to be called after event_trigger_register(), so it
+> can be moved up, allowing event_trigger_register() to be called just
+> before hist_trigger_enable() keeping them together and allowing the
+> file->triggers to be properly populated.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist t=
+riggers")
+> Reported-by: Tomas Glozar <tglozar@redhat.com>
+> Closes: https://lore.kernel.org/all/CAP4=3DnvTsxjckSBTz=3DOe_UYh8keD9_sZC=
+4i++4h72mJLic4_W4A@mail.gmail.com/
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 60611df77957..f4859516b190 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -21707,7 +21707,7 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 			 * way, it's fine to back out this inlining logic
- 			 */
- #ifdef CONFIG_SMP
--			insn_buf[0] = BPF_MOV32_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
-+			insn_buf[0] = BPF_MOV64_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_hot.cpu_number);
- 			insn_buf[1] = BPF_MOV64_PERCPU_REG(BPF_REG_0, BPF_REG_0);
- 			insn_buf[2] = BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 0);
- 			cnt = 3;
--- 
-2.48.1
+Looks like a good fix, and is cleaner without the goto as well. Small typo =
+below...
 
+Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+
+
+> ---
+> =C2=A0kernel/trace/trace_events_hist.c | 31 ++++++++++++++++-------------=
+--
+> =C2=A01 file changed, 16 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events=
+_hist.c
+> index 261163b00137..c32adc372808 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -6724,27 +6724,28 @@ static int event_hist_trigger_parse(struct event_=
+command *cmd_ops,
+> =C2=A0	if (existing_hist_update_only(glob, trigger_data, file))
+> =C2=A0		goto out_free;
+> =C2=A0
+> -	ret =3D event_trigger_register(cmd_ops, file, glob, trigger_data);
+> -	if (ret < 0)
+> -		goto out_free;
+> +	if (!get_named_trigger_data(trigger_data)) {
+> =C2=A0
+> -	if (get_named_trigger_data(trigger_data))
+> -		goto enable;
+> +		ret =3D create_actions(hist_data);
+> +		if (ret)
+> +			goto out_free;
+> =C2=A0
+> -	ret =3D create_actions(hist_data);
+> -	if (ret)
+> -		goto out_unreg;
+> +		if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
+> +			ret =3D save_hist_vars(hist_data);
+> +			if (ret)
+> +				goto out_free;
+> +		}
+> =C2=A0
+> -	if (has_hist_vars(hist_data) || hist_data->n_var_refs) {
+> -		ret =3D save_hist_vars(hist_data);
+> +		ret =3D tracing_map_init(hist_data->map);
+> =C2=A0		if (ret)
+> -			goto out_unreg;
+> +			goto out_free;
+> =C2=A0	}
+> =C2=A0
+> -	ret =3D tracing_map_init(hist_data->map);
+> -	if (ret)
+> -		goto out_unreg;
+> -enable:
+> +	ret =3D event_trigger_register(cmd_ops, file, glob, trigger_data);
+> +	if (ret < 0)
+> +		goto out_free;
+> +
+> +
+
+Extra space added here.
+
+> =C2=A0	ret =3D hist_trigger_enable(trigger_data, file);
+> =C2=A0	if (ret)
+> =C2=A0		goto out_unreg;
+
+Thanks,
+
+Tom
 
