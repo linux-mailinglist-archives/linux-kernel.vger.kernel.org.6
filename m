@@ -1,147 +1,161 @@
-Return-Path: <linux-kernel+bounces-537334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C9AA48AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:36:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC7FA48AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B167A188D320
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E732B3A9E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49A7271288;
-	Thu, 27 Feb 2025 21:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F413271289;
+	Thu, 27 Feb 2025 21:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUOO1z1E"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIgsVSNz"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EC31A9B2A;
-	Thu, 27 Feb 2025 21:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B2C1A9B2A;
+	Thu, 27 Feb 2025 21:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692183; cv=none; b=Z7RW3pS+Lgl6CvyOaYeNIAqWrhC7oXv1eHR38eso6HEzbAjycLC9fXwE1u7oyH3oOLfakFC/TYJGYBxQVXhd3b4I2Zm9owB4CWy/r84DFCA1ch5Ovf2aQLHhJFEA5KwpKFr9b6rH1f7ffZbW+45ho4KNnmsrRaubJg/qGPiqiys=
+	t=1740692239; cv=none; b=lfnYZWqWhG4C3nrj9V1DH5JG1uhaxAMcFsfpINspbE9wiDXN+8Rw1H29IHtJv2FYIjCkBjc8h7ceDNR1nBO1H2PzJJgYo2bPTSQgRbtVf3Ojzlmj1xSOuLHQEN3BWgQtaaZUWahn8KIqTLIocxH0FRvvjAa68fqKZKYz8mUZwrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692183; c=relaxed/simple;
-	bh=aT6LCpQh/DUk/4C5yjN5YoQwJQsJ0wDh8MPAiZ/0uSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUV8Xmk0ZI8FPbf7zb1O/sNScipQF5NZpTlPV5RD28UIyYJpzhqxGMqHoM7SyYxRsRCYneY8p/7fsfInMOWYahEAygsoBK0csIoE6IAaIFbp93xoWVjXypCP8vYVFVijor1MsXrk1nIQ4hVNnx+3R35LWt0CKS65GeREwcELEvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUOO1z1E; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1740692239; c=relaxed/simple;
+	bh=btlCW5mLLVIYYk2nX4RAZ4l99i17M+CnwyEwJPwKI0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ckv6/8PJOY6UnxZxxgRbXNlIKJQ8vOl0/Ld3/38nf1WdKuTBGIR5vTMMjCupEHrC9U+1qnF1oz+ftihMy0fyugWBr+7BrU4T05knEQ8bp5D1B2294ALOPJ8zwE942jeE8J2fZIdjOX3sdsD7800VgGZAljMUmM1bK5J5vgZkYDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIgsVSNz; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8a2fd46ddso11196d6.1;
-        Thu, 27 Feb 2025 13:36:21 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaec111762bso246643666b.2;
+        Thu, 27 Feb 2025 13:37:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740692180; x=1741296980; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hHhkYScYoArvR/F5m50Hw9t1PzuS3cNkRvx1BFjMwv8=;
-        b=gUOO1z1E/WmMZ6Sv0rKm4tPGXcFaWEHTA+6q8Sx47AI5JdUfU3/55zPM8mSq70l2P8
-         BuO7nf76QbTwodNfV4TOxKLQqi49RpEChpX8Xiwy+40C1AIjco/UwYrxR04lAN+ruMlS
-         uWHqkf3vNpaXaeIApagiAUynRRJpiyhMw/E1212pCT5Drd51nRUh9F7TfeX8CyHUO8Z7
-         4n2IND2wXG6Api3Q228BL6nL+j9bZOo2pPut3oYfBO/LMbBV/Ezf7hJDm/oiD4gG92+W
-         NH0hqu30soGnLtuCYn4XcEjOUfrH68J1DmcxA5V47TtGaPQBy6/Y0IQ8bNR3N0NgfVs9
-         hsLw==
+        d=gmail.com; s=20230601; t=1740692234; x=1741297034; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8OPiXI+rd/MrzDn/nDWKXlSzbv1AQvFkOB93Td3FkH4=;
+        b=TIgsVSNz9L4Kbjueip7ew5hK3syQCFSmvpG0Vjwq899o1afTQ1u0h5JPVTlq/SI+Cu
+         4N1N5zYkQZbOZQYDHStBVwd5yct7bECM++R2oEhiuaMoKDWvtph/JJl355cfcq67EP/q
+         EVQVPh3pLpsE3SsqHAsbOg3N9Xh9MON6+HJLBZKMGkdGfw7epUj02TxqBtuLScEG/0LV
+         CdY3R1omLPdgClxmKhbspa7FWWfd1rz4JYaXOC95dpFViJP1GUDaWrvIefxLLepKw6F5
+         iefzdbY9R2pmsybKKqWqxvhqdc6aRNjjMhc+TjVyheuPoav3jDYGIAwD0fEitwUkmNEG
+         nnLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740692180; x=1741296980;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hHhkYScYoArvR/F5m50Hw9t1PzuS3cNkRvx1BFjMwv8=;
-        b=GTPVOAQR2pEo9K6UUhEL1oOfpX4TEuD2Iey5zKo0sRJZ8buQJHpsytNv8CHa13BTEJ
-         bJP+N4ZWP/3iOq//si2ZjwNP1zYTdPDnvs3jesZipBHOck4NXTGOjZGmDFSUYNu4VtLe
-         Ld26zFI7baHhUy41CYthfXqAxH98a9p3nSG/Imzu3Eii+/izB8OC6pblzKOs20g9Gym9
-         2qT+e3iGDgYCNxhwpkfbWTNKFIGmDAzkFTjL/I2zrGaQrYOXntamGTb0m0m4HW3UwtW+
-         V9F4Vn2WKer8x5zv0e+/eT1DZCrN9pGlhJp6k+lFjAToCJwMVBj0r7aHj9weKTBdlfSs
-         waNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkUSrUCgVrTdjkd43B2rUOBMjaH+pl8JI3JrvCis0O36JOgLa7U7TmQrFpvsJxQzqACcRY3DtJZPtk@vger.kernel.org, AJvYcCXTfCLj8/JQBhP4pEtnwpDdLuzlsS+hnYb2mDf05qsZT7K1HQybVts4uYuhr+xoLOLJ6F1qEi37jGLk@vger.kernel.org, AJvYcCXkbrz3miSpjbqLNsQDutQa3s6EbyLwRdxz3LRDCLXjE9sx+q+eQh+6UVfZVpWserC0W5Ey9qmiQGl4O978@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqUn0QwBzi+34uhsL1gEu0e81mTYq18W1MpLvQvrUOKmlGbSZP
-	DJTG0lsnzZY8JPAwac+O0HMKl2EUfTiFe0IPD5JxLtt0Sruu9Mxa
-X-Gm-Gg: ASbGncsBGx9F9YKMm6GtXFKM3/oYvCuB4lanSK4SqiCZOJojGtWnwvlskKMtWW43XtC
-	qQG8sxL7lNrQK8+6+Wum8cCBVXy38+amqzBIZ4Lp3v9ttDe/B1q++xra/r0/f/XQwOXoNB9cz21
-	lkQHw1FpTzMCMjdF+EzLqg0ScxCgDTyL80F7tegdSxWTmGm+1+o+zhSfKOonMxym64dXhFO1+vh
-	XLvMeBnWlkL22EyjQguVah1Aeh/R1kNq+/lDapDbcn94OB6pFSYm5X80HHg4Kenk/ob8pKk+5kL
-	Kor2lsTXHx4u09o2ayv5PY95AF1h2+yDbLo6LQaroZhqEVE=
-X-Google-Smtp-Source: AGHT+IHR/OUOc/tEgpDCPTt9nKJHRGg4bGS409xWq/BFnfnsG9F5vT8dzLfgr1Z6oagPe3mr7gB/Zg==
-X-Received: by 2002:ad4:596c:0:b0:6e6:5bd5:f3b5 with SMTP id 6a1803df08f44-6e8a0da79bcmr5186576d6.8.1740692180311;
-        Thu, 27 Feb 2025 13:36:20 -0800 (PST)
-Received: from JSANTO12-L01.ad.analog.com ([191.255.131.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897653799sm14308416d6.33.2025.02.27.13.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 13:36:19 -0800 (PST)
-Date: Thu, 27 Feb 2025 18:36:15 -0300
-From: Jonathan Santos <jonath4nns@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
-	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH RESEND v3 12/17] iio: adc: ad7768-1: Add GPIO controller
- support
-Message-ID: <Z8DazwTguF/gfKW1@JSANTO12-L01.ad.analog.com>
-Reply-To: 7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com
-References: <cover.1739368121.git.Jonathan.Santos@analog.com>
- <62cb9786b02adde118db9349617cb796585ceb02.1739368121.git.Jonathan.Santos@analog.com>
- <CACRpkdaSY7WH191makzPcZqLd-vBsC_f6yagWzBa65MrC+pjKA@mail.gmail.com>
- <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
+        d=1e100.net; s=20230601; t=1740692234; x=1741297034;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8OPiXI+rd/MrzDn/nDWKXlSzbv1AQvFkOB93Td3FkH4=;
+        b=IizW9ybSJTrB1UqYKhsHAj9G4vYAWapzzUUCieNCLx+V5hnBx0AP8jjx8Itu4DHXcu
+         hVf35IlRRuVVBQfdaRI3MBzKcUzVVqp3cyAR+0mp9QYbYq4QkHY01xR2Ry7RB6liCmVu
+         2YZ9hbgjAh5SEucVkLZWPLsqY3NLNIHrJUHWZfPGTvWcDsQkln7amL7AaPS6yQuvhuJ/
+         GAKXVgfox4zh4wahSgoVfD42oiHsK/9yBxogyLapAvCv+O18RHzNuxeBzT/UEyUbilq2
+         DelJLZEWZOXJQko5m0hR2onEiGx8YzfVUNPztOYhByfZwrlx7QNhgWO8aSsD3yOmfGKl
+         Mc2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Onpt5Ktq0gXTcvbFiE+kd9E9Y7s9BWDKA7Ue0BPhpPv6Q4vJvIHaH+vj0bKM8pNQMf1/wU00PhT7NUs=@vger.kernel.org, AJvYcCVODgIqoA1ViPwb/z4VcrAcVBcXPeiXrX6q0mA0K0jndUrTi3v2nWfvzhgt2OJWabpJ4fC/DKohYSVs+bbbG8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM0NGcu47VxDZ+U6IXq2rQ/nh74tOw1rI1OO8lmjoHJgpTrdtX
+	zjr6sO6l8BgBJCDturfOw+93vqDijxm5tmw3Bt3z90IJ3jNm2JjHm3i0GsyGRumSJdFCgs7BnIn
+	T5jZiS8InJ53DTkuEh/Sm8EPehjs=
+X-Gm-Gg: ASbGncuEFro/HN1Qj9DQt2UI3xVl7/GhNefLlmH+O4N4hAmjycwKPjN7ocjPoKAJoz3
+	jXaOqQk2wJ+l9yfDLsXNRZ72UbXMqMfQtdyccpv94WPLLMgYW+XJLhtCZ+Av5upTQYdqoToypWr
+	eCMQixYg==
+X-Google-Smtp-Source: AGHT+IGdlWC7jyxJ9UtgZj3x1oxVxEs/GQ8X4nwvawPLmqnQBdoM5j8QxGLMU77XPGVkRIdrYErK0UE7a6Dq68dnnT0=
+X-Received: by 2002:a17:906:d542:b0:ab7:beeb:d1f1 with SMTP id
+ a640c23a62f3a-abf26837fcemr115485966b.51.1740692234080; Thu, 27 Feb 2025
+ 13:37:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c5e2364-038b-48a8-ad67-3cf0f2fd2be3@baylibre.com>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux> <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com> <Z7xg8uArPlr2gQBU@pollux> <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
+In-Reply-To: <D81L5PE1SPWC.O56MB6SRS0XK@nvidia.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 28 Feb 2025 07:37:01 +1000
+X-Gm-Features: AQ5f1JrqDxEQ56EhqKKjLvOBDjGfULXzUH0GjV45l8xFwzjJgSzflFTOZ8R4_g4
+Message-ID: <CAPM=9tw=8WtR9093EThr0aY6yTYtef9SBgjN5S1xZUXaWN8aWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice implementation
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, 
+	Nouveau <nouveau-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/20, David Lechner wrote:
-> On 2/19/25 2:34 PM, Linus Walleij wrote:
-> > Hi Jonathan/Sergiu,
-> > 
-> > thanks for your patch!
-> > 
-> > On Wed, Feb 12, 2025 at 7:20 PM Jonathan Santos
-> > <Jonathan.Santos@analog.com> wrote:
-> > 
-> >> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+On Wed, 26 Feb 2025 at 00:11, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>
+> On Mon Feb 24, 2025 at 9:07 PM JST, Danilo Krummrich wrote:
+> > CC: Gary
+> >
+> > On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
+> >> This inability to sleep while we are accessing registers seems very
+> >> constraining to me, if not dangerous. It is pretty common to have
+> >> functions intermingle hardware accesses with other operations that might
+> >> sleep, and this constraint means that in such cases the caller would
+> >> need to perform guard lifetime management manually:
 > >>
-> >> The AD7768-1 has the ability to control other local hardware (such as gain
-> >> stages),to power down other blocks in the signal chain, or read local
-> >> status signals over the SPI interface.
+> >>   let bar_guard = bar.try_access()?;
+> >>   /* do something non-sleeping with bar_guard */
+> >>   drop(bar_guard);
 > >>
-> >> This change exports the AD7768-1's four gpios and makes them accessible
-> >> at an upper layer.
+> >>   /* do something that might sleep */
 > >>
-> >> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> >> Co-developed-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> >> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> > 
-> > Is it not possible to use the gpio regmap library in this driver
-> > like we do in drivers/iio/addac/stx104.c?
-> > 
-> > It cuts down the code size of simple GPIO chips on random
-> > chips quite a lot.
-> > 
-> > Yours,
-> > Linus Walleij
-> 
-> I think the answer is "no" since we need to hold a conditional lock
-> while accessing registers. Namely: iio_device_claim_direct_mode()/
-> iio_device_release_direct_mode().
-> 
-> Unless we add some extra stuff to the gpio regmap implementation to
-> add optional callbacks to call these. Which could be worth it given
-> that quite a few ADCs provide GPIOs like this.
+> >>   let bar_guard = bar.try_access()?;
+> >>   /* do something non-sleeping with bar_guard */
+> >>   drop(bar_guard);
+> >>
+> >>   ...
+> >>
+> >> Failure to drop the guard potentially introduces a race condition, which
+> >> will receive no compile-time warning and potentialy not even a runtime
+> >> one unless lockdep is enabled. This problem does not exist with the
+> >> equivalent C code AFAICT, which makes the Rust version actually more
+> >> error-prone and dangerous, the opposite of what we are trying to achieve
+> >> with Rust. Or am I missing something?
+> >
+> > Generally you are right, but you have to see it from a different perspective.
+> >
+> > What you describe is not an issue that comes from the design of the API, but is
+> > a limitation of Rust in the kernel. People are aware of the issue and with klint
+> > [1] there are solutions for that in the pipeline, see also [2] and [3].
+> >
+> > [1] https://rust-for-linux.com/klint
+> > [2] https://github.com/Rust-for-Linux/klint/blob/trunk/doc/atomic_context.md
+> > [3] https://www.memorysafety.org/blog/gary-guo-klint-rust-tools/
+>
+> Thanks, I wasn't aware of klint and it looks indeed cool, even if not perfect by
+> its own admission. But even if the ignore the safety issue, the other one
+> (ergonomics) is still there.
+>
+> Basically this way of accessing registers imposes quite a mental burden on its
+> users. It requires a very different (and harsher) discipline than when writing
+> the same code in C, and the correct granularity to use is unclear to me.
+>
+> For instance, if I want to do the equivalent of Nouveau's nvkm_usec() to poll a
+> particular register in a busy loop, should I call try_access() once before the
+> loop? Or every time before accessing the register? I'm afraid having to check
+> that the resource is still alive before accessing any register is going to
+> become tedious very quickly.
+>
+> I understand that we want to protect against accessing the IO region of an
+> unplugged device ; but still there is no guarantee that the device won't be
+> unplugged in the middle of a critical section, however short. Thus the driver
+> code should be able to recognize that the device has fallen off the bus when it
+> e.g. gets a bunch of 0xff instead of a valid value. So do we really need to
+> extra protection that AFAICT isn't used in C?
 
-Since this patch set is quite large already, is it worth to do this
-here? if you say it is necessary, i can try this.
+Yes.
 
-> 
+I've tried to retrofit checking 0xffffffff to drivers a lot, I'd
+prefer not to. Drivers getting stuck in wait for clear bits for ever.
+
+Dave.
 
