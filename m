@@ -1,162 +1,150 @@
-Return-Path: <linux-kernel+bounces-536515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386E5A48103
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:25:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA912A480B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5512B420037
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF6B3A6282
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D482343C2;
-	Thu, 27 Feb 2025 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FEB23E23C;
+	Thu, 27 Feb 2025 14:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KUER0pru"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+kjX8wW"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8008B270047;
-	Thu, 27 Feb 2025 14:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4F323C39A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665214; cv=none; b=hSpJL7+LbWmOCSUg54dJNuP8D7EN9a0D96ToH54g0iGbMOt5F1ILDdDd/DRpjAV/LotXbmsJtg0yIM9bvEK1o9PhvrQA6EZrBoX/sw8o+VUJp5Ru+lLPaHRctqkRSJun4CPQ1OGGTWue/QISBOlZ/fHzzFTcHrk2Fvgm60u+5mI=
+	t=1740665241; cv=none; b=lqaodfVttonu/fsfRdSGBfbIGfZMcY3maaM5m6/D3nXvp7BVlzBUEZ3LzOZ7DXMbAqh/aYxCizHpjFdxaLrflIXsTKA/qmPljdjFfJr1Ih+qV/uAUI2aiBhjdsclS/OhOJEXJVaCQUyXxL97Cf3kI/620xX2kOa5XdvqYCawCs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665214; c=relaxed/simple;
-	bh=42WdhgXhdDMPXhJ4DI29Tw36HeAU88JIQbz7zLd0iqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lE5pDothkzhLHflXKOowP5lWG8kJJgcCJ8mZfYXn6ebnQETVEM2wmBOYudF1yOZQAIqdffnsV/tCvHt1tdqPJPfo73PQWRygsvr7wkPrlcGjXM4zHYjokt2ZyaOBBYJTWLsyU1k1LA/N0KZdqpO+T10z2cXD59L/Ur9I7JXRHUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KUER0pru; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740665212; x=1772201212;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=42WdhgXhdDMPXhJ4DI29Tw36HeAU88JIQbz7zLd0iqQ=;
-  b=KUER0pru0AOon9chZQZOI8ts7jfnDECsuemFwrFDPbJrcWlzbIZLNv+g
-   zVRafDQzVX0hq0mu6LhBVHM25DC40VbjGVPPy9ZajTIn22b0S4v9BglPL
-   OqgiRCnJHOsq6C7BNhF+txfzAKlvLTdZ9TFkUW+Qat4VIPuKkOroWUqJ7
-   P2PYlaS6Ncpqf/Hc6JuTxxbmkWNvZJ5EgVJa9OFhM3BVxvZRiOmt2HNLa
-   x+HvrCFwHL1A1UFAifSqCApjCef9uN9vgvkJ9968+W49kJk7j/iYl50sK
-   tOMY7ggVezH1Otya1TGcKRrunUZv/jJ++FL8OIv7NMNz5WLzvGmZm2XSH
-   w==;
-X-CSE-ConnectionGUID: ZhOuLE8sQkOWebt0vlN6iw==
-X-CSE-MsgGUID: Z97zpZdxTXKgPOd0YE7HeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41752955"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="41752955"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:49 -0800
-X-CSE-ConnectionGUID: kMdXKLKDTRGPJH9PLlHl8A==
-X-CSE-MsgGUID: gZIzw05fTxGpUaQSHKHAbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="122151921"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:48 -0800
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 679FB20B5713;
-	Thu, 27 Feb 2025 06:06:46 -0800 (PST)
-Message-ID: <afdc5b07-9795-4049-8941-c2e3d2bbaa87@linux.intel.com>
-Date: Thu, 27 Feb 2025 09:06:45 -0500
+	s=arc-20240116; t=1740665241; c=relaxed/simple;
+	bh=XAN1YWH9D7fhIC80lM9v65r9S5cnQUbTdkwcS0usi4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BFWREciRj1hrpreKIUZMO56czzU13eZJydspttggYJ03aF3RSIPYHeSlILXK4o5e73ZEbMnXSYm7rvuWOUJZjERtNtNqahJE8muGlcLk5dtIkNUJwrKthuomrtpxxWEJI7yrKZenYLgQ1/ivK8VzOx+quGaVTzc7h7VFGgQ3ook=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+kjX8wW; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ab744d5e567so178435266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740665238; x=1741270038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0gwIGXInW+F7WA8WdnAv9e0DBkovllqoBbjCqtJC5/A=;
+        b=d+kjX8wW90hRLQu6ukkeqlcEswKP5/GzPI1V1atHvI8gITb48jhNPGV9BlYua6fXQU
+         hVAEKcql3s9mQ5DTqKgg6Z2CDoZCAXzc/YB91sIL4ULk4hcczEeDrPVqj8n3uzFgs4/u
+         0g8bHzqeumh0RLau9rSFTWz0hNZbgb+pVolB4am9BL20Fqf3yWsicA0AFdRrEFLxHDv4
+         Z6Hc0NpbfLSglJDBBmQNgtkaMmTb609cNy8no+Zv1FfVtSIONmQFdTUlPbJpjWCx4c07
+         V7HBMdzVerUHJWEdOMUqaQSTE2hvAw7TpVi36Qe6jySAoeBj9SVf2RfAkNd/ezZINpxl
+         UJkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740665238; x=1741270038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0gwIGXInW+F7WA8WdnAv9e0DBkovllqoBbjCqtJC5/A=;
+        b=e8c0EXQxEEUwiuD/f+ow85mcRhJ8z/pnenCyVNyCGl6dg9m+pF+lXdLcez5sjeZynZ
+         RlzINfqx7SkV/uN5EvQQV00CiuJvkUGvQTXDZpZ9iUrNvjT/rOfG/GnnUE201VxhrMJi
+         ACD/0XaYxWLuWOLyBXGoxmnXdPLfFG3sa8DHkBhAYyj0Yj++IQl5yL0bXyB6SlJjYjpy
+         vtCLfyhIOOz/WRnqtrq6tWo5C/RY+OtmJ+6o1YAQS+mkFQjlWZt8YgTmgALd8yDFWhhf
+         stkOiDt7nCq0TA8cAQVuiBwvApA9i6IZBQG/9zc6mPWKZhjDjlyRJJy627yjcBHgkToz
+         fp5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZtK8kLP1PtbcZvIY1jdbg5LtHcnEBx3JzkGEfL8M1tiXD1zKc40flij5+ZdOnruc+cWiawA7UELCJ5H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+9h/5i2DZZBtl3gcFftaIcqfuHdU3cAxqLoX5XQNzLACYBwo1
+	Br4Ozm0gnRCwTMF4hpzWjMqqldsEgAMvBZZmSmRWNZdSkVBjTQKw
+X-Gm-Gg: ASbGncsIapYBb67oCzUM9B7uRnVaDrSt9ArrFjlEYE1W+FrnG6y3d4roqpIQlwmlhdK
+	fzV12WAJp8s5go0mymyZXNLk4ZRaNnNS0/voiyKrOLpRB3VuVW5pwbB6gs9tvLq+nRXV/0XGQSm
+	ULz5IhoZrsFH3SeR0oZq+HHl9beo4otBhSWvKXJ+b7ZdueNIyVEDfclG9LSUqZG8GEFbYosOJlC
+	fiZxYYfcpxUxgq5Fr9XtWd6wXK7wmg8ewE5Z5V/N0kZwQrsSWWSqvqSX/jn0StzCD1Y59YwsJZh
+	E6hi5UeOGhgqxsdzzg==
+X-Google-Smtp-Source: AGHT+IHj01UdUdouLpLrpg/EF9SJ2fYdEnZ4H9STAdnJbEjkOTio6fzxgP00IHhClcTagCh6QcsNjA==
+X-Received: by 2002:a17:906:5f92:b0:ab7:b9b5:60ff with SMTP id a640c23a62f3a-abf05de37admr438714866b.2.1740665238060;
+        Thu, 27 Feb 2025 06:07:18 -0800 (PST)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9ac0sm128481866b.5.2025.02.27.06.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 06:07:17 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Matt Fleming <matt@readmodwrite.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/percpu: Disable named address spaces for UBSAN_BOOL with KASAN for GCC < 14.2
+Date: Thu, 27 Feb 2025 15:06:58 +0100
+Message-ID: <20250227140715.2276353-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 13/24] perf/x86/intel: Update dyn_constranit base on
- PEBS event precise level
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-14-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250218152818.158614-14-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+GCC < 14.2 does not correctly propagate address space qualifiers
+with -fsanitize=bool,enum. Together with address sanitizer then
+causes that load to be sanitized.
 
+Disable named address spaces for GCC < 14.2 when both, UBSAN_BOOL
+and KASAN are enabled.
 
-On 2025-02-18 10:28 a.m., Dapeng Mi wrote:
-> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
-> sampling and precise distribution PEBS sampling. Thus PEBS constraints
-> should be dynamically configured base on these counter and precise
-> distribution bitmap instead of defining them statically.
-> 
-> Update event dyn_constraint base on PEBS event precise level.
-> 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  arch/x86/events/intel/core.c | 6 ++++++
->  arch/x86/events/intel/ds.c   | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 472366c3db22..c777e0531d40 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -4033,6 +4033,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
->  		return ret;
->  
->  	if (event->attr.precise_ip) {
-> +		struct arch_pebs_cap pebs_cap = hybrid(event->pmu, arch_pebs_cap);
-> +
->  		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
->  			return -EINVAL;
->  
-> @@ -4046,6 +4048,10 @@ static int intel_pmu_hw_config(struct perf_event *event)
->  		}
->  		if (x86_pmu.pebs_aliases)
->  			x86_pmu.pebs_aliases(event);
-> +
-> +		if (x86_pmu.arch_pebs)
-> +			event->hw.dyn_constraint = event->attr.precise_ip >= 3 ?
-> +						   pebs_cap.pdists : pebs_cap.counters;
->  	}
+Reported-by: Matt Fleming <matt@readmodwrite.com>
+Closes: https://lore.kernel.org/lkml/20241213190119.3449103-1-matt@readmodwrite.com/
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/Kconfig | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-The dyn_constraint is only required when the counter mask is different.
-I think the pebs_cap.counters should be very likely the same as the
-regular counter mask. Maybe something as below (not test).
-
-	if (x86_pmu.arch_pebs) {
-		u64 cntr_mask = event->attr.precise_ip >= 3 ?
-				pebs_cap.pdists : pebs_cap.counters;
-		if (cntr_mask != hybrid(event->pmu, intel_ctrl))
-			event->hw.dyn_constraint = cntr_mask;
-	}
-
-
-Thanks,
-Kan
->  
->  	if (needs_branch_stack(event)) {
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index 519767fc9180..615aefb4e52e 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -2948,6 +2948,7 @@ static void __init intel_arch_pebs_init(void)
->  	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
->  	x86_pmu.drain_pebs = intel_pmu_drain_arch_pebs;
->  	x86_pmu.pebs_capable = ~0ULL;
-> +	x86_pmu.flags |= PMU_FL_PEBS_ALL;
->  
->  	x86_pmu.pebs_enable = __intel_pmu_pebs_enable;
->  	x86_pmu.pebs_disable = __intel_pmu_pebs_disable;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 95ea2b4b95db..60c2a16c7801 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2369,18 +2369,20 @@ config CC_HAS_NAMED_AS
+ 	def_bool $(success,echo 'int __seg_fs fs; int __seg_gs gs;' | $(CC) -x c - -S -o /dev/null)
+ 	depends on CC_IS_GCC
+ 
++#
++# -fsanitize=kernel-address (KASAN) and -fsanitize=thread (KCSAN)
++# are incompatible with named address spaces with GCC < 13.3
++# (see GCC PR sanitizer/111736 and also PR sanitizer/115172).
++#
++
+ config CC_HAS_NAMED_AS_FIXED_SANITIZERS
+-	def_bool CC_IS_GCC && GCC_VERSION >= 130300
++	def_bool y
++	depends on !(KASAN || KCSAN) || GCC_VERSION >= 130300
++	depends on !(UBSAN_BOOL && KASAN) || GCC_VERSION >= 140200
+ 
+ config USE_X86_SEG_SUPPORT
+-	def_bool y
+-	depends on CC_HAS_NAMED_AS
+-	#
+-	# -fsanitize=kernel-address (KASAN) and -fsanitize=thread
+-	# (KCSAN) are incompatible with named address spaces with
+-	# GCC < 13.3 - see GCC PR sanitizer/111736.
+-	#
+-	depends on !(KASAN || KCSAN) || CC_HAS_NAMED_AS_FIXED_SANITIZERS
++	def_bool CC_HAS_NAMED_AS
++	depends on CC_HAS_NAMED_AS_FIXED_SANITIZERS
+ 
+ config CC_HAS_SLS
+ 	def_bool $(cc-option,-mharden-sls=all)
+-- 
+2.48.1
 
 
