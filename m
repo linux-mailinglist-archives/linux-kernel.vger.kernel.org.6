@@ -1,138 +1,151 @@
-Return-Path: <linux-kernel+bounces-536023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BD1A47A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:44:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1659AA47AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062A23B42F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:44:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC2EF16CF56
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B351222A4C0;
-	Thu, 27 Feb 2025 10:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AAF21ABB4;
+	Thu, 27 Feb 2025 10:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XbZvj3ea"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeAqEP7A"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820B21D3E7;
-	Thu, 27 Feb 2025 10:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D411E22A1CB;
+	Thu, 27 Feb 2025 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653033; cv=none; b=PHsbgTY53M1DHp2o8XPXfv6c0Q6J9yBFpDmfPJFUu+HFSNeW7HP1F4ciZZ7io3OK468BKQ3jpA3PmNi1NKN15M7MREEL8IW6Fu+vfxW7Xm1DCWzAmfWIjzWzpvZIFYAFzf5NvWLAqI493luZ7MLTXD7FOpZfcjigly5itzPXnlI=
+	t=1740653112; cv=none; b=s3BW95BWmS/OSISifj+ZqipEChXlHwqTS5wCTS1qARMcvwUl9Z/bNdsju0yr1+UfHc4uPN2/q4oc1oiimULnWxX2E9dKgaJiikfrySoP1eSC4P+drulmzaxmk5Houe9hjRRz8iRz3Lc5pCwjhX6uwXPUhNX4VIiX/U983bBNNic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653033; c=relaxed/simple;
-	bh=ETwdDOtFOrakrghWy56GNhC/hHnp2ekIYkGwcXPrWBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eH30glhB61Dxj+Z41hgrNMeM2UicsKBafrCLVrwDSA/wLcWz9mK0J+1BpweSUSDFNQdM43uusu1tYIqcHYUZlxmJ7rufy8uVw+P4/QcEuOtC9dcjls15kZME1cqUhCWqD4x41wXAuSL9sfHHtXUjWf5KPhg/7SeP2wJUiNOnwv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XbZvj3ea; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E9F364326B;
-	Thu, 27 Feb 2025 10:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740653028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETwdDOtFOrakrghWy56GNhC/hHnp2ekIYkGwcXPrWBA=;
-	b=XbZvj3ea1VxZ6LFwyFUD5LQvtI6D6skIomejZBrw6pbBj/fMVCaUr5SQPXiVhlcTrgoaz9
-	LflljhA9TKoJf60zTRIMQckLHfhM1wbwxtnMu80jg1Zn3N+xzpNmkf2HZ8WlPNL0oj33L/
-	3rekvaOixbAz1kJ+pZxkDi6Hj9UDhAG2WhnjmdNXgPWPkmYCaklEtmFz21pBzw3Od87BAX
-	88dLwONErcS8BgyBZop9DrAxBbHE/FWYoYTGrQ8up7FXLJBHvDhlmZmzfFhDSIwM0W4LsJ
-	PJKCZVrYk2zXjFmK3D3o8zoHkRXTlwIxURe+8klC08j6+p7clsQUzlBBOXEMzA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 2/9] i2c: atr: unlock mutex after c2a access
-Date: Thu, 27 Feb 2025 11:43:42 +0100
-Message-ID: <2388582.ElGaqSPkdT@fw-rgant>
-In-Reply-To: <20250225113939.49811-3-demonsingur@gmail.com>
-References:
- <20250225113939.49811-1-demonsingur@gmail.com>
- <20250225113939.49811-3-demonsingur@gmail.com>
+	s=arc-20240116; t=1740653112; c=relaxed/simple;
+	bh=+Q2GcbXrqqS3P5H/IateYvsCHJixfshJ8PfZtYJ4/K0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivKFtcz7OfpcuJeyuuYx6DO1UZl4/u3oPuwTt+oXdWTChBflXOLFZDan6TPV7ETjmPRB5tepbCQBogvKsxmKXUGCR9q5tTtIkTyLxZuMwEiLsI9oC7kdjvNgnDQ3KMhEOJpJyLwiFEqTrTUP8dqncOuWxeUsT9uDwEDkTeLMm7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeAqEP7A; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-390e702d481so189195f8f.1;
+        Thu, 27 Feb 2025 02:45:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740653109; x=1741257909; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Q2GcbXrqqS3P5H/IateYvsCHJixfshJ8PfZtYJ4/K0=;
+        b=aeAqEP7AoOgN5VFjRFXq9XbcKUiEwc0B+nYfgujNFwyRJEw7+L1s/r9qpPXtSZiH25
+         BO10m+xx6SEHOIPCOTEp1rSiTPStlc98wBrh6CdCGGVjDQnPX7uB2rtHcnEhMV4EXzJ2
+         CbU/thnssOyzLJvr0xa61QI49x6jH4NoILmkETaOJ/Cax32N8dbvTBosl25WzBAryJFn
+         dzCIqdcwFAqxUoRZL2+5YGbfV2fOOYeeroLaKMP7BnZ17G+2wdkIhyBvmJW4VdnYRhBh
+         +PYNbDe3w4REkc/0A2tI65M4S6A+zlBccIJbIN2Bnjp5L4YJHkbioCkTPfWQPNqTolq3
+         +0Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740653109; x=1741257909;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Q2GcbXrqqS3P5H/IateYvsCHJixfshJ8PfZtYJ4/K0=;
+        b=W/oJGCRTGddmqDKBE7a1fhYdXGPRH4jKVnQsJ9UEtb53amM8M0696V9aTmaHdaCW5C
+         YL8jtX4Pm5dxUTUIOTtpkVnp1U+k1sIzRmVXTwxRP+3XuQ2jZmsdBhd9FQNhrNaix+pY
+         s6xN0wOLs6mcRPhT4K4+zkUeexyIYiuefchu+yjPupQbqJB6o4A8yNif6GhuN+g769+A
+         9ZqFLewDmnLTKnhoYQq4bozCfj7TWVQeCOxLSdEdBlgXe+Ho+m+a3NvyQ6CtVDddMQkv
+         zBImoT8NMmpimczbPP0dmaL6Bkutgm7IDUa3NIUeG6SF+uivnHwabq4hkzPOOaKpoFev
+         GC/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9nqRPgFMWuNlasFDCZ8XbsvkIcVHU1A5XSziMvWNxmlrK7umW/b/XiOWF9pLUOiRSJ8sq+6/IIe7f@vger.kernel.org, AJvYcCUDt/LLAJ4aEByEoVVGYkm0PiavmI3DUjvK/rjhHYuk5S2hLqO1IgLpcgqZ7Ktl4ojPdkInJ0es5f7N8yY=@vger.kernel.org, AJvYcCXlBr73t9KIu+oe2ipegxXFFTQuxFrGrGEhasndI/2mDPFNofE0biWtg6JDcNVuXdDjeRAVt4D2IN16L4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzerI4b/XZrvD05UvcZ8tLfg2Hc11f6jkHK43uT87Ttq1IeIAC0
+	8qUT5hGAcM7g9BgolThr+MCmqAP2KeVAlQTkcsMXuBcqx+c/yWkZAp+PNg==
+X-Gm-Gg: ASbGncvRc45E7uGLy9P5us64ylCXoEQW6fQ25oim6c8BouRh0nAtd+qIBM9UmJtQAS8
+	QUF9gR2uRoV/APkMi/Rk+reBKttT2K4nFkyZcru3AmtdZNxC7QfKA2oY2DZj4pqUoGuRaVGg/pN
+	DqCPZFoWJn1Fg3ZSnMSipVKtgUXSj5xKSCw5vsrPKe9WD6sxWqZcZqwUYWeNqYnjkw+iMZXC1KV
+	+L9C7J04TaJlrRTd+GveJ/YNWjGNNe6S/kFED/PK7LfZY4ZI/2e6QtkIv4sVr/xyaJz6YqllLFa
+	yTVqNh7N8WwnjVv8U/dwjhxJlp96bAIrGoDLgxgsujde5S9NT1wfFfuCqZgxvhkgIFZsyALJmd5
+	zEu2iO0FxouYl
+X-Google-Smtp-Source: AGHT+IHA49MofxnHaSdabYQ1UAnisVzQLjhknXMU454Du12x614NOv8tJF69LNpTIw1GoPFOxWmULQ==
+X-Received: by 2002:a05:6000:1787:b0:390:e158:a1b8 with SMTP id ffacd0b85a97d-390e158a24dmr2152768f8f.43.1740653108891;
+        Thu, 27 Feb 2025 02:45:08 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479596dsm1616556f8f.7.2025.02.27.02.45.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 02:45:07 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:45:05 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Vishwaroop A <va@nvidia.com>
+Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, 
+	broonie@kernel.org, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kyarlagadda@nvidia.com, smangipudi@nvidia.com
+Subject: Re: [PATCH v2 3/6] spi: tegra210-quad: Fix X1_X2_X4 encoding and
+ support x4 transfers
+Message-ID: <kb7g5xx6i6ydjgmltitcfaqlnhjuygcn7a6v7c34z75nykjnm3@2mybamhzwpbp>
+References: <s355cib7g6e3gmsy2663pnzx46swhfudpofv2s5tcaytjq4yuj@xqtvoa5p477n>
+ <20250212144651.2433086-1-va@nvidia.com>
+ <20250212144651.2433086-4-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4992291.GXAFRqVoOG";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjedvhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepteevieelgeekteevgfdtgeffvdeigfdvveekhffgteeiffdvvdekudejfedvgfdtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopeguvghmohhnshhinhhguhhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepfihsr
- gdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="smohwlpuzwmja7aw"
+Content-Disposition: inline
+In-Reply-To: <20250212144651.2433086-4-va@nvidia.com>
 
---nextPart4992291.GXAFRqVoOG
+
+--smohwlpuzwmja7aw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 2/9] i2c: atr: unlock mutex after c2a access
-Date: Thu, 27 Feb 2025 11:43:42 +0100
-Message-ID: <2388582.ElGaqSPkdT@fw-rgant>
-In-Reply-To: <20250225113939.49811-3-demonsingur@gmail.com>
+Subject: Re: [PATCH v2 3/6] spi: tegra210-quad: Fix X1_X2_X4 encoding and
+ support x4 transfers
 MIME-Version: 1.0
 
-Hello Cosmin,
-
-On mardi 25 f=C3=A9vrier 2025 12:39:30 heure normale d=E2=80=99Europe centr=
-ale Cosmin=20
-Tanislav wrote:
-> i2c_atr_release_alias(), i2c_atr_destroy_c2a(), and c2a access, are
-> protected everywhere with alias_pairs_lock, use it here too.
+On Wed, Feb 12, 2025 at 02:46:48PM +0000, Vishwaroop A wrote:
+> This patch corrects the QSPI_COMMAND_X1_X2_X4 and QSPI_ADDRESS_X1_X2_X4
+> macros to properly encode the bus width for x1, x2, and x4 transfers.
+> Although these macros were previously incorrect, they were not being
+> used in the driver, so no functionality was affected.
 >=20
-> i2c_atr_destroy_c2a() accesses the elements inside alias_pairs, which
-> needs to be mutex protected.
+> The patch updates tegra_qspi_cmd_config() and tegra_qspi_addr_config()
+> function calls to use the actual bus width from the transfer, instead of
+> hardcoding it to 0 (which implied x1 mode). This change enables proper
+> support for x1, x2, and x4 data transfers by correctly configuring the
+> interface width for commands and addresses.
+>=20
+> These modifications improve the QSPI driver's flexibility and prepare it
+> for future use cases that may require different bus widths for commands
+> and addresses.
+>=20
+> Fixes: 1b8342cc4a38 ("spi: tegra210-quad: combined sequence mode")
+>=20
+> Signed-off-by: Vishwaroop A <va@nvidia.com>
 
-This looks like something that should be fixed in my FPC202 series. I'll fi=
-x it=20
-in v9 so that you don't have to do it in your series. FYI here's the link t=
-o=20
-v8 of my FPC202 series:=20
+With that blank line between Fixes: and S-o-b: dropped, this is:
 
-https://lore.kernel.org/all/20250227-fpc202-v8-0-b7994117fbe2@bootlin.com/
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-I'll put you in Cc of v9.
-
-Thanks,
-
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart4992291.GXAFRqVoOG
+--smohwlpuzwmja7aw
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmfAQd4ACgkQ3R9U/FLj
-285GXBAAnbIDwVvS1NBBDdmmOAkUiV5IzCtoOi2nmS0DEww/s0ACzVFLXeOkRPIW
-3EnveYKSWjmTanG0PGYlz9pgcQUI7aF1db7+nc3PQMNnmg2cwCXaVZuyKP4D2+R2
-sH++NYDYduzKqCh9T2p7OUOaKvhun1h0WDboaWY0SzW+XX5EcUiTINFaSaJn5T3p
-Lm70o/Z0jDhPCgfD4+Mr78q7EW7CvKj5gGau55deiZQxWBWZvNA7Aw3T3K5A84OR
-6OQnNw1Qsus9fG4kmeVjFZUq7gjEs3DQgCNohO71fPWCcp2NnQ+s6PDmagnJ48Xo
-DtX4fe3mL/mEEXXnUCy81dWIGfrnxOv2PiDBa2lIdbfXmIcVEcSeq4nkYg/IlzOj
-ibm1Mkhuvb0llGMRdhZA5Z4yGHuDv92RxixvpHyMoXgKYkX48NVa4NNu5BqIxAIc
-RsqtqutPbbZ4BmMaCEH88ZEeVBgeWFapaaTnq7efKJ/ZvkSecbqpuKySw3Rj7H3l
-rjB8kkcV0yMNUoeeckBBLRwK+sXIpRKsz5Z12VujhstA0XKGQ+jz+/694wTOrMiG
-8AMEjHTgz6bOtCph1l7Dc0HnR0WbzRmrCffpjzHTu0D2ikWO4AcBBaiB8Wc/rl7A
-xgHKOWygbHzor5UBhtJTivQBCIozuDLOtuGD2c2ODi99ui+tPu4=
-=YIka
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAQjEACgkQ3SOs138+
+s6EeuxAAk1IAdbqFPV5e/5T+wcb9TBBi2UXUZhOzCQYnnkwGt4yRX1aKxJkiW+Zj
+fLSn/uvUz2qxCl/QaZzs/1iOjUBbxxp4l08YdRzftSvZrkeTESNTj7ej/nVc+FrM
+S8PE78UvxETtwT7UsJ0NimrQCt3/7tbq+i/bOFSI2z2/7UuH5+G0x2wI0sj1oCQ/
+SzFKOjVGy9toHfHtxMYwi6pv5vFkYQvHzydEhlN8aeWFBWfe7J46RPy9F4rhrunP
+909RtZQrQJj1ShHPQKzUJY2vUF4bBYH8/KA/rieV2Qaq/nXr1xC/ggx18F4ECfub
+TwT+TaQB0rDnSDOFrQlK+UfH/pxDQCU4plNEknFvd1INsx2zgBbY6nengZ9iehPW
+2gxY1CGbtL2V4J8yeSG43NK0zh+wpulfRIZQF0UUtJ5Jo6dVIcui04XwoNJirmq1
+dKtLdeW2VBqEozYFOKeSn8pCynqsJCQPAcZPwxvQg1JaYJDxsjch7SykT5kQNrc+
+WwE7U/8MY42+mMvyeiHLE1enNyHkpbArsgzYQvVe3uQGlmkThePLC3f5FNrulWrb
+AGBtKW6qddDUJaHhqVT3oIyyvNUJfV2eSdEOcFw4Ie2kGzj+C38qhi8EWM4xXyys
+StX8M1IizH8jyKCgasuXA92MIwn0LhlraElYreVbhStRHayHNS0=
+=6E9P
 -----END PGP SIGNATURE-----
 
---nextPart4992291.GXAFRqVoOG--
-
-
-
+--smohwlpuzwmja7aw--
 
