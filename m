@@ -1,145 +1,169 @@
-Return-Path: <linux-kernel+bounces-537516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E6AA48CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:37:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4628AA48CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA202188F023
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363AB16CA76
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07BA276D27;
-	Thu, 27 Feb 2025 23:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A799227EB0;
+	Thu, 27 Feb 2025 23:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipautFG6"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fKc1RRcE"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353EECF
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02759276D24
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699472; cv=none; b=J05CRcPXMvnK62EzD3Tk/OBL9Byzlyb05v8Pg8vOp4Ei4h1ET2mFfDAwWxt+hxdP1hh2iw4Xsip/ud4SQD6FJjVV3wvOn/30iThk9hvkh2FWF4pf/8+1W8syJCn7pHxprxFVysSzehPRzuRQoJ07QSswsp5QxjWPKOg07PInte0=
+	t=1740699541; cv=none; b=FHpxtFx2OZiRKPGSwpHOl3uN2g2GQYwiF2S/TA2h9VfgoM7TSTt65OR/eaVzzIy5dGdmM8SPrg4F//x47i0cGviEOb4oHn570sq/NyBDNWY42MKlvQDtEN2I1d7aMbRLNMDjJDTQAW677FNAyO920wwYeo8bjgIBTXOrLfgvPUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699472; c=relaxed/simple;
-	bh=WbgiTFR8OLXl9EBrqSFd1T+tSTHxoHSLOquz5CCP0PY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrDJAPm50PYl9o2Orlv/T7bjcVrSl++5ym17D6V5HUnoyovVPBcGmTp28XP5yC1t/10UVVwFn7xLOWJX1wytRhLiegPZgCvCebFElvWPJStLE2n48HmvHTQGA7Mb38F4gaTflf5V3sfrAXDzlt62FFnSdlFmmYys7B2S/MJtaaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipautFG6; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abec8b750ebso233831466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:37:50 -0800 (PST)
+	s=arc-20240116; t=1740699541; c=relaxed/simple;
+	bh=uazbQbXAgJkqYDiwEOwqWCYWk/4zsx2AxDpUxCHm10E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FoSSsmLQlifx/yuG1ASA/eoox3TJG1YZShAOlzCSwn+DubpfT9GTi/bOEAbASk7x7ukrb3KkvkHybaKWwXcHFfZFR19L3MwmqYcKIHXY1UrSBvBzECgkDXFfbJ+s4T78W4sJrrwRrkU3iAwIQSsqlrsX0LcKelzF0NYf2g5CAGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fKc1RRcE; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5fc6f75aa8aso77668eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:38:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740699469; x=1741304269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGc/M4Idkv0pwDjroWrApK5Pl9QbkdaU6P/ll2uMees=;
-        b=ipautFG6dzwXeRvDsqzrJTT0SdQwi+fqageiZh+AbFoN0PYwST9//B8exAJL5LB3xK
-         mFFyofQ5U4LU2VFigYoteQD+Rx9/vedKguzqhDcolOi8x5SM6TAM3793CeiS3dF/JZEN
-         KrHwJps4n0UIKGVYPEyFBwJlfxYVBZgPOK3kHxgMC3zQWqLm2yfOcG63LjuKWd2AA8dy
-         a6GxreyBUo6fMCMdhy7aNwxvuZN9DAJCI0RQLZsR+oeleXwy5ZrH028JAgqC7bSDkwlH
-         sZLQQ9BGhiUnIqMP6iJaOPf3oDWJBv08+GtDbHr3OHcaSawA/TZJy5glSCzpoHADIuZk
-         QpJw==
+        d=chromium.org; s=google; t=1740699539; x=1741304339; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BtvOHIMuelDkAYqCBYw4pmTE6kjO3Q01OuRJQEoDcUw=;
+        b=fKc1RRcEGDUZyYWtSMByqX9B9cHwAbgxw6kJAIBLl38G8StmfOTvlmpx+9Tgz4s5a0
+         i6veTF78h5Ws2AudlsdDUqazKPTQZ6Yu5izi8ln/Y70UR8lXec0t13vj+HraQe9n6Thv
+         SwyZPxbeDZGyeyNL9XYJAvc6oCvKnZPe88hbs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740699469; x=1741304269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CGc/M4Idkv0pwDjroWrApK5Pl9QbkdaU6P/ll2uMees=;
-        b=iQAn5KBwlcQlF5Tyk/tCbFkL+DUqoBVcadf0lxpe5575QHULVl5e+XIRTb2jeH6y4I
-         nzKNKHwQIBLlzz86OlWfxn+jGNuvJKM7nMSFSFRMwsMFxUOYTddt66GPUCprfeUCJnic
-         +xYrWqW36re6aKwSa8+o/a71tnBFNnbEL/T5KBzpec128ia1n2yA1d5uOX+FEqu5VCO3
-         fyslxdSbPb22PAzmeU3TAJRhvwvt1r+FAM4a4JR8cEtAclHvkLBrZdJSdZH8opEtv2OF
-         91sOIUGD4TSzFftmzHZFIUlhqQ0FRoCQlsFiUaH9Tvqk5e1nh4fTJdgGo6vxyJuroOPb
-         NNVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjFLAkIW7dzpLW3Pb73qyKkQFuvtqbQbeFDmLhZj6kL3kDoqAYn2ZgoFqCggCB05oSC89/aSWCVN1jY0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzm9/LijbVPNZ1IyeELoTuxqqi6TdiJ/tORoxLH2Io4HJe9UQ2
-	+dXlXgUzARZM9J3ZG9Xe/B21+Ff7+6A9t4f0phh5CgsNIHc3lAn2
-X-Gm-Gg: ASbGncvByYkma+EqygHxBP/hi2LLfC7TphH3XLsbgAmB4U6BpanPUVaZ8a7mveL7Jdo
-	35a+DAFLkj4DedFGVMxoikEUmvX/OSxCHGhv66U4BrjaGiM8VMtHq9DKcXpCq3215gXYRc4eSUy
-	VjpM5u0+FBFSHOIiTkIuHmfapkA10OdNRjgX6vxt7YyUuAKfV+gLYC0BZ1TJOAlvQHtPkmAcLWe
-	q80y3RbA6pdx9c9k5NQpwct1nGGKIPJ82uTOHyHSWARQRhD3RHSsWCAB8dBLEPW6d5z+dNKATNQ
-	bsQTBWKh0O3lw0sofHNuQIlF8L7TPe3gDZei29Hoh7LT
-X-Google-Smtp-Source: AGHT+IEJcVjn3ZpyU+qcNsU8eoJanDnChcfkLru3SZxuIgNCauuDPyZOublah5knY8QfPW6TT9dHFg==
-X-Received: by 2002:a17:907:3e9e:b0:aba:6204:1c03 with SMTP id a640c23a62f3a-abf26831546mr126718066b.57.1740699468600;
-        Thu, 27 Feb 2025 15:37:48 -0800 (PST)
-Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b99a6sm199241366b.13.2025.02.27.15.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:37:47 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	rostedt@goodmis.org
-Cc: vschneid@redhat.com,
-	mgorman@suse.de,
-	bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	vincent.guittot@linaro.org,
-	linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RFC PATCH] wait: avoid spurious calls to prepare_to_wait_event() in  ___wait_event()
-Date: Fri, 28 Feb 2025 00:36:52 +0100
-Message-ID: <20250227233652.142613-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1740699539; x=1741304339;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BtvOHIMuelDkAYqCBYw4pmTE6kjO3Q01OuRJQEoDcUw=;
+        b=jU6BBYb+DYdW+T8i8E6GaSrTP3ArvFw5brAhYTNVymikhgxMTitbW7iCAM/HJjRUYO
+         rDo/sGVappxwSgA9YW7dZtchUoQN6mK871OmVJ0Hp2oMM+QyryHkqj5hqFD9TiQ5Rowj
+         pFCcOpgl3uvJZJDBYoWk2HS/tbzV7BvNfRfs3hiFRYc1cBanHQUVvxAmxqBwGavXZVBq
+         qtfOe7ruJ6XsyAwnS8jWJcCgm2MUfZrLotEd7SZLMssxTg3mshoAV+ctk3m4jX+U1ehD
+         Yv6G3dU4/fTzniVdOSZq8CVORwKFnZgrBaoQ4LWiEYBzI4j1pK/i0FY+1Zh915/GBeNK
+         S+Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCU8p7NCYuVOqd8hD6jBhXiZS2LqsACVidt9QPrxB6PaZmdCGFF83xChxTEMYBOfNcLROKXOv6xFfL6jvKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyplqE2NynK04taPxKxKeddAeWauHQ60dFu9DmDNgPMj5DVFN9Q
+	0WKfm6RtojdhpK13IcHvM73703FHYvP1FtVqHT+nLgb30GWVOklcVnhsP2Gx6AyfVfF6hNAEiP0
+	BkY3G6uoIMQMuS/6IN7uMdWR5zd3nEHHWrBS1
+X-Gm-Gg: ASbGncuTvJ8hVz40nrDTs7vmK7exZETpgUMBDDPC/Bsyq/hdTC0haI8awob8+tmJO4A
+	3Nq6mjgNZOpQak+1mfEGE3PHy7b+FE0NMSnwKtddIY/WJ2X2aNSFAkfcAa++Pkz64MiSy2HPEIm
+	g3gqaatl/p2Dnsl8IHE2HVd/1XqEr87DALSoRmpUrP
+X-Google-Smtp-Source: AGHT+IGa5qWw6mWS9FqBki1tFln20XRNh8F87XAQ33WnPErm38DCBjPn+ns0NBr5sJsRp+DHD4erKnV1oUgv1UGVsr8=
+X-Received: by 2002:a05:6820:a110:b0:5fc:e9dd:45ed with SMTP id
+ 006d021491bc7-5feb352ea7bmr202854eaf.1.1740699539040; Thu, 27 Feb 2025
+ 15:38:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-7-jeffxu@google.com>
+ <20250226162604.GA17833@redhat.com> <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
+ <20250226180135.GI8995@redhat.com> <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
+ <20250226182050.GK8995@redhat.com> <ba83f8c3-6f8f-4ed9-81ec-104f72ea4ef1@lucifer.local>
+In-Reply-To: <ba83f8c3-6f8f-4ed9-81ec-104f72ea4ef1@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 27 Feb 2025 15:38:47 -0800
+X-Gm-Features: AQ5f1JpI4wTwciE-lKyx_Ev93hW3Fh_Xe8B3FCHbhfxf4AGtcraQIrvmSgrDIxs
+Message-ID: <CABi2SkUi6EOfMag37GOLNt3Fb71-QgYiXbcwVuiVTreRuEFW2Q@mail.gmail.com>
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, akpm@linux-foundation.org, keescook@chromium.org, 
+	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In vast majority of cases the condition determining whether the thread
-can proceed is true after the first wake up.
+On Wed, Feb 26, 2025 at 10:25=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Feb 26, 2025 at 07:20:50PM +0100, Oleg Nesterov wrote:
+> > On 02/26, Lorenzo Stoakes wrote:
+> > >
+> > > Like I said, Jeff opposes the change. I disagree with him, and agree =
+with you,
+> > > because this is very silly.
+> > >
+> > > But I don't want to hold up this series with that discussion (this is=
+ for his
+> > > sake...)
+> >
+> > Neither me, so lets go with VM_SEALED_SYSMAP.
+> >
+> > My only objection is that
+> >
+> >       vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
+> >       vm_flags |=3D VM_SEALED_SYSMAP;
+> >
+> > looks unnecessarily confusing to me,
+> >
+> >       vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMA=
+P;
+> >
+> > or just
+> >
+> >       vma =3D _install_special_mapping(...,
+> >                               VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_S=
+EALED_SYSMAP,
+> >                               ...
+> >
+> > looks more readable. But this is cosmetic/subjective, so I won't argue/=
+insist.
+>
+> Agreed. This would be good.
+>
+> >
+> > > Jeff - perhaps drop this and let's return to it in a follow up so thi=
+s series
+> > > isn't held up?
+> >
+> > Up to you and Jeff.
+> >
+> > But this patch looks "natural" to me in this series.
+>
+> OK, I mean in that case I'm ok with it as-is, as you confirms there's no
+> issue, I've looked at the code and there's no issue.
+>
+> It was only if we wanted to try the VM_SEALED thing, i.e. _always_ seal
+> then it'd do better outside of the series as there'd be a discussion abou=
+t
+> maybe changing this CONFIG_64BIT thing yada yada.
+>
+> >
+> > Oleg.
+> >
+>
+> Jeff - in that case, do NOT drop this one :P but do please look at the
+> above style nit.
+>
+Ok.
 
-However, even in that there is an additional call to prepare_to_wait_event(),
-resulting in a spurious irq + lock trip.
 
-Then it calls into finish_wait() to unlink itself.
-
-pre-check the condition instead after waking up instead.
-
-Stats gathared during a kernel build:
-bpftrace -e 'kprobe:prepare_to_wait_event,kprobe:finish_wait \
-		 { @[probe] = count(); }'
-
-@[kprobe:finish_wait]: 392483
-@[kprobe:prepare_to_wait_event]: 778690
-
-As in calls to prepare_to_wait_event() almost double calls to
-finish_wait(). This evens out with the patch.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-One may worry about using "condition" twice. However, macros leading up
-to this one already do it, so it should be fine.
-
-Also one may wonder about fences -- to my understanding going off and on
-CPU guarantees a full fence.
-
- include/linux/wait.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index 2bdc8f47963b..965a19809c7e 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -316,6 +316,9 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
- 		}								\
- 										\
- 		cmd;								\
-+										\
-+		if (condition)							\
-+			break;							\
- 	}									\
- 	finish_wait(&wq_head, &__wq_entry);					\
- __out:	__ret;									\
--- 
-2.43.0
-
+> Let's keep things moving... :)
 
