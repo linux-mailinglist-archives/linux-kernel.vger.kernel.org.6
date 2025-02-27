@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-536035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8E6A47AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:49:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0492A47AC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FDC16937E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:48:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5717A6417
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F422A4F7;
-	Thu, 27 Feb 2025 10:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D85622B590;
+	Thu, 27 Feb 2025 10:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGjukulC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EfBCFwJP"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F33D229B3D;
-	Thu, 27 Feb 2025 10:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA2422AE6D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 10:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653261; cv=none; b=e8AlFY1/GjHW4gpfBq6ZT+lBqsXXR2F/aJGWOY8TE5kLEuu+7TOxo83GMrNPAer1uhm1mG9d4eR22VdN5F1KRMg1Cmnur7z9UlJsntiRWlLm2k7mvpMX3rGt4kqTdytmVL1MPv1bV3llXvU7TX0XQQqQU6JnAhXocnSt4SBH4Mo=
+	t=1740653267; cv=none; b=jgWcB9UiI/uRv/Qc9UvX3QCFAJU6NOj1NVmeorjxXT2FM4SglUnbUjrhEl6d47iO6gwD4GVdwxqB2TS2mgjTSXCCnObpweqSkFmuSLhEgs3NBgAAUT2AecP+u/Lb+O68h0e+FNArhBzDaJr4mOc0VufSQx1PZWML3ZKEijHgJQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653261; c=relaxed/simple;
-	bh=faKqbIo9ohlJImOLrrHIkwjNGaccf93VmOWvmUtLnEg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Tmpx/s/LvifIyLVb7Vm+rKOnxcbsR9xnGFBx7yaJV3W1NYoUsf1e/7lhZKqZg2ZcAvqpkKDErwH3VX7ccCbh3pyeiui1PTCOp9dS2Hd06DYMdIBBwwplj/vVzN/3lt0pXA9LPfUEw+XZWYSULxE6e/yFHgr6XANhJ+Gp0KItWQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGjukulC; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740653259; x=1772189259;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=faKqbIo9ohlJImOLrrHIkwjNGaccf93VmOWvmUtLnEg=;
-  b=mGjukulC12kfBa9ndhjDjW010/RoXnaVQEOm5pppIOocBuWlnJowZXse
-   Y314WbFj+iemWaVmuIeON0Um44fXxhjHS4DzjEjKd8KZRZH++U+TtfeKW
-   J5l85X+KoXOVBxTKm/yUsbrGY0RcgeQa4SD3vSVRFp4oCrccLZZvBjmIo
-   w8ChHiRfk0u7woUnr/m1/c5Ylz7+Lm3sFAGNKAUzWM2p98jut4GhuAn3x
-   vYsmQxQ/CcG4wLvoIcZ2kOd72WcJ2KhM5c+iwhxgGySH7yky8S+qiihM1
-   xuBzNdFN81QUpzpgShkq8lIUca0Ys+913T8OYK3unAVX4XEqGQRuVXKEW
-   w==;
-X-CSE-ConnectionGUID: a8bFODgTTBCipZuva2/s1g==
-X-CSE-MsgGUID: PrzB74eyQZalYvft8dGFJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41663449"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41663449"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:47:39 -0800
-X-CSE-ConnectionGUID: bDl6Q4biRAisW1awg+BeNw==
-X-CSE-MsgGUID: 9yUe7WxTQ2u7KZi8apzAAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="116783370"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.181])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 02:47:33 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Su Hui <suhui@nfschina.com>, lucas.demarchi@intel.com,
- thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Cc: Su Hui <suhui@nfschina.com>, ilpo.jarvinen@linux.intel.com,
- andriy.shevchenko@linux.intel.com, michael.j.ruhl@intel.com,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-In-Reply-To: <20250227073205.1248282-1-suhui@nfschina.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250227073205.1248282-1-suhui@nfschina.com>
-Date: Thu, 27 Feb 2025 12:47:28 +0200
-Message-ID: <87senz3br3.fsf@intel.com>
+	s=arc-20240116; t=1740653267; c=relaxed/simple;
+	bh=voqDI+sR3cgQLpRJNz2L7lClXa4i8MTgaVBRLvybSdM=;
+	h=From:Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:
+	 References:In-Reply-To; b=VWY/yoeFubmmrNguzEpRJLxrkdXiSRwCNVjt0uf7ftpkCdrNbc4iDJ26cTWEglUo07V/QlFpCqn+wD55DQ0uNFakJ18nkENp2Rw964BUkb7dNMp3u4h50vFcwEoIIB0tbwYU4uuTEpkV018mzAQS2NAOI1YNI8/ZVMe1Lql0vAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EfBCFwJP; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaec111762bso128439066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:47:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740653264; x=1741258064; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwYrgbQrysBcAd8WRw0jB/UCnkIW4vR+8ZOYC92wVf4=;
+        b=EfBCFwJPvX3mJBaI1iMIG6qRcCc/ZE0MBX6+7rU2JyA55KjwnWRARWDOtWMpATTJti
+         9qUmo44uX1c6pWtCIbFfYfLsskm0Z+OJJTDPwaPVPGrCOUs4Ug+GbrP5n5QpXGkoXfmc
+         f0tJxpdBmvPQ2TSmKxKhrrIIb5LOWDH6aVbCK7qzHu8fTNodSJbHz+U6mBIGWyOsE0FO
+         l216f4svoJhdStviEPpjKgQJbsScHiJXTljrahFMHQ/CJvEbnyDPcsXn9aLsiV4tatLT
+         MtBnRnVkSvqtwK8VLafHNFU5s4Wo3lJnyw66a/1hXQWEtc//lnIdWMBp5un8H2t58QMJ
+         2ZnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740653264; x=1741258064;
+        h=in-reply-to:references:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hwYrgbQrysBcAd8WRw0jB/UCnkIW4vR+8ZOYC92wVf4=;
+        b=RBepsQH+nKF8n/D5+YXgQtrQ3oI9OzvoCz36PcQ1lRk+1eQxuM1EkWz1fpg0JLzwBp
+         3515rDy5+0UdtfZWdhoqzifmwl4CKQVP/JUtl11bZztvOPibKMY1X+BIZVq/NtOP7pCj
+         +R6OBMpN0eWETZLNNoMd9VNo4awZdsq8/1+ZAoO/KCeQLxnHAIJO4j7EuT7tlloTodXw
+         lsAT6ywK3y7hOslvYXCW8D3W3PbqxgNZVon7OPU0j8Nox+X8mhRdVvrYlHwpKVNz7MGs
+         V0zbWDfVf6Ehhg6gMwpRJi+t8rVpZADtaPzQGpNf69wqpFgOhwcz9XkI91k7YnEZ+qVs
+         z50g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnsQel8ynwvHKw+XdstcE+f7sWpcDcTDEO+C/DUPsHpmKjiteSDx0rEp3HfDgAE1ow6WymCGX7zPDCdlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpOhxkq8+cqko9NQ8iZAC5ZzUXkkqroTkmjIrzs2bUNRYsgH0t
+	FplRFbO4eF9Juom7e4NjGF69FfocGpl21iOoVezwP9PJ8zwDjRU9m5DZjRD4v6Q=
+X-Gm-Gg: ASbGncvDgHFqTq7ESxXWMLxeuClI/bCRqSnoXBZzHZ8MFm8zannkJRGxca2tg6j+vvI
+	lGKxaloSG0v1va4Z7GwzI1wJf4KQbHDHTSmfKOfZ5yUdACnMlcENRvUGxSF3bIecI3Hi9HupEX6
+	MG4zvDdZD20esW3anHundp+7rx8Eyj5z3s9DHT5IfFr+t8Ho1EyEeK9ZjvCSjJVYQOtCPhK2fQ1
+	axdQA7xqhux/xJIWJgBCacyEJaO6nIxENbWMSHIOCR2HA0pOBxT0oFydejgWl3jjiUgRC63BgAf
+	nmxDmYgq66ObUxU=
+X-Google-Smtp-Source: AGHT+IH/QdSWLijhlmKS6cpPQOvDmaBBqLi3TtTAJFjDo0/KOlaCmiQJXCXK3w63xzxEUvqFh2dyGw==
+X-Received: by 2002:a17:907:770f:b0:abe:e91e:b7d9 with SMTP id a640c23a62f3a-abeeed10d3bmr882696466b.1.1740653262374;
+        Thu, 27 Feb 2025 02:47:42 -0800 (PST)
+Received: from localhost ([179.228.215.131])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-734a00400absm1199194b3a.151.2025.02.27.02.47.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 02:47:41 -0800 (PST)
+From: =?utf-8?B?UmljYXJkbyBCLiBNYXJsacOocmU=?= <rbm@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 27 Feb 2025 07:47:38 -0300
+Message-Id: <D8362ZV7Y4YI.PJTF4OC88RQK@suse.com>
+Subject: Re: [PATCH] security: keys: Make sysctl table const
+Cc: "James Morris" <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Paul Moore" <paul@paul-moore.com>, "Ricardo B. Marliere"
+ <ricardo@marliere.net>, "David Howells" <dhowells@redhat.com>, "Jarkko
+ Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250123-sysctl_const-pcmoore-v1-1-d9f918dbb0be@suse.com>
+ <CAHC9VhQpkyqaJsxj9_d4d6Vpc+FVbSnH_HeAFAVEdj0trGCh1g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQpkyqaJsxj9_d4d6Vpc+FVbSnH_HeAFAVEdj0trGCh1g@mail.gmail.com>
 
-On Thu, 27 Feb 2025, Su Hui <suhui@nfschina.com> wrote:
-> When build randconfig, there is an error:
-> ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
-> xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
+Hi Paul,
+
+On Wed Feb 26, 2025 at 9:21 PM -03, Paul Moore wrote:
+> On Thu, Jan 23, 2025 at 2:50=E2=80=AFPM Ricardo B. Marliere
+> <ricardo@marliere.net> wrote:
+>>
+>> Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
+>> ctl_table"), the sysctl registration API allows for struct ctl_table to =
+be
+>> in read-only memory. Move key_sysctls to be declared at build time, inst=
+ead
+>> of having to be dynamically allocated at boot time.
+>>
+>> Cc: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>> Suggested-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>> Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
+>> ---
+>>  security/keys/sysctl.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
-> 'intel_vsec_register'. Select INTEL_VSEC to fix this error.
+> Looks fine to me.  David or Jarkko, this looks like something for the
+> keys tree, yes?
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Documentation/kbuild/kconfig-language.rst:
+Thank you for the review, but I believe this has been done here:
 
-  Note:
-	select should be used with care. select will force
-	a symbol to a value without visiting the dependencies.
-	By abusing select you are able to select a symbol FOO even
-	if FOO depends on BAR that is not set.
-	In general use select only for non-visible symbols
-	(no prompts anywhere) and for symbols with no dependencies.
-	That will limit the usefulness but on the other hand avoid
-	the illegal configurations all over.
-
-This should likely be either
-
-	depends on INTEL_VSEC || INTEL_VSEC=n
-
-or
-
-	depends on INTEL_VSEC
-
-
-BR,
-Jani.
-
-
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D1751f872cc97f992ed5c4c72c55588db1f0021e1
 
 >
-> Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/gpu/drm/xe/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-> index b51a2bde73e2..7a60d96d2dd6 100644
-> --- a/drivers/gpu/drm/xe/Kconfig
-> +++ b/drivers/gpu/drm/xe/Kconfig
-> @@ -44,6 +44,7 @@ config DRM_XE
->  	select WANT_DEV_COREDUMP
->  	select AUXILIARY_BUS
->  	select HMM_MIRROR
-> +	select INTEL_VSEC
->  	help
->  	  Experimental driver for Intel Xe series GPUs
+>> diff --git a/security/keys/sysctl.c b/security/keys/sysctl.c
+>> index 91f000eef3ad82370250e5238d9c9c80757aab61..cde08c478f3272081304e6db=
+34e36b64ce0d321a 100644
+>> --- a/security/keys/sysctl.c
+>> +++ b/security/keys/sysctl.c
+>> @@ -9,7 +9,7 @@
+>>  #include <linux/sysctl.h>
+>>  #include "internal.h"
+>>
+>> -static struct ctl_table key_sysctls[] =3D {
+>> +static const struct ctl_table key_sysctls[] =3D {
+>>         {
+>>                 .procname =3D "maxkeys",
+>>                 .data =3D &key_quota_maxkeys,
+>>
+>> ---
+>> base-commit: 714d87c90a766e6917f7d69f618b864d350f09d3
+>> change-id: 20250123-sysctl_const-pcmoore-fa14389b8329
+>>
+>> Best regards,
+>> --
+>> Ricardo B. Marliere <rbm@suse.com>
 
--- 
-Jani Nikula, Intel
 
