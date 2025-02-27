@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-535338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00679A4718E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DA6A47183
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BF11891C0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B5E1895412
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529711AC448;
-	Thu, 27 Feb 2025 01:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF601AF0B0;
+	Thu, 27 Feb 2025 01:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BGxLyfmc"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ncq2TKQZ"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F71A9B2A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529EE1AE01C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740619660; cv=none; b=hh/4gx6xs6YlfVptljyOsoplbjSwcR6OJhQ1nKfg1Nb44v783kyQvOHBkAQ4KBD/dorZ9aDKaYkftz05DDJDW5b8iJ1tGWcschUMO/M8eEbHo7sFFFzU37+o/OG+oH8HYPsXKHw1mLI9NTaaGleTI4bKoCitXzQAfOzQp3fRXe4=
+	t=1740619664; cv=none; b=JLTOJIodU+TCX/6wR0Uv14i0bbZyLTnz7q9fBH/fID0id9bdic5cz8mIPBmIqDvjt+x/somaKQU1Ugi1+9NQwfVmueMj1SD182pQuaxtFe63WD9A2mdwi0TNRMLaqiCsp5fNDjDDr/S16OWRMZ0j+4PSoBxYPRJL1c2CGEdPhAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740619660; c=relaxed/simple;
-	bh=J9sI+M12HfqQ9qPGHnst3V7H6uKSmS7Ytv59xyDnWfE=;
+	s=arc-20240116; t=1740619664; c=relaxed/simple;
+	bh=MJUfF7p26znqsRd71QkxiKuEqw5hwNIYx869VTuAzqo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M9xX5ePgIldeReZTnpeiRIPG/5bW1UE3HSMXEh9NVGbRUwdhnqXbtXUaSI/mLs7fhDe2gW36whnJKxDFcF4GoapdF03X9GsO6/AtCnpY6DPeARLJ+a/XxeobbszTisar7Axpe+442g/+vxhqa1Wy/ZZTPhWprfcAUONaqbwB7A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BGxLyfmc; arc=none smtp.client-ip=91.218.175.180
+	 MIME-Version; b=If/jJRDTWaK+Aigk23l1u+1tT+8zNNng4YGCylz1KCIFq/rIaPPxgaRpMVjG2yMS5NB9Agf6OUHiFHLNFUc237ZwVXI7FLlRXDlJi1sE9xQ14dDofafLH8bruNLyUirofVHbxZXaooCYmeIVWCjnICBLIOvOUtQvHfDvbbGItII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ncq2TKQZ; arc=none smtp.client-ip=91.218.175.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740619657;
+	t=1740619660;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dwg1Ay80T2e92R/BjPVjDqxXeHZ5ZCL2VFstPzXptZo=;
-	b=BGxLyfmcXyFurUAjrcpo/Q4xR1Hg84FflGotgy0EOHvfbhXUNXk89ijYTxBm7O/cvhQDwd
-	1EqYhI1K64lVBeoV6MV43zC8GBzn26QrichlGYYGZf2RmxEqiUGA1oWntnT682+txKPxSL
-	x9exdo3aW/5+dq9fl7lLIc7XjtkhiVA=
+	bh=inZTcE9vZsNLhguAg/kTgyLxoDkWmzTqzRa3pZ8DdDU=;
+	b=Ncq2TKQZ/IJ4xbucbqtQ7Beux11X1pjvnfVY+U0kCSVGvTO2fh6RYFffg9vO0ewt4tRLi7
+	pgezoU0Ggb5KW42/8wnJJMfkfgXr2F/F0jVX46IoKddNU1yg6y2WTURBQSoS0u5UAfhJMh
+	2MmYTEqBrhiJOL3niq/CfB5xAx0L/es=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: x86@kernel.org,
 	Sean Christopherson <seanjc@google.com>
@@ -58,9 +58,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v2 3/6] x86/bugs: Remove the X86_FEATURE_USE_IBPB check in ib_prctl_set()
-Date: Thu, 27 Feb 2025 01:27:09 +0000
-Message-ID: <20250227012712.3193063-4-yosry.ahmed@linux.dev>
+Subject: [PATCH v2 4/6] x86/bugs: Use a static branch to guard IBPB on vCPU switch
+Date: Thu, 27 Feb 2025 01:27:10 +0000
+Message-ID: <20250227012712.3193063-5-yosry.ahmed@linux.dev>
 In-Reply-To: <20250227012712.3193063-1-yosry.ahmed@linux.dev>
 References: <20250227012712.3193063-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -72,31 +72,87 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-If X86_FEATURE_USE_IBPB is not set, then both spectre_v2_user_ibpb and
-spectre_v2_user_stibp are set to SPECTRE_V2_USER_NONE in
-spectre_v2_user_select_mitigation(). Since ib_prctl_set() already checks
-for this before performing the IBPB, the X86_FEATURE_USE_IBPB check is
-redundant. Remove it.
+Instead of using X86_FEATURE_USE_IBPB to guard the IBPB execution in KVM
+when a new vCPU is loaded, introduce a static branch, similar to
+switch_mm_*_ibpb.
+
+This makes it obvious in spectre_v2_user_select_mitigation() what
+exactly is being toggled, instead of the unclear X86_FEATURE_USE_IBPB
+(which will be shortly removed). It also provides more fine-grained
+control, making it simpler to change/add paths that control the IBPB in
+the vCPU switch path without affecting other IBPBs.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/nospec-branch.h | 2 ++
+ arch/x86/kernel/cpu/bugs.c           | 5 +++++
+ arch/x86/kvm/svm/svm.c               | 2 +-
+ arch/x86/kvm/vmx/vmx.c               | 2 +-
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 7cbb76a2434b9..36bc395bdef32 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -552,6 +552,8 @@ DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
+ DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
+ DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+ 
++DECLARE_STATIC_KEY_FALSE(switch_vcpu_ibpb);
++
+ DECLARE_STATIC_KEY_FALSE(mds_idle_clear);
+ 
+ DECLARE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 754150fc05784..1d7afc40f2272 100644
+index 1d7afc40f2272..7f904d0b0b04f 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2272,7 +2272,7 @@ static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		if (ctrl == PR_SPEC_FORCE_DISABLE)
- 			task_set_spec_ib_force_disable(task);
- 		task_update_spec_tif(task);
--		if (task == current && cpu_feature_enabled(X86_FEATURE_USE_IBPB))
-+		if (task == current)
+@@ -113,6 +113,10 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
+ /* Control unconditional IBPB in switch_mm() */
+ DEFINE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+ 
++/* Control IBPB on vCPU load */
++DEFINE_STATIC_KEY_FALSE(switch_vcpu_ibpb);
++EXPORT_SYMBOL_GPL(switch_vcpu_ibpb);
++
+ /* Control MDS CPU buffer clear before idling (halt, mwait) */
+ DEFINE_STATIC_KEY_FALSE(mds_idle_clear);
+ EXPORT_SYMBOL_GPL(mds_idle_clear);
+@@ -1365,6 +1369,7 @@ spectre_v2_user_select_mitigation(void)
+ 	/* Initialize Indirect Branch Prediction Barrier */
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
++		static_branch_enable(&switch_vcpu_ibpb);
+ 
+ 		spectre_v2_user_ibpb = mode;
+ 		switch (cmd) {
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 57222c3b56592..a73875ffbc3df 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -1566,7 +1566,7 @@ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 		sd->current_vmcb = svm->vmcb;
+ 
+ 		if (!cpu_feature_enabled(X86_FEATURE_IBPB_ON_VMEXIT) &&
+-		    cpu_feature_enabled(X86_FEATURE_USE_IBPB))
++		    static_branch_likely(&switch_vcpu_ibpb))
  			indirect_branch_prediction_barrier();
- 		break;
- 	default:
+ 	}
+ 	if (kvm_vcpu_apicv_active(vcpu))
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 042b7a88157b0..956f9143a3c4c 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1477,7 +1477,7 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
+ 		 * performs IBPB on nested VM-Exit (a single nested transition
+ 		 * may switch the active VMCS multiple times).
+ 		 */
+-		if (cpu_feature_enabled(X86_FEATURE_USE_IBPB) &&
++		if (static_branch_likely(&switch_vcpu_ibpb) &&
+ 		    (!buddy || WARN_ON_ONCE(buddy->vmcs != prev)))
+ 			indirect_branch_prediction_barrier();
+ 	}
 -- 
 2.48.1.658.g4767266eb4-goog
 
