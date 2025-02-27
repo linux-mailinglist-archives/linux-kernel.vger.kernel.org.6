@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-535754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7471A476BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:42:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E077FA476C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B776E3AD422
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:42:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB4ED7A4425
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53602222A4;
-	Thu, 27 Feb 2025 07:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9E9223711;
+	Thu, 27 Feb 2025 07:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DzX3XyLE"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="MqL0PS9N"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99911EB194
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F8F2236FC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740642125; cv=none; b=OfSpDqV/JaxoOde3qc7kDOQ4a15rZRkzgw9E+sb4wHK8R4baSSncOGi1Uh2BzfpJFHfoxTqV+2w2p9Xo4WvDwi3zD0TheW68BKRI69S+Wr/8Zd7OwC/uvWn8vpzQl9zIH3dO/LvZDbRffGlYr3jt90DC6HkhcKJc2hC9jueUu5A=
+	t=1740642134; cv=none; b=O8l47I4fVS6en9fWar2rm6wfp2WvwO5Vi3Qb3ge8qU4U0FcguWghjsCE6oKHqWy74RyFiLV+YvhG2N8hk2E3rHmBy8fNAVMqpJnRrYx/Wz3y39Vm/fga3N6rv1sFC/MTVkDR5xVgKHFj8Dro90V+vJ0EkBRBRWqMo9sU7FJRoQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740642125; c=relaxed/simple;
-	bh=kUt1hw2OeGcF75w78SXUkJLgZ7NQEvchGPnQlK/Nwpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Duaiq0X+A3yMG+vqDEt9Y7bSNv6CNxrU2I/KVpmwh3TSEwaBabuAxhk0M1VbD12XEqxtjrAZTrrpLm6ihDngEIzH4d5SIsSkQKelQo8XFNPjfesBOlK6kxJOT5nvsDZViep5d87urJzDGpJ9wWLsJIawZgvdq6Az/3nu1N5ZbLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DzX3XyLE; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wEmwrAZv2rrwivZwCQP0TGYEjyLyX3HOCE9A9/d0M3U=; b=DzX3XyLEbuSVOFEX1cMP19n5kg
-	W377LZUUSGEQrXA6e8AoUYKjfq4bAdZP4RBL5W5MT/ouRq1Uugh0LUFDkjO/5hTTqh3KrO8x7uRlV
-	pUFnqnZg+pO6gxAp1iXRqUQ9n8sMFWMFwbxX+xJneMlxMfQeiik4FhTVys61umIczLrT7T9CKbWb0
-	ryaxDu3PmHynhOIDpiHyGmZ/ckWNOmkHFAf1js+dNbJoQ9kizbyHxGvD67u18AH95ghz9czCzit8n
-	YFjS/zf1cmNWT4KPzTv+us6K86/03LkOMr3/H5hfWbNxwz83lgh/HklmneeUhWuR5pcF92fRxbySR
-	49vJgIaQ==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tnYWf-001U5M-RF; Thu, 27 Feb 2025 08:41:52 +0100
-Message-ID: <7d985c1a-1e4a-4518-917d-4ff701d7bb9e@igalia.com>
-Date: Thu, 27 Feb 2025 16:41:46 +0900
+	s=arc-20240116; t=1740642134; c=relaxed/simple;
+	bh=hOWdYrxNiuPN+XNM7jJtHqXLqHZiONyk2eJf35zleLQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GPDslEqXRhBcg87iPd0/yK6zn1m2Rp/aJXjClwT/uSVF4IoNQRx2kpXhm9M3XyB+US826b0U5vBwjuglRUf1JCCf2PkiGbQwWazLZsKPG8RIYJU3Zmh/NhXfes0OZraHynBGzBE7fG/M0o83jkpr9K99X0cfmLNDOni3YoM7itQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=MqL0PS9N; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso4045355e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1740642130; x=1741246930; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vDstNabKa+U0RFMr+z3tANP7Vpq5gfUk2k27kasy3M0=;
+        b=MqL0PS9NAInaTWnWSw7cHRNWcriR0cflcIq2/WF0wQrPby2EiMBOywObtHbpAuQfBx
+         D8Wenx9alUaIUJ2vpZB/+mcuqA+o0UkrwxLcK6ImBng1qEuzymEgX0wJ5HCchYQbsqav
+         DznWcnMWq2E7KuITZAStKu3mcCsJp47bjhYAqbD5OR75oIJswJoRxOBBYoeZJGB6zzXF
+         Ksi4Vt97tMysPaGPnP++Lfi4vWz5VEwV7Gy9gi2fYaVyQuKyiCuM1Z+3hvDdm/I5hWAK
+         b0Um9R0jl5vFdol5oav0NVHltb1AfxHhUY5jtbLHZiKHGAm9Xv0TuGNVa8u6q+iU6DtG
+         ixwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740642130; x=1741246930;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vDstNabKa+U0RFMr+z3tANP7Vpq5gfUk2k27kasy3M0=;
+        b=JPppZt9G/2+wWluRBkHfyX2FzJi7rWxruTnVt/7x8Vma9Md8sQu3q7CeBSvTeqDKMm
+         /d3Vuk/yoW4ZtTiH8x+sEbw+eMznCCwV5vNjWTOMzaxOhXvaIRIZyDfFHw2pHngsqtPa
+         QPt2y63hyOgvNdKF6CsCQblau7JEZd45OqyD+loOzEEa3AGiKXLu9ahJ6WueXLdH2o3L
+         wffbJDjZWFTEnIkM5xtT1rmbWfQ05PIR/x7mDIfVOAykCXhuWnnDdrdvux4NmFCr9r4/
+         BBJXDLtc/uOU02gXNDD8ET15L1CnS3Yho9HAGcdGFXmpx0+wCL7g3x7sOQylaZoooiHb
+         xdxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf04ip3vwrptDuvBXJtpkh8Vfo7l4XguqP+L8QKytU4Q3uyHU/Gsq3pV1FSDg3YZ11rq7L2yreGfcq+fI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE14mYPCsVofOQQYoANHTWAc5NIpSiDelDwZdjE4q/WYb7TiOk
+	36zPkUKNz0EMMb6aGJjJg6dRBvQUVXiRXPY9Wd5+FjZY3burQjTzErEbkGnLoMI=
+X-Gm-Gg: ASbGncuuKc4PF9n+GoG++smz6RoPKNy8zVikwPMef/PwnYYgmG94Hqv2ZrqQKAsgcCt
+	5EDE7C/TR1x/nFhttBFgiIOx1OBht7o2bOSfRmKYNMKWrMKIIsSCf9WMlXpAOod3mfk++NKAMwo
+	JXxSQK+2ldDv/j/2B0teNtddv6Nqof6xGARH3C3s1N8peq+DSr+Zvu7ceCXTqXrv+OnaWrNiNwg
+	A9TOoEamVrLlg/QHPwqVrIszUW3NdGeHsiTELcMVsy5BuyBBHov01kmIq5wClxNE6My8XWp+4Na
+	u2ukquQmJn2Nc0XrR+WOvRBvzhA0eeNz3R2yrJykPg9DAO0Xupe9ArFp6arUTfoSmgCEWOU=
+X-Google-Smtp-Source: AGHT+IEjgF0COFVrxkgx63jJMahBS/fzpXpuAZ0WbHEMTNr8DH0vZgYR2D9bi1jTvh7DSZQR0NvF4A==
+X-Received: by 2002:a05:600c:468e:b0:439:9828:c44b with SMTP id 5b1f17b1804b1-43ab0f3ccddmr106690235e9.14.1740642130144;
+        Wed, 26 Feb 2025 23:42:10 -0800 (PST)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba52b947sm45759585e9.2.2025.02.26.23.42.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 23:42:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: Add trace point to track sched_ext core events
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, arighi@nvidia.com, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org
-References: <20250226143327.231685-1-changwoo@igalia.com>
- <Z79ivCISjmFlkecF@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z79ivCISjmFlkecF@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 27 Feb 2025 08:42:06 +0100
+Message-Id: <D8324XX78W5E.273JA9U5U4NV8@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Fairphone 5 DisplayPort over USB-C support
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, <cros-qcom-dts-watchers@chromium.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250226-fp5-pmic-glink-dp-v1-0-e6661d38652c@fairphone.com>
+ <e5290e59-0022-4eba-abce-a11928d76d3a@oss.qualcomm.com>
+In-Reply-To: <e5290e59-0022-4eba-abce-a11928d76d3a@oss.qualcomm.com>
 
-Hi Tejun,
-
-On 25. 2. 27. 03:51, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Feb 26, 2025 at 11:33:27PM +0900, Changwoo Min wrote:
->> Add tracing support, which may be useful for debugging sched_ext schedulers
->> that trigger a certain event.
->>
->> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+On Wed Feb 26, 2025 at 6:44 PM CET, Konrad Dybcio wrote:
+> On 26.02.2025 3:10 PM, Luca Weiss wrote:
+>> This series adds all the necessary bits to enable DisplayPort-out over
+>> USB-C on Fairphone 5.
+>>=20
+>> There's currently a dt validation error with this, not quite sure how to
+>> resolve this:
+>>=20
+>>   arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dtb: typec-mux@42: port=
+:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpec=
+ted)
+>>           from schema $id: http://devicetree.org/schemas/usb/fcs,fsa4480=
+.yaml#
+>>=20
+>> See also this mail plus replies:
+>> * https://lore.kernel.org/linux-arm-msm/D0H3VE6RLM2I.MK2NT1P9N02O@fairph=
+one.com/
+>>=20
+>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 >> ---
->>   include/trace/events/sched_ext.h | 21 +++++++++++++++++++++
->>   kernel/sched/ext.c               |  4 ++++
->>   2 files changed, 25 insertions(+)
->>
->> diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
->> index fe19da7315a9..88527b9316de 100644
->> --- a/include/trace/events/sched_ext.h
->> +++ b/include/trace/events/sched_ext.h
->> @@ -26,6 +26,27 @@ TRACE_EVENT(sched_ext_dump,
->>   	)
->>   );
->>   
->> +TRACE_EVENT(sched_ext_add_event,
->> +	    TP_PROTO(const char *name, int offset, __u64 added),
->> +	    TP_ARGS(name, offset, added),
-> 
-> Can we do sched_ext_event with @delta? Otherwise, looks fine to me.
-Sure, @delta is clearer. I will change it as suggested.
+>> Luca Weiss (3):
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add PTN36502 redriver
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add OCP96011 audio switch
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Hook up DisplayPort over =
+USB-C
+>>=20
+>>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 110 ++++++++++++++=
+++++++-
+>>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +
+>>  2 files changed, 108 insertions(+), 4 deletions(-)
+>> ---
+>> base-commit: 417c2d4ed67b729abea7dc73d7fb2153b7154d31
+>
+> I don't see this commit in -next, master, or qcom/, this series fails
+> to apply atop next-20250225
 
-Regards,
-Changwoo Min
+Maybe I was a bit fast in sending this series, the 2 patches this
+depends on have been merged into qcom tree yesterday, I've sent this
+series based on latest linux-next + arm64-for-6.15 merged in.
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/log/?h=
+=3Darm64-for-6.15
+
+Regards
+Luca
+
+
+>
+> Konrad
+
 
