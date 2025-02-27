@@ -1,222 +1,142 @@
-Return-Path: <linux-kernel+bounces-535660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18453A475AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:00:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F048A475B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4D93A6367
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:00:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D593B0D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289AD21A44B;
-	Thu, 27 Feb 2025 06:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5221519B;
+	Thu, 27 Feb 2025 06:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMJrpTBB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ao1d9D2T"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3241E835A;
-	Thu, 27 Feb 2025 06:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AB12E403;
+	Thu, 27 Feb 2025 06:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740636030; cv=none; b=QmNYoBHENIW2L2J0uRHVShbMT9xBHhp4xZYXwQk421ReWZymeYTQCHuZsL+xr93Udy4BDG7vGskZSqlBHvLpkzPsmsav59WJe0J6RBdyYLruh4iCqHHhfQOv67DBzCL3lsnFYGVxItf9xXzvSEK7uF+aKTKWqtdsQ0WPgvBH75M=
+	t=1740636107; cv=none; b=P1ux3a9j3ZByP86j0EaBTSyH1+pNgAyKHZ2vFQDe/2y7IpTdQ6iPJSmQ1jeGe8OiDNAa/qUM8ImAYtZ7oTvVgrv4hYRwXQvkXr/RbKOGwfcpQh0i9L7zCAUL+Dlc9QRurgQOVUwf3wi1fM9cGabYjmXys9rhVis7+4qw3f0UWg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740636030; c=relaxed/simple;
-	bh=tRUaBjfQeJhK+q/8PKXwiUJCfypbozRNjwBfu7BchpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jkFUQUkbg16wM/Ob//Xc6FNqaNkc7sW1ZUlrciICNxAotV8/gE4ZbKcX5XQ+cm76BEd7Kbgha1j3Zh+rqMGqkNA6I8Q7Uvnbzv7BKmjORET56dRu/kW4r38tUw6OoP0rdna2fJHx/WfpNoCVdyqQs1rPCwI1o1THSwxI5pcIAZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMJrpTBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D976AC4CEDD;
-	Thu, 27 Feb 2025 06:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740636029;
-	bh=tRUaBjfQeJhK+q/8PKXwiUJCfypbozRNjwBfu7BchpY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WMJrpTBBQURZ3HaqKnlBxryXqMVZR/xjlhDc1PBJR9hEKzncjvOQA7FY9HHaQzP/d
-	 phWfOj+N+1sK9JpXRQIkslQuZNXBzN0LSMORIWpyPRdynEIv+aUM7jtFFm4m76+l1x
-	 +UAe0EtqgNsBm30m9XzXP1SsfG+71/dcvKSgqsrQdPoXMGMOtVGpjZCx85hl58mJtH
-	 vAW2MbRkUvwzW9O1qM0vt12s2vPBVkJnEHpa3OKFjI2BCv+SFzpXppoVUn3vjZ81+3
-	 rxjMS9svehUMC6bJlgJiFU4dwuFr7wgObypr86lbU78CUl5f+clfGUr8LVC2r8fd9u
-	 +Ge8iPjFZAZSg==
-Date: Thu, 27 Feb 2025 11:30:24 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, kishon@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, p.zabel@pengutronix.de,
-	quic_nsekar@quicinc.com, dmitry.baryshkov@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH v10 2/7] phy: qcom: Introduce PCIe UNIPHY 28LP driver
-Message-ID: <Z7//eDJZw2SNNc5Z@vaman>
-References: <20250206121803.1128216-1-quic_varada@quicinc.com>
- <20250206121803.1128216-3-quic_varada@quicinc.com>
- <Z64xQcgHIgAEzKFb@vaman>
- <Z7MChDND+iClDNES@hu-varada-blr.qualcomm.com>
+	s=arc-20240116; t=1740636107; c=relaxed/simple;
+	bh=rPsLXSIlQSDCrhzxipSR0b90z+AZe/txP8doGIMPNLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GyzescKGNrnSJ5wiACqgz4IdmPDLPnOYBPWBAHHmU86DzmsDidthCuooDJDtk8jD391tX+EwICPElpUqJV4FCcGndSZmgshEfVozAjq2uvXnqQ/IRTXLRuPceobT/OCKkxrjpyBCoarptRptXW9WOlj4SqIHywKC1aPTBDYGBYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ao1d9D2T; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fe9759e5c1so1005346a91.0;
+        Wed, 26 Feb 2025 22:01:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740636104; x=1741240904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mQOD6qMSjdqWtzCTx+pFa0M8XN6p/c/XrJV+5EOBBM=;
+        b=ao1d9D2TuVrpFCHqBSTxaepvAelyhYyt55Wn0U8OSBjPcx7jQA0el0NqELvaHw9GVw
+         IjTAx1hylXDq9Y6/jghmp8EeJnmvyBlxwyD0FXE7NiWxwnoZrRH5lAjY6eT1h9qOCype
+         QXuhRJcBqNznj7TPD1MO/A0uRPlAyjr+22iM/I8aRIkfJGDUwK7VbTVu873Ydn/36f8D
+         UcA1hudiqTp8VEns0l3KguwhukM8ZTENnAqHAvhi2YduFio4ng1qxw4DO6v1HXZC8Ynv
+         D/y1d2zU/q1cQ9xahSiLblEFoFBADptyYEyXlhPvMsT+AJFmSf7GM/T9GgBQSt+NR+n/
+         0jqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740636104; x=1741240904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/mQOD6qMSjdqWtzCTx+pFa0M8XN6p/c/XrJV+5EOBBM=;
+        b=PZo3yfHat3b3dF7O/oNc+Psn3IVOJ/mVsJBQN5yvc6xfFYU5CNeBl5JEzoeScnWweU
+         L4kS+ftdI5BDmESJxhE5KgOD5y28C7L4SrIbE5Ms7v1kFnLGIskaZGo9Iqd8nZi1Yrq5
+         NTrNrT22XqgM+8o4hpoQ3rppjpzNDxe7cBxFyBDaDUpBeSrxWJ7KG2/W33iynftOrQ2o
+         i6k6gVblJiagC5W33YXFrBMX41KZUujBpfqyCQNLcLF/xr76ozi93ke0hQyZGTHyz48L
+         LxdFbZDDvCh9oHpQfFvXPHH0kMxe3ernihRKT9sgeCvXkJGsvz077S4QXObOWYM2DdD0
+         LlsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1+QynGzVLcq61x8erR8Mix+SduOhSMlbFSzl6XMpzyg1xPiJPkajdzmWVPGZdtW58hwGIkZ5Ypqii@vger.kernel.org
+X-Gm-Message-State: AOJu0YzudOOujiDNrRuKEh6XKrAvE62G2yp7I5BXFU3LSq2AlfodFDFn
+	x6Y41PeFL+84OKA0/5Bduy+jdpt/CcK2BT45SpKG0mPq8AlkQebk
+X-Gm-Gg: ASbGncs3OxyRlPo9ESAUUxhmf16aTgatKcRhRD3agZAvXi0wqQc6xXulWryyVN8sgYf
+	hpylxfNX7hkN6su5Je75nWY5PmUczW206m8aSkkLa1xVa0+eX/NMZBH+1cLauIu0J0g96b49kQ+
+	ilqSi1AX/ImcEuvLeMLzlMphtaBwGctEpDLlUi5DbCv8xt4pFQeMw5zEmjhlOGDB15DedWxAkpH
+	1utRLx6YXfGUm/ZnFYBxbYFlsNDLs7OP5lg2yz6+ASc6dRhkiUAB7ii8q3G0bwfBQSenc9pz1Nk
+	Uft6C+zEDnST3Va6L0iLBk4dOkf/nmYEbOr0
+X-Google-Smtp-Source: AGHT+IFuEs4AAjjifzVRpqGnWLY52CMxLXiU8hn4T+n1HgSLdz6Z6rVMv5YZ5DGLwtmkw/hJmQTEUA==
+X-Received: by 2002:a17:90b:2588:b0:2fa:20f4:d277 with SMTP id 98e67ed59e1d1-2fce873af65mr39994730a91.24.1740636104120;
+        Wed, 26 Feb 2025 22:01:44 -0800 (PST)
+Received: from cs20-buildserver.lan ([2403:c300:cd02:bc36:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe824b67a1sm2728177a91.0.2025.02.26.22.01.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 22:01:43 -0800 (PST)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v5 0/5] Add support for Nuvoton npcm845 i3c controller
+Date: Thu, 27 Feb 2025 14:01:26 +0800
+Message-Id: <20250227060131.2206860-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7MChDND+iClDNES@hu-varada-blr.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On 17-02-25, 15:03, Varadarajan Narayanan wrote:
-> On Thu, Feb 13, 2025 at 11:22:01PM +0530, Vinod Koul wrote:
-> [ . . .]
-> 
-> > > +static const struct qcom_uniphy_pcie_data ipq5332_data = {
-> > > +	.lane_offset	= 0x800,
-> > > +	.phy_type	= PHY_TYPE_PCIE_GEN3,
-> > > +	.init_seq	= ipq5332_regs,
-> > > +	.init_seq_num	= ARRAY_SIZE(ipq5332_regs),
-> > > +	.pipe_clk_rate	= 250000000,
-> >
-> > can be written as 250 * MEGA
-> 
-> Ok.
-> 
-> [ . . .]
-> 
-> > > +/*
-> > > + * Register a fixed rate pipe clock.
-> > > + *
-> > > + * The <s>_pipe_clksrc generated by PHY goes to the GCC that gate
-> > > + * controls it. The <s>_pipe_clk coming out of the GCC is requested
-> > > + * by the PHY driver for its operations.
-> > > + * We register the <s>_pipe_clksrc here. The gcc driver takes care
-> > > + * of assigning this <s>_pipe_clksrc as parent to <s>_pipe_clk.
-> > > + * Below picture shows this relationship.
-> > > + *
-> > > + *         +---------------+
-> > > + *         |   PHY block   |<<---------------------------------------+
-> > > + *         |               |                                         |
-> > > + *         |   +-------+   |                   +-----+               |
-> > > + *   I/P---^-->|  PLL  |---^--->pipe_clksrc--->| GCC |--->pipe_clk---+
-> > > + *    clk  |   +-------+   |                   +-----+
-> > > + *         +---------------+
-> > > + */
-> > > +static inline int phy_pipe_clk_register(struct qcom_uniphy_pcie *phy, int id)
-> > > +{
-> > > +	const struct qcom_uniphy_pcie_data *data = phy->data;
-> > > +	struct clk_hw *hw;
-> > > +	char name[64];
-> > > +
-> > > +	snprintf(name, sizeof(name), "phy%d_pipe_clk_src", id);
-> > > +	hw = devm_clk_hw_register_fixed_rate(phy->dev, name, NULL, 0,
-> > > +					     data->pipe_clk_rate);
-> > > +	if (IS_ERR(hw))
-> > > +		return dev_err_probe(phy->dev, PTR_ERR(hw),
-> > > +				     "Unable to register %s\n", name);
-> > > +
-> > > +	return devm_of_clk_add_hw_provider(phy->dev, of_clk_hw_simple_get, hw);
-> > > +}
-> > > +
-> > > +static const struct of_device_id qcom_uniphy_pcie_id_table[] = {
-> > > +	{
-> > > +		.compatible = "qcom,ipq5332-uniphy-pcie-phy",
-> > > +		.data = &ipq5332_data,
-> > > +	}, {
-> > > +		/* Sentinel */
-> > > +	},
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, qcom_uniphy_pcie_id_table);
-> > > +
-> > > +static const struct phy_ops pcie_ops = {
-> > > +	.power_on	= qcom_uniphy_pcie_power_on,
-> > > +	.power_off	= qcom_uniphy_pcie_power_off,
-> > > +	.owner          = THIS_MODULE,
-> > > +};
-> > > +
-> > > +static int qcom_uniphy_pcie_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct phy_provider *phy_provider;
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct qcom_uniphy_pcie *phy;
-> > > +	struct phy *generic_phy;
-> > > +	int ret;
-> > > +
-> > > +	phy = devm_kzalloc(&pdev->dev, sizeof(*phy), GFP_KERNEL);
-> > > +	if (!phy)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	platform_set_drvdata(pdev, phy);
-> > > +	phy->dev = &pdev->dev;
-> > > +
-> > > +	phy->data = of_device_get_match_data(dev);
-> > > +	if (!phy->data)
-> > > +		return -EINVAL;
-> > > +
-> > > +	ret = of_property_read_u32(dev_of_node(dev), "num-lanes", &phy->lanes);
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret, "Couldn't read num-lanes\n");
-> > > +
-> > > +	ret = qcom_uniphy_pcie_get_resources(pdev, phy);
-> > > +	if (ret < 0)
-> > > +		return dev_err_probe(&pdev->dev, ret,
-> > > +				     "failed to get resources: %d\n", ret);
-> > > +
-> > > +	generic_phy = devm_phy_create(phy->dev, NULL, &pcie_ops);
-> > > +	if (IS_ERR(generic_phy))
-> > > +		return PTR_ERR(generic_phy);
-> > > +
-> > > +	phy_set_drvdata(generic_phy, phy);
-> > > +
-> > > +	ret = phy_pipe_clk_register(phy, generic_phy->id);
-> > > +	if (ret)
-> > > +		dev_err(&pdev->dev, "failed to register phy pipe clk\n");
-> > > +
-> > > +	phy_provider = devm_of_phy_provider_register(phy->dev,
-> > > +						     of_phy_simple_xlate);
-> > > +	if (IS_ERR(phy_provider))
-> > > +		return PTR_ERR(phy_provider);
-> >
-> > should we not unroll the pipe clk registration here?
-> 
-> Since it is a 'devm_' clk_hw_register_fixed_rate, wouldn't the devm
-> framework do the unregister?
-> 
-> 	$ git diff
-> 	diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-> 	index 6b4f76b9c4da..3fd1a12cc163 100644
-> 	--- a/drivers/clk/clk-fixed-rate.c
-> 	+++ b/drivers/clk/clk-fixed-rate.c
-> 	@@ -58,6 +58,7 @@ static void
-> 	devm_clk_hw_register_fixed_rate_release(struct device *dev, void *re
-> 		 * the hw, resulting in double free. Just unregister the hw and
-> 		 * let
-> 		 * devres code kfree() it.
-> 		 */
-> 	+	printk("--> %s: %s\n", __func__, __clk_get_name(fix->hw.clk));
-> 		clk_hw_unregister(&fix->hw);
-> 	 }
-> 
-> 	diff --git a/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
-> 	b/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
-> 	index 311f98181177..9a8d8d9a7c2b 100644
-> 	--- a/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
-> 	+++ b/drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
-> 	@@ -267,6 +268,7 @@ static int qcom_uniphy_pcie_probe(struct
-> 	platform_device *pdev)
-> 
-> 		phy_provider = devm_of_phy_provider_register(phy->dev,
-> 							     of_phy_simple_xlate);
-> 	+	phy_provider = ERR_PTR(-EINVAL);
-> 		if (IS_ERR(phy_provider))
-> 			return PTR_ERR(phy_provider);
-> 
-> I forced an error here and saw that devm_clk_hw_register_fixed_rate_release
-> is getting called, which in turn calls clk_hw_unregister. Is that sufficient?
-> Or am i missing something.
+This patchset adds support for the Nuvoton npcm845
+Board Management controller (BMC) SoC family.
 
-I missed that internally this is devm_, this is fine
+The Nuvoton npcm845 uses the same Silvico IP but an older version.
+This patchset adds fixes for the npcm845 specific hardware issues.
+
+--
+v5:
+ - Add default driver data
+ - Add helper function svc_has_daa_corrupt()
+ - Revise SVC_I3C_QUIRK_FIFO_EMPTY fix and add comments
+
+v4:
+ - Fix kernel test robot build warning.
+ - Add SVC_I3C_QUIRK_DAA_CORRUPT fix
+
+v3:
+ - Add more description in dt-binging commit message
+ - Add the svc_i3c_drvdata structure in struct svc_i3c_master
+ - Improve the do_daa
+
+v2:
+ - Add a new compatible string in dt-binding doc.
+ - Add driver data for npcm845 to address the quirks.
+ - Modify svc_i3c_master_write to be reused by SVC_I3C_QUIRK_FIFO_EMPTY fix
+ - Fix typo of SVC_I3C_QUIRK_FALSE_SLVSTART fix.
+ - Remove the code changes in svc_i3c_master_do_daa_locked, will add it in
+   another patch series for common improvement.
+---
+
+Stanley Chu (5):
+  dt-bindings: i3c: silvaco: Add npcm845 compatible string
+  i3c: master: svc: Add support for Nuvoton npcm845 i3c
+  i3c: master: svc: Fix npcm845 FIFO empty issue
+  i3c: master: svc: Fix npcm845 invalid slvstart event
+  i3c: master: svc: Fix npcm845 DAA process corruption
+
+ .../bindings/i3c/silvaco,i3c-master.yaml      |   4 +-
+ drivers/i3c/master/svc-i3c-master.c           | 123 ++++++++++++++++--
+ 2 files changed, 116 insertions(+), 11 deletions(-)
 
 -- 
-~Vinod
+2.34.1
+
 
