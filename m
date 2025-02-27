@@ -1,87 +1,185 @@
-Return-Path: <linux-kernel+bounces-537315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99048A48A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:24:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C34AA48A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4C1188A47E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D4D3B60E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD0E270EDD;
-	Thu, 27 Feb 2025 21:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A777270ECE;
+	Thu, 27 Feb 2025 21:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld55pj4b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KfLOkzEc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h6j0FYMj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189726FA68;
-	Thu, 27 Feb 2025 21:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016C28BEC;
+	Thu, 27 Feb 2025 21:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740691444; cv=none; b=iYxXUiE0E2BpexTiCeC9bO876D7PpfvNzZBStiYzttU4PemdkkH/fs9Er5/Mt0PF3RHcCNiZnn/UNLtEkVS8hLR1ObdZhjF1r0XLjqSG/JF6yQoIJv1Ueo3B3blsDaUU5w6n7pwTnLm/ajK36uFl5bWba5Ll0pJ+F6IcUgGAnlk=
+	t=1740691497; cv=none; b=HmQTi9tQNl+6WdrNI5CV9N5O6BkSttZM0Pq3u47UVYfcXPxhCW/vURa5BXB0d2xDA/kaUUa5GgCRT9U4lAvqsdh6FPNv6BYIPnpH/0lcC7pwMOZQZvn/c8/Lzn05n37IZIAQ/+tIh0hlIvTNphEmAvSY5z2JjqF+lWgaymnh2x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740691444; c=relaxed/simple;
-	bh=vD8RUpJ0yAedJRgQfUTf+GMBbYOFPmK1x7iiFwnW3Fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rG45vl3iS+4I/kb9TMeKJNMC2g5nKURQ8OLbJgm8Ytfivy90VX9Ceh6Cg0zs0okL/vhmNrxJuLx7t7QDZ/0FMGd/aVAYFSFucZp69OJPgyruZ0AtxQzDBzaVFY9UAAjy+m94TwXzykyLkJnMyIeQHsO/QBcNSyY23/wTsxQAeOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld55pj4b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C323C4CEDD;
-	Thu, 27 Feb 2025 21:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740691443;
-	bh=vD8RUpJ0yAedJRgQfUTf+GMBbYOFPmK1x7iiFwnW3Fg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ld55pj4bFuPsOkON+H2nuyZvN0PedfTwaoPB4SGghCybDpYfWimkHPVYIHe3BP17u
-	 DHeK+UQ+rLFEdd8ZD3CmaotrWR7EE7wZkbYft6Tn4ttVYPfkVcHWQMT45m3Vv+Vz5W
-	 bcsiufUXD7hA22Urm7yD+baM6ktDtKT5XPi7IR8Zfll7oyJfgrYXIwbYj3IhbNk+En
-	 AoyNw1owA8ZXK7Xf5m6++KMzsY+grs/n5KyIK2vplpNCZ/fuaVnWnMZ3CCClzHSAIz
-	 GBwW9TMSy5pJfLgu9uaBh6RCl07TdZLcCwyvjRT7KIxDyHZZ5MQ17h4lmWd2nhDtHk
-	 /WFdG7cWY3lsQ==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] f2fs: fix the missing write pointer correction
-Date: Thu, 27 Feb 2025 21:24:01 +0000
-Message-ID: <20250227212401.152977-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+	s=arc-20240116; t=1740691497; c=relaxed/simple;
+	bh=I7Gw+VOrI81yKKKEn1hv//pEIL9LNwWod+qYpXQUf9Q=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=H9Y0zEcH51nE1W4gJv4o0DitRzOdNd3bOIWhLY+iv/D6bXmjbZgKSGNfzJ3o1CQ1M0qL1vxyUOsi8/8zdmEfTda1jDLakXHkNxC8m+W5MI/rAWwNtutrz8c7LvW93l/Mk8+igtIM9bl9KV0FSZ6TUJNKu0I528eqG5LGQwl1X4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KfLOkzEc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h6j0FYMj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 21:24:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740691492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=9pP9b9kojON7jgAl1zqDNk5ddQhlUEqyQo91wqw5eHo=;
+	b=KfLOkzEci080xPMVcz3Jh91nB78XZJHH/sL9C9FHW+LoX6YmmShcv0xoWSKkS/Ar2AI3EW
+	8G/3d0WxpwrrsNy2LPKobYYZBRyayvw1CZk2aFp35Q5OHYRNoE93w9MXd04LJmDt8Ga93R
+	FWE3Jv3GOiIKsA4CpwfafqiNhXp0e5Rf5thn5Zz6wUzmwkyr0EnheSklSp/E5jAHvF4mbc
+	KdmjoVPNSWUE+IZJQVX8/7nNT1GvYLPoQJttfnjGatJMQBqXZ5dc6fcvBfLaHraqeOaeoU
+	H2JZqYENAosy8u7NVSoB2IHCPFfJldPPy17Rgxm3lW+Bz1rzbnm21DA7kvrhVw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740691492;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=9pP9b9kojON7jgAl1zqDNk5ddQhlUEqyQo91wqw5eHo=;
+	b=h6j0FYMjcD8vCIU91p5qvwqYgTKv9gdOSIeiQgC9jKnRpXfmfVe/Q0Gpn3SODUbFKDOTkJ
+	SmHi5G5Syv7i6lBQ==
+From: "tip-bot2 for Max Grobecker" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in
+ init_amd_k8() on AMD when running in a virtual machine
+Cc: Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>,
+ linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174069148027.10177.17527893236219214276.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-If checkpoint was disabled, we missed to fix the write pointers.
+The following commit has been merged into the x86/cpu branch of tip:
 
-Cc: <stable@vger.kernel.org>
-Fixes: 1015035609e4 ("f2fs: fix changing cursegs if recovery fails on zoned device")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Commit-ID:     1ec6ddc0d9857b56f1cb3d014395eee6a86923d6
+Gitweb:        https://git.kernel.org/tip/1ec6ddc0d9857b56f1cb3d014395eee6a86=
+923d6
+Author:        Max Grobecker <max@grobecker.info>
+AuthorDate:    Thu, 27 Feb 2025 21:45:05 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 22:07:28 +01:00
+
+x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when ru=
+nning in a virtual machine
+
+When running in a virtual machine, we might see the original hardware CPU
+vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
+hypervisor. In case we run on AMD hardware and the hypervisor sets a model
+ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
+capabilities present to circumvent a bug with some BIOSes in conjunction with
+AMD K8 processors.
+
+Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
+bash scripts and prebuilt Docker containers, as it does not need to have
+additionals tools present =E2=80=93 even though more reliable ways like using=
+ "kcpuid",
+which calls the CPUID instruction instead of parsing a list, should be prefer=
+red.
+Scripts, that use /proc/cpuinfo to determine if the current CPU is
+"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
+claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missi=
+ng
+in that flags list.
+
+This can prevent some docker containers from starting or build scripts to cre=
+ate
+unoptimized binaries.
+
+Admittably, this is more a small inconvenience than a severe bug in the kernel
+and the shoddy scripts that rely on parsing /proc/cpuinfo
+should be fixed instead.
+
+This patch adds an additional check to see if we're running inside a
+virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
+understanding, can't be present on a real K8 processor as it was introduced
+only with the later/other Athlon64 models.
+
+Example output with the "lahf_lm" flag missing in the flags list
+(should be shown between "hypervisor" and "abm"):
+
+    $ cat /proc/cpuinfo
+    processor       : 0
+    vendor_id       : AuthenticAMD
+    cpu family      : 15
+    model           : 6
+    model name      : Common KVM processor
+    stepping        : 1
+    microcode       : 0x1000065
+    cpu MHz         : 2599.998
+    cache size      : 512 KB
+    physical id     : 0
+    siblings        : 1
+    core id         : 0
+    cpu cores       : 1
+    apicid          : 0
+    initial apicid  : 0
+    fpu             : yes
+    fpu_exception   : yes
+    cpuid level     : 13
+    wp              : yes
+    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
+                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdt=
+scp
+                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
+                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe pop=
+cnt
+                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
+                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
+
+... while kcpuid shows the feature to be present in the CPU:
+
+    # kcpuid -d | grep lahf
+         lahf_lm             - LAHF/SAHF available in 64-bit mode
+
+[ mingo: Updated the comment a bit. ]
+
+Signed-off-by: Max Grobecker <max@grobecker.info>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
 ---
- fs/f2fs/super.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/amd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f5c69cc2de72..7a8fcc1e278c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4752,8 +4752,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (err)
- 		goto free_meta;
- 
--	if (unlikely(is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)))
-+	if (unlikely(is_set_ckpt_flags(sbi, CP_DISABLED_FLAG))) {
-+		skip_recovery = true;
- 		goto reset_checkpoint;
-+	}
- 
- 	/* recover fsynced data */
- 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD) &&
--- 
-2.48.1.711.g2feabab25a-goog
-
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 54194f5..c1f0a5f 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -631,8 +631,11 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	 * Some BIOSes incorrectly force this feature, but only K8 revision D
+ 	 * (model =3D 0x14) and later actually support it.
+ 	 * (AMD Erratum #110, docId: 25759).
++	 * Only clear capability flag if we're running on baremetal,
++	 * as we might see a wrong model ID as a guest kernel. In such a case,
++	 * we can safely assume we're not affected by this erratum.
+ 	 */
+-	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
++	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X=
+86_FEATURE_HYPERVISOR)) {
+ 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+ 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
+ 			value &=3D ~BIT_64(32);
 
