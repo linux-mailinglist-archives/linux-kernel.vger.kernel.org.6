@@ -1,94 +1,97 @@
-Return-Path: <linux-kernel+bounces-537120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A920A48836
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB59A48835
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D8463A4DD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DCA63A3DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE826BD95;
-	Thu, 27 Feb 2025 18:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4B226A0BF;
+	Thu, 27 Feb 2025 18:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovWiIEZ7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZWG+Jsm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8624726B2D5;
-	Thu, 27 Feb 2025 18:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911C4258CF1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740682239; cv=none; b=r6mHQnqpBZGAFbBWOa6OGZ/h3WSeZH9c6aAS51IGYdIwSmFF68tGCyLUoWlI/2lRco8F7UQyGN5EIBwghZGjA+Ipq0oRtWLC95wzP/+qQnPhGhzV0RX7ZKD53DkYNHM0Ie6e+bgltPINuMv75GXZGN5iNLPjyIjMA1BXLmFOTwE=
+	t=1740682235; cv=none; b=jVhijRof0ThsomKUJys6sNL6heCu+IXp/zWWOH3VDKsa+IL2l81F+mrxUC6e7Gx7AZ6ar3XFpRLh8Iq3XV5pKk3zHSfmjAeEhYP8zUBiNmpughJWcZz9ps21j9mAmjV1a3BV6jLTBPfpOdp4sSAVZFJHOb0QZ2Fq4UnF9quhHF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740682239; c=relaxed/simple;
-	bh=oTVSH8ATq89gEN+7dq3E+hPTjcXNSgoWoUNOl9on9bw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7I+Z8vTS+1tdp6fjlWl2Qi1x3Q1jKww394agBVIfqoO18ydTr661HUg0mHp2qoF5vrN5EICeB5twQGgM31DsQNvlWcPYse4uTutu3+Psyx3+y7gjLbzdl8LrDe1LgIL9HsQsLKvVzh5f53CXf7oalkL5tj8sYIpbaHGmdcx7sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovWiIEZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D7E8C4CEE7;
-	Thu, 27 Feb 2025 18:50:39 +0000 (UTC)
+	s=arc-20240116; t=1740682235; c=relaxed/simple;
+	bh=PdhWZy9D7TCGdHdbg75DVHTX/1icTJe90dYyzL4iqgM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rYMODeo+U58bkagB7IgrjQCEsGnHZGpwCHcdx0JdSM8oGjAFRlspRDa5s01KFVvqIxX3+iJpFbERSnXfyCKdJ9h1iUJxyjIJHdAvo62TxTbU/I/oO6zeh5+cy86x7gyYyt93F9ZmSO4GuSWbo1u8ND/n7DNhcdlGRRrJu3pzr2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZWG+Jsm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A3AC4CEDD;
+	Thu, 27 Feb 2025 18:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740682239;
-	bh=oTVSH8ATq89gEN+7dq3E+hPTjcXNSgoWoUNOl9on9bw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ovWiIEZ7pLy2cYEmwBy9IfLXnjS6VdikWxELyTrI2QDKLTCdc645ImyP1GuLNhavP
-	 765lMHOEFbwWxUChgBN0HB4KOYFfR/xHdJnWc+9rUL5FjaFaik0cZ4IxnUyv0MBiAg
-	 yQDBkUkO3WxcDDICEEhqbsBmypRrfd6Vc6stZ8EmpnZBxoTu6FUcrfiAaAwFP/GQpB
-	 +2kWeNuPZL1BpMsGVeRTVAi7hlUSBN9Nfpl9MfZYAfJU0o2frDafj8xkW6cQFKuU+s
-	 2tsCX55wezvcRolMndfUhqqaERxbOxdnX0Fo4vO6ZudDOwJowP7fVW+fp9BNWq7Vna
-	 38vOsLr4rtCtg==
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22356471820so19261275ad.0;
-        Thu, 27 Feb 2025 10:50:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU4duq3gHsx8k5Gq0ENiF0+j/7es9M4xyrGgTqWemI37zTg2h1FmbN09Ffc7fqb0lj5CZfHWGJw/wjyTGU=@vger.kernel.org, AJvYcCUvN2VXvnMTdR4dpfRpVj7yM5vWW6R3n+RGemZh2LMGMU+XizRjRwlMZtMwLU9d493POm1oGLdLD7rK+x0h2CcBgg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAIK0N86Y6+p0OFkImBQcLHDdmFf/03yV+qkmaV/v0qUUWxq1/
-	toEATA6wXmlvE2X6iRrLanl4IybgbgAuFKydYkycRBxuMFyKiwmewuaGqt66NB7rztmfsbe2eFq
-	yUieEL2HD0rLT68M1i4aCtHTRJi0=
-X-Google-Smtp-Source: AGHT+IEcT8glwiOUUxgaZKf43NgGrwojDEdFCyXWOtwjeMycyiAX4X0ZADJ2fsdkYgvLrdiPV4tdOMFvF17XUmJsHdo=
-X-Received: by 2002:a17:903:2302:b0:221:2f4:5446 with SMTP id
- d9443c01a7336-22368fba4aemr4634515ad.25.1740682238646; Thu, 27 Feb 2025
- 10:50:38 -0800 (PST)
+	s=k20201202; t=1740682234;
+	bh=PdhWZy9D7TCGdHdbg75DVHTX/1icTJe90dYyzL4iqgM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QZWG+Jsm30Kz3TKsQv7Kk64q1Eq/a0DAcMQXm1ViLfsEQCLc8d562FIccbXB9lk+y
+	 5NxDDvNRAhFSFweXFQU485yHjFoP8UoVgf0XSR6lU2Lajq0kaoZUmXinvaOohznvN3
+	 5k7vfPb6XjdACvyyZNPFFMYD/jtMRXMwC24P0YAlz31uKP0y5ReRZzMSmiA+GGUDPr
+	 xLYp5L91cfWEwc1hIfkBWp7kRrfpcH2XQS83LN1BRHeDlOabq/WdEqueCSu6z9ULTj
+	 uisn0lGGG3WFDv7oI8E3ScPSjJZs+RNmiXMXkcgxeU5LglxD/2xruyc/whFo09j4ae
+	 CKAVKsb1mb1hQ==
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Luiz Capitulino <luizcap@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64/mm: Fix Boot panic on Ampere Altra
+Date: Thu, 27 Feb 2025 18:50:27 +0000
+Message-Id: <174052227763.2420464.2784848656225511807.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250225114638.2038006-1-ryan.roberts@arm.com>
+References: <20250225114638.2038006-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227051718.1176930-1-namhyung@kernel.org>
-In-Reply-To: <20250227051718.1176930-1-namhyung@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Thu, 27 Feb 2025 10:50:26 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6wuBjCo9ygCFhyYimEHg5ZNtN7-Yd+gWuMJPTU781vFw@mail.gmail.com>
-X-Gm-Features: AQ5f1JqKpEAia7ny_bAWJIbQCaS3pUgO-hy2zjDAKa68TfRDgM_e95e4q7iAJpY
-Message-ID: <CAPhsuW6wuBjCo9ygCFhyYimEHg5ZNtN7-Yd+gWuMJPTU781vFw@mail.gmail.com>
-Subject: Re: [PATCH v2] perf tools: Skip BPF sideband event for userspace profiling
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, James Clark <james.clark@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 9:17=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> The BPF sideband information is tracked using a separate thread and
-> evlist.  But it's only useful for profiling kernel and we can skip it
-> when users profile their application only in userspace.
->
-> It seems it already fails to open the sideband event in that case.
-> Let's remove the noise in the verbose output anyway.
->
-> Cc: Song Liu <song@kernel.org>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On Tue, 25 Feb 2025 11:46:36 +0000, Ryan Roberts wrote:
+> When the range of present physical memory is sufficiently small enough
+> and the reserved address space for the linear map is sufficiently large
+> enough, The linear map base address is randomized in
+> arm64_memblock_init().
+> 
+> Prior to commit 62cffa496aac ("arm64/mm: Override PARange for !LPA2 and
+> use it consistently"), we decided if the sizes were suitable with the
+> help of the raw mmfr0.parange. But the commit changed this to use the
+> sanitized version instead. But the function runs before the register has
+> been sanitized so this returns 0, interpreted as a parange of 32 bits.
+> Some fun wrapping occurs and the logic concludes that there is enough
+> room to randomize the linear map base address, when really there isn't.
+> So the top of the linear map ends up outside the reserved address space.
+> 
+> [...]
 
-This turns out to be more complicated than I thought. I actually
-like v1 better.
+Applied the reduced version to arm64 (for-next/fixes), thanks!
 
-Thanks,
-Song
+[1/1] arm64/mm: Fix Boot panic on Ampere Altra
+      https://git.kernel.org/arm64/c/2b1283e1ea9b
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
