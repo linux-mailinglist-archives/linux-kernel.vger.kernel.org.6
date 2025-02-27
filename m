@@ -1,220 +1,233 @@
-Return-Path: <linux-kernel+bounces-535747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D35AA476AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:35:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E236A476B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC2F3AB716
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E887A2BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE652222B8;
-	Thu, 27 Feb 2025 07:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890A92222B0;
+	Thu, 27 Feb 2025 07:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAV7nAGC"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NGgMx6H0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4945C21CC78;
-	Thu, 27 Feb 2025 07:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB7B1EB194;
+	Thu, 27 Feb 2025 07:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740641726; cv=none; b=CoEAAMS06yrNl80z676L3wBVfReS/quSMKLQVuNqGxj8hVP1syKib88DBxbIdk85X+ZxozdCQbolDn56MjNZ1RNuLqQu/jbsLifPwY2Q7P0sjzyO86vsT/qiDd+fg2vdoNai+kl9XrPB7AmK77jRPxhBFjIMu/iZfbLkJJMsFSg=
+	t=1740641846; cv=none; b=q65mdNHTJJidhSqVMM9G+8Yhqnh0sVsFbu0ytmJCIj/qQ3cRjbGOtq5Ndefezt42GCEuMeITrh8s4ilnp7RXvlbGwEwy1tHuJ8UCojzHIZpAnvh0SeamO9IDJQyhL+Iy/1IkhFeP8kMIcPxU7855tZYVZIxeLrUjb9Waar+puAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740641726; c=relaxed/simple;
-	bh=8hg+9araqvEMPI2HTgeHHZA6fNAP81AgSp6OmVnX3Tg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kVJP1oN4lpgDX2BobAEQD3MjyckvYITteM2a6+/xEct/EF21L+ml9xIQ7xJsJxJCkVOAk9WfhltM8fRlp80TW3wnPuRhIzQzZ7Qq5DLuJ+489oJRHX0wSTl+UULTNh9WsofC8GCnPNM6WW2Mh5xCtLFZekw3vC9mVVHGHtoeExA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAV7nAGC; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2235025322fso1019565ad.2;
-        Wed, 26 Feb 2025 23:35:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740641724; x=1741246524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuiEsUqTezBrxInrICHfQuSg7HvE344EU1ThXTmLiXU=;
-        b=MAV7nAGCnv/V4C2VZm9eIZNMbSPBoSNaOt+m8imndl6wwcWmrqVLl21V8M2vnYOH9l
-         SX//W2F99QgcbbmP2GScopTxVYN1GZ+QJMtyMbGymI5onAkIGGzG/v87Keqb0XqG+yXO
-         +FSZA+XLVtmaz4gADqQr0gUgC6Uk65vkcH3y+3GccdgNlxoeuRz1y/MGR2ujEEXCVMiz
-         eKHG4xxqN+qDFpyNWTljEXOW+FyuwoWqoDD+72YWX2fH7lG3rSIiF+D64x/hpqXWJyjF
-         thSmy33kY/lG2nfn5HG7ho0wgs5mHf/PSz5OtX0xPJ8yHauB6nZ6acUR98jmO9Ob6cvJ
-         oC+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740641724; x=1741246524;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tuiEsUqTezBrxInrICHfQuSg7HvE344EU1ThXTmLiXU=;
-        b=aPqc4kUh8nJsefbdXcdQEsv22Bt3FNwJmGW9FdW6p96ckpncTNllzzI3J1r09arRcg
-         61uBE/8Jbcn9VsEKjA6Ta53asZ5LuNfS+aBJ1rmgDbLGRWe511DSzU80lUI7Xgg16wE4
-         wrXbOpotC4VD3Gvm3yQ8IN2IqwAyHcq9AxrToArvGCmdkvE8ibssoDjCgvtK2LELK8XY
-         gOyXxmIDJesum06hjkxPHkAqfYps8kWH0el0UDshvcJPv3H/yjx0DKr4D3jd/nc8afi1
-         saisKAp2JAbhK0Afj4DN85VzpOB84A+AGDPz/0sNLfYvTn/lKt7weCUKDSmiZo1lHBzN
-         J/lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyYQ7J9Vscf2FIBFiWdyzpHvn8qQBdUsIBkHs8fdX/4MJEUS3VxGJPy8jAvkXSI1jaid/qn9WeVZ4r4hMX@vger.kernel.org, AJvYcCXZNG2VxuutPb/4+DbW40rnUDkBCWd27w9j5k6c2h9I6GPFvSnVzBsnIj4mJxwnbaMKyF4tQsuplWF77g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCDI+8BbYxfn1Ix4PJN/aUOViqvq7oDI91ZAvLc7cfIVPYOXDh
-	9n37RN+WNNbtEi2zxV+UagsquPqjkt/GJv9fDNJ8z/6aMS92CNV6
-X-Gm-Gg: ASbGncsrgJ16W+gBpiyMSvwtJ4tddfUDSf3ZHJkTuz4GpNalWgJnoiutK0NC6oOds0/
-	BFXljVdKy3lMAT3/yHEpTausIN3tso6dRO/Qml2ba8WHaS11bcpSKGMEV7M0jDqq3Ex1mMRz+B7
-	MPrlAwHd4Eb1/rkb2FYZpbhfn3uSn/dsocfdR91m4q3+r2qnIj8BrGB0oK3wRQ1M39QRUkL6LVm
-	iNh3ZvKaQfGByQcfH6YE6BBeiL2aiq1GgE4+ld/Ia5CGboRvG+kT9TYcb0Il4FwLkCPNhc+uHTE
-	7qZYcVTZ106gvH8ZmNyO9nvnJ6I=
-X-Google-Smtp-Source: AGHT+IFVNaKaThEpZWarAFUAoVnKLdGRyEHbvuziklT+DeHtIeeC/OIp3vD5A6k3YedUKxSAKj4yOw==
-X-Received: by 2002:a05:6a00:1489:b0:730:8526:5db2 with SMTP id d2e1a72fcca58-73426db0babmr13541342b3a.5.1740641724316;
-        Wed, 26 Feb 2025 23:35:24 -0800 (PST)
-Received: from SaltyKitkat.. ([2403:18c0:5:400:bca6:d6ff:fe8f:8ac0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe48858sm868340b3a.51.2025.02.26.23.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 23:35:24 -0800 (PST)
-From: Sun YangKai <sunk67188@gmail.com>
-To: dsterba@suse.com
-Cc: Sun YangKai <sunk67188@gmail.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] btrfs: simplify copy_to_sk() by removing unnecessary min key check
-Date: Thu, 27 Feb 2025 15:35:04 +0800
-Message-ID: <20250227073509.1764-1-sunk67188@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740641846; c=relaxed/simple;
+	bh=d6+xsNMLGylxxEKXWbWqVK7LJVxyIb/Mz0Pc9ABIaXY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s32lJs9VLRiKpKU4sHz0LpfXDlJ0HS0iLErpy5jjaTnvfjgptshkx3mxfoWJkOh4fATit6Zvaz9Shznqa2FsmgkCuAGPyJstbVwIBm0mgKA0jlrz4c4L5jbCK8H4onIn0AaqTHiGJGQFGuyD/s55EvYLh+Q3B19UE7ZxLpM2F1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NGgMx6H0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QKrh46017852;
+	Thu, 27 Feb 2025 07:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EZhXB7z7YOzRnW+XxlpcUTeG
+	X2DctPRP+TSIzjsr4os=; b=NGgMx6H0DlHKHOQoJfzsGPANqtnF2yrTHN1mFrm7
+	3NcryYbQECZDgp4IXB1FspIVscjG8wgLLs4BTTju0m7UFIp7Y/anG5q9Zhh1AFGS
+	YXRZgVfnKYC5AhRwTvF5ptyHqnrEk7qdJnrBazgZCm0HZOCOp+x2CeTMuQ/KwuzI
+	EZWaw+7FvEP3IzbRdYAlYweatp30vxpVQxGx9akiGNyCTiXfuh/v668uNiu6MUDo
+	6i1yhyDOz9f3zQpPrWzJ2rNc7Cu5B4AnihcE7tvjwhFSOIWleiCiFV+i5H/iioA3
+	MvtvHJchL3khbMnpJxPhzJU67cFUEu7yQ7Kixe87LJVuVA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prn4s24-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 07:37:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R7bJ07017861
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 07:37:19 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 26 Feb 2025 23:37:11 -0800
+Date: Thu, 27 Feb 2025 13:07:02 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: Re: [PATCH v5 5/6] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+Message-ID: <Z8AWHiVu05s0RJws@hu-wasimn-hyd.qualcomm.com>
+References: <4wmxjxcvt7un7wk5v43q3jpxqjs2jbc626mgah2fxbfuouu4q6@ptzibxe2apmx>
+ <Z3eMxl1Af8TOAQW/@hu-wasimn-hyd.qualcomm.com>
+ <xuy6tp4dmxiqbjitmoi6x5lngplgcczytnowqjvzvq5hh5zwoa@moipssfsgw3w>
+ <Z3gzezBgZhZJkxzV@hu-wasimn-hyd.qualcomm.com>
+ <37isla6xfjeofsmfvb6ertnqe6ufyu3wh3duqsyp765ivdueex@nlzqyqgnocib>
+ <67b888fb-2207-4da5-b52e-ce84a53ae1f9@kernel.org>
+ <Z3/hmncCDG8OzVkc@hu-wasimn-hyd.qualcomm.com>
+ <b0b08c81-0295-4edb-ad97-73715a88bea6@kernel.org>
+ <Z4dMRjK5I8s2lT3k@hu-wasimn-hyd.qualcomm.com>
+ <80e59b3b-2160-4e24-93f2-ab183a7cbc74@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <80e59b3b-2160-4e24-93f2-ab183a7cbc74@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bVkyS-N2-HDk6rlfPnogYgbU2vuiEstj
+X-Proofpoint-GUID: bVkyS-N2-HDk6rlfPnogYgbU2vuiEstj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_03,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270057
 
-The copy_to_sk() function, which is used solely by
-search_ioctl(), previously relied on the helper function
-key_in_sk() to evaluate whether a key fell within
-the range defined by the search key (sk). This function
-checked the key against both the minimum and maximum
-bounds in the search key.
+On Wed, Jan 15, 2025 at 09:35:34AM +0100, Krzysztof Kozlowski wrote:
+> On 15/01/2025 06:48, Wasim Nazir wrote:
+> >> The the SoC, I am asking about the board. Why each of them is for
+> >> example r3?
+> >>
+> >> So this is not sufficient explanation, nothing about the board, and
+> >> again just look Renesas and NXP.
+> >>
+> > 
+> > Hi Krzysztof,
+> > 
+> > sa8775p(AUTO), qcs9100(IOT), qcs9075(IOT) are different SoCs based on
+> > safety capabilities and memory map, serving different purpose.
+> > Ride & Ride-r3 are different boards based on ethernet capabilities and
+> > are compatible with all the SoCs mentioned.
+> 
 
-However, within search_ioctl(), the btrfs_search_forward()
-ensures that the search starts at an item whose key
-is already no less than min_key. This guarantees that
-no keys below the minimum threshold will be encountered
-during the traversal. As a result, the check against
-the minimum key is redundant and can be safely removed.
+Hi Krzysztof,
 
-This patch:
+> Compatible? What does it mean for a board?
+> 
 
-* Removes the key_in_sk() helper function, as
-  it is no longer needed.
-* Refactors copy_to_sk() to directly compare keysi
-  with the max_key from the search key. If a key
-  exceeds max_key, the traversal stops early since
-  all relevant items have been processed.
-* Remove the inline mark for copy_to_sk(), since
-  it is only called once in search_ioctl().
-* Updates the comments in copy_to_sk() to clarify
-  the reasoning behind removing the min_key check
-  and to document the new logic.
+Ride board is based on multiple daughter cards (SOC-card, display,
+camera, ethernet, pcie, sensor, etc.).
 
-By removing the redundant check and simplifying the
-traversal logic, this patch improves both readability
-and runtime efficiency for this code path.
+The SOC is not directly soldered to Ride board, instead SOC is soldered
+on SIP (System in Package) card which can be mounted on SOC-daughter card of
+Ride board.
+	- SoC => SIP-card => SOC-daughter-card (Ride)
 
-Signed-off-by: Sun YangKai <sunk67188@gmail.com>
----
- fs/btrfs/ioctl.c | 57 ++++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 33 deletions(-)
+Together with SIP cards and other daughter cards we are creating different
+<soc>-Ride Variants with differences in memory map & thermal mitigations.
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 61c4c6ac8994..abf1ce7e9208 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1447,31 +1447,10 @@ static noinline int btrfs_ioctl_subvol_setflags(struct file *file,
- 	return ret;
- }
- 
--static noinline int key_in_sk(struct btrfs_key *key,
--			      struct btrfs_ioctl_search_key *sk)
--{
--	struct btrfs_key test;
--	int ret;
--
--	test.objectid = sk->min_objectid;
--	test.type = sk->min_type;
--	test.offset = sk->min_offset;
--
--	ret = btrfs_comp_cpu_keys(key, &test);
--	if (ret < 0)
--		return 0;
--
--	test.objectid = sk->max_objectid;
--	test.type = sk->max_type;
--	test.offset = sk->max_offset;
--
--	ret = btrfs_comp_cpu_keys(key, &test);
--	if (ret > 0)
--		return 0;
--	return 1;
--}
--
--static noinline int copy_to_sk(struct btrfs_path *path,
-+/*
-+ * This is a helper function only used by search_ioctl()
-+ */
-+static int copy_to_sk(struct btrfs_path *path,
- 			       struct btrfs_key *key,
- 			       struct btrfs_ioctl_search_key *sk,
- 			       u64 *buf_size,
-@@ -1490,6 +1469,9 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 	int slot;
- 	int ret = 0;
- 
-+	test.objectid = sk->max_objectid;
-+	test.type = sk->max_type;
-+	test.offset = sk->max_offset;
- 	leaf = path->nodes[0];
- 	slot = path->slots[0];
- 	nritems = btrfs_header_nritems(leaf);
-@@ -1505,8 +1487,22 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 		item_len = btrfs_item_size(leaf, i);
- 
- 		btrfs_item_key_to_cpu(leaf, key, i);
--		if (!key_in_sk(key, sk))
--			continue;
-+		/*
-+		 * The btrfs_search_forward() ensures that the key of
-+		 * the returned slot should be no less than the min_key.
-+		 * This guarantees that no keys below the minimum threshold
-+		 * will be encountered during the traversal.
-+		 * So we only need to check the max key here.
-+		 *
-+		 * If a key greater than max_key is found,
-+		 * no more keys in range can be found in following slots
-+		 * and all keys in range have been found and copied to
-+		 * the buffer. So we should return 1 here.
-+		 */
-+		if (btrfs_comp_cpu_keys(key, &test) > 0) {
-+			ret = 1;
-+			goto out;
-+		}
- 
- 		if (sizeof(sh) + item_len > *buf_size) {
- 			if (*num_found) {
-@@ -1575,12 +1571,7 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 	}
- advance_key:
- 	ret = 0;
--	test.objectid = sk->max_objectid;
--	test.type = sk->max_type;
--	test.offset = sk->max_offset;
--	if (btrfs_comp_cpu_keys(key, &test) >= 0)
--		ret = 1;
--	else if (key->offset < (u64)-1)
-+	if (key->offset < (u64)-1)
- 		key->offset++;
- 	else if (key->type < (u8)-1) {
- 		key->offset = 0;
--- 
-2.48.1
+The SIP card consists of SOC, PMIC & DDR and it is pin compatible to the
+SOC daughter card of <soc>-Ride board. Only SOC is changing accross SIP
+cards, except an additional third party SIL-PMIC for SAIL, which is not
+present in QCS9075 Ride.
 
+Other daughter cards remains same for <soc>-Ride variants, except
+ethernet card which is different for <soc>-Ride rev3 variants.
+
+So the Ride board (combination of daughter cards) is same across the SIP,
+while SOC on SIP card is changing which can be sa8775p, qcs9100 or qcs9075.
+
+> Third time: did you look how other vendors do it?
+> 
+
+Yes, we have reviewed other vendors. However, please feel free to share
+any specific reference you would like us to follow.
+
+Here are few reference files we found from other vendors where similar
+tasks are performed which includes code refactoring and HW modularity:
+ - Freescale: fsl-ls208xa.dtsi, fsl-ls2088a.dtsi, fsl-ls2081a-rdb.dts
+ - Renesas: white-hawk-common.dtsi, r8a779g0-white-hawk.dts
+ - Rockchip: px30-engicam-common.dtsi, px30-engicam-ctouch2.dtsi,
+   px30-engicam-px30-core-ctouch2.dts
+
+In our case along with describing the HW, code refactoring is also done
+which might be causing confusion, but we are ready for any inputs for
+correction.
+
+Putting this pictorial diagram for updated DT structure depicting our HW.
+ - qcs9xxx-module.dtsi specifying QCS9xxx based SIP card/module having
+   SoC, PMICs, Memory-map updates.
+ - qcom-ride-common.dtsi specifying ride daughter boards, here we are
+   doing code refactoring also as this is common for all ride boards.
+ - qcom-ride-ethernet-aqr115c.dtso specifying ethernet overlay board which
+   uses 2.5G phy and can be overlayed to ride boards to get ride-r3.
+   By default ride uses 1G phy.
+ - qcs9075-iq-9075-evk.dts is the new name for RB8 as per new product
+   name. We will be changing this in next patch series.
+
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                                                                                               |
+|                                                          sa8775p.dtsi                                                                         |
+|                                                              |                                                                                |
+|                                    +-------------------------+-----------------------+                                                        |
+|                                    |                         |                       |                                                        |
+|                                    v                         |                       v                                                        |
+|                             qcs9075-module.dtsi              |                qcs9100-module.dtsi                                             |
+|                                    |                         |                       |                                                        |
+|                                    v                         v                       v                                                        |
+|                                  (IOT)                    (AUTO)                   (IOT)                                                      |
+|                                    |                         |                       |                                                        |
+|             +----------------------+                         |                       |                                                        |
+|             |                      |                         |                       |                                                        |
+|             |                      | +-------------------------+-----------------------+-------------------< qcom-ride-common.dtsi            |
+|             |                      | |                       | |                     | |                                                      |
+|             v                      v v                       v v                     v v                                                      |
+|  qcs9075-iq-9075-evk.dts     qcs9075-ride.dts         sa8775p-ride.dts         qcs9100-ride.dts                                               |
+|                                    |                         |                       |                                                        |
+|                                    | +-------------------------+-----------------------+-------------------< qcom-ride-ethernet-aqr115c.dtso  |
+|                                    | |                       | |                     | |                                                      |
+|                                    v v                       v v                     v v                                                      |
+|                             qcs9075-ride-r3.dts      sa8775p-ride-r3.dts      qcs9100-ride-r3.dts                                             |
+|                                                                                                                                               |
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+
+> > 
+> > With the combination of these 3 SoCs and 2 boards, we have 6 platforms,
+> > all of which we need.
+> > - sa8775p-ride.dts is auto grade Ride platform with safety feature.
+> > - qcs9100-ride.dts is IOT grade Ride platform with safety feature.
+> > - qcs9075-ride.dts is IOT grade Ride platform without safety feature.
+> > 
+> > Since the Ride-r3 boards are essentially Ride boards with Ethernet
+> > modifications, we can convert the Ride-r3 DTS to overlays.
+> How one board can be with multiple SoCs? If it is soldered, it's close
+> to impossible - that's just not the same board. If it is not soldered,
+> why you are not explaining it? What is Ride board? What is there? What
+> can go there? How it can be used in other SoCs? Or for which SoCs? Is
+> there a datasheet available?
+> 
+
+As our SoC is based on SIP card and SIP card is compatible with Ride
+board, we could able to use same Ride board (which is combination of
+multiple daughter cards) with multiple SIP cards.
+These SIP cards can be of sa8775p, qcs9100 or qcs9075 SOC.
+
+> You keep repeating my about SoC and I keep responding the same: don't care.
+> 
+> Best regards,
+> Krzysztof
+
+Thanks & Regards,
+Wasim
 
