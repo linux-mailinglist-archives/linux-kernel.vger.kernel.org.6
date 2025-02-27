@@ -1,133 +1,237 @@
-Return-Path: <linux-kernel+bounces-536905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B15BA485D8
+	by mail.lfdr.de (Postfix) with ESMTPS id D195EA485D9
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89833179A69
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F081754DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E751A3178;
-	Thu, 27 Feb 2025 16:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AE01B0103;
+	Thu, 27 Feb 2025 16:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YhHMxDun"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eoDsxAKk"
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99831B2EF2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160901B394E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674853; cv=none; b=IPtpTeYK+DbKCE4zyuaGwmPqlm/6yc5cntYzAPYziXkoDCib9kcOGOfqhkunxrQlVsxw0LXyUY51HQAG/cQzlpDR0PaSAZ1htNHfs+QgAlS1bEqsJ7hFkXXw7rnTqm66/Eto7P5uO9eQ8vjPEPV27oKc6TaZrYGzQj6JCbvEDLU=
+	t=1740674877; cv=none; b=pofxcIWmpAQrYlAjqAu64ZmZwpayiR+zEJ9rUqJIYl9a8Wlmta6AoP8NgvjAf5G/PB53XPLSFuu5nSzRCRPHkkM9Gg/CkYbA+AanbetvIk2e74Cn6Xj2q6Pt4nlkjPVXsmw4DWsuYC/J2dQGhX7yA4HLc5h/RNnWFr3Um3g0Pvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674853; c=relaxed/simple;
-	bh=JP0AuB3kw2PEi3GW+6fgAezX1Cf3DmKkSFC+S2+PILM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DSl2MfL0Q+uYKi7ObTUADY/lhLfMhNVnUSL/ZNDnpfsQCCtsRGnBH4KwIFZJ1QVxeYZoZgEWQNvxecmyb+fqSZEwH9XsWd91/zmVTy3Ct8BQumn0VwUn5gcJNdIsagl8h267/eFrAPyoA5HVfA+bd6XU23K4G1WmLThH5QfCOaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YhHMxDun; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471fa3b19bcso344501cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:47:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740674851; x=1741279651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F3mjCIbokKR2si82Xd+QOzbLqWQ/e+owXf6s86/Cdu8=;
-        b=YhHMxDunluXZvQaXZxXs5jrmaokKnCFLTHf+JBaFQl5PgjrdnjYXCX6besEN/o+O8c
-         tJrRRr+4iY8Hkz8H11oCKgHOt5WOti86tbCYckRGkRUpMsCKnjZU6gmfe7TSAoEV7bdw
-         yaR20BEn5IsuIi6tXjvo9DZ1ZQ9OrpfhKLGn8lOwF5tQHC2RCQ3Sm+M6msb6tXwUQVTI
-         vJgECm09jQZOHmvaNQMG5kQ1dbStTAzpBTB2gDRl2HsccSqb8Eh/TocnQrCqAVpBf4Il
-         hAbkPxbVa6wiH9ckccN8GJia5QxTzY8gKokYDQ26A3jBVBMM8UnWAfUxPZEYCtFnrs21
-         8vHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740674851; x=1741279651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F3mjCIbokKR2si82Xd+QOzbLqWQ/e+owXf6s86/Cdu8=;
-        b=dPJjom+/IXqvFWqPlNv2LGVhPF3GDB54BiMh8paI+AeVa8It203RZPJkc4vkXM7gbw
-         jXcvq6UT7ZXmswClLFGcb4+XAEbEvzzfkJ9vCEEkHGM74tSLH1N10srm9eqVGCWXchDA
-         y4Wld+B9Gk/1SP8Fi2TR0VtFzXf3YNf3b1dUHevYddZi/3300AyLINUaqqq/U3b/Dvv4
-         qIr2iBwQ9BL6HGouWpkqkATdvKcuyWNvpMBCzyZzEQP/s1tIH10M3Y2an8k50no8Fcu0
-         SYuKb6NBCs1+nwL48sG0Kqg1hHCZte5/Khfi7ucnZkgDaNiPbV4Z4FXAjzm3+zl9Byld
-         frOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXon1MavyBzA7GCPncjfy/Q/HwQEKIWRmI8gk6GydOwlkFHMWQA6CIusIraBg1JXU0UwrBBF1S0E8eP4HM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfdkWWevpeU3YRC2s+PHDwUaH1rhWg49PrZtjUmdFr8i+lCpid
-	+TPm3FkPyayU3f9CYJy5eJhGqv+rq0iGlhzh8N8lYTo741eR5VBOS+HA7Ac14kkmn5E3RCBcEOE
-	4IhFQO83A4zjlnKasmnPBgsRE5HYe09L+Hyy6
-X-Gm-Gg: ASbGncvuO6f4+2twAYLDNXkwC6ufswrEchSyNZs3HEpM6jipEUlRWq5VA3bEuQBmdua
-	rzwrHeeYNlQ5XzmuaPk4b9ILWFj15vX0K4DXNtuHUDW2xJz3bJiWPXM+UP4NxCyCnDv+mAt8HpE
-	PAetvc
-X-Google-Smtp-Source: AGHT+IEg4PcLdbPR2re8NB1pY3Girc/Jo/BSDCGC2xaMrI1YsccVev++KKt3DEL4KRUJ2CNAhqwrxeA4tHDLG2o46vw=
-X-Received: by 2002:a05:622a:4d2:b0:472:478:b124 with SMTP id
- d75a77b69052e-4742e0f550fmr4387451cf.4.1740674850553; Thu, 27 Feb 2025
- 08:47:30 -0800 (PST)
+	s=arc-20240116; t=1740674877; c=relaxed/simple;
+	bh=ILmTD/IZsa5BMc1gaQ14DSF9LoFKPFwAyT9iegItuTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RlfaUCAEafwESaM+o+xsx1v4cz0BCyZWDpA2/rXTk6K0DGcj+JNcizEr+JbcVSrK7sqyVKEN/v/km1VPmZ797YRIOGC6bXoc6OwM3LavN7F2PiXf/je0D01WmXQFvO5HQOV3WSCkx60l6xgEUe4jYCzn8wSVkcf+fvHtVurzTyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=eoDsxAKk; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740674867; bh=dtxm1x4SmJAjPr/SXPTydAXxNE8fMb+1ByuAcQdQtmM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=eoDsxAKkXl155c0oCYAIUenNZ09C+L94nsP2/+14TbHYIYZzVY2wRRlqsjN9L99V0z/QkuyhzyLHoj42IaPiJEPqRQ/vHZTyYFrooItAn6pM18k4I+ckMbUdDOYUk3U0+P6OypaGL1Q4w8etlXUGIiK3iPD145TpEhSJLVONL8Bn8u20s6fdO5XSXnphD+LGbWc4vUK7T/pJt8HB9S0h7yS6nQKfVXQoG7IS1eTB+4t77qw5yF8FeARRj9WKvLp1tLQIF0gtHC9yghwZjKDVmgqtlsrycPvq4vgx9q9/vEpWufwlUUQ6F5Hk5C9zdvOsvLxYGvBWFDfJpOup/i3G1w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740674867; bh=IpzCKdNT8Kks9du8IT3QCYIQrrrM0mke5CrGrrlBXlL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Z5gKV5sWoo+1UYRk1dVBkcWARO2uky78xYuk0U6CPfwWQS2xjdD4PToEda+00ACzI00pPvcWObZRHIB6K/4iFTqsErgqrH0JycDzf05NQq+Z/F9PsNpnUM2OnZ/opne1Fg9mn0pbM+gbW8y9+WvpgTU/vtz3c+KienkIMWjwLoA+/23h34hEVWS5lALfwxGGGGpOr1/SPY0oQF0+xbQ5yvkZ6KL8u/g1TYjhn0O6rvx9Owpi0NIbhbbZIpHVgeR+5CnqHjqhq4UM75I+Ln2RgBgpfIarx8plqJOrZpkkCKmuKDk4buos1Vm6/dPvfliia+nh+VNacSGSGQeNxxZTWQ==
+X-YMail-OSG: oAjEVwUVM1lmT2xZSVwuI5hkV0KRGeKqUqorq3mSqy0dLetVt7k5AROJ3BDJgaz
+ 9RTkCsJ1ueoxhneGGtU9SOPgfZedphluh9bIGqMQ2i6542rIrh3.fPbiAGUHeOFKPlk1QWbmY.Tf
+ LcTxjQcmF7chK8VRU0hG2bU2OT39Jc8gpNWlfrgwYcV_RHbQbN9YwGFqe6oLMj0z13q81LnOCnIH
+ FvfCe7aj2OdchA5_AARQu_uqzlCfA1f1DXggPzHGXkZ2j07zEdRa.H5.al5En.HRjc7GtskF4wQS
+ 8zNQ6RZlIKUGO_1KQQHL.Ww_yMaESkvDh1WkTIDgqR6mbSesLE6oh7NPSoTMrK2JVxY3uhc_T6kU
+ BqS8zwxHoATAsR7RXOKxNHfTyhhByfWTGgbK.Ed49l4J1drjK69BV3UUiucDUtyCL9rZAQaulOF5
+ KRTQ1KWWh5OuNItJmLcxdqbs5qLBOv9GOLIfxkRwz0R0BTh605b7kC.xgnuLsfWtzXqxJT_SHoy0
+ MkCwNCV32oC80IIC_Ua0Z5NLWV10CNvkbIKM8sG46yXNu6hg_OJcGpxqyci_qVfvjQnVWjRR9KZ9
+ iBmXP5mkmjzEgDEvNTq5OXo8FnQdiO0TCkhk2WlCDB9k.f4y2T7q2itQMhWk9.sIW0jCqLAw1220
+ DLJD3ivGhtYt5Ng326l8Q97ggjj3KrtUEqCQ8snnkXBHKJSEvD5dYbRtpWuuThXJueOT8_HEXY2F
+ XPF02rkewD69m6AkzDNwt_5EG_0Z5SfSxqSpk1sbvieZ2_AtqxKmp6vIPJqA5DhyHijFFKAwgC7h
+ KEArAQcyVCnOWCU76kFNj9ToF1kHNHgeH6GX5OeQQGwc8aKz2xzDvIMXcqOmoBywcvOWU9QFFX9Q
+ EpLjQVYXTYu9Kd3g4Zr4UE_RJvPm6MOygqmABWbAJijfgegZG3ZlJSKzaC.TZFyUPIEsE756etvZ
+ rHWWCkyJq_DdAd.uDepBF0mIySJPOT__stehQQHSRBbHf.yEC.pYOE6AKuszhL0NK7onN75PQnSn
+ 1OX71ZgxrakJhEbm6fjHoD5DfX81Kgr3.5pAqf7ATAhsxgmiYjGsgqKyaX2zXk7vNBIg69Hok1QG
+ wwcHh_uwftynYIYgeYvXR9LEbkLJ7rERiMNIzD5_0uwbCj9OQvQHF7wmSW3x4j5eRxpJcjQlK5LE
+ cE4xnkuBgoT7OoQUUf9U2Cd_J5NXDiLp6Y2Da_8b.aCRb0ULCVCkq0IWe4A6tSwNDA57nCketp3M
+ R9VvQqzDrqA2.VfGhIjVL4i.gR7EhFWJmC9fr0VU049RRGCH5wfht0SeHk5S8im55j4k_XTjbOc9
+ dKz4uC9kvr76OEVgYVRTw9lw1zcmQBjPD7xqEJbz4sTzP69XKn8KEVrMo.Ro9bEEa0Be_hBL56L6
+ wBXrbVXa.bVqKTzeEUtG0CHtw1viQ3UcJ5SrzKl6ECdQLoQUozgmndj6OZSclsNYVpndZwG6zCSZ
+ dSJ3AZRGXuGWNjGZhguVjiDNE_w7aoN9bFPMc5MroOnfwM2T0JbsfWbvR_nwE6VA9oW1vboSgjRC
+ JQLHDMGyxKFwd2EAxaMx_2oZ79ywYLqznP0PrkYHeKfCqpRCEwm48L.olKRNiQxyMTqWMKu5X05g
+ F9yergycJaP5G1hIo8LgoMT.nEvoJ.UcPxKRShSEwJGlsrh8jU9HeKeeYLIzT7Z5sUAmB6zRlL0G
+ mbNYU6BzG0kCzjzg7r8LOxU_t6r7d0JkJVg9.gNmsPzcyjFJG5yDxynmiB9uTORZhC9kSDTVEmxP
+ IP_8QwT1NBTQVPPVycGnXa0uTxaqnW6UrhDASTXgpuFvhqJ5kGEQ8m64Umb24_Q6S1vX9nMqM1E6
+ ykYa97h5TSbzwAEx9VMEAHY9YhSHzn.DAk8oDlrfRiD8l5HAkMQmhzvkMyQP4WNozzg1HSk9.5h0
+ 4K4GzBzAoZ8VUcWq8.2pdE2JWmw1kG7a7S1xWFEz.huadxiEUPxnjUyBKg0V5DDeA6nCmLU33HWT
+ b3YhRHfe60Aa_eZT06ZlmAeEiTiB5g8UKk7s44ge1ZdsCxF0ep8XUhnrVF1w1FobkrXcdq1bRdFT
+ q9y9r38kdyqTTWLl1YEcQTlhVTBHKWHLdstkzbaEqyfq_wmUXbqO4N8wsNaAKTOTLKpSqF3r5Vlp
+ .DL01Eh1HmckOoqFGLxreAFFthee4CKliv_iu_M88WtqsN.xeg7B.JxIwCr9FtbDjK1cGNwZXaiA
+ SVH6XoPdiEOMWRDwiJce1ndOtDRfHiK.9gTk-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 58252655-7da4-497d-92f8-11479b545252
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 27 Feb 2025 16:47:47 +0000
+Received: by hermes--production-gq1-75cc957d6c-t9f94 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID bb7759726b1596cf55d3257f985390a7;
+          Thu, 27 Feb 2025 16:47:44 +0000 (UTC)
+Message-ID: <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
+Date: Thu, 27 Feb 2025 08:47:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218181656.207178-1-fvdl@google.com> <20250218181656.207178-11-fvdl@google.com>
- <20250226180900.GA1042@cmpxchg.org>
-In-Reply-To: <20250226180900.GA1042@cmpxchg.org>
-From: Frank van der Linden <fvdl@google.com>
-Date: Thu, 27 Feb 2025 08:47:18 -0800
-X-Gm-Features: AQ5f1Jq4MYeH7gOFJQGJ71-iV_kaHKELQA_gD8gPyEFnkP_235vGg7zbJImj8JA
-Message-ID: <CAPTztWaXZE=y4HBd7ZYW-1pTDrwxO3OBbwNJyu9vpuy22xx16A@mail.gmail.com>
-Subject: Re: [PATCH v4 10/27] mm/sparse: allow for alternate vmemmap section
- init at boot
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, yuzhao@google.com, usamaarif642@gmail.com, 
-	joao.m.martins@oracle.com, roman.gushchin@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jmorris@namei.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240826103728.3378-3-greg@enjellic.com>
+ <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250117044731.GA31221@wind.enjellic.com>
+ <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
+ <20250225120114.GA13368@wind.enjellic.com>
+ <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com>
+ <20250227121207.GA15116@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250227121207.GA15116@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Feb 26, 2025 at 10:09=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.or=
-g> wrote:
+On 2/27/2025 4:12 AM, Dr. Greg wrote:
+> On Tue, Feb 25, 2025 at 07:48:31AM -0800, Casey Schaufler wrote:
 >
-> On Tue, Feb 18, 2025 at 06:16:38PM +0000, Frank van der Linden wrote:
-> > @@ -489,6 +489,14 @@ config SPARSEMEM_VMEMMAP
-> >         SPARSEMEM_VMEMMAP uses a virtually mapped memmap to optimise
-> >         pfn_to_page and page_to_pfn operations.  This is the most
-> >         efficient option when sufficient kernel resources are available=
-.
-> > +
-> > +config ARCH_WANT_SPARSEMEM_VMEMMAP_PREINIT
-> > +     bool
-> > +
-> > +config SPARSEMEM_VMEMMAP_PREINIT
-> > +     bool "Early init of sparse memory virtual memmap"
-> > +     depends on SPARSEMEM_VMEMMAP && ARCH_WANT_SPARSEMEM_VMEMMAP_PREIN=
-IT
-> > +     default y
+> Good morning, I hope this note finds the week going well for everyone.
 >
-> oldconfig just prompted me on this, but it's not clear to me what it
-> does. Not even after skimming the changelog of the patch to be honest.
+>> On 2/25/2025 4:01 AM, Dr. Greg wrote:
+>>> On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+>>>
+>>> For the record, further documentation of our replies to TSEM technical
+>>> issues.
+>>>
+>>> ...
+>>>
+>>> Further, TSEM is formulated on the premise that software teams,
+>>> as a by product of CI/CD automation and testing, can develop precise
+>>> descriptions of the security behavior of their workloads.
+>> I've said it before, and I'll say it again. This premise is
+>> hopelessly naive. If it was workable you'd be able to use SELinux
+>> and audit2allow to create perfect security, and it would have been
+>> done 15 years ago.  The whole idea that you can glean what a
+>> software system is *supposed* to do from what it *does* flies
+>> completely in the face of basic security principles.
+> You view our work as hopelessly naive because you, and perhaps others,
+> view it through a 45+ year old lens of classic subject/object
+> mandatory controls that possess only limited dimensionality.
+
+I view your work as hopelessly naive because I've seen the basic idea
+fail spectacularly so many times. That includes things I have written,
+such as the Datastate LSM.
+
+... and don't play the stodgy old fart card on me. I've been working
+on making the LSM more available to new security models for years.
+
+> We view it through a lens of 10+ years of developing new multi-scale
+> methods for modeling alpha2-adrenergic receptor antagonists... :-)
+
+Which is relevant how?
+
+> We don't offer this observation just in jest.  If people don't
+> understand what we mean by this, they should consider the impact that
+> Singular Value Decomposition methods had when they were brought over
+> from engineering and applied to machine learning and classification.
 >
-> Can you please add a help text that explains the user-visible effects
-> of the toggle, as well as guidance as to who might care to change it?
+> A quote from John von Neumann, circa 1949, would seem appropriate:
+>
+> "It would appear that we have reached the limits of what is
+>  possible to achieve with computer technology, although one should be
+>  careful with such statements, as they tend to sound pretty silly in 5
+>  years."
 
-Hi Johannes,
+New good ideas can shatter old conceptions. Old bad ideas with a fresh
+coat of paint and impressive new terminology fail to impress.
 
-Thanks for your comment. How's this:
 
-=3D=3D
-Enables subsystems to pre-initialize memmap in their own way,
-allowing for memory savings during boot. The HugeTLB code uses
-this to initialize memmap for bootmem allocated gigantic hugepages
-in a way that is done by HUGETLB_PAGE_OPTIMIZE_VMEMMAP. This
-means saving this memory right away, instead of allocating it
-first and then freeing it later. Not allocating these pages
-at all during boot allows for specifying a bigger number of
-hugepages on the kernel commandline on larger systems.
-=3D=3D
+> If anyone spends time understanding the generative functions that we
+> are using, particularly the task identity model, they will find that
+> the coefficients that define the permitted behaviors have far more
+> specificity, with respect to classifying what a system is *supposed*
+> to do, than the two, possibly three dimensions of classic
+> subject/object controls.
 
-- Frank
+Squirrels are funny rodents. If you model their behavior you will declare
+that they are herbivores. In California (where many strange and wonderful
+things happen) squirrels have begun to eat voles, a very carnivorous
+behavior. If you believe in modeling as a way to identify correct behavior,
+you have to say that these furry creatures that eat voles are not squirrels.
+If, on the other hand, you look at the environment they live in you can see
+that the loss of native habitat has reduced the available fat calories to
+the point where survival requires changed behavior. They're still squirrels,
+and no amount of modeling is going to change that.
+
+
+> More specifically to the issues you raise.
+>
+> Your SeLinux/audit2allow analogy is flawed and isn't a relevant
+> comparison to what we are implementing.  audit2allow is incapable of
+> defining a closed set of allowed security behaviors that are
+> *supposed* to be exhibited by a workload.
+>
+> The use of audit2allow only generates what can be considered as
+> possible permitted exceptions to a security model, after the model has
+> failed and hopefully before people have simply turned off the
+> infrastructure in frustration because they needed a working system.
+
+It's a poor workman who blames his tools. Why haven't audit and audit2allow
+been enhanced to provide the information necessary to create your analysis?
+I suggest that it's because the value has been recognized as unimportant.
+
+> Unit testing of a workload under TSEM produces a closed set of high
+> resolution permitted behaviors generated by the normal functioning of
+> that workload, in other words all of the security behaviors that are
+> exibited when the workload is doing what it is *supposed* to do.  TSEM
+> operates under default deny criteria, so if workload testing is
+> insufficient in coverage, any unexpressed behaviors will be denied,
+> thus blocking or alerting on any undesired security behaviors.
+
+And how is that different from running SELinux in permissive mode?
+
+> I believe our team is unique in these conversations in being the only
+> group that has ever compiled a kernel with TSEM enabled and actually
+> spent time running and testing its performance with the trust
+> orchestrators and modeling tools we provide.  That includes unit
+> testing of workloads and then running the models developed from those
+> tests against kernels and application stacks with documented
+> vulnerabilities.  To determine whether the models can detect
+> deviations generated by an exploit of those vulnerabilities, from what
+> the workload is *supposed* to be doing.
+>
+> If anyone is interested in building and testing TSEM and can
+> demonstrate that security behaviors, undesired from its training set,
+> can escape detection we would certainly embrace an example so we can
+> review why it is occurring and integrate it into our testing and
+> development framework.
+
+Sigh. You keep coming back to a train of logic that is based on a flawed
+assumption. If you accept that observed behavior describes intended
+behavior the arguments that follow may be convincing. I, for one, do not
+accept that assumption.
+
+> FWIW, a final thought for those reading along at home.
+>
+> TSEM is not as much an LSM as it is a generic framework for driving
+> mathematical models over the basis set of information provided by the
+> LSM hooks.
+>
+> All of the above starts the conversation on deterministic models, we
+> can begin argueing about the relevancy of probabilistic and
+> inferential models at everyone's convenience.  The latter two of which
+> will probably drive how the industry does security for the next 45
+> years.
+>
+> Have a good day.
+>
+> As always,
+> Dr. Greg
+>
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
 
