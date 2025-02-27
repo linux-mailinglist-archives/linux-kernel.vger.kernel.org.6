@@ -1,165 +1,158 @@
-Return-Path: <linux-kernel+bounces-537501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8130A48CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:21:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EBFA48C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989731888697
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:20:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CECB3AF244
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DEB276D3B;
-	Thu, 27 Feb 2025 23:17:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBBE22A7E9;
-	Thu, 27 Feb 2025 23:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28BE272913;
+	Thu, 27 Feb 2025 23:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HClOBCHP"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69F83C1F;
+	Thu, 27 Feb 2025 23:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740698250; cv=none; b=ReAy/72ApQf5tnCgVd2bH4kWrSiYG+zmdvp0d5poIm6Al6Lc4WMcSH96qhF60CGCkGBc6JQw/6ofCyEwpiT7mdfy5Nak917OT/L8X+lbLXcDG3Wyvs2CWSjLD3x/M58BcB5igyZOX1dh6THv6JstZOihjGb7iW1bIQZI8MsVOzM=
+	t=1740698121; cv=none; b=ouoTOBR2DqEwtIvqGQOJ5IAOZagE/IOyyltd7QrqHcsXOf4XglPlcetgJiJQI1JfFdljL9mJE9a6fL6kOT3dbp6C72zWN8gOqPJH4OyVIC2/FeNX9IN4XzfpTaMSxo90T3eQzX3SwjRmEkQ21mMiyALYwW8+bmn8aVVdLIY/Y4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740698250; c=relaxed/simple;
-	bh=9DJX4GeezJm5XmMAY97rH2s9kYvmm6DkOakDepGm7+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HtW1UW53Q+UylvAT8qnhp1MtnFaSMpYgNfHusyRjU4mrZOxCLUQW8z7F2q6PlEP/z5vmmWpBl0c4CLGDKUdS0EB9gVsKAL53sKJrAlhKfJi9VwaaMfFIN+W/hI3vUSsRSwVUB+JDEKv0BxIu0j+ey+JtewZdbmgSXHGNIxL0G5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D64FB1688;
-	Thu, 27 Feb 2025 15:17:43 -0800 (PST)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAB693F673;
-	Thu, 27 Feb 2025 15:17:26 -0800 (PST)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/8] pinctrl: sunxi: Add support for the secondary A523 GPIO ports
-Date: Thu, 27 Feb 2025 23:14:47 +0000
-Message-ID: <20250227231447.20161-9-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.46.3
-In-Reply-To: <20250227231447.20161-1-andre.przywara@arm.com>
-References: <20250227231447.20161-1-andre.przywara@arm.com>
+	s=arc-20240116; t=1740698121; c=relaxed/simple;
+	bh=GZ0IxKXhs5l6xoXe9cqSWDPLEe5+lFTovORNZ21/kXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TMDSc729N5ooDVZPcoJCeAGwv+7fKAneUem574YDv/whURKFRgURqlS/7gLp/r/nBLFqMh5ErykVw7K3yWfwFdDoLSzVUfGNxoLeWqh3KKZex7LFtXI0AEaR8nlX23a9zpfoiTOjJ988uNg5mtvxZmnECF8YwfFudQvk+V+aaHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HClOBCHP; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so16710525e9.0;
+        Thu, 27 Feb 2025 15:15:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740698118; x=1741302918; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upHKPxofYs7grxb7NMPS91d4+y/mUbTVdMGymIHFZrw=;
+        b=HClOBCHPZrVy1F9VRFFf5mifS82Cl8/fXkl89eYlDZPaxDyEIfyCo2Fk5TL78aI/tS
+         z+pBa9iEyac9c71LH424V8jLDcytdGIlt/rU/gwijAYsAvx6IMdY+05l+zc9hCA+0SME
+         7N+46kwMaycMG2x+J3T4B6ng7cdT9x7iUCkgIyW3DVaE4vhWu+ven0GCGM4p8+HlPF2G
+         KvYn81MtJyBG12KksB3Xt7Bkd1VoSUK3WfGQ9rNlxz3Ib3wkwqP2qkBzynW8uTnOf+md
+         S5f/CyUO5V08hyZU/jVZocaWLiRLWDx6/Fna+kTN8w+Xnt5WQzIXeKxja9Pm1gfFTzfA
+         Z3Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740698118; x=1741302918;
+        h=content-transfer-encoding:content-disposition:mime-version:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=upHKPxofYs7grxb7NMPS91d4+y/mUbTVdMGymIHFZrw=;
+        b=XBrxuCpItEbv8UKgglfPGk1FuoA5tq8eVeM4/O2w2TLUh0ZYJCEUM9TaktstEpnvG/
+         64y0CZN84Vsmmk24sjBxt0fKxVIx5FouKGCJFuYt0uzEnsbKmdLhJ0ho4s3CTkshovd2
+         pY+ZxKxz216RHLZMcNxLqb/Mc/zUahgO1cNlMT0KLvJZyiKllVxCbejf0Sv49ocbSj90
+         AsmC5p0iVn4oRolGd+4hgVQk+JyBn9DG15Iso75vV+4BXdW0pQwAISQAyCW8UOqu/OpS
+         Fl8qRHOfUTssHqWd9+k+cJ/EClvaYwqeqE5qOrRQ68jM9fPrhuqJQf++s5g227Jev844
+         gC4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWEmRpou+RtUkApBY5Hflj91yEed+p6rN3CPG8iaJxyoRgpW3gE0cxew/mZEJesxMod3PXiqxBwNmWS@vger.kernel.org, AJvYcCWarEp9TLgVbFEIkFafBYumfY/zXloysnK3R18o1d92kRO+6/P1VdGMEHK+iaQx6BLUf8phizl9@vger.kernel.org, AJvYcCX9mYAIQa7DPOxTEcoOHY+GSdhhlF21W172eyMPh8i8Y2+wYWVQt8PqAfVSdH0fjrnWvYjumX6y@vger.kernel.org, AJvYcCXVauBBhgwrHuA33dgV5C7t3KJj1ihJ5qpxuSSwfMtWcCPB17tQ9zDMk2klKFsIMjPKjVBO4w5xVCs5MWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBrrkoE+CyW0EhkHDYiyqjMdEDOhAcScvVKIv5iJAL6xI6SgxL
+	4oaiRf3pEZ72blHQKcdsETV5yUMYxIKe90WJb5tTeN3RNBa9CHh+
+X-Gm-Gg: ASbGncuq3gbaOBAGtE+t+pzGnmXYdIZyHOZkzdUO3lqRYWL7jAi961XFKWp1pzCgDeQ
+	vl1YtnpByVGdIL20udmRnMIhpL6f5K694o/hkQRWnl7oerBmS+3HF2AWrma5rsNu57AqABP7Y3Y
+	vV6RPydZudL27IHUhDJsZF3JmgrG2t63KKVE2MdZg0LzHq3uChls4OsGqvJkJnbwUcJeg3l/U5H
+	TvsyGhLpyPc4OL1nuKVd/t4FEwkpZIoVSRzsMF/cbFklhVAdps3c6Pd8VCMVQrmBehSC2I7SKXS
+	wFOhYZhtyU5/w6p7r100Wu3KzBNqYA==
+X-Google-Smtp-Source: AGHT+IGUAfAPDhOU2ooDtM65n6XBa2TpX2XimIfiqy6zMSSrRmSGwbZEuWMWPQDFdM+s5D7sbB27iQ==
+X-Received: by 2002:a05:600c:3546:b0:439:8490:d1e5 with SMTP id 5b1f17b1804b1-43afdda633bmr43534885e9.4.1740698117724;
+        Thu, 27 Feb 2025 15:15:17 -0800 (PST)
+Received: from qasdev.system ([2a02:c7c:6696:8300:79cb:51f4:38ef:97dc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27aa85sm36558415e9.28.2025.02.27.15.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 15:15:17 -0800 (PST)
+Date: Thu, 27 Feb 2025 23:15:04 +0000
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: fix uninitialised access in mii_nway_restart()
+Message-ID: <Z8Dx-Jh71VIc4fzm@qasdev.system>
+Reply-To: 418ddcf6-e7c9-4a8e-ba1a-38a83cb2b5f8@lunn.ch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-As most other Allwinner SoCs before, the A523 chip contains a second
-GPIO controller, managing banks PL and PM.
-Use the newly introduced DT based pinctrl driver to describe just the
-generic pinctrl properties, so advertise the number of pins per bank
-and the interrupt capabilities. The actual function/mux assignment is
-taken from the devicetree.
+On Wed, Feb 26, 2025 at 02:43:31PM +0100, Andrew Lunn wrote:
+> On Tue, Feb 18, 2025 at 12:19:57PM +0000, Qasim Ijaz wrote:
+> > On Tue, Feb 18, 2025 at 02:10:08AM +0100, Andrew Lunn wrote:
+> > > On Tue, Feb 18, 2025 at 12:24:43AM +0000, Qasim Ijaz wrote:
+> > > > In mii_nway_restart() during the line:
+> > > > 
+> > > > 	bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+> > > > 
+> > > > The code attempts to call mii->mdio_read which is ch9200_mdio_read().
+> > > > 
+> > > > ch9200_mdio_read() utilises a local buffer, which is initialised 
+> > > > with control_read():
+> > > > 
+> > > > 	unsigned char buff[2];
+> > > > 	
+> > > > However buff is conditionally initialised inside control_read():
+> > > > 
+> > > > 	if (err == size) {
+> > > > 		memcpy(data, buf, size);
+> > > > 	}
+> > > > 
+> > > > If the condition of "err == size" is not met, then buff remains 
+> > > > uninitialised. Once this happens the uninitialised buff is accessed 
+> > > > and returned during ch9200_mdio_read():
+> > > > 
+> > > > 	return (buff[0] | buff[1] << 8);
+> > > > 	
+> > > > The problem stems from the fact that ch9200_mdio_read() ignores the
+> > > > return value of control_read(), leading to uinit-access of buff.
+> > > > 
+> > > > To fix this we should check the return value of control_read()
+> > > > and return early on error.
+> > > 
+> > > What about get_mac_address()?
+> > > 
+> > > If you find a bug, it is a good idea to look around and see if there
+> > > are any more instances of the same bug. I could be wrong, but it seems
+> > > like get_mac_address() suffers from the same problem?
+> > 
+> > Thank you for the feedback Andrew. I checked get_mac_address() before
+> > sending this patch and to me it looks like it does check the return value of
+> > control_read(). It accumulates the return value of each control_read() call into 
+> > rd_mac_len and then checks if it not equal to what is expected (ETH_ALEN which is 6),
+> > I believe each call should return 2.
+> 
+> It is unlikely a real device could trigger an issue, but a USB Rubber
+> Ducky might be able to. So the question is, are you interested in
+> protecting against malicious devices, or just making a static analyser
+> happy? Feel free to submit the patch as is.
+> 
+Hi Andrew,
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/pinctrl/sunxi/Kconfig                 |  5 ++
- drivers/pinctrl/sunxi/Makefile                |  1 +
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 54 +++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+How about an approach similar to the patch for ch9200_mdio_read(), where we immediately check the return value of 
+each control_read() call in get_mac_address(), and if one fails we stop and return an error right away? 
+That would ensure we don’t continue if an earlier call fails.
 
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index 0cbe466683650..dc62eba96348e 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -136,4 +136,9 @@ config PINCTRL_SUN55I_A523
- 	default ARM64 && ARCH_SUNXI
- 	select PINCTRL_SUNXI
- 
-+config PINCTRL_SUN55I_A523_R
-+	bool "Support for the Allwinner A523 R-PIO"
-+	default ARM64 && ARCH_SUNXI
-+	select PINCTRL_SUNXI
-+
- endif
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index 4e55508ff7f76..951b3f1e4b4f1 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -28,5 +28,6 @@ obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
- obj-$(CONFIG_PINCTRL_SUN50I_H616)	+= pinctrl-sun50i-h616.o
- obj-$(CONFIG_PINCTRL_SUN50I_H616_R)	+= pinctrl-sun50i-h616-r.o
- obj-$(CONFIG_PINCTRL_SUN55I_A523)	+= pinctrl-sun55i-a523.o
-+obj-$(CONFIG_PINCTRL_SUN55I_A523_R)	+= pinctrl-sun55i-a523-r.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-new file mode 100644
-index 0000000000000..69cd2b4ebd7d7
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Allwinner A523 SoC r-pinctrl driver.
-+ *
-+ * Copyright (C) 2024 Arm Ltd.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const u8 a523_r_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =
-+/*	  PL  PM */
-+	{ 14,  6 };
-+
-+static const unsigned int a523_r_irq_bank_map[] = { 0, 1 };
-+
-+static const u8 a523_r_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
-+/*	  PL  PM */
-+	{ 14, 14 };
-+
-+static struct sunxi_pinctrl_desc a523_r_pinctrl_data = {
-+	.irq_banks = ARRAY_SIZE(a523_r_irq_bank_map),
-+	.irq_bank_map = a523_r_irq_bank_map,
-+	.irq_read_needs_mux = true,
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-+	.pin_base = PL_BASE,
-+};
-+
-+static int a523_r_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return sunxi_pinctrl_dt_table_init(pdev, a523_r_nr_bank_pins,
-+					   a523_r_irq_bank_muxes,
-+					   &a523_r_pinctrl_data,
-+					   SUNXI_PINCTRL_NEW_REG_LAYOUT);
-+}
-+
-+static const struct of_device_id a523_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun55i-a523-r-pinctrl", },
-+	{}
-+};
-+
-+static struct platform_driver a523_r_pinctrl_driver = {
-+	.probe	= a523_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun55i-a523-r-pinctrl",
-+		.of_match_table	= a523_r_pinctrl_match,
-+	},
-+};
-+builtin_platform_driver(a523_r_pinctrl_driver);
--- 
-2.46.3
+Let me know if you’d like me to submit a patch v2 if this sounds good.
 
+Thanks, 
+Qasim
+
+> 	Andrew
+> 
 
