@@ -1,129 +1,184 @@
-Return-Path: <linux-kernel+bounces-536269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27418A47D79
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:21:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D949CA47D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377D83B3948
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD351896306
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D9F22DFB4;
-	Thu, 27 Feb 2025 12:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JUTagwtn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CC822D7BD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196222B8D0;
+	Thu, 27 Feb 2025 12:18:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9141270048;
+	Thu, 27 Feb 2025 12:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658732; cv=none; b=JkOrFrIqJbRbcFwsn7L9tdh2AhcK2vs96b8qKGHhfXFeC2fuJO0vwaOSkask/uGglpC5Gv7RDKzrJB+Sa/oUhBIRIGVhvCEsDZ6u902SOUfkYK9xI/tvQCFNG2QdLpbCHngjaA/bNVWmphUJz18spK8B2CdTb8m/VuQMstQ2a7Y=
+	t=1740658699; cv=none; b=cf+mwlCWn/vR9mToGqeVzIXrw61uiSCXDOd4Z6GZac8rmnis8el7hd5P7SiIMGtaQ8MPYQMpzB2W7tZUEQpUljx1lwM2jr6/EcTQCxZXftW8OWSoBwkI9gr0KnOuzB7EaNmTPngfowjj24mOPHkLwGPrqc6DPmmfI0xiorcYkH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658732; c=relaxed/simple;
-	bh=ZZjeJBG/Bzh+5m95eZg1qhnnDWmekuEjAAFkFlDYJ5E=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=XY3K/+VTQX5xSeyZ0sXCsLH0Me2fzibazHHIvF6Rng7D/lqUdBj6a1X6MogVaiERr0ej4fobtK4UVOA8n8RQi7CS4doJcx9wr++40Lg9bf14i9fi1hTwQAulBTnh2N7VkuKWi/SfIbSpBr0dlHMmeI9COkUyFqIlUkhdV1qxkxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JUTagwtn; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740658730; x=1772194730;
-  h=date:from:to:cc:subject:message-id;
-  bh=ZZjeJBG/Bzh+5m95eZg1qhnnDWmekuEjAAFkFlDYJ5E=;
-  b=JUTagwtnMTJd7VArlgYzC5ZK4247ZgrA5jtsLzuhLrwcKCaQmf9da4av
-   zEzG1BP4lPKNy1pKRvLxKhDlhfsdY/qNFI4bQenEmO5GG/H7Ml6pmMO/p
-   /QyKTRb+cHFlNjz4FjbskhHqD/rUYVO50IAUIenAO0FPn1xvwIj8hzC+8
-   ZuP0rI93M6LtMaKDo9zodFP7xrjgeknIL3n+TOtkgZlC7kaR02QBH07Ay
-   cVeQWjGkdRsAEs4683ZBk+0gJ6YlBdAr8LNMFz+n7xpJG6aC2uOn8WPpA
-   NAJBeXIiDBxCBl5eR5O4S7AAxN/HtO9dC29GSe1B2Tt6gGVS7GC21Af/E
-   w==;
-X-CSE-ConnectionGUID: A1nwjzVbTVek8mxrr3MyAA==
-X-CSE-MsgGUID: +CsXR+MBS9Gs3Ui2vKsWBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52184253"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="52184253"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 04:18:49 -0800
-X-CSE-ConnectionGUID: bbuKLQ2zQQ+L6azsR1CgDQ==
-X-CSE-MsgGUID: phCij7ZKT2ucBLJze6a2tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="117017129"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 27 Feb 2025 04:18:48 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tncqk-000DKe-0G;
-	Thu, 27 Feb 2025 12:18:46 +0000
-Date: Thu, 27 Feb 2025 20:17:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:ras/core] BUILD SUCCESS
- 6447828875b7d768e4ef0f58765b4bd4e16bcf18
-Message-ID: <202502272048.3ATCbkZS-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1740658699; c=relaxed/simple;
+	bh=HSa4X05wJ6LbkPCWaSBF4nZC+iFFswKuy147sU4Tx1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rms3KrA4l0vM26dhJkg/KIEgjj6XqfJJOu11v5q56jxtwn1h1znhPo/Of6gcfsPhE8IIr9vpHwNIDVEBgTknJlVOqm+rYnc4q9BJoHBYq9c2RLgMGjyoW60MxaulXx2AufO5v6q1KQc7E+sewEgDIjLJLC5vCE8otwILQitDWRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 971B62BCA;
+	Thu, 27 Feb 2025 04:18:31 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FF5E3F673;
+	Thu, 27 Feb 2025 04:18:14 -0800 (PST)
+Date: Thu, 27 Feb 2025 12:18:11 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, <linux-gpio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/8] pinctrl: sunxi: support moved power
+ configuration registers
+Message-ID: <20250227121811.23460bf0@donnerap.manchester.arm.com>
+In-Reply-To: <CAGb2v67V7PAOC8MLVzE5SwwvpogN_WLNhQnRVD2pikGVDHtJjA@mail.gmail.com>
+References: <20250214003734.14944-1-andre.przywara@arm.com>
+	<20250214003734.14944-5-andre.przywara@arm.com>
+	<CAGb2v67V7PAOC8MLVzE5SwwvpogN_WLNhQnRVD2pikGVDHtJjA@mail.gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras/core
-branch HEAD: 6447828875b7d768e4ef0f58765b4bd4e16bcf18  x86/mce/inject: Remove call to mce_notify_irq()
+On Mon, 17 Feb 2025 23:48:13 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-elapsed time: 1458m
+Hi,
 
-configs tested: 37
-configs skipped: 133
+> * # Be careful, this email looks suspicious; * Out of Character: The send=
+er is exhibiting a significant deviation from their usual behavior, this ma=
+y indicate that their account has been compromised. Be extra cautious befor=
+e opening links or attachments. *
+> On Fri, Feb 14, 2025 at 8:40=E2=80=AFAM Andre Przywara <andre.przywara@ar=
+m.com> wrote:
+> >
+> > The Allwinner pincontroller IP features some registers to control the
+> > withstand voltage of each pin group. So far those registers were always
+> > located at the same offset, but the A523 SoC has moved them (probably to
+> > accommodate all eleven pin banks).
+> >
+> > Add a flag to note this feature, and use that to program the registers
+> > either at offset 0x340 or 0x380. So far no pincontroller driver uses
+> > this flag, but we need it for the upcoming A523 support.
+> >
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 15 +++++++++++----
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  7 +++++--
+> >  2 files changed, 16 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/su=
+nxi/pinctrl-sunxi.c
+> > index 83a031ceb29f2..a1057122272bd 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > @@ -736,9 +736,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sun=
+xi_pinctrl *pctl,
+> >                 val =3D uV > 1800000 && uV <=3D 2500000 ? BIT(bank) : 0;
+> >
+> >                 raw_spin_lock_irqsave(&pctl->lock, flags);
+> > -               reg =3D readl(pctl->membase + PIO_POW_MOD_CTL_REG);
+> > +               reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset);
+> >                 reg &=3D ~BIT(bank);
+> > -               writel(reg | val, pctl->membase + PIO_POW_MOD_CTL_REG);
+> > +               writel(reg | val, pctl->membase + pctl->pow_mod_sel_off=
+set);
+> >                 raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> >
+> >                 fallthrough;
+> > @@ -746,9 +746,12 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct su=
+nxi_pinctrl *pctl,
+> >                 val =3D uV <=3D 1800000 ? 1 : 0;
+> >
+> >                 raw_spin_lock_irqsave(&pctl->lock, flags);
+> > -               reg =3D readl(pctl->membase + PIO_POW_MOD_SEL_REG);
+> > +               reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset +
+> > +                           PIO_POW_MOD_SEL_OFS);
+> >                 reg &=3D ~(1 << bank);
+> > -               writel(reg | val << bank, pctl->membase + PIO_POW_MOD_S=
+EL_REG);
+> > +               writel(reg | val << bank,
+> > +                      pctl->membase + pctl->pow_mod_sel_offset +
+> > +                      PIO_POW_MOD_SEL_OFS);
+> >                 raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> >                 return 0;
+> >         default:
+> > @@ -1520,6 +1523,10 @@ int sunxi_pinctrl_init_with_flags(struct platfor=
+m_device *pdev,
+> >                 pctl->pull_regs_offset =3D PULL_REGS_OFFSET;
+> >                 pctl->dlevel_field_width =3D DLEVEL_FIELD_WIDTH;
+> >         }
+> > +       if (flags & SUNXI_PINCTRL_ELEVEN_BANKS)
+> > +               pctl->pow_mod_sel_offset =3D PIO_11B_POW_MOD_SEL_REG;
+> > +       else
+> > +               pctl->pow_mod_sel_offset =3D PIO_POW_MOD_SEL_REG;
+> >
+> >         pctl->irq_array =3D devm_kcalloc(&pdev->dev,
+> >                                        IRQ_PER_BANK * pctl->desc->irq_b=
+anks,
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/su=
+nxi/pinctrl-sunxi.h
+> > index 6cf721876d89d..a93385e456a57 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> > @@ -87,9 +87,11 @@
+> >  #define SUNXI_PINCTRL_VARIANT_MASK     GENMASK(7, 0)
+> >  #define SUNXI_PINCTRL_NEW_REG_LAYOUT   BIT(8)
+> >  #define SUNXI_PINCTRL_PORTF_SWITCH     BIT(9)
+> > +#define SUNXI_PINCTRL_ELEVEN_BANKS     BIT(10)
+> >
+> > -#define PIO_POW_MOD_SEL_REG    0x340
+> > -#define PIO_POW_MOD_CTL_REG    0x344
+> > +#define PIO_POW_MOD_SEL_REG            0x340
+> > +#define PIO_11B_POW_MOD_SEL_REG                0x380
+> > +#define PIO_POW_MOD_SEL_OFS            0x004 =20
+>=20
+> Shouldn't this be PIO_POW_MOD_CTL_OFS instead?
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Ah, I already got lost myself in those three-letter stubs, but you are
+right: it's the offset of the control register within the POW_MOD(?)
+register block.
+So nice catch, will fix it.
 
-tested configs:
-i386      buildonly-randconfig-001-20250226    gcc-12
-i386      buildonly-randconfig-001-20250227    gcc-12
-i386      buildonly-randconfig-002-20250226    gcc-12
-i386      buildonly-randconfig-002-20250227    gcc-12
-i386      buildonly-randconfig-003-20250226    gcc-12
-i386      buildonly-randconfig-003-20250227    gcc-12
-i386      buildonly-randconfig-004-20250226    clang-19
-i386      buildonly-randconfig-004-20250227    gcc-12
-i386      buildonly-randconfig-005-20250226    gcc-12
-i386      buildonly-randconfig-005-20250227    gcc-12
-i386      buildonly-randconfig-006-20250226    gcc-12
-i386      buildonly-randconfig-006-20250227    gcc-12
-i386                randconfig-011-20250227    gcc-12
-i386                randconfig-012-20250227    gcc-12
-i386                randconfig-013-20250227    gcc-12
-i386                randconfig-014-20250227    gcc-12
-i386                randconfig-015-20250227    gcc-12
-i386                randconfig-016-20250227    gcc-12
-i386                randconfig-017-20250227    gcc-12
-openrisc                        allnoconfig    clang-15
-parisc                          allnoconfig    clang-15
-powerpc                         allnoconfig    clang-15
-riscv                           allnoconfig    clang-15
-s390                            allnoconfig    clang-15
-um                              allnoconfig    clang-15
-x86_64    buildonly-randconfig-001-20250226    clang-19
-x86_64    buildonly-randconfig-001-20250227    clang-19
-x86_64    buildonly-randconfig-002-20250226    clang-19
-x86_64    buildonly-randconfig-002-20250227    clang-19
-x86_64    buildonly-randconfig-003-20250226    gcc-12
-x86_64    buildonly-randconfig-003-20250227    clang-19
-x86_64    buildonly-randconfig-004-20250226    clang-19
-x86_64    buildonly-randconfig-004-20250227    clang-19
-x86_64    buildonly-randconfig-005-20250226    gcc-12
-x86_64    buildonly-randconfig-005-20250227    clang-19
-x86_64    buildonly-randconfig-006-20250226    gcc-12
-x86_64    buildonly-randconfig-006-20250227    clang-19
+Thanks,
+Andre
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ChenYu
+>=20
+> >
+> >  #define PIO_BANK_K_OFFSET              0x500
+> >
+> > @@ -173,6 +175,7 @@ struct sunxi_pinctrl {
+> >         u32                             bank_mem_size;
+> >         u32                             pull_regs_offset;
+> >         u32                             dlevel_field_width;
+> > +       u32                             pow_mod_sel_offset;
+> >  };
+> >
+> >  #define SUNXI_PIN(_pin, ...)                                   \
+> > --
+> > 2.46.3
+> > =20
+>=20
+>=20
+
 
