@@ -1,92 +1,149 @@
-Return-Path: <linux-kernel+bounces-537418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E2EA48B90
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:28:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C76A48B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224ED16D3D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997E4188BD39
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2525423E33B;
-	Thu, 27 Feb 2025 22:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620812777FB;
+	Thu, 27 Feb 2025 22:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFs4eDMr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b56IiBLK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1A42777FB;
-	Thu, 27 Feb 2025 22:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE932777EF;
+	Thu, 27 Feb 2025 22:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695249; cv=none; b=Sz3mViM0Exr4HQRyml97KTXiKlZTssc0WM7jVOAyI3V7Wkgmt8ejZ0aeRDAktvtLuO6n+/dfbyXsxC19ghn4p4tPMoNLpZMFdck4zdKqc5lUh3wvMwR19Y9pVOCUGV3web9GWv+JbNXrozy2v+qK+rFBne7Ff1vyHzvo8+YJ05c=
+	t=1740695313; cv=none; b=sMKNzDsWkuJBjmGpCwrOAnORBW83OoffSHs3WjbGbKFZD81gjJ1lLAdAWxTJtWSBlrcS1eAArYJADSJmluFvtNlP0e9orXId+vEWqhIts1w4w6qfrxBDWE0U3tQzV+9HF2dqVHzscTtEOERsef89XL8r7oRPL/iqFtkrQPv1nw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695249; c=relaxed/simple;
-	bh=96pSSj+jAeeUv8Kf2rgomEwAi8sdHZX5niFNLuSN/dA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrP1YE6CNLgqhDS8Zkg6+Pve+3PLQtor1B5EDinRshFtvi8OSD7CPUmSf70O9nKF/Z+/nRvebGjcwTfG0fl94JRtvE9VDtAVFXWjACWbYhtn1FO6F+kX5GTELzNHPC4Bs6z8FDgcW9JCRgjsEgC55Qst1qKGva5FueU1kECrIZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFs4eDMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A3AC4CEDD;
-	Thu, 27 Feb 2025 22:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740695248;
-	bh=96pSSj+jAeeUv8Kf2rgomEwAi8sdHZX5niFNLuSN/dA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sFs4eDMr34h2DDvmtOqE9WpoSYxpM0wNuqTpid8DU6vBtzUd9yqPhbUjL+OyqFcdH
-	 3S8B2yZ3b43Z/fOtECdTgU1jIU+oehc2T1F6Z7TrYEiMWbjIYsHGVsvQxBm0XVHYdH
-	 F7ADWh8uml4kA8MRsDSUz0BAEEovpY1HorLEbYg0Xt7nxjmndH6yqPPnKBv0BcTShu
-	 MhQoiQTAVF4zZVPnjjETaLio9sYsDi6nAuV5svCl2VDqfpXhMXl8F47NS1po1KkJYb
-	 r0ryZWd1/iEd8ddiTuB3bKpQNMsvYQwm+4quyz+dBahSYcHfLCavy4dEo9hr2dDHCN
-	 7qklH3IfnvzWA==
-Date: Thu, 27 Feb 2025 14:27:27 -0800
-From: Saeed Mahameed <saeed@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3][next] net/mlx5e: Avoid a hundred
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z8Dmz_UPfR-WS8LI@x130>
-References: <Z76HzPW1dFTLOSSy@kspp>
- <Z79iP0glNCZOznu4@x130>
- <20250226172519.11767ac9@kernel.org>
+	s=arc-20240116; t=1740695313; c=relaxed/simple;
+	bh=G+R19zA2mZY26AFFznsKsclDdalHv5+OwDlT2J+5/DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rEN+A9MBI0zBaCpV3jM0KUcwdNje0aAp9TsGB1ZjRY+AZ+d9zOtJQvYs0OmYmU9JH70eKeH0q+wq/yQEvEJ78HHrH4YNrZqN6y9kDIe44UEty88BIlXLry/BCD8ubDfLQriddfRf6mPvVeD7vrGAbtkTp0jyNzqTAYBvCOMc4Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b56IiBLK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740695307;
+	bh=gcLgbk68LRVHN4P06IKc6hXQzPJSLKXWEyW0JZrnV64=;
+	h=Date:From:To:Cc:Subject:From;
+	b=b56IiBLKW3Cj031YvgaO2gzoBCMOVF6p1GRpf8v4bMjc6ueAW1j8GbtUb0p360fDS
+	 zS+DWWDNCn+4EZmY/cA6EvBMVmdR5V9S/1LdWFf1zKTpfT+9F4bj9/7rcedO/WJSra
+	 XLEr/rTOgvuYopO7R7r45tv1QweU6dLAMLB25s9f94pjVZBj5MlYdvF7EBeo5swfR+
+	 3xFHq/Ry/6tKXXcRh7m2PnX9hZvNFSRn07Tr+DGXbwFPgc1I0E+eug9gLvcSA49cax
+	 P1BuvVmaSFd5vYrhmWLOiAB7m+XHWhmwaT2BP+2zHjmSu//2JnpahAsRIE19HOYjor
+	 ty2qa+x4n3KvA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3mFl38Trz4wy6;
+	Fri, 28 Feb 2025 09:28:27 +1100 (AEDT)
+Date: Fri, 28 Feb 2025 09:28:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Joshua Ashton <joshua@froggi.es>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bcachefs tree with Linus tree
+Message-ID: <20250228092826.255fec8a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250226172519.11767ac9@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/4SruOqN4_oQNzBpxT3aMzAV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 26 Feb 17:25, Jakub Kicinski wrote:
->On Wed, 26 Feb 2025 10:49:35 -0800 Saeed Mahameed wrote:
->> On 26 Feb 13:47, Gustavo A. R. Silva wrote:
->> >-struct mlx5e_umr_wqe {
->> >+struct mlx5e_umr_wqe_hdr {
->> > 	struct mlx5_wqe_ctrl_seg       ctrl;
->> > 	struct mlx5_wqe_umr_ctrl_seg   uctrl;
->> > 	struct mlx5_mkey_seg           mkc;
->> >+};
->> >+
->> >+struct mlx5e_umr_wqe {
->> >+	struct mlx5e_umr_wqe_hdr hdr;
->>
->> You missed or ignored my comment on v0, anyway:
->>
->> Can we have struct mlx5e_umr_wq_hdr defined anonymously within
->> mlx5e_umr_wqe? Let's avoid namespace pollution.
->
->It's also used in struct mlx5e_rq, I don't think it can be anonymous?
+--Sig_/4SruOqN4_oQNzBpxT3aMzAV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yep, I see now, Thanks!.
+Hi all,
 
+Today's linux-next merge of the bcachefs tree got conflicts in:
+
+  fs/bcachefs/dirent.h
+  fs/bcachefs/fs-common.c
+  fs/bcachefs/sb-downgrade.c
+
+between commit:
+
+  4804f3ac2649 ("bcachefs: Revert directory i_size")
+
+from Linus tree and commits:
+
+  1afdbf54cda5 ("bcachefs: bcachefs_metadata_version_cached_backpointers")
+  713d0639b9f7 ("bcachefs: bcachefs_metadata_version_stripe_backpointers")
+  3e97fc2b1bb1 ("bcachefs: Kill dirent_occupied_size()")
+  bb13a9d96daa ("bcachefs: bcachefs_metadata_version_casefolding")
+
+from the bcachefs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/bcachefs/dirent.h
+index 362b3b2f2f2e,a6e15a012936..000000000000
+--- a/fs/bcachefs/dirent.h
++++ b/fs/bcachefs/dirent.h
+diff --cc fs/bcachefs/fs-common.c
+index 2c3d46ac70c6,ca70a3de805c..000000000000
+--- a/fs/bcachefs/fs-common.c
++++ b/fs/bcachefs/fs-common.c
+diff --cc fs/bcachefs/sb-downgrade.c
+index 051214fdc735,21130eadaf32..000000000000
+--- a/fs/bcachefs/sb-downgrade.c
++++ b/fs/bcachefs/sb-downgrade.c
+@@@ -90,7 -90,16 +90,13 @@@
+  	  BIT_ULL(BCH_RECOVERY_PASS_check_allocations),		\
+  	  BCH_FSCK_ERR_accounting_mismatch,			\
+  	  BCH_FSCK_ERR_accounting_key_replicas_nr_devs_0,	\
+- 	  BCH_FSCK_ERR_accounting_key_junk_at_end)
++ 	  BCH_FSCK_ERR_accounting_key_junk_at_end)		\
+ -	x(directory_size,					\
+ -	  BIT_ULL(BCH_RECOVERY_PASS_check_dirents),		\
+ -	  BCH_FSCK_ERR_directory_size_mismatch)			\
++ 	x(cached_backpointers,					\
++ 	  BIT_ULL(BCH_RECOVERY_PASS_check_extents_to_backpointers),\
++ 	  BCH_FSCK_ERR_ptr_to_missing_backpointer)		\
++ 	x(stripe_backpointers,					\
++ 	  BIT_ULL(BCH_RECOVERY_PASS_check_extents_to_backpointers),\
++ 	  BCH_FSCK_ERR_ptr_to_missing_backpointer)
+ =20
+  #define DOWNGRADE_TABLE()					\
+  	x(bucket_stripe_sectors,				\
+
+--Sig_/4SruOqN4_oQNzBpxT3aMzAV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfA5woACgkQAVBC80lX
+0Gwzfgf8DbToHSzKXL+RWgT+jDZ3R0zJqExvSpMFryMbRVZYD3XQwSDJsDyLowZ9
+DdFgBY+FJcYGxzs/3Id7I76pnCb5H++nM8l3m5BKBzgKQon9lhypOmPZToYjI3qH
++mHjldRzsIgcuybk/sz0fQ5xm/8PFQsdHzBhLVt2A2CIV72uqhKEwA/KmWkGT3vJ
+j8WCBw6JPuep5KN3uTLAY+YfAs2e8w0YTEYzvDODwm6P2+3Acol7b0Y5N+YctiLQ
+0TPbIq7NU1vD9TpG6dBTxXFthnhMC8m9FoDGEOQk7En1CoRf6zKuaSLhvKBVW82B
+xsSH2ynK5vcWhyIgA3nQAOdjd/n9aQ==
+=t64n
+-----END PGP SIGNATURE-----
+
+--Sig_/4SruOqN4_oQNzBpxT3aMzAV--
 
