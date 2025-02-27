@@ -1,200 +1,82 @@
-Return-Path: <linux-kernel+bounces-536923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0247BA485CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:54:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF78A485F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C2D3A6C05
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF1D1887AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9391BC07B;
-	Thu, 27 Feb 2025 16:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0CE1DC9B8;
+	Thu, 27 Feb 2025 16:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VhHpG0jQ"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQqwMY1Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54261B4151
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF6C1C8FB4;
+	Thu, 27 Feb 2025 16:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675274; cv=none; b=D4JGX3cPBqph9Lu90MRJUltWG+CY5DOJ3i0RR8mI5dEAni8CTPAo+CEPdNyNnZijsqVdVqS06nVryWaKgknvwcw2PxJgqvPeK9n/C5igliHfDWWq/aYJa9jsT1b2wNGAIGnb79pqYZuhOV2UVoh1ydTwa9Ym5hsxrtW5APItEDY=
+	t=1740675293; cv=none; b=XXqASIuDzWUIIJK/4uQWtYu7QU7C5LWV769GlmzaiV9GSbkfG/PedPRo8E/qVUSI/jT3iFxqNQkUmkFJjM3ZDzJxNxNi3wV32HFgjnNmtrk05kTaVfRP+lfOCdGGXYUW4urQvHNJBJ4v0/cXRjXF8xuWT8hI2RIsfLxDIXd0bTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675274; c=relaxed/simple;
-	bh=/xbSj+dtZ5xL0KKWz+bEG9rH09SkZMpFNTYJzDwhYv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=shxYbsQvdzOhRYcs+cuQOslJwE672tAW9fzoXJiqkl0jup+PNS46eMe93OTwTdCHooeBMwPKMOA9G5jYH4GUWx9jNthEeQcew1+2WoiVDh5KVfYhjliaxA2BIFol4y+6sK6Dk7zMHN0apg6dSg0+NLT1GFoNeQ3i64VFQx/XggE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VhHpG0jQ; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740675269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LZtJblFnV+khFsBLJxw+UvMEOyflz0RYTRno32s3M9I=;
-	b=VhHpG0jQ3tziz9gYawW/sA+KpRZlka2LmM3JFmdR0a7RyhXpvjeK2Z7cPDNoH3EWyI1Dqx
-	tdZFxMMspwTMOrpWYrfCOLxMnbYTvBAyUHCeMl0LWUnQ4/nK57GdjVCDVbROuaIYmk6kXW
-	QtL3Ev4SWUxejVn0M/uCwa/njAKEVRA=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/core: don't expose hw_counters outside of init net namespace
-Date: Thu, 27 Feb 2025 16:54:20 +0000
-Message-ID: <20250227165420.3430301-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1740675293; c=relaxed/simple;
+	bh=TmWvFUQLCnd+pivm8ZY7bZuz0W7aCNeXWJ0RoTa2c+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gI3vPmAhFvGOyyihLv8vbNp3gMXb5JwI8BJbtS7cMhqiwNWyvZYoRXAQHAjEkUhKfQqGQZA020pWv87PPnNav5CrUUSGovPpQ8ZCLsFj0FqHxIG7hT1eBayl3RbkUVB3fCB9uDG+sobIbHG9OuVaX+XK8gfk1FzElP1Ll0xf2Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQqwMY1Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E23C4CEDD;
+	Thu, 27 Feb 2025 16:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740675292;
+	bh=TmWvFUQLCnd+pivm8ZY7bZuz0W7aCNeXWJ0RoTa2c+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NQqwMY1YlWROF/jhKfz7/qNDrFSjp2Zct7v1rFRjQyt2iXHOVqs62fwENRsOclyjj
+	 oPwWoziE1f5DPbCwDPnbvVOLCmxG7vdiOVoqnbikss32WVtj0yqa1/pMR03vtTgIFQ
+	 Zx4OkE3OXA625aSftS4YrglHEZhBuSYL8yYIPkfyoAgRxuUJLBV8g0/hs/w0TEvRDJ
+	 XvIWSJ6KVfe5kkvk4VOdQLm9P/gLTYbiNi+D9MbWIdy9ZsN5SNJIHapRWOCHUhn6US
+	 dVUPUx9zqNJ/lHrw0dbSLpadJybDzGtMdA8o3MNWheQzke/LI2wCHi9ibRTeKlyfxc
+	 U8/6ykatlbG6w==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, pavel@kernel.org, andersson@kernel.org, 
+ krzysztof.kozlowski@linaro.org, 
+ Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: morf3089@gmail.com, u.kleine-koenig@pengutronix.de, 
+ marijn.suijten@somainline.org, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Zejiong Huang <zejiongh@qti.qualcomm.com>
+In-Reply-To: <20250213003533.1684131-1-anjelique.melendez@oss.qualcomm.com>
+References: <20250213003533.1684131-1-anjelique.melendez@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH] leds: rgb: leds-qcom-lpg: Add support for
+ 6-bit PWM resolution
+Message-Id: <174067529045.3584478.9992009485506424464.b4-ty@kernel.org>
+Date: Thu, 27 Feb 2025 16:54:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Mailer: b4 0.15-dev-510f9
 
-Commit 467f432a521a ("RDMA/core: Split port and device counter sysfs
-attributes") accidentally almost exposed hw counters to non-init net
-namespaces. It didn't expose them fully, as an attempt to read any of
-those counters leads to a crash like this one:
+On Wed, 12 Feb 2025 16:35:33 -0800, Anjelique Melendez wrote:
+> Currently, driver only allows for PWM modules to use 9-bit resolution.
+> However, PWM modules can support 6-bit and 9-bit resolution. Add support
+> for 6-bit resolution.
+> 
+> 
 
-[42021.807566] BUG: kernel NULL pointer dereference, address: 0000000000000028
-[42021.814463] #PF: supervisor read access in kernel mode
-[42021.819549] #PF: error_code(0x0000) - not-present page
-[42021.824636] PGD 0 P4D 0
-[42021.827145] Oops: 0000 [#1] SMP PTI
-[42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded Tainted: G S      W I        XXX
-[42021.841697] Hardware name: XXX
-[42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
-[42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
-[42021.873931] RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287
-[42021.879108] RAX: ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
-[42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI: ffff940c7517aef0
-[42021.893230] RBP: ffff97fe90f03e70 R08: ffff94085f1aa000 R09: 0000000000000000
-[42021.900294] R10: ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
-[42021.907355] R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
-[42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000) knlGS:0000000000000000
-[42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[42021.928130] CR2: 0000000000000028 CR3: 00000042dcfb8003 CR4: 00000000003726f0
-[42021.935194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[42021.949324] Call Trace:
-[42021.951756]  <TASK>
-[42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
-[42021.959030]  [<ffffffff86c58468>] ? __die+0x78/0xc0
-[42021.963874]  [<ffffffff86c9ef75>] ? page_fault_oops+0x2b5/0x3b0
-[42021.969749]  [<ffffffff87674b92>] ? exc_page_fault+0x1a2/0x3c0
-[42021.975549]  [<ffffffff87801326>] ? asm_exc_page_fault+0x26/0x30
-[42021.981517]  [<ffffffffc0775680>] ? __pfx_show_hw_stats+0x10/0x10 [ib_core]
-[42021.988482]  [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
-[42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
-[42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
-[42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
-[42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
-[42022.017058]  [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
-[42022.022073]  [<ffffffff8766f1ca>] do_syscall_64+0x6a/0xa0
-[42022.027441]  [<ffffffff8780013b>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+Applied, thanks!
 
-The problem can be reproduced using the following steps:
-  ip netns add foo
-  ip netns exec foo bash
-  cat /sys/class/infiniband/mlx4_0/hw_counters/*
+[1/1] leds: rgb: leds-qcom-lpg: Add support for 6-bit PWM resolution
+      commit: 7a3350495d9ae8ae5b178d603449d18fa7150560
 
-The panic occurs because of casting the device pointer into an
-ib_device pointer using container_of() in hw_stat_device_show() is
-wrong and leads to a memory corruption.
-
-However the real problem is that hw counters should never been exposed
-outside of the non-init net namespace.
-
-Fix this by saving the index of the corresponding attribute group
-(it might be 1 or 2 depending on the presence of driver-specific
-attributes) and zeroing the pointer to hw_counters group for compat
-devices during the initialization.
-
-With this fix applied hw_counters are not available in a non-init
-net namespace:
-  find /sys/class/infiniband/mlx4_0/ -name hw_counters
-    /sys/class/infiniband/mlx4_0/ports/1/hw_counters
-    /sys/class/infiniband/mlx4_0/ports/2/hw_counters
-    /sys/class/infiniband/mlx4_0/hw_counters
-
-  ip netns add foo
-  ip netns exec foo bash
-  find /sys/class/infiniband/mlx4_0/ -name hw_counters
-
-Fixes: 467f432a521a ("RDMA/core: Split port and device counter sysfs attributes")
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-Reviewed-by: Parav Pandit <parav@nvidia.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Leon Romanovsky <leon@kernel.org>
-Cc: Maher Sanalla <msanalla@nvidia.com>
-Cc: linux-rdma@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/infiniband/core/device.c | 9 +++++++++
- drivers/infiniband/core/sysfs.c  | 1 +
- include/rdma/ib_verbs.h          | 1 +
- 3 files changed, 11 insertions(+)
-
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index 0ded91f056f3..8feb22089cbb 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -528,6 +528,8 @@ static struct class ib_class = {
- static void rdma_init_coredev(struct ib_core_device *coredev,
- 			      struct ib_device *dev, struct net *net)
- {
-+	bool is_full_dev = &dev->coredev == coredev;
-+
- 	/* This BUILD_BUG_ON is intended to catch layout change
- 	 * of union of ib_core_device and device.
- 	 * dev must be the first element as ib_core and providers
-@@ -539,6 +541,13 @@ static void rdma_init_coredev(struct ib_core_device *coredev,
- 
- 	coredev->dev.class = &ib_class;
- 	coredev->dev.groups = dev->groups;
-+
-+	/*
-+	 * Don't expose hw counters outside of the init namespace.
-+	 */
-+	if (!is_full_dev && dev->hw_stats_attr_index)
-+		coredev->dev.groups[dev->hw_stats_attr_index] = NULL;
-+
- 	device_initialize(&coredev->dev);
- 	coredev->owner = dev;
- 	INIT_LIST_HEAD(&coredev->port_list);
-diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-index 7491328ca5e6..0ed862b38b44 100644
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -976,6 +976,7 @@ int ib_setup_device_attrs(struct ib_device *ibdev)
- 	for (i = 0; i != ARRAY_SIZE(ibdev->groups); i++)
- 		if (!ibdev->groups[i]) {
- 			ibdev->groups[i] = &data->group;
-+			ibdev->hw_stats_attr_index = i;
- 			return 0;
- 		}
- 	WARN(true, "struct ib_device->groups is too small");
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index b59bf30de430..a5761038935d 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -2767,6 +2767,7 @@ struct ib_device {
- 	 * It is a NULL terminated array.
- 	 */
- 	const struct attribute_group	*groups[4];
-+	u8				hw_stats_attr_index;
- 
- 	u64			     uverbs_cmd_mask;
- 
--- 
-2.48.1.711.g2feabab25a-goog
+--
+Lee Jones [李琼斯]
 
 
