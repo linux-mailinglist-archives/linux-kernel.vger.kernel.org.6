@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-537456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D0BA48C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:51:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A368A48C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B593B5DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B46416D4F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AA023E32E;
-	Thu, 27 Feb 2025 22:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC22227B8E;
+	Thu, 27 Feb 2025 22:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsdqezS6"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QmPQhNmf"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC227781F;
-	Thu, 27 Feb 2025 22:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F7027781F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696684; cv=none; b=RBufhoA+p80t+7k+1MhSv7SHI2SEyR2h/1jkztsp905v7l3moSATros2WSNdvPnXKDPSmK3z4obRmi5iol88jgYh31pLKob2ZY4M3zzIJ3uJQ0OBi/GnVHzcQuIbRGmXeq+T+Qp92ueow6YWilpQyp6GAo53khNBBHsagLxgKgs=
+	t=1740696806; cv=none; b=W/rfSaxR+ixnt5I6NNAbt2uD06Up/QO5dHb8LMG+mZljcZbrKaUtnk573wS2pT/s+zx2NwQYn/P5P7C39xldH+YKbHJfjkGXVSVM5VthapYwAqML7dlf9g5mnUB5Q02swj3yksNZFcaHUqJapBw2OFEpuCDrB2LShUAnK3m3ibI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696684; c=relaxed/simple;
-	bh=ZNi7C6bEWTzQUwdQGL5EqHY5BUfHTwi74qKGhnSGiYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LaOIJYgJjiBoS7YsRflNH0aLwphUci0KEvD9hV0nt124z00O6fXRzoTMUBiJCFTf5aDPBqN4//MPFd2PGZLRZ6Z8mpiyKXxe9jblsunxa/DpVLBG36WcdC4sfUIqXDC1JrSttO8u7+a+jZlJemrZfvRAjUA5SoGm9jGW7A4+tYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsdqezS6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so10069475e9.3;
-        Thu, 27 Feb 2025 14:51:22 -0800 (PST)
+	s=arc-20240116; t=1740696806; c=relaxed/simple;
+	bh=sGvdnue/B5GYlmaUtedTZkS3J2gnunXBcoKQK+BG5Cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MGgtaGvoKjJ4GgexWwy3YLeI8aSbYFrNMUH8oI/XmVHq4t49uq//SXjmjWw+IXy1Bpk9TxTBKld0NMhCTHagXC7hmweJdGEgmjRKJuXQBLivusiTMbKhaJvGa/SOWId+PDKJ9vqaUPTF546kjttOEmyi5G2uq/W1G+UJGez9NCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QmPQhNmf; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5461cb12e39so1380152e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740696681; x=1741301481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
-        b=SsdqezS6Is+jwtBJtMIxYH/o1eRMpljnkeR1K0JE/pDVo3llt7wy1Ugv1OwTwMVvQh
-         GepGuEhODCVaPD6NuGpgDZx7YXsWtAfTBALDUwCXvMozLVBIocjp51SbbpQoeowvorQI
-         jBVsAgkpYZnGGofclNd181aSx2FMO9ASyFPJqr4wTFzLIOoDvKv5ynaWha6u/zpPxo4z
-         SCRWn9WAnDje3wUOf2qddCf86qeBMhZGwWCBw0ySFEEgl7VIxoO5xNTXt8KYOojz68Ar
-         Wbwd2yGE7rxiX1FAUTcYz/P2wMhQJdzy/liS31E83g1HIpkhJf8w027r5xFLbO7R3GEn
-         gInw==
+        d=linaro.org; s=google; t=1740696803; x=1741301603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYAfR6rT+J2Pmezoedxv/QKmEL6vhTnAGCGwcyVDn58=;
+        b=QmPQhNmfL8rp1P+SsJQ31uOC9I0E1xF4FAHT/u4+BneXewIjwpCGKgMWfm6MUGl6dL
+         PnTFPecK2+A2RSvqLMRJA8RjyyNHvWKN+RiwrX2iziOQFLDhBLQHhxnBfavV3Bs/jyPa
+         J1b1NUguH4GIvHd0EF7wY3BonhF37V2CVAVJohpw3nARrF9AMGQcsBrhZIVDrXSt7dL8
+         keQVZ1ENwE7OyMjGEhYERKekNdQVcZR85PHNXOFbKY7NfoZdIUP4Xl9b4ehfHHkprx3w
+         3ED/qXY6qpvZ+/ZgJuMWwWq996sw9pD1gfnEMz5QBfgHRgLGRWjdrwXxghKtT4LTo+PP
+         lRPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740696681; x=1741301481;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
-        b=MpvrzStpXQvFaINI/6EQJYTDI0eNc8vSqTTTjJ5Qet/v6QWLkPISSA60DwHgHk9O0z
-         ioDuBS4aGYumNWrPOA6RtuCFYjshcTnL1P00Tr0qu5lXAdXI5ECvFRlKrur/tUMMNIjf
-         ION+exDvDqRESIiZFFF59CaguX43jK4i2kB9ofdCTm7wXWZkzkjRTFtH/wKnpNHKSN5A
-         X1BF0lc+i/I2ya0II5EeH8gef33MpO2NRQTl2unILjha/VcPtY54/5LmgArJpso0lrxA
-         cuj1bZqwpMb/q0vO3CamnQzgtwgZNO1bFvjSG6BK1dzjwCOhVD/VRDA2CncaHz0fZk2r
-         zedA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRhmZR/wisiGV+cx0a8twkT6lx+B1YPwIrmE0lNQv3MDaTfh41g6MuyZlF4rcDCw+IzSgHcbpe7a1U2w==@vger.kernel.org, AJvYcCW/64BrlhyJJTI5a5FEJp8GE6Wq5o2X+InkwGvW34VyXFxVxe2hUF92HqrCfkj2YKPxSA1xt6wdKlq7eIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4egEdupzxAPcRwsHiNemglpKac3CWC4cj8TVep4hr424uqSUk
-	jHDhZTA2CVWBaHVyCmb65k+ptPMkvpg5VWl8waRo1mu9pWQ/ldMEutoJ5sDppfw=
-X-Gm-Gg: ASbGncv8gbp9xBZRWKHh4DRHtxJyOcG/bVE7aVMlZnfC+42ZakjD/soq536AVeSjp8U
-	+qDk+DiCy8J2hEpZ2Uh5eRg1/UslimQSz+Ixrvbuui6wBXeKwCYN5CEaVd046HIiIOMmjEJbcG9
-	3BSZNp5vx0w4wbSDADIVDkWXHwtzcD7HmlqLM2oYcziUfrbnB61g7RQFhLtkJrYEy2Epejx9yFK
-	Zd+x8l/xIeya3zY2yTEupOTPaXwNciRt0Y0sQaWnAMMR76/98NNHZWAzZg+k3NHx2gZwqv2ZE5A
-	ABol+sAPgCxD04dSH0e0MzQ7vog=
-X-Google-Smtp-Source: AGHT+IHPqkfBSHNgZwgyytyFDMty3HvWbsqx8cQXA84xBSInA6L2qPeZF8jWee0m6ovCoUw5FTOGkg==
-X-Received: by 2002:a05:600c:502b:b0:439:9828:c447 with SMTP id 5b1f17b1804b1-43ba7d6635cmr1864125e9.17.1740696681215;
-        Thu, 27 Feb 2025 14:51:21 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba58760bsm66555595e9.38.2025.02.27.14.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:51:20 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
-Date: Thu, 27 Feb 2025 22:50:46 +0000
-Message-ID: <20250227225046.660865-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1740696803; x=1741301603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sYAfR6rT+J2Pmezoedxv/QKmEL6vhTnAGCGwcyVDn58=;
+        b=OEoa/Li9LzZkAsge4Qxt1Rh5BLje6VZGTuJiSNH194mrkhnU5wdGz75+5wWYJQi/RO
+         5I1atYKUPaMbyd6atKM6cm5ftDYwUJd8h2C1niRgG8ypUUkQOn0uc6vrMacrdqsI2o+u
+         aAPkIzq/AUWPgoDfLTIaCxv8VM6zeIuSR1Wyzv/4tYtxsrezpnjjagYs2gu+Hzl75IYa
+         +3VnTlcc6DYF6aAQcyF8FgFxeESfOqanjogwPXzLrBzHyQ3bGXv+FuXaDQDXSocaZV9j
+         1VkuZZw6AMytuQGdv3DXv+JFdUO8Hyo/J5RZ2wKYoXnFiH/5BP6QHkQB5G1gQ7rnO1Su
+         6MFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxZttNWcvTkMgX5Psj07YaAOkufjWcRjWu6b3pAyQtDSyVrv6X5AWv+W0hJOSu93GZEyEhK6y4+CGDIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC9T3qeeisI5AMA/ZoGrqXLUdkr3iXpiTM75LceGREFDNkgeLF
+	RhzgqFTVCgb7B96Q73mBT5KUQkOP1ntEMHyn+vCnUq8U8zzIpo7CyGldFJlAmoR8kwrjQbRA/ND
+	dRRFcd21mxLp4PFrpU5aimfnuwYEWjwhIL7ZjKA==
+X-Gm-Gg: ASbGnctyMJdIAJuRXac6d8uWSk0h9tqkoqf0GRsi/AevNaAJQxNGkd075QzW2eICpaY
+	OkpFjcioNA6+jnCXkVwwPH0Niiu1Zqw11pfnMyJrMy1sFrMV4ytRypko7B64MzKza4cu15VSu8+
+	9J8CEuA4M=
+X-Google-Smtp-Source: AGHT+IEtwiHtj9LHUcW0e/otkeY6xFx8rK1S/vfrLBTeffolkmIjfF0YZc4BMa7wskN4DXcOEuc/fyfJLasqmpJiYAc=
+X-Received: by 2002:ac2:4c4f:0:b0:545:2770:79b2 with SMTP id
+ 2adb3069b0e04-5494c351b83mr499150e87.33.1740696802619; Thu, 27 Feb 2025
+ 14:53:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250219102750.38519-1-brgl@bgdev.pl> <Z7XqSVfhPGI5J63B@finisterre.sirena.org.uk>
+ <CAMRc=MdEcjFUp2OEutcnDqSHbbait3f25NEWbdp7mARyKZLvBw@mail.gmail.com>
+In-Reply-To: <CAMRc=MdEcjFUp2OEutcnDqSHbbait3f25NEWbdp7mARyKZLvBw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 27 Feb 2025 23:53:10 +0100
+X-Gm-Features: AQ5f1Jp6iZursAYFoyZhYUa8R_xOEcekX9mX715XkkcwLe7KRWmfwikYltCeIOs
+Message-ID: <CACRpkdbkcX5pEeikkDZAxSGp+M3kJH5SWimxQA6P35iiDAUNdA@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH] pinctrl: bcm2835: don't -EINVAL on alternate
+ funcs from get_direction()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mark Brown <broonie@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, 
+	Liao Chen <liaochen4@huawei.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-gpio@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a lpfc_printf_log message. Fix it.
+On Wed, Feb 19, 2025 at 3:30=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+> On Wed, Feb 19, 2025 at 3:27=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
+rote:
+> >
+> > On Wed, Feb 19, 2025 at 11:27:50AM +0100, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Since commit 9d846b1aebbe ("gpiolib: check the return value of
+> > > gpio_chip::get_direction()") we check the return value of the
+> > > get_direction() callback as per its API contract. This driver returns
+> > > -EINVAL if the pin in question is set to one of the alternative
+> > > (non-GPIO) functions. This isn't really an error that should be
+> > > communicated to GPIOLIB so default to returning the "safe" value of
+> > > INPUT in this case. The GPIO subsystem does not have the notion of
+> > > "unknown" direction.
+> >
+> > I see this was already tested for these specific boards.  I've also
+> > found that Avenger96 is failing with bisect pointing to the same commit
+> > this is fixing:
+> >
+> >     https://lava.sirena.org.uk/scheduler/job/1126314
+> >
+> > as is the Libretech Potato:
+> >
+> >     https://lava.sirena.org.uk/scheduler/job/1126285
+> >
+> > neither of which produce any output before dying, they'll not be fixed
+> > by this change.  Seems like an audit of the drivers might be in order?
+>
+> Right. I don't know if they return EINVAL or some other error so let
+> me prepare a change that will not bail-out but simply warn on
+> get_direction() errors in gpiochip_add_data() instead.
+>
+> This patch can still go upstream IMO.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/lpfc/lpfc_hbadisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm fine to apply it, maybe as non-urgent fix at this point? (for -next)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 18c0365ca305..8ca590e8469b 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -3524,7 +3524,7 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
- 	if (phba->fc_topology &&
- 	    phba->fc_topology != bf_get(lpfc_mbx_read_top_topology, la)) {
- 		lpfc_printf_log(phba, KERN_WARNING, LOG_SLI,
--				"3314 Toplogy changed was 0x%x is 0x%x\n",
-+				"3314 Topology changed was 0x%x is 0x%x\n",
- 				phba->fc_topology,
- 				bf_get(lpfc_mbx_read_top_topology, la));
- 		phba->fc_topology_changed = 1;
--- 
-2.47.2
+Do you want to send a non-RFC/RFT version or should I just apply it?
 
+Yours,
+Linus Walleij
 
