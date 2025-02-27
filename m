@@ -1,165 +1,82 @@
-Return-Path: <linux-kernel+bounces-537330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83083A48A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:34:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB53A48A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79623B76D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB94188D08A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857827291A;
-	Thu, 27 Feb 2025 21:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rv40QSHI"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0055271277;
+	Thu, 27 Feb 2025 21:32:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44752271285
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C589218823;
+	Thu, 27 Feb 2025 21:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740691985; cv=none; b=JymVlRZf9c3HvVcJuHuyTGlRIAJvO8YB6ymMDQo281T9xJpQo963IeduEkPyX9/R1M23kzNsrCeAj9MOB6GMx6WIy4bax2B1Qh/kviKwKB8q2GwRbmIOsnGAEo9aScWGS+TDaxJqT/R0Sch3I0zinvrcz7qN8YzJ//lMBja3ffM=
+	t=1740691959; cv=none; b=flARFKv/pDk0WBi6iUlsIIZ2y3RSeBjI0/QDPXdU+55WqCL6GeFVPlxbXtMhVHMT+2N5X1SspNvejYcItTWuWZeffvNdmHIxZaLPW1Xa9+SC2KDZLoNPllbbMp6eEI0mXgPkc2y+shhXakQy6Rf6JRdsoaxUJQhnOWKg2rNMsIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740691985; c=relaxed/simple;
-	bh=O78laQRCugQQJVm33qwQw6Vm1O71zPoAwdwqZY3zw2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=glcVowmeQtWJo2vmsYhW0NpA3afKlYWJ2UGJgqxBM3dpmXkCBFa8KPIJln1dQRAhcLxFiCNKqc0iedoIctFTYyg7gs70AylkjxNfmqEbCjgNqTHhV5UcpfzdZlCH1vY1bvH2ZMo0M3VfkqC2OY3j0afLKjaGiAe4KhxOP9pRz7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rv40QSHI; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 17F3D2C066F;
-	Fri, 28 Feb 2025 10:32:55 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1740691975;
-	bh=cU5KnnGteSBBNh2MJua3cK4JTvnCQNhda1NWxrZBi1I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rv40QSHIm6CXLc0HWvjwWiGhQKKL4uEGiaH+MSmEsgsLTRCl/Mye1fxfojYebNTXp
-	 PS1if9IU4jH8A1qkgMc1ppDU8Udy/yOsiouWz88r6L4J0y1rqlAG6cp8Zr4sMhvnxV
-	 MkrLe4IPVSKWXWxiX0bsORmEu/H8//u6YCTkcTxFtzmql46DlAO23AALRywYmW1Q9M
-	 Ee8OFPyCi8cykxL8/a565igqqimvrsck/4wlnYtBHIEvCEEXQh1+EQgBbUakSklRS4
-	 l1ZhiguU0EGrrcXLOJfu87QEkx4NqpwWQ0FMDlsDQWtM/KSuYanZ6t9d64waPMg7cn
-	 5/Tg45I3IyGIw==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67c0da060000>; Fri, 28 Feb 2025 10:32:54 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id DE7B113ED4A;
-	Fri, 28 Feb 2025 10:32:54 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id DC257280AFD; Fri, 28 Feb 2025 10:32:54 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	sander@svanheule.net,
-	markus.stockhausen@gmx.de
-Cc: devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH net-next v8 2/2] mips: dts: realtek: Add MDIO controller
-Date: Fri, 28 Feb 2025 10:32:48 +1300
-Message-ID: <20250227213248.2010986-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250227213248.2010986-1-chris.packham@alliedtelesis.co.nz>
-References: <20250227213248.2010986-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1740691959; c=relaxed/simple;
+	bh=E3atdKrHAqEQcNejYjymMr9w/+VUCvBazKROwVdpSPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jTZSOGedDvQvz7pE3EkosHFn/m02k2+weRlrpOEsHLtgCcnarDiCG1e0njm0U+0c3XiIfVXOQT6QqBzePc0fx3qlayVb9Z44lpHHmoigYJbLbrcYm0nS9Z4jw9VP4eC9aGQ/yl/bqHEccTIeiVZ0ernOegrSMSGuOQ+dVS94Dt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2C2C4CEDD;
+	Thu, 27 Feb 2025 21:32:36 +0000 (UTC)
+Date: Thu, 27 Feb 2025 16:33:19 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Martin Uecker
+ <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura Jack
+ <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250227163319.5b19a68a@gandalf.local.home>
+In-Reply-To: <20250227204722.653ce86b@pumpkin>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+	<20250226162655.65ba4b51@gandalf.local.home>
+	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+	<20250226165619.64998576@gandalf.local.home>
+	<20250226171321.714f3b75@gandalf.local.home>
+	<CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+	<20250226173534.44b42190@gandalf.local.home>
+	<20250227204722.653ce86b@pumpkin>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67c0da06 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T2h4t0Lz3GQA:10 a=Vd_wJYyKU8c0xNhbhIwA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add a device tree node for the MDIO controller on the RTL9300 chips.
+On Thu, 27 Feb 2025 20:47:22 +0000
+David Laight <david.laight.linux@gmail.com> wrote:
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+> Except that (IIRC) it is actually valid for the compiler to write something
+> entirely unrelated to a memory location before writing the expected value.
+> (eg use it instead of stack for a register spill+reload.)
+> Not gcc doesn't do that - but the standard lets it do it.
 
-Notes:
-    Changes in v8:
-    - None
-    Changes in v7:
-    - None
-    Changes in v6:
-    - None
-    Changes in v5:
-    - Add reg property to mdio-controller
-    Changes in v4:
-    - Have a single mdio-controller with the individual buses as child
-      nodes
-    Changes in v3:
-    - None
-    Changes in v2:
-    - None
+I call that a bug in the specification ;-)
 
- arch/mips/boot/dts/realtek/rtl930x.dtsi | 33 +++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts=
-/realtek/rtl930x.dtsi
-index f2e57ea3a60c..101bab72a95f 100644
---- a/arch/mips/boot/dts/realtek/rtl930x.dtsi
-+++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-@@ -69,6 +69,39 @@ i2c1: i2c@388 {
- 			#size-cells =3D <0>;
- 			status =3D "disabled";
- 		};
-+
-+		mdio_controller: mdio-controller@ca00 {
-+			compatible =3D "realtek,rtl9301-mdio";
-+			reg =3D <0xca00 0x200>;
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			status =3D "disabled";
-+
-+			mdio0: mdio-bus@0 {
-+				reg =3D <0>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+			mdio1: mdio-bus@1 {
-+				reg =3D <1>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+			mdio2: mdio-bus@2 {
-+				reg =3D <2>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+			mdio3: mdio-bus@3 {
-+				reg =3D <3>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+		};
- 	};
-=20
- 	soc: soc@18000000 {
---=20
-2.48.1
-
+-- Steve
 
