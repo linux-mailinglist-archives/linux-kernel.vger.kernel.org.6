@@ -1,222 +1,179 @@
-Return-Path: <linux-kernel+bounces-536420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39364A47F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:37:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655D8A47F43
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC151885596
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E90C3ABBAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F0F22F17B;
-	Thu, 27 Feb 2025 13:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000DD22FDE6;
+	Thu, 27 Feb 2025 13:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG/VVDMe"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OE7nSJFO"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F7A221574
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCF6221574;
+	Thu, 27 Feb 2025 13:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663349; cv=none; b=TZW2Tcgil+k9SqyKp4XKtks/Xo6j5nnZUVLfQ8A72OlJnePQXJbcMfzS1cxg0nTnCOoQd9ZNSV9SvORH5zZFt1Vbxq01xRsrg9sJu32KS8GRSz0uA2x7S6wfFrJDOnrXVPtMd6mgi0Wk42+ndWAbF300UhgIeunLCDT9iQWqq8A=
+	t=1740663382; cv=none; b=hWJ/eHdA8lamEHDM94BkbY9wkXhwznQZ7jNatdrwdefgW4yK/QiuV+gg78T9k4r6sdaIRmdpbPeImlLaMUUK1vI+4qQ7AyChFwe0vCUpMoWVNTUWDJXIFRkWp2X090DrpbQiCdVaYDwiXbtmt5qzg/rkySF1ogvuWvA61NUVce0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663349; c=relaxed/simple;
-	bh=6Il58BrvrPVO60P6UVsP7CImh149GPv44Rna7LFM1OA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kKx1AHI/BVcEhfpEsU3IUNgysMPIvAiTKFzI29ga3cYkuy+AnIOYsxLL6DObrAmRe4kENTgVTYi23D+3RAlF6hl6MNjlkW0uaytzlu93GLfZe4Na5KF/L/io3LgNf41uf/43ck+YW2prfUZS9C0Fm0qVNxYt1keo4EmnBqUHAN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG/VVDMe; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30a2594435dso19966281fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:35:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740663346; x=1741268146; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UcX5Ze2cAe7Y7OTQRQkAqDrbuLGej7Q2EGbAJWbbBBk=;
-        b=OG/VVDMeriAOCL3yKdTKAIEI6HsQ6HAkhWL2sfyCw7TA/CjD12H57cLaORk1n3IpJm
-         WO7Ey7EwFtfX0sUQbcSlVAjwHhw1OrbtzfHfickJuldmYO2+eOaS6AkIdIUb3ScBajDf
-         bAaanbVrPw3xJTfAb6rLBpVLZCe5GtZ4tFG22XGIPXQ15nzvOAMH/+mFGtJHxF7uhFM0
-         6uE/2yCasYx5S7gDif+Lh2+i+FyVTLofDB7fR4wr00+thpIP3sk5IIA5qBQ1LaFgGZWD
-         Ul64lNjV/oGQqylaeg6TSbgAKmg1BaaGTXgiPb/4mqnyrxXdSf/zhimuy0J7BXFVV9Dd
-         yhAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740663346; x=1741268146;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UcX5Ze2cAe7Y7OTQRQkAqDrbuLGej7Q2EGbAJWbbBBk=;
-        b=uikK4TqHndwXgT56gURBm5TaZK+6l6kKfsVR5WY8ZmO+SCzMxnLvChQy8TFWd93zok
-         rUBhs2/lBvuEgvUj5JrmF/BY+KNxs2xYGUW28VykX8o6Xx8bq0PjR5I/LxcYAkl/DMqb
-         wLAAZ7BTt7BNUv2iyY95z0jcrcJvQ3gcTARXhX5jDvAY+hIRZgrKVqDTj5JEHmDT0Z9I
-         88JIYM+zRGq8ZM2cKinxJz+Jh8NwetK8M00JrJfO5HNnMNvNS8XrUswuZrIlSTsprexI
-         1baC5ZZS7fvfKmiYuO5suuiyECwMTjMvLx0zed/6C+GIkYBFzsYdPtOiomVsaj/ahxZj
-         cd5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYmyrSBDjqDp//uAPHuKufFMqROQRctWTEDH02V34N5nHWfvtwfbBDYWKj1NoPXIaBDpg5nlixuHcVovQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfbHM2dAB9inTFSPKRbYXJsP/0sX02mQpoDzf81ipqrE3RKLOF
-	R0qkQl4VUD3SRPSPf6TNMffg3G1vzvh6Ym8LBhxipjNRYasATo6BI0P34O6x3ChADcLKW/QPaDg
-	R+CI6VYwczkcl4afPNXviXIC/VVc=
-X-Gm-Gg: ASbGncsehG+ZbB/j20pInG57jLGT4B/GbRmzagofefbEJVFoXPlNILdlBFIFe/rUYZg
-	XezurLgyHOTlPN8+QauGaKE5dh8Y7NvKDFdjNypc/0BTQlMW9MX8ObwzCKBfLmLSoGZC1KXFdf6
-	lrOicEZmQ=
-X-Google-Smtp-Source: AGHT+IE+AQzSKTtQXERT8HvyBiH74HXMnpTakPkfha42J4EAdOhM36VP8EOBJCeEvnw7PfpTYCiOxs6qzdKNnCH1m94=
-X-Received: by 2002:a2e:ad0b:0:b0:309:2999:77d4 with SMTP id
- 38308e7fff4ca-30b84650d3dmr17304321fa.6.1740663345647; Thu, 27 Feb 2025
- 05:35:45 -0800 (PST)
+	s=arc-20240116; t=1740663382; c=relaxed/simple;
+	bh=aab2/SyQEGBUyaPseIJICjiOfGbAWP2jtmSGkYZMjyc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aVFppxvKku+prDK3XCBXWOjXaARbYQsHL0y29aFDihAHC3rGKER2Z4VJkdawAIQr5V5fYHlURzGJX+eA6W6PwPWRXEKHR9etphVIyy9G9DGBop6Auff20ByAK+LlIM4Ajanampe3f/1sTZ256T/WA6ln69eVp7s1fgrflST1bCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OE7nSJFO; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 309D944178;
+	Thu, 27 Feb 2025 13:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740663378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+cvfHkogpXmJPGabzvRVQY6bYL/xdH6T/pSVAZSPolY=;
+	b=OE7nSJFO6AVAU7nKQEMLpFhSc0IPmxb8TaiyUlNSPkYWqxCSRQxZnHxlvrZPawuHbUx0Ox
+	+fVhVhvrWMYpoVQoT5VAMLl2aG1fsL1X2eq7Dnuc2ArO721sADNrTL9WIUixr2E6B+E70n
+	H8OQcuT+H0D890rQZpN0Ge4BD2E+NjBaGNjx0nd0HfDqDuiytoYaDP0PjIz/RIdpgY5QU/
+	dI3uQoOEwJJCzisnazsqHBniFWyWx9/gdMIHqIrSedPkEnIFhDnx33nfU57wXxPYcx2EFR
+	TstUZ5m4T9LXVVzp2puiJ8x0BejpPmGR/fwm2NXGuMmDYtIKJlgMItYrymvbXQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Cosmin Tanislav <demonsingur@gmail.com>
+Subject: Re: [PATCH v2 6/9] i2c: atr: deduplicate logic in attach_addr()
+Date: Thu, 27 Feb 2025 14:36:17 +0100
+Message-ID: <3644500.iIbC2pHGDl@fw-rgant>
+In-Reply-To: <20250225113939.49811-7-demonsingur@gmail.com>
+References:
+ <20250225113939.49811-1-demonsingur@gmail.com>
+ <20250225113939.49811-7-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213190119.3449103-1-matt@readmodwrite.com>
- <CAFULd4Zrnn=1=1AP329Qw23b0Ume2A5Z-U2q-M62L1gcpJD4pg@mail.gmail.com>
- <CAENh_SRw-L3UtBiz2xg_X4szdMJmNg118gL8f2g8gN5w6hc3Nw@mail.gmail.com>
- <CAFULd4bwLyGiJ87fvT+N06ANchEQ0aGZdLvT-U3C8ROwCADr4Q@mail.gmail.com>
- <Z8BY_AZPQQm0BJTu@gmail.com> <CAFULd4aCBMXcco_GdTYu9Zmc5A6+Z=J4XrsjLXWe1dydRD0oDQ@mail.gmail.com>
- <Z8BekITYkuc4F4b1@gmail.com>
-In-Reply-To: <Z8BekITYkuc4F4b1@gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 27 Feb 2025 14:35:33 +0100
-X-Gm-Features: AQ5f1JorbHPwjE3-2yO0d1g4rFj_UfCZcf4xd4xv-ZTHEsObbL_-_R55Q19Z1dQ
-Message-ID: <CAFULd4YsMAqqVApUdtib-n6JuaFzyOXmi3fBuUNKdnnNKK=iig@mail.gmail.com>
-Subject: Re: CONFIG_KASAN triggers ASAN bug in GCC 13.3.0 and 14.1.0
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Matt Fleming <matt@readmodwrite.com>, Jakub Jelinek <jakub@redhat.com>, 
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Content-Type: multipart/mixed; boundary="000000000000642d51062f1fc4f6"
+Content-Type: multipart/signed; boundary="nextPart9442157.CDJkKcVGEf";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeeitdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsr
+ ghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
---000000000000642d51062f1fc4f6
-Content-Type: text/plain; charset="UTF-8"
+--nextPart9442157.CDJkKcVGEf
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Date: Thu, 27 Feb 2025 14:36:17 +0100
+Message-ID: <3644500.iIbC2pHGDl@fw-rgant>
+In-Reply-To: <20250225113939.49811-7-demonsingur@gmail.com>
+MIME-Version: 1.0
 
-On Thu, Feb 27, 2025 at 1:46=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
-e:
->
->
-> * Uros Bizjak <ubizjak@gmail.com> wrote:
->
-> > On Thu, Feb 27, 2025 at 1:22=E2=80=AFPM Ingo Molnar <mingo@kernel.org> =
-wrote:
-> > >
-> > >
-> > > * Uros Bizjak <ubizjak@gmail.com> wrote:
-> > >
-> > > > On Mon, Dec 16, 2024 at 5:20=E2=80=AFPM Matt Fleming <matt@readmodw=
-rite.com> wrote:
-> > > > >
-> > > > > On Sat, Dec 14, 2024 at 1:17=E2=80=AFAM Uros Bizjak <ubizjak@gmai=
-l.com> wrote:
-> > > > > >
-> > > > > > Does your config include CONFIG_UBSAN_BOOL=3Dy ?
-> > > > >
-> > > > > Yes, it does!
-> > > > >
-> > > > > > There is a rare interaction between CONFIG_KASAN and CONFIG_UBS=
-AN_BOOL
-> > > > > > (aka -fsanitize=3Dbool), reported in [1] and fixed for gcc-14.2=
- in [2].
-> > > > > >
-> > > > > > [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D111736#c42
-> > > > > >
-> > > > > > [2] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D115172
-> > > > > >
-> > > > > > Otherwise, please attach your .config, and I'll look into this =
-issue.
-> > > > >
-> > > > > Thanks. Disabling CONFIG_UBSAN_BOOL does indeed make the kernels =
-boot again.
-> > > > >
-> > > > > Should CONFIG_UBSAN_BOOL have a dependency on GCC 14.4+ ?
-> > > >
-> > > > No, this is a very rare Oops that triggers only with gcc-14.1 versi=
-on
-> > > > and only when both KASAN and UBSAN are enabled. This is actually th=
-e
-> > > > problem with sanitization of the percpu address when named address
-> > > > spaces are enabled (IOW, sanitization of __seg_gs prefixed address)=
-.
-> > > > UBSAN creates a temporary in memory, but forgets to copy memory tag=
-s,
-> > > > including named address space qualifier from the original. Later AS=
-AN
-> > > > sanitizes this location as a normal variable (due to missing
-> > > > qualifier), but actually should be disabled for __seg_gs prefixed
-> > > > addresses.
-> > > >
-> > > > Your report is only *the second* since sanitizers were re-enabled w=
-ith
-> > > > named address spaces. gcc-14.2 that includes the fix is available
-> > > > since August 2024, and since sanitizers are strictly development
-> > > > tools, my proposed solution would be to simply upgrade the compiler=
- to
-> > > > gcc-14.2 release.
-> > >
-> > > So unless this is difficult to test for, it would be nice to have a
-> > > compiler version cutoff for the feature. Especially if it's been
-> > > reported twice already, chances are that a lot more people have
-> > > experienced it already.
-> > >
-> > > The kernel build should avoid this known oops automatically.
-> >
-> > The patch could be as simple as:
-> >
-> > --cut here--
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index 95ea2b4b95db..c94c37889917 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -2370,7 +2370,7 @@ config CC_HAS_NAMED_AS
-> >      depends on CC_IS_GCC
-> >
-> >  config CC_HAS_NAMED_AS_FIXED_SANITIZERS
-> > -    def_bool CC_IS_GCC && GCC_VERSION >=3D 130300
-> > +    def_bool CC_IS_GCC && GCC_VERSION >=3D 140200
-> >
-> >  config USE_X86_SEG_SUPPORT
-> >      def_bool y
-> > --cut here--
-> >
-> > but it will disable all sanitizers for a very rare Oops that needs the
-> > combination of CONFIG_KASAN and CONFIG_UBSAN_BOOL.
->
-> Can we not limit the version quirk to KASAN && UBSAN_BOOL?
+On mardi 25 f=C3=A9vrier 2025 12:39:34 heure normale d=E2=80=99Europe centr=
+ale Cosmin=20
+Tanislav wrote:
+> This is the same logic as in i2c_atr_create_mapping_by_addr().
+>=20
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  drivers/i2c/i2c-atr.c | 30 ++++++------------------------
+>  1 file changed, 6 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
+> index b62aa6ae452e..5b53eaee0408 100644
+> --- a/drivers/i2c/i2c-atr.c
+> +++ b/drivers/i2c/i2c-atr.c
+> @@ -538,38 +538,20 @@ static int i2c_atr_attach_addr(struct i2c_adapter
+> *adapter, struct i2c_atr_chan *chan =3D adapter->algo_data;
+>  	struct i2c_atr *atr =3D chan->atr;
+>  	struct i2c_atr_alias_pair *c2a;
+> -	u16 alias;
+> -	int ret;
+> -
+> -	ret =3D i2c_atr_reserve_alias(chan->alias_pool);
+> -	if (ret < 0) {
+> -		dev_err(atr->dev, "failed to find a free alias\n");
+> -		return ret;
+> -	}
+> -
+> -	alias =3D ret;
+> +	int ret =3D 0;
+>=20
+>  	mutex_lock(&chan->alias_pairs_lock);
 
-I am testing the attached patch that resolves the issue.
+A mutex guard could be used here.
 
-Thanks,
-Uros.
+>=20
+> -	c2a =3D i2c_atr_create_c2a(chan, alias, addr);
+> +	c2a =3D i2c_atr_create_mapping_by_addr(chan, addr);
+>  	if (!c2a) {
+> -		ret =3D -ENOMEM;
+> -		goto err_release_alias;
+> +		dev_err(atr->dev, "failed to find a free alias\n");
+> +		ret =3D -EBUSY;
+> +		goto out_unlock;
+>  	}
+>=20
+> -	ret =3D atr->ops->attach_addr(atr, chan->chan_id, addr, alias);
+> -	if (ret)
+> -		goto err_del_c2a;
+> -
+>  	dev_dbg(atr->dev, "chan%u: using alias 0x%02x for addr 0x%02x\n",
+> -		chan->chan_id, alias, addr);
+> +		chan->chan_id, c2a->alias, addr);
+>=20
+> -	goto out_unlock;
+> -
+> -err_del_c2a:
+> -	i2c_atr_destroy_c2a(&c2a);
+> -err_release_alias:
+> -	i2c_atr_release_alias(chan->alias_pool, alias);
+>  out_unlock:
+>  	mutex_unlock(&chan->alias_pairs_lock);
+>  	return ret;
 
---000000000000642d51062f1fc4f6
-Content-Type: text/plain; charset="US-ASCII"; name="p.diff.txt"
-Content-Disposition: attachment; filename="p.diff.txt"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m7ndzw2b0>
-X-Attachment-Id: f_m7ndzw2b0
+Best Regards,
 
-ZGlmZiAtLWdpdCBhL2FyY2gveDg2L0tjb25maWcgYi9hcmNoL3g4Ni9LY29uZmlnCmluZGV4IDk1
-ZWEyYjRiOTVkYi4uYjkyZTBjM2Y3ZjE5IDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9LY29uZmlnCisr
-KyBiL2FyY2gveDg2L0tjb25maWcKQEAgLTIzNjksMTggKzIzNjksMjAgQEAgY29uZmlnIENDX0hB
-U19OQU1FRF9BUwogCWRlZl9ib29sICQoc3VjY2VzcyxlY2hvICdpbnQgX19zZWdfZnMgZnM7IGlu
-dCBfX3NlZ19ncyBnczsnIHwgJChDQykgLXggYyAtIC1TIC1vIC9kZXYvbnVsbCkKIAlkZXBlbmRz
-IG9uIENDX0lTX0dDQwogCisjCisjIC1mc2FuaXRpemU9a2VybmVsLWFkZHJlc3MgKEtBU0FOKSBh
-bmQgLWZzYW5pdGl6ZT10aHJlYWQgKEtDU0FOKQorIyBhcmUgaW5jb21wYXRpYmxlIHdpdGggbmFt
-ZWQgYWRkcmVzcyBzcGFjZXMgd2l0aCBHQ0MgPCAxMy4zCisjIChzZWUgR0NDIFBSIHNhbml0aXpl
-ci8xMTE3MzYgYW5kIGFsc28gUFIgc2FuaXRpemVyLzExNTE3MikuCisjCisKIGNvbmZpZyBDQ19I
-QVNfTkFNRURfQVNfRklYRURfU0FOSVRJWkVSUwotCWRlZl9ib29sIENDX0lTX0dDQyAmJiBHQ0Nf
-VkVSU0lPTiA+PSAxMzAzMDAKKwlkZWZfYm9vbCB5CisJZGVwZW5kcyBvbiAhKEtBU0FOIHx8IEtD
-U0FOKSB8fCBHQ0NfVkVSU0lPTiA+PSAxMzAzMDAKKwlkZXBlbmRzIG9uICEoS0FTQU4gJiYgVUJT
-QU5fQk9PTCkgfHwgR0NDX1ZFUlNJT04gPj0gMTQwMjAwCiAKIGNvbmZpZyBVU0VfWDg2X1NFR19T
-VVBQT1JUCi0JZGVmX2Jvb2wgeQotCWRlcGVuZHMgb24gQ0NfSEFTX05BTUVEX0FTCi0JIwotCSMg
-LWZzYW5pdGl6ZT1rZXJuZWwtYWRkcmVzcyAoS0FTQU4pIGFuZCAtZnNhbml0aXplPXRocmVhZAot
-CSMgKEtDU0FOKSBhcmUgaW5jb21wYXRpYmxlIHdpdGggbmFtZWQgYWRkcmVzcyBzcGFjZXMgd2l0
-aAotCSMgR0NDIDwgMTMuMyAtIHNlZSBHQ0MgUFIgc2FuaXRpemVyLzExMTczNi4KLQkjCi0JZGVw
-ZW5kcyBvbiAhKEtBU0FOIHx8IEtDU0FOKSB8fCBDQ19IQVNfTkFNRURfQVNfRklYRURfU0FOSVRJ
-WkVSUworCWRlZl9ib29sIENDX0hBU19OQU1FRF9BUworCWRlcGVuZHMgb24gQ0NfSEFTX05BTUVE
-X0FTX0ZJWEVEX1NBTklUSVpFUlMKIAogY29uZmlnIENDX0hBU19TTFMKIAlkZWZfYm9vbCAkKGNj
-LW9wdGlvbiwtbWhhcmRlbi1zbHM9YWxsKQo=
---000000000000642d51062f1fc4f6--
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart9442157.CDJkKcVGEf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmfAalEACgkQ3R9U/FLj
+28608xAAi5fpoO6caP1MOe8d0s7ygUrw8YJUE6Pgx/wd7sK2psG9f8GmG/w/+qoU
+jw1wPF5zSu+YDCGcnI3JPcXlAGOCx2vBqfqpmLNp9knq8Ixlh+bV+CDA/pM2/fs4
+iBKV9PhMM570wasfgORjKeWGf1yWIHp7sVSY/ypBZo/NtACTTNC9bFTpUWbOG2mc
+2lZZWf9bKt4GUeXCeaez9fbxf6au5GJb0qm/Z345UQD7Qqbn3DAcwqVe2N5zREWB
+lfvox53EYxzPYaaUGgBPUozT1Wm/4boo9SxX9FHjViwkFb44WqZoFfkxRn9ybkBT
+bCVFXgLdqfMSi8PjxfqY1gvntzC2DekoSK39XPCg7vCiWNeBI8JY6hEEt6ps/mX6
+x+raY5BrisxALQqhmQBhi9xYAIILc4vOK3WB5S/15n77gmw6O1TSafn7Q2UXJQ15
+HsvMfzYkLd8XHUHJV83wApmFH08ohTixU7F6wK6461bRALfoq7wxrONHQd/Qnx7V
+iX6dZmyyha6gs+gYxMHpU/0D7MdJAr0N6gVe/vMa5Y2CZYazvAF23R8xctnahjEK
+jQXZ/6WDAYM/iDADOcdgPCxEX1RhW5cCI/3ythcN1UDd9OK2oh71PPwSffbqRL35
+gRwlNrh5IY3r2cwKby35E/6SdvuXLPNjRDM12UZEiV6LwuOxrAk=
+=ZSY0
+-----END PGP SIGNATURE-----
+
+--nextPart9442157.CDJkKcVGEf--
+
+
+
 
