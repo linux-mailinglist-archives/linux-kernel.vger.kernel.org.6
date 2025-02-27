@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-537100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816CEA48811
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:45:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACDAA48813
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA8A188C499
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1EE188BF00
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F44B26BDB4;
-	Thu, 27 Feb 2025 18:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924AB26E16C;
+	Thu, 27 Feb 2025 18:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJKdUbIi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6qHBZRB"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73C626B97F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D045426D5A9
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681909; cv=none; b=glk/BLBAqJwKbMfKGJJPDeV4J52wyCjlUamZ7c8rpvJkK/pdEMgC2o5SACDo5nUk5yK0xIUZTJgSD+JONkT7hp5qhWrG5AvFHQGVYmDyGPAH+8zOlaUs/HodkIfoOzwPO68P+SuQ+8/lrJW8Ll/Pn72xmipLzGAd8c8vFxjaL+0=
+	t=1740681911; cv=none; b=C/B2GVvJ4NYdRABpevX9mBRFU75K/DUFFzJcC+QhX7WBa4wsTOt/+2yyYE6lm7RX6j9AR/vnormSi+uugOV7NR0bGTZLfY53YQPyxpUYYDL9D5xsUpsNtyx/98MrcPJhepYzOMYY7xrwnDsFhrIxolshvgZasHE0O6rBDbgHxuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681909; c=relaxed/simple;
-	bh=M67rS9H7Qso6AOXIDWb/hoSSdA5CWVIzCPpTU22f688=;
+	s=arc-20240116; t=1740681911; c=relaxed/simple;
+	bh=j+BCRed+9G0JDy4ms61fhOSISvI8yxPsmuGYZ95UX3Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rJuxSa2rsJCD7xsRbM0zrPq4BUtbvu826kVQxcgtXv0tWHSoTt2kGteoYxHtwLhTeBT3QaIss84McBzxFGU6Oc8InGutXvH/DadlqLZ/Z+t7eLEMuIKEZ10fEzI1qQtP/WRZTSV4mMzHglvjSHtL+vZRxuVfg6+DSxCQsSRsVO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJKdUbIi; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=ZMgHugPNOhLAK7FGtknmzS1LHvubo8K1XR8C1FDP0KoKcwkHMJVDMDCMK2IPYQ1H56XDmD9/OJCFHlOMhToLC3iEaGgbsf37TDa3iEkKzdmG9sEU0vxhyYyqO0vWgKKHovPoPaZp513FUjhtw/Ulyy7BVYGPkdp3O87ZKDaI2T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6qHBZRB; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740681908; x=1772217908;
+  t=1740681909; x=1772217909;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=M67rS9H7Qso6AOXIDWb/hoSSdA5CWVIzCPpTU22f688=;
-  b=RJKdUbIicghEeG0XsDH5vn9a8CSkWW+OkfwLdxZLT/3zPCQhjsfAux7U
-   JPh/Qc9h6kAW6vc37Hwy5D5KL+GwVcDbBOdmxBLevQfFkRjeLZRgL1DHR
-   +/YOkOaPL41Ds2Ni4b1eVAX/Mo0A9NiZ0U7lNw0bi8Q4IyyS/IAI1PwZ2
-   x++PoMzI2vB+Voo6cG3lFpF8tsRRz1z3by8NvO57zNaMlQLqtA/vMSjUC
-   A3tbd9W/mubo/fig3XxbzMzdQ1ysymYXQ4HxXcwsUyzxFXMLHcIOiGwip
-   3ICEbRlhI3JACNwEbLkjKnjAkMrQwQcUA7IOOP820qdxaJYpPD8PfiQgt
+  bh=j+BCRed+9G0JDy4ms61fhOSISvI8yxPsmuGYZ95UX3Q=;
+  b=N6qHBZRBFh8k6IvIYdev74aU4kCcB9l2CoFv3swOSyR83xnzy0vvNI8D
+   f0EAom5Lbgg5y+REz2ZGXS7Pq4X1UZDZxIWR4XzT8RFp8rVv0mCu2I4za
+   5lEG0ZjFMdmxg2+fRmD1fFJTug1QWAo25aXoGTox4fFHR3sCpGhTmeELk
+   I3axDKpXtX0+InWLGUhcQgUGZeK5RBz0Q7co9ieVMN4dKvt7ibWuxAEjs
+   yiMYZy9ODJQWKY7F0C5Cn9hQuT6zNa6U6tQGzDd18mF3kE58jAAJDzE77
+   8Gtw0l26yd2klPijSLiN7y8ipI+vVz1UhHvzGZ6EymKrTPGTkxxwu9bwg
    A==;
-X-CSE-ConnectionGUID: a7HdJwAwSimSi8Mm2ELOtw==
-X-CSE-MsgGUID: WZD2wjSoRemUfUT6C+9keQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720870"
+X-CSE-ConnectionGUID: WbMJyKLiQXaSmdxXCgSuFw==
+X-CSE-MsgGUID: Gj7IxRXWS8WfTeieh3KIgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720876"
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41720870"
+   d="scan'208";a="41720876"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:07 -0800
-X-CSE-ConnectionGUID: fUS3uTsuTD2ONtuDIDYXhw==
-X-CSE-MsgGUID: 3cl642s2Rh6WtyVGt7TtYg==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:08 -0800
+X-CSE-ConnectionGUID: 5M9e5LwFR1uJZ4dkZtgwmA==
+X-CSE-MsgGUID: x4ujSbY5SMqrFq6If0Ct0w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117767387"
+   d="scan'208";a="117767396"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.154.132])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:07 -0800
+  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:08 -0800
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -65,9 +65,9 @@ Cc: x86@kernel.org,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH RFC v1 03/11] x86/fpu/xstate: Remove xstate offset check
-Date: Thu, 27 Feb 2025 10:44:48 -0800
-Message-ID: <20250227184502.10288-4-chang.seok.bae@intel.com>
+Subject: [PATCH RFC v1 04/11] x86/fpu/xstate: Adjust XSAVE buffer size calculation
+Date: Thu, 27 Feb 2025 10:44:49 -0800
+Message-ID: <20250227184502.10288-5-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
 References: <20250227184502.10288-1-chang.seok.bae@intel.com>
@@ -79,55 +79,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Traditionally, new xstate components have been assigned sequentially,
-aligning feature numbers with their offsets in the XSAVE buffer. However,
-this ordering is not architecturally mandated in the non-compacted
-format, where a component's offset may not correspond to its feature
-number.
-
-The kernel caches CPUID-reported xstate component details, including size
-and offset in the non-compacted format. As part of this process, a sanity
-check is also conducted to ensure alignment between feature numbers and
+The current xstate size calculation assumes that the highest-numbered
+xstate feature has the highest offset in the buffer, determining the size
+based on the topmost bit in the feature mask. However, this assumption is
+not architecturally guaranteed -- higher-numbered features may have lower
 offsets.
 
-This check was likely intended as a general guideline rather than a
-strict requirement. As part of supporting out-of-order offsets, remove
-this unnecessary validation.
+With the introduction of the xfeature order table and its helper macro,
+xstate components can now be traversed in their positional order. Update
+the non-compacted format handling to iterate through the table to
+determine the last-positioned feature. Then, set the offset accordingly.
+
+Since size calculation primarily occurs during initialization or in
+non-critical paths, looping to find the last feature is not expected to
+have a meaningful performance impact.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index cee9a1e454b7..c6f825bb744b 100644
+index c6f825bb744b..06d2be602ea9 100644
 --- a/arch/x86/kernel/fpu/xstate.c
 +++ b/arch/x86/kernel/fpu/xstate.c
-@@ -253,9 +253,6 @@ static bool xfeature_enabled(enum xfeature xfeature)
- static void __init setup_xstate_cache(void)
+@@ -576,13 +576,20 @@ static bool __init check_xstate_against_struct(int nr)
+ static unsigned int xstate_calculate_size(u64 xfeatures, bool compacted)
  {
- 	u32 eax, ebx, ecx, edx, i;
--	/* start at the beginning of the "extended state" */
--	unsigned int last_good_offset = offsetof(struct xregs_state,
--						 extended_state_area);
- 	/*
- 	 * The FP xstates and SSE xstates are legacy states. They are always
- 	 * in the fixed offsets in the xsave area in either compacted form
-@@ -283,16 +280,6 @@ static void __init setup_xstate_cache(void)
- 			continue;
+ 	unsigned int topmost = fls64(xfeatures) -  1;
+-	unsigned int offset = xstate_offsets[topmost];
++	unsigned int offset, i;
  
- 		xstate_offsets[i] = ebx;
--
--		/*
--		 * In our xstate size checks, we assume that the highest-numbered
--		 * xstate feature has the highest offset in the buffer.  Ensure
--		 * it does.
--		 */
--		WARN_ONCE(last_good_offset > xstate_offsets[i],
--			  "x86/fpu: misordered xstate at %d\n", last_good_offset);
--
--		last_good_offset = xstate_offsets[i];
- 	}
+ 	if (topmost <= XFEATURE_SSE)
+ 		return sizeof(struct xregs_state);
+ 
+-	if (compacted)
++	if (compacted) {
+ 		offset = xfeature_get_offset(xfeatures, topmost);
++	} else {
++		/* Walk through the xfeature order to pick the last */
++		for_each_extended_xfeature_in_order(i, xfeatures)
++			topmost = xfeature_noncompact_order[i];
++		offset = xstate_offsets[topmost];
++	}
++
+ 	return offset + xstate_sizes[topmost];
  }
  
 -- 
