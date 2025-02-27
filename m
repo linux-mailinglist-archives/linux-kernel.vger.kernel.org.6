@@ -1,222 +1,158 @@
-Return-Path: <linux-kernel+bounces-536560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240BEA480F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:24:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8784DA48135
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243123AC64B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3DCB189C2EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A96E233158;
-	Thu, 27 Feb 2025 14:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD021CA14;
+	Thu, 27 Feb 2025 14:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="B24PTjqM"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QSFYMRQo"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540E127003D;
-	Thu, 27 Feb 2025 14:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD99342AA1;
+	Thu, 27 Feb 2025 14:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666090; cv=none; b=LY/vT/h1Iw6h8VtSFo6YNgZMMNx0/D5eGwmaoQwOQKBmwKpvY5c4dzmF7r6OFDRudC29p1b0M/tU6gYQ6vJOcckgk767kjKc2pkltFA7pED73GfOGzAga3sZft7btm7XPDNLbHmksXzCSmJwmUiwTZZ+KgHVTDtnM86BSolzYGs=
+	t=1740666087; cv=none; b=GHD+5y0ozGI3fDmWg1QdThZsBczw+QIuQv5FJXz482SnmkGcIFRzanDF1vMkr0nBKHP2RoFYl3KpZX08KDFpH7kzX0lEEfxxwlvmQyfty9NEmm36uwrM3vj92JhocveABzbzdtrtwqCawACkRZZKQxh+/c28jrpf03IvxJh4wG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666090; c=relaxed/simple;
-	bh=ijvJbklRaVxatHySwEJGs2tGLouKIiKmqCoLYtwRaMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KsHmWXCcBoQIh0Nh4UiO9d84mlG+7wMgrAdhvXh7R29p0h91LxRcoE7lkS2GJ3utnvT3MCTWhut0BDCk35+h1hankKiwUK104DwaLMyiFjl9DyoJ+hoV47LKzdzV9yQs2o6xSaCwOcmv7q1QfU/8fTbjS1+DBbgaQuTsqhKWuXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=B24PTjqM; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740666059;
-	bh=Uz1jT418BDhN+2nYXqkBO9J7O5VbnfcOo+CUWIwEAC4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=B24PTjqMnJRHJrFVasn0NLd6DZOChOHbQHqaNtxCzI3v8rubO3dpcjZ3J/rtDPh1K
-	 U/KTSSSlP3KgRBrtB1zfbh7fFn+/MAdrKNRkqCFw0yHE8di5PO1o2IhKM7PWyjO79l
-	 ldeJMJsa9zW77E86GtEW2IbtkBfjQS8JU/IB7swE=
-X-QQ-mid: bizesmtpip3t1740666005traeu0f
-X-QQ-Originating-IP: SgmZ1DVddhf4853oGFIiBWgmEOe34RkqKKw0TqObrRw=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 27 Feb 2025 22:20:03 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17606361630312257937
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de,
-	macro@orcam.me.uk
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v2] MIPS: dec: Create reset.h
-Date: Thu, 27 Feb 2025 22:19:49 +0800
-Message-ID: <EA0AFB15DDCF65C1+20250227141949.1129536-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740666087; c=relaxed/simple;
+	bh=gFa6GpKVLPwlHcDdDMyMTXz8bG022aq5QSyPy10QOa0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5fX5+Y6FYX9vDG3eGapSC+y12eGd7EzyzrzjO6WyYcnmCWc24N90U7D74EUYzs2Q/x8vyxv7bvUwMjcqfeL/lYIyEZWkI86u+zGciwJ4xDFQDgFiz2Ax1Yp2vu0RJhEp6uNpkLP6y2mSWzScC+lZ7Z4IyN/ZiIGwUJd6jpoFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QSFYMRQo; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51REKtYe1783638
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 08:20:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740666055;
+	bh=lM/T3w7yUieqaJocZ0BLAs84QNCXgUrCL8lVLG4NWTs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=QSFYMRQocjgVFaCGWkMEyWi0F5TSes/NQaMaXjEAgo41xQLwoSAL/izLY3/DtIs/4
+	 HQkLhm44q6rSarjxpah6TdlvZxplsTPSnYPGHnh6MYHDQsms4GSovJvcQVP/MgO8e1
+	 YiG/ieHZ54+KkgQxOAAILN5QEVrgpZGRENbZjTSM=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51REKt4m009869
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Feb 2025 08:20:55 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Feb 2025 08:20:55 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Feb 2025 08:20:55 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51REKtcs097316;
+	Thu, 27 Feb 2025 08:20:55 -0600
+Date: Thu, 27 Feb 2025 08:20:55 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+CC: Andi Shyti <andi.shyti@kernel.org>, <vigneshr@ti.com>,
+        <aaro.koskinen@iki.fi>, <khilman@baylibre.com>, <rogerq@kernel.org>,
+        <tony@atomide.com>, <jmkrzyszt@gmail.com>, <reidt@ti.com>,
+        <wsa@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@kernel.org>
+Subject: Re: [PATCH] i2c: omap: fix IRQ storms
+Message-ID: <20250227142055.ndzavzysaenoducj@murky>
+References: <20250207185435.751878-1-andreas@kemnade.info>
+ <c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
+ <20250220100745.05c0eff8@akair>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OJzv1jSZYUX4OZ5CsXTBVQmsvPV8CRLKRW1/ZMugu4g3NG6ZzVbPqGFO
-	/8XqWlStQ7zUuP4g3CFhguELVP3UU+kifFI6SWIvxsc5MNz6XtUAna8TTYLhgoLv84fvCuQ
-	EKCaHY1Y0/eLAnq7cXUQ+GoQJ2EcHVJR68S//weYbVvwtL/LfsGG0GTx7capTui/bc1R9ec
-	RhxpQZmJitEFqbCjLdbdkUUOulUZrNdw9z5EyDod11zWv5Xvd5Rz4rmn3FylQZQemrjUEyM
-	8Gn8koPZpX+o0YRJ63th/wLvcKrCYENf52JCMjC2BLYP8m8nELT09ebAvaxqm9BCOpC2Pbw
-	eNiXSGf6dWiEnLacup+H/oECDOC3m/WspwTOErqni3Nq0ARXbI3PotndWXfqmzmK9vBQ5Go
-	SmwMJEat9K2j+xRVw8Sz3eObTscws2EZPRYSCRYoFfp0eW1EJc379ZX6S2NEwX5J6fRGE/h
-	U3KZsPsYCG7p5ZqyVXV6/q4bvxJEL/1BdKe5yXgWVtyelC1nS5YmEklGWNuXJTh1Sf76IBM
-	Lw5ZB9SdchhMUhrACQELJu7bphdybzj2FBABzw+mAv1zd4E4pEype6RKhIFi9REYwYfsNoB
-	URDGDZJPdTVQJ6htVAWo+QIYWudJ0Ywnp8y3u0d/2vnKkIW/yoLyTpGJw4e8XihJFAp7RuP
-	bq3FyfGWPwuVZgOPz6GDCcmS/1nISlAlKVvxISnKc06R8MAF7l7ModMlKltd3ZQHtcs/+G/
-	gPhQPEkR1rvAh5FU78/IaQOm1bBNlNMCVZn2KmbyYj8G879yQH+1WQkHCWnF5T3EJnBf1BO
-	ySI54MrEwD4Kb6aimfzEZnBGNelNq2mBlgSrG/Mz+g7IIA+myHOoypwYDnXy23TH3LGDuIu
-	CYCk7kgL8NDRpUF3BcSDOJ/GFHTPwBd/l6JLPKT4xb1105E2ggOg/c+7gj92mbhW1tnNNzM
-	n8JvopnHMpSnoG63jry3wtbB9W8AYvPJE/N6QADMsNEm8vvi9dvbVQeGU/48qc+dg4RIjNW
-	9p1Q9teTN7KCrJzo6Gc0VKInKWaDLrbHV9fHHt8w8BYSeHLWId913CiBNbkLk=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250220100745.05c0eff8@akair>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Declare externally used functions in reset.c to resolve compilation
-warnings.
+On 10:08-20250220, Andreas Kemnade wrote:
+> Am Wed, 19 Feb 2025 20:22:13 +0100
+> schrieb Andi Shyti <andi.shyti@kernel.org>:
+> 
+> > Hi,
+> > 
+> > On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote:
+> > > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
+> > > storms because NACK IRQs are enabled and therefore triggered but not
+> > > acked.
+> > > 
+> > > Sending a reset command to the gyroscope by
+> > > i2cset 1 0x69 0x14 0xb6
+> > > with an additional debug print in the ISR (not the thread) itself
+> > > causes
+> > > 
+> > > [ 363.353515] i2c i2c-1: ioctl, cmd=0x720, arg=0xbe801b00
+> > > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0, stop: 1
+> > > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x1110)
+> > > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+> > > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR = 0x0102)
+> > > repeating till infinity
+> > > [...]
+> > > (0x2 = NACK, 0x100 = Bus free, which is not enabled)
+> > > Apparently no other IRQ bit gets set, so this stalls.
+> > > 
+> > > Do not ignore enabled interrupts and make sure they are acked.
+> > > If the NACK IRQ is not needed, it should simply not enabled, but
+> > > according to the above log, caring about it is necessary unless
+> > > the Bus free IRQ is enabled and handled. The assumption that is
+> > > will always come with a ARDY IRQ, which was the idea behind
+> > > ignoring it, proves wrong.
+> > > It is true for simple reads from an unused address.
+> > > 
+> > > So revert
+> > > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readings").
+> > > 
+> > > The offending commit was used to reduce the false detections in
+> > > i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
+> > > rare false detections (I have never seen such on my systems) is the
+> > > lesser devil than having basically the system hanging completely.
+> > > 
+> > > No more details came to light in the corresponding email thread since
+> > > several months:
+> > > https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti.com/
+> > > so no better fix to solve both problems can be developed right now.  
+> > 
+> > I need someone from TI or someone who can test to ack here.
+> > 
+> > Can someone help?
+> >
+> The original (IMHO minor) problem which should be fixed by c770657bd261
+> is hard to test, I have never seen that on any system (and as a
+> platform maintainer have a bunch of them) I have access to.
+> There is not much description anywhere about the system in which the
+> original system occured, and no reaction since several months from the
+> author, so I do not see anything which can be done.
+> Maybe it was just faulty hardware.
+> 
+> As said in the commit message, reverting it should be the lesser devil.
+> And that state was tested for many years.
 
-Fix follow errors with gcc-14 when -Werror:
+Can we not handle this slightly differently? leave the fix based on
+compatible? we know that the i2c controller changed over time. the
+i2cdetect bug fixed by c770657bd261 esp hard to find and fix.
 
-arch/mips/dec/reset.c:22:17: error: no previous prototype for ‘dec_machine_restart’ [-Werror=missing-prototypes]
-   22 | void __noreturn dec_machine_restart(char *command)
-      |                 ^~~~~~~~~~~~~~~~~~~
-arch/mips/dec/reset.c:27:17: error: no previous prototype for ‘dec_machine_halt’ [-Werror=missing-prototypes]
-   27 | void __noreturn dec_machine_halt(void)
-      |                 ^~~~~~~~~~~~~~~~
-arch/mips/dec/reset.c:32:17: error: no previous prototype for ‘dec_machine_power_off’ [-Werror=missing-prototypes]
-   32 | void __noreturn dec_machine_power_off(void)
-      |                 ^~~~~~~~~~~~~~~~~~~~~
-arch/mips/dec/reset.c:38:13: error: no previous prototype for ‘dec_intr_halt’ [-Werror=missing-prototypes]
-   38 | irqreturn_t dec_intr_halt(int irq, void *dev_id)
-      |             ^~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[7]: *** [scripts/Makefile.build:207: arch/mips/dec/reset.o] Error 1
-make[7]: *** Waiting for unfinished jobs....
 
-In passing, also correct the include file ordering in setup.c as it
-doesn't merit a separate commit.
 
-Link: https://lore.kernel.org/all/Z8A0JeFYfBxXOFCD@alpha.franken.de/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
-Changelog:
- *v1->v2: Rationalize the copyright for reset.h.
----
- arch/mips/dec/prom/init.c         |  3 +--
- arch/mips/dec/reset.c             |  2 ++
- arch/mips/dec/setup.c             |  9 ++-------
- arch/mips/include/asm/dec/reset.h | 20 ++++++++++++++++++++
- 4 files changed, 25 insertions(+), 9 deletions(-)
- create mode 100644 arch/mips/include/asm/dec/reset.h
-
-diff --git a/arch/mips/dec/prom/init.c b/arch/mips/dec/prom/init.c
-index 8d74d7d6c05b..a8393052a443 100644
---- a/arch/mips/dec/prom/init.c
-+++ b/arch/mips/dec/prom/init.c
-@@ -18,7 +18,7 @@
- #include <asm/processor.h>
- 
- #include <asm/dec/prom.h>
--
-+#include <asm/dec/reset.h>
- 
- int (*__rex_bootinit)(void);
- int (*__rex_bootread)(void);
-@@ -88,7 +88,6 @@ static void __init which_prom(s32 magic, s32 *prom_vec)
- 
- void __init prom_init(void)
- {
--	extern void dec_machine_halt(void);
- 	static const char cpu_msg[] __initconst =
- 		"Sorry, this kernel is compiled for a wrong CPU type!\n";
- 	s32 argc = fw_arg0;
-diff --git a/arch/mips/dec/reset.c b/arch/mips/dec/reset.c
-index 3df01f1da347..ee1ad38f4a69 100644
---- a/arch/mips/dec/reset.c
-+++ b/arch/mips/dec/reset.c
-@@ -10,6 +10,8 @@
- 
- #include <asm/addrspace.h>
- 
-+#include <asm/dec/reset.h>
-+
- typedef void __noreturn (* noret_func_t)(void);
- 
- static inline void __noreturn back_to_prom(void)
-diff --git a/arch/mips/dec/setup.c b/arch/mips/dec/setup.c
-index 87f0a1436bf9..6b100c7d0633 100644
---- a/arch/mips/dec/setup.c
-+++ b/arch/mips/dec/setup.c
-@@ -18,10 +18,10 @@
- #include <linux/memblock.h>
- #include <linux/param.h>
- #include <linux/percpu-defs.h>
-+#include <linux/pm.h>
- #include <linux/sched.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
--#include <linux/pm.h>
- 
- #include <asm/addrspace.h>
- #include <asm/bootinfo.h>
-@@ -48,14 +48,9 @@
- #include <asm/dec/kn02ca.h>
- #include <asm/dec/kn03.h>
- #include <asm/dec/kn230.h>
-+#include <asm/dec/reset.h>
- #include <asm/dec/system.h>
- 
--
--extern void dec_machine_restart(char *command);
--extern void dec_machine_halt(void);
--extern void dec_machine_power_off(void);
--extern irqreturn_t dec_intr_halt(int irq, void *dev_id);
--
- unsigned long dec_kn_slot_base, dec_kn_slot_size;
- 
- EXPORT_SYMBOL(dec_kn_slot_base);
-diff --git a/arch/mips/include/asm/dec/reset.h b/arch/mips/include/asm/dec/reset.h
-new file mode 100644
-index 000000000000..c1557b88264c
---- /dev/null
-+++ b/arch/mips/include/asm/dec/reset.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Reset a DECstation machine.
-+ *
-+ * File created to eliminate warnings; copyright from reset.c.
-+ *
-+ * Copyright (C) 199x  the Anonymous
-+ * Copyright (C) 2001, 2002, 2003  Maciej W. Rozycki
-+ */
-+
-+#ifndef __ASM_DEC_RESET_H
-+
-+#include <linux/interrupt.h>
-+
-+extern void __noreturn dec_machine_restart(char *command);
-+extern void __noreturn dec_machine_halt(void);
-+extern void __noreturn dec_machine_power_off(void);
-+extern irqreturn_t dec_intr_halt(int irq, void *dev_id);
-+
-+#endif /* __ASM_DEC_RESET_H */
 -- 
-2.47.2
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
