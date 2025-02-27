@@ -1,344 +1,262 @@
-Return-Path: <linux-kernel+bounces-535788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9ABA4773D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:06:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62380A47740
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75CA173651
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC3C188DEAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58351226863;
-	Thu, 27 Feb 2025 08:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6922236FF;
+	Thu, 27 Feb 2025 08:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKirZCsX"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed0Qxid+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C22222AC;
-	Thu, 27 Feb 2025 08:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37FA24B28;
+	Thu, 27 Feb 2025 08:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740643204; cv=none; b=kfrZg002xSQHcgW2ULddWtspiFWtNKHEaRJ7G589TlPcezVGGX0t+qMKJ8VL2XHc9K8cTcfekFWrQma89vY1VNUYC6LxhluTmpK5yjpdIcieN+rXq0tvFkF/X7Lqfbprx58C3t3wBZUPbPQH3pOBjVQ2HI3oDnMEyKczVS08pEY=
+	t=1740643244; cv=none; b=nwvRGSnZKbrGkWro+pO6fvu1oVSPpzoAWmndOrr8eIBf2Qj/vPYyrzZ9/LkdK1YhS3xXx0JpVWNKzHmdawVEiNvXFomH4xOUKhBHRbJ6SjpV1LP2/kWZvuP5R7Jjd2Gu1uYcp3cwu5xSVWRQ5B/Kd6/MpJXcHPKgUH5+OQtAaoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740643204; c=relaxed/simple;
-	bh=F/Q/rQMBhG8QlQ0hvZO4Vy6dvWhPpbp2iZ88VJNmuaQ=;
+	s=arc-20240116; t=1740643244; c=relaxed/simple;
+	bh=s9+t4OIp5dGezQHN9ElJ8KaRQewu/1qLqmi4k+ijfx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRXF/bS6o70Ga/A4t5QwpIBN/zeO64lW5wAPMnetXX7KneDUwZPySH2sJsNj0orLAIWenTAwixlGhXlR70dA2zo8Ocyam9Bk1n1NUv84Mbc44IP04KsIQnUIg4qc++ZpmlaaYLlTmgk3iZqfWGetdBk1IzfbjeEJNSFIJ5wF8Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKirZCsX; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22337bc9ac3so10294445ad.1;
-        Thu, 27 Feb 2025 00:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740643202; x=1741248002; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e+VhD1FcQ4v0IAeCPGXacuvSg0+RMPQMMHyVhpvcmHA=;
-        b=UKirZCsX5tRGNE/5mAhj3FsL1I6H4QCbI7FZckmmbzJvaeZ1SqzGkHmTiUQwrO8npp
-         R4IIjNNFFop1hbea9O4NeYjtez+qwp/cLPRotG1UeRPocyriETZShMUStWl+nI6omuUT
-         Xk0t3oPlhS/nOeGWMX88byrEx+CvVe+AFvuVhoCSZ40YZJHjKTSMRPX3gW3K4IlhL0lZ
-         8z9lJnwzut331eF0BH2HVT6U7xe24+4uKRr3Nt2mP5MFb8rusuylepI1w6/+p+qnznHa
-         N3b8pgcSQFRsy+VZSgRuGqhBILWNaTxtePBSUHgPhrp1LmYh+9kSHJoa/eyXfCXTy2Er
-         pvwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740643202; x=1741248002;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e+VhD1FcQ4v0IAeCPGXacuvSg0+RMPQMMHyVhpvcmHA=;
-        b=wuO76JAa62qrMx5U4+t7UMAivj2FHFgRZ+3PMpbvDkB+08vf6odnDvv4tP7zveYzRS
-         ridw18lHUUopXlIKZxzWU8rWqfHdG1FSBHRRbHSMZ65ujMDm2VMq9Y2tmuNUJ5fc+TwI
-         eKpXlCvOjm8tEKEVEx+LVS1VBUNnrq/FsW1ss29PCntpOt8DC42HsExmoSRtnh86tEL0
-         5/koIYJJ+gvVuKhfKjJk+uvPwgLbX4RK2lvWXsL/JKSCX7KuDiWyFPJ5D71On8Xzlfb6
-         9Xznu96ZEM3ouYqLL7qqjzwIg0oaqYI+enjumQDKPa3F0rywTcIceMCp7zsSwofBruI4
-         OrWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPL36GVOi+/4mDbfRMsyagvgicsi+6AUyAilcJc+JzCLR2I4E0tl4qlXDhOuEDvSA3LNHz9/iDALnK@vger.kernel.org, AJvYcCVaKzrv7czdjwUyBAqUKerBpNzHqOORW05kSVFzfWyjdd6oH+MUHnJtXRc1mwXROtQk8tc=@vger.kernel.org, AJvYcCXLlsjgBQkLaeo9ubVuTnHAvZv8PgeFLUDWJZhqdA2NPd33jLcj2miZi4mzF+t/a/juDqPI6GEc@vger.kernel.org, AJvYcCXct7HGDyN7KbTOUmZ6eCiWyGAObf+Yu0plSIOroU/woeiXfU+EWQd4tQUWqwd675ncDCNc2la8i5IBpZNM@vger.kernel.org, AJvYcCXkAGhnw/chUSLsGmiUQNDCfcpszDqkp4+w5Ip7ZAm1ESeIP/f++IdRUDTKCLAghRhiC0L/o2ZfkbMacrzmrJt+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMusFA6jxYwyQ5xJ+3o6YkGStT8fd3NeZT4P0FjexFqgDe4nL
-	cUl2LAtMDCCtHlm2h8yYX81szpd/qhAnWUMNcZ4NZu2Ax6TcWj66
-X-Gm-Gg: ASbGncvA6sLkV/ApCYsYsdvDLwP4GDo0iK8YDL2v1OWqA8rYkJ48j6nNNlVzZ4YRypG
-	v2Vd3uQyGHTVj2FsAXxTLdJD3EnQofFCwZZkGnlS/xvle3eOdfyp68O9WC0KAeoF2YTlBM+6EsZ
-	vkws9L6m723OGL3VJWrd12SSqtKUz8x2vQ6zTay76tFtV4B/2QlqLXD1CQfEoiuUUZXatfOFpTA
-	dbcqKFIaROoyKt+eu/KgJaG0V0tYwE+nH8tszslbr63KrewLinBp2GZ+2KOVrvSUHKkLow3Pom9
-	6BKsuct9SFqkpasohO7gIsssEw==
-X-Google-Smtp-Source: AGHT+IHbgNhJloGNS3WGI/ZiBYGWLiZc0ShwSla+EDWIC7+o+EwVg1hEUCizPi07PZDxpMZGk59OJg==
-X-Received: by 2002:a17:903:2311:b0:220:dff2:18ee with SMTP id d9443c01a7336-221a0edbf42mr392893445ad.14.1740643201794;
-        Thu, 27 Feb 2025 00:00:01 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223505336f9sm8356295ad.245.2025.02.27.00.00.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 00:00:00 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 55C6941296D8; Thu, 27 Feb 2025 14:59:58 +0700 (WIB)
-Date: Thu, 27 Feb 2025 14:59:57 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-kselftest@vger.kernel.org
-Cc: Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
-	asml.silence@gmail.com, dw@davidwei.uk,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Victor Nogueira <victor@mojatatu.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Samiullah Khawaja <skhawaja@google.com>
-Subject: Re: [PATCH net-next v6 4/8] net: add devmem TCP TX documentation
-Message-ID: <Z8AbfZg98HS_QQjb@archie.me>
-References: <20250227041209.2031104-1-almasrymina@google.com>
- <20250227041209.2031104-5-almasrymina@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6+KoHFgAtaHd9xQgMaDQBa2PQsJMMBRTL2T8fJoaXJFG8lrbvsv6VAqWr9UsNu6cD0qYRxKbhWMN1B7TOyAR8eXPzlE6VMJ+z6N9dIyxP5yF7+3VQgjnQ4J8D7VlLTNoHKZ/dYsKPot0T32QGkf2IzG2w7ehLVpGg9gg7snqGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed0Qxid+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77375C4CEDD;
+	Thu, 27 Feb 2025 08:00:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740643244;
+	bh=s9+t4OIp5dGezQHN9ElJ8KaRQewu/1qLqmi4k+ijfx8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ed0Qxid+3w9VGbE1z4Og93eBb2ZSsbaQbykUruohCot2RaLfzW7KsILGbpncEEZog
+	 A6TMLa14b3bH0cwWwcZj18+Oryvlk59zw5CPTtpVkOOmIbz1SCnWq5sETXM2JpgQGP
+	 AWPeVpQIO6U4x+n74uvSEMs5mL7nXehGFpRXYIhvEfXk59+mzsEOtKBFzmQPdxXP0z
+	 uc5t8xwfNfafAxgzOkcQiLRe2Re/Prkk/wGWIyElaLw5FcErjk/7lYB9r3o/hbn9l1
+	 a2GanE4xATpi0AAxF2NHEYOnRrj3pzdfq59Znyl+ABcq25XE6/OVS8avdWLHpBBBQQ
+	 Hhmh5dmvvPe/Q==
+Date: Thu, 27 Feb 2025 13:30:40 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Aatif Mushtaq <aatif4.m@samsung.com>
+Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>,
+	ASWANI REDDY <aswani.reddy@samsung.com>
+Subject: Re: FW: [PATCH 0/3] Add capability for 2D DMA transfer
+Message-ID: <Z8AbqGa9lZYnWddp@vaman>
+References: <20250210061915.26218-1-aatif4.m@samsung.com>
+ <CGME20250210062219epcas5p4695fe63e9ba36c19a640504f95dc3f12@epcms5p5>
+ <20250224084948epcms5p57acb02e41b7626321d82c74569361be5@epcms5p5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AMvatQGVE1g1y7TH"
-Content-Disposition: inline
-In-Reply-To: <20250227041209.2031104-5-almasrymina@google.com>
-
-
---AMvatQGVE1g1y7TH
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250224084948epcms5p57acb02e41b7626321d82c74569361be5@epcms5p5>
 
-On Thu, Feb 27, 2025 at 04:12:05AM +0000, Mina Almasry wrote:
-> diff --git a/Documentation/networking/devmem.rst b/Documentation/networki=
-ng/devmem.rst
-> index d95363645331..1c476522d6f5 100644
-> --- a/Documentation/networking/devmem.rst
-> +++ b/Documentation/networking/devmem.rst
-> @@ -62,15 +62,15 @@ More Info
->      https://lore.kernel.org/netdev/20240831004313.3713467-1-almasrymina@=
-google.com/
-> =20
-> =20
-> -Interface
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +RX Interface
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =20
-> =20
->  Example
->  -------
-> =20
-> -tools/testing/selftests/net/ncdevmem.c:do_server shows an example of set=
-ting up
-> -the RX path of this API.
-> +./tools/testing/selftests/drivers/net/hw/ncdevmem:do_server shows an exa=
-mple of
-> +setting up the RX path of this API.
-> =20
-> =20
->  NIC Setup
-> @@ -235,6 +235,148 @@ can be less than the tokens provided by the user in=
- case of:
->  (a) an internal kernel leak bug.
->  (b) the user passed more than 1024 frags.
-> =20
-> +TX Interface
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +
-> +Example
-> +-------
-> +
-> +./tools/testing/selftests/drivers/net/hw/ncdevmem:do_client shows an exa=
-mple of
-> +setting up the TX path of this API.
-> +
-> +
-> +NIC Setup
-> +---------
-> +
-> +The user must bind a TX dmabuf to a given NIC using the netlink API::
-> +
-> +        struct netdev_bind_tx_req *req =3D NULL;
-> +        struct netdev_bind_tx_rsp *rsp =3D NULL;
-> +        struct ynl_error yerr;
-> +
-> +        *ys =3D ynl_sock_create(&ynl_netdev_family, &yerr);
-> +
-> +        req =3D netdev_bind_tx_req_alloc();
-> +        netdev_bind_tx_req_set_ifindex(req, ifindex);
-> +        netdev_bind_tx_req_set_fd(req, dmabuf_fd);
-> +
-> +        rsp =3D netdev_bind_tx(*ys, req);
-> +
-> +        tx_dmabuf_id =3D rsp->id;
-> +
-> +
-> +The netlink API returns a dmabuf_id: a unique ID that refers to this dma=
-buf
-> +that has been bound.
-> +
-> +The user can unbind the dmabuf from the netdevice by closing the netlink=
- socket
-> +that established the binding. We do this so that the binding is automati=
-cally
-> +unbound even if the userspace process crashes.
-> +
-> +Note that any reasonably well-behaved dmabuf from any exporter should wo=
-rk with
-> +devmem TCP, even if the dmabuf is not actually backed by devmem. An exam=
-ple of
-> +this is udmabuf, which wraps user memory (non-devmem) in a dmabuf.
-> +
-> +Socket Setup
-> +------------
-> +
-> +The user application must use MSG_ZEROCOPY flag when sending devmem TCP.=
- Devmem
-> +cannot be copied by the kernel, so the semantics of the devmem TX are si=
-milar
-> +to the semantics of MSG_ZEROCOPY::
-> +
-> +	setsockopt(socket_fd, SOL_SOCKET, SO_ZEROCOPY, &opt, sizeof(opt));
-> +
-> +It is also recommended that the user binds the TX socket to the same int=
-erface
-> +the dma-buf has been bound to via SO_BINDTODEVICE::
-> +
-> +	setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifnam=
-e) + 1);
-> +
-> +
-> +Sending data
-> +------------
-> +
-> +Devmem data is sent using the SCM_DEVMEM_DMABUF cmsg.
-> +
-> +The user should create a msghdr where,
-> +
-> +* iov_base is set to the offset into the dmabuf to start sending from
-> +* iov_len is set to the number of bytes to be sent from the dmabuf
-> +
-> +The user passes the dma-buf id to send from via the dmabuf_tx_cmsg.dmabu=
-f_id.
-> +
-> +The example below sends 1024 bytes from offset 100 into the dmabuf, and =
-2048
-> +from offset 2000 into the dmabuf. The dmabuf to send from is tx_dmabuf_i=
-d::
-> +
-> +       char ctrl_data[CMSG_SPACE(sizeof(struct dmabuf_tx_cmsg))];
-> +       struct dmabuf_tx_cmsg ddmabuf;
-> +       struct msghdr msg =3D {};
-> +       struct cmsghdr *cmsg;
-> +       struct iovec iov[2];
-> +
-> +       iov[0].iov_base =3D (void*)100;
-> +       iov[0].iov_len =3D 1024;
-> +       iov[1].iov_base =3D (void*)2000;
-> +       iov[1].iov_len =3D 2048;
-> +
-> +       msg.msg_iov =3D iov;
-> +       msg.msg_iovlen =3D 2;
-> +
-> +       msg.msg_control =3D ctrl_data;
-> +       msg.msg_controllen =3D sizeof(ctrl_data);
-> +
-> +       cmsg =3D CMSG_FIRSTHDR(&msg);
-> +       cmsg->cmsg_level =3D SOL_SOCKET;
-> +       cmsg->cmsg_type =3D SCM_DEVMEM_DMABUF;
-> +       cmsg->cmsg_len =3D CMSG_LEN(sizeof(struct dmabuf_tx_cmsg));
-> +
-> +       ddmabuf.dmabuf_id =3D tx_dmabuf_id;
-> +
-> +       *((struct dmabuf_tx_cmsg *)CMSG_DATA(cmsg)) =3D ddmabuf;
-> +
-> +       sendmsg(socket_fd, &msg, MSG_ZEROCOPY);
-> +
-> +
-> +Reusing TX dmabufs
-> +------------------
-> +
-> +Similar to MSG_ZEROCOPY with regular memory, the user should not modify =
-the
-> +contents of the dma-buf while a send operation is in progress. This is b=
-ecause
-> +the kernel does not keep a copy of the dmabuf contents. Instead, the ker=
-nel
-> +will pin and send data from the buffer available to the userspace.
-> +
-> +Just as in MSG_ZEROCOPY, the kernel notifies the userspace of send compl=
-etions
-> +using MSG_ERRQUEUE::
-> +
-> +        int64_t tstop =3D gettimeofday_ms() + waittime_ms;
-> +        char control[CMSG_SPACE(100)] =3D {};
-> +        struct sock_extended_err *serr;
-> +        struct msghdr msg =3D {};
-> +        struct cmsghdr *cm;
-> +        int retries =3D 10;
-> +        __u32 hi, lo;
-> +
-> +        msg.msg_control =3D control;
-> +        msg.msg_controllen =3D sizeof(control);
-> +
-> +        while (gettimeofday_ms() < tstop) {
-> +                if (!do_poll(fd)) continue;
-> +
-> +                ret =3D recvmsg(fd, &msg, MSG_ERRQUEUE);
-> +
-> +                for (cm =3D CMSG_FIRSTHDR(&msg); cm; cm =3D CMSG_NXTHDR(=
-&msg, cm)) {
-> +                        serr =3D (void *)CMSG_DATA(cm);
-> +
-> +                        hi =3D serr->ee_data;
-> +                        lo =3D serr->ee_info;
-> +
-> +                        fprintf(stdout, "tx complete [%d,%d]\n", lo, hi);
-> +                }
-> +        }
-> +
-> +After the associated sendmsg has been completed, the dmabuf can be reuse=
-d by
-> +the userspace.
-> +
-> +
->  Implementation & Caveats
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =20
+On 24-02-25, 14:19, Aatif Mushtaq wrote:
+> <!DOCTYPE html>
+> <html>
+> <head>
+> <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8" =
+class=3D"cui-content-default">
+> <style class=3D"cui-content-default" data-cafe-default=3D"true">@charset =
+"UTF-8";/*! cafe note v2.3.34.7 | Copyright 2014, S-Core, Inc. All Right Re=
+served. */body,html{overflow:visible!important;height:auto}html{height:auto=
+}body{display:block;margin-left:24px;margin-right:20px;margin-top:16px}body=
+ ol,body ul{margin:0;padding-left:40px}body li,body p{line-height:1.9;margi=
+n:0 auto}body .cui-quote{margin-left:4px;margin-bottom:20px;padding-left:6p=
+x;border-left:4px solid #ccc}body .cui-quote h1,body .cui-quote h2,body .cu=
+i-quote h3,body .cui-quote h4,body .cui-quote h5,body .cui-quote h6,body .c=
+ui-quote li,body .cui-quote p{margin-bottom:4px}table.cui-div{display:block=
+}table.cui-div>tbody{display:block}table.cui-div>tbody>tr{display:block}tab=
+le.cui-div>tbody>tr>td,table.cui-div>tbody>tr>th{display:block}figure.cui-o=
+g,figure.cui-temp-og{margin:0;display:block;margin-inline-start:0;margin-in=
+line-end:0}.cui-og-container{display:inline-flex}.cui-og-container .cui-og-=
+button-close{display:none;width:20px;height:20px;cursor:pointer;border:none=
+;border-radius:4px;background-color:#fff;background-position:center;backgro=
+und-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAA=
+CNiR0NAAAAAXNSR0IArs4c6QAAAI5JREFUOE+9lLEVgDAIRC8b6Tw0Opk2zKMj+XjPApUABTFtL=
+j9wXNJQvFoxD+OBzDwR0Zmp3NI+KhQBgAPASkS7B2XmBcAGYNYFfFpWwi7U05geegeiC7tDsQ5G=
+MLHInbIG3H6KZ66/YWwUVJjhsP4FlrZcOpTS2GSikQ72qKdX9zlkfphIE+YwArz3y4EXDCF2Fap=
+Wr4IAAAAASUVORK5CYII=3D");position:relative;top:10px;left:-30px;z-index:1}.=
+cui-og-container .cui-og-button-close.cui-state-focus{display:block}table.c=
+ui-pasted-table h1,table.cui-pasted-table h2,table.cui-pasted-table h3,tabl=
+e.cui-pasted-table h4,table.cui-pasted-table h5,table.cui-pasted-table h6,t=
+able.cui-pasted-table li,table.cui-pasted-table p,table.cui-pasted-table td=
+,table.cui-pasted-table th{line-height:normal}div[data-cui-alt-image],img[d=
+ata-cui-alt-image]{background:url("data:image/png;base64,iVBORw0KGgoAAAANSU=
+hEUgAAABYAAAAUCAYAAACJfM0wAAABH0lEQVQ4jbXU26qEIBQGYF+wtxLMgg4QdGdBREUhFEFBB=
+x/tn6sGpcPezTTCAi/0Q11rSQghhDGGJ4P8An3j20QIgSzLvookSfawUgrrukIp9VVcwkIIcM7h=
++z66rnsGbprGeCvf95+B8zw3YM75M/A4jnAcB3pS9Y3zPKPv+0vYKDf9jcdxRJ7naJrG2DRNE8I=
+wBGMMZVkewmQbOnwVy7IgiqL3TWzbRtu2x+gVnKYpXNdF27ZY1xVxHO+awHVdDMMAKaWJnsFZlh=
+kn8zzvtMOCIACl1No8Sqm1S55SCkVR3GrdI3QH13V9/7PRxmG5SSlh2/bHKGMMVVXtYc75bZRSa=
+unX1w92+9vUT6mju3WfJuqvv/zf8FmZXq7/BfoCA1VRsvK4AfgAAAAASUVORK5CYII=3D") no-=
+repeat center #c1c1c1}body::-webkit-scrollbar{opacity:.08;width:6px;height:=
+6px}body::-webkit-scrollbar-thumb{background-color:rgba(0,0,0,.15);border-r=
+adius:7px;width:6px}.cui-knoxtaskinput-line{height:150px}.cui-knoxtaskinput=
+-line.double-line{height:170px}.cui-customtask-card{width:560px;height:68px=
+;border-radius:8px;border:solid 1px #dbdbdb;background-color:#fff;border-sp=
+acing:0px;table-layout:fixed;margin-bottom:20px}.cui-customtask-card td{mar=
+gin:0;padding:0;border:0}.cui-customtask-card td>p{width:422px;margin-left:=
+0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.cui-customtask=
+-card .cui-customtask-card-cell{text-overflow:ellipsis;white-space:nowrap;o=
+verflow:hidden}.cui-customtask-card .cui-customtask-card-image{width:40px;h=
+eight:40px;margin:0 15px 0 15px;border-radius:22px;background-color:#e96b6b=
+;vertical-align:middle}.cui-customtask-card .cui-customtask-card-content-ta=
+sk{font-size:15px;font-weight:700;font-stretch:normal;font-style:normal;let=
+ter-spacing:normal;text-align:left;color:#000;line-height:20px;height:100%}=
+=2Ecui-customtask-card .cui-customtask-card-content-asignee{font-size:12px;=
+font-weight:400;font-stretch:normal;font-style:normal;letter-spacing:normal=
+;line-height:20px;text-align:left;color:rgba(0,0,0,.9)}.cui-taskcard-wrappe=
+r{display:block;height:72px;margin-bottom:20px}.cui-taskcard-wrapper .cui-t=
+askcard-more{width:32px;height:32px;padding:0;border:0;background-image:url=
+("./cafe/knox/2.3.34.7/skins/default-knox/images/ic_more_horizontal_normal.=
+png");background-size:16px 16px;background-repeat:no-repeat;background-posi=
+tion:center;background-color:transparent;border-radius:16px}.cui-taskcard-w=
+rapper .cui-taskcard-more-hover{background-image:url("./cafe/knox/2.3.34.7/=
+skins/default-knox/images/ic_more_horizontal_active.png");background-color:=
+rgba(0,0,0,.06)}.cui-taskcard-wrapper-menu{width:122px;height:80px;border-r=
+adius:8px;box-shadow:0 3px 4px 0 rgba(0,0,0,.08);border:solid 1px #dbdbdb;b=
+ackground-color:#fff;position:absolute;top:46px;left:516px}.cui-taskcard-wr=
+apper-menu .cui-taskcard-wrapper-menu-ul{margin:8px;padding:0;list-style:no=
+ne}.cui-taskcard-wrapper-menu .cui-taskcard-wrapper-menu-item{position:rela=
+tive;width:106px;height:32px;border-radius:4px;list-style-image:url("data:i=
+mage/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");=
+margin:0 auto}.cui-taskcard-wrapper-menu .cui-taskcard-wrapper-menu-item-ho=
+ver{border-radius:4px;background-color:rgba(0,0,0,.06)}.cui-taskcard-wrappe=
+r-menu .cui-taskcard-wrapper-menu-icon{width:20px;height:20px;margin:0 0 6p=
+x 0;position:absolute;top:4px;left:8px}.cui-taskcard-wrapper-menu .cui-task=
+card-delete{background-image:url("./cafe/knox/2.3.34.7/skins/default-knox/i=
+mages/ic_memo_delete.png")}.cui-taskcard-wrapper-menu .cui-taskcard-update{=
+background-image:url("./cafe/knox/2.3.34.7/skins/default-knox/images/ic_edi=
+t.png");background-repeat:no-repeat;background-position:center}.cui-taskcar=
+d-wrapper-menu .cui-taskcard-wrapper-menu-text{width:52px;height:19px;font-=
+family:"Malgun Gothic","=EB=A7=91=EC=9D=80 =EA=B3=A0=EB=94=95",Dotum,"=EB=
+=8F=8B=EC=9B=80",Gulim,"=EA=B5=B4=EB=A6=BC","Apple SD Gothic Neo","Segoe UI=
+ WPC","Segoe UI",Helvetica,sans-serif;font-size:13px;font-weight:400;font-s=
+tretch:normal;font-style:normal;line-height:2.15;letter-spacing:normal;text=
+-align:left;color:rgba(0,0,0,.9);position:absolute;left:34px}.cui-mention.c=
+ui-mention-edited{display:inline-block;padding:1px 4px;border-radius:4px;ba=
+ckground-color:rgba(187,187,187,.19)!important;color:#2a82f0!important;font=
+-weight:400!important;font-style:normal!important;font-family:"=EB=A7=91=EC=
+=9D=80 =EA=B3=A0=EB=94=95"!important;text-decoration:none!important;line-he=
+ight:normal}.cui-mention.cui-mention-editing{padding:1px 4px;border-radius:=
+4px;background-color:rgba(0,0,0,.06);color:rgba(0,0,0,.9)}</style>
+> <style class=3D"cui-content-default" data-user-config=3D"true">
 
-Looks good, thanks!
+???
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Pls stop sending HTML emails to the lists!
+
+> body {margin: 10px; font-size: 10pt; font-family:Arial,sans-serif; line-h=
+eight:1.9;}
+> p {line-height:1.9;}
+> body,body p,body li,body h1,body h2, body h3,body h4,body h5,body h6 {fon=
+t-family:Arial,sans-serif; line-height:1.9;}
+> </style></head>
+> <body><p><span style=3D"font-family: Arial, sans-serif; font-size: 13.333=
+3px;">Hi all !<br><br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+I hope this email finds you well. I wanted to gently remind you to please t=
+ake out some&nbsp;</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+valuable time from your schedule to review the patch chain.</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+regards</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+Aatif Mushtaq</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+&nbsp;</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+--------- <b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3=
+333px;">Original Message</span></b> ---------</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">Se=
+nder</span></b> : Aatif Mushtaq &lt;aatif4.m@samsung.com&gt;FDS SW /SSIR/Sa=
+msung Electronics</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">Da=
+te</span></b>   : 2025-02-10 11:52 (GMT+5:30)</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">Ti=
+tle</span></b>  : [PATCH 0/3] Add capability for 2D DMA transfer</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">To=
+ : </span></b>vkoul@kernel.org, dmaengine@vger.kernel.org, linux-kernel@vge=
+r.kernel.org</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<b><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">CC=
+ : </span></b>PANKAJ KUMAR DUBEY&lt;pankaj.dubey@samsung.com&gt;, ASWANI RE=
+DDY&lt;aswani.reddy@samsung.com&gt;, Aatif Mushtaq&lt;aatif4.m@samsung.com&=
+gt;</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+&nbsp;</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+Add support for add halfword instruction to pl330 driver to achieve</span><=
+/p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+2D DMA operations. Add a corresponding dmaengine API to prepare the</span><=
+/p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+DMA for 2D transfer and create a hook between the dma engine and pl330</spa=
+n></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+driver function.</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+Aatif Mushtaq (3):</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+&nbsp; dmaengine: Add support for 2D DMA operation</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+&nbsp; dmaengine: pl330: Add DMAADDH instruction</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+&nbsp; dmaengine: pl330: Add DMA_2D capability</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+ drivers/dma/pl330.c&nbsp; &nbsp; &nbsp;  | 44 ++++++++++++++++++++++++++++=
++++++++++++</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+ include/linux/dmaengine.h | 25 ++++++++++++++++++++++</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+ 2 files changed, 69 insertions(+)</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+-- </span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+2.17.1</span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <p><span style=3D"font-family: Arial, sans-serif; font-size: 13.3333px;">=
+<br></span></p>
+> <table id=3Dbannersignimg data-cui-lock=3D"true" namo_lock><tr><td><div i=
+d=3D"cafe-note-contents" style=3D"margin:10px;font-family:Arial;font-size:1=
+0pt;"><p>&nbsp;</p></div></td></tr></table><table id=3Dconfidentialsignimg =
+data-cui-lock=3D"true" namo_lock><tr><td><p><img unselectable=3D"on" data-c=
+ui-image=3D"true" style=3D"display: inline-block; border: 0px solid; width:=
+ 520px; height: 144px;" src=3D"cid:cafe_image_0@s-core.co.kr"><br></p>
+> </td></tr></table></body>
+> </html><table style=3D'display: none;'><tbody><tr><td><img style=3D'displ=
+ay: none;' border=3D0 src=3D'http://ext.samsung.net/mail/ext/v1/external/st=
+atus/update?userid=3Daatif4.m&do=3DbWFpbElEPTIwMjUwMjI0MDg0OTQ4ZXBjbXM1cDU3=
+YWNiMDJlNDFiNzYyNjMyMWQ4MmM3NDU2OTM2MWJlNSZyZWNpcGllbnRBZGRyZXNzPXZrb3VsQGt=
+lcm5lbC5vcmc_' width=3D0 height=3D0></td></tr></tbody></table>
+
 
 --=20
-An old man doll... just what I always wanted! - Clara
-
---AMvatQGVE1g1y7TH
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ8AbdwAKCRD2uYlJVVFO
-o5L6AP94BQBQkG23E8CUzSu2bJ8z0CxxYycEKJqhqTQ+o4ZjrAEA+k30eIV66TQg
-+CdsIvY8VaYj1OlgpJ5nlSex5IoycAg=
-=GAXk
------END PGP SIGNATURE-----
-
---AMvatQGVE1g1y7TH--
+~Vinod
 
