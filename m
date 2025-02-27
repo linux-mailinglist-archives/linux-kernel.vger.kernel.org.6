@@ -1,84 +1,88 @@
-Return-Path: <linux-kernel+bounces-535851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C75A47819
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:43:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F94BA4781A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1689A3B0823
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9200D188A30C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BC422578D;
-	Thu, 27 Feb 2025 08:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC28622576A;
+	Thu, 27 Feb 2025 08:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="GsRmCFqW"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RHIADAo0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167C842065;
-	Thu, 27 Feb 2025 08:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834E13A3F2
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740645831; cv=none; b=FXo4mlMpJ7E8Fontngj0/qrBoNnHCNYDefc4hcvW+Ocr5l2wHSYu7+0xID7VyP0sfTUYBv/gSkoUB2n7CP+tsiP9eVYtLJZ48L+lWYO9pJCtJzM3Yc3GhRSuHka3kiqRA5ebQWPHdNqBskKIXS0wflnnqqw4g/l95xFkuhujTh0=
+	t=1740645861; cv=none; b=rEiEJBlGh4xao/nhYnsAPAsS4f/d48N7nWLaxtNQakCE5P4K2tsgQfwNkAHiz3rFv6BasrMCbhjQDbGcALvKliPojcDi/R0G9osguTZf/caOo2lO2eNgqq4BRKt2jRkmRVvpU505/iXJ0f2x1AXn1Vao2Wf8znqk9tdWmI+82Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740645831; c=relaxed/simple;
-	bh=EKov/eWUobveVY+0YfO7u9hWNImc86wliXWDLqVpDTU=;
+	s=arc-20240116; t=1740645861; c=relaxed/simple;
+	bh=q5DyFV5gTaMxqJ16Z1qIG2jXFLnd0OlbWwYkvNtHfZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFlHY+2KNJJ5lcL2Zpqp02TWbGS+vfTJSRpbFAqfkgRgvDxEC4qLcC+1alnq0uJHBiw3yHZ2zfAaQEqk8U0EBjOoWE94bVXd3UPk4umkVuoJuxylJtxG2er3LI4WZr/Z6wQF3LivGxSiNdnYfU68pUnUZvjnEYNkD2uMnZyeOIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=GsRmCFqW; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=jiPcZapR216itPgDV41PdhwEbp2fRiThI86FlwLZTVA=; b=GsRmCFqWzGCGd5G+zhMOhUMliV
-	cvZYzsxKo30kJ+tvuntDdmv1EkdyiT0+RGypU3QuqxpBqjsmnSUpF1KQU6I08bJLDR964dnyF1dg2
-	F+hRMofLDZkexeOuz6TJIBgcOgYD9e1FkzFYhTWrW4tOXm3izNYMQIKBiVxOvR9VWbfx2DMLc0209
-	2U9reGjCRZC6/5tRtAkyM8XYsb4BO0sGHkWzjsMU2O6Hc8b5CHNlDooaTzPulqLwb1B18CHh17Z7E
-	ksxKtGLzPh9rNCN+j9JS2t9utYmWIFsJNWGFUqZfk8XAPqdt5vR9G4T9uNTl71HMzUAzeG3P8/0tE
-	oef5neBw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tnZTz-002Cin-38;
-	Thu, 27 Feb 2025 16:43:05 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 27 Feb 2025 16:43:03 +0800
-Date: Thu, 27 Feb 2025 16:43:03 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Will Deacon <will@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [v3 PATCH] crypto: lib/Kconfig - Hide arch options from user
-Message-ID: <Z8All3G80gGXzfaU@gondor.apana.org.au>
-References: <20250225164216.4807-1-arnd@kernel.org>
- <20250225213344.GA23792@willie-the-truck>
- <f7c298b8-7989-49e7-90a2-5356029a6283@app.fastmail.com>
- <c4896a12-8abe-4fe6-b381-86b23d32b332@app.fastmail.com>
- <Z75xKexTUNm_FnSK@gondor.apana.org.au>
- <Z76aUfPIbhPAsHbv@gondor.apana.org.au>
- <Z77aFJCVuXeDXRrs@gondor.apana.org.au>
- <Z8AY16EIqAYpfmRI@gondor.apana.org.au>
- <134f64aa-65bd-4de0-9ac6-52326e35d6d6@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AakbFyhTs5ADE72ejbIevjqX5f1V20/WeEUUzKukqZKKj+OV/mcvCX/9rn3qhwIfsI+73GKt0hLrT3LCwqriCrT1vLRXlVA/NO6yXZrv8MdzXOjsGcgYTgayu1LZ4bd6iXNrs9XzLgqobjKSiI/aqAGI6YA20ByxfEkEWVQdYvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RHIADAo0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-439946a49e1so4156305e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:44:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1740645858; x=1741250658; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0eD4WdY2Ar0Qpt9c3iLvWQtqo0+f9AP00jRPqQ8lu4I=;
+        b=RHIADAo0VDugGIIeAcng1OLrH5DX8+FoJnJV6CA3b7I3oQKeOu9D15rnJfjHZNbPJ0
+         iULCF9ZDS+pCiTLwTwTBAFfdPOBHs5Wc0Egy6mcUxj77XXKFOZPqkub6A1FD6hVACOp9
+         TVFDHp1RRBvMe1DMB6ul0FSPNU0Fs3xX1CyBe4Iu0cuy3F0V5iYmA2x+vnAilHXl2dyO
+         mGn3IgmNKNy3xDKsKEBkPFSbD/Nx70OWEt8GcBSTAl7uIMWWMc4l9cHMPlf9jK229Fxu
+         fk6enje3N8CqylKl6I71O6+mcjZ8AOyttkU+T9vZXtvKLx4kr08M0FiN7YRy/dfpTTjq
+         Dc/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740645858; x=1741250658;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0eD4WdY2Ar0Qpt9c3iLvWQtqo0+f9AP00jRPqQ8lu4I=;
+        b=vFmT54UPlyyyuF/M4yVpWZDyRlZpsdGX4f+fjMlLj4xMMjl9zZTq62LRl1GK/00YWa
+         HGp/x5+V3sBtXozalm/mwioi7bPfM89CzqqSysg/l5S2GCGj1DTu364KhnPwORnWFWsk
+         balX72VOvnxTIxNQ9D+CzzNnvQ2NQIcCfWSAycgUFgDF5qYHlcnkf8jtNS2YLYUIDf91
+         VfO1680q8/KE6iUrTQ7UVgyRNId5/fX0mhNvGOxCVNj7jUQg62Rbno3+bBjE/k10T/u0
+         E9iAoDGsGYf3hCJFmqQhmS90WNm/q/Iw4sxX2VNXFXfVvTqxepz3/LVLpqc7pO4H8KHD
+         6EmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNi3AYDTLZdHLJoX3kQUiNHuo6DUx5Ynq8c1VGRURh7ccHdndhUHEgYuTH8EUkiBsvdsKV5sxfSOqqbrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiCk8wmozWPhoug76TSGD7wGOqmiDH8TBIjPLBXN9l+dD0b4yj
+	gqumumsUFYz9LlInIFJaIXf3Wyxg571PpnbNiAdP2pjGzlmyiEfdSABexwUps2Y=
+X-Gm-Gg: ASbGncuLvnxyDPPYPXHVCpv6winKhqSl+fxRi6QGlLQhsFrApumUgqOxhcdg9E2jtml
+	QuElkSRw1jSGOHeGh/rHVG9+kNDNRL7hgDLNFNjyFJ8IJG4ag1611bVc7c7V/XYMTRyomUqIaVY
+	4rNkBrdIOX1AYLTc7dVXw0WctTISPy/PN0/HaSbC6Z1goyW2wenNzf98wVGN7E2MIWnEWd9NwXa
+	518LjkPrg3w+YBCOhd7Ly/l5YqdwFs+r0Ka3JCCzDnwyUK3nyfKjbCWScLbv9N2NUFxvZ06/6S6
+	pP/6RzggsvNMWw==
+X-Google-Smtp-Source: AGHT+IG7ml0QUrxxm1q148UuaevZWwyImW/BG/iHf4sSOi4FAdGUGP1loq2o5+xFJijpyPDy5kgSvA==
+X-Received: by 2002:a05:600c:3c86:b0:439:9377:fa29 with SMTP id 5b1f17b1804b1-43ab903fe5bmr54754285e9.31.1740645857622;
+        Thu, 27 Feb 2025 00:44:17 -0800 (PST)
+Received: from localhost ([2a02:8308:a00c:e200::8cf0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f990esm15612155e9.5.2025.02.27.00.44.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 00:44:16 -0800 (PST)
+Date: Thu, 27 Feb 2025 09:44:15 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 2/4] KVM: riscv: selftests: Do not start the counter in
+ the overflow handler
+Message-ID: <20250227-3799414d0651c86f6a815046@orel>
+References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
+ <20250226-kvm_pmu_improve-v1-2-74c058c2bf6d@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,57 +91,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <134f64aa-65bd-4de0-9ac6-52326e35d6d6@app.fastmail.com>
+In-Reply-To: <20250226-kvm_pmu_improve-v1-2-74c058c2bf6d@rivosinc.com>
 
-On Thu, Feb 27, 2025 at 09:32:51AM +0100, Arnd Bergmann wrote:
+On Wed, Feb 26, 2025 at 12:25:04PM -0800, Atish Patra wrote:
+> There is no need to start the counter in the overflow handler as we
+> intend to trigger precise number of LCOFI interrupts through these
+> tests. The overflow irq handler has already stopped the counter. As
+> a result, the stop call from the test function may return already
+> supported error which is fine as well.
+  ^ stopped
+
+> 
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> index f45c0ecc902d..284bc80193bd 100644
+> --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
+> @@ -118,8 +118,8 @@ static void stop_counter(unsigned long counter, unsigned long stop_flags)
+>  
+>  	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP, counter, 1, stop_flags,
+>  			0, 0, 0);
+> -	__GUEST_ASSERT(ret.error == 0, "Unable to stop counter %ld error %ld\n",
+> -			       counter, ret.error);
+> +	__GUEST_ASSERT(ret.error == 0 || ret.error == SBI_ERR_ALREADY_STOPPED,
+> +		       "Unable to stop counter %ld error %ld\n", counter, ret.error);
+>  }
+>  
+>  static void guest_illegal_exception_handler(struct ex_regs *regs)
+> @@ -137,7 +137,6 @@ static void guest_irq_handler(struct ex_regs *regs)
+>  	unsigned int irq_num = regs->cause & ~CAUSE_IRQ_FLAG;
+>  	struct riscv_pmu_snapshot_data *snapshot_data = snapshot_gva;
+>  	unsigned long overflown_mask;
+> -	unsigned long counter_val = 0;
+>  
+>  	/* Validate that we are in the correct irq handler */
+>  	GUEST_ASSERT_EQ(irq_num, IRQ_PMU_OVF);
+> @@ -151,10 +150,6 @@ static void guest_irq_handler(struct ex_regs *regs)
+>  	GUEST_ASSERT(overflown_mask & 0x01);
+>  
+>  	WRITE_ONCE(vcpu_shared_irq_count, vcpu_shared_irq_count+1);
+> -
+> -	counter_val = READ_ONCE(snapshot_data->ctr_values[0]);
+> -	/* Now start the counter to mimick the real driver behavior */
+> -	start_counter(counter_in_use, SBI_PMU_START_FLAG_SET_INIT_VALUE, counter_val);
+>  }
+>  
+>  static unsigned long get_counter_index(unsigned long cbase, unsigned long cmask,
+> 
+> -- 
+> 2.43.0
 >
-> This looks like a good approach. Once it works correctly,
-> it should be possible to clean up the 'select' statements
-> in wireguard as well and just 'select CRYPTO_LIB_CHACHA' etc.
 
-Yes that's the idea.
+Other than the commit message,
 
-> I think the more common style is to put the 'default'
-> lines before 'select'.
-
-It is the customary place in the crypto tree.
-
-> It appears that the two above are missing a
-> 'depends on KERNEL_MODE_NEON' line. There is still
-> a runtime check that prevents it from being used on
-> non-neon machines, but I think you should add these
-> lines here since it's no longer possible to turn
-> them off individually when building a kernel for a
-> non-NEON target.
-
-Good catch.  But I think this was deliberate as it also includes
-a non-NEON implementation:
-
-commit b36d8c09e710c71f6a9690b6586fea2d1c9e1e27
-Author: Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri Nov 8 13:22:14 2019 +0100
-
-    crypto: arm/chacha - remove dependency on generic ChaCha driver
-    
-    Instead of falling back to the generic ChaCha skcipher driver for
-    non-SIMD cases, use a fast scalar implementation for ARM authored
-    by Eric Biggers. This removes the module dependency on chacha-generic
-    altogether, which also simplifies things when we expose the ChaCha
-    library interface from this module.
-    
-    Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
- 
-> I'm not sure why we need the extra "_INTERNAL" symbols, but I
-> may be missing something here. What problem does this solve
-> for you?
-
-Without them Kconfig will bomb out because of a loop centering
-on CONFIG_CRYPTO.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
