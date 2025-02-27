@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-537295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400A9A48A26
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1EBA48A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57D418855A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37809188FB7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7771270EC2;
-	Thu, 27 Feb 2025 20:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C9F270ECE;
+	Thu, 27 Feb 2025 20:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iH/rmYF+"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCCj4EBq"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B89E1AF0C9;
-	Thu, 27 Feb 2025 20:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC00225405;
+	Thu, 27 Feb 2025 20:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740689542; cv=none; b=QxHxPghbSuJa5BkkGBEC/OgIcCvh3Npjf13oYsleY/ezowxJJvdQgmYZGULmh9RTl21yI+5ySbj8zSy6ra4NgvJaTFCO6hj6Ru265y9OPMILi8/QEdIQ7ikElk9Fw5pvHhGyM2QsJ4+1KohOLnVDTaS1KlV+pvPWyQPSb2rJbpY=
+	t=1740689248; cv=none; b=OV2wlefMsXePNZpxidNi2nPaqh+JCcNWjNMFgmA32sq1LXRSJDrier91zh603XrFWFCTi5jF7GQc8vc3QlPMy+QxQTRVzijdeIf6g4ioodSEM6FXn9BhOUorat8eiPJO2MVTwQEo1ZOcpq/w2S674Jgm2lQSofKEZ8sSEmTszjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740689542; c=relaxed/simple;
-	bh=ORq9jkRCIXj2zv20dBQ5aH6mM2s+q06FC9H+4PepyX8=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=o/6doeCbIlZDLjU7IA1+QtXSrP7ENCmC4KACIcqmuoYLG+UKQppv+xc/i2CzryFMfZ3fMEHcHUGcbXz24XVVN2vT3OxMzuTObsVSZDN20dzEZMHcwF5Ba8IiSRTgc4HhOWjxchrYtbgtJV4P+zMuFHeUGhSEylAAjxOmmTr5KaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iH/rmYF+; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1740689248; c=relaxed/simple;
+	bh=4Cz2YpoTHmPtHkOS68fh+sUr/fCWd1Ola9ZLsLZtMjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DZMNPp3g22jZZ/bf7avgQNDp/r69p3fxsUrGsAQk+UIaRBERI0SU9r6msswiI8uhnlhSMIeDZsn9Jv+uv5T5opikk9P8DiC5TSCeZroGJZcTScRWlJyh1uaMFTwxcNlc0vkqGNPBvfYtug/RjAFYs1xKwdoTX4SHPgNIvpLxxTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCCj4EBq; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5462ea9691cso1463773e87.2;
-        Thu, 27 Feb 2025 12:52:20 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4399deda38cso9815865e9.1;
+        Thu, 27 Feb 2025 12:47:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740689538; x=1741294338; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORq9jkRCIXj2zv20dBQ5aH6mM2s+q06FC9H+4PepyX8=;
-        b=iH/rmYF+N1Ce40sC3cTx+/BTIxYtlDCXWfCnPxpykQTeYRtOMju8QzRKDJv7eW6acQ
-         sCUm/i9up3s21QBtlfSRmwJ3dGUitnsFH0KcpJbcWTopYb5rl4Cg7g70YDmFt9Mi1tsu
-         iEEcvyRiXTluvIfmBXcadc4sAI8ScBXPxBWQJLVMC+nBsDTJ2Fa7Ny/g0mfM3PScsrIc
-         lIoDa1NdJho2QZyHMhQC43omg/p0J0vpmcxuXqby/nuOM94vTxg4x2S/M5ZNQDD5pR3P
-         8eCpcRpBbwzsebP7Ac9zRwHgtcOzBxvBlJNG1c0RCHiHlrXc/W0Cfk2ExLF+FirXITv1
-         lkVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740689538; x=1741294338;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740689245; x=1741294045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ORq9jkRCIXj2zv20dBQ5aH6mM2s+q06FC9H+4PepyX8=;
-        b=BJNPapwot9In/aMiwNbQBddC9FxVtfew/1CeRAFTwJe4lncjfHNo8+5kUTQ6ZGIq0v
-         gy/FSXvU7CMxbWDqLmTz9a0/83UM8Is2HOKOlvVHw0dBn81OveKvLiY9Wnfe5RtmwOao
-         0RF6VTY/c8iqnsAUQf3468QWt++d+cdD6bzlAxcSw7AGZzlvSc9K2NEb35+bUmbL+58e
-         uyImH5tBzQPk3iQ9jKaiVQpi3X3fQqJLLCVkiq0I2/ZrxqiicOmqw0+2IMv57X/Nmuhu
-         bikvY3o3MEKNiKOXsoUWSxAAMdZnNg3H8SHIiNpTka9OzhOVEwB1Tg5f7dtukEpw9LE1
-         6xvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmWly6/i0s90jAeT88ocY3St1GMIixwEStysGu7X9QR8QyaaOeadw7wfxitsNiEzZVM7H7m4oLy86CQYo=@vger.kernel.org, AJvYcCWnlHcT4Oexa3lmgn4L2BsseJ7LtTCAyHj08kRv3kIugJ4reOG4p4mqJOMmB/ufUCtmWsc/o9hNWFFReV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw15KGDCB+T+YVioY8K87I25t3eYOSPGw0638qNGdk6489gOcF6
-	LVVpe4oSLdTIT41/n8zU6lEDvZiVDlsDqRNXl8fNdqP+hqXNq/iGsidga51a
-X-Gm-Gg: ASbGncuzwIeATVOUvChGvcIiYqgX42qAsM4pkNBemOtcsirBr4SCKkMr/A9SNHcQSEg
-	s4Elq9LVyJ/U0T32JxYeqfV0nvcEwvLbemzr6hF+vWGmMxC3haFwEOEhMbZZt0ynd6/5+sEnlEG
-	J9ubJZPUQ+70C7+RGubPNeKOmmAoSrFGkGf+CLgY88pPu+BbDA76ZzAGeZQMt/+fYg56X4r56Ng
-	zAK9RrwfEpInFQNjm1tsLhhdpahlG88XYzNgVwsQx0BbszwWZeMTVZMA8PfGsRh+bzal92/Mcg5
-	PRHCAUwesMGd
-X-Google-Smtp-Source: AGHT+IGihLlnXop/m8uLi6YA+JiEFOKQNSYL2eLkoXrXYoArVJ7ew7FmuX17wQiiXQfECok7M8pYyw==
-X-Received: by 2002:ac2:411a:0:b0:549:4e7f:24af with SMTP id 2adb3069b0e04-5494e7f274cmr57045e87.0.1740689537881;
-        Thu, 27 Feb 2025 12:52:17 -0800 (PST)
-Received: from razdolb ([77.220.204.220])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494a149b07sm105767e87.157.2025.02.27.12.52.15
+        bh=ZQQPqcJQz5kC+gdnMR2nVLYPbdgKeZprBZgNoDqESvI=;
+        b=aCCj4EBq3e8lr1az8BIvJWwXFqsPt9Bs9/QZYI1yxGlu5MvUqVPqETdK0AVzyAj14D
+         ZP+lM2zHQGPqTCobhdbsiToR7bpOthXtkpPhD+IIfX1F096tpu3yO4ih0zfydCrjsF5i
+         LeXdUTRl90Rej6Bbl2AArAc514Ua8RNmFlrtLaN/oLNb4aPnTVlUbEd5J0cLL0J29zmy
+         wWdw78oS8EITNka1mEdF8Au9o5DqRePDfcGcZWLj4BPGjIqCAR+aUkqyndXWBoZTSO/m
+         AbMYVCRHXg05T1n9JBPLrt8I5miOsO4ItnKcTTwbWd5gPfw5H40OpTRhBNJCe+vE/JQ1
+         6Tug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740689245; x=1741294045;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQQPqcJQz5kC+gdnMR2nVLYPbdgKeZprBZgNoDqESvI=;
+        b=ejEcPcPXAkNJGl4DJiqnMzs693+B1PUh4KHdmp8+UUqY9LHpWUVEwKJkWWGprUD4xq
+         O2uqjY9s2s94sdILmhz6PMXnTDizUrYx+qy+6Ux5hsJRbD/pdxuujdUztkRVLzUPrmb1
+         GCfQviX/9vCw8aFC4eIiy3grMh0AL9lOJaCJJiNE1ZKjilTuNE4lEaD78GmYVhF4W816
+         VoRNaX1ZXoKBqihqvAKL+xhfptYK/Ms/Gmbu5R5TKtTX452cSh9Pg1D+bBKdVf+Cz1Bu
+         7JNJS6yP0GH30AP6AtBPXQPSOEp1wnIODvmZGZkxB2cffmMTypuCkBbtscsgb/oqda7P
+         0xuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2IjXPAt2v0iOWIH6ofbR+iEMpWvWk5Kp3i7HEyWCWWsIEG163u83xA9w6VMg5BMrGq04/j+WFzfECVQc=@vger.kernel.org, AJvYcCW1cvxeLvxO56wQswQKxCq/I2Q4C0moVlYJOyrTYnhg14Pu1gRN16CQD7SOIofihHQIUQGQwGvh+yu2ynlDSXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNyvx9sEdJNBPLW+zmJO+zpPri3gKPjT1b9lhDJpYXUvLNb+q1
+	JDsa+9TrQ01yGT1y16IcjxI2w0/xn6LfStuZRZMuAjXiWq2UqtXX
+X-Gm-Gg: ASbGncuC42IRskAc4DT0K7LUNoEc9m7+i6eF5Yi6TOy4tCbQebMfxmTqorOBr8xTU4L
+	mOLWjaP1ssz2J/W3xklh4KtXFT9bsz3CNAfJn+tBB3R3PE4cMghEyBo0gd/avjVmEmymJz591Bb
+	1rubUW2kP8hXpRlkhQTCTz/spd/MTW6Q69RSSAcOG3RLg13oOJU6pKP24e0FA0xVsR5O9CqHvOM
+	B/Pl7Sc1xUL25XD4dP69+CbEMjV3NzvUASfdrKWJwDFpLdjYfQegWaNam0OeaEHLG7kDCkJT6+V
+	kE+0ihm7/3l+uB0UUugOJXKzoZgIYEzKWJ8oqOvDnQEQTiIVHXDP5LAOwv8UAXiA
+X-Google-Smtp-Source: AGHT+IELp/ltp2+Tc9OTbSKyIGmqwP78lBZ8wP6ARPo+Nb6Lsvnj4kNu47cm6JSoAPSU4T43nlym1A==
+X-Received: by 2002:a05:600c:3506:b0:439:9828:c44b with SMTP id 5b1f17b1804b1-43ba6704220mr5378135e9.14.1740689244666;
+        Thu, 27 Feb 2025 12:47:24 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba58717esm65285695e9.33.2025.02.27.12.47.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 12:52:17 -0800 (PST)
-References: <20250102-b4-rkisp-noncoherent-v1-1-bba164f7132c@gmail.com>
- <20250103152326.GP554@pendragon.ideasonboard.com>
- <87bjw9s4s3.fsf@gmail.com>
- <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
-User-agent: mu4e 1.10.9; emacs 29.4.50
-From: Mikhail Rudenko <mike.rudenko@gmail.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dafna Hirschfeld
- <dafna@fastmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: rkisp1: allow non-coherent video capture buffers
-Date: Thu, 27 Feb 2025 23:46:44 +0300
-In-reply-to: <dtfv2slbtj3ar2wvlcnd74p3xtlvggebkk3fj5ocm3eil7kyqw@al3brwf4y5dw>
-Message-ID: <87ldtraz5v.fsf@gmail.com>
+        Thu, 27 Feb 2025 12:47:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 20:47:22 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Martin Uecker
+ <uecker@tugraz.at>, Ralf Jung <post@ralfj.de>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Ventura Jack
+ <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250227204722.653ce86b@pumpkin>
+In-Reply-To: <20250226173534.44b42190@gandalf.local.home>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
+	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+	<20250226162655.65ba4b51@gandalf.local.home>
+	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+	<20250226165619.64998576@gandalf.local.home>
+	<20250226171321.714f3b75@gandalf.local.home>
+	<CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+	<20250226173534.44b42190@gandalf.local.home>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Jacopo,
+On Wed, 26 Feb 2025 17:35:34 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 2025-02-27 at 18:05 +01, Jacopo Mondi <jacopo.mondi@ideasonboard.com> wrote:
+> On Wed, 26 Feb 2025 14:22:26 -0800
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+> > > But if I used:
+> > >
+> > >         if (global > 1000)
+> > >                 goto out;
+> > >         x = global;    
+> > 
+> > which can have the TUCTOU issue because 'global' is read twice.  
+> 
+> Correct, but if the variable had some other protection, like a lock held
+> when this function was called, it is fine to do and the compiler may
+> optimize it or not and still have the same result.
+> 
+> I guess you can sum this up to:
+> 
+>   The compiler should never assume it's safe to read a global more than the
+>   code specifies, but if the code reads a global more than once, it's fine
+>   to cache the multiple reads.
+> 
+> Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
+> And when I do use it, it is more to prevent write tearing as you mentioned.
 
-> Hi Mikhail
->
-> On Tue, Jan 14, 2025 at 07:00:39PM +0300, Mikhail Rudenko wrote:
->>
->> Hi Laurent,
->>
->> On 2025-01-03 at 17:23 +02, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
->>
->> > On Thu, Jan 02, 2025 at 06:35:00PM +0300, Mikhail Rudenko wrote:
->> >> Currently, the rkisp1 driver always uses coherent DMA allocations for
->> >> video capture buffers. However, on some platforms, using non-coherent
->> >> buffers can improve performance, especially when CPU processing of
->> >> MMAP'ed video buffers is required.
->> >>
->> >> For example, on the Rockchip RK3399 running at maximum CPU frequency,
->> >> the time to memcpy a frame from a 1280x720 XRGB32 MMAP'ed buffer to a
->> >> malloc'ed userspace buffer decreases from 7.7 ms to 1.1 ms when using
->> >> non-coherent DMA allocation. CPU usage also decreases accordingly.
->> >
->> > What's the time taken by the cache management operations ?
->>
->> Sorry for the late reply, your question turned out a little more
->> interesting than I expected initially. :)
->>
->> When capturing using Yavta with MMAP buffers under the conditions mentioned
->> in the commit message, ftrace gives 437.6 +- 1.1 us for
->> dma_sync_sgtable_for_cpu and 409 +- 14 us for
->> dma_sync_sgtable_for_device. Thus, it looks like using non-coherent
->> buffers in this case is more CPU-efficient even when considering cache
->> management overhead.
->>
->> When trying to do the same measurements with libcamera, I failed. In a
->> typical libcamera use case when MMAP buffers are allocated from a
->> device, exported as dmabufs and then used for capture on the same device
->> with DMABUF memory type, cache management in kernel is skipped [1]
->> [2]. Also, vb2_dc_dmabuf_ops_{begin,end}_cpu_access are no-ops [3], so
->> DMA_BUF_IOCTL_SYNC from userspace does not work either.
->>
->> So it looks like to make this change really useful, the above issue of
->> cache management for libcamera/DMABUF/videobuf2-dma-contig has to be
->> solved. I'm not an expert in this area, so any advice is kindly welcome. :)
->
-> It would be shame if we let this discussion drop dead.. cache
-> management policies are relevant for performances, specifically for
-> cpu access, and your above 7.7ms vs 1.1 ms test clearly shows that.
->
->>
->> [1] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n411
->
-> I would like to know from Hans if the decision to disallow cache-hints
-> for dmabuf importers is a design choice or is deeply rooted in other
-> reasons I might be missing.
->
-> I'm asking because the idea is for libcamera to act solely as dma-buf
-> importer, the current alloc-export-then-import trick is an helper for
-> applications to work around the absence of a system allocator.
->
-> If the requirement to disable cache-hints for importers cannot be
-> lifted, for libcamera it means we would not be able to use it.
+Except that (IIRC) it is actually valid for the compiler to write something
+entirely unrelated to a memory location before writing the expected value.
+(eg use it instead of stack for a register spill+reload.)
+Not gcc doesn't do that - but the standard lets it do it.
 
-Meanwhile, I have posted a patch, which re-enables cache management ops
-for non-coherent dmabufs exported from dma-contig allocator [1]. It is
-currently waiting for review.
+	David
 
-[1] https://lore.kernel.org/all/20250128-b4-rkisp-noncoherent-v3-1-baf39c997d2a@gmail.com/
+> 
+> -- Steve
+> 
 
->
->> [2] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-core.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n829
->> [3] https://git.linuxtv.org/media.git/tree/drivers/media/common/videobuf2/videobuf2-dma-contig.c?id=94794b5ce4d90ab134b0b101a02fddf6e74c437d#n426
->>
->> --
->> Best regards,
->> Mikhail Rudenko
->>
-
-
---
-Best regards,
-Mikhail Rudenko
 
