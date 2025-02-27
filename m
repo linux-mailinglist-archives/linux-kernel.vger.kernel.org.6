@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-536940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6920A48612
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:03:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEC2A4860F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51DE3B0DC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:02:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7382E7A6868
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338CB1DDA2F;
-	Thu, 27 Feb 2025 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4081DE3CB;
+	Thu, 27 Feb 2025 17:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDhka04P"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UkKOfAU3"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74DE1AE003
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B351DC9AB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675761; cv=none; b=uklM3huiw4glv3ZpcFo1/XJ419YqVrK0JoqwUytiNr7Hta123tDnsLrXyk3oEkn7E2FJA9WhuBcADsgVcTkDrL8q/DGybnMntPPscLAhKKuObDZ4bs9z3j9Zv8dkZpoerT75sL3CpGMclbhV5N8iK2DFjVsCiNdySpxY/HWwB2Y=
+	t=1740675763; cv=none; b=eHLvHi6RonJgQxO8FHjE3z2u/wwbtVAa3l2M5EBod3xrO0bSH94L4+PMDaTgx8ZgrOaVgxPz/nbi21RXE+L76zuMOUuv+TePBeHansSu3fwoKvurAuRfuYNJIkfe1dtys+cvXtN5QZYprywjp0lv9qZ+gDgkqe1LWOV8n91Mvl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675761; c=relaxed/simple;
-	bh=SLkqtCbTV4WGngOIGeQdA6Ma/ik2r38oGZ+ix63LEAs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=s05NhwzX4ThYnC0i0lbD5Sez617Zq1zi4Zlhqwt96BH0+TeMYInkzem5cLmuYicXV0HZvkdkEefXY70FUXCeOAOzSZ1YqwMJ0XCFNNvItrb34vjvFBst9J2KNIKJjmfbSn+Ks6ZW24/i/QGstRaQuiIy4ktMGnJ6oLJL1QLpUOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDhka04P; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1740675763; c=relaxed/simple;
+	bh=DX4aj6g1+3gi1MzmclI/m0bUFCVi048l6tZnNSfBMrY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MHqj7aW09MLVuhKtMUUkwaPVS9kwYnkGzkGsiteozJPfo6551v/GCKCKJqKsulg6p7Y3fkbRMEyJo1WHXeSc8iMfbaP0ZQdnik0UaNAQexjoYNweoK3rImZqfpl+fF2A9JJUykpjWx7nYh1ReawTzk6P8CFTryIjoUc/AnNRnPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UkKOfAU3; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so8288945e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:02:39 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-439858c5911so6011595e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740675758; x=1741280558; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7N2niC0tm9GYpL4kTpAci69B17RX2iCWEhPKu3yRgtc=;
-        b=sDhka04PQzum/t7pcZb/gGXmj5dCEvu/ic+KF2YyjzHxibTn/ib5rsiQVSS3lpRcbo
-         VGLYoyC7xYdzAlj9uTW6L6H9149T6l/IiHaU0C+kl+2pkIVSQMWkyVy7EUCgDaWMNWp7
-         kpw5Q3QULkdVMJlR3Toii6dy1qUiPdSq8qE+CsfkASRuN99xITe99B4iDDg5+NF2i01g
-         T9vvvzndibE9hSYoWWHFJcqTTtLp4bB5Mf77JxbOorpIFrYufR+2CKo8MrhbjYc10rc3
-         akfezYv+dNljtuwcT81FZHoF8mHbDpmZSA28CJU0SmX40Dg9nfJ2l4rnoqo3PdOrLUHL
-         2MwQ==
+        d=google.com; s=20230601; t=1740675760; x=1741280560; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyTw/awpQ2b8W4zrJVV8H3S2MlbDfUjPlgXrev/cyno=;
+        b=UkKOfAU3uyQ3KJEpEbNuq3JVFkdb1LL4VA2wcSn/RRcDdYeg9n5SFZdk/pSZ2T8ugm
+         bnsQanrfOlyp4eOzoQ07sYqIUEdsL5HcyXSH3qseZoKNzegrROt4D0zpOa3ECEOJ5LYF
+         8FZBynFl1Ip5f91Yr21G7ZQONGzVvm0TzzXD5rPh3U7WXrHQ/m+8Nlx59sUGrCp1sTPQ
+         aaaIR0LzUcW6mIcpKxLpzd2P76rw+5BTUFc6YfkgDTCA1p3WzyYRHAwrQWoELJrHQOPI
+         15wXOwbS28dxndETNCdRo5j/xrSF7oZ1Ry431WK90Y8b7ySoOL6i1nGroLgbuK/wUP/e
+         V9Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740675758; x=1741280558;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7N2niC0tm9GYpL4kTpAci69B17RX2iCWEhPKu3yRgtc=;
-        b=Ob873y+TGLQHHwBxDXOpk/1MlGMc7AeLmwMzZNy/UVQ+T4YZYUD7QuhufUH7+s5e7z
-         rwwibHE7c873CgEiBKWmC8SMLzP10CJUtk4uIA0dC+7/wag+ylv+Q1sYOwk6Hbo4VqB/
-         TBIldTBf6Lr+eaGz/fgMgqYD8onCZ3GVK96bzTlbEvPOh8K15/s4kpjE27Ri2nHw80CF
-         pCBhMHf2HQ25YYDViPo4uGI8tc+BQs83HlfQEEOfhO3dogrTirUyWzTJlBWg5IZkmRSP
-         D21V//xwJ8ocpWNPLNTU/w2b8ezIVBnqQSUv2pW3jJn5yVECk5U0wqZ+nDB/Q1njGFvT
-         JX0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVkLHsoM6Bl+FY9v5L05pCDE16KccqMojNLI+SVW4zfNqVpCjaYT/K5msDd7D10XYBOKc2K1t6tpfb05OA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXOVjwjQtLXG6U+Fuqe2vNuCd45H6ztiJ8iyVvmhzt+kMv9e27
-	PSL6wD1AKy57O/mmeJt/UGp0W3Bcu3kUYXmua2dZrOscUop00XqLNfZzqroUdEf/G3d/XSks9XA
-	ahUU27HG3I67yxg==
-X-Google-Smtp-Source: AGHT+IGiRBy2T4pZuKAoxObAEh9uitxTWZj5IZVMfO1S6oM96yytdRmD9YMHqkMLgp0r3G0WIE6HBshMhjxRYv8=
-X-Received: from wmbjh14.prod.google.com ([2002:a05:600c:a08e:b0:439:8ee3:e17b])
+        d=1e100.net; s=20230601; t=1740675760; x=1741280560;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyTw/awpQ2b8W4zrJVV8H3S2MlbDfUjPlgXrev/cyno=;
+        b=bg2GmMGW6WkKNJLAZYtc5EB8SUb4sqdtA8lLGaVXdkbkUDYs+E7h72swBD1dKDOdQo
+         0DUqKmLIvZmYJpNHhn9AYuht6wZDPzgNVsNuYdM94rGHOvOoIxI9UqdVdCB6m/9uIZSP
+         srAwVrpa5KAszqlRWd2/3DqwvixaPmZyfPlMBbWbIif+L6k985YS95wAHxd7GQD0LdsE
+         WBc3fwO9JKn+SyK7hTHqJOLxgXTfYNWhUXCBKbzpAVHhKTpiqdAYFfIc710aHIY/6WuF
+         anFUD8W6NKadoG9+vEeFU9HFavqvpnZmIGGmpWSDw2mg7pwX6vwNCVXcPm3Po8GV6BBd
+         a3Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwhdM087YHEuWpWC42bHoZAFs5J/KNn/n1aHI6IN3uiAenavMribph8K/auIReUkCtsHA6Y6n5f7XNnxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznjA/0LODQpRNmQZQ2XOpycSxT2TNd+8hm+jmGw4D/BHoEtQFw
+	SYXBXV+5E4Il3VqZDN1ShaximXA6NTGLolc3O+cAqWhAIpT7PfzWi9OOXTbaIgK4w35pVm6uacL
+	0lFWh/N1MjCzfFQ==
+X-Google-Smtp-Source: AGHT+IETYd45wqLlFSGYfA2r23+tMfJyS7mFkY2/XSj51L1vJ2+M6lbfKeR3YEjy5LaJ4YSnfFn0fdn05icFoqY=
+X-Received: from wmbez4.prod.google.com ([2002:a05:600c:83c4:b0:439:8ada:836c])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1e15:b0:439:9cbc:7753 with SMTP id 5b1f17b1804b1-439b03246d2mr237339895e9.10.1740675758273;
- Thu, 27 Feb 2025 09:02:38 -0800 (PST)
-Date: Thu, 27 Feb 2025 17:01:58 +0000
+ 2002:a05:600c:4f0d:b0:439:98ca:e3a4 with SMTP id 5b1f17b1804b1-43ab90169d5mr68313845e9.19.1740675760403;
+ Thu, 27 Feb 2025 09:02:40 -0800 (PST)
+Date: Thu, 27 Feb 2025 17:01:59 +0000
+In-Reply-To: <20250227-export-macro-v1-0-948775fc37aa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAIaawGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyNz3dSKgvyiEt3cxOSifF3LxETLNEMDQ7MUi2QloJaCotS0zAqwcdG xtbUAw8oUeV4AAAA=
+References: <20250227-export-macro-v1-0-948775fc37aa@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=SLkqtCbTV4WGngOIGeQdA6Ma/ik2r38oGZ+ix63LEAs=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwJqObbplB6yaeANqTFz7BvG+CSsY/WddYZzOF
- Ug+T+3+duSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8CajgAKCRAEWL7uWMY5
- RpFKD/9sJCzRyJGIyiSqnki5NeoIaiQUIr0r3kFUeBkycOLKP6NN7QmR1K7Sl6FCblSl8mcdcd5
- SMoTkfP7ETUcT/aDp8hNnqguI5bGB3kX65A06YmHds5KVEMEoDOflnh+SNZ2J4QAeBa59hyujnk
- 8EyY0GBFoOxp0Qbf+NSamLl1BAECCBS7ycDJesX/ceneS+/TVJCtftniQOSmaDe5i6fs8XbpvRF
- Z9AYyINAQYYOLnZWngIoX8+S/h+gZgQPVbhHWSwwcC7hGXJnIQGjzBFyDi+JjfzQ48pYk8VIW+6
- WDRuuizvplZPnA3/Th2Q2UwY3VXn7IYHodwxNluX0gLIoJFe0sXF2Cd3wlkD0Fm346lyuQZUveJ
- DFrVjvse0OcwYk35esL2Il11UU0K1CB86qBqPW3SFmWunjk+q/WAGztVxyN0feyDDghNgIM6czW
- cKlXb2I/AzihXQwgoNqkJ77cGWAUF2Q5OGfbFtQ7CrgVqz3XHKpaoSunEDxsvIkCkovA41p5ZkO
- E9Ka0h7XG+BvNr9oflcrsYNyuxubjRtE1tOvtGx/L1ndT/hjEhCLi7ZpwnjyQ4cFS7QqG2cNQpn
- r+zHiLtV9TX7yvawCgcc0XEHv7rgMkuOB0A+6OHPixX3vp52M3H6PCpSRJkqGoV/l/pD+ULqBXX 1Tc+b3pKRo/rczw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1992; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=DX4aj6g1+3gi1MzmclI/m0bUFCVi048l6tZnNSfBMrY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnwJqpf2Qi8QLFv2OSIJifmJDT7I63pnqPsJGib
+ 8/RB4+fSH+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8CaqQAKCRAEWL7uWMY5
+ Rud9D/9PV7zhQlnXuqvTuDYGJ1Hq8bZynWlH6JAsl8T6q78NM8tFf5f6hi8fs8YgHDZK0PJiCHC
+ WFUgxUIf4kpzyTV/hwu4KMggH5sRMnfmNFzQJEFjtB0AZZ99shzceswR+Yl3R6TDvrpPwZhOvBT
+ s70bBkW9mkmsR9TLjEzaNDIWkjRUNcQ30JvAlTV1Vqn1Cx4b2q44eSW0Xi5aiwIgSEoroVHbOkL
+ rYLzkF7iB+HEQ5C2POOf0D9IJVunNMhgVfr6d5BavKOsvsBU4JacOybGeg7N8VxFkHuMjwZrnN8
+ Pu6NZWIaCE895cyrJIV+31NFb0HUZveAlqUsDaPFcqRXmqr9ZcAv1PllPbVFFDNtmtcJIiEg2Uy
+ rKoO3uzNVjtvZev2qj3Sh8/C7xiR7uG53F1Vbgd+o36WLOG9yZ9ZwVu9LBTVMvbMk2ZPkyi+qgA
+ LrrdvpoXtFSGM0Um9Dt+segnzH+EaQW0JLjKaEWUKHVOQFmj0hmKrBEj5QS4XMw2I7tVr4OtbTz
+ fbrNsz2bIYOgwq6R8lakVGZt8txCmiAUYVuAkaJIjNnVLMNOyONgwYN8wNIA+IZ4jN6pOQhIjGv
+ L/DlXoYP5ctDsboWl+CIK9STl/jyLn06rIexpwkPOed5fEIGAPcZQKEMKh7b0GxYFZLYR5gWkaK n/NrKkkl0ayaLTg==
 X-Mailer: b4 0.14.1
-Message-ID: <20250227-export-macro-v1-0-948775fc37aa@google.com>
-Subject: [PATCH 0/4] Check Rust signatures at compile time
+Message-ID: <20250227-export-macro-v1-1-948775fc37aa@google.com>
+Subject: [PATCH 1/4] rust: fix signature of rust_fmt_argument
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>
 Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -103,33 +104,66 @@ Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
 	dri-devel@lists.freedesktop.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
+Without this change, the rest of this series will emit the following
+error message:
+
+error[E0308]: `if` and `else` have incompatible types
+  --> <linux>/rust/kernel/print.rs:22:22
+   |
+21 | #[export]
+   | --------- expected because of this
+22 | unsafe extern "C" fn rust_fmt_argument(
+   |                      ^^^^^^^^^^^^^^^^^ expected `u8`, found `i8`
+   |
+   = note: expected fn item `unsafe extern "C" fn(*mut u8, *mut u8, *mut c_void) -> *mut u8 {bindings::rust_fmt_argument}`
+              found fn item `unsafe extern "C" fn(*mut i8, *mut i8, *const c_void) -> *mut i8 {print::rust_fmt_argument}`
+
+The error may be different depending on the architecture.
+
+Fixes: 787983da7718 ("vsprintf: add new `%pA` format specifier")
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Alice Ryhl (4):
-      rust: fix signature of rust_fmt_argument
-      rust: add #[export] macro
-      print: use new #[export] macro for rust_fmt_argument
-      panic_qr: use new #[export] macro
+ lib/vsprintf.c       | 2 +-
+ rust/kernel/print.rs | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
- drivers/gpu/drm/drm_panic.c     |  5 -----
- drivers/gpu/drm/drm_panic_qr.rs | 15 +++++++++++----
- include/drm/drm_panic.h         |  7 +++++++
- include/linux/sprintf.h         |  3 +++
- lib/vsprintf.c                  |  3 ---
- rust/bindings/bindings_helper.h |  4 ++++
- rust/kernel/prelude.rs          |  2 +-
- rust/kernel/print.rs            | 11 ++++++-----
- rust/macros/export.rs           | 25 +++++++++++++++++++++++++
- rust/macros/helpers.rs          | 19 ++++++++++++++++++-
- rust/macros/lib.rs              | 18 ++++++++++++++++++
- rust/macros/quote.rs            | 21 +++++++++++++++++++--
- 12 files changed, 112 insertions(+), 21 deletions(-)
----
-base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
-change-id: 20250227-export-macro-9aa9f1016d8c
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 56fe96319292..a8ac4c4fffcf 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -2285,7 +2285,7 @@ int __init no_hash_pointers_enable(char *str)
+ early_param("no_hash_pointers", no_hash_pointers_enable);
+ 
+ /* Used for Rust formatting ('%pA'). */
+-char *rust_fmt_argument(char *buf, char *end, void *ptr);
++char *rust_fmt_argument(char *buf, char *end, const void *ptr);
+ 
+ /*
+  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
+diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
+index b19ee490be58..8551631dedf1 100644
+--- a/rust/kernel/print.rs
++++ b/rust/kernel/print.rs
+@@ -6,13 +6,13 @@
+ //!
+ //! Reference: <https://docs.kernel.org/core-api/printk-basics.html>
+ 
+-use core::{
++use core::fmt;
++
++use crate::{
+     ffi::{c_char, c_void},
+-    fmt,
++    str::RawFormatter,
+ };
+ 
+-use crate::str::RawFormatter;
+-
+ // Called from `vsprintf` with format specifier `%pA`.
+ #[expect(clippy::missing_safety_doc)]
+ #[no_mangle]
 
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.48.1.658.g4767266eb4-goog
 
 
