@@ -1,138 +1,95 @@
-Return-Path: <linux-kernel+bounces-535671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4072EA475CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:04:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2FCA475CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9791D170BE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B331881E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7E321A429;
-	Thu, 27 Feb 2025 06:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B2321930E;
+	Thu, 27 Feb 2025 06:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWLR/RtY"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jcpdBJGT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA512E403;
-	Thu, 27 Feb 2025 06:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA140215769;
+	Thu, 27 Feb 2025 06:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740636229; cv=none; b=Y9MppbeSS2D2OF5gSEvVFuHoxWHkkNz690EeJmHQumBZGU5XDrZWRVD1usanxbj2enpYfVZYC2Jw+H9j3qETA2/xsXvU2fyk5YcfJNDkfXEC9tYCPHpjdVxPvtVRzZwkk3f609S8VRPkqw0U6OgExjHIkhqN6yxk5NaPWnoMxHI=
+	t=1740636277; cv=none; b=ulw/DcDYivc2D2kjHl7GVEBLAO0iUzS3B9y46nYfQ+Fpy7D9BhbmUZXuohdpZNusFNeUWBdEcxeqHThHAUKfH6wJyzE5AQsxjMhrs5G5qIQEsFiWOGTyzwkxpg0mVrTNahVkTTKdAKgL40oGFKqWepe0H/2uHKXpCgKJIStlLYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740636229; c=relaxed/simple;
-	bh=id8Qg4h5TPS0BUzKQKO0wT6fCrQR34/3Z/Bv0E4J2yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qlEe/maFQt0UomvK4IREOawk1XW821iKRDqfC72m9LNCpwwfS/jhZ8YACaytDQwH9p3C8D3OiPjP+eaxcFnwitLAOWOd4NcyzZDKhkCvb7ZXO01NOX2eZCrMBb0W8r1kcdjYhACJqT9SnpxonVzb9+rIp7OQbbuMZNwdPRxwJVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWLR/RtY; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f7031ea11cso5752757b3.2;
-        Wed, 26 Feb 2025 22:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740636227; x=1741241027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DdOFGgb65k0Cn9Nz8/cPncizPnzFIKvzyuAPw/gRjP4=;
-        b=MWLR/RtY2TWFVqsK0b2ge9qpf8IBHNcQ/RXVj69UAamHgGkURYV7vohHmjvzw2fMXO
-         k+QcY18gbivX0QUwntJEJ4W/VkW2S6krCVf5BuQL1jAZ6BBBLwqHmOhCBSexH4OX4Ydy
-         EoYE0S5kxNCGkaoxTbLS4eyxd9zxpsMwllZk5IKiUhJTxLHmKYfqClFDwvsNOae7md3O
-         msH1X1F2WrlYYjPq4Mla6VP/7A+TVKU5Oi9NQxT7J90QejK2rdmyPtPBvf1q0TtMVmWT
-         LBTa4y/ByuEUN00qFpj0UX5gpHwZkP98pjkMcROG8O37OYPpO1S1WjgZw52i09++T3nt
-         8KtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740636227; x=1741241027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DdOFGgb65k0Cn9Nz8/cPncizPnzFIKvzyuAPw/gRjP4=;
-        b=kYhz78tzf+IurBLGwS0/S0D9ZcwFijPaDRGxP6FsTv8dNPSdtjS53SUoPpTaAa4w1f
-         QJ7wANGHtBZfUqxZqeIqR1GD20oWhEMK7R5tEm5P3xzgixZD0h1yklwzi+HYpSYeOyDp
-         8otm/8pK/4E0Cx/WL6uC15qEEpM1OyiDTX0AJHYtTAZWZS6ZLtaTshMVJCGukJ7hK5dm
-         YIrfkRMWv80J90hv/5Po/u95o6Qb9ef41jkF791I7hi97Dy7h31mD/Wv0lhdE024zQGk
-         vy5paNyeLEZFdPXKWDgY0nzRzJFXScTUKUOOSxQjFutWxKaOXZY7R54IQNJM8zoDxpIZ
-         FXDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlYsgV18udL77CjWIrJCf/QIixn2WjeHWm5etlRq/U+DSgJT4d+LEwkgJd727VL0Vz702b3tYIzjiiQGo=@vger.kernel.org, AJvYcCWnEPXvbavwPSQGNng3LncgV47ASBoXn7E6B50xYl/BiyZH6mBh/ZOmEZ/U0d043BnT6RI4m+xRM5n3eOBQE9PKwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWhKFQVS6E5JLjQ2O+eQFM9gd4jd+YTRSspn3Om/8Re0qW5Vws
-	JuMDX0YtyOqNjWsd1pvwTdyzALqhHC4iGi/EiRIaISC54fi/LKddwPVpUgb0Ib8GI7g+Gjicq5W
-	3Vksu1327EucNG4fVivlw2fP8qQc=
-X-Gm-Gg: ASbGncvbXxOaMXiqBCTq27oEh0Zq6J0YXp0KUM3C8FcuIlC9DRMpMhPQDb0ZDmRjzMZ
-	OO8tyOD14Y1QIXjnJEVWiGbM7FGH/x3TGLF9QWw+hOJ/9PVZ5Uiu6JgUPwUp2JFx8RnRVWKMa5/
-	xkCd7oEg==
-X-Google-Smtp-Source: AGHT+IEL++qAZVyzQTn3ojQynvJrhqG0fQwgG7E/+e2foO96+UUWr560txlmn5uxcQbG4RpwgMUNs+QZpy3Bo6DAjn4=
-X-Received: by 2002:a05:690c:690b:b0:6fb:a467:bff4 with SMTP id
- 00721157ae682-6fd220852f7mr71661227b3.24.1740636227042; Wed, 26 Feb 2025
- 22:03:47 -0800 (PST)
+	s=arc-20240116; t=1740636277; c=relaxed/simple;
+	bh=yLIxoMkr0ur2OAbRZKbGVnmARCH0t2/K8u/fv8aAomQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRBX4X/x4A+ZdyHgk69rC9Y6O1nasMaVMqjo+IMn8xxIiostRXKoiqLbEVtCmXsZBZxMXhU09cmwxzOS8N22mYuStwC8gqq/xSthDlwwlDAC+7f5N3jX4BNSZj1gv5rYMnbhiUkWY0sndq2AV3zu3qPnNP1u1bQ49DwwvNWjoEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jcpdBJGT; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740636276; x=1772172276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yLIxoMkr0ur2OAbRZKbGVnmARCH0t2/K8u/fv8aAomQ=;
+  b=jcpdBJGTRjzLObhK2N6J4MhsktsjOlLh4RADHrZ9Ko9sfS9YwrqWyeD8
+   mkWRcLsyjp4VaJkM1W9qQUTwQK/sqclYSPN6dSnD7jRSsMxLl7lxq1/A8
+   4eBBPrXL6msq6i3HUTJAOSmsj4CTBHTv2Pv+x3FXaSQ8i5Us6WhD67p3S
+   OGW5cYHRHBV2ar03OGG2Ttzw8dLeJRpZo/79k09b9dZyz0Cwq6VWu0j0H
+   /jL8laEJekZhryxge4bqCazqSWGOaghtpCIkLpQdVBTjUbVwZUWtDWcmg
+   b6mbYYINIF2FlBZE3jzei0rttXqiUjGGTvVgs9+HGEHmwVa2iNAa1/Fj9
+   g==;
+X-CSE-ConnectionGUID: KQMSTt1mThilhBIa1HC6KA==
+X-CSE-MsgGUID: o9ndrhS/Q0yy1dkp5sGVbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41640178"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="41640178"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:04:35 -0800
+X-CSE-ConnectionGUID: QgCQH2GoRguX54NQ8SGVNw==
+X-CSE-MsgGUID: 35ZqiWAnTHi81G0DsoBGTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="147748144"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 22:04:35 -0800
+Date: Wed, 26 Feb 2025 22:04:33 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
+	dvyukov@google.com, james.clark@linaro.org,
+	christophe.leroy@csgroup.eu, ben.gainey@arm.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf record: Add 8-byte aligned event type
+ PERF_RECORD_COMPRESSED2
+Message-ID: <Z8AAcZXtuD7O3TAV@tassilo>
+References: <20250227053738.788153-1-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109075108.7651-1-irogers@google.com> <20250109075108.7651-2-irogers@google.com>
- <CAH0uvohxfk0wYv8NB5i7dZJ2+0PX22iqVAJqWLGqKykrqC-RgQ@mail.gmail.com> <CAP-5=fW_j_jisBsMw8AU0t3NgQdfE-ZBgqHN5y4ezA+bvRWW2g@mail.gmail.com>
-In-Reply-To: <CAP-5=fW_j_jisBsMw8AU0t3NgQdfE-ZBgqHN5y4ezA+bvRWW2g@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 26 Feb 2025 22:03:34 -0800
-X-Gm-Features: AQ5f1JrjW713G-ilRFqcL6ISJ_ZFKLSu0dKZM33DAXk2Psjh1hw4kB__o9L3hrM
-Message-ID: <CAH0uvojRo0YV+OGwzDHCh6+p5zaLBPKP6aQLjcexEfTmiBqKmA@mail.gmail.com>
-Subject: Re: [PATCH v1 01/11] perf debug: Avoid stack overflow in recursive
- error message
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227053738.788153-1-ctshao@google.com>
 
-Hello,
+On Wed, Feb 26, 2025 at 09:34:06PM -0800, Chun-Tse Shao wrote:
+> The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+> asan runtime error:
 
-On Wed, Feb 26, 2025 at 9:45=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Wed, Feb 26, 2025 at 9:40=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
-> wrote:
-> >
-> > Hi Ian,
-> >
-> > On Wed, Jan 8, 2025 at 11:51=E2=80=AFPM Ian Rogers <irogers@google.com>=
- wrote:
-> > >
-> > > In debug_file, pr_warning_once is called on error. As that function
-> > > calls debug_file the function will yield a stack overflow. Switch the
-> > > location of the call so the recursion is avoided.
-> >
-> > May I ask how it created the recursion? Too ignorant to understand sorr=
-y...
->
-> If _debug_file is NULL then debug_file calls pr_warning_once which
-> calls debug_file which calls pr_warning_once again, etc ... :-)
+It seems pointless. Most architectures have cheap unaligned accesses
+these days.
 
-Got it,
+Just disable that error?
 
-pr_warning()
-  eprintf()
-    veprintf()
-      debug_file()
-
-ack.
-
-Thanks,
-Howard
->
-> Thanks,
-> Ian
->
-> > Thanks,
-> > Howard
+-Andi
 
