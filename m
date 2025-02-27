@@ -1,255 +1,124 @@
-Return-Path: <linux-kernel+bounces-536601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B12A48203
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:50:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B2BA48215
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:53:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE67A19C3092
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C90B17A866
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEB9235BF8;
-	Thu, 27 Feb 2025 14:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AD623AE9A;
+	Thu, 27 Feb 2025 14:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u523WwmH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bjOhYbh9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u523WwmH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bjOhYbh9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="35xqrGF4"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD883231C87
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20826237717
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667132; cv=none; b=MWFpvxNGkWsAdJZZfXOCeEviohbcpaIJa2eOETt6V112rKLiRttPceYyUbZR4QKJopzAwkqKGRb/znmDQ1oyNQY73dqQz7rmBztELZsmHRoNXRfQkuHjfkcw+EyROYcqqRBthWTyw1nZgpGAewMaCXLCmKZWjnCTP8lG1qd+ReY=
+	t=1740667187; cv=none; b=XtmZItmYJnudqav3VLsNQMtTyTgMz2XISTn1y9H+6MBf7OSI06py8lOJyVnB+GEMAVGTm5sPWcg9DUL+6BLTGxMsxOcXNd9V/Nix8+b4X9mL+ASceu1B6vgD8F0t98xbARNcbknPW20efEBSsYQYgbXa3Ib6U8/UdKT4GbOFGFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667132; c=relaxed/simple;
-	bh=ugGlZWJEMUS3tEPTcLeHFPxbYGU002BhkX+XwcJCDmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qBsH0TEp1Wyo+dI90oUwhQxtXt4MCaE1/wuBox8l0NSqaWTPaoBFzkJ7RSYg+tOk6r43qLJ1MgqNgeEXY3GpBKtZutIR25dowKEXBGULgmH5fUCcQ93kD5j3xQMtYhjZYGHSQNEKLgYDc1nsbDaMa6OdyFDvlomHxmIUn/6Ibi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u523WwmH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bjOhYbh9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u523WwmH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bjOhYbh9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 681022118B;
-	Thu, 27 Feb 2025 14:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740667128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5x4jy6t17hcLvzjI8SgZJDgjCK5nQB09GOUL3aUeAjI=;
-	b=u523WwmHMZ6kKdnsm1VUSMMNF8qmHp9oQH+/uDjRpSPqvL36Q0NZxfwQTfGyTXI6Ey4qMW
-	RGux5NivHT3wq0Rr5kLJRpCRn6ayW6Jbb22sJauKK72iuZl5lD7lqUj7oIXnD+3SpwEUTi
-	8TaUKR24w0Ji59Ven+4OjK2UKANX3uc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740667128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5x4jy6t17hcLvzjI8SgZJDgjCK5nQB09GOUL3aUeAjI=;
-	b=bjOhYbh92IKRXZ4V38mC90ymS7JIdiu8CkZut6SOtxLWksL3G4SC7VE7cDaQrVDykgZMlN
-	jfezwuEj+YtQZOBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=u523WwmH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bjOhYbh9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740667128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5x4jy6t17hcLvzjI8SgZJDgjCK5nQB09GOUL3aUeAjI=;
-	b=u523WwmHMZ6kKdnsm1VUSMMNF8qmHp9oQH+/uDjRpSPqvL36Q0NZxfwQTfGyTXI6Ey4qMW
-	RGux5NivHT3wq0Rr5kLJRpCRn6ayW6Jbb22sJauKK72iuZl5lD7lqUj7oIXnD+3SpwEUTi
-	8TaUKR24w0Ji59Ven+4OjK2UKANX3uc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740667128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5x4jy6t17hcLvzjI8SgZJDgjCK5nQB09GOUL3aUeAjI=;
-	b=bjOhYbh92IKRXZ4V38mC90ymS7JIdiu8CkZut6SOtxLWksL3G4SC7VE7cDaQrVDykgZMlN
-	jfezwuEj+YtQZOBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C15A13888;
-	Thu, 27 Feb 2025 14:38:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UMeQEfh4wGcleQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 27 Feb 2025 14:38:48 +0000
-Message-ID: <50cb2f6c-f1cd-4aac-9336-e2c88f6314bf@suse.cz>
-Date: Thu, 27 Feb 2025 15:38:48 +0100
+	s=arc-20240116; t=1740667187; c=relaxed/simple;
+	bh=C42kb8jZYl09xjQISSvxQc2ob3/FWGQuxy1rlAyDRgo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iHec+10IagdcPG8ua84qvVxXUsWJP3/MGlkqGJ+C/PKujHJdmCmpVRl6lG3e+ELtBmRmJXv17rxCOOQnX+C8Srh5cFWg2Ihg5PF18HtctudFNJtO/ri4XU4ehax5gaRE1U+aFNEWJ05bCtc+hIkW8iWDLrt5SAWo2i2kIsJ+L+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=35xqrGF4; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8fa38f6eso2266887a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:39:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740667185; x=1741271985; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxH+On3rOFzz2SdFAE8SEry5Nrx+QsPGCIQtGhiP8po=;
+        b=35xqrGF4JmSollVj8v6VmwqKWC2sC13040OWTzu9qYwqilPSaXQskv8CH9KBEps29X
+         Mp/SYRuA7KwzesRDzAE8J8WQTU3BzFQMsYYcB7P8mc05fNZ/VN4W0iRBhW7FUuAm8QLi
+         QKyPXqEGpZ8PaMWJ9jDraoHndvKrMmsYyIjrNqbaUmI7hLjNrv178C8obyq2P7D25U/3
+         /5C9x8BIWWpuDUgV5LzJ/bQ0bV5EafJQ9SMg2ku0hNF6Isdttq2Buc9xL67glaeBtf3Q
+         39uR8m59WdglqMr2AIlUPJWk/O/U1DRM0estyqLyuH7LRjARQnoB6Yh1q1XHN1Md27DU
+         6Vcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740667185; x=1741271985;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxH+On3rOFzz2SdFAE8SEry5Nrx+QsPGCIQtGhiP8po=;
+        b=w6AroUAH6ei6VwPOdSr1YDuf6HgkFbXld2Q8ADqhm29DlQ4Emi/OhO8WiG23Pkcp8y
+         5j5/xcsG3Z04NtWgaWd/5R8BKT4x++6mqILu/o98yRJ8Ds3GMhEqK38lCt0kYnZVl9Es
+         c4TYqVz9c4DFaOv5wivHFl7Fclav1Zxun+6Cr+TZyLnzrxiu46kuDGlPibisZ687ElA7
+         mhXtJqRdYYD/uE/nmGs7417M1pC/pGTG1Zr6v3WbaIgiaJ+reJrLWhKZb+Apa4S1xXQ+
+         fwBGgghZz8fNd0G+aLAqbFPB4cZDFuuhyiVyATNn8xdz96ZMt3fVrTHDKbdWp7Myeqs2
+         Ukuw==
+X-Gm-Message-State: AOJu0YzO1YCCCY0+k0J1uR4G0w4X40H4a5TY/3tqf0UTwewMWTyZPUq7
+	YpPIy8Yzwc+JYg3xLyoRYnM1vZIEDW7OjlmzaFpllYMV/sZsS1RpUbgH8/L+/pXQ1YbUqLe/ti+
+	83g==
+X-Google-Smtp-Source: AGHT+IFJ3wN5DANqSer5hQVwE1SxZTBD0Lvfi1B1zqpxom5zbstWSZgZeTQEsaQZtulu7UPNR3qjkDRor8w=
+X-Received: from pjbsh16.prod.google.com ([2002:a17:90b:5250:b0:2fb:fa62:d40])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5407:b0:2ee:c91a:ad05
+ with SMTP id 98e67ed59e1d1-2fe68ac9087mr16599772a91.3.1740667185442; Thu, 27
+ Feb 2025 06:39:45 -0800 (PST)
+Date: Thu, 27 Feb 2025 06:39:44 -0800
+In-Reply-To: <f114eb3a8a21e1cd1a120db32258340504464458.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] mm: slub: call WARN() when the slab detect an
- error
-Content-Language: en-US
-To: Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: janghyuck.kim@samsung.com, harry.yoo@oracle.com,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250226081206.680495-1-hyesoo.yu@samsung.com>
- <CGME20250226081359epcas2p2a6a1f3f92540660129164734fa6eaa64@epcas2p2.samsung.com>
- <20250226081206.680495-3-hyesoo.yu@samsung.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20250226081206.680495-3-hyesoo.yu@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 681022118B
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[samsung.com,oracle.com,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+References: <20250218202618.567363-1-sieberf@amazon.com> <Z755r4S_7BLbHlWa@google.com>
+ <e8cd99b4c4f93a581203449db9caee29b9751373.camel@amazon.com>
+ <Z7-A76KjcYB8HAP8@google.com> <f114eb3a8a21e1cd1a120db32258340504464458.camel@amazon.com>
+Message-ID: <Z8B5MMCzBGwkTT0X@google.com>
+Subject: Re: [RFC PATCH 0/3] kvm,sched: Add gtime halted
+From: Sean Christopherson <seanjc@google.com>
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2/26/25 09:12, Hyesoo Yu wrote:
-> If a slab object is corrupted or an error occurs in its internal
-> value, continuing after restoration may cause other side effects.
-> At this point, it is difficult to debug because the problem occurred
-> in the past. It is useful to use WARN() to catch errors at the point
-> of issue because WARN() could trigger panic for system debugging when
-> panic_on_warn is enabled. WARN() is added where to detect the error
-> on slab_err and object_err.
+On Thu, Feb 27, 2025, Fernand Sieber wrote:
+> On Wed, 2025-02-26 at 13:00 -0800, Sean Christopherson wrote:
+> > On Wed, Feb 26, 2025, Fernand Sieber wrote:
+> > > On Tue, 2025-02-25 at 18:17 -0800, Sean Christopherson wrote:
+> > > > And if you're running vCPUs on tickless CPUs, and you're doing
+> > > > HLT/MWAIT passthrough, *and* you want to schedule other tasks on those
+> > > > CPUs, then IMO you're abusing all of those things and it's not KVM's
+> > > > problem to solve, especially now that sched_ext is a thing.
+> > > 
+> > > We are running vCPUs with ticks, the rest of your observations are
+> > > correct.
+> > 
+> > If there's a host tick, why do you need KVM's help to make scheduling
+> > decisions?  It sounds like what you want is a scheduler that is primarily
+> > driven by MPERF (and APERF?), and sched_tick() => arch_scale_freq_tick()
+> > already knows about MPERF.
 > 
-> It makes sense to only do the WARN() after printing the logs. slab_err
-> is splited to __slab_err that calls the WARN() and it is called after
-> printing logs.
+> Having the measure around VM enter/exit makes it easy to attribute the
+> unhalted cycles to a specific task (vCPU), which solves both our use
+> cases of VM metrics and scheduling. That said we may be able to avoid
+> it and achieve the same results.
 > 
-> Changes in v4:
-> - Remove WARN() in kmem_cache_destroy to remove redundant warning.
+> i.e
+> * the VM metrics use case can be solved by using /proc/cpuinfo from
+> userspace.
+> * for the scheduling use case, the tick based sampling of MPERF means
+> we could potentially introduce a correcting factor on PELT accounting
+> of pinned vCPU tasks based on its value (similar to what I do in the
+> last patch of the series).
 > 
-> Changes in v3:
-> - move the WARN from slab_fix to slab_err, object_err and check_obj to
-> use WARN on all error reporting paths.
+> The combination of these would remove the requirement of adding any
+> logic around VM entrer/exit to support our use cases.
 > 
-> Changes in v2:
-> - Replace direct calling with BUG_ON with the use of WARN in slab_fix.
-> 
-> Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+> I'm happy to prototype that if we think it's going in the right
+> direction?
 
-As Harry said. I'll remove that locally.
-
-> ---
->  mm/slab_common.c |  3 ---
->  mm/slub.c        | 31 +++++++++++++++++++------------
->  2 files changed, 19 insertions(+), 15 deletions(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 477fa471da18..d13f4ffe252b 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -517,9 +517,6 @@ void kmem_cache_destroy(struct kmem_cache *s)
->  	kasan_cache_shutdown(s);
->  
->  	err = __kmem_cache_shutdown(s);
-> -	if (!slab_in_kunit_test())
-> -		WARN(err, "%s %s: Slab cache still has objects when called from %pS",
-> -		     __func__, s->name, (void *)_RET_IP_);
-
-I think I'll keep this one, because the more detailed warning via
-list_slab_objects() is only enabled with CONFIG_SLUB_DEBUG.
-If it's not enabled, the kmem_cache_destroy() failure rather should not be
-silent.
-So slab_in_kunit_test() would also stay.
-
->  		} else {
-> -			list_slab_objects(s, slab,
-> -			  "Objects remaining in %s on __kmem_cache_shutdown()");
-> +			list_slab_objects(s, slab);
-
-I tried to extract slab_bug() and __slab_err() from list_slab_objects() but
-they were also only available with CONFIG_SLUB_DEBUG.
-
-Perhaps we can improve that, but as a follow-up cleanup so we don't hold
-this up further.
-
->  		}
->  	}
->  	spin_unlock_irq(&n->list_lock);
-
+That's mostly a question for the scheduler folks.  That said, from a KVM perspective,
+sampling MPERF around entry/exit for scheduling purposes is a non-starter.
 
