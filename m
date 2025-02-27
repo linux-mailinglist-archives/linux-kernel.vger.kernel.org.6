@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-537389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1CAA48B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AD5A48B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 807AF16CA08
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9883A62E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C850271837;
-	Thu, 27 Feb 2025 22:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9356627183D;
+	Thu, 27 Feb 2025 22:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKIaobaK"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2WBulhY"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C6E14EC60;
-	Thu, 27 Feb 2025 22:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57053225775;
+	Thu, 27 Feb 2025 22:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694764; cv=none; b=Sv9vZGXRDA65+X5lMsQHD5Qnrndqj/ZO1lDr0XROVaKepjN09AM7TlzSj+U3Q39lyi4jYh//bC9O1k29G+bIzRYR+ceEAEbtXLCe1b+ilvdhE24sYY0YB/2QW3afV1142LSP6FgwXROdqPRd+8lNvoY9lkVSwb4X2jO+Hcql0t0=
+	t=1740694837; cv=none; b=UdGZnV/iZ2whfbeA9fAz0FRBLOao4tnR4umIncsG3hfvOGDmDNckkh6S65Nb+etmgTHA8k+9XZc4oQxybk426Rew9nfZXf5yVu88dmUr76yBQO+7RsUf3+WjW0YNVqQGb7Lci/BbwMCvhBY0Jny1w+3EMt2iPk+jb4J9J9C4iUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694764; c=relaxed/simple;
-	bh=kJue5qF1O88thhWiBUhTAkc+0gerXobM1xMG5TfadMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jf8BVjjryKTMfkSvjZHIQhmHd1B62W1qbVzBiCL7hbsy7XDk0o0dAb0h37TdopPRh3X52hEPoxasr8dm6kFG6QmVaDNA0SoO7ECnR3zPVEE6bZmNixLLSDJaC2aW+ehDgvaqnwlq785wENQKsFUOX3TqqmzDj4F9H7zWIxM24FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKIaobaK; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1740694837; c=relaxed/simple;
+	bh=HMDvo7nca0IFV2djIVMP9TfMU1YDS9A4fyz5CGnL46g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y3wbJBPqEQ06vBGpV4O+YGHIeWlmlLdA7Up3C5/kPXbKGI40ubiLwh/OGNLFYREJhtZU6YYHv8v48mNXdncLIVLcZlOXaLB9UbI4Cl90Shqy9es7IxbN34+YNcpcT9qdBkTQUGaw7h7622O4qrd3p6BAgBTkfOzk8g7/YHxzg3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2WBulhY; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2235c5818a3so25551485ad.1;
-        Thu, 27 Feb 2025 14:19:22 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f403edb4eso870740f8f.3;
+        Thu, 27 Feb 2025 14:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694762; x=1741299562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FuwHNr64To1YZr/5VGQMiVziw9gpIJwT9lA0paNQuxQ=;
-        b=XKIaobaKV7RSC8h+1FclPQsl5jhbY8Oqs4fNZnrCise9n4eNzpOj49FPnwGa0+bDtG
-         zeKjDLQfeV5nGr81LZFQi1Dh0zAm22h3Zhda0zbRlltJXobbvKgxC5ek84sWSCKxeocl
-         9hbU9uhWAwIS8f6Zf40FQPPVMG3viOMRGOtwK9Lg8CbRx/GhNzyCq8TFdEuhGqT7wj3E
-         yqlULI6UkjktQN5aKPfdDgOq6VAbIOHGStduJ1qSssuGuX9MY8lQn36uL/iejlPnl/c6
-         J1RR5kMbuFnpi6/JYGSSHCoSGBsFg8bMep7rXGLHHUEw4h3999U8OPhdIhgwa4+HsYUF
-         2HYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694762; x=1741299562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740694835; x=1741299635; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FuwHNr64To1YZr/5VGQMiVziw9gpIJwT9lA0paNQuxQ=;
-        b=syuZoxCj1sugvgwcamnZj7ckQWmj1EBuZwJTzdAfQeljbdEXJQexviIvR7QqMitLCu
-         IUJNmyoZ+ixWfU2/ahvFYCSvyQeQgKdapRItU6yJfEKnVrLQyAJgaVJNeSXbZfjHXbEw
-         0kvqwdRAXlzhdKskrsT81EPk+rpw3GY0RF3OEVdk+Rzn4bZB8ccdH9tv2x7u58KhGLju
-         CDwWDjGfgm4akfRwgFKFYMp4OAaUsKhLQZ56fjpfDXCXNIWyp70jf3YqESLlGkKssfd+
-         FFFgHiMei5jJjbjSho7C/IqU6V9s3xVBVuClBtEkkTDg/knHn/VDUSQx68yvt8L5Ubxq
-         Pygw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaDVH58qODY16XPTkThzS92Au7W3c/t1OaI1kzq0pn0AGf0yEuF/9OQ6Zz5qEJ8cif6a8=@vger.kernel.org, AJvYcCVyOrhnUNgkd9C60663JG+zFTKqoIxoq3TMbwLsoPsXDsWaG5y6iAqZu9/blUODH0sPiA86G+e2K8t9u9//GmkE@vger.kernel.org, AJvYcCWYfAQ8ifhtBugQODHNHowyS9qloLxPv7k4bBenZ7Y2wdHQAoPy+u88LuZ231JOLkpN1EqrcDdZPRMMhi5H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVHjf7/Qcv7xYAkMXwsIlj7O99FEVTSy55ZTtvwLObMS+hkm+c
-	uHJJC/TswfasE980RQxyGQn433qzaoUOHzzSPh1cuPt57CZ0JbZpTB1a
-X-Gm-Gg: ASbGncsD27/Cy3whUYkf1PvSLrvuWEnlk8VkAY1EqhcrjmFCp0aGLVLLPCQjQEM+fLu
-	0PAylVFLorBXJ4gHcMrowNnBH6jiW8ZMkvQ3sUFUe6duKvdVZeryOmKkUd2+iMzCzEeiiffMNFl
-	OlygKVT9Bl+W9m2B0xmBXGMf6eGX2ddb3X57kas24xYCbMVS2nZvEr9LdlBBxBTLF9eyf3b2hdc
-	DbCRHJqZh6Lw3kHmwJNtkyCI+LEhGkUDiJ6UqRXC4zoGAcvLBcfDd/zhT9EJQJUxeVjjPfawB6V
-	YTvA01whmxL2CvVdojmkIaEhIw==
-X-Google-Smtp-Source: AGHT+IEtI8fug1hP9HPt5r1Vl4r9sfcw7d7kBuzUcBbGpkCMNoZ3emli/QVrVjGm4odETnprb1P7Pw==
-X-Received: by 2002:a05:6a00:4b4a:b0:732:5696:51db with SMTP id d2e1a72fcca58-734ac429836mr1722643b3a.24.1740694761231;
-        Thu, 27 Feb 2025 14:19:21 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-734a006010esm2323498b3a.179.2025.02.27.14.19.20
+        bh=vrMBhcvnNde1i07KOFR0r6p8VM2SE3/ilITXzHNVp4w=;
+        b=B2WBulhYuTZ2DtEjIYHr3hHP6bI6CCp/9gBmVJJbO6ls28OP0ptMd7sGjgb3CLK5uk
+         f/i6uTT9qttPe8/f4Z5r7y1wADRNDpx/xgQdZOuOngqlhKmlpR/H1DsFDPO0LXYdx1yJ
+         u7NcwD13uTKEWGne6+Ocve9dyZD3xMsXhdolVQuuO+9kBwQBSQh9rLgdPKlnwwrM+t3B
+         Pr7p7QcQOGDdmx5mBYGliZN7M7bPdDGRVkW+A7iVBDVh/qQKkYNJJs78lLYeaj6AyOcc
+         YUnLYcsIx26dLXQFvw5cQxd9aQ00WD9W9GgYqpSbpqPcGDcflVsgsXmdDpyzp9ZtW5FL
+         sPmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740694835; x=1741299635;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vrMBhcvnNde1i07KOFR0r6p8VM2SE3/ilITXzHNVp4w=;
+        b=KhlNApMMDQnEHs7u/7xESZ2B+PvlFIBGLrQXPlonjPm/WX3/ZFSezjRJVX1TG3wgnB
+         jeaq3ahpgvezMUUI2JyyA0VqOxuFEMtVJixQUhzFEaXVQALYhnGNny44HzfAJmH5gmmN
+         QkTooU1s0O792EiqY59S658Pr+8GCyik1h7K3n/BX/llhnRR3pdYJbCU5WG6XrVyza+W
+         Cb+KobcGk9duE+/SWnKE1XHHrCsELF/ngOKqMU5QrTytju4bRrNIBeiSeK2fdZLbHN0N
+         goZdWV+bmasGdTegGhRXohaFPy6Cc0K7EN6qoCzJQNfYNc4AObRYJSojLDkMtDi4uWz0
+         DoBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDq66OpHsAeHHp3B4HJMiVRdn3OZeA9Hht/Pdg3MrTIc1fxDX0A6vuFbFNY2j7RsfumUTpFsfNP3Xn9MANGrk=@vger.kernel.org, AJvYcCVAkFJuZjXCWUuGgmO8GikBMqAm5C5Sf8Ezu0oUnX6jsCYzdeNkjeofI9k05gjozTWLoIicNcza/Zgp740=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75FVE27SzzX23Aee4w/3gntMS6mkcf4L5tidDi7azbavFlXME
+	dzpYuntV/uKruZAGg5oQrGvNTfz1exIKtjXo2yH22Iwiw631V4eE
+X-Gm-Gg: ASbGncvD9h0lmbhbSB6EDJWvFLVeSxCKnoO2oGD4FddjmPZtSif8hUiiDoxQmwtsYvJ
+	qg/fd6yVesT/vySO0TsnqLiZa3WSycKafO3dZhdzYXiQ0kYJfgm0AuStPB3TQ50WdBYKhDslc98
+	iiB7wMmCKCzb5eSYLbKGsKjj0V8iYf4gv0nlcslgXBd5eWxsBMVjg13RytSWS1ej/Zbv9M5uTpg
+	kSC9L9D1CDBwZTsTJU+7n5pcaKQTVaIuzDNP+hHvRH0qAGeS7sV/7jcsIuQWK3Ru+Ol3C1z+A+u
+	nhrjxbLsYC8wytjA1RxhMVBaAZ5uj3Cos+ftZw2HZqg8xNgcgMBv3w3zFvEGpkCr
+X-Google-Smtp-Source: AGHT+IEaqnAUI9UG6zLvTdn8dszXRMwLgW2Zlu6WgMIs55bnF0eZzkoVW8qvrLxaNKmcJm1y5wML2A==
+X-Received: by 2002:a5d:598d:0:b0:38d:de45:bf98 with SMTP id ffacd0b85a97d-390ec7c6adbmr630691f8f.8.1740694833583;
+        Thu, 27 Feb 2025 14:20:33 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6739sm3221628f8f.22.2025.02.27.14.20.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:19:20 -0800 (PST)
-Date: Thu, 27 Feb 2025 14:19:20 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 05/10] selftests/bpf: test_tunnel: Move erspan
- tunnel tests to test_progs
-Message-ID: <Z8Dk6NuryDiYm1nF@mini-arch>
-References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
- <20250227-tunnels-v1-5-33df5c30aa04@bootlin.com>
+        Thu, 27 Feb 2025 14:20:32 -0800 (PST)
+Date: Thu, 27 Feb 2025 22:20:30 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Martin Uecker <uecker@tugraz.at>, Ralf
+ Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>, Ventura Jack
+ <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250227222030.3fd32466@pumpkin>
+In-Reply-To: <72bd8dc3-8a46-47b1-ac60-6b9b18b54f69@paulmck-laptop>
+References: <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
+	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
+	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
+	<20250226162655.65ba4b51@gandalf.local.home>
+	<CAHk-=wjAcA4KrZ-47WiPd3haQU7rh+i315ApH82d=oZmgBUT_A@mail.gmail.com>
+	<20250226165619.64998576@gandalf.local.home>
+	<20250226171321.714f3b75@gandalf.local.home>
+	<CAHk-=wj8Btsn0zN5jT1nBsUskF8DJoZbMiK81i_wPBk82Z0MGw@mail.gmail.com>
+	<20250226173534.44b42190@gandalf.local.home>
+	<20250227204722.653ce86b@pumpkin>
+	<72bd8dc3-8a46-47b1-ac60-6b9b18b54f69@paulmck-laptop>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227-tunnels-v1-5-33df5c30aa04@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
-> erspan tunnels are tested in the test_tunnel.sh but not in the test_progs
-> framework.
-> 
-> Add a new test in test_progs to test erspan tunnels. It uses the same
-> network topology and the same BPF programs than the script.
-> Remove test_erspan() from the script.
-> 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+On Thu, 27 Feb 2025 13:41:15 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+> On Thu, Feb 27, 2025 at 08:47:22PM +0000, David Laight wrote:
+> > On Wed, 26 Feb 2025 17:35:34 -0500
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >   
+> > > On Wed, 26 Feb 2025 14:22:26 -0800
+> > > Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > >   
+> > > > > But if I used:
+> > > > >
+> > > > >         if (global > 1000)
+> > > > >                 goto out;
+> > > > >         x = global;      
+> > > > 
+> > > > which can have the TUCTOU issue because 'global' is read twice.    
+> > > 
+> > > Correct, but if the variable had some other protection, like a lock held
+> > > when this function was called, it is fine to do and the compiler may
+> > > optimize it or not and still have the same result.
+> > > 
+> > > I guess you can sum this up to:
+> > > 
+> > >   The compiler should never assume it's safe to read a global more than the
+> > >   code specifies, but if the code reads a global more than once, it's fine
+> > >   to cache the multiple reads.
+> > > 
+> > > Same for writes, but I find WRITE_ONCE() used less often than READ_ONCE().
+> > > And when I do use it, it is more to prevent write tearing as you mentioned.  
+> > 
+> > Except that (IIRC) it is actually valid for the compiler to write something
+> > entirely unrelated to a memory location before writing the expected value.
+> > (eg use it instead of stack for a register spill+reload.)
+> > Not gcc doesn't do that - but the standard lets it do it.  
+> 
+> Or replace a write with a read, a check, and a write only if the read
+> returns some other value than the one to be written.  Also not something
+> I have seen, but something that the standard permits.
+
+Or if you write code that does that, assume it can just to the write.
+So dirtying a cache line.
+
+	David
+
+> 
+> 							Thanx, Paul
+
 
