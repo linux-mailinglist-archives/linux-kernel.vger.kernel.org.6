@@ -1,150 +1,164 @@
-Return-Path: <linux-kernel+bounces-535546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE5EA4745F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:24:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8B9A47463
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:25:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B34A3A6392
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:24:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2637A29B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AA21E5B8C;
-	Thu, 27 Feb 2025 04:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AAA1E5208;
+	Thu, 27 Feb 2025 04:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DMzwtVa2"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4qryMEoF"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2059.outbound.protection.outlook.com [40.107.95.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EEF14D2B7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740630264; cv=none; b=SDM+ssiSu0vyWXARmVrmjUAV+TpKzrST+nJx8LADIrseUXNWdKVXT02faPd1gYL/BvOHGc2JgGG+T7DBXAi9Q17H2pf83yco4AD17C0FSFaYHRvuBNjHuEgN7B61rS6sV+gHQlodO4yok60ybm0xudcbMnoglDuHNrPsX6CLwj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740630264; c=relaxed/simple;
-	bh=GQrep6THGEFfEeZwaQe//qMyhuL44R85HqtTXacsQwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E0p04Mqww+Q9Ac6G36Defi5R1uSIRsLhrCNJQOFupzNSbLlnzCpB5DAgQm9pZSB75QgZkKcQatKXeoQFHCixM9/HzF1rCMARh77aRMXHcx4TNMuphsSoZ3gMK1kkVScqohh2G4DNLBIdhNu0N5JTmYjrXI4bwpBrvrOlixU5Wxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DMzwtVa2; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-548409cd2a8so485029e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740630261; x=1741235061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BIKB82LpdlnmqrEnsr6U/nF5X3U1VHYp+Ab/GWMNqM=;
-        b=DMzwtVa22NxQO9YGI0xsgmr0rkFQ+vrlYMyhRUxPmK5I4J0F3T7OGj3jIRozkW6gm7
-         ZeHa+TSyKfqZf0KsOnnCW3nRi5742vhrclyx7sUvs8RvMgn2YNG6sEScfq4WDhHPzbax
-         6iyWxNuWAwxWZEJtj1JSznhRJiw3+ANQOALH2nLbYLmc8s0wsg2YYGpEUOVmyZCedAtA
-         4Hrf43IOt+23HXs3HgCuUeE6jEcPIN4juMjJtPiCI/9kDx1cGVrtTCP7mV7mni+bAN/R
-         vkXQvwhoGDCe38G3wYOmysP8HYDm3fxFiJaFyb+glFZ61N2OT4kZ4CzD9HhLBBgsJaaa
-         wsnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740630261; x=1741235061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1BIKB82LpdlnmqrEnsr6U/nF5X3U1VHYp+Ab/GWMNqM=;
-        b=Uoig7N3GD/GLdOVhWaLAhWtV99qTak0xUH8M5zRHYTSsLiFk6EYqNTGow0FZD30D5u
-         YHPk5HIqAd1VP5BC0pQCSlQxKWqtiviiSvNrrROLm6K54RqKJrZ+ioP7qKqkbjRbEua/
-         KlZudnEMqRpQyvJlZGvuk2CRQhZ3yFYez2do4ldLTcILOROxNVi13m17ak2byMyOoyUQ
-         191iL0aYJUg2IL3bQXy/cN70qRGF+zcUnAtU0PyB4GIB7FUQ1MO3IYB3cXV6jTqnWqYo
-         oeSaF6oNWSwcrYjn6gKNAS9m7EU2fHKdQv984lzhOiIkVgudJSJbBg4NPcMfT2P0nMvG
-         wIlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSCgJLsFI/zReDuU2JhftLGU1VaYywSgokCZQmcyyZXitQm3YIBww36kgdD6MdlYPtZ3Rp1ZZx1VmcKg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfW2Q7sNdIMGXNKkPWN5otNRNQbsVe/dMiPmt0y+ML0n6MeelP
-	OtlPbRIbzVIfE+kxfI9buDWUz6HOs3mCZsDgIB8HKusOaNY2mzfwwRkHeUMQY8A=
-X-Gm-Gg: ASbGnctPhXiO60UkKKWMatQOXoCneSTGJ7zFnw9iAA/9hK7+JeHNA4u3m33SSabDIlM
-	AOkFoumJ7KDlPYI+MzerH4WLAjWphmzvKYsdgheZvKK0flWM0PHPYTRBaYuve6WPI1EtHk2GnvN
-	hs97+5gPoU+Vh/0Dq+RUlc9iSbDZPh+d+IOWYFsL2RPvL2kuBV0dV0scoUPJDlFmczLjro9zeVb
-	7rcY6FoQ2Wup5hxg5xWwHoDoXGEzKome/kyvTfMPgvsq/g/U105vQZXHH8B9ypOw60na0nMhSP9
-	3h/CpNDAm0SLX8DNfRA0Z7GqHpbPjU7sJ28ETomS5J1pY1NBvJG4wfjxtmM+0cFlHr3CzxJc+8U
-	3tnJ0gg==
-X-Google-Smtp-Source: AGHT+IGIniJ2q9dLlxOMrazyqcBa1KLqAlXIytyXZvZz/PtReLoH+1OdzX8tTefQVa3tCb4ZcXGA1w==
-X-Received: by 2002:a05:6512:33cc:b0:545:1ce0:6407 with SMTP id 2adb3069b0e04-548510dd946mr5844511e87.27.1740630260622;
-        Wed, 26 Feb 2025 20:24:20 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417b7b3sm61383e87.100.2025.02.26.20.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 20:24:19 -0800 (PST)
-Date: Thu, 27 Feb 2025 06:24:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Saravana Kannan <saravanak@google.com>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Frank Li <Frank.li@nxp.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] usb: dwc3: core: Don't touch resets and clocks
-Message-ID: <w72zvfh3uf7crbkmuenxcjnu6moircjdy6rnbzszl4tjlm2jks@4z2k3iqt2ohi>
-References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
- <20250226-dwc3-refactor-v4-3-4415e7111e49@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692B17A58F;
+	Thu, 27 Feb 2025 04:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740630334; cv=fail; b=N06JdgHa9QFUKzaBNkV+9BsXaOG4dZPifeP5AGFXerdw+gOEXN5sFH6sZOsKPC5QqFnm7ko0ZLhM1UiXaSBzY2zE7etNsC4NR2qZWqZigTsMUgsy5uRCnwQgCW0zZV58mjzCv86MRCPzj4qNtqHEyKyxZjnxjwDBOWWx/JlakLU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740630334; c=relaxed/simple;
+	bh=X1d5umld7C9emHSfVv2nZusPtOrcBUfUPO1RDgP9DO4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dwnde9MnjyvMe69Ht5l0LNP+HBMFxDUwFC10JMiCHD8pFfyWGLHn1nB3ouUfHtaK01GquBkOuPgF+Ubfo8XHTEoVYY1AoiMaPlYP3dKcc/nyxz3yUZBrruMwZXKWc6ykw2l31CrXPZV2zE7MuKVJqs5iM2DQQXc9tUve1Ye8xL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4qryMEoF; arc=fail smtp.client-ip=40.107.95.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WAYfnu0fNMKaT7pIRnS2/9+QD5TkmzwG7g/COeFFu0VCAmw1XDL/SsYz3HyQOfc2WQN+ky/mo1ixUI1kMOuMk5daAlzOldPV1z6hnM9BxggOHiUQznxUjaCCPztAgXRTUKGDPY5R6SVoBzZcla5Oo5qHPP9fHoWJABezHtaSwE6o+CRta9yPnGrrbFlLSwaukMmCWdwUS5bJDeOwcaWo6/OWkCsxxGKtmDBGmAHJa9hpLzNCpDl8GN/+xxIMXU2MYp+jrr5GUV7XMJds1b7qogmuauEBHLMUuTEZw6RZAF0ZOGUulrj1f19CmPw0UKa9mQgX0kpbTRiBoVqfvUIDKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dAPXE3V3VNUP8Btc3olfEe4ktxVe5gM/ueBIkxdX2YI=;
+ b=Sr2WfyHL9iwrIISMlKsptTX6ccgrP6fvxU4ug/zx3aLbvXnqZ8wGE6e8CTpQfFE8c+7niAmoq/9v9vmxLgijSZR8dkt+B0ulxe/xwzYl5GEz4nDYmgMZZm9VdOaej/LtBkqbYUEKg4+AqGt7rC7KwJj/4mb2sun/a6/sJpl3GZUhHWf7/08FMxStketY/ziSEaOsebWop63rOLctzU9fafWLl4Lo1gEsNvcOvbUh+cgDfGTSWTDvs28yXOWPzQiiBOeGZRXL2OB1yEdrfKCG/5p7yof/C0ztzhwOGs80YITHygM+5ProMWO6BfnBNMhzXCuofzRW7z16WfhhJS/PNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dAPXE3V3VNUP8Btc3olfEe4ktxVe5gM/ueBIkxdX2YI=;
+ b=4qryMEoFmzNSPlFHE7s0KsPdeD1UFdmOYnoSZVI6J+GpsaAt85A8orHRQPyNMRsQGtfI/UW9uhyLdNKD3r+JZD/fdW/lXpGBjh7GLK1A4RSYudHXo4ZWvhgo8kL8uKV7eftNL21dh1SBRhgEOGhGCFlgvof6h98pXsnaUI/9oas=
+Received: from CH0P223CA0026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::27)
+ by DM3PR12MB9433.namprd12.prod.outlook.com (2603:10b6:0:47::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.24; Thu, 27 Feb
+ 2025 04:25:30 +0000
+Received: from CH1PEPF0000AD7F.namprd04.prod.outlook.com
+ (2603:10b6:610:116:cafe::d5) by CH0P223CA0026.outlook.office365.com
+ (2603:10b6:610:116::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Thu,
+ 27 Feb 2025 04:25:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7F.mail.protection.outlook.com (10.167.244.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 04:25:30 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
+ 2025 22:25:29 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
+ 2025 22:25:29 -0600
+Received: from xhdlc210316.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 26 Feb 2025 22:25:03 -0600
+From: Sai Krishna Musham <sai.krishna.musham@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <cassel@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
+	<sai.krishna.musham@amd.com>
+Subject: [PATCH v3 0/2] Add support for PCIe RP PERST#
+Date: Thu, 27 Feb 2025 09:54:52 +0530
+Message-ID: <20250227042454.907182-1-sai.krishna.musham@amd.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-dwc3-refactor-v4-3-4415e7111e49@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: sai.krishna.musham@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7F:EE_|DM3PR12MB9433:EE_
+X-MS-Office365-Filtering-Correlation-Id: 441b6fa8-a83d-4955-128c-08dd56e6c4e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LMHYIvBLA/WScamILhvZCHzfGetEtoS3zzLnLEhuWYzGrTa/QRAGwTfWGpW9?=
+ =?us-ascii?Q?oWEDHnHvxcEH8TpyCsuEWgX4CQyq+UFyGQCZ4twloQH6os5XSV3a5/N6HIk6?=
+ =?us-ascii?Q?7qrtvMkhFAzTl/thIgAv2Gq6Z554IiPnYMv5yUf0pN5LmSu+WGywKNd1b+he?=
+ =?us-ascii?Q?eOKQAf7oj6eZCTnlyMHyLc+w/Z18TAfopcc8ieAJZJOz9l/rnEEH3UrS4ne3?=
+ =?us-ascii?Q?RK2GP2mUNB/eNcZe00gy+bqFfB9ohBeis2LV1RFoMuDiT5nquvCYT0rAcgdI?=
+ =?us-ascii?Q?6t55sVkJBypu4nK3uZjP32dpi1DKdpp2QeJjGr+B3RHjbGIla2Ba17ZmqB7y?=
+ =?us-ascii?Q?dk9NpXlr9qRazgEVu+rAzLFyBa39ft8WG7P+JmW2W8hTt5eNog6ot1RNY8Ri?=
+ =?us-ascii?Q?0b7Zh5HKPvZDfPTMAFqilaYbWfQlzPgWWiL5s4NTdSJjuCUQbdCpSGF81uKq?=
+ =?us-ascii?Q?CoaEO9jXRkYfrMhgQICeNDbQ/4gimOg7LyM12U3cF4Lw68PerAjbk2PxCJr1?=
+ =?us-ascii?Q?55dZ687O+1oZv6z60gIvDaFlQxA7A0eIVUAcKmZpUUCVxLGhq4QsVVCNxQE+?=
+ =?us-ascii?Q?txfIg+xU0HnUN47T2q3/Q8tJRK7UMiEW+ntlYAaPChWcYB4qp0Zw10v/J+UL?=
+ =?us-ascii?Q?VmjaXEdW2kp5z8mWbs2M/fON1U7kBHtbkeioShTAXmX24TqZ0BO8yl+tj88i?=
+ =?us-ascii?Q?mlnzBDxfTJYliXetr3KjIm371aQ9IC2dTlKMan4XhzFOiDCflAGN1yL/vN4e?=
+ =?us-ascii?Q?3i/RLtSLv5Mwu7TFrsP83iakcoQPIIi1snBCB3IT+qIgOtZSCjMxmjJSODIp?=
+ =?us-ascii?Q?ln17nVIn8OOGMROF2v0rSNGohC+yS6bplhGnIrhzRHTS8BRjZFj4to/iOxZU?=
+ =?us-ascii?Q?Ch4eBZ5cQVKo2rBJEddFxhB7yC4w3Atoxsczq+FmthrNo4hG2H2hbIKLUiAR?=
+ =?us-ascii?Q?uIT+po6XfH7Nb8E4nPo+ups6yl1DwIYCHTFTijo7W4JABh0vilfVa6bzUI9H?=
+ =?us-ascii?Q?+T97twBc2qH4w9sHpJzN4Ph7hQqHoEv5ygcZhCNfCyjLrTisAdbRC+M5kKw0?=
+ =?us-ascii?Q?VskB1pqLc1aSYWAUq50XEsbR0JaOywFJwIHuRaiLsJ7f5HDefF5kBzdA51fb?=
+ =?us-ascii?Q?qAF4TTrHMfZV4SRbO5XVJmUjacZbyt6v1No9Zpi8ZRAXKxdHBOrh/QQguDCp?=
+ =?us-ascii?Q?JAooOT54MVd0k1aOTPJTQVuPXNLSSCc+x07vBg7t6H1COqGGWJgXt4c/4DkS?=
+ =?us-ascii?Q?aVpurWxVl6evw0hR7Pcz+rUvUOpaWnxrpsqKKM47AC+aGhZNQ336y4SpLOva?=
+ =?us-ascii?Q?sEVmvVkNiUebBI0GUzqmHCyxQKvwNcCBUnxQRitsm0Ub5Rs2SryZFjbCuf/P?=
+ =?us-ascii?Q?k2UPoePbT6ECMYCzfG43n0h/qXYCDVx7wlQux6eHcfM8wMJ1GlUMb85OcjeD?=
+ =?us-ascii?Q?psIcB6WULo3aAh94H9tqNHEXnzz4u779Qn9dNM2Sk1vORildWLHMF42Nna4K?=
+ =?us-ascii?Q?4YSM78k8xKUPGXM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 04:25:30.1495
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 441b6fa8-a83d-4955-128c-08dd56e6c4e0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9433
 
-On Wed, Feb 26, 2025 at 04:17:50PM -0800, Bjorn Andersson wrote:
-> When the core is integrated with glue, it's reasonable to assume that
-> the glue driver will have to touch the IP before/after the core takes
-> the hardware out and into reset. As such the glue must own these
-> resources and be allowed to turn them on/off outside the core's
-> handling.
-> 
-> Allow the platform or glue layer to indicate if the core logic for
-> clocks and resets should be skipped to deal with this.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->  drivers/usb/dwc3/core.c | 19 +++++++++++--------
->  drivers/usb/dwc3/glue.h |  1 +
->  2 files changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index d9f0a6782d36..aecdde8dc999 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -2328,6 +2330,7 @@ static int dwc3_probe(struct platform_device *pdev)
->  
->  	probe_data.dwc = dwc;
->  	probe_data.res = res;
-> +	probe_data.ignore_clocks_and_resets = false;
+Add support for PCIe Root Port PERST# signal.
 
-Isn't it a default value?
+Add `reset-gpios` property to the Versal CPM PCIe controller binding.
 
->  
->  	return dwc3_core_probe(&probe_data);
->  }
-> diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
-> index e73cfc466012..1ddb451bdbd0 100644
-> --- a/drivers/usb/dwc3/glue.h
-> +++ b/drivers/usb/dwc3/glue.h
-> @@ -17,6 +17,7 @@
->  struct dwc3_probe_data {
->  	struct dwc3 *dwc;
->  	struct resource *res;
-> +	bool ignore_clocks_and_resets;
->  };
->  
->  int dwc3_core_probe(const struct dwc3_probe_data *data);
-> 
-> -- 
-> 2.45.2
-> 
+Sai Krishna Musham (2):
+  dt-bindings: PCI: xilinx-cpm: Add reset-gpios for PCIe RP PERST#
+  PCI: xilinx-cpm: Add support for PCIe RP PERST# signal
+
+ .../bindings/pci/xilinx-versal-cpm.yaml        |  7 +++++++
+ drivers/pci/controller/pcie-xilinx-cpm.c       | 18 ++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
 -- 
-With best wishes
-Dmitry
+2.44.1
+
 
