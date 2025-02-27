@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-535505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79BCA473B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08478A473B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE6AE7A4D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:42:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE3AF7A2E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD3C1E3775;
-	Thu, 27 Feb 2025 03:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329DA1D90AE;
+	Thu, 27 Feb 2025 03:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tXqaFK2o"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E0AB/uBn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1E1CAA79;
-	Thu, 27 Feb 2025 03:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5BA1581E5;
+	Thu, 27 Feb 2025 03:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740627814; cv=none; b=Bn0pMcxztKD86DAHxFbw5B80diP+DB6KOdr2vS4t80gYDJwe//FmTJZQtXR7+CzudGBIi6sqyJJXO/Lpk276XRl07xRviFOppOBI4EHe4QkozNQ11TxYqxA4UgltUam2hemdX0VNXE8pCKlo8jOTuGGSFVFLRkEfdH7CSxDRkCw=
+	t=1740627860; cv=none; b=Ck4fzxudAJlP/n60mkdhaUmMsdobC9HIIwUa1pTuX1Xmeab4MxzGzI25/o3SX+h1rRl+VONrcVqD9ecn+d2JcOP6thHXjx6oY2Vgt1gzONVPNx7pasfk6yZ2DgJDOborKi5M1ZoLA6Vtn8WGfB/nfw39zhjXGMjyBwpv182BAAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740627814; c=relaxed/simple;
-	bh=9GlsjQr2QhDcFn03r9Qw1k4bhpLAnS5b82yQXLTd5ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FiZdPVjHHLpAZEdqtBvsRZzZ9+TI9ifPQjR7mdEfeb0sI9KrNUBeUYxe6qF1f0D6n1ZM9Y0EixRCJi4YDfFxUaePsP3zA1HnHpOdam0T4Pct6NVC0f7Cgl3Y53iHFxERSm3kjiZKdr8teiFcjV5xmCvQBPDami5Vgq1VvxIw3O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tXqaFK2o; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740627807; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=TMLk+pH9DL7fAhjLGVm//3iZnCFaZVw+B1tXOrFpX0U=;
-	b=tXqaFK2ohYXbA31KmAjB7uVDIBxreqJIfcxx0sc4VoRsMkfnGFfLHrBIUon2ve+9Vr3QhvbEc91RAjXr0lh2AqE14pcofjIw5eseVG5NTfgJX2hpybh0GJLVXLyKeGgWJeKY5zFqTVRtVlykZmawznFR9gTPtGZYfqGiL2f19kE=
-Received: from 30.74.144.117(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQKuZaU_1740627805 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 27 Feb 2025 11:43:26 +0800
-Message-ID: <250ce8a5-8f2c-4d29-b73b-ea9a117598f0@linux.alibaba.com>
-Date: Thu, 27 Feb 2025 11:43:24 +0800
+	s=arc-20240116; t=1740627860; c=relaxed/simple;
+	bh=itIz0yWzY/4jfnNu7ubEYYnCjKI5K3Z0M8l6cQpH0AQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MDhqgK3V0Tffdyw2RxWzw/+xth3sox//wqDyqWm1x0sQzS2CvrMTnmixZFwmNn8/HXw6Czif7EuwulYzNigcJ+0wCUjUwwibG1GbJjscwwy5zqJ7Sse4WF48nO86uplufnH9c6xa3R+TaDoakJXQ1IUuabHr58tmYOxl7qXGZvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=E0AB/uBn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740627852;
+	bh=r1JtnbgL72/VPVHaKjy1KV+t6vos+4+p+g9qM8BMhsY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=E0AB/uBn4I2yRfDl+mU21CXbX+mYnxB0ajVM8mCbEr8g78gFh6lXs3a0OSXwR1dXZ
+	 bjz0EUVq7a6jL1xwqsdrZxK1HABDCZcIcbOUcZy/GTAHvwtyWAly/DXSBPBkRQPg0V
+	 2n2SWb/LJFR74kV5R8UoBFOGedT7DtpemMPyI6skA1quNWARrOW0Vb5Q1izbDaQc7I
+	 tfAVW165k5NZbzIFASboof+lP0DOVFKYNnM3uDm0ioCQhPQuV8I0T+T9afoBbxkyCb
+	 LR0txN88rcZ0LvVKpXUFJIjiWsJwRZPf3dOBNLheYpY8uJy+uLm1ZypW3bcewmns/8
+	 3egRvAAzOiVeg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3HJW60y7z4w2H;
+	Thu, 27 Feb 2025 14:44:11 +1100 (AEDT)
+Date: Thu, 27 Feb 2025 14:44:10 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the tip tree
+Message-ID: <20250227144410.275469fc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm/shmem: use xas_try_split() in
- shmem_split_large_entry()
-To: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Kairui Song <kasong@tencent.com>,
- Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- "Kirill A. Shuemov" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <yang@os.amperecomputing.com>,
- Yu Zhao <yuzhao@google.com>
-References: <20250226210854.2045816-1-ziy@nvidia.com>
- <20250226210854.2045816-3-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250226210854.2045816-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/cg2QjYASmZSNx7RPOWufiVT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/cg2QjYASmZSNx7RPOWufiVT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2025/2/27 05:08, Zi Yan wrote:
-> During shmem_split_large_entry(), large swap entries are covering n slots
-> and an order-0 folio needs to be inserted.
-> 
-> Instead of splitting all n slots, only the 1 slot covered by the folio
-> need to be split and the remaining n-1 shadow entries can be retained with
-> orders ranging from 0 to n-1.  This method only requires
-> (n/XA_CHUNK_SHIFT) new xa_nodes instead of (n % XA_CHUNK_SHIFT) *
-> (n/XA_CHUNK_SHIFT) new xa_nodes, compared to the original
-> xas_split_alloc() + xas_split() one.
-> 
-> For example, to split an order-9 large swap entry (assuming XA_CHUNK_SHIFT
-> is 6), 1 xa_node is needed instead of 8.
-> 
-> xas_try_split_min_order() is used to reduce the number of calls to
-> xas_try_split() during split.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Kairui Song <kasong@tencent.com>
-> Cc: Mattew Wilcox <willy@infradead.org>
-> Cc: Miaohe Lin <linmiaohe@huawei.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kirill A. Shuemov <kirill.shutemov@linux.intel.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: Yu Zhao <yuzhao@google.com> > ---
+The following commit is also in the mm tree as a different commit (but
+the same patch):
 
-LGTM. Feel free to add:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+  a37259732a7d ("x86/mm: Make MMU_GATHER_RCU_TABLE_FREE unconditional")
+
+This is commit
+
+  a30104ede395 ("x86/mm: make MMU_GATHER_RCU_TABLE_FREE unconditional")
+
+in the mm-unstable branch of the mm tree.
+
+This is already causing a conflct in arch/x86/kernel/paravirt.c due commit
+
+  f2c5c2105827 ("x86/mm: Remove pv_ops.mmu.tlb_remove_table call")
+
+in the tip tree (where I just used the tip tree version).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/cg2QjYASmZSNx7RPOWufiVT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme/34oACgkQAVBC80lX
+0Gwe2wgAnAmWWYpCn0kp1joSbPighB9ieSnKDQr7SOAJIFR6sEjZQ989SM+Uj+Yc
+uwx6tZqYkOKWa+/55nnFql5ovg4zMpm6tHxH4v/wF1fHO/a+hIIs3DSL1cixuV3K
+4CZYs7k362W3rLpzaVEPhgDfa1BYIVFsKIG6x9aTEsl9Avg7GONC08YD3BnINvQ1
+42INQydW/uioRlw8teZzLMsW37gurgIWKNE54b6divDaTWi36dn4CVWAoHGdZpTz
+xXWKuqeSO4pOPf3PxFc6RPkboSCBcgWRf67w46AV7Wwom6JyO3qsKYp0ryYcL+y9
+R384SAVFqEArvMRz5BOERkoORIT++Q==
+=8ebq
+-----END PGP SIGNATURE-----
+
+--Sig_/cg2QjYASmZSNx7RPOWufiVT--
 
