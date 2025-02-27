@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-535230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1A0A47059
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:37:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB18DA47066
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1700B188D931
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C417716336C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59344749C;
-	Thu, 27 Feb 2025 00:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223B618AFC;
+	Thu, 27 Feb 2025 00:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VhCSHvPU"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5EvtkN8"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43FDC2FA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A9D4A24
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740616663; cv=none; b=uWwaSxdJumcRAHyc84J7sYnKAumvzxy9rtsmWqfvIA/TQDfO2NS3oVQAs7d3I/eHq4MSCihYTECiPDdL0KIl0myXRQuueWFONILFWZBH86x3o9FWakeO8Cb8KCJuUMT+10dURoEOS6okUGuslXUkmrm7riIwZPbAWgAgn8XZ55c=
+	t=1740616840; cv=none; b=VYk9r6ALQSwNgFdqjKVfxkq5oRhqKzfG3rN4e2MCcZ6zJPQL0Vye9TOwmVrdohTtImMeebFR97Vo6X8GpKdB+kGCuO8AK4EXjFL9w+KyzdmkulJ9C9uMNs9YHda+hvLCssmJ9xHhSG9cXauPdDnskjEMlQv3CKaBMNWHJ5YdG7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740616663; c=relaxed/simple;
-	bh=4oR8/akrv9h99E5/0q46DrQwOgYl3Aj5OIoGH8fu7ZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GWF0MYIuTmR7ChLDiJ0wM0qn8kjAFFBQNzrzAziJzvFTFoef3SCv8Ts9mXKQ/D/OjhC9C1y8uETE49Aj4lHn742GQjAFSZGs0acuYwLS2ot5pCQP253hGiFaPxOZj1IQ+cuihiqyYYS0r+rIm7A3cFybCjgviH4Dn9niH+jPSbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VhCSHvPU; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 26 Feb 2025 19:37:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740616649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=8r7ZBWen2aHvNkU/gKusFsPhdVjQwKX/sY5JWKex0t8=;
-	b=VhCSHvPUyGXE3MdpKB5c2Wm5RiQWHTmE85ttyz//taG++KnRsGN/TTAyQggL5DJoUVx87W
-	LgaRXcxfZ9KDmZ1Qv6U/07Hdxw7lEjVHo/pAIfUimRyXscDgroNlW2b4klFRfw2wCLLeJh
-	zYUh1/Dk2/smbftEOOHpMkqE38CwaWE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.14-rc5
-Message-ID: <6xhke7esvj47xpl6ylxtcz5b2ol2ckwup2q3yunjo6zudthrtm@emmsdk3bpusy>
+	s=arc-20240116; t=1740616840; c=relaxed/simple;
+	bh=jpLsczkirjl3znww0vHtEndaxD24N3ExtJwt48GA4Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tRFv9WBfubbGHS8QTvRbRw5280zsQwX1qIi+6ZUacTJ9cSIFcmCz5QX98zzjY69r5NJQnhIcNxLectlO0dB9OWVNjoPSjWBI7lGiqHxPLS07PsjZmYCu0eK2pL4bg/o7eVa4ZZembBXHgA2IwsE9BNl3ICAk6UclETMlF3vdsHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5EvtkN8; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-390e3b3d3bcso270755f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:40:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740616837; x=1741221637; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jpLsczkirjl3znww0vHtEndaxD24N3ExtJwt48GA4Ow=;
+        b=j5EvtkN8N3A2HCls/pSAH0wrUZnMmuC3jvwNr7IKJ6Oj+ohHlDnC71rJLVHeAbrLvl
+         znyl7vpN1abevrtVBo6W36Vc+qJ+/zRGYEkPDQKGE4FyPUgWVVgTw9Jz7h2f3JcA++iU
+         SBSUhDJ7iMsXZ7Ye9gYMTaxHABnEmzgCpDU5ef9KK4ra39BCgaKNuvDcX0gUj8BTjKc0
+         6O8tcuy6r2uyqiuEmWhB38WvuGSb9+18AZCdSZVpuUOuFl4HHgvquYOrysa+zHgGQeID
+         HBX7VrD5WeVImbCye2jdzTPti7ANBLgUTm08PGOrUyUSUIu5jkvNnqmlRTw5NBSzvHtT
+         8TAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740616837; x=1741221637;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jpLsczkirjl3znww0vHtEndaxD24N3ExtJwt48GA4Ow=;
+        b=IRmtzN+5SxiU0DPTqLIMzg5ztU/9Tx13QjkMlJ9dBzPP5oA/m4IyPLtCBwQUnpCyej
+         1AUyxJNqdTEcccOzoM4APwLMXhVwnuOrLDZkavOdDET4NBlbTyxVjfN0XCC26ENV19I5
+         m2A09UivKLj3m10GV1B1x/4atCM3xIY1wXsC+xFbNuQEbpDJKyh4ftcoXeTLHoeoWL3s
+         gqgxnahLJElXxaBwOIUhPjQJUdsQFjCRzrUvq73vgaeB/0H/IcYJkqNXOOssJLNaxztB
+         s5K+8tdqJ49oSHEtEps1DRp5G+ykUYqezcCPBPgkphM/XMi9jqnT2K42RgcjXucqvBIB
+         lIHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ8dIQQ1jGk/JSbhDIRo5fJZIb6F6XefN52I04Ha+l9F8R7FA99qtHzpvABdtaPlLER/tPg9shY+zujew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPotHdPkbsm7RsuLyAMTo59WYnHg1CzxL9+GSX0XPSQDtcxOyd
+	VKuizs8g+z1a6Q1wjJZO8rh2W5ndj197z0diTcCaq7blWv25GTJ6
+X-Gm-Gg: ASbGncvOD1I5ZGAp6oBVqPjeGSUVd1URNhMWY8d56Vr1jJcNQ7u4QB3MzO8V8Oo8lF5
+	LdDyVLicfsOIC22nx82gCTWkyHJfG9vJ+/7HVGbZzCduviLTSJFjr4yV4+S3nlTQGmFMEsS+hyr
+	oMdh8WdNo6GdpQ6fc1BRWtrJIl0MN/s9OcXKTRsdgfw6FVd6uB2IH6h8QsCO8HHAlJXazUS+cKA
+	OI72+9llqsIwUtEnyU1Xab7/IzkUoAeQ/Ip/SWa8JhNRF2O3yPVOwDs0t7uRtjXLXl9ovZ4znri
+	A5Nk6JX/xP9AiEYcbWQ0EbuqyvVeSQ5UtzHK1eoMJz+DsxXV6KayYa8qNNDYTtVfvW3cRJ2ps1F
+	VFUAev/mv+UVJRqMiIVbOMoHKxAeM5W6n2Wz83ITNpQ==
+X-Google-Smtp-Source: AGHT+IHrZFOinDSrmWi4+m1t5sYEIk52JDxPafuRYroaeZUSAqukvpFIFZVBSIhGoAPxRg+hZKGI9Q==
+X-Received: by 2002:a5d:59a3:0:b0:385:d7f9:f157 with SMTP id ffacd0b85a97d-390cc631b55mr9933881f8f.36.1740616837065;
+        Wed, 26 Feb 2025 16:40:37 -0800 (PST)
+Received: from [26.26.26.1] (ec2-63-176-201-248.eu-central-1.compute.amazonaws.com. [63.176.201.248])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e46f580bsm402728f8f.0.2025.02.26.16.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 16:40:35 -0800 (PST)
+Message-ID: <f29818dc-a0a7-46c4-b541-1b469a6b3304@gmail.com>
+Date: Thu, 27 Feb 2025 08:40:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
+To: Jason Gunthorpe <jgg@ziepe.ca>, Ethan Zhao <haifeng.zhao@linux.intel.com>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Yunhui Cui
+ <cuiyunhui@bytedance.com>, dwmw2@infradead.org, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+ <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+ <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
+ <20250225142610.GB545008@ziepe.ca>
+ <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
+ <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
+ <83039906-77f7-4318-94bf-4c98bb3f0e32@linux.intel.com>
+ <20250226130423.GF5011@ziepe.ca>
+Content-Language: en-US
+From: Ethan Zhao <etzhao1900@gmail.com>
+In-Reply-To: <20250226130423.GF5011@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-The following changes since commit b04974f759ac7574d8556deb7c602a8d01a0dcc6:
+On 2/26/2025 9:04 PM, Jason Gunthorpe wrote:
+> On Wed, Feb 26, 2025 at 01:55:28PM +0800, Ethan Zhao wrote:
+>>> Provided the system does not respond to those events when this function
+>>> is called, it's fine to remove the lock.
+>> I agree.
+> I think it is running the destruction of the iommu far too late in the
+> process. IMHO it should be done after all the drivers have been
+> shutdown, before the CPUs go single threaded.
 
-  bcachefs: Fix srcu lock warning in btree_update_nodes_written() (2025-02-19 18:52:42 -0500)
+Hmm... so far it is fine, the iommu_shutdown only has a little work to
+do, disable the translation, the PMR disabling is just backward compatible,
+was deprecated already. if we move it to one position where all CPUs are
+cycling, we don't know what kind of user-land tasks left there (i.e. reboot -f
+case), it would be hard to full-fill the requirement of Intel VT-d, no ongoing
+transaction there on hardware when issue the translation disabling command.
 
-are available in the Git repository at:
+Of course, once you have clear motivation to re-position it. we would like
+to work on it.
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-02-26
+Thanks,
+Ethan
 
-for you to fetch changes up to eb54d2695b57426638fed0ec066ae17a18c4426c:
-
-  bcachefs: Fix truncate sometimes failing and returning 1 (2025-02-26 19:31:05 -0500)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.14-rc5
-
-Couple small ones, the main user visible changes/fixes are:
-
-- Fix a bug where truncate would rarely fail and return 1
-
-- Revert the directory i_size code: this turned out to have a number of
-  issues that weren't noticed because the fsck code wasn't correctly
-  reporting errors (ouch), and we're late enough in the cycle that it
-  can just wait until 6.15.
-
-----------------------------------------------------------------
-Alan Huang (2):
-      bcachefs: Fix memmove when move keys down
-      bcachefs: Fix deadlock
-
-Kent Overstreet (5):
-      bcachefs: print op->nonce on data update inconsistency
-      bcachefs: fix bch2_extent_ptr_eq()
-      bcachefs: Revert directory i_size
-      bcachefs: Check for -BCH_ERR_open_buckets_empty in journal resize
-      bcachefs: Fix truncate sometimes failing and returning 1
-
- fs/bcachefs/btree_cache.c     |  9 +++++----
- fs/bcachefs/btree_io.c        |  2 +-
- fs/bcachefs/btree_key_cache.c |  2 +-
- fs/bcachefs/btree_locking.c   |  5 +++--
- fs/bcachefs/btree_locking.h   |  2 +-
- fs/bcachefs/data_update.c     |  1 +
- fs/bcachefs/dirent.h          |  5 -----
- fs/bcachefs/extents.h         |  2 +-
- fs/bcachefs/fs-common.c       | 11 -----------
- fs/bcachefs/fs-io.c           |  1 +
- fs/bcachefs/fsck.c            | 21 ---------------------
- fs/bcachefs/journal.c         |  4 +++-
- fs/bcachefs/sb-downgrade.c    |  5 +----
- fs/bcachefs/six.c             |  5 +++--
- fs/bcachefs/six.h             |  7 ++++---
- 15 files changed, 25 insertions(+), 57 deletions(-)
+>
+> Jason
+>
 
