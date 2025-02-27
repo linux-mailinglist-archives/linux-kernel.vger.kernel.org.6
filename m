@@ -1,128 +1,175 @@
-Return-Path: <linux-kernel+bounces-536541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D03FA48180
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:36:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D10A480BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F676424450
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A625E3A9915
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3077235BF0;
-	Thu, 27 Feb 2025 14:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFDD233D7B;
+	Thu, 27 Feb 2025 14:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVBaQDNq"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D1QqMFlR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70497270052
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08B22FF42
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665377; cv=none; b=bmrLgRgDdezX7guI8zG0Lp/olWgmk0cXi5AvwUQ0IA6qq7BjP6tvhNg4HYKRtkzOJ3OHMO+A0uLHkEuK6mUzNauKEP0VyNkO/wO3vjzazMiQT0h584T0rYd4u7zCl3FRYKlTAuwdBlSUtURsHMvElA28cU1N7fI2DPk3pX8f0VI=
+	t=1740665365; cv=none; b=cv2KofgvKZijasQVNtzet+noDD92oKQfq/AQYoV1Anz7IZw5kZlX2NyxKP5WAUtuZBQ3ZPza8wSUW5ql6ar+6vxBuuv7PcC+kV6r3kQsddaeplwBmwyQfIdxi7Xpt/p0H1m5rQN3C/JdmRE6RpO1gK5ez/Y1HbeZnggGRbpTTnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665377; c=relaxed/simple;
-	bh=y9vG1iPWvDAF6zCHpOPL2jFeK1V+D/mgCVDXY8fpOwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2V5Or5whcwe3sLODZRRRCZcQWdRdz3o3S0NDxgTv/NTmfC7XO55UlzSKIMiVJFdgyDDuY6GQurYYm73BI/5oHH1TJUUbQFvwPCtRbVAQlQ/WlgSqlizMlm7RLM12STKT261jFPSRhsLwKsCaJ4lPQgNQXGMKYV8EigEtvvbS9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVBaQDNq; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb86beea8cso180030566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:09:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740665374; x=1741270174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JcmsmIYz/UFt1MRrhtx6/mjCLzpAXjuKYfnRdAxYePk=;
-        b=HVBaQDNqtVUv59TMN+x9onoFn23OAbilh1xRj9bvbYN9SBlgjnOsLq7+/N5hXxkoo4
-         zwZQnOO3ipZpJjpo0KLJD/dw6BvkMCTvirAyxvZPPK9ip5sqOU9ajwG2PkKJ1PPJogj3
-         O+29PZVRWad+LOvY45VZOSsmJoDAuxVrpp4b/b5r0S1pfeEd6HbaT2z85WvKbVK3XlHq
-         imLF5eLUeWawszTWK/VOTd5dN7ACWh05XHGF7oZeGN5NkT4tkRlek9/3LWXBv5xM9Uex
-         OxYFD98coELs9fyzGBmVlA+HYsFMa14A9+AaoyyvNLzi2KhpXDNxPvrLBzarPmdrK5bC
-         99oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740665374; x=1741270174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JcmsmIYz/UFt1MRrhtx6/mjCLzpAXjuKYfnRdAxYePk=;
-        b=FF4vkv8gdDhKiN/EJ9w5UM3ZFWME6NA8Ozd5IzV+7mg7CYv8GipSFrHVr+EdPzmlOt
-         xPPL3eyN+PXsiXnxlniVM8S4VlBPuvMON1lTK1IxMRqGrALgEDVcGVbmiF7AStpmv1/N
-         Qw7ZPaWhmmri6yJbXWo6RcFCevCZKyHCL7LzkgqiMGQWgSrEGvkIRbvnIBZD0ARFxdM1
-         7XHpWUaOFp4Nzy2Tv4lrj4iQJ6Wx5lGdMcKP1vZiZjVu8QnJ836IxrxpylPwU17XMKiE
-         UyCjTjULJWxA1bYWeDzPSUEkXGSHx6ZI/8eXl+7m0Mxd+7Hx7iNhQBygGzcxPu8Uq+hj
-         Vp+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW9WvqsIkNSg00XrHrDWqPNSyIFcAn6sx3zK7cwDFYTHzlURgcMS0nTzml5dEmF0pYa0GNqT3hjc8cajpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvMMc9EX5KWvnCCPsXXDcFOyyHRDT2kz1l4Xsp1QgrmHnPKowa
-	0y+bdi0mlEWNZ5s9Fp5tdj/5psBgnsXbi2f3B2Ow7qM+Ep1HFyl/Bguoh2oqRvlFpgcntGNLrvp
-	O39Vv85I/Zu4iOVMECxOMD+gGFBc=
-X-Gm-Gg: ASbGncuAsGRkFqTKp6x4JJbR50NKSQ2sUiMwMR77uqw1Mrgw0WvepUehYBF9hUjlzd/
-	Lqd6bF1q+lg/Y8DdwYGtqY0EPameIWIG2BDnNi5clSpfq0+b+IE7pKa5iayjGjQq/MAnGEHeqL9
-	XDVKg86AOUdQ==
-X-Google-Smtp-Source: AGHT+IE907VD9IHhyD6lPe//n/YbGaTUME1RK0u3EwA/uCGPb3q9y1DGFusOkBD4Fv5rnhnJo+jEfi76/BFyRVYloUg=
-X-Received: by 2002:a17:907:2cc2:b0:abc:cbf:ff1f with SMTP id
- a640c23a62f3a-abeeef42910mr1090435566b.40.1740665373408; Thu, 27 Feb 2025
- 06:09:33 -0800 (PST)
+	s=arc-20240116; t=1740665365; c=relaxed/simple;
+	bh=Hi9Mp1AAFllqGxKPspf+DsegSpFTi2IJ/amGPL0yNPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEq6C7aZslqRcofYdpMsmC74qPbujCQdxNn2WIX8UjIXckmc8SYbfTypQEGiZKK2njM5GEG7IexE5BJVEnZuFhlAM9nxtY8R6IfIXPM0jbNl2/tHmYLlK1A6ViNMQNd0dq11CRmqnBJoK6/ETTvjBQa9ckWjeEYuJfNo74Qnceg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D1QqMFlR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 792AF40E01AE;
+	Thu, 27 Feb 2025 14:09:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8eFN3L3CQT5n; Thu, 27 Feb 2025 14:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740665355; bh=vDJ9tdc/hxyj77FADptJ382wj95JHb7D2GO1rnAYVw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D1QqMFlRqBv/tH/KZowRMIp0v+3AaY4+kJNjDO7tX+inzTCi4igDNZdbmqJpi8p1S
+	 +ZsgKvQ4HUfCl/IJGAW+xRNUHHIU5elddzrKnVDVquC2+iL4RFRapQFda2w6bwvehZ
+	 gOjxFdfNQNckiRXsr4CXB5xG7Qq6QpAvsO0P2Jw0jBSlX6WnoWkzaNWl6+Y7gjpsOK
+	 h+qDVGKsLJWPjG7UtKVymnD6J+nwOQKB/ERO4XZUTqRL5q6tD1SgIHpnn+Jcd2wYgt
+	 kJ2gmfA1gSUagJsjWEmsL76uSG/hiJ7tlenuGhqmGRY4ktfDah25f9eSr5dftppf2L
+	 1IEonQakVYH//0rDc1zKZAP5fXCQuYbSk3zvx7QePxxUwDmd9q1+mkm7cqYgcCNG+s
+	 eaHlzU0kxN+EL8elMZhP5zOKZ8Y846rMGVHkKyvTANDOzVe2v4tCs7m9IZaM+CCzeK
+	 beugyq+rmGEEJz+Y8puJgUfh8bd+LGisnxW30Fn+eFt9V3GU7ZoIQ9NiB56micCh0L
+	 Iwp6keHwnb0Hz1bE5Cep1+Z0HV62qR7gQ+ajainr/5/4n/KpBKbcbG89PpeuCYr91Q
+	 KNv4uB7gglYH8kU8vsBqaiBu21/xtPy0MIEL7mMsJLW+PRsJbNufaKYMzfUbo9hREY
+	 lnMkgepF0VTVPGhpo/kwsCoQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1D5EF40E01A3;
+	Thu, 27 Feb 2025 14:09:05 +0000 (UTC)
+Date: Thu, 27 Feb 2025 15:08:58 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250227140858.GEZ8Bx-tTaQF8D5WBj@fat_crate.local>
+References: <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
+ <20250220220440.ma5yfebhiovkqojt@jpoimboe>
+ <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226201453.jgg6kucaathzmcvs@desk>
+ <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226221324.hq2nevnnnrpgo75n@desk>
+ <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
+ <20250227003528.hnviwrtzs7jc3juj@desk>
+ <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
+ <20250227034813.booxbhxnff66dnqx@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226213714.4040853-1-arnd@kernel.org> <Z8A_wAbpavm3Ydab@gmail.com>
-In-Reply-To: <Z8A_wAbpavm3Ydab@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 27 Feb 2025 16:08:57 +0200
-X-Gm-Features: AQ5f1Jr9iaICHLVJjScnuMMtRh3FXYUrlzUYmGgdaTjD7F4tb53LiPgw-uRO4zY
-Message-ID: <CAHp75VdUU-=2vjNAjeaQ0-sNVv-Q4GBw3J-ivz9_Bqn_V=M16Q@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] x86: 32-bit cleanups
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227034813.booxbhxnff66dnqx@desk>
 
-On Thu, Feb 27, 2025 at 12:34=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wro=
-te:
-> * Arnd Bergmann <arnd@kernel.org> wrote:
+On Wed, Feb 26, 2025 at 07:50:38PM -0800, Pawan Gupta wrote:
+> Thats fair. I certainly don't want to be adding new option if we are
+> willing to live with some minor quirks with auto,nosmt.
+> 
+> Like, should the order in which nosmt appears after =auto matter? IOW,
+> "=auto,no_foo,nosmt" would be equivalent to "=auto,nosmt,no_foo"? I believe
+> they should be treated the same.
 
-> > While looking at 32-bit arm cleanups, I came across some related topics
-> > on x86 and ended up making a series for those as well.
-> >
-> > Primarily this is about running 32-bit kernels on 64-bit hardware,
-> > which usually works but should probably be discouraged more clearly by
-> > only providing support for features that are used on real 32-bit hardwa=
-re:
-> >
-> > I found only a few 2003-era high-end servers (HP DL740 and DL760 G2)
-> > that were the only possible remaining uses of HIGHMEM64G and BIGSMP aft=
-er
-> > the removal of 32-bit NUMA machines in 2014. Similarly, there is only
-> > one generation of hardware with support for VT-x.  All these features
-> > can be removed without hurting users.
-> >
-> > In the CPU selection, building a 32-bit kernel optimized for AMD K8
-> > or Intel Core2 is anachronistic, so instead only 32-bit CPU types need
-> > to be offered as optimization targets. The "generic" target on 64-bit
-> > turned out to be slightly broken, so I included a fix for that as well.
+Yes, they should be. The order within a single mitigations=<string> shouldn't
+matter.
 
+> So as to treat nosmt as any other attack vector, CPU_MITIGATIONS_AUTO_NOSMT
+> should go away. I am thinking we can modify cpu_mitigations_auto_nosmt() to
+> check for smt attack vector:
 
-> Sweet! I have applied your series to tip:x86/cpu with some minor tweaks
-> and a conflict resolution for pending work in x86/mm. Let's see if
-> anyone complains about the removal of these obsolete features.
+Looks like we're calling it an attack vector if I look at the cross-thread
+section in the documentation patch:
 
-A bit of offtopic here since it seems I have not noticed any activity
-in your header dependency clean up series are you planning to rebase
-it at some point? And what is the status in general?
+https://lore.kernel.org/r/20250108202515.385902-20-david.kaplan@amd.com
 
---=20
-With Best Regards,
-Andy Shevchenko
+So I guess the cmdline format should be something like:
+
+mitigations=<global_vector_policy>;<list_of_vectors>
+
+More concretely:
+
+mitigations=(on|off|auto);((no)_<vector>)?
+
+Btw, it probably would be better to split the global policy and the vectors
+with ';' instead of ',' for an additional clarity and ease of parsing.
+
+Before this goes out of hand with bikeshedding: please think about what
+configurations we want to support and why and then design the command line
+syntax - not the other way around.
+
+I'm still not fully sold on the negative vector options. Although it sure does
+save typing.
+
+With my user hat on: If I have to do "no_user_kernel" then I probably need to
+go look what else is there. Do I want it, need it? Dunno. Maybe.
+
+If I do
+
+mitigations=;no_user_kernel
+
+then yeah, that would basically set everything else to "auto" and disable
+user_kernel.
+
+David still wants to warn if there's no global option supplied like "auto" but
+we can simply assume it is meant "auto" but warn. This is the most intuitive
+thing to do IMO.
+
+And when it comes to warning about nonsensical options - yap, we should do so
+when parsing.
+
+A couple more random examples as food for bikeshedding:
+
+mitigation=auto;nosmt,user_user	- running untrusted user stuff, prevent user
+apps from attacking each-other, kernel protections are default
+
+mitigations=off;guest_host - running untrusted VMs, protect host from them
+
+mitigations=off;guest_host,guest_guest,cross_thread - cloud provider settings
+
+Same thing with negative options should probably be
+
+mitigations=;no_user_kernel,no_user_user
+
+Hmm, I dunno: being able to specify the same thing in two different ways is
+calling for trouble. I think we should keep it simple and do positive options
+first and then consider negative if really really needed.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
