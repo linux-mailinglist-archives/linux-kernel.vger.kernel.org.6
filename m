@@ -1,577 +1,210 @@
-Return-Path: <linux-kernel+bounces-537052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F226A48786
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:13:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C27A4878B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1711885C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8081516A116
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DABB1F582C;
-	Thu, 27 Feb 2025 18:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945911F5835;
+	Thu, 27 Feb 2025 18:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XE1VbkiI"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A959C1EB5DA;
-	Thu, 27 Feb 2025 18:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740680018; cv=none; b=K+If7QxLy/WQkH1yYqLg+N4RHkISt5iVcUwT1hAMtyIHvIZ4s7VMoQ/vQJ9LOF9eYGtYzyPzzan4WTM7di9B+TR9aKpHI4WyYm6avJmUYHaXSmQz/KtUIV7I/pD8fbKdr6HnXoTeieiy8gPd+XNTXlAraUk9ekqsC0ocR/kIT/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740680018; c=relaxed/simple;
-	bh=8ot5B+keFCB91jXLFYbpI59nNxieuL8zMlbEHO8YZH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCaRF3PPu/xGrHnwjmfBXYYGniuLUhPL4rWTBF7Hv9HHt9NIkLAG6KR1CEVqES9lQ/JdygoCteSwz7yXYYoc/NRP5iaBFWsPU11FyAQGqSUp2ZZ/RQMXp7V83xrcJBE7WLa9f0cQ+4dW/H8ve4SLn4ElkkW/pPg4QQ5uL46C9MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XE1VbkiI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0997B203CDDF;
-	Thu, 27 Feb 2025 10:13:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0997B203CDDF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740680016;
-	bh=k72Xi+nNK+97+SSjOdcWPGWWN4nulEint6A9Aox0c1I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XE1VbkiIhYZlRtocxk6U0MoOaM9uYWbY66B8CI+eOiQyVQvU55I4ENcntcDaFT7gm
-	 fnqM9sHDbX4Z5nc8vNMRU1moN1eaH5c1pr1ZyJRcLioQem40Xv5p3HqZJUcVfk1s1o
-	 HSz+VUFCTg2WQDP15A8ChKEU5urTHPaIUiLSdAgg=
-Message-ID: <1bffd8ba-d7b5-4189-a42b-efeafed8c9a5@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 10:13:35 -0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tSQDkpR7"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257651EFF9C;
+	Thu, 27 Feb 2025 18:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740680027; cv=fail; b=ZfLq6CXNJ5eVIluv69UdbyfsKEWkgG2CQYr1kBcMRKRq375/lNolBT7Ed2BfQRR93AYpropvL5LLoP/UOTS+BflLwI40dR81qLjqZiQ5B2ZGMeL2ZwA0EKe+q4Mb2oFvyvw9xP1+Cm2/oM6mz3mxu6MIfP3ocorMAav21xGcz5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740680027; c=relaxed/simple;
+	bh=RsLNKxRuc/8QMdF9146+5Fy1hNQDxGTcxfxY99mWQcc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=N8Iqa/RW8jNul6gqkKWKP2YiB93hNZqemQVyCmkoodTSCAYk1gIe+E/4YFjCqdvdUnzARgJbLFGjmfxfEtgOh5vwOfnib5YiSNgtfHnIiv3tyB17MM2y4/Q9FdiKfaOYwXSNwj0aSHqM/MVdjLVPhHgC2Mm/U0Ow18kBFhTAd+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tSQDkpR7; arc=fail smtp.client-ip=40.107.236.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=juclEHdhLh3QsSfgCZhIf/nGEcoGOnka9HO4BK85VdqVpcVXl4cwg+PsKmwIrwFhqX/Z+0ObFzW2cJp9Q1mkdFMdkK+k2G31TuNgsLGNYQlQsxBbs/wlmw9oUaHZyffH19Gk0RS3hSuOi247Ma93TX4ob9R8iFX519G7kMHvhhhCbpMGdWuuipXyfh6T48xlwRrybjY6pCsaUugRA3qb8Hr2tC474aAh6QhnXiTcE2byoWa9dfdSJauWAVokQsndKWLZjgl//ddIbqeOFswR3VqZMpaTnxtYhgc9ldvO5fCL+4Qu3i2M/TZ3IEqrJSztMnG0hQVvIvoE14JyeClqPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BDcZ5ygK5qGJBDgDkwwxdKb3VnffTG1NqZ/9uwtu2wI=;
+ b=IrzrGGOxDzHmXKzqmgOkPso6/WNz0IsJEZ+ATftFI97ef90Ek98/dOzEVYR8C9OKCdreomXNPdFG9pviA2nhxi74ljAfg3lrijoKQBXfOCU2VS7ixCeJGNrIdIkn6Y05U7Ldm1O44m6pDRBT6SxnpgVkCzJ+Oxkn5N8LW9lHUthnyABjyXjMLME4dM2DSRtpwvvoNd7VJ8KyFampwY3WGN+x8eEgoVeHsr1mahuBoa1Vr2KXaxxLTFR76BhgJLdJQk3AyjA9ZCVlxoWucUj3k3h2VJOTov0T7hDkp9hZrrpbpT4cUeQlnXtlWYHAtHcdfseiHW3GeHkHMzhq7wT0dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BDcZ5ygK5qGJBDgDkwwxdKb3VnffTG1NqZ/9uwtu2wI=;
+ b=tSQDkpR7bMAfcmJMgc4zGRAwZSMDeb9NiYW7BIQ/EqOrman6zRWuy9Q7sOcH/B67Z/p/CZsXf2j9hzxusSr0l9tND+1fkUZaB1Hxh+xFQFypiQkEHh7VwkPib+ujKmDr0SPC7EA9KxT7o22VkkZb2hOU3G4Js1ajAJfcbeZpWeBa/8QxeHraS50yeJnrzPaANFj5PADxygkNgAgNrGuDsrpMAjfVL3h4vbJgSyYIViMNDtdoHsGIT6osSMpwQt0ZnIxx7LSB0HScSdVyam0WpKqqK+J3KotZYbQDw8jvTwvqCvBScQQGGT4uD7afO/FunOhbBRHrIIknq4vNCwZvGw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SA3PR12MB8438.namprd12.prod.outlook.com (2603:10b6:806:2f6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Thu, 27 Feb
+ 2025 18:13:43 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8466.016; Thu, 27 Feb 2025
+ 18:13:43 +0000
+Message-ID: <4bfb33c7-5d12-4862-bad3-495ce5fd70ed@nvidia.com>
+Date: Thu, 27 Feb 2025 18:13:36 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: tegra-hsp: Define dimensioning masks in soc data
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Kartik Rajput <kkartik@nvidia.com>
+Cc: jassisinghbrar@gmail.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250123124632.9061-1-kkartik@nvidia.com>
+ <hgvxugls732nt5yfoqygvxn52x73ioh4qpbbmu6swwmafsrmm7@w2gcbjinmujj>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <hgvxugls732nt5yfoqygvxn52x73ioh4qpbbmu6swwmafsrmm7@w2gcbjinmujj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0225.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/10] hyperv: Add definitions for root partition
- driver to hv headers
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
- will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.lezcano@linaro.org,
- joro@8bytes.org, robin.murphy@arm.com, arnd@arndb.de,
- jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA3PR12MB8438:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c9c084e-2649-440d-7b88-08dd575a77f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UU1kVEMxdkVOVmJiRkFjZHFUaXBmYTZNUTJwV2NOeVhlSWp4ajhUMXVpTDNW?=
+ =?utf-8?B?dmFrOVdpTWdiS1Z5Zzl5cm5vNjJqd3dSd0NXVzROTDIydDZrWEZwa2RPWTFX?=
+ =?utf-8?B?cFNWNm5pUzBaZXVjbXd3Mngwa0dOeFlxY0ZEa2Z6OVRhSnkzaUdDL3hWTkRs?=
+ =?utf-8?B?QlhZTFV3OU9sWUNYWlVNWHcxQzFXR3BkQzcyTWpJQk1LdE41UnpOSTlxbXRp?=
+ =?utf-8?B?LzRJNHFSczNLVjZkNnE4ZzVEUE4wVkJTdGk3NjdJMHAwVTBKdkMzazVmUm85?=
+ =?utf-8?B?bnYyRFJwN0RqVHpIQ1ZQZ0lxUUdJZW9TMDVoT3ZwdkZWVXE5ZWhHSUVWbHUx?=
+ =?utf-8?B?V0h2UzB6RWoybnp2SHFtcHFVQmJuNkdVQlRSRElnSHliQ0tuRXdCcG9pTFpz?=
+ =?utf-8?B?Mk5lOXY0K2hkR1B4N2JuRTR1ZUJ4RVowOFJZbFMyTnRxYm5zbXNPakZWcC8x?=
+ =?utf-8?B?YnFGbFRiNW9GdWRoZHlDdm9VTEU2RHBhN2M2RmhhZmxFQkFFZzV5dFU1S2Ns?=
+ =?utf-8?B?emNDS3JzcFBZUGxjQWRwZ1Y2azc3a1hJS2hxYWFKUmZnQ1lCZ3I0aXJlVWh3?=
+ =?utf-8?B?RUZEUXluMVpsdWdqaXZMeFJFekY1VG16YjNWL0ZiZWlCTmNJME9KK1BsbW50?=
+ =?utf-8?B?bVdyeTEyRWZVQVNYSnR2VzkxekpKYXNOSUVxRmRsL1JrWkQ3MHBtVnZQVWxT?=
+ =?utf-8?B?N2s1aGEyM3dIZlVaRmdTZHV3ODc1cDhjWnNtdy9NWWkxeTRmTU40alhTUVR3?=
+ =?utf-8?B?aVg5dXg0L2tTSXNZVC93OTJuREkyU0NqSWw4NUMxSTQrVkdyUWlwbXNsRWFI?=
+ =?utf-8?B?R1FSOXlsWThXYzJYa08zN3RuRTVTNmRQb0YzcmtTblh4eFgzK0dCcGJ5eWxO?=
+ =?utf-8?B?NVVnS2pPU3hLL0dUTXFTYnR3RWxtSDVBdFY1dXRnbWtFV2sxT1NSTlRrN1JE?=
+ =?utf-8?B?RGdoaHA5Qk9ITkRWbVhMUWd4bHhmenRnSHhiSUhxWFZ6anBxTWo4S1VQSk1C?=
+ =?utf-8?B?RG1aR0Y0T3Rxam1RRWJZMTJVZHhqSit0YTJUN2k4UCsralkyOVVFTTcrV1E3?=
+ =?utf-8?B?WjZWQnBBamN4TDdEbVJ3TmppdTNXWXNmelZFSVlkWHVFSDhsT21zclRRM2w4?=
+ =?utf-8?B?TjlhYXJBRmZWV09lcUNrNHFhN1djZm1ITEZHZHA3RDh3MVZ4SW9WbnZPZnM3?=
+ =?utf-8?B?NGNGMnY5WWhuYkNRKzB4ZGt4Q3VjejF6a2xaQ0l5SUFWSlYweG1WcnJaZjBw?=
+ =?utf-8?B?dk14Q0RGakNQRnVIcVRrVGZCVHlDWnJ4cW1FSWRXcnpTTzFqL3huWm16SVhS?=
+ =?utf-8?B?b0EvOGVVVkZ6VnpURjJiNXQ2TFJFblU3TzMxV1BCUjNZNnZuRzZKWktlN2Rp?=
+ =?utf-8?B?aFdvcFVKY0h3K3VjZ0szRUVlWFVFKy9NVDkwS2xsbE11N1JEU3BXdUNEalZl?=
+ =?utf-8?B?a0JhU0hGbUdVdHg2OHVISEx0UU5Fa3pKcTFQMGFOR2xwejFuOFN1Um9QZXQy?=
+ =?utf-8?B?QjZnVU9IclMvODVhQXdaY1ZRYjB2UmlrMVVONC8yOUxxYXB5eDFDZUg2VVo2?=
+ =?utf-8?B?SjlCNWVWUlB4YkF2VWhDSkhtaHBzRFZEMW83TUkzbTF2ZFBRL2RZekxVSmQ5?=
+ =?utf-8?B?bU9YWVpuMnpvVXhpb3NwbDRvSmpJemZMUElKMEptSlE4NUhPNzhaYXVReW5r?=
+ =?utf-8?B?amIzMllQMExYMWw5TUtSNzR1YXdGSzBNb0hxOW1aUnhVR0NWWUM3NFVjZGFL?=
+ =?utf-8?B?ZkxadUh5TU1NWGJiOUVtK3M5dXRtWURLcmNrUmtpbm5Kc0xOb2EvTnR2WVdw?=
+ =?utf-8?B?WVZuSGVvd3MzSFV5TjZ5MHhiNVBKaVFSUWZ0M3dma3FoSDJnV3c5QmdqRDZq?=
+ =?utf-8?Q?haTLRu0/TbuoA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y0lacHVwUjBnWUYraXJsM2NHbk9FT2xlcEpjYTBJVjI1cGw2Y3l2ZGNySzYy?=
+ =?utf-8?B?WGw1aGFvZGJkaWN3Y2dXYWZmbVdhdG1lVWowV0R0RENTUEhhMk00TmJ0OGdL?=
+ =?utf-8?B?Zi91VGx0OFd5QXZKSyt0VjRSOHZNNHdicGh1czF2bm1IR2t2N3JDYkUybEdS?=
+ =?utf-8?B?RjJGSlQvc3pYOEtyakQxb1A0SmcwU0xLcjQ3dGhxM0RZeHpMcXVab2Ryekl3?=
+ =?utf-8?B?QVFHR2R6UGlEZ2xzSlFvZTBTREx0YzRRTmpNZmVsUkJDa3c4NWRZdjh3dmhM?=
+ =?utf-8?B?SjBnLzU5ZnZsc0gycnJ1QVJGZzNDYmVOc01QYWJIQ0M1bHBNcmZoeTgrZEVC?=
+ =?utf-8?B?UHBDcko3Zzg1Rjg1YTNnaStoVnNBSURhbDZVVXhtQlBnUzNMa2lteHVYOWJr?=
+ =?utf-8?B?dGJ2YTk3WEhud2dTMHBUZ3VUN2xIYnhFZFd1ZDAzd3d4QWt3SXVPSW9mM2pq?=
+ =?utf-8?B?L2tsaGF3TFMzWXpCODVxTHNvRFZKeEx0OU9VeC83RGg3NUs5clV6b0VodVN3?=
+ =?utf-8?B?TnVuc0E5YlJ1R3hFT1BicGNOcW5RaUpZVy9iM0RIM3pUMktKY2g3ejBYMWlF?=
+ =?utf-8?B?a2hheDROeVhPU3RGc0Nkem91d2FGUTVnSEpTMXVXL0YvWEJXU0d0ZjFXZjY1?=
+ =?utf-8?B?NzFuWWxxbnpPVGZQL3VYeGNQLzJ2SUJlSzJuTTNuNS9iWDdRZUdtT1BEUEc1?=
+ =?utf-8?B?bkFGV2RYRVc4dDNZSDAza0hXTGROZlI4NGJPWCsxQ3NscXJna3l5R3F0SHkv?=
+ =?utf-8?B?d3RETHZjQ1YwdnZEUDhSV0lDVGVaaXAxNVN1MTN3SnB6VnBqR1grQ2QrMlNU?=
+ =?utf-8?B?NGd3bjJlbXdzUGkyZjRtMHlJdlp4U2JJMW45TXdjb1NYT0xGbGFnTFhQZ0Jq?=
+ =?utf-8?B?YVZOTmtjcDUwanNON0VkejZ1Q0pWZ1B4RWVQNFZja09vT3hJOEZ2VFZYdmtC?=
+ =?utf-8?B?NERUcTQyNVZGL2ptNjIwVDBoVHRQLzFUcUhRZmQ0ZCthaU9PUW1ETGtPTGl5?=
+ =?utf-8?B?ZFJvblZrbWczUm5kNFgwNzFocm9aZzNJZFB2OW1mNStHb0JRMGxPNkY1SkpJ?=
+ =?utf-8?B?aGgzUFZiYTVFdFFHVWxnSkczWGUzbDdIL0Q1R1VsYittRlJDZnBzWmdWYXVl?=
+ =?utf-8?B?anNHVFZlZmh5NWZYUFd3TCtiWW5XckJ4d0pZT2RvdER5M2t5SGxlcHJYT3lT?=
+ =?utf-8?B?WDlaN05qalRlN1U1UjY2ZmNBQm1zVzgrSUJQMWJ2WkJlQzI0SzI5VG9jd0ZE?=
+ =?utf-8?B?OVdRUGZnaDN1amF1cDFlUjRteTVFRUJjSUlpWFlFdE4xbkNNd0J5TVdBWG1L?=
+ =?utf-8?B?akx3N2grQ1I1NUc4QjJJVXdZWVd0cUZXNW9uQUZUMHRyRm93T0hFZnJxbDdN?=
+ =?utf-8?B?NUQ2K1dBTDhMWGw5QjlGdHFSOVZZWW5Fem94eWVjUXl6d0o0N3dIV0FqT3Nw?=
+ =?utf-8?B?OG5GYmFOQWZodHlFOUVwdGl2MHFOcWpXKzU3d3Zmc2YzVzNKVUx5U25weEh2?=
+ =?utf-8?B?TmFMTW5yWDRsRlJoVk1tbjlHbytWdkNtUUVmV0RVeGpHM0g4VUd6RFBMVHQ1?=
+ =?utf-8?B?Z2RzYm5DYTlMVE53bUNFN2FWcGlkT2g0UzdPZDRpcjdudlFmaFJTNVlTNTJV?=
+ =?utf-8?B?bUpmQ0dZeU5xN2w4SFhuL3VqbkEzWlI1TFN3eUtmYndGUExtQWhIdlVEdG9o?=
+ =?utf-8?B?L1BydFlYSGJhZndBRVR3cDA4blgzZjByaS9aNGF0bjFMcWh6aEl6V1g3Ry8y?=
+ =?utf-8?B?QkJCVG1HNlVlSk1wdGVHSlNKbFFVZ20zNWpKV0ZzSUJjYzVnME1mVFhhSFds?=
+ =?utf-8?B?b1dRQVFmemtXTjU2NlJPZFdLdUdUeUVuWHc0dGc3UnRINzRhOTM1eHllK0E3?=
+ =?utf-8?B?YUFLT0xmQkx3dGNiOHRGTVRqZnV5U1FWN09jc3pzT1ZzVjRja0ZkZ1c0S0pi?=
+ =?utf-8?B?ZmtPbDNUandqL3AvT3lOcEVEUGordnlFeW1jU3JMQzdXdTJvWWJuUm5QcDM4?=
+ =?utf-8?B?QTR0NXNGZXlscmdCVjA3UFFlcGgxZEgxVWxXVy9ocmFpTVJyUGVZNzg5bzhk?=
+ =?utf-8?B?RXNrWUhSYmliM0dyOFBoRU5HaWMxUS9LZFhUUXAyVDAvbVMrNHdSU1BGTmIv?=
+ =?utf-8?B?UjNWRmV4SVNWT3hWaGtvVCtDaHdabXlWblN1SmpqeFU0ZlM0VFE3ZkVqTnhJ?=
+ =?utf-8?B?MEE9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9c084e-2649-440d-7b88-08dd575a77f5
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 18:13:43.1117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5PRKbaaHB2+rf7OVyxsN1oiiAwH9I+GP0FHsT4hLeJY75wpBG7Q8+9uAcVly1bTbR5p3MuoDhLRHN4JkommFwg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8438
 
 
-
-On 2/26/2025 3:08 PM, Nuno Das Neves wrote:
-> A few additional definitions are required for the mshv driver code
-> (to follow). Introduce those here and clean up a little bit while
-> at it.
+On 27/02/2025 10:35, Thierry Reding wrote:
+> On Thu, Jan 23, 2025 at 06:16:32PM +0530, Kartik Rajput wrote:
+>> Tegra264 has updated HSP_INT_DIMENSIONING register as follows:
+>> 	* nSI is now BIT17:BIT21.
+>> 	* nDB is now BIT12:BIT16.
+>>
+>> Currently, we are using a static macro HSP_nINT_MASK to get the values
+>> from HSP_INT_DIMENSIONING register. This results in wrong values for nSI
+>> for HSP instances that supports 16 shared interrupts.
+>>
+>> Define dimensioning masks in soc data and use them to parse nSI, nDB,
+>> nAS, nSS & nSM values.
+>>
+>> Fixes: 602dbbacc3ef ("mailbox: tegra: add support for Tegra264")
+>> Cc: stable@vger.kernel.org
+>>
+>> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->   include/hyperv/hvgdk_mini.h |  64 ++++++++++++++++-
->   include/hyperv/hvhdk.h      | 132 ++++++++++++++++++++++++++++++++++--
->   include/hyperv/hvhdk_mini.h |  91 +++++++++++++++++++++++++
->   3 files changed, 280 insertions(+), 7 deletions(-)
+> Maybe remove the blank line between the Cc: and S-o-b: tags. Also, "soc"
+> -> "SoC" in the subject and commit message. With that:
 > 
-> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-> index 58895883f636..e4a3cca0cbce 100644
-> --- a/include/hyperv/hvgdk_mini.h
-> +++ b/include/hyperv/hvgdk_mini.h
-> @@ -13,7 +13,7 @@ struct hv_u128 {
->   	u64 high_part;
->   } __packed;
->   
-> -/* NOTE: when adding below, update hv_status_to_string() */
-> +/* NOTE: when adding below, update hv_result_to_string() */
->   #define HV_STATUS_SUCCESS			    0x0
->   #define HV_STATUS_INVALID_HYPERCALL_CODE	    0x2
->   #define HV_STATUS_INVALID_HYPERCALL_INPUT	    0x3
-> @@ -51,6 +51,7 @@ struct hv_u128 {
->   #define HV_HYP_PAGE_SHIFT		12
->   #define HV_HYP_PAGE_SIZE		BIT(HV_HYP_PAGE_SHIFT)
->   #define HV_HYP_PAGE_MASK		(~(HV_HYP_PAGE_SIZE - 1))
-> +#define HV_HYP_LARGE_PAGE_SHIFT		21
->   
->   #define HV_PARTITION_ID_INVALID		((u64)0)
->   #define HV_PARTITION_ID_SELF		((u64)-1)
-> @@ -374,6 +375,10 @@ union hv_hypervisor_version_info {
->   #define HV_SHARED_GPA_BOUNDARY_ACTIVE			BIT(5)
->   #define HV_SHARED_GPA_BOUNDARY_BITS			GENMASK(11, 6)
->   
-> +/* HYPERV_CPUID_FEATURES.ECX bits. */
-> +#define HV_VP_DISPATCH_INTERRUPT_INJECTION_AVAILABLE	BIT(9)
-> +#define HV_VP_GHCB_ROOT_MAPPING_AVAILABLE		BIT(10)
-> +
->   enum hv_isolation_type {
->   	HV_ISOLATION_TYPE_NONE	= 0,	/* HV_PARTITION_ISOLATION_TYPE_NONE */
->   	HV_ISOLATION_TYPE_VBS	= 1,
-> @@ -437,9 +442,12 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
->   #define HVCALL_MAP_GPA_PAGES				0x004b
->   #define HVCALL_UNMAP_GPA_PAGES				0x004c
->   #define HVCALL_CREATE_VP				0x004e
-> +#define HVCALL_INSTALL_INTERCEPT			0x004d
->   #define HVCALL_DELETE_VP				0x004f
->   #define HVCALL_GET_VP_REGISTERS				0x0050
->   #define HVCALL_SET_VP_REGISTERS				0x0051
-> +#define HVCALL_TRANSLATE_VIRTUAL_ADDRESS		0x0052
-> +#define HVCALL_CLEAR_VIRTUAL_INTERRUPT			0x0056
->   #define HVCALL_DELETE_PORT				0x0058
->   #define HVCALL_DISCONNECT_PORT				0x005b
->   #define HVCALL_POST_MESSAGE				0x005c
-> @@ -447,12 +455,15 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
->   #define HVCALL_POST_DEBUG_DATA				0x0069
->   #define HVCALL_RETRIEVE_DEBUG_DATA			0x006a
->   #define HVCALL_RESET_DEBUG_SESSION			0x006b
-> +#define HVCALL_MAP_STATS_PAGE				0x006c
-> +#define HVCALL_UNMAP_STATS_PAGE				0x006d
->   #define HVCALL_ADD_LOGICAL_PROCESSOR			0x0076
->   #define HVCALL_GET_SYSTEM_PROPERTY			0x007b
->   #define HVCALL_MAP_DEVICE_INTERRUPT			0x007c
->   #define HVCALL_UNMAP_DEVICE_INTERRUPT			0x007d
->   #define HVCALL_RETARGET_INTERRUPT			0x007e
->   #define HVCALL_NOTIFY_PORT_RING_EMPTY			0x008b
-> +#define HVCALL_REGISTER_INTERCEPT_RESULT		0x0091
->   #define HVCALL_ASSERT_VIRTUAL_INTERRUPT			0x0094
->   #define HVCALL_CREATE_PORT				0x0095
->   #define HVCALL_CONNECT_PORT				0x0096
-> @@ -460,12 +471,18 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
->   #define HVCALL_GET_VP_ID_FROM_APIC_ID			0x009a
->   #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE	0x00af
->   #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST	0x00b0
-> +#define HVCALL_SIGNAL_EVENT_DIRECT			0x00c0
-> +#define HVCALL_POST_MESSAGE_DIRECT			0x00c1
->   #define HVCALL_DISPATCH_VP				0x00c2
-> +#define HVCALL_GET_GPA_PAGES_ACCESS_STATES		0x00c9
-> +#define HVCALL_ACQUIRE_SPARSE_SPA_PAGE_HOST_ACCESS	0x00d7
-> +#define HVCALL_RELEASE_SPARSE_SPA_PAGE_HOST_ACCESS	0x00d8
->   #define HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY	0x00db
->   #define HVCALL_MAP_VP_STATE_PAGE			0x00e1
->   #define HVCALL_UNMAP_VP_STATE_PAGE			0x00e2
->   #define HVCALL_GET_VP_STATE				0x00e3
->   #define HVCALL_SET_VP_STATE				0x00e4
-> +#define HVCALL_GET_VP_CPUID_VALUES			0x00f4
->   #define HVCALL_MMIO_READ				0x0106
->   #define HVCALL_MMIO_WRITE				0x0107
->   
-> @@ -807,6 +824,8 @@ struct hv_x64_table_register {
->   	u64 base;
->   } __packed;
->   
-> +#define HV_NORMAL_VTL	0
-> +
->   union hv_input_vtl {
->   	u8 as_uint8;
->   	struct {
-> @@ -1325,6 +1344,49 @@ struct hv_retarget_device_interrupt {	 /* HV_INPUT_RETARGET_DEVICE_INTERRUPT */
->   	struct hv_device_interrupt_target int_target;
->   } __packed __aligned(8);
->   
-> +enum hv_intercept_type {
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_IO_PORT			= 0x00000000,
-> +	HV_INTERCEPT_TYPE_X64_MSR			= 0x00000001,
-> +	HV_INTERCEPT_TYPE_X64_CPUID			= 0x00000002,
-> +#endif
-> +	HV_INTERCEPT_TYPE_EXCEPTION			= 0x00000003,
-> +	/* Used to be HV_INTERCEPT_TYPE_REGISTER */
-> +	HV_INTERCEPT_TYPE_RESERVED0			= 0x00000004,
-> +	HV_INTERCEPT_TYPE_MMIO				= 0x00000005,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_GLOBAL_CPUID		= 0x00000006,
-> +	HV_INTERCEPT_TYPE_X64_APIC_SMI			= 0x00000007,
-> +#endif
-> +	HV_INTERCEPT_TYPE_HYPERCALL			= 0x00000008,
-> +#if defined(CONFIG_X86_64)
-> +	HV_INTERCEPT_TYPE_X64_APIC_INIT_SIPI		= 0x00000009,
-> +	HV_INTERCEPT_MC_UPDATE_PATCH_LEVEL_MSR_READ	= 0x0000000A,
-> +	HV_INTERCEPT_TYPE_X64_APIC_WRITE		= 0x0000000B,
-> +	HV_INTERCEPT_TYPE_X64_MSR_INDEX			= 0x0000000C,
-> +#endif
-> +	HV_INTERCEPT_TYPE_MAX,
-> +	HV_INTERCEPT_TYPE_INVALID			= 0xFFFFFFFF,
-> +};
-> +
-> +union hv_intercept_parameters {
-> +	/*  HV_INTERCEPT_PARAMETERS is defined to be an 8-byte field. */
-> +	__u64 as_uint64;
-> +#if defined(CONFIG_X86_64)
-> +	/* HV_INTERCEPT_TYPE_X64_IO_PORT */
-> +	__u16 io_port;
-> +	/* HV_INTERCEPT_TYPE_X64_CPUID */
-> +	__u32 cpuid_index;
-> +	/* HV_INTERCEPT_TYPE_X64_APIC_WRITE */
-> +	__u32 apic_write_mask;
-> +	/* HV_INTERCEPT_TYPE_EXCEPTION */
-> +	__u16 exception_vector;
-> +	/* HV_INTERCEPT_TYPE_X64_MSR_INDEX */
-> +	__u32 msr_index;
-> +#endif
-> +	/* N.B. Other intercept types do not have any parameters. */
-> +};
-> +
->   /* Data structures for HVCALL_MMIO_READ and HVCALL_MMIO_WRITE */
->   #define HV_HYPERCALL_MMIO_MAX_DATA_LENGTH 64
->   
-> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
-> index 64407c2a3809..1b447155c338 100644
-> --- a/include/hyperv/hvhdk.h
-> +++ b/include/hyperv/hvhdk.h
-> @@ -19,11 +19,24 @@
->   
->   #define HV_VP_REGISTER_PAGE_VERSION_1	1u
->   
-> +#define HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT		7
-> +
-> +union hv_vp_register_page_interrupt_vectors {
-> +	u64 as_uint64;
-> +	struct {
-> +		u8 vector_count;
-> +		u8 vector[HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT];
-> +	} __packed;
-> +} __packed;
-> +
->   struct hv_vp_register_page {
->   	u16 version;
->   	u8 isvalid;
->   	u8 rsvdz;
->   	u32 dirty;
-> +
-> +#if IS_ENABLED(CONFIG_X86)
-> +
->   	union {
->   		struct {
->   			/* General purpose registers
-> @@ -95,6 +108,22 @@ struct hv_vp_register_page {
->   	union hv_x64_pending_interruption_register pending_interruption;
->   	union hv_x64_interrupt_state_register interrupt_state;
->   	u64 instruction_emulation_hints;
-> +	u64 xfem;
-> +
-> +	/*
-> +	 * Fields from this point are not included in the register page save chunk.
-> +	 * The reserved field is intended to maintain alignment for unsaved fields.
-> +	 */
-> +	u8 reserved1[0x100];
-> +
-> +	/*
-> +	 * Interrupts injected as part of HvCallDispatchVp.
-> +	 */
-> +	union hv_vp_register_page_interrupt_vectors interrupt_vectors;
-> +
-> +#elif IS_ENABLED(CONFIG_ARM64)
-> +	/* Not yet supported in ARM */
-> +#endif
->   } __packed;
->   
->   #define HV_PARTITION_PROCESSOR_FEATURES_BANKS 2
-> @@ -299,10 +328,11 @@ union hv_partition_isolation_properties {
->   #define HV_PARTITION_ISOLATION_HOST_TYPE_RESERVED   0x2
->   
->   /* Note: Exo partition is enabled by default */
-> -#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION                    BIT(8)
-> -#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED                    BIT(13)
-> -#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED   BIT(19)
-> -#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE                   BIT(22)
-> +#define HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED		BIT(4)
-> +#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION			BIT(8)
-> +#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED			BIT(13)
-> +#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED	BIT(19)
-> +#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE			BIT(22)
->   
->   struct hv_input_create_partition {
->   	u64 flags;
-> @@ -349,13 +379,23 @@ struct hv_input_set_partition_property {
->   enum hv_vp_state_page_type {
->   	HV_VP_STATE_PAGE_REGISTERS = 0,
->   	HV_VP_STATE_PAGE_INTERCEPT_MESSAGE = 1,
-> +	HV_VP_STATE_PAGE_GHCB,
->   	HV_VP_STATE_PAGE_COUNT
->   };
->   
->   struct hv_input_map_vp_state_page {
->   	u64 partition_id;
->   	u32 vp_index;
-> -	u32 type; /* enum hv_vp_state_page_type */
-> +	u16 type; /* enum hv_vp_state_page_type */
-> +	union hv_input_vtl input_vtl;
-> +	union {
-> +		u8 as_uint8;
-> +		struct {
-> +			u8 map_location_provided : 1;
-> +			u8 reserved : 7;
-> +		};
-> +	} flags;
-> +	u64 requested_map_location;
->   } __packed;
->   
->   struct hv_output_map_vp_state_page {
-> @@ -365,7 +405,14 @@ struct hv_output_map_vp_state_page {
->   struct hv_input_unmap_vp_state_page {
->   	u64 partition_id;
->   	u32 vp_index;
-> -	u32 type; /* enum hv_vp_state_page_type */
-> +	u16 type; /* enum hv_vp_state_page_type */
-> +	union hv_input_vtl input_vtl;
-> +	u8 reserved0;
-> +} __packed;
-> +
-> +struct hv_x64_apic_eoi_message {
-> +	__u32 vp_index;
-> +	__u32 interrupt_vector;
->   } __packed;
->   
->   struct hv_opaque_intercept_message {
-> @@ -515,6 +562,13 @@ struct hv_synthetic_timers_state {
->   	u64 reserved[5];
->   } __packed;
->   
-> +struct hv_async_completion_message_payload {
-> +	__u64 partition_id;
-> +	__u32 status;
-> +	__u32 completion_count;
-> +	__u64 sub_status;
-> +} __packed;
-> +
->   union hv_input_delete_vp {
->   	u64 as_uint64[2];
->   	struct {
-> @@ -649,6 +703,57 @@ struct hv_input_set_vp_state {
->   	union hv_input_set_vp_state_data data[];
->   } __packed;
->   
-> +union hv_x64_vp_execution_state {
-> +	__u16 as_uint16;
-> +	struct {
-> +		__u16 cpl:2;
-> +		__u16 cr0_pe:1;
-> +		__u16 cr0_am:1;
-> +		__u16 efer_lma:1;
-> +		__u16 debug_active:1;
-> +		__u16 interruption_pending:1;
-> +		__u16 vtl:4;
-> +		__u16 enclave_mode:1;
-> +		__u16 interrupt_shadow:1;
-> +		__u16 virtualization_fault_active:1;
-> +		__u16 reserved:2;
-> +	} __packed;
-> +};
-> +
-> +struct hv_x64_intercept_message_header {
-> +	__u32 vp_index;
-> +	__u8 instruction_length:4;
-> +	__u8 cr8:4; /* Only set for exo partitions */
-> +	__u8 intercept_access_type;
-> +	union hv_x64_vp_execution_state execution_state;
-> +	struct hv_x64_segment_register cs_segment;
-> +	__u64 rip;
-> +	__u64 rflags;
-> +} __packed;
-> +
-> +union hv_x64_memory_access_info {
-> +	__u8 as_uint8;
-> +	struct {
-> +		__u8 gva_valid:1;
-> +		__u8 gva_gpa_valid:1;
-> +		__u8 hypercall_output_pending:1;
-> +		__u8 tlb_locked_no_overlay:1;
-> +		__u8 reserved:4;
-> +	} __packed;
-> +};
-> +
-> +struct hv_x64_memory_intercept_message {
-> +	struct hv_x64_intercept_message_header header;
-> +	__u32 cache_type; /* enum hv_cache_type */
-> +	__u8 instruction_byte_count;
-> +	union hv_x64_memory_access_info memory_access_info;
-> +	__u8 tpr_priority;
-> +	__u8 reserved1;
-> +	__u64 guest_virtual_address;
-> +	__u64 guest_physical_address;
-> +	__u8 instruction_bytes[16];
-> +} __packed;
-> +
->   /*
->    * Dispatch state for the VP communicated by the hypervisor to the
->    * VP-dispatching thread in the root on return from HVCALL_DISPATCH_VP.
-> @@ -716,6 +821,7 @@ static_assert(sizeof(struct hv_vp_signal_pair_scheduler_message) ==
->   #define HV_DISPATCH_VP_FLAG_SKIP_VP_SPEC_FLUSH		0x8
->   #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_SPEC_FLUSH	0x10
->   #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_USER_SPEC_FLUSH	0x20
-> +#define HV_DISPATCH_VP_FLAG_SCAN_INTERRUPT_INJECTION	0x40
->   
->   struct hv_input_dispatch_vp {
->   	u64 partition_id;
-> @@ -730,4 +836,18 @@ struct hv_output_dispatch_vp {
->   	u32 dispatch_event; /* enum hv_vp_dispatch_event */
->   } __packed;
->   
-> +struct hv_input_modify_sparse_spa_page_host_access {
-> +	u32 host_access : 2;
-> +	u32 reserved : 30;
-> +	u32 flags;
-> +	u64 partition_id;
-> +	u64 spa_page_list[];
-> +} __packed;
-> +
-> +/* hv_input_modify_sparse_spa_page_host_access flags */
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_EXCLUSIVE  0x1
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_SHARED     0x2
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_LARGE_PAGE      0x4
-> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_HUGE_PAGE       0x8
-> +
->   #endif /* _HV_HVHDK_H */
-> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
-> index f8a39d3e9ce6..42e7876455b5 100644
-> --- a/include/hyperv/hvhdk_mini.h
-> +++ b/include/hyperv/hvhdk_mini.h
-> @@ -36,6 +36,52 @@ enum hv_scheduler_type {
->   	HV_SCHEDULER_TYPE_MAX
->   };
->   
-> +/* HV_STATS_AREA_TYPE */
-> +enum hv_stats_area_type {
-> +	HV_STATS_AREA_SELF = 0,
-> +	HV_STATS_AREA_PARENT = 1,
-> +	HV_STATS_AREA_INTERNAL = 2,
-> +	HV_STATS_AREA_COUNT
-> +};
-> +
-> +enum hv_stats_object_type {
-> +	HV_STATS_OBJECT_HYPERVISOR		= 0x00000001,
-> +	HV_STATS_OBJECT_LOGICAL_PROCESSOR	= 0x00000002,
-> +	HV_STATS_OBJECT_PARTITION		= 0x00010001,
-> +	HV_STATS_OBJECT_VP			= 0x00010002
-> +};
-> +
-> +union hv_stats_object_identity {
-> +	/* hv_stats_hypervisor */
-> +	struct {
-> +		u8 reserved[15];
-> +		u8 stats_area_type;
-> +	} __packed hv;
-> +
-> +	/* hv_stats_logical_processor */
-> +	struct {
-> +		u32 lp_index;
-> +		u8 reserved[11];
-> +		u8 stats_area_type;
-> +	} __packed lp;
-> +
-> +	/* hv_stats_partition */
-> +	struct {
-> +		u64 partition_id;
-> +		u8  reserved[7];
-> +		u8  stats_area_type;
-> +	} __packed partition;
-> +
-> +	/* hv_stats_vp */
-> +	struct {
-> +		u64 partition_id;
-> +		u32 vp_index;
-> +		u16 flags;
-> +		u8  reserved;
-> +		u8  stats_area_type;
-> +	} __packed vp;
-> +};
-> +
->   enum hv_partition_property_code {
->   	/* Privilege properties */
->   	HV_PARTITION_PROPERTY_PRIVILEGE_FLAGS			= 0x00010000,
-> @@ -47,19 +93,45 @@ enum hv_partition_property_code {
->   
->   	/* Compatibility properties */
->   	HV_PARTITION_PROPERTY_PROCESSOR_XSAVE_FEATURES		= 0x00060002,
-> +	HV_PARTITION_PROPERTY_XSAVE_STATES                      = 0x00060007,
->   	HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE		= 0x00060008,
->   	HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY		= 0x00060009,
->   };
->   
-> +enum hv_snp_status {
-> +	HV_SNP_STATUS_NONE = 0,
-> +	HV_SNP_STATUS_AVAILABLE = 1,
-> +	HV_SNP_STATUS_INCOMPATIBLE = 2,
-> +	HV_SNP_STATUS_PSP_UNAVAILABLE = 3,
-> +	HV_SNP_STATUS_PSP_INIT_FAILED = 4,
-> +	HV_SNP_STATUS_PSP_BAD_FW_VERSION = 5,
-> +	HV_SNP_STATUS_BAD_CONFIGURATION = 6,
-> +	HV_SNP_STATUS_PSP_FW_UPDATE_IN_PROGRESS = 7,
-> +	HV_SNP_STATUS_PSP_RB_INIT_FAILED = 8,
-> +	HV_SNP_STATUS_PSP_PLATFORM_STATUS_FAILED = 9,
-> +	HV_SNP_STATUS_PSP_INIT_LATE_FAILED = 10,
-> +};
-> +
->   enum hv_system_property {
->   	/* Add more values when needed */
->   	HV_SYSTEM_PROPERTY_SCHEDULER_TYPE = 15,
-> +	HV_DYNAMIC_PROCESSOR_FEATURE_PROPERTY = 21,
-> +};
-> +
-> +enum hv_dynamic_processor_feature_property {
-> +	/* Add more values when needed */
-> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_MAX_ENCRYPTED_PARTITIONS = 13,
-> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_SNP_STATUS = 16,
->   };
->   
->   struct hv_input_get_system_property {
->   	u32 property_id; /* enum hv_system_property */
->   	union {
->   		u32 as_uint32;
-> +#if IS_ENABLED(CONFIG_X86)
-> +		/* enum hv_dynamic_processor_feature_property */
-> +		u32 hv_processor_feature;
-> +#endif
->   		/* More fields to be filled in when needed */
->   	};
->   } __packed;
-> @@ -67,9 +139,28 @@ struct hv_input_get_system_property {
->   struct hv_output_get_system_property {
->   	union {
->   		u32 scheduler_type; /* enum hv_scheduler_type */
-> +#if IS_ENABLED(CONFIG_X86)
-> +		u64 hv_processor_feature_value;
-> +#endif
->   	};
->   } __packed;
->   
-> +struct hv_input_map_stats_page {
-> +	u32 type; /* enum hv_stats_object_type */
-> +	u32 padding;
-> +	union hv_stats_object_identity identity;
-> +} __packed;
-> +
-> +struct hv_output_map_stats_page {
-> +	u64 map_location;
-> +} __packed;
-> +
-> +struct hv_input_unmap_stats_page {
-> +	u32 type; /* enum hv_stats_object_type */
-> +	u32 padding;
-> +	union hv_stats_object_identity identity;
-> +} __packed;
-> +
->   struct hv_proximity_domain_flags {
->   	u32 proximity_preferred : 1;
->   	u32 reserved : 30;
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+
+FWIW ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
 
 -- 
-Thank you,
-Roman
+nvpublic
 
 
