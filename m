@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-535555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EBFA4747E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:33:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A17FA47481
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BAD188C29C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:33:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E6C7A46CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC9642065;
-	Thu, 27 Feb 2025 04:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6F21E835E;
+	Thu, 27 Feb 2025 04:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y14zn1GJ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W3MgjG6H"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AC92EAE4
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8715A28F3;
+	Thu, 27 Feb 2025 04:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740630794; cv=none; b=AanwDlth6ZmDpDCYkUIFPVKEOSGTEP3XVc1GMOul7oH66RY3HP4YooA5U6EdWftECN5I1VAVw9NupwWILgvP3eMBBKTrDTltYQGpBBHcpSFQmMULabxF9ARRieqw6Cp355nNIfcoruG3LPjRUVHYPWsZ4TSzctUVYCLeg0WnH1U=
+	t=1740630808; cv=none; b=Ac8fCBUPR/toBRPeob6pmVeaWRbI5oAzoT4mmhAEbK7t6XxJpvNZSFGW/iBAXu06Kk9hNvxOF7C1IIl6snLsBLA8QK39UQd69WT09ptzwyyQulhZJm3LWX2qy4/PYCIb7TaKb2vN882cVvuibunzVte1ya+xEWM+4LNem177RAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740630794; c=relaxed/simple;
-	bh=YtZ5CKgC1l5YAr+QgfvUWGH0Dop2tg9dyuK7ovDLanU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bx99vQQ1PTYr3xM55s4lo8QF5eFHrGgabh/fNT5gdNyUIKb8OaV39h5h0bcQbvSagX5jV0cfgjNXuLdXSSf8n08IwkY/Y8ACNl70iWrEf3I7+OI3iz6lUmMMt1xGUFS3bNrBfE23K/LrsXzzZgy8DGvN9oYwQrNMtwuexs8ivw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y14zn1GJ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30a440effcfso17520861fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:33:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740630790; x=1741235590; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=obscijDO91Mt88inTL4A7vtLGjjQitrqKYoQVkgXUGk=;
-        b=y14zn1GJoYrYvUK/F8WVk8Qx/xlvIciq4I07zgZ2XzH+2lgpK8LxrKuVPz6kyc/sXK
-         0TFg1k3e0uuEnbTkssAHm5a3+EpcLDs6IJ9v7eiYVxoJEOEeOaSgmclaPNGtpY72wlhY
-         5Rgb4s0jBC4b1u+Qj1ITPUrMzvNTkvasrdWqmApj5Pei7wZr5IfCfdZBuFx0rmIySE/N
-         yayS6ikiHsd3HWXTLRnYzTVeRhOywix84SSKF+ICTZVytj4dmJBB0oLyrqmr9VCSQyj7
-         9Uj1yccnd3gkfxjAjtWvnUq/GsrhlRJvWCt5VR8Dm1kwznd/9uieDY0QTcCfYMnfuHak
-         IHQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740630790; x=1741235590;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obscijDO91Mt88inTL4A7vtLGjjQitrqKYoQVkgXUGk=;
-        b=F4e8BRbWA1alCOU0CWA/+jj/5YhLNyQrHyB8a4Q5FtjxbXAYY3Y1Km7ttcUWxn10Me
-         8nYv+zXj7JjJC7dforjX0mCOnI9gNScz88c4oG0fj7t5dCHs/fVUGrIOF327pQ1VTWRn
-         s7lA/wOQMCRqfdVZEmGgQZ0LWwG+rsLKXCCV/u0clIdPq/ACWuNgCVXcXeXZKxzD5Q7G
-         QOKYA0fS8fMGPasqti/TEOj/z/KUGDvJP/dFX0dRetpnr02lZIl6jry64Vjw1li831RD
-         TlVwXCu1IjS8eUoj0jAFzjq40d+pvX3S+3P3e60tj2BLkW9u6OXU1N5rTYWtmcvVNR9U
-         l4Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQL/19sNbfa2rwcp0RdYHDL0EFEyC9hxZ23NfpxSQOmStMcN5O5tonf/ZW2oRvASbA8vBrUtk++yO67DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Xr0VXhoM/30cmmaaf1r6b9b5UR+uqp8GWlZf4BVno5fg0LUL
-	W70p9ZBfVFNQdfPF86EUCrupWf50PA9/zDqyfmsS/H1yKzLdTLN7EwJlt6TPt+nGxzKpqo0wr+c
-	P1M8Dow==
-X-Gm-Gg: ASbGncs62rOPt1DeseFD3pI1dh5W+sHezQAbprIQZAnquayDk7SVF8fKsTQ+UYw/rKy
-	PXJ/p8AcrWGFQFVR+BO2wN1n2FtnMx0SaeVYydYowtltsPPejkSuWwEtinBQztM3TlTYN4WERwn
-	C/FTEyqIKDRLzrXh3iLlF7SNyvBMJGI6UbY3zddjf2tAqo6ndJMPX9Bd4lI6bSmWQ6AXrkHwrYn
-	UH50nsRDbcdM6rjKilROYYMRTikwgPMxb4MnXJEU8Cs2z6iny0+fonHTJIMIP601YkSiZQO/kQn
-	gwWb9iS8v4hJP2eE7rorbK9QAY9nq4si6UZZQcuBE5eGDrg3wAyrUIUV3v+DDYVqwkS3De+0p+d
-	3+TJmsQ==
-X-Google-Smtp-Source: AGHT+IHn49HjynasOW0d3PE6ed9GscgrGPeAaHZGAfjQ6cYekzKg6vVVq5xB21jaMu9bNtfIFG8yJw==
-X-Received: by 2002:a2e:9d0c:0:b0:308:eabd:297b with SMTP id 38308e7fff4ca-30b8464b31dmr7624621fa.4.1740630790326;
-        Wed, 26 Feb 2025 20:33:10 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b8685b31fsm610901fa.77.2025.02.26.20.33.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 20:33:09 -0800 (PST)
-Date: Thu, 27 Feb 2025 06:33:06 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	patches@lists.linux.dev, cros-qcom-dts-watchers@chromium.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Pin-yen Lin <treapking@chromium.org>
-Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: sc7180-trogdor: Wire up USB to
- usb-c-connectors
-Message-ID: <nnklm22zfnjiabjsbo7fsdigwx6nbcqjidhzynjyr2aunmk5r2@6m4dj45ddfge>
-References: <20250225223038.879614-1-swboyd@chromium.org>
- <20250225223038.879614-3-swboyd@chromium.org>
+	s=arc-20240116; t=1740630808; c=relaxed/simple;
+	bh=L6UQQ5HPUHsm0W5GL37jxSwi1wIvUIy4wNTkPKse7K4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YsKVB7C1X/hJR/YYB4tK1fEnFovNfKnEoX0iWXmfiolMwoCd/innIW/XFHEaPqC78gLSYXXEIN1uZn2T6jqOjDZiympkIQ0DVAA2bVVfXoyjbeUTxo2uE/+b52q2iOMqyKwF4PJ31HM+q1EnVZ6nYTgG3kWV5YHbT5Kc0P5BMVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W3MgjG6H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QKT4sL011851;
+	Thu, 27 Feb 2025 04:33:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1NN8XjpRBYWnEA6zUigFDXj2mO9PGwJ7+yXm+E5zrl0=; b=W3MgjG6HcLSfNxrj
+	S8tRzC9B16zi1R68btgSOSMufDGJo4Ch7jziIcl124xWxT9pYwyXWbQpKQu/0Sip
+	ji83kZMCUg7j+8sYImzDOcIqiGVnNxpv8miKPMj/0bYVrIL1dRV5uyx5aezsxhBQ
+	rno1QQomi/KQiLjAa9rvthhZZeox4cMs1755ei2R+oaaDRp0AVxchFsIC6MTSQcP
+	XV/R+lXhB44hOPcv2PVC/igN2fKjy3IMbgPTPOuB3mMfUHVX7kU3G9Cnvp+zQ5h6
+	ylYH1sP1MUSK8eeznzb4QUIoJxXr6du0Vd9HLJKB+2N+GtznJJupjQGdI+et/eDj
+	BbE3BQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmm8tt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 04:33:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R4XMfk031768
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 04:33:22 GMT
+Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
+ 2025 20:33:18 -0800
+Message-ID: <a6a22695-305b-49e2-893d-eddce67ab9eb@quicinc.com>
+Date: Thu, 27 Feb 2025 10:03:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225223038.879614-3-swboyd@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-idp: Update protected clocks
+ list
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250206-protected_clock_qcm6490-v1-1-5923e8c47ab5@quicinc.com>
+ <j43f4wu6wgoho2tl4crckemnngyvek5mma6ghkdyqcivk65dcf@gfsimovfuqy5>
+ <72cc2c52-1d0d-4a60-93da-14acd5947f1f@quicinc.com>
+ <o53nnmt5ypuoms3b37lehtmpwloudusr7647alehvnwsiltsyo@grd6ua7mh4o2>
+ <0ab2552a-3b8d-4b4f-8f9e-8b0c4f5bf6ea@quicinc.com>
+ <xwatlvi3xwu6q6difsd53ymh6htzebmcbyiq67mvworye6epq5@ash232dggqia>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <xwatlvi3xwu6q6difsd53ymh6htzebmcbyiq67mvworye6epq5@ash232dggqia>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mw33a_4ewup2keXZ1N_u3M8lLBOlDtyT
+X-Proofpoint-GUID: mw33a_4ewup2keXZ1N_u3M8lLBOlDtyT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ mlxlogscore=609 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270032
 
-On Tue, Feb 25, 2025 at 02:30:37PM -0800, Stephen Boyd wrote:
-> Fully describe the USB type-c on sc7180 Trogdor devices. Most Trogdor
-> devices have two USB type-c ports (i.e. usb-c-connector nodes), but
-> Quackingstick only has one. Also, clamshell devices such as Lazor have a
-> USB webcam connected to the USB hub, while detachable devices such as
-> Wormdingler don't have a webcam, or a USB type-a connector. Instead they
-> have the pogo pins for the detachable keyboard.
-> 
-> Fully describing the topology like this will let us expose information
-> about what devices are connected to which physical USB connector (type-A
-> or type-C).
-> 
-> Cc: <cros-qcom-dts-watchers@chromium.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: <linux-arm-msm@vger.kernel.org>
-> Cc: <devicetree@vger.kernel.org>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  .../dts/qcom/sc7180-trogdor-clamshell.dtsi    |  21 +++
->  .../boot/dts/qcom/sc7180-trogdor-coachz.dtsi  |  47 +++++++
->  .../dts/qcom/sc7180-trogdor-detachable.dtsi   |  16 +++
->  .../dts/qcom/sc7180-trogdor-homestar.dtsi     |  47 +++++++
->  .../dts/qcom/sc7180-trogdor-kingoftown.dts    |  55 ++++++++
->  .../boot/dts/qcom/sc7180-trogdor-lazor.dtsi   |  55 ++++++++
->  .../boot/dts/qcom/sc7180-trogdor-pazquel.dtsi |  55 ++++++++
->  .../boot/dts/qcom/sc7180-trogdor-pompom.dtsi  |  44 +++++++
->  .../qcom/sc7180-trogdor-quackingstick.dtsi    |  31 +++++
->  .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |  57 ++++++++-
->  .../dts/qcom/sc7180-trogdor-wormdingler.dtsi  |  47 +++++++
->  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  | 121 ++++++++++++++++++
->  12 files changed, 594 insertions(+), 2 deletions(-)
-> 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
--- 
-With best wishes
-Dmitry
+On 2/27/2025 10:02 AM, Dmitry Baryshkov wrote:
+> On Thu, Feb 27, 2025 at 09:56:27AM +0530, Taniya Das wrote:
+>>
+>>
+>> On 2/27/2025 9:50 AM, Dmitry Baryshkov wrote:
+>>> On Thu, Feb 27, 2025 at 09:42:39AM +0530, Taniya Das wrote:
+>>>>
+>>>>
+>>>> On 2/26/2025 10:12 AM, Bjorn Andersson wrote:
+>>>>> On Thu, Feb 06, 2025 at 03:43:21PM +0530, Taniya Das wrote:
+>>>>>> Certain clocks are not accessible on QCM6490-IDP board,
+>>>>>> thus mark them as protected.
+>>>>>>
+>>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>>>> ---
+>>>>>> Mark few clocks as protected on IDP of QCM6490.
+>>>>>>
+>>>>>> This patchset is separated out from the series[1] to remove dependency from
+>>>>>> the LPASS reset.
+>>>>>> [1]: https://lore.kernel.org/all/20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com/
+>>>>>> ---
+>>>>>>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 21 +++++++++++++++++++++
+>>>>>
+>>>>> I merged the patch adding this board in November 2023, are you saying
+>>>>> that for the last 15 months no one has actually booted it!?
+>>>>>
+>>>>
+>>>> I am not sure, I had got request to help boot the board which was not
+>>>> due to these clocks.
+>>>
+>>> So, was the original submission in November 2023 broken or was it broken
+>>> by a later firmware upgrade which started to protect those clocks?
+>>>
+>> That's a fair question, probably the later broke it.
+> 
+> Could you please document it this way? This would have removed possible
+> questions by Bjorn.
+> 
+Sure, will take care and resubmit.
+
 
