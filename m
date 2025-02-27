@@ -1,168 +1,128 @@
-Return-Path: <linux-kernel+bounces-535180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06E8A46FD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:08:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D61F0A46FDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F1A188D41E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EDAD188D466
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D0A2744E;
-	Thu, 27 Feb 2025 00:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AD4322B;
+	Thu, 27 Feb 2025 00:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2kX9+pl"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2xCzwEZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14285EED8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5E48F66;
+	Thu, 27 Feb 2025 00:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740614837; cv=none; b=cxr7UgfnnUr1geQSuZDgoi/csGHZrMJpABkeUn+87eIpUyr3Ywnl8/0j5kT5PEREAXHz6QtFnB3p6SEe0PVU9eh1o9StF+o33KLbTiGWtofkQ7Vn5q+sn5a9emN9+NMST1W/vrRUQH5qjjy+FQAA3r2m9InOhCZYkL0KYmgTyGY=
+	t=1740614899; cv=none; b=VtU2dEWEaRqwgXsG9JuCqllXzuGEikXGrQtVAvXEG8jfT4QFKR3FD5D4U0p/7JbsWK1glwF0LJWgxMyQ+87/C2G2qA1EGWW0FnW6mJfXnjx848ut7Y25ZsWwMBU2S7hVHcaNjX/USZ29KMVVMauiBr8ibBt8PuRicogCVx2gIO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740614837; c=relaxed/simple;
-	bh=0OcKgr3Czng9NbWaBwLaNoKEDdd3fZmUTwyjhXF8x4s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RXoHnHUmdRvII+PvSwzLHBVba6dMPMxGR/CkgPK9m2lwtRu4elUt0fgH0ZWnEAC6iiOOp1PWvQE+TCdCQ3mzivNaF3BA8MtEsWNHU6L+R6b6exE5wEVQmuvS7KnN5SkM1g9rkxbG8fySX7xvDRJIJPR6UYY9AA/B7GEfG7cyMIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2kX9+pl; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe8fdfdd94so843215a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 16:07:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740614835; x=1741219635; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpBLcBPrSK39J8xwLKbfB7MiuFNa+KhFkiMUhKQTXu4=;
-        b=e2kX9+pl//35VPfbGU0jT0oZFwAwprk2IhdW5VOdvxXkvoM0o79YWRKxfhUMQQDWCJ
-         /2L+jmImp2xRicbqR3WtLzbUZJeKTzs10WDZ/7/TViGZuqmHiQP9YWtvvabPqn4kOgKl
-         /wN6jIRIXByfVa7Q8XvtztfbC5fmbMJ30mBEDsPyQkZgYgVuDTLlvHEKtCQhH+6Eh9mg
-         ziS3rnyE84rsTmb88VJFEX6xTQC1PtZTkDfi8U0+oq3oZzoV3F20cZhlCJ3P1LGgxgIj
-         CDqvgh7TuuCAc6b6WEsVhLhvCjRguHi4RoVA3ShXM8OGnio8PV9s3QR8JvvIhi2XY6Nb
-         2xlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740614835; x=1741219635;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OpBLcBPrSK39J8xwLKbfB7MiuFNa+KhFkiMUhKQTXu4=;
-        b=Xc8Dzqzg3s2pyySglWApsSDju7phOPS7EE19sLkIAnLxT+FPPNogCGxTn5T3Bd3Wdl
-         khHU6Ig/CiJAKLdUjVT8t2lHyZnN6OzQWdO0CxT8LUvqNEP8gatQxt2tXpTnCh2EntGK
-         u15s3LFws34tErn7kg+c3c/9RmgwiBgvgwamyzV//4SEysr/bLVKGHJwpZhfeQMXJP6O
-         h2SdvFDjhDvDEiSYYyu0vxrgB35yloguBWq+dsTOs7U8dP0w6btdTV9EDhdAKmVYGrz7
-         KOdZU/FRA2SISt+xymm901AOzppozEzG6bpxqvp88jCXrTlwXzzJnfppN4/AH6CcNaYG
-         TjBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBLk7QRFb5KiA2MC8jQmGJA20ii1Fe8WfuTLBL28EnUfOOynjt5z1Epsg3hg54TyupLXw5Pje4lyOoro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzajGBkU7BvLbNN1C7iYmCrLvd9IBW9WzlXeQbycPdVOfmp+C5A
-	DHMbGXuqzIKKp2IWMLOpKgO/nHDwBzEh90Sh3YDsm3MXDmp/QqFqM+weBlShP3qLdtnd7yk8SEh
-	jNA==
-X-Google-Smtp-Source: AGHT+IHvRvyrfuq3N6aeKsAExnrfi6YmDK+XDqxdTsUoJhVn44XGuxYyjmOc7xmxw6spYnjHOgtwHqwO+MQ=
-X-Received: from pjbqi7.prod.google.com ([2002:a17:90b:2747:b0:2f5:4762:e778])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:518b:b0:2ee:741c:e9f4
- with SMTP id 98e67ed59e1d1-2fe7e31f509mr8554685a91.11.1740614835389; Wed, 26
- Feb 2025 16:07:15 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 16:07:05 -0800
-In-Reply-To: <20250227000705.3199706-1-seanjc@google.com>
+	s=arc-20240116; t=1740614899; c=relaxed/simple;
+	bh=xgs7rT60JFXEHjg9mQodKhFyFx8CjHFlo+z0Izl+sPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oDP806idcKop+jYjqlry9XFZ7gPpsqZe1CiA5LFvTv0eMKYTfTuTWaPu0OKPg0GB4yjIQOL8JVqK2T9b0SsVOxq314NTSS9TSjqA9Z/UK7JZi0q2A2JQngHSk3q3nxor8xQ4LhNu31LdIiwoa1fSqabdrIdyqXaQZUbfIh5Ng68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2xCzwEZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC32FC4CED6;
+	Thu, 27 Feb 2025 00:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740614898;
+	bh=xgs7rT60JFXEHjg9mQodKhFyFx8CjHFlo+z0Izl+sPE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=g2xCzwEZWvRK21RHGuJr1sXCfA+YRAmrbtRAF4GdHDCVQ3wVOMp9umP4H7FarbFdq
+	 7frYHCCegvUG0mb37YjiDdZI3TS/JXMRQoy8q3nP8xTtrzv/gKad+G/LeFkkA1GdFq
+	 +Xb/QGPx2cFkpgnS1M0vlAOmhAYWCMBFnU2lez3G/iFcVyxa7KOkyiINv+WN2gLZOZ
+	 3iXL2RslMqWfH1h/qfcGQk7RDLA0bYR35kyCAplYb7xyeHFgDhnBDatEcCUXqJi1Ug
+	 vIXiULOxDdWv9Ye3W2luRCJb+zAmf0jgS7eqPIm2IKSwpg2PlAXAvDncAFh4R3rhSd
+	 +wcSfEiHPTm/Q==
+Date: Wed, 26 Feb 2025 18:08:17 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v9 3/7] PCI: Add parent_bus_offset to resource_entry
+Message-ID: <20250227000817.GA565171@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227000705.3199706-1-seanjc@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227000705.3199706-3-seanjc@google.com>
-Subject: [PATCH v2 2/2] KVM: nVMX: Decouple EPT RWX bits from EPT Violation
- protection bits
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nikolay Borisov <nik.borisov@suse.com>, Jon Kohler <jon@nutanix.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250128-pci_fixup_addr-v9-3-3c4bb506f665@nxp.com>
 
-Define independent macros for the RWX protection bits that are enumerated
-via EXIT_QUALIFICATION for EPT Violations, and tie them to the RWX bits in
-EPT entries via compile-time asserts.  Piggybacking the EPTE defines works
-for now, but it creates holes in the EPT_VIOLATION_xxx macros and will
-cause headaches if/when KVM emulates Mode-Based Execution (MBEC), or any
-other features that introduces additional protection information.
+On Tue, Jan 28, 2025 at 05:07:36PM -0500, Frank Li wrote:
+> Introduce `parent_bus_offset` in `resource_entry` and a new API,
+> `pci_add_resource_parent_bus_offset()`, to provide necessary information
+> for PCI controllers with address translation units.
+> 
+> Typical PCI data flow involves:
+>   CPU (CPU address) -> Bus Fabric (Intermediate address) ->
+>   PCI Controller (PCI bus address) -> PCI Bus.
+> 
+> While most bus fabrics preserve address consistency, some modify addresses
+> to intermediate values. 
 
-Opportunistically rename EPT_VIOLATION_RWX_MASK to EPT_VIOLATION_PROT_MASK
-so that it doesn't become stale if/when MBEC support is added.
+s/modify/translate/
 
-No functional change intended.
+Specifically, they *translate* addresses, which means the same offset
+is added to every address in the range, as opposed to masking or some
+other transformation.
 
-Cc: Jon Kohler <jon@nutanix.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/vmx.h     | 13 +++++++++++--
- arch/x86/kvm/mmu/paging_tmpl.h |  3 +--
- arch/x86/kvm/vmx/vmx.c         |  2 +-
- 3 files changed, 13 insertions(+), 5 deletions(-)
+I think we can take advantage of this to simplify the callers of
+.cpu_addr_fixup() later.
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index aabc223c6498..8707361b24da 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -580,14 +580,23 @@ enum vm_entry_failure_code {
- /*
-  * Exit Qualifications for EPT Violations
-  */
--#define EPT_VIOLATION_RWX_SHIFT		3
- #define EPT_VIOLATION_ACC_READ		BIT(0)
- #define EPT_VIOLATION_ACC_WRITE		BIT(1)
- #define EPT_VIOLATION_ACC_INSTR		BIT(2)
--#define EPT_VIOLATION_RWX_MASK		(VMX_EPT_RWX_MASK << EPT_VIOLATION_RWX_SHIFT)
-+#define EPT_VIOLATION_PROT_READ		BIT(3)
-+#define EPT_VIOLATION_PROT_WRITE	BIT(4)
-+#define EPT_VIOLATION_PROT_EXEC		BIT(5)
-+#define EPT_VIOLATION_PROT_MASK		(EPT_VIOLATION_PROT_READ  | \
-+					 EPT_VIOLATION_PROT_WRITE | \
-+					 EPT_VIOLATION_PROT_EXEC)
- #define EPT_VIOLATION_GVA_IS_VALID	BIT(7)
- #define EPT_VIOLATION_GVA_TRANSLATED	BIT(8)
- 
-+#define EPT_VIOLATION_RWX_TO_PROT(__epte) (((__epte) & VMX_EPT_RWX_MASK) << 3)
-+
-+static_assert(EPT_VIOLATION_RWX_TO_PROT(VMX_EPT_RWX_MASK) ==
-+	      (EPT_VIOLATION_PROT_READ | EPT_VIOLATION_PROT_WRITE | EPT_VIOLATION_PROT_EXEC));
-+
- /*
-  * Exit Qualifications for NOTIFY VM EXIT
-  */
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index f4711674c47b..68e323568e95 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -510,8 +510,7 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
- 		 * Note, pte_access holds the raw RWX bits from the EPTE, not
- 		 * ACC_*_MASK flags!
- 		 */
--		walker->fault.exit_qualification |= (pte_access & VMX_EPT_RWX_MASK) <<
--						     EPT_VIOLATION_RWX_SHIFT;
-+		walker->fault.exit_qualification |= EPT_VIOLATION_RWX_TO_PROT(pte_access);
- 	}
- #endif
- 	walker->fault.address = addr;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b71392989609..049f28f1b2bc 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5821,7 +5821,7 @@ static int handle_ept_violation(struct kvm_vcpu *vcpu)
- 	error_code |= (exit_qualification & EPT_VIOLATION_ACC_INSTR)
- 		      ? PFERR_FETCH_MASK : 0;
- 	/* ept page table entry is present? */
--	error_code |= (exit_qualification & EPT_VIOLATION_RWX_MASK)
-+	error_code |= (exit_qualification & EPT_VIOLATION_PROT_MASK)
- 		      ? PFERR_PRESENT_MASK : 0;
- 
- 	if (error_code & EPT_VIOLATION_GVA_IS_VALID)
--- 
-2.48.1.711.g2feabab25a-goog
+Ironically, most of the .cpu_addr_fixup() implementations *do* mask
+the address, e.g., cdns_plat_cpu_addr_fixup() masks with 0x0fffffff.
+But I think this is actually incorrect because masking results in a
+many-to-one mapping, e.g.,
 
+  0x42000000 & 0x0fffffff == 0x02000000
+  0x52000000 & 0x0fffffff == 0x02000000
+
+But presumably the addresses we pass to cdns_plat_cpu_addr_fixup()
+don't cross a 256MB (0x10000000) boundary, so we could accomplish the
+same by subtracting 0x40000000:
+
+  0x42000000 - 0x40000000 == 0x02000000
+
+> +++ b/drivers/pci/of.c
+> @@ -402,7 +402,17 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
+>  			res->flags &= ~IORESOURCE_MEM_64;
+>  		}
+>  
+> -		pci_add_resource_offset(resources, res,	res->start - range.pci_addr);
+> +		/*
+> +		 * IORESOURCE_IO res->start is io space start address.
+> +		 * IORESOURCE_MEM res->start is cpu start address, which is the
+> +		 * same as range.cpu_addr.
+> +		 *
+> +		 * Use (range.cpu_addr - range.parent_bus_addr) to align both
+> +		 * IO and MEM's parent_bus_offset always offset to cpu address.
+> +		 */
+> +
+> +		pci_add_resource_parent_bus_offset(resources, res, res->start - range.pci_addr,
+> +						   range.cpu_addr - range.parent_bus_addr);
+
+Wrap to fit in 80 columns like the rest of the file.  Will have to
+unindent the two lines of arguments to make this work.
 
