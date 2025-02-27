@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-536029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CDFA47AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:47:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B43A47A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 664597A5A26
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD903B1B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D1122A7F0;
-	Thu, 27 Feb 2025 10:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="F1LekHHU"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8531022A1E1;
+	Thu, 27 Feb 2025 10:33:35 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEA821D5BD;
-	Thu, 27 Feb 2025 10:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653186; cv=pass; b=PmHU8/oxoolCg8Zl16Zfxm0aCa5RsjKZR8FwUsoaJAl+Dz7X1Zbl7I8xB6dwhpctPcD6mH3Nc8KaSxpizT0TmkEQu6cq6gj59VcLS3YkAnsTVFN44Zb0s14T3aS71Utd9qW853hkb7RupliNHDKBtjYlsd1B/ZOWA3MMGd+AJSM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653186; c=relaxed/simple;
-	bh=jErgEQ+TUOucGrZZAhpmYkoPvjxC4e7WR4Mn6W94J2k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f3MNoecjo3JU9BYqVDpv43fS8uJ7kpkPoACMFofo9HBE8+HO3QoAJDISE1P+6CPlEFkRuZ4MF38ih/+7UZo9PGoflaZ4MZxSQHbznB6MXWKsNqsm35JjX0WyLFilQwjaPruWVYbqN180LxE4yEAJcn4JG3dNIcwaRKjwB87Joi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=F1LekHHU; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740653169; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dg8P0nJK5JPcFugLoKt0xIYPkUVtQmKGkV5bvVaHL7tlGB4Hr65TunHF6Sdi1ndX3A44gl8lyvSF3J7wOonIBUeCbfsrkSDI+/A91WtVWWSE2jd31VUEUnUdnbdhiSAGKNb9vb0gni31QF+F5ZfMu/KNYMFY2SJB8qEF9Yk8WFI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740653169; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=P07Y9+em6TQ0YpcdOuQLsw4N5WzWQShNoV6rX/vAwp0=; 
-	b=jpDQ2nVh/ReuUm/frgAKuagA7MbowZmgAdWZLGy+/vvPRkX2KiS485MU9OyUBsNfaHl73jBDd4DJH8Jup84r2PeBXMPXU3eKLxaGYvoS7hG3yledjb/MOPHsPsmaTWXKWsg4/Zoa2cw/CoLWSZqJZDrXvGH3PYjLiJcvmwboHB8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740653169;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=P07Y9+em6TQ0YpcdOuQLsw4N5WzWQShNoV6rX/vAwp0=;
-	b=F1LekHHU+XYWrxz2ToxORCrdnh/pnLbGUsDiRy8eDuaNOBS6WX8UD2wUva8AsdXz
-	GrCWdOwTWQNSAs/tQ1b3zRBGQQmkBx6lTMHIlj0snGQlsaqw5KEpueQJ9LlUtlDqSjJ
-	rS+Yt3OjF1iQUVdKCQiPcfz1DTG5fYg4Wlf/iW4Y=
-Received: by mx.zohomail.com with SMTPS id 1740652387816361.8871097135559;
-	Thu, 27 Feb 2025 02:33:07 -0800 (PST)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after parsing
-Date: Thu, 27 Feb 2025 18:32:51 +0800
-Message-Id: <20250227103251.390147-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB7C21D3E7;
+	Thu, 27 Feb 2025 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740652415; cv=none; b=ERXTJ+jqIqj0xyKFZ5/cg4AAmIKRA2HVcvPQdDto7ls5PrTIVVf6x2SErQl5dyQzKuhrFUsu/krw1Tq1HnE/D9SvYwVnA5PqNQ9tKHtIh/KnvcHF/QlVifPFgytrM1gK+NT50ZnV5qySyZ8AIbt+/thbB1GWVPJqOZQZo2k3q+Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740652415; c=relaxed/simple;
+	bh=sdRYJf5KqEhXm7M/os0m46/SzH35rQZIDcFmEL2GFkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tft7f8a39Lhobh/dnaBwZxjVOvMeFDRlB/w2XMrEjK7lS8YuQyHBtV1LKJh6ti9YmRF/bDQ52EK/cmPtJw5kgxxkVhMShoONRs/6Eu0hMFh7YuOv8Vbpmig96Op8aoBGtDLulhSMyKXLxJmE8CvGD5jd9/61RMcFu+upDf9Fom8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86b3ed5fde5so395734241.0;
+        Thu, 27 Feb 2025 02:33:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740652411; x=1741257211;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ubSE84NjFTjsY5U2xLJxwBeHimqGUMTmF43TX7I58to=;
+        b=oBBvKr9XVDbFmwKhembhCuagm7yyyDaZXId+H9hUTcc0ek7mObLqOTTQiKR7EJ0yAE
+         /c6cxYKcqxiZP7Kp0mw9NpxjGS3TWIgTKzf9RhSjzqNexm5UF49utu0gt4/HWbnsNZ55
+         51d4AY5nRBe7/ZJjch7LnmAfJhusMtUJM/1zCEfF3EJJlBetVytPX5v/m6ZKQPGhtxCC
+         J8LrWDJ5zImhZ/5vQlRleLUDutmaXj76uEn6QbmL+bU3sVvmg2vYiV3Zhun6YxHnEKqI
+         hJ0Xhif7xDJkELroxVPffwW5Lqgy70A5YVodD3MUpEWoG+EKURquswOGUVmSKiZJTJ/P
+         7aLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUomP/c2MA4IuVz4uJuwQlLsNnwV/4iQh/q6ancGS0kkpn1oDIgKOu4rXv9Cm5aojtJurX5BT5ImToC@vger.kernel.org, AJvYcCVVFf6gLqzZ6rfqNpKBs0Hfq8jaMqshSIaXsAec0tIR8iFAxknBMR/lml904FQ0nhkJumEUHUa2E1LGislH3oyo7UU=@vger.kernel.org, AJvYcCWv1EL2utwHo2YlgV06/I+5+4v3RctOQkj8LYqrcqtTJ6sPilLCtdWQ1TTApEaZHCP2jImE15ehbJPyanM=@vger.kernel.org, AJvYcCX+bG+R3V9yUB1r1vMxLRAI0VDcRrUr0xOw5OejQtVeC1Itt9gWszGPcu6HnK2msiLFXMG/cwPSWzvqcvAb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgXcmp1HywGQr289Pv1mTavtkWj3rgodthv67FELNB17hfMq0Q
+	u8MfmghAm0nHsTvs9OThR06wB9tl2+CBE37WfXAMpswyijlsyiBIj8YKirCi
+X-Gm-Gg: ASbGncvPVqsLJ5xKOFCuhkTFXah47xt/5Gj1FjoI8bMaUXZkXNGqUFhy3NOnEhAd6sA
+	Sv+s7/kIeumblNCRRIdtwwSO7dzdsiTINhc/6i+hN6Pw+zC5ciImMqcoyOnlE5cbdNV8Q6BK+7E
+	Yk4VC9AAntpUnwzRoIyN7+WqKY7qvW+17PJfBbqAWHVttbP/OewvKCI+f7esmlsXdmd9FPEaC7g
+	Yw++89z1H0K19cQEO24sWRki561ShUGEGescUKcOKcIRH2cv6+sLRJTQhDz0U3LFGGi6X1iHr2b
+	uE0AjxMYqQP/+puqe3vIlIjIibC2h7vCl5zUMprsG5eavegBysuKlWKmHoXOv7d6KhQn
+X-Google-Smtp-Source: AGHT+IG8QZ60apdnKBlKPn/BDfdi4vaLf8ZdXAbLymQpP6LqjEnW5zIiyBSSnWGaGcVdIDzEj1v4Kw==
+X-Received: by 2002:a05:6102:26cd:b0:4bb:dd1c:dcff with SMTP id ada2fe7eead31-4c030fd5013mr1118836137.2.1740652410866;
+        Thu, 27 Feb 2025 02:33:30 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c0345fc82fsm199790137.1.2025.02.27.02.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 02:33:30 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-52099627b5aso791000e0c.1;
+        Thu, 27 Feb 2025 02:33:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUlmQKq94RL7ibpCyZpDX1dC7g/X4RL/KonRvKEPk9jNGGscoOY/JdknYtP3UyuX9XDuVCVHrIpXqACbEgV@vger.kernel.org, AJvYcCVANtr7PKnLKea5/vusQL7DasrUQAJkSpPxMkAQYLNKMTYmW/ME7/VhhBLVaS9Q1bBCP4K26mWku332ToLXpcozYD8=@vger.kernel.org, AJvYcCVWa8NCXGo8A50Dmi74X3HmQCn4oT9Q23/QHd5Be6gEYWHBvBBdqBcfp37yP/nQ1PsjIxko6cBaIypbfqE=@vger.kernel.org, AJvYcCWiz20+v6jRU1HWRooyPE/xlM/TyFivpTC8tbhlugsiQmKoZn3WJ+tuqqGOJhvIwI3/Vq9Z2zTx89Mt@vger.kernel.org
+X-Received: by 2002:a05:6122:2708:b0:521:bb4e:c68d with SMTP id
+ 71dfb90a1353d-523493c558amr1710120e0c.0.1740652409909; Thu, 27 Feb 2025
+ 02:33:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227c0943d90364cb82e43977bd3000036146dae4918cde90a0f48e2b54b1f01c60f3825064a82e4ee:zu08011227d3f19496acc2fe87961957450000a1e5773b687733c8bf686330abbf024704b5232d2550ba6eff:rf0801122dd0313017268c95b673f66f9f00006272b51ab9fc857ccf2ea6766b3c7c171d5b8fab80748d0d6dfa19fa842c50:ZohoMail
-X-ZohoMailClient: External
+References: <20250226152418.1132337-1-tommaso.merciai.xr@bp.renesas.com> <20250226152418.1132337-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250226152418.1132337-2-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Feb 2025 11:33:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUfZSP3BDmKYTBDbKFe=KVR6TtscMQZov4+UDoMXgZwGQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrvdZJIWK8_MeL2zxoRDqPgCpV_45kQFeRZFTYprQXVZ0-CAVTqL8i0vNI
+Message-ID: <CAMuHMdUfZSP3BDmKYTBDbKFe=KVR6TtscMQZov4+UDoMXgZwGQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/17] media: dt-bindings: renesas,rzg2l-csi2: Document
+ Renesas RZ/V2H(P) SoC
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, Rob Herring <robh@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
-decoder capability, But according to the implementation of
-cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
+Hi Tommaso,
 
-Per CXL specification, the values ranges of decoder_count and
-target_count are limited. Adding a checking for the values of them
-in case hardware initialized them with wrong values.
+On Wed, 26 Feb 2025 at 16:25, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
+> found on the Renesas RZ/G2L SoC, with the following differences:
+> - A different D-PHY
+> - Additional registers for the MIPI CSI-2 link
+> - Only two clocks
+>
+> Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
+> SoC.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
-base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
----
- drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-index 70cae4ebf8a4..a98191867c22 100644
---- a/drivers/cxl/core/hdm.c
-+++ b/drivers/cxl/core/hdm.c
-@@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
- 	return true;
- }
- 
-+static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
-+{
-+	/*
-+	 * CXL r3.2 section 8.2.4.20.1
-+	 * CXL devices shall not advertise more than 10 decoders,
-+	 * CXL switches and HBs may advertise up to 32 decoders.
-+	 */
-+	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
-+		return -EINVAL;
-+	else if (cxlhdm->decoder_count > 32)
-+		return -EINVAL;
-+
-+	/*
-+	 * CXL r3.2 section 8.2.4.20.1
-+	 * target count is applicable only to CXL upstream port and HB.
-+	 * The number of target ports each decoder supports should be
-+	 * one of the numbers 1, 2, 4 or 8.
-+	 */
-+	if (!is_cxl_endpoint(cxlhdm->port) &&
-+	    cxlhdm->target_count != 1 &&
-+	    cxlhdm->target_count != 2 &&
-+	    cxlhdm->target_count != 4 &&
-+	    cxlhdm->target_count != 8)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- /**
-  * devm_cxl_setup_hdm - map HDM decoder component registers
-  * @port: cxl_port to map
-@@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
- 	}
- 
- 	parse_hdm_decoder_caps(cxlhdm);
--	if (cxlhdm->decoder_count == 0) {
-+	rc = cxlhdm_decoder_caps_verify(cxlhdm);
-+	if (rc) {
- 		dev_err(dev, "Spec violation. Caps invalid\n");
- 		return ERR_PTR(-ENXIO);
- 	}
+> --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+
+> @@ -48,7 +58,8 @@ properties:
+>    resets:
+>      items:
+>        - description: CRU_PRESETN reset terminal
+> -      - description: CRU_CMN_RSTB reset terminal
+> +      - description:
+> +          CRU_CMN_RSTB reset terminal (all but RZ/V2H(P)) or D-PHY reset (RZ/V2H(P))
+
+According to the flowcharts[1] in the RZ/G2L, RZ/V2L, and RZ/G2UL
+documentation, CPG_RST_CRU.CRU_CMN_RSTB is the D-PHY reset on all of
+them, so I think you can just write "D-PHY reset".
+Or "D-PHY reset (CRU_CMN_RSTB or CRU_n_S_RESETN)"?
+
+[1] Section 35. Camera Data Receiving Unit (CRU)
+    35.3.1 Starting Reception for the MIPI CSI-2 Input
+    35.3.2.2Stopping the D-PHY (MIPI CSI-2 Input)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
