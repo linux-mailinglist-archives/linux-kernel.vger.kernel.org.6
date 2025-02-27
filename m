@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-536802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CDDA4845C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:11:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1881A48461
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD61F3AACDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04FE13B228A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5369A1DE2A7;
-	Thu, 27 Feb 2025 16:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A0226B96E;
+	Thu, 27 Feb 2025 16:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="koQKNspj"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ha7zQ8fa"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCAB1DDC0B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52601DE3DC;
+	Thu, 27 Feb 2025 16:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672250; cv=none; b=cZMrs6LMLikfWGkgbX59UMgjciVdo5sMFF57I6P/XIuvjPkww8GISuXifX/GUW6/TkLM7/Ye61huQUM1exe82t1v83qDDeIdH5En/Z8TkutgdKF+G5/0CyBtXL8vc/6SrL4mH134+gIlOUO8nMPVvSZpS1PrXw60IjU/UGpn/lI=
+	t=1740672272; cv=none; b=B4MWKIo15PozDnTvFjcb3ybMVYitIZofzcZzeP6UGNtE1fUkaMN7hUkAPQ8UvgJge32jYrOk5MRGRgJJP9IokB4ZHH5/7sdGD7SE07xGrBqyZg0nqchZpulX9n+PjZX8U7tI1u5RwdSiUfYVwYB3XbSc/+LhWZQMH2Zr1i/q61k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672250; c=relaxed/simple;
-	bh=tyjvAD+adDTd//PDrw1nlWoUz+V/OCQOULIAUJl5qMQ=;
+	s=arc-20240116; t=1740672272; c=relaxed/simple;
+	bh=TOGtalCsJZB6AvdPJ6FXApmEN79Uyv0/s10P1lRmEwk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHVoJSPu//OGej/dz21WFtSDs8RpAzOHHJmD470Rvr+d8bZD/BwePrcwXPwDJvd4ytWJVgHUvwnhOJ7ww/02eYvWuc9RTlyNmlN9xi5qecsA2EmP4JfsHch4EU6x7p2RXOls9JdrQb96zqUDZtsgCe8oervzpxGJw4cT69+zwHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=koQKNspj; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43996e95114so8239005e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:04:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740672247; x=1741277047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LvIn24tYLHOsgb21p347DIWtQWK0Ha6hvZuB/OU8gA0=;
-        b=koQKNspjSWudfG9DJfPwlQQTnrc2AX/QdoVrNc67zuepx4saVwpGStrcGd9e6CCsaM
-         3xyre+69JFtI606iHO9Vn0ipMjdFVrOuxAy55K9SWwlf5ZF6vuU0SMkRhw42pMd5Of9e
-         n8YMafu+0x1ARUzQHMgqB/n4p+VSwBzGg3FeT7wQv+5WYZJY/D/ylEwhQBjbaj263Z2a
-         Xu8QPf9pOF15K5kbGAGLdOOVA/xZVLykYEysF5R4L0qMuBNACCAg6s8z3xsLR9G3afJX
-         M1PQ5oaMO2zuCLtnJAyNnVZ/UOet18YKA2ydy9rP3A3Y5xigwwUWM+Q+RZweVqxa+0Pp
-         ybaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740672247; x=1741277047;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvIn24tYLHOsgb21p347DIWtQWK0Ha6hvZuB/OU8gA0=;
-        b=Z0pb709bB+s0npuXSYjRwzLj636P7Dm4JSv/iUuizinAAO/B7pB6bqlyIb+33kHI67
-         NsXBtPht84zZl0HLpCUcugy5aVH7ypFDHyctIO210NTU1rSOS0ffrLoDhQhDZm8y4Qf3
-         jja8VrJNw3uLIOBOlgQV8CFDV20eAazAzcUcoLlxYgZ3tN8WT2luIOl1tlCl78V3vfz7
-         bbOdJu+Ya+pYCBSac1jdOwxxcjFI63HB+/8I7VnWGX5vjTsu9qR6Vl1YGC84mnOJ0v6x
-         Uh91HsG4XKkMjs6O+HMyk4BXUp1xoolv/kHjMkax8oZbHWgaWpY6hxklm/n8lIHnWI/f
-         lEBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKjnNoMsfkpg51VY306JOp7062f8K2D3YUY5KjIpksel0mokTmMEmBXhN/UDXKfH3vHzZIHjKNY0di4AU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk4ZuhIWbFJKo1Wu65KYbSO2sPiJT+QnRYtozFSi3CPGG4LUUY
-	Iu3ua8O7waVhsqRoG2gJJKBgms5w7zsDgcTa21FtmpN0RCzRcaHD9PPnOk0pHE0=
-X-Gm-Gg: ASbGncv1dXfxydrBFQsegtXz/8JnfHcw+6NHxXgdALrh+zPPBFLd173fR1azXjKhBnC
-	PCywERyj5ygLqI0vC6JX5jKo4KSX/nuydYiXFr3WHlOlZ711yDpYtK7P8RLCNaMjb/4YtxOTqyQ
-	AkHCsqyECKjlx5pAFfu9vP9l8s5S42dtA0oUzLfVIp0E3KkdmbrZTtEIElRSUBBi9+XPL913IZM
-	1EW3t3/EtGEzPT1bVrzco93/zmVu4vXTIhM9dFtEWhLWLoaXKAsmZkemDR1XKaYi3LtX8Qzd3J3
-	hqo1otePtOZMXhUHyDkNVIZlQMeH6FGoLEQFzXMIJegtYHMuzx6RDjTPFFSGKfy2MXw=
-X-Google-Smtp-Source: AGHT+IE3Ip9lM9pQRwKTBvY/WeuCuU31LF5zKSLs2OxofNzgwY3TCLJUZhTWGYeeFNNIo1VpBFTuBg==
-X-Received: by 2002:a05:600c:1c1d:b0:439:9496:181c with SMTP id 5b1f17b1804b1-439aebdc9e1mr215296025e9.29.1740672246975;
-        Thu, 27 Feb 2025 08:04:06 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a27b27bsm27022515e9.31.2025.02.27.08.04.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 08:04:06 -0800 (PST)
-Message-ID: <96208c2e-f38f-4d1b-aa6f-0b774359c2cf@linaro.org>
-Date: Thu, 27 Feb 2025 16:04:05 +0000
+	 In-Reply-To:Content-Type; b=V9qt4l3hKSjSmOojh8dZkAsAmnfcswFd9/JDaAPuAq6XZBq8avrUO2PV9E+43RYLHPRX/NlqACjrUU9CKEs9F/Oys7x+RDihK5qUYzO4J/nZwl8S18e73kGIr0z49n834bWSYWIU2gm4ioHsSxrH4N30X9OAa8xLGGfIqbesKlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ha7zQ8fa; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RDU83F004444;
+	Thu, 27 Feb 2025 16:04:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=TOGtal
+	CsJZB6AvdPJ6FXApmEN79Uyv0/s10P1lRmEwk=; b=Ha7zQ8favGSAhxAxfKy+4m
+	fZGfxBc6diUM+7D1ZFszSTACpjCGQ3rg020XbCKN701r5zMAPXih0FSdOlgGQAJe
+	qwOd9Wwc5C0FmcykQODUn3tJAv4iq+ra6cPFxKG+Ri/zZbMMoLmRybXFPLFBaBTJ
+	XlP1OQyVGKdoomCppcVpig6qa0+k7tmSGZJbXJef06wdhl3+Jo2Jpa/SEkjm56j6
+	Ww1ihiGVI/Ck9ovk8ikOO39EOhSY2FaSiy2l14rDx9up4zD6yssM/QS07OfOzSl7
+	dsQnXKU152hAwdNTR94pRHVTfg2Yy8FIaOJR9TP5d5oBV2yRSRN0By33yKJQ0/Ng
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452ew0kmfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 16:04:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51RDL5EE026404;
+	Thu, 27 Feb 2025 16:04:24 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44yswnsf1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 16:04:24 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51RG4K9523200070
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 16:04:20 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4763320040;
+	Thu, 27 Feb 2025 16:04:20 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C42A82004B;
+	Thu, 27 Feb 2025 16:04:19 +0000 (GMT)
+Received: from [9.171.45.20] (unknown [9.171.45.20])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Feb 2025 16:04:19 +0000 (GMT)
+Message-ID: <1de30a2f-96c0-4e1b-8fe3-d66a2ef0b5c1@linux.ibm.com>
+Date: Thu, 27 Feb 2025 17:04:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,64 +76,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: qrb5165-rb5-vision-mezzanine:
- Drop CMA heap
-To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250227-qcom-nonroot-overlays-v2-0-bde44f708cbe@trvn.ru>
- <20250227-qcom-nonroot-overlays-v2-1-bde44f708cbe@trvn.ru>
+Subject: Re: [PATCH 0/2] KVM: s390: Don't use %pK through debug printing or
+ tracepoints
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250217-restricted-pointers-s390-v1-0-0e4ace75d8aa@linutronix.de>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250227-qcom-nonroot-overlays-v2-1-bde44f708cbe@trvn.ru>
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20250217-restricted-pointers-s390-v1-0-0e4ace75d8aa@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3pX9xfns-Oji3l2c8WvW3NKOhw-7qMz6
+X-Proofpoint-ORIG-GUID: 3pX9xfns-Oji3l2c8WvW3NKOhw-7qMz6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=522 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270121
 
-On 27/02/2025 14:26, Nikita Travkin wrote:
-> Initially added, the cma heap was supposed to help with libcamera swisp,
-> however a mistake was made such that the node was never applied as part
-> of the overlay since the change was added to the overlay root ("/") and
-> not with a reference to the target dtb root ("&{/}"). Moveover libcamera
-> doesn't require CMA heap on Qualcomm platforms anymore as it can now use
-> UDMA buffers instead.
-> 
-> Drop the CMA heap node. This change has no effect on the final dtb.
-> 
-> This reverts commit 99d557cfe4fcf89664762796678e26009aa3bdd9.
-> 
-> Fixes: 99d557cfe4fc ("arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Add cma heap for libcamera softisp support")
-> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> ---
->   arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso | 11 -----------
->   1 file changed, 11 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> index ae256c713a36078afdadc67193f381a19ea8e5d3..5fe331923dd3cd31ff2be047a2228e1c4104e80e 100644
-> --- a/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> +++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso
-> @@ -9,17 +9,6 @@
->   #include <dt-bindings/clock/qcom,camcc-sm8250.h>
->   #include <dt-bindings/gpio/gpio.h>
->   
-> -/ {
-> -	reserved-memory {
-> -		linux,cma {
-> -			compatible = "shared-dma-pool";
-> -			size = <0x0 0x8000000>;
-> -			reusable;
-> -			linux,cma-default;
-> -		};
-> -	};
-> -};
-> -
->   &camcc {
->   	status = "okay";
->   };
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+T24gMi8xNy8yNSAyOjEzIFBNLCBUaG9tYXMgV2Vpw59zY2h1aCB3cm90ZToNCj4gUmVzdHJp
+Y3RlZCBwb2ludGVycyAoIiVwSyIpIGFyZSBvbmx5IG1lYW50IHRvIGJlIHVzZWQgd2hlbiBk
+aXJlY3RseQ0KPiBwcmludGluZyB0byBhIGZpbGUgZnJvbSB0YXNrIGNvbnRleHQuDQo+IE90
+aGVyd2lzZSBpdCBjYW4gdW5pbnRlbnRpb25hbGx5IGV4cG9zZSBzZWN1cml0eSBzZW5zaXRp
+dmUsIHJhdyBwb2ludGVyIHZhbHVlcy4NCj4gDQo+IFVzZSByZWd1bGFyIHBvaW50ZXIgZm9y
+bWF0dGluZyBpbnN0ZWFkLg0KDQoNClRoYW5rcywgcGlja2VkIQ0KDQoNCg==
 
