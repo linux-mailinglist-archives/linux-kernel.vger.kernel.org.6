@@ -1,182 +1,206 @@
-Return-Path: <linux-kernel+bounces-537003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915A3A486EE
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7704A486EF
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DEC3A9AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECF1165E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2659C1E521C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B61E835B;
 	Thu, 27 Feb 2025 17:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KYbQ75Hp"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GmGH923o"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2042.outbound.protection.outlook.com [40.107.236.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22601C5D7C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678445; cv=none; b=uLsPoPpQtBBlMgOTUqP/9jUnj62xvcA+Q5Sb/h7YRgOJ10gjxN2TyHJ+Bfxc+iPfkMG2mO6/luFjtzquM2kGKXpJqvVa3rFYV3oUrVXzc1YfR0z+hOyL1FY/f3vQLDbvvHLKtBTSr74tStGWcLf81wyh96ohTYP0ZIZ93Hnqu9M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD941B424D;
+	Thu, 27 Feb 2025 17:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740678445; cv=fail; b=X0rGswpeMdme1rIzItvh58c0nCEvXjkmEvDI+VbI7Vnjii0F+UgUzU2hXnEQmlJGz0B4eHO7xWCmur9Aex8tyvlEzPPr1c1sqIDoldxNnpstCvk5oqgvgwQAcbmyrqtpnVRGOsSyLZHgFZQBBD5vtlGTDkHcU9Zqn/ltdVh0Zsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740678445; c=relaxed/simple;
-	bh=bOwn5zZRw9yp4+vrfk3BzuxmlpN+8RGzjHpCiAkL82k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=up7/pAclkjHnDaKSaROgHfwZhTUaI2LuHZxLOxttq+jKQ4mF+m6PusERCJk12yGrcvXerQMJwIHkfSjHbv2na9le13Vi1JSAe5RYXlVKvN20j1r6oVpulT3NmFyA0mz9YxFArXq2DoBmnsj74dC8ueT3HdfaFSPwoK8Scfk/J6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KYbQ75Hp; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c12f9e9449so667263fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:47:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1740678443; x=1741283243; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HC2J6Mb9/RYSJwCU37fb1IaAz399El4qkG/TtbCDhMs=;
-        b=KYbQ75HpRwZMG3Zu195FwKALVPo8oOoXFPbI0Ttgmd8b9Z0v+twqwtZG2QGE8GAW0Q
-         0poOlo0aZGzklF2Bn83rZqb1kcCGQBAn7p3xyLVINliFLR2/INTtPPXBt3vOsuJcLbtG
-         LPiE3jdaTUn1ftwVRquja5OgEfok7yarTiiWc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740678443; x=1741283243;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HC2J6Mb9/RYSJwCU37fb1IaAz399El4qkG/TtbCDhMs=;
-        b=hzG6koeWMB9bMekdIW4nx6EodAPYezdp5/yBC8Ns6fN14dnCa6ReboDWclo5kLx+BS
-         wZQ4n6OKW+rypQcmmw5Zxgqa7qMH66z1ZlfJhqk+s2udmZGTDtv7VN5Wh3sxVIYMBL8r
-         hfOLrsMpL/oI1HkLyv3l+VusiwW7w4d/P+KVY1JLCw+YzsbE0y5woC7bsivx20F0Nfua
-         er9fgBfRGj7tR87HeQqIE9KfzY9OS8yVH3gR0nQDC+G00rOOjnfi90XVAJqC5erQ5swi
-         1Th5vEqKexWXXRjuet08rki20n3JTSvAFDT+DqitNjsIjh3+9C1YGBrL7/ooW9dzvPmq
-         0KVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWciP5TalqJghhBqng39tvRhDi9TbtkRWMcP15lPcwnzX6UVxIWNr3OJNirii76vPrtW5rocpvZ9pXc2KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4RGkzcckOLC7gLNlMNSqx+9Sswi4c/vplnpJz1jz7L2CnDEZO
-	iCNTZ6wAPjnENdNB3kI2VO0qxkGx4SklDZqwZgFPF9lTDEl2CqKv/NmNKaWNGQ==
-X-Gm-Gg: ASbGncsMsv9XP5iMIkh/jlDLFo0h0xJ6iAuDa7JwNnQChwPAbiwnnV42jMwUtM6o/gE
-	1apKzDCbshHgPFO8igZRfv94a6YvKObxO4E99riHfVDLO80N374fLYsb39XiNRcrMv52YyD+T6w
-	sE/3w3ZLMyTJ+ZPTPZ5Gfk5pcR0BWPxh9R1u4NnWC0b/NVaM9QgYlPXvfYmaiN2Dkg8wVJO8hj0
-	CA39OQmWIQRYHqdOlHovha4wXje0bMapYYMFzIDfoZvCCZGOEOTLuoyMdDXccSuJr3F3jsMzvvO
-	+s+iuPzeP0S0s7VRmT/hDPC18gaTSSL9UDQ85q+LNOLwvQLQ0YFf3gVoru9saw==
-X-Google-Smtp-Source: AGHT+IE8XZ+28PXtIF3rqQI56RoJIDoRjyLhnTul82ozQ0249c82pcF8rg78xs90VxHUTHIvPlr1HQ==
-X-Received: by 2002:a05:687c:2191:b0:29e:499d:1d33 with SMTP id 586e51a60fabf-2c178433b9dmr51623fac.14.1740678442705;
-        Thu, 27 Feb 2025 09:47:22 -0800 (PST)
-Received: from mail.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c15c12639esm362545fac.14.2025.02.27.09.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 09:47:22 -0800 (PST)
-From: Kamal Dasu <kamal.dasu@broadcom.com>
-To: florian.fainelli@broadcom.com,
-	Brian Norris <computersforpeace@gmail.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v2] mtd: rawnand: brcmnand: fix PM resume warning
-Date: Thu, 27 Feb 2025 12:46:08 -0500
-Message-Id: <20250227174653.8497-1-kamal.dasu@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+	bh=u27K6VXdEbDTmY/cbzR62bNtS3/82VnSAAhGbmpYlJ8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kLb8mk9KcMnktxgJr+i4I2h/fgaXJDTtDFnSBCET5e9HuLztOycnXs8+Kl/xI5LJBmREhN6Fu5Vflfedsvu5NyejaELOr/GZORVP55JvmF/TfPfw7FPwyEPRFWMq5mBk1pMJn3M0mn9oeLl1o9kCpXIQ0tP12VT2dc7mj4wVPmg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GmGH923o; arc=fail smtp.client-ip=40.107.236.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pTPRCgvZB8olkWghbvpNKTXf4F0s5arL8v0u6K758Ewe8t8CNDyXTrRayFiRQI00g2nLJ7vyy0sweM9Mel6fUBGs4dm5d0Ui1WbFbpvKfPdwM3bNRaNNaF8c2GFO1bgnigiNc28rQC582Isi8e3fYUBbJiZh+7yWzKEYso5G1DUgDCMneRRtZ3/2YUenEtzYPY/mwpqJdcfXPgh85FW+/fdm5d7MCRJqSRCMjvEQtkWNtNy49CUrUjsWdRkbJl/4PWk7yecP2DVqZjmipFoQjXkhWRxHcDAiaWuiWfjNAPdJ6ca9RL1p/Kf6Bt+AFGr2eUB4AI2ed85wEVjaKZ8EvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6bWoknXiyduvcXpNpYIUL3dOOVAOiZ5FAl0OB00x/Tc=;
+ b=uG7kkv35Zed6cV9DgY7VXXCHZS+VOBL6ER1rQMcaWQkhnvscRX7t34Nr7Wv/5j0fBjfjS/1xAjYITwF4qeMDkltPsDvIzxpk5yfWErA5H2mp48745MSqYpJu5uuIIc1QqR1NMH9qufrk35GMrpXKNKsBxtXFp12BVA0KAzv2btWeI1B3IV9wWrT39kOJl1723RVA/hpaA1bX1RVDya4xxhuoAoawBHv9FRKT6jP0eCUJ2QSfI41rzYtAE4nkqgV5Q8nZRSM4XGHxiIQeCUo7ve99SAWkE2Z6qmx0B6b3dIrWuoMiE/MgYsnV+OtH++d9lY25u39Ut30bKip3SRbVCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6bWoknXiyduvcXpNpYIUL3dOOVAOiZ5FAl0OB00x/Tc=;
+ b=GmGH923oSBLHugiBNe0r3KS2KqQ5TxBC8S2tIc3GH13o5DCq0LehkpaY7Z0kbfqyS1rKSwVdEqmewsaStSd5a6BlDdHNeCQNXNWOe0MDZteL8TSyjKG42+6OBzARE5XqbZ2nU4EGnSZDTolyDCNCYTaRp4CKORFXFj/ghxQNxS4/+tjIVaj5snoEJWiKNGXwPct00APMTsJkXukYno8SVXnAX4/36vmp0rX/H3u1oOy3ri64ckYnuHrNjmTdHfQcIND8zdV5dz8iw2J0WBeBjPzd2JsitESb8p0JoTVNFbZ3haosTGJYMkiJWYNweqK88NUHFkzcTz9a750NHKHw4g==
+Received: from PH1PEPF000132F0.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::33)
+ by DS0PR12MB6605.namprd12.prod.outlook.com (2603:10b6:8:d3::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
+ 2025 17:47:19 +0000
+Received: from CY4PEPF0000E9D6.namprd05.prod.outlook.com
+ (2a01:111:f403:f912::5) by PH1PEPF000132F0.outlook.office365.com
+ (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.19 via Frontend Transport; Thu,
+ 27 Feb 2025 17:47:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9D6.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 17:47:18 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 27 Feb
+ 2025 09:46:58 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 27 Feb
+ 2025 09:46:58 -0800
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 27 Feb 2025 09:46:57 -0800
+Date: Thu, 27 Feb 2025 09:46:55 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Robin Murphy <robin.murphy@arm.com>, <kevin.tian@intel.com>,
+	<tglx@linutronix.de>, <maz@kernel.org>, <joro@8bytes.org>, <will@kernel.org>,
+	<shuah@kernel.org>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>,
+	<yury.norov@gmail.com>, <jacob.pan@linux.microsoft.com>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v2 3/7] iommu: Make iommu_dma_prepare_msi() into a
+ generic operation
+Message-ID: <Z8ClD4jMtSH31IqA@Asurada-Nvidia>
+References: <cover.1740014950.git.nicolinc@nvidia.com>
+ <4ca696150d2baee03af27c4ddefdb7b0b0280e7b.1740014950.git.nicolinc@nvidia.com>
+ <5b9e15e1-8081-46ef-b9db-3872e98a6f35@arm.com>
+ <20250221164400.GN50639@nvidia.com>
+ <634c60ea-fec3-43ad-923a-cf9ba5e76065@arm.com>
+ <20250227153242.GG39591@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250227153242.GG39591@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D6:EE_|DS0PR12MB6605:EE_
+X-MS-Office365-Filtering-Correlation-Id: f35b1f64-1728-41bd-f87f-08dd5756c7ff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h+rJr7CttCa1WgPjropsToQUo/fFqjhJSs4SBwhsAL+OFMUiStTQ9gpdduMu?=
+ =?us-ascii?Q?SIvyWummM0r6M8odBGz2vg/AtziVTLMxxQLdrARp9oxICjFOUTPj0ZGIg45K?=
+ =?us-ascii?Q?xHqw1350XPG8/k+O+ZH684XUmv8KN3XtK7i7/4lc8T8vHbM7RxO4U8rH8QI5?=
+ =?us-ascii?Q?MQgDpPGo5BBnVQLRmvtY15u9z6QWz5zGr/DtUHS3q7ZNtjJCemorho11eIZB?=
+ =?us-ascii?Q?0JpAz0KUDdmQThDsZoZGYMpOfca8FcL6E+CBK7WJFUqDfEa4+zQsrgSrqYdn?=
+ =?us-ascii?Q?vLuhKaLmWrZTW3TiL5XB5fuDaxNWw4/dMPKseI02j7dLgKv9EvyLSr8Y+tHB?=
+ =?us-ascii?Q?UKkJCfXawt43Ih5aUkCWRTdmxrvxuXd8uC6ssfMk6teUdqtAHRyMRrA77FEQ?=
+ =?us-ascii?Q?YZPVRSLPI98mV2ehSu3DsXat2c2CxzW00qpZxSFYTSkUB/CPoCxIKJ1C6HHu?=
+ =?us-ascii?Q?pUYe+qJKsEN1UrG9THKsmPDf3aGEtNFIO6pMbwLJIMH8FhVGOFi4ww7UJWnw?=
+ =?us-ascii?Q?cfQpD++aiN7m6SM/QC/GiBCoKDH9dQpSq08K5N9mMlhjPEjVUuRd5BFsC1Cf?=
+ =?us-ascii?Q?sxMA4UjcgBZcfLFDT2luvRp0oDwayjCKL4/6NEDDGrpA9MA+Zpsh3ELzLUYa?=
+ =?us-ascii?Q?ehjTog85qQuU7qjjzLsDjirIJos8UeP9EzaxzetfsBjEDiYYgTm3LXCpwUmd?=
+ =?us-ascii?Q?7YSAV2twgCF9v/pt+AYZfl38un8jIWiXexQ+G5BpEP8kxzs/OPNgmMvwF0KN?=
+ =?us-ascii?Q?eygQ62/hlUO29O9/97i5c+Vyn4/owBOJOPEGTNeH76ZlCNuusUYUQaSn4qlk?=
+ =?us-ascii?Q?Ywv3ThDxUARP7252pv0r8fQXOjTffyXeKL0Ortaxn4ndeNbs9d8/viG+X5Mo?=
+ =?us-ascii?Q?ytUMK8s9AWhPqqfqLBpe/WHh4QmZx7X/Q6ky0CAPSaBBLzdFd9jejHnFH96q?=
+ =?us-ascii?Q?GPfYhuKDYhXoBk1V+KU6s3XbInpd4BWzS9iCoWcPuxxQfJbo/jJ6zaBgn3rX?=
+ =?us-ascii?Q?yARQX7Ho5qTpdK6BwUPlyrOp+fBzFnmjmyuUyER4ahOgvZM1W4hBBvi7df+f?=
+ =?us-ascii?Q?c9zee7tsN7GXu9IwBk8XjEP4q1EtV3e01y7IKBkyrWLn9CNh/7ee083D+Hu+?=
+ =?us-ascii?Q?ucT1eqhJu9QDNb1XQHnYlfae1OKBrhpk/nWLJxeK2uBew30L4nrgUJGNSQwW?=
+ =?us-ascii?Q?DhDS+bIxX2KZ/pBXnpUVY6i14QN9vXgdpzjnXw1xMpE7pL6dZL+ty4ueHXo4?=
+ =?us-ascii?Q?U4yuM6dWDEf/jVWxinGbF+zuLFWcoBgp98zF8c+dIaLQ0KxEZYa1d4XVAkfx?=
+ =?us-ascii?Q?r7sQ2v0M8L5Zn5K6wI6wgF5TN9ilQ+XDtt6hZjpfO82ikM/nE1korKGO4RWV?=
+ =?us-ascii?Q?RFIhmVY/6fev6jSY8u1Nm9Dhwxrc+R+Jrh0F68Re/OyidiWvNpCLcnY3wH0o?=
+ =?us-ascii?Q?DBCE3C/ycexFPFeP0QI5kJlGYDyrR24Y/XhlpPL6dDaRL11KjOekhcmMWzbu?=
+ =?us-ascii?Q?coPcvxhs775cfPw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 17:47:18.9629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f35b1f64-1728-41bd-f87f-08dd5756c7ff
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6605
 
-Fixed warning on PM resume as shown below caused due to uninitialized
-struct nand_operation that checks chip select field :
-WARN_ON(op->cs >= nanddev_ntargets(&chip->base)
+On Thu, Feb 27, 2025 at 11:32:42AM -0400, Jason Gunthorpe wrote:
+> On Thu, Feb 27, 2025 at 11:21:28AM +0000, Robin Murphy wrote:
+> > All I'm saying is to hide the callback detail in the IOMMUFD code because
+> > being IOMMUFD modular is unique to IOMMUFD and not the rest of the core
+> > code's problem.
+> 
+> Maybe we could use a global function pointer set/cleared on iommufd
+> module load?
+> 
+> Regardless, we need to first find a way for the core code to tell if
+> the domain is iommufd owned or not.
+> 
+> We should also make it so we can tell if dma-iommu.c is linked to that
+> domain (eg vfio or the default_domain), then we can do the iova_cookie
+> move without changing the destruction flows. This would be the missing
+> union struct tag you mentioned in the other email.
+> 
+> What I've been thinking of is changing type into flags. I think we
+> have now removed type from all drivers so this should be a small
+> enough work.
+> 
+> Nicolin should be able to look into some followup here, it is not a
+> small change.
+> 
+> > And frankly otherwise, what even is the benefit of moving the iova_cookie
+> > pointer into the union if we have to replace it with another whole pointer
+> > to make it work?
+> 
+> It makes a lot more semantic sense that the domain owners all share a
+> single "private data" pointer.
 
-[   14.588522] ------------[ cut here ]------------
-[   14.588529] WARNING: CPU: 0 PID: 1392 at drivers/mtd/nand/raw/internals.h:139 nand_reset_op+0x1e0/0x1f8
-[   14.588553] Modules linked in: bdc udc_core
-[   14.588579] CPU: 0 UID: 0 PID: 1392 Comm: rtcwake Tainted: G        W          6.14.0-rc4-g5394eea10651 #16
-[   14.588590] Tainted: [W]=WARN
-[   14.588593] Hardware name: Broadcom STB (Flattened Device Tree)
-[   14.588598] Call trace:
-[   14.588604]  dump_backtrace from show_stack+0x18/0x1c
-[   14.588622]  r7:00000009 r6:0000008b r5:60000153 r4:c0fa558c
-[   14.588625]  show_stack from dump_stack_lvl+0x70/0x7c
-[   14.588639]  dump_stack_lvl from dump_stack+0x18/0x1c
-[   14.588653]  r5:c08d40b0 r4:c1003cb0
-[   14.588656]  dump_stack from __warn+0x84/0xe4
-[   14.588668]  __warn from warn_slowpath_fmt+0x18c/0x194
-[   14.588678]  r7:c08d40b0 r6:c1003cb0 r5:00000000 r4:00000000
-[   14.588681]  warn_slowpath_fmt from nand_reset_op+0x1e0/0x1f8
-[   14.588695]  r8:70c40dff r7:89705f41 r6:36b4a597 r5:c26c9444 r4:c26b0048
-[   14.588697]  nand_reset_op from brcmnand_resume+0x13c/0x150
-[   14.588714]  r9:00000000 r8:00000000 r7:c24f8010 r6:c228a3f8 r5:c26c94bc r4:c26b0040
-[   14.588717]  brcmnand_resume from platform_pm_resume+0x34/0x54
-[   14.588735]  r5:00000010 r4:c0840a50
-[   14.588738]  platform_pm_resume from dpm_run_callback+0x5c/0x14c
-[   14.588757]  dpm_run_callback from device_resume+0xc0/0x324
-[   14.588776]  r9:c24f8054 r8:c24f80a0 r7:00000000 r6:00000000 r5:00000010 r4:c24f8010
-[   14.588779]  device_resume from dpm_resume+0x130/0x160
-[   14.588799]  r9:c22539e4 r8:00000010 r7:c22bebb0 r6:c24f8010 r5:c22539dc r4:c22539b0
-[   14.588802]  dpm_resume from dpm_resume_end+0x14/0x20
-[   14.588822]  r10:c2204e40 r9:00000000 r8:c228a3fc r7:00000000 r6:00000003 r5:c228a414
-[   14.588826]  r4:00000010
-[   14.588828]  dpm_resume_end from suspend_devices_and_enter+0x274/0x6f8
-[   14.588848]  r5:c228a414 r4:00000000
-[   14.588851]  suspend_devices_and_enter from pm_suspend+0x228/0x2bc
-[   14.588868]  r10:c3502910 r9:c3501f40 r8:00000004 r7:c228a438 r6:c0f95e18 r5:00000000
-[   14.588871]  r4:00000003
-[   14.588874]  pm_suspend from state_store+0x74/0xd0
-[   14.588889]  r7:c228a438 r6:c0f934c8 r5:00000003 r4:00000003
-[   14.588892]  state_store from kobj_attr_store+0x1c/0x28
-[   14.588913]  r9:00000000 r8:00000000 r7:f09f9f08 r6:00000004 r5:c3502900 r4:c0283250
-[   14.588916]  kobj_attr_store from sysfs_kf_write+0x40/0x4c
-[   14.588936]  r5:c3502900 r4:c0d92a48
-[   14.588939]  sysfs_kf_write from kernfs_fop_write_iter+0x104/0x1f0
-[   14.588956]  r5:c3502900 r4:c3501f40
-[   14.588960]  kernfs_fop_write_iter from vfs_write+0x250/0x420
-[   14.588980]  r10:c0e14b48 r9:00000000 r8:c25f5780 r7:00443398 r6:f09f9f68 r5:c34f7f00
-[   14.588983]  r4:c042a88c
-[   14.588987]  vfs_write from ksys_write+0x74/0xe4
-[   14.589005]  r10:00000004 r9:c25f5780 r8:c02002fA0 r7:00000000 r6:00000000 r5:c34f7f00
-[   14.589008]  r4:c34f7f00
-[   14.589011]  ksys_write from sys_write+0x10/0x14
-[   14.589029]  r7:00000004 r6:004421c0 r5:00443398 r4:00000004
-[   14.589032]  sys_write from ret_fast_syscall+0x0/0x5c
-[   14.589044] Exception stack(0xf09f9fa8 to 0xf09f9ff0)
-[   14.589050] 9fa0:                   00000004 00443398 00000004 00443398 00000004 00000001
-[   14.589056] 9fc0: 00000004 00443398 004421c0 00000004 b6ecbd58 00000008 bebfbc38 0043eb78
-[   14.589062] 9fe0: 00440eb0 bebfbaf8 b6de18a0 b6e579e8
-[   14.589065] ---[ end trace 0000000000000000 ]---
+I found a bit confusing to use "owner" as the domain->owner isn't
+the same thing in this context. Maybe it should be "driver_ops"?
 
-The fix uses the higher level nand_reset(chip, chipnr); where chipnr = 0, when
-doing PM resume operation in compliance with the controller support for single
-die nand chip. Switching from nand_reset_op() to nand_reset() implies more
-than just setting the cs field op->cs, it also reconfigures the data interface
-(ie. the timings). Tested and confirmed the NAND chip is in sync timing wise
-with host after the fix.
+Then, "owner" could be another op structure that holds the owner-
+specific things, such as:
+	enum iommu_domain_owner { DMA/VFIO/IOMMUFD}; // or flag?
+	union {
+		iova_cookie;  // DMA
+		msi_cookie;   // VFIO
+		iommufd_hwpt; // IOMMUFD
+	}
+	(*sw_msi);
+?
 
-Fixes: 97d90da8a886 ("mtd: nand: provide several helpers to do common NAND operations")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
----
- drivers/mtd/nand/raw/brcmnand/brcmnand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index fea5b6119956..17f6d9723df9 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -3008,7 +3008,7 @@ static int brcmnand_resume(struct device *dev)
- 		brcmnand_save_restore_cs_config(host, 1);
- 
- 		/* Reset the chip, required by some chips after power-up */
--		nand_reset_op(chip);
-+		nand_reset(chip, 0);
- 	}
- 
- 	return 0;
--- 
-2.17.1
-
+Thanks
+Nicolin
 
