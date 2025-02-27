@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-537288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF13A48A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:49:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD30A48A1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B0B16912A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524BA16BBF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CE427126C;
-	Thu, 27 Feb 2025 20:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBEC26FA77;
+	Thu, 27 Feb 2025 20:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ahKBFIdD"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NxhDk4ts"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72B526A0E8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A6F270ECE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740689320; cv=none; b=UmGE2eSoJupthe/WIUeRZTZUXe4VBhlYT6XWBAyJdHOMuELnEy2yRbFcTCQ8l9MJwoeFosnFQktKbh36EXLH4zYr9cd+8z0YBiho4ERszYoBKgmVzfi3kP2KB0ujWywfbHnNdal5gDAM71h77lpBYvSoiTtwNuakkH6x98DI8Rs=
+	t=1740689322; cv=none; b=hVL2oZsxjXTrHDWOcG7KhjEz71jmcDYYAnvc+W8bOdEyzVXxXBr5aoilkwelDtLPxRO0YQwX8n2bein1ufV2J6Atm0pmt4M2JFCs3ngJ1W/NqDRtJ8aODCTzgeXTB/DQIx72JOzG9qDwqA4GbIu/M22n4bINMbgL0yskaP687SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740689320; c=relaxed/simple;
-	bh=Xxud70Inza86j1JQ9nHUEnW33K891lr2O2QEID5NVK4=;
+	s=arc-20240116; t=1740689322; c=relaxed/simple;
+	bh=XAZnok0S49ELWACGuseJI0Fa57i+hvs3d+sdMvKJSWg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=buLggsZy4slGp5ddquKoP638lazxmk4LR05nn8hz/pd/f8PGhrCISr6QwtzNcr+d52oJoOla8VHK5Nk1NqeDukBQ2UgbiHpHnMGvGHvxU8wFxSAA0aIoFoG9BBwglR0cJLpqjOvsGrC+kLhgMi1YsNcTKPGAtiUGXap+Zu7cMOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ahKBFIdD; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=LHlN9jFAX8uNo0IHzJjhHJBumUF73x4Tnol0i5nsTpTNpfdx6xUooCD27CaDVKdloE04qLYCGvTwJlntjVib8CmliQ7aj2LoxSb6KAn4EBWLP3SdSRgr+ksosku9RiXs/6tasBlWmBJ5vppvmhpKwExrOP+vcLGIlki4phDUDcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NxhDk4ts; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJiXvx016378;
-	Thu, 27 Feb 2025 20:48:31 GMT
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJivuU020031;
+	Thu, 27 Feb 2025 20:48:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=gOwuz
-	uTOLUCNwJAMPht/sO46yRRy3GRTeMgEldjsPnU=; b=ahKBFIdDqMDUr0McX+3EF
-	ZxhSy0tY5rvY2X7vdmD4Go02lQKuNCU/uVAeU63f1IJHaEXTHKIte2izLECE8bnC
-	04An58Q9qRXiXxPc5sxe2TbCFjve3FSRdliNI3DK8DMX4HVhzxLQEChTXVaZAFb7
-	HPBWl9hO1k2N+BjutKb/AL+tGKUNn4/1oIoH6LpGJmuCf/CyT+y+CDWP1FEs8n4u
-	1Rd7Dl3R+s/LmHkxpvYC+kAgYJvKv3uYnHkX+OYff8TnFsZrGj43SVpuD2WF3qUs
-	UItQ8eSBrXov9Li3LjZW21s/wAoq2bxWG8uLb1cay6MTp3uNEN6yK0WZX8/B7JhP
-	w==
+	:mime-version:references:subject:to; s=corp-2023-11-20; bh=9LL2P
+	3OXGfVz0nnVa8W39TneCyQ10Aw4rLIk1Wd13bw=; b=NxhDk4tsxMlSEelWIb2Z7
+	1+IimFvRIjSRcWPOE+ynJTEEXqhNnTTIOi+VNTRkX4EDrd2g3294n36/vEpu1Ron
+	dhYJlVYOPwWMpuUAh07HQ6K6qUhzoaikXOs8AjRn994q26oK45w+Iqw6ncOnsnbC
+	uGamtv/x0etKgwTKzQC4527leb7F3e2o4RvgFQID3GhhDp41Ygb5cUIaPVqC3jhQ
+	TNYv9N5hFMyH8exswQPNP3EzVM0cw7MQHhjvlc3DP2OUCLXw+k0s6vWNUXgwsWx5
+	7ZyMCrjfalTrP8o7ZJ6qpAK5TvAEhSPJFNTLorfpXsDHJpisYTZtGWC1JThEjZAX
+	Q==
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451psecbj7-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451pse4bch-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 20:48:31 +0000 (GMT)
+	Thu, 27 Feb 2025 20:48:33 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJ30w5012629;
-	Thu, 27 Feb 2025 20:48:30 GMT
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJ5gfs012575;
+	Thu, 27 Feb 2025 20:48:32 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51dws1q-1
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y51dws3e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Feb 2025 20:48:30 +0000
+	Thu, 27 Feb 2025 20:48:32 +0000
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51RKhrvg030883;
-	Thu, 27 Feb 2025 20:48:30 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51RKhrvi030883;
+	Thu, 27 Feb 2025 20:48:31 GMT
 Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 44y51dwrvc-3;
-	Thu, 27 Feb 2025 20:48:30 +0000
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 44y51dwrvc-4;
+	Thu, 27 Feb 2025 20:48:31 +0000
 From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
 Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
         richard.weiyang@gmail.com,
         Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH v3 2/6] maple_tree: use height and depth consistently
-Date: Thu, 27 Feb 2025 20:48:19 +0000
-Message-ID: <20250227204823.758784-3-sidhartha.kumar@oracle.com>
+Subject: [PATCH v3 3/6] maple_tree: use vacant nodes to reduce worst case allocations
+Date: Thu, 27 Feb 2025 20:48:20 +0000
+Message-ID: <20250227204823.758784-4-sidhartha.kumar@oracle.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250227204823.758784-1-sidhartha.kumar@oracle.com>
 References: <20250227204823.758784-1-sidhartha.kumar@oracle.com>
@@ -85,344 +85,255 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spam
  adultscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
  definitions=main-2502270154
-X-Proofpoint-GUID: l6ABSd6hzPhnG4lAK7HrR1bf2g6TVq8x
-X-Proofpoint-ORIG-GUID: l6ABSd6hzPhnG4lAK7HrR1bf2g6TVq8x
+X-Proofpoint-ORIG-GUID: HFRumWjksH2GrIpyFTFDyBAAQ3qLdNVH
+X-Proofpoint-GUID: HFRumWjksH2GrIpyFTFDyBAAQ3qLdNVH
 
-For the maple tree, the root node is defined to have a depth of 0 with a
-height of 1. Each level down from the node, these values are incremented
-by 1. Various code paths define a root with depth 1 which is inconsisent
-with the definition. Modify the code to be consistent with this
-definition.
+In order to determine the store type for a maple tree operation, a walk
+of the tree is done through mas_wr_walk(). This function descends the
+tree until a spanning write is detected or we reach a leaf node. While
+descending, keep track of the height at which we encounter a node with
+available space. This is done by checking if mas->end is less than the
+number of slots a given node type can fit.
 
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Now that the height of the vacant node is tracked, we can use the
+difference between the height of the tree and the height of the vacant
+node to know how many levels we will have to propagate creating new
+nodes. Update mas_prealloc_calc() to consider the vacant height and
+reduce the number of worst-case allocations.
+
+Rebalancing and spanning stores are not supported and fall back to using
+the full height of the tree for allocations.
+
+Update preallocation testing assertions to take into account vacant
+height.
+
+Signed-off-by: Sidhartha <sidhartha.kumar@oracle.com>
 ---
- lib/maple_tree.c | 85 ++++++++++++++++++++++++++----------------------
- 1 file changed, 46 insertions(+), 39 deletions(-)
+ include/linux/maple_tree.h       |  2 +
+ lib/maple_tree.c                 | 13 ++++--
+ tools/testing/radix-tree/maple.c | 79 ++++++++++++++++++++++++++++----
+ 3 files changed, 82 insertions(+), 12 deletions(-)
 
+diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+index cbbcd18d4186..7d777aa2d9ed 100644
+--- a/include/linux/maple_tree.h
++++ b/include/linux/maple_tree.h
+@@ -463,6 +463,7 @@ struct ma_wr_state {
+ 	void __rcu **slots;		/* mas->node->slots pointer */
+ 	void *entry;			/* The entry to write */
+ 	void *content;			/* The existing entry that is being overwritten */
++	unsigned char vacant_height;	/* Depth of lowest node with free space */
+ };
+ 
+ #define mas_lock(mas)           spin_lock(&((mas)->tree->ma_lock))
+@@ -498,6 +499,7 @@ struct ma_wr_state {
+ 		.mas = ma_state,					\
+ 		.content = NULL,					\
+ 		.entry = wr_entry,					\
++		.vacant_height = 0					\
+ 	}
+ 
+ #define MA_TOPIARY(name, tree)						\
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 0410e13a099e..a37837d6f3eb 100644
+index a37837d6f3eb..878a7740628c 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -211,14 +211,14 @@ static void ma_free_rcu(struct maple_node *node)
- 	call_rcu(&node->rcu, mt_free_rcu);
- }
+@@ -3544,6 +3544,9 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+ 		if (ma_is_leaf(wr_mas->type))
+ 			return true;
  
--static void mas_set_height(struct ma_state *mas)
-+static void mt_set_height(struct maple_tree *mt, unsigned char height)
- {
--	unsigned int new_flags = mas->tree->ma_flags;
-+	unsigned int new_flags = mt->ma_flags;
- 
- 	new_flags &= ~MT_FLAGS_HEIGHT_MASK;
--	MAS_BUG_ON(mas, mas->depth > MAPLE_HEIGHT_MAX);
--	new_flags |= mas->depth << MT_FLAGS_HEIGHT_OFFSET;
--	mas->tree->ma_flags = new_flags;
-+	MT_BUG_ON(mt, height > MAPLE_HEIGHT_MAX);
-+	new_flags |= height << MT_FLAGS_HEIGHT_OFFSET;
-+	mt->ma_flags = new_flags;
- }
- 
- static unsigned int mas_mt_height(struct ma_state *mas)
-@@ -1375,7 +1375,7 @@ static inline struct maple_enode *mas_start(struct ma_state *mas)
- 		root = mas_root(mas);
- 		/* Tree with nodes */
- 		if (likely(xa_is_node(root))) {
--			mas->depth = 1;
-+			mas->depth = 0;
- 			mas->status = ma_active;
- 			mas->node = mte_safe_root(root);
- 			mas->offset = 0;
-@@ -1716,9 +1716,10 @@ static inline void mas_adopt_children(struct ma_state *mas,
-  * node as dead.
-  * @mas: the maple state with the new node
-  * @old_enode: The old maple encoded node to replace.
-+ * @new_height: if we are inserting a root node, update the height of the tree
-  */
- static inline void mas_put_in_tree(struct ma_state *mas,
--		struct maple_enode *old_enode)
-+		struct maple_enode *old_enode, char new_height)
- 	__must_hold(mas->tree->ma_lock)
- {
- 	unsigned char offset;
-@@ -1727,7 +1728,7 @@ static inline void mas_put_in_tree(struct ma_state *mas,
- 	if (mte_is_root(mas->node)) {
- 		mas_mn(mas)->parent = ma_parent_ptr(mas_tree_parent(mas));
- 		rcu_assign_pointer(mas->tree->ma_root, mte_mk_root(mas->node));
--		mas_set_height(mas);
-+		mt_set_height(mas->tree, new_height);
- 	} else {
- 
- 		offset = mte_parent_slot(mas->node);
-@@ -1745,12 +1746,13 @@ static inline void mas_put_in_tree(struct ma_state *mas,
-  * the parent encoding to locate the maple node in the tree.
-  * @mas: the ma_state with @mas->node pointing to the new node.
-  * @old_enode: The old maple encoded node.
-+ * @new_height: The new height of the tree as a result of the operation
-  */
- static inline void mas_replace_node(struct ma_state *mas,
--		struct maple_enode *old_enode)
-+		struct maple_enode *old_enode, unsigned char new_height)
- 	__must_hold(mas->tree->ma_lock)
- {
--	mas_put_in_tree(mas, old_enode);
-+	mas_put_in_tree(mas, old_enode, new_height);
- 	mas_free(mas, old_enode);
- }
- 
-@@ -2540,10 +2542,11 @@ static inline void mas_topiary_node(struct ma_state *mas,
-  *
-  * @mas: The maple state pointing at the new data
-  * @old_enode: The maple encoded node being replaced
-+ * @new_height: The new height of the tree as a result of the operation
-  *
-  */
- static inline void mas_topiary_replace(struct ma_state *mas,
--		struct maple_enode *old_enode)
-+		struct maple_enode *old_enode, unsigned char new_height)
- {
- 	struct ma_state tmp[3], tmp_next[3];
- 	MA_TOPIARY(subtrees, mas->tree);
-@@ -2551,7 +2554,7 @@ static inline void mas_topiary_replace(struct ma_state *mas,
- 	int i, n;
- 
- 	/* Place data in tree & then mark node as old */
--	mas_put_in_tree(mas, old_enode);
-+	mas_put_in_tree(mas, old_enode, new_height);
- 
- 	/* Update the parent pointers in the tree */
- 	tmp[0] = *mas;
-@@ -2635,14 +2638,15 @@ static inline void mas_topiary_replace(struct ma_state *mas,
-  * mas_wmb_replace() - Write memory barrier and replace
-  * @mas: The maple state
-  * @old_enode: The old maple encoded node that is being replaced.
-+ * @new_height: The new height of the tree as a result of the operation
-  *
-  * Updates gap as necessary.
-  */
- static inline void mas_wmb_replace(struct ma_state *mas,
--		struct maple_enode *old_enode)
-+		struct maple_enode *old_enode, unsigned char new_height)
- {
- 	/* Insert the new data in the tree */
--	mas_topiary_replace(mas, old_enode);
-+	mas_topiary_replace(mas, old_enode, new_height);
- 
- 	if (mte_is_leaf(mas->node))
- 		return;
-@@ -2828,6 +2832,7 @@ static void mas_spanning_rebalance(struct ma_state *mas,
- {
- 	unsigned char split, mid_split;
- 	unsigned char slot = 0;
-+	unsigned char new_height = 0; /* used if node is a new root */
- 	struct maple_enode *left = NULL, *middle = NULL, *right = NULL;
- 	struct maple_enode *old_enode;
- 
-@@ -2877,7 +2882,7 @@ static void mas_spanning_rebalance(struct ma_state *mas,
- 		 */
- 		memset(mast->bn, 0, sizeof(struct maple_big_node));
- 		mast->bn->type = mte_node_type(left);
--		l_mas.depth++;
-+		new_height++;
- 
- 		/* Root already stored in l->node. */
- 		if (mas_is_root_limits(mast->l))
-@@ -2901,8 +2906,10 @@ static void mas_spanning_rebalance(struct ma_state *mas,
- 			continue;
- 
- 		/* May be a new root stored in mast->bn */
--		if (mas_is_root_limits(mast->orig_l))
-+		if (mas_is_root_limits(mast->orig_l)) {
-+			new_height++;
- 			break;
-+		}
- 
- 		mast_spanning_rebalance(mast);
- 
-@@ -2913,7 +2920,7 @@ static void mas_spanning_rebalance(struct ma_state *mas,
- 
- 	l_mas.node = mt_mk_node(ma_mnode_ptr(mas_pop_node(mas)),
- 				mte_node_type(mast->orig_l->node));
--	l_mas.depth++;
++		if (mas->end < mt_slots[wr_mas->type] - 1)
++			wr_mas->vacant_height = mas->depth + 1;
 +
- 	mab_mas_cp(mast->bn, 0, mt_slots[mast->bn->type] - 1, &l_mas, true);
- 	mas_set_parent(mas, left, l_mas.node, slot);
- 	if (middle)
-@@ -2937,7 +2944,7 @@ static void mas_spanning_rebalance(struct ma_state *mas,
- 	mas->min = l_mas.min;
- 	mas->max = l_mas.max;
- 	mas->offset = l_mas.offset;
--	mas_wmb_replace(mas, old_enode);
-+	mas_wmb_replace(mas, old_enode, new_height);
- 	mtree_range_walk(mas);
- 	return;
- }
-@@ -3013,6 +3020,7 @@ static inline void mas_destroy_rebalance(struct ma_state *mas, unsigned char end
- 	void __rcu **l_slots, **slots;
- 	unsigned long *l_pivs, *pivs, gap;
- 	bool in_rcu = mt_in_rcu(mas->tree);
-+	unsigned char new_height = mas_mt_height(mas);
- 
- 	MA_STATE(l_mas, mas->tree, mas->index, mas->last);
- 
-@@ -3107,7 +3115,7 @@ static inline void mas_destroy_rebalance(struct ma_state *mas, unsigned char end
- 	mas_ascend(mas);
- 
- 	if (in_rcu) {
--		mas_replace_node(mas, old_eparent);
-+		mas_replace_node(mas, old_eparent, new_height);
- 		mas_adopt_children(mas, mas->node);
+ 		mas_wr_walk_traverse(wr_mas);
  	}
  
-@@ -3118,10 +3126,9 @@ static inline void mas_destroy_rebalance(struct ma_state *mas, unsigned char end
-  * mas_split_final_node() - Split the final node in a subtree operation.
-  * @mast: the maple subtree state
-  * @mas: The maple state
-- * @height: The height of the tree in case it's a new root.
-  */
- static inline void mas_split_final_node(struct maple_subtree_state *mast,
--					struct ma_state *mas, int height)
-+					struct ma_state *mas)
+@@ -4159,7 +4162,9 @@ static inline void mas_wr_prealloc_setup(struct ma_wr_state *wr_mas)
+ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
  {
- 	struct maple_enode *ancestor;
- 
-@@ -3130,7 +3137,6 @@ static inline void mas_split_final_node(struct maple_subtree_state *mast,
- 			mast->bn->type = maple_arange_64;
- 		else
- 			mast->bn->type = maple_range_64;
--		mas->depth = height;
- 	}
- 	/*
- 	 * Only a single node is used here, could be root.
-@@ -3218,7 +3224,6 @@ static inline void mast_split_data(struct maple_subtree_state *mast,
-  * mas_push_data() - Instead of splitting a node, it is beneficial to push the
-  * data to the right or left node if there is room.
-  * @mas: The maple state
-- * @height: The current height of the maple state
-  * @mast: The maple subtree state
-  * @left: Push left or not.
-  *
-@@ -3226,8 +3231,8 @@ static inline void mast_split_data(struct maple_subtree_state *mast,
-  *
-  * Return: True if pushed, false otherwise.
-  */
--static inline bool mas_push_data(struct ma_state *mas, int height,
--				 struct maple_subtree_state *mast, bool left)
-+static inline bool mas_push_data(struct ma_state *mas,
-+				struct maple_subtree_state *mast, bool left)
- {
- 	unsigned char slot_total = mast->bn->b_end;
- 	unsigned char end, space, split;
-@@ -3284,7 +3289,7 @@ static inline bool mas_push_data(struct ma_state *mas, int height,
- 
- 	mast_split_data(mast, mas, split);
- 	mast_fill_bnode(mast, mas, 2);
--	mas_split_final_node(mast, mas, height + 1);
-+	mas_split_final_node(mast, mas);
- 	return true;
- }
- 
-@@ -3297,6 +3302,7 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- {
- 	struct maple_subtree_state mast;
- 	int height = 0;
-+	unsigned int orig_height = mas_mt_height(mas);
- 	unsigned char mid_split, split = 0;
- 	struct maple_enode *old;
- 
-@@ -3323,7 +3329,6 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- 	MA_STATE(prev_r_mas, mas->tree, mas->index, mas->last);
- 
- 	trace_ma_op(__func__, mas);
--	mas->depth = mas_mt_height(mas);
- 
- 	mast.l = &l_mas;
- 	mast.r = &r_mas;
-@@ -3331,9 +3336,9 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- 	mast.orig_r = &prev_r_mas;
- 	mast.bn = b_node;
- 
--	while (height++ <= mas->depth) {
-+	while (height++ <= orig_height) {
- 		if (mt_slots[b_node->type] > b_node->b_end) {
--			mas_split_final_node(&mast, mas, height);
-+			mas_split_final_node(&mast, mas);
- 			break;
- 		}
- 
-@@ -3348,11 +3353,15 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- 		 * is a significant savings.
- 		 */
- 		/* Try to push left. */
--		if (mas_push_data(mas, height, &mast, true))
-+		if (mas_push_data(mas, &mast, true)) {
-+			height++;
- 			break;
-+		}
- 		/* Try to push right. */
--		if (mas_push_data(mas, height, &mast, false))
-+		if (mas_push_data(mas, &mast, false)) {
-+			height++;
- 			break;
-+		}
- 
- 		split = mab_calc_split(mas, b_node, &mid_split);
- 		mast_split_data(&mast, mas, split);
-@@ -3369,7 +3378,7 @@ static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- 	/* Set the original node as dead */
- 	old = mas->node;
- 	mas->node = l_mas.node;
--	mas_wmb_replace(mas, old);
-+	mas_wmb_replace(mas, old, height);
- 	mtree_range_walk(mas);
- 	return;
- }
-@@ -3428,8 +3437,7 @@ static inline void mas_root_expand(struct ma_state *mas, void *entry)
- 	if (mas->last != ULONG_MAX)
- 		pivots[++slot] = ULONG_MAX;
- 
--	mas->depth = 1;
--	mas_set_height(mas);
-+	mt_set_height(mas->tree, 1);
- 	ma_set_meta(node, maple_leaf_64, 0, slot);
- 	/* swap the new root into the tree */
- 	rcu_assign_pointer(mas->tree->ma_root, mte_mk_root(mas->node));
-@@ -3673,8 +3681,7 @@ static inline void mas_new_root(struct ma_state *mas, void *entry)
- 	WARN_ON_ONCE(mas->index || mas->last != ULONG_MAX);
- 
- 	if (!entry) {
--		mas->depth = 0;
--		mas_set_height(mas);
-+		mt_set_height(mas->tree, 0);
- 		rcu_assign_pointer(mas->tree->ma_root, entry);
- 		mas->status = ma_start;
- 		goto done;
-@@ -3688,8 +3695,7 @@ static inline void mas_new_root(struct ma_state *mas, void *entry)
- 	mas->status = ma_active;
- 	rcu_assign_pointer(slots[0], entry);
- 	pivots[0] = mas->last;
--	mas->depth = 1;
--	mas_set_height(mas);
-+	mt_set_height(mas->tree, 1);
- 	rcu_assign_pointer(mas->tree->ma_root, mte_mk_root(mas->node));
- 
- done:
-@@ -3808,6 +3814,7 @@ static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
- 	struct maple_node reuse, *newnode;
- 	unsigned char copy_size, node_pivots = mt_pivots[wr_mas->type];
- 	bool in_rcu = mt_in_rcu(mas->tree);
+ 	struct ma_state *mas = wr_mas->mas;
+-	int ret = mas_mt_height(mas) * 3 + 1;
 +	unsigned char height = mas_mt_height(mas);
++	int ret = height * 3 + 1;
++	unsigned char delta = height - wr_mas->vacant_height;
  
- 	if (mas->last == wr_mas->end_piv)
- 		offset_end++; /* don't copy this offset */
-@@ -3864,7 +3871,7 @@ static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
- 		struct maple_enode *old_enode = mas->node;
+ 	switch (mas->store_type) {
+ 	case wr_invalid:
+@@ -4177,13 +4182,13 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
+ 			ret = 0;
+ 		break;
+ 	case wr_spanning_store:
+-		ret =  mas_mt_height(mas) * 3 + 1;
++		WARN_ON_ONCE(ret != height * 3 + 1);
+ 		break;
+ 	case wr_split_store:
+-		ret =  mas_mt_height(mas) * 2 + 1;
++		ret = delta * 2 + 1;
+ 		break;
+ 	case wr_rebalance:
+-		ret =  mas_mt_height(mas) * 2 - 1;
++		ret = height * 2 + 1;
+ 		break;
+ 	case wr_node_store:
+ 		ret = mt_in_rcu(mas->tree) ? 1 : 0;
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index bc30050227fd..5950a7c9b27f 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -35475,15 +35475,65 @@ static void check_dfs_preorder(struct maple_tree *mt)
+ }
+ /* End of depth first search tests */
  
- 		mas->node = mt_mk_node(newnode, wr_mas->type);
--		mas_replace_node(mas, old_enode);
-+		mas_replace_node(mas, old_enode, height);
- 	} else {
- 		memcpy(wr_mas->node, newnode, sizeof(struct maple_node));
- 	}
++/* get height of the lowest non-leaf node with free space */
++static unsigned char get_vacant_height(struct ma_wr_state *wr_mas, void *entry)
++{
++	struct ma_state *mas = wr_mas->mas;
++	char vacant_height = 0;
++	enum maple_type type;
++	unsigned long *pivots;
++	unsigned long min = 0;
++	unsigned long max = ULONG_MAX;
++	unsigned char offset;
++
++	/* start traversal */
++	mas_reset(mas);
++	mas_start(mas);
++	if (!xa_is_node(mas_root(mas)))
++		return 0;
++
++	type = mte_node_type(mas->node);
++	wr_mas->type = type;
++	while (!ma_is_leaf(type)) {
++		mas_node_walk(mas, mte_to_node(mas->node), type, &min, &max);
++		offset = mas->offset;
++		mas->end = mas_data_end(mas);
++		pivots = ma_pivots(mte_to_node(mas->node), type);
++
++		if (pivots) {
++			if (offset)
++				min = pivots[mas->offset - 1];
++			if (offset < mas->end)
++				max = pivots[mas->offset];
++		}
++		wr_mas->r_max = offset < mas->end ? pivots[offset] : mas->max;
++
++		/* detect spanning write */
++		if (mas_is_span_wr(wr_mas))
++			break;
++
++		if (mas->end < mt_slot_count(mas->node) - 1)
++			vacant_height = mas->depth + 1;
++
++		mas_descend(mas);
++		type = mte_node_type(mas->node);
++		mas->depth++;
++	}
++
++	return vacant_height;
++}
++
+ /* Preallocation testing */
+ static noinline void __init check_prealloc(struct maple_tree *mt)
+ {
+ 	unsigned long i, max = 100;
+ 	unsigned long allocated;
+ 	unsigned char height;
++	unsigned char vacant_height;
+ 	struct maple_node *mn;
+ 	void *ptr = check_prealloc;
+ 	MA_STATE(mas, mt, 10, 20);
++	MA_WR_STATE(wr_mas, &mas, ptr);
+ 
+ 	mt_set_non_kernel(1000);
+ 	for (i = 0; i <= max; i++)
+@@ -35494,8 +35544,9 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
+ 	MT_BUG_ON(mt, allocated == 0);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	mas_destroy(&mas);
+ 	allocated = mas_allocated(&mas);
+ 	MT_BUG_ON(mt, allocated != 0);
+@@ -35503,8 +35554,9 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
+ 	MT_BUG_ON(mt, allocated == 0);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	mas_destroy(&mas);
+ 	allocated = mas_allocated(&mas);
+@@ -35514,7 +35566,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	mn = mas_pop_node(&mas);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+ 	mn->parent = ma_parent_ptr(mn);
+@@ -35527,7 +35580,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	mn = mas_pop_node(&mas);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+@@ -35540,7 +35594,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	mn = mas_pop_node(&mas);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != allocated - 1);
+ 	mas_push_node(&mas, mn);
+@@ -35553,7 +35608,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 3);
+ 	mas_store_prealloc(&mas, ptr);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+ 
+@@ -35578,7 +35634,8 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
+-	MT_BUG_ON(mt, allocated != 1 + height * 2);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
++	MT_BUG_ON(mt, allocated != 1 + (height - vacant_height) * 2);
+ 	mas_store_prealloc(&mas, ptr);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+ 	mt_set_non_kernel(1);
+@@ -35595,8 +35652,14 @@ static noinline void __init check_prealloc(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_preallocate(&mas, ptr, GFP_KERNEL) != 0);
+ 	allocated = mas_allocated(&mas);
+ 	height = mas_mt_height(&mas);
++	vacant_height = get_vacant_height(&wr_mas, ptr);
+ 	MT_BUG_ON(mt, allocated == 0);
+-	MT_BUG_ON(mt, allocated != 1 + height * 3);
++	/*
++	 * vacant height cannot be used to compute the number of nodes needed
++	 * as the root contains two entries which means it is on the verge of
++	 * insufficiency. The worst case full height of the tree is needed.
++	 */
++	MT_BUG_ON(mt, allocated != height * 3 + 1);
+ 	mas_store_prealloc(&mas, ptr);
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+ 	mas_set_range(&mas, 0, 200);
 -- 
 2.43.0
 
