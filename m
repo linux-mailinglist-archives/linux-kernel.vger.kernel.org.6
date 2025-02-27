@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-537252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F41A489AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:19:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D69A489BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6443A98E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:18:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C0F3A9275
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F242526A1A4;
-	Thu, 27 Feb 2025 20:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E688626FA68;
+	Thu, 27 Feb 2025 20:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcB2z9z3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CvlEYPyq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1211C07E6
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B71D6182;
+	Thu, 27 Feb 2025 20:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687536; cv=none; b=g+4KTfzzXiEO9R0HppEUelZ1Mypj/rhIyH76UfdxoNPOjcBhQikreIb2LP7u5ktbpKueauikje9fDxkUtlmWHJRAk73dBQdKzN4fOJ/IHju2iJnFMksF4HELWJQkW2urEZAYJ2MTSLgRHdYk+yAIburloWWEeKw5kCPi9MF99rM=
+	t=1740687707; cv=none; b=fRmdOzSz19kx0mO5iA6DVQKhnOCxdgc8GN0j/KHWkdGWF93wWQP1ffaU5KSyRXIeqDUxUOzB+iKZUe2V26pfG2bqqWE5eFbXEnGfwxDSt0+TqBMlKVogUYsqYvJxkxo9hYvzyizS0lMRm2kYTJnw7Na+yRGC97gXHyfmHfR2EJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687536; c=relaxed/simple;
-	bh=+TweW/BFWyrYX8cKdXeRzDCMX/yo1PPVIyK0g0icqF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ontq5rSn0L5Gjzv3038t+y/7BFla6nowXpv6c+ro3r1yx/AvzbmEEef9oXI6JmaBF73ujBoC9RzDlDv8tWbtlnILVt79zsz3zy55UEJXtniKPDKqc5ez2EVAWEBBhrlgAWOFc/fQTbUSYocMCu1Hh6x646ONnPT53cluGr+D2k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcB2z9z3; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740687534; x=1772223534;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+TweW/BFWyrYX8cKdXeRzDCMX/yo1PPVIyK0g0icqF8=;
-  b=UcB2z9z3jpznWCONS0mUiENsMjY75amBToS2EtaCsLVB6JrugKVe1yEF
-   kfHR42NIEIAys129S9tGPAxJN6h953fex1hbmTfU++/t0sjAaelxPq3np
-   fH+UfE1ssTkwyrmK4unQQ+kdnNHPVQ9GtT7rxZsshx7MUKdbbXXi3rBfS
-   enN+OhdUNntxwUzVc2NRD1zrq5fMQYy9Xz3NfNVrqrxxaFD+wFBcBQqFj
-   +tvIG99CEzU1okZYm0CluAHJCggJFCCr15x3SEPxQORt7GtjZ0jZtUZ6V
-   dfcfLfgtwG62q5RoaayYvgBJA7B4Mx8kFPV1sOxY3ywMvu6nL21CQ9lm+
-   g==;
-X-CSE-ConnectionGUID: HZ/eFDEjSX62jri8Bhp1Ew==
-X-CSE-MsgGUID: jhTLtH32QCG85SlJ78RdeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="53010325"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="53010325"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 12:18:54 -0800
-X-CSE-ConnectionGUID: G1tsPvtWS5WyCNQLylqTlA==
-X-CSE-MsgGUID: Od6FgnaSTjG3VYl/FTgLTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="140350410"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 12:18:54 -0800
-Message-ID: <4c71fc86-2d70-4d50-b041-d6ef8c1baf4c@intel.com>
-Date: Thu, 27 Feb 2025 12:19:05 -0800
+	s=arc-20240116; t=1740687707; c=relaxed/simple;
+	bh=yJLvp2oI0sbx31hYDIXLNAAq0hg/gtAY3C68UTWPF8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBCpu4gmKEoAR8/g1CAH2WRHFlaKJ0J8L5n2HrQN47GrlzEO0iosB89Tw73hm0SwKRJha2OmYnVX0BzSR3Wa15O3Ur1WSGF+ofYuphxFYLslqCNhtOmiA26X0Sbw4PZhshp4RS+Z4ZjUaK3V3M0vRKtMvJDWbSoCKiDGwgsIujI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CvlEYPyq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CCFC4CEDD;
+	Thu, 27 Feb 2025 20:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740687706;
+	bh=yJLvp2oI0sbx31hYDIXLNAAq0hg/gtAY3C68UTWPF8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CvlEYPyqID3xG6JZnddwKCBj86r3Ccp80AYP8Ur+fzaXY/aU9kwpIhJiV7j0AEFfC
+	 ikcFpnhFkTSSMgHP+SXGqfjt9zHxjNb7cz9GA8d1V9by1Vo7X4ytcXHk0q7Rxzzs97
+	 f0YbwqkoW1aVPUHeNo9CPAAGczlcJVUYyF5h0YEk=
+Date: Thu, 27 Feb 2025 12:20:36 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] xhci: Restrict USB4 tunnel detection for USB3 devices to
+ Intel hosts
+Message-ID: <2025022709-unread-mystified-ddf1@gregkh>
+References: <20250227194529.2288718-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
- and accessor macro
-To: Ingo Molnar <mingo@kernel.org>
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, Linus Torvalds <torvalds@linux-foundation.org>
-References: <20250227184502.10288-1-chang.seok.bae@intel.com>
- <20250227184502.10288-3-chang.seok.bae@intel.com>
- <Z8C3ZcMgHuBtIjFR@gmail.com> <674db309-e206-4bb4-bf99-b3c39bff7973@intel.com>
- <Z8C-xa7WB1kWoxqx@gmail.com> <af4ec757-22fd-4438-91fc-d8778998bf07@intel.com>
- <Z8DE0K2EEDe1dQdh@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <Z8DE0K2EEDe1dQdh@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227194529.2288718-1-maz@kernel.org>
 
-On 2/27/25 12:02, Ingo Molnar wrote:
->>> There's a 4th option:
->>>
->>>    4. Reuse XFEATURES 3/4 (MPX) only on APX-aware kernels, keep it 
->>>       disabled for old kernels.
->>>
->>> Problem solved.
->> The worry boils down to code in the kernel or userspace doing this:
->>
->> 	if (XGETBV(0) & 0x11)
->> 		do_mpx_gunk();
-> New, APX-aware kernels wouldn't be doing this, why would they?
-
-New, updated software is rarely the problem. It would not be a problem
-in this case either.
-
-The problem is with old OSes/VMMs and even old userspace on new kernels.
-XGETBV() is unprivileged, so the concern extends to userspace and kernel.
-
->> So, sure, we could try to make sure that new kernels don't have any 
->> do_mpx_gunk() in them, but that doesn't help old kernels or other 
->> OSes/VMMs.
-> Old kernels would *never* see this bit enabled if it's disabled by 
-> default on bootup ...
+On Thu, Feb 27, 2025 at 07:45:29PM +0000, Marc Zyngier wrote:
+> When adding support for USB3-over-USB4 tunnelling detection, a check
+> for an Intel-specific capability was added. This capability, which
+> goes by ID 206, is used without any check that we are actually
+> dealing with an Intel host.
 > 
-> VMMs would boot with it default-disabled as well, they can enable it 
-> themselves.
+> As it turns out, the Cadence XHCI controller *also* exposes an
+> extended capability numbered 206 (for unknown purposes), but of
+> course doesn't have the Intel-specific registers that the tunnelling
+> code is trying to access. Fun follows.
+> 
+> The core of the problems is that the tunnelling code blindly uses
+> vendor-specific capabilities without any check (the Intel-provided
+> documentation I have at hand indicates that 192-255 are indeed
+> vendor-specific).
+> 
+> Restrict the detection code to Intel HW for real, preventing any
+> further explosion on my (non-Intel) HW.
+> 
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: stable@vger.kernel.org
+> Fixes: 948ce83fbb7df ("xhci: Add USB4 tunnel detection for USB3 devices on Intel hosts")
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/usb/host/xhci-hub.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+> index 9693464c05204..69c278b64084b 100644
+> --- a/drivers/usb/host/xhci-hub.c
+> +++ b/drivers/usb/host/xhci-hub.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/unaligned.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/pci.h>
+>  
+>  #include "xhci.h"
+>  #include "xhci-trace.h"
+> @@ -770,9 +771,16 @@ static int xhci_exit_test_mode(struct xhci_hcd *xhci)
+>  enum usb_link_tunnel_mode xhci_port_is_tunneled(struct xhci_hcd *xhci,
+>  						struct xhci_port *port)
+>  {
+> +	struct usb_hcd *hcd;
+>  	void __iomem *base;
+>  	u32 offset;
+>  
+> +	/* Don't try and probe this capability for non-Intel hosts */
+> +	hcd = xhci_to_hcd(xhci);
+> +	if (!dev_is_pci(hcd->self.controller) ||
+> +	    to_pci_dev(hcd->self.controller)->vendor != PCI_VENDOR_ID_INTEL)
+> +		return USB_LINK_UNKNOWN;
 
-The problem is with code which is logically like this:
+Ugh, nice catch.
 
-        cpuid_count(CPUID_LEAF_XSTATE, 0, &eax, &ebx, &ecx, &edx);
-        fpu_kernel_cfg.max_features = eax + ((u64)edx << 32);
-	fpu_kernel_cfg.max_features &= SUPPORTED_FEATURE_MASK;
-	xsetbv(fpu_kernel_cfg.max_features);
+Mathias, want me to just take this directly for now and not wait for you
+to resend it?
 
-In that code, the kernel asks the CPU which features it supports and
-then it enables all those features. In an old kernel,
-SUPPORTED_FEATURE_MASK would contain the two MPX XFEATURES.
+thanks,
 
-So I'm not _quite_ sure what you meant when you said:
-
-> Old kernels would *never* see this bit enabled if it's disabled by
-> default on bootup ...
-
-Because old kernel very much do see the MPX bits in CPUID and very much
-do enable them by default via XSETBV.
-
-But I suspect I'm misunderstanding what you mean by "this bit" in first
-place. Could you explain in some more detail, please?
+greg k-h
 
