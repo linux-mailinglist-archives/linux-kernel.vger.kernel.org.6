@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-537089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA3BA487FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:41:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DA1A48850
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23B016653F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EE0189191C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D411EB5E4;
-	Thu, 27 Feb 2025 18:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8CC26B974;
+	Thu, 27 Feb 2025 18:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="BHxdprZ5"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ywpjxjll"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B761F585B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0805224BBE5
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681681; cv=none; b=e98oRol4Jj9Wgk6nYjfEAKO41y+Ws3Txs/kN/k65cOCR7EgGUnDk0DsSbjsH/pCzd3LYsfufYnaSOSYjkkRa3jKIbHahcdfSF7ze6Dy0qxXqF2UtvINyf0UF6UqiqgFhbrZW6n37MmBQwYnfpS6Fi58VbB4gc/AfuUj1BCJSAC8=
+	t=1740682337; cv=none; b=j1a/YtlWRvVYEbtnA8SPsEa4BRdDRvLpO8CqYldeDySYaFZk7spmRbbhRlvOWqNc+lapKbdiqXIa0dte2OYkjJPno4KBt/n4elvMrxHMSg+wc1j7WsoQV+Qa5MwBDM9e+3uhibY0m79NbiuDEMbFGNSWbuWjTawyRSx3WUtrLgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681681; c=relaxed/simple;
-	bh=VsPeGELfKzh2zGT/k2lCE+HEjrx0IEdRBb/n1+v7KX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KzlDRebi9FZY6nvHO+Au/nIdXfdLEReEZXFlxiPceA4neRP97xTIaKcaEfDA5B+doVqlsUw05btz3AodZWviClqF2mdEYrX4pwHFzWx5IN1+PHCFOQ+SC4xbxQJCpIJXqrbB63SatNzoVdoDgbZ7rSvkwEiUJV3JbYT/uNwkdSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=BHxdprZ5; arc=none smtp.client-ip=121.127.44.59
+	s=arc-20240116; t=1740682337; c=relaxed/simple;
+	bh=9YT1d9GISltSTtz8dTBbWKTn8OXvk3sE1Jl32PtK2vw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ht4VE8D6dUUenXHpiXYx3PhjEGz4JIhOSzXlJtmLq4kn/1qwR9XZ3pfvmpsyWWQRSxd75c7q/OuaqL9sDXMCrF8p6mPRmN86HoGj6xqSjITXxzWW3mcJkLNrj0zonzYfzVYimsTF0JkYLFAhDMcEd5A31JrKrP4jBLkqlYiqELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ywpjxjll; arc=none smtp.client-ip=121.127.44.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-e1b5cab7be; t=1740681678;
- bh=r6E0ijl99dglGUtzxVKRHRyEXc5SE/61O6khRNhDT7Q=;
- b=BHxdprZ5FVRytbppPNtqHiM+lZniBdcwVbOe0a4seftHq6ZEnULwt6bDQqOq5Ej2aAp0VrdOU
- v+8FTBvgvt+bQhRtZGt5LcJ4QT6zpO+261wQ7rSHCAnEs8UNiSyDWpNgjqPG7G83oPsyrdT4dQ9
- Vkvf6OBsnVuOFK5QrQPKZ03zOu5ilTEMj7f/GZ2QFcKU9KqS80EXG6cu10xuFwV5f3yl8a84dzR
- uicdlkK6ZqL9nXFMLAuXm/xMUVoPIjx8Ia2ruhtSvUoyrYArEYozIty83zZWojTtQGVz6N94bXz
- ykf4ECvEKFU2KknD/KgxIqBYWmlnyaIwtA2l3nNq04TA==
-X-Forward-Email-ID: 67c0b1c9bf572996e8621452
+ h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
+ Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
+ t=1740682334; bh=eS8EdvGPaOo7zCDoFD9uMhkn/FUO+ddnyL9qkYr6zIE=;
+ b=ywpjxjll8cj4DqhTNj3MVwVR21+QmMNoC5xMyhMQWf9KvgkiXO10IycgR/TQW4pBxRo2oCdoz
+ OSLABiASwnMhsmK+Kg3f071TzTBtOp1jwO0V/6+tY1Jdp2gfrA/UUsS+lev5BuaVF1St2cydIrg
+ WlTXkQDzfgAuJVQyLku6n0jAfuhWXfXGG1Xap4JIU6tgsmKlfUar17jpyumi6ePrRLjNOyxfxCt
+ 5Ql86TylB5DHH2h95RrD2k9onaOJaKj6Gzd8NAq7SpSwTcSjbFTCtblOOBlVOhONgfEeHDxiqaX
+ UEdf258HBILV4s4xbo5L/gf4E+oZLX/Ms0u+Pb01MmQw==
+X-Forward-Email-ID: 67c0b1cebf572996e8621467
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  121.127.44.59
 X-Forward-Email-Version: 0.4.40
@@ -47,23 +48,25 @@ X-Complaints-To: abuse@forwardemail.net
 X-Report-Abuse: abuse@forwardemail.net
 X-Report-Abuse-To: abuse@forwardemail.net
 From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Heiko Stuebner <heiko@sntech.de>,
 	Jonathan Cameron <jic23@kernel.org>,
 	Lars-Peter Clausen <lars@metafoo.de>,
-	Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>,
 	linux-rockchip@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-iio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 0/4] rockchip: Add support for maskrom button on Radxa E20C
-Date: Thu, 27 Feb 2025 18:40:49 +0000
-Message-ID: <20250227184058.2964204-1-jonas@kwiboo.se>
+Subject: [PATCH 1/4] dt-bindings: iio: adc: Add rockchip,rk3528-saradc variant
+Date: Thu, 27 Feb 2025 18:40:50 +0000
+Message-ID: <20250227184058.2964204-2-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250227184058.2964204-1-jonas@kwiboo.se>
+References: <20250227184058.2964204-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,24 +75,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Radxa E20C has two buttons, one SARADC maskrom button and one GPIO
-user button.
+The Successive Approximation ADC (SARADC) in RK3528 uses the v2
+controller and support:
+- 10-bit resolution
+- Up to 1MS/s sampling rate
+- 4 single-ended input channels
+- Current consumption: 0.5mA @ 1MS/s
 
-This series adds dt-binding, driver support, DT node in SoC .dtsi and
-adc-keys node in board DT to support the maskrom button.
+Add a rockchip,rk3562-saradc compatible string for the 4 channels of
+10-bit resolution supported by SARADC in RK3528.
 
-Jonas Karlman (4):
-  dt-bindings: iio: adc: Add rockchip,rk3528-saradc variant
-  iio: adc: rockchip_saradc: Add support for RK3528
-  arm64: dts: rockchip: Add SARADC node for RK3528
-  arm64: dts: rockchip: Add adc-keys node to Radxa E20C
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+ Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/iio/adc/rockchip-saradc.yaml     |  1 +
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 50 +++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 13 +++++
- drivers/iio/adc/rockchip_saradc.c             | 18 +++++++
- 4 files changed, 82 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+index fd93ed3991e0..86eae9672c04 100644
+--- a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+@@ -15,6 +15,7 @@ properties:
+       - const: rockchip,saradc
+       - const: rockchip,rk3066-tsadc
+       - const: rockchip,rk3399-saradc
++      - const: rockchip,rk3528-saradc
+       - const: rockchip,rk3588-saradc
+       - items:
+           - const: rockchip,rk3576-saradc
 -- 
 2.48.1
 
