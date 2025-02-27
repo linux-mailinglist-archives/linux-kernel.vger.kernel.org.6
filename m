@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-536208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B879A47CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:03:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCADA47CD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDDF1678C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2E7F1890F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0D42AA5;
-	Thu, 27 Feb 2025 12:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAC822AE42;
+	Thu, 27 Feb 2025 12:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WefDE7Jd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HN5IATKy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zjYRfjCx"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F14270020
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEC8270048;
+	Thu, 27 Feb 2025 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740657788; cv=none; b=Lzt1GE2gkw/bWH6I2Fj4STSTrdK+gNqvalRzlrebkYMLRt3SriD7jxvKryiRwAB/Oq9o1AIfgVE5/CX2kbWEtKD1/FWpq89B7m1bXPSK4Q3Q1ZY3tp9+TgF7MsMsCKbRVltHgtwUIhtgEzRywmUhaB575KTmPDHjl5F5jri62fY=
+	t=1740657911; cv=none; b=r+EM+xvPPFEtsAzr47rSFYS70HxDNrfbUU6cgXQ3gejkMPnYf5cy8hk17IhY5A8NBccdJ512nKXjUc3gcPjgO69ODEBoVWKxzDEhqZ7zBoXPjouAZ/O5w2GTTIcbQIXIzx3+HnIbyZq2bwKarBy7FVgkdeY5E/R0WGSlw+4Z528=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740657788; c=relaxed/simple;
-	bh=NQiCDHbc4sv+CR/8zk750oE11oq5a4gIIvmi+RsiEbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l8fYWDyz+x5c5gLqRZUEvXUPZj5i9qQsaTDJFT9EZ/im08/J4lSamXR9SWklJNTeJaXoLO+yS4libx/Hoatd9QxhkcmdaukKXyBD+f/OBP+5qXrsV4f6Yqz5X5ATaSqldfB7GY+G0QKxTsThh+6/CrcaU+Oz76XL72PtbySo8OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WefDE7Jd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740657785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v5xj3BC1T+wGPDd2kj9+gKjm5LAXNQxtfhll0pXUlUM=;
-	b=WefDE7Jd0VtbQSmd2bmud5SQxEic7jWBhNIW6VlGgsenebssU0KulonD38lPrK3+K+0UJC
-	LLAXh2FMrwCQiMoehkm0e77FihImfU5QVCBX+fPNqE/M6t6xm+yTTIYdaGEh1UtJvKX6+4
-	1c19O+r3jWesTrmQkvY1CpRJjFjPSgI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-454-fzxF29BJP_yLlJONcnRCIg-1; Thu, 27 Feb 2025 07:03:03 -0500
-X-MC-Unique: fzxF29BJP_yLlJONcnRCIg-1
-X-Mimecast-MFC-AGG-ID: fzxF29BJP_yLlJONcnRCIg_1740657783
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38f55ccb04bso521369f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:03:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740657782; x=1741262582;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v5xj3BC1T+wGPDd2kj9+gKjm5LAXNQxtfhll0pXUlUM=;
-        b=w4o7C/V4m+fr0j4I4keOvIL18wJv2GFXQotI3sXsm55LsjcSXDzMuduapROspPO/fw
-         PE5QP2LaeEkVbeX1VoR+murCmhptTgZ/8S2qL53GWpF2ZX9Qt0+sc164txp4m4hMpWOB
-         fn99aVDlZSek/zp11/Py4CNC3yXrjuKuwkA3AYxKC7b6i4RWUUO99mlBxA7mPUDrzl5U
-         Y5Skl7LVg6/9ygsLFCzJzxOw+lJ9/44UUwhdYLs7hyGRSKJRRnlrMsXVadtWODYWkVb1
-         cFt6LOHNrv60fxHVI68ZFjLLLwu5cqmlQ117jVSOyP1lwaDY5T/IVDukgi4TEnNduPMx
-         5Mcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl4j+yxcaRkm7r7KNTNHKC9g4PqWdblQ6wTSgKN6/QYH8uYf8qYZAAP28oyX3NyNja0Wk/HmFh5kMIwG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxWvxxQR6wbn0M8DdMAOdkk/4loPbTME924Hre/ug4xObSMj4E
-	ZY9lCF3kxhqqzdF8NxilwDC/ogYLWxjp10TaiVJw/KmmTJ/L9EGD9hqP5p9QWSJ2d3yS+tQrmXK
-	ZRs8aGSI+yrbRyrqtm1iDdIYAe/F9sYutBBM8lD+IKKx9WkmEVN5wfm7EJIbkxw==
-X-Gm-Gg: ASbGncudpGLzLnRqYBIUabz2xaM3JQt/BN8PYP4qb4UYF3wnAVfu2DykxlD/1c39nlA
-	Hg5zCkC1+N/8JUyeUR1n0KcqMWy5NQbdifIrtYL+rRn5LzMTbQmZX86GSxY/YOlhWwXQAqG4YJW
-	6Tk1tg+EXhE4crFpNGyusoimvhhbQfdNMNcqQ+7eBohSNkR1H+MxzOx3xEN2LaCswv3v0zCyTk2
-	uLVhGqOVSS6+Pkqwda5PoRiun5mpjB9CmqjesSb3iwFohp1twMBQUV3h2qm37eUa43U9spZ4kx3
-	4G4qoFuC2BWLr4SqyoWenS3IXvhgli6Te+5mbZbxIVLy+MES3SsXhJPxBtDWWPk=
-X-Received: by 2002:a05:600c:5123:b0:439:8ef6:5782 with SMTP id 5b1f17b1804b1-43ab8fd7acemr66726375e9.10.1740657782490;
-        Thu, 27 Feb 2025 04:03:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHGsmcVRgCFbjb9R4XUkv4ggUO+/xJlQmWBPEfi9kCw3Hg6pcObspvfzXkTMsw8PrznpqnjCQ==
-X-Received: by 2002:a05:600c:5123:b0:439:8ef6:5782 with SMTP id 5b1f17b1804b1-43ab8fd7acemr66725875e9.10.1740657782065;
-        Thu, 27 Feb 2025 04:03:02 -0800 (PST)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485ddd1sm1827170f8f.94.2025.02.27.04.03.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 04:03:01 -0800 (PST)
-Date: Thu, 27 Feb 2025 13:03:00 +0100
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/21] tests/qtest/bios-tables-test: extend to also
- check HEST table
-Message-ID: <20250227130300.607bbc27@imammedo.users.ipa.redhat.com>
-In-Reply-To: <3ebde58416b8be1140c569538192399feeccf412.1740653898.git.mchehab+huawei@kernel.org>
-References: <cover.1740653898.git.mchehab+huawei@kernel.org>
-	<3ebde58416b8be1140c569538192399feeccf412.1740653898.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740657911; c=relaxed/simple;
+	bh=8pN9ZtJpWnad92ETYOWFrypWE7zqctvEixPpkbJ7xl0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ZZNYHdfECyGvE+Owi8weJndMfFezcAjSzc7rzjSzvalFyiQRtS7bRiZAELgLZP+KfwcysPP+oEQ+3GOopP6KwYVGo1DBB3KGUVq29LGZP4CSZAfmqjE2ACq6yuprafm9hFEZ8TrfG3Qp2ny8ql+DZnBZLLfHITYYTfvBiA6D9sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HN5IATKy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zjYRfjCx; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id F04A21140163;
+	Thu, 27 Feb 2025 07:05:07 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-11.internal (MEProxy); Thu, 27 Feb 2025 07:05:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740657907;
+	 x=1740744307; bh=wR1yJ7+sfWbEGLOYHNHHr2Z5z5K7L8QPIipqy40eWks=; b=
+	HN5IATKyqc2W4FueNuOQhB//31RcdqjDp6IGbejFqjp8X49ngbkIUeef+Vz3uFka
+	LHT/XQ5GPhnxy/qD6Mgn75DGQDBbehVPsjd2w2M0GFdU9jpMhsv/+SXOkd7NhENw
+	Ydkz/7h/LYp2iszauo0vQIcRcAo5GOjG/uV6DBCem24qzbZzhbpZggJhVUfJdEk4
+	nurDYGfnHuVr4GPgA4TcCd+PWGMy5JUQLKfdhZkp2pIZqqj1nH924dVwF+6jidez
+	L5T0oSIb/PQ84xdBrMAQ4Eor6VisqUENCKeK91FrOGW4jR9pKpnVvpHrO+9H9Vg2
+	GpKK3HZSh90Bu8VQbo8zvQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740657907; x=
+	1740744307; bh=wR1yJ7+sfWbEGLOYHNHHr2Z5z5K7L8QPIipqy40eWks=; b=z
+	jYRfjCxJ2cPXcbh5P5cSNeAlGxJqU0E7HiFSuPuUtjBOPbSuaCy4/I1rgl7R1uGL
+	6COMISQyRMu2tQFFKITm9SljU+FCpVyldGhgF5hhBibiHmaDjx75Swd/Zs3P4YOt
+	EDPavd5j3dVfG/hjujLoAO2WSBYFg61lHBz6eSQfj/YGj8hWqYXI2WXUDOpe2s53
+	JIlvYT4wbcwb0ezNaYnU8msVwjGmpHZsrsFIbyD8K7UTttIP+hrfaooZDzqCcySL
+	KpnTf7kO1A0p+qyoQhmHnmz75pc46lTMVNIGbLU0qxqk4Pf872DEQs5c47z51vG+
+	qHydthYNUmFQu9L062iIw==
+X-ME-Sender: <xms:8lTAZ7KqEZSAM3nBSCA8Xk2nhBCGCYTf3o8IUb0K78u_DlwvzfA0ZQ>
+    <xme:8lTAZ_K17-qWr38d6amvOensD6RaEB5GHjDzrOcoH4-aNrPQdvnIqsU5Roa1wZyNc
+    aziUw3nXHn4v2W1S8o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeegudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnh
+    highessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhl
+    ohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtohepshgrlhhilhdrmhgvhhhtrgeshhhurgifvghirdgtohhmpdhrtghpthht
+    ohepshhhrghojhhijhhivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepshhhvghnjh
+    hirghnudehsehhuhgrfigvihdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epkhhusggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:8lTAZzs8APRGeCK3xKVQLOEZzJ1mN53J34GxAQEI_jMuij28X512XA>
+    <xmx:8lTAZ0YTfg_4FfIRrXYYkdP1caULsA3qkVo55TTmf0bYKXEG8V3LWg>
+    <xmx:8lTAZybdypKjL98ayHQ1Og_jG--RTGRWv7RqRIDq_KC_z2hirIzn0A>
+    <xmx:8lTAZ4Dp_hYygRJJJgA7nPpl3lXaDI9x2SB-m9b5IgK6j7YcGzrVVQ>
+    <xmx:81TAZ6o2w1SVZVGrvyhEbSb-HmYZLJ1tKKNDO5LwngpgwaRiWqLixpsf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C122A2220076; Thu, 27 Feb 2025 07:05:06 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 27 Feb 2025 13:03:05 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jijie Shao" <shaojijie@huawei.com>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Jian Shen" <shenjian15@huawei.com>, "Salil Mehta" <salil.mehta@huawei.com>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>
+Cc: "Simon Horman" <horms@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Message-Id: <c28e16ce-d535-4af4-972b-e19376833235@app.fastmail.com>
+In-Reply-To: <3e477135-981f-49bd-8e54-0c3ecdcc8a19@huawei.com>
+References: <20250225163341.4168238-1-arnd@kernel.org>
+ <da799a9f-f0c7-4ee0-994b-4f5a6992e93b@huawei.com>
+ <c0a3d083-d6ae-491e-804d-28e4c37949d7@app.fastmail.com>
+ <3e477135-981f-49bd-8e54-0c3ecdcc8a19@huawei.com>
+Subject: Re: [PATCH 1/2] net: hisilicon: hns_mdio: remove incorrect ACPI_PTR annotation
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 12:03:32 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Thu, Feb 27, 2025, at 12:53, Jijie Shao wrote:
+>
+> if CONFIG_ACPI is disabled, ACPI_PTR() will return NULL, so
+> hns_mdio_acpi_match is unused variable.
+>
+>
+> So use #ifdef is possible and has no side effects, and many drivers do so.
 
-> Currently, aarch64 can generate a HEST table when loaded with
-> -machine ras=on. Add support for it.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Those should be cleaned up eventually, but that is separate from
+the build warning.
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> Of course, it also seems possible to remove ACPI_PTR(),
+> But I'm not sure if it's okay to set a value to acpi_match_table if 
+> CONFIG_ACPI is disabled.
 
-> ---
->  tests/qtest/bios-tables-test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tests/qtest/bios-tables-test.c b/tests/qtest/bios-tables-test.c
-> index 0a333ec43536..8d41601cc9e9 100644
-> --- a/tests/qtest/bios-tables-test.c
-> +++ b/tests/qtest/bios-tables-test.c
-> @@ -2122,7 +2122,7 @@ static void test_acpi_aarch64_virt_tcg(void)
->  
->      data.smbios_cpu_max_speed = 2900;
->      data.smbios_cpu_curr_speed = 2700;
-> -    test_acpi_one("-cpu cortex-a57 "
-> +    test_acpi_one("-cpu cortex-a57 -machine ras=on "
->                    "-smbios type=4,max-speed=2900,current-speed=2700", &data);
->      free_test_data(&data);
->  }
+Setting .acpi_match_table and .of_match_table unconditionally
+is the normal case. Historically we had some drivers that
+used of_match_ptr() to assign the .of_match_table in order
+to allow drivers to #ifdef out the CONFIG_OF portion of the
+driver for platforms that did not already use devicetree
+based probing.
 
+There are basically no platforms left that have not been
+converted to devicetree yet, so there is no point in
+micro-optimizing the kernel size for that case, but the
+(mis)use of of_match_ptr() has been copied into drivers
+after that, and most of the ACPI_PTR() users unfortunately
+copied from that when drivers started supporting both.
+
+     Arnd
 
