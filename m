@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-536095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56646A47B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:10:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD32A47B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF7BA188E4F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C3F16D4D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB9322FAC3;
-	Thu, 27 Feb 2025 11:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NuJ9PbZO"
-Received: from mail-m19731109.qiye.163.com (mail-m19731109.qiye.163.com [220.197.31.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1218D22F388
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41DF2253BC;
+	Thu, 27 Feb 2025 11:08:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DAB224226;
+	Thu, 27 Feb 2025 11:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654492; cv=none; b=Tw1Zvrxi6NnC3OilRaTtNmW5qb5hGK8sNGYTP/UOWYzBZ+/kmFt+IIePsaNQxOqfzLun0OBlfr3OprUPSYPA1UkmtjddaHQhM446DBpbejHrc3NvYTyGgZdoWS9py5PUgjCgDUJ0HKSYVF6ZDbM7/gbEqzH47hXkVCAniPuVFGg=
+	t=1740654519; cv=none; b=FLscyB33n+Cd0LU0iGXazPvtNOQ3zY49Urc0XOXljg2ldgicOA/IAE9BTiddFisuL1B2N2hnRs4KvPF1VwF0LKUQAL5TR5qzEDNKHSzR3xKSGL8+24CEIZvzdN81Kkf2Y9XYV4Ix0fdKtAXL/cKbc5InITo7c/hxRXvaM9bqAZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740654492; c=relaxed/simple;
-	bh=ah036QBdUC5VHOFCc117mgdh1Xx8978CYwAhudvak4c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QaHrsPbKm309HUPzM3cupEB6PKiqazsEqh0N504b83bzs4YSMqKaojoXBlbh9eOi6++MDryxP2SGP+39L1b9t1+JdpwpM9RR7DJcLf0tfiheLbRi1nLM2dts8T7s8SAuEvbTgdmO/cGQsuIP96iBsRxVHMEbp1NgnXluO9Jy338=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NuJ9PbZO; arc=none smtp.client-ip=220.197.31.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id c65b37e3;
-	Thu, 27 Feb 2025 19:08:07 +0800 (GMT+08:00)
-From: Kever Yang <kever.yang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 3/3] nvmem: rockchip-otp: Add support for rk3562
-Date: Thu, 27 Feb 2025 19:08:04 +0800
-Message-Id: <20250227110804.2342976-3-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250227110804.2342976-1-kever.yang@rock-chips.com>
-References: <20250227110804.2342976-1-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1740654519; c=relaxed/simple;
+	bh=XO2jfTI107R+rb5azefOUZU+vtLmfEnZbkQ+3/fyhEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bz+/Vf5j79P0zltP8b0YAujVRO2s1BlAEkSSlLHabnBDyWW5xC1/0EiVmqInkvisAOAUtP8pRoLbbwj2GcYi4A8sxG7n4EA8hSyjtLqGI50bHlJyL15jaWNR6UCVGz4POQjEY5b4HlzGGigWJgXXXF2tZqj+W6TFxkc8rP0qCMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D84A2BCC;
+	Thu, 27 Feb 2025 03:08:51 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C90A3F6A8;
+	Thu, 27 Feb 2025 03:08:33 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:08:30 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>
+Subject: Re: [PATCH v7 07/10] arm64: dts: morello: Add support for common
+ functionalities
+Message-ID: <Z8BHrrL0kXeBmRpx@bogus>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
+ <20250221180349.1413089-8-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh5ITFYaSB1KSk9OSkNKSE9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-X-HM-Tid: 0a954717a85e03afkunmc65b37e3
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OSI6Eyo*LTILFQ0LKBQ6Lhgc
-	TDIKCjBVSlVKTE9LTU5PT0NDTk5OVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKSEhJNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=NuJ9PbZOq0suEaL1eeWZHCn6FQR1hTBrmFt+1/iim5yUFnS9gNJpowjYkMkMjLQEhJAUfyAETUpE3pF7CpqWCvb0Qe9RQaFhfZ50tbcdnVrC/sUHWNMyRj0BFMLpkl2SrM3uWnFenUvpdI0eyVZsTl8kshuq6DLU53A6M/v141c=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=dXsD9MQD1sYnSEmH2nVcNU78cnc+FXKwdmWo6JL0D7U=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221180349.1413089-8-vincenzo.frascino@arm.com>
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+On Fri, Feb 21, 2025 at 06:03:46PM +0000, Vincenzo Frascino wrote:
+> The Morello architecture is an experimental extension to Armv8.2-A,
+> which extends the AArch64 state with the principles proposed in
+> version 7 of the Capability Hardware Enhanced RISC Instructions
+> (CHERI) ISA.
+> 
+> The Morello Platform (soc) and the Fixed Virtual Platfom (fvp) share
+> some functionalities that have conveniently been included in
+> morello.dtsi to avoid duplication.
+> 
+> Introduce morello.dtsi.
+> 
+> Note: Morello fvp will be introduced with a future patch series.
+> 
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/morello.dtsi | 323 +++++++++++++++++++++++++++
+>  1 file changed, 323 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/arm/morello.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/arm/morello.dtsi b/arch/arm64/boot/dts/arm/morello.dtsi
+> new file mode 100644
+> +
+> +		gic: interrupt-controller@2c010000 {
+> +			compatible = "arm,gic-v3";
+> +			reg = <0x0 0x30000000 0x0 0x10000>,	/* GICD */
+> +			      <0x0 0x300c0000 0x0 0x80000>;	/* GICR */
 
-This adds the necessary data for handling otp on the rk3562.
+[...]
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
----
+> +
+> +
+> +		sram: sram@45200000 {
+> +			compatible = "mmio-sram";
+> +			reg = <0x0 0x06000000 0x0 0x8000>;
+> +			ranges = <0 0x0 0x06000000 0x8000>;
+> +
 
-Changes in v2: None
+[...]
 
- drivers/nvmem/rockchip-otp.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Not sure if you are not seeing these warnings from DTC. Looks pretty clear
+to me. May be you missed or using some old DTC. I don't know why though.
+If you agree, I can patch it up with below patch and no need to repost:
 
-diff --git a/drivers/nvmem/rockchip-otp.c b/drivers/nvmem/rockchip-otp.c
-index a04bce89ecc8..6f86cf8ec390 100644
---- a/drivers/nvmem/rockchip-otp.c
-+++ b/drivers/nvmem/rockchip-otp.c
-@@ -341,6 +341,17 @@ static const struct rockchip_data px30_data = {
- 	.reg_read = px30_otp_read,
- };
- 
-+static const char * const rk3562_otp_clocks[] = {
-+	"usr", "sbpi", "apb_pclk", "phy",
-+};
-+
-+static const struct rockchip_data rk3562_data = {
-+	.size = 0x80,
-+	.clks = rk3562_otp_clocks,
-+	.num_clks = ARRAY_SIZE(rk3562_otp_clocks),
-+	.reg_read = rk3568_otp_read,
-+};
-+
- static const char * const rk3568_otp_clocks[] = {
- 	"usr", "sbpi", "apb_pclk", "phy",
- };
-@@ -372,6 +383,10 @@ static const struct of_device_id rockchip_otp_match[] = {
- 		.compatible = "rockchip,rk3308-otp",
- 		.data = &px30_data,
- 	},
-+	{
-+		.compatible = "rockchip,rk3562-otp",
-+		.data = &rk3562_data,
-+	},
- 	{
- 		.compatible = "rockchip,rk3568-otp",
- 		.data = &rk3568_data,
--- 
-2.25.1
+morello.dtsi:227.38-272.5: Warning (simple_bus_reg): /soc/interrupt-controller@2c010000: simple-bus unit address format error, expected "30000000"
+morello.dtsi:296.23-313.5: Warning (simple_bus_reg): /soc/sram@45200000: simple-bus unit address format error, expected "6000000"
+morello.dtsi:227.38-272.5: Warning (simple_bus_reg): /soc/interrupt-controller@2c010000: simple-bus unit address format error, expected "30000000"
+morello.dtsi:296.23-313.5: Warning (simple_bus_reg): /soc/sram@45200000: simple-bus unit address format error, expected "6000000"
+
+Regards,
+Sudeep
+
+-->8
+
+diff --git i/arch/arm64/boot/dts/arm/morello.dtsi w/arch/arm64/boot/dts/arm/morello.dtsi
+index e35e5e482720..0bab0b3ea969 100644
+--- i/arch/arm64/boot/dts/arm/morello.dtsi
++++ w/arch/arm64/boot/dts/arm/morello.dtsi
+@@ -224,7 +224,7 @@ uart0: serial@2a400000 {
+                        status = "disabled";
+                };
+
+-               gic: interrupt-controller@2c010000 {
++               gic: interrupt-controller@30000000 {
+                        compatible = "arm,gic-v3";
+                        reg = <0x0 0x30000000 0x0 0x10000>,     /* GICD */
+                              <0x0 0x300c0000 0x0 0x80000>;     /* GICR */
+@@ -293,7 +293,7 @@ mailbox: mhu@45000000 {
+                        clock-names = "apb_pclk";
+                };
+
+-               sram: sram@45200000 {
++               sram: sram@6000000 {
+                        compatible = "mmio-sram";
+                        reg = <0x0 0x06000000 0x0 0x8000>;
+                        ranges = <0 0x0 0x06000000 0x8000>;
 
 
