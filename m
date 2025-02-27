@@ -1,124 +1,268 @@
-Return-Path: <linux-kernel+bounces-535609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD94DA47514
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:14:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23C6A4751D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4761316E1DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:13:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66AD3ACE11
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C161E8357;
-	Thu, 27 Feb 2025 05:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3271EA7F3;
+	Thu, 27 Feb 2025 05:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="rnXDS1IT"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxEu948t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105011E833A;
-	Thu, 27 Feb 2025 05:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F18186E2D;
+	Thu, 27 Feb 2025 05:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740633228; cv=none; b=JxlbTsacJxE2eVydeA02+8MbN8j892mdtbHO2J5Q1yNgLLv59I9jV3g1aMb9hDYbsQi0zk9Bp3k2mMjz4Ppwz2Z+dBTU+DF/LXGK09jzzQMDTXDE4HSO4rlexEntkGhaUxNwc5cDSCk2ZDb2MUknDcIf47gQ5JkYKCgRUtghppg=
+	t=1740633440; cv=none; b=cYCK+B0oM+Q2Wq+wIX5z02hT178AlLqMW79sbJLkLoe60RYALJuT2zF4yyy/3QMKs7LhIWIQcKL3NmJyAlUDdLa46kE8OScVudlzr0JVEW+Mxi/5e+TGR7VGfdoB6NghUKS7NldxUHnR9HGUA37MHFCSjUMqZpCKwMhJLRTJ9VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740633228; c=relaxed/simple;
-	bh=6mPELG30QvwhvudxXkhUdp/eArCX2wGHM95Gv1mHh8A=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=R+0ci8aOKfbt9xnPmMtQkDGWrGvjE4FaGnlc3isFxj197XXUlFEfD6p6HTsWxkCmV5uPOFkS6GVw3eHnEccH+lkzm8hE/lX1Xw+SzsbwNMgdPiDRjb172HlpYsMcJjlECiUyzegw1uUc9oHAMHnSRa/cqO/qztVrQmivchceOEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=rnXDS1IT; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1740633440; c=relaxed/simple;
+	bh=oEIKXLa+lC5gpgRN/t7bIplihoQJx5CcIDuHuxDQYsc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qsV5gbH6txjg6FQgZWPzVihcUZVLBmQmEDXFUvlR5x+3Y7MNeHWK2wXepcihJjvfZshnvk2oG+Z7XfxVC7DxONf6ZC8XHojaqBBlE97Q4+y1x9CIeKO8W2Dk3ScWJ1y4ayBv3WPSpzDdWKZVfquIyudTWAARbU/fyM4JhQ9ZhVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxEu948t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD80C4CEE5;
+	Thu, 27 Feb 2025 05:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740633439;
+	bh=oEIKXLa+lC5gpgRN/t7bIplihoQJx5CcIDuHuxDQYsc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uxEu948txvDodPuxC23TYrHwvLHoqpA283ysFZi5RfyXIyK5zisx5kbvnqzAzMLAm
+	 z2ckgEQaCH8dbfJdEknns1U0xZoDWaXwByOWvBD/Kkgl1rJ5m+ecEdI6sTV5o+Mgev
+	 es8jIMCEYxFuWy3uDiwj1laPDd0yCamG2abAIPthB2JdgG4/skW/8xEIDzUUnZ0D3Q
+	 0vzI1320k0xX56RZGqbeomkfxOiVmwKQgDxDTXuCYZJF+SblxlCH+SRwZtKUGfTzn7
+	 WtUXwVuSl0x1U0MegrRinJ7jrMPUdZpkRxKALkaqCFhNuywnjNGdMlJvjkpipitsPA
+	 nHryE4OGw1R6Q==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	James Clark <james.clark@linaro.org>,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v2] perf tools: Skip BPF sideband event for userspace profiling
+Date: Wed, 26 Feb 2025 21:17:18 -0800
+Message-ID: <20250227051718.1176930-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1740633224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKlLjUCYt/7C/aUqa8V29qM6zcYxyzNvO3oU1xinEp8=;
-	b=rnXDS1ITz7j5pdL6P+8n7fNPA479Gk8yJfvWPtE2+/sE/I/iwGI2FIj0MSQFyctqGhw+xg
-	y/T92ZXJYsG9mjVaM9rAiZcANtjdpMkb55uSkqiIUWhh/WBUKyJ3wcK3ywnLWuzAfkkBsj
-	Tg5vHQfSKvJ+RsfnpNnVkAKv6srOknOdZg5lHdVk4SyyQEPketV3SZyjMBNhGZSnLGgTpA
-	V7+6iO8krA2trQOxU2frbjjxPzIMrjonr+T2a87mKMXzVWyttGhnltPsHpEPbnr6GWTog7
-	OGJD0CQO8MefGCjC2Ff1T5IX61kTxJUSaDPY7ijjXEdF2v2bF2aEQNbtvw7jJQ==
-Date: Thu, 27 Feb 2025 06:13:44 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: quentin.schulz@cherry.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, dse@thaumatec.com, Heiko Stuebner
- <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add overlay for tiger-haikou
- video-demo adapter
-In-Reply-To: <20250226140942.3825223-4-heiko@sntech.de>
-References: <20250226140942.3825223-1-heiko@sntech.de>
- <20250226140942.3825223-4-heiko@sntech.de>
-Message-ID: <9cfe09a2dc108ddac16368687d43e88d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Heiko,
+The BPF sideband information is tracked using a separate thread and
+evlist.  But it's only useful for profiling kernel and we can skip it
+when users profile their application only in userspace.
 
-On 2025-02-26 15:09, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> This adds support for the video-demo-adapter DEVKIT ADDON CAM-TS-A01
-> (https://embedded.cherry.de/product/development-kit/) for the Haikou
-> devkit with Tiger RK3588 SoM.
-> 
-> The Video Demo adapter is an adapter connected to the fake PCIe slot
-> labeled "Video Connector" on the Haikou devkit.
-> 
-> It's main feature is a Leadtek DSI-display with touchscreen and a 
-> camera
-> (that is not supported yet). To drive these components a number of
-> additional regulators are grouped on the adapter as well as a PCA9670
-> gpio-expander to provide the needed additional gpio-lines.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+It seems it already fails to open the sideband event in that case.
+Let's remove the noise in the verbose output anyway.
 
-The additions to the Makefile introduced in this patch are looking
-good to me, so please feel free to include
+Cc: Song Liu <song@kernel.org>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2) add evlist__setup_sb_evlist()
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org> # Makefile
+ tools/perf/builtin-record.c       | 24 +++++++++---------------
+ tools/perf/builtin-top.c          | 20 ++++----------------
+ tools/perf/util/evlist.c          | 14 ++++++++++++++
+ tools/perf/util/evlist.h          |  4 ++++
+ tools/perf/util/sideband_evlist.c | 31 +++++++++++++++++++++++++++++++
+ 5 files changed, 62 insertions(+), 31 deletions(-)
 
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |   5 +
->  .../rk3588-tiger-haikou-video-demo.dtso       | 153 ++++++++++++++++++
->  2 files changed, 158 insertions(+)
->  create mode 100644
-> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile
-> b/arch/arm64/boot/dts/rockchip/Makefile
-> index db6017272ff1..4cddb5d2807d 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -158,6 +158,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-turing-rk1.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-coolpi-4b.dtb
-> @@ -214,3 +215,7 @@ rk3588-rock-5b-pcie-ep-dtbs := rk3588-rock-5b.dtb \
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtb
->  rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
->  	rk3588-rock-5b-pcie-srns.dtbo
-> +
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtb
-> +rk3588-tiger-haikou-video-demo-dtbs := rk3588-tiger-haikou.dtb \
-> +	rk3588-tiger-haikou-video-demo.dtbo
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 0e45bd64185403ae..ab6bef710a689f7f 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -2166,23 +2166,14 @@ static int record__setup_sb_evlist(struct record *rec)
+ 		evlist__set_cb(rec->sb_evlist, record__process_signal_event, rec);
+ 		rec->thread_id = pthread_self();
+ 	}
+-#ifdef HAVE_LIBBPF_SUPPORT
+-	if (!opts->no_bpf_event) {
+-		if (rec->sb_evlist == NULL) {
+-			rec->sb_evlist = evlist__new();
+-
+-			if (rec->sb_evlist == NULL) {
+-				pr_err("Couldn't create side band evlist.\n.");
+-				return -1;
+-			}
+-		}
+ 
+-		if (evlist__add_bpf_sb_event(rec->sb_evlist, &rec->session->header.env)) {
+-			pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
+-			return -1;
+-		}
++	if (rec->sb_evlist == NULL) {
++		rec->sb_evlist = evlist__setup_sb_evlist(rec->evlist, opts,
++							 &rec->session->header.env);
++		if (IS_ERR(rec->sb_evlist))
++			return PTR_ERR(rec->sb_evlist);
+ 	}
+-#endif
++
+ 	if (evlist__start_sb_thread(rec->sb_evlist, &rec->opts.target)) {
+ 		pr_debug("Couldn't start the BPF side band thread:\nBPF programs starting from now on won't be annotatable\n");
+ 		opts->no_bpf_event = true;
+@@ -2535,6 +2526,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		goto out_free_threads;
+ 	}
+ 
++	if (!evlist__needs_bpf_sb_event(rec->evlist))
++		opts->no_bpf_event = true;
++
+ 	err = record__setup_sb_evlist(rec);
+ 	if (err)
+ 		goto out_free_threads;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 6440b5c1757d92ce..f727738faa154564 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1833,23 +1833,11 @@ int cmd_top(int argc, const char **argv)
+ 		goto out_delete_evlist;
+ 	}
+ 
+-#ifdef HAVE_LIBBPF_SUPPORT
+-	if (!top.record_opts.no_bpf_event) {
+-		top.sb_evlist = evlist__new();
+-
+-		if (top.sb_evlist == NULL) {
+-			pr_err("Couldn't create side band evlist.\n.");
+-			status = -EINVAL;
+-			goto out_delete_evlist;
+-		}
+-
+-		if (evlist__add_bpf_sb_event(top.sb_evlist, &perf_env)) {
+-			pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
+-			status = -EINVAL;
+-			goto out_delete_evlist;
+-		}
++	top.sb_evlist = evlist__setup_sb_evlist(top.evlist, &top.record_opts, &perf_env);
++	if (IS_ERR(top.sb_evlist)) {
++		status = PTR_ERR(top.sb_evlist);
++		goto out_delete_evlist;
+ 	}
+-#endif
+ 
+ 	if (evlist__start_sb_thread(top.sb_evlist, target)) {
+ 		pr_debug("Couldn't start the BPF side band thread:\nBPF programs starting from now on won't be annotatable\n");
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index f0dd174e2debdbe8..43adf6b3d855771a 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -2594,3 +2594,17 @@ bool evlist__has_bpf_output(struct evlist *evlist)
+ 
+ 	return false;
+ }
++
++bool evlist__needs_bpf_sb_event(struct evlist *evlist)
++{
++	struct evsel *evsel;
++
++	evlist__for_each_entry(evlist, evsel) {
++		if (evsel__is_dummy_event(evsel))
++			continue;
++		if (!evsel->core.attr.exclude_kernel)
++			return true;
++	}
++
++	return false;
++}
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index adddb1db1ad2b25d..1bba5c73b1425834 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -19,6 +19,7 @@
+ struct pollfd;
+ struct thread_map;
+ struct perf_cpu_map;
++struct perf_env;
+ struct record_opts;
+ struct target;
+ 
+@@ -117,6 +118,8 @@ struct evsel *evlist__add_sched_switch(struct evlist *evlist, bool system_wide);
+ int evlist__add_sb_event(struct evlist *evlist, struct perf_event_attr *attr,
+ 			 evsel__sb_cb_t cb, void *data);
+ void evlist__set_cb(struct evlist *evlist, evsel__sb_cb_t cb, void *data);
++struct evlist *evlist__setup_sb_evlist(struct evlist *evlist, struct record_opts *opts,
++				       struct perf_env *env);
+ int evlist__start_sb_thread(struct evlist *evlist, struct target *target);
+ void evlist__stop_sb_thread(struct evlist *evlist);
+ 
+@@ -435,5 +438,6 @@ void evlist__check_mem_load_aux(struct evlist *evlist);
+ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
+ void evlist__uniquify_name(struct evlist *evlist);
+ bool evlist__has_bpf_output(struct evlist *evlist);
++bool evlist__needs_bpf_sb_event(struct evlist *evlist);
+ 
+ #endif /* __PERF_EVLIST_H */
+diff --git a/tools/perf/util/sideband_evlist.c b/tools/perf/util/sideband_evlist.c
+index 388846f17bc13fb9..e75a335e11676cdc 100644
+--- a/tools/perf/util/sideband_evlist.c
++++ b/tools/perf/util/sideband_evlist.c
+@@ -1,11 +1,14 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ 
++#include "util/bpf-event.h"
+ #include "util/debug.h"
+ #include "util/evlist.h"
+ #include "util/evsel.h"
+ #include "util/mmap.h"
+ #include "util/perf_api_probe.h"
++#include "util/record.h"
+ #include <perf/mmap.h>
++#include <linux/err.h>
+ #include <linux/perf_event.h>
+ #include <limits.h>
+ #include <pthread.h>
+@@ -94,6 +97,34 @@ void evlist__set_cb(struct evlist *evlist, evsel__sb_cb_t cb, void *data)
+       }
+ }
+ 
++struct evlist *evlist__setup_sb_evlist(struct evlist *evlist, struct record_opts *opts,
++				       struct perf_env *env)
++{
++	struct evlist *sb_evlist = NULL;
++
++	if (!evlist__needs_bpf_sb_event(evlist))
++		opts->no_bpf_event = true;
++
++	if (opts->no_bpf_event)
++		return NULL;
++
++#ifdef HAVE_LIBBPF_SUPPORT
++	sb_evlist = evlist__new();
++	if (sb_evlist == NULL) {
++		pr_err("Couldn't create side band evlist.\n.");
++		return ERR_PTR(-ENOMEM);
++	}
++
++	if (evlist__add_bpf_sb_event(sb_evlist, env)) {
++		pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
++		evlist__delete(sb_evlist);
++		return ERR_PTR(-EINVAL);
++	}
++#endif
++
++	return sb_evlist;
++}
++
+ int evlist__start_sb_thread(struct evlist *evlist, struct target *target)
+ {
+ 	struct evsel *counter;
+-- 
+2.48.1.658.g4767266eb4-goog
+
 
