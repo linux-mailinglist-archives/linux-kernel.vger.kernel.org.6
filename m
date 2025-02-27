@@ -1,102 +1,137 @@
-Return-Path: <linux-kernel+bounces-536908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08AFA485A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4AEA485B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:51:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BA73A89BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06553A4CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385F41BCA05;
-	Thu, 27 Feb 2025 16:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B041D90DB;
+	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hm4yOuD2"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CFF1B0403
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eje/hodl"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3C11AF0C2;
+	Thu, 27 Feb 2025 16:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674913; cv=none; b=FHvALV4KtWOPd0W60fdFn5zodxlRI2ZzTUolg8bUqQ8sUW8SiYhEMC43Ism0HtcMjqh0imv4b8kiOw8NlTyIAHPQavcHyp8uPo3vwGgwEBht7OJq2p7lvEbOH3CsJisLgFQBqVs8ojUvRotVp0KRgsqaxpOgcysGyGQYt1R9E4I=
+	t=1740675026; cv=none; b=Ry6kMjheMkgWl99WML+u+de1vYjkxiTuQbe0tGtRAI125wbToHFv5tyM5FDxKbZDvDYuM5vaf56+hDu40OEoZGSmewl6j14BVJ/+CzdxC6z8g3ZaUwIc7iVovCXDq02dzMEtzQZZ2lbixg9DCo7E+D/TjPZCdealrG0Zv9BVsIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674913; c=relaxed/simple;
-	bh=WeAE/TxeOmGnY4+JQF5xk1qUh5Kf+dfgn0Fy3i422Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTEioH4mNKRXsfJNsBztK+ovRoKWzNXBXQMgRjJDEWuqokJ3xaj8EA8VME9mR7FHYynK1ULeygIhXfrLIJDpZIRWmpK8VGN4SHuFQgW8N+XurIEPj4ZR2FeuloPHNSJRFyR/vVupMdTz/EgQFj1tlsH/HQy4GlNfKL7DrQ6xV/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hm4yOuD2; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 27 Feb 2025 16:48:23 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740674908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYqkwfqBGdERzPpqSrLqEfTuFzAy3l3vuA3S89dJKzI=;
-	b=Hm4yOuD2Z6trhtMH/dLnwVtxrs93F6QIonjOPAnYVXPum6sNIsIlUnQ39AVOZPf0RNm+Dq
-	PW6tP66dmw+uUfk6i1Nv8BLPd+82mtB1ZfErKAKMLfURNR7J6PycbmJulzavL4cqWtvoYQ
-	cDim2l1RgjjtYJwuy1rcm2PgMGKEhns=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Parav Pandit <parav@mellanox.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RDMA/core: don't expose hw_counters outside of init net
- namespace
-Message-ID: <Z8CXV4c9GSPXvgLN@google.com>
-References: <20250226190214.3093336-1-roman.gushchin@linux.dev>
- <CY8PR12MB719566F1EE6987670B7D85F0DCCD2@CY8PR12MB7195.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740675026; c=relaxed/simple;
+	bh=mR62XuSfzXZJNdY09zTjqiMM76glY7ee8nEqkeAlZk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h0KdPWh0MMGKVp0SXPRIi1ppsYbKqq/8+kWsTeVtj8H/ntiSK/ZIxifTVX+arUU4bhP9PVwohtXmUBRI6PKENwT7dyQC31lidtLYtOqvAdZK97zyf8V5N8+VcqFIZ3+uHzg0u12oY58cYeKzxd/S7aTvSJNePiN6ZGQ1HmKhwd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eje/hodl; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=b3eACf/NqGtuvY52aeXEePolnc9Kdlg09f0o15Y4tjU=;
+	b=eje/hodl5/f2qU348Ki4VDTJLF9l5RW4r/Dk00KH+FuwONGIutWdhChZt1kEnt
+	Bfds/XDUEYtbcz63G/i25odB7Z6SxwF6C3Kv+vnlBZTWx/8u3+B042G+ow6LrR5s
+	jktDqHBfuavtKxPxh+favHFKi+nFmCbvHK1qSEXU00w+g=
+Received: from [192.168.71.45] (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDHI+yil8Bn2SvOBA--.51118S2;
+	Fri, 28 Feb 2025 00:49:38 +0800 (CST)
+Message-ID: <f6e44f34-8800-421c-ba2c-755c10a6840e@163.com>
+Date: Fri, 28 Feb 2025 00:49:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR12MB719566F1EE6987670B7D85F0DCCD2@CY8PR12MB7195.namprd12.prod.outlook.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] genirq/msi: Add the address and data that show MSI/MSIX
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: tglx@linutronix.de, kw@linux.com, kwilczynski@kernel.org,
+ bhelgaas@google.com, cassel@kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250227162821.253020-1-18255117159@163.com>
+ <20250227163937.wv4hsucatyandde3@thinkpad>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250227163937.wv4hsucatyandde3@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PygvCgDHI+yil8Bn2SvOBA--.51118S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr4Utw4fWFy8KryDKr1Dtrb_yoW8uFy7pr
+	yDJF43Kr48Jr1UAwsrWF47Wr15Xrs0vayxJrykG34Skwn8Wwn2yF1DKa1fGa4aqr4ruw1j
+	v3Wqvw47Kwn8CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9ID7UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwcBo2fAkCC0WwAAsG
 
-On Thu, Feb 27, 2025 at 05:22:59AM +0000, Parav Pandit wrote:
+
+
+On 2025/2/28 00:39, Manivannan Sadhasivam wrote:
+> On Fri, Feb 28, 2025 at 12:28:21AM +0800, Hans Zhang wrote:
+>> Add to view the addresses and data stored in the MSI capability or the
+>> addresses and data stored in the MSIX vector table.
+>>
+>> e.g.
+>> root@root:/sys/bus/pci/devices/<dev>/msi_irqs# ls
+>> 86  87  88  89
+>> root@root:/sys/bus/pci/devices/<dev>/msi_irqs# cat *
+>> msix
+>>   address_hi: 0x00000000
+>>   address_lo: 0x0e060040
+>>   msg_data: 0x00000000
+>> msix
+>>   address_hi: 0x00000000
+>>   address_lo: 0x0e060040
+>>   msg_data: 0x00000001
+>> msix
+>>   address_hi: 0x00000000
+>>   address_lo: 0x0e060040
+>>   msg_data: 0x00000002
+>> msix
+>>   address_hi: 0x00000000
+>>   address_lo: 0x0e060040
+>>   msg_data: 0x00000003
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   kernel/irq/msi.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+>> index 396a067a8a56..a37a3e535fb8 100644
+>> --- a/kernel/irq/msi.c
+>> +++ b/kernel/irq/msi.c
+>> @@ -503,8 +503,18 @@ static ssize_t msi_mode_show(struct device *dev, struct device_attribute *attr,
+>>   {
+>>   	/* MSI vs. MSIX is per device not per interrupt */
+>>   	bool is_msix = dev_is_pci(dev) ? to_pci_dev(dev)->msix_enabled : false;
+>> +	struct msi_desc *desc;
+>> +	u32 irq;
+>> +
+>> +	if (kstrtoint(attr->attr.name, 10, &irq) < 0)
+>> +		return 0;
+>>   
+>> -	return sysfs_emit(buf, "%s\n", is_msix ? "msix" : "msi");
+>> +	desc = irq_get_msi_desc(irq);
+>> +	return sysfs_emit(
+>> +		buf,
+>> +		"%s\n address_hi: 0x%08x\n address_lo: 0x%08x\n msg_data: 0x%08x\n",
+>> +		is_msix ? "msix" : "msi", desc->msg.address_hi,
+>> +		desc->msg.address_lo, desc->msg.data);
 > 
-> > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > Sent: Thursday, February 27, 2025 12:32 AM
-> > 
-> > Commit 5fd8529350f0 ("RDMA/core: fix a NULL-pointer dereference in
-> > hw_stat_device_show()") accidentally almost exposed hw counters to non-init
-> > net namespaces. It didn't expose them fully, as an attempt to read any of
-> > those counters leads to a crash like this one:
-> > 
-> It is not the commit 5fd8529350f0.
-> You just want to say cited commit accidentally..
-
-Right, it's a typo, it had to be 467f432a521a ("RDMA/core: Split port
-and device counter sysfs attributes").
-
-> >  	WARN(true, "struct ib_device->groups is too small"); diff --git
-> > a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h index
-> > b59bf30de430..a5761038935d 100644
-> > --- a/include/rdma/ib_verbs.h
-> > +++ b/include/rdma/ib_verbs.h
-> > @@ -2767,6 +2767,7 @@ struct ib_device {
-> >  	 * It is a NULL terminated array.
-> >  	 */
-> >  	const struct attribute_group	*groups[4];
-> > +	u8				hw_stats_attr_index;
-> > 
-> >  	u64			     uverbs_cmd_mask;
-> > 
-> > --
-> > 2.48.1.711.g2feabab25a-goog
+> Sysfs is an ABI. You cannot change the semantics of an attribute.
 > 
-> With above suggested small commit log correction, 
-> Reviewed-by: Parav Pandit <parav@nvidia.com>
 
-Thank you!
+Thanks Mani for the tip.
+
+If I want to implement similar functionality, where should I add it? 
+Since this sysfs node is the only one that displays the MSI/MSIX 
+interrupt number, I don't know where to implement similar debug 
+functionality at this time. Do you have any suggestions? Or it shouldn't 
+have a similar function.
+
+Best regards
+Hans
+
 
