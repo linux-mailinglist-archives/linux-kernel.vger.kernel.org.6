@@ -1,104 +1,246 @@
-Return-Path: <linux-kernel+bounces-535522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C63A473F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:04:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F92A473F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6E07A2D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D692F1887DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202B4198A1A;
-	Thu, 27 Feb 2025 04:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tqsm4K2V"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4821C84AD;
+	Thu, 27 Feb 2025 04:08:41 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B1BE65;
-	Thu, 27 Feb 2025 04:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6199A59;
+	Thu, 27 Feb 2025 04:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740629084; cv=none; b=gpbXlMHzlarieb5As3OlG0YJfFAbmuDprHYlyQ/EB6opkObc/3BaEK3bxVqMIHNP5k/2YeFNfCsObfjwovQyhKFxpZoA6qaGIiQjzUi/l6ovnb2TN+ykm5+ahK4/u5NUYfINAel6Dmp+7Wk2W98rSxt84OfvNFFTw62T8nL1/OM=
+	t=1740629321; cv=none; b=R47oU43/nuzje5eqTvwEm1nPpUN7RrNYm7GbCKMtkjxI1uqgEiE7XqsivZh1RKAxhokv+mMfBWVadOhtN+2cJ92FQs7vbY8R8Q+9OO3EMjcm1Pb/WB3x5k+9oerimlq19QSDqVnuu75qXsL0bkm7vUE6COcbqZYDRglODEnbovQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740629084; c=relaxed/simple;
-	bh=L49AgEInu75X3a5lu/WbDpQesPjoT1koyxZbS6v/y4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VtcGJ2W6CJA54UuTCAeRScOJwWQBovsBzXK5di0TTzFKNMpDFqShRlGIoVhrtw7VJDZBlTgHfA2GqlKdRv+8AMsSSwbH0N1W+pccf5YThBuSPogZ4kQJ93i+YYap6PSMhzL/7trNvkciZrZvIBuE3OA8zhJtldsSUE4boA7unjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tqsm4K2V; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740629078;
-	bh=CWz+QXeFH2u89wfikyy369PYPjDdtcy2aCpxfPF6ySk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tqsm4K2VvK1RHCJr03BmQAV0HWZzx4J8vdBAJUfFKUvOY1TvKnkSVrhKL0svYsRgK
-	 pPmnrvooOEmByluYvktwXgbVlknvJ0VWvLTz0nRIbvZcJwHIbU9h3eOAVPXFSzvSp/
-	 S0kDgMtOrB9kuGPTQw/86b4Ut0qoQQ9+zupIsgqpbwosIY+NZ7X1NNA7eD6DszAOG1
-	 sGpRgGFEE6ARYylvQvo5aOPU9oSiSknaEK+opo/Or21OA8nfYe52kPonILJJRk7z3Y
-	 76vFDJZz2goM3KVWqLfyJrnkhb+v28hfCR97MBP6QovajPfkDhKudoeijcQfT6KpL5
-	 Oea8nfMqtwTbQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z3Hm65Qkmz4wcT;
-	Thu, 27 Feb 2025 15:04:38 +1100 (AEDT)
-Date: Thu, 27 Feb 2025 15:04:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the spi tree
-Message-ID: <20250227150438.280465e0@canb.auug.org.au>
+	s=arc-20240116; t=1740629321; c=relaxed/simple;
+	bh=jDpqDV+f3f+gTNoOjls2eh9JGcqzPxReFnyDScLUcn0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aZnViP3TjbXbeDsmkfVH1OqYOaEII0kgIzApZb4WHNEXz0DD/n25pioBaYKMnJTT6s73kQwwdBrG909MNgW7QFmBOKXPKoHgrr558joeTEBRRvEyxW69jklInAm8KqYzz5foltO8FaZDLxqiqGSUPybKlPDvexfymmTOGPP69e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z3Hr93YYNz4f3l26;
+	Thu, 27 Feb 2025 12:08:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C2FE81A166E;
+	Thu, 27 Feb 2025 12:08:32 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP4 (Coremail) with SMTP id gCh0CgDnSF065b9n0WYRFA--.15782S2;
+	Thu, 27 Feb 2025 12:08:30 +0800 (CST)
+Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
+ map atomically
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Zvi Effron <zeffron@riotgames.com>,
+ =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@kernel.org>,
+ bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Cody Haas <chaas@riotgames.com>, Hou Tao <hotforest@gmail.com>
+References: <20250204082848.13471-1-hotforest@gmail.com>
+ <20250204082848.13471-3-hotforest@gmail.com>
+ <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com>
+ <8734gr3yht.fsf@toke.dk>
+ <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com>
+ <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+ <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com>
+ <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
+ <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
+ <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com>
+ <CAADnVQJU9OWAWFk89P6i1RK6vXkuee5s76suHjF+uP+V4iepqQ@mail.gmail.com>
+ <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
+ <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <6b70aa4e-68c4-20de-b042-c549efd6a901@huaweicloud.com>
+Date: Thu, 27 Feb 2025 12:08:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oJOY+=EAvUgN59ta036dl8Z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:gCh0CgDnSF065b9n0WYRFA--.15782S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww1UJr1DuF43Aw1ruFyrXrb_yoW7KF4DpF
+	WfKF18trWkJ34Ivwn29w1xX34Ykrs3t34UJrn5GryUCwn8Kr1SvFWSvF4Y9F4UZrs5GF1q
+	qr4UK393Zan8uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07jIksgUUUUU=
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
---Sig_/oJOY+=EAvUgN59ta036dl8Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On 2/27/2025 11:17 AM, Alexei Starovoitov wrote:
+> On Wed, Feb 26, 2025 at 6:43 PM Hou Tao <houtao@huaweicloud.com> wrote:
+>>>> lookup procedure A
+>>>> A: find the old element (instead of the new old)
+>>>>
+>>>>               update procedure B
+>>>>               B: delete the old element
+>>>>               update procedure C on the same CPU:
+>>>>               C: reuse the old element (overwrite its key and insert in
+>>>> the same bucket)
+>>>>
+>>>> A: the key is mismatched and return -ENOENT.
+>>> This is fine. It's just normal reuse.
+>>> Orthogonal to 'update as insert+delete' issue.
+>> OK. However, it will break the lookup procedure because it expects it
+>> will return an valid result instead of -ENOENT.
+> What do you mean 'breaks the lookup' ?
+> lookup_elem_raw() matches hash, and then it memcmp(key),
+> if the element is reused anything can happen.
+> Either it succeeds in memcmp() and returns an elem,
+> or miscompares in memcmp().
+> Both are expected, because elems are reused in place.
+>
+> And this behavior is expected and not-broken,
+> because bpf prog that does lookup on one cpu and deletes
+> the same element on the other cpu is asking for trouble.
 
-The following commits are also in the mm tree as different commits
-(but the same patches):
+It seems I mislead you in the above example. It is also possible for
+doing lookup in one CPU and updating the same element in other CPU. So
+does such concurrence also look insane ?
 
-  1d2e01d53a8e ("spi: spi-imx: convert timeouts to secs_to_jiffies()")
-  32fcd1b9c397 ("spi: spi-fsl-lpspi: convert timeouts to secs_to_jiffies()")
+lookup procedure A
+A: find the old element (instead of the new old)
 
-These are commits
+              update procedure B
+              B: overwrite the same element and free the old element
+              update procedure C on the same CPU:
+              C: reuse the old element (overwrite its key and insert in
+the same bucket)
 
-  442b53316118 ("spi: spi-imx: convert timeouts to secs_to_jiffies()")
-  d569a6881325 ("spi: spi-fsl-lpspi: convert timeouts to secs_to_jiffies()")
+A: the key is mismatched and return -ENOENT.
 
-in the mm-nonmm-unstable branch fo the mm tree.
+> bpf infra guarantees the safety of the kernel.
+> It doesn't guarantee that bpf progs are sane.
+>
+>>> It's been a long time since I looked into rcu_nulls details.
+>>> Pls help me understand that this new replace_rcu_nulls()
+>>> is correct from nulls pov,
+>>> If it is then this patch set may be the right answer to non-atomic update.
+>> If I understand correctly, only the manipulations of ->first pointer and
+>> ->next pointer need to take care of nulls pointer.
+> hmm. I feel we're still talking past each other.
+> See if (get_nulls_value() == ...) in lookup_nulls_elem_raw().
+> It's there because of reuse. The lookup can start in one bucket
+> and finish in another.
 
---=20
-Cheers,
-Stephen Rothwell
+Yes. I noticed that.  However, it happens when the deleted element is
+reused and inserted to a different bucket, right ? For
+replace_rcu_nulls(), the reuse of old element is possible only after
+replace_rcu_nulls() completes, so I think it is irrelevant.
 
---Sig_/oJOY+=EAvUgN59ta036dl8Z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>If it is then this patch set may be the right answer to non-atomic update.
 
------BEGIN PGP SIGNATURE-----
+I also didn't follow that. Due to the immediate reuse, the lookup
+procedure may still return -ENOENT when there is concurrent overwriting
+of the same element as show above, so I think it only reduce the
+possibility. I still prefer to implement a separated update procedure of
+htab of maps to fix the atomic update problem completely for htab of
+maps first.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme/5FYACgkQAVBC80lX
-0Gz+rAf/W4mpbfSRJHNLUM+ygQe3Ltcywmvv3CDna37vyzLXMKZS6VVAQtMxyx5p
-wVHjk8bI7wz2JV8clJ3H5c1Mw/zWn5YlRGt2vjE0Gx1TBnPo/PJHhwuaz8SNxckt
-ku+gFNxqptB7Z1SKir6Cxoer4In01paXx61uKf7azKJr5Jr9B/aT4s1UmVMB84dI
-qtXDZ4BwqhDJCEgw9mC7Q3lQjEYubszStCSUmfaPQ0nmAe4c+bvj/9GljlduOyIl
-ZXCWX9ohtzWvnhudrYfs9f9zVRb6jaK1A18dgnkXJg/AqpraUkYv9ncDFyVm6/vt
-tdJyF/YyamzZr404sRTORYZLg4xzmQ==
-=HPH4
------END PGP SIGNATURE-----
 
---Sig_/oJOY+=EAvUgN59ta036dl8Z--
+>
+>>> And for the future, please please focus on "why" part in
+>>> the cover letter and commit logs instead of "what".
+>>>
+>>> Since the only thing I got from the log was:
+>>> "Currently, the update is not atomic
+>>> because the overwrite of existing element happens in a two-steps way,
+>>> but the support of atomic update is feasible".
+>>>
+>>> "is feasible" doesn't explain "why".
+>>>
+>>> Link to xdp-newbie question is nice for additional context,
+>>> but reviewers should not need to go and read some thread somewhere
+>>> to understand "why" part.
+>>> All of it should be in the commit log.
+>> OK. My original thought is that is a reported problem, so an extra link
+>> will be enough. Will try to add more context next time.
+>>>> map may still be incorrect (as shown long time ago [1]), so I think
+>>>> maybe for other types of map, the atomic update doesn't matter too much.
+>>>>
+>>>> [1]:
+>>>> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.com/
+>>> A thread from 3 years ago ?! Sorry, it's not helpful to ask
+>>> people to page-in such an old context with lots of follow ups
+>>> that may or may not be relevant today.
+>> Let me reuse part of the diagram above to explain how does the lookup
+>> procedure may return a incorrect value:
+>>
+>> lookup procedure A
+>> A: find the old element (instead of the new element)
+>>
+>>
+>>               update procedure B
+>>               B: delete the old element
+>>               update procedure C on the same CPU:
+>>
+>>
+>> A: the key is matched and return the value in the element
+>>
+>>               C: reuse the old element (overwrite its key and value)
+>>
+>> A: read the value (it is incorrect, because it has been reused and
+>> overwritten)
+> ... and it's fine. It's by design. It's an element reuse behavior.
+>
+> Long ago hashmap had two modes: prealloc (default) and
+> NO_PREALLOC (call_rcu + kfree)
+>
+> The call_rcu part was there to make things safe.
+> The memory cannot be kfree-ed to the kernel until RCU GP.
+> With bpf_mem_alloc hashmap elements are freed back to bpf_ma
+> right away. Hashmap is doing bpf_mem_cache_free()
+> (instead of bpf_mem_cache_free_rcu()) because users need speed.
+> So since 2022 both prealloc and no_prealloc reuse elements.
+> We can consider a new flag for the hash map like F_REUSE_AFTER_RCU_GP
+> that will use _rcu() flavor of freeing into bpf_ma,
+> but it has to have a strong reason.
+> And soon as we add it the default with prealloc would need
+> to use call_rcu() too, right?
+> and that becomes nightmare, since bpf prog can easily DoS the system.
+> Even if we use bpf_mem_cache_free_rcu() only, the DoS is a concern.
+> Unlike new things like bpf_obj_new/obj_drop the hashmap
+> is unpriv, so concerns are drastically different.
+>
+> .
+
+I see. Thanks for the detailed explanation. And that is part of the
+reason why I proposed adding a seq-counter in the htab-element and
+checking the seq-counter during lookup, so at least the lookup will not
+return -ENOENT for the concurrent overwriting procedure.
+
 
