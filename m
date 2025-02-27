@@ -1,169 +1,307 @@
-Return-Path: <linux-kernel+bounces-537517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4628AA48CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:39:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35C1A48CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 363AB16CA76
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A352C188ED50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A799227EB0;
-	Thu, 27 Feb 2025 23:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFF923E326;
+	Thu, 27 Feb 2025 23:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fKc1RRcE"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TArWM/v3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02759276D24
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE5D276D23;
+	Thu, 27 Feb 2025 23:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699541; cv=none; b=FHpxtFx2OZiRKPGSwpHOl3uN2g2GQYwiF2S/TA2h9VfgoM7TSTt65OR/eaVzzIy5dGdmM8SPrg4F//x47i0cGviEOb4oHn570sq/NyBDNWY42MKlvQDtEN2I1d7aMbRLNMDjJDTQAW677FNAyO920wwYeo8bjgIBTXOrLfgvPUo=
+	t=1740699699; cv=none; b=boH3IrsMC6OjrVQlTUxAv+xM2TyQ/Gk8nY3k7KMaHBi1WvCh4j+gQqxtFUaRXUYk/EG12Rtpc6hL04TFgNQP0BHAgc5EhbHuNkpe4k+Eb70/fWWmbtsZ5AguGbO0H+wrmT2LseOCsr4/SGw533y2k5Q8CpPvz3Lu85MAeIzEy7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699541; c=relaxed/simple;
-	bh=uazbQbXAgJkqYDiwEOwqWCYWk/4zsx2AxDpUxCHm10E=;
+	s=arc-20240116; t=1740699699; c=relaxed/simple;
+	bh=1tU3+ozNm3RX5VFE1YDJZ+W2QGdJ4V27XWteIDBhW7o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FoSSsmLQlifx/yuG1ASA/eoox3TJG1YZShAOlzCSwn+DubpfT9GTi/bOEAbASk7x7ukrb3KkvkHybaKWwXcHFfZFR19L3MwmqYcKIHXY1UrSBvBzECgkDXFfbJ+s4T78W4sJrrwRrkU3iAwIQSsqlrsX0LcKelzF0NYf2g5CAGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fKc1RRcE; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5fc6f75aa8aso77668eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:38:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740699539; x=1741304339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BtvOHIMuelDkAYqCBYw4pmTE6kjO3Q01OuRJQEoDcUw=;
-        b=fKc1RRcEGDUZyYWtSMByqX9B9cHwAbgxw6kJAIBLl38G8StmfOTvlmpx+9Tgz4s5a0
-         i6veTF78h5Ws2AudlsdDUqazKPTQZ6Yu5izi8ln/Y70UR8lXec0t13vj+HraQe9n6Thv
-         SwyZPxbeDZGyeyNL9XYJAvc6oCvKnZPe88hbs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740699539; x=1741304339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BtvOHIMuelDkAYqCBYw4pmTE6kjO3Q01OuRJQEoDcUw=;
-        b=jU6BBYb+DYdW+T8i8E6GaSrTP3ArvFw5brAhYTNVymikhgxMTitbW7iCAM/HJjRUYO
-         rDo/sGVappxwSgA9YW7dZtchUoQN6mK871OmVJ0Hp2oMM+QyryHkqj5hqFD9TiQ5Rowj
-         pFCcOpgl3uvJZJDBYoWk2HS/tbzV7BvNfRfs3hiFRYc1cBanHQUVvxAmxqBwGavXZVBq
-         qtfOe7ruJ6XsyAwnS8jWJcCgm2MUfZrLotEd7SZLMssxTg3mshoAV+ctk3m4jX+U1ehD
-         Yv6G3dU4/fTzniVdOSZq8CVORwKFnZgrBaoQ4LWiEYBzI4j1pK/i0FY+1Zh915/GBeNK
-         S+Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU8p7NCYuVOqd8hD6jBhXiZS2LqsACVidt9QPrxB6PaZmdCGFF83xChxTEMYBOfNcLROKXOv6xFfL6jvKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyplqE2NynK04taPxKxKeddAeWauHQ60dFu9DmDNgPMj5DVFN9Q
-	0WKfm6RtojdhpK13IcHvM73703FHYvP1FtVqHT+nLgb30GWVOklcVnhsP2Gx6AyfVfF6hNAEiP0
-	BkY3G6uoIMQMuS/6IN7uMdWR5zd3nEHHWrBS1
-X-Gm-Gg: ASbGncuTvJ8hVz40nrDTs7vmK7exZETpgUMBDDPC/Bsyq/hdTC0haI8awob8+tmJO4A
-	3Nq6mjgNZOpQak+1mfEGE3PHy7b+FE0NMSnwKtddIY/WJ2X2aNSFAkfcAa++Pkz64MiSy2HPEIm
-	g3gqaatl/p2Dnsl8IHE2HVd/1XqEr87DALSoRmpUrP
-X-Google-Smtp-Source: AGHT+IGa5qWw6mWS9FqBki1tFln20XRNh8F87XAQ33WnPErm38DCBjPn+ns0NBr5sJsRp+DHD4erKnV1oUgv1UGVsr8=
-X-Received: by 2002:a05:6820:a110:b0:5fc:e9dd:45ed with SMTP id
- 006d021491bc7-5feb352ea7bmr202854eaf.1.1740699539040; Thu, 27 Feb 2025
- 15:38:59 -0800 (PST)
+	 To:Cc:Content-Type; b=mYmCcx3u52uqq1ioMzjnfbVy+zUwnTSsxoBXJhIKXgnZLJrqzRLEe7R41MDrw1olXIVjDlOeBimSPxiG2vmBu+J649hGO1/qUoqdptoYRowqAoNRs85KFGcpj0Y+kU5aMVI+7ESJxzXotxCadE6G/joJl7e8+w03iNaB6N7CjN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TArWM/v3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DDBC4CEE4;
+	Thu, 27 Feb 2025 23:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740699699;
+	bh=1tU3+ozNm3RX5VFE1YDJZ+W2QGdJ4V27XWteIDBhW7o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TArWM/v3Pf/blJdR0NTf+xz1pAKb/H4mbhsPRg30GAfLq3Vnj/s3O0KQ/BBm+OK8a
+	 Kx9u0/J4hlD6MoZwu7c595U4kswy8eayuNoWGhQXIc4pRM9lIJOzYa+8c7mZ1MWjAt
+	 JIq7gRZ1B3bi39cvQ40QZuXRKQmsyxDc+o4J7+jwUj5KAZRse4PGC3aJESH5LQHQ31
+	 nBwbTBTRQ9Sl/LGti7dkGv9hXAHpTbYz0u6Q91Hq+8ps1RzFdbWimx3k8eihVHakD5
+	 YVbhn4I9aGthGKmPf4MhQaCfIIq4iBhyJjGYZoSNoRDIUE51VcEY9UWconF02RtNOn
+	 XlWr6yEI6KeTw==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f88509dad2so15220997b3.3;
+        Thu, 27 Feb 2025 15:41:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUi/IRK64LskCGKNRbvgI4VnpuY/s74etwHFbeQKGahfxDJS/5c5hnlwzHkSzj89Gs2Y3DOQnhvxubdkBEK@vger.kernel.org, AJvYcCVkkvnBGYEuITSsz8Dr/Fd1X/vY8CyN2gnwsFcUsbYtzYPbxNjrd7sh6zCtGrUHWwaXSYWRTw==@vger.kernel.org, AJvYcCW9UFWvuf4Csde2ZKE/UREjwMW657b0GJKMDuGPbuVKFGsXDzp6TJAT+ugRffHFzaP+j8Ig7xClvNoQvejG+pD9TjbNlKep@vger.kernel.org, AJvYcCWTUZYekdNJtHdUd8Zxz8XFAQN/aFOyp4t2IUOTp/NqHYYHKG5dykKNZQQAlgV4izUgbWPkvkKLAi24@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdX9ngZCibW7DsB86MBXB8ZWDgv/+CbJQbY4EuROjlDGos45Ti
+	VUxGcsysaYBAeS/l2rAfYrix1g5Lq5jmhwH/NQAhbwBayYAaXokiT7f+ToZfnp5FsQn3OZkkk/C
+	Ym6h4PFcwpgHCy+a+ZVPvEauGFzg=
+X-Google-Smtp-Source: AGHT+IGtxSEgYIBq4gfvypTDq1mQ6f9IWC8rh1ZC5QmPUpe8DTHZIh0DiGqiSCJdarqXBnLu1IxgJ6NYxSfIJNtsqpU=
+X-Received: by 2002:a05:690c:9989:b0:6ef:5013:bfd9 with SMTP id
+ 00721157ae682-6fd4a04b3demr18394197b3.10.1740699698422; Thu, 27 Feb 2025
+ 15:41:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-7-jeffxu@google.com>
- <20250226162604.GA17833@redhat.com> <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
- <20250226180135.GI8995@redhat.com> <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
- <20250226182050.GK8995@redhat.com> <ba83f8c3-6f8f-4ed9-81ec-104f72ea4ef1@lucifer.local>
-In-Reply-To: <ba83f8c3-6f8f-4ed9-81ec-104f72ea4ef1@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 27 Feb 2025 15:38:47 -0800
-X-Gm-Features: AQ5f1JpI4wTwciE-lKyx_Ev93hW3Fh_Xe8B3FCHbhfxf4AGtcraQIrvmSgrDIxs
-Message-ID: <CABi2SkUi6EOfMag37GOLNt3Fb71-QgYiXbcwVuiVTreRuEFW2Q@mail.gmail.com>
-Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, akpm@linux-foundation.org, keescook@chromium.org, 
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
+References: <CAKtyLkFg2+8ciy4DM=g+vcTVvuRPNL2SHbN+m9ObErxtYXZYPw@mail.gmail.com>
+ <1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com>
+In-Reply-To: <1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Thu, 27 Feb 2025 15:41:26 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
+X-Gm-Features: AQ5f1Jpyw71LHr7qE8c6RnzWmXjrG76Ce4qwZD2HcZmcYYWARRgof66mCoQDUHQ
+Message-ID: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] ipe: add errno field to IPE policy load auditing
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Cc: wufan@kernel.org, audit@vger.kernel.org, corbet@lwn.net, eparis@redhat.com, 
+	jmorris@namei.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 10:25=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Thu, Feb 27, 2025 at 2:46=E2=80=AFPM Jasjiv Singh
+<jasjivsingh@linux.microsoft.com> wrote:
 >
-> On Wed, Feb 26, 2025 at 07:20:50PM +0100, Oleg Nesterov wrote:
-> > On 02/26, Lorenzo Stoakes wrote:
-> > >
-> > > Like I said, Jeff opposes the change. I disagree with him, and agree =
-with you,
-> > > because this is very silly.
-> > >
-> > > But I don't want to hold up this series with that discussion (this is=
- for his
-> > > sake...)
-> >
-> > Neither me, so lets go with VM_SEALED_SYSMAP.
-> >
-> > My only objection is that
-> >
-> >       vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
-> >       vm_flags |=3D VM_SEALED_SYSMAP;
-> >
-> > looks unnecessarily confusing to me,
-> >
-> >       vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMA=
-P;
-> >
-> > or just
-> >
-> >       vma =3D _install_special_mapping(...,
-> >                               VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_S=
-EALED_SYSMAP,
-> >                               ...
-> >
-> > looks more readable. But this is cosmetic/subjective, so I won't argue/=
-insist.
+> Thanks for reviewing it. Here's the example generated from real logs:
 >
-> Agreed. This would be good.
+> AUDIT_IPE_POLICY_LOAD(1422):
+> audit:  AUDIT1422 policy_name=3D"Test_Policy" policy_version=3D0.0.1
+> policy_digest =3Dsha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4
+> 299DCA92BFFF4DB82E86D3 auid=3D1000 ses=3D3 lsm=3Dipe res=3D1 errno=3D0
 >
-> >
-> > > Jeff - perhaps drop this and let's return to it in a follow up so thi=
-s series
-> > > isn't held up?
-> >
-> > Up to you and Jeff.
-> >
-> > But this patch looks "natural" to me in this series.
+> The above record shows a new policy has been successfully loaded into
+> the kernel with the policy name, version, and hash with the errno=3D0.
 >
-> OK, I mean in that case I'm ok with it as-is, as you confirms there's no
-> issue, I've looked at the code and there's no issue.
+> AUDIT_IPE_POLICY_LOAD(1422) with error:
 >
-> It was only if we wanted to try the VM_SEALED thing, i.e. _always_ seal
-> then it'd do better outside of the series as there'd be a discussion abou=
-t
-> maybe changing this CONFIG_64BIT thing yada yada.
+> audit: AUDIT1422 policy_name=3D? policy_version=3D? policy_digest=3D?
+> auid=3D1000 ses=3D3 lsm=3Dipe res=3D0 errno=3D-74
 >
-> >
-> > Oleg.
-> >
+> The above record shows a policy load failure due to an invalid policy.
 >
-> Jeff - in that case, do NOT drop this one :P but do please look at the
-> above style nit.
+> I have updated the failure cases in new_policy() and update_policy(),
+> which covers each case as well.
 >
-Ok.
+> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
 
+Please merge the old and new changes into one single patch. Also the
+commit message is supposed to be used to describe the code change.
 
-> Let's keep things moving... :)
+> ---
+>  Documentation/admin-guide/LSM/ipe.rst |  2 ++
+>  security/ipe/audit.c                  | 10 ++++------
+>  security/ipe/fs.c                     | 17 ++++++++++++-----
+>  security/ipe/policy.c                 |  4 +---
+>  security/ipe/policy_fs.c              | 24 +++++++++++++++++++-----
+>  5 files changed, 38 insertions(+), 19 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
+guide/LSM/ipe.rst
+> index 2143165f48c9..5dbf54471fab 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -453,6 +453,8 @@ Field descriptions:
+>  | errno          | integer    | No        | The result of the policy err=
+or as follows:        |
+>  |                |            |           |                             =
+                      |
+>  |                |            |           | +  0: no error              =
+                      |
+> +|                |            |           | +  -EPERM: Insufficient perm=
+ission                |
+> +|                |            |           | +  -EEXIST: Same name policy=
+ already deployed     |
+>  |                |            |           | +  -EBADMSG: policy is inval=
+id                    |
+>  |                |            |           | +  -ENOMEM: out of memory (O=
+OM)                   |
+>  |                |            |           | +  -ERANGE: policy version n=
+umber overflow        |
+> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+> index f810f7004498..8df307bb2bab 100644
+> --- a/security/ipe/audit.c
+> +++ b/security/ipe/audit.c
+> @@ -21,7 +21,7 @@
+>
+>  #define AUDIT_POLICY_LOAD_FMT "policy_name=3D\"%s\" policy_version=3D%hu=
+.%hu.%hu "\
+>                               "policy_digest=3D" IPE_AUDIT_HASH_ALG ":"
+> -#define AUDIT_POLICY_LOAD_NULL_FMT "policy_name=3D? policy_version=3D? "=
+\
+> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=3D? policy_version=3D? "=
+\
+>                                    "policy_digest=3D?"
+>  #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=3D\"%s\" "\
+>                                     "old_active_pol_version=3D%hu.%hu.%hu=
+ "\
+> @@ -255,9 +255,8 @@ void ipe_audit_policy_activation(const struct ipe_pol=
+icy *const op,
+>   */
+>  void ipe_audit_policy_load(const struct ipe_policy *const p)
+>  {
+> -       int res =3D 0;
+> -       int err =3D 0;
+>         struct audit_buffer *ab;
+> +       int err =3D 0;
+>
+>         ab =3D audit_log_start(audit_context(), GFP_KERNEL,
+>                              AUDIT_IPE_POLICY_LOAD);
+> @@ -266,15 +265,14 @@ void ipe_audit_policy_load(const struct ipe_policy =
+*const p)
+>
+>         if (!IS_ERR(p)) {
+>                 audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
+> -               res =3D 1;
+>         } else {
+> -               audit_log_format(ab, AUDIT_POLICY_LOAD_NULL_FMT);
+> +               audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
+>                 err =3D PTR_ERR(p);
+>         }
+>
+>         audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D%d errn=
+o=3D%d",
+>                          from_kuid(&init_user_ns, audit_get_loginuid(curr=
+ent)),
+> -                        audit_get_sessionid(current), res, err);
+> +                        audit_get_sessionid(current), !err, err);
+>
+>         audit_log_end(ab);
+>  }
+> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+> index 5b6d19fb844a..40805b13ee2c 100644
+> --- a/security/ipe/fs.c
+> +++ b/security/ipe/fs.c
+> @@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const cha=
+r __user *data,
+>         char *copy =3D NULL;
+>         int rc =3D 0;
+>
+> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> -               return -EPERM;
+> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> +               rc =3D -EPERM;
+> +               goto out;
+> +       }
+>
+>         copy =3D memdup_user_nul(data, len);
+> -       if (IS_ERR(copy))
+> -               return PTR_ERR(copy);
+> +       if (IS_ERR(copy)) {
+> +               rc =3D PTR_ERR(copy);
+> +               goto out;
+> +       }
+>
+>         p =3D ipe_new_policy(NULL, 0, copy, len);
+>         if (IS_ERR(p)) {
+> @@ -161,8 +165,11 @@ static ssize_t new_policy(struct file *f, const char=
+ __user *data,
+>         ipe_audit_policy_load(p);
+>
+>  out:
+> -       if (rc < 0)
+> +       if (rc < 0) {
+>                 ipe_free_policy(p);
+
+> +               p =3D ERR_PTR(rc);
+> +               ipe_audit_policy_load(p);
+
+How about ipe_audit_policy_load(ERR_PTR(rc));
+
+> +       }
+>         kfree(copy);
+>         return (rc < 0) ? rc : len;
+>  }
+> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+> index 0f616e9fbe61..b628f696e32b 100644
+> --- a/security/ipe/policy.c
+> +++ b/security/ipe/policy.c
+> @@ -202,9 +202,7 @@ struct ipe_policy *ipe_new_policy(const char *text, s=
+ize_t textlen,
+>         return new;
+>  err:
+>         ipe_free_policy(new);
+> -       new =3D ERR_PTR(rc);
+> -       ipe_audit_policy_load(new);
+> -       return new;
+> +       return ERR_PTR(rc);
+>  }
+>
+>  /**
+> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
+> index 3bcd8cbd09df..74f4e7288331 100644
+> --- a/security/ipe/policy_fs.c
+> +++ b/security/ipe/policy_fs.c
+> @@ -12,6 +12,7 @@
+>  #include "policy.h"
+>  #include "eval.h"
+>  #include "fs.h"
+> +#include "audit.h"
+>
+>  #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
+>
+> @@ -288,25 +289,38 @@ static ssize_t getactive(struct file *f, char __use=
+r *data,
+>  static ssize_t update_policy(struct file *f, const char __user *data,
+>                              size_t len, loff_t *offset)
+>  {
+> +       const struct ipe_policy *p =3D NULL;
+
+This var can be avoided.
+
+>         struct inode *root =3D NULL;
+>         char *copy =3D NULL;
+>         int rc =3D 0;
+>
+> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> -               return -EPERM;
+> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> +               rc =3D -EPERM;
+> +               goto out;
+> +       }
+>
+>         copy =3D memdup_user(data, len);
+> -       if (IS_ERR(copy))
+> -               return PTR_ERR(copy);
+> +       if (IS_ERR(copy)) {
+> +               rc =3D PTR_ERR(copy);
+> +               goto out;
+> +       }
+>
+>         root =3D d_inode(f->f_path.dentry->d_parent);
+>         inode_lock(root);
+>         rc =3D ipe_update_policy(root, NULL, 0, copy, len);
+> +       if (rc < 0) {
+> +               inode_unlock(root);
+> +               goto out;
+> +       }
+
+This part seems unnecessary.
+
+>         inode_unlock(root);
+>
+> +out:
+>         kfree(copy);
+> -       if (rc)
+> +       if (rc) {
+> +               p =3D ERR_PTR(rc);
+> +               ipe_audit_policy_load(p);
+
+p can be avoided, see the above comments.
+
+Also please update function documentation if it has a significant change.
+
+-Fan
 
