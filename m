@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-536990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134DAA486BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:35:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C75A486C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903BE3B5CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E83164CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BF1E51E8;
-	Thu, 27 Feb 2025 17:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FB11DF247;
+	Thu, 27 Feb 2025 17:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFTWj5Mn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJqhViAQ"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2DE1DEFFD;
-	Thu, 27 Feb 2025 17:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079931DDC29;
+	Thu, 27 Feb 2025 17:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677711; cv=none; b=RSrZo6JcumRRruAYYsDbidVPPCql8N1BmKLwVEGvTf50Nq6aLG2Vky3P9LL1hOFhNGrLOs+hbowMJxp7S3FojzqQLJqxpFWh3njhQKfs9IccmnNOSOlJ5SS7hy+A953goMk8UU9OBr8ny368dxcEwfHGGzk4UtFQrd7II7Wg4xU=
+	t=1740677750; cv=none; b=QmEEiRTg11gp79BEf7creCmB7bFbtySAVJ8CcEm/qjVGfQLVschfnamOF/xw67QjVGCJoyiS9Cy85FTtBYSBubJu/fylNAvtygmRihVYQrvE2jueTTalqlfBVRAGg06nDlh33rOCOApEvBPHoTAF5dPaVONbuZLIhZ8xeypTWK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677711; c=relaxed/simple;
-	bh=ey8ABS/p5vUBXOFJPmbtoJ/tRFgZYhZrBVTq4JyjQDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IFt9XywtVO0fvLX5gPlnCEkuFObNDfegMhOoaEn/y122qY7yY3z6MHsH++Lt5C1hxI1yeeVp8ZIK5l4Y9D0hKykrHLoS6dgNF5UQb0ry1DY6B8U+KGf1dJl9xYxOvSZEsLQA1iYl0t+fpWK3K4y7MWOnRnnYpupRwMNNrM5VFjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFTWj5Mn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FDCC4CEDD;
-	Thu, 27 Feb 2025 17:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740677710;
-	bh=ey8ABS/p5vUBXOFJPmbtoJ/tRFgZYhZrBVTq4JyjQDQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=lFTWj5MnYrsCAgU0ARCWVNpj30xfhEtQfvYkdsW5Tew7TwJHMLPOxTUQpZOctEPh9
-	 UheY0twEBzeznHFgD4dlAEt+fPgORW40apw+ROIvO4NrhM1SNbXtvCEjdiC4HEcUrj
-	 G7ahZrvE7gsp5eQ4UOY/epkXJR07JL5kiMwpBxMB3mHPRJ0KRVA0/gJZaS7yK8GrxJ
-	 8ur/P5TwncksU7+2+xkIuPhNr7SnH20OGfVC/kcj/iRwKBAvXhEZxIR1jzTk+P17Yq
-	 CcL4aXH3KhbovABO3AjLSK30mYqLowBxg8VJFEghgWneCbm+8i6oyyqIfqNcnTOBsK
-	 c62We2LEAkrzA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8EEA2CE0799; Thu, 27 Feb 2025 09:35:10 -0800 (PST)
-Date: Thu, 27 Feb 2025 09:35:10 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Martin Uecker <uecker@tugraz.at>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>,
-	Ventura Jack <venturajack85@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Gary Guo <gary@garyguo.net>, airlied@gmail.com,
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de,
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <54b92e98-cabf-4ddc-b51b-496626ac3ccb@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
- <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
- <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
- <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
- <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
- <09e282a9c02fb07ba4fc248f14c0173d9b19179a.camel@tugraz.at>
- <CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
- <2f5a537b895250c40676d122a08d31e23a575b81.camel@tugraz.at>
- <20250227092949.137a39e9@gandalf.local.home>
+	s=arc-20240116; t=1740677750; c=relaxed/simple;
+	bh=mbZ4jhZ8cJLd2yXxgJbu7Eds+oK78xxQLnalQNs0jiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MCXjEJx5MBFpP4egTgU0RfS8DOJ6pH/y+BBS4FKsfvIazYVkKxEZXFGUN0YmBevCLRH37CpIhWxbgQgQixRzeQcGqLvpMB7Ah4haxHDX7k3vArJUKyM4vQa/6CNZ2NhazHV7uYiCVTfxwMVKur9piVKnnudCl7JJkIuY4eO5ysU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJqhViAQ; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fe851fa123so317945a91.0;
+        Thu, 27 Feb 2025 09:35:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740677748; x=1741282548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q4grSqOZMcr4AeLl2348rl+pUCApMWP0TAJcpSJmaT8=;
+        b=EJqhViAQwVzWvkp/kg8/rL181kMx+ENtqGFJCXYGRv4isaaWn8hy7XVsMycBFtxTj2
+         MkYofsbwFZNAdAMhUMKbmse+456xIziQFtEwFIhVoZIieHacpXKzp6c1h+JPxYhCPffP
+         xdgcq8gff1ZLXFi0LQlawaDg7CfbEj5nDKfvXZwiiaVWBxGGS/lKXBNRt3xghsNtnC8U
+         OYj0spmB6hrWtJlQvmfadL/sGjeq0ajImZOyoYxLHbfTUy7jwCYnX/SnV6lrVy6irSWv
+         d/UQ5/13JvTxSjGhpfrAlZoSbK+d9xNI3v8mlNo27JNm+XljR66/X25pQa098zjHT37Z
+         4OtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740677748; x=1741282548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q4grSqOZMcr4AeLl2348rl+pUCApMWP0TAJcpSJmaT8=;
+        b=fOnl3tQPyzWdKF3N9ae6Oq0kOyPv+5QFNUdFb28Y9OVITQKDRwFf36mxmaoxnEpMiy
+         XjrHPsrVO40AgVqzfBlGRb5PKwBRUyg/x3sGuQwVegp1hEsfGI1nBtMQMi5kJ0edCsmZ
+         nC3OSPM4pdhQhrGFc4jI/UaQqDpm2aRqm/p3KACdkvn2ZIAT8Z1ZldQB2VImJM69MgQR
+         d9zs2Zz8ggWlBHqeVvFewvDPkfDm/PZwg4qnKWvqPB65M8+uyIpeNTmH1xO943siD1uW
+         AYhWyiQdoniJYVylUyRZvq9JvjMtW45JgpskFtgOD9fYPm6MNKERy8o6QMwQ+Femz9FP
+         hFRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8X7bI7awDalJGxqjdof4tx2qvTRAFfkNDbmm19fAUWhiK3j1+VZZJPTuNwWnEQZCZmOqm9wZbM/1o86I16kw=@vger.kernel.org, AJvYcCWGB3bjfVZi6KofyzdAvkIhgfFxaj8RPQmX2ZcwQDl4XwEm2fFGqZay5AA1c34KzgJXr2UweZVk0FszD9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP0ZVllT3jsLXvMB/2FL4VOYkXV1DrWYFPrl0JqXAEgBq+ipKa
+	l3ReiIWBWvvPOWOD/g60pbQn1S792LpsqwEeHDeTGJyMYnU+RkeQLQdObdKMpyxHIInhosuVL87
+	+JEju3frt74t3swN5rS/4cuNRb+Q=
+X-Gm-Gg: ASbGncveATNkfoOyQ17T0o0BjOe0Bzorll4OQH+Ve+pRYpCe/ICbXW4l24itOLPBKmi
+	8zsuxWX2231Nlc/vWKOE67OyYpmRH7rJ8hIklVaOpls7/jtlFXeWFGHMCJxpo90/ABZEUO3jl/5
+	2OYJg/0OY=
+X-Google-Smtp-Source: AGHT+IHUchORsUtdm1yxlMwOcrNlOupYjquYuSxpOcVfPm/3p9K7lrlkAXjKRpGKq51BxhjDyuBH1A9yYkp4l5vFa2w=
+X-Received: by 2002:a17:90b:1c0e:b0:2fc:25b3:6a91 with SMTP id
+ 98e67ed59e1d1-2febac0576amr82469a91.5.1740677748229; Thu, 27 Feb 2025
+ 09:35:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250227092949.137a39e9@gandalf.local.home>
+References: <20250227101720.1811578-1-bqe@google.com>
+In-Reply-To: <20250227101720.1811578-1-bqe@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 27 Feb 2025 18:35:33 +0100
+X-Gm-Features: AQ5f1JqyTr9uY6Jg-KT7Yzs_ZAVSPYm_gg7wc7b6YNYL_QxobuOM0KGJHne15PU
+Message-ID: <CANiq72kaUXSTMmQCFKKF-OJNXuhi13xJcbAoq5iFbSZ0wwz61A@mail.gmail.com>
+Subject: Re: [PATCH] rust: add bindings and API for bitmap.h and bitops.h.
+To: Burak Emir <bqe@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 09:29:49AM -0500, Steven Rostedt wrote:
-> On Thu, 27 Feb 2025 07:56:47 +0100
-> Martin Uecker <uecker@tugraz.at> wrote:
-> 
-> > Observable is I/O and volatile accesses.  These are things considered
-> > observable from the outside of a process and the only things an
-> > optimizer has to preserve.  
-> > 
-> > Visibility is related to when stores are visible to other threads of
-> > the same process. But this is just an internal concept to give
-> > evaluation of expressions semantics in a multi-threaded 
-> > program when objects are accessed from different threads. But 
-> > the compiler is free to change any aspect of it, as  long as the 
-> > observable behavior stays the same.
-> > 
-> > In practice the difference is not so big for a traditional
-> > optimizer that only has a limited local view and where
-> > "another thread" is basically part of the "outside world".
-> 
-> So basically you are saying that if the compiler has access to the entire
-> program (sees the use cases for variables in all threads) that it can
-> determine what is visible to other threads and what is not, and optimize
-> accordingly?
-> 
-> Like LTO in the kernel?
+On Thu, Feb 27, 2025 at 11:17=E2=80=AFAM Burak Emir <bqe@google.com> wrote:
+>
+> +use crate::bindings::{
+> +    bitmap_copy, bitmap_free, bitmap_zalloc, clear_bit, find_last_bit, f=
+ind_next_zero_bit, set_bit,
+> +};
 
-LTO is a small step in that direction.  In the most extreme case, the
-compiler simply takes a quick glance at the code and the input data and
-oracularly generates the output.
+I think it may be best to avoid importing `bindings::*` things, so
+that it is clear when they happen and so that they are easier to grep
+for.
 
-Which is why my arguments against duplicating atomic loads have been
-based on examples where doing so breaks basic arithmetic.  :-/
+I guess some of these may benefit from being inline when small
+constants are involved, similar to what the C docs mention -- do we
+want to have equivalents to the C "generic" ones that could be inlined
+well?
 
-							Thanx, Paul
+> +/// * `ptr` is obtained from a successful call to bitmap_zalloc and
+
+Please use Markdown wherever possible, e.g. `bitmap_zalloc`.
+
+> +#[cold]
+> +fn not_in_bounds_lt(arg: &'static str, len: usize, val: usize) -> ! {
+> +    panic!("{arg} must be less than length {len}, was {val}");
+> +}
+
+Should these be more explicit? e.g. `panic_if_not_in_bounds_lt`?
+
+Do we want to only have infallible versions?
+
+> +impl Bitmap {
+> +    /// Constructs a new Bitmap.
+
+Please use intra-doc links where possible (and Markdown), e.g. [`Bitmap`].
+
+> +    /// Fails with AllocError if `nbits` is greater than or equal to 2^3=
+2,
+> +    /// or when the bitmap could not be allocated.
+
+Some examples would be nice to add, which double as KUnit tests.
+
+Thanks!
+
+Cheers,
+Miguel
 
