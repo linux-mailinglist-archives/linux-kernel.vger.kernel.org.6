@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-535238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9FBA47076
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:45:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29277A4707A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 01:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C60DB16DF56
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9BA3AA6C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 00:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CB47462;
-	Thu, 27 Feb 2025 00:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E81B11CA0;
+	Thu, 27 Feb 2025 00:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTSjhBkp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2567D270037;
-	Thu, 27 Feb 2025 00:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="JK9JophO"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709AD7462;
+	Thu, 27 Feb 2025 00:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740617154; cv=none; b=TCOhT50Y/jg7pycFuQUl0bo7VTackpsd83ViEhXbc8Xb9cr5FSZgY9M/1u2Vetoq1/u/IsUNb6I48JuUm7ZeT/IDi9XJ8LoU4o2nd3Q/HwBsuFxBOUM1J5Pw1K9BciW3QeOnqazfG1dz6QrxQNHyaKe6mxi5yQhpaCLStCvkxsg=
+	t=1740617179; cv=none; b=VTVmXpPaqkXTStWQLlsPO3pX/QTzhnA5QKEaG7O8h66ckvd0gTqml7vK1xYXbFcMcy6wDTlLgPI71XESjxLB0Yzfw+eY9gy6y/82s7C16yAc1BWlY1zYJfxjeql4r0So8QozXaEVNV5QnEWNgL4CHYtp8v3GUi1u4U3jNqwhR/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740617154; c=relaxed/simple;
-	bh=bmjGIsxoJW9MtYDnAf/zAnbbN3cgJxABDX6H5mj1kNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3p2KsnsrthfmqiqsPuP1MrriFINgzo/DnZ/CBRmiaRthlz6q0L2N73kzcRuD590BucdwUnEXPtK428x7/MFf1xJz/0GzYx7osQdTjYFU7Mjuue3kgyhdxM995zqrDUKXI5BSBygQyqPJXliIHU9af+H1dn+dQk4ixYsadSiAbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTSjhBkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68025C4CED6;
-	Thu, 27 Feb 2025 00:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740617153;
-	bh=bmjGIsxoJW9MtYDnAf/zAnbbN3cgJxABDX6H5mj1kNs=;
+	s=arc-20240116; t=1740617179; c=relaxed/simple;
+	bh=mXzZ0BmaQS0yzGWDeFwERyTqnUkdRAA9/VSw1crzZlA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BS5Wtf8BvtY4kv7O/HY19/L1UdRNDm9XqHvdWOOz1oHpeYH3hXj7qIjxeMp+DbNQaO9i75rn4oGR6msR0aaBsbvbO2JMP6j97Gnzae5PXlHUeqHi3ETLAYVgVB2espGka8eNxHOcPUxdcXHh3eryn7YwLOnRiJ8zlRoz6tTfScQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=JK9JophO; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id 11C0F210C313; Wed, 26 Feb 2025 16:46:18 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 11C0F210C313
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+	s=default; t=1740617178;
+	bh=ZftA8Or9AuHhHcKwPIKZDu5IOAx79F4qZJUHq+qO1GU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=KTSjhBkp4dI4PahCStErGNnjoU/xFYZCNllz6mP8fV4FVhqcaqUW+BtjIaUrX16cd
-	 DMOkJwL6SodjbQ7JQa+CAX8P47lTukwDXcp3Spu3XLQ9GR1hzausWcxPBeIFJO3I2/
-	 K5T8zkhK6rOe817iT06gWyHrzii8h+F1kwH9FoBUagOw+RWcPxS5Tp1RFxN42YTANV
-	 /zc45XYyjckj+JSRUEQyYLKtGGt4Zjaue8x1eYRAqgwFzS+lJvEV+jgHfnLjARpDmO
-	 mMmpi2AqUwiP4txi650pqNEDJVYSyIv2foVYrb3cvplf92oEOx9w81/ajp0O4jBaxN
-	 M9hTikH4y5H8Q==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: probe-events: Add comments about entry data storing code
-Date: Thu, 27 Feb 2025 09:45:50 +0900
-Message-ID: <174061715004.501424.333819546601401102.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	b=JK9JophOsvP5UY+utUXAht+ZBcmvxMPWb3Q7dAbaPFoemssa6yMCCq0EuOiQH0Z2D
+	 e5vNjMO+9r0hBh/c4hRBVttptJjw+G54hQgpR5HpuYO00luSbs/+oS4eRaeAgykM56
+	 LZqVfJ4dnzZQTonUwP9wF0/jstZ2/Ko1n2LSDlXw=
+From: longli@linuxonhyperv.com
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH] uio_hv_generic: Set event for all channels on the device
+Date: Wed, 26 Feb 2025 16:45:58 -0800
+Message-Id: <1740617158-15902-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+From: Long Li <longli@microsoft.com>
 
-Add comments about entry data storing code to __store_entry_arg() and
-traceprobe_get_entry_data_size(). These are a bit complicated because of
-building the entry data storing code and scanning it.
+Hyper-V may offer a non latency sensitive device with subchannels without
+monitor bit enabled. The decision is entirely on the Hyper-V host not
+configurable within guest.
 
-This just add comments, no behavior change.
+When a device has subchannels, also signal events for the subchannel
+if its monitor bit is disabled.
 
-Reported-by: Steven Rostedt <rostedt@goodmis.org>
-Closes: https://lore.kernel.org/all/20250226102223.586d7119@gandalf.local.home/
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Long Li <longli@microsoft.com>
 ---
- kernel/trace/trace_probe.c |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/uio/uio_hv_generic.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 8f58ee1e8858..2eeecb6c95ee 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -770,6 +770,10 @@ static int check_prepare_btf_string_fetch(char *typename,
+diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+index 3976360d0096..8b6df598a728 100644
+--- a/drivers/uio/uio_hv_generic.c
++++ b/drivers/uio/uio_hv_generic.c
+@@ -65,6 +65,16 @@ struct hv_uio_private_data {
+ 	char	send_name[32];
+ };
  
- #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
- 
-+/*
-+ * Add the entry code to store the 'argnum'th parameter and return the offset
-+ * in the entry data buffer where the data will be stored.
-+ */
- static int __store_entry_arg(struct trace_probe *tp, int argnum)
++static void set_event(struct vmbus_channel *channel, s32 irq_state)
++{
++	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
++	if (!channel->offermsg.monitor_allocated && irq_state) {
++		/* MB is needed for host to see the interrupt mask first */
++		virt_mb();
++		vmbus_setevent(channel);
++	}
++}
++
+ /*
+  * This is the irqcontrol callback to be registered to uio_info.
+  * It can be used to disable/enable interrupt from user space processes.
+@@ -79,12 +89,13 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
  {
- 	struct probe_entry_arg *earg = tp->entry_arg;
-@@ -793,6 +797,20 @@ static int __store_entry_arg(struct trace_probe *tp, int argnum)
- 		tp->entry_arg = earg;
- 	}
+ 	struct hv_uio_private_data *pdata = info->priv;
+ 	struct hv_device *dev = pdata->device;
++	struct vmbus_channel *primary, *sc;
+ 
+-	dev->channel->inbound.ring_buffer->interrupt_mask = !irq_state;
+-	virt_mb();
++	primary = dev->channel;
++	set_event(primary, irq_state);
+ 
+-	if (!dev->channel->offermsg.monitor_allocated && irq_state)
+-		vmbus_setevent(dev->channel);
++	list_for_each_entry(sc, &primary->sc_list, sc_list)
++		set_event(sc, irq_state);
+ 
+ 	return 0;
+ }
+@@ -95,12 +106,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
+ static void hv_uio_channel_cb(void *context)
+ {
+ 	struct vmbus_channel *chan = context;
+-	struct hv_device *hv_dev = chan->device_obj;
+-	struct hv_uio_private_data *pdata = hv_get_drvdata(hv_dev);
++	struct hv_device *hv_dev;
++	struct hv_uio_private_data *pdata;
+ 
+ 	chan->inbound.ring_buffer->interrupt_mask = 1;
+ 	virt_mb();
  
 +	/*
-+	 * The entry code array is repeating the pair of
-+	 * [FETCH_OP_ARG(argnum)][FETCH_OP_ST_EDATA(offset of entry data buffer)]
-+	 * and the rest of entries are filled with [FETCH_OP_END].
-+	 *
-+	 * To reduce the redundant function parameter fetching, we scan the entry
-+	 * code array to find the FETCH_OP_ARG which already fetches the 'argnum'
-+	 * parameter. If it doesn't match, update 'offset' to find the last
-+	 * offset.
-+	 * If we find the FETCH_OP_END without matching FETCH_OP_ARG entry, we
-+	 * will save the entry with FETCH_OP_ARG and FETCH_OP_ST_EDATA, and
-+	 * return data offset so that caller can find the data offset in the entry
-+	 * data buffer.
++	 * The callback may come from a subchannel, in which case look
++	 * for the hv device in the primary channel
 +	 */
- 	offset = 0;
- 	for (i = 0; i < earg->size - 1; i++) {
- 		switch (earg->code[i].op) {
-@@ -826,6 +844,16 @@ int traceprobe_get_entry_data_size(struct trace_probe *tp)
- 	if (!earg)
- 		return 0;
++	hv_dev = chan->primary_channel ?
++		 chan->primary_channel->device_obj : chan->device_obj;
++	pdata = hv_get_drvdata(hv_dev);
+ 	uio_event_notify(&pdata->info);
+ }
  
-+	/*
-+	 * earg->code[] array has an operation sequence which is run in
-+	 * the entry handler.
-+	 * The sequence stopped by FETCH_OP_END and each data stored in
-+	 * the entry data buffer by FETCH_OP_ST_EDATA. The FETCH_OP_ST_EDATA
-+	 * stores the data at the data buffer + its offset, and all data are
-+	 * "unsigned long" size. The offset must be increased when a data is
-+	 * stored. Thus we need to find the last FETCH_OP_ST_EDATA in the
-+	 * code array.
-+	 */
- 	for (i = 0; i < earg->size; i++) {
- 		switch (earg->code[i].op) {
- 		case FETCH_OP_END:
+-- 
+2.34.1
 
 
