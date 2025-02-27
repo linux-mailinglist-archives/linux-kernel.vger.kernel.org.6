@@ -1,138 +1,149 @@
-Return-Path: <linux-kernel+bounces-536027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54C7A47AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BC6A47AA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 265A37A409B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:45:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3F127A1F7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C622ACDC;
-	Thu, 27 Feb 2025 10:45:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291CB227E95;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DC022A7EC;
 	Thu, 27 Feb 2025 10:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibIJ0tGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E38E1EB5E8;
+	Thu, 27 Feb 2025 10:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653155; cv=none; b=H6cjadiRLBT2AIG/447+poD4CRiDqfNQs+xmf6wXUugMAfkGfZgPcb/oocWAhBAqqUfhAL+Con5S1Aio6pstxARkIlhCVg/CiXdykzDhhxBLPUBLGwgHRwOkzWbRkpx6TjNL7NJqXShjg9yUSAWxLEtydKsh7FM6oF3Wnpu4Gpg=
+	t=1740653153; cv=none; b=tk1J0z/bmvqHCzdXYkNlUHPvhKLDVCArN7UGwiuMD8uC5odeY6nYqScxdhP++MTgrrzV2nlHXAQWSdKUSq8INhOtfTQu012Q4+9cZLpUFvwqtC7MWMn1j1cvQ9+/J5/ff0fAhr1Pq/q2tbEuLIJscCNlikNXBlwJPeNBXW0xyZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653155; c=relaxed/simple;
-	bh=rl7PDQVu9xbZVpMs2pbjVuHwz+EkGPkkI2IIJhdpEU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDQHrafTDfuxu8deZcNMpXXsL6Dd2GtVzDCCce9OoT8JjCCT2K7ZJG9ipVk8LGHXzJCAiAJSubQQBJQymLl9l7nMRNYQ0V3joylmsqqJUCNhAoXFvPr2MkluHJQk8RX9tHOJcxlXpDC0N/5wtq4eK6xJ9+LXa/PuAx1bWsrviZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F03E12BCC;
-	Thu, 27 Feb 2025 02:46:08 -0800 (PST)
-Received: from [10.1.30.50] (e122027.cambridge.arm.com [10.1.30.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6B373F673;
-	Thu, 27 Feb 2025 02:45:48 -0800 (PST)
-Message-ID: <aec8ecd9-55b0-4690-9c54-780fc47643bc@arm.com>
-Date: Thu, 27 Feb 2025 10:45:46 +0000
+	s=arc-20240116; t=1740653153; c=relaxed/simple;
+	bh=sRc81rsNx8VOK7VP5opBGjZMA86PBpVNKgJXwBSOo24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccpOgeQBnEbhHpk9S0gwVIvcvzuD8z7ww5FQh4htUddgVwaz/3tMZNnlYbnSL5WeumQsa0rgYqMrhS7xqEo5fcmTeEC3VhuujSr2ofQ7pfd9o2PmX/L1uZeqjy9bhH9B2aoylWX0ZkbqbGBRJVO9DIyxfT+F7vfw0vhbxVr8T8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibIJ0tGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A0C9C4CEDD;
+	Thu, 27 Feb 2025 10:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740653152;
+	bh=sRc81rsNx8VOK7VP5opBGjZMA86PBpVNKgJXwBSOo24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ibIJ0tGNCMUjgwabSqp3/JUBa/J327EpdZ6FK+/Ygpb9pmOPvmuY8zFSFaU5wcGYT
+	 dFL1Gg4PooAuVEqg2FbyfDLjjIwWY9JCgB9r1AObMhURA8MOuZpz/ET6weJfysnr0F
+	 FqYqCCi1vfdxo6z8B2J+vWx/rDEWrWPv+ei/aN71Aimv5fyugcLnjJH5lLMNuLUqdO
+	 c0YZSdu6nKpmi8j7mC7AoXNTh3iklM0d1eXzSCeXaGEoaalkMVa+AaToAuCVDwaaFG
+	 v/1VmyblALlu87TiPEgGMuRQ97+DSA/OGL9C50Jx+ql0YE/J/hX4QtFVTHZlHc8mA4
+	 mihgwxlWWLr9A==
+Date: Thu, 27 Feb 2025 11:45:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: Document Maxim
+ MAX8971 charger
+Message-ID: <20250227-cherubic-mantis-from-betelgeuse-86f5ff@krzk-bin>
+References: <20250226093700.44726-1-clamor95@gmail.com>
+ <20250226093700.44726-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 09/11] arm64: Enable memory encrypt for Realms
-To: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, kvmarm@lists.linux.dev, kvm@vger.kernel.org
-References: <20241017131434.40935-1-steven.price@arm.com>
- <20241017131434.40935-10-steven.price@arm.com>
- <5aeb6f47-12be-40d5-be6f-847bb8ddc605@arm.com> <Z79lZdYqWINaHfrp@arm.com>
- <20250227002330.GA24899@willie-the-truck>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250227002330.GA24899@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226093700.44726-2-clamor95@gmail.com>
 
-On 27/02/2025 00:23, Will Deacon wrote:
-> On Wed, Feb 26, 2025 at 07:03:01PM +0000, Catalin Marinas wrote:
->> On Wed, Feb 19, 2025 at 02:30:28PM +0000, Steven Price wrote:
->>>> @@ -23,14 +25,16 @@ bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED
->>>>  bool can_set_direct_map(void)
->>>>  {
->>>>  	/*
->>>> -	 * rodata_full and DEBUG_PAGEALLOC require linear map to be
->>>> -	 * mapped at page granularity, so that it is possible to
->>>> +	 * rodata_full, DEBUG_PAGEALLOC and a Realm guest all require linear
->>>> +	 * map to be mapped at page granularity, so that it is possible to
->>>>  	 * protect/unprotect single pages.
->>>>  	 *
->>>>  	 * KFENCE pool requires page-granular mapping if initialized late.
->>>> +	 *
->>>> +	 * Realms need to make pages shared/protected at page granularity.
->>>>  	 */
->>>>  	return rodata_full || debug_pagealloc_enabled() ||
->>>> -	       arm64_kfence_can_set_direct_map();
->>>> +		arm64_kfence_can_set_direct_map() || is_realm_world();
->>>>  }
->>>
->>> Aneesh pointed out that this call to is_realm_world() is now too early 
->>> since the decision to delay the RSI detection. The upshot is that a 
->>> realm guest which doesn't have page granularity forced for other reasons 
->>> will fail to share pages with the host.
->>>
->>> At the moment I can think of a couple of options:
->>>
->>> (1) Make rodata_full a requirement for realm guests. 
->>>     CONFIG_RODATA_FULL_DEFAULT_ENABLED is already "default y" so this 
->>>     isn't a big ask.
->>>
->>> (2) Revisit the idea of detecting when running as a realm guest early. 
->>>     This has the advantage of also "fixing" earlycon (no need to 
->>>     manually specify the shared-alias of an unprotected UART).
->>>
->>> I'm currently leaning towards (1) because it's the default anyway. But 
->>> if we're going to need to fix earlycon (or indeed find other similar 
->>> issues) then (2) would obviously make sense.
->>
->> I'd go with (1) since the end result is the same even if we implemented
->> (2) - i.e. we still avoid block mappings in realms.
-> 
-> Is it, though? The config option is about the default behaviour but there's
-> still an "rodata=" option on the command-line.
+On Wed, Feb 26, 2025 at 11:36:59AM +0200, Svyatoslav Ryhel wrote:
+> +  maxim,fcharge-current-limit-microamp:
+> +    description:
+> +      Fast-Charge current limit
+> +    minimum: 250000
+> +    default: 500000
+> +    maximum: 1550000
+> +
+> +  maxim,fcharge-timer-hours:
+> +    description:
+> +      Fast-Charge timer in hours. Setting this value 3 and lower or 11 and higher
+> +      will disable Fast-Charge timer.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 5
 
-I think the question comes down to is there any value in having page
-mappings and not setting the read-only permissions? I.e.
-rodata_full=false but we're still avoiding block mappings.
+You still did not answer why this is board specific. This was rejected
+in the past because of that reason and nothing here changed. Nothing
+will change without detailed explanation, so use other interfaces if you
+need user-space to configure it (see other drivers, e.g. maxim)
 
-(1) as I've currently proposed doesn't allow that combination - if you
-disable rodata_full you also break realms (assuming
-DEBUG_PAGEALLOC/kfence don't otherwise force can_set_direct_map().
+> +
+> +  maxim,fcharge-rst-threshold-high:
+> +    description:
+> +      Set Fast-Charge reset threshold to -100 mV
+> +    type: boolean
+> +
+> +  maxim,in-current-limit-microamp:
+> +    description:
+> +      Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,topoff-timer-minutes:
+> +    description:
+> +      Top-Off timer minutes
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 10, 20, 30, 40, 50, 60, 70]
+> +    default: 30
 
-(2) forces page mappings if there's an RMM present, but does allow
-disabling the read-only permissions with "rodata=".
+Same.
 
-So I guess there's also another option:
+> +
+> +  maxim,topoff-current-threshold-microamp:
+> +    description:
+> +      Top-Off current threshold
+> +    enum: [50000, 100000, 150000, 200000]
+> +    default: 50000
+> +
+> +  maxim,fcharge-usb-current-limit-microamp:
+> +    description:
+> +      Fast-Charge USB current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,fcharge-ac-current-limit-microamp:
+> +    description:
+> +      Fast-Charge AC current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,usb-in-current-limit-microamp:
+> +    description:
+> +      USB Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,ac-in-current-limit-microamp:
+> +    description:
+> +      AC Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
 
-(3) Provide another compile/command line flag which forces page mapping
-which is different from rodata_full. That would then allow realms
-without affecting the permissions.
+Half of these properties as well are not suitable and duplicate existing
+sysfs interface.
 
-or indeed:
+And for remaining, still no battery.
 
-(4) Change can_set_direct_map() to always return true! ;)
-
-Thanks,
-Steve
+Best regards,
+Krzysztof
 
 
