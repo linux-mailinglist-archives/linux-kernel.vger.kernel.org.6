@@ -1,301 +1,165 @@
-Return-Path: <linux-kernel+bounces-537242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E02AA4898F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29473A48993
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3503B413A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7351890AD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E947127292A;
-	Thu, 27 Feb 2025 20:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0670D26FA7B;
+	Thu, 27 Feb 2025 20:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XWXo4Go3"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC6F26FA69;
-	Thu, 27 Feb 2025 20:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbJJKtPe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wBRbC0VT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF9A26A0BF;
+	Thu, 27 Feb 2025 20:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686966; cv=none; b=mFHh+2Q7DgbSIdK5c2asx2dZy8oXZGaMaI0G7l3qsMygG0Ac/8PHUk632CBy02Z5xErip3SKZxCLXm3rnby750qu8JAg15Kp4PAi7MY16H8AMK9yq5nGnB2SL3TPZeg5zZX1Bv/cLZL9cBEk7UW20n0ZgdlaW4d5YBURR0ec0zE=
+	t=1740687038; cv=none; b=QTEucjNkqxUAhebRBMp2T0QOYuujouMdD9+0XDnDMn2D2cC2NWrvOmKNLl/AKiOg/G6L4ttkWq/cRWoX2+vzw7wkgQ8QyDMIcKO28aDl3Ak10+Vt1WtH5XFN2awozs10BH79QdH5zo/j5uV3hD6OBu5MAkVt91okNVOn3/efHno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686966; c=relaxed/simple;
-	bh=fBrVCxpJBEfNKG9j/drwmbNUOrI/ARypiCduWRPTEBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bIxMUcD0jZKVuSlDcSkeVfKoLnHzlUt/qvcSF9HhGF6QgqHLKlOJW8ReOtgJlb5PxjZ2/r1st4k3jdxa1Mql81mdgR2vIlVarLUwe988TrqoA9ZlRyO6AY5wWxd/+JNN5a8CWiEIBfpHvipHgWHfY8L8rzb1YK1vJLwhnb59o3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XWXo4Go3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5429D210D0F6;
-	Thu, 27 Feb 2025 12:09:18 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5429D210D0F6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740686958;
-	bh=0GqjdZyUoxmHDoAKJ5CzA1TGTiAo0pCGgyNuqQwC4pk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XWXo4Go3v4bgG+YT+6NLUe6Yn3FzJT6MIqjH9PghDT44SASzCjT/VvrtPJxUF8KOz
-	 C0Y/nR1HtVTdtR0CENhtKR1yDaPVmrW69xydjw7SzGYZMrGNHYK2hfpKhQzCs9sD0y
-	 u7Fs6rW2rZ9Z+J8at3bW/IBwau4gfpLJxOnklqHg=
-Message-ID: <e949f5fc-44e2-437e-8b78-9e697ab1ac12@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 12:09:17 -0800
+	s=arc-20240116; t=1740687038; c=relaxed/simple;
+	bh=IIhv31tHm5nbcYXmnEy2mJ0BZBhMjxvw6fk3HPAcah4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=CjSydbpsr3rXHllNVkiYjGY09U9zjj7ZLW6FfrW4M028t/nmUOCGqGliPHjWTDQ6Nct2u8y1pTQNGBfnSACqA0dzLEyGjawhki5IP+0ERvnqyMaOnfJPCmOWtZ5R/+F+4TUtrNsq0zfqnTcXoSoxCVrtZaBovyAJq9+IH5Wh0wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbJJKtPe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wBRbC0VT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 27 Feb 2025 20:10:29 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740687034;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=t9+V8RePVjSPDpuIDIZ3RFGMA2w2/OJO32B8KrynrsE=;
+	b=vbJJKtPejnkgi1nCm7HXD57VphdQ0yCu6hr+cyJDX58836LY8K1g0eh7506Te7bMoISWgv
+	YJMTpcBDYo/bAVYnKFba4vIutGZ8HBS4HVusYdHoroPBB7HdtCvlFSxvXF1eL8MOC2gZEO
+	rc6DGFka62twIlZy4oaw1YR7IRf4rC7uoRwCEH4LTAuuUujX/w07SgkP4UncAsyCziExc2
+	7jrWwarGI0eIU8oUnPHFHfVfCSwg5meKRd3+pa8OsENpx5ZXzwKTm1XbyBpLXz2R0c9rw1
+	/jixwxC5PYd1vCSezXaC0BawZwmR0HE1SujkadOqRcQlLhJ3wuChpva3VCn8Cg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740687034;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=t9+V8RePVjSPDpuIDIZ3RFGMA2w2/OJO32B8KrynrsE=;
+	b=wBRbC0VTLIdmwgHuIyatirgeO9kJCV70RPFyTY9XXLczsMvLQtn70MFrWBEBnmWs2qUlk9
+	OruKBkbmMILkHWBA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/core: Prevent rescheduling when interrupts
+ are disabled
+Cc: David Woodhouse <dwmw@amazon.co.uk>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] Drivers: hv: Introduce hv_hvcall_*() functions for
- hypercall arguments
-To: Michael Kelley <mhklinux@outlook.com>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
- <kw@linux.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
-Cc: "x86@kernel.org" <x86@kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <20250226200612.2062-1-mhklinux@outlook.com>
- <20250226200612.2062-3-mhklinux@outlook.com>
- <45a1b6b5-407c-4518-9ea2-05341e93a67e@linux.microsoft.com>
- <SN6PR02MB4157FF9AF372F252C6D8B0A1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157FF9AF372F252C6D8B0A1D4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174068702952.10177.18201689881316002263.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2/26/2025 5:50 PM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 4:15 PM
->>
->> On 2/26/2025 12:06 PM, mhkelley58@gmail.com wrote:
->>> From: Michael Kelley <mhklinux@outlook.com>
->>>
->>> Current code allocates the "hyperv_pcpu_input_arg", and in
->>> some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
->>> page of memory allocated per-vCPU. A hypercall call site disables
->>> interrupts, then uses this memory to set up the input parameters for
->>> the hypercall, read the output results after hypercall execution, and
->>> re-enable interrupts. The open coding of these steps leads to
->>> inconsistencies, and in some cases, violation of the generic
->>> requirements for the hypercall input and output as described in the
->>> Hyper-V Top Level Functional Spec (TLFS)[1].
->>>
->>> To reduce these kinds of problems, introduce a family of inline
->>> functions to replace the open coding. The functions provide a new way
->>> to manage the use of this per-vCPU memory that is usually the input and
->>> output arguments to Hyper-V hypercalls. The functions encapsulate
->>> key aspects of the usage and ensure that the TLFS requirements are
->>> met (max size of 1 page each for input and output, no overlap of
->>> input and output, aligned to 8 bytes, etc.). Conceptually, there
->>> is no longer a difference between the "per-vCPU input page" and
->>> "per-vCPU output page". Only a single per-vCPU page is allocated, and
->>> it provides both hypercall input and output memory. All current
->>> hypercalls can fit their input and output within that single page,
->>> though the new code allows easy changing to two pages should a future
->>> hypercall require a full page for each of the input and output.
->>>
->>> The new functions always zero the fixed-size portion of the hypercall
->>> input area so that uninitialized memory is not inadvertently passed
->>> to the hypercall. Current open-coded hypercall call sites are
->>> inconsistent on this point, and use of the new functions addresses
->>> that inconsistency. The output area is not zero'ed by the new code
->>> as it is Hyper-V's responsibility to provide legal output.
->>>
->>> When the input or output (or both) contain an array, the new functions
->>> calculate and return how many array entries fit within the per-cpu
->>> memory page, which is effectively the "batch size" for the hypercall
->>> processing multiple entries. This batch size can then be used in the
->>> hypercall control word to specify the repetition count. This
->>> calculation of the batch size replaces current open coding of the
->>> batch size, which is prone to errors. Note that the array portion of
->>> the input area is *not* zero'ed. The arrays are almost always 64-bit
->>> GPAs or something similar, and zero'ing that much memory seems
->>> wasteful at runtime when it will all be overwritten. The hypercall
->>> call site is responsible for ensuring that no part of the array is
->>> left uninitialized (just as with current code).
->>>
->>> The new functions are realized as a single inline function that
->>> handles the most complex case, which is a hypercall with input
->>> and output, both of which contain arrays. Simpler cases are mapped to
->>> this most complex case with #define wrappers that provide zero or NULL
->>> for some arguments. Several of the arguments to this new function are
->>> expected to be compile-time constants generated by "sizeof()"
->>> expressions. As such, most of the code in the new function can be
->>> evaluated by the compiler, with the result that the code paths are
->>> no longer than with the current open coding. The one exception is
->>> new code generated to zero the fixed-size portion of the input area
->>> in cases where it is not currently done.
->>>
->>> [1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/tlfs
->>>
->>> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
->>> ---
->>>  include/asm-generic/mshyperv.h | 102 +++++++++++++++++++++++++++++++++
->>>  1 file changed, 102 insertions(+)
->>>
->>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
->>> index b13b0cda4ac8..0c8a9133cf1a 100644
->>> --- a/include/asm-generic/mshyperv.h
->>> +++ b/include/asm-generic/mshyperv.h
->>> @@ -135,6 +135,108 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
->>>  	return status;
->>>  }
->>>
->>> +/*
->>> + * Hypercall input and output argument setup
->>> + */
->>> +
->>> +/* Temporary mapping to be removed at the end of the patch series */
->>> +#define hyperv_pcpu_arg hyperv_pcpu_input_arg
->>> +
->>> +/*
->>> + * Allocate one page that is shared between input and output args, which is
->>> + * sufficient for all current hypercalls. If a future hypercall requires
->>> + * more space, change this value to "2" and everything will work.
->>> + */
->>> +#define HV_HVCALL_ARG_PAGES 1
->>> +
->>> +/*
->>> + * Allocate space for hypercall input and output arguments from the
->>> + * pre-allocated per-cpu hyperv_pcpu_args page(s). A NULL value for the input
->>> + * or output indicates to allocate no space for that argument. For input and
->>> + * for output, specify the size of the fixed portion, and the size of an
->>> + * element in a variable size array. A zero value for entry_size indicates
->>> + * there is no array. The fixed size space for the input is zero'ed.
->>> + *
->> It might be worth explicitly mentioning that interrupts should be disabled when
->> calling this function.
-> 
-> Agreed.
-> 
->>
->>> + * When variable size arrays are present, the function returns the number of
->>> + * elements (i.e, the batch size) that fit in the available space.
->>> + *
->>> + * The four "size" arguments are expected to be constants, in which case the
->>> + * compiler does most of the calculations. Then the generated inline code is no
->>> + * larger than if open coding the access to the hyperv_pcpu_arg and doing
->>> + * memset() on the input.
->>> + */
->>> +static inline int hv_hvcall_inout_array(
->>> +			void *input, u32 in_size, u32 in_entry_size,
->>> +			void *output, u32 out_size, u32 out_entry_size)
->> Is there a reason input and output are void * instead of void ** here?
-> 
-> Yes -- it must be void *, and not void **.  Consider a function like get_vtl()
-> in Patch 3 of this series where local variable "input" is declared as:
-> 
-> struct hv_input_get_vp_registers *input;
-> 
-> Then the first argument to hv_hvcall_inout() will be of type
-> struct hv_input_get_vp_registers **. The compiler does not consider
-> this to match void ** and would generate an error. But
-> struct hv_input_get_vp_registers ** _does_ match void * and compiles
-> with no error. It makes sense when you think about it, though it
-> isn't obvious. I tried to use void ** initially and had to figure out
-> why the code wouldn't compile. :-)
-> 
-Ah, that does make sense. Okay then, fair enough!
+The following commit has been merged into the sched/urgent branch of tip:
 
->>
->>> +{
->>> +	u32 in_batch_count = 0, out_batch_count = 0, batch_count;
->>> +	u32 in_total_size, out_total_size, offset;
->>> +	u32 batch_space = HV_HYP_PAGE_SIZE * HV_HVCALL_ARG_PAGES;
->>> +	void *space;
->>> +
->>> +	/*
->>> +	 * If input and output have arrays, allocate half the space to input
->>> +	 * and half to output. If only input has an array, the array can use
->>> +	 * all the space except for the fixed size output (but not to exceed
->>> +	 * one page), and vice versa.
->>> +	 */
->>> +	if (in_entry_size && out_entry_size)
->>> +		batch_space = batch_space / 2;
->>> +	else if (in_entry_size)
->>> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - out_size);
->>> +	else if (out_entry_size)
->>> +		batch_space = min(HV_HYP_PAGE_SIZE, batch_space - in_size);
->>> +
->>> +	if (in_entry_size)
->>> +		in_batch_count = (batch_space - in_size) / in_entry_size;
->>> +	if (out_entry_size)
->>> +		out_batch_count = (batch_space - out_size) / out_entry_size;
->>> +
->>> +	/*
->>> +	 * If input and output have arrays, use the smaller of the two batch
->>> +	 * counts, in case they are different. If only one has an array, use
->>> +	 * that batch count. batch_count will be zero if neither has an array.
->>> +	 */
->>> +	if (in_batch_count && out_batch_count)
->>> +		batch_count = min(in_batch_count, out_batch_count);
->>> +	else
->>> +		batch_count = in_batch_count | out_batch_count;
->>> +
->>> +	in_total_size = ALIGN(in_size + (in_entry_size * batch_count), 8);
->>> +	out_total_size = ALIGN(out_size + (out_entry_size * batch_count), 8);
->>> +
->>> +	space = *this_cpu_ptr(hyperv_pcpu_arg);
->>> +	if (input) {
->>> +		*(void **)input = space;
->>> +		if (space)
->>> +			/* Zero the fixed size portion, not any array portion */
->>> +			memset(space, 0, ALIGN(in_size, 8));
->>> +	}
->>> +
->>> +	if (output) {
->>> +		if (in_total_size + out_total_size <= HV_HYP_PAGE_SIZE) {
->>> +			offset = in_total_size;
->>> +		} else {
->>> +			offset = HV_HYP_PAGE_SIZE;
->>> +			/* Need more than 1 page, but only 1 was allocated */
->>> +			BUILD_BUG_ON(HV_HVCALL_ARG_PAGES == 1);
->> Interesting... so the compiler is not compiling this BUILD_BUG_ON in your patchset
->> because in_total_size + out_total_size <= HV_HYP_PAGE_SIZE is always known at
->> compile-time?
-> 
-> Correct. And if for some future hypercall in_total_size + out_total_size is
-> *not* <= HV_HYP_PAGE_SIZE, the BUILD_BUG_ON() will alert the developer
-> to the problem. Depending on the argument requirements of this future
-> hypercall, the solution might require changing HV_HVCALL_ARG_PAGES to 2.
-> 
->> So will this also fail if any of the args in_size, in_entry_size, out_size,
->> out_entry_size are runtime-known?
-> 
-> Correct.  I should change my wording about "The four 'size' arguments are
-> expected to be constants" to ". . . must be constants". OTOH, if there's a need
-> to support non-constants for any of these arguments, some additional code
-> could handle that case. But the overall hv_hvcall_inout_array() function will
-> end up generating a lot of code to execute at runtime. I looked at the hypercall
-> call sites in the OHCL kernel tree, and didn't see any need for non-constants,
-> but I haven't looked yet at the v4 patch series you just posted.  Let me know
-> if you have a case requiring non-constants.
-> 
-I don't think we ever use non-constants. In fact I can't think of a case where these
-values aren't the result of a sizeof() (or 0).
+Commit-ID:     c092dc7d88c1214e109591790c9021a0f734677a
+Gitweb:        https://git.kernel.org/tip/c092dc7d88c1214e109591790c9021a0f734677a
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 16 Dec 2024 14:20:56 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 27 Feb 2025 20:55:16 +01:00
 
-Overall I think this approach is looking quite nice and I'd be happy to adopt it
-in the mshv driver code when this is merged.
+sched/core: Prevent rescheduling when interrupts are disabled
 
-With the comment change mentioned above:
+David reported a warning observed while loop testing kexec jump:
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+  Interrupts enabled after irqrouter_resume+0x0/0x50
+  WARNING: CPU: 0 PID: 560 at drivers/base/syscore.c:103 syscore_resume+0x18a/0x220
+   kernel_kexec+0xf6/0x180
+   __do_sys_reboot+0x206/0x250
+   do_syscall_64+0x95/0x180
 
-> Michael
+The corresponding interrupt flag trace:
 
+  hardirqs last  enabled at (15573): [<ffffffffa8281b8e>] __up_console_sem+0x7e/0x90
+  hardirqs last disabled at (15580): [<ffffffffa8281b73>] __up_console_sem+0x63/0x90
+
+That means __up_console_sem() was invoked with interrupts enabled. Further
+instrumentation revealed that in the interrupt disabled section of kexec
+jump one of the syscore_suspend() callbacks woke up a task, which set the
+NEED_RESCHED flag. A later callback in the resume path invoked
+cond_resched() which in turn led to the invocation of the scheduler:
+
+  __cond_resched+0x21/0x60
+  down_timeout+0x18/0x60
+  acpi_os_wait_semaphore+0x4c/0x80
+  acpi_ut_acquire_mutex+0x3d/0x100
+  acpi_ns_get_node+0x27/0x60
+  acpi_ns_evaluate+0x1cb/0x2d0
+  acpi_rs_set_srs_method_data+0x156/0x190
+  acpi_pci_link_set+0x11c/0x290
+  irqrouter_resume+0x54/0x60
+  syscore_resume+0x6a/0x200
+  kernel_kexec+0x145/0x1c0
+  __do_sys_reboot+0xeb/0x240
+  do_syscall_64+0x95/0x180
+
+This is a long standing problem, which probably got more visible with
+the recent printk changes. Something does a task wakeup and the
+scheduler sets the NEED_RESCHED flag. cond_resched() sees it set and
+invokes schedule() from a completely bogus context. The scheduler
+enables interrupts after context switching, which causes the above
+warning at the end.
+
+Quite some of the code paths in syscore_suspend()/resume() can result in
+triggering a wakeup with the exactly same consequences. They might not
+have done so yet, but as they share a lot of code with normal operations
+it's just a question of time.
+
+The problem only affects the PREEMPT_NONE and PREEMPT_VOLUNTARY scheduling
+models. Full preemption is not affected as cond_resched() is disabled and
+the preemption check preemptible() takes the interrupt disabled flag into
+account.
+
+Cure the problem by adding a corresponding check into cond_resched().
+
+Reported-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/all/7717fe2ac0ce5f0a2c43fdab8b11f4483d54a2a4.camel@infradead.org
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9aecd91..6718990 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7285,7 +7285,7 @@ out_unlock:
+ #if !defined(CONFIG_PREEMPTION) || defined(CONFIG_PREEMPT_DYNAMIC)
+ int __sched __cond_resched(void)
+ {
+-	if (should_resched(0)) {
++	if (should_resched(0) && !irqs_disabled()) {
+ 		preempt_schedule_common();
+ 		return 1;
+ 	}
 
