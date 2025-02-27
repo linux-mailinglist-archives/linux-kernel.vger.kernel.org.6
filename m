@@ -1,200 +1,407 @@
-Return-Path: <linux-kernel+bounces-536985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F28A486AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:33:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD38A486B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17A616430D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C073B5CF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F711DE2B9;
-	Thu, 27 Feb 2025 17:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6796A1E51EC;
+	Thu, 27 Feb 2025 17:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="sAxVJj1f"
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010009.outbound.protection.outlook.com [52.103.67.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpZDD3Eo"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5711A1C5F1D;
-	Thu, 27 Feb 2025 17:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677591; cv=fail; b=p/bV8ekF+P9usoYJaQDPHfDAlAhqVsZF8M7lPKAY4lfBvFuZh9PmkNm+MAcLsrkYWd3nAhkyQTHrCMXR9PAWGskkFMcGNhTfO/LLECmbPHpxjPcEM+dZUhQQ3qxdDiC4MGqJIQvA+MoXl7NZFbvgLU5EpzyOsahJKoMBx0Zwwnk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677591; c=relaxed/simple;
-	bh=dupHdi1kp/izzzrRlPcKkfWR0zO537yHt18y6CSZkLY=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kC9O4p28br//lMxSWiM6+uNMrE419JOCWa0a8/XPyOvi28xfFF38kHAWszu3PCAAmO7J3vvEkq5Y8UHOXC/k/frT1rRaFV1TD15ZxQ6w6MKh14CZRnXKgLdx9XTCLPxO9xZjSxAnD1avtbuiJtIAs53QZe4Ut2puYRqOW5mS80Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=sAxVJj1f; arc=fail smtp.client-ip=52.103.67.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lv5IkDn/Jqv7KlX8Y6rBOowUA3wwbQ1PJR4rAe8Lk164XOlcoxr35DZutWK0fnrigJWiJB2hc5aWUlWlK878FFi5hYNhjliJ2rYRjyqQl+5RVzPXbfJsZsAxL8VCpyH2xtGjzvRbkJyZ36ManFw5pBnGOcXm+Nio99Va08sPGqNlNPB8RDhEdTywyB5EwV1NM89pG0PJjidffxqyqw/lknybU6asH2Kw5VHNHBoQArlhjQHN7fVRzXvZGeHgijyd9Eb3O8IVtGn5sTPA1el0wudjSuIqebeft4DsFj04efaSrBBCG67YfXZGLuGhrD3Icljh6l/VrYXSo9hgEgP3rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OHUCyUqxHYsd7t2eKDLP98rR0haICPDXh6teUSS1U3s=;
- b=y3O0/HNQD0u7Wgiz0f6f1/dCoXq70RBl1m2zZ9HxEZQUSbj9kPkr8erkMisfnoiTKKCbZ+vkQMq5XVBf7nkoq2w4hBgliReHDLJdRINkubU3LcoIVuTNH4lq8aPKMrSXXxe4Jb9Xb7i7USVMw37GUNLhhUSxz+0A0tM4tkhVTgWVZuxv0IJMM+etco737WyAY5oXresm2fmHJ8VKeXuy8HIEhJxJLbMk5rOcGIMoVVTznrFux4hycLgGHYOGPWaqh4EephHlCQnBQiYRHyUjMYdI2O5v/6mM+ISWHIdfiWd9RCOws4y0PgkyzcliTO8YQkXcMRfAiJOWk6i4OU+K/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OHUCyUqxHYsd7t2eKDLP98rR0haICPDXh6teUSS1U3s=;
- b=sAxVJj1fh5BpnLQEOJzwQltDR2mUwmfMyC+K3XelTaEsWLHlthFbEj+5b4kIVifG+JvC0FUZQ/PLsKXLWMPFcjtDFUrCxnN6i3YwlrHMjEKu21gCGtgZX/9tlTbCrnK0WABOSa+M55H7zq4LbnyEQg3K3d/CmQiQj4X3MDbm72Gc2lI78Q13hF6uKI7d0tzyEOe8HerFrOo2eRD/KoYvm9NE/c+O38Zqkph8Sd1zXzAyE7uTn8L47VVilbnFG6LLb+UhjboRkZ1/qVxNKgkhjrfebrWNPxgGxmRl9as7NWENttCB34wckngH1Xq9kNWgae8JCmhY4ekDbTi/ckKrLQ==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MA0PR01MB7281.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:34::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Thu, 27 Feb
- 2025 17:33:04 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.021; Thu, 27 Feb 2025
- 17:33:04 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>
-Subject: [PATCH 0/5] HID: multitouch: Add support for Touch Bars on x86
- MacBook Pros
-Thread-Topic: [PATCH 0/5] HID: multitouch: Add support for Touch Bars on x86
- MacBook Pros
-Thread-Index: AQHbiT2o13we6r7ex0SoH0BF8Ph2lg==
-Date: Thu, 27 Feb 2025 17:33:04 +0000
-Message-ID: <4C367CCA-2994-46EA-A139-7B4E23E33ADF@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MA0PR01MB7281:EE_
-x-ms-office365-filtering-correlation-id: 52ae2252-24d0-4e5b-bec4-08dd5754ca84
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|461199028|7092599003|8062599003|19110799003|12121999004|8060799006|5062599005|102099032|1602099012|4302099013|3412199025|440099028|10035399004;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?hlQ286N7CStLhubdk8/ervKneMwyqqpJ7U8e/7pm26cJvjR7sePaBqz4MTRQ?=
- =?us-ascii?Q?fpuehgF1yvA/v8LjWRWfivT3uurBjs4TKftO4iZp0zrKF4L+JsObjKBfwowA?=
- =?us-ascii?Q?rO0kyUvFd2Vzoo9W+TSac9ckGdVB/BxkN7tNM7W3qbM+i0Dc2Yyna0hDnYkO?=
- =?us-ascii?Q?B60kSqMpbzgx6cCspp0rdsuAqFtblkBUssWZs3eVeSA/I3Mpz2CXxNWe3GQr?=
- =?us-ascii?Q?QonrW+Zb2uP7poqFZP7/8NV4+WtgTihDBYHnWJyAO8xnMivuEz/oSLZb8zr1?=
- =?us-ascii?Q?ayqjJT1e/bgcMOCu5SYYvjHV+fTguv8IExlSzBztcckv170YbklMRdIzPEjB?=
- =?us-ascii?Q?8z4xq9NOZqURkXeMaTOXZ2wMu+koS/0kQrptLL1FkIDmqSUnV6yCyKDNH68V?=
- =?us-ascii?Q?dzhDrK4a6Aab/5xj3mPR0+/vpj8pahUNjpcCMG20Xl/21lIP7Sur216cbiDY?=
- =?us-ascii?Q?nd1/yMOK50KC3gqpVVn3UTa/KcHgskUHkt7fstbgUtM+4m9GADvE5PcMNk5U?=
- =?us-ascii?Q?6hno3CuiLY8LS493D5+5d+5LJXydd03osYOovzyPgb8m8B3aZFY2rAYuXLDO?=
- =?us-ascii?Q?sSNYNC5L0xXJAe+QIIlV2Du6gcB/rcif4Nrnem2+sGqdXVcZOdbF76PDrUZ9?=
- =?us-ascii?Q?yM+By11F29R5GBbqUl3XxEYbs9F+0lHoEFtUA/kqSaeK+/XVCNqXwIWO3NhS?=
- =?us-ascii?Q?bU0CVRAuWAlTznEilFyid0hCP6SlbZLa0RAdqhZ82rn4kDAJSpGFkeJx5MIB?=
- =?us-ascii?Q?RpmtFp1nJce7WQJW+ihaGkypA0gpCs9Pxht0HOJWZgbxWno/JR8K7D5oEnQr?=
- =?us-ascii?Q?+VUelffvVYencmmjXe9FHsDyRtffQdzaw6NqmckFngE9263xJX3TGUQ006ZM?=
- =?us-ascii?Q?KUmxbdcq56u188rSs3qAXlBhfn0qh+yMP7Ccf//F1AdZxsZkmWjRBHpOGZH5?=
- =?us-ascii?Q?gvNXnEUJd/ZH5zBLDAu6CgyufYTOKaq78qzyVX2K/QcWcxddjKmpu6bGNXhh?=
- =?us-ascii?Q?MK8lxVtJAoDmx4TWXmnLCg4XUZ8rhOEL2rHBsFR5luyBvwDqOoj2KildDmAM?=
- =?us-ascii?Q?cBLVoEGHiGOxRflMqySAKzrL2gHuOsv8wmWqrFWyUPN9mgxm3Bw25zR32AL9?=
- =?us-ascii?Q?oG2qXxsEMcNKhTzb4GaQGbbNRkzga4cYRBFQLrCymKB6hmQRiCWdt0VlpXTG?=
- =?us-ascii?Q?0qqnSoUV5RAkRuKFXxTwnT6D8qN6yA8kRtZiNWDoype8U2+ULU/0get+Heo+?=
- =?us-ascii?Q?XZJ3fDupoA33l/N7uqNB?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?noxLUGB0OpCmOXNWSpt+6KDMtAeWbaRHOBWhqopuau0c3oGPCMqgANT22W+l?=
- =?us-ascii?Q?7q0YoNISa1HSRKzsFR9PgyFLxcZ1oW0vZI9fLH9bkML8UWREdfw5Ka+UimgN?=
- =?us-ascii?Q?vdYYMP6NLz696IIVqrbqERIhWUHOFmp9NzUawQENzSbAni+/YL9+pDAKpyGd?=
- =?us-ascii?Q?UREOxWSECX5ANHd8fFxr6qckVwpkkJ1eMZ0e0aV9meM/LDj/EKAVSTeH8YjR?=
- =?us-ascii?Q?MsQ+RkHu7fGl3YbPBYr7vKKDuY33qsTO1Zea8gaXaVsnzv6iEiBvqUOp6BlG?=
- =?us-ascii?Q?mTjNRVpWL5YGuvZcnsF1ZLjPPuxJJrV8BmRVbWtxh6XBF8CKrBMzg5BkVcc5?=
- =?us-ascii?Q?dEmG/F+tof9gVdvdzJbXQti1xwVm/sUU6hxlN0VvnABnxmqm2rrrJujd1UI4?=
- =?us-ascii?Q?0W8AlDn+5QoBvt/hOhjgJYrIa5mN9gXrj/JN78SCRSeZgB4HHW/PjIVQQ8PG?=
- =?us-ascii?Q?kc+Q9EFiV++GSv7f1bmqG5nSAEN10tlV/GUFr4jY7VJZSe678ukaFUye8QP/?=
- =?us-ascii?Q?tMjUS4ONY1k6zCH/lLYROEotslzg7oMPkmcX/OBSyAdW5fWYrIZRTI/Wh916?=
- =?us-ascii?Q?Ksb/moXbGOSJypQHV8iJQuOny2Z/6kb5uQWYWQou+Yf0M7jB+3MJUUOVPU+w?=
- =?us-ascii?Q?Tyvyucsp5uRydh1GXMZjs3htj0D2on8snyIwBkjV1mHnNphZqbJ+MtYZWofs?=
- =?us-ascii?Q?uc5W+iFiI+5xXk/amtDT5SJ3jtWLA5VRlnLQPaN9q0owmsCFxSeLbDgTUjEr?=
- =?us-ascii?Q?s6/Gr9s2g3RM/VrK9LCzbWSzfK/BYPSRY+lY2HdiqpwetD/JqljAsptmk+mr?=
- =?us-ascii?Q?TIoJl5B0510NAdmkQkD52DXHAowaEcWyPF+4HcLKA9l8p+44sfUCnxjZhC51?=
- =?us-ascii?Q?qra77nuIHyArg7MALqeSVop7JFB130AE+eApoHxmdSBzjba2x4UYdE5bP2AG?=
- =?us-ascii?Q?sYrJSF+syPRC5xzypZ2aPjLmZj8UahJ/Z5XoiXWuJkU3+megSv0K+ante8R1?=
- =?us-ascii?Q?LYh5VSbP7U27Td3ogFnMcGoGAQroKVupmPqVM6EjAieg7uuvPjPB8UdX+AGM?=
- =?us-ascii?Q?vB8r4lZnN8TtmIOxCF8DbsQgbT2EX6ngenk9NK86DmKPfMuL0STEfuUNUBOr?=
- =?us-ascii?Q?Hpe+Vuz65ePnW3UyxAGE4QO3CRqi8k91T24J+PRmAGmwhCjUk98Kfg0nNPNJ?=
- =?us-ascii?Q?AQxX9x6U/OEYP1RHUD70fliOraSf+PCELPXtZSLpy22UWwPjNtc+NvT7UcWc?=
- =?us-ascii?Q?XsNEOsFFwWdh6UdnghnuynuLwdXtAIFuqXBGw1TlJxBWXD98Pu7wfJGThFst?=
- =?us-ascii?Q?o+Kl0exvwhb4BMhrX0PswNNM?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8D217C30D39EFF4F98D700132CD76FDC@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7C31DF274;
+	Thu, 27 Feb 2025 17:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740677649; cv=none; b=Z+zQ/Kfc/UxGnBTUY1wigI4XCMOSmTZ+Yj45rLIGcyo5zaOvpPVr25Pnj9jMuGG0Ldn4GM/R8U4WP9PriXKE979kMK6tKyxkpMU50tO5Jwu76mHgoME0BHWd8vsmd1hRivr01kde1I11GAlyuy75l1i/itgoqRRuC02RM3jvmik=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740677649; c=relaxed/simple;
+	bh=5io/u43OHyQ2ai/jTUAdQxiaUovK4D7VNZCRIf2uOfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K10XfSx/J8LmqtB0yAbHEgWeBdu0Y7D+CT3rBxwoqWzi1j6JGcD8Ju43Vo8KmVYevFLINxBvFhRtK27iByRuHzwkT4+ZftbWkHgjdSsPCw1E4NQARnpaqA4E49uq3nXNXnoHHJfkCiUOIXy9/OnA5wLwm+d1OC7knEKt7qH3EWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpZDD3Eo; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3091fecb637so10735011fa.1;
+        Thu, 27 Feb 2025 09:34:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740677645; x=1741282445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zV0HMykXZypVpGQkkQGaLeN+qp7pfqOToj9ZBxVcMKY=;
+        b=TpZDD3EoKE/fFeDf65LrhsV/V66TYLUEhXNpWI6GR2hlt/MnEk9UElYLaLhXj6D7cl
+         XRIZhqFO8iral01J9eYXIbvhrLciq8qaERcvrHI6ashutsk5WfD3GxTcRRTRF1ZnYkhI
+         D1Q8OOyd9vweV2TrhccrVZG44TcWaVYtGZsKKGeWDZeJt1Xn95JyAtMenR28u2g7O5Fn
+         NXIwPKkHTq/lG0ZKG1fQmsIMfVNBtxEK7RZ8ONhCdllRYn07clqiqzQgjloBkSYjq6Yv
+         0Rz0uqvv/YorHksr9a8lodEliQjHKphsneQac2aCRtwVDUZ3rCPkba1ppj+uS88s154g
+         qPqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740677645; x=1741282445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zV0HMykXZypVpGQkkQGaLeN+qp7pfqOToj9ZBxVcMKY=;
+        b=H/Sav+Fi77NBK1SNHjkNodBM6yiRrT9l1Y0HHB+fkOshQp9dItiWrQ2iYWgtukLzJv
+         R+BuUycLnqQqyz33wOBJTH4mKh7Pk8Gfv7/iVkWHdZ7zw9ayKCzOHkmpaQcaF9CYeAzc
+         GLgsqvQZj3QuSkwwQoBA8ydNJtk4F3cNmHCe6a77N09MUjtDumCSE5Y8RTGiO9RhPdcS
+         mNgpXGqEolEql8LsbccW0NCly7rB1WQNqMkj97Jp/1GTMEY0vlPZNegat2RMGrP65goI
+         S1DOuv2r8az22lIcsaff0OYzaMc1lwAEqqcEM+Uq6kOqQztZE0LDjR1RXsStp4FftK94
+         8DgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ/mh8ow03bO87BcqOA/v67O0QmHEOrOMAdIKJLdt00CQPlSZZzoKTfNROi+6T3bvuJnGjZNobGXTBVeo=@vger.kernel.org, AJvYcCXV2FPjE83UIYGPyh5x6VFPo+qc1KUfgwTX2N5dBt5QGWBdoNmf5B45K9VDcmZ/IGV2eermofoA5lcvWXYsY6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0AWochlhp5HWAl/LxeMTJ+Jb8qvrGSoecJDbX2Tu7/y8AWoqE
+	ZamH/NzJvBgVe9BtHcr1eA6wQuanD9HS57fvoLk3dGz9Wd69Rfi+wIHVZsSIhQvva2N0y8oNLtc
+	S7de/1yaRlAySfrZD8ItnUF2AuWY=
+X-Gm-Gg: ASbGncs5mDZkXIPbtNvgEGhOSLSg6bpBMKnVWWJlgGmbChy23rmdOVsNtk8AfOeoyXY
+	55GZ78KmwmbiSTRv9AKiOqmWnK4pbWyzAcJEQKmQsKWL2U+P3BJZc8WCFEcY8sbCLLSCfPm1AB1
+	H37NXTWvLo
+X-Google-Smtp-Source: AGHT+IE2BH/1NSXRzDXlElgcsEfByXyUcbKRKGR78hEZv7EvEhyk5TgAq8IxZXZq0wHhsseeHK9uPd1WEEbhefpqOR4=
+X-Received: by 2002:a2e:3c0b:0:b0:308:ffa1:890b with SMTP id
+ 38308e7fff4ca-30a80be24bdmr57978641fa.2.1740677644588; Thu, 27 Feb 2025
+ 09:34:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52ae2252-24d0-4e5b-bec4-08dd5754ca84
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 17:33:04.2959
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB7281
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+ <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
+ <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de> <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
+ <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de> <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
+ <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
+In-Reply-To: <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
+From: Ventura Jack <venturajack85@gmail.com>
+Date: Thu, 27 Feb 2025 10:33:51 -0700
+X-Gm-Features: AQ5f1JqN3AWgV8meR08A05wz9Nzi0d-mCixv49weqXaO89Jr7-WdZ80Dn-oXMRY
+Message-ID: <CAFJgqgS-S3ZbPfYsA-eJmCXHhMrzwaKW1-G+LegKJNqqGm31UQ@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Ralf Jung <post@ralfj.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
+	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all!
+On Wed, Feb 26, 2025 at 3:28=E2=80=AFPM Ralf Jung <post@ralfj.de> wrote:
+>
+> Hi all,
+>
+> On 26.02.25 19:09, Ventura Jack wrote:
+> > Is Miri the only one of its kind in the programming world?
+> > There are not many system languages in mass use, and
+> > those are the languages that first and foremost deal
+> > with undefined behavior. That would make Miri extra impressive.
+>
+> I am not aware of a comparable tool that would be in wide-spread use, or =
+that is
+> carefully aligned with the semantics of an actual compiler.
+> For C, there is Cerberus (https://www.cl.cam.ac.uk/~pes20/cerberus/) as a=
+n
+> executable version of the C specification, but it can only run tiny examp=
+les.
+> The verified CompCert compiler comes with a semantics one could interpret=
+, but
+> that only checks code for compatibility with CompCert C, which has a lot =
+less
+> (and a bit more) UB than real C.
+> There are also two efforts that turned into commercial tools that I have =
+not
+> tried, and for which there is hardly any documentation of how they interp=
+ret the
+> C standard so it's not clear what a green light from them means when comp=
+iling
+> with gcc or clang. I also don't know how much real-world code they can ac=
+tually run.
+> - TrustInSoft/tis-interpreter, mostly gone from the web but still availab=
+le in
+> the wayback machine
+> (https://web.archive.org/web/20200804061411/https://github.com/TrustInSof=
+t/tis-interpreter/);
+> I assume this got integrated into their "TrustInSoft Analyzer" product.
+> - kcc, a K-framework based formalization of C that is executable. The pub=
+lic
+> repo is dead (https://github.com/kframework/c-semantics) and when I tried=
+ to
+> build their tool that didn't work. The people behind this have a company =
+that
+> offers "RV-Match" as a commercial product claiming to find bugs in C base=
+d on "a
+> complete formal ISO C11 semantics" so I guess that is where their efforts=
+ go now.
+>
+> For C++ and Zig, I am not aware of anything comparable.
+>
+> Part of the problem is that in C, 2 people will have 3 ideas for what the
+> standard means. Compiler writers and programmers regularly have wildly
+> conflicting ideas of what is and is not allowed. There are many different=
+ places
+> in the standard that have to be scanned to answer "is this well-defined" =
+even
+> for very simple programs. (https://godbolt.org/z/rjaWc6EzG is one of my f=
+avorite
+> examples.) A tool can check a single well-defined semantics, but who gets=
+ to
+> decide what exactly those semantics are?
+> Formalizing the C standard requires extensive interpretation, so I am ske=
+ptical
+> of everyone who claims that they "formalized the C standard" and built a =
+tool on
+> that without extensive evaluation of how their formalization compares to =
+what
+> compilers do and what programmers rely on. The Cerberus people have done =
+that
+> evaluation (see e.g. https://dl.acm.org/doi/10.1145/2980983.2908081), but=
+ none
+> of the other efforts have (to my knowledge). Ideally such a formalization=
+ effort
+> would be done in close collaboration with compiler authors and the commit=
+tee so
+> that the ambiguities in the standard can be resolved and the formalizatio=
+n
+> becomes the one canonical interpretation. The Cerberus people are the one=
+s that
+> pushed the C provenance formalization through, so they made great progres=
+s here.
+> However, many issues remain, some quite long-standing (e.g.
+> https://www.open-std.org/jtc1/sc22/wg14/www/docs/dr_260.htm and
+> https://www.open-std.org/jtc1/sc22/wg14/www/docs/dr_451.htm, which in my =
+eyes
+> never got properly resolved by clarifying the standard). Martin and a few=
+ others
+> are slowly pushing things in the right direction, but it takes a long tim=
+e.
+> Rust, by having a single project in charge of the one canonical implement=
+ation
+> and the specification, and having an open process that is well-suited for
+> incorporating user concerns, can move a lot quicker here. C has a huge
+> head-start, Rust has nothing like the C standard, but we are catching up =
+-- and
+> our goal is more ambitious than that; we are doing our best to learn from=
+ C and
+> C++ and concluded that that style of specification is too prone to ambigu=
+ity, so
+> we are trying to achieve a formally precise unambiguous specification. Wa=
+sm
+> shows that this can be done, at industry scale, albeit for a small langua=
+ge --
+> time we do it for a large one. :)
+>
+> So, yes I think Miri is fairly unique. But please let me know if I missed=
+ something!
+>
+> (As an aside, the above hopefully also explains why some people in Rust a=
+re
+> concerned about alternative implementations. We do *not* want the current
+> de-factor behavior to ossify and become the specification. We do *not* wa=
+nt the
+> specification to just be a description of what the existing implementatio=
+ns at
+> the time happen to do, and declare all behavior differences to be UB or
+> unspecified or so just because no implementation is willing to adjust the=
+ir
+> behavior to match the rest. We want the specification to be prescriptive,=
+ not
+> descriptive, and we will adjust the implementation as we see fit to achie=
+ve that
+> -- within the scope of Rust's stability guarantees. That's also why we ar=
+e so
+> cagey about spelling out the aliasing rules until we are sure we have a g=
+ood
+> enough model.)
 
-This patch series aims to improve the Touch Bar support for x86 Macs.
+Very interesting, thank you for the exhaustive answer.
 
-Recently, the hid-appletb-kbd and hid-appletb-bl drivers were upstreamed
-into the Linux kernel [1]. They enabled the Touch Bar to display a
-predefined set of media and function keys, exactly the same it does on
-Windows Bootcamp.
+Might it be accurate to categorize Miri as a
+"formal-semantics-based undefined-behavior-detecting interpreter"?
 
-Now we are about to get support added for the DRM mode of the Touch Bar
-as well [2].
+>https://godbolt.org/z/rjaWc6EzG
 
-The DRM mode enables the Touch Bar to act as a second display,
-just like macOS. So now you can add a widget, put a clock or anything
-else on the Touch Bar as long as you can develop a daemon.
+That example uses a compiler-specific attribute AFAIK, namely
 
-Now via these patches, in the DRM mode, we can use the Touch Bar as a
-touch screen. The Touch Bar seems to be not compliant with the HID spec,
-thus via these patches several tweaks have been done under the cover of
-a single quirk, MT_QUIRK_APPLE_TOUCHBAR.
+    __attribute__((noinline))
 
-For the case of T2 Macs, apple-bce [4], the driver for the T2 Security
-Chip is also needed for all the peripherals, including the Touch Bar
-to work. It is still WIP, and will be subsequently sent later to the
-appropriate tree. Till then, I'll suggest for get the driver from [3],
-or more preferably, get Linux support from https://t2linux.org/.
+When using compiler-specific attributes and options, the
+original language is arguably no longer being used, depending
+on the attribute. Though a language being inexpressive and
+possibly requiring compiler extensions to achieve some goals,
+possibly like in this C example, can be a disadvantage in itself.
 
-Cheers
-Aditya
+> [On formalization]
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=3Df=
-or-6.15/apple
-[2]: https://lore.kernel.org/dri-devel/72610225-c6e0-413a-a791-468635743fc2=
-@suse.de/
-[3]: https://github.com/t2linux/apple-bce-drv
+I agree that Rust has some advantages in regards to formalization,
+but some of them that I think of, are different from what you
+mention here. And I also see some disadvantages.
 
-Kerem Karabay (5):
-  HID: multitouch: Get the contact ID from HID_DG_TRANSDUCER_INDEX
-    fields in case of Apple Touch Bar
-  HID: multitouch: support getting the tip state from HID_DG_TOUCH
-    fields in Apple Touch Bar
-  HID: multitouch: take cls->maxcontacts into account for Apple Touch
-    Bar even without a HID_DG_CONTACTMAX field
-  HID: multitouch: specify that Apple Touch Bar is direct
-  HID: multitouch: add device ID for Apple Touch Bar
+C is an ancient language, and parsing and handling C is made
+more complex by the preprocessor. Rust is a much younger
+language that avoided all that pain, and is easier to parse
+and handle. C++ is way worse, though might become closer
+to Rust with C++ modules.
 
- drivers/hid/Kconfig          |  1 +
- drivers/hid/hid-multitouch.c | 70 +++++++++++++++++++++++++++++++-----
- 2 files changed, 62 insertions(+), 9 deletions(-)
+Rust is more willing to break existing code in projects, causing
+previously compiling projects to no longer compile. rustc does this
+rarely, but it has happened, also long after Rust 1.0.
 
---=20
-2.43.0
+From last year, 2024.
 
+    https://internals.rust-lang.org/t/type-inference-breakage-in-1-80-has-n=
+ot-been-handled-well/21374
+        "Rust 1.80 broke builds of almost all versions of the
+        very popular time crate (edit: please don't shoot the
+        messenger in that GitHub thread!!!)
+
+        Rust has left only a 4-month old version working.
+        That was not enough time for the entire Rust
+        ecosystem to update, especially that older
+        versions of time were not yanked, and users
+        had no advance warning that it will stop working.
+
+        A crater run found a regression in over 5000 crates,
+        and that has just been accepted as okay without
+        any further action! This is below the level of stability
+        and reliability that Rust should have."
+
+If C was willing to break code as much as Rust, it would be easier to
+clean up C.
+
+There is the Rust feature "editions", which is interesting,
+but in my opinion also very experimental from a
+programming language theory perspective. It does
+help avoid breakage while letting the languages developers
+clean up the language and improve it, but has some other
+consequences, such as source code having different
+semantics in different editions. Automated upgrade
+tools help with this, but does not handle all consequences.
+
+If C was made from scratch today, by experts at type theory,
+then C would likely have a much simpler type system and type
+checking than Rust, and would likely be much easier to formalize.
+Programs in C would likely still often be more complex than
+in C++ or Rust, however.
+
+>[Omitted] We do *not* want the
+> specification to just be a description of what the existing implementatio=
+ns at
+> the time happen to do, and declare all behavior differences to be UB or
+> unspecified or so just because no implementation is willing to adjust the=
+ir
+> behavior to match the rest. [Omitted]
+
+I have seen some Rust proponents literally say that there is
+a specification for Rust, and that it is called rustc/LLVM.
+Though those specific individuals may not have been the
+most credible individuals.
+
+A fear I have is that there may be hidden reliance in
+multiple different ways on LLVM, as well as on rustc.
+Maybe even very deeply so. The complexity of Rust's
+type system and rustc's type system checking makes
+me more worried about this point. If there are hidden
+elements, they may turn out to be very difficult to fix,
+especially if they are discovered to be fundamental.
+While having one compiler can be an advantage in
+some ways, it can arguably be a disadvantage
+in some other ways, as you acknowledge as well
+if I understand you correctly.
+
+You mention ossifying, but the more popular Rust becomes,
+the more painful breakage will be, and the less suited
+Rust will be as a research language.
+
+Using Crater to test existing Rust projects with, as you
+mention later in your email, is an interesting and
+possibly very valuable approach, but I do not know
+its limitations and disadvantages. Some projects
+will be closed source, and thus will presumably
+not be checked, as I understand it.
+
+Does Crater run Rust for Linux and relevant Rust
+kernel code?
+
+I hope that any new language at least has its
+language developers ensure that they have a type
+system that is formalized and proven correct
+before that langauge's 1.0 release.
+Since fixing a type system later can be difficult or
+practically impossible. A complex type system
+and complex type checking can be a larger risk in this
+regard relative to a simple type system and simple
+type checking, especially the more time passes and
+the more the language is used and have code
+written in it, making it more difficult to fix the language
+due to code breakage costing more.
+
+Some languages that broke backwards compatibility
+arguably suffered or died because of it, like Perl 6
+or Scala 3. Python 2 to 3 was arguably successful but painful.
+Scala 3 even had automated conversion tools AFAIK.
+
+> > There are some issues in Rust that I am curious as to
+> > your views on. rustc or the Rust language has some type
+> > system holes, which still causes problems for rustc and
+> > their developers.
+> >
+> >      https://github.com/lcnr/solver-woes/issues/1
+> >      https://github.com/rust-lang/rust/issues/75992
+> >
+> > Those kinds of issues seem difficult to solve.
+> >
+> > In your opinion, is it accurate to say that the Rust language
+> > developers are working on a new type system for
+> > Rust-the-language and a new solver for rustc, and that
+> > they are trying to make the new type system and new solver
+> > as backwards compatible as possible?
+>
+> It's not really a new type system. It's a new implementation for the same=
+ type
+> system. But yes there is work on a new "solver" (that I am not involved i=
+n) that
+> should finally fix some of the long-standing type system bugs. Specifical=
+ly,
+> this is a "trait solver", i.e. it is the component responsible for dealin=
+g with
+> trait constraints. Due to some unfortunate corner-case behaviors of the o=
+ld,
+> organically grown solver, it's very hard to do this in a backwards-compat=
+ible
+> way, but we have infrastructure for extensive ecosystem-wide testing to j=
+udge
+> the consequences of any given potential breaking change and ensure that a=
+lmost
+> all existing code keeps working. In fact, Rust 1.84 already started using=
+ the
+> new solver for some things
+> (https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html) -- did you notic=
+e?
+> Hopefully not. :)
+
+If it is not a new type system, why then do they talk about
+backwards compatibility for existing Rust projects?
+If the type system is not changed, existing projects would
+still type check. And in this repository of one of the main
+Rust language developers as I understand it, several
+issues are labeled with "S-fear".
+
+    https://github.com/lcnr/solver-woes/issues
+
+They have also been working on this new solver for
+several years. Reading through the issues, a lot of
+the problems seem very hard.
+
+Best, VJ.
 
