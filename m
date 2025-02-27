@@ -1,59 +1,99 @@
-Return-Path: <linux-kernel+bounces-537276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F3BA489E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A622A489F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50DC188F7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DDF188F809
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAA1270EC6;
-	Thu, 27 Feb 2025 20:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445F326F465;
+	Thu, 27 Feb 2025 20:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyLTUH4B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="P64ttOiu"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC851222576;
-	Thu, 27 Feb 2025 20:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831619DF52
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740688193; cv=none; b=eyGQkd+i16VMExmMBr65b0h9GrbbR9+AzOHE/rrhnytiYW3tw0YGFBg/Iog3PbQc/fxh6aKQHj3Db6LOMe+7ajf0r45YNVqaDKtsUWnO3mtq9h5BhDTosbpTeVsCQiyFfKNyrmBJhW3p1D4sAFY3vNWJ5xDQVPVUBSWeXKK+CgI=
+	t=1740688740; cv=none; b=PoP41D9Ve5FkIxECfFwLpp5wOIeDArCrs7j7QTmfuOdrN1KYq/jf+371WgoVwT2R/kFl47fK+NXKEo7HxKMV0wgZu5SB9Ob8Ki81QDRCikLNns1rjNWy1y9cJrazhdg0eCRGhyyiEI9JMI1mgiHs9T4wLCqMabUhS00ODj2JBzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740688193; c=relaxed/simple;
-	bh=2cybosVQHkRgv3r4+gwu1gpd5fZS7Gc+fStsIZV1ynM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eNmbOSaAT3OggyiDIlGWkQmtd0AGkarM4sALngePFgVnYwuVxnRte1WlOS29sM+ietXGtlAD9PqF/y0nfvSorHPRDVMJu9mNlxSuEEeYlO0bIbrkH016vm+4lJF3iNFXotm7zhkd2FyntkB5BEZ0EBwMeLYnMYmtag1ixOkw3N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyLTUH4B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C63EC4CEDD;
-	Thu, 27 Feb 2025 20:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740688193;
-	bh=2cybosVQHkRgv3r4+gwu1gpd5fZS7Gc+fStsIZV1ynM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=cyLTUH4BoE4q96G95tspxn+UHwwCGbTdAbaqRIngaNqA62UaTIHyGk5jdlbA30ciq
-	 qiYobGFaPRNL1+QTnDt69eSqVkBnCeURCp+9PPSjLsMEkkTsW7B+cedd8h/4LvhxZk
-	 ul3Uxnra1ewphFFKtDcfSGUqorC1Z+ixvojNFqhSeQKI5i3hG5+9KChDmcpFoWasfp
-	 m2Sj542TDjS24sLHr2xOuGvfu+F323cHV6+LlNi3SPP/3NyiK1S56R4Pib5JSDE8rw
-	 eM5n0DH5RKw1xWjCOl100gbBGt26RYTXa4X62uAy8exLJVgSgmK1EfQL7aLDVwgWUq
-	 4PlGk+5GNzcBg==
-Date: Thu, 27 Feb 2025 14:29:51 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: mhklinux@outlook.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, arnd@arndb.de, x86@kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH 6/7] PCI: hv: Use hv_hvcall_*() to set up hypercall
- arguments
-Message-ID: <20250227202951.GA615709@bhelgaas>
+	s=arc-20240116; t=1740688740; c=relaxed/simple;
+	bh=tMLyfjj+PLIq74mmCTMG+2Qq5ezLhFjkwAJEJM30sx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKKXETLalegS7KlmoUnCl4ZY9CmJ0Tku8zo35PTAbjp9sv64Y1FxAXS21V2epl8HGTojyf6FGPan10C4PdphKvKAilUcPDIH+3tAprQksYPAuiXXzLz7Y0G9uuLlNp6i5ThYgfrRJC7uOq5wCFqDtdyobr2ajKAikidsPpMcyUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=P64ttOiu; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471eb0e3536so24726641cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:38:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1740688738; x=1741293538; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A8/Qt7Vv2+DDRlyzFkpTUnydrm+Dq5juNVKCyJPPEsk=;
+        b=P64ttOiufROrXgA1UwKfgdKzgMWcFYHqr4q3Eqp+H49vJqRvGSN/B8avmYScFINYpA
+         +45hsbvCSISnXogl4eKj3sgU0WXQiE8X+gih9FTZ+nNa2umPzNJPeYUF6y1w7CPCHegs
+         GdabA15ZOR1mzx5hhs0kx51JpiSLhPbEOC2P5SsDsjnmOk6Ufh3kJtxM8Qd6IqDvdn+r
+         /8uNF6iEZNz9U23IxmhbJy9Q/+rRs9J5H7oV6qhioDWNQd70BSWVF753tkMmt/yrQfN6
+         O/+lIpaklUDd83++IL0TlJ1QQGtl4JdDj1jg11TP9dtLU+SdnYngYO+mDS9ANEV1LNfV
+         2WXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740688738; x=1741293538;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A8/Qt7Vv2+DDRlyzFkpTUnydrm+Dq5juNVKCyJPPEsk=;
+        b=OFtrXJgZQX5qUIJ90wbqdbFijo9/oxn3GDcqc5foejBGsrEGiXFBoLA/Mmmu8LJAhT
+         IbrfjqGhEO0cRUCHDFi8IEXPjZxXVEWQawoduvtx+hMbDxmRT8oUoP9EJ1nZb6XYLvzc
+         FdLFYpM8nx8Dafh5tfeILrI8AX8GcRZsYtrPh66kgT0ltKx1U+dCZrQ/vEqWn5JM2b/y
+         xIWLZW1FfL0w+oRNVaOXTCOerjFJbT1zzLlqLGLMVPLxYfzc06eAn299ooIkUrRmtAN0
+         D5awFhjLd3dOKTBmFMTcuM45SLYJNJuj6NIFVnGD54P7uSa23mGihSxFK1ug9ngpqkxG
+         Hj4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXqDaD1PfBr8aKiz0CPmM/6uqrQHigm+H1YNjNdBpW80kqtogs0Dw6C34ijWCI4gdd4ighYPNr6PpgP/tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCqdJ+GwUY1/tk1FS9ZhuD6lqTSnfjfaYT7+1cWCj3CerbcSsA
+	3TbNQ743iMTwedUHhGwOzze9wDPCTP0qcudvf1ffsmmU/Us3JllTs/h+ExF1Srk=
+X-Gm-Gg: ASbGncu77RzpKtgHjMgbnfXXLy1XHCRO/QNVHeX45U6HSkzobon4n5vrPDKSeaKjQFc
+	qD+huPR9UdIAXr/10ja6QJ9woAGAyJWKL86v4StntVmD28cYgXIFLGQZ6OWnbOOPHhYYtTEItcj
+	yKmNXKDBihny+/c/pJkIBVx3GP/B01iALjME5n3DYtFx18JZVwGUr5Cnhr4QlS72R+yPAJdmmxF
+	d65q7F8NgGtziw/bgrR+l4PVYow857TcWHKZ7FrrjLr4mAbuEFSbKjLMSJ+kKfuyo3HRgB0ucUg
+	WsjLgCSG60r9IHO1564+5QD+ntZ6wtMqUTBLfXHQJAEMXQs2hYKneLlqa0eU9AzFiW/8tSlm8WY
+	=
+X-Google-Smtp-Source: AGHT+IH9h5nIeqRBN4A62EgPqAGrwp4q9RWIx3Ok1zBoIEmHHWXkJ71RN3O4VBV+synHi7sJ/BjH/Q==
+X-Received: by 2002:ac8:5e11:0:b0:472:165e:91d4 with SMTP id d75a77b69052e-474bc0848aemr8752981cf.13.1740688737797;
+        Thu, 27 Feb 2025 12:38:57 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4746b5eed4fsm15111101cf.31.2025.02.27.12.38.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 12:38:56 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tnkel-00000000K3V-3Gtf;
+	Thu, 27 Feb 2025 16:38:55 -0400
+Date: Thu, 27 Feb 2025 16:38:55 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Ethan Zhao <etzhao1900@gmail.com>
+Cc: Ethan Zhao <haifeng.zhao@linux.intel.com>,
+	Baolu Lu <baolu.lu@linux.intel.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
+	joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iommu/vt-d: fix system hang on reboot -f
+Message-ID: <20250227203855.GI5011@ziepe.ca>
+References: <20250225064831.63348-1-cuiyunhui@bytedance.com>
+ <0691a295-0883-47b3-84a6-47d9a94af69a@linux.intel.com>
+ <c059fb19-9e03-426c-a06a-41f46a07b30a@linux.intel.com>
+ <20250225142610.GB545008@ziepe.ca>
+ <888f41b7-dac6-4faf-9f71-4d7bea050e41@linux.intel.com>
+ <33c4755d-6a0f-4734-88e0-84f0de67b652@linux.intel.com>
+ <83039906-77f7-4318-94bf-4c98bb3f0e32@linux.intel.com>
+ <20250226130423.GF5011@ziepe.ca>
+ <f29818dc-a0a7-46c4-b541-1b469a6b3304@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,82 +102,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226200612.2062-7-mhklinux@outlook.com>
+In-Reply-To: <f29818dc-a0a7-46c4-b541-1b469a6b3304@gmail.com>
 
-On Wed, Feb 26, 2025 at 12:06:11PM -0800, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
+On Thu, Feb 27, 2025 at 08:40:31AM +0800, Ethan Zhao wrote:
 > 
-> Update hypercall call sites to use the new hv_hvcall_*() functions
-> to set up hypercall arguments. Since these functions zero the
-> fixed portion of input memory, remove now redundant calls to memset().
+> On 2/26/2025 9:04 PM, Jason Gunthorpe wrote:
+> > On Wed, Feb 26, 2025 at 01:55:28PM +0800, Ethan Zhao wrote:
+> > > > Provided the system does not respond to those events when this function
+> > > > is called, it's fine to remove the lock.
+> > > I agree.
+> > I think it is running the destruction of the iommu far too late in the
+> > process. IMHO it should be done after all the drivers have been
+> > shutdown, before the CPUs go single threaded.
 > 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Hmm... so far it is fine, the iommu_shutdown only has a little work to
+> do, disable the translation, the PMR disabling is just backward compatible,
+> was deprecated already. if we move it to one position where all CPUs are
+> cycling, we don't know what kind of user-land tasks left there (i.e. reboot -f
+> case), it would be hard to full-fill the requirement of Intel VT-d, no ongoing
+> transaction there on hardware when issue the translation disabling command.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+There is no guarentee device dma is halted anyhow at this point either.
 
-Since most of this series touches arch/x86/hyperv/ and drivers/hv/, I
-assume this will be merged via some non-PCI tree.
-
-> ---
->  drivers/pci/controller/pci-hyperv.c | 14 ++++++--------
->  include/hyperv/hvgdk_mini.h         |  2 +-
->  2 files changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index 44d7f4339306..b7bfda00544d 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -638,8 +638,8 @@ static void hv_arch_irq_unmask(struct irq_data *data)
->  
->  	local_irq_save(flags);
->  
-> -	params = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	memset(params, 0, sizeof(*params));
-> +	hv_hvcall_in_array(&params, sizeof(*params),
-> +			sizeof(params->int_target.vp_set.bank_contents[0]));
->  	params->partition_id = HV_PARTITION_ID_SELF;
->  	params->int_entry.source = HV_INTERRUPT_SOURCE_MSI;
->  	params->int_entry.msi_entry.address.as_uint32 = int_desc->address & 0xffffffff;
-> @@ -1034,11 +1034,9 @@ static void hv_pci_read_mmio(struct device *dev, phys_addr_t gpa, int size, u32
->  
->  	/*
->  	 * Must be called with interrupts disabled so it is safe
-> -	 * to use the per-cpu input argument page.  Use it for
-> -	 * both input and output.
-> +	 * to use the per-cpu argument page.
->  	 */
-> -	in = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	out = *this_cpu_ptr(hyperv_pcpu_input_arg) + sizeof(*in);
-> +	hv_hvcall_inout(&in, sizeof(*in), &out, sizeof(*out));
->  	in->gpa = gpa;
->  	in->size = size;
->  
-> @@ -1067,9 +1065,9 @@ static void hv_pci_write_mmio(struct device *dev, phys_addr_t gpa, int size, u32
->  
->  	/*
->  	 * Must be called with interrupts disabled so it is safe
-> -	 * to use the per-cpu input argument memory.
-> +	 * to use the per-cpu argument page.
->  	 */
-> -	in = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> +	hv_hvcall_in_array(&in, sizeof(*in), sizeof(in->data[0]));
->  	in->gpa = gpa;
->  	in->size = size;
->  	switch (size) {
-> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-> index 70e5d7ee40c8..cb25ac1e3ac5 100644
-> --- a/include/hyperv/hvgdk_mini.h
-> +++ b/include/hyperv/hvgdk_mini.h
-> @@ -1342,7 +1342,7 @@ struct hv_mmio_write_input {
->  	u64 gpa;
->  	u32 size;
->  	u32 reserved;
-> -	u8 data[HV_HYPERCALL_MMIO_MAX_DATA_LENGTH];
-> +	u8 data[];
->  } __packed;
->  
->  #endif /* _HV_HVGDK_MINI_H */
-> -- 
-> 2.25.1
-> 
+Jason
 
