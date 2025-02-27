@@ -1,307 +1,142 @@
-Return-Path: <linux-kernel+bounces-537518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35C1A48CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:41:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C5DA48CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A352C188ED50
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F53716CA7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFF923E326;
-	Thu, 27 Feb 2025 23:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E6E227EB0;
+	Thu, 27 Feb 2025 23:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TArWM/v3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WxBTBzur"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE5D276D23;
-	Thu, 27 Feb 2025 23:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDED276D23
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740699699; cv=none; b=boH3IrsMC6OjrVQlTUxAv+xM2TyQ/Gk8nY3k7KMaHBi1WvCh4j+gQqxtFUaRXUYk/EG12Rtpc6hL04TFgNQP0BHAgc5EhbHuNkpe4k+Eb70/fWWmbtsZ5AguGbO0H+wrmT2LseOCsr4/SGw533y2k5Q8CpPvz3Lu85MAeIzEy7Q=
+	t=1740699801; cv=none; b=WIynTHlBnB6ALg9ae+KJkA2po7bjiTvD9n37Vua3jwqFkFWCnoPqWHtCok1DFgH9Czsh4boPnlMsgDp/3eIVzOLPY60Nfyooo0krG/PN1cQ4qO8EF62n2zPCKH17N27zUOY0dLr36AzT0pOgNoX0B9uc7FTr9u3J89rTn0YHs+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740699699; c=relaxed/simple;
-	bh=1tU3+ozNm3RX5VFE1YDJZ+W2QGdJ4V27XWteIDBhW7o=;
+	s=arc-20240116; t=1740699801; c=relaxed/simple;
+	bh=XTtVjQ4kq+/ahGTfmaEVrVy1YQKoKT9VRg0oViebMB0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mYmCcx3u52uqq1ioMzjnfbVy+zUwnTSsxoBXJhIKXgnZLJrqzRLEe7R41MDrw1olXIVjDlOeBimSPxiG2vmBu+J649hGO1/qUoqdptoYRowqAoNRs85KFGcpj0Y+kU5aMVI+7ESJxzXotxCadE6G/joJl7e8+w03iNaB6N7CjN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TArWM/v3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DDBC4CEE4;
-	Thu, 27 Feb 2025 23:41:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740699699;
-	bh=1tU3+ozNm3RX5VFE1YDJZ+W2QGdJ4V27XWteIDBhW7o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TArWM/v3Pf/blJdR0NTf+xz1pAKb/H4mbhsPRg30GAfLq3Vnj/s3O0KQ/BBm+OK8a
-	 Kx9u0/J4hlD6MoZwu7c595U4kswy8eayuNoWGhQXIc4pRM9lIJOzYa+8c7mZ1MWjAt
-	 JIq7gRZ1B3bi39cvQ40QZuXRKQmsyxDc+o4J7+jwUj5KAZRse4PGC3aJESH5LQHQ31
-	 nBwbTBTRQ9Sl/LGti7dkGv9hXAHpTbYz0u6Q91Hq+8ps1RzFdbWimx3k8eihVHakD5
-	 YVbhn4I9aGthGKmPf4MhQaCfIIq4iBhyJjGYZoSNoRDIUE51VcEY9UWconF02RtNOn
-	 XlWr6yEI6KeTw==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f88509dad2so15220997b3.3;
-        Thu, 27 Feb 2025 15:41:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUi/IRK64LskCGKNRbvgI4VnpuY/s74etwHFbeQKGahfxDJS/5c5hnlwzHkSzj89Gs2Y3DOQnhvxubdkBEK@vger.kernel.org, AJvYcCVkkvnBGYEuITSsz8Dr/Fd1X/vY8CyN2gnwsFcUsbYtzYPbxNjrd7sh6zCtGrUHWwaXSYWRTw==@vger.kernel.org, AJvYcCW9UFWvuf4Csde2ZKE/UREjwMW657b0GJKMDuGPbuVKFGsXDzp6TJAT+ugRffHFzaP+j8Ig7xClvNoQvejG+pD9TjbNlKep@vger.kernel.org, AJvYcCWTUZYekdNJtHdUd8Zxz8XFAQN/aFOyp4t2IUOTp/NqHYYHKG5dykKNZQQAlgV4izUgbWPkvkKLAi24@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdX9ngZCibW7DsB86MBXB8ZWDgv/+CbJQbY4EuROjlDGos45Ti
-	VUxGcsysaYBAeS/l2rAfYrix1g5Lq5jmhwH/NQAhbwBayYAaXokiT7f+ToZfnp5FsQn3OZkkk/C
-	Ym6h4PFcwpgHCy+a+ZVPvEauGFzg=
-X-Google-Smtp-Source: AGHT+IGtxSEgYIBq4gfvypTDq1mQ6f9IWC8rh1ZC5QmPUpe8DTHZIh0DiGqiSCJdarqXBnLu1IxgJ6NYxSfIJNtsqpU=
-X-Received: by 2002:a05:690c:9989:b0:6ef:5013:bfd9 with SMTP id
- 00721157ae682-6fd4a04b3demr18394197b3.10.1740699698422; Thu, 27 Feb 2025
- 15:41:38 -0800 (PST)
+	 To:Cc:Content-Type; b=m+UAbp1SFS/B0eHDogZX1VuJlmgwzgUENNccg77N3AEFxm/wcRUseD/8Lmo1swq3QlF101cJv49tFJV/LDR9NQ5nR/pSNYO/SY/laRxxwKYArjk5IPXlMkBd13FZnmcLszvL/J+yRoRXQUDGIew2OS5Ca3j+7Ce7/xqo9Wruozo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WxBTBzur; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5fd062e9f91so79326eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:43:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740699799; x=1741304599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XTtVjQ4kq+/ahGTfmaEVrVy1YQKoKT9VRg0oViebMB0=;
+        b=WxBTBzurUQLyNqrD3+VU3kzMoSQwYOcFX7GFcb3r/OIAxTy6RjHcO61bo9/8uvXjFU
+         ZBDyEMg+sIwI3rMhrd2nXzUPsSVWubXjSZjx7nV88eYs9NCHR1xWeM6v/n743SDQdHQb
+         Nel0+JtxE1zss3rq29Y0bR8EsC05+ZNP/fIKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740699799; x=1741304599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XTtVjQ4kq+/ahGTfmaEVrVy1YQKoKT9VRg0oViebMB0=;
+        b=c1Wn88waMlN+xZF2NhjEDjEJvS4MJdjwnwetw7MvTpUM8JYx0H/ZYN0AFTk+f91yLq
+         KLidJmuwcJogJygUJuO3QBWWGfV2L7iXGkBx/pXA7e/OrK19fm9McnEEsky9ki0sOxap
+         d178iTGB+ARCZiOf1qAftDz0oFnk+cv37G+LVYmPLgkVF5Kkt50tReuQWx+cIPxFjW5U
+         oo/sJMpY7yzmtMDGuO8Bxzhez+9Czy8tRl5NP3V2LUi2hBHTFyAWoFyt5uJ9+umki7Yg
+         ZmA8Lg9JP9TOtym5tIWfMqccGZ5WLPBGrN98sYpu2dfr0m5j8qKGb8RC79GgF8SVhMz6
+         GHbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ0r29jL+teK41eMjGBJ2S61EBB55RiAxuNA0ww49+Di4n9GZoXB7jpVU9B7L22RFZlblBQ7jToAKa9CI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMhnEQddw9zJOjpx40eC+PRpXvkHUvljXPRLaTGgpkrOkDQkT1
+	rsMoDabYGF555sHsUMi647sV9jgg5ibWZQUt5vjPDByiL+z3KNrU8tAB9rG9SmgdleV2xpjdxLp
+	1CatfBu9K7TFXlCoKp1vN68i7utbeI85g0S5a
+X-Gm-Gg: ASbGnct7e3Vn7oAT0IAe1KZlkSgKJB3kqKOFokc/MddF00LepFvV/CjYB+J2CDiqJ4V
+	9TXHzoT8yQMzghc6yn0VQ5w5B6borevYh7gfJBGyXozaK1uy3ILuQStJhx+vZMC6QbJshv90CR2
+	GM1X35HPaynJB7CaBiDAmsE/8AxOqGUBJjYJEt7gNm
+X-Google-Smtp-Source: AGHT+IFVUyUsYDptOf1uEkSXiVm2KUCfAt5kpvDR++NsMlronN4mKbbFdn4W8gEd5sIJVSXFhEkNggEOqBxyd7D1hps=
+X-Received: by 2002:a05:6820:a110:b0:5fc:e9dd:45ed with SMTP id
+ 006d021491bc7-5feb352ea7bmr204153eaf.1.1740699799150; Thu, 27 Feb 2025
+ 15:43:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKtyLkFg2+8ciy4DM=g+vcTVvuRPNL2SHbN+m9ObErxtYXZYPw@mail.gmail.com>
- <1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Thu, 27 Feb 2025 15:41:26 -0800
-X-Gmail-Original-Message-ID: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpyw71LHr7qE8c6RnzWmXjrG76Ce4qwZD2HcZmcYYWARRgof66mCoQDUHQ
-Message-ID: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ipe: add errno field to IPE policy load auditing
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Cc: wufan@kernel.org, audit@vger.kernel.org, corbet@lwn.net, eparis@redhat.com, 
-	jmorris@namei.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com
+References: <20250224225246.3712295-1-jeffxu@google.com> <30b4de93-70e8-4384-ae56-9f6b6cf0f347@lucifer.local>
+ <CABi2SkXkfFAMhmXP1CKHCZMxdKWcHx8T9_0-nwBPWycTbxOctQ@mail.gmail.com> <afbaee91-3bea-4127-9dc1-7b43b0090229@lucifer.local>
+In-Reply-To: <afbaee91-3bea-4127-9dc1-7b43b0090229@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 27 Feb 2025 15:43:07 -0800
+X-Gm-Features: AQ5f1Jo_gJY3RsgJ5xmWVYLTo90Mu9L8ltsde4Nhv3yL6k10ypx9JSGFT-uMpC4
+Message-ID: <CABi2SkVcbuxm5j7xekSuyV=9goKxAPcDE_7OEz2JLds1+K0j0Q@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] mseal system mappings
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 2:46=E2=80=AFPM Jasjiv Singh
-<jasjivsingh@linux.microsoft.com> wrote:
+On Tue, Feb 25, 2025 at 10:01=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> Thanks for reviewing it. Here's the example generated from real logs:
+> On Tue, Feb 25, 2025 at 04:17:01PM -0800, Jeff Xu wrote:
+> > On Tue, Feb 25, 2025 at 2:32=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > BTW can we please drop the 'mseal, system mappings' prefixes on this
+> > > series, it's really weird and makes it really hard for me to actually=
+ read
+> > > the individual summary lines for each commit. 'mseal:' will do.
+> > >
+> >
+> > I am not sure.
+> > I had comments about adding mseal, system mappings, as prefixes, and I
+> > think it is reasonable.
 >
-> AUDIT_IPE_POLICY_LOAD(1422):
-> audit:  AUDIT1422 policy_name=3D"Test_Policy" policy_version=3D0.0.1
-> policy_digest =3Dsha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4
-> 299DCA92BFFF4DB82E86D3 auid=3D1000 ses=3D3 lsm=3Dipe res=3D1 errno=3D0
+> No it's really horrible (sorry I know it's hyperbolic but it really reall=
+y looks
+> horrid to me) , I've never seen prefixes like that before in mm in my lif=
+e and I
+> don't think it adds anything.
 >
-> The above record shows a new policy has been successfully loaded into
-> the kernel with the policy name, version, and hash with the errno=3D0.
+> I also find it MIGHTY confusing.
 >
-> AUDIT_IPE_POLICY_LOAD(1422) with error:
+> Please remove this :) you can git log the relevant files to see the conve=
+ntions
+> people use. Typically xxx: has something really short and sweet for the '=
+xxx'.
 >
-> audit: AUDIT1422 policy_name=3D? policy_version=3D? policy_digest=3D?
-> auid=3D1000 ses=3D3 lsm=3Dipe res=3D0 errno=3D-74
+> I realise this is subjective, but it's a small thing and would be helpful=
+ for
+> parsing your series at a glance.
 >
-> The above record shows a policy load failure due to an invalid policy.
->
-> I have updated the failure cases in new_policy() and update_policy(),
-> which covers each case as well.
->
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+I need a prefix to group the patches, especially when the first patch
+is just a config change. "mseal" won't work because this patch isn't
+about core business logic of mseal.
 
-Please merge the old and new changes into one single patch. Also the
-commit message is supposed to be used to describe the code change.
+How about "mseal sysmap:"?
 
-> ---
->  Documentation/admin-guide/LSM/ipe.rst |  2 ++
->  security/ipe/audit.c                  | 10 ++++------
->  security/ipe/fs.c                     | 17 ++++++++++++-----
->  security/ipe/policy.c                 |  4 +---
->  security/ipe/policy_fs.c              | 24 +++++++++++++++++++-----
->  5 files changed, 38 insertions(+), 19 deletions(-)
->
-> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
-guide/LSM/ipe.rst
-> index 2143165f48c9..5dbf54471fab 100644
-> --- a/Documentation/admin-guide/LSM/ipe.rst
-> +++ b/Documentation/admin-guide/LSM/ipe.rst
-> @@ -453,6 +453,8 @@ Field descriptions:
->  | errno          | integer    | No        | The result of the policy err=
-or as follows:        |
->  |                |            |           |                             =
-                      |
->  |                |            |           | +  0: no error              =
-                      |
-> +|                |            |           | +  -EPERM: Insufficient perm=
-ission                |
-> +|                |            |           | +  -EEXIST: Same name policy=
- already deployed     |
->  |                |            |           | +  -EBADMSG: policy is inval=
-id                    |
->  |                |            |           | +  -ENOMEM: out of memory (O=
-OM)                   |
->  |                |            |           | +  -ERANGE: policy version n=
-umber overflow        |
-> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-> index f810f7004498..8df307bb2bab 100644
-> --- a/security/ipe/audit.c
-> +++ b/security/ipe/audit.c
-> @@ -21,7 +21,7 @@
->
->  #define AUDIT_POLICY_LOAD_FMT "policy_name=3D\"%s\" policy_version=3D%hu=
-.%hu.%hu "\
->                               "policy_digest=3D" IPE_AUDIT_HASH_ALG ":"
-> -#define AUDIT_POLICY_LOAD_NULL_FMT "policy_name=3D? policy_version=3D? "=
-\
-> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=3D? policy_version=3D? "=
-\
->                                    "policy_digest=3D?"
->  #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=3D\"%s\" "\
->                                     "old_active_pol_version=3D%hu.%hu.%hu=
- "\
-> @@ -255,9 +255,8 @@ void ipe_audit_policy_activation(const struct ipe_pol=
-icy *const op,
->   */
->  void ipe_audit_policy_load(const struct ipe_policy *const p)
->  {
-> -       int res =3D 0;
-> -       int err =3D 0;
->         struct audit_buffer *ab;
-> +       int err =3D 0;
->
->         ab =3D audit_log_start(audit_context(), GFP_KERNEL,
->                              AUDIT_IPE_POLICY_LOAD);
-> @@ -266,15 +265,14 @@ void ipe_audit_policy_load(const struct ipe_policy =
-*const p)
->
->         if (!IS_ERR(p)) {
->                 audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
-> -               res =3D 1;
->         } else {
-> -               audit_log_format(ab, AUDIT_POLICY_LOAD_NULL_FMT);
-> +               audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
->                 err =3D PTR_ERR(p);
->         }
->
->         audit_log_format(ab, " auid=3D%u ses=3D%u lsm=3Dipe res=3D%d errn=
-o=3D%d",
->                          from_kuid(&init_user_ns, audit_get_loginuid(curr=
-ent)),
-> -                        audit_get_sessionid(current), res, err);
-> +                        audit_get_sessionid(current), !err, err);
->
->         audit_log_end(ab);
->  }
-> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-> index 5b6d19fb844a..40805b13ee2c 100644
-> --- a/security/ipe/fs.c
-> +++ b/security/ipe/fs.c
-> @@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const cha=
-r __user *data,
->         char *copy =3D NULL;
->         int rc =3D 0;
->
-> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -               return -EPERM;
-> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +               rc =3D -EPERM;
-> +               goto out;
-> +       }
->
->         copy =3D memdup_user_nul(data, len);
-> -       if (IS_ERR(copy))
-> -               return PTR_ERR(copy);
-> +       if (IS_ERR(copy)) {
-> +               rc =3D PTR_ERR(copy);
-> +               goto out;
-> +       }
->
->         p =3D ipe_new_policy(NULL, 0, copy, len);
->         if (IS_ERR(p)) {
-> @@ -161,8 +165,11 @@ static ssize_t new_policy(struct file *f, const char=
- __user *data,
->         ipe_audit_policy_load(p);
->
->  out:
-> -       if (rc < 0)
-> +       if (rc < 0) {
->                 ipe_free_policy(p);
-
-> +               p =3D ERR_PTR(rc);
-> +               ipe_audit_policy_load(p);
-
-How about ipe_audit_policy_load(ERR_PTR(rc));
-
-> +       }
->         kfree(copy);
->         return (rc < 0) ? rc : len;
->  }
-> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-> index 0f616e9fbe61..b628f696e32b 100644
-> --- a/security/ipe/policy.c
-> +++ b/security/ipe/policy.c
-> @@ -202,9 +202,7 @@ struct ipe_policy *ipe_new_policy(const char *text, s=
-ize_t textlen,
->         return new;
->  err:
->         ipe_free_policy(new);
-> -       new =3D ERR_PTR(rc);
-> -       ipe_audit_policy_load(new);
-> -       return new;
-> +       return ERR_PTR(rc);
->  }
->
->  /**
-> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-> index 3bcd8cbd09df..74f4e7288331 100644
-> --- a/security/ipe/policy_fs.c
-> +++ b/security/ipe/policy_fs.c
-> @@ -12,6 +12,7 @@
->  #include "policy.h"
->  #include "eval.h"
->  #include "fs.h"
-> +#include "audit.h"
->
->  #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
->
-> @@ -288,25 +289,38 @@ static ssize_t getactive(struct file *f, char __use=
-r *data,
->  static ssize_t update_policy(struct file *f, const char __user *data,
->                              size_t len, loff_t *offset)
->  {
-> +       const struct ipe_policy *p =3D NULL;
-
-This var can be avoided.
-
->         struct inode *root =3D NULL;
->         char *copy =3D NULL;
->         int rc =3D 0;
->
-> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -               return -EPERM;
-> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +               rc =3D -EPERM;
-> +               goto out;
-> +       }
->
->         copy =3D memdup_user(data, len);
-> -       if (IS_ERR(copy))
-> -               return PTR_ERR(copy);
-> +       if (IS_ERR(copy)) {
-> +               rc =3D PTR_ERR(copy);
-> +               goto out;
-> +       }
->
->         root =3D d_inode(f->f_path.dentry->d_parent);
->         inode_lock(root);
->         rc =3D ipe_update_policy(root, NULL, 0, copy, len);
-> +       if (rc < 0) {
-> +               inode_unlock(root);
-> +               goto out;
-> +       }
-
-This part seems unnecessary.
-
->         inode_unlock(root);
->
-> +out:
->         kfree(copy);
-> -       if (rc)
-> +       if (rc) {
-> +               p =3D ERR_PTR(rc);
-> +               ipe_audit_policy_load(p);
-
-p can be avoided, see the above comments.
-
-Also please update function documentation if it has a significant change.
-
--Fan
+-Jeff
 
