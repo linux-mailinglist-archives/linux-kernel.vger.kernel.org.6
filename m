@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-536252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB33EA47D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:16:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B817A47D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48ED3A778B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5103AFE64
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A44523A58B;
-	Thu, 27 Feb 2025 12:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="majmujgv"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92B222FF51
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C20A22E3F4;
+	Thu, 27 Feb 2025 12:12:35 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD5A22B8D0;
+	Thu, 27 Feb 2025 12:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658276; cv=none; b=ZRkax2haQKktH8D8Fkw/I4VsRs0fxYgrR0g7PaVN1cr6/L29bvPryEipA1yek6E7ewmmResvs4uRZVvV6JpLe4K9ds+QJdMZ0JSynXs5UQdU6DSob2MK376xdbRtf57Eq1J2IOMGXGUEVhdOuUkRvaEUQUHAOmEM2kAN0HaVKY4=
+	t=1740658354; cv=none; b=pMnyFda+7y/HQS652Se5uGSyCP8YVWhVtsN5c1/3QAbN5Zlf4ol58cpe/Jp4p/0ruI8yjSvu3rmqaxcFeXIuCwiKJU9cDFA9Ipt28KQmseP1Suh2A1EYjSoT0c/4uYtDye9EDbVWdX6AnJ1zVJMZ57ImdL3Ns2mPuWUN02tdEZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658276; c=relaxed/simple;
-	bh=PTMEKD2EChQP2kUhaxHvIOqhyTFQGOfvfgMjLfpR2Rc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHAW14JkV2WDRk5GaWxNkYxQXIldnVknmz4b2mFOhTbougRGohW4c8XD4bQ1hFKoJp63bpVjiGUoN/H9IxPQtvmKXuqUWtwh3fi3SeWpHkjl+nw1LlJ2MlL2zuHoRY6ASHSa8xDIc31GH9rbjKpGtu9qmuFHNBUB0S/8urAW3Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=majmujgv; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f406e9f80so617203f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:11:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740658273; x=1741263073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F8TH4Cvj18nm/1BUbuXS+Iv/nce9vLQaK2uqdnSHHx0=;
-        b=majmujgvDUhIovFjTOd5dpcniOfeRDr5fYyu25ARNxKPhMsZtalkK4ws8uiI1XKCkH
-         7EAscE9msTp6p1tymVxAS7wqLSbaDuY2SUEC5N/ebkyX/UI2Rnr+3bCHGL7Z5JCre9wm
-         8lR1vg68LzuhjX/tOohr2ZdmcW5G2yfFkmz3Zh+S/aQBGN0YIzSDXOukbSgg9EvVNJ3v
-         rYwieFtOMXqpSa1Vu3Kxgu7ovNk+QuGUvWN2cWRwXqhu1YQqOEa6CMIPgWk7jYt5uMdL
-         qWR171QMFzWFfszVFn2PloScrqBOY1mQRVQbaS3GWcs2vdxe37Sn7gxAFcMyPqyM0esO
-         vckA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740658273; x=1741263073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F8TH4Cvj18nm/1BUbuXS+Iv/nce9vLQaK2uqdnSHHx0=;
-        b=wUECTQULgBwRA+eSZT+H7vVo+yvpUhddzbJ8l4cohsnLBa/QYLIXT0ciE7QpbL1syh
-         6VA6UMVk6typL8gScAPJPZ3d4CVtsYO+7MpZjekwlsmftrHnZYmPtN0C2BoRAjV1TUEs
-         e2e4/VAV6PrJhpjaIt3YaDh2yi17tkFo2jYPai7xfTd4cDutcTiQYRk0hK+L9VtBpu/c
-         oJMuax0tYqPyET2dbJSWu/Ljq+8pyn+0V0WIVw7zYsWRyt6ncyK7ODKP84SCVm5ZyGzl
-         bFT0nAp97ui287dZJIbo2KJa5OPzos9e2Ytdlv4DuzsUpUCoO475oemhFOUWi7F/lULe
-         lywg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKEyzxDKJuWT/GiHKJ0dpWCj1d8DkpGKH2BSPAZowpAvT65CssF8xqdHg6hZV3XrX507e0Hsa0r03GtJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwybXcTgrG1VwJ3Kl22VXxePYlNGVhr/206WOdGntkjdqCOQ3fD
-	rB4zfWxl7XTSgjJZ81uNXtV5caHPaxZaj9bZMuU123BFgm57aXCwtmWQs5BwsjYuMFanVNz2uIu
-	yoXhvuqe90UDTfjIjFskdRGgVyd4vIFV0E1tC
-X-Gm-Gg: ASbGncsirYea39jmoXqamLAeFi1EL+/zaPZY10v6DVy/KhDDmdeITDd0gI3gDsBAI3d
-	a5mnaEMxAlyKlwGRirm7uC0TQz20jBGhNwKzTNKLQwlpzTJsH7HytODyi0wcJPXLIFAy0bSE1VQ
-	kn49VjOSacFsysFkvrSi80ZYPzKSrXmtgitl+06Q==
-X-Google-Smtp-Source: AGHT+IHaWCAPtldzHsXOX8LfMuJ4Kn2aOpz1eqAYmusznWkd40J7PjFBmbpkDGHYUXSXXq4IKAHJ0rYjP2C7bAgbVzI=
-X-Received: by 2002:a5d:5987:0:b0:38f:4acd:975c with SMTP id
- ffacd0b85a97d-390d4f430dcmr6047575f8f.27.1740658272861; Thu, 27 Feb 2025
- 04:11:12 -0800 (PST)
+	s=arc-20240116; t=1740658354; c=relaxed/simple;
+	bh=UC2rpvyWXrKN4d3nbei/pEG8zi0Fltfi8u5srY/6kvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6I0o/moa/kGYEjbxVZvkz1E0yQoE3PL5qe+DmaSJ8SgK8RGFPNc0qj0+MTcl2MgK/UpR+9l/vaEun+t0hrF/PMgNzRn8d17AeAAE+ks4aftLRBuxjL7AsDBNSvywfj1QLwQNRk63kR2wH0tsFEescC1nH0sxcYjWheCwhl9dHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51RCC9A7015235;
+	Thu, 27 Feb 2025 06:12:09 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51RCC72v015234;
+	Thu, 27 Feb 2025 06:12:07 -0600
+Date: Thu, 27 Feb 2025 06:12:07 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+Message-ID: <20250227121207.GA15116@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com> <20250225120114.GA13368@wind.enjellic.com> <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250227030952.2319050-1-alistair@alistair23.me>
- <20250227030952.2319050-10-alistair@alistair23.me> <2025022717-dictate-cortex-5c05@gregkh>
- <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com> <2025022752-pureblood-renovator-84a8@gregkh>
-In-Reply-To: <2025022752-pureblood-renovator-84a8@gregkh>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 27 Feb 2025 13:11:01 +0100
-X-Gm-Features: AQ5f1JqUVKP1GAP99zBTs6W1IB0GTaEeL8d4qVYR5_PRZUXnpo-FpP_nPI9vjHw
-Message-ID: <CAH5fLghbScOTBnLLRDMdhE4RBhaPfhaqPr=Xivh8VL09wd5XGQ@mail.gmail.com>
-Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are authenticated
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lukas@wunner.de, linux-pci@vger.kernel.org, 
-	bhelgaas@google.com, Jonathan.Cameron@huawei.com, 
-	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, 
-	ojeda@kernel.org, alistair23@gmail.com, a.hindborg@kernel.org, 
-	tmgross@umich.edu, gary@garyguo.net, alex.gaynor@gmail.com, 
-	benno.lossin@proton.me, Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 27 Feb 2025 06:12:09 -0600 (CST)
 
-On Thu, Feb 27, 2025 at 1:01=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Feb 27, 2025 at 12:52:02PM +0100, Alice Ryhl wrote:
-> > On Thu, Feb 27, 2025 at 12:17=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
-n.org> wrote:
-> > >
-> > > On Thu, Feb 27, 2025 at 01:09:41PM +1000, Alistair Francis wrote:
-> > > > +     return rust_authenticated_show(spdm_state, buf);
-> > >
-> > > Here you have C code calling into Rust code.  I'm not complaining abo=
-ut
-> > > it, but I think it will be the first use of this, and I didn't think
-> > > that the rust maintainers were willing to do that just yet.
-> > >
-> > > Has that policy changed?
-> > >
-> > > The issue here is that the C signature for this is not being
-> > > auto-generated, you have to manually keep it in sync (as you did abov=
-e),
-> > > with the Rust side.  That's not going to scale over time at all, you
-> > > MUST have a .h file somewhere for C to know how to call into this and
-> > > for the compiler to check that all is sane on both sides.
-> > >
-> > > And you are passing a random void * into the Rust side, what could go
-> > > wrong?  I think this needs more thought as this is fragile-as-f***.
+On Tue, Feb 25, 2025 at 07:48:31AM -0800, Casey Schaufler wrote:
+
+Good morning, I hope this note finds the week going well for everyone.
+
+> On 2/25/2025 4:01 AM, Dr. Greg wrote:
+> > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
 > >
-> > I don't think we have a policy against it? I'm pretty sure the QR code
-> > thing does it.
->
-> Sorry, you are right, it does, and of course it happens (otherwise how
-> would bindings work), but for small functions like this, how is the C
-> code kept in sync with the rust side?  Where is the .h file that C
-> should include?
+> > For the record, further documentation of our replies to TSEM technical
+> > issues.
+> >
+> > ...
+> >
+> > Further, TSEM is formulated on the premise that software teams,
+> > as a by product of CI/CD automation and testing, can develop precise
+> > descriptions of the security behavior of their workloads.
 
-I don't think there is tooling for it today. We need the opposite of
-bindgen, which does exist in a tool called cbindgen. Unfortunately,
-cbindgen is written to only work in cargo-based build systems, so we
-cannot use it.
+> I've said it before, and I'll say it again. This premise is
+> hopelessly naive. If it was workable you'd be able to use SELinux
+> and audit2allow to create perfect security, and it would have been
+> done 15 years ago.  The whole idea that you can glean what a
+> software system is *supposed* to do from what it *does* flies
+> completely in the face of basic security principles.
 
-One trick you could do is write the signature in a header file, and
-then compare what bindgen generates to the real signature like this:
+You view our work as hopelessly naive because you, and perhaps others,
+view it through a 45+ year old lens of classic subject/object
+mandatory controls that possess only limited dimensionality.
 
-const _: () =3D {
-    if true {
-        bindings::my_function
-    } else {
-        my_function
-    };
-};
+We view it through a lens of 10+ years of developing new multi-scale
+methods for modeling alpha2-adrenergic receptor antagonists... :-)
 
-This would only compile if the two function pointers have the same signatur=
-e.
+We don't offer this observation just in jest.  If people don't
+understand what we mean by this, they should consider the impact that
+Singular Value Decomposition methods had when they were brought over
+from engineering and applied to machine learning and classification.
 
-Alice
+A quote from John von Neumann, circa 1949, would seem appropriate:
+
+"It would appear that we have reached the limits of what is
+ possible to achieve with computer technology, although one should be
+ careful with such statements, as they tend to sound pretty silly in 5
+ years."
+
+If anyone spends time understanding the generative functions that we
+are using, particularly the task identity model, they will find that
+the coefficients that define the permitted behaviors have far more
+specificity, with respect to classifying what a system is *supposed*
+to do, than the two, possibly three dimensions of classic
+subject/object controls.
+
+More specifically to the issues you raise.
+
+Your SeLinux/audit2allow analogy is flawed and isn't a relevant
+comparison to what we are implementing.  audit2allow is incapable of
+defining a closed set of allowed security behaviors that are
+*supposed* to be exhibited by a workload.
+
+The use of audit2allow only generates what can be considered as
+possible permitted exceptions to a security model, after the model has
+failed and hopefully before people have simply turned off the
+infrastructure in frustration because they needed a working system.
+
+Unit testing of a workload under TSEM produces a closed set of high
+resolution permitted behaviors generated by the normal functioning of
+that workload, in other words all of the security behaviors that are
+exibited when the workload is doing what it is *supposed* to do.  TSEM
+operates under default deny criteria, so if workload testing is
+insufficient in coverage, any unexpressed behaviors will be denied,
+thus blocking or alerting on any undesired security behaviors.
+
+I believe our team is unique in these conversations in being the only
+group that has ever compiled a kernel with TSEM enabled and actually
+spent time running and testing its performance with the trust
+orchestrators and modeling tools we provide.  That includes unit
+testing of workloads and then running the models developed from those
+tests against kernels and application stacks with documented
+vulnerabilities.  To determine whether the models can detect
+deviations generated by an exploit of those vulnerabilities, from what
+the workload is *supposed* to be doing.
+
+If anyone is interested in building and testing TSEM and can
+demonstrate that security behaviors, undesired from its training set,
+can escape detection we would certainly embrace an example so we can
+review why it is occurring and integrate it into our testing and
+development framework.
+
+FWIW, a final thought for those reading along at home.
+
+TSEM is not as much an LSM as it is a generic framework for driving
+mathematical models over the basis set of information provided by the
+LSM hooks.
+
+All of the above starts the conversation on deterministic models, we
+can begin argueing about the relevancy of probabilistic and
+inferential models at everyone's convenience.  The latter two of which
+will probably drive how the industry does security for the next 45
+years.
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
