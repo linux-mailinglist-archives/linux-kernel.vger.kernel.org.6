@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-537325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E957BA48A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D80CA48A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A0B16B0AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6229616CBEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B17270ED8;
-	Thu, 27 Feb 2025 21:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5148E271296;
+	Thu, 27 Feb 2025 21:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SS0eXn72"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS1E0vi3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD2270054;
-	Thu, 27 Feb 2025 21:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9D0270ED1;
+	Thu, 27 Feb 2025 21:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740691880; cv=none; b=VgAEY4DRdrOKko9zZX4LXpuYm/mWuj1s57uldCJlB7pDXMoLlA/08PzRWZfFci3kFQ5w9OjPAbNm20IZ8GntcQpX33gra1NQbD8MPcwjOklYsbv2WAbj54q9sw32A97hfHu8gvo/lALwoa+dIkWzbTPpq+bdKZZcCZs63u0hQU8=
+	t=1740691959; cv=none; b=gvdYXKbizTuoOScGjiiqxFPBqygIRWjB6tGjGCVrcFxTVbBTgH87P9fiXDqQBN+31TQfJtNfTFOUUgGodePeYzygvXmh61no4avb4mNQUAEtETxtIp4M5LdLEMXbZvFEWLb8X64WHhYEEWw0NzOsT8R8p5NL69bz0uMLATwauJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740691880; c=relaxed/simple;
-	bh=smiZ/apE+Yk4FJShZg1ezck42LbWkq1NsSbpbC9kjT8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=QGbE3Rj2XKb/Tr6VVvwYGT0gosdgTCD3KN3Yw0gCe+lzHLg7c0FCbmvLtZIMCd9No0JvL2nz8qyN1MoBYfWBTuyhYeK4lHIGH825IfizT4jTlsIt13O1UgLq8EGsKe8ZVqH7utTTWjOqZe9aG8YXSJlsGT7OgJnHJSohPeM8gRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SS0eXn72; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0ba89dda9so149485285a.0;
-        Thu, 27 Feb 2025 13:31:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740691877; x=1741296677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tTXWCzxJGjQRhBeTvZrkv4Em3taHo2homJvU6LLXryU=;
-        b=SS0eXn72sQXv/ixeIcFg6qHAzZbF65r6liCtlj7GJDv/8QdgnV+mUeXSz3MxHB9v8I
-         VyFoVdoPLFxmKRMFu53MBjlmeYuLp8xp1MrM4u2heb7vTfw4ZKtPrAorIQDoaKhKz0Lz
-         WwmIkOD0Qplk4aPrsPfsTgMip3dj5r4QPjfv2YsFL9vhS/Cn88nnjj9+/YG++F8yMoeg
-         WFXUhUW3GzEgIqto8e6IbbZUuEuqRA41MM+KF8MPuaOm/iI0CsR+sfJKvGeeLHrT0kOe
-         Wgr/k/tPmyQvb7tp3Ww/1XVHNNF0DTfCM15fRgtOPL37Cqut19yyrCQJAWTfbt7HN42d
-         Qo2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740691877; x=1741296677;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tTXWCzxJGjQRhBeTvZrkv4Em3taHo2homJvU6LLXryU=;
-        b=in0zLSr6nX0aDShqWl1FRBm90gVzztye/Ao6dJgLIYycrgz0J4kGP0nI6DV62GLWeR
-         1CVOJi4pUNhcPTeike9jaj5jxsDBizhm6cJQhTaBu0Z5XccfVFh/5L3cnKe2BHpU/5tS
-         PiAuRCMNA/kSIFERlhah/gYg9ZzABgLyAfSzVPRodP8ZcSM0N3I8ofBVAj4upT/4XkYM
-         q0o1vnBdrshvJOEkc0fQVLsNCrefpPi/kEkTrl7NsHTk/u9xFONX0Ux9Eq2d+8IrcfKh
-         jZm7Eyp7eANbnv92E6kl2wclULlZkFxaiZTVR6sg+k5hUNGN0YdJ9PQ5/8GZVe7fdAH+
-         ooGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQlHLHzX1WvMB3pNs416sWSUqWURJkjLvyr2fiZdTa0Avgpaveb2ZMc6l85zNqoUlSFKRigNJWyWdB7jHKaBsg@vger.kernel.org, AJvYcCWwVOB5D3v/Kzkf0LrDRoiPjQODserr7H2hIfFXJF6JfDefui+7I+hUjIwlBcD4UFhWPLyJqQIAU94DygU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH838BT0HyvNZ1N96NOrGSe9ZjOKaGX1QsJwWlq/0QTKHVTogx
-	/7f1g68O+8jCQgXIM49UlIKsFuv8hv+3Z2kvafIzQSZ5zEIT60R3
-X-Gm-Gg: ASbGncuEE4sR0U9xY4l+YDr9qvBswujR9g+RvHFoWAdie+fZ/XRQpRCoeZwK8wGJlMu
-	K2bmmmY7lGCYLoJOf5kROtGhNj48u0ZLGpPmlKshbgLmN49k48i94XAGYu/mTZwXtlKKhPVZmra
-	ezI8vHtl4IgNm5A3fQXaAZHl2TdTFIZK2DKLUot4u/Tu3g6IHXl0qoWk6iqr1lktHnuHoJNkNbT
-	d/gq9nK0U8pFBaQjKnFCviExjvTKQBWhfXFyZSG12tCQ5zmlLmup8pFiKJoH2LhhiJHxGq4W9Q5
-	NykM+HOOpRWrUddPYoPXS7pDmv540k6gEiMeWTyc7afWQ872i72GvGVoCScwAuSCJ2/vd0WAzBr
-	iBPU=
-X-Google-Smtp-Source: AGHT+IFZOAzjE9lqgxr501qXM+xsj+WuPGXphtv657s2teoMDxnxZ+El3z4MqsQHqMslYAysMTD1Ag==
-X-Received: by 2002:a05:620a:394c:b0:7c0:ca33:6a97 with SMTP id af79cd13be357-7c39c4b7608mr121147085a.18.1740691877481;
-        Thu, 27 Feb 2025 13:31:17 -0800 (PST)
-Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378dab64asm153205585a.100.2025.02.27.13.31.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 13:31:17 -0800 (PST)
-Date: Thu, 27 Feb 2025 16:31:16 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Kevin Krakauer <krakauer@google.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Shuah Khan <shuah@kernel.org>, 
- linux-kernel@vger.kernel.org
-Message-ID: <67c0d9a492e9d_3a9f1829469@willemb.c.googlers.com.notmuch>
-In-Reply-To: <Z8DYMBlzcK5sFG-M@google.com>
-References: <20250226192725.621969-1-krakauer@google.com>
- <20250226192725.621969-2-krakauer@google.com>
- <67c090bf9db73_37f929294ec@willemb.c.googlers.com.notmuch>
- <Z8DYMBlzcK5sFG-M@google.com>
-Subject: Re: [PATCH v2 1/3] selftests/net: have `gro.sh -t` return a correct
- exit code
+	s=arc-20240116; t=1740691959; c=relaxed/simple;
+	bh=24dA6Z2ZK6UhZS4DruOECgGiZ8UxuXiS2+MwHPNxGB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPpTqtVElOQPjDoQIfISi8sVY55YwehCX5r4XMHPAMjUNVpzzu+K6o4wyr/WgwuzWkbbUXVjZNt0dsXSDmO39CDousDXLOOHxKHR3oBFFfoHvKRZMvzCng4r+AymNI2OW8m6c5TTmCYfit7hicVhqgdM4tSGsYL78L0cQCpl6Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS1E0vi3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DC7C4CEE5;
+	Thu, 27 Feb 2025 21:32:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740691959;
+	bh=24dA6Z2ZK6UhZS4DruOECgGiZ8UxuXiS2+MwHPNxGB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MS1E0vi3vYTLU2IYnbwqG44LtcXSoG2QJorBuZ54riv33Z5s7glAEoZdcbL3FNZux
+	 mMQpvvgBZiSuCekNQA0wOwL5FQdFezjSykm71ILSblU1rWgljD1W6qEvpI1YLAtAmN
+	 j7XnayG3ZTLVTpPbWmko9T2OWJ2awoBHhuNBws6Fe81pLyh4NqBZey2fsfW4i15u3P
+	 oXHMIyrun4sJKPoYL3vwPRAx72F0jXvG0HlW0in1gOG2kd042P/nxswSrPU7P/sv7d
+	 DFCLyyXauMrV0z0JLAecMw03SZyKk0Qmf/VLCFXiwbWPP0fLDOBQvVPVbgcAwUw8lR
+	 mt9AD0e7qsZDQ==
+Date: Thu, 27 Feb 2025 11:32:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+	memxor@gmail.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.15 v3 3/5] sched_ext: Add
+ scx_kfunc_ids_ops_context_sensitive for unified filtering of
+ context-sensitive SCX kfuncs
+Message-ID: <Z8DZ9pqlWim8EIwk@slm.duckdns.org>
+References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080648369E8A4508220133E99C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Z8DKSgzZB5HZgYN8@slm.duckdns.org>
+ <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB5080C1F0E0F10BCE67101F6F99CD2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-Kevin Krakauer wrote:
-> On Thu, Feb 27, 2025 at 11:20:15AM -0500, Willem de Bruijn wrote:
-> > > ---
-> > >  tools/testing/selftests/net/gro.sh | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
-> > > index 02c21ff4ca81..aabd6e5480b8 100755
-> > > --- a/tools/testing/selftests/net/gro.sh
-> > > +++ b/tools/testing/selftests/net/gro.sh
-> > > @@ -100,5 +100,6 @@ trap cleanup EXIT
-> > >  if [[ "${test}" == "all" ]]; then
-> > >    run_all_tests
-> > >  else
-> > > -  run_test "${proto}" "${test}"
-> > > +  exit_code=$(run_test "${proto}" "${test}")
-> > > +  exit $exit_code
-> > >  fi;
+Hello,
+
+On Thu, Feb 27, 2025 at 09:23:20PM +0000, Juntong Deng wrote:
+> > > +	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS &&
+> > > +	    prog->aux->st_ops != &bpf_sched_ext_ops)
+> > > +		return 0;
 > > 
-> > This is due to run_test ending with echo ${exit_code}, which itself
-> > always succeeds. Rather than the actual exit_code of the process it
-> > ran, right?
+> > Why can't other struct_ops progs call scx_kfunc_ids_unlocked kfuncs?
 > > 
-> > It looks a bit odd, but this is always how run_all_tests uses
-> > run_test.
 > 
-> Yep. I could change this to use exit codes and $? if that's desirable,
-> but IME using echo to return is fairly common.
+> Return 0 means allowed. So kfuncs in scx_kfunc_ids_unlocked can be
+> called by other struct_ops programs.
 
-Thanks. No need to change it.
+Hmm... would that mean a non-sched_ext bpf prog would be able to call e.g.
+scx_bpf_dsq_insert()?
+
+> > > +	/* prog->type == BPF_PROG_TYPE_STRUCT_OPS && prog->aux->st_ops == &bpf_sched_ext_ops*/
+> > > +
+> > > +	moff = prog->aux->attach_st_ops_member_off;
+> > > +	flags = scx_ops_context_flags[SCX_MOFF_IDX(moff)];
+> > > +
+> > > +	if ((flags & SCX_OPS_KF_UNLOCKED) &&
+> > > +	    btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id))
+> > > +		return 0;
+> > 
+> > Wouldn't this disallow e.g. ops.dispatch() from calling scx_dsq_move()?
+> > 
+> 
+> No, because
+> 
+> > > [SCX_OP_IDX(dispatch)] = SCX_OPS_KF_DISPATCH | SCX_OPS_KF_ENQUEUE,
+> 
+> Therefore, kfuncs (scx_bpf_dsq_move_*) in scx_kfunc_ids_dispatch can be
+> called in the dispatch context.
+
+I see, scx_dsq_move_*() are in both groups, so it should be fine. I'm not
+fully sure the groupings are the actually implemented filtering are in sync.
+They are intended to be but the grouping didn't really matter in the
+previous implementation. So, they need to be carefully audited.
+
+> > Have you tested that the before and after behaviors match?
+> 
+> I tested the programs in tools/testing/selftests/sched_ext and
+> tools/sched_ext and all worked fine.
+> 
+> If there are other cases that are not covered, we may need to add new
+> test cases.
+
+Right, the coverage there isn't perfect. Testing all conditions would be too
+much but it'd be nice to have a test case which at least confirms that all
+allowed cases verify successfully.
+
+Thanks.
+
+-- 
+tejun
 
