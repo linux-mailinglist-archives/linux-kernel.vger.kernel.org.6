@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-536415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7189A47F39
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:33:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C989BA47F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966C03B319C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9A0189159B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A6F22F397;
-	Thu, 27 Feb 2025 13:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9182B22DF8E;
+	Thu, 27 Feb 2025 13:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GqLLwQZS"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZscCeqjT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5622D4F3;
-	Thu, 27 Feb 2025 13:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B317221574
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663225; cv=none; b=tZ051pklCFz7d1R8bsxqlOvpHOnivb8CaaADpPfCDA7WaAsTZOoNvRgXJz2LijHlf1WLndq4fRo5wN1f2S7lwpvHUVX9HasdIpwZOgl2uMJlMSY7pZwlpyI8+Gl/BdL9QWyx0EJrEnVoPsq0qa98ossgOnVe3IJ1p84we8/to9U=
+	t=1740663250; cv=none; b=C5aLyECVUFvwM6vyDWjTsb2MCQJisOH4EqAJB43X9hH7zHGRPcQwt07LY/vf2qfxK+CjkmWMkqwbI2xV8P4vL+lLhPlbQ7lvWP234G0YF7rFkT6e+ljkceC5mZkaLW+Fa24kTWZ6Jz7Bxnke2YiLCx3a1D30c0dvo6marzi4QWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663225; c=relaxed/simple;
-	bh=YYaX4fM8y0aSrz9ljeSJ81PqES4t67efi7fD90W/cwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D5Ta1S5JybdZgoooG0aPUwSVpWtR5DVg+gXdQ5bBYGSwdyyMUDUPlAY7VTFiPK+lPKumuNKXAlmiBrVGM2zo23CvHzxRVahs0WjWmUNaJoG5uIEK4LVYDTZPakJEXBfYpQcBBIlzoHL6q12uVEpm4NUO7TNabh5zEmvAtP+d8sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GqLLwQZS; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B9144315F;
-	Thu, 27 Feb 2025 13:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740663214;
+	s=arc-20240116; t=1740663250; c=relaxed/simple;
+	bh=xFE676yswlPUkveJrw3/9s8mQ9wbSeq1Si8WEKRwYBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LBkrOtLKasnegaK2lMSuVJmuVnnX+/XnzBN5v7se8aqsB44SETPWEqggvBVBQ8MteUWofv/TLhygmuBiu/X5SjNPBq2QGUV1EiBvDhjIKVgphEbfh1Lo6sdDAoG/SQhYsb+sUI6kFzXO9TqSGwIRbbyApvbnwYQQwASnFplFGFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZscCeqjT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740663247;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JgblnwuWUmY5kYn4D0OU89iAmcNF5Q3maN2KDHlkwQA=;
-	b=GqLLwQZSv4d5ulqOy3pstT9rxElvXDP2uegomLTxMFiF2VRZW17V/k+Ckfw4f5OpxspCFp
-	8G52nko8AqA//4gXBsq8JPrtehWqccsq+9o/3oqsZC2J2JkzuTNzgr9zrJn94enMLKrT71
-	XCjdDDs+S81X47m+bcnqNVjRJ9DdrXDmoTnnnrEzQCDQp3WlrCMbqiVbyD9e+hE4J1+I4O
-	A5ORZ13NClw4WJWNn75Tq9+YNEGEleK6kRYagFqkBBPuc8dlAG+iIXMyQ59NAoKDTvQ30d
-	L6oCpyumBNJDoWOk2LmX85r66DlIGKWsNEPzaifI3nMID3m6DdHKOg4lrDU46g==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Cosmin Tanislav <demonsingur@gmail.com>
-Subject: Re: [PATCH v2 5/9] i2c: atr: do not create mapping in detach_addr()
-Date: Thu, 27 Feb 2025 14:33:34 +0100
-Message-ID: <22639181.EfDdHjke4D@fw-rgant>
-In-Reply-To: <20250225113939.49811-6-demonsingur@gmail.com>
-References:
- <20250225113939.49811-1-demonsingur@gmail.com>
- <20250225113939.49811-6-demonsingur@gmail.com>
+	bh=n+B6L4n6BOi+geOHGCelQa4PK6UgYjAHyRQzVn6Mv8Y=;
+	b=ZscCeqjT++bnMw5O0CT2EYXXZOXTptvFaBINqDzwST4MhyOTqFBsAlewoqXkk/VhVXH+GN
+	rm8wzLP6MODUwEuXXQ3CoYrQ2uGwJL6K2kkJ0L5PvHVpDxhA1GcLeqKeFAREKz/iIS9WBW
+	3W7+iXI9Hoo6lPHspYmsQY+nwAjq3z8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-122-eBFDSKgkMaWUq3_nPkMBMQ-1; Thu, 27 Feb 2025 08:34:05 -0500
+X-MC-Unique: eBFDSKgkMaWUq3_nPkMBMQ-1
+X-Mimecast-MFC-AGG-ID: eBFDSKgkMaWUq3_nPkMBMQ_1740663244
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f3bac2944so413158f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:34:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740663244; x=1741268044;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n+B6L4n6BOi+geOHGCelQa4PK6UgYjAHyRQzVn6Mv8Y=;
+        b=wFlMWtn193Cy809mdXVdm6uXPEdR3+f1a0YLLAadYWLR7R3APa2YZK5Yvd+mygrkcI
+         CTc/yjTlfdk+FcypPn76xrEC2GLhV7p4REPwj1jR1IrPpI8C914Es+nQPDT9zv9xUcfB
+         c4bErAKCid6lTgSLOz/cWhKKnI9zglClcytiecclOC7VIXlfIoiHHtzNDHKcfuDimdzN
+         kHVXYZ/jdBi9YrtCbLLxapnoMFE8c5B3mpIuweohDalUtif91KsS5VwiEcrNilpIJ0oG
+         FlzdonEAyvDJA5DAqiOfTYiZcwq3EFferFo/DdMkVPRCTRI7ESAeDmOyy0XcC4c9zUyJ
+         5hqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmIDniRxJSIeSyso5J5xdT63R5GSQtwOYpKKuMurG8NMW+K+qBK/CjVKPfGl01xtMZnJtyjEpoon5mCpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI7xzHQLPVurvG0u2hP/P0f49OYwbcxtNrraZjJsFkrhjMwqmx
+	adUPTWY/u8J8V7e5hLDYTj5ezESlTOyuXJvYX3sJIcig/aVDDif7zv9YM+RLzM3QNjMiR5VvmAR
+	8hcB1St1UlLoLTb8uxNBjKkjUqSzO7pB27OL3XKqXiHgplHUvqPKUnAFSr7pBqA==
+X-Gm-Gg: ASbGncs4Gv1s6JE58Nz2EfCnr872pheX8QTd6OAKJlBcVlbPfZ4zh6GCl6R5IwzfNT6
+	WnjB0zTBP9zIfo0fQW9NxM4YV2xCqie0FSFqrKtnxXIR68+THwc3QfRdNjuqYkAqRM3pH6cdHjV
+	wB9SxbfXHNohOkq6kyhrd/q7MV8rQM/yFyo1egAnCKGhrrVffijtAcdSjBoQuKHUbslRI0Ntiln
+	WT5DVlOk/+aXCwnxJfe4P/6tgudJIrnrr6JB7lcp4bXUhf1ToVoc/ShfwPXPNfUJ5LmhzZsGfAU
+	a3tpL6lIVgh00PeRFV3rds6L5RSv+iyYuPwIAltsE4+lm1o+Edil3p0UBZrxYtU=
+X-Received: by 2002:a5d:64e9:0:b0:390:e3c2:4638 with SMTP id ffacd0b85a97d-390e3c247bcmr2178799f8f.45.1740663244468;
+        Thu, 27 Feb 2025 05:34:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHPgXKZGzQZi1RlXVPrwC3mmkAF2LYR36JJd6HlYn8JsxhoUL0knF3kKMZithcftiX65fGmwQ==
+X-Received: by 2002:a5d:64e9:0:b0:390:e3c2:4638 with SMTP id ffacd0b85a97d-390e3c247bcmr2178773f8f.45.1740663244089;
+        Thu, 27 Feb 2025 05:34:04 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6aabsm2087622f8f.26.2025.02.27.05.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:34:03 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:34:02 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Ani Sinha
+ <anisinha@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 14/21] tests/acpi: virt: allow acpi table changes at
+ DSDT and HEST tables
+Message-ID: <20250227143402.2aae1c20@imammedo.users.ipa.redhat.com>
+In-Reply-To: <11f37e677592494c7e73b2ff5fad700e8726205f.1740653898.git.mchehab+huawei@kernel.org>
+References: <cover.1740653898.git.mchehab+huawei@kernel.org>
+	<11f37e677592494c7e73b2ff5fad700e8726205f.1740653898.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7803983.EvYhyI6sBW";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieekkeffvdeugfekjeegfefhvdetuefhtdelieduheeileduledvteelgefgffffnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdpr
- hgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---nextPart7803983.EvYhyI6sBW
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Date: Thu, 27 Feb 2025 14:33:34 +0100
-Message-ID: <22639181.EfDdHjke4D@fw-rgant>
-In-Reply-To: <20250225113939.49811-6-demonsingur@gmail.com>
-MIME-Version: 1.0
+On Thu, 27 Feb 2025 12:03:44 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-On mardi 25 f=C3=A9vrier 2025 12:39:33 heure normale d=E2=80=99Europe centr=
-ale Cosmin=20
-Tanislav wrote:
-> It is useless to create a new mapping just to detach it immediately.
->=20
-> Use the newly added i2c_atr_find_mapping_by_addr() function to avoid it,
-> and exit without logging an error if not found.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> We'll be adding a new GED device for HEST GPIO notification and
+> increasing the number of entries at the HEST table.
+> 
+> Blocklist testing HEST and DSDT tables until such changes
+> are completed.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+Acked-by: Igor Mammedov <imammedo@redhat.com>
+
 > ---
->  drivers/i2c/i2c-atr.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-> index 9c4e9e8ec802..b62aa6ae452e 100644
-> --- a/drivers/i2c/i2c-atr.c
-> +++ b/drivers/i2c/i2c-atr.c
-> @@ -586,10 +586,8 @@ static void i2c_atr_detach_addr(struct i2c_adapter
-> *adapter,
->=20
->  	mutex_lock(&chan->alias_pairs_lock);
->=20
-> -	c2a =3D i2c_atr_get_mapping_by_addr(chan, addr);
-> +	c2a =3D i2c_atr_find_mapping_by_addr(chan, addr);
->  	if (!c2a) {
-> -		 /* This should never happen */
-> -		dev_warn(atr->dev, "Unable to find address mapping\n");
->  		mutex_unlock(&chan->alias_pairs_lock);
->  		return;
->  	}
-
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-
---nextPart7803983.EvYhyI6sBW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmfAaa4ACgkQ3R9U/FLj
-287EsQ//XJuLkXvmscKzQkTBc4Nd3AwLM956yv31y1jrLCaTUTdbuWQvk58nRsmw
-IKSbf511Rq1prbRdfA6URx3+jejl1gI3WI/2kFW+Tr/CBUH5+c2htskd30mufy/1
-WjO9ZzhUnv1EEO1O14RHgD1BsZshZMF7S6gvVjxh+CRxSC1Gy78KfN/N1w2SafEX
-FoEKm0hW5ssITw6ldgDXqC6BVzK/90GWntCYl9Y+wztlxINbsSVTzQ+nhkY46diB
-w8+JQYWru/M/oiu3t3+ZSTiYxsyusDAKg3zxMsMIgb7CPBOivOHyYdhgFertc7Af
-LFzMSw9UCdyMQwD8IrwgKvuKy1vnjTMcCjEbw1R/aS9AnyWcDoCTLQkHLqFRxU+b
-EELd8My9BMDdZwVSP7LxD1oOy55c53yL8imxIcE2kSHB3/tflauOntMmldq/nDXw
-dkXWTVYYhVrRzR23W7ktQxQ92XlHhd4uZI8LDKjnszFKLLgJ2sMkB+OStPCPuqyQ
-wWdlKMXBEYGnv4OYkjQj/KERUffPzBxDDD8V8pB7wLeuv01u+GyJ4Swcp+otJR8P
-FZtb7kFKIS9rM/XKm/0BCNHuwIOfPRLnEAvnpr2E3APPxhOiaBDsBipJIPfRkRq9
-7RFjDfPl2fN5D3aH2oN//wFWyntLCVEVOulAgq0T1FU6Dl/KrPs=
-=5pJH
------END PGP SIGNATURE-----
-
---nextPart7803983.EvYhyI6sBW--
-
-
+>  tests/qtest/bios-tables-test-allowed-diff.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
+> index dfb8523c8bf4..0a1a26543ba2 100644
+> --- a/tests/qtest/bios-tables-test-allowed-diff.h
+> +++ b/tests/qtest/bios-tables-test-allowed-diff.h
+> @@ -1 +1,7 @@
+>  /* List of comma-separated changed AML files to ignore */
+> +"tests/data/acpi/aarch64/virt/HEST",
+> +"tests/data/acpi/aarch64/virt/DSDT",
+> +"tests/data/acpi/aarch64/virt/DSDT.acpihmatvirt",
+> +"tests/data/acpi/aarch64/virt/DSDT.memhp",
+> +"tests/data/acpi/aarch64/virt/DSDT.pxb",
+> +"tests/data/acpi/aarch64/virt/DSDT.topology",
 
 
