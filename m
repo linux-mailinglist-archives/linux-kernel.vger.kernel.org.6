@@ -1,243 +1,240 @@
-Return-Path: <linux-kernel+bounces-536994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFE9A486C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:36:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBB2A486C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911353B6A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886FB1888C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0341C1E5212;
-	Thu, 27 Feb 2025 17:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510DA1DEFEB;
+	Thu, 27 Feb 2025 17:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Xl94Qrpq"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011027.outbound.protection.outlook.com [52.103.68.27])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8Q3ZWrx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725D61D63CF;
-	Thu, 27 Feb 2025 17:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677778; cv=fail; b=DW8K2ngihYUlnC0CAr3LWHCb4HhSOfpBH6RsLMDKyTeDzLn0kiI0Uqj/tmpVUZ9FEKfgce/vmxr4bzQQ/Iayms698xr5ZfoosZHgKPuVD1Ix2M2kLkiV2pUK3DVhsCIVOXLkEXPdqFAcd5WwaTGWuxSjo41JSpmQvXKNwwRijdw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677778; c=relaxed/simple;
-	bh=A+RnlCnxqk/FXWtfGywQ0faeL9vDUtsw3aN3Cd9Mh8w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MvSLRSnoXxfHri3O9MSmuX1QuqSkBpDszgKOYkkHKLAg0U8ESyjRKYAQ0XtL90aWaYzu80IqJeDcouo0QTr/0VH8DsLr2AX+qWEGQVVEnG5LQA+X4/jX0MymUwRPuPN4KgHMdKxyCfpLo/HKPd8hmO2hiuVTpur0DkfalGMqAqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Xl94Qrpq; arc=fail smtp.client-ip=52.103.68.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jwIQcLqJSt9TsNB80ZoSKS6HyNaCIcLQ6qd7K8GL6IdNBVkwOslCDQoa81ZaXv7Oh7JkW3ehdd8Pw1x25vTbnG6h06pMDl34JfS6ClKjXuLbQlNsaOyqCI4L+CleN5lSBxLTwh2RvaYhf4GTFjCw9bmiZ0RS/Ks7PtB5vEJP5qSyo3GLnoDued7ZEEjf/iPnS6opFuil+7TWQ4TFlK1iIi67wsfhufDjQ3UmLdBolBeWk9SeJpJBDZ3fnERZzibXWIDVV/gMbmoEyRpxEyVm1eF0IRYp/7F7ncLD1/Vw++bGufr925Ey+J9IFjLjGVapo00I5M5MtHArjxxzfpq5dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ReDvTgeIRITbPf0iSR2vMf/gEIGRR9UeRdo6xkH+DY=;
- b=NYodZgQbNyqBNWBcM/GUsGlWz0ZzWhqYaGE5Hi5alo8QP3YAQ+wmQ4xA4gDOnTUtFVGuSV/QKU9NV8Lxl/WVAcdC5sllQ+GbKtulUpttxS52+PlzcyG8lRFfNFa+DPqIRm/AfnvjvGsncN3lRjYQ+SnVkW4Bm3jkayrdNuzmGazIPEEUPW8Ugq4sYdrmMQ5ipj7uQ5N2mlxS/5TU0Os70pmBTARoFGeP1OtjDv0jLvW5KBuRwTvUdm654qmvBhRS6p1Tazi0I7h/TK6qpayvrFP6Dbcxi4Mya9oVSYb6nDgKGcbGohhkdYPgUP31eHMpzQ4NSNJJG5EJu16FVVEx3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2ReDvTgeIRITbPf0iSR2vMf/gEIGRR9UeRdo6xkH+DY=;
- b=Xl94QrpqfaE+craF82KCsjrJAh3K2N7pYr+WitPI6p+4JdWJPsDsPcFmGh84iW0Ry3na1k9wGnkZkhAqRVY4DgWhSxHfZzXxbPa9Hbe272bqPxiAhjxsdbWR1DZlIiSXIt6NqEOFF8sVvOFKJtcdC9YyFryeFZ5vPHFWdRnuf3X/r2BsWs5Hvqao2TlCluR2KENNkd/cHtwGf7BVRumG39NLlrLF6eyHdBAtxPUwt9Oo5zq9KyfQ2QPYG/oFvFyo8XZQ6HXGvNbLO4tJTX5Sek2W9YEJjdG68l1M19nx9gvn1jTL+jZIS3oS9WyyP0sC/C8ioo790uvCL4V/0NLL0g==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MAXPR01MB4422.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Thu, 27 Feb
- 2025 17:36:11 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.021; Thu, 27 Feb 2025
- 17:36:11 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>
-Subject: [PATCH 5/5] HID: multitouch: add device ID for Apple Touch Bar
-Thread-Topic: [PATCH 5/5] HID: multitouch: add device ID for Apple Touch Bar
-Thread-Index: AQHbiT4XygWhKwXARUOQeR1AGw0jQA==
-Date: Thu, 27 Feb 2025 17:36:11 +0000
-Message-ID: <CEEAE215-C209-4FE0-8629-834AD5C48EE1@live.com>
-References: <4C367CCA-2994-46EA-A139-7B4E23E33ADF@live.com>
-In-Reply-To: <4C367CCA-2994-46EA-A139-7B4E23E33ADF@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|MAXPR01MB4422:EE_
-x-ms-office365-filtering-correlation-id: f1daa8d1-98bb-4b15-f3ce-08dd575539d4
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799003|8062599003|15080799006|7092599003|8060799006|440099028|3412199025|41001999003|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?MW7VoupqOnRQLzPPtE+9vycGfABRRsxWDnvSFGNHoS6bAfXq2j/D5Tg/QzVg?=
- =?us-ascii?Q?ahUP0cytgBdqOgMJe3hReZcvLOI1rgc/TIlhmScANdamEOzUOX6IwVG0G4bm?=
- =?us-ascii?Q?c8gcVzP+sEBROXalQ1trppyUohLWPKCl2IdqNKmrIwiwce/xJSP60OOt0z01?=
- =?us-ascii?Q?vkEA5avNeh6DbUxrpHUQNHQ4JNltsA1MRCpT7JeAulcaq3NbVtsFo6c3mtpc?=
- =?us-ascii?Q?GqNj7/8vloM3pNS1zhx9gVvNr2hpBjbhfvw36KhnISzHSv8ovrX9sPgqFD0W?=
- =?us-ascii?Q?dUUQ+lf7jZgcnq3qhiPYSAcFtRxLowRUG96kZyoWzz5WAcccnfZ4TiYESzfe?=
- =?us-ascii?Q?oPYLKsE8S19+48sxLRUHZI6996HD5cTJ3kBVanPwnwDNoVljMaOQRPApcksy?=
- =?us-ascii?Q?LgqfRD3D0OmEDqQTd41i61fIkttJK+BVU3MOJA4KdpxM/Q+dvlUFGhd9W10P?=
- =?us-ascii?Q?Wy6jenzLg1CKWkNU56Yrr0X+0fiaHw9+tqCrkv0uCBztwqGRsHrPaohvLPdJ?=
- =?us-ascii?Q?wAYlJihld8yh7EzMbKPBMWGzmB7HxDXORvbdMcBl1AYLtxHbuivKp8jzKRzW?=
- =?us-ascii?Q?toSD9hFcYuK2SIdu52+VRnBgNxR30FZ0Z8jLFkwAnmXW4BPAxH4cQxQ7JuRg?=
- =?us-ascii?Q?JvigjKP23syeMMB7GKbIKfpDbsCYu+aBY7EQREk4pXu98COp2lI/skLRjyG1?=
- =?us-ascii?Q?NMGzLYLQQKTNI6QQ/BIpTDU3yocZ0z+F4RqKd6zswRR9UedVR96XJUEyltd3?=
- =?us-ascii?Q?kvUW72Scl3Vg5xc5lOV5AfhZO2Ml6yRkKR1bIjA1Z1nFq6uy784M0uNNkRwm?=
- =?us-ascii?Q?zYvvq4uoYdV+TdsiBfqluQklIdudA8FQa3End+fcYVpNtmoiPg885zyeN7nl?=
- =?us-ascii?Q?skfkLWJHMaZdOZGAii+klaa39K7FNSJpLpQe4bOntyV6tJcIVMp6930m2cD1?=
- =?us-ascii?Q?iefYXM8BX8V3XhGCZL0zhjvkSNvV4FNHGpwoDMAYywhSuPIWm8HinO/M7RV4?=
- =?us-ascii?Q?bBPrQZq/Xp0QS+XvIyXpUYv0pwYEoZ2LjdMkaV3LGZIKyDAIxf2gidy01zyn?=
- =?us-ascii?Q?Qzych/bl6M0LbFHqtkCG8et/St9Zb0g/Ichqk285xmVAuuNB/Jw=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?2A4ndslnJcXrCWlaL/v5hmiifl5l2JNJ/MIYx31gFWGmY181Bz1+IHs7DkFZ?=
- =?us-ascii?Q?e5CRlleqOjso4sPnwyXc+Qe1oa0BaR3hZ+MUd18I3LCWJRjwxL7Filz1toy2?=
- =?us-ascii?Q?8volRZe36VnkedHa1+pSnntcrfopk8ehTZpLaBp0vX/iTYDo4D4Kwz3G5+ht?=
- =?us-ascii?Q?S2j5Q08vkx9umbWcMIrz4hNntblfCSWAxpfQRnGvRO/wWAhaWH/xynWp8nG3?=
- =?us-ascii?Q?DN3kVjsrszr5D3guaVgCtSDBdUxiASBhxswAW1ZlDvDJzV6L6vl+7tqyCu+m?=
- =?us-ascii?Q?50oNAtp1qDSuABdce8B4KK3GgVmtcpDuQ/GiYXekFSOFAs27eG4/oit8IjLa?=
- =?us-ascii?Q?pNVcKYlRJkSDhWvzUu4VfrQo2amnjqU9i/XSZDT9fV26qGcL62OQkZpChZrg?=
- =?us-ascii?Q?bc+NhMqsMWKxEz5JK46IEL8Qts/hxdAgs3zb+kmCxDVdJUQHRUOCeoIBQKtR?=
- =?us-ascii?Q?vLV9C83LXWNbKVOJn83nkYyNdo9USv2UGOADIuQS0XnBWtH17o/KF04ZUOi1?=
- =?us-ascii?Q?nmQwqjB4WMQhb1dOXyuAm5MNuke793RHJsTBromhb0/0Sh5+NUCizEtD1nl6?=
- =?us-ascii?Q?umdGSPm9BCVGA2FuuUvmO/3di7NhpiHK3nwpe41T9CilGzWSldiNPJEXKq56?=
- =?us-ascii?Q?JlJF2XdiUlMUu6vt1ry5L7thF/mOJG4HshwDxzdJ+GEmKuOEAfoMCPyLHgUX?=
- =?us-ascii?Q?tMVwhU4Clj5miGSjeafXVLMaHef3rCL51ha9NGeiGefhu2J6BC0jrwup3KIn?=
- =?us-ascii?Q?t3Ew0cretrGuxyx1zYc9X2ZckgaDoTNxFmB6YsXN5pTCVBLqUcDFxowrCzee?=
- =?us-ascii?Q?tsb1i4ETuv3BiPXuoiUUQwqQenV4Ot7bj4fzQ7sVbA9nsXo9mKKWljdvkm8f?=
- =?us-ascii?Q?yWkv3RyvyLSBI5dvJiWi3jRX6fzKTt19pQ9yZyP6kwW7BAYFHJJ9Ac/fBVEj?=
- =?us-ascii?Q?otgEaTn3oUwnooZ+mG2GOnDmzXy3t0UyvfDMuLbr2gFWGa8pFXO9hn9xydge?=
- =?us-ascii?Q?Gic1wBm9Ud2DBEF4dP4VrRBeH0cLOft5TPeUhsqGevLLkhpmidRCbMxcrrxa?=
- =?us-ascii?Q?etpg3HO0a8dMNmVpSvsAjAisUherOoObIRBrAk/zge9AEmkWI9OUObnrrK/0?=
- =?us-ascii?Q?h8QFDeE5PdweyDygxYrJ2OjpCPfSHPN3bebqWSTQFpO6iVSclTv8xUj2GrDB?=
- =?us-ascii?Q?hclAezy5SST1Xn7qR1ApIBLza4Y6MCjTLBUCPg6gkRwNmKuEA5dkeMjdJJy1?=
- =?us-ascii?Q?uPzGqnKLSoN79uk/KuIZ0IkXyM509NF9fnLxZPp4dd+TTNMFG3O9+VWf/Skr?=
- =?us-ascii?Q?o0uRcHSNxQETybqoSiW7/bL6?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <75AC845104370942820B4F516E02302F@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BCF1DE2B9;
+	Thu, 27 Feb 2025 17:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740677774; cv=none; b=FY+3f9DIxCcnBHEqZf1oZU0+YRb/GBYv1IhV2DVujVbIdZeGk9Pe2BwUsJJZJvy02hqXfBxBzHvNbWokGc6wk0y7+iRzLar+KP6rkGpxX6WCu75Q/I1cS3g5bXSUDxXkIOdEm0dV212hcdTl8c08nhIICL48BbhhdvzBVa/uiDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740677774; c=relaxed/simple;
+	bh=Z0sfGr3HdnbzHvGkVfOwOcuQNt8HuNW7o8cV/1jRzxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ODa4tmskSMYpM51PZlo3O5EEHNDBE34kQ3Ekav9D5DrVCwKodSbgh6o8b6rCf4ko/FifwnYYeJaw87afG3yVmlrBTeEtKm0PKPIQQ7tWjSKqSVEwYdL7h1xiMV8cHx7ePhqOI1amd9rpYHNSroOA9HtV2MQfzXEIGNpzl7HQ3NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8Q3ZWrx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F61C4CEDD;
+	Thu, 27 Feb 2025 17:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740677774;
+	bh=Z0sfGr3HdnbzHvGkVfOwOcuQNt8HuNW7o8cV/1jRzxY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=o8Q3ZWrx/8rEqCsDPoKylQmzyIaDvw29jbXi9gZA/BIWCoAkWaii/HoGER+rgWS2y
+	 uUP8rKn8wgAxfWYw/k7syZkejPO1UepMZpIMaD5fWoOduZzyQVOk5IlxHTadMx9DkE
+	 5ifD6XzKk81KEhQiKejribyArVlx2TSya5gcdrPcrWSCPxxh22aVRNj+SY77PWAeqI
+	 MJmG//OfgdUYKrTZQWamiTwew52N26mos4JIgYLtFJeYUc6eduMaIriI7jA4S5J0D7
+	 u65nkcbAmZggrQpI6YeHYNqVckzsqjPwZ7F2F+SVygUSZdMkxFDqmKB0vc7vJSyfe6
+	 +rwaN7hbivPBA==
+Date: Thu, 27 Feb 2025 11:36:12 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 0/5] Add support for the PCI host bridge device-tree
+ node creation.
+Message-ID: <20250227173612.GA606350@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1daa8d1-98bb-4b15-f3ce-08dd575539d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 17:36:11.0130
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAXPR01MB4422
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250224141356.36325-1-herve.codina@bootlin.com>
 
-From: Kerem Karabay <kekrby@gmail.com>
+On Mon, Feb 24, 2025 at 03:13:50PM +0100, Herve Codina wrote:
+> Hi,
+> 
+> This series adds support for creating a device-tree node for the PCI
+> host bridge on non device-tree based system.
+> 
+> Creating device-tree nodes for PCI devices and PCI-PCI bridges already
+> exists upstream. It was added in commit 407d1a51921e ("PCI: Create
+> device tree node for bridge"). Created device-tree nodes need a parent
+> node to be attached to. For the first level devices, on device-tree
+> based system, this parent node (i.e. the PCI host bridge) is described
+> in the base device-tree. The PCI bus related to this bridge (PCI root
+> bus) inherit of the PCI host bridge device-tree node.
+> 
+> The LAN966x PCI device driver, available since commit 185686beb464
+> ("misc: Add support for LAN966x PCI device"), relies on this feature.
+> 
+> On system where the base hardware is not described by a device-tree, the
+> PCI host bridge to which first level created PCI devices need to be
+> attach to does not exist. This is the case for instance on ACPI
+> described systems such as x86.
+> 
+> This series goal is to handle this case.
+> 
+> In order to have the PCI host bridge device-tree node available even
+> on x86, this top level node is created (if not already present) based on
+> information computed by the PCI core. It follows the same mechanism as
+> the one used for PCI devices device-tree node creation.
+> 
+> As for device-tree based system, the PCI root bus handled by the PCI
+> host bridge inherit of this created node.
+> 
+> In order to have this feature available, a number of changes are needed:
+>   - Patch 1 and 2: Introduce and use device_{add,remove}_of_node().
+>     This function will also be used in the root PCI bus node creation.
+> 
+>   - Patch 3 and 4: Improve existing functions to reuse them in the root
+>     PCI bus node creation.
+> 
+>   - Patch 5: The PCI host bridge device-tree node creation itself.
+> 
+> With those modifications, the LAN966x PCI device is working on x86 systems
+> and all device-tree kunit tests (including the of_unittest_pci_node test)
+> pass successfully with the following command:
+>   qemu-system-x86_64 -machine q35 -nographic \
+>     -kernel arch/x86_64/boot/bzImage --append console=ttyS0 \
+>     -device pcie-root-port,port=0x10,chassis=9,id=pci.9,bus=pcie.0,multifunction=on,addr=0x3 \
+>     -device pcie-root-port,port=0x11,chassis=10,id=pci.10,bus=pcie.0,addr=0x3.0x1 \
+>     -device x3130-upstream,id=pci.11,bus=pci.9,addr=0x0 \
+>     -device xio3130-downstream,port=0x0,chassis=11,id=pci.12,bus=pci.11,multifunction=on,addr=0x0 \
+>     -device i82801b11-bridge,id=pci.13,bus=pcie.0,addr=0x4 \
+>     -device pci-bridge,chassis_nr=14,id=pci.14,bus=pci.13,addr=0x0 \
+>     -device pci-testdev,bus=pci.12,addr=0x0
+> 
+> Compare to previous iteration, this v8 series mainly improves a commit
+> log.
+> 
+> Best regards,
+> Hervé Codina
+> 
+> Changes v7 -> v8
+>   v7: https://lore.kernel.org/lkml/20250204073501.278248-1-herve.codina@bootlin.com/
+> 
+>   - Patch 1
+>     Add 'Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>'
+>     Add 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+> 
+>   - Patch 2, 3, 4
+>     Add 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+> 
+>   - Patch 5
+>     Improve commit log adding a high level part outlining the benefit of
+>     changes.
+>     Add 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+> 
+> Changes v6 -> v7
+>   v6: https://lore.kernel.org/lkml/20250110082143.917590-1-herve.codina@bootlin.com/
+> 
+>   Rebase on top of v6.14-rc1
+> 
+> Changes v5 -> v6
+>   v5: https://lore.kernel.org/lkml/20241209130339.81354-1-herve.codina@bootlin.com/
+> 
+>   - Patch 1
+>     Add a return error code in device_add_of_node()
+> 
+>   - Patches 2 and 5
+>     Handle the device_add_of_node() error code
+> 
+>   - Patches 3 and 4
+>     No changes
+> 
+> Changes v4 -> v5
+>   v4: https://lore.kernel.org/lkml/20241202131522.142268-1-herve.codina@bootlin.com/
+> 
+>   - Patch 1
+>     Use dev_warn() instead of WARN()
+> 
+>   - Patches 2 to 4
+>     No changes
+> 
+>   - Patch 5 (v4 patch 6)
+>     Use dev_err()
+>     Fix a typo in commit log
+> 
+>   Patch removed in v5
+>     - Patch 5 in v4
+>       Already applied
+> 
+> Changes v3 -> v4
+>   v3: https://lore.kernel.org/lkml/20241114165446.611458-1-herve.codina@bootlin.com/
+> 
+>   Rebase on top of v6.13-rc1
+> 
+>   - Patches 1 to 6
+>     No changes
+> 
+> Changes v2 -> v3
+>   v2: https://lore.kernel.org/lkml/20241108143600.756224-1-herve.codina@bootlin.com/
+> 
+>   - Patch 5
+>     Fix commit log.
+>     Use 2 for #size-cells.
+> 
+>   - Patches 1 to 4 and 6
+>     No changes
+> 
+> Changes v1 -> v2
+>   v1: https://lore.kernel.org/lkml/20241104172001.165640-1-herve.codina@bootlin.com/
+> 
+>   - Patch 1
+>     Remove Cc: stable
+> 
+>   - Patch 2
+>     Remove Fixup tag and Cc: stable
+> 
+>   - Patches 3 and 4
+>     No changes
+> 
+>   - Patch 5
+>     Add #address-cells/#size-cells in the empty root DT node instead of
+>     updating default values for x86.
+>     Update commit log and commit title.
+> 
+>   - Patch 6
+>     Create device-tree node for the PCI host bridge and reuse it for
+>     the PCI root bus. Rename functions accordingly.
+>     Use "pci" instead of "pci-root" for the PCI host bridge node name.
+>     Use "res->start - windows->offset" for the PCI bus addresses.
+>     Update commit log and commit title.
+> 
+> Herve Codina (5):
+>   driver core: Introduce device_{add,remove}_of_node()
+>   PCI: of: Use device_{add,remove}_of_node() to attach of_node to
+>     existing device
+>   PCI: of_property: Add support for NULL pdev in of_pci_set_address()
+>   PCI: of_property: Constify parameter in of_pci_get_addr_flags()
+>   PCI: of: Create device-tree PCI host bridge node
+> 
+>  drivers/base/core.c       |  61 ++++++++++++++++++++
+>  drivers/pci/of.c          | 115 +++++++++++++++++++++++++++++++++++++-
+>  drivers/pci/of_property.c | 114 +++++++++++++++++++++++++++++++++++--
+>  drivers/pci/pci.h         |   6 ++
+>  drivers/pci/probe.c       |   2 +
+>  drivers/pci/remove.c      |   2 +
+>  include/linux/device.h    |   2 +
+>  7 files changed, 295 insertions(+), 7 deletions(-)
 
-This patch adds the device ID of Apple Touch Bar found on x86 MacBook Pros
-to the hid-multitouch driver.
-
-Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
-appreciated.
-
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/Kconfig          |  1 +
- drivers/hid/hid-multitouch.c | 25 +++++++++++++++++++++----
- 2 files changed, 22 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index dfc245867..727a2ed0d 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -743,6 +743,7 @@ config HID_MULTITOUCH
- 	  Say Y here if you have one of the following devices:
- 	  - 3M PCT touch screens
- 	  - ActionStar dual touch panels
-+	  - Apple Touch Bar on x86 MacBook Pros
- 	  - Atmel panels
- 	  - Cando dual touch panels
- 	  - Chunghwa panels
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 66e33a482..078ceef62 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -221,6 +221,7 @@ static void mt_post_parse(struct mt_device *td, struct =
-mt_application *app);
- #define MT_CLS_GOOGLE				0x0111
- #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
- #define MT_CLS_SMART_TECH			0x0113
-+#define MT_CLS_APPLE_TOUCHBAR			0x0114
- #define MT_CLS_SIS				0x0457
-=20
- #define MT_DEFAULT_MAXCONTACT	10
-@@ -406,6 +407,12 @@ static const struct mt_class mt_classes[] =3D {
- 			MT_QUIRK_CONTACT_CNT_ACCURATE |
- 			MT_QUIRK_SEPARATE_APP_REPORT,
- 	},
-+	{ .name =3D MT_CLS_APPLE_TOUCHBAR,
-+		.quirks =3D MT_QUIRK_HOVERING |
-+			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE |
-+			MT_QUIRK_APPLE_TOUCHBAR,
-+		.maxcontacts =3D 11,
-+	},
- 	{ .name =3D MT_CLS_SIS,
- 		.quirks =3D MT_QUIRK_NOT_SEEN_MEANS_UP |
- 			MT_QUIRK_ALWAYS_VALID |
-@@ -1807,6 +1814,15 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
- 		}
- 	}
-=20
-+	ret =3D hid_parse(hdev);
-+	if (ret !=3D 0)
-+		return ret;
-+
-+	if (mtclass->name =3D=3D MT_CLS_APPLE_TOUCHBAR &&
-+	    !hid_find_field(hdev, HID_INPUT_REPORT,
-+			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
-+		return -ENODEV;
-+
- 	td =3D devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
- 	if (!td) {
- 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
-@@ -1854,10 +1870,6 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
-=20
- 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
-=20
--	ret =3D hid_parse(hdev);
--	if (ret !=3D 0)
--		return ret;
--
- 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
- 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
-=20
-@@ -2339,6 +2351,11 @@ static const struct hid_device_id mt_devices[] =3D {
- 		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
- 			USB_DEVICE_ID_XIROKU_CSR2) },
-=20
-+	/* Apple Touch Bar */
-+	{ .driver_data =3D MT_CLS_APPLE_TOUCHBAR,
-+		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-+			USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
-+
- 	/* Google MT devices */
- 	{ .driver_data =3D MT_CLS_GOOGLE,
- 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
---=20
-2.43.0
-
+Applied to pci/devtree-create, planning for v6.15, thanks!
 
