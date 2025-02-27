@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-536257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6715CA47D5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:18:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB11A47C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3503174B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0EE3A566A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCF022CBDC;
-	Thu, 27 Feb 2025 12:14:48 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBA227005C;
-	Thu, 27 Feb 2025 12:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708422D4D4;
+	Thu, 27 Feb 2025 11:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="HdHx+4l1"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E284374F1;
+	Thu, 27 Feb 2025 11:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658488; cv=none; b=dmMMMEMzZmt1SiVVCR19kr0O+/9xkUAgEZK3dwhj1DyE5fdm6S9YIIuI4o/c4GuJbQzQImoJ+tJFl9xuzbojzboqsylShmTqZcWqgfAMNiy0h/XjH5hC1bg9FsQCzB4Vhzx18wGjxFDvzU2x+frjjtyKl1ia5iBQp1ttWOQMPPI=
+	t=1740656966; cv=none; b=uhhtfNprcI6c+e+HYJh2Vpex9Tnb8781pPiKW4+h67+6XCuiz8HC8xB5LHYFLG1IrrA2Wg3M5b+zNMj4HzpoUaM6wHMoxV2F83oiwWstlLltHMTsVmBO2/XQhKS/0Igy1Z5VwOllcwsTH02IPxcDft8DwOCjbExrqsqGQpCY+4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658488; c=relaxed/simple;
-	bh=Gh7xmGWSgO6eYc0d7vBNoai2bHYo22KqAYJc7A1uFgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzGJNnWZOt7doblvj03V/jpqeb0bmSVmJZiF2k8qnDbWL4OsDvItf0UDhzgkLuHP9kqO+PJFieJWecx369Ysy2EVfGwP/5DqKKUlFDfQQvmOvkARTMpBZqQ1yXT424maAhVnjsXq4Furvlca51fo4C/vTWwwBr4KFf6lT5Qm514=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tncmn-00016H-00; Thu, 27 Feb 2025 13:14:41 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 50FDAC0135; Thu, 27 Feb 2025 11:12:36 +0100 (CET)
-Date: Thu, 27 Feb 2025 11:12:36 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Matt Redfearn <matt.redfearn@blaize.com>,
-	linux-mips@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Ignore relocs against __ex_table for relocatable
- kernel
-Message-ID: <Z8A6lBXX8LZPyEDS@alpha.franken.de>
-References: <20250226132841.381063-1-xry111@xry111.site>
+	s=arc-20240116; t=1740656966; c=relaxed/simple;
+	bh=85lMz2M0QYHYQ6bvLv6GGi/2p5ZaXpYYj4wUS4wT9Xs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M9EYz7FyKDmxFpvqSN0snHINnWT0PUJCHtnzod0PS2hPZwk+gV8q9nFGfaYoSRScQ1A2g1jQF1no2IGvovDVFQTher7SONn0wa2yBh9D+GBW/KTYBk/wFaMm+/4Nu0d44P1x2UMEOR3OGLEH2E/uVauhIuVDRyGvhdgM6j0/ixU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=HdHx+4l1; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 33343677ed09fce7; Thu, 27 Feb 2025 11:49:22 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id F35B4D50215;
+	Thu, 27 Feb 2025 11:49:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740653362;
+	bh=85lMz2M0QYHYQ6bvLv6GGi/2p5ZaXpYYj4wUS4wT9Xs=;
+	h=From:Subject:Date;
+	b=HdHx+4l1Rmr42SpTQWfOXg1asn+wghFLaF4mSt0+Kqjs23AFOjempx6GMeaoVOR6T
+	 qS+k8cHb669tn6b6GY+AdbahUHdynjMExc/XWg3GCELcuW+6al+U1jCUAN6KLuIWTh
+	 yGcjbNN/gx339RMTD2JemWbUbVh+IRwz4pJJSyopjiyZqTL33JBiCu0FEq/HutKJVF
+	 268ZBDhOg18t6m2N/u+YBPEg2qICp7CfOMoFhQsWgszrTUfWkvUaM1rfGcaYcr/DyJ
+	 cL0Cm5imXf+k/nyF6XRh7zOc1ES7upuTTgtRbowcX8rx9R48k4w+hnXtMiMeg8sgPo
+	 nPjWH1misj/Hw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 0/3] PM: Tweaks on top of "smart suspend" handling changes
+Date: Thu, 27 Feb 2025 11:44:23 +0100
+Message-ID: <5000287.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226132841.381063-1-xry111@xry111.site>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjedviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepjhhohhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Wed, Feb 26, 2025 at 09:28:41PM +0800, Xi Ruoyao wrote:
-> Since commit 6f2c2f93a190 ("scripts/sorttable: Remove unneeded
-> Elf_Rel"), sorttable no longer clears relocs against __ex_table,
-> claiming "it was never used."  But in fact MIPS relocatable kernel had
-> been implicitly depending on this behavior, so after this commit the
-> MIPS relocatable kernel has started to spit oops like:
-> 
-> 	CPU 1 Unable to handle kernel paging request at virtual address 000000fffbbdbff8, epc == ffffffff818f9a6c, ra == ffffffff813ad7d0
-> 	... ...
-> 	Call Trace:
-> 	[<ffffffff818f9a6c>] __raw_copy_from_user+0x48/0x2fc
-> 	[<ffffffff813ad7d0>] cp_statx+0x1a0/0x1e0
-> 	[<ffffffff813ae528>] do_statx_fd+0xa8/0x118
-> 	[<ffffffff813ae670>] sys_statx+0xd8/0xf8
-> 	[<ffffffff81156cc8>] syscall_common+0x34/0x58
-> 
-> So ignore those relocs on our own to fix the issue.
-> 
-> Fixes: 6f2c2f93a190 ("scripts/sorttable: Remove unneeded Elf_Rel")
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->  arch/mips/boot/tools/relocs.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/mips/boot/tools/relocs.c b/arch/mips/boot/tools/relocs.c
-> index a88d66c46d7f..9863e1d5c62e 100644
-> --- a/arch/mips/boot/tools/relocs.c
-> +++ b/arch/mips/boot/tools/relocs.c
-> @@ -468,6 +468,8 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
->  			Elf_Sym *sym, const char *symname))
->  {
->  	int i;
-> +	struct section *extab_sec = sec_lookup("__ex_table");
-> +	int extab_index = extab_sec ? extab_sec - secs : -1;
->  
->  	/* Walk through the relocations */
->  	for (i = 0; i < ehdr.e_shnum; i++) {
-> @@ -480,6 +482,9 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
->  		if (sec->shdr.sh_type != SHT_REL_TYPE)
->  			continue;
->  
-> +		if (sec->shdr.sh_info == extab_index)
-> +			continue;
-> +
->  		sec_symtab  = sec->link;
->  		sec_applies = &secs[sec->shdr.sh_info];
->  		if (!(sec_applies->shdr.sh_flags & SHF_ALLOC))
-> -- 
-> 2.48.1
+Hi Everyone,
 
-applied to mips-fixes.
+These are some tweaks based on
 
-Thomas.
+https://lore.kernel.org/linux-pm/12612706.O9o76ZdvQC@rjwysocki.net/
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+which in the meantime has been applied to linux-pm.git/linux-next (as 6.15
+material).
+
+None of them is essential, so if you have objections, please let me know,
+but IMV they generally will make the code work better.
+
+Please refer to the individual patch changelogs for details.
+
+Thanks!
+
+
+
 
