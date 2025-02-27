@@ -1,227 +1,121 @@
-Return-Path: <linux-kernel+bounces-537366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF92A48AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:58:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F751A48AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62DC188C899
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF9D164198
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F211D27183D;
-	Thu, 27 Feb 2025 21:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E44F271828;
+	Thu, 27 Feb 2025 21:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToEsXxGf"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWiG7gSf"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4D4227B8E;
-	Thu, 27 Feb 2025 21:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0552702D7;
+	Thu, 27 Feb 2025 21:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740693468; cv=none; b=nFDuoNtECG/5sgI6JCOw3esOZhvFPKiAEjv5qChh0VJLREQvkfjxnHKrdzv989jDoZ9GgqWNdOcY27xCX+zsDYOOpEAbJnXcIdTXqEiCtKtFBhhROr+v03sCV4Fn3F7oBotgWt3ChG5z/cms78nHLXm76bSozEZH+CZWu9OiOs0=
+	t=1740693534; cv=none; b=DoV8myTjxsPuFGCuuZBhZJSZ9E/E7FGkiij+5KKEWTJUSATAsKClltCJWPupLp92q4rtNahDo84ExDkL/zTpoxSxmsvg7HC+YDN0qIwMEsldq8fzNlSv82RIqWN4bYOyoaCLyirZ+SqS3LStL2RlXRcdEMIy5gMCR3ezKRZjTuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740693468; c=relaxed/simple;
-	bh=KRFx2VPv0/SkpIJsIryj+VgjCDlLd6MvWLHprVAY+pE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IETrppeE5j5A/vm2ID4MH8lPSC6nm+Wr5KpHGaEq5Mbz+d8J98QS511gtJzFZM13k4Xxollwh/wVyWIZh724m476nY7AVcUVqUoeQw/umJprH2kVcNQqiMGtP6iGcaG+dGTeogwUpO63W/ChWJBLXcKQfQrgBrMl5E5GRw3LztU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToEsXxGf; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1740693534; c=relaxed/simple;
+	bh=Dm3RxaB0CXAQe1z7lgXkILph+xq5j+lovtkROFEkZdE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XHivdrWziKojtDiIPYEMmNlhpW1jMs6i1mBdMSv0+q89bzV7ewuoFcA5jCNL/yUGp5tX3gUaQbyxZ4KYX3dIEwuttDC9odt+z0toXTEJ96YOIO05Xjg6MnQjj5j//oEEc1BIUjvmj4mfAw5dJZGQpi3t5hltd92FjID6eunV3nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWiG7gSf; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43998deed24so14228255e9.2;
-        Thu, 27 Feb 2025 13:57:46 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-471f16f4b73so14224191cf.1;
+        Thu, 27 Feb 2025 13:58:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740693465; x=1741298265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740693532; x=1741298332; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yMuX81k7SiNTHz2+bDlgy5RWfBuIrQmuJh6Y3XOI5k0=;
-        b=ToEsXxGfke+y6Hq/oOz1RYCu15/2WWOkF5RJbdy8dwuC3s/lfsgCeOfIzAp6MZX7Y6
-         lwlSvvy/+4Lu99wB20NLPAdKr450ji4lDezm+9BjLdQmXoBiC7n52Q3x0raX/VHceWUa
-         PAh0l12jljs4UshLtvf8qtFm/Q6v08Bv50PwyWRTC/BIft0l7rt2yuJ8t0UyKJ0vb3HX
-         03yW1/jwdG8Sd6fIdRbJOhmd0Ir+hzB7or8mmnIbzrysVcwwME7J9HoT+jmzI6lJLlLS
-         KG37noP74COukptatoxiaPYRQhmvQb1mn2KsevjVC/uyHNF5iA3J2/2YpExnzBAzhdXO
-         dbLw==
+        bh=Dm3RxaB0CXAQe1z7lgXkILph+xq5j+lovtkROFEkZdE=;
+        b=KWiG7gSfBf4wGfKvY5ibhhZfYa7dtDt3IdGRtzsKbbabkgDcF24VShprByqUB0INNE
+         9yGUD7hxW+iqEauU8O9CqmgJYib9MRFE0Yz537CEhnOqXNjMht9TZcY7MOfG26vjHjPH
+         TmpdTiywRmthss4yewWtR4rV4Vsl09xPLm/tj19XxiUIGqtFkFmnjN+6LtD0tPENDtCa
+         9RlKIcq6Pt+tBcKnN3CvY78Cn3tB4YnX8NEzmzbWGqh8yqU4YN1EtC65da++PP0ZBliL
+         /9G0gFTIEq6BABkrGh9eT3otjYfhYawjvbx82u2fkLDNi23BZd8ZciMZ4NjiyG2TZvxf
+         CmPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740693465; x=1741298265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740693532; x=1741298332;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yMuX81k7SiNTHz2+bDlgy5RWfBuIrQmuJh6Y3XOI5k0=;
-        b=YXhgLZTR3RmdGr59jOTBs32lE1Xoxn83vvnTUAr5H/qsJ3YDws+XdUXkskXTZVQ83E
-         yC+91jxcCnLVnUV0dHTYMj0FdorgTpkdakyzYWn2Vk+a338VexqroFS5GcyDkqyVCEg+
-         g39cma4VhO6XkrF0SdSbTC1R3T38+zmnjllfRVGowkyQsJY1I1ux2PuaLxJIiF3EfSSq
-         bIxtbGzbfipJrQY3odDd+nXsiZoHA9OaXsSeFb8TX7PXuMYCfI8rchFMU10k+wxwKBHH
-         kkydfmlvhAWxan6yVSJ6h2LkCPmeRaBh0QMR9o+Y4xK9edhMhTMZg4DL6qOhUD3iZyDY
-         s5/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdEW5yTpG/e+24LgmsbUTjOUBKdkH9p5REJoHWqQA+RssP0qwwf/7rHsQ6IbC/FOk+EXxxd4y74Y/nWUE+@vger.kernel.org, AJvYcCUwNbF521BK830oD3GxhxnLjcNF65UUDOJLppcag2/pWCH3L0qACiyRewfceW096I5ELpo=@vger.kernel.org, AJvYcCV7QEoYPKNz+D1Cn2lgn/p//XeHvdddrd2zH1LeP5KcxJBZWgTB3pDy9LbGeP8C8r0Jpvh4KgiP@vger.kernel.org, AJvYcCVS9ptc+dH4lUmelDv95d/mvOHqdpNjMPm3OtvBGKNrVCBhWam0XvwgrLccxc7jaIPRUrj8A6v5g2tZ0GLB9e8=@vger.kernel.org, AJvYcCWxBudOva1ksIu4FT7POmrdKaVZ6DXB+XZ6nhkLQcTn4l1vZu0nSVHuTWs9FxLshrSKUQmp+sNvBJzEhCz9@vger.kernel.org, AJvYcCXnsegOL/9kmLMVujOu99B/+5YJNiLoXOrMhulVp0RDFFdL8D4KyDGOG1Pg8rna7NvWxw4NZOGT9zHSPY0=@vger.kernel.org, AJvYcCXouRFZZf4fxqEjcjv0Xg6lcGdkAIeSCbt1R+ABrtDs2JyBavVQ8pbII6AAUn0efwsdigIgRZ2wj+ugfAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2hJ65avONXpKJjigjXmufkhuNPeW/Zq3DE7qZ4RbFVLauYTZx
-	CoLTW1VpJWjoR0G2Ibtw81JG+pQM6G0O8LhntKM2CEqd43lOPzhj
-X-Gm-Gg: ASbGncs8bSZynR3d04PBfZd1zDtTHWf9GUlXzJ+FtIT/iMq1l4qm7I+sbMwtAxUirHP
-	3+Utsyj7PAs8wZzcwnMNdGRLz9RZheS1fXOMkfarJoIzFaEiQoGktr62I0oR/f/LgYfMkxcrZiQ
-	3lcZMvpWH+ciE6p0sJGONgxMno/FQTIlA/oWE/NYwVBfSPPmbLZW0uMf8KdhY/Z9q7Hkpuqg8Sg
-	JhG3yKsmqgoptEK4JH3cXDMI9L58/mKTqfqphbGOanrqhBWQNP0xL0XJxz/1RsZBznGAcZZHM/J
-	vmefVdXAm4VBlV3/WPgYF2kf0WWI1kDp55nREqCixrJzrtUbN3EWnJw4LZjNP3cT
-X-Google-Smtp-Source: AGHT+IEhn6JpdK4VbGGBYqWA0Kpl3+orzugSC/uMKlJ9X/pPv2vI6Oa6V51Yx+DCCez80jfd4SeOMA==
-X-Received: by 2002:a05:600c:1912:b0:439:a1b8:a246 with SMTP id 5b1f17b1804b1-43ba66f9643mr7425895e9.8.1740693464406;
-        Thu, 27 Feb 2025 13:57:44 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7370372dsm35525085e9.11.2025.02.27.13.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 13:57:43 -0800 (PST)
-Date: Thu, 27 Feb 2025 21:57:41 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, jk@ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, dmitry.torokhov@gmail.com,
- mchehab@kernel.org, awalls@md.metrocast.net, hverkuil@xs4all.nl,
- miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
- louis.peens@corigine.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com,
- parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
- johannes@sipsolutions.net, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
- alistair@popple.id.au, linux@rasmusvillemoes.dk,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
- linux-input@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
- Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
-Message-ID: <20250227215741.1c2e382f@pumpkin>
-In-Reply-To: <Z8CpaaHv0ahHFVuK@thinkpad>
-References: <20250223164217.2139331-1-visitorckw@gmail.com>
-	<20250223164217.2139331-3-visitorckw@gmail.com>
-	<Z7zIBwH4aUA7G9MY@thinkpad>
-	<20250226222911.22cb0c18@pumpkin>
-	<Z8CpaaHv0ahHFVuK@thinkpad>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=Dm3RxaB0CXAQe1z7lgXkILph+xq5j+lovtkROFEkZdE=;
+        b=SjqKsGs1F/iQrRrMUHwsRBWIV2g8VH/VZa8KCeFM+VjQuc/EPZ2uZLbxIAXVn2HQg5
+         IJ45q49Cvqng6ovd5RYUCLG7ri2SrJXv1/Lr/mVNHcMVsMpZX9Gjz/p6WAO60CrNSAot
+         tu+jjfR1/rYhPhu/RwuSlvc065dejl+tZ7xvG/qhZer7yMnNR6lY7Ds1tm7e0OEf7rXC
+         lAYjwo8y4Jnw3qEY121XadkUPJ4QwjsOISDKGahW3noUq3VbFvO9l9LGzwgxkiGku5vC
+         iQtUAd2ddTaf15UdZQ63retJUYd35tPtq/i2m59rLv0cV6i+M+7z52FaVu1Fak7t2fB0
+         36fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+L/VoFXPajW4+9SH1F6x86W+XJtPE9s3F4SrmFe3ODdkLXjiMOSzApo8h0jaESmrNWXZf2YtP3OQqLw/H@vger.kernel.org, AJvYcCUOug3lEs6QBvOjSEzsOVune/qwLFjhNRIxv3HmvdjJWonhpoDzFgd08CJbKzTcuObGAk1uMSPNBmJoUmY=@vger.kernel.org, AJvYcCV2MeQiaO8PEwHX3SHhfR2I4dqhVQNnqq5dfA5n8DHMSle/UUYACYqgpdePiqIK6YN3m7hU5ZCDI9hXSD0=@vger.kernel.org, AJvYcCXA6kxLdqyfoSmHBE7BHx2ALJqlxpM94+xl/lFZ0mcrI5MYY6Grx1YKt21cftdsJdeWAsdMqcONWs3V@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMvLeYNXbi226kkLOlzn+rhTNiPoQiyMCGINICFoMXIDXS8naZ
+	EAQrWW6ypD2JMBax83Nui9llkeLdRL7sVwCg5cVr9B7W2kmH62YrkHU/0KOaF4/WAVeO5fA8/WM
+	QKtq87cJv4MAI1vHR70ya1w472qaMFV49
+X-Gm-Gg: ASbGnctGESNdbgWz/aK24Q4LUh0uT4ukOMG18993Qr58V596RuY4yD0mHg/xnRG4f7i
+	hXXC9xHee2f/oPePEce+XmA9NPrzLfxo905zPguJAmHXJToiWYW0JI2WBSzRiso5woix/P5lSK5
+	6dduwJ1A==
+X-Google-Smtp-Source: AGHT+IGZycxF9mK2j7Xgw/jf4P4PzwJkPkA+YQ8gNsvWst/YlqRF9ahH2kcIfaFTwicW7dgH/uB2VhA7H7UVn8sEOSQ=
+X-Received: by 2002:ac8:5ad0:0:b0:473:87fb:2ecf with SMTP id
+ d75a77b69052e-474bc068615mr12002921cf.21.1740693531852; Thu, 27 Feb 2025
+ 13:58:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
+ <20250227-apple-codec-changes-v3-15-cbb130030acf@gmail.com> <f3eecce4-51d1-4414-af85-680d51e588fa@sirena.org.uk>
+In-Reply-To: <f3eecce4-51d1-4414-af85-680d51e588fa@sirena.org.uk>
+From: James Calligeros <jcalligeros99@gmail.com>
+Date: Fri, 28 Feb 2025 07:58:33 +1000
+X-Gm-Features: AQ5f1JqhIE5frhKKp88Yce4HcYqH0rbyxjCTlt3Y9iZPbu-hf4o4-EBYqcvAUCc
+Message-ID: <CAHgNfTx_kMj=rsd4nUCiX_PvgC4GX3DsPDwXHdEyEeLMbDFccw@mail.gmail.com>
+Subject: Re: [PATCH v3 15/20] ASoC: tas2764: Enable main IRQs
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+	Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shi Fu <shifu0704@thundersoft.com>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+	Neal Gompa <neal@gompa.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Feb 2025 13:05:29 -0500
-Yury Norov <yury.norov@gmail.com> wrote:
+On Fri, Feb 28, 2025 at 2:23=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Thu, Feb 27, 2025 at 10:07:42PM +1000, James Calligeros wrote:
+> > From: Hector Martin <marcan@marcan.st>
+> >
+> > IRQ handling was added in commit dae191fb957f ("ASoC: tas2764: Add IRQ
+> > handling") however that same commit masks all interrupts coming from
+> > the chip. Unmask the "main" interrupts so that we can see and
+> > deal with a number of errors including clock, voltage, and current.
+>
+> Shouldn't this also be a fix?
 
-> On Wed, Feb 26, 2025 at 10:29:11PM +0000, David Laight wrote:
-> > On Mon, 24 Feb 2025 14:27:03 -0500
-> > Yury Norov <yury.norov@gmail.com> wrote:
-> > ....  
-> > > +#define parity(val)					\
-> > > +({							\
-> > > +	u64 __v = (val);				\
-> > > +	int __ret;					\
-> > > +	switch (BITS_PER_TYPE(val)) {			\
-> > > +	case 64:					\
-> > > +		__v ^= __v >> 32;			\
-> > > +		fallthrough;				\
-> > > +	case 32:					\
-> > > +		__v ^= __v >> 16;			\
-> > > +		fallthrough;				\
-> > > +	case 16:					\
-> > > +		__v ^= __v >> 8;			\
-> > > +		fallthrough;				\
-> > > +	case 8:						\
-> > > +		__v ^= __v >> 4;			\
-> > > +		__ret =  (0x6996 >> (__v & 0xf)) & 1;	\
-> > > +		break;					\
-> > > +	default:					\
-> > > +		BUILD_BUG();				\
-> > > +	}						\
-> > > +	__ret;						\
-> > > +})
-> > > +  
-> > 
-> > You really don't want to do that!
-> > gcc makes a right hash of it for x86 (32bit).
-> > See https://www.godbolt.org/z/jG8dv3cvs  
-> 
-> GCC fails to even understand this. Of course, the __v should be an
-> __auto_type. But that way GCC fails to understand that case 64 is
-> a dead code for all smaller type and throws a false-positive 
-> Wshift-count-overflow. This is a known issue, unfixed for 25 years!
+I don't think so. The referenced commit only says that it adds an IRQ handl=
+er.
+I don't think this commit is actually "fixing" anything - it's just
+enabling previously
+masked interrupts.
 
-Just do __v ^= __v >> 16 >> 16
+Happy to move things around if you disagree.
 
-> 
-> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=4210
->  
-> > You do better using a __v32 after the 64bit xor.  
-> 
-> It should be an __auto_type. I already mentioned. So because of that,
-> we can either do something like this:
-> 
->   #define parity(val)					\
->   ({							\
->   #ifdef CLANG                                          \
->   	__auto_type __v = (val);			\
->   #else /* GCC; because of this and that */             \
->   	u64 __v = (val);			        \
->   #endif                                                \
->   	int __ret;					\
-> 
-> Or simply disable Wshift-count-overflow for GCC.
-
-For 64bit values on 32bit it is probably better to do:
-int p32(unsigned long long x)
-{
-    unsigned int lo = x;
-    lo ^= x >> 32;
-    lo ^= lo >> 16;
-    lo ^= lo >> 8;
-    lo ^= lo >> 4;
-    return (0x6996 >> (lo & 0xf)) & 1;
-}
-That stops the compiler doing 64bit shifts (ok on x86, but probably not elsewhere).
-It is likely to be reasonably optimal for most 64bit cpu as well.
-(For x86-64 it probably removes a load of REX prefix.)
-(It adds an extra instruction to arm because if its barrel shifter.)
-
-
-> 
-> > Even the 64bit version is probably sub-optimal (both gcc and clang).
-> > The whole lot ends up being a bit single register dependency chain.
-> > You want to do:  
-> 
-> No, I don't. I want to have a sane compiler that does it for me.
-> 
-> > 	mov %eax, %edx
-> > 	shrl $n, %eax
-> > 	xor %edx, %eax
-> > so that the 'mov' and 'shrl' can happen in the same clock
-> > (without relying on the register-register move being optimised out).
-> > 
-> > I dropped in the arm64 for an example of where the magic shift of 6996
-> > just adds an extra instruction.  
-> 
-> It's still unclear to me that this parity thing is used in hot paths.
-> If that holds, it's unclear that your hand-made version is better than
-> what's generated by GCC.
-
-I wasn't seriously considering doing that optimisation.
-Perhaps just hoping is might make a compiler person think :-)
-
-	David
-
-> 
-> Do you have any perf test?
-> 
-> Thanks,
-> Yury
-
+James
 
