@@ -1,142 +1,309 @@
-Return-Path: <linux-kernel+bounces-535526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802C1A473FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:12:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC3FA47409
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E000188A3DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD86D3A382A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DC81B78F3;
-	Thu, 27 Feb 2025 04:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B967A1E5211;
+	Thu, 27 Feb 2025 04:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fh6fRU0/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PVKUrzeV"
+Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26B71D6DA8;
-	Thu, 27 Feb 2025 04:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1E11D6DA8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740629519; cv=none; b=j/1e8AUvH0BPC1UL1UL8/ScMZpXU00Ud7sUYCP/3F7KedoUMFHz+x+J8+Evuh3OWxNFQlRU/CXtEkaKPjtdQq3IfAK66YlSXHPbQej/qh61Ka7SqncYjQZ+wDFp7jg8jkXmY+Kt300w9hUlhiiVYasmDS3FPL1/bGaiy+TjRA8g=
+	t=1740629534; cv=none; b=dYFYVo6FsPJhxsViUN74AcWsWwehOa0gccn5xOteO/A3Euxf47wxewB6l63eWqNgr5YRmuNqEktiY7fhMHlmvKc8NoM7kqN8DSigi21f/ZAqIoxnOxW4pScqUv6hC0CqVwGpJB5JL05R4CLGj2dAUZcgscFgzTNgLcE3fD2gmkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740629519; c=relaxed/simple;
-	bh=sONm4BN0IfviQvUhWnVOT80ube+RfPJgnGmwi3cDfV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=otUeyFnrX9SNz5FnHqTzSUYnFZG2URLzfcGS00vJaZngliTIGOL2fANAbgnh61Fc53Cf6oYi6K8iVKdkivVRvob7RixvzFA29HgE0Dh4FkJQUP2GrRvwpBnYcAA8mna9/vkKTqlQKJe48S5RHfagI6Ti0Pcefl/Hi8IsRq/uO1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fh6fRU0/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51QKGEYK011761;
-	Thu, 27 Feb 2025 04:11:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pvNw71+p2forC6KnrngR+sRYsLprV+8mfZkCOqFyuPM=; b=Fh6fRU0/bFHzDi1n
-	1pyk9RD106EcMY+C4efCYI67gLKwfZnpVC/z6ltowocFwiYMxsprLlUwNhyBSCJV
-	B/A16RrUmNV87iHE3VcbPV3D6dPnIZsOQojaKzlUIvXj9yZDvf3cdWLuewYBsKeb
-	oMP3OcCTHqrZlDLKsg7JpFYf23rpWianPSmppTLdpwNPazP19+MYdhV6xq52hpz7
-	T2qDapMsHa+Ru2GwCY/uO/rLsXxJBrh4uGMc+e3Q5onMtht3fgsDDD6jc9rOQVve
-	XDvKNX0rq/Y4RMIN/HdozUNOW8l7C8EOorRWWZ18dc9oQzpPgkN1ncHNdeysb7ox
-	4e1yuQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmm7ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 04:11:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R4BrEn027814
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 04:11:53 GMT
-Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Feb
- 2025 20:11:48 -0800
-Message-ID: <6e48c69a-973c-48ef-892e-f84de6c17673@quicinc.com>
-Date: Thu, 27 Feb 2025 09:41:45 +0530
+	s=arc-20240116; t=1740629534; c=relaxed/simple;
+	bh=Z1x9cBAckNAGgXsh1KnLoyHiDSqdyqilemzDU/Dtrzw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MbSt9303JGNpeFh8U5mz+S539oUugg116DGlFAWEUwyRtce7rxmzWvP+3DRTKyzJBycBsMbdvYd1/RS83OhBPCfdstHM747d9pdLU8wEmYgEzxa/5j8HDfJg0giilvFZAzBdih1rOtdcwIA+14W4SwSQl0/G5KpvDouqnA6US3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PVKUrzeV; arc=none smtp.client-ip=209.85.210.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-7273bfeb806so243002a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740629531; x=1741234331; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3g5LjBldgpfT3/dJj9/PNfchsdoxXJ5s3FXfsdFv20U=;
+        b=PVKUrzeVeAtM5IhujWcTBhshzUSqPoLhuQuTgfeEL9bTeULUUCUm/X/ugp8keQSIIi
+         A0OPz33GYAxh6jleS8fbW6Cyg7Ub1LfiHqcrdUe/XfgMb1RyCj+irFj8ADTmkmBfnSGp
+         64adCads07Zb6YWcRXyvpLYk+OAwOV58zImpwSILI5/v6FiGadb0C26hSGMWFjmfcn7D
+         4eqT5E4etlVF52/QgAMtxViMk5su/oVk+Hsd4PWy30I/BIDkyyG7fW+GbWkt+BdJvGHj
+         DZ8GqyaL85GHtoNetXUuIdjsbhSUTuHALBs6qVaWTOm+G3Bf4ilauI83scBI6uMTBKVX
+         dbdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740629531; x=1741234331;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3g5LjBldgpfT3/dJj9/PNfchsdoxXJ5s3FXfsdFv20U=;
+        b=qKaTtq7QYf/2HNs3ir+ej7T64BatD7yQpfd/sWMiK1AfJkcjAQl8bQPT8lKk6emGp1
+         dDVml57kp+06X+BG0dDeJXHQqSgjcLpWl01V6I1sjtyAF2zRI8kPTL1o8BFN0CAElHnF
+         MrKuQse8ilfdMJnxM5ru8+IwaIJSrjh8cM8t4rquNFXkVGQi0Vwtj3GqAJ7g7G3SO6V4
+         2lJDA6SkaXyoWUdk+ObWCsEYHsEZocCREksGHiQYcWJ2yZIkRSIKPJJzCyPVCp8zn37y
+         93o5Sl2aND3hbCWja6Mws4GZeoR0qwGE8qnQjQO8dKG/ob4Fb1nFeJiaKUKeVT/aTxSu
+         OPsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFzNF9LvJgQdGbbYlaDXDJ4TD2YaH6oxVMYHnovIaY8Lpq9B4oIYgb+vWczy+nGXjPE2tH4lKfCt1WOLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZEsWJ00isvCXUEVm6Z+mZriqOEQnukmloXwfWEcWdkb533tWE
+	/DvHuMe4b8+1L5n9zC54zkQ2TO7KmR87cNzHzKfjujcdm9FMRlrC/9BhctjACGM6ZKq698JUkib
+	isxa+1pLtmnggLb/AEooqTg==
+X-Google-Smtp-Source: AGHT+IH783qYzy8zqnAN9qy+ZgGK9lxDY+qeDhB++EerNVKBi0iW0nYVUAd0UY8jwXAselzgbS5EQUX7E0eXV9iZuQ==
+X-Received: from oabxe11.prod.google.com ([2002:a05:6870:ce8b:b0:295:f44d:8dfa])
+ (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6830:6a90:b0:727:2f79:ce32 with SMTP id 46e09a7af769-7274c563d40mr15643474a34.22.1740629531553;
+ Wed, 26 Feb 2025 20:12:11 -0800 (PST)
+Date: Thu, 27 Feb 2025 04:12:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcm6490-idp: Update protected clocks
- list
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250206-protected_clock_qcm6490-v1-1-5923e8c47ab5@quicinc.com>
- <j43f4wu6wgoho2tl4crckemnngyvek5mma6ghkdyqcivk65dcf@gfsimovfuqy5>
- <502e002d-f5a1-4b78-9a9c-4b227623e5b6@quicinc.com>
- <5e46f261-94e4-441b-a0be-fbf54c34a5f6@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <5e46f261-94e4-441b-a0be-fbf54c34a5f6@oss.qualcomm.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250227041209.2031104-1-almasrymina@google.com>
+Subject: [PATCH net-next v6 0/8] Device memory TCP TX
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"=?UTF-8?q?Eugenio=20P=C3=A9rez?=" <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, 
+	asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Victor Nogueira <victor@mojatatu.com>, Pedro Tammela <pctammela@mojatatu.com>, 
+	Samiullah Khawaja <skhawaja@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Pg4deYmP1blW63BYwFZVgPATqe09Fddz
-X-Proofpoint-GUID: Pg4deYmP1blW63BYwFZVgPATqe09Fddz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_02,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
- mlxlogscore=458 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270029
+
+v6: https://lore.kernel.org/netdev/20250222191517.743530-1-almasrymina@google.com/
+===
+
+v6 has no major changes. Addressed a few issues from Paolo and David,
+and collected Acks from Stan. Thank you everyone for the review!
+
+Changes:
+- retain behavior to process MSG_FASTOPEN even if the provided cmsg is
+  invalid (Paolo).
+- Rework the freeing of tx_vec slightly (it now has its own err label).
+  (Paolo).
+- Squash the commit that makes dmabuf unbinding scheduled work into the
+  same one which implements the TX path so we don't run into future
+  errors on bisecting (Paolo).
+- Fix/add comments to explain how dmabuf binding refcounting works
+  (David).
+
+v5: https://lore.kernel.org/netdev/20250220020914.895431-1-almasrymina@google.com/
+===
+
+v5 has no major changes; it clears up the relatively minor issues
+pointed out to in v4, and rebases the series on top of net-next to
+resolve the conflict with a patch that raced to the tree. It also
+collects the review tags from v4.
+
+Changes:
+- Rebase to net-next
+- Fix issues in selftest (Stan).
+- Address comments in the devmem and netmem driver docs (Stan and Bagas)
+- Fix zerocopy_fill_skb_from_devmem return error code (Stan).
+
+v4: https://lore.kernel.org/netdev/20250203223916.1064540-1-almasrymina@google.com/
+===
+
+v4 mainly addresses the critical driver support issue surfaced in v3 by
+Paolo and Stan. Drivers aiming to support netmem_tx should make sure not
+to pass the netmem dma-addrs to the dma-mapping APIs, as these dma-addrs
+may come from dma-bufs.
+
+Additionally other feedback from v3 is addressed.
+
+Major changes:
+- Add helpers to handle netmem dma-addrs. Add GVE support for
+  netmem_tx.
+- Fix binding->tx_vec not being freed on error paths during the
+  tx binding.
+- Add a minimal devmem_tx test to devmem.py.
+- Clean up everything obsolete from the cover letter (Paolo).
+
+v3: https://patchwork.kernel.org/project/netdevbpf/list/?series=929401&state=*
+===
+
+Address minor comments from RFCv2 and fix a few build warnings and
+ynl-regen issues. No major changes.
+
+RFC v2: https://patchwork.kernel.org/project/netdevbpf/list/?series=920056&state=*
+=======
+
+RFC v2 addresses much of the feedback from RFC v1. I plan on sending
+something close to this as net-next  reopens, sending it slightly early
+to get feedback if any.
+
+Major changes:
+--------------
+
+- much improved UAPI as suggested by Stan. We now interpret the iov_base
+  of the passed in iov from userspace as the offset into the dmabuf to
+  send from. This removes the need to set iov.iov_base = NULL which may
+  be confusing to users, and enables us to send multiple iovs in the
+  same sendmsg() call. ncdevmem and the docs show a sample use of that.
+
+- Removed the duplicate dmabuf iov_iter in binding->iov_iter. I think
+  this is good improvment as it was confusing to keep track of
+  2 iterators for the same sendmsg, and mistracking both iterators
+  caused a couple of bugs reported in the last iteration that are now
+  resolved with this streamlining.
+
+- Improved test coverage in ncdevmem. Now multiple sendmsg() are tested,
+  and sending multiple iovs in the same sendmsg() is tested.
+
+- Fixed issue where dmabuf unmapping was happening in invalid context
+  (Stan).
+
+====================================================================
+
+The TX path had been dropped from the Device Memory TCP patch series
+post RFCv1 [1], to make that series slightly easier to review. This
+series rebases the implementation of the TX path on top of the
+net_iov/netmem framework agreed upon and merged. The motivation for
+the feature is thoroughly described in the docs & cover letter of the
+original proposal, so I don't repeat the lengthy descriptions here, but
+they are available in [1].
+
+Full outline on usage of the TX path is detailed in the documentation
+included with this series.
+
+Test example is available via the kselftest included in the series as well.
+
+The series is relatively small, as the TX path for this feature largely
+piggybacks on the existing MSG_ZEROCOPY implementation.
+
+Patch Overview:
+---------------
+
+1. Documentation & tests to give high level overview of the feature
+   being added.
+
+1. Add netmem refcounting needed for the TX path.
+
+2. Devmem TX netlink API.
+
+3. Devmem TX net stack implementation.
+
+4. Make dma-buf unbinding scheduled work to handle TX cases where it gets
+   freed from contexts where we can't sleep.
+
+5. Add devmem TX documentation.
+
+6. Add scaffolding enabling driver support for netmem_tx. Add helpers, driver
+feature flag, and docs to enable drivers to declare netmem_tx support.
+
+7. Guard netmem_tx against being enabled against drivers that don't
+   support it.
+
+8. Add devmem_tx selftests. Add TX path to ncdevmem and add a test to
+   devmem.py.
+
+Testing:
+--------
+
+Testing is very similar to devmem TCP RX path. The ncdevmem test used
+for the RX path is now augemented with client functionality to test TX
+path.
+
+* Test Setup:
+
+Kernel: net-next with this RFC and memory provider API cherry-picked
+locally.
+
+Hardware: Google Cloud A3 VMs.
+
+NIC: GVE with header split & RSS & flow steering support.
+
+Performance results are not included with this version, unfortunately.
+I'm having issues running the dma-buf exporter driver against the
+upstream kernel on my test setup. The issues are specific to that
+dma-buf exporter and do not affect this patch series. I plan to follow
+up this series with perf fixes if the tests point to issues once they're
+up and running.
+
+Special thanks to Stan who took a stab at rebasing the TX implementation
+on top of the netmem/net_iov framework merged. Parts of his proposal [2]
+that are reused as-is are forked off into their own patches to give full
+credit.
+
+[1] https://lore.kernel.org/netdev/20240909054318.1809580-1-almasrymina@google.com/
+[2] https://lore.kernel.org/netdev/20240913150913.1280238-2-sdf@fomichev.me/T/#m066dd407fbed108828e2c40ae50e3f4376ef57fd
+
+Cc: sdf@fomichev.me
+Cc: asml.silence@gmail.com
+Cc: dw@davidwei.uk
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Victor Nogueira <victor@mojatatu.com>
+Cc: Pedro Tammela <pctammela@mojatatu.com>
+Cc: Samiullah Khawaja <skhawaja@google.com>
 
 
+Mina Almasry (7):
+  net: add get_netmem/put_netmem support
+  net: devmem: Implement TX path
+  net: add devmem TCP TX documentation
+  net: enable driver support for netmem TX
+  gve: add netmem TX support to GVE DQO-RDA mode
+  net: check for driver support in netmem TX
+  selftests: ncdevmem: Implement devmem TCP TX
 
-On 2/26/2025 11:25 PM, Konrad Dybcio wrote:
-> On 26.02.2025 6:01 AM, Trilok Soni wrote:
->> On 2/25/2025 8:42 PM, Bjorn Andersson wrote:
->>> On Thu, Feb 06, 2025 at 03:43:21PM +0530, Taniya Das wrote:
->>>> Certain clocks are not accessible on QCM6490-IDP board,
->>>> thus mark them as protected.
->>>>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>> Mark few clocks as protected on IDP of QCM6490.
->>>>
->>>> This patchset is separated out from the series[1] to remove dependency from
->>>> the LPASS reset.
->>>> [1]: https://lore.kernel.org/all/20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com/
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 21 +++++++++++++++++++++
->>>
->>> I merged the patch adding this board in November 2023, are you saying
->>> that for the last 15 months no one has actually booted it!?
->>
->> Should we just delete these boards? I prefer to not have platforms which 
->> are not maintained.
-> 
-> I think there's enough RB3Gen2s in the wild now to get rid of this one..
-> Unless anyone has a real use for it, but it doesn't seem like that's the
-> case given the lack of activity
-> 
+Stanislav Fomichev (1):
+  net: devmem: TCP tx netlink api
 
-At least there were requests for me to get this board boot up and that
-is where this patch comes. I agree if they are not supported, should be
-removed.
+ Documentation/netlink/specs/netdev.yaml       |  12 +
+ Documentation/networking/devmem.rst           | 150 ++++++++-
+ .../networking/net_cachelines/net_device.rst  |   1 +
+ Documentation/networking/netdev-features.rst  |   5 +
+ Documentation/networking/netmem.rst           |  23 +-
+ drivers/net/ethernet/google/gve/gve_main.c    |   4 +
+ drivers/net/ethernet/google/gve/gve_tx_dqo.c  |   8 +-
+ include/linux/netdevice.h                     |   2 +
+ include/linux/skbuff.h                        |  17 +-
+ include/linux/skbuff_ref.h                    |   4 +-
+ include/net/netmem.h                          |  23 ++
+ include/net/sock.h                            |   1 +
+ include/uapi/linux/netdev.h                   |   1 +
+ net/core/datagram.c                           |  48 ++-
+ net/core/dev.c                                |   3 +
+ net/core/devmem.c                             | 115 ++++++-
+ net/core/devmem.h                             |  77 ++++-
+ net/core/netdev-genl-gen.c                    |  13 +
+ net/core/netdev-genl-gen.h                    |   1 +
+ net/core/netdev-genl.c                        |  73 ++++-
+ net/core/skbuff.c                             |  48 ++-
+ net/core/sock.c                               |   6 +
+ net/ipv4/ip_output.c                          |   3 +-
+ net/ipv4/tcp.c                                |  50 ++-
+ net/ipv6/ip6_output.c                         |   3 +-
+ net/vmw_vsock/virtio_transport_common.c       |   5 +-
+ tools/include/uapi/linux/netdev.h             |   1 +
+ .../selftests/drivers/net/hw/devmem.py        |  26 +-
+ .../selftests/drivers/net/hw/ncdevmem.c       | 300 +++++++++++++++++-
+ 29 files changed, 950 insertions(+), 73 deletions(-)
 
-> Konrad
+
+base-commit: 80c4a0015ce249cf0917a04dbb3cc652a6811079
+-- 
+2.48.1.658.g4767266eb4-goog
 
 
