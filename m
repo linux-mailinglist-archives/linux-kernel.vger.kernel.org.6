@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-535466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D80A47344
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:05:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA76FA47348
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67233AFF53
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47453AFE97
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE18154425;
-	Thu, 27 Feb 2025 03:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224E017A319;
+	Thu, 27 Feb 2025 03:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZgOeYWDj"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjqkmrNx"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D5182BD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01AC2B9B7;
+	Thu, 27 Feb 2025 03:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740625498; cv=none; b=u/C9HBcbIoS0G31j7B60x2qYsz9fX246kiuL1FPf9+3nsLUGZSQgKADWqPXwwVB0JK5y5Yj0lfwveT5ExuvXrJnNT9kUt5BO9KqbF+iUpPYThJDPi+3bNLrY20YcW5+p3UlaIX2wNaDyDvM0yDMixEhXlf/hVU/341uWh5qtS94=
+	t=1740625528; cv=none; b=D3m9aGtIbLyfj3E56HRL/JRu0V52asIL07L7lg346ieBR9FeclWisG7ziU+9nZdPLoclW9Re+m4Buc1gEhoyXEKJUSy+OctdG0in5fJJpQpce1atsnDq2/O7+CMJxiCzgUKYvgv+OHoyoFBO4RgtVN0p894/laSG1st/NguZfnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740625498; c=relaxed/simple;
-	bh=sApeOFUm9vtPmXsAcHKHmqVM5ydqSgewslfuqqLoT7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iu8y12KFShZIFITfOyl6kwDiPCuM6M3ghdTPi/shJoxYFeXi+U91naSAfNq5KCeaemQ7FCtehQF3WS8yA4IjijRTkz0fxhb3a8845x1bt3Dw+vAm4+0ZrI95Ah/+XKqmGAvx99otqmsYP2zYxJqOzr2/IjE0TLQOfuEmpZLqK2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZgOeYWDj; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220ecbdb4c2so9899915ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:04:56 -0800 (PST)
+	s=arc-20240116; t=1740625528; c=relaxed/simple;
+	bh=7WtL4nedANVT2iqljZ7s77zwDOpB0DfKNNT/4bjqozA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YE77emM19vq82zWOIKT/9Pv5t12UZLHLHhgcf8Es4BlRoU2em7dBeIFBa/zJHMJcQI08rY2waPIrYf8y+jlo5H/5czFIGJJtcCYKbVRzasU2ZtulL2Q/DnMFrOA1ZJPRzvms60AY7HyzXayboLFAb4LTfZEXN3gtksAuAlXhtn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjqkmrNx; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-869440f201eso379744241.3;
+        Wed, 26 Feb 2025 19:05:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740625496; x=1741230296; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740625525; x=1741230325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yQVKWv0Ome4K7rsB2kB3GKRybp0+6cMBrnmVUw1MVXM=;
-        b=ZgOeYWDjmGzoWh1HVuwgTeophpHzetR/UJvQr92vP9sCpN2ZbceS8DuWbWvvnnyg4f
-         W+P/HOOgbgtN4VBzxRsgYmrNzKBgGiHePtItN0QusM0Lb1v4QxZfv/IesLpxwFE3i0sC
-         oWP00N6m2bi7VP/VDCODXM9BASO1cnEkQnHbfAwX+PUcOMBHx5muWfPg0EnX4Ka2w76y
-         OmeeN0KvwvSiNpCDgRvzsgSVa5oMQQfECc0Y/q9IMwRIU/usBMagUPvKdZQcPqLocZDJ
-         L2J5bWhgzJJFG5OLBsWJbCBgOeXYV8Gj9s4ATaJObJjM5nw1zZ5k2xEMwUOYk3MNhKB7
-         bqmg==
+        bh=IXVx49eJQBLxbCrIlxbeeYi4KBlOK0BbrpMyI4DO0vk=;
+        b=DjqkmrNxFaKt8dsM23JihGHZTQg7KqFSX6yH7ifGmfzWuTVjfpc0Ed6D5lLQGcgq+f
+         SClY4Q3spGIx3nFocDMywIrigjHZD2gR1OZBz6L1bVXICvSeiq9oEwIyBXmoU/p2N9Mb
+         wEi5xTDdolbuCDn31Y+gHFjWMF18r+cSyKqSC0bq0IEeO3iM1+fdzru98uwPknwiMOzM
+         L9PCZeOd2OwtiJzrXSU6w5glWCh/bPYCrr87IFKuRI+ZuvR6pXFSCphC3QmQQgB7hbcO
+         5pLbRiCI7wUvNpzdLu4dzCBs4eSFVUAjYkim6hvJM7Jc5LLKN0jFoN5rohs+n8x3nN+J
+         rukA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740625496; x=1741230296;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yQVKWv0Ome4K7rsB2kB3GKRybp0+6cMBrnmVUw1MVXM=;
-        b=fBTVM2UlKicq9z6Pw8FH0w2ZT1KAXrGHEqbKlGP8RAlWRDbQYnIyuJzAeDyMm1vhPI
-         Tw1jN/i0VfrHlfRNOFKtOkQ1NgrzLjsZfO0/IFUs2xu5cJ13BXVy2cninxsfiUbZyUFM
-         ixzBgm0H2BW3Sxl78jsBiuQQrVFbwlgCveapuxV+uhwaBiG1QUlu9wbcv7ZZK4GLsR6U
-         XsGqcdog+m59Zs/eRHxyWXrEBhB4o7wAlnVCwhT19AI823+TlJcM3j2ZQSkiVfgiGsuS
-         iHJWDh7hYiSzZUOerwf6ht5T3WkbM8WscYnDUKHSs0I/1mUDRB9LPDKUnpm3VuVv9Qmb
-         3Wag==
-X-Forwarded-Encrypted: i=1; AJvYcCV2mPeB04uM9ASzfP73TUTXSLFZGruDPfxQTB58jVM1SgcO6dlcvvUkAaCtreOAmu11mADjrCSC+34KM9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGm9sB5iv6mww/VWAESdjQwScX+5y9WE900wmXaMbESombn8/e
-	nbnea4eG8zs6yw1an37jlPhLQk+4gUrdnMRFSGtyBvxbCoj897OGNbH0A3pdY8YvQrLIWLA1SPF
-	vXJE=
-X-Gm-Gg: ASbGncuX1pzjEPDuqvZtNfO894couVdwqkVbZGv9JbWWqBGCazpXOXIPqkurts3hSE0
-	FlnBNkxZo4S8TsoyPGs7J5n3EOOzWx63qoeKITbB67OnjMrWwjghnbhNzrfXcmo5DVKySrrd7UB
-	kKdF40ziHfPJPbg8tucBQmHbMlix8mANqRjGJsncONqlGG0MU2AfRyMfdZ9onnSmeZnGNED9qQ7
-	S7aXym6E/JLJ65N3VIvfOjqafSwNdm9/jOTb0CEkfDvu0YA6qy0FfB18oaYG1ZLv2SIAw0FNq8K
-	CgTEFaIMfQUWoR1/0zLhTk+TEHrzvNQ1Gvb/KBxjJJZpgYVkQg==
-X-Google-Smtp-Source: AGHT+IFXdHw6V94ujYF/Y7q0TUGZj+lZtIenRxWAiQyN/0z1I1NpUoGEdoEWZTJZ0/gdQ8Q5Uzj+wg==
-X-Received: by 2002:a05:6a21:8801:b0:1f0:e3b9:6b17 with SMTP id adf61e73a8af0-1f0e3b96b1amr20800701637.26.1740625495721;
-        Wed, 26 Feb 2025 19:04:55 -0800 (PST)
-Received: from [10.68.122.90] ([63.216.146.179])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de1a4absm310575a12.26.2025.02.26.19.04.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 19:04:55 -0800 (PST)
-Message-ID: <a77923d3-ce26-4e29-bb98-b908ce2355c2@bytedance.com>
-Date: Thu, 27 Feb 2025 11:04:51 +0800
+        d=1e100.net; s=20230601; t=1740625525; x=1741230325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IXVx49eJQBLxbCrIlxbeeYi4KBlOK0BbrpMyI4DO0vk=;
+        b=QO4ITxiC53fOIjSgIUD5ZJrRXTpe0b1Ycj9397O4b5mS0RiMiAnGr+GgzuIXms8TIa
+         DCaHRlFrngfLB9x8FbgkDhBo3GuO5fLb454DDSQj5z+RNJ2AgNzs0ytzgOeinxJ4eeod
+         kZI4ZFcy5pesT2iu/9nuN/MJl+TwbhrrpxfLn2TAvhsbq9aBXhnMLWMOCofm8cTbaEWv
+         ndFHqOrJlFeqru96btm2dZ1UeZ/nFEMsADP5WC9apEsEZZNr1JrB1bNwD+zt/IXKKrkE
+         9HCXGBEaLSnn+ZaR96dHxROGbjVYmEWPYrna3P2QoaCqaVs5U5jh7p4gZBMiSBKwfHt/
+         W1+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAgz+DkcV7FYVusPt+vvTLAdUgw+erqF1MKfyrX10WASQYhwTTxlNY8kykslj3f1Ut6NcNVWYgQk9/dWv9@vger.kernel.org, AJvYcCUm4CQBa7pNFE/4OEQq6ffsZweeRvrA0rAv45iDI0izocO+OYeM7cxE4f2pX4/P+MmQNvHHEDACZEkaKX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxYTWErltNpk+tJBVBq8Ogiyr2HgWMWzJixRhIAZK3p2wVvSXb
+	RKjKTg67aexZb0PVO88GGPW/1VTyugqs9w8XNXBJAKQIHoyuj4NlK9YYAnYHTonekEv/LgYiQkf
+	iivxRVLtYUdqJ9411prUkPKLWloo=
+X-Gm-Gg: ASbGnct9Ec/DACfjcPl2x5b0fYimgQWtpSfdZamWgjitfQdQwKR0CT6kpzCzD8w9QD2
+	YexsLtglUQJs7hUM0qLpEE0fCOw4puMiCnPL+IKMthHGm7aOYBrk12qS2PEk8id67fxqkczeTtv
+	/AltuH3ew=
+X-Google-Smtp-Source: AGHT+IFyyL3QwKMRRIxrajlGaeKqkP2l4r4cTYgFE9XLJOhNICubo3hunk6zTvETFEecuXEDORjBfHeBIuyCQFpuRBM=
+X-Received: by 2002:a05:6102:1614:b0:4bb:9b46:3f6f with SMTP id
+ ada2fe7eead31-4bfc27aed9fmr12833741137.1.1740625525584; Wed, 26 Feb 2025
+ 19:05:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CONFIG_PT_RECLAIM
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250226183013.GB1042@cmpxchg.org>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20250226183013.GB1042@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
+ <Z3yMNI_DbkKBKJxO@gondor.apana.org.au> <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
+ <Z7F1B_blIbByYBzz@gondor.apana.org.au> <Z7dnPh4tPxLO1UEo@google.com>
+ <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
+ <Z7lv6JLax4S8vTtD@gondor.apana.org.au> <CAGsJ_4yAQxjTnSALZHAJZDdUnXKAYFvQCcjQjHiQSUip6cJGKg@mail.gmail.com>
+ <Z7l0Hf-CFFjeKaZY@gondor.apana.org.au> <CAGsJ_4zFdHUPELSYDkrN4ie2c73L6e=FEdQbDL3JckS4unKFpg@mail.gmail.com>
+ <Z7zpZlWmSV15EUVV@google.com>
+In-Reply-To: <Z7zpZlWmSV15EUVV@google.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 27 Feb 2025 16:05:14 +1300
+X-Gm-Features: AQ5f1JqXTKth9otrpj1zvCFqiq4wqPtE2SBEWuDVtOaMhsKlJKNsoIq3Jx_5obQ
+Message-ID: <CAGsJ_4wr3aT7zxn1MTjUjvQV9jeCGn=xi6VZz0qPm=xEBM6Qdg@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
+ compress/decompress batching.
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Johannes,
+On Tue, Feb 25, 2025 at 10:49=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev=
+> wrote:
+>
+> On Sat, Feb 22, 2025 at 08:13:13PM +1300, Barry Song wrote:
+> > On Sat, Feb 22, 2025 at 7:52=E2=80=AFPM Herbert Xu <herbert@gondor.apan=
+a.org.au> wrote:
+> > >
+> > > On Sat, Feb 22, 2025 at 07:41:54PM +1300, Barry Song wrote:
+> > > >
+> > > > probably no, as an incompressible page might become compressible
+> > > > after changing an algorithm. This is possible, users may swith an
+> > > > algorithm to compress an incompressible page in the background.
+> > >
+> > > I don't understand the difference.  If something is wrong with
+> > > the system causing the compression algorithm to fail, shouldn't
+> > > zswap just hobble along as if the page was incompressible?
+> > >
+> > > In fact it would be quite reasonble to try to recompress it if
+> > > the admin did change the algorithm later because the error may
+> > > have been specific to the previous algorithm implementation.
+> > >
+> >
+> > Somehow, I find your comment reasonable. Another point I want
+> > to mention is the semantic difference. For example, in a system
+> > with only one algorithm, a dst_buf overflow still means a successful
+> > swap-out. However, other errors actually indicate an I/O failure.
+> > In such cases, vmscan.c will log the relevant error in pageout() to
+> > notify the user.
+> >
+> > Anyway, I'm not an authority on this, so I=E2=80=99d like to see commen=
+ts
+> > from Minchan, Sergey, and Yosry.
+>
+> From a zswap perspective, things are a bit simpler. Currently zswap
+> handles compression errors and pages compressing to above PAGE_SIZE in
+> the same way (because zs_pool_malloc() will fail for sizes larger than
+> PAGE_SIZE). In both cases, zswap_store() will err out, and the page will
+> either go to the underlying swap disk or reclaim of that page will fail
+> if writeback is disabled for this cgroup.
+>
+> Zswap currently does not do anything special about incompressible pages,
+> it just passes them along to disk. So if the Crypto API can guarantee
+> that compression nevers writes past PAGE_SIZE, the main benefit for
+> zswap would be reducing the buffer size from PAGE_SIZE*2 to PAGE_SIZE.
+>
+> If/when zswap develops handling of incompressible memory (to avoid LRU
+> inversion), I imagine we would handle compression errors and
+> incompressible pages similarly. In both cases we'd store the page as-is
+> and move th LRU along to write more pages to disk. There is no point to
+> fail the reclaim operation in this case, because unlike zram we do have
+> a choice :)
 
-On 2/27/25 2:30 AM, Johannes Weiner wrote:
-> Does PT_RECLAIM need to be configurable by the user?
+Yes. For zswap, I suppose we just need to wait until all driver issues are
+resolved, such as:
+crypto: lzo - Fix compression buffer overrun
+https://lore.kernel.org/lkml/Z7_JOAgi-Ej3CCic@gondor.apana.org.au/
 
-The PT_RECLAIM will select MMU_GATHER_RCU_TABLE_FREE, but not all archs
-support MMU_GATHER_RCU_TABLE_FREE, and even before Rik's a37259732a7dc 
-("x86/mm: Make MMU_GATHER_RCU_TABLE_FREE unconditional"), x86 only
-supports MMU_GATHER_RCU_TABLE_FREE in the case of PARAVIRT.
+for zswap, we just need to address point 1, which is not the case yet.
 
-Therefore, PT_RECLAIM also implies the meaning of enabling
-MMU_GATHER_RCU_TABLE_FREE, so I made it user-configurable. And I just
-thought that as a new feature, it would be better to give users the
-ability to turn it on and off.
+"
+> 1. All drivers must be capable of handling dst_buf overflow.
 
-> 
-> Why not always try to free the page tables if the arch supports it?
+-Not the case.
+"
 
-If so, maybe changing
-
-select MMU_GATHER_RCU_TABLE_FREE
-
-to
-
-depends on MMU_GATHER_RCU_TABLE_FREE
-
-would be better?
-
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 2761098dbc1a..99383c93db33 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1309,16 +1309,9 @@ config ARCH_SUPPORTS_PT_RECLAIM
->   	def_bool n
->   
->   config PT_RECLAIM
-> -	bool "reclaim empty user page table pages"
-> -	default y
-> +	def_bool y
->   	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
->   	select MMU_GATHER_RCU_TABLE_FREE
-> -	help
-> -	  Try to reclaim empty user page table pages in paths other than munmap
-> -	  and exit_mmap path.
-> -
-> -	  Note: now only empty user PTE page table pages will be reclaimed.
-> -
-
-Maybe keep the help information?
-
-Thanks,
-Qi
-
->   
->   source "mm/damon/Kconfig"
->   
-
+Thanks
+Barry
 
