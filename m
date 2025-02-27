@@ -1,210 +1,188 @@
-Return-Path: <linux-kernel+bounces-535538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EAFA47442
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:19:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B27A47446
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD21B1891197
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56C2188C686
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F701EB5E3;
-	Thu, 27 Feb 2025 04:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC5A1D90B1;
+	Thu, 27 Feb 2025 04:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NWd8fN+/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q5gXPcHC"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7CA1D63CD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D6B1B78F3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740629738; cv=none; b=Chi1dXqvBUGwzeH6AOYW8YDHzpLs0lthRCL8rrvSje+9K5LvLt1Z1Agog6oebSJGrpBeE0pFSQ4ltHCX7uyIK9+A1pkx+YMWrA1Rf4ylVpHh8++CLLzCpAibuM8+pbp6MBot6hR+6532LjZLsxePvBHKZ8iMJISb9XjFLTRH6JU=
+	t=1740629824; cv=none; b=UmEKVz0qGZiNFju500WMp9JXJcgSlaQr2zrPhIAmGBQwchBk0xKiRCqfvcw8/c3m28l/eB1EEe21IMYFAU9/xe/NE/5rWHgJn7IV3csV5OqH34lIsPuQ6qcMFSIj7v4wi/XJokE360k8K5273+NQ7PlUDbOwvKlTU/xkTAtzMqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740629738; c=relaxed/simple;
-	bh=i0P3oKURB+E0lUIrcY5OeJO3AwVoYL0kp6OuxUk1Ptw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=brNUXTy1dzPHZv0ogLmczprl4hqtMruACcQt6aim9Gj5Mv52nbyIrY18ksw8IjXIPesvBDbVjyBWcQzjWSNmpWVt96b04KvZ6yNGWLbMcSX3yjn4MfaxUAINR4nct9e8DY0xvrpdglhJtUAwmmqfiSHsR8KV8U8ndRL+1NJSP1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NWd8fN+/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740629735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LzMafZg7Owg9vjJaHS40UzrgTQRclUEj2q21FtbKF/A=;
-	b=NWd8fN+/1UBgBjXfptzlyTqaLXbQpuyk+8/nt/zcTq5Ut7iBraKCA4yvUjXYIGbFgRp1hL
-	nbHKBXQTYuRIys9uq+ZfT2aUtkp44UHRqkyRVG4GG39o/g1cRSnf6eJoASlyzi+2CjPVbG
-	iW28Q/zH0Yp/466/lecpY9wDBzzKWyU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-212-WVLY5IonPhKzJ87A7qlsJw-1; Wed,
- 26 Feb 2025 23:15:31 -0500
-X-MC-Unique: WVLY5IonPhKzJ87A7qlsJw-1
-X-Mimecast-MFC-AGG-ID: WVLY5IonPhKzJ87A7qlsJw_1740629729
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F211119560B9;
-	Thu, 27 Feb 2025 04:15:25 +0000 (UTC)
-Received: from starship.lan (unknown [10.2.18.180])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3F5DF180035E;
-	Thu, 27 Feb 2025 04:15:23 +0000 (UTC)
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Shuah Khan <shuah@kernel.org>,
-	James Houghton <jthoughton@google.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Anup Patel <anup@brainfault.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH] KVM: selftests: access_tracking_perf_test: add option to skip the sanity check
-Date: Wed, 26 Feb 2025 23:15:22 -0500
-Message-Id: <20250227041522.1734260-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1740629824; c=relaxed/simple;
+	bh=cdH66nBgTf0Lwg3K/8eyHtCyVQMYcf9IUF1L6JQC4tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZ6SfW9BQQa88cczpO2K8IVCaHjiecQHAmB9pCPJSAQqcILBA+0QyV0FFtxNU4ixQ+AXme4JY4Dw0+rNklFTjMnqJ3msQYgjrK5jFi2vRnMmaJSAaIxj3Xao0UkgWsVlC3aKFWsvGfOPixj1tvy4X8PFl/1XOYPER968TF1VMto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q5gXPcHC; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-546267ed92fso466525e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 20:17:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740629820; x=1741234620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sbpE7A80HY+/Mdda5+FpAzRig9IYFvS6m/EoQDwpXAQ=;
+        b=Q5gXPcHC5lN5JVX2lf0aUyQc63bMtc0iG5JHy2/dODruChVNW2VZxhugXxooa3WQx1
+         OANOD/ClCw/F679fgDtLCFQQwk05hqG7NJWqIO1t44nZwU/aMMhb4fAgkhksL42G70c7
+         oydZhdGEKwC6yT3dNFwBRhHEyaOBDj2UU1KqoklO6D3q54Bf4j+tjqAHUufKVRl7Lhrw
+         mD3BlgOq9BjY9auio47tCYFtTalb1n6XvfzHLgxaEAfcK6L2nx4Tnc4MtKCYGibBdnRT
+         PZsSAB5RkuSshr+5X8fMcbTDraISIEp5EEvNdXLj8aR9L4e0Gnw/Jfluxihi4/Wk4nQo
+         wxZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740629820; x=1741234620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbpE7A80HY+/Mdda5+FpAzRig9IYFvS6m/EoQDwpXAQ=;
+        b=kUPaefdVAgBcz2rBKTf4NWMdIoEWK6/hccg9Wlo1uXLuU+OAGA7VlwiA69NqgwnkN3
+         hTEhFUDZduu4iS7zLOSPOLYX9JBKsdoFVB0kxms3WwZGewmH6tNYH3rTho6lV+2xXzLA
+         WhFxIRhIfjNn2kD17ZaPZYM5UUdfxltRLH5q6Hzj/Sk2Ou1ra8+sVfScsQ/7abcGXkig
+         X0hYvszD5wgnIbkDzdhPxKf2aWcztn4nSC+b24C3hdUnw76csv7myh9s45g1CP/rFmg/
+         GoXOqJraoPY2w4ogErSjneG5hNEwa3rlC81pinbAHma+Uc+1Np/BguVwtH/375lpRaFX
+         uxMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUws3T1HhsMftAcRBT5URj8JcfDzBxyIUCWiNS6OluyrfznTVhe9lGbSU2VN1LTh4FKBJG+DPr8bx7I+Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2D4Xyf7VTgwlIb+AU55uNRFzpM9B4GIQudxEvfs2D+AjRH8Al
+	epgzu2pjruMyK8ujVPE1o21SePniSj94Gf1xnQRB4EIFv/swCEjCADXCFVQ8t9Q=
+X-Gm-Gg: ASbGnctrdVA7jhgyWCRFluzog9lo1KQxH8oZDH4DKg7DfEEgxpgJhhaGQEaUV5wmduS
+	eTXnQfKY39/U7+Q8T4U8MUjL9E9gDuwa+LWdn6qVZCbfJV3PMrJxwXUPeKi0ZIfqR8LBLcDKIBO
+	L3t/oAyCjR/PqYpVU4/46E7chRHxQp/r3uMKpc4Js7tGyArNmtznKVuAviUtyn94dRr1woGERPb
+	L+cNpW2bFpsekLHwcH5BW5qGnmGEWEKmDFGM/Zr10UuKRqYQ2dsggwb301DGrlVYxc8dmGyAWDK
+	rbgLkoQbp3D28H5sD+ar17mv2Wk4ymmXdH0T/zwUNIXdnWaTWfiP6tjS43EsatplsfrvwR9Y7i/
+	Y/FPw/Q==
+X-Google-Smtp-Source: AGHT+IE5VURtJx3akR0wW8QuRF4r2+WixtLJlHwmRqGjmXOtaF1CwM79EnenRC2OLvGzgMnEngZwiw==
+X-Received: by 2002:ac2:4e15:0:b0:545:c7d:1791 with SMTP id 2adb3069b0e04-548510ed5d4mr6767391e87.43.1740629820504;
+        Wed, 26 Feb 2025 20:17:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549441743c4sm61550e87.49.2025.02.26.20.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 20:16:59 -0800 (PST)
+Date: Thu, 27 Feb 2025 06:16:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Nikita Travkin <nikita@trvn.ru>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] {vision/navigation}-mezzanine: Fix overlay root node
+Message-ID: <vq5dcsi55aqn56h6ihysqk4lainhmjbyvot3jiqkxm3i7igsak@da5u6ro7rkvg>
+References: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru>
 
-Add an option to skip sanity check of number of still idle pages,
-and force it on, in case hypervisor or NUMA balancing
-is detected.
+On Wed, Feb 26, 2025 at 07:29:54PM +0500, Nikita Travkin wrote:
+> While considering to propose WoA EL2 dt overlays upstream I was looking
+> at existing overlays and noticed that some of them are broken: they put
+> seemingly meaningful fixups into the overlay's "/" node, which places
+> them into the overlay "metadata" itself, not into a fixup fragment to be
+> applied to the actual dtb. This series fixes those two by changing to
+> full path "&{/}" which should work as it was initially intended.
+> 
+> See demonstration of the problem below:
+> 
+> $ cat base.dts
+> /dts-v1/;
+> / {
+> 	compatible = "fake,board";
+> 	fake,value = <42>;
+> };
+> 
+> $ cat extra.dtso
+> /dts-v1/;
+> /plugin/;
+> 
+> / {
+> 	foo;
+> 	bar { baz; };
+> };
+> &{/} { whatever-comes-next-after-baz; };
+> 
+> $ dtc base.dts -o base.dtb
+> $ dtc extra.dtso -o extra.dtbo
+> $ fdtoverlay -i base.dtb -o combine.dtb extra.dtbo
+> $ dtc base.dtb
+> /dts-v1/;
+> 
+> / {
+> 	compatible = "fake,board";
+> 	fake,value = <0x2a>;
+> };
+> 
+> $ dtc extra.dtbo
+> /dts-v1/;
+> 
+> / {
+> 	foo;
+> 
+> 	bar {
+> 		baz;
+> 	};
 
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
----
- .../selftests/kvm/access_tracking_perf_test.c | 23 +++++++++++++++++--
- .../testing/selftests/kvm/include/test_util.h |  1 +
- tools/testing/selftests/kvm/lib/test_util.c   | 22 ++++++++++++++++++
- 3 files changed, 44 insertions(+), 2 deletions(-)
+Is this behaviour documented somewhere? I'd say, it would be a surprise
+to me.
 
-diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-index 3c7defd34f56..eafaecf086c4 100644
---- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-+++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-@@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
- /* Whether to overlap the regions of memory vCPUs access. */
- static bool overlap_memory_access;
- 
-+static bool skip_sanity_check;
-+
- struct test_params {
- 	/* The backing source for the region of memory. */
- 	enum vm_mem_backing_src_type backing_src;
-@@ -185,7 +187,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
- 	 */
- 	if (still_idle >= pages / 10) {
- #ifdef __x86_64__
--		TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-+		TEST_ASSERT(skip_sanity_check,
- 			    "vCPU%d: Too many pages still idle (%lu out of %lu)",
- 			    vcpu_idx, still_idle, pages);
- #endif
-@@ -342,6 +344,8 @@ static void help(char *name)
- 	printf(" -v: specify the number of vCPUs to run.\n");
- 	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
- 	       "     them into a separate region of memory for each vCPU.\n");
-+	printf(" -u: Skip check that after dirtying the guest memory, most (90%%) of\n"
-+	       "it is reported as dirty again");
- 	backing_src_help("-s");
- 	puts("");
- 	exit(0);
-@@ -359,7 +363,7 @@ int main(int argc, char *argv[])
- 
- 	guest_modes_append_default();
- 
--	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
-+	while ((opt = getopt(argc, argv, "hm:b:v:os:u")) != -1) {
- 		switch (opt) {
- 		case 'm':
- 			guest_modes_cmdline(optarg);
-@@ -376,6 +380,9 @@ int main(int argc, char *argv[])
- 		case 's':
- 			params.backing_src = parse_backing_src_type(optarg);
- 			break;
-+		case 'u':
-+			skip_sanity_check = true;
-+			break;
- 		case 'h':
- 		default:
- 			help(argv[0]);
-@@ -386,6 +393,18 @@ int main(int argc, char *argv[])
- 	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
- 	__TEST_REQUIRE(page_idle_fd >= 0,
- 		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-+
-+
-+	if (skip_sanity_check == false) {
-+		if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
-+			printf("Skipping idle page count sanity check, because the test is run nested\n");
-+			skip_sanity_check = true;
-+		} else if (is_numa_balancing_enabled()) {
-+			printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
-+			skip_sanity_check = true;
-+		}
-+	}
-+
- 	close(page_idle_fd);
- 
- 	for_each_guest_mode(run_test, &params);
-diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-index 3e473058849f..1bc9b0a92427 100644
---- a/tools/testing/selftests/kvm/include/test_util.h
-+++ b/tools/testing/selftests/kvm/include/test_util.h
-@@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
- void backing_src_help(const char *flag);
- enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
- long get_run_delay(void);
-+bool is_numa_balancing_enabled(void);
- 
- /*
-  * Whether or not the given source type is shared memory (as opposed to
-diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-index 8ed0b74ae837..1271863613fa 100644
---- a/tools/testing/selftests/kvm/lib/test_util.c
-+++ b/tools/testing/selftests/kvm/lib/test_util.c
-@@ -163,6 +163,28 @@ size_t get_trans_hugepagesz(void)
- 	return size;
- }
- 
-+
-+bool is_numa_balancing_enabled(void)
-+{
-+	int ret;
-+	int val;
-+	struct stat statbuf;
-+	FILE *f;
-+
-+	ret = stat("/proc/sys/kernel/numa_balancing", &statbuf);
-+	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
-+			"Error in stating /proc/sys/kernel/numa_balancing");
-+
-+	if (ret != 0)
-+		return false;
-+
-+	f = fopen("/proc/sys/kernel/numa_balancing", "r");
-+	ret = fscanf(f, "%d", &val);
-+
-+	TEST_ASSERT(val == 0 || val == 1, "Unexpected value in /proc/sys/kernel/numa_balancing");
-+	return val == 1;
-+}
-+
- size_t get_def_hugetlb_pagesz(void)
- {
- 	char buf[64];
+> 
+> 	fragment@0 {
+> 		target-path = "/";
+> 
+> 		__overlay__ {
+> 			whatever-comes-next-after-baz;
+> 		};
+> 	};
+> };
+> 
+> $ dtc combine.dtb
+> /dts-v1/;
+> 
+> / {
+> 	whatever-comes-next-after-baz;
+> 	compatible = "fake,board";
+> 	fake,value = <0x2a>;
+> };
+> 
+> In the resulting dtb foo bar and baz are missing.
+> 
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+> Nikita Travkin (2):
+>       arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix broken overlay root
+>       arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Fix the overlay root
+> 
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso       | 2 +-
+>  arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
+> change-id: 20250226-qcom-nonroot-overlays-bfe21d33be8c
+> 
+> Best regards,
+> -- 
+> Nikita Travkin <nikita@trvn.ru>
+> 
+
 -- 
-2.26.3
-
+With best wishes
+Dmitry
 
