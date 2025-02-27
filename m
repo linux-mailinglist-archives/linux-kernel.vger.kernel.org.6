@@ -1,49 +1,63 @@
-Return-Path: <linux-kernel+bounces-536377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A9CA47EE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E05A47EE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:21:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6B71896DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:20:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56CE3A4FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FDB2309A1;
-	Thu, 27 Feb 2025 13:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9440322F38C;
+	Thu, 27 Feb 2025 13:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgr5WQkK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpjlQW8z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D8A22FE13;
-	Thu, 27 Feb 2025 13:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0044422171A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740662401; cv=none; b=IGDR4TWCEhTfa8ww6aoa/gVDtKOeaawaFDcjTUURIdCplo8vfES9G+2F/+w5hMtPugmIeNeV4xP00jNxm+SZyUVWA8petDdzl7kQW1ZEufJGmA+GtUFj2fb49iRA5qPZDcl1UILtHJtNWunpsmhd//avDEy6JgOoONk9mtBDx5Y=
+	t=1740662442; cv=none; b=IFyQQCpuWdAnuAIFOSYExuSA8Lde0CyX98xlTvuZ51n3qQY52hpXJbxZJXrzChs9V/DCcQil8Ralo8qMXPdr4KuQ/pfaPf7Hz/QVzKQHKm8DQvOs/d3Sy7aBXZAk1B1H/NnNf33bQud6ezwE/HK5sTxGdsrbedDIe1A6Fch12tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740662401; c=relaxed/simple;
-	bh=fx/Vom5mqh1leEZgG1aXz67lV8T/4Prd0jnHr4TXuX8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=j8g5f0DdUowvb49CtE3ByEfrcAFRNrCKz3xg9lu8wnUoddkuplauRrIsMesk8PQl8S6XnJyPj46DzvwjU3nGhlWiIs5HUae16YvzoY/DbIFk9gUNFQu2+f9uIcufZl0k3EPtEhio9zz3fQq42G2XO09jMASPJYTG08d3kKydlk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgr5WQkK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD9AC4AF0B;
-	Thu, 27 Feb 2025 13:20:00 +0000 (UTC)
+	s=arc-20240116; t=1740662442; c=relaxed/simple;
+	bh=FLYX4MtQxNdE09SlMrP22m+WXbicdAzLZnnz94YMMU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gdnsJhy1nrTEw25gfHWsg6kMsYZMoLrn1EDxO920CP9oKBPr3/NAiyWENR/khDEjVcbGxSuNnGmOMXAC1XaTtFSS/7CHloBLzje3AfrZ+I/QsiCfbfKoxU73ZC8OnxMPk/LNswq9QyzF7gz/HY8qCAUyB2qKuSF0wzzzaGtL968=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpjlQW8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAE0C4CEDD;
+	Thu, 27 Feb 2025 13:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740662400;
-	bh=fx/Vom5mqh1leEZgG1aXz67lV8T/4Prd0jnHr4TXuX8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hgr5WQkK6hpAwtpX4s8FDd0cwNjE5K3Xkf/iPiZxefwYhyMLVqUHnnv5Wpsl4uURb
-	 4ENKT1yriatYXcREFBFv8sM91bcjBERPpqMv3jrFYge7z3gPnLPfqbw6lbYvXWb5ur
-	 z49h2fkQFGGKYb3sVSS4dDHFjbupGWJWZX9yWDqdJ7vKcj+GONP5DoIYHsG+fdg7m1
-	 8MLncX2Wc1ORiSRg99UK9LiDHYVTew5IIqRL+Z6oybSl/eXgRPnS0jn/1xp1UAvtUN
-	 VyvIfsNzlt7R89/NR3E+xB+RxnUgQCG7t0SJc89jgFVcPigbBQXzlbuLsNvAP1zf69
-	 uwl6KLGw4123Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD66380AA7F;
-	Thu, 27 Feb 2025 13:20:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1740662441;
+	bh=FLYX4MtQxNdE09SlMrP22m+WXbicdAzLZnnz94YMMU8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QpjlQW8zNpmJ08WB9JTBJqlF36PognoNnSxjJT4tKa/l4ZaFM4w5dpNn+VhYJjU5s
+	 OEotBr056p3g1inqlXhP9bDQpWQ9686G5QktZbrtWl/m0Fi2c3OGLt1gHEUmuqqzyW
+	 7M2nS6lvIxRpR6Kus5NMH92N8IDOYpiX+fF00t3gvEn7Bx+0k83cm5qeRokiID3461
+	 3EBuBvfN/aEO8C3a/C10HFjRnfka4BhCcUdtH1r4OnDqVeLg1nXJ9Go8txXaqCZS5B
+	 MMuls9Q5smhRdLfS+6lbTeGPVAiA9jHTeu/9uFKMMmDSVqQqNxUmTuG6PHSVYO70or
+	 rE82cHC1EXnPQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Vishal Sagar <vishal.sagar@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: xlnx: zynqmp_dpsub: fix Kconfig dependencies for ASoC
+Date: Thu, 27 Feb 2025 14:20:32 +0100
+Message-Id: <20250227132036.1136600-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,64 +65,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 0/8] bpf: cpumap: enable GRO for XDP_PASS frames
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174066243275.1425284.11463138682186483898.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Feb 2025 13:20:32 +0000
-References: <20250225171751.2268401-1-aleksander.lobakin@intel.com>
-In-Reply-To: <20250225171751.2268401-1-aleksander.lobakin@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, lorenzo@kernel.org, dxu@dxuuu.xyz,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- john.fastabend@gmail.com, toke@kernel.org, hawk@kernel.org,
- martin.lau@linux.dev, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+From: Arnd Bergmann <arnd@arndb.de>
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+The new audio code fails to build when sounds support is in a loadable
+module but the GPU driver is built-in:
 
-On Tue, 25 Feb 2025 18:17:42 +0100 you wrote:
-> Several months ago, I had been looking through my old XDP hints tree[0]
-> to check whether some patches not directly related to hints can be sent
-> standalone. Roughly at the same time, Daniel appeared and asked[1] about
-> GRO for cpumap from that tree.
-> 
-> Currently, cpumap uses its own kthread which processes cpumap-redirected
-> frames by batches of 8, without any weighting (but with rescheduling
-> points). The resulting skbs get passed to the stack via
-> netif_receive_skb_list(), which means no GRO happens.
-> Even though we can't currently pass checksum status from the drivers,
-> in many cases GRO performs better than the listified Rx without the
-> aggregation, confirmed by tests.
-> 
-> [...]
+x86_64-linux-ld: zynqmp_dp_audio.c:(.text+0x6a8): undefined reference to `devm_snd_soc_register_card'
+x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1bc): undefined reference to `snd_soc_info_volsw'
+x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f0): undefined reference to `snd_soc_get_volsw'
+x86_64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x1f4): undefined reference to `snd_soc_put_volsw'
 
-Here is the summary with links:
-  - [net-next,v5,1/8] net: gro: decouple GRO from the NAPI layer
-    (no matching commit)
-  - [net-next,v5,2/8] net: gro: expose GRO init/cleanup to use outside of NAPI
-    https://git.kernel.org/netdev/net-next/c/388d31417ce0
-  - [net-next,v5,3/8] bpf: cpumap: switch to GRO from netif_receive_skb_list()
-    https://git.kernel.org/netdev/net-next/c/4f8ab26a034f
-  - [net-next,v5,4/8] bpf: cpumap: reuse skb array instead of a linked list to chain skbs
-    https://git.kernel.org/netdev/net-next/c/57efe762cd3c
-  - [net-next,v5,5/8] net: skbuff: introduce napi_skb_cache_get_bulk()
-    https://git.kernel.org/netdev/net-next/c/859d6acd94cc
-  - [net-next,v5,6/8] bpf: cpumap: switch to napi_skb_cache_get_bulk()
-    (no matching commit)
-  - [net-next,v5,7/8] veth: use napi_skb_cache_get_bulk() instead of xdp_alloc_skb_bulk()
-    https://git.kernel.org/netdev/net-next/c/1c5bf4de975d
-  - [net-next,v5,8/8] xdp: remove xdp_alloc_skb_bulk()
-    https://git.kernel.org/netdev/net-next/c/b696d289c07d
+Change the Kconfig dependency to disallow the sound support in this
+configuration.
 
-You are awesome, thank you!
+Fixes: 3ec5c1579305 ("drm: xlnx: zynqmp_dpsub: Add DP audio support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/xlnx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/xlnx/Kconfig b/drivers/gpu/drm/xlnx/Kconfig
+index dbecca9bdd54..cfabf5e2a0bb 100644
+--- a/drivers/gpu/drm/xlnx/Kconfig
++++ b/drivers/gpu/drm/xlnx/Kconfig
+@@ -22,6 +22,7 @@ config DRM_ZYNQMP_DPSUB_AUDIO
+ 	bool "ZynqMP DisplayPort Audio Support"
+ 	depends on DRM_ZYNQMP_DPSUB
+ 	depends on SND && SND_SOC
++	depends on SND_SOC=y || DRM_ZYNQMP_DPSUB=m
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	help
+ 	  Choose this option to enable DisplayPort audio support in the ZynqMP
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.5
 
 
