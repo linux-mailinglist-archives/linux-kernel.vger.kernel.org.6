@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-536589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88E3A48173
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:35:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4A9A481DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D14947A9A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:30:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACC7424926
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F7C235BE8;
-	Thu, 27 Feb 2025 14:29:11 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0364E2356B1;
+	Thu, 27 Feb 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="S8Ppehat"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AB923315F;
-	Thu, 27 Feb 2025 14:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D45156C62;
+	Thu, 27 Feb 2025 14:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666551; cv=none; b=LwI4ibp6GpNv4/RwdWXtdPUI4eNo24pc+59b6HHJbLvKbk18XYeeHNimH4ZPzedOhWkW6Yi4SX1bl8ZUxCmunfVfiJMZRySRPcdudz3RS9jzdmmH4R2Zax+sMUxOAs8zQDBGCTvq0A/rmjvUZ7EgN1pM8sBblpFd0IjcvXKuwEE=
+	t=1740666622; cv=none; b=cMeXLziGcUq8w9JxKGBXam3QIvL6hJ5yhkJuzr43dMYl3KC2VdFGv2WEqCj6QHKsYESzy3rWE1qE0mRKt86eZFWeq671S0HCr58uO4OJpfWlzz5rVAVehCwahZpPFOhx0/jMXoh2DjeL4ajkTZAhDavwaZnxjka+/yJZMdvLvnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666551; c=relaxed/simple;
-	bh=SR4n4RWYTAfQnMYeY0Z6B8JFxcbPm5d7iAbrsJxtYZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=chPcg6UmWnHdhW2grI97q5vJGgKiszO+ca8LOsf8o1ej21SkvrpkUPa8ogaL2KHMg936Mz+32VMcLTAl7DQvRRw9vSR4VpRtv+zLCW7dxqteQ+ITrVIl4aeUXc3mn3T4zk8wgq749BWKzo26zxz7Hf+3NM04CZaIGIFxlcy+cpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9650DC4CEDD;
-	Thu, 27 Feb 2025 14:29:07 +0000 (UTC)
-Date: Thu, 27 Feb 2025 09:29:49 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Martin Uecker <uecker@tugraz.at>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ralf Jung
- <post@ralfj.de>, "Paul E. McKenney" <paulmck@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Ventura Jack <venturajack85@gmail.com>, Kent
- Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>,
- airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
- ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
- ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250227092949.137a39e9@gandalf.local.home>
-In-Reply-To: <2f5a537b895250c40676d122a08d31e23a575b81.camel@tugraz.at>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
-	<20250222141521.1fe24871@eugeo>
-	<CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
-	<6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
-	<CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
-	<CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
-	<CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-	<CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-	<5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
-	<CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
-	<ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
-	<CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
-	<09e282a9c02fb07ba4fc248f14c0173d9b19179a.camel@tugraz.at>
-	<CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
-	<2f5a537b895250c40676d122a08d31e23a575b81.camel@tugraz.at>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740666622; c=relaxed/simple;
+	bh=ieucAQ/i0HJh1IYOkkqVgRRjfm1JSIor9mC+iMLbvBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tznv1eDx4po22O9bsROVzf2+ng81OWP+qp5FcBlQdFG8kcbD59y3Yj/ijNApoPMsnMIgMiUsTmX5DKLolxCv4h0oD9Kk6jN3J4Uo04uCp4K2JMYt9HL4VyOTHYXp6r/5B/LaBmk+MCvggAhnxv0Vn6MQ8fRUQvS+AE1Y6iFZxLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=S8Ppehat; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A5C4DA0D06;
+	Thu, 27 Feb 2025 15:30:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=guEftXoNJKwkM6Mgjwbl
+	Uug0shsafyPZ98TWKbr7I9Q=; b=S8PpehatVRCtCf2eASlnS5FG74i8rgudDSzZ
+	nz3fu+p7mkqrT6tV8O/LT108g8j9betYkx/Vct15GKoMnyYaxv6S6z1DZneRJRXh
+	rJ+6ENF1WVLRwtN/Kk+pIWAazdVDr4cnR1u7PZ3mdtsSoot81dDzLkVh+m46vFhL
+	X13dQaUTqqbjLtA29XDI/0w26IsQFta8o1B3TnIUk9q7/Vbkx3bTmb8Y6enAYsGe
+	ItQ3AGz4cyUsh5GUYiMufs/Ftdp6JVZYYcCaZ/tebRZzx1c9ALb5DbE6C1xA9e5c
+	nehWTKefs0drnbq93Pf3fax331pKQFAP4MS14UmtwplREBKSspKA9MaVTWYglo7B
+	dbbOqePnO8awc3KzrwHKSAUKUGvJNj60CG4oR0m6bjMw7Cs82aoQGDEZ1kd0erU5
+	HTaibORh+a9ANaEvN57dmu2qaDT3gKAOTcUXca3YFTT6EkmqsXZsN/liX4czvAn9
+	d43y7evKZiARubXamnrbn649flDFYMVmrYnfXuN0egYSrw0WUt1rHCmgTuuYA4Ap
+	qXZiXF2r2MhdYy7qBIxhPV4VUcAWSGVYCQD9PjvAUOPI2xbILfxBlGdz6I5/YyMw
+	ys2b/LmeDkEOCWC98zXcgg8UEAJIOlZHvr/4M3kawN7+F1Z6HlACxhPxG/v3Yvps
+	G99VtWQ=
+Message-ID: <d1468825-aa4f-4f0b-aade-04bf61aa7c40@prolan.hu>
+Date: Thu, 27 Feb 2025 15:30:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] counter: microchip-tcb-capture: Add capture
+ extensions for registers RA-RC
+To: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Kamel Bouhara <kamel.bouhara@bootlin.com>, William Breathitt Gray
+	<wbg@kernel.org>
+References: <20250227142751.61496-1-csokas.bence@prolan.hu>
+ <20250227142751.61496-4-csokas.bence@prolan.hu>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250227142751.61496-4-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637760
 
-On Thu, 27 Feb 2025 07:56:47 +0100
-Martin Uecker <uecker@tugraz.at> wrote:
+Hi,
 
-> Observable is I/O and volatile accesses.  These are things considered
-> observable from the outside of a process and the only things an
-> optimizer has to preserve. =C2=A0
->=20
-> Visibility is related to when stores are visible to other threads of
-> the same process. But this is just an internal concept to give
-> evaluation of expressions semantics in a multi-threaded=C2=A0
-> program when objects are accessed from different threads. But=C2=A0
-> the compiler is free to change any aspect of it, as=C2=A0 long as the=C2=
-=A0
-> observable behavior stays the same.
->=20
-> In practice the difference is not so big for a traditional
-> optimizer that only has a limited local view and where
-> "another thread" is basically part of the "outside world".
+On 2025. 02. 27. 15:27, Bence Csókás wrote:
+> TCB hardware is capable of capturing the timer value to registers RA and
+> RB. On top, it is capable of triggering on compare against a third
+> register, RC. Add these registers as extensions.
+> 
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> ---
+> 
+> Notes:
+>      Changes in v2:
+>      * Add IRQs
+>      Changes in v3:
+>      * Move IRQs to previous patch
+>      Changes in v4:
+>      * Return the status of the regmap_*() operations
+>      * Add names for the extension numbers
 
-So basically you are saying that if the compiler has access to the entire
-program (sees the use cases for variables in all threads) that it can
-determine what is visible to other threads and what is not, and optimize
-accordingly?
+Uhh, I sent the wrong version of this patch... Will re-send it shortly...
 
-Like LTO in the kernel?
+Bence
 
--- Steve
 
