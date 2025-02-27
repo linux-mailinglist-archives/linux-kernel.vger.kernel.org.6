@@ -1,78 +1,222 @@
-Return-Path: <linux-kernel+bounces-536410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1247A47F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C821A47F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1879C174635
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D82161699
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FA322FF37;
-	Thu, 27 Feb 2025 13:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A30222FDE6;
+	Thu, 27 Feb 2025 13:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bBg4Du/f"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCtOb9Og"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA2B22FAC3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E62206AC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740663013; cv=none; b=VclddE+3uYx3rCNFJjl7f8AeL/o3yg8gLnF86PPGDtePUTgAO4rU5NmVzZ5H6EzqRD7wb1jtLKb/7AaytYZqkTLkU9vZfoW5+0VMJiWzRLV0y9QcFAamNorYRXmPoAGh9/LwzZZtjeG83eowrxyyzf5qVG+9yqFeNpNWr0PS/r0=
+	t=1740663035; cv=none; b=rz/8kY92ERjrQJctCE/dCYRsnE78ImUrfETHY3twt/oKMzaAuWu08v3ajnFsh/NsAZ4fqkTAT2jKJvpa391VcO2xH/3+gTU1i9XYbPnKESRO11QLBkxUZz039uP4U+5cV6aOUXXAl0smY+psWkb4iv170SMgoZjECduMvSLPmEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740663013; c=relaxed/simple;
-	bh=GDZ5BvPgy2lCmzewOwp+tGRhkqPTAxTh6RPXmssfyoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WFBLONUgUYhGGvi1/JxDg1p3NnA0qCJEdZmUsE+W7XnLL3hIBAPxUIcODPzWFq+PH2sFpQLv9QshsONDferwQrSTAdTYr1AL10c4N2TH6aazarLVW/KJe3Eutd2pqAZKY9Oc1D5otUfiiNoI1xu3xj75bLOARbrgT6mkCmQDKTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bBg4Du/f; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rSW8vY1Lz82V3O90pR+pYsVexANwdbEdqaogjvgFhUU=; b=bBg4Du/fOsVoASBNeammEzgOX6
-	sMwnZjf9NZkDzTj0cYQWJKCGLoYwFfsb8lyIMEzuKr9THey0k5TY3NOXcFWBpRjR2gyqwzEB1xfgt
-	2mBOE5B+A0xBANnFBluQp1wGNR3GIRcD4VVQoL7jIOD9zrA0lja4silnhHjmLUOQDFCh91j4Ha8d+
-	aHUWajsW9QhBqZtEH3vh5w3zEtOrIbKaMBiy1z8676q1pJClEF8JHcRjK8sKSijfqPME9MXepcKVM
-	887gCUSJLrgZHBu0C9u7QuPlu9coFLqydeNZg8nxZ8mpwzQgEA83dGtAhmc1WpP3b2GOGyNGj/p0r
-	VBi7lk3w==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tndxl-000163-FM; Thu, 27 Feb 2025 14:30:05 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: rockchip: usbdp: Remove unnecessary bool conversion
-Date: Thu, 27 Feb 2025 14:30:04 +0100
-Message-ID: <6199846.GJh79HuArf@diego>
-In-Reply-To: <20250224220339.199180-2-thorsten.blum@linux.dev>
-References: <20250224220339.199180-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740663035; c=relaxed/simple;
+	bh=DueZqCozERlca+RVkfx9tZTXSZg207xg5AFCIHcPtfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sSXDRsOwUdIzrmlp7t5dVhLy/JlxxOHt2lq3c7F+h+qv/cFLC3Tb7Z9717GzCFs/rd5DPXzcUv7cpWEQFyR/gFXwy1ICMKmbDK96KDx+PXPXV0A5J+BKsFcUJusnH3akZxtzPQV/gYKIJ6o9aNjLXNFZZEUcJW+3z7KT4A9lOTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCtOb9Og; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740663033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10kUSJV4EUd1FzHZvX0wjBLQDNiAVBrIFn/OMdDmjA4=;
+	b=bCtOb9OgSGr3G3UV6Ua+x4wHs32tc2b4RXTV/bkuzKMiyYFTFHJ2LmlXtdptxZ8Mp/m6fN
+	mnlod70VgHWqVbS29rxPC9Ys9B5zjyhUUloSyM0Ku+ea/N8JdSjhBm7jVQ7DWUikKpw1U3
+	cFl2S/kzp/GZh0sFYqLiWEO6Zjy5PKs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-130-WB_KKAaBNyiZF2GwKBJbHw-1; Thu, 27 Feb 2025 08:30:31 -0500
+X-MC-Unique: WB_KKAaBNyiZF2GwKBJbHw-1
+X-Mimecast-MFC-AGG-ID: WB_KKAaBNyiZF2GwKBJbHw_1740663030
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38f255d44acso293401f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:30:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740663030; x=1741267830;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10kUSJV4EUd1FzHZvX0wjBLQDNiAVBrIFn/OMdDmjA4=;
+        b=V5EG/rrB3wYMYyx32aUHN0rywMfyQQi3hP2s9cZ152xuhkOGzxyQtJAUEKdHRKZtq/
+         3N2HahRX0n7Z/viUd4DQMi/ugWs2N+GbVsZwe9EGGDRUAez3Po1uvTyrT+waTYLZ6hq/
+         jhGC/afWzXSaLrLIQgsjbpXA02G0nGu6bx4WKlVHxXgnXpwEhbWAa5lfUETWzAwuAV0e
+         96rjm8fTuF5TIzf9MmjFwrbFP3m71/MFG/KWwG6Ptt4UfrugmkHfoVuiaqiGBMUWtiey
+         QXtBRhQTd5Zmqgd5m8lxuwW6ecsXAzzswFxuwZJwiemjb7fMKSnKjBsSTKzKMBlfBjsx
+         lRcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJkzj5o7CxTSImwFOSKHc1KFHvIFzxsE+8VZ7v9YHYB82jkA5RfIlC4cOjFj1soVs98+kkvQtxg1YwZE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhfrnM46TaD8zHMTT9Z077dHZHNcFOuCII/efzUBbJvnRd8dkC
+	XxqX9pX0mXM9k2Ed5QOP0iDjScpJx9COlHGXQEqGyKC9PzM8F6Mt/QAYdoj4j3mJkqF7peTIXvh
+	6NAVYcz055F5hrRwNYETXEvs6W7VUIyGvxZYDgTa2ZCvZUa64mrI+ENY+uQvUjg==
+X-Gm-Gg: ASbGncsveLCekVF1Cz5Gi2WByy+PdjnoXb3HkeZUQWSE66qk4xPz2MwFTWU3aRf5Hss
+	v/9KTfLKUOxM3/pYJ8+eYJSuhZZtbKcIBabIwve1hL/XU4gG6ZuNQ0bycSggmpIDOe+yjm4CNdD
+	Y4TmJ1SnJNdUaymVqhe1m7z+sgLFM9OyDhKH3qrWir+VWcFxmQ1bM3v5l14PEcH39e35GPcLwIR
+	Qa25KNk4WxRMc+l/JT54v1UHLuRIWfzPH8gy8pIWZPoz2Imr/hul38wc0rzKvM+WhZS6eG2M/W+
+	iOSvEcvk9Gew74NNycdwoszF98Vlf6ICP/9/oqCiLcOfPTyrRRQ7G8GzbfV+QZg=
+X-Received: by 2002:a05:6000:1a89:b0:390:e9e7:ca70 with SMTP id ffacd0b85a97d-390e9e7cc41mr530497f8f.30.1740663030082;
+        Thu, 27 Feb 2025 05:30:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHDkqUxDVICIl2asaXKqIUXiaJsWHY1QefjUZLHDH5yJP2etyBSJVoWL14wXy6Wvs131BU7Sg==
+X-Received: by 2002:a05:6000:1a89:b0:390:e9e7:ca70 with SMTP id ffacd0b85a97d-390e9e7cc41mr530476f8f.30.1740663029647;
+        Thu, 27 Feb 2025 05:30:29 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm2094064f8f.57.2025.02.27.05.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:30:29 -0800 (PST)
+Date: Thu, 27 Feb 2025 14:30:28 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
+ =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/21]Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250227143028.22372363@imammedo.users.ipa.redhat.com>
+In-Reply-To: <cover.1740653898.git.mchehab+huawei@kernel.org>
+References: <cover.1740653898.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Montag, 24. Februar 2025, 23:03:39 MEZ schrieb Thorsten Blum:
-> Remove the unnecessary bool conversion and simplify the code.
+On Thu, 27 Feb 2025 12:03:30 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Now that the ghes preparation patches were merged, let's add support
+> for error injection.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> On this version, HEST table got added to ACPI tables testing for aarch64 virt.
+> 
+> There are also some patch reorder to help reviewers to check the changes.
+> 
+> The code itself is almost identical to v4, with just a few minor nits addressed.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+series still has checkpatch errors 'line over 80' which are not false positive,
+it needs to be fixed
 
+> 
+> ---
+> v5:
+> - make checkpatch happier;
+> - HEST table is now tested;
+> - some changes at HEST spec documentation to align with code changes;
+> - extra care was taken with regards to git bisectability.
+> 
+> v4:
+> - added an extra comment for AcpiGhesState structure;
+> - patches reordered;
+> - no functional changes, just code shift between the patches in this series.
+> 
+> v3:
+> - addressed more nits;
+> - hest_add_le now points to the beginning of HEST table;
+> - removed HEST from tests/data/acpi;
+> - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
+> 
+> v2: 
+> - address some nits;
+> - improved ags cleanup patch and removed ags.present field;
+> - added some missing le*_to_cpu() calls;
+> - update date at copyright for new files to 2024-2025;
+> - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+> - added HEST and DSDT tables after the changes to make check target happy.
+>   (two patches: first one whitelisting such tables; second one removing from
+>    whitelist and updating/adding such tables to tests/data/acpi)
+> 
+> 
+> Mauro Carvalho Chehab (21):
+>   tests/acpi: virt: add an empty HEST file
+>   tests/qtest/bios-tables-test: extend to also check HEST table
+>   tests/acpi: virt: update HEST file with its current data
+>   acpi/ghes: Cleanup the code which gets ghes ged state
+>   acpi/ghes: prepare to change the way HEST offsets are calculated
+>   acpi/ghes: add a firmware file with HEST address
+>   acpi/ghes: Use HEST table offsets when preparing GHES records
+>   acpi/ghes: don't hard-code the number of sources for HEST table
+>   acpi/ghes: add a notifier to notify when error data is ready
+>   acpi/ghes: create an ancillary acpi_ghes_get_state() function
+>   acpi/generic_event_device: Update GHES migration to cover hest addr
+>   acpi/generic_event_device: add logic to detect if HEST addr is
+>     available
+>   acpi/generic_event_device: add an APEI error device
+>   tests/acpi: virt: allow acpi table changes at DSDT and HEST tables
+>   arm/virt: Wire up a GED error device for ACPI / GHES
+>   qapi/acpi-hest: add an interface to do generic CPER error injection
+>   tests/acpi: virt: update HEST table to accept two sources
+>   tests/acpi: virt: and update DSDT table to add the new GED device
+>   docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
+>   acpi/generic_event_device.c: enable use_hest_addr for QEMU 10.x
+>   scripts/ghes_inject: add a script to generate GHES error inject
+> 
+>  MAINTAINERS                                   |  10 +
+>  docs/specs/acpi_hest_ghes.rst                 |  28 +-
+>  hw/acpi/Kconfig                               |   5 +
+>  hw/acpi/aml-build.c                           |  10 +
+>  hw/acpi/generic_event_device.c                |  43 ++
+>  hw/acpi/ghes-stub.c                           |   7 +-
+>  hw/acpi/ghes.c                                | 231 ++++--
+>  hw/acpi/ghes_cper.c                           |  38 +
+>  hw/acpi/ghes_cper_stub.c                      |  19 +
+>  hw/acpi/meson.build                           |   2 +
+>  hw/arm/virt-acpi-build.c                      |  36 +-
+>  hw/arm/virt.c                                 |  19 +-
+>  hw/core/machine.c                             |   2 +
+>  include/hw/acpi/acpi_dev_interface.h          |   1 +
+>  include/hw/acpi/aml-build.h                   |   2 +
+>  include/hw/acpi/generic_event_device.h        |   1 +
+>  include/hw/acpi/ghes.h                        |  52 +-
+>  include/hw/arm/virt.h                         |   2 +
+>  qapi/acpi-hest.json                           |  35 +
+>  qapi/meson.build                              |   1 +
+>  qapi/qapi-schema.json                         |   1 +
+>  scripts/arm_processor_error.py                | 476 ++++++++++++
+>  scripts/ghes_inject.py                        |  51 ++
+>  scripts/qmp_helper.py                         | 702 ++++++++++++++++++
+>  target/arm/kvm.c                              |   7 +-
+>  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+>  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+>  tests/data/acpi/aarch64/virt/HEST             | Bin 0 -> 224 bytes
+>  tests/qtest/bios-tables-test.c                |   2 +-
+>  32 files changed, 1692 insertions(+), 91 deletions(-)
+>  create mode 100644 hw/acpi/ghes_cper.c
+>  create mode 100644 hw/acpi/ghes_cper_stub.c
+>  create mode 100644 qapi/acpi-hest.json
+>  create mode 100644 scripts/arm_processor_error.py
+>  create mode 100755 scripts/ghes_inject.py
+>  create mode 100755 scripts/qmp_helper.py
+>  create mode 100644 tests/data/acpi/aarch64/virt/HEST
+> 
 
 
