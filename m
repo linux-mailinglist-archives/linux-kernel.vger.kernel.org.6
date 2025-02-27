@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-536816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E90A484D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:25:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B7AA4848D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06B11795F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3EC3ABFB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D222702C3;
-	Thu, 27 Feb 2025 16:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCEC1B424D;
+	Thu, 27 Feb 2025 16:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1yXLbDV"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3fqiv1Y"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860C826FDB7;
-	Thu, 27 Feb 2025 16:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296951B372C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672403; cv=none; b=ntG45iO5WTLmGmXcmxcoytMC/irZiBJTlsYyd8sAhFq/S1KFm7tnmwqoA2MpL4Njjp+y8KQQpQT9vIZZhg+pQeSTelQHYP0pY6Cp82rY8h0sjK1xcOp+PNzqxa0PC3HwOLaXot1jTqfJ6KmFVJaZCn8pg9aYLcuBl9qz7KMb9GQ=
+	t=1740672464; cv=none; b=ofBacO1qxv9oCFYlVLdSrMyLuVlc/Z34rZoC9m6WgEFjjlOfyjF0XV9G7Wwh9JwjzqSKAOCbx5GK+rwyRZSHutckA6ZzlkOv4Y/M9uldUZ+RnDG1Z48qx6Z9i3jj4Ot1EuMlTAu1ze462GZ9+4bSm0Gh/leHfuXlloG4ced/E+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672403; c=relaxed/simple;
-	bh=PJfgPnKJ89sswz05HEjeGzyw+HZGCWBZpjHbZs0nHMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZtQzlOJWwYIuOKkTnFo2tgVXz0phz3Kqs5TslY32ihGLC2vRXn0uxq8DCE5WnHrG76OPjmraxGKoL+stxEHzPXNu9O0foNMdSHsPgW7RyRAe0eUrJ6mByQHjoa5hUVhoXvpCEsVweUaPvKhoo2+fW+JwMVkDvFUr1Pp1ZcIOkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1yXLbDV; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fe8f6a4bfaso305367a91.0;
-        Thu, 27 Feb 2025 08:06:42 -0800 (PST)
+	s=arc-20240116; t=1740672464; c=relaxed/simple;
+	bh=CWV28ba7/pK0pfEMDt6BpVkKjS1yOP/DZbLPMFCESts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HrukfdPqyzBeZuOqXnOq1iVgKS+EqnG04T9dMpv8FfveERQBdVSMPdpDHJNgKCCiKjpGeCGqaEWcG6hBzy26Rsqp/eHlLDSUHNYuAyDkC05+0E3LuuJ6DMSANeuVYMcTIwyKTvob2j3Od202u4dtPgzo2wRRGJ19YWWl8GiOy8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3fqiv1Y; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30918c29da2so12653451fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:07:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740672402; x=1741277202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJfgPnKJ89sswz05HEjeGzyw+HZGCWBZpjHbZs0nHMA=;
-        b=I1yXLbDVK0AarkOV01ID3SFH86PTImcP6Rl0LikMc15i/7wNVUHSkjsYFyJWWpbngR
-         nUM0blQpCdHjHzq/l76H7FSG5RDcIbdzsO1kGxqwoMKHINCGJpID3jvlGx4S8pA/eCZs
-         v9QQb1yqKbj3puS77N0S1MimkGdEhtYY5vZvx7JFgZ7JGI0KvZlNCvd6xkBHK/Uv/XUK
-         L11bu4bMI2CONMMQlmgHmYvFbNYl9mULHHRLZw3Gy0pZw0+j6tmlL1hOEgWxS2869uzX
-         K2Ie1RgQ0+IRtQyPi80lWyTzX3mofmfjO4k1rEeNB4IosQHCEOINzzWclg88Hj3v0Bfo
-         gotQ==
+        d=linaro.org; s=google; t=1740672460; x=1741277260; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xb088OdXJlTA9IPSpcKjiPeuNEBwco6JwP3ohVxG/tQ=;
+        b=R3fqiv1YYZSIwyl573OWxgWA4kDjbCNBiTwSx+oI6zNaYF/DkAMuPWNbIdv8+mAUQC
+         2wFfrTFS5AujvsmQali8BzjoP5jSjo9ocbc8B+9T7GivCk1QaAWGvYl8APZ+0sA5S2uJ
+         odT3J7tRzrUvKo32MxFbAXISg228wgNa9Pi2ZdupkV8eHSojiYg3saYGfyF/qPZZ9OIs
+         Ln+f/R2GLB6yqctHEhDp6Q38OacpgM3CfY6vDndLlRLUCEtd9aL3zkW0iMJK7V5QxpT8
+         2m0ss6qr14x+k2NpFE1ZPMih9GXAXFBygivBcdBo8WgZFEqKAUEcLuLU+sEKlEUZeVYZ
+         xOtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740672402; x=1741277202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJfgPnKJ89sswz05HEjeGzyw+HZGCWBZpjHbZs0nHMA=;
-        b=o0hZBXoG2XhVoTBPchcMM7KsA1Pkm4I9ZpeJuvX43r94pWACFek4JkoWqunfMMcovQ
-         f0+b/shb8sGvvsG2nk4Y3+OyVgaek4kxDTDif+aCuAageCbcI8ZM2/SiChJ/feJFFYlu
-         3ajxYg6cZbDYzrimh7e+Pop1pp+9bEJGRulDznohjkk873LyfdI/3PKabooqKus7AjtM
-         mvxk8gRVPA6dzMio7PiqLAmmXOGMmEwZb9EPQtQBKFvUh/BspnpU4LuzfHhmO8lFDiYs
-         Y2SPWXtQ1dR4hFnYYCTB0xeMEU9PYv7UraCsGuqmqFpif9LDPxnFkbsUTP+YhUe5I3bp
-         jIng==
-X-Forwarded-Encrypted: i=1; AJvYcCUH2Bg/mHSw8Pm3zNvFvk8z80M1NwChqeC+dqX0XCBQwTTx76a8keSCOhGnlK4uYgK0MZiT9Ntisj6p@vger.kernel.org, AJvYcCVwYljQoJmwa3pbxplPYkm7/z9c0n8B+BX9aYLepEdzB39R9aWdkyZetCLlwzjojcPp2aQ7s71Wy/Wz@vger.kernel.org, AJvYcCWuDQ9kzkbj9NAgFPAoUwx0DwmDP96ermbDoxajHNgBmWnDKvYwXqTZvmSOUulEWiNw05vd27ipOg/URfNj6Io=@vger.kernel.org, AJvYcCXikuNVkGmgswLLCDIdgiVLnYZ7aP7giEF4XA3VxmqAwHu6XxGC9Gol6flhXT2Ytf1aYzt1@vger.kernel.org, AJvYcCXwE39QtVtPZRZ4Z8xWqyf82sgeHp/vQyf/W5vriy3OFwdMlLj94bsoYUNKhGRnxryIH2arTKEFOWwA2bCg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjQGhAEWz7jaU4f2e4T+lydk6WHY5TORk2NRX0M6h39/+xPJqW
-	YctZdc1QRlj8sALnVXFqkdOEV0V7zVOZ84d/SXVvqUesCUympsVb7S6dt/R/SYUUafjFYSnPkUj
-	ALMNJQBy2b4bPlnXUOiu8vhnmQmw=
-X-Gm-Gg: ASbGnctcF3POyyvaBSUY/0As05pB8fFGUpCwz11535HESlgbv/AJSJgvtq8y2XDWsNS
-	NbK6uWhHEl6G/mDvTGQA0PZQkVd7MYT+FA9bzHp6Xs/cF87nRHdQeC0lIHPzmnUDHkbnK30DqyZ
-	xkl/s2lM8=
-X-Google-Smtp-Source: AGHT+IErgJSlzMKoFDBnkaE7/t4p7pkyKYyZBw7RJv2MRmTY5RNYgYWmYi0oEf6W6z4sa2855ARS13/cWfLtygNaRCM=
-X-Received: by 2002:a17:90b:3a8b:b0:2fe:a8b1:7cd with SMTP id
- 98e67ed59e1d1-2fea8b1093cmr1569044a91.2.1740672401702; Thu, 27 Feb 2025
- 08:06:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740672460; x=1741277260;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xb088OdXJlTA9IPSpcKjiPeuNEBwco6JwP3ohVxG/tQ=;
+        b=toODP3R89w9ZO5Yl2MsWdDrKh55E6SUw5vK/5ZqmHIiUB9fMJz2rms9nuPeqmGY4SQ
+         0lQ453yN3czbCtgjgUwUhWBRU7+OCSVoT2LvUh/3Q2F6MAspKqI3IV9tnAGfayLBrgfi
+         WCALa0Aupfwk60ypUrCjuxpFlLywuLq4h8usgqMU1FC6I8n6RdLjvqzkgy/u9FROPwhP
+         hXahKtF+yOCN2+OQeb/Oby2WrneAWHAffVw0v/6pXCJdBNrBCFP5wawo/HYqv8daMwUi
+         lappnfpiqkyPmPcOozODNPEqeh2ub0OgkJwQK/Yvng9WWY2527uvOnMcbKcsMDpcWU/C
+         MpYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFYQA4JHnm9AsjemoGZk+z1ivoLd2fWiQ1rzkNmcVFMdid/0sYgIdRYW6NisjnJTEAXSupJwda7vrKDXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYlZp9x9HW21sJ7fD+MGwW9jxwjg595+sOw8pw4pmQJL7iXKmc
+	AM6DVibE/wO0VGIaTvyvlQQcN4piafpd95SuMj2cozeRQfL973Kjxva8gF6jfN8=
+X-Gm-Gg: ASbGncsTdEdkLxXc3rkAb5zGevHENoeYAbVlQwak9Hc96LWfJEs8+YjvLfPDijNKRrA
+	icx+UNXgW+BH9etr6KX7/znxi9PNZVOlGDCbalAomffOsXg0xybAOBZl1n6N9/Y+XGNHT7Si7PS
+	ci4URQ/TpLb0V99uI3rk65hoXLUoZ/BK/K3VD0KNRDmUzzrR/GgDo/Aggacxf6n8GNUXpFOQzW3
+	LkLM/G3H4ExbUJMmyq8kULjPRmKPbpb6TsSMUNxcaNqA3Ms67hXgo44CJr/18pWbaRS18qTWByO
+	rNHXLXtkAwKAplDwqrJwVIFDf9SsSVMpuwBmjiyt387KwWcXHln0xcL4CSzF2RXxOKBNVHBJmW/
+	K2zrkWQ==
+X-Google-Smtp-Source: AGHT+IE2tBs2MLi0CVU9yzfVsEhz9N65BqwobeMX6DA+APv9dvpZztToWRbeHRYswXJcbcUI2FoZ8A==
+X-Received: by 2002:a2e:b607:0:b0:309:2747:e30 with SMTP id 38308e7fff4ca-30a80bff08amr59492871fa.10.1740672460272;
+        Thu, 27 Feb 2025 08:07:40 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b8688a8e3sm1946411fa.112.2025.02.27.08.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 08:07:38 -0800 (PST)
+Date: Thu, 27 Feb 2025 18:07:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Felipe Balbi <balbi@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	Saravana Kannan <saravanak@google.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Frank Li <Frank.li@nxp.com>, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] usb: dwc3: core: Don't touch resets and clocks
+Message-ID: <x45slyuz5bboqzqdyhgd22dx4vfsam6unvzymrmjvunef7cpfv@ixqrlvyzt4jp>
+References: <20250226-dwc3-refactor-v4-0-4415e7111e49@oss.qualcomm.com>
+ <20250226-dwc3-refactor-v4-3-4415e7111e49@oss.qualcomm.com>
+ <w72zvfh3uf7crbkmuenxcjnu6moircjdy6rnbzszl4tjlm2jks@4z2k3iqt2ohi>
+ <6v2kyk3rhss4itvo4dhwxyf3mp7ey7gh5abaklgwa27b4fw6ce@ofyuo3ortl4p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241219170425.12036-1-dakr@kernel.org> <20241219170425.12036-8-dakr@kernel.org>
- <g63h5f3zowy375yutftautqhurflahq3o5nmujbr274c5d7u7u@j5cbqi5aba6k>
- <CANiq72=gZhG8MOCqPi8F0yp3WR1oW77V+MXdLP=RK_R2Jzg-cw@mail.gmail.com>
- <wnzq3vlgawjdchjck7nzwlzmm5qbmactwlhtj44ak7s7kefphd@m7emgjnmnkjn>
- <Z72jw3TYJHm7N242@pollux> <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
-In-Reply-To: <nlngenb6udempavyevw62qvdzuo7jr4m5mt4fwvznza347vicl@ynn4c5lojoub>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 27 Feb 2025 17:06:28 +0100
-X-Gm-Features: AQ5f1JqLW2JqfenVRPiw0Bw5DJ2q63fM_hLXAaW41V4GKj_UYjrOy-DoLwS8j8U
-Message-ID: <CANiq72n7gi=BJr72P1z_MKaOTRV5p2R3EoP_dUZ6C02xf2WA=g@mail.gmail.com>
-Subject: Re: [PATCH v7 07/16] rust: add `io::{Io, IoRaw}` base types
-To: Alistair Popple <apopple@nvidia.com>, Gary Guo <gary@garyguo.net>
-Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	paulmck@kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6v2kyk3rhss4itvo4dhwxyf3mp7ey7gh5abaklgwa27b4fw6ce@ofyuo3ortl4p>
 
-On Thu, Feb 27, 2025 at 1:26=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
-> wrote:
->
-> I've asked a few times, but are there any plans/ideas on how to improve t=
-he
-> situation? I'm kind of suprised we're building things on top of a fairly =
-broken
-> feature without an idea of how we might make that feature work. I'd love =
-to
-> help, but being new to R4L no immediately useful ideas come to mind.
+On Thu, Feb 27, 2025 at 09:55:29AM -0600, Bjorn Andersson wrote:
+> On Thu, Feb 27, 2025 at 06:24:17AM +0200, Dmitry Baryshkov wrote:
+> > On Wed, Feb 26, 2025 at 04:17:50PM -0800, Bjorn Andersson wrote:
+> > > When the core is integrated with glue, it's reasonable to assume that
+> > > the glue driver will have to touch the IP before/after the core takes
+> > > the hardware out and into reset. As such the glue must own these
+> > > resources and be allowed to turn them on/off outside the core's
+> > > handling.
+> > > 
+> > > Allow the platform or glue layer to indicate if the core logic for
+> > > clocks and resets should be skipped to deal with this.
+> > > 
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > > ---
+> > >  drivers/usb/dwc3/core.c | 19 +++++++++++--------
+> > >  drivers/usb/dwc3/glue.h |  1 +
+> > >  2 files changed, 12 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > index d9f0a6782d36..aecdde8dc999 100644
+> > > --- a/drivers/usb/dwc3/core.c
+> > > +++ b/drivers/usb/dwc3/core.c
+> > > @@ -2328,6 +2330,7 @@ static int dwc3_probe(struct platform_device *pdev)
+> > >  
+> > >  	probe_data.dwc = dwc;
+> > >  	probe_data.res = res;
+> > > +	probe_data.ignore_clocks_and_resets = false;
+> > 
+> > Isn't it a default value?
+> > 
+> 
+> I like the false because it's explicit, but I have no strong attachment
+> to it.
 
-It is not "broken" -- after all, it works as it was intended/designed
-when it was introduced, though it is definitely a hack and thus indeed
-the message could be improved greatly. :)
+I'm more biased to the 'make unusal cases stand out', which means the
+defaults can go away to highlight non-default cases.
 
-As for how to improve it, e.g. Gary suggested the other day to use the
-DWARF information to locate the call site.
+> 
+> That said, it's not the default value, because probe_data isn't
+> zero-initialized. That would however make sense to do, in order to avoid
+> surprises in the future when probe_data grows.
 
-I guess another way would be to generate different symbol names per
-call site, so that we can embed the path and line number into it (more
-or less), so that the user at least has a hint, though that may have
-disadvantages.
+:-)
 
-Cheers,
-Miguel
+> 
+> Regards,
+> Bjorn
+> 
+> > >  
+> > >  	return dwc3_core_probe(&probe_data);
+> > >  }
+> > > diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
+> > > index e73cfc466012..1ddb451bdbd0 100644
+> > > --- a/drivers/usb/dwc3/glue.h
+> > > +++ b/drivers/usb/dwc3/glue.h
+> > > @@ -17,6 +17,7 @@
+> > >  struct dwc3_probe_data {
+> > >  	struct dwc3 *dwc;
+> > >  	struct resource *res;
+> > > +	bool ignore_clocks_and_resets;
+> > >  };
+> > >  
+> > >  int dwc3_core_probe(const struct dwc3_probe_data *data);
+> > > 
+> > > -- 
+> > > 2.45.2
+> > > 
+> > 
+> > -- 
+> > With best wishes
+> > Dmitry
+
+-- 
+With best wishes
+Dmitry
 
