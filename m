@@ -1,150 +1,96 @@
-Return-Path: <linux-kernel+bounces-536242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3EDA47D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:20:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D153A47D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40A707ABCCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5246A3A457C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F47D2356A3;
-	Thu, 27 Feb 2025 12:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2017233D9D;
+	Thu, 27 Feb 2025 12:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ip1Jz9Iu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C7QCxcA5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ip1Jz9Iu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C7QCxcA5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvHmvkBD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE45822FF39
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5FD22F38B;
+	Thu, 27 Feb 2025 12:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658214; cv=none; b=ZHrBKNazfZ8mdVAz3OEJRYdqFrRTLSMpW8sP8FLgl/xfrtfymSUs0eWZmUxDYMjimUZrbu5O1Ujjgu4zxJqlsxWa7coLT0XvQE1fwn7xCsdb9eYltewGhManFNBaZZI/qgwIlXkuVCRwqP1bR+nvgZ6V9wCq2q2yeYyTfq4RExc=
+	t=1740658198; cv=none; b=TrqtDh4OTKlPTLw8mRjl7KDK7aMStvXlf19JpbV4hTryXzoqyBTQqmBmtg5gBeKw+Az4dVGyGtFSt7bheJD4WPFy1fMooizDBq9LICJ6YCT43chOibLEKaoF8LRi+mko1pcnyE44zVodT7+E3RK2vGRZ//prJ7csnzUnAeV3a5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658214; c=relaxed/simple;
-	bh=akxUv/7DKimh18nab4zYzcVHXlnTJtDLd+AduB8PjYI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=m/aomKSuowtLFLdw+t3593fN0i09RE4UtZgYvMIHkIX0eOdpWQEI/ttuk6M3yrozjuH4q1WJcqt8e7B9bZmL9tJ8ApTq7OlXKbNuELeeY3cokB+k+SEifvQ6/AcxmKmDWT9e/9C4pISmxBl4lBuxJLzxNMzBbaEyrL7hjfPcXDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ip1Jz9Iu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C7QCxcA5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ip1Jz9Iu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C7QCxcA5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2E94921179;
-	Thu, 27 Feb 2025 12:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740658210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkh4hhvitVpN0mKPmW0tH5YxKInmBYciLZFphhKj924=;
-	b=ip1Jz9IurwcOjzrHThzL3ETYe0y+abQ5eqK8IserEG6735aAbxFFnWlupVdUXOy+68ORds
-	64sI995sqxExnQr92i6ZUDtqB82nigpXMfQIXwHXA1XOcwHYwp8b/3LW8oK2d6z2AVSryM
-	yidfOTKEG5p8RLIwPbzY/wqQ9sOsHNk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740658210;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkh4hhvitVpN0mKPmW0tH5YxKInmBYciLZFphhKj924=;
-	b=C7QCxcA51Gxrg6/yfdUJBm5QkTqTsKbY0IeIvcuSXc+YTJN9EynkZUmYBh5PTjxbe07otZ
-	e9owObibSiKc5FBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740658210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkh4hhvitVpN0mKPmW0tH5YxKInmBYciLZFphhKj924=;
-	b=ip1Jz9IurwcOjzrHThzL3ETYe0y+abQ5eqK8IserEG6735aAbxFFnWlupVdUXOy+68ORds
-	64sI995sqxExnQr92i6ZUDtqB82nigpXMfQIXwHXA1XOcwHYwp8b/3LW8oK2d6z2AVSryM
-	yidfOTKEG5p8RLIwPbzY/wqQ9sOsHNk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740658210;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkh4hhvitVpN0mKPmW0tH5YxKInmBYciLZFphhKj924=;
-	b=C7QCxcA51Gxrg6/yfdUJBm5QkTqTsKbY0IeIvcuSXc+YTJN9EynkZUmYBh5PTjxbe07otZ
-	e9owObibSiKc5FBw==
-Date: Thu, 27 Feb 2025 13:10:10 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Weinan Liu <wnliu@google.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-    Indu Bhagat <indu.bhagat@oracle.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
-    roman.gushchin@linux.dev, Will Deacon <will@kernel.org>, 
-    Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, 
-    joe.lawrence@redhat.com, linux-arm-kernel@lists.infradead.org, 
-    "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>, 
-    Suraj Jitindar Singh <sjitindarsingh@gmail.com>
-Subject: Re: [PATCH 7/8] arm64: Define TIF_PATCH_PENDING for livepatch
-In-Reply-To: <20250127213310.2496133-8-wnliu@google.com>
-Message-ID: <alpine.LSU.2.21.2502271308390.25291@pobox.suse.cz>
-References: <20250127213310.2496133-1-wnliu@google.com> <20250127213310.2496133-8-wnliu@google.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1740658198; c=relaxed/simple;
+	bh=yqRB5lzPN6YFf0epR/fplLg16wEnwUaEt6MfRnoCkG0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=b8reY4NJMQ2vuFF5vuEMxxAUR+yF3atuKN1qHTZSBzL0pY4cJ8NLjdHmRPEhkEo0KX1EvfhRMvFK1gWPOk/q5HSvG54HW2nExXxV49HfmQPYn7tHEzODaqVNE+STs6Q2HY8lb3va5Nq3cn+IWcK9Sbt/Jvy7FN8PUKAxHQkbxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvHmvkBD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDDAC4CEDD;
+	Thu, 27 Feb 2025 12:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740658197;
+	bh=yqRB5lzPN6YFf0epR/fplLg16wEnwUaEt6MfRnoCkG0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=BvHmvkBDxKI81m8GYkC48N4ySh3HjxU/wMO/QOWxsXxRBQM7yvSQ7KwsaO+ukxM5l
+	 6NflidsF3RlQOPTyL0WzQrB8ZkBpiPTC3otpou6w7NYEoCf34s8NhtzyP437jSLBsQ
+	 uzUzXXMkNj47VP+lkgX5e0zcwNTivGzK9335PlxsUxM76h49r5Jtv7H4S/vvbXw156
+	 gxzkxbrazRaz76/5tp2Ug5j2E0I37BLWOHLeeuK58392O1U27gcVBfnddrre2I0JwC
+	 ICTVZRjbNdfNF38m+yEJhqtm9XtQIqX37VgG9/JWwNz7Q/j3OKH+lSx5bCXtVAictC
+	 co8bKMPuJqtxQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB19C380AA7F;
+	Thu, 27 Feb 2025 12:10:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.950];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_CC(0.00)[kernel.org,goodmis.org,oracle.com,infradead.org,arm.com,linux.dev,google.com,vger.kernel.org,redhat.com,lists.infradead.org,linux.microsoft.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.29
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] pktgen: avoid unused-const-variable warning
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174065822975.1403860.8629807772029389054.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Feb 2025 12:10:29 +0000
+References: <20250225085722.469868-1-arnd@kernel.org>
+In-Reply-To: <20250225085722.469868-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, arnd@arndb.de, horms@kernel.org, ps.report@gmx.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+Hello:
 
-> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-> index b260ddc4d3e9..b537af333b42 100644
-> --- a/arch/arm64/kernel/entry-common.c
-> +++ b/arch/arm64/kernel/entry-common.c
-> @@ -8,6 +8,7 @@
->  #include <linux/context_tracking.h>
->  #include <linux/kasan.h>
->  #include <linux/linkage.h>
-> +#include <linux/livepatch.h>
->  #include <linux/lockdep.h>
->  #include <linux/ptrace.h>
->  #include <linux/resume_user_mode.h>
-> @@ -144,6 +145,9 @@ static void do_notify_resume(struct pt_regs *regs, unsigned long thread_flags)
->  				       (void __user *)NULL, current);
->  		}
->  
-> +		if (thread_flags & _TIF_PATCH_PENDING)
-> +			klp_update_patch_state(current);
-> +
->  		if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
->  			do_signal(regs);
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Just a remark so that it is recorded. Once arm64 is moved to generic 
-entry infra, the hunk will not be needed.
+On Tue, 25 Feb 2025 09:57:14 +0100 you wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> When extra warnings are enable, there are configurations that build
+> pktgen without CONFIG_XFRM, which leaves a static const variable unused:
+> 
+> net/core/pktgen.c:213:1: error: unused variable 'F_IPSEC' [-Werror,-Wunused-const-variable]
+>   213 | PKT_FLAGS
+>       | ^~~~~~~~~
+> net/core/pktgen.c:197:2: note: expanded from macro 'PKT_FLAGS'
+>   197 |         pf(IPSEC)               /* ipsec on for flows */                \
+>       |         ^~~~~~~~~
+> 
+> [...]
 
-Regards,
-Miroslav
+Here is the summary with links:
+  - pktgen: avoid unused-const-variable warning
+    https://git.kernel.org/netdev/net-next/c/af4a5da8ed54
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
