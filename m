@@ -1,311 +1,131 @@
-Return-Path: <linux-kernel+bounces-536473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6A7A48042
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:01:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4FDA4800D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBDD162A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391AC1882980
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8A422FF25;
-	Thu, 27 Feb 2025 13:55:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC8242C0B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC0623024C;
+	Thu, 27 Feb 2025 13:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="EmSqhOjV"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4859842C0B;
+	Thu, 27 Feb 2025 13:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664503; cv=none; b=u6bEHNPtSbthECJYr9F0yDFqYxaaJ6pH17ez9o4auwFyHhkxNNLIpRORTqEKM+qpLyA0e+yh2fLBvJ+asERvIHctr63S71aweCadHCx+cTNJLd1/2DS7R7HcUBoI+Iwm8Bt8ZOKtNGMETLS3UV/YclDQ7ooaBhg7EhrgJ6eMABI=
+	t=1740664539; cv=none; b=uxWkGmToA8Q4/MCxWp5CybtpSXjs6r2nLSrKNk48iLwFzXg3ocqIX/Dv/Zup3JeIVMBWQLE3tAgSoJ05j709hR17qpEDp3yNXdA96bKskTAJVuu5W8fjdnudq/L4iPW7RIYzs0T/fcl4oGrigvYa0xAE8wSdMa0xfnARknr7I8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664503; c=relaxed/simple;
-	bh=Pdt8O146ptygVvVnyQfDP5dxqD2Sa3cG0ObvDZoSX88=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LrnwC1Bz9fDyRwoLRQyht6fA6+XUSY/uYresD80wShm0ctN1oqIDatJ6NxnzHmAfVSB7OVyoJ2VGzP2oSAcbsGL8wOHPBUcERKolnncM0OxJN9Wj/qdKqmWgWMlU4VQIzlL4IZ8uCVwEgi1+CE7QTsDdVskGT0Zb+LIeNZt0zrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E57D32BCC;
-	Thu, 27 Feb 2025 05:55:15 -0800 (PST)
-Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3951D3F673;
-	Thu, 27 Feb 2025 05:54:58 -0800 (PST)
-From: Hongyan Xia <hongyan.xia2@arm.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org,
-	Hongyan Xia <hongyan.xia2@arm.com>
-Subject: [PATCH] sched/uclamp: Let each sched_class handle uclamp
-Date: Thu, 27 Feb 2025 13:54:43 +0000
-Message-Id: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740664539; c=relaxed/simple;
+	bh=MZ5feQNtisJgpeJy5xLzx0Y8Q+XnSBumrFimAbzZ9CM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I+Pcq1A6JIUEL7mONV1k9pmiGik195G5LpNNi6a7/t/DF3T8B7vS8Bv2JMBn1bS1FupmHyAMK4OkF00cO1YW09CMsN7oq3L7yuhGCIPy3Ugtjm9qGUhEJJrHq3wfME9f9HhycJjku8a3V8B6Aulc7YQYNoiwX7lSdj9nyt8FDRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=EmSqhOjV; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1740664527; bh=MZ5feQNtisJgpeJy5xLzx0Y8Q+XnSBumrFimAbzZ9CM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EmSqhOjVTv/5qycUfH0WaMucg+fhJaX+QaLJDaN7j5pv+AO3LHrkfHfhEz78bmFE8
+	 5Wmvn1X52+ZGUzV0+Stdk7alPHSvfNRXxNqy1bwepz5dx+8Bn1TEdqm3PBFf7I1NKc
+	 4yxnyQjNSmcPnthA3ukUCkq3/7nwB3yR/KSCtRhI=
+Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 62DA02052A91;
+	Thu, 27 Feb 2025 14:55:27 +0100 (CET)
+Message-ID: <f2c2d7ae-08c1-4122-a131-f5a65e9ed3d2@ralfj.de>
+Date: Thu, 27 Feb 2025 14:55:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Ventura Jack <venturajack85@gmail.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>,
+ torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com,
+ ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
+ ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo>
+ <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+ <lz7hsnvexoywjgdor33mcjrcztxpf7lzvw3khwzd5rifetwrcf@g527ypfkbhp2>
+ <780ff858-4f8e-424f-b40c-b9634407dce3@ralfj.de>
+ <CAFJgqgRN0zwwaNttS_9qnncTDnSA-HU5EgAXFrNHoPQ7U8fUxw@mail.gmail.com>
+ <f3a83d60-3506-4e20-b202-ef2ea99ef4dc@ralfj.de>
+ <CAFJgqgR4Q=uDKNnU=2yo5zoyFOLERG+48bFuk4Dd-c+S6x+N5w@mail.gmail.com>
+ <7edf8624-c9a0-4d8d-a09e-2eac55dc6fc5@ralfj.de>
+ <20250226230816.2c7bbc16@pumpkin>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <20250226230816.2c7bbc16@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-While delayed dequeue issues were being resolved, uclamp was made out of
-sync with cpufreq, especially in enqueue_task().
+Hi all,
 
-For example, when a task with uclamp_min goes through enqueue_task() and
-updates cpufreq, its uclamp_min won't even be considered in the cpufreq
-update. It is only after enqueue will the uclamp_min be added to rq
-buckets, and cpufreq will only pick it up at the next update. This is
-very different from the old behavior, where a uclamp value immediately
-has an effect at enqueue. Worse, sub classes like fair.c issue cpufreq
-updates on utilization changes. If no utilization changes for a while,
-the new uclamp will be delayed further.
+> ...
+>>> Unions in C, C++ and Rust (not Rust "enum"/tagged union) are
+>>> generally sharp. In Rust, it requires unsafe Rust to read from
+>>> a union.
+>>
+>> Definitely sharp. At least in Rust we have a very clear specification though,
+>> since we do allow arbitrary type punning -- you "just" reinterpret whatever
+>> bytes are stored in the union, at whatever type you are reading things. There is
+>> also no "active variant" or anything like that, you can use any variant at any
+>> time, as long as the bytes are "valid" for the variant you are using. (So for
+>> instance if you are trying to read a value 0x03 at type `bool`, that is UB.)
+> 
+> That is actually a big f***ing problem.
+> The language has to define the exact behaviour when 'bool' doesn't contain
+> 0 or 1.
 
-So, let each sched_class handle uclamp in its own class, in case delayed
-dequeue needs further tweaks or there are potential future similar
-changes, and make sure uclamp is picked up immediately on enqueue. In
-fair.c, we re-use the guard logic for util_est.
+No, it really does not. If you want a variable that can hold all values in 
+0..256, use `u8`. The entire point of the `bool` type is to represent values 
+that can only ever be `true` or `false`. So the language requires that when you 
+do type-unsafe manipulation of raw bytes, and when you then make the choice of 
+the `bool` type for that code (which you are not forced to!), then you must 
+indeed uphold the guarantees of `bool`: the data must be `0x00` or `0x01`.
 
-Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
----
- kernel/sched/core.c  | 28 ++--------------------------
- kernel/sched/ext.c   |  8 ++++----
- kernel/sched/fair.c  | 12 ++++++------
- kernel/sched/rt.c    |  8 ++++----
- kernel/sched/sched.h |  9 +++++----
- 5 files changed, 21 insertions(+), 44 deletions(-)
+> Much the same as the function call interface defines whether it is the caller
+> or called code is responsible for masking the high bits of a register that
+> contains a 'char' type.
+> 
+> Now the answer could be that 'and' is (or may be) a bit-wise operation.
+> But that isn't UB, just an undefined/unexpected result.
+> 
+> I've actually no idea if/when current gcc 'sanitises' bool values.
+> A very old version used to generate really crap code (and I mean REALLY)
+> because it repeatedly sanitised the values.
+> But IMHO bool just shouldn't exist, it isn't a hardware type and is actually
+> expensive to get right.
+> If you use 'int' with zero meaning false there is pretty much no ambiguity.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b00f884701a6..2d51608a4c46 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1745,7 +1745,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
- 	}
- }
- 
--static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-+void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
- {
- 	enum uclamp_id clamp_id;
- 
-@@ -1758,12 +1758,6 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
- 	if (!static_branch_unlikely(&sched_uclamp_used))
- 		return;
- 
--	if (unlikely(!p->sched_class->uclamp_enabled))
--		return;
--
--	if (p->se.sched_delayed)
--		return;
--
- 	for_each_clamp_id(clamp_id)
- 		uclamp_rq_inc_id(rq, p, clamp_id);
- 
-@@ -1772,7 +1766,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
- 		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
- }
- 
--static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
-+void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
- {
- 	enum uclamp_id clamp_id;
- 
-@@ -1785,12 +1779,6 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
- 	if (!static_branch_unlikely(&sched_uclamp_used))
- 		return;
- 
--	if (unlikely(!p->sched_class->uclamp_enabled))
--		return;
--
--	if (p->se.sched_delayed)
--		return;
--
- 	for_each_clamp_id(clamp_id)
- 		uclamp_rq_dec_id(rq, p, clamp_id);
- }
-@@ -2029,8 +2017,6 @@ static void __init init_uclamp(void)
- }
- 
- #else /* !CONFIG_UCLAMP_TASK */
--static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) { }
--static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
- static inline void uclamp_fork(struct task_struct *p) { }
- static inline void uclamp_post_fork(struct task_struct *p) { }
- static inline void init_uclamp(void) { }
-@@ -2066,11 +2052,6 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 		update_rq_clock(rq);
- 
- 	p->sched_class->enqueue_task(rq, p, flags);
--	/*
--	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
--	 * ->sched_delayed.
--	 */
--	uclamp_rq_inc(rq, p);
- 
- 	psi_enqueue(p, flags);
- 
-@@ -2097,11 +2078,6 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
- 
- 	psi_dequeue(p, flags);
- 
--	/*
--	 * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
--	 * and mark the task ->sched_delayed.
--	 */
--	uclamp_rq_dec(rq, p);
- 	return p->sched_class->dequeue_task(rq, p, flags);
- }
- 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 8857c0709bdd..4521c27f9ab8 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2094,6 +2094,8 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int enq_flags
- {
- 	int sticky_cpu = p->scx.sticky_cpu;
- 
-+	uclamp_rq_inc(rq, p);
-+
- 	if (enq_flags & ENQUEUE_WAKEUP)
- 		rq->scx.flags |= SCX_RQ_IN_WAKEUP;
- 
-@@ -2181,6 +2183,8 @@ static void ops_dequeue(struct task_struct *p, u64 deq_flags)
- 
- static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags)
- {
-+	uclamp_rq_dec(rq, p);
-+
- 	if (!(p->scx.flags & SCX_TASK_QUEUED)) {
- 		WARN_ON_ONCE(task_runnable(p));
- 		return true;
-@@ -4456,10 +4460,6 @@ DEFINE_SCHED_CLASS(ext) = {
- 	.prio_changed		= prio_changed_scx,
- 
- 	.update_curr		= update_curr_scx,
--
--#ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
--#endif
- };
- 
- static void init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id)
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 857808da23d8..7e5a653811ad 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	 * Let's add the task's estimated utilization to the cfs_rq's
- 	 * estimated utilization, before we update schedutil.
- 	 */
--	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
-+	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE)))) {
-+		uclamp_rq_inc(rq, p);
- 		util_est_enqueue(&rq->cfs, p);
-+	}
- 
- 	if (flags & ENQUEUE_DELAYED) {
- 		requeue_delayed_entity(se);
-@@ -7183,8 +7185,10 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
-  */
- static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- {
--	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
-+	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE)))) {
-+		uclamp_rq_dec(rq, p);
- 		util_est_dequeue(&rq->cfs, p);
-+	}
- 
- 	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
- 	if (dequeue_entities(rq, &p->se, flags) < 0)
-@@ -13660,10 +13664,6 @@ DEFINE_SCHED_CLASS(fair) = {
- #ifdef CONFIG_SCHED_CORE
- 	.task_is_throttled	= task_is_throttled_fair,
- #endif
--
--#ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
--#endif
- };
- 
- #ifdef CONFIG_SCHED_DEBUG
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 4b8e33c615b1..7c0642ea85f2 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1471,6 +1471,8 @@ enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
- {
- 	struct sched_rt_entity *rt_se = &p->rt;
- 
-+	uclamp_rq_inc(rq, p);
-+
- 	if (flags & ENQUEUE_WAKEUP)
- 		rt_se->timeout = 0;
- 
-@@ -1487,6 +1489,8 @@ static bool dequeue_task_rt(struct rq *rq, struct task_struct *p, int flags)
- {
- 	struct sched_rt_entity *rt_se = &p->rt;
- 
-+	uclamp_rq_dec(rq, p);
-+
- 	update_curr_rt(rq);
- 	dequeue_rt_entity(rt_se, flags);
- 
-@@ -2649,10 +2653,6 @@ DEFINE_SCHED_CLASS(rt) = {
- #ifdef CONFIG_SCHED_CORE
- 	.task_is_throttled	= task_is_throttled_rt,
- #endif
--
--#ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
--#endif
- };
- 
- #ifdef CONFIG_RT_GROUP_SCHED
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index ab16d3d0e51c..990d87e8d8ed 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2410,10 +2410,6 @@ extern s64 update_curr_common(struct rq *rq);
- 
- struct sched_class {
- 
--#ifdef CONFIG_UCLAMP_TASK
--	int uclamp_enabled;
--#endif
--
- 	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
- 	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
- 	void (*yield_task)   (struct rq *rq);
-@@ -3393,6 +3389,8 @@ static inline bool update_other_load_avgs(struct rq *rq) { return false; }
- #ifdef CONFIG_UCLAMP_TASK
- 
- unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
-+void uclamp_rq_inc(struct rq *rq, struct task_struct *p);
-+void uclamp_rq_dec(struct rq *rq, struct task_struct *p);
- 
- static inline unsigned long uclamp_rq_get(struct rq *rq,
- 					  enum uclamp_id clamp_id)
-@@ -3470,6 +3468,9 @@ uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
- 
- #else /* !CONFIG_UCLAMP_TASK: */
- 
-+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) { };
-+static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { };
-+
- static inline unsigned long
- uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
- {
--- 
-2.34.1
+We have many types in Rust that are not hardware types. Users can even define 
+them themselves:
+
+enum MyBool { MyFalse, MyTrue }
+
+This is, in fact, one of the entire points of higher-level languages like Rust: 
+to let users define types that represent concepts that are more abstract than 
+what exists in hardware. Hardware would also tell us that `&i32` and `*const 
+i32` are basically the same thing, and yet of course there's a world of a 
+difference between those types in Rust.
+
+Kind regards,
+Ralf
 
 
