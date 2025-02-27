@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-535825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87781A477BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:25:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A78BA477CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C9A188667B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:25:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2CE2170D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294A122371B;
-	Thu, 27 Feb 2025 08:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E491D22652E;
+	Thu, 27 Feb 2025 08:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SZ2E1/Wd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bGjKnSIO"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAACF1E520D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584092253BB;
+	Thu, 27 Feb 2025 08:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644744; cv=none; b=sSkBRcBD3pVTxAT02odRoY8dX100/C3DUMEkNl4o+l50ASZPWw8HQdl2+cN76LsgBubzKoWj4yLU7M4HVNuL7DGw04D4Rhmgn0wlD/I2T/pLex79A0T8D4OYqpPwCv319sHa7NRC5/HKlIBYioqXS2ZY/0RTYNk0qbr8Yu6rGUI=
+	t=1740644827; cv=none; b=rvhh5S3sfxyS4CpkXrdD/hmkn3MoqSgOi7HiRxZS/mWGEgemKMahHB0bEpc214O74068obJ+AdrQcIP98SqTs2JCa0wsnXclkjJnhLolLcc0sop7SWkiVBU9YTaHkIpwFehcB9t1FpJ7vdPd8Pp5rAfhyXnsyYue/GC6OAoZthE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644744; c=relaxed/simple;
-	bh=L5y2u+6ZbVsG8e8AdeI8M9nMozRubd1dS8820cxPBNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fxv1fD/TeQGufKD+VD4YvDawlHBqVdaQUEL5dtnyhSG+T1h8cSvp1rNIyNXE5di/b63/c612NgZ4BTlhK+IeNRw4NlkbgQQkvSO0YZ/ky7PdpHJmZqetnQ8dOqJvhAUhvvUK9ZbwFh32JDkieuYjQqDpqTL7VaSf1o2aWKfZOfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SZ2E1/Wd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740644740;
-	bh=L5y2u+6ZbVsG8e8AdeI8M9nMozRubd1dS8820cxPBNw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SZ2E1/WdINttx2bEUkYV+minAB18jXR4dU4vwrXDEIAPDc76Q1wveRu5yvL9oyVZ5
-	 nu01LAQ/IAvWhTbdK+KIkSHrq5ws2SZ9RJN16PGKfLksEPFseZpVIRyNZvLet5S5cb
-	 nTwH406+g/8pS7uQQd8bDZZUPNF4OdcK+HSUAhnN+F5lR2lf20x7eZePbDsW4LBNfL
-	 ScbnYqZ4uy6scl/NtXwTxCb2CrgBxATgxsNNqucalL4bOWFkLvxy1L1JDvO2WPQX2r
-	 t3qMzGNCWQVVe64Y1NhQB9LHiVyiDem3PKmbuEUXxWlf9KREFsMKlYSifJwe54p8Xl
-	 xcBH4Yg5a8WAw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E2E117E0605;
-	Thu, 27 Feb 2025 09:25:40 +0100 (CET)
-Date: Thu, 27 Feb 2025 09:25:37 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [RFC PATCH 2/4] drm/panfrost: Split LPAE MMU TRANSTAB register
- values
-Message-ID: <20250227092537.63053596@collabora.com>
-In-Reply-To: <20250226183043.140773-3-ariel.dalessandro@collabora.com>
-References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
-	<20250226183043.140773-3-ariel.dalessandro@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740644827; c=relaxed/simple;
+	bh=tP9uRHvs555G5VvnDDdHN0idiabXISPpl80F9hoD84U=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=It2gK3t15+D/BZEdQkgeP49cUlq0hvJmCT9Y6pB630f46U+xt+1JOQMnUyRNgPAPnJCsuMtjxQD7xH07vr2eX62zlqfBfAuIf0vsGxW3qU+io0TnT/vYQAOyI4CafizJArqfDAJnoZDVQaYF5ZVJ2xV2vz/HDX++2fUhOSF+CHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bGjKnSIO; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740644825; x=1772180825;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:mime-version:content-transfer-encoding:subject;
+  bh=tP9uRHvs555G5VvnDDdHN0idiabXISPpl80F9hoD84U=;
+  b=bGjKnSIOdw6yfD3qw0SzKPb7YU4BHKErkGXzlZEIhuFX1DTk0KUZDt+e
+   l76LEAYXc8ZziCKtOM59fmSVNLe18cmR1EPl++C6D2Ma2h7IUZauV2a9p
+   PlTMd15QkaxE02I/kQxPcxImtuiqpDFyThBsi/CTKB6vJ6obF716L7o2T
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.13,319,1732579200"; 
+   d="scan'208";a="475728317"
+Subject: Re: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
+Thread-Topic: [RFC PATCH 3/3] sched, x86: Make the scheduler guest unhalted aware
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:27:01 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:55064]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.24.106:2525] with esmtp (Farcaster)
+ id cc38097c-cce8-4160-b5b8-aa5e715157df; Thu, 27 Feb 2025 08:27:01 +0000 (UTC)
+X-Farcaster-Flow-ID: cc38097c-cce8-4160-b5b8-aa5e715157df
+Received: from EX19D003EUB003.ant.amazon.com (10.252.51.36) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 27 Feb 2025 08:27:00 +0000
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19D003EUB003.ant.amazon.com (10.252.51.36) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 27 Feb 2025 08:27:00 +0000
+Received: from EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06]) by
+ EX19D003EUB001.ant.amazon.com ([fe80::f153:3fae:905b:eb06%3]) with mapi id
+ 15.02.1544.014; Thu, 27 Feb 2025 08:27:00 +0000
+From: "Sieber, Fernand" <sieberf@amazon.com>
+To: "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>
+CC: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com"
+	<mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>
+Thread-Index: AQHbiOoaCizytckQ8k+KkTn+O93XSLNa0OUA
+Date: Thu, 27 Feb 2025 08:27:00 +0000
+Message-ID: <591b12f8c31264d1b7c7417ed916541196eddd58.camel@amazon.com>
+References: <20250218202618.567363-1-sieberf@amazon.com>
+	 <20250218202618.567363-4-sieberf@amazon.com>
+	 <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com>
+In-Reply-To: <CAKfTPtDx3vVK1ZgBwicTeP82wL=wGOKdxheuBHCBjzM6mSDPOQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7B4C7BCB3896EF47B7EEB99ED30234E0@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-On Wed, 26 Feb 2025 15:30:41 -0300
-Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
-
-> The TRANSTAB (Translation table base address) layout is different
-> depending on the legacy mode configuration.
-> 
-> Currently, the defined values apply to the legacy mode. Let's rename
-> them so we can add the ones for no-legacy mode.
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_regs.h | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> index b5f279a19a08..4e6064d5feaa 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> @@ -317,14 +317,19 @@
->  #define MMU_AS_STRIDE			(1 << MMU_AS_SHIFT)
->  
->  /*
-> - * Begin LPAE MMU TRANSTAB register values
-> + * Begin LPAE MMU TRANSTAB register values (legacy mode)
->   */
-> -#define AS_TRANSTAB_LPAE_ADDR_SPACE_MASK	0xfffffffffffff000
-> -#define AS_TRANSTAB_LPAE_ADRMODE_IDENTITY	0x2
-> -#define AS_TRANSTAB_LPAE_ADRMODE_TABLE		0x3
-> -#define AS_TRANSTAB_LPAE_ADRMODE_MASK		0x3
-> -#define AS_TRANSTAB_LPAE_READ_INNER		BIT(2)
-> -#define AS_TRANSTAB_LPAE_SHARE_OUTER		BIT(4)
-> +#define AS_TRANSTAB_LEGACY_ADDR_SPACE_MASK	0xfffffffffffff000
-> +#define AS_TRANSTAB_LEGACY_ADRMODE_IDENTITY	0x2
-> +#define AS_TRANSTAB_LEGACY_ADRMODE_TABLE	0x3
-> +#define AS_TRANSTAB_LEGACY_ADRMODE_MASK		0x3
-> +#define AS_TRANSTAB_LEGACY_READ_INNER		BIT(2)
-> +#define AS_TRANSTAB_LEGACY_SHARE_OUTER		BIT(4)
-
-How about we keep AS_TRANSTAB_LPAE_ here and prefix the new reg values
-with AS_xxx_AARCH64_ when there's a collision between the two formats.
-
-> +
-> +/*
-> + * Begin LPAE MMU TRANSTAB register values (no-legacy mode)
-> + */
-> +#define AS_TRANSTAB_LPAE_ADDR_SPACE_MASK	0xfffffffffffffff0
-
-It looks like we're not use AS_TRANSTAB_LPAE_ADDR_SPACE_MASK, so I'm
-not sure it's worth defining the mask for the AARCH64 format.
-
->  
->  #define AS_STATUS_AS_ACTIVE			0x01
->  
+T24gVGh1LCAyMDI1LTAyLTI3IGF0IDA4OjM0ICswMTAwLCBWaW5jZW50IEd1aXR0b3Qgd3JvdGU6
+DQo+IE9uIFR1ZSwgMTggRmViIDIwMjUgYXQgMjE6MjcsIEZlcm5hbmQgU2llYmVyIDxzaWViZXJm
+QGFtYXpvbi5jb20+DQo+IHdyb3RlOg0KPiA+IA0KPiA+IFdpdGggZ3Vlc3QgaGx0L213YWl0L3Bh
+dXNlIHBhc3MgdGhyb3VnaCwgdGhlIHNjaGVkdWxlciBoYXMgbm8NCj4gPiB2aXNpYmlsaXR5IGlu
+dG8NCj4gPiByZWFsIHZDUFUgYWN0aXZpdHkgYXMgaXQgc2VlcyB0aGVtIGFsbCAxMDAlIGFjdGl2
+ZS4gQXMgc3VjaCwgbG9hZA0KPiA+IGJhbGFuY2luZw0KPiA+IGNhbm5vdCBtYWtlIGluZm9ybWVk
+IGRlY2lzaW9ucyBvbiB3aGVyZSBpdCBpcyBwcmVmZXJyYWJsZSB0bw0KPiA+IGNvbGxvY2F0ZQ0K
+PiA+IHRhc2tzIHdoZW4gbmVjZXNzYXJ5LiBJLmUgYXMgZmFyIGFzIHRoZSBsb2FkIGJhbGFuY2Vy
+IGlzIGNvbmNlcm5lZCwNCj4gPiBhDQo+ID4gaGFsdGVkIHZDUFUgYW5kIGFuIGlkbGUgcG9sbGlu
+ZyB2Q1BVIGxvb2sgZXhhY3RseSB0aGUgc2FtZSBzbyBpdA0KPiA+IG1heSBkZWNpZGUNCj4gPiB0
+aGF0IGVpdGhlciBzaG91bGQgYmUgcHJlZW1wdGVkIHdoZW4gaW4gcmVhbGl0eSBpdCB3b3VsZCBi
+ZQ0KPiA+IHByZWZlcnJhYmxlIHRvDQo+ID4gcHJlZW1wdCB0aGUgaWRsZSBvbmUuDQo+ID4gDQo+
+ID4gVGhpcyBjb21taXRzIGVubGlnaHRlbnMgdGhlIHNjaGVkdWxlciB0byByZWFsIGd1ZXN0IGFj
+dGl2aXR5IGluDQo+ID4gdGhpcw0KPiA+IHNpdHVhdGlvbi4gTGV2ZXJhZ2luZyBndGltZSB1bmhh
+bHRlZCwgaXQgYWRkcyBhIGhvb2sgZm9yIGt2bSB0bw0KPiA+IGNvbW11bmljYXRlDQo+ID4gdG8g
+dGhlIHNjaGVkdWxlciB0aGUgZHVyYXRpb24gdGhhdCBhIHZDUFUgc3BlbmRzIGhhbHRlZC4gVGhp
+cyBpcw0KPiA+IHRoZW4gdXNlZCBpbg0KPiA+IFBFTFQgYWNjb3VudGluZyB0byBkaXNjb3VudCBp
+dCBmcm9tIHJlYWwgYWN0aXZpdHkuIFRoaXMgcmVzdWx0cyBpbg0KPiA+IGJldHRlcg0KPiA+IHBs
+YWNlbWVudCBhbmQgb3ZlcmFsbCBzdGVhbCB0aW1lIHJlZHVjdGlvbi4NCj4gDQo+IE5BSywgUEVM
+VCBhY2NvdW50IGZvciB0aW1lIHNwZW50IGJ5IHNlIG9uIHRoZSBDUFUuwqANCg0KSSB3YXMgZXNz
+ZW50aWFsbHkgYWltaW5nIHRvIGFkanVzdCB0aGlzIGNvbmNlcHQgdG8gIlBFTFQgYWNjb3VudCBm
+b3INCnRoZSB0aW1lIHNwZW50IGJ5IHNlICp1bmhhbHRlZCogb24gdGhlIENQVSIuIFdvdWxkIHN1
+Y2ggYW4gYWRqdXN0bWVudHMNCm9mIHRoZSBkZWZpbml0aW9uIGNhdXNlIHByb2JsZW1zPw0KDQo+
+IElmIHlvdXIgdGhyZWFkL3ZjcHUgZG9lc24ndCBkbyBhbnl0aGluZyBidXQgYnVybiBjeWNsZXMs
+IGZpbmQgYW5vdGhlcg0KPiB3YXkgdG8gcmVwb3J0IHRoYXR0byB0aGUgaG9zdA0KDQpUaGUgbWFp
+biBhZHZhbnRhZ2Ugb2YgaG9va2luZyBpbnRvIFBFTFQgaXMgdGhhdCBpdCBtZWFucyB0aGF0IGxv
+YWQNCmJhbGFuY2luZyB3aWxsIGp1c3Qgd29yayBvdXQgb2YgdGhlIGJveCBhcyBpdCBpbW1lZGlh
+dGVseSBhZGp1c3RzIHRoZQ0Kc2NoZWRfZ3JvdXAgdXRpbC9sb2FkL3J1bm5hYmxlIHZhbHVlcy4N
+Cg0KSXQgbWF5IGJlIHBvc3NpYmxlIHRvIHNjb3BlIGRvd24gbXkgY2hhbmdlIHRvIGxvYWQgYmFs
+YW5jaW5nIHdpdGhvdXQNCnRvdWNoaW5nIFBFTFQgaWYgdGhhdCBpcyBub3QgdmlhYmxlLiBGb3Ig
+ZXhhbXBsZSBpbnN0ZWFkIG9mIHVzaW5nIFBFTFQNCndlIGNvdWxkIHBvdGVudGlhbGx5IGFkanVz
+dCB0aGUgY2FsY3VsYXRpb24gb2Ygc2dzLT5hdmdfbG9hZCBpbg0KdXBkYXRlX3NnX2xiX3N0YXRz
+IGZvciBvdmVybG9hZGVkIGdyb3VwcyB0byBpbmNsdWRlIGEgY29ycmVjdGluZyBmYWN0b3INCmJh
+c2VkIG9uIHJlY2VudCBoYWx0ZWQgY3ljbGVzIG9mIHRoZSBDUFUuIFRoZSBjb21wYXJpc29uIG9m
+IHR3bw0Kb3ZlcmxvYWRlZCBncm91cHMgd291bGQgdGhlbiBmYXZvciBwdWxsaW5nIHRhc2tzIG9u
+IHRoZSBvbmUgdGhhdCBoYXMNCnRoZSBtb3N0IGhhbHRlZCBjeWNsZXMuIFRoaXMgYXBwcm9hY2gg
+aXMgbW9yZSBzY29wZWQgZG93biBhcyBpdCBkb2Vzbid0DQpjaGFuZ2UgdGhlIGNsYXNzaWZpY2F0
+aW9uIG9mIHNjaGVkdWxpbmcgZ3JvdXBzLCBpbnN0ZWFkIGl0IGp1c3QgY2hhbmdlcw0KaG93IG92
+ZXJsb2FkZWQgZ3JvdXBzIGFyZSBjb21wYXJlZC4gSSB3b3VsZCBuZWVkIHRvIHByb3RvdHlwZSB0
+byBzZWUgaWYNCml0IHdvcmtzLg0KDQpMZXQgbWUga25vdyBpZiB0aGlzIHdvdWxkIGdvIGluIHRo
+ZSByaWdodCBkaXJlY3Rpb24gb3IgaWYgeW91IGhhdmUgYW55DQpvdGhlciBpZGVhcyBvZiBhbHRl
+cm5hdGUgb3B0aW9ucz8NCg0KPiBGdXJ0aGVybW9yZSB0aGlzIGJyZWFrcyBhbGwgdGhlIGhpZXJh
+cmNoeSBkZXBlbmRlbmN5DQoNCkkgYW0gbm90IHVuZGVyc3RhbmRpbmcgdGhlIG1lYW5pbmcgb2Yg
+dGhpcyBjb21tZW50LCBjb3VsZCB5b3UgcGxlYXNlDQpwcm92aWRlIG1vcmUgZGV0YWlscz8NCg0K
+PiANCj4gPiANCj4gPiBUaGlzIGluaXRpYWwgaW1wbGVtZW50YXRpb24gYXNzdW1lcyB0aGF0IG5v
+bi1pZGxlIENQVXMgYXJlIHRpY2tpbmcNCj4gPiBhcyBpdA0KPiA+IGhvb2tzIHRoZSB1bmhhbHRl
+ZCB0aW1lIHRoZSBQRUxUIGRlY2F5aW5nIGxvYWQgYWNjb3VudGluZy4gQXMgc3VjaA0KPiA+IGl0
+DQo+ID4gZG9lc24ndCB3b3JrIHdlbGwgaWYgUEVMVCBpcyB1cGRhdGVkIGluZnJlcXVlbmx5IHdp
+dGggbGFyZ2UgY2h1bmtzDQo+ID4gb2YNCj4gPiBoYWx0ZWQgdGltZS4gVGhpcyBpcyBub3QgYSBm
+dW5kYW1lbnRhbCBsaW1pdGF0aW9uIGJ1dCBtb3JlIGNvbXBsZXgNCj4gPiBhY2NvdW50aW5nIGlz
+IG5lZWRlZCB0byBnZW5lcmFsaXplIHRoZSB1c2UgY2FzZSB0byBub2h6IGZ1bGwuDQoKCgpBbWF6
+b24gRGV2ZWxvcG1lbnQgQ2VudHJlIChTb3V0aCBBZnJpY2EpIChQcm9wcmlldGFyeSkgTGltaXRl
+ZAoyOSBHb2dvc29hIFN0cmVldCwgT2JzZXJ2YXRvcnksIENhcGUgVG93biwgV2VzdGVybiBDYXBl
+LCA3OTI1LCBTb3V0aCBBZnJpY2EKUmVnaXN0cmF0aW9uIE51bWJlcjogMjAwNCAvIDAzNDQ2MyAv
+IDA3Cg==
 
 
