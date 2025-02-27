@@ -1,241 +1,110 @@
-Return-Path: <linux-kernel+bounces-536052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990E4A47AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:57:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F7EA47AFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34AE3B2092
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:57:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44BB47A575F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F6322ACCA;
-	Thu, 27 Feb 2025 10:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF5022A4F7;
+	Thu, 27 Feb 2025 10:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="jMVJkIjB"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2086.outbound.protection.outlook.com [40.107.241.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajZ1sRb4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65561DC997;
-	Thu, 27 Feb 2025 10:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740653847; cv=fail; b=RQEM0jI2fcW+y+Cu6x3ppFxBl0GR5kDTGWIs2OI4sjqSeDQ6xAJbfqUNMUZSjxVrSC9dLWN2jk9iL5D7D9L3aGZ3wlOGw9p5vizgd+/Ebi12+oPETSYdr7dVr+WpgSea/3cYPriBgBQfjUVGt4daYjyobO1eIGS+aOgb857jmCg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740653847; c=relaxed/simple;
-	bh=FBuvtKQoH9rRR2V0nyia4P1jrvbt75/iIqFGXg5bPAU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iD5/QqkLjMNiZrggxScNk5Tk3i1sRk7aNe4y9z1lPPyduc7+ozyBvoSEP+s8/jVRsVUCB6itR8KrgqFIAT4WgzGAKbKJbVk37fifNJvJ9wQ8LgZeeAcbZ8BCs/3PwXtVJNWPyjhwWlvdNN3LwQexBAE+wmNIb8afwU93uZSw5JM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=jMVJkIjB; arc=fail smtp.client-ip=40.107.241.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fOoHrDQoomaIcK776XbZQpA646M2qdh4lLuUbrP62BaJlWHGB6ozsS+WQvaOP1Q+fdNtsTWUlI/O3sVx3ZE4sWWMqAkpDaPR5FfDozw3obZGfRLF7p++a+17yAfY5GQGar/oM07fxM2bq8NU4KQKWBtrCWWXa5CIiHaWhyAVce6F/+McLEHYX3MzDZvE8rRs3qbOQI+6mq/H7ZIzq3bzL32Pv/HpbHWtja4JvbRqAnBd6L0Ll/T0xrLqzUXiECdKayOthnjyE+3kaLgEzMNIju5bJyVUZ6cQzYz4XMFJ2iLB+U89hN9mZSbqbNtDaxTnjVOcC6ZCU7DJCDmRYcEDJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5YU2K3+mlTJEuvXWjTNmJLFJCZTKoqlwksomBBxrPMA=;
- b=qzH0b98qsz5bGWkngKRsLLxbvomtTDJWPtaefICXVO4gswR3zkAkbCM57QTBW2UamG5yS4tJOz48xBI0r+PcCSVgu7guP1mXkNjX8MMMMCitEn9tbGICz2IfZrIXaAn+W2wUKKjA6YxkwQ5xQPza8fNlx0yiSQ737QcX/PINLErZF+M80DAoFpUPHIw8+YYO0KcByCTnGDJJRsnD2qkf8oS66duYq7eF6QlBQYVfM6YfM/zFcTM8oQ+CcUSpJSmP+CR7XT+sfFcOJxYWtEhxMcsvWjOq2P5j8RL+8bBFjBjmgXTwKGBm/GdWZeHSWg71BcGsTfwKxGb9TcbvD/tRnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5YU2K3+mlTJEuvXWjTNmJLFJCZTKoqlwksomBBxrPMA=;
- b=jMVJkIjB1D8Mpuncsh2aJkImRqEvmGCCpBv08jWlrFGldfDC4fBEa0plMRFvNoUMEHVjx0fElyzzcXZ84fxxXfg+Ml/Jl/QRianV3Soy5LsgWEsG1/NjOKfvnaENJSw/sRTV/+XJsE0I1byrArspZv/jJBZWBgnZ8VrwIcJzZio=
-Received: from DU6P191CA0069.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::22)
- by VI1PR06MB6799.eurprd06.prod.outlook.com (2603:10a6:800:181::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
- 2025 10:57:21 +0000
-Received: from DB1PEPF000509ED.eurprd03.prod.outlook.com
- (2603:10a6:10:53e:cafe::96) by DU6P191CA0069.outlook.office365.com
- (2603:10a6:10:53e::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.21 via Frontend Transport; Thu,
- 27 Feb 2025 10:57:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- DB1PEPF000509ED.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.16 via Frontend Transport; Thu, 27 Feb 2025 10:57:21 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Thu, 27 Feb 2025 11:57:20 +0100
-From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-To: neeraj.sanjaykale@nxp.com,
-	marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	loic.poulain@linaro.org
-Cc: linux-bluetooth@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	m.felsch@pengutronix.de,
-	amitkumar.karwar@nxp.com,
-	conor+dt@kernel.org,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Subject: [PATCH next v2 2/2] bluetooth: btnxpuart: implement powerup sequence
-Date: Thu, 27 Feb 2025 11:57:18 +0100
-Message-Id: <20250227105718.1692639-2-catalin.popescu@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250227105718.1692639-1-catalin.popescu@leica-geosystems.com>
-References: <20250227105718.1692639-1-catalin.popescu@leica-geosystems.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786491DC997;
+	Thu, 27 Feb 2025 10:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740653861; cv=none; b=QBlyempMreOQ0w5ogdK0HObiX/0iG2hZsYXxAEFrfUoy5EgRKqmPvupdHiOkJsY2yeEdUYCTD1RAjPt+vVUdAq3/qltjvO9elhRrBy2p6k6pdw2upX9wzhIukVLTsR5cI3zJ2cOOweEHnijignWtjwm0WOIm+NnqFs3aCrHI8R0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740653861; c=relaxed/simple;
+	bh=zKmpACgApZGDf+VVI+CD4Rv/C4u2prcVyBajdqkzEAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMLHJwP9OPRCxgW2EDbcBMlM0t/iGaA5l0Z+kdS/qN7D6V+NO+uLzRJ0rEwQ1oBYsvApOkUQQWuV2VLOZeOUX4vXt7pDw1zn0qBpX09yCwZKwlYyzxkb2K3dWFE1xkvkAIOnGW+UNxu9R07rJ8mEieq4KHr+D9M9Ino5yXSN9HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajZ1sRb4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF557C4CEEA;
+	Thu, 27 Feb 2025 10:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740653860;
+	bh=zKmpACgApZGDf+VVI+CD4Rv/C4u2prcVyBajdqkzEAY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ajZ1sRb4WGbQlMkMnR5NUXYlyL3JVy5W/qWCQJQAJL/+jcVEd7DMC21IS5nFWnlv/
+	 ptP10ao67t+cs2AqdFrsYxWx4vUZJDGeWQ8bw3gkWFmWLLXHmwcpA7Z7Q3+raxeZym
+	 4h47DKowUE59La+k13AyRQns759eEztKNdfTOU0s75K4ga/ZK0Ksi8b+XQQZvtMsLj
+	 WRwWypYzoYOTcdzZzhggGU3EZ7WgABGOStkxv/G/wGdF59Re3akC4uk5e5hNMno1r1
+	 pp58hZMc7NMGj9ZCORnJBFp7Ok7EOVrBiKs+w8Ma0pA0unj5QO1RcMU/sgsT7jFIno
+	 pc2sqwwn3hSLQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-545284eac3bso670044e87.0;
+        Thu, 27 Feb 2025 02:57:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDrYV2RD9lGqwvcOBPKecZXHyyCxYfVKLfChMaX6irVnXvKmL9atM6+rB37+TgruV2xut9tB2xLskl0pA+@vger.kernel.org, AJvYcCXnLAKpwC+2DdoT9JqW5DMxlf3v3bJKAv2bIkVRmi3zF87yGQ9msYr0FW3w5tfqQDmSG5Yczsjm4vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy920Fx2V0qC9p/lhvwB6hRPZ5z6yMI2eOEhktXGlLRt5igX0Ux
+	ZQCBVO1A4XMW4V5kW3mH2kJKxPyKfKRckXPpHPxlt/98Qqek3wHLm09vHvk/gmDj0TbepPrMCdV
+	qKMp10y8+vHcK7fo7CHfwH27b+1s=
+X-Google-Smtp-Source: AGHT+IHCNs4mhzQpOJmEg+Z4O/xKEexEtXl4q3kKZgwS/e6iNYNl47Lg0JFc8Q620FD7wUA0kPo2yMqNj/LZfJwKk8I=
+X-Received: by 2002:a05:6512:104d:b0:545:2e76:495c with SMTP id
+ 2adb3069b0e04-5493c57a8camr3793713e87.25.1740653859248; Thu, 27 Feb 2025
+ 02:57:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 27 Feb 2025 10:57:20.0577 (UTC) FILETIME=[5FB07310:01DB8906]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509ED:EE_|VI1PR06MB6799:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d41df6e7-f69e-489d-5295-08dd571d8282
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nQM2HpjWYmS9KQfSFCyvnOcmCPyME8AIjfbaJl1z7VFceYePnNvCiLUyb1ds?=
- =?us-ascii?Q?FgV7Ctiwg8I4x/BkFHOGjJjY+YtOojo9LSB6cM+DUb7VrGlY6v3+pE/3M1oz?=
- =?us-ascii?Q?QVQ6X1P5e3+4rjGO7Ilr0xJTwr7nZ/QzvRzKE41Oibd9DihIQ0WV3+PUTYkU?=
- =?us-ascii?Q?zSSWVpl1ioeiVL7dUV3HduUAtB710IsvaeMb1onXUsjOH3AmHRQKyMDPc46C?=
- =?us-ascii?Q?zmd8GfM8Ko2L1q0/hDzSd6m8APzp7FSmYuTXounPc7M7WH0MkVc34EsmzIrQ?=
- =?us-ascii?Q?awcekXWH1gsDbFZ8nEPKd1eC2TWm57YLSF4FcV0U7dWLBqrv6cDB/TL8P4Y2?=
- =?us-ascii?Q?Vvh332oGK4jlonNOYUYxA7DWLrG4PDlNKqdH9L9oX1Unw315EK+sY6hQ33rx?=
- =?us-ascii?Q?ycqY9Nv8JWOqT02HsUw1IIBnI06+qMbvXBZzsz6FqcqHnCgKrmb82QRjaNXa?=
- =?us-ascii?Q?/GTpgY6wx6jmfCBkCqy9qB3NHzAFMWYAmvCj1RjSDVKsYAxq/ujskPLgLp0u?=
- =?us-ascii?Q?H7F02IOPYzMIKj1BECOjWmXrGXicyc5SoIshV5NbbqD6YZIO/+TD659OMSRb?=
- =?us-ascii?Q?z1tPCoLfyA+wKLrlCotPOdj6rpV+8hmj8AN0XRZ6KcZGwVi/81tB2Byc67ax?=
- =?us-ascii?Q?pMgYVi0a/9nwz/9bzsYDihu2lN/5wHHV8Im9MlcxOn4ygo0+Xe5aYx9oNq7f?=
- =?us-ascii?Q?QE7NlpNLcCiEGexmkrSfsS45r3phsyiBgvbYKo0xbWKvErztIySU7NdA9nlq?=
- =?us-ascii?Q?goT8FCR2maz3ExAo2ptAiX+Ywt6mG3QGT0l9rQcTej+36JYGRJrNnhczz0P5?=
- =?us-ascii?Q?C6W+95pe7nsk5llSWpi9c83YnAaB/lon1+C635RAQmjc8Ra9QpPkLXZPHrCd?=
- =?us-ascii?Q?1XXrpJLs0wEZgiLVO3oKR27RwVqu0a3BLoqFGBDKt5nK7ql12rYQ9Sft4FEk?=
- =?us-ascii?Q?QVzBMY96yHGvzhvbV37KYv39jAr0sGytaHYnsnuFAxp7oy+r6V1Bl7mO9ZWS?=
- =?us-ascii?Q?Sx9gZr7/Gq3LabVnKvAwD/+eoa7ECgM1LPHDUaf6RzHj4JcJAoUBxex5/lL7?=
- =?us-ascii?Q?32aNkMEFLEMq7xB9gS/oOr9ZDatX4+zuUr8pFvIP7NsbKZHpL06XKjQE/pHq?=
- =?us-ascii?Q?trcOnTY6uNVOP/yU86h3qKUs3P9MlxeEF4FmmfjhQpkPX3NMP/KK/g6aZ7FT?=
- =?us-ascii?Q?kkGvBYp5PYTN+H/jBd2INPfel5Lo0I2JXsvFVNZ7bNypzDgQiHUpNMOKQTDa?=
- =?us-ascii?Q?bnhBvNYzIjcRLkob8lKD6xymaZocDdjrbFffbdOE4wQ6HorCwhaocqoN5v+N?=
- =?us-ascii?Q?yGPrqqPMzMm49z5OTy4r568quWRCAGmWpXmIy5gxmDJHQgxjExW0DoD+EadQ?=
- =?us-ascii?Q?rxyFUt2UnI2Q6w/r3mBkXNOxtmkMJwzpJ+viCLgZl5c0djcFPaS8XiP6YCDw?=
- =?us-ascii?Q?rWBun+ObkhJAQPxyiRdIA5wFpd6pCMCFLEmx529RShTiqeJr1HqE+oa9K1GB?=
- =?us-ascii?Q?5BuZCG3es6FgTtk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 10:57:21.0318
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d41df6e7-f69e-489d-5295-08dd571d8282
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509ED.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB6799
+References: <20250210174941.3251435-9-ardb+git@google.com> <CAMj1kXHOqMM5uGxLTYuEf9KrxY5WzYvwo847JzoB-Qa2SN67Sg@mail.gmail.com>
+ <20250220124831.GFZ7cknypjWiZoZzK5@fat_crate.local> <CAMj1kXEkkShwDfbwJ5abc9Q+LaqbvTNh1O5rVXy3EW85DdYTuQ@mail.gmail.com>
+ <2d4924d6-1ae3-4993-a6b0-aae6f00bab88@redhat.com>
+In-Reply-To: <2d4924d6-1ae3-4993-a6b0-aae6f00bab88@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 27 Feb 2025 11:57:28 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGmqcTy7a8hTxRgeNpLT4tu_660Wx+o0FJbynB-a_ZsWA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoT20AKU9XGXKKaeIqG0K4DhE3kTw3XvvmQi-cn5DDU2wPKf39ic3Olcbc
+Message-ID: <CAMj1kXGmqcTy7a8hTxRgeNpLT4tu_660Wx+o0FJbynB-a_ZsWA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] x86/efi/mixed: Decouple from legacy decompressor
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-NXP bluetooth chip shares power supply and reset gpio with a WLAN
-chip. Add support for power supply and reset and enforce powerup
-sequence:
-- apply power supply
-- deassert reset/powerdown
+On Thu, 20 Feb 2025 at 14:38, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi Ard,
+>
+> On 20-Feb-25 1:54 PM, Ard Biesheuvel wrote:
+> > On Thu, 20 Feb 2025 at 13:48, Borislav Petkov <bp@alien8.de> wrote:
+> >>
+> >> On Thu, Feb 20, 2025 at 12:29:30PM +0100, Ard Biesheuvel wrote:
+> >>> Unless anyone minds, I'd like to queue this up in the EFI tree.
+> >>>
+> >>> Boris, Ingo?
+> >>
+> >> FWIW, it looks like a nice cleanup to me and it boots in my 64-bit OVMF guest
+> >> but that doesn't mean a whole lot.
+> >>
+> >
+> > Thanks. For the record, I tested this both on 32-bit OVMF and on a
+> > mixed mode tablet (with 32-bit AMI firmware) that I keep for testing
+> > purposes. Notably, 32-bit OVMF boots with paging (and PAE) enabled
+> > whereas the AMI firmware doesn't.
+>
+> Ah good to know that you're still using the mixed-mode tablet
+> for testing.
+>
 
-Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Reviewed-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
-v2:
-- rebase on linux-next tag next-20250227
-- add reviewed-by
----
- drivers/bluetooth/btnxpuart.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Yes, thanks again for sending me that thing - it has been quite
+useful. I bricked my mixed mode iMac24, but that thing is just too old
+now anyway.
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 4f2f429c9800..81d1c9b97146 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -17,6 +17,8 @@
- #include <linux/crc32.h>
- #include <linux/string_helpers.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
- 
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
-@@ -191,6 +193,7 @@ struct btnxpuart_dev {
- 
- 	struct ps_data psdata;
- 	struct btnxpuart_data *nxp_data;
-+	struct reset_control *pdn;
- };
- 
- #define NXP_V1_FW_REQ_PKT	0xa5
-@@ -1522,6 +1525,7 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
- {
- 	struct hci_dev *hdev;
- 	struct btnxpuart_dev *nxpdev;
-+	int err;
- 
- 	nxpdev = devm_kzalloc(&serdev->dev, sizeof(*nxpdev), GFP_KERNEL);
- 	if (!nxpdev)
-@@ -1549,6 +1553,16 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
- 
- 	crc8_populate_msb(crc8_table, POLYNOMIAL8);
- 
-+	nxpdev->pdn = devm_reset_control_get_optional_shared(&serdev->dev, NULL);
-+	if (IS_ERR(nxpdev->pdn))
-+		return PTR_ERR(nxpdev->pdn);
-+
-+	err = devm_regulator_get_enable(&serdev->dev, "vcc");
-+	if (err) {
-+		dev_err(&serdev->dev, "Failed to enable vcc regulator\n");
-+		return err;
-+	}
-+
- 	/* Initialize and register HCI device */
- 	hdev = hci_alloc_dev();
- 	if (!hdev) {
-@@ -1556,6 +1570,8 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
- 		return -ENOMEM;
- 	}
- 
-+	reset_control_deassert(nxpdev->pdn);
-+
- 	nxpdev->hdev = hdev;
- 
- 	hdev->bus = HCI_UART;
-@@ -1583,6 +1599,7 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
- 	return 0;
- 
- probe_fail:
-+	reset_control_assert(nxpdev->pdn);
- 	hci_free_dev(hdev);
- 	return -ENODEV;
- }
-@@ -1609,6 +1626,7 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	}
- 	ps_cleanup(nxpdev);
- 	hci_unregister_dev(hdev);
-+	reset_control_assert(nxpdev->pdn);
- 	hci_free_dev(hdev);
- }
- 
--- 
-2.43.0
+> I've just added this series to my personal kernel testing-tree which
+> I regularly boot on various models of these kinda tablets. I'll let
+> you know if I hit any problems.
+>
 
+Thanks. These changes are in -next now, so that give some more
+coverage until the next merge window.
 
