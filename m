@@ -1,249 +1,162 @@
-Return-Path: <linux-kernel+bounces-535395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AB0A471FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:10:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18ADAA471FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FFEE7A465E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B911882C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FF51487F6;
-	Thu, 27 Feb 2025 02:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F031487F6;
+	Thu, 27 Feb 2025 02:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4wMa19/"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCTeBojF"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD48145B25
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7B31F94A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622234; cv=none; b=OzCRCqaD5zq27nDvSniBO/fB8VIRtSJ02gj8Od8+XM7W6CPBAZdXMdtWB3SLlrGu0d37kIqaPhS0jaaa9kbgo+RbprCs5O+sdo/5hkKjtmSdpazmDUWomP3A5l8SMJ25NMRg2lUPkGOr/rMPmIOhtfJJGGVvCmuIoVOC0jVouEA=
+	t=1740622359; cv=none; b=LvHbmxzyWTDpaXtKU7yS9VI0luL7MbL//GYNt1U8Jmatk0f7s1pTcwCNIZtjzGJ00Gc7mZ8G654KqluHHp0G4/pDYNyCLth+8a0Uq+ETY1LeYc1lMHJfb7lrJWsVJtciJWYZTe/yMuM4uSrvE1bn2vlsx0slw5PhI92B6w6yw5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622234; c=relaxed/simple;
-	bh=gc6S2JpMkh9+SlpVNws8xnI278iajsYgxd5Nj4QiLGg=;
+	s=arc-20240116; t=1740622359; c=relaxed/simple;
+	bh=HH12gKKrFaZm7wzH3pCpMF8j418F10mNd/vReR3oceA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ajSer+Q2ycVMn9Apz82ho3i5wvTZg4MttKk52fOv9/F+XryllmtPkj7iJ71StteqnT1WO6kl2SsqspqTB64vjp3SRurb2eS/N4oxfBjLwYfQf4aBCmIe5Q2QyJr1XENw1ygC5T25+odvn3/XfGWeXVHnwfoXqAptsj4gmAjFqKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4wMa19/; arc=none smtp.client-ip=209.85.208.170
+	 To:Cc:Content-Type; b=AUqqWZAgPNsh2FrphxKo4oyRITx8vDMBuh0OZTGZbtR7T7bFQnEZi/HJwd+PfvfqnTTzISDvTj0oJsIB8eWdU4kGMxZU1YbjBgh93H8etP7NptpWI6Q7xe6ckhgx0mP8yS1L6BvrLPucCs/oiMoowPAnnP9PmD+PsPqlSgwgx/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCTeBojF; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30613802a04so5083931fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:10:32 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abec925a135so62409166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740622231; x=1741227031; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740622352; x=1741227152; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HyNS7yiZ0M+hACoIoTjs4K2E1oZHkiWIyiPKi+q6bCo=;
-        b=k4wMa19/aoA5z5t7b34J8y66hg2v0Rzz7f+o177V4AWWcD6rJYA664ISyAJCAscaIf
-         V+/BOxJOPjWc9IOLhzffn/1rRbasO7sy7PjkXVV2il5R+89ErBUS0DqNP2rRSkxlxste
-         HgYO0mqmIH7MKTFyw+0Yy0lMQeXCH3XN+5eGrHGHu4Mks4y0YJ9qGcw4zjel8FvaNDCV
-         4dMExSY1QFf63Z0g8eozPLIouFFLaGh+7AMxfS0JeC6HUpysI0wT1m7i/qPp2z5rr/1a
-         RhE7XY/Mr47GkB+g1I2xTJzV77d8b5irfTrDmp5Vbe8r0/ePA9ltDri41V1eGfJvtYSD
-         EaVw==
+        bh=1lYamqTJH3BifzDRaKsEz7OpShDOh2zvdQFoGbniJMw=;
+        b=jCTeBojFN9+cGWTabOAq3imZW2IRhC/OyJ3dPu2C16B3ggoyrjOwN0/THkHToKTX5i
+         HjpBoUp3cjxLHsK3z2v5JJtqGN7gOeCUd5lmY7iS6vke1T4Ul83Nrc4r2kkWPv5o1TY5
+         lyP2rwMU5Ik/zVNr1V+G8e0s0MxSE3szj6rTNwOgFUMtzqePNWEAEoVc+tpaVRtB8go4
+         WMjfm8EZn+Vd2Oczgqp3d33MhZPw/7QeT+TTWTSKJm7ImKeOvnf3Wa4JBBUqgfanr9xe
+         QiJWmFyf9lBLujYJuRZCIvDev4iPTVsC78T0A3A13RFh3824tQt9gk4929oMnt8TKyJ4
+         ZG3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740622231; x=1741227031;
+        d=1e100.net; s=20230601; t=1740622352; x=1741227152;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HyNS7yiZ0M+hACoIoTjs4K2E1oZHkiWIyiPKi+q6bCo=;
-        b=lvQV9FESLNoNQ/pbSHq+R9slgXUDB+5WdmHzT4GOaKJJ9twEo6i2lJH5Rd8koN+Yq3
-         8x/y6iqyF0Q/qyA8RGOUXI+Yf7SvjcqIXq52p0KuqLTeG9D4XnV/Hvsa8WZVuBTtC7op
-         U9d4NS6NbBuJ3KW9/XnMm3GCVwkZLcLZSB1I0P1Nwq1/2/5qD/d6twjUkXdpnsVSFC4w
-         kwynNYMAIBZrui4Me2RfGs+bLQVuzEunfw3fZatgvcQ5vIVsO6mmbXgKYYm/gxfSir2m
-         RNvMy3EHPrxjLqWuW896lrMa3dY0o4h9Md4w4Vap/USUi97qDRC+jzPqR9jIEPuzv1td
-         zK3w==
-X-Gm-Message-State: AOJu0YwjFVgZ5VpEpl0RBnJiTjMAqr21Qd1BU+M0l7txFl0CcFKK4w1e
-	EKCEu8fHqVGl6pjMPXuy+C90OGb0Vfhdsl5wnEwfHaN9TFVi8fnxsMwoCFh6amijpX0kMte6v0s
-	mQw1LeEfF5ATVJD4wNDZ7tyFgUA==
-X-Gm-Gg: ASbGnctVLvjtRASqtmEtgD87yLa2pba7hMapafyC71U/53W26t0FlaoGMKfv9HRvj4Y
-	2SDm95GTWRRDi0RomOMztZw3T0eXzvlQpIxfLfmEYNYHlnJAMO2t/yJSDHXFLX+EjKT359yBlo6
-	LS3/+ZlEuy6eWiymlUV0CPoQ==
-X-Google-Smtp-Source: AGHT+IHVoTjdYNOhqXcZUrAev/CIB5qQETknQlAYdeVHPsRHD+qg0Slqqcqp2PhmFU510rwPrmN/r24+nuTPV12h3/c=
-X-Received: by 2002:a05:6512:3f0d:b0:545:2544:6ae2 with SMTP id
- 2adb3069b0e04-5483913f60cmr12306773e87.16.1740622230714; Wed, 26 Feb 2025
- 18:10:30 -0800 (PST)
+        bh=1lYamqTJH3BifzDRaKsEz7OpShDOh2zvdQFoGbniJMw=;
+        b=Dvz6Nj/opW3UzHdPYGekZa0pivO9+04RDq+lnAqNZnliRSY57HvAdJ/6RMX8xySMTo
+         xiv2THBw+BtudHhXIJaEFF917ZOgk2mIutqSnjdR24Q84PUQYxk234ZZxKWVB7Cuq92e
+         A26eeidM/xkoMssOH0AoYps3P9bQK2tNboMZdqAHpIhiisY/IOG/D+DN6SsRXyhCRIaF
+         fB5tGU1WN8aOcNyrQwpPJ8KRG/wOi+shgDPLj9aC6qQMHCjPedQZu4HaLzgwOZQodoad
+         H6hlDIQiOleIZBW7H+x96LaWrIIDDE6vKTYg1EWDM61lzV/s0/UnH+jeibOKjM8srRkj
+         i7hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsvjUaZ2avSOOMSROAaSQ4A7KSST2QspQYfTwTpGltGuuV6ghNg1CvUjnpCbxv8arXkpnV0gdJZD3NO+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbukWehUMp0GxJaS2aha0DhLCkJ7hFiDYTKzNwVep/QJZEfGdG
+	2BZ2Ur5bq1+uZi3l3gzkEVYphNjnG8fjLZszgWBkj4BiyYJHHHkdguyZ1hAlUt03cWizhy1pB2Y
+	2UfJ8MDJgIeNZUw1//fG9JZLVkRI=
+X-Gm-Gg: ASbGncvJAUO3RQ8npWvvwZx6F62vvOMIrFRxX6lAQTuPTx5hKRuuIZfYVpxKETza+cL
+	cUDrfLbBHfK8JJB+F9A6zUgMBDxs/pVVrLnk6KNk21ocWo4JMc3khXglU8IYx0MTNMlAH48hM86
+	ydylCKROtx
+X-Google-Smtp-Source: AGHT+IFkHZSpYroN6cAmPhG3UCeeGVWNROZZKfh0zdQH3C4WFSL1wcOHs7i4JLX0V3aaI37ZWD02nRP4LcR3MEzabH0=
+X-Received: by 2002:a17:907:7d93:b0:ab3:60eb:f8b6 with SMTP id
+ a640c23a62f3a-abeeef8c479mr717479066b.56.1740622352432; Wed, 26 Feb 2025
+ 18:12:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226180531.1242429-1-brgerst@gmail.com> <20250226180531.1242429-9-brgerst@gmail.com>
- <CAFULd4Z3o18zRebbqTgNH9QrPkoSLtbS=_mZGfheJYoeMawUaw@mail.gmail.com>
-In-Reply-To: <CAFULd4Z3o18zRebbqTgNH9QrPkoSLtbS=_mZGfheJYoeMawUaw@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 26 Feb 2025 21:10:19 -0500
-X-Gm-Features: AQ5f1JqriTP8IY8FXxbMn0qZLNCSU7mDbVaPZXf6wEDHCBwSZryC7RHaQgZIN_s
-Message-ID: <CAMzpN2j56_fCuToxtSfEYy7iGddJPR41jB4QvC1S_kF-wherOA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/11] x86/percpu: Move top_of_stack to percpu hot section
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+References: <20250226114301.4900-1-xuewen.yan@unisoc.com> <7e3b656e-ea65-4441-b08f-062eb0501355@arm.com>
+In-Reply-To: <7e3b656e-ea65-4441-b08f-062eb0501355@arm.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Thu, 27 Feb 2025 10:12:21 +0800
+X-Gm-Features: AQ5f1JrFQOEZkPM7BBl-9S8b4_e-acv_f4WjVFGk1nMmXcWiGyVhL4SUdAOSBr4
+Message-ID: <CAB8ipk-CcirMttnxDUj_VGfgd3Z9SgeZf+jmLTEV7YBabvVP3w@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched/fair: Prevent from cpufreq not being updated
+ when delayed-task is iowait
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, peterz@infradead.org, mingo@redhat.com, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	Hongyan Xia <Hongyan.Xia2@arm.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Luis Machado <luis.machado@arm.com>, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, ke.wang@unisoc.com, di.shen@unisoc.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 3:08=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wro=
-te:
+On Wed, Feb 26, 2025 at 8:08=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
 >
-> On Wed, Feb 26, 2025 at 7:06=E2=80=AFPM Brian Gerst <brgerst@gmail.com> w=
-rote:
+> On 2/26/25 11:43, Xuewen Yan wrote:
+> > Because the sched-delayed task maybe in io-wait state,
+> > so we should place the requeue_delayed_entity() after the
+> > cpufreq_update_util(), to prevent not boosting iowait cpufreq
+> > before return.
 > >
-> > No functional change.
-> >
-> > Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 > > ---
-> >  arch/x86/entry/entry_32.S        | 4 ++--
-> >  arch/x86/entry/entry_64.S        | 6 +++---
-> >  arch/x86/entry/entry_64_compat.S | 4 ++--
-> >  arch/x86/include/asm/current.h   | 1 -
-> >  arch/x86/include/asm/percpu.h    | 2 +-
-> >  arch/x86/include/asm/processor.h | 8 ++++++--
-> >  arch/x86/kernel/asm-offsets.c    | 1 -
-> >  arch/x86/kernel/cpu/common.c     | 3 ++-
-> >  arch/x86/kernel/process_32.c     | 4 ++--
-> >  arch/x86/kernel/process_64.c     | 2 +-
-> >  arch/x86/kernel/smpboot.c        | 2 +-
-> >  arch/x86/kernel/vmlinux.lds.S    | 1 +
-> >  12 files changed, 21 insertions(+), 17 deletions(-)
+> >  kernel/sched/fair.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
 > >
-> > diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> > index 20be5758c2d2..92c0b4a94e0a 100644
-> > --- a/arch/x86/entry/entry_32.S
-> > +++ b/arch/x86/entry/entry_32.S
-> > @@ -1153,7 +1153,7 @@ SYM_CODE_START(asm_exc_nmi)
-> >          * is using the thread stack right now, so it's safe for us to =
-use it.
-> >          */
-> >         movl    %esp, %ebx
-> > -       movl    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esp
-> > +       movl    PER_CPU_VAR(cpu_current_top_of_stack), %esp
-> >         call    exc_nmi
-> >         movl    %ebx, %esp
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 2d6d5582c3e9..040674734128 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -6931,11 +6931,6 @@ enqueue_task_fair(struct rq *rq, struct task_str=
+uct *p, int flags)
+> >       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
+ ENQUEUE_RESTORE))))
+> >               util_est_enqueue(&rq->cfs, p);
 > >
-> > @@ -1217,7 +1217,7 @@ SYM_CODE_START(rewind_stack_and_make_dead)
-> >         /* Prevent any naive code from trying to unwind to our caller. =
-*/
-> >         xorl    %ebp, %ebp
+> > -     if (flags & ENQUEUE_DELAYED) {
+> > -             requeue_delayed_entity(se);
+> > -             return;
+> > -     }
+> > -
+> >       /*
+> >        * If in_iowait is set, the code below may not trigger any cpufre=
+q
+> >        * utilization updates, so do it here explicitly with the IOWAIT =
+flag
+> > @@ -6944,6 +6939,11 @@ enqueue_task_fair(struct rq *rq, struct task_str=
+uct *p, int flags)
+> >       if (p->in_iowait)
+> >               cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
 > >
-> > -       movl    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %esi
-> > +       movl    PER_CPU_VAR(cpu_current_top_of_stack), %esi
-> >         leal    -TOP_OF_KERNEL_STACK_PADDING-PTREGS_SIZE(%esi), %esp
+> > +     if (flags & ENQUEUE_DELAYED) {
+> > +             requeue_delayed_entity(se);
+> > +             return;
+> > +     }
+> > +
+> >       if (task_new && se->sched_delayed)
+> >               h_nr_runnable =3D 0;
 > >
-> >         call    make_task_dead
-> > diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> > index 33a955aa01d8..9baf32a7a118 100644
-> > --- a/arch/x86/entry/entry_64.S
-> > +++ b/arch/x86/entry/entry_64.S
-> > @@ -92,7 +92,7 @@ SYM_CODE_START(entry_SYSCALL_64)
-> >         /* tss.sp2 is scratch space. */
-> >         movq    %rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
-> >         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rsp
-> > -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> >
-> >  SYM_INNER_LABEL(entry_SYSCALL_64_safe_stack, SYM_L_GLOBAL)
-> >         ANNOTATE_NOENDBR
-> > @@ -1166,7 +1166,7 @@ SYM_CODE_START(asm_exc_nmi)
-> >         FENCE_SWAPGS_USER_ENTRY
-> >         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rdx
-> >         movq    %rsp, %rdx
-> > -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> >         UNWIND_HINT_IRET_REGS base=3D%rdx offset=3D8
-> >         pushq   5*8(%rdx)       /* pt_regs->ss */
-> >         pushq   4*8(%rdx)       /* pt_regs->rsp */
-> > @@ -1484,7 +1484,7 @@ SYM_CODE_START_NOALIGN(rewind_stack_and_make_dead=
-)
-> >         /* Prevent any naive code from trying to unwind to our caller. =
-*/
-> >         xorl    %ebp, %ebp
-> >
-> > -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rax
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rax
-> >         leaq    -PTREGS_SIZE(%rax), %rsp
-> >         UNWIND_HINT_REGS
-> >
-> > diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64=
-_compat.S
-> > index ed0a5f2dc129..a45e1125fc6c 100644
-> > --- a/arch/x86/entry/entry_64_compat.S
-> > +++ b/arch/x86/entry/entry_64_compat.S
-> > @@ -57,7 +57,7 @@ SYM_CODE_START(entry_SYSENTER_compat)
-> >         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rax
-> >         popq    %rax
-> >
-> > -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> >
-> >         /* Construct struct pt_regs on stack */
-> >         pushq   $__USER_DS              /* pt_regs->ss */
-> > @@ -193,7 +193,7 @@ SYM_CODE_START(entry_SYSCALL_compat)
-> >         SWITCH_TO_KERNEL_CR3 scratch_reg=3D%rsp
-> >
-> >         /* Switch to the kernel stack */
-> > -       movq    PER_CPU_VAR(pcpu_hot + X86_top_of_stack), %rsp
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> >
-> >  SYM_INNER_LABEL(entry_SYSCALL_compat_safe_stack, SYM_L_GLOBAL)
-> >         ANNOTATE_NOENDBR
-> > diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/curr=
-ent.h
-> > index 6fad5a4c21d7..3d1b123c2ee3 100644
-> > --- a/arch/x86/include/asm/current.h
-> > +++ b/arch/x86/include/asm/current.h
-> > @@ -14,7 +14,6 @@ struct task_struct;
-> >
-> >  struct pcpu_hot {
-> >         struct task_struct      *current_task;
-> > -       unsigned long           top_of_stack;
-> >  };
-> >
-> >  DECLARE_PER_CPU_CACHE_HOT(struct pcpu_hot, pcpu_hot);
-> > diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percp=
-u.h
-> > index 7cb4f64b2e60..044410462d36 100644
-> > --- a/arch/x86/include/asm/percpu.h
-> > +++ b/arch/x86/include/asm/percpu.h
-> > @@ -554,7 +554,7 @@ do {                                               =
-                         \
-> >   * it is accessed while this_cpu_read_stable() allows the value to be =
-cached.
-> >   * this_cpu_read_stable() is more efficient and can be used if its val=
-ue
-> >   * is guaranteed to be valid across CPUs.  The current users include
-> > - * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
-> > + * pcpu_hot.current_task and cpu_current_top_of_stack, both of which a=
-re
-> >   * actually per-thread variables implemented as per-CPU variables and
-> >   * thus stable for the duration of the respective task.
-> >   */
-> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/pr=
-ocessor.h
-> > index 54fce8d7504d..b4d51de071f2 100644
-> > --- a/arch/x86/include/asm/processor.h
-> > +++ b/arch/x86/include/asm/processor.h
-> > @@ -427,6 +427,10 @@ DECLARE_PER_CPU_CACHE_HOT(bool, hardirq_stack_inus=
-e);
-> >  DECLARE_PER_CPU_CACHE_HOT(struct irq_stack *, softirq_stack_ptr);
-> >  #endif
-> >
-> > +DECLARE_PER_CPU_CACHE_HOT(unsigned long, cpu_current_top_of_stack);
-> > +/* const-qualified alias provided by the linker. */
-> > +DECLARE_PER_CPU_CACHE_HOT(const unsigned long __percpu_seg_override, c=
-onst_cpu_current_top_of_stack);
 >
-> Please split the above line, like you did with const_current_task declara=
-tion.
+> I understand that iowait cpufreq update isn't happening now (and that's a=
+ bug),
+> but if we reorder we may call cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAI=
+T)
+> followed by the cpufreq_update_util() in update_load_avg() of
+> requeue_delayed_entity()
+>         update_load_avg()
+>                 cpufreq_update_util()
+>
+> and the latter will likely be dropped by the governor, so the update
+> won't include util of the (re)-enqueuing task, right?
 
-Fixed in the next version.
+emmm, util_est has already included the util of requeue-task.
+However, the cfs_rq->avg.runnable_avg would indeed be slightly different.
+If we want to include both iowait and runnable_avg, perhaps we should
+add the iowait check to the update_load_avg() function, but this would
+make the code more complex.
 
-
-Brian Gerst
+>
+> I'll give it some more thought.
 
