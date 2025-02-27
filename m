@@ -1,83 +1,77 @@
-Return-Path: <linux-kernel+bounces-536879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D650A4858C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:46:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4A2A48533
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9204517E7C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96513A71AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485F71D4335;
-	Thu, 27 Feb 2025 16:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FFE1B3956;
+	Thu, 27 Feb 2025 16:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLcsGKrX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+CKa4q9"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EC51B982C;
-	Thu, 27 Feb 2025 16:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815AB1ACEB5;
+	Thu, 27 Feb 2025 16:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740673987; cv=none; b=VFV4MpX5hEH+N9aSktGfciPaDH5qra6HPjyhI9CQTd8jHr94lS7nISWz8P7KDYLsHkiCifyFRvVysOaV2h9/2rSQWnpWd9f2AnTuzMQ01OZm8bsdGAgPXzeJQYXLYUbSRgaWIsXHhpPrcDLo0xofYHbJTx6ATPh/347NmZzDyvw=
+	t=1740673984; cv=none; b=s6hKRTeGy6ppUWkCsTld2nTxTb9qnughpFyLcy3QqFe/gFQ9fSgiB1WdSrBJxZ+YqBmCyo+0WFDeVtYN/ZsmrlLHBDsTea1aFobDB2XIx2lVWbi58F55Dzau16be4oTw3F/0U+cPOH8lzWphARCWrbvbtK/nB3oohvl+GQ4l+Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740673987; c=relaxed/simple;
-	bh=BD4f1tzirgqPmQ5M6W5JBi3601o80CXVHLpgb/NNKms=;
+	s=arc-20240116; t=1740673984; c=relaxed/simple;
+	bh=xZAGtiBsGVxjIe3gDGDtguAEm32g2nHJ2cV0VNCaCc0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hvexu96sJ5h0lU+ZkAd2UzBi4GTpR2w8GuPqLla/1p20jdKTzK6Rd/Kscng3fsKhw0ap6SOQ4AgaPfJVLFMrSNoDN3IHqjNK8CZ91hxPyyuI7Y0h6lzSxZPwqnc9btW6Ip1ZLKlLMN3GrE8SGpfXKVivHxdl9ZcaviB2x15vPaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLcsGKrX; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=KElHh2ljkrcBCFs2vhPZ1u4xJGz0+opQomHUqNyov370F27xbmOQ29qiybIXgaFk9BMZENsCmAlSysc4WSsHwIzoakclZFesUsDhi2dOkDF9RRObqi7TASMXzdmE+0M1LFzXHBfUSWMpq5C0TkdWNwNUiovsuXnLopdJNuL47tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+CKa4q9; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740673986; x=1772209986;
+  t=1740673982; x=1772209982;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=BD4f1tzirgqPmQ5M6W5JBi3601o80CXVHLpgb/NNKms=;
-  b=iLcsGKrXspp6+KiNjBPJztHgsl6eupNwioCUdqnNWFaP687yC2KpY5rx
-   D6GiBMyPDBUymFiiCAlRiHSFx8hF+1CKMETXY+WUNG+RxU7kVMKHBaO2H
-   TTolUGJZuR6BI5aDQTnqUSjyfTM0uHZYbAPlc21KrxPRnaaeeNMhtSsm+
-   7JuA8LJxc+WO7gzselP7mqnSb1nyNcKxbNMihNsEupjbqUZ/k3YAlK6iC
-   dCMFaLtzISuxDJqjt/MguqJ3b8CFn9qaHF7YFKZP99EVhnHU7tRjNfMBz
-   okdTcuwasbTUWlFv9nZZcyFs1anKy4/tW50eLmNOugC3Bcm7b8LnbTJv4
+  bh=xZAGtiBsGVxjIe3gDGDtguAEm32g2nHJ2cV0VNCaCc0=;
+  b=n+CKa4q9Jq3fptWImzOiO2Wop/tp50kRp7TdX+r3FcTufZCloKlsdBkD
+   V6UHBd6RFqDwPQHfAAAzE/9AaeAwfLdJS/WYPgEFcbqyAzEVjMSQiPs/0
+   QiLK7MpihY7WNiVouLtqdETjgevXLrsci9zIXL4kGHi4mGATSb3qxRWfF
+   l4tzeTxOEvRUUUxDnwMl8lLYNBPV10X+75jDTULuQfPeEO10Z7JoAc2uA
+   OkOwKXNCwSWT4r/n4ArKkwvzoGVBnC3iHzX4ncw0f02SKUl1W0581g1Bk
+   XIFLe9WAFuV+MtSGTwSx1GES0Ejwc5/nstOdx9dePs1h2aXX1Wh1suaU1
    w==;
-X-CSE-ConnectionGUID: yB87Gu95QYer00NOsFyYNg==
-X-CSE-MsgGUID: 0F9WsLj8QZO9h7/aJc/AWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52985974"
+X-CSE-ConnectionGUID: bsHMLeMzS/mV6NzqB1qE/g==
+X-CSE-MsgGUID: zu3LkvlSTSivVwbx4M7fJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52985966"
 X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52985974"
+   d="scan'208";a="52985966"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:33:06 -0800
-X-CSE-ConnectionGUID: MWXNu6UFS3qVgsk7wMMXFQ==
-X-CSE-MsgGUID: Ykyo5a2lRQ6WUsTSyMn8Jw==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:33:02 -0800
+X-CSE-ConnectionGUID: sPldEseqQBCwTkBow3WKPA==
+X-CSE-MsgGUID: T61cUxiFTMaOxWwXeT1zTg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="140304005"
+   d="scan'208";a="140303904"
 Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
   by fmviesa002.fm.intel.com with ESMTP; 27 Feb 2025 08:33:00 -0800
 Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tngoj-000Dhm-2B;
+	id 1tngoj-000Dho-2G;
 	Thu, 27 Feb 2025 16:32:57 +0000
-Date: Fri, 28 Feb 2025 00:32:28 +0800
+Date: Fri, 28 Feb 2025 00:32:29 +0800
 From: kernel test robot <lkp@intel.com>
-To: Menglong Dong <menglong8.dong@gmail.com>, rostedt@goodmis.org,
-	mark.rutland@arm.com, alexei.starovoitov@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org,
-	mhiramat@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, mathieu.desnoyers@efficios.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	dongml2@chinatelecom.cn, akpm@linux-foundation.org, rppt@kernel.org,
-	graf@amazon.com, dan.j.williams@intel.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH bpf-next v2] add function metadata support
-Message-ID: <202502280004.QmU2zIb5-lkp@intel.com>
-References: <20250226121537.752241-1-dongml2@chinatelecom.cn>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	thierry.bultel@linatsea.fr
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] clk: renesas: Add support for R9A09G077 SoC
+Message-ID: <202502280006.8lJfdpzm-lkp@intel.com>
+References: <20250226130935.3029927-7-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,63 +80,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226121537.752241-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20250226130935.3029927-7-thierry.bultel.yh@bp.renesas.com>
 
-Hi Menglong,
+Hi Thierry,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on bpf-next/master]
+[auto build test WARNING on tty/tty-testing]
+[also build test WARNING on tty/tty-next tty/tty-linus geert-renesas-devel/next linus/master v6.14-rc4 next-20250227]
+[cannot apply to geert-renesas-drivers/renesas-clk]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/add-function-metadata-support/20250226-202312
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20250226121537.752241-1-dongml2%40chinatelecom.cn
-patch subject: [PATCH bpf-next v2] add function metadata support
-config: x86_64-randconfig-r112-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280004.QmU2zIb5-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280004.QmU2zIb5-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Bultel/dt-bindings-clock-Add-cpg-for-the-Renesas-RZ-T2H-SoC/20250226-221033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250226130935.3029927-7-thierry.bultel.yh%40bp.renesas.com
+patch subject: [PATCH v3 06/13] clk: renesas: Add support for R9A09G077 SoC
+config: arc-randconfig-r122-20250227 (https://download.01.org/0day-ci/archive/20250228/202502280006.8lJfdpzm-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250228/202502280006.8lJfdpzm-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502280004.QmU2zIb5-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280006.8lJfdpzm-lkp@intel.com/
 
 sparse warnings: (new ones prefixed by >>)
-   kernel/trace/kfunc_md.c:12:23: sparse: sparse: symbol 'kfunc_mds' redeclared with different type (different address spaces):
-   kernel/trace/kfunc_md.c:12:23: sparse:    struct kfunc_md [noderef] __rcu *[addressable] [toplevel] kfunc_mds
-   kernel/trace/kfunc_md.c: note: in included file:
-   include/linux/kfunc_md.h:16:24: sparse: note: previously declared as:
-   include/linux/kfunc_md.h:16:24: sparse:    struct kfunc_md *extern [addressable] [toplevel] kfunc_mds
->> kernel/trace/kfunc_md.c:186:20: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct kfunc_md *md @@     got struct kfunc_md [noderef] __rcu * @@
-   kernel/trace/kfunc_md.c:186:20: sparse:     expected struct kfunc_md *md
-   kernel/trace/kfunc_md.c:186:20: sparse:     got struct kfunc_md [noderef] __rcu *
+>> drivers/clk/renesas/renesas-cpg-mssr.c:216:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/clk/renesas/renesas-cpg-mssr.c:216:49: sparse:     expected void *base
+   drivers/clk/renesas/renesas-cpg-mssr.c:216:49: sparse:     got void [noderef] __iomem *
+>> drivers/clk/renesas/renesas-cpg-mssr.c:294:51: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/renesas/renesas-cpg-mssr.c:294:51: sparse:     expected void [noderef] __iomem *addr
+   drivers/clk/renesas/renesas-cpg-mssr.c:294:51: sparse:     got void *
 
-vim +186 kernel/trace/kfunc_md.c
+vim +216 drivers/clk/renesas/renesas-cpg-mssr.c
 
-   169	
-   170	/* Get a exist metadata by the function address, and NULL will be returned
-   171	 * if not exist.
-   172	 *
-   173	 * NOTE: rcu lock should be held during reading the metadata, and
-   174	 * kfunc_md_lock should be held if writing happens.
-   175	 */
-   176	struct kfunc_md *kfunc_md_find(void *ip)
-   177	{
-   178		struct kfunc_md *md;
-   179		u32 index;
-   180	
-   181		if (kfunc_md_arch_exist(ip)) {
-   182			index = kfunc_md_get_index(ip);
-   183			if (WARN_ON_ONCE(index >= kfunc_md_count))
-   184				return NULL;
-   185	
- > 186			md = &kfunc_mds[index];
-   187			return md;
-   188		}
-   189		return NULL;
-   190	}
-   191	EXPORT_SYMBOL_GPL(kfunc_md_find);
-   192	
+   211	
+   212	static void *cpg_rzt2h_addr_from_offset(struct clk_hw *hw, u16 offset)
+   213	{
+   214		struct mstp_clock *clock = to_mstp_clock(hw);
+   215		struct cpg_mssr_priv *priv = clock->priv;
+ > 216		void *base = RZT2H_MSTPCR_BLOCK(offset) ? priv->pub.base1 : priv->pub.base0;
+   217	
+   218		return base + RZT2H_MSTPCR_OFFSET(offset);
+   219	}
+   220	
+   221	static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+   222	{
+   223		struct mstp_clock *clock = to_mstp_clock(hw);
+   224		struct cpg_mssr_priv *priv = clock->priv;
+   225		unsigned int reg = clock->index / 32;
+   226		unsigned int bit = clock->index % 32;
+   227		struct device *dev = priv->dev;
+   228		u32 bitmask = BIT(bit);
+   229		unsigned long flags;
+   230		u32 value;
+   231		int error;
+   232	
+   233		dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
+   234			enable ? "ON" : "OFF");
+   235		spin_lock_irqsave(&priv->pub.rmw_lock, flags);
+   236	
+   237		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
+   238			value = readb(priv->pub.base0 + priv->control_regs[reg]);
+   239			if (enable)
+   240				value &= ~bitmask;
+   241			else
+   242				value |= bitmask;
+   243			writeb(value, priv->pub.base0 + priv->control_regs[reg]);
+   244	
+   245			/* dummy read to ensure write has completed */
+   246			readb(priv->pub.base0 + priv->control_regs[reg]);
+   247			barrier_data(priv->pub.base0 + priv->control_regs[reg]);
+   248	
+   249		} else {
+   250			value = readl(priv->pub.base0 + priv->control_regs[reg]);
+   251			if (enable)
+   252				value &= ~bitmask;
+   253			else
+   254				value |= bitmask;
+   255			writel(value, priv->pub.base0 + priv->control_regs[reg]);
+   256		}
+   257	
+   258		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+   259	
+   260		if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+   261			priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
+   262			return 0;
+   263	
+   264		error = readl_poll_timeout_atomic(priv->pub.base0 + priv->status_regs[reg],
+   265						  value, !(value & bitmask), 0, 10);
+   266		if (error)
+   267			dev_err(dev, "Failed to enable SMSTP %p[%d]\n",
+   268				priv->pub.base0 + priv->control_regs[reg], bit);
+   269	
+   270		return error;
+   271	}
+   272	
+   273	static int cpg_mstp_clock_enable(struct clk_hw *hw)
+   274	{
+   275		return cpg_mstp_clock_endisable(hw, true);
+   276	}
+   277	
+   278	static void cpg_mstp_clock_disable(struct clk_hw *hw)
+   279	{
+   280		cpg_mstp_clock_endisable(hw, false);
+   281	}
+   282	
+   283	static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+   284	{
+   285		struct mstp_clock *clock = to_mstp_clock(hw);
+   286		struct cpg_mssr_priv *priv = clock->priv;
+   287		unsigned int reg = clock->index / 32;
+   288		u32 value;
+   289	
+   290		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+   291			value = readb(priv->pub.base0 + priv->control_regs[reg]);
+   292		else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
+   293			void __iomem *addr =
+ > 294				cpg_rzt2h_addr_from_offset(hw,
+   295							   priv->control_regs[reg]);
+   296			value = readw(addr);
+   297		}
+   298		else
+   299			value = readl(priv->pub.base0 + priv->status_regs[reg]);
+   300	
+   301		return !(value & BIT(clock->index % 32));
+   302	}
+   303	
 
 -- 
 0-DAY CI Kernel Test Service
