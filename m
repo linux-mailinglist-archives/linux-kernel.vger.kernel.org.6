@@ -1,111 +1,186 @@
-Return-Path: <linux-kernel+bounces-536982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C8FA486A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:31:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64AC0A4869D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B44D3B6116
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:31:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0487A3322
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C784B1DE3CB;
-	Thu, 27 Feb 2025 17:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA881DA100;
+	Thu, 27 Feb 2025 17:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JL52TaCD"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WF5hv/jj"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452F136351;
-	Thu, 27 Feb 2025 17:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740677477; cv=pass; b=Fuo6VdumJvj8w6YDNF3yr8LyIFZcgLtEvU8HEU7BFCIL4hcCxUalp79sXDLsxoDtOtzieu0ha9ALZ1L1vDO1kII4nu5FgL8VWYfY4rAppRpZFba0pmr2Y5STzUcHCIVLxkKgUD3Px3frrrr2/dSOTaZ5Cdk/Av/GaHD8yTGb+hs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740677477; c=relaxed/simple;
-	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HM/4GydM6ZonVA6S4ZuUnJ8hsP/3csIzwjyMPsulgiAM1zLeVHLfnp71VK+N8DVh7Ha5lOXmmT8eEbFN0cbdU9pl8KJajDlTS1RiXfJgzWT6FI4HjHHdBe9M6t5JvoriKjs85F2gu2GoCYQhchE/QBOpMzJSe/O8CP+IRFpMqIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JL52TaCD; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740677409; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FTN4iejmJbD3zVMnol9SB/PeFykB9egs/6XaEr/QRjdTPaUdScVFt6lCZY6KEANYdHHDJy7fCZuRPdBEpKhrEFG7SHykfe5UPS7hwBGtm0xkzcnKbd5SR/flZeOajo7BsHmUaYtj9Oy6dqmuWmfeWKJ/d+BDkF/l/rqtyKNJqSg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740677409; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=; 
-	b=OU4vLbh9z0Wy5rSJIPqAAiv0qNUjz4AmXUiLWpQ6fsJ4kSSGuqcfvGLDSTn8l8rsgKSm+TYNAJvdbiFXFpff2EF+3lU9XW0t1n3J8Dt0zKrNbhbPtRxzDCmO/xocviDo06i+l3xHHXTQomiq4gfIwGQ8FnbThMVrM0Ysr0rng5E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740677409;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=pY0h9Uqj3mrF8jCMF8B0UPDavohCQ9bLCBbrtld9yos=;
-	b=JL52TaCD/b1D2zQ/WgtmajSca6k2sVDq6Nnt4Hj57q3CcJEGAv4w7b1HwGEUjIJr
-	xVwrhtV/sA5C2hjR/uK6oo5gsYD3G5J5JLwnyLLVnxa42ojnl2h8udtN5mKbNquqzsD
-	VGlODyRoOomK1FPb5kIcGn0UJJHSCdPZqrNCSB/E=
-Received: by mx.zohomail.com with SMTPS id 1740677406210259.24822276471855;
-	Thu, 27 Feb 2025 09:30:06 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDCC136351;
+	Thu, 27 Feb 2025 17:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740677417; cv=none; b=Au/Mprsg/rvA34RnaMBJXOUTYPjnRN0dct/GL26inpzBisympmhtFwe9471ci828R23jDRpPhifsHMCLm145YdEX52hkt7EIQshNRVc6DAId5X+v89BA8oZsKPFy1nbwG4MoswTy4k8F7V2Ka2VBM4ZL/pkKfs7ZNaIieqyHm/o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740677417; c=relaxed/simple;
+	bh=BHOmUMRksJWGkPGQguX9AGezCQ1EireXEQhlLKUOn+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUgtLseOqB3MVaUIHMyKJwMvNWyoC47CrsXnqIiZPImCCNcMw7RE17DvCcJCOwVjmQYnoDWJ02mUKOyLYRorZ7KzKMaf019+HCaJPxT2bAnNvbXy/Ru8KeAdNf4BT4UKcx6Un1RjLpv5zUwvkG8e1Wl6sWqCp1KN/oIU/AzoChA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WF5hv/jj; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c07cd527e4so111682285a.3;
+        Thu, 27 Feb 2025 09:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740677413; x=1741282213; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+ncAr0i2yaCNPOat1iqqfGrGLU6UJ1TbQz5tFfMPH0g=;
+        b=WF5hv/jjMLiVzAPId0v2EOLpwfTh19vdQcTYZhloWx5dNK2k270bOmZAq5As4hJ1A9
+         mNAwbyjC0zsu23cQSuOlw38JT+IuqgUOj57kdmfwlIL8xrEbGOqbdGkhuiP76QFnsWjk
+         d0NwgAhQn1cma6x49cOvXonm71TreBbz06vGcvMPUzCpCA4wuNI+QwhPHMlfFPeIVlTQ
+         h2AKe0DM7CbMa9+TuIMWlF7AWGiDoxXInDnjl4le+nSLaF9oLadxSigMuuAAtNovtV9/
+         QnWEwqEeuzFfj3ob1Jf5Y0WINRKEQNBs33cz3aLHhEydrLyXTxSkO9wrvChdUUTWxb3Q
+         NHqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740677413; x=1741282213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+ncAr0i2yaCNPOat1iqqfGrGLU6UJ1TbQz5tFfMPH0g=;
+        b=G8EzVmdu1CcK8LbSiPV+YoDdCAWib17IKa16lLZpPXqSnWm/eLzMUwaLnySJvvDteV
+         RZmW1bOBHIacZ+BT+fOEul9/CqYvleYeb/LH+WCRjva6HjInq6hQusfQovuA+wwSmB3v
+         lFGZtT9hg2RnD8vPVeEbo90vZauTXFBYGj0L9ny/fuwgLMIrAoou5RqydQyAVrzELdN8
+         RffcYQjMCW+cPJPTzIbiLMCrX9IDqCT3FXNkAAZZKYdDUOkIh5hYpe5q+0GgnlxxG3xF
+         gTkqxtM/mdTxHcycEDvpx0JB2RZSaqc9gN3UnJ+yUhW5gqCMr/ROpu5WSLdwABp5wyhG
+         vwlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwaosvoQHSzQuXvka/GgTN9jqDsBpde7YdhiOpxpIuhKuRb5J+to3zz5f212hh2wDi5TgK@vger.kernel.org, AJvYcCXNePfDhAikQhicvM5vgwW3n+E0MBC/glcb7VlNih3nrkfQCo7Jvl2jUWK+XuSGYozc6DavJc1OSv0bdv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbEzt/rWDURhIkTP7QPtS5RuIc629Cvcip5zrYu1taw66JKm4U
+	BOKS52Zhx61OuKkaBPU+neirAte+m0/igGMAu1Xuf4HKns5s0QS+
+X-Gm-Gg: ASbGnctj6pHPsiuQqPnZbtCuXMGADA4t6hoXtTXFwTErvmVGT4EwVxPOmLzepUfkyyz
+	GtlTeCMtli3xtjw6k10YJ7PV2hIKiii+O8YDi0HwgBg61XZexkWXzNhqMsxDc+RcD89Bxvxt/TF
+	S0JqgU/GD03qA1J9CXH63j7NlelUnZK+dStgN1ZpRRjMm2k+OQDDO1FdSLrbBh5R+L3F/xBxO8N
+	gxScoEjhL3KUTXdJarBH10GyWgS4g3lsY6SpH/x63HseOn1i44JdBP5We5nevzQubbHksZvmrBi
+	EVHKk3DYr0YAed0qIt8rUhNN8uwyLL9JLUnOiB73qbbKZl3a4YvwW9ScudaYUY2JKwFxBTQJEit
+	ASKpovM0zik3LBuU9
+X-Google-Smtp-Source: AGHT+IEhqRePoIEaEEW0l4JynfwuD/1O+VvhzuB6mR89VzP+NE6CE3gvCV8+gHkU6kXrYKP0OaNTog==
+X-Received: by 2002:a05:6214:2462:b0:6e4:4331:aae6 with SMTP id 6a1803df08f44-6e8a0d9990emr3818696d6.39.1740677413129;
+        Thu, 27 Feb 2025 09:30:13 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378dacd0bsm128276585a.90.2025.02.27.09.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 09:30:12 -0800 (PST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 3E6351200068;
+	Thu, 27 Feb 2025 12:30:12 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Thu, 27 Feb 2025 12:30:12 -0500
+X-ME-Sender: <xms:JKHAZ-D0TIFIsKsJPPCWSFad9tofZ9djQnjg67vN3Z7CcuW6x6S8Ig>
+    <xme:JKHAZ4ifO3jbwhr-io6oJzVOOtho4VzmiTVkrVxy4nvQss1syz5qsulBRYhZqyJTw
+    ZDtwUW3KWcvYzeCvg>
+X-ME-Received: <xmr:JKHAZxl1d7sr072cfyNBRS8Y95Rm5Be3dLmnRnqiEI7F6fQfRAJD92wNUw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekkedtjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
+    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehurhgviihkihes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopeiiiihqqhdtuddtfedrhhgvhiesghhmrghilhdrtghomhdprhgtphhtthhopehnvggv
+    rhgrjhdruhhprgguhhihrgihsegrmhgurdgtohhmpdhrtghpthhtohepjhhovghlsehjoh
+    gvlhhfvghrnhgrnhguvghsrdhorhhgpdhrtghpthhtohepohhlvghkshhihidrrghvrhgr
+    mhgthhgvnhhkohesshhonhihrdgtohhm
+X-ME-Proxy: <xmx:JKHAZ8y9AAvkHojA27_cBk5BWAj8hl7oYAGTCuMBHgK1-n3UipUAKg>
+    <xmx:JKHAZzTcKXacDepN72FnnqrB3BWoCg4uQrrNJvuDRoZzbWI2RQCVvQ>
+    <xmx:JKHAZ3YWgIQVCMxEP00WZ5oDY0ZGOIEr0hYIIdKtqHKBNcre0TE3ww>
+    <xmx:JKHAZ8QlHfrCEJwTe05Fa4cjbU5lIUeSDJ0l3AxZfA-CN0-xM5ms0Q>
+    <xmx:JKHAZ1D5t3_2zfre3BSSmRRoBqxccp1hH-SpYWbRbvAGZ6ymkQAltClY>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Feb 2025 12:30:11 -0500 (EST)
+Date: Thu, 27 Feb 2025 09:30:10 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
+Message-ID: <Z8ChIpP7pcq-1-Qz@Mac.home>
+References: <20250227131613.52683-1-urezki@gmail.com>
+ <20250227131613.52683-3-urezki@gmail.com>
+ <Z8CdB0Hzvdu5ZVSI@Mac.home>
+ <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v11 0/8] rust: Add IO polling
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250220070611.214262-1-fujita.tomonori@gmail.com>
-Date: Thu, 27 Feb 2025 14:29:45 -0300
-Cc: linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- netdev@vger.kernel.org,
- andrew@lunn.ch,
- hkallweit1@gmail.com,
- tmgross@umich.edu,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- benno.lossin@proton.me,
- a.hindborg@samsung.com,
- aliceryhl@google.com,
- anna-maria@linutronix.de,
- frederic@kernel.org,
- tglx@linutronix.de,
- arnd@arndb.de,
- jstultz@google.com,
- sboyd@kernel.org,
- mingo@redhat.com,
- peterz@infradead.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- tgunders@redhat.com,
- me@kloenk.dev,
- david.laight.linux@gmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4647720C-28CA-4E18-AD1E-55844CF078E6@collabora.com>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8b196c1-c1b5-4bf9-b1cb-dde8642cc34b@paulmck-laptop>
 
-Hi Fujita,
+On Thu, Feb 27, 2025 at 09:26:40AM -0800, Paul E. McKenney wrote:
+> On Thu, Feb 27, 2025 at 09:12:39AM -0800, Boqun Feng wrote:
+> > Hi Ulad,
+> > 
+> > I put these three patches into next (and misc.2025.02.27a) for some
+> > testing, hopefully it all goes well and they can make it v6.15.
+> > 
+> > A few tag changed below:
+> > 
+> > On Thu, Feb 27, 2025 at 02:16:13PM +0100, Uladzislau Rezki (Sony) wrote:
+> > > Switch for using of get_state_synchronize_rcu_full() and
+> > > poll_state_synchronize_rcu_full() pair to debug a normal
+> > > synchronize_rcu() call.
+> > > 
+> > > Just using "not" full APIs to identify if a grace period is
+> > > passed or not might lead to a false-positive kernel splat.
+> > > 
+> > > It can happen, because get_state_synchronize_rcu() compresses
+> > > both normal and expedited states into one single unsigned long
+> > > value, so a poll_state_synchronize_rcu() can miss GP-completion
+> > > when synchronize_rcu()/synchronize_rcu_expedited() concurrently
+> > > run.
+> > > 
+> > > To address this, switch to poll_state_synchronize_rcu_full() and
+> > > get_state_synchronize_rcu_full() APIs, which use separate variables
+> > > for expedited and normal states.
+> > > 
+> > > Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
+> > 
+> > I switch this into "Closes:" per checkpatch.
+> > 
+> > > Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
+> > > Reported-by: cheung wall <zzqq0103.hey@gmail.com>
+> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > 
+> > You seem to forget add Paul's Reviewed-by, so I add it in rcu/next.
+> > Would you or Paul double-check the Reviewed-by should be here?
+> 
+> I am good with keeping my Reviewed-by tags.
+> 
 
-Would you be interested in working on read_poll_timeout_atomic() as =
-well?
+Thank you!
 
-There would be a user for that.
+Regards,
+Boqun
 
-=E2=80=94 Daniel=20=
+> 							Thanx, Paul
+> 
+[...]
 
