@@ -1,362 +1,320 @@
-Return-Path: <linux-kernel+bounces-536717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F294AA4835E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:44:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CDBA4835F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C893AD795
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A309188366A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5067026B974;
-	Thu, 27 Feb 2025 15:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F49126E63B;
+	Thu, 27 Feb 2025 15:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kNKBtjjU"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mYn5gddv"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A552226A1CF
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A664526E620
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670888; cv=none; b=YzEsn0Jqjh5IamHO1toHndVPpN9GCtHXkw4U2nuxGEuSSnWAwnlCp7VIjCJ39pZ8ql+hi7OWaH2lnkTR97dXUDH8rAkGD8Nc7VHESDtsuu8HnrazVccPwitodHG4A/uRja3cTPEBuB1iliF0KEA0LVH4mZGVdSnBwqtcy2wx2SM=
+	t=1740670923; cv=none; b=APXt54qkbkTDKeT/ZtQFDkPrvtbX9B03bmeew6V50y0lu/HlnwvRCHWsiVRHBj/0+AKB2ZphhOv3McUkcYVxRvv+NtZVT1BAd03xfh7J7Idxc+riNMz2HsuQh3hFzz4fHKVRtH8IiC2RkjfyZqfDXxxkd2vizhFfbKz0G5jPyEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670888; c=relaxed/simple;
-	bh=Da5AnvMmGpZ4+PRGJTdejXKPe0Mw/BATivoU7g5Y1W4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kFmiM4mO/oSh5HIH+ByWXwXHVV/j1atjq+60q5OLVvQAmYJahy4ZdpQnS3r6+bzUcgLPBZKXeXLiT0ph6+3NfHMr9atd8LKBfIMdvZm2it48rMgBN83o64t1Qq7P1+GbWAk4WzB8QmlHyYAgr2fZJf+Q50NZdrnkq2oqGssfzYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kNKBtjjU; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so2442693a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:41:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740670886; x=1741275686; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpWebaG6ta7C4r+/QTI9Hpf7yd202gY2ilwfhDkC51w=;
-        b=kNKBtjjU13WpJoaIoPawp0ckzfYmLmHUODsrBzdw3sAWug+nXB0W+shDByC+MmXNuN
-         Z9uKB1HJIGDLoqX6EbpZ58TD/MJWvq858B8f3N4fSPpq4exUjzmuZfxuxxp6XXu++Zhu
-         4KbLDMYgj6tdri1AmAE58l17q0ZDWFbAvg4ER1po5W3tn2ImHlMpMjMycbsTxMTNcPgG
-         X5hieD3BT4cf632JuiPRP9J/HMKIc1icRAMsPHiTJXBdEbtbMawsO8vjLrub+tO1qIZB
-         41M4289/6PxItFiYSCtXdPVCjkIrqS0fo3AP4rYeDGqIIgY5xT1KlId9EdY1SES8Rk2D
-         2Abw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740670886; x=1741275686;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpWebaG6ta7C4r+/QTI9Hpf7yd202gY2ilwfhDkC51w=;
-        b=Xq/sYqUn2vSK7/mLJzFGV/pGkUdgGdmGKsVbn77AI8Sh5G1kJFSgS3HB2yekbsEjc3
-         QjOUMAhJWMr9PSjU5HzngMM2rdRI++PAQXdP10nf+ss4arxx215SJ9iaSoa1edhdbTNB
-         tJQ2Yk2YoMRHMY3/HKlEI88xkw99WY1AC03ecPFnleDUdL2F/r3Lx5TwUcs4ituBpuSA
-         wobUnjAKTdcKS0rx9Lo1nUaVF6kfvoA8ionWIHuXOlY5tAwz5SsKH6x1OlfPU9kji8in
-         rtM4MfDkQVhTARZXhbLHwNl7xsPL7UP2qXwISrHdTOkoyRdMoYm7lAVuaNcuTWaNjPva
-         PJkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTeTZGG9TywyCykskSF4UTF2oG5oZyUqlY+fSCKDzF9JmyOszGYlNdNzDK9b084a/5hWW2X1t1m+qGGhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpfh5Xo1D6IaHfUJG49eM0Qw1SJsM+xUlYJSqbry7IWhk6UgR
-	ZUURVM27rb87yyCEEq2gmn168/Q5+bOd/T8frOdQf+ubj/lmL54Alog2rRXcg718sA/dId7seTz
-	WVQ==
-X-Google-Smtp-Source: AGHT+IFr2Hi5hWjqDrFkQXi/BpmSscvvgpC48vIgUsBffnpafInukRPQsN67WY8M/RuByhyUtG6LR6vx2wo=
-X-Received: from pjbov6.prod.google.com ([2002:a17:90b:2586:b0:2fa:a30a:3382])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc44:b0:2f6:f107:fae6
- with SMTP id 98e67ed59e1d1-2fe68cf3f5fmr15885811a91.23.1740670885945; Thu, 27
- Feb 2025 07:41:25 -0800 (PST)
-Date: Thu, 27 Feb 2025 07:41:24 -0800
-In-Reply-To: <20250227041522.1734260-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1740670923; c=relaxed/simple;
+	bh=/pH/AP2pDhWaRgVtZJC8/LEMe2tRFFXiquD9vYJ4inQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=NJ6h7JHiWqlXECnPL556kCBCmXUTEa1R26UHga+YyuT+ldftycXSp2lssgpLDWjVbn/+Xb0rHO/aYAGQ7MN6ULKNnNdtqvppibKCfuNmj5pofIK5AzMnqiqvn8MDUWogJxIlfXScUcCos8JhVdIv6QfSfSnQGoEUwUkBe5U9C+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mYn5gddv; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51RFfQDe2206762
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 27 Feb 2025 07:41:26 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51RFfQDe2206762
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740670887;
+	bh=miBXCNSq5FF5x5V3+N1fWs3Zi52js77/5lX7Im9Fwko=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=mYn5gddvjraUbbzXZOxVSAKZGp8IRRXcIYnF/LPkdM6JdWRusMfewBnRuy7xjjdZl
+	 ciW6HUS+kh48rU44to4qE1DygEMnXPYB5kUd9YiWW4lmGScwWWmx8MKZEdRD/gKsGx
+	 PI+eJUstuovSremv/Kfirbm0rbiuT3MqsIrvyalHLCmmmL2/pZ1FcrTySdov1EP0zY
+	 60O0hGm9Bvk9v49psQUV19z+G+7G5o42ZupLm3hVjY+DayLeaCEHWfRfSVb7JJdw4+
+	 dOKcMpD4mQnzlMWKx4qguZ0Os/ft4qyEV6h7TflbrkQue3AD+k2fOw3g64kdvcId+s
+	 EZ+W/nZ7YS2Pw==
+Date: Thu, 27 Feb 2025 07:41:26 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+CC: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 05/10] x86: remove HIGHMEM64G support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250226213714.4040853-6-arnd@kernel.org>
+References: <20250226213714.4040853-1-arnd@kernel.org> <20250226213714.4040853-6-arnd@kernel.org>
+Message-ID: <572DCA31-1CCA-45FB-ADCD-29C24A527437@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227041522.1734260-1-mlevitsk@redhat.com>
-Message-ID: <Z8CHpJMdhWNDBr0E@google.com>
-Subject: Re: [PATCH] KVM: selftests: access_tracking_perf_test: add option to
- skip the sanity check
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-	James Houghton <jthoughton@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Anup Patel <anup@brainfault.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025, Maxim Levitsky wrote:
-> Add an option to skip sanity check of number of still idle pages,
-> and force it on, in case hypervisor or NUMA balancing
-> is detected.
-> 
-> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
-> ---
->  .../selftests/kvm/access_tracking_perf_test.c | 23 +++++++++++++++++--
->  .../testing/selftests/kvm/include/test_util.h |  1 +
->  tools/testing/selftests/kvm/lib/test_util.c   | 22 ++++++++++++++++++
->  3 files changed, 44 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> index 3c7defd34f56..eafaecf086c4 100644
-> --- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> +++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-> @@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
->  /* Whether to overlap the regions of memory vCPUs access. */
->  static bool overlap_memory_access;
->  
-> +static bool skip_sanity_check;
+On February 26, 2025 1:37:09 PM PST, Arnd Bergmann <arnd@kernel=2Eorg> wrot=
+e:
+>From: Arnd Bergmann <arnd@arndb=2Ede>
+>
+>The HIGHMEM64G support was added in linux-2=2E3=2E25 to support (then)
+>high-end Pentium Pro and Pentium III Xeon servers with more than 4GB of
+>addressing, NUMA and PCI-X slots started appearing=2E
+>
+>I have found no evidence of this ever being used in regular dual-socket
+>servers or consumer devices, all the users seem obsolete these days,
+>even by i386 standards:
+>
+> - Support for NUMA servers (NUMA-Q, IBM x440, unisys) was already
+>   removed ten years ago=2E
+>
+> - 4+ socket non-NUMA servers based on Intel 450GX/450NX, HP F8 and
+>   ServerWorks ServerSet/GrandChampion could theoretically still work
+>   with 8GB, but these were exceptionally rare even 20 years ago and
+>   would have usually been equipped with than the maximum amount of
+>   RAM=2E
+>
+> - Some SKUs of the Celeron D from 2004 had 64-bit mode fused off but
+>   could still work in a Socket 775 mainboard designed for the later
+>   Core 2 Duo and 8GB=2E Apparently most BIOSes at the time only allowed
+>   64-bit CPUs=2E
+>
+> - The rare Xeon LV "Sossaman" came on a few motherboards with
+>   registered DDR2 memory support up to 16GB=2E
+>
+> - In the early days of x86-64 hardware, there was sometimes the need
+>   to run a 32-bit kernel to work around bugs in the hardware drivers,
+>   or in the syscall emulation for 32-bit userspace=2E This likely still
+>   works but there should never be a need for this any more=2E
+>
+>PAE mode is still required to get access to the 'NX' bit on Atom
+>'Pentium M' and 'Core Duo' CPUs=2E
+>
+>Signed-off-by: Arnd Bergmann <arnd@arndb=2Ede>
+>---
+> Documentation/admin-guide/kdump/kdump=2Erst     |  4 --
+> Documentation/arch/x86/usb-legacy-support=2Erst | 11 +----
+> arch/x86/Kconfig                              | 46 +++----------------
+> arch/x86/configs/xen=2Econfig                   |  2 -
+> arch/x86/include/asm/page_32_types=2Eh          |  4 +-
+> arch/x86/mm/init_32=2Ec                         |  9 +---
+> 6 files changed, 11 insertions(+), 65 deletions(-)
+>
+>diff --git a/Documentation/admin-guide/kdump/kdump=2Erst b/Documentation/=
+admin-guide/kdump/kdump=2Erst
+>index 5376890adbeb=2E=2E1f7f14c6e184 100644
+>--- a/Documentation/admin-guide/kdump/kdump=2Erst
+>+++ b/Documentation/admin-guide/kdump/kdump=2Erst
+>@@ -180,10 +180,6 @@ Dump-capture kernel config options (Arch Dependent, =
+i386 and x86_64)
+> 1) On i386, enable high memory support under "Processor type and
+>    features"::
+>=20
+>-	CONFIG_HIGHMEM64G=3Dy
+>-
+>-   or::
+>-
+> 	CONFIG_HIGHMEM4G
+>=20
+> 2) With CONFIG_SMP=3Dy, usually nr_cpus=3D1 need specified on the kernel
+>diff --git a/Documentation/arch/x86/usb-legacy-support=2Erst b/Documentat=
+ion/arch/x86/usb-legacy-support=2Erst
+>index e01c08b7c981=2E=2Eb17bf122270a 100644
+>--- a/Documentation/arch/x86/usb-legacy-support=2Erst
+>+++ b/Documentation/arch/x86/usb-legacy-support=2Erst
+>@@ -20,11 +20,7 @@ It has several drawbacks, though:
+>    features (wheel, extra buttons, touchpad mode) of the real PS/2 mouse=
+ may
+>    not be available=2E
+>=20
+>-2) If CONFIG_HIGHMEM64G is enabled, the PS/2 mouse emulation can cause
+>-   system crashes, because the SMM BIOS is not expecting to be in PAE mo=
+de=2E
+>-   The Intel E7505 is a typical machine where this happens=2E
+>-
+>-3) If AMD64 64-bit mode is enabled, again system crashes often happen,
+>+2) If AMD64 64-bit mode is enabled, again system crashes often happen,
+>    because the SMM BIOS isn't expecting the CPU to be in 64-bit mode=2E =
+ The
+>    BIOS manufacturers only test with Windows, and Windows doesn't do 64-=
+bit
+>    yet=2E
+>@@ -38,11 +34,6 @@ Problem 1)
+>   compiled-in, too=2E
+>=20
+> Problem 2)
+>-  can currently only be solved by either disabling HIGHMEM64G
+>-  in the kernel config or USB Legacy support in the BIOS=2E A BIOS updat=
+e
+>-  could help, but so far no such update exists=2E
+>-
+>-Problem 3)
+>   is usually fixed by a BIOS update=2E Check the board
+>   manufacturers web site=2E If an update is not available, disable USB
+>   Legacy support in the BIOS=2E If this alone doesn't help, try also add=
+ing
+>diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>index 4a1205b22ae2=2E=2Ed785cb368125 100644
+>--- a/arch/x86/Kconfig
+>+++ b/arch/x86/Kconfig
+>@@ -1387,15 +1387,11 @@ config X86_CPUID
+> 	  with major 203 and minors 0 to 31 for /dev/cpu/0/cpuid to
+> 	  /dev/cpu/31/cpuid=2E
+>=20
+>-choice
+>-	prompt "High Memory Support"
+>-	default HIGHMEM4G
+>+config HIGHMEM4G
+>+	bool "High Memory Support"
+> 	depends on X86_32
+>-
+>-config NOHIGHMEM
+>-	bool "off"
+> 	help
+>-	  Linux can use up to 64 Gigabytes of physical memory on x86 systems=2E
+>+	  Linux can use up to 4 Gigabytes of physical memory on x86 systems=2E
+> 	  However, the address space of 32-bit x86 processors is only 4
+> 	  Gigabytes large=2E That means that, if you have a large amount of
+> 	  physical memory, not all of it can be "permanently mapped" by the
+>@@ -1411,38 +1407,9 @@ config NOHIGHMEM
+> 	  possible=2E
+>=20
+> 	  If the machine has between 1 and 4 Gigabytes physical RAM, then
+>-	  answer "4GB" here=2E
+>+	  answer "Y" here=2E
+>=20
+>-	  If more than 4 Gigabytes is used then answer "64GB" here=2E This
+>-	  selection turns Intel PAE (Physical Address Extension) mode on=2E
+>-	  PAE implements 3-level paging on IA32 processors=2E PAE is fully
+>-	  supported by Linux, PAE mode is implemented on all recent Intel
+>-	  processors (Pentium Pro and better)=2E NOTE: If you say "64GB" here,
+>-	  then the kernel will not boot on CPUs that don't support PAE!
+>-
+>-	  The actual amount of total physical memory will either be
+>-	  auto detected or can be forced by using a kernel command line option
+>-	  such as "mem=3D256M"=2E (Try "man bootparam" or see the documentation=
+ of
+>-	  your boot loader (lilo or loadlin) about how to pass options to the
+>-	  kernel at boot time=2E)
+>-
+>-	  If unsure, say "off"=2E
+>-
+>-config HIGHMEM4G
+>-	bool "4GB"
+>-	help
+>-	  Select this if you have a 32-bit processor and between 1 and 4
+>-	  gigabytes of physical RAM=2E
+>-
+>-config HIGHMEM64G
+>-	bool "64GB"
+>-	depends on X86_HAVE_PAE
+>-	select X86_PAE
+>-	help
+>-	  Select this if you have a 32-bit processor and more than 4
+>-	  gigabytes of physical RAM=2E
+>-
+>-endchoice
+>+	  If unsure, say N=2E
+>=20
+> choice
+> 	prompt "Memory split" if EXPERT
+>@@ -1488,8 +1455,7 @@ config PAGE_OFFSET
+> 	depends on X86_32
+>=20
+> config HIGHMEM
+>-	def_bool y
+>-	depends on X86_32 && (HIGHMEM64G || HIGHMEM4G)
+>+	def_bool HIGHMEM4G
+>=20
+> config X86_PAE
+> 	bool "PAE (Physical Address Extension) Support"
+>diff --git a/arch/x86/configs/xen=2Econfig b/arch/x86/configs/xen=2Econfi=
+g
+>index 581296255b39=2E=2Ed5d091e03bd3 100644
+>--- a/arch/x86/configs/xen=2Econfig
+>+++ b/arch/x86/configs/xen=2Econfig
+>@@ -1,6 +1,4 @@
+> # global x86 required specific stuff
+>-# On 32-bit HIGHMEM4G is not allowed
+>-CONFIG_HIGHMEM64G=3Dy
+> CONFIG_64BIT=3Dy
+>=20
+> # These enable us to allow some of the
+>diff --git a/arch/x86/include/asm/page_32_types=2Eh b/arch/x86/include/as=
+m/page_32_types=2Eh
+>index faf9cc1c14bb=2E=2E25c32652f404 100644
+>--- a/arch/x86/include/asm/page_32_types=2Eh
+>+++ b/arch/x86/include/asm/page_32_types=2Eh
+>@@ -11,8 +11,8 @@
+>  * a virtual address space of one gigabyte, which limits the
+>  * amount of physical memory you can use to about 950MB=2E
+>  *
+>- * If you want more physical memory than this then see the CONFIG_HIGHME=
+M4G
+>- * and CONFIG_HIGHMEM64G options in the kernel configuration=2E
+>+ * If you want more physical memory than this then see the CONFIG_VMSPLI=
+T_2G
+>+ * and CONFIG_HIGHMEM4G options in the kernel configuration=2E
+>  */
+> #define __PAGE_OFFSET_BASE	_AC(CONFIG_PAGE_OFFSET, UL)
+> #define __PAGE_OFFSET		__PAGE_OFFSET_BASE
+>diff --git a/arch/x86/mm/init_32=2Ec b/arch/x86/mm/init_32=2Ec
+>index ac41b1e0940d=2E=2Ef288aad8dc74 100644
+>--- a/arch/x86/mm/init_32=2Ec
+>+++ b/arch/x86/mm/init_32=2Ec
+>@@ -582,7 +582,7 @@ static void __init lowmem_pfn_init(void)
+> 	"only %luMB highmem pages available, ignoring highmem size of %luMB!\n"
+>=20
+> #define MSG_HIGHMEM_TRIMMED \
+>-	"Warning: only 4GB will be used=2E Use a HIGHMEM64G enabled kernel!\n"
+>+	"Warning: only 4GB will be used=2E Support for for CONFIG_HIGHMEM64G wa=
+s removed!\n"
+> /*
+>  * We have more RAM than fits into lowmem - we try to put it into
+>  * highmem, also taking the highmem=3Dx boot parameter into account:
+>@@ -606,18 +606,13 @@ static void __init highmem_pfn_init(void)
+> #ifndef CONFIG_HIGHMEM
+> 	/* Maximum memory usable is what is directly addressable */
+> 	printk(KERN_WARNING "Warning only %ldMB will be used=2E\n", MAXMEM>>20)=
+;
+>-	if (max_pfn > MAX_NONPAE_PFN)
+>-		printk(KERN_WARNING "Use a HIGHMEM64G enabled kernel=2E\n");
+>-	else
+>-		printk(KERN_WARNING "Use a HIGHMEM enabled kernel=2E\n");
+>+	printk(KERN_WARNING "Use a HIGHMEM enabled kernel=2E\n");
+> 	max_pfn =3D MAXMEM_PFN;
+> #else /* !CONFIG_HIGHMEM */
+>-#ifndef CONFIG_HIGHMEM64G
+> 	if (max_pfn > MAX_NONPAE_PFN) {
+> 		max_pfn =3D MAX_NONPAE_PFN;
+> 		printk(KERN_WARNING MSG_HIGHMEM_TRIMMED);
+> 	}
+>-#endif /* !CONFIG_HIGHMEM64G */
+> #endif /* !CONFIG_HIGHMEM */
+> }
+>=20
 
-I think it makes sense to keep the sanity check, but to warn instead of asserting,
-which is already the proposed behavior.  I.e. the sanity check is still there,
-it's only the assert that's being "skipped".  So maybe something like this?
+One of the generations of kernel=2Eorg ran on a dual socket system with 6 =
+GiB RAM=2E It was a mess; basically it achieved less than 50% memory utiliz=
+ation because of highmem=2E
 
-static bool warn_on_too_many_idle_pages;
-
-> +
->  struct test_params {
->  	/* The backing source for the region of memory. */
->  	enum vm_mem_backing_src_type backing_src;
-> @@ -185,7 +187,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
->  	 */
->  	if (still_idle >= pages / 10) {
->  #ifdef __x86_64__
-
-Gah, the assert needs to be applied to all architectures.  Commit 6336a810db5c
-("KVM: selftests: replace assertion with warning in access_tracking_perf_test")
-dropped it entirely.  It got restored by 8fcee0421386 ("KVM: selftests: Restore
-assert for non-nested VMs in access tracking test"), but only for x86.
-
-Maybe do that in a follow-up patch?  Or alternatively, introduce the boolean in a
-prep patch, then enable the assert for !x86, and then finally add the command
-line option to make it controllable.
-
-I'd probably vote for the second option?
-
-> -		TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-> +		TEST_ASSERT(skip_sanity_check,
->  			    "vCPU%d: Too many pages still idle (%lu out of %lu)",
->  			    vcpu_idx, still_idle, pages);
->  #endif
-> @@ -342,6 +344,8 @@ static void help(char *name)
->  	printf(" -v: specify the number of vCPUs to run.\n");
->  	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
->  	       "     them into a separate region of memory for each vCPU.\n");
-> +	printf(" -u: Skip check that after dirtying the guest memory, most (90%%) of\n"
-
-Maybe '-w' if we go with something along the lines of "warn_on..."
-
-> +	       "it is reported as dirty again");
->  	backing_src_help("-s");
->  	puts("");
->  	exit(0);
-> @@ -359,7 +363,7 @@ int main(int argc, char *argv[])
->  
->  	guest_modes_append_default();
->  
-> -	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
-> +	while ((opt = getopt(argc, argv, "hm:b:v:os:u")) != -1) {
->  		switch (opt) {
->  		case 'm':
->  			guest_modes_cmdline(optarg);
-> @@ -376,6 +380,9 @@ int main(int argc, char *argv[])
->  		case 's':
->  			params.backing_src = parse_backing_src_type(optarg);
->  			break;
-> +		case 'u':
-> +			skip_sanity_check = true;
-
-Do we want to allow the user to force the assert?  E.g. move the logic that sets
-the default value to before the parsing of the command line, and then make this
-something like:
-
-			warn_on_too_many_idle_pages = atoi_positive(optarg);
-			break;
-
-> +			break;
->  		case 'h':
->  		default:
->  			help(argv[0]);
-> @@ -386,6 +393,18 @@ int main(int argc, char *argv[])
->  	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
->  	__TEST_REQUIRE(page_idle_fd >= 0,
->  		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-> +
-
-Extra newline.
-
-> +
-> +	if (skip_sanity_check == false) {
-
-	if (!skip_sanity_check) {
-
-> +		if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
-
-This needs to be guarded with __x86_64__.
-
-> +			printf("Skipping idle page count sanity check, because the test is run nested\n");
-> +			skip_sanity_check = true;
-> +		} else if (is_numa_balancing_enabled()) {
-> +			printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
-> +			skip_sanity_check = true;
-> +		}
-> +	}
-> +
->  	close(page_idle_fd);
->  
->  	for_each_guest_mode(run_test, &params);
-> diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-> index 3e473058849f..1bc9b0a92427 100644
-> --- a/tools/testing/selftests/kvm/include/test_util.h
-> +++ b/tools/testing/selftests/kvm/include/test_util.h
-> @@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
->  void backing_src_help(const char *flag);
->  enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
->  long get_run_delay(void);
-> +bool is_numa_balancing_enabled(void);
->  
->  /*
->   * Whether or not the given source type is shared memory (as opposed to
-> diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-> index 8ed0b74ae837..1271863613fa 100644
-> --- a/tools/testing/selftests/kvm/lib/test_util.c
-> +++ b/tools/testing/selftests/kvm/lib/test_util.c
-> @@ -163,6 +163,28 @@ size_t get_trans_hugepagesz(void)
->  	return size;
->  }
->  
-> +
-
-Extra newline.
-
-> +bool is_numa_balancing_enabled(void)
-> +{
-> +	int ret;
-> +	int val;
-> +	struct stat statbuf;
-> +	FILE *f;
-> +
-> +	ret = stat("/proc/sys/kernel/numa_balancing", &statbuf);
-> +	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
-> +			"Error in stating /proc/sys/kernel/numa_balancing");
-
-Align indentation.
-
-> +	if (ret != 0)
-
-	if (ret)
-
-> +		return false;
-> +
-> +	f = fopen("/proc/sys/kernel/numa_balancing", "r");
-
-Pretty sure this needs to assert on f being valid.
-
-> +	ret = fscanf(f, "%d", &val);
-
-file needs to be closed.
-
-Actually, rather than fix these things, extract the mechanical aspects of the THP
-code to helpers (patch at the bottom), and then this can be:
-
-bool is_numa_balancing_enabled(void)
-{
-	const char *numa_balancing = "/proc/sys/kernel/numa_balancing";
-
-	return test_sysfs_path(numa_balancing) && get_sysfs_val(numa_balancing);
-}
-
-> +	TEST_ASSERT(val == 0 || val == 1, "Unexpected value in /proc/sys/kernel/numa_balancing");
-
-I vote to omit this sanity check.  The odds of numa_balancing having a different
-value *and* the bad value going unnoticed are quite low, so I'd prefer to make
-the helper short and simple.
-
----
-From: Sean Christopherson <seanjc@google.com>
-Date: Thu, 27 Feb 2025 07:31:09 -0800
-Subject: [PATCH] KVM: selftests: Extract guts of THP accessor to standalone
- sysfs helpers
-
-Extract the guts of thp_configured() and get_trans_hugepagesz() to
-standalone helpers so that the core logic can be reused for other sysfs
-files, e.g. to query numa_balancing.
-
-Opportunistically assert that the initial fscanf() read at least one byte,
-and add a comment explaining the second call to fscanf().
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/lib/test_util.c | 35 ++++++++++++++-------
- 1 file changed, 24 insertions(+), 11 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-index 8ed0b74ae837..3dc8538f5d69 100644
---- a/tools/testing/selftests/kvm/lib/test_util.c
-+++ b/tools/testing/selftests/kvm/lib/test_util.c
-@@ -132,37 +132,50 @@ void print_skip(const char *fmt, ...)
- 	puts(", skipping test");
- }
- 
--bool thp_configured(void)
-+static bool test_sysfs_path(const char *path)
- {
--	int ret;
- 	struct stat statbuf;
-+	int ret;
- 
--	ret = stat("/sys/kernel/mm/transparent_hugepage", &statbuf);
-+	ret = stat(path, &statbuf);
- 	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
--		    "Error in stating /sys/kernel/mm/transparent_hugepage");
-+		    "Error in stat()ing '%s'", path);
- 
- 	return ret == 0;
- }
- 
--size_t get_trans_hugepagesz(void)
-+bool thp_configured(void)
-+{
-+	return test_sysfs_path("/sys/kernel/mm/transparent_hugepage");
-+}
-+
-+static size_t get_sysfs_val(const char *path)
- {
- 	size_t size;
- 	FILE *f;
- 	int ret;
- 
--	TEST_ASSERT(thp_configured(), "THP is not configured in host kernel");
--
--	f = fopen("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "r");
--	TEST_ASSERT(f != NULL, "Error in opening transparent_hugepage/hpage_pmd_size");
-+	f = fopen(path, "r");
-+	TEST_ASSERT(f, "Error opening '%s'", path);
- 
- 	ret = fscanf(f, "%ld", &size);
-+	TEST_ASSERT(ret > 0, "Error reading '%s'", path);
-+
-+	/* Re-scan the input stream to verify the entire file was read. */
- 	ret = fscanf(f, "%ld", &size);
--	TEST_ASSERT(ret < 1, "Error reading transparent_hugepage/hpage_pmd_size");
-+	TEST_ASSERT(ret < 1, "Error reading '%s'", path);
-+
- 	fclose(f);
--
- 	return size;
- }
- 
-+size_t get_trans_hugepagesz(void)
-+{
-+	TEST_ASSERT(thp_configured(), "THP is not configured in host kernel");
-+
-+	return get_sysfs_val("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size");
-+}
-+
- size_t get_def_hugetlb_pagesz(void)
- {
- 	char buf[64];
-
-base-commit: c2b800261f01eda7e811b588eaa6324cfcfdecc6
--- 
-
+The next generation after that was 64 bits  hardware and software=2E
 
