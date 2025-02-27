@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-535678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CA5A475E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:17:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D209BA475E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB0116B1CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17DC7A3DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F2621ABA1;
-	Thu, 27 Feb 2025 06:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4753D21B9E3;
+	Thu, 27 Feb 2025 06:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CMO8HFcs"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="I6T6DoQy"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB131EA65;
-	Thu, 27 Feb 2025 06:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740637018; cv=none; b=BfsAK6yzawK9qs47XRJMvjxGBenUa+zSFZA9zBkgRpi68ZwMX2xNYcBpnhlkuFGcmSrNOenLIhmH/ybTHpU5H6G/2GhlrMW+WhL4DefnR4GM+dLQ0YrDQ9f4MUGX8CWsbr9w6N6D6F11C1dzx9AUXrwTQDKbQsq3YE9cHrPsKGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740637018; c=relaxed/simple;
-	bh=VOygxrRuQi0MuwwrjmEfkbNUSuc27WpWl959Ony6xE8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H5kUacuRFDeKu/2Ihz8nwKb/VOca0H2F3t8/84+WEbo7Nn3l5pWR+yLRNybYt5m5jlCRZY7nvYRrcyGJHRbPLKUw2CkqYo7+frTnGjhADBuHlPEE2w7IP3mRWrvglsqCqhrTjrVbq8H4ad/r8V8z4iCJiRclIpIsRkIh1dvrj0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CMO8HFcs; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51R6GmwR1771632
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 27 Feb 2025 00:16:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1740637008;
-	bh=AtiE7jmXgdQuBTp//fQBjeoSIa2kWNKuBTEAPBRs2QA=;
-	h=From:To:CC:Subject:Date;
-	b=CMO8HFcszCsgkK2Te9V+JopO5Flgd/AUpem1gtxpsO3vnLYXXDkTFEj9Z1B6AMY5I
-	 upZlFOYFfLs4Gcj/f+XMG531OtEeR0mKDQuGVLexYjuH2zikEz/KwBje7Gp5qJY8PB
-	 8NQNFMI/VkUriQcSGruwnXxlxOV9eEblJP9hMgaA=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51R6Gm67017400;
-	Thu, 27 Feb 2025 00:16:48 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Feb 2025 00:16:48 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Feb 2025 00:16:48 -0600
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51R6GiYa034038;
-	Thu, 27 Feb 2025 00:16:44 -0600
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <j-choudhary@ti.com>,
-        <rogerq@kernel.org>
-CC: <stable@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
-Date: Thu, 27 Feb 2025 11:46:43 +0530
-Message-ID: <20250227061643.144026-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649A31DDD1;
+	Thu, 27 Feb 2025 06:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740637263; cv=pass; b=I7HvZazhB+1ZxTNYAOOHzWPvxJFM5eaCMtKgmIuCX56bQkukB3VcaJAK75q9yb8vpBMQO1Ap6Rzi6SNZsKhErXDCVNnDROJVOANoIc4uGsXG3ZftkasbQgg61Aehsyp66kokzJmbpm4lrT2jHjdhM2EGyxZJfm2G68gzE63U1Yo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740637263; c=relaxed/simple;
+	bh=QXFk6AMhbzhCA2gLl5st0ygMgRkWYmUuvZgfjp3wpRk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OXX3gCMMLApSWThpKyQ9uscSzg838wIz8WHJelosrm+TUzxFXv4dh5vvu0FEHxWkqAPcFVmwlcJKJui/syEin/x6qaW+S+Sj3clDK3LriM7yyP4FCblNHWZDczECBNlsQn7DnkZELyMY4yi9sKcq6wPmolG3E5N8lST+B4Z0MGg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=I6T6DoQy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740637213; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CBj+2u58FaLlfXUL5r4ElOi/IpxDJUdL5DLsNEHNk0+UdTf0KDAKmpQs29KN2wHLP9/UUsQgiHaFf2mLEtRXdtkxAOFjk5p7D77egssavIxWXcksgod1qfC2e6z2J999I8dM2W7bPgdcWUTxk0toEcEOpEB0gdkCyyGg9VlroKU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740637213; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ESKAXw1Tt8hbvdnODg8HBJ11zlfZzK9vXWlIshKQpnM=; 
+	b=eyor/mD0YxxN/+q0uTnIbXdi7xJWvjgNigMgz8rS5ydyCPMv7a3KBmIsu7MBqRtIkI7mdjiR8uUqRA0dE/B/r3/YCZy4LUrU0muqSyeh93ziWKJoboj4caNWqbmFxTL7Z6APJZeNKyWwAtzNqkvQBx4hAmhFqpnGSEGmX3vGkzg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740637213;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ESKAXw1Tt8hbvdnODg8HBJ11zlfZzK9vXWlIshKQpnM=;
+	b=I6T6DoQyMwenD8Jj/4OugRF2aKDRyqQsd/tTY6GcNUy4pt7BKeT4PEW00BiaVpz9
+	fh+sT/lcbefoqcFBM6TegVOlcc3bkxh+DPX1SeXTVMpgetIWzaLT7nsc9ycU3ep1hw8
+	GzLi3NENYsWzsPypocvxxDRm88OXIufDY7H8cSoo=
+Received: by mx.zohomail.com with SMTPS id 1740637210671337.5440148916407;
+	Wed, 26 Feb 2025 22:20:10 -0800 (PST)
+Message-ID: <82e5a342-c82e-40c4-88a9-645a70420aa0@collabora.com>
+Date: Thu, 27 Feb 2025 09:20:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/6] media: platform: synopsys: Add support for HDMI
+ input driver
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+ Heiko Stuebner <heiko@sntech.de>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+References: <20250227055025.766018-1-dmitry.osipenko@collabora.com>
+ <20250227055025.766018-4-dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250227055025.766018-4-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Commit under Fixes added the 'idle-states' property for SERDES4 lane muxing
-without defining the corresponding register offsets and masks for it in the
-'mux-reg-masks' property within the 'serdes_ln_ctrl' node.
+On 2/27/25 08:50, Dmitry Osipenko wrote:
+> +struct hdmirx_cec *snps_hdmirx_cec_register(struct hdmirx_cec_data *data)
+> +{
+> +	struct hdmirx_cec *cec;
+> +	unsigned int irqs;
+> +	int ret;
+> +
+> +	/*
+> +	 * Our device is just a convenience - we want to link to the real
+> +	 * hardware device here, so that userspace can see the association
+> +	 * between the HDMI hardware and its associated CEC chardev.
+> +	 */
+> +	cec = devm_kzalloc(data->dev, sizeof(*cec), GFP_KERNEL);
+> +	if (!cec)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	cec->dev = data->dev;
+> +	cec->irq = data->irq;
+> +	cec->ops = data->ops;
+> +	cec->hdmirx = data->hdmirx;
+> +
+> +	hdmirx_cec_update_bits(cec, GLOBAL_SWENABLE, CEC_ENABLE, CEC_ENABLE);
+> +	hdmirx_cec_update_bits(cec, CEC_CONFIG, RX_AUTO_DRIVE_ACKNOWLEDGE,
+> +			       RX_AUTO_DRIVE_ACKNOWLEDGE);
+> +
+> +	hdmirx_cec_write(cec, CEC_TX_COUNT, 0);
+> +	hdmirx_cec_write(cec, CEC_INT_MASK_N, 0);
+> +	hdmirx_cec_write(cec, CEC_INT_CLEAR, ~0);
+> +
+> +	cec->adap = cec_allocate_adapter(&hdmirx_cec_ops, cec, "snps-hdmirx",
+> +					 CEC_CAP_DEFAULTS | CEC_CAP_MONITOR_ALL,
+> +					 CEC_MAX_LOG_ADDRS);
+> +	if (IS_ERR(cec->adap)) {
+> +		dev_err(cec->dev, "cec adapter allocation failed\n");
+> +		return ERR_CAST(cec->adap);
+> +	}
+> +
+> +	/* override the module pointer */
+> +	cec->adap->owner = THIS_MODULE;
+> +
+> +	ret = devm_add_action(cec->dev, hdmirx_cec_del, cec);
+> +	if (ret) {
+> +		cec_delete_adapter(cec->adap);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	irq_set_status_flags(cec->irq, IRQ_NOAUTOEN);
+> +
+> +	ret = devm_request_threaded_irq(cec->dev, cec->irq,
+> +					hdmirx_cec_hardirq,
+> +					hdmirx_cec_thread, IRQF_ONESHOT,
+> +					"rk_hdmirx_cec", cec->adap);
+> +	if (ret) {
+> +		dev_err(cec->dev, "cec irq request failed\n");
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	cec->notify = cec_notifier_cec_adap_register(cec->dev,
+> +						     NULL, cec->adap);
 
-Fix this.
+It now occurred to me that this cec->notify also should be not needed
+for this driver and *everything* related to CEC notifiers should be
+removed. Hans, is this correct or I'm missing something?
 
-Fixes: 7287d423f138 ("arm64: dts: ti: k3-j784s4-main: Add system controller and SERDES lane mux")
-Cc: stable@vger.kernel.org
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-
-Hello,
-
-This patch is based on commit
-dd83757f6e68 Merge tag 'bcachefs-2025-02-26' of git://evilpiepirate.org/bcachefs
-of the master branch of Mainline Linux.
-
-Regards,
-Siddharth.
-
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 83bbf94b58d1..a5fefafcba74 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -84,7 +84,9 @@ serdes_ln_ctrl: mux-controller@4080 {
- 					<0x10 0x3>, <0x14 0x3>, /* SERDES1 lane0/1 select */
- 					<0x18 0x3>, <0x1c 0x3>, /* SERDES1 lane2/3 select */
- 					<0x20 0x3>, <0x24 0x3>, /* SERDES2 lane0/1 select */
--					<0x28 0x3>, <0x2c 0x3>; /* SERDES2 lane2/3 select */
-+					<0x28 0x3>, <0x2c 0x3>, /* SERDES2 lane2/3 select */
-+					<0x30 0x3>, <0x34 0x3>, /* SERDES4 lane0/1 select */
-+					<0x38 0x3>, <0x3c 0x3>; /* SERDES4 lane2/3 select */
- 			idle-states = <J784S4_SERDES0_LANE0_PCIE1_LANE0>,
- 				      <J784S4_SERDES0_LANE1_PCIE1_LANE1>,
- 				      <J784S4_SERDES0_LANE2_IP3_UNUSED>,
 -- 
-2.34.1
-
+Best regards,
+Dmitry
 
