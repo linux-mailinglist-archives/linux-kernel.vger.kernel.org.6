@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-536463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5147A47FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:51:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEB6A48016
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B6D3A8AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6A16F03B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E5E22FF25;
-	Thu, 27 Feb 2025 13:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0050232379;
+	Thu, 27 Feb 2025 13:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VjM/TY+M"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7PEQG2j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBE4225408;
-	Thu, 27 Feb 2025 13:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8D723024D;
+	Thu, 27 Feb 2025 13:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664083; cv=none; b=dQsJ+fKNU4hOlGVRuzzeHFvsYbHN+OzYgY91zWtg603EGiWlG4teOZZ4kV2JHQVVm5nluW1NqH+VvdYGbcFZTlU84mskNNAwqRABBqwNZAsyr7OUJK7C+w8aq77Um83v4WzEIatod3lNspPEgv7zrku4mjD4319pK2BEZXxldbA=
+	t=1740664104; cv=none; b=GVzhsVCbEhYvgPMYTvvYKfqfNQbeJM9gXcG7l12ePwjm32M2ryDtyzMX4Y5zK8fo4nhzeL3RUrKPrisc4kNPdxQOYVB18bbg0PYCFcDaLzBi/8UPT3Q0Go1TLFfgL5J+fuaKMzU6J+M5yOevhwl50voAigF+SRpy9H8zXlTo2rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664083; c=relaxed/simple;
-	bh=wD85VJQ8lARU3IOIS7ujrn+8LZk9cO7XYm4TGlkQQKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Efjtob3zmhNURZfdTgXtfqZTCt/poyzT1fNdoZhrndGtSuoyMlJoGnfRS+9mJ5kTDUf4VuENNMsMiqxMXjUzrVW5e0WwAYVOE/16PwgaLbBAcDqF4ywJDV6SjJZ03NBSLANBURrEKnXSHHOjgKkSacMVe0lsP+RGEsiXIuWPRYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VjM/TY+M; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=z2VNcrufiCKj7eFAmSfO6YQZUc/4GuUjSOvR4L9XN8o=; b=VjM/TY+MXccsyzI6ksj8zDo9In
-	yFoyfRsMmdidwKCGMPw1blkR3xTStw1bxHGpgycjtHDOsEnqExtNS3RQIudklQ8ucmhjj/B4S1SWP
-	XZsbM1ax1tchMRmjs0fXdGMprPgX+3Ab2pssCBqoQkjazkJQI0GjsRlxtyc69Y/C4pOw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tneEx-000bcT-JT; Thu, 27 Feb 2025 14:47:51 +0100
-Date: Thu, 27 Feb 2025 14:47:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	David Wu <david.wu@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	netdev@vger.kernel.org,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2 2/3] ethernet: stmmac: dwmac-rk: Add gmac support for
- rk3562
-Message-ID: <f7146c95-85dd-4e5f-99b4-83a5d1b6fbd1@lunn.ch>
-References: <20250227110652.2342729-1-kever.yang@rock-chips.com>
- <20250227110652.2342729-2-kever.yang@rock-chips.com>
+	s=arc-20240116; t=1740664104; c=relaxed/simple;
+	bh=+0o56Rl9c9XlxO66ciG8cF7751qtwRokbDOXu3oKKI4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FMFKyocHrZSA/TlKZnIb1X6A/TMi9N72lH4SDCKr0X1bCQ9bRXaqP+vqJFFSNOgakaqqzfJtpSNC4vXHeX+UMliVpgXdUTTIMcG9/x89fjLp8Yuz1BAaN5Q78qwrfrWim6cKeGuXMIAaAJ3N7uclDuMSaxvK+lNQ0x/WI3dUwzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7PEQG2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E80BC4CEDD;
+	Thu, 27 Feb 2025 13:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740664103;
+	bh=+0o56Rl9c9XlxO66ciG8cF7751qtwRokbDOXu3oKKI4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=u7PEQG2j83U1EUgccAsv7ZZeyzoXGP5E3eyEnhw4NoElI1P1PQduAFpk3Aw26XQga
+	 MU1FsSM2xWeVk3888IvozG2rU0czOy6ksHQKL+ms88vEKd69Oz3Wn/JfI5RXTFTwNk
+	 wfGNc/kEM3DNOFtXZ34ZRYeTDGKQ9rq2QA/8JJ070MZrbICKSyOueWiZTR8CewZk/4
+	 YNa2OgN5lkcQjeMyprtE571tUFUuQFiRLywSCD55mJu1bl6w3MNEN7o1f2vw9759LK
+	 TWM2LHQPLAcDuMVzwA6GP/6GMrZpDf8H3uZGfG3Gq2L3gj60l5E8fYaRb6MO8wqJWV
+	 z16TlfgV2NvRQ==
+From: Mark Brown <broonie@kernel.org>
+To: heiko@sntech.de, Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Simon Xue <xxm@rock-chips.com>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org, 
+ Chris Morgan <macromorgan@hotmail.com>, 
+ Frank Wang <frank.wang@rock-chips.com>, Jamie Iles <jamie@jamieiles.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ Jonas Karlman <jonas@kwiboo.se>, Johan Jonker <jbx6244@gmail.com>, 
+ David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+ linux-i2c@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>, 
+ Simona Vetter <simona@ffwll.ch>, Elaine Zhang <zhangqing@rock-chips.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Finley Xiao <finley.xiao@rock-chips.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ FUKAUMI Naoki <naoki@radxa.com>, linux-pwm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-serial@vger.kernel.org, 
+ Michael Riesch <michael.riesch@wolfvision.net>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ulf.hansson@linaro.org, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, devicetree@vger.kernel.org, 
+ Diederik de Haas <didi.debian@cknow.org>, linux-watchdog@vger.kernel.org, 
+ Rob Herring <robh@kernel.org>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Shresth Prasad <shresthprasad7@gmail.com>, Tim Lunn <tim@feathertop.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ linux-arm-kernel@lists.infradead.org, Jisheng Zhang <jszhang@kernel.org>, 
+ Dragan Simic <dsimic@manjaro.org>, linux-mmc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+In-Reply-To: <20250227111913.2344207-1-kever.yang@rock-chips.com>
+References: <20250227111913.2344207-1-kever.yang@rock-chips.com>
+Subject: Re: (subset) [PATCH v3 00/15] rockchip: Add rk3562 SoC and evb
+ support
+Message-Id: <174066409262.43847.18143301735398340521.b4-ty@kernel.org>
+Date: Thu, 27 Feb 2025 13:48:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227110652.2342729-2-kever.yang@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Thu, Feb 27, 2025 at 07:06:51PM +0800, Kever Yang wrote:
-> From: David Wu <david.wu@rock-chips.com>
+On Thu, 27 Feb 2025 19:18:58 +0800, Kever Yang wrote:
+> This patch set adds rk3562 SoC and its evb support.
 > 
-> Add constants and callback functions for the dwmac on RK3562 soc.
-> As can be seen, the base structure is the same.
+> I have split out patches need driver change for different subsystem.
+> And all the modules with dt-binding document update in this patch set
+> do not need any driver change. I put them together to make it clear we
+> have a new SoC and board to use the new compatible. Please pick up the
+> patch for your subsystem, or please let me know if the patch has to
+> send separate.
 > 
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> 
-> Changes in v2:
-> - Collect review tag
-> 
->  .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 207 +++++++++++++++++-
->  1 file changed, 205 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index a4dc89e23a68..ccf4ecdffad3 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -2,8 +2,7 @@
->  /**
->   * DOC: dwmac-rk.c - Rockchip RK3288 DWMAC specific glue layer
->   *
-> - * Copyright (C) 2014 Chen-Zhi (Roger Chen)
-> - *
-> + * Copyright (c) 2014 Rockchip Electronics Co., Ltd.
->   * Chen-Zhi (Roger Chen)  <roger.chen@rock-chips.com>
->   */
+> [...]
 
-IANAL, but generally, you add additional copyright notices, not
-replace them.
+Applied to
 
-> +#define DELAY_VALUE(soc, tx, rx) \
-> +	((((tx) >= 0) ? soc##_GMAC_CLK_TX_DL_CFG(tx) : 0) | \
-> +	 (((rx) >= 0) ? soc##_GMAC_CLK_RX_DL_CFG(rx) : 0))
-> +
-> +#define GMAC_RGMII_CLK_DIV_BY_ID(soc, id, div) \
-> +		(soc##_GMAC##id##_CLK_RGMII_DIV##div)
-> +
-> +#define GMAC_RMII_CLK_DIV_BY_ID(soc, id, div) \
-> +		(soc##_GMAC##id##_CLK_RMII_DIV##div)
-> +
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-This macro magic is pretty unreadable. Please consider another way to
-do this. Some wise developer once said, code is written once, read 100
-times. So please make code readable by default, unless it is hot path.
+Thanks!
 
-> +static void rk3562_set_gmac_speed(struct rk_priv_data *bsp_priv, int speed)
-> +{
-> +	struct device *dev = &bsp_priv->pdev->dev;
-> +	unsigned int val = 0, offset, id = bsp_priv->id;
-> +
-> +	switch (speed) {
-> +	case 10:
-> +		if (bsp_priv->phy_iface == PHY_INTERFACE_MODE_RMII) {
-> +			if (id > 0) {
-> +				val = GMAC_RMII_CLK_DIV_BY_ID(RK3562, 1, 20);
-> +				regmap_write(bsp_priv->grf, RK3562_GRF_SYS_SOC_CON0,
-> +					     RK3562_GMAC1_RMII_SPEED10);
-> +			} else {
-> +				val = GMAC_RMII_CLK_DIV_BY_ID(RK3562, 0, 20);
-> +			}
-> +		} else {
-> +			val = GMAC_RGMII_CLK_DIV_BY_ID(RK3562, 0, 50);
-> +		}
-> +		break;
+[07/15] dt-bindings: spi: Add rk3562 support
+        commit: 825687c1662c53ecda991adf0ecfd8dd3d864043
 
-It seems like this function would be a lot more readable if it was
-split into two, one dealing with RMII and another with RGMII.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> +static void rk3562_set_clock_selection(struct rk_priv_data *bsp_priv, bool input,
-> +				       bool enable)
-> +{
-> +	struct device *dev = &bsp_priv->pdev->dev;
-> +	unsigned int value;
-> +
-> +	if (IS_ERR(bsp_priv->grf) || IS_ERR(bsp_priv->php_grf)) {
-> +		dev_err(dev, "Missing rockchip,grf or rockchip,php_grf property\n");
-> +		return;
-> +	}
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-That should of been checked much earlier, at probe.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-	Andrew
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
