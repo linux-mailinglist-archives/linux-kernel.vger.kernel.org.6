@@ -1,215 +1,266 @@
-Return-Path: <linux-kernel+bounces-536948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2061BA48625
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:05:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF177A48635
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AC53AB771
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C0C1764E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0728D1DC9AB;
-	Thu, 27 Feb 2025 17:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ww5FgaNi"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9871D63CF;
+	Thu, 27 Feb 2025 16:59:26 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AED1D5AD8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 17:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8335D1B4151
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675921; cv=none; b=RcOEe22LLyY1jYUONRTRHYUq88tCTu2WR35T4nsW/ma13E0qOLtluRaOi6WXKkMaAMqAR/6TYqlLsseiza48V8rZUQ/V6WK+l2otZmyNkOrvPa5NTd7+3f3eosB3W8BcjQwbk3v7xHOqCKT/Ye7bB2QSYfKbad4Of7kBzyX8yuY=
+	t=1740675566; cv=none; b=O2QfRPV5H74eYgGIJfbVqh5M85aAHkDANQimPkPnI7VykvOor2UurCEe4AU5IFNWvDauWl5moJln1o+Qfx8m6mWJVZ8a9P55oRgahhSHJ6hVAyDOd38FnSksZugzxDSNDNY7HgEHoAhGt2nc4FWaCIfpK1wa9haEJN21bvOkD4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675921; c=relaxed/simple;
-	bh=7XChtsa0NQK2jNQqByJFv42QLQZfG/59qbf5QMzlocg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rB+qeBcXSbKTRfiIX+bXxw7y8mXdXGejtHhB/F0iNN1fYBRqE8Fx6BTBaOCgUhgqWrpRjp213sATQ+1F5D/AmBDrW/Mre89tRCHA0TgLMPqbPe6Eb/MfINJ9RhHyZzZ13KHGKrStzJ1kUOo/Qb8co9WOyr3KDVAO/3k0zbdHGio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ww5FgaNi; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaec111762bso200544966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:05:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740675917; x=1741280717; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K6Y8JQULavsNlLpEQIX3xqjGtKxhdLW9C1hzs6N6L9o=;
-        b=Ww5FgaNiNbH0Z21miuSO3vXT1jgydSjnpMGuH+EJC4ev26qbHHcfOQ2waCoRyE8x9g
-         AU6pQ8lNE7Sj//4JCzvkHec91jMaGPoemEfPZWuPZquRo0SDyKAnHH6EA/oZAoTp85HR
-         AI33fY7zKxiDKiLCPd4uqQxpi/+kLXMFrLCSb9g+OnZchauEowdwQSTZTLAU2p+ywsDH
-         zxzvjImMyqFlcachADC2ftJpqkulwVUNLbJ9fN44EysKwGI7IiaCjUbZjzFLth0Z4g7a
-         QiaSzvuOQqaBjGVFf57Jf6rSxNxe8FEuNjikpQa5TQVvjpIUTMVG8Skxaj71No3aGgqa
-         wUTw==
+	s=arc-20240116; t=1740675566; c=relaxed/simple;
+	bh=DBrCCfmbbgOYEaHaOkBZdTP2NcHYf6u/yYmTSzwGcPw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fZ7bBcw7NHyPNRMlp02kPk6zCglxhfHX7Fja6RwBUsL8iOSbgoreXaLBtYN21dnbqgP6qzVov2ZJee9iVJRUZQgVlJpjxiNxuhuTfljKWxgsY+Owq/PWwcf8nq/yZpcQb401V4z7ETpTCy2IOYjVwb8FiXOurRr/0/5RFUIG4DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2a40e470fso9858995ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:59:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740675917; x=1741280717;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K6Y8JQULavsNlLpEQIX3xqjGtKxhdLW9C1hzs6N6L9o=;
-        b=hgdTUQPaYu4V+bMxDFvZRE+H6a6+Xio2xbgtmmYN8/efWKJ7+I6C+oBKQCDbQEMFq0
-         YPrqwAUAfR0Mmbao6IUXlgpizCAOc6QvVhLSqinSor5CA0r8i06kfHpyrK4Q7HhTRWz4
-         P64vBnMR8G9m9LV31squfe98lkfm1intJbzypeX9c55a+609GbwSBpw+93O44Yrd4has
-         ksQI8dWIQ3zCFxAEGv+wUrMT1P20fO3NQFUGfOj3zGofnSlWaRJkKkBNT5WyQ3CBHqwX
-         H+1dwIu8MNwMl6RLhhYG3Fu6QAw9NFuz5yQIv9TTV+nDeJQ2mUW/lRk8h1Wz2BiVwGnX
-         5Brw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdg9ms3Vt6/xq2hsGgXD8xKr2V3/lPLwfwsvVfxc3on7S1Adc36aVysusWiFh+8AXKdsxliEJCLpxTssM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPXI1oA1aQa444h+zOV0YkcdNHIJIYYUleWbEyL9YRi0PJfzeg
-	uwk/nBluE67oEISlIb2HZBkLkKLB8C1SAN2Qp8ePEVpOmfCBe3ZGMyg3dvyvfIU=
-X-Gm-Gg: ASbGnctqRhu/e4FByAIRG4vF6IWUBBD0FIiSEr+mflUz3eU2zyrJOLL1/D6+E9Cyav4
-	2QxiXJtD0CdJm7Mp3lPA/v1gc1vAVWn4s4bIOTgPmVEuqmZYbCptTkS883s14vqI7PnPRh35+lB
-	igpkyUBGOJFYZoyg0CQtnhZdsvGP8ED9A7nWI88cbVbtZb4TERyXwNpdDpFW66J2GUetLmzAndm
-	N5FNjww7Ta33woxBv4rwWe4rv5o6SRxGaTRN4jNi6ZHvDv0gQx7KlBbJTJ0t7uYUlUD0vyyE38G
-	YVAFnz4Dhh/vdZ+WiBtu+rc=
-X-Google-Smtp-Source: AGHT+IEqzm7n+9CgLAtGOBByJjji4KY3D/kBRSRdTZK29CzMh0eKvJAC98wBTDUbj6GZHbvPXAzgOQ==
-X-Received: by 2002:a17:906:d542:b0:ab7:beeb:d1f1 with SMTP id a640c23a62f3a-abf26837fcemr20886166b.51.1740675916853;
-        Thu, 27 Feb 2025 09:05:16 -0800 (PST)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0b9990sm150354966b.35.2025.02.27.09.05.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 09:05:16 -0800 (PST)
-Date: Thu, 27 Feb 2025 19:05:14 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Anjelique Melendez <quic_amelende@quicinc.com>,
-	Kamal Wadhwa <quic_kamalw@quicinc.com>,
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] leds: rgb: leds-qcom-lpg: Fix pwm resolution for Hi-Res
- PWMs
-Message-ID: <Z8CbSvlG856oxQRw@linaro.org>
-References: <20250220-leds-qcom-lpg-fix-max-pwm-on-hi-res-v1-1-a161ec670ea5@linaro.org>
- <dfthocttum7dscotngi6l2hz6bpdwfgrdxpvkcv6bdux3lt66d@iqfvmntvzyut>
- <Z7zVgeM+7P7SLWIu@linaro.org>
- <vc7irlp7nuy5yvkxwb5m7wy7j7jzgpg73zmajbmq2zjcd67pd2@cz2dcracta6w>
- <Z7161SzdxhLITsW3@linaro.org>
- <5euqboshlfwweie7tlaffajzg3siiy6bm3j4evr572ko54gtbv@7lan3vizskt3>
- <Z8B2Bl/9uD3jPvQi@linaro.org>
- <j55de6bbipoavqx25w2s6qr7n6fv6w7bj3lrgyag4dlvvddbqv@shn22aqcqeci>
- <Z8CIY2OJUMqIOHGU@linaro.org>
- <Z8CTqdFafLY17C25@linaro.org>
+        d=1e100.net; s=20230601; t=1740675563; x=1741280363;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BpJtKMbB0T7y5gCWnMdvQODk6uraPTxV8/on6Hpe2hs=;
+        b=aoi4mE2XAIt8j9WpL8NAoqEZTR73wY0Vn/0bVnoBG8LyYXf2mIqiRgC1UDn6bF5Puv
+         ov+yySMm/JRXlGclOoQjCUUXQCS3unG1JVJYD9RMDQ/1r8+4ZegCbq6SBxe9uT3bkLZw
+         OqNOSDRmURmRLJ8KqSDqqR+7NN4W4So7upkbThaORXrWVey1DA9Jdo0VfK2aMhFYOYAd
+         0RQnQZOhwn288tWXr2619Fvn73YtadJWQJdV5QrGVWGYmnnAG7rcRyBRxUpiVIfYCege
+         z+ScTT2BIEHy0/Mx4zHduwQ0NqxUmHbEdiW56dnJ1uteTs4bu6P4WviU8ptnVhTnfvNP
+         VbnA==
+X-Gm-Message-State: AOJu0Yx9ubHNSbcB3vlRKPFGfC3ysoRT6n2sLkXF/gYW4yGDkqDtY85X
+	EbPbX995N/U8l9sgmTLoRrPaycgGXZeraM9y40nlUNQlWbg/GxOvO7UisIkviVRFJlTf+et8fTb
+	r4A1J5IvFsaXfHIvZgU4EvOky5Slqag/3gMw6lCxplg5tp34PstQwM9AYXQ==
+X-Google-Smtp-Source: AGHT+IEHrpXbbqqqHe68AmD6V4I/G+zPsckNGkICOcFty187OMcieLTFwJH1asRqFQs8f91Xudgwv5sQH4Evnf8EQEAghHZvj/jr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8CTqdFafLY17C25@linaro.org>
+X-Received: by 2002:a92:cda6:0:b0:3d3:e34b:daa0 with SMTP id
+ e9e14a558f8ab-3d3e6e21079mr481485ab.1.1740675563657; Thu, 27 Feb 2025
+ 08:59:23 -0800 (PST)
+Date: Thu, 27 Feb 2025 08:59:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c099eb.050a0220.222324.026a.GAE@google.com>
+Subject: [syzbot] [kernel?] KASAN: slab-use-after-free Read in task_work_run
+From: syzbot <syzbot+aef8e425f1a85ee5ef1c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, luto@kernel.org, netdev@vger.kernel.org, 
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-02-27 18:32:41, Abel Vesa wrote:
-> On 25-02-27 17:44:35, Abel Vesa wrote:
-> > On 25-02-27 16:25:06, Uwe Kleine-König wrote:
-> > > Hello Abel,
-> > > 
-> > > On Thu, Feb 27, 2025 at 04:26:14PM +0200, Abel Vesa wrote:
-> > > > On 25-02-27 10:58:47, Uwe Kleine-König wrote:
-> > > > > Can you please enable CONFIG_PWM_DEBUG, enable pwm tracing (
-> > > > > 
-> > > > > 	echo 1 > /sys/kernel/debug/tracing/events/pwm/enable
-> > > > > 
-> > > > > ) then reproduce the problem and provide the output of
-> > > > > 
-> > > > > 	cat /sys/kernel/debug/tracing/trace
-> > > > > 
-> > > > > .
-> > > > 
-> > > > $ cat trace
-> > > > # tracer: nop
-> > > > #
-> > > > # entries-in-buffer/entries-written: 13/13   #P:12
-> > > > #
-> > > > #                                _-----=> irqs-off/BH-disabled
-> > > > #                               / _----=> need-resched
-> > > > #                              | / _---=> hardirq/softirq
-> > > > #                              || / _--=> preempt-depth
-> > > > #                              ||| / _-=> migrate-disable
-> > > > #                              |||| /     delay
-> > > > #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-> > > > #              | |         |   |||||     |         |
-> > > >         modprobe-203     [000] .....     0.938668: pwm_get: pwmchip0.0: period=1066407 duty_cycle=533334 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.938775: pwm_apply: pwmchip0.0: period=5000000 duty_cycle=0 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.938821: pwm_get: pwmchip0.0: period=4266537 duty_cycle=0 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.938936: pwm_apply: pwmchip0.0: period=4266537 duty_cycle=0 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.938982: pwm_get: pwmchip0.0: period=4266537 duty_cycle=0 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.939274: pwm_apply: pwmchip0.0: period=5000000 duty_cycle=921458 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.939320: pwm_get: pwmchip0.0: period=4266537 duty_cycle=921355 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.939434: pwm_apply: pwmchip0.0: period=4266537 duty_cycle=921355 polarity=0 enabled=1 err=0
-> > > >         modprobe-203     [000] .....     0.939480: pwm_get: pwmchip0.0: period=4266537 duty_cycle=921355 polarity=0 enabled=1 err=0
-> > > >  systemd-backlig-724     [006] .....     9.079538: pwm_apply: pwmchip0.0: period=5000000 duty_cycle=5000000 polarity=0 enabled=1 err=0
-> > > >  systemd-backlig-724     [006] .....     9.079585: pwm_get: pwmchip0.0: period=4266537 duty_cycle=4266537 polarity=0 enabled=1 err=0
-> > > >  systemd-backlig-724     [006] .....     9.079698: pwm_apply: pwmchip0.0: period=4266537 duty_cycle=4266537 polarity=0 enabled=1 err=0
-> > > >  systemd-backlig-724     [006] .....     9.079750: pwm_get: pwmchip0.0: period=4266537 duty_cycle=4266537 polarity=0 enabled=1 err=0
-> > > > $
-> > > > 
-> > > > > 
-> > > > > I didn't take a deeper dive in this driver combination, but here is a
-> > > > > description about what *should* happen:
-> > > > > 
-> > > > > You're talking about period in MHz, the PWM abstraction uses
-> > > > > nanoseconds. So your summary translated to the PWM wording is (to the
-> > > > > best of my understanding):
-> > > > > 
-> > > > >   1. PWM backlight driver requests PWM with .period = 200 ns and
-> > > > >      .duty_cycle = 200 ns.
-> > > > > 
-> > > > >   2. leds-qcom-lpg cannot pick 200 ns exactly and then chooses .period =
-> > > > >      1000000000 / 4.26666 MHz = 234.375 ns
-> > > > >      
-> > > > >   3. leds-qcom-lpg then determines setting for requested .duty_cycle
-> > > > >      based on .period = 200 ns which then ends up with something bogus.
-> > > 
-> > > The trace looks better than what I expected. 2. is fine here because it
-> > > seems when Sebastian wrote "driver requests PWM with 5 MHz period" that
-> > > meant period = 5000000 ns. That was then rounded down to 4266537 ns. And
-> > > the request for period = 5000000 ns + duty_cycle = 5000000 ns was
-> > > serviced by configuring period = 4266537 ns + duty_cycle = 4266537 ns.
-> > > So that's a 100 % relative duty configuration as intended.
-> > > 
-> > > So just from the traces I don't spot a problem. Do these logs not match
-> > > what actually happens on the signal?
-> > 
-> > What I do not get is why do we expect 2 pwm_get() and 2 pwm_apply()
-> > calls each time ?
-> 
-> OK, so the second pwm_apply() is due to CONFIG_PWM_DEBUG.
-> 
-> But still, the first pwm_apply() requests duty cycle of 5MHz:
-> 
-> systemd-backlig-724     [006] .....     9.079538: pwm_apply: pwmchip0.0: period=5000000 duty_cycle=5000000 polarity=0 enabled=1 err=0
-> 
-> So since the period is 4.26MHz, due to the knobs selected by the
-> provider, this duty cycle will result in a PWM value that is above the
-> selected resolution, as I already mentioned.
-> 
+Hello,
 
-On top of that, the duty cycle in debugfs is also reported as 5000000ns
-when in fact it is 4266666ns, as the trace shows.
+syzbot found the following issue on:
 
-> > 
-> > Need to dig a bit further.
-> > 
-> > But meanwhile, if the first pwm_apply() call goes all the way to the
-> > provider, then the duty cycle value, when translated to the actual PWM
-> > value that gets written to reg, will overflow. So this is what is wrong.
-> > And this is what actually happens.
-> > 
-> > > 
-> > > Best regards
-> > > Uwe
-> > 
-> > 
-> > 
-> 
+HEAD commit:    63817c771194 selftests/bpf: Test struct_ops program with _..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ccf498580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=aef8e425f1a85ee5ef1c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d306e4580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b31ec77253e7/disk-63817c77.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/07bea500bd9d/vmlinux-63817c77.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7a0b65578ed5/bzImage-63817c77.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aef8e425f1a85ee5ef1c@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in task_work_run+0x22b/0x310 kernel/task_work.c:226
+Read of size 8 at addr ffff888028b97a18 by task syz.4.416/7301
+
+CPU: 1 UID: 0 PID: 7301 Comm: syz.4.416 Not tainted 6.14.0-rc3-syzkaller-g63817c771194 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x16e/0x5b0 mm/kasan/report.c:521
+ kasan_report+0x143/0x180 mm/kasan/report.c:634
+ task_work_run+0x22b/0x310 kernel/task_work.c:226
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f489a58d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f489b4cf038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: fffffffffffffff2 RBX: 00007f489a7a5fa0 RCX: 00007f489a58d169
+RDX: 000000110e22fff6 RSI: 00000000c004743e RDI: 0000000000000003
+RBP: 00007f489a60e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f489a7a5fa0 R15: 00007ffe5af01388
+ </TASK>
+
+Allocated by task 7301:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_node_noprof+0x1d9/0x380 mm/slub.c:4216
+ perf_event_alloc+0x157/0x1e40 kernel/events/core.c:12240
+ __do_sys_perf_event_open kernel/events/core.c:12875 [inline]
+ __se_sys_perf_event_open+0xa5d/0x34b0 kernel/events/core.c:12765
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 24:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2353 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kmem_cache_free+0x195/0x410 mm/slub.c:4711
+ rcu_do_batch kernel/rcu/tree.c:2546 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2802
+ handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:950
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xaa/0xc0 mm/kasan/generic.c:548
+ task_work_add+0xb8/0x450 kernel/task_work.c:65
+ __perf_event_overflow+0x78d/0xdc0 kernel/events/core.c:9945
+ perf_swevent_event+0x317/0x680
+ do_perf_sw_event kernel/events/core.c:10185 [inline]
+ ___perf_sw_event+0x4f3/0x730 kernel/events/core.c:10212
+ __perf_sw_event+0xff/0x1b0 kernel/events/core.c:10224
+ perf_sw_event include/linux/perf_event.h:1503 [inline]
+ do_user_addr_fault arch/x86/mm/fault.c:1284 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1480 [inline]
+ exc_page_fault+0x710/0x8b0 arch/x86/mm/fault.c:1538
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+The buggy address belongs to the object at ffff888028b97590
+ which belongs to the cache perf_event of size 1456
+The buggy address is located 1160 bytes inside of
+ freed 1456-byte region [ffff888028b97590, ffff888028b97b40)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x28b90
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b091500 ffffea0001f63400 dead000000000002
+raw: 0000000000000000 0000000080140014 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b091500 ffffea0001f63400 dead000000000002
+head: 0000000000000000 0000000080140014 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000a2e401 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 6118, tgid 6115 (syz.1.31), ts 147556510632, free_ts 147513456959
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4739
+ alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x8f/0x3a0 mm/slub.c:2587
+ new_slab mm/slub.c:2640 [inline]
+ ___slab_alloc+0xc27/0x14a0 mm/slub.c:3826
+ __slab_alloc+0x58/0xa0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ kmem_cache_alloc_node_noprof+0x269/0x380 mm/slub.c:4216
+ perf_event_alloc+0x157/0x1e40 kernel/events/core.c:12240
+ __do_sys_perf_event_open kernel/events/core.c:12875 [inline]
+ __se_sys_perf_event_open+0xa5d/0x34b0 kernel/events/core.c:12765
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5968 tgid 5968 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2660
+ discard_slab mm/slub.c:2684 [inline]
+ __put_partials+0x160/0x1c0 mm/slub.c:3153
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3228
+ __slab_free+0x290/0x380 mm/slub.c:4479
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4171
+ getname_kernel+0x59/0x2f0 fs/namei.c:250
+ kern_path+0x1d/0x50 fs/namei.c:2772
+ do_loopback+0xc9/0x4f0 fs/namespace.c:2817
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888028b97900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888028b97980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888028b97a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff888028b97a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888028b97b00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
