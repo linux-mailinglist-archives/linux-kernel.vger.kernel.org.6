@@ -1,342 +1,201 @@
-Return-Path: <linux-kernel+bounces-536691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B97DA4830C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:34:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD92A48310
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA20C165424
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FBD3B5838
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13125F7BB;
-	Thu, 27 Feb 2025 15:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866A926B947;
+	Thu, 27 Feb 2025 15:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PAVL7+P4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmUnHW2M"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE2A26BDBD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EA625F790;
+	Thu, 27 Feb 2025 15:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670447; cv=none; b=cOStluEEf5IWlfrZmUA4x1Hi9SVhIpc8E8JReKX/93EPYu6R98Kid7bXBIWM62guveIxgFJahlC6iYQU8PAd0t3hUmNLJwk67rwNTXjoXN3D3Nm1YC0MA08ZTsSW8BVIZQh2r7tv1bXHXg1XQleu4KrCmQ3cpFIBlWFgF/OSmZY=
+	t=1740670479; cv=none; b=GBkRG5tcftJLjOIVx1qURLlSAL9Vn3fDPPAOVMmJzVqbGSsAPY+jwlfiXnGXMeaX4q89uWKljy4/vZVGYmgR0Yj3uu9CigTt5YCFi09iPgeA4a+J7+dEHPFC/E4u4m52iymSDCEKv7xYqdpoDSWhwTlCIdYjdccafKGyAngkUTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670447; c=relaxed/simple;
-	bh=0K3d8F/xVoOQDemlJCe7zkTMGCdS+at9S4Wn6xK5jsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JufricxfQu+tZ0R23p2qmcdbspp2KwlD8eawCiZu+ZEZWfq9bBznJRb39hs3ihvzE8WH3PzY7QJ9WrXm9/68fNxWJpHNTZw152kDjqufXWv7kCfpklVbW3XDuAlxCrnNyQDJiIRTTCS5aM/pe98KigRc/x2zIi7wJOmhHiQQ9GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PAVL7+P4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740670444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BbjEMY8/mdvBBPR5YIiGfY/QlRvz6+lINWP41WIENPI=;
-	b=PAVL7+P4OjwCwmd0yr/ebtVTrPWgLWmAlFgA3YHVeLv0fjDI4EZTcr2AQR/V9aK4LhVj5a
-	j1XmDosrfOc/lyIBkjZS8ExTNp5KhfLxKWFlNLIzq4I+WsY5pPdoAtTDybwRtA+v/skNMj
-	SCnMDHtzAXNq0rMTXxIkamNXhKOsS3k=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-7HggNbDrNra1N4q56Om2mQ-1; Thu,
- 27 Feb 2025 10:34:01 -0500
-X-MC-Unique: 7HggNbDrNra1N4q56Om2mQ-1
-X-Mimecast-MFC-AGG-ID: 7HggNbDrNra1N4q56Om2mQ_1740670439
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F98C19560BC;
-	Thu, 27 Feb 2025 15:33:59 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.225.72])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 47B8F1800358;
-	Thu, 27 Feb 2025 15:33:56 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Ingo Molnar <mingo@redhat.org>
-Subject: [PATCH v11 3/3] selftests/rseq: Add test for mm_cid compaction
-Date: Thu, 27 Feb 2025 16:33:27 +0100
-Message-ID: <20250227153329.672079-4-gmonaco@redhat.com>
-In-Reply-To: <20250227153329.672079-1-gmonaco@redhat.com>
-References: <20250227153329.672079-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1740670479; c=relaxed/simple;
+	bh=DQnmkPIeP+h+BKqiIj4ecZCJn0/Q8dv3DMXJ+8RRyTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGkZYiDYEw6XZzJUjO1WSEghh+SxNR32b1oS49YLjAJH/NAPVYg2N09zO0IDXKI6FfeCy0kbWboYU7nUGbn1jimVOBrlI2AksO6kC8XyLciXSm24gCqBzO5V+/KBtzDuINMoDZNyvIm70LB1k72/WzZQjXWczKTZON7pbBIb214=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XmUnHW2M; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e05717755bso1493462a12.0;
+        Thu, 27 Feb 2025 07:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740670476; x=1741275276; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewW7lGzv9EKdBq0S1qPivXW2ykucSSmJzJOK5QaGs54=;
+        b=XmUnHW2M0SVadVvfdCgsiXCOSkhlGm76BJ/VO8nbZVlGv1u0zrg+gUCKdXhdlOtth0
+         iWs4ynGV8vu7u1ugB6nL+YQOBJxUv/UPBGk8XGgH5DaN/yLTrAcaYTpXdqhFA0kdIqsG
+         2Nd1l8+7Oou19iYZsxzJS0xaZSAXtt1UaFZmbWGlTQJRc5HApr29ldi9FGotoWiMgtMA
+         miLwEQLSvbokZpskr/e1ACbeBwn69UoxaXFV2t5RFzHI08je9JNF7mm4TZVdzgT9lPqP
+         iRapOx8cTDCuI8XS+TMEfdpMvxsAji27cbHeZltq/1Y2YB7K6CjeR8NDtMlINbKXfOsO
+         itaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740670476; x=1741275276;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewW7lGzv9EKdBq0S1qPivXW2ykucSSmJzJOK5QaGs54=;
+        b=JGRCDP/mKSYlNrXwyyGbSa/IqbAHDwxmI+bkc5PyJyP5hf7Moz2ffSpCF1x1CVZ6va
+         zmYaKBiPKLsKTQjYopyYJGJaqTZrJ9OKbGTerm4KWhv7m7Xs/vokjNLyrWrgldALTr4U
+         mBwC+SS5HSQU9cuCTIQGYfB0Re/quhcXd8KrAfxYP9YxmhV0iVCHDszcoLaa4Al/zA4h
+         CE+FOF5lHeeN4Xqm/KJ1isS/xIIGL7BoN3OE1guIaGBoZUT6RrZ55q5DyiFyutiTWTiz
+         8yvwY1J6XMaFp9oQBAWOPFHqogZiyw4UONPP590pHjkEO+so3p/puwzVPKHmkSJ40sD5
+         5anw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnBsE9/1eMmQePu+3MXf+Fluuxh67t1VSvFl8kQJTAS/sWm7Tpq0wQ9qpXcQ00czFZDkDZ4rNBksQD@vger.kernel.org, AJvYcCXPaIarWsPTjsbd4TULP9/eie2lclRi/X5KA6AR4jpSFyRKo70Ju7Po045RySHOD7HfC060z75y/H0bV3Q=@vger.kernel.org, AJvYcCXydoK30g7JzDbIfgvoyA7Iwc7cQfmQ61ZxucA07n/4+v6Te7Rk5/8s19Xbenlcftye5TTNp6xAZHGz32gb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1W7kYPtjvI9R3h0YUmGq5JYAS0XQwWh0LXCKOuknJWct7W4jf
+	K9+7MlnMPMHUtJBHySunc+8HR0QFWn31h9+qJ58T760te0EYi8kI
+X-Gm-Gg: ASbGncu5iKhrsyhq8ORi7uTN7zjl105gFxcK0lZXNDBSA180jcKkzUOaW8LqxPh2zT9
+	/ZfzUmQq/M0uOLtR6mDM3e2WbkCUvmCnjFYJ3UwoDdriu7HRl0vX1VvW8wQrN++quef5ywTfMek
+	roMy3vJwYyMssW1SBUR62Edc0qFPxQCWuAuj7vFwQYVbWlCQcQbihtdyt9HrF3aNMvHb+oyRX1b
+	yKltGxvbU89gJxMbiFB/Ed+jQm03hpOZpsE9v3az23QrOf9XnKrFreEUYnQhZnon+2qwBhbbb+2
+	LU9mZsx+6JDjz/BDLywC2vMfr/sKztSEXCnBPk3z2+Ue1byvymHYZ1mabFGEaYhBnTQ=
+X-Google-Smtp-Source: AGHT+IGmrWhI9xTnk7myNMS3P04pOgJ/Z6LmnusFuC663a0RitJlSrAiSvhowBBSOpwB/vXXwAkdtA==
+X-Received: by 2002:a17:907:3d8f:b0:abb:db78:a24e with SMTP id a640c23a62f3a-abed0d3b4camr1447316766b.23.1740670476128;
+        Thu, 27 Feb 2025 07:34:36 -0800 (PST)
+Received: from ernest.hoecke-nb (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c75ff0asm138782866b.159.2025.02.27.07.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 07:34:35 -0800 (PST)
+Date: Thu, 27 Feb 2025 16:34:34 +0100
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	patches@opensource.cirrus.com, Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, 
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
+ and EQ support
+Message-ID: <er4bcixggriqp6idl6xmr7bjetf5kkhadyeplkbyxvrffuiknc@ews752x4ugh7>
+References: <20250224155500.52462-1-francesco@dolcini.it>
+ <20250224155500.52462-4-francesco@dolcini.it>
+ <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
 
-A task in the kernel (task_mm_cid_work) runs somewhat periodically to
-compact the mm_cid for each process. Add a test to validate that it runs
-correctly and timely.
+On Tue, Feb 25, 2025 at 09:41:17AM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Feb 24, 2025 at 04:54:58PM +0100, Francesco Dolcini wrote:
+> > +  wlf,drc-cfg-regs:
+> > +    $ref: /schemas/types.yaml#/definitions/uint16-array
+> > +    description:
+> > +      Default register values for R40/41/42/43 (DRC).
+> > +      The list must be 4 times the length of wlf,drc-cfg-names.
+> > +      If absent, DRC is disabled.
+> > +
+> > +  wlf,retune-mobile-cfg-names:
+> > +    $ref: /schemas/types.yaml#/definitions/string-array
+> > +    description:
+> > +      List of strings for the available retune modes.
+> > +      If absent, retune is disabled.
+> 
+> How is this retune supposed to be used? If by user-space I can easily
+> imagine that static DTS configuration won't be enough, because you need
+> to factor for example temperature or some other minor differences
+> between same boards.
 
-The test spawns 1 thread pinned to each CPU, then each thread, including
-the main one, runs in short bursts for some time. During this period, the
-mm_cids should be spanning all numbers between 0 and nproc.
+This is intended for integrators to be able to specify some EQ options,
+mirroring the previous behaviour that was possible via platform data.
 
-At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
-is selected to be the new leader, all other threads terminate.
+I expect most users to use the first five Retune Mobile registers and
+not care about the rest, which require a proprietary tool and are not
+well documented. The example in the binding shows how some simple
+static EQ can be configured. Anyone interested in the extended config
+can also use it (statically).
 
-After some time, the only running thread should see 0 as mm_cid, if that
-doesn't happen, the compaction mechanism didn't work and the test fails.
+If someone requires dynamic behaviour at runtime that could be a
+separate patch that should not be hindered by this static config.
 
-The test never fails if only 1 core is available, in which case, we
-cannot test anything as the only available mm_cid is 0.
+> > +
+> > +  wlf,retune-mobile-cfg-rates:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> 
+> Drop
+> 
+> > +    description:
+> > +      List of rates for the available retune modes.
+> 
+> Use standard property suffixes - hz or whatever is matching here.
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../selftests/rseq/mm_cid_compaction_test.c   | 200 ++++++++++++++++++
- 3 files changed, 202 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+I will send a v3 later integrating your feedback, I have renamed this
+property to wlf,retune-mobile-cfg-hz there, and dropped the "ref".
 
-diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
-index 16496de5f6ce4..2c89f97e4f737 100644
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -3,6 +3,7 @@ basic_percpu_ops_test
- basic_percpu_ops_mm_cid_test
- basic_test
- basic_rseq_op_test
-+mm_cid_compaction_test
- param_test
- param_test_benchmark
- param_test_compare_twice
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb586..ce1b38f46a355 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
- 
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
--		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
-+		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice mm_cid_compaction_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-new file mode 100644
-index 0000000000000..7ddde3b657dd6
---- /dev/null
-+++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-@@ -0,0 +1,200 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stddef.h>
-+
-+#include "../kselftest.h"
-+#include "rseq.h"
-+
-+#define VERBOSE 0
-+#define printf_verbose(fmt, ...)                    \
-+	do {                                        \
-+		if (VERBOSE)                        \
-+			printf(fmt, ##__VA_ARGS__); \
-+	} while (0)
-+
-+/* 0.5 s */
-+#define RUNNER_PERIOD 500000
-+/* Number of runs before we terminate or get the token */
-+#define THREAD_RUNS 5
-+
-+/*
-+ * Number of times we check that the mm_cid were compacted.
-+ * Checks are repeated every RUNNER_PERIOD.
-+ */
-+#define MM_CID_COMPACT_TIMEOUT 10
-+
-+struct thread_args {
-+	int cpu;
-+	int num_cpus;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	pthread_t *tinfo;
-+	struct thread_args *args_head;
-+};
-+
-+static void __noreturn *thread_runner(void *arg)
-+{
-+	struct thread_args *args = arg;
-+	int i, ret, curr_mm_cid;
-+	cpu_set_t cpumask;
-+
-+	CPU_ZERO(&cpumask);
-+	CPU_SET(args->cpu, &cpumask);
-+	ret = pthread_setaffinity_np(pthread_self(), sizeof(cpumask), &cpumask);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to set affinity");
-+		abort();
-+	}
-+	pthread_barrier_wait(args->barrier);
-+
-+	for (i = 0; i < THREAD_RUNS; i++)
-+		usleep(RUNNER_PERIOD);
-+	curr_mm_cid = rseq_current_mm_cid();
-+	/*
-+	 * We select one thread with high enough mm_cid to be the new leader.
-+	 * All other threads (including the main thread) will terminate.
-+	 * After some time, the mm_cid of the only remaining thread should
-+	 * converge to 0, if not, the test fails.
-+	 */
-+	if (curr_mm_cid >= args->num_cpus / 2 &&
-+	    !pthread_mutex_trylock(args->token)) {
-+		printf_verbose(
-+			"cpu%d has mm_cid=%d and will be the new leader.\n",
-+			sched_getcpu(), curr_mm_cid);
-+		for (i = 0; i < args->num_cpus; i++) {
-+			if (args->tinfo[i] == pthread_self())
-+				continue;
-+			ret = pthread_join(args->tinfo[i], NULL);
-+			if (ret) {
-+				errno = ret;
-+				perror("Error: failed to join thread");
-+				abort();
-+			}
-+		}
-+		pthread_barrier_destroy(args->barrier);
-+		free(args->tinfo);
-+		free(args->token);
-+		free(args->barrier);
-+		free(args->args_head);
-+
-+		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
-+			curr_mm_cid = rseq_current_mm_cid();
-+			printf_verbose("run %d: mm_cid=%d on cpu%d.\n", i,
-+				       curr_mm_cid, sched_getcpu());
-+			if (curr_mm_cid == 0)
-+				exit(EXIT_SUCCESS);
-+			usleep(RUNNER_PERIOD);
-+		}
-+		exit(EXIT_FAILURE);
-+	}
-+	printf_verbose("cpu%d has mm_cid=%d and is going to terminate.\n",
-+		       sched_getcpu(), curr_mm_cid);
-+	pthread_exit(NULL);
-+}
-+
-+int test_mm_cid_compaction(void)
-+{
-+	cpu_set_t affinity;
-+	int i, j, ret = 0, num_threads;
-+	pthread_t *tinfo;
-+	pthread_mutex_t *token;
-+	pthread_barrier_t *barrier;
-+	struct thread_args *args;
-+
-+	sched_getaffinity(0, sizeof(affinity), &affinity);
-+	num_threads = CPU_COUNT(&affinity);
-+	tinfo = calloc(num_threads, sizeof(*tinfo));
-+	if (!tinfo) {
-+		perror("Error: failed to allocate tinfo");
-+		return -1;
-+	}
-+	args = calloc(num_threads, sizeof(*args));
-+	if (!args) {
-+		perror("Error: failed to allocate args");
-+		ret = -1;
-+		goto out_free_tinfo;
-+	}
-+	token = malloc(sizeof(*token));
-+	if (!token) {
-+		perror("Error: failed to allocate token");
-+		ret = -1;
-+		goto out_free_args;
-+	}
-+	barrier = malloc(sizeof(*barrier));
-+	if (!barrier) {
-+		perror("Error: failed to allocate barrier");
-+		ret = -1;
-+		goto out_free_token;
-+	}
-+	if (num_threads == 1) {
-+		fprintf(stderr, "Cannot test on a single cpu. "
-+				"Skipping mm_cid_compaction test.\n");
-+		/* only skipping the test, this is not a failure */
-+		goto out_free_barrier;
-+	}
-+	pthread_mutex_init(token, NULL);
-+	ret = pthread_barrier_init(barrier, NULL, num_threads);
-+	if (ret) {
-+		errno = ret;
-+		perror("Error: failed to initialise barrier");
-+		goto out_free_barrier;
-+	}
-+	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
-+		if (!CPU_ISSET(i, &affinity))
-+			continue;
-+		args[j].num_cpus = num_threads;
-+		args[j].tinfo = tinfo;
-+		args[j].token = token;
-+		args[j].barrier = barrier;
-+		args[j].cpu = i;
-+		args[j].args_head = args;
-+		if (!j) {
-+			/* The first thread is the main one */
-+			tinfo[0] = pthread_self();
-+			++j;
-+			continue;
-+		}
-+		ret = pthread_create(&tinfo[j], NULL, thread_runner, &args[j]);
-+		if (ret) {
-+			errno = ret;
-+			perror("Error: failed to create thread");
-+			abort();
-+		}
-+		++j;
-+	}
-+	printf_verbose("Started %d threads.\n", num_threads);
-+
-+	/* Also main thread will terminate if it is not selected as leader */
-+	thread_runner(&args[0]);
-+
-+	/* only reached in case of errors */
-+out_free_barrier:
-+	free(barrier);
-+out_free_token:
-+	free(token);
-+out_free_args:
-+	free(args);
-+out_free_tinfo:
-+	free(tinfo);
-+
-+	return ret;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	if (!rseq_mm_cid_available()) {
-+		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
-+		return -1;
-+	}
-+	if (test_mm_cid_compaction())
-+		return -1;
-+	return 0;
-+}
--- 
-2.48.1
+> > +
+> > +            wlf,retune-mobile-cfg-names = "bassboost", "bassboost", "treble";
+> > +            wlf,retune-mobile-cfg-rates = <48000 44100 48000>;
+> > +            wlf,retune-mobile-cfg-regs =
+> > +                /* bassboost: EQ_ENA = 1, +6 dB @ 100 Hz, +3 dB @ 300 Hz, 0 dB @ 875, 2400, 6900 Hz */
+> > +                /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
+> > +                /* default values for ReTune Mobile registers 140-157 */
+> > +                /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5 0xf145 0x0bd5 0x0075 0x1c58 0xf3d3 0x0a54 0x0568 0x168e 0xf829 0x07ad 0x1103 0x0564 0x0559 0x4000>,
+> 
+> See DTS coding style.
+> 
+> Best regards,
+> Krzysztof
+> 
 
+Would the following snippet be a good way to handle wrapping this?
+To me the first six registers form an "item" since they are the most
+important, followed by the next 18 which belong together, but I was
+not sure about the common convention to handle wrapping such a long
+item.
+
+/*
+ * Config registers per name, respectively:
+ * EQ_ENA,  100 Hz,  300 Hz,  875 Hz, 2400 Hz, 6900 Hz
+ *      1,   +6 dB,   +3 dB,    0 dB,    0 dB,    0 dB
+ *      1,   +6 dB,   +3 dB,    0 dB,    0 dB,    0 dB
+ *      1,   -2 dB,   -2 dB,    0 dB,    0 dB,   +3 dB
+ * Each one uses the defaults for ReTune Mobile registers 140-157
+ */
+wlf,retune-mobile-cfg-regs = /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
+                             /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5
+                                        0xf145 0x0bd5 0x0075 0x1c58
+                                        0xf3d3 0x0a54 0x0568 0x168e
+                                        0xf829 0x07ad 0x1103 0x0564
+                                        0x0559 0x4000>,
+
+                             /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
+                             /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5
+                                        0xf145 0x0bd5 0x0075 0x1c58
+                                        0xf3d3 0x0a54 0x0568 0x168e
+                                        0xf829 0x07ad 0x1103 0x0564
+                                        0x0559 0x4000>,
+
+                             /bits/ 16 <0x1 0xa 0xa 0xc 0xc 0xf>,
+                             /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5
+                                        0xf145 0x0bd5 0x0075 0x1c58
+                                        0xf3d3 0x0a54 0x0568 0x168e
+                                        0xf829 0x07ad 0x1103 0x0564
+                                        0x0559 0x4000>;
+
+Apologies for sending the broken binding. I have integrated the rest of
+your feedback into v3 which will be sent later. Thanks for taking the
+time to review.
+
+Kind regards,
+Ernest
 
