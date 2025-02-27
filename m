@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-535835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DC4A477E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:34:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A4FA477E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29951888462
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C3E188A693
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5BA224B08;
-	Thu, 27 Feb 2025 08:33:42 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A7113A3F2;
-	Thu, 27 Feb 2025 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41A225403;
+	Thu, 27 Feb 2025 08:34:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD46213A3F2;
+	Thu, 27 Feb 2025 08:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740645221; cv=none; b=SY6+wrmXxyXsl+G2TFEKyMmRtABT2VbO/tCBo3ZaJGIF/9FSjjZXkizPVay0SICP15AkM6zs+tIzXQ+MH7JNBuOpRX/ed4gLZu03/KWtcwDOaqu2b9glvg4oA1BBOPZSDqs9LLMsmiCTKRmZPP8Z4IMzvJRfoKFN0DHIBAddQXY=
+	t=1740645297; cv=none; b=RuCk0ofke7CRG5LX0hoJzgtLC0x/ZpXprK3o+di20ULEkkMF/zBOVjXMlOPP6IK4/V+NJso9GW2R3/5HEwxkzlbrLWruNq9ZkD3sVDz8DL8t3ED+GCTm/arK59FgHNTHOHpRvRt/C/wRWIHmji25NQhsqPiKKmnxLvcnehA8a4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740645221; c=relaxed/simple;
-	bh=tTU8BPQogB7QOOex7t9c3MRyP9OwxduI4shfP+gPs1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jYr4oRG6tgcVQXzCGUynoQxePgJWKHNOvRd0fEDRHQEydTxADiT25TTRXEJSxvyXOxQBRCWJKMha6vOt+g0/mgXdpvj/xDjoAKgSezSQ7QWfPCqAj6MlnUuCM4WA7o8mojkoX2Z5euR7S6No8B1iZJuDHBpsgB+AA+EekGTQd0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z3Pdd4tz8z1ltYR;
-	Thu, 27 Feb 2025 16:29:25 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5CCE51A016C;
-	Thu, 27 Feb 2025 16:33:30 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 27 Feb 2025 16:33:29 +0800
-Message-ID: <9765d9c7-959f-3611-4093-89f7e941e2ba@huawei.com>
-Date: Thu, 27 Feb 2025 16:33:29 +0800
+	s=arc-20240116; t=1740645297; c=relaxed/simple;
+	bh=5ZLeqmdkLwQ5NBO+s0wVpWR+KwHTu+P2L07dgmrQd08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjIJVwEegfMYzh9yvU0kcjtrpOv0YQgVyMfWpge0cDpX0JBlXlkCR50f9T1axpkx7s8e1netx6Nv81Kez8kBQIVgdmgQNcLp/RYGVbY7QGLHSWvVme9pnn/dHW4GjCPNeVaCe8NhJ7GatEoWmGltjR6KPDCcP/Djmk3X7yvv664=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A80172C1C;
+	Thu, 27 Feb 2025 00:35:10 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 719873F6A8;
+	Thu, 27 Feb 2025 00:34:53 -0800 (PST)
+Date: Thu, 27 Feb 2025 08:34:44 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, dmitry.baryshkov@linaro.org,
+	maz@kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org
+Subject: Re: [RFC V6 2/2] firmware: arm_scmi: Add quirk to bypass SCP fw bug
+Message-ID: <Z8AjhHsVT9ZQTtZX@pluto>
+References: <20250226024338.3994701-1-quic_sibis@quicinc.com>
+ <20250226024338.3994701-3-quic_sibis@quicinc.com>
+ <Z77M5iXHQsdMptWm@hovoldconsulting.com>
+ <Z77W-fKBUqAALZKJ@hovoldconsulting.com>
+ <759226e1-05aa-4ca2-b2f5-7f1a84dc427f@stanley.mountain>
+ <Z77l1NflYXTnRyg0@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
- directly connected
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
-	<yanaijie@huawei.com>
-CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
-	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
-	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
-References: <20250220130546.2289555-1-yangxingui@huawei.com>
- <20250220130546.2289555-2-yangxingui@huawei.com>
- <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
- <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
- <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
- <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
- <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
- <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
- <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
- <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
- <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
- <d4b7ae14-5b60-883a-c4f8-be11fc51a4f7@huawei.com>
- <4f287a32-d24f-47dc-bec5-a4b94895e135@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <4f287a32-d24f-47dc-bec5-a4b94895e135@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepemh500008.china.huawei.com (7.202.181.139) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z77l1NflYXTnRyg0@hovoldconsulting.com>
 
-Hi, John
+On Wed, Feb 26, 2025 at 10:58:44AM +0100, Johan Hovold wrote:
+> On Wed, Feb 26, 2025 at 12:31:27PM +0300, Dan Carpenter wrote:
+> > On Wed, Feb 26, 2025 at 09:55:21AM +0100, Johan Hovold wrote:
+> > > On Wed, Feb 26, 2025 at 09:12:23AM +0100, Johan Hovold wrote:
+> > > > On Wed, Feb 26, 2025 at 08:13:38AM +0530, Sibi Sankar wrote:
+> > > 
+> > > > >  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> > > > >  			     u8 describe_id, u32 message_id, u32 valid_size,
+> > > > >  			     u32 domain, void __iomem **p_addr,
+> > > > > -			     struct scmi_fc_db_info **p_db, u32 *rate_limit)
+> > > > > +			     struct scmi_fc_db_info **p_db, u32 *rate_limit,
+> > > > > +			     bool skip_check)
+> > > > 
+> > > > This does not look like it will scale.
+> > > 
 
-On 2025/2/26 16:57, John Garry wrote:
+Hi,
 
+> > > After taking a closer look, perhaps it needs to be done along these
+> > > lines.
+> > > 
+> > > But calling the parameter 'force' or similar as Dan suggested should
+> > > make it more readable.
+> > > 
+> > > > >  {
+> > > > >  	int ret;
+> > > > >  	u32 flags;
+> > > > > @@ -1919,7 +1920,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> > > > >  
+> > > > >  	/* Check if the MSG_ID supports fastchannel */
+> > > > >  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
+> > > > > -	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes))
+> > > > > +	if (!ret && !MSG_SUPPORTS_FASTCHANNEL(attributes) && !skip_check)
+> > > > 
+> > > > Why can't you just make sure that the bit is set in attributes as I
+> > > > suggested? That seems like it should allow for a minimal implementation
+> > > > of this.
+> > > 
+> > > My idea here was that you could come up with some way of abstracting
+> > > this so that you did not have to update every call site. Not sure how
+> > > feasible that is.
+> > 
+> > I'm having a hard time finding your email.
 > 
-> The lldd_dev_found CB is where you should set the itct, and it is only 
-> possible to do that if you report the device gone first. So that seems 
-> like a simpler solution.
-Solution as follow?
-+static bool hisi_sas_hw_port_id_changed(struct hisi_hba *hisi_hba, int 
-phy_no)
-+{
-+       struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
-+       struct asd_sas_phy *sas_phy = &phy->sas_phy;
-+       struct device *dev = hisi_hba->dev;
-+       struct asd_sas_port *sas_port;
-+       struct hisi_sas_port *port;
-+
-+       if (!sas_phy->port)
-+               return false;
-+
-+       sas_port = sas_phy->port;
-+       port = to_hisi_sas_port(sas_port);
-+       if (phy->port_id == port->id)
-+               return false;
-+
-+       dev_info(dev, "phy%d's hw port id changed from %d to %llu\n",
-+                phy_no, port->id, phy->port_id);
-+
-+       return true;
-+}
-+
-  static void hisi_sas_slot_index_clear(struct hisi_hba *hisi_hba, int 
-slot_idx)
-  {
-         void *bitmap = hisi_hba->slot_index_tags;
-@@ -856,6 +878,14 @@ static void hisi_sas_phyup_work_common(struct 
-work_struct *work,
-         struct asd_sas_phy *sas_phy = &phy->sas_phy;
-         int phy_no = sas_phy->id;
+> 	https://lore.kernel.org/lkml/Z4Dt8E7C6upVtEGV@hovoldconsulting.com/
+>  
+> > Why does the scmi_proto_helpers_ops struct even exist?  We could just
+> > call all these functions directly.  Do we have plans to actually create
+> > different implementations?
+> > 
+> > If we got rid of the scmi_proto_helpers_ops struct then we could just
+> > rename scmi_common_fastchannel_init() to __scmi_common_fastchannel_init()
+> > and create a default wrapper around it and a _forced() wrapper.
+> > 
+> > Some other potentially stupid ideas in the spirit of brainstorming are
+> > that we could add a quirks parameter which takes a flag instead of a
+> > bool.  Or we could add a quirks flag to the scmi_protocol_handle struct.
+> 
+> Something like that, yes. :) I didn't try to implement it, but it seems
+> like it should be possible implement this is a way that keeps the quirk
+> handling isolated.
+>
 
-+       if (hisi_sas_hw_port_id_changed(hisi_hba, phy_no)) {
-+               sas_phy_disconnected(sas_phy);
-+               phy->phy_attached = 0;
-+               sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR, 
-GFP_ATOMIC);
-+               hisi_sas_notify_phy_event(phy, HISI_PHYE_LINK_RESET);
-+               return;
-+       }
-+
+I hope next week to have a better look at this, in tne meantime just a
+few considerations....
+
+Sooner or later we should have introduced some sort of quirk framework
+in SCMI to deal systematically with potentially out-of-spec FW, but as
+in the name, it should be some sort of framework where you have a table of
+quirks, related activation conditions and a few very well isolated points
+where the quirks are placed and take action if enabled...this does not
+seem the case here where instead an ad-hoc param is added to the function
+that needs to be quirked...this does not scale and will make the codebase
+a mess IMHO...
+
+Last but not least, these quirks 'activations' in the SCMI world should
+be driven mainly by the VENDOR/SUB-VENDOR/IMPLEMENTATION_VERS triple and
+only as a last resort by a platform compatible match...because the
+IMPLEMENTATION_VERSION, exposed by the FW and gathered via SCMI Base
+protocol, is completely under the vendor control so it can, and should, be
+used to identify broken FW-versions...indeed all the distinct SCMI protocols
+are anyway versioned elsewhere according to the spec, so there is no need to
+repeat SCMI protocol version here..I mean it is an IMPLEMENTATION version
+
+As an example on a JUNO the SCP reference FW reports:
+
+arm-scmi arm-scmi.1.auto: SCMI Protocol v2.0 'arm:arm' Firmware version 0x20f0000
+
+where the FW version represent something like the FW release tag, I think...not
+really sure about the menaing our FW gys give to it, BUT definitely it is not
+a bare copy of the SCMI protocol version...
+
+So...
+...does the platfom-to-be-quirked at hand properly use the IMPLEMENTATION_VERSION
+flag in a sensible way ?
+IOW does that change between a bad and good (or less bad :D) version ?
+Because shooting with the platform 'compatible-gun' should be the last resort
+if all of the above does NOT happen in this beloved fw...
+
+Anyway, after all of this babbling, I know, talk is cheap :D...so now I will shut
+up and see if I can prototype something generic to deal with quirks, possibly
+next week...
 
 Thanks,
-Xingui
+Cristian
 
