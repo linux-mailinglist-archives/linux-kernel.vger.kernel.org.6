@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-536160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA47A47C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:29:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099A8A47C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F45F3A4D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:29:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103F1164362
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0401722ACCA;
-	Thu, 27 Feb 2025 11:29:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAA4226183
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2212022A7E5;
+	Thu, 27 Feb 2025 11:31:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C42621C197;
+	Thu, 27 Feb 2025 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740655753; cv=none; b=U3L1rLTB5Mti5Fev6J3ceWdqs9VLbDfuENDScAwy2qxg48dYZVY+YIViSIjHbmHKFzMjDps4+/W2hCbrbBUBiAd3eofH4OJP05bDjfaj1jPKNr/GwgH8Nj1M7aa8C7VM6wYl7PkYspeRfGh9KHfUUSRYuK4Y99I/l9u6Va/FGYs=
+	t=1740655897; cv=none; b=IpHTWeGOqjRrPNMl2BPBU97vX9Ux1c/gpfRnp+KvT7b+gjvTr5syi0+3JJWFWivqKvYVYynVW0halAQcqhc5qUmyCO4OpatJrgKwIzKIq+pCfkeJm1hL6v5mk3T0AO2V3ElqBgFDG/xZ4oUXYJv9MADTXPUiyU1lxJbTFgXuMUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740655753; c=relaxed/simple;
-	bh=ZywMm4CjYa5hw1+87SFh/PxwPwctZfrw6ORjAyszIUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDmgILR9dGC+kLPVlJXQSiK+gz7O3ChZyFHJGTdK5+IQlJgqnVLiiZK+AzU16ZyW+AZi/WhO8bTYZQoVGgeZfzxyJp/SBsQqMmVjAf5V+7Jw3lB2zOdnIijeiL54K5D8cMtLYdOoaYoww/WtxyqbkDtkPRiQ1NGzTOhESVKX8jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnc4X-00058G-Bq; Thu, 27 Feb 2025 12:28:57 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnc4W-0037HX-2y;
-	Thu, 27 Feb 2025 12:28:56 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tnc4W-003Omf-2c;
-	Thu, 27 Feb 2025 12:28:56 +0100
-Date: Thu, 27 Feb 2025 12:28:56 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
-Message-ID: <20250227112856.aylsurbt3uqm4ivw@pengutronix.de>
-References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
- <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
+	s=arc-20240116; t=1740655897; c=relaxed/simple;
+	bh=sDj3J3eyO/n3cAM0nb6fEPRi1/eZS8UFgJTqHdnYU6E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ovf3snr/iw1LQ3Umf+hAggj9vJtagcYDaiOLmol7VF5ETGkrBzyuNdOVaWsdHpmBEZVNbbfyOKElIifHyszYs+xvVgSvZRVZOYIr3HJpYNWTZnvCZBckXNZbtxtpNTnL+HR3fsk5nwBRqvDnGGEDj5r0oh8M0kmXnWtEDZEXpyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F87115A1;
+	Thu, 27 Feb 2025 03:31:51 -0800 (PST)
+Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F98A3F6A8;
+	Thu, 27 Feb 2025 03:31:33 -0800 (PST)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>
+Subject: Re: (subset) [PATCH v7 00/10] arm64: dts: Add Arm Morello support
+Date: Thu, 27 Feb 2025 11:31:19 +0000
+Message-Id: <174065576473.2740592.10867811098764653721.b4-ty@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
+References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Laurentiu,
-
-On 25-02-26, Marco Felsch wrote:
-> Hi,
+On Fri, 21 Feb 2025 18:03:39 +0000, Vincenzo Frascino wrote:
+> The Morello architecture is an experimental extension to Armv8.2-A,
+> which extends the AArch64 state with the principles proposed in
+> version 7 of the Capability Hardware Enhanced RISC Instructions
+> (CHERI) ISA [1].
 > 
-> On 25-02-26, Laurentiu Mihalcea wrote:
-> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > 
-> > The AIPSTZ bridge offers some security-related configurations which can
-> > be used to restrict master access to certain peripherals on the bridge.
-> > 
-> > Normally, this could be done from a secure environment such as ATF before
-> > Linux boots but the configuration of AIPSTZ5 is lost each time the power
-> > domain is powered off and then powered on. Because of this, it has to be
-> > configured each time the power domain is turned on and before any master
-> > tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
+> This series adds dts support for the Arm Morello System Development
+> Platform.
 > 
-> My question still stands:
-> 
-> Setting these bits requires very often that the core is running at EL3
-> (e.g. secure-monitor) which is not the case for Linux. Can you please
-> provide more information how Linux can set these bits?
+> [...]
 
-Sorry I didn't noticed your response:
+Applied to sudeep.holla/linux (for-next/juno/updates), thanks!
 
-https://lore.kernel.org/all/a62ab860-5e0e-4ebc-af1f-6fb7ac621e2b@gmail.com/
-
-If EL1 is allowed to set the security access configuration of the IP
-cores doesn't this mean that a backdoor can be opened? E.g. your
-secure-boot system configures one I2C IP core to be accessible only from
-secure-world S-EL1 (OP-TEE) and after the power-domain was power-cycled
-it's accessible from EL1 again. This doesn't seem right. Why should a
-user be able to limit the access permissions to an IP core to only be
-accessible from secure-world if the IP core is accessible from
-normal-world after the power-domain was power-cycled.
-
+[01/10] arm64: Kconfig: Update description for CONFIG_ARCH_VEXPRESS
+        https://git.kernel.org/sudeep.holla/c/a3b955ac911b
+[02/10] dt-bindings: arm: Add Morello compatibility
+        https://git.kernel.org/sudeep.holla/c/51e877f12d23
+[03/10] dt-bindings: arm: Add Morello fvp compatibility
+        https://git.kernel.org/sudeep.holla/c/73d251e7068c
+[04/10] dt-bindings: arm: Add Rainier compatibility
+        https://git.kernel.org/sudeep.holla/c/91ee16438965
+[05/10] dt-bindings: arm-pmu: Add support for ARM Rainier PMU
+        https://git.kernel.org/sudeep.holla/c/807945ae7325
+[07/10] arm64: dts: morello: Add support for common functionalities
+        https://git.kernel.org/sudeep.holla/c/8fc53e26fdd8
+[08/10] arm64: dts: morello: Add support for soc dts
+        https://git.kernel.org/sudeep.holla/c/7f6838da3c67
+[09/10] arm64: dts: morello: Add support for fvp dts
+        https://git.kernel.org/sudeep.holla/c/34f3b3745ce5
+[10/10] MAINTAINERS: Add Vincenzo Frascino as Arm Morello Maintainer
+        https://git.kernel.org/sudeep.holla/c/6ceb0dd64727
+--
 Regards,
-  Marco
+Sudeep
+
 
