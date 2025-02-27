@@ -1,46 +1,76 @@
-Return-Path: <linux-kernel+bounces-537308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D2BA48A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:08:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3D7A48A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8E4F188FB0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF5C16133F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36640270EDD;
-	Thu, 27 Feb 2025 21:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E874426E976;
+	Thu, 27 Feb 2025 21:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q38XJ4wZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234841A9B2A;
-	Thu, 27 Feb 2025 21:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="VB1WuXHK"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2DE225A50
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740690477; cv=none; b=uLGtpX99c+tpnYZNo/NMCcpM7UvKVG1c2ewLHK29UmKFd2/MSyFo/Ro7+mDFcDdgKWpAtVuCD8Ntu66A8x+uVHH0HeK5pKLu3baqfxKsrKidHBU5oa9cDYBCsp1j6wZoEysOGaPMe4heksxjvHvNx3EHpQy9hD0w+Pbsy1/shag=
+	t=1740690624; cv=none; b=n15hrCpVd8bNCspXDjNme0D1hlbCEhNCryoCRNGe3ENdKIgZX1oPnWkUVuqTZbbW71ySrNrYdfj8krvOK1O1NrRJ/78xiAE1ni7z558ZUQwSForXRVElyGeO730ENCAqub6uBqvTdthoQwrf9IsugaM5PwoAE3jIqEF1BrPZfas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740690477; c=relaxed/simple;
-	bh=Fi9jUvZvCG6GYfCZYsMhxN2ciNunPlLnqb2YNjzyTxM=;
+	s=arc-20240116; t=1740690624; c=relaxed/simple;
+	bh=0EcUyBKZhTLQR3BYkYQDdRQDQ7f2tsUeTeRa4PvAtV4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HA13rNBCaMA09OGHnMvPN8uCRkJHerJsd3PQ+O7FEzlJ1Ph3RBz3B1eriPd2Fwpc9XCEiSdKRwMcCZ1Wy+2UtS+1SHt75fZq7VZDmqzS9BTbMiieGBIjRH/AEMZDOWWHiJw+JYZfZLYHFfFXkuFQAbZLE8pv2ZhvuQ222sn5xpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q38XJ4wZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 518E7210EAC0;
-	Thu, 27 Feb 2025 13:07:55 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 518E7210EAC0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740690475;
-	bh=IEOL6HLjW56dyRwoK8KUsakrGDoqCPmIDIIxo6mrB6I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q38XJ4wZRq9Fo2GurqKMAPPkl8c/pMalRVlMHGZxAmjQWoqIUJAo8a0eFrjdMAP/1
-	 1xWAqfiUzuB+FK7m0Zb/RwE/h7fSFEMZtWduLM9DmfY9fCMcM3pFe8oZToEOqrqZJ9
-	 RFeTRHQAIZfc7yjf01FCLdFT20j5DihGKRJD1iH4=
-Message-ID: <f9b3d2b7-59d6-42b7-b0eb-d26be3405b22@linux.microsoft.com>
-Date: Thu, 27 Feb 2025 13:07:54 -0800
+	 In-Reply-To:Content-Type; b=fea6F9HcTXXpXmEmPAaHgvYwf/8ffcIlyFK7d4K1mnhTEMgNyy9hoplt1SJc4wnldxjk0A0Gs8Gpir0j9aaE3hs9Uhl5xrE0+/8bI+hlhAyS4EJrkmcdmdN/jmdTZKoMSpXKcNv8gvvuQaXWiltPQZyaGX5t4tZjXn4MppLOYg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=VB1WuXHK; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f504f087eso1021693f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:10:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1740690621; x=1741295421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=McVDA02T8ChyltXMoGQz21UDmm2WB9bHt1FmktyqO9g=;
+        b=VB1WuXHKBRFvNWav7ZbGBLkSPGATk50qjSOBIqx5EGGsKGsSgFe6FG5jKXev51DA7p
+         kRzl0jlbMg8C+WarGL7wFavg4oPoZE/LMCGsSywryS0ObkLCpFgu+VniNfkZ9ilxAE52
+         Uzi7iXqzuEkx704jpSFyTkbaSbkAh7gzzdPGU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740690621; x=1741295421;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=McVDA02T8ChyltXMoGQz21UDmm2WB9bHt1FmktyqO9g=;
+        b=ork89SeRQLg7KXSnkt1JeudZUX2PAFkETNSKIau62HqsPgj6fcyfynFxzSDgoyGev3
+         WjzPRpK+Xr7SKsmqmbxqt8HY1kq8jTLCT3CcB0uBhsxFdw1c+ALXLHXmcSFSGzsK93Lm
+         W49FD9exCJFukkf+e5shm6u+gv/pEwU+PAijao+DXk7gEwK4SdWV9y7v9IWenlEuSRP7
+         gZVINAAvvhBSC6xIwIcRQuYYJNuFjddkGXG2vAIX+3W7H5htWucliNk4vA0/aaiGBOWp
+         H+RTtomDWyyF8XuL5petjcJMwbLo+3OLJlhCfqqP9fewpt5BS94yWK7GW2Ub0ggm90ak
+         aW/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcpigMWC69OsFJ+uwtVwSAWrv3OQbu/uK5KsQwlW1qu7+30CCR6MuAlvj0TsFWv3OVFsc5FuG/s5zYloE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/x7LT/8XMYumeBbPeP42pfMO7DLWT03rykJup2ep/sNgKOSHU
+	cmuOmLDIhPRdI7ILkPmTgszIzYD6Gj92+NtIB1jkd+Obumvku4pB2IxT++A/iFM=
+X-Gm-Gg: ASbGncvAdVJI7zqvUCbtdaq97hM/bSrYIXK6Xo2Pm/fTW6/agyGO+LWfYQhhgiWA6BC
+	z5tKmu1P5og6VQX8qHOF/up8B6mAsaq+VmhLFOD1TUcQ4skduFO++K1sycu7Sh3wl+Z29zRGtCG
+	kq08gyA/an/QCdkdPBlHxs81D6RECNUcBmaWMjXGCPxodfWv95Q+jK5XiqAMCnkjcPmVTyqiGll
+	+BBGE/i4fU64h7TMnB6V1qTkYyrj5MWoI2OzApnKX56m7tq0+YIMFNAMLnPHQmGfg6Nv6XyFmXu
+	JROFg/3fQN4kM1+6xbngDS0jRKjQSUUrvN09Gpmf461l+G3qdwpFQQbO3pGLk5/X/w==
+X-Google-Smtp-Source: AGHT+IFgQt1PVzqZnm4g8KGhIwZcUHnnyirC4gn2Ce/wzGC6Yq6y2mLyVO1IOZ3rKalzE2d9OwQfoQ==
+X-Received: by 2002:a5d:47cd:0:b0:38d:e481:c680 with SMTP id ffacd0b85a97d-390ec9bb569mr584403f8f.18.1740690620844;
+        Thu, 27 Feb 2025 13:10:20 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7d69sm3196795f8f.60.2025.02.27.13.10.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 13:10:20 -0800 (PST)
+Message-ID: <ea20d47e-88b9-46ab-9893-26bcf262d8b0@citrix.com>
+Date: Thu, 27 Feb 2025 21:10:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,143 +78,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] x86/hyperv: Use hv_hvcall_*() to set up hypercall
- arguments -- part 1
-To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
-Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20250226200612.2062-1-mhklinux@outlook.com>
- <20250226200612.2062-4-mhklinux@outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250226200612.2062-4-mhklinux@outlook.com>
+Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
+ and accessor macro
+To: Ingo Molnar <mingo@kernel.org>
+Cc: bp@alien8.de, chang.seok.bae@intel.com, dave.hansen@intel.com,
+ dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ tglx@linutronix.de, x86@kernel.org
+References: <Z8C-xa7WB1kWoxqx@gmail.com>
+ <94083f1c-dab1-4b57-bd45-a4d4f8ac262e@citrix.com>
+ <Z8DFusMiUYPZ3ffd@gmail.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <Z8DFusMiUYPZ3ffd@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/26/2025 12:06 PM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Update hypercall call sites to use the new hv_hvcall_*() functions
-> to set up hypercall arguments. Since these functions zero the
-> fixed portion of input memory, remove now redundant calls to memset()
-> and explicit zero'ing of input fields.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  arch/x86/hyperv/hv_apic.c   |  6 ++----
->  arch/x86/hyperv/hv_init.c   |  5 +----
->  arch/x86/hyperv/hv_vtl.c    |  8 ++------
->  arch/x86/hyperv/irqdomain.c | 10 ++++------
->  4 files changed, 9 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-> index f022d5f64fb6..c16f81dd36fc 100644
-> --- a/arch/x86/hyperv/hv_apic.c
-> +++ b/arch/x86/hyperv/hv_apic.c
-> @@ -115,14 +115,12 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector,
->  		return false;
->  
->  	local_irq_save(flags);
-> -	ipi_arg = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -
-> +	hv_hvcall_in_array(&ipi_arg, sizeof(*ipi_arg),
-> +				sizeof(ipi_arg->vp_set.bank_contents[0]));
-I think the returned "batch size" should be checked to ensure it is not too small to hold the
-variable-sized part of the header.
+On 27/02/2025 8:06 pm, Ingo Molnar wrote:
+> * Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>> What options #1 and #4 will cause is the virt people to come after 
+>> you with sharp implements for creating incompatibilities in an ABI.  
+>> The XFEATUREs are the tag(ish) of the union that is the xsave buffer.
+> There's no incompatibility for a default-disabled feature that gets 
+> enabled by an AVX-aware host kernel and by AVX-aware guest kernels. 
+> What ABI would be broken?
 
->  	if (unlikely(!ipi_arg))
->  		goto ipi_mask_ex_done;
->  
-While here, is this check really needed? If so, maybe a check for the percpu page(s) could be
-baked into hv_hvcall_inout_array()?
+I don't understand your question.
 
->  	ipi_arg->vector = vector;
-> -	ipi_arg->reserved = 0;
-> -	ipi_arg->vp_set.valid_bank_mask = 0;
->  
->  	/*
->  	 * Use HV_GENERIC_SET_ALL and avoid converting cpumask to VP_SET
-> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> index ddeb40930bc8..c5c9511cb7ed 100644
-> --- a/arch/x86/hyperv/hv_init.c
-> +++ b/arch/x86/hyperv/hv_init.c
-> @@ -400,13 +400,10 @@ static u8 __init get_vtl(void)
->  	u64 ret;
->  
->  	local_irq_save(flags);
-> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
->  
-> -	memset(input, 0, struct_size(input, names, 1));
-> +	hv_hvcall_inout(&input, sizeof(*input), &output, sizeof(*output));
+XSAVE, and details about in CPUID, are a stated ABI (given in the SDM
+and APM), and available in userspace, including for userpace to write
+into a file/socket and interpret later (this is literally how we migrate
+VMs between different hosts).
 
-This doesn't look right, this is a rep hypercall taking an array of register names
-and outputting an array of register values.
+You simply redefine what %xcr0.bnd_* (a.k.a. XFEATURES 3 and 4) mean,
+irrespective of what a guest kernel thinks it can get away with.
 
-hv_hvcall_inout_array() should be fully utilized (input and output arrays) here.
-
-The current code may actually work, but it will overlap the input and output!
-
->  	input->partition_id = HV_PARTITION_ID_SELF;
->  	input->vp_index = HV_VP_INDEX_SELF;
-> -	input->input_vtl.as_uint8 = 0;
->  	input->names[0] = HV_REGISTER_VSM_VP_STATUS;
->  
->  	ret = hv_do_hypercall(control, input, output);
-> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> index 3f4e20d7b724..3dd27d548db6 100644
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-<snip>
-> @@ -185,13 +184,10 @@ static int hv_vtl_apicid_to_vp_id(u32 apic_id)
->  
->  	local_irq_save(irq_flags);
->  
-> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	memset(input, 0, sizeof(*input));
-> +	hv_hvcall_inout(&input, sizeof(*input), &output, sizeof(*output));
-This has the same issue as above - it is a rep hypercall so needs hv_hvcall_inout_array()
-
->  	input->partition_id = HV_PARTITION_ID_SELF;
->  	input->apic_ids[0] = apic_id;
->  
-> -	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-> -
->  	control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_ID_FROM_APIC_ID;
->  	status = hv_do_hypercall(control, input, output);
->  	ret = output[0];
-> diff --git a/arch/x86/hyperv/irqdomain.c b/arch/x86/hyperv/irqdomain.c
-> index 64b921360b0f..803b1a945c5c 100644
-> --- a/arch/x86/hyperv/irqdomain.c
-> +++ b/arch/x86/hyperv/irqdomain.c
-> @@ -24,11 +24,11 @@ static int hv_map_interrupt(union hv_device_id device_id, bool level,
->  
->  	local_irq_save(flags);
->  
-> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-> +	hv_hvcall_inout_array(&input, sizeof(*input),
-> +			sizeof(input->interrupt_descriptor.target.vp_set.bank_contents[0]),
-> +			&output, sizeof(*output), 0);
-As noted before I think the batch size should be checked to ensure it is large enough.
-
-Side note - it seems in this hypercall, nr_banks + 1 is used as the varhead size, which
-counts the vp valid mask, but this is not the case in __send_ipi_mask_ex(). Do you happen
-to know why that might be?
-
-Thanks,
-Nuno
-
->  
->  	intr_desc = &input->interrupt_descriptor;
-> -	memset(input, 0, sizeof(*input));
->  	input->partition_id = hv_current_partition_id;
->  	input->device_id = device_id.as_uint64;
->  	intr_desc->interrupt_type = HV_X64_INTERRUPT_TYPE_FIXED;
-<snip>
+~Andrew
 
