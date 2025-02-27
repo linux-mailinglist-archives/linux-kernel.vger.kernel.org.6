@@ -1,83 +1,101 @@
-Return-Path: <linux-kernel+bounces-535720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348C5A47665
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:19:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A7EA47666
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B5A1888BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:19:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A459616F96D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC2D21C9F4;
-	Thu, 27 Feb 2025 07:18:57 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B8513777E;
+	Thu, 27 Feb 2025 07:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrOS7tKF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B67C189BB0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007E51F9F5C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740640737; cv=none; b=f8byjh8v7dzRx4c1grXEBjn1akrNUhufnnNLSio2AjKvF5TnREPMSeHsBlQM0D7jg0fjlhZnJvSbR/TWtY5j3kL1lVXJfUwfNl4oG71EvOf3ziChxM00ypchju7mjzpfLDjvXmVUazq1D2Ezz9ZwX8ywpZsSdoYYnYVSIkVz08w=
+	t=1740640774; cv=none; b=LPBbuN68F/tleYOC7S7Tigb8svpNO9JGx0hO7pC70JeKMOLkhuOg2MW9q7tdPwWLQJB7ZBEae60d3CpTq9Z+3Jzf8PjRuIIc1veeggkshrHPuKfJTSTVr5lH9LEj8R6BiDq9bFehsQ2NVEgJtS7r0dFBsE3WnpebcNzvoNDTtBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740640737; c=relaxed/simple;
-	bh=VIP/tA+0gkM1g/bBuzM+N6UsjKn8Y3R/wOwMCFFITUY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3e2nuwP9HgRJbXZS0SmDRt0wwmLBqNQSRE0c2SOuYplARv29QqvEAbPHUdqde4kqJvSNhk/McOXRhrLv1OAFk2uwc/jxIyQVmtdfEfioZoAVHeOyXIDEC3zILFCMYZQm5QXi+zCRCpvMGrhUWIs+TT0MdanTM0+gBGW0Tmf2/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 14e8d78e-f4db-11ef-83b3-005056bdf889;
-	Thu, 27 Feb 2025 09:18:46 +0200 (EET)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 27 Feb 2025 09:18:45 +0200
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, lee@kernel.org,
-	giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] pps: generators: tio: split pps_gen_tio.h
-Message-ID: <Z8AR1Qq0F_e8PjBl@surfacebook.localdomain>
-References: <20250226061527.3031250-1-raag.jadav@intel.com>
- <20250226061527.3031250-2-raag.jadav@intel.com>
- <Z78M5iTHgdHnqbz2@smile.fi.intel.com>
- <Z7_zW3rlWtZZ7BiM@black.fi.intel.com>
+	s=arc-20240116; t=1740640774; c=relaxed/simple;
+	bh=uTordXA6MaEuH41ZSrokwDn9YzrrXK3YvPjwk15VGEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q8K2lqe/+T131jarXOu9g37ujfriBALIJPjYiiRvb0KpVwPUtfMDb2Y0H0T6V55Ac+rv5ZizDbDXRiTut6NQ41FSMIvZWgg4fj07aWQXIKUT/KM7HLFc3dBrUht8aMl2sSVxkhHyedQDAFtvjv2pXoMeubSOpbJ0U7/N3neFRFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BrOS7tKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD6BC4CEDD;
+	Thu, 27 Feb 2025 07:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740640773;
+	bh=uTordXA6MaEuH41ZSrokwDn9YzrrXK3YvPjwk15VGEE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BrOS7tKFkZRzASt4b8/eCJhLAdguSzcQpduJsd61+sxwYKUchK7jsqEAdSVTSVgYu
+	 vKjxCD6tWLLT2DZlUxJvdDDQvjbCF0TWnNsUIteWhCrVNKfGxfUY4jnP8TI6GYbVZY
+	 R5yKx4nbOqPOf8ywzYUT50fPmYAFl8y3VflnckPuYlE6Z1ljYn63tSCUydeB7+ti44
+	 wOHmjpwqJ84+f0PtMu8EdY6fSV7VsMUHBd2M5OlTkFyoqRI9qog9G7N22LLb/nhskm
+	 /0l+eJDaO2bxGyONN8Sa4DzTojvXDYgLlqqmpGOXIn2YC/ND1PGHWzqw6HDvOZiGjT
+	 x1gGQHu5bwIew==
+Date: Thu, 27 Feb 2025 08:19:27 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
+ =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, Marcel
+ Apfelbaum <marcel.apfelbaum@gmail.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>, Yanan
+ Wang <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/14] acpi/generic_event_device: add logic to detect
+ if HEST addr is available
+Message-ID: <20250227081927.726a1938@foz.lan>
+In-Reply-To: <20250226165226.49b88429@imammedo.users.ipa.redhat.com>
+References: <cover.1740148260.git.mchehab+huawei@kernel.org>
+	<e9e0aafd7cc8613709171ec5d8a6d9d9be62d7c1.1740148260.git.mchehab+huawei@kernel.org>
+	<20250226165226.49b88429@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7_zW3rlWtZZ7BiM@black.fi.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thu, Feb 27, 2025 at 07:08:43AM +0200, Raag Jadav kirjoitti:
-> On Wed, Feb 26, 2025 at 02:45:26PM +0200, Andy Shevchenko wrote:
-> > On Wed, Feb 26, 2025 at 11:45:24AM +0530, Raag Jadav wrote:
+Em Wed, 26 Feb 2025 16:52:26 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-...
-
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/bits.h>
-> > > +#include <linux/hrtimer.h>
-> > > +#include <linux/pps_gen_kernel.h>
-> > > +#include <linux/spinlock_types.h>
-> > 
-> > This missing time.h and types.h.
+> On Fri, 21 Feb 2025 15:35:17 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
-> Aren't they guaranteed by hrtimer.h and spinlock_types.h?
 
-Nope, why? HR timer is only for HR timer specific definitions and APIs, how
-does they are related?
+> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > index 5346cae573b7..14d8513a5440 100644
+> > --- a/hw/acpi/generic_event_device.c
+> > +++ b/hw/acpi/generic_event_device.c
+> > @@ -318,6 +318,7 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
+> >  
+> >  static const Property acpi_ged_properties[] = {
+> >      DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
+> > +    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState, ghes_state.use_hest_addr, false),  
+> 
+> you below set it for 9.2 to false, so
+> shouldn't it be set to true by default here?
 
-time.h due to NSEC_PER_USEC (or what was there?) and types.h due to u32.
+Yes, but it is too early to do that here, as the DSDT table was not
+updated to contain the GED device.
 
--- 
-With Best Regards,
-Andy Shevchenko
+We're switching it to true later on, at patch 11::
 
+	d8c44ee13fbe ("arm/virt: Wire up a GED error device for ACPI / GHES")
 
+Thanks,
+Mauro
 
