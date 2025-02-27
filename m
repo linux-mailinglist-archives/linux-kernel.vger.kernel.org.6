@@ -1,378 +1,255 @@
-Return-Path: <linux-kernel+bounces-537137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CF4A4885F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:58:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18384A4886E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CB71647DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD014188B1AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754CF26D5B8;
-	Thu, 27 Feb 2025 18:57:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CB226D5AE;
+	Thu, 27 Feb 2025 18:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="St+q02zH"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011033.outbound.protection.outlook.com [52.103.67.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0920215769;
-	Thu, 27 Feb 2025 18:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740682659; cv=none; b=ZyTsvGAKv4VxSf1LF65JQexLNanbdbvoUGfgMjbRzvDNsjFXki0QL+fftO/yPLHddxUiLvjPvTyz4EJY+9YECcGTEIE0UC2b7vtxAgAmYHqTW9dDg+axU0yRwEzI7sXgi2/p61FL6OZ9CSzlywwFnsNROAPdZX0ChfLAsjHoqbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740682659; c=relaxed/simple;
-	bh=75NhAFRF+JLlYAINhq+WwIi22Lhv7jwxXtxpD0YdsMY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rZ5nwDUGRkK0g2bCO9PXiluNYa4H7jlm6froCp5Qz9FhyVA3hR4gCQk0r8lO5PmlvCktYbk4KT5dwUM1ZQKZigHeHuw1WGw/GXta5jXN+09Lpw4F8u4nJdd/uhnPsvVPt3JbdmQWQmeOM1pMCn9PY9PCbmzav9I/X2UwN2GGNi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF77C4CEE4;
-	Thu, 27 Feb 2025 18:57:39 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tnj5T-00000009nSX-1GYc;
-	Thu, 27 Feb 2025 13:58:23 -0500
-Message-ID: <20250227185823.154996172@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 27 Feb 2025 13:58:08 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sven Schnelle <svens@linux.ibm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>,
- Donglin Peng <dolinux.peng@gmail.com>,
- Zheng Yejian <zhengyejian@huaweicloud.com>
-Subject: [PATCH v4 4/4] ftrace: Add arguments to function tracer
-References: <20250227185804.639525399@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD4D26D5AB;
+	Thu, 27 Feb 2025 18:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740682714; cv=fail; b=cgT+Z21YRHnxIq+xEEILclAU/AHcz80gy7/caEk2nkfNAD7NA7asleotH/lGjyhfBLzKwFf5suvPOFuGhODDyGRe7KsJqnb1Z1csQiuKvxKuBY4+UQdj/WHIqkj+Mpmwr5BruXGcS00YUFVsqEdsIolRIpLWaBY7W6L7g39QaEc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740682714; c=relaxed/simple;
+	bh=JJgPmcwR41GTd4qM7UnFMPOzs2ZBMts3/xMWFnoG9LI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sEnMI0y5u0SBgm2w7FrGGONXyEQduMhB8bfwEie/3kMu7MjqHykzUWjTZC63wXMj8ndC6S4hP6daLEF5JXSg4GsHd+HqmpY1g5WX6/AVinWTJnaf7hrPsIy9CTBbQJvXO1EkeIvfVfszgHH7L8tnjCnUQGVF7OAOEY8QoVqj6SE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=St+q02zH; arc=fail smtp.client-ip=52.103.67.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HR/O3Gc98bUNLsHAyx3f5k5TEJo3vHVQBGcGIwNhLjOa+joPqRzNqUUU45AXC7nKhUTd4jkflAD4SeXFlPhe53paOvYJdzSl7qGDgaEXUCGJOvtBIRpx73OP0o8Z6Fn8NkQv5vKGx9fq+Qtfx7A3qpgHKYtuLzmU4nobiFJJ+MFJu4digP2Dmdh9/nHw4FjQKSR/FpCYRuCoNwaAIW5LQsydmGO5cil8CySEdSzc2nE4h+XlMmYitAnBkcQkm3L5KexZoOQYwPxEummT9jkSZuCKVpI/7CaihAByeM3BKprm42sWtAJfIDhLrAvUfGlNlJ2jfrbfsahcfjCUBgigSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JJgPmcwR41GTd4qM7UnFMPOzs2ZBMts3/xMWFnoG9LI=;
+ b=qjM7H6RRHZaochh8gch5WjfQKpps/2blHlF20ZZ3p+ggwIHTMKFeaV6bPMokJcov1dFH0TpfYAcXO70FDWk5Evhb2pJ8IuRM4UIb7BGRBrRSkXa1h36c2ZW0IQDyz7WU7o62HC4uixppLooEEftASbp8lVOjhat0lD7XxgUmKfRhXtMm+Z/TGzADxBE5UMK/9edCCr4AA/q/zYG2LZfR6E+Kg+B2A/qbq5Brcf5Mvzm+d7OudP7vPjHV+t9DEEjafWrrRlVEWy2zRM2tmTF4mF29k3qDzIHFJPZl8wx+vDwnCQc5XW5as/wNobGeYyhCjjnLfiOCNJIMK/c8klsV/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JJgPmcwR41GTd4qM7UnFMPOzs2ZBMts3/xMWFnoG9LI=;
+ b=St+q02zHUR0f+iNjAa9lMnaA8SbeUftmBBdw3CE2A6TuWjVY/F/nbRLz7eyoOUbOC661sd7VLx8hiK5YPXnVF9nEgwOZJUEgP9Oaom93ZWGmjDQ7IK7TzZo+SwSPIgnMf/QOLv4Zqm7/oSNbjRHNfZ90/MVwdwLFUI53xyzr1/t4zQlBSKAyiwOFmelWMCGX9wTjmvAKhkjTnay6aEvDHMi83rjJFjweoQ/wS/13ahKjLhk8CgRwQ94xjw/uGxkhMrwVicIOWXUvPVQSt8Vukhwap7tF6bAFV3A1TWBndydwCdnL8Iyy/vU8TwcA8gbfPfI1fRUM69ueuMxtJqg0/w==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB7934.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:43::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Thu, 27 Feb
+ 2025 18:58:24 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.021; Thu, 27 Feb 2025
+ 18:58:24 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+CC: "pmladek@suse.com" <pmladek@suse.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, "corbet@lwn.net"
+	<corbet@lwn.net>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>, "joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hector Martin
+	<marcan@marcan.st>, "sven@svenpeter.dev" <sven@svenpeter.dev>, Janne Grunau
+	<j@jannau.net>, "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
+Subject: Re: [PATCH v4] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Thread-Topic: [PATCH v4] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Thread-Index: AQHbiOEjzUrALYS3lkmTQCvm8eL6dLNbOimAgAApL4OAAB3pAA==
+Date: Thu, 27 Feb 2025 18:58:24 +0000
+Message-ID:
+ <PN3PR01MB9597D1584C472757EB9F9C26B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+References:
+ <PN3PR01MB9597916417D398179C55BD98B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+In-Reply-To:
+ <PN3PR01MB9597916417D398179C55BD98B8CD2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB7934:EE_
+x-ms-office365-filtering-correlation-id: db5a60d6-30a6-400a-e5da-08dd5760b627
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|7092599003|8062599003|461199028|6072599003|12121999004|19110799003|8060799006|41001999003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?SjAvNXUvWFhWL0NBVThyZ0gzbjQ1cWFZeUwrTmtMUmtmV2RJakZtMlQyeWxJ?=
+ =?utf-8?B?VU9UN2F5QkFtRlllZkZBMWJQWEI2eDBueDcvWWZmcHlhUzVpdjZTRHlTSDZD?=
+ =?utf-8?B?WG1vb3hyZWx1YVBVODh5eE1ncTFacHlod1p4NVBYOUk5Ymd1U2NJVWNJdkVF?=
+ =?utf-8?B?STJjK0haL0tjdUprRi9CSHRENUJnY3NQM2V6MmFwOERlV25lOTI0Ykl6c09a?=
+ =?utf-8?B?RmlkcU1jV29XMjFqVmtXRlBjY2VKcGZKc0JSVmFqSDJud1RKVUcwVXMweTYr?=
+ =?utf-8?B?VlNNY0s3N1RpSnY4aisyZWJpZ2g4RXNDSFdjWHlqdlBKcGpCWmJCTDYvWXBT?=
+ =?utf-8?B?NnpBcXBmejN0RjFBYnFzVEQ4eUdsUlBXMG5ZcXAwUFBtZzM1ZHhnL05iMnNq?=
+ =?utf-8?B?ZEhKaGlxL1U4bjhDcGVTeUdla25YMVRiSG1XWUtvYiswaW9Kd1JDT05DSXFL?=
+ =?utf-8?B?ZmJLNGdKSTFmY3ljRURsbUVOaXBObzk0VllyU0RYZXBBQXdoRmR6ZSt5MzI5?=
+ =?utf-8?B?dFJqNXpBblpoVW5wQXp2ZzFNd0hpNUtIUzZHYXlUNTJaekdDa0pOQ0cvalM0?=
+ =?utf-8?B?blJXR3F0THBxYWszVnVvakxqOXp5TVdZQWdqeXBja3FOVHIxZjNIMStENUY2?=
+ =?utf-8?B?NzFmRWV0T1dHemhWYm9SRHIrbEtVeFl1T0FTeDM2cjZhUmJQdVhxSGpBN0Ix?=
+ =?utf-8?B?bTFYeU1nOGhQQkFrQlQ5eWRLMkNTb2poakh2c1JacFRKRm9EMHZSb05XU1hw?=
+ =?utf-8?B?VTlZY1BkWHBGSWpXdlBML2hrQzdoV3prRmNpUWo4WHFwaVdQSUcxWmw3WmtM?=
+ =?utf-8?B?NlhwTHdQWjZSRjhFc0lDRjlKZWlaZFVTbTRGNFFQM1pWWEcyajFqZWJWbjBa?=
+ =?utf-8?B?QytkdmR1Y1hIRXBQMk1FOVY3ejl4NDRnbFFIa0lkY00yUVN3VGRqem93QWk3?=
+ =?utf-8?B?alllVjZtMTVNYm5mR0QyZ3FhTXF6bzluQmNyV3NhaCthM3F6a0x1dFJmRHB4?=
+ =?utf-8?B?L2JiaENTVkIydi9pOFVBRkJqanUwMitLS1lQZmo4bGZXcThZbFJ3ajFzbG5T?=
+ =?utf-8?B?bUVNQ0FjbTdiNUZSNTJjZWVwV2ZQdjBlRlVDWXhJMXJ5SXNLM25YelN3bkpr?=
+ =?utf-8?B?SzEyZnJHSVNndGptbDRWeThzd2o0T2RlcDlLYUpPeWh2blk4NENZblFwL0kx?=
+ =?utf-8?B?M3pYOXZUV1ZkZGM5Z041KzViM0Y1dGpkOVZpbkNDVWdjSXhzanN6MlZmY1FZ?=
+ =?utf-8?B?YjRCcDNqMWE1YmZrQUZGUnhBTFZWT2FBMlRBVTNNSVliRGpYR2xkU0prVUdl?=
+ =?utf-8?B?akhqK2IyeGw0ZjA5K0kxOWR5QWl3TjUzWEI5ek1hWVVJbjFPSmRoN1pNWERt?=
+ =?utf-8?B?amRpNGdjV2JMSGptVHFpaUJEdkpnNEpmdzBHaUtXdFJhYzhmbEVyWTdVbHo2?=
+ =?utf-8?B?R2hiOHNsTE5NYlZDQXN0dmNYc05HMFpYRHZaWHNyMmdDZFlPQStOS1FPblVu?=
+ =?utf-8?B?MHo3UUh1NGRsMHlUdkVvQlZIZEp5M3E1aDg4NDhzSjNiWU5mRGxUQzRDa1NC?=
+ =?utf-8?Q?h5w7dClfZj1lZp/FvCQje/A9A=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YWovenQ4N3N6cWluSDVrN0xmRWtDcEF5THdMbDNVMlBXVG1PVHhPek5OcndO?=
+ =?utf-8?B?VHpXVzlaYk94VDA3NVZTWklwT3RUOGVkTXcyYi95UGpRM0JRcktlN3lKcnFC?=
+ =?utf-8?B?OEw1NGlCbHdIelNCYjVicTdoOU8wM3UxMUphUkN1VXBPQVFvK0VBZTczSEtP?=
+ =?utf-8?B?L2VNWkRJTk9PaGdEN3BxVVBmZkdqQS91MU5TWDA3MWlnZkFSTHpZUUlPc0NZ?=
+ =?utf-8?B?TDhJalFxT0lFRkc5QVpOOWdHcjcrckl2dnFUNHNCcFlHWTFlTXEwTmU1YU82?=
+ =?utf-8?B?b3haVHRna3RFRHVLOTJYUDJGQVJTWEFtTEJiVFBLMG1UMHpvSG5TZEdPbkI3?=
+ =?utf-8?B?VFY5bVJFc3oweFR5N3JITXY3UGQrL2FQYVFUdXQrSUhYSE1vNmNSaUZjMk9t?=
+ =?utf-8?B?Q3FIKzJ0QWNsU256RnM0T0RNeTFBRi9lcDFWNHBzWXhGY2RjemFGc3lsZG5k?=
+ =?utf-8?B?WlV6Z3RTUi83ZXRBYTJWQTFZRVpvY2pLL1poVlNTTlBGc2NPRlRIZGRjekJO?=
+ =?utf-8?B?b0ZPOGo1eDkzQzBnenRjM0lDTlNLUDBQdC8yTlE2aTh6M1B4bXM5VEtoR3g3?=
+ =?utf-8?B?NnpDUDZvZEhpOHlWQ0x5UmpzNmpUSFZkUkxxY1E1aUJ6M1RVT0VxbW1UbVZQ?=
+ =?utf-8?B?NHZub0FuN1B0MUpMdWpCRkRyNzJheG5HS3ZVUzZsMHp0TndBbDhudjQ5aUhO?=
+ =?utf-8?B?WDlMN2hON0NDQ2xCSkVpRmNKSFB5WC9zdnhWSXoycGNSTlNTZ2IyMnJGaDhE?=
+ =?utf-8?B?ekFzd3o0NjMxYm8ydHo4V3ZYUzd0azlRQXNtczRTclA1ZUlZVDFSZCt3UVVj?=
+ =?utf-8?B?bjdWZGUzYTdpTlhaL2pXWE1ZaFVyRTNvMENoZmFMUHR1S0FDSDdNMkVjZ2h6?=
+ =?utf-8?B?WVpENjhGOTNqY2pBL2JpdWp5N3I5Rzl1bmdQNzF3RGUrcC8yNjl2Qm56V1Yr?=
+ =?utf-8?B?RFhkc0YyZUQyUXNwNi9YRXBUU0o0SXpzRWQrRUptNm1WSG5FRGE4KzRFZmRV?=
+ =?utf-8?B?VzdFS3d6UEdBa0YrbXlEaUlXOXJoSEFYR1NvQ0hRbGhKaVVUQllwaTgxVmQ1?=
+ =?utf-8?B?MUNpMTNTZWNXNzNlU28wKzlkRkh6Z2dZQ2NzVElkRTFtbjlrdmdJVUcxZTVm?=
+ =?utf-8?B?RUZrbytBVkRJVk5kTlJDd2wxNkhKQzJkTmVVS245dms1RkNaMVNKcW1ERU0w?=
+ =?utf-8?B?SHladUhQLy9LR0lZalEvemNMb3lWbmwvbVFGQVBsdzR6NFkzRzFRc3p1K0Qy?=
+ =?utf-8?B?OWFNTkhmS3cwZnFGdUhnNzJseGVHUDFUMnNYMDQyb1pSN1lEY0V0b09RdTR1?=
+ =?utf-8?B?UjF3TGxadnVoMWR3WkFXWG1UL0tqQUJTbjllMUZZRmpmUzNjRlBuSTJoaDZr?=
+ =?utf-8?B?ZGJSMHBobXdFa216T2p5VGdzYXdFbWNqZXJxckFPck4rNlJ6akJxSGUwRU4w?=
+ =?utf-8?B?RDMvbHY3S0grTHFVL2t1cy9zbTZzaWk1REpFT0VQcUYxQjdvS01PK0dlTVRv?=
+ =?utf-8?B?cFR6YnV0UDdYbmRhT1UyMFl6c1FMcHRadzJMd3hhOUd6MWxwVk5nbmpTVHRi?=
+ =?utf-8?B?NDV3c0d5ME1veFAxVFJBMGxMU09mVy9HZ2FJenQ4cnFMelpVVTNqczdUQVFM?=
+ =?utf-8?B?STBVU1BkcStCSXZPeTd5U0YwL1IyRVplZG1hOHJzZHp1TTBZZnV2cjBOaC8x?=
+ =?utf-8?B?NHFqdDlPaU5jTlNlcy9QSjVBUG1kMmNwK2RCRnRGNGdsVVZCekhwbGpZT1ZJ?=
+ =?utf-8?Q?lUd4rLEUsI0GU92Xtc=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID:
+ <0B03533BC5B7F44DAAAEDA62CF4E118F@sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: db5a60d6-30a6-400a-e5da-08dd5760b627
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2025 18:58:24.0535
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB7934
 
-From: Sven Schnelle <svens@linux.ibm.com>
-
-Wire up the code to print function arguments in the function tracer.
-This functionality can be enabled/disabled during runtime with
-options/func-args.
-
-        ping-689     [004] b....    77.170220: dummy_xmit(skb = 0x82904800, dev = 0x882d0000) <-dev_hard_start_xmit
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c              | 14 ++++++++--
- kernel/trace/trace.h              |  4 ++-
- kernel/trace/trace_entries.h      |  5 ++--
- kernel/trace/trace_functions.c    | 46 +++++++++++++++++++++++++++----
- kernel/trace/trace_irqsoff.c      | 12 ++++++--
- kernel/trace/trace_output.c       | 18 ++++++++++--
- kernel/trace/trace_sched_wakeup.c |  4 +--
- 7 files changed, 85 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0e6d517e74e0..cb13c88abfd6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2878,13 +2878,16 @@ trace_buffer_unlock_commit_nostack(struct trace_buffer *buffer,
- 
- void
- trace_function(struct trace_array *tr, unsigned long ip, unsigned long
--	       parent_ip, unsigned int trace_ctx)
-+	       parent_ip, unsigned int trace_ctx, struct ftrace_regs *fregs)
- {
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
- 	struct ring_buffer_event *event;
- 	struct ftrace_entry *entry;
-+	int size = sizeof(*entry);
- 
--	event = __trace_buffer_lock_reserve(buffer, TRACE_FN, sizeof(*entry),
-+	size += FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long);
-+
-+	event = __trace_buffer_lock_reserve(buffer, TRACE_FN, size,
- 					    trace_ctx);
- 	if (!event)
- 		return;
-@@ -2892,6 +2895,13 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
- 	entry->ip			= ip;
- 	entry->parent_ip		= parent_ip;
- 
-+#ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-+	if (fregs) {
-+		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
-+			entry->args[i] = ftrace_regs_get_argument(fregs, i);
-+	}
-+#endif
-+
- 	if (static_branch_unlikely(&trace_function_exports_enabled))
- 		ftrace_exports(event, TRACE_EXPORT_FUNCTION);
- 	__buffer_unlock_commit(buffer, event);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 6963cd83b6da..32da87f45010 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -21,6 +21,7 @@
- #include <linux/workqueue.h>
- #include <linux/ctype.h>
- #include <linux/once_lite.h>
-+#include <linux/ftrace_regs.h>
- 
- #include "pid_list.h"
- 
-@@ -697,7 +698,8 @@ unsigned long trace_total_entries(struct trace_array *tr);
- void trace_function(struct trace_array *tr,
- 		    unsigned long ip,
- 		    unsigned long parent_ip,
--		    unsigned int trace_ctx);
-+		    unsigned int trace_ctx,
-+		    struct ftrace_regs *regs);
- void trace_graph_function(struct trace_array *tr,
- 		    unsigned long ip,
- 		    unsigned long parent_ip,
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index 77a8ba3bc1e3..ee40d4e6ad1c 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -61,8 +61,9 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
- 	TRACE_FN,
- 
- 	F_STRUCT(
--		__field_fn(	unsigned long,	ip		)
--		__field_fn(	unsigned long,	parent_ip	)
-+		__field_fn(	unsigned long,		ip		)
-+		__field_fn(	unsigned long,		parent_ip	)
-+		__dynamic_array( unsigned long,		args		)
- 	),
- 
- 	F_printk(" %ps <-- %ps",
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index df56f9b76010..98ccf3f00c51 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -25,6 +25,9 @@ static void
- function_trace_call(unsigned long ip, unsigned long parent_ip,
- 		    struct ftrace_ops *op, struct ftrace_regs *fregs);
- static void
-+function_args_trace_call(unsigned long ip, unsigned long parent_ip,
-+			 struct ftrace_ops *op, struct ftrace_regs *fregs);
-+static void
- function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 			  struct ftrace_ops *op, struct ftrace_regs *fregs);
- static void
-@@ -42,9 +45,10 @@ enum {
- 	TRACE_FUNC_NO_OPTS		= 0x0, /* No flags set. */
- 	TRACE_FUNC_OPT_STACK		= 0x1,
- 	TRACE_FUNC_OPT_NO_REPEATS	= 0x2,
-+	TRACE_FUNC_OPT_ARGS		= 0x4,
- 
- 	/* Update this to next highest bit. */
--	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x4
-+	TRACE_FUNC_OPT_HIGHEST_BIT	= 0x8
- };
- 
- #define TRACE_FUNC_OPT_MASK	(TRACE_FUNC_OPT_HIGHEST_BIT - 1)
-@@ -114,6 +118,8 @@ static ftrace_func_t select_trace_function(u32 flags_val)
- 	switch (flags_val & TRACE_FUNC_OPT_MASK) {
- 	case TRACE_FUNC_NO_OPTS:
- 		return function_trace_call;
-+	case TRACE_FUNC_OPT_ARGS:
-+		return function_args_trace_call;
- 	case TRACE_FUNC_OPT_STACK:
- 		return function_stack_trace_call;
- 	case TRACE_FUNC_OPT_NO_REPEATS:
-@@ -220,7 +226,34 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 
- 	data = this_cpu_ptr(tr->array_buffer.data);
- 	if (!atomic_read(&data->disabled))
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
-+
-+	ftrace_test_recursion_unlock(bit);
-+}
-+
-+static void
-+function_args_trace_call(unsigned long ip, unsigned long parent_ip,
-+			 struct ftrace_ops *op, struct ftrace_regs *fregs)
-+{
-+	struct trace_array *tr = op->private;
-+	struct trace_array_cpu *data;
-+	unsigned int trace_ctx;
-+	int bit;
-+	int cpu;
-+
-+	if (unlikely(!tr->function_enabled))
-+		return;
-+
-+	bit = ftrace_test_recursion_trylock(ip, parent_ip);
-+	if (bit < 0)
-+		return;
-+
-+	trace_ctx = tracing_gen_ctx();
-+
-+	cpu = smp_processor_id();
-+	data = per_cpu_ptr(tr->array_buffer.data, cpu);
-+	if (!atomic_read(&data->disabled))
-+		trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 
- 	ftrace_test_recursion_unlock(bit);
- }
-@@ -270,7 +303,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 
- 	if (likely(disabled == 1)) {
- 		trace_ctx = tracing_gen_ctx_flags(flags);
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- #ifdef CONFIG_UNWINDER_FRAME_POINTER
- 		if (ftrace_pids_enabled(op))
- 			skip++;
-@@ -349,7 +382,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	trace_ctx = tracing_gen_ctx_dec();
- 	process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
- 
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- 
- out:
- 	ftrace_test_recursion_unlock(bit);
-@@ -389,7 +422,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 		trace_ctx = tracing_gen_ctx_flags(flags);
- 		process_repeats(tr, ip, parent_ip, last_info, trace_ctx);
- 
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- 		__trace_stack(tr, trace_ctx, STACK_SKIP);
- 	}
- 
-@@ -403,6 +436,9 @@ static struct tracer_opt func_opts[] = {
- 	{ TRACER_OPT(func_stack_trace, TRACE_FUNC_OPT_STACK) },
- #endif
- 	{ TRACER_OPT(func-no-repeats, TRACE_FUNC_OPT_NO_REPEATS) },
-+#ifdef CONFIG_FUNCTION_TRACE_ARGS
-+	{ TRACER_OPT(func-args, TRACE_FUNC_OPT_ARGS) },
-+#endif
- 	{ } /* Always set a last empty entry */
- };
- 
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 7294ad676379..c8bfa7310a91 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -150,7 +150,7 @@ irqsoff_tracer_call(unsigned long ip, unsigned long parent_ip,
- 
- 	trace_ctx = tracing_gen_ctx_flags(flags);
- 
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 
- 	atomic_dec(&data->disabled);
- }
-@@ -295,11 +295,17 @@ __trace_function(struct trace_array *tr,
- 	if (is_graph(tr))
- 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
- 	else
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- }
- 
- #else
--#define __trace_function trace_function
-+static inline void
-+__trace_function(struct trace_array *tr,
-+		 unsigned long ip, unsigned long parent_ip,
-+		 unsigned int trace_ctx)
-+{
-+	return trace_function(tr, ip, parent_ip, trace_ctx, NULL);
-+}
- 
- static enum print_line_t irqsoff_print_line(struct trace_iterator *iter)
- {
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 4b721cd4f21d..b51ee9373773 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -1090,12 +1090,15 @@ enum print_line_t trace_nop_print(struct trace_iterator *iter, int flags,
- }
- 
- static void print_fn_trace(struct trace_seq *s, unsigned long ip,
--			   unsigned long parent_ip, long delta, int flags)
-+			   unsigned long parent_ip, long delta,
-+			   unsigned long *args, int flags)
- {
- 	ip += delta;
- 	parent_ip += delta;
- 
- 	seq_print_ip_sym(s, ip, flags);
-+	if (args)
-+		print_function_args(s, args, ip);
- 
- 	if ((flags & TRACE_ITER_PRINT_PARENT) && parent_ip) {
- 		trace_seq_puts(s, " <-");
-@@ -1109,10 +1112,19 @@ static enum print_line_t trace_fn_trace(struct trace_iterator *iter, int flags,
- {
- 	struct ftrace_entry *field;
- 	struct trace_seq *s = &iter->seq;
-+	unsigned long *args;
-+	int args_size;
- 
- 	trace_assign_type(field, iter->ent);
- 
--	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta, flags);
-+	args_size = iter->ent_size - offsetof(struct ftrace_entry, args);
-+	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
-+		args = field->args;
-+	else
-+		args = NULL;
-+
-+	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta,
-+		       args, flags);
- 	trace_seq_putc(s, '\n');
- 
- 	return trace_handle_return(s);
-@@ -1785,7 +1797,7 @@ trace_func_repeats_print(struct trace_iterator *iter, int flags,
- 
- 	trace_assign_type(field, iter->ent);
- 
--	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta, flags);
-+	print_fn_trace(s, field->ip, field->parent_ip, iter->tr->text_delta, NULL, flags);
- 	trace_seq_printf(s, " (repeats: %u, last_ts:", field->count);
- 	trace_print_time(s, iter,
- 			 iter->ts - FUNC_REPEATS_GET_DELTA_TS(field));
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index af30586f1aea..c9ba4259e03e 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -242,7 +242,7 @@ wakeup_tracer_call(unsigned long ip, unsigned long parent_ip,
- 		return;
- 
- 	local_irq_save(flags);
--	trace_function(tr, ip, parent_ip, trace_ctx);
-+	trace_function(tr, ip, parent_ip, trace_ctx, fregs);
- 	local_irq_restore(flags);
- 
- 	atomic_dec(&data->disabled);
-@@ -327,7 +327,7 @@ __trace_function(struct trace_array *tr,
- 	if (is_graph(tr))
- 		trace_graph_function(tr, ip, parent_ip, trace_ctx);
- 	else
--		trace_function(tr, ip, parent_ip, trace_ctx);
-+		trace_function(tr, ip, parent_ip, trace_ctx, NULL);
- }
- 
- static int wakeup_flag_changed(struct trace_array *tr, u32 mask, int set)
--- 
-2.47.2
-
-
+DQoNCj4gT24gMjcgRmViIDIwMjUsIGF0IDEwOjQw4oCvUE0sIEFkaXR5YSBHYXJnIDxnYXJnYWRp
+dHlhMDhAbGl2ZS5jb20+IHdyb3RlOg0KPiANCj4g77u/DQo+IEhpDQo+Pj4gT24gMjcgRmViIDIw
+MjUsIGF0IDg6MTPigK9QTSwgYW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tIHdyb3Rl
+Og0KPj4+IA0KPj4+IO+7v09uIFRodSwgRmViIDI3LCAyMDI1IGF0IDA2OjMwOjQ4QU0gKzAwMDAs
+IEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4+IEZyb206IEhlY3RvciBNYXJ0aW4gPG1hcmNhbkBtYXJj
+YW4uc3Q+DQo+Pj4gDQo+Pj4gJXA0Y2MgaXMgZGVzaWduZWQgZm9yIERSTS9WNEwyIEZPVVJDQ3Mg
+d2l0aCB0aGVpciBzcGVjaWZpYyBxdWlya3MsIGJ1dA0KPj4gDQo+PiBGb3VyQ0MgKGFzIEZvdXIg
+aXMgbm90IGFuIGFjcm9ueW0gaXRzZWxmKS4NCj4gDQo+IE9rDQo+PiANCj4+PiBpdCdzIHVzZWZ1
+bCB0byBiZSBhYmxlIHRvIHByaW50IGdlbmVyaWMgNC1jaGFyYWN0ZXIgY29kZXMgZm9ybWF0dGVk
+IGFzDQo+Pj4gYW4gaW50ZWdlci4gRXh0ZW5kIGl0IHRvIGFkZCBmb3JtYXQgc3BlY2lmaWVycyBm
+b3IgcHJpbnRpbmcgZ2VuZXJpYw0KPj4+IDMyLWJpdCBGT1VSQ0NzIHdpdGggdmFyaW91cyBlbmRp
+YW4gc2VtYW50aWNzOg0KPj4+IA0KPj4+ICVwNGNoICAgSG9zdC1lbmRpYW4NCj4+IA0KPj4gVG9v
+IG1hbnkgc3BhY2VzIDotKQ0KPiANCj4gT2sNCj4+IA0KPj4+ICVwNGNsICAgIExpdHRsZS1lbmRp
+YW4NCj4+PiAlcDRjYiAgICBCaWctZW5kaWFuDQo+Pj4gJXA0Y3IgICAgUmV2ZXJzZS1lbmRpYW4N
+Cj4+IA0KPj4+IFRoZSBlbmRpYW5uZXNzIGRldGVybWluZXMgaG93IGJ5dGVzIGFyZSBpbnRlcnBy
+ZXRlZCBhcyBhIHUzMiwgYW5kIHRoZQ0KPj4+IEZPVVJDQyBpcyB0aGVuIGFsd2F5cyBwcmludGVk
+IE1TQnl0ZS1maXJzdCAodGhpcyBpcyB0aGUgb3Bwb3NpdGUgb2YNCj4+PiBWNEwvRFJNIEZPVVJD
+Q3MpLiBUaGlzIGNvdmVycyBtb3N0IHByYWN0aWNhbCBjYXNlcywgZS5nLiAlcDRjciB3b3VsZA0K
+Pj4+IGFsbG93IHByaW50aW5nIExTQnl0ZS1maXJzdCBGT1VSQ0NzIHN0b3JlZCBpbiBob3N0IGVu
+ZGlhbiBvcmRlcg0KPj4+IChvdGhlciB0aGFuIHRoZSBoZXggZm9ybSBiZWluZyBpbiBjaGFyYWN0
+ZXIgb3JkZXIsIG5vdCB0aGUgaW50ZWdlcg0KPj4+IHZhbHVlKS4NCj4+IA0KPj4gLi4uDQo+PiAN
+Cj4+PiArR2VuZXJpYyBGb3VyQ0MgY29kZQ0KPj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tDQo+Pj4g
+Kw0KPj4+ICs6Og0KPj4+ICsgICAgJXA0Y1tocmJsXSAgICBnUDAwICgweDY3NTAzMDMwKQ0KPj4+
+ICsNCj4+PiArUHJpbnQgYSBnZW5lcmljIEZvdXJDQyBjb2RlLCBhcyBib3RoIEFTQ0lJIGNoYXJh
+Y3RlcnMgYW5kIGl0cyBudW1lcmljYWwNCj4+PiArdmFsdWUgYXMgaGV4YWRlY2ltYWwuDQo+Pj4g
+Kw0KPj4+ICtUaGUgYWRkaXRpb25hbCBgYGhgYCwgYGByYGAsIGBgYmBgLCBhbmQgYGBsYGAgc3Bl
+Y2lmaWVycyBhcmUgdXNlZCB0byBzcGVjaWZ5DQo+Pj4gK2hvc3QsIHJldmVyc2VkLCBiaWcgb3Ig
+bGl0dGxlIGVuZGlhbiBvcmRlciBkYXRhIHJlc3BlY3RpdmVseS4gSG9zdCBlbmRpYW4NCj4+PiAr
+b3JkZXIgbWVhbnMgdGhlIGRhdGEgaXMgaW50ZXJwcmV0ZWQgYXMgYSAzMi1iaXQgaW50ZWdlciBh
+bmQgdGhlIG1vc3QNCj4+PiArc2lnbmlmaWNhbnQgYnl0ZSBpcyBwcmludGVkIGZpcnN0OyB0aGF0
+IGlzLCB0aGUgY2hhcmFjdGVyIGNvZGUgYXMgcHJpbnRlZA0KPj4+ICttYXRjaGVzIHRoZSBieXRl
+IG9yZGVyIHN0b3JlZCBpbiBtZW1vcnkgb24gYmlnLWVuZGlhbiBzeXN0ZW1zLCBhbmQgaXMgcmV2
+ZXJzZWQNCj4+PiArb24gbGl0dGxlLWVuZGlhbiBzeXN0ZW1zLg0KPj4gDQo+PiBCdHcsIHRoaXMg
+c291bmRzIHRvIG1lIHRoYXQgJ2gnIHNob3VsZCBiZSBhY2NvbXBhbmllZCB3aXRoICduJywgb3Ro
+ZXJ3aXNlIGl0J3MNCj4+IGNvbmZ1c2luZyB3aHkgQkUgaXMgdGhlIGhvc3Qgb3JkZXIgb3V0IG9m
+IHRoZSBibHVlLg0KPj4gc28sIGl0IG5lZWRzIG1vcmUgaW5mb3JtYXRpb24gdGhhdCB0aGlzIG1p
+bWljcyBodG9ubCgpIC8gbnRvaGwoKSBmb3IgbmV0d29ya2luZy4NCj4+IA0KPj4gRG9lcyAncicg
+YWN0dWFsbHkgc2hvdWxkIGJlICduJz8NCj4gDQo+IEkgYmVsaWV2ZSB5b3UgbWVhbiBuZWdhdGl2
+ZSBlbmRpYW4/IENhbiBiZSBkb25lLg0KPj4gDQo+Pj4gK1Bhc3NlZCBieSByZWZlcmVuY2UuDQo+
+Pj4gKw0KPj4+ICtFeGFtcGxlcyBmb3IgYSBsaXR0bGUtZW5kaWFuIG1hY2hpbmUsIGdpdmVuICYo
+dTMyKTB4Njc1MDMwMzA6Og0KPj4+ICsNCj4+PiArICAgICVwNGNoICAgIGdQMDAgKDB4Njc1MDMw
+MzApDQo+Pj4gKyAgICAlcDRjciAgICAwMFBnICgweDMwMzA1MDY3KQ0KPj4+ICsgICAgJXA0Y2Ig
+ICAgMDBQZyAoMHgzMDMwNTA2NykNCj4+PiArICAgICVwNGNsICAgIGdQMDAgKDB4Njc1MDMwMzAp
+DQo+Pj4gKw0KPj4+ICtFeGFtcGxlcyBmb3IgYSBiaWctZW5kaWFuIG1hY2hpbmUsIGdpdmVuICYo
+dTMyKTB4Njc1MDMwMzA6Og0KPj4+ICsNCj4+PiArICAgICVwNGNoICAgIGdQMDAgKDB4Njc1MDMw
+MzApDQo+Pj4gKyAgICAlcDRjciAgICAwMFBnICgweDMwMzA1MDY3KQ0KPj4+ICsgICAgJXA0Y2Ig
+ICAgZ1AwMCAoMHg2NzUwMzAzMCkNCj4+PiArICAgICVwNGNsICAgIDAwUGcgKDB4MzAzMDUwNjcp
+DQo+Pj4gKw0KPj4gDQo+PiAuLi4NCj4+IA0KPj4+ICsgICAgc3dpdGNoIChmbXRbMl0pIHsNCj4+
+PiArICAgIGNhc2UgJ2gnOg0KPj4+ICsgICAgICAgIHZhbCA9IG9yaWc7DQo+Pj4gKyAgICAgICAg
+YnJlYWs7DQo+Pj4gKyAgICBjYXNlICdyJzoNCj4+PiArICAgICAgICBvcmlnID0gc3dhYjMyKG9y
+aWcpOw0KPj4+ICsgICAgICAgIHZhbCA9IG9yaWc7DQo+Pj4gKyAgICAgICAgYnJlYWs7DQo+Pj4g
+KyAgICBjYXNlICdsJzoNCj4+PiArICAgICAgICBvcmlnID0gKF9fZm9yY2UgdTMyKWNwdV90b19s
+ZTMyKG9yaWcpOw0KPj4+ICsgICAgICAgIHZhbCA9IG9yaWc7DQo+Pj4gKyAgICAgICAgYnJlYWs7
+DQo+Pj4gKyAgICBjYXNlICdiJzoNCj4+PiArICAgICAgICBvcmlnID0gKF9fZm9yY2UgdTMyKWNw
+dV90b19iZTMyKG9yaWcpOw0KPj4+ICsgICAgICAgIHZhbCA9IG9yaWc7DQo+Pj4gKyAgICAgICAg
+YnJlYWs7DQo+Pj4gKyAgICBjYXNlICdjJzoNCj4+PiArICAgICAgICAvKiBQaXhlbCBmb3JtYXRz
+IGFyZSBwcmludGVkIExTQi1maXJzdCAqLw0KPj4+ICsgICAgICAgIHZhbCA9IHN3YWIzMihvcmln
+ICYgfkJJVCgzMSkpOw0KPj4+ICsgICAgICAgIHBpeGVsX2ZtdCA9IHRydWU7DQo+Pj4gKyAgICAg
+ICAgYnJlYWs7DQo+Pj4gKyAgICBkZWZhdWx0Og0KPj4+ICsgICAgICAgIHJldHVybiBlcnJvcl9z
+dHJpbmcoYnVmLCBlbmQsICIoJXA0PykiLCBzcGVjKTsNCj4+PiArICAgIH0NCj4+IA0KPj4gQWN0
+dWFsbHkgeW91IGNhbiByZXBsYWNlIGFsbCB0aGVzZSBvcmlnIGNvcGllcyBieSBpbnRyb2R1Y2lu
+ZyBhIG5ldyBib29sZWFuLCBwaXhlbF9iZS4NCj4+IA0KPj4gV2lsbCBiZWNvbWUNCj4+IA0KPj4g
+ICBzd2l0Y2ggKGZtdFsyXSkgew0KPj4gICBjYXNlICdoJzoNCj4+ICAgICAgIHZhbCA9IG9yaWc7
+DQo+PiAgICAgICBicmVhazsNCj4+ICAgY2FzZSAncic6IC8vIG9yICduJyA/DQo+PiAgICAgICB2
+YWwgPSBzd2FiMzIob3JpZyk7DQo+PiAgICAgICBicmVhazsNCj4+ICAgY2FzZSAnbCc6DQo+PiAg
+ICAgICB2YWwgPSAoX19mb3JjZSB1MzIpY3B1X3RvX2xlMzIob3JpZyk7DQo+PiAgICAgICBicmVh
+azsNCj4+ICAgY2FzZSAnYic6DQo+PiAgICAgICB2YWwgPSAoX19mb3JjZSB1MzIpY3B1X3RvX2Jl
+MzIob3JpZyk7DQo+PiAgICAgICBicmVhazsNCj4+ICAgY2FzZSAnYyc6DQo+PiAgICAgICBwaXhl
+bF9mbXQgPSB0cnVlOw0KPj4gICAgICAgcGl4ZWxfYmUgPSBvcmlnICYgQklUKDMxKTsNCj4+ICAg
+ICAgIC8qIFBpeGVsIGZvcm1hdHMgYXJlIHByaW50ZWQgTFNCLWZpcnN0ICovDQo+PiAgICAgICB2
+YWwgPSBzd2FiMzIob3JpZyAmIH5CSVQoMzEpKTsNCj4+ICAgICAgIGJyZWFrOw0KPj4gICBkZWZh
+dWx0Og0KPj4gICAgICAgcmV0dXJuIGVycm9yX3N0cmluZyhidWYsIGVuZCwgIiglcDQ/KSIsIHNw
+ZWMpOw0KPj4gICB9DQo+PiANCj4+IEFuZCB3aXRoIHRoaXMgdGhlIGV4aXN0ZW5jZSBvZiAndmFs
+JyBub3cgYmVjb21lcyBkb3VidGZ1bCwgd2UgbWF5IHJldXNlICdvcmlnJywNCj4+IGp1c3QgbmFt
+ZSBpdCAndmFsJyBldmVyeXdoZXJlLCBubz8NCj4gDQo+IEluIGNhc2UgYywgdmFsICE9IG9yaWcs
+IGluIHJlc3QgaXQgaXMuIFdlIGNhbiBqdXN0IHVzZSBwaXhlbF9mbXQgdG8gY2hlY2sgdGhpcyBj
+b25kaXRpb24sIGJ1dCBwbGFjZXMgd2hlcmUgd2UgdXNlIG9yaWcsIGFuZCBub3QgdmFsIHdpbGwg
+bmVlZCBhbiBpZiBzdGF0ZW1lbnQgb3Igc29tZXRoaW5nIHNpbWlsYXIuIFRiaCwgaXQncyBhbiB1
+bmVjZXNzYXJ5IGNvbXBsaWNhdGlvbi4gWW91IG1pZ2h0IHdhbnQgdG8gc2VlIHRoaXMgcGFydCBv
+ZiB0aGUgY29kZToNCg0KTW9yZSBlYXNpZXIgSU1PIGNhbiBiZToNCg0KdmFsID0gcGl4ZWxfZm10
+ID8gc3dhYjMyKG9yaWcgJiB+QklUKDMxKSkgOiBvcmlnOw0KDQpBdCB0aGUgZW5kIG9mIHRoZSB0
+YWJsZQ==
 
