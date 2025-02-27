@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-536371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BB8A47EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2E3A47ED4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:18:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A353B58D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4C73B1E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8950D230242;
-	Thu, 27 Feb 2025 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E95122FDF9;
+	Thu, 27 Feb 2025 13:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KojPpKf3"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQQf0wJ/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F6222F38E;
-	Thu, 27 Feb 2025 13:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C6117A305;
+	Thu, 27 Feb 2025 13:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740662181; cv=none; b=sggsuC6IxqjDg2B4/crJvXETWmrRZmmTHsjz2T4nEPobBWUP3vS1yU8T3x9htgmkQpixTl8iYLEMe1TjTVpzGFxaWW30+nLjYDSmb+2AFXxV1aHC9ZdB/VoDKLxlG2FDtH0zP452fG1dNICFrBqmPKW4x5WET4h7AlZQT/iST50=
+	t=1740662257; cv=none; b=mPYgadH+4VFq/1B3NvLBXK6Z0LYhl6wK7s8AJSTTdidISFTN2K+oofG5aVR9Ka5QKD6sfvSMJb36rsOD2U7uI6vy5tjxyufbInIUY/17dhvamTjCyOHduLITez/qIJunB5udsz63Tfh1Yzh0JGYP35KqzOObWQ/vNJcAix0qnbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740662181; c=relaxed/simple;
-	bh=bYUZ+mFYgQy3fmEZhoYJu6Kf0gd8Eq8OYrkuc81YJ4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fDx3tEqn7VoT5v/tq//mFQtfhlCDm9wUpqO5kBJbLY7ytIxBN34DSlNwk7gefdvTqLjCoYu3ZhEjfereAJJzOmBWa08Q77EaKKMewUCfYwj3RuhU0sH2hxkVpWYoIIyNUHth2XvuKFM4ILn/fOcIu8IALM9YvdFJ7tMGm3bMcXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KojPpKf3; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-546267ed92fso919865e87.2;
-        Thu, 27 Feb 2025 05:16:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740662178; x=1741266978; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0RTsy7+StkyF/uZICr0cKjY+TqTfaQpfCUKBRMx4ff0=;
-        b=KojPpKf3wdhe0z9S0/NFI/Qu3NCoqr4NgkfO/A2VKW9Q3XkbFUpGfe41LMq4jxNQZ4
-         JvjOmGfE7voEmu64Yg7yvBTGJPZ6S7sxtLMGzkTrl6vebUTyFTIno8XDGq5GLhl/Y4u7
-         eMPVpRtPGtU0IttEAO2oE1oMX87hffJZ6Xzg56D2E69lvzZ8rf5SsVOgvH5td5bGxvFq
-         GkGBlA5HaE6sV3W28AVyeHKW/icY11A7bnEiSjbd2u7HP86VwYzj5whmtU/1QD9I1rYx
-         e/rgj2u9CteYivR0pmCEfWCoh8rOTGGN7l/Yva0Q7oRaZKZ2zRlAEEOmPlGPMT2IM7un
-         S8Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740662178; x=1741266978;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0RTsy7+StkyF/uZICr0cKjY+TqTfaQpfCUKBRMx4ff0=;
-        b=TXihGsWEyXKH1H5m82aCZjEeN2DqPc+jWP4g2nsQsqWlahrvzwUP9srS4eVUDC92JT
-         8rLgyLU24NViBEwUX2SGMs2vSFfRRg8Cb92U7PqO9nyUeWNN5gzWi7MHbfFPmpe6uVWS
-         GYlzIfax5RF08K+48FxHPcFLxQJdIZq/RWGAZd69rHIIGvUZOaNiyJ4l1edF3J2qMWhq
-         ADKX9IOz8HZFDwCWYiC4RK1wG3B5IJTmEeXTfvUith7JFKkSXYmB8JEAWsgaU08yvjIM
-         Pg8RsFmQl3Om2c9z9or3kvl/HFDG31KrEj+AO4gI4LTzrrknkPRkY+TQXuOp8oEEi/Z5
-         obCw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5F2hYUvM78KNJv8fvpFnIn9qqkOvIvUIBNQMV71Z/pRxHI5Q7QMRLjvZMBkm/lBz4OhKL+Gy0wqAvFr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcLNOxg/5ioVTpZ6wgV0zJS7dUTHsJSEPdgwlvm55QR1Ywi0Dv
-	HQkc7tSr/kdDFpStg+h83pMh/mKSpqMrehdNy/n2Vj8RyW56V7Yg
-X-Gm-Gg: ASbGnctb/oOcOJBBhYTnasoFwFOw0NOOsXvlgNP+54/ObbZv+RrHWf4U8ure7azwv7x
-	TaGg+cdwlgSe/311QZTDIZuUBz3m/1kPNb3ejt4BmsooqJcNM3WOB/ZTKBAClA2mS913mr1o5mV
-	sUtjZkq9D+9K3mdx15FFhnpECfVTU1TNpEPNNU0wzF8KdjJO+votFu0K5QJSZ2WR3ArNhN0ZhxA
-	E6ka2ORrfXihi892eFAIt7kznxjIEfb56vOV8TghPnzqTURiCq8bXuiv3iIoepW2UQiSWjL1/dA
-	GDATDPzrl3B4Iz1Qf1obrA==
-X-Google-Smtp-Source: AGHT+IFR9Hk30gIJ7yteYrIHtrcQYiEdSi1movsTxUujeeNXz5xGprrz0YptnKOLbXdsoX2pYNP1lQ==
-X-Received: by 2002:ac2:4e07:0:b0:545:a2a:589 with SMTP id 2adb3069b0e04-548510ed8e7mr6796685e87.52.1740662177923;
-        Thu, 27 Feb 2025 05:16:17 -0800 (PST)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54944174505sm157011e87.37.2025.02.27.05.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 05:16:16 -0800 (PST)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Date: Thu, 27 Feb 2025 14:16:13 +0100
-Message-Id: <20250227131613.52683-3-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250227131613.52683-1-urezki@gmail.com>
-References: <20250227131613.52683-1-urezki@gmail.com>
+	s=arc-20240116; t=1740662257; c=relaxed/simple;
+	bh=toSHPZ1YVa1gl//0kRiyLUjjHt9nXx8rDY0Mkemm0Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u5xZB48f6YgmP/Nc5+rxRM5+iMR0TQ7/MO3SIGzk+reQx4luNgP9b76WcHtJ45Gv9BDlnN5SatbcyLIDiD7tzSc7Sj1TPd/jKnb/Yje+cXexPhykInK3J1w/+JxCZlxT9eyuhiXLGTLfYiCD8AcmHaF9c5R2mZMrlF2MjmmhOyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQQf0wJ/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740662256; x=1772198256;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=toSHPZ1YVa1gl//0kRiyLUjjHt9nXx8rDY0Mkemm0Mc=;
+  b=KQQf0wJ/MoVgzYrn//vvFyFlDbMGCmtaatMheq1icKYMMl3WBPqWx4to
+   JgkxXQ/iOQu6LXdps7fqgAPUzpGy7XnqEPRhLMxH5WvuactwFDePLEeL4
+   reAzqlZUD4alXZwA1LCJ3A5RHcywkzTkVNuZMagSjXgQbWKtpOmmBuHLW
+   XZePs3hI00g5AXhySiw4YtRNVCqUO+04cfhX9ZDQWGmm8qC/zH7lznF+t
+   j/38W0Rd7nDlDm+AdLz39q32lF3VTycFacLJolB2/tbZSfeLYUwfpap38
+   +TSdilXJVSS/oGRKDpUhUxlzEjngjujMmQ1a9DOq9U56QU64bIGtgmJ9b
+   A==;
+X-CSE-ConnectionGUID: ZmQBd14vTDWxYnDPX2vT5Q==
+X-CSE-MsgGUID: xjNWp1vhSX+U9nBf7XB2HQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41433033"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="41433033"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 05:17:34 -0800
+X-CSE-ConnectionGUID: sGPlddMNR0G8ZteOUDv6gg==
+X-CSE-MsgGUID: QI2K/LkMQjKqVmN4JfZORA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="154208682"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 27 Feb 2025 05:17:28 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id AD1B92D5; Thu, 27 Feb 2025 15:17:26 +0200 (EET)
+Date: Thu, 27 Feb 2025 15:17:26 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Juergen Gross <jgross@suse.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, John Stultz <jstultz@google.com>, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-hyperv@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v2 30/38] x86/paravirt: Don't use a PV sched_clock in
+ CoCo guests with trusted TSC
+Message-ID: <okuuhll3ymxlvno46dlimlpnkhg5vcxm2jiaew7uce4f35sps3@xaommgjd447m>
+References: <20250227021855.3257188-1-seanjc@google.com>
+ <20250227021855.3257188-31-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227021855.3257188-31-seanjc@google.com>
 
-Switch for using of get_state_synchronize_rcu_full() and
-poll_state_synchronize_rcu_full() pair to debug a normal
-synchronize_rcu() call.
+On Wed, Feb 26, 2025 at 06:18:46PM -0800, Sean Christopherson wrote:
+> Silently ignore attempts to switch to a paravirt sched_clock when running
+> as a CoCo guest with trusted TSC.  In hand-wavy theory, a misbehaving
+> hypervisor could attack the guest by manipulating the PV clock to affect
+> guest scheduling in some weird and/or predictable way.  More importantly,
+> reading TSC on such platforms is faster than any PV clock, and sched_clock
+> is all about speed.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kernel/paravirt.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> index a3a1359cfc26..c538c608d9fb 100644
+> --- a/arch/x86/kernel/paravirt.c
+> +++ b/arch/x86/kernel/paravirt.c
+> @@ -89,6 +89,15 @@ DEFINE_STATIC_CALL(pv_sched_clock, native_sched_clock);
+>  int __init __paravirt_set_sched_clock(u64 (*func)(void), bool stable,
+>  				      void (*save)(void), void (*restore)(void))
+>  {
+> +	/*
+> +	 * Don't replace TSC with a PV clock when running as a CoCo guest and
+> +	 * the TSC is secure/trusted; PV clocks are emulated by the hypervisor,
+> +	 * which isn't in the guest's TCB.
+> +	 */
+> +	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC) ||
+> +	    boot_cpu_has(X86_FEATURE_TDX_GUEST))
+> +		return -EPERM;
+> +
 
-Just using "not" full APIs to identify if a grace period is
-passed or not might lead to a false-positive kernel splat.
+Looks like a call for generic CC_ATTR_GUEST_SECURE_TSC that would be true
+for TDX and SEV with CC_ATTR_GUEST_SNP_SECURE_TSC.
 
-It can happen, because get_state_synchronize_rcu() compresses
-both normal and expedited states into one single unsigned long
-value, so a poll_state_synchronize_rcu() can miss GP-completion
-when synchronize_rcu()/synchronize_rcu_expedited() concurrently
-run.
+>  	if (!stable)
+>  		clear_sched_clock_stable();
+>  
+> -- 
+> 2.48.1.711.g2feabab25a-goog
+> 
 
-To address this, switch to poll_state_synchronize_rcu_full() and
-get_state_synchronize_rcu_full() APIs, which use separate variables
-for expedited and normal states.
-
-Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/rcupdate_wait.h | 3 +++
- kernel/rcu/tree.c             | 8 +++-----
- 2 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/rcupdate_wait.h b/include/linux/rcupdate_wait.h
-index f9bed3d3f78d..4c92d4291cce 100644
---- a/include/linux/rcupdate_wait.h
-+++ b/include/linux/rcupdate_wait.h
-@@ -16,6 +16,9 @@
- struct rcu_synchronize {
- 	struct rcu_head head;
- 	struct completion completion;
-+
-+	/* This is for debugging. */
-+	struct rcu_gp_oldstate oldstate;
- };
- void wakeme_after_rcu(struct rcu_head *head);
- 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 8625f616c65a..48384fa2eaeb 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1632,12 +1632,10 @@ static void rcu_sr_normal_complete(struct llist_node *node)
- {
- 	struct rcu_synchronize *rs = container_of(
- 		(struct rcu_head *) node, struct rcu_synchronize, head);
--	unsigned long oldstate = (unsigned long) rs->head.func;
- 
- 	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) &&
--		!poll_state_synchronize_rcu(oldstate),
--		"A full grace period is not passed yet: %lu",
--		rcu_seq_diff(get_state_synchronize_rcu(), oldstate));
-+		!poll_state_synchronize_rcu_full(&rs->oldstate),
-+		"A full grace period is not passed yet!\n");
- 
- 	/* Finally. */
- 	complete(&rs->completion);
-@@ -3247,7 +3245,7 @@ static void synchronize_rcu_normal(void)
- 	 * snapshot before adding a request.
- 	 */
- 	if (IS_ENABLED(CONFIG_PROVE_RCU))
--		rs.head.func = (void *) get_state_synchronize_rcu();
-+		get_state_synchronize_rcu_full(&rs.oldstate);
- 
- 	rcu_sr_normal_add_req(&rs);
- 
 -- 
-2.39.5
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
