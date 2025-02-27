@@ -1,105 +1,197 @@
-Return-Path: <linux-kernel+bounces-536131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F3EA47BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:20:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C02A47C90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BD61172071
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B00E1883ECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A4E22D4DF;
-	Thu, 27 Feb 2025 11:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9663322B8D0;
+	Thu, 27 Feb 2025 11:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGHUfehn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="mrLFJyru"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F2D22836C;
-	Thu, 27 Feb 2025 11:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F143F18C34B;
+	Thu, 27 Feb 2025 11:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740655108; cv=none; b=NvRRuql+xKF23iK6TR//bFPPh8kB5k5yn5WgOl4z159HE41JR0uzrHwvVW2dZqxHz7pDBvDds5/JZIKVvi0FJOb8zXrADbT8/wnSfogKGZQxH7vNSCTXgMilLRW13ut2DaZz+vAtQaCLOEa7DRZiu4CxRMXljqPm4HIMp4zLwPQ=
+	t=1740656965; cv=none; b=VW57nczMWArlD47liOdMZm2efJwgpiRtbI756dOnCkcorv7N8Facx9Ce9uqwkZXNvGoqnX9GiO9jklRS01Jq0jY2JpqXjijtVUAy4M01Q3hL4j381eT0JISzn3ZcE12/8rLrEXHbyBUdIJxuUJA4p4HK2lPSjds5T3siKaEAy2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740655108; c=relaxed/simple;
-	bh=18fxekQp5UNFj1KRhDlY4nBV/k4Bu70+SmkhQsKs9YI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FjB1YaII5a+RrWPjvBHiY06GUPv6fjatxuztR5y6d0OCFcyY/vHKoirX6If4oywo5WS5N/w4nAv6t+LEa+btwdTFxI8mIt5/PaTb4FWqfWRID8/aJTdSnINftbzATU95QAaoHYip4aNBSJPBFFUn1i0LRJLkTFKADcDgU3f+wQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGHUfehn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD2BC4CEDD;
-	Thu, 27 Feb 2025 11:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740655107;
-	bh=18fxekQp5UNFj1KRhDlY4nBV/k4Bu70+SmkhQsKs9YI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JGHUfehnsqo+HA3j59zVlpYAPGKYWblpzLxI/0IHHiZP6HxQTnig5+dsJzd84oIuc
-	 UGAgtFyuAe1J4uY27qk2Aswdg63mJpLstpmFIlPHM5pPEUKqr9ZcP5wt78ctRiBIg2
-	 ZeODPCBe1g8JinOPZKJb0KDC/csfen4KIpQwwptteqPElZ9veMu350WVpT5feFIEev
-	 ND1gGv12MzhMLYDLMOjX9z5gn/863jdoTjWgQ1NcFi3I+87vlmP6Ml1mkim1OuV7bN
-	 L7Kofht43Gl7WtZzaY4Spso5ZsmdE4H/QdbD6eKiBVNlp/JK8rJahAdk4pCB2PoDJh
-	 w9OUk9Vn+5PFw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Frederic Weisbecker" <frederic@kernel.org>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria
- Behnsen" <anna-maria@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 13/13] rust: hrtimer: add maintainer entry
-In-Reply-To: <87h64feop6.ffs@tglx> (Thomas Gleixner's message of "Thu, 27 Feb
-	2025 10:12:21 +0100")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-13-5bd3bf0ce6cc@kernel.org>
-	<Z7yT5XU5gAm0ZCZD@Mac.home> <Z78-mVAHdSq1zbJr@localhost.localdomain>
-	<Q3CmP7SuqFgOrxKxEhLa2kgf9P2nPp7II7U920gO4m_GYMmuinS4CFyVVqlG5T9IVPe5rILxVIncOaSM47u5cA==@protonmail.internalid>
-	<87h64feop6.ffs@tglx>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 27 Feb 2025 11:45:28 +0100
-Message-ID: <875xkvr7hz.fsf@kernel.org>
+	s=arc-20240116; t=1740656965; c=relaxed/simple;
+	bh=3JjXQcjruxl7T2U/j9rlu8qhbi1Eqvuizv3BLuPaZFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TDRA/9fru8B9/HfW+cdqD1QdOxP0cSV3chmw+2qcFdd04BWOy1cTW/jcpRVPk7Li8PLLaN8tDvsPb/VSP0hG1eGWK4TQe2smfNbOJmtuurj2WMBaxPrEWrbJp6xOzWByQCb5gDG+mDA5ovhyUqbSQ8lvTqRVYQ85IzLRviFxNRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=mrLFJyru; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id e14e882bf36c814f; Thu, 27 Feb 2025 11:49:21 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 29621D50215;
+	Thu, 27 Feb 2025 11:49:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740653361;
+	bh=3JjXQcjruxl7T2U/j9rlu8qhbi1Eqvuizv3BLuPaZFk=;
+	h=From:Subject:Date;
+	b=mrLFJyruDmtEPUX+lvIUGVtR9mgDGwextLdf0lBwN99mOClGjRB4AOC2L7ElRnnF2
+	 eyVV8dXBTW13EoHoFFMp53T1BMsVxpmOba8MnnRW1SiI/QYRf4kJmjSascGRXjNMTY
+	 Qd76tLPOUVUOowpSiLVNOTG3X2ryggYPVPTGyMAESAqDgQFMhKuUW4ibW2Nu1DHv8r
+	 Y8VVSEsjGWB7Gw0gDZoHXORogIRN1qqCIa5XmBmD8Ad6VaARkGdnCsmbMYvF4z8gYr
+	 KK668M2SjTW1lUS+2d8o+AGd2q5qTCmSgf1JFQEjqtAK6ilsXRPICy9s+bjJm+M5Oo
+	 RetfA6tJ2kLFQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Subject:
+ [PATCH v1 1/3] PM: sleep: Update power.smart_suspend under PM spinlock
+Date: Thu, 27 Feb 2025 11:45:52 +0100
+Message-ID: <2368159.ElGaqSPkdT@rjwysocki.net>
+In-Reply-To: <5000287.31r3eYUQgx@rjwysocki.net>
+References: <5000287.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjedvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgrrhhvrghrugdrvgguuhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-"Thomas Gleixner" <tglx@linutronix.de> writes:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On Wed, Feb 26 2025 at 17:17, Frederic Weisbecker wrote:
->> Le Mon, Feb 24, 2025 at 07:44:37AM -0800, Boqun Feng a =C3=A9crit :
->>> On Mon, Feb 24, 2025 at 01:03:47PM +0100, Andreas Hindborg wrote:
->>> > Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. A=
-lso
->>> > add Boqun Feng as reviewer.
->>> >
->>> > Acked-by: Boqun Feng <boqun.feng@gmail.com>
->>> > Acked-by: Frederic Weisbecker <frederic@kernel.org>
->>>
->>> Frederic, since you've reviewed the series, and we certainly need your
->>> expertise here, do you want to be an reviewer in this maintainer entry
->>> (to watch how we are doing maybe ;-))?
->>
->> Yes indeed! Please include me as a reviewer!
->
-> Please add Anna-Maria and myself to the reviewers list well.
+Put the update of the power.smart_suspend device flag under the PM
+spinlock of the device in case multiple bit fields in struct dev_pm_info
+occupy one memory location which needs to be updated via RMW every time
+any of these bit fields is updated.
 
-Will do =F0=9F=91=8D
+The lock in question is already held around the power.direct_complete
+flag update in device_prepare() for the same reason, so this change does
+not add locking-related overhead to the code.
 
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c |   35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-
-Best regards,
-Andreas Hindborg
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1789,9 +1789,10 @@
+ 	return error;
+ }
+ 
+-static void device_prepare_smart_suspend(struct device *dev)
++static bool device_prepare_smart_suspend(struct device *dev)
+ {
+ 	struct device_link *link;
++	bool ret = true;
+ 	int idx;
+ 
+ 	/*
+@@ -1802,17 +1803,13 @@
+ 	 * or any of its suppliers that take runtime PM into account, it cannot
+ 	 * be enabled for the device either.
+ 	 */
+-	dev->power.smart_suspend = dev->power.no_pm_callbacks ||
+-		dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND);
+-
+-	if (!dev_pm_smart_suspend(dev))
+-		return;
++	if (!dev->power.no_pm_callbacks &&
++	    !dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND))
++		return false;
+ 
+ 	if (dev->parent && !dev_pm_smart_suspend(dev->parent) &&
+-	    !dev->parent->power.ignore_children && !pm_runtime_blocked(dev->parent)) {
+-		dev->power.smart_suspend = false;
+-		return;
+-	}
++	    !dev->parent->power.ignore_children && !pm_runtime_blocked(dev->parent))
++		return false;
+ 
+ 	idx = device_links_read_lock();
+ 
+@@ -1822,12 +1819,14 @@
+ 
+ 		if (!dev_pm_smart_suspend(link->supplier) &&
+ 		    !pm_runtime_blocked(link->supplier)) {
+-			dev->power.smart_suspend = false;
++			ret = false;
+ 			break;
+ 		}
+ 	}
+ 
+ 	device_links_read_unlock(idx);
++
++	return ret;
+ }
+ 
+ /**
+@@ -1841,7 +1840,7 @@
+ static int device_prepare(struct device *dev, pm_message_t state)
+ {
+ 	int (*callback)(struct device *) = NULL;
+-	bool no_runtime_pm;
++	bool smart_suspend;
+ 	int ret = 0;
+ 
+ 	/*
+@@ -1857,7 +1856,7 @@
+ 	 * suspend-resume cycle is complete, so prepare to trigger a warning on
+ 	 * subsequent attempts to enable it.
+ 	 */
+-	no_runtime_pm = pm_runtime_block_if_disabled(dev);
++	smart_suspend = !pm_runtime_block_if_disabled(dev);
+ 
+ 	if (dev->power.syscore)
+ 		return 0;
+@@ -1893,9 +1892,12 @@
+ 		return ret;
+ 	}
+ 	/* Do not enable "smart suspend" for devices without runtime PM. */
+-	if (!no_runtime_pm)
+-		device_prepare_smart_suspend(dev);
++	if (smart_suspend)
++		smart_suspend = device_prepare_smart_suspend(dev);
++
++	spin_lock_irq(&dev->power.lock);
+ 
++	dev->power.smart_suspend = smart_suspend;
+ 	/*
+ 	 * A positive return value from ->prepare() means "this device appears
+ 	 * to be runtime-suspended and its state is fine, so if it really is
+@@ -1903,11 +1905,12 @@
+ 	 * will do the same thing with all of its descendants".  This only
+ 	 * applies to suspend transitions, however.
+ 	 */
+-	spin_lock_irq(&dev->power.lock);
+ 	dev->power.direct_complete = state.event == PM_EVENT_SUSPEND &&
+ 		(ret > 0 || dev->power.no_pm_callbacks) &&
+ 		!dev_pm_test_driver_flags(dev, DPM_FLAG_NO_DIRECT_COMPLETE);
++
+ 	spin_unlock_irq(&dev->power.lock);
++
+ 	return 0;
+ }
+ 
 
 
 
