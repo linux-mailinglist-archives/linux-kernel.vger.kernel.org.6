@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-536325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D37A47E2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:47:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D48A47E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D2A3A4041
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5334D188A6BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AB11DFFC;
-	Thu, 27 Feb 2025 12:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED022E3E6;
+	Thu, 27 Feb 2025 12:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANaK0pc+"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="GLbbhl50"
+Received: from pv50p00im-ztdg10022001.me.com (pv50p00im-ztdg10022001.me.com [17.58.6.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE42CA48
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49C222D4E4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740660433; cv=none; b=sOQEslV3zVvkOYj4113ukY5kYHIJR+BsEOio7Xmsix8CdFCmjGVTv9XAo7cnN3Bbv1CJO+OgFHGVw5gqumB7YmZt76C82c6cROTxsS8zY6RChEY1fwMZwcNMsXwCI9DFzxJdyaJa71zdJNeOlbVGrhB+B+k/rOnuID8/7RcAGcw=
+	t=1740660525; cv=none; b=e45o0I3YrYcLqPCbHzpym7V1lMhDuSihQ0TbLyGtoe6kTVjztxvw8h5YQiGcNJ1Ws8Z3FkuNFvJ++GqCJOiEPZpzWN2dP3lJTyPLukHl8rYM1hklMEGeFLku8zkba4ik07LB0G4JSgkFatte/+MaH5nZX7PSk9oJKB49E+VJHFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740660433; c=relaxed/simple;
-	bh=27TEdDkNVWz2XKb1y1K0Mm6R7JBGLRCjeyYTzkaZGT4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dF5aLq7DkcZWKDBuce5eLwW4eqANZOSKC+g7WjIu5mN9u2A9aLB72xKWlgJJHxMoLbBTSdtQ/S8FkcJEjwBbmQzOny9++HRWPRzw79TnqnAl3T7x9CLIbrBJXmy5zuAyKe+WJN6L/X+RVaGw4+6QkC/oX2UoJci3eEeOofgBMPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANaK0pc+; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e4bed34bccso1184220a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 04:47:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740660430; x=1741265230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YvqGa2htjWCzP2pH+g/TGswl5kcWxTHqgNmoSeJM+0U=;
-        b=ANaK0pc+ZLcN6j+KqDGQSOGwr7r5gi4wyfbBSftax8BsTdPOR1+mAe/8BjQ8t2o6HA
-         FZZeu8GymLuyi+EwIPw2LTfkiV6DUthbf9H8C4DxznkAZJBA/5rJMrkCCyJAqwlenM/1
-         S1uOb0saq1gI36jXe/A4x0Ec9UpOMGiTkrBhWT4Nx5AoPt2eyyhSX9Wwp8BOttjVI98P
-         Nu9W9chPxrvKCJWs5egHapqjxmtgjV9BU3YQsMyj3+Ahcv1tufKsFSDtuxeKTLWNoJW8
-         pwg56JKyLUYMaVwREd1E0J2ljh3d5ozTnUugWdPYQSA+5vw8+dazKju2ChAtJKMIqAtj
-         n5KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740660430; x=1741265230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YvqGa2htjWCzP2pH+g/TGswl5kcWxTHqgNmoSeJM+0U=;
-        b=tTDRnzu73wLG0whmXKxskX6jOYtxaabWOeT6peWOmH/n5bnP7qek/6hRnEK9fvssZ7
-         sZyNRVk5plF8jWTcrKtttfMWY1gxQvbLo3W+90x7G0tJLvQd1Jenxs+WGlQoagiuuORi
-         HNh0JIRNa9qI3V2Zx37B9yAPy8To2I/xT/VB+lMacBb+sLd9W6tzc/Js5GytvNzBxpZV
-         7asvQkT8paRMoW16kZEft9dNturNIn/6hTROeWZhCyscK+fOe8/9VvFmZsjLBMN9Z4IZ
-         3XNRJP0EYEYCKMhSEVhyVzu0rjTlblc77t9MKVTQgo7VJcnsvMOTs/kVYcm1TI1061Mv
-         RzDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2UWnqLv2y9tSgDgA92GlybqIJMeRU/fSMV2LkK8NNoaMwd2vjdK3JUUyMVIN+bDSEcNAu/mupiXSTQW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz800uQeWIfnSVUuz6scU+lKqKbi+WvGitMZrtYbs8Q246mu/3z
-	KJeC9mcFCbybqLRyLChvPNAfg13Gurd6G7g935/Ce6tgFEtptz2p+LpenSn4djtlqeJaBMMXJo1
-	S6RL1rX31TtiwECDUySdONaMfF7k=
-X-Gm-Gg: ASbGnctRdHkg859fmonZnkILQ+5ihNaJbnoB1lvc+72LcT2SIV6AI+A/haVFt1av4lN
-	lw3uLM8P8N6hjKCnhX7oxcz2v7Cc3nJYtovVVGra2M5GqdiAcUAIfHAeFU359gDzyFzhHaMvssf
-	F3XvAgND805Hei0VUBcntlQ0QFiBQLimIJs/7uuQ==
-X-Google-Smtp-Source: AGHT+IF5pHJNn+tt/WfllGhbNqS4qLd4mb6/LfonGkNV4Oa8GE6ZIsw0d+OoyLIIjPpLDYr6fDaJJccyenyFvF2Bjw4=
-X-Received: by 2002:a05:6402:350e:b0:5dc:c9ce:b029 with SMTP id
- 4fb4d7f45d1cf-5e4a0d45cd5mr9264486a12.5.1740660429726; Thu, 27 Feb 2025
- 04:47:09 -0800 (PST)
+	s=arc-20240116; t=1740660525; c=relaxed/simple;
+	bh=yX9IP9tWJLI9/Byl8rHeAtn/q4pN2nne6lrg8q8ydYA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=oyzYrSYF6mpnxiThWWFSb1emRFLr98T9uPqIupeiZxjnnErR8ljVmXLbvNfiAhKGV/AEpfKuR2mNTqm32i9nnDTyBSzhXIWnYwDcz5cV9nKGOCsBxwE9PI4aoYVCoG6oPmJxxd9igKVTMwvcexih7w6DpUgc/YGpkQ0Kpz0jpCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=GLbbhl50; arc=none smtp.client-ip=17.58.6.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=3a4gDmWNcm/PN/PkyXMAH7J982HJ/SWLRPrRdcNbL0I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type:x-icloud-hme;
+	b=GLbbhl50/6s4XSz2hWsI2pBZw9mNkyoy4mfVS3ceyWFxtT2IXAgPw4vR2c4niyC8z
+	 Cn2HmQiD1m50m37YfMI08jjxHRfhEn42+FHcXSScomZlHKDtu+Wp54dOblB3imAZgA
+	 8Sh5FnBSf63pOv7KKwz4PnuK53+FcygvCr7GQVeYyjKkuNNU3G7hg7+mVfYTDQsuYn
+	 V/LofsjZFEnKZpfyRxF2x9XD81VAonZ5IWIEsKoP+zCePc8L+vIyjsVPd78Yr1B3dG
+	 y7y+n4035LJBFthLQyoBxgdJQehrL+qDmYWtQI5x+p4yNMchSmlhXEXKe5LinKs/Im
+	 ZmDofqUPOnkdw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10022001.me.com (Postfix) with ESMTPSA id 9DDEC3E1E07;
+	Thu, 27 Feb 2025 12:48:23 +0000 (UTC)
+Message-ID: <46d17d84-5298-4460-96b0-9c62672167a0@icloud.com>
+Date: Thu, 27 Feb 2025 20:48:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227042058.409003-1-vignesh.raman@collabora.com>
-In-Reply-To: <20250227042058.409003-1-vignesh.raman@collabora.com>
-From: Helen Mae Koike Fornazier <helen.fornazier@gmail.com>
-Date: Thu, 27 Feb 2025 09:46:58 -0300
-X-Gm-Features: AQ5f1Jq7lUOKGmVudQItPekhexMxviW5zGUOt-yAkW-BhET87g_wogjP2LmxMqI
-Message-ID: <CAPW4XYagd1TPQ6j6uEzOrcPpyA_+Ldpx86-MTzpb5iV+b+zRaQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/ci: fix merge request rules
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, airlied@gmail.com, 
-	simona.vetter@ffwll.ch, robdclark@gmail.com, dmitry.baryshkov@linaro.org, 
-	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	valentine.burley@collabora.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: Re: [PATCH *-next 00/18] Remove weird and needless 'return' for void
+ APIs
+To: Zijun Hu <quic_zijuhu@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-mtd@lists.infradead.org
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: dWcj_ItTiibsX6WGOwhQtepLygIMQOy8
+X-Proofpoint-ORIG-GUID: dWcj_ItTiibsX6WGOwhQtepLygIMQOy8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 adultscore=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2502270097
 
-Em qui., 27 de fev. de 2025 =C3=A0s 01:21, Vignesh Raman
-<vignesh.raman@collabora.com> escreveu:
->
-> Merge request pipelines were only created when changes
-> were made to drivers/gpu/drm/ci/, causing MRs that
-> didn't touch this path to break. Fix MR pipeline rules
-> to trigger jobs for all changes.
->
-> Run jobs automatically for marge-bot and scheduled
-> pipelines, but in all other cases run manually. Also
-> remove CI_PROJECT_NAMESPACE checks specific to mesa.
->
-> Fixes: df54f04f2020 ("drm/ci: update gitlab rules")
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+On 2025/2/21 21:02, Zijun Hu wrote:
+> void api_func_a(...);
+> 
+> static inline void api_func_b(...)
+> {
+> 	return api_func_a(...);
+> }
 
-Acked-by: Helen Koike <helen.fornazier@gmail.com>
+The Usage : Return void function in void function
 
-> ---
->
-> v2:
->   - Run jobs automatically for marge-bot and scheduled
->     pipelines, but in all other cases run manually. Also
->     remove CI_PROJECT_NAMESPACE checks specific to mesa.
->
-> ---
->  drivers/gpu/drm/ci/gitlab-ci.yml | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab=
--ci.yml
-> index f04aabe8327c..f4e324e156db 100644
-> --- a/drivers/gpu/drm/ci/gitlab-ci.yml
-> +++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-> @@ -143,11 +143,11 @@ stages:
->      # Pre-merge pipeline
->      - if: &is-pre-merge $CI_PIPELINE_SOURCE =3D=3D "merge_request_event"
->      # Push to a branch on a fork
-> -    - if: &is-fork-push $CI_PROJECT_NAMESPACE !=3D "mesa" && $CI_PIPELIN=
-E_SOURCE =3D=3D "push"
-> +    - if: &is-fork-push $CI_PIPELINE_SOURCE =3D=3D "push"
->      # nightly pipeline
->      - if: &is-scheduled-pipeline $CI_PIPELINE_SOURCE =3D=3D "schedule"
->      # pipeline for direct pushes that bypassed the CI
-> -    - if: &is-direct-push $CI_PROJECT_NAMESPACE =3D=3D "mesa" && $CI_PIP=
-ELINE_SOURCE =3D=3D "push" && $GITLAB_USER_LOGIN !=3D "marge-bot"
-> +    - if: &is-direct-push $CI_PIPELINE_SOURCE =3D=3D "push" && $GITLAB_U=
-SER_LOGIN !=3D "marge-bot"
->
->
->  # Rules applied to every job in the pipeline
-> @@ -170,26 +170,15 @@ stages:
->      - !reference [.disable-farm-mr-rules, rules]
->      # Never run immediately after merging, as we just ran everything
->      - !reference [.never-post-merge-rules, rules]
-> -    # Build everything in merge pipelines, if any files affecting the pi=
-peline
-> -    # were changed
-> +    # Build everything in merge pipelines
->      - if: *is-merge-attempt
-> -      changes: &all_paths
-> -      - drivers/gpu/drm/ci/**/*
->        when: on_success
->      # Same as above, but for pre-merge pipelines
->      - if: *is-pre-merge
-> -      changes:
-> -        *all_paths
-> -      when: manual
-> -    # Skip everything for pre-merge and merge pipelines which don't chan=
-ge
-> -    # anything in the build
-> -    - if: *is-merge-attempt
-> -      when: never
-> -    - if: *is-pre-merge
-> -      when: never
-> +    - when: manual
->      # Build everything after someone bypassed the CI
->      - if: *is-direct-push
-> -      when: on_success
-> +    - when: manual
->      # Build everything in scheduled pipelines
->      - if: *is-scheduled-pipeline
->        when: on_success
-> --
-> 2.47.2
->
+IMO, perhaps, the usage is not good since:
 
+A) STD C does not like the usage, and i find GCC has no description
+about the usage.
+   C11/C17: 6.8.6.4 The return statement
+   "A return statement with an expression shall not appear in a
+function whose return type is void"
 
---=20
-Helen Koike
+B) According to discussion, the usage have function that return type
+   of the callee api_func_a() is monitored. but this function has below
+shortcoming as well:
+
+the monitor is not needed if the caller api_func_b() is in the same
+module with the callee api_func_a(), otherwise, provided the callee is
+a API and provided by author of other module. the author needs to clean
+up lot of usages of the API if he/she changes the API's return type from
+void to any other type, so it is not nice to API provider.
+
+C) perhaps, most ordinary developers don't known the function mentioned
+   by B), and also feel strange for the usage
 
