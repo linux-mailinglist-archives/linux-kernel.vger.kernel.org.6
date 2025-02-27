@@ -1,165 +1,106 @@
-Return-Path: <linux-kernel+bounces-537243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29473A48993
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:11:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68F8A48995
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7351890AD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:11:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C071886167
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0670D26FA7B;
-	Thu, 27 Feb 2025 20:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A9F26FA76;
+	Thu, 27 Feb 2025 20:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbJJKtPe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wBRbC0VT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMNSlluZ"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF9A26A0BF;
-	Thu, 27 Feb 2025 20:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD23B26F46E;
+	Thu, 27 Feb 2025 20:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687038; cv=none; b=QTEucjNkqxUAhebRBMp2T0QOYuujouMdD9+0XDnDMn2D2cC2NWrvOmKNLl/AKiOg/G6L4ttkWq/cRWoX2+vzw7wkgQ8QyDMIcKO28aDl3Ak10+Vt1WtH5XFN2awozs10BH79QdH5zo/j5uV3hD6OBu5MAkVt91okNVOn3/efHno=
+	t=1740687089; cv=none; b=fq4O3e5VQ+73VJ4ULXWqO5DLf3ifgQLj9cW1roCWVvJi90NoUKKYij/h0Vy6z2XlCPPA3UCRxJ9vkv2S3F16838GMhz5MBhMjYJL7BTzkHza+S80Q9PcPD9QZhMs3iz9ixdEW9piTMGDcGC5eWKpNcilSR/HikeXof4HgK9gzlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687038; c=relaxed/simple;
-	bh=IIhv31tHm5nbcYXmnEy2mJ0BZBhMjxvw6fk3HPAcah4=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=CjSydbpsr3rXHllNVkiYjGY09U9zjj7ZLW6FfrW4M028t/nmUOCGqGliPHjWTDQ6Nct2u8y1pTQNGBfnSACqA0dzLEyGjawhki5IP+0ERvnqyMaOnfJPCmOWtZ5R/+F+4TUtrNsq0zfqnTcXoSoxCVrtZaBovyAJq9+IH5Wh0wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbJJKtPe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wBRbC0VT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 20:10:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740687034;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=t9+V8RePVjSPDpuIDIZ3RFGMA2w2/OJO32B8KrynrsE=;
-	b=vbJJKtPejnkgi1nCm7HXD57VphdQ0yCu6hr+cyJDX58836LY8K1g0eh7506Te7bMoISWgv
-	YJMTpcBDYo/bAVYnKFba4vIutGZ8HBS4HVusYdHoroPBB7HdtCvlFSxvXF1eL8MOC2gZEO
-	rc6DGFka62twIlZy4oaw1YR7IRf4rC7uoRwCEH4LTAuuUujX/w07SgkP4UncAsyCziExc2
-	7jrWwarGI0eIU8oUnPHFHfVfCSwg5meKRd3+pa8OsENpx5ZXzwKTm1XbyBpLXz2R0c9rw1
-	/jixwxC5PYd1vCSezXaC0BawZwmR0HE1SujkadOqRcQlLhJ3wuChpva3VCn8Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740687034;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=t9+V8RePVjSPDpuIDIZ3RFGMA2w2/OJO32B8KrynrsE=;
-	b=wBRbC0VTLIdmwgHuIyatirgeO9kJCV70RPFyTY9XXLczsMvLQtn70MFrWBEBnmWs2qUlk9
-	OruKBkbmMILkHWBA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/core: Prevent rescheduling when interrupts
- are disabled
-Cc: David Woodhouse <dwmw@amazon.co.uk>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1740687089; c=relaxed/simple;
+	bh=DnWd/E0xczaoDEIgI+I55eU7RCGoOyvxz0buRmpQb9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a71IE9VjH5YufBMon1RsSYx1aEes9cBRdjS2cTEeApMFP/NLTdOn6tpIjligq9atn6uXj8Wy2xt5XKKDGf0h1pv+MVfDasvccxflvl9v8EL+y17FhTpaKPEdkII3y1E31XMXEolM0nDyMjcuvLPs9TsxSGUpFCqKvG3FgLWOEao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YMNSlluZ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso2353853a91.1;
+        Thu, 27 Feb 2025 12:11:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740687087; x=1741291887; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RtRBTV9UKR+OGw3dJKUiMPVCp52egxrnRethKoRX62Q=;
+        b=YMNSlluZh6p0FYvrcqOHoPd28capt7PhPP5iyJF+Wwm/E0WqVmOV/gURpOtGcRG6R8
+         grH2mY0qsWTgCnNUE0gM9q5H2dbV7LxiX+7OtuTvmCldp0F/XwnyF8+j2z6aDRkCiKZ6
+         L97X39D8Yn7+TkmWVg9F6iAiCSFPeYok0HAxl++OkXHvMocKkLntBtY3BkhGub6wOPOn
+         EY6Q0xA7WNMIaJgKjd6SukXayb9r9IYfoOkMgG9oe/JJDvtc/Gi4uepJPHhI3m0BEiZZ
+         R4dUfWGVNpfgs8mHkxOckBqYG2ogey+4oABkQVylmxGNtdAcXNGG/7o1ESd7ZKfHo65H
+         zdnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740687087; x=1741291887;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RtRBTV9UKR+OGw3dJKUiMPVCp52egxrnRethKoRX62Q=;
+        b=Li/p0wHlDiCopPMXRTFKEomleisJZ+wCv1Q6TLFgmci0RU4HWZdQeAu6bnAqy1Gep5
+         bnlWuILR/MtHPq7WcGU9M1iY/4NiDNugQ22YU/4BRhbdZA0lTqVwwDhnobXANlK9wFhN
+         VmgdAKIgaMOLBZaicQcFW0zxfBfQ+3/rmRnjA8AuguL6BRsULz9rKygGye1H2pi+GP7g
+         DMcxAY3EnZGljk1TSOFzvlKU/FxIpy0xL+tZ2QXQhij8nu2IIoeLIxScVGiSLSNr6dSs
+         2lDLlfqeCOfQnKsOGuJga97naFjX/RD2///hbtFaOk4inQdYBeG79n4kBiDY3hnRX1Ax
+         bOdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfIdG+fwTLyI0kcMleBxc6iW0M63+SYKf70ZYhRXfyaZcVY0Q5xGzwP/f+b+oBsk2U8D3s26wgsj53@vger.kernel.org, AJvYcCXDeP0g2YV6PQEU01TUi8gKgasArikzW5UR+Tp74guYAHLqR0qdB2hv5YmamRzuOJE182Y3N0RQ34foI4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaUQwSVFEZMdGWjrYNFlw4xLRSY3nlyZXSYtcP3i7Aq5rzhLKs
+	74C22dkEGgUMHRqjamC2id5zA8dcAcm1gpF8xCpz6UcKJSsNKKH5
+X-Gm-Gg: ASbGncuYAGwBe8nlVCtObg0MEe8icP06N2MWpLsoI3HduflLjSB7m3eg1K6pInN2ywm
+	5HR0mWG7944QmlP5bEITsukRpM9WDZh6cIN6fUsJNhCiEs0sIXwzSwRzE7b5J2uH9ahtRgY2Bup
+	4Lly0+5AbNcojP1J8V2CMuiPJyZiK+KsQDa/kai1F/HEgAIHvDbgH/GSjvpW7RVGRv1Ob6Pi8xu
+	MxlM/SdFkrYAZyYaC1+bhGuFp8VM1rFiibSuw11Wa5Ph194YjyhWOUuqYyzVk30pB43ACuejxcF
+	oz6EqZBngiSG7rUnkAPJen36KI0e3v/dpQ==
+X-Google-Smtp-Source: AGHT+IF3ctquER88QUePhseS75+E0p/QHwJwJmAEL1HQNd2e5ZIyU0Ayi2LIjBjv8ihie8XLSXm58Q==
+X-Received: by 2002:a17:90a:d605:b0:2ee:bbe0:98c6 with SMTP id 98e67ed59e1d1-2febab56ffemr964338a91.8.1740687086863;
+        Thu, 27 Feb 2025 12:11:26 -0800 (PST)
+Received: from embed-PC ([2401:4900:1cb5:84b:96dd:21a7:7ff3:7964])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe4cd89sm2195510b3a.66.2025.02.27.12.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 12:11:26 -0800 (PST)
+Date: Fri, 28 Feb 2025 01:41:20 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org
+Subject: Re: [PATCH] xhci: Fix bcdUSB initialization
+Message-ID: <Z8DG6A76HFWs3hlD@embed-PC>
+References: <20250227193400.109593-1-abhishektamboli9@gmail.com>
+ <2025022757-extrude-carpenter-5bec@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174068702952.10177.18201689881316002263.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022757-extrude-carpenter-5bec@gregkh>
 
-The following commit has been merged into the sched/urgent branch of tip:
+Hi Greg,
+Thanks for the review.
+> On Fri, Feb 28, 2025 at 01:04:00AM +0530, Abhishek Tamboli wrote:
+> > Initialize bcdUSB to 0 to prevent undefined behaviour
+> > if accessed without being explicitly set.
+> 
+> Is it actually accessed without being set?  If so, please explain it and
+> also how the compiler is somehow missing this already?
+I added bcdUSB = 0 based on a Smatch warning about potential uninitialized access. 
+However, given that bcdUSB is always set in the first loop iteration, 
+this might be a false positive.
 
-Commit-ID:     c092dc7d88c1214e109591790c9021a0f734677a
-Gitweb:        https://git.kernel.org/tip/c092dc7d88c1214e109591790c9021a0f734677a
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 16 Dec 2024 14:20:56 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 20:55:16 +01:00
-
-sched/core: Prevent rescheduling when interrupts are disabled
-
-David reported a warning observed while loop testing kexec jump:
-
-  Interrupts enabled after irqrouter_resume+0x0/0x50
-  WARNING: CPU: 0 PID: 560 at drivers/base/syscore.c:103 syscore_resume+0x18a/0x220
-   kernel_kexec+0xf6/0x180
-   __do_sys_reboot+0x206/0x250
-   do_syscall_64+0x95/0x180
-
-The corresponding interrupt flag trace:
-
-  hardirqs last  enabled at (15573): [<ffffffffa8281b8e>] __up_console_sem+0x7e/0x90
-  hardirqs last disabled at (15580): [<ffffffffa8281b73>] __up_console_sem+0x63/0x90
-
-That means __up_console_sem() was invoked with interrupts enabled. Further
-instrumentation revealed that in the interrupt disabled section of kexec
-jump one of the syscore_suspend() callbacks woke up a task, which set the
-NEED_RESCHED flag. A later callback in the resume path invoked
-cond_resched() which in turn led to the invocation of the scheduler:
-
-  __cond_resched+0x21/0x60
-  down_timeout+0x18/0x60
-  acpi_os_wait_semaphore+0x4c/0x80
-  acpi_ut_acquire_mutex+0x3d/0x100
-  acpi_ns_get_node+0x27/0x60
-  acpi_ns_evaluate+0x1cb/0x2d0
-  acpi_rs_set_srs_method_data+0x156/0x190
-  acpi_pci_link_set+0x11c/0x290
-  irqrouter_resume+0x54/0x60
-  syscore_resume+0x6a/0x200
-  kernel_kexec+0x145/0x1c0
-  __do_sys_reboot+0xeb/0x240
-  do_syscall_64+0x95/0x180
-
-This is a long standing problem, which probably got more visible with
-the recent printk changes. Something does a task wakeup and the
-scheduler sets the NEED_RESCHED flag. cond_resched() sees it set and
-invokes schedule() from a completely bogus context. The scheduler
-enables interrupts after context switching, which causes the above
-warning at the end.
-
-Quite some of the code paths in syscore_suspend()/resume() can result in
-triggering a wakeup with the exactly same consequences. They might not
-have done so yet, but as they share a lot of code with normal operations
-it's just a question of time.
-
-The problem only affects the PREEMPT_NONE and PREEMPT_VOLUNTARY scheduling
-models. Full preemption is not affected as cond_resched() is disabled and
-the preemption check preemptible() takes the interrupt disabled flag into
-account.
-
-Cure the problem by adding a corresponding check into cond_resched().
-
-Reported-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Closes: https://lore.kernel.org/all/7717fe2ac0ce5f0a2c43fdab8b11f4483d54a2a4.camel@infradead.org
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9aecd91..6718990 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7285,7 +7285,7 @@ out_unlock:
- #if !defined(CONFIG_PREEMPTION) || defined(CONFIG_PREEMPT_DYNAMIC)
- int __sched __cond_resched(void)
- {
--	if (should_resched(0)) {
-+	if (should_resched(0) && !irqs_disabled()) {
- 		preempt_schedule_common();
- 		return 1;
- 	}
+Regards,
+Abhishek
 
