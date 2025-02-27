@@ -1,83 +1,79 @@
-Return-Path: <linux-kernel+bounces-535926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C184A47923
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:29:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8F5A47909
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6752718849E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D423B0B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F13622ACDC;
-	Thu, 27 Feb 2025 09:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46592227E95;
+	Thu, 27 Feb 2025 09:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VwWV+QVI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DXIH+4j5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF8522A4E0;
-	Thu, 27 Feb 2025 09:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CCE226D06;
+	Thu, 27 Feb 2025 09:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740648461; cv=none; b=ofeY3tHjSy02sF9fu1ZvnHCLH7EvTtg4hB9XD+y1u3/Jivc55b4phLDn3/Av4fsPdNJsox28kA53es5ZATRryP6FLHoGd2+ZZA7SvS60LFF8RFY9i3KL7+NBrdJMxZ+3SALHZ0UFuBV8CSgr7iFxq4BbP9Gc4b++T5WWuapyUTY=
+	t=1740648417; cv=none; b=GNyhWirpCoKtjUk3MbUcYZhYTvXPC54M7J2658ygGRovK5tY1tg3bqfYVmyB2yg5/nptNSi4k4kgLaStOHwvL0N1O0ro/Ap0KJIgzv1WpKnnXluBbdRT6XItDQ4gT4AXthT41ImTcgTMji2vqK32wmQFKupyBjX4ycvGCbD8TNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740648461; c=relaxed/simple;
-	bh=J7NjV+a4A75Q6FVQVvBR5hHZa0YLNsYqusRD7coT8Dg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tpqAyesRod1azBJUWrWqhPS/E+WkY5BAaYZ+/nEURBbJ8ekmtugjGH3WlU2q1ezRwpSl81jxMgUrffqQAVCZAjrpgRIf1Bb2azDSAXuqum3Zqm4tH/kg8b7yu9Oc0278Mg3UUhAKDO3c2yQQvMTt+ClY+eNlZenDSQOCRr15Kz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VwWV+QVI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R8n5mw002157;
-	Thu, 27 Feb 2025 09:27:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1l7edTeasmoMFPJa7aEBSwFL/pdGW62t+1SXgjMizNw=; b=VwWV+QVIYrpjXcOG
-	CM3KKCLtKafZtyZ7UGNICLSRtHB/JeKEatGw6IR2JItnFWqUUGxRV3EzyuhmIK/k
-	+CFL5CeIaMpenqSwy27FHo0+y8lqU7Qk8tvUzTLXJhOJILx9T++TV68FoMw3SXMT
-	vZ2Pt6+lKALaGtksQL2yezUeLK1T+Mf1PauyJ4tiu9tq+3RJIr1vqd9vPuB4t4Nn
-	npB7dMsiFscXCC36FfAg7HLQ05+bDIpYdfBqyCgljI4WTT/B/M/K/TrjXT6/3YVp
-	mRnd/pL+xlgZYePIBF2z/tKvwe7fuP/7bOC1gVJOF+9V+zvYy2kHRHDL6IHfIpr5
-	FMOHLQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451pu9d4dj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 09:27:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51R9RUqG012443
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 09:27:30 GMT
-Received: from ap-cloud-sh02-lnx.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Feb 2025 01:27:25 -0800
-From: songchai <quic_songchai@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Songwei Chai <quic_songchai@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 7/7] coresight-tgu: add reset node to initialize
-Date: Thu, 27 Feb 2025 17:26:40 +0800
-Message-ID: <20250227092640.2666894-8-quic_songchai@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250227092640.2666894-1-quic_songchai@quicinc.com>
-References: <20250227092640.2666894-1-quic_songchai@quicinc.com>
+	s=arc-20240116; t=1740648417; c=relaxed/simple;
+	bh=S1XOeVmtQkcD/IsX/mGhIpVMvMKU1yve/GlRx1cRLgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cFB2HcRkFNzljqEQWBWVLI4FsWfVZlHB9BW9OkNkUe3cAzegkuluHwZTphK+bQIIwC1yVu4OGx/b0eOEDJaMB/Yhm91XiKL40u45e0O5GtixzhWuyWDy5jN/Zb3SjtPVnmp9N9FXl4sbdGb2FiW/VfmxhJrVqPcrtcd9ek4l6Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DXIH+4j5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740648417; x=1772184417;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=S1XOeVmtQkcD/IsX/mGhIpVMvMKU1yve/GlRx1cRLgE=;
+  b=DXIH+4j5Dn8LXMH8NLt0prCM28QL7lCzMAEXsa9G4ZrFL1n/yLrzsquT
+   9ebHN/JRumCdIwSC9bTzkvr9XcOXA3PgcR22yk91vYC3P/kn6klyiM0Vl
+   LB/vNWaBjUEYTkLb845lPr2uhbIok8WQyCtH35CO9ntTet4HKq210uaLm
+   r8J0NniLZ3fRvQeDAXwlnmZQdAk0tuqdXOVn1yiq/CD5XrtCRDrwOc23X
+   A4S+wTl3UARfl/HNr/4YX928j5d/yEGYH5cC8JQvavPtSofdBve9FcEpN
+   Kr7VtAyhSo5Jk1TOIVOmVPWr1LIGVk10vlnVMxzfnirvzTB+7/eMYeQdm
+   Q==;
+X-CSE-ConnectionGUID: psYvn6rRR4SqBRKB/Qc4pg==
+X-CSE-MsgGUID: 9GyMvUcdSZOiSrqF7rVeRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="58945456"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="58945456"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 01:26:56 -0800
+X-CSE-ConnectionGUID: nENdso6DTfa6qS65dYaoyA==
+X-CSE-MsgGUID: QDsYqhjQQk6TLy1G6HX71Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="121571993"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.138])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 01:26:52 -0800
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com
+Cc: tomi.valkeinen@ideasonboard.com,
+	jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com,
+	naush@raspberrypi.com,
+	mchehab@kernel.org,
+	hdegoede@redhat.com,
+	dave.stevenson@raspberrypi.com,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mehdi Djait <mehdi.djait@linux.intel.com>
+Subject: [RFC PATCH v1] media: v4l2-common: Add a helper for obtaining the clock producer
+Date: Thu, 27 Feb 2025 10:26:43 +0100
+Message-ID: <20250227092643.113939-1-mehdi.djait@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,145 +81,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ez9pBtqEFL_RKGTRrdyRjH8hiiDxTHnL
-X-Proofpoint-ORIG-GUID: ez9pBtqEFL_RKGTRrdyRjH8hiiDxTHnL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_04,2025-02-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0 clxscore=1011
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270071
 
-From: Songwei Chai <quic_songchai@quicinc.com>
+Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+platforms to retrieve a reference to the clock producer from firmware.
 
-Add reset node to initialize the value of
-priority/condition_decode/condition_select/timer/counter nodes
+This helper behaves the same as clk_get_optional() except where there is
+no clock producer like typically in ACPI-based platforms.
+For ACPI-based platforms the function will read the "clock-frequency"
+property (_DSD ACPI property) and register a fixed frequency clock with
+the frequency indicated in the property.
 
-Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
-Signed-off-by: songchai <quic_songchai@quicinc.com>
+Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
 ---
- .../testing/sysfs-bus-coresight-devices-tgu   |  7 ++
- drivers/hwtracing/coresight/coresight-tgu.c   | 79 +++++++++++++++++++
- 2 files changed, 86 insertions(+)
+ drivers/media/v4l2-core/v4l2-common.c | 38 +++++++++++++++++++++++++++
+ include/media/v4l2-common.h           | 19 ++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-index d88d05fbff43..8fb5afd7c655 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-@@ -42,3 +42,10 @@ KernelVersion   6.15
- Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
- Description:
-                 (RW) Set/Get the counter value with specific step for TGU.
-+
-+What:           /sys/bus/coresight/devices/<tgu-name>/reset_tgu
-+Date:           February 2025
-+KernelVersion   6.15
-+Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
-+Description:
-+                (Write) Reset the dataset for TGU.
-diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
-index 693d632fb079..b36ced761c0d 100644
---- a/drivers/hwtracing/coresight/coresight-tgu.c
-+++ b/drivers/hwtracing/coresight/coresight-tgu.c
-@@ -343,6 +343,84 @@ static ssize_t enable_tgu_store(struct device *dev,
+diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+index 0a2f4f0d0a07..308a13536ac3 100644
+--- a/drivers/media/v4l2-core/v4l2-common.c
++++ b/drivers/media/v4l2-core/v4l2-common.c
+@@ -34,6 +34,9 @@
+  * Added Gerd Knorrs v4l1 enhancements (Justin Schoeman)
+  */
+ 
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+@@ -636,3 +639,38 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+ 	return 0;
  }
- static DEVICE_ATTR_RW(enable_tgu);
- 
-+/* reset_tgu_store - Reset Trace and Gating Unit (TGU) configuration. */
-+static ssize_t reset_tgu_store(struct device *dev,
-+			       struct device_attribute *attr, const char *buf,
-+			       size_t size)
+ EXPORT_SYMBOL_GPL(v4l2_link_freq_to_bitmap);
++
++struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
 +{
-+	unsigned long value;
-+	struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+	int i, j, ret;
++	struct clk_hw *clk_hw;
++	struct clk *clk;
++	char *clk_name;
++	u32 rate;
++	int ret;
 +
-+	if (kstrtoul(buf, 0, &value))
-+		return -EINVAL;
++	clk = devm_clk_get_optional(dev, id);
++	if (clk || IS_ERR(clk))
++		return clk;
 +
-+	if (!drvdata->enable) {
-+		ret = pm_runtime_get_sync(drvdata->dev);
-+		if (ret < 0) {
-+			pm_runtime_put(drvdata->dev);
-+			return ret;
-+		}
++	if (!is_acpi_node(dev_fwnode(dev)))
++		return ERR_PTR(-EINVAL);
++
++	ret = device_property_read_u32(dev, "clock-frequency", &rate);
++	if (ret)
++		return ERR_PTR(ret);
++
++	if (!id) {
++		clk_name = devm_kasprintf(dev, GFP_KERNEL, "clk-%s",
++					  dev_name(dev));
++		if (!clk_name)
++			return ERR_PTR(-ENOMEM);
 +	}
 +
-+	spin_lock(&drvdata->spinlock);
-+	CS_UNLOCK(drvdata->base);
++	clk_hw = devm_clk_hw_register_fixed_rate(dev, id ? id : clk_name, NULL,
++						 0, rate);
++	if (IS_ERR(clk_hw))
++		return ERR_CAST(clk_hw);
 +
-+	if (value) {
-+		tgu_writel(drvdata, 0, TGU_CONTROL);
-+
-+		if (drvdata->value_table->priority)
-+			memset(drvdata->value_table->priority, 0,
-+			       MAX_PRIORITY * drvdata->max_step *
-+				       drvdata->max_reg * sizeof(unsigned int));
-+
-+		if (drvdata->value_table->condition_decode)
-+			memset(drvdata->value_table->condition_decode, 0,
-+			       drvdata->max_condition_decode * drvdata->max_step *
-+				       sizeof(unsigned int));
-+
-+		/* Initialize all condition registers to NOT(value=0x1000000) */
-+		for (i = 0; i < drvdata->max_step; i++) {
-+			for (j = 0; j < drvdata->max_condition_decode; j++) {
-+				drvdata->value_table
-+					->condition_decode[calculate_array_location(
-+						drvdata, i, TGU_CONDITION_DECODE, j)] =
-+					0x1000000;
-+			}
-+		}
-+
-+		if (drvdata->value_table->condition_select)
-+			memset(drvdata->value_table->condition_select, 0,
-+			       drvdata->max_condition_select * drvdata->max_step *
-+				       sizeof(unsigned int));
-+
-+		if (drvdata->value_table->timer)
-+			memset(drvdata->value_table->timer, 0,
-+			       (drvdata->max_step) *
-+				       (drvdata->max_timer_counter) *
-+				       sizeof(unsigned int));
-+
-+		if (drvdata->value_table->counter)
-+			memset(drvdata->value_table->counter, 0,
-+			       (drvdata->max_step) *
-+				       (drvdata->max_timer_counter) *
-+				       sizeof(unsigned int));
-+
-+		dev_dbg(dev, "Coresight-TGU reset complete\n");
-+	} else {
-+		dev_dbg(dev, "Coresight-TGU invalid input\n");
-+	}
-+
-+	CS_LOCK(drvdata->base);
-+
-+	drvdata->enable = false;
-+	spin_unlock(&drvdata->spinlock);
-+	pm_runtime_put(drvdata->dev);
-+
-+	return size;
++	return clk_hw->clk;
 +}
-+static DEVICE_ATTR_WO(reset_tgu);
++EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
+diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+index 63ad36f04f72..6446575b2a75 100644
+--- a/include/media/v4l2-common.h
++++ b/include/media/v4l2-common.h
+@@ -573,6 +573,25 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+ 			     unsigned int num_of_driver_link_freqs,
+ 			     unsigned long *bitmap);
+ 
++/**
++ * devm_v4l2_sensor_clk_get - lookup and obtain a reference to an optional clock
++ *			      producer for a camera sensor.
++ *
++ * @dev: device for v4l2 sensor clock "consumer"
++ * @id: clock consumer ID
++ *
++ * This function behaves the same way as clk_get_optional() except where there
++ * is no clock producer like in ACPI-based platforms.
++ * For ACPI-based platforms, the function will read the "clock-frequency"
++ * property (_DSD ACPI property) and register a fixed-clock with the frequency
++ * indicated in the property.
++ *
++ * Return:
++ * * %pointer to a struct clk: Success
++ * * %valid IS_ERR() condition containing errno: Failure
++ */
++struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id);
 +
- static const struct coresight_ops_helper tgu_helper_ops = {
- 	.enable = tgu_enable,
- 	.disable = tgu_disable,
-@@ -354,6 +432,7 @@ static const struct coresight_ops tgu_ops = {
- 
- static struct attribute *tgu_common_attrs[] = {
- 	&dev_attr_enable_tgu.attr,
-+	&dev_attr_reset_tgu.attr,
- 	NULL,
- };
- 
+ static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
+ {
+ 	/*
+-- 
+2.48.1
 
 
