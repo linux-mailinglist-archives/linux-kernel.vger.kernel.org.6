@@ -1,202 +1,127 @@
-Return-Path: <linux-kernel+bounces-535824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669CFA477B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:25:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87781A477BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E3CC17012D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C9A188667B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86186224884;
-	Thu, 27 Feb 2025 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294A122371B;
+	Thu, 27 Feb 2025 08:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVUoSLwe"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SZ2E1/Wd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181FEA59;
-	Thu, 27 Feb 2025 08:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAACF1E520D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740644664; cv=none; b=PJRmIGBo/N4XwmgywvJunOaDwrcG+4i3y96b2WqQ8AtXjH/shOkoB7qg2XAHOhY1fWTXY003dxsR9HaPVWW02kTQYTqiUzx9dOw7ZdaAwWL+VFUJ70dHi0Qfa8o0X5paZcxDQ/KFD/a0hEYPEysrbbeu4A5+Mo5ekclBSA+SXGA=
+	t=1740644744; cv=none; b=sSkBRcBD3pVTxAT02odRoY8dX100/C3DUMEkNl4o+l50ASZPWw8HQdl2+cN76LsgBubzKoWj4yLU7M4HVNuL7DGw04D4Rhmgn0wlD/I2T/pLex79A0T8D4OYqpPwCv319sHa7NRC5/HKlIBYioqXS2ZY/0RTYNk0qbr8Yu6rGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740644664; c=relaxed/simple;
-	bh=Nb/Hgm4oStf7q+jlubqt6Dr9pzfPaYaAm6OB6hz1PCc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tf7wWX8DJVgI01XKa4Jv+elQV1zqNsmD1/kZmSbchF4BiSdyb+ZYjV2RjlRvvnafSn4ZyMA/1BGxgxyM9ZUGXC3ouHW4Ym0vxz/dXowPu24taP0k6UmCtxXOicKTlNNSrPdikCYZT0GVDAEA4gN6dvUblHa0IM3w/zzF/5Vkypc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVUoSLwe; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5439a6179a7so816366e87.1;
-        Thu, 27 Feb 2025 00:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740644661; x=1741249461; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KMdKkT9T6eW8JPXgw7f6XF0ny6zLaa3x883xjhyN/zA=;
-        b=MVUoSLwecQOMH9BOWeGg40Adg4tLwwyO9sk/1Uubi7hkg+a4SX2qjoahkB9r+JsKW9
-         bXzG38swzA9JD3kK3CoEc4JBq+eNx84QDGwPj9+M4xBbhyTNWuR+rA7euLLkT/+md7+K
-         /Woe1RVIywFM5f10Xup/4sye3TLxI2aNU4LYDFx4Fe6jh98dUipZLdW/l8oxSiFaJHTk
-         z5oTQOXzJG3f2j/WXuK4fRQm5aqk6N5ExntaiFftEprxA79g5XfuT6+PLke0TAz85eB6
-         YS0YOYUhjoFLE73nFQF8pg55G+MpKNt/d8qTg8Jyx6sAhMLMQ4vN3wPCJghds+LuKy7R
-         2cKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740644661; x=1741249461;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMdKkT9T6eW8JPXgw7f6XF0ny6zLaa3x883xjhyN/zA=;
-        b=LuWRE2r8DnZiCOqt2qBmnfIaGGVnm58Pd+AqaRGlToSUHTwaZKB1dPTVsTtub56w74
-         BLLf1ZNIhCBurG34Bv9gX0Al3TF5vN4HKMjdrJW2UMbr1/Ra4Zqq0OKno8UdZL8jBhj1
-         4aHT8pEXXowaLJPiRXf074U0En3pQzl4Z1ikFrRP3+wV2KJNj+N+btvFXiSa3ltHiLd2
-         aeK35ZVYH4R0bmt0OC754YLUJeWfLYrYguC2dYugiDH8a4r7VrGrqz97kjVf551cP1wn
-         VE1kro7JCMcmZWflsCgzNiYzpO3qRNolvJWhDBuyx5ThP8tZaeBc9i7W4fgVnS3WxfbA
-         GSKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNsxDtLJR9IOuGYtzXMZjV+ALStmrER7YTdz7xj4pliJzdV0D8dyoQN2q/dEJto9j5i29QO7p8IBC9@vger.kernel.org, AJvYcCXn+KgEqxfLUAoREpuc8/9pCXP9hrVWlt21KZbcO+1Z664Ls0Awy5rcsYKkNCsu2iAblriMM/yI/TNrwoni@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbS6FNzy6R2Tmqz3Wvfwo3NAQiZrqQeXHP/fcw2rZNuqgkDPo3
-	vVKz4yGqjG2bnqoCB7uVgHwLU9LI3OV6yBVVQyY/Dsiu2codG/C9wp5mSA==
-X-Gm-Gg: ASbGncuwj41YJ3Ze7U1q2JqNMKTCYMybU1kYca4Tf40y/YhguF1cmv5UxtXov8sWdJo
-	wbfu0oZhrvgw4emFEnr+u5VKit6WlbVWLQq/rVWUJP355BqbM+fnJ2kd6o6cdX5EC1bgMuiK7dt
-	skQ6Gl9SXo8q2t9k5lB/8dpJwqFX71oxQLQPSe8XB+I7MpBsAvhwlGlVq5CZmO2ScF1GFhhXigv
-	QnSvTjqTXrSjNcIX6JpnWvNw1828X/oaqwtia8WzL6LgV+IxZ9PYy8/8xw7u3Tj/Bg7H+5+Zbt9
-	cnlL1vWf9KcDWnSo3h18906nd+nizd1AbtkAL8vSaAKCIGx5qiCe79fdEvL/BbXyo90Tk6U/Cz0
-	dQuV1o3I=
-X-Google-Smtp-Source: AGHT+IFXpgZteQzCMyngKYESsa8l1Q3yg0bIMEvwucuXw2MU6ApuyAwzf+m14YatM/t6Oej1nF7HQA==
-X-Received: by 2002:a05:6512:31d4:b0:546:1ffa:51ce with SMTP id 2adb3069b0e04-54943327ab8mr723861e87.21.1740644660919;
-        Thu, 27 Feb 2025 00:24:20 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494417b636sm102821e87.94.2025.02.27.00.24.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 00:24:18 -0800 (PST)
-Message-ID: <a7ab9d47-cd17-4098-b2ba-d53dfc19dbed@gmail.com>
-Date: Thu, 27 Feb 2025 10:24:18 +0200
+	s=arc-20240116; t=1740644744; c=relaxed/simple;
+	bh=L5y2u+6ZbVsG8e8AdeI8M9nMozRubd1dS8820cxPBNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fxv1fD/TeQGufKD+VD4YvDawlHBqVdaQUEL5dtnyhSG+T1h8cSvp1rNIyNXE5di/b63/c612NgZ4BTlhK+IeNRw4NlkbgQQkvSO0YZ/ky7PdpHJmZqetnQ8dOqJvhAUhvvUK9ZbwFh32JDkieuYjQqDpqTL7VaSf1o2aWKfZOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SZ2E1/Wd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740644740;
+	bh=L5y2u+6ZbVsG8e8AdeI8M9nMozRubd1dS8820cxPBNw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SZ2E1/WdINttx2bEUkYV+minAB18jXR4dU4vwrXDEIAPDc76Q1wveRu5yvL9oyVZ5
+	 nu01LAQ/IAvWhTbdK+KIkSHrq5ws2SZ9RJN16PGKfLksEPFseZpVIRyNZvLet5S5cb
+	 nTwH406+g/8pS7uQQd8bDZZUPNF4OdcK+HSUAhnN+F5lR2lf20x7eZePbDsW4LBNfL
+	 ScbnYqZ4uy6scl/NtXwTxCb2CrgBxATgxsNNqucalL4bOWFkLvxy1L1JDvO2WPQX2r
+	 t3qMzGNCWQVVe64Y1NhQB9LHiVyiDem3PKmbuEUXxWlf9KREFsMKlYSifJwe54p8Xl
+	 xcBH4Yg5a8WAw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E2E117E0605;
+	Thu, 27 Feb 2025 09:25:40 +0100 (CET)
+Date: Thu, 27 Feb 2025 09:25:37 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [RFC PATCH 2/4] drm/panfrost: Split LPAE MMU TRANSTAB register
+ values
+Message-ID: <20250227092537.63053596@collabora.com>
+In-Reply-To: <20250226183043.140773-3-ariel.dalessandro@collabora.com>
+References: <20250226183043.140773-1-ariel.dalessandro@collabora.com>
+	<20250226183043.140773-3-ariel.dalessandro@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: Document the 'valid_mask' being internal
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Z71qphikHPGB0Yuv@mva-rohm>
- <CACRpkdYOGeDaDUuQQUGwvFNNk7ZuFjkXSMPXL3BJ=4jGEGPkoQ@mail.gmail.com>
- <ce0d802d-6bad-4028-bb57-18bddba5632d@gmail.com>
- <CACRpkdZtWLGAn0K+xENY+RF6CsWPn0m7R--W9EaH+xTKazALFg@mail.gmail.com>
- <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <8979f8d4-8768-40b0-a3a7-6638ddb626cd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 26/02/2025 13:42, Matti Vaittinen wrote:
-> On 26/02/2025 12:18, Linus Walleij wrote:
->> On Wed, Feb 26, 2025 at 7:09 AM Matti Vaittinen
->> <mazziesaccount@gmail.com> wrote:
->>> On 25/02/2025 23:36, Linus Walleij wrote:
->>>> we can maybe move it to struct gpio_device in
->>>> drivers/gpio/gpiolib.h?
->>>>
->>>> This struct exist for every gpio_chip but is entirely gpiolib-internal.
->>>>
->>>> Then it becomes impossible to do it wrong...
->>>
->>> True. I can try seeing what it'd require to do that. But ... If there
->>> are any drivers out there altering the valid_mask _after_ registering
->>> the driver to the gpio-core ... Then it may be a can of worms and I may
->>> just keep the lid closed :)
->>
->> That's easy to check with some git grep valid_mask
+On Wed, 26 Feb 2025 15:30:41 -0300
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+
+> The TRANSTAB (Translation table base address) layout is different
+> depending on the legacy mode configuration.
 > 
-> True. I just tried. It seems mostly Ok, but...
-> For example the drivers/gpio/gpio-rcar.c uses the contents of the 
-> 'valid_mask' in it's set_multiple callback to disallow setting the value 
-> of masked GPIOs.
+> Currently, the defined values apply to the legacy mode. Let's rename
+> them so we can add the ones for no-legacy mode.
 > 
-> For uneducated person like me, it feels this check should be done and 
-> enforced by the gpiolib and not left for untrustworthy driver writers 
-> like me! (I am working on BD79124 driver and it didn't occur to me I 
-> should check for the valid_mask in driver :) If gpiolib may call the 
-> driver's set_multiple() with masked lines - then the bd79124 driver just 
-> had one unknown bug less :rolleyes:) )
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_regs.h | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
 > 
-> I tried looking at the gpiolib to see how this works... It seems to me:
-> 
-> gpio_chip_set_multiple() does not seem to check for valid_mask. This is 
-> called from the gpiod_set_array_value_complex() - which gave me a 
-> headache as it is, as name says, complex. Well, I didn't spot valid_mask 
-> check but I may have missed a thing or 2...
-> 
-> If someone remembers straight away how this is supposed to work - I 
-> appreciate any guidance. If not, then I try doing some testing when I 
-> wire the BD79124 to my board for the next version of the BD79124 series.
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> index b5f279a19a08..4e6064d5feaa 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> @@ -317,14 +317,19 @@
+>  #define MMU_AS_STRIDE			(1 << MMU_AS_SHIFT)
+>  
+>  /*
+> - * Begin LPAE MMU TRANSTAB register values
+> + * Begin LPAE MMU TRANSTAB register values (legacy mode)
+>   */
+> -#define AS_TRANSTAB_LPAE_ADDR_SPACE_MASK	0xfffffffffffff000
+> -#define AS_TRANSTAB_LPAE_ADRMODE_IDENTITY	0x2
+> -#define AS_TRANSTAB_LPAE_ADRMODE_TABLE		0x3
+> -#define AS_TRANSTAB_LPAE_ADRMODE_MASK		0x3
+> -#define AS_TRANSTAB_LPAE_READ_INNER		BIT(2)
+> -#define AS_TRANSTAB_LPAE_SHARE_OUTER		BIT(4)
+> +#define AS_TRANSTAB_LEGACY_ADDR_SPACE_MASK	0xfffffffffffff000
+> +#define AS_TRANSTAB_LEGACY_ADRMODE_IDENTITY	0x2
+> +#define AS_TRANSTAB_LEGACY_ADRMODE_TABLE	0x3
+> +#define AS_TRANSTAB_LEGACY_ADRMODE_MASK		0x3
+> +#define AS_TRANSTAB_LEGACY_READ_INNER		BIT(2)
+> +#define AS_TRANSTAB_LEGACY_SHARE_OUTER		BIT(4)
 
-I did some quick testing. I used:
+How about we keep AS_TRANSTAB_LPAE_ here and prefix the new reg values
+with AS_xxx_AARCH64_ when there's a collision between the two formats.
 
-adc: adc@10 {
+> +
+> +/*
+> + * Begin LPAE MMU TRANSTAB register values (no-legacy mode)
+> + */
+> +#define AS_TRANSTAB_LPAE_ADDR_SPACE_MASK	0xfffffffffffffff0
 
-...
+It looks like we're not use AS_TRANSTAB_LPAE_ADDR_SPACE_MASK, so I'm
+not sure it's worth defining the mask for the AARCH64 format.
 
-	channel@0 {
-		reg = <0>;
-	};
-	channel@1 {
-		reg = <1>;
-	};
-	/* ... up to the channel@6. */
+>  
+>  #define AS_STATUS_AS_ACTIVE			0x01
+>  
 
-	gpio-controller;
-};
-
-which left GPIO0 ... GPIO6 masked (pins used for ADC) and only GPIO7 
-unmasked.
-
-Then I added:
-gpiotst {
-	compatible = "rohm,foo-bd72720-gpio";
-	rohm,dvs-vsel-gpios = <&adc 5 0>, <&adc 6 0>;
-};
-
-and a dummy driver which does:
-gpio_array = devm_gpiod_get_array(&pdev->dev, "rohm,dvs-vsel",
-				  GPIOD_OUT_LOW);
-
-...
-
-ret = gpiod_set_array_value_cansleep(gpio_array->ndescs,
-		gpio_array->desc, gpio_array->info, values);
-
-As a result the bd79124 gpio driver got it's set_multiple called with 
-masked pins. (Oh, and I had accidentally prepared to handle this as I 
-had added a sanity check for pinmux register in the set_multiple()).
-
-I suppose one can think this is a result of invalid DT and that drivers 
-shouldn't need to be prepared for that. But ... After supporting 
-customers who try to integrate IC drivers to their products ... I think 
-it's still better to be prepared. I definitely wouldn't blame the rcar 
-driver authors for their valid_mask sanity check :)
-
-After all this babbling, my point is that having the valid mask visible 
-for drivers is useful. Especially because there are cases where the 
-'valid_mask' can be directly compared to the 'mask' parameter in the 
-set_multiple. It's clear and efficient check, and I could assume the 
-set_multiple() is an optimized call, and thus being efficient makes sense.
-
-So... Long story short - I would still suggest keeping the valid_mask 
-visible and either taking just the doc update (as was done in the 
-original patch) - or skipping the valid_mask initialization in gpiolib 
-if driver provides non NULL value.
-
-What do you think?
-
-Yours,
-	-- Matti
 
