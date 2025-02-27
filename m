@@ -1,275 +1,217 @@
-Return-Path: <linux-kernel+bounces-536355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CE7A47E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:06:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E49A47E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3387D3B3DE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC2116F298
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF07D22F166;
-	Thu, 27 Feb 2025 13:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E4A22F174;
+	Thu, 27 Feb 2025 13:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YQZn4FaJ"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XCEEYepn"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56C41662EF;
-	Thu, 27 Feb 2025 13:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CF122E3EC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661593; cv=none; b=T5OkArBB5oZ4aGkO1Si4YXwaDhbEORpCiiEfnAN69cyJTih51aM34gqDHFt4cJ/EfiUYb/q4WkTiAu5f3CD56x46lWNT7NwZ7pBCs+1X3LHzrAnbyrSjTFYoBxSTtza2yT0n9hUKhmlU59z+6m6EnHiyYghXhntljhKg+AIgvbA=
+	t=1740661649; cv=none; b=P8IX4o1Np2N4IMc3U7IMqmtyKD6YJQiHVZmHcnphtGhmdS5hRoQbxad0710PjhfXL3r5nSkSWjwF/J61CdWMvq1pQqmz9eGcCBQobXR99/sXOV8JZ+JnMyYlUj7nz7B7gC1yVd6b4Gwl2Xr6u9zChqIqxR82ramboDdjc5hr6fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661593; c=relaxed/simple;
-	bh=gehwLQH/F0EbzXWjJA5bmN6veVCSiRGzWa9NpQ7Foho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvgQRwb8rigf00VgmVBVsTPjlHpnTWKp+cGWpEF7Kj6vcmPXNbNUF/PMLQTZRds/Vr3I4iKUshcLJ992VYfBiSFXeVAHrYPNTighe4FOkF/IDKZSLqeA8i7nbW8hTv7ZVKH8cHhkLbQXjOiV1y8jjutr+cn7v2pX4GlvRVTIaMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YQZn4FaJ; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 05B2F433D6;
-	Thu, 27 Feb 2025 13:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740661587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0jurlLBNXfGd9DqDpI41umHtPOLvrCM/YL4keN35dP4=;
-	b=YQZn4FaJmdglmiMSVbEuKnBrJAFELHRX1nhF48UX+WMCEibHQEd3UdSSticOgQ91WWHjeJ
-	DQ8CpwXxJCTA/0r1BV14ekk2Nk2J1+rT8ztwsjUJK0MEyPcs/7z/a4ksZnzaAUiX2iCRbh
-	oABVymmTy4kWJD/rF+VLV59ijZd1W7skFplXpH1bObyWKY/kYM1Jqt3ZLh3mX8MPGCtF+H
-	WLrjwvPbk1aUA8rSumHJVYuAaZA2+kCzAH+3LDVR7P13iY5+B6tJ1JzkHwHXncspiJIuPw
-	e3F2k1Becmy8iGr7WKAzsgsO8ZOCd18q+M2uOmbNDDHe5g5c+JwJqdAnFDMw4w==
-Message-ID: <7d196a91-220a-41a5-8577-198b436d8440@bootlin.com>
-Date: Thu, 27 Feb 2025 14:06:21 +0100
+	s=arc-20240116; t=1740661649; c=relaxed/simple;
+	bh=XL5kn7VGM3DLfqXNKKS9zls2n6nLce6SliFfWaxMstc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDw/ylnaPmdFxx//s+vy2T6j4wnH7CHf7MIXQ2IWaJK7FNrHfDBDyeG5PIX1m/V13H3auIlvLcXxyIMnpgHLsD6wyjoOYkhETGX2aMoiSZf55uGhl3L3mpPGwz6qWExdO7mWdJfP4vBJGLW4sAbR1pN/l5mMiEs+8p9FtF1I9uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XCEEYepn; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e4b410e48bso1360347a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 05:07:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740661645; x=1741266445; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JTyMrNqruIfN80FNenPnWbn1JyAg6VWCPasiwyXp9FI=;
+        b=XCEEYepnOtcYlzOvGQVa5HBoZE+sD2IyfaRSWs3zkhagsWaT5zyd9SrPWU57iI7yDy
+         oq6CnHQ6jSDQjFJ8N6qJUFBk7aej0IU+7tjmB4U5lc5S7i4MZd5f5o1VB1eMbJnvwCfQ
+         3RFYPZSTRBPYqzj/MH9zh9qHShLujMgrE5oYiagB4KRAD4Ju38PX6cQ2SAsSo3pWb2np
+         0MQbzrhx1q3FoLb/Y3rg5DlhMAHHCWIcr335MAL1/bZJUOTTDyiU5WhpTRedGcZuT1IQ
+         PMrbaORjmz9twMHU+vFd7dXET69Wj4yspxbFj/R9xM0H2DQ2gPgA0/Gh1fO1e20J8PDt
+         sE2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740661645; x=1741266445;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JTyMrNqruIfN80FNenPnWbn1JyAg6VWCPasiwyXp9FI=;
+        b=LtiK4kUuxLD6UGN0xYFpdbOX99ST/HlYOnuX3jxOGmlSI6GT7fwKu4bh3K8PIiGGJ3
+         ma/VWuYRZ4u1IlL//0mFdCxRkrIxwYBdArvImV3NZXTZZBgfjdVO2z0x09kcDmNBZEoB
+         0OYUrzDhMSfcmvRFd6+AKYxiufttkP0HOeTszpsXsUdQTe/t3dINCzP/VkwmvSTfmNcU
+         KbR8uT29xqDtTdZFWzkvcbP5/eBDkFj+TmPTNkFEkqkmEKeHzb8Rby8k505NmwKeCvul
+         nOwTz2F82YxS8r2RzPdayevm0qI3qLJGuGD4S+WYeF/9IIEcqU0rCw3lDJkdoM/9yxZa
+         cyNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM/YLMMYP+qdY4WU4lsL6E+vEF3YM/X8tN9pgDx29viX/ljZD1bikvFyNfPertTH2Jbn+OZd9KijDYblk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNlIoem+f00iibQ6/FfGSR/L8OavX8ZtlDpgcjVQSyvoFYTuqO
+	qj+1/DNo+ntzpJT4aubRdfTnJGGnNk97BF3O0Ux4Iy6ICnobomxlzRR5O9p4EVc=
+X-Gm-Gg: ASbGnctrudD0fv42vXCNWJzyYfiP1QD/sI+yuMBulkSyoUyUDuXNBSANLrTEyPPGI6H
+	V505D2os85rSuUk2z185GwSKmVKfZKB+0PxUSSxSr3KCAUWgSsy4n2ct2iBiY+dQOqkGvUwJV9J
+	szixA+ONAaSzsZClKHHuOfOsEIYJEA7wgZPd0Zy8isQ1azvxwJlkgNr7Fl8jSpo6ZUpSVk2dWhj
+	eRJwYL8iCghHvj5OCKyVC5xuN+bmxGp69r+7qRx+EVc3jznI0cLSyeeovSDIWeiXWcIma67gZ0+
+	yPGFu43HP7Nx3KYcMIk8bAU=
+X-Google-Smtp-Source: AGHT+IGjfWHYiaAXdrqA594SKctf+/MPGNFwOKZ2m/oLfiL1GNAvt9xOlxqJ0+a9h6IWKjELe4604Q==
+X-Received: by 2002:a05:6402:2b86:b0:5d9:a54:f8b4 with SMTP id 4fb4d7f45d1cf-5e0b70dc05emr25956467a12.11.1740661645077;
+        Thu, 27 Feb 2025 05:07:25 -0800 (PST)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a6ab7sm1071222a12.74.2025.02.27.05.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 05:07:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 15:07:21 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] backlight: pwm_bl: Read back PWM period from provider
+Message-ID: <Z8BjiRjLin8jTE8j@linaro.org>
+References: <20250226-pwm-bl-read-back-period-from-hw-v1-1-ccd1df656b23@linaro.org>
+ <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/9] Driver core: Add faux bus devices
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Lukas Wunner <lukas@wunner.de>,
- Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mairacanal@riseup.net>, Robin Murphy <robin.murphy@arm.com>,
- Simona Vetter <simona.vetter@ffwll.ch>, Zijun Hu <quic_zijuhu@quicinc.com>,
- linux-usb@vger.kernel.org, rust-for-linux@vger.kernel.org,
- =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
-References: <2025021023-sandstorm-precise-9f5d@gregkh>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <2025021023-sandstorm-precise-9f5d@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekjeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudfggeegueffjeffteetteehjefhiedtkedvffettddthedthefhvddvlefgleevnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpt
- hhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvghkshgrnhguvghrrdhlohgsrghkihhnsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhm
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <xltamao27utfrsax2pc6mh5tthanmrqszz4k7gyw3knqkm24xp@4tydmhfh6g4j>
 
-
-
-Le 10/02/2025 à 13:30, Greg Kroah-Hartman a écrit :
-> For years/decades now, I've been complaining when I see people use
-> platform devices for things that are obviously NOT platform devices.
-> To finally fix this up, here is a "faux bus" that should be used instead
-> of a platform device for these tiny and "fake" devices that people
-> create all over the place.
+On 25-02-26 17:34:50, Uwe Kleine-K�nig wrote:
+> Hello,
 > 
-> The api is even simpler than the normal platform device api, just two
-> functions, one to create a device and one to remove it.  When a device
-> is created, if a probe/release callback is offered, they will be called
-> at the proper time in the device's lifecycle.  When finished with the
-> device, just destroy it and all should be good.
+> On Wed, Feb 26, 2025 at 05:31:08PM +0200, Abel Vesa wrote:
+> > The current implementation assumes that the PWM provider will be able to
+> > meet the requested period, but that is not always the case. Some PWM
+> > providers have limited HW configuration capabilities and can only
+> > provide a period that is somewhat close to the requested one. This
+> > simply means that the duty cycle requested might either be above the
+> > PWM's maximum value or the 100% duty cycle is never reached.
 > 
-> This simple api should also hopefully provide for a simple rust binding
-> to it given the simple rules and lifecycle of the pointer passed back
-> from the creation function (i.e. it is alive and valid for as long as
-> you have not called destroy on it.)
-> 
-> I've also converted four different examples of platform device abuse, the
-> dummy regulator driver, the USB phy code, the x86 microcode dvice, and
-> the "regulator" device that wifi uses to load the firmware tables, to
-> use this api.  In all cases, the logic either was identical, or became
-> simpler, than before, a good sign (side note, a bug was fixed in the usb
-> phy code that no one ever noticed before).
-> 
-> Note, unless there are major objections, I'm leaning toward getting
-> patch 1 and 2 of this series merged during this -rc cycle so that all of
-> the individual driver subsystem cleanups can go through those subsystems
-> as needed, as well as allowing the rust developers to create a binding
-> and get that merged easier.  Having patch 1 merged on its own isn't
-> going to cause any changes if no one uses it, so that should be fine.
+> If you request a state with 100% relative duty cycle you should get 100%
+> unless the hardware cannot do that. Which PWM hardware are you using?
+> Which requests are you actually doing that don't match your expectation?
 
-Hi all,
+The PWM hardware is Qualcomm PMK8550 PMIC. The way the duty cycle is
+controlled is described in the following comment found in lpg_calc_freq
+of the leds-qcom-lpg driver:
 
-I have a maybe dumb question regarding the patches 3..9: do they break 
-the UAPI?
+/*
+ * The PWM period is determined by:
+ *
+ *          resolution * pre_div * 2^M
+ * period = --------------------------
+ *                   refclk
+ *
+ * Resolution = 2^9 bits for PWM or
+ *              2^{8, 9, 10, 11, 12, 13, 14, 15} bits for high resolution PWM
+ * pre_div = {1, 3, 5, 6} and
+ * M = [0..7].
+ *
+ * This allows for periods between 27uS and 384s for PWM channels and periods between
+ * 3uS and 24576s for high resolution PWMs.
+ * The PWM framework wants a period of equal or lower length than requested,
+ * reject anything below minimum period.
+ */
 
-With a platform device, the drivers appear under /sys/bus/platform, but 
-with faux device, they appear under /sys/bus/faux.
+So if we request a period of 5MHz, that will not ever be reached no matter what config
+is used. Instead, the 4.26 MHz is selected as closest possible.
 
-I ask because I found out that one (see my reply to [2]) of the main drm 
-library expects to find all the devices under pci, usb, platform, virtio 
-and host1x buses [1], so at least for the vgem and vkms driver, this 
-library will be broken (it will not crash, but previously detected 
-devices will suddenly disappear).
+Now, the pwm_bl is not aware of this limitation and will request duty cycle values that
+go above 4.26MHz.
 
-I don't know what are the rules for /sys/bus, but changing a device from 
-one bus to another seems to break userspace programs. How should we 
-handle this situation? Should we fix the existing drivers? Or only new 
-drivers should use it?
-
-+CC: José Expósito
-
-Thanks,
-Louis Chauvet
-
-[1]:https://gitlab.freedesktop.org/mesa/drm/-/blob/main/xf86drm.c#L4460-4515
-[2]:https://lore.kernel.org/all/20250218165011.9123-21-jose.exposito89@gmail.com/
-
-> Changes from v4:
->    - really dropped the internal name structure, remanants were left over
->      from the last patch series
->    - added the rust binding patch from Lyude (is this one of the first
->      patch series that adds a new kernel api AND the rust binding at the
->      same time?)
->    - added a parent pointer to the api so the devices can be in the tree
->      if the caller wants them
->    - made probe synchronous to prevent race when using the api (when the
->      create call returns the device is fully ready to go.)  Thanks to
->      testing of the drm driver change to find this issue.
->    - documentation tweaks
->    - #include <linux/container_of.h> finally added to faux.h
+>  
+> > This could be easily fixed if the pwm_apply*() API family would allow
+> > overriding the period within the PWM state that's used for providing the
+> > duty cycle. But that is currently not the case.
 > 
-> 
-> Changes from v3:
->    - Dropped the USB phy porting, turned out to be incorrect, it really
->      did need a platform device
->    - converted more drivers to the faux_device api (tlclk, lis3lv02d,
->      vgem, and vkms)
->    - collected some reviewed-by
->    - lots of minor tweaks of the faux.c api, and documentation based on
->      review, see the changelog in patch 1 for details.
-> 
-> Changes from v2:
->    - lots of cleanups to faux.c based on reviews, see patch 1 for details
->    - actually tested the destroy device path, it worked first try!
->    - added 3 more example drivers
-> 
-> 
-> 
-> Greg Kroah-Hartman (8):
->    driver core: add a faux bus for use when a simple device/bus is needed
->    regulator: dummy: convert to use the faux device interface
->    x86/microcode: move away from using a fake platform device
->    wifi: cfg80211: move away from using a fake platform device
->    tlclk: convert to use faux_device
->    misc: lis3lv02d: convert to use faux_device
->    drm/vgem/vgem_drv convert to use faux_device
->    drm/vkms: convert to use faux_device
-> 
-> Lyude Paul (1):
->    rust/kernel: Add faux device bindings
-> 
->   Documentation/driver-api/infrastructure.rst |   6 +
->   MAINTAINERS                                 |   2 +
->   arch/x86/kernel/cpu/microcode/core.c        |  14 +-
->   drivers/base/Makefile                       |   2 +-
->   drivers/base/base.h                         |   1 +
->   drivers/base/faux.c                         | 232 ++++++++++++++++++++
->   drivers/base/init.c                         |   1 +
->   drivers/char/tlclk.c                        |  32 +--
->   drivers/gpu/drm/vgem/vgem_drv.c             |  30 +--
->   drivers/gpu/drm/vkms/vkms_drv.c             |  28 +--
->   drivers/gpu/drm/vkms/vkms_drv.h             |   4 +-
->   drivers/misc/lis3lv02d/lis3lv02d.c          |  26 +--
->   drivers/misc/lis3lv02d/lis3lv02d.h          |   4 +-
->   drivers/regulator/dummy.c                   |  37 +---
->   include/linux/device/faux.h                 |  69 ++++++
->   net/wireless/reg.c                          |  28 +--
->   rust/bindings/bindings_helper.h             |   1 +
->   rust/kernel/faux.rs                         |  67 ++++++
->   rust/kernel/lib.rs                          |   1 +
->   samples/rust/Kconfig                        |  10 +
->   samples/rust/Makefile                       |   1 +
->   samples/rust/rust_driver_faux.rs            |  29 +++
->   22 files changed, 502 insertions(+), 123 deletions(-)
->   create mode 100644 drivers/base/faux.c
->   create mode 100644 include/linux/device/faux.h
->   create mode 100644 rust/kernel/faux.rs
->   create mode 100644 samples/rust/rust_driver_faux.rs
-> 
+> I don't understand what you mean here.
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+What I was trying to say is that the PWM generic framework currently doesn't
+allow overriding the PWM state's period with one provided by the consumer,
+when calling pwm_apply_might_sleep().
 
+Also, the pwm_get_state_hw() doesn't cache the state either.
+
+This results in always having to call pwm_get_state_hw() before calling
+pwm_apply_might_sleep().
+
+On top of that, pwm_get_state_hw() doesn't default to the cached value if the
+provider doesn't implement the ->get_state() op.
+
+Please correct me if I'm wrong about these.
+
+> 
+> > So easiest fix here is to read back the period from the PWM provider via
+> > the provider's ->get_state() op, if implemented, which should provide the
+> > best matched period. Do this on probe after the first ->pwm_apply() op has
+> > been done, which will allow the provider to determine the best match
+> > period based on available configuration knobs. From there on, the
+> > backlight will use the best matched period, since the driver's internal
+> > PWM state is now synced up with the one from provider.
+> > [...]
+> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > index 237d3d3f3bb1a6d713c5f6ec3198af772bf1268c..71a3e9cd8844095e85c01b194d7466978f1ca78e 100644
+> > --- a/drivers/video/backlight/pwm_bl.c
+> > +++ b/drivers/video/backlight/pwm_bl.c
+> > @@ -525,6 +525,17 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >  		goto err_alloc;
+> >  	}
+> >  
+> > +	/*
+> > +	 * The actual period might differ from the requested one due to HW
+> > +	 * limitations, so sync up the period with one determined by the
+> > +	 * provider driver.
+> > +	 */
+> > +	ret = pwm_get_state_hw(pb->pwm, &pb->pwm->state);
+> 
+> As a consumer you're not supposed to write to &pb->pwm->state. That's a
+> layer violation. Please call pwm_get_state_hw() with a struct pwm_state
+> that you own and save the relevant parts in your driver data.
+
+Yep, that is indeed wrong. Maybe making the pwm opaque might be a good idea as well.
+
+[1] Calling pwm_get_state_hw() would be wrong if the provider doesn't implement the ->get_state(),
+as I mentioned above.
+
+But are you suggesting we replace all calls to pwm_get_state() with
+pwm_get_state_hw() in pwm_bl?
+
+I can do that, but the concern from [1] still stands.
+
+> 
+> > +	if (ret && ret != -EOPNOTSUPP) {
+> > +		dev_err(&pdev->dev, "failed to get PWM HW state");
+> > +		goto err_alloc;
+> > +	}
+> > +
+> >  	memset(&props, 0, sizeof(struct backlight_properties));
+> >  
+> >  	if (data->levels) {
+> 
+> Best regards
+> Uwe
+
+Thanks for reviewing,
+Abel
 
