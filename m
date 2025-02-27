@@ -1,118 +1,213 @@
-Return-Path: <linux-kernel+bounces-537197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426C9A48914
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:34:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115A1A48916
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBBE1611C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA773ABDB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4C726F443;
-	Thu, 27 Feb 2025 19:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32C1C07E6;
+	Thu, 27 Feb 2025 19:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnpjKxC8"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yEKuo4f"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3291C07E6;
-	Thu, 27 Feb 2025 19:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378E725F790
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740684848; cv=none; b=ICfgSCQiFv8vV5qK9BWrqGbKwY0hloOWq6XD+NACDJyU89dqj4kuPgAJWV1LGj/6cbswCOvxNCNkjPFIuDtlEozcng+Yo794NMWmFj4126x3caWjUhZoH2ZFxlPHsSumZpEqhnEvC4KU/RVqpXDG27v5XqUlkXq+UUCDYW+7yuk=
+	t=1740684864; cv=none; b=e0DWVsHNff/rYZL6VpdQsORKYeTj8VWYDRBFVVIa3Uyz+hdyQel1BJT3NgX6X/tkTcw7Wp53knxFBHIWjqKvpDWQWcP1widQMFh0hnObYKMGkD8HExYH4S0GdGMjI9asYEdeLJpDKpqkwdlt/pTl2///39GkxRZeiotmJqVg7SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740684848; c=relaxed/simple;
-	bh=8Ja3G+/8biwQcQyQlcOcW5AKkLPiN5J+6s9uWWE5tqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NfTPspl8M0VR/ZxV/riq9D5nvXHdhjawipZplhlVBWmxhNiyczYWIqDSkuOVYxP0FgG5a6AWXw9Gtuun0AbXj3R3e3LyHdD3BsSrKK0+zEhUSJQfCrjlbyaCi15uwt+HiyR6QuEuvW/AtcOV4ao+apbpR8w6JGn/DVcOx8I5yfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QnpjKxC8; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2f83a8afcbbso2537555a91.1;
-        Thu, 27 Feb 2025 11:34:06 -0800 (PST)
+	s=arc-20240116; t=1740684864; c=relaxed/simple;
+	bh=iqMFOWoLHPzEE2F7btnovEmgqjRXPhaMKoi0v82VKo8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D5ZVshhfnb17DOQ99HQsYCE43L4KqV1QTc3d+eIz90HKK8mxsh0U8AV8c3RAVQhRI/vXBAIlhqHgBcwLAKLQLSKn7JWObN8yA5nT50tyOBVJoLVn9IobvD6pWt2oTDnaysqLBt0Jos8YX0D9aoycK87eBTWzlGTrVeYwxAbAErs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yEKuo4f; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fc0bc05c00so4176268a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740684846; x=1741289646; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V6T71r4zbRHPgqZ0EGR7Irt/x5iBPir+HkN1z6PeyLM=;
-        b=QnpjKxC8e2npeRfHm5ZHIfJ2FKJm97hxorrCBwpEHFzh6z4q4FBqdqyT13X1jPpmw5
-         XG0MS739dFIxCWHEQNtj0amYxgAexqs6exGzxWiHvEJZperHRBloivmvatpGVrHUr32z
-         EFXjfeIW/Pp8N3Y/4iu/yEfGJofAVF2lLibYxclbGhXD6JJfJwfiAbc4lcsX9iXKeXMs
-         0o7fcTHOs6Nx1MxZZAi+RD/5WEtmcCkEtREIwkMxQE68iJPQUioiOiCVfwz2EK4WoLLW
-         Sp0s6JoWBgj2TtxyliXayaulme+tHBivgtyy2LmJrMRiFdIOq7YR+ICd/fVlpDq5EVI6
-         t4+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740684846; x=1741289646;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1740684862; x=1741289662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V6T71r4zbRHPgqZ0EGR7Irt/x5iBPir+HkN1z6PeyLM=;
-        b=xLDYvn8gSt4JJ+cPAbLaYxcrcVUwESjt+gGkA6VfhehOeNtOoCz1XCJIrfGLBRIZI5
-         hk8lKMo8qkzAkVcfmZiJBoleB6Iddkr+0NBIabd+zFsyR3ypRg4HZgfSZ9zux/SyB6WF
-         ALGwY1047Qs2LgLWUaQyDKWmMes8qn9SpNEDyA9bz5HPWvHsG6hZuBMRal0JLVVCZLJ1
-         tWqI/PcnhBGUmpmiY7rQRgtUAXnMyj2SsCC1AnJQ4WRos1+GTeWM+cNnIYIVZyAcco+U
-         qAaIKEdklA+h7HtEmaOpfcBrGz8g26beax80PLUeTEvR8pbutKjR38NC8KWckgqaTRXg
-         ujlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRuDk08jyQOdm/dx/HKHTmG1tSy0TUQAa6u9MMZOe/v47CXoZuTksACSSKda9rYxi8iExXEjQble8eUtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIgKXKusu9BcQid9AikJzxpNYQ0KXmQOXMACE1fDCRbJtF1+fc
-	/oQm/Z7/SIUFfC0Os5pB6SQamL+IPfm989fdu7nIKnFMNJ1RD5A6koYRpCIj
-X-Gm-Gg: ASbGncvp6LWynP8iG0DzOcEzNiytb9dNueU2sbjyoK0nUZEthlylHoDyPnHw9TdLMSR
-	WueTZLUZVU4yVMlQeDOQZGXg2ozkPs98rBMorge89dw05AwCfBIisyJs7vphDw9rPZCYu6Pyj1f
-	MchPA8zQnpS6ifKbZVF2ahAoTIGm6SZ71MYSa8m5ZL12eXYY8NTV28Z/lv1sKIDyqyt17ZsCohp
-	t8fOcln1ftTjqgZF3TjDCwmC+GdHqSecu/JSxUh7/13LfQt42ZNyd3Wxjt5GiNsXewMjDIA1q2D
-	gQMix6Uzoa9IgzwM1RQT8K6lypuseVTcX7gz
-X-Google-Smtp-Source: AGHT+IEtaJTwHxtP9Ru3d6ucWaSgP6i9J4IUsBMK7rftHq3rP2kpeqnN6gjCMmpitMQ1/Usfy8MGvg==
-X-Received: by 2002:a17:90a:ec86:b0:2fa:562c:c1cf with SMTP id 98e67ed59e1d1-2fea12683d9mr7377411a91.1.1740684846304;
-        Thu, 27 Feb 2025 11:34:06 -0800 (PST)
-Received: from embed-PC.. ([2401:4900:1cb5:84b:96dd:21a7:7ff3:7964])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe825a990csm4224057a91.2.2025.02.27.11.34.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 11:34:05 -0800 (PST)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org
-Subject: [PATCH] xhci: Fix bcdUSB initialization
-Date: Fri, 28 Feb 2025 01:04:00 +0530
-Message-Id: <20250227193400.109593-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=a17KzYivCQNainroozlTYNEBao153DxG5A3TbD1B1BQ=;
+        b=3yEKuo4f/teswu2As+3lw0lv5gQhsJJufpp9x9e7MvRtpLNrOtlBkIvUrkNXTgdvZ2
+         xeNLH5hOCtY3wbvJr+LzCSCttMV2qRR7sHAC92Ks3Hmc3YOf23fS2nllS3gqwvLpTf/i
+         3A5+0FZsvxoOZE9eTC4iRXLHx3kZsaSUTDKRg15xa8PP5g/JB3tCFb9EWn6uxI5O530K
+         o7xZkCYweNtvEnZJbR1eccJ3w9ARwHUBtPf+hHcbDSJcmVEeIjyMiK7h1BnuaO9zN8wi
+         Xoxqah/370wMTEzVEumLM8XsjFFIT1tKbEEPf505/unuwD7QYQAaBqyzGTaulBPDtSTw
+         AlDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740684862; x=1741289662;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a17KzYivCQNainroozlTYNEBao153DxG5A3TbD1B1BQ=;
+        b=p5urkR1wZWY23ZlAxKYnh5dbr3V8Hod90S1+oXbdbs/qV/nJUHeko1MhsOpj2rnf+u
+         38ystJKd/YbcnFF4cnpoaExQP4W4p4/XYtwNmwHrCcpCNcn9QATbPGitQiTk10zJ0Itt
+         JwOmz6JDdJxYyHOzX8nATZULJVTpRfIt2ijS1uV2HNxTcEcsUDcOX8hdRFdIARDRcKXZ
+         SPDPuDDAzMmL4d668zcV359eQBYy8C/jxcE272nD5MXjbzKeQMKSwT3ieBBT/oeJK/Rv
+         DTMX53aOLBXDp7kHuwXCjS1Yp27Oxar7tFqOhqAGLqsROeWmR8LhWNbKPB4NtyYlvND7
+         RNPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdg34sJOexvohaFKXIVTdwSa56Kdj5CpHHQQD3yx6mzb+TLPh1r+jcZAZvgZKONzlzma8n/JA6tHPYaRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdNlq739Tw3t0BlFk03LH3Ax6cuN3/oQBoTxLHtp3h9bxlrQI9
+	YEABN+At5nSq8HYJpwYCV11rD6KPBJ4OTX8mVn7RT8G7YQawqcSND9ltRnQOL0dGxBH8w+sWnHr
+	bug==
+X-Google-Smtp-Source: AGHT+IF+7pMShNlkxX9Q3ftILKLxc4OcR65JsoK+DbBdUkSfdPP3enQqEnHoYWbV/VbGsPrN73yEXxb17ZE=
+X-Received: from pjboi16.prod.google.com ([2002:a17:90b:3a10:b0:2fc:1eb0:5743])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a89:b0:2ee:8ea0:6b9c
+ with SMTP id 98e67ed59e1d1-2febab570b1mr1014148a91.12.1740684862557; Thu, 27
+ Feb 2025 11:34:22 -0800 (PST)
+Date: Thu, 27 Feb 2025 19:34:21 +0000
+In-Reply-To: <88E181D6-323E-4352-8E4C-7B7191707611@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250227000705.3199706-1-seanjc@google.com> <20250227000705.3199706-3-seanjc@google.com>
+ <73f00589-7d6d-489a-ae40-fefdf674ea42@suse.com> <88E181D6-323E-4352-8E4C-7B7191707611@nutanix.com>
+Message-ID: <Z8C-PRStaoikVlGx@google.com>
+Subject: Re: [PATCH v2 2/2] KVM: nVMX: Decouple EPT RWX bits from EPT
+ Violation protection bits
+From: Sean Christopherson <seanjc@google.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Initialize bcdUSB to 0 to prevent undefined behaviour
-if accessed without being explicitly set.
+On Thu, Feb 27, 2025, Jon Kohler wrote:
+> > On Feb 27, 2025, at 1:52=E2=80=AFAM, Nikolay Borisov <nik.borisov@suse.=
+com> wrote:
+> >=20
+> > !-------------------------------------------------------------------|
+> > CAUTION: External Email
 
-Fix the following smatch error:
-drivers/usb/host/xhci-hub.c:71 xhci_create_usb3x_bos_desc()
-error: uninitialized symbol 'bcdUSB'
+Noted.  :-D
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> > |-------------------------------------------------------------------!
+> >=20
+> > On 27.02.25 =D0=B3. 2:07 =D1=87., Sean Christopherson wrote:
+> >> Define independent macros for the RWX protection bits that are enumera=
+ted
+> >> via EXIT_QUALIFICATION for EPT Violations, and tie them to the RWX bit=
+s in
+> >> EPT entries via compile-time asserts.  Piggybacking the EPTE defines w=
+orks
+> >> for now, but it creates holes in the EPT_VIOLATION_xxx macros and will
+> >> cause headaches if/when KVM emulates Mode-Based Execution (MBEC), or a=
+ny
+> >> other features that introduces additional protection information.
+> >> Opportunistically rename EPT_VIOLATION_RWX_MASK to EPT_VIOLATION_PROT_=
+MASK
+> >> so that it doesn't become stale if/when MBEC support is added.
+> >> No functional change intended.
+> >> Cc: Jon Kohler <jon@nutanix.com>
+> >> Cc: Nikolay Borisov <nik.borisov@suse.com>
+> >> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> >=20
+> > Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+>=20
+> LGTM, but any chance we could hold this until I get the MBEC RFC out?=20
+
+No?  It's definitely landing before the MBEC support, and IOM it works quit=
+e nicely
+with the MBEC support (my diff at the bottom).  I don't see any reason to d=
+elay
+or change this cleanup.
+
+> My apologies on the delay, I caught a terrible chest cold after we met ab=
+out
+> it, followed by a secondary case of strep!
+
+Ow.  Don't rush on behalf of upstream, KVM has lived without MBEC for a lon=
+g time,
+it's not going anywhere.o
+
 ---
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/vmx.h     | 4 +++-
+ arch/x86/kvm/mmu/paging_tmpl.h | 9 +++++++--
+ arch/x86/kvm/vmx/vmx.c         | 7 +++++++
+ 3 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 9693464c0520..5715a8bdda7f 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -39,7 +39,7 @@ static int xhci_create_usb3x_bos_desc(struct xhci_hcd *xhci, char *buf,
- 	struct usb_ss_cap_descriptor	*ss_cap;
- 	struct usb_ssp_cap_descriptor	*ssp_cap;
- 	struct xhci_port_cap		*port_cap = NULL;
--	u16				bcdUSB;
-+	u16				bcdUSB = 0;
- 	u32				reg;
- 	u32				min_rate = 0;
- 	u8				min_ssid;
---
-2.34.1
+diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+index d7ab0ad63be6..61e31e915e46 100644
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -587,9 +587,11 @@ enum vm_entry_failure_code {
+ #define EPT_VIOLATION_PROT_READ		BIT(3)
+ #define EPT_VIOLATION_PROT_WRITE	BIT(4)
+ #define EPT_VIOLATION_PROT_EXEC		BIT(5)
++#define EPT_VIOLATION_PROT_USER_EXEC	BIT(6)
+ #define EPT_VIOLATION_PROT_MASK		(EPT_VIOLATION_PROT_READ  | \
+ 					 EPT_VIOLATION_PROT_WRITE | \
+-					 EPT_VIOLATION_PROT_EXEC)
++					 EPT_VIOLATION_PROT_EXEC  | \
++					 EPT_VIOLATION_PROT_USER_EXEC)
+ #define EPT_VIOLATION_GVA_IS_VALID	BIT(7)
+ #define EPT_VIOLATION_GVA_TRANSLATED	BIT(8)
+=20
+diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.=
+h
+index 68e323568e95..ede8207bf4d7 100644
+--- a/arch/x86/kvm/mmu/paging_tmpl.h
++++ b/arch/x86/kvm/mmu/paging_tmpl.h
+@@ -181,8 +181,9 @@ static inline unsigned FNAME(gpte_access)(u64 gpte)
+ 	unsigned access;
+ #if PTTYPE =3D=3D PTTYPE_EPT
+ 	access =3D ((gpte & VMX_EPT_WRITABLE_MASK) ? ACC_WRITE_MASK : 0) |
+-		((gpte & VMX_EPT_EXECUTABLE_MASK) ? ACC_EXEC_MASK : 0) |
+-		((gpte & VMX_EPT_READABLE_MASK) ? ACC_USER_MASK : 0);
++		 ((gpte & VMX_EPT_EXECUTABLE_MASK) ? ACC_EXEC_MASK : 0) |
++		 ((gpte & VMX_EPT_USER_EXECUTABLE_MASK) ? ACC_USER_EXEC_MASK : 0) |
++		 ((gpte & VMX_EPT_READABLE_MASK) ? ACC_USER_MASK : 0);
+ #else
+ 	BUILD_BUG_ON(ACC_EXEC_MASK !=3D PT_PRESENT_MASK);
+ 	BUILD_BUG_ON(ACC_EXEC_MASK !=3D 1);
+@@ -511,6 +512,10 @@ static int FNAME(walk_addr_generic)(struct guest_walke=
+r *walker,
+ 		 * ACC_*_MASK flags!
+ 		 */
+ 		walker->fault.exit_qualification |=3D EPT_VIOLATION_RWX_TO_PROT(pte_acce=
+ss);
++		/* This is also wrong.*/
++		if (vcpu->arch.pt_guest_exec_control &&
++		    (pte_access & VMX_EPT_USER_EXECUTABLE_MASK))
++			walker->fault.exit_qualification |=3D EPT_VIOLATION_PROT_USER_EXEC;
+ 	}
+ #endif
+ 	walker->fault.address =3D addr;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 0db64f4adf2a..4684647ef063 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5806,6 +5806,13 @@ static int handle_ept_violation(struct kvm_vcpu *vcp=
+u)
+=20
+ 	exit_qualification =3D vmx_get_exit_qual(vcpu);
+=20
++	/*
++	 * The USER_EXEC flag is undefined if MBEC is disabled.
++	 * Note, this is wrong, MBEC should be a property of the MMU.
++	 */
++	if (!vcpu->arch.pt_guest_exec_control)
++		exit_qualification &=3D ~EPT_VIOLATION_PROT_USER_EXEC;
++
+ 	/*
+ 	 * EPT violation happened while executing iret from NMI,
+ 	 * "blocked by NMI" bit has to be set before next VM entry.
+
+base-commit: 67983df09fc3f96d0d6107fe1a99d29460bab481
+--=20
 
 
