@@ -1,268 +1,255 @@
-Return-Path: <linux-kernel+bounces-535611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23C6A4751D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:17:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72F2A47524
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:21:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66AD3ACE11
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9329B16E2A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3271EA7F3;
-	Thu, 27 Feb 2025 05:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5831EFF82;
+	Thu, 27 Feb 2025 05:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxEu948t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MoHjB7hs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F18186E2D;
-	Thu, 27 Feb 2025 05:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740633440; cv=none; b=cYCK+B0oM+Q2Wq+wIX5z02hT178AlLqMW79sbJLkLoe60RYALJuT2zF4yyy/3QMKs7LhIWIQcKL3NmJyAlUDdLa46kE8OScVudlzr0JVEW+Mxi/5e+TGR7VGfdoB6NghUKS7NldxUHnR9HGUA37MHFCSjUMqZpCKwMhJLRTJ9VQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740633440; c=relaxed/simple;
-	bh=oEIKXLa+lC5gpgRN/t7bIplihoQJx5CcIDuHuxDQYsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qsV5gbH6txjg6FQgZWPzVihcUZVLBmQmEDXFUvlR5x+3Y7MNeHWK2wXepcihJjvfZshnvk2oG+Z7XfxVC7DxONf6ZC8XHojaqBBlE97Q4+y1x9CIeKO8W2Dk3ScWJ1y4ayBv3WPSpzDdWKZVfquIyudTWAARbU/fyM4JhQ9ZhVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxEu948t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD80C4CEE5;
-	Thu, 27 Feb 2025 05:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740633439;
-	bh=oEIKXLa+lC5gpgRN/t7bIplihoQJx5CcIDuHuxDQYsc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uxEu948txvDodPuxC23TYrHwvLHoqpA283ysFZi5RfyXIyK5zisx5kbvnqzAzMLAm
-	 z2ckgEQaCH8dbfJdEknns1U0xZoDWaXwByOWvBD/Kkgl1rJ5m+ecEdI6sTV5o+Mgev
-	 es8jIMCEYxFuWy3uDiwj1laPDd0yCamG2abAIPthB2JdgG4/skW/8xEIDzUUnZ0D3Q
-	 0vzI1320k0xX56RZGqbeomkfxOiVmwKQgDxDTXuCYZJF+SblxlCH+SRwZtKUGfTzn7
-	 WtUXwVuSl0x1U0MegrRinJ7jrMPUdZpkRxKALkaqCFhNuywnjNGdMlJvjkpipitsPA
-	 nHryE4OGw1R6Q==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	James Clark <james.clark@linaro.org>,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v2] perf tools: Skip BPF sideband event for userspace profiling
-Date: Wed, 26 Feb 2025 21:17:18 -0800
-Message-ID: <20250227051718.1176930-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0831E521C;
+	Thu, 27 Feb 2025 05:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740633679; cv=fail; b=m420JsuRdaZkgFwbcAZDEWcegGneNnjcNurRjRY5KvIWUM+/ok99GD2HSyAQ/BH+hdRECNRFGi2wXOIv1t8t0jnfqZfkOTY0nrDpZdcy82SPN6pLRIV4h9yGoUHHnJxlQZcHgD/9UgbFQT1wLZISjn7N5vwhBIrWgN46j0tG2Ls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740633679; c=relaxed/simple;
+	bh=Wk+CO0eRnVaXN3ypnYPtmxHiKKhC+Wii52qRVgayhjA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uE1tMEbXeOKRiqZLzcCPfE4TWaF9OWIbpyRsvRvTpZ7lKxjqbgS8LwN+aro+jFWwTbxL+NDi0uADDqLdOtPETp75U748ax7K0t3YbZXc6XvSzMwAnmuuKo/u/6VB8RZ9tQDQKd/uLhEoVBCKVzaHWh1uvXQ3hTWnIFNZTsSW0vE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MoHjB7hs; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740633678; x=1772169678;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Wk+CO0eRnVaXN3ypnYPtmxHiKKhC+Wii52qRVgayhjA=;
+  b=MoHjB7hsq5LUG+hnfIGxAoy6Iurtz3fRGcGWVm6WWQDE4PCk6tgn/7XY
+   IaiEuhfSsxdj8uXtpJwctu43cMB9vVt/No3fihYDS8Soa6wIGW8I+z4ui
+   sqJWI9U7iKfJTgHixiIjyjva/JRBAeOWsCYO5UXLrsOr/H1fSzCGRrfjD
+   Q+a/yS//B8qEx7NVXFJuAG9mv+WBkWA1OzvH4aD7+lTiDn2yod5rbzoMt
+   TBQ7hcDUIHYCV0FkY0ag/fMV4DqdTQ1fvTjpIwBo0d6O/SSP7v4ZbL2jy
+   hrWeLzvs4KczZ+LM2mqC+6Iw2hu8o6F2DI7/T9uDdnQqZdtLzgO5Y4uBD
+   Q==;
+X-CSE-ConnectionGUID: mlzZrt62TGutKZzqKRi86Q==
+X-CSE-MsgGUID: /wQ9qSC3TtWTgQolDL4g2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41708184"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41708184"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:21:18 -0800
+X-CSE-ConnectionGUID: Q+j9Aj2KQXWnPdxiipsNDA==
+X-CSE-MsgGUID: OTOGV0F9QiKiu/EUuLjwtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="121512283"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Feb 2025 21:21:17 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 26 Feb 2025 21:21:16 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 26 Feb 2025 21:21:16 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 26 Feb 2025 21:21:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ontEDn9qxg1KkVHruXgo7vAqTz/sx4RSaxRDxYlQ62tqghoDbexJkrl4Zq/XU8eWJNnc1yGaVAFTcufjAawb1bfCRNMHzo2kwlCTnStGpfAYsiGgxYWLiUR9FiyRCYnGWbummJgDYsUcBwCJBhNHmdLxY1g1DGk1vao97ADArK45tp6nDetr9LItdVwjKFcmRB5nsFAF8TtIjkXgjau8cNxdeEY1tjR+QesAW/tso7KCTBy7ecObMNDbqRJvLZMLsAnvW0Jo6iEie425NTkTxSGfnpkZJ/xHyInZlKJeoe5oJvT4rdjjUAp9+wZebusbICIObYeMGNpP9/l0C7vrAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=st51FtFEcikr3eifA/IkNGDvbIoxUm6kAsZc4MYZlUA=;
+ b=vJhxTFpspIaldqhgz4W1+z3viOnxsc8pnCo8TUEr5fKlJF2g3+3jR0MWuXWAT+A/FmippFKYUYYvc8Z9GEcVRnF3u2ZAQsApfXHNde5aqz32J4TNAiVlbJNCLyKwDAKJcrzFWx1aGgmr6V2b8ZI0/0xEb2OmZQKOaBGekgjTSMTLjvn3QW6YBfkERiEm8SFaKEIpunaflnRi2TUTI7ROghKzDH+J1bvwK3wOd+pywg1ZfGfuAL4uT/6txJNYnw4qm3aPHL4469xG9fsSUzA9rwD2/c3NCMWFTbMbEwh2cW6xYJFxOTGcQaL//+JjM+rROUAzzaOqKPkbXdhmRkJL5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by PH8PR11MB7119.namprd11.prod.outlook.com (2603:10b6:510:215::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
+ 2025 05:21:13 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.8466.016; Thu, 27 Feb 2025
+ 05:21:13 +0000
+Message-ID: <34b2c92f-e879-4a9e-beb6-c6786bd59c9d@intel.com>
+Date: Thu, 27 Feb 2025 06:21:08 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 net-next] dpll: Add an assertion to check
+ freq_supported_num
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+CC: <arkadiusz.kubalewski@intel.com>, <jiri@resnulli.us>,
+	<davem@davemloft.net>, <jan.glaza@intel.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <stable@vger.kernel.org>,
+	<vadim.fedorenko@linux.dev>
+References: <74xcws6rns5hrmkf4hsfuittgzsddsc3hnqj6jbfsfu3o2vvol@gy32jyg75gmd>
+ <20250226193715.23898-1-jiashengjiangcool@gmail.com>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250226193715.23898-1-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MR1P264CA0061.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:3e::25) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|PH8PR11MB7119:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2534f93-6565-490a-d4fc-08dd56ee8d8e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZC9TRWhxN1pwY3gwbkRtbXk0K2NQVFZwd04wOWdnQytNL2ZJYldwR0xVdTFz?=
+ =?utf-8?B?czZMWXdmL2x2U2QrTXN6a1pUWU5ZdlNISmxSTmQ1dUtCc3EweTN4UGZCSFRj?=
+ =?utf-8?B?dGJJWnlHWW9CN29mUDVKQkJlaUlXbEVlTW9Qc2pOc0R4OW01aG0xMEVKTE1q?=
+ =?utf-8?B?azB6LzlJbmpDZzRLSEFhWDBYM0JWZHFUU1h0MTJVdXJPdDNxdVlZbkF6OXBF?=
+ =?utf-8?B?WXFGWHJEVE1KZUo5TkJMb1JGT1huTjBPVUpNK0FQQlptMkxjNmtQdGJZczRM?=
+ =?utf-8?B?NHN5ZnRZWUwwaitTWXdYYXprNHZvZXdtdVQvUFF1eEJocjNZczdWT3B6YzZD?=
+ =?utf-8?B?UzJpeUhJRUhqeTFDWXRmcEFvN1BxT2ZpQkl0RHRUUFlVUmpXN0dCQ0N3M3dI?=
+ =?utf-8?B?UzVmdFhXQmtVUFVHQ0t3WmQrSXBmcTFQMVpOU25GMC9tYVJiRTMvNEM0bnd0?=
+ =?utf-8?B?NkgzUDdHOHI0aW9wZjJQZDJrSXVocWdMcFF5azBIR2J5aVJRcUJ5OHZtUmdC?=
+ =?utf-8?B?bmQrUUk0UVdNV3FYVVplVExtQmF0QjJlRTdBZmUyK1FjVW5NY05iRCttZ29Y?=
+ =?utf-8?B?cW5HRm0wdWYzVlhtbWhlcG1qMGszK2ZCeWRFcmRDV2laNXBldGdrVERLWlBE?=
+ =?utf-8?B?U0txMklZNlhaTFgzMzAxM3NUd2p4L3VoaWs1VXIvSi9FSklDSU5QSVZ3QS9Y?=
+ =?utf-8?B?NUpidmFRR3M2c2h6M0pFTU1seFNmTGlkd1BxRzRQMnRyZFRQc3ZjZGorNDE1?=
+ =?utf-8?B?QS9KTVdRVU5lZ1podXVQY3N0QS9JV2FDUHUzUmRkb0xrWVVGMlluS3V4NXBS?=
+ =?utf-8?B?L1hpT3Vzb0ZhNlpScmlXQkdacUNZZ1hxOE1Cb2hNdnFYZXdvejlhTUpxdmdK?=
+ =?utf-8?B?MXJGbWM3SERtRlF4UTdjNGQ3d01jVncyVW95czRoUmhxcWo1eVRwMDhLenlP?=
+ =?utf-8?B?L0NKVG9iazFkc1JNalZMVGlYRmtqTlFtOUtpQzFXUEJFemYzYzAxUDZHU0Ux?=
+ =?utf-8?B?SytYZnFlT1lQMmVXZERBbzdSalpHV1JGWmE2RFBKS2hoc3prK1lyRVhOYkxM?=
+ =?utf-8?B?YTFBVHQ4eVBScTNacnROVjF4QTV4cTkvVVVlK05OMnJtdDQ0Wno2MnB6WVFq?=
+ =?utf-8?B?bHg1c0JDUkg5Mmo2VnFRRmZrSW8rRDdDYUZ4YlFRbzUvVHNjS1gwU0loR0Na?=
+ =?utf-8?B?cnRzdTRUZVJYK2Y0ZHU3Nld4V0cza3pxUmtsSTdoSlY2NStKZ2tRZ24wdVJE?=
+ =?utf-8?B?aGc0Yy9MZmFFaFRFa0xWcUxDcVF4S3htcmpxUE5DUDJNSjNkUXFnd0UrUk5R?=
+ =?utf-8?B?TmJYemxpOHFyUUlXMWFxa2ZNMll1Y3RCOTFDcE11YzR4M0I1SDVsWWY5aXJp?=
+ =?utf-8?B?cE80SVhuRE1CNzF4ZHZoSkc2azZTMzlJTU4rMEhBVnplVFFDWmlBbkpKOEFP?=
+ =?utf-8?B?eXZvc2JNMDZmUHFzV00vcWFJU2dJZVA2VnZBdWhsdzJ6RTZZSkdYTmtTemcv?=
+ =?utf-8?B?VWxOTDZPaWpiQXcxbzNaNWRhdXJRMXk0S3NLeWJDNndpdEF5ZFFaTFpncGhG?=
+ =?utf-8?B?YmFLOU9aRjdqandCSlhZOVlYcXpnTXEvTzBnNUlkVHo1cE8zWnZNcnJYdnMz?=
+ =?utf-8?B?WGZqRURUanBQUnhUbGc0OUcvSjZrTTVQS0xvazJ1ZXphNlI0TXNRS0c4WEgx?=
+ =?utf-8?B?TVZiSGpob3FCOHBxVzk4WEpjTWErMk5WYW15N0ZHNlpFRzlGOFB5QlhmSDZL?=
+ =?utf-8?B?dDByaE5JcXNrc0VvSkpXUWRHaXhlYUQvSDl6WXJsZjdtdndybTdXUmQ3dG5l?=
+ =?utf-8?B?TG51blBDS3RCaGpneng1UzNOdFA2NFVncHEyQkp1bXZIUHRwUURqOVRjR0ds?=
+ =?utf-8?Q?h3KnAIc8xzyGo?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?KzJGK2l5ZkNMVm8ybWQwZ0xCaGduZ1g4SDhublVSSHR2NEZxMkc2RXBZQzlV?=
+ =?utf-8?B?N3VFNHJCWERnQmxzeEdhWTNTMWpCMU12Mkd4Qld0eXRVdnhCS1Q2ZmliU3Fl?=
+ =?utf-8?B?T0tQc3g2VUNJTlBUa2h1K0haeUZtRXBVcEprTDRqcExUaC9HYUhtbXBha3lz?=
+ =?utf-8?B?RC9xSE56RTNOcWNSSk9GaVArNFVzNmpGZ0FWR2t0VWFiQ1prZTFYb1hCZE1a?=
+ =?utf-8?B?R24xQ21wMVB5Z3RMbHVySksybjY0VDIydzN2c1RJblNLV0U0bSsvYUhIcmxL?=
+ =?utf-8?B?b202ZFRLMmM5VlkvN0J0TjFoWlNmZmxrUzRveXhvL2VUTWxCN1BxbzRqcmNJ?=
+ =?utf-8?B?T25ZUTFOZ3phbUtocTkzSjBVWGFKQTB6djQzZjB3M29DQ3p6RmY0S1k3WUcz?=
+ =?utf-8?B?cDNzSGVNbUloQWhvcDVBaVhOWWV4Qzh5NEViRlBPeTZlRDNkMWRla3NRRWxy?=
+ =?utf-8?B?aWZ0aXgySHVKSU9GWkkzWXBvRWlCMmFJbUZVY1FYN1h4YWxPZ3BmRlM2SGkv?=
+ =?utf-8?B?T0c2QXkrdzZXS2NYZHVLYmlxWURzNUs5T1FLQnc2OXE3WTlpT29EOTRXV29U?=
+ =?utf-8?B?U0hFVUhCbk9zUjZYT2FtdERQeUU5K09sSUNMUjZLQUJaeGZOOENERGJOb0gx?=
+ =?utf-8?B?UXBKVjdzV3o2RWxKcDlnZ0oxTFYvSVlZa3hUd082WlZQSS9ka3djeDVxTlIw?=
+ =?utf-8?B?Q2xhWFg4L1diRmI0YlI2ZXNmbHlVT1YyWWw4UGlIeGsrZk0vUmVBQjZQd2da?=
+ =?utf-8?B?UG0xZThxU3FGSGU4OXJhN1ZobFFKMm1yL1c5MXRWZ21wYnFkTDkvWGZ0U0Zm?=
+ =?utf-8?B?bnU2Zi9ZVnVadytqRDdZMFVvaXpKUHBIaWJLc1hCQzNXdEdiWjhJYWFicFZG?=
+ =?utf-8?B?SmpUWHhPYjVQMEhjeDdjQ1pQanA1ZDF4NjlOeTRRdXlYdVZ3L0xQazRWbFZk?=
+ =?utf-8?B?L2loUExTZWppdlZaT0VtUVI5SmU4YldIck9UcTVVbWx2M2lYdWNub3FrT25Z?=
+ =?utf-8?B?ZnBuMkd1K3YyN3V0R0k2RWdzTk1EazlZQXlTK1BhNXBaSUtqeXRlS1NBeEdD?=
+ =?utf-8?B?VnRFTDcvRmZSVFJ2WG1xUzJmQzB4SVZmOTRCZmNTb3huOUltU3lMd2Y1RkRa?=
+ =?utf-8?B?Tys5OHdJVTB2M3d1ejVyT1ZrOGFXQkQvS2dubk1HVDdaeUUxYVBkSERwa2lB?=
+ =?utf-8?B?dUVUbTRmRG5yVisrREJmVDdzTFkrT0s3UU9tMlRmanhPSkV5VXoydVZTVEIz?=
+ =?utf-8?B?V0ZqcVJSUkZGdk9hQVZGVzF3T3BiWisvdkZ5dHNpaEorMzl4ODIvUXNYSkYv?=
+ =?utf-8?B?V0VMdnFGbjdFZGErcDUvNERYUFRhSGNCVTdvOU85aFZnUzN0a1huUTdUaG5N?=
+ =?utf-8?B?dkNoRXBabERuRzNjdjZaTzd6T1puTDUvdXJaZWIzRGJMVStNcmRFcEIrWXBr?=
+ =?utf-8?B?eGJFdFNETEFrc1FtUmlnaXBGYVhpY2x5NzdkdTVYY2VIc3dBSlQreHppOVVO?=
+ =?utf-8?B?NFRYdUVnVExDQ01oYmpWNHRla1ozOHlQZUNzS3ZBbTN6SUhtNzQvN1R6QkJI?=
+ =?utf-8?B?Q0JTMnNrekU5NTcwSDlCRGNrcDIrd25pOW1SSnJHckpmVHlIaGVWS0tZbXZJ?=
+ =?utf-8?B?bkRuMTV2RzFnQ0RsbHVqdFQ5WEUvR1BWdUZWS05KTjB0YXR0Wk5iWmVlZm1Z?=
+ =?utf-8?B?K3FtL1I0dkwyZEUvaVN5Vm1ZMlhPNXZnUVJwNWNHZjFqQWxMTzg2clBNeDVG?=
+ =?utf-8?B?S0wzZW9ieXhvbG1GZjd0cU54cG9zN0FJS1grWStlNkFWZjNjVnZPOEhTOHRU?=
+ =?utf-8?B?ckxaWVhzck54VlBjaTJoMjh1elM2d3pEdGFJT3QzZStWTmlhdGsrQmRZRkxq?=
+ =?utf-8?B?TlF5VVhUaG9vWmRVajZZZU9yN0E1VGl6ZmRtY1YzaHJFV0pmWVdOSW4yQWkr?=
+ =?utf-8?B?amhWQzBvM05jMllCNWczMi8vd3hLb0VnaG1UZVU1VHZOODlvWDBGVndHMmtq?=
+ =?utf-8?B?dEtYM2Z4Y0MzM1RqZ21UdnVvL3dDVXlhQ0NldU81T0o0eTZjdWJsNW9iTHI3?=
+ =?utf-8?B?S3dGb2p6R2hFY2RqY2krbGhaQVpiZ05iRXNRdmY4Y0paNFROQzd5V2NqS2Vz?=
+ =?utf-8?B?bENlS2pXYk00VjNKZUtJejgxQWdibFl1ZDNIKy9BcTh2WFQzN2xZVExISkk1?=
+ =?utf-8?B?elE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2534f93-6565-490a-d4fc-08dd56ee8d8e
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 05:21:13.5421
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BT62l5ULmiD1vZ8gmnVMrZGPjS8bIitsfpt5fYUuc7HG6TBXXcuPGdfyg29ptsUSfWJqVYBclREQSI1cmg7FOgFhDhzqzD43ctpGPcgr83Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7119
+X-OriginatorOrg: intel.com
 
-The BPF sideband information is tracked using a separate thread and
-evlist.  But it's only useful for profiling kernel and we can skip it
-when users profile their application only in userspace.
+On 2/26/25 20:37, Jiasheng Jiang wrote:
+> Since the driver is broken in the case that src->freq_supported is not
+> NULL but src->freq_supported_num is 0, add an assertion for it.
+> 
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+> Changelog:
+> 
+> v2 -> v3:
 
-It seems it already fails to open the sideband event in that case.
-Let's remove the noise in the verbose output anyway.
+please post next revision as a separate thread instead of
+in-reply-to the previous one
 
-Cc: Song Liu <song@kernel.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
-v2) add evlist__setup_sb_evlist()
+please also do wait a minimum of 24h prior to submitting a new
+revision
 
- tools/perf/builtin-record.c       | 24 +++++++++---------------
- tools/perf/builtin-top.c          | 20 ++++----------------
- tools/perf/util/evlist.c          | 14 ++++++++++++++
- tools/perf/util/evlist.h          |  4 ++++
- tools/perf/util/sideband_evlist.c | 31 +++++++++++++++++++++++++++++++
- 5 files changed, 62 insertions(+), 31 deletions(-)
+> 
+> 1. Add "net-next" to the subject.
+> 2. Remove the "Fixes" tag and "Cc: stable".
+> 3. Replace BUG_ON with WARN_ON.
+> 
+> v1 -> v2:
+> 
+> 1. Replace the check with an assertion.
+> ---
+>   drivers/dpll/dpll_core.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+> index 32019dc33cca..0927eddbd417 100644
+> --- a/drivers/dpll/dpll_core.c
+> +++ b/drivers/dpll/dpll_core.c
+> @@ -443,8 +443,9 @@ static void dpll_pin_prop_free(struct dpll_pin_properties *prop)
+>   static int dpll_pin_prop_dup(const struct dpll_pin_properties *src,
+>   			     struct dpll_pin_properties *dst)
+>   {
+> +	WARN_ON(src->freq_supported && !src->freq_supported_num);
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0e45bd64185403ae..ab6bef710a689f7f 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -2166,23 +2166,14 @@ static int record__setup_sb_evlist(struct record *rec)
- 		evlist__set_cb(rec->sb_evlist, record__process_signal_event, rec);
- 		rec->thread_id = pthread_self();
- 	}
--#ifdef HAVE_LIBBPF_SUPPORT
--	if (!opts->no_bpf_event) {
--		if (rec->sb_evlist == NULL) {
--			rec->sb_evlist = evlist__new();
--
--			if (rec->sb_evlist == NULL) {
--				pr_err("Couldn't create side band evlist.\n.");
--				return -1;
--			}
--		}
- 
--		if (evlist__add_bpf_sb_event(rec->sb_evlist, &rec->session->header.env)) {
--			pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
--			return -1;
--		}
-+	if (rec->sb_evlist == NULL) {
-+		rec->sb_evlist = evlist__setup_sb_evlist(rec->evlist, opts,
-+							 &rec->session->header.env);
-+		if (IS_ERR(rec->sb_evlist))
-+			return PTR_ERR(rec->sb_evlist);
- 	}
--#endif
-+
- 	if (evlist__start_sb_thread(rec->sb_evlist, &rec->opts.target)) {
- 		pr_debug("Couldn't start the BPF side band thread:\nBPF programs starting from now on won't be annotatable\n");
- 		opts->no_bpf_event = true;
-@@ -2535,6 +2526,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		goto out_free_threads;
- 	}
- 
-+	if (!evlist__needs_bpf_sb_event(rec->evlist))
-+		opts->no_bpf_event = true;
-+
- 	err = record__setup_sb_evlist(rec);
- 	if (err)
- 		goto out_free_threads;
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 6440b5c1757d92ce..f727738faa154564 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1833,23 +1833,11 @@ int cmd_top(int argc, const char **argv)
- 		goto out_delete_evlist;
- 	}
- 
--#ifdef HAVE_LIBBPF_SUPPORT
--	if (!top.record_opts.no_bpf_event) {
--		top.sb_evlist = evlist__new();
--
--		if (top.sb_evlist == NULL) {
--			pr_err("Couldn't create side band evlist.\n.");
--			status = -EINVAL;
--			goto out_delete_evlist;
--		}
--
--		if (evlist__add_bpf_sb_event(top.sb_evlist, &perf_env)) {
--			pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
--			status = -EINVAL;
--			goto out_delete_evlist;
--		}
-+	top.sb_evlist = evlist__setup_sb_evlist(top.evlist, &top.record_opts, &perf_env);
-+	if (IS_ERR(top.sb_evlist)) {
-+		status = PTR_ERR(top.sb_evlist);
-+		goto out_delete_evlist;
- 	}
--#endif
- 
- 	if (evlist__start_sb_thread(top.sb_evlist, target)) {
- 		pr_debug("Couldn't start the BPF side band thread:\nBPF programs starting from now on won't be annotatable\n");
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index f0dd174e2debdbe8..43adf6b3d855771a 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -2594,3 +2594,17 @@ bool evlist__has_bpf_output(struct evlist *evlist)
- 
- 	return false;
- }
-+
-+bool evlist__needs_bpf_sb_event(struct evlist *evlist)
-+{
-+	struct evsel *evsel;
-+
-+	evlist__for_each_entry(evlist, evsel) {
-+		if (evsel__is_dummy_event(evsel))
-+			continue;
-+		if (!evsel->core.attr.exclude_kernel)
-+			return true;
-+	}
-+
-+	return false;
-+}
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index adddb1db1ad2b25d..1bba5c73b1425834 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -19,6 +19,7 @@
- struct pollfd;
- struct thread_map;
- struct perf_cpu_map;
-+struct perf_env;
- struct record_opts;
- struct target;
- 
-@@ -117,6 +118,8 @@ struct evsel *evlist__add_sched_switch(struct evlist *evlist, bool system_wide);
- int evlist__add_sb_event(struct evlist *evlist, struct perf_event_attr *attr,
- 			 evsel__sb_cb_t cb, void *data);
- void evlist__set_cb(struct evlist *evlist, evsel__sb_cb_t cb, void *data);
-+struct evlist *evlist__setup_sb_evlist(struct evlist *evlist, struct record_opts *opts,
-+				       struct perf_env *env);
- int evlist__start_sb_thread(struct evlist *evlist, struct target *target);
- void evlist__stop_sb_thread(struct evlist *evlist);
- 
-@@ -435,5 +438,6 @@ void evlist__check_mem_load_aux(struct evlist *evlist);
- void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
- void evlist__uniquify_name(struct evlist *evlist);
- bool evlist__has_bpf_output(struct evlist *evlist);
-+bool evlist__needs_bpf_sb_event(struct evlist *evlist);
- 
- #endif /* __PERF_EVLIST_H */
-diff --git a/tools/perf/util/sideband_evlist.c b/tools/perf/util/sideband_evlist.c
-index 388846f17bc13fb9..e75a335e11676cdc 100644
---- a/tools/perf/util/sideband_evlist.c
-+++ b/tools/perf/util/sideband_evlist.c
-@@ -1,11 +1,14 @@
- // SPDX-License-Identifier: GPL-2.0-only
- 
-+#include "util/bpf-event.h"
- #include "util/debug.h"
- #include "util/evlist.h"
- #include "util/evsel.h"
- #include "util/mmap.h"
- #include "util/perf_api_probe.h"
-+#include "util/record.h"
- #include <perf/mmap.h>
-+#include <linux/err.h>
- #include <linux/perf_event.h>
- #include <limits.h>
- #include <pthread.h>
-@@ -94,6 +97,34 @@ void evlist__set_cb(struct evlist *evlist, evsel__sb_cb_t cb, void *data)
-       }
- }
- 
-+struct evlist *evlist__setup_sb_evlist(struct evlist *evlist, struct record_opts *opts,
-+				       struct perf_env *env)
-+{
-+	struct evlist *sb_evlist = NULL;
-+
-+	if (!evlist__needs_bpf_sb_event(evlist))
-+		opts->no_bpf_event = true;
-+
-+	if (opts->no_bpf_event)
-+		return NULL;
-+
-+#ifdef HAVE_LIBBPF_SUPPORT
-+	sb_evlist = evlist__new();
-+	if (sb_evlist == NULL) {
-+		pr_err("Couldn't create side band evlist.\n.");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	if (evlist__add_bpf_sb_event(sb_evlist, env)) {
-+		pr_err("Couldn't ask for PERF_RECORD_BPF_EVENT side band events.\n.");
-+		evlist__delete(sb_evlist);
-+		return ERR_PTR(-EINVAL);
-+	}
-+#endif
-+
-+	return sb_evlist;
-+}
-+
- int evlist__start_sb_thread(struct evlist *evlist, struct target *target)
- {
- 	struct evsel *counter;
--- 
-2.48.1.658.g4767266eb4-goog
+Jiri has asked for an early return too
+
+>   	memcpy(dst, src, sizeof(*dst));
+> -	if (src->freq_supported && src->freq_supported_num) {
+> +	if (src->freq_supported) {
+>   		size_t freq_size = src->freq_supported_num *
+>   				   sizeof(*src->freq_supported);
+>   		dst->freq_supported = kmemdup(src->freq_supported,
 
 
