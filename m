@@ -1,78 +1,53 @@
-Return-Path: <linux-kernel+bounces-535752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89081A476B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:40:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7471A476BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49378188B6A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B776E3AD422
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689D7221F08;
-	Thu, 27 Feb 2025 07:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53602222A4;
+	Thu, 27 Feb 2025 07:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZI98/mm8"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DzX3XyLE"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD7321D587
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99911EB194
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740642049; cv=none; b=SQu1jnC9P8ZCk9w+rtuHPkWNuJ6e2cHReuDp3aFRVRV9ZsDhAIwYK4UEFem7BT3Ei7sWMXElcasI2XccV9up5QFk8XgDBoUkpph8yoVy+OideKdnCaDVdAX5LosepkCWOVZkQRuyQHJOpjJG8Wp13vxuNhy03bxAWtuedf0812c=
+	t=1740642125; cv=none; b=OfSpDqV/JaxoOde3qc7kDOQ4a15rZRkzgw9E+sb4wHK8R4baSSncOGi1Uh2BzfpJFHfoxTqV+2w2p9Xo4WvDwi3zD0TheW68BKRI69S+Wr/8Zd7OwC/uvWn8vpzQl9zIH3dO/LvZDbRffGlYr3jt90DC6HkhcKJc2hC9jueUu5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740642049; c=relaxed/simple;
-	bh=i5i5/2WtwcEwL6yfATVhVUfAvygcEdaPGTM1LRPGSAs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=slpf6AyFzSxIDUXw8z+YDacK3Vp4aCE9IbwB9tux0KaRgHqlevKsMN64RIiBZQkL50HPK+1WnANGY8reiFYWSfJjD2YGg8g+7FbaUWSUIk863PuHKtC9XHQdsz9OYb7jruV4xNKH5JN5yKWALYrVdx+ai0emXNaWjbrwZO1DjgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZI98/mm8; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22359001f1aso3765175ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:40:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740642046; x=1741246846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z5Gzl06H2T5FbZ9IOLR6EjrtJZgeU6uFgDyakJm+mzM=;
-        b=ZI98/mm8VeyBhQz2Zg7Rle8zcVBOHqo5hl6MmoRw5VzB1ISbzZOrNFyiztJePaDQpY
-         aP3eu57DianbPnPRGW7AeG7Rkkq1idshMZrVvQuVp15sAS+OS9Bt0t1/b0fOHeePyl8e
-         jenrtSgiIIy98OLdYVB/+SMUZ9EVmg6qAc0Oei1dRQJYCaNWFBcpmXw/E5Jh+38LSJOv
-         LS3du2Gh+CYCkx571ksdMZRrcib8dzhFuUUHIcYhscZTcl4pQGbzt9GTJnIuIR3mVF0S
-         L2DAqD5cfhBDE3YAE3oMwFZrCeXxs4ABuDXx0WJTcf1Xmp8n167LaMtRo0WyUDzdWCd/
-         JSug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740642046; x=1741246846;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z5Gzl06H2T5FbZ9IOLR6EjrtJZgeU6uFgDyakJm+mzM=;
-        b=ksokG7hgrxfr/XJKn3lCtIXp4JxvM6qmvvxqiWCHli7jZrlUddiNzB04dN5TNzSuK1
-         JNmHrtxipKk72GQvV5QCCWjIcBju8zTHwMaARySuDEV4zLgWpDjjJY3gEZFxa1Laon6P
-         53jV+R5x3d2T/RYFVEc42XDWO0xqjJu4lay1fiBDOxLDT/xoVzpXW/nWOhr0+lHxRpBZ
-         DtS9xSd4L4RX4wvgaWsr8J3bHH6NmQD1a5ZMb/3oiLk5EjEFmpNfh7WosGap2t/Ognzy
-         5nxwhWUf3Pgz5yJIe6EhQNiNDIr+cHc55RhoaEJRB6aKHoCWwww1cDd+lAMhwxfNGjFU
-         dfzA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0pmHvOYQatiKSbo50w3KiO8XtvCoQahZM0yKeP7OhMA3cXEzDWiSloXosICUgWHk628185ueFHY0shJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2S2l0+lZokWh383wjP1XAnIyqNJqvn3tMMSP2KCQwb0eRlu97
-	yL6E6fpRmVDnIAxcsbTb4UmZ+iTYEBOw0lzgH0B6HLO7eRd9uny8Wkb/5b6QUhE=
-X-Gm-Gg: ASbGncucL18Yu+7ibvhvb1zluFpOZjy5/JoaA9rPborQ0z0whM8l3ten8KZvIlQKGnx
-	w4erJEGL5PlX2UakQnVQ5B8hnX21nL6dIGP8lq/ksJi3wRA3EnUK9zSCV7eD5WGK+IAzsmXYUPb
-	TIRDyrhAJCaPW/FWTS9xBwS3OE4wT53dx/p52GPEsYJZ5DKIifxhBRe4VIZbhkD76ZDAxaNihd0
-	NUYqyE1vhe6Ed/paHTuSZrJt5uf7ahEF1wHqxR8uxsnuWJYMQSLF9uJr5HMeM4afOpJvWXEW/kP
-	TsxzCpxGZHnEDxYmmWF13JhabqZxwx/0yx+dJFN+wGpvvSzJqQ==
-X-Google-Smtp-Source: AGHT+IEWhr28ouNGqr2cMLn6viCM/3ClvBIDRbvTbC18jRLu78wwmIB+H6DOh64BYZadBUL1LgBoxg==
-X-Received: by 2002:a05:6a20:728f:b0:1ee:e33d:f477 with SMTP id adf61e73a8af0-1eef52e9a19mr44559120637.15.1740642046190;
-        Wed, 26 Feb 2025 23:40:46 -0800 (PST)
-Received: from [10.68.122.90] ([63.216.146.179])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a0040208sm843218b3a.154.2025.02.26.23.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 23:40:45 -0800 (PST)
-Message-ID: <2d73d888-fcb2-4b3b-a9ec-ad9c80d7cbe9@bytedance.com>
-Date: Thu, 27 Feb 2025 15:40:42 +0800
+	s=arc-20240116; t=1740642125; c=relaxed/simple;
+	bh=kUt1hw2OeGcF75w78SXUkJLgZ7NQEvchGPnQlK/Nwpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Duaiq0X+A3yMG+vqDEt9Y7bSNv6CNxrU2I/KVpmwh3TSEwaBabuAxhk0M1VbD12XEqxtjrAZTrrpLm6ihDngEIzH4d5SIsSkQKelQo8XFNPjfesBOlK6kxJOT5nvsDZViep5d87urJzDGpJ9wWLsJIawZgvdq6Az/3nu1N5ZbLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DzX3XyLE; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wEmwrAZv2rrwivZwCQP0TGYEjyLyX3HOCE9A9/d0M3U=; b=DzX3XyLEbuSVOFEX1cMP19n5kg
+	W377LZUUSGEQrXA6e8AoUYKjfq4bAdZP4RBL5W5MT/ouRq1Uugh0LUFDkjO/5hTTqh3KrO8x7uRlV
+	pUFnqnZg+pO6gxAp1iXRqUQ9n8sMFWMFwbxX+xJneMlxMfQeiik4FhTVys61umIczLrT7T9CKbWb0
+	ryaxDu3PmHynhOIDpiHyGmZ/ckWNOmkHFAf1js+dNbJoQ9kizbyHxGvD67u18AH95ghz9czCzit8n
+	YFjS/zf1cmNWT4KPzTv+us6K86/03LkOMr3/H5hfWbNxwz83lgh/HklmneeUhWuR5pcF92fRxbySR
+	49vJgIaQ==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tnYWf-001U5M-RF; Thu, 27 Feb 2025 08:41:52 +0100
+Message-ID: <7d985c1a-1e4a-4518-917d-4ff701d7bb9e@igalia.com>
+Date: Thu, 27 Feb 2025 16:41:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,106 +55,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: CONFIG_PT_RECLAIM
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: Johannes Weiner <hannes@cmpxchg.org>, peterz@infradead.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250226183013.GB1042@cmpxchg.org>
- <a77923d3-ce26-4e29-bb98-b908ce2355c2@bytedance.com>
- <20250227060820.GC110982@cmpxchg.org>
- <6281ffc9-398e-44b9-a95c-2527004e09b7@bytedance.com>
-In-Reply-To: <6281ffc9-398e-44b9-a95c-2527004e09b7@bytedance.com>
+Subject: Re: [PATCH] sched_ext: Add trace point to track sched_ext core events
+To: Tejun Heo <tj@kernel.org>
+Cc: void@manifault.com, arighi@nvidia.com, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org
+References: <20250226143327.231685-1-changwoo@igalia.com>
+ <Z79ivCISjmFlkecF@slm.duckdns.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z79ivCISjmFlkecF@slm.duckdns.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Tejun,
 
-
-On 2/27/25 2:58 PM, Qi Zheng wrote:
-> Hi Johannes,
+On 25. 2. 27. 03:51, Tejun Heo wrote:
+> Hello,
 > 
-> On 2/27/25 2:08 PM, Johannes Weiner wrote:
->> On Thu, Feb 27, 2025 at 11:04:51AM +0800, Qi Zheng wrote:
->>> Hi Johannes,
->>>
->>> On 2/27/25 2:30 AM, Johannes Weiner wrote:
->>>> Does PT_RECLAIM need to be configurable by the user?
->>>
->>> The PT_RECLAIM will select MMU_GATHER_RCU_TABLE_FREE, but not all archs
->>> support MMU_GATHER_RCU_TABLE_FREE, and even before Rik's a37259732a7dc
->>> ("x86/mm: Make MMU_GATHER_RCU_TABLE_FREE unconditional"), x86 only
->>> supports MMU_GATHER_RCU_TABLE_FREE in the case of PARAVIRT.
->>>
->>> Therefore, PT_RECLAIM also implies the meaning of enabling
->>> MMU_GATHER_RCU_TABLE_FREE, so I made it user-configurable. And I just
->>> thought that as a new feature, it would be better to give users the
->>> ability to turn it on and off.
+> On Wed, Feb 26, 2025 at 11:33:27PM +0900, Changwoo Min wrote:
+>> Add tracing support, which may be useful for debugging sched_ext schedulers
+>> that trigger a certain event.
 >>
->> New *features*, yes - something that has a significant enough cost
->> that clearly not all users want to pay for the benefits.
-> 
-> Got it.
-> 
+>> Signed-off-by: Changwoo Min <changwoo@igalia.com>
+>> ---
+>>   include/trace/events/sched_ext.h | 21 +++++++++++++++++++++
+>>   kernel/sched/ext.c               |  4 ++++
+>>   2 files changed, 25 insertions(+)
 >>
->> But it's hard to imagine anybody would WANT to keep the page tables
->> around if they madvised away all the pages inside of them. It's a
->> great optimization, what would be a reason to opt out?
+>> diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
+>> index fe19da7315a9..88527b9316de 100644
+>> --- a/include/trace/events/sched_ext.h
+>> +++ b/include/trace/events/sched_ext.h
+>> @@ -26,6 +26,27 @@ TRACE_EVENT(sched_ext_dump,
+>>   	)
+>>   );
+>>   
+>> +TRACE_EVENT(sched_ext_add_event,
+>> +	    TP_PROTO(const char *name, int offset, __u64 added),
+>> +	    TP_ARGS(name, offset, added),
 > 
-> OK, now I think it makes sense to change it to 'def_bool y'.
-> 
->>
->>>> diff --git a/mm/Kconfig b/mm/Kconfig
->>>> index 2761098dbc1a..99383c93db33 100644
->>>> --- a/mm/Kconfig
->>>> +++ b/mm/Kconfig
->>>> @@ -1309,16 +1309,9 @@ config ARCH_SUPPORTS_PT_RECLAIM
->>>>        def_bool n
->>>>    config PT_RECLAIM
->>>> -    bool "reclaim empty user page table pages"
->>>> -    default y
->>>> +    def_bool y
->>>>        depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
->>>>        select MMU_GATHER_RCU_TABLE_FREE
->>>> -    help
->>>> -      Try to reclaim empty user page table pages in paths other 
->>>> than munmap
->>>> -      and exit_mmap path.
->>>> -
->>>> -      Note: now only empty user PTE page table pages will be 
->>>> reclaimed.
->>>> -
->>>
->>> Maybe keep the help information?
->>
->> I don't find it very helpful :( Which "other paths?" It doesn't
->> explain any pros and cons, and why anybody might choose to enable or
->> disable it. The Note repeats what's in the sentence before it.
-> 
-> Sorry about that. :(
-> 
->>
->> Maybe I'm missing something. Could this not just be an #ifdef block
->> inside mm/madvise.c, instead of living inside a new file with two new
->> config symbols?
->>
->> #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
->> ...
->> #endif
->>
->> Is there an arch-specific feature that it requires besides
->> MMU_GATHER_RCU_TABLE_FREE such that only x86 supports it now?
-> 
-> No, it only needs MMU_GATHER_RCU_TABLE_FREE.
-> 
+> Can we do sched_ext_event with @delta? Otherwise, looks fine to me.
+Sure, @delta is clearer. I will change it as suggested.
 
-And I originally planned to support more architectures. The following 
-link has some of my previous plans:
-
-https://lore.kernel.org/all/0ca36b2e-463e-493f-aede-aff9aec3c7fa@bytedance.com/
-
-It would be better if more people could discuss and participate. ;)
-
-Thanks!
-
-> 
-
+Regards,
+Changwoo Min
 
