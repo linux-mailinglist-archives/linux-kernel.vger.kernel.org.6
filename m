@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-536910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854F6A485B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22646A485B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A03A802E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9363A4A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050E11D5AC3;
-	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FED1DDC0B;
+	Thu, 27 Feb 2025 16:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLB2jaNm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKXbEBY1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8D41B21B8;
-	Thu, 27 Feb 2025 16:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23461DB122;
+	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675026; cv=none; b=eAGj3XzIwuVHmjbMvYifbf3ivDd5P3+0KVDB0M8mGLPaD7b34vGI1V3ylhVan0Cyigyb6lJJmytFxUFxTimaJm2Q3wPh4hDeEDI9HE8Vzcomtqss0yKwakIkf/OpnGXCMRiSFP4U/kHYXJOgjpbWcT0FDLUENR8F8rylMKrMDfg=
+	t=1740675027; cv=none; b=I2UGSRMz/YlmwKm+pI90bFMis4IjSmBgPKd5ScQiNpl2S4IJBCSSgC/duDbLyze27dDt77nJpt1LTVvFoyv3qMfYT5jhCQaXPZl7qDG8fyNXktAivWD6dYZ8itmOcTSmcb8P6oKH7gyjTeWQzrdhZFgTtD1zdsloHNpeCWFQBI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675026; c=relaxed/simple;
-	bh=JAW9f9N92yK7POtGQNiZGOWSZkkGb8CrfNa1yfpMZkU=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=he5jKmTdQBXxtSh2CsrTWruPJC1uuHFLd+xzXDXiZ6Hd5pWiwLDFN7CiTO2+RCpf30t+nF7w1CTv0DA7hs5vsVPFFInWSRb8EcQRPdmv5BXMT/qS3pK4bZH1IJJO2KzhMapdANoAUVoTfojXYROVMAPxm7vxReEe6V2rpkHHxxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLB2jaNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17145C4CEE9;
-	Thu, 27 Feb 2025 16:50:26 +0000 (UTC)
+	s=arc-20240116; t=1740675027; c=relaxed/simple;
+	bh=JAe7NAiJZKeZrRwd/2AkQMazx4iDKgezMJFcr6WCo14=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=muS/l18bvfTCwPmRDAB67g4tFknf+1a6NpmaFzgVQkCilqKeXJQVyRYZNVC9BzXS63zfr8D4dQkWe2S6ZvSvKL9eljnkcfCZoG79yu/zCObC5geoLVBn1L9p7oIbPjyA3hCSEQ6vYAM7hEZhDG2vR7lH/eNY0GgOBfqrnv1hkcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKXbEBY1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCA7C4CEF4;
+	Thu, 27 Feb 2025 16:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740675026;
-	bh=JAW9f9N92yK7POtGQNiZGOWSZkkGb8CrfNa1yfpMZkU=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=sLB2jaNmubzcaxnlOBGcN5vP7KXIPZiraqCMkM/AqMQfU5tagsLbrh2nVrf6AhjRU
-	 iU62KnK4iJW7OYt2WBqYiSw8RvCpj9UIQB6IqmOWFWrEQ0VUFEMdcbFHcpiBFflV4R
-	 QgIM5dEZ80VtHuGtB+FzUJBBR8jfTrY3h/0cDb7l8wrHURW5kYWc2hziQeJ0biZFO/
-	 TX6QtOESv0N+YTsixdagyZENdncsmtqPOEQkHM7MiiVw0CcbV2Nmct3McpllOx7xqv
-	 h/5hyYaDbTucRLSLocFNDM5GrvAyqrjqzX2B9G2+Qpxt2P+KN2Xup4s/2fZ3OqiSYt
-	 hnUEkbR+yEB2g==
+	s=k20201202; t=1740675027;
+	bh=JAe7NAiJZKeZrRwd/2AkQMazx4iDKgezMJFcr6WCo14=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JKXbEBY1k8DrqkH96t6sCq71iBnahff6YsUjY/xSCLPy1ZcW69jUpFzu3J8L0Z7cy
+	 wrMXH+j4O9RaBRibak9FQc/J0Eohg4zT1+NYRVyZy0aOaSmg5Cm1ScIf1Syw5bKKDT
+	 Aw6XVA629tBugagj+5osdRIkOe9O2iBsWH2pZ/lVbDNvwALI5vDH90R4w5N8gsLY8t
+	 An5aDy6B2oLoFkpQkD8y3RWVQUN+2DCZefxHPKSAB20qw2MA1GV9IXF1mUDtpsC7jK
+	 iQTOcSMuXoTuW2QdeSYt81ddxQzKZ4OMZuTH+PWrkgfWiV431otDQpJ/yM7I0d+KNx
+	 jcDP6CJrT0RhA==
 From: Namhyung Kim <namhyung@kernel.org>
-To: linux-kernel@vger.kernel.org, 
+To: linux-perf-users@vger.kernel.org, irogers@google.com, cyy@cyyself.name, 
+ James Clark <james.clark@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
- linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
- Gabriele Monaco <gmonaco@redhat.com>
-In-Reply-To: <20250207080446.77630-1-gmonaco@redhat.com>
-References: <20250207080446.77630-1-gmonaco@redhat.com>
-Subject: Re: [PATCH 1/2] perf ftrace latency: variable histogram buckets
-Message-Id: <174067502605.1401960.295346748722727301.b4-ty@kernel.org>
-Date: Thu, 27 Feb 2025 08:50:26 -0800
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Yoshihiro Furudera <fj5100bi@fujitsu.com>, 
+ Weilin Wang <weilin.wang@intel.com>, Junhao He <hejunhao3@huawei.com>, 
+ Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250226104111.564443-1-james.clark@linaro.org>
+References: <20250226104111.564443-1-james.clark@linaro.org>
+Subject: Re: [PATCH v2 0/3] perf pmu: Dynamically allocate tool PMU
+Message-Id: <174067502701.1401960.11028274407047299720.b4-ty@kernel.org>
+Date: Thu, 27 Feb 2025 08:50:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,13 +69,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Fri, 07 Feb 2025 09:04:44 +0100, Gabriele Monaco wrote:
-> The max-latency value can make the histogram smaller, but not larger, we
-> have a maximum of 22 buckets and specifying a max-latency that would
-> require more buckets has no effect.
+On Wed, 26 Feb 2025 10:40:59 +0000, James Clark wrote:
+> A few minor fixes that I came across when poking around with the Perf
+> list behavior on hybrid Arm.
 > 
-> Dynamically allocate the buckets and compute the bucket number from the
-> max latency as (max-min) / range + 2
+> Changes since v1:
+>   * Rename perf_pmus__new_tool_pmu() -> tool_pmu__new()
+> 
+> James Clark (3):
+>   perf pmu: Dynamically allocate tool PMU
+>   perf pmu: Don't double count common sysfs and json events
+>   perf list: Document -v option deduplication feature
 > 
 > [...]
 Applied to perf-tools-next, thanks!
