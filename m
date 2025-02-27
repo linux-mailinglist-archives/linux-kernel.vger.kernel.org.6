@@ -1,164 +1,127 @@
-Return-Path: <linux-kernel+bounces-535887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6BFA47886
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:02:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AEBA47892
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB7C77A4309
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1203B2A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ECB225A24;
-	Thu, 27 Feb 2025 09:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F785227EA4;
+	Thu, 27 Feb 2025 09:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="CfEArneS"
-Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLspYqEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533D4227BA5;
-	Thu, 27 Feb 2025 09:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BA22576C;
+	Thu, 27 Feb 2025 09:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646906; cv=none; b=YErW16ssbByrdRFr/q/zVM1sSNMoNRLyRKNcDlMZQ711Ia4XCsR4ymb2lE/v2CcGlu+aJJEg/Ly6KsaRT2581geqQ4+FY2fgQUkjzK+tHVUyNOsKOzZ8GtJyNHVuo+grfFHp9k0t1LqEFhSvJRDr8aook8FPyOX7dX0tSTuPbq0=
+	t=1740646985; cv=none; b=SXR8cJvgeK28GNoIUbBSC2CPnlCrYcK/9dVqrQpjDaOGIlyGtuwOtFQzhJipfNsUeKFa/BIMsHrA1G2R803n1cQaxQVYJz9d+QJehmR/Yf+HaVqdBnH8oJyFsNBBR3+r4BDXyug7fcHXuRTj/6ijAVIDeeyMWCfqhxBC2jokAUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646906; c=relaxed/simple;
-	bh=b6xawKG+7vT6ikY3PpBIE1Xreg7uT09HW0pKvc4K62M=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=FNsSU9WwsB2mzZMQ9ukK9xENVup8u1QXbyNUVrvQHUO/DH6XFxPhzmLLRVnMiXECXKnyUPdzyMOPhiYZMRnXy31y/Gl/NmA5S/GEDpUYtnaAMRvrzkevv18M4Zt+xuM60jqz3niC00fhkVXZfairRXdGhbYO8F466w8H0pVMmsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=CfEArneS; arc=none smtp.client-ip=45.141.101.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1740646901; bh=b6xawKG+7vT6ikY3PpBIE1Xreg7uT09HW0pKvc4K62M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CfEArneSe8WJxtyotOJ2xbN95m/f4sfT/IXfNy77f08LhPgnt1bk4Z3/p83gy37xj
-	 uWx9mufRu90sjk+lDGsbMyZNE2ePyw6Od+Ioeh4LYElFTEEDFQ6D/khEvrYpgtY9oq
-	 BMVblAHQqDEMbQRX0vQIlfC06ATfDDtjXQXvCEsXDmrQlEbtno/YipywtnGm139aAb
-	 P7Z/4NovCsddchw8QIoGwYvJ5SOqD6jgRaPX0EcywhoV5l5bYXMEBCGndIwsscHD1M
-	 m11KFN1Tv44Otrb//s7F/czqDVdwn2+vKdri1SpFBHBFWh7xFNWrNhMVvyRpWbl0Ti
-	 1FgZiqYkCuBBA==
-Received: from authenticated-user (box.trvn.ru [45.141.101.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id 70E3B90B1;
-	Thu, 27 Feb 2025 14:01:41 +0500 (+05)
+	s=arc-20240116; t=1740646985; c=relaxed/simple;
+	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiKcbViOayNAePsy0pUklxZwqZAKz5ZhJDjiW/QdW5lHGaxT+Vo5tfm0VqNhLPVFOMwAeAQi6wKqh5GEy+E3dflZVAGVaC6KcIWdzpA9FRLlTu4DM+sBdi+mk0OWcEJ+q7823JMaOAgky+oPyeIZyWfWStoybPumk/gacdR9Byw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLspYqEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7E3C4CEDD;
+	Thu, 27 Feb 2025 09:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740646984;
+	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nLspYqEw609cIT0ad0o594ZSe9+944oOqgtsX4PvzoyBCh2CjxvcaZKHcRlfZbkg3
+	 o98sgutNPNtNQvtB1V2TWfdkxk0jvPKNau6dHa8OKjnpZRzHC9C6ErL5o2r0XNXfYe
+	 ynD51HJPuofVM3zovm3pWhAZDAaeGPoIRj6tCVyu8o4t7sFTQlvipwFQwyRdAzsR2d
+	 B6voWJuIrlI+Cf1lPSYN2ZjYhqS7rvygaip7lyyFeeh6HBrO8Q/DpezIvl2iQUtyVl
+	 OXwKmfMuglQQ5kuzM1Q6kxE36HyfrIokC3I3woeNs2DsuZou71wXc13B0RkvyLg9Ys
+	 NykE1mhZbbdJQ==
+Date: Thu, 27 Feb 2025 10:02:45 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, Yaron Avizrat <yaron.avizrat@intel.com>, 
+	Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Nicolas Palix <nicolas.palix@imag.fr>, James Smart <james.smart@broadcom.com>, 
+	Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Selvin Xavier <selvin.xavier@broadcom.com>, 
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, cocci@inria.fr, linux-kernel@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+	ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, 
+	Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH v3 00/16] Converge on using secs_to_jiffies() part two
+Message-ID: <3apo7evpkvcy5mafw7zdatr3n7lytugvfmumq2zou4nifyptnc@ucbu4c5g5jrq>
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <79b24031-5776-4eb3-960b-32b0530647fb@sirena.org.uk>
+ <hJl1qb89zCHWejINoRSGGIO0m7NNi3wAmY9N_VC7royLnZoyL-ZozLkmLO-vCPlYc55-IPh76PIB_2_aKKjp1A==@protonmail.internalid>
+ <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 27 Feb 2025 14:01:41 +0500
-From: Nikita Travkin <nikita@trvn.ru>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
- <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue
- <bryan.odonoghue@linaro.org>, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] {vision/navigation}-mezzanine: Fix overlay root node
-In-Reply-To: <vq5dcsi55aqn56h6ihysqk4lainhmjbyvot3jiqkxm3i7igsak@da5u6ro7rkvg>
-References: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru>
- <vq5dcsi55aqn56h6ihysqk4lainhmjbyvot3jiqkxm3i7igsak@da5u6ro7rkvg>
-Message-ID: <62a53d3222dfc516accd8dcd5e1adca0@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
 
-Dmitry Baryshkov писал(а) 27.02.2025 09:16:
-> On Wed, Feb 26, 2025 at 07:29:54PM +0500, Nikita Travkin wrote:
->> While considering to propose WoA EL2 dt overlays upstream I was looking
->> at existing overlays and noticed that some of them are broken: they put
->> seemingly meaningful fixups into the overlay's "/" node, which places
->> them into the overlay "metadata" itself, not into a fixup fragment to be
->> applied to the actual dtb. This series fixes those two by changing to
->> full path "&{/}" which should work as it was initially intended.
->> 
->> See demonstration of the problem below:
->> 
-[...]
->> $ dtc extra.dtbo
->> /dts-v1/;
->> 
->> / {
->> 	foo;
->> 
->> 	bar {
->> 		baz;
->> 	};
+On Wed, Feb 26, 2025 at 12:38:51PM -0800, Andrew Morton wrote:
+> On Wed, 26 Feb 2025 11:29:53 +0000 Mark Brown <broonie@kernel.org> wrote:
 > 
-> Is this behaviour documented somewhere? I'd say, it would be a surprise
-> to me.
+> > On Tue, Feb 25, 2025 at 08:17:14PM +0000, Easwar Hariharan wrote:
+> > > This is the second series (part 1*) that converts users of msecs_to_jiffies() that
+> > > either use the multiply pattern of either of:
+> > > - msecs_to_jiffies(N*1000) or
+> > > - msecs_to_jiffies(N*MSEC_PER_SEC)
+> > >
+> > > where N is a constant or an expression, to avoid the multiplication.
+> >
+> > Please don't combine patches for multiple subsystems into a single
+> > series if there's no dependencies between them, it just creates
+> > confusion about how things get merged, problems for tooling and makes
+> > everything more noisy.  It's best to split things up per subsystem in
+> > that case.
 > 
+> I asked for this.  I'll merge everything, spend a few weeks gathering
+> up maintainer acks.  Anything which a subsystem maintainer merges will
+> be reported by Stephen and I'll drop that particular patch.
 
-According to dtc docs [1],
+I'm removing this from my queue then and let it go through your tree.
+Cheers,
 
-   3.b) The Device Tree fragments must be compiled with the same option but they
-   must also have a tag (/plugin/) that allows undefined references to nodes
-   that are not present at compilation time to be recorded so that the runtime
-   loader can fix them.
+Carlos
 
-so per my understanding "plugin" directive only changes the meaning of
-references (i.e. stuff with "&"), to generate fragments/fixups, which
-are the only way libfdt combines overlays into the base dtb.
-
-I suppose the old way of "manually" writing fragments (and thus writing
-to / as raw nodes) was kept because phandle/path based updates were
-added later to dtc and many overlays were still defining raw fragments...
-
-"/" also allows one to write "raw" nodes into the overlay, which is
-sometimes used by downstreams. (i.e. they put custom extensions to the
-overlay format [2] or add metadata into / of the dtbo like "compatible"
-values to reject incompatible overlays from applying. [3]) This is
-actually why I started looking here in the first place as for woa el2
-overlays I was asked to add compatible metadata as, apparently, NixOS
-tooling requires it to validate the overlays [4].
-
-[1] https://web.git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt#n120
-[2] https://github.com/raspberrypi/linux/blob/rpi-6.6.y/arch/arm/boot/dts/overlays/adafruit-st7735r-overlay.dts#L73
-[3] https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/rockchip/overlays/rk3588-i2c0-m1.dts#L5
-[4] https://github.com/TravMurav/slbounce/blob/main/dtbo/x1e-el2.dtso#L12
-
->> 
->> 	fragment@0 {
->> 		target-path = "/";
->> 
->> 		__overlay__ {
->> 			whatever-comes-next-after-baz;
->> 		};
->> 	};
->> };
->> 
->> $ dtc combine.dtb
->> /dts-v1/;
->> 
->> / {
->> 	whatever-comes-next-after-baz;
->> 	compatible = "fake,board";
->> 	fake,value = <0x2a>;
->> };
->> 
->> In the resulting dtb foo bar and baz are missing.
->> 
->> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
->> ---
->> Nikita Travkin (2):
->>       arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix broken overlay root
->>       arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Fix the overlay root
->> 
->>  arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso       | 2 +-
->>  arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->> ---
->> base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
->> change-id: 20250226-qcom-nonroot-overlays-bfe21d33be8c
->> 
->> Best regards,
->> -- 
->> Nikita Travkin <nikita@trvn.ru>
->>
+> 
+> This way, nothing gets lost.  I take this approach often and it works.
+> 
+> If these were sent as a bunch of individual patches then it would be up
+> to the sender to keep track of what has been merged and what hasn't.
+> That person will be resending some stragglers many times.  Until they
+> give up and some patches get permanently lost.
+> 
+> Scale all that across many senders and the whole process becomes costly
+> and unreliable.  Whereas centralizing it on akpm is more efficient,
+> more reliable, more scalable, lower latency and less frustrating for
+> senders.
+> 
 
