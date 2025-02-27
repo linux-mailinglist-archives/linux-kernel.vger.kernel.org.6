@@ -1,306 +1,217 @@
-Return-Path: <linux-kernel+bounces-536801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3782A48473
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:14:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83D0A484A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:20:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8A3188820B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A1017BDB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B211DC9A8;
-	Thu, 27 Feb 2025 16:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A6026E95D;
+	Thu, 27 Feb 2025 16:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmnL121r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpbbLZRQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CBC19D07C;
-	Thu, 27 Feb 2025 16:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E1C26E944;
+	Thu, 27 Feb 2025 16:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740672229; cv=none; b=KA1VuhJeDpj3bzp442+MoVi4oCmeWdQYj4UqNEvD8b5+JUzCnwbMT0zagr6FVGrgMoDunQRRRjVdW53VnwDaoLDf4I3sSg4wuHSsv2HrmhD9dss0Zz9Ek5mE31s5eV3fSwPGps2m/OvwYzgWNpTU8A7iE9HFh2AsP71xeUiZUp8=
+	t=1740672306; cv=none; b=DtBFaWnEDt0rKtKTLQf8C9z+6PBbyTTFKhski/Ou9pEzm+zODcfWxE+/JR9gUeR28X1Wc0oE6MFE2DXim4djEUKNTXrO3yFG5bQzOw9IT10vzeqQMwTqxltYLcQi4UaKxGNtkXqOSqLOP6FHluzewLhuQR1SNn35L/SLDZPb8nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740672229; c=relaxed/simple;
-	bh=Vq9pRRc5BfHueS+vTDE4bALzNK4FWB32HuyBpbTBgdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KkYN57XOz+N1NuUqTiMU/tkejDIKk/RekOyhM2fKcOp1DlmNBPy9pms/D1+0UPwWp7g/5gBlKkzhmtCQNAYkpuvxN5czcJGx6mYrKyZnfLN4O7rF1FADbQcuCuMLbMXoGSOsHnX8tezDUFkydFAouZ1nI9jQ6HeXWw9gbF2uOGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmnL121r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF66C4CEDD;
-	Thu, 27 Feb 2025 16:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740672229;
-	bh=Vq9pRRc5BfHueS+vTDE4bALzNK4FWB32HuyBpbTBgdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gmnL121rW8R47lTupspwERJNJbDvdVhL4/y62HeM05S7CPEevMY1bcGQ+lnwAonVT
-	 +Jch1Aj4bDCsJGIHeBbFhboM7LdvTYTTSLxZeugjvZg7tMB6EUlUGA7cvYywVXxmV/
-	 FCubvBC+QWQFbUGlqsDlVmcR4FdW/c3eisWOKMdlTla9rvlcEnmNww+BJtoJ7CUBUh
-	 govQU0hXtURtR/ay4DihJkJdpfm7N3A7NKqpTqA0NEtnjAiMQIYwm09vKGDwhyVKpM
-	 QnD0yaZyhe09ADPLExAogUjg6jYxGxiUoaVOf0OfsROG7w0WHcJIMkA1uH0oUqCMTe
-	 8+Id43A6p2SrA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Danilo Krummrich" <dakr@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 12/13] rust: hrtimer: add clocksource selection
- through `ClockSource`
-In-Reply-To: <87bjuneabh.ffs@tglx> (Thomas Gleixner's message of "Thu, 27 Feb
-	2025 15:22:58 +0100")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-12-5bd3bf0ce6cc@kernel.org>
-	<6sz8JD2Jq54KZZ3nCKbMpvae2yHUmF2hHEP3qrQlbGY6RrWzS8BN5YxinlIQnIFkGfjAPauTxI8i3sZUhzoPiw==@protonmail.internalid>
-	<87jz9beor7.ffs@tglx> <87zfi7prf2.fsf@kernel.org>
-	<0ePSCNg5vlevhPRhflq3lvzk2YBD5-uA5M0VWGr5gb-BldbGA9KzHxwkgP5zPayOl4vg9rjEK_Ku5ago9Vp-tQ==@protonmail.internalid>
-	<87bjuneabh.ffs@tglx>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 27 Feb 2025 17:03:37 +0100
-Message-ID: <87tt8fpe7a.fsf@kernel.org>
+	s=arc-20240116; t=1740672306; c=relaxed/simple;
+	bh=sj5RoctSbIGx3p/cbQm/bVUcln1LHkula1nexu5M2Yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMTpr9MR8I+MaFB1MjtHV2PMGEB/9sipEGXIL06yqhf5/ApdMVv2cru8eMmBPoKYaBOdMBLDnclpyjWQIrFveVh6pHD7Popk6sJs7QM38gZASI2HbuYvP4oqHEksg1Y3Ls/7q2/qodJ4hZN37GwNTZPQflQCjE72ixzjhC6TVnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpbbLZRQ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740672305; x=1772208305;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sj5RoctSbIGx3p/cbQm/bVUcln1LHkula1nexu5M2Yc=;
+  b=VpbbLZRQ3VixHYzmJZQp1fx6e+tlLAVfLrYQQHG703jNi/x54nOH4nGy
+   NDPSFxjZ/OUgwgsspUqQTVJFKI93/Fg9N/H1aSLwr9D7jdyJDpZFToo8e
+   Ec0f9s63m7KoXkxf/SV3aNjp5eSWfaFQYGWVngzTHvveu2uMCrbQCKGpR
+   S8t90P55sPlj5tXppGQQEVVFbgT1S9mFF76JvB60OH2IKbMvPB1XUctoK
+   eJKTAX//IT2BOOXmUrfJKeUJVrZ1qtwSbPgr5GIgum3oOvJb4eivIVRpC
+   +iKEsJP/8b/HdsXTRbUTbb/Pm10fv1oQJjj4f+fSGUgd88a3qqFpaU1Wx
+   Q==;
+X-CSE-ConnectionGUID: acx7fHkGTKuH88/XDzgAgA==
+X-CSE-MsgGUID: VuWxpeIrTMigvEh834yw/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="58986105"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="58986105"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:05:01 -0800
+X-CSE-ConnectionGUID: ssF3YDBeRBu6QxaaafjaCg==
+X-CSE-MsgGUID: MU9sB79WT7iA8Qeu7d4S1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="140298768"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 27 Feb 2025 08:04:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tngMy-000Ddu-31;
+	Thu, 27 Feb 2025 16:04:21 +0000
+Date: Fri, 28 Feb 2025 00:03:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	cmllamas@google.com, surenb@google.com, omosnace@redhat.com,
+	shuah@kernel.org, arnd@arndb.de, masahiroy@kernel.org,
+	bagasdotme@gmail.com, horms@kernel.org, tweek@google.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org, selinux@vger.kernel.org, hridya@google.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	smoreland@google.com, ynaffit@google.com, kernel-team@android.com
+Subject: Re: [PATCH v15 2/3] binder: report txn errors via generic netlink
+Message-ID: <202502272346.6XGVfFlz-lkp@intel.com>
+References: <20250226192047.734627-3-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226192047.734627-3-dualli@chromium.org>
 
-"Thomas Gleixner" <tglx@linutronix.de> writes:
+Hi Li,
 
-> On Thu, Feb 27 2025 at 12:18, Andreas Hindborg wrote:
->> "Thomas Gleixner" <tglx@linutronix.de> writes:
->>>> +/// The clock source to use for a [`HrTimer`].
->>>> +pub enum ClockSource {
->>>
->>> ClockSource is a confusing name as 'clocksource' is used in the kernel
->>> already for devices providing counters, which can be used for
->>> timekeeping.
->>>
->>> Also these clocks are not really hrtimer specific. These CLOCK ids are
->>> system wide valid and are used for other purposes obviously internally
->>> in timekeeping. hrtimers are built on top of timekeeping, which provides
->>> the underlying time.
->>
->> I see. How about renaming to `ClockId` and moving the type one level up
->> to `kernel::time`?
->
-> Yes.
->
->>>> +    /// A settable system-wide clock that measures real (i.e., wall-clock) time.
->>>> +    ///
->>>> +    /// Setting this clock requires appropriate privileges. This clock is
->>>> +    /// affected by discontinuous jumps in the system time (e.g., if the system
->>>> +    /// administrator manually changes the clock), and by frequency adjustments
->>>> +    /// performed by NTP and similar applications via adjtime(3), adjtimex(2),
->>>> +    /// clock_adjtime(2), and ntp_adjtime(3). This clock normally counts the
->>>> +    /// number of seconds since 1970-01-01 00:00:00 Coordinated Universal Time
->>>> +    /// (UTC) except that it ignores leap seconds; near a leap second it is
->>>> +    /// typically adjusted by NTP to stay roughly in sync with UTC.
->>>
->>> That's not correct. It depends on the implementation/configuration of
->>> NTP. The default is that the leap second is actually applied at the
->>> requested time, by setting the clock one second forth or back.
->>>
->>> Though there are NTP configurations/implementations out there which use
->>> leap second "smearing" to avoid the jump. They adjust the conversion
->>> factors around the leap second event by slowing down or speeding up for
->>> a while. That avoids a few common issues, e.g. in data bases.
->>>
->>> But it brings all clocks out of sync with the actual progress of time, which
->>> is patently bad for systems which require strict synchronization.
->>>
->>> The problem is that the kernel uses the NTP/PTP frequency adjustment to
->>> steer the conversion of all clocks, except CLOCK_MONOTONIC_RAW. The
->>> kernel internal base clock is CLOCK_MONOTONIC. The other clocks are
->>> derived from that:
->>>
->>>         CLOCK_[X] = CLOCK_MONOTONIC + offset[X]
->>
->> I see. I lifted the text from `clock_getres(2)` in linux-man [1]. We
->> might consider updating that source with the info we collect here.
->
-> Yup.
->
->> How about changing the text like so:
->>
->> .. by frequency adjustments performed by NTP ...
->>
->> to
->>
->> .. by frequency adjustments performed by some implementations of NTP ...
->>
->> ?
->
-> Frequency is adjusted by _all_ implementations of NTP and also by PTP,
-> PPS and GPS. That's how the time synchronization daemons steer the clock
-> to align with the master clock. This adjustment is done via adjtimex(2).
->
-> That affects all clocks except CLOCK_MONOTONIC_RAW, which is never
-> adjusted and keeps the boot time frequency forever.
->
-> CLOCK_REALTIME is not only frequency adjusted, it also can be set
-> via settimeofday(2) and clock_settime((2), CLOCK_REALTIME).
->
-> But CLOCK_REALTIME _and_ CLOCK_TAI can also be set via adjtimex(2). For
-> CLOCK_TAI this is required to set the offset between CLOCK_REALTIME and
-> CLOCK_TAI correctly (at least during boot).
->
-> The last oddity are leap seconds. The standardized method is to actually
-> jump the clock by one second at midnight of the day specified by the
-> International Earth Rotation and Reference Systems Service (IERS).
->
-> That obviously causes problems because a minute having 61 seconds is not
-> only beyond the comprehension of computer programmers, but is
-> problematic in many areas like astronomy, satellite navigation, control
-> systems, telecommunications .... Those industries largely switched to
-> clock TAI or GPS time, where TAI is always ahead of GPS by constant 19
-> seconds.
->
-> In the recent years big companies like Google, Facebook, Alibaba and
-> others implemented leap smearing to address the remaining issues in
-> applications, which have to use clock REALTIME. But of course it's
-> neither standardized nor did those clowns talk to each other. So we have
-> today:
->
->    Google:   24 h before the leap second
->    Facebook: 18 h after the leap second
->    Alibaba:  12 h before until 12 h after the leap second
->    ...       more incompatible variants of the same
->
-> This obviously creates just a different set of inconsistency problems
-> not only between the networks of these giants but also with the rest of
-> the (non smearing) world around the leap second event. Their notion of
-> time is only coherent within their own network.
->
-> On Linux (and other OSes) it also affects the accuracy of all other
-> clocks during that time. The actual slowdown is marginal, e.g. on
-> average 192nsec per minute in the Google case, but the accumulated one
-> second offset over 24 hours is way more than what certain applications
-> can tolerate.
+kernel test robot noticed the following build errors:
 
-Rereading the original paragraph, I think that it is consistent with
-what you write:
+[auto build test ERROR on 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Li/lsm-selinux-Add-setup_report-permission-to-binder/20250227-032351
+base:   8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
+patch link:    https://lore.kernel.org/r/20250226192047.734627-3-dualli%40chromium.org
+patch subject: [PATCH v15 2/3] binder: report txn errors via generic netlink
+config: hexagon-randconfig-002-20250227 (https://download.01.org/0day-ci/archive/20250227/202502272346.6XGVfFlz-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272346.6XGVfFlz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502272346.6XGVfFlz-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/android/binder.c:6479:8: error: call to undeclared function 'security_binder_setup_report'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           ret = security_binder_setup_report(current_cred());
+                 ^
+   1 error generated.
 
 
- - Setting this clock requires appropriate privileges.
+vim +/security_binder_setup_report +6479 drivers/android/binder.c
 
- OK I assume.
+  6462	
+  6463	/**
+  6464	 * binder_nl_report_setup_doit() - netlink .doit handler
+  6465	 * @skb:	the metadata struct passed from netlink driver
+  6466	 * @info:	the generic netlink struct passed from netlink driver
+  6467	 *
+  6468	 * Implements the .doit function to process binder netlink commands.
+  6469	 */
+  6470	int binder_nl_report_setup_doit(struct sk_buff *skb, struct genl_info *info)
+  6471	{
+  6472		struct binder_context *context = NULL;
+  6473		struct binder_device *device;
+  6474		struct binder_proc *proc;
+  6475		u32 flags, pid;
+  6476		void *hdr;
+  6477		int ret;
+  6478	
+> 6479		ret = security_binder_setup_report(current_cred());
+  6480		if (ret < 0) {
+  6481			NL_SET_ERR_MSG(info->extack, "Permission denied");
+  6482			return ret;
+  6483		}
+  6484	
+  6485		hlist_for_each_entry(device, &binder_devices, hlist) {
+  6486			if (!nla_strcmp(info->attrs[BINDER_A_CMD_CONTEXT],
+  6487					device->context.name)) {
+  6488				context = &device->context;
+  6489				break;
+  6490			}
+  6491		}
+  6492	
+  6493		if (!context) {
+  6494			NL_SET_ERR_MSG(info->extack, "Unknown binder context");
+  6495			return -EINVAL;
+  6496		}
+  6497	
+  6498		pid = nla_get_u32(info->attrs[BINDER_A_CMD_PID]);
+  6499		flags = nla_get_u32(info->attrs[BINDER_A_CMD_FLAGS]);
+  6500	
+  6501		if (!pid) {
+  6502			/* Set the global flags for the whole binder context */
+  6503			context->report_flags = flags;
+  6504		} else {
+  6505			/* Set the per-process flags */
+  6506			proc = binder_find_proc(pid);
+  6507			if (!proc) {
+  6508				NL_SET_ERR_MSG_FMT(info->extack,
+  6509						   "Invalid binder report pid %u",
+  6510						   pid);
+  6511				ret = -EINVAL;
+  6512				goto err_exit;
+  6513			}
+  6514	
+  6515			proc->report_flags = flags;
+  6516		}
+  6517	
+  6518		skb = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
+  6519		if (!skb) {
+  6520			pr_err("Failed to alloc binder netlink reply message\n");
+  6521			ret = -ENOMEM;
+  6522			goto err_exit;
+  6523		}
+  6524	
+  6525		hdr = genlmsg_iput(skb, info);
+  6526		if (!hdr)
+  6527			goto free_skb;
+  6528	
+  6529		if (nla_put_string(skb, BINDER_A_CMD_CONTEXT, context->name) ||
+  6530		    nla_put_u32(skb, BINDER_A_CMD_PID, pid) ||
+  6531		    nla_put_u32(skb, BINDER_A_CMD_FLAGS, flags))
+  6532			goto cancel_skb;
+  6533	
+  6534		genlmsg_end(skb, hdr);
+  6535	
+  6536		if (genlmsg_reply(skb, info)) {
+  6537			pr_err("Failed to send binder netlink reply message\n");
+  6538			ret = -EFAULT;
+  6539			goto err_exit;
+  6540		}
+  6541	
+  6542		return 0;
+  6543	
+  6544	cancel_skb:
+  6545		pr_err("Failed to add reply attributes to binder netlink message\n");
+  6546		genlmsg_cancel(skb, hdr);
+  6547	free_skb:
+  6548		pr_err("Free binder netlink reply message on error\n");
+  6549		nlmsg_free(skb);
+  6550		ret = -EMSGSIZE;
+  6551	err_exit:
+  6552		return ret;
+  6553	}
+  6554	
 
-
-
- - This clock is affected by discontinuous jumps in the system time
-   (e.g., if the system administrator manually changes the clock),
-
- OK as well.
-
-
-
- - and by frequency adjustments performed by NTP and similar
-   applications via adjtime(3), adjtimex(2), clock_adjtime(2), and
-   ntp_adjtime(3).
-
- This also seems to align with what you explain. Even though PTP and GPS
-   is not mentioned, it does say "and similar applications".
-
-
-
- - This clock normally counts the number of seconds since 1970-01-01
-   00:00:00 Coordinated Universal Time (UTC)
-
- Seems OK.
-
-
-
- - except that it ignores leap seconds;
-
- The clock does not count leap seconds in the number of seconds elapsed
-   since epoch. A slightly confusing wording, but OK I guess?
-
-
-
- - near a leap second it is typically adjusted by NTP to stay roughly in
-   sync with UTC
-
- Also aligns with your explanation. We could rephrase a bit:
-
- - near a leap second it may be adjusted by leap second smearing to stay
-   roughly in sync with UTC. Leap second smearing applies frequency
-   adjustments to the clock to speed up or slow down the clock to
-   account for the leap second without discontinuities in the clock. If
-   leap second smearing is not applied, the clock will experience
-   discontinuity around leap second adjustment.
-
->
->>>> +    /// International Atomic Time.
->>>> +    ///
->>>> +    /// A nonsettable system-wide clock derived from wall-clock time but
->>>> +    /// counting leap seconds. This clock does not experience discontinuities or
->>>> +    /// frequency adjustments caused by inserting leap seconds as CLOCK_REALTIME
->>>> +    /// does.
->>>
->>> Only partially correct.
->>>
->>> CLOCK_TAI can be set as CLOCK_TAI is obviously coupled to CLOCK_REALTIME
->>> and vice versa.
->>
->> So it cannot be set directly, but if CLOCK_REALTIME is set, CLOCK_TAI
->> will update?
->>
->> In that case I would add the following paragraph:
->>
->>   This clock is coupled to CLOCK_REALTIME and will be set when
->>   CLOCK_REALTIME is set.
->
-> It also can be set independently via adjtimex(2) by correcting the
-> offset between REALTIME and TAI, which is done usually during system
-> startup when the time synchronization deamon starts (ntpd, chrony,
-> systemd-???, ....). Should not happen during normal operations, emphasis
-> on *should*.
-
-
-  This clock is coupled to CLOCK_REALTIME and will be set when
-  CLOCK_REALTIME is set, or when the offset to CLOCK_REALTIME is changed
-  via adjtimex(2). This usually happens during boot and **should** not
-  happen during normal operations.
-
->
->>> Also if the NTP implementation does leap seconds smearing then the
->>> adjustment affects CLOCK_TAI as well. See above. That's compensated for
->>> by adjusting the TAI offset to be in sync with reality, but during the
->>> smear phase the readout is not precise.
->>
->> I would add the following paragraph then:
->>
->>   However, if NTP adjusts CLOCK_REALTIME by leap second smearing, this
->>   clock will not be precise during leap second smearing.
->
-> Correct.
->
-> The important part is that the selection of the clock depends on the
-> actual use case. In some cases the usage of a particular clock is
-> mandatory, e.g. in network protocols, filesystems ... In other cases the
-> programmer has to decide which clock is best suited for the purpose. In
-> most scenarios clock MONOTONIC is the best choice as it provides a
-> accurate monotonic notion of time (leap second smearing ignored).
-
-I'll grab this paragraph to use as a base for documentation on the
-`ClockId` type.
-
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
