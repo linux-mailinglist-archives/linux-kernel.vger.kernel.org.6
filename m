@@ -1,226 +1,117 @@
-Return-Path: <linux-kernel+bounces-537479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6B0A48C73
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D07A48C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32212189080F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:11:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E8E188F7B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B162272918;
-	Thu, 27 Feb 2025 23:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B050B272922;
+	Thu, 27 Feb 2025 23:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HllX7fUh"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="izwXnQOC"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2C2309A3;
-	Thu, 27 Feb 2025 23:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5F2309A3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697886; cv=none; b=c0qVc4NwCfVh6BkfGDmHVqHSXmQ/eWlaO5feLakgSLuXu3JU5kMnln+MpXNNl2YuAH4p4AjqBfldiM5xlZWCsFbx8vB7fVq/6nCF5grGpakCAj71xahEfHuxMqwRYl28NJPmBuUQgmCd6i/Gi+KDBNJVL8+/x9BJmFsg0npmf30=
+	t=1740697964; cv=none; b=HuWs1BW8HqIs+Ziv9UcIPZig/98nxc9TJ7uVuXSGhHitydI6dxAp9Pm+4zkE02BklSTe5ixD/8ttVi/5GRmBoK4TNSHGqfECbdP9XzrmcaL7rEWpY+RZluzI755rm7xAPIT0zoLR+ckrgBch/0t+Bp2FrRckuv725snpvUs5FE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697886; c=relaxed/simple;
-	bh=nf1/dckcnomNKWFNl7Mj3elVZpIUPC9x6D/lkkXmlTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTXP/uAv7bChhYd0jtv24+mLrL70Jz6XGn9b3IFCZKFfpqVZ/3xLeOuuNlRI40EoiRjnDIYEMGAMQs5xWghxciQKDCGM8bCPwtGCkgUK3tGrIeVi1+km0bMto/I3UdMGbmlwcUxUnZjResN4cyALFMG5oFiFWqXBGhEaOc+B+iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HllX7fUh; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so2133526a12.2;
-        Thu, 27 Feb 2025 15:11:24 -0800 (PST)
+	s=arc-20240116; t=1740697964; c=relaxed/simple;
+	bh=qXZYUb+38s6T7BVpnd2FbZlzNg9yTJdtjrYvUzxnbAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDebrqnfez59YgMjXoKKME5OsOWZW31wLQO/3k89MuW8LW1zvXmCzwczBRMnI7uaPxkKok3DrP77J04PVUhYtLZ6itJsOyK41aMyz2HKhwU0KCVKupV+YpzjUqDnW12wxN6Q3TQ0SHaaRPL4KR7vHLD+P75cqBoxfbWbPscJDqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=izwXnQOC; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso22085e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:12:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740697883; x=1741302683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AY8ndVYJ7XgqaUiDvauHMj3rzJsfZgflXLJt38pHW0c=;
-        b=HllX7fUhB2pTRmlySPaHA66Lw5chXVGZNGaiLPOOGYx8KNtNJxH3205BmbUK3QUFYf
-         TUySLKxjIp5ZRhF8dR6Lp8/k2I2Cl3yJSMDY5aVWNxyHdSDNehXnVoTGm17jTkF/0Jbm
-         kVSK1/uDGXos1lK32M06nppeGAiYE3tAlf8sXpC99ln2nfMLBJW0vyk45ZTTdfHArNHl
-         S58rDsRkbV6+8z2zzOP5BX/wYEMgVNd0yIkhVtzk6so9F/PMgNlmWnISZFoKry1cbr/o
-         aUakx3moE6SPZXMYYNiQxkEWH7/0xzoWMFOf75YEfaIHL7lT2xduzuH9lqfWgyUJ4Suf
-         hmRA==
+        d=google.com; s=20230601; t=1740697961; x=1741302761; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fj7LGOSrk0w5SNsFMZf4HWgkzLmJvJuks0dPBWfMtzY=;
+        b=izwXnQOC3oezjqJaDBj5Na3lRnnk2yHvqk+RJEanAlTYYOhhn2Ka9kef/IEU+gWPJY
+         jFuZsGDIv89x3tezwnqVu081Z091F4RqUEIVa1tZ7cjP1S9EEZwKjoCh70LJM/+zzfXH
+         fFazwtOnXy7iZHh6kRWzAiSqLhkR2Z1/RihqEVlGPYd81Xbb6ThblghqXJ/CWCtNDQzN
+         hfSLCvM83WRctLrYb9UX9zi7PCvfubCe8YUCgRQNxCpvx1bPMf5qwOj4Ocn8f1Pc78zI
+         vRBlMIYn271JM9ZZxLnyU+UoYZMWk0LNZq8+Ii92E+OJM63W1o+gMye12TSaQP+SdlJR
+         If+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697883; x=1741302683;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AY8ndVYJ7XgqaUiDvauHMj3rzJsfZgflXLJt38pHW0c=;
-        b=AFpPXUT2B7BhS430CyvjOk1rJW42bm3PMgK2U0M4+ZZYx7gxQUUCeGeWYUS2jUtSgE
-         pdkxRVvns8YsD+DenBsYGylCp1mEOZz9vnQbA+3Ss+pMVWh3FA1Tjn7HmomqUG9FhOKU
-         gOqnJKWiA4KL1iFqa3H/S7cLJA9VdNn2S2giT96HDjbYKbdzTS6bbtVr6sk75AO6DY0G
-         CW+NId1AKOUYQqEJVbpcMQjmJqixLXnqySvVxc3G82fOtkyAHD6qbKRQEfiB8Ge3FLPZ
-         GKI1wdatXn8htOl4KFw9Nk1JppfXsJuOhvi/TXR3weFe1M/bceXGVf3eY23Acg2fQZva
-         ngPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVolypfRDzqjLsVbpk7hPtMEoF21O8lriE8J5ua6Sfp1fhTOVCbaosY4NjTwpbJ6u320ZSEdqLKDXrhJa1u@vger.kernel.org, AJvYcCX2k70xJJ3yZqz/3EuGH3A+ZAZ9YlGiett6h+GYoTTRLsAaw7uk6cGbzfRIBwObpm3n8YeJqqHIkAXMdiGu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa0gpd8JFJhCFSHvdS7R0lkXeAYIDibe58eD7jD8MisY1Phx/b
-	YwEnuad9yHzWWdXvwezkgDmd4WytM9IMPC2mt/ewpOBURPUeoEga
-X-Gm-Gg: ASbGncu5bSAN2qb/u1njr0CH6v1MzF3ZvaJpV4B/zAGOuNvJfBH53jgNF7e2pfhucvI
-	lTGfEK54naMC88LieEZVk/8a/PkWilULoiQw441Cs9hCZFIeQpA5RZYtuLfp30zFomjMDBIbo+K
-	TKY+8vWYQ7eu1LPGzwuSFhYkMIILtoWodKu5ZkOfp6GGNPlqPeJckqHXtDmsSU2R5gbdH1JVfEN
-	3d427E1zYibQtFXAIBRrjMMygXnTYtpvopUXgTxCg8SC904n++7ZJVOmlYXY8fWzzMgfmkqRR2L
-	o8kx+mueRWyHJ17SxT5oG80EEZizuug4zvjYQSEoIG6O
-X-Google-Smtp-Source: AGHT+IH1s6mwS8zayyWG+J0RZb18tEFC5xGqBkXi4CaMktxg/7/kRZoW/5g2fKi/89vA6+bnOCcD2Q==
-X-Received: by 2002:a17:907:6d25:b0:ab7:ec7c:89e4 with SMTP id a640c23a62f3a-abf26542879mr109995066b.21.1740697883212;
-        Thu, 27 Feb 2025 15:11:23 -0800 (PST)
-Received: from f.. (cst-prg-72-140.cust.vodafone.cz. [46.135.72.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c756f6csm194377866b.141.2025.02.27.15.11.20
+        d=1e100.net; s=20230601; t=1740697961; x=1741302761;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fj7LGOSrk0w5SNsFMZf4HWgkzLmJvJuks0dPBWfMtzY=;
+        b=SJ9eQEJuxfOxojSSf2j0zdXNkO7EBPCPxHdZDc9N2PJFOZ23PXT8HZl+2hY4XlsfN8
+         bj2EAdzVCOGiAm5tPAW3d1f4dlcuAvajitbYNfaB5S15Raaiui4DvMPr2C4icyqtCLe+
+         OuANL/3liMHxx9HACSSqTnxeK41asG77+Bmd6b2pRU7WpZjt9IGdt2PHAaNlm5/5gu8P
+         yp4pJz/S231fl9u658nk8P4+M4JIld591W4wx6V5BttnEOm3C4S4mP8BxcPhCTzBIW2a
+         cidbcZFks38aZp+k3DwjgJA+2th/BoEyVwlnNZeMdlg1UqvKC3cnEgu44A3KHgi7Curk
+         wtDA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SX/Y1c552ZxKoFuZ4iu7qV5Z9xbYxrjMeIVviw8cW/TrGbW1QUEWh+UV6PDq0h50vKl3Eci41J2Wjq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaQW4Z14Oqhqa7g626Oe4pgS6x45mrhHqWmJuZRVR663uRTYH+
+	alBRAxLtWOlEbioEiaw53v29Gnx95HZskWX/i8Widw9qiv2dN1EWkT+DRCzo9A==
+X-Gm-Gg: ASbGncuVSMKtt0Gso0hfzS/jtO4wCx22kg61ap7oSJX9amkqusQON5EjsZqM2q03uHC
+	aon3yxWu8445Sc+ngxc00b9l5BVR5ZZfZMbKo79XB5waQamavroOhUbta7VEEmFGHtRdawY6UyT
+	FSwlL3siDP2z4BMECo4eZDnRIHKOnZuFlDoUKXK63lH3I2sYJQmGyUrYN4EScAc3PmMmLy7WrN2
+	bzmCxSyyNFds47DYNxN++zCroildpp/zEI6yuMTVhUDKmEpi48qYHxfP3yh9floGPKnNO5nu+t6
+	rqBRHIA0zw8N2kT6JV9zLAUcjDqQI/foAu16OeQKW5QIGlYbK6vUx5ztGPJqR3ZNQhFpCg==
+X-Google-Smtp-Source: AGHT+IFqQLaqdVWxc8waBGwgBaSF4yEsnQkEr61vpanM2YcoX/7/V0zwkd6V54Vs2QrQ3ETgd2DUJA==
+X-Received: by 2002:a05:600c:5618:b0:439:8739:b82b with SMTP id 5b1f17b1804b1-43ba6edd7bbmr333605e9.4.1740697960527;
+        Thu, 27 Feb 2025 15:12:40 -0800 (PST)
+Received: from google.com (100.235.22.34.bc.googleusercontent.com. [34.22.235.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485db82sm3254105f8f.88.2025.02.27.15.12.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:11:22 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	oleg@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] pipe: cache 2 pages instead of 1
-Date: Fri, 28 Feb 2025 00:11:16 +0100
-Message-ID: <20250227231116.140640-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 27 Feb 2025 15:12:39 -0800 (PST)
+Date: Thu, 27 Feb 2025 23:12:37 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	suzuki.poulose@arm.com, vdonnefort@google.com, will@kernel.org,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 2/4] KVM: arm64: Move the ffa_to_linux definition to
+ the ffa header
+Message-ID: <Z8DxZY-09R6lwEW3@google.com>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-3-sebastianene@google.com>
+ <20250227202557.d3fd6ylzbaho4pvx@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227202557.d3fd6ylzbaho4pvx@bogus>
 
-User data is kept in a circular buffer backed by pages allocated as
-needed. Only having space for one spare is still prone to having to
-resort to allocation / freeing.
+On Thu, Feb 27, 2025 at 08:25:57PM +0000, Sudeep Holla wrote:
+> On Thu, Feb 27, 2025 at 06:17:47PM +0000, Sebastian Ene wrote:
+> > Keep the ffa_to_linux error map in the header and move it away
+> > from the arm ffa driver to make it accessible for other components.
+> 
+> Do you plan to push/target these changes for v6.15 ? If not, I can take
+> this patch with other FF-A changes in my tree for v6.15. Otherwise, it
+> is must go along with other changes.
+> 
 
-In my testing this decreases page allocs by 60% during a kernel build.
+Yes, feel free to pick them with your changes and we can push them
+later.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+> --
+> Regards,
+> Sudeep
 
-v2:
-- iterate over an array
-
- fs/pipe.c                 | 60 ++++++++++++++++++++++++++-------------
- include/linux/pipe_fs_i.h |  2 +-
- 2 files changed, 41 insertions(+), 21 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 19a7948ab234..b5b40d5e2a17 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -112,20 +112,40 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- 	pipe_lock(pipe2);
- }
- 
-+static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i]) {
-+			struct page *page = pipe->tmp_page[i];
-+			pipe->tmp_page[i] = NULL;
-+			return page;
-+		}
-+	}
-+
-+	return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-+}
-+
-+static void anon_pipe_put_page(struct pipe_inode_info *pipe,
-+			       struct page *page)
-+{
-+	if (page_count(page) == 1) {
-+		for (int i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+			if (!pipe->tmp_page[i]) {
-+				pipe->tmp_page[i] = page;
-+				return;
-+			}
-+		}
-+	}
-+
-+	put_page(page);
-+}
-+
- static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
- 				  struct pipe_buffer *buf)
- {
- 	struct page *page = buf->page;
- 
--	/*
--	 * If nobody else uses this page, and we don't already have a
--	 * temporary page, let's keep track of it as a one-deep
--	 * allocation cache. (Otherwise just release our reference to it)
--	 */
--	if (page_count(page) == 1 && !pipe->tmp_page)
--		pipe->tmp_page = page;
--	else
--		put_page(page);
-+	anon_pipe_put_page(pipe, page);
- }
- 
- static bool anon_pipe_buf_try_steal(struct pipe_inode_info *pipe,
-@@ -493,27 +513,25 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		if (!pipe_full(head, pipe->tail, pipe->max_usage)) {
- 			unsigned int mask = pipe->ring_size - 1;
- 			struct pipe_buffer *buf;
--			struct page *page = pipe->tmp_page;
-+			struct page *page;
- 			int copied;
- 
--			if (!page) {
--				page = alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
--				if (unlikely(!page)) {
--					ret = ret ? : -ENOMEM;
--					break;
--				}
--				pipe->tmp_page = page;
-+			page = anon_pipe_get_page(pipe);
-+			if (unlikely(!page)) {
-+				if (!ret)
-+					ret = -ENOMEM;
-+				break;
- 			}
- 
- 			copied = copy_page_from_iter(page, 0, PAGE_SIZE, from);
- 			if (unlikely(copied < PAGE_SIZE && iov_iter_count(from))) {
-+				anon_pipe_put_page(pipe, page);
- 				if (!ret)
- 					ret = -EFAULT;
- 				break;
- 			}
- 
- 			pipe->head = head + 1;
--			pipe->tmp_page = NULL;
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
- 			buf->page = page;
-@@ -847,8 +865,10 @@ void free_pipe_info(struct pipe_inode_info *pipe)
- 	if (pipe->watch_queue)
- 		put_watch_queue(pipe->watch_queue);
- #endif
--	if (pipe->tmp_page)
--		__free_page(pipe->tmp_page);
-+	for (i = 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
-+		if (pipe->tmp_page[i])
-+			__free_page(pipe->tmp_page[i]);
-+	}
- 	kfree(pipe->bufs);
- 	kfree(pipe);
- }
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 8ff23bf5a819..eb7994a1ff93 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -72,7 +72,7 @@ struct pipe_inode_info {
- #ifdef CONFIG_WATCH_QUEUE
- 	bool note_loss;
- #endif
--	struct page *tmp_page;
-+	struct page *tmp_page[2];
- 	struct fasync_struct *fasync_readers;
- 	struct fasync_struct *fasync_writers;
- 	struct pipe_buffer *bufs;
--- 
-2.43.0
-
+Thanks,
+Sebastian
 
