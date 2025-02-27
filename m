@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-537378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A02BA48B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:08:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265CBA48B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EA93B6F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:07:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B17837A6CBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6648271826;
-	Thu, 27 Feb 2025 22:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A704272904;
+	Thu, 27 Feb 2025 22:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhpYy57d"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKlnf1fr"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D626E968;
-	Thu, 27 Feb 2025 22:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBE426E968;
+	Thu, 27 Feb 2025 22:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694082; cv=none; b=GTcIg0cWF+uFCZOKm9zDlDTWARsGa8PxbllhHWEkjQH2MR29dHciBtLoZ8qp57vsSVN4RS4HQC/LZ2mxnjxSq2ILeLA5utjksznk+z06gn1xN/j4J6SMKBwU8bSkMv4anudl9FrrMDWPegcFjQVq2Dqi0AyEAvv45aluF5HfIGA=
+	t=1740694137; cv=none; b=RHs6Pj0X8Z8z6Z6el/E/2LyRuK6enZr7z0uHEMvhJ1yzLnndajQgyPs2bSLZIoHAa7+fXT+a+IxlLvvwCj40eTfDI2+1qKmaGDjjDsLMH7rnMyVXozZsvGoMZNKzqFRn5bkvL76HTkvOLQejqzO6XtZpqSYAfZmZStsqIJ10HGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694082; c=relaxed/simple;
-	bh=UN+Ru2yjqJrkcSVGik6SXxWdueMW66UZG8XnISR/UP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5r0ePeealrT7vE7fpanMSYFkHnhX+NP3tI1J3uaQSJp0A1FtNYFQmssrf4MI/C8m4/I9LoW+nticZz//o8dGKNsFR7oijzW64hBOTRwNGUVw/5EtChyM8gsGw+AN7YnPcVVbalRzOH9657rt6p1DJizM3mD5dncxFlGqNAlE5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhpYy57d; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1740694137; c=relaxed/simple;
+	bh=RtonItbxRqN5tUy3koSsiE+b6epQ5IsKPLHg4/gwsj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X++lrABkfb4GvCnNB2GVjPSFkDPPY01cqQoMDFSEuiXseVgC1mzANunwevneaREMbS6DImLW3G1t4RB6+hDEmX+b4V2feYGYql1Az3syoDBAzJeJJ+M9h5lPXwhH51v3YaQejowsICPb7LJ7OagnjnXZG3xwn2WvVxu5e/bvidU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKlnf1fr; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-abb892fe379so206176066b.0;
-        Thu, 27 Feb 2025 14:08:00 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390df942558so1083023f8f.2;
+        Thu, 27 Feb 2025 14:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694079; x=1741298879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
-        b=nhpYy57dLJH1uPapQI7VnXH1HZpEkA4pWhCcg8ejbk5k7VSzfZokdbiZ5OA9YC10cE
-         L8WWibF6EYYyjJZSygxVWd5GUXsaITlN85fJtjgJFO/i9y4AhklroffS2bcHtAgckpGh
-         p6uZ2vDixkuJDv7q57KIIk+JfHG/X11fZFAKObCab8rx45rAPSZbY8h2bSquqBt6KPF0
-         Nam3Jb1s/FGOK+FFNJGfaffIxT6AjrhAQ9jaCuyTpZHBfoQkEEQxYj53XnINu9eNuXHX
-         ScVKgSgQ4OHHtnbNqlVGd7Aw3pXlefhif269O8U8pzcxGIiji8VwQ7nP6Fum2N9IC1hq
-         Lo0Q==
+        d=gmail.com; s=20230601; t=1740694134; x=1741298934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lEaZnjEGW+dXEB2fycgaBpMAJRVwO79ROy1KwTNDGTA=;
+        b=BKlnf1fr6zZ8QkTAgpp49+W9W9rNb06+YH/jv/9KZQM21g/BEZC9/tTR8Ys7WB7U80
+         K0MuvDOhImc7jxv8fL6ChRiDBFxBAIy5hoHSecC6ln8ptAFkBQFjml+1Itov0EUVOjNt
+         Wi3tgMqzKwFXpsTG9/fYUXO8lhUGPIZdc5173FLJTA7quuo8626xAr7IgrY5S/VV3z6P
+         DHivF5Fm5zll9wlizqy21U/Ds+4iiaXqKzfeHx6Be5nZ6jiKzTXApC1dbogiXZCB13Uo
+         q7AmnWZxeEqSehAnjNogp4uwRHseHXUrk1rRqxub/QSm7qmzez8BsHU8wn1XnpC7jE9P
+         d74A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694079; x=1741298879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADjzqVu0rQMGccp4tlner6D96WtUA+UNr/2jIh2K1oc=;
-        b=LI8CsWzJ7kvh3ezXpDM2d/iuwSwPp7MmADVHgPQq/Pvt0DABfgJRagEKoqy6WEn8yB
-         hLzKMwPtENFvsGI1nGqKGjCYzt2t3qjk9HPDravQx55Vt+/WTKZr/qRg+xkEXMZ+2mKh
-         uAroUeiGXxNX1/IxVGj0G3Lgg+nqYq1nrR2oaYla9A47IdVxVujaOfPLXittmTwdZrwI
-         S+QVw98a3xZ6pydw9shAWJQ9KdXOs7hDBtgdNj9LaYO6iGnxnPdyz2rwpPNnOhs2qU3i
-         ohsIwJBmHhrqUf0iXgalFOYLIq+r+pllL8RV9jjsOhEhaqEuCiBx2+m2iSvx6nfRn2EL
-         gtIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVVhv9IOZbwmXAFCXnx3SnIp2NVENVXjbks7cWg+/I6vXQk+AsTOpHmYu8OSl++z2yUBMeZx5DDLMsttNS@vger.kernel.org, AJvYcCWnS0zVR4l7O7YQJ+wBadtQxvw20ijwv8OpdIFGDK2GZKpLkKHaMZQkDJMIg7CLkMc/RQPSUyIMylzH6ixp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv8nBQt+chqmVS1Vk7Hy4QBCAtjmBZZUAXN8Je7sz/7JX395gN
-	mk59Hi7KFd8Q5Jc7vcOMNXpN/6VwEkvDvXva0s8OJHydd/VXgy1QId7aG2MyDJ1A9ZMBmKE67W8
-	MtNA2dLBYT9DigMQ5KKnRqoiH+1c=
-X-Gm-Gg: ASbGncsleKffVWeH/iO0hATIaYzRNrTzcCW1WS9QF1uz1gN5nwnLqAwG9ITmB8KZya3
-	yTFwbaVHXUv5CyDDH441qMP+HYxjKy1+lj/iurCeT89v3gIaw7H6StJNVISZjHRPJSDn22SKTa1
-	nRGSz6c7A=
-X-Google-Smtp-Source: AGHT+IEBd5l3TXoINUYoCqfpZdrHIWch7LPPU/DVCUKfuAbX+iDCrpluTBxuviWEJtgjZj47tQXm4fxrqHTF+kGUQeE=
-X-Received: by 2002:a05:6402:34c6:b0:5de:4a8b:4c9c with SMTP id
- 4fb4d7f45d1cf-5e4d6b62f6emr1432015a12.32.1740694078277; Thu, 27 Feb 2025
- 14:07:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740694134; x=1741298934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lEaZnjEGW+dXEB2fycgaBpMAJRVwO79ROy1KwTNDGTA=;
+        b=rm6VATS5T5MVYfE7iA4/KMCn5Rhz9fzPlpvT8WkXtpSei81PsnSoqmropnrUGnkILp
+         edo7x3PjYhTFzqCLqJgG91vgo7DOqR330wThCs/GLbE7xjJixBYMPd53FuOlbv/mXrFk
+         LdYHeU/etdPyXAlkFO1a05Li+HhXECOLpl5cdZ9iZVAjAxPjj0wubkd/HXgywF+5RdN8
+         nPf1BKiSHBvI/aOPLgcMTJwFZA8MYG/6aiUJuvY0mNGzB4iGL6rLvLuo3xHGPciscVq9
+         trGcIjrJGFqr1bk5R3LDHTanJ3IKvf9Cow2iJ6IYNSxcy/5Wv6aqh6UKKIXMHnmlv7Et
+         MgBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVJoHJ2Gl7xpKubD7wXqN6h9sjzJOeoDGM+X1lioJQx9eqUS2//9WxzSp8ksURCm2XtSU=@vger.kernel.org, AJvYcCVfGaBivkrLgOTAnuUXszVZSuUSJ7IsKNuwqIMLmX2+wDzx3HauZID9lrswxbrgVU/0hKy3xuqaIMNZmG8C/BTa@vger.kernel.org, AJvYcCVvTIkZn2ks5kHm7JK+FLG2hgU1pPwsyLADzOGZWLTBawfHCXxKg+qEJH3BcC2IBYFMmzEmr4XaEQM3+a+j@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd3XFzCu/lSlycZGOTelTBWkPYvzFf3LVm44FL5kBOLvZXp6uw
+	ZO5iKDpyc50vuTZp8btwhRxR4jO2TW75ZbHz+J9VnqyVMzcYAp1c
+X-Gm-Gg: ASbGncuB3nm8yX2dECj1Ak6ZGbBV2hHstJNe02egBxJJCM9T8w0HChNMUofCJTKlwDd
+	fbNthStO0DK1B4yXhSXFBan3RwGlN7Yv+Hm5clZwpTe1+r3xYYrwdAGxbmk09dJPQVf/5Yr1d0T
+	79KhncGg+uH1qf53qI7HCaUN8cdt7hOLDmnVRsGTPZ5GmR7zBqoJ3thWISX9N17xzs/lhxkdTIr
+	aXziKcN+YYTJ4hCwCPIxeK1HrUPBRyadYRN9W+F7VYRiKfEmS50rE0JeOJiBlR/2LmUkO8woy30
+	tYJ/QOPpuInvtHYovKkrs0MLnDs=
+X-Google-Smtp-Source: AGHT+IFZa9dboOaE6stYPiILmPTLGm8NPOEro5l2YZ8uwZslwXyNX9MgmlcGxKnCIReGCaskMePG2w==
+X-Received: by 2002:a5d:5f91:0:b0:38f:3c8a:4bf4 with SMTP id ffacd0b85a97d-390ec7cd27fmr661579f8f.6.1740694134109;
+        Thu, 27 Feb 2025 14:08:54 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e4796084sm3303760f8f.19.2025.02.27.14.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 14:08:53 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH]][next] KVM: selftests: Fix spelling mistake "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
+Date: Thu, 27 Feb 2025 22:08:19 +0000
+Message-ID: <20250227220819.656780-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227180407.111787-1-mjguzik@gmail.com> <20250227215834.GE25639@redhat.com>
-In-Reply-To: <20250227215834.GE25639@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 27 Feb 2025 23:07:45 +0100
-X-Gm-Features: AQ5f1JpvudCDW09pKlncHJMvLXGsrmhmZGJuFrf5IBX_27iIWhHqMRNvU_zS9vU
-Message-ID: <CAGudoHG7EF5_wnNhsyFoiRtU-qW1b=vUaVaFk7TKnqeSjC6sOg@mail.gmail.com>
-Subject: Re: [PATCH] pipe: cache 2 pages instead of 1
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 10:59=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
-> > +static struct page *anon_pipe_get_page(struct pipe_inode_info *pipe)
-> > +{
-> > +     struct page *page;
-> > +
-> > +     if (pipe->tmp_page[0]) {
-> > +             page =3D pipe->tmp_page[0];
-> > +             pipe->tmp_page[0] =3D NULL;
-> > +     } else if (pipe->tmp_page[1]) {
-> > +             page =3D pipe->tmp_page[1];
-> > +             pipe->tmp_page[1] =3D NULL;
-> > +     } else {
-> > +             page =3D alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> > +     }
-> > +
-> > +     return page;
-> > +}
->
-> Perhaps something like
->
->         for (i =3D 0; i < ARRAY_SIZE(pipe->tmp_page); i++) {
->                 if (pipe->tmp_page[i]) {
->                         struct page *page =3D pipe->tmp_page[i];
->                         pipe->tmp_page[i] =3D NULL;
->                         return page;
->                 }
->         }
->
->         return alloc_page(GFP_HIGHUSER | __GFP_ACCOUNT);
-> ?
->
-> Same for anon_pipe_put_page() and free_pipe_info().
->
-> This avoids the code duplication and allows to change the size of
-> pipe->tmp_page[] array without other changes.
->
+There is a spelling mistake in a PER_PAGE_DEBUG debug message. Fix it.
 
-I have almost no opinion one way or the other and I'm not going to
-argue about this bit. I only note I don't expect there is a legit
-reason to go beyond 2 pages here. As in if more is warranted, the
-approach to baking the area should probably change.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/kvm/lib/userfaultfd_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I started with this being spelled out so that I have easier time
-toggling the extra slot for testing.
+diff --git a/tools/testing/selftests/kvm/lib/userfaultfd_util.c b/tools/testing/selftests/kvm/lib/userfaultfd_util.c
+index 7c9de8414462..5bde176cedd5 100644
+--- a/tools/testing/selftests/kvm/lib/userfaultfd_util.c
++++ b/tools/testing/selftests/kvm/lib/userfaultfd_util.c
+@@ -114,7 +114,7 @@ struct uffd_desc *uffd_setup_demand_paging(int uffd_mode, useconds_t delay,
+ 
+ 	PER_PAGE_DEBUG("Userfaultfd %s mode, faults resolved with %s\n",
+ 		       is_minor ? "MINOR" : "MISSING",
+-		       is_minor ? "UFFDIO_CONINUE" : "UFFDIO_COPY");
++		       is_minor ? "UFFDIO_CONTINUE" : "UFFDIO_COPY");
+ 
+ 	uffd_desc = malloc(sizeof(struct uffd_desc));
+ 	TEST_ASSERT(uffd_desc, "Failed to malloc uffd descriptor");
+-- 
+2.47.2
 
-That said, I don't know who counts as the pipe man today. I can do the
-needful(tm) no problem.
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
