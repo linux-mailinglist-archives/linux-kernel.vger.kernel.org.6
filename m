@@ -1,68 +1,86 @@
-Return-Path: <linux-kernel+bounces-536922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AC6A485C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:53:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6A5A485EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:59:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFF37A2272
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B26188219F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF801D5CD3;
-	Thu, 27 Feb 2025 16:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855331C6FEA;
+	Thu, 27 Feb 2025 16:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KOKkPpZu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fR+BMNmA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7E61A9B5B;
-	Thu, 27 Feb 2025 16:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BCF1ACECF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740675206; cv=none; b=VuGCVzSeRGi1rB+DjxOO0pldP2up2lBif0YKyk9MXLUuJ5jHadEfWZH7XRNxRwNWenetOcSW5Uh7M4QutMwAI7uRam8Ikc7Mp92EHQC0w56QnM6fitpHzUsn8fgqylmd5NUBC4ECngt73mBpznobFi24OXyu6Ia3NTgwm7TSFEY=
+	t=1740675289; cv=none; b=YLdUe1F4QG/eEABxirikr6FUjTOJSk7qyKnq3v7VrNgIqK1x3cxTq1872UFwjJngOXOf46CCf94cIqj/FQ5nV/2TXew5YUYOy/Kx9Z62UQCowZVBb2iqbdMZAb4u5hqhryKXlPZbw6MCeylVHblUrQAY4uiPEuWuHbdbLJ51fY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740675206; c=relaxed/simple;
-	bh=ngUTo6dF9F0tDXaqjupgRaWwtDiAGw55L4O6aivUeE4=;
+	s=arc-20240116; t=1740675289; c=relaxed/simple;
+	bh=wmPZL0hTajLmHouhNoG+H8g4d9k2lliIa/FDsUAPuXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2koa+k8fwEVFpPlCUxy3YIxuFe8McvWKIxPDvRgVFXsZ0HGpiX/FPOpj/RoW7l6yZrwEo1S0VKYA04WO0yNIKd+LLt5tzv7JlH9xbvwJ7l5K6peZvT+rIgLSIt4vJ6DoJ7ONT5qMEht5QJ4i9JyEu/NyLk8bgMgtPfRt8a72XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KOKkPpZu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2Ov/y1t7Dpez9RlDMwDLU2+3BKfoWfwxweNJ4MdRL9s=; b=KOKkPpZuy4OXVvkiO0Y5M/4QeT
-	Ks24n3qwEAVTlfVNX9rIPgeZAVBnlpuRscpDSDp5Pj7ScbGAADOXp0BWLAVdsQEUX6O5vJteeLrYA
-	jmmpodsZCsX4IuJBMihq4CGBHHX9s8eJ0IpP/cr2aDP5gTKY7I1tQPdD4cBILLtr5OyyJve1RNWST
-	5Uw9/bKbqgRQHCmbxkDcc86/cMIXfboUu97s5MXDT4fdDrWsz4SfDfXEGsYxNsxlpuJyq4D87KP8v
-	eLljZ6rbbsQLn94dCsPVtry5o5ejVT3fH7Q4HjXZtajayh+M0F0BvcUVmU01ol21kyaBB/EVusWGP
-	LfllOMDg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tnh8B-00000003pRG-0nbx;
-	Thu, 27 Feb 2025 16:53:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 42319300472; Thu, 27 Feb 2025 17:53:02 +0100 (CET)
-Date: Thu, 27 Feb 2025 17:53:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com,
-	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	mathieu.desnoyers@efficios.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	dongml2@chinatelecom.cn, akpm@linux-foundation.org, rppt@kernel.org,
-	graf@amazon.com, dan.j.williams@intel.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH bpf-next v2] add function metadata support
-Message-ID: <20250227165302.GB5880@noisy.programming.kicks-ass.net>
-References: <20250226121537.752241-1-dongml2@chinatelecom.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=koOlUFAIA7etE/10k4xHzFEmCaHxU6kbaMYUNVu4LdK2J6Ko+tItgHnKKsjaCaQtH8r4AwfGr1zlYows5Blg+MSnbH1ekMwdn27VY3dpMz2LuAlEbczqLyL9wuEhEet4O4l2vHrjONaZiXFD8UN3Vs05Zl0+m9Gw+MRvOprZ1tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fR+BMNmA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740675286; x=1772211286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wmPZL0hTajLmHouhNoG+H8g4d9k2lliIa/FDsUAPuXM=;
+  b=fR+BMNmAYIzkn1JDa9x0MkXGSGPjrQh2DojUua44lvIboDFqUlUS0fb0
+   OhsWwiI7/wEFmQVjgXO4c5kVDuQhpYVKrLWBQY4kwSWKpNM1gS7GaL/Hr
+   jtdG5pO+aAfAoR2aMbrISKsUjMWaipO/9CeVgdbRVKq9COVt57wwbDNSn
+   ZAxSSLgFm0JJqgorM2KPMsNJUAdKs8u64J56JCR+Ld1v+sxMi0bInsn/6
+   CeJAuXTlU+hf64AWtnGCI9kpzSRgkDQ2EjxPmRNqRrqDsxWkc6DR3Xs2E
+   V3wWqH087rp5qfvOvyICWwvQwJukNI51aaoeRBHZNV9n2ck8g8EJI3rvA
+   g==;
+X-CSE-ConnectionGUID: cn4fbmlqQWy0d3xlySu+OA==
+X-CSE-MsgGUID: r1qFtOauTCmgi/HAgVyYqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41495722"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="41495722"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 08:54:46 -0800
+X-CSE-ConnectionGUID: ZDe6c26fRMyo6x8RxzXcLQ==
+X-CSE-MsgGUID: cBPTHcmiQ0mGjDKfAROMAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="117580453"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 27 Feb 2025 08:54:43 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnh9j-000Djc-3D;
+	Thu, 27 Feb 2025 16:54:39 +0000
+Date: Fri, 28 Feb 2025 00:54:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aditya Garg <gargaditya08@live.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, Kerem Karabay <kekrby@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Message-ID: <202502280028.1Y9QMcR0-lkp@intel.com>
+References: <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,25 +89,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226121537.752241-1-dongml2@chinatelecom.cn>
+In-Reply-To: <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
 
-On Wed, Feb 26, 2025 at 08:15:37PM +0800, Menglong Dong wrote:
+Hi Aditya,
 
-> In x86, we need 5-bytes to prepend a "mov %eax xxx" insn, which can hold
-> a 4-bytes index. So we have following logic:
-> 
-> 1. use the head 5-bytes if CFI_CLANG is not enabled
-> 2. use the tail 5-bytes if MITIGATION_CALL_DEPTH_TRACKING is not enabled
-> 3. compile the kernel with extra 5-bytes padding if
->    MITIGATION_CALL_DEPTH_TRACKING and CFI_CLANG are both enabled.
+kernel test robot noticed the following build warnings:
 
-3) would result in 16+5 bytes padding, what does that do for alignment?
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.14-rc4 next-20250227]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Functions should be 16 byte aligned.
+url:    https://github.com/intel-lab-lkp/linux/commits/Aditya-Garg/drm-format-helper-Add-conversion-from-XRGB8888-to-BGR888/20250224-214352
+base:   linus/master
+patch link:    https://lore.kernel.org/r/844C1D39-4891-4DC2-8458-F46FA1B59FA0%40live.com
+patch subject: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86 Macs
+config: alpha-kismet-CONFIG_HID_MULTITOUCH-CONFIG_DRM_APPLETBDRM-0-0 (https://download.01.org/0day-ci/archive/20250228/202502280028.1Y9QMcR0-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250228/202502280028.1Y9QMcR0-lkp@intel.com/reproduce)
 
-Also, did you make sure all the code in arch/x86/kernel/alternative.c
-still works? Because adding extra padding in the CFI_CLANG case moves
-where the CFI bytes are emitted and all the CFI rewriting code goes
-sideways.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502280028.1Y9QMcR0-lkp@intel.com/
 
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for HID_MULTITOUCH when selected by DRM_APPLETBDRM
+   WARNING: unmet direct dependencies detected for HID_MULTITOUCH
+     Depends on [n]: HID_SUPPORT [=n] && HID [=n]
+     Selected by [y]:
+     - DRM_APPLETBDRM [=y] && HAS_IOMEM [=y] && DRM [=y] && USB [=y] && MMU [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
