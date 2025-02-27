@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-537108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0155A4881A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:47:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AACA4881C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002A01693BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:47:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24E817A41F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 18:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868F26F47D;
-	Thu, 27 Feb 2025 18:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BA22356D3;
+	Thu, 27 Feb 2025 18:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKvFxEzq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWZTdLK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A778026F450
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965DC18CC15
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 18:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740681918; cv=none; b=RlJKkTmn2j1AxKnhMV4uNSHtNKfYYU8bND2umLPipRIcC7qmTpnpDR/jQvubFJqYGgEMspQImzcAJpKn9L9oCIk3S9MYy1QURHQjIEyKUXqTAGPZHDOjS5C39VvmKAkYoJleIH/wlFFB6zFFuGl4hjqnEfrZXi2+CHsPaYihVME=
+	t=1740681989; cv=none; b=rQLjw4sFoGvDEm5N9pJJBiAJb/3tEe308HWAol8OXGfSQg1HOMiGZOa3dJ0CUG2E1Hep8fu8gHyEpVV07Fh2Q1bwtJMAnNRJCtiZwVfSoO99I8VeJTTeTpw/aDLjz8N1OvNO8l05i7+7yBMnRVsfFVD+gz9VoqEqRgd9hXLbQVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740681918; c=relaxed/simple;
-	bh=gxC4YpulTjL4LyXhFMns9rIvzhJlui2aMfofQzc2VGA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V9alKDl/WWxGMejvsw70lBe3Gu2HWA9RLwM9TxR2BG1AqUahSc/0p0B0XhY2+3zMrIFwpzEQSwFdeR/dBTjdMcqJeYibaxast3uyHC8hA7B7JNlffk8G952Pk2SuTeGO3B1sWCyaF+p9G87GG9wjE/wzM6JDutldfBQrNAOSrZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKvFxEzq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740681917; x=1772217917;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gxC4YpulTjL4LyXhFMns9rIvzhJlui2aMfofQzc2VGA=;
-  b=RKvFxEzqZ1oKzq13b/wo2MSSHxGkAQso1gbfVAFzHYIYTLIqY+ESE+J9
-   lo8N2tsoKpwh/emqETfFoncdvvfIQCR7I6DDuTxtzumv7l/1PcRS96TnY
-   9Z6ok8UE4AUKc6i93nKZB6WQazDI4XvBZpOTPojGsKgFy0Phvs3DQy6jn
-   IHQubkLj/NAbOtT6HxN2zmacqO4yYsrfRsv4JLXf5b9mxImPigkDxUcM9
-   7r2db+H/fj0/z9cMi4rQ7UY9jq/PkGb81i5L7JeENH0IkFtJmqgVI0zcX
-   eZM+YP3nfMTkv02dODljUnq9r0aJT3RekjA+YeNK/kXxz6WCzZTjubSdf
-   w==;
-X-CSE-ConnectionGUID: Xf3AT+PnT2GyIPo0/VdN4A==
-X-CSE-MsgGUID: mdBPoQZHR3GJpksg+LCBlQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41720925"
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="41720925"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 10:45:16 -0800
-X-CSE-ConnectionGUID: wfJMc+3LS82MOF+1S9p++A==
-X-CSE-MsgGUID: OfFZEz4oT+Whyw4Bl0hvkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="117767455"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.154.132])
-  by fmviesa009.fm.intel.com with ESMTP; 27 Feb 2025 10:45:15 -0800
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	chang.seok.bae@intel.com
-Subject: [PATCH RFC v1 11/11] selftests/x86/apx: Add APX test
-Date: Thu, 27 Feb 2025 10:44:56 -0800
-Message-ID: <20250227184502.10288-12-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
-References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1740681989; c=relaxed/simple;
+	bh=BjZdXViAG8ZGsrjysMXmH9bmFLZCSMf57ftylZQhXLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z32hBQYcRd9VHoxZPktYPR/jD8YAgPqN69fUaUAClWENtTf9FpjbaighGvgjnptI0P2NIRiOPsikpwIpxCrJMd0r9gInEcIK1PnoQIh4/G/3OoyWrPHB+S5pTuTVJhEjd+QeEMl+QMOLUK2s2MLepqVyf9ielLPQgTymLqrNRYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWZTdLK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F305C4CEDD;
+	Thu, 27 Feb 2025 18:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740681989;
+	bh=BjZdXViAG8ZGsrjysMXmH9bmFLZCSMf57ftylZQhXLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CWZTdLK1ks3LWoFUL5XgfldOguqz+9Jl4/26OvK8cc1tSHt6oWYk8aMjDsGJ/xyvW
+	 UPtIchLAqsTEUTTO91PrHcLggKLC/i2Oq/BVgRUPAMabK+lv9nY0hG6LHsefeWFugL
+	 xwqgLX6oAW45rgpsGjF6IUWdEv9Widz+MTTqU9b06DxCa/Q/57LYJ6d5qz+FmhToRm
+	 bq4rhlcJW06cuy7ykPLi0bWcCnUsV3eH7/twn8x+dQ2A711l0D0EylCq7o/+OAR5CN
+	 0Mu653gXdFH2cZEI/fqcdayAIk95yI+LxnnsKmbuCR0mOTsYdG/rmbLTVzr906iy2E
+	 18EOgKwFJvKOw==
+Date: Thu, 27 Feb 2025 19:46:16 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>,
+	Alexander Shishkin <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] x86/cpufeature: Add feature dependency checks
+Message-ID: <Z8Cy-IonwmCGNkkQ@gmail.com>
+References: <20241210224037.3052555-1-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210224037.3052555-1-sohil.mehta@intel.com>
 
-The extended general-purpose registers for APX may contain random data,
-which is currently assumed by the xstate testing framework. This allows
-the testing of the new userspace feature using the common test code.
 
-Invoke the test entry function from apx.c after enumerating the
-state component and adding it to the support list
+* Sohil Mehta <sohil.mehta@intel.com> wrote:
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
----
-The patch depends on the selftest xstate series, which was just merged
-into the x86/fpu branch:
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=x86/fpu
+> +
+> +/*
+> + * Return the feature "name" if available otherwise return
+> + * the X86_FEATURE_* numerals to make it easier to identify
+> + * the feature.
+> + */
+> +static const char *x86_feature_name(unsigned int feature, char *buf)
+> +{
+> +	if (x86_cap_flags[feature])
+> +		return x86_cap_flags[feature];
+> +
+> +	snprintf(buf, 16, "%d*32+%2d", feature / 32, feature % 32);
+> +
+> +	return buf;
+> +}
+> +
+> +void filter_feature_dependencies(struct cpuinfo_x86 *c)
+> +{
+> +	char feature_buf[16], depends_buf[16];
+> +	const struct cpuid_dep *d;
+> +
+> +	for (d = cpuid_deps; d->feature; d++) {
+> +		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
+> +			pr_info("CPU%d: Disabling feature %s due to missing feature %s\n",
+> +				smp_processor_id(),
+> +				x86_feature_name(d->feature, feature_buf),
+> +				x86_feature_name(d->depends, depends_buf));
+> +			do_clear_cpu_cap(c, d->feature);
+> +		}
+> +	}
 
-Here is the original series posting:
-  https://lore.kernel.org/lkml/20250226010731.2456-1-chang.seok.bae@intel.com/
----
- tools/testing/selftests/x86/Makefile |  3 ++-
- tools/testing/selftests/x86/apx.c    | 10 ++++++++++
- tools/testing/selftests/x86/xstate.c |  3 ++-
- tools/testing/selftests/x86/xstate.h |  1 +
- 4 files changed, 15 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/x86/apx.c
+So let's not disable any CPU features actively for the time being, how 
+about issuing a pr_warn() only about the dependency violation?
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 28422c32cc8f..f703fcfe9f7c 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -19,7 +19,7 @@ TARGETS_C_32BIT_ONLY := entry_from_vm86 test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip syscall_numbering \
--			corrupt_xstate_header amx lam test_shadow_stack avx
-+			corrupt_xstate_header amx lam test_shadow_stack avx apx
- # Some selftests require 32bit support enabled also on 64bit systems
- TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
- 
-@@ -136,3 +136,4 @@ $(OUTPUT)/nx_stack_64: CFLAGS += -Wl,-z,noexecstack
- $(OUTPUT)/avx_64: CFLAGS += -mno-avx -mno-avx512f
- $(OUTPUT)/amx_64: EXTRA_FILES += xstate.c
- $(OUTPUT)/avx_64: EXTRA_FILES += xstate.c
-+$(OUTPUT)/apx_64: EXTRA_FILES += xstate.c
-diff --git a/tools/testing/selftests/x86/apx.c b/tools/testing/selftests/x86/apx.c
-new file mode 100644
-index 000000000000..d9c8d41b8c5a
---- /dev/null
-+++ b/tools/testing/selftests/x86/apx.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+
-+#include "xstate.h"
-+
-+int main(void)
-+{
-+	test_xstate(XFEATURE_APX);
-+}
-diff --git a/tools/testing/selftests/x86/xstate.c b/tools/testing/selftests/x86/xstate.c
-index 23c1d6c964ea..97fe4bd8bc77 100644
---- a/tools/testing/selftests/x86/xstate.c
-+++ b/tools/testing/selftests/x86/xstate.c
-@@ -31,7 +31,8 @@
- 	 (1 << XFEATURE_OPMASK)	|	\
- 	 (1 << XFEATURE_ZMM_Hi256) |	\
- 	 (1 << XFEATURE_Hi16_ZMM) |	\
--	 (1 << XFEATURE_XTILEDATA))
-+	 (1 << XFEATURE_XTILEDATA) |	\
-+	 (1 << XFEATURE_APX))
- 
- static inline uint64_t xgetbv(uint32_t index)
- {
-diff --git a/tools/testing/selftests/x86/xstate.h b/tools/testing/selftests/x86/xstate.h
-index 42af36ec852f..f3c25193a3be 100644
---- a/tools/testing/selftests/x86/xstate.h
-+++ b/tools/testing/selftests/x86/xstate.h
-@@ -33,6 +33,7 @@ enum xfeature {
- 	XFEATURE_RSRVD_COMP_16,
- 	XFEATURE_XTILECFG,
- 	XFEATURE_XTILEDATA,
-+	XFEATURE_APX,
- 
- 	XFEATURE_MAX,
- };
--- 
-2.45.2
+I think the main problem is when these problems slip through 100% 
+unnoticed.
 
+Thanks,
+
+	Ingo
 
