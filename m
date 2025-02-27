@@ -1,251 +1,247 @@
-Return-Path: <linux-kernel+bounces-535909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF185A478F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:21:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93ADA478F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13B657A4A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5493A3AFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088EA227E82;
-	Thu, 27 Feb 2025 09:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85892227BB6;
+	Thu, 27 Feb 2025 09:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WeHpMBn2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="n6ytZsN9"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE92515DBB3;
-	Thu, 27 Feb 2025 09:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF74227B83
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740648080; cv=none; b=VfxUxQsLxQpgorq+Sl/OQMNEMRswjGOf8x7phYN8vwq059ZhG/UD3/G4CJC8bzY3PpyHQQ3bEUsELz3QeqDKcIKIdeXB+3S2Z+a3Lq6sVBJUwXx+nQvLvZPfRqBai+7QBwhL2RKulGeHGHMo65mFRLBzM+CHsF70U6K8tg+ljvk=
+	t=1740648116; cv=none; b=JviURpUXwcKSkZXxctMnmKmolkHhaMtvp0AFKrFYIex64rZJb7ZZ9Xyfa7y1DAnaNBV23gbMRTl/Q+i59s6fJRjTangtFnHlbobeFTvgJ95nqSWlfpTOeJOcyZB6xjB6gLWyNcbuOX1uINeWKpXoih/Oi0JMBAM3f68RbjfW0eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740648080; c=relaxed/simple;
-	bh=+4tBccp2hJaSrzDQVra5A8hudiY5I7ym0Fqom3OIn6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBjVlOKqi8R5my/JNf/iojK5zmr04f93IqfkY5m2jT/EUZwt6+SNcxv81Ccif4WkCDuF0ttyaTh1vHTVGWZ4iYJig6cGT19aErx4qPt1fhAeVah9eIElaI2/Sz2cimx15bZNVJmjjUDZEHiUsDXM61tKwZOuJ0cKcVumvusJ+8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WeHpMBn2; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740648079; x=1772184079;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+4tBccp2hJaSrzDQVra5A8hudiY5I7ym0Fqom3OIn6A=;
-  b=WeHpMBn2HTF5Kpk1KEd42UWSxcGa48RvWW7SI7nIijazyQFTi+9ye0ci
-   KWsMmQLI/LNbi8Mw3XPSTSlh3mqwU42evqf1Zf9ONo/BFGevvTjI1sZMs
-   xUQTvzR98vydst7p7MjMavgyxhBvsgNZEkXSWwtLHS9mQ7387W5xRFSFH
-   pv1QFNxxRANe12G0MnRHI9z/yan0CyMkczem46RS45KgqCEkPJyjnFh9s
-   re4GmcFsIPvEfjZ2fnedtMZ4o3wFXxqYJCrZ1pt2A/HdnwNuYwUY6Av6o
-   pSfJIQOsqTLqqxKvBTdxmo2bfpwuPrR8q8fpY3nYCzfeLvI7lmk+dNFYw
-   A==;
-X-CSE-ConnectionGUID: B3xtlKx/Q1WphPXB6CAukQ==
-X-CSE-MsgGUID: YE2Pj0x+QNKF5LcnBOjDNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41783188"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41783188"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 01:21:18 -0800
-X-CSE-ConnectionGUID: K21TiGyvSsq3xymICO23Yw==
-X-CSE-MsgGUID: aCB2f2A1RAuzRiBg/1YofA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="117461361"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 01:21:17 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id DA6F711F944;
-	Thu, 27 Feb 2025 11:21:12 +0200 (EET)
-Date: Thu, 27 Feb 2025 09:21:12 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Shravan.Chippa@microchip.com
-Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor.Dooley@microchip.com, Valentina.FernandezAlanis@microchip.com,
-	Praveen.Kumar@microchip.com
-Subject: Re: [PATCH V5 1/2] media: i2c: imx334: Optimized 4k and 2k mode
- register arrays
-Message-ID: <Z8AuiGKcGUeKxf_H@kekkonen.localdomain>
-References: <20250225062635.3566513-1-shravan.chippa@microchip.com>
- <20250225062635.3566513-2-shravan.chippa@microchip.com>
- <Z78lKVUsd-sxnZ0v@kekkonen.localdomain>
- <PH0PR11MB56115C346E4BE3CD3598DB5C81CD2@PH0PR11MB5611.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1740648116; c=relaxed/simple;
+	bh=qJ6d6yyVEiOIzWKAFqn29zVljBDyaAUEI1J5TgXK8MA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ofGund55dNOqWbUOtK7HKsoOz4d1dq2WOmpc6oJuiKfzJLODC/I64LROwbp1o7Tdbk1ybNVp1Bt07PVlm/lePV9CbNTKuPr2Wm8jL34yEMYfVMY9gxFAhLmIMN9N7I3YXS/fWWjdn0lfDJmll0zdIscz9tzJ2IzVoEMGroGazYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=n6ytZsN9; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbb12bea54so127624866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 01:21:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740648113; x=1741252913; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QGKuyOFdmCrFZDueE7tG98lW1JYRuqGd31pjDPdwi0A=;
+        b=n6ytZsN9bCZOytA5VLbihqdX0iuFDF1y6DcGq8WceZddRdPOc33d+6PLBb+Ej454Kb
+         GfGyu2CNZ0u03yzImi5gZNQ4bRcqxQ5jlEa+nwhtYt0MXWZx8d9HLyEomoigX2Wmg9jr
+         YFOFpSaO4g7ZqUozXLMwYSQPhYOeZbJjGTIC11m2IHsqMwgaQo4gvh2FWqaby4AuvltE
+         Jk7Qo5bWETupQiI75zzai2Xk/JSkO8vGGXKflj7iW+kYVtD+wBmhV9RKbPYV8g5p7w+d
+         4z8H1xAFYOmlURRFX7gBKXHv2RsTGPfBojfdgq2mDGPmwfCERSs+3Tlg9t0Bv63fZooD
+         ljiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740648113; x=1741252913;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QGKuyOFdmCrFZDueE7tG98lW1JYRuqGd31pjDPdwi0A=;
+        b=XUceBOU+ZkdPkXfPGYBALl1CCJ03OcyoUpjyn2kgTWeEyndehLdI8CJA9pidS3Ay9y
+         jjSQqnrO4sh1MYpyym/bH+t9iIBP1QxFHe9o/4m5rMsJ7L+2rQqzmddP2vzbMXXfnzzB
+         asDnaAeylC8HHHrJ5i8PcXQP6OJjNUPeq8UaIQYWLeixb6cXYiA3Gisu3ciLjGp1ufLE
+         nDFJQeD3tl4vI+M4UFyyhdWG9gskm1KoisYeYoBPvz4PwvRnDYrZOu8/q03cAifS7yRN
+         HlfEW9FgJ0SrprfSjx0vc+e7MWpxr71rXBIOQpf84cZJwUAzlp9sOrC55D0hdmjNA8P8
+         ZqtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9SbmHvqC1Wl3ZLTfotpjOpLCSGCQCXpP6BOyCfvYsILuwdnjqkXO+b1jekngjouvHfg1ZmsXqdXM6wSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu0PXbV1HL/i/kwfvUMXgRcUEE4twTxjzB0MAIDPLBg9XnJHEb
+	IiSErVs4gGvb3U1BZfN3wfGYFG2IcBpEqhp647bGnmD0r8DjEplcohlCPVKK5fY=
+X-Gm-Gg: ASbGncs0tn520LatgqaSopaPI6izubWssKddFP5yYjU/gpz1AthIMeejcjMtWILwZ0o
+	iGwaVmFyA5tJC/UMlw0/j0NnQWgSZU7pmPhThdU+wOYPw9guCz/uuCjcDi4+OawaJxq+2fwMAv1
+	FBqI8umt1mU/pliOPVun8e/YCd8pPW7+30aqrTw4IetwaGoVfIl2lFEoCTZgaQ0nIDXcoQCGLZ0
+	zvP/QV+kvahp1xHABYVwwHRKuUdq0d1hIyQfASfE4n1164l5YVoK2gBI7qkEWYF4TnZGqqq/Oog
+	sxo2S/pQ5uq5bVoFhEYxQQlG928a3c4QjP0rHazSuwR8dG+KAL50QM2ZYg==
+X-Google-Smtp-Source: AGHT+IHD+cNx6yl3X1EnkFEtFKEHouxEwyh4QDe/AW5lHxTVz7/szNt45pitj7P8HvFW9mO2l6DKdg==
+X-Received: by 2002:a17:907:7fa3:b0:abb:b12b:e103 with SMTP id a640c23a62f3a-abed0dd817amr1443127466b.34.1740648113102;
+        Thu, 27 Feb 2025 01:21:53 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c6e9c25sm91516366b.108.2025.02.27.01.21.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 01:21:52 -0800 (PST)
+Message-ID: <13cb4b16-51b0-4042-8435-6dac72586e55@blackwall.org>
+Date: Thu, 27 Feb 2025 11:21:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR11MB56115C346E4BE3CD3598DB5C81CD2@PH0PR11MB5611.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 net 1/3] bonding: move IPsec deletion to
+ bond_ipsec_free_sa
+From: Nikolay Aleksandrov <razor@blackwall.org>
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
+ Jarod Wilson <jarod@redhat.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250227083717.4307-1-liuhangbin@gmail.com>
+ <20250227083717.4307-2-liuhangbin@gmail.com>
+ <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
+Content-Language: en-US
+In-Reply-To: <446e8ef4-7ac0-43ad-99ff-29c21a2ee117@blackwall.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Shravan,
-
-On Thu, Feb 27, 2025 at 05:04:11AM +0000, Shravan.Chippa@microchip.com wrote:
-> Hi Sakari,
+On 2/27/25 10:50, Nikolay Aleksandrov wrote:
+> On 2/27/25 10:37, Hangbin Liu wrote:
+>> The fixed commit placed mutex_lock() inside spin_lock_bh(), which triggers
+>> a warning:
+>>
+>>   BUG: sleeping function called from invalid context at...
+>>
+>> Fix this by moving the IPsec deletion operation to bond_ipsec_free_sa,
+>> which is not held by spin_lock_bh().
+>>
+>> Additionally, delete the IPsec list in bond_ipsec_del_sa_all() when the
+>> XFRM state is DEAD to prevent xdo_dev_state_free() from being triggered
+>> again in bond_ipsec_free_sa().
+>>
+>> For bond_ipsec_free_sa(), there are now three conditions:
+>>
+>>   1. if (!slave): When no active device exists.
+>>   2. if (!xs->xso.real_dev): When xdo_dev_state_add() fails.
+>>   3. if (xs->xso.real_dev != real_dev): When an xs has already been freed
+>>      by bond_ipsec_del_sa_all() due to migration, and the active slave has
+>>      changed to a new device. At the same time, the xs is marked as DEAD
+>>      due to the XFRM entry is removed, triggering xfrm_state_gc_task() and
+>>      bond_ipsec_free_sa().
+>>
+>> In all three cases, xdo_dev_state_free() should not be called, only xs
+>> should be removed from bond->ipsec list.
+>>
+>> Fixes: 2aeeef906d5a ("bonding: change ipsec_lock from spin lock to mutex")
+>> Reported-by: Jakub Kicinski <kuba@kernel.org>
+>> Closes: https://lore.kernel.org/netdev/20241212062734.182a0164@kernel.org
+>> Suggested-by: Cosmin Ratiu <cratiu@nvidia.com>
+>> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+>> ---
+>>  drivers/net/bonding/bond_main.c | 34 ++++++++++++++++++++++-----------
+>>  1 file changed, 23 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+>> index e45bba240cbc..683bf1221caf 100644
+>> --- a/drivers/net/bonding/bond_main.c
+>> +++ b/drivers/net/bonding/bond_main.c
+>> @@ -537,6 +537,10 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
+>>  	}
+>>  
+>>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+>> +		/* Skip dead xfrm states, they'll be freed later. */
+>> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
+>> +			continue;
+>> +
+>>  		/* If new state is added before ipsec_lock acquired */
+>>  		if (ipsec->xs->xso.real_dev == real_dev)
+>>  			continue;
+>> @@ -560,7 +564,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
+>>  	struct net_device *bond_dev = xs->xso.dev;
+>>  	struct net_device *real_dev;
+>>  	netdevice_tracker tracker;
+>> -	struct bond_ipsec *ipsec;
+>>  	struct bonding *bond;
+>>  	struct slave *slave;
+>>  
+>> @@ -592,15 +595,6 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
+>>  	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
+>>  out:
+>>  	netdev_put(real_dev, &tracker);
+>> -	mutex_lock(&bond->ipsec_lock);
+>> -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+>> -		if (ipsec->xs == xs) {
+>> -			list_del(&ipsec->list);
+>> -			kfree(ipsec);
+>> -			break;
+>> -		}
+>> -	}
+>> -	mutex_unlock(&bond->ipsec_lock);
+>>  }
+>>  
+>>  static void bond_ipsec_del_sa_all(struct bonding *bond)
+>> @@ -617,6 +611,12 @@ static void bond_ipsec_del_sa_all(struct bonding *bond)
+>>  
+>>  	mutex_lock(&bond->ipsec_lock);
+>>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+>> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
+>> +			list_del(&ipsec->list);
 > 
-> > -----Original Message-----
-> > From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Sent: Wednesday, February 26, 2025 7:59 PM
-> > To: shravan Chippa - I35088 <Shravan.Chippa@microchip.com>
-> > Cc: mchehab@kernel.org; kieran.bingham@ideasonboard.com; linux-
-> > media@vger.kernel.org; linux-kernel@vger.kernel.org; Conor Dooley -
-> > M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -
-> > M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -
-> > I30718 <Praveen.Kumar@microchip.com>
-> > Subject: Re: [PATCH V5 1/2] media: i2c: imx334: Optimized 4k and 2k mode
-> > register arrays
-> > 
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the
-> > content is safe
-> > 
-> > Hi Shravan,
-> > 
-> > On Tue, Feb 25, 2025 at 11:56:34AM +0530, shravan kumar wrote:
-> > > From: Shravan Chippa <shravan.chippa@microchip.com>
-> > >
-> > > Optimized the resolution arrays by integrating a common register array.
-> > >
-> > > Adjusted the register array values for 1920x1080@30 and 3840x2160@30
-> > > resolutions to align with the common register array values.
-> > >
-> > > Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
-> > > ---
-> > >  drivers/media/i2c/imx334.c | 148
-> > > +++++++++++--------------------------
-> > >  1 file changed, 43 insertions(+), 105 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> > > index a544fc3df39c..b2ad19abaca8 100644
-> > > --- a/drivers/media/i2c/imx334.c
-> > > +++ b/drivers/media/i2c/imx334.c
-> > > @@ -167,8 +167,8 @@ static const s64 link_freq[] = {
-> > >       IMX334_LINK_FREQ_445M,
-> > >  };
-> > >
-> > > -/* Sensor mode registers for 1920x1080@30fps */ -static const struct
-> > > imx334_reg mode_1920x1080_regs[] = {
-> > > +/* Sensor common mode registers values */ static const struct
-> > > +imx334_reg common_mode_regs[] = {
-> > >       {0x3000, 0x01},
-> > >       {0x3018, 0x04},
-> > >       {0x3030, 0xca},
-> > > @@ -176,26 +176,10 @@ static const struct imx334_reg
-> > mode_1920x1080_regs[] = {
-> > >       {0x3032, 0x00},
-> > >       {0x3034, 0x4c},
-> > >       {0x3035, 0x04},
-> > > -     {0x302c, 0xf0},
-> > > -     {0x302d, 0x03},
-> > > -     {0x302e, 0x80},
-> > > -     {0x302f, 0x07},
-> > > -     {0x3074, 0xcc},
-> > > -     {0x3075, 0x02},
-> > > -     {0x308e, 0xcd},
-> > > -     {0x308f, 0x02},
-> > > -     {0x3076, 0x38},
-> > > -     {0x3077, 0x04},
-> > > -     {0x3090, 0x38},
-> > > -     {0x3091, 0x04},
-> > > -     {0x3308, 0x38},
-> > > -     {0x3309, 0x04},
-> > > -     {0x30C6, 0x00},
-> > > +     {0x30c6, 0x00},
-> > >       {0x30c7, 0x00},
-> > >       {0x30ce, 0x00},
-> > >       {0x30cf, 0x00},
-> > > -     {0x30d8, 0x18},
-> > > -     {0x30d9, 0x0a},
-> > >       {0x304c, 0x00},
-> > >       {0x304e, 0x00},
-> > >       {0x304f, 0x00},
-> > > @@ -210,7 +194,7 @@ static const struct imx334_reg
-> > mode_1920x1080_regs[] = {
-> > >       {0x300d, 0x29},
-> > >       {0x314c, 0x29},
-> > >       {0x314d, 0x01},
-> > > -     {0x315a, 0x06},
-> > > +     {0x315a, 0x0a},
-> > >       {0x3168, 0xa0},
-> > >       {0x316a, 0x7e},
-> > >       {0x319e, 0x02},
-> > > @@ -330,116 +314,63 @@ static const struct imx334_reg
-> > mode_1920x1080_regs[] = {
-> > >       {0x3002, 0x00},
-> > >  };
-> > >
-> > > +/* Sensor mode registers for 1920x1080@30fps */ static const struct
-> > > +imx334_reg mode_1920x1080_regs[] = {
-> > > +     {0x302c, 0xf0},
-> > > +     {0x302d, 0x03},
-> > > +     {0x302e, 0x80},
-> > > +     {0x302f, 0x07},
-> > > +     {0x3074, 0xcc},
-> > > +     {0x3075, 0x02},
-> > > +     {0x308e, 0xcd},
-> > > +     {0x308f, 0x02},
-> > > +     {0x3076, 0x38},
-> > > +     {0x3077, 0x04},
-> > > +     {0x3090, 0x38},
-> > > +     {0x3091, 0x04},
-> > > +     {0x3308, 0x38},
-> > > +     {0x3309, 0x04},
-> > > +     {0x30d8, 0x18},
-> > > +     {0x30d9, 0x0a},
-> > > +};
-> > > +
-> > >  /* Sensor mode registers for 3840x2160@30fps */  static const struct
-> > > imx334_reg mode_3840x2160_regs[] = {
-> > > -     {0x3000, 0x01},
-> > > -     {0x3002, 0x00},
-> > > -     {0x3018, 0x04},
-> > > -     {0x37b0, 0x36},
-> > > -     {0x304c, 0x00},
-> > > -     {0x300c, 0x3b},
-> > > -     {0x300d, 0x2a},
-> > > -     {0x3034, 0x26},
-> > > -     {0x3035, 0x02},
-> > > -     {0x314c, 0x29},
-> > > -     {0x314d, 0x01},
-> > > -     {0x315a, 0x02},
-> > > -     {0x3168, 0xa0},
-> > > -     {0x316a, 0x7e},
-> > > -     {0x3288, 0x21},
-> > > -     {0x328a, 0x02},
-> > >       {0x302c, 0x3c},
-> > >       {0x302d, 0x00},
-> > >       {0x302e, 0x00},
-> > >       {0x302f, 0x0f},
-> > > +     {0x3074, 0xb0},
-> > > +     {0x3075, 0x00},
-> > > +     {0x308e, 0xb1},
-> > 
-> > This register wasn't part of the original register list for the mode. It seems to
-> > have been written to in the other (binned?) mode only. It looks like a possible
-> > bugfix. Should it be in a separate patch? This patch is only meant to reorganise
-> > register settings to a base set and modes, not change the registers written in
-> > any way.
+> To be able to do this here, you'll have to use list_for_each_entry_safe().
 > 
-> Yes, it is correct that these values are not part of the original
-> 3840x2160 register list. However, these registers have been modified in
-> the other three mode registers array. The 3840x2160 mode operates with
-> the reset value. If we switch to the other three modes and then return to
-> the 3840x2160 mode, it should function correctly. Therefore, I am
-> restoring the reset values.
 
-Please do wrap at 75 characters when replying.
+One more thing - note I'm not an xfrm expert by far but it seems to me here you have
+to also call  xdo_dev_state_free() with the old active slave dev otherwise that will
+never get called with the original real_dev after the switch to a new
+active slave (or more accurately it might if the GC runs between the switching
+but it is a race), care must be taken wrt sequence of events because the XFRM
+GC may be running in parallel which probably means that in bond_ipsec_free_sa()
+you'll have to take the mutex before calling xdo_dev_state_free() and check
+if the entry is still linked in the bond's ipsec list before calling the free_sa
+callback, if it isn't then del_sa_all got to it before the GC and there's nothing
+to do if it also called the dev's free_sa callback. The check for real_dev doesn't
+seem enough to protect against this race.
 
-Such changes belong to separate patches. Please add further patches in such
-cases.
+Cheers,
+ Nik
 
--- 
-Regards,
+>> +			kfree(ipsec);
+>> +			continue;
+>> +		}
+>> +
+>>  		if (!ipsec->xs->xso.real_dev)
+>>  			continue;
+>>  
+>> @@ -640,6 +640,7 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
+>>  	struct net_device *bond_dev = xs->xso.dev;
+>>  	struct net_device *real_dev;
+>>  	netdevice_tracker tracker;
+>> +	struct bond_ipsec *ipsec;
+>>  	struct bonding *bond;
+>>  	struct slave *slave;
+>>  
+>> @@ -659,13 +660,24 @@ static void bond_ipsec_free_sa(struct xfrm_state *xs)
+>>  	if (!xs->xso.real_dev)
+>>  		goto out;
+>>  
+>> -	WARN_ON(xs->xso.real_dev != real_dev);
+>> +	if (xs->xso.real_dev != real_dev)
+>> +		goto out;
+>>  
+>>  	if (real_dev && real_dev->xfrmdev_ops &&
+>>  	    real_dev->xfrmdev_ops->xdo_dev_state_free)
+>>  		real_dev->xfrmdev_ops->xdo_dev_state_free(xs);
+>>  out:
+>>  	netdev_put(real_dev, &tracker);
+>> +
+>> +	mutex_lock(&bond->ipsec_lock);
+>> +	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+>> +		if (ipsec->xs == xs) {
+>> +			list_del(&ipsec->list);
+>> +			kfree(ipsec);
+>> +			break;
+>> +		}
+>> +	}
+>> +	mutex_unlock(&bond->ipsec_lock);
+>>  }
+>>  
+>>  /**
+> 
 
-Sakari Ailus
 
