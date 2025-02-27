@@ -1,121 +1,94 @@
-Return-Path: <linux-kernel+bounces-537149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10F7A4888D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:11:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E0AA488CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:17:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7879E188BF5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:11:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478347A5727
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AD426E654;
-	Thu, 27 Feb 2025 19:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB89926E658;
+	Thu, 27 Feb 2025 19:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVvDI46L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Od+gIcsA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E2526E63F;
-	Thu, 27 Feb 2025 19:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132C826E652
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740683457; cv=none; b=F1UHkoyUHL7WZVdaigVXoP9XxqmH0QJP3UjwMoM7BupuY7NFXHkgR/dy9De65ro/baEgBAwXB5vavsXxPAiOCyRzYAZk1FNDzt6qEl0T3t8hBJX5gp7bkf1IuILGHZ4P0MfbiE3VZBVhltP7PoSwTGKfkZaBOPnbbmofVUegPuE=
+	t=1740683539; cv=none; b=B6iDI/EelAkz/4Q1M9V0BPYRhkBCCFDRk4QzPY7ZXiD3NLEYQKQW5TXacPdpXbOiU7qrcl3KqZ656QANNNn6JXtKpeTvq1CM50d5iKUXeLsPX1tlnMJ5s9tD24yHkYcFViGz//1JIUCWjNjw+UkZOe9HuOw9zfVbrrx+3Pdc9Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740683457; c=relaxed/simple;
-	bh=IcMDrCFUyWWuyUKJigwMhEoRpg9pbvdpgup3hiDyvDU=;
+	s=arc-20240116; t=1740683539; c=relaxed/simple;
+	bh=QfA4t+TnvHcJFsgllIETJAAm5PaYWOAJv/1avs53/vQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fh7wcse4ZwmMV339f8he3dVFKbWYfKsUnnWnjbTlX5y2GACv16wsaUNV151OponzlveaXuMFgPDgNwZn3sr5YXFRQK6M7QhD3q8TGvWIOpksZXh18iBG0yJNnE748Req6wD8VT2c/j37FqdvNJd3JpvFqGwYOn5rQXdq/D8Aw4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVvDI46L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16031C4CEDD;
-	Thu, 27 Feb 2025 19:10:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4X7CFbd2xA+RQL47P/5I3c+Jqs4cxzqFwNxmVdwfRkjdvcny9L4D+GSiQxZFqASvklhuYuJJJEzGkU+/7Ag6oKgMS7JZQ+krRpUBFQ/Mv2DJK/rEDxYSFeuOnudVGwA9JVNtqTjH2O+rFgrQX9X1nriQ8V2QerpMQnLEzMf9O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Od+gIcsA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4FFC4CEDD;
+	Thu, 27 Feb 2025 19:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740683457;
-	bh=IcMDrCFUyWWuyUKJigwMhEoRpg9pbvdpgup3hiDyvDU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hVvDI46LbUUXBr217w1MRrLcEeobjX7mjWP4O7tNTyNZVmNa+MB+bXIzYq60GmwJb
-	 sKwn+a4DALi9NxsdqbIh6AlAz24ODpQihY1e/7VjUoJRKl9mhMRsFQrGIq66ZEvb01
-	 Kh2TcqrcYfOzX9/FrSBfbhJ81T0QXC6GZQXDdeHYDeq385IT9n9n5PtTW5U52UiCUQ
-	 684nueLx7haLKuWnU+Lj8Tgidu2XK5ls5HMKOZ6eYe1q8+LinUwwaV8OlqbAgj+LoB
-	 Z0qIq76UYMBFI47woSjOtLfi8GIH/6APmESbJyKmBi9pSznN7sp6hSc0PK2hg0k1sv
-	 sc4SC1TngzUmg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9BF80CE0799; Thu, 27 Feb 2025 11:10:56 -0800 (PST)
-Date: Thu, 27 Feb 2025 11:10:56 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Martin Uecker <uecker@tugraz.at>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>,
-	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>,
-	airlied@gmail.com, boqun.feng@gmail.com,
-	david.laight.linux@gmail.com, ej@inai.de,
-	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <5ef99795-8d4e-48f9-909a-d752dc24c023@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <5d7363b0-785c-4101-8047-27cb7afb0364@ralfj.de>
- <CAHk-=wh=8sqvB-_TkwRnvL7jVA_xKbzsy9VH-GR93brSxTp60w@mail.gmail.com>
- <ed7ef66dbde453035117c3f2acb1daefa5bd19eb.camel@tugraz.at>
- <CAHk-=whLSWX=-5-z4Q8x1f_NLrHd0e3afbEwYPkkVSXj=xT-JQ@mail.gmail.com>
- <09e282a9c02fb07ba4fc248f14c0173d9b19179a.camel@tugraz.at>
- <CAHk-=wjqmHD-3QQ_9o4hrkhH57pTs3c1zuU0EdXYW23Vo0KTmQ@mail.gmail.com>
- <2f5a537b895250c40676d122a08d31e23a575b81.camel@tugraz.at>
- <20250227092949.137a39e9@gandalf.local.home>
- <54b92e98-cabf-4ddc-b51b-496626ac3ccb@paulmck-laptop>
- <czke6xumgufksyvu7xgin2ygn2jx6uvgtgwfknafq4s4migccz@aih2ptkzw3jx>
+	s=k20201202; t=1740683537;
+	bh=QfA4t+TnvHcJFsgllIETJAAm5PaYWOAJv/1avs53/vQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Od+gIcsAbJ0H1nOcpQ6ESquno0NZMfuV8zyzNPCpvZdNazt8GQPkFsQCgkZquN3Ew
+	 gg/TRp5D5BLMx1My9kMmIf3PHS1nM14tINr0qZoOebWIUrHu+y9ww436VNR1HfsSdP
+	 6r/s6ShV0tE71YPtV69HUqYNoE6Qy0U4D7280y73mVSbOAgUJqiJpxItjerdgdYq+p
+	 N/0uGtJvN9J3skKd9xBxkvzFMTQeAI2vE4tt4mdMM5s9eQcDag54lJUrxBiNnf0s6P
+	 mQi64WWmNUFqzwwQs0SNHeazT/jNwAHnaRR+ZFZgEKlz6rO6RlIPN4U+Q9nOyN1Ucy
+	 GtBewlT+8waUA==
+Date: Thu, 27 Feb 2025 20:12:07 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Subject: Re: [PATCH RFC v1 06/11] x86/fpu/mpx: Remove MPX xstate component
+ support
+Message-ID: <Z8C5B9PJUqkEDGH9@gmail.com>
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+ <20250227184502.10288-7-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <czke6xumgufksyvu7xgin2ygn2jx6uvgtgwfknafq4s4migccz@aih2ptkzw3jx>
+In-Reply-To: <20250227184502.10288-7-chang.seok.bae@intel.com>
 
-On Thu, Feb 27, 2025 at 01:13:40PM -0500, Kent Overstreet wrote:
-> On Thu, Feb 27, 2025 at 09:35:10AM -0800, Paul E. McKenney wrote:
-> > On Thu, Feb 27, 2025 at 09:29:49AM -0500, Steven Rostedt wrote:
-> > > On Thu, 27 Feb 2025 07:56:47 +0100
-> > > Martin Uecker <uecker@tugraz.at> wrote:
-> > > 
-> > > > Observable is I/O and volatile accesses.  These are things considered
-> > > > observable from the outside of a process and the only things an
-> > > > optimizer has to preserve.  
-> > > > 
-> > > > Visibility is related to when stores are visible to other threads of
-> > > > the same process. But this is just an internal concept to give
-> > > > evaluation of expressions semantics in a multi-threaded 
-> > > > program when objects are accessed from different threads. But 
-> > > > the compiler is free to change any aspect of it, as  long as the 
-> > > > observable behavior stays the same.
-> > > > 
-> > > > In practice the difference is not so big for a traditional
-> > > > optimizer that only has a limited local view and where
-> > > > "another thread" is basically part of the "outside world".
-> > > 
-> > > So basically you are saying that if the compiler has access to the entire
-> > > program (sees the use cases for variables in all threads) that it can
-> > > determine what is visible to other threads and what is not, and optimize
-> > > accordingly?
-> > > 
-> > > Like LTO in the kernel?
-> > 
-> > LTO is a small step in that direction.  In the most extreme case, the
-> > compiler simply takes a quick glance at the code and the input data and
-> > oracularly generates the output.
-> > 
-> > Which is why my arguments against duplicating atomic loads have been
-> > based on examples where doing so breaks basic arithmetic.  :-/
+
+* Chang S. Bae <chang.seok.bae@intel.com> wrote:
+
+> A new xstate component is set to occupy the position previously used by
+> MPX in the non-compacted format, then creating a fundamental conflict
+> between the two.
 > 
-> Please tell me that wasn't something that seriously needed to be said...
+> Currently, xfeature_noncompact_order[] includes MPX, but the introduction
+> of the new feature would cause a direct conflict there unless MPX is
+> removed. Fortunately, MPX support has already been deprecated and
+> effectively removed by commit:
+> 
+>     45fc24e89b7c ("x86/mpx: remove MPX from arch/x86")
+> 
+> Explicitly disable the deprecated feature to reserve a space for the new
+> xstate.
+> 
+> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+> ---
+> Several code references to this feature macro remain, primarily on the
+> KVM side. While they are likely to become obsolete after this patch,
+> their cleanup has been deferred at this review stage: This can be
+> addressed in a follow-up patch or included as an optional part of APX
+> enablement, I suppose.
 
-You are really asking me to lie to you?  ;-)
+So can this patch be moved further up in the series (without breaking 
+anything), to make it easier to review the impact of the APX changes?
 
-							Thanx, Paul
+Thanks,
+
+	Ingo
 
