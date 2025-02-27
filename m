@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-537406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4B3A48B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:24:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAF3A48B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443A616CF20
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5175188FA1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096127424A;
-	Thu, 27 Feb 2025 22:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6791323E35F;
+	Thu, 27 Feb 2025 22:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhyQO/HE"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GSr5EiiN"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C69527183D;
-	Thu, 27 Feb 2025 22:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0568823E345
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 22:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740694954; cv=none; b=nV2caKHJgSYmHOUYVMY+VaN7qD3lNO1QRzxPIOvPa02ErJEQh6SiLb2sOfhb2+skTJONHFku9EwtWIQB9mKfhJuJhcp1VyxwO/gtDCa8NESRA49N+zF65bKjL24ZaY3Kuc80l2AfHmw+VC0oI53iENiARqK+1UArClDHVf1eUEA=
+	t=1740695009; cv=none; b=GQHxQzc42JUR0Hbh4am6QgxbR6ILxRbbfjlPIJGbKCtF1WHXwHXj9Skk+o9uti8LHIi2kFrpxUczx3QCUGep9yzqDw4xwl79S5RobRlO/qAjO0gs/pinrs70tG8VueHHe9UHzILeCpiao5wES+MeCAxIoPaPVL60u6yJkk8TLnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740694954; c=relaxed/simple;
-	bh=T6Bo50skY4SCzRbWW2limk0zSRLlYkPHA1ym6x6SC90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDIRgaGEm2DYx+q3hQnHLsZf+4LzDAHWDs5UBPqy1/8q1QkrzZ+AFd2yO42afjem/Z28fT0TEGsiUA6/XziW+U/apIMxQPBDmMDPaiJSZGM5gELbpKV9QfwNCWyY46T9CUOWxiwfknykoooabztcUfoz6Dv/X8w+EMamP+46oz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhyQO/HE; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fe98d173daso2526769a91.1;
-        Thu, 27 Feb 2025 14:22:33 -0800 (PST)
+	s=arc-20240116; t=1740695009; c=relaxed/simple;
+	bh=0YNPSWTQpWa/D7GXeK/2uRq3i3eL4O93TsB5Vt1ZrbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1iDWbNawIYLDeXBO5ngpOeCjuHa+4uQZ/WYas4wI6u4bYIhTbN47yx/YE75JOIqy966xBCoSPPJHs1RqOXC+6afl1cSAWuYDeBrJQbVPXfgLdt9PBCJgD68Su7UAvNgNmVJjoZNkBZhM0AlFgN69v82KT0eLBvQS8yfHqd0rpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GSr5EiiN; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d2a869d016so4507115ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:23:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740694953; x=1741299753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJDVGKS8xeRNIpq4DDg+hys1rLrFWY25whSokAczVVQ=;
-        b=lhyQO/HE0/+LsXTj3lNNlLFI3p1jQ3sGgaW0EbbJLz3Qh2A7ZG9nGVcwCyF2vkO3+M
-         ghz9kgiwwzDUwdT3NXoBheebTaWgQmzsbZEQWDmdpCHbs7bbEyUEo0kWl7vf0Z01WCse
-         XJ3DlsTe7QYc+Wg60dZuAdjo44G2wwQqechup47DTW+GpoyOpFg3K7M+Ka+v8dn4b+jp
-         JqPyRSN2tCQfgSWrrlzakpQ7iA5MowYNy8FtIpcDVzNZh2+7x0RuFJGCbiW5ax/txsdn
-         fmx45w2vNcBiNH0VPwHgkJIlqzjZsXF4r/K9j4lTItfVb5sL+huyw0XcYdiGtuiZ5sCj
-         yg7A==
+        d=linuxfoundation.org; s=google; t=1740695007; x=1741299807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WZGLdBAP4UrHwr4pwKCt5KapJuR+y6gbHDi1DCQWdcY=;
+        b=GSr5EiiNc3IGIsq3xZaFvkHePID4hJpiDago/iR6MeyJvY+CnPwDhksatyKDzQiaVj
+         +KtedjqXogUOS0ascY4nL/RBd/1yscrGPVrlbxZ36OEt/kHMannHfGFFexjVfHGBUw4e
+         uPLYDqgNKNyppEzSuc1bKjCH7e0VKeyA2gupc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740694953; x=1741299753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LJDVGKS8xeRNIpq4DDg+hys1rLrFWY25whSokAczVVQ=;
-        b=SfVmDTMxkEg104vBSVkq2HB6eoAlb3Lh1SGaXrNIYIhB01wzcF8pZJe3aWdkZcaFlK
-         BSu32qZnins5iYonLhcec+13ZRQjYdjGmEPjnK1h6+0Ui91neYC7n+Wum6DJESAvnq5q
-         mMtyIbAh4HiWKvlhbO+SZ6nGvd7vs/DjP+qeNRLcmScSHqCXSOicJnSK9YvvLlU0aBkr
-         bTI9a++2kcvdMDGYP03JPW/qBYj6xK9jz2QvPjlGJ0DOgUcotb+HgLTw9QcwqASceL4q
-         we1fkYmFnmrC/Ikl+k1ATCZUM6QcJ2DQZk2ZyPLmwMSbmdChqhScuyQLKuIHaz3nzici
-         qCHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAo4HNsiJfpRpL/GpLRXSSRUKJBxCOQ6gILs8ItNEGmtnzhdW1slTiV769O24157dq6bggvm59TScVTa1A@vger.kernel.org, AJvYcCWC2b/6xMHHKmJPzGGETM1UxUMs6pheRy2dDrVQPRVJmQgvJWRiQw1OjCfiWNH+WNpXKI3Eg+dSg8OSjmWiL+83@vger.kernel.org, AJvYcCWu+yOrG5yDIK8UMhH9xjujbGPrEG0Aze/n6LbS8NpDzwgrWpoMvXt6NDMBD/4KrVGiusk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyETZAGuIi/DERFG1OXObiQ10+871OXxPJy47RHDc5XcpzQgn4v
-	cGAhEsbJJQcX+7+JB9ZknpUSTq0hrRG2sF3Zml/Z7zbGCEBPGi8=
-X-Gm-Gg: ASbGnctRf4VMU+4N8YbMsVMmKCVVyM0GcspygVdyG367WZWCyEvMC0v3rmvJT2wjlxJ
-	QG55Lt2nFKrukRjh7CJ0mzqytz5b7uKJ3dpOQWZnnT9p7VUTk8ovS88l9LDCW8b97r4EoEd4nEj
-	XFhEqU1WcHvGlXThXO/UJJQgBZSyKQVPtKUxM9/BGyHSRWKHDLCAeIidoKyJ7WgW21kppiEssHf
-	XvUvY6MKC1b8ApW4AlnJ5Vxf99PHAjy0LsLTwoUsVQ9MHtMvwIacxCJnipheRggTRbKrZkpwks3
-	7YLBb4rbRpThs/xBQ0N8GQXNOw==
-X-Google-Smtp-Source: AGHT+IHn+Ln1T+Or+8rEipf6FBTj9dYsfBDLagfJ6RzH15PWcaHs8JWOE9U6BH42Bt5qd0KZn2dp4w==
-X-Received: by 2002:a17:90b:2247:b0:2fe:84d6:cdf9 with SMTP id 98e67ed59e1d1-2febabf1a73mr1356087a91.26.1740694952654;
-        Thu, 27 Feb 2025 14:22:32 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fea67530d0sm2289741a91.10.2025.02.27.14.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:22:32 -0800 (PST)
-Date: Thu, 27 Feb 2025 14:22:31 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexis Lothore <alexis.lothore@bootlin.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 10/10] selftests/bpf: test_tunnel: Remove
- test_tunnel.sh
-Message-ID: <Z8Dlp_8RicAToHEr@mini-arch>
-References: <20250227-tunnels-v1-0-33df5c30aa04@bootlin.com>
- <20250227-tunnels-v1-10-33df5c30aa04@bootlin.com>
+        d=1e100.net; s=20230601; t=1740695007; x=1741299807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZGLdBAP4UrHwr4pwKCt5KapJuR+y6gbHDi1DCQWdcY=;
+        b=piQ183lEbp/pSwzMkCjM6SzaMKJc4lUhzde9KJFuH9JncsE/FJrIUtFXnSyXGJx7hE
+         ds9iR8caC3zNwRWxMcBu+BDEEMJvra5dAGqFB9uZsqplY21LIMulzeLHggqGp8gNgRKC
+         PiAuRQBgcN9qdrneNF90wr0HYbjI9fmETxJ/Sm+BudL2FsidvKIWB9L14+Bd04GDU99T
+         ohzAo1MYNoGtolMmdBj9ZKkwyrxwWgELX4nvE85Ik1lQFvjqQbhczP6Ae9GpevvZYBip
+         ei1jXZsB4z+xnoj5gXrJxKW8NJfAQSAwzxfLValTpRfeU7OHdhJK+KhEczMjStHJjP2b
+         V6fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXk5qRVNFBBm/Rvoxum95HlXshbf3AFeaINDdoeW3cf9i5PFfIT6iuEHG4AXgeXCoUhWcY1W7hYvsarh1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylvmoguml1R9XAqXsw84E8LZxaA9pFPxgju8wXQ1PEKrv1Vqpi
+	e4/8O5Ka0wiyhBt43CaN1cIRoahk/VYQzOUMblOuHkUAiIdse55Yk4YO4woZu4s=
+X-Gm-Gg: ASbGncsKGWDjZMKamQMkOIHMcOTYQetOcuY4eFDttTkD9xjGE1SFqIQObByxqYq3wEL
+	tkilGl+FSfxcq7YXq7KUlvMB0YnVjNTkp3VN1ES1YSxxD7tuDdBQ9XnXdR+4dDpA/Arp7WZhPrs
+	uCDl38OYRxM3PiyXVGpoHhiJv1cDTAm4iQgRFx4ePg4U+TH2t98TbPHZMViBnzVfopXbO6OVglA
+	5wimvr5G8E/C/BijrwdDj/x5cVpLelVspT1XimHOUKvfArX+eUpzi9xrM/wvrCcWHbgMcleitMn
+	gYJ04ZPy8k8TZNF8dAUftZMoVPbhBAFgjrQj
+X-Google-Smtp-Source: AGHT+IEKZr3NGXPy1Tv5y66C8yGg4ClACZyJG7v4CYzLbHYBMX19ZoriO50XGMis7tUv/ZwDiVzyTQ==
+X-Received: by 2002:a05:6e02:184a:b0:3d3:dd32:73d5 with SMTP id e9e14a558f8ab-3d3e6e23403mr11186115ab.4.1740695006941;
+        Thu, 27 Feb 2025 14:23:26 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d3deee5d4fsm5165025ab.62.2025.02.27.14.23.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 14:23:26 -0800 (PST)
+Message-ID: <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
+Date: Thu, 27 Feb 2025 15:23:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227-tunnels-v1-10-33df5c30aa04@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
+ usbip device
+To: Zongmin Zhou <min_halo@163.com>
+Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
+ gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250219092555.112631-1-min_halo@163.com>
+ <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
+ <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 02/27, Bastien Curutchet (eBPF Foundation) wrote:
-> All tests from test_tunnel.sh have been migrated into test test_progs.
-> The last test remaining in the script is the test_ipip() that is already
-> covered in the test_prog framework by the NONE case of test_ipip_tunnel().
+On 2/24/25 01:36, Zongmin Zhou wrote:
+> Dear Shuah,
 > 
-> Remove the test_tunnel.sh script and its Makefile entry
 > 
-> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+> Yes，the usbip server get the real USB controller message send to usbip client vhci-hcd，
+> 
+> must have to changethe API between the kernel and user-space.
+> 
+> The easiest way is to simply set vhci-hcd dma mask to 64 by default,
+> 
+> but not all USB controllers support 64bit，That doesn't look good？
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+This is an expetnsive change to fix the problem. In addition this change
+is unnecessary for non-storage devices where USB over IP is used.
+You mentioned this happens only in swiotlb cases? Can you explain the
+configuration on host and client side.
+
+I would like to explore fixes that are simpler than what is proposed
+in this patch.
+
+thanks,
+-- Shuah
 
