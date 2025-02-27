@@ -1,193 +1,136 @@
-Return-Path: <linux-kernel+bounces-537305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85720A48A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:03:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F407BA48A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AF6188FAC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3A77A6490
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFD326E956;
-	Thu, 27 Feb 2025 21:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C607270EC9;
+	Thu, 27 Feb 2025 21:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="px1TgrSh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kFzX+qBp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kyclk4gH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256101A9B2A;
-	Thu, 27 Feb 2025 21:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAED200111;
+	Thu, 27 Feb 2025 21:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740690200; cv=none; b=t47O8Vv6PCpJPYv5MtNRiIFV54B4bon+wESvdTkYamq1zDj3+JGi8lyeviHEqxODC/634dsgWFY9teJrd6SvlTUmWxfyLJsP1nKb5BzcwTPg2ZywYpJdpRwUgOa3vmEj0OusbfFpLblCu1ixT1tlns8Uy/5JFQjkFpJ47W2DYtA=
+	t=1740690186; cv=none; b=gRdIR/AdjjBRyeDfj2ZC9kyu183kYX+63QNYpdz/A64tvfPNFCCdJYK9qm4kqbkI4HHOBpCak8ZAZ2i1s1PZTzYSrix2gRPaNCN2Du5lAmYPSw7WnUIqVzTTNmP3FI/cQvEhDHC8E3YOaqp2Lpe4YzVKdgoG4ZXFv9v31gwABSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740690200; c=relaxed/simple;
-	bh=n0s0pvLs4N/eFWN5fJqX10ajVFKD6HnU7Kg2S63kz0k=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jLVXnE/LTtsJuN237YNfUUumW6+eawmlFACe1w4XGEkxWzJn6hVR7S6C49jd1eCSLWs5sKcpUhRNIMp660sNQW39TPR4IODF3Hbivcat6pE6pYXzmvieFKBynnhtfN8TqQsb6RRAITGMC/ekH73zJi5XFtWKNofJnpbip3FGeEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=px1TgrSh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kFzX+qBp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 21:02:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740690195;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LsZPoVQRz4ewufDmHvcQ5s456RuExlhmRlk1wbyZ+us=;
-	b=px1TgrShBQ/dzZ09bU9Yn+UYFyqW697hsK5UmQRu8dA3TkP/hVr7Io1rs8UDyckW7lWJWE
-	OAnnmIDvaU1l7ZWgac9MDS4y9IHr0R2gSeMSWD4UnAC5NY4pRc4i38cuPLs/PGFBYVNjVS
-	g85ZdxCKtumQRAH7MZfbnXx0vZ6Q21+NTMbB4Hq8J4SFBxTsVThqR1EDtDh/dWuq32YLcT
-	x4DPRiSj/cxlle/Z8eqPnixS2/h0urvCn586g4MMlQoc14jNyGg/SHEFOEq4gMvLHyX2e5
-	Geac0FKP+LaG531EOtD9ucyy8g4Wc8+1f06/Xs4nyZ5PFjfDE8C/2GPayLiQrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740690195;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LsZPoVQRz4ewufDmHvcQ5s456RuExlhmRlk1wbyZ+us=;
-	b=kFzX+qBpwubpZt0ZHa3P7WK6S97D0NWxcCuxCOiztR/Zp83+bmHRoVA2uF1HInvam4h2ra
-	7qE43tPOVlezDODA==
-From: "tip-bot2 for Max Grobecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in
- init_amd_k8() on AMD when running in a virtual machine
-Cc: Max Grobecker <max@grobecker.info>, Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <533f9cf-1957-41e8-a8cc-ddce5438f658-max@grobecker.info>
-References: <533f9cf-1957-41e8-a8cc-ddce5438f658-max@grobecker.info>
+	s=arc-20240116; t=1740690186; c=relaxed/simple;
+	bh=3r4B5oXY/BH77JcRs+o7wfqEqeE4UQbUlNZHU1J1ejA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W8drGfQb5p7g/nELgpjO0uMWWlvKgt47+jx1ueVl/eHg63CM1ei8BLzgLqbXfqaFWo1Mx+bvwgXul6Ua91sLoThKQvwvbWS1A378KqC7dLe1se67KkvcMbdOaC8sQC6rtHayOnrbo2WVEPUcelObcplJi6cwVgs9SOXJWpktLkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kyclk4gH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740690185; x=1772226185;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3r4B5oXY/BH77JcRs+o7wfqEqeE4UQbUlNZHU1J1ejA=;
+  b=Kyclk4gHrHuoiFVBwIoCY0gL4dshLAAXRbdXq/MyHis710UHoiSgda8K
+   X1506q1E/W0dSbF1GUlIE+TcG6gZs1DuzdQARToRwuAUTFqnyYoQRogWo
+   1arCSrswItJ11ie5r5XmsC2OB6CuoLIoRk3nwlwOqgb0w65rUVLcudL+G
+   d25m3o0mFNlIJr31g5Nqiws1DMQRTieBg5M2ut7OrQzBUdR02fbyFtHGy
+   1k/91fVLtgi8Ld7EXOzltCZBgdmpS6G3iE+RrbpM9hOQqnmWavkupU1I2
+   dP+o4Z78ZB+/HDfU/l4b6pX6HNgtGW093HUt3u9jEoqQklp1nZKY61jkX
+   g==;
+X-CSE-ConnectionGUID: juUW6RoPR3WeTDZ15KS7GQ==
+X-CSE-MsgGUID: eYiJuHFZSU+lHc9T4r1lQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="45518600"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="45518600"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 13:03:04 -0800
+X-CSE-ConnectionGUID: +u2IBbgaT/mS0s9qGAf+wQ==
+X-CSE-MsgGUID: BOhJFFZHRXqlhvzLKhBp0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="116940037"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 13:03:03 -0800
+Message-ID: <60941700-89e9-44c4-9e28-be482268d327@intel.com>
+Date: Thu, 27 Feb 2025 13:03:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174069015279.10177.12820241052987007054.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/crc32: use builtins to improve code generation
+To: Bill Wendling <morbo@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Eric Biggers <ebiggers@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Justin Stitt <justinstitt@google.com>, LKML <linux-kernel@vger.kernel.org>,
+ linux-crypto@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>
+References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
+ <d20da175-2102-4ac0-bf91-0ab8f6b6b317@intel.com>
+ <CAGG=3QX-msHuRffAtNCBoqYo=15Z--5RXbPbJ=Tzkb+C9zNSaw@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAGG=3QX-msHuRffAtNCBoqYo=15Z--5RXbPbJ=Tzkb+C9zNSaw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+On 2/27/25 12:57, Bill Wendling wrote:
+> I vastly prefer the first way if made "static __always_inline".
 
-Commit-ID:     faf7a039659bf8e8afaf4cb9e0106b268e9acdb4
-Gitweb:        https://git.kernel.org/tip/faf7a039659bf8e8afaf4cb9e0106b268e9=
-acdb4
-Author:        Max Grobecker <max@grobecker.info>
-AuthorDate:    Thu, 27 Feb 2025 21:45:05 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 21:45:20 +01:00
-
-x86/cpu: Don't clear X86_FEATURE_LAHF_LM flag in init_amd_k8() on AMD when ru=
-nning in a virtual machine
-
-When running in a virtual machine, we might see the original hardware CPU
-vendor string (i.e. "AuthenticAMD"), but a model and family ID set by the
-hypervisor. In case we run on AMD hardware and the hypervisor sets a model
-ID < 0x14, the LAHF cpu feature is eliminated from the the list of CPU
-capabilities present to circumvent a bug with some BIOSes in conjunction with
-AMD K8 processors.
-
-Parsing the flags list from /proc/cpuinfo seems to be happening mostly in
-bash scripts and prebuilt Docker containers, as it does not need to have
-additionals tools present =E2=80=93 even though more reliable ways like using=
- "kcpuid",
-which calls the CPUID instruction instead of parsing a list, should be prefer=
-red.
-Scripts, that use /proc/cpuinfo to determine if the current CPU is
-"compliant" with defined microarchitecture levels like x86-64-v2 will falsely
-claim the CPU is incapable of modern CPU instructions when "lahf_lm" is missi=
-ng
-in that flags list.
-
-This can prevent some docker containers from starting or build scripts to cre=
-ate
-unoptimized binaries.
-
-Admittably, this is more a small inconvenience than a severe bug in the kernel
-and the shoddy scripts that rely on parsing /proc/cpuinfo
-should be fixed instead.
-
-This patch adds an additional check to see if we're running inside a
-virtual machine (X86_FEATURE_HYPERVISOR is present), which, to my
-understanding, can't be present on a real K8 processor as it was introduced
-only with the later/other Athlon64 models.
-
-Example output with the "lahf_lm" flag missing in the flags list
-(should be shown between "hypervisor" and "abm"):
-
-    $ cat /proc/cpuinfo
-    processor       : 0
-    vendor_id       : AuthenticAMD
-    cpu family      : 15
-    model           : 6
-    model name      : Common KVM processor
-    stepping        : 1
-    microcode       : 0x1000065
-    cpu MHz         : 2599.998
-    cache size      : 512 KB
-    physical id     : 0
-    siblings        : 1
-    core id         : 0
-    cpu cores       : 1
-    apicid          : 0
-    initial apicid  : 0
-    fpu             : yes
-    fpu_exception   : yes
-    cpuid level     : 13
-    wp              : yes
-    flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca
-                      cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdt=
-scp
-                      lm rep_good nopl cpuid extd_apicid tsc_known_freq pni
-                      pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe pop=
-cnt
-                      tsc_deadline_timer aes xsave avx f16c hypervisor abm
-                      3dnowprefetch vmmcall bmi1 avx2 bmi2 xsaveopt
-
-... while kcpuid shows the feature to be present in the CPU:
-
-    # kcpuid -d | grep lahf
-         lahf_lm             - LAHF/SAHF available in 64-bit mode
-
-[ mingo: Updated the comment a bit. ]
-
-Signed-off-by: Max Grobecker <max@grobecker.info>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lore.kernel.org/r/533f9cf-1957-41e8-a8cc-ddce5438f658-max@grobe=
-cker.info
----
- arch/x86/kernel/cpu/amd.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 54194f5..c1f0a5f 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -631,8 +631,11 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
- 	 * Some BIOSes incorrectly force this feature, but only K8 revision D
- 	 * (model =3D 0x14) and later actually support it.
- 	 * (AMD Erratum #110, docId: 25759).
-+	 * Only clear capability flag if we're running on baremetal,
-+	 * as we might see a wrong model ID as a guest kernel. In such a case,
-+	 * we can safely assume we're not affected by this erratum.
- 	 */
--	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM)) {
-+	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X=
-86_FEATURE_HYPERVISOR)) {
- 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
- 		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
- 			value &=3D ~BIT_64(32);
+'static', for sure. But I'd leave the explicit inlining out unless the
+compiler is actively being stupid.
 
