@@ -1,131 +1,146 @@
-Return-Path: <linux-kernel+bounces-535431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA642A472CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:31:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECD3A47210
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154551889369
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6B0165B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEDA236435;
-	Thu, 27 Feb 2025 02:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271901A2554;
+	Thu, 27 Feb 2025 02:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UEbgBKOh"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbOXVG2d"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A7235345
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D790B187858;
+	Thu, 27 Feb 2025 02:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622797; cv=none; b=qPn7tyKAjK/B5GUdePXx1KiLt1o1xX5LZ8qDZBVfhhDF75QXxg4mN8neG1gP/zyY9VjG1TC053nsf/BO2bq02RwpyYWDCCZun7VhakgdX1ERoIPxaGJdTM6kLG7Vpfo9NEezVq2q0QrOQeebaopiNZzBqllbmX5O7dZj3zhNi5o=
+	t=1740622742; cv=none; b=jZR0cegQ+JM3RzG+siut0f1YkM80IA8DIrE80jodp9YfYO2hPMY5+GUT464bxPWP9ZsE6+6iPHMyyqLl4t9ApmjlVQTeOK/yOq7wMUkhdhoLXglN1CB0AZIx+NoecLgNX7MlS20KSfIyuKvKjy+CKgxuiFJBwf7oCVQkevc9P3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622797; c=relaxed/simple;
-	bh=9PNQlaFr17QsW09OA3IEH/cFSTquMC7pYNcyhSay2n0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HYscxsRHDWYLP+zB4FwmDdfA7YTE6k0/Cg+dwPXyKse4Efzkm6YGFgXL7CvHdruGUaeGKwF0vm/OyT16hTDYVfQ3o5DIn90Ms0P/kz2lihRA9Ej83Kifn46OOocu2uu2hmfyWgezD3dIJV7whxE6xMKHWiftsQNEIykhpKDnG70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UEbgBKOh; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so1064523a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:19:55 -0800 (PST)
+	s=arc-20240116; t=1740622742; c=relaxed/simple;
+	bh=E5oKEM4c3dUDoG1C3Apf7XUAQ1dqHQWFDZ7U0uJWOW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7FJsqsdTqfccdtHapdWuB0N2OBYuw4CxXZ4ZdMLSjc9XDyZzLaQLMn5vPbC7l8lujjFd0sB1NQ4UHeYmMD4LSR5rGZP55grWUAO7UxUu6eH1KO2Wdflq5MyWJMW5DJU8Vyrecp+7D1izI+ny4HCRxe4iYIQHGxxzxcm/mmoJBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbOXVG2d; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390df0138beso199348f8f.0;
+        Wed, 26 Feb 2025 18:19:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740622795; x=1741227595; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=3F6YIZD9bSIlkGuU2KG3Ao1xkSJhhKmqbmLiePXFSIM=;
-        b=UEbgBKOhDxMYxMoDIIGBV5uWU/Tnmn8nsHyXriJImPHhu0J0q/06xJVRquOlcg1V5K
-         jL538nlnF5PiO95x4DhiJAIz63+eT/PmtCiiQ1OCc0h5rXnN0XLrOdrTUtbA/OILqljq
-         RURh6o/gjgofzE1fD0MgXZyG1aH7sr+ak88LGum+GhqLSKNGv62kStd+75zMIYXX7OV3
-         zhuPjdcwkYo9af3YLGjTgCEzColLONbqBDyHtBH98Kvrw6hNbu2M3Of2BEejO3D3Q6jV
-         hU9NA3sLP3vXNJAStUWDxeNP5n/nyiWGVMaokES++xGuNfu6DmX4kagAdtwhrAF+Icq+
-         ZNgw==
+        d=gmail.com; s=20230601; t=1740622739; x=1741227539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RKgnaqO1THtjCOxWh4A+wQIkk3mMpJl1DZhYW099CWc=;
+        b=kbOXVG2d6ndBV6HXs5bmrK1b5jKSA5fwunkv/cmQDS/Xpe1G4yq2dTnV8wJPv1/oy8
+         gPnrPZfAuOsNaCbwYwXTTK41wo+MYHlkd+cubq6L8DevX7RKH6jTOWnAzjlMMDpPkY6v
+         Qgrpy7MnuNpz+Wfeh/g3PpUJUbvP5zmyBRpHevv+kJ6YgXxRAK2gcA0W4BgyISdTSfsh
+         ZnTylQqKsPQmcoeTh5Vxiy6zMw0G/msacur8Z1t3HAVeVNw+YofU6p5lL6LBTwwWgLMf
+         Hxr/G6AiA7JRjSSVvQ8XADFJlwqkjqYL37zCaHketiGOj/gM4/0W0bqm1sGBZbaZZ2fE
+         OrFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740622795; x=1741227595;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3F6YIZD9bSIlkGuU2KG3Ao1xkSJhhKmqbmLiePXFSIM=;
-        b=arEbW8sVrMlS9ma+dehSaMqDx7uXxEPeiJt9TR53YMaXhfkDrjI9pvap0sxmTdd5x/
-         Ao9X5shSKlST4dJ+Y527Ttyt8sqOElErfY9lS+49BIkLJD1mOsUro4z06S1+nvIntEzt
-         WeKn/FkId92jBfq6hptylNyR21aCvxH4J9kWp8zVMMfd0w9wdl1LkwR/6BWYNB7DWWi+
-         KAEQZpvWB3Tw8h7jJMmC+g+/hAFFg4KFuL48EDQCUrKIVoxLn/+pGhvdB90tY6PL2ndf
-         Zj0IQ2WIFWq/r3b7xA09TwwJOBK8IArZY7n++9LOlXhyyvxmm4j+wz2h1pDO9dG0freJ
-         Fadg==
-X-Gm-Message-State: AOJu0Yx0OWdBAwmlkMIFJzF8nPNiCqubbXT1bQnI9OF/1/LnFLIWGhE4
-	vaSdCD1fsKMzuu1VQkcR/FauX+g0/h8FV+DoKbunva8p49Kfm/zClvz/XsIIno8U9N6gFCrEwYp
-	SVw==
-X-Google-Smtp-Source: AGHT+IGJ6z3saIzRbkZlSBZLnZw7mlbnCfDCjtlOA/kyHI3FVoB/Y5gfMuQ1H6WQ1/ZAhh6gzh0XRDRpGl4=
-X-Received: from pfbfb4.prod.google.com ([2002:a05:6a00:2d84:b0:732:1ead:f8ac])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:1509:b0:1f2:e2b0:dd91
- with SMTP id adf61e73a8af0-1f2e2b0ddb7mr3698859637.21.1740622795028; Wed, 26
- Feb 2025 18:19:55 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 18:18:46 -0800
-In-Reply-To: <20250227021855.3257188-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1740622739; x=1741227539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RKgnaqO1THtjCOxWh4A+wQIkk3mMpJl1DZhYW099CWc=;
+        b=Se8SriPn1igJp2wFwOqx1rfOaynZme/eCTy5VYXFzisbhflvfK9teUsxK0uK2qjUqz
+         wxe7ccoEJq+OLNKASixw0qE0WPNACNBy/wWTy5HDYUme0upFcxua58g3Ko8SIoXHRQ0x
+         aC4MC+TLYMkGJt6UgR41XUe6Aa9XrHsYNQLdSghs1YrfsdUGY5nn96ymSe6eJxc2bnTR
+         7wFhtZZrs6JWOW/OEZfJysUpLwKrhSV/GZ1dHrgJPKwkA0IjbGXSgR/H+30+a0bAreFO
+         pGLEkoG3VQp7B2vckJtB5mCzDYY+hFohxHE0a3880YhkeiXcmxf3HK6ZEsKrPQYFGL8b
+         xCcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXANHPaM8IyJvrAM2oh3uRhUjGYMGJasq0woUOhhiOFYwj1nIAtDnxjT4IbQ5gPhUjk0zFC1sUJzdaKIJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeCj3ZIg98zCG/vhuVLHZvewLl3B3n7vMd+w9P/mNjOVx63RIn
+	hPPr+/mQgf1jn8SC3zadFhP5BO/CB7iKZigtKrDI6AtdNihzVzjDMSwh9sNy1BA4YrtVPZ086pU
+	BLyAKiYmxwvyxLkjTf7t/6d92aJc=
+X-Gm-Gg: ASbGncv63+GyMfASUaIr9mgQT1xY/zvTne87AgW5onqQvKtibMn3jj956GytKJTRsvz
+	Omg7oBWkgqSX78uluUeZC4FVthwT2P+xdB7JSqrS1d25sxqcipMmre9+Q20/PbTNjS/7xq5i6pP
+	uNUNSFrPthrlMwcgqsdWGEods=
+X-Google-Smtp-Source: AGHT+IFj9lP3GWA+vKa3jAcVVxBcG8NT2uVfgsPyo0nWKDEklwxzkOv8eMk1aaXCnVCJDi5nTjn07mT717GUMuR0kVg=
+X-Received: by 2002:a5d:47ac:0:b0:38f:516b:5429 with SMTP id
+ ffacd0b85a97d-38f6e96738amr24102168f8f.25.1740622739040; Wed, 26 Feb 2025
+ 18:18:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227021855.3257188-1-seanjc@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227021855.3257188-31-seanjc@google.com>
-Subject: [PATCH v2 30/38] x86/paravirt: Don't use a PV sched_clock in CoCo
- guests with trusted TSC
-From: Sean Christopherson <seanjc@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Juergen Gross <jgross@suse.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
-	Jan Kiszka <jan.kiszka@siemens.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	John Stultz <jstultz@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	linux-hyperv@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
+MIME-Version: 1.0
+References: <cover.1740009184.git.yepeilin@google.com> <e2d7bfc155a26305a3024aaa102a3acfa693e565.1740009184.git.yepeilin@google.com>
+In-Reply-To: <e2d7bfc155a26305a3024aaa102a3acfa693e565.1740009184.git.yepeilin@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 26 Feb 2025 18:18:47 -0800
+X-Gm-Features: AQ5f1Jq1Bqzfu5XLxkx0XrckAoOp2Oka7xkENl-fqAWdeylPPR2SlLu-E196h-E
+Message-ID: <CAADnVQKEcof-WBBj_W=GpsP0Tjm8hyxeWc06243ZBR7_Ua0Gfg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 4/9] bpf: Introduce load-acquire and
+ store-release instructions
+To: Peilin Ye <yepeilin@google.com>
+Cc: bpf <bpf@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	David Vernet <void@manifault.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
+	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
+	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Silently ignore attempts to switch to a paravirt sched_clock when running
-as a CoCo guest with trusted TSC.  In hand-wavy theory, a misbehaving
-hypervisor could attack the guest by manipulating the PV clock to affect
-guest scheduling in some weird and/or predictable way.  More importantly,
-reading TSC on such platforms is faster than any PV clock, and sched_clock
-is all about speed.
+On Wed, Feb 19, 2025 at 5:21=E2=80=AFPM Peilin Ye <yepeilin@google.com> wro=
+te:
+>
+>
+> In arch/{arm64,s390,x86}/net/bpf_jit_comp.c, have
+> bpf_jit_supports_insn(..., /*in_arena=3D*/true) return false for the new
+> instructions, until the corresponding JIT compiler supports them.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/paravirt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+...
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index a3a1359cfc26..c538c608d9fb 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -89,6 +89,15 @@ DEFINE_STATIC_CALL(pv_sched_clock, native_sched_clock);
- int __init __paravirt_set_sched_clock(u64 (*func)(void), bool stable,
- 				      void (*save)(void), void (*restore)(void))
- {
-+	/*
-+	 * Don't replace TSC with a PV clock when running as a CoCo guest and
-+	 * the TSC is secure/trusted; PV clocks are emulated by the hypervisor,
-+	 * which isn't in the guest's TCB.
-+	 */
-+	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC) ||
-+	    boot_cpu_has(X86_FEATURE_TDX_GUEST))
-+		return -EPERM;
-+
- 	if (!stable)
- 		clear_sched_clock_stable();
- 
--- 
-2.48.1.711.g2feabab25a-goog
+> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> index a43fc5af973d..f0c31c940fb8 100644
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -3771,8 +3771,12 @@ bool bpf_jit_supports_insn(struct bpf_insn *insn, =
+bool in_arena)
+>         if (!in_arena)
+>                 return true;
+>         switch (insn->code) {
+> +       case BPF_STX | BPF_ATOMIC | BPF_B:
+> +       case BPF_STX | BPF_ATOMIC | BPF_H:
+>         case BPF_STX | BPF_ATOMIC | BPF_W:
+>         case BPF_STX | BPF_ATOMIC | BPF_DW:
+> +               if (bpf_atomic_is_load_store(insn))
+> +                       return false;
+>                 if (insn->imm =3D=3D (BPF_AND | BPF_FETCH) ||
+>                     insn->imm =3D=3D (BPF_OR | BPF_FETCH) ||
+>                     insn->imm =3D=3D (BPF_XOR | BPF_FETCH))
 
+It's border line ok-ish to delay arena ld_acq/st_rel on x86 for a follow up=
+,
+but non-arena on x86 should be done in this patch.
+It's trivial to add support on x86-64 and
+limiting the selftest to:
+.. defined(__TARGET_ARCH_arm64)
+is just not right.
+
+Even arena ld_acq/st_rel can be done in this patch too.
+It is such a minor addition compared to the rest, so I don't see
+a reason not to do it right away.
+
+pw-bot: cr
 
