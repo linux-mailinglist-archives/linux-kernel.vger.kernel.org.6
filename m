@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-537351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1014A48ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:48:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB6AA48AD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 22:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8F3165859
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A641614DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5390227180A;
-	Thu, 27 Feb 2025 21:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8909271291;
+	Thu, 27 Feb 2025 21:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="HNFB8BfO"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PZ9wVRmS"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D011CEAA3;
-	Thu, 27 Feb 2025 21:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D822327126A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 21:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692876; cv=none; b=pROlkQfY4v+keDtmnWEq+5/XQTSIT7T2Kk7LrRjNvCpLgX0l0EKc3B7uAtaaNO0HhODYUjTp9gMJ7WKJq6N9ccCnlBPmxCyRgnaOYtVsGO0lST/y27o7eViIIA0GDlgo8ess7fY/Jtu7YztumnOEwuWUWr+DTYna+HYVYmoFdG8=
+	t=1740692942; cv=none; b=hY3ZD2rBG7ddciFGACM2ctUMO6g8G0D/xTZNsaZ++tvjZeAnRYoVVhICHtCWsOqqShK4G0lJOURBb7172IVDfjbZhUD3PjM71YFk7L1SiDHShjX9nB41PsPi9PkQ5DkORfPgbD68mGsTYlXuc3QaU2QG4zsyzPWtpyHZhtLYswo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692876; c=relaxed/simple;
-	bh=8s3KyPP5+X5tLO930i9gADccHKv4fCmFC0alqAjK0f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QU5oYO8m/oCg5E7qpEnAFPRghWkaFW58VvCc2zPVe6JPAA4Slm9INdre7GqW6aGxDmP15gwNWU/7DeZClxJ0xV0J8wzxzB6lxhRLpsRKQXLrG4v5JGrUMnCSZa3Y/72a/yyte230ist0E4bmZ/BgEEjeOXNbgkWdZI0+zOpFzQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=HNFB8BfO; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=gYjaKOa1qyvTVLLATJgBPcnTo3YvBY1Vu2MT27yHSZo=; b=HNFB8BfOVSohIXtfIvjNdHwd2w
-	dasmnZAFnwCd6WtdseHM7+CukesU4EuE8ivRkTdDXlJArWVNQDbDZSrsnuFDo+tFd2R++XK2IElKg
-	xA0tAHsF4U1/+6gr/WTi4g0rlvIZSNbZzK5kP0cYNkDmdqdF30mI7/EnnOqooeW7SVVQ5G2//v4pw
-	tNHbWcmGHOWXWLkvPtu4yFyyMOXQeo6mxrDQfK0pL0XdRMQ1tnE9+jB43kewfhgmKlBgfPyCFj8NB
-	PwP1WFrjrGVIc7V4vS9VSBNbEmF0KltjGsamvRDAYQI3D84FTVHPV65BngQghdP+AkuLMtyUjGbBs
-	LTm4jOHg==;
-Date: Thu, 27 Feb 2025 22:47:38 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Nishanth Menon <nm@ti.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, <vigneshr@ti.com>,
- <aaro.koskinen@iki.fi>, <khilman@baylibre.com>, <rogerq@kernel.org>,
- <tony@atomide.com>, <jmkrzyszt@gmail.com>, <reidt@ti.com>,
- <wsa@kernel.org>, <linux-omap@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <stable@kernel.org>
-Subject: Re: [PATCH] i2c: omap: fix IRQ storms
-Message-ID: <20250227224738.6d7ebd8e@akair>
-In-Reply-To: <20250227142055.ndzavzysaenoducj@murky>
-References: <20250207185435.751878-1-andreas@kemnade.info>
-	<c3bcusjbn23z5yd2a3xtm7swnfizkl7rb6ufhicdhn52epnjvb@5uqm3g6jcony>
-	<20250220100745.05c0eff8@akair>
-	<20250227142055.ndzavzysaenoducj@murky>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740692942; c=relaxed/simple;
+	bh=j65XZnLRgP5uH+H32AXhBNqNHf2gezKnh56MWy4Juyg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAksa80nhRbx5emwluyl6lWQV5p0svpJx4No+jVfm7mBNmmNBV9REkJBZmUA3TbjF66/CxHNxjREnpXZNLD8GR/MQO4jeZwMA+HBIANqEhcaheolblK9jDYB7W6HmDoGSoamwy52QzPAta517mcv/Z1cj1GUwHuAZhANHu9+IHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PZ9wVRmS; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2b1f2b286f5so77845fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:49:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740692940; x=1741297740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S20fxq1ry7p9hh50mjUI/MxMWC0bw2bNpdDweaT8JpQ=;
+        b=PZ9wVRmSECjb2yKVqvORnSHsHXIiQFU3LkT6l/Wlkn2GY4+IhdjHG+sP4s5whNbbBO
+         6KY32UQswlbwfrS5jWe9M9M+unfQhDT0HysOHgwfbgsDI20iv2gWQ1kl8nCg+/UROMWp
+         qkdUQxKOD26yO5djukGEWfTdbDQpfdn9qrHOc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740692940; x=1741297740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S20fxq1ry7p9hh50mjUI/MxMWC0bw2bNpdDweaT8JpQ=;
+        b=iZB9+fXZatsHtqDyXhvMaFdJwc41UUY2ETW+vdu0aKrevff/5BochOjuBjoInl9GDE
+         GQdn0l7BneanjfnL+V0MjMWzCslattZAAfF+tnBVXtVfmGqXTApRj28haNY+0vFJiFj8
+         fuulGRFIE+Lgq5+3J5kKCdcOC40+3wkYrRrJwhGpKgjZWj9OHmMJDI6TQJLXEYBG8Q5n
+         QtrqygcQaRF3yUWlfDrGa0E8nS7RNp07PvqDGchUtJ8Q/dR3cDPK1c6g0b70LA5QVlfS
+         orcr2mohV5Fi2zznpJ7Aeam0Ime/tIQd7cGNUqdyT1gS/iM/0bQSYvdl5wNCPaHEDVh4
+         4ofw==
+X-Forwarded-Encrypted: i=1; AJvYcCXL1PTNwyp7sEhl7wkt8tmBPb8Tgt2nLhNXVubkZOo2xdNIHMkAUo4P2yn9xbyaCAQubAdqJJBHXTgP0IM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVUvB6jBdJ00wVU+ahwCOGzI1CD2DJt4UG+rknckBVzFgFhRsI
+	1ltv9bee60L6qa2jMkpd6BcnlhqSsbIDE4o+sDIse9oaQjaJl0N9qLNSEzag9VfL9DZv/iVI7VW
+	nCWh4LNPj40zSUh9yM6b5PC+iWK78GtrpuCsD
+X-Gm-Gg: ASbGncs0UMEWWKQ1BhY99WEX4Q9DN1CTJFZvjjByDQD0nE0yZ0NunyWcx9bH5dadzGP
+	s+B5+Pblm5pskyf5m+vJ/1dh2GzlV0SD1BFaim+lZvSeA1DMLCskijMMl4vWzf9N/fQwrkDqL4m
+	yu4wQBYVgY89KJAgEr/iGWm/8aJX9pVqfcM4ri
+X-Google-Smtp-Source: AGHT+IHyEdounA70KkXSh23Nmd4f4aE5ui8o/HbAvGXPGW/uNecoMbNRDyQAff5aD7Br5h1XJp/sjnk6PehGLfqhLtY=
+X-Received: by 2002:a05:6808:3097:b0:3f4:a27:f74d with SMTP id
+ 5614622812f47-3f55862f435mr194102b6e.9.1740692939817; Thu, 27 Feb 2025
+ 13:48:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-7-jeffxu@google.com>
+ <20250226162604.GA17833@redhat.com> <c489fea2-644c-411d-a03b-15e448b2778c@lucifer.local>
+ <20250226180135.GI8995@redhat.com> <b67cb9de-24b1-4670-8f8f-195e426c8781@lucifer.local>
+ <20250226182050.GK8995@redhat.com>
+In-Reply-To: <20250226182050.GK8995@redhat.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 27 Feb 2025 13:48:46 -0800
+X-Gm-Features: AQ5f1Jo2mnzwZQraAqqQiHYSY4itEhI58lkCEMcdRw_QRoxgrmRrD4sF7HgEYxE
+Message-ID: <CABi2SkU=eXQGbk0sacMXogE72-EDqpmeuj9sA=MfL0y3tt=Qtw@mail.gmail.com>
+Subject: Re: [PATCH v7 6/7] mseal, system mappings: uprobe mapping
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
+	keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org, 
+	vbabka@suse.cz, Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, 
+	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Am Thu, 27 Feb 2025 08:20:55 -0600
-schrieb Nishanth Menon <nm@ti.com>:
+Hi Oleg
 
-> On 10:08-20250220, Andreas Kemnade wrote:
-> > Am Wed, 19 Feb 2025 20:22:13 +0100
-> > schrieb Andi Shyti <andi.shyti@kernel.org>:
-> >  =20
-> > > Hi,
-> > >=20
-> > > On Fri, Feb 07, 2025 at 07:54:35PM +0100, Andreas Kemnade wrote: =20
-> > > > On the GTA04A5 writing a reset command to the gyroscope causes IRQ
-> > > > storms because NACK IRQs are enabled and therefore triggered but not
-> > > > acked.
-> > > >=20
-> > > > Sending a reset command to the gyroscope by
-> > > > i2cset 1 0x69 0x14 0xb6
-> > > > with an additional debug print in the ISR (not the thread) itself
-> > > > causes
-> > > >=20
-> > > > [ 363.353515] i2c i2c-1: ioctl, cmd=3D0x720, arg=3D0xbe801b00
-> > > > [ 363.359039] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0=
-x0, stop: 1
-> > > > [ 363.366180] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x1110)
-> > > > [ 363.371673] omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0010)
-> > > > [ 363.376892] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
-> > > > [ 363.382263] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
-> > > > [ 363.387664] omap_i2c 48072000.i2c: IRQ LL (ISR =3D 0x0102)
-> > > > repeating till infinity
-> > > > [...]
-> > > > (0x2 =3D NACK, 0x100 =3D Bus free, which is not enabled)
-> > > > Apparently no other IRQ bit gets set, so this stalls.
-> > > >=20
-> > > > Do not ignore enabled interrupts and make sure they are acked.
-> > > > If the NACK IRQ is not needed, it should simply not enabled, but
-> > > > according to the above log, caring about it is necessary unless
-> > > > the Bus free IRQ is enabled and handled. The assumption that is
-> > > > will always come with a ARDY IRQ, which was the idea behind
-> > > > ignoring it, proves wrong.
-> > > > It is true for simple reads from an unused address.
-> > > >=20
-> > > > So revert
-> > > > commit c770657bd261 ("i2c: omap: Fix standard mode false ACK readin=
-gs").
-> > > >=20
-> > > > The offending commit was used to reduce the false detections in
-> > > > i2cdetect. i2cdetect warns for confusing the I2C bus, so having some
-> > > > rare false detections (I have never seen such on my systems) is the
-> > > > lesser devil than having basically the system hanging completely.
-> > > >=20
-> > > > No more details came to light in the corresponding email thread sin=
-ce
-> > > > several months:
-> > > > https://lore.kernel.org/linux-omap/20230426194956.689756-1-reidt@ti=
-.com/
-> > > > so no better fix to solve both problems can be developed right now.=
-   =20
-> > >=20
-> > > I need someone from TI or someone who can test to ack here.
-> > >=20
-> > > Can someone help?
-> > > =20
-> > The original (IMHO minor) problem which should be fixed by c770657bd261
-> > is hard to test, I have never seen that on any system (and as a
-> > platform maintainer have a bunch of them) I have access to.
-> > There is not much description anywhere about the system in which the
-> > original system occured, and no reaction since several months from the
-> > author, so I do not see anything which can be done.
-> > Maybe it was just faulty hardware.
-> >=20
-> > As said in the commit message, reverting it should be the lesser devil.
-> > And that state was tested for many years. =20
->=20
-> Can we not handle this slightly differently? leave the fix based on
-> compatible? we know that the i2c controller changed over time. the
-> i2cdetect bug fixed by c770657bd261 esp hard to find and fix.
->=20
-looking a bit more deeper in:
-Why do we have omap_i2c_isr at all? Can there any case that
-stat & mask =3D=3D 0 there (without c770657bd261 applied)?
+On Wed, Feb 26, 2025 at 10:21=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wr=
+ote:
+>
+> On 02/26, Lorenzo Stoakes wrote:
+> >
+> > Like I said, Jeff opposes the change. I disagree with him, and agree wi=
+th you,
+> > because this is very silly.
+> >
+> > But I don't want to hold up this series with that discussion (this is f=
+or his
+> > sake...)
+>
+> Neither me, so lets go with VM_SEALED_SYSMAP.
+>
+> My only objection is that
+>
+>         vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO;
+>         vm_flags |=3D VM_SEALED_SYSMAP;
+>
+> looks unnecessarily confusing to me,
+>
+>         vm_flags =3D VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED_SYSMA=
+P;
+>
+> or just
+>
+>         vma =3D _install_special_mapping(...,
+>                                 VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_S=
+EALED_SYSMAP,
+>
+Sure
+                                 ...
+>
+> looks more readable. But this is cosmetic/subjective, so I won't argue/in=
+sist.
+>
+> > Jeff - perhaps drop this and let's return to it in a follow up so this =
+series
+> > isn't held up?
+>
+> Up to you and Jeff.
+>
+> But this patch looks "natural" to me in this series.
+>
+Thanks for sharing your insights on uprobe! Your expertise is invaluable.
 
-I looked at omap_i2c_xfer_data() and nothing interesting seems to
-happen without other bits besides OMAP_I2C_STAT_NACK.=20
-Looking again, things get interesting when that loop is left.
+-Jeff
 
-Maybe just acking NACK, setting cmd_err and return -EAGAIN if no other
-bits are set. That should not cause changes to scenarios where NACK
-comes with other bits set. Lets check whether that fixes the
-mess I see here. Well, everything is better then having that IRQ going
-mad.
-
-For reference, the sensor involved was the BMG160. Because it is not
-enabled in omap2plus_defconfig, the issue did not show up early.
-=46rom my understanding, that there is a NACK after the reset command
-data byte is sent. @Nikolaus: are there any nice and simple test points
-for a scope?
-
-Do you have any chance to test such a scenario on any device requiring
-the c770657bd261 applied?
-
-Regards,
-Andreas
+> Oleg.
+>
 
