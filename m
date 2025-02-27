@@ -1,98 +1,122 @@
-Return-Path: <linux-kernel+bounces-536353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2ECFA47E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:06:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED36A47E82
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B4D176315
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171E3188DD3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678E622E406;
-	Thu, 27 Feb 2025 13:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWEc7/j8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264C22E3F0;
+	Thu, 27 Feb 2025 13:05:32 +0000 (UTC)
+Received: from mail.muc.de (mail.muc.de [193.149.48.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2541662EF;
-	Thu, 27 Feb 2025 13:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1C22D7B2
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 13:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.149.48.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740661515; cv=none; b=nXfRjl/r7bIZ3Jz9Smc68FTDinOk9nxIU2w86kvmc3jRmcXgTZdIwKJU8Xroy8K1hZ+T+LG3jhVUVGUBfpcHbEyOL0O0EF+XKUGiNG0edt1AslfcMbE+efkKfSEvXk3gfOCwNVyGXO9FUvyiZU67shwlNfKwxL+8wbxFjqpYKTM=
+	t=1740661532; cv=none; b=I2E3zcwenKw5umOUYquHgaVqWZzZ1jKOuO2TtCtQh8MItrQH1/7ZEEQZoYtWXV2bvu8jZnc/piYCqIKWgT7qW2tKk6JDKEygMlPMKSAnAN+YB3n7gYp67SeDNHIo0a2jMVfE7t7WKFw8X5rkf0cG26XJ5ZZ0vlpIbwRe16lj1uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740661515; c=relaxed/simple;
-	bh=sY36R3VwjWTFFatStJrDFPiJflwv1Qz3+ewgmvKvf4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1UaRK9mWMq5qxYO2DV9sp+orLKa2ZA5VZLch3uUVuRTyNrTQHNFYWot4TRAF7eeycNLsWtVpw9MT7Ukh41R6kl6+xnVdj4dLgKaKalgNZ3gGC86CeKf0zH5NtOduAZfU77F3KSBXOj2Ffy/60MonifPkiEkLVTDmn9YSkyEGT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWEc7/j8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4F9C4CEDD;
-	Thu, 27 Feb 2025 13:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740661515;
-	bh=sY36R3VwjWTFFatStJrDFPiJflwv1Qz3+ewgmvKvf4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KWEc7/j8Qgr6QkbqHgLYWYqdnK8NA1gCvSz7Hh5Oy2oGy4DTtULOZq/IPMXJlY9CU
-	 fCf8Z7NhsqC2BXkLkyIhBf8jOVBu7o/g8KutkDLGbedT/S+yRbCYmvF6HTaeBBpbN0
-	 0Ee21Afxb+qYguMgUGLelsI7CKqus3318lpZME3MEU1uJ+Xc7t/jrsvfgtQxizkzxh
-	 PLx8zRkuzBrB8ZFryttkVTmzuqZZR2sm6jsRcsdMJrlHyLJbiHEhKuz4uJND8zk+6B
-	 B6I4MaNI2rDl4vnfqXsPApk6omuoDpJOOoklrILM6sQbieRzblzgXBs+qOaBsEWTJr
-	 8Mi72Y/ykTBFw==
-Date: Thu, 27 Feb 2025 07:05:12 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	devicetree@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel-team@android.com,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Kees Cook <kees@kernel.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 2/6] dt-bindings: nvmem: add max77759 binding
-Message-ID: <174066151161.1829485.16000199455497636028.robh@kernel.org>
-References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org>
- <20250226-max77759-mfd-v2-2-a65ebe2bc0a9@linaro.org>
+	s=arc-20240116; t=1740661532; c=relaxed/simple;
+	bh=yMjWERQO7tb9dKxz8yG/jWDz2IVS11vV3vvewjuaCIs=;
+	h=Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:From; b=bRsmlohpo86//WhIVhJoO3BZZImjHQMKDw0FHInZI5A019bJaZfwzeZuZ70hJdSjDsk68+VARswvmRlbNJS37jfT//vViVEbiRsiikyePTdszwLUQZ2LiWwGSCfS6mM6rQ+L9aTjegzlTIbmrGhFOItqeQBjD3tEaJEVCHPVpjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de; spf=pass smtp.mailfrom=muc.de; arc=none smtp.client-ip=193.149.48.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=muc.de
+Received: (qmail 52940 invoked by uid 3782); 27 Feb 2025 14:05:16 +0100
+Received: from muc.de (pd953af25.dip0.t-ipconnect.de [217.83.175.37]) (using
+ STARTTLS) by colin.muc.de (tmda-ofmipd) with ESMTP;
+ Thu, 27 Feb 2025 14:05:15 +0100
+Received: (qmail 6065 invoked by uid 1000); 27 Feb 2025 13:05:15 -0000
+Date: Thu, 27 Feb 2025 13:05:15 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+  linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: More than 256/512 glyphs on the Liinux console
+Message-ID: <Z8BjC_TzuDVaFC_3@MAC.fritz.box>
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh>
+ <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+ <2025022355-peroxide-defacing-4fa4@gregkh>
+ <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
+ <d5e05c61-d796-4e5c-9538-a1e068631bba@kernel.org>
+ <Z73sqvjlbJ54FCtH@MAC.fritz.box>
+ <2025022652-uptown-cheating-5df8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250226-max77759-mfd-v2-2-a65ebe2bc0a9@linaro.org>
+In-Reply-To: <2025022652-uptown-cheating-5df8@gregkh>
+X-Submission-Agent: TMDA/1.3.x (Ph3nix)
+From: Alan Mackenzie <acm@muc.de>
+X-Primary-Address: acm@muc.de
 
+Hello, Greg.
 
-On Wed, 26 Feb 2025 17:51:21 +0000, André Draszik wrote:
-> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-> Port Controller (TCPC), NVMEM, and a GPIO expander.
-> 
-> This describes its storage module (NVMEM).
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> v2:
-> * drop example as the MFD binding has a complete one (Rob)
-> 
-> Note: MAINTAINERS doesn't need updating, the binding update for the
-> first leaf device (gpio) adds a wildcard matching all max77759 bindings
-> ---
->  .../bindings/nvmem/maxim,max77759-nvmem.yaml       | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
+On Wed, Feb 26, 2025 at 11:09:57 +0100, Greg Kroah-Hartman wrote:
+> On Tue, Feb 25, 2025 at 04:15:38PM +0000, Alan Mackenzie wrote:
+> > On Mon, Feb 24, 2025 at 21:08:50 +0100, Jiri Slaby wrote:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+[ .... ]
 
+> > > I didn't read the thread, but are you looking e.g. for kmscon?
+
+> > No, I wasn't.  I was looking for a drm replacement for the drivers/tty/vt
+> > code inside the kernel.  I may have misunderstood Greg when he referred
+> > to a replacement which uses drm.
+
+> No, this is what I was referring to.  Also maybe we should be asking on
+> the drm list?  The developers there were working to get rid of CONFIG_VT
+> so I know they have plans for what they see replacing it.
+
+Which list would that be?  There are over 100 occurrences of "DRM" in the
+file MAINTAINERS.  I am also interested in this.  There is a very great
+deal of functionality in drivers/tty/vt.  It will be quite a task to
+replace it.
+
+> > kmscon doesn't seem to be a suitable replacement for the Linux console.
+> > According to Wikipedia, it stopped being maintained ~10 years ago.  Also,
+> > it is a user level program, not a kernel level program, so will only become
+> > active later in the boot process than the current console, which is not
+> > a good thing.  It might well steal key sequences from application
+> > programs, the way X and X window managers do, but maybe it doesn't.  On
+> > Gentoo, kmscon is "masked", i.e. strongly recommended not to be
+> > installed, and installable only after taking special measures.
+
+> Yes, it will be "after" the boot console, but that should be it.
+
+What would the boot console be?  Some console needs to be in place early
+enough to be able to display "Kernel panic - unable to mount the root
+partition".
+
+> It shouldn't be stealing any keys away from anything, but rather going
+> through the existing apis we have for input devices and the like.
+
+Agreed.
+
+> I don't know why distros seem to not be using it anymore, maybe there's
+> something else?
+
+Jiri pointed to some problems yesterday from his point of view as a SuSE
+maintainer.  Perhaps kmscon just needs bringing back into maintenance.  I
+haven't actually looked at it yet.
+
+> thanks,
+
+By the way, I'll be away from my email for a few days, so won't be able
+to answer any posts in that time.
+
+> greg k-h
+
+-- 
+Alan Mackenzie (Nuremberg, Germany).
 
