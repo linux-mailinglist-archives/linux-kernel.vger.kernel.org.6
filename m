@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-536150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9607A47C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:25:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3C0A47CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA28F3A86CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4809316E435
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A3422A1C0;
-	Thu, 27 Feb 2025 11:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F55E22AE7B;
+	Thu, 27 Feb 2025 11:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="OIGdv/oj"
-Received: from mail-m155110.qiye.163.com (mail-m155110.qiye.163.com [101.71.155.110])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="RzsR3blO"
+Received: from mail-m1973173.qiye.163.com (mail-m1973173.qiye.163.com [220.197.31.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E2F215F45;
-	Thu, 27 Feb 2025 11:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB95227B9C;
+	Thu, 27 Feb 2025 11:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740655482; cv=none; b=IyOpOOlGBryIy9kwnBuNAfOh/jHQQdwYNcDhua0lt+FPutqjniBphZyBEYxT2Q73sWv55Fr16yhF8xWUC1OdnasPO9bFhvjmmDzNrvJlwjQrFsw83OFp6xuqY12k4Nlx2HaSq99/6HAklH9KtiLzT5aMsZedh/8hXQE/91Ldikw=
+	t=1740657294; cv=none; b=pCyaL/AH9LUO7UX8sFoSGHYrm/Ya7Sv2ytvFK9SEGZz/FMZtWQEOHAwVf2CUZbqDI7lN7ePsTNpqoyQ+Y/dAMtz+d8Q8xf3H4VBdPcP/2f5a7bKp6uFfqvEHvgIYn3dfpfbOPVRHKR+MuCbT9ggmi8Gr0Xa+aVpbQDEz9zNn3ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740655482; c=relaxed/simple;
-	bh=DD7zYgu4Kti1fkUmflbroxB2ogPWjoiC4JlhvhPr+ys=;
+	s=arc-20240116; t=1740657294; c=relaxed/simple;
+	bh=dhs0V5nmWdNo3Y0T8n5/DBHytdtpe0tD6ouPJ2TeqT4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AhgMzItw2Cp5Gmw/76VLTGTMShKbihEOMZW4eUW/FTl1309ZSKHn27hVhVaCI4sIoU/elw+kq+IaHnaqOR/Y8HyT7T55z8pTk1J+JWM8DVhLnWVjskRmHU6lT5XrL1Cv+JcHEfGb8KM/Dh0eO7zdNp3GOqIlHW5weZm8G098wKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=OIGdv/oj; arc=none smtp.client-ip=101.71.155.110
+	 MIME-Version; b=diNcBGClnlRwjtYwpNKIZ7JiibdCaZ/7yM7eeNZpb9RSGHv8rORgYyuYicn8VEPE5CSSbojUkvqnTLAhkxQqkRZRQ1sQyBzdZR2sJwIGX3PJG6QU30+Mqxv6pMpPAKKcFQaN+cAJCzxSv+IwjM9TkcE9hJDdcwUjSCqiSwrcMVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=RzsR3blO; arc=none smtp.client-ip=220.197.31.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id c65f97c8;
-	Thu, 27 Feb 2025 19:19:21 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id c65f97d1;
+	Thu, 27 Feb 2025 19:19:22 +0800 (GMT+08:00)
 From: Kever Yang <kever.yang@rock-chips.com>
 To: heiko@sntech.de
 Cc: linux-rockchip@lists.infradead.org,
 	Kever Yang <kever.yang@rock-chips.com>,
-	Simon Xue <xxm@rock-chips.com>,
+	devicetree@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	linux-mmc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 01/15] dt-bindings: PCI: dwc: rockchip: Add rk3562 support
-Date: Thu, 27 Feb 2025 19:18:59 +0800
-Message-Id: <20250227111913.2344207-2-kever.yang@rock-chips.com>
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 02/15] dt-bindings: mmc: Add support for rk3562 eMMC
+Date: Thu, 27 Feb 2025 19:19:00 +0800
+Message-Id: <20250227111913.2344207-3-kever.yang@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250227111913.2344207-1-kever.yang@rock-chips.com>
 References: <20250227111913.2344207-1-kever.yang@rock-chips.com>
@@ -64,66 +59,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk5KT1YaShhCTBpOTEofTB5WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkhOTFYYTUpITklPHk5DTRhWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a954721efb403afkunmc65f97c8
+X-HM-Tid: 0a954721f69203afkunmc65f97d1
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MFE6PCo4TzIXMw0SEkwMHkoY
-	AiwwCyxVSlVKTE9LTU5OSk1JQ05LVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKTktLNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6DAw5MjITNw0RAkI4HlYU
+	TQgwCRBVSlVKTE9LTU5OSk1PT0hPVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKSklONwY+
 DKIM-Signature:a=rsa-sha256;
-	b=OIGdv/ojTp7MJl1BAr7LjG4Z/nf+7P2XerwncGNwK/5TZxKKMeTLCfglQknD0FijyGmyrN4sP0577pRh8SeGDYvIYHoS1SkvkoL9VhG/QqqoZAPRmKp18OIypqITL9J3rShgCUsMJrPfkRwTvVFmKYNfiR62iGJk/lk30XwkH3c=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=dtE/yQzTKTSTRJnHoa013KVsjd6UVbm1wGhrzOmi5Hg=;
+	b=RzsR3blOXsXwdI9HOvFzOcLEQVZBRtujcQhvm2zRbJadsYsjAdqa88MYo/taqnfh1GaY0m6Nicn1uKLkOGGjwJlRcWrCUcKd/nvb4c3AoVEhx9goLwFHlvDQ06ya2I3N3N1svmtzCtDbqUgxJHdkP+BcWjZW5V6e3/BhHsuY10E=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=wng6RPNu0umxr4Kc1/tX7hihuPkkSZn7r6Whp2T9fIM=;
 	h=date:mime-version:subject:message-id:from;
 
-rk3562 is using the same dwc controller as rk3576.
+The eMMC core on Rockchip's RK3562 is the same as the one already
+included in RK3588. Extend the binding accordingly to allow
+
+	compatible = "rockchip,rk3562-dwcmshc", "rockchip,rk3588-dwcmshc";
 
 Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 ---
 
 Changes in v3:
-- Rebase the change base on rk3576 pcie patches
+- Updae to fix dt_binding_check fail
 
 Changes in v2: None
 
- .../devicetree/bindings/pci/rockchip-dw-pcie.yaml        | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-index 4764a0173ae4..6c6d828ce964 100644
---- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
-@@ -22,6 +22,7 @@ properties:
-       - const: rockchip,rk3568-pcie
+diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+index c3d5e0230af1..2d5c9931f623 100644
+--- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
++++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+@@ -14,7 +14,9 @@ properties:
+   compatible:
+     oneOf:
        - items:
-           - enum:
-+              - rockchip,rk3562-pcie
-               - rockchip,rk3576-pcie
-               - rockchip,rk3588-pcie
-           - const: rockchip,rk3568-pcie
-@@ -76,7 +77,9 @@ allOf:
-         properties:
-           compatible:
-             contains:
--              const: rockchip,rk3576-pcie
-+              enum:
-+                - rockchip,rk3562-pcie
-+                - rockchip,rk3576-pcie
-     then:
-       required:
-         - msi-map
-@@ -85,7 +88,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: rockchip,rk3576-pcie
-+            enum:
-+              - rockchip,rk3562-pcie
-+              - rockchip,rk3576-pcie
-     then:
-       properties:
-         interrupts:
+-          - const: rockchip,rk3576-dwcmshc
++          - enum:
++              - rockchip,rk3562-dwcmshc
++              - rockchip,rk3576-dwcmshc
+           - const: rockchip,rk3588-dwcmshc
+       - enum:
+           - rockchip,rk3568-dwcmshc
 -- 
 2.25.1
 
