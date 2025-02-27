@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-537480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D07A48C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:12:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431A6A48C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2025 00:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E8E188F7B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F4C1890A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 23:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B050B272922;
-	Thu, 27 Feb 2025 23:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798F2274245;
+	Thu, 27 Feb 2025 23:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="izwXnQOC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XipCgQP5"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5F2309A3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC5272914
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 23:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697964; cv=none; b=HuWs1BW8HqIs+Ziv9UcIPZig/98nxc9TJ7uVuXSGhHitydI6dxAp9Pm+4zkE02BklSTe5ixD/8ttVi/5GRmBoK4TNSHGqfECbdP9XzrmcaL7rEWpY+RZluzI755rm7xAPIT0zoLR+ckrgBch/0t+Bp2FrRckuv725snpvUs5FE0=
+	t=1740697984; cv=none; b=VXnwG2M8FEyaHl1U3x6Eogl/bUJkituplPRDg3VQ2YVeDqQoeXqRK8r1LtMzrLJocVvps2nhDSJGuo5nskYD8b5NUCBKBro36pF2b3i03abAobr06r7xczEDTNgTI7Il5XT5i+oS0cUzXbZRa8F0gyGyr5M0YMFreACKo5NROU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697964; c=relaxed/simple;
-	bh=qXZYUb+38s6T7BVpnd2FbZlzNg9yTJdtjrYvUzxnbAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDebrqnfez59YgMjXoKKME5OsOWZW31wLQO/3k89MuW8LW1zvXmCzwczBRMnI7uaPxkKok3DrP77J04PVUhYtLZ6itJsOyK41aMyz2HKhwU0KCVKupV+YpzjUqDnW12wxN6Q3TQ0SHaaRPL4KR7vHLD+P75cqBoxfbWbPscJDqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=izwXnQOC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso22085e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:12:42 -0800 (PST)
+	s=arc-20240116; t=1740697984; c=relaxed/simple;
+	bh=VrMyULN9yRhX0362jZvsXqzL/blFpYThDTo1AkO/c30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E9MvKPOHO8lASXYiEqgkbOoNseYXmimB80+Qnj4/eYxg+1ZdkuunPl9VxmFUWfRykdue9zl4qpaNFYIEFHp1cE/WLCH4XPkW2KSdr+yzzoFKVpA2h2Z9MFnHuYzPSFf4Cnr5Ta4FHymzo/4OHwnpgGGwO7U+m7RnkcdXOdK94YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XipCgQP5; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5494bc4d741so532839e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740697961; x=1741302761; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fj7LGOSrk0w5SNsFMZf4HWgkzLmJvJuks0dPBWfMtzY=;
-        b=izwXnQOC3oezjqJaDBj5Na3lRnnk2yHvqk+RJEanAlTYYOhhn2Ka9kef/IEU+gWPJY
-         jFuZsGDIv89x3tezwnqVu081Z091F4RqUEIVa1tZ7cjP1S9EEZwKjoCh70LJM/+zzfXH
-         fFazwtOnXy7iZHh6kRWzAiSqLhkR2Z1/RihqEVlGPYd81Xbb6ThblghqXJ/CWCtNDQzN
-         hfSLCvM83WRctLrYb9UX9zi7PCvfubCe8YUCgRQNxCpvx1bPMf5qwOj4Ocn8f1Pc78zI
-         vRBlMIYn271JM9ZZxLnyU+UoYZMWk0LNZq8+Ii92E+OJM63W1o+gMye12TSaQP+SdlJR
-         If+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697961; x=1741302761;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1740697981; x=1741302781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fj7LGOSrk0w5SNsFMZf4HWgkzLmJvJuks0dPBWfMtzY=;
-        b=SJ9eQEJuxfOxojSSf2j0zdXNkO7EBPCPxHdZDc9N2PJFOZ23PXT8HZl+2hY4XlsfN8
-         bj2EAdzVCOGiAm5tPAW3d1f4dlcuAvajitbYNfaB5S15Raaiui4DvMPr2C4icyqtCLe+
-         OuANL/3liMHxx9HACSSqTnxeK41asG77+Bmd6b2pRU7WpZjt9IGdt2PHAaNlm5/5gu8P
-         yp4pJz/S231fl9u658nk8P4+M4JIld591W4wx6V5BttnEOm3C4S4mP8BxcPhCTzBIW2a
-         cidbcZFks38aZp+k3DwjgJA+2th/BoEyVwlnNZeMdlg1UqvKC3cnEgu44A3KHgi7Curk
-         wtDA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2SX/Y1c552ZxKoFuZ4iu7qV5Z9xbYxrjMeIVviw8cW/TrGbW1QUEWh+UV6PDq0h50vKl3Eci41J2Wjq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaQW4Z14Oqhqa7g626Oe4pgS6x45mrhHqWmJuZRVR663uRTYH+
-	alBRAxLtWOlEbioEiaw53v29Gnx95HZskWX/i8Widw9qiv2dN1EWkT+DRCzo9A==
-X-Gm-Gg: ASbGncuVSMKtt0Gso0hfzS/jtO4wCx22kg61ap7oSJX9amkqusQON5EjsZqM2q03uHC
-	aon3yxWu8445Sc+ngxc00b9l5BVR5ZZfZMbKo79XB5waQamavroOhUbta7VEEmFGHtRdawY6UyT
-	FSwlL3siDP2z4BMECo4eZDnRIHKOnZuFlDoUKXK63lH3I2sYJQmGyUrYN4EScAc3PmMmLy7WrN2
-	bzmCxSyyNFds47DYNxN++zCroildpp/zEI6yuMTVhUDKmEpi48qYHxfP3yh9floGPKnNO5nu+t6
-	rqBRHIA0zw8N2kT6JV9zLAUcjDqQI/foAu16OeQKW5QIGlYbK6vUx5ztGPJqR3ZNQhFpCg==
-X-Google-Smtp-Source: AGHT+IFqQLaqdVWxc8waBGwgBaSF4yEsnQkEr61vpanM2YcoX/7/V0zwkd6V54Vs2QrQ3ETgd2DUJA==
-X-Received: by 2002:a05:600c:5618:b0:439:8739:b82b with SMTP id 5b1f17b1804b1-43ba6edd7bbmr333605e9.4.1740697960527;
-        Thu, 27 Feb 2025 15:12:40 -0800 (PST)
-Received: from google.com (100.235.22.34.bc.googleusercontent.com. [34.22.235.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485db82sm3254105f8f.88.2025.02.27.15.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:12:39 -0800 (PST)
-Date: Thu, 27 Feb 2025 23:12:37 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, snehalreddy@google.com,
-	suzuki.poulose@arm.com, vdonnefort@google.com, will@kernel.org,
-	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2 2/4] KVM: arm64: Move the ffa_to_linux definition to
- the ffa header
-Message-ID: <Z8DxZY-09R6lwEW3@google.com>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-3-sebastianene@google.com>
- <20250227202557.d3fd6ylzbaho4pvx@bogus>
+        bh=YmkybCOSFne6yK3kY+Du84AtHtcKYiWZlsF8gbRhEyU=;
+        b=XipCgQP5AMF9HQZrYR98rzjGwiwORxjbfuqc08WQYkF5sJfbva3dXBMA18/bZAYruq
+         lYzFIm066i1nKA/I7Wzwj6MRBy+0n/39lK+vm6FC6CVRgGDu7WVqIrB8ipuDCvhsn2zX
+         gv0fpICwmOY5QulyxYLrcoOFj5IBGXjw4THDC8H5KzFtAVKQ4BSA0oM7EMfJbsaTTsxD
+         VZVNpjtUVnbHGmSynxMcIgz16aEeDQ4C2vuh5WGjDtLxJlH3J37QUF3px8FPH2CV6ejF
+         XHzz6NQx80JJCWwT0F7ydmGCbLFt4WTzVd+9gutJtxv6qDO2V0i8yvXAaddp2Q2ZPUFr
+         Z/gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740697981; x=1741302781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YmkybCOSFne6yK3kY+Du84AtHtcKYiWZlsF8gbRhEyU=;
+        b=F/r8MMntzdWL9/F5DQo4VxsaB5vQkT9D448ehj0Gy7KPrg8PMRkiH3NzVA5JODANm4
+         pF8zBekUK5qgPAYEivyZu3FBvQcnddLXz+buJeKULCcCk6G1Z/z8W9ubjE4kaxttm5yX
+         4gp9dTVRsJGiiOxQZJXjt5gPyWgwW09mWLqb1fAZGAm46nnLOQatOZ0WQ9k4bgJ/zsGG
+         tC0InxyjVWIa7lIU03t4b6z/aslEPLpvgUbM2tK7lmWl+1UajWr0Vpx0oCUVlrHoo4xf
+         n9tjth7iKa+jFn/pwVcWBd7esNnNbgj4N/UCFP6Za0bTB1QoeG8sThQEpVEwL2Fy4sMN
+         nexw==
+X-Forwarded-Encrypted: i=1; AJvYcCWV+o23eQI0RMqBSd9YdO8CVJ+rh5+k1vtz0UCzcZq7me99a/LmCVrw5nBJdT4djzmT9gnDuMr8PvHAYzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUubcMpvAHpaaXdq7tBivV7IzRgSwm+TfEoE1cEPyPg33r+Y1V
+	R741tQzjHnXM/5SBxuLbz/1t5UHYcFn9MQ8H8t4cx3I7Zxh8dXYxVKJ6/BFvDhqO/kHbTpIqgEF
+	SPmF82Z+sJjgrVTLgdnPnlH1oR8vR7JdwJEyGZQ==
+X-Gm-Gg: ASbGncsELJW2jfBKIg2j9+2M7mRYitsrI9TEQfwbzw4XQbzutxA/Yms5CA/x0WO3TLU
+	V+skaypzGamnN+aZrtRbCDOQ8DZMnQJzBqOR56ag5700fdBuEJS3uGed1vWN9dRmNYizuBiYjeU
+	mELJ5POpw=
+X-Google-Smtp-Source: AGHT+IHLcUchRQ5RHejMZKQOgPdGa2RgldlYInULBrGmDbyHiaxGOnJDGcYbTPdwNuvGN5wuzKGCGgT0iWuzwLntJq0=
+X-Received: by 2002:ac2:4e0e:0:b0:545:2fa9:8cf5 with SMTP id
+ 2adb3069b0e04-5494c354e58mr578980e87.49.1740697980909; Thu, 27 Feb 2025
+ 15:13:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227202557.d3fd6ylzbaho4pvx@bogus>
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com> <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
+In-Reply-To: <20250221-rmv_return-v1-15-cc8dff275827@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 00:12:48 +0100
+X-Gm-Features: AQ5f1Jra6Y1TNly1NYmSkFPtENvNIwlGHtsux17X3bXg-g3qhlo7h9G9hMQoxr8
+Message-ID: <CACRpkdZV4EHGxYrX77FgsZvPrHohCEixXX6dkEoVSYSsaAzbYg@mail.gmail.com>
+Subject: Re: [PATCH *-next 15/18] mfd: db8500-prcmu: Remove needless return in
+ three void APIs
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Will Deacon <will@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Lee Jones <lee@kernel.org>, Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Zijun Hu <zijun_hu@icloud.com>, linux-arch@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 08:25:57PM +0000, Sudeep Holla wrote:
-> On Thu, Feb 27, 2025 at 06:17:47PM +0000, Sebastian Ene wrote:
-> > Keep the ffa_to_linux error map in the header and move it away
-> > from the arm ffa driver to make it accessible for other components.
-> 
-> Do you plan to push/target these changes for v6.15 ? If not, I can take
-> this patch with other FF-A changes in my tree for v6.15. Otherwise, it
-> is must go along with other changes.
-> 
+On Fri, Feb 21, 2025 at 2:03=E2=80=AFPM Zijun Hu <quic_zijuhu@quicinc.com> =
+wrote:
 
-Yes, feel free to pick them with your changes and we can push them
-later.
+> Remove needless 'return' in the following void APIs:
+>
+>  prcmu_early_init()
+>  prcmu_system_reset()
+>  prcmu_modem_reset()
+>
+> Since both the API and callee involved are void functions.
+>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 
-> --
-> Regards,
-> Sudeep
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks,
-Sebastian
+Yours,
+Linus Walleij
 
