@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-536065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC36A47B22
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C61A47B23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90AF16AB33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0E416B401
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB2822B8C5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AB222B8C6;
 	Thu, 27 Feb 2025 11:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEg0GYNr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2CQdGU7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795E522AE42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7972322AE65
 	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740654238; cv=none; b=g4COQDwd8mcvfyF0SaD89BvGS6WLasLpShcKdsJrkCOTNu0sSVHycdGu09nLn+sIAmhvXMGgcknrayBYpLjkkx69Du69LxPrwEy8Qf3Kmaq3GvpN1IIsxBfcb1Za7+tB/ky4l/hwmENFHKEL1rmyLZlqpgJGsRKPl/BICmYTRQg=
+	t=1740654238; cv=none; b=qIOaQ7XB4zhmGHfzDZOsxny6j/AqQ8uiJku2yyQwZS/T4K0spAn2V3I7fy0BbCJ3M9CNMuofUX1/zl/nj1QYKj/uGUOT77w0CmLQihxaxPMWKfqVBWhsyr73vwoaBSVCq6HiE2UiAqmt1jiB4/7jPYzwZTowWEVBk1dHdkyu/Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740654238; c=relaxed/simple;
-	bh=WFSs/B3Y34immM1a4OhkanKgJ7jJZGY58fcV+6YM6P4=;
+	bh=lEo2jNIgAk3ZjJgy5xIzg8AzQhxCgrbkVelQc/it8Po=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K5cIpNF3o37ugMHib3zZMFRfjWk2KrkvQbuEmOU2LXBVDpFQYbBS+sO8RwX7XbpBtlCWlf+Ft02XXkxOwb8CLgcEFw4pAwevm+ClOf95CJXISLIl1PeAo9nXVq+WkhLEWtCwHW2JWSD17BYRCT85nX/I8EdANRA5PvZRQ7rNV2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEg0GYNr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D4CC4CEEA;
+	 MIME-Version; b=f72E4X5JFsKG2efIJ5OOc/JqSw5237BrNuxiosj+rV5YEuQ8WXzaHhvCsvqS2FWmY1YqyI5T91mooOL4cGOoGFAXshqQCrYRsE9IxqbufQV2HYZmuDAWBXQxaegl+HrQAIP6uUGKACHccVyzxlNGGysprjSavq7wKRT4eRuXHhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2CQdGU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF75C4CEE7;
 	Thu, 27 Feb 2025 11:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740654238;
-	bh=WFSs/B3Y34immM1a4OhkanKgJ7jJZGY58fcV+6YM6P4=;
+	bh=lEo2jNIgAk3ZjJgy5xIzg8AzQhxCgrbkVelQc/it8Po=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iEg0GYNrvGcLEdkYD3sIqziy/IPNKk8xMz9vEDSXYibyAXRX6mnL1hO4hT/QkXcMX
-	 tiwTsroWWil5RobhnMO5dXKnEUghjC/UrH43z5SGmMuY3nN7W0oyWbuFClOsUzgDsK
-	 ZEY6CsWXr0mlUV6rcgZf/ooNykBBL8Dih0DrZZpcFigfzinlpltlkFIELrxTQWQ3q/
-	 zEVgm+slR3VF7AnbmrlQhz8PzdFKt6DE6lB6G+v5LMdiLkP0L1A2JuGTUAA+1ApUPg
-	 tJj37K1ierPwX5R+7239UhwqZyQAxY1HfndMldXXz7xdyt3emqM37rv1+pYAd9/DXW
-	 u5q5Z/Y2gL9Xw==
+	b=p2CQdGU7i6faoDJLGZ7crDGcRR4Bg1TsSA7iCjt44ot3hIkO+UCOju0tThQSVecdT
+	 XuA95nrBN/pjZ37KUx3Kq2rAp+s0eg7ipzC9c7r2RvVv15r6eFGj6mkJF1M9Uvm5hh
+	 wA2pQY5vqgV16yRYofuMeYvDOYLzFoBVkl3oT5j4wHVH1vhk9skSSa4kHB5JV1MQMs
+	 8dwhpq7CEwtyiWFVAP9wzm83Hh3fibDr09zWYVljxaOEv1yMBcwBiXaaFV39uS8ooe
+	 De5JRmQQvFmiAXTvLcK35NMbYpoQq3zNQP26AvaJOxboLf3ewkmIcVrLE18NB1YjgW
+	 ygc7yBDdAWWnA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tnbgK-00000001mQa-07zQ;
+	id 1tnbgK-00000001mQe-0Eii;
 	Thu, 27 Feb 2025 12:03:56 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>,
@@ -54,9 +54,9 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Ani Sinha <anisinha@redhat.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 01/21] tests/acpi: virt: add an empty HEST file
-Date: Thu, 27 Feb 2025 12:03:31 +0100
-Message-ID: <3da2d197610ada25dacaee54d113fb87c5448b04.1740653898.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v5 02/21] tests/qtest/bios-tables-test: extend to also check HEST table
+Date: Thu, 27 Feb 2025 12:03:32 +0100
+Message-ID: <3ebde58416b8be1140c569538192399feeccf412.1740653898.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740653898.git.mchehab+huawei@kernel.org>
 References: <cover.1740653898.git.mchehab+huawei@kernel.org>
@@ -69,28 +69,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Such file will be used to track HEST table changes.
-
-For now, disallow HEST table check until we update it to the
-current data.
+Currently, aarch64 can generate a HEST table when loaded with
+-machine ras=on. Add support for it.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- tests/data/acpi/aarch64/virt/HEST           | 0
- tests/qtest/bios-tables-test-allowed-diff.h | 1 +
- 2 files changed, 1 insertion(+)
- create mode 100644 tests/data/acpi/aarch64/virt/HEST
+ tests/qtest/bios-tables-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tests/data/acpi/aarch64/virt/HEST b/tests/data/acpi/aarch64/virt/HEST
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
-index dfb8523c8bf4..39901c58d647 100644
---- a/tests/qtest/bios-tables-test-allowed-diff.h
-+++ b/tests/qtest/bios-tables-test-allowed-diff.h
-@@ -1 +1,2 @@
- /* List of comma-separated changed AML files to ignore */
-+"tests/data/acpi/aarch64/virt/HEST",
+diff --git a/tests/qtest/bios-tables-test.c b/tests/qtest/bios-tables-test.c
+index 0a333ec43536..8d41601cc9e9 100644
+--- a/tests/qtest/bios-tables-test.c
++++ b/tests/qtest/bios-tables-test.c
+@@ -2122,7 +2122,7 @@ static void test_acpi_aarch64_virt_tcg(void)
+ 
+     data.smbios_cpu_max_speed = 2900;
+     data.smbios_cpu_curr_speed = 2700;
+-    test_acpi_one("-cpu cortex-a57 "
++    test_acpi_one("-cpu cortex-a57 -machine ras=on "
+                   "-smbios type=4,max-speed=2900,current-speed=2700", &data);
+     free_test_data(&data);
+ }
 -- 
 2.48.1
 
