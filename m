@@ -1,329 +1,272 @@
-Return-Path: <linux-kernel+bounces-536891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDC7A4858A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:46:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FC7A48599
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 17:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C4A1887744
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFBDA18867D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB4A1B4F0A;
-	Thu, 27 Feb 2025 16:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAE41B4F0B;
+	Thu, 27 Feb 2025 16:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kexlJpzn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q6fPEnZx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4EB1C36;
-	Thu, 27 Feb 2025 16:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343381B21B7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 16:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674465; cv=none; b=T8eWMcQKlkD+2airPHmR0dC8K9DWXjqjb66IomtWRnK+GnwHx80OokVv9pNOcmb7t0lpru7oodk5301GQP+lHrFrA5IIogFbT51wZxfvIeAZQ6viRJpMSN28eu9mic4bK8zpotrQef8d7xr1KPDhbpPV1GFJYdo4n5b5w1t+N+k=
+	t=1740674612; cv=none; b=dh2/RyifazhfWtsguDVo46DbpNcv0eKY1rTTOcskcTI+s9J5cevBBjgVZ+hV164SQXjsgptT3EFi4nW/Z2NvCBa1sQidsRFfxD71zYtId3xcj3kXlIVugVUAn4xIUPgmHcsulqJQ64zGmpCHLnG5jHSKVeFIQazfWYHyC1JrJ5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674465; c=relaxed/simple;
-	bh=rckz/q7pIYlvVhINqFR0AJWmC2bxmbeg/qRYzgjj9dE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KQtjMAPGEPesvbOD3/eblqoMEL0A/f8bEPdZ/6IUjzALpWNpUPYLeTl1vU/YUM4AIhCaql3/xBlcx7ztui8jF75qhTug6vgxaj9PUin9Dl204QIvH0w+NlAptmJnhxydd1n2nWwXqjYuK5vVwoEmXO8RShw2waTzsyx4XgArnlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kexlJpzn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21799C4CEE6;
-	Thu, 27 Feb 2025 16:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740674464;
-	bh=rckz/q7pIYlvVhINqFR0AJWmC2bxmbeg/qRYzgjj9dE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kexlJpzn0ctUGzeGuqsLm0k592G2drmX/Im+JqjqA5hOQb/4zK9yUR7+QRp4CV7az
-	 AumjowILGk6fPJmM2qaVu7Gu4mmw3N+U8HjSjVisC5yWucqXtu7ombbfzL/7wHOC6i
-	 KqXQv763g2Z5Z72iIwEpiGBNpBH2Af648zS9O3w2RUHmhdmtOzdEGzlGlwaISLEmp7
-	 8WGLplU/K61o0/29kvkzGKmeb2UD3wROzmnAMn0M9b2oAghH8jL/qzmGIJ5olH3cRc
-	 d3H2tyJgW1Lfc3rUZAUqkcydox2XD3JRa6G53CKsqWvLOqxCfnqXhG/Xk+9WURhdBo
-	 Kv3Y3WDslCVQQ==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.14-rc5
-Date: Thu, 27 Feb 2025 08:41:03 -0800
-Message-ID: <20250227164103.3599252-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740674612; c=relaxed/simple;
+	bh=N2U6Xyj+9lJkd79UADYQfgAlIIyD7zVtVL/LKmWPx0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h/3xOgxvUQBqpF9f2O/3Xp9U+PngKXxn618iiuqkWrw3rrPslabbSbJBomh2ZtYNiTPMoNizWrU+FkbmZV55JxyJnLIsPEs366gtSJe8WUyvpgmwg3y5upj8J760J/HG22hPO/V7BSv42kepsPJokQsdxMFfyjkv76nIGcAEDVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q6fPEnZx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740674607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TQNCbBxi7eD7idYstTcVVTcDcXqJ3+FMvik+jAH6Dos=;
+	b=Q6fPEnZx8nLEFQPAzBX7CCyKjB0JIFhgqsLYEMbMBhX8iq9ds9berfAbIIavAvAV9OlMHT
+	dOkvXaoyGN1BCwy4K+YgLRYQtxbv7i0/B7bK9izLbf/u9Bw1tXxJPRfaKuuX2QiAbYOeNo
+	Gq/7EZ3SLkqZsV4G0WLkRG/TISrqt70=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-141-rOjCYrpLPeG5hum8F66PKg-1; Thu, 27 Feb 2025 11:43:26 -0500
+X-MC-Unique: rOjCYrpLPeG5hum8F66PKg-1
+X-Mimecast-MFC-AGG-ID: rOjCYrpLPeG5hum8F66PKg_1740674605
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43988b9ecfbso6015295e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:43:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740674605; x=1741279405;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TQNCbBxi7eD7idYstTcVVTcDcXqJ3+FMvik+jAH6Dos=;
+        b=HvBDoR3TdGNKF3d9DRzRblfkIzkaYEoI6oOA/ycLm7bSngPsN7MJr3zrynZTv22ExK
+         gnN/fTLnVB4baTHAii8c33P3wSmAh1bfoEFUWXcJXbT5jPlFYnapC0fQIGPGedzks9LG
+         1iQsGUSVV5OwT1oc2Kh0XJPViS6yd1DSGPFzWI41uo/KffBCosd4JLtpn0h6Xy9UbI37
+         OY0Z56gpFpNEngXnuOqqyHbAZqwXHWq19leF8muV/PuwAaY5e1ZKwe4tn6IQrGKkoAdl
+         uLkz3uMiQsgsGVFC8cNupmgLZk2IG02JPBsLmaGEEO0c+1geMd/s02fH3x+/tgLPCHjd
+         GAiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUODI8QrM/0VbO6jZPj/jl1IJ9Y9d8UcChiVj+2jG/+ch8d/JWvTOQ1xPsswGxtF74HAe0+kXKAlsgLJqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi76/lqBQuyfaTtZZZ4Eel0BgOYD0JMH6TId9QYoLizLvG1lGC
+	IaekfQ8fInuVwRztI8V69MmMvf9vzchQjBV2cOiqgqQV35XEEbb6Z12MZk+GO16qr0tkGHLt9WS
+	WTpLmY4wWEgaqsM8xSVnnOy14vb00A+Om7KqTjMZ9wjfcpiwU/+SMFTjKmtzkrg==
+X-Gm-Gg: ASbGnct8a9R85YHkjHdm+MRKLHzxJ5DM9PboQ8q/o1/BR+pSVZ2LZ1cEVjZloBAiDjY
+	NDNpehRtl3RaveFGt/jwLGq67MoY+IhReELsGXoG7arDWvgAN6Bbq/muu8mTtlvz5cwMb5NDxnE
+	jPkioumFd1om+GV0jFqXaSjn2csvzRiuxVtWNJc8kqZ+tWiFZSspNjdsLJsiYxkMixE64x2qoKJ
+	SgzTNoLirFvCw5e1HjV9hxKKDNBFFxPctz614Hf9uaSbyhFAlWYP0ffVhptJTckVMp5V/hzGNIq
+	Fes9O+qElP9Ci4mcdZFTSgZyld3tEq6KsPAmu6Uu1cWTRcQE5fRM53MSkCbG+HU=
+X-Received: by 2002:a05:600c:3c83:b0:439:82de:9166 with SMTP id 5b1f17b1804b1-43ab8fd1e8dmr64031145e9.1.1740674605052;
+        Thu, 27 Feb 2025 08:43:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFrTKA/tq7v3HDQicW7l4zuzGDkJqwkvaaj/r610R8fS1dVqhjB9P9yfyCOg58tOjH/0/jlEQ==
+X-Received: by 2002:a05:600c:3c83:b0:439:82de:9166 with SMTP id 5b1f17b1804b1-43ab8fd1e8dmr64030785e9.1.1740674604620;
+        Thu, 27 Feb 2025 08:43:24 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b737074d8sm29172345e9.16.2025.02.27.08.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 08:43:24 -0800 (PST)
+Date: Thu, 27 Feb 2025 17:43:21 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org, Philippe =?UTF-8?B?TWF0aGll?=
+ =?UTF-8?B?dS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eduardo Habkost <eduardo@habkost.net>, Eric Blake
+ <eblake@redhat.com>, John Snow <jsnow@redhat.com>, Marcel Apfelbaum
+ <marcel.apfelbaum@gmail.com>, Markus Armbruster <armbru@redhat.com>,
+ Michael Roth <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
+ <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, Zhao Liu
+ <zhao1.liu@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/19] Change ghes to use HEST-based offsets and add
+ support for error inject
+Message-ID: <20250227174321.0162a10f@imammedo.users.ipa.redhat.com>
+In-Reply-To: <cover.1740671863.git.mchehab+huawei@kernel.org>
+References: <cover.1740671863.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Linus!
+On Thu, 27 Feb 2025 17:00:38 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-You'll see a prompt for NET_DSA_REALTEK_RTL8366RB_LEDS.
-We should probably hide it from the user, and just use the default.
-I'm following up with Linus W, but I don't supposed this is a big deal.
+> Now that the ghes preparation patches were merged, let's add support
+> for error injection.
+> 
+> On this version, HEST table got added to ACPI tables testing for aarch64 virt.
+> 
+> There are also some patch reorder to help reviewers to check the changes.
+> 
+> The code itself is almost identical to v4, with just a few minor nits addressed.
+checkpatch on my machine still complains
 
-The following changes since commit 27eddbf3449026a73d6ed52d55b192bfcf526a03:
+0007-acpi-ghes-Use-HEST-table-offsets-when-preparing-GHES.patch has no obvious style problems and is ready for submission.
+Checking 0008-acpi-ghes-don-t-hard-code-the-number-of-sources-for-.patch...
+WARNING: line over 80 characters
+#170: FILE: hw/acpi/ghes.c:390:
++        build_ghes_v2_entry(table_data, linker, &notif_source[i], i, num_sources);
 
-  Merge tag 'net-6.14-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-02-20 10:19:54 -0800)
+total: 0 errors, 1 warnings, 159 lines checked
 
-are available in the Git repository at:
+0008-acpi-ghes-don-t-hard-code-the-number-of-sources-for-.patch has style problems, please review.  If any of these errors
+are false positives report them to the maintainer, see
+CHECKPATCH in MAINTAINERS.
+Checking 0009-acpi-ghes-add-a-notifier-to-notify-when-error-data-i.patch...
+total: 0 errors, 0 warnings, 26 lines checked
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.14-rc5
+0009-acpi-ghes-add-a-notifier-to-notify-when-error-data-i.patch has no obvious style problems and is ready for submission.
+Checking 0010-acpi-generic_event_device-Update-GHES-migration-to-c.patch...
+total: 0 errors, 0 warnings, 41 lines checked
 
-for you to fetch changes up to 54e1b4becf5e220be03db4e1be773c1310e8cbbd:
+0010-acpi-generic_event_device-Update-GHES-migration-to-c.patch has no obvious style problems and is ready for submission.
+Checking 0011-acpi-generic_event_device-add-logic-to-detect-if-HES.patch...
+total: 0 errors, 0 warnings, 59 lines checked
 
-  net: ti: icss-iep: Reject perout generation request (2025-02-27 08:09:02 -0800)
+0011-acpi-generic_event_device-add-logic-to-detect-if-HES.patch has no obvious style problems and is ready for submission.
+Checking 0012-acpi-generic_event_device-add-an-APEI-error-device.patch...
+total: 0 errors, 0 warnings, 72 lines checked
 
-----------------------------------------------------------------
-Including fixes from bluetooth. We didn't get netfilter or wireless PRs
-this week, so next week's PR is probably going to be bigger. A healthy
-dose of fixes for bugs introduced in the current release nonetheless.
+0012-acpi-generic_event_device-add-an-APEI-error-device.patch has no obvious style problems and is ready for submission.
+Checking 0013-tests-acpi-virt-allow-acpi-table-changes-at-DSDT-and.patch...
+total: 0 errors, 0 warnings, 7 lines checked
 
-Current release - regressions:
+0013-tests-acpi-virt-allow-acpi-table-changes-at-DSDT-and.patch has no obvious style problems and is ready for submission.
+Checking 0014-arm-virt-Wire-up-a-GED-error-device-for-ACPI-GHES.patch...
+WARNING: line over 80 characters
+#68: FILE: hw/arm/virt.c:1015:
++    VirtMachineState *s = container_of(n, VirtMachineState, generic_error_notifier);
 
- - Bluetooth: always allow SCO packets for user channel
+total: 0 errors, 1 warnings, 44 lines checked
 
- - af_unix: fix memory leak in unix_dgram_sendmsg()
+0014-arm-virt-Wire-up-a-GED-error-device-for-ACPI-GHES.patch has style problems, please review.  If any of these errors
+are false positives report them to the maintainer, see
+CHECKPATCH in MAINTAINERS.
+Checking 0015-qapi-acpi-hest-add-an-interface-to-do-generic-CPER-e.patch...
+total: 0 errors, 0 warnings, 178 lines checked
 
- - rxrpc:
-   - remove redundant peer->mtu_lock causing lockdep splats
-   - fix spinlock flavor issues with the peer record hash
 
- - eth: iavf: fix circular lock dependency with netdev_lock
 
- - net: use rtnl_net_dev_lock() in register_netdevice_notifier_dev_net()
-   RDMA driver register notifier after the device
+> ---
+> v6:
+> - some minor nits addressed:
+>    - use GPA instead of offset;
+>    - merged two patches;
+>    - fixed a couple of long line coding style issues;
+>    - the HEST/DSDT diff inside a patch was changed to avoid troubles
+>      applying it.
+> 
+> v5:
+> - make checkpatch happier;
+> - HEST table is now tested;
+> - some changes at HEST spec documentation to align with code changes;
+> - extra care was taken with regards to git bisectability.
+> 
+> v4:
+> - added an extra comment for AcpiGhesState structure;
+> - patches reordered;
+> - no functional changes, just code shift between the patches in this series.
+> 
+> v3:
+> - addressed more nits;
+> - hest_add_le now points to the beginning of HEST table;
+> - removed HEST from tests/data/acpi;
+> - added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
+> 
+> v2: 
+> - address some nits;
+> - improved ags cleanup patch and removed ags.present field;
+> - added some missing le*_to_cpu() calls;
+> - update date at copyright for new files to 2024-2025;
+> - qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+> - added HEST and DSDT tables after the changes to make check target happy.
+>   (two patches: first one whitelisting such tables; second one removing from
+>    whitelist and updating/adding such tables to tests/data/acpi)
+> 
+> 
+> 
+> Mauro Carvalho Chehab (19):
+>   tests/acpi: virt: add an empty HEST file
+>   tests/qtest/bios-tables-test: extend to also check HEST table
+>   tests/acpi: virt: update HEST file with its current data
+>   acpi/ghes: Cleanup the code which gets ghes ged state
+>   acpi/ghes: prepare to change the way HEST offsets are calculated
+>   acpi/ghes: add a firmware file with HEST address
+>   acpi/ghes: Use HEST table offsets when preparing GHES records
+>   acpi/ghes: don't hard-code the number of sources for HEST table
+>   acpi/ghes: add a notifier to notify when error data is ready
+>   acpi/generic_event_device: Update GHES migration to cover hest addr
+>   acpi/generic_event_device: add logic to detect if HEST addr is
+>     available
+>   acpi/generic_event_device: add an APEI error device
+>   tests/acpi: virt: allow acpi table changes at DSDT and HEST tables
+>   arm/virt: Wire up a GED error device for ACPI / GHES
+>   qapi/acpi-hest: add an interface to do generic CPER error injection
+>   acpi/generic_event_device.c: enable use_hest_addr for QEMU 10.x
+>   tests/acpi: virt: update HEST and DSDT tables
+>   docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
+>   scripts/ghes_inject: add a script to generate GHES error inject
+> 
+>  MAINTAINERS                                   |  10 +
+>  docs/specs/acpi_hest_ghes.rst                 |  28 +-
+>  hw/acpi/Kconfig                               |   5 +
+>  hw/acpi/aml-build.c                           |  10 +
+>  hw/acpi/generic_event_device.c                |  44 ++
+>  hw/acpi/ghes-stub.c                           |   7 +-
+>  hw/acpi/ghes.c                                | 231 ++++--
+>  hw/acpi/ghes_cper.c                           |  38 +
+>  hw/acpi/ghes_cper_stub.c                      |  19 +
+>  hw/acpi/meson.build                           |   2 +
+>  hw/arm/virt-acpi-build.c                      |  35 +-
+>  hw/arm/virt.c                                 |  19 +-
+>  hw/core/machine.c                             |   2 +
+>  include/hw/acpi/acpi_dev_interface.h          |   1 +
+>  include/hw/acpi/aml-build.h                   |   2 +
+>  include/hw/acpi/generic_event_device.h        |   1 +
+>  include/hw/acpi/ghes.h                        |  51 +-
+>  include/hw/arm/virt.h                         |   2 +
+>  qapi/acpi-hest.json                           |  35 +
+>  qapi/meson.build                              |   1 +
+>  qapi/qapi-schema.json                         |   1 +
+>  scripts/arm_processor_error.py                | 476 ++++++++++++
+>  scripts/ghes_inject.py                        |  51 ++
+>  scripts/qmp_helper.py                         | 703 ++++++++++++++++++
+>  target/arm/kvm.c                              |   7 +-
+>  tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+>  .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+>  tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+>  tests/data/acpi/aarch64/virt/HEST             | Bin 0 -> 224 bytes
+>  tests/qtest/bios-tables-test.c                |   2 +-
+>  32 files changed, 1692 insertions(+), 91 deletions(-)
+>  create mode 100644 hw/acpi/ghes_cper.c
+>  create mode 100644 hw/acpi/ghes_cper_stub.c
+>  create mode 100644 qapi/acpi-hest.json
+>  create mode 100644 scripts/arm_processor_error.py
+>  create mode 100755 scripts/ghes_inject.py
+>  create mode 100755 scripts/qmp_helper.py
+>  create mode 100644 tests/data/acpi/aarch64/virt/HEST
+> 
 
-Current release - new code bugs:
-
- - ethtool: fix ioctl confusing drivers about desired HDS user config
-
- - eth: ixgbe: fix media cage present detection for E610 device
-
-Previous releases - regressions:
-
- - loopback: avoid sending IP packets without an Ethernet header
-
- - mptcp: reset connection when MPTCP opts are dropped after join
-
-Previous releases - always broken:
-
- - net: better track kernel sockets lifetime
-
- - ipv6: fix dst ref loop on input in seg6 and rpl lw tunnels
-
- - phy: qca807x: use right value from DTS for DAC_DSP_BIAS_CURRENT
-
- - eth: enetc: number of error handling fixes
-
- - dsa: rtl8366rb: reshuffle the code to fix config / build issue
-   with LED support
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Adrian Huang (1):
-      af_unix: Fix memory leak in unix_dgram_sendmsg()
-
-Carolina Jubran (2):
-      net/mlx5: Fix vport QoS cleanup on error
-      net/mlx5: Restore missing trace event when enabling vport QoS
-
-David Howells (5):
-      rxrpc: rxperf: Fix missing decoding of terminal magic cookie
-      rxrpc: peer->mtu_lock is redundant
-      rxrpc: Fix locking issues with the peer record hash
-      afs: Fix the server_list to unuse a displaced server rather than putting it
-      afs: Give an afs_server object a ref on the afs_cell object it points to
-
-Eric Dumazet (3):
-      net: better track kernel sockets lifetime
-      ipvlan: ensure network headers are in skb linear part
-      idpf: fix checksums set in idpf_rx_rsc()
-
-Frederic Weisbecker (1):
-      net: Handle napi_schedule() calls from non-interrupt
-
-George Moussalem (1):
-      net: phy: qcom: qca807x fix condition for DAC_DSP_BIAS_CURRENT
-
-Harshal Chaudhari (1):
-      net: mvpp2: cls: Fixed Non IP flow, with vlan tag flow defination.
-
-Harshitha Ramamurthy (1):
-      gve: unlink old napi when stopping a queue using queue API
-
-Hsin-chen Chuang (1):
-      Bluetooth: Always allow SCO packets for user channel
-
-Ido Schimmel (1):
-      net: loopback: Avoid sending IP packets without an Ethernet header
-
-Jacob Keller (1):
-      iavf: fix circular lock dependency with netdev_lock
-
-Jakub Kicinski (9):
-      Merge branch 'rxrpc-afs-miscellaneous-fixes'
-      Merge tag 'for-net-2025-02-21' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      MAINTAINERS: fix DWMAC S32 entry
-      net: ethtool: fix ioctl confusing drivers about desired HDS user config
-      selftests: drv-net: test XDP, HDS auto and the ioctl path
-      Merge branch 'mptcp-misc-fixes'
-      Merge branch 'intel-wired-lan-driver-updates-2025-02-24-ice-idpf-iavf-ixgbe'
-      Merge branch 'net-enetc-fix-some-known-issues'
-      Merge branch 'mlx5-misc-fixes-2025-02-25'
-
-Jiri Slaby (SUSE) (1):
-      net: set the minimum for net_hotdata.netdev_budget_usecs
-
-Joe Damato (1):
-      selftests: drv-net: Check if combined-count exists
-
-Justin Iurman (2):
-      net: ipv6: fix dst ref loop on input in seg6 lwt
-      net: ipv6: fix dst ref loop on input in rpl lwt
-
-Kuniyuki Iwashima (1):
-      net: Use rtnl_net_dev_lock() in register_netdevice_notifier_dev_net().
-
-Linus Walleij (1):
-      net: dsa: rtl8366rb: Fix compilation problem
-
-Luiz Augusto von Dentz (1):
-      Bluetooth: L2CAP: Fix L2CAP_ECRED_CONN_RSP response
-
-Marcin Szycik (2):
-      ice: Fix deinitializing VF in error path
-      ice: Avoid setting default Rx VSI twice in switchdev setup
-
-Matthieu Baerts (NGI0) (2):
-      mptcp: reset when MPTCP opts are dropped after join
-      mptcp: safety check before fallback
-
-Meghana Malladi (1):
-      net: ti: icss-iep: Reject perout generation request
-
-Mohammad Heib (1):
-      net: Clear old fragment checksum value in napi_reuse_skb
-
-Nikita Zhandarovich (1):
-      usbnet: gl620a: fix endpoint checking in genelink_bind()
-
-Paolo Abeni (2):
-      mptcp: always handle address removal under msk socket lock
-      Merge branch 'fixes-for-seg6-and-rpl-lwtunnels-on-input'
-
-Philo Lu (1):
-      ipvs: Always clear ipvs_property flag in skb_scrub_packet()
-
-Piotr Kwapulinski (1):
-      ixgbe: fix media cage present detection for E610 device
-
-Qunqin Zhao (1):
-      net: stmmac: dwmac-loongson: Add fix_soc_reset() callback
-
-Sascha Hauer (1):
-      net: ethernet: ti: am65-cpsw: select PAGE_POOL
-
-Sean Anderson (1):
-      net: cadence: macb: Synchronize stats calculations
-
-Shay Drory (1):
-      net/mlx5: IRQ, Fix null string in debug print
-
-Stanislav Fomichev (1):
-      tcp: devmem: don't write truncated dmabuf CMSGs to userspace
-
-Wang Hai (1):
-      tcp: Defer ts_recent changes until req is owned
-
-Wei Fang (8):
-      net: enetc: fix the off-by-one issue in enetc_map_tx_buffs()
-      net: enetc: keep track of correct Tx BD count in enetc_map_tx_tso_buffs()
-      net: enetc: correct the xdp_tx statistics
-      net: enetc: VFs do not support HWTSTAMP_TX_ONESTEP_SYNC
-      net: enetc: update UDP checksum when updating originTimestamp field
-      net: enetc: add missing enetc4_link_deinit()
-      net: enetc: remove the mm_lock from the ENETC v4 driver
-      net: enetc: fix the off-by-one issue in enetc_map_tx_tso_buffs()
-
-Willem de Bruijn (1):
-      MAINTAINERS: socket timestamping: add Jason Xing as reviewer
-
- MAINTAINERS                                        |   5 +-
- drivers/bluetooth/btusb.c                          |   6 +-
- drivers/net/dsa/realtek/Kconfig                    |   6 +
- drivers/net/dsa/realtek/Makefile                   |   3 +
- drivers/net/dsa/realtek/rtl8366rb-leds.c           | 177 ++++++++++++++
- drivers/net/dsa/realtek/rtl8366rb.c                | 258 +--------------------
- drivers/net/dsa/realtek/rtl8366rb.h                | 107 +++++++++
- drivers/net/ethernet/cadence/macb.h                |   2 +
- drivers/net/ethernet/cadence/macb_main.c           |  12 +-
- drivers/net/ethernet/freescale/enetc/enetc.c       | 103 +++++---
- drivers/net/ethernet/freescale/enetc/enetc4_pf.c   |   2 +-
- .../net/ethernet/freescale/enetc/enetc_ethtool.c   |   7 +-
- drivers/net/ethernet/google/gve/gve_rx_dqo.c       |   2 +
- drivers/net/ethernet/intel/iavf/iavf_main.c        |  12 +-
- drivers/net/ethernet/intel/ice/ice_eswitch.c       |   3 +-
- drivers/net/ethernet/intel/ice/ice_sriov.c         |   5 +-
- drivers/net/ethernet/intel/ice/ice_vf_lib.c        |   8 +
- .../net/ethernet/intel/ice/ice_vf_lib_private.h    |   1 +
- drivers/net/ethernet/intel/idpf/idpf_txrx.c        |   3 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_e610.c      |   2 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c     |   2 +-
- drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c  |   8 +-
- drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c  |   2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   |  14 ++
- drivers/net/ethernet/ti/Kconfig                    |   1 +
- drivers/net/ethernet/ti/icssg/icss_iep.c           |  21 +-
- drivers/net/ipvlan/ipvlan_core.c                   |  21 +-
- drivers/net/loopback.c                             |  14 ++
- drivers/net/netdevsim/ethtool.c                    |   2 +
- drivers/net/phy/qcom/qca807x.c                     |   2 +-
- drivers/net/usb/gl620a.c                           |   4 +-
- fs/afs/server.c                                    |   3 +
- fs/afs/server_list.c                               |   4 +-
- include/linux/socket.h                             |   2 +
- include/net/sock.h                                 |   1 +
- include/trace/events/afs.h                         |   2 +
- net/bluetooth/l2cap_core.c                         |   9 +-
- net/core/dev.c                                     |  14 +-
- net/core/gro.c                                     |   1 +
- net/core/scm.c                                     |  10 +
- net/core/skbuff.c                                  |   2 +-
- net/core/sock.c                                    |  27 ++-
- net/core/sysctl_net_core.c                         |   3 +-
- net/ethtool/common.c                               |  16 ++
- net/ethtool/common.h                               |   6 +
- net/ethtool/ioctl.c                                |   4 +-
- net/ethtool/rings.c                                |   9 +-
- net/ipv4/tcp.c                                     |  26 +--
- net/ipv4/tcp_minisocks.c                           |  10 +-
- net/ipv6/rpl_iptunnel.c                            |  14 +-
- net/ipv6/seg6_iptunnel.c                           |  14 +-
- net/mptcp/pm_netlink.c                             |   5 -
- net/mptcp/protocol.h                               |   2 +
- net/mptcp/subflow.c                                |  20 +-
- net/netlink/af_netlink.c                           |  10 -
- net/rds/tcp.c                                      |   8 +-
- net/rxrpc/ar-internal.h                            |   1 -
- net/rxrpc/input.c                                  |   2 -
- net/rxrpc/peer_event.c                             |   9 +-
- net/rxrpc/peer_object.c                            |   5 +-
- net/rxrpc/rxperf.c                                 |  12 +
- net/smc/af_smc.c                                   |   5 +-
- net/sunrpc/svcsock.c                               |   5 +-
- net/sunrpc/xprtsock.c                              |   8 +-
- net/unix/af_unix.c                                 |   1 +
- tools/testing/selftests/drivers/net/hds.py         | 145 +++++++++++-
- tools/testing/selftests/drivers/net/queues.py      |   7 +-
- tools/testing/selftests/net/lib/Makefile           |   3 +
- tools/testing/selftests/net/lib/xdp_dummy.bpf.c    |  13 ++
- 69 files changed, 792 insertions(+), 461 deletions(-)
- create mode 100644 drivers/net/dsa/realtek/rtl8366rb-leds.c
- create mode 100644 drivers/net/dsa/realtek/rtl8366rb.h
- create mode 100644 tools/testing/selftests/net/lib/xdp_dummy.bpf.c
 
