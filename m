@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-535462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAF6A47334
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE4FA47338
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5E7188E31C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE493188E220
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A9A18C907;
-	Thu, 27 Feb 2025 02:49:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D7F18D63A;
+	Thu, 27 Feb 2025 02:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dm72vgPE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A66A13AA31;
-	Thu, 27 Feb 2025 02:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D430542A8F;
+	Thu, 27 Feb 2025 02:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740624599; cv=none; b=MHeyKcM7VUTgaKJzRs99F97cjJWgAz/jymBs0AeOpRYbR8xOQ8DmVvxnNOXYBII2vteN0r7MZV6XLacwx5Prfo+ouyHf2FIY2zkZ1fti29ecQAd3qoEywC1JwJbOAGZ48ylQyeiQaCwBL8DzwCh/mVTxJdATMiN/eZFm5YvPi24=
+	t=1740624793; cv=none; b=HEbK25Qxa9HmlqXivGTX49jSMiNOwrGDPEiUTYoSx1U32lB9o1wTKcsvdw3vYJaq75oX+XDg/4o/jwxeoEsfVgnJ9VKYc6vlxcQbMl/JLn9duZkrXNjlXwDMutpBOeXVjQaQ/oRZ8ExYeslzc6vwLS7WhmxnuBzpcgNdcgdLBJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740624599; c=relaxed/simple;
-	bh=Ab7eo57PFCFC9WhnnwSJx1S7OQ+3hKFiHMvngc6cB+A=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IRb03ZovsJa1mnGUS8KDj81FvxfOtR4bM7VsaUu3fjjqBBP+0eURbsehiybVf+kprj86Wm94QtT6gfM4wfCINA1Mxek3G14V3/S7DdcnNIL3kFbNrwZd1HPeDGpcn06l533rkNwIV6lL5E71jEkQ8MU2MqeDffonkRvv+9fHs2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z3G5Y66mGz4f3jt8;
-	Thu, 27 Feb 2025 10:49:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 620251A0FA5;
-	Thu, 27 Feb 2025 10:49:54 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCH61_R0r9nxjIMFA--.28039S3;
-	Thu, 27 Feb 2025 10:49:54 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: fix lower bps rate by throtl_trim_slice()
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, vgoyal@redhat.com,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250226011627.242912-1-yukuai1@huaweicloud.com>
- <Z77R_rqgDdAvFVgP@fedora>
- <021e6495-11e5-3b39-2786-d69cc4bf24f7@huaweicloud.com>
- <Z77uID36yIvWDQEj@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <6ce659d4-460d-b8bc-4834-8ad0702e7bdc@huaweicloud.com>
-Date: Thu, 27 Feb 2025 10:49:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740624793; c=relaxed/simple;
+	bh=HQn3kFyIyqvH4epxW53yWGH/1SfObMrTDpgmVoEPrqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L/u3G8OWXwbYMw3Phyc8i6lnhjuJVNucgTIPRFIUeqDgTh+1iqtPore8PhK/zo96Dgb0+/gVQxlNT5L+iRKcN+b8YvBRQqvYwxo/CVZcylVKqwmW6mrf9oEFgG2iIoyMVTR7Izr2jGTpJQdU/CvQhPuSgj7Fmzyx4xw33+Kvn3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dm72vgPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49E4C4CEE2;
+	Thu, 27 Feb 2025 02:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740624792;
+	bh=HQn3kFyIyqvH4epxW53yWGH/1SfObMrTDpgmVoEPrqk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dm72vgPEzDhxvXsgbDuBab5q4/HSlANu+hcSMiVek6Dli7PMo6Ut2OyQ8JRZJId/+
+	 l9oINZuu8w9LBLepUw0hj3uA40e2waZT4+0dFHGLsgMqR54gX7T51FxPZpJKI5Ah19
+	 NnQctRX3OJOkL63XXn+CXkEYC7GC1f8N1X5t5kMTgD8TQeBz0F24EjgQcRA+rSB2JZ
+	 bfau5kfi0old55RcolHdlHhebS1OpD0lTTOUMu1O8UR7EhOa0evwNThttf4EIuXmef
+	 oRfDDLCQ47Kl7rRQI//1SALuvxXiDDUJnqYaB/Gls5xgg1NVOzjv2f9+Nbxp2DS4NE
+	 JSoRWsGM5jn+Q==
+Date: Wed, 26 Feb 2025 18:53:10 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
+ <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Jiri Pirko
+ <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran
+ <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate
+ domains
+Message-ID: <20250226185310.42305482@kernel.org>
+In-Reply-To: <wgbtvsogtf4wgxyz7q4i6etcvlvk6oi3xyckie2f7mwb3gyrl4@m7ybivypoojl>
+References: <20250213180134.323929-1-tariqt@nvidia.com>
+	<20250213180134.323929-4-tariqt@nvidia.com>
+	<ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
+	<20250218182130.757cc582@kernel.org>
+	<qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
+	<20250225174005.189f048d@kernel.org>
+	<wgbtvsogtf4wgxyz7q4i6etcvlvk6oi3xyckie2f7mwb3gyrl4@m7ybivypoojl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z77uID36yIvWDQEj@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH61_R0r9nxjIMFA--.28039S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	F9a9DUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-在 2025/02/26 18:34, Ming Lei 写道:
-> Actually the in-tree code already covers deviation from the rounddown(),
-> but turns out it is still not enough, so this patch increases one extra
-> def slice size. With this thing is documented, feel free to add:
+On Wed, 26 Feb 2025 15:44:35 +0100 Jiri Pirko wrote:
+> > Why would there still be PF instances? I'm not suggesting that you
+> > create a hierarchy of instances.  
 > 
-> Reviewed-by: Ming Lei<ming.lei@redhat.com>
+> I'm not sure how you imagine getting rid of them. One PCI PF
+> instantiates one devlink now. There are lots of configuration (e.g. params)
+> that is per-PF. You need this instance for that, how else would you do
+> per-PF things on shared ASIC instance?
 
-Thanks for the review, will send a new verion.
-Kuai
+There are per-PF ports, right?
 
+> Creating SFs is per-PF operation for example. I didn't to thorough
+> analysis, but I'm sure there are couple of per-PF things like these.
+
+Seems like adding a port attribute to SF creation would be a much
+smaller extension than adding a layer of objects.
+
+> Also not breaking the existing users may be an argument to keep per-PF
+> instances.
+
+We're talking about multi-PF devices only. Besides pretty sure we 
+moved multiple params and health reporters to be per port, so IDK 
+what changed now.
 
