@@ -1,167 +1,176 @@
-Return-Path: <linux-kernel+bounces-536726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC8FA48371
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836E0A48372
 	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:47:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733F93B8DBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01DD31894E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE79C17C225;
-	Thu, 27 Feb 2025 15:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BFD189F36;
+	Thu, 27 Feb 2025 15:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OT2sMCPc"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gr+j/3B+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611CF187858
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD57E1624C3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740671138; cv=none; b=EtgX+JtMA3RItU8PAAotAB9BUdYET+pYkgAVKhar4/+ovY9cl8bs+2DxB7r/5XJc/oUA7JM4CSGcsn5/SPpkVfOWL/FESk/EEOC9aJf4668/+0o/k+A/E6RM2qKLUrQgkv2rGC3sjxjG7tilqUqfqNsWlZXjb20d930Z98jSb/E=
+	t=1740671180; cv=none; b=mhlDjOqWeAN27v+W6sjLpDU8EpH4ToFHGAZz61j0NxxOomGiJGKIfLo7rnHbbhyG385b8kmxxItbxmDBdwJRGirnJvstImBhkvysdTxib6jMdHAjVF4CZN0i/yWpMxW2TQy5MP546SUWprhkiCBOYo5PyxgyuLwva+IMy7Xdpr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740671138; c=relaxed/simple;
-	bh=/ii1hq+QPUbfzauT0Vac3Ol89BWdodOU8tB3n0MbeGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iA6bjYO+ubNmdnvsehNelBEB2X3dtLIcJgwhp+SdbU148Oix/hIxXdTg32k0DsSrVGS+99UYYBjzw9cSFQ1rAXDr84FwjY1cKwEq62QZKerF5q6mja6XuKVAACw4r/PJYMwWfOQWIZpftdEM0xc0+5CSegPVXYJPHEKl+/aQ4B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OT2sMCPc; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54943bb8006so1071708e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:45:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740671134; x=1741275934; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rcuVzMPrrCCi+TThZU+HIFR963eQI7ErESoom0Yv0pw=;
-        b=OT2sMCPcR0uvIOqI7fE7MV3HKRoLhjFCV7sZ/VQS37s7ZaiDnk5PmfoRjMPouCbLuE
-         yBAFS7wyA9XXQSLJk7Cgjrz+GkLz1Zo7dTCDOiSlyAoxbuxnaAnqhRdcxo6QKHpWU2D0
-         RnUMrlp3BUDTT0aBz0DGHo1ndvWgKXdwkzvwZePqajkulNC6g32RW17DaYPzX8eO91PA
-         HvDRggSDxIx5E8DQ79Z9nEqTODnbvffA/sX8nozSAbe/RsLBMr1LDLU+PIqdm8LjHoeG
-         sl74M/2KVVqAccgTDhPRNL6kgYC9SOMQlh+hKAdpm8PwHMnO/iYkvOUdmsNDOPumw3nc
-         taiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740671134; x=1741275934;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rcuVzMPrrCCi+TThZU+HIFR963eQI7ErESoom0Yv0pw=;
-        b=SMA5NNnDP/rW1T1FJu9Z1M8zSngUPt03YQeX6ZVJZpXUZhbok58uEhwznZJ2t1ZYWV
-         PHiFRcYVO+svzSPSocyLmzbAVRydp10ne1PTcg50ZOhCa8vFLIT+Re2FqY7E3AojEYI/
-         K1D1FlZ0VyskLnBu+NfXil6orH1qMa6/4/+9u4rz4u2oF4fp6z21CsqSGyIKKC2tgQlV
-         cGCiGtRdPlI3cDrluBoakWC2GUZgRdWRXh/35H1kBuenrXFATf0iDgHfTKa2kKzBPydq
-         Rgn6MPiumXHsVrJZ4xF2yr0Vy+Qu/CD0MXbBedaTIFeN99eOhitjPUEJiXGgGrU10eSV
-         VrSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLQzE7NXHloHngE/zlK0BDgY/y5bAlOiNzX1IpMAfDb1+PSL/fCmt65EEASF0sK4wjX8eEqOxWaO5JpWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb8AFIj/pCN+lefonqq7M+2sf9LwaBs8eb86TTwPu+z9k1SnG8
-	O4DWTBmUgjoIbIwysM0kT5pB0ToH9IsbVdWoITzOPZncKnckvxoIlM+VFnRfaEktL5oFXf8alu2
-	8/otbUny1URGZbQUQn9Z7eZhV5KJFWNFI34xw
-X-Gm-Gg: ASbGncuHGhGmkunjedarqnrYl2gz11aaK7qa4z2Xuy1Zx8+2CiAGnOzrsBpGrb0NuZP
-	rhHAGSkp34/9Uh+UFYh3kJueF5Mlm2L6phDBoHO0xDsS7cXFX3piZLrkwSDlZ+8TC64888Smjw5
-	8Plx/iK2Th
-X-Google-Smtp-Source: AGHT+IE+7zetE6DVGc6+iFS75ktCya3waqmc2xhr0SmYs1IrM45Kxr6XeFcELNyrhnn6EWIQf1McPU/XVWODl8dgMWY=
-X-Received: by 2002:a05:6512:b8d:b0:545:2950:5360 with SMTP id
- 2adb3069b0e04-548510d7323mr6563038e87.22.1740671134247; Thu, 27 Feb 2025
- 07:45:34 -0800 (PST)
+	s=arc-20240116; t=1740671180; c=relaxed/simple;
+	bh=eOPQbHrKBaxcxqCGe9Ye1dD+/DpzRtor7FU+2lGxES0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Ao653k/Fd8sVFaghNvgWwAJG0v37LfeAgwLpVf+CJAy4i0DdiulSV4aNJlvxH5xbYVIfSQtmYunnnL1WE8fSXfzRJVQ4z1QDyBv4JmsI0EgN/UZmP3t5BGEWthBvId0pkeColUeDe6Lq2cnFW0y3fUwlYfQZ7T3b75v+X1b7KFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gr+j/3B+; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740671178; x=1772207178;
+  h=date:from:to:cc:subject:message-id;
+  bh=eOPQbHrKBaxcxqCGe9Ye1dD+/DpzRtor7FU+2lGxES0=;
+  b=gr+j/3B+Ii64JUPB+PdnY6KiCufW9Sw95kF8Vr/vVRDqaIpe1id23Op3
+   6AUTnhPyZANxCmD9gcYnKfUyLDV3X8I8FwHWV+dtQ0/ExjxUowIGR9c/S
+   KSrbgV4ALpnX2hQnkBKIcceWl7g6shlfjch53RIjqZjj+Ip93IapM4qrb
+   tyqMrEQLP//GD/Q514yr6MwQivVDUJuHSRJVTfwjMUP7q+EubqASlZ1hr
+   yDgoWZK9ik8ii/gn98dSfKmbxIcWc2qdPGSeuyo+hywOZZ9TNDIB4nvrW
+   4W+RZ69wYMhRrqM/Nc5ph5eX6OSypcatHHoYZEMlgANBNhh/igtXgIDdP
+   Q==;
+X-CSE-ConnectionGUID: B0WKOFZqSTmBwP/ZU3Zg1g==
+X-CSE-MsgGUID: uBJbzlMwR72imq8Yej0tBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="51774743"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="51774743"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:46:17 -0800
+X-CSE-ConnectionGUID: 6NYIK59zTyaeWMo+zf/8rw==
+X-CSE-MsgGUID: Pwfb/O4tRZKIoRaQ2VxjqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="122191055"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 27 Feb 2025 07:46:16 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tng5W-000Dbu-1O;
+	Thu, 27 Feb 2025 15:46:14 +0000
+Date: Thu, 27 Feb 2025 23:45:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ 79e10dad1ce3feac7937bedf911d92f486a9e76a
+Message-ID: <202502272352.usVj4VEF-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <13709135.uLZWGnKmhe@rjwysocki.net>
-In-Reply-To: <13709135.uLZWGnKmhe@rjwysocki.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 27 Feb 2025 07:44:56 -0800
-X-Gm-Features: AQ5f1JoLn-Gmzkhoib8A3lXPDMeZMr-h9iZPxDZg9Oo-jd-3BrgtaFeYWPIBTYg
-Message-ID: <CAGETcx-ow3T_R_Lj1s3sjp6nQz6Wv7T3dQdP3HJHd+E8nkh6rw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 8:46=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> Hi Everyone,
->
-> Initially, this was an attempt to address the problems described by
-> Saravana related to spawning async work for any async device upfront
-> in the resume path:
->
-> https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@googl=
-e.com/
->
-> but then I realized that it could be extended to the suspend path and
-> used for speeding it up, which it really does.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: 79e10dad1ce3feac7937bedf911d92f486a9e76a  rseq: Update kernel fields in lockstep with CONFIG_DEBUG_RSEQ=y
 
-Btw, maybe I didn't  word it correctly, but my patch series was meant
-to speed up the non-async case too.
+elapsed time: 1446m
 
-I was going to get around sending a v2 of my series, but was caught up
-with some other work. But I'm okay if you want to finish up my effort
--- less work for me and I can focus on the other aspects of suspend :)
+configs tested: 84
+configs skipped: 2
 
-Maybe add a Suggested-by: to the patches?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I definitely want to review the series, but very busy this week with
-some other work. I'll get to this next week for sure.
+tested configs:
+alpha                            allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250227    gcc-13.2.0
+arc                   randconfig-002-20250227    gcc-13.2.0
+arm                         assabet_defconfig    clang-21
+arm                           h3600_defconfig    gcc-14.2.0
+arm                            mps2_defconfig    clang-15
+arm                   randconfig-001-20250227    gcc-14.2.0
+arm                   randconfig-002-20250227    clang-17
+arm                   randconfig-003-20250227    gcc-14.2.0
+arm                   randconfig-004-20250227    clang-21
+arm                           spitz_defconfig    gcc-14.2.0
+arm64                 randconfig-001-20250227    gcc-14.2.0
+arm64                 randconfig-002-20250227    clang-19
+arm64                 randconfig-003-20250227    gcc-14.2.0
+arm64                 randconfig-004-20250227    gcc-14.2.0
+csky                  randconfig-001-20250227    gcc-14.2.0
+csky                  randconfig-002-20250227    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250227    clang-14
+hexagon               randconfig-002-20250227    clang-16
+i386        buildonly-randconfig-001-20250227    gcc-12
+i386        buildonly-randconfig-002-20250227    gcc-11
+i386        buildonly-randconfig-003-20250227    clang-19
+i386        buildonly-randconfig-004-20250227    gcc-12
+i386        buildonly-randconfig-005-20250227    gcc-11
+i386        buildonly-randconfig-006-20250227    clang-19
+loongarch             randconfig-001-20250227    gcc-14.2.0
+loongarch             randconfig-002-20250227    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                          hp300_defconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250227    gcc-14.2.0
+nios2                 randconfig-002-20250227    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250227    gcc-14.2.0
+parisc                randconfig-002-20250227    gcc-14.2.0
+parisc64                         alldefconfig    gcc-14.1.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc               mpc834x_itxgp_defconfig    clang-18
+powerpc               randconfig-001-20250227    clang-19
+powerpc               randconfig-002-20250227    gcc-14.2.0
+powerpc               randconfig-003-20250227    clang-19
+powerpc64             randconfig-001-20250227    clang-17
+powerpc64             randconfig-002-20250227    clang-21
+powerpc64             randconfig-003-20250227    gcc-14.2.0
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250227    gcc-14.2.0
+riscv                 randconfig-002-20250227    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250227    clang-18
+s390                  randconfig-002-20250227    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250227    gcc-14.2.0
+sh                    randconfig-002-20250227    gcc-14.2.0
+sh                           se7751_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250227    gcc-14.2.0
+sparc                 randconfig-002-20250227    gcc-14.2.0
+sparc64               randconfig-001-20250227    gcc-14.2.0
+sparc64               randconfig-002-20250227    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250227    clang-17
+um                    randconfig-002-20250227    gcc-12
+x86_64      buildonly-randconfig-001-20250227    clang-19
+x86_64      buildonly-randconfig-002-20250227    clang-19
+x86_64      buildonly-randconfig-003-20250227    gcc-12
+x86_64      buildonly-randconfig-004-20250227    gcc-12
+x86_64      buildonly-randconfig-005-20250227    clang-19
+x86_64      buildonly-randconfig-006-20250227    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250227    gcc-14.2.0
+xtensa                randconfig-002-20250227    gcc-14.2.0
 
-Thanks,
-Saravana
-
->
-> Overall, the idea is that instead of starting an async work item for ever=
-y
-> async device upfront, which is not very efficient because the majority of
-> those devices will not be able to make progress due to dependencies anywa=
-y,
-> the async handling is only started upfront for the devices that are likel=
-y
-> to be able to make progress.  That is, devices without parents in the res=
-ume
-> path and leaf devices (ie. devices without children or consumers) in the
-> suspend path (the underlying observation here is that devices without par=
-ents
-> are likely to have no suppliers too whereas devices without children that
-> have consumers are not unheard of).  This allows to reduce the amount of
-> processing that needs to be done to start with.
->
-> Then, after processing every device ("async" or "sync"), "async" processi=
-ng
-> is started for some devices that have been "unblocked" by it, which are i=
-ts
-> children in the resume path or its parent and its suppliers in the suspen=
-d
-> path.  This allows asynchronous handling to start as soon as it makes sen=
-se
-> without delaying the "async" devices unnecessarily.
->
-> Fortunately, the additional plumbing needed to implement this is not
-> particularly complicated.
->
-> The first two patches in the series are preparatory.
->
-> Patch [3/5] deals with the resume path for all device resume phases.
->
-> Patch [4/5] optimizes the "suspend" phase which has the most visible effe=
-ct (on
-> the systems in my office the speedup is in the 100 ms range which is arou=
-nd 20%
-> of the total device resume time).
->
-> Patch [5/5] extend this to the "suspend late" and "suspend noirq" phases.
->
-> Thanks!
->
->
->
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
