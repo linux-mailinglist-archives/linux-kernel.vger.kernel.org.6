@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-536159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48AAA47C3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:30:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA47A47C35
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F68188315A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F45F3A4D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 11:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0F522A816;
-	Thu, 27 Feb 2025 11:28:40 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0401722ACCA;
+	Thu, 27 Feb 2025 11:29:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5384215F45;
-	Thu, 27 Feb 2025 11:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAA4226183
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740655720; cv=none; b=S0Gnierkkj7jmpp5zGGXEJ1Z38DmogZUAz2w18JWI2QeGNjNu/E2BE6jbySABPlM90mPkt7juKj4PVHrcZymBHLz/dJjsHAgeqfMUZ5/EXfM2I8mqK3vrcJkko9QmNYB27XPXP4DB2085GWXufowDc/MrxScRp263FkKZSMogN0=
+	t=1740655753; cv=none; b=U3L1rLTB5Mti5Fev6J3ceWdqs9VLbDfuENDScAwy2qxg48dYZVY+YIViSIjHbmHKFzMjDps4+/W2hCbrbBUBiAd3eofH4OJP05bDjfaj1jPKNr/GwgH8Nj1M7aa8C7VM6wYl7PkYspeRfGh9KHfUUSRYuK4Y99I/l9u6Va/FGYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740655720; c=relaxed/simple;
-	bh=AVYD9G/Hnh2E9vpPCeJsnf+TDieaShVmNKOLUm8dk3U=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=om9b/RseMbYRzOm2ZmRT6U+hIJ3FDlKRVGTWzNyQk8D1XvABh6DnrvkDgg85ymarPYdFzwiPNyvbizWBnJGQ1qCEY4UOJmxMbiMPGUXMVKvlkYnzZb/F001V5eYAn5yFrDS+XGnkR0+9GCsj9F6kfqBl61wmgIvDoIkYiaWHQIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z3TZS6Vq3zTn7b;
-	Thu, 27 Feb 2025 19:26:56 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF5FB140133;
-	Thu, 27 Feb 2025 19:28:28 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 27 Feb 2025 19:28:27 +0800
-Message-ID: <11198621-5c04-4a00-a69e-165e22ebf0e8@huawei.com>
-Date: Thu, 27 Feb 2025 19:28:25 +0800
+	s=arc-20240116; t=1740655753; c=relaxed/simple;
+	bh=ZywMm4CjYa5hw1+87SFh/PxwPwctZfrw6ORjAyszIUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDmgILR9dGC+kLPVlJXQSiK+gz7O3ChZyFHJGTdK5+IQlJgqnVLiiZK+AzU16ZyW+AZi/WhO8bTYZQoVGgeZfzxyJp/SBsQqMmVjAf5V+7Jw3lB2zOdnIijeiL54K5D8cMtLYdOoaYoww/WtxyqbkDtkPRiQ1NGzTOhESVKX8jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnc4X-00058G-Bq; Thu, 27 Feb 2025 12:28:57 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnc4W-0037HX-2y;
+	Thu, 27 Feb 2025 12:28:56 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tnc4W-003Omf-2c;
+	Thu, 27 Feb 2025 12:28:56 +0100
+Date: Thu, 27 Feb 2025 12:28:56 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
+Message-ID: <20250227112856.aylsurbt3uqm4ivw@pengutronix.de>
+References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+ <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>
-Subject: Re: [PATCH v3 net-next 2/6] net: hibmcge: Add support for rx checksum
- offload
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20250221115526.1082660-1-shaojijie@huawei.com>
- <20250221115526.1082660-3-shaojijie@huawei.com>
- <20250224190937.05b421d0@kernel.org>
- <641ddf73-3497-433b-baf4-f7189384d19b@huawei.com>
- <20250225082306.524e8d6a@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20250225082306.524e8d6a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi Laurentiu,
 
-on 2025/2/26 0:23, Jakub Kicinski wrote:
-> On Tue, 25 Feb 2025 17:00:45 +0800 Jijie Shao wrote:
->>>> +			     NETIF_F_RXCSUM)
->>> I don't see you setting the checksum to anything other than NONE
->> When receiving packets, MAC checks the checksum by default. This behavior cannot be disabled.
->> If the checksum is incorrect, the MAC notifies the driver through the descriptor.
->>
->> If checksum offload is enabled, the driver drops the packet.
->> Otherwise, the driver set the checksum to NONE and sends the packet to the stack.
-> Dropping packets with bad csum is not correct.
-> Packets where device validated L4 csum should have csum set
-> to UNNECESSARY, most likely. Please read the comment in skbuff.h
+On 25-02-26, Marco Felsch wrote:
+> Hi,
+> 
+> On 25-02-26, Laurentiu Mihalcea wrote:
+> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > 
+> > The AIPSTZ bridge offers some security-related configurations which can
+> > be used to restrict master access to certain peripherals on the bridge.
+> > 
+> > Normally, this could be done from a secure environment such as ATF before
+> > Linux boots but the configuration of AIPSTZ5 is lost each time the power
+> > domain is powered off and then powered on. Because of this, it has to be
+> > configured each time the power domain is turned on and before any master
+> > tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
+> 
+> My question still stands:
+> 
+> Setting these bits requires very often that the core is running at EL3
+> (e.g. secure-monitor) which is not the case for Linux. Can you please
+> provide more information how Linux can set these bits?
 
-Hi, is it ok below:
+Sorry I didn't noticed your response:
 
-rx checksum offload enable:
-	device check ok ->  CHECKSUM_UNNECESSARY -> stack
-	device check fail ->  drop
-	
-rx checksum offload disable:
-	device check ok ->  CHECKSUM_NONE -> stack
-	device check fail ->  CHECKSUM_NONE -> stack
+https://lore.kernel.org/all/a62ab860-5e0e-4ebc-af1f-6fb7ac621e2b@gmail.com/
 
-Thanks
-Jijie Shao
+If EL1 is allowed to set the security access configuration of the IP
+cores doesn't this mean that a backdoor can be opened? E.g. your
+secure-boot system configures one I2C IP core to be accessible only from
+secure-world S-EL1 (OP-TEE) and after the power-domain was power-cycled
+it's accessible from EL1 again. This doesn't seem right. Why should a
+user be able to limit the access permissions to an IP core to only be
+accessible from secure-world if the IP core is accessible from
+normal-world after the power-domain was power-cycled.
 
-
-
-
-
+Regards,
+  Marco
 
