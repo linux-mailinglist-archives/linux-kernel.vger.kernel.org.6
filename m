@@ -1,221 +1,210 @@
-Return-Path: <linux-kernel+bounces-535698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA4BA47628
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:57:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFE8A4762A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB3DE7A451D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:56:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E47A35ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787D21D3C9;
-	Thu, 27 Feb 2025 06:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC502165F1;
+	Thu, 27 Feb 2025 06:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bz8u17XL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TZ61ZIpB"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6FF1E833E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672264A1A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740639445; cv=none; b=BFcSN1/fG3hZVUAQMkxlCUrcLMRzW/liX/kVtjDTZC+S0Ip04JY8LxpCqZJh63CXW+S2bHQ6aCTuw8lGXmvsAk/gQDeiGDjuqPEZQCKPCgrTjg/mPGojbYeafyFvSPlqo79y6KHxnTOu+UKK9yfTsuSJ3nt/yvWICKQqyJtskrk=
+	t=1740639538; cv=none; b=aD63hxagkrsfuWrnVr9C6slSRv1VHgN5OuJB0eObu2oHqe8sWmvgNQmcMybv4ti4LUa+j24z4oXBuOeYPtDj2xLo/Wad/KxGM40MViOO7LCVG0D5D1jsCQth76fAfLwpt9/YuJOc0/d+URnFi/h90K4QOd+dJ57kkTS6WKaWjlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740639445; c=relaxed/simple;
-	bh=+t1vB+e+bOKQTWYHRPeG3VR1xS2UIFEHDuINsmtsQSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndx2A0Q7DLCuwcBwxy4HIkXmtlXGLOFxiD03FK46A402vVoaSY5cRGlzs84bJAKKEbhQ68OkLa5RddpDDQpexBlAIZggCBirtWVkVt+repUNF4Kjm6Ym/BHJ7fal70eO4amXRyclvSHVJ6aDtQaranhaQ5PRZL3ffcbcouReeRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bz8u17XL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740639442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fN9zyRpTMvyZXcI47Dudh0fWxP2P2sHISATio+64sck=;
-	b=Bz8u17XLWGwKTooGeDDorQPyJl5vjFoNUFgsY401yKUXvHo/ol3/ykWfRuBGijHwQFl9Dj
-	9lWHEls0KvdIADplwYYHh4mfa5T0OJCIfFGeigMmQ9N0i5MhXxHXNwFkL0t1ikVgOdIFw1
-	PXUgSTSmYPOu2rTP5BtGXcA0gtwE0HU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-HLnvhgB0Or-cduU6yFqZwQ-1; Thu,
- 27 Feb 2025 01:57:17 -0500
-X-MC-Unique: HLnvhgB0Or-cduU6yFqZwQ-1
-X-Mimecast-MFC-AGG-ID: HLnvhgB0Or-cduU6yFqZwQ_1740639436
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3F411800874;
-	Thu, 27 Feb 2025 06:57:15 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.46])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6771D19560AE;
-	Thu, 27 Feb 2025 06:57:13 +0000 (UTC)
-Date: Thu, 27 Feb 2025 14:57:11 +0800
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Ferry Meng <mengferry@linux.alibaba.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>
-Subject: Re: [PATCH v1 0/3] virtio-blk: add io_uring passthrough support.
-Message-ID: <20250227065711.GB85709@fedora>
-References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
- <20250219020112.GB38164@fedora>
- <be8704b0-81a4-403b-8b42-d3612099279f@linux.alibaba.com>
+	s=arc-20240116; t=1740639538; c=relaxed/simple;
+	bh=f5F+05FWg7QH9vbkrSNw7cHzta28XzeRdqo1QWrj6K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1DwKmVoR/xQ8MgOyL0lrxG/nLTyEFEROkWf9pb4LJY2WVIzBBrYJIsyzI9oNLn4mjyKMd84Gh22hdaFaoElEifxYf//H3NfZ/vfqJ/QbU/nkPtHdNc6yq76Ag9sspI82O8B1febaUhQCGqUH/4kBSF06W937guWAVVY7cw4jkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TZ61ZIpB; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2234daaf269so13556965ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1740639535; x=1741244335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MfruRsY+T9lOEc8HQldVsXeT9YnNdxrpdhBm7o5Zvg8=;
+        b=TZ61ZIpBRr4HvzWbMXeltj85/VIZ+Sx/jO/yYLLm0cnk5HInpJN/Hr1qmMcawAoS0p
+         weWsaulZiSJSdF7GLKfP6espF525pZe0aibkmzRE3NVXWLGbv8fGlTbuoB5CCXtjc1Ij
+         OjJ3YO1pzqA8J/2fpX2ewTYWc1HhTUQGvsUjlkLN746hswXPsCf7sOqXeFpWum2nGTbH
+         xYmHNdQ3jfWC6ki546TkFYBP38wipg2i7QZtmbzD/Z5LIb7YGYkGfZJGxzZUsGxWfhOE
+         WNZW93ADvPlj+BQDEd2mPFO2qtTr+ffAll+6I9Nbwz97JzOCrSotSETNcu4AQdofhCxx
+         ebhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740639535; x=1741244335;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MfruRsY+T9lOEc8HQldVsXeT9YnNdxrpdhBm7o5Zvg8=;
+        b=h96Dns9iDUCkcGqMnXLgC4tbJKn8EY27N1Vr2PYee6bvZyEG08aeL/LY1PeuQTpZc9
+         1bhuMAoU2jqNuE23laOIHQbGBfsmiBbM+AVRcqPomWxyuwlHLg0iWloVRG2efdC9wnnK
+         RGm7kO7KOLqa+uTeZddzDJ2ft8yt1YaHtqReylpTRgcyAJiqp/K07azoA1WhjYtf5Te9
+         sScVgCgEUebaM6A0CjBTfZhm5PFx1x7DqNJZlR2SzMwoj5sNhxs6rIQ6Vy0FlL7AOhYC
+         3ayf4uNeFeQToTdd7g5uNrIM1LWjA1RQRdQqV+o7bsg/B+88ysKAfrfUtJ6N54QalTYg
+         dByg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxpgA95xVaXZ3uxkFe4MuiIYZWxnQav/DuYPh57coSLSj7kAuixQB0cAAMTgXhW3xrZ07KwN2L8NxbJ+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY5tt+gcsx6LymcmlsJ1IjqlBca/4TdjJdkckHMg6l4NReAMuI
+	Ixj7qAfovgoeB9Y2d67OYqrC7AKRjlb910B7u3qxfUNXE/n+6LHMtk7SVieT4yGgzxstXJ6jxM1
+	C738=
+X-Gm-Gg: ASbGncvt+Qv3MTw113/JIsb+1f1wmwPzoAwFRXlE61sWn56b/r7bkNVURQw52ZwiFuC
+	8ywMpmWy2whNhlcz8jQteKNTrr/N7xorYuQ+KAtcWkyz5zJ9JstBt8if3AnexMVlNQQyXasNaYM
+	L0c073jUljZktLULkhA108tj5GKwGBOGjYmqSmXd+fN89pXBR7ICtA4cS5HqfkahyZEF8Mq1a34
+	+N3BszFE+jAkA1puMR40x3Sk1ITd3P5v4dXrvpxlcR/qsrIC/mcRSIk9jelYFPNoQCpcEJhTzYg
+	lUCM2wTKMsEH+dZenhzXKjX/Zjs4DoKYRj1cjwhn1UybcllK/A==
+X-Google-Smtp-Source: AGHT+IGUjTn00KPpX5mYfIBAiaODZc50JFY37y/Z4PuASFcLngKFz8EgyB5ISCL6z4hnVmppA/jlzA==
+X-Received: by 2002:a17:903:1984:b0:223:4b88:77ff with SMTP id d9443c01a7336-2234b887eb6mr25466455ad.6.1740639535586;
+        Wed, 26 Feb 2025 22:58:55 -0800 (PST)
+Received: from [10.68.122.90] ([63.216.146.179])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7c1sm7272975ad.198.2025.02.26.22.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2025 22:58:55 -0800 (PST)
+Message-ID: <6281ffc9-398e-44b9-a95c-2527004e09b7@bytedance.com>
+Date: Thu, 27 Feb 2025 14:58:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QutFJKJ1ZBtQgHGb"
-Content-Disposition: inline
-In-Reply-To: <be8704b0-81a4-403b-8b42-d3612099279f@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: CONFIG_PT_RECLAIM
+To: Johannes Weiner <hannes@cmpxchg.org>, peterz@infradead.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250226183013.GB1042@cmpxchg.org>
+ <a77923d3-ce26-4e29-bb98-b908ce2355c2@bytedance.com>
+ <20250227060820.GC110982@cmpxchg.org>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20250227060820.GC110982@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Johannes,
 
---QutFJKJ1ZBtQgHGb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/27/25 2:08 PM, Johannes Weiner wrote:
+> On Thu, Feb 27, 2025 at 11:04:51AM +0800, Qi Zheng wrote:
+>> Hi Johannes,
+>>
+>> On 2/27/25 2:30 AM, Johannes Weiner wrote:
+>>> Does PT_RECLAIM need to be configurable by the user?
+>>
+>> The PT_RECLAIM will select MMU_GATHER_RCU_TABLE_FREE, but not all archs
+>> support MMU_GATHER_RCU_TABLE_FREE, and even before Rik's a37259732a7dc
+>> ("x86/mm: Make MMU_GATHER_RCU_TABLE_FREE unconditional"), x86 only
+>> supports MMU_GATHER_RCU_TABLE_FREE in the case of PARAVIRT.
+>>
+>> Therefore, PT_RECLAIM also implies the meaning of enabling
+>> MMU_GATHER_RCU_TABLE_FREE, so I made it user-configurable. And I just
+>> thought that as a new feature, it would be better to give users the
+>> ability to turn it on and off.
+> 
+> New *features*, yes - something that has a significant enough cost
+> that clearly not all users want to pay for the benefits.
 
-On Wed, Feb 26, 2025 at 07:10:36PM +0800, Ferry Meng wrote:
->=20
-> On 2/19/25 10:01 AM, Stefan Hajnoczi wrote:
-> > On Wed, Dec 18, 2024 at 05:24:32PM +0800, Ferry Meng wrote:
-> > > This patchset implements io_uring passthrough surppot in virtio-blk
-> > > driver, bypass vfs and part of block layer logic, resulting in lower
-> > > submit latency and increased flexibility when utilizing virtio-blk.
-> > Hi,
-> > What is the status of this patch series?
-> >=20
-> > Stefan
->=20
-> I apologize for the delayed response. It seems that the maintainer has not
-> yet provided feedback on this patch series, and I was actually waiting for
-> his comments before proceeding. I have received the feedback from the oth=
-er
-> reviewers & have already discovered some obvious mistakes in v1 series.
->=20
->=20
-> Although I'm occupied with other tasks recently, I expect to send out v2
-> patches *in a week*.
+Got it.
 
-Great. I'll review the next revision in more detail.
+> 
+> But it's hard to imagine anybody would WANT to keep the page tables
+> around if they madvised away all the pages inside of them. It's a
+> great optimization, what would be a reason to opt out?
 
-Thanks,
-Stefan
+OK, now I think it makes sense to change it to 'def_bool y'.
 
->=20
->=20
-> Thanks.
->=20
-> > > In this version, currently only supports READ/WRITE vec/no-vec operat=
-ions,
-> > > others like discard or zoned ops not considered in. So the userspace-=
-related
-> > > struct is not complicated.
-> > >=20
-> > > struct virtblk_uring_cmd {
-> > > 	__u32 type;
-> > > 	__u32 ioprio;
-> > > 	__u64 sector;
-> > > 	/* above is related to out_hdr */
-> > > 	__u64 data;  // user buffer addr or iovec base addr.
-> > > 	__u32 data_len; // user buffer length or iovec count.
-> > > 	__u32 flag;  // only contains whether a vector rw or not.
-> > > };
-> > >=20
-> > > To test this patch series, I changed fio's code:
-> > > 1. Added virtio-blk support to engines/io_uring.c.
-> > > 2. Added virtio-blk support to the t/io_uring.c testing tool.
-> > > Link: https://github.com/jdmfr/fio
-> > >=20
-> > >=20
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > Performance
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >=20
-> > > Using t/io_uring-vblk, the performance of virtio-blk based on uring-c=
-md
-> > > scales better than block device access. (such as below, Virtio-Blk wi=
-th QEMU,
-> > > 1-depth fio)
-> > > (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
-> > > slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
-> > > clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
-> > > lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
-> > > (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
-> > > slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
-> > > clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
-> > > lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
-> > >=20
-> > > Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
-> > > and 'engines=3Dio_uring' also demonstrates improvements in submit lat=
-ency.
-> > > (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B=
-0 -O0 -n1 -u1 /dev/vdcc0
-> > > IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
-> > > IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
-> > > (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -=
-O0 -n1 -u0 /dev/vdc
-> > > IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
-> > > IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
-> > >=20
-> > > =3D=3D=3D=3D=3D=3D=3D
-> > > Changes
-> > > =3D=3D=3D=3D=3D=3D=3D
-> > >=20
-> > > Changes in v1:
-> > > --------------
-> > > * remove virtblk_is_write() helper
-> > > * fix rq_flags type definition (blk_opf_t), add REQ_ALLOC_CACHE flag.
-> > > https://lore.kernel.org/io-uring/202412042324.uKQ5KdkE-lkp@intel.com/
-> > >=20
-> > > RFC discussion:
-> > > ---------------
-> > > https://lore.kernel.org/io-uring/20241203121424.19887-1-mengferry@lin=
-ux.alibaba.com/
-> > >=20
-> > > Ferry Meng (3):
-> > >    virtio-blk: add virtio-blk chardev support.
-> > >    virtio-blk: add uring_cmd support for I/O passthru on chardev.
-> > >    virtio-blk: add uring_cmd iopoll support.
-> > >=20
-> > >   drivers/block/virtio_blk.c      | 320 +++++++++++++++++++++++++++++=
-++-
-> > >   include/uapi/linux/virtio_blk.h |  16 ++
-> > >   2 files changed, 331 insertions(+), 5 deletions(-)
-> > >=20
-> > > --=20
-> > > 2.43.5
-> > >=20
->=20
+> 
+>>> diff --git a/mm/Kconfig b/mm/Kconfig
+>>> index 2761098dbc1a..99383c93db33 100644
+>>> --- a/mm/Kconfig
+>>> +++ b/mm/Kconfig
+>>> @@ -1309,16 +1309,9 @@ config ARCH_SUPPORTS_PT_RECLAIM
+>>>    	def_bool n
+>>>    
+>>>    config PT_RECLAIM
+>>> -	bool "reclaim empty user page table pages"
+>>> -	default y
+>>> +	def_bool y
+>>>    	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
+>>>    	select MMU_GATHER_RCU_TABLE_FREE
+>>> -	help
+>>> -	  Try to reclaim empty user page table pages in paths other than munmap
+>>> -	  and exit_mmap path.
+>>> -
+>>> -	  Note: now only empty user PTE page table pages will be reclaimed.
+>>> -
+>>
+>> Maybe keep the help information?
+> 
+> I don't find it very helpful :( Which "other paths?" It doesn't
+> explain any pros and cons, and why anybody might choose to enable or
+> disable it. The Note repeats what's in the sentence before it.
 
---QutFJKJ1ZBtQgHGb
-Content-Type: application/pgp-signature; name="signature.asc"
+Sorry about that. :(
 
------BEGIN PGP SIGNATURE-----
+> 
+> Maybe I'm missing something. Could this not just be an #ifdef block
+> inside mm/madvise.c, instead of living inside a new file with two new
+> config symbols?
+> 
+> #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
+> ...
+> #endif
+> 
+> Is there an arch-specific feature that it requires besides
+> MMU_GATHER_RCU_TABLE_FREE such that only x86 supports it now?
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmfADMYACgkQnKSrs4Gr
-c8jz7gf/c3Twnw6cmUIGZ/fNaLP0eld0k8vAGDGtBoL4DmX6CVcdgbnhvoYfvAca
-lXiz+VFWI1azdrIkU1cuvHfInJgVFrL9Rkq9F6pAEZEplHesY5iRR53l45+eKeM+
-/YVI4jJaZQkEsr9YyNkY0TBLLom0o2de0npgg7Plu1j6Bfn7f/omyvyBBCgqEk8x
-/RBA8JQ/b2ltF5KV8aIEoXTUiiN43O205Lqx0UlVvahvlWY29WY5k70bFy9Wn7gK
-TnDL4NrddTl6vvP5CCo5TQDHZBZNRyQegTpJbc1g7cR6egz5RsNrJ1OeOA7MVpxL
-hNoD9AKorcwvOiA7VNcgL6lvIFG6Mw==
-=Ccdx
------END PGP SIGNATURE-----
+No, it only needs MMU_GATHER_RCU_TABLE_FREE.
 
---QutFJKJ1ZBtQgHGb--
+> 
+> And why *does* it require MMU_GATHER_RCU_TABLE_FREE?
+
+Because in the madvise(MADV_DONTNEED) path, mmu_gather has been used
+to batch flush tlb and free physical pages. It is a better choice to
+free PTE pages in this ways as well.
+
+And because PT_RECLAIM needs rcu, we need MMU_GATHER_RCU_TABLE_FREE to
+make pte_free_tlb() free PTE pages through rcu. Of course, we also need
+to modify __tlb_remove_table_one() to make it use rcu as well.
+
+> 
+> Documentation/mm/process_addrs.rst explains why you need rcu, but
+> there is free_pte_defer() that THP was using long before x86 needed
+> MMU_GATHER_RCU_TABLE_FREE. It seems to me if you could use that, this
+> feature would also work fine on architectures that do not generally
+> need RCU for flush & frees otherwise. So is the main issue that there
+
+As mentioned above, we want to flush & frees in batches, so we don't
+use pte_free_defer().
+
+> just isn't an explicitly deferred variant of pte_free_tlb()?
+
+The pte_free_defer() seems to have been adapted to all archs, so I
+wonder if all archs can support MMU_GATHER_RCU_TABLE_FREE, so that
+pte_free_tlb() will always use rcu to free PTE pages.
+
+Maybe I missed something.
+
++Peter.
+
+> 
+> If so, this is a fairly non-obvious dependency that should be
+> documented. It would help somebody trying to port this to a !RCU
+> mmu_gather arch.
+> 
+> And I apologize if all this was discussed before. But if it was, the
+> conclusions should be in the changelog or in code comments. This is a
+> very delicate synchronization scheme that I think deserves explicit
+> documentation somewhere.
 
 
