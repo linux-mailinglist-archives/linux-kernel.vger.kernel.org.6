@@ -1,219 +1,142 @@
-Return-Path: <linux-kernel+bounces-535491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BCCA47380
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:17:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E7FA47388
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA753A87CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1594A3A812D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6754318DB35;
-	Thu, 27 Feb 2025 03:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA81A189B84;
+	Thu, 27 Feb 2025 03:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpIa8aii"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Je6MaUdS"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEC0270039;
-	Thu, 27 Feb 2025 03:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEDC15278E;
+	Thu, 27 Feb 2025 03:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740626242; cv=none; b=C/tKl99F9rXZ37dBsrkQVaN+muEn7OLPu1sjo5n5Nat3wLA2eyVlVOEDxxyss3K0XCW6yxd/GLV+BcnedA+1RUlcHpWRZY1jQveRwTB1p79Bu3xQ5cMKEGrYkZmaTV4JFkS9mBmr0tCosQijSMJpP7YzB1lJ1GyTRkXwX7xaCd0=
+	t=1740626462; cv=none; b=CCAzb/SeJN0LTyZVNINkUp16nnqj7UPVXnZxeRnh4B1SoxH1g5T+1DkZGt7sq+9lmgEfh0OBqe8n2X+Wc1veUrJPvPtgW08iUX5Bc6GCYD0IAFb4mv5Uj+FJtneactkYNNFP7Enw4LFFO3I8Wj1MYmEe9tE49n7cAe/rmEpN/rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740626242; c=relaxed/simple;
-	bh=9AS3Hc9v2DOGdZTMZqp5nK9ONH+qjbjZwNPhNyqpfS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZLEhYbn+fs3RLv20C6ymEGBwRh82sTyJ8E13k8ktkbiNB4+XdpANo9i3DNtVtGWZqmBz7AOCv7QWK/o892h0E59vNZK4PJEoeiE+kOi8YmK1PsmDwQlSmnTwiS1TUVlP6LxxSQAPf+DCFCcgWl7vLpLfzsyH4Y+sYSFkGnnX3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpIa8aii; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f378498c9so412460f8f.1;
-        Wed, 26 Feb 2025 19:17:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740626239; x=1741231039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=186RQJEPxOQii793CYJkBqMJYUwTqOLmAOv049AKC2A=;
-        b=bpIa8aiiLXUn9ySxpKSWk0XC/MHapqfscsCyTWdBCG7VcyKUv+vn62+BBw+2cTX/E/
-         0sAkya3DN/VP7NrOqUDc87jQUlV3BWqaACLyJKmAuxGBIlkLZHaQXq8T8WpTzF6p6gAw
-         9kCl1vujes0APdHHJmapnIgy0wyRJYWq4W6KyaKFtetcVzeoLSAso1gq8yuASYASMtop
-         uBGN1fVbQihsKEXvRAtQ4csAMmJ0msgSjxXiUfakX9UX8+S/iFIEkeGC+/34eueIU1eC
-         nOw/Y1+OLDajfih+PdoSPfwMrNa/Lu7hoRqltpZ6IhxMlhBV0W5jL9niEvtR51RZJU0S
-         tXyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740626239; x=1741231039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=186RQJEPxOQii793CYJkBqMJYUwTqOLmAOv049AKC2A=;
-        b=p2XHd8Qp3fPUW9dLv/rcuApSEwJuHLV+NdyO3sJsf8ACoPqQYM28OJ18oXiFkFhX1M
-         JI1ASx943C/99RtTNGxvUs/+cWWJEIZXPn8mrZ6avEw/B/cqL9zUs8+up2H/LXGfiyI7
-         PsTtFBf8b9sAas6JEjm3cnvX/oSSPDxaC4r3ZxU7k6zgyQwTTtkLhgVWxjcvxxB5ZLi4
-         cY8O0wOgJGQfuRXG04nARgOzZsBfnsoGO8aM8HWQ3USyE3IAMa925f646S90qQHTXmbj
-         mLW/QhE0eRJT7OaDA9OPQWuH+R2sBxcBh24AWo4dqohGncVvyhsRa8hfHWy9xeH9d4Wk
-         bpbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2vJ6HFyiuPTqBlO1VpNv9JyRWIsSI2T290ZgAlnQrwzBv0I585aF8lAbARJ/Hng8u4Hs=@vger.kernel.org, AJvYcCWkXKtlCQcJQZ+g6TX0eSZUaHFsJ3PcEHoKs1XZvw2Pw1T5OxbvGdN3fPn1HY8uQvbY4fBsU2LBCpH6Y+mc@vger.kernel.org, AJvYcCX3llmC1axla/kZ+c9GGU6/gMdNMkXjUwwFGLLy9y+fd4tztKcF5XkjiXKj+OR3fXSGWAOM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrJO41106RYLNZ4zROhoAIYkTmEmoRuJ4+/6z04WjtU8aHXgeh
-	3k8Uqe2f4JtITMKdXPcSoJchs8CyFeF8nqWWSUIP7XARhCJRISQs9lhfuz9QD9u5/uI4DyihMi2
-	TLSa9pH0mNrx36PiRXrOL0nUYb+s=
-X-Gm-Gg: ASbGncv919uGpsAKkf7fV/TGZE4WQnozDwbbOuOmRaQNGw7O3W8xNDni9f3mRfpZfuB
-	6iISCHpAcXz4xNOnc2+dZtB+W5Y3buddnKUjSznTvNYaFrgPknNQ4D5j7/kzOtx+YU8hXNjgw+N
-	7GaIsxjn+DSEGsUKP+iaEwZlg=
-X-Google-Smtp-Source: AGHT+IF1DGhFf9YwvPe6WrEE56EGDwZi4/BZ2x4+eFfkz5avtcJPkCN3jzsZ2Bh5Ry6Iyq4lQWFdUc5ZRSQ2wOdXM0Y=
-X-Received: by 2002:a05:6000:4027:b0:38f:4e30:6bbb with SMTP id
- ffacd0b85a97d-390cc60a437mr11956487f8f.25.1740626239009; Wed, 26 Feb 2025
- 19:17:19 -0800 (PST)
+	s=arc-20240116; t=1740626462; c=relaxed/simple;
+	bh=7ekryrg0JkQnPhfhXHgplTQCEGv6EXtERN+54e6F2GA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=vAvwrc/dxcrRKjpYK0pUsZU0YiLC6umKHM3GKvLK4nDwHAkRab2z9DkZ4vh9SEiuKk47lb9f+jsEJxS9tztNi1afGEN0lXo6SjpRauLv+cRwtu85jWLBB0Uf5j0EvSxrTm2jnU+3eMC+Zka3ZTOuFGDx/HcuOgyOTfZZ+Mi+Wmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Je6MaUdS; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 51R3JpyhE1075058, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1740626392; bh=7ekryrg0JkQnPhfhXHgplTQCEGv6EXtERN+54e6F2GA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Je6MaUdS08TqYxJa4Zapl7TGgIexaDOxCNee76uq4biGzSUtX/1S5GuW6wUJ93y37
+	 Mhsc39PEQlzYWP+BV/VQgQ21E9LrTvhhmVI+6MyTIBkiAaSJKI6U6v/rPTu6roxLkB
+	 IyhLzmjNm38wUkv/BV7uuiIdXCxJMN7wRw7XitYjhKuuXozz+AEguYc2sNN1G+1Xg6
+	 3TlZsLBGSJHgmRX/NRD1ruSFwqVZFvR+oGL/pOQN6dDLn85axexwTPBNsQbHr8de8b
+	 UsWqupskcB7LuDn1n1VwzlCJ0AwIDZDzqhWQByZ7J94iHkQ7yP6hZrYVC/dkXYD6Z0
+	 hJRJ/HwQovp9Q==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 51R3JpyhE1075058
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 11:19:52 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 27 Feb 2025 11:19:52 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 27 Feb 2025 11:19:51 +0800
+Received: from RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547]) by
+ RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547%5]) with mapi id
+ 15.01.2507.035; Thu, 27 Feb 2025 11:19:51 +0800
+From: Ricky WU <ricky_wu@realtek.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Thomas Haschka
+	<thomas.haschka@tuwien.ac.at>,
+        Bart Van Assche <bvanassche@acm.org>
+CC: "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "James.Bottomley@hansenpartnership.com"
+	<James.Bottomley@hansenpartnership.com>,
+        "martin.peterson@oracle.com"
+	<martin.peterson@oracle.com>
+Subject: RE: mmc0: error -95 doing runtime resume
+Thread-Topic: mmc0: error -95 doing runtime resume
+Thread-Index: AQHbiEvKs6LTi7Jk9ku8Dmbfc5C+U7NaeMRw
+Date: Thu, 27 Feb 2025 03:19:51 +0000
+Message-ID: <4e7162dfccbe44468f6a452896110cc8@realtek.com>
+References: <c2f50eac-3270-8dfa-2440-4c737c366b17@tuwien.ac.at>
+ <8fd7f1d9-fc0d-4fa7-81be-378a3fc47d2a@acm.org>
+ <CAPDyKFpwZt9rezBhBbe9FeUX1BycD2br6RRTttvAVS_C99=TiQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFpwZt9rezBhBbe9FeUX1BycD2br6RRTttvAVS_C99=TiQ@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204082848.13471-1-hotforest@gmail.com> <20250204082848.13471-3-hotforest@gmail.com>
- <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com> <8734gr3yht.fsf@toke.dk>
- <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com> <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
- <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com> <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
- <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
- <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com> <CAADnVQJU9OWAWFk89P6i1RK6vXkuee5s76suHjF+uP+V4iepqQ@mail.gmail.com>
- <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
-In-Reply-To: <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 26 Feb 2025 19:17:07 -0800
-X-Gm-Features: AQ5f1Jq1fcbJkFAdT5yUh773lJn5P-P9VjdWujeJsDT-CJu9e1AyvAlVcd4f_AU
-Message-ID: <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
-Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
- map atomically
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: Zvi Effron <zeffron@riotgames.com>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, rcu@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>, Cody Haas <chaas@riotgames.com>, 
-	Hou Tao <hotforest@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 26, 2025 at 6:43=E2=80=AFPM Hou Tao <houtao@huaweicloud.com> wr=
-ote:
->
-> >>
-> >> lookup procedure A
-> >> A: find the old element (instead of the new old)
-> >>
-> >>               update procedure B
-> >>               B: delete the old element
-> >>               update procedure C on the same CPU:
-> >>               C: reuse the old element (overwrite its key and insert i=
-n
-> >> the same bucket)
-> >>
-> >> A: the key is mismatched and return -ENOENT.
-> > This is fine. It's just normal reuse.
-> > Orthogonal to 'update as insert+delete' issue.
->
-> OK. However, it will break the lookup procedure because it expects it
-> will return an valid result instead of -ENOENT.
-
-What do you mean 'breaks the lookup' ?
-lookup_elem_raw() matches hash, and then it memcmp(key),
-if the element is reused anything can happen.
-Either it succeeds in memcmp() and returns an elem,
-or miscompares in memcmp().
-Both are expected, because elems are reused in place.
-
-And this behavior is expected and not-broken,
-because bpf prog that does lookup on one cpu and deletes
-the same element on the other cpu is asking for trouble.
-bpf infra guarantees the safety of the kernel.
-It doesn't guarantee that bpf progs are sane.
-
-> > It's been a long time since I looked into rcu_nulls details.
-> > Pls help me understand that this new replace_rcu_nulls()
-> > is correct from nulls pov,
-> > If it is then this patch set may be the right answer to non-atomic upda=
-te.
->
-> If I understand correctly, only the manipulations of ->first pointer and
-> ->next pointer need to take care of nulls pointer.
-
-hmm. I feel we're still talking past each other.
-See if (get_nulls_value() =3D=3D ...) in lookup_nulls_elem_raw().
-It's there because of reuse. The lookup can start in one bucket
-and finish in another.
-
-> >
-> > And for the future, please please focus on "why" part in
-> > the cover letter and commit logs instead of "what".
-> >
-> > Since the only thing I got from the log was:
-> > "Currently, the update is not atomic
-> > because the overwrite of existing element happens in a two-steps way,
-> > but the support of atomic update is feasible".
-> >
-> > "is feasible" doesn't explain "why".
-> >
-> > Link to xdp-newbie question is nice for additional context,
-> > but reviewers should not need to go and read some thread somewhere
-> > to understand "why" part.
-> > All of it should be in the commit log.
->
-> OK. My original thought is that is a reported problem, so an extra link
-> will be enough. Will try to add more context next time.
-> >
-> >> map may still be incorrect (as shown long time ago [1]), so I think
-> >> maybe for other types of map, the atomic update doesn't matter too muc=
-h.
-> >>
-> >> [1]:
-> >> https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweiclou=
-d.com/
-> > A thread from 3 years ago ?! Sorry, it's not helpful to ask
-> > people to page-in such an old context with lots of follow ups
-> > that may or may not be relevant today.
-> Let me reuse part of the diagram above to explain how does the lookup
-> procedure may return a incorrect value:
->
-> lookup procedure A
-> A: find the old element (instead of the new element)
->
->
->               update procedure B
->               B: delete the old element
->               update procedure C on the same CPU:
->
->
-> A: the key is matched and return the value in the element
->
->               C: reuse the old element (overwrite its key and value)
->
-> A: read the value (it is incorrect, because it has been reused and
-> overwritten)
-
-... and it's fine. It's by design. It's an element reuse behavior.
-
-Long ago hashmap had two modes: prealloc (default) and
-NO_PREALLOC (call_rcu + kfree)
-
-The call_rcu part was there to make things safe.
-The memory cannot be kfree-ed to the kernel until RCU GP.
-With bpf_mem_alloc hashmap elements are freed back to bpf_ma
-right away. Hashmap is doing bpf_mem_cache_free()
-(instead of bpf_mem_cache_free_rcu()) because users need speed.
-So since 2022 both prealloc and no_prealloc reuse elements.
-We can consider a new flag for the hash map like F_REUSE_AFTER_RCU_GP
-that will use _rcu() flavor of freeing into bpf_ma,
-but it has to have a strong reason.
-And soon as we add it the default with prealloc would need
-to use call_rcu() too, right?
-and that becomes nightmare, since bpf prog can easily DoS the system.
-Even if we use bpf_mem_cache_free_rcu() only, the DoS is a concern.
-Unlike new things like bpf_obj_new/obj_drop the hashmap
-is unpriv, so concerns are drastically different.
+PiArIFJpY2t5DQo+IA0KPiBPbiBGcmksIDIxIEZlYiAyMDI1IGF0IDE4OjIwLCBCYXJ0IFZhbiBB
+c3NjaGUgPGJ2YW5hc3NjaGVAYWNtLm9yZz4gd3JvdGU6DQo+ID4NCj4gPg0KPiA+IE9uIDIvMjEv
+MjUgNzo0MSBBTSwgVGhvbWFzIEhhc2Noa2Egd3JvdGU6DQo+ID4gPiBCdWcgRml4OiBibG9jazog
+SW1wcm92ZSBzdGFiaWxpdHkgb2YgU0QgY2FyZHMgaW4gTWljcm9zb2Z0IFN1cmZhY2UgR08gMiBh
+bmQNCj4gPiA+ICAgICAgICAgICAgICAgcG9zc2libHkgb3RoZXIgZGV2aWNlcy4NCj4gPiA+DQo+
+ID4gPg0KPiA+ID4gVGhlIGNvbW1pdCA2NWE1NThmNjZjMzA4DQo+ID4gPiAgICAgIGJsb2NrOiBJ
+bXByb3ZlIHBlcmZvcm1hbmNlIGZvciBCTEtfTVFfRl9CTE9DS0lORyBkcml2ZXJzDQo+ID4gPg0K
+PiA+ID4gYmFzaWNhbGx5IG1hZGUgdGhlIHVzZSBvZiBTRCBjYXJkcyBpbiBteSBNaWNyb3NvZnQg
+U3VyZmFjZSBHTyAyDQo+IGltcG9zc2libGUuDQo+ID4gPiBUaGUgY2FyZHMgZG8gc3RvcCBmdW5j
+dGlvbmluZyBhZnRlciBhYm91dCAxNSBtaW51dGVzLiBNb3N0bHkgYXQgaW8NCj4gPiA+IGludGVu
+c2l2ZSB0YXNrcy4NCj4gPiA+DQo+ID4gPiBBcyBvdXRsaW5lZCBpbiBodHRwczovL2J1Z3ppbGxh
+Lmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIxODgyMQ0KPiA+ID4gaSBiaXNlY3RlZCB0aGUg
+cHJvYmxlbSB0aGF0IHlpZWxkZWQgYW4gdW5zdGFibGUgb3BlcmF0aW9uIG9mIHRoZQ0KPiA+ID4g
+Y2FyZHJlYWRlciBvbiBteSBTdXJmYWNlIEdPIDIuDQo+ID4gPiBJIHN1Y2Nlc3NmdWxseSByZXZl
+cnNlZCB0aGUgY29tbWl0IDY1YTU1OGY2NmMzMDggaW4gNi4xMi4xNiB1c2luZw0KPiA+ID4gdGhl
+IGF0dGFjaGVkIHBhdGNoLiBBcyBJIHN1cHBvc2UgdGhlIGJ1ZyBpbnRyb2R1Y2VkIHdpdGggdGhp
+cyBjb21taXQNCj4gPiA+IG1pZ2h0IGhpdCBvdGhlciB1c2VycyBvZiBzZC1jYXJkcyBpbiBzaW1p
+bGFyIGhhcmR3YXJlIEkgc3VnZ2VzdCB0aGlzDQo+ID4gPiBjb21taXQgc2hhbGwgYmUgcmV2ZXJz
+ZWQsIGV2ZW4gaWYgdGhlIGltcHJvdmVkIHBlcmZvcm1hbmNlIG1pZ2h0IGJlDQo+IGdvbmUuDQo+
+ID4NCj4gPiBUaGFuayB5b3UgZm9yIGhhdmluZyBiaXNlY3RlZCB0aGlzIGlzc3VlIGFuZCBmb3Ig
+aGF2aW5nIHNoYXJlZCB0aGUNCj4gPiByZXN1bHQgb2YgdGhlIGJpc2VjdGlvbiBwcm9jZXNzLiBU
+aGlzIGlzIHZlcnkgdXNlZnVsIGluZm9ybWF0aW9uLg0KPiA+DQo+ID4gU2luY2UgdGhlIGNvbW1p
+dCBtZW50aW9uZWQgYWJvdmUgaXMgYWJvdXQgMS41IHllYXJzIG9sZCBhbmQgaGFzIG5vdA0KPiA+
+IGNhdXNlZCBhbnkgaXNzdWVzIGZvciBhbnlvbmUgd2hvIGlzIG5vdCB1c2luZyBhbiBTRCBjYXJk
+IHJlYWRlciwgdGhhdA0KPiA+IGNvbW1pdCBpcyBwcm9iYWJseSBub3QgdGhlIHJvb3QgY2F1c2Ug
+b2YgdGhlIHJlcG9ydGVkIGJlaGF2aW9yLiBBcmUgU0QNCj4gPiBjYXJkcyBjb250cm9sbGVkIGJ5
+IHRoZSBNTUMgZHJpdmVyPyBJZiBzbywgSSB0aGluayB0aGUgbmV4dCBzdGVwIGlzIHRvDQo+ID4g
+dGFrZSBhIGNsb3NlIGxvb2sgYXQgdGhlIE1NQyBkcml2ZXIuIEkgaGF2ZSBDYy1lZCB0aGUgTU1D
+IGRyaXZlcg0KPiBtYWludGFpbmVyLg0KPiANCj4gVGhlcmUgd2FzIGFub3RoZXIgdGhyZWFkIFsx
+XSB3aGVyZSBJIHRyaWVkIHRvIGxvb3AgaW4gUmlja3kgV3UsIGJ1dCB0aGVyZSB3YXMNCj4gbm8g
+cmVzcG9uc2UuIEkgaGF2ZSBhZGRlZCBoaW0gdG8gdGhpcyB0cmVhZCB0b28uDQo+IA0KSGkgVWxm
+LA0KQmVjYXVzZSBJIHdhcyB3YWl0aW5nIGZvciB0aGUgcmVzdWx0IHRoYXQgcmV2ZXJ0IDEwMWJk
+OTA3YjQyNCAoIm1pc2M6IHJ0c3g6IGp1ZGdlIEFTUE0gTW9kZSB0byBzZXQgUEVUWENGRyBSZWci
+KQ0KQ2FuIGZpeCB0aGlzIGlzc3VlIG9yIG5vdCwgYnV0IEkgZGlkIG5vdCBzZWUgYW55IHJlc3Bv
+bnNlLi4uDQoNCkhpIFRob21hcywNClRoaXMgaXNzdWUodGhpcyBtYWlsIHRocmVhZCkgYW5kIFsx
+XSBhcmUgdGhlIHNhbWUgaXNzdWU/DQpBbmQgdGhpcyBpc3N1ZSBvbmx5IGNhbiByZXByb2R1Y2Ug
+b24gc3VyZmFjZSBnbyAyPw0KSWYgc28sIEkgbmVlZCB0byBmaW5kIGNvcnJlY3QgcGxhdGZvcm0g
+dG8gcmVwcm9kdWNlIHRoaXMgaXNzdWUgb24gbXkgaGFuZA0KDQoNCj4gRm9yIHRoZSByZWNvcmQs
+IEkgYWdyZWUsIGV2ZW4gaWYgcmV2ZXJ0aW5nIDY1YTU1OGY2NmMzMDggc29sdmVzIHRoZSBpc3N1
+ZSwgaXQncw0KPiBub3QgdGhlIGNvcnJlY3QgZml4Lg0KPiANCj4gVW5sZXNzIHdlIGNhbiBnZXQg
+c29tZSBoZWxwIGZyb20gUmlja3ksIHdlIGNhbiB0cnkgdG8gZHJvcCBhc3NpZ25pbmcNCj4gIk1N
+Q19DQVBfQUdHUkVTU0lWRV9QTSIgaW4gcmVhbHRla19pbml0X2hvc3QoKSB0byBzZWUgaWYgdGhh
+dCBzb2x2ZXMgdGhlDQo+IHByb2JsZW0uIE9yIGlmIGRlYnVnZnMgaXMgZW5hYmxlZCwgd2UgY2Fu
+IGRpc2FibGUNCj4gTU1DX0NBUF9BR0dSRVNTSVZFX1BNIGZvciB0aGUgbW1jIGhvc3QgdmlhIHRo
+ZSAiY2FwcyIgZGVidWdmcy1ub2RlLg0KPiANCj4gVGhvbWFzIGNhbiB5b3UgdHJ5IHRvIGRyb3Ag
+TU1DX0NBUF9BR0dSRVNTSVZFX1BNIGFuZCBzZWUgaWYgdGhhdCBzb2x2ZXMNCj4gdGhlIHByb2Js
+ZW0/DQo+IA0KPiBLaW5kIHJlZ2FyZHMNCj4gVWZmZQ0KPiANCj4gWzFdDQo+IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2FsbC9DQVBEeUtGcTQtZkwzb0hlVDlwaFRoV1FKcXppY0tlQTQ0N1dCSlVi
+dGMNCj4gS1BoZFoyZDFBQG1haWwuZ21haWwuY29tLw0K
 
