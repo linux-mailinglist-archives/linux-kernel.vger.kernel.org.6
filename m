@@ -1,184 +1,121 @@
-Return-Path: <linux-kernel+bounces-536267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D949CA47D80
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:22:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D7DA47D9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 13:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD351896306
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:20:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679737A842B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 12:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196222B8D0;
-	Thu, 27 Feb 2025 12:18:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9141270048;
-	Thu, 27 Feb 2025 12:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B0922D4E3;
+	Thu, 27 Feb 2025 12:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GP2codip"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27E0270040;
+	Thu, 27 Feb 2025 12:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658699; cv=none; b=cf+mwlCWn/vR9mToGqeVzIXrw61uiSCXDOd4Z6GZac8rmnis8el7hd5P7SiIMGtaQ8MPYQMpzB2W7tZUEQpUljx1lwM2jr6/EcTQCxZXftW8OWSoBwkI9gr0KnOuzB7EaNmTPngfowjj24mOPHkLwGPrqc6DPmmfI0xiorcYkH4=
+	t=1740658707; cv=none; b=MCRx6zAa96KCaeh21QNGDIx3ERdfDsVSH2dYYagDc0+bVpiWFdtSiM740snGF/VA7fwlyTe5wIChNWLxHEgYICjmlY13PbPR05kg/Zt1Q/rSQn5hgs8G9NAO8E8Emmo655y3CLM6TdDSUtH2jU0KAk7gB9B+/+J0XPibtqWZkCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658699; c=relaxed/simple;
-	bh=HSa4X05wJ6LbkPCWaSBF4nZC+iFFswKuy147sU4Tx1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rms3KrA4l0vM26dhJkg/KIEgjj6XqfJJOu11v5q56jxtwn1h1znhPo/Of6gcfsPhE8IIr9vpHwNIDVEBgTknJlVOqm+rYnc4q9BJoHBYq9c2RLgMGjyoW60MxaulXx2AufO5v6q1KQc7E+sewEgDIjLJLC5vCE8otwILQitDWRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 971B62BCA;
-	Thu, 27 Feb 2025 04:18:31 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FF5E3F673;
-	Thu, 27 Feb 2025 04:18:14 -0800 (PST)
-Date: Thu, 27 Feb 2025 12:18:11 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, <linux-gpio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/8] pinctrl: sunxi: support moved power
- configuration registers
-Message-ID: <20250227121811.23460bf0@donnerap.manchester.arm.com>
-In-Reply-To: <CAGb2v67V7PAOC8MLVzE5SwwvpogN_WLNhQnRVD2pikGVDHtJjA@mail.gmail.com>
-References: <20250214003734.14944-1-andre.przywara@arm.com>
-	<20250214003734.14944-5-andre.przywara@arm.com>
-	<CAGb2v67V7PAOC8MLVzE5SwwvpogN_WLNhQnRVD2pikGVDHtJjA@mail.gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1740658707; c=relaxed/simple;
+	bh=Y/2H0VwlBRrkxH+JvTo6LrgmHk1fi1vhR22rgXq1cmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+3a9qpJM9neOcMeW9/yvtzTnAvQDaOmpGAphU7b0n+KK+bZIix4X2a3ohwR4xY+1YJ5TLdtBn0z2cT/vPuR5VCSYyp308wwWgR+ED/xysDQGGIHKLoZT9k9NsPVMhPhXALeYyLw3HvCcFzWmfktIsT+k/jN5cAHRptlCnlkeqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GP2codip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB38C4CEDD;
+	Thu, 27 Feb 2025 12:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740658707;
+	bh=Y/2H0VwlBRrkxH+JvTo6LrgmHk1fi1vhR22rgXq1cmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GP2codipxrHYBkhNHC1/K/xNkUFRxPiKB9xFfqguhzRiQko+9FFUxls3xjTDm/7Rr
+	 blonfpL1d4l/yKhYcJdllZsvs6WFZ/worPwKbXgM6AmNG+IroyZF5ml2UfN08d/gs5
+	 rT14F/fWKR1G+ouKjTjOdxQRH7lIuMqNIvc0Ov78bPy1SOl63fXKqZHM2AMdYJJp9t
+	 w1CRlHQ+wbAsqzjAV+hDKU4DOorXG/Yfz3RlO5xG5NqOK/MT6l/tvVIQEuDN2MFyTU
+	 n1Wx+4os1QBdE55Qnr0cOavFfnJQMYNSLS7tLlqoVEqZYrynJOatA5JgmHItU1uh0l
+	 1ZwqeKdXSL0Ow==
+Date: Thu, 27 Feb 2025 13:18:18 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Kaixiong Yu <yukaixiong@huawei.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the sysctl tree with the tip tree
+Message-ID: <skkjdjse5q7wgwwfqzkgcfb7ewcrlsn7hbqmdf333bcwbbpgak@j4hwc7iidkqh>
+References: <20250224170310.41c8611d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224170310.41c8611d@canb.auug.org.au>
 
-On Mon, 17 Feb 2025 23:48:13 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On Mon, Feb 24, 2025 at 05:03:10PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the sysctl tree got a conflict in:
+> 
+>   kernel/sysctl.c
+Yep, 8aeacf257070 got picked up by the tip robot. I was expecting a bit
+more review before this went in, so I did not bother rebasing it on top
+of next.
 
-Hi,
+> 
+> between commit:
+> 
+>   8aeacf257070 ("perf/core: Move perf_event sysctls into kernel/events")
+> 
+> from the tip tree and commit:
+> 
+>   dccf3c99febf ("sysctl: remove unneeded include")
+> 
+> from the sysctl tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+Thx for this.
 
-> * # Be careful, this email looks suspicious; * Out of Character: The send=
-er is exhibiting a significant deviation from their usual behavior, this ma=
-y indicate that their account has been compromised. Be extra cautious befor=
-e opening links or attachments. *
-> On Fri, Feb 14, 2025 at 8:40=E2=80=AFAM Andre Przywara <andre.przywara@ar=
-m.com> wrote:
-> >
-> > The Allwinner pincontroller IP features some registers to control the
-> > withstand voltage of each pin group. So far those registers were always
-> > located at the same offset, but the A523 SoC has moved them (probably to
-> > accommodate all eleven pin banks).
-> >
-> > Add a flag to note this feature, and use that to program the registers
-> > either at offset 0x340 or 0x380. So far no pincontroller driver uses
-> > this flag, but we need it for the upcoming A523 support.
-> >
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 15 +++++++++++----
-> >  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  7 +++++--
-> >  2 files changed, 16 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/su=
-nxi/pinctrl-sunxi.c
-> > index 83a031ceb29f2..a1057122272bd 100644
-> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> > @@ -736,9 +736,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sun=
-xi_pinctrl *pctl,
-> >                 val =3D uV > 1800000 && uV <=3D 2500000 ? BIT(bank) : 0;
-> >
-> >                 raw_spin_lock_irqsave(&pctl->lock, flags);
-> > -               reg =3D readl(pctl->membase + PIO_POW_MOD_CTL_REG);
-> > +               reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset);
-> >                 reg &=3D ~BIT(bank);
-> > -               writel(reg | val, pctl->membase + PIO_POW_MOD_CTL_REG);
-> > +               writel(reg | val, pctl->membase + pctl->pow_mod_sel_off=
-set);
-> >                 raw_spin_unlock_irqrestore(&pctl->lock, flags);
-> >
-> >                 fallthrough;
-> > @@ -746,9 +746,12 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct su=
-nxi_pinctrl *pctl,
-> >                 val =3D uV <=3D 1800000 ? 1 : 0;
-> >
-> >                 raw_spin_lock_irqsave(&pctl->lock, flags);
-> > -               reg =3D readl(pctl->membase + PIO_POW_MOD_SEL_REG);
-> > +               reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset +
-> > +                           PIO_POW_MOD_SEL_OFS);
-> >                 reg &=3D ~(1 << bank);
-> > -               writel(reg | val << bank, pctl->membase + PIO_POW_MOD_S=
-EL_REG);
-> > +               writel(reg | val << bank,
-> > +                      pctl->membase + pctl->pow_mod_sel_offset +
-> > +                      PIO_POW_MOD_SEL_OFS);
-> >                 raw_spin_unlock_irqrestore(&pctl->lock, flags);
-> >                 return 0;
-> >         default:
-> > @@ -1520,6 +1523,10 @@ int sunxi_pinctrl_init_with_flags(struct platfor=
-m_device *pdev,
-> >                 pctl->pull_regs_offset =3D PULL_REGS_OFFSET;
-> >                 pctl->dlevel_field_width =3D DLEVEL_FIELD_WIDTH;
-> >         }
-> > +       if (flags & SUNXI_PINCTRL_ELEVEN_BANKS)
-> > +               pctl->pow_mod_sel_offset =3D PIO_11B_POW_MOD_SEL_REG;
-> > +       else
-> > +               pctl->pow_mod_sel_offset =3D PIO_POW_MOD_SEL_REG;
-> >
-> >         pctl->irq_array =3D devm_kcalloc(&pdev->dev,
-> >                                        IRQ_PER_BANK * pctl->desc->irq_b=
-anks,
-> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/su=
-nxi/pinctrl-sunxi.h
-> > index 6cf721876d89d..a93385e456a57 100644
-> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> > @@ -87,9 +87,11 @@
-> >  #define SUNXI_PINCTRL_VARIANT_MASK     GENMASK(7, 0)
-> >  #define SUNXI_PINCTRL_NEW_REG_LAYOUT   BIT(8)
-> >  #define SUNXI_PINCTRL_PORTF_SWITCH     BIT(9)
-> > +#define SUNXI_PINCTRL_ELEVEN_BANKS     BIT(10)
-> >
-> > -#define PIO_POW_MOD_SEL_REG    0x340
-> > -#define PIO_POW_MOD_CTL_REG    0x344
-> > +#define PIO_POW_MOD_SEL_REG            0x340
-> > +#define PIO_11B_POW_MOD_SEL_REG                0x380
-> > +#define PIO_POW_MOD_SEL_OFS            0x004 =20
->=20
-> Shouldn't this be PIO_POW_MOD_CTL_OFS instead?
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc kernel/sysctl.c
+> index 635f5e829fe8,eeb4cba12190..000000000000
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@@ -54,7 -47,7 +47,6 @@@
+>   #include <linux/acpi.h>
+>   #include <linux/reboot.h>
+>   #include <linux/ftrace.h>
+> - #include <linux/oom.h>
+>  -#include <linux/perf_event.h>
+>   #include <linux/kmod.h>
+>   #include <linux/capability.h>
+>   #include <linux/binfmts.h>
+I see that linux/oom.h was removed from kernel/sysctl.h. This was not
+part of any of the patches but it is the right thing to do. I'll make a
+note of it and make sure to remove it if it comes back
 
-Ah, I already got lost myself in those three-letter stubs, but you are
-right: it's the offset of the control register within the POW_MOD(?)
-register block.
-So nice catch, will fix it.
+Thx again.
 
-Thanks,
-Andre
+Best
 
-> ChenYu
->=20
-> >
-> >  #define PIO_BANK_K_OFFSET              0x500
-> >
-> > @@ -173,6 +175,7 @@ struct sunxi_pinctrl {
-> >         u32                             bank_mem_size;
-> >         u32                             pull_regs_offset;
-> >         u32                             dlevel_field_width;
-> > +       u32                             pow_mod_sel_offset;
-> >  };
-> >
-> >  #define SUNXI_PIN(_pin, ...)                                   \
-> > --
-> > 2.46.3
-> > =20
->=20
->=20
+-- 
 
+Joel Granados
 
