@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-536579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7BBA481D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:46:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5212BA48157
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D6B177D93
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2FC3AC417
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291D2356DB;
-	Thu, 27 Feb 2025 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D5B23770C;
+	Thu, 27 Feb 2025 14:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nwmWaF96"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gNGnGPuk"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5610230D35
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904082376EC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740666441; cv=none; b=pZW1jAbKlAMqZQzlv6SoY47yI5R2ROz7MGjnqAEHWsay3XjFwh5G9QCkdq5iFDYtAkA57TuOliYl7SDOhci2a/q+D1hejNA3a3plJ33JDBfQJLBI1bXfpAeUAfC7PPcVQnY58qFw7UXsmxAWIOuDdfJYdqeIXRlf44JXgvgs19M=
+	t=1740666447; cv=none; b=oklM+yLchdDpqOB7LSMPsPZoGPkOXsmcWBMKWhBYzTvAfuA5AlgRF9YS4MHKMHmozvFKqOvyGeO5FZR5MuyBBp4XT0Fi2YMGBFTcZFCKiBZSzgv/jAHbuNKdeMpovzBPlRNfx/qgkeC6U6rQisPkE615fKyvWKrIP3ch5w04OCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740666441; c=relaxed/simple;
-	bh=9NJh4qWBaG6Re9XAkRIRu/sfCXk4U7OusKRVt14Xt5o=;
+	s=arc-20240116; t=1740666447; c=relaxed/simple;
+	bh=rDWiyqunZGTOtFOaj6bPovFS1empQsc83Ctjli5d8AA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QAVgkxrzXe8+DJtTKCEj++5XwUNxlpjeoYQ9YqcX3TgjHLOitAckOgpkMProekyKJ5QmUueHRgYVqGa5dyJMRWCVfRu6RvbDUz6FYEslAzLk2+sINuiSijHnDVL/bbkhaop+18Qas0SAshT+CK0CjVQ4OPDdKPD/ZBc8MohxG4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nwmWaF96; arc=none smtp.client-ip=91.218.175.180
+	 MIME-Version; b=JPx5Kq70oaCaU9C5UHhpr6OJBmFQr1O8rLpzPqjHGYk+m/hbXL4J/JuJo1i4DMLuYCvRlEKr4gmCn9uzJNEx9STbiJC5wU4QVUEYvYTpJ5iIO3D71s8l7XjuWO/eNxJ1ddbcNg6suReaVmhQntbbT/g5dQ7g+/x9kfH7uQTjZBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gNGnGPuk; arc=none smtp.client-ip=91.218.175.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740666436;
+	t=1740666443;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s7AvVgItQBcIy3/yElChkvzIw9QALk+tx+dIFetvRkg=;
-	b=nwmWaF96KstZUIDUwvmXpOsGOBzSQAJeUTep86aEKE0QY40D4ZU8xwstYHcScmI/ZkCKud
-	BZ2OaoQXOqd07v0dJJA5DKbILtc0UF32ch5v9wEG1G7rObojUixm0EvtJX4vMlCUZrENFQ
-	lN8Ykv+OXzoFmEIvecUy6DvzYcOBviY=
+	bh=ZM2tKqXjjo4I4618vU5KeTgE7YE43jJgVbf+MnAQmK4=;
+	b=gNGnGPuk3qV2Kf4osot90TYQKn6u2hTi1fGtYIo6FtHBtsVui939+Ge7rD9knRdCvppp71
+	zyHz7s0ufy2lNLANAc8V0OZ5R+eNb6TnTLIabEfLb9KyTCMn2E48zOqrCbn4pZdEjvdFFS
+	VzuUybXQq/8gcQP4QNpg16iBBkyrWZY=
 From: Jiayuan Chen <jiayuan.chen@linux.dev>
 To: bpf@vger.kernel.org
 Cc: john.fastabend@gmail.com,
@@ -65,9 +65,9 @@ Cc: john.fastabend@gmail.com,
 	linux-kselftest@vger.kernel.org,
 	mrpre@163.com,
 	Jiayuan Chen <jiayuan.chen@linux.dev>
-Subject: [PATCH bpf-next v1 1/3] selftests/bpf: Allow auto port binding for cgroup connect
-Date: Thu, 27 Feb 2025 22:26:44 +0800
-Message-ID: <20250227142646.59711-2-jiayuan.chen@linux.dev>
+Subject: [PATCH bpf-next v1 2/3] selftests/bpf: Allow auto port binding for bpf nf
+Date: Thu, 27 Feb 2025 22:26:45 +0800
+Message-ID: <20250227142646.59711-3-jiayuan.chen@linux.dev>
 In-Reply-To: <20250227142646.59711-1-jiayuan.chen@linux.dev>
 References: <20250227142646.59711-1-jiayuan.chen@linux.dev>
 Precedence: bulk
@@ -79,84 +79,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Allow auto port binding for cgroup connect test to avoid binding conflict.
+Allow auto port binding for bpf nf test to avoid binding conflict.
 
-Result:
-./test_progs -a cgroup_v1v2
-59      cgroup_v1v2:OK
-Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+./test_progs -a bpf_nf
+24/1    bpf_nf/xdp-ct:OK
+24/2    bpf_nf/tc-bpf-ct:OK
+24/3    bpf_nf/alloc_release:OK
+24/4    bpf_nf/insert_insert:OK
+24/5    bpf_nf/lookup_insert:OK
+24/6    bpf_nf/set_timeout_after_insert:OK
+24/7    bpf_nf/set_status_after_insert:OK
+24/8    bpf_nf/change_timeout_after_alloc:OK
+24/9    bpf_nf/change_status_after_alloc:OK
+24/10   bpf_nf/write_not_allowlisted_field:OK
+24      bpf_nf:OK
+Summary: 1/10 PASSED, 0 SKIPPED, 0 FAILED
 
 Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 ---
- .../testing/selftests/bpf/prog_tests/cgroup_v1v2.c  | 13 +++++++++----
- .../testing/selftests/bpf/progs/connect4_dropper.c  |  4 +++-
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/bpf_nf.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_v1v2.c b/tools/testing/selftests/bpf/prog_tests/cgroup_v1v2.c
-index 64abba72ac10..37c1cc52ed98 100644
---- a/tools/testing/selftests/bpf/prog_tests/cgroup_v1v2.c
-+++ b/tools/testing/selftests/bpf/prog_tests/cgroup_v1v2.c
-@@ -10,12 +10,18 @@
- static int run_test(int cgroup_fd, int server_fd, bool classid)
- {
- 	struct connect4_dropper *skel;
--	int fd, err = 0;
-+	int fd, err = 0, port;
+diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_nf.c b/tools/testing/selftests/bpf/prog_tests/bpf_nf.c
+index a4a1f93878d4..dbd13f8e42a7 100644
+--- a/tools/testing/selftests/bpf/prog_tests/bpf_nf.c
++++ b/tools/testing/selftests/bpf/prog_tests/bpf_nf.c
+@@ -72,11 +72,14 @@ static void test_bpf_nf_ct(int mode)
+ 	if (!ASSERT_OK(system(cmd), cmd))
+ 		goto end;
  
- 	skel = connect4_dropper__open_and_load();
- 	if (!ASSERT_OK_PTR(skel, "skel_open"))
- 		return -1;
+-	srv_port = (mode == TEST_XDP) ? 5005 : 5006;
+-	srv_fd = start_server(AF_INET, SOCK_STREAM, "127.0.0.1", srv_port, TIMEOUT_MS);
++	srv_fd = start_server(AF_INET, SOCK_STREAM, "127.0.0.1", 0, TIMEOUT_MS);
+ 	if (!ASSERT_GE(srv_fd, 0, "start_server"))
+ 		goto end;
  
-+	port = get_socket_local_port(server_fd);
-+	if (!ASSERT_GE(port, 0, "get_socket_local_port"))
-+		return -1;
++	srv_port = get_socket_local_port(srv_fd);
++	if (!ASSERT_GE(srv_port, 0, "get_sock_local_port"))
++		goto end;
 +
-+	skel->bss->port = ntohs(port);
-+
- 	skel->links.connect_v4_dropper =
- 		bpf_program__attach_cgroup(skel->progs.connect_v4_dropper,
- 					   cgroup_fd);
-@@ -48,10 +54,9 @@ void test_cgroup_v1v2(void)
- {
- 	struct network_helper_opts opts = {};
- 	int server_fd, client_fd, cgroup_fd;
--	static const int port = 60120;
+ 	client_fd = connect_to_server(srv_fd);
+ 	if (!ASSERT_GE(client_fd, 0, "connect_to_server"))
+ 		goto end;
+@@ -91,7 +94,7 @@ static void test_bpf_nf_ct(int mode)
+ 	skel->bss->saddr = peer_addr.sin_addr.s_addr;
+ 	skel->bss->sport = peer_addr.sin_port;
+ 	skel->bss->daddr = peer_addr.sin_addr.s_addr;
+-	skel->bss->dport = htons(srv_port);
++	skel->bss->dport = srv_port;
  
- 	/* Step 1: Check base connectivity works without any BPF. */
--	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, port, 0);
-+	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, 0, 0);
- 	if (!ASSERT_GE(server_fd, 0, "server_fd"))
- 		return;
- 	client_fd = connect_to_fd_opts(server_fd, &opts);
-@@ -66,7 +71,7 @@ void test_cgroup_v1v2(void)
- 	cgroup_fd = test__join_cgroup("/connect_dropper");
- 	if (!ASSERT_GE(cgroup_fd, 0, "cgroup_fd"))
- 		return;
--	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, port, 0);
-+	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, 0, 0);
- 	if (!ASSERT_GE(server_fd, 0, "server_fd")) {
- 		close(cgroup_fd);
- 		return;
-diff --git a/tools/testing/selftests/bpf/progs/connect4_dropper.c b/tools/testing/selftests/bpf/progs/connect4_dropper.c
-index d3f4c5e4fb69..a3819a5d09c8 100644
---- a/tools/testing/selftests/bpf/progs/connect4_dropper.c
-+++ b/tools/testing/selftests/bpf/progs/connect4_dropper.c
-@@ -13,12 +13,14 @@
- #define VERDICT_REJECT	0
- #define VERDICT_PROCEED	1
- 
-+int port;
-+
- SEC("cgroup/connect4")
- int connect_v4_dropper(struct bpf_sock_addr *ctx)
- {
- 	if (ctx->type != SOCK_STREAM)
- 		return VERDICT_PROCEED;
--	if (ctx->user_port == bpf_htons(60120))
-+	if (ctx->user_port == bpf_htons(port))
- 		return VERDICT_REJECT;
- 	return VERDICT_PROCEED;
- }
+ 	if (mode == TEST_XDP)
+ 		prog_fd = bpf_program__fd(skel->progs.nf_xdp_ct_test);
 -- 
 2.47.1
 
