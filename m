@@ -1,169 +1,106 @@
-Return-Path: <linux-kernel+bounces-535674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA15A475D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:08:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E81A475DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297AC188EB04
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:08:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959A77A3AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B282192E7;
-	Thu, 27 Feb 2025 06:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C941EB5CB;
+	Thu, 27 Feb 2025 06:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="aFoFfPFj"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="VIjxa5kf"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F32553E23
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ADA21B9E6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 06:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740636510; cv=none; b=JV9cQsOYPLGWTgMEsx5nzf2wTm6AbvXA5mVG5YcRMqT2gSd1wSyZP647FX3av5FlmrfYviDjnhGRwELiuTRhAotyAQmjpYOwkMjhPC9E+AOvCGQ7Y8Wiq83y9mhdWfu/6MU3SFnRcONvt7/sfaSWxmAcj65y0JlW0XOt9vFcFSg=
+	t=1740636992; cv=none; b=jf9PO2wZ2eZ++IXI8C78dTQuTq3WfsqMdg0FDYUd4D2o8jeFJIaa56YZRJu8AlG3d9EI+LAoKIbCO/A4wlwqXpe/Ai7NcgueJRN8wqhqgBKDgE3z1zT+kXuPf1//qVsvMT63LY5rXebqLbpV3X98Evr1p7Q92/Zpijydskf8KJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740636510; c=relaxed/simple;
-	bh=9qHQwG/jH4v2hSOB5u9qYkiVsAp/QLoX8s57aRwldGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IajY2ZDjVt6wDhNbNMrurgjvfyxdGIWAVJsE/q5Gp1HSFySoMCbkMF1Cl90lWPSUxOgEwlWyXbPWvGbwmCduz+0auK2oIRBlWU0jqqyj1nqzz6oh4YSP0/65aY69CUG+q/3COMrLhCggfMN3RlIhxfKt9KL3KPNArmiyjZv9TcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=aFoFfPFj; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-471ede4b8e5so2776501cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 22:08:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1740636506; x=1741241306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPz1Jtb3iDmlzLw3YyOfEPl0dmoA/8jm1qHrEBiYBV8=;
-        b=aFoFfPFjK08FhidN+/lzzH5pohCdgCpU7FAegOQmrWdJoORIAm0Y0LIdtjrlJHzguA
-         nyNcVjxsBYlFThLjL9sZIS8X2lQlGOFcqEpUB+LLHhJEsroE5sYKQLlXDtGKgFRog8eL
-         BJeyc+6IlMp3X04WbsNX+DWYWvZTGMosLN2R3pnc0odK0i0CDVF3PTC3JzWDLq1x+512
-         7N2/vsfwkQrJs4DZelIemVU6158HQ4Awa7yAxXgaeBXxi+di3hZRF5XIxWizg5886zdr
-         VNB40Rp7dBc9rTJusv4kPDUt5aGZ4H1CgTXN6Uu3guhERr2m5VM3ikFV10BFtTCtUfw+
-         pfeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740636506; x=1741241306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VPz1Jtb3iDmlzLw3YyOfEPl0dmoA/8jm1qHrEBiYBV8=;
-        b=ARUYqFZyZQ+FtaGc3yWG+hB5+SW5eYVvwfTXMbD1XJk2+HfXKwe0OyS1HRkPnfSYTo
-         IkU9y6SpQmqu5X4KTZHtFRO9VVIVWCzzGqvlc36KYGfuL3iYe0RZQ6Gt/1Bbnt4ePlvq
-         /5zDrjw4Pvp+6lWvFh8fp8k30pmkhx3jntPrG+6X6vx2IM6aFpc8V70/mpgkU5i2fbn2
-         GND6ttKz7etdlcBkGaXpOJSSHb6ln5ILbc5WIsWJmYkqpfypVIsqsUaePLQXXErdnDbj
-         LmSv9d6wJpHkwJeFGdIBRkyAbc61unhLXx7xO++04QMXdkWDtsC0odNTU43ox6i1fRio
-         z5ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpGhZ4lkp4ssQEc/YJhjViHCi4jFxSSlVaYJ7pnFIpkk2EnSvxjEfjoP8+8pKaixjdpckWAGiU2uYk6Q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIY8fn/6OIKoNXROA6EJ80obASC9nrR8gpa97WnT8sZ9OH3CxZ
-	t14N28DOYGwBCTPyFqPl+QAw1sJNeFfVrmV0ZkEAIhudmtPLNZR0qa0MM+KuTxLJbJuolddYFgs
-	U
-X-Gm-Gg: ASbGncveAEjL30nByM+wJIf4iRHVb/BRUQn/eb11tQDiJLyQcxdMs3KNhQ2yycMpETv
-	DOh13ZbbQsjUqCVU+EGxdsuijNeZG05sLkU1sEJaAyZvGOqvPs1edgXR6rDLSNUconwfxyq667M
-	DPGnSGvf2+XEaRp3qqU/WcQyYyxxase50fIjJU8/jTUqwz4M8/f1VwmWfckTVJtdjX0WMAi1Jck
-	3YlxRIWljIsjp1NoLW/IYzulyiFS/9z9ePaS3TDlrMOQ2i7cfletXwGz+pIsQyBd8W+CbfvMccS
-	qVrpeRa9TI7BTxNPn6162Zst
-X-Google-Smtp-Source: AGHT+IHh3l/pbd4U+HZO31M9X7egjzLQA2am+j8f66WkAfpl/b+8JFLXkEalx8BJVXBHXv/+SxiZdQ==
-X-Received: by 2002:a05:622a:24c:b0:471:ef27:a30d with SMTP id d75a77b69052e-47381365f87mr79384461cf.40.1740636505919;
-        Wed, 26 Feb 2025 22:08:25 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474691a1f2csm7429221cf.13.2025.02.26.22.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 22:08:24 -0800 (PST)
-Date: Thu, 27 Feb 2025 01:08:20 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: CONFIG_PT_RECLAIM
-Message-ID: <20250227060820.GC110982@cmpxchg.org>
-References: <20250226183013.GB1042@cmpxchg.org>
- <a77923d3-ce26-4e29-bb98-b908ce2355c2@bytedance.com>
+	s=arc-20240116; t=1740636992; c=relaxed/simple;
+	bh=FprXlwf5FNOqNXB7rLjZwqKM4fIG4idwE/s0iLleCoM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=K51QbY/Dtl77bjSlW8zeY2O6N6NBikxn9gXDXw4koYEWb/1+KMmqpiqcedTODwpdw85Fx4u+J3pnrHvmb5o87AcBU6zlnBSoxFGLuhSMsFU+7LUUMoQZGOd7uJ0TYA7yjUslV127ioSU+YxvPu0QtM1nA0MsptZl8oRlDw2r03c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=VIjxa5kf; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1740636979;
+	bh=F3ApL+JeDj3lZFD/DdaVFfxrPRTF2KrKK9eGSSim+FM=;
+	h=From:To:Cc:Subject:Date;
+	b=VIjxa5kfcIu0r42/PiK6V26jLGe+aa0+k9QaEnW+6i0FmXSjbisdiYmaRMC2j2bhm
+	 clg/VURVpZHKqmYn2Fxo5/f8EFG2oJnxce39xE6R421ERsmyOtrxLyc/113kQb4S8Z
+	 bVi4YJcQXhkOAcSO98Bgm5hLTnIpGkpc8N/v6ql0=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id 283BCA36; Thu, 27 Feb 2025 14:10:03 +0800
+X-QQ-mid: xmsmtpt1740636603trv9hp5qc
+Message-ID: <tencent_0B119ADC0E546990F05E3727AB7364AEAB08@qq.com>
+X-QQ-XMAILINFO: MIOa0ndEC0BblRG9mBKOGjwVz6dYFOm/8zfpux30lV2XceDC4J3biozxfv8LsC
+	 8ADOslqitConxJltL5mq5EOjZA6iDqLZ/UHQZZ+Q1FajJeVbVmcvVO2IFO8uRqa7pkJwFSewtU+e
+	 Gqa8TP08EwZwR6iquaZg8jzUFP4CMzwPquxlXQpQZccaPFz6LmN5nHaCh3PPHoJo0kTC15bvAvr6
+	 en1Zba+EFK+AoTwFTpD+3xv3njDIUz0nl6/f0l8wU8NFmeKck9gKDav1l7reUKaaLUTHbPn+AYbK
+	 dFImohiIMbD05QAufhzRSMcvq6e3flBWbJzvghKUQxeG6ysYeZTu000MEXr24VyNW3a7iWfLwDe/
+	 529bj/oDmye5RA0xnNVBIkzOMcm+sZlP7iagcDrKAKRcfBDFn0fzRWjZ+gt2Bew1rTQJgR76etcC
+	 iksofHXZzBvFOWPljJsvv3Q/HzOYfhJUuvfpPbQTVpEaxvHOEJD0dsd7vOzWusS9V3MjJt8vbvUc
+	 3uju1X6U43rJS3Yvt95+RIH2o66ugE6KCa4kDysH3aFZNMD+2/LtxZHRMJ4O9uoko14B6+319ywP
+	 BmIeLF+U2dSfJ3Nhp0jWPu+hcjfyGhdXswxjUNn5eUaKBQdsn1b9jr3igEouQdcO95CAR3og71mb
+	 o8q/bCUVa0S9sZmkkQ29zYQIsMreH04x8DX+MXuXn85P3ewdG9T/3Dp4pUhg1I9UZt5QE98le153
+	 TVAzXLDQ4XogC1fc5pPq5liT94UBlUhJgHHhZtj+CVCZ0YfFcJoz6nw5WUMrt2Vwk4Ei5qz4fwTz
+	 o+j0sY8PhlHIOKvfa6veFjzMLO+s946NZSoyLqUh4SjrzOvR3rOF/sitG3i4c8ezqSIvogH7QD8b
+	 2XeMP+iIOlShNUFfVBONfvrwO7G1sbZProP0hMuHeyq+fcr8l3wPBC+shIFwUDxLz3puk8T2xf//
+	 q5fGrSz4Y=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: xiaopeitux@foxmail.com
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] mm/list_lru: Remove unnecessary NULL check before kfree()
+Date: Thu, 27 Feb 2025 14:10:02 +0800
+X-OQ-MSGID: <ccf2e7de4caba7b16dee2aef2608f72e1ab974e7.1740636544.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a77923d3-ce26-4e29-bb98-b908ce2355c2@bytedance.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 27, 2025 at 11:04:51AM +0800, Qi Zheng wrote:
-> Hi Johannes,
-> 
-> On 2/27/25 2:30 AM, Johannes Weiner wrote:
-> > Does PT_RECLAIM need to be configurable by the user?
-> 
-> The PT_RECLAIM will select MMU_GATHER_RCU_TABLE_FREE, but not all archs
-> support MMU_GATHER_RCU_TABLE_FREE, and even before Rik's a37259732a7dc 
-> ("x86/mm: Make MMU_GATHER_RCU_TABLE_FREE unconditional"), x86 only
-> supports MMU_GATHER_RCU_TABLE_FREE in the case of PARAVIRT.
-> 
-> Therefore, PT_RECLAIM also implies the meaning of enabling
-> MMU_GATHER_RCU_TABLE_FREE, so I made it user-configurable. And I just
-> thought that as a new feature, it would be better to give users the
-> ability to turn it on and off.
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-New *features*, yes - something that has a significant enough cost
-that clearly not all users want to pay for the benefits.
+Since kfree() already checks if its argument is NULL, an additional
+check before calling kfree() is unnecessary and can be removed.
 
-But it's hard to imagine anybody would WANT to keep the page tables
-around if they madvised away all the pages inside of them. It's a
-great optimization, what would be a reason to opt out?
+Remove it and thus also the following cocci warning:
+	WARNING: NULL check before some freeing functions is not needed.
 
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 2761098dbc1a..99383c93db33 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -1309,16 +1309,9 @@ config ARCH_SUPPORTS_PT_RECLAIM
-> >   	def_bool n
-> >   
-> >   config PT_RECLAIM
-> > -	bool "reclaim empty user page table pages"
-> > -	default y
-> > +	def_bool y
-> >   	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
-> >   	select MMU_GATHER_RCU_TABLE_FREE
-> > -	help
-> > -	  Try to reclaim empty user page table pages in paths other than munmap
-> > -	  and exit_mmap path.
-> > -
-> > -	  Note: now only empty user PTE page table pages will be reclaimed.
-> > -
-> 
-> Maybe keep the help information?
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ mm/list_lru.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I don't find it very helpful :( Which "other paths?" It doesn't
-explain any pros and cons, and why anybody might choose to enable or
-disable it. The Note repeats what's in the sentence before it.
+diff --git a/mm/list_lru.c b/mm/list_lru.c
+index 7d69434c70e0..7c8fb17d9027 100644
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -548,8 +548,7 @@ int memcg_list_lru_alloc(struct mem_cgroup *memcg, struct list_lru *lru,
+ 			}
+ 			xas_unlock_irqrestore(&xas, flags);
+ 		} while (xas_nomem(&xas, gfp));
+-		if (mlru)
+-			kfree(mlru);
++		kfree(mlru);
+ 	} while (pos != memcg && !css_is_dying(&pos->css));
+ 
+ 	return xas_error(&xas);
+-- 
+2.25.1
 
-Maybe I'm missing something. Could this not just be an #ifdef block
-inside mm/madvise.c, instead of living inside a new file with two new
-config symbols?
-
-#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-...
-#endif
-
-Is there an arch-specific feature that it requires besides
-MMU_GATHER_RCU_TABLE_FREE such that only x86 supports it now?
-
-And why *does* it require MMU_GATHER_RCU_TABLE_FREE?
-
-Documentation/mm/process_addrs.rst explains why you need rcu, but
-there is free_pte_defer() that THP was using long before x86 needed
-MMU_GATHER_RCU_TABLE_FREE. It seems to me if you could use that, this
-feature would also work fine on architectures that do not generally
-need RCU for flush & frees otherwise. So is the main issue that there
-just isn't an explicitly deferred variant of pte_free_tlb()?
-
-If so, this is a fairly non-obvious dependency that should be
-documented. It would help somebody trying to port this to a !RCU
-mmu_gather arch.
-
-And I apologize if all this was discussed before. But if it was, the
-conclusions should be in the changelog or in code comments. This is a
-very delicate synchronization scheme that I think deserves explicit
-documentation somewhere.
 
