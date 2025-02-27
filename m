@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-535913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0562EA478FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:24:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9036A478FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:24:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9C4188FD66
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5BA93AC94E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF4D22688A;
-	Thu, 27 Feb 2025 09:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ED0228386;
+	Thu, 27 Feb 2025 09:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KFWu7s5A";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tZbJybQt"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w71EvgTl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dcb2lerc"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C95226D06;
-	Thu, 27 Feb 2025 09:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4B5227E92;
+	Thu, 27 Feb 2025 09:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740648246; cv=none; b=AHBYqI0t/rzGsnWmh+/nrlRXRCVLF1kEN33CR56Dqv3fAY2jU2NSF3TZUP+MV3uO42ORWidZoI+QCelyVuzFaSZjuiY0Afl3asOevwuQFAru1KthM5t+JNl9NIK2wY75hi0rbm0FRCxukj+YIHR4P88Lw9WyVn/pYpe3z3YxmGU=
+	t=1740648252; cv=none; b=sl9r+FdMCSasqlKA0Mgq3nrpJ72cksF/2XA297LwhjljKnqKwz5dGJmf/vlXjyxLYh+viZKuon/Uw31k1H79ZEcJic1jXNIFVBZPIsVx4mqwdHRJ5EqkkSK7kf1iR6JuvUYh6zC7b+sGv2BrYn/HwMdDOhvJzgfjd0paJTdMEtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740648246; c=relaxed/simple;
-	bh=u7qv8oXSxOccGaoQm4UvUhPUjBeZ3q2V698M7kRL8tU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ObcGwQkVXB6tNozqIlD1WFiKYfkfyMAF0uWbb521+uJ39hW5ATqVccxWX9XiPGakZcLEQyCP+NXjSasNXiNVwzDWS3Q1MOAv4WGAnih1Q2oXYit5Dv9QBpbp7repFCNetQUTzIeVhYpjDc7J4Bd6Yl/eAmtgpdT0EuXPmKc/DEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KFWu7s5A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tZbJybQt; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1740648252; c=relaxed/simple;
+	bh=A0/Rv8pcFQMZQJC8h111DGjqhwFez8qUvd0LPAAS9wg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YVwbsuwUpZ6yGwYF+s6hIWtk1ryggMIL4KZppVvBA2qaFQ0rvwUxe7s9L84Q0vFns+YnnHXOGtVhvXO3ZyckKlS7Tn2jP56trYUfoQ/W9V+dCzjDpF+240GvuW1xbgWgXZgGsjhacAq5e6QwINyVWDcOXc/JDWUJYp0r4ydwm/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w71EvgTl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dcb2lerc; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Feb 2025 09:24:02 -0000
+From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740648243;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020; t=1740648249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZEJwZ+58U4TNZ10VRSktiicxpAU7Dlwn/Vlnkzj0Ck0=;
-	b=KFWu7s5A6m0l2izvgf5Qom1zA+oiD3UGTZ3XN8uLBNO1fOB26SPWMQCrgGy9fzCKW5uPRh
-	rP9tkFn118b83I6HkE7yN3uQUWmXLHSGHJChqBB4TnGByadKoH/XYF8cg8FSO7AGE759i7
-	o5OwFwt4m9AAfxJ/V262M1ET8pU9w0Db6i13JUVTOooxJp0SRmvAylrvWb+xW5HpjrbvaU
-	kEX8QRIAkGcQamUopsueUaoN1TBJZMcvscI1AnpBbJT7C7YSdNQJ7Cac8ojFcCLHBgv19A
-	yHxrHUmWHf4DHkoeGpCMNaA+GaINEYRsyILVQp6T5Xd2b4N8nedGtd08AHvSXg==
+	bh=vj8pxx/HQhJRDBVv70yDd3OqxLOCbUlXX2jRhoVJAn4=;
+	b=w71EvgTlmYy/NS0hyYbYNsuJFo7QCJePF/SYxOWxe1WvAMLwviZuGxTZGQi4qzV4OW5woo
+	ArhztW6I3m4M4LjRmnqFKJWqzjYg6YsUWLu28AblmAAQeje8njcR6GL3FBMjOsu+7o1OHc
+	Aqh8bBrBENYpkF7EV6WKPt64JGsdxs6RUQFCWPbXDHWj7wEg7xlLHDjHXfdOPHJLY/G+QH
+	5Fh2N1WovTEHW8Bq+mi4aMJih262AHqDCqPArEQdjt1k5+IjCiuN3B8pnqGqA7AscvMZZB
+	tSepG3h48E8mrIlO7zXekn/tJFZ15u3HedxXhSojezsbUnZiXmtOci3tgluxhw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740648243;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020e; t=1740648249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZEJwZ+58U4TNZ10VRSktiicxpAU7Dlwn/Vlnkzj0Ck0=;
-	b=tZbJybQtuD3QtRUHgqWUMc5U6yqMc+XsGWeUvdJEF2WQZK4v4VvW/h4CcUrw+Oqv8uEzWC
-	sQH+zLQKYl4qEMBg==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/bootflag: Micro-optimize sbf_write()
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250226153709.6370-1-ubizjak@gmail.com>
-References: <20250226153709.6370-1-ubizjak@gmail.com>
+	bh=vj8pxx/HQhJRDBVv70yDd3OqxLOCbUlXX2jRhoVJAn4=;
+	b=dcb2lerctxfTrY4/jBZoE2WipEVYp0AnCaOPLhh2Ns7g4I517QUo2ZV6u3iMvIXrsRy95x
+	7Gd1/Ut/T+qo5HDQ==
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Danilo Krummrich
+ <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo
+ Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas
+ Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v9 12/13] rust: hrtimer: add clocksource selection
+ through `ClockSource`
+In-Reply-To: <87jz9beor7.ffs@tglx>
+References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
+ <20250224-hrtimer-v3-v6-12-rc2-v9-12-5bd3bf0ce6cc@kernel.org>
+ <87jz9beor7.ffs@tglx>
+Date: Thu, 27 Feb 2025 10:24:09 +0100
+Message-ID: <87eczjeo5i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174064824225.10177.13942306236102685600.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the x86/boot branch of tip:
+On Thu, Feb 27 2025 at 10:11, Thomas Gleixner wrote:
+> On Mon, Feb 24 2025 at 13:03, Andreas Hindborg wrote:
+>> +    /// International Atomic Time.
+>> +    ///
+>> +    /// A nonsettable system-wide clock derived from wall-clock time but
+>> +    /// counting leap seconds. This clock does not experience discontinuities or
+>> +    /// frequency adjustments caused by inserting leap seconds as CLOCK_REALTIME
+>> +    /// does.
+>
+> Only partially correct.
+>
+> CLOCK_TAI can be set as CLOCK_TAI is obviously coupled to CLOCK_REALTIME
+> and vice versa.
 
-Commit-ID:     adf6819278ba34be1d29ffcdca5c2ccd2123f667
-Gitweb:        https://git.kernel.org/tip/adf6819278ba34be1d29ffcdca5c2ccd2123f667
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Wed, 26 Feb 2025 16:36:56 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Feb 2025 10:14:00 +01:00
+For clarification:
 
-x86/bootflag: Micro-optimize sbf_write()
+    CLOCK_REALTIME (UTC) = CLOCK_TAI - sum(leap seconds since the epoch)
 
-Change parity bit with XOR when !parity instead of masking bit out
-and conditionally setting it when !parity.
+As of today thats 37 seconds.
 
-Saves a couple of bytes in the object file.
+Thanks,
 
-Co-developed-by: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250226153709.6370-1-ubizjak@gmail.com
----
- arch/x86/kernel/bootflag.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
-index 4d89a2d..b935c3e 100644
---- a/arch/x86/kernel/bootflag.c
-+++ b/arch/x86/kernel/bootflag.c
-@@ -38,9 +38,8 @@ static void __init sbf_write(u8 v)
- 	unsigned long flags;
- 
- 	if (sbf_port != -1) {
--		v &= ~SBF_PARITY;
- 		if (!parity(v))
--			v |= SBF_PARITY;
-+			v ^= SBF_PARITY;
- 
- 		printk(KERN_INFO "Simple Boot Flag at 0x%x set to 0x%x\n",
- 			sbf_port, v);
+        tglx
 
