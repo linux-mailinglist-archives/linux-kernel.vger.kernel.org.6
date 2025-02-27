@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-535420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671F1A47263
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:25:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C71BA47299
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71ECC7A6434
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7751887215
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 02:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2876821CA15;
-	Thu, 27 Feb 2025 02:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628AB22B8A9;
+	Thu, 27 Feb 2025 02:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YNGEAb2o"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X1zL7se1"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B487F21A429
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19C21CFF0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 02:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740622778; cv=none; b=BYLSIO5Y2U9QrxvC6s9dUIiWVL/48y07hw16J8KPMkc6w/4xe2JhuA4wqLjVV+m00X7Iu+YeQkpaA5HsgqD7ySKBHgtbmHqIUxTXXlboHWEroE1rIFBFUahXBsk+TCJKFr/sfcyerTCQ3pV0w7sn1q7b/k4NvySQeHdrCSHsogY=
+	t=1740622779; cv=none; b=NAKEEZZGvFICQsFVOrRNCqxdc52C6afwj1/52eoygJrMGhfR5Y0gl8iJ5G6t2AOAL0CuxuUibQuyXpr9cg1Q3MFEYdbksQ8VSd1iMo6FhsQ8MozYkHdaYa8wusx7BGltQ+OVPVzOPC/k/2RpTdmdhqiy6G1xRjJwo1luPOc4bdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740622778; c=relaxed/simple;
-	bh=6spaFA6jKPMfGFgmSBLcviB3IyQMP9osLaGs4X9wbRo=;
+	s=arc-20240116; t=1740622779; c=relaxed/simple;
+	bh=EvFWgyIbvQaWWwWHzVo5uP3rkhFuLRC5lAG1scfhHho=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j+ncFzFRMUsNLOTfzfQsIwyhcuda3W9oXK8czXYEuEDbnqHgmIFw1aucemUfQlN5ndrU6g7Z1xFjLpv1i/hBK1Cm1fjIB0gBFmuPLVPvmr6IFhSRePBvkZX3gkODSYanqDdEiOLDDwmlsksPqOfkhVop/37o84rDdMKYrXpFnc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YNGEAb2o; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=Lo8IvLS7wjEj1KNv5YgVBpx5VWp14KpBFzXFQoZtSdZo0YHsWPk3+9SPPoFFcoerS9wYC3Mvym4LKFEBEaiE0CeGS0DhXMhE0DN7raGJm9CUZtradL5Gtvefhhxc3w5LuzAfAXoUl43yNmgBrwGNxezNVUkNdnSK5uIWcJLgsuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X1zL7se1; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22350e4b7baso5453215ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:19:36 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22348343f5aso8070365ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 18:19:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740622776; x=1741227576; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740622778; x=1741227578; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=DqrQU03sQXOQDWLkbiIYCQHYscRa6LsfmxFd/y9lSQI=;
-        b=YNGEAb2orJWT4DaRfs2+oc8Ryoe6Sgg9CpOjlncAktCi0oNOWV4j+zVPu4FHgHvPzm
-         MisCMMOv0sElsSpzQpUX+g6iHQTJkRFheGKZHh2BzOgD/S3Uq5902KKHgqD1i+Hk8al4
-         sM/fyuLzXj+ruTxCJMwBauBzGZWHNzXuZxveUxZ6vWYnYlUshB+BV7DLon93RCYNc24Q
-         YP0CT/PtIZNkCkUGjJ4l0oo/MmgyB6/Asef0aUoxqNDZ6x3ojL+AcB4fGzxLFgutur5j
-         JPNBai+sqzfURvnZIuSvoO9pnDcmJ/ONdWvZtG97GPGw885SiWIuuzHlgQvT2wQDRk9c
-         ndEA==
+        bh=Fan7xWhbYPUjoe6Gj73DFLAXBBtIUty3w4hEBXyAFt4=;
+        b=X1zL7se16+Y15iD7qpRznCwf0+Gn1F8PWtxotjxAL9p3L6n4taifamPCuKE7/zxX3O
+         DtNHfCZNcJO3cHqpHWFKjTjg3sSyZUCpEL63gb29qQpEgXkinrmfblDIsKPjMfxdZsW0
+         7ADNYtWcpjiGLiCq5qdtgsG1kSiCk0wL/0g1wX7zNzdiGi7ad7V605XJNP9oNdX5ofgI
+         QVy6AmtBuIOQO5eBtoc6M+IGso7CXkBTP3NZYXC3PdskDEDwxU+jcTuwgEskwRNZ+LqL
+         makxbBwWcd0SjHjffhMjHyK+tJtz7Ka+o51OQIifB9OkT4lIQCJkxzEg/JGJHclOpz1P
+         ZcFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740622776; x=1741227576;
+        d=1e100.net; s=20230601; t=1740622778; x=1741227578;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DqrQU03sQXOQDWLkbiIYCQHYscRa6LsfmxFd/y9lSQI=;
-        b=kWS3hSoa+decb0d3+2S0KksrLmd7UzV5hJWC7xA5va6z936sd7dut0SoP8v+hgelZA
-         NyLDQQfuLZsQxJPiaU/AJycjOFxPdAd2EoXA2wa8+gJZJzVHPh2dWfA0OkycBuaPcxpX
-         WUh+PB/29k2XPAighFJ4hUj2zaAQAFkcFT2AyXxhekqwBtv9nhZUahLFKGS1/eIwMPB4
-         gmF4GeeDHtRwhgXprs4yVwVyoh88oEF0SMc+XQHf2pxcO8XY4rNpD94WZ0mEQhx56WTM
-         mWc/50zCsp/HoOTXbq+XSB2ILZCBdInOxzpXFm7ZHIM1qxD71pH0r8lnGFhWs4GHziZB
-         l9gA==
-X-Gm-Message-State: AOJu0YwME1NXcjcdDHwe7ZclmQpd02feojPhZAJ7YMoiEx7wLv9sg8gI
-	PqQ33Oo14wM23xDJV0bVPhWS/1acV/zDm6/daWQL2e8fU15+56nXX/VVlT+3dmSBOxgnT35mW9p
-	mFQ==
-X-Google-Smtp-Source: AGHT+IEOb0ihEjgZTJgsK50piH41vKgvY42fSlJ0VND1RngWC+UvT9KhzxC1r0flylu86Z/N4Su58D1alpU=
-X-Received: from pllg7.prod.google.com ([2002:a17:902:7407:b0:223:2747:3d22])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d58e:b0:21f:140e:2929
- with SMTP id d9443c01a7336-22307b52eb5mr158736135ad.15.1740622776273; Wed, 26
- Feb 2025 18:19:36 -0800 (PST)
+        bh=Fan7xWhbYPUjoe6Gj73DFLAXBBtIUty3w4hEBXyAFt4=;
+        b=Y8FILl7zBuRHtLQcCmpkJJGmQT9Hgra8q93uEfF2Cg2o9IbJJn2veSjdgb3bwD2qAd
+         qZgerVkBX/AYufJ3YI6kHaG2bYQrrAPiG2OJa93kaJaBC925Y9SQOM0jcqJsY8T/cKeM
+         TpxnkaO1tb5cpHM0sofjZtMPhR+21fTU2P7UNK601drThlq3xUn3fMJur6qaBR5LgK59
+         w9om94avYHXcs4jHWgRelK2gko5Pw9gtzwn1OPAPG5VEu480+zqO1paiyg+9XcNPQE0p
+         txAG0Lse1t+gTiAw+NPKqk4DEO0p9qPZeO/e5y3t3fJLnURfs9ZeiGobcA0MUDotOD08
+         QZlg==
+X-Gm-Message-State: AOJu0YzenoQUnYwMRhYldj1zLVb3PwGjUDI7XEJWZOtFQ0Lv7lONuhVu
+	XRPwG8Vyui4KOlVk2Ron1RkI+Nkjuz2rjLgQ/pjGS2FmA2B8LBwzUtl/uNuqHU3kXKlTYz0Qjrd
+	B5g==
+X-Google-Smtp-Source: AGHT+IEIDOZ4TbuvBdNqbq0BRf/iBYYL2tXyd/xxECXyr6rznFcwd1mvvnFfD4EHjsDge5bCz6C8+YGYPK0=
+X-Received: from plbje3.prod.google.com ([2002:a17:903:2643:b0:223:4e55:d29a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e80d:b0:220:f5d7:6405
+ with SMTP id d9443c01a7336-221a0edbfc3mr358957175ad.16.1740622777972; Wed, 26
+ Feb 2025 18:19:37 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 26 Feb 2025 18:18:35 -0800
+Date: Wed, 26 Feb 2025 18:18:36 -0800
 In-Reply-To: <20250227021855.3257188-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250227021855.3257188-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250227021855.3257188-20-seanjc@google.com>
-Subject: [PATCH v2 19/38] x86/kvmclock: Move kvm_sched_clock_init() down in kvmclock.c
+Message-ID: <20250227021855.3257188-21-seanjc@google.com>
+Subject: [PATCH v2 20/38] x86/xen/time: Mark xen_setup_vsyscall_time_info() as __init
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -92,67 +92,28 @@ Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
 	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Move kvm_sched_clock_init() "down" so that it can reference the global
-kvm_clock structure without needing a forward declaration.
-
-Opportunistically mark the helper as "__init" instead of "inline" to make
-its usage more obvious; modern compilers don't need a hint to inline a
-single-use function, and an extra CALL+RET pair during boot is a complete
-non-issue.  And, if the compiler ignores the hint and does NOT inline the
-function, the resulting code may not get discarded after boot due lack of
-an __init annotation.
-
-No functional change intended.
+Annotate xen_setup_vsyscall_time_info() as being used only during kernel
+initialization; it's called only by xen_time_init(), which is already
+tagged __init.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kernel/kvmclock.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ arch/x86/xen/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 1ad3878cc1d9..934ee4a4c6d4 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -133,19 +133,6 @@ static void kvm_restore_sched_clock_state(void)
- 	kvm_register_clock("primary cpu clock, resume");
+diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
+index 3179f850352d..13e5888c4501 100644
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -441,7 +441,7 @@ void xen_restore_time_memory_area(void)
+ 	xen_sched_clock_offset = xen_clocksource_read() - xen_clock_value_saved;
  }
  
--static inline void kvm_sched_clock_init(bool stable)
--{
--	kvm_sched_clock_offset = kvm_clock_read();
--	__paravirt_set_sched_clock(kvm_sched_clock_read, stable,
--				   kvm_save_sched_clock_state, kvm_restore_sched_clock_state);
--
--	pr_info("kvm-clock: using sched offset of %llu cycles",
--		kvm_sched_clock_offset);
--
--	BUILD_BUG_ON(sizeof(kvm_sched_clock_offset) >
--		sizeof(((struct pvclock_vcpu_time_info *)NULL)->system_time));
--}
--
- void kvmclock_cpu_action(enum kvm_guest_cpu_action action)
+-static void xen_setup_vsyscall_time_info(void)
++static void __init xen_setup_vsyscall_time_info(void)
  {
- 	/*
-@@ -302,6 +289,19 @@ static int kvmclock_setup_percpu(unsigned int cpu)
- 	return p ? 0 : -ENOMEM;
- }
- 
-+static void __init kvm_sched_clock_init(bool stable)
-+{
-+	kvm_sched_clock_offset = kvm_clock_read();
-+	__paravirt_set_sched_clock(kvm_sched_clock_read, stable,
-+				   kvm_save_sched_clock_state, kvm_restore_sched_clock_state);
-+
-+	pr_info("kvm-clock: using sched offset of %llu cycles",
-+		kvm_sched_clock_offset);
-+
-+	BUILD_BUG_ON(sizeof(kvm_sched_clock_offset) >
-+		sizeof(((struct pvclock_vcpu_time_info *)NULL)->system_time));
-+}
-+
- void __init kvmclock_init(void)
- {
- 	u8 flags;
+ 	struct vcpu_register_time_memory_area t;
+ 	struct pvclock_vsyscall_time_info *ti;
 -- 
 2.48.1.711.g2feabab25a-goog
 
