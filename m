@@ -1,131 +1,106 @@
-Return-Path: <linux-kernel+bounces-537249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A00A489A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:17:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D8A4899B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 21:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D933716E0D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11027A7140
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B678271268;
-	Thu, 27 Feb 2025 20:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707A26E962;
+	Thu, 27 Feb 2025 20:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L2/pP3CU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JPb6tUCB"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C163270EBF;
-	Thu, 27 Feb 2025 20:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7BF1AB6D8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 20:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740687412; cv=none; b=k+OR5TqHl+Q6reaEuQf/qcoe3fNXBF7CVHlplkEdPtTcrzrPnJ9BozEkFvbOJwPYIocQbunMeMAycjjbGP3OF+QjVA/1iLqjB3bYNnfvQQx+oB1LswgyRmwNHsPC5p/04C4z38K/LdYNx2iMacpuJJZ6G45FRjlTrOvwQ0X+aok=
+	t=1740687382; cv=none; b=pggsPHdgfRHJ/iMbjzrnRU5ouXwDF/KbdrPFiALmJ9zKycKrriGyQvVf31KxXN3/9J0CgmLP5g5LRUOJsZdwlpy066FLT9Lgd/R2QvApshe6faTo7CVf5f/YS2VaOe23mXGGuE8bdmykiywqZWKNCYc0HEMPjBKdGZW9jtNGDZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740687412; c=relaxed/simple;
-	bh=TgUgSCfEjp/Ol+C+9VklJ/oJBe5DmYOGniiUhH7U5v8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=sXji8AHe7avHZ2i11C0XDJCoPBvnSimKE2jScEBfWmIhab326DTvsgOCRpqf/dHaCJDuR9gucwLiYZIQ8x1T8SZt5BOhVJeESRhvvYvfBUgDexxK/1cVTnEvaQzoV8jxwa4OdJeVAl5BWrLgCU2Yj3gvNnsoQslc1LU4ZEZk9v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L2/pP3CU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RGspj1021539;
-	Thu, 27 Feb 2025 20:16:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lw84Gh7TvOeiskkHs/TyNfsZ1Q9WTbX4FLowNZ3+r4E=; b=L2/pP3CUfaSTP10r
-	6UZUudNWejBOeX4OC1jqVdS1/Daq7jci7opb0plVpPdXUkWnfFU8LMnJRsCVNzPu
-	EbWsR4QIu2Zzkbw7yVK3v2d5m7P0hbsZoG4aWf+AFvSAjJffa7AVnkJI1VX+0c59
-	Cjo+ah1fQV/HWbFcxjWb4HGFv2u2TJuP0nRaoTUdhFtNmZ6ULq4hIuoZbPWuzm+9
-	mdMf5i5PES2f9E0JpkXpcXO2D1GOBwsWLq6FsIx5W7HBKmvv8VymswKBSIHtpNk2
-	hB9uwoGMMBfc7tn0tvK9M7bkQ7DGMv6qhMEqOso4jdOLenLNNMLgCe5kFw9+duk8
-	GVF+mw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prkq1k6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 20:16:47 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51RKGk3g021565
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 20:16:46 GMT
-Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Feb 2025 12:16:42 -0800
-From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
-Date: Fri, 28 Feb 2025 01:45:55 +0530
-Subject: [PATCH v2 2/2] arm64: dts: qcom: qcs615: add TRNG node
+	s=arc-20240116; t=1740687382; c=relaxed/simple;
+	bh=84h/RFLZWqWFvHRkgj2Eu5xJJkjpYWE2cje3cUPANmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1yu5Di/iTqjpPix6XyiQuekmBKpyIiPkr8Ztqp4ly0qyM1iWzA4tskPIaI8w8+/6yZpsqBiG0mXdzpOThXFtpaa25lrfhGfDxcOCDTNvusmbfpprDwQee4HftnOk9rn8zbMn4jYN+OQyhwwAmG53C2CVWfnA8JldbXpnK75iac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JPb6tUCB; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so1938978a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 12:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740687379; x=1741292179; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xXJZXOlj8RS1CWCL6FlZJfuUCxngSMS4ulOS9DCvcgQ=;
+        b=JPb6tUCBvSy/ZnRCx3SUCN4rRmGuGgZPARCgj8O8/97I7p0JYXwc6kxqKoEwZ5QLj+
+         RAFP2Q7qMVbByfbAJ41a7f0/l4jyQZsl5Au6/r9ikU9iVgWNJhfLKpA67G6vYmZus568
+         HZCo+WzE/og2N8XJo/rR8NFGlfi9WBPi8GPGD7BycXx3ihfOBREVP5lrXtnEIsMuulc2
+         4F1ctBD2QDq2sZDNupzzhf4Uvqcyo8Uv9ITEs03TFfC/YO59gjsLv2d6JoM6wwViEtoR
+         gxik6bUHHLRjQaRO9tv6slYIMuWRdTJ/Wpg0U9F93ken1NskvVlvO/qgHncC28V6D0UF
+         q7ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740687379; x=1741292179;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xXJZXOlj8RS1CWCL6FlZJfuUCxngSMS4ulOS9DCvcgQ=;
+        b=mIibZG3TvNsqhIS/66HQcA0YfyxzMlBqd+xhEHh/HfMkTo9Y/k9TZH4kprTkIznMaF
+         Ep0d6/V400pbgtF26xgMkPjGqedF04F3GtRSCqRbaY7twbkjmlpqr8ybI6Q7Q3PWV/zH
+         3zkceed72rUjNFsfN89sj8meGjpmv4Lln3voUNDffj8j1ptU8Tny6CPPL/MEUwDbY+tz
+         hZdl2zSkUA0AZtIARTWgmfGbx3WcHzEOyG5B3yX5lE/6fWkZP7OQB8ePsttM2TmvuTKw
+         Fe8rpuFBcDhvaP8X4qm6E1imnjFRTJND9aEtKv9j3XLx1ZqpcAXNgYEkFrvzqD5T4q6v
+         seTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjOcnvqKsOqwqu1ze6gFNS9DGdiSlhn3xrZGPTsvmePqf+4M0k/SCbnl+PlFxT3/JTg9P34xmuh6b3OvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM7TJFIqdoodQQMKqqIYJXwqAIGm7CbLX1NIWc8wRgPMswzTLv
+	Np6bh7/V4VDyN+bVLMf25j+5Kx2Ns/l/m8xpV1/UCOcw1HBxLHXJFExdKE+G0HM=
+X-Gm-Gg: ASbGncteEleHWwe5cRBb2pw1McZQZgxtQfq95sSizBUs4UhQNlAo/L4Z4xTuiSUk9Nb
+	m/HoJWxtjS2K/QpGs/KupmMqywovkTjN1ARPT36rr1eQSYlMYL83sD69vnsY/KoLQfnHg+P16+E
+	SCSwZXkup2e61espy49pfQZ/fg4xXi1k19laOU2ZyhcFdc6AytjFc4HAh9LWdpwHKekH+c1490y
+	wivHRBsCVp3/awnwtvclDXW9Ax+Pxm6av6GMCo0fvvinzogJoB17JJK4IJNjF25TsU1Lb6vgAqI
+	Ev0joDWJ9jV412B/X99HOw+HKB0QUBg=
+X-Google-Smtp-Source: AGHT+IH/bEmEblcXab5Tj8A0iK4TBeBn4mn3wXNDIIFNA5wM6pq+whn3pw/0Z2EMocbp0uIvyh267A==
+X-Received: by 2002:a17:907:94c7:b0:abb:cdca:1c08 with SMTP id a640c23a62f3a-abf2642b53emr72174566b.16.1740687379227;
+        Thu, 27 Feb 2025 12:16:19 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c75d8e8sm173381066b.146.2025.02.27.12.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 12:16:18 -0800 (PST)
+Date: Thu, 27 Feb 2025 23:16:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>, mathias.nyman@intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xhci: Fix bcdUSB initialization
+Message-ID: <150a2fb5-f1f1-44c3-8923-e23589d5dabc@stanley.mountain>
+References: <20250227193400.109593-1-abhishektamboli9@gmail.com>
+ <2025022757-extrude-carpenter-5bec@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250228-enable-trng-for-qcs615-v2-2-017aa858576e@quicinc.com>
-References: <20250228-enable-trng-for-qcs615-v2-0-017aa858576e@quicinc.com>
-In-Reply-To: <20250228-enable-trng-for-qcs615-v2-0-017aa858576e@quicinc.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Abhinaba
- Rakshit" <quic_arakshit@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qn-wKMcWjadJLoYJ6LbOnQ87aCEJ6DdH
-X-Proofpoint-ORIG-GUID: qn-wKMcWjadJLoYJ6LbOnQ87aCEJ6DdH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 phishscore=0 mlxlogscore=614 mlxscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502270150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022757-extrude-carpenter-5bec@gregkh>
 
-The qcs615 SoC has a True Random Number Generator, add the node
-with the correct compatible set.
+On Thu, Feb 27, 2025 at 11:36:24AM -0800, Greg KH wrote:
+> On Fri, Feb 28, 2025 at 01:04:00AM +0530, Abhishek Tamboli wrote:
+> > Initialize bcdUSB to 0 to prevent undefined behaviour
+> > if accessed without being explicitly set.
+> 
+> Is it actually accessed without being set?  If so, please explain it and
+> also how the compiler is somehow missing this already?
+> 
 
-Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+This is a Smatch warning, not a compiler warning.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index f4abfad474ea62dea13d05eb874530947e1e8d3e..9048514e8ae9046df5cad4b8129311563af68f68 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -453,6 +453,11 @@ qusb2_hstx_trim: hstx-trim@1f8 {
- 			};
- 		};
- 
-+		rng@793000 {
-+			compatible = "qcom,qcs615-trng", "qcom,trng";
-+			reg = <0x0 0x00793000 0x0 0x1000>;
-+		};
-+
- 		sdhc_1: mmc@7c4000 {
- 			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
- 			reg = <0x0 0x007c4000 0x0 0x1000>,
-
--- 
-2.34.1
+regards,
+dan carpenter
 
 
