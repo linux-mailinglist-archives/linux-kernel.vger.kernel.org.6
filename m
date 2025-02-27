@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-535898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1509A478AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:08:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E562EA478B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2728F3B02BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:07:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ABD16E1AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6074227B83;
-	Thu, 27 Feb 2025 09:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E21227B8E;
+	Thu, 27 Feb 2025 09:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRHgRjEH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0SYf27+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0610015DBB3;
-	Thu, 27 Feb 2025 09:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1144B2222BA;
+	Thu, 27 Feb 2025 09:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647274; cv=none; b=MgvLZ0z0STvooJf8LwqFg7YpVGBPJibLmbIwVy0cZ2/ZKINZ+l/2oSPhy7YzIuVBo0RGXg+DbA3HBuM0LHa62N46RcrGghZ2UK+++vzaxPOWQYI7+XLoq9c6xqCRhqyV+7n41mPISWN6p+byjd1Q6o8+Mo6s5eW6d2kHHgkEUFI=
+	t=1740647331; cv=none; b=ie2ZpgmzmdvQY6HbF53wiG/Xb9of170zQLGNTVtxXQBUNq6VFDu72WQwUuYzbej+au64IEMRbc7W0249aAAua75OuhVrFxryp3LKlTH6bJfLOD6nk6FnciXEwmjt50Koqr54y0Jmu5/TEZgVpG6vijBhLYOriu3pdMq9BaXtkqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647274; c=relaxed/simple;
-	bh=uSI5UxGrxM8RkQ3jlqH3utlrAtw26PUYGq0eb+CxpaQ=;
+	s=arc-20240116; t=1740647331; c=relaxed/simple;
+	bh=JOL+QBSvYEPxGbstJirDhY6SK7GKdJbrZwpNPl+HZxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeNbD9Yd9gHKjAAsfQ7bPaOqiGDsiDppyWNx+wJfqC8Ikd45YXIApiZrD6ZwB7Gk5qYsqrqBxXGCwM+OjYDqBk6idr/Th8Do+6XoJqhsK5/pftgbQce3ip8Dkxpb3XhYNFHT3j2aYK9SNssoQbv9b4/R3k675gfxEYHYB6A+o2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRHgRjEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA92C4CEDD;
-	Thu, 27 Feb 2025 09:07:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8zf6dkynhTEMZYpq+ULSqX6AseqsQX9J5/yPMnlRASD3lYeHQw3xtaybVg9BmmIY3O2PyC+vvYk21Wreemv/9KOWAzHPNCYijjYvfctRGDILOq0aUzhPHzz/KAy1ZL0OjGCTK5KXWu02RDwQL1wHVbDOq2ZSHNiQ9HTE/wNvQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0SYf27+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38779C4CEDD;
+	Thu, 27 Feb 2025 09:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740647273;
-	bh=uSI5UxGrxM8RkQ3jlqH3utlrAtw26PUYGq0eb+CxpaQ=;
+	s=k20201202; t=1740647330;
+	bh=JOL+QBSvYEPxGbstJirDhY6SK7GKdJbrZwpNPl+HZxE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRHgRjEHSGuyhFlBsSI3fVwcQLn8G0QLVjvEpK22Hf/qHsNoqA3J8xe1pybOh0ogD
-	 nJ1bwQFWo4Wc3NgcjkwIizQRSBnsG3znd2AYGF6nPH/VbqkploZ0NepfWU1V5E050w
-	 ZVCWW5vZASztI5bzZPDQAxzY/CooUQKOvqK6T7qW+ODLnMTA/Fdn/8V/1+IApzX2yt
-	 buC68N2O+xPt1bpJ6UfumBgk0lSmO5d2jTUPP9ZOnClX8RcoLZPE104Wmj7zJEsYXf
-	 ZTwCQxwsxDmIO8PONTvP0WQcYujO46xkRjXHS2YhSNP1KxwshJEqWNWXn+2b8bIIPt
-	 BWlOMT79ptYtg==
-Date: Thu, 27 Feb 2025 10:07:42 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Krishanth Jagaduri <Krishanth.Jagaduri@sony.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Atsushi Ochiai <Atsushi.Ochiai@sony.com>,
-	Daniel Palmer <Daniel.Palmer@sony.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Chris von Recklinghausen <crecklin@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND v2] Documentation/no_hz: Remove description that
- states boot CPU cannot be nohz_full
-Message-ID: <Z8ArXtTa8zAZDCtK@gmail.com>
-References: <20250227-send-oss-20250129-v2-1-eea4407300cf@sony.com>
+	b=i0SYf27+idIvmyfRAYY6kViB6BJ2c7mO085i8JKFH9zyWuRonms+/fNmrZfgHrXDR
+	 S7izsZnEXpawhnsxVFAcFmev3o9Du/OS0AVMKIjuaYQmkikcRQDVLik82ZP/lZdRz0
+	 3zByjM+7W3edgmlQuxgUDnDu9ddNTC5hvygf3Z7cLtIx5QMHjfT7x6C4cQMiAAov8c
+	 dIW/SvdGm7KF5ki985K4R11cJpdmkxpqvaWorMxpF8Mv0Py+28p+J+xWB4qmBow1nU
+	 PW8UOdOldXWMMX8ZDBtA6mJ/ZYR4AUIeoeRJvmU7BS9eifZbVLNofwpRPjnT0Wt+e9
+	 cAqghIOYBuqGQ==
+Date: Thu, 27 Feb 2025 10:08:42 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+Cc: kees@kernel.org, shuah@kernel.org, skhan@linuxfoundation.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH sysctl-next v2] selftests/sysctl: fix wording of help
+ messages
+Message-ID: <segxcbty2dr7oawsyxytxeo3lwyknfgrunb2glbdcj4fpn6nj2@s3wigyuldgxr>
+References: <20250221102151.5593-1-bharadwaj.raju777@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,104 +58,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250227-send-oss-20250129-v2-1-eea4407300cf@sony.com>
+In-Reply-To: <20250221102151.5593-1-bharadwaj.raju777@gmail.com>
 
-
-* Krishanth Jagaduri <Krishanth.Jagaduri@sony.com> wrote:
-
-> Hi,
+On Fri, Feb 21, 2025 at 03:51:49PM +0530, Bharadwaj Raju wrote:
+> Fix grammar such as "number amount of times is
+> recommended" etc -> "the recommended number of
+> times".
 > 
-> Before kernel 6.9, Documentation/timers/no_hz.rst states that
-> "nohz_full=" mask must not include the boot CPU, which is no longer
-> true after commit 08ae95f4fd3b ("nohz_full: Allow the boot CPU to be
-> nohz_full").
+> Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+> ---
+>  tools/testing/selftests/sysctl/sysctl.sh | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> When trying LTS kernels between 5.4 and 6.6, we noticed we could use
-> boot CPU as nohz_full but the information in the document was misleading.
+> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+> index f6e129a82ffd..db1616857d89 100755
+> --- a/tools/testing/selftests/sysctl/sysctl.sh
+> +++ b/tools/testing/selftests/sysctl/sysctl.sh
+> @@ -857,7 +857,7 @@ list_tests()
+>  	echo
+>  	echo "TEST_ID x NUM_TEST"
+>  	echo "TEST_ID:   Test ID"
+> -	echo "NUM_TESTS: Number of recommended times to run the test"
+> +	echo "NUM_TESTS: Recommended number of times to run the test"
+>  	echo
+>  	echo "0001 x $(get_test_count 0001) - tests proc_dointvec_minmax()"
+>  	echo "0002 x $(get_test_count 0002) - tests proc_dostring()"
+> @@ -884,7 +884,7 @@ usage()
+>  	echo "Valid tests: 0001-$MAX_TEST"
+>  	echo ""
+>  	echo "    all     Runs all tests (default)"
+> -	echo "    -t      Run test ID the number amount of times is recommended"
+> +	echo "    -t      Run test ID the recommended number of times"
+>  	echo "    -w      Watch test ID run until it runs into an error"
+>  	echo "    -c      Run test ID once"
+>  	echo "    -s      Run test ID x test-count number of times"
+> @@ -898,7 +898,7 @@ usage()
+>  	echo Example uses:
+>  	echo
+>  	echo "$TEST_NAME.sh            -- executes all tests"
+> -	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 number of times is recommended"
+> +	echo "$TEST_NAME.sh -t 0002    -- Executes test ID 0002 the recommended number of times"
+>  	echo "$TEST_NAME.sh -w 0002    -- Watch test ID 0002 run until an error occurs"
+>  	echo "$TEST_NAME.sh -s 0002    -- Run test ID 0002 once"
+>  	echo "$TEST_NAME.sh -c 0002 3  -- Run test ID 0002 three times"
+> -- 
+> 2.48.1
 > 
-> This was fixed upstream by commit 5097cbcb38e6 ("sched/isolation: Prevent
-> boot crash when the boot CPU is nohz_full").
-> 
-> While it fixes the document description, it also fixes issue introduced
-> by another commit aae17ebb53cd ("workqueue: Avoid using isolated cpus'
-> timers on queue_delayed_work").
-> 
-> It is unlikely that upstream commit as a whole will be backported to
-> stable kernels which does not contain the commit that introduced the
-> issue of boot crash when boot CPU is nohz_full.
-> 
-> Could we fix only the document portion in stable kernels 5.4+ that
-> mentions boot CPU cannot be nohz_full?
 
-So you are requesting a partial backport to -stable of the 
-Documentation/timers/no_hz.rst chunk of 5097cbcb38e6?
+pushed this to sysctl-next; thx.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+-- 
 
-Thanks,
-
-	Ingo
-
-================={ partial backport of 5097cbcb38e6 }=================>
-From 5097cbcb38e6e0d2627c9dde1985e91d2c9f880e Mon Sep 17 00:00:00 2001
-From: Oleg Nesterov <oleg@redhat.com>
-Date: Thu, 11 Apr 2024 16:39:05 +0200
-Subject: [PATCH] sched/isolation: Prevent boot crash when the boot CPU is
- nohz_full
-
-Documentation/timers/no_hz.rst states that the "nohz_full=" mask must not
-include the boot CPU, which is no longer true after:
-
-  08ae95f4fd3b ("nohz_full: Allow the boot CPU to be nohz_full").
-
-However after:
-
-  aae17ebb53cd ("workqueue: Avoid using isolated cpus' timers on queue_delayed_work")
-
-the kernel will crash at boot time in this case; housekeeping_any_cpu()
-returns an invalid CPU number until smp_init() brings the first
-housekeeping CPU up.
-
-Change housekeeping_any_cpu() to check the result of cpumask_any_and() and
-return smp_processor_id() in this case.
-
-This is just the simple and backportable workaround which fixes the
-symptom, but smp_processor_id() at boot time should be safe at least for
-type == HK_TYPE_TIMER, this more or less matches the tick_do_timer_boot_cpu
-logic.
-
-There is no worry about cpu_down(); tick_nohz_cpu_down() will not allow to
-offline tick_do_timer_cpu (the 1st online housekeeping CPU).
-
-Fixes: aae17ebb53cd ("workqueue: Avoid using isolated cpus' timers on queue_delayed_work")
-Reported-by: Chris von Recklinghausen <crecklin@redhat.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Phil Auld <pauld@redhat.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240411143905.GA19288@redhat.com
-Closes: https://lore.kernel.org/all/20240402105847.GA24832@redhat.com/
----
- Documentation/timers/no_hz.rst |  7 ++-----
- 1 files changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/Documentation/timers/no_hz.rst b/Documentation/timers/no_hz.rst
-index f8786be15183..7fe8ef9718d8 100644
---- a/Documentation/timers/no_hz.rst
-+++ b/Documentation/timers/no_hz.rst
-@@ -129,11 +129,8 @@ adaptive-tick CPUs:  At least one non-adaptive-tick CPU must remain
- online to handle timekeeping tasks in order to ensure that system
- calls like gettimeofday() returns accurate values on adaptive-tick CPUs.
- (This is not an issue for CONFIG_NO_HZ_IDLE=y because there are no running
--user processes to observe slight drifts in clock rate.)  Therefore, the
--boot CPU is prohibited from entering adaptive-ticks mode.  Specifying a
--"nohz_full=" mask that includes the boot CPU will result in a boot-time
--error message, and the boot CPU will be removed from the mask.  Note that
--this means that your system must have at least two CPUs in order for
-+user processes to observe slight drifts in clock rate.) Note that this
-+means that your system must have at least two CPUs in order for
- CONFIG_NO_HZ_FULL=y to do anything for you.
- 
- Finally, adaptive-ticks CPUs must have their RCU callbacks offloaded.
+Joel Granados
 
