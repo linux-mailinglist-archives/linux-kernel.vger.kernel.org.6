@@ -1,154 +1,185 @@
-Return-Path: <linux-kernel+bounces-536645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F807A4827D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1E5A4827F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C311188F4C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5FD18940F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FF226A0CC;
-	Thu, 27 Feb 2025 15:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680FE26A0C3;
+	Thu, 27 Feb 2025 15:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Omzr/tjM"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pn6XRNW5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B193154BF0;
-	Thu, 27 Feb 2025 15:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68411154BF0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740668508; cv=none; b=JDTd4iwxaMoiLKjbWpBa4bDgWRTnTAzw98e2XlA/oW0SZGbRNn36fQAQ3bgQhFOqZmh8Sp2jIHgXKqp7zvLsyIjdQUmOyE19Gx5C2bGYfZ8cBxkzv0tOuDEz7W+iJS9ArRrv3PO4GP68ESbpMNmf8nZBahrGfpGm6l/u5cMZbfI=
+	t=1740668526; cv=none; b=QF23+ky/W/Wgp4NEddzy5csicqjVclt5eSoJJaa6rcsfTQEM2IDEo+iilJznt7n4OmSSJ+IC2lEssBiecNdYUTx0cc1W356i76BOOg61X8KXi9319GdeAvaeuMrWfWODPAi4LV9ATvVddwBJHD6dNlP7N4IIqFh216nSnudOKtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740668508; c=relaxed/simple;
-	bh=MpNFNYvFbpMRQ0dNsCFuJrisGGKznXaF3ybQ0yuB6iU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYtJjSo2SQIGVALRDaSEqpCmXdXbHKElflzbug9a1sWcl/2k/+w07U7FCHcwkmy+uQ185pHVzjopIKKFzmP8LsfBVFzMfXn/xdmej3GqHSKCAmcHdSyx3JhlisanoAtmps1BxJ5/dJqaEE0NzUodTKjr/QnCuDnAK49dls98Nco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Omzr/tjM; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-307c13298eeso13250011fa.0;
-        Thu, 27 Feb 2025 07:01:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740668504; x=1741273304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qFG5Y5fsjKl2zvRQ9VBEmXYBmDmudyN0YtOflmIP4OY=;
-        b=Omzr/tjMfEXzgWnrKrkcTPNzcx1mwBIkNsvWkgm6EFS2O83GnTmbf/zEOOL5INWuma
-         WpiC3DMP0Xw0s8B43MOGkU1ftalSiJKaeVY31bqGsDYtELa+rvfCP7JpRxvLzfdVaeJc
-         TGMD4fdVDhE5kqE4EqsWMUc4f+klR3nM5fLmr8Fwah6/2Ce9CxKa0RCw5CYHONEQzi4a
-         fU4+UnXsQDqWHrfhiwXR7UReJvlCtGTlRYnKxUo6CD9qYm3bSTCIgjnKmI8AFiXGuk7o
-         gKpSRKTjVVgNAoZ7aO88nOj1tgL8Kn4cSAhOlR4wIloIYX56LoQMP6fdX9rLo7JRHKqB
-         EKDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740668504; x=1741273304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qFG5Y5fsjKl2zvRQ9VBEmXYBmDmudyN0YtOflmIP4OY=;
-        b=SQT3n/yftmRjrmP7h1exfROTFohJdKnQKX6qwACGyjIJZAweSjHESVkvpixRZTwH/n
-         BAnFGaavVq6ryRvLhP1WbI3SXNYkVrH836tNL+bwoDPO1k9k7Dq9C65VXVKh4EG9TQXj
-         KbaVkbC56dJSAzQuh+hMPeZ5Wl9UY4NCMTdh89Rfy3Tci09zdZBQ9+EUbslMZJKNJf17
-         Zdvx1BXbre00HG/MBEU5TWpzAAwE0fFKTVnfN4dEgvC4chbj9s5Bg5NVRoNDFSRH2drf
-         pinualTWn3lySJnDtVZF0JEPFL2Y088TOq8ic5cRgBahykwfojoslBbPXICnJ/NHgLo0
-         HinQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTzsim8kwQv0sjBhIHnPTNWLmrwQPBbLpgpbFMBhcykxJczgFmT+D3YViT/d7M62SK9kv5n9og5DTDF0oudbQ=@vger.kernel.org, AJvYcCXxWnkMuF8/TdX1j66L69mALYAKXdKDS4RsXEKZjTuQcHtIfK17iWMyq5UYAfuDlFm7jrORVyQo2lMNJxlj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3VLTPf8R1xWDb4U9/ULzlmi//HImI8b7zaiOeOmcv5vhtsQ1V
-	wFG3dzP8fE1a6bGJdBo00vLi7PlZjfzYXArsfAtfBMpD0sXVdG/qH5Sx7ODBgBbQul1yuxfoJJ0
-	wh3eCca/FIjmmGxhyLe76L1Xn+HE=
-X-Gm-Gg: ASbGnctx+nJlppR29cIcnXGmBy1qv2xf8dNqGw261l5+RGs8ZTf6BHlqcCFf4+WOSDC
-	cQUdkM3IHnrzyD1exO/R14vm/dggGYguXl/CQPwzDp2Yr+/RJCcGxabUfjFSa879WrHkT6i3eeh
-	kI3NPXqg==
-X-Google-Smtp-Source: AGHT+IHatpsMbgwoNVwaLM9LkHVMcCjPk3Np1qRZkSm2cC2JnV7lxUJIwAdE84ICXIcwrpm5DRTH7s0/xqmqqw6APRc=
-X-Received: by 2002:a2e:7c14:0:b0:30a:cb8:6de7 with SMTP id
- 38308e7fff4ca-30b8463c53emr12774361fa.1.1740668502479; Thu, 27 Feb 2025
- 07:01:42 -0800 (PST)
+	s=arc-20240116; t=1740668526; c=relaxed/simple;
+	bh=z+Nj3qYcUKKM/dtNHjqvKQPyv6yD2YaLPYv1XpD4e5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jT/CVmWKl9tJXFVR71zUJQHkqfPzNg8RE/t5/V43rmRf3vX5jMV/MmriUjreL6qHhnMorx6kF2knzFQEz1F9bQnGG3M8/Ygb2EKHSc7u4jG0+yQBCUGA1wcAao7hRidgs7Bv8Fi4pKcBxXFDPB9hWTlf+paH9JG7PdSjVayzQSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pn6XRNW5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0DE4740E0212;
+	Thu, 27 Feb 2025 15:02:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DKqSEh8EeHyd; Thu, 27 Feb 2025 15:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740668518; bh=E3ulQVFwquBzi928EN2lwTovsU2b0NQY03QuZAGaIgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pn6XRNW5tzZpRKNIK3gdI6f+/rnCdGk1ERCH2brQhXI7fKCpFmQp+mDn1I8qgcJId
+	 z+eN/sU4wS9uVFYNbdkZMx/MbV+rNhxvtyymW0hLU5srPmk3RgNmuwMBJJIwzoXKTm
+	 vGalgvvBkDkk3AUjuvdWWr4XerHpK5BRBgmZtwbMN5OOB2Y56qw07shCrvBTn8OSz9
+	 Xomn4Rnjq4pD7Tk/owirVkGYLVkWEo43rJlAxor7Z7rLUWup6UQO+p5Btv/ZbTQx7J
+	 OsQkYs1XjVXKOIultLBfZ6rxUDfIqwPYqZ1lMMSqqTEeBAaOziS+PTO/vSxGqkXaHP
+	 Pkil/SK4h8ellJ1AT6DQy7zxtsHeaiQYvWHx5Rj5RSXxBoJkd4zKFjGXtXP72YvuWp
+	 RAf9vOhfsnb4W8Dsk3w64cRwgyS3JRvEPYXsMHPDbwIn+hKU6RsFk4uWpUKxtMO3XF
+	 OLca3qkwLr4quSxTk1EpIPWoKW1MR+ZsUhyKtCyO5laml1Wg5tA6+J471GvdqYLcpc
+	 rmXwt7u8vyluvkdGuoJJ5BR9zMvGKP0UcI9iCoObLhYD2svD0fHcqZDX+XrFTNsOUe
+	 5FeXSREKQu8ct233DcMi3Wyxl3RavEAfm0Q+sN9LaA2hu5eo7U31WyF7dQNoD/NZNn
+	 bQJjYMb4+7XP+aW76cFj+fRs=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0F50540E01A3;
+	Thu, 27 Feb 2025 15:01:48 +0000 (UTC)
+Date: Thu, 27 Feb 2025 16:01:43 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250227150143.GFZ8B-V8nIdSlV7ng7@fat_crate.local>
+References: <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226201453.jgg6kucaathzmcvs@desk>
+ <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226221324.hq2nevnnnrpgo75n@desk>
+ <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
+ <20250227003528.hnviwrtzs7jc3juj@desk>
+ <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
+ <20250227034813.booxbhxnff66dnqx@desk>
+ <20250227140858.GEZ8Bx-tTaQF8D5WBj@fat_crate.local>
+ <LV3PR12MB9265B1854AB766EBB7F098D294CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227132132.1171583-1-arnd@kernel.org>
-In-Reply-To: <20250227132132.1171583-1-arnd@kernel.org>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 27 Feb 2025 20:01:29 +0500
-X-Gm-Features: AQ5f1JoTB21tqACyTRfjho0CRnXS0OMjktLV3uqtibDJbBobunvn6NYRnOkT22o
-Message-ID: <CABBYNZL5s1xipGg7Ft7Cgccp6X81ae_jhQ9ETyh9T9ap9siaRQ@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btintel_pcie: fix 32-bit warning
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Kiran K <kiran.k@intel.com>, 
-	Vijay Satija <vijay.satija@intel.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Devegowda Chandrashekar <chandrashekar.devegowda@intel.com>, Tedd Ho-Jeong An <tedd.an@intel.com>, 
-	Philipp Stanner <pstanner@redhat.com>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265B1854AB766EBB7F098D294CD2@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Hi Arnd,
+On Thu, Feb 27, 2025 at 02:36:37PM +0000, Kaplan, David wrote:
 
-On Thu, Feb 27, 2025 at 8:21=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
+> My 2 cents is I think the negative option form is better.  That's because
+> I'd rather err on the side of safety if the user forgets something.
 >
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The open-coded upper_32_bits() produces a warning when building
-> for 32-bit targets:
->
-> drivers/bluetooth/btintel_pcie.c: In function 'btintel_pcie_setup_dbgc':
-> drivers/bluetooth/btintel_pcie.c:142:72: error: right shift count >=3D wi=
-dth of type [-Werror=3Dshift-count-overflow]
->   142 |                 db_frag.bufs[i].buf_addr_msb =3D (u32)((buf->data=
-_p_addr >> 32) & 0xffffffff);
->       |                                                                  =
-      ^~
->
-> Use the provided upper/lower helpers instead.
->
-> Fixes: 3104ae5ad1b7 ("Bluetooth: btintel_pcie: Setup buffers for firmware=
- traces")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/bluetooth/btintel_pcie.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel=
-_pcie.c
-> index cecb926bce1c..e8307eeb971f 100644
-> --- a/drivers/bluetooth/btintel_pcie.c
-> +++ b/drivers/bluetooth/btintel_pcie.c
-> @@ -138,8 +138,8 @@ static int btintel_pcie_setup_dbgc(struct btintel_pci=
-e_data *data)
->                 buf =3D &data->dbgc.bufs[i];
->                 buf->data_p_addr =3D data->dbgc.buf_p_addr + i * BTINTEL_=
-PCIE_DBGC_BUFFER_SIZE;
->                 buf->data =3D data->dbgc.buf_v_addr + i * BTINTEL_PCIE_DB=
-GC_BUFFER_SIZE;
-> -               db_frag.bufs[i].buf_addr_lsb =3D (u32)(buf->data_p_addr &=
- 0xffffffff);
-> -               db_frag.bufs[i].buf_addr_msb =3D (u32)((buf->data_p_addr =
->> 32) & 0xffffffff);
-> +               db_frag.bufs[i].buf_addr_lsb =3D lower_32_bits(buf->data_=
-p_addr);
-> +               db_frag.bufs[i].buf_addr_msb =3D upper_32_bits(buf->data_=
-p_addr);
+> For instance, in the case of 'mitigations=off;guest_host' there would be no
+> guest->guest protection.  Did the user really intend for that?  Or did they
+> simply forget to think about that attack vector?  In this case, their error
+> leaves the system potentially insecure.
 
-Great, I was going to ask Kiran to fix these, btw we might just amend
-the original change but I will keep your Signed-off-by.
+Well, good question. It could be that or it could be that the admin only cares
+about protecting the host from malicious VMs but not the VMs amongst each
+other. Does this use case make sense?
 
->                 db_frag.bufs[i].buf_size =3D BTINTEL_PCIE_DBGC_BUFFER_SIZ=
-E;
->         }
->
-> --
-> 2.39.5
->
+Probably. Maybe.
 
+So if the admin really wants to do that, then she'll have to say:
 
---=20
-Luiz Augusto von Dentz
+mitigations=off;guest_host,no_guest_guest
+
+I guess that can be specified with this cmdline.
+
+I guess if she would want to enable both guest_host and guest_guest, then the
+cmdline should be
+
+mitigations=auto;no_user_kernel,no_user_user
+
+or the shorter version
+
+mitigations=;no_user_kernel,no_user_user
+
+Hmmm, something still feels weird... I still can't go "oh yeah, this is a good
+form." ;-\
+
+> But if we only support the opt-out form, like
+> 'mitigations=auto;no_guest_host' and the user forgot about guest->guest, it
+> would leave those protections enabled.  Potentially reducing performance
+> more than intended, but the system is more secure.
+
+Still don't know for sure what the admin wanted: more perf or more security?
+:-P
+
+> Because the existing kernel defaults things to on (the auto setting) and
+> requires action to disable mitigations, why not keep the same logic here and
+> only support the opt-out form?
+> 
+> Some specific use case examples might be:
+> 'mitigations=auto;no_guest_guest,no_guest_host' -- Running trusted VMs
+> 'mitigations=auto;no_user_kernel,no_user_user' -- Running untrusted VMs but trusted userspace (cloud provider setting)
+> 'mitigations=auto;no_cross_thread' -- Using core scheduling
+
+I guess those make sense if you write them this way.
+
+With the opt-out-only strategy, enabling a single vector would require you to
+specify all others as no_*.
+
+mitigations=auto,no_user_kernel,no_guest_host,no_guest_guest,no_cross_thread
+
+That'll give you user_user.
+
+Yeah, I guess we can't have the cake and eat it too. :-\
+
+Which reminds me: on boot we should printk which attack vector got enabled and
+which got disabled.
+
+And then have that same info in
+
+/sys/devices/system/cpu/vulnerabilities/attack_vectors
+
+or so.
+
+So that we can verify what got configured.
+
+> On the SMT piece, I think the proposal is:
+> 'auto;<attack vectors>' -- Default SMT protections (enable cheap ones like STIBP, but never disable SMT)
+> 'auto,nosmt;<attack vectors>' -- Full SMT protections, including disabling SMT if required
+
+Well, that's the question: cross-thread or nosmt is yet another attack vector.
+So if we define the format as I mentioned above, this should be
+
+auto;<attack_vectors>,nosmt or "cross_thread".
+
+Right?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
