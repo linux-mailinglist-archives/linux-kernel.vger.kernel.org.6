@@ -1,275 +1,171 @@
-Return-Path: <linux-kernel+bounces-537223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-537224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53B5A4894F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:55:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17BFA48950
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 20:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0FB516DA33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721511886509
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 19:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A2626FA55;
-	Thu, 27 Feb 2025 19:55:37 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9114326F464;
+	Thu, 27 Feb 2025 19:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OQwEAjmL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B748A26FA52
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CCE1E521C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 19:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740686136; cv=none; b=Mr8OmvkssYv8fHrLFIdFLXmVic08JI6mLt1W/7j1PQT9f2J4oHSB65o1omoTPGNHIZR0UzOxv5ZdYHkC1hWS4h9vtp+BY+x/b1ad4jlN1KBohGp95vW7pjpp2+pTfzWvVtMwt0vLWv70jh5lHVWS697t3XiUDWSwoFCGPD5NibU=
+	t=1740686194; cv=none; b=mZ/PrAzJ4uiYEK2yYGM/ZM3fUZcvEZV9SSr5Zvjabm2xdUpDg40EQNeGRvzrIB15gt58xD74hT8baMJZSWYtAy7D+yJCxpzRKHTnxENCtrI4oGoCNiL1IfSTjnkExNFZG3CtHjrkbyK4joVf9ubUrC4N88u+6nDE6GN+1YAbfeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740686136; c=relaxed/simple;
-	bh=cKvUdXsEjvtHtHga3ldzaC1r3mLy1KMAS7EYeBbFdYQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JLFA51o5ImUGDoQLY2JE3oZeK2YONHnK5iOuWaJO18+4mr23DNaZlu51nCRVuC1PVuddkkgP4Lk4JLgKQivMK6DnBdD3pM7tJfkzhpBixNXADuk9bDjUzRKroTnIETcAVMGb5eqI3nzojn7/smceEA3VgI9/tfkCijxtXrLQVQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d3e09da2c0so9872965ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 11:55:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740686134; x=1741290934;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fC5MSRm9BECByFHM5ylvmXFJ1nvWpeqQ8PESL8FrfuU=;
-        b=MjwWk11tIY8V1Ij1f5JuT/dCCuEw14rXzBir9u9Zy/tCZ1GwXPchnD/uWMbxuMRZV1
-         Q9T1PdD4+bn+d4npDnTjLYVZOU1ZkUV2TXL7GcWx+DkO4GAddUkZvuh+g2nzVOa2LQXL
-         ns0ptwtezaNDQl5Mrqs5Pje/RNa3UO60OwsGNtpCOW25m98dWdzOK4Xsx/IInewyJRz3
-         Te+DqL9KcoqhYTz2k3gFi47I8ntq/X8J1/nrTQm4/xRZAmEJpYY6b5uhcoX4Yrxfjp9t
-         EZQoI8qeFdqm/2FeM5xjMR3V6a3xBNkPx0UCtTAmC/cc+X5HP/WXUIuEiZO8Gjhi7Fmo
-         Fnew==
-X-Forwarded-Encrypted: i=1; AJvYcCV9+hdhqzIgYbwiS16f+2mvc+9ib9eTQgXytZqGEWgvn9yOIGX+Ee9AneVqZ/a+Lqn8vKcyHLf5sqTkx28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeTfyqAfB9huiITSVM5PiS8Qozobt0OM3GDmzn69oibUYw2doC
-	RDpbCljUdiLtc9iCze9G8rOnOKY/0xvrkVPTgg2eKE+Zm8tnDt0Z80Bas7ZjYpXBt6E3mhuHHoe
-	LQX5rm6or+ngRj+G5Wsaq5JRBqW1DLG+t7LqGKMCgFsfnk3Mk1ZOgIYw=
-X-Google-Smtp-Source: AGHT+IEAmRfhaFWJDNSDY6t96ozm4BGEa0RtrysODBtxnkZc04NzgkyhoPlXPsbDjM7OFW0P6ORGpqT6ZvUdX7QKurAnDONUn30R
+	s=arc-20240116; t=1740686194; c=relaxed/simple;
+	bh=2HeW410NTQiUkUv+k8Pv1uPVUvca+wYKROIYRmPGdl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HeOh1opvXLPShogNtzv6dmDoW3FYLNIJlkw49Dt0+Pl0/t71MoJoFSw/IUKuu3mQ790ZCkkzylNB5a96Jjg29j23wiKyX/QYMwZ0FIbRJnbjczGqEK3M5moSFNrj8PQ5LJiKMxWIZ1TgBJmMvaYDyvQz9X5WCe6AY7FKvqjzJsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OQwEAjmL; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740686192; x=1772222192;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2HeW410NTQiUkUv+k8Pv1uPVUvca+wYKROIYRmPGdl8=;
+  b=OQwEAjmLb47L6ucBczb559J+Hb/XMg3kmeCl/5/KYA2VmVqwjGIbIZvU
+   lWjjspf1y5dhS4NjDTA42hUx2MGKp0ZEPm+yIAEGGKNtkcROk4qN59JxD
+   WUglSX0z5uobN30+dJki0DkKEkzDn0nDC4V5IcVdxflegIX5eykS+t7BU
+   6s37CxSZjt3QQJQIaODvXdwOiVNPO05smv+Cc3AQbwrkzSvTPy0LEy7Lv
+   luDVvzw5uOqR8qWKCZURHCEnr3LgQ9UTRvKfj/1o/kEe8wAE+dVPTOIeY
+   d4u2biM8gZW7Gqr4zw79z5HcRO6+qh2vWjg5KCRVx1mB8ETv/XazZoJzF
+   A==;
+X-CSE-ConnectionGUID: O2xR3MLpTs6YJlP6Ko1Uiw==
+X-CSE-MsgGUID: 2J+B+47yQK+5VzizENTAsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="66966713"
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="66966713"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:56:31 -0800
+X-CSE-ConnectionGUID: YVIxSqdHQdOQ8c1sqOvN1Q==
+X-CSE-MsgGUID: Zd8kcV3ORb2wEYkNaSdJYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
+   d="scan'208";a="122074076"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.108.72]) ([10.125.108.72])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 11:56:31 -0800
+Message-ID: <af4ec757-22fd-4438-91fc-d8778998bf07@intel.com>
+Date: Thu, 27 Feb 2025 11:56:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c9:b0:3cf:fd62:e39c with SMTP id
- e9e14a558f8ab-3d3e6b27ffdmr7078155ab.5.1740686133869; Thu, 27 Feb 2025
- 11:55:33 -0800 (PST)
-Date: Thu, 27 Feb 2025 11:55:33 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c0c335.050a0220.222324.0271.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in pipe_release (6)
-From: syzbot <syzbot+23e4a7772eb9a9715b85@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 02/11] x86/fpu/xstate: Introduce xstate order table
+ and accessor macro
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
+ <20250227184502.10288-3-chang.seok.bae@intel.com>
+ <Z8C3ZcMgHuBtIjFR@gmail.com> <674db309-e206-4bb4-bf99-b3c39bff7973@intel.com>
+ <Z8C-xa7WB1kWoxqx@gmail.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z8C-xa7WB1kWoxqx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 2/27/25 11:36, Ingo Molnar wrote:
+> 
+>> There were basically three choices:
+>>
+>>  1. Reuse XFEATURES 3/4 (MPX)
+>>  2. Create a new out-of-order XFEATURE 19 that reuses MPX space
+>>  3. Create a n in-order XFEATURE 19 that needs XFD and an opt-in
+>>
+>> #1 risks breaking old MPX code in weird ways.
+> This is a false trichotomy. 😉
+> 
+> There's a 4th option:
+> 
+>    4. Reuse XFEATURES 3/4 (MPX) only on APX-aware kernels, keep it 
+>       disabled for old kernels.
+> 
+> Problem solved.
 
-syzbot found the following issue on:
+The worry boils down to code in the kernel or userspace doing this:
 
-HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fe26e4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8de9cc84d5960254
-dashboard link: https://syzkaller.appspot.com/bug?extid=23e4a7772eb9a9715b85
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fe26e4580000
+	if (XGETBV(0) & 0x11)
+		do_mpx_gunk();
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5efd609bee65/disk-d082ecbc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfadbc41acd8/vmlinux-d082ecbc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/50189caf8ad6/bzImage-d082ecbc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/470a5d56ad27/mount_0.gz
+So, sure, we could try to make sure that new kernels don't have any
+do_mpx_gunk() in them, but that doesn't help old kernels or other OSes/VMMs.
 
-The issue was bisected to:
+The only thing that would help them would be to hide the XFEATURES 3/4
+enumeration and require some kind of opt-in for it so that it can't be
+enabled except with APX-aware software. That's totally possible, of
+course. But it doesn't fix the userspace problem.
 
-commit 1d16c605cc55ef26f0c65b362665a6c99080ccbc
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Nov 9 19:22:46 2023 +0000
+If folks really look at the diffstat:
 
-    bcachefs: Disk space accounting rewrite
+>  10 files changed, 108 insertions(+), 57 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=117c9db0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=137c9db0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=157c9db0580000
+and hate it with _so_ much of a passion that we should go back and re
+architect this thing, just say the word. I don't know how far along the
+hardware is, but this kind of stuff is usually fixable in microcode. We
+can totally go back to the drawing board and try to reuse XFEATURES 3/4
+and see if there are any showstoppers (like with "other" OSes).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+23e4a7772eb9a9715b85@syzkaller.appspotmail.com
-Fixes: 1d16c605cc55 ("bcachefs: Disk space accounting rewrite")
-
-INFO: task syz-executor:5849 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc4-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:20592 pid:5849  tgid:5849  ppid:5843   task_flags:0x400100 flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6914
- __mutex_lock_common kernel/locking/mutex.c:662 [inline]
- __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
- pipe_release+0x48/0x320 fs/pipe.c:728
- __fput+0x3e9/0x9f0 fs/file_table.c:464
- __do_sys_close fs/open.c:1580 [inline]
- __se_sys_close fs/open.c:1565 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1565
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe6de58bda0
-RSP: 002b:00007fff16f18de8 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 0000555580184ec0 RCX: 00007fe6de58bda0
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 000000000000001d
-RBP: 00005555801847a0 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000202 R12: 00007fff16f18e10
-R13: 0000000000000023 R14: 0000555580184f0c R15: 00005555801854c8
- </TASK>
-INFO: task syz.3.64:6573 blocked for more than 143 seconds.
-      Not tainted 6.14.0-rc4-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.64        state:D stack:10240 pid:6573  tgid:6572  ppid:5971   task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- io_schedule+0x8d/0x110 kernel/sched/core.c:7690
- folio_wait_bit_common+0x839/0xee0 mm/filemap.c:1318
- folio_lock include/linux/pagemap.h:1163 [inline]
- invalidate_inode_pages2_range+0x48f/0x960 mm/truncate.c:639
- bch2_write_invalidate_inode_pages_range+0xce/0x120 fs/bcachefs/fs-io-pagecache.c:68
- bch2_direct_write+0x2ebf/0x3190 fs/bcachefs/fs-io-direct.c:653
- bch2_write_iter+0x19d/0x2cd0 fs/bcachefs/fs-io-buffered.c:1047
- iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- do_sendfile+0x564/0x8a0 fs/read_write.c:1363
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f893338d169
-RSP: 002b:00007f89342ae038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f89335a5fa0 RCX: 00007f893338d169
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000006
-RBP: 00007f893340e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000fffa83 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f89335a5fa0 R15: 00007fffa972dc48
- </TASK>
-INFO: task syz.3.64:6613 blocked for more than 144 seconds.
-      Not tainted 6.14.0-rc4-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.64        state:D stack:15824 pid:6613  tgid:6572  ppid:5971   task_flags:0x440140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5378 [inline]
- __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
- __schedule_loop kernel/sched/core.c:6842 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6857
- __bch2_two_state_lock+0x229/0x2c0 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
- bch2_readahead+0x9e1/0x1240 fs/bcachefs/fs-io-buffered.c:272
- read_pages+0x179/0x570 mm/readahead.c:161
- page_cache_ra_unbounded+0x708/0x820 mm/readahead.c:298
- filemap_readahead mm/filemap.c:2549 [inline]
- filemap_get_pages+0x9e4/0x1fb0 mm/filemap.c:2594
- filemap_splice_read+0x68e/0xef0 mm/filemap.c:2971
- do_splice_read fs/splice.c:985 [inline]
- splice_file_to_pipe+0x290/0x500 fs/splice.c:1295
- do_sendfile+0x508/0x8a0 fs/read_write.c:1369
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f893338d169
-RSP: 002b:00007f893428d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f89335a6080 RCX: 00007f893338d169
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 00007f893340e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000000002ab R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f89335a6080 R15: 00007fffa972dc48
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
-2 locks held by getty/5582:
- #0: ffff88803571a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
-1 lock held by syz-executor/5849:
- #0: ffff88802a3d6068 (&pipe->mutex){+.+.}-{4:4}, at: pipe_release+0x48/0x320 fs/pipe.c:728
-4 locks held by kworker/u8:4/6005:
- #0: ffff8880b873e7d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
- #1: ffff8880b8728948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x41d/0x7a0 kernel/sched/psi.c:987
- #2: ffff8880b872a398 (&base->lock){-.-.}-{2:2}, at: lock_timer_base kernel/time/timer.c:1046 [inline]
- #2: ffff8880b872a398 (&base->lock){-.-.}-{2:2}, at: __mod_timer+0x24a/0x10e0 kernel/time/timer.c:1127
- #3: ffffffff9a832208 (&obj_hash[i].lock){-.-.}-{2:2}, at: debug_object_activate+0x17f/0x580 lib/debugobjects.c:818
-1 lock held by syz.3.64/6573:
- #0: ffff8880741e2420 (sb_writers#13){.+.+}-{0:0}, at: direct_splice_actor+0x49/0x220 fs/splice.c:1163
-2 locks held by syz.3.64/6613:
- #0: ffff88802a3d6068 (&pipe->mutex){+.+.}-{4:4}, at: splice_file_to_pipe+0x2e/0x500 fs/splice.c:1292
- #1: ffff8880744ba148 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
- #1: ffff8880744ba148 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0x156/0x820 mm/readahead.c:229
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.14.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
- watchdog+0x1058/0x10a0 kernel/hung_task.c:399
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Let's just make sure that we've got a strong consensus amongst the
+maintainer team, and I'm happy to oblige!
 
