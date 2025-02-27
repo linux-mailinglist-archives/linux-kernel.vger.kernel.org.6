@@ -1,118 +1,92 @@
-Return-Path: <linux-kernel+bounces-536620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83578A48232
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:57:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C14DA48229
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E159317A83F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:43:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518AB19C6F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1470023C8AA;
-	Thu, 27 Feb 2025 14:42:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FA123CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF93B270032;
+	Thu, 27 Feb 2025 14:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="izF4xcrC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542C723771E;
+	Thu, 27 Feb 2025 14:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667332; cv=none; b=O075WmCzlm3dwAaya9LSg+UNbYArR4HR8h74mvAwx4jsCJWh46d/h1GZqvl4z/2Ef3cV8GEZSynCbXUgkmOa9dlFQV9B5Cj/Iy3GOaNP5xhbhqjo4ClgPpvdopPsi0LMWa1lPgI99PX80ZFWciG4nE/sM3GNkOZHcU9aiCWoBk8=
+	t=1740667346; cv=none; b=n3eWBGF2U0XUcEohFVBn1ZW6T8dngvGMvn6Ez1tdgx9DQuFn8Ds/JxElHWfqTXPDej41Q5nUodCeRnqYpVZMjyazanJsCLzABy17h8dK03ozwOK27HdWupiltl9ErIkkC9G08OoOsi7gDBeCy1Pvqsv/kQyrKAbNEHeUYPcUfcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667332; c=relaxed/simple;
-	bh=KGfjGgNglULtwKNBSYbC76MripoE1VrbD6UN9FeUQhg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tHCPR7nYb4jJ9CSan7WK8Dm90vs919zaQn/e9kiM3xzFw2nIjZAa+e27zubv8+HFETtaXwJa5Ze33P9cqV0SyrDfR7AGf5L3RzfP4S/l6ANI8mo/mvUnwMVER99pNXOPV9oExsAZ4jJR455T1BUhTJxBNVKX+28Mgb/Je+E/myI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28A722C3D;
-	Thu, 27 Feb 2025 06:42:26 -0800 (PST)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E88453F673;
-	Thu, 27 Feb 2025 06:42:08 -0800 (PST)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: will@kernel.org,
-	catalin.marinas@arm.com,
-	maz@kernel.org,
-	steven.price@arm.com,
-	aneesh.kumar@kernel.org,
-	gshan@redhat.com,
-	robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH v3 3/3] arm64: realm: Use aliased addresses for device DMA to shared buffers
-Date: Thu, 27 Feb 2025 14:41:50 +0000
-Message-ID: <20250227144150.1667735-4-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227144150.1667735-1-suzuki.poulose@arm.com>
-References: <20250227144150.1667735-1-suzuki.poulose@arm.com>
+	s=arc-20240116; t=1740667346; c=relaxed/simple;
+	bh=gw3yhjaD34XHxfwtco/3BRJayc9o3DLXMMEhaJRahdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ts2Kx9sa1VZfCueFLk6Y6DpmpjCwrsXIVVt3VZ9BgGwDsp4ulowwMoQlO0vYaUPNzneUoEmIqe0A6R2zDlYUAmLiE8DhCv3YeF2wlza6SiLOnj1Z9n+nPjS8ng84b7A16nNBXfy3Dq3wlLa1WYKRLOBbTJ/mBmTn1axKBtMamuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=izF4xcrC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740667342;
+	bh=gw3yhjaD34XHxfwtco/3BRJayc9o3DLXMMEhaJRahdk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=izF4xcrCafDcNBAziKL40z+O24j05bpv7QQCpr1mlk78Prem1x3LczV3gTWAL7eN7
+	 HhP+R9Z2pl3w8KIkEqQjhZc2NkU9pZM9O76ENRFuTqmF0FkP/q4Q2Ed2ohSufJT7VP
+	 PP1KxeY6rZpxCogyjKSJs8EU4iGzu2ZQWSXOWESz9XpGgDaeX+8AioxzOXWDfhed/g
+	 CNeURodYDSoaf82rHOFTcjrORQlR8dpPr0gYJMeu+geM67KX9OnE2ME29goZeTqDnp
+	 vitS9KvVdBuFz/u9xsSVZMx0oowaCuEI3Xpj2Rm34u1aXbKMJTwrb4kCQW40+G2dsn
+	 lCXKMK+0OcoYw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AA0B517E05A6;
+	Thu, 27 Feb 2025 15:42:21 +0100 (CET)
+Message-ID: <06563381-faea-48de-86f1-4db174de394b@collabora.com>
+Date: Thu, 27 Feb 2025 15:42:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: mediatek: mt8188: avoid uninitialized variable use
+To: Arnd Bergmann <arnd@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ parkeryang <Parker.Yang@mediatek.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250227131939.1040168-1-arnd@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250227131939.1040168-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When a device performs DMA to a shared buffer using physical addresses,
-(without Stage1 translation), the device must use the "{I}PA address" with the
-top bit set in Realm. This is to make sure that a trusted device will be able
-to write to shared buffers as well as the protected buffers. Thus, a Realm must
-always program the full address including the "protection" bit, like AMD SME
-encryption bits.
+Il 27/02/25 14:19, Arnd Bergmann ha scritto:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The 'msk' variable has no initialization:
+> 
+> sound/soc/mediatek/mt8188/mt8188-dai-dmic.c:311:4: error: variable 'msk' is uninitialized when used here [-Werror,-Wuninitialized]
+>    311 |                         msk |= PWR2_TOP_CON1_DMIC_FIFO_SOFT_RST_EN(i);
+>        |                         ^~~
+> 
+> Set it to zero before the loop.
+> 
+> Fixes: c1e42ec04197 ("ASoC: mediatek: mt8188: Add support for DMIC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Enable this by providing arm64 specific dma_addr_{encrypted, canonical}
-helpers for Realms. Please note that the VMM needs to similarly make sure that
-the SMMU Stage2 in the Non-secure world is setup accordingly to map IPA at the
-unprotected alias.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Steven Price <steven.price@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
-Changes since v2:
- - Drop dma_addr_encrypted() helper, which is a NOP for CCA ( Aneesh )
- - Only mask the "top" IPA bit and not all the bits beyond top bit. ( Robin )
- - Use PROT_NS_SHARED, now that we only set/clear top bit. (Gavin)
----
- arch/arm64/include/asm/mem_encrypt.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/include/asm/mem_encrypt.h b/arch/arm64/include/asm/mem_encrypt.h
-index f8f78f622dd2..a2a1eeb36d4b 100644
---- a/arch/arm64/include/asm/mem_encrypt.h
-+++ b/arch/arm64/include/asm/mem_encrypt.h
-@@ -21,4 +21,15 @@ static inline bool force_dma_unencrypted(struct device *dev)
- 	return is_realm_world();
- }
- 
-+/*
-+ * For Arm CCA guests, canonical addresses are "encrypted", so no changes
-+ * required for dma_addr_encrypted().
-+ * The unencrypted DMA buffers must be accessed via the unprotected IPA,
-+ * "top IPA bit" set.
-+ */
-+#define dma_addr_unencrypted(x)		((x) | PROT_NS_SHARED)
-+
-+/* Clear the "top" IPA bit while converting back */
-+#define dma_addr_canonical(x)		((x) & ~PROT_NS_SHARED)
-+
- #endif	/* __ASM_MEM_ENCRYPT_H */
--- 
-2.43.0
 
 
