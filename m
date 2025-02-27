@@ -1,179 +1,362 @@
-Return-Path: <linux-kernel+bounces-536713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8FA48351
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:43:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F294AA4835E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F3718949BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C893AD795
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9B726BDB7;
-	Thu, 27 Feb 2025 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5067026B974;
+	Thu, 27 Feb 2025 15:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bwRajS4l"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kNKBtjjU"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A4D26AA86
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A552226A1CF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 15:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740670843; cv=none; b=lCKzVHQ/odAbfyNxudrkH2yHQjSf39IB6YYEtaiipyg3eswbcmRq4avTv9s4oyyg703iIQG8YWeJ+5M5EAnG0Y76sqZu5SgYx/JR/ZvGzsgxNjLti6r07/PLCxvgb1luoYQ290bmhB7MBIjxJ4UTLMF0MARrGCAMuZTVv+ug584=
+	t=1740670888; cv=none; b=YzEsn0Jqjh5IamHO1toHndVPpN9GCtHXkw4U2nuxGEuSSnWAwnlCp7VIjCJ39pZ8ql+hi7OWaH2lnkTR97dXUDH8rAkGD8Nc7VHESDtsuu8HnrazVccPwitodHG4A/uRja3cTPEBuB1iliF0KEA0LVH4mZGVdSnBwqtcy2wx2SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740670843; c=relaxed/simple;
-	bh=QHw7OAFUWU6niQBeT5cSwFgogQetkHz8qbH2HdnB67o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sqcwVl7jppLLQwO94BB7FeRfd/TfW8P3B0FKwlr0MkYnnQOazMqG2y+Ifhh+hrSJr/DZpqc1HcaAlLRR6TsTaNh0tmrrBrcot4kphkps6vmBg+WdJFFfXCjEcfBHTG3xpJ8/b7fJ4sbsYeFx3Eo4R5/Y2Bxx5e4NVL+LV5dsXt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bwRajS4l; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394036c0efso7592435e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:40:41 -0800 (PST)
+	s=arc-20240116; t=1740670888; c=relaxed/simple;
+	bh=Da5AnvMmGpZ4+PRGJTdejXKPe0Mw/BATivoU7g5Y1W4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kFmiM4mO/oSh5HIH+ByWXwXHVV/j1atjq+60q5OLVvQAmYJahy4ZdpQnS3r6+bzUcgLPBZKXeXLiT0ph6+3NfHMr9atd8LKBfIMdvZm2it48rMgBN83o64t1Qq7P1+GbWAk4WzB8QmlHyYAgr2fZJf+Q50NZdrnkq2oqGssfzYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kNKBtjjU; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so2442693a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:41:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740670840; x=1741275640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mICGVTvlu71CB2Y912+BgJeYTHn2DASMGPwLIjScMqY=;
-        b=bwRajS4lZXwlm9NgrBjgFBlBod6RCSL+S44Ho98L5QD+UahuZ6mY5qjegGHtr3fF5y
-         PEv8Krt4PjY42L4bWJghW9xi8WMJ+UMj8Rbjt5EzRFWGvlRa783TMapoJid6XQXHImJ5
-         0uyQUynMrZ0CtmseXWqkjU4Mr6EKld26J0Ybezq3QZy6XSA4KPcQUhD/PuY9hnOZuhOv
-         Xm3cnZkIhn7gmYDaF/zIZ35uz+HJRcppNO4ZrqEWtBGwyWuYiYgEyJgxCxKbpDuAfAa9
-         7w8k6RqSVbX417lLHYOnWmmjsawfY7RArUMh6CL77dQNxFQWuczpcRjBqUpPP02kKUp2
-         cVNQ==
+        d=google.com; s=20230601; t=1740670886; x=1741275686; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RpWebaG6ta7C4r+/QTI9Hpf7yd202gY2ilwfhDkC51w=;
+        b=kNKBtjjU13WpJoaIoPawp0ckzfYmLmHUODsrBzdw3sAWug+nXB0W+shDByC+MmXNuN
+         Z9uKB1HJIGDLoqX6EbpZ58TD/MJWvq858B8f3N4fSPpq4exUjzmuZfxuxxp6XXu++Zhu
+         4KbLDMYgj6tdri1AmAE58l17q0ZDWFbAvg4ER1po5W3tn2ImHlMpMjMycbsTxMTNcPgG
+         X5hieD3BT4cf632JuiPRP9J/HMKIc1icRAMsPHiTJXBdEbtbMawsO8vjLrub+tO1qIZB
+         41M4289/6PxItFiYSCtXdPVCjkIrqS0fo3AP4rYeDGqIIgY5xT1KlId9EdY1SES8Rk2D
+         2Abw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740670840; x=1741275640;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mICGVTvlu71CB2Y912+BgJeYTHn2DASMGPwLIjScMqY=;
-        b=adP7mAa6gNy2axPV1j6FYNm5tMyIyrbUucClAf7yhbGM+KzASFGFvhZo6cF7KZIjYk
-         OZqZI80yI3Dl2RIn333nLljfxQl+0cc1/rRWFJHio93VmETe8Sk2/Qcjm7abhbMGC/B5
-         yVoC09tSUn+0xVz4jLztnu08Wx8jRHfWSxU99+iO39Laf0cmZmIR0CayjKK3W7oB/SWq
-         6wBVFZHgMqMFGwqZlWaCmeADr5w7Akr/OYhYb2o7bPNUrfY+Sn3/2kMkx+wREY4sJtoW
-         eLNJ4KNDbfhUI8FwKSb8uRgCBG3PQxOGf59dGk5++tLbjjFqiAByr+iWV4OkcBKjU2m2
-         AGcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHwU9PneL6/M5xJ11UuCNzXErsalyZI9u582OxAD6sG6nRGVOax3vVHJAIY3fnySQvjNjoxbTX/aT/x60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBsuJKKeVx0qbsM1xcfuXFAQEAmQf3ikLT2YrxVhsDIP9FoS6/
-	pf1EPhAbQMzIOKdIF/WyqRRELkn9XpmVXix7lT3JQw6b06TCNN2nRhNE5I5FUdM=
-X-Gm-Gg: ASbGncvX+fEnpm/Q2av+F3DymNjls8CEoD4LwJjWF1tW3YF2rVoLfjTNmbBdBMHam8B
-	G72hQnw6NIKxeT6PwIFsNjkkdCQN5wzTOfl2JFIfNXEWVq6go+UsthXH8kWw+nXM8IkHlhHGc12
-	TWdsJUWL+onoN2U0/aa8Xxphz9WZGI6hb/oDtomB7PQA6ySO4qBIYyxtps6MEw1Il3wcfCO93Ij
-	JY9XZsxP8XS5BwYZWxzs/iETSxGF5//UikKimCcFIURundHh8nd1oVjGt9VxYb3/LSSIpZ781rM
-	VdebaKRktLGJxXJjfkQRm3RsjxEnZYSNZ3djo7OPw7gQ7mcUGlUYO1dcDsFj9/8UUCHIl6ywF07
-	jBnU=
-X-Google-Smtp-Source: AGHT+IFCwirr0zSUWLtvCagWYh1fa3K+AfXuY+gLIHqR2YW+RV4zpszQEQ1q+3Ta9d7lcR+MDvPjJQ==
-X-Received: by 2002:a05:600c:3b93:b0:439:7b5e:820a with SMTP id 5b1f17b1804b1-43ab8fdcac1mr75644555e9.11.1740670839850;
-        Thu, 27 Feb 2025 07:40:39 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c5de:e7f3:73c7:7958? ([2a01:e0a:982:cbb0:c5de:e7f3:73c7:7958])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a28b285sm27239005e9.33.2025.02.27.07.40.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2025 07:40:39 -0800 (PST)
-Message-ID: <ab3f5ee6-eabf-491a-99ef-da1e74b29081@linaro.org>
-Date: Thu, 27 Feb 2025 16:40:38 +0100
+        d=1e100.net; s=20230601; t=1740670886; x=1741275686;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RpWebaG6ta7C4r+/QTI9Hpf7yd202gY2ilwfhDkC51w=;
+        b=Xq/sYqUn2vSK7/mLJzFGV/pGkUdgGdmGKsVbn77AI8Sh5G1kJFSgS3HB2yekbsEjc3
+         QjOUMAhJWMr9PSjU5HzngMM2rdRI++PAQXdP10nf+ss4arxx215SJ9iaSoa1edhdbTNB
+         tJQ2Yk2YoMRHMY3/HKlEI88xkw99WY1AC03ecPFnleDUdL2F/r3Lx5TwUcs4ituBpuSA
+         wobUnjAKTdcKS0rx9Lo1nUaVF6kfvoA8ionWIHuXOlY5tAwz5SsKH6x1OlfPU9kji8in
+         rtM4MfDkQVhTARZXhbLHwNl7xsPL7UP2qXwISrHdTOkoyRdMoYm7lAVuaNcuTWaNjPva
+         PJkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTeTZGG9TywyCykskSF4UTF2oG5oZyUqlY+fSCKDzF9JmyOszGYlNdNzDK9b084a/5hWW2X1t1m+qGGhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBpfh5Xo1D6IaHfUJG49eM0Qw1SJsM+xUlYJSqbry7IWhk6UgR
+	ZUURVM27rb87yyCEEq2gmn168/Q5+bOd/T8frOdQf+ubj/lmL54Alog2rRXcg718sA/dId7seTz
+	WVQ==
+X-Google-Smtp-Source: AGHT+IFr2Hi5hWjqDrFkQXi/BpmSscvvgpC48vIgUsBffnpafInukRPQsN67WY8M/RuByhyUtG6LR6vx2wo=
+X-Received: from pjbov6.prod.google.com ([2002:a17:90b:2586:b0:2fa:a30a:3382])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc44:b0:2f6:f107:fae6
+ with SMTP id 98e67ed59e1d1-2fe68cf3f5fmr15885811a91.23.1740670885945; Thu, 27
+ Feb 2025 07:41:25 -0800 (PST)
+Date: Thu, 27 Feb 2025 07:41:24 -0800
+In-Reply-To: <20250227041522.1734260-1-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sm8650: switch to
- interrupt-cells 4 to add PPI partitions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250227-topic-sm8650-pmu-ppi-partition-v2-0-b93006a65037@linaro.org>
- <20250227-topic-sm8650-pmu-ppi-partition-v2-1-b93006a65037@linaro.org>
- <fdlsw6mctzfutashmlve7eubgbx6nfzwsft2mnslmgsdrrwuve@pudlwja2y6g5>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <fdlsw6mctzfutashmlve7eubgbx6nfzwsft2mnslmgsdrrwuve@pudlwja2y6g5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250227041522.1734260-1-mlevitsk@redhat.com>
+Message-ID: <Z8CHpJMdhWNDBr0E@google.com>
+Subject: Re: [PATCH] KVM: selftests: access_tracking_perf_test: add option to
+ skip the sanity check
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+	James Houghton <jthoughton@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Anup Patel <anup@brainfault.org>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>
+Content-Type: text/plain; charset="us-ascii"
 
-On 27/02/2025 16:11, Dmitry Baryshkov wrote:
-> On Thu, Feb 27, 2025 at 10:04:39AM +0100, Neil Armstrong wrote:
->> The ARM PMUs shares the same per-cpu (PPI) interrupt, so we need to switch
->> to interrupt-cells = <4> in the GIC node to allow adding an interrupt
->> partition map phandle as the 4th cell value for GIC_PPI interrupts.
->>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 542 +++++++++++++++++------------------
->>   1 file changed, 271 insertions(+), 271 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> index de960bcaf3ccf6e2be47bf63a02effbfb75241bf..273170a2e9499b900b3348307f13c9bc1a9a7345 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> @@ -1417,17 +1417,17 @@ opp-3302400000 {
->>   
->>   	pmu-a520 {
->>   		compatible = "arm,cortex-a520-pmu";
->> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
+On Wed, Feb 26, 2025, Maxim Levitsky wrote:
+> Add an option to skip sanity check of number of still idle pages,
+> and force it on, in case hypervisor or NUMA balancing
+> is detected.
 > 
-> Why are you changing the interrupt type? Should that be coming as a part
-> of the next patch?
-
-Damn, indeed, bad rebase.
-
-Thanks,
-Neil
-
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  .../selftests/kvm/access_tracking_perf_test.c | 23 +++++++++++++++++--
+>  .../testing/selftests/kvm/include/test_util.h |  1 +
+>  tools/testing/selftests/kvm/lib/test_util.c   | 22 ++++++++++++++++++
+>  3 files changed, 44 insertions(+), 2 deletions(-)
 > 
->>   	};
->>   
->>   	pmu-a720 {
->>   		compatible = "arm,cortex-a720-pmu";
->> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
->>   	};
->>   
->>   	pmu-x4 {
->>   		compatible = "arm,cortex-x4-pmu";
->> -		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH 0>;
->>   	};
->>   
->>   	psci {
-> 
+> diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> index 3c7defd34f56..eafaecf086c4 100644
+> --- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> +++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
+> @@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
+>  /* Whether to overlap the regions of memory vCPUs access. */
+>  static bool overlap_memory_access;
+>  
+> +static bool skip_sanity_check;
+
+I think it makes sense to keep the sanity check, but to warn instead of asserting,
+which is already the proposed behavior.  I.e. the sanity check is still there,
+it's only the assert that's being "skipped".  So maybe something like this?
+
+static bool warn_on_too_many_idle_pages;
+
+> +
+>  struct test_params {
+>  	/* The backing source for the region of memory. */
+>  	enum vm_mem_backing_src_type backing_src;
+> @@ -185,7 +187,7 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
+>  	 */
+>  	if (still_idle >= pages / 10) {
+>  #ifdef __x86_64__
+
+Gah, the assert needs to be applied to all architectures.  Commit 6336a810db5c
+("KVM: selftests: replace assertion with warning in access_tracking_perf_test")
+dropped it entirely.  It got restored by 8fcee0421386 ("KVM: selftests: Restore
+assert for non-nested VMs in access tracking test"), but only for x86.
+
+Maybe do that in a follow-up patch?  Or alternatively, introduce the boolean in a
+prep patch, then enable the assert for !x86, and then finally add the command
+line option to make it controllable.
+
+I'd probably vote for the second option?
+
+> -		TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
+> +		TEST_ASSERT(skip_sanity_check,
+>  			    "vCPU%d: Too many pages still idle (%lu out of %lu)",
+>  			    vcpu_idx, still_idle, pages);
+>  #endif
+> @@ -342,6 +344,8 @@ static void help(char *name)
+>  	printf(" -v: specify the number of vCPUs to run.\n");
+>  	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
+>  	       "     them into a separate region of memory for each vCPU.\n");
+> +	printf(" -u: Skip check that after dirtying the guest memory, most (90%%) of\n"
+
+Maybe '-w' if we go with something along the lines of "warn_on..."
+
+> +	       "it is reported as dirty again");
+>  	backing_src_help("-s");
+>  	puts("");
+>  	exit(0);
+> @@ -359,7 +363,7 @@ int main(int argc, char *argv[])
+>  
+>  	guest_modes_append_default();
+>  
+> -	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
+> +	while ((opt = getopt(argc, argv, "hm:b:v:os:u")) != -1) {
+>  		switch (opt) {
+>  		case 'm':
+>  			guest_modes_cmdline(optarg);
+> @@ -376,6 +380,9 @@ int main(int argc, char *argv[])
+>  		case 's':
+>  			params.backing_src = parse_backing_src_type(optarg);
+>  			break;
+> +		case 'u':
+> +			skip_sanity_check = true;
+
+Do we want to allow the user to force the assert?  E.g. move the logic that sets
+the default value to before the parsing of the command line, and then make this
+something like:
+
+			warn_on_too_many_idle_pages = atoi_positive(optarg);
+			break;
+
+> +			break;
+>  		case 'h':
+>  		default:
+>  			help(argv[0]);
+> @@ -386,6 +393,18 @@ int main(int argc, char *argv[])
+>  	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
+>  	__TEST_REQUIRE(page_idle_fd >= 0,
+>  		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
+> +
+
+Extra newline.
+
+> +
+> +	if (skip_sanity_check == false) {
+
+	if (!skip_sanity_check) {
+
+> +		if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
+
+This needs to be guarded with __x86_64__.
+
+> +			printf("Skipping idle page count sanity check, because the test is run nested\n");
+> +			skip_sanity_check = true;
+> +		} else if (is_numa_balancing_enabled()) {
+> +			printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
+> +			skip_sanity_check = true;
+> +		}
+> +	}
+> +
+>  	close(page_idle_fd);
+>  
+>  	for_each_guest_mode(run_test, &params);
+> diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
+> index 3e473058849f..1bc9b0a92427 100644
+> --- a/tools/testing/selftests/kvm/include/test_util.h
+> +++ b/tools/testing/selftests/kvm/include/test_util.h
+> @@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
+>  void backing_src_help(const char *flag);
+>  enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
+>  long get_run_delay(void);
+> +bool is_numa_balancing_enabled(void);
+>  
+>  /*
+>   * Whether or not the given source type is shared memory (as opposed to
+> diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
+> index 8ed0b74ae837..1271863613fa 100644
+> --- a/tools/testing/selftests/kvm/lib/test_util.c
+> +++ b/tools/testing/selftests/kvm/lib/test_util.c
+> @@ -163,6 +163,28 @@ size_t get_trans_hugepagesz(void)
+>  	return size;
+>  }
+>  
+> +
+
+Extra newline.
+
+> +bool is_numa_balancing_enabled(void)
+> +{
+> +	int ret;
+> +	int val;
+> +	struct stat statbuf;
+> +	FILE *f;
+> +
+> +	ret = stat("/proc/sys/kernel/numa_balancing", &statbuf);
+> +	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
+> +			"Error in stating /proc/sys/kernel/numa_balancing");
+
+Align indentation.
+
+> +	if (ret != 0)
+
+	if (ret)
+
+> +		return false;
+> +
+> +	f = fopen("/proc/sys/kernel/numa_balancing", "r");
+
+Pretty sure this needs to assert on f being valid.
+
+> +	ret = fscanf(f, "%d", &val);
+
+file needs to be closed.
+
+Actually, rather than fix these things, extract the mechanical aspects of the THP
+code to helpers (patch at the bottom), and then this can be:
+
+bool is_numa_balancing_enabled(void)
+{
+	const char *numa_balancing = "/proc/sys/kernel/numa_balancing";
+
+	return test_sysfs_path(numa_balancing) && get_sysfs_val(numa_balancing);
+}
+
+> +	TEST_ASSERT(val == 0 || val == 1, "Unexpected value in /proc/sys/kernel/numa_balancing");
+
+I vote to omit this sanity check.  The odds of numa_balancing having a different
+value *and* the bad value going unnoticed are quite low, so I'd prefer to make
+the helper short and simple.
+
+---
+From: Sean Christopherson <seanjc@google.com>
+Date: Thu, 27 Feb 2025 07:31:09 -0800
+Subject: [PATCH] KVM: selftests: Extract guts of THP accessor to standalone
+ sysfs helpers
+
+Extract the guts of thp_configured() and get_trans_hugepagesz() to
+standalone helpers so that the core logic can be reused for other sysfs
+files, e.g. to query numa_balancing.
+
+Opportunistically assert that the initial fscanf() read at least one byte,
+and add a comment explaining the second call to fscanf().
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ tools/testing/selftests/kvm/lib/test_util.c | 35 ++++++++++++++-------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
+index 8ed0b74ae837..3dc8538f5d69 100644
+--- a/tools/testing/selftests/kvm/lib/test_util.c
++++ b/tools/testing/selftests/kvm/lib/test_util.c
+@@ -132,37 +132,50 @@ void print_skip(const char *fmt, ...)
+ 	puts(", skipping test");
+ }
+ 
+-bool thp_configured(void)
++static bool test_sysfs_path(const char *path)
+ {
+-	int ret;
+ 	struct stat statbuf;
++	int ret;
+ 
+-	ret = stat("/sys/kernel/mm/transparent_hugepage", &statbuf);
++	ret = stat(path, &statbuf);
+ 	TEST_ASSERT(ret == 0 || (ret == -1 && errno == ENOENT),
+-		    "Error in stating /sys/kernel/mm/transparent_hugepage");
++		    "Error in stat()ing '%s'", path);
+ 
+ 	return ret == 0;
+ }
+ 
+-size_t get_trans_hugepagesz(void)
++bool thp_configured(void)
++{
++	return test_sysfs_path("/sys/kernel/mm/transparent_hugepage");
++}
++
++static size_t get_sysfs_val(const char *path)
+ {
+ 	size_t size;
+ 	FILE *f;
+ 	int ret;
+ 
+-	TEST_ASSERT(thp_configured(), "THP is not configured in host kernel");
+-
+-	f = fopen("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "r");
+-	TEST_ASSERT(f != NULL, "Error in opening transparent_hugepage/hpage_pmd_size");
++	f = fopen(path, "r");
++	TEST_ASSERT(f, "Error opening '%s'", path);
+ 
+ 	ret = fscanf(f, "%ld", &size);
++	TEST_ASSERT(ret > 0, "Error reading '%s'", path);
++
++	/* Re-scan the input stream to verify the entire file was read. */
+ 	ret = fscanf(f, "%ld", &size);
+-	TEST_ASSERT(ret < 1, "Error reading transparent_hugepage/hpage_pmd_size");
++	TEST_ASSERT(ret < 1, "Error reading '%s'", path);
++
+ 	fclose(f);
+-
+ 	return size;
+ }
+ 
++size_t get_trans_hugepagesz(void)
++{
++	TEST_ASSERT(thp_configured(), "THP is not configured in host kernel");
++
++	return get_sysfs_val("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size");
++}
++
+ size_t get_def_hugetlb_pagesz(void)
+ {
+ 	char buf[64];
+
+base-commit: c2b800261f01eda7e811b588eaa6324cfcfdecc6
+-- 
 
 
