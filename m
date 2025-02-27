@@ -1,204 +1,177 @@
-Return-Path: <linux-kernel+bounces-535703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBAD7A4763B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:02:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D6DA4763F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D416416FB47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FE43B1526
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 07:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A1421D3C4;
-	Thu, 27 Feb 2025 07:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D14721E0BE;
+	Thu, 27 Feb 2025 07:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wC4qmWI8"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYO+tYcI"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289152165F1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14821E087
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 07:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740639764; cv=none; b=AT4UWkQNVAWM3sBd7uR42Q/BzsHFDUtQzMKd+Z680zLViZlVti+JaBOCDjpDnaRDN37xh7nkc8BAe0cee15xRzdyAYP5RCUVbCdGww9UmnvOiFJLHMTPmKgNcfir2slakmOD4dDa3/JFSoBx1OBl5T5+wepAxO4Qw50fl/NQUDA=
+	t=1740639853; cv=none; b=MyZpeGd+5sItxRV/2XaoH0Bo6WM7qrNITZ7QXRTR6/xbyfSfruW4UPgrUjO7wYLALD7amI2T9ZWPUVgMWj4ZqqK7U7kdjguHZJLV6p9p4CmWYF8gPASbEpuRg83E7KlbqEsBUJVKgUlr4Tbe4bSv3rI+NbCfht5GuN9sjNb3Jqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740639764; c=relaxed/simple;
-	bh=AjNBnNrt/mUMgqkWz7yw8xWma5z7VeBH4ukBVPJ4NpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LMFrB6lyFvouaJIFM7x37E8svV3HAbTfv5OHP7jAvYg3JywZj3oCrOI0m59Cup9Xql6FkN7Iw0bR+/V2Swaf/4vkanFjsENBti5GlT/ZUc7nN41I9k29gCAyz9+tS5fjo5jQd34b/2/fTTdKTdLf9gcED9Rv60D3PqaaU8t0D6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wC4qmWI8; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abad214f9c9so9864366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:02:42 -0800 (PST)
+	s=arc-20240116; t=1740639853; c=relaxed/simple;
+	bh=wGhmY4K+cfsz+Ts0JI7fTq+0yQhI6j1x0t4HpKbP2FI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JvG2N6wdJdXanQhJUndzhlT8AsehxhdqOc3I7Y+gGS2CZciYOAyL91B6TAdFk9abpeEdpVf873NpyPONr8h98XBAp4KTs6adbgZHOnEAZ1GPTwpxVofQ3b1syu6Glne01RujWCZdAW2ZjF7Uz33QEDylZX37tCuvknc41MJZH4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYO+tYcI; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30b83290d39so5369231fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 23:04:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740639761; x=1741244561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nt30vxCZ8dDJGA9f6yl5mbEhlcuKQimFoXdE6IW4R8k=;
-        b=wC4qmWI81yXzUhPTslGw/riwkVNexEw8viX0x6Z5zRdw3jkL39tsttJyQOG7lJ1roD
-         23LQHYQMULkY7abNk8M4ws2IbyQfQjiKILO77Ma2nNTaWm0ilS5KlWzBPelcbuYdUjzn
-         yYlXxvwtB6igHpKeV5mdM0F1dhbdFP8qRVkd6wol7HGFfxzPWWWCwtbbd0SfzTc1x4xc
-         +Z6WGiOwchZjba73fgpi3hKrc9OAc3euwRxYqzMkegnLgpcH8x9JcaGjf9AOpbPvggRK
-         ONtBcBLy/HwEGNKwvqSwl7c95S+/stLWXaeVaTyFgUiazIdjgAaILMq1Lqdktahj28zt
-         L6jg==
+        d=gmail.com; s=20230601; t=1740639850; x=1741244650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5pSnAlORQX9yo5NqS9jLGuSkbz6XSEuBHk2B9Ea63/k=;
+        b=MYO+tYcI/N1Mj/Hif7F1y2VrYX0BDt4zY3cSouYbqojRGJhIc0BLbFtSJcAToA2v5u
+         8/6aVa3AtnBVLNHG4VpKaHB4Dx708opPPPcZjY3h3YhO5pyjR8b6HX6PfpX/xvWbTbR9
+         pZL5Bb16PesKAdUCImrpcArh7zbCrFgAuPueAPeOip8qEZoldI0x0H5paT3Qi1aL1rR5
+         u3cjCmtKPWGOI5hNHmBS0+HuPVFWfiN8YpC5hdO0jA7eq0S4t4WTURs79zgaUf8GHqq+
+         AeDcoeB4QoCptFATuB1wWGUNhXMOlO7anD7bLT8I1F6XEWJEfuzJXL96WsLRnB1nITla
+         fE8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740639761; x=1741244561;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740639850; x=1741244650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nt30vxCZ8dDJGA9f6yl5mbEhlcuKQimFoXdE6IW4R8k=;
-        b=sjRhHlg8cvbhQQIQXxyaIPnF/b0ZSqQEaaHANmx92Ft2qRHk8dLeACgiYXevAvBy8z
-         t1zcQTuAuiN0Ks4l+oNLSlYE0nMjHGPWPq0cmy1xGfF6Sx900vcvZVkskR/tahO/XTos
-         cFADdEyfe7ITUVB5KUhQQRJGhWd+udVDLsHHrhEMXENitxdii2Ouk373IOb5t+2If1Y+
-         oe4luMZid2nLmE1M60Rog43zBcYPitJLw1aLOtnTJ5OvMKsF+f1l7T970c5qHizv/f9u
-         A3lSCSF0Xg2tGdUoCz5morJrzI6cOCsDZSnhYxsoB3a6Q7go0dJOf7yMcSx3A+P/gA8s
-         Te/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6AI8BHfXG5RsiVD+oOVwFBU9EMI0ftNpguHETK/Pcb7cRUle4WAO3fRBmqf2oJxAZRzcGct/zwNqWGGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoYoA9bK6MlG0h5yRsC6dVeS4R4ZGY4Rh+12wWlqyv25OgtqgB
-	0y99yNqxDVYIy9SqO7k0lCWntx2StPRHD2Hz2TgUOL13GqTLVc6L15k7dwiTz/8=
-X-Gm-Gg: ASbGncuET5GRsF/DnJ3RS5GbDavJfK9231N0cL0du6pJ+yhXA2sHH++nxMNPgwq7I6Z
-	zUrNpkauY7dU/cjn2JsyuELp6mtnWI/jVNG/busGB2MoGCyYlbw+SyU5GJVWcnDMdE6gJXwbrQB
-	6LFFiCWEG9U5oGOxga17pfy2sqNaKDqHUoLxOnynvPD7HK17Jk2gQDphQY040nI/eza8etbSNKW
-	tnIjgVaFqR17ime7Vq/oxJq69pt33XvviHvuKAUOgT2jA13ys9znjlQMs0NPADMn7afcn3786zZ
-	zgjw6duY7kQFRPRq58KN88ZO9Fq4/Qy3kOYsPQlGAaBN+w==
-X-Google-Smtp-Source: AGHT+IFaX5Xx465ynY+QBW+bAA7zOiG4EkIiD1sgmpBcYUZdAaaw8LwpWoTVpJIUbrMT2ZdTel9FfA==
-X-Received: by 2002:a17:907:96ac:b0:ab7:5fcd:d4db with SMTP id a640c23a62f3a-abc09e321a0mr931418366b.9.1740639761342;
-        Wed, 26 Feb 2025 23:02:41 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c0dc5d5sm75582566b.63.2025.02.26.23.02.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2025 23:02:40 -0800 (PST)
-Message-ID: <58a96f60-b748-493e-b935-649044c4a750@linaro.org>
-Date: Thu, 27 Feb 2025 08:02:38 +0100
+        bh=5pSnAlORQX9yo5NqS9jLGuSkbz6XSEuBHk2B9Ea63/k=;
+        b=dAYtKHSalvg2361RRSpcZP1ZRg/KkxPy6n5dTxvGNd3Gd8YLTAd1L1LCHX59WnOqBD
+         tt9yLUcJjl2qWAR3ro3cILvmP7U4xZ3ynJKu5tpZUNiJzgeIM1DCaDLbTYIcBjEl7sUa
+         8JaZ13FG6NY1v5jz1ybA4DlhKP5okM0QIsqgELFBBr4n748l6rUBT25DSeM24dqi8g/F
+         7eCduVdq5G0z0kceUY408M7CWUC5IWSyN0bJWyFzZxFWe3JR6hNwyam1uOIY7La0vtt3
+         XJ5fkim0PDE+t2ZUBE97VsSodCA5MXKQ0MvUxA9BPpG1ob4Qhqs4sbe8MHPFWW14oBaL
+         /3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuemyHYU3Jv0yWm0vPcnNwhfZSQegtNrjQLtQh19oyvIAMf6ScPJRo4ZA7WDM1Vz/0rF2Xf2L1GJ4Qx3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqPagrcZlmCo2/HtPkcJz3oHnfsWDrXRjq/MBiveYoxP+j/0Iy
+	FlSGarup4wXaPipJ4zgROslPH8dnuTlhjnAUavQ+t9ygyL2na+FE89TZC1thIOed6UUVRBkbRDi
+	dR1S06baSDyFpytKwk0STayLmYaQ=
+X-Gm-Gg: ASbGncu9bMmxt51TERZ1jlG2Vbd6BB7WmnnWxEROhQr2hpp+EKr0CH47WJqMbifCOje
+	g/Ntf894CpAZuMvjqBux2WjIWWAZCvbdrJ/0p6xldw1bh0Ibnjoth8MtOc+3an9ik+h6zhvibya
+	VFvfMWhvE=
+X-Google-Smtp-Source: AGHT+IEJB9xY5jdV4yA0qX96NmnQQAhEOgjMykCaPQFjWaqdpoNDmqQyMdSO8o9a1TpCdng2oPuHncXDTZDKMC+urTU=
+X-Received: by 2002:a05:651c:220a:b0:2ff:d0c4:5ffe with SMTP id
+ 38308e7fff4ca-30a5989ec23mr108942871fa.16.1740639849425; Wed, 26 Feb 2025
+ 23:04:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix broken USB on Exynos5422 (TYPEC
- dependency)
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20250215094122.60535-1-krzysztof.kozlowski@linaro.org>
- <Z7/+gXVFVzGadc4z@vaman>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <Z7/+gXVFVzGadc4z@vaman>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250226133703.3c9775c9e50e198abc9b9f6e@linux-foundation.org>
+ <20250226225605.2000-1-sj@kernel.org> <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
+In-Reply-To: <CAJGd785Eu7iuVwYnewaUm38NJcKzB-xkZwdRiYR9Yo9Qwaoffg@mail.gmail.com>
+From: bus710 <bus710@gmail.com>
+Date: Wed, 26 Feb 2025 23:03:57 -0800
+X-Gm-Features: AQ5f1JpVLtjZYY8z8VdY3q00BIa0I40J0PTII1FHJ04t63xdJqRQe8KrnJyuBBs
+Message-ID: <CAJGd784+kQ8NXSp1=9tZW+4wYvTh6SkW7ySaB0TVGcinjjcEdQ@mail.gmail.com>
+Subject: Re: [PATCH] samples/damon: a typo in the kconfig - sameple
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: multipart/mixed; boundary="000000000000e855b8062f1a4bde"
 
-On 27/02/2025 06:56, Vinod Koul wrote:
-> Hi Krzysztof,
-> 
-> On 15-02-25, 10:41, Krzysztof Kozlowski wrote:
-> 
-> Can you revise the title to "phy: exynos5-usbdrd: dont depend on type-c"
-> or something relevenant which describes the change rather than the
-> Fix something!
+--000000000000e855b8062f1a4bde
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sure, it won't change the fact that we are fixing broken USB dependency.
+On Wed, Feb 26, 2025 at 3:07=E2=80=AFPM bus710 <bus710@gmail.com> wrote:
+>
+> On Wed, Feb 26, 2025 at 2:56=E2=80=AFPM SeongJae Park <sj@kernel.org> wro=
+te:
+> >
+> > On Wed, 26 Feb 2025 13:37:03 -0800 Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+> >
+> > > On Wed, 26 Feb 2025 10:42:04 -0800 SeongJae Park <sj@kernel.org> wrot=
+e:
+> > >
+> > > > From: bus710 <bus710@gmail.com>
+> > >
+> > > Full names are preferred, please.  Actually I think it's "required".
+> >
+> > Thank you for letting me clearly know this.  I'll request full names to=
+ DAMON
+> > patch authors from next time.
+> >
+> > bus710, we could still update the patch before it is merged into the ma=
+inline.
+> > If you could, please let us know your full name and if we can update th=
+e patch
+> > with that.
+> >
+> > >
+> > > I'll apply it anyway due to the patch's minor nature, thanks.
+> >
+> > I agree this is a simple enough patch that the name doesn't really matt=
+er.
+> > Thank you Andrew :)
+> >
+> >
+> > Thanks,
+> > SJ
+>
+> Oh, yes. I was a little worried if I added too much noise for such a
+> small work, but I shouldn't miss this opportunity to leave my name in
+> Linux history.
+> Let me prepare a new patch as soon as possible.
 
-> 
->> Older Exynos designs, like Exynos5422, do not have USB Type-C and the
->> USB DRD PHY does not really depend on Type-C for these devices at all.
->> Incorrectly added dependency on CONFIG_TYPEC caused this driver to be
->> missing for exynos_defconfig and as result Exynos5422-based boards like
->> Hardkernel Odroid HC1 failed to probe USB.
->>
->> Drop incorrect dependency and rely on module to be reachable by the
->> compiler.
-> 
-> Changelog lgtm
-> 
->>
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Closes: https://krzk.eu/#/builders/21/builds/6139
->> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Closes: https://lore.kernel.org/all/3c0b77e6-357d-453e-8b63-4757c3231bde@samsung.com/
->> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> Patch for issue in linux-next
->> ---
->>  drivers/phy/samsung/Kconfig              | 1 -
->>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
->>  2 files changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
->> index 7fba571c0e2b..e2330b0894d6 100644
->> --- a/drivers/phy/samsung/Kconfig
->> +++ b/drivers/phy/samsung/Kconfig
->> @@ -81,7 +81,6 @@ config PHY_EXYNOS5_USBDRD
->>  	tristate "Exynos5 SoC series USB DRD PHY driver"
->>  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->>  	depends on HAS_IOMEM
->> -	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
-> 
-> So how would this dependency be sorted..?
+Hi all,
 
-That was a v1 and new versions are on the lists with simpler approach.
+Please find the attached patch.
+Based on the latest one, from @Andrew Morton I just replaced my ID
+with my real name as well as updated the subject.
 
-> 
+Thank you,
+Seongjun Kim
 
+--000000000000e855b8062f1a4bde
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0002-samples-damon-a-typo-in-the-kconfig-sameple.patch"
+Content-Disposition: attachment; 
+	filename="0002-samples-damon-a-typo-in-the-kconfig-sameple.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m7n00g7d0>
+X-Attachment-Id: f_m7n00g7d0
 
-Best regards,
-Krzysztof
+RnJvbTogU2VvbmdqdW4gS2ltIDxidXM3MTBAZ21haWwuY29tPgpTdWJqZWN0OiBbUEFUQ0ggdjJd
+IHNhbXBsZXMvZGFtb246IGEgdHlwbyBpbiB0aGUga2NvbmZpZyAtIHNhbWVwbGUKRGF0ZTogV2Vk
+LCAyNiBGZWIgMjAyNSAxMDo0MjowNCAtMDgwMAoKVGhlcmUgaXMgYSB0eXBvIGluIHRoZSBLY29u
+ZmlnIGZpbGUgb2YgdGhlIGRhbW9uIHNhbXBsZSBtb2R1bGUuICBDb3JyZWN0Cml0OiBzL3NhbWVw
+bGUvc2FtcGxlLwoKTGluazogaHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvci8yMDI1MDIyNjE4NDIw
+NC4yOTM3MC0xLXNqQGtlcm5lbC5vcmcKU2lnbmVkLW9mZi1ieTogU2VvbmdqdW4gS2ltIDxidXM3
+MTBAZ21haWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBTZW9uZ0phZSBQYXJrIDxzakBrZXJuZWwub3Jn
+PgpSZXZpZXdlZC1ieTogU2VvbmdKYWUgUGFyayA8c2pAa2VybmVsLm9yZz4KU2lnbmVkLW9mZi1i
+eTogQW5kcmV3IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4KLS0tCgogc2FtcGxl
+cy9kYW1vbi9LY29uZmlnIHwgICAgNCArKy0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
+KCspLCAyIGRlbGV0aW9ucygtKQoKLS0tIGEvc2FtcGxlcy9kYW1vbi9LY29uZmlnfnNhbXBsZXMt
+ZGFtb24tYS10eXBvLWluLXRoZS1rY29uZmlnLXNhbWVwbGUKKysrIGEvc2FtcGxlcy9kYW1vbi9L
+Y29uZmlnCkBAIC0zLDcgKzMsNyBAQAogbWVudSAiREFNT04gU2FtcGxlcyIKCiBjb25maWcgU0FN
+UExFX0RBTU9OX1dTU0UKLSAgICAgICBib29sICJEQU1PTiBzYW1lcGxlIG1vZHVsZSBmb3Igd29y
+a2luZyBzZXQgc2l6ZSBlc3RpbWF0aW9uIgorICAgICAgIGJvb2wgIkRBTU9OIHNhbXBsZSBtb2R1
+bGUgZm9yIHdvcmtpbmcgc2V0IHNpemUgZXN0aW1hdGlvbiIKICAgICAgICBkZXBlbmRzIG9uIERB
+TU9OICYmIERBTU9OX1ZBRERSCiAgICAgICAgaGVscAogICAgICAgICAgVGhpcyBidWlsZHMgREFN
+T04gc2FtcGxlIG1vZHVsZSBmb3Igd29ya2luZyBzZXQgc2l6ZSBlc3RpbWF0aW9uLgpAQCAtMTUs
+NyArMTUsNyBAQCBjb25maWcgU0FNUExFX0RBTU9OX1dTU0UKICAgICAgICAgIElmIHVuc3VyZSwg
+c2F5IE4uCgogY29uZmlnIFNBTVBMRV9EQU1PTl9QUkNMCi0gICAgICAgYm9vbCAiREFNT04gc2Ft
+ZXBsZSBtb2R1bGUgZm9yIGFjY2Vzcy1hd2FyZSBwcm9hY3RpdmUgcmVjbGFtYXRpb24iCisgICAg
+ICAgYm9vbCAiREFNT04gc2FtcGxlIG1vZHVsZSBmb3IgYWNjZXNzLWF3YXJlIHByb2FjdGl2ZSBy
+ZWNsYW1hdGlvbiIKICAgICAgICBkZXBlbmRzIG9uIERBTU9OICYmIERBTU9OX1ZBRERSCiAgICAg
+ICAgaGVscAogICAgICAgICAgVGhpcyBidWlsZHMgREFNT04gc2FtcGxlIG1vZHVsZSBmb3IgYWNj
+ZXNzLWF3YXJlIHByb2FjdGl2ZQpfCg==
+--000000000000e855b8062f1a4bde--
 
