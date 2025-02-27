@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-535852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F94BA4781A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:44:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500B1A4781E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9200D188A30C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1DAB16B007
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 08:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC28622576A;
-	Thu, 27 Feb 2025 08:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47BE225785;
+	Thu, 27 Feb 2025 08:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RHIADAo0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RVbL21y6"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834E13A3F2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FB32222A5
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 08:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740645861; cv=none; b=rEiEJBlGh4xao/nhYnsAPAsS4f/d48N7nWLaxtNQakCE5P4K2tsgQfwNkAHiz3rFv6BasrMCbhjQDbGcALvKliPojcDi/R0G9osguTZf/caOo2lO2eNgqq4BRKt2jRkmRVvpU505/iXJ0f2x1AXn1Vao2Wf8znqk9tdWmI+82Ns=
+	t=1740645885; cv=none; b=FNOC3WSZ9pA1zsUdCOU6Pc/c58qRTP1voibGmJGQH6BR+aOAvZThtH0njbBdGthY+owjzfoBn2LLjDB/stkjQMTupRQUfruSVykBvoYNIs66qvn0JpVvme6GCqnQc0tjA7cIvvYm7jDJGB2CMQtZyuvmzStl9DT+j5iX7ON8hpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740645861; c=relaxed/simple;
-	bh=q5DyFV5gTaMxqJ16Z1qIG2jXFLnd0OlbWwYkvNtHfZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AakbFyhTs5ADE72ejbIevjqX5f1V20/WeEUUzKukqZKKj+OV/mcvCX/9rn3qhwIfsI+73GKt0hLrT3LCwqriCrT1vLRXlVA/NO6yXZrv8MdzXOjsGcgYTgayu1LZ4bd6iXNrs9XzLgqobjKSiI/aqAGI6YA20ByxfEkEWVQdYvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RHIADAo0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-439946a49e1so4156305e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 00:44:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1740645858; x=1741250658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0eD4WdY2Ar0Qpt9c3iLvWQtqo0+f9AP00jRPqQ8lu4I=;
-        b=RHIADAo0VDugGIIeAcng1OLrH5DX8+FoJnJV6CA3b7I3oQKeOu9D15rnJfjHZNbPJ0
-         iULCF9ZDS+pCiTLwTwTBAFfdPOBHs5Wc0Egy6mcUxj77XXKFOZPqkub6A1FD6hVACOp9
-         TVFDHp1RRBvMe1DMB6ul0FSPNU0Fs3xX1CyBe4Iu0cuy3F0V5iYmA2x+vnAilHXl2dyO
-         mGn3IgmNKNy3xDKsKEBkPFSbD/Nx70OWEt8GcBSTAl7uIMWWMc4l9cHMPlf9jK229Fxu
-         fk6enje3N8CqylKl6I71O6+mcjZ8AOyttkU+T9vZXtvKLx4kr08M0FiN7YRy/dfpTTjq
-         Dc/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740645858; x=1741250658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0eD4WdY2Ar0Qpt9c3iLvWQtqo0+f9AP00jRPqQ8lu4I=;
-        b=vFmT54UPlyyyuF/M4yVpWZDyRlZpsdGX4f+fjMlLj4xMMjl9zZTq62LRl1GK/00YWa
-         HGp/x5+V3sBtXozalm/mwioi7bPfM89CzqqSysg/l5S2GCGj1DTu364KhnPwORnWFWsk
-         balX72VOvnxTIxNQ9D+CzzNnvQ2NQIcCfWSAycgUFgDF5qYHlcnkf8jtNS2YLYUIDf91
-         VfO1680q8/KE6iUrTQ7UVgyRNId5/fX0mhNvGOxCVNj7jUQg62Rbno3+bBjE/k10T/u0
-         E9iAoDGsGYf3hCJFmqQhmS90WNm/q/Iw4sxX2VNXFXfVvTqxepz3/LVLpqc7pO4H8KHD
-         6EmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNi3AYDTLZdHLJoX3kQUiNHuo6DUx5Ynq8c1VGRURh7ccHdndhUHEgYuTH8EUkiBsvdsKV5sxfSOqqbrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiCk8wmozWPhoug76TSGD7wGOqmiDH8TBIjPLBXN9l+dD0b4yj
-	gqumumsUFYz9LlInIFJaIXf3Wyxg571PpnbNiAdP2pjGzlmyiEfdSABexwUps2Y=
-X-Gm-Gg: ASbGncuLvnxyDPPYPXHVCpv6winKhqSl+fxRi6QGlLQhsFrApumUgqOxhcdg9E2jtml
-	QuElkSRw1jSGOHeGh/rHVG9+kNDNRL7hgDLNFNjyFJ8IJG4ag1611bVc7c7V/XYMTRyomUqIaVY
-	4rNkBrdIOX1AYLTc7dVXw0WctTISPy/PN0/HaSbC6Z1goyW2wenNzf98wVGN7E2MIWnEWd9NwXa
-	518LjkPrg3w+YBCOhd7Ly/l5YqdwFs+r0Ka3JCCzDnwyUK3nyfKjbCWScLbv9N2NUFxvZ06/6S6
-	pP/6RzggsvNMWw==
-X-Google-Smtp-Source: AGHT+IG7ml0QUrxxm1q148UuaevZWwyImW/BG/iHf4sSOi4FAdGUGP1loq2o5+xFJijpyPDy5kgSvA==
-X-Received: by 2002:a05:600c:3c86:b0:439:9377:fa29 with SMTP id 5b1f17b1804b1-43ab903fe5bmr54754285e9.31.1740645857622;
-        Thu, 27 Feb 2025 00:44:17 -0800 (PST)
-Received: from localhost ([2a02:8308:a00c:e200::8cf0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b736f990esm15612155e9.5.2025.02.27.00.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 00:44:16 -0800 (PST)
-Date: Thu, 27 Feb 2025 09:44:15 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Atish Patra <atishp@rivosinc.com>
-Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/4] KVM: riscv: selftests: Do not start the counter in
- the overflow handler
-Message-ID: <20250227-3799414d0651c86f6a815046@orel>
-References: <20250226-kvm_pmu_improve-v1-0-74c058c2bf6d@rivosinc.com>
- <20250226-kvm_pmu_improve-v1-2-74c058c2bf6d@rivosinc.com>
+	s=arc-20240116; t=1740645885; c=relaxed/simple;
+	bh=JGW9cxzzsY5VN/raILkwjSf7H9fvm109h9NaTvo8lac=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qjs1Xfwnz2Gd4I6ekPwdl37BKsy6f8ToZo/vX355ncY5ArvjUEJpyR6aug1nu9qSR43EwQjvrkiS1NM1ZEhOyIDAoNUVxnDCPILQ7RXXr3wdjaWCTwe+Q3K+N8g1cbjJJ2zf3jb3dXO+S1gjAiFccqfJVBzoYGCOtr9xtZABntU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RVbL21y6; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5MZDY9LEAwQLaGy/5t3sedQ+InC4HHqCTBWMRr1Rdmk=; b=RVbL21y6Trpv8FYuCJuwa0q4YZ
+	j6HQ7xFe55AuYT7lmC4Gf/GF3zjg+r5aQKTMTGLeNnFQJYre3w3w3Ux794RbN9DfuaX2UQtpDjiuM
+	rHTvDuY/Qq6BX0S7zNx68eBQWt7IotR24gJ1OQHNawYd4PeQW5OLCJG9NLdLVJJDiH0GmZo9o4o06
+	FTod+l+W0JiOW5Zn1u2MuNumi6eGa79l86OqXBZwChbF0luXJm49t/JSp6qRU3KPwnO7lOs9CsLcP
+	/+7xIDnXjuSkMJ2F+BcUF/uD1LZLOIpV9Of5VOF/lAAE4kPUiKQBkWh9BVCgUAK5ccCiLTZgte0Sc
+	d/zLl4nA==;
+Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tnZVI-0007pV-G7; Thu, 27 Feb 2025 09:44:24 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, dakr@kernel.org, hjc@rock-chips.com,
+ andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, quentin.schulz@cherry.de
+Subject:
+ Re: [PATCH 1/2] drivers: base: component: add function to query the bound
+ status
+Date: Thu, 27 Feb 2025 09:44:23 +0100
+Message-ID: <12995210.iMDcRRXYNz@diego>
+In-Reply-To: <2025022153-outdoors-snugly-3967@gregkh>
+References:
+ <20250220234141.2788785-1-heiko@sntech.de>
+ <20250220234141.2788785-2-heiko@sntech.de>
+ <2025022153-outdoors-snugly-3967@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226-kvm_pmu_improve-v1-2-74c058c2bf6d@rivosinc.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Feb 26, 2025 at 12:25:04PM -0800, Atish Patra wrote:
-> There is no need to start the counter in the overflow handler as we
-> intend to trigger precise number of LCOFI interrupts through these
-> tests. The overflow irq handler has already stopped the counter. As
-> a result, the stop call from the test function may return already
-> supported error which is fine as well.
-  ^ stopped
+Hi Greg,
 
+Am Freitag, 21. Februar 2025, 07:14:07 MEZ schrieb Greg KH:
+> On Fri, Feb 21, 2025 at 12:41:40AM +0100, Heiko Stuebner wrote:
+> > The component helpers already expose the bound status in debugfs, but at
+> > times it might be necessary to also check that state in the kernel and
+> > act differently depending on the result.
+> > 
+> > For example the shutdown handler of a drm-driver might need to stop
+> > a whole output pipeline if the drm device is up and running, but may
+> > run into problems if that drm-device has never been set up before,
+> > for example because the binding deferred.
+> > 
+> > So add a little helper that returns the bound status for a componet
+> > device.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  drivers/base/component.c  | 14 ++++++++++++++
+> >  include/linux/component.h |  4 +++-
+> >  2 files changed, 17 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
-> index f45c0ecc902d..284bc80193bd 100644
-> --- a/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
-> +++ b/tools/testing/selftests/kvm/riscv/sbi_pmu_test.c
-> @@ -118,8 +118,8 @@ static void stop_counter(unsigned long counter, unsigned long stop_flags)
->  
->  	ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP, counter, 1, stop_flags,
->  			0, 0, 0);
-> -	__GUEST_ASSERT(ret.error == 0, "Unable to stop counter %ld error %ld\n",
-> -			       counter, ret.error);
-> +	__GUEST_ASSERT(ret.error == 0 || ret.error == SBI_ERR_ALREADY_STOPPED,
-> +		       "Unable to stop counter %ld error %ld\n", counter, ret.error);
->  }
->  
->  static void guest_illegal_exception_handler(struct ex_regs *regs)
-> @@ -137,7 +137,6 @@ static void guest_irq_handler(struct ex_regs *regs)
->  	unsigned int irq_num = regs->cause & ~CAUSE_IRQ_FLAG;
->  	struct riscv_pmu_snapshot_data *snapshot_data = snapshot_gva;
->  	unsigned long overflown_mask;
-> -	unsigned long counter_val = 0;
->  
->  	/* Validate that we are in the correct irq handler */
->  	GUEST_ASSERT_EQ(irq_num, IRQ_PMU_OVF);
-> @@ -151,10 +150,6 @@ static void guest_irq_handler(struct ex_regs *regs)
->  	GUEST_ASSERT(overflown_mask & 0x01);
->  
->  	WRITE_ONCE(vcpu_shared_irq_count, vcpu_shared_irq_count+1);
-> -
-> -	counter_val = READ_ONCE(snapshot_data->ctr_values[0]);
-> -	/* Now start the counter to mimick the real driver behavior */
-> -	start_counter(counter_in_use, SBI_PMU_START_FLAG_SET_INIT_VALUE, counter_val);
->  }
->  
->  static unsigned long get_counter_index(unsigned long cbase, unsigned long cmask,
-> 
-> -- 
-> 2.43.0
->
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Other than the commit message,
+just for safety and not stepping on people's toes, does the Acked-by mean
+that this patch can go together with its user through the drm-misc tree?
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+
+Thanks a lot
+Heiko
+
+
 
