@@ -1,229 +1,164 @@
-Return-Path: <linux-kernel+bounces-535886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205A4A47883
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:01:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6BFA47886
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 10:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09C316FF98
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB7C77A4309
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 09:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A3C51C5A;
-	Thu, 27 Feb 2025 09:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ECB225A24;
+	Thu, 27 Feb 2025 09:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bc+JZOuz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MNWT+R7E";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jfL7SxB6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K7vjKmly"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="CfEArneS"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DEE22652D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 09:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533D4227BA5;
+	Thu, 27 Feb 2025 09:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646900; cv=none; b=Kpa+7kU0WMPY5bfqgdxQ8J2tqwnkQh45eKZ1cnz4dQjgqBUmGy7wrs8+04aLOZeXOhpwqzYVovE3Fib7opPFXmlwMI3j2By0mN7t1xND11jm2EyO/1qcSLQmWJ6vMzxhakaWdbW00W8aUX82FOD+L9/Lmo+tdBRwkAHEGZfo4B8=
+	t=1740646906; cv=none; b=YErW16ssbByrdRFr/q/zVM1sSNMoNRLyRKNcDlMZQ711Ia4XCsR4ymb2lE/v2CcGlu+aJJEg/Ly6KsaRT2581geqQ4+FY2fgQUkjzK+tHVUyNOsKOzZ8GtJyNHVuo+grfFHp9k0t1LqEFhSvJRDr8aook8FPyOX7dX0tSTuPbq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646900; c=relaxed/simple;
-	bh=2UHmA5NmbtGuZWzqU3YCusQHf6qU4KNq9ycwbPXIzYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBQh4USNRq/RFw0aFLuGfDMI39Eywgo+PkfKiqtiihJY7Lr9opW560PWuqfULjlmoySqGWgFHsi1P+DF5fvuqeu6vJ3VME8O8uSUlLVKT7ZtADqZidNvBoPZG7ujaf4teoxKtmZNttgkTS2mj000U++PO1Ujd65Y91iUKIJX4BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bc+JZOuz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MNWT+R7E; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jfL7SxB6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K7vjKmly; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1740646906; c=relaxed/simple;
+	bh=b6xawKG+7vT6ikY3PpBIE1Xreg7uT09HW0pKvc4K62M=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=FNsSU9WwsB2mzZMQ9ukK9xENVup8u1QXbyNUVrvQHUO/DH6XFxPhzmLLRVnMiXECXKnyUPdzyMOPhiYZMRnXy31y/Gl/NmA5S/GEDpUYtnaAMRvrzkevv18M4Zt+xuM60jqz3niC00fhkVXZfairRXdGhbYO8F466w8H0pVMmsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=CfEArneS; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1740646901; bh=b6xawKG+7vT6ikY3PpBIE1Xreg7uT09HW0pKvc4K62M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CfEArneSe8WJxtyotOJ2xbN95m/f4sfT/IXfNy77f08LhPgnt1bk4Z3/p83gy37xj
+	 uWx9mufRu90sjk+lDGsbMyZNE2ePyw6Od+Ioeh4LYElFTEEDFQ6D/khEvrYpgtY9oq
+	 BMVblAHQqDEMbQRX0vQIlfC06ATfDDtjXQXvCEsXDmrQlEbtno/YipywtnGm139aAb
+	 P7Z/4NovCsddchw8QIoGwYvJ5SOqD6jgRaPX0EcywhoV5l5bYXMEBCGndIwsscHD1M
+	 m11KFN1Tv44Otrb//s7F/czqDVdwn2+vKdri1SpFBHBFWh7xFNWrNhMVvyRpWbl0Ti
+	 1FgZiqYkCuBBA==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D1D11F38A;
-	Thu, 27 Feb 2025 09:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740646897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U0jnjOlTwNM/eDNzI+261ff3PbKfT8p5rqqRp8agbl8=;
-	b=bc+JZOuz2nlAjeivEm4wZjvsykbU+CBWp2pNRj4+aLtO2afdsZVUFWVj/7cK8iyGg4FiSy
-	8i0Gn/j/8TKGgxK9qVQBTOiwoeu8iXYI7pGcJ/t0WdflqoDvbcIdUBYawQifdpzqTaNZCN
-	QteAiSGzp2ID7h5R821cOgHkPIH7uRE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740646897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U0jnjOlTwNM/eDNzI+261ff3PbKfT8p5rqqRp8agbl8=;
-	b=MNWT+R7EV2022VyFbYq1czP9EYqh8ybfk+y+HsS5OSlvFjl5OP4fhbjxJiK4XUE9JTL7JU
-	6y7XT+CdVa21c9Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740646896; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U0jnjOlTwNM/eDNzI+261ff3PbKfT8p5rqqRp8agbl8=;
-	b=jfL7SxB6hGbWoberPj/X6pwfLIMvdBHggdyl1fFC3S39q3LjiDKAXp7AwLp4yG6UT3GCFb
-	N2+Lj+Yyt5MNauCr5mCJNqerieU9TwpCwfEQSkYNEdPd1CjaOtrpV6m4K8FTS5n7NBXZuN
-	DBZItNcosqYQ/1mh9yKDjkYW3zYICIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740646896;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U0jnjOlTwNM/eDNzI+261ff3PbKfT8p5rqqRp8agbl8=;
-	b=K7vjKmly4VGwM7RSe36byfn+r+QN0vxYwzO5bIyKcIZAMqCnI8QvjVfJUXxO1oG/kutcbX
-	2LELLhqYemzaKFBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F50A13888;
-	Thu, 27 Feb 2025 09:01:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id llZ0AvApwGccCwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 27 Feb 2025 09:01:36 +0000
-Message-ID: <5d13fad0-c5d2-4816-b71a-fceeb03589c3@suse.de>
-Date: Thu, 27 Feb 2025 10:01:35 +0100
+	by box.trvn.ru (Postfix) with ESMTPSA id 70E3B90B1;
+	Thu, 27 Feb 2025 14:01:41 +0500 (+05)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drm/fbdev-dma: regression
-To: =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Linux Framebuffer <linux-fbdev@vger.kernel.org>
-References: <20220621104617.8817-1-tzimmermann@suse.de>
- <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
- <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
- <b4d28b98-a85c-4095-9c1b-8ebdfa13861c@suse.de>
- <CAEXMXLQEJPVPyqLpH6C7R6iqhhKBpdNS9QeESbEdcmxB70goSA@mail.gmail.com>
- <da4288a6-96cc-4095-bd73-d66b68e9ed01@suse.de>
- <CAEXMXLQw1yqUGbWcrKZdOuGvA4eZMG0utiyQ2PVRvTeuFedGbA@mail.gmail.com>
- <9c902ac0-a94d-4465-98ff-840132e482b1@suse.de>
- <CAEXMXLSLau0sEy8WSZ3=ofK97xP8aPcDQEnT=JFkkt7K=Rzivw@mail.gmail.com>
- <900b873f-6eba-4dba-b155-dc5f7594becf@suse.de>
- <CAEXMXLTT5m0Po_wz0ywRHFetV6e080AJwy8f99Zb9R_afzafRw@mail.gmail.com>
- <844f1fa4-6f47-4386-878f-739d2819605e@suse.de>
- <CAEXMXLQyOY=dXcYoSc9=LVVWb1BjXLd3_Lo3LRNor_STT+H+WQ@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAEXMXLQyOY=dXcYoSc9=LVVWb1BjXLd3_Lo3LRNor_STT+H+WQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Thu, 27 Feb 2025 14:01:41 +0500
+From: Nikita Travkin <nikita@trvn.ru>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] {vision/navigation}-mezzanine: Fix overlay root node
+In-Reply-To: <vq5dcsi55aqn56h6ihysqk4lainhmjbyvot3jiqkxm3i7igsak@da5u6ro7rkvg>
+References: <20250226-qcom-nonroot-overlays-v1-0-26c6e7605833@trvn.ru>
+ <vq5dcsi55aqn56h6ihysqk4lainhmjbyvot3jiqkxm3i7igsak@da5u6ro7rkvg>
+Message-ID: <62a53d3222dfc516accd8dcd5e1adca0@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.26
-X-Spamd-Result: default: False [-4.26 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.16)[-0.819];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Hi
+Dmitry Baryshkov писал(а) 27.02.2025 09:16:
+> On Wed, Feb 26, 2025 at 07:29:54PM +0500, Nikita Travkin wrote:
+>> While considering to propose WoA EL2 dt overlays upstream I was looking
+>> at existing overlays and noticed that some of them are broken: they put
+>> seemingly meaningful fixups into the overlay's "/" node, which places
+>> them into the overlay "metadata" itself, not into a fixup fragment to be
+>> applied to the actual dtb. This series fixes those two by changing to
+>> full path "&{/}" which should work as it was initially intended.
+>> 
+>> See demonstration of the problem below:
+>> 
+[...]
+>> $ dtc extra.dtbo
+>> /dts-v1/;
+>> 
+>> / {
+>> 	foo;
+>> 
+>> 	bar {
+>> 		baz;
+>> 	};
+> 
+> Is this behaviour documented somewhere? I'd say, it would be a surprise
+> to me.
+> 
 
-Am 26.02.25 um 23:57 schrieb Nuno Gonçalves:
-> Dear Thomas,
->
-> Could you check if the patch got lost in review?
->
-> I can confirm that mainline is still broken since this 2024/May regression.
+According to dtc docs [1],
 
-You're right. The patch got reviewed and then I forgot to merge it. It's 
-now on its way into the upstream kernel. Thanks for the note. Apologies 
-for the delay.
+   3.b) The Device Tree fragments must be compiled with the same option but they
+   must also have a tag (/plugin/) that allows undefined references to nodes
+   that are not present at compilation time to be recorded so that the runtime
+   loader can fix them.
 
-Best regards
-Thomas
+so per my understanding "plugin" directive only changes the meaning of
+references (i.e. stuff with "&"), to generate fragments/fixups, which
+are the only way libfdt combines overlays into the base dtb.
 
->
-> Thanks,
-> Nuno
->
-> On Wed, Dec 11, 2024 at 9:07 AM Thomas Zimmermann <tzimmermann@suse.de> wrote:
->> Hi
+I suppose the old way of "manually" writing fragments (and thus writing
+to / as raw nodes) was kept because phandle/path based updates were
+added later to dtc and many overlays were still defining raw fragments...
+
+"/" also allows one to write "raw" nodes into the overlay, which is
+sometimes used by downstreams. (i.e. they put custom extensions to the
+overlay format [2] or add metadata into / of the dtbo like "compatible"
+values to reject incompatible overlays from applying. [3]) This is
+actually why I started looking here in the first place as for woa el2
+overlays I was asked to add compatible metadata as, apparently, NixOS
+tooling requires it to validate the overlays [4].
+
+[1] https://web.git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt#n120
+[2] https://github.com/raspberrypi/linux/blob/rpi-6.6.y/arch/arm/boot/dts/overlays/adafruit-st7735r-overlay.dts#L73
+[3] https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/rockchip/overlays/rk3588-i2c0-m1.dts#L5
+[4] https://github.com/TravMurav/slbounce/blob/main/dtbo/x1e-el2.dtso#L12
+
+>> 
+>> 	fragment@0 {
+>> 		target-path = "/";
+>> 
+>> 		__overlay__ {
+>> 			whatever-comes-next-after-baz;
+>> 		};
+>> 	};
+>> };
+>> 
+>> $ dtc combine.dtb
+>> /dts-v1/;
+>> 
+>> / {
+>> 	whatever-comes-next-after-baz;
+>> 	compatible = "fake,board";
+>> 	fake,value = <0x2a>;
+>> };
+>> 
+>> In the resulting dtb foo bar and baz are missing.
+>> 
+>> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+>> ---
+>> Nikita Travkin (2):
+>>       arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Fix broken overlay root
+>>       arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Fix the overlay root
+>> 
+>>  arch/arm64/boot/dts/qcom/qrb5165-rb5-vision-mezzanine.dtso       | 2 +-
+>>  arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso | 2 +-
+>>  2 files changed, 2 insertions(+), 2 deletions(-)
+>> ---
+>> base-commit: 8433c776e1eb1371f5cd40b5fd3a61f9c7b7f3ad
+>> change-id: 20250226-qcom-nonroot-overlays-bfe21d33be8c
+>> 
+>> Best regards,
+>> -- 
+>> Nikita Travkin <nikita@trvn.ru>
 >>
->>
->> Am 09.12.24 um 14:56 schrieb Nuno Gonçalves:
->>> On Mon, Dec 9, 2024 at 1:43 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>>> Thanks you so much for testing. I'll prepare a real patch. Can I add
->>>> your Reported-by and Tested-by tags?
->>> Reported-by: Nuno Gonçalves <nunojpg@gmail.com>
->>> Tested-by: Nuno Gonçalves <nunojpg@gmail.com>
->> Thanks a lot. I've sent out the patch for review. Apologies if this took
->> a bit longer than expected.
->>
->> Best regards
->> Thomas
->>
->>> Thanks,
->>> Nuno
->> --
->> --
->> Thomas Zimmermann
->> Graphics Driver Developer
->> SUSE Software Solutions Germany GmbH
->> Frankenstrasse 146, 90461 Nuernberg, Germany
->> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->> HRB 36809 (AG Nuernberg)
->>
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
 
