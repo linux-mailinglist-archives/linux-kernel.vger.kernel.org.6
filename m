@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-536531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368A6A480F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:23:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B7AA480AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079D617003A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DEC3A3746
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF53D243370;
-	Thu, 27 Feb 2025 14:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C6C24338F;
+	Thu, 27 Feb 2025 14:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9PW2c9y"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKWNtwWF"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203E241677;
-	Thu, 27 Feb 2025 14:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCBD2417C8;
+	Thu, 27 Feb 2025 14:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665229; cv=none; b=Nss9ffqTnrc3yhh3W/qodIGUZPprEWR2oiyLQVh7M4/TbiKYhdM0GzxPw1Z9+HRE9hsQDHPb3lsNUz6eEfFj0VluLi/gI1KagSKr+lRPkpUGAGXa81k/PTUXabpAmiBPzZe7I8rB9saXjjwLxt59hAYywn7GFQYYg5aEfuZJ0m0=
+	t=1740665230; cv=none; b=sj+RjvR4LCaYSRMWCFSF/JoDJU1SZoR9O2eaIes0kDJDFMVPqoHrKtc8zOqbFi7iEJW8UJiQNJaZoRmYVi5DHAq3M8KTC3Rr6hlX4qoq3BTk2glGm9kEhWF8y4ROcssrO5DEc8lvbvtgY3vJnl2lPMBnfjTxnz/oyMvQBIrX1dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665229; c=relaxed/simple;
-	bh=dIHzKvs/CLNsdZuAwNYXUG9aLPMbUkYW5XbTPXy1O0E=;
+	s=arc-20240116; t=1740665230; c=relaxed/simple;
+	bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tJcaAN9SIfn8YiBgG907QuIAQZJtWh089rNnVL3k7XDte9+d/L2/8Yocm+QGVprKCsnqYh+4PwMTLFH01B9NkfVeXDuzbGXR+dLHh2Y49C3IE46XDt6YKeaKFieDobDXzYkwj1AjQOv1bQogMTzCkgvLsXP6xsJrvp2tHQnL5+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9PW2c9y; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version:Content-Type; b=kE8vZTwJRT3txsJ2rpegKmiOGx+F8VCDUP2qONV4PGFfs3NoJxd2NrqqDKHBTbcFyuFmbx0Q/KTtjoVdCaQ14OqK7znjtaBeiFqQ9mtcnjTVK9+FYadQhNuIJaqLjOCrgLqrKBdm7sl5P2GFA/TzaxATIvyrKm3g66Ut1Z6jigk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKWNtwWF; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740665228; x=1772201228;
+  t=1740665229; x=1772201229;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=dIHzKvs/CLNsdZuAwNYXUG9aLPMbUkYW5XbTPXy1O0E=;
-  b=M9PW2c9yNx1Jasl+k5byyITSrSDBCL804Xscmx5gvjYIFweSCd/naRwk
-   3rbmpLiDJ5XeuHauTgzRWkdz7BDrh8QidlsD5Ltz496IP/RU2hNzvWshV
-   WWKYj2+tKRO4SAV3UvVZN7g8jMMAm3KZpZCW06qpxl47JSKA/AxWJB9pz
-   BKGptgFtEGiyAos8GgZRLCUzkjcVqeODfLH4CKZ7wx7W8G43e2zk7+AJR
-   CBFQ5Za6bFvrZIy4J9msyjG1CRNf+ECMGR/WnETxBayrKCeN3e+Lz4ZAL
-   drBGTClliPy3DyujSAaI7TMXNedvNHePiiar0lt64FkNLRsS+Lxd9lnkT
-   Q==;
-X-CSE-ConnectionGUID: u5lKXMEnTy2RyRymuKhNSg==
-X-CSE-MsgGUID: DSXT1WRPRNmsZ3eQs4gwYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41438115"
+  bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
+  b=cKWNtwWFp3uRjZvCB2JCXumnWgX/En+skFCZMb8rfrJpo3tTjGWifpWP
+   4SjwLSNzUfUlOykg6LI8v+bngRCRk7LL/8aFQPvyysm/vYgmLQBMCP82T
+   v7yH2xQ82x+Z7/gqkW0W34GpQLBB5Tonfk5XlTEMEdk//Yr8WmvIbfY4q
+   o+eFlaY6jnkDsir0xGHy37i9D6vclOyDNK3Kw0XRf9gR3nmfN/cUuTFcN
+   fQBVFHi7d4571z0Nh2QPJxpW4zuRiu6FPDoz1pcLcpXQ44Xw+jKnlocua
+   1XQQQ7hgrytCv6KHQAdtL79fpaW9BJLLbBrupirtIQtugc4lfwUv13ov4
+   A==;
+X-CSE-ConnectionGUID: vOrBLuzJRdy8jZZbsoBlRg==
+X-CSE-MsgGUID: HSJs5alzTXKaIBA2mD5W3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="41438120"
 X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41438115"
+   d="scan'208";a="41438120"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:58 -0800
-X-CSE-ConnectionGUID: yKBDOOB9TuG59qYmtoaCxg==
-X-CSE-MsgGUID: baI9oRBtRAeB6TQSYcruUw==
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:07:00 -0800
+X-CSE-ConnectionGUID: VMW8zrYCQHKWLJsjtbC5hQ==
+X-CSE-MsgGUID: qx3XXiPBQLGBUROwW1nV9A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="116831771"
+   d="scan'208";a="116831792"
 Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.220.154])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:56 -0800
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:06:58 -0800
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	broonie@kernel.org,
@@ -66,9 +66,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH v4 15/16] soundwire: debugfs: add interface for BPT/BRA transfers
-Date: Thu, 27 Feb 2025 22:06:14 +0800
-Message-ID: <20250227140615.8147-16-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH v4 16/16] ASoC: rt711-sdca: add DP0 support
+Date: Thu, 27 Feb 2025 22:06:15 +0800
+Message-ID: <20250227140615.8147-17-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
 References: <20250227140615.8147-1-yung-chuan.liao@linux.intel.com>
@@ -83,9 +83,7 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 
-Add code to show what codec drivers will need to do to enable BPT/BRA
-transfers. The only difference is to set the 'command_type' file to
-'1'. A zero-value will rely on regular read/write commands in Column0.
+DP0 is required for BPT/BRA transport.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
@@ -93,156 +91,28 @@ Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
 Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
 Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 ---
- drivers/soundwire/debugfs.c | 84 ++++++++++++++++++++++++++++++-------
- 1 file changed, 68 insertions(+), 16 deletions(-)
+ sound/soc/codecs/rt711-sdca-sdw.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-index 5bf0d9552433..3099ea074f10 100644
---- a/drivers/soundwire/debugfs.c
-+++ b/drivers/soundwire/debugfs.c
-@@ -136,9 +136,10 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(sdw_slave_reg);
- 
--#define MAX_CMD_BYTES 256
-+#define MAX_CMD_BYTES (1024 * 1024)
- 
- static int cmd;
-+static int cmd_type;
- static u32 start_addr;
- static size_t num_bytes;
- static u8 read_buffer[MAX_CMD_BYTES];
-@@ -162,6 +163,25 @@ static int set_command(void *data, u64 value)
- DEFINE_DEBUGFS_ATTRIBUTE(set_command_fops, NULL,
- 			 set_command, "%llu\n");
- 
-+static int set_command_type(void *data, u64 value)
-+{
-+	struct sdw_slave *slave = data;
-+
-+	if (value > 1)
-+		return -EINVAL;
-+
-+	/* Userspace changed the hardware state behind the kernel's back */
-+	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-+
-+	dev_dbg(&slave->dev, "command type: %s\n", value ? "BRA" : "Column0");
-+
-+	cmd_type = (int)value;
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(set_command_type_fops, NULL,
-+			 set_command_type, "%llu\n");
-+
- static int set_start_address(void *data, u64 value)
- {
- 	struct sdw_slave *slave = data;
-@@ -197,9 +217,28 @@ static int set_num_bytes(void *data, u64 value)
- DEFINE_DEBUGFS_ATTRIBUTE(set_num_bytes_fops, NULL,
- 			 set_num_bytes, "%llu\n");
- 
-+static int do_bpt_sequence(struct sdw_slave *slave, bool write, u8 *buffer)
-+{
-+	struct sdw_bpt_msg msg = {0};
-+
-+	msg.addr = start_addr;
-+	msg.len = num_bytes;
-+	msg.dev_num = slave->dev_num;
-+	if (write)
-+		msg.flags = SDW_MSG_FLAG_WRITE;
-+	else
-+		msg.flags = SDW_MSG_FLAG_READ;
-+	msg.buf = buffer;
-+
-+	return sdw_bpt_send_sync(slave->bus, slave, &msg);
-+}
-+
- static int cmd_go(void *data, u64 value)
- {
-+	const struct firmware *fw = NULL;
- 	struct sdw_slave *slave = data;
-+	ktime_t start_t;
-+	ktime_t finish_t;
- 	int ret;
- 
- 	if (value != 1)
-@@ -216,40 +255,52 @@ static int cmd_go(void *data, u64 value)
- 		return ret;
+diff --git a/sound/soc/codecs/rt711-sdca-sdw.c b/sound/soc/codecs/rt711-sdca-sdw.c
+index f5933d2e085e..e87e2e1bfff7 100644
+--- a/sound/soc/codecs/rt711-sdca-sdw.c
++++ b/sound/soc/codecs/rt711-sdca-sdw.c
+@@ -225,6 +225,14 @@ static int rt711_sdca_read_prop(struct sdw_slave *slave)
+ 		j++;
  	}
  
--	/* Userspace changed the hardware state behind the kernel's back */
--	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
--
--	dev_dbg(&slave->dev, "starting command\n");
--
- 	if (cmd == 0) {
--		const struct firmware *fw;
--
- 		ret = request_firmware(&fw, firmware_file, &slave->dev);
- 		if (ret < 0) {
- 			dev_err(&slave->dev, "firmware %s not found\n", firmware_file);
- 			goto out;
- 		}
--
--		if (fw->size != num_bytes) {
-+		if (fw->size < num_bytes) {
- 			dev_err(&slave->dev,
--				"firmware %s: unexpected size %zd, desired %zd\n",
-+				"firmware %s: firmware size %zd, desired %zd\n",
- 				firmware_file, fw->size, num_bytes);
--			release_firmware(fw);
- 			goto out;
- 		}
-+	}
- 
--		ret = sdw_nwrite_no_pm(slave, start_addr, num_bytes, fw->data);
--		release_firmware(fw);
-+	/* Userspace changed the hardware state behind the kernel's back */
-+	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
++	prop->dp0_prop = devm_kzalloc(&slave->dev, sizeof(*prop->dp0_prop),
++				      GFP_KERNEL);
++	if (!prop->dp0_prop)
++		return -ENOMEM;
 +
-+	dev_dbg(&slave->dev, "starting command\n");
-+	start_t = ktime_get();
++	prop->dp0_prop->simple_ch_prep_sm = true;
++	prop->dp0_prop->ch_prep_timeout = 10;
 +
-+	if (cmd == 0) {
-+		if (cmd_type)
-+			ret = do_bpt_sequence(slave, true, (u8 *)fw->data);
-+		else
-+			ret = sdw_nwrite_no_pm(slave, start_addr, num_bytes, fw->data);
- 	} else {
--		ret = sdw_nread_no_pm(slave, start_addr, num_bytes, read_buffer);
-+		memset(read_buffer, 0, sizeof(read_buffer));
-+
-+		if (cmd_type)
-+			ret = do_bpt_sequence(slave, false, read_buffer);
-+		else
-+			ret = sdw_nread_no_pm(slave, start_addr, num_bytes, read_buffer);
- 	}
+ 	/* set the timeout values */
+ 	prop->clk_stop_timeout = 700;
  
--	dev_dbg(&slave->dev, "command completed %d\n", ret);
-+	finish_t = ktime_get();
- 
- out:
-+	if (fw)
-+		release_firmware(fw);
-+
- 	pm_runtime_mark_last_busy(&slave->dev);
- 	pm_runtime_put(&slave->dev);
- 
-+	dev_dbg(&slave->dev, "command completed, num_byte %zu status %d, time %lld ms\n",
-+		num_bytes, ret, div_u64(finish_t - start_t, NSEC_PER_MSEC));
-+
- 	return ret;
- }
- DEFINE_DEBUGFS_ATTRIBUTE(cmd_go_fops, NULL,
-@@ -291,6 +342,7 @@ void sdw_slave_debugfs_init(struct sdw_slave *slave)
- 
- 	/* interface to send arbitrary commands */
- 	debugfs_create_file("command", 0200, d, slave, &set_command_fops);
-+	debugfs_create_file("command_type", 0200, d, slave, &set_command_type_fops);
- 	debugfs_create_file("start_address", 0200, d, slave, &set_start_address_fops);
- 	debugfs_create_file("num_bytes", 0200, d, slave, &set_num_bytes_fops);
- 	debugfs_create_file("go", 0200, d, slave, &cmd_go_fops);
 -- 
 2.43.0
 
