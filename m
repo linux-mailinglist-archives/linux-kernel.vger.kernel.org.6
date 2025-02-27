@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-536669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEC8A482D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 492FBA482E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 16:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8618166223
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8E9167307
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15726AAB7;
-	Thu, 27 Feb 2025 15:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA64526AAAC;
+	Thu, 27 Feb 2025 15:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBrcjuJV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bcrJDwMZ"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E466024DFF8;
-	Thu, 27 Feb 2025 15:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371923535E;
+	Thu, 27 Feb 2025 15:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669621; cv=none; b=muQkLVjHls69FDtvkRdSgsQ8IrrS9ewBzmENk/jocjoIClKSebG2y6vab5/Gk7+VFn3Cwg+TXV6eyRbA0GUwQQkuhlZWRRR3rgbS2MP/MO+GbB7gxblCmKBCWWw7BVFMY6ZUaOMDVxiZ1ymVWkyj/hOl4TY/f7DjKL1Yb7fwUJg=
+	t=1740669721; cv=none; b=gmRwnopYRjMMV/H311ZuUJFNZBwCJ30NkIc0YWOlKOI3F7EMB+gx/rSM1Kdvzvo/cKEzGhv68f+SnwQyOaIcvEm/Phdv2aLg4BvtRUDasTuoQOkEoeTHCbzPOFOzjxAke8AtZ1WZXXRYrbbfaIZCYqlFaqT7gnDKIb0JPDSqTnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669621; c=relaxed/simple;
-	bh=xbybQy58/b9cxOIPGCsqR+WM6Yqy4lCzOUwQ/Rvr3Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qRltDQ0+Q32EDuAs1jvOcKXpLjRLg3GjlVm48UtVoNCpO8D83aQHYcBHSXzt1avCR7EG/G8hbL1cmee3gsVbdgxeH5KxUIuzN9QMPVdd9Hgz0gsdussTiX1apy4EVPr9StZuj5LDu9MwJqmfcd1NQbGAi7JFsFPwVoXazemPJ+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBrcjuJV; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740669721; c=relaxed/simple;
+	bh=ZbFHvEVs/StgTBF2XpBIeDqG6mLo1uxwQtkaK+V1oa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hr3ntN9OY+fpF8ZwIoJRllHBlBlTns7Q+Tc8CNvd3+CyOyuYeEA2acWe3Iyib05Jv7VK3NXscUxc3+a/os1lUqcLhfo8O+eIMYORuuPLeQo7lciq5u69Eq5J38fsiycqWX0Ge/hVIT7B5vTJ2JBCgaQURBZ1Z26p0xSEW34MInM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bcrJDwMZ; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740669620; x=1772205620;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xbybQy58/b9cxOIPGCsqR+WM6Yqy4lCzOUwQ/Rvr3Ww=;
-  b=kBrcjuJVtBtM0u615xSA3pwdbvfizjoLw/jTt1CaEVbo34FwUW5YN4Jx
-   spDheWQGv8r/bViKO5Fvd3Kap1CnNBYiWXZERNl2CCwcnED3uUxTguOX4
-   y+j8uWKUS/ZcdElU24Dm7EkpXT8K1Q7PnJeS1z7AxEwQRbmQXU43quhAk
-   pb5c+7n8EeKFyxIpLqfk6/2AutqfSBS7aym268PNm8Hsrasehk2U0fVnN
-   VIZU97z1v/WPwJYXtPfhWuriPTQQD9mvPy6wrUkppB1zEDBvdrYEnSouM
-   ITj/tbdT++E7qysv0kIQ9oB3SjJDgW1n4SIN6sqyu/5MLxiDj+qBONYas
-   g==;
-X-CSE-ConnectionGUID: 8qP6V1+vQkOfTCAvo+bX0Q==
-X-CSE-MsgGUID: fOgMdmsbT+CTa57ssuqtpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52205832"
+  t=1740669719; x=1772205719;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZbFHvEVs/StgTBF2XpBIeDqG6mLo1uxwQtkaK+V1oa0=;
+  b=bcrJDwMZQOzrTx4484503dZDYj11aEx69Cq0usdEqlIjKpAsKRiGKA6z
+   BMFTvhKYnyHo2gNsj4jaIsO7YwyexJVcKZ9Law2tmZtHMgQly/82DZLWS
+   jqX7QQS6WZH1/7hTjoEkbdede4eUzChffk60Agm2PCATrAptForgQ5s9E
+   Pu3HHWO4h+NSoavWO7E9wDAuGfPEbRuygtp1IdacztMyuefroPiP00trU
+   ebv/FpVqemvrX7Z0xec+ZjLHt6+8SnJ1b1OU2IaHrmsLs8prqz9l28FZD
+   dRLH+ROS5QqLloS9l0Glriq9NtpyWhgg+RHekuEaoT8htEgb2fFVBw73W
+   Q==;
+X-CSE-ConnectionGUID: lyEAPzfZRF+95xDBYTIWgQ==
+X-CSE-MsgGUID: 5XNhtjXHQIqxL+ebf5TqSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11358"; a="52206183"
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="52205832"
+   d="scan'208";a="52206183"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:20:19 -0800
-X-CSE-ConnectionGUID: //sydfZnSqWjo0BZQbncpw==
-X-CSE-MsgGUID: VE+oI+AfQS2qiv7pLBNW3g==
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:21:58 -0800
+X-CSE-ConnectionGUID: sc33+yjhRC+aHNm171099g==
+X-CSE-MsgGUID: zm9t+1H0SnmLMUEOxChHDg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,320,1732608000"; 
-   d="scan'208";a="121999934"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:20:18 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tnfgM-0000000FdBP-2W3l;
-	Thu, 27 Feb 2025 17:20:14 +0200
-Date: Thu, 27 Feb 2025 17:20:14 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] asm-generic/io.h: rework split ioread64/iowrite64 helpers
-Message-ID: <Z8CCrqzCfwzIpJ-3@smile.fi.intel.com>
-References: <20250227141910.3819351-1-arnd@kernel.org>
+   d="scan'208";a="122000348"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 07:21:58 -0800
+Message-ID: <34a30d8d-f4e2-4c3b-8386-d07f7b8cfaa1@intel.com>
+Date: Thu, 27 Feb 2025 08:21:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227141910.3819351-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] cxl/hdm: Verify HDM decoder capabilities after
+ parsing
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250227103251.390147-1-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250227103251.390147-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 03:19:01PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+
+
+On 2/27/25 3:32 AM, Li Ming wrote:
+> devm_cxl_setup_hdm() only checks if decoder_count is 0 after parsing HDM
+> decoder capability, But according to the implementation of
+> cxl_hdm_decoder_count(), cxlhdm->decoder_count will never be 0.
 > 
-> There are two incompatible sets of definitions of these eight functions:
-> On 64-bit architectures setting CONFIG_HAS_IOPORT, they turn into
-> either pair of 32-bit PIO (inl/outl) accesses or a single 64-bit MMIO
-> (readq/writeq). On other 64-bit architectures, they are always split
-> into 32-bit accesses.
+> Per CXL specification, the values ranges of decoder_count and
+> target_count are limited. Adding a checking for the values of them
+> in case hardware initialized them with wrong values.
 > 
-> Depending on which header gets included in a driver, there are
-> additionally definitions for ioread64()/iowrite64() that are
-> expected to produce a 64-bit register MMIO access on all 64-bit
-> architectures.
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> ---
+> base-commit: 22eea823f69ae39dc060c4027e8d1470803d2e49 cxl/next
+> ---
+>  drivers/cxl/core/hdm.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
 > 
-> To separate the conflicting definitions, make the version in
-> include/linux/io-64-nonatomic-*.h visible on all architectures
-> but pick the one from lib/iomap.c on architectures that set
-> CONFIG_GENERIC_IOMAP in place of the default fallback.
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index 70cae4ebf8a4..a98191867c22 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -138,6 +138,34 @@ static bool should_emulate_decoders(struct cxl_endpoint_dvsec_info *info)
+>  	return true;
+>  }
+>  
+> +static int cxlhdm_decoder_caps_verify(struct cxl_hdm *cxlhdm)
+> +{
+> +	/*
+> +	 * CXL r3.2 section 8.2.4.20.1
+> +	 * CXL devices shall not advertise more than 10 decoders,
+> +	 * CXL switches and HBs may advertise up to 32 decoders.
+> +	 */
+> +	if (is_cxl_endpoint(cxlhdm->port) && cxlhdm->decoder_count > 10)
 
-Thanks, this is good to go in my opinion,
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+#define the limit please
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +		return -EINVAL;
+> +	else if (cxlhdm->decoder_count > 32)
 
+same here
+
+DJ
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * CXL r3.2 section 8.2.4.20.1
+> +	 * target count is applicable only to CXL upstream port and HB.
+> +	 * The number of target ports each decoder supports should be
+> +	 * one of the numbers 1, 2, 4 or 8.
+> +	 */
+> +	if (!is_cxl_endpoint(cxlhdm->port) &&
+> +	    cxlhdm->target_count != 1 &&
+> +	    cxlhdm->target_count != 2 &&
+> +	    cxlhdm->target_count != 4 &&
+> +	    cxlhdm->target_count != 8)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * devm_cxl_setup_hdm - map HDM decoder component registers
+>   * @port: cxl_port to map
+> @@ -182,7 +210,8 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+>  	}
+>  
+>  	parse_hdm_decoder_caps(cxlhdm);
+> -	if (cxlhdm->decoder_count == 0) {
+> +	rc = cxlhdm_decoder_caps_verify(cxlhdm);
+> +	if (rc) {
+>  		dev_err(dev, "Spec violation. Caps invalid\n");
+>  		return ERR_PTR(-ENXIO);
+>  	}
 
 
