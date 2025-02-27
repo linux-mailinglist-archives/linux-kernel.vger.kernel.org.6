@@ -1,152 +1,198 @@
-Return-Path: <linux-kernel+bounces-535509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCA4A473BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:49:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1D2A473C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 04:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93DDC1887D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:49:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1797516A42C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 03:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1891E51FE;
-	Thu, 27 Feb 2025 03:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3D91E1DEC;
+	Thu, 27 Feb 2025 03:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SvHVlJ3L"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KsAsQXQF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4A17A30F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B84E1EB5E5
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 03:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740628146; cv=none; b=XlMXhY9bTSL/X+QXEGenjTjKIlp/WecItmwKcNVJcYwDvCeHNH1oyxdY27Gr8HGPflg7QYkKf+SQu5f2mNd77Fas1DX4dNOKHWrYTYRKJ4v0ZPnJ3rcqIL3mX8pJVdrsc9U9100jvt+w3BAqvrbsTAT8V5LTIiWcA1WIV2YJ3Ec=
+	t=1740628253; cv=none; b=MZ3RC28NkKvw84pNSjmhnIksEpTFmKWJv/MJU6i7rBP3ro8n5ZWTABt3BpeqEUny0kpxjYTVNCVFSXkFzBjmuImLkdZ33eOtRULDuZXFLoAw8t+EidKbX43C7RL/leV3YhxD2w6swZOzcToNIK6NmoY/RAFfyGcWQ4jeGY4sxac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740628146; c=relaxed/simple;
-	bh=oi+m9gpixAFvi5EpPAxx46lrS+MPBn6RaE9ZtWVWGk0=;
+	s=arc-20240116; t=1740628253; c=relaxed/simple;
+	bh=tzXkCv3Dxtcb/gM98yhByyiqamfOlOYCxInZgpUs6Jg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNQfO3B6kTjpUSZbgurVhWkFOAc9RX4geoSOfyFxMJxeL4l2KQ7FGSWuR6dISSRaltsiIWcoG8tknJgfQH1ytJA2wuq6fapXxJEH2AfyNtmB3OMZELPC8cU3KpmJHbHE+Zrzp1s/xvfhJar1apYFsaiUbFPXhGulXoQIB22VNQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SvHVlJ3L; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fea65dcc3cso511352a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Feb 2025 19:49:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740628143; x=1741232943; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fO7EiubiHLOGU2rtl1Xwvp+D0Vg5HuoflpxbDTrARsY=;
-        b=SvHVlJ3Ly9dVJSOgV7LQnsnZ0xz/4RsVIdbRfTeKnV4EV8FgkJTJlxBoZlvnr6vVPc
-         jBKtpqnaOTxv1C8idIq73c7Mj654uEbgSjnqL7cPAPF/f0W8llGI2G0y5ATlxgFgYZjf
-         NK9hSmnzzlolk4N+1j7SW74o1Akzx7Sy/Vj8gTCnodCKMajfoyhwFMI4n8B8vd5HEiKm
-         BPOJBzQt8AozMQu1ewueWKqQOP58K/+u+0upXbKzbiNiZs6WiNdPIQrR7fRgzonkk+Xg
-         lYLjQ9QtRwihutPH9zIcIUynyPDK7qIAsANBT4bq1lSONlGqTAYYHKp1bmIp2uj9HhhE
-         RqyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740628143; x=1741232943;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fO7EiubiHLOGU2rtl1Xwvp+D0Vg5HuoflpxbDTrARsY=;
-        b=vqBMs6lQP4eQ5STnhK4TraDY9vMq5Hz5yw9Q+2jLQRwWtfI2VfrJXhJsgrDx/G7nF/
-         oQnPA3Qf02qf2EnVJsyWOFCLWxaSQ6orZ1soTn/VE6BCr0vPsndjsP2+qeS8LLbAhidU
-         v1kJ/e/8gBNmXSGrit7ywZys1kh93tf22mFHywacHnYtDtZfxC/mtqCGm7R0nPOKCErF
-         7XGhI8cxh05Poqk/qIBXQEjrsEBO+ZH0xGT84F7iSGG3fqupZajRQ1bHolIIa31kKq79
-         pAxXdpAQ4dSPj86wsM9jigT5CDla9q/GOgnt0Zm6rWt5UPhv0OmBLKhEupvaiJQztGzL
-         JTXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoXoVuu7AEAYHowKD/NYc5JmOhOih4lBv7YoVFzb8ZtHwbc9pOHx52ZeOYTWK6bBP5TwgLXN6f8WPeLj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1v5SEfV22d7CAM7UR10IRnb4DWkhye2tpyRlMYv2UPdIbhwp2
-	LzSMjLwDT4FujM/VeSN7r2/jwlCiVLWstDl/X/Q1p9q9QeGms+OncIgGTqjVpw==
-X-Gm-Gg: ASbGncuUG72SxfQ6aLG4dX6HccVSyXMs+1B6OWBwHEuMCjI0ZRnjUK86jwj3pAgzt24
-	fnd59b1L8OsqviSNBNIkCzkAz4z6QYYqPaHIK3i3V9nVxjwjEHJQ5kfyaXbRClOFDU9yYnWxIhT
-	0Z/gSWZfVvH4rKh72tUX2YWYXM/fAswEYCP/sZL7o3gbh1buzYDUH2mtl/8kz7xBX3aa3Cbl3SE
-	mLxWLwJNZsKBUE+KIgd+oKGJn0Zx/Y182z9YTK+jIaIOWnmFu9uiK662V2cHdkTZXn/n21B3e/j
-	qYUMTvUm5+UIyRFZyu9lK7Fl3AJPNgJko7gN
-X-Google-Smtp-Source: AGHT+IEcysD2mq0oTW6yavadIZ+Dy03Ac/OJWfv0J/mF/FDiTNU3vFb7Q5X25mkxRJS7teNSdDqlAg==
-X-Received: by 2002:a05:6a20:2d09:b0:1ee:e2ac:516d with SMTP id adf61e73a8af0-1eef5560808mr44946908637.30.1740628143509;
-        Wed, 26 Feb 2025 19:49:03 -0800 (PST)
-Received: from thinkpad ([120.60.51.181])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de1a4ebsm278779a12.23.2025.02.26.19.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 19:49:03 -0800 (PST)
-Date: Thu, 27 Feb 2025 09:18:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	chaitanya chundru <quic_krichai@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
-	amitk@kernel.org, dmitry.baryshkov@linaro.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	jorge.ramirez@oss.qualcomm.com
-Subject: Re: [PATCH v4 09/10] dt-bindings: PCI: qcom,pcie-sc7280: Add
- 'global' interrupt
-Message-ID: <20250227034855.orrwu32mlnn5mjfk@thinkpad>
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-9-e08633a7bdf8@oss.qualcomm.com>
- <20250226-enlightened-chachalaca-of-artistry-2de5ea@krzk-bin>
- <t34rurxh5cb7hwzvt6ps3fgw4kh4ddwcieukskxxz5mo3pegst@jkapxm6izq7p>
- <e83bc594-5500-4f76-b3d1-96f669515c24@kernel.org>
- <dd16f56b-f066-44b7-b5ff-baf608e0f87e@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I12Jag7kl39S3TbnEBL5GM+y1ww8tpOZ41QwfwWbthMX2Gr5vb5vS5UZBhWeNUgYQjf9aU6gOr1u+VF3xTBYRz3+3hUe5AgUkV86Dj6Nm0MRYFODmMYNh1jtzMyVapg8gbLXUH93jHpKS14JRx34BUoyRlPxkaX/2595qIdbiOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KsAsQXQF; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740628252; x=1772164252;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tzXkCv3Dxtcb/gM98yhByyiqamfOlOYCxInZgpUs6Jg=;
+  b=KsAsQXQF4CwEqYc2IsZNgr2MPB1tcmk0nzBdJwpYpePnOeMa8y/23Vtu
+   IulRwBaKzeyRVucIb/6Akx9ae73RSA+v3oag4TD/RYeL6nb+Vwz1hoaPe
+   5TpsQTuvWsKCVAqKuTMNEIoFJvT1ZiOtj92Ny+fPafqNbGutC2VVNsVUB
+   mqVEA8EPH5zUCNZ7RHAgR6rtaYE7Lrtd0nVO90KOsURcCYkcAa4Kus0B9
+   wYaTYtAEHvpnvbpRzWnRDj85Xz3DlZ8pfUAlP2g4tw+h6pOr4mjjFIjXm
+   k/fDZEpNL+2uFH4S71FlEO3Ib5O7NpnzpeQH/eOX5FIVblmB0AEAiYXsq
+   g==;
+X-CSE-ConnectionGUID: nEZnvG9GQ/yHbNJEW4ChSw==
+X-CSE-MsgGUID: ew8hwnaBRKKkCN4sdPTEgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41633836"
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="41633836"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 19:50:51 -0800
+X-CSE-ConnectionGUID: 7A8JQ9ACTDW8Hh+zXrkSig==
+X-CSE-MsgGUID: u06h+CAUTY+ZgmKusSaL0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
+   d="scan'208";a="117542095"
+Received: from unknown (HELO desk) ([10.125.145.169])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 19:50:50 -0800
+Date: Wed, 26 Feb 2025 19:50:38 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>, Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 20/35] x86/bugs: Define attack vectors
+Message-ID: <20250227034813.booxbhxnff66dnqx@desk>
+References: <20250218070501.7mwcxqgsuxl3meef@jpoimboe>
+ <20250218085203.GDZ7RKM6IyPDQAkZ8A@fat_crate.local>
+ <20250220220440.ma5yfebhiovkqojt@jpoimboe>
+ <LV3PR12MB9265DE3082FA0A7FDF9B587594C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226201453.jgg6kucaathzmcvs@desk>
+ <LV3PR12MB9265F875F52317BBCDF953EC94C22@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250226221324.hq2nevnnnrpgo75n@desk>
+ <20250226234440.4dk4t3urkzt4zll7@jpoimboe>
+ <20250227003528.hnviwrtzs7jc3juj@desk>
+ <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dd16f56b-f066-44b7-b5ff-baf608e0f87e@oss.qualcomm.com>
+In-Reply-To: <20250227012329.vbwdmihjlqu6h5da@jpoimboe>
 
-On Thu, Feb 27, 2025 at 09:09:38AM +0530, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 2/27/2025 3:03 AM, Krzysztof Kozlowski wrote:
-> > On 26/02/2025 17:29, Bjorn Andersson wrote:
-> > > > > @@ -54,7 +54,7 @@ properties:
-> > > > >     interrupts:
-> > > > >       minItems: 8
-> > > > > -    maxItems: 8
-> > > > > +    maxItems: 9
-> > > > >     interrupt-names:
-> > > > >       items:
-> > > > > @@ -66,6 +66,7 @@ properties:
-> > > > >         - const: msi5
-> > > > >         - const: msi6
-> > > > >         - const: msi7
-> > > > > +      - const: global
-> > > > 
-> > > > Either context is missing or these are not synced with interrupts.
-> > > > 
+On Wed, Feb 26, 2025 at 05:23:29PM -0800, Josh Poimboeuf wrote:
+> On Wed, Feb 26, 2025 at 04:35:28PM -0800, Pawan Gupta wrote:
+> > On Wed, Feb 26, 2025 at 03:44:40PM -0800, Josh Poimboeuf wrote:
+> > > On Wed, Feb 26, 2025 at 02:13:24PM -0800, Pawan Gupta wrote:
+> > > > On Wed, Feb 26, 2025 at 09:03:58PM +0000, Kaplan, David wrote:
+> > > > > > Extending =auto to take attack vectors is going to be tricky, because it already
+> > > > > > takes ",nosmt" which would conflict with ",no_cross_thread".
+> > > > > >
+> > > > > > How about we keep =off, and =auto as is, and add:
+> > > > > >
+> > > > > >   mitigations=selective,no_user_kernel,no_cross_thread,...
+> > > > > >
+> > > > > > Requiring the user to explicitly select attack vectors to disable (rather than to
+> > > > > > enable). This would be more verbose, but it would be clear that the user is explicitly
+> > > > > > selecting attack vectors to disable. Also, if a new attack vector gets added in future,
+> > > > > > it would be mitigated by default, without requiring the world to change their cmdline.
+> > > > > 
+> > > > > I kind of like that.
 > > > 
-> > > I think the patch context ("properties") is confusing here, but it looks
-> > > to me that these are in sync: interrupts is defined to have 8 items, and
-> > > interrupt-names is a list of msi0 through msi7.
+> > > While it might be true that we don't necessarily need both opt-in and
+> > > opt-out options...
+> > > 
+> > > I'm missing the point of the "selective" thing vs just
+> > > "auto,no_whatever"?
 > > 
-> > interrupt-names has minItems 9 in this case, so they are not synced.
-> > That's my concern
-> > 
-> Ok I will update the minItems to 9 as suggested.
+> > That was my first thought, but then I realized that in "auto,nosmt" nosmt
+> > is the opposite of disabling the mitigation. It would be cleaner to have
+> > "=selective,no_whatever" which is self-explanatory.
 > 
+> The "auto,nosmt,no_whatever" is indeed a bit confusing because of the
+> opposite meanings of the word "no", but least it sort of makes some
+> kind of sense if you consider the existing "auto,nosmt" option to be the
+> starting point.
+> 
+> And we could document it from that perspective: start with "auto" or
+> "auto,smt" and then optionally append the ",no_*" options for the vectors
+> you want to disable.
+>
+> IMO "selective" doesn't seem very self-explanatory, it says nothing to
+> indicate "opting out of defaults", in fact it sounds to me more like
+> opting in.  At least with "auto,no_whatever" it's more clear that it
+> starts with the defaults and subtracts from there.
 
-You got it backwards. interrupt-names should have minItems as 8. Otherwise, old
-DTS will break.
+Thats fair. I certainly don't want to be adding new option if we are
+willing to live with some minor quirks with auto,nosmt.
 
-- Mani
+Like, should the order in which nosmt appears after =auto matter? IOW,
+"=auto,no_foo,nosmt" would be equivalent to "=auto,nosmt,no_foo"? I believe
+they should be treated the same.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Arches that don't support attack vectors, but support smt, should treat
+"=auto,no_foo,nosmt" as "=auto,nosmt".
+
+So as to treat nosmt as any other attack vector, CPU_MITIGATIONS_AUTO_NOSMT
+should go away. I am thinking we can modify cpu_mitigations_auto_nosmt() to
+check for smt attack vector:
+
+---
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index b605334f8ee6..6ddbee6a0b6b 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -3193,22 +3193,27 @@ void __init boot_cpu_hotplug_init(void)
+ enum cpu_mitigations {
+ 	CPU_MITIGATIONS_OFF,
+ 	CPU_MITIGATIONS_AUTO,
+-	CPU_MITIGATIONS_AUTO_NOSMT,
+ };
+ 
++#define MITIGATE_SMT            BIT(0)
++#define MITIGATE_USER_KERNEL    BIT(1)
++#define MITIGATE_USER_USER      BIT(2)
++#define MITIGATE_GUEST_HOST     BIT(3)
++
+ static enum cpu_mitigations cpu_mitigations __ro_after_init = CPU_MITIGATIONS_AUTO;
++static unsigned int cpu_attack_vectors __ro_after_init = ~0;
+ 
+ static int __init mitigations_parse_cmdline(char *arg)
+ {
+-	if (!strcmp(arg, "off"))
++	if (!strcmp(arg, "off")) {
+ 		cpu_mitigations = CPU_MITIGATIONS_OFF;
+-	else if (!strcmp(arg, "auto"))
++	} else if (strstr(arg, "auto")) {
+ 		cpu_mitigations = CPU_MITIGATIONS_AUTO;
+-	else if (!strcmp(arg, "auto,nosmt"))
+-		cpu_mitigations = CPU_MITIGATIONS_AUTO_NOSMT;
+-	else
++		cpu_attack_vectors = parse_cpu_attack_vectors(arg);
++	} else {
+ 		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
+ 			arg);
++	}
+ 
+ 	return 0;
+ }
+@@ -3223,7 +3228,7 @@ EXPORT_SYMBOL_GPL(cpu_mitigations_off);
+ /* mitigations=auto,nosmt */
+ bool cpu_mitigations_auto_nosmt(void)
+ {
+-	return cpu_mitigations == CPU_MITIGATIONS_AUTO_NOSMT;
++	return (cpu_mitigations == CPU_MITIGATIONS_AUTO) && (cpu_attack_vectors & MITIGATE_SMT);
+ }
+ EXPORT_SYMBOL_GPL(cpu_mitigations_auto_nosmt);
+ #else
 
