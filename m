@@ -1,135 +1,193 @@
-Return-Path: <linux-kernel+bounces-536553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-536551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4026A480E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:22:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F43A481A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 15:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6423AD303
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:19:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00BBC420156
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 14:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FE923644D;
-	Thu, 27 Feb 2025 14:18:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B2E2343D2;
+	Thu, 27 Feb 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="GhrulTfS"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F211235342
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2025 14:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F9A233159;
+	Thu, 27 Feb 2025 14:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740665913; cv=none; b=XjMYhqjlLfBQeOYSq0z1TAX1MiAsbMAZtNh96Noyhch9K7lMFxguX+lF2rO1DmN8WPgr4DlHioCCsnrGUz+Bn+vl70V5+jWkHFwCYWmhwMEYexhAXRKpgloTLcbTntb1CB1hWGsoMbAkm016ZQIbmW5hGZGje8lU3Sr1cX0U7gk=
+	t=1740665889; cv=none; b=KPhQBhGXmcjrx80nIUnXV6qy0FJULYCUO3Y6bxJzJLHZ4eN9yVxe6rAP3C85JZDW9jz9UhoXCC+Vn4Aqg+ULhpCFmM/HTYT3bABOAJ71+q4fxsY1VVOU2ZerdIQMqKFR5XF1Sz2ON+y0Tie9CRymPRjWOispqlwGnbxrd4IC13Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740665913; c=relaxed/simple;
-	bh=LxGqDDciDNPai+yMXfQ6y3up7TsSxsnZOwf8EJYTN8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oT64pd7s2Kb1e8vHrb6ufkanIhofNtZoksTRVFfeZJYkeDoNOry3+Jq2L7oDqRCZNch8mn6PdUgWneBQ4rzHe/kUbrVs5We44c6IVMb1fmlKGVaCcqJ0XIJR5K8ac7C/R9cwk/nfnvgrfnBUot8i3vZPRIN/+nq4DAfeFei1gZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tnehz-0003GQ-MD; Thu, 27 Feb 2025 15:17:51 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tnehw-0038i4-0Z;
-	Thu, 27 Feb 2025 15:17:48 +0100
-Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C00033CD6A6;
-	Thu, 27 Feb 2025 14:17:47 +0000 (UTC)
-Date: Thu, 27 Feb 2025 15:17:47 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Ming Yu <a0282524688@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, tmyu0@nuvoton.com, lee@kernel.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-Message-ID: <20250227-gregarious-garrulous-echidna-ca7975-mkl@pengutronix.de>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-5-a0282524688@gmail.com>
- <a32b4ca1-0bcf-48e4-87ab-61fbd077a3c3@wanadoo.fr>
+	s=arc-20240116; t=1740665889; c=relaxed/simple;
+	bh=I4D5T4gbh/d8tIv78snRkNTZnaNgFmKWHJjAxj3TY6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KREO59mvGa3/+f+GBLKLTINz/jCmv2YRKtu/bJRvwyl+xxeziVigKi7aG9PyRUur5j62RAzduUskOnpcvcjdL3LCa+BV2ZjL01hy+Obd6CxkUwj27xBy51jpzShOt3ajCZubThXQb+t9fnohSdnxiiKiHFjaS5ihWsKnS7vF9Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=GhrulTfS; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4FFBBA0A38;
+	Thu, 27 Feb 2025 15:17:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=Gve341c4MtwAxnVIeHWR
+	vtQwTa8aD0Q7X4a/H6VslyI=; b=GhrulTfSFfOwpfdYBS/q4qhnm70YikZAXxys
+	mcGK3sg7vs2kBi7gIzBBJi+a/rmZmtbeWrFm1HAxwIokNzWnp9C9u8rzplSd2mg2
+	j4gQi9vdBqyHn5c9wyj2Rlliekk72u+uGYNUN2iRzieJAMa159KTN0fh0kqabDdR
+	+TXs61WD5OpDxyfKrol9VWcFcVHETK87mfOI1ZawEePHuBtBMujOUX82AdNs09CR
+	c7J/YzQsJ+LPIwEJ8nqOPxZ531hH/9yeSJXgHXVr7znsIuKuGwMItcZQsFs7uS9Z
+	0hqbbY8cUlA4O9p9lYh3DFwVArtrO09BSfz7C+72JADErBOHKSv4aB7DbAwmu/g/
+	BdV395GLBlcirSuswvXvHp3VSXbq62wzW2CVThH18+oYBEo9wwJrVqHZoIVye9CU
+	BPjjFt+sxEG9ZMcQq8Wq7Bo01Ha6qtTJZLueT4K55NiT/1Gglf9S9jpXKGKihQT+
+	gAIH3i5sa7Jfs3rzA/aK48Nxe50741WxLZCn+PXO9NQ6Ao3eOZ7HdJcmDYeBpA40
+	+QZDPUMn17ED7Vsr1Z+DDs3R+JYkZQmZgtgOnqqZoKgMCgtsqxZVUwkJgeZPbgPP
+	rIsXME3O2XnY6bWpuCLYAKrFBCYgDMy80WctMJbA0+1YptGDDoNmWEhbLfGkSCaB
+	uvy7dAk=
+Message-ID: <7c9941e0-1169-46cd-95b0-785e8f72eb34@prolan.hu>
+Date: Thu, 27 Feb 2025 15:17:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i5nv6d7na7xl5d3b"
-Content-Disposition: inline
-In-Reply-To: <a32b4ca1-0bcf-48e4-87ab-61fbd077a3c3@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+To: William Breathitt Gray <wbg@kernel.org>, Kamel Bouhara
+	<kamel.bouhara@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Dharma.B@microchip.com>, Ludovic Desroches
+	<ludovic.desroches@microchip.com>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Jonathan Cameron <jic23@kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
+ <Z7h0AXV1zlgp9Nw-@ishi> <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
+ <Z7vihBqOgP3fBUVq@ishi> <bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu>
+ <Z7_xTQeTzD-RH3nH@ishi>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <Z7_xTQeTzD-RH3nH@ishi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637760
 
+Hi,
 
---i5nv6d7na7xl5d3b
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-MIME-Version: 1.0
+On 2025. 02. 27. 5:59, William Breathitt Gray wrote:
+>> Isn't it better to keep API header changes in the same commit as the
+>> implementation using them? That way if someone bisects/blames the API
+>> header, they get the respective implementation as well.
+> 
+> Fair enough, we'll keep the header together with the implementation.
 
-On 27.02.2025 11:08:50, Vincent Mailhol wrote:
-> > +static int nct6694_can_stop(struct net_device *ndev)
-> > +{
-> > +	struct nct6694_can_priv *priv =3D netdev_priv(ndev);
-> > +
-> > +	priv->can.ctrlmode =3D CAN_CTRLMODE_LISTENONLY;
->=20
-> Hmmm, when Marc asked you to put the device in listen only mode, I think
-> he meant that you set it on the device side (i.e. flag
-> NCT6694_CAN_SETTING_CTRL1_MON) and not on the driver side. If you set
-> CAN_CTRLMODE_LISTENONLY flag, that will be reported in the netlink
-> interface. So you should not change that flag.
+I ended up splitting the actual creation of the file (the change to 
+MAINTAINERS, along with the new header file containing the include guard 
+and the doc-comment) to a new commit, and added the `enum 
+counter_mchp_event_channels` to it in the commit containing the IRQ 
+handler. I'll send that shortly.
 
-ACK
+>>> and it looks like this chip has
+>>> three timer counter channels described in section 54. Currently, the
+>>> microchip-tcb-capture module is exposing only one timer counter channel
+>>> (as Count0), correct? Should this driver expose all three channels (as
+>>> Count0, Count1, and Count2)?
+>>
+>> No, as this device is actually instantiated per-channel, i.e. in the DT,
+>> there are two TCB nodes (as the SoC has two peripherals, each with 3
+>> channels), and then the counter is a sub-node with `reg = <0/1/2>`,
+>> specifying which timer channel to use. Or, in quadrature decode mode, you'd
+>> have two elements in `reg`, i.e. `reg = <0>, <1>`.
+> 
+> So right now each timer counter channel is exposed as an independent
+> Counter device? That means we're exposing the timer counter blocks
+> incorrectly.
+> 
+> You're not at fault Bence, so you don't need to address this problem
+> with your current patchset, but I do want to discuss it briefly here so
+> we can come up with a plan for how to resolve it for the future. The
+> Generic Counter Interface was nascent at the time, so we likely
+> overlooked this problem at the time. I'm CCing some of those present
+> during the original introduction of the microchip-tcb-capture driver so
+> they are aware of this discussion.
+> 
+> Let me make sure I understand the situation correctly. This SoC has two
+> Timer Counter Blocks (TCB) and each TCB has three Timer Counter Channels
+> (TCC); each TCC has a Counter Value (CV) and three general registers
+> (RA, RB, RC); RA and RB can store Captures, and RC can be used for
+> Compare operations.
 
-> But before that, did you check the datasheet? Don't you have a device
-> flag to actually turn the device off (e.g. sleep mode)?
+That seems to be an accurate description.
 
-Please test that the ifup -> ifdown -> ifup sequence works properly,
-even on a busy bus and on a bus without with a 2nd CAN station that is
-sending and you are the only receiver.
+> If that is true, then the correct way for this hardware to be exposed is
+> to have each TCB be a Counter device where each TCC is exposed as a
+> Count. So for this SoC: two Counter devices as counter0 and counter1;
+> count0, count1, and count2 as the three TCC; i.e. counter0/count{0,1,2}
+> and counter1/count{0,1,2}.
 
-regards,
-Marc
+And how would the extensions fit into this? 
+`capture{0..6}`/`compare{0..3}? For me, the status quo fits better.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+> With that setup, configurations that affect the entire TCB (e.g. Block
+> Mode Register) can be exposed as Counter device components. Furthermore,
+> this would allow users to set Counter watches to collect component
+> values for the other two Counts while triggering off of the events of
+> any particular one, which wouldn't be possible if each TCC is isolated
+> to its own Counter device as is the case right now.
 
---i5nv6d7na7xl5d3b
-Content-Type: application/pgp-signature; name="signature.asc"
+TCCs are pretty self-contained though. BMR only seems to be used
 
------BEGIN PGP SIGNATURE-----
+> Regardless, the three TCC of each TCB should be grouped together
+> logically as they can represent related values. For example,  when using
+> the quadrature decoder TTC0 CV can represent Speed/Position while TTC1
+> CV represents rotation, thus giving a high level of precision on motion
+> system position as the datasheet points out.
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfAdAgACgkQDHRl3/mQ
-kZxjHQf/cl+NPaGA6wNUTa68Le8AS6tbcg6UkzWcAd8AS8/6CWkgPeebGEbmzKvl
-iENWrgc7mfiuy346ubOPufojybeeXMdOHLiwDPEkVgZegMycqUnS+2F/mTCm50fR
-vf9mETJuODrqvL4I265jS9Z+SUA/R/pzTcs0pQItMSzfUwGJ5nv9JQS8mv3MOQhM
-zOqyOMX1bv3+0Ov9ZTpjaV2JoOmTqpDFIYuN2DyqGl+NlJfZyHCp/Z8UJ7MyQykL
-Nzk53OPw0yb1MC6RT8m5ijRnpiVzfV5Et+2/FEXSW0aE/SXBRailPfDqdEmxXFnf
-f4DOoo4Z+H6xhf0L7EUZ1HcmpU+ckA==
-=2o2X
------END PGP SIGNATURE-----
+ From what I gathered from looking at the code, the quadrature mode uses 
+a hardware decoder that gives us processed values already. Though I 
+don't use it, so I don't know any specifics.
 
---i5nv6d7na7xl5d3b--
+One more thing, as Kamel pointed it out, the current implementation 
+allows channels of a TCB to perform different functions, e.g. one used 
+for PWM, one for clocksource and a third for counter capture. Whether 
+that works in practice, I cannot tell either, we only use TCB0 channel 0 
+for clocksource and TCB1 channel 1 for the counter.
+
+>>>> The `mchp_tc_count_function_write()` function already disables PWM mode by
+>>>> clearing the `ATMEL_TC_WAVE` bit from the Channel Mode Register (CMR).
+>>>
+>>> So capture mode is unconditionally set by mchp_tc_count_function_write()
+>>> which means the first time the user sets the Count function then PWM
+>>> mode will be disabled. However, what happens if the user does not set
+>>> the Count function? Should PWM mode be disabled by default in
+>>> mchp_tc_probe(), or does that already happen?
+>>
+>> You're right, and it is a problem I encounter regularly: almost all HW
+>> initialization happens in `mchp_tc_count_function_write()`, the probe()
+>> function mostly just allocates stuff. Meaning, if you want to do anything
+>> with the counter, you have to set the "increase" function first (even
+>> though, if you `cat function`, it will seem like it's already in "increase"
+>> mode). I don't know if it was deliberate, or what, but again, that would be
+>> a separate bugfix patch.
+> 
+> That does seem like an oversight that goes back to the original commit
+> 106b104137fd ("counter: Add microchip TCB capture counter"). I'll submit
+> a bug fix patch later separately to address this and we can continue
+> discussions about the issue there.
+
+Thank you, squashing this annoyance would be appreciated.
+
+> William Breathitt Gray
+
+Bence
+
 
