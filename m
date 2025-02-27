@@ -1,159 +1,211 @@
-Return-Path: <linux-kernel+bounces-535621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-535618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFA3A47542
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:34:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D82A4753C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 06:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B01616EE55
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9E83A78B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Feb 2025 05:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BDF21516A;
-	Thu, 27 Feb 2025 05:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHHWHuAo"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A3F20E31D;
+	Thu, 27 Feb 2025 05:31:15 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D94D2153EA;
-	Thu, 27 Feb 2025 05:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221511E5210;
+	Thu, 27 Feb 2025 05:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740634426; cv=none; b=F4mFxYnsp7RlVwGyj732knF1r2dCscYZs08F6rjWP6EwMdRV1krkebRUT9rVG3VygyE8akwc3dYleJpJW8ZXet2r8P133dpTNymloQ2OtzZP18R+5QhX1FBPpw/hwqzpX3YsIdF8VnKxnV+XY3YYRlN0FYA5PBUBE7AqmpTU//s=
+	t=1740634274; cv=none; b=H5Z5kK7dQGAI9sgNuXwFoeK2z2boVYUulf6CMVLFeE+1u5ybMYx3RLpNpvsl7fVvgwNoUxF9IABl9KCKwqL3G2fY3jGSxW5Fv9e0BmHUMOu6z5rtWe4Pjj3zPsKHe3dBViXTiGjRXXGzEYol4/ry2H6uThihM4jVfu5+7rMYLI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740634426; c=relaxed/simple;
-	bh=GzkEP80bc+2j9R7ea6A+JgaA7IWEDxVPCLy+hvQ9hAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EOc80hEihXKNGHwN0ZzKqvgPo5SFRH4rnVoEibKTExBn4YkO0jldKZsj5AiR6ntpo67s+hchN79r9iU6Dsc3YGWAOcJGO6X27Dhwchh8i8Iz6cuaVEiw4KhJXiI1au4ZYwX78ALqSgsGXASaGjrT2vppL55j9GGJ24MKHEe9Qhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHHWHuAo; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso1213900a91.3;
-        Wed, 26 Feb 2025 21:33:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740634424; x=1741239224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=reYQ3kEdxRIcp+AlEGxe4/u4x5hxYLbz2KdG4kcg/Bg=;
-        b=NHHWHuAolFz4Ijwwa/ohaj9zJ5TkbUEppfOWPw1sSOBkL/Kv1xTAT3uZKPbfm4c0hL
-         DizfrFfTPfnuzTv6N13Oqw5+7OQfW2y2xfnhSUMe5F1ABm1TTu4Do/Y1Etl6FwvqD1eE
-         kfiCfJW0tDLTbDwGI0N9BZbDrgHJUJa2Xi2cUH3qEqsRT1xIdjsn2kEq37eLRsMAbAU6
-         ZseoXEk6I7StymvUn0xdJ0TKLKPs4oyZVsw07zmBlitC+yFG7FgxfkAQCo2ddkKVMZlX
-         tR0lpDfXXmDNJjYmI7dG/Rstvd0aMTgS9+yihk/pZB3wFYmwEkHw5w/ycsm35GopmMDA
-         9icA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740634424; x=1741239224;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=reYQ3kEdxRIcp+AlEGxe4/u4x5hxYLbz2KdG4kcg/Bg=;
-        b=lBmL5iVD53KNB/BLU4NWj8o+DC6nWNoGkTAgdGrFkJDJz0S0TifqdWYxFpqZpVDKgJ
-         /Ujd7hvKM1TJ+WlwiMApjeQtG10RBCqPyIt/9V6ERX61c3gGQZJavBJN8ewS5d1rPBiL
-         pvHCuxPmqR4pDWiIc6CEIxVe6KKlm47JJnDbvwrRrMZOi2x8FXsv2WGIy3Y6H0WpkTDi
-         Oz785D+MM0beDlKiWV7k5L3Vtt/Lmv6uiN+xtnEefVIwhfuL5VHhxE6LlwwXFg9Na55w
-         B5QHaJzymSdNufbsc6fCxVKQQmIbTvkAWd+j7l5hTrHz6iuqDm1R6l8VkIzlGPUTrsej
-         +nLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1zHTWhyd3wqJ1bLP79BFq6kfoe+8+OzrBwp3cFIeLOQhKkp3nCGWrwaGLSJ/il1OYb92F8+p7UxHAxkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWtrKXmc9uGbMv6CL2CrMRs85+Oj6lhLzlvUPvqv3hB6PAU761
-	HhIKFTlPwakUmZ0S1qGt2FWF3Jx70Q7LogV5Ns+U+9hIhL+ufk3ibK8WMk8zBw0=
-X-Gm-Gg: ASbGnctMUQ2lJXN/lEiq2ch/yldUgwRVkpyTZieBXlqInuV7zHsyy2g+teGJBPYC4d7
-	OmJNxxflHTO8wpaoMl1WU+SzzV+Lqei1UdecEFMNNO19xUCXii/NS0hD/FCAfqTsPQ6vJqAgCkR
-	zrFGq6GSuhdgOWgVzLMluloTuQjZu9+W5s+ZtMp5jpVenIu5oTrlLSL7aLrTMhD1lyvH6zgj82v
-	TBB9r1O6DtnA4oJh2j9F3W1EZOaHn4HUmuW4P8nRAGExINmXmi1dVgxhu9++If/n009XJaEhpAW
-	69w1ODZelXs71oY7ych21CDSC5il6V7RasJoZEnKswk=
-X-Google-Smtp-Source: AGHT+IFBTfT+rXScplEGZOSqbKB16z8kFYvuSlvRtid2M/w3rf9uNa3iNQPcokIirQ03KU0lGrh0Vw==
-X-Received: by 2002:a17:90b:2e0d:b0:2fa:17d2:166 with SMTP id 98e67ed59e1d1-2fe7e3b14cbmr8974123a91.31.1740634424211;
-        Wed, 26 Feb 2025 21:33:44 -0800 (PST)
-Received: from fedora.am.students.amrita.edu ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea6753143sm582407a91.4.2025.02.26.21.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 21:33:43 -0800 (PST)
-From: Siddharth Menon <simeddon@gmail.com>
-To: linux-kselftest@vger.kernel.org,
-	shuah@kernel.org
-Cc: skhan@linuxfoundation.org,
-	pmladek@suse.com,
-	mbenes@suse.cz,
-	linux-kernel@vger.kernel.org,
-	Siddharth Menon <simeddon@gmail.com>
-Subject: [PATCH v3 2/2] selftests/lib.mk: Introduce check to validate required dependencies
-Date: Thu, 27 Feb 2025 10:59:27 +0530
-Message-ID: <20250227053322.114215-3-simeddon@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250227053322.114215-1-simeddon@gmail.com>
-References: <20250227053322.114215-1-simeddon@gmail.com>
+	s=arc-20240116; t=1740634274; c=relaxed/simple;
+	bh=Ubkpo2yfm2TxLNOmS+RA8sofbSaJ0lFhErUT9aL6IP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbA6bf7+MaIOraQZ3RJyaAKe0LUNMW0Oxc2p5G00+rUyLrAWG40LMtFEOe/FzxrXgFSwHc+KRS3ifiA1vOz8WeZfxLeuTjG5muI8z5hyQ9z/qsdb2C3Q2c3UgvLqBE1FCsAf5KSH8LrB6Y9EbC/PLCaso5yMKwiIQRUl/fIle6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id C767B2800B484;
+	Thu, 27 Feb 2025 06:31:08 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id C0E0B1AAC71; Thu, 27 Feb 2025 06:31:08 +0100 (CET)
+Date: Thu, 27 Feb 2025 06:31:08 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Joel Mathew Thomas <proxy0@tutamail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI/bwctrl: Disable PCIe BW controller during reset
+Message-ID: <Z7_4nMod6jWd-Bi1@wunner.de>
+References: <20250217165258.3811-1-ilpo.jarvinen@linux.intel.com>
+ <Z7RL7ZXZ_vDUbncw@wunner.de>
+ <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <14797a5a-6ded-bf8f-aa0c-128668ba608f@linux.intel.com>
 
-Currently, kselftests does not have a generalised mechanism to skip compilation
-and run tests when required kernel configuration flags are missing.
+On Mon, Feb 24, 2025 at 05:13:15PM +0200, Ilpo Järvinen wrote:
+> On Tue, 18 Feb 2025, Lukas Wunner wrote:
+> > On Mon, Feb 17, 2025 at 06:52:58PM +0200, Ilpo Järvinen wrote:
+> > > PCIe BW controller enables BW notifications for Downstream Ports by
+> > > setting Link Bandwidth Management Interrupt Enable (LBMIE) and Link
+> > > Autonomous Bandwidth Interrupt Enable (LABIE) (PCIe Spec. r6.2 sec.
+> > > 7.5.3.7).
+> > > 
+> > > It was discovered that performing a reset can lead to the device
+> > > underneath the Downstream Port becoming unavailable if BW notifications
+> > > are left enabled throughout the reset sequence (at least LBMIE was
+> > > found to cause an issue).
+> > 
+> > What kind of reset?  FLR?  SBR?  This needs to be specified in the
+> > commit message so that the reader isn't forced to sift through a
+> > bugzilla with dozens of comments and attachments.
+> 
+> Heh, I never really tried to figure out it because the reset disable 
+> patch was just a stab into the dark style patch. To my surprise, it ended 
+> up working (after the initial confusion was resolved) and I just started 
+> to prepare this patch from that knowledge.
 
-This patch introduces a check to validate the presence of required config flags
-specified in the selftest config files. In case scripts/config or the current
-kernel config is not found, this check is skipped.
+If the present patch is of the type "changing this somehow makes the
+problem go away" instead of a complete root-cause analysis, it would
+have been appropriate to mark it as an RFC.
 
-In order to skip checking for config options required to compile the test,
-set the environment variable SKIP_CHECKS=1.
+I've started to dig into the bugzilla and the very first attachment
+(dmesg for the non-working case) shows:
 
-example usage:
-```
-make SKIP_CHECKS=1 -C livepatch/
-```
+  vfio-pci 0000:01:00.0: timed out waiting for pending transaction; performing function level reset anyway
 
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Suggested-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
- v1->v2:
- - Moved the logic to check for required configurations
-   to an external script
- v2 -> v3:
- - Add SKIP_CHECKS flag to skip checking the dependencies
-   if required
- - Updated the test skip statement to be more meaningful
- 
- tools/testing/selftests/lib.mk | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+That message is emitted by pcie_flr().  Perhaps the Nvidia GPU takes
+more time than usual to finish pending transactions, so the first
+thing I would have tried would be to raise the timeout significantly
+and see if that helps.  Yet I'm not seeing any patch or comment in
+the bugzilla where this was attempted.  Please provide a patch for
+the reporter to verify this hypothesis.
 
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index d6edcfcb5be8..0e11d1d3bab8 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -97,7 +97,18 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
- TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
- TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
- 
--all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) \
-+TEST_DIR := $(shell pwd)
-+
-+check_kselftest_deps:
-+ifneq ($(SKIP_CHECKS),1)
-+	@$(selfdir)/check_kselftest_deps.pl $(TEST_DIR) $(CC) || { \
-+		echo "Skipping test: $(notdir $(TEST_DIR)) (missing required kernel features)"; \
-+		exit 1; \
-+	}
-+endif
-+
-+
-+all: check_kselftest_deps $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) \
- 	$(if $(TEST_GEN_MODS_DIR),gen_mods_dir)
- 
- define RUN_TESTS
-@@ -228,4 +239,4 @@ $(OUTPUT)/%:%.S
- 	$(LINK.S) $^ $(LDLIBS) -o $@
- endif
- 
--.PHONY: run_tests all clean install emit_tests gen_mods_dir clean_mods_dir
-+.PHONY: run_tests all clean install emit_tests gen_mods_dir clean_mods_dir check_kselftest_deps
--- 
-2.48.1
 
+> Logs do mention this:
+> 
+> [   21.560206] pcieport 0000:00:01.1: unlocked secondary bus reset via: pciehp_reset_slot+0x98/0x140
+> 
+> ...so it seems to be SBR.
+
+Looking at the vfio code, vfio_pci_core_enable() (which is called on
+binding the vfio driver to the GPU) invokes pci_try_reset_function().
+This will execute the reset method configured via sysfs.  The same
+is done on unbind via vfio_pci_core_disable().
+
+So you should have asked the reporter for the contents of:
+/sys/bus/pci/devices/0000:01:00.0/reset_method
+/sys/bus/pci/devices/0000:01:00.1/reset_method
+
+In particular, I would like to know whether the contents differ across
+different kernel versions.
+
+There's another way to perform a reset:   Via an ioctl.  This ends up
+calling vfio_pci_dev_set_hot_reset(), which invokes pci_reset_bus()
+to perform an SBR.
+
+Looking at dmesg output in log_linux_6.13.2-arch1-1_pcie_port_pm_off.log
+it seems that vfio first performs a function reset of the GPU on bind...
+
+[   40.171564] vfio-pci 0000:01:00.0: resetting
+[   40.276485] vfio-pci 0000:01:00.0: reset done
+
+...and then goes on to perform an SBR both of the GPU and its audio
+device...
+
+[   40.381082] vfio-pci 0000:01:00.0: resetting
+[   40.381180] vfio-pci 0000:01:00.1: resetting
+[   40.381228] pcieport 0000:00:01.1: unlocked secondary bus reset via: pciehp_reset_slot+0x98/0x140
+[   40.620442] vfio-pci 0000:01:00.0: reset done
+[   40.620479] vfio-pci 0000:01:00.1: reset done
+
+...which is odd because the audio device apparently wasn't bound to
+vfio-pci, otherwise there would have been a function reset.  So why
+does vfio think it can safely reset it?
+
+Oddly, there is a third function reset of only the GPU:
+
+[   40.621894] vfio-pci 0000:01:00.0: resetting
+[   40.724430] vfio-pci 0000:01:00.0: reset done
+
+The reporter writes that pcie_port_pm=off avoids the PME messages.
+If the reset_method is "pm", I could imagine that the Nvidia GPU
+signals a PME event during the D0 -> D3hot -> D0 transition.
+
+I also note that the vfio-pci driver allows runtime PM.  So both the
+GPU and its audio device may runtime suspend to D3hot.  This in turn
+lets the Root Port runtime suspend to D3hot.  It looks like the
+reporter is using a laptop with an integrated AMD GPU and a
+discrete Nvidia GPU.  On such products the platform often allows
+powering down the discrete GPU and this is usually controlled
+through ACPI Power Resources attached to the Root Port.
+Those are powered off after the Root Port goes to D3hot.
+You should have asked the reporter for an acpidump.
+
+pcie_bwnotif_irq() accesses the Link Status register without
+acquiring a runtime PM reference on the PCIe port.  This feels
+wrong and may also contribute to the issue reported here.
+Acquiring a runtime PM ref may sleep, so I think you need to
+change the driver to use a threaded IRQ handler.
+
+Nvidia GPUs are known to hide the audio device if no audio-capable
+display is attached (e.g. HDMI).  quirk_nvidia_hda() unhides the
+audio device on boot and resume.  It might be necessary to also run
+the quirk after resetting the GPU.  Knowing which reset_method
+was used is important to decide if that's necessary, and also
+whether a display was attached.
+
+Moreover Nvidia GPUs are known to change the link speed on idle
+to reduce power consumption.  Perhaps resetting the GPU causes
+a change of link speed and thus execution of pcie_bwnotif_irq()?
+
+
+> > This approach won't work if the reset is performed without software
+> > intervention.  E.g. if a DPC event occurs, the device likewise undergoes
+> > a reset but there is no prior system software involvement.  Software only
+> > becomes involved *after* the reset has occurred.
+> > 
+> > I think it needs to be tested if that same issue occurs with DPC.
+> > It's easy to simulate DPC by setting the Software Trigger bit:
+> > 
+> > setpci -s 00:01.1 ECAP_DPC+6.w=40:40
+> > 
+> > If the issue does occur with DPC then this fix isn't sufficient.
+> 
+> Looking into lspci logs, I don't see DPC capability being there for 
+> 00:01.1?!
+
+Hm, so we can't verify whether your approach is safe for DPC.
+
+
+> > Instead of putting this in the PCI core, amend pcie_portdrv_err_handler
+> > with ->reset_prepare and ->reset_done callbacks which call down to all
+> > the port service drivers, then amend bwctrl.c to disable/enable
+> > interrupts in these callbacks.
+> 
+> Will it work? I mean if the port itself is not reset (0000:00:01.1 in this 
+> case), do these callbacks get called for it?
+
+Never mind, indeed this won't work.
+
+Thanks,
+
+Lukas
 
